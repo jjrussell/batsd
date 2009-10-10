@@ -28,7 +28,8 @@ Rails::Initializer.run do |config|
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem 'uuidtools', :version => '2.0.0'
-  config.gem 'aws-sdb', :lib => 'aws_sdb', :version => '0.3.1'
+  config.gem 'needle', :version => '1.3.0'
+  config.gem 'aws-sdb', :lib => 'aws_sdb', :version => '0.1.2'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
