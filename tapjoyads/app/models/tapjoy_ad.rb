@@ -1,5 +1,5 @@
 class TapjoyAd
-  attr_accessor: ClickURL, Image, AdMessage, AdImpressionID, AdID, AdHTML, OpenIn
+  attr_accessor :ClickURL, :Image, :AdMessage, :AdImpressionID, :AdID, :AdHTML, :OpenIn
   
   def initialize()
     @AdImpressionID = "00000000-0000-0000-0000-000000000000"
