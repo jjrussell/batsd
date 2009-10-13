@@ -12,6 +12,14 @@ class GetadController < ApplicationController
   
   def crisp
     respond_to do |f|
+      #store the app and device in our system
+      app = App.find(:first, :params => { :appid => params[:app_id] } )
+      unless app do
+        app = App.new
+        app.appid = params[:app_id]
+        app.save
+      end
+      
       partner_key = params[:partner_key]
       site_key = params[:site_key]
       zone_key = params[:zone_key]
