@@ -36,7 +36,6 @@ class GetadController < ApplicationController
         f.html {render(:text => "no ad")}
       else
         @ad_return_obj = TapjoyAd.new
-        @ad_return_obj.ClickURL = host + path
         @ad_return_obj.AdHTML = html
         f.xml {render(:partial => 'tapjoy_ad')}
       end
