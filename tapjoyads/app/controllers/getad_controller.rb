@@ -13,12 +13,8 @@ class GetadController < ApplicationController
   def crisp
     respond_to do |f|
       #store the app and device in our system
-      app = App.find(:first, :params => { :appid => params[:app_id] } )
-      unless app do
-        app = App.new
-        app.appid = params[:app_id]
-        app.save
-      end
+      store_device(params[:udid])
+      store_app(params[:app_id])
       
       partner_key = params[:partner_key]
       site_key = params[:site_key]
@@ -48,6 +44,42 @@ class GetadController < ApplicationController
         f.xml {render(:partial => 'tapjoy_ad')}
       end
     end
+  end
+  
+  private
+  def store_device(udid)
+    Device
+    device = CACHE.get(udid)
+    unless device
+      device = Device.find(:first, :params => { :udid => udid } )
+    end
+    
+    if device
+      device.count = device.count.to_i + 1  
+    else
+      device = Device.new
+      device.udid = udid
+      device.count = 1
+    end
+    CACHE.set(udid, device, 1.hour)
+    device.save
+  end
+  
+  def store_app(app_id)
+    App
+    app = CACHE.get(app_id)
+    unless app
+      app = App.find(:first, :params => { :appid => app_id } )
+    end
+    if app
+      app.count = app.count.to_i + 1
+    else
+      app = App.new
+      app.appid = app_id
+      app.count = 1
+    end
+    CACHE.set(app_id, app, 1.hour)
+    app.save
   end
   
 end

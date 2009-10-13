@@ -75,4 +75,8 @@ Rails::Initializer.run do |config|
   # Activate observers that should always be running
   # Please note that observers generated using script/generate observer need to have an _observer suffix
   # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
+  
+  # Memcached instance
+  require 'memcache'
+  CACHE = MemCache.new('127.0.0.1')
 end
