@@ -48,38 +48,51 @@ class GetadController < ApplicationController
   
   private
   def store_device(udid)
-    Device
-    device = CACHE.get(udid)
-    unless device
-      device = Device.find(:first, :params => { :udid => udid } )
-    end
+    wait_until_lock_free(udid) do
+      Device
+      device = CACHE.get(udid)
+      unless device
+        device = Device.find(:first, :params => { :udid => udid } )
+      end
     
-    if device
-      device.count = device.count.to_i + 1  
-    else
-      device = Device.new
-      device.udid = udid
-      device.count = 1
+      if device
+        device.count = device.count.to_i + 1  
+      else
+        device = Device.new
+        device.udid = udid
+        device.count = 1
+      end
+      CACHE.set(udid, device, 1.hour)
+      device.save
     end
-    CACHE.set(udid, device, 1.hour)
-    device.save
   end
   
   def store_app(app_id)
-    App
-    app = CACHE.get(app_id)
-    unless app
-      app = App.find(:first, :params => { :appid => app_id } )
+    wait_until_lock_free(app_id) do
+      App
+      app = CACHE.get(app_id)
+      unless app
+        app = App.find(:first, :params => { :appid => app_id } )
+      end
+      if app
+        app.count = app.count.to_i + 1
+      else
+        app = App.new
+        app.appid = app_id
+        app.count = 1
+      end
+      CACHE.set(app_id, app, 1.hour)
+      app.save
     end
-    if app
-      app.count = app.count.to_i + 1
-    else
-      app = App.new
-      app.appid = app_id
-      app.count = 1
+  end
+  
+  def wait_until_lock_free(key)
+    lock_key = "LOCK_#{key}"
+    while CACHE.add(lock_key, nil).index('NOT_STORED') == 0
+      sleep(0.1)
     end
-    CACHE.set(app_id, app, 1.hour)
-    app.save
+    yield
+    CACHE.delete(lock_key)
   end
   
 end
