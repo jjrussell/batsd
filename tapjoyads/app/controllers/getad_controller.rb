@@ -50,13 +50,13 @@ class GetadController < ApplicationController
   private
   def store_device(udid)
     get_model_atomically(Device, :udid, udid) do |m|
-      m.attributes['count'] += 1
+      m.count = m.count.to_i + 1
     end
   end
   
   def store_app(app_id)
     get_model_atomically(App, :app_id, app_id) do |m|
-      m.attributes['count'] += 1
+      m.count = m.count.to_i + 1
     end
   end
   
@@ -73,13 +73,13 @@ class GetadController < ApplicationController
         puts "Not in cache or simpledb, creating new"
         model = model_class.new
         model.attributes[key_name] = key_value
-        model.attributes['count'] = 0
+        model.count = 0
       end
       
       yield model
       
-      CACHE.set(key_value, model, 1.hour)
       model.save
+      CACHE.set(key_value, model, 1.hour)
     end
   end
   
