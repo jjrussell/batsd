@@ -1,6 +1,7 @@
 require 'net/http'
 
 class GetadController < ApplicationController
+
   def adfonic
     respond_to do |f|  
       @ad_return_obj = TapjoyAd.new
@@ -48,51 +49,50 @@ class GetadController < ApplicationController
   
   private
   def store_device(udid)
-    wait_until_lock_free(udid) do
-      Device
-      device = CACHE.get(udid)
-      unless device
-        device = Device.find(:first, :params => { :udid => udid } )
-      end
-    
-      if device
-        device.count = device.count.to_i + 1  
-      else
-        device = Device.new
-        device.udid = udid
-        device.count = 1
-      end
-      CACHE.set(udid, device, 1.hour)
-      device.save
+    get_model_atomically(Device, :udid, udid) do |m|
+      m.attributes['count'] += 1
     end
   end
   
   def store_app(app_id)
-    wait_until_lock_free(app_id) do
-      App
-      app = CACHE.get(app_id)
-      unless app
-        app = App.find(:first, :params => { :appid => app_id } )
+    get_model_atomically(App, :app_id, app_id) do |m|
+      m.attributes['count'] += 1
+    end
+  end
+  
+  def get_model_atomically(model_class, key_name, key_value)
+    wait_until_lock_free(key_value) do
+      model_class
+      model = CACHE.get(key_value)
+      unless model
+        puts "Not in cache, getting from simpledb"
+        model = model_class.find(:first, :params => {key_name => key_value})
       end
-      if app
-        app.count = app.count.to_i + 1
-      else
-        app = App.new
-        app.appid = app_id
-        app.count = 1
+      
+      unless model
+        puts "Not in cache or simpledb, creating new"
+        model = model_class.new
+        model.attributes[key_name] = key_value
+        model.attributes['count'] = 0
       end
-      CACHE.set(app_id, app, 1.hour)
-      app.save
+      
+      yield model
+      
+      CACHE.set(key_value, model, 1.hour)
+      model.save
     end
   end
   
   def wait_until_lock_free(key)
     lock_key = "LOCK_#{key}"
-    while CACHE.add(lock_key, nil).index('NOT_STORED') == 0
-      sleep(0.1)
+    begin
+      while CACHE.add(lock_key, nil).index('NOT_STORED') == 0
+        sleep(0.1)
+      end
+      yield
+    ensure
+      CACHE.delete(lock_key)
     end
-    yield
-    CACHE.delete(lock_key)
   end
   
 end
