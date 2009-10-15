@@ -5,7 +5,16 @@ require 'base64'
 class GetadController < ApplicationController
 
   def mdotm
-
+    respond_to do |f|
+      #store the app and device in our system
+      store_device(params[:udid])
+      store_app(params[:app_id])
+      
+      udid = params[:udid]
+      ip_address = request.remote_ip
+      
+      
+    end
   end
 
   def adfonic
@@ -47,8 +56,7 @@ class GetadController < ApplicationController
         @ad_return_obj = TapjoyAd.new
         @ad_return_obj.ClickURL = json['destination']['url']
         if json['components']['image']
-          #image_url = json['components']['image']['url']
-          image_url = 'http://www.google.com/images/nav_logo7.png'
+          image_url = json['components']['image']['url']
           image = Net::HTTP.get(URI.parse(image_url))
           @ad_return_obj.Image = Base64.encode64(image)
           f.xml {render(:partial => 'tapjoy_ad')}
