@@ -42,14 +42,21 @@ class GetadController < ApplicationController
       if json['ad_type'] == 1
         image_url = json['img_url']
         image = Net::HTTP.get(URI.parse(image_url))
+        @ad_return_obj.ClickURL = json['landing_url']
         @ad_return_obj.Image = Base64.encode64(image)
       elsif json['ad_type'] == 2
         #draw text
+        @ad_return_obj.ClickURL = json['landing_url']
       elsif json['ad_type'] == 3
-        #set adhtml
+        @ad_return_obj.AdHTML = json['ad_text']
       end
       
-      @ad_return_obj.ClickURL = json['landing_url']
+      if json['lanuch_type'] == 2
+        @ad_return_obj.OpenIn = 'Webview'
+      else
+        @ad_return_obj.OpenIn = 'Safari'
+      end
+      
       f.xml {render(:partial => 'tapjoy_ad')}
     end
   end
