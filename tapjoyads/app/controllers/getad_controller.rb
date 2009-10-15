@@ -13,8 +13,8 @@ class GetadController < ApplicationController
       store_app(params[:app_id])
       
       udid = params[:udid]
-      apikey = params[:apikey]
-      appkey = params[:appkey]
+      apikey = CGI::escape(params[:apikey])
+      appkey = CGI::escape(params[:appkey])
       ip_address = request.remote_ip
       
       if ip_address == '127.0.0.1'
@@ -25,12 +25,32 @@ class GetadController < ApplicationController
       path = '/ads/feed.php' + 
           "?apikey=#{apikey}" +
           "&appkey=#{appkey}" +
-          "&deviceid-#{udid}" +
+          "&deviceid=#{udid}" +
           "&width=320&height=50" +
           "&platform=iphone" +
           "&fmt=json" +
           "&clientip=#{ip_address}"
       
+      puts "URL:" + "http://#{host}#{path}"
+      
+      jsonString = Net::HTTP.get(URI.parse("http://#{host}#{path}"))
+      puts "JSON:" + jsonString
+      json = JSON.parse(jsonString).first
+      
+      @ad_return_obj = TapjoyAd.new
+      
+      if json['ad_type'] == 1
+        image_url = json['img_url']
+        image = Net::HTTP.get(URI.parse(image_url))
+        @ad_return_obj.Image = Base64.encode64(image)
+      elsif json['ad_type'] == 2
+        #draw text
+      elsif json['ad_type'] == 3
+        #set adhtml
+      end
+      
+      @ad_return_obj.ClickURL = json['landing_url']
+      f.xml {render(:partial => 'tapjoy_ad')}
     end
   end
 
