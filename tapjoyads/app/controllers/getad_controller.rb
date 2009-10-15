@@ -31,7 +31,10 @@ class GetadController < ApplicationController
           "&fmt=json" +
           "&clientip=#{ip_address}"
       
+      logger.info "URL:" + "http://#{host}#{path}"
+      
       jsonString = Net::HTTP.get(URI.parse("http://#{host}#{path}"))
+      logger.info "JSON:" + jsonString
       json = JSON.parse(jsonString).first
       
       @ad_return_obj = TapjoyAd.new
