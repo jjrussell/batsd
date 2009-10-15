@@ -31,10 +31,7 @@ class GetadController < ApplicationController
           "&fmt=json" +
           "&clientip=#{ip_address}"
       
-      puts "URL:" + "http://#{host}#{path}"
-      
       jsonString = Net::HTTP.get(URI.parse("http://#{host}#{path}"))
-      puts "JSON:" + jsonString
       json = JSON.parse(jsonString).first
       
       @ad_return_obj = TapjoyAd.new
@@ -45,7 +42,7 @@ class GetadController < ApplicationController
         @ad_return_obj.ClickURL = json['landing_url']
         @ad_return_obj.Image = Base64.encode64(image)
       elsif json['ad_type'] == 2
-        #draw text
+        #draw text and image
         @ad_return_obj.ClickURL = json['landing_url']
       elsif json['ad_type'] == 3
         @ad_return_obj.AdHTML = json['ad_text']
