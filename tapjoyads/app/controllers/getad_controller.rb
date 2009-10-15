@@ -222,6 +222,7 @@ class GetadController < ApplicationController
     begin
       while CACHE.add(lock_key, nil).index('NOT_STORED') == 0
         sleep(0.1)
+        logger.info('sleeping')
       end
       yield
     ensure
