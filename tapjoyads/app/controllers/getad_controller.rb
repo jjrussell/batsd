@@ -1,6 +1,8 @@
 require 'net/http'
 require 'json'
 require 'base64'
+require 'RMagick'
+include Magick
 
 class GetadController < ApplicationController
 
@@ -11,8 +13,23 @@ class GetadController < ApplicationController
       store_app(params[:app_id])
       
       udid = params[:udid]
+      apikey = params[:apikey]
+      appkey = params[:appkey]
       ip_address = request.remote_ip
       
+      if ip_address == '127.0.0.1'
+        ip_address = '72.164.173.18'
+      end
+      
+      host = 'ads.mdotm.com'
+      path = '/ads/feed.php' + 
+          "?apikey=#{apikey}" +
+          "&appkey=#{appkey}" +
+          "&deviceid-#{udid}" +
+          "&width=320&height=50" +
+          "&platform=iphone" +
+          "&fmt=json" +
+          "&clientip=#{ip_address}"
       
     end
   end
@@ -41,12 +58,10 @@ class GetadController < ApplicationController
           "&t.markup=0" +
           "&h.user-agent=#{user_agent}"
       
-      puts host + path
-      
       #jsonString = Net::HTTP.get(URI.parse(host + path))
       jsonString = ''
       Net::HTTP.start(host) do |http|
-        jsonString = http.get(path, "User-Agent" => user_agent, "Accept" => "*/*").body
+        jsonString = http.get(path).body
       end
       
       json = JSON.parse(jsonString)
@@ -58,12 +73,17 @@ class GetadController < ApplicationController
         if json['components']['image']
           image_url = json['components']['image']['url']
           image = Net::HTTP.get(URI.parse(image_url))
-          @ad_return_obj.Image = Base64.encode64(image)
-          f.xml {render(:partial => 'tapjoy_ad')}
         else
-        #if json['components']['text']
-          f.html {render(:text => "no ad")}
+          text = json['components']['text']['content']
+          image = Image.read(text) do
+            self.size = "280x"
+            self.pointsize = 12
+            self.font = 'Arial'
+          end
         end
+        
+        @ad_return_obj.Image = Base64.encode64(image)
+        f.xml {render(:partial => 'tapjoy_ad')}
       end
     end
   end
