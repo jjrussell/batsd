@@ -76,11 +76,17 @@ class GetadController < ApplicationController
         else
           text = json['components']['text']['content']
           image_array = Image.read("caption:#{text}") do
-            self.size = "280x50"
-            self.pointsize = 12
-            self.font = 'Arial'
-            self.undercolor = 'white'
+            self.size = "320x50"
+            self.pointsize = 18
+            self.font = 'times'
+            self.antialias = true
+            self.stroke_width = 1
+            self.gravity = CenterGravity
+            self.stroke = 'white'
+            self.fill = 'white'
+            self.undercolor = 'black'
             self.background_color = 'black'
+            self.border_color = 'blue'
           end
           image_array[0].format = 'png'
           image = image_array[0].to_blob
