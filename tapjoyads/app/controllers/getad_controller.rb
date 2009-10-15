@@ -7,7 +7,7 @@ include Magick
 
 class GetadController < ApplicationController
 
-  #before_filter :store_device, :store_app
+  before_filter :store_device, :store_app
 
   USER_AGENT = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
       " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
