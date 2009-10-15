@@ -1,0 +1,2 @@
+module AdshownHelper
+end
