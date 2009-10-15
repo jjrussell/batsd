@@ -1,5 +1,6 @@
 require 'net/http'
 require 'json'
+require 'xml'
 require 'base64'
 require 'RMagick'
 include Magick
@@ -8,16 +9,43 @@ class GetadController < ApplicationController
 
   before_filter :store_device, :store_app
 
+  USER_AGENT = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
+      " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
+
+  def millennial
+    respond_to do |f|
+      apid = params[:apid]
+      auid = params[:auid]
+      ip_address = get_ip_address
+      
+      host = 'ads.mp.mydas.mobi'
+      path = '/getAd.php5' +
+          "?apid=#{apid}" +
+          "&auid=#{auid}" +
+          "&ip=#{ip_address}" +
+          "&ua=#{USER_AGENT}"
+      
+      xmlString = Net::HTTP.get(URI.parse("http://#{host}#{path}"))
+      doc =  XML::Parser.string(xmlString).parse
+      
+      click_url = doc.find('//ad/clickUrl').first.content
+      image_url = doc.find('//ad/image/url').first.content
+      image = Net::HTTP.get(URI.parse(image_url))
+      
+      @ad_return_obj = TapjoyAd.new
+      @ad_return_obj.ClickURL = click_url
+      @ad_return_obj.Image = Base64.encode64(image)
+      
+      f.xml {render(:partial => 'tapjoy_ad')}
+    end
+  end
+
   def mdotm
     respond_to do |f|
       udid = params[:udid]
       apikey = CGI::escape(params[:apikey])
       appkey = CGI::escape(params[:appkey])
-      ip_address = request.remote_ip
-      
-      if ip_address == '127.0.0.1'
-        ip_address = '72.164.173.18'
-      end
+      ip_address = get_ip_address
       
       host = 'ads.mdotm.com'
       path = '/ads/feed.php' + 
@@ -67,12 +95,7 @@ class GetadController < ApplicationController
     respond_to do |f|
       udid = params[:udid]
       slot_id = params[:slot_id]
-      user_agent = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
-          " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
-      ip_address = request.remote_ip
-      if ip_address == '127.0.0.1'
-        ip_address = '72.164.173.18'
-      end
+      ip_address = get_ip_address
       
       host = 'adfonic.net'
       path = "/ad/#{slot_id}" +
@@ -81,13 +104,9 @@ class GetadController < ApplicationController
           "&test=0" +
           "&t.format=json" +
           "&t.markup=0" +
-          "&h.user-agent=#{user_agent}"
+          "&h.user-agent=#{USER_AGENT}"
       
-      #jsonString = Net::HTTP.get(URI.parse(host + path))
-      jsonString = ''
-      Net::HTTP.start(host) do |http|
-        jsonString = http.get(path).body
-      end
+      jsonString = Net::HTTP.get(URI.parse("http://#{host}#{path}"))
       
       json = JSON.parse(jsonString)
       if json['status'] == 'error'
@@ -155,6 +174,14 @@ class GetadController < ApplicationController
   end
   
   private
+  def get_ip_address
+    ip_address = request.remote_ip
+    if ip_address == '127.0.0.1'
+      ip_address = '72.164.173.18'
+    end
+    return ip_address
+  end
+  
   def store_device
     udid = params[:udid]
     get_model_atomically(Device, :udid, udid) do |m|
