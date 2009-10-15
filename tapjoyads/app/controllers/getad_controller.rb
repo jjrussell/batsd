@@ -75,10 +75,12 @@ class GetadController < ApplicationController
           image = Net::HTTP.get(URI.parse(image_url))
         else
           text = json['components']['text']['content']
-          image = Image.read(text) do
+          image = Image.read("caption:#{text}") do
             self.size = "280x"
             self.pointsize = 12
             self.font = 'Arial'
+            self.undercolor = 'white'
+            self.background_color = 'black'
           end
         end
         
