@@ -76,7 +76,7 @@ class GetadController < ApplicationController
         else
           text = json['components']['text']['content']
           image_array = Image.read("caption:#{text}") do
-            self.size = "280x"
+            self.size = "280x50"
             self.pointsize = 12
             self.font = 'Arial'
             self.undercolor = 'white'
