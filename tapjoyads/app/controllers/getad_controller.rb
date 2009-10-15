@@ -6,12 +6,10 @@ include Magick
 
 class GetadController < ApplicationController
 
+  before_filter :store_device, :store_app
+
   def mdotm
     respond_to do |f|
-      #store the app and device in our system
-      store_device(params[:udid])
-      store_app(params[:app_id])
-      
       udid = params[:udid]
       apikey = CGI::escape(params[:apikey])
       appkey = CGI::escape(params[:appkey])
@@ -67,10 +65,6 @@ class GetadController < ApplicationController
 
   def adfonic
     respond_to do |f|
-      #store the app and device in our system
-      store_device(params[:udid])
-      store_app(params[:app_id])
-      
       udid = params[:udid]
       slot_id = params[:slot_id]
       user_agent = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
@@ -131,10 +125,6 @@ class GetadController < ApplicationController
   
   def crisp
     respond_to do |f|
-      #store the app and device in our system
-      store_device(params[:udid])
-      store_app(params[:app_id])
-      
       partner_key = params[:partner_key]
       site_key = params[:site_key]
       zone_key = params[:zone_key]
@@ -165,13 +155,15 @@ class GetadController < ApplicationController
   end
   
   private
-  def store_device(udid)
+  def store_device
+    udid = params[:udid]
     get_model_atomically(Device, :udid, udid) do |m|
       m.count = m.count.to_i + 1
     end
   end
   
-  def store_app(app_id)
+  def store_app
+    app_id = params[:app_id]
     get_model_atomically(App, :app_id, app_id) do |m|
       m.count = m.count.to_i + 1
     end
@@ -182,12 +174,10 @@ class GetadController < ApplicationController
       model_class
       model = CACHE.get(key_value)
       unless model
-        puts "Not in cache, getting from simpledb"
         model = model_class.find(:first, :params => {key_name => key_value})
       end
       
       unless model
-        puts "Not in cache or simpledb, creating new"
         model = model_class.new
         model.attributes[key_name] = key_value
         model.count = 0
