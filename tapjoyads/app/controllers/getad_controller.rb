@@ -82,7 +82,8 @@ class GetadController < ApplicationController
             self.undercolor = 'white'
             self.background_color = 'black'
           end
-          image = image_array[0].to_blob('PNG')
+          image_array[0].format = 'png'
+          image = image_array[0].to_blob
         end
         
         @ad_return_obj.Image = Base64.encode64(image)
