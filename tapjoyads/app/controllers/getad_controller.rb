@@ -1,6 +1,6 @@
 require 'net/http'
 require 'json'
-#require 'xml'
+require 'xml'
 require 'base64'
 require 'RMagick'
 include Magick
@@ -12,33 +12,33 @@ class GetadController < ApplicationController
   USER_AGENT = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
       " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
 
-  # def millennial
-  #   respond_to do |f|
-  #     apid = params[:apid]
-  #     auid = params[:auid]
-  #     ip_address = get_ip_address
-  #     
-  #     host = 'ads.mp.mydas.mobi'
-  #     path = '/getAd.php5' +
-  #         "?apid=#{apid}" +
-  #         "&auid=#{auid}" +
-  #         "&ip=#{ip_address}" +
-  #         "&ua=#{USER_AGENT}"
-  #     
-  #     xmlString = Net::HTTP.get(URI.parse("http://#{host}#{path}"))
-  #     doc =  XML::Parser.string(xmlString).parse
-  #     
-  #     click_url = doc.find('//ad/clickUrl').first.content
-  #     image_url = doc.find('//ad/image/url').first.content
-  #     image = Net::HTTP.get(URI.parse(image_url))
-  #     
-  #     @ad_return_obj = TapjoyAd.new
-  #     @ad_return_obj.ClickURL = click_url
-  #     @ad_return_obj.Image = Base64.encode64(image)
-  #     
-  #     f.xml {render(:partial => 'tapjoy_ad')}
-  #   end
-  # end
+  def millennial
+    respond_to do |f|
+      apid = params[:apid]
+      auid = params[:auid]
+      ip_address = get_ip_address
+      
+      host = 'ads.mp.mydas.mobi'
+      path = '/getAd.php5' +
+          "?apid=#{apid}" +
+          "&auid=#{auid}" +
+          "&ip=#{ip_address}" +
+          "&ua=#{USER_AGENT}"
+      
+      xmlString = Net::HTTP.get(URI.parse("http://#{host}#{path}"))
+      doc =  XML::Parser.string(xmlString).parse
+      
+      click_url = doc.find('//ad/clickUrl').first.content
+      image_url = doc.find('//ad/image/url').first.content
+      image = Net::HTTP.get(URI.parse(image_url))
+      
+      @ad_return_obj = TapjoyAd.new
+      @ad_return_obj.ClickURL = click_url
+      @ad_return_obj.Image = Base64.encode64(image)
+      
+      f.xml {render(:partial => 'tapjoy_ad')}
+    end
+  end
 
   def mdotm
     respond_to do |f|
