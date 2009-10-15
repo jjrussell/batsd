@@ -31,33 +31,37 @@ class GetadController < ApplicationController
           "&fmt=json" +
           "&clientip=#{ip_address}"
       
-      logger.info "URL:" + "http://#{host}#{path}"
+      #logger.info "URL:" + "http://#{host}#{path}"
       
       jsonString = Net::HTTP.get(URI.parse("http://#{host}#{path}"))
-      logger.info "JSON:" + jsonString
+      #logger.info "JSON:" + jsonString
       json = JSON.parse(jsonString).first
       
-      @ad_return_obj = TapjoyAd.new
-      
-      if json['ad_type'] == 1
-        image_url = json['img_url']
-        image = Net::HTTP.get(URI.parse(image_url))
-        @ad_return_obj.ClickURL = json['landing_url']
-        @ad_return_obj.Image = Base64.encode64(image)
-      elsif json['ad_type'] == 2
-        #draw text and image
-        @ad_return_obj.ClickURL = json['landing_url']
-      elsif json['ad_type'] == 3
-        @ad_return_obj.AdHTML = json['ad_text']
-      end
-      
-      if json['lanuch_type'] == 2
-        @ad_return_obj.OpenIn = 'Webview'
+      if json.length == 0
+        f.html {render(:text => "no ad")}
       else
-        @ad_return_obj.OpenIn = 'Safari'
-      end
+        @ad_return_obj = TapjoyAd.new
       
-      f.xml {render(:partial => 'tapjoy_ad')}
+        if json['ad_type'] == 1
+          image_url = json['img_url']
+          image = Net::HTTP.get(URI.parse(image_url))
+          @ad_return_obj.ClickURL = json['landing_url']
+          @ad_return_obj.Image = Base64.encode64(image)
+        elsif json['ad_type'] == 2
+          #TODO: draw text and image
+          @ad_return_obj.ClickURL = json['landing_url']
+        elsif json['ad_type'] == 3
+          @ad_return_obj.AdHTML = json['ad_text']
+        end
+      
+        if json['lanuch_type'] == 2
+          @ad_return_obj.OpenIn = 'Webview'
+        else
+          @ad_return_obj.OpenIn = 'Safari'
+        end
+      
+        f.xml {render(:partial => 'tapjoy_ad')}
+      end
     end
   end
 
