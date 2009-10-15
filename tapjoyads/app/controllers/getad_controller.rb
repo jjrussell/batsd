@@ -75,13 +75,14 @@ class GetadController < ApplicationController
           image = Net::HTTP.get(URI.parse(image_url))
         else
           text = json['components']['text']['content']
-          image = Image.read("caption:#{text}") do
+          image_array = Image.read("caption:#{text}") do
             self.size = "280x"
             self.pointsize = 12
             self.font = 'Arial'
             self.undercolor = 'white'
             self.background_color = 'black'
           end
+          image = image_array[0]
         end
         
         @ad_return_obj.Image = Base64.encode64(image)
