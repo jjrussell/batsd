@@ -28,6 +28,9 @@ class GetadController < ApplicationController
       xmlString = Net::HTTP.get(URI.parse("http://#{host}#{path}"))
       doc =  XML::Parser.string(xmlString).parse
       
+      logging.info("MILL: #{host}#{path}")
+      logging.info("MILL: #{xmlString}")
+      
       click_url = doc.find('//ad/clickUrl').first.content
       image_url = doc.find('//ad/image/url').first.content
       image = Net::HTTP.get(URI.parse(image_url))
@@ -63,7 +66,7 @@ class GetadController < ApplicationController
       #logger.info "JSON:" + jsonString
       json = JSON.parse(jsonString).first
       
-      if json.length == 0
+      if !json or json.length == 0
         f.html {render(:text => "no ad")}
       else
         @ad_return_obj = TapjoyAd.new
