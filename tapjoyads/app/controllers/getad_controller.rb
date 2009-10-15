@@ -1,13 +1,62 @@
 require 'net/http'
+require 'json'
+require 'base64'
 
 class GetadController < ApplicationController
 
+  def mdotm
+
+  end
+
   def adfonic
-    respond_to do |f|  
-      @ad_return_obj = TapjoyAd.new
-      @ad_return_obj.ClickURL = 'http://sample.com'
-      @ad_return_obj.Image = '9823897239487239487'
-      f.xml {render(:partial => 'tapjoy_ad')}
+    respond_to do |f|
+      #store the app and device in our system
+      store_device(params[:udid])
+      store_app(params[:app_id])
+      
+      udid = params[:udid]
+      slot_id = params[:slot_id]
+      user_agent = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
+          " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
+      ip_address = request.remote_ip
+      if ip_address == '127.0.0.1'
+        ip_address = '72.164.173.18'
+      end
+      
+      host = 'adfonic.net'
+      path = "/ad/#{slot_id}" +
+          "?r.ip=#{ip_address}" +
+          "&r.id=#{udid}" +
+          "&test=0" +
+          "&t.format=json" +
+          "&t.markup=0" +
+          "&h.user-agent=#{user_agent}"
+      
+      puts host + path
+      
+      #jsonString = Net::HTTP.get(URI.parse(host + path))
+      jsonString = ''
+      Net::HTTP.start(host) do |http|
+        jsonString = http.get(path, "User-Agent" => user_agent, "Accept" => "*/*").body
+      end
+      
+      json = JSON.parse(jsonString)
+      if json['status'] == 'error'
+        f.html {render(:text => "no ad")}
+      else
+        @ad_return_obj = TapjoyAd.new
+        @ad_return_obj.ClickURL = json['destination']['url']
+        if json['components']['image']
+          #image_url = json['components']['image']['url']
+          image_url = 'http://www.google.com/images/nav_logo7.png'
+          image = Net::HTTP.get(URI.parse(image_url))
+          @ad_return_obj.Image = Base64.encode64(image)
+          f.xml {render(:partial => 'tapjoy_ad')}
+        else
+        #if json['components']['text']
+          f.html {render(:text => "no ad")}
+        end
+      end
     end
   end
   
@@ -33,11 +82,10 @@ class GetadController < ApplicationController
       
       html = ''
       Net::HTTP.start(host) do |http|
-        html = http.get(path, "User-Agent" =>user_agent).body
+        html = http.get(path, "User-Agent" => user_agent).body
       end
       
       if html.include? 'Error: Empty ad'
-        @ad_return_obj = nil
         f.html {render(:text => "no ad")}
       else
         @ad_return_obj = TapjoyAd.new
