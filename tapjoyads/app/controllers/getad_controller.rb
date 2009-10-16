@@ -38,11 +38,16 @@ class GetadController < ApplicationController
         
         @ad_return_obj.ClickURL = click_url
         @ad_return_obj.Image = Base64.encode64(image)
+        
+        f.xml {render(:partial => 'tapjoy_ad')}
+      elsif /^GIF/.match(content)
+        @ad_return_obj.ClickURL = 'http://'
+        @ad_return_obj.Image = Base64.encode64(content)
+        f.html {render(:text => "no ad")}
       else
         @ad_return_obj.AdHTML = content
+        f.html {render(:text => "no ad")}
       end
-      
-      f.xml {render(:partial => 'tapjoy_ad')}
     end
   end
 
