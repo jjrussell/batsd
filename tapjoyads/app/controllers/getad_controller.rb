@@ -99,52 +99,55 @@ class GetadController < ApplicationController
 
   def adfonic
     respond_to do |f|
-      udid = params[:udid]
-      slot_id = params[:slot_id]
-      ip_address = get_ip_address
       
-      host = 'adfonic.net'
-      path = "/ad/#{slot_id}" +
-          "?r.ip=#{ip_address}" +
-          "&r.id=#{udid}" +
-          "&test=0" +
-          "&t.format=json" +
-          "&t.markup=0" +
-          "&h.user-agent=#{USER_AGENT}"
-      
-      jsonString = Net::HTTP.get(URI.parse("http://#{host}#{path}"))
-      
-      json = JSON.parse(jsonString)
-      if json['status'] == 'error'
-        f.html {render(:text => "no ad")}
-      else
-        @ad_return_obj = TapjoyAd.new
-        @ad_return_obj.ClickURL = json['destination']['url']
-        if json['components']['image']
-          image_url = json['components']['image']['url']
-          image = Net::HTTP.get(URI.parse(image_url))
-        else
-          text = json['components']['text']['content']
-          image_array = Image.read("caption:#{text}") do
-            self.size = "320x50"
-            self.pointsize = 18
-            self.font = 'times'
-            self.antialias = true
-            self.stroke_width = 1
-            self.gravity = CenterGravity
-            self.stroke = 'white'
-            self.fill = 'white'
-            self.undercolor = 'black'
-            self.background_color = 'black'
-            self.border_color = 'blue'
-          end
-          image_array[0].format = 'png'
-          image = image_array[0].to_blob
-        end
-        
-        @ad_return_obj.Image = Base64.encode64(image)
-        f.xml {render(:partial => 'tapjoy_ad')}
-      end
+      f.html {render(:text => "no ad")}
+            # 
+            # udid = params[:udid]
+            # slot_id = params[:slot_id]
+            # ip_address = get_ip_address
+            # 
+            # host = 'adfonic.net'
+            # path = "/ad/#{slot_id}" +
+            #     "?r.ip=#{ip_address}" +
+            #     "&r.id=#{udid}" +
+            #     "&test=0" +
+            #     "&t.format=json" +
+            #     "&t.markup=0" +
+            #     "&h.user-agent=#{USER_AGENT}"
+            # 
+            # jsonString = Net::HTTP.get(URI.parse("http://#{host}#{path}"))
+            # 
+            # json = JSON.parse(jsonString)
+            # if json['status'] == 'error'
+            #   f.html {render(:text => "no ad")}
+            # else
+            #   @ad_return_obj = TapjoyAd.new
+            #   @ad_return_obj.ClickURL = json['destination']['url']
+            #   if json['components']['image']
+            #     image_url = json['components']['image']['url']
+            #     image = Net::HTTP.get(URI.parse(image_url))
+            #   else
+            #     text = json['components']['text']['content']
+            #     image_array = Image.read("caption:#{text}") do
+            #       self.size = "320x50"
+            #       self.pointsize = 18
+            #       self.font = 'times'
+            #       self.antialias = true
+            #       self.stroke_width = 1
+            #       self.gravity = CenterGravity
+            #       self.stroke = 'white'
+            #       self.fill = 'white'
+            #       self.undercolor = 'black'
+            #       self.background_color = 'black'
+            #       self.border_color = 'blue'
+            #     end
+            #     image_array[0].format = 'png'
+            #     image = image_array[0].to_blob
+            #   end
+            #   
+            #   @ad_return_obj.Image = Base64.encode64(image)
+            #   f.xml {render(:partial => 'tapjoy_ad')}
+            # end
     end
   end
   
