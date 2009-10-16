@@ -7,7 +7,7 @@ include Magick
 
 class GetadController < ApplicationController
 
-  before_filter :store_device, :store_app
+  before_filter :store_device
 
   USER_AGENT = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
       " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
@@ -25,19 +25,22 @@ class GetadController < ApplicationController
           "&ip=#{ip_address}" +
           "&ua=#{USER_AGENT}"
       
-      xmlString = Net::HTTP.get(URI.parse("http://#{host}#{path}"))
-      doc =  XML::Parser.string(xmlString).parse
-      
-      logging.info("MILL: #{host}#{path}")
-      logging.info("MILL: #{xmlString}")
-      
-      click_url = doc.find('//ad/clickUrl').first.content
-      image_url = doc.find('//ad/image/url').first.content
-      image = Net::HTTP.get(URI.parse(image_url))
-      
+      content = Net::HTTP.get(URI.parse("http://#{host}#{path}"))
+
       @ad_return_obj = TapjoyAd.new
-      @ad_return_obj.ClickURL = click_url
-      @ad_return_obj.Image = Base64.encode64(image)
+      
+      if /^<\?xml/.match(content)
+        doc =  XML::Parser.string(content).parse
+      
+        click_url = doc.find('//ad/clickUrl').first.content
+        image_url = doc.find('//ad/image/url').first.content
+        image = Net::HTTP.get(URI.parse(image_url))
+        
+        @ad_return_obj.ClickURL = click_url
+        @ad_return_obj.Image = Base64.encode64(image)
+      else
+        @ad_return_obj.AdHTML = content
+      end
       
       f.xml {render(:partial => 'tapjoy_ad')}
     end
