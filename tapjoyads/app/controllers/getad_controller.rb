@@ -18,16 +18,13 @@ class GetadController < ApplicationController
       auid = params[:auid]
       ip_address = get_ip_address
       
-      host = 'ads.mp.mydas.mobi'
-      path = '/getAd.php5' +
+      url = 'http://ads.mp.mydas.mobi/getAd.php5' +
           "?apid=#{apid}" +
           "&auid=#{auid}" +
           "&ip=#{ip_address}" +
           "&ua=#{USER_AGENT}"
       
-      content = Net::HTTP.get(URI.parse("http://#{host}#{path}"))
-
-      puts "CONTENT: '#{content}'"
+      content = download_content(URI.parse(url))
 
       @ad_return_obj = TapjoyAd.new
       
@@ -36,15 +33,13 @@ class GetadController < ApplicationController
       
         click_url = doc.find('//ad/clickUrl').first.content
         image_url = doc.find('//ad/image/url').first.content
-        image = Net::HTTP.get(URI.parse(image_url))
+        image = download_content(URI.parse(image_url))
         
         @ad_return_obj.ClickURL = click_url
         @ad_return_obj.Image = Base64.encode64(image)
         
         f.xml {render(:partial => 'tapjoy_ad')}
       elsif /^GIF/.match(content)
-        @ad_return_obj.ClickURL = 'http://'
-        @ad_return_obj.Image = Base64.encode64(content)
         f.html {render(:text => "no ad")}
       else
         @ad_return_obj.AdHTML = content
@@ -60,8 +55,7 @@ class GetadController < ApplicationController
       appkey = CGI::escape(params[:appkey])
       ip_address = get_ip_address
       
-      host = 'ads.mdotm.com'
-      path = '/ads/feed.php' + 
+      url = 'http://ads.mdotm.com/ads/feed.php' + 
           "?apikey=#{apikey}" +
           "&appkey=#{appkey}" +
           "&deviceid=#{udid}" +
@@ -70,11 +64,8 @@ class GetadController < ApplicationController
           "&fmt=json" +
           "&clientip=#{ip_address}"
       
-      #logger.info "URL:" + "http://#{host}#{path}"
-      
-      jsonString = Net::HTTP.get(URI.parse("http://#{host}#{path}"))
-      #logger.info "JSON:" + jsonString
-      json = JSON.parse(jsonString).first
+      json_string = download_content(URI.parse(url))
+      json = JSON.parse(json_string).first
       
       if !json or json.length == 0
         f.html {render(:text => "no ad")}
@@ -83,7 +74,7 @@ class GetadController < ApplicationController
       
         if json['ad_type'] == 1
           image_url = json['img_url']
-          image = Net::HTTP.get(URI.parse(image_url))
+          image = download_content(URI.parse(image_url))
           @ad_return_obj.ClickURL = json['landing_url']
           @ad_return_obj.Image = Base64.encode64(image)
         elsif json['ad_type'] == 2
@@ -170,8 +161,7 @@ class GetadController < ApplicationController
       zone_key = params[:zone_key]
       user_agent = request.headers['User-Agent']
            
-      host = 'api.crispwireless.com'
-      path = "/adRequest.v1/single/ad.html" +
+      url = "http://api.crispwireless.com/adRequest.v1/single/ad.html" +
           "?partnerkey=#{partner_key}" + 
           "&sitekey=#{site_key}" +
           "&random=#{rand(9999999)}" +
@@ -179,7 +169,7 @@ class GetadController < ApplicationController
           "&zonekey=#{zone_key}" +
           "&sectionkey"
       
-      html = download_content(host, path, 'User-Agent' => user_agent)
+      html = download_content(URI.parse(url), 'User-Agent' => user_agent)
       
       if html.include? 'Error: Empty ad'
         f.html {render(:text => "no ad")}
@@ -200,14 +190,16 @@ class GetadController < ApplicationController
     return ip_address
   end
   
-  def download_content(host, path, *headers)
+  def download_content(uri, *headers)
     start_time = Time.now
-    content = ''
-    Net::HTTP.start(host) do |http|
-      content = http.get(path, *headers).body
+    
+    res = Net::HTTP.start(uri.host, uri.port) do |http|
+      content = http.get(uri.request_uri, *headers)
     end
     
-    logger.info "Downloaded http://#{host}#{path} in #{Time.now - start_time} seconds"
+    content = res.body
+    
+    logger.info "Downloaded #{uri.to_s} (#{Time.now - start_time}s)"
     
     return content
   end
