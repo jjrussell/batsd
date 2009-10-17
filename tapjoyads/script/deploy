@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+server_list = [
+  'ec2-75-101-247-213.compute-1.amazonaws.com',
+  'ec2-174-129-66-251.compute-1.amazonaws.com'
+  ]
+  
+svn_info = `svn info`
+svn_rev = svn_info.match(/\nRevision: (\d*)/)[1]
+print "Deploy revision #{svn_rev}? [y/N] "
+answer = gets
+if !/^y/i.match(answer)
+  exit
+end
+
+server_list.each do |s|
+  puts "Deploying on #{s}"
+  puts "Updating svn"
+  `ssh webuser@#{s} 'cd tapjoyads && svn update'`
+  puts "Restarting apache"
+  `ssh root@#{s} apachectl restart`
+  puts "Done deploying on #{s}\n\n"
+end
+
+puts "Done deploying"

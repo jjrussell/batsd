@@ -111,8 +111,14 @@ class GetadController < ApplicationController
       
       json_string = download_content(URI.parse(url))
       
-      json = JSON.parse(json_string)
-      if json['status'] == 'error'
+      json = nil
+      begin
+        json = JSON.parse(json_string)
+      rescue JSON::ParserError
+        logger.info "Error parsing json: '#{json_string}'"
+      end
+      
+      if !json or json['status'] == 'error'
         f.html {render(:text => "no ad")}
       else
         @ad_return_obj = TapjoyAd.new
@@ -187,16 +193,20 @@ class GetadController < ApplicationController
   def download_content(uri, *headers)
     start_time = Time.now
     
-    res = Net::HTTP.start(uri.host, uri.port) do |http|
-      http.read_timeout = 3
-      content = http.get(uri.request_uri, *headers)
+    begin
+      res = Net::HTTP.start(uri.host, uri.port) do |http|
+        http.read_timeout = 1.5
+        content = http.get(uri.request_uri, *headers)
+      end
+      content = res.body
+      logger.info "Downloaded #{uri.to_s} (#{Time.now - start_time}s)"
+      
+      return content
+    rescue TimeoutError
+      logger.info "Timed Out when downloading #{uri.to_s}"
     end
     
-    content = res.body
-    
-    logger.info "Downloaded #{uri.to_s} (#{Time.now - start_time}s)"
-    
-    return content
+    return ''
   end
   
   def store_device

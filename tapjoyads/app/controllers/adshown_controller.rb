@@ -8,7 +8,7 @@ class AdshownController < ApplicationController
     <TotalTicketsAvailable xsi:nil="true"/>
     <TicketsEnteredInSweepstakes xsi:nil="true"/>
     <GameRank xsi:nil="true"/>
-    <TapPoints>15</TapPoints>
+    <TapPoints>150</TapPoints>
     <PointsID>5a3de21f-a517-4e9c-ac21-6c3fb2e7ea4c</PointsID>
     <CurrencyName>Gold</CurrencyName>
   </UserAccountObject>
