@@ -97,59 +97,53 @@ class GetadController < ApplicationController
 
   def adfonic
     respond_to do |f|
-      f.html {render(:text => "no ad")}
+      udid = params[:udid]
+      slot_id = params[:slot_id]
+      ip_address = get_ip_address
       
-      # udid = params[:udid]
-      # slot_id = params[:slot_id]
-      # ip_address = get_ip_address
-      # 
-      # host = 'adfonic.net'
-      # path = "/ad/#{slot_id}" +
-      #     "?r.ip=#{ip_address}" +
-      #     "&r.id=#{udid}" +
-      #     "&test=0" +
-      #     "&t.format=json" +
-      #     "&t.markup=0" +
-      #     "&h.user-agent=#{USER_AGENT}"
-      # 
-      # jsonString = download_content(host, path)
-      # 
-      # json = JSON.parse(jsonString)
-      # if json['status'] == 'error'
-      #   f.html {render(:text => "no ad")}
-      # else
-      #   @ad_return_obj = TapjoyAd.new
-      #   @ad_return_obj.ClickURL = json['destination']['url']
-      #   if json['components']['image']
-      #     image_url = json['components']['image']['url']
-      #     
-      #     start_time = Time.now
-      #     image = Net::HTTP.get(URI.parse(image_url))
-      #     logger.info "adfonic image download time: #{Time.now - start_time}"
-      #   else
-      #     start_time = Time.now
-      #     text = json['components']['text']['content']
-      #     image_array = Image.read("caption:#{text}") do
-      #       self.size = "320x50"
-      #       self.pointsize = 18
-      #       self.font = 'times'
-      #       self.antialias = true
-      #       self.stroke_width = 1
-      #       self.gravity = CenterGravity
-      #       self.stroke = 'white'
-      #       self.fill = 'white'
-      #       self.undercolor = 'black'
-      #       self.background_color = 'black'
-      #       self.border_color = 'blue'
-      #     end
-      #     image_array[0].format = 'png'
-      #     image = image_array[0].to_blob
-      #     logger.info "adfonic image generation time: #{Time.now - start_time}"
-      #   end
-      #   
-      #   @ad_return_obj.Image = Base64.encode64(image)
-      #   f.xml {render(:partial => 'tapjoy_ad')}
-      # end
+      url = "http://adfonic.net/ad/#{slot_id}" +
+          "?r.ip=#{ip_address}" +
+          "&r.id=#{udid}" +
+          "&test=0" +
+          "&t.format=json" +
+          "&t.markup=0" +
+          "&h.user-agent=#{USER_AGENT}"
+      
+      json_string = download_content(URI.parse(url))
+      
+      json = JSON.parse(json_string)
+      if json['status'] == 'error'
+        f.html {render(:text => "no ad")}
+      else
+        @ad_return_obj = TapjoyAd.new
+        @ad_return_obj.ClickURL = json['destination']['url']
+        if json['components']['image']
+          image_url = json['components']['image']['url']
+          image = download_content(URI.parse(image_url))
+        else
+          start_time = Time.now
+          text = json['components']['text']['content']
+          image_array = Image.read("caption:#{text}") do
+            self.size = "320x50"
+            self.pointsize = 18
+            self.font = 'times'
+            self.antialias = true
+            self.stroke_width = 1
+            self.gravity = CenterGravity
+            self.stroke = 'white'
+            self.fill = 'white'
+            self.undercolor = 'black'
+            self.background_color = 'black'
+            self.border_color = 'blue'
+          end
+          image_array[0].format = 'png'
+          image = image_array[0].to_blob
+          logger.info "image generation time: #{Time.now - start_time}"
+        end
+        
+        @ad_return_obj.Image = Base64.encode64(image)
+        f.xml {render(:partial => 'tapjoy_ad')}
+      end
       
     end
   end
@@ -194,6 +188,7 @@ class GetadController < ApplicationController
     start_time = Time.now
     
     res = Net::HTTP.start(uri.host, uri.port) do |http|
+      http.read_timeout = 3
       content = http.get(uri.request_uri, *headers)
     end
     
