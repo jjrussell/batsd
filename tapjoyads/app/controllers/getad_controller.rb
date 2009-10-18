@@ -33,10 +33,12 @@ class GetadController < ApplicationController
       
         click_url = doc.find('//ad/clickUrl').first.content
         image_url = doc.find('//ad/image/url').first.content
-        image = download_content(URI.parse(image_url))
+        image = cache("img.#{image_url.hash}") do
+          Base64.encode64(download_content(URI.parse(image_url)))
+        end
         
         @ad_return_obj.ClickURL = click_url
-        @ad_return_obj.Image = Base64.encode64(image)
+        @ad_return_obj.Image = image
         
         f.xml {render(:partial => 'tapjoy_ad')}
       elsif /^GIF/.match(content)
@@ -74,9 +76,11 @@ class GetadController < ApplicationController
       
         if json['ad_type'] == 1
           image_url = json['img_url']
-          image = download_content(URI.parse(image_url))
+          image = cache("img.#{image_url.hash}") do
+            Base64.encode64(download_content(URI.parse(image_url)))
+          end
           @ad_return_obj.ClickURL = json['landing_url']
-          @ad_return_obj.Image = Base64.encode64(image)
+          @ad_return_obj.Image = image
         elsif json['ad_type'] == 2
           #TODO: draw text and image
           @ad_return_obj.ClickURL = json['landing_url']

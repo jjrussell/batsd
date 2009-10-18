@@ -18,9 +18,9 @@ class ApplicationController < ActionController::Base
     output = nil
     begin
       output = CACHE.get(key)
-      logger.info("Key: #{key} found in cache")
+      logger.info("Memcache key found: #{key}")
     rescue Memcached::NotFound
-      logger.info("key: #{key} not found in cache")
+      logger.info("Memcache key not found: #{key}")
     end
     
     unless output
