@@ -126,6 +126,9 @@ class GetadController < ApplicationController
         if json['components']['image']
           image_url = json['components']['image']['url']
           image = download_content(URI.parse(image_url))
+          
+          @ad_return_obj.Image = Base64.encode64(image)
+          f.xml {render(:partial => 'tapjoy_ad')}
         else
           # start_time = Time.now
           # text = json['components']['text']['content']
@@ -148,9 +151,6 @@ class GetadController < ApplicationController
 
           f.html {render(:text => "no ad")}
         end
-        
-        @ad_return_obj.Image = Base64.encode64(image)
-        f.xml {render(:partial => 'tapjoy_ad')}
       end
       
     end
