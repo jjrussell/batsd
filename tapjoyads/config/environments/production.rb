@@ -24,6 +24,6 @@ config.action_controller.perform_caching             = true
 # config.action_mailer.raise_delivery_errors = false
 
 # Memcache
-CACHE = Memcache.new('127.0.0.1')
+CACHE = Memcached.new('127.0.0.1')
 # CACHE = Memcached.new(['10.240.117.174', 
 #                        '10.254.106.99'])
