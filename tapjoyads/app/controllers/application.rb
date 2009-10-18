@@ -18,12 +18,12 @@ class ApplicationController < ActionController::Base
     output = nil
     begin
       output = CACHE.get(key)
-      unless
-        puts "unless"
-        output = yield
-      end
+      logger.info("Key: #{key} found in cache")
     rescue Memcached::NotFound
-      puts 'notfound'
+      logger.info("key: #{key} not found in cache")
+    end
+    
+    unless output
       output = yield
     end
     
