@@ -77,6 +77,5 @@ Rails::Initializer.run do |config|
   # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
   
   # Memcached instance
-  require 'memcache'
-  CACHE = MemCache.new('127.0.0.1')
+  require 'memcached'
 end
