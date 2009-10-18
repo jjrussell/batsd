@@ -127,24 +127,26 @@ class GetadController < ApplicationController
           image_url = json['components']['image']['url']
           image = download_content(URI.parse(image_url))
         else
-          start_time = Time.now
-          text = json['components']['text']['content']
-          image_array = Image.read("caption:#{text}") do
-            self.size = "320x50"
-            self.pointsize = 18
-            self.font = 'times'
-            self.antialias = true
-            self.stroke_width = 1
-            self.gravity = CenterGravity
-            self.stroke = 'white'
-            self.fill = 'white'
-            self.undercolor = 'black'
-            self.background_color = 'black'
-            self.border_color = 'blue'
-          end
-          image_array[0].format = 'png'
-          image = image_array[0].to_blob
-          logger.info "image generation time: #{Time.now - start_time}"
+          # start_time = Time.now
+          # text = json['components']['text']['content']
+          # image_array = Image.read("caption:#{text}") do
+          #   self.size = "320x50"
+          #   self.pointsize = 18
+          #   self.font = 'times'
+          #   self.antialias = true
+          #   self.stroke_width = 1
+          #   self.gravity = CenterGravity
+          #   self.stroke = 'white'
+          #   self.fill = 'white'
+          #   self.undercolor = 'black'
+          #   self.background_color = 'black'
+          #   self.border_color = 'blue'
+          # end
+          # image_array[0].format = 'png'
+          # image = image_array[0].to_blob
+          # logger.info "image generation time: #{Time.now - start_time}"
+
+          f.html {render(:text => "no ad")}
         end
         
         @ad_return_obj.Image = Base64.encode64(image)
@@ -209,52 +211,33 @@ class GetadController < ApplicationController
     return ''
   end
   
-  def store_device
+  def store_device_stats
     udid = params[:udid]
+    cache(udid) do
+      device = get_model(Device, udid)
+      device.increment_count('impression')
+    end
+    
     get_model_atomically(Device, :udid, udid) do |m|
       m.count = m.count.to_i + 1
     end
   end
   
-  def store_app
+  def store_app_stats
     app_id = params[:app_id]
     get_model_atomically(App, :app_id, app_id) do |m|
       m.count = m.count.to_i + 1
     end
   end
   
-  def get_model_atomically(model_class, key_name, key_value)
-    wait_until_lock_free(key_value) do
-      model_class
-      model = CACHE.get(key_value)
-      unless model
-        model = model_class.find(:first, :params => {key_name => key_value})
-      end
-      
-      unless model
-        model = model_class.new
-        model.attributes[key_name] = key_value
-        model.count = 0
-      end
-      
-      yield model
-      
-      model.save
-      CACHE.set(key_value, model, 1.hour)
-    end
-  end
-  
-  def wait_until_lock_free(key)
-    lock_key = "LOCK_#{key}"
+  def get_model(model_class, id)
+    model = nil
     begin
-      while CACHE.add(lock_key, nil).index('NOT_STORED') == 0
-        sleep(0.1)
-        logger.info('sleeping')
-      end
-      yield
-    ensure
-      CACHE.delete(lock_key)
+      model = model_class.find(id)
+    rescue ActiveResource::ResourceNotFound
+      model = model_class.new
+      model.id = id
     end
+    return model
   end
-  
 end

@@ -67,14 +67,6 @@ module Counter
   
   private
   
-  def hash_string(hash)
-    s = '{'
-    hash.each do |key, value|
-      s += "#{key}:#{value},"
-    end
-    return s + '}'
-  end
-  
   def get_time_and_pid
     "%.6f.%i" %  [Time.now.to_f, Process.pid]
   end
