@@ -15,10 +15,19 @@ class ApplicationController < ActionController::Base
   
   private
   def cache(key)
-    unless output = CACHE.get(key)
+    output = nil
+    begin
+      output = CACHE.get(key)
+      unless
+        puts "unless"
+        output = yield
+      end
+    rescue Memcached::NotFound
+      puts 'notfound'
       output = yield
-      CACHE.set(key, output, 1.hour)
     end
+    
+    CACHE.set(key, output, 1.hour)
     return output
   end
 end
