@@ -27,7 +27,9 @@ class ApplicationController < ActionController::Base
       output = yield
     end
     
-    CACHE.set(key, output, 1.hour)
+    if output
+      CACHE.set(key, output, 1.hour)
+    end
     return output
   end
 end
