@@ -47,6 +47,8 @@ module Counter
     
     count_hash, lowest_count, highest_count = get_count_hash(attr_name, get_blacklist(attr_name))
     
+    puts count_hash.to_query
+    
     count = get_count_from_hash(count_hash, lowest_count, highest_count)
     new_lowest_count = lowest_count
     for i in lowest_count..highest_count
@@ -55,14 +57,24 @@ module Counter
       end
     end
     
+    puts "new_lowest_count: #{new_lowest_count}"
+    
+    keys_to_delete = []
     self.attributes.each do |key, value|
       if is_key_valid(key, attr_name)
         count = value.to_i
+        puts "count: #{count}"
         if count < new_lowest_count
-          self.attributes.delete(key)
+          keys_to_delete.push(key)
         end
       end
     end
+    
+    # keys_to_delete.each do |key|
+    #   puts "delete key: #{key}"
+    #   self.attributes.delete(key)
+    # end
+    #SDB.delete_attributes(get_domain_name, attr_name, keys_to_delete)
   end
   
   private
@@ -124,5 +136,9 @@ module Counter
     end
     
     return blacklist
+  end
+  
+  def get_domain_name
+    return self.prefix[1..-2]
   end
 end

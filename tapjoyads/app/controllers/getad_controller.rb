@@ -29,7 +29,7 @@ class GetadController < ApplicationController
   rescue_from TimeoutError, :with => :rescue_from_timeout
   rescue_from JSON::ParserError, :with => :rescue_from_json_parser
          
-  #before_filter :store_device_stats
+  #after_filter :store_device_stats
 
   USER_AGENT = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
       " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
@@ -79,16 +79,15 @@ class GetadController < ApplicationController
     json_string = download_content(URI.parse(url))
     json = JSON.parse(json_string).first
     
-    if json.length == 0
+    if !json or json.length == 0
+      logger.info "empty json"
       no_ad
     else
       @ad_return_obj = TapjoyAd.new
     
       if json['ad_type'] == 1
-        image_url = json['img_url']
-        download_image image_url
         @ad_return_obj.ClickURL = json['landing_url']
-        @ad_return_obj.Image = image
+        @ad_return_obj.Image = download_image json['img_url']
       elsif json['ad_type'] == 2
         #TODO: draw text and image
         #@ad_return_obj.ClickURL = json['landing_url']
@@ -102,18 +101,14 @@ class GetadController < ApplicationController
         return
       end
     
-      if json['lanuch_type'] == 2
-        @ad_return_obj.OpenIn = 'Webview'
-      else
-        @ad_return_obj.OpenIn = 'Safari'
-      end
+      @ad_return_obj.OpenIn = json['lanuch_type'] == 2 ? 'Webview' : 'Safari'
     
       render_ad
     end
   end
   
   def adfonic
-    url = "http://adfonic.net/ad/#{CGI::escape(slot_id)}" +
+    url = "http://adfonic.net/ad/#{CGI::escape(params[:slot_id])}" +
         "?r.ip=#{get_ip_address}" +
         "&r.id=#{CGI::escape(params[:udid])}" +
         "&test=0" +
@@ -136,7 +131,7 @@ class GetadController < ApplicationController
         download_image image_url
       else
         text = json['components']['text']['content']
-        image = cache("img.#{text.hash}") do
+        image = get_from_cache_and_save("img.#{text.hash}") do
           start_time = Time.now
           image_array = Image.read("caption:#{text}") do
             self.size = "320x50"
@@ -207,20 +202,33 @@ class GetadController < ApplicationController
   
   def store_device_stats
     udid = params[:udid]
-    cache(udid) do
-      device = get_model(Device, udid)
-      device.increment_count('impression')
+    key = "udid.#{udid}"
+    logger.info "storing device stats"
+    
+    Device
+    # device = get_from_cache(key) do
+    #   get_model(Device, udid)
+    # end
+    device = get_model(Device, udid)
+    
+    device.increment_count('requested')
+    if defined? @ad_rendered
+      device.increment_count('responded')
     end
     
-    get_model_atomically(Device, :udid, udid) do |m|
-      m.count = m.count.to_i + 1
-    end
+    device.save
+    #save_to_cache(key, device)
   end
   
   def store_app_stats
     app_id = params[:app_id]
-    get_model_atomically(App, :app_id, app_id) do |m|
-      m.count = m.count.to_i + 1
+    cache(udid) do
+      app = get_model(App, app_id)
+      app.increment_count('requested')
+      if defined? @ad_rendered
+        app.increment_count('responded')
+      end
+      app.save
     end
   end
   
@@ -236,13 +244,14 @@ class GetadController < ApplicationController
   end
   
   def download_image image_url
-    cache("img.#{image_url.hash}") do 
+    get_from_cache_and_save("img.#{image_url.hash}") do 
       Base64.encode64 download_content(URI.parse(image_url))
     end
   end
   
   def render_ad
     logger.info "Ad rendered"
+    @ad_rendered = true
     respond_to do |f|
       f.xml {render(:partial => 'tapjoy_ad')}
     end

@@ -14,22 +14,35 @@ class ApplicationController < ActionController::Base
   # filter_parameter_logging :password
   
   private
-  def cache(key)
-    output = nil
+  def get_from_cache_and_save(key)
+    value = get_from_cache(key) do
+      yield
+    end
+    
+    save_to_cache(key, value)
+    
+    return value
+  end
+  
+  def get_from_cache(key)
+    value = nil
     begin
-      output = CACHE.get(key)
+      value = CACHE.get(key)
       logger.info("Memcache key found: #{key}")
     rescue Memcached::NotFound
       logger.info("Memcache key not found: #{key}")
     end
     
-    unless output
-      output = yield
+    unless value
+      value = yield
     end
     
-    if output
-      CACHE.set(key, output, 1.hour)
+    return value
+  end
+  
+  def save_to_cache(key, value)
+    if value
+      CACHE.set(key, value, 1.hour)
     end
-    return output
   end
 end
