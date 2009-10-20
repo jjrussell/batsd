@@ -1,6 +1,7 @@
-class App < ActiveResource::Base
+class App < SimpledbResource
   include Counter
   
-  self.site = "http://localhost:8888"
-  self.prefix = "/app/"
+  def initialize(key)
+    super 'app', key
+  end
 end

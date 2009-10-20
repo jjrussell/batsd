@@ -201,22 +201,25 @@ class GetadController < ApplicationController
   end
   
   def store_device_stats
-    udid = params[:udid]
-    key = "udid.#{udid}"
-    logger.info "storing device stats"
-    
-    Device
-    # device = get_from_cache(key) do
-    #   get_model(Device, udid)
-    # end
-    device = get_model(Device, udid)
-    
-    device.increment_count('requested')
-    if defined? @ad_rendered
-      device.increment_count('responded')
-    end
-    
+    device = Device.new(params[:udid])
+    device['a'] = 'sdf'
     device.save
+    # udid = params[:udid]
+    # key = "udid.#{udid}"
+    # logger.info "storing device stats"
+    # 
+    # Device
+    # # device = get_from_cache(key) do
+    # #   get_model(Device, udid)
+    # # end
+    # device = get_model(Device, udid)
+    # 
+    # device.increment_count('requested')
+    # if defined? @ad_rendered
+    #   device.increment_count('responded')
+    # end
+    # 
+    # device.save
     #save_to_cache(key, device)
   end
   

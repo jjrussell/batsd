@@ -1,18 +1,17 @@
-# This module is meant to be mixed in to an ActiveResource class.
+# This module is meant to be mixed in to a SimpledbResource class.
 # It is specifically designed to work with SimpleDB, and eventual consistency.
 # This module provides methods which allow for an accurate counter to be stored
 # even though immediate consistency is not guaranteed.
 
 module Counter
-  SALT = "COUNT"
   CONSISTENCY_LIMIT = 60
   
   def increment_count(attr_name)
-    # Increments the count by 1, and also deletes uneeded atributes related to 
+    # Increments the count by 1, and also deletes uneeded values related to 
     # storing this count.
     
     new_count = get_count(attr_name) + 1
-    self.attributes[create_key(attr_name)] = new_count
+    put(attr_name, create_value(new_count))
     delete_uneeded(attr_name)
     return new_count
   end
@@ -29,11 +28,11 @@ module Counter
     #   3 is the number of duplicates (two 5's and one 7)
     #   1 is the number of skips (6 was skipped)
     #   Therefore, get_count would return 10 with the example data set.
-    #   The next value that would be written by increment_count would be 11,
+    #   If increment_count were called, the next value written would be 11,
     #   making the data set for future reads be 4,5,5,5,6,6,8,11.
     
     count_hash, lowest_count, highest_count = get_count_hash(attr_name)
-    
+
     return get_count_from_hash(count_hash, lowest_count, highest_count)
   end
   
@@ -47,8 +46,6 @@ module Counter
     
     count_hash, lowest_count, highest_count = get_count_hash(attr_name, get_blacklist(attr_name))
     
-    puts count_hash.to_query
-    
     count = get_count_from_hash(count_hash, lowest_count, highest_count)
     new_lowest_count = lowest_count
     for i in lowest_count..highest_count
@@ -57,24 +54,14 @@ module Counter
       end
     end
     
-    puts "new_lowest_count: #{new_lowest_count}"
-    
-    keys_to_delete = []
-    self.attributes.each do |key, value|
-      if is_key_valid(key, attr_name)
-        count = value.to_i
-        puts "count: #{count}"
-        if count < new_lowest_count
-          keys_to_delete.push(key)
-        end
+    values = []
+    get(attr_name).each do |value|
+      count, time = parse_value(value)
+      if count >= new_lowest_count
+        values.push(value)
       end
     end
-    
-    # keys_to_delete.each do |key|
-    #   puts "delete key: #{key}"
-    #   self.attributes.delete(key)
-    # end
-    #SDB.delete_attributes(get_domain_name, attr_name, keys_to_delete)
+    put_all(attr_name, values)
   end
   
   private
@@ -83,18 +70,15 @@ module Counter
     "%.6f.%i" %  [Time.now.to_f, Process.pid]
   end
   
-  def create_key(attr_name)
-    "#{attr_name}.#{SALT}.#{get_time_and_pid}"
+  def create_value(value)
+    "#{value}.#{get_time_and_pid}"
   end
   
-  def is_key_valid(key, attr_name)
-    return key.match("#{attr_name}.#{SALT}")
-  end
-  
-  def parse_key(key)
-    attr_name, salt, epoch, epoch_remainder, pid = key.split('.')
+  def parse_value(value)
+    value, epoch, epoch_remainder, pid = value.split('.')
     time = Time.at("#{epoch}.#{epoch_remainder}".to_f)
-    return time
+    count = value.to_i
+    return count, time
   end
   
   def get_count_from_hash(count_hash, lowest_count, highest_count)
@@ -110,11 +94,11 @@ module Counter
     highest_count, lowest_count = 0, 1
     count_hash = Hash.new(0)
     
-    self.attributes.each do |key, value|
-      if is_key_valid(key, attr_name) && !blacklist.member?(value)
-        count = value.to_i
+    get(attr_name).each do |value|
+      count, time = parse_value(value)
+      unless blacklist.member?(count)
         count_hash[count] += 1
-
+      
         lowest_count = highest_count == 0 || count < lowest_count ? count : lowest_count
         highest_count = count > highest_count ? count : highest_count
       end
@@ -125,20 +109,13 @@ module Counter
   def get_blacklist(attr_name)
     blacklist = Set.new
     now = Time.now
-    self.attributes.each do |key, value|
-      if is_key_valid(key, attr_name)
-        count = value.to_i
-        time = parse_key(key)
-        if now - time < CONSISTENCY_LIMIT
-          blacklist.add(count)
-        end
+    get(attr_name).each do |value|
+      count, time = parse_value(value)
+      if now - time < CONSISTENCY_LIMIT
+        blacklist.add(count)
       end
     end
     
     return blacklist
-  end
-  
-  def get_domain_name
-    return self.prefix[1..-2]
   end
 end

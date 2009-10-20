@@ -1,6 +1,7 @@
-class Device < ActiveResource::Base
+class Device < SimpledbResource
   include Counter
   
-  self.site = "http://localhost:8888"
-  self.prefix = "/device/"
+  def initialize(key)
+    super 'device', key
+  end
 end
