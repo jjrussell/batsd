@@ -9,13 +9,14 @@ class SimpledbResource
     @item = Item.new(@domain, item_key)
     
     # Attempt to load the item attributes from the cache. If they are not found,
-    # they will automatically be loaded from simpledb.
+    # they will attempt be loaded from simpledb. If thet are still not found,
+    # a new multimap will be created.
     begin
       @item.attributes = CACHE.get(get_memcache_key)
     rescue Memcached::NotFound
       begin
         @item.reload!
-      rescue
+      rescue RecordNotFoundError
         @item.attributes = Multimap.new
       end
     end
@@ -36,12 +37,10 @@ class SimpledbResource
   end
   
   def put(attr_name, value)
-    @item.reload! if @item.empty?
     @item.attributes.put(attr_name, value, {:replace => false})
   end
   
   def put_all(attr_name, values)
-    @item.reload! if @item.empty?
     @item.attributes.put(attr_name, values, {:replace => true})
   end
   

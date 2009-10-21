@@ -27,7 +27,6 @@ Rails::Initializer.run do |config|
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
-  config.gem 'aws-sdb', :lib => 'aws_sdb', :version => '0.3.1'
   config.gem 'memcached'
   config.gem 'amazon_sdb'
 

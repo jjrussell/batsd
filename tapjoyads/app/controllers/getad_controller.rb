@@ -25,12 +25,8 @@ class GetadController < ApplicationController
          :render => {:text => missing_message},
          :only => :crisp
          
+  around_filter :catch_and_log
          
-  rescue_from TimeoutError, :with => :rescue_from_timeout
-  rescue_from JSON::ParserError, :with => :rescue_from_json_parser
-         
-  #after_filter :store_device_stats
-
   USER_AGENT = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
       " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
 
@@ -202,48 +198,18 @@ class GetadController < ApplicationController
   
   def store_device_stats
     device = Device.new(params[:udid])
-    device['a'] = 'sdf'
+    device.increment_count('request')
+    device.increment_count('impression') if defined? @ad_rendered
     device.save
-    # udid = params[:udid]
-    # key = "udid.#{udid}"
-    # logger.info "storing device stats"
-    # 
-    # Device
-    # # device = get_from_cache(key) do
-    # #   get_model(Device, udid)
-    # # end
-    # device = get_model(Device, udid)
-    # 
-    # device.increment_count('requested')
-    # if defined? @ad_rendered
-    #   device.increment_count('responded')
-    # end
-    # 
-    # device.save
-    #save_to_cache(key, device)
+    logger.info "Device stats stored. Simpledb box usage: #{device.box_usage}"
   end
   
   def store_app_stats
-    app_id = params[:app_id]
-    cache(udid) do
-      app = get_model(App, app_id)
-      app.increment_count('requested')
-      if defined? @ad_rendered
-        app.increment_count('responded')
-      end
-      app.save
-    end
-  end
-  
-  def get_model(model_class, id)
-    model = nil
-    begin
-      model = model_class.find(id)
-    rescue ActiveResource::ResourceNotFound
-      model = model_class.new
-      model.id = id
-    end
-    return model
+    app = App.new(params[:app_id])
+    app.increment_count('request')
+    app.increment_count('impression') if defined? @ad_rendered
+    app.save
+    logger.info "App stats stored. Simpledb box usage: #{app.box_usage}"
   end
   
   def download_image image_url
@@ -273,5 +239,22 @@ class GetadController < ApplicationController
   def no_ad
     logger.info "No ad returned"
     render :text => "no ad"
+  end
+  
+  def catch_and_log
+    yield
+  rescue TimeoutError
+    logger.info "Download timed out"
+    no_ad
+  rescue JSON::ParserError
+    logger.info "Error parsing json"
+    no_ad
+  ensure
+    begin
+      store_device_stats
+      store_app_stats
+    rescue
+      logger.info "Error storing simpledb stats"
+    end
   end
 end
