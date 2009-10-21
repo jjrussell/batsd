@@ -46,7 +46,7 @@ class GetadController < ApplicationController
     
       click_url = doc.find('//ad/clickUrl').first.content
       image_url = doc.find('//ad/image/url').first.content
-      download_image image_url
+      image = download_image image_url
       
       @ad_return_obj.ClickURL = click_url
       @ad_return_obj.Image = image
@@ -124,7 +124,7 @@ class GetadController < ApplicationController
       @ad_return_obj.ClickURL = json['destination']['url']
       if json['components']['image']
         image_url = json['components']['image']['url']
-        download_image image_url
+        image = download_image image_url
       else
         text = json['components']['text']['content']
         image = get_from_cache_and_save("img.#{text.hash}") do
