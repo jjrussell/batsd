@@ -250,11 +250,11 @@ class GetadController < ApplicationController
     logger.info "Error parsing json"
     no_ad
   ensure
-    begin
-      store_device_stats
-      store_app_stats
-    rescue
-      logger.info "Error storing simpledb stats"
-    end
+    # begin
+    #   store_device_stats
+    #   store_app_stats
+    # rescue => e
+    #   logger.info "Error storing simpledb stats: #{e}"
+    # end
   end
 end
