@@ -5,6 +5,7 @@ require 'json'
 require 'xml'
 require 'base64'
 require 'RMagick'
+require 'hpricot'
 include Magick
 
 class GetadController < ApplicationController
@@ -34,8 +35,8 @@ class GetadController < ApplicationController
     url = 'http://ads.mp.mydas.mobi/getAd.php5' +
         "?apid=#{CGI::escape(params[:apid])}" +
         "&auid=#{CGI::escape(params[:auid])}" +
-        "&ip=#{get_ip_address}" +
-        "&ua=#{USER_AGENT}"
+        "&ip=#{get_ip_address}" 
+        # + "&ua=#{USER_AGENT}"
     
     content = download_content(URI.parse(url))
 
@@ -55,6 +56,16 @@ class GetadController < ApplicationController
     elsif /^GIF/.match(content)
       logger.info "gif image"
       no_ad
+    elsif /^<link/.match(content)
+      doc = Hpricot.parse(content)
+      link = (doc/"a").first["href"]
+      image_url = (doc/"img").first["src"]
+      image = download_image image_url
+      
+      @ad_return_obj.ClickURL = link
+      @ad_return_obj.Image = image
+      
+      render_ad
     else
       logger.info "html ad"
       #@ad_return_obj.AdHTML = content
