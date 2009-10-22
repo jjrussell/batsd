@@ -155,21 +155,35 @@ class GetadController < ApplicationController
   end
   
   def crisp
-    url = "http://api.crispwireless.com/adRequest.v1/single/ad.html" +
+    # http://adserviceapi.qa.mlogic.be/adRequest.v1/single/ad.json?
+    # partnerkey=67934ffbf308992b66b77856abb2abc7&sitekey=tapjoy-test&random=64223321&zonekey=Default&sectionkey=home
+    
+    url = "http://adserviceapi.qa.mlogic.be/adRequest.v1/single/ad.json" +
         "?partnerkey=#{CGI::escape(params[:partner_key])}" + 
         "&sitekey=#{CGI::escape(params[:site_key])}" +
         "&random=#{rand(9999999)}" +
         "&rspid=" +
         "&zonekey=#{CGI::escape(params[:zone_key])}" +
-        "&sectionkey"
+        "&sectionkey=home"
     
-    html = download_content(URI.parse(url), 'User-Agent' => request.headers['User-Agent'])
+    # old url, keep until crisp verifies the new url works
+    # url = "http://api.crispwireless.com/adRequest.v1/single/ad.html" +
+    #     "?partnerkey=#{CGI::escape(params[:partner_key])}" + 
+    #     "&sitekey=#{CGI::escape(params[:site_key])}" +
+    #     "&random=#{rand(9999999)}" +
+    #     "&rspid=" +
+    #     "&zonekey=#{CGI::escape(params[:zone_key])}" +
+    #     "&sectionkey"
     
-    if html.include? 'Error: Empty ad'
+    json_string = download_content(URI.parse(url), 'User-Agent' => request.headers['User-Agent'])
+    
+    json = JSON.parse(json_string)
+    
+    if !json or !json['html']
       no_ad
     else
       @ad_return_obj = TapjoyAd.new
-      @ad_return_obj.AdHTML = html
+      @ad_return_obj.AdHTML = json['html']
       render_ad
     end
   end
