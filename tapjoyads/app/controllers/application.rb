@@ -13,6 +13,7 @@ class ApplicationController < ActionController::Base
   # from your application log (in this case, all fields with names like "password"). 
   # filter_parameter_logging :password
   
+  
   private
   def get_from_cache_and_save(key)
     value = get_from_cache(key) do
@@ -45,4 +46,15 @@ class ApplicationController < ActionController::Base
       CACHE.set(key, value, 1.hour)
     end
   end
+  
+  def authenticate_cron
+    authenticate_or_request_with_http_basic do |username, password| 
+      username == 'cron' &&  (password == 'y7jF0HFcjPq' || Digest::SHA1.hexdigest(password) == 'y7jF0HFcjPq')
+    end 
+    
+    # Rails >=2.3 required for below code to work:
+    # authenticate_or_request_with_http_digest do |username|
+    #   'y7jF0HFcjPq'
+    # end
+  end 
 end
