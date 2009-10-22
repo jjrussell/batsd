@@ -35,8 +35,8 @@ class GetadController < ApplicationController
     url = 'http://ads.mp.mydas.mobi/getAd.php5' +
         "?apid=#{CGI::escape(params[:apid])}" +
         "&auid=#{CGI::escape(params[:auid])}" +
-        "&ip=#{get_ip_address}" 
-       + "&ua=#{USER_AGENT}"
+        "&ip=#{get_ip_address}" +
+        "&ua=#{USER_AGENT}"
     
     content = download_content(URI.parse(url))
 
