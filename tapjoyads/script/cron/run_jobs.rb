@@ -9,7 +9,7 @@ path_list = [
 
 loop {
   sess = Patron::Session.new
-  sess.base_url = 'http://localhost:3000'
+  sess.base_url = 'http://localhost'
 
   sess.username = 'cron'
   sess.password = 'y7jF0HFcjPq'
