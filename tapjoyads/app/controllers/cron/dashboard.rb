@@ -4,3 +4,4 @@ class Cron::Dashboard < ApplicationController
   def index
     render :text => "hi"
   end
+end
