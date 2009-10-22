@@ -36,7 +36,7 @@ class GetadController < ApplicationController
         "?apid=#{CGI::escape(params[:apid])}" +
         "&auid=#{CGI::escape(params[:auid])}" +
         "&ip=#{get_ip_address}" 
-        # + "&ua=#{USER_AGENT}"
+       + "&ua=#{USER_AGENT}"
     
     content = download_content(URI.parse(url))
 
