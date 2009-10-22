@@ -64,6 +64,7 @@ class GetadController < ApplicationController
       
       @ad_return_obj.ClickURL = link
       @ad_return_obj.Image = image
+      @ad_return_obj.OpenIn = "Webview"
       
       render_ad
     else
