@@ -8,14 +8,18 @@ path_list = [
   ]
 
 loop {
-  sess = Patron::Session.new
-  sess.base_url = 'http://localhost'
+  begin
+    sess = Patron::Session.new
+    sess.base_url = 'http://localhost'
 
-  sess.username = 'cron'
-  sess.password = 'y7jF0HFcjPq'
-  sess.auth_type = :basic
+    sess.username = 'cron'
+    sess.password = 'y7jF0HFcjPq'
+    sess.auth_type = :basic
 
-  response = sess.get(path_list[0])
+    response = sess.get(path_list[0])
 
-  puts "Downloaded complete: #{response.body}"  
+    puts "Downloaded complete: #{response.body}"
+  rescue => e
+    puts "Exception: #{e}"
+  end
 }
