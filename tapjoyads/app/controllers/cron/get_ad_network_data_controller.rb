@@ -15,7 +15,7 @@ class Cron::GetAdNetworkDataController < ApplicationController
   
   def index
     uri = URI.parse("http://tapjoyconnect.com/CronService.asmx/GetAdCampaign?password=taptapcampaign")
-    content = download_content(uri, {}, 0)
+    content = download_content(uri, {}, 30)
     
     next_params = []
     
@@ -52,7 +52,7 @@ class Cron::GetAdNetworkDataController < ApplicationController
         "&CTR=#{site.ctr}" + 
         "&Date=#{site.date}")
     
-    response = download_content(uri, {}, 0)
+    response = download_content(uri, {}, 30)
     doc = Hpricot.parse(response)
     response_string = doc.search('//string').first.inner_text
     
@@ -73,7 +73,7 @@ class Cron::GetAdNetworkDataController < ApplicationController
           "&input_login_password=#{password}" +
           "&tab=Site")
 
-      csv = download_content(uri, {}, 0)
+      csv = download_content(uri, {}, 30)
 
       get_next_line = false
       csv.each do |line|
