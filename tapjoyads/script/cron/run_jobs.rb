@@ -2,6 +2,10 @@
 
 require 'rubygems'
 require 'patron'
+require 'logger'
+
+$logger = Logger.new('run_jobs.log')
+
 
 path_list = [
   '/cron/get_ad_network_data'
@@ -18,8 +22,8 @@ loop {
 
     response = sess.get(path_list[0])
 
-    puts "Downloaded complete: #{response.body}"
+    $logger.info "Downloaded complete: #{response.body}"
   rescue => e
-    puts "Exception: #{e}"
+    $logger.warn "Exception: #{e}"
   end
 }
