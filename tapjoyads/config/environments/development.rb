@@ -18,3 +18,5 @@ config.action_mailer.raise_delivery_errors = false
 
 # Memcache
 CACHE = Memcached.new('127.0.0.1')
+
+EXCEPTIONS_NOT_LOGGED = []

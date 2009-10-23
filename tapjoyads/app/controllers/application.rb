@@ -13,6 +13,11 @@ class ApplicationController < ActionController::Base
   # from your application log (in this case, all fields with names like "password"). 
   # filter_parameter_logging :password
   
+  protected
+  def log_error(exc)
+    super unless EXCEPTIONS_NOT_LOGGED.include?(exc.class.name)
+  end
+  
   
   private
   def get_from_cache_and_save(key)

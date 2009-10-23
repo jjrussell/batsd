@@ -27,3 +27,6 @@ config.action_controller.perform_caching             = true
 CACHE = Memcached.new('127.0.0.1')
 # CACHE = Memcached.new(['10.240.117.174', 
 #                        '10.254.106.99'])
+
+EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
+                         'ActionController::RoutingError']

@@ -23,3 +23,5 @@ config.action_mailer.delivery_method = :test
 
 # Memcache
 CACHE = Memcached.new('127.0.0.1')
+
+EXCEPTIONS_NOT_LOGGED = []
