@@ -75,7 +75,7 @@ class Cron::GetAdNetworkDataController < ApplicationController
   end
 
   class MillennialSite < Site
-    def get_data(username, password, ad_network_id1, ad_network_id2, site_id)
+    def get_data(username, password, ad_network_id1, site_id, ad_network_id3)
       sess = Patron::Session.new
       sess.handle_cookies
       sess.base_url = 'clients.millennialmedia.com'
