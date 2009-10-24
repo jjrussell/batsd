@@ -38,9 +38,9 @@ class Cron::GetAdNetworkDataController < ApplicationController
       report_data(campaign_id, site.yesterday_data)
     rescue => e
       logger.info "Failed to get data: #{e}"
-      render :text => "FAIL: #{e}"
+      render :text => "FAIL: #{site.name}: #{e}"
     else
-      render :text => "OK"
+      render :text => "OK: #{site.name}"
     end
   end
   
@@ -71,10 +71,14 @@ class Cron::GetAdNetworkDataController < ApplicationController
 
   class Site
     include DownloadContent
-    attr_accessor :today_data, :yesterday_data
+    attr_accessor :today_data, :yesterday_data, :name
   end
 
   class MillennialSite < Site
+    def initialize
+      @name = "Millennial"
+    end
+    
     def get_data(username, password, ad_network_id1, site_id, ad_network_id3)
       sess = Patron::Session.new
       sess.handle_cookies
@@ -85,13 +89,19 @@ class Cron::GetAdNetworkDataController < ApplicationController
       response = sess.get("/publisher/publisher-statistics-default.php5?" +
           "siteid=#{site_id}&timecheck=DX7&drawer=statistics")
       content = response.body
+      
+      Rails.logger.info username
 
-      json_string = content.match(/var rootReportObj = (\{.*\})\;/)[1]
+      json_match = content.match(/var rootReportObj = (\{.*\})\;/)
+      
+      unless json_match
+        raise "Could not log in to user: #{username}"
+      end
+      json_string = json_match[1]
+      
       json = JSON.parse(json_string)
       
       values = []
-      
-      puts json_string
       
       json.each do |key, value|
         values.push(value)
@@ -117,10 +127,16 @@ class Cron::GetAdNetworkDataController < ApplicationController
       data.fill_rate = (1.0 * data.impressions / data.requests).to_s
       data.ecpm = (1.0 * data.revenue / data.impressions * 1000).to_s
       data.ctr = (1.0 * data.clicks / data.impressions).to_s
+      
+      return data
     end
   end
 
   class VideoEggSite < Site
+    def initialize
+      @name = "VideoEgg"
+    end
+    
     def get_data(username, password, ad_network_id1, app_name, ad_network_id3)
       uri = URI.parse("https://partners.videoegg.com/p/eap/h/1/Reports/partner_report" +
           "?type=csv&form=Package.login.login&doLogin=true" +
