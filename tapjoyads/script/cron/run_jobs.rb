@@ -26,4 +26,7 @@ loop {
   rescue => e
     $logger.warn "Exception: #{e}"
   end
+  
+  $logger.info "Sleeping for 5 minutes"
+  sleep(300)
 }
