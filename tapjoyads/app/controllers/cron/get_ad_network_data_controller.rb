@@ -48,15 +48,15 @@ class Cron::GetAdNetworkDataController < ApplicationController
   
   def report_data(campaign_id, data)
     uri = URI.parse("http://tapjoyconnect.com/CronService.asmx/SubmitAdCampaignData" +
-        "?AdCampaignID=#{campaign_id}" +
-        "&eCPM=#{data.ecpm}" +
-        "&Revenue=#{data.revenue}" +
-        "&Impressions=#{data.impressions}" +
-        "&FillRate=#{data.fill_rate}" +
-        "&Clicks=#{data.clicks}" +
-        "&Requests=#{data.requests}" +
-        "&CTR=#{data.ctr}" + 
-        "&Date=#{data.date}")
+        "?AdCampaignID=#{campaign_id.to_s}" +
+        "&eCPM=#{data.ecpm.to_s}" +
+        "&Revenue=#{data.revenue.to_s}" +
+        "&Impressions=#{data.impressions.to_s}" +
+        "&FillRate=#{data.fill_rate.to_s}" +
+        "&Clicks=#{data.clicks.to_s}" +
+        "&Requests=#{data.requests.to_s}" +
+        "&CTR=#{data.ctr.to_s}" + 
+        "&Date=#{data.date.to_s}")
     
     response = download_content(uri, {}, 30)
     doc = Hpricot.parse(response)
