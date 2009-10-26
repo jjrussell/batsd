@@ -3,16 +3,15 @@ require 'patron'
 module DownloadContent
   include Patron
   
-  def download_content(uri, headers = {}, timeout = 2)
+  def download_content(url, headers = {}, timeout = 1)
     start_time = Time.now
-    Rails.logger.info "Downloading #{uri.to_s}"
+    Rails.logger.debug "Downloading #{url}"
     sess = Session.new
-    sess.base_url = uri.host
-    sess.timeout = 2
+    sess.timeout = timeout
+
+    response = sess.get(url, headers)
     
-    response = sess.get(uri.request_uri, headers)
-    
-    Rails.logger.info "Downloaded complete (#{Time.now - start_time}s)"
+    Rails.logger.debug "Downloaded complete (#{Time.now - start_time}s)"
     
     return response.body
   end

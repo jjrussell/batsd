@@ -1,5 +1,5 @@
-require "cgi"
-require "uri"
+require 'cgi'
+require 'uri'
 require 'net/http'
 require 'json'
 require 'xml'
@@ -9,6 +9,7 @@ require 'hpricot'
 include Magick
 
 class GetadController < ApplicationController
+  include DownloadContent
 
   missing_message = "missing required params"
   verify :params => [:udid, :app_id],
@@ -26,7 +27,7 @@ class GetadController < ApplicationController
          :render => {:text => missing_message},
          :only => :crisp
          
-  around_filter :catch_and_log
+  around_filter :catch_exceptions
          
   USER_AGENT = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
       " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
@@ -38,7 +39,7 @@ class GetadController < ApplicationController
         "&ip=#{get_ip_address}" +
         "&ua=#{USER_AGENT}"
     
-    content = download_content(URI.parse(url))
+    content = download_content(url)
 
     @ad_return_obj = TapjoyAd.new
     
@@ -84,7 +85,7 @@ class GetadController < ApplicationController
         "&fmt=json" +
         "&clientip=#{get_ip_address}"
     
-    json_string = download_content(URI.parse(url))
+    json_string = download_content(url)
     json = JSON.parse(json_string).first
     
     if !json or json.length == 0
@@ -109,7 +110,7 @@ class GetadController < ApplicationController
         return
       end
     
-      @ad_return_obj.OpenIn = json['lanuch_type'] == 2 ? 'Webview' : 'Safari'
+      @ad_return_obj.OpenIn = json['launch_type'] == 2 ? 'Webview' : 'Safari'
     
       render_ad
     end
@@ -124,7 +125,7 @@ class GetadController < ApplicationController
         "&t.markup=0" +
         "&h.user-agent=#{USER_AGENT}"
     
-    json_string = download_content(URI.parse(url))
+    json_string = download_content(url)
     
     json = JSON.parse(json_string)
     
@@ -187,7 +188,7 @@ class GetadController < ApplicationController
     #     "&zonekey=#{CGI::escape(params[:zone_key])}" +
     #     "&sectionkey"
     
-    json_string = download_content(URI.parse(url), 'User-Agent' => request.headers['User-Agent'])
+    json_string = download_content(url, 'User-Agent' => request.headers['User-Agent'])
     
     json = JSON.parse(json_string)
     
@@ -209,19 +210,6 @@ class GetadController < ApplicationController
     return ip_address
   end
   
-  def download_content(uri, *headers)
-    start_time = Time.now
-    logger.info "Downloading #{uri.to_s}"
-    res = Net::HTTP.start(uri.host, uri.port) do |http|
-      http.read_timeout = 1.5
-      content = http.get(uri.request_uri, *headers)
-    end
-    content = res.body
-    logger.info "Downloaded complete (#{Time.now - start_time}s)"
-    
-    return content
-  end
-  
   def store_device_stats
     device = Device.new(params[:udid])
     device.increment_count('request')
@@ -240,7 +228,7 @@ class GetadController < ApplicationController
   
   def download_image image_url
     get_from_cache_and_save("img.#{image_url.hash}") do 
-      Base64.encode64 download_content(URI.parse(image_url))
+      Base64.encode64 download_content(image_url)
     end
   end
   
@@ -252,24 +240,14 @@ class GetadController < ApplicationController
     end
   end
   
-  def rescue_from_timeout
-    logger.info "Download timed out"
-    no_ad
-  end
-  
-  def rescue_from_json_parser
-    logger.info "Error parsing json"
-    no_ad
-  end
-  
   def no_ad
     logger.info "No ad returned"
     render :text => "no ad"
   end
   
-  def catch_and_log
+  def catch_exceptions
     yield
-  rescue TimeoutError
+  rescue Patron::TimeoutError
     logger.info "Download timed out"
     no_ad
   rescue JSON::ParserError

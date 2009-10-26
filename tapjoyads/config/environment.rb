@@ -29,6 +29,7 @@ Rails::Initializer.run do |config|
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem 'memcached'
   config.gem 'amazon_sdb'
+  config.gem 'patron'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
@@ -80,5 +81,4 @@ Rails::Initializer.run do |config|
   # SimpleDB:
   ENV['AMAZON_ACCESS_KEY_ID'] = '1A3R3ANTXCET9AE95VG2'
   ENV['AMAZON_SECRET_ACCESS_KEY'] = 'KNRjoeVhTRWJf4l84xgzh7Y2DNXmJo+wbAVStQLq'
-  
 end
