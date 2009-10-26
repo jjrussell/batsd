@@ -12,13 +12,14 @@ class Cron::GetAdNetworkDataController < ApplicationController
   def initialize
     @adnetwork_map = {
       '78c4f8c0-4940-4d59-97fe-16bc44981657' => VideoEggSite,
-      'f2eb272c-1783-4589-99a0-667e1a45ac51' => MillennialSite
+      'f2eb272c-1783-4589-99a0-667e1a45ac51' => MillennialSite,
+      '' => AdfonicSite
     }
   end
   
   def index
-    uri = URI.parse("http://tapjoyconnect.com/CronService.asmx/GetAdCampaign?password=taptapcampaign")
-    content = download_content(uri, {}, 30)
+    url = "http://tapjoyconnect.com/CronService.asmx/GetAdCampaign?password=taptapcampaign"
+    content = download_content(url, {}, 30)
     
     next_params = []
     
@@ -37,17 +38,33 @@ class Cron::GetAdNetworkDataController < ApplicationController
       report_data(campaign_id, site.today_data)
       report_data(campaign_id, site.yesterday_data)
     rescue => e
-      logger.info "Failed to get data: #{e}"
+      logger.warn "Failed to get data: #{e}"
       render :text => "FAIL: #{site.name}: #{e}"
     else
       render :text => "OK: #{site.name}"
     end
   end
   
+  def test
+    site = AdfonicSite.new
+    render :text => site.get_data('partners@tapjoy.com', 'business', nil, nil, nil)
+    
+    campaign_id = 'asdd'
+    report_data(campaign_id, site.today_data)
+    report_data(campaign_id, site.yesterday_data)
+
+  end
+  
   private
   
   def report_data(campaign_id, data)
-    uri = URI.parse("http://tapjoyconnect.com/CronService.asmx/SubmitAdCampaignData" +
+    unless data.date
+      logger.debug "No data"
+      return
+    end
+      
+      
+    url = "http://tapjoyconnect.com/CronService.asmx/SubmitAdCampaignData" +
         "?AdCampaignID=#{campaign_id.to_s}" +
         "&eCPM=#{data.ecpm.to_s}" +
         "&Revenue=#{data.revenue.to_s}" +
@@ -56,13 +73,13 @@ class Cron::GetAdNetworkDataController < ApplicationController
         "&Clicks=#{data.clicks.to_s}" +
         "&Requests=#{data.requests.to_s}" +
         "&CTR=#{data.ctr.to_s}" + 
-        "&Date=#{data.date.to_s}")
-    
-    response = download_content(uri, {}, 30)
-    doc = Hpricot.parse(response)
-    response_string = doc.search('//string').first.inner_text
-    
-    logger.info "Callback response: '#{response_string}'"
+        "&Date=#{data.date.to_s}"
+    puts url
+    # response = download_content(url, {}, 30)
+    # doc = Hpricot.parse(response)
+    # response_string = doc.search('//string').first.inner_text
+    # 
+    # logger.info "Callback response: '#{response_string}'"
   end
   
   class Data
@@ -74,6 +91,93 @@ class Cron::GetAdNetworkDataController < ApplicationController
     attr_accessor :today_data, :yesterday_data, :name
   end
 
+  class AdfonicSite < Site
+    def initialize
+      @name = "Adfonic"
+    end
+    
+    def get_data(username, password, publication_name, ad_network_id2, ad_network_id3)
+      sess = Patron::Session.new
+      sess.handle_cookies
+      sess.base_url = 'adfonic.com'
+      sess.get('/')
+      sess.post('/', 'loginForm=loginForm&loginForm%3AhiddenSubmit=' +
+          "&loginForm%3Aemail=#{CGI::escape(username)}" +
+          "&loginForm%3Aj_id_jsp_1414384550_14=#{password}" +
+          '&javax.faces.ViewState=j_id1%3Aj_id2')
+      
+      page_content = sess.get('/sites-and-apps/reporting/sites-and-apps').body
+      #todo: use hpricot
+      
+      doc = Hpricot.parse(page_content)
+      view_state_param = doc.search('input#javax.faces.ViewState').first['value']
+      puts view_state_param
+      
+      view_state_param = page_content.match(/id="javax.faces.ViewState" value="(.*?)"/)[1]
+      end_date_string = page_content.match(/name="reportForm:endDate" value="(.*?)"/)[1]
+      
+      puts view_state_param
+      
+      day, month, year = end_date_string.split('/')
+      start_date = Time.parse("#{year}-#{month}-#{day}") - 24 * 60 * 60
+      start_date_string = "#{start_date.day}/#{start_date.month}/#{start_date.year}"
+      
+      
+      response = sess.post('/sites-and-apps/reporting/sites-and-apps', 'reportForm=reportForm' +
+            # Fill this param out to limit it to just one app:
+            #'&reportForm%3Apublication=167%5BOID%5Dcom.adfonic.domain.Publication' +
+            '&reportForm%3Apublication=' +
+            "&reportForm%3AstartDate=#{CGI::escape(start_date_string)}" +
+            "&reportForm%3AendDate=#{CGI::escape(end_date_string)}" +
+            "&javax.faces.ViewState=#{CGI::escape(view_state_param)}" +
+            '&reportForm%3Aj_id_jsp_2115318982_13=reportForm%3Aj_id_jsp_2115318982_13')
+          
+      csv = sess.get('/sites-and-apps/reporting/csv').body
+      
+      puts csv
+      
+      @today_data = Data.new
+      @yesterday_data = Data.new
+      csv.each do |line|
+        line = line.gsub(/\s/, '')
+        next if line.length == 0
+        
+        items = line.split(',')
+        data = nil
+        if items[0].include? start_date_string
+          data = @yesterday_data
+        elsif items[0].include? end_date_string
+          data = @today_data
+        end
+        if data
+          get_data_from_csv_line(data, items)
+        end
+      end
+      
+      return csv
+      
+    end
+    
+    def get_data_from_csv_line(data, line_items)
+      items = []
+      line_items.each do |item|
+        items.push(item.gsub('"', ''))
+      end
+      
+      day, month, year = items[0].split('/')
+      date = Time.parse("#{year}-#{month}-#{day}")
+      data.date = "#{date.month}-#{date.day}-#{date.year}"
+      
+      data.requests = items[1]
+      data.impressions = items[2]
+      data.fill_rate = items[3]
+      data.clicks = items[4]
+      data.ctr = items[5]
+      data.ecpm = items[6]
+      data.revenue = items[7]
+    end
+  end
+
   class MillennialSite < Site
     def initialize
       @name = "Millennial"
@@ -83,15 +187,12 @@ class Cron::GetAdNetworkDataController < ApplicationController
       sess = Patron::Session.new
       sess.handle_cookies
       sess.base_url = 'clients.millennialmedia.com'
-      #sess.get('/')
       sess.post('/', "username=#{username}&password=#{password}")
       
       response = sess.get("/publisher/publisher-statistics-default.php5?" +
           "siteid=#{site_id}&timecheck=DX7&drawer=statistics")
       content = response.body
       
-      Rails.logger.info username
-
       json_match = content.match(/var rootReportObj = (\{.*\})\;/)
       
       unless json_match
