@@ -18,7 +18,7 @@ loop {
 
     sess.username = 'cron'
     sess.password = 'y7jF0HFcjPq'
-    sess.auth_type = :basic
+    sess.auth_type = :digest
 
     response = sess.get(path_list[0])
 
