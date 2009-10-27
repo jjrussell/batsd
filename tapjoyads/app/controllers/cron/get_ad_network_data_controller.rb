@@ -21,8 +21,6 @@ class Cron::GetAdNetworkDataController < ApplicationController
     url = "http://tapjoyconnect.com/CronService.asmx/GetAdCampaign?password=taptapcampaign"
     content = download_content(url, {}, 30)
     
-    next_params = []
-    
     doc = Hpricot.parse(content)
     ad_network_id = doc.search('//adcampaign/adnetwork').first.inner_text
     campaign_id = doc.search('//adcampaign/adcampaignid').first.inner_text
@@ -47,7 +45,7 @@ class Cron::GetAdNetworkDataController < ApplicationController
   
   def test
     site = AdfonicSite.new
-    render :text => site.get_data('partners@tapjoy.com', 'business', nil, nil, nil)
+    render :text => site.get_data('partners@tapjoy.com', 'business', 'TapDefense', nil, nil)
     
     campaign_id = 'asdd'
     report_data(campaign_id, site.today_data)
@@ -63,7 +61,6 @@ class Cron::GetAdNetworkDataController < ApplicationController
       return
     end
       
-      
     url = "http://tapjoyconnect.com/CronService.asmx/SubmitAdCampaignData" +
         "?AdCampaignID=#{campaign_id.to_s}" +
         "&eCPM=#{data.ecpm.to_s}" +
@@ -75,11 +72,11 @@ class Cron::GetAdNetworkDataController < ApplicationController
         "&CTR=#{data.ctr.to_s}" + 
         "&Date=#{data.date.to_s}"
     puts url
-    # response = download_content(url, {}, 30)
-    # doc = Hpricot.parse(response)
-    # response_string = doc.search('//string').first.inner_text
-    # 
-    # logger.info "Callback response: '#{response_string}'"
+    response = download_content(url, {}, 30)
+    doc = Hpricot.parse(response)
+    response_string = doc.search('//string').first.inner_text
+   
+    logger.info "Callback response: '#{response_string}'"
   end
   
   class Data
@@ -99,6 +96,7 @@ class Cron::GetAdNetworkDataController < ApplicationController
     def get_data(username, password, publication_name, ad_network_id2, ad_network_id3)
       sess = Patron::Session.new
       sess.handle_cookies
+      sess.timeout = 10
       sess.base_url = 'adfonic.com'
       sess.get('/')
       sess.post('/', 'loginForm=loginForm&loginForm%3AhiddenSubmit=' +
@@ -107,34 +105,33 @@ class Cron::GetAdNetworkDataController < ApplicationController
           '&javax.faces.ViewState=j_id1%3Aj_id2')
       
       page_content = sess.get('/sites-and-apps/reporting/sites-and-apps').body
-      #todo: use hpricot
       
       doc = Hpricot.parse(page_content)
-      view_state_param = doc.search('input#javax.faces.ViewState').first['value']
-      puts view_state_param
-      
-      view_state_param = page_content.match(/id="javax.faces.ViewState" value="(.*?)"/)[1]
-      end_date_string = page_content.match(/name="reportForm:endDate" value="(.*?)"/)[1]
-      
-      puts view_state_param
+      view_state_param = doc.search('input[@id=javax.faces.ViewState]').first['value']
+      # Must use the # notation with no tag name, since the id contains a ':'
+      end_date_string = doc.search('#reportForm:endDate').first['value']
       
       day, month, year = end_date_string.split('/')
       start_date = Time.parse("#{year}-#{month}-#{day}") - 24 * 60 * 60
-      start_date_string = "#{start_date.day}/#{start_date.month}/#{start_date.year}"
-      
+      start_date_string = "#{start_date.day}/#{start_date.month}/#{start_date.year.to_s[2,3]}"
+
+      publication_id = ''
+      options = doc.search('#reportForm:publication/option')
+      options.each do |option|
+        if option.inner_text.strip.downcase.eql?(publication_name.downcase)
+          publication_id = option['value']
+        end
+      end
+      raise "Publication not found (#{publication_name})" if publication_id == ''
       
       response = sess.post('/sites-and-apps/reporting/sites-and-apps', 'reportForm=reportForm' +
-            # Fill this param out to limit it to just one app:
-            #'&reportForm%3Apublication=167%5BOID%5Dcom.adfonic.domain.Publication' +
-            '&reportForm%3Apublication=' +
+            "&reportForm%3Apublication=#{CGI::escape(publication_id)}" +
             "&reportForm%3AstartDate=#{CGI::escape(start_date_string)}" +
             "&reportForm%3AendDate=#{CGI::escape(end_date_string)}" +
             "&javax.faces.ViewState=#{CGI::escape(view_state_param)}" +
             '&reportForm%3Aj_id_jsp_2115318982_13=reportForm%3Aj_id_jsp_2115318982_13')
           
       csv = sess.get('/sites-and-apps/reporting/csv').body
-      
-      puts csv
       
       @today_data = Data.new
       @yesterday_data = Data.new
@@ -155,7 +152,6 @@ class Cron::GetAdNetworkDataController < ApplicationController
       end
       
       return csv
-      
     end
     
     def get_data_from_csv_line(data, line_items)
