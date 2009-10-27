@@ -1,5 +1,7 @@
 class Cron::Dashboard < ApplicationController
-  before_filter 'authenticate_cron'
+  include AuthenticationHelper
+  
+  before_filter 'authenticate'
   
   def index
     render :text => "hi"

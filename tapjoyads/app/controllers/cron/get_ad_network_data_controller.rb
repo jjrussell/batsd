@@ -6,8 +6,9 @@ require 'json'
 
 class Cron::GetAdNetworkDataController < ApplicationController
   include DownloadContent
+  include AuthenticationHelper
   
-  before_filter 'authenticate_cron'
+  before_filter 'authenticate'
   
   def initialize
     @adnetwork_map = {

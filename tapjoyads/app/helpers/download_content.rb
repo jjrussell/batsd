@@ -3,7 +3,7 @@ require 'patron'
 module DownloadContent
   include Patron
   
-  def download_content(url, headers = {}, timeout = 1)
+  def download_content(url, headers = {}, timeout = 2)
     start_time = Time.now
     Rails.logger.debug "Downloading #{url}"
     sess = Session.new

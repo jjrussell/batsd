@@ -10,6 +10,7 @@ include Magick
 
 class GetadController < ApplicationController
   include DownloadContent
+  include MemcachedHelper
 
   missing_message = "missing required params"
   verify :params => [:udid, :app_id],
@@ -202,7 +203,7 @@ class GetadController < ApplicationController
       @ad_return_obj = TapjoyAd.new
       @ad_return_obj.ClickURL = json['clickURL']
       image_url = json['mediaSourceURL']
-      @ad_return_obj.Image = download_image image_url
+      @ad_return_obj.Image = download_image image_url if image_url
       render_ad
     else
       @ad_return_obj = TapjoyAd.new
