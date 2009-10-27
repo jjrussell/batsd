@@ -67,8 +67,10 @@ class GetadController < ApplicationController
       @ad_return_obj.Image = image
       @ad_return_obj.OpenIn = "Webview"
       
+      #set tracking data for millennial
       tracker_url = (doc/"img")[1]["src"]
-      
+      download_image tracker_url
+
       render_ad
     else
       logger.info "html ad"
