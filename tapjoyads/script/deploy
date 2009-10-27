@@ -16,9 +16,9 @@ end
 server_list.each do |s|
   puts "Deploying on #{s}"
   puts "Updating svn"
-  `ssh webuser@#{s} 'cd tapjoyads && svn update'`
+  puts `ssh webuser@#{s} 'cd tapjoyads && svn update'`
   puts "Restarting apache"
-  `ssh root@#{s} apachectl restart`
+  puts `ssh root@#{s} apachectl restart`
   puts "Done deploying on #{s}\n\n"
 end
 
