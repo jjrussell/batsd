@@ -67,6 +67,8 @@ class GetadController < ApplicationController
       @ad_return_obj.Image = image
       @ad_return_obj.OpenIn = "Webview"
       
+      tracker_url = (doc/"img")[1]["src"]
+      
       render_ad
     else
       logger.info "html ad"
@@ -194,6 +196,12 @@ class GetadController < ApplicationController
     
     if !json or !json['html']
       no_ad
+    elsif json['clickURL'] != '' && json['mediaSourceURL'] != ''
+      @ad_return_obj = TapjoyAd.new
+      @ad_return_obj.ClickURL = json['clickURL']
+      image_url = json['mediaSourceURL']
+      @ad_return_obj.Image = download_image image_url
+      render_ad
     else
       @ad_return_obj = TapjoyAd.new
       @ad_return_obj.AdHTML = json['html']
