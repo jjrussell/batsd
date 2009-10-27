@@ -45,4 +45,10 @@ class ApplicationController < ActionController::Base
       CACHE.set(key, value, 1.hour)
     end
   end
+  
+  def authenticate_cron
+    authenticate_or_request_with_http_digest do |username|
+      'y7jF0HFcjPq'
+    end
+  end
 end

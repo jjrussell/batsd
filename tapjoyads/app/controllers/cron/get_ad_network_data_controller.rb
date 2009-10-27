@@ -71,7 +71,7 @@ class Cron::GetAdNetworkDataController < ApplicationController
         "&Requests=#{data.requests.to_s}" +
         "&CTR=#{data.ctr.to_s}" + 
         "&Date=#{data.date.to_s}"
-    puts url
+    
     response = download_content(url, {}, 30)
     doc = Hpricot.parse(response)
     response_string = doc.search('//string').first.inner_text
