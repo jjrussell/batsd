@@ -69,7 +69,7 @@ class GetadController < ApplicationController
       
       #set tracking data for millennial
       tracker_url = (doc/"img")[1]["src"]
-      download_image tracker_url
+      download_content tracker_url
 
       render_ad
     else
