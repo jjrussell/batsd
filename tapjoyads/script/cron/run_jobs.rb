@@ -6,7 +6,6 @@ require 'logger'
 
 $logger = Logger.new('run_jobs.log')
 
-
 path_list = [
   '/cron/get_ad_network_data'
   ]
