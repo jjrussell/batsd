@@ -216,6 +216,7 @@ class GetadController < ApplicationController
     num = rand(6) + 6251 # 6521 <= num <= 6256
     
     @ad_return_obj = TapjoyAd.new
+    @ad_return_obj.OpenIn = 'Webview'
     @ad_return_obj.ClickURL = "http://clicks.socialreach.com/click?zone=#{num}"
     
     image_name = "socialreach-#{num}.jpg"
