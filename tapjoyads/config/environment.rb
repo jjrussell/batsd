@@ -26,7 +26,7 @@ Rails::Initializer.run do |config|
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
-  # config.gem "aws-s3", :lib => "aws/s3"
+  config.gem "aws-s3", :lib => "aws/s3"
   config.gem 'memcached'
   config.gem 'amazon_sdb'
   config.gem 'patron'
@@ -84,4 +84,10 @@ Rails::Initializer.run do |config|
   # SimpleDB:
   ENV['AMAZON_ACCESS_KEY_ID'] = '1A3R3ANTXCET9AE95VG2'
   ENV['AMAZON_SECRET_ACCESS_KEY'] = 'KNRjoeVhTRWJf4l84xgzh7Y2DNXmJo+wbAVStQLq'
+  
+  # AWS S3:
+  require 'aws/s3'
+  AWS::S3::Base.establish_connection!(
+      :access_key_id => ENV['AMAZON_ACCESS_KEY_ID'],
+      :secret_access_key => ENV['AMAZON_SECRET_ACCESS_KEY'])
 end

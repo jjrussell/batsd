@@ -212,6 +212,24 @@ class GetadController < ApplicationController
     end
   end
   
+  def socialreach
+    num = rand(6) + 6251 # 6521 <= num <= 6256
+    
+    @ad_return_obj = TapjoyAd.new
+    @ad_return_obj.ClickURL = "http://clicks.socialreach.com/click?zone=#{num}"
+    
+    image_name = "socialreach-#{num}.jpg"
+    
+    image = get_from_cache_and_save("img.s3.#{image_name.hash}") do
+      image_content = AWS::S3::S3Object.value image_name, 'adimages'
+      Base64.encode64 image_content
+    end
+    
+    @ad_return_obj.Image = image
+    
+    render_ad
+  end
+  
   private
   def get_ip_address
     ip_address = request.remote_ip
