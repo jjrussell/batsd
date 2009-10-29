@@ -59,6 +59,7 @@ class GetadController < ApplicationController
       logger.info "gif image"
       no_ad
     elsif /^<link/.match(content)
+      logger.info "rich media ad"
       doc = Hpricot.parse(content)
       link = (doc/"a").first["href"]
       image_url = (doc/"img").first["src"]
