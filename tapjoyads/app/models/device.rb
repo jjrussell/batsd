@@ -2,6 +2,6 @@ class Device < SimpledbResource
   include Counter
   
   def initialize(key)
-    super 'device', key
+    super RUN_MODE_PREFIX + 'device', key
   end
 end

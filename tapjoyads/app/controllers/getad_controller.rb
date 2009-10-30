@@ -7,10 +7,12 @@ require 'base64'
 require 'RMagick'
 require 'hpricot'
 include Magick
+require 'activemessaging/processor'
 
 class GetadController < ApplicationController
   include DownloadContent
   include MemcachedHelper
+  include ActiveMessaging::MessageSender
 
   missing_message = "missing required params"
   verify :params => [:udid, :app_id],
@@ -30,7 +32,7 @@ class GetadController < ApplicationController
          
   around_filter :catch_exceptions
   
-  #after_filter :add_stats_to_queue
+  after_filter :add_stats_to_queue
          
   USER_AGENT = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
       " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
@@ -241,6 +243,16 @@ class GetadController < ApplicationController
       ip_address = '72.164.173.18'
     end
     return ip_address
+  end
+  
+  def add_stats_to_queue
+    begin
+      stats = GetadStats.new(params[:app_id], defined? @ad_rendered)
+      message = stats.serialize
+      publish :getad_stats, message
+    rescue => e
+      logger.error "Error adding message: '#{message}' to queue. Error: #{e}"
+    end
   end
   
   def store_device_stats

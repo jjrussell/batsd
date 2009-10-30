@@ -31,4 +31,4 @@ CACHE = Memcached.new(['ec2-75-101-247-213.compute-1.amazonaws.com',
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
 
-QUEUE_PREFIX = 'prod_'
+RUN_MODE_PREFIX = ''

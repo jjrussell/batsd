@@ -26,4 +26,4 @@ CACHE = Memcached.new('127.0.0.1')
 
 EXCEPTIONS_NOT_LOGGED = []
 
-QUEUE_PREFIX = 'test_'
+RUN_MODE_PREFIX = 'test_'
