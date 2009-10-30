@@ -3,8 +3,6 @@ class AdshownController < ApplicationController
   
   include ActiveMessaging::MessageSender
   
-  publishes_to :hello_world
-  
   def index
     xml = <<XML_END
 <?xml version="1.0" encoding="UTF-8"?>
@@ -13,7 +11,7 @@ class AdshownController < ApplicationController
 </TapjoyConnectReturnObject>
 XML_END
 
-    publish :hello_world, 'Hello World!!!'
+    publish :hello_world, '4444'
     
     respond_to do |f|
       f.xml {render(:text => xml)}

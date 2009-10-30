@@ -25,3 +25,5 @@ config.action_mailer.delivery_method = :test
 CACHE = Memcached.new('127.0.0.1')
 
 EXCEPTIONS_NOT_LOGGED = []
+
+QUEUE_PREFIX = 'test_'

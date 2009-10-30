@@ -20,3 +20,5 @@ config.action_mailer.raise_delivery_errors = false
 CACHE = Memcached.new('127.0.0.1')
 
 EXCEPTIONS_NOT_LOGGED = []
+
+QUEUE_PREFIX = 'dev_'

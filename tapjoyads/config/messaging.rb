@@ -7,6 +7,6 @@ ActiveMessaging::Gateway.define do |s|
   #s.filter :some_filter, :only=>:orders
   #s.processor_group :group1, :order_processor
   
-  s.destination :hello_world, 'HelloWorld'
+  s.destination :hello_world, QUEUE_PREFIX + 'HelloWorld'
   
 end

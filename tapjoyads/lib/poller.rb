@@ -3,6 +3,16 @@
 STDOUT.sync = true; STDOUT.flush
 STDERR.sync = true; STDERR.flush
 
+
+# Add support for running poller in production mode.
+unless ENV['RAILS_ENV']
+  rails_mode = ARGV.first || "development"
+  unless ["development", "test", "production"].include?(rails_mode)
+    raise "Unknown rails environment '#{rails_mode}'.  (Choose 'development', 'test' or 'production')"
+  end
+  ENV['RAILS_ENV'] ||= rails_mode
+end
+
 #Try to Load Merb
 merb_init_file = File.expand_path(File.dirname(__FILE__)+'/../config/merb_init')
 if File.exists? merb_init_file
