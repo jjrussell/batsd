@@ -203,9 +203,19 @@ class GetAdNetworkDataJob
       data.requests = json['requests']
       data.date = json['name']
       
-      data.fill_rate = (1.0 * data.impressions / data.requests).to_s
-      data.ecpm = (1.0 * data.revenue / data.impressions * 1000).to_s
-      data.ctr = (1.0 * data.clicks / data.impressions).to_s
+      if data.requests > 0
+        data.fill_rate = (1.0 * data.impressions / data.requests).to_s
+      else
+        data.fill_rate = '0'
+      end
+      
+      if data.impressions > 0
+        data.ecpm = (1.0 * data.revenue / data.impressions * 1000).to_s
+        data.ctr = (1.0 * data.clicks / data.impressions).to_s
+      else
+        data.ecpm = '0'
+        data.crt = '0'
+      end
       
       return data
     end
