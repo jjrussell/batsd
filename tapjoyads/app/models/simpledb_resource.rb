@@ -29,15 +29,16 @@ class SimpledbResource
   # it may take a long time to complete.
   def save
     is_saved = false
+    sleep_time = 1
     until is_saved
       begin
         @item.attributes['updated-at'] = Time.now.iso8601
         @item.save
         is_saved = true
       rescue ServerError
-        sleep_time = defined? sleep_time ? sleep_time * 2 : 1;
         logger.warn "ServerError when trying to save. Sleeping for #{sleep_time} seconds before retrying."
         sleep(sleep_time)
+        sleep_time *= 2
       end
     end
     CACHE.set(get_memcache_key, @item.attributes, 1.hour)
