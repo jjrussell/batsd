@@ -214,7 +214,7 @@ class GetAdNetworkDataJob
         data.ctr = (1.0 * data.clicks / data.impressions).to_s
       else
         data.ecpm = '0'
-        data.crt = '0'
+        data.ctr = '0'
       end
       
       return data
