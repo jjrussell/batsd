@@ -42,6 +42,7 @@ module JobRunner
       def start
         puts "JobRunner: starting"
         Rails.logger.info "JobRunner: starting"
+        Rails.logger.flush
         jobs.each_value do |job|
           set_next_run_time job
         end
