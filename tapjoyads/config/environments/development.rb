@@ -16,8 +16,9 @@ config.action_controller.perform_caching             = false
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
 
-# Memcache
-CACHE = Memcached.new('127.0.0.1')
+MACHINES = ['127.0.0.1']
+
+CACHE = Memcached.new(MACHINES)
 
 EXCEPTIONS_NOT_LOGGED = []
 
