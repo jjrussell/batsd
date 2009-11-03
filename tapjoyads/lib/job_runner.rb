@@ -55,6 +55,7 @@ module JobRunner
                 Rails.logger.info "JobRunner: Running #{job_name}"
                 job.job_class.new.run
                 Rails.logger.info "JobRunner: Done running #{job_name} (#{Time.now - start}s)"
+                Rails.logger.flush
                 set_next_run_time job
               end
             end
@@ -76,7 +77,9 @@ module JobRunner
       end
       
       def stop
+        puts "JobRunner: Stopping"
         Rails.logger.info "JobRunner: Stopping"
+        Rails.logger.flush
       end
     end
   end
