@@ -50,8 +50,10 @@ module JobRunner
             now = Time.now
             jobs.each do |job_name, job|
               if now > job.next_run_time
+                start = Time.now
                 Rails.logger.info "JobRunner: Running #{job_name}"
                 job.job_class.new.run
+                Rails.logger.info "JobRunner: Done running #{job_name} (#{Time.now - start}s)"
                 set_next_run_time job
               end
             end
