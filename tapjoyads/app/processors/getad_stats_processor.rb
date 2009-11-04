@@ -3,15 +3,17 @@ require 'cgi'
 class GetadStatsProcessor < ApplicationProcessor
 
   subscribes_to :getad_stats
-
-  def on_message(message)
-    logger.debug "GetadStatsProcessor received: " + message
-    stats = GetadStats.deserialize(message)
-    
-    app = App.new(stats.app_id)
+  
+  def message(app_id, is_ad_returned)
+    app = App.new(app_id)
     app.increment_count('request')
-    app.increment_count('returned') if stats.ad_returned
+    app.increment_count('returned') if is_ad_returned == '1'
     app.save
     logger.info "App stats stored. Simpledb box usage: #{app.box_usage}"
   end
+  
+  def log(message)
+    logger.debug "GetadStatsProcessor received: " + message
+  end
+  
 end

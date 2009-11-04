@@ -1,3 +1,5 @@
+require 'cgi'
+
 class ApplicationProcessor < ActiveMessaging::Processor
   
   # Default on_error implementation - logs standard errors but keeps processing. Other exceptions are raised.
@@ -14,5 +16,11 @@ class ApplicationProcessor < ActiveMessaging::Processor
       raise err
     end
   end
-
+  
+  def on_message(message)
+    log(message)
+    args = QueueMessage.deserialize(message)
+    message(*args)
+  end
+  
 end

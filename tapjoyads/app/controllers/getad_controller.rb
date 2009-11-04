@@ -247,9 +247,9 @@ class GetadController < ApplicationController
   
   def add_stats_to_queue
     begin
-      stats = GetadStats.new(params[:app_id], defined? @ad_rendered)
-      message = stats.serialize
-      publish :getad_stats, message
+      ad_rendered_string = defined? @ad_rendered ? '1' : '0';
+      
+      publish :getad_stats, QueueMessage.serialize([params[:app_id], ad_rendered_string])
     rescue => e
       logger.error "Error adding message: '#{message}' to queue. Error: #{e}"
     end
