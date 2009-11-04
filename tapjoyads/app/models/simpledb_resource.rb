@@ -24,23 +24,10 @@ class SimpledbResource
   
   ##
   # Updates the 'updated-at' attribute of this item, and saves it to SimpleDB.
-  # If the item fails to save, then it will be retried, with exponential backoff.
-  # For this reason, this method should never be called from a request thread, because
-  # it may take a long time to complete.
+  # Potentially throws a ServerError if the save fails.
   def save
-    is_saved = false
-    sleep_time = 1
-    until is_saved
-      begin
-        @item.attributes['updated-at'] = Time.now.iso8601
-        @item.save
-        is_saved = true
-      rescue ServerError
-        logger.warn "ServerError when trying to save. Sleeping for #{sleep_time} seconds before retrying."
-        sleep(sleep_time)
-        sleep_time *= 2
-      end
-    end
+    @item.attributes['updated-at'] = Time.now.iso8601
+    @item.save
     CACHE.set(get_memcache_key, @item.attributes, 1.hour)
   end
   
