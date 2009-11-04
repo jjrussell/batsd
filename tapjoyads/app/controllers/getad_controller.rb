@@ -247,7 +247,7 @@ class GetadController < ApplicationController
   
   def add_stats_to_queue
     begin
-      ad_rendered_string = defined? @ad_rendered ? '1' : '0';
+      ad_rendered_string = (defined? @ad_rendered) ? '1' : '0';
       message = QueueMessage.serialize([params[:app_id], ad_rendered_string])
       
       publish :getad_stats, message
