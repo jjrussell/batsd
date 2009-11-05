@@ -12,6 +12,7 @@ development:
     access_key_id: 1A3R3ANTXCET9AE95VG2
     secret_access_key: KNRjoeVhTRWJf4l84xgzh7Y2DNXmJo+wbAVStQLq
     aws_version: 2009-02-01
+    poll_interval: 0.1
 
     ## properties below are all defaults for this adapter
     # host: queue.amazonaws.com
@@ -28,9 +29,11 @@ test:
     access_key_id: 1A3R3ANTXCET9AE95VG2
     secret_access_key: KNRjoeVhTRWJf4l84xgzh7Y2DNXmJo+wbAVStQLq
     aws_version: 2009-02-01
+    poll_interval: 0.1
 
 production:
     adapter: asqs
     access_key_id: 1A3R3ANTXCET9AE95VG2
     secret_access_key: KNRjoeVhTRWJf4l84xgzh7Y2DNXmJo+wbAVStQLq
     aws_version: 2009-02-01
+    poll_interval: 0.1
