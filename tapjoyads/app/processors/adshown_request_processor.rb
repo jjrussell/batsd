@@ -1,4 +1,4 @@
-require 'UUID'
+#require 'UUID'
 
 class AdshownRequestProcessor < ApplicationProcessor
 
@@ -7,9 +7,9 @@ class AdshownRequestProcessor < ApplicationProcessor
   def on_message(message)
     logger.debug "AdshownRequestProcessor received: " + message
     
-    adshown_request = AdshownRequest.new(UUID.new.generate)
-    adshown_request.put('msg', message)
-    adshown_request.save
+    #adshown_request = AdshownRequest.new(UUID.new.generate)
+    #adshown_request.put('msg', message)
+    #adshown_request.save
     
     logger.info "AdshownRequest stored. Simpledb box usage: #{adshown_request.box_usage}"
   end
