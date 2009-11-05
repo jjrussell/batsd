@@ -1,7 +1,11 @@
+#require 'activemessaging/processor'
+
 class AdshownController < ApplicationController
-  require 'activemessaging/processor'
-  
   include ActiveMessaging::MessageSender
+  
+  missing_message = "missing required params"
+  verify :params => [:campaign_id, :udid, :app_id],
+         :render => {:text => missing_message}
   
   def index
     xml = <<XML_END
@@ -15,7 +19,7 @@ XML_END
         Time.now.to_f.to_s])
     
     #publish :adshown_stats, message
-    publish :adshown_request, message
+    #publish :adshown_request, message
     
     respond_to do |f|
       f.xml {render(:text => xml)}
