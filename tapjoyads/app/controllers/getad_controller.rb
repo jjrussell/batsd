@@ -32,7 +32,7 @@ class GetadController < ApplicationController
          
   around_filter :catch_exceptions
   
-  after_filter :add_stats_to_queue
+  #after_filter :add_stats_to_queue
          
   USER_AGENT = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
       " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
@@ -250,26 +250,17 @@ class GetadController < ApplicationController
       ad_rendered_string = (defined? @ad_rendered) ? '1' : '0';
       message = QueueMessage.serialize([params[:app_id], ad_rendered_string])
       
+      special_id = '1b834371-f997-4c30-9172-2a098e6effce'
+      if (params[:app_id] == special_id)
+        app = App.new(special_id)
+        count = app.get_count('request')
+        logger.info "request from app: #{special_id}. Current request count: #{count}"
+      end
+      
       publish :getad_stats, message
     rescue => e
       logger.error "Error adding message: '#{message}' to queue. Error: #{e}"
     end
-  end
-  
-  def store_device_stats
-    device = Device.new(params[:udid])
-    device.increment_count('request')
-    device.increment_count('impression') if defined? @ad_rendered
-    device.save
-    logger.info "Device stats stored. Simpledb box usage: #{device.box_usage}"
-  end
-  
-  def store_app_stats
-    app = App.new(params[:app_id])
-    app.increment_count('request')
-    app.increment_count('impression') if defined? @ad_rendered
-    app.save
-    logger.info "App stats stored. Simpledb box usage: #{app.box_usage}"
   end
   
   def download_image image_url
