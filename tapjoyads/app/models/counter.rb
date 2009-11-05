@@ -4,7 +4,7 @@
 # even though immediate consistency is not guaranteed.
 
 module Counter
-  CONSISTENCY_LIMIT = 0.1
+  CONSISTENCY_LIMIT = 0
   
   def increment_count(attr_name)
     # Increments the count by 1, and also deletes uneeded values related to 
@@ -44,7 +44,8 @@ module Counter
     # and then finding the highest number such that if all numbers below it are
     # deleted, the calculated count would be the same.
     
-    count_hash, lowest_count, highest_count = get_count_hash(attr_name, get_blacklist(attr_name))
+    #count_hash, lowest_count, highest_count = get_count_hash(attr_name, get_blacklist(attr_name))
+    count_hash, lowest_count, highest_count = get_count_hash(attr_name)
     
     count = get_count_from_hash(count_hash, lowest_count, highest_count)
     new_lowest_count = lowest_count
