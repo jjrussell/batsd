@@ -1,4 +1,4 @@
-#require 'activemessaging/processor'
+require 'activemessaging/processor'
 
 class AdshownController < ApplicationController
   include ActiveMessaging::MessageSender
@@ -19,7 +19,7 @@ XML_END
         Time.now.to_f.to_s])
     
     #publish :adshown_stats, message
-    #publish :adshown_request, message
+    publish :adshown_request, message
     
     respond_to do |f|
       f.xml {render(:text => xml)}
