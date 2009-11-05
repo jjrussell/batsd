@@ -33,6 +33,7 @@ class GetadController < ApplicationController
   around_filter :catch_exceptions
   
   #after_filter :add_stats_to_queue
+  after_filter :write_to_sdb
          
   USER_AGENT = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
       " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
@@ -260,6 +261,18 @@ class GetadController < ApplicationController
       publish :getad_stats, message
     rescue => e
       logger.error "Error adding message: '#{message}' to queue. Error: #{e}"
+    end
+  end
+  
+  def write_to_sdb
+    start_time = Time.now
+    begin
+      domain = AdshownRequest.new("d#{rand(99999999999)}")
+      domain.put('msg', params[:app_id])
+      domain.save
+      logger.info "write_to_sdb complete (#{Time.now - start_time}s)"
+    rescue => e
+      logger.info "write_to_sdb FAILED (#{Time.now - start_time}s). Error: #{e}"
     end
   end
   
