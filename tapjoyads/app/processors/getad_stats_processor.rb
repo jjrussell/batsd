@@ -1,5 +1,3 @@
-require 'cgi'
-
 class GetadStatsProcessor < ApplicationProcessor
 
   subscribes_to :getad_stats

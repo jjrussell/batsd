@@ -9,4 +9,5 @@ ActiveMessaging::Gateway.define do |s|
   
   s.destination :hello_world, RUN_MODE_PREFIX + 'HelloWorld'
   s.destination :getad_stats, RUN_MODE_PREFIX + 'GetadStats'
+  s.destination :adshown_stats, RUN_MODE_PREFIX + 'AdshownStats'
 end

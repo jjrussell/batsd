@@ -5,7 +5,7 @@ class SimpledbResource
   
   def initialize(domain_name, item_key)
     @base = Base.new(ENV['AMAZON_ACCESS_KEY_ID'], ENV['AMAZON_SECRET_ACCESS_KEY'])
-    @domain = @base.domain(domain_name)
+    @domain = @base.domain(RUN_MODE_PREFIX + domain_name)
     @item = Item.new(@domain, item_key)
     
     # Attempt to load the item attributes from the cache. If they are not found,
