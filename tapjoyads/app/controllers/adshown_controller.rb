@@ -14,7 +14,8 @@ XML_END
     message = QueueMessage.serialize([params[:campaign_id], params[:app_id], params[:udid],
         Time.now.to_f.to_s])
     
-    publish :adshown_stats, message
+    #publish :adshown_stats, message
+    publish :adshown_request, message
     
     respond_to do |f|
       f.xml {render(:text => xml)}

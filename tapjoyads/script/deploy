@@ -15,10 +15,19 @@ end
 
 server_list.each do |s|
   puts "Deploying on #{s}"
+  
   puts "Updating svn"
   puts `ssh webuser@#{s} 'cd tapjoyads && svn update'`
+  
+  puts "Stopping poller"
+  puts `ssh webuser@#{s} 'cd tapjoyads && script/poller stop'`
+  
   puts "Restarting apache"
-  puts `ssh root@#{s} apachectl restart`
+  puts `ssh webuser@#{s} 'cd tapjoyads && touch tmp/restart.txt'`
+  
+  puts "Starting poller"
+  puts `ssh webuser@#{s} 'cd tapjoyads && script/poller start -- production'`
+  
   puts "Done deploying on #{s}\n\n"
 end
 
