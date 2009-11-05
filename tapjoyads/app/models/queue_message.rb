@@ -12,7 +12,7 @@ class QueueMessage
   end
   
   def self.deserialize(message)
-    values = message.split(' ')
+    values = message.split(/ /)
     args = []
     values.each do |value|
       args.push(CGI::unescape(value))
