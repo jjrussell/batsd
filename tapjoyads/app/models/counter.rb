@@ -4,7 +4,7 @@
 # even though immediate consistency is not guaranteed.
 
 module Counter
-  CONSISTENCY_LIMIT = 60
+  CONSISTENCY_LIMIT = 0
   
   def increment_count(attr_name)
     # Increments the count by 1, and also deletes uneeded values related to 
