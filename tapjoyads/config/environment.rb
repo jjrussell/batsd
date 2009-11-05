@@ -33,6 +33,7 @@ Rails::Initializer.run do |config|
   config.gem 'hpricot'
   config.gem 'activemessaging'
   config.gem 'daemons'
+  config.gem 'uuid'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
