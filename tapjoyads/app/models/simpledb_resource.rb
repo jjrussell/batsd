@@ -16,6 +16,13 @@ class SimpledbResource
     rescue Memcached::NotFound
       begin
         @item.reload!
+      rescue ParameterError => e
+        if (e.to_s.starts_with? 'NoSuchDomain')
+          @base.create_domain(@domain.name)
+          @item.attributes = Multimap.new
+        else
+          raise e
+        end
       rescue RecordNotFoundError
         @item.attributes = Multimap.new
       end
@@ -31,20 +38,22 @@ class SimpledbResource
     CACHE.set(get_memcache_key, @item.attributes, 1.hour)
   end
   
+  ##
+  # Returns the sdb box usage since this object was created.
   def box_usage
     @base.box_usage
   end
   
-  def get(attr_name)
-    @item.attributes.get(attr_name, {:force_array => true})
+  ##
+  # Gets value(s) for a given attribute name.
+  def get(attr_name, options = {:force_array => false})
+    @item.attributes.get(attr_name, options)
   end
   
-  def put(attr_name, value)
-    @item.attributes.put(attr_name, value, {:replace => false})
-  end
-  
-  def put_all(attr_name, values)
-    @item.attributes.put(attr_name, values, {:replace => true})
+  ##
+  # Puts a value to be associated with an attribute name.
+  def put(attr_name, value, options = {:replace => true})
+    @item.attributes.put(attr_name, value, options)
   end
   
   private

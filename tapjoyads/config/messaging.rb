@@ -10,4 +10,5 @@ ActiveMessaging::Gateway.define do |s|
   s.destination :getad_stats, RUN_MODE_PREFIX + 'GetadStats'
   s.destination :adshown_stats, RUN_MODE_PREFIX + 'AdshownStats'
   s.destination :adshown_request, RUN_MODE_PREFIX + 'AdshownRequest'
+  s.destination :web_request, RUN_MODE_PREFIX + 'WebRequest'
 end

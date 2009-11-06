@@ -4,7 +4,9 @@ server_list = [
   'ec2-75-101-247-213.compute-1.amazonaws.com',
   'ec2-174-129-66-251.compute-1.amazonaws.com'
   ]
-  
+
+puts 'Updating svn'
+puts `svn update`
 svn_info = `svn info`
 svn_rev = svn_info.match(/\nRevision: (\d*)/)[1]
 print "Deploy revision #{svn_rev}? [y/N] "
