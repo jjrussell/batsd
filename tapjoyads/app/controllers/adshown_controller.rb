@@ -15,7 +15,7 @@ class AdshownController < ApplicationController
 XML_END
     
     #message = QueueMessage.serialize([params[:campaign_id], params[:app_id], params[:udid],
-    #    Time.now.to_f.to_s])
+    #    Time.now.utc.to_f.to_s])
     
     web_request = WebRequest.new('adshown')
     web_request.put('campaign_id', params[:campaign_id])

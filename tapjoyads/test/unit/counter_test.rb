@@ -96,7 +96,7 @@ class CounterTest < ActiveSupport::TestCase
   def test_get_blacklist
     @model.put('a', @model.create_value(8))
     def @model.get_time_and_pid
-      "%.6f.%i" %  [Time.now.to_f - 100, Process.pid]
+      "%.6f.%i" %  [Time.now.utc.to_f - 100, Process.pid]
     end
     @model.put('a', @model.create_value(1))
     assert_equal Set.new([8]), @model.get_blacklist('a')
@@ -105,7 +105,7 @@ class CounterTest < ActiveSupport::TestCase
   def test_delete_uneeded
     @model.attributes['a'] = @model.create_value(6)
     def @model.get_time_and_pid
-      "%.6f.%i" %  [Time.now.to_f - 100, Process.pid]
+      "%.6f.%i" %  [Time.now.utc.to_f - 100, Process.pid]
     end
     @model.put('a', @model.create_value(1))
     @model.put('a', @model.create_value(2))

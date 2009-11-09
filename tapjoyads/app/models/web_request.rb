@@ -6,7 +6,7 @@ class WebRequest < SimpledbResource
   include ActiveMessaging::MessageSender
   
   def initialize(path, domain_name=nil, key=nil)
-    now = Time.now
+    now = Time.now.utc
     date = now.iso8601[0,10]
     
     key = UUID.new.generate unless key
@@ -40,7 +40,7 @@ class WebRequest < SimpledbResource
     key = json['key']
     attributes = json['attrs']
     
-    now = Time.now
+    now = Time.now.utc
     date = now.iso8601[0,10]
     domain_name = "web-request-#{date}"
     

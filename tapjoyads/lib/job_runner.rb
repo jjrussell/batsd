@@ -49,13 +49,13 @@ module JobRunner
         
         begin
           loop do
-            now = Time.now
+            now = Time.now.utc
             jobs.each do |job_name, job|
               if now > job.next_run_time
-                start = Time.now
+                start = Time.now.utc
                 Rails.logger.info "JobRunner: Running #{job_name}"
                 job.job_class.new.run
-                Rails.logger.info "JobRunner: Done running #{job_name} (#{Time.now - start}s)"
+                Rails.logger.info "JobRunner: Done running #{job_name} (#{Time.now.utc - start}s)"
                 Rails.logger.flush
                 set_next_run_time job
               end
@@ -74,7 +74,7 @@ module JobRunner
       # This ensures that all jobs across the system don't run at the same time, while
       # also keeping the average interval equal to the specified interval.
       def set_next_run_time job
-        job.next_run_time = Time.now + rand(job.interval * 2)
+        job.next_run_time = Time.now.utc + rand(job.interval * 2)
       end
       
       def stop

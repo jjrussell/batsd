@@ -67,7 +67,7 @@ module Counter
   private
   
   def get_time_and_pid
-    "%.6f.%i" %  [Time.now.to_f, Process.pid]
+    "%.6f.%i" %  [Time.now.utc.to_f, Process.pid]
   end
   
   def create_value(value)
@@ -108,7 +108,7 @@ module Counter
   
   def get_blacklist(attr_name)
     blacklist = Set.new
-    now = Time.now
+    now = Time.now.utc
     get(attr_name).each do |value|
       count, time = parse_value(value)
       if now - time < CONSISTENCY_LIMIT

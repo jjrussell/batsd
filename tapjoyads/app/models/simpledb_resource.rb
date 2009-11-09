@@ -33,7 +33,7 @@ class SimpledbResource
   # Updates the 'updated-at' attribute of this item, and saves it to SimpleDB.
   # Potentially throws a ServerError if the save fails.
   def save
-    @item.attributes['updated-at'] = Time.now.to_f.to_s
+    @item.attributes['updated-at'] = Time.now.utc.to_f.to_s
     @item.save
     CACHE.set(get_memcache_key, @item.attributes, 1.hour)
   end
