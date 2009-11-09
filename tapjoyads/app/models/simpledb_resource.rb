@@ -66,6 +66,13 @@ class SimpledbResource
     count = response.items[0].attributes[0].value
     return count
   end
+  
+  def self.query(query)
+    sdb = SDB::SDB.new(ENV['AMAZON_ACCESS_KEY_ID'], ENV['AMAZON_SECRET_ACCESS_KEY'])
+    response = sdb.select(query)
+    return response
+  end
+  
   private
   
   def get_memcache_key
