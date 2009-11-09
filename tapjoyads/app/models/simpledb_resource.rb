@@ -63,14 +63,19 @@ class SimpledbResource
   end
   
   def self.query(domain, item = '*', where = '', order = '')
-    sdb = SDB::SDB.new(ENV['AMAZON_ACCESS_KEY_ID'], ENV['AMAZON_SECRET_ACCESS_KEY'])
-    query = "SELECT #{item} FROM `#{RUN_MODE_PREFIX}#{domain}`"
+    begin
+      sdb = SDB::SDB.new(ENV['AMAZON_ACCESS_KEY_ID'], ENV['AMAZON_SECRET_ACCESS_KEY'])
+      query = "SELECT #{item} FROM `#{RUN_MODE_PREFIX}#{domain}`"
     
-    query = query + " WHERE #{where}" if (where != "")
-    query = query + " ORDER BY #{order}" if (order != "")
+      query = query + " WHERE #{where}" if (where != "")
+      query = query + " ORDER BY #{order}" if (order != "")
     
-    response = sdb.select(query)
-    return response
+      response = sdb.select(query)
+      return response
+    rescue
+      Rails.logger.error("Bad query: #{query}")
+      puts "Bad query: #{query}"
+    end
   end
   
   private

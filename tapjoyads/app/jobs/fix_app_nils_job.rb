@@ -1,8 +1,8 @@
-class FixAppNils
+class FixAppNilsJob
   def run
-    response = SimpledbResource.query('app', 'app_id', "next_run_time is nil", '')
+    response = SimpledbResource.query('app', 'name', "next_run_time is null", '')
     response.items.each do |item| 
-      app_id = item.attributes[0].value
+      app_id = item.name
       app = App.new(app_id)
       next_run_time = (Time.now + 1.minutes).to_f.to_s
       app.put('next_run_time', next_run_time)
