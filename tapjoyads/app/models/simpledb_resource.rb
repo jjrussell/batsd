@@ -56,6 +56,16 @@ class SimpledbResource
     @item.attributes.put(attr_name, value, options)
   end
   
+  def self.count(domain, where = '')
+    sdb = SDB::SDB.new(ENV['AMAZON_ACCESS_KEY_ID'], ENV['AMAZON_SECRET_ACCESS_KEY'])
+    query = "SELECT COUNT(*) FROM `#{RUN_MODE_PREFIX}#{domain}`"
+    if (where != "")
+      query = query + " WHERE #{where}"
+    end
+    response = sdb.select(query)
+    count = response.items[0].attributes[0].value
+    return count
+  end
   private
   
   def get_memcache_key
