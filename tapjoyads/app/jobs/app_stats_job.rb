@@ -38,10 +38,10 @@ class AppStatsJob
     end
       
     for hour in last_hour..now.hour
-      min_time = Time.utc(now.year, now.month, now.day, hour, 0, 0, 0).to_f.to_s
-      max_time = Time.utc(now.year, now.month, now.day, hour + 1, 0, 0, 0).to_f.to_s
+      min_time = Time.utc(now.year, now.month, now.day, hour, 0, 0, 0)
+      max_time = min_time + 1.hour
       count = SimpledbResource.count("web-request-#{date}", 
-          "time >= '#{min_time}' and time < '#{max_time}' and #{item_type}_id = '#{item_id}'")
+          "time >= '#{min_time.to_f.to_s}' and time < '#{max_time.to_f.to_s}' and #{item_type}_id = '#{item_id}'")
       hourly_impressions[hour] = count
     end
     
