@@ -1,37 +1,22 @@
 class DailyAppStatsJob
+  include StatsProcessorHelper
+  
   def run
     now = Time.now.utc
     
-    response = SimpledbResource.query('app', 'next_daily_run_time', 
-        "next_daily_run_time < '#{now.to_f.to_s}'", 'next_daily_run_time asc')
-    if (response.items.length == 0)
+    app_id = get_item_to_process('app', 'next_daily_run_time', now)
+    
+    unless app_id
       Rails.logger.info "No daily app stats to process"
       return
     end
+    Rails.logger.info("Processing daily app stats: #{app_id}")
     
-    app = App.new(response.items[0].name)
+    app = App.new(app_id)
+    stat = Stats.new(get_stat_key('app', app_id, now - 1.day))
     
-    Rails.logger.info("Processing daily app stats:" + response.items[0].name + ' ' + response.items[0].attributes[0].value)
-    
-    item_type = 'app'
-    item_id = app.item.key
-    yesterday = now - 1.day
-    date = yesterday.iso8601[0,10]
-    
-    #get the current stat row for this item
-    key = "#{item_type}.#{date}.#{item_id}"
-    
-    stat = Stats.new(key)
-    
-    hourly_impressions = Array.new(24, 0)
-    
-    for hour in 0..23
-      min_time = Time.utc(now.year, now.month, now.day, hour, 0, 0, 0)
-      max_time = min_time + 1.hour
-      count = SimpledbResource.count("web-request-#{date}", 
-          "time >= '#{min_time.to_f.to_s}' and time < '#{max_time.to_f.to_s}' and #{item_type}_id = '#{item_id}'")
-      hourly_impressions[hour] = count
-    end
+    hourly_impressions = get_hourly_impressions(0, 23, now - 1.day, item_type, item_id, 
+        stat.get('hourly_impressions'))
     
     stat.put('hourly_impressions', hourly_impressions.join(','))
     stat.save
