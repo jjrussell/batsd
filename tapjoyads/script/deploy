@@ -16,7 +16,7 @@ if ARGV.first == 'production'
 else
   puts "TESTING deploy"
   server_list = test_server_list
-  rails_mode - 'test'
+  rails_mode = 'test'
 end
 
 puts 'Updating svn'
