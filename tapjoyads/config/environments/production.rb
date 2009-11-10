@@ -24,7 +24,8 @@ config.action_controller.perform_caching             = true
 # config.action_mailer.raise_delivery_errors = false
 
 MACHINES = ['ec2-75-101-247-213.compute-1.amazonaws.com',
-            'ec2-174-129-66-251.compute-1.amazonaws.com']
+            'ec2-174-129-66-251.compute-1.amazonaws.com', 
+            'ec2-174-129-70-48.compute-1.amazonaws.com']
 
 CACHE = Memcached.new(MACHINES)
 
