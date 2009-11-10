@@ -64,20 +64,26 @@ class SimpledbResource
   end
   
   def self.count(domain, where = '')
-    response = self.query(domain, 'COUNT(*)', where)
-    count = response.items[0].attributes[0].value
+    next_token = nil
+    count = 0
+    begin 
+      response = self.query(domain, 'COUNT(*)', where, '', next_token)
+      count += response.items[0].attributes[0].value.to_i
+      puts response
+      next_token = response.next_token 
+    end while not next_token.nil?
     return count
   end
   
-  def self.query(domain, item = '*', where = '', order = '')
+  def self.query(domain, item = '*', where = '', order = '', next_token = nil)
     begin
       sdb = SDB::SDB.new(ENV['AMAZON_ACCESS_KEY_ID'], ENV['AMAZON_SECRET_ACCESS_KEY'])
       query = "SELECT #{item} FROM `#{RUN_MODE_PREFIX}#{domain}`"
     
       query = query + " WHERE #{where}" if (where != "")
       query = query + " ORDER BY #{order}" if (order != "")
-    
-      response = sdb.select(query)
+      
+      response = sdb.select(query, next_token)
       return response
     rescue
       Rails.logger.error("Bad query: #{query}")
