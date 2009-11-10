@@ -38,7 +38,11 @@ class SimpledbResource
   def save
     @item.attributes['updated-at'] = Time.now.utc.to_f.to_s
     @item.save
-    CACHE.set(get_memcache_key, @item.attributes, 1.hour)
+    begin
+      CACHE.set(get_memcache_key, @item.attributes, 1.hour)
+    rescue
+      # Don't do anything. Memcache will be a little cold.
+    end
   end
   
   ##
