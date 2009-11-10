@@ -23,6 +23,8 @@ module MemcachedHelper
       logger.debug("Memcache key found: #{key}")
     rescue Memcached::NotFound
       logger.debug("Memcache key not found: #{key}")
+    rescue Memcached::ServerIsMarkedDead
+      logger.debug("Memcache::ServerIsMarkedDead: #{key}")
     end
     
     unless value
