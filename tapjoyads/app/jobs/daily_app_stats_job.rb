@@ -12,10 +12,12 @@ class DailyAppStatsJob
     end
     Rails.logger.info("Processing daily app stats: #{app_id}")
     
-    app = App.new(app_id)
-    stat = Stats.new(get_stat_key('app', app_id, now - 1.day))
+    item_type = 'app'
     
-    hourly_impressions = get_hourly_impressions(0, 23, now - 1.day, item_type, item_id, 
+    app = App.new(app_id)
+    stat = Stats.new(get_stat_key(item_type, app_id, now - 1.day))
+    
+    hourly_impressions = get_hourly_impressions(0, 23, now - 1.day, item_type, app_id, 
         stat.get('hourly_impressions'))
     
     stat.put('hourly_impressions', hourly_impressions.join(','))
