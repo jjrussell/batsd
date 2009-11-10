@@ -24,7 +24,7 @@ module StatsJobHelper
     stat.save
     
     interval = item.get('interval_update_time') || 60
-    new_next_run_time = now + interval
+    new_next_run_time = now + interval.to_f
     item.put('next_run_time', new_next_run_time.to_f.to_s)
     item.put('last_run_time', now.to_f.to_s)
     item.save
