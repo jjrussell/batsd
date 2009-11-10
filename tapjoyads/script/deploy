@@ -1,9 +1,23 @@
 #!/usr/bin/env ruby
 
-server_list = [
+prod_server_list = [
   'ec2-75-101-247-213.compute-1.amazonaws.com',
   'ec2-174-129-66-251.compute-1.amazonaws.com'
   ]
+  
+test_server_list = [
+  'ec2-67-202-31-220.compute-1.amazonaws.com'
+  ]
+
+if ARGV.first == 'production'
+  puts "PRODUCTION deploy"
+  server_list = prod_server_list
+  rails_mode = 'production'
+else
+  puts "TESTING deploy"
+  server_list = test_server_list
+  rails_mode - 'test'
+end
 
 puts 'Updating svn'
 puts `svn update`
@@ -21,14 +35,8 @@ server_list.each do |s|
   puts "Updating svn"
   puts `ssh webuser@#{s} 'cd tapjoyads && svn update'`
   
-  puts "Stopping poller"
-  puts `ssh webuser@#{s} 'cd tapjoyads && script/poller stop'`
-  
-  puts "Restarting apache"
-  puts `ssh webuser@#{s} 'cd tapjoyads && touch tmp/restart.txt'`
-  
-  puts "Starting poller"
-  puts `ssh webuser@#{s} 'cd tapjoyads && script/poller start -- production'`
+  puts "Restarting services"
+  puts `ssh webuser@#{s} 'cd tapjoyads && script/restart #{rails_mode}'`
   
   puts "Done deploying on #{s}\n\n"
 end

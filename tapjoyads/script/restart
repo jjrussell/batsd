@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+rails_mode = ARGV.first || "development"
+unless ["development", "test", "production"].include?(rails_mode)
+  raise "Unknown rails environment '#{rails_mode}'.  (Choose 'development', 'test' or 'production')"
+end
+
+puts "Stopping poller"
+`script/poller stop`
+puts "Stopping jobs"
+`script/jobs stop`
+puts "Restarting apache"
+`touch tmp/restart.txt`
+puts "Starting jobs"
+`script/jobs start -- #{rails_mode}`
+puts "Starting poller"
+`script/poller start -- #{rails_mode}`
