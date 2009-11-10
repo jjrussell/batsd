@@ -5,7 +5,7 @@ class GetAdNetworkDataJob
     @adnetwork_map = {
       '78c4f8c0-4940-4d59-97fe-16bc44981657' => VideoEggSite,
       'f2eb272c-1783-4589-99a0-667e1a45ac51' => MillennialSite,
-      '9054DF9E-1D7E-4FA7-91D6-7373C1CD0AFF' => AdfonicSite
+      '9054df9e-1d7e-4fa7-91d6-7373c1cd0aff' => AdfonicSite
     }
   end
   
