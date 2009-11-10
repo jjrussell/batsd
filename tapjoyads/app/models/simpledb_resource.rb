@@ -3,7 +3,7 @@ class SimpledbResource
   
   attr_accessor :domain, :item
   
-  def initialize(domain_name, item_key)
+  def initialize(domain_name, item_key, use_memcache = true)
     @base = Base.new(ENV['AMAZON_ACCESS_KEY_ID'], ENV['AMAZON_SECRET_ACCESS_KEY'])
     @domain = @base.domain(RUN_MODE_PREFIX + domain_name)
     @item = Item.new(@domain, item_key)
@@ -12,6 +12,9 @@ class SimpledbResource
     # they will attempt be loaded from simpledb. If thet are still not found,
     # a new multimap will be created.
     begin
+      unless use_memcache
+        raise Memcached::NotFound
+      end
       @item.attributes = CACHE.get(get_memcache_key)
     rescue Memcached::NotFound
       begin
