@@ -3,9 +3,6 @@ require 'activemessaging/processor'
 class AdshownController < ApplicationController
   include ActiveMessaging::MessageSender
   
-  verify :params => [:campaign_id, :udid, :app_id],
-         :render => {:text => "missing required params"}
-  
   def index
     xml = <<XML_END
 <?xml version="1.0" encoding="UTF-8"?>
@@ -13,14 +10,23 @@ class AdshownController < ApplicationController
 <Success>true</Success>
 </TapjoyConnectReturnObject>
 XML_END
-    
-    #message = QueueMessage.serialize([params[:campaign_id], params[:app_id], params[:udid],
-    #    Time.now.utc.to_f.to_s])
+
+    if (not params[:campaign_id]) || (not params[:app_id]) || (not params[:udid])
+      error = Error.new(UUID.new.generate)
+      error.put('request', request.url)
+      error.put('function', 'adshown')
+      error.put('ip', request.remote_ip)
+      error.save
+      render :text => "missing required params"
+      return
+    end
     
     web_request = WebRequest.new('adshown')
     web_request.put('campaign_id', params[:campaign_id])
     web_request.put('app_id', params[:app_id])
     web_request.put('udid', params[:udid])
+    #web_request.put('slot_id', params[:slot_id])
+    web_request.put('ip_address', request.remote_ip)
     web_request.save
     
     respond_to do |f|
