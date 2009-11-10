@@ -16,18 +16,18 @@ class FixAppNilsJob
       unless (response_item.attributes[0])
         next_run_time = (Time.now.utc + 1.minutes).to_f.to_s
         app.put('next_run_time', next_run_time)     
-        Rails.logger.info("Added next_run_time to #{app_id} for #{next_run_time}")
+        Rails.logger.info("Added next_run_time to #{item_id} for #{next_run_time}")
       end
       
       unless (response_item.attributes[1])
         app.put('interval_update_time','60')
-        Rails.logger.info("Added interval time to #{app_id} for 60 seconds")
+        Rails.logger.info("Added interval time to #{item_id} for 60 seconds")
       end
       
       unless (response_item.attributes[2])
         next_run_time = (Time.now.utc + 4.hours).to_f.to_s
         app.put('next_daily_run_time', next_run_time)
-        Rails.logger.info("Added next_daily_run_time to #{app_id} for #{next_run_time}")
+        Rails.logger.info("Added next_daily_run_time to #{item_id} for #{next_run_time}")
       end
       
       app.save
