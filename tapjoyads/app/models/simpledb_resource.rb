@@ -16,7 +16,7 @@ class SimpledbResource
         raise Memcached::NotFound
       end
       @item.attributes = CACHE.get(get_memcache_key)
-    rescue Memcached::NotFound
+    rescue
       begin
         @item.reload!
       rescue ParameterError => e
