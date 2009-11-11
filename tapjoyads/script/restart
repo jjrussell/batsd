@@ -11,6 +11,8 @@ puts "Stopping jobs"
 `script/jobs stop`
 puts "Restarting apache"
 `touch tmp/restart.txt`
+puts "Deleting /var/tmp/ruby-uuid"
+`rm /var/tmp/ruby-uuid`
 puts "Starting jobs"
 `script/jobs start -- #{rails_mode}`
 puts "Starting poller"

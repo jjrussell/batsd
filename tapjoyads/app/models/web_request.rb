@@ -12,7 +12,7 @@ class WebRequest < SimpledbResource
     key = UUID.new.generate unless key
     domain_name = "web-request-#{date}" unless domain_name
     
-    super domain_name, key
+    super domain_name, key, false
     
     put('path', path)
     put('time', now.to_f.to_s)
