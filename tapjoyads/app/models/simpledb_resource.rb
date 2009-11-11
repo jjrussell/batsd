@@ -69,7 +69,6 @@ class SimpledbResource
     begin 
       response = self.query(domain, 'COUNT(*)', where, '', next_token)
       count += response.items[0].attributes[0].value.to_i
-      puts response
       next_token = response.next_token 
     end while not next_token.nil?
     return count

@@ -64,7 +64,7 @@ module StatsJobHelper
     end
     
     # Choose a random item from the first 10 results.
-    item_num = rand([10, response.items.length].max)
+    item_num = rand([10, response.items.length].min)
     
     return response.items[item_num].name
   end
