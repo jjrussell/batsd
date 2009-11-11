@@ -63,7 +63,10 @@ module StatsJobHelper
       return nil
     end
     
-    return response.items[0].name
+    # Choose a random item from the first 10 results.
+    item_num = rand([10, response.items.length].max)
+    
+    return response.items[item_num].name
   end
   
   def get_stat_key(item_type, item_id, time)
