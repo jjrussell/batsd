@@ -72,7 +72,10 @@ class SimpledbResource
       response = self.query(domain, 'COUNT(*)', where, '', next_token)
       count += response.items[0].attributes[0].value.to_i
       next_token = response.next_token 
-    end while not next_token.nil? and iterations < 10
+    end while not next_token.nil? and iterations < 100
+    if iterations == 100
+      Rails.logger.warn 'Iterations hit max'
+    end
     return count
   end
   
