@@ -2,7 +2,6 @@ class FixAppNilsJob
   def run
     fix_times('app', App)
     fix_times('campaign', Campaign)
-    
   end
   
   def fix_times(domain, domain_class)
@@ -15,22 +14,22 @@ class FixAppNilsJob
       
       unless (response_item.attributes[0])
         next_run_time = (Time.now.utc + 1.minutes).to_f.to_s
-        app.put('next_run_time', next_run_time)     
+        item.put('next_run_time', next_run_time)     
         Rails.logger.info("Added next_run_time to #{item_id} for #{next_run_time}")
       end
       
       unless (response_item.attributes[1])
-        app.put('interval_update_time','60')
+        item.put('interval_update_time','60')
         Rails.logger.info("Added interval time to #{item_id} for 60 seconds")
       end
       
       unless (response_item.attributes[2])
         next_run_time = (Time.now.utc + 4.hours).to_f.to_s
-        app.put('next_daily_run_time', next_run_time)
+        item.put('next_daily_run_time', next_run_time)
         Rails.logger.info("Added next_daily_run_time to #{item_id} for #{next_run_time}")
       end
       
-      app.save
+      item.save
 
     end
   end
