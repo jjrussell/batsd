@@ -1,0 +1,137 @@
+--- !ruby/object:Gem::Specification 
+name: sdb
+version: !ruby/object:Gem::Version 
+  version: "0.6"
+platform: ruby
+authors: 
+- Amazon Web Services - SimpleDB
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2009-10-01 00:00:00 -07:00
+default_executable: 
+dependencies: []
+
+description: Ruby Library for SimpleDB.
+email: 
+executables: []
+
+extensions: []
+
+extra_rdoc_files: []
+
+files: 
+- lib/sdb/item_list.rb
+- lib/sdb/item.rb
+- lib/sdb/request/domain_metadata_request.rb
+- lib/sdb/request/create_domain_request.rb
+- lib/sdb/request/delete_attributes_request.rb
+- lib/sdb/request/sdb_request.rb
+- lib/sdb/request/get_attributes_request.rb
+- lib/sdb/request/select_request.rb
+- lib/sdb/request/batch_put_attributes_request.rb
+- lib/sdb/request/list_domains_request.rb
+- lib/sdb/request/delete_domain_request.rb
+- lib/sdb/request/put_attributes_request.rb
+- lib/sdb/request/request_parameter.rb
+- lib/sdb/sdb_exception.rb
+- lib/sdb/domain_list.rb
+- lib/sdb/domain_metadata.rb
+- lib/sdb/attribute.rb
+- lib/sdb/sdb.rb
+- lib/sdb/sdb_response.rb
+- doc/created.rid
+- doc/index.html
+- doc/fr_class_index.html
+- doc/fr_method_index.html
+- doc/classes/SDB/DomainList.src/M000015.html
+- doc/classes/SDB/DomainList.src/M000016.html
+- doc/classes/SDB/Item.html
+- doc/classes/SDB/Attribute.html
+- doc/classes/SDB/SDBException.html
+- doc/classes/SDB/DomainMetadata.html
+- doc/classes/SDB/SDB.src/M000008.html
+- doc/classes/SDB/SDB.src/M000012.html
+- doc/classes/SDB/SDB.src/M000003.html
+- doc/classes/SDB/SDB.src/M000006.html
+- doc/classes/SDB/SDB.src/M000011.html
+- doc/classes/SDB/SDB.src/M000007.html
+- doc/classes/SDB/SDB.src/M000005.html
+- doc/classes/SDB/SDB.src/M000009.html
+- doc/classes/SDB/SDB.src/M000010.html
+- doc/classes/SDB/SDB.src/M000004.html
+- doc/classes/SDB/ItemList.src/M000018.html
+- doc/classes/SDB/ItemList.src/M000017.html
+- doc/classes/SDB/Item.src/M000019.html
+- doc/classes/SDB/Item.src/M000020.html
+- doc/classes/SDB/ItemList.html
+- doc/classes/SDB/SDBResponse.src/M000001.html
+- doc/classes/SDB/Attribute.src/M000013.html
+- doc/classes/SDB/Attribute.src/M000014.html
+- doc/classes/SDB/SDBResponse.html
+- doc/classes/SDB/DomainList.html
+- doc/classes/SDB/SDB.html
+- doc/classes/SDB/DomainMetadata.src/M000002.html
+- doc/fr_file_index.html
+- doc/files/lib/sdb/request/batch_put_attributes_request_rb.html
+- doc/files/lib/sdb/request/list_domains_request_rb.html
+- doc/files/lib/sdb/request/delete_attributes_request_rb.html
+- doc/files/lib/sdb/request/domain_metadata_request_rb.html
+- doc/files/lib/sdb/request/get_attributes_request_rb.html
+- doc/files/lib/sdb/request/put_attributes_request_rb.html
+- doc/files/lib/sdb/request/delete_domain_request_rb.html
+- doc/files/lib/sdb/request/request_parameter_rb.html
+- doc/files/lib/sdb/request/select_request_rb.html
+- doc/files/lib/sdb/request/create_domain_request_rb.html
+- doc/files/lib/sdb/request/sdb_request_rb.html
+- doc/files/lib/sdb/attribute_rb.html
+- doc/files/lib/sdb/sdb_response_rb.html
+- doc/files/lib/sdb/sdb_rb.html
+- doc/files/lib/sdb/item_list_rb.html
+- doc/files/lib/sdb/item_rb.html
+- doc/files/lib/sdb/domain_list_rb.html
+- doc/files/lib/sdb/domain_metadata_rb.html
+- doc/files/lib/sdb/sdb_exception_rb.html
+- doc/rdoc-style.css
+- test/select_tests.rb
+- test/sdb_base_testcase.rb
+- test/sdb_unit_test_suite.rb
+- test/test.rb
+- test/test_sdb.rb
+- test/batch_put_tests.rb
+- test/domain_api_tests.rb
+- test/get_put_delete_tests.rb
+- LICENSE.txt
+- NOTICE.txt
+- README.txt
+has_rdoc: true
+homepage: http://sdb.amazonaws.com/
+licenses: []
+
+post_install_message: 
+rdoc_options: []
+
+require_paths: 
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      version: "0"
+  version: 
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      version: "0"
+  version: 
+requirements: []
+
+rubyforge_project: 
+rubygems_version: 1.3.5
+signing_key: 
+specification_version: 3
+summary: Ruby Library for SimpleDB.
+test_files: []
+
