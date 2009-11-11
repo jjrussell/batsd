@@ -66,11 +66,13 @@ class SimpledbResource
   def self.count(domain, where = '')
     next_token = nil
     count = 0
+    iterations = 0
     begin 
+      iterations += 1
       response = self.query(domain, 'COUNT(*)', where, '', next_token)
       count += response.items[0].attributes[0].value.to_i
       next_token = response.next_token 
-    end while not next_token.nil?
+    end while not next_token.nil? and iterations < 10
     return count
   end
   
