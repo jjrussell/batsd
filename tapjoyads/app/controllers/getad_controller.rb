@@ -32,9 +32,6 @@ class GetadController < ApplicationController
          
   around_filter :catch_exceptions
   
-  #after_filter :add_stats_to_queue
-  #after_filter :write_to_sdb
-         
   USER_AGENT = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
       " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
 
@@ -246,36 +243,6 @@ class GetadController < ApplicationController
     return ip_address
   end
   
-  def add_stats_to_queue
-    begin
-      ad_rendered_string = (defined? @ad_rendered) ? '1' : '0';
-      message = QueueMessage.serialize([params[:app_id], ad_rendered_string])
-      
-      special_id = '1b834371-f997-4c30-9172-2a098e6effce'
-      if (params[:app_id] == special_id)
-        app = App.new(special_id)
-        count = app.get_count('request')
-        logger.info "request from app: #{special_id}. Current request count: #{count}"
-      end
-      
-      publish :getad_stats, message
-    rescue => e
-      logger.error "Error adding message: '#{message}' to queue. Error: #{e}"
-    end
-  end
-  
-  def write_to_sdb
-    start_time = Time.now
-    begin
-      domain = AdshownRequest.new("d#{rand(99999999999)}")
-      domain.put('msg', params[:app_id])
-      domain.save
-      logger.info "write_to_sdb complete (#{Time.now - start_time}s)"
-    rescue => e
-      logger.info "write_to_sdb FAILED (#{Time.now - start_time}s). Error: #{e}"
-    end
-  end
-  
   def download_image image_url
     get_from_cache_and_save("img.#{image_url.hash}") do 
       Base64.encode64 download_content(image_url)
@@ -300,15 +267,11 @@ class GetadController < ApplicationController
   rescue Patron::TimeoutError
     logger.info "Download timed out"
     no_ad
+  rescue Patron::HostResolutionError
+    logger.info "Name resolution error when downloading"
+    no_ad
   rescue JSON::ParserError
     logger.info "Error parsing json"
     no_ad
-  ensure
-    # begin
-    #   store_device_stats
-    #   store_app_stats
-    # rescue => e
-    #   logger.info "Error storing simpledb stats: #{e}"
-    # end
   end
 end
