@@ -15,7 +15,7 @@ class RegisterServersJob
     
     dns_names.each do |dns_name|
       sess = Patron::Session.new
-      sess.base_url = 'http://localhost:3000'
+      sess.base_url = 'http://localhost:9898'
     
       sess.username = 'internal'
       sess.password = AuthenticationHelper::USERS[sess.username]
