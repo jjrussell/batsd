@@ -6,10 +6,12 @@ if ARGV.first == 'production'
   puts "PRODUCTION deploy"
   server_list = get_dns_names('jobserver') | get_dns_names('webserver')
   rails_mode = 'production'
+  version = ENV['prod_version']
 else
   puts "TESTING deploy"
   server_list = get_dns_names('testserver')
   rails_mode = 'test'
+  version = ENV['test_version']
 end
 
 puts "Servers to push to:"
@@ -17,9 +19,9 @@ puts server_list
 
 puts "\nUpdating local svn"
 puts `svn update`
-svn_info = `svn info`
-svn_rev = svn_info.match(/\nRevision: (\d*)/)[1]
-print "Deploy revision #{svn_rev}? [y/N] "
+#svn_info = `svn info`
+#svn_rev = svn_info.match(/\nRevision: (\d*)/)[1]
+print "Deploy version #{version}? [y/N] "
 answer = STDIN.gets
 if !/^y/i.match(answer)
   exit
@@ -29,7 +31,7 @@ server_list.each do |s|
   puts "Deploying on #{s}"
   
   puts "Updating svn"
-  puts `ssh webuser@#{s} 'cd tapjoyads && svn update'`
+  puts `ssh webuser@#{s} 'cd tapjoyads && svn switch https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version}'`
   
   puts "Restarting services"
   puts `ssh webuser@#{s} 'cd tapjoyads && script/restart #{rails_mode}'`

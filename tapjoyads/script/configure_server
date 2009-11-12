@@ -9,6 +9,14 @@
 `mkdir -p /mnt/log/rails`
 `chown -R webuser.webuser /mnt/log`
 
+version = ENV['prod_server']
+type = Base64::decode64(`curl http://169.254.169.254/1.0/user-data`)
+if type == 'testserver'
+  version = ENV['test_server']
+end
+
+`su - webuser -c 'cd tapjoyads && svn switch https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version}'`
+
 `su webuser -c 'memcached -d -m 256'`
 
 `apachectl start`
