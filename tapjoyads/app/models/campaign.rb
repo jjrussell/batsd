@@ -1,5 +1,5 @@
 class Campaign < SimpledbResource
-  def initialize(key, use_memcache = true)
-    super 'campaign', key, use_memcache    
+  def initialize(key, load = true, memcache = true)
+    super 'campaign', key, load, memcache  
   end
 end

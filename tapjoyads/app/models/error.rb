@@ -1,5 +1,6 @@
 class Error < SimpledbResource
-  def initialize(key, use_memcache = true)
-    super 'error', key, use_memcache    
+  def initialize
+    key = UUID.generate
+    super 'error', key, false
   end
 end

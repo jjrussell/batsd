@@ -12,11 +12,12 @@ class AdshownController < ApplicationController
 XML_END
 
     if (not params[:campaign_id]) || (not params[:app_id]) || (not params[:udid])
-      error = Error.new(UUID.new.generate)
+      error = Error.new
       error.put('request', request.url)
       error.put('function', 'adshown')
       error.put('ip', request.remote_ip)
       error.save
+      Rails.logger.info "missing required params"
       render :text => "missing required params"
       return
     end
