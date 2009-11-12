@@ -24,6 +24,8 @@ class GetAdNetworkDataJob
     
     begin
       site = @adnetwork_map[ad_network_id].new
+      Rails.logger.info "GetAdNetworkData: Getting info for site: #{site.name}, user: #{username}, " +
+          "data: #{ad_network_id1}, #{ad_network_id2}, #{ad_network_id3}"
       site.get_data(username, password, ad_network_id1, ad_network_id2, ad_network_id3)
       report_data(campaign_id, site.today_data)
       report_data(campaign_id, site.yesterday_data)
