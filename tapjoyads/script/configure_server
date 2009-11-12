@@ -2,42 +2,16 @@
 
 # A script that will run when a new ec2 instance is brought up.
 # This script will run as root.
+# This script depends on rails, so it must be run using script/runner. E.g.:
+#  script/runner script/configure_server
 
-require 'rubygems'
-require 'patron'
-require 'AWS'
+# `mkdir -p /mnt/log/httpd`
+# `mkdir -p /mnt/log/rails`
+# `chown -R webuser.webuser /mnt/log`
+# 
+# `su webuser -c 'memcached -d -m 256'`
+# 
+# `apachectrl start`
 
-`mkdir -p /mnt/log/httpd`
-`mkdir -p /mnt/log/rails`
-`chown -R webuser.webuser /mnt/log`
-
-`su webuser -c 'memcached -d -m 256'`
-
-`apachectrl start`
-
-ec2 = AWS::Base.new({:access_key_id => '1A3R3ANTXCET9AE95VG2', 
-    :secret_access_key => 'KNRjoeVhTRWJf4l84xgzh7Y2DNXmJo+wbAVStQLq'})
-
-instances = ec2.describe_instances
-dns_names = []
-
-instances['reservationSet']['item'].each do |item|
-  if item['instancesSet']['item'][0]['instanceState']['name'] == 'running'
-    dns_names.push(item['instancesSet']['item'][0]['dnsName'])
-  end
-end
-
-dns_names.each do |dns_name|
-  sess = Patron::Session.new
-  sess.base_url = dns_name
-
-  sess.username = 'internal'
-  sess.password = 'r3sU0oQav2Nl'
-  sess.auth_type = :digest
-  
-  sess.get("/register_server?server=#{dns_name}")
-end
-
-
-
-
+load File.expand_path("#{RAILS_ROOT}/app/jobs/register_servers_job.rb")
+RegisterServersJob.new.run

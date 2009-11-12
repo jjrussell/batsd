@@ -9,4 +9,5 @@ JobRunner::Gateway.define do |s|
   
   s.add_job :fix_app_nils, FixAppNilsJob, 60.minutes
   
+  s.add_job :register_servers, RegisterServersJob, 5.minutes
 end
