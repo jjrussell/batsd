@@ -11,10 +11,10 @@ require 'base64'
 `mkdir -p /mnt/log/rails`
 `chown -R webuser.webuser /mnt/log`
 
-version = ENV['prod_server']
+version = ENV['test_version']
 type = Base64::decode64(`curl http://169.254.169.254/1.0/user-data`)
 if type == 'testserver'
-  version = ENV['test_server']
+  version = ENV['test_version']
 end
 
 `su - webuser -c 'cd tapjoyads && svn switch https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version}/tapjoyads'`
