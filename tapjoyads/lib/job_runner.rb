@@ -12,9 +12,6 @@ module JobRunner
     cattr_accessor :jobs
     @@jobs = {}
 
-    @@num_machines = MACHINES.length if defined? MACHINES
-    @@num_machines ||= 1
-
     class << self
       def load_jobs
         Dir[APP_ROOT + '/app/jobs/*.rb'].each do |f|
@@ -32,7 +29,7 @@ module JobRunner
       end
       
       def add_job job_name, job_class, interval
-        jobs[job_name] = Job.new job_class, interval * @@num_machines
+        jobs[job_name] = Job.new job_class, interval
       end
     
       def define
