@@ -179,7 +179,8 @@ class GetadController < ApplicationController
     # http://adserviceapi.qa.mlogic.be/adRequest.v1/single/ad.json?
     # partnerkey=67934ffbf308992b66b77856abb2abc7&sitekey=tapjoy-test&random=64223321&zonekey=Default&sectionkey=home
     
-    url = "http://adserviceapi.qa.mlogic.be/adRequest.v1/single/ad.json" +
+    #url = "http://adserviceapi.qa.mlogic.be/adRequest.v1/single/ad.json" +
+    url = "http://test-api.crispwireless.com/adRequest.v1/single/ad.json" +
         "?partnerkey=#{CGI::escape(params[:partner_key])}" + 
         "&sitekey=#{CGI::escape(params[:site_key])}" +
         "&random=#{rand(9999999)}" +
