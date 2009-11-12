@@ -23,15 +23,8 @@ config.action_controller.perform_caching             = true
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-MACHINES = ['ec2-75-101-247-213.compute-1.amazonaws.com',
-            'ec2-174-129-66-251.compute-1.amazonaws.com', 
-            'ec2-174-129-70-48.compute-1.amazonaws.com',
-            'ec2-72-44-61-131.compute-1.amazonaws.com',
-            'ec2-75-101-172-19.compute-1.amazonaws.com',
-            'ec2-75-101-207-219.compute-1.amazonaws.com',
-            'ec2-75-101-253-153.compute-1.amazonaws.com']
-
-CACHE = Memcached.new(MACHINES)
+# Start with no servers. Servers will be registered by the RegisterServerJob.
+CACHE = Memcached.new
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']

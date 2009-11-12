@@ -5,13 +5,13 @@
 # This script depends on rails, so it must be run using script/runner. E.g.:
 #  script/runner script/configure_server
 
-# `mkdir -p /mnt/log/httpd`
-# `mkdir -p /mnt/log/rails`
-# `chown -R webuser.webuser /mnt/log`
-# 
-# `su webuser -c 'memcached -d -m 256'`
-# 
-# `apachectrl start`
+`mkdir -p /mnt/log/httpd`
+`mkdir -p /mnt/log/rails`
+`chown -R webuser.webuser /mnt/log`
+
+`su webuser -c 'memcached -d -m 256'`
+
+`apachectrl start`
 
 load File.expand_path("#{RAILS_ROOT}/app/jobs/register_servers_job.rb")
 RegisterServersJob.new.run
