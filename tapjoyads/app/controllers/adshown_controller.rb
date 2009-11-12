@@ -31,7 +31,9 @@ XML_END
     web_request.put('ip_address', request.remote_ip)
       
     Thread.new do
+      start_time = Time.now
       web_request.save
+      logger.info "WebRequest saved to sdb(#{Time.now - start_time}s)"
     end
     
     respond_to do |f|

@@ -22,6 +22,7 @@ class WebRequest < SimpledbResource
     begin
       super
     rescue ServerError
+      logger.info "Sdb save failed. Adding to sqs."
       publish :web_request, self.serialize
     end
   end
