@@ -22,13 +22,17 @@ XML_END
       return
     end
     
+    
     web_request = WebRequest.new('adshown')
     web_request.put('campaign_id', params[:campaign_id])
     web_request.put('app_id', params[:app_id])
     web_request.put('udid', params[:udid])
     #web_request.put('slot_id', params[:slot_id])
     web_request.put('ip_address', request.remote_ip)
-    web_request.save
+      
+    Thread.new do
+      web_request.save
+    end
     
     respond_to do |f|
       f.xml {render(:text => xml)}
