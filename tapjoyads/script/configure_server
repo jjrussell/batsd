@@ -5,6 +5,8 @@
 # This script depends on rails, so it must be run using script/runner. E.g.:
 #  script/runner script/configure_server
 
+require 'base64'
+
 `mkdir -p /mnt/log/httpd`
 `mkdir -p /mnt/log/rails`
 `chown -R webuser.webuser /mnt/log`
