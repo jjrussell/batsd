@@ -11,7 +11,7 @@
 
 `su webuser -c 'memcached -d -m 256'`
 
-`apachectrl start`
+`apachectl start`
 
 load File.expand_path("#{RAILS_ROOT}/app/jobs/register_servers_job.rb")
 RegisterServersJob.new.run
