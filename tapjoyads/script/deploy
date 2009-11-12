@@ -1,30 +1,21 @@
 #!/usr/bin/env ruby
 
-prod_server_list = [
-  'ec2-75-101-247-213.compute-1.amazonaws.com',
-  'ec2-174-129-66-251.compute-1.amazonaws.com',
-  'ec2-174-129-70-48.compute-1.amazonaws.com',
-  'ec2-72-44-61-131.compute-1.amazonaws.com',
-  'ec2-75-101-172-19.compute-1.amazonaws.com',
-  'ec2-75-101-207-219.compute-1.amazonaws.com',
-  'ec2-75-101-253-153.compute-1.amazonaws.com'
-  ]
-  
-test_server_list = [
-  'ec2-67-202-31-220.compute-1.amazonaws.com'
-  ]
+include Ec2Helper
 
 if ARGV.first == 'production'
   puts "PRODUCTION deploy"
-  server_list = prod_server_list
+  server_list = get_dns_names('jobserver') | get_dns_names('webserver')
   rails_mode = 'production'
 else
   puts "TESTING deploy"
-  server_list = test_server_list
+  server_list = get_dns_names('testserver')
   rails_mode = 'test'
 end
 
-puts 'Updating svn'
+puts "Servers to push to:"
+puts server_list
+
+puts "\nUpdating local svn"
 puts `svn update`
 svn_info = `svn info`
 svn_rev = svn_info.match(/\nRevision: (\d*)/)[1]

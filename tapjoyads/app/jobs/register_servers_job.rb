@@ -1,15 +1,17 @@
-require 'AWS'
-
 class RegisterServersJob
   include Ec2Helper
   
   def run
-    # Only run this job in production mode. All other modes use 127.0.0.1 as their memcache server.
-    unless ENV['RAILS_ENV'] == 'production'
-      return
+    dns_names = []
+    if ENV['RAILS_ENV'] == 'production'
+      dns_names = get_dns_names('webserver') | get_dns_names('jobserver')
+    elsif ENV['RAILS_ENV'] == 'testing'
+      dns_names = get_dns_names('testserver')
+    else
+      dns_names = ['127.0.0.1']
     end
     
-    dns_names = get_dns_names
+    Rails.logger.info("RegisterServersJob: registering on machines: #{dns_names}")
     
     dns_names.each do |dns_name|
       sess = Patron::Session.new
