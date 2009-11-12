@@ -17,7 +17,7 @@ if type == 'testserver'
   version = ENV['test_server']
 end
 
-`su - webuser -c 'cd tapjoyads && svn switch https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version}'`
+`su - webuser -c 'cd tapjoyads && svn switch https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version}/tapjoyads'`
 
 `su webuser -c 'memcached -d -m 256'`
 
