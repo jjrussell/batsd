@@ -82,6 +82,10 @@ Rails::Initializer.run do |config|
   # Please note that observers generated using script/generate observer need to have an _observer suffix
   # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
   
+  # These verion numbers indicate the version that is currently deployed.
+  ENV['prod_version'] = '1.0'
+  ENV['test_version'] = '1.0'
+  
   require 'memcached'
   
   # SimpleDB:
