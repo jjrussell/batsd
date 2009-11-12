@@ -22,6 +22,7 @@ XML_END
       return
     end
     
+    now = Time.now
     
     web_request = WebRequest.new('adshown')
     web_request.put('campaign_id', params[:campaign_id])
@@ -29,12 +30,18 @@ XML_END
     web_request.put('udid', params[:udid])
     #web_request.put('slot_id', params[:slot_id])
     web_request.put('ip_address', request.remote_ip)
-      
+    
+    logger.info "Created WebRequest object (#{now - Time.now}s)"
+    now = Time.now
+    
     Thread.new do
       start_time = Time.now
       web_request.save
       logger.info "WebRequest saved to sdb(#{Time.now - start_time}s)"
+      logger.flush
     end
+    
+    logger.info "Spawned thread (#{Time.now - now}s)"
     
     respond_to do |f|
       f.xml {render(:text => xml)}
