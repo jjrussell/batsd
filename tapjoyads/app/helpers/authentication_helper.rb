@@ -1,6 +1,6 @@
 module AuthenticationHelper
   USERS = {
-    'cron' => 'y7jF0HFcjPq'
+    'internal' => 'r3sU0oQav2Nl'
   }
   
   def authenticate

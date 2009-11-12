@@ -31,7 +31,7 @@ XML_END
     #web_request.put('slot_id', params[:slot_id])
     web_request.put('ip_address', request.remote_ip)
     
-    logger.info "Created WebRequest object (#{now - Time.now}s)"
+    logger.info "Created WebRequest object (#{Time.now - now}s)"
     now = Time.now
     
     Thread.new do
