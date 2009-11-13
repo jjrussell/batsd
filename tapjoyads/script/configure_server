@@ -16,10 +16,13 @@ run_mode = 'production'
 
 type = Base64::decode64(`curl http://169.254.169.254/1.0/user-data`)
 puts "Server type: #{type}"
+
 if type == 'testserver'
   version = ENV['test_version']
   run_mode = 'test'
 end
+
+puts "Version: #{version}"
 
 `su - webuser -c 'cd tapjoyads && svn switch https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version}/tapjoyads'`
 
