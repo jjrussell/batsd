@@ -51,7 +51,11 @@ module JobRunner
               if now > job.next_run_time
                 start = Time.now.utc
                 Rails.logger.info "JobRunner: Running #{job_name}"
-                job.job_class.new.run
+                begin
+                  job.job_class.new.run
+                rescue Exception => e
+                  logger.warn "Exception while running job: #{e}"
+                end
                 Rails.logger.info "JobRunner: Done running #{job_name} (#{Time.now.utc - start}s)"
                 Rails.logger.flush
                 set_next_run_time job
