@@ -14,7 +14,7 @@ require 'base64'
 version = ENV['prod_version']
 run_mode = 'production'
 
-type = Base64::decode64(DownloadContent::download_content('http://169.254.169.254/1.0/user-data'))
+type = Base64::decode64(`curl http://169.254.169.254/1.0/user-data`))
 puts "Server type: #{type}"
 if type == 'testserver'
   version = ENV['test_version']
