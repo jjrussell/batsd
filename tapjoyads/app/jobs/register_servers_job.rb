@@ -22,7 +22,9 @@ class RegisterServersJob
     dns_names.each do |dns_name|
       sess = Patron::Session.new
       sess.base_url = base_url
-    
+      
+      sess.timeout = 60
+      
       sess.username = 'internal'
       sess.password = AuthenticationHelper::USERS[sess.username]
       sess.auth_type = :digest
