@@ -83,8 +83,8 @@ Rails::Initializer.run do |config|
   # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
   
   # These verion numbers indicate the version that is currently deployed.
-  ENV['prod_version'] = '1.0'
-  ENV['test_version'] = '1.0'
+  ENV['prod_version'] = '1.1'
+  ENV['test_version'] = '1.1'
   
   require 'memcached'
   
