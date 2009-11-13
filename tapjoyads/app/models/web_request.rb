@@ -9,7 +9,7 @@ class WebRequest < SimpledbResource
     now = Time.now.utc
     date = now.iso8601[0,10]
     
-    key = UUID.new.generate unless key
+    key = UUIDTools::UUID.random_create.to_s unless key
     domain_name = "web-request-#{date}" unless domain_name
     
     super domain_name, key, false

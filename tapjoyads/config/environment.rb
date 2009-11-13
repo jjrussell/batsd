@@ -33,7 +33,7 @@ Rails::Initializer.run do |config|
   config.gem 'hpricot'
   config.gem 'activemessaging'
   config.gem 'daemons'
-  config.gem 'uuid'
+  config.gem 'uuidtools'
   config.gem 'json'
   config.gem 'sdb', :lib => "sdb/sdb"
 
