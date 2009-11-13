@@ -23,9 +23,6 @@ config.action_controller.perform_caching             = true
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-# Start with no servers. Servers will be registered by the RegisterServerJob.
-CACHE = Memcached.new
-
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
 

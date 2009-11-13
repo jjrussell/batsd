@@ -86,7 +86,10 @@ Rails::Initializer.run do |config|
   ENV['prod_version'] = '3'
   ENV['test_version'] = '3'
   
+  # Memcache:
+  # Start with no servers. Servers will be registered by the RegisterServerJob.
   require 'memcached'
+  CACHE = Memcached.new('')
   
   # SimpleDB:
   ENV['AMAZON_ACCESS_KEY_ID'] = '1A3R3ANTXCET9AE95VG2'

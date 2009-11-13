@@ -1,15 +1,12 @@
 #!/usr/bin/env ruby
 
-require 'base64'
+# Restarts everything.
+# This script depends on rails, so it must be run using script/runner.
 
 rails_mode = ARGV.first || "development"
 unless ["development", "test", "production"].include?(rails_mode)
   raise "Unknown rails environment '#{rails_mode}'.  (Choose 'development', 'test' or 'production')"
 end
-
-type = Base64::decode64(`curl -s http://169.254.169.254/1.0/user-data`)
-
-puts "Machine type: #{type}"
 
 puts "Stopping poller"
 `script/poller stop`
@@ -19,12 +16,10 @@ puts "Restarting apache"
 `touch tmp/restart.txt`
 puts "Deleting /var/tmp/ruby-uuid"
 `rm /var/tmp/ruby-uuid`
-
-if type == 'jobserver'
-  puts "Starting jobs"
-  `script/jobs start -- #{rails_mode}`
-else
-  puts "Not starting job server"
-end
+puts "Starting jobs"
+`script/jobs start -- #{rails_mode}`
 puts "Starting poller"
 `script/poller start -- #{rails_mode}`
+
+load File.expand_path("#{RAILS_ROOT}/app/jobs/register_servers_job.rb")
+RegisterServersJob.new.run(rails_mode)

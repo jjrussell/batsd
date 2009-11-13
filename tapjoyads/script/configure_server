@@ -30,5 +30,4 @@ puts "Version: #{version}"
 
 `apachectl start`
 
-load File.expand_path("#{RAILS_ROOT}/app/jobs/register_servers_job.rb")
-RegisterServersJob.new.run(run_mode)
+`script/runner script/restart #{run_mode}`
