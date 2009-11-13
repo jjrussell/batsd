@@ -9,4 +9,4 @@
 
 `apachectl start`
 
-puts `su - webuser /home/webuser/server/configure_server.rb`
+puts `su - webuser -c /home/webuser/server/configure_server.rb`
