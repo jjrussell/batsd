@@ -19,7 +19,7 @@ puts "Server type: #{type}"
 
 if type == 'testserver'
   version = ENV['test_version']
-  run_mode = 'test'
+  run_mode = 'testing'
 end
 
 puts "Version: #{version}"
