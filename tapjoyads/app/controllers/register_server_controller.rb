@@ -4,12 +4,9 @@ class RegisterServerController < ActionController::Base
   before_filter 'authenticate'
 
   def index
-    new_server = params[:server]
-    
-    servers = CACHE.servers
-    servers.push(params[:server])
-    servers.uniq!
-    CACHE.reset(servers)
+    new_servers = params[:servers].split(',')
+    new_servers.uniq!
+    CACHE.reset(new_servers)
     
     render :text => `hostname`
   end

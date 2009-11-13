@@ -19,17 +19,15 @@ class RegisterServersJob
     
     Rails.logger.info("RegisterServersJob: registering on machines: #{dns_names}")
     
-    dns_names.each do |dns_name|
-      sess = Patron::Session.new
-      sess.base_url = base_url
-      
-      sess.timeout = 60
-      
-      sess.username = 'internal'
-      sess.password = AuthenticationHelper::USERS[sess.username]
-      sess.auth_type = :digest
+    sess = Patron::Session.new
+    sess.base_url = base_url
     
-      sess.get("/register_server?server=#{dns_name}")
-    end
+    sess.timeout = 60
+    
+    sess.username = 'internal'
+    sess.password = AuthenticationHelper::USERS[sess.username]
+    sess.auth_type = :digest
+  
+    sess.get("/register_server?servers=#{dns_names.join(',')}")
   end
 end
