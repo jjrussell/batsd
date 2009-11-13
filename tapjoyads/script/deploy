@@ -31,7 +31,7 @@ server_list.each do |s|
   puts "Deploying on #{s}"
   
   puts "Updating svn"
-  puts `ssh webuser@#{s} 'cd tapjoyads && svn switch https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version}'`
+  puts `ssh webuser@#{s} 'cd tapjoyads && svn switch https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version}/tapjoyads'`
   
   puts "Restarting services"
   puts `ssh webuser@#{s} 'cd tapjoyads && script/restart #{rails_mode}'`
