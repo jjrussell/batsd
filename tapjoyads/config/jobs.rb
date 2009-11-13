@@ -18,5 +18,5 @@ JobRunner::Gateway.define do |s|
   end
   
   # Maintenance jobs. Run on all servers:
-  s.add_job :register_servers, RegisterServersJob, 5.minutes
+  s.add_job :register_servers, RegisterServersJob, 1.minutes
 end

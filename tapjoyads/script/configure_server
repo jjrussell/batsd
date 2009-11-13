@@ -30,4 +30,4 @@ puts "Version: #{version}"
 
 `apachectl start`
 
-`script/runner script/restart #{run_mode}`
+`su - webuser -c 'cd tapjoyads && script/runner script/restart #{run_mode}'`
