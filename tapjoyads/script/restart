@@ -7,7 +7,9 @@ unless ["development", "test", "production"].include?(rails_mode)
   raise "Unknown rails environment '#{rails_mode}'.  (Choose 'development', 'test' or 'production')"
 end
 
-type = Base64::decode64(`curl http://169.254.169.254/1.0/user-data`)
+type = Base64::decode64(`curl -s http://169.254.169.254/1.0/user-data`)
+
+puts "Machine type: #{type}"
 
 puts "Stopping poller"
 `script/poller stop`
@@ -17,11 +19,12 @@ puts "Restarting apache"
 `touch tmp/restart.txt`
 puts "Deleting /var/tmp/ruby-uuid"
 `rm /var/tmp/ruby-uuid`
+
 if type == 'jobserver'
   puts "Starting jobs"
   `script/jobs start -- #{rails_mode}`
 else
-  put "Not starting job server"
+  puts "Not starting job server"
 end
 puts "Starting poller"
 `script/poller start -- #{rails_mode}`
