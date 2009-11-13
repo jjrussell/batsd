@@ -55,7 +55,8 @@ class SimpledbResource
     
     begin
       CACHE.set(get_memcache_key, @item.attributes, 1.hour)
-    rescue
+    rescue => e
+      logger.info "Memcache exception when setting: #{e}"
       # Don't do anything. Memcache will be a little cold.
     end
   end
