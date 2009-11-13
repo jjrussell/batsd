@@ -5,4 +5,4 @@
 
 `memcached -d -m 256`
 
-`/home/webuser/server/deploy.rb`
+puts `/home/webuser/server/deploy.rb`

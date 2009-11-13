@@ -18,6 +18,6 @@ settings = YAML::load_file('/home/webuser/server/configuration.yaml')
 version = settings['config']['deploy_version']
 puts "Deploying version: #{version}"
 
-`cd /home/webuser/tapjoyads && svn switch https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version}/tapjoyads`
+puts `cd /home/webuser/tapjoyads && svn switch https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version}/tapjoyads`
 
-`cd /home/webuser/tapjoyads && script/runner script/restart #{run_mode}`
+puts `cd /home/webuser/tapjoyads && script/runner script/restart #{run_mode}`
