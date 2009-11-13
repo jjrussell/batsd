@@ -1,13 +1,15 @@
 class RegisterServersJob
   include Ec2Helper
   
-  def run
+  def run(run_mode = nil)
+    run_mode ||= ENV['RAILS_ENV']
+    
     dns_names = []
     base_url = ''
-    if ENV['RAILS_ENV'] == 'production'
+    if run_mode == 'production'
       dns_names = get_dns_names('webserver') | get_dns_names('jobserver')
       base_url = 'http://localhost:9898'
-    elsif ENV['RAILS_ENV'] == 'testing'
+    elsif run_mode == 'testing'
       dns_names = get_dns_names('testserver')
       base_url = 'http://localhost:9898'
     else

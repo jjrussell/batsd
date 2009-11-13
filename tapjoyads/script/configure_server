@@ -11,10 +11,14 @@ require 'base64'
 `mkdir -p /mnt/log/rails`
 `chown -R webuser.webuser /mnt/log`
 
-version = ENV['test_version']
-type = Base64::decode64(`curl http://169.254.169.254/1.0/user-data`)
+version = ENV['prod_version']
+run_mode = 'production'
+
+type = Base64::decode64(DownloadContent::download_content('http://169.254.169.254/1.0/user-data')
+puts "Server type: #{type}"
 if type == 'testserver'
   version = ENV['test_version']
+  run_mode = 'test'
 end
 
 `su - webuser -c 'cd tapjoyads && svn switch https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version}/tapjoyads'`
@@ -24,4 +28,4 @@ end
 `apachectl start`
 
 load File.expand_path("#{RAILS_ROOT}/app/jobs/register_servers_job.rb")
-RegisterServersJob.new.run
+RegisterServersJob.new.run(run_mode)
