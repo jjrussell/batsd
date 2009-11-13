@@ -82,10 +82,6 @@ Rails::Initializer.run do |config|
   # Please note that observers generated using script/generate observer need to have an _observer suffix
   # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
   
-  # These verion numbers indicate the version that is currently deployed.
-  ENV['prod_version'] = '7'
-  ENV['test_version'] = '7'
-  
   # Memcache:
   # Start with no servers. Servers will be registered by the RegisterServerJob.
   require 'memcached'
