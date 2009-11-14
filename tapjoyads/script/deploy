@@ -30,7 +30,7 @@ end
 server_list.each do |s|
   puts "Deploying on #{s}"
   
-  puts `ssh webuser@#{s} 'cd tapjoyads/server && svn update && ./deploy.rb'`
+  puts `ssh webuser@#{s} 'cd server && svn update && ./deploy.rb'`
   
   puts "Done deploying on #{s}\n\n"
 end
