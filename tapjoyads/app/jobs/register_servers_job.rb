@@ -7,7 +7,7 @@ class RegisterServersJob
     dns_names = []
     base_url = ''
     if run_mode == 'production'
-      dns_names = get_dns_names('webserver') | get_dns_names('jobserver')
+      dns_names = get_dns_names('mc')
       base_url = 'http://localhost:9898'
     elsif run_mode == 'test'
       dns_names = get_dns_names('testserver')
