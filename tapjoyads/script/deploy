@@ -4,7 +4,7 @@ include Ec2Helper
 
 if ARGV.first == 'production'
   puts "PRODUCTION deploy"
-  server_list = get_dns_names('jobserver') | get_dns_names('webserver')
+  server_list = get_dns_names('mc')
   rails_mode = 'production'
   version = ENV['prod_version']
 else
@@ -30,11 +30,7 @@ end
 server_list.each do |s|
   puts "Deploying on #{s}"
   
-  puts "Updating svn"
-  puts `ssh webuser@#{s} 'cd tapjoyads && svn switch https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version}/tapjoyads'`
-  
-  puts "Restarting services"
-  puts `ssh webuser@#{s} 'cd tapjoyads && script/runner script/restart #{rails_mode}'`
+  puts `ssh webuser@#{s} 'cd tapjoyads/server && svn update && ./deploy.rb'`
   
   puts "Done deploying on #{s}\n\n"
 end
