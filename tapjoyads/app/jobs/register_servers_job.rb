@@ -19,6 +19,10 @@ class RegisterServersJob
     
     Rails.logger.info("RegisterServersJob: registering on machines: #{dns_names}")
     
+    # Reset the cache for the job_runner:
+    CACHE.reset dns_names
+    
+    # Reset the cache for hte webserver:
     sess = Patron::Session.new
     sess.base_url = base_url
     
@@ -27,7 +31,7 @@ class RegisterServersJob
     sess.username = 'internal'
     sess.password = AuthenticationHelper::USERS[sess.username]
     sess.auth_type = :digest
-  
+    
     sess.get("/register_server?servers=#{dns_names.join(',')}")
   end
 end
