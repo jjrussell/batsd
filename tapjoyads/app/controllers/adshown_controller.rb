@@ -37,7 +37,7 @@ XML_END
     Thread.new do
       start_time = Time.now
       web_request.save
-      logger.info "WebRequest saved to sdb(#{Time.now - start_time}s)"
+      logger.info "WebRequest sdb save (#{Time.now - start_time}s)"
       logger.flush
     end
     

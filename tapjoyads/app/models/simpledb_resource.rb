@@ -39,7 +39,7 @@ class SimpledbResource
   # Updates the 'updated-at' attribute of this item, and saves it to SimpleDB.
   # If the domain does not exist, then the domain is created.
   # Potentially throws a ServerError if the save fails.
-  def save
+  def save(write_to_memcache = true)
     @item.attributes['updated-at'] = Time.now.utc.to_f.to_s
     begin
       @item.save
@@ -53,11 +53,13 @@ class SimpledbResource
       end
     end
     
-    begin
-      CACHE.set(get_memcache_key, @item.attributes, 1.hour)
-    rescue => e
-      logger.info "Memcache exception when setting: #{e}"
-      # Don't do anything. Memcache will be a little cold.
+    if write_to_memcache
+      begin
+        CACHE.set(get_memcache_key, @item.attributes, 1.hour)
+      rescue => e
+        Rails.logger.info "Memcache exception when setting: #{e}"
+        # Don't do anything. Memcache will be a little cold.
+      end
     end
   end
   

@@ -20,9 +20,9 @@ class WebRequest < SimpledbResource
   
   def save
     begin
-      super
-    rescue ServerError
-      logger.info "Sdb save failed. Adding to sqs."
+      super false
+    rescue => e
+      Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e}"
       publish :web_request, self.serialize
     end
   end
@@ -30,20 +30,17 @@ class WebRequest < SimpledbResource
   ##
   # Stores the item key and attributes to a json string.
   def serialize
-    {:key => @item.key, :attrs => @item.attributes.to_a}.to_json
+    domain_name = @domain.name.gsub(Regexp.new('^' + RUN_MODE_PREFIX), '')
+    {:domain => domain_name, :key => @item.key, :attrs => @item.attributes.to_a}.to_json
   end
   
   ##
-  # Re-creates this item from a json string. The domain will be the current day's
-  # domain, not the domain it was originally in.
+  # Re-creates this item from a json string.
   def self.deserialize(str)
     json = JSON.parse(str)
     key = json['key']
     attributes = json['attrs']
-    
-    now = Time.now.utc
-    date = now.iso8601[0,10]
-    domain_name = "web-request-#{date}"
+    domain_name = json['domain']
     
     web_request = WebRequest.new('', domain_name, key)
 
