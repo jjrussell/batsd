@@ -271,6 +271,9 @@ class GetadController < ApplicationController
   rescue Patron::HostResolutionError
     logger.info "Name resolution error when downloading"
     no_ad
+  rescue Patron::ConnectionFailed
+    logger.info "ConnectionFailed error when downloading"
+    no_ad
   rescue JSON::ParserError
     logger.info "Error parsing json"
     no_ad

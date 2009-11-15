@@ -1,17 +1,13 @@
 #!/usr/bin/env ruby
 
-include Ec2Helper
-
 if ARGV.first == 'production'
   puts "PRODUCTION deploy"
-  server_list = get_dns_names('mc')
+  server_list = `script/ec2servers mc`.split("\n")
   rails_mode = 'production'
-  version = ENV['prod_version']
 else
   puts "TESTING deploy"
-  server_list = get_dns_names('testserver')
+  server_list = `script/ec2servers testserver`.split("\n")
   rails_mode = 'test'
-  version = ENV['test_version']
 end
 
 puts "Servers to push to:"
@@ -19,9 +15,7 @@ puts server_list
 
 puts "\nUpdating local svn"
 puts `svn update`
-#svn_info = `svn info`
-#svn_rev = svn_info.match(/\nRevision: (\d*)/)[1]
-print "Deploy version #{version}? [y/N] "
+print "Deploy? [y/N] "
 answer = STDIN.gets
 if !/^y/i.match(answer)
   exit

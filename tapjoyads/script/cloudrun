@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+# Runs a command on all specified servers.
+# Usage: cloudrun <server-group> <command>
+#   where <server-group> is the same server group as specified in ec2servers
+
+server_list = `script/ec2servers #{ARGV.first}`.split("\n")
+command = ARGV[1]
+
+server_list.each do |s|
+  puts "Running on #{s}"
+  
+  puts `ssh webuser@#{s} '#{command}'`
+  
+  puts "\n"
+end

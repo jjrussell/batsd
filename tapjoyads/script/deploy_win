@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+# Deploys to amazon windows servers.
+
+puts "WINDOWS deploy"
+server_list = server_list = `script/ec2servers winwebserver`.split("\n")
+
+puts "Servers to push to:"
+puts server_list
+
+print "Deploy? [y/N] "
+answer = STDIN.gets
+if !/^y/i.match(answer)
+  exit
+end
+
+server_list.each do |s|
+  puts "Deploying on #{s}"
+  
+  puts `ssh root@#{s} '/home/Administrator/upSource.bat'`
+  
+  puts "Done deploying on #{s}\n\n"
+end
+
+puts "Done deploying"

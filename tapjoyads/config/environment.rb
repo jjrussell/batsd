@@ -87,9 +87,10 @@ Rails::Initializer.run do |config|
   require 'memcached'
   CACHE = Memcached.new('')
   
-  # SimpleDB:
-  ENV['AMAZON_ACCESS_KEY_ID'] = '1A3R3ANTXCET9AE95VG2'
-  ENV['AMAZON_SECRET_ACCESS_KEY'] = 'KNRjoeVhTRWJf4l84xgzh7Y2DNXmJo+wbAVStQLq'
+  # Amazon services:
+  amazon = YAML::load_file('config/amazon.yaml')
+  ENV['AMAZON_ACCESS_KEY_ID'] = amazon['main']['access_key_id']
+  ENV['AMAZON_SECRET_ACCESS_KEY'] = amazon['main']['secret_access_key']
   
   # AWS S3:
   require 'aws/s3'

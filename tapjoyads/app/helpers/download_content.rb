@@ -11,7 +11,7 @@ module DownloadContent
 
     response = sess.get(url, headers)
     
-    Rails.logger.debug "Downloaded complete (#{Time.now.utc - start_time}s)"
+    Rails.logger.debug "Download complete (#{Time.now.utc - start_time}s)"
     
     return response.body
   end

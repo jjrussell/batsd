@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+# Logs in on all specified servers.
+# Usage: cloudlogin <server-group>
+#   where <server-group> is the same server group as specified in ec2servers
+
+server_list = `script/ec2servers #{ARGV.first}`.split("\n")
+
+# Todo: launch screen with an ssh connection to each server
