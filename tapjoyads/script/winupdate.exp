@@ -1,0 +1,6 @@
+#!/usr/bin/expect -f
+set server [lindex $argv 0]
+spawn ssh $server /home/administrator/upSource.bat
+expect "assword"
+send "bidcoins1\r"
+interact
