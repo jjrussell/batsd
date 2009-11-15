@@ -17,7 +17,7 @@ end
 server_list.each do |s|
   puts "Deploying on #{s}"
   
-  puts `ssh root@#{s} '/home/Administrator/upSource.bat'`
+  puts `script/winupdate.exp root@#{s}`
   
   puts "Done deploying on #{s}\n\n"
 end
