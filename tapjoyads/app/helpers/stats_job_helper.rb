@@ -18,9 +18,15 @@ module StatsJobHelper
     last_hour = get_last_run_hour_in_day(item.get('last_run_time'), now)
     
     hourly_impressions = get_hourly_impressions(last_hour, now.hour, now, domain_name, item_id, 
-        stat.get('hourly_impressions'))
+        stat.get('hourly_impressions'), 'adshown')
     
     stat.put('hourly_impressions', hourly_impressions.join(','))
+    
+    hourly_impressions = get_hourly_impressions(last_hour, now.hour, now, domain_name, item_id, 
+        stat.get('logins'), 'connect')
+    
+    stat.put('logins', hourly_impressions.join(','))
+    
     stat.save
     
     interval = item.get('interval_update_time') || 60
@@ -45,9 +51,15 @@ module StatsJobHelper
     stat = Stats.new(get_stat_key(domain_name, item_id, now - 1.day))
     
     hourly_impressions = get_hourly_impressions(0, 23, now - 1.day, item_type, item_id, 
-        stat.get('hourly_impressions'))
+        stat.get('hourly_impressions'), 'adshown')
     
     stat.put('hourly_impressions', hourly_impressions.join(','))
+    
+    hourly_impressions = get_hourly_impressions(0, 23, now - 1.day, item_type, item_id, 
+        stat.get('logins'), 'connect')
+    
+    stat.put('logins', hourly_impressions.join(','))
+    
     stat.save
     
     new_next_daily_run_time = now + 4.hour
@@ -86,7 +98,7 @@ module StatsJobHelper
   end
   
   def get_hourly_impressions(last_hour, current_hour, time, item_type, item_id, 
-      hourly_impressions_string)
+      hourly_impressions_string, path)
     if hourly_impressions_string
       hourly_impressions = hourly_impressions_string.split(',')
     else
@@ -99,7 +111,8 @@ module StatsJobHelper
       min_time = Time.utc(time.year, time.month, time.day, hour, 0, 0, 0)
       max_time = min_time + 1.hour
       count = SimpledbResource.count("web-request-#{date}", 
-          "time >= '#{min_time.to_f.to_s}' and time < '#{max_time.to_f.to_s}' and #{item_type}_id = '#{item_id}'")
+          "time >= '#{min_time.to_f.to_s}' and time < '#{max_time.to_f.to_s}' " +
+          "and #{item_type}_id = '#{item_id}' and path= '#{path}'")
       hourly_impressions[hour] = count
     end
     return hourly_impressions
