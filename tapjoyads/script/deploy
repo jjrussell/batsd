@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require 'yaml'
+
 if ARGV.first == 'production'
   puts "PRODUCTION deploy"
   server_list = `script/ec2servers mc`.split("\n")
@@ -13,7 +15,12 @@ end
 puts "Servers to push to:"
 puts server_list
 
-version_number = ARGV[1] || ''
+version_number = ARGV[1]
+
+unless version_number
+  settings = YAML::load_file('server/configuration.yaml')
+  version_number = settings['config']['deploy_version']
+end
 
 puts "\nUpdating local svn"
 puts `svn update`

@@ -268,7 +268,6 @@ class GetadController < ApplicationController
     imp.put('app_id', app_id)
     imp.put('ip_address', request.remote_ip)
     
-    logger.info "Created Impression object (#{Time.now - now}s)"
     now = Time.now
     
     Thread.new do

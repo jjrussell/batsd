@@ -18,6 +18,11 @@ settings = YAML::load_file('/home/webuser/server/configuration.yaml')
 version = ARGV.first || settings['config']['deploy_version']
 puts "Deploying version: #{version}"
 
-puts `cd /home/webuser/tapjoyads && svn switch https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version}/tapjoyads`
+svn_url = "https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version}/tapjoyads"
+if version == 'trunk'
+  svn_url = "https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/trunk/tapjoyads"
+end
+
+puts `cd /home/webuser/tapjoyads && svn switch #{svn_url}`
 
 puts `cd /home/webuser/tapjoyads && script/runner script/restart #{run_mode}`
