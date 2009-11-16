@@ -24,3 +24,5 @@ config.action_mailer.delivery_method = :test
 EXCEPTIONS_NOT_LOGGED = []
 
 RUN_MODE_PREFIX = 'test_'
+
+NEXT_DEVICE_APP_LIST_TABLE = '1'

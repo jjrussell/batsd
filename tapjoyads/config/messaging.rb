@@ -12,4 +12,6 @@ ActiveMessaging::Gateway.define do |s|
   s.destination :adshown_request, RUN_MODE_PREFIX + 'AdshownRequest'
   s.destination :web_request, RUN_MODE_PREFIX + 'WebRequest'
   s.destination :update_stats, RUN_MODE_PREFIX + 'UpdateStats'
+  s.destination :add_app_to_device, RUN_MODE_PREFIX + 'DeviceAppList'
+  s.destination :device_lookup, RUN_MODE_PREFIX + 'DeviceLookup'
 end

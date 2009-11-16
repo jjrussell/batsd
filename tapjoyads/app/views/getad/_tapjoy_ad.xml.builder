@@ -13,5 +13,6 @@ xml.TapjoyConnectReturnObject do
       xml.AdHTML(@ad_return_obj.AdHTML)
     end
     xml.OpenIn(@ad_return_obj.OpenIn)
+    xml.GameID(@ad_return_obj.GameID)
   end
 end

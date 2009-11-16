@@ -1,0 +1,2 @@
+module CreatePublisherAdHelper
+end

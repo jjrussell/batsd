@@ -235,6 +235,77 @@ class GetadController < ApplicationController
     render_ad
   end
   
+  def publisher_ad
+    
+    ad_id = params[:ad_id]
+    
+    ad = PublisherAd.new(ad_id)
+    
+    if (ad.item.empty?)
+      error = Error.new
+      error.put('request', request.url)
+      error.put('function', 'getad/publisher_ad')
+      error.put('ip', request.remote_ip)
+      error.save
+      Rails.logger.info "can't find ad_id in simpledb: #{ad_id}"
+
+      no_ad
+      return
+    end
+    
+    @ad_return_obj = TapjoyAd.new
+        
+    url = ad.get('url')
+    open_in = ad.get('open_in')
+    open_in = 'Safari' if open_in.nil?
+    
+    app_id_to_advertise = ad.get('app_id_to_advertise')
+    
+    #store this impression in the database
+    imp = WebRequest.new('publisher_ad_impression')
+    imp.put('ad_id', ad_id)
+    imp.put('udid', udid)
+    imp.put('app_id', app_id)
+    imp.put('ip_address', request.remote_ip)
+    
+    logger.info "Created Impression object (#{Time.now - now}s)"
+    now = Time.now
+    
+    Thread.new do
+      start_time = Time.now
+      imp.save
+      logger.info "Impression sdb save (#{Time.now - start_time}s)"
+      logger.flush
+    end
+    
+    logger.info "Spawned thread (#{Time.now - now}s)"
+    
+        
+    if (app_id_to_advertise)
+      url = "http://ws.tapjoyads.com/redirect_to_app?" +
+        "ad_id=#{CGI::escape(ad_id)}" +
+        "&udid=#{CGI::escape(udid)}" +
+        "&impression_id=#{CGI::escape(imp_id)}" +
+        "&url=#{CGI::escape(url)}" +
+        "&from_app_id=#{app_id}"
+      open_in = 'Safari'
+      @ad_return_obj.GameID = app_id_to_advertise
+    end
+    
+    @ad_return_obj.OpenIn = open_in
+    @ad_return_obj.ClickURL = url
+    @ad_return_obj.AdID = ad_id
+    
+    image = get_from_cache_and_save("img.s3.#{ad_id}") do
+      image_content = AWS::S3::S3Object.value ad_id, 'publisher_ads'
+    end
+    
+    @ad_return_obj.Image = image
+    @ad_return_obj.ImpressionID = imp.item.name
+    
+    render_ad
+  end
+  
   private
   def get_ip_address
     ip_address = request.remote_ip

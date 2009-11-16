@@ -27,3 +27,5 @@ EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
 
 RUN_MODE_PREFIX = ''
+
+NEXT_DEVICE_APP_LIST_TABLE = '1'
