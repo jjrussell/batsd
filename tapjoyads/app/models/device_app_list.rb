@@ -27,8 +27,10 @@ class DeviceAppList < SimpledbResource
   # Add an application to this device
   def add_app(app_id)
     begin
-      put(app_id,  Time.now.utc.to_f.to_s)
-      save
+      unless get('app.' + app_id)
+        put('app.' + app_id,  Time.now.utc.to_f.to_s)
+        save
+      end
     rescue => e
       Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e}"
       publish :add_app_to_device, serialize(app_id)
@@ -52,7 +54,7 @@ class DeviceAppList < SimpledbResource
     
     device_app_list = DeviceAppList.new(key, domain)
 
-    device_app_list.put(app_id,  Time.now.utc.to_f.to_s)
+    device_app_list.put('app.' + app_id,  Time.now.utc.to_f.to_s)
     
     return device_app_list
   end
