@@ -25,6 +25,7 @@ File.open(name, "r") do |file|
         publish :process_stored_ids, message
         arr = []
         messages += 1
+        print "Count: #{count}"
       end
     rescue => e
       puts 'Bad_Line: ' + line + e
