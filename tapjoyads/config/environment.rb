@@ -88,7 +88,7 @@ Rails::Initializer.run do |config|
   CACHE = Memcached.new('')
   
   # Amazon services:
-  amazon = YAML::load_file('config/amazon.yaml')
+  amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
   ENV['AMAZON_ACCESS_KEY_ID'] = amazon['main']['access_key_id']
   ENV['AMAZON_SECRET_ACCESS_KEY'] = amazon['main']['secret_access_key']
   
