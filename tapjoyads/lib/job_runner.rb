@@ -10,14 +10,10 @@ module JobRunner
   
   class Gateway
     cattr_accessor :jobs
-    @@jobs = {}
+    @@jobs = []
 
     class << self
       def load_jobs
-        Dir[APP_ROOT + '/app/jobs/*.rb'].each do |f|
-          load f
-        end
-
         path = File.expand_path("#{APP_ROOT}/config/jobs.rb")
         begin
           load path
@@ -28,8 +24,8 @@ module JobRunner
         end
       end
       
-      def add_job job_name, job_class, interval
-        jobs[job_name] = Job.new job_class, interval
+      def add_job job_path, interval
+        jobs.push(Job.new job_path, interval)
       end
     
       def define
@@ -40,24 +36,38 @@ module JobRunner
         puts "JobRunner: starting"
         Rails.logger.info "JobRunner: starting"
         Rails.logger.flush
-        jobs.each_value do |job|
+        jobs.each do |job|
           set_next_run_time job
+        end
+        
+        base_url = case ENV['RAILS_ENV']
+        when 'production' then 'http://localhost:9898'
+        when 'test' then 'http://localhost:9898'
+        else 'http://localhost:3000'
         end
         
         begin
           loop do
             now = Time.now.utc
-            jobs.each do |job_name, job|
+            jobs.each do |job|
               if now > job.next_run_time
-                start = Time.now.utc
-                Rails.logger.info "JobRunner: Running #{job_name}"
-                begin
-                  job.job_class.new.run
-                rescue Exception => e
-                  logger.warn "Exception while running job: #{e}"
-                end
-                Rails.logger.info "JobRunner: Done running #{job_name} (#{Time.now.utc - start}s)"
+                Rails.logger.info "JobRunner: Running #{job.job_path}"
                 Rails.logger.flush
+                Thread.new(job) do |job|
+                  begin
+                    sess = Patron::Session.new
+                    sess.base_url = base_url
+                    sess.timeout = 60
+                    sess.username = 'internal'
+                    sess.password = AuthenticationHelper::USERS[sess.username]
+                    sess.auth_type = :digest
+
+                    sess.get("/job/#{job.job_path}")
+                  rescue Exception => e
+                    Rails.logger.warn "Error running job #{job.job_path}: #{e}"
+                    Rails.logger.flush
+                  end
+                end
                 set_next_run_time job
               end
             end
@@ -87,9 +97,9 @@ module JobRunner
   end
   
   class Job
-    attr_accessor :job_class, :interval, :next_run_time
-    def initialize job_class, interval
-      @job_class = job_class
+    attr_accessor :job_path, :interval, :next_run_time
+    def initialize job_path, interval
+      @job_path = job_path
       @interval = interval
     end
   end

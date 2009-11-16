@@ -36,26 +36,26 @@ module StatsJobHelper
     item.save
   end
   
-  def daily_stats(domain_name, domain_class)
+  def yesterday_hourly_stats(domain_name, domain_class)
     now = Time.now.utc
     
     item_id = get_item_to_process(domain_name, 'next_daily_run_time', now)
     
     unless item_id
-      Rails.logger.info "No daily #{domain_name} stats to process"
+      Rails.logger.info "No yesterday's #{domain_name} stats to process"
       return
     end
-    Rails.logger.info("Processing daily #{domain_name} stats: #{item_id}")
+    Rails.logger.info("Processing yesterday's #{domain_name} stats: #{item_id}")
     
     item = domain_class.new(item_id)
     stat = Stats.new(get_stat_key(domain_name, item_id, now - 1.day))
     
-    hourly_impressions = get_hourly_impressions(0, 23, now - 1.day, item_type, item_id, 
+    hourly_impressions = get_hourly_impressions(0, 23, now - 1.day, domain_name, item_id, 
         stat.get('hourly_impressions'), 'adshown')
     
     stat.put('hourly_impressions', hourly_impressions.join(','))
     
-    hourly_impressions = get_hourly_impressions(0, 23, now - 1.day, item_type, item_id, 
+    hourly_impressions = get_hourly_impressions(0, 23, now - 1.day, domain_name, item_id, 
         stat.get('logins'), 'connect')
     
     stat.put('logins', hourly_impressions.join(','))

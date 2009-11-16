@@ -2,8 +2,20 @@ require 'AWS'
 
 module Ec2Helper
   ##
-  # Returns an array of the dns_names of all running EC2 servers.
+  # Returns an array of the public dns names of all running EC2 servers.
   def get_dns_names(group_id = nil)
+    get_field('dnsName', group_id)
+  end  
+  
+  ##
+  # Returns an array of the local/private dns names of all running EC2 servers.
+  def get_local_dns_names(group_id = nil)
+    get_field('privateDnsName', group_id)
+  end
+  
+  private
+  
+  def get_field(field_name, group_id)
     ec2 = AWS::EC2::Base.new({:access_key_id => ENV['AMAZON_ACCESS_KEY_ID'], 
         :secret_access_key => ENV['AMAZON_SECRET_ACCESS_KEY']})
 
@@ -22,7 +34,7 @@ module Ec2Helper
       group_id_match = group_ids.include?(group_id) if group_id
 
       if instance_state == 'running' and group_id_match
-        dns_names.push(item['instancesSet']['item'][0]['dnsName'])
+        dns_names.push(item['instancesSet']['item'][0][field_name])
       end
     end
     return dns_names

@@ -1,8 +1,15 @@
-class FixAppNilsJob
-  def run
+# Fills in default values for simpledb.
+
+class Job::FixNilsController < Job::JobController
+  
+  def index
     fix_times('app', App)
     fix_times('campaign', Campaign)
+    
+    render :text => "ok"
   end
+  
+  private 
   
   def fix_times(domain, domain_class)
     response = SimpledbResource.query(domain, 'next_run_time, interval_update_time, next_daily_run_time', 
@@ -30,8 +37,6 @@ class FixAppNilsJob
       end
       
       item.save
-
     end
   end
-  
 end

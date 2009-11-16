@@ -1,15 +1,9 @@
-class GetAdNetworkDataJob
+# Aggregates yesterday's stats for campaigns.
+
+class Job::GetAdNetworkDataController < Job::JobController
   include DownloadContent
   
-  def initialize
-    @adnetwork_map = {
-      '78c4f8c0-4940-4d59-97fe-16bc44981657' => VideoEggSite,
-      'f2eb272c-1783-4589-99a0-667e1a45ac51' => MillennialSite,
-      '9054df9e-1d7e-4fa7-91d6-7373c1cd0aff' => AdfonicSite
-    }
-  end
-  
-  def run
+  def index
     url = "http://tapjoyconnect.com/CronService.asmx/GetAdCampaign?password=taptapcampaign"
     content = download_content(url, {}, 30)
     
@@ -24,24 +18,25 @@ class GetAdNetworkDataJob
     
     begin
       site = @adnetwork_map[ad_network_id].new
-      Rails.logger.info "GetAdNetworkData: Getting info for site: #{site.name}, user: #{username}, " +
+      logger.info "GetAdNetworkData: Getting info for site: #{site.name}, user: #{username}, " +
           "data: #{ad_network_id1}, #{ad_network_id2}, #{ad_network_id3}"
       site.get_data(username, password, ad_network_id1, ad_network_id2, ad_network_id3)
       report_data(campaign_id, site.today_data)
       report_data(campaign_id, site.yesterday_data)
     rescue => e
-      Rails.logger.warn "Failed to get data: #{e}"
-      Rails.logger.warn "FAIL: #{site.name}: #{e}"
+      logger.warn "FAIL: #{site.name}: #{e}"
     else
-      Rails.logger.info "OK: #{site.name}"
+      logger.info "OK: #{site.name}"
     end
+    
+    render :text => "ok"
   end
   
   private
   
   def report_data(campaign_id, data)
     unless data.date
-      Rails.logger.debug "No data"
+      logger.debug "No data"
       return
     end
       
@@ -60,7 +55,7 @@ class GetAdNetworkDataJob
     doc = Hpricot.parse(response)
     response_string = doc.search('//string').first.inner_text
    
-    Rails.logger.info "Callback response: '#{response_string}'"
+    logger.info "Callback response: '#{response_string}'"
   end
   
   class Data
