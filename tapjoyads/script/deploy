@@ -13,9 +13,11 @@ end
 puts "Servers to push to:"
 puts server_list
 
+version_number = ARGV[1] || ''
+
 puts "\nUpdating local svn"
 puts `svn update`
-print "Deploy? [y/N] "
+print "Deploy version #{version_number}? [y/N] "
 answer = STDIN.gets
 if !/^y/i.match(answer)
   exit
@@ -24,7 +26,7 @@ end
 server_list.each do |s|
   puts "Deploying on #{s}"
   
-  puts `ssh webuser@#{s} 'cd server && svn update && ./deploy.rb'`
+  puts `ssh webuser@#{s} 'cd server && svn update && ./deploy.rb #{version_number}'`
   
   puts "Done deploying on #{s}\n\n"
 end

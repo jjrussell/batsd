@@ -15,7 +15,7 @@ end
 
 settings = YAML::load_file('/home/webuser/server/configuration.yaml')
 
-version = settings['config']['deploy_version']
+version = ARGV.first || settings['config']['deploy_version']
 puts "Deploying version: #{version}"
 
 puts `cd /home/webuser/tapjoyads && svn switch https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version}/tapjoyads`
