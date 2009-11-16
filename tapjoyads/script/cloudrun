@@ -5,7 +5,7 @@
 #   where <server-group> is the same server group as specified in ec2servers
 
 server_list = `script/ec2servers #{ARGV.first}`.split("\n")
-command = ARGV[1]
+command = ARGV[1, ARGV.length].join(' ')
 
 server_list.each do |s|
   puts "Running on #{s}"
