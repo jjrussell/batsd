@@ -1,4 +1,5 @@
 class CreatePublisherAdController < ApplicationController
+  include TimeLogHelper
   
   def index
     xml = <<XML_END
@@ -19,8 +20,6 @@ XML_END
       return
     end
     
-    now = Time.now
-    
     ad_id = params[:ad_id]
   
     ad = PublisherAd.new(ad_id)
@@ -37,26 +36,16 @@ XML_END
     ad.put('cpa', params[:cpa]) if params[:cpa]    
     ad.put('cpm', params[:cpm]) if params[:cpm]
     
-    
+    ad.save
   
-    logger.info "Created Ad object (#{Time.now - now}s)"
-    now = Time.now
-  
-    Thread.new do
-      start_time = Time.now
-      ad.save
-      logger.info "Ad sdb save (#{Time.now - start_time}s)"
-      logger.flush
-    
+    # Keep it non-multithreaded for now.
+    # TODO: determine what steps are needed to make S3Object threadsafe.
+    #Thread.new do
       #store an image in s3
-      start_time = Time.now
-      AWS::S3::S3Object.store ad_id, params[:image], 'publisher_ads'
-    
-      logger.info "Stored in s3 (#{Time.now - start_time}s)"
-      logger.flush
-    end
-  
-    logger.info "Spawned thread (#{Time.now - now}s)"
+      time_log("Stored in s3") do
+        AWS::S3::S3Object.store ad_id, params[:image], 'publisher-ads'
+      end
+    #end
   
     respond_to do |f|
       f.xml {render(:text => xml)}

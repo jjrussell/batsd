@@ -97,4 +97,12 @@ Rails::Initializer.run do |config|
   AWS::S3::Base.establish_connection!(
       :access_key_id => ENV['AMAZON_ACCESS_KEY_ID'],
       :secret_access_key => ENV['AMAZON_SECRET_ACCESS_KEY'])
+      
+  if defined?(PhusionPassenger)
+    PhusionPassenger.on_event(:starting_worker_process) do |forked|
+      if forked
+        CACHE = CACHE.clone
+      end
+    end
+  end
 end

@@ -1,5 +1,6 @@
 class SimpledbResource  
   include Amazon::SDB
+  include TimeLogHelper
   
   attr_accessor :domain, :item
   
@@ -40,27 +41,42 @@ class SimpledbResource
   # If the domain does not exist, then the domain is created.
   # Potentially throws a ServerError if the save fails.
   def save(write_to_memcache = true)
-    @item.attributes['updated-at'] = Time.now.utc.to_f.to_s
-    begin
-      @item.save
-    rescue ParameterError => e
-      if (e.to_s.starts_with? 'NoSuchDomain')
-        @base.create_domain(@domain.name)
-        @item.attributes['updated-at'] = Time.now.utc.to_f.to_s
-        @item.save
-      else
-        raise e
+    
+    time_log("Spawing thread") do
+      Thread.new do
+        Rails.logger.info "Saving to #{@domain.name}"
+        
+        time_log("Saving to sdb") do
+          @item.attributes['updated-at'] = Time.now.utc.to_f.to_s
+          begin
+            @item.save
+          rescue ParameterError => e
+            time_log("Creating new domain") do
+              if (e.to_s.starts_with? 'NoSuchDomain')
+                @base.create_domain(@domain.name)
+                @item.attributes['updated-at'] = Time.now.utc.to_f.to_s
+                @item.save
+              else
+                raise e
+              end
+            end
+          end
+        end
+      
+        if write_to_memcache
+          time_log("Writing to memcache") do
+            cache = CACHE.clone
+            begin
+              cache.set(get_memcache_key, @item.attributes, 1.hour)
+            rescue => e
+              Rails.logger.info "Memcache exception when setting: #{e}"
+            end
+          end
+        end
       end
+      Rails.logger.flush
     end
     
-    if write_to_memcache
-      begin
-        CACHE.set(get_memcache_key, @item.attributes, 1.hour)
-      rescue => e
-        Rails.logger.info "Memcache exception when setting: #{e}"
-        # Don't do anything. Memcache will be a little cold.
-      end
-    end
   end
   
   ##

@@ -2,7 +2,8 @@ require 'activemessaging/processor'
 
 class ConnectController < ApplicationController
   include ActiveMessaging::MessageSender
-    
+  include TimeLogHelper
+  
   def index
     xml = <<XML_END
 <?xml version="1.0" encoding="UTF-8"?>
@@ -26,7 +27,7 @@ XML_END
     udid = params[:udid]
     
     #add this app to the device list
-    Thread.new do
+    time_log("Added app to device list") do
       device = DeviceAppList.new(udid)
       unless device.get(params[:app_id])
         device.add_app(params[:app_id])
@@ -34,8 +35,6 @@ XML_END
     end
     
 
-    now = Time.now
-  
     web_request = WebRequest.new('connect')
     web_request.put('app_id', params[:app_id])
     web_request.put('udid', udid)
@@ -43,20 +42,9 @@ XML_END
     web_request.put('device_os_version', params[:device_os_version])
     web_request.put('device_type', params[:device_type])
     web_request.put('library_version', params[:library_version])
-
     web_request.put('ip_address', request.remote_ip)
   
-    logger.info "Created WebRequest object (#{Time.now - now}s)"
-    now = Time.now
-  
-    Thread.new do
-      start_time = Time.now
-      web_request.save
-      logger.info "WebRequest sdb save (#{Time.now - start_time}s)"
-      logger.flush
-    end
-  
-    logger.info "Spawned thread (#{Time.now - now}s)"
+    web_request.save
   
     respond_to do |f|
       f.xml {render(:text => xml)}

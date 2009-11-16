@@ -268,17 +268,7 @@ class GetadController < ApplicationController
     imp.put('app_id', app_id)
     imp.put('ip_address', request.remote_ip)
     
-    now = Time.now
-    
-    Thread.new do
-      start_time = Time.now
-      imp.save
-      logger.info "Impression sdb save (#{Time.now - start_time}s)"
-      logger.flush
-    end
-    
-    logger.info "Spawned thread (#{Time.now - now}s)"
-    
+    imp.save
         
     if (app_id_to_advertise)
       url = "http://ws.tapjoyads.com/redirect_to_app?" +
