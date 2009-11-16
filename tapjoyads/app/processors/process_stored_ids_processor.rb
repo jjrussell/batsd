@@ -29,15 +29,15 @@ class ProcessStoredIdsProcessor < ApplicationProcessor
     
     devices.each do |device_id, app_id_list|
       
-      app_item_attribues = [SDB::Attribute.new('updated-at', updated_at)]
+      app_item_attribues = [SDB::Attribute.new('updated-at', updated_at, true)]
       app_id_list.each do |pair|
         app_id = pair[0]
         timestamp = pair[1]
-        app_item_attribues.push(SDB::Attribute.new("app.#{app_id}", timestamp))
+        app_item_attribues.push(SDB::Attribute.new("app.#{app_id}", timestamp, true))
       end
       
       app_item = SDB::Item.new(device_id, app_item_attribues)
-      lookup_item = SDB::Item.new(device_id, [SDB::Attribute.new('app_list', '1'), SDB::Attribute.new('updated-at', updated_at)])
+      lookup_item = SDB::Item.new(device_id, [SDB::Attribute.new('app_list', '1', true), SDB::Attribute.new('updated-at', updated_at, true)])
    
       app_items_array.push(app_item)
       lookup_item_array.push(lookup_item)
