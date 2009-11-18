@@ -3,6 +3,14 @@
 class Job::GetAdNetworkDataController < Job::JobController
   include DownloadContent
   
+  def initialize
+    @adnetwork_map = {
+      '78c4f8c0-4940-4d59-97fe-16bc44981657' => VideoEggSite,
+      'f2eb272c-1783-4589-99a0-667e1a45ac51' => MillennialSite,
+      '9054df9e-1d7e-4fa7-91d6-7373c1cd0aff' => AdfonicSite
+    }
+  end
+  
   def index
     url = "http://tapjoyconnect.com/CronService.asmx/GetAdCampaign?password=taptapcampaign"
     content = download_content(url, {}, 30)
