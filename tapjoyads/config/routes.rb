@@ -45,4 +45,12 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'Service1.asmx/:action', :controller => 'service1'
   map.connect 'service1.asmx/:action', :controller => 'service1'
   map.connect 'CronService.asmx/:action', :controller => 'cron_service'
+  map.connect 'TapDefenseCurrencyService.asmx/:action', :controller => 'tapdefense_currency'
+  map.connect 'TapPointsCurrencyService.asmx/:action', :controller => 'tappoints_currency'
+  map.connect 'RingtoneService.asmx/:action', :controller => 'ringtone_currency'
+  map.connect 'AppRedir.aspx/:action', :controller => 'app_redir'
+  map.connect 'Redir.aspx/:action', :controller => 'redir'
+  map.connect 'RateApp.aspx/:action', :controller => 'rate_app'
+  
+  
 end
