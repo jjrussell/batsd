@@ -15,8 +15,8 @@ class Service1Controller < ApplicationController
       url = case params[:action]
         when 'Connect' then ruby_lb + "connect" + standard_params
         when 'SubmitAppStoreClick' then ruby_lb + "submit_click/store?" +
-          "udid=#{get_param(:DeviceTag)}&advertiser_app_id=#{get_param(:AdvertiserAppID)}" +
-          "&publisher_app_id=#{get_param(:AppID)}&publisher_user_record_id=#{get_param(:PublisherUserRecordID)}"
+          "udid=#{get_param(:DeviceTag, true)}&advertiser_app_id=#{get_param(:AdvertiserAppID, true)}" +
+          "&publisher_app_id=#{get_param(:AppID, true)}&publisher_user_record_id=#{get_param(:PublisherUserRecordID, true)}"
         when 'AdShown' then ruby_lb + "adshown" + standard_params + "&campaign_id=#{get_param(:CampaignID, true)}"
         when 'index' then win_lb
         else win_lb + "/" + params[:action] + "?" + request.query_string
