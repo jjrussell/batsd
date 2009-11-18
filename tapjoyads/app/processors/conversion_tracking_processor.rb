@@ -33,12 +33,9 @@ class ConversionTrackingProcessor < ApplicationProcessor
       
       download_content(url, {}, 15) #15 second timeout
       
-      click.put('installed',"#{publisher_app_id}")
+      click.put('installed',"#{install_date.to_s}")
       click.save
-      
-      web_request = WebRequest.new('store-click', nil, click.get('webrequest_key'))
-      web_request.put('install_date', install_date)
-      web_request.save
+
       
     end #worth checking conversions
 
