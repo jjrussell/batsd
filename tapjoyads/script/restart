@@ -27,7 +27,7 @@ server_list = case rails_mode
 when 'production'
   `script/ec2servers mc`.split("\n")
 when 'test'
-  `script/ec2servers test`.split("\n")
+  `script/ec2servers testserver`.split("\n")
 else
   port = '3000'
   ['localhost:3000']
