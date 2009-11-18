@@ -51,6 +51,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'AppRedir.aspx/:action', :controller => 'app_redir'
   map.connect 'Redir.aspx/:action', :controller => 'redir'
   map.connect 'RateApp.aspx/:action', :controller => 'rate_app'
+  map.connect 'ReceiveOffersService.asmx/:action', :controller => 'receive_offers'
   
   
 end
