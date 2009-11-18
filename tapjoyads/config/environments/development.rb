@@ -18,8 +18,12 @@ config.action_mailer.raise_delivery_errors = false
 
 CACHE = Memcached.new('127.0.0.1')
 
+
+
 EXCEPTIONS_NOT_LOGGED = []
 
 RUN_MODE_PREFIX = 'dev_'
+
+REDIRECT_URI = 'http://localhost:3000/'
 
 NEXT_DEVICE_APP_LIST_TABLE = '1'
