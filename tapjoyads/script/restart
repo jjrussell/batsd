@@ -16,6 +16,7 @@ puts "Stopping jobs"
 `script/jobs stop`
 puts "Restarting apache"
 `touch tmp/restart.txt`
+sleep(1)
 puts "Starting jobs"
 `script/jobs start -- #{rails_mode}`
 puts "Starting poller"

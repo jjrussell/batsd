@@ -25,7 +25,7 @@ module JobRunner
       end
       
       def add_job job_path, interval
-        jobs.push(Job.new job_path, interval)
+        jobs.push(Job.new(job_path, interval))
       end
     
       def define
