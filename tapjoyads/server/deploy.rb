@@ -25,4 +25,4 @@ end
 
 puts `cd /home/webuser/tapjoyads && svn switch #{svn_url}`
 
-puts `cd /home/webuser/tapjoyads && script/runner script/restart #{run_mode}`
+puts `cd /home/webuser/tapjoyads && script/restart #{run_mode}`
