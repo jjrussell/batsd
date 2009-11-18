@@ -2,11 +2,10 @@ class Service1Controller < ApplicationController
   
   before_filter :redirect
   
-  
   private
     def redirect
       ruby_lb = 'http://webservice-lb-624573684.us-east-1.elb.amazonaws.com/'
-      win_lb = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/Service1.asmx/'
+      win_lb = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/Service1.asmx'
       
       standard_params = "?udid=#{get_param(:DeviceTag, true)}&app_id=#{get_param(:AppID, true)}" +
         "&device_type=#{get_param(:DeviceType)}&app_version=#{get_param(:AppVersion)}" +
@@ -16,7 +15,8 @@ class Service1Controller < ApplicationController
       url = case params[:action]
         when 'Connect' then ruby_lb + "connect" + standard_params
         when 'AdShown' then ruby_lb + "adshown" + standard_params + "&campaign_id=#{get_param(:CampaignID, true)}"
-        else win_lb + params[:action] + "?" + request.query_string
+        when 'index' then win_lb
+        else win_lb + "/" + params[:action] + "?" + request.query_string
       end
       
       redirect_to url

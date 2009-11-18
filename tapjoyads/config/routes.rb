@@ -42,6 +42,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/:action/:id.:format'
   map.connect 'jobs/:controller/:action/:id'
   map.connect 'jobs/:controller/:action/:id.:format'
-  map.connect 'Service1.asmx', :controller => 'service1'
-  map.connect 'service1.asmx', :controller => 'service1'
+  map.connect 'Service1.asmx/:action', :controller => 'service1'
+  map.connect 'service1.asmx/:action', :controller => 'service1'
 end
