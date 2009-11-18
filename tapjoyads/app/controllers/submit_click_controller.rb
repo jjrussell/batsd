@@ -20,22 +20,30 @@ XML_END
         return
       end
       
-      # lookup the money paid for install
-      app = App.new(params[:advertiser_app_id])
-      money = app.get('money-for-install')
-      money = 25 unless money # start off at 25 cents
-      
       now = Time.now.utc
+      
+      web_request = WebRequest.new('store-click')
       
       ##
       # each attribute that starts with publisher.<id> has a . separated value
       # the left of the . is when the click happened.  the right of the . is the publisher user record
       # so when the app is installed, we look at the timestamp to determine where the reward goes
       click = StoreClick.new("#{params[:udid]}.#{params[:advertiser_app_id]}")
-      click.put("last_click", "#{now.to_f.to_s}")
-      click.put("publisher.#{params[:publisher_app_id]}",
-        "#{now.to_f.to_s}@#{params[:publisher_user_record_id]}@#{money}")
+      click.put("click_date", "#{now.to_f.to_s}")
+      click.put("publisher_app_id",params[:publisher_app_id])
+      click.put("publisher_user_record_id", params[:publisher_user_record_id])
+      click.put("webrequest_key", web_request.item.key)
+
       click.save
+      
+
+      web_request.put('advertiser_app_id', params[:advertiser_app_id])
+      web_request.put('publisher_app_id', params[:publisher_app_id])
+      web_request.put('udid', params[:udid])
+      web_request.put('click_date', now.to_f.to_s)
+      web_request.put('ip_address', request.remote_ip)
+
+      web_request.save
       
       respond_to do |f|
         f.xml {render(:text => xml)}

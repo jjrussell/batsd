@@ -34,7 +34,8 @@ XML_END
         device.add_app(params[:app_id])
         # this is a first time device/app. add to the conversion tracking queue
         Rails.logger.info "Adding #{udid}.#{params[:app_id]} to conversion tracking sqs"
-        publish :conversion_tracking, {:udid => params[:udid], :app_id => params[:app_id]}.to_json
+        publish :conversion_tracking, {:udid => params[:udid], :app_id => params[:app_id], 
+          :install_date => Time.now.to_f.to_s}.to_json
       end
       
     end
