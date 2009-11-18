@@ -1,0 +1,2 @@
+module SubmitClickHelper
+end

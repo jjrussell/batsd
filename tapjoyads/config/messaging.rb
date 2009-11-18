@@ -15,4 +15,6 @@ ActiveMessaging::Gateway.define do |s|
   s.destination :add_app_to_device, RUN_MODE_PREFIX + 'DeviceAppList'
   s.destination :device_lookup, RUN_MODE_PREFIX + 'DeviceLookup'
   s.destination :process_stored_ids, RUN_MODE_PREFIX + 'ProcessStoredIds'
+  s.destination :store_click, RUN_MODE_PREFIX + 'StoreClick'
+  s.destination :conversion_tracking, RUN_MODE_PREFIX + 'ConversionTracking'
 end

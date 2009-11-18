@@ -1,6 +1,7 @@
 require 'activemessaging/processor'
 
 class ConnectController < ApplicationController
+  include DownloadContent
   include ActiveMessaging::MessageSender
   include TimeLogHelper
   
@@ -12,9 +13,9 @@ class ConnectController < ApplicationController
 </TapjoyConnectReturnObject>
 XML_END
   
-    if ((not params[:app_id]) || (not params[:udid]) || (not params[:device_type]) ||
+    if ( (not params[:app_id]) || (not params[:udid]) || (not params[:device_type]) ||
       (not params[:app_version]) || (not params[:device_os_version]) || (not params[:library_version]) )
-      error = Error.new
+      error = ::Error.new
       error.put('request', request.url)
       error.put('function', 'connect')
       error.put('ip', request.remote_ip)
@@ -28,10 +29,14 @@ XML_END
     
     #add this app to the device list
     time_log("Added app to device list") do
-      device = DeviceAppList.new(udid)
-      unless device.get(params[:app_id])
+      device = DeviceAppList.new(params[:udid])
+      unless device.get('app.' + params[:app_id])
         device.add_app(params[:app_id])
+        # this is a first time device/app. add to the conversion tracking queue
+        Rails.logger.info "Adding #{udid}.#{params[:app_id]} to conversion tracking sqs"
+        publish :conversion_tracking, {:udid => params[:udid], :app_id => params[:app_id]}.to_json
       end
+      
     end
     
 
@@ -51,5 +56,7 @@ XML_END
     end
 
   end
+
+
   
 end
