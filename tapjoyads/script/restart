@@ -1,13 +1,14 @@
 #!/usr/bin/env ruby
 
 # Restarts everything.
-# This script depends on rails, so it must be run using script/runner.
+
+require 'rubygems'
+require 'patron'
 
 rails_mode = ARGV.first || "development"
 unless ["development", "test", "production"].include?(rails_mode)
   raise "Unknown rails environment '#{rails_mode}'.  (Choose 'development', 'test' or 'production')"
 end
-ENV['RAILS_ENV'] = rails_mode
 
 puts "Stopping poller"
 `script/poller stop`
@@ -20,5 +21,23 @@ puts "Starting jobs"
 puts "Starting poller"
 `script/poller start -- #{rails_mode}`
 
-load File.expand_path("#{RAILS_ROOT}/app/jobs/register_servers_job.rb")
-RegisterServersJob.new.run(rails_mode)
+# Call the register_servers job on all machines.
+server_list = case rails_mode
+when 'production'
+  `script/ec2servers mc`.split("\n")
+when 'test'
+  `script/ec2servers mc`.split("\n")
+else 
+  ['http://localhost:3000']
+end
+
+server_list.each do |server|
+  sess = Patron::Session.new
+  sess.base_url = base_url
+  sess.timeout = 60
+  sess.username = 'internal'
+  sess.password = 'r3sU0oQav2Nl'
+  sess.auth_type = :digest
+
+  sess.get("/job/register_servers")
+end
