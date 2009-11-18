@@ -15,6 +15,27 @@ end
 puts "Servers to push to:"
 puts server_list
 
+# Add servers to ~/.ssh/known_hosts, so that ssh does not prompt you to type 'yes'.
+f = open(File.expand_path('~/.ssh/known_hosts'), 'r')
+file_content = ''
+f.each do |line|
+  file_content += line
+end
+f = open(File.expand_path('~/.ssh/known_hosts'), 'a')
+server_list.each do |s|
+  unless file_content.include?(s)
+    puts "Adding #{s} to known_hosts"
+    f.puts "#{s} ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEApZ4yGm+pCsxG/jyPfhn0Qqar0b2oA2eGgCGfcR9J1zMhcqoHUh" +
+           "8/2IVpAKsPzPL9UFcpo5dYCFzm2EHwmj6x8ervGIEgoicQ4HlmIGTLEWIo2xTyYdcKw/Bg1lKC9ZKBUAr8iyfXJJVs+" +
+           "4LiTUeKfZCtD31u0X+yfYjg5S3AwlWSrCApLJCOGuYHUG9TV0F480GThcZfo5FkQaoR6MnYD6NkpZ0Jmf9f/iXsdLc1" +
+           "oHTcwNoePbsn8zqQ/B1vwgVKYfcKMKYRiIRqOYn06kUJn+pHzqQzpRl2xRHbpFbViIiWt3B8OX9+eftdJT5rHUBJs4Y" +
+           "9YBjpT13lnvcj8gs60Q=="
+  end
+end
+
+puts "\nUpdating local svn"
+puts `svn update`
+
 version_number = ARGV[1]
 
 unless version_number
@@ -22,20 +43,27 @@ unless version_number
   version_number = settings['config']['deploy_version']
 end
 
-puts "\nUpdating local svn"
-puts `svn update`
 print "Deploy version #{version_number}? [y/N] "
 answer = STDIN.gets
 if !/^y/i.match(answer)
   exit
 end
 
+thread_list = []
+
 server_list.each do |s|
-  puts "Deploying on #{s}"
+  thread = Thread.new do
+    puts "Deploying on #{s}"
   
-  puts `ssh webuser@#{s} 'cd server && svn update && ./deploy.rb #{version_number}'`
+    puts `ssh webuser@#{s} 'cd server && svn update && ./deploy.rb #{version_number}'`
   
-  puts "Done deploying on #{s}\n\n"
+    puts "Done deploying on #{s}\n\n"
+  end
+  thread_list.push(thread)
+end
+
+thread_list.each do |thread|
+  thread.join
 end
 
 puts "Done deploying"
