@@ -1,4 +1,4 @@
-class Service1Controller < ApplicationController
+class CronServiceController < ApplicationController
   
   before_filter :redirect
   
