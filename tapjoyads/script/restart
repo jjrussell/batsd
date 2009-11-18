@@ -22,18 +22,20 @@ puts "Starting poller"
 `script/poller start -- #{rails_mode}`
 
 # Call the register_servers job on all machines.
+port = '9898'
 server_list = case rails_mode
 when 'production'
   `script/ec2servers mc`.split("\n")
 when 'test'
   `script/ec2servers mc`.split("\n")
-else 
+else
+  port = '3000'
   ['http://localhost:3000']
 end
 
 server_list.each do |server|
   sess = Patron::Session.new
-  sess.base_url = base_url
+  sess.base_url = "#{server}:#{port}"
   sess.timeout = 60
   sess.username = 'internal'
   sess.password = 'r3sU0oQav2Nl'
