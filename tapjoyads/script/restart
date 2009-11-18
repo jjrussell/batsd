@@ -45,4 +45,5 @@ server_list.each do |server|
     sess.get("/job/register_servers")
   rescue Patron::TimeoutError
     puts "Timed out when registering #{server}"
+  end
 end
