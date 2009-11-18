@@ -14,12 +14,26 @@ if !/^y/i.match(answer)
   exit
 end
 
+thread_list = []
+
 server_list.each do |s|
-  puts "Deploying on #{s}"
+  thread = Thread.new do
+    puts "Deploying on #{s}"
   
-  puts `ssh root@#{s} ''/home/administrator/upSource.bat''`
+    # Using the stricthostkeychecking=no option, which is not the best security-wise, but
+    # it stops the 'yes/no' prompt. The more secure solution can be seen in the deploy
+    # script, which adds the known host key identification to known_hosts file. This
+    # doesn't work for windows though, because the host key changes for every instance of
+    # windows, and therefore cannot be known ahead of time.
+    puts `ssh -o stricthostkeychecking=no root@#{s} ''/home/administrator/upSource.bat''`
   
-  puts "Done deploying on #{s}\n\n"
+    puts "Done deploying on #{s}\n\n"
+  end
+  thread_list.push(thread)
+end
+
+thread_list.each do |thread|
+  thread.join
 end
 
 puts "Done deploying"
