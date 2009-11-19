@@ -3,7 +3,7 @@ require 'base64'
 class ImportMssqlController < ApplicationController
   include TimeLogHelper
   
-  protect_from_forgery :except => :index
+  protect_from_forgery :except => [:publisher_ad, :app, :campaign]
   
   def publisher_ad
     xml = <<XML_END
@@ -63,72 +63,73 @@ XML_END
     end
     
   end
-    def app
-      xml = <<XML_END
+  
+  def app
+    xml = <<XML_END
 <?xml version="1.0" encoding="UTF-8"?>
 <TapjoyConnectReturnObject>
 <Success>true</Success>
 </TapjoyConnectReturnObject>
 XML_END
 
-      if ( (not params[:campaign_id]) || (not params[:app_id]) )
-        error = Error.new
-        error.put('request', request.url)
-        error.put('function', 'connect')
-        error.put('ip', request.remote_ip)
-        error.save
-        Rails.logger.info "missing required params"
-        render :text => "missing required params"
-        return
-      end
-
-      app_id = params[:app_id]
-
-      app = App.new(app_id)
-      unless app.get('next_run_time')
-          next_run_time = (Time.now.utc).to_f.to_s
-          app.put('next_run_time', next_run_time)     
-          app.put('interval_update_time','60')
-      end
-
-      unless app.get('next_ad_optimization_time')
-          next_run_time = (Time.now.utc).to_f.to_s
-          app.put('next_ad_optimization_time', next_run_time)     
-          app.put('ad_optimization_interval_update_time','60')
-      end
-
-      app.put('name',params[:name])
-      app.put('payment_for_install', params[:payment_for_install])
-      app.put('rewarded_installs_ordinal', params[:rewarded_installs_ordinal])
-      app.put('install_tracking', params[:install_tracking])
-      app.put('store_url', params[:store_url])
-      app.put('partner_id', params[:partner_id])
-      app.put('os', params[:os])
-      app.put('launhced', params[:launched])
-      app.put('status', params[:status])
-      app.put('color', params[:color])
-      app.put('description_1', params[:description][0,999])
-      app.put('description_2', params[:description][1000,1999]) if params[:description].length > 1000
-      app.put('description_3', params[:description][2000,2999]) if params[:description].length > 2000
-      app.put('description_4', params[:description][3000,3999]) if params[:description].length > 3000
-      app.put('has_location', params[:has_location])
-      app.put('ad_space', {
-        :name => "1",
-        :has_location => params[:has_location],
-        :rotation_direction => params[:rotation_direction]
-         }.to_json)
-
-
-      time_log("Stored in s3") do
-        AWS::S3::S3Object.store app_id, params[:icon], 'app-icons'
-        AWS::S3::S3Object.store app_id, params[:screenshot], 'app-screenshots'
-      end
-
-      respond_to do |f|
-        f.xml {render(:text => xml)}
-      end
-
+    if (not params[:app_id])
+      error = Error.new
+      error.put('request', request.url)
+      error.put('function', 'connect')
+      error.put('ip', request.remote_ip)
+      error.save
+      Rails.logger.info "missing required params"
+      render :text => "missing required params"
+      return
     end
+
+    app_id = params[:app_id]
+
+    app = App.new(app_id)
+    unless app.get('next_run_time')
+        next_run_time = (Time.now.utc).to_f.to_s
+        app.put('next_run_time', next_run_time)     
+        app.put('interval_update_time','60')
+    end
+
+    unless app.get('next_ad_optimization_time')
+        next_run_time = (Time.now.utc).to_f.to_s
+        app.put('next_ad_optimization_time', next_run_time)     
+        app.put('ad_optimization_interval_update_time','60')
+    end
+
+    app.put('name',params[:name])
+    app.put('payment_for_install', params[:payment_for_install])
+    app.put('rewarded_installs_ordinal', params[:rewarded_installs_ordinal])
+    app.put('install_tracking', params[:install_tracking])
+    app.put('store_url', params[:store_url])
+    app.put('partner_id', params[:partner_id])
+    app.put('os', params[:os])
+    app.put('launhced', params[:launched])
+    app.put('status', params[:status])
+    app.put('color', params[:color])
+    app.put('description_1', params[:description][0,999])
+    app.put('description_2', params[:description][1000,1999]) if params[:description].length > 1000
+    app.put('description_3', params[:description][2000,2999]) if params[:description].length > 2000
+    app.put('description_4', params[:description][3000,3999]) if params[:description].length > 3000
+    app.put('has_location', params[:has_location])
+    app.put('ad_space', {
+      :name => "1",
+      :has_location => params[:has_location],
+      :rotation_direction => params[:rotation_direction]
+       }.to_json)
+
+
+    time_log("Stored in s3") do
+      AWS::S3::S3Object.store app_id, params[:icon], 'app-icons'
+      AWS::S3::S3Object.store app_id, params[:screenshot], 'app-screenshots'
+    end
+
+    respond_to do |f|
+      f.xml {render(:text => xml)}
+    end
+
+  end
     
   def campaign
     xml = <<XML_END
