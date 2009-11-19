@@ -30,25 +30,25 @@ class Service1Controller < ApplicationController
         when "Millennial"
           apid = CGI::escape campaign.get('id1')
           auid = CGI::escape campaign.get('id2')
-          "millennial?" + standard_params + "&apid=#{apid}&auid=#{auid}"
+          "millennial" + standard_params + "&apid=#{apid}&auid=#{auid}"
         when "MDotM"
           apikey = ""
           appkey = CGI::escape get_param(:app_id)
-          "mdotm?" + standard_params + "&apikey=#{apikey}&appkey=#{appkey}"
+          "mdotm" + standard_params + "&apikey=#{apikey}&appkey=#{appkey}"
         when "Adfonic"
           slot_id = CGI::escape campaign.get('id1')
-          "adfonic?" + standard_params + "&slot_id=#{slot_id}"
+          "adfonic" + standard_params + "&slot_id=#{slot_id}"
         when "Crisp"
           partner_key = CGI::escape campaign.get('id1')
           site_key = CGI::escape campaign.get('id2')
           zone_key = CGI::escape campaign.get('id3')
-          "crisp?" + standard_params + "&partner_key=#{partner_key}&site_key=#{site_key}&zone_key=#{zone_key}"
+          "crisp" + standard_params + "&partner_key=#{partner_key}&site_key=#{site_key}&zone_key=#{zone_key}"
         when "SocialReach"
-          "socialreach?" + standard_params
+          "socialreach" + standard_params
         when "PublisherAds"
           ad_id = CGI::escape campaign_id.get('ad_id')
           campaign_id = get_param(:CampaignID, true)
-          "publisher_ad?" + standard_params + "&ad_id=#{ad_id}&campaign_id=#{campaign_id}"
+          "publisher_ad" + standard_params + "&ad_id=#{ad_id}&campaign_id=#{campaign_id}"
         end
         ruby_lb + "getad/#{path}"
       when 'index'
