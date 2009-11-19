@@ -28,6 +28,8 @@ module MemcachedHelper
         Rails.logger.info("Memcache key not found: #{key}")
       rescue Memcached::ServerIsMarkedDead
         Rails.logger.info("Memcache::ServerIsMarkedDead: #{key}")
+      rescue Memcached::NoServersDefined
+        Rails.logger.info("Memcache::NoServersDefined: #{key}")
       end
     end
     
