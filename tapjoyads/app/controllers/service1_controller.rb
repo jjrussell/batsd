@@ -48,7 +48,7 @@ class Service1Controller < ApplicationController
         when "SocialReach"
           "socialreach" + standard_params
         when "PublisherAds"
-          ad_id = CGI::escape campaign_id.get('ad_id')
+          ad_id = CGI::escape campaign.get('ad_id')
           campaign_id = get_param(:AdCampaignID, true)
           "publisher_ad" + standard_params + "&ad_id=#{ad_id}&campaign_id=#{campaign_id}"
         end

@@ -281,11 +281,11 @@ class GetadController < ApplicationController
     @ad_return_obj.AdID = ad_id
     
     image = get_from_cache_and_save("img.s3.#{ad_id}") do
-      image_content = AWS::S3::S3Object.value ad_id, 'publisher_ads'
+      image_content = AWS::S3::S3Object.value "base64.#{ad_id}", 'publisher-ads'
     end
     
     @ad_return_obj.Image = image
-    @ad_return_obj.ImpressionID = params[:campaign_id]
+    @ad_return_obj.AdImpressionID = params[:campaign_id]
     
     render_ad
   end
