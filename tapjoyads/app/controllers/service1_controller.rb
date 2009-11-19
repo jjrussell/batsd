@@ -21,8 +21,10 @@ class Service1Controller < ApplicationController
             "&publisher_app_id=#{get_param(:AppID, true)}&publisher_user_record_id=#{get_param(:PublisherUserRecordID, true)}"
       when 'AdShown'
         ruby_lb + "adshown" + standard_params + "&campaign_id=#{get_param(:CampaignID, true)}"
+      when 'SubmitTapjoyAdClick'
+        ruby_lb + "submit_click/ad?"
       when 'GetTapjoyAd'
-        campaign = Campaign.new(get_param(:CampaignID, true))
+        campaign = Campaign.new(get_param(:AdCampaignID, true))
         network_name = campaign.get('network_name')
         Rails.logger.info campaign.to_json
         Rails.logger.info "network_name: #{network_name}"
@@ -47,7 +49,7 @@ class Service1Controller < ApplicationController
           "socialreach" + standard_params
         when "PublisherAds"
           ad_id = CGI::escape campaign_id.get('ad_id')
-          campaign_id = get_param(:CampaignID, true)
+          campaign_id = get_param(:AdCampaignID, true)
           "publisher_ad" + standard_params + "&ad_id=#{ad_id}&campaign_id=#{campaign_id}"
         end
         ruby_lb + "getad/#{path}"
