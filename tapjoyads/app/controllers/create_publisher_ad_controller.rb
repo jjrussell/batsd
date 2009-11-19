@@ -1,3 +1,5 @@
+require 'base64'
+
 class CreatePublisherAdController < ApplicationController
   include TimeLogHelper
   
@@ -46,7 +48,8 @@ XML_END
     #Thread.new do
       #store an image in s3
       time_log("Stored in s3") do
-        AWS::S3::S3Object.store ad_id, params[:image], 'publisher-ads'
+        AWS::S3::S3Object.store "raw." + ad_id, params[:image], 'publisher-ads'
+        AWS::S3::S3Object.store "base64." + ad_id, Base64.b64encode(params[:image]), 'publisher-ads'
       end
     #end
   
