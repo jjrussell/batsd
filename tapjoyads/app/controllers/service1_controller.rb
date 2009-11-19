@@ -22,7 +22,7 @@ class Service1Controller < ApplicationController
       when 'AdShown'
         ruby_lb + "adshown" + standard_params + "&campaign_id=#{get_param(:CampaignID, true)}"
       when 'SubmitTapjoyAdClick'
-        ruby_lb + "submit_click/ad?"
+        ruby_lb + "submit_click/ad" + standard_params + "&campaign_id=#{get_param(:AdImpressionID, true)}"
       when 'GetTapjoyAd'
         campaign = Campaign.new(get_param(:AdCampaignID, true))
         network_name = campaign.get('network_name')
