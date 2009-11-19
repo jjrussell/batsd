@@ -2,6 +2,9 @@
 
 # Restarts everything.
 
+require 'rubygems'
+require 'patron'
+
 rails_mode = ARGV.first || "development"
 unless ["development", "test", "production"].include?(rails_mode)
   raise "Unknown rails environment '#{rails_mode}'.  (Choose 'development', 'test' or 'production')"
@@ -13,7 +16,24 @@ puts "Stopping jobs"
 `script/jobs stop`
 puts "Restarting apache"
 `touch tmp/restart.txt`
-sleep(1)
+
+puts "Registering memcache machines"
+base_url= case rails_mode
+when 'production' then 'localhost:9898'
+when 'test' then 'localhost:9898'
+else 'localhost:3000' end
+sess = Patron::Session.new
+sess.base_url = base_url
+sess.timeout = 30
+sess.username = 'internal'
+sess.password = 'r3sU0oQav2Nl'
+sess.auth_type = :digest
+begin
+  sess.get("/job/register_servers")
+rescue Patron::TimeoutError
+  puts "Timed out when registering server"
+end
+
 puts "Starting jobs"
 `script/jobs start -- #{rails_mode}`
 puts "Starting poller"

@@ -10,21 +10,19 @@ require 'patron'
 
 puts `/home/webuser/server/deploy.rb`
 
+type = Base64::decode64(`curl -s http://169.254.169.254/1.0/user-data`)
+
 # Call the register_servers job on all machines, so that they pick up this new machine's memcache.
-port = '9898'
-server_list = case rails_mode
-when 'production'
-  `script/ec2servers mc`.split("\n")
-when 'test'
+server_list = case
+when 'testserver'
   `script/ec2servers testserver`.split("\n")
 else
-  port = '3000'
-  ['localhost:3000']
+  `script/ec2servers mc`.split("\n")
 end
 
 server_list.each do |server|
   sess = Patron::Session.new
-  sess.base_url = "#{server}:#{port}"
+  sess.base_url = "#{server}:9898"
   sess.timeout = 30
   sess.username = 'internal'
   sess.password = 'r3sU0oQav2Nl'
