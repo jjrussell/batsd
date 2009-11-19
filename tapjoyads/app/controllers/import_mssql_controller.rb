@@ -119,6 +119,7 @@ XML_END
       :rotation_direction => params[:rotation_direction]
        }.to_json)
 
+    app.save
 
     time_log("Stored in s3") do
       AWS::S3::S3Object.store app_id, params[:icon], 'app-icons'
