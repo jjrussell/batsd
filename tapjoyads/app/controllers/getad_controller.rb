@@ -241,8 +241,8 @@ class GetadController < ApplicationController
     
     ad = PublisherAd.new(ad_id)
     
-    if (ad.item.empty?)
-      error = Error.new
+    if (not ad.get('url'))
+      error = ::Error.new
       error.put('request', request.url)
       error.put('function', 'getad/publisher_ad')
       error.put('ip', request.remote_ip)
