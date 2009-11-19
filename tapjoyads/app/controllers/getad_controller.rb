@@ -11,7 +11,6 @@ require 'activemessaging/processor'
 
 class GetadController < ApplicationController
   include DownloadContent
-  include MemcachedHelper
   include ActiveMessaging::MessageSender
 
   missing_message = "missing required params"
@@ -148,7 +147,7 @@ class GetadController < ApplicationController
         image = download_image image_url
       else
         text = json['components']['text']['content']
-        image = get_from_cache_and_save("img.#{text.hash}") do
+        image = MemcachedModel.instance.get_from_cache_and_save("img.#{text.hash}") do
           start_time = Time.now
           image_array = Image.read("caption:#{text}") do
             self.size = "320x50"
@@ -225,7 +224,7 @@ class GetadController < ApplicationController
     
     image_name = "socialreach-#{num}.jpg"
     
-    image = get_from_cache_and_save("img.s3.#{image_name.hash}") do
+    image = MemcachedModel.instance.get_from_cache_and_save("img.s3.#{image_name.hash}") do
       image_content = AWS::S3::S3Object.value image_name, 'adimages'
       Base64.encode64 image_content
     end
@@ -280,7 +279,7 @@ class GetadController < ApplicationController
     @ad_return_obj.ClickURL = url
     @ad_return_obj.AdID = ad_id
     
-    image = get_from_cache_and_save("img.s3.#{ad_id}") do
+    image = MemcachedModel.instance.get_from_cache_and_save("img.s3.#{ad_id}") do
       image_content = AWS::S3::S3Object.value "base64.#{ad_id}", 'publisher-ads'
     end
     
@@ -300,7 +299,7 @@ class GetadController < ApplicationController
   end
   
   def download_image image_url
-    get_from_cache_and_save("img.#{image_url.hash}") do 
+    MemcachedModel.instance.get_from_cache_and_save("img.#{image_url.hash}") do 
       Base64.encode64 download_content(image_url)
     end
   end
