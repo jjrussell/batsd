@@ -7,6 +7,8 @@
 `mkdir -p /mnt/log/rails`
 `chown -R webuser.webuser /mnt/log`
 
+`crontab -r`
+
 `apachectl start`
 
 puts `su - webuser -c /home/webuser/server/configure_server.rb`
