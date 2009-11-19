@@ -1,6 +1,8 @@
 class CreatePublisherAdController < ApplicationController
   include TimeLogHelper
   
+  protect_from_forgery :except => :index
+  
   def index
     xml = <<XML_END
 <?xml version="1.0" encoding="UTF-8"?>
@@ -32,6 +34,7 @@ XML_END
     ad.put('open_in', params[:open_in])
     ad.put('max_daily_impressions', params[:max_daily_impressions]) if params[:max_daily_impressions]
     ad.put('max_total_impressions', params[:max_total_impressions]) if params[:max_total_impressions]
+    ad.put('max_impressions_per_device', params[:max_impressions_per_device]) if params[:max_impressions_per_device]
     ad.put('cpc', params[:cpc]) if params[:cpc]
     ad.put('cpa', params[:cpa]) if params[:cpa]    
     ad.put('cpm', params[:cpm]) if params[:cpm]
