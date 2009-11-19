@@ -263,14 +263,6 @@ class GetadController < ApplicationController
     
     app_id_to_advertise = ad.get('app_id_to_advertise')
     
-    #store this impression in the database
-    imp = WebRequest.new('publisher_ad_impression')
-    imp.put('ad_id', ad_id)
-    imp.put('udid', udid)
-    imp.put('app_id', app_id)
-    imp.put('ip_address', request.remote_ip)
-    
-    imp.save
         
     if (app_id_to_advertise)
       #todo is it installed??
@@ -293,7 +285,7 @@ class GetadController < ApplicationController
     end
     
     @ad_return_obj.Image = image
-    @ad_return_obj.ImpressionID = imp.item.name
+    @ad_return_obj.ImpressionID = params[:campaign_id]
     
     render_ad
   end
