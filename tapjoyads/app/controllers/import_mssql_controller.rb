@@ -105,19 +105,14 @@ XML_END
     app.put('store_url', params[:store_url])
     app.put('partner_id', params[:partner_id])
     app.put('os', params[:os])
-    app.put('launhced', params[:launched])
+    app.put('launched', params[:launched])
     app.put('status', params[:status])
     app.put('color', params[:color])
-    app.put('description_1', params[:description][0,999])
+    app.put('description_1', params[:description][0,999]) if params[:description]
     app.put('description_2', params[:description][1000,1999]) if params[:description].length > 1000
     app.put('description_3', params[:description][2000,2999]) if params[:description].length > 2000
     app.put('description_4', params[:description][3000,3999]) if params[:description].length > 3000
     app.put('has_location', params[:has_location])
-    app.put('ad_space', {
-      :name => "1",
-      :has_location => params[:has_location],
-      :rotation_direction => params[:rotation_direction]
-       }.to_json)
 
     app.save
 
