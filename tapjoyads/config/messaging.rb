@@ -10,11 +10,6 @@ ActiveMessaging::Gateway.define do |s|
   s.destination :getad_stats, RUN_MODE_PREFIX + 'GetadStats'
   s.destination :adshown_stats, RUN_MODE_PREFIX + 'AdshownStats'
   s.destination :adshown_request, RUN_MODE_PREFIX + 'AdshownRequest'
-  s.destination :web_request, RUN_MODE_PREFIX + 'WebRequest'
-  s.destination :update_stats, RUN_MODE_PREFIX + 'UpdateStats'
-  s.destination :add_app_to_device, RUN_MODE_PREFIX + 'DeviceAppList'
-  s.destination :device_lookup, RUN_MODE_PREFIX + 'DeviceLookup'
-  s.destination :process_stored_ids, RUN_MODE_PREFIX + 'ProcessStoredIds'
-  s.destination :store_click, RUN_MODE_PREFIX + 'StoreClick'
+  s.destination :failed_sdb_saves, RUN_MODE_PREFIX + 'FailedSdbSaves'
   s.destination :conversion_tracking, RUN_MODE_PREFIX + 'ConversionTracking'
 end

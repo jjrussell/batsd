@@ -253,6 +253,8 @@ class GetadController < ApplicationController
       return
     end
     
+    #todo daily/global limits???
+    
     @ad_return_obj = TapjoyAd.new
         
     url = ad.get('url')
@@ -271,6 +273,7 @@ class GetadController < ApplicationController
     imp.save
         
     if (app_id_to_advertise)
+      #todo is it installed??
       url = "http://ws.tapjoyads.com/redirect_to_app?" +
         "ad_id=#{CGI::escape(ad_id)}" +
         "&udid=#{CGI::escape(udid)}" +

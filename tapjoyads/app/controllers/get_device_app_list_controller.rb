@@ -1,10 +1,9 @@
 class GetDeviceAppListController < ApplicationController
   
   def index
-    udid = params[:udid]
-    device = DeviceAppList.new(udid)
+    device = DeviceAppList.new(params[:udid])
     
-    render :text => device.item.attributes.to_a.to_json
+    render :text => device.attributes.to_json
   end
   
 end

@@ -1,5 +1,5 @@
 class App < SimpledbResource
-  def initialize(key, load = true, memcache = true)
-    super 'app', key, load, memcache
+  def initialize(key, load = true)
+    super 'app', key, load
   end
 end

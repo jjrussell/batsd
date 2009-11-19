@@ -68,18 +68,16 @@ module StatsJobHelper
   end
   
   def get_item_to_process(domain_name, item_name, time)
-    response = SimpledbResource.query(domain_name, item_name, 
+    item_array = SimpledbResource.select(domain_name, item_name, 
         "#{item_name} < '#{time.to_f.to_s}'", "#{item_name} asc")
         
-    if (response.items.length == 0)
+    if (item_array.length == 0)
       return nil
-      puts 'no items'
     end
     
     # Choose a random item from the first 10 results.
-    item_num = rand([10, response.items.length].min)
-    puts 'items'
-    return response.items[item_num].name
+    item_num = rand([10, item_array.length].min)
+    return item_array[item_num].key
   end
   
   def get_stat_key(item_type, item_id, time)

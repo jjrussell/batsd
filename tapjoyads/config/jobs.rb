@@ -5,7 +5,7 @@ JobRunner::Gateway.define do |s|
   machine_type = Base64::decode64(`curl -s http://169.254.169.254/1.0/user-data`) if ENV['RAILS_ENV'] != "development"
   
   # Expensive jobs. Only run these on job servers.
-  if machine_type == 'jobserver'
+  if machine_type == 'jobserver' || ENV['RAILS_ENV'] == "development"
     s.add_job 'get_ad_network_data', 8.minutes
   
     s.add_job 'app_stats', 30.seconds

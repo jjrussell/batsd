@@ -32,6 +32,7 @@ XML_END
       device = DeviceAppList.new(params[:udid])
       unless device.get('app.' + params[:app_id])
         device.add_app(params[:app_id])
+        device.save
         # this is a first time device/app. add to the conversion tracking queue
         Rails.logger.info "Adding #{udid}.#{params[:app_id]} to conversion tracking sqs"
         publish :conversion_tracking, {:udid => params[:udid], :app_id => params[:app_id], 

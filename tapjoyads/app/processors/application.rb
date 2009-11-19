@@ -17,10 +17,4 @@ class ApplicationProcessor < ActiveMessaging::Processor
     end
   end
   
-  def on_message(message)
-    log(message)
-    args = QueueMessage.deserialize(message)
-    message(*args)
-  end
-  
 end
