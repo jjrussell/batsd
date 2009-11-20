@@ -33,10 +33,10 @@ class SimpledbResource
   # they will attempt be loaded from simpledb. If thet are still not found,
   # an empty attributes hash will be created.
   def load
-    @attributes = MemcachedModel.instance.get_from_cache_and_save(get_memcache_key) do
-      response = @@sdb.get_attributes(@domain_name, @key)
-      response[:attributes]
-    end
+   #@attributes = MemcachedModel.instance.get_from_cache_and_save(get_memcache_key) do
+     response = @@sdb.get_attributes(@domain_name, @key)
+     response[:attributes]
+    #end
   rescue AwsError => e
     if e.message.starts_with?("NoSuchDomain")
       Rails.logger.info "NoSuchDomain: #{@domain_name}, when attempting to load #{@key}"
