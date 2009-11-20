@@ -21,6 +21,8 @@ config.action_controller.allow_forgery_protection    = false
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
 
+MEMCACHE_SERVERS = ['127.0.0.1']
+
 EXCEPTIONS_NOT_LOGGED = []
 
 RUN_MODE_PREFIX = 'test_'

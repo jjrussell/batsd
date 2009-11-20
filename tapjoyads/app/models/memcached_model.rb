@@ -29,7 +29,7 @@ class MemcachedModel
   # returned from the yield block is returned.
   def get_from_cache(key, clone = false)
     cache = clone ? @cache.clone : @cache
-    check_servers(cache)
+    #check_servers(cache)
     
     value = nil
     time_log("Read from memcache") do
@@ -56,7 +56,7 @@ class MemcachedModel
   # Saves value to memcached, as long as value is not nil.
   def save_to_cache(key, value, clone = false, time = 1.hour)
     cache = clone ? @cache.clone : @cache
-    check_servers(cache)
+    #check_servers(cache)
     
     if value
       time_log("Wrote to memcache") do

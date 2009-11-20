@@ -2,7 +2,7 @@
 
 class Job::RegisterServersController < Job::JobController
   def index
-    MemcachedModel.instance.register_servers
+    #MemcachedModel.instance.register_servers
     
     render :text => "ok"
   end
