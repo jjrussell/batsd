@@ -44,16 +44,16 @@ XML_END
     end
     
 
-    #web_request = WebRequest.new('connect')
-    #web_request.put('app_id', params[:app_id])
-    #web_request.put('udid', udid)
-    #web_request.put('app_version', params[:app_version])
-    #web_request.put('device_os_version', params[:device_os_version])
-    #web_request.put('device_type', params[:device_type])
-    #web_request.put('library_version', params[:library_version])
-    #web_request.put('ip_address', request.remote_ip)
+    web_request = WebRequest.new('connect')
+    web_request.put('app_id', params[:app_id])
+    web_request.put('udid', udid)
+    web_request.put('app_version', params[:app_version])
+    web_request.put('device_os_version', params[:device_os_version])
+    web_request.put('device_type', params[:device_type])
+    web_request.put('library_version', params[:library_version])
+    web_request.put('ip_address', request.remote_ip)
   
-    #web_request.save
+    web_request.save
   
     respond_to do |f|
       f.xml {render(:text => xml)}
