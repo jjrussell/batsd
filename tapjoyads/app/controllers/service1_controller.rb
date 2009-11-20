@@ -13,16 +13,7 @@ class Service1Controller < ApplicationController
         "&device_os_version=#{get_param(:DeviceOSVersion)}"
       
       url = case params[:action]
-      when 'Connect'
-         ruby_lb + "connect" + standard_params
-      when 'SubmitAppStoreClick'
-        ruby_lb + "submit_click/store?" +
-            "udid=#{get_param(:DeviceTag, true)}&advertiser_app_id=#{get_param(:AdvertiserAppID, true)}" +
-            "&publisher_app_id=#{get_param(:AppID, true)}&publisher_user_record_id=#{get_param(:PublisherUserRecordID, true)}"
-      when 'AdShown'
-        ruby_lb + "adshown" + standard_params + "&campaign_id=#{get_param(:CampaignID, true)}"
-      when 'SubmitTapjoyAdClick'
-        ruby_lb + "submit_click/ad" + standard_params + "&campaign_id=#{get_param(:AdImpressionID, true)}"
+
       when 'GetTapjoyAd'
         if (get_param(:AdCampaignID, true) == "")
           render :text => "Missing AdCampaignID"
