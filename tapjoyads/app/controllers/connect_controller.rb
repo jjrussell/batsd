@@ -37,9 +37,11 @@ XML_END
     
     end
     
-    device_app = DeviceAppList.new(params[:udid], false)
-    device_app.put('app.' + params[:app_id],  Time.now.utc.to_f.to_s)
-    device_app.save(false)
+    device_app = DeviceAppList.new(params[:udid])
+    unless device_app.get('app.' + params[:app_id])
+      device_app.put('app.' + params[:app_id],  Time.now.utc.to_f.to_s)
+      device_app.save
+    end
     
 
     #web_request = WebRequest.new('connect')
