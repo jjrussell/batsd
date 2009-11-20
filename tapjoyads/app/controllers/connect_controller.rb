@@ -28,18 +28,18 @@ XML_END
     udid = params[:udid]
     
     #add this app to the device list
-    time_log("Added app to device list") do
-      device = DeviceAppList.new(params[:udid])
-      unless device.get('app.' + params[:app_id])
-        device.add_app(params[:app_id])
-        device.save
-        # this is a first time device/app. add to the conversion tracking queue
-        Rails.logger.info "Adding #{udid}.#{params[:app_id]} to conversion tracking sqs"
+    time_log("Check conversions and maybe add to sqs") do
+      click = StoreClick.new("#{params[:udid]}.#{params[:app_id]}")
+      unless (click.attributes.empty? || click.get('installed'))
         publish :conversion_tracking, {:udid => params[:udid], :app_id => params[:app_id], 
-          :install_date => Time.now.to_f.to_s}.to_json
+          :install_date => Time.now.to_f.to_s}.to_json      
       end
       
     end
+    
+    device_app = DeviceAppList.new(params[:udid], false)
+    device_app.put('app.' + params[:app_id],  Time.now.utc.to_f.to_s)
+    device_app.save
     
 
     web_request = WebRequest.new('connect')
