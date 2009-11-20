@@ -44,9 +44,12 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'service1.asmx/AdShown', :controller => 'adshown'
   map.connect 'service1.asmx/SubmitTapjoyAdClick', :controller => 'submit_click', :action => 'ad'
   map.connect 'service1.asmx/SubmitAppStoreClick', :controller => 'submit_click', :action => 'store'
-  map.connect 'service1.asmx/:action', :controller => 'service1'
   map.connect 'Service1.asmx/Connect', :controller => 'connect'
+  map.connect 'service1.asmx/GetAppIcon', :controller => 'get_app_image', :action => 'icon'
+    
+  map.connect 'service1.asmx/:action', :controller => 'service1'
   map.connect 'log_device_app', :controller => 'connect'
+  map.connect 'Service1.asmx/GetAppIcon', :controller => 'get_app_image', :action => 'icon'
   map.connect 'Service1.asmx/AdShown', :controller => 'adshown'
   map.connect 'Service1.asmx/SubmitTapjoyAdClick', :controller => 'submit_click', :action => 'ad'
   map.connect 'Service1.asmx/SubmitAppStoreClick', :controller => 'submit_click', :action => 'store'
