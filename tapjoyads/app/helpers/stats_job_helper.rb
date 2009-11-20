@@ -118,6 +118,7 @@ module StatsJobHelper
       url += "&item=#{item_id}"
       url += "&Data=#{data}"
       
+      Rails.logger.info(url)
       download_content(url)
     end
     
