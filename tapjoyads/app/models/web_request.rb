@@ -7,7 +7,10 @@ class WebRequest < SimpledbResource
     date = now.iso8601[0,10]
     
     key = UUIDTools::UUID.random_create.to_s
-    domain_name = "web-request-#{date}"
+    
+    num = rand(MAX_WEB_REQUEST_DOMAINS)
+    
+    domain_name = "web-request-#{date}-#{num}"
     
     super domain_name, key, false
     

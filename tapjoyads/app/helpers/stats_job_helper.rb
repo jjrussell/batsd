@@ -119,6 +119,7 @@ module StatsJobHelper
       url += "&Data=#{data}"
       
       Rails.logger.info(url)
+      Rails.logger.flush
       download_content(url)
     end
     
@@ -226,9 +227,12 @@ module StatsJobHelper
     for hour in last_hour..current_hour
       min_time = Time.utc(time.year, time.month, time.day, hour, 0, 0, 0)
       max_time = min_time + 1.hour
-      count = SimpledbResource.count("web-request-#{date}", 
+      count = 0
+      for i in (0..MAX_WEB_REQUEST_DOMAINS)
+        count += SimpledbResource.count("web-request-#{date}-#{i}", 
           "time >= '#{min_time.to_f.to_s}' and time < '#{max_time.to_f.to_s}' " +
           "and #{item_type}_id = '#{item_id}' and path= '#{path}'")
+      end
       hourly_impressions[hour] = count
     end
     return hourly_impressions
