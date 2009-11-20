@@ -25,7 +25,7 @@ class Service1Controller < ApplicationController
         ruby_lb + "submit_click/ad" + standard_params + "&campaign_id=#{get_param(:AdImpressionID, true)}"
       when 'GetTapjoyAd'
         if (get_param(:AdCampaignID, true) == "")
-          render :text => "Missing campaign id"
+          render :text => "Missing AdCampaignID"
           return
         end
         campaign = Campaign.new(get_param(:AdCampaignID, true))
