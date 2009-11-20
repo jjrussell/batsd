@@ -4,7 +4,7 @@
 
 require 'yaml'
 
-type = `server/server_type.rb`
+type = `/home/webuser/server/server_type.rb`
 
 run_mode = 'production'
 if type == 'test'
