@@ -43,6 +43,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'jobs/:controller/:action/:id'
   map.connect 'jobs/:controller/:action/:id.:format'
   map.connect 'Service1.asmx/Connect', :controller => 'connect'
+  map.connect 'log_device_app', :controller => 'connect'
   map.connect 'Service1.asmx/AdShown', :controller => 'adshown'
   map.connect 'Service1.asmx/SubmitTapjoyAdClick', :controller => 'submit_click', :action => 'ad'
   map.connect 'Service1.asmx/SubmitAppStoreClick', :controller => 'submit_click', :action => 'store'
