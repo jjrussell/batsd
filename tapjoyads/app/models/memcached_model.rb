@@ -6,7 +6,7 @@ class MemcachedModel
   SERVER_LIST_FILE_LOCATION = 'tmp/memcached_servers'
   
   def initialize
-    @cache = Memcached.new('')
+    @cache = Memcached.new(MEMCACHE_SERVERS)
     @last_update_time = 0
   end
   
