@@ -28,15 +28,13 @@ XML_END
     udid = params[:udid]
     
     #add this app to the device list
-    Thread.new do
-      time_log("Check conversions and maybe add to sqs") do
-        click = StoreClick.new("#{params[:udid]}.#{params[:app_id]}")
-        unless (click.attributes.empty? || click.get('installed'))
-          publish :conversion_tracking, {:udid => params[:udid], :app_id => params[:app_id], 
-            :install_date => Time.now.to_f.to_s}.to_json      
-        end
-      
+    time_log("Check conversions and maybe add to sqs") do
+      click = StoreClick.new("#{params[:udid]}.#{params[:app_id]}")
+      unless (click.attributes.empty? || click.get('installed'))
+        publish :conversion_tracking, {:udid => params[:udid], :app_id => params[:app_id], 
+          :install_date => Time.now.to_f.to_s}.to_json      
       end
+    
     end
     
     device_app = DeviceAppList.new(params[:udid], false)
@@ -44,16 +42,16 @@ XML_END
     device_app.save
     
 
-    web_request = WebRequest.new('connect')
-    web_request.put('app_id', params[:app_id])
-    web_request.put('udid', udid)
-    web_request.put('app_version', params[:app_version])
-    web_request.put('device_os_version', params[:device_os_version])
-    web_request.put('device_type', params[:device_type])
-    web_request.put('library_version', params[:library_version])
-    web_request.put('ip_address', request.remote_ip)
+    #web_request = WebRequest.new('connect')
+    #web_request.put('app_id', params[:app_id])
+    #web_request.put('udid', udid)
+    #web_request.put('app_version', params[:app_version])
+    #web_request.put('device_os_version', params[:device_os_version])
+    #web_request.put('device_type', params[:device_type])
+    #web_request.put('library_version', params[:library_version])
+    #web_request.put('ip_address', request.remote_ip)
   
-    web_request.save
+    #web_request.save
   
     respond_to do |f|
       f.xml {render(:text => xml)}
