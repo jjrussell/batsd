@@ -9,7 +9,7 @@ class SimpledbResource
   attr_accessor :domain_name, :key, :attributes
   
   @@sdb = SdbInterface.new(ENV['AMAZON_ACCESS_KEY_ID'], ENV['AMAZON_SECRET_ACCESS_KEY'], 
-      {:multi_thread => true})
+      {:multi_thread => true, :port => 80, :protocol => 'http'})
   
   ##
   # Initializes a new SimpledbResource, which represents a single row in a domain.
