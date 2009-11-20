@@ -19,4 +19,4 @@ else
   machine_type = 'web'
 end
 
-puts machine_type
+print machine_type
