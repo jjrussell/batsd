@@ -39,7 +39,7 @@ XML_END
     
     device_app = DeviceAppList.new(params[:udid], false)
     device_app.put('app.' + params[:app_id],  Time.now.utc.to_f.to_s)
-    device_app.save
+    device_app.save(false)
     
 
     #web_request = WebRequest.new('connect')
