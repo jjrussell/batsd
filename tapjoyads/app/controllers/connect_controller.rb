@@ -28,13 +28,15 @@ XML_END
     udid = params[:udid]
     
     #add this app to the device list
-    time_log("Check conversions and maybe add to sqs") do
-      click = StoreClick.new("#{params[:udid]}.#{params[:app_id]}")
-      unless (click.attributes.empty? || click.get('installed'))
-        publish :conversion_tracking, {:udid => params[:udid], :app_id => params[:app_id], 
-          :install_date => Time.now.to_f.to_s}.to_json      
-      end
+    Thread.new do
+      time_log("Check conversions and maybe add to sqs") do
+        click = StoreClick.new("#{params[:udid]}.#{params[:app_id]}")
+        unless (click.attributes.empty? || click.get('installed'))
+          publish :conversion_tracking, {:udid => params[:udid], :app_id => params[:app_id], 
+            :install_date => Time.now.to_f.to_s}.to_json      
+        end
       
+      end
     end
     
     device_app = DeviceAppList.new(params[:udid], false)
