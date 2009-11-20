@@ -8,7 +8,7 @@ unless ["development", "test", "production"].include?(rails_mode)
 end
 
 unless rails_mode == 'development'
-  security_groups = Base64::decode64(`curl -s http://169.254.169.254/latest/meta-data/security-groups`).split("\n")
+  security_groups = `curl -s http://169.254.169.254/latest/meta-data/security-groups`.split("\n")
   if security_groups.include? 'testserver'
     machine_type = :jobs
   elsif security_groups.include? 'masterjobs'
