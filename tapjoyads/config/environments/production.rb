@@ -23,7 +23,8 @@ config.action_controller.perform_caching             = true
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-MEMCACHE_SERVERS = ['domU-12-31-39-0A-9E-31.compute-1.internal']
+MEMCACHE_SERVERS = ['domU-12-31-39-09-F9-82.compute-1.internal',
+                    'domU-12-31-39-00-41-C1.compute-1.internal']
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
