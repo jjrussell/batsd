@@ -6,8 +6,6 @@
 require 'rubygems'
 require 'patron'
 
-`memcached -d -m 256`
-
 puts `/home/webuser/server/deploy.rb`
 
 type = Base64::decode64(`curl -s http://169.254.169.254/1.0/user-data`)
