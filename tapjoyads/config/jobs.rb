@@ -24,7 +24,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'campaign_stats', 10.seconds
     s.add_job 'yesterday_campaign_stats', 30.minutes
   
-    s.add_job 'fix_app_nils', 60.minutes
+    s.add_job 'fix_nils', 60.minutes
   elsif machine_type == :master
     
   end
