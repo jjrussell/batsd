@@ -46,6 +46,9 @@ class Service1Controller < ApplicationController
           ad_id = CGI::escape campaign.get('ad_id')
           campaign_id = get_param(:AdCampaignID, true)
           "publisher_ad" + standard_params + "&ad_id=#{ad_id}&campaign_id=#{campaign_id}"
+        else
+          render :text => "no ad"
+          return
         end
         ruby_lb + "getad/#{path}"
       when 'index'
