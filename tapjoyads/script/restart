@@ -7,27 +7,21 @@ unless ["development", "test", "production"].include?(rails_mode)
   raise "Unknown rails environment '#{rails_mode}'.  (Choose 'development', 'test' or 'production')"
 end
 
-unless rails_mode == 'development'
-  security_groups = `curl -s http://169.254.169.254/latest/meta-data/security-groups`.split("\n")
-  if security_groups.include? 'testserver'
-    machine_type = :jobs
-  elsif security_groups.include? 'masterjobs'
-    machine_type = :master
-  else
-    machine_type = :web
-  end
-else
-  machine_type = :jobs
-end
+machine_type = `server/server_type.rb`
 
 puts "Stopping poller"
 `script/poller stop`
 puts "Stopping jobs"
 `script/jobs stop`
+
+puts "Killing remaining pollers and jobs"
+`server/kill_all.rb poller`
+`server/kill_all.rb jobs`
+
 puts "Restarting apache"
 `touch tmp/restart.txt`
 
-if machine_type == :jobs
+if machine_type == 'jobs' || machine_type == 'test'
   puts "Starting jobs"
   `script/jobs start -- #{rails_mode}`
   puts "Starting poller"

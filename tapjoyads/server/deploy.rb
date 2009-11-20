@@ -3,13 +3,11 @@
 # Deploys to this server.
 
 require 'yaml'
-require 'base64'
 
-type = Base64::decode64(`curl -s http://169.254.169.254/1.0/user-data`)
-puts "Server type: #{type}"
+type = `server/server_type.rb`
 
 run_mode = 'production'
-if type == 'testserver'
+if type == 'test'
   run_mode = 'test'
 end
 
