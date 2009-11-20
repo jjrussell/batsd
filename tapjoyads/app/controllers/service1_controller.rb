@@ -24,6 +24,10 @@ class Service1Controller < ApplicationController
       when 'SubmitTapjoyAdClick'
         ruby_lb + "submit_click/ad" + standard_params + "&campaign_id=#{get_param(:AdImpressionID, true)}"
       when 'GetTapjoyAd'
+        if (get_param(:AdCampaignID, true) == "")
+          render :text => "Missing campaign id"
+          return
+        end
         campaign = Campaign.new(get_param(:AdCampaignID, true))
         network_name = campaign.get('network_name')
         Rails.logger.info campaign.to_json
