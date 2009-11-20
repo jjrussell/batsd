@@ -47,8 +47,8 @@ class Service1Controller < ApplicationController
           campaign_id = get_param(:AdCampaignID, true)
           "publisher_ad" + standard_params + "&ad_id=#{ad_id}&campaign_id=#{campaign_id}"
         else
-          render :text => "no ad"
-          return
+          "socialreach" + standard_params #render :text => "no ad"
+          #return
         end
         ruby_lb + "getad/#{path}"
       when 'index'
