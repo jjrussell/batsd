@@ -2,12 +2,22 @@
 
 # Restarts everything.
 
-require 'rubygems'
-require 'patron'
-
 rails_mode = ARGV.first || "development"
 unless ["development", "test", "production"].include?(rails_mode)
   raise "Unknown rails environment '#{rails_mode}'.  (Choose 'development', 'test' or 'production')"
+end
+
+unless rails_mode == 'development'
+  security_groups = Base64::decode64(`curl -s http://169.254.169.254/latest/meta-data/security-groups`).split("\n")
+  if security_groups.include? 'testserver'
+    machine_type = :jobs
+  elsif security_groups.include? 'masterjobs'
+    machine_type = :master
+  else
+    machine_type = :web
+  end
+else
+  machine_type = :jobs
 end
 
 puts "Stopping poller"
@@ -16,7 +26,10 @@ puts "Stopping jobs"
 `script/jobs stop`
 puts "Restarting apache"
 `touch tmp/restart.txt`
-puts "Starting jobs"
-`script/jobs start -- #{rails_mode}`
-puts "Starting poller"
-`script/poller start -- #{rails_mode}`
+
+if machine_type == :jobs
+  puts "Starting jobs"
+  `script/jobs start -- #{rails_mode}`
+  puts "Starting poller"
+  `script/poller start -- #{rails_mode}`
+end
