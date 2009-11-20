@@ -228,7 +228,7 @@ module StatsJobHelper
       min_time = Time.utc(time.year, time.month, time.day, hour, 0, 0, 0)
       max_time = min_time + 1.hour
       count = 0
-      for i in (0..MAX_WEB_REQUEST_DOMAINS)
+      for i in (0..MAX_WEB_REQUEST_DOMAINS - 1)
         count += SimpledbResource.count("web-request-#{date}-#{i}", 
           "time >= '#{min_time.to_f.to_s}' and time < '#{max_time.to_f.to_s}' " +
           "and #{item_type}_id = '#{item_id}' and path= '#{path}'")
