@@ -1,2 +1,2 @@
 config:
-    deploy_version: '50'
+    deploy_version: '48' # next is 51
