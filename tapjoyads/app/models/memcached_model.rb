@@ -38,10 +38,14 @@ class MemcachedModel
         Rails.logger.info("Memcache key found: #{key}")
       rescue Memcached::NotFound
         Rails.logger.info("Memcache key not found: #{key}")
-      rescue Memcached::ServerIsMarkedDead
+      rescue Memcached::ServerIsMarkedDead => e
         Rails.logger.info("Memcache::ServerIsMarkedDead: #{key}")
-      rescue Memcached::NoServersDefined
-        Rails.logger.info("Memcache::NoServersDefined: #{key}")
+      rescue Memcached::NoServersDefined => e
+        Rails.logger.info("Memcache::NoServersDefined: #{e}")
+      rescue Memcache::ATimeoutOccurred => e
+        Rails.logger.info("ATimeoutOccurred::NoServersDefined: #{e}")
+      rescue Memcached::SystemError => e
+        Rails.logger.info("Memcache::SystemError: #{e.message}")
       end
     end
     
