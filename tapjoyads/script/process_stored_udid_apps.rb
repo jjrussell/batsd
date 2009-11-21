@@ -12,15 +12,13 @@ name = ARGV.first
 File.open(name, "r") do |file|
   while (line = file.gets) 
     begin
-      items = line.split(',')
-      udid = items[0]
-      app_id = items[1]
-      timestamp  = Time.parse(items[2].gsub(/\s/,'T')).to_f.to_s
+      udid = line
+      app_id = 'f8751513-67f1-4273-8e4e-73b1e685e83d'
 
-      set = [udid, app_id, timestamp]
+      set = [udid, app_id]
       arr.push(set)
       count += 1
-      if count == 50
+      if count % 50
         message = arr.to_json
         publish :process_stored_ids, message
         arr = []
