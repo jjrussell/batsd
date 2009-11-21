@@ -5,7 +5,7 @@ class ProcessStoredIdsProcessor < ApplicationProcessor
   
   def on_message(message)
     start_time = Time.new
-    Rails.logger.info "ProcessStoredIds: Recieved message: #{message}"
+    Rails.logger.debug "ProcessStoredIds: Recieved message: #{message}"
     
     sdb = SDB::SDB.new(ENV['AMAZON_ACCESS_KEY_ID'], ENV['AMAZON_SECRET_ACCESS_KEY'])
     
