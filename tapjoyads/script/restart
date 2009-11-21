@@ -21,7 +21,7 @@ puts "Killing remaining pollers and jobs"
 puts "Restarting apache"
 `touch tmp/restart.txt`
 
-if machine_type == 'jobs' || machine_type == 'test'
+if machine_type == 'jobs'
   puts "Starting jobs"
   `script/jobs start -- #{rails_mode}`
   puts "Starting poller"
