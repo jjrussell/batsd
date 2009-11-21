@@ -111,18 +111,14 @@ module StatsJobHelper
   
   def send_stat_to_windows(date, stat_type, item_id, data)
     
-    Thread.new do
-      url = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/CronService.asmx/SubmitStat?'
-      url += "Date=#{CGI::escape(date)}"
-      url += "&StatType=#{stat_type}"
-      url += "&item=#{item_id}"
-      url += "&Data=#{data}"
-      
-      download_content(url, {}, 10)
-      Rails.logger.info(url)
-      Rails.logger.flush
-    end
+    url = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/CronService.asmx/SubmitStat?'
+    url += "Date=#{CGI::escape(date)}"
+    url += "&StatType=#{stat_type}"
+    url += "&item=#{item_id}"
+    url += "&Data=#{data}"
     
+    download_content(url, {}, 10)
+
   end
   
   def get_item_to_process(domain_name, item_name, time)
