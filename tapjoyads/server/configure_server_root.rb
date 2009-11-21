@@ -7,6 +7,13 @@
 `mkdir -p /mnt/log/rails`
 `chown -R webuser.webuser /mnt/log`
 
+# Add the opendns name servers.
+`echo -e "make_resolv_conf(){\n\t:\n}" > /etc/dhclient-enter-hooks`
+`chmod a+x /etc/dhclient-enter-hooks`
+`echo "nameserver 208.67.222.222" >> /etc/resolv.conf`
+`echo "nameserver 208.67.220.220" >> /etc/resolv.conf`
+`/etc/init.d/network restart`
+
 `crontab -r`
 
 `apachectl start`
