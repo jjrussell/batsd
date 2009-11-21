@@ -2,20 +2,9 @@ require 'base64'
 
 JobRunner::Gateway.define do |s|
   
-  unless ENV['RAILS_ENV'] == 'development'
-    security_groups = Base64::decode64(`curl -s http://169.254.169.254/latest/meta-data/security-groups`).split("\n")
-    if security_groups.include? 'testserver'
-      machine_type = :jobs
-    elsif security_groups.include? 'masterjobs'
-      machine_type = :master
-    else
-      machine_type = :web
-    end
-  else
-    machine_type = :jobs
-  end
+  machine_type = `/home/webuser/server/server_type.rb`
   
-  if machine_type == :jobs
+  if machine_type == 'jobs' || machine_type == 'test'
     s.add_job 'get_ad_network_data', 8.minutes
   
     s.add_job 'app_stats', 30.seconds
@@ -25,8 +14,10 @@ JobRunner::Gateway.define do |s|
     s.add_job 'yesterday_campaign_stats', 30.minutes
   
     s.add_job 'fix_nils', 60.minutes
-  elsif machine_type == :master
+  elsif machine_type == 'master'
     
+  else
+    puts "Not running any jobs. Not a job server."
   end
   
   # Maintenance jobs. Run on all servers:
