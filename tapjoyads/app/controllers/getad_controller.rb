@@ -266,14 +266,8 @@ class GetadController < ApplicationController
         
     if (app_id_to_advertise)
       #todo is it installed??
-      url = "http://ws.tapjoyads.com/redirect_to_app?" +
-        "ad_id=#{CGI::escape(ad_id)}" +
-        "&udid=#{CGI::escape(udid)}" +
-        "&impression_id=#{CGI::escape(imp_id)}" +
-        "&url=#{CGI::escape(url)}" +
-        "&from_app_id=#{app_id}"
       open_in = 'Safari'
-      @ad_return_obj.GameID = app_id_to_advertise
+      #@ad_return_obj.GameID = app_id_to_advertise
     end
     
     @ad_return_obj.OpenIn = open_in
