@@ -35,4 +35,4 @@ REDIRECT_URI = 'http://webservice-lb-624573684.us-east-1.elb.amazonaws.com/'
 
 NEXT_DEVICE_APP_LIST_TABLE = '1'
 
-MAX_WEB_REQUEST_DOMAINS = 5
+MAX_WEB_REQUEST_DOMAINS = 10

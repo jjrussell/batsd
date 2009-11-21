@@ -118,9 +118,9 @@ module StatsJobHelper
       url += "&item=#{item_id}"
       url += "&Data=#{data}"
       
+      download_content(url, {}, 10)
       Rails.logger.info(url)
       Rails.logger.flush
-      download_content(url)
     end
     
   end
