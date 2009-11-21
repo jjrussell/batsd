@@ -50,7 +50,7 @@ module StatsJobHelper
       stat.put('logins', hourly_impressions.join(','))
         
       paid_clicks = get_hourly_store_clicks(start_hour, end_hour, time, item_id, 
-          stat.get('paid_clicks_to_store'), true, false)
+          stat.get('paid_clicks_to_store'), false, true)
     
       send_stat_to_windows(time.iso8601[0,10], 'RewardedInstallClicks', item_id, paid_clicks.sum)
           
