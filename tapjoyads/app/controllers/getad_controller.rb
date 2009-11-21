@@ -237,6 +237,7 @@ class GetadController < ApplicationController
   def publisher_ad
     
     ad_id = params[:ad_id]
+    udid = params[:udid]
     
     ad = PublisherAd.new(ad_id)
     
