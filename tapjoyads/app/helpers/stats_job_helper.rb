@@ -194,7 +194,7 @@ module StatsJobHelper
       min_time = Time.utc(time.year, time.month, time.day, hour, 0, 0, 0)
       max_time = min_time + 1.hour
       
-      query = "time >= '#{min_time.to_f.to_s}' and time < '#{max_time.to_f.to_s}' "
+      query = "click_date >= '#{min_time.to_f.to_s}' and click_date < '#{max_time.to_f.to_s}' "
       if advertiser
         query += "and advertiser_app_id = '#{item_id}' "
       else
