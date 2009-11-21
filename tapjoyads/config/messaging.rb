@@ -12,4 +12,5 @@ ActiveMessaging::Gateway.define do |s|
   s.destination :adshown_request, RUN_MODE_PREFIX + 'AdshownRequest'
   s.destination :failed_sdb_saves, RUN_MODE_PREFIX + 'FailedSdbSaves'
   s.destination :conversion_tracking, RUN_MODE_PREFIX + 'ConversionTracking'
+  s.destination :process_stored_ids, RUN_MODE_PREFIX + 'ProcessStoredIds'
 end
