@@ -1,4 +1,6 @@
 module StatsJobHelper
+  include DownloadContent
+  
   ##
   # Updates the hourly stats for a given domain.
   def hourly_stats(domain_name, domain_class)
