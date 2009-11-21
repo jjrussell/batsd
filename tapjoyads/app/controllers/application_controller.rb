@@ -35,7 +35,7 @@ class ApplicationController < ActionController::Base
   def set_param(r, w, lower = false)
     if ( (not params[r]) && (params[w]) )
       params[r] = params[w] 
-      params[r] = params[r].downcase if lower
+      params[r] = params[r].downcase.strip if lower
     end
   end
     
