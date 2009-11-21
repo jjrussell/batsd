@@ -6,3 +6,4 @@
 `./kill_all.rb memcached`
 
 puts `/home/webuser/server/deploy.rb`
+  

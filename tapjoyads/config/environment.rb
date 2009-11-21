@@ -100,12 +100,4 @@ Rails::Initializer.run do |config|
       end
     end
   end
-  
-  SERVER_TYPE = `server/server_type.rb`
-  
-  # NewRelic:
-  if SERVER_TYPE == 'web'
-    NewRelic::Agent.manual_start({:app_name => 'TapjoyApiWeb'})
-  else
-    NewRelic::Agent.manual_start({:app_name => 'TapjoyApiJobs'})
 end

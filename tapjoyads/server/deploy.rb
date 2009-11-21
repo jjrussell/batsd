@@ -23,4 +23,12 @@ end
 
 puts `cd /home/webuser/tapjoyads && svn switch #{svn_url}`
 
+server_type = `/home/webuser/server/server_type.rb`
+
+if server_type == 'jobs'
+  `mv /home/webuser/tapjoyads/config/newrelic-jobs.yml /home/webuser/tapjoyads/config/newrelic.yml`
+else
+  `mv /home/webuser/tapjoyads/config/newrelic-web.yml /home/webuser/tapjoyads/config/newrelic.yml`
+end
+
 puts `cd /home/webuser/tapjoyads && script/restart #{run_mode}`
