@@ -2,6 +2,7 @@
 
 class Job::CleanupWebRequestsController < Job::JobController
   include RightAws
+  include TimeLogHelper
   
   def initialize
     @s3 = S3.new(ENV['AMAZON_ACCESS_KEY_ID'], ENV['AMAZON_SECRET_ACCESS_KEY'])
@@ -63,33 +64,45 @@ class Job::CleanupWebRequestsController < Job::JobController
   # Next, the file is uploaded to s3, in to the 'web-requests' bucket.
   # Finally, assuming no errors have occurred, the domain is deleted.
   def backup_domain(domain_name)
-    file_name = "tmp/#{RUN_MODE_PREFIX}#{domain_name}.sdb"
-    gzip_file_name = "#{file_name}.gz"
-    s3_name = "#{RUN_MODE_PREFIX}#{domain_name}.sdb"
-    file = open(file_name, 'w')
+    time_log("Backed up domain: #{domain_name}") do
+      file_name = "tmp/#{RUN_MODE_PREFIX}#{domain_name}.sdb"
+      gzip_file_name = "#{file_name}.gz"
+      s3_name = "#{RUN_MODE_PREFIX}#{domain_name}.sdb"
+      file = open(file_name, 'w')
     
-    next_token = nil
-    begin 
-      response = SimpledbResource.select(domain_name, '*', nil, nil, next_token)
-      puts response
-      next_token = response[:next_token]
-      response[:items].each do |item|
-        file.write(item.serialize)
-        file.write("\n")
-      end
-    end while next_token
-    file.close
+      box_usage = 0
+      count = 0
+      next_token = nil
+      begin 
+        count += 1
+        response = SimpledbResource.select(domain_name, '*', nil, nil, next_token)
+        puts response
+        next_token = response[:next_token]
+        box_usage += response[:box_usage].to_f
+        response[:items].each do |item|
+          file.write(item.serialize)
+          file.write("\n")
+        end
+      end while next_token
+      file.close
     
-    `gzip -f #{file_name}`
+      Rails.logger.info "Made #{count} select queries. Total box usage: #{box_usage}"
     
-    @bucket.put(s3_name, open(gzip_file_name))
+      `gzip -f #{file_name}`
     
-    SimpledbResource.delete_domain(domain_name)
-    `rm #{gzip_file_name}`
+      @bucket.put(s3_name, open(gzip_file_name))
+      Rails.logger.info "Successfully stored #{s3_name} to s3."
     
+      reponse = SimpledbResource.delete_domain(domain_name)
+      Rails.logger.info "Deleted domain. Box usage for delete: #{response[:box_usage]}"
+    
+      `rm #{gzip_file_name}`
+    end
     logger.info "Successfully backed up #{domain_name}"
   rescue AwsError => e
     logger.info "Error while trying to back up #{domain_name}: #{e}"
+    `rm #{file_name}`
+    `rm #{gzip_file_name}`
   end
   
 end

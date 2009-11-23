@@ -6,4 +6,15 @@
 
 server_list = `script/ec2servers #{ARGV.first}`.split("\n")
 
-# Todo: launch screen with an ssh connection to each server
+server_num = (ARGV[1] || 0).to_i
+
+server = server_list[server_num]
+
+user = ARGV[2] || 'webuser'
+
+puts "#{server_list.length} total servers:"
+server_list.each_index do |i|
+  puts "#{i}. #{server_list[i]}"
+end
+puts "Connecting to server #{server_num} as #{user}"
+system "ssh #{user}@#{server}"

@@ -8,8 +8,11 @@ class SimpledbResource
   
   attr_accessor :domain_name, :key, :attributes
   
-  @@sdb = SdbInterface.new(ENV['AMAZON_ACCESS_KEY_ID'], ENV['AMAZON_SECRET_ACCESS_KEY'], 
-      {:multi_thread => true, :port => 80, :protocol => 'http'})
+  def self.reset_connection
+    @@sdb = SdbInterface.new(ENV['AMAZON_ACCESS_KEY_ID'], ENV['AMAZON_SECRET_ACCESS_KEY'], 
+        {:multi_thread => true, :port => 80, :protocol => 'http'})
+  end
+  self.reset_connection
   
   ##
   # Initializes a new SimpledbResource, which represents a single row in a domain.
@@ -32,17 +35,22 @@ class SimpledbResource
   # an empty attributes hash will be created.
   def load
     @attributes = MemcachedModel.instance.get_from_cache_and_save(get_memcache_key) do
-      response = @@sdb.get_attributes(@domain_name, @key)
-      response[:attributes]
+      begin
+        response = @@sdb.get_attributes(@domain_name, @key)
+        return response[:attributes]
+      rescue AwsError => e
+        if e.message.starts_with?("NoSuchDomain")
+          Rails.logger.info "NoSuchDomain: #{@domain_name}, when attempting to load #{@key}"
+          # Domain will be created on save.
+          return {}
+        elsif e.message =~ /getaddrinfo/
+          raise e
+        else
+          raise e
+        end
+      end
+      raise "Attrbutes failed to load from simpledb."
     end
-  rescue AwsError => e
-    if e.message.starts_with?("NoSuchDomain")
-      Rails.logger.info "NoSuchDomain: #{@domain_name}, when attempting to load #{@key}"
-      # Do nothing. Attributes will remain defined as {}. Domain will be created on save.
-    else
-      raise e
-    end
-    
   end
   
   ##
@@ -52,13 +60,14 @@ class SimpledbResource
   # replace: Whether to replace attribute values with identical names. It is important to note that
   #     if load() has not been called, and replace is set to true, it is possible to overwrite
   #     attribute values.
-  def save(write_to_memcache = true, replace = true)
+  # updated_at: Whether to include an updated-at attribute.
+  def save(write_to_memcache = true, replace = true, updated_at = true)
     time_log("Spawing thread") do
       Thread.new do
         Rails.logger.info "Saving to #{@domain_name}"
         
         time_log("Saving to sdb") do
-          put('updated-at', Time.now.utc.to_f.to_s)
+          put('updated-at', Time.now.utc.to_f.to_s) if updated_at
           
           begin
             @@sdb.put_attributes(@domain_name, @key, @attributes, replace)
@@ -171,7 +180,8 @@ class SimpledbResource
     
     return {
       :items => sdb_item_array,
-      :next_token => response[:next_token]
+      :next_token => response[:next_token],
+      :box_usage => response[:box_usage]
     }
     
   rescue => e

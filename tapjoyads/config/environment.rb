@@ -97,6 +97,7 @@ Rails::Initializer.run do |config|
     PhusionPassenger.on_event(:starting_worker_process) do |forked|
       if forked
         MemcachedModel.instance.clone
+        SimpledbResource.reset_connection
       end
     end
   end
