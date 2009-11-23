@@ -64,10 +64,11 @@ class Job::CleanupWebRequestsController < Job::JobController
   # Next, the file is uploaded to s3, in to the 'web-requests' bucket.
   # Finally, assuming no errors have occurred, the domain is deleted.
   def backup_domain(domain_name)
+    file_name = "tmp/#{RUN_MODE_PREFIX}#{domain_name}.sdb"
+    gzip_file_name = "#{file_name}.gz"
+    s3_name = "#{RUN_MODE_PREFIX}#{domain_name}.sdb"
+    
     time_log("Backed up domain: #{domain_name}") do
-      file_name = "tmp/#{RUN_MODE_PREFIX}#{domain_name}.sdb"
-      gzip_file_name = "#{file_name}.gz"
-      s3_name = "#{RUN_MODE_PREFIX}#{domain_name}.sdb"
       file = open(file_name, 'w')
     
       box_usage = 0
@@ -89,18 +90,17 @@ class Job::CleanupWebRequestsController < Job::JobController
       Rails.logger.info "Made #{count} select queries. Total box usage: #{box_usage}"
     
       `gzip -f #{file_name}`
-    
+
       @bucket.put(s3_name, open(gzip_file_name))
       Rails.logger.info "Successfully stored #{s3_name} to s3."
-    
+  
       reponse = SimpledbResource.delete_domain(domain_name)
       Rails.logger.info "Deleted domain. Box usage for delete: #{response[:box_usage]}"
-    
-      `rm #{gzip_file_name}`
     end
     logger.info "Successfully backed up #{domain_name}"
   rescue AwsError => e
     logger.info "Error while trying to back up #{domain_name}: #{e}"
+  ensure
     `rm #{file_name}`
     `rm #{gzip_file_name}`
   end
