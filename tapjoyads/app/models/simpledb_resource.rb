@@ -17,9 +17,7 @@ class SimpledbResource
   # key: The item key
   # load: Whether the item attributes should be laoded at all.
   def initialize(domain_name, key, load = true)
-    # Set the domain name, but strip any pre-existing run mode prefix, in order to ensure that
-    # only one prefix is added.
-    @domain_name = RUN_MODE_PREFIX + domain_name.gsub(Regexp.new('^' + RUN_MODE_PREFIX), '')
+    @domain_name = get_real_domain_name(domain_name)
     @key = key
     @attributes = {}
     
@@ -118,19 +116,35 @@ class SimpledbResource
   end
   
   ##
+  # Performs a batch_put_attributes.
+  def self.put_items(items, replace = false)
+    raise "Too many items to batch_put" if items.length >25
+    return {} if items.length == 0
+
+    domain_name = items[0].domain_name
+    items_object = {}
+    items.each do |item|
+      raise "All domain names must be the same for batch_put_attributes" if item.domain_name != domain_name
+      items_object[item.key] = item.attributes
+    end
+    return @@sdb.batch_put_attributes(domain_name, items_object, replace)
+  end
+  
+  ##
   # Runs a select count(*) for the specified domain, with the specified where clause,
   # and returns the number.
-  def self.count(domain, where = nil)
+  def self.count(domain_name, where = nil)
+    domain_name = get_real_domain_name(domain_name)
     where_clause = where ? "where #{where}" : ''
     next_token = nil
     count = 0
     iterations = 0
     begin 
       iterations += 1
-      response = @@sdb.select("select count(*) from `#{RUN_MODE_PREFIX}#{domain}` #{where_clause}")
+      response = @@sdb.select("select count(*) from `#{domain_name}` #{where_clause}", next_token)
       count += response[:items][0]['Domain']['Count'][0].to_i
       next_token = response[:next_token]
-    end while not next_token.nil? and iterations < 100
+    end while next_token and iterations < 100
     if iterations == 100
       Rails.logger.warn 'Iterations hit max'
     end
@@ -139,8 +153,9 @@ class SimpledbResource
   
   ##
   # Returns an array of items which match the specified select 
-  def self.select(domain, item = '*', where = nil, order = nil, next_token = nil)
-    query = "SELECT #{item} FROM `#{RUN_MODE_PREFIX}#{domain}`"
+  def self.select(domain_name, item = '*', where = nil, order = nil, next_token = nil)
+    domain_name = get_real_domain_name(domain_name)
+    query = "SELECT #{item} FROM `#{domain_name}`"
   
     query = query + " WHERE #{where}" if where
     query = query + " ORDER BY #{order}" if order
@@ -149,14 +164,29 @@ class SimpledbResource
     
     sdb_item_array = []
     response[:items].each do |item|
-      sdb_item = SimpledbResource.new(domain, item.keys[0], false)
+      sdb_item = SimpledbResource.new(domain_name, item.keys[0], false)
       sdb_item.attributes = item.values[0]
       sdb_item_array.push(sdb_item)
     end
     
-    return sdb_item_array
-  rescue
+    return {
+      :items => sdb_item_array,
+      :next_token => response[:next_token]
+    }
+    
+  rescue => e
     Rails.logger.error("Bad select query: #{query}")
+    raise e
+  end
+  
+  def self.create_domain(domain_name)
+    domain_name = get_real_domain_name(domain_name)
+    return @@sdb.create_domain(domain_name)
+  end
+  
+  def self.delete_domain(domain_name)
+    domain_name = get_real_domain_name(domain_name)
+    return @@sdb.delete_domain(domain_name)
   end
   
   ##
@@ -184,4 +214,15 @@ class SimpledbResource
   def get_memcache_key
     "sdb.#{@domain_name}.#{@key}"
   end
+  
+  # Return the domain name, but strip any pre-existing run mode prefix, in order to ensure that
+  # only one prefix is added.
+  def self.get_real_domain_name(domain_name)
+    RUN_MODE_PREFIX + domain_name.gsub(Regexp.new('^' + RUN_MODE_PREFIX), '')
+  end
+  
+  def get_real_domain_name(domain_name)
+    SimpledbResource.get_real_domain_name(domain_name)
+  end
+  
 end

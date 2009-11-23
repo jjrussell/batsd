@@ -100,4 +100,9 @@ Rails::Initializer.run do |config|
       end
     end
   end
+  
+  # Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
+  # to the list of transient problems which will automatically get retried by RightAws.
+  require 'right_aws'
+  RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable']
 end

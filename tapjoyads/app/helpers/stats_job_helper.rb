@@ -125,7 +125,7 @@ module StatsJobHelper
   
   def get_item_to_process(domain_name, item_name, time)
     item_array = SimpledbResource.select(domain_name, item_name, 
-        "#{item_name} < '#{time.to_f.to_s}'", "#{item_name} asc")
+        "#{item_name} < '#{time.to_f.to_s}'", "#{item_name} asc").items
         
     if (item_array.length == 0)
       return nil

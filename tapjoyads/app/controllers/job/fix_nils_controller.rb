@@ -13,7 +13,7 @@ class Job::FixNilsController < Job::JobController
   
   def fix_times(domain, domain_class)
     items = SimpledbResource.select(domain, '*', 
-      "next_run_time is null or interval_update_time is null or next_daily_run_time is null")
+      "next_run_time is null or interval_update_time is null or next_daily_run_time is null").items
       
     items.each do |item| 
       unless (item.get('next_run_time'))
