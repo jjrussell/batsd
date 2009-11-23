@@ -24,7 +24,7 @@
 `crontab -r`
 
 # Rails log rotation:
-`cp /home/webuser/server /etc/logrotate.d/rails`
+`cp /home/webuser/server/rails-logrotate /etc/logrotate.d/rails`
 
 `apachectl start`
 
