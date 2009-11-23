@@ -1,0 +1,10 @@
+/mnt/log/rails/*log {
+    daily
+    rotate 10
+    missingok
+    notifempty
+    sharedscripts
+    postrotate
+	    touch /home/webuser/tapjoyads/tmp/restart.txt
+    endscript
+}

@@ -14,7 +14,17 @@
 `echo "nameserver 208.67.220.220" >> /etc/resolv.conf`
 `/etc/init.d/network restart`
 
+# Remove uneeded cron jobs, which hog cpu
+`rm -f /etc/cron.daily/0logwatch`
+`rm -f /etc/cron.daily/makewhatis.cron`
+`rm -f /etc/cron.daily/mlocate.cron`
+`rm -f /etc/cron.daily/rpm`
+`rm -f /etc/cron.weekly/makewhatis.cron`
+
 `crontab -r`
+
+# Rails log rotation:
+`cp /home/webuser/server /etc/logrotate.d/rails`
 
 `apachectl start`
 
