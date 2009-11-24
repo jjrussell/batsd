@@ -15,8 +15,9 @@ class ApplicationController < ActionController::Base
   # from your application log (in this case, all fields with names like "password"). 
   # filter_parameter_logging :password
   
+  private
+  
   def fix_params
-    
     set_param(:udid, :DeviceTag, true)
     set_param(:app_id, :AppID, true)
     set_param(:device_os_version, :DeviceOSVersion)
@@ -29,13 +30,12 @@ class ApplicationController < ActionController::Base
     set_param(:publisher_app_id, :AppID, true)
     set_param(:publisher_user_record_id, :PublisherUserRecordID, true)
     set_param(:campaign_id, :AdImpressionID, true)
-
-   end
+  end
   
-  def set_param(r, w, lower = false)
-    if ( (not params[r]) && (params[w]) )
-      params[r] = params[w] 
-      params[r] = params[r].downcase.strip if lower
+  def set_param(to, from, lower = false)
+    if (not params[to]) && params[from]
+      params[to] = params[from] 
+      params[to] = params[to].downcase.strip if lower
     end
   end
     

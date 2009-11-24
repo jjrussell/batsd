@@ -11,7 +11,6 @@ require 'activemessaging/processor'
 
 class GetadController < ApplicationController
   include DownloadContent
-  include ActiveMessaging::MessageSender
 
   missing_message = "missing required params"
   verify :params => [:udid, :app_id],
@@ -50,6 +49,10 @@ class GetadController < ApplicationController
     
       click_url = doc.find('//ad/clickUrl').first.content
       image_url = doc.find('//ad/image/url').first.content
+      if image_url.empty?
+        no_ad
+        return
+      end
       image = download_image image_url
       
       @ad_return_obj.ClickURL = click_url
@@ -196,7 +199,7 @@ class GetadController < ApplicationController
     #     "&zonekey=#{CGI::escape(params[:zone_key])}" +
     #     "&sectionkey"
     
-    json_string = download_content(url, 'User-Agent' => request.headers['User-Agent'])
+    json_string = download_content(url, {:headers => {'User-Agent' => request.headers['User-Agent']}})
     
     json = JSON.parse(json_string)
     

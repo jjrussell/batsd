@@ -4,7 +4,6 @@ class ConversionTrackingProcessor < ApplicationProcessor
   subscribes_to :conversion_tracking
   
   def on_message(message)
-    
     json = JSON.parse(message)
     udid = json['udid']
     advertiser_app_id = json['app_id']
@@ -29,16 +28,10 @@ class ConversionTrackingProcessor < ApplicationProcessor
         "&DeviceTag=#{udid}&PublisherUserID=#{publisher_user_record_id}" +
         "&MoneyPaidForInstall=0"
         
-      Rails.logger.info "Calling #{url}"
+      download_content(url, {:timeout => 15})
       
-      download_content(url, {}, 15) #15 second timeout
-      
-      click.put('installed',"#{install_date.to_s}")
+      click.put('installed', "#{install_date.to_s}")
       click.save
-
-      
-    end #worth checking conversions
-
+    end
   end
-  
 end

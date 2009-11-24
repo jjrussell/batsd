@@ -9,11 +9,15 @@ class Job::GetAdNetworkDataController < Job::JobController
       'f2eb272c-1783-4589-99a0-667e1a45ac51' => MillennialSite,
       '9054df9e-1d7e-4fa7-91d6-7373c1cd0aff' => AdfonicSite
     }
+    @download_content_options = {
+      :timeout => 30,
+      :authenticate_internal => true
+    }
   end
   
   def index
     url = "http://tapjoyconnect.com/CronService.asmx/GetAdCampaign?password=taptapcampaign"
-    content = download_content(url, {}, 30)
+    content = download_content(url, @download_content_options)
     
     doc = Hpricot.parse(content)
     ad_network_id = doc.search('//adcampaign/adnetwork').first.inner_text
@@ -59,7 +63,7 @@ class Job::GetAdNetworkDataController < Job::JobController
         "&CTR=#{data.ctr.to_s}" + 
         "&Date=#{data.date.to_s}"
     
-    response = download_content(url, {}, 30)
+    response = download_content(url, @download_content_options)
     doc = Hpricot.parse(response)
     response_string = doc.search('//string').first.inner_text
    
@@ -241,7 +245,7 @@ class Job::GetAdNetworkDataController < Job::JobController
       @today_data = Data.new
       @yesterday_data = Data.new
 
-      csv = download_content(uri, {}, 30)
+      csv = download_content(uri, {:timeout => 30})
 
       get_next_line = false
       today = true

@@ -40,28 +40,36 @@ ActionController::Routing::Routes.draw do |map|
   # consider removing the them or commenting them out if you're using named routes and resources.
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
+  
+  # Special paths:
+  map.connect 'log_device_app/:action/:id', :controller => 'connect'
+  
+  # Service1.asmx redirects. (Must include both lower-case and capital: service1.asmx and Service1.asmx).
+  # These paths will be supported indefinitely - or as long as we support the legacy api.
   map.connect 'service1.asmx/Connect', :controller => 'connect'
-  map.connect 'service1.asmx/AdShown', :controller => 'adshown'
-  map.connect 'service1.asmx/SubmitTapjoyAdClick', :controller => 'submit_click', :action => 'ad'
-  map.connect 'service1.asmx/SubmitAppStoreClick', :controller => 'submit_click', :action => 'store'
   map.connect 'Service1.asmx/Connect', :controller => 'connect'
-  map.connect 'service1.asmx/GetAppIcon', :controller => 'get_app_image', :action => 'icon'
-    
-  map.connect 'service1.asmx/:action', :controller => 'service1'
-  map.connect 'log_device_app', :controller => 'connect'
-  map.connect 'Service1.asmx/GetAppIcon', :controller => 'get_app_image', :action => 'icon'
+  map.connect 'service1.asmx/AdShown', :controller => 'adshown'
   map.connect 'Service1.asmx/AdShown', :controller => 'adshown'
+  map.connect 'service1.asmx/SubmitTapjoyAdClick', :controller => 'submit_click', :action => 'ad'
   map.connect 'Service1.asmx/SubmitTapjoyAdClick', :controller => 'submit_click', :action => 'ad'
+  map.connect 'service1.asmx/SubmitAppStoreClick', :controller => 'submit_click', :action => 'store'
   map.connect 'Service1.asmx/SubmitAppStoreClick', :controller => 'submit_click', :action => 'store'
+  map.connect 'service1.asmx/GetAppIcon', :controller => 'get_app_image', :action => 'icon'
+  map.connect 'Service1.asmx/GetAppIcon', :controller => 'get_app_image', :action => 'icon'
+  map.connect 'service1.asmx/:action', :controller => 'service1'
   map.connect 'Service1.asmx/:action', :controller => 'service1'
-  map.connect 'CronService.asmx/:action', :controller => 'cron_service'
-  map.connect 'TapDefenseCurrencyService.asmx/:action', :controller => 'tapdefense_currency'
-  map.connect 'TapPointsCurrencyService.asmx/:action', :controller => 'tappoints_currency'
-  map.connect 'RingtoneService.asmx/:action', :controller => 'ringtone_currency'
-  map.connect 'AppRedir.aspx/:action', :controller => 'app_redir'
-  map.connect 'Redir.aspx/:action', :controller => 'redir'
-  map.connect 'RateApp.aspx/:action', :controller => 'rate_app'
-  map.connect 'ReceiveOffersService.asmx/:action', :controller => 'receive_offers'
   
+  # Generic windows redirectors. These will be transitions over to ruby controllers as
+  # functionality is moved off of windows.
+  map.connect 'TapDefenseCurrencyService.asmx/:action', :controller => 'win_redirector'
+  map.connect 'TapPointsCurrencyService.asmx/:action', :controller => 'win_redirector'
+  map.connect 'RingtoneService.asmx/:action', :controller => 'win_redirector'
+  map.connect 'AppRedir.aspx/:action', :controller => 'win_redirector'
+  map.connect 'Redir.aspx/:action', :controller => 'win_redirector'
+  map.connect 'RateApp.aspx/:action', :controller => 'win_redirector'
+  map.connect 'ReceiveOffersService.asmx/:action', :controller => 'win_redirector'
   
+  # Authenticated windows redirectors. These too will be removed/moved to standard 
+  # ruby controllers in time.
+  map.connect 'CronService.asmx/:action', :controller => 'authenticated_win_redirector'
 end

@@ -119,7 +119,7 @@ module StatsJobHelper
     url += "&item=#{item_id}"
     url += "&Data=#{data}"
     
-    download_content(url, {}, 10)
+    download_content(url, {:timeout => 30, :authenticate_internal => true})
 
   end
   
