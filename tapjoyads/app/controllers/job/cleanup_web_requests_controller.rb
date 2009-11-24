@@ -14,10 +14,17 @@ class Job::CleanupWebRequestsController < Job::JobController
     date = params[:date]
     
     backup_domain("web-request-#{date}")
+    thread_list = []
     MAX_WEB_REQUEST_DOMAINS.times do |num|
-      backup_domain("web-request-#{date}-#{num}")
+      thread = Thread.new do
+        backup_domain("web-request-#{date}-#{num}")
+      end
+      thread_list.push(thread)
     end
     
+    thread_list.each do |thread|
+      thread.join
+    end
     
     render :text => 'ok'
   end
