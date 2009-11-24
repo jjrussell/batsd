@@ -1,8 +1,8 @@
 class GetAppImageController < ApplicationController
+  include MemcachedHelper
   
   def icon
-    
-    if ( (not params[:app_id])  )
+    unless params[:app_id]
       error = ::Error.new
       error.put('request', request.url)
       error.put('function', 'connect')
@@ -19,7 +19,7 @@ class GetAppImageController < ApplicationController
     
     image_name = "#{app_id}"
     
-    image = MemcachedModel.instance.get_from_cache_and_save("icon.s3.#{image_name.hash}") do
+    image = get_from_cache_and_save("icon.s3.#{image_name.hash}") do
       image_content = AWS::S3::S3Object.value image_name, 'app-icons'
       Base64.encode64 image_content
     end
@@ -29,6 +29,5 @@ class GetAppImageController < ApplicationController
     respond_to do |f|
       f.xml {render(:partial => 'app_icon')}
     end
-    
   end
 end

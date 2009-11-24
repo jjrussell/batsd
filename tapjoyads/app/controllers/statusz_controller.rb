@@ -4,6 +4,6 @@ class StatuszController < ApplicationController
   before_filter 'authenticate'
   
   def index
-    render :text => MemcachedModel.instance.servers.to_json
+    render :text => MemcachedHelper::CACHE.servers.to_json
   end
 end
