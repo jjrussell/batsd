@@ -36,21 +36,22 @@ class SimpledbResource
   # an empty attributes hash will be created.
   def load
     @attributes = get_from_cache_and_save(get_memcache_key) do
+      attributes = {}
       begin
         response = @@sdb.get_attributes(@domain_name, @key)
-        return response[:attributes]
+        attributes = response[:attributes]
       rescue AwsError => e
         if e.message.starts_with?("NoSuchDomain")
           Rails.logger.info "NoSuchDomain: #{@domain_name}, when attempting to load #{@key}"
           # Domain will be created on save.
-          return {}
         elsif e.message =~ /getaddrinfo/
+          # Attempt to reload?
           raise e
         else
           raise e
         end
       end
-      raise "Attrbutes failed to load from simpledb."
+      attributes
     end
   end
   
