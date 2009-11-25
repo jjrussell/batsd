@@ -90,8 +90,7 @@ class Job::CleanupWebRequestsController < Job::JobController
     
       `gzip -f #{file_name}`
 
-      @bucket.put(s3_name, open(gzip_file_name))
-      Rails.logger.info "Successfully stored #{s3_name} to s3."
+      write_to_s3(s3_name, gzip_file_name, 3)
   
       reponse = SimpledbResource.delete_domain(domain_name)
       Rails.logger.info "Deleted domain. Box usage for delete: #{response[:box_usage]}"
@@ -104,4 +103,17 @@ class Job::CleanupWebRequestsController < Job::JobController
     `rm #{gzip_file_name}`
   end
   
+  
+  def write_to_s3(s3_name, local_name, num_retries)
+    num_retries.times do
+      begin
+        @bucket.put(s3_name, open(local_name))
+        Rails.logger.info "Successfully stored #{local_name} to s3 as #{s3_name}."
+        return
+      rescue AwsError => e
+        Rails.logger.info "Failed attempt to store #{local_name} to s3. Error: #{e}"
+      end
+    end
+    raise "Failed to save #{local_name} to s3."
+  end
 end
