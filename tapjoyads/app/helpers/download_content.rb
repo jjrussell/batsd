@@ -4,10 +4,11 @@ module DownloadContent
   include Patron
   
   def download_content(url, options = {})
-    headers = options[:headers] || {}
-    timeout = options[:timeout] || 2
-    internal_authenticate = options[:internal_authenticate] || false
-    
+    headers = options.delete(:headers) { {} }
+    timeout = options.delete(:timeout) { 2 }
+    internal_authenticate = options.delete(:internal_authenticate) { false }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+        
     start_time = Time.now.utc
     Rails.logger.info "Downloading #{url}"
     sess = Session.new

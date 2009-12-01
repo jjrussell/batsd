@@ -12,13 +12,13 @@ class WebRequest < SimpledbResource
     
     domain_name = "web-request-#{date}-#{num}"
     
-    super domain_name, key, false
+    super domain_name, key, {:load => false}
     
     put('path', path)
     put('time', now.to_f.to_s)
   end
   
   def save
-    super false
+    super({:write_to_memcache => false})
   end
 end

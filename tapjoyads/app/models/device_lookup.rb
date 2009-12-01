@@ -1,5 +1,5 @@
 class DeviceLookup < SimpledbResource
-  def initialize(key, load = true)
-    super 'device_lookup', key, load
+  def initialize(key, options = {})
+    super 'device_lookup', key, options
   end
 end

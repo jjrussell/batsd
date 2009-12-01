@@ -1,5 +1,5 @@
 class App < SimpledbResource
-  def initialize(key, load = true)
-    super 'app', key, load
+  def initialize(key, options = {})
+    super 'app', key, options
   end
 end

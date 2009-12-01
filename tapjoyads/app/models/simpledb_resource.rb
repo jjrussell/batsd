@@ -19,14 +19,21 @@ class SimpledbResource
   # Initializes a new SimpledbResource, which represents a single row in a domain.
   # domain_name: The name of the domain
   # key: The item key
-  # load: Whether the item attributes should be laoded at all.
-  def initialize(domain_name, key, load = true)
+  # options:
+  #   load: Whether the item attributes should be loaded at all.
+  #   load_from_memcache: Whether attributes should be loaded from memcache.
+  def initialize(domain_name, key, options = {})
+    should_load = options.delete(:load) { true }
+    load_from_memcache = options.delete(:load_from_memcache) { true }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
     @domain_name = get_real_domain_name(domain_name)
     @key = key
     @attributes = {}
+    @attributes_to_delete = {}
     
-    if load
-      load()
+    if should_load
+      load(load_from_memcache)
     end
   end
   
@@ -34,24 +41,13 @@ class SimpledbResource
   # Attempt to load the item attributes from memcache. If they are not found,
   # they will attempt be loaded from simpledb. If thet are still not found,
   # an empty attributes hash will be created.
-  def load
-    @attributes = get_from_cache_and_save(get_memcache_key) do
-      attributes = {}
-      begin
-        response = @@sdb.get_attributes(@domain_name, @key)
-        attributes = response[:attributes]
-      rescue AwsError => e
-        if e.message.starts_with?("NoSuchDomain")
-          Rails.logger.info "NoSuchDomain: #{@domain_name}, when attempting to load #{@key}"
-          # Domain will be created on save.
-        elsif e.message =~ /getaddrinfo/
-          # Attempt to reload?
-          raise e
-        else
-          raise e
-        end
+  def load(load_from_memcache = true)
+    if load_from_memcache
+      @attributes = get_from_cache_and_save(get_memcache_key) do
+        load_from_sdb
       end
-      attributes
+    else
+      @attributes = load_from_sdb
     end
   end
   
@@ -63,7 +59,12 @@ class SimpledbResource
   #     if load() has not been called, and replace is set to true, it is possible to overwrite
   #     attribute values.
   # updated_at: Whether to include an updated-at attribute.
-  def save(write_to_memcache = true, replace = true, updated_at = true)
+  def save(options = {})
+    write_to_memcache = options.delete(:write_to_memcache) { true }
+    replace = options.delete(:replace) { true }
+    updated_at = options.delete(:updated_at) { true }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
     time_log("Spawing thread") do
       Thread.new do
         Rails.logger.info "Saving to #{@domain_name}"
@@ -73,12 +74,13 @@ class SimpledbResource
           
           begin
             @@sdb.put_attributes(@domain_name, @key, @attributes, replace)
+            @@sdb.delete_attributes(@domain_name, @key, @attributes_to_delete) unless @attributes_to_delete.empty?
           rescue AwsError => e
             if e.message.starts_with?("NoSuchDomain")
-              time_log("Creating new domain") do
+              time_log("Creating new domain: #{@domain_name}") do
                 @@sdb.create_domain(@domain_name)
-                @@sdb.put_attributes(@domain_name, @key, @attributes, replace)
               end
+              retry
             else
               raise e
             end
@@ -108,6 +110,7 @@ class SimpledbResource
   # Gets value(s) for a given attribute name.
   def get(attr_name, force_array = false)
     attr_array = @attributes[attr_name]
+    attr_array = Array(attr_array) if force_array
     
     if not force_array and not attr_array.nil? and attr_array.length == 1
       return attr_array[0]
@@ -124,6 +127,27 @@ class SimpledbResource
     else
       @attributes[attr_name].push(value)
     end
+  end
+  
+  ##
+  # Adds a value to be deleted. Also removes it from the hash of attributes.
+  def delete(attr_name, value)
+    unless @attributes_to_delete[attr_name]
+      @attributes_to_delete[attr_name] = [value]
+    else
+      @attributes_to_delete[attr_name].push(value)
+    end
+    
+    if @attributes[attr_name]
+      @attributes[attr_name].delete(value)
+    end
+  end
+  
+  ##
+  # Deletes this entire row immediately (no need to call save after calling this).
+  def delete_all
+    # TODO: Update memcache as well.
+    @@sdb.delete_attributes(@domain_name, @key)
   end
   
   ##
@@ -222,6 +246,25 @@ class SimpledbResource
   end
   
   private
+  
+  def load_from_sdb
+    attributes = {}
+    begin
+      response = @@sdb.get_attributes(@domain_name, @key)
+      attributes = response[:attributes]
+    rescue AwsError => e
+      if e.message.starts_with?("NoSuchDomain")
+        Rails.logger.info "NoSuchDomain: #{@domain_name}, when attempting to load #{@key}"
+        # Domain will be created on save.
+      elsif e.message =~ /getaddrinfo/
+        # Attempt to reload?
+        raise e
+      else
+        raise e
+      end
+    end
+    attributes
+  end
   
   def get_memcache_key
     "sdb.#{@domain_name}.#{@key}"

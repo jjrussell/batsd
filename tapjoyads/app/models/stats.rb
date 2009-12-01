@@ -1,8 +1,7 @@
 class Stats < SimpledbResource
-  include Counter
-  
-  def initialize(key, load = true)
-    super 'stats', key, load
+
+  def initialize(key, options = {})
+    super 'stats', key, options
   end
   
 end
