@@ -65,8 +65,9 @@ class SimpledbResource
     updated_at = options.delete(:updated_at) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
+    thread = nil
     time_log("Spawing thread") do
-      Thread.new do
+      thread = Thread.new do
         Rails.logger.info "Saving to #{@domain_name}"
         
         time_log("Saving to sdb") do
@@ -88,11 +89,32 @@ class SimpledbResource
         end
       
         if write_to_memcache
-          save_to_cache(get_memcache_key, @attributes, true, 1.hour)
+          clone
+          begin
+            CACHE.cas(get_memcache_key) do |mc_attributes|
+              # merge mc_attributes with @attributes.
+              if replace
+                @attributes = mc_attributes.merge(@attributes)
+              else
+                @attributes.each do |key, value|
+                  @attributes[key] = value | mc_attributes.delete(key) { [] }
+                end
+                @attributes.merge!(mc_attributes)
+              end
+              @attributes
+            end
+          rescue Memcached::NotFound
+            # Attribute hasn't been stored yet.
+            save_to_cache(get_memcache_key, @attributes)
+          rescue Memcached::NotStored
+            # Attribute was modified before it could write.
+            retry
+          end
         end
       end
       Rails.logger.flush
     end
+    return thread
   rescue Exception => e
     Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e}"
     

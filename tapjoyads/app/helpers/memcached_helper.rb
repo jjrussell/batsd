@@ -1,7 +1,14 @@
 module MemcachedHelper
   include TimeLogHelper
   
-  CACHE = Memcached.new(MEMCACHE_SERVERS)
+  CACHE = Memcached.new(MEMCACHE_SERVERS, {
+    :support_cas => true, 
+    :prefix_key => RUN_MODE_PREFIX
+    })
+  
+  unless ENV['RAILS_ENV'] == 'production'
+    CACHE.flush
+  end
   
   ##
   # Gets from object from cache which matches key.
@@ -63,6 +70,19 @@ module MemcachedHelper
   end
   
   def clone
-    const_set('CACHE', CACHE.clone)
+    Kernel.with_warnings_suppressed do
+      MemcachedHelper.const_set('CACHE', CACHE.clone)
+    end
+  end
+end
+
+module Kernel
+  # Suppresses warnings within a given block.
+  def with_warnings_suppressed
+    saved_verbosity = $-v
+    $-v = nil
+    yield
+  ensure
+    $-v = saved_verbosity
   end
 end
