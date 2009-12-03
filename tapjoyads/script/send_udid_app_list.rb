@@ -1,7 +1,4 @@
 #!/usr/bin/env ruby
-require 'activemessaging/processor'
-
-include ActiveMessaging::MessageSender
 
 arr = []
 count = 0

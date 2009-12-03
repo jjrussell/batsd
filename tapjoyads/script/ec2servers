@@ -10,8 +10,8 @@ require 'AWS'
 
 amazon = YAML::load_file('config/amazon.yaml')
 
-ENV['AMAZON_ACCESS_KEY_ID'] = amazon['main']['access_key_id']
-ENV['AMAZON_SECRET_ACCESS_KEY'] = amazon['main']['secret_access_key']
+ENV['AWS_ACCESS_KEY_ID'] = amazon['main']['access_key_id']
+ENV['AWS_SECRET_ACCESS_KEY'] = amazon['main']['secret_access_key']
 
 load 'app/helpers/ec2_helper.rb'
 include Ec2Helper

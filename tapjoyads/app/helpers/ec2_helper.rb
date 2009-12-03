@@ -39,8 +39,8 @@ module Ec2Helper
   private
   
   def get_server_field(field_name, group_id)
-    ec2 = AWS::EC2::Base.new({:access_key_id => ENV['AMAZON_ACCESS_KEY_ID'], 
-        :secret_access_key => ENV['AMAZON_SECRET_ACCESS_KEY']})
+    ec2 = AWS::EC2::Base.new({:access_key_id => ENV['AWS_ACCESS_KEY_ID'], 
+        :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY']})
 
     instances = ec2.describe_instances
     dns_names = []

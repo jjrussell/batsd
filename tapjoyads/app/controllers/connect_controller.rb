@@ -1,9 +1,7 @@
-require 'activemessaging/processor'
-
 class ConnectController < ApplicationController
   include DownloadContent
-  include ActiveMessaging::MessageSender
   include TimeLogHelper
+  include RightAws
   
   def index
     xml = <<XML_END
@@ -31,10 +29,11 @@ XML_END
     time_log("Check conversions and maybe add to sqs") do
       click = StoreClick.new("#{params[:udid]}.#{params[:app_id]}")
       unless (click.attributes.empty? || click.get('installed'))
-        publish :conversion_tracking, {:udid => params[:udid], :app_id => params[:app_id], 
-          :install_date => Time.now.to_f.to_s}.to_json      
+        logger.info "Added conversion to sqs queue"
+        message = {:udid => params[:udid], :app_id => params[:app_id], 
+            :install_date => Time.now.to_f.to_s}.to_json
+        SqsGen2.new.queue(QueueNames::CONVERSION_TRACKING).send_message(message)
       end
-    
     end
     
     device_app = DeviceAppList.new(params[:udid])

@@ -7,7 +7,6 @@ require 'base64'
 require 'RMagick'
 require 'hpricot'
 include Magick
-require 'activemessaging/processor'
 
 class GetadController < ApplicationController
   include DownloadContent

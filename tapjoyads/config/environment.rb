@@ -30,7 +30,6 @@ Rails::Initializer.run do |config|
   config.gem 'memcached'
   config.gem 'patron'
   config.gem 'hpricot'
-  config.gem 'activemessaging'
   config.gem 'daemons'
   config.gem 'uuidtools'
   config.gem 'json'
@@ -83,14 +82,14 @@ Rails::Initializer.run do |config|
   
   # Amazon services:
   amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
-  ENV['AMAZON_ACCESS_KEY_ID'] = amazon['main']['access_key_id']
-  ENV['AMAZON_SECRET_ACCESS_KEY'] = amazon['main']['secret_access_key']
+  ENV['AWS_ACCESS_KEY_ID'] = amazon['main']['access_key_id']
+  ENV['AWS_SECRET_ACCESS_KEY'] = amazon['main']['secret_access_key']
   
   # AWS S3:
   require 'aws/s3'
   AWS::S3::Base.establish_connection!(
-      :access_key_id => ENV['AMAZON_ACCESS_KEY_ID'],
-      :secret_access_key => ENV['AMAZON_SECRET_ACCESS_KEY'])
+      :access_key_id => ENV['AWS_ACCESS_KEY_ID'],
+      :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY'])
   
   # Memcached clone instance on passenger fork:
   if defined?(PhusionPassenger)

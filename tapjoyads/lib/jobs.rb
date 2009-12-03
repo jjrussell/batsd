@@ -30,6 +30,4 @@ else
   require File.join(RAILS_ROOT, 'config', 'environment')
 end
 
-JobRunner::Gateway.load_jobs
-
 JobRunner::Gateway.start

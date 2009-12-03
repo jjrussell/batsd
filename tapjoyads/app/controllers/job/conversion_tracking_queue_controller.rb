@@ -1,9 +1,14 @@
-class ConversionTrackingProcessor < ApplicationProcessor
+class Job::ConversionTrackingQueueController < Job::SqsReaderController
   include DownloadContent
   
-  subscribes_to :conversion_tracking
+  def initialize
+    super QueueNames::CONVERSION_TRACKING
+  end
+  
+  private
   
   def on_message(message)
+    Rails.logger.info "ConversionTracking msg rcvd: #{message}"
     json = JSON.parse(message)
     udid = json['udid']
     advertiser_app_id = json['app_id']

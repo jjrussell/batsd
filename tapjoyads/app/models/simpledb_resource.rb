@@ -1,16 +1,14 @@
 require 'sdb_batchput'
-require 'activemessaging/processor'
 
 class SimpledbResource  
   include TimeLogHelper
   include MemcachedHelper
   include RightAws
-  include ActiveMessaging::MessageSender
   
   attr_accessor :domain_name, :key, :attributes
   
   def self.reset_connection
-    @@sdb = SdbInterface.new(ENV['AMAZON_ACCESS_KEY_ID'], ENV['AMAZON_SECRET_ACCESS_KEY'], 
+    @@sdb = SdbInterface.new(nil, nil,
         {:multi_thread => true, :port => 80, :protocol => 'http'})
   end
   self.reset_connection
@@ -127,7 +125,7 @@ class SimpledbResource
   rescue Exception => e
     Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e}"
     
-    publish :failed_sdb_saves, self.serialize
+    SqsGen2.new.queue(QueueNames::FAILED_SDB_SAVES).send_message(self.serialize)
   end
   
   ##

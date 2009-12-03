@@ -9,14 +9,12 @@ end
 
 machine_type = `server/server_type.rb`
 
-puts "Stopping poller"
-`script/poller stop`
 puts "Stopping jobs"
 `script/jobs stop`
 
-puts "Killing remaining pollers and jobs"
-`server/kill_all.rb poller`
+puts "Killing remaining jobs"
 `server/kill_all.rb jobs`
+`server/kill_all.rb poller`
 
 puts "Restarting apache"
 `touch tmp/restart.txt`
@@ -24,6 +22,4 @@ puts "Restarting apache"
 if machine_type == 'jobs'
   puts "Starting jobs"
   `script/jobs start -- #{rails_mode}`
-  puts "Starting poller"
-  `script/poller start -- #{rails_mode}`
 end

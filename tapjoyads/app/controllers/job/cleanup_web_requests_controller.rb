@@ -5,7 +5,7 @@ class Job::CleanupWebRequestsController < Job::JobController
   include TimeLogHelper
   
   def initialize
-    @s3 = S3.new(ENV['AMAZON_ACCESS_KEY_ID'], ENV['AMAZON_SECRET_ACCESS_KEY'])
+    @s3 = S3.new
     @bucket = S3::Bucket.create(@s3, 'web-requests')
   end
   

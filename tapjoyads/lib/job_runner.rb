@@ -8,12 +8,14 @@
 
 module JobRunner
   
+  
   class Gateway
     cattr_accessor :jobs
     @@jobs = []
 
+    
     class << self
-      def load_jobs
+      def load_config
         path = File.expand_path("#{APP_ROOT}/config/jobs.rb")
         begin
           load path
@@ -33,8 +35,8 @@ module JobRunner
       end
       
       def start
-        puts "JobRunner: starting"
-        Rails.logger.info "JobRunner: starting"
+        Rails.logger.info "JobRunner: running"
+        load_config
         Rails.logger.flush
         jobs.each do |job|
           set_next_run_time job
@@ -54,19 +56,14 @@ module JobRunner
                 Rails.logger.info "JobRunner: Running #{job.job_path}"
                 Rails.logger.flush
                 Thread.new(job) do |job|
-                  begin
-                    sess = Patron::Session.new
-                    sess.base_url = base_url
-                    sess.timeout = 60
-                    sess.username = 'internal'
-                    sess.password = AuthenticationHelper::USERS[sess.username]
-                    sess.auth_type = :digest
+                  sess = Patron::Session.new
+                  sess.base_url = base_url
+                  sess.timeout = 60
+                  sess.username = 'internal'
+                  sess.password = AuthenticationHelper::USERS[sess.username]
+                  sess.auth_type = :digest
 
-                    sess.get("/job/#{job.job_path}")
-                  rescue Exception => e
-                    Rails.logger.warn "Error running job #{job.job_path}: #{e}"
-                    Rails.logger.flush
-                  end
+                  sess.get("/job/#{job.job_path}")
                 end
                 set_next_run_time job
               end
@@ -89,7 +86,6 @@ module JobRunner
       end
       
       def stop
-        puts "JobRunner: Stopping"
         Rails.logger.info "JobRunner: Stopping"
         Rails.logger.flush
       end
