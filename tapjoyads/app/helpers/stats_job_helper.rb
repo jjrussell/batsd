@@ -63,6 +63,13 @@ module StatsJobHelper
           
       stat.put('paid_installs', paid_installs.join(','))
       
+      offer_clicks = get_hourly_offer_clicks(start_hour, end_hour, time, item_id, 
+          stat.get('offer_clicks'), false, true)
+    
+      send_stat_to_windows(time.iso8601[0,10], 'OfferClicks', item_id, paid_clicks.sum)
+          
+      stat.put('offer_clicks', offer_clicks.join(','))
+ 
       paid_cvr = Array.new(24, 0)
       for i in (0..23)
         paid_cvr[i] = (paid_installs[i] / paid_clicks[i] * 10000.0).to_i if paid_clicks[i] > 0
@@ -176,7 +183,34 @@ module StatsJobHelper
     end
     return new_users
   end  
-  
+
+  def get_hourly_offer_clicks(last_hour, current_hour, time, item_id, 
+      hourly_counts_string)
+    if hourly_counts_string
+      hourly_counts = hourly_counts_string.split(',')
+      hourly_counts.each_index do |i|
+        hourly_counts[i] = hourly_counts[i].to_i
+      end
+    else
+      hourly_counts = Array.new(24, 0)
+    end
+    
+    date = time.iso8601[0,10]
+    
+    for hour in last_hour..current_hour
+      min_time = Time.utc(time.year, time.month, time.day, hour, 0, 0, 0)
+      max_time = min_time + 1.hour
+      
+      query = "click_date >= '#{min_time.to_f.to_s}' and click_date < '#{max_time.to_f.to_s}' "
+      query += "and app_id = '#{item_id}' "
+      
+      count = SimpledbResource.count("offer-click", query)
+      hourly_counts[hour] = count
+    end
+    
+    return hourly_counts
+  end
+    
   def get_hourly_store_clicks(last_hour, current_hour, time, item_id, 
       hourly_counts_string, installed = false, advertiser = false)
     if hourly_counts_string

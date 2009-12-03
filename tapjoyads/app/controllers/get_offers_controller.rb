@@ -1,0 +1,86 @@
+require 'activemessaging/processor'
+
+class GetOffersController < ApplicationController
+  include ActiveMessaging::MessageSender
+  
+  def index
+    xml = <<XML_END
+<?xml version="1.0" encoding="UTF-8"?>
+<TapjoyConnectReturnObject>
+<Success>false</Success>
+<ErrorMessage>Wrong Type</ErrorMessage>
+</TapjoyConnectReturnObject>
+XML_END
+
+    #first lookup the publisher_user_record_id for this user
+    record = PublisherUserRecord.new("#{params[:app_id]}.#{params[:publisher_user_id]}")
+    unless record.get('publisher_user_record_id') && record.get('int_record_id')
+      record.put('record_id',  UUIDTools::UUID.random_create.to_s)
+      record.put('int_record_id', record.attributes['record_id'].hash.to_s) #this should work!
+      record.save
+    end
+
+    xml = "<TapjoyConnectReturnObject>\n"
+    if params[:type] == '0'
+      xml += get_offerpal_offers
+    elsif params[:type] == '1'
+      xml += get_rewarded_installs
+    end
+    xml += "</TapjoyConnectReturnObject>"
+    
+    xml.gsub('$INT_IDENTIFIER', record.get('int_record_id'))
+    xml.gsub('$UDID', params[:udid])
+    xml.gsub('$PUBLISHER_USER_RECORD_ID', record.get('record_id'))
+    xml.gsub('$APP_ID', params[:app_id])
+
+    respond_to do |f|
+      f.xml {render(:text => xml)}
+    end
+  end
+  
+  def get_offerpal_offers
+    country = CGI::escape("United States") #for now
+    app_id = params[:app_id]
+    
+    xml = get_from_cache_and_save("offers.s3.#{app_id}.#{country}") do
+      xml = AWS::S3::S3Object.value "offers_#{app_id}.#{country}", 'offer_lists'
+    end
+    
+    return xml
+    
+  end
+  
+  def get_rewarded_installs
+    country = CGI::escape("United States") #for now
+    app_id = params[:app_id]
+    
+    device_app = DeviceAppList.new(params[:udid])
+    
+    xml = get_from_cache_and_save("offers.s3.#{app_id}.#{country}") do
+      xml = AWS::S3::S3Object.value "installs_#{app_id}", 'offer_lists'
+    end
+    
+    # remove all apps this user already has
+    entire_rewarded_installs = xml.split('^^TAPJOY_SPLITTER^^')
+    user_rewarded_installs = []
+    
+    entire_rewarded_installs.each do |install|
+      add = true
+      
+      device_app.attributes.each do |app|
+        if app[0] =~ /^app/ #assuming this is how you get the key from a hash in each
+          id = app[1].split('.')[1] 
+          add = false if install.contains "<GameID>#{id}</GameID>"
+        end
+      end
+  
+      user_rewarded_installs.push install if add
+    end
+    
+    xml = user_rewarded_installs.join
+    
+    return xml
+    
+  end
+  
+end

@@ -39,6 +39,39 @@ XML_END
       end
   end
   
+  def offer
+    xml = <<XML_END
+<?xml version="1.0" encoding="UTF-8"?>
+<TapjoyConnectReturnObject>
+<Success>true</Success>
+</TapjoyConnectReturnObject>
+XML_END
+
+    if ((not params[:app_id]) || (not params[:udid]) || (not params[:offer_id]) ||
+      (not params[:publisher_user_record_id]) )
+      error = Error.new
+      error.put('request', request.url)
+      error.put('function', 'connect')
+      error.put('ip', request.remote_ip)
+      error.save
+      Rails.logger.info "missing required params"
+      render :text => "missing required params"
+      return
+    end
+    
+    now = Time.now.utc
+    
+    click = OfferClick.new( UUIDTools::UUID.random_create.to_s)
+    click.put("click_date", "#{now.to_f.to_s}")
+    click.put('offer_id', params[:offer_id])
+    click.put('app_id', params[:app_id])
+    click.put('udid', params[:udid])
+    click.put('record_id', params[:publisher_user_record_id])
+    click.put('source', 'app')
+    click.put('ip_address', request.remote_ip)
+    click.save
+  end
+  
   def ad
     xml = <<XML_END
 <?xml version="1.0" encoding="UTF-8"?>
