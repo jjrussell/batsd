@@ -6,50 +6,50 @@ class ImportMssqlController < ApplicationController
   protect_from_forgery :except => [:publisher_ad, :app, :campaign]
   
   def currency
-      xml = <<XML_END
+    xml = <<XML_END
 <?xml version="1.0" encoding="UTF-8"?>
 <TapjoyConnectReturnObject>
 <Success>true</Success>
 </TapjoyConnectReturnObject>
 XML_END
 
-  if (not params[:app_id])
-    error = Error.new
-    error.put('request', request.url)
-    error.put('function', 'connect')
-    error.put('ip', request.remote_ip)
-    error.save
-    Rails.logger.info "missing required params"
-    render :text => "missing required params"
-    return
-  end
+    if (not params[:app_id])
+      error = Error.new
+      error.put('request', request.url)
+      error.put('function', 'connect')
+      error.put('ip', request.remote_ip)
+      error.save
+      Rails.logger.info "missing required params"
+      render :text => "missing required params"
+      return
+    end
 
-  app_id = params[:app_id]
+    app_id = params[:app_id]
 
-  app = App.new(app_id)
-  unless app.get('next_run_time')
-      next_run_time = (Time.now.utc).to_f.to_s
-      app.put('next_run_time', next_run_time)     
-      app.put('interval_update_time','60')
-  end
+    app = App.new(app_id)
+    unless app.get('next_run_time')
+        next_run_time = (Time.now.utc).to_f.to_s
+        app.put('next_run_time', next_run_time)     
+        app.put('interval_update_time','60')
+    end
 
-  app.put('currency_name',params[:name])
-  app.put('conversion_rate', params[:conversion_rate])
-  app.put('initial_balance', params[:initial_balance])
-  app.put('virtual_goods_currency', params[:virtual_goods_currency])
-  app.put('secret_key', params[:secret_key])
-  app.put('callback_url', params[:callback_url])
-  app.put('cs_callback_url', params[:cs_callback_url])
-  app.put('offers_money_share', params[:offers_money_share])
-  app.put('installs_money_share', params[:installs_money_share])
-  app.put('banned_offers', params[:banned_offers])
-  app.put('banned_apps', params[:banned_apps])
+    app.put('currency_name',params[:name])
+    app.put('conversion_rate', params[:conversion_rate])
+    app.put('initial_balance', params[:initial_balance])
+    app.put('virtual_goods_currency', params[:virtual_goods_currency])
+    app.put('secret_key', params[:secret_key])
+    app.put('callback_url', params[:callback_url])
+    app.put('cs_callback_url', params[:cs_callback_url])
+    app.put('offers_money_share', params[:offers_money_share])
+    app.put('installs_money_share', params[:installs_money_share])
+    app.put('banned_offers', params[:banned_offers])
+    app.put('banned_apps', params[:banned_apps])
 
-  app.save
+    app.save
 
-  respond_to do |f|
-    f.xml {render(:text => xml)}
-  end    
+    respond_to do |f|
+      f.xml {render(:text => xml)}
+    end    
   end
   
   def publisher_ad
