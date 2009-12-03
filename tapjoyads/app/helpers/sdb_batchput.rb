@@ -54,5 +54,34 @@ module RightAws
     rescue Exception
       on_exception
     end
+    
+    # Prepare attributes for putting.
+    # (used by put_attributes)
+    # Patched, so that replace can also take an array of attribute names to replace.
+    # def pack_attributes(attributes, replace = false) #:nodoc:
+    #   result = {}
+    #   if attributes
+    #     idx = 0
+    #     skip_values = attributes.is_a?(Array)
+    #     attributes.each do |attribute, values|
+    #       # set replacement attribute
+    #       result["Attribute.#{idx}.Replace"] = 'true' if replace == true || replace.include?(attribute)
+    #       # pack Name/Value
+    #       unless values.nil?
+    #         Array(values).each do |value|
+    #           result["Attribute.#{idx}.Name"]  = attribute
+    #           result["Attribute.#{idx}.Value"] = ruby_to_sdb(value) unless skip_values
+    #           idx += 1
+    #         end
+    #       else
+    #         result["Attribute.#{idx}.Name"] = attribute
+    #         result["Attribute.#{idx}.Value"] = ruby_to_sdb(nil) unless skip_values
+    #         idx += 1
+    #       end
+    #     end
+    #   end
+    #   result
+    # end
+    
   end
 end

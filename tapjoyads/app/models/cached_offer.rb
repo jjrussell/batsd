@@ -1,5 +1,5 @@
 class CachedOffer < SimpledbResource
-  def initialize(key, load = true)
-    super 'cached-offer', key, load
+  def initialize(key, options = {}
+    super 'cached-offer', key, options
   end
 end
