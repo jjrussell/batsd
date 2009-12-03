@@ -1,8 +1,4 @@
-require 'activemessaging/processor'
-
 class CompleteOfferController < ApplicationController
-  include ActiveMessaging::MessageSender
-  
   def index
 
     if ( (not params[:offer_id]) || (not params[:app_id]) || (not params[:udid]) || (not params[:url]))

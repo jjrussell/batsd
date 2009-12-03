@@ -1,8 +1,4 @@
-require 'activemessaging/processor'
-
 class GetOffersController < ApplicationController
-  include ActiveMessaging::MessageSender
-  
   def index
     xml = <<XML_END
 <?xml version="1.0" encoding="UTF-8"?>

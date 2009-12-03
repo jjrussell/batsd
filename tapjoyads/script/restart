@@ -19,7 +19,7 @@ puts "Killing remaining jobs"
 puts "Restarting apache"
 `touch tmp/restart.txt`
 
-if machine_type == 'jobs'
+if machine_type == 'jobs' or machine_type == 'masterjobs'
   puts "Starting jobs"
   `script/jobs start -- #{rails_mode}`
 end
