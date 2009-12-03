@@ -28,9 +28,36 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     thread_list = []
     10.times do |i|
       model = Testing.new(@key)
-      model.put("#{i}", "#{i}")
+      model.put("#{i}", 'value')
+      model.put("#{i}", 'value2', false)
       thread_list.push(model.save({:updated_at => false}))
-      expected_attrs["#{i}"] = ["#{i}"]
+      expected_attrs["#{i}"] = ['value', 'value2']
+    end
+    
+    thread_list.each do |thread|
+      thread.join
+    end
+    
+    model = Testing.new(@key, {:load => false})
+    model.put("9", 'value3', false)
+    model.save({:updated_at => false, :replace => false}).join
+    expected_attrs['9'].push('value3')
+    
+    model = Testing.new(@key)
+    assert_equal(expected_attrs, model.attributes)
+    
+    # Sleep for consistency
+    sleep(5)
+    
+    model = Testing.new(@key, {:load_from_memcache => false})
+    assert_equal(expected_attrs, model.attributes)
+    
+    # Test deletes:
+    3.times do |i|
+      model = Testing.new(@key)
+      model.delete("#{i}", "value2")
+      thread_list.push(model.save({:updated_at => false}))
+      expected_attrs["#{i}"] = ['value']
     end
     
     thread_list.each do |thread|
@@ -40,10 +67,10 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     model = Testing.new(@key)
     assert_equal(expected_attrs, model.attributes)
     
-    # Sleep for consistency
-    sleep(2)
-    
+    # Deletes take longer to become consistent, so sleep longer than usual
+    sleep(10)
     model = Testing.new(@key, {:load_from_memcache => false})
     assert_equal(expected_attrs, model.attributes)
+    
   end
 end

@@ -30,6 +30,8 @@ class SimpledbResource
     @domain_name = get_real_domain_name(domain_name)
     @key = key
     @attributes = {}
+    @attributes_to_add = {}
+    @attributes_to_replace = {}
     @attributes_to_delete = {}
     
     if should_load
@@ -92,15 +94,22 @@ class SimpledbResource
           clone
           begin
             CACHE.cas(get_memcache_key) do |mc_attributes|
-              # merge mc_attributes with @attributes.
-              if replace
-                @attributes = mc_attributes.merge(@attributes)
-              else
-                @attributes.each do |key, value|
-                  @attributes[key] = value | mc_attributes.delete(key) { [] }
-                end
-                @attributes.merge!(mc_attributes)
+              mc_attributes.merge!(@attributes_to_replace)
+              @attributes_to_add.each do |key, values|
+                mc_attributes[key] = Array(mc_attributes[key]) | values
               end
+              
+              @attributes_to_delete.each do |key, values|
+                if values.empty?
+                  mc_attributes.delete(key)
+                elsif mc_attributes[key]
+                  values.each do |value|
+                    mc_attributes[key].delete(value)
+                  end
+                  mc_attributes.delete(key) if mc_attributes[key].empty?
+                end
+              end
+              @attributes = mc_attributes
               @attributes
             end
           rescue Memcached::NotFound
@@ -144,24 +153,23 @@ class SimpledbResource
   ##
   # Puts a value to be associated with an attribute name.
   def put(attr_name, value, replace = true)
-    if replace or not @attributes[attr_name]
-      @attributes[attr_name] = [value]
+    if replace
+      @attributes[attr_name] = Array(value)
+      @attributes_to_replace[attr_name] = Array(value)
     else
-      @attributes[attr_name].push(value)
+      @attributes[attr_name] = Array(value) | Array(@attributes[attr_name])
+      @attributes_to_add[attr_name] = Array(value) | Array(@attributes_to_add[attr_name])
     end
   end
   
   ##
   # Adds a value to be deleted. Also removes it from the hash of attributes.
   def delete(attr_name, value)
-    unless @attributes_to_delete[attr_name]
-      @attributes_to_delete[attr_name] = [value]
-    else
-      @attributes_to_delete[attr_name].push(value)
-    end
+    @attributes_to_delete[attr_name] = Array(value) | Array(@attributes_to_delete[attr_name])
     
     if @attributes[attr_name]
       @attributes[attr_name].delete(value)
+      @attributes.delete(attr_name) if @attributes[attr_name].empty?
     end
   end
   
