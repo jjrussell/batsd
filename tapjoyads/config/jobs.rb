@@ -2,7 +2,8 @@ require 'base64'
 
 JobRunner::Gateway.define do |s|
   
-  machine_type = `#{ENV['APP_ROOT']}/server/server_type.rb`
+  # TODO: Find a better way to determine the server type. Get relative path to work at least.
+  machine_type = `/home/webuser/server/server_type.rb`
   
   if machine_type == 'jobs' || machine_type == 'test'
     s.add_job 'get_ad_network_data', :interval => 8.minutes
