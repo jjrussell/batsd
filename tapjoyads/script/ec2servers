@@ -16,8 +16,12 @@ ENV['AWS_SECRET_ACCESS_KEY'] = amazon['main']['secret_access_key']
 load 'app/helpers/ec2_helper.rb'
 include Ec2Helper
 
-servers = get_dns_names(ARGV.first)
+groups = ARGV.first.split
 
-servers.each do |server|
-  puts server
+groups.each do |group|
+  servers = get_dns_names(group)
+
+  servers.each do |server|
+    puts server
+  end
 end

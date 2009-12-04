@@ -4,10 +4,10 @@ require 'yaml'
 
 if ARGV.first == 'production'
   puts "PRODUCTION deploy"
-  group = 'mc'
+  groups = 'webserver jobserver masterjobs'
 else
   puts "TESTING deploy"
-  group = 'testserver'
+  groups = 'testserver'
 end
 
 puts "\nUpdating local svn"
@@ -21,6 +21,6 @@ unless version_number
 end
 
 # Must use the system command to run, not backticks, otherwise it will be non-interactive.
-system("script/cloudrun #{group} 'cd server && svn update && ./deploy.rb #{version_number}'")
+system("script/cloudrun '#{groups}' 'cd server && svn update && ./deploy.rb #{version_number}'")
 
 puts "Done deploying"

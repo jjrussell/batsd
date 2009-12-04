@@ -4,7 +4,7 @@
 # Usage: cloudlogin <server-group>
 #   where <server-group> is the same server group as specified in ec2servers
 
-server_list = `script/ec2servers #{ARGV.first}`.split("\n")
+server_list = `script/ec2servers "#{ARGV.first}"`.split("\n")
 
 server_num = (ARGV[1] || 0).to_i
 

@@ -10,7 +10,7 @@
 #   cloudrun webserver "apachectl restart" root
 #   This will restart apache on all serves in the 'webserver' security group.
 
-server_list = `script/ec2servers #{ARGV.first}`.split("\n")
+server_list = `script/ec2servers "#{ARGV.first}"`.split("\n")
 command = ARGV[1]
 user = ARGV[2] || 'webuser'
 
