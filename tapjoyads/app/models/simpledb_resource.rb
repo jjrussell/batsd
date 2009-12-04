@@ -235,11 +235,12 @@ class SimpledbResource
     query = query + " WHERE #{where}" if where
     query = query + " ORDER BY #{order}" if order
     
+    puts query 
     response = @@sdb.select(query, next_token)
     
     sdb_item_array = []
     response[:items].each do |item|
-      sdb_item = SimpledbResource.new(domain_name, item.keys[0], false)
+      sdb_item = SimpledbResource.new(domain_name, item.keys[0], {:load => false})
       sdb_item.attributes = item.values[0]
       sdb_item_array.push(sdb_item)
     end
