@@ -19,7 +19,7 @@ class Service1Controller < ApplicationController
           render :text => "Missing AdCampaignID"
           return
         end
-        campaign = Campaign.new(get_param(:AdCampaignID, true))
+        campaign = Campaign.new(get_param(:AdCampaignID))
         network_name = campaign.get('network_name')
         Rails.logger.info campaign.to_json
         Rails.logger.info "network_name: #{network_name}"
