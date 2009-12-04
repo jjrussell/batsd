@@ -235,7 +235,6 @@ class SimpledbResource
     query = query + " WHERE #{where}" if where
     query = query + " ORDER BY #{order}" if order
     
-    puts query 
     response = @@sdb.select(query, next_token)
     
     sdb_item_array = []
@@ -280,7 +279,7 @@ class SimpledbResource
     attributes = json['attrs']
     domain_name = json['domain']
     
-    item = SimpledbResource.new(domain_name, key, false)
+    item = SimpledbResource.new(domain_name, key, {:load => false})
     item.attributes = attributes
     
     return item

@@ -11,12 +11,15 @@ class Job::CreateOffersController < Job::JobController
     
     next_token = nil
     app_currency_list = []
-    while next_token != nil && next_token != ''
+    begin
       app_items_list = SimpledbResource.select('currency','currency_name, conversion_rate, offers_money_share, disabled_offers', 
-        "currency_name != ''")
+        "currency_name != ''", nil, next_token)
       next_token = app_items_list.next_token
-      app_currency_list.push(app_items_list)
-    end
+      puts next_token
+      app_items_list.items.each do |item|
+        app_currency_list.push(item)
+      end
+    end while next_token != nil
     
     drop_id = 'b7b401f73d98ff21792b49117edd8b9f'
     
@@ -57,13 +60,13 @@ class Job::CreateOffersController < Job::JobController
             dbOffer = CachedOffer.new(offerpalID)
             
             dbOffer.put('name', offer['name'])
-            dbOffer.put('actionURL', offer['actionURL'])
+            dbOffer.put('action_url', offer['actionURL'])
             dbOffer.put('description', offer['description'])
             dbOffer.put('instructions', offer['instructions'])
-            dbOffer.put('imageHTML', offer['imageHTML'])
+            dbOffer.put('image_html', offer['imageHTML'])
             dbOffer.put('timeDelay', offer['timeDelay'])
             dbOffer.put('currency', 'TAPJOY_BUCKS')
-            dbOffer.put('creditCardRequired', offer['creditCardRequired'])
+            dbOffer.put('credit_card_required', offer['creditCardRequired'])
             dbOffer.put('cached_offer_id', UUIDTools::UUID.random_create.to_s) unless dbOffer.get('cached_offer_id')
             
             amount = offer['amount'].to_i
@@ -86,18 +89,19 @@ class Job::CreateOffersController < Job::JobController
       
       #go through and create app-specific lists for each app
       app_currency_list.each do |currency|
-        banned_offers = currency.get('banned_offers').split(';') if currency.get('banned_offers')
+        banned_offers = currency.get('disabled_offers').split(';') if currency.get('disabled_offers')
         
         xml = "<OfferArray>\n"
         offer_list.each do |offer|
-          next if banned.offers.contains offer.key
-          return_offer = ReturnOffer.new(0, offer, currency.get('offers_money_share'), currency.get('conversion_rate'))
+          next if (banned_offers) && (banned_offers.include? offer.key)
+          return_offer = ReturnOffer.new(0, offer, currency.get('offers_money_share'), 
+            currency.get('conversion_rate'), currency.get('currency_name'))
           xml += return_offer.to_xml
         end
         xml += "</OfferArray>\n"
         
-        AWS::S3::S3Object.store "offers_" + currency.get('app_id') + "." + CGI::escape(country), 
-          xml, 'offer_lists'
+        AWS::S3::S3Object.store "offers_" + currency.key + "." + CGI::escape(country), 
+          xml, 'offer-data'
         
       end
       
