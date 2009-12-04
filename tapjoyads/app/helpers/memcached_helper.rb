@@ -14,12 +14,12 @@ module MemcachedHelper
   # Gets from object from cache which matches key.
   # If no object is found, then control is yielded, and the object
   # returned from the yield block is saved and returned.
-  def get_from_cache_and_save(key, clone = false)
+  def get_from_cache_and_save(key, clone = false, time = 1.hour)
     value = get_from_cache(key, clone) do
       yield
     end
     
-    save_to_cache(key, value, clone)
+    save_to_cache(key, value, clone, time)
     return value
   end
   

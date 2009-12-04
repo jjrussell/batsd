@@ -153,6 +153,7 @@ XML_END
     app.put('price', params[:price]) 
     app.put('description', params[:description]) if params[:description]
     app.put('has_location', params[:has_location])
+    app.put('balance', params[:balance])
 
     app.save
 

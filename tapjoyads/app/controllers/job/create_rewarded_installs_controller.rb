@@ -2,6 +2,7 @@
 
 class Job::CreateRewardedInstallsController < Job::JobController
   include DownloadContent
+  include MemcachedHelper
   
   def index
     
@@ -10,7 +11,7 @@ class Job::CreateRewardedInstallsController < Job::JobController
     app_list = []
     begin
       app_items = SimpledbResource.select('app','*', 
-        "payment_for_install > '0' and install_tracking = '1' and rewarded_installs_ordinal != '' ", " rewarded_installs_ordinal",
+        "payment_for_install > '0' and install_tracking = '1' and rewarded_installs_ordinal != '' and balance > '0' ", " rewarded_installs_ordinal",
         next_token)
       next_token = app_items.next_token
       app_items.items.each do |item|
@@ -46,7 +47,7 @@ class Job::CreateRewardedInstallsController < Job::JobController
       
       AWS::S3::S3Object.store "installs_" + currency.key, 
         xml, 'offer-data'
-      
+      save_to_cache("installs.s3.#{currency.key}", xml)
     end    
     
     render :text => "ok"

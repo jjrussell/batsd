@@ -2,6 +2,7 @@
 
 class Job::CreateOffersController < Job::JobController
   include DownloadContent
+  include MemcachedHelper
   
   def index
     
@@ -101,7 +102,7 @@ class Job::CreateOffersController < Job::JobController
         
         AWS::S3::S3Object.store "offers_" + currency.key + "." + CGI::escape(country), 
           xml, 'offer-data'
-        
+        save_to_cache("offers.s3.#{currency.key}.#{CGI::escape(country)}", xml)
       end
       
     end #country loop
