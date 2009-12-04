@@ -19,7 +19,20 @@ class SimpledbResourceTest < ActiveSupport::TestCase
   end
   
   def teardown
-    @model.delete_all
+    #@model.delete_all
+  end
+  
+  test "long attributes" do
+    val = ''
+    4501.times do |i|
+      val += (i % 10).to_s
+    end
+    @model.put('long_string',val)
+    @model.save
+    sleep(5)
+    
+    m = Testing.new(@key)
+    assert_equal(val, m.get('long_string'))
   end
   
   test "concurrent saves interacting with memcache" do

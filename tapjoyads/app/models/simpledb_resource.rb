@@ -142,6 +142,10 @@ class SimpledbResource
     attr_array = Array(attr_array) if force_array
     
     if not force_array and not attr_array.nil? and attr_array.length == 1
+      if attr_array[0].length == 1000
+        second_part = get(attr_name + '_', false) || ''
+        return attr_array[0] + second_part
+      end
       return attr_array[0]
     end
       
@@ -151,6 +155,14 @@ class SimpledbResource
   ##
   # Puts a value to be associated with an attribute name.
   def put(attr_name, value, replace = true)
+    return if value.nil?
+    value = value.to_s
+    
+    if value.length > 1000
+      put(attr_name+'_', value[1000,value.length-1000], replace)
+      value = value[0,1000]
+    end
+          
     if replace
       @attributes[attr_name] = Array(value)
       @attributes_to_replace[attr_name] = Array(value)

@@ -26,13 +26,8 @@ XML_END
 
     app_id = params[:app_id]
 
-    app = App.new(app_id)
-    unless app.get('next_run_time')
-        next_run_time = (Time.now.utc).to_f.to_s
-        app.put('next_run_time', next_run_time)     
-        app.put('interval_update_time','60')
-    end
-
+    app = Currency.new(app_id)
+    
     app.put('currency_name',params[:currency_name])
     app.put('conversion_rate', params[:conversion_rate])
     app.put('initial_balance', params[:initial_balance])
@@ -156,10 +151,7 @@ XML_END
     app.put('status', params[:status])
     app.put('color', params[:color])
     app.put('price', params[:price]) 
-    app.put('description_1', params[:description][0,999]) if params[:description]
-    app.put('description_2', params[:description][1000,1999]) if params[:description].length > 1000
-    app.put('description_3', params[:description][2000,2999]) if params[:description].length > 2000
-    app.put('description_4', params[:description][3000,3999]) if params[:description].length > 3000
+    app.put('description', params[:description]) if params[:description]
     app.put('has_location', params[:has_location])
 
     app.save
