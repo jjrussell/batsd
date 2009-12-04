@@ -40,20 +40,20 @@ class ReturnOffer
   def to_xml
     
     s = "<OfferReturnClass>\n"
-    s += "  <Cost>#{CGI::escape(@Cost)}</Cost>\n" if @Cost
-    s += "  <CreditCardRequired>#{CGI::escape(@CreditCardRequired)}</CreditCardRequired>\n" if @CreditCardRequired
-    s += "  <Currency>#{CGI::escape(@Currency)}</Currency>\n" if @Currency
-    s += "  <Description>#{CGI::escape(@Description)}</Description>\n" if @Description
-    s += "  <ImageURL>#{CGI::escape(@ImageURL)}</ImageURL>\n" if @ImageURL
-    s += "  <Instructions>#{CGI::escape(@Instructions)}</Instructions>\n" if @Instructions
-    s += "  <Name>#{CGI::escape(@Name)}</Name>\n" if @Name
-    s += "  <TimeDelay>#{CGI::escape(@TimeDelay)}</TimeDelay>\n" if @TimeDelay
-    s += "  <GameID>#{CGI::escape(@AppID)}</GameID>\n" if @AppID
-    s += "  <ActionURL>#{CGI::escape(@ActionURL)}</ActionURL>" if @ActionURL
-    s += "  <CachedOfferID>#{CGI::escape(@CachedOfferID)}</CachedOfferID>\n" if @CachedOfferID
-    s += "  <PublisherUserRecordID>#{CGI::escape(@PublisherUserRecordID)}</PublisherUserRecordID>\n" if @PublisherUserRecordID
-    s += "  <Type>#{CGI::escape(@Type)}</Type>\n" if @Type
-    s += "  <EmailURL>#{CGI::escape(@EmailURL)}</EmailURL>\n" if @EmailURL
+    s += "  <Cost>#{CGI::escapeHTML(@Cost)}</Cost>\n" if @Cost
+    s += "  <CreditCardRequired>#{CGI::escapeHTML(@CreditCardRequired)}</CreditCardRequired>\n" if @CreditCardRequired
+    s += "  <Currency>#{CGI::escapeHTML(@Currency)}</Currency>\n" if @Currency
+    s += "  <Description>#{CGI::escapeHTML(@Description)}</Description>\n" if @Description
+    s += "  <ImageURL>#{CGI::escapeHTML(@ImageURL)}</ImageURL>\n" if @ImageURL
+    s += "  <Instructions>#{CGI::escapeHTML(@Instructions)}</Instructions>\n" if @Instructions
+    s += "  <Name>#{CGI::escapeHTML(@Name)}</Name>\n" if @Name
+    s += "  <TimeDelay>#{CGI::escapeHTML(@TimeDelay)}</TimeDelay>\n" if @TimeDelay
+    s += "  <GameID>#{CGI::escapeHTML(@AppID)}</GameID>\n" if @AppID
+    s += "  <ActionURL>#{CGI::escapeHTML(@ActionURL)}</ActionURL>" if @ActionURL
+    s += "  <CachedOfferID>#{CGI::escapeHTML(@CachedOfferID)}</CachedOfferID>\n" if @CachedOfferID
+    s += "  <PublisherUserRecordID>#{CGI::escapeHTML(@PublisherUserRecordID)}</PublisherUserRecordID>\n" if @PublisherUserRecordID
+    s += "  <Type>#{@Type}</Type>\n"
+    s += "  <EmailURL>#{CGI::escapeHTML(@EmailURL)}</EmailURL>\n" if @EmailURL
     s += "</OfferReturnClass>\n"
     
     return s
