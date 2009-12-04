@@ -37,13 +37,13 @@ XML_END
     app.put('conversion_rate', params[:conversion_rate])
     app.put('initial_balance', params[:initial_balance])
     app.put('virtual_goods_currency', params[:virtual_goods_currency])
-    app.put('secret_key', params[:secret_key])
+    app.put('secret_key', params[:secret_key]) if params[:secret_key] != ''
     app.put('callback_url', params[:callback_url])
     app.put('cs_callback_url', params[:cs_callback_url])
     app.put('offers_money_share', params[:offers_money_share])
     app.put('installs_money_share', params[:installs_money_share])
-    app.put('disabled_offers', params[:disabled_offers])
-    app.put('disabled_apps', params[:disabled_apps])
+    app.put('disabled_offers', params[:disabled_offers]) if params[:disabled_offers] != ''
+    app.put('disabled_apps', params[:disabled_apps]) if params[:disabled_apps] != ''
 
     app.save
 
