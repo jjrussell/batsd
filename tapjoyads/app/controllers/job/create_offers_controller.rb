@@ -12,7 +12,7 @@ class Job::CreateOffersController < Job::JobController
     next_token = nil
     app_currency_list = []
     while next_token != nil && next_token != ''
-      app_items_list = SimpledbResource.select('app','app_id, currency_name, conversion_rate, offers_money_share, disabled_offers', 
+      app_items_list = SimpledbResource.select('currency','currency_name, conversion_rate, offers_money_share, disabled_offers', 
         "currency_name != ''")
       next_token = app_items_list.next_token
       app_currency_list.push(app_items_list)
