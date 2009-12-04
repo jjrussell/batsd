@@ -141,6 +141,10 @@ class SimpledbResource
     attr_array = @attributes[attr_name]
     attr_array = Array(attr_array) if force_array
     
+    attr_array.map! do |item|
+      item.gsub("^^TAPJOY_NEWLINE^^", "\n")
+    end
+    
     if not force_array and not attr_array.nil? and attr_array.length == 1
       if attr_array[0].length == 1000
         second_part = get(attr_name + '_', false) || ''
@@ -157,6 +161,8 @@ class SimpledbResource
   def put(attr_name, value, replace = true)
     return if value.nil?
     value = value.to_s
+    
+    value = value.gsub("\n", "^^TAPJOY_NEWLINE^^")
     
     if value.length > 1000
       put(attr_name+'_', value[1000,value.length-1000], replace)

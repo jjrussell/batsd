@@ -21,7 +21,7 @@ class ReturnOffer
       @EmailURL = "http://www.tapjoyconnect.com/complete_offer?offerid=#{CGI::escape(offer.key)}&udid=$UDID&record_id=$PUBLISHER_USER_RECORD_ID&app_id=$APP_ID&url=#{CGI::escape(@ActionURL)}"
     elsif type == 1 #apps
       @Cost = "Free" 
-      @Cost = "Paid" unless offer.get('price').to_i > 0
+      @Cost = "Paid" if offer.get('price') && offer.get('price').to_i > 0
       @Currency = currency_name
       @Description = offer.get('description')
       @Name = offer.get('name')
@@ -40,20 +40,20 @@ class ReturnOffer
   def to_xml
     
     s = "<OfferReturnClass>\n"
-    s += "  <Cost>#{@Cost}</Cost>\n"
-    s += "  <CreditCardRequired>#{@CreditCardRequired}</CreditCardRequired>\n"
-    s += "  <Currency>#{@Currency}</Currency>\n"
-    s += "  <Description>#{@Description}</Description>\n"
-    s += "  <ImageURL>#{@ImageURL}</ImageURL>\n"
-    s += "  <Instructions>#{@Instructions}</Instructions>\n"
-    s += "  <Name>#{@Name}</Name>\n"
-    s += "  <TimeDelay>#{@TimeDelay}</TimeDelay>\n"
-    s += "  <GameID>#{@AppID}</GameID>\n"
-    s += "  <ActionURL>#{@ActionURL}</ActionURL>"
-    s += "  <CachedOfferID>#{@CachedOfferID}</CachedOfferID>\n"
-    s += "  <PublisherUserRecordID>#{@PublisherUserRecordID}</PublisherUserRecordID>\n"
-    s += "  <Type>#{@Type}</Type>\n"
-    s += "  <EmailURL>#{@EmailURL}</EmailURL>\n"
+    s += "  <Cost>#{CGI::escape(@Cost)}</Cost>\n" if @Cost
+    s += "  <CreditCardRequired>#{CGI::escape(@CreditCardRequired)}</CreditCardRequired>\n" if @CreditCardRequired
+    s += "  <Currency>#{CGI::escape(@Currency)}</Currency>\n" if @Currency
+    s += "  <Description>#{CGI::escape(@Description)}</Description>\n" if @Description
+    s += "  <ImageURL>#{CGI::escape(@ImageURL)}</ImageURL>\n" if @ImageURL
+    s += "  <Instructions>#{CGI::escape(@Instructions)}</Instructions>\n" if @Instructions
+    s += "  <Name>#{CGI::escape(@Name)}</Name>\n" if @Name
+    s += "  <TimeDelay>#{CGI::escape(@TimeDelay)}</TimeDelay>\n" if @TimeDelay
+    s += "  <GameID>#{CGI::escape(@AppID)}</GameID>\n" if @AppID
+    s += "  <ActionURL>#{CGI::escape(@ActionURL)}</ActionURL>" if @ActionURL
+    s += "  <CachedOfferID>#{CGI::escape(@CachedOfferID)}</CachedOfferID>\n" if @CachedOfferID
+    s += "  <PublisherUserRecordID>#{CGI::escape(@PublisherUserRecordID)}</PublisherUserRecordID>\n" if @PublisherUserRecordID
+    s += "  <Type>#{CGI::escape(@Type)}</Type>\n" if @Type
+    s += "  <EmailURL>#{CGI::escape(@EmailURL)}</EmailURL>\n" if @EmailURL
     s += "</OfferReturnClass>\n"
     
     return s

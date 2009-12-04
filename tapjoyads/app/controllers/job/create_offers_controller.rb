@@ -15,7 +15,6 @@ class Job::CreateOffersController < Job::JobController
       app_items_list = SimpledbResource.select('currency','currency_name, conversion_rate, offers_money_share, disabled_offers', 
         "currency_name != ''", nil, next_token)
       next_token = app_items_list.next_token
-      puts next_token
       app_items_list.items.each do |item|
         app_currency_list.push(item)
       end

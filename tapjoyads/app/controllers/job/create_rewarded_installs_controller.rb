@@ -8,37 +8,44 @@ class Job::CreateRewardedInstallsController < Job::JobController
     #first get the list of all apps paying for installs
     next_token = nil
     app_list = []
-    while next_token != nil && next_token != ''
-      app_items = SimpledbResource.select('app','app_id, payment_for_install, name, price, description1, description2, description3, description4', 
-        "payment_for_install > '0' and install_tracking = '1' ", " rewarded_installs_ordinal, price, payment_for_install descending")
+    begin
+      app_items = SimpledbResource.select('app','*', 
+        "payment_for_install > '0' and install_tracking = '1' and rewarded_installs_ordinal != '' ", " rewarded_installs_ordinal",
+        next_token)
       next_token = app_items.next_token
-      app_list.push(app_items)
-    end
+      app_items.items.each do |item|
+        app_list.push(item)
+      end
+    end while next_token != nil
     
     #now get the list of all apps with currency
     next_token = nil
     app_currency_list = []
-    while next_token != nil && next_token != ''
-      app_items_list = SimpledbResource.select('app','app_id, currency_name, conversion_rate, money_share, banned_offers', 
-        "currency_name != ''")
+    begin
+      app_items_list = SimpledbResource.select('currency','currency_name, conversion_rate, installs_money_share, disabled_offers', 
+        "currency_name != ''", nil, next_token)
       next_token = app_items_list.next_token
-      app_currency_list.push(app_items_list)
-    end
+      app_items_list.items.each do |item|
+        app_currency_list.push(item)
+      end
+    end while next_token != nil
       
     #go through and create app-specific lists for each app
     app_currency_list.each do |currency|
-      banned_apps = currency.get('banned_apps').split(';') if currency.get('banned_apps')
+      banned_apps = currency.get('disabled_apps').split(';') if currency.get('disabled_apps')
       
       xml = "<OfferArray>\n"
       app_list.each do |app|
-        next if banned.offers.contains offer.key
-        return_offer = ReturnOffer.new(1, app, currency.get('installs_money_share'), currency.get('conversion_rate'))
+        next if (banned_apps) && (banned_apps.include? app.key)
+        return_offer = ReturnOffer.new(1, app, currency.get('installs_money_share'), currency.get('conversion_rate'), 
+          currency.get('currency_name'))
         xml += return_offer.to_xml
+        xml += "^^TAPJOY_SPLITTER^^"
       end
-      xml += "</OfferArray>\n^^TAPJOY_SPLITTER^^"
+      xml += "</OfferArray>\n"
       
-      AWS::S3::S3Object.store "installs_" + currency.get('app_id'), 
-        xml, 'offer_lists'
+      AWS::S3::S3Object.store "installs_" + currency.key, 
+        xml, 'offer-data'
       
     end    
     
