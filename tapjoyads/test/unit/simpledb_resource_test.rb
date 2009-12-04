@@ -19,7 +19,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
   end
   
   def teardown
-    #@model.delete_all
+    @model.delete_all
   end
   
   test "long attributes" do
