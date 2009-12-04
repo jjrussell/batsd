@@ -8,8 +8,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
   private
   
   def on_message(message)
-    Rails.logger.info "ConversionTracking msg rcvd: #{message}"
-    json = JSON.parse(message)
+    json = JSON.parse(message.to_s)
     udid = json['udid']
     advertiser_app_id = json['app_id']
     install_date = json['install_date']

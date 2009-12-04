@@ -1,22 +1,17 @@
-#
-
-class Job::CleanupWebRequestsController < Job::JobController
+class Job::CleanupWebRequestsController < Job::SqsReaderController
   include RightAws
   include TimeLogHelper
   
   def initialize
+    super QueueNames::CLEANUP_WEB_REQUESTS
     @s3 = S3.new
     @bucket = S3::Bucket.create(@s3, 'web-requests')
   end
   
-  def index
-    # Todo before this can be a real job: generate date automatically.
+  def backup_date
     date = params[:date]
     
-    backup_domain("web-request-#{date}")
-    MAX_WEB_REQUEST_DOMAINS.times do |num|
-        backup_domain("web-request-#{date}-#{num}")
-    end
+    on_message(date)
     
     render :text => 'ok'
   end
@@ -55,6 +50,18 @@ class Job::CleanupWebRequestsController < Job::JobController
   
   private
   
+  def on_message(message)
+    # Delete the message immediately. This is sure to take longer than 60 seconds.
+    # If this fails, it will automatically be retried on later days.
+    message.delete
+    
+    date_string = message.to_s
+    
+    MAX_WEB_REQUEST_DOMAINS.times do |num|
+      backup_domain("web-request-#{date_string}-#{num}")
+    end
+  end
+  
   ##
   # Backs up the specified domain name to s3.
   # Each line of the file represents a single item. The contents of the line are 
@@ -63,6 +70,7 @@ class Job::CleanupWebRequestsController < Job::JobController
   # Next, the file is uploaded to s3, in to the 'web-requests' bucket.
   # Finally, assuming no errors have occurred, the domain is deleted.
   def backup_domain(domain_name)
+    Rails.logger.info "Backing up domain: #{domain_name}"
     file_name = "tmp/#{RUN_MODE_PREFIX}#{domain_name}.sdb"
     gzip_file_name = "#{file_name}.gz"
     s3_name = "#{RUN_MODE_PREFIX}#{domain_name}.sdb"

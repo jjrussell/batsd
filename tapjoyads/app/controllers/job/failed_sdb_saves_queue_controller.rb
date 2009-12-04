@@ -6,7 +6,7 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
   private
   
   def on_message(message)
-    sdb_item = SimpledbResource.deserialize(message)
+    sdb_item = SimpledbResource.deserialize(message.to_s)
     sdb_item.put('from_queue', '1')
     sdb_item.save
   end

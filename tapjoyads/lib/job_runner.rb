@@ -26,8 +26,15 @@ module JobRunner
         end
       end
       
-      def add_job job_path, interval
-        jobs.push(Job.new(job_path, interval))
+      ##
+      # Called by the config file to add a job.
+      # job_path: The path of the job, under /job.
+      # options: Specify how often to run the job. Only one option should be specified.
+      # Supported options are:
+      #   interval: Run every X seconds, on average. 
+      #   daily: Run once a day, every day X seconds after the start of the day.
+      def add_job job_path, options
+        jobs.push(Job.new(job_path, options))
       end
     
       def define
@@ -39,7 +46,7 @@ module JobRunner
         load_config
         Rails.logger.flush
         jobs.each do |job|
-          set_next_run_time job
+          job.set_next_run_time
         end
         
         base_url = case ENV['RAILS_ENV']
@@ -65,7 +72,7 @@ module JobRunner
 
                   sess.get("/job/#{job.job_path}")
                 end
-                set_next_run_time job
+                job.set_next_run_time
               end
             end
             sleep(1)
@@ -77,14 +84,6 @@ module JobRunner
         end
       end
       
-      ##
-      # Set the next run time for a job to a random value between now and (now + 2 * job.interval).
-      # This ensures that all jobs across the system don't run at the same time, while
-      # also keeping the average interval equal to the specified interval.
-      def set_next_run_time job
-        job.next_run_time = Time.now.utc + rand(job.interval * 2)
-      end
-      
       def stop
         Rails.logger.info "JobRunner: Stopping"
         Rails.logger.flush
@@ -93,10 +92,39 @@ module JobRunner
   end
   
   class Job
-    attr_accessor :job_path, :interval, :next_run_time
-    def initialize job_path, interval
+    attr_accessor :job_path, :next_run_time
+    def initialize job_path, options
       @job_path = job_path
-      @interval = interval
+      @options = options
+      
+      if options.keys.length != 1
+        raise "Options must contain only one key"
+      end
+      
+      allowable_keys = [:interval]
+      unless allowable_keys.include?(options.keys.first)
+        raise "Options must contain one of: #{allowable_keys.join(', ')}"
+      end
+      
+    end
+    
+    ##
+    # Set the next run time for a job to a random value between now and (now + 2 * job.interval).
+    # This ensures that all jobs across the system don't run at the same time, while
+    # also keeping the average interval equal to the specified interval.
+    def set_next_run_time
+      if @options[:interval]
+        next_run_time = Time.now.utc + rand(@options[:interval] * 2)
+      elsif @options[:daily]
+        if next_run_time
+          next_run_time += 1.days
+        else
+          next_run_time = Time.parse('00:00 GMT', Time.now.utc).utc + @options[:daily]
+          if Time.now.utc > next_run_time
+            next_run_time += 1.days
+          end
+        end
+      end
     end
   end
 end
