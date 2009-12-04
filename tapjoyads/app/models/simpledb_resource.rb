@@ -141,8 +141,10 @@ class SimpledbResource
     attr_array = @attributes[attr_name]
     attr_array = Array(attr_array) if force_array
     
-    attr_array.map! do |item|
-      item.gsub("^^TAPJOY_NEWLINE^^", "\n")
+    if attr_array
+      attr_array.map! do |item|
+        item.gsub("^^TAPJOY_NEWLINE^^", "\n")
+      end
     end
     
     if not force_array and not attr_array.nil? and attr_array.length == 1
