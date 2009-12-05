@@ -78,7 +78,7 @@ XML_END
     
     xml = "<OfferArray>\n"
     max.times do |i|
-      xml += user_rewarded_installs[start + i] if start + i < max
+      xml += user_rewarded_installs[start + i] if start + i < user_rewarded_installs.length
     end
     
     xml += "<MoreDataAvailable>#{user_rewarded_installs.length - max - start}</MoreDataAvailable>\n"
