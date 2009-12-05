@@ -11,7 +11,7 @@ class Job::GetAdNetworkDataController < Job::JobController
     }
     @download_content_options = {
       :timeout => 30,
-      :authenticate_internal => true
+      :internal_authenticate => true
     }
   end
   
