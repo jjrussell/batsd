@@ -23,7 +23,7 @@ XML_END
       xml += get_offerpal_offers
       xml += "<Message>Complete one of the offers below to earn</Message>\n"
     elsif params[:type] == '1'
-      xml += get_rewarded_installs(params[:start], params[:max])
+      xml += get_rewarded_installs(params[:start].to_i, params[:max].to_i)
       xml += "<Message>Install one of the apps below to earn</Message>\n"
     end
     xml += "</TapjoyConnectReturnObject>"
@@ -77,7 +77,7 @@ XML_END
     end
     
     xml = ""
-    max.to_i.times do |i|
+    max.times do |i|
       xml += user_rewarded_installs[start + i] if start + i < max
     end
     
