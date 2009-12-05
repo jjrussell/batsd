@@ -10,8 +10,7 @@
 # Add the opendns name servers.
 `echo -e "make_resolv_conf(){\n\t:\n}" > /etc/dhclient-enter-hooks`
 `chmod a+x /etc/dhclient-enter-hooks`
-`echo "nameserver 208.67.222.222" >> /etc/resolv.conf`
-`echo "nameserver 208.67.220.220" >> /etc/resolv.conf`
+`echo -e "nameserver 8.8.4.4\nnameserver 8.8.8.8" > /etc/resolv.conf`
 `/etc/init.d/network restart`
 
 # Remove uneeded cron jobs, which hog cpu

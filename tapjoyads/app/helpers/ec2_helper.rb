@@ -11,9 +11,10 @@ module Ec2Helper
   ##
   # Returns an array of the local/private dns names of all running EC2 servers.
   # If the group_id is specified, then only servers withing that security group are returned.
-  def get_local_dns_names(group_id = nil)
-    get_server_field('privateDnsName', group_id)
-  end
+  # Not to be used. Our servers are now set up without internal dns.
+  #def get_local_dns_names(group_id = nil)
+  #  get_server_field('privateDnsName', group_id)
+  #end
   
   def get_server_type
     hostname = `hostname`
