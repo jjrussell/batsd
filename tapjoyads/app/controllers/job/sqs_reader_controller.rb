@@ -28,6 +28,8 @@ class Job::SqsReaderController < Job::JobController
 
   def run_job
     on_message(params[:message])
+    
+    render :text => 'ok'
   end
 
 end
