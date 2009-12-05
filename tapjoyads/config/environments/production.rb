@@ -14,6 +14,9 @@ config.cache_classes = true
 config.action_controller.consider_all_requests_local = false
 config.action_controller.perform_caching             = true
 
+# Disable request forgery protection because this is an api
+config.action_controller.allow_forgery_protection    = false
+
 # Use a different cache store in production
 # config.cache_store = :mem_cache_store
 
