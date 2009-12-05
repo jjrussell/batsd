@@ -72,6 +72,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'Redir.aspx/:action', :controller => 'win_redirector'
   map.connect 'RateApp.aspx/:action', :controller => 'win_redirector'
   map.connect 'ReceiveOffersService.asmx/:action', :controller => 'win_redirector'
+  map.connect 'Offers.aspx/:action', :controller => 'win_redirector'
   
   # Authenticated windows redirectors. These too will be removed/moved to standard 
   # ruby controllers in time.
