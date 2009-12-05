@@ -1,15 +1,15 @@
 class Job::SqsReaderController < Job::JobController
   include RightAws
+  @@queue = nil
 
   def initialize(queue_name)
-    @queue_name = queue_name
+    unless @@queue
+      @@queue = SqsGen2.new.queue(queue_name)
+    end
   end
 
   def index
-    now = Time.now
-    sqs = SqsGen2.new
-    queue = sqs.queue(@queue_name, false)
-    messages = queue.receive_messages(10, 60)
+    messages = @@queue.receive_messages(10, 60)
     messages.each do |message|
       Rails.logger.info "#{@queue_name} message recieved: #{message.to_s}"
       begin
