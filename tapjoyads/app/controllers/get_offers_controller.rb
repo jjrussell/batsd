@@ -77,7 +77,7 @@ XML_END
     end
     
     xml = ""
-    max.times do |i|
+    max.to_i.times do |i|
       xml += user_rewarded_installs[start + i] if start + i < max
     end
     
