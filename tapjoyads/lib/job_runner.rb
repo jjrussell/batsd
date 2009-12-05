@@ -44,10 +44,11 @@ module JobRunner
       def start
         Rails.logger.info "JobRunner: running"
         load_config
-        Rails.logger.flush
         jobs.each do |job|
           job.set_next_run_time
+          Rails.logger.info "Next run time for #{job.job_path}: #{job.next_run_time}"
         end
+        Rails.logger.flush
         
         base_url = case ENV['RAILS_ENV']
         when 'production' then 'http://localhost:9898'
@@ -101,7 +102,7 @@ module JobRunner
         raise "Options must contain only one key"
       end
       
-      allowable_keys = [:interval]
+      allowable_keys = [:interval, :daily]
       unless allowable_keys.include?(options.keys.first)
         raise "Options must contain one of: #{allowable_keys.join(', ')}"
       end

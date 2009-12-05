@@ -19,14 +19,12 @@ JobRunner::Gateway.define do |s|
     s.add_job 'conversion_tracking_queue', :interval => 1.seconds
     s.add_job 'failed_sdb_saves_queue', :interval => 1.seconds
     s.add_job 'cleanup_web_requests', :interval => 1.minutes
-  elsif machine_type == 'master'
-    s.add_job 'master_cleanup_web_requests', :daily => 1.hours
+    s.add_job 'create_offers', :interval => 1.seconds
+    s.add_job 'create_rewarded_installs', :interval => 1.seconds
+  elsif machine_type == 'masterjobs'
+    s.add_job 'master_cleanup_web_requests', :daily => 2.hours
+    s.add_job 'master_create_offers', :interval => 15.minutes
   else
-    puts "Not running any jobs. Not a job server."
+    Rails.logger.info "JobRunner: Not running any jobs. Not a job server."
   end
-  
-  # Maintenance jobs. Run on all servers:
-  
-  # Memcache servers are hard-coded. Register-servers does not need to run.
-  # s.add_job 'register_servers', 30.minutes
 end

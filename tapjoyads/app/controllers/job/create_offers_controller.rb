@@ -1,10 +1,16 @@
 # Gets the list of offers from offerpal
 
-class Job::CreateOffersController < Job::JobController
+class Job::CreateOffersController < Job::SqsReaderController
   include DownloadContent
   include MemcachedHelper
   
-  def index
+  def initialize
+    super QueueNames::CREATE_OFFERS
+  end
+  
+  private
+  
+  def on_message(message)
     
     #first get the list of countries supported by offerpal
     country_list = AWS::S3::S3Object.value 'OfferpalCountryList.txt', 'offer-data'
@@ -107,6 +113,5 @@ class Job::CreateOffersController < Job::JobController
       
     end #country loop
     
-    render :text => "ok"
   end
 end

@@ -1,10 +1,16 @@
 # Gets the list of offers from offerpal
 
-class Job::CreateRewardedInstallsController < Job::JobController
+class Job::CreateRewardedInstallsController < Job::SqsReaderController
   include DownloadContent
   include MemcachedHelper
   
-  def index
+  def initialize
+    super QueueNames::CREATE_REWARDED_INSTALLS
+  end
+  
+  private 
+  
+  def on_message(message)
     
     #first get the list of all apps paying for installs
     next_token = nil
@@ -48,8 +54,7 @@ class Job::CreateRewardedInstallsController < Job::JobController
       AWS::S3::S3Object.store "installs_" + currency.key, 
         xml, 'offer-data'
       save_to_cache("installs.s3.#{currency.key}", xml)
-    end    
-    
-    render :text => "ok"
+    end
+        
   end
 end
