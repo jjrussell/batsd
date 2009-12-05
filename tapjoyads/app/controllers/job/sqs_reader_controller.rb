@@ -3,13 +3,16 @@ class Job::SqsReaderController < Job::JobController
   @@queue = nil
 
   def initialize(queue_name)
-    unless @@queue
-      @@queue = SqsGen2.new.queue(queue_name)
-    end
+    @queue_name = queue_name
   end
 
   def index
-    messages = @@queue.receive_messages(10, 60)
+    queue = nil
+    begin
+      queue = SqsGen2.new.queue(@queue_name)
+    end while queue == nil
+    
+    messages = queue.receive_messages(10, 60)
     messages.each do |message|
       Rails.logger.info "#{@queue_name} message recieved: #{message.to_s}"
       begin
@@ -21,6 +24,10 @@ class Job::SqsReaderController < Job::JobController
     end
     
     render :text => 'ok'
+  end
+
+  def run_job
+    on_message(params[:message])
   end
 
 end
