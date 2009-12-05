@@ -10,8 +10,12 @@ class LookupOfferpalIdController < ApplicationController
     user = SimpledbResource.select('publisher-user-record','*', "int_record_id = '#{int_id}'")
     record = user.items.first
     
-    render :text => record.key #this contains the app_id.pubisher_user_id
-
+    if record
+      render :text => record.key  #this contains app_id.publisher_user_id
+    else
+      render :text => "not_found"
+    end
+    
   end         
 
   def reverse
@@ -19,8 +23,11 @@ class LookupOfferpalIdController < ApplicationController
     user = SimpledbResource.select('publisher-user-record','*', "record_id = '#{record_id}'")
     record = user.items.first
     
-    
-    render :text => record.key #this contains app_id.publisher_user_id
+    if record
+      render :text => record.key  #this contains app_id.publisher_user_id
+    else
+      render :text => "not_found"
+    end
   end
   
 end
