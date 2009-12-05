@@ -21,8 +21,10 @@ XML_END
     xml = "<TapjoyConnectReturnObject>\n"
     if params[:type] == '0'
       xml += get_offerpal_offers
+      xml += "<Message>Complete one of the offers below to earn</Message>\n"
     elsif params[:type] == '1'
       xml += get_rewarded_installs
+      xml += "<Message>Install one of the apps below to earn</Message>\n"
     end
     xml += "</TapjoyConnectReturnObject>"
     
