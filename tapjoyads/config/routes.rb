@@ -56,6 +56,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'Service1.asmx/SubmitAppStoreClick', :controller => 'submit_click', :action => 'store'
   map.connect 'service1.asmx/GetAppIcon', :controller => 'get_app_image', :action => 'icon'
   map.connect 'Service1.asmx/GetAppIcon', :controller => 'get_app_image', :action => 'icon'
+  map.connect 'service1.asmx/GetOffersForPublisherCurrencyByType', :controller => 'get_offers'
+  map.connect 'Service1.asmx/GetOffersForPublisherCurrencyByType', :controller => 'get_offers'
   map.connect 'service1.asmx/:action', :controller => 'service1'
   map.connect 'Service1.asmx/:action', :controller => 'service1'
   
