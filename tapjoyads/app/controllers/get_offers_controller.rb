@@ -67,7 +67,7 @@ XML_END
       device_app.attributes.each do |app|
         if app[0] =~ /^app/ #assuming this is how you get the key from a hash in each
           id = app[1].split('.')[1] 
-          add = false if install.contains "<GameID>#{id}</GameID>"
+          add = false if install.include? "<AdvertiserAppID>#{id}</AdvertiserAppID>"
         end
       end
   
