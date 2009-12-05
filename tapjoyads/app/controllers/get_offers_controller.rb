@@ -23,7 +23,7 @@ XML_END
       xml += get_offerpal_offers
       xml += "<Message>Complete one of the offers below to earn</Message>\n"
     elsif params[:type] == '1'
-      xml += get_rewarded_installs
+      xml += get_rewarded_installs(params[:start], params[:max])
       xml += "<Message>Install one of the apps below to earn</Message>\n"
     end
     xml += "</TapjoyConnectReturnObject>"
@@ -50,7 +50,7 @@ XML_END
     
   end
   
-  def get_rewarded_installs
+  def get_rewarded_installs(start, max)
     app_id = params[:app_id]
     
     device_app = DeviceAppList.new(params[:udid])
@@ -76,7 +76,13 @@ XML_END
       user_rewarded_installs.push install if add
     end
     
-    xml = user_rewarded_installs.join
+    xml = ""
+    max.times do |i|
+      xml += user_rewarded_installs[start + i] if start + i < max
+    end
+    
+    xml += "<MoreDataAvailable>#{user_rewarded_installs.length - max - start}</MoreDataAvailable>\n"
+
     
     return xml
     

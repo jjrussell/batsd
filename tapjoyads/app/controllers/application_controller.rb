@@ -33,6 +33,8 @@ class ApplicationController < ActionController::Base
     set_param(:offer_id, :CachedOfferID, true)
     set_param(:type, :Type, true)
     set_param(:publisher_user_id, :PublisherUserID)
+    set_param(:start, :Start)
+    set_param(:max, :Max)
   end
   
   def set_param(to, from, lower = false)
