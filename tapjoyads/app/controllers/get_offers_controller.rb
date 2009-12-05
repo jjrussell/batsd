@@ -73,7 +73,7 @@ XML_END
         end
       end
   
-      user_rewarded_installs.push install.gsub("<OfferArray>","") if add
+      user_rewarded_installs.push install if add
     end
     
     xml = "<OfferArray>\n"

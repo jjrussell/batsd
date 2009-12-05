@@ -41,7 +41,6 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
     app_currency_list.each do |currency|
       banned_apps = currency.get('disabled_apps').split(';') if currency.get('disabled_apps')
       
-      xml = "<OfferArray>\n"
       app_list.each do |app|
         next if (banned_apps) && (banned_apps.include? app.key)
         return_offer = ReturnOffer.new(1, app, currency.get('installs_money_share'), currency.get('conversion_rate'), 
@@ -49,8 +48,7 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
         xml += return_offer.to_xml
         xml += "^^TAPJOY_SPLITTER^^"
       end
-      xml += "</OfferArray>\n"
-      
+        
       AWS::S3::S3Object.store "installs_" + currency.key, 
         xml, 'offer-data'
       save_to_cache("installs.s3.#{currency.key}", xml)
