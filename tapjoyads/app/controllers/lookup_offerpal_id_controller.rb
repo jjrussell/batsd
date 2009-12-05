@@ -1,9 +1,4 @@
 class LookupOfferpalIdController < ApplicationController
-  
-  missing_message = "missing required params"
-  verify :params => [:int_id],
-         :render => {:text => missing_message}
-
          
   def index
     int_id = params[:int_id]
