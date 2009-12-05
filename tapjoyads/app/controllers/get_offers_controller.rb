@@ -73,16 +73,16 @@ XML_END
         end
       end
   
-      user_rewarded_installs.push install if add
+      user_rewarded_installs.push install.gsub("<OfferArray>","") if add
     end
     
-    xml = ""
+    xml = "<OfferArray>\n"
     max.times do |i|
       xml += user_rewarded_installs[start + i] if start + i < max
     end
     
     xml += "<MoreDataAvailable>#{user_rewarded_installs.length - max - start}</MoreDataAvailable>\n"
-
+    xml += "</OfferArray>\n"
     
     return xml
     
