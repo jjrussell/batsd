@@ -64,7 +64,7 @@ module StatsJobHelper
       stat.put('paid_installs', paid_installs.join(','))
       
       offer_clicks = get_hourly_offer_clicks(start_hour, end_hour, time, item_id, 
-          stat.get('offer_clicks'), false, true)
+          stat.get('offer_clicks'))
     
       send_stat_to_windows(time.iso8601[0,10], 'OfferClicks', item_id, paid_clicks.sum)
           
