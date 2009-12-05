@@ -114,14 +114,14 @@ module JobRunner
     # also keeping the average interval equal to the specified interval.
     def set_next_run_time
       if @options[:interval]
-        next_run_time = Time.now.utc + rand(@options[:interval] * 2)
+        @next_run_time = Time.now.utc + rand(@options[:interval] * 2)
       elsif @options[:daily]
-        if next_run_time
-          next_run_time += 1.days
+        if @next_run_time
+          @next_run_time += 1.days
         else
-          next_run_time = Time.parse('00:00 GMT', Time.now.utc).utc + @options[:daily]
-          if Time.now.utc > next_run_time
-            next_run_time += 1.days
+          @next_run_time = Time.parse('00:00 GMT', Time.now.utc).utc + @options[:daily]
+          if Time.now.utc > @next_run_time
+            @next_run_time += 1.days
           end
         end
       end
