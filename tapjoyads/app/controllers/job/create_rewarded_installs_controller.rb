@@ -29,7 +29,7 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
     next_token = nil
     app_currency_list = []
     begin
-      app_items_list = SimpledbResource.select('currency','currency_name, conversion_rate, installs_money_share, disabled_offers', 
+      app_items_list = SimpledbResource.select('currency','*', 
         "currency_name != ''", nil, next_token)
       next_token = app_items_list.next_token
       app_items_list.items.each do |item|
