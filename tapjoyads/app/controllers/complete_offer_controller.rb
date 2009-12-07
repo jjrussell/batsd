@@ -1,7 +1,7 @@
 class CompleteOfferController < ApplicationController
   def index
 
-    if ( (not params[:offer_id]) || (not params[:app_id]) || (not params[:udid]) || (not params[:url]))
+    if ( (not params[:offerid]) || (not params[:app_id]) || (not params[:udid]) || (not params[:url]))
       error = Error.new
       error.put('request', request.url)
       error.put('function', 'adshown')
@@ -16,7 +16,7 @@ class CompleteOfferController < ApplicationController
     
     click = OfferClick.new( UUIDTools::UUID.random_create.to_s)
     click.put("click_date", "#{now.to_f.to_s}")
-    click.put('offer_id', params[:offer_id])
+    click.put('offer_id', params[:offerid])
     click.put('app_id', params[:app_id])
     click.put('udid', params[:udid])
     click.put('record_id', params[:record_id])
