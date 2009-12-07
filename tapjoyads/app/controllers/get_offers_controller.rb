@@ -20,10 +20,10 @@ XML_END
 
     xml = "<TapjoyConnectReturnObject>\n"
     if params[:type] == '0'
-      xml += get_offerpal_offers
+      xml += get_offerpal_offers(params[:app_id], params[:udid])
       xml += "<Message>Complete one of the offers below to earn</Message>\n"
     elsif params[:type] == '1'
-      xml += get_rewarded_installs(params[:start].to_i, params[:max].to_i)
+      xml += get_rewarded_installs(params[:start].to_i, params[:max].to_i, params[:udid])
       xml += "<Message>Install one of the apps below to earn</Message>\n"
     end
     xml += "</TapjoyConnectReturnObject>"
@@ -38,19 +38,26 @@ XML_END
     end
   end
   
-  def get_offerpal_offers
+  def get_offerpal_offers(app_id, udid)
     country = CGI::escape("United States") #for now
-    app_id = params[:app_id]
     
     xml = get_from_cache_and_save("offers.s3.#{app_id}.#{country}") do
       xml = AWS::S3::S3Object.value "offers_#{app_id}.#{country}", 'offer-data'
     end
     
+    # if app_id == '2349536b-c810-47d7-836c-2cd47cd3a796'
+    #   rate = RateApp.get("#{app_id}.#{udid}")
+    #   unless rate.get('rate_date')
+    #     #they haven't rated the app before
+    #     create_rating_offer(app_id, udid)
+    #   end
+    # end
+    
     return xml
     
   end
   
-  def get_rewarded_installs(start, max)
+  def get_rewarded_installs(start, max, udid)
     app_id = params[:app_id]
     
     device_app = DeviceAppList.new(params[:udid])
@@ -69,8 +76,9 @@ XML_END
       device_app.attributes.each do |app|
         if app[0] =~ /^app/ #assuming this is how you get the key from a hash in each
           id = app[0].split('.')[1] 
-          add = false if install.include? "<AdvertiserAppID>#{id}</AdvertiserAppID>" 
-          add = true if params[:udid] == '298c5159a3681207eaba5a04b3573aa7b4f13d99'
+          if udid != '298c5159a3681207eaba5a04b3573aa7b4f13d99'
+            #add = false if install.include? "<AdvertiserAppID>#{id}</AdvertiserAppID>" 
+          end
         end
       end
   

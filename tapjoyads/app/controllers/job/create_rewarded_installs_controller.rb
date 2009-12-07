@@ -51,7 +51,7 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
       end
         
       AWS::S3::S3Object.store "installs_" + currency.key, 
-        xml, 'offer-data'
+        xml, RUN_MODE_PREFIX + 'offer-data'
       save_to_cache("installs.s3.#{currency.key}", xml)
     end
         

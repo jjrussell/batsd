@@ -107,7 +107,7 @@ class Job::CreateOffersController < Job::SqsReaderController
         xml += "</OfferArray>\n"
         
         AWS::S3::S3Object.store "offers_" + currency.key + "." + CGI::escape(country), 
-          xml, 'offer-data'
+          xml, RUN_MODE_PREFIX + 'offer-data'
         save_to_cache("offers.s3.#{currency.key}.#{CGI::escape(country)}", xml)
       end
       
