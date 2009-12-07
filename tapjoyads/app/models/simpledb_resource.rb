@@ -165,7 +165,7 @@ class SimpledbResource
   def put(attr_name, value, replace = true)
     return if value.nil?
     illegal_xml_chars = /\x00|\x01|\x02|\x03|\x04|\x05|\x06|\x07|\x08|\x0B|\x0C|\x0E|\x0F|\x10|\x11|\x12|\x13|\x14|\x15|\x16|\x17|\x18|\x19|\x1A|\x1B|\x1C|\x1D|\x1E|\x1F|\x7F-\x84\x86-\x9F/
-    value = value.to_s.toutf16.gsub(illegal_xml_chars,'')
+    value = Iconv.conv('UTF-8','UTF-16',value.to_s.toutf16).gsub(illegal_xml_chars,'')
     
     value = value.gsub("\r\n", "^^TAPJOY_NEWLINE^^")
     value = value.gsub("\n", "^^TAPJOY_NEWLINE^^")
