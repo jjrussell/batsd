@@ -15,10 +15,10 @@ class ReturnOffer
       @Instructions = offer.get('instructions').gsub("TAPJOY_BUCKS", @Currency)
       @CachedOfferID = offer.get('cached_offer_id')
       @PublisherUserRecordID = "$PUBLISHER_USER_RECORD_ID" #to be replaced
-      @ActionURL = offer.get('action_url').gsub('TAPJOY_GENERIC','INT_IDENTIFIER') #has a TAPJOY_GENERIC to be replaced with INT of publisher_user_record_id
+      @ActionURL = offer.get('action_url').gsub(" ","%20").gsub('TAPJOY_GENERIC','INT_IDENTIFIER') #has a TAPJOY_GENERIC to be replaced with INT of publisher_user_record_id
       @Amount = (offer.get('amount').to_f * money_share.to_f * conversion_rate.to_f / 100.0).to_i.to_s
       @Type = type
-      @EmailURL = "http://www.tapjoyconnect.com/complete_offer?offerid=#{CGI::escape(offer.key)}&udid=$UDID&record_id=$PUBLISHER_USER_RECORD_ID&app_id=$APP_ID&url=#{CGI::escape(@ActionURL)}"
+      @EmailURL = "http://www.tapjoyconnect.com/complete_offer?offerid=#{CGI::escape(offer.key)}&udid=$UDID&record_id=$PUBLISHER_USER_RECORD_ID&app_id=$APP_ID&url=#{CGI::escape(CGI::escape(@ActionURL))}"
     elsif type == 1 #apps
       @Cost = "Free" 
       @Cost = "Paid" if offer.get('price') && offer.get('price').to_i > 0
