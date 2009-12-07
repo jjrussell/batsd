@@ -17,14 +17,16 @@ XML_END
       record.put('int_record_id', record.attributes['record_id'].hash.abs.to_s) #this should work!
       record.save
     end
+    
+    currency = Currency.new(params[:app_id])
 
     xml = "<TapjoyConnectReturnObject>\n"
     if params[:type] == '0'
       xml += get_offerpal_offers(params[:app_id], params[:udid])
-      xml += "<Message>Complete one of the offers below to earn</Message>\n"
+      xml += "<Message>Complete one of the offers below to earn #{CGI::escapeHTML(currency.get('currency_name'))}</Message>\n"
     elsif params[:type] == '1'
       xml += get_rewarded_installs(params[:start].to_i, params[:max].to_i, params[:udid])
-      xml += "<Message>Install one of the apps below to earn</Message>\n"
+      xml += "<Message>Install one of the apps below to earn #{CGI::escapeHTML(currency.get('currency_name'))}</Message>\n"
     end
     xml += "</TapjoyConnectReturnObject>"
     
@@ -104,9 +106,9 @@ XML_END
     max.times do |i|
       xml += user_rewarded_installs[start + i] if start + i < user_rewarded_installs.length
     end
-    
-    xml += "<MoreDataAvailable>#{user_rewarded_installs.length - max - start}</MoreDataAvailable>\n"
+  
     xml += "</OfferArray>\n"
+    xml += "<MoreDataAvailable>#{user_rewarded_installs.length - max - start}</MoreDataAvailable>\n" if user_rewarded_installs.length - max - start > 0
     
     return xml
     
