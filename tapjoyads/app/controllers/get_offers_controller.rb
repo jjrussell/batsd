@@ -42,19 +42,34 @@ XML_END
     country = CGI::escape("United States") #for now
     
     xml = get_from_cache_and_save("offers.s3.#{app_id}.#{country}") do
-      xml = AWS::S3::S3Object.value "offers_#{app_id}.#{country}", 'offer-data'
+      xml = AWS::S3::S3Object.value "offers_#{app_id}.#{country}", RUN_MODE_PREFIX + 'offer-data'
     end
     
-    # if app_id == '2349536b-c810-47d7-836c-2cd47cd3a796'
-    #   rate = RateApp.get("#{app_id}.#{udid}")
-    #   unless rate.get('rate_date')
-    #     #they haven't rated the app before
-    #     create_rating_offer(app_id, udid)
-    #   end
-    # end
+    if app_id == '2349536b-c810-47d7-836c-2cd47cd3a796'
+      rate = RateApp.new("#{app_id}.#{udid}")
+      unless rate.get('rate_date')
+        #they haven't rated the app before
+        offer = create_rating_offer(app_id, udid)
+        first_line = "<OfferArray>\n"
+        old_xml = xml[first_line.length,xml.length]
+        xml = first_line + offer + old_xml
+      end
+    end
     
     return xml
     
+  end
+  
+  def create_rating_offer(app_id, udid)
+    #thank god for memcached, but this should be optimized
+    
+    app = App.new(app_id)
+    currency = Currency.new(app_id)
+    offer = ReturnOffer.new(3, app.get('name'), currency.get('offers_money_share'), 
+      currency.get('conversion_rate'), currency.get('currency_name'))
+    offer.ActionURL = "http://ws.tapjoyads.com/rate_app_offer?record_id=$PUBLISHER_USER_RECORD_ID&udid=#{udid}&app_id=#{app_id}"
+    
+    return offer.to_xml
   end
   
   def get_rewarded_installs(start, max, udid)
@@ -63,7 +78,7 @@ XML_END
     device_app = DeviceAppList.new(params[:udid])
     
     xml = get_from_cache_and_save("installs.s3.#{app_id}") do
-      xml = AWS::S3::S3Object.value "installs_#{app_id}", 'offer-data'
+      xml = AWS::S3::S3Object.value "installs_#{app_id}", RUN_MODE_PREFIX + 'offer-data'
     end
     
     # remove all apps this user already has

@@ -6,7 +6,6 @@ class ReturnOffer
   def initialize(type, offer, money_share, conversion_rate, currency_name)
     if type == 0 #offers
       @Cost = "Free" 
-      @Cost = "Paid" unless offer.get('amount').to_i > 0
       @Currency = currency_name
       @Description = offer.get('description').gsub("TAPJOY_BUCKS", @Currency)
       @Name = offer.get('name').gsub("TAPJOY_BUCKS", @Currency)
@@ -38,6 +37,21 @@ class ReturnOffer
       @EmailURL = nil
       @CachedOfferID = nil
       @CreditCardRequired = "false"
+    elsif type == 3 #rating
+      @Cost = "Free"
+      @Currency = currency_name
+      @Description = "You must Open in Safari.  Clicking Complete Offer will not work.  Click Open in Safari to go to the App Store where you can quickly submit a rating.  This is on the honor system.  When you return to #{offer} you will have earned your #{currency_name}."
+      @Name = "Rate #{offer} in the App Store"
+      @Amount = (10.0 * conversion_rate.to_f / 100.0).to_i.to_s #give 10 cents worth of currency
+      @TimeDelay = 'in seconds'
+      @ImageURL = nil
+      @Instructions = "Just click the Complete Offer button to go to the App Store where you can rate #{offer}"
+      @ActionURL = ""
+      @PublisherUserRecordID = "$PUBLISHER_USER_RECORD_ID"
+      @Type = "0"
+      @EmailURL = @ActionURL
+      @CreditCardRequired = "false"
+      @CachedOfferID = "75f78cc5-e247-4707-f4934af0483a"
     end
   end  
 
