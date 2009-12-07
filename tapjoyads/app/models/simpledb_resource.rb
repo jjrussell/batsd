@@ -119,13 +119,14 @@ class SimpledbResource
           end
         end
       end
-      Rails.logger.flush
     end
     return thread
   rescue Exception => e
     Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e}"
     
     SqsGen2.new.queue(QueueNames::FAILED_SDB_SAVES).send_message(self.serialize)
+  ensure
+    Rails.logger.flush
   end
   
   ##
