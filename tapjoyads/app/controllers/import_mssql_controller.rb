@@ -78,7 +78,7 @@ XML_END
     ad.put('app_id_to_advertise', params[:app_id_to_advertise]) if params[:app_id_to_advertise]
     ad.put('app_id_restricted', params[:app_id_restricted]) if params[:app_id_restricted]
     ad.put('name', params[:name])
-    ad.put('description', params[:description])
+    ad.put('description', "----------------") #temporary fix instead of params[:description]
     ad.put('url', params[:url])
     ad.put('open_in', params[:open_in])
     ad.put('max_daily_impressions', params[:max_daily_impressions]) if params[:max_daily_impressions]
