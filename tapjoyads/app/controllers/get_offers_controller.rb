@@ -47,7 +47,7 @@ XML_END
     
     if app_id == '2349536b-c810-47d7-836c-2cd47cd3a796'
       rate = RateApp.new("#{app_id}.#{udid}")
-      unless rate.get('rate_date')
+      unless rate.get('rate-date')
         #they haven't rated the app before
         offer = create_rating_offer(app_id, udid)
         first_line = "<OfferArray>\n"
