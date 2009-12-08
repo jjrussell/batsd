@@ -18,7 +18,7 @@ class Job::RateOfferQueueController < Job::SqsReaderController
     rate = RateApp.new("#{app_id}.#{udid}")
     unless rate.get('rate_date')
       Rails.logger.info "Sending rating info for #{record_id}"
-      rate.put('rate-date', Time.now.utc.to_f)
+      rate.put('rate-date', Time.now.utc.to_f.to_s)
       rate.save
 
       currency = Currency.new(app_id)
