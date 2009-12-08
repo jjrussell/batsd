@@ -94,9 +94,9 @@ class SimpledbResource
         end
       
         if write_to_memcache
-          clone
+          cache = get_cache_instance
           begin
-            CACHE.cas(get_memcache_key) do |mc_attributes|
+            cache.cas(get_memcache_key) do |mc_attributes|
               mc_attributes.merge!(@attributes_to_replace)
               @attributes_to_add.each do |key, values|
                 mc_attributes[key] = Array(mc_attributes[key]) | values
@@ -181,6 +181,7 @@ class SimpledbResource
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     return if value.nil?
+    value = value.to_s
     
     # Probably not necessary, because params with questionable characters should call with cgi_escape => true
     #illegal_xml_chars = /\x00|\x01|\x02|\x03|\x04|\x05|\x06|\x07|\x08|\x0B|\x0C|\x0E|\x0F|\x10|\x11|\x12|\x13|\x14|\x15|\x16|\x17|\x18|\x19|\x1A|\x1B|\x1C|\x1D|\x1E|\x1F|\x7F-\x84\x86-\x9F/
