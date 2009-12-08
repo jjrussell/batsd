@@ -160,7 +160,7 @@ XML_END
 
     time_log("Stored in s3") do
       AWS::S3::S3Object.store app_id, params[:icon], 'app-icons'
-      save_to_cache("icon.s3.#{currency.key.hash}", params[:icon])
+      save_to_cache("icon.s3.#{app_id.hash}", params[:icon])
       AWS::S3::S3Object.store app_id, params[:screenshot], 'app-screenshots'
     end
 
