@@ -46,7 +46,7 @@ class Counter < SimpledbResource
       get_next_row.increment_count(attr_name)
     else
       new_count = get_count(attr_name, {:this_row_only => true}) + 1
-      put(attr_name, create_value(new_count), false)
+      put(attr_name, create_value(new_count), {:replace => false})
     end
   end
   
@@ -98,7 +98,7 @@ class Counter < SimpledbResource
     Rails.logger.info "Delete uneeded: new_lowest_count: #{new_lowest_count}"
     
     values_to_delete = []
-    get(attr_name, true).each do |value|
+    get(attr_name, {:force_array => true}).each do |value|
       count, time = parse_value(value)
       if count < new_lowest_count
         values_to_delete.push(value)
@@ -187,7 +187,7 @@ class Counter < SimpledbResource
     highest_count, lowest_count = 0, 1
     count_hash = Hash.new(0)
     
-    get(attr_name, true).each do |value|
+    get(attr_name, {:force_array => true}).each do |value|
       count, time = parse_value(value)
       unless blacklist.member?(count)
         count_hash[count] += 1
@@ -205,7 +205,7 @@ class Counter < SimpledbResource
   def get_blacklist(attr_name)
     blacklist = Set.new
     now = Time.now.utc
-    get(attr_name, true).each do |value|
+    get(attr_name, {:force_array => true}).each do |value|
       count, time = parse_value(value)
       if now - time < CONSISTENCY_LIMIT
         blacklist.add(count)

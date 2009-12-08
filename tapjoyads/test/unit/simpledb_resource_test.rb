@@ -32,7 +32,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     sleep(5)
     
     m = Testing.new(@key)
-    assert_equal(val, m.get('long_string'))
+    assert_equal(val, m.get('long_string', {:join_values => true}))
   end
   
   test "newlines in attributes" do
@@ -45,6 +45,16 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     assert_equal(val, m.get('newline_string'))
   end
   
+  test "cgi escape" do
+    val = "Special chars\n\t\xc2\xa0"
+    @model.put('escaped', val, {:cgi_escape => true})
+    @model.save
+    sleep(5)
+    
+    m = Testing.new(@key)
+    assert_equal(val, m.get('escaped'))
+  end
+  
   test "concurrent saves interacting with memcache" do
     expected_attrs = {}
     
@@ -52,7 +62,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     10.times do |i|
       model = Testing.new(@key)
       model.put("#{i}", 'value')
-      model.put("#{i}", 'value2', false)
+      model.put("#{i}", 'value2', {:replace => false})
       thread_list.push(model.save({:updated_at => false}))
       expected_attrs["#{i}"] = ['value', 'value2']
     end
@@ -62,7 +72,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     end
     
     model = Testing.new(@key, {:load => false})
-    model.put("9", 'value3', false)
+    model.put("9", 'value3', {:replace => false})
     model.save({:updated_at => false, :replace => false}).join
     expected_attrs['9'].push('value3')
     

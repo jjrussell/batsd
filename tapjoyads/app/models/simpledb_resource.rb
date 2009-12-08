@@ -32,6 +32,11 @@ class SimpledbResource
     @attributes_to_replace = {}
     @attributes_to_delete = {}
     
+    @special_values = {
+      :newline => "^^TAPJOY_NEWLINE^^",
+      :escaped => "^^TAPJOY_ESCAPED^^"
+    }
+    
     if should_load
       load(load_from_memcache)
     end
@@ -138,24 +143,32 @@ class SimpledbResource
   
   ##
   # Gets value(s) for a given attribute name.
-  def get(attr_name, force_array = false)
+  def get(attr_name, options = {})
+    force_array = options.delete(:force_array) { false }
+    join_values = options.delete(:join_values) { false }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
     attr_array = @attributes[attr_name]
     attr_array = Array(attr_array) if force_array
     
-    if not force_array and not attr_array.nil? and attr_array.length == 1
-      if attr_array[0].length >= 1000
-        second_part = get(attr_name + '_', false) || ''
-        val = attr_array[0].gsub("^^TAPJOY_NEWLINE^^", "\n")
-
-        return val + second_part
+    unless @attributes[attr_name]
+      return attr_array
+    end
+    
+    if join_values
+      joined_value = ''
+      attr_array.each do |value|
+        joined_value += value
       end
-      return attr_array[0].gsub("^^TAPJOY_NEWLINE^^", "\n")
+      return unescape_specials(joined_value)
+    end
+    
+    if not force_array and attr_array.length == 1
+      return unescape_specials(attr_array[0])
     end
       
-    if attr_array
-      attr_array.map! do |item|
-        item.gsub("^^TAPJOY_NEWLINE^^", "\n")
-      end
+    attr_array.map! do |value|
+      unescape_specials(value)
     end
     
     return attr_array
@@ -163,26 +176,30 @@ class SimpledbResource
   
   ##
   # Puts a value to be associated with an attribute name.
-  def put(attr_name, value, replace = true)
+  def put(attr_name, value, options = {})
+    replace = options.delete(:replace) { true }
+    cgi_escape = options.delete(:cgi_escape) { false }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
     return if value.nil?
-    illegal_xml_chars = /\x00|\x01|\x02|\x03|\x04|\x05|\x06|\x07|\x08|\x0B|\x0C|\x0E|\x0F|\x10|\x11|\x12|\x13|\x14|\x15|\x16|\x17|\x18|\x19|\x1A|\x1B|\x1C|\x1D|\x1E|\x1F|\x7F-\x84\x86-\x9F/
-    value = value.to_s.toutf16.gsub(illegal_xml_chars,'')
     
-    value = value.gsub("\r\n", "^^TAPJOY_NEWLINE^^")
-    value = value.gsub("\n", "^^TAPJOY_NEWLINE^^")
-    value = value.gsub("\r", "^^TAPJOY_NEWLINE^^")
+    # Probably not necessary, because params with questionable characters should call with cgi_escape => true
+    #illegal_xml_chars = /\x00|\x01|\x02|\x03|\x04|\x05|\x06|\x07|\x08|\x0B|\x0C|\x0E|\x0F|\x10|\x11|\x12|\x13|\x14|\x15|\x16|\x17|\x18|\x19|\x1A|\x1B|\x1C|\x1D|\x1E|\x1F|\x7F-\x84\x86-\x9F/
+    #value = value.to_s.toutf16.gsub(illegal_xml_chars,'')
     
+    value = escape_specials(value, {:cgi_escape => cgi_escape})
+    
+    value_array = Array(value)
     if value.length > 1000
-      put(attr_name+'_', value[1000,value.length-1000], replace)
-      value = value[0,1000]
+      value_array = value.scan(/.{1,1000}/)
     end
-          
+    
     if replace
-      @attributes[attr_name] = Array(value)
-      @attributes_to_replace[attr_name] = Array(value)
+      @attributes[attr_name] = value_array
+      @attributes_to_replace[attr_name] = value_array
     else
-      @attributes[attr_name] = Array(value) | Array(@attributes[attr_name])
-      @attributes_to_add[attr_name] = Array(value) | Array(@attributes_to_add[attr_name])
+      @attributes[attr_name] = value_array | Array(@attributes[attr_name])
+      @attributes_to_add[attr_name] = value_array | Array(@attributes_to_add[attr_name])
     end
   end
   
@@ -206,7 +223,10 @@ class SimpledbResource
   
   ##
   # Performs a batch_put_attributes.
-  def self.put_items(items, replace = false)
+  def self.put_items(items, options = {})
+    replace = options.delete(:force_array) { false }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
     raise "Too many items to batch_put" if items.length >25
     return {} if items.length == 0
 
@@ -332,6 +352,32 @@ class SimpledbResource
   
   def get_real_domain_name(domain_name)
     SimpledbResource.get_real_domain_name(domain_name)
+  end
+  
+  def unescape_specials(value)
+    value = value.gsub(@special_values[:newline], "\n")
+    
+    if value.starts_with?(@special_values[:escaped])
+      value = value.gsub(@special_values[:escaped], '')
+      value = CGI::unescape(value)
+    end
+    
+    return value
+  end
+  
+  def escape_specials(value, options = {})
+    cgi_escape = options.delete(:cgi_escape) { false }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
+    if cgi_escape
+      value = @special_values[:escaped] + CGI::escape(value)
+    else
+      value = value.gsub("\r\n", @special_values[:newline])
+      value = value.gsub("\n", @special_values[:newline])
+      value = value.gsub("\r", @special_values[:newline])
+    end
+    
+    return value
   end
   
 end

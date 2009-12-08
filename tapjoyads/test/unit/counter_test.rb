@@ -76,11 +76,11 @@ class CounterTest < ActiveSupport::TestCase
   end
   
   def test_get_count_simple
-    @model.put('a', @model.create_value(1), false)
-    @model.put('a', @model.create_value(2), false)
-    @model.put('a', @model.create_value(3), false)
-    @model.put('a', @model.create_value(4), false)
-    @model.put('a', @model.create_value(5), false)
+    @model.put('a', @model.create_value(1), {:replace => false})
+    @model.put('a', @model.create_value(2), {:replace => false})
+    @model.put('a', @model.create_value(3), {:replace => false})
+    @model.put('a', @model.create_value(4), {:replace => false})
+    @model.put('a', @model.create_value(5), {:replace => false})
   
     assert_equal 5, @model.get_count('a')
   end
@@ -92,57 +92,57 @@ class CounterTest < ActiveSupport::TestCase
     @model.increment_count('a')
     assert_equal 2, @model.get_count('a')
     
-    @model.put('a', @model.create_value(2), false)
+    @model.put('a', @model.create_value(2), {:replace => false})
     assert_equal 3, @model.get_count('a')
     
     @model.increment_count('a')
     assert_equal 4, @model.get_count('a')
     
-    @model.put('a', @model.create_value(1), false)
+    @model.put('a', @model.create_value(1), {:replace => false})
     assert_equal 5, @model.get_count('a')
   end
   
   def test_get_count_hash_simple
-    @model.put('a', @model.create_value(1), false)
-    @model.put('a', @model.create_value(2), false)
-    @model.put('a', @model.create_value(2), false)
-    @model.put('a', @model.create_value(3), false)
-    @model.put('a', @model.create_value(4), false)
+    @model.put('a', @model.create_value(1), {:replace => false})
+    @model.put('a', @model.create_value(2), {:replace => false})
+    @model.put('a', @model.create_value(2), {:replace => false})
+    @model.put('a', @model.create_value(3), {:replace => false})
+    @model.put('a', @model.create_value(4), {:replace => false})
     
     assert_equal([{1 => 1, 2 => 2, 3 => 1, 4 => 1}, 1, 4], @model.get_count_hash('a'))
   end
   
   def test_get_count_hash_with_blacklist
-    @model.put('a', @model.create_value(1), false)
-    @model.put('a', @model.create_value(1), false)
-    @model.put('a', @model.create_value(2), false)
-    @model.put('a', @model.create_value(2), false)
-    @model.put('a', @model.create_value(3), false)
+    @model.put('a', @model.create_value(1), {:replace => false})
+    @model.put('a', @model.create_value(1), {:replace => false})
+    @model.put('a', @model.create_value(2), {:replace => false})
+    @model.put('a', @model.create_value(2), {:replace => false})
+    @model.put('a', @model.create_value(3), {:replace => false})
     
     count_hash = @model.get_count_hash('a', Set.new([1]))[0]
     assert_equal({2 => 2, 3 => 1}, count_hash)
   end
   
   def test_get_blacklist
-    @model.put('a', @model.create_value(8), false)
+    @model.put('a', @model.create_value(8), {:replace => false})
     def @model.get_time
       "%.6f" %  (Time.now.utc.to_f - 100)
     end
-    @model.put('a', @model.create_value(1), false)
+    @model.put('a', @model.create_value(1), {:replace => false})
     assert_equal Set.new([8]), @model.get_blacklist('a')
   end
   
   def test_delete_uneeded
-    @model.put('a', @model.create_value(6), false)
+    @model.put('a', @model.create_value(6), {:replace => false})
     def @model.get_time
       "%.6f" %  (Time.now.utc.to_f - 100)
     end
-    @model.put('a', @model.create_value(1), false)
-    @model.put('a', @model.create_value(2), false)
-    @model.put('a', @model.create_value(3), false)
-    @model.put('a', @model.create_value(4), false)
-    @model.put('a', @model.create_value(4), false)
-    @model.put('a', @model.create_value(5), false)
+    @model.put('a', @model.create_value(1), {:replace => false})
+    @model.put('a', @model.create_value(2), {:replace => false})
+    @model.put('a', @model.create_value(3), {:replace => false})
+    @model.put('a', @model.create_value(4), {:replace => false})
+    @model.put('a', @model.create_value(4), {:replace => false})
+    @model.put('a', @model.create_value(5), {:replace => false})
     
     @model.delete_uneeded('a')
     
@@ -151,11 +151,11 @@ class CounterTest < ActiveSupport::TestCase
   
   def test_get_num_attrs
     @model.put('a', '1')
-    @model.put('a', '2', false)
-    @model.put('a', '3', false)
+    @model.put('a', '2', {:replace => false})
+    @model.put('a', '3', {:replace => false})
     @model.put('b', '1')
     @model.put('c', '1')
-    @model.put('c', '2', false)
+    @model.put('c', '2', {:replace => false})
     
     assert_equal(6, @model.get_num_attrs)
   end
@@ -174,7 +174,7 @@ class CounterTest < ActiveSupport::TestCase
   # Tests the mock counter's save and load methods.
   def test_save_and_load
     @model.put('a', 'a1')
-    @model.put('a', 'a2', false)
+    @model.put('a', 'a2', {:replace => false})
     @model.put('b', 'b')
     @model.save
     
