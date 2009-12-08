@@ -57,7 +57,7 @@ module MemcachedHelper
   
   ##
   # Saves value to memcached, as long as value is not nil.
-  def save_to_cache(key, value, clone = false, time = 1.hour)
+  def save_to_cache(key, value, clone = false, time = 1.week)
     cache = clone ? CACHE.clone : CACHE
     
     if value
