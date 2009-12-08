@@ -145,7 +145,6 @@ class SimpledbResource
   # Gets value(s) for a given attribute name.
   def get(attr_name, options = {})
     force_array = options.delete(:force_array) { false }
-    join_values = options.delete(:join_values) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     attr_array = @attributes[attr_name]
@@ -155,7 +154,11 @@ class SimpledbResource
       return attr_array
     end
     
-    if join_values
+    if not force_array and attr_array.length == 1
+      return unescape_specials(attr_array[0])
+    end
+    
+    if not force_array and attr_array[0].length >= 1000
       joined_value = ''
       attr_array.each do |value|
         joined_value += value
@@ -163,10 +166,6 @@ class SimpledbResource
       return unescape_specials(joined_value)
     end
     
-    if not force_array and attr_array.length == 1
-      return unescape_specials(attr_array[0])
-    end
-      
     attr_array.map! do |value|
       unescape_specials(value)
     end

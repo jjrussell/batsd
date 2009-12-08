@@ -151,7 +151,7 @@ XML_END
     app.put('status', params[:status])
     app.put('color', params[:color])
     app.put('price', params[:price]) 
-    app.put('description', "------") #params[:description]) if params[:description]
+    app.put('description', params[:description], {:cgi_escape => true}) if params[:description]
     app.put('has_location', params[:has_location])
     app.put('balance', params[:balance])
 

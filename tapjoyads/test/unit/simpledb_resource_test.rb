@@ -32,7 +32,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     sleep(5)
     
     m = Testing.new(@key)
-    assert_equal(val, m.get('long_string', {:join_values => true}))
+    assert_equal(val, m.get('long_string'))
   end
   
   test "newlines in attributes" do
