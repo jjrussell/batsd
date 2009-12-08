@@ -63,7 +63,7 @@ class Job::CreateOffersController < Job::SqsReaderController
             next if offerpalID == 'UNKNOWN'
             
             #now we know what the offerpal id is
-            dbOffer = CachedOffer.new(offerpalID)
+            dbOffer = CachedOffer.new(offerpalID.to_s + CGI::escape(country))
             
             dbOffer.put('name', offer['name'])
             dbOffer.put('action_url', offer['actionURL'])
