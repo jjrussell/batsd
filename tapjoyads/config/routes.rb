@@ -60,6 +60,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'Service1.asmx/GetOffersForPublisherCurrencyByType', :controller => 'get_offers'
   map.connect 'service1.asmx/GetTapjoyAd', :controller => 'getad'
   map.connect 'Service1.asmx/GetTapjoyAd', :controller => 'getad'
+  map.connect 'service1.asmx/SubmitOfferClick', :controller => 'submit_click', :action => 'offer'
+  map.connect 'Service1.asmx/SubmitOfferClick', :controller => 'submit_click', :action => 'offer'
   #map.connect 'service1.asmx/GetUserOfferStatus', :controller => 'offer_status'
   #map.connect 'Service1.asmx/GetUserOfferStatus', :controller => 'offer_status'
   map.connect 'service1.asmx/:action', :controller => 'service1'
