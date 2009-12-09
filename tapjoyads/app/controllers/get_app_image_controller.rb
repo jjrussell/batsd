@@ -18,7 +18,7 @@ class GetAppImageController < ApplicationController
     app_id = params[:app_id].downcase
     
     image_name = "#{app_id}"
-    
+
     image = get_from_cache_and_save("icon.s3.#{image_name.hash}") do
       image_content = AWS::S3::S3Object.value image_name, 'app-icons'
       Base64.encode64 image_content

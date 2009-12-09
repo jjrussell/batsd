@@ -101,7 +101,7 @@ class SimpledbResource
               @attributes_to_add.each do |key, values|
                 mc_attributes[key] = Array(mc_attributes[key]) | values
               end
-              
+            
               @attributes_to_delete.each do |key, values|
                 if values.empty?
                   mc_attributes.delete(key)
@@ -113,6 +113,7 @@ class SimpledbResource
                 end
               end
               @attributes = mc_attributes
+
               @attributes
             end
           rescue Memcached::NotFound
@@ -123,6 +124,7 @@ class SimpledbResource
             retry
           end
         end
+        
       end
     end
     return thread
@@ -154,16 +156,20 @@ class SimpledbResource
       return attr_array
     end
     
-    if not force_array and attr_array.length == 1
-      return unescape_specials(attr_array[0])
+    if not force_array and @attributes[attr_name].first.length >= 1000
+      joined_value = ''
+      while @attributes[attr_name].first.length >= 1000 do
+        joined_value += @attributes[attr_name].first
+        attr_name += '_'
+      end
+      
+      joined_value += @attributes[attr_name].first
+      
+      return unescape_specials(joined_value)
     end
     
-    if not force_array and attr_array[0].length >= 1000
-      joined_value = ''
-      attr_array.each do |value|
-        joined_value += value
-      end
-      return unescape_specials(joined_value)
+    if not force_array and attr_array.length == 1
+      return unescape_specials(attr_array[0])
     end
     
     attr_array.map! do |value|
@@ -178,6 +184,7 @@ class SimpledbResource
   def put(attr_name, value, options = {})
     replace = options.delete(:replace) { true }
     cgi_escape = options.delete(:cgi_escape) { false }
+    escape_nothing = options.delete(:escape_nothing) {false}
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     return if value.nil?
@@ -187,13 +194,38 @@ class SimpledbResource
     #illegal_xml_chars = /\x00|\x01|\x02|\x03|\x04|\x05|\x06|\x07|\x08|\x0B|\x0C|\x0E|\x0F|\x10|\x11|\x12|\x13|\x14|\x15|\x16|\x17|\x18|\x19|\x1A|\x1B|\x1C|\x1D|\x1E|\x1F|\x7F-\x84\x86-\x9F/
     #value = value.to_s.toutf16.gsub(illegal_xml_chars,'')
     
-    value = escape_specials(value, {:cgi_escape => cgi_escape})
+    value = escape_specials(value, {:cgi_escape => cgi_escape}) unless escape_nothing
     
     value_array = Array(value)
     if value.length > 1000
       value_array = value.scan(/.{1,1000}/)
+      new_attr_name = attr_name
+      
+      value_array.each do |part|
+        put(new_attr_name, part, {:escape_nothing => :true})
+        new_attr_name += '_'
+      end
+      
+      #erase all attributes after new_attr_name + '_'
+      while @attributes[new_attr_name] do
+        delete(new_attr_name, @attributes[new_attr_name].first)
+        new_attr_name += '_'
+      end
+      
+      return
+    else
+      
+      new_attr_name = attr_name + '_'
+      
+      #erase all attributes after new_attr_name + '_'
+      while @attributes[new_attr_name] do
+        delete(new_attr_name, @attributes[new_attr_name].first)
+        new_attr_name += '_'
+      end
+      
     end
     
+
     if replace
       @attributes[attr_name] = value_array
       @attributes_to_replace[attr_name] = value_array
