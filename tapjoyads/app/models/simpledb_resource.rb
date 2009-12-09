@@ -94,7 +94,7 @@ class SimpledbResource
         end
       
         if write_to_memcache
-          cache = get_cache_instance
+          cache = CACHE.clone
           begin
             cache.cas(get_memcache_key) do |mc_attributes|
               mc_attributes.merge!(@attributes_to_replace)
