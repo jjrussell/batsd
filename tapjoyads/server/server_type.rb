@@ -15,8 +15,12 @@ elsif security_groups.include? 'jobserver'
   machine_type = 'jobs'
 elsif security_groups.include? 'masterjobs'
   machine_type = 'masterjobs'
-else
+elsif security_groups.include? 'webserver'
   machine_type = 'web'
+elsif security_groups.include? 'website'
+  machine_type = 'website'
+elsif security_groups.include? 'testwebsite'
+  machine_type = 'testwebsite'
 end
 
 print machine_type

@@ -1,2 +1,3 @@
 config:
-    deploy_version: '100'
+    api_deploy_version: '100'
+    website_deploy_version: '1'
