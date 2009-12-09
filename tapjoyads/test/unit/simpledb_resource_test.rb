@@ -25,7 +25,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
   test "long attributes" do
     val = ''
     4501.times do |i|
-      val += (i % 10).to_s
+      val += (i % 7).to_s
     end
     @model.put('long_string',val)
     @model.save
@@ -33,6 +33,9 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     
     m = Testing.new(@key)
     assert_equal(val, m.get('long_string'))
+    
+    m = Testing.new(@key)
+    assert_equal(val, m.get('long_string'), {:load_from_memcache => false})
   end
   
   test "newlines in attributes" do
@@ -43,6 +46,9 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     
     m = Testing.new(@key)
     assert_equal(val, m.get('newline_string'))
+    
+    m = Testing.new(@key)
+    assert_equal(val, m.get('newline_string'), {:load_from_memcache => false})
   end
   
   test "cgi escape" do
