@@ -201,8 +201,8 @@ class SimpledbResource
       new_attr_name = attr_name
       
       value_array.each do |part|
-        @attributes[new_attr_name] = part
-        @attributes_to_replace[new_attr_name] = part
+        @attributes[new_attr_name] = Array(part)
+        @attributes_to_replace[new_attr_name] = Array(part)
         new_attr_name += '_'
       end
       
