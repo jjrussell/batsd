@@ -158,7 +158,7 @@ class SimpledbResource
     
     if not force_array and @attributes[attr_name].first.length >= 1000
       joined_value = ''
-      while @attributes[attr_name].first.length >= 1000 do
+      while @attributes[attr_name] && @attributes[attr_name].first.length >= 1000 do
         joined_value += @attributes[attr_name].first
         attr_name += '_'
       end
@@ -184,7 +184,6 @@ class SimpledbResource
   def put(attr_name, value, options = {})
     replace = options.delete(:replace) { true }
     cgi_escape = options.delete(:cgi_escape) { false }
-    escape_nothing = options.delete(:escape_nothing) {false}
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     return if value.nil?
@@ -194,7 +193,7 @@ class SimpledbResource
     #illegal_xml_chars = /\x00|\x01|\x02|\x03|\x04|\x05|\x06|\x07|\x08|\x0B|\x0C|\x0E|\x0F|\x10|\x11|\x12|\x13|\x14|\x15|\x16|\x17|\x18|\x19|\x1A|\x1B|\x1C|\x1D|\x1E|\x1F|\x7F-\x84\x86-\x9F/
     #value = value.to_s.toutf16.gsub(illegal_xml_chars,'')
     
-    value = escape_specials(value, {:cgi_escape => cgi_escape}) unless escape_nothing
+    value = escape_specials(value, {:cgi_escape => cgi_escape})
     
     value_array = Array(value)
     if value.length > 1000
@@ -202,7 +201,8 @@ class SimpledbResource
       new_attr_name = attr_name
       
       value_array.each do |part|
-        put(new_attr_name, part, {:escape_nothing => :true})
+        @attributes[new_attr_name] = part
+        @attributes_to_replace[new_attr_name] = part
         new_attr_name += '_'
       end
       
