@@ -32,7 +32,47 @@ class GetadController < ApplicationController
   
   USER_AGENT = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
       " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
+      
+      
+  def index
+      if params[:campaign_id] == ""
+        no_ad
+        return
+      end
+      
+      campaign = Campaign.new(params[:campaign_id])
+      network_name = campaign.get('network_name')
 
+      Rails.logger.info "network_name: #{network_name}"
+
+      path = case network_name
+      when "Millennial"
+        params[:apid] = campaign.get('id1')
+        params[:auid] = campaign.get('id2')
+        return millennial
+      when "MDotM"
+        no_ad
+        return
+      when "Adfonic"
+        params[:slot_id] = campaign.get('id1')
+        return adfonic
+      when "Crisp"
+        params[:partner_key] = campaign.get('id1')
+        params[:site_key] = campaign.get('id2')
+        params[:zone_key] = campaign.get('id3')
+        return crisp
+      when "SocialReach"
+        return socialreach
+      when "PublisherAds"
+        params[:ad_id] = campaign.get('ad_id')
+        return publisher_ad
+      else
+        no_ad
+        return
+      end
+
+  end
+  
   def millennial
     url = 'http://ads.mp.mydas.mobi/getAd.php5' +
         "?apid=#{CGI::escape(params[:apid])}" +
