@@ -57,80 +57,86 @@ class SimpledbResource
   end
   
   ##
+  # Calls serial_save in a separate thread.
+  def save(options = {})
+    thread = nil
+    time_log("Spawing save thread") do
+      thread = Thread.new(options) do |opts|
+        serial_save(opts)
+      end
+    end
+    return thread
+  end
+  
+  ##
   # Updates the 'updated-at' attribute of this item, and saves it to SimpleDB.
   # If the domain does not exist, then the domain is created.
-  # write_to_memcache: Whether to write these attributes to memcache.
-  # replace: Whether to replace attribute values with identical names. It is important to note that
+  # options:
+  #   write_to_memcache: Whether to write these attributes to memcache.
+  #   replace: Whether to replace attribute values with identical names. It is important to note that
   #     if load() has not been called, and replace is set to true, it is possible to overwrite
   #     attribute values.
-  # updated_at: Whether to include an updated-at attribute.
-  def save(options = {})
+  #   updated_at: Whether to include an updated-at attribute.
+  def serial_save(options = {})
     write_to_memcache = options.delete(:write_to_memcache) { true }
     replace = options.delete(:replace) { true }
     updated_at = options.delete(:updated_at) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
-    thread = nil
-    time_log("Spawing thread") do
-      thread = Thread.new do
-        Rails.logger.info "Saving to #{@domain_name}"
-        
-        time_log("Saving to sdb") do
-          put('updated-at', Time.now.utc.to_f.to_s) if updated_at
-          
-          begin
-            @@sdb.put_attributes(@domain_name, @key, @attributes, replace)
-            @@sdb.delete_attributes(@domain_name, @key, @attributes_to_delete) unless @attributes_to_delete.empty?
-          rescue AwsError => e
-            if e.message.starts_with?("NoSuchDomain")
-              time_log("Creating new domain: #{@domain_name}") do
-                @@sdb.create_domain(@domain_name)
-              end
-              retry
-            else
-              raise e
-            end
-          end
-        end
+    Rails.logger.info "Saving to #{@domain_name}"
+    
+    time_log("Saving to sdb") do
+      put('updated-at', Time.now.utc.to_f.to_s) if updated_at
       
-        if write_to_memcache
-          cache = CACHE.clone
-          begin
-            cache.cas(get_memcache_key) do |mc_attributes|
-              mc_attributes.merge!(@attributes_to_replace)
-              @attributes_to_add.each do |key, values|
-                mc_attributes[key] = Array(mc_attributes[key]) | values
-              end
-            
-              @attributes_to_delete.each do |key, values|
-                if values.empty?
-                  mc_attributes.delete(key)
-                elsif mc_attributes[key]
-                  values.each do |value|
-                    mc_attributes[key].delete(value)
-                  end
-                  mc_attributes.delete(key) if mc_attributes[key].empty?
-                end
-              end
-              @attributes = mc_attributes
-
-              @attributes
-            end
-          rescue Memcached::NotFound
-            # Attribute hasn't been stored yet.
-            save_to_cache(get_memcache_key, @attributes)
-          rescue Memcached::NotStored
-            # Attribute was modified before it could write.
-            retry
+      begin
+        @@sdb.put_attributes(@domain_name, @key, @attributes, replace)
+        @@sdb.delete_attributes(@domain_name, @key, @attributes_to_delete) unless @attributes_to_delete.empty?
+      rescue AwsError => e
+        if e.message.starts_with?("NoSuchDomain")
+          time_log("Creating new domain: #{@domain_name}") do
+            @@sdb.create_domain(@domain_name)
           end
+          retry
+        else
+          raise e
         end
-        
       end
     end
-    return thread
+  
+    if write_to_memcache
+      cache = CACHE.clone
+      begin
+        cache.cas(get_memcache_key) do |mc_attributes|
+          mc_attributes.merge!(@attributes_to_replace)
+          @attributes_to_add.each do |key, values|
+            mc_attributes[key] = Array(mc_attributes[key]) | values
+          end
+        
+          @attributes_to_delete.each do |key, values|
+            if values.empty?
+              mc_attributes.delete(key)
+            elsif mc_attributes[key]
+              values.each do |value|
+                mc_attributes[key].delete(value)
+              end
+              mc_attributes.delete(key) if mc_attributes[key].empty?
+            end
+          end
+          @attributes = mc_attributes
+
+          @attributes
+        end
+      rescue Memcached::NotFound
+        # Attribute hasn't been stored yet.
+        save_to_cache(get_memcache_key, @attributes)
+      rescue Memcached::NotStored
+        # Attribute was modified before it could write.
+        retry
+      end
+    end
   rescue Exception => e
     Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e}"
-    
+
     SqsGen2.new.queue(QueueNames::FAILED_SDB_SAVES).send_message(self.serialize)
   ensure
     Rails.logger.flush
