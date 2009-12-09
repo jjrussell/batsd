@@ -163,7 +163,7 @@ class SimpledbResource
         attr_name += '_'
       end
       
-      joined_value += @attributes[attr_name].first
+      joined_value += @attributes[attr_name].first if @attributes[attr_name]
       
       return unescape_specials(joined_value)
     end
