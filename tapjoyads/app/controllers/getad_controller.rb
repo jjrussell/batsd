@@ -67,8 +67,7 @@ class GetadController < ApplicationController
         params[:ad_id] = campaign.get('ad_id')
         return publisher_ad
       else
-        no_ad
-        return
+        return socialreach
       end
 
   end
