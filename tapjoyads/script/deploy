@@ -2,6 +2,13 @@
 
 require 'yaml'
 
+def prompt_and_exit_if_not_yes
+  answer = STDIN.gets
+  if !/^y/i.match(answer)
+    exit
+  end
+end
+
 if ARGV.first == 'production'
   puts "PRODUCTION deploy"
   groups = 'webserver jobserver masterjobs'
@@ -17,7 +24,19 @@ version_number = ARGV[1]
 
 unless version_number
   settings = YAML::load_file('server/configuration.yaml')
-  version_number = settings['config']['deploy_version']
+  version_number = settings['config']['api_deploy_version']
+  
+  #puts "No version number specified. Create new version? [y/N] "
+  #prompt_and_exit_if_not_yes
+  
+  #version_number += 1
+  #settings['config']['deploy_version'] = version_number
+  
+  #system("svn copy https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/trunk " +
+  #    "https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version_number} " +
+  #    "-m \"Creating deploy branch #{version_number}\"")
+      
+  
 end
 
 # Must use the system command to run, not backticks, otherwise it will be non-interactive.
