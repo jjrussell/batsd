@@ -27,7 +27,7 @@ XML_END
 
     xml = "<TapjoyConnectReturnObject>\n"
     if params[:type] == '0'
-      xml += get_offerpal_offers(params[:app_id], params[:udid])
+      xml += get_offerpal_offers(params[:app_id], params[:udid], currency)
       xml += "<Message>Complete one of the offers below to earn #{CGI::escapeHTML(currency.get('currency_name'))}</Message>\n"
     elsif params[:type] == '1'
       xml += get_rewarded_installs(params[:start].to_i, params[:max].to_i, params[:udid])
@@ -45,18 +45,18 @@ XML_END
     end
   end
   
-  def get_offerpal_offers(app_id, udid)
+  def get_offerpal_offers(app_id, udid, currency)
     country = CGI::escape("United States") #for now
     
     xml = get_from_cache_and_save("offers.s3.#{app_id}.#{country}") do
       xml = AWS::S3::S3Object.value "offers_#{app_id}.#{country}", RUN_MODE_PREFIX + 'offer-data'
     end
     
-    if app_id == '2349536b-c810-47d7-836c-2cd47cd3a796'
+    if currency.get('show_rating_offer') == '1'
       rate = RateApp.new("#{app_id}.#{udid}")
       unless rate.get('rate-date')
         #they haven't rated the app before
-        offer = create_rating_offer(app_id, udid)
+        offer = create_rating_offer(app_id, udid, currency)
         first_line = "<OfferArray>\n"
         old_xml = xml[first_line.length,xml.length]
         xml = first_line + offer + old_xml
@@ -67,11 +67,10 @@ XML_END
     
   end
   
-  def create_rating_offer(app_id, udid)
+  def create_rating_offer(app_id, udid, currency)
     #thank god for memcached, but this should be optimized
     
     app = App.new(app_id)
-    currency = Currency.new(app_id)
     offer = ReturnOffer.new(3, app.get('name'), currency.get('offers_money_share'), 
       currency.get('conversion_rate'), currency.get('currency_name'))
     offer.ActionURL = "http://ws.tapjoyads.com/rate_app_offer?record_id=$PUBLISHER_USER_RECORD_ID&udid=#{udid}&app_id=#{app_id}"
