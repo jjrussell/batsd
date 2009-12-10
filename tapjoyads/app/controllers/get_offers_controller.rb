@@ -41,9 +41,9 @@ XML_END
     end
     xml += "</TapjoyConnectReturnObject>"
     
-    xml = xml.gsub('INT_IDENTIFIER', record.get('int_record_id')) #no $ because this gets encoded
+    xml = xml.gsub('INT_IDENTIFIER', record.get('int_record_id', :force_array => true)[0]) #no $ because this gets encoded
     xml = xml.gsub('$UDID', params[:udid])
-    xml = xml.gsub('$PUBLISHER_USER_RECORD_ID', record.get('record_id'))
+    xml = xml.gsub('$PUBLISHER_USER_RECORD_ID', record.get('record_id', :force_array => true)[0])
     xml = xml.gsub('$APP_ID', params[:app_id])
 
     respond_to do |f|
