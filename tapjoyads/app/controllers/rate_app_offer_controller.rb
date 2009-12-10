@@ -3,7 +3,7 @@ class RateAppOfferController < ApplicationController
   
   def index
     
-    if request.headers['User-Agent'] =~ /safari/ && request.headers['User-Agent'] =~ /mobile/ 
+    if request.headers['User-Agent'].downcase =~ /safari/ && request.headers['User-Agent'].downcase =~ /mobile/ 
       record_id = params[:record_id]
       udid = params[:udid]
       app_id = params[:app_id]
