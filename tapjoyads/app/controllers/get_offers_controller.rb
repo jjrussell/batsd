@@ -17,7 +17,7 @@ XML_END
 
     #first lookup the publisher_user_record_id for this user
     record = PublisherUserRecord.new("#{params[:app_id]}.#{params[:publisher_user_id]}")
-    unless record.get('record_id') && record.get('int_record_id')
+    unless record.get('record_id') && record.get('int_record_id') && record.get('udid')
       uid = UUIDTools::UUID.random_create.to_s
       record.put('record_id',  uid)
       record.put('int_record_id', uid.hash.abs.to_s) #this should work!
