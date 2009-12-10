@@ -80,11 +80,12 @@ class SimpledbResource
   #     attribute values.
   #   updated_at: Whether to include an updated-at attribute.
   def serial_save(options = {})
+    options_copy = options.clone
     write_to_memcache = options.delete(:write_to_memcache) { true }
     replace = options.delete(:replace) { true }
     updated_at = options.delete(:updated_at) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
+
     Rails.logger.info "Saving to #{@domain_name}"
     
     time_log("Saving to sdb") do
@@ -139,8 +140,8 @@ class SimpledbResource
     end
   rescue Exception => e
     Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e}"
-
-    SqsGen2.new.queue(QueueNames::FAILED_SDB_SAVES).send_message(self.serialize)
+    message = {:sdb => self.serialize, :options => options_copy}.to_json
+    SqsGen2.new.queue(QueueNames::FAILED_SDB_SAVES).send_message(message)
   ensure
     Rails.logger.flush
   end
