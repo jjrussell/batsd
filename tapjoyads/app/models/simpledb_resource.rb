@@ -108,7 +108,8 @@ class SimpledbResource
     if write_to_memcache
       cache = CACHE.clone
       begin
-        cache.cas(get_memcache_key) do |mc_attributes|
+        # TODO: Move the cas method to memcache helper.
+        cache.cas(CGI::escape(get_memcache_key)) do |mc_attributes|
           mc_attributes.merge!(@attributes_to_replace)
           @attributes_to_add.each do |key, values|
             mc_attributes[key] = Array(mc_attributes[key]) | values
