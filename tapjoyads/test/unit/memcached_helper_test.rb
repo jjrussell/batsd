@@ -29,7 +29,7 @@ class MemcachedHelperTest < ActiveSupport::TestCase
     thread_list = []
     10.times do |i|
       thread = Thread.new do
-        save_to_cache("thread-#{i}", "#{i}")
+        save_to_cache("thread-#{i}", "#{i}", true)
       end
       thread_list.push(thread)
     end
@@ -37,7 +37,7 @@ class MemcachedHelperTest < ActiveSupport::TestCase
     pid_list = []
     10.times do |i|
       Process.fork do
-        save_to_cache("proc-#{i}", "#{i}")
+        save_to_cache("proc-#{i}", "#{i}", true)
       end
     end
   
@@ -48,8 +48,8 @@ class MemcachedHelperTest < ActiveSupport::TestCase
     Process.wait
     
     10.times do |i|
-      assert_equal "#{i}", get_from_cache("thread-#{i}")
-      #assert_equal "#{i}", get_from_cache("proc-#{i}")
+      assert_equal "#{i}", get_from_cache("thread-#{i}", true)
+      assert_equal "#{i}", get_from_cache("proc-#{i}", true)
     end
   end
 end
