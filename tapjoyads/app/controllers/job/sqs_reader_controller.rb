@@ -8,8 +8,18 @@ class Job::SqsReaderController < Job::JobController
 
   def index
     queue = nil
+    retries = 3
     begin
       queue = SqsGen2.new.queue(@queue_name)
+    rescue AwsError => e
+      Rails.logger.info "Error creating queue object: #{e}"
+      if retries > 0
+        Rails.logger.info "Retrying up to #{retries} more times."
+        retries -= 1
+        retry
+      else
+        raise e
+      end
     end while queue == nil
     
     messages = queue.receive_messages(10, 60)
