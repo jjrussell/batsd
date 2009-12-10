@@ -104,7 +104,7 @@ class ReturnOffer
     s += "  <Cost>#{CGI::escapeHTML(@Cost)}</Cost>\n"
     s += "  <Amount>#{@Amount}</Amount>"
     s += "  <Description>#{CGI::escapeHTML(@Description)}</Description>\n"
-    s += "  <IconURL>#{CGI::escapeHTML("http://ws.tapjoyads.com/get_app_image/icon?app_id=#{CGI::escape(@AdvertiserAppID)}")}</IconURL>\n"
+    s += "  <IconURL>#{CGI::escapeHTML("http://ws.tapjoyads.com/get_app_image/icon?app_id=#{CGI::escape(@AdvertiserAppID)}&img=1")}</IconURL>\n"
     s += "  <Name>#{CGI::escapeHTML(@Name)}</Name>\n" 
     
     click_url = "http://ws.tapjoyads.com/submit_click/store?" +
