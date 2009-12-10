@@ -33,9 +33,13 @@ XML_END
       click.put("advertiser_app_id", params[:advertiser_app_id])
       click.save
       
-
-      respond_to do |f|
-        f.xml {render(:text => xml)}
+      if params[:redirect] == "1"
+        app = App.new(params[:advertiser_app_id])
+        redirect_to app.get('store_url')
+      else
+        respond_to do |f|
+          f.xml {render(:text => xml)}
+        end
       end
   end
   

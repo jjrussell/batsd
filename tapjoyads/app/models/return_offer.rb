@@ -1,7 +1,7 @@
 class ReturnOffer
   attr_accessor :Cost, :CreditCardRequired, :Currency, :Description, 
     :ImageURL, :Instructions, :Name, :TimeDelay, :CachedOfferID,
-    :PublisherUserRecordID, :Type, :EmailURL, :ActionURL, :Amount
+    :PublisherUserRecordID, :Type, :EmailURL, :ActionURL, :Amount, :AppID
     
   def initialize(type, offer, money_share, conversion_rate, currency_name)
     if type == 0 #offers
@@ -19,6 +19,7 @@ class ReturnOffer
       @Type = type
       @EmailURL = "http://www.tapjoyconnect.com/complete_offer?offerid=#{CGI::escape(offer.key)}&udid=$UDID&record_id=$PUBLISHER_USER_RECORD_ID&app_id=$APP_ID&url=#{CGI::escape(CGI::escape(@ActionURL))}"
     elsif type == 1 #apps
+      @AppID = offer.key
       @Cost = "Free" 
       @Cost = "Paid" if offer.get('price') && offer.get('price').to_i > 0
       @Currency = currency_name
@@ -73,6 +74,49 @@ class ReturnOffer
     s += "  <EmailURL>#{CGI::escapeHTML(@EmailURL)}</EmailURL>\n" if @EmailURL
     s += "</OfferReturnClass>\n"
     
+    return s
+    
+  end
+  
+  def to_server_xml
+    
+    s = "<TapjoyApp>\n"
+    s += "  <Cost>#{CGI::escapeHTML(@Cost)}</Cost>\n" 
+    s += "  <Amount>#{@Amount}</Amount>"
+    s += "  <Description>#{CGI::escapeHTML(@Description)}</Description>\n"
+    s += "  <IconURL>#{CGI::escapeHTML("http://ws.tapjoyads.com/get_app_image/icon?app_id=#{CGI::escape(@AdvertiserAppID)}")}</IconURL>\n"
+    s += "  <Name>#{CGI::escapeHTML(@Name)}</Name>\n"
+    click_url = "http://ws.tapjoyads.com/submit_click/store?" +
+               "advertiser_app_id=#{CGI::escape(@AdvertiserAppID)}" +
+               "&publisher_app_id=#{CGI::escape(@AppID)}" +
+               "&publisher_user_record_id=$PUBLISHER_USER_RECORD_ID" +
+               "&udid=$UDID"
+    s += "  <ClickURL>#{CGI::escapeHTML(click_url)}</ClickURL>\n"
+    s += "  <StoreURL>#{CGI::escapeHTML(@ActionURL)}</StoreURL>\n" 
+    s += "</TapjoyApp>\n"
+    
+    return s
+  end
+  
+  def to_server_xml_redirect
+
+    s = "<TapjoyApp>\n"
+    s += "  <Cost>#{CGI::escapeHTML(@Cost)}</Cost>\n"
+    s += "  <Amount>#{@Amount}</Amount>"
+    s += "  <Description>#{CGI::escapeHTML(@Description)}</Description>\n"
+    s += "  <IconURL>#{CGI::escapeHTML("http://ws.tapjoyads.com/get_app_image/icon?app_id=#{CGI::escape(@AdvertiserAppID)}")}</IconURL>\n"
+    s += "  <Name>#{CGI::escapeHTML(@Name)}</Name>\n" 
+    
+    click_url = "http://ws.tapjoyads.com/submit_click/store?" +
+               "advertiser_app_id=#{CGI::escape(@AdvertiserAppID)}" +
+               "&publisher_app_id=#{CGI::escape(@AppID)}" +
+               "&publisher_user_record_id=$PUBLISHER_USER_RECORD_ID" +
+               "&udid=$UDID"
+
+    s += "  <RedirectURL>#{CGI::escapeHTML(click_url + '&redirect=1')}</RedirectURL>\n"
+
+    s += "</TapjoyApp>\n"
+
     return s
     
   end

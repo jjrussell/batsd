@@ -32,7 +32,11 @@ XML_END
       xml += get_offerpal_offers(params[:app_id], params[:udid], currency)
       xml += "<Message>Complete one of the offers below to earn #{CGI::escapeHTML(currency.get('currency_name'))}</Message>\n"
     elsif params[:type] == '1'
-      xml += get_rewarded_installs(params[:start].to_i, params[:max].to_i, params[:udid])
+      type = ''
+      type = 'server.' if params[:server] == '1'
+      type = 'redirect.' if params[:redirect] == '1'
+      Rails.logger.info "type = #{type}"
+      xml += get_rewarded_installs(params[:start].to_i, params[:max].to_i, params[:udid], type)
       xml += "<Message>Install one of the apps below to earn #{CGI::escapeHTML(currency.get('currency_name'))}</Message>\n"
     end
     xml += "</TapjoyConnectReturnObject>"
@@ -80,13 +84,13 @@ XML_END
     return offer.to_xml
   end
   
-  def get_rewarded_installs(start, max, udid)
+  def get_rewarded_installs(start, max, udid, type)
     app_id = params[:app_id]
     
     device_app = DeviceAppList.new(params[:udid])
     
-    xml = get_from_cache_and_save("installs.s3.#{app_id}") do
-      xml = AWS::S3::S3Object.value "installs_#{app_id}", RUN_MODE_PREFIX + 'offer-data'
+    xml = get_from_cache_and_save("#{type}installs.s3.#{app_id}") do
+      xml =  AWS::S3::S3Object.value "#{type}installs_#{app_id}", RUN_MODE_PREFIX + 'offer-data'
     end
     
     # remove all apps this user already has
@@ -104,7 +108,6 @@ XML_END
           end
         end
       end
-  
       user_rewarded_installs.push install if add
     end
     

@@ -39,6 +39,7 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
       
     #go through and create app-specific lists for each app
     app_currency_list.each do |currency|
+      Rails.logger.info "Creating rewarded install xml for #{currency.key} of #{currency.get('currency_name')}"
       banned_apps = currency.get('disabled_apps').split(';') if currency.get('disabled_apps')
       
       xml = ""
@@ -53,6 +54,35 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
       AWS::S3::S3Object.store "installs_" + currency.key, 
         xml, RUN_MODE_PREFIX + 'offer-data'
       save_to_cache("installs.s3.#{currency.key}", xml)
+      
+      xml = ""
+      app_list.each do |app|
+        next if (banned_apps) && (banned_apps.include? app.key)
+        return_offer = ReturnOffer.new(1, app, currency.get('installs_money_share'), currency.get('conversion_rate'), 
+          currency.get('currency_name'))
+        return_offer.AppID = currency.key
+        xml += return_offer.to_server_xml
+        xml += "^^TAPJOY_SPLITTER^^"
+      end
+        
+      AWS::S3::S3Object.store "server.installs_" + currency.key, 
+        xml, RUN_MODE_PREFIX + 'offer-data'
+      save_to_cache("server.installs.s3.#{currency.key}", xml)
+      
+      xml = ""
+      app_list.each do |app|
+        next if (banned_apps) && (banned_apps.include? app.key)
+        return_offer = ReturnOffer.new(1, app, currency.get('installs_money_share'), currency.get('conversion_rate'), 
+          currency.get('currency_name'))
+        return_offer.AppID = currency.key
+        xml += return_offer.to_server_xml_redirect
+        xml += "^^TAPJOY_SPLITTER^^"
+      end
+        
+      AWS::S3::S3Object.store "redirect.installs_" + currency.key, 
+        xml, RUN_MODE_PREFIX + 'offer-data'
+      save_to_cache("redirect.installs.s3.#{currency.key}", xml)
+      
     end
         
   end
