@@ -33,7 +33,7 @@ module MemcachedHelper
     value = nil
     time_log("Read from memcache") do
       begin
-        value = cache.get(key)
+        value = cache.get(CGI::escape(key))
         Rails.logger.info("Memcache key found: #{key}")
       rescue Memcached::NotFound
         Rails.logger.info("Memcache key not found: #{key}")
@@ -49,7 +49,9 @@ module MemcachedHelper
     end
     
     unless value
-      value = yield
+      if block_given?
+        value = yield
+      end
     end
     
     return value
@@ -62,7 +64,7 @@ module MemcachedHelper
     
     if value
       time_log("Wrote to memcache") do
-        cache.set(key, value, time)
+        cache.set(CGI::escape(key), value, time)
       end
     end
   rescue => e
