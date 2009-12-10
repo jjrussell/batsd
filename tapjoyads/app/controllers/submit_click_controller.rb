@@ -70,6 +70,11 @@ XML_END
     click.put('source', 'app')
     click.put('ip_address', request.remote_ip)
     click.save
+        
+    respond_to do |f|
+      f.xml {render(:text => xml)}
+    end
+    
   end
   
   def ad
