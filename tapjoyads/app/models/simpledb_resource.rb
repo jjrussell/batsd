@@ -8,8 +8,10 @@ class SimpledbResource
   attr_accessor :domain_name, :key, :attributes
   
   def self.reset_connection
+    sdb_ip_address = Socket::getaddrinfo('sdb.amazonaws.com', 'http')[0][3]
+    Rails.logger.info "Resetting sdb connection. Sdb ip address: #{sdb_ip_address}"
     @@sdb = SdbInterface.new(nil, nil,
-        {:multi_thread => true, :port => 80, :protocol => 'http'})
+        {:multi_thread => true, :port => 80, :protocol => 'http', :server => sdb_ip_address})
   end
   self.reset_connection
   
