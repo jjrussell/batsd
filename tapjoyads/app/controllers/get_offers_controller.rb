@@ -1,6 +1,11 @@
 class GetOffersController < ApplicationController
   include MemcachedHelper
     
+  missing_message = "missing required params"
+  verify :params => [:udid, :app_id],
+         :only => :index,
+         :render => {:text => missing_message}
+    
   def index
     xml = <<XML_END
 <?xml version="1.0" encoding="UTF-8"?>
