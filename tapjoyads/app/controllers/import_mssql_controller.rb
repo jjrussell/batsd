@@ -38,8 +38,8 @@ XML_END
     app.put('cs_callback_url', params[:cs_callback_url])
     app.put('offers_money_share', params[:offers_money_share])
     app.put('installs_money_share', params[:installs_money_share])
-    app.put('disabled_offers', params[:disabled_offers]) if params[:disabled_offers] != ''
-    app.put('disabled_apps', params[:disabled_apps]) if params[:disabled_apps] != ''
+    app.put('disabled_offers', params[:disabled_offers])
+    app.put('disabled_apps', params[:disabled_apps]) 
 
     app.save
 
