@@ -16,11 +16,12 @@ class Job::SqsReaderController < Job::JobController
       if retries > 0
         Rails.logger.info "Retrying up to #{retries} more times."
         retries -= 1
+        sleep(0.5)
         retry
       else
         raise e
       end
-    end while queue == nil
+    end
     
     messages = queue.receive_messages(10)
     messages.each do |message|
