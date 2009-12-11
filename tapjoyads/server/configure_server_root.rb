@@ -22,9 +22,15 @@
 
 `crontab -r`
 
+# Time
+# Allow the system clock to be changed. See http://ubuntuforums.org/showthread.php?t=1172252
+`echo 1 > /proc/sys/xen/independent_wallclock`
+`ntpdate 0.fedora.pool.ntp.org`
+`ntpd -l /mnt/log/ntpd.log`
+
 # Rails log rotation:
 `cp /home/webuser/server/rails-logrotate /etc/logrotate.d/rails`
 
-`apachectl start`
-
 puts `su - webuser -c /home/webuser/server/configure_server.rb`
+
+`apachectl start`
