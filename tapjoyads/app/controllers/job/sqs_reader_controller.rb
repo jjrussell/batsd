@@ -1,6 +1,6 @@
 class Job::SqsReaderController < Job::JobController
   include RightAws
-  @@queue = nil
+  include MemcachedHelper
 
   def initialize(queue_name)
     @queue_name = queue_name
@@ -8,7 +8,7 @@ class Job::SqsReaderController < Job::JobController
 
   def index
     queue = nil
-    retries = 3
+    retries = 2
     begin
       queue = SqsGen2.new.queue(@queue_name)
     rescue AwsError => e
@@ -16,8 +16,13 @@ class Job::SqsReaderController < Job::JobController
       if retries > 0
         Rails.logger.info "Retrying up to #{retries} more times."
         retries -= 1
-        sleep(0.5)
         retry
+      elsif e.message =~ /temporarily unavailable/
+        error_count = increment_count_in_cache(get_memcache_error_count_key, false, 10.minutes)
+        Rails.logger.info "SQS temporarily unavailable. Incrementing 5-minute count in memcache to: #{error_count}"
+        if error_count > 60
+          raise e
+        end
       else
         raise e
       end
@@ -43,4 +48,12 @@ class Job::SqsReaderController < Job::JobController
     render :text => 'ok'
   end
 
+
+  private
+  
+  ##
+  # Returns a new key for every 5-minute window. The key is unique to this host and this queue.
+  def get_memcache_error_count_key
+    "sqserrors.#{Socket.gethostname}.#{@queue_name}.#{Time.now.to_i / 5.minutes}"
+  end
 end

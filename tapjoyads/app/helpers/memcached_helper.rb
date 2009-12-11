@@ -71,6 +71,33 @@ module MemcachedHelper
     Rails.logger.info "Memcache exception when setting key #{key}. Error: #{e}"
   end
   
+  def increment_count_in_cache(key, clone = false, time = 1.week)
+    cache = clone ? CACHE.clone : CACHE
+    key = CGI::escape(key)
+    
+    begin
+      count = cache.increment(key)
+    rescue Memcached::NotFound
+      count = 1
+      cache.set(key, count, time, false)
+    end
+    
+    return count
+  end
+  
+  def get_count_in_cache(key, clone = false)
+    cache = clone ? CACHE.clone : CACHE
+    key = CGI::escape(key)
+    
+    begin
+      count = cache.get(key, false).to_i
+    rescue Memcached::NotFound
+      count = 0
+    end
+    
+    return count
+  end
+  
   def clone
     Kernel.with_warnings_suppressed do
       MemcachedHelper.const_set('CACHE', CACHE.clone)

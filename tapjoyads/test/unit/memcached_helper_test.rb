@@ -42,4 +42,17 @@ class MemcachedHelperTest < ActiveSupport::TestCase
       assert_equal "#{i}", get_from_cache("thread-#{i}", true)
     end
   end
+  
+  test "increment count" do
+    key = 'foo'
+    assert_equal 0, get_count_in_cache(key)
+    
+    assert_equal 1, increment_count_in_cache(key)
+    
+    5.times do
+      increment_count_in_cache(key)
+    end
+    
+    assert_equal 6, get_count_in_cache(key)
+  end
 end
