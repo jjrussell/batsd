@@ -7,10 +7,12 @@ class Job::SqsReaderController < Job::JobController
   end
 
   def index
-    queue = nil
     retries = 2
     begin
       queue = SqsGen2.new.queue(@queue_name)
+      unless queue
+        raise AwsError.new('Queue is nil')
+      end
     rescue AwsError => e
       Rails.logger.info "Error creating queue object: #{e}"
       if retries > 0
