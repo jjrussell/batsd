@@ -19,15 +19,24 @@ class GetAppImageController < ApplicationController
     
     image_name = "#{app_id}"
 
-    image = get_from_cache_and_save("icon.s3.#{image_name.hash}") do
-      image_content = AWS::S3::S3Object.value image_name, 'app-icons'
-      Base64.encode64 image_content
-    end
+    if params[:img] == '1'
+      image = get_from_cache_and_save("img.icon.s3.#{image_name.hash}") do
+        AWS::S3::S3Object.value image_name, 'app-icons'
+      end
+      
+     send_data(image, :type => 'image/png', :filename => "#{app_id}.png", :disposition => 'inline')
+      
+    else
+      image = get_from_cache_and_save("icon.s3.#{image_name.hash}") do
+        image_content = AWS::S3::S3Object.value image_name, 'app-icons'
+        Base64.encode64 image_content
+      end
     
-    @return_obj.Icon = image
+      @return_obj.Icon = image
     
-    respond_to do |f|
-      f.xml {render(:partial => 'app_icon')}
+      respond_to do |f|
+        f.xml {render(:partial => 'app_icon')}
+      end
     end
   end
 end
