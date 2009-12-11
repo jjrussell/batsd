@@ -22,7 +22,7 @@ class Job::SqsReaderController < Job::JobController
       end
     end while queue == nil
     
-    messages = queue.receive_messages(10, 60)
+    messages = queue.receive_messages(10)
     messages.each do |message|
       Rails.logger.info "#{@queue_name} message recieved: #{message.to_s}"
       begin
