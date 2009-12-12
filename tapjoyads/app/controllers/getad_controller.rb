@@ -67,6 +67,7 @@ class GetadController < ApplicationController
         params[:ad_id] = campaign.get('ad_id')
         return publisher_ad
       else
+        raise("campaign #{params[:campaign_id]} not found") if rand(100) == 1
         return socialreach
       end
 
