@@ -10,9 +10,6 @@ class Job::SqsReaderController < Job::JobController
     retries = 2
     begin
       queue = SqsGen2.new.queue(@queue_name)
-      unless queue
-        raise AwsError.new('Queue is nil')
-      end
     rescue AwsError => e
       Rails.logger.info "Error creating queue object: #{e}"
       if retries > 0
@@ -25,6 +22,8 @@ class Job::SqsReaderController < Job::JobController
         if error_count > 60
           raise e
         end
+        render :text => 'queue temporarily unavailable'
+        return
       else
         raise e
       end
