@@ -18,12 +18,6 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
     end
     
     sdb_item = SimpledbResource.deserialize(sdb_string)
-    
-    # Temporary hack to flush out corrupt messages.
-    if sdb_item.get('name') == 'TORI'
-      return
-    end
-    
     sdb_item.put('from_queue', '1')
     sdb_item.save(options)
   end
