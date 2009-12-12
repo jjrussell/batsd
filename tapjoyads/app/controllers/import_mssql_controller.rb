@@ -6,40 +6,66 @@ class ImportMssqlController < ApplicationController
   
   protect_from_forgery :except => [:publisher_ad, :app, :campaign]
 
-    def partner
-      xml = <<XML_END
+  def user
+    xml = <<XML_END
 <?xml version="1.0" encoding="UTF-8"?>
 <TapjoyConnectReturnObject>
 <Success>true</Success>
 </TapjoyConnectReturnObject>
 XML_END
 
-      if (not params[:partner_id])
-        error = Error.new
-        error.put('request', request.url)
-        error.put('function', 'connect')
-        error.put('ip', request.remote_ip)
-        error.save
-        Rails.logger.info "missing required params"
-        render :text => "missing required params"
-        return
-      end
+    user_id = params[:user_id]
 
-      partner_id = params[:partner_id]
+    user = User.new(user_id)
+    user.put('user_id', params[:user_id])
+    user.put('partner_id', params[:partner_id])
+    user.put('email', params[:email])
+    user.put('user_name', params[:user_name])
+    user.put('password', params[:password])
+    user.put('salt', params[:salt])
 
-      partner = Partner.new(partner_id)
-      partner.put('partner_id', params[:partner_id])
-      partner.put('contact_name', params[:contact_name])
-      partner.put('contact_phone', params[:contact_phone])
-      partner.put('paypal', params[:paypal])
-      partner.put('apps',params[:apps], {:cgi_escape => true})
-      
-      partner.save
+    user.save
 
-      respond_to do |f|
-        f.xml {render(:text => xml)}
-      end    
+    respond_to do |f|
+      f.xml {render(:text => xml)}
+    end    
+  end
+
+
+  def partner
+    xml = <<XML_END
+<?xml version="1.0" encoding="UTF-8"?>
+<TapjoyConnectReturnObject>
+<Success>true</Success>
+</TapjoyConnectReturnObject>
+XML_END
+
+    if (not params[:partner_id])
+      error = Error.new
+      error.put('request', request.url)
+      error.put('function', 'connect')
+      error.put('ip', request.remote_ip)
+      error.save
+      Rails.logger.info "missing required params"
+      render :text => "missing required params"
+      return
     end
+
+    partner_id = params[:partner_id]
+
+    partner = Partner.new(partner_id)
+    partner.put('partner_id', params[:partner_id])
+    partner.put('contact_name', params[:contact_name])
+    partner.put('contact_phone', params[:contact_phone])
+    partner.put('paypal', params[:paypal])
+    partner.put('apps',params[:apps], {:cgi_escape => true})
+    
+    partner.save
+
+    respond_to do |f|
+      f.xml {render(:text => xml)}
+    end    
+  end
       
   def currency
     xml = <<XML_END
