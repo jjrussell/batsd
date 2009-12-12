@@ -63,6 +63,9 @@ class GetadController < ApplicationController
         return crisp
       when "SocialReach"
         return socialreach
+      when "TapjoyAds"
+        params[:ad_id] = 'a5fd42df-7120-4fe7-9e49-814cb1d566c2'
+        return publisher_ad
       when "PublisherAds"
         params[:ad_id] = campaign.get('ad_id')
         return publisher_ad
