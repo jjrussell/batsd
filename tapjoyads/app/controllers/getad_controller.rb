@@ -64,7 +64,8 @@ class GetadController < ApplicationController
       when "SocialReach"
         return socialreach
       when "TapjoyAds"
-        params[:ad_id] = 'a5fd42df-7120-4fe7-9e49-814cb1d566c2'
+        #params[:ad_id] = 'a5fd42df-7120-4fe7-9e49-814cb1d566c2' #tapfarm
+        params[:ad_id] = '35e27740-d857-45a6-9f59-1529be64914a' #4info microsoft
         return publisher_ad
       when "PublisherAds"
         params[:ad_id] = campaign.get('ad_id')
