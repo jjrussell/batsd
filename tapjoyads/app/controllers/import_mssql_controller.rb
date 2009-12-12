@@ -156,6 +156,9 @@ XML_END
     app.put('description', params[:description], {:cgi_escape => true}) if params[:description]
     app.put('has_location', params[:has_location])
     app.put('balance', params[:balance])
+    app.put('description_1',' ') if app.get('description_1')
+    app.put('description_2',' ') if app.get('description_2')
+    app.put('description_3',' ') if app.get('description_3')
 
     app.save
 
