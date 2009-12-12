@@ -19,7 +19,7 @@ class Job::SqsReaderController < Job::JobController
       elsif e.message =~ /temporarily unavailable/
         error_count = increment_count_in_cache(get_memcache_error_count_key, false, 10.minutes)
         Rails.logger.info "SQS temporarily unavailable. Incrementing 5-minute count in memcache to: #{error_count}"
-        if error_count > 60
+        if error_count > 20
           raise e
         end
         render :text => 'queue temporarily unavailable'
