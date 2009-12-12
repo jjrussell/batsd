@@ -2,6 +2,8 @@
 
 require 'yaml'
 
+SERVER_CONFIG_FILENAME = 'server/configuration.yaml'
+
 def prompt_and_exit_if_not_yes
   answer = STDIN.gets
   if !/^y/i.match(answer)
@@ -9,37 +11,71 @@ def prompt_and_exit_if_not_yes
   end
 end
 
-if ARGV.first == 'production'
+def print_usage_and_exit
+  puts "USAGE: script/deploy <deploy_group> [<environment>] [<version>]"
+  puts "  deploy_group is either 'api' or 'website'."
+  puts "  environment is either 'production' or 'test'. Default is test."
+  puts "  version can be 'trunk', or a specific version number. If left blank, a new version will be created."
+  exit
+end
+
+deploy_group = ARGV[0] # 'api' or 'website'
+environment = ARGV[1] # 'production' or 'testing'
+version_number = ARGV[2] # 'trunk' or a deploy number
+
+if environment == 'production'
   puts "PRODUCTION deploy"
-  groups = 'webserver jobserver masterjobs'
+  server_groups = case deploy_group
+  when 'api'
+    'webserver jobserver masterjobs'
+  when 'website'
+    'website'
+  end
 else
   puts "TESTING deploy"
-  groups = 'testserver'
+  server_groups = case deploy_group
+  when 'api'
+    'testserver'
+  when 'website'
+    'testwebsite'
+  end
+end
+
+unless server_groups
+  print_usage_and_exit
 end
 
 puts "\nUpdating local svn"
 puts `svn update`
 
-version_number = ARGV[1]
-
 unless version_number
-  settings = YAML::load_file('server/configuration.yaml')
-  version_number = settings['config']['api_deploy_version']
+  settings = YAML::load_file(SERVER_CONFIG_FILENAME)
+
+  version_number = settings['config']["#{deploy_group}_deploy_version"].to_i
   
-  #puts "No version number specified. Create new version? [y/N] "
-  #prompt_and_exit_if_not_yes
+  if environment == 'production'
+    version_number += 1
+    print "No deploy version number specified. Create new deploy version #{version_number}? [y/N] "
+    prompt_and_exit_if_not_yes
   
-  #version_number += 1
-  #settings['config']['deploy_version'] = version_number
+    
+    settings['config']["#{deploy_group}_deploy_version"] = version_number.to_s
   
-  #system("svn copy https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/trunk " +
-  #    "https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version_number} " +
-  #    "-m \"Creating deploy branch #{version_number}\"")
-      
+    File.open(SERVER_CONFIG_FILENAME, 'w') do |f|
+      f.write(settings.to_yaml)
+    end
   
+    puts "Creating new deploy branch."
+    system("svn copy https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/trunk " +
+       "https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version_number} " +
+       "-m \"Creating deploy branch #{version_number}\"")
+       
+    puts "Incrementing version in config file."
+    system("svn commit #{SERVER_CONFIG_FILENAME} -m 'Incrementing config version number to #{version_number}'")
+  end
 end
 
 # Must use the system command to run, not backticks, otherwise it will be non-interactive.
-system("script/cloudrun '#{groups}' 'cd server && svn update && ./deploy.rb #{version_number}'")
+system("script/cloudrun '#{server_groups}' 'cd server && svn update && ./deploy.rb #{version_number}'")
 
 puts "Done deploying"
