@@ -6,7 +6,7 @@ class Site::UsersController < Site::SiteController
   def index
     user_id = params[:id]
     @user = User.new(user_id)
-    unless @user
+    unless @user.get('user_name')
       forbidden
       return
     end
