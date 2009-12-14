@@ -112,4 +112,12 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     assert_equal(expected_attrs, model.attributes)
     
   end
+  
+  test "cleanup attributes" do
+    @model.attributes[:foo] = []
+    @model.attributes[:foo2] = nil
+    @model.cleanup_attributes
+    
+    assert_equal({}, @model.attributes)
+  end
 end

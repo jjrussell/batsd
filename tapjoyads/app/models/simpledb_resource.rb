@@ -91,6 +91,8 @@ class SimpledbResource
     time_log("Saving to sdb") do
       put('updated-at', Time.now.utc.to_f.to_s) if updated_at
       
+      cleanup_attributes
+      
       begin
         @@sdb.put_attributes(@domain_name, @key, @attributes, replace)
         @@sdb.delete_attributes(@domain_name, @key, @attributes_to_delete) unless @attributes_to_delete.empty?
@@ -196,7 +198,9 @@ class SimpledbResource
     cgi_escape = options.delete(:cgi_escape) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
-    return if value.nil?
+    if value.nil? or value == ''
+      return
+    end
     value = value.to_s
     
     # Probably not necessary, because params with questionable characters should call with cgi_escape => true
@@ -420,6 +424,20 @@ class SimpledbResource
     end
     
     return value
+  end
+  
+  ##
+  # Remove any attributes which contain empty values, or empty arrays.
+  def cleanup_attributes
+    keys_to_delete = []
+    @attributes.each do |key, value|
+      if value.nil? or value.empty?
+        keys_to_delete.push(key)
+      end
+    end
+    keys_to_delete.each do |key|
+      @attributes.delete(key)
+    end
   end
   
 end
