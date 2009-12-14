@@ -22,6 +22,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'cleanup_web_requests', :interval => 1.minutes
     s.add_job 'create_offers', :interval => 5.seconds
     s.add_job 'create_rewarded_installs', :interval => 5.seconds
+    s.add_job 'send_money_txn', :interval => 5.seconds
   elsif machine_type == 'masterjobs'
     s.add_job 'master_cleanup_web_requests', :daily => 2.hours
     s.add_job 'master_create_offers', :interval => 15.minutes
