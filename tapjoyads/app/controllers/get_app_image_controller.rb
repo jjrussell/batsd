@@ -2,18 +2,7 @@ class GetAppImageController < ApplicationController
   include MemcachedHelper
   
   def icon
-    unless params[:app_id]
-      error = ::Error.new
-      error.put('request', request.url)
-      error.put('function', 'connect')
-      error.put('ip', request.remote_ip)
-      error.save
-      Rails.logger.info "missing required params"
-      render :text => "missing required params"
-      return
-    end
-    
-    @return_obj = TapjoyReturnObject.new
+    return unless verify_params([:app_id])
     
     app_id = params[:app_id].downcase
     
@@ -25,18 +14,13 @@ class GetAppImageController < ApplicationController
       end
       
      send_data(image, :type => 'image/png', :filename => "#{app_id}.png", :disposition => 'inline')
-      
     else
       image = get_from_cache_and_save("icon.s3.#{image_name.hash}") do
         image_content = AWS::S3::S3Object.value image_name, 'app-icons'
         Base64.encode64 image_content
       end
     
-      @return_obj.Icon = image
-    
-      respond_to do |f|
-        f.xml {render(:partial => 'app_icon')}
-      end
+      @icon = image
     end
   end
 end

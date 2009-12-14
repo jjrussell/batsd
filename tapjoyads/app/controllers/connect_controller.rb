@@ -4,19 +4,7 @@ class ConnectController < ApplicationController
   include RightAws
   
   def index
-
-  
-    if ( (not params[:app_id]) || (not params[:udid]) || (not params[:device_type]) ||
-      (not params[:app_version]) || (not params[:device_os_version]) || (not params[:library_version]) )
-      error = ::Error.new
-      error.put('request', request.url)
-      error.put('function', 'connect')
-      error.put('ip', request.remote_ip)
-      error.save
-      Rails.logger.info "missing required params"
-      render :text => "missing required params"
-      return
-    end
+    return unless verify_params([:app_id, :udid, :device_type, :app_version, :device_os_version, :library_version])
     
     udid = params[:udid]
     
@@ -36,7 +24,6 @@ class ConnectController < ApplicationController
       device_app.put('app.' + params[:app_id],  Time.now.utc.to_f.to_s)
       device_app.save
     end
-    
 
     web_request = WebRequest.new('connect')
     web_request.put('app_id', params[:app_id])
@@ -51,7 +38,4 @@ class ConnectController < ApplicationController
   
     render :template => 'layouts/success'
   end
-
-
-  
 end

@@ -1,17 +1,7 @@
 class CompleteOfferController < ApplicationController
   def index
+    return unless verify_params([:offerid, :app_id, :udid, :url])
 
-    if ( (not params[:offerid]) || (not params[:app_id]) || (not params[:udid]) || (not params[:url]))
-      error = Error.new
-      error.put('request', request.url)
-      error.put('function', 'adshown')
-      error.put('ip', request.remote_ip)
-      error.save
-      Rails.logger.info "missing required params"
-      render :text => "missing required params"
-      return
-    end
-    
     now = Time.now.utc    
     
     click = OfferClick.new( UUIDTools::UUID.random_create.to_s)
@@ -24,7 +14,7 @@ class CompleteOfferController < ApplicationController
     click.put('ip_address', request.remote_ip)
     click.save
   
+    # TODO: verify url. Add signature to url? Whitelist certain urls?
     redirect_to params[:url]
-    
   end
 end

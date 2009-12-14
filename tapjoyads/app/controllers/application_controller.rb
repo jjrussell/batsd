@@ -17,6 +17,29 @@ class ApplicationController < ActionController::Base
   
   private
   
+  def verify_params(required_params)
+    all_params = true
+    required_params.each do |param|
+      unless params.include?(param)
+        all_params = false
+      end
+    end
+    
+    unless all_params
+      Rails.logger.info "missing required params"
+      render :text => "missing required params"
+      log_missing_required_params
+    end
+    return all_params
+  end
+  
+  def log_missing_required_params
+    error = Error.new
+    error.put('request', request.url)
+    error.put('ip', request.remote_ip)
+    error.save
+  end
+  
   def fix_params
     set_param(:udid, :DeviceTag, true)
     set_param(:app_id, :AppID, true)

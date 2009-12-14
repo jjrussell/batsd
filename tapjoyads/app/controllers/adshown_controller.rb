@@ -1,15 +1,6 @@
 class AdshownController < ApplicationController
   def index
-    if (not params[:campaign_id]) || (not params[:app_id]) || (not params[:udid])
-      error = Error.new
-      error.put('request', request.url)
-      error.put('function', 'adshown')
-      error.put('ip', request.remote_ip)
-      error.save
-      Rails.logger.info "missing required params"
-      render :text => "missing required params"
-      return
-    end
+    return unless verify_params([:campaign_id, :app_id, :udid])
     
     web_request = WebRequest.new('adshown')
     web_request.put('campaign_id', params[:campaign_id])
