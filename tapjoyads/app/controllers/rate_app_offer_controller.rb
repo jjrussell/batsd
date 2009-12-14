@@ -15,11 +15,7 @@ class RateAppOfferController < ApplicationController
       SqsGen2.new.queue(QueueNames::RATE_OFFER).send_message(message)
     
       redirect_to app.get('store_url')
-    else
-      render :text => "Please click Back and then Open in Safari to go to the App Store"
+      return
     end
-   
   end
-  
-  
 end
