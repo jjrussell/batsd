@@ -35,8 +35,8 @@ puts `cd /home/webuser/tapjoyads && svn switch #{svn_url}`
 if server_type == 'jobs' || server_type == 'masterjobs'
   `mv /home/webuser/tapjoyads/config/newrelic-jobs.yml /home/webuser/tapjoyads/config/newrelic.yml`
 elsif server_type == 'website' || server_type == 'testwebsite'
-  'mv /home/webuser/tapjoyads/config/newrelic.yml.example'
-  'mv /home/webuser/tapjoyads/config/database.yml.example'
+  'mv /home/webuser/tapjoyads/config/newrelic.yml.example /home/webuser/tapjoyads/config/newrelic.yml'
+  'mv /home/webuser/tapjoyads/config/database.yml.example /home/webuser/tapjoyads/config/database.yml'
 else
   `mv /home/webuser/tapjoyads/config/newrelic-web.yml /home/webuser/tapjoyads/config/newrelic.yml`
 end
