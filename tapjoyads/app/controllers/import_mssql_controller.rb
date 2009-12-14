@@ -7,13 +7,6 @@ class ImportMssqlController < ApplicationController
   protect_from_forgery :except => [:publisher_ad, :app, :campaign]
 
   def user
-    xml = <<XML_END
-<?xml version="1.0" encoding="UTF-8"?>
-<TapjoyConnectReturnObject>
-<Success>true</Success>
-</TapjoyConnectReturnObject>
-XML_END
-
     user_id = params[:user_id]
 
     user = User.new(user_id)
@@ -26,20 +19,11 @@ XML_END
 
     user.save
 
-    respond_to do |f|
-      f.xml {render(:text => xml)}
-    end    
+    render :template => 'layouts/success'  
   end
 
 
   def partner
-    xml = <<XML_END
-<?xml version="1.0" encoding="UTF-8"?>
-<TapjoyConnectReturnObject>
-<Success>true</Success>
-</TapjoyConnectReturnObject>
-XML_END
-
     if (not params[:partner_id])
       error = Error.new
       error.put('request', request.url)
@@ -62,19 +46,10 @@ XML_END
     
     partner.save
 
-    respond_to do |f|
-      f.xml {render(:text => xml)}
-    end    
+    render :template => 'layouts/success' 
   end
       
   def currency
-    xml = <<XML_END
-<?xml version="1.0" encoding="UTF-8"?>
-<TapjoyConnectReturnObject>
-<Success>true</Success>
-</TapjoyConnectReturnObject>
-XML_END
-
     if (not params[:app_id])
       error = Error.new
       error.put('request', request.url)
@@ -105,19 +80,10 @@ XML_END
 
     app.save
 
-    respond_to do |f|
-      f.xml {render(:text => xml)}
-    end    
+    render :template => 'layouts/success'
   end
   
   def publisher_ad
-    xml = <<XML_END
-<?xml version="1.0" encoding="UTF-8"?>
-<TapjoyConnectReturnObject>
-<Success>true</Success>
-</TapjoyConnectReturnObject>
-XML_END
-
     if ( (not params[:ad_id]) || (not params[:partner_id]) )
       error = Error.new
       error.put('request', request.url)
@@ -153,30 +119,16 @@ XML_END
     
     ad.save
   
-    # Keep it non-multithreaded for now.
-    # TODO: determine what steps are needed to make S3Object threadsafe.
-    #Thread.new do
-      #store an image in s3
-      time_log("Stored in s3") do
-        AWS::S3::S3Object.store "raw." + ad_id, params[:image], 'publisher-ads'
-        AWS::S3::S3Object.store "base64." + ad_id, Base64.b64encode(params[:image]), 'publisher-ads'
-      end
-    #end
-  
-    respond_to do |f|
-      f.xml {render(:text => xml)}
+    #store an image in s3
+    time_log("Stored in s3") do
+      AWS::S3::S3Object.store "raw." + ad_id, params[:image], 'publisher-ads'
+      AWS::S3::S3Object.store "base64." + ad_id, Base64.b64encode(params[:image]), 'publisher-ads'
     end
-    
+  
+    render :template => 'layouts/success'
   end
   
   def app
-    xml = <<XML_END
-<?xml version="1.0" encoding="UTF-8"?>
-<TapjoyConnectReturnObject>
-<Success>true</Success>
-</TapjoyConnectReturnObject>
-XML_END
-
     if (not params[:app_id])
       error = Error.new
       error.put('request', request.url)
@@ -229,20 +181,10 @@ XML_END
       AWS::S3::S3Object.store app_id, params[:screenshot], 'app-screenshots'
     end
 
-    respond_to do |f|
-      f.xml {render(:text => xml)}
-    end
-
+    render :template => 'layouts/success'
   end
     
   def campaign
-    xml = <<XML_END
-<?xml version="1.0" encoding="UTF-8"?>
-<TapjoyConnectReturnObject>
-<Success>true</Success>
-</TapjoyConnectReturnObject>
-XML_END
-
     if ( (not params[:campaign_id]) || (not params[:app_id]) )
       error = Error.new
       error.put('request', request.url)
@@ -297,12 +239,7 @@ XML_END
     campaign.put('event5', params[:event5])
     
     campaign.save
-
   
-    respond_to do |f|
-      f.xml {render(:text => xml)}
-    end
-    
+    render :template => 'layouts/success'
   end
-  
 end

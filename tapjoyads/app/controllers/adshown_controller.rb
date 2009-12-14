@@ -1,12 +1,5 @@
 class AdshownController < ApplicationController
   def index
-    xml = <<XML_END
-<?xml version="1.0" encoding="UTF-8"?>
-<TapjoyConnectReturnObject>
-<Success>true</Success>
-</TapjoyConnectReturnObject>
-XML_END
-
     if (not params[:campaign_id]) || (not params[:app_id]) || (not params[:udid])
       error = Error.new
       error.put('request', request.url)
@@ -27,8 +20,6 @@ XML_END
     
     web_request.save
 
-    respond_to do |f|
-      f.xml {render(:text => xml)}
-    end
+    render :template => 'layouts/success'
   end
 end

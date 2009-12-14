@@ -4,12 +4,7 @@ class ConnectController < ApplicationController
   include RightAws
   
   def index
-    xml = <<XML_END
-<?xml version="1.0" encoding="UTF-8"?>
-<TapjoyConnectReturnObject>
-<Success>true</Success>
-</TapjoyConnectReturnObject>
-XML_END
+
   
     if ( (not params[:app_id]) || (not params[:udid]) || (not params[:device_type]) ||
       (not params[:app_version]) || (not params[:device_os_version]) || (not params[:library_version]) )
@@ -54,10 +49,7 @@ XML_END
   
     web_request.save
   
-    respond_to do |f|
-      f.xml {render(:text => xml)}
-    end
-
+    render :template => 'layouts/success'
   end
 
 
