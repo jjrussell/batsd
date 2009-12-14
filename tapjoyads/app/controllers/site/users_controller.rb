@@ -4,9 +4,12 @@ class Site::UsersController < Site::SiteController
   filter_parameter_logging :password
 
   def index
-    Rails.logger.info "SD " + params[:sd]
     user_id = params[:id]
     @user = User.new(user_id)
+    unless @user
+      forbidden
+      return
+    end
   end
   
   def login
