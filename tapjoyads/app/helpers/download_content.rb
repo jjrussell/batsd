@@ -26,4 +26,12 @@ module DownloadContent
     
     return response.body
   end
+  
+  ##
+  # Downloads data from url, without returning the data. If the download fails, it will be retried
+  # automatically via sqs.
+  # TODO: actually implement retrying.
+  def send_to_url(url, download_options = {}, send_options = {})
+    download_content(url, download_options)
+  end
 end
