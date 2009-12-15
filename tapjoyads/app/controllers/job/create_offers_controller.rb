@@ -100,8 +100,7 @@ class Job::CreateOffersController < Job::SqsReaderController
         xml = "<OfferArray>\n"
         offer_list.each do |offer|
           next if (banned_offers) && (banned_offers.include? offer.key)
-          return_offer = ReturnOffer.new(0, offer, currency.get('offers_money_share'), 
-            currency.get('conversion_rate'), currency.get('currency_name'))
+          return_offer = ReturnOffer.new(0, offer, currency)
           xml += return_offer.to_xml
         end
         xml += "</OfferArray>\n"

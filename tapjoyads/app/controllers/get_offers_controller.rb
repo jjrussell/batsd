@@ -77,8 +77,7 @@ XML_END
     #thank god for memcached, but this should be optimized
     
     app = App.new(app_id)
-    offer = ReturnOffer.new(3, app.get('name'), currency.get('offers_money_share'), 
-      currency.get('conversion_rate'), currency.get('currency_name'))
+    offer = ReturnOffer.new(3, app.get('name'), currency)
     offer.ActionURL = "http://ws.tapjoyads.com/rate_app_offer?record_id=$PUBLISHER_USER_RECORD_ID&udid=#{udid}&app_id=#{app_id}"
     
     return offer.to_xml

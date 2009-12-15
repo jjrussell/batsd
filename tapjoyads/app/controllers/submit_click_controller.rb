@@ -6,6 +6,26 @@ class SubmitClickController < ApplicationController
     now = Time.now.utc
     
     ##
+    # store the value of an install in this table
+    # so the user gets the reward they think they earned
+    app = App.new(:advertiser_app_id)
+    advertiser_amount = app.get('payment_for_install').to_i
+    
+    if advertiser_amount <= 0
+      if app.get('price').to_i <= 0
+        advertiser_amount = 25
+      else
+        advertiser_amount = app.get('price').to_i / 2
+      end
+    end
+    
+    ##
+    # store how much currency the user earns for this install    
+    currency = Currency.new(:publisher_app_id)
+
+    values = calculate_install_payouts(:currency => currency, :advertiser_app => app)
+    
+    ##
     # each attribute that starts with publisher.<id> has a . separated value
     # the left of the . is when the click happened.  the right of the . is the publisher user record
     # so when the app is installed, we look at the timestamp to determine where the reward goes
@@ -14,6 +34,11 @@ class SubmitClickController < ApplicationController
     click.put("publisher_app_id",params[:publisher_app_id])
     click.put("publisher_user_record_id", params[:publisher_user_record_id])
     click.put("advertiser_app_id", params[:advertiser_app_id])
+    click.put('advertiser_amount', values[:advertiser_amount])
+    click.put('publisher_amount', values[:publisher_amount])
+    click.put('currency_reward', values[:currency_reward])
+    click.put('tapjoy_amount', values[:tapjoy_amount])
+    click.put('offerpal_amount', values[:offerpal_amount])
     click.save
     
     if params[:redirect] == "1"

@@ -1,12 +1,13 @@
 class ReturnOffer
+  include RewardHelper
   attr_accessor :Cost, :CreditCardRequired, :Currency, :Description, 
     :ImageURL, :Instructions, :Name, :TimeDelay, :CachedOfferID,
     :PublisherUserRecordID, :Type, :EmailURL, :ActionURL, :Amount, :AppID
     
-  def initialize(type, offer, money_share, conversion_rate, currency_name)
+  def initialize(type, offer, currency)
     if type == 0 #offers
       @Cost = "Free" 
-      @Currency = currency_name
+      @Currency = currency.get('currency_name')
       @Description = offer.get('description').gsub("TAPJOY_BUCKS", @Currency)
       @Name = offer.get('name').gsub("TAPJOY_BUCKS", @Currency)
       @TimeDelay = offer.get('time_delay')
@@ -15,17 +16,17 @@ class ReturnOffer
       @CachedOfferID = offer.get('cached_offer_id')
       @PublisherUserRecordID = "$PUBLISHER_USER_RECORD_ID" #to be replaced
       @ActionURL = offer.get('action_url').gsub(" ","%20").gsub('TAPJOY_GENERIC','INT_IDENTIFIER') #has a TAPJOY_GENERIC to be replaced with INT of publisher_user_record_id
-      @Amount = (offer.get('amount').to_f * money_share.to_f * conversion_rate.to_f / 100.0).to_i.to_s
+      @Amount = calculate_offer_payouts(:currency => currency, :offer_amount => offer.get('amount'))[:currency_reward]
       @Type = type
       @EmailURL = "http://www.tapjoyconnect.com/complete_offer?offerid=#{CGI::escape(offer.key)}&udid=$UDID&record_id=$PUBLISHER_USER_RECORD_ID&app_id=$APP_ID&url=#{CGI::escape(CGI::escape(@ActionURL))}"
     elsif type == 1 #apps
       @AppID = offer.key
       @Cost = "Free" 
       @Cost = "Paid" if offer.get('price') && offer.get('price').to_i > 0
-      @Currency = currency_name
+      @Currency = currency.get('name')
       @Description = offer.get('description')
       @Name = offer.get('name')
-      @Amount = (offer.get('payment_for_install').to_f * money_share.to_f * conversion_rate.to_f / 100.0).to_i.to_s
+      @Amount = calculate_install_payouts(:currency => currency, :advertiser_app => offer)[:currency_reward]
       @TimeDelay = 'in seconds'
       @ImageURL = nil
       @Instructions = 'Install and then run the app while online to receive credit.'
@@ -38,10 +39,10 @@ class ReturnOffer
       @CreditCardRequired = "false"
     elsif type == 3 #rating
       @Cost = "Free"
-      @Currency = currency_name
+      @Currency = currency.get('name')
       @Description = "You must Open in Safari.  Clicking Complete Offer will not work.  Click Open in Safari to go to the App Store where you can quickly submit a rating.  This is on the honor system.  When you return to #{offer} you will have earned your #{currency_name}."
       @Name = "Rate #{offer} in the App Store"
-      @Amount = (10.0 * conversion_rate.to_f / 100.0).to_i.to_s #give 10 cents worth of currency
+      @Amount = calculate_offer_payouts(:currency => currency, :offer_amount => 10)[:currency_reward]
       @TimeDelay = 'in seconds'
       @ImageURL = nil
       @Instructions = "Just click the Complete Offer button to go to the App Store where you can rate #{offer}"
