@@ -55,7 +55,9 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
         
         SqsGen2.new.queue(QueueNames::SEND_CURRENCY).send_message(message)
         SqsGen2.new.queue(QueueNames::SEND_MONEY_TXN).send_message(message)
-
+        
+        click.put('installed', "#{install_date.to_s}")
+        click.save
         
       else
         publisher_app_id = click.get('publisher_app_id')
