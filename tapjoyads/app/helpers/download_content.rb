@@ -34,44 +34,55 @@ module DownloadContent
   # Makes a GET request to url. No data is returned.
   # If the download fails, it will be retried automatically via sqs, 
   # as long as retry_options[:retries] > 0.
-  def download_with_retry(url, download_options = {}, retry_options = {})
+  def download_with_retry(url, download_options = {}, retry_options = {}, action_options = {})
     num_retries = retry_options.delete(:retries) { 0 }
     should_alert = retry_options.delete(:alert) { false }
+    final_action = retry_options.delete(:final_action)
+    raise "Unknown retry_options #{options.keys.join(', ')}" unless retry_options.empty?
     
     begin
       response = download_content(url, download_options.merge({:return_response => true}))
       if response.status == 403
-        call_fail_action(retry_options)
+        call_final_action(final_action, '403', retry_options)
       elsif response.status < 200 or response.status > 399
         raise "#{response.status} error"
       end
+      call_final_action(final_action, 'success', action_options)
     rescue Exception => e
       Rails.logger.info "Download failed. Error: #{e}"
       if num_retries > 0
         retry_options[:retries] = num_retries - 1
         message = {:url => url, :download_options => download_options, 
-            :retry_options => retry_options}.to_json
+            :retry_options => retry_options, :action_options => action_options}.to_json
         SqsGen2.new.queue(QueueNames::FAILED_DOWNLOADS).send_message(message)
         Rails.logger.info "Added to FailedDownloads queue."
       else
         if retry_options[:alert]
           # TODO: Alert via newrelic.
         end
-        call_fail_action(retry_options)
+        call_final_action(final_action, 'max_retries', retry_options)
       end
     end
   end
   
   private
   
-  def call_fail_action(retry_options)
-    case retry_options[:fail_action]
-    when :mark_app_callback_dead
-      mark_app_callback_dead(retry_options[:app_id])
+  def call_final_action(action, status, options)
+    case action
+    when 'send_currency_download_complete'
+      send_currency_download_complete(status, options)
     end
   end
   
-  def mark_app_callback_dead(app_id)
-    Rails.logger.info "Mark app dead: #{app_id}"
+  def send_currency_download_complete(status, options)
+    if status == 'max_retries'
+      app = App.new(options[:app_id])
+      app.put('send_currency_error', status)
+      app.save
+    end
+    
+    reward = Rewarded.new(options[:reward_id])
+    reward.put('send_currency_status', status)
+    reward.save
   end
 end
