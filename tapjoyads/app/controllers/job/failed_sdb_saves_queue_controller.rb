@@ -18,7 +18,7 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
     end
     
     sdb_item = SimpledbResource.deserialize(sdb_string)
-    sdb_item.put('from_queue', '1')
+    sdb_item.put('from_queue', Time.now.utc.to_f.to_s)
     sdb_item.save(options)
   end
   
