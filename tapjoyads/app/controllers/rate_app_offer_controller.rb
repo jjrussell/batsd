@@ -8,8 +8,17 @@ class RateAppOfferController < ApplicationController
       record_id = params[:record_id]
       udid = params[:udid]
       app_id = params[:app_id]
-    
+      
       app = App.new(app_id)
+      
+      rate = RateApp.new("#{app_id}.#{udid}")
+      if rate.get('rate-date')
+        redirect_to app.get('store_url') 
+        return
+      end
+      
+      rate.put('rate-date', Time.now.utc.to_f.to_s)
+      rate.save
       
       currency = Currency.new(app_id)
     
