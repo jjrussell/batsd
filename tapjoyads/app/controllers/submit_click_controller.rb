@@ -9,7 +9,7 @@ class SubmitClickController < ApplicationController
     ##
     # store the value of an install in this table
     # so the user gets the reward they think they earned
-    app = App.new(:advertiser_app_id)
+    app = App.new(params[:advertiser_app_id])
     advertiser_amount = app.get('payment_for_install').to_i
     
     if advertiser_amount <= 0
@@ -22,7 +22,7 @@ class SubmitClickController < ApplicationController
     
     ##
     # store how much currency the user earns for this install    
-    currency = Currency.new(:publisher_app_id)
+    currency = Currency.new(params[:publisher_app_id])
 
     values = calculate_install_payouts(:currency => currency, :advertiser_app => app)
     

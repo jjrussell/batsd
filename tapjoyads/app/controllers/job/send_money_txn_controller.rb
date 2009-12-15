@@ -11,7 +11,7 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
     reward = SimpledbResource.deserialize(message.to_s)
     
     unless reward.get('sent_money_txn')
-      Rails.logger.info "Sending money transaction to sql: #{reward_id}"
+      Rails.logger.info "Sending money transaction to sql: #{reward.key}"
 
       win_lb = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/Service1.asmx/'
       url = win_lb + "SubmitMoneyTxn?password=asfyrexvlkjewr214314" + 

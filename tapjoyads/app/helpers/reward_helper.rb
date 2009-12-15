@@ -11,7 +11,7 @@ module RewardHelper
     currency_reward = [publisher_amount_float.to_i * currency.get('conversion_rate').to_f / 100.0, 1.0].max
     
     return {
-      :advertiser_amount => advertiser_amount_float.to_i.to_s,
+      :advertiser_amount => (-advertiser_amount_float.to_i).to_s,
       :publisher_amount => publisher_amount_float.to_i.to_s,
       :tapjoy_amount => tapjoy_amount.to_s,
       :offerpal_amount => offerpal_amount.to_s,
@@ -30,7 +30,7 @@ module RewardHelper
     currency_reward = [publisher_amount_float.to_i * currency.get('conversion_rate').to_f / 100.0, 1.0].max
     
     return {
-      :advertiser_amount => advertiser_amount_float.to_i.to_s,
+      :advertiser_amount => (-advertiser_amount_float.to_i).to_s,
       :publisher_amount => publisher_amount_float.to_i.to_s,
       :tapjoy_amount => tapjoy_amount.to_s,
       :offerpal_amount => offerpal_amount.to_s,

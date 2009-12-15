@@ -39,7 +39,6 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
       
     #go through and create app-specific lists for each app
     app_currency_list.each do |currency|
-      next if currency.key != '93e78102-cbd7-4ebf-85cc-315ba83ef2d5'
       
       Rails.logger.info "Creating rewarded install xml for #{currency.key} of #{currency.get('currency_name')}"
       banned_apps = currency.get('disabled_apps').split(';') if currency.get('disabled_apps')

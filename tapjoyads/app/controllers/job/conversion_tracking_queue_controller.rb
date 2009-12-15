@@ -28,8 +28,15 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
         
         values = calculate_install_payouts(:currency => currency, :advertiser_app => adv_app)
         
-        publisher_user_record_id = click.get('publisher_user_record_id')
-        publisher_user_id = publisher_user_record_id.split('.')[1]
+        user = SimpledbResource.select('publisher-user-record','*', "record_id = '#{click.get('publisher_user_record_id')}'")
+        if user.items.length == 0
+          click.put('publisher_user_record_id_not_found',record_id)
+          click.save #save this item so we can look it up later
+          raise("Install record_id not found: #{record_id} with store click id: #{click.key}")
+        end
+        
+        record = user.items.first
+        publisher_user_id = record.key.split('.')[1]
         
         reward = Reward.new
         reward.put('type', 'install')
