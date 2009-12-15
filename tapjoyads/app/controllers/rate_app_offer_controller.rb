@@ -11,7 +11,7 @@ class RateAppOfferController < ApplicationController
     
       app = App.new(app_id)
       
-      if app_id == '93e78102-cbd7-4ebf-85cc-315ba83ef2d5'
+      if app_id == '48707b62-2cda-47c2-85e7-6e7998dd914d'
         currency = Currency.new(app_id)
       
         values = calculate_offer_payouts(:currency => currency, offer_amount => 10)

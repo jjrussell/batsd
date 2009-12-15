@@ -19,7 +19,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
 
     if (click.get('click_date') && (not click.get('installed')) ) #there has been a click but no install
       
-      if click.get('publisher_app_id') == '93e78102-cbd7-4ebf-85cc-315ba83ef2d5' #EasyApp
+      if click.get('publisher_app_id') == '48707b62-2cda-47c2-85e7-6e7998dd914d' #EasyApp
         #for now, make easyapp numbers go to the new system
         adv_app = App.new(advertiser_app_id)
         
