@@ -46,8 +46,9 @@ module DownloadContent
         call_final_action(final_action, '403', retry_options)
       elsif response.status < 200 or response.status > 399
         raise "#{response.status} error"
+      else
+        call_final_action(final_action, 'success', action_options)
       end
-      call_final_action(final_action, 'success', action_options)
     rescue Exception => e
       Rails.logger.info "Download failed. Error: #{e}"
       if num_retries > 0
@@ -71,6 +72,10 @@ module DownloadContent
     case action
     when 'send_currency_download_complete'
       send_currency_download_complete(status, options)
+    when nil
+      Rails.logger.info "No final action to call."
+    else
+      raise "Unknown final action: #{action}"
     end
   end
   
@@ -81,7 +86,7 @@ module DownloadContent
       app.save
     end
     
-    reward = Rewarded.new(options[:reward_id])
+    reward = Reward.new(options[:reward_id])
     reward.put('send_currency_status', status)
     reward.save
   end
