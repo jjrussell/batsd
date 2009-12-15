@@ -33,7 +33,7 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
         "&offerpal_amount=#{CGI::escape(offerpal_amount)}"
         
       
-      send_to_url(url, {:timeout => 15}, {:max_retries => 3, :alert => true})
+      download_with_retry(url, {:timeout => 15}, {:retries => 3, :alert => true})
       
       reward.put('sent_money_txn', Time.now.utc.to_f.to_s)
       reward.save
