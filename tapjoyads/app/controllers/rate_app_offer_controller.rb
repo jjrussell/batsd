@@ -14,7 +14,7 @@ class RateAppOfferController < ApplicationController
       if app_id == '48707b62-2cda-47c2-85e7-6e7998dd914d'
         currency = Currency.new(app_id)
       
-        values = calculate_offer_payouts(:currency => currency, offer_amount => 10)
+        values = calculate_offer_payouts(:currency => currency, :offer_amount => 10)
       
         #create the reward item and push to the queues
         reward = Reward.new
