@@ -2,6 +2,7 @@ require 'patron'
 
 module DownloadContent
   include Patron
+  include RightAws
   
   def download_content(url, options = {})
     headers = options.delete(:headers) { {} }
@@ -37,8 +38,6 @@ module DownloadContent
     num_retries = retry_options.delete(:retries) { 0 }
     should_alert = retry_options.delete(:alert) { false }
     
-    raise "Unknown options #{retry_options.keys.join(', ')}" unless retry_options.empty?
-    
     begin
       response = download_content(url, download_options.merge({:return_response => true}))
       if response.status == 403
@@ -48,12 +47,12 @@ module DownloadContent
       end
     rescue Exception => e
       Rails.logger.info "Download failed. Error: #{e}"
-      num_retries = retry_options[:retries]
       if num_retries > 0
         retry_options[:retries] = num_retries - 1
         message = {:url => url, :download_options => download_options, 
             :retry_options => retry_options}.to_json
         SqsGen2.new.queue(QueueNames::FAILED_DOWNLOADS).send_message(message)
+        Rails.logger.info "Added to FailedDownloads queue."
       else
         if retry_options[:alert]
           # TODO: Alert via newrelic.
