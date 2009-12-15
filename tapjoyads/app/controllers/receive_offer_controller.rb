@@ -23,7 +23,7 @@ class ReceiveOfferController < ApplicationController
     
     ##
     # Find the user record by snuid
-    user = SimpledbResource.select('publisher-user-record','*', "int_record_id = '#{int_id}'")
+    user = SimpledbResource.select('publisher-user-record','*', "int_record_id = '#{snuid}'")
     if user.items.length == 0
       received_offer.put('snuid_not_found_error',Time.now.utc.to_f.to_s)
       received_offer.save #save this item so we can look it up later
