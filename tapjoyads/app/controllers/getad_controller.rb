@@ -84,7 +84,6 @@ class GetadController < ApplicationController
       @tapjoy_ad.click_url = click_url
       @tapjoy_ad.image = image
       
-      render_ad
     elsif /^GIF/.match(content)
       logger.info "gif image"
       no_ad
@@ -102,8 +101,6 @@ class GetadController < ApplicationController
       #set tracking data for millennial
       tracker_url = (doc/"img")[1]["src"]
       download_content tracker_url
-
-      render_ad
     else
       logger.info "html ad"
       #@tapjoy_ad.ad_html = content
@@ -147,8 +144,6 @@ class GetadController < ApplicationController
       end
     
       @tapjoy_ad.open_in = json['launch_type'] == 2 ? 'Webview' : 'Safari'
-    
-      render_ad
     end
   end
   
@@ -199,7 +194,6 @@ class GetadController < ApplicationController
       end
       
       @tapjoy_ad.image = image
-      render_ad
     end
   end
   
