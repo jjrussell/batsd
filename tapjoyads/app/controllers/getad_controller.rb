@@ -11,82 +11,64 @@ include Magick
 class GetadController < ApplicationController
   include DownloadContent
   include MemcachedHelper
-
-  missing_message = "missing required params"
-  verify :params => [:udid, :app_id],
-         :render => {:text => missing_message}
-  verify :params => [:apid, :auid],
-         :only => :millennial,
-         :render => {:text => missing_message}
-  verify :params => [:apikey, :appkey],
-         :render => {:text => missing_message},
-         :only => :mdotm
-  verify :params => [:slot_id],
-         :render => {:text => missing_message},
-         :only => :adfonic
-  verify :params => [:partner_key, :site_key, :zone_key],
-         :render => {:text => missing_message},
-         :only => :crisp
          
   around_filter :catch_exceptions
   
   USER_AGENT = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
       " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
       
-      
   def index
-      if params[:campaign_id] == ""
-        no_ad
-        return
-      end
-      
-      campaign = Campaign.new(params[:campaign_id])
-      network_name = campaign.get('network_name')
+    return unless verify_params([:udid, :app_id, :campaign_id])
+    
+    if params[:campaign_id] == ""
+      no_ad
+      return
+    end
+    
+    campaign = Campaign.new(params[:campaign_id])
+    Rails.logger.info campaign.domain_name
+    network_name = campaign.get('network_name')
 
-      Rails.logger.info "network_name: #{network_name}"
+    Rails.logger.info "network_name: #{network_name}"
 
-      path = case network_name
-      when "Millennial"
-        params[:apid] = campaign.get('id1')
-        params[:auid] = campaign.get('id2')
-        return millennial
-      when "MDotM"
-        no_ad
-        return
-      when "Adfonic"
-        params[:slot_id] = campaign.get('id1')
-        return adfonic
-      when "Crisp"
-        params[:partner_key] = campaign.get('id1')
-        params[:site_key] = campaign.get('id2')
-        params[:zone_key] = campaign.get('id3')
-        return crisp
-      when "SocialReach"
-        return socialreach
-      when "TapjoyAds"
-        #params[:ad_id] = 'a5fd42df-7120-4fe7-9e49-814cb1d566c2' #tapfarm
-        params[:ad_id] = '35e27740-d857-45a6-9f59-1529be64914a' #4info microsoft
-        return publisher_ad
-      when "PublisherAds"
-        params[:ad_id] = campaign.get('ad_id')
-        return publisher_ad
-      else
-        raise("campaign #{params[:campaign_id]} not found") if rand(100) == 1
-        return socialreach
-      end
+    path = case network_name
+    when "Millennial"
+      return millennial(campaign.get('id1'), campaign.get('id2'))
+    when "MDotM"
+      no_ad
+      return
+    when "Adfonic"
+      return adfonic(campaign.get('id1'))
+    when "Crisp"
+      return crisp(campaign.get('id1'), campaign.get('id2'), campaign.get('id3'))
+    when "SocialReach"
+      return socialreach
+    when "TapjoyAds"
+      return publisher_ad('35e27740-d857-45a6-9f59-1529be64914a')  #4info microsoft
+    when "PublisherAds"
+      return publisher_ad(campaign.get('ad_id'))
+    else
+      # The default ad shouldn't be showing up. If it does, we randomly throw an error, so that
+      # it wil show up in the newrelic logs. The client will re-request.
+      # TODO: use newrelic gem api to log error.
+      raise("campaign #{params[:campaign_id]} not found") if rand(100) == 1
+      return socialreach
+    end
 
   end
   
-  def millennial
+  private
+  
+  def millennial(apid, auid)
     url = 'http://ads.mp.mydas.mobi/getAd.php5' +
-        "?apid=#{CGI::escape(params[:apid])}" +
-        "&auid=#{CGI::escape(params[:auid])}" +
+        "?apid=#{CGI::escape(apid)}" +
+        "&auid=#{CGI::escape(auid)}" +
         "&uip=#{get_ip_address}" +
         "&ua=#{USER_AGENT}"
     
     content = download_content(url)
 
-    @ad_return_obj = TapjoyAd.new
+    @tapjoy_ad = TapjoyAd.new
     
     if /^<\?xml/.match(content)
       doc =  XML::Parser.string(content).parse
@@ -99,8 +81,8 @@ class GetadController < ApplicationController
       end
       image = download_image image_url
       
-      @ad_return_obj.ClickURL = click_url
-      @ad_return_obj.Image = image
+      @tapjoy_ad.click_url = click_url
+      @tapjoy_ad.image = image
       
       render_ad
     elsif /^GIF/.match(content)
@@ -113,9 +95,9 @@ class GetadController < ApplicationController
       image_url = (doc/"img").first["src"]
       image = download_image image_url
       
-      @ad_return_obj.ClickURL = link
-      @ad_return_obj.Image = image
-      #@ad_return_obj.OpenIn = "Webview"
+      @tapjoy_ad.click_url = link
+      @tapjoy_ad.image = image
+      #@tapjoy_ad.open_in = "Webview"
       
       #set tracking data for millennial
       tracker_url = (doc/"img")[1]["src"]
@@ -124,7 +106,7 @@ class GetadController < ApplicationController
       render_ad
     else
       logger.info "html ad"
-      #@ad_return_obj.AdHTML = content
+      #@tapjoy_ad.ad_html = content
       no_ad
     end
   end
@@ -146,32 +128,32 @@ class GetadController < ApplicationController
       logger.info "empty json"
       no_ad
     else
-      @ad_return_obj = TapjoyAd.new
+      @tapjoy_ad = TapjoyAd.new
     
       if json['ad_type'] == 1
-        @ad_return_obj.ClickURL = json['landing_url']
-        @ad_return_obj.Image = download_image json['img_url']
+        @tapjoy_ad.click_url = json['landing_url']
+        @tapjoy_ad.image = download_image json['img_url']
       elsif json['ad_type'] == 2
         #TODO: draw text and image
-        #@ad_return_obj.ClickURL = json['landing_url']
+        #@tapjoy_ad.click_url = json['landing_url']
         logger.info "Type 2 ad not yet implemented"
         no_ad
         return
       elsif json['ad_type'] == 3
-        #@ad_return_obj.AdHTML = json['ad_text']
+        #@tapjoy_ad.ad_html = json['ad_text']
         logger.info "html ad"
         no_ad
         return
       end
     
-      @ad_return_obj.OpenIn = json['launch_type'] == 2 ? 'Webview' : 'Safari'
+      @tapjoy_ad.open_in = json['launch_type'] == 2 ? 'Webview' : 'Safari'
     
       render_ad
     end
   end
   
-  def adfonic
-    url = "http://adfonic.net/ad/#{CGI::escape(params[:slot_id])}" +
+  def adfonic(slot_id)
+    url = "http://adfonic.net/ad/#{CGI::escape(slot_id)}" +
         "?r.ip=#{get_ip_address}" +
         "&r.id=#{CGI::escape(params[:udid])}" +
         "&test=0" +
@@ -187,8 +169,8 @@ class GetadController < ApplicationController
       logger.info "Ad network reported an error"
       no_ad
     else
-      @ad_return_obj = TapjoyAd.new
-      @ad_return_obj.ClickURL = json['destination']['url']
+      @tapjoy_ad = TapjoyAd.new
+      @tapjoy_ad.click_url = json['destination']['url']
       if json['components']['image']
         image_url = json['components']['image']['url']
         image = download_image image_url
@@ -216,32 +198,19 @@ class GetadController < ApplicationController
         end
       end
       
-      @ad_return_obj.Image = image
+      @tapjoy_ad.image = image
       render_ad
     end
   end
   
-  def crisp
-    # http://adserviceapi.qa.mlogic.be/adRequest.v1/single/ad.json?
-    # partnerkey=67934ffbf308992b66b77856abb2abc7&sitekey=tapjoy-test&random=64223321&zonekey=Default&sectionkey=home
-    
-    #url = "http://adserviceapi.qa.mlogic.be/adRequest.v1/single/ad.json" +
+  def crisp(partner_key, site_key, zone_key)
     url = "http://test-api.crispwireless.com/adRequest.v1/single/ad.json" +
-        "?partnerkey=#{CGI::escape(params[:partner_key])}" + 
-        "&sitekey=#{CGI::escape(params[:site_key])}" +
+        "?partnerkey=#{CGI::escape(partner_key)}" + 
+        "&sitekey=#{CGI::escape(site_key)}" +
         "&random=#{rand(9999999)}" +
         "&rspid=" +
-        "&zonekey=#{CGI::escape(params[:zone_key])}" +
+        "&zonekey=#{CGI::escape(zone_key)}" +
         "&sectionkey=home"
-    
-    # old url, keep until crisp verifies the new url works
-    # url = "http://api.crispwireless.com/adRequest.v1/single/ad.html" +
-    #     "?partnerkey=#{CGI::escape(params[:partner_key])}" + 
-    #     "&sitekey=#{CGI::escape(params[:site_key])}" +
-    #     "&random=#{rand(9999999)}" +
-    #     "&rspid=" +
-    #     "&zonekey=#{CGI::escape(params[:zone_key])}" +
-    #     "&sectionkey"
     
     json_string = download_content(url, {:headers => {'User-Agent' => request.headers['User-Agent']}})
     
@@ -250,24 +219,22 @@ class GetadController < ApplicationController
     if !json or !json['html']
       no_ad
     elsif json['clickURL'] != '' && json['mediaSourceURL'] != ''
-      @ad_return_obj = TapjoyAd.new
-      @ad_return_obj.ClickURL = json['clickURL'].split(' ',2)[0]
+      @tapjoy_ad = TapjoyAd.new
+      @tapjoy_ad.click_url = json['clickURL'].split(' ',2)[0]
       image_url = json['mediaSourceURL']
-      @ad_return_obj.Image = download_image image_url if image_url
-      render_ad
+      @tapjoy_ad.image = download_image(image_url) if image_url
     else
-      @ad_return_obj = TapjoyAd.new
-      @ad_return_obj.AdHTML = json['html']
-      render_ad
+      @tapjoy_ad = TapjoyAd.new
+      @tapjoy_ad.ad_html = json['html']
     end
   end
   
   def socialreach
     num = rand(6) + 6251 # 6521 <= num <= 6256
     
-    @ad_return_obj = TapjoyAd.new
-    @ad_return_obj.OpenIn = 'Webview'
-    @ad_return_obj.ClickURL = "http://clicks.socialreach.com/click?zone=#{num}"
+    @tapjoy_ad = TapjoyAd.new
+    @tapjoy_ad.open_in = 'Webview'
+    @tapjoy_ad.click_url = "http://clicks.socialreach.com/click?zone=#{num}"
     
     image_name = "socialreach-#{num}.jpg"
     
@@ -276,16 +243,10 @@ class GetadController < ApplicationController
       Base64.encode64 image_content
     end
     
-    @ad_return_obj.Image = image
-    
-    render_ad
+    @tapjoy_ad.image = image
   end
   
-  def publisher_ad
-    
-    ad_id = params[:ad_id]
-    udid = params[:udid]
-    
+  def publisher_ad(ad_id)
     ad = PublisherAd.new(ad_id)
     
     if (not ad.get('url'))
@@ -302,7 +263,7 @@ class GetadController < ApplicationController
     
     #todo daily/global limits???
     
-    @ad_return_obj = TapjoyAd.new
+    @tapjoy_ad = TapjoyAd.new
         
     url = ad.get('url')
     open_in = ad.get('open_in')
@@ -310,25 +271,22 @@ class GetadController < ApplicationController
     
     app_id_to_advertise = ad.get('app_id_to_advertise')
     
-        
-    if (app_id_to_advertise)
+    if app_id_to_advertise
       #todo is it installed??
       open_in = 'Safari'
-      #@ad_return_obj.GameID = app_id_to_advertise
+      #@tapjoy_ad.game_id = app_id_to_advertise
     end
     
-    @ad_return_obj.OpenIn = open_in
-    @ad_return_obj.ClickURL = url
-    @ad_return_obj.AdID = ad_id
+    @tapjoy_ad.open_in = open_in
+    @tapjoy_ad.click_url = url
+    @tapjoy_ad.ad_id = ad_id
     
     image = get_from_cache_and_save("img.s3.#{ad_id}") do
       image_content = AWS::S3::S3Object.value "base64.#{ad_id}", 'publisher-ads'
     end
     
-    @ad_return_obj.Image = image
-    @ad_return_obj.AdImpressionID = params[:campaign_id]
-    
-    render_ad
+    @tapjoy_ad.image = image
+    @tapjoy_ad.ad_impression_id = params[:campaign_id]
   end
   
   private
@@ -343,14 +301,6 @@ class GetadController < ApplicationController
   def download_image image_url
     get_from_cache_and_save("img.#{image_url.hash}") do 
       Base64.encode64 download_content(image_url)
-    end
-  end
-  
-  def render_ad
-    logger.info "Ad rendered"
-    @ad_rendered = true
-    respond_to do |f|
-      f.xml {render(:partial => 'tapjoy_ad')}
     end
   end
   
