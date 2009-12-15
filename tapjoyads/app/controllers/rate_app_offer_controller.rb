@@ -28,7 +28,7 @@ class RateAppOfferController < ApplicationController
         
         #create the reward item and push to the queues
         reward = Reward.new
-        reward.put('type', 'offer')
+        reward.put('type', 'rating')
         reward.put('publisher_app_id', app_id)
         reward.put('publisher_user_id', publisher_user_id)
         reward.put('advertiser_amount', '0')
