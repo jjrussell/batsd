@@ -46,8 +46,7 @@ class SubmitClickController < ApplicationController
       app = App.new(params[:advertiser_app_id])
       redirect_to app.get('store_url')
     else
-      #render :template => 'layouts/success'
-      render :text => values.to_s
+      render :template => 'layouts/success'
     end
   end
   
