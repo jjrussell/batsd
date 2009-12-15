@@ -61,5 +61,6 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         
       reward.put('sent_currency', Time.now.utc.to_f.to_s)
       reward.save
+    end
   end
 end
