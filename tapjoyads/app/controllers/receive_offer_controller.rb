@@ -1,5 +1,6 @@
 class ReceiveOfferController < ApplicationController
   include RewardHelper
+  include RightAws
   
   def receive_offer
     return record_offer
