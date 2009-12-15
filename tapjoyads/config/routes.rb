@@ -71,6 +71,10 @@ ActionController::Routing::Routes.draw do |map|
   # Route GetOffersForPublsherCurrencyByType to get_offers
   # Route SubmitOfferClick to submit_click/offer
   
+  map.connect 'ReceiveOffersService.asmx/ReceiveOffer', :controller => 'receive_offer', :action => 'receive_offer'
+  map.connect 'ReceiveOffersService.asmx/ReceiveOfferCS', :controller => 'receive_offer', :action => 'receive_offer_cs'
+  
+    
   # Generic windows redirectors. These will be transitions over to ruby controllers as
   # functionality is moved off of windows.
   map.connect 'TapDefenseCurrencyService.asmx/:action', :controller => 'win_redirector'
@@ -79,7 +83,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'AppRedir.aspx/:action', :controller => 'win_redirector'
   map.connect 'Redir.aspx/:action', :controller => 'win_redirector'
   map.connect 'RateApp.aspx/:action', :controller => 'win_redirector'
-  map.connect 'ReceiveOffersService.asmx/:action', :controller => 'win_redirector'
+
   map.connect 'Offers.aspx/:action', :controller => 'win_redirector'
   
   # Authenticated windows redirectors. These too will be removed/moved to standard 

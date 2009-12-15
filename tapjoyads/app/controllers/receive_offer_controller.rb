@@ -6,7 +6,7 @@ class ReceiveOfferController < ApplicationController
     return record_offer
   end
   
-  def cs_receive_offer
+  def receive_offer_cs
     return record_offer(true)
   end
   
