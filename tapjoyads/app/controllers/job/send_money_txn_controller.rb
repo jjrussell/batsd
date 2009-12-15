@@ -16,7 +16,7 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
       win_lb = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/Service1.asmx/'
       url = win_lb + "SubmitMoneyTxn?password=asfyrexvlkjewr214314" + 
         "&publisher_app_id=#{CGI::escape(reward.get('publisher_app_id'))}" +
-        "&advertiser_app_id=#{CGI::escape(reward.get('advertiser_app_id'))}" +
+        "&advertiser_app_id=#{CGI::escape(reward.get('advertiser_app_id') || '')}" +
         "&item_id=#{CGI::escape(reward.key)}" +
         "&publisher_amount=#{CGI::escape(reward.get('publisher_amount'))}" +
         "&advertiser_amount=#{CGI::escape(reward.get('advertiser_amount'))}" +
