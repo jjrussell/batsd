@@ -13,7 +13,7 @@ class RateAppOfferController < ApplicationController
       
       currency = Currency.new(app_id)
     
-      values = calculate_offer_payouts(:currency => currency, :offer_amount => 10)
+      values = calculate_offer_payouts(:currency => currency, :offer_amount => 15)
     
       ##
       # Find the user record by snuid

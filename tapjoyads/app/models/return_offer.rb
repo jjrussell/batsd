@@ -42,7 +42,7 @@ class ReturnOffer
       @Currency = currency.get('name')
       @Description = "You must Open in Safari.  Clicking Complete Offer will not work.  Click Open in Safari to go to the App Store where you can quickly submit a rating.  This is on the honor system.  When you return to #{offer} you will have earned your #{currency.get('currency_name')}."
       @Name = "Rate #{offer} in the App Store"
-      @Amount = calculate_offer_payouts(:currency => currency, :offer_amount => 10)[:currency_reward]
+      @Amount = calculate_offer_payouts(:currency => currency, :offer_amount => 15)[:currency_reward]
       @TimeDelay = 'in seconds'
       @ImageURL = nil
       @Instructions = "Just click the Complete Offer button to go to the App Store where you can rate #{offer}"

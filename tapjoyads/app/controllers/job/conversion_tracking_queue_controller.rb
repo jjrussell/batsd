@@ -33,6 +33,17 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
         raise("Install record_id not found: #{record_id} with store click id: #{click.key}")
       end
       
+      unless click.get('currency_reward')
+        values = calculate_install_payouts(:currency => currency, :advertiser_app => app)
+
+        click.put('advertiser_amount', values[:advertiser_amount])
+        click.put('publisher_amount', values[:publisher_amount])
+        click.put('currency_reward', values[:currency_reward])
+        click.put('tapjoy_amount', values[:tapjoy_amount])
+        click.put('offerpal_amount', values[:offerpal_amount])
+        
+      end
+      
       record = user.items.first
       publisher_user_id = record.key.split('.')[1]
       

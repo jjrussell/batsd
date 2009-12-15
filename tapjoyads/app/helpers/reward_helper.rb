@@ -5,6 +5,12 @@ module RewardHelper
     advertiser_app = params.fetch(:advertiser_app)
     
     advertiser_amount_float = advertiser_app.get('payment_for_install').to_f
+    
+    if advertiser_amount_float <= 0.1
+      advertiser_amount_float = 25.to_f
+      advertiser_amount_float = advertiser_app.get('price').to_f / 2.0 if advertiser_app.get('price') > '0'
+    end
+    
     publisher_amount_float = advertiser_amount_float.to_f * currency.get('installs_money_share').to_f
     offerpal_amount = ((1.0 - currency.get('installs_money_share').to_f) / 2.0 * advertiser_amount_float).to_i
     tapjoy_amount = advertiser_amount_float.to_i - publisher_amount_float.to_i - offerpal_amount.to_i
