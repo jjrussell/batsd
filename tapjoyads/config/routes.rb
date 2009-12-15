@@ -29,17 +29,16 @@ ActionController::Routing::Routes.draw do |map|
   #     # Directs /admin/products/* to Admin::ProductsController (app/controllers/admin/products_controller.rb)
   #     admin.resources :products
   #   end
-
+  
+  # User controller is exposed as resource
+  map.namespace :site do |site|
+    site.resources :users, :only => [:show], :collection => {:login => :post}
+  end
+  
   # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
   # map.root :controller => "welcome"
 
   # See how all your routes lay out with "rake routes"
-
-  # Install the default routes as the lowest priority.
-  # Note: These default routes make all actions in every controller accessible via GET requests. You should
-  # consider removing the them or commenting them out if you're using named routes and resources.
-  map.connect ':controller/:action/:id'
-  map.connect ':controller/:action/:id.:format'
   
   # Special paths:
   map.connect 'log_device_app/:action/:id', :controller => 'connect'
@@ -89,4 +88,11 @@ ActionController::Routing::Routes.draw do |map|
   # Authenticated windows redirectors. These too will be removed/moved to standard 
   # ruby controllers in time.
   map.connect 'CronService.asmx/:action', :controller => 'authenticated_win_redirector'
+  
+  # Install the default routes as the lowest priority.
+  # Note: These default routes make all actions in every controller accessible via GET requests. You should
+  # consider removing the them or commenting them out if you're using named routes and resources.
+  map.connect ':controller/:action/:id'
+  map.connect ':controller/:action/:id.:format'
+    
 end

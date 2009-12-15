@@ -2,37 +2,48 @@ class Site::UsersController < Site::SiteController
   
   # TODO: filter password in the "Completed in" log line also. (The entire GET request is logged there)
   filter_parameter_logging :password
-
+  
   def index
-    user_id = params[:id]
-    @user = User.new(user_id)
-    unless @user.get('user_name')
-      forbidden
-      return
-    end
   end
   
-  def login
-    unless params[:user_name] and params[:password]
-      forbidden
-      return
-    end
-
-    items = SimpledbResource.select('user', '*', "user_name='#{params[:user_name]}'")
-    @user = items[:items][0]
-    Rails.logger.info "pw: " + encode_password(params[:password], @user.get('salt'))
-    unless @user and verify_password(params[:password], @user.get('password'), @user.get('salt'))
-     forbidden
-     return
-    end
+  #GET /site/users/:id.xml  
+  def show
+    user_id = params[:id]
+    @user = User.new(user_id)
     
-    render 'index'
+    respond_to do |format|
+      if @user.get('user_name')
+        format.xml #show.builder
+      else
+        format.xml {render :xml => {:message => "Resource Not found"}.to_xml(:root => "User"), :status => 404} 
+      end
+    end  
+  end
+  
+  #POST /site/users/login.xml   
+  def login    
+    success = true
+    success = false unless params[:user_name] and params[:password]                
+    if success      
+      items = SimpledbResource.select('user', '*', "user_name='#{params[:user_name]}'")
+      @user = items[:items][0]      
+      Rails.logger.info "pw: " + encode_password(params[:password], @user.get('salt'))
+      success = false unless @user and verify_password(params[:password], @user.get('password'), @user.get('salt'))            
+    end    
+    
+    respond_to do |format|
+      if success
+        format.xml #login.builder
+      else
+        format.xml {forbidden}
+      end    
+    end    
   end
   
   private
   
   def forbidden
-    render :text => 'forbidden', :status => :forbidden
+    render :xml => {:message => "Forbidden access"}, :status => :forbidden
   end
   
   def verify_password(password, hashed_password, salt)
@@ -47,6 +58,5 @@ class Site::UsersController < Site::SiteController
     raw_salt = Base64::decode64(salt)
     sha1 = Digest::SHA1.digest(raw_salt + unicode_password)
     return Base64::encode64(sha1).strip
-  end
-  
+  end  
 end
