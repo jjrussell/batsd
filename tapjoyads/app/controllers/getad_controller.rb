@@ -214,12 +214,14 @@ class GetadController < ApplicationController
       no_ad
     elsif json['clickURL'] != '' && json['mediaSourceURL'] != ''
       @tapjoy_ad = TapjoyAd.new
-      @tapjoy_ad.click_url = json['clickURL'].split(' ',2)[0]
+      @tapjoy_ad.click_url = json['clickURL'].split(' ',2)[0].strip
       image_url = json['mediaSourceURL']
       @tapjoy_ad.image = download_image(image_url) if image_url
+      @tapjoy_ad.open_in = "Webview"
     else
       @tapjoy_ad = TapjoyAd.new
       @tapjoy_ad.ad_html = json['html']
+      @tapjoy_ad.open_in = "Webview"
     end
   end
   
