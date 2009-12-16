@@ -69,14 +69,14 @@ module DownloadContent
   private
   
   def call_final_action(action, status, options)
-    Rails.logger.info "Calling final action: #{action}"
+    Rails.logger.info "Calling final action: '#{action}'"
     case action
     when 'send_currency_download_complete'
       send_currency_download_complete(status, options)
     when nil
       Rails.logger.info "No final action to call."
     else
-      raise "Unknown final action: #{action}"
+      raise "Unknown final action: '#{action}'"
     end
   end
   
