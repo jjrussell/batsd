@@ -65,6 +65,7 @@ class Job::CreateOffersController < Job::SqsReaderController
             #now we know what the offerpal id is
             dbOffer = CachedOffer.new(offerpalID.to_s + CGI::escape(country))
             
+            dbOffer.put('ordinal', 100) unless dbOffer.get('ordinal')
             dbOffer.put('name', offer['name'])
             dbOffer.put('action_url', offer['actionURL'])
             dbOffer.put('description', offer['description'])
@@ -92,6 +93,10 @@ class Job::CreateOffersController < Job::SqsReaderController
         end #begin/rescue
           
       end #offset loop
+      
+      offer_list.sort do |a,b| 
+        a.get('ordinal').to_i - b.get('ordinal').to_i
+      end
       
       #go through and create app-specific lists for each app
       app_currency_list.each do |currency|
