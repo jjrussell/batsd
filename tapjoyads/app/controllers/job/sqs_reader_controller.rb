@@ -32,6 +32,13 @@ class Job::SqsReaderController < Job::JobController
     messages = queue.receive_messages(10)
     messages.each do |message|
       Rails.logger.info "#{@queue_name} message recieved: #{message.to_s}"
+
+      # TORI messages are bad. This is only temporary.
+      if message.to_s =~ /First Global Telugu Radio on Internet/
+        message.delete
+        return
+      end
+      
       begin
         on_message(message)
         message.delete
