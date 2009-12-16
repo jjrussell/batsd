@@ -11,4 +11,10 @@ module AuthenticationHelper
       password
     end
   end
+  
+  def basic_authenticate(allowed_users = nil)
+    authenticate_or_request_with_http_basic do |username, password|
+      username == 'website' && password == '91karWQpaN5q'
+    end
+  end
 end
