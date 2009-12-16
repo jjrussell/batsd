@@ -1,7 +1,7 @@
 class LookupOfferpalIdController < ApplicationController
          
   def index
-    int_id = params[:int_id]
+    int_id = params[:int_id].gsub("'", '')
     user = SimpledbResource.select('publisher-user-record','*', "int_record_id = '#{int_id}'")
     record = user.items.first
     
@@ -14,7 +14,7 @@ class LookupOfferpalIdController < ApplicationController
   end         
 
   def reverse
-    record_id = params[:record_id]
+    record_id = params[:record_id].gsub("'", '')
     user = SimpledbResource.select('publisher-user-record','*', "record_id = '#{record_id}'")
     record = user.items.first
     
@@ -26,7 +26,7 @@ class LookupOfferpalIdController < ApplicationController
   end
   
   def store
-    record_id = params[:record_id]
+    record_id = params[:record_id].gsub("'", '')
     user = SimpledbResource.select('store-click','*', "publisher_user_record_id = '#{record_id}'")
     record = user.items.first
     
