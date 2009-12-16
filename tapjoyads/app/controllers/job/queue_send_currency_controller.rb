@@ -13,6 +13,10 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
     
     unless reward.get('sent_currency')
       publisher_user_id = reward.get('publisher_user_id')
+      unless publisher_user_id
+        Rails.logger.info "No publisher_user_id found for reward key: #{reward.key}"
+        return
+      end
 
       currency = Currency.new(reward.get('publisher_app_id'))
       callback_url = currency.get('callback_url')
