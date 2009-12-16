@@ -43,9 +43,15 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
           name = adv_app.get('name')
           id = 'application'
         elsif (reward.get('type') == 'offer')
-          offer = CachedOffer.new(reward.get('cached_offer_id'))
-          id = offer.key
-          name = offer.get('name')
+          offer_id = reward.get('cached_offer_id')
+          if offer_id
+            offer = CachedOffer.new(offer_id)
+            id = offer.key
+            name = offer.get('name')
+          else
+            id = 'UNKNOWN'
+            name = 'UNKNOWN'
+          end
         elsif (reward.get('type') == 'rating')
           id = 'rating'
           name = 'rating'

@@ -36,6 +36,7 @@ class Job::SqsReaderController < Job::JobController
       # TORI messages are bad. This is only temporary.
       if message.to_s =~ /First Global Telugu Radio on Internet/
         message.delete
+        render :text => 'TORI'
         return
       end
       
