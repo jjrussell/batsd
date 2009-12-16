@@ -69,6 +69,7 @@ module DownloadContent
   private
   
   def call_final_action(action, status, options)
+    Rails.logger.info "Calling final action: #{action}"
     case action
     when 'send_currency_download_complete'
       send_currency_download_complete(status, options)
