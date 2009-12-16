@@ -1,10 +1,6 @@
 class Site::UsersController < Site::SiteController
   
-  # TODO: filter password in the "Completed in" log line also. (The entire GET request is logged there)
   filter_parameter_logging :password
-  
-  def index
-  end
   
   #GET /site/users/:id.xml  
   def show
@@ -17,7 +13,7 @@ class Site::UsersController < Site::SiteController
       else
         format.xml {render :xml => {:message => "Resource Not found"}.to_xml(:root => "User"), :status => 404} 
       end
-    end  
+    end
   end
   
   #POST /site/users/login.xml   
@@ -27,7 +23,6 @@ class Site::UsersController < Site::SiteController
     if success      
       items = SimpledbResource.select('user', '*', "user_name='#{params[:user_name]}'")
       @user = items[:items][0]      
-      Rails.logger.info "pw: " + encode_password(params[:password], @user.get('salt'))
       success = false unless @user and verify_password(params[:password], @user.get('password'), @user.get('salt'))            
     end    
     
@@ -36,7 +31,7 @@ class Site::UsersController < Site::SiteController
         format.xml #login.builder
       else
         format.xml {forbidden}
-      end    
+      end
     end    
   end
   
