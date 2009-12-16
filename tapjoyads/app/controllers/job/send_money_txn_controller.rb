@@ -13,6 +13,17 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
     unless reward.get('sent_money_txn')
       Rails.logger.info "Sending money transaction to sql: #{reward.key}"
 
+      unless reward.get('publisher_amount')
+        values = calculate_install_payouts(:currency => Currency.new(reward.get('publisher_app_id')), 
+            :advertiser_app => App.new(reward.get('advertiser_app_id')))
+
+        reward.put('advertiser_amount', values[:advertiser_amount])
+        reward.put('publisher_amount', values[:publisher_amount])
+        reward.put('currency_reward', values[:currency_reward])
+        reward.put('tapjoy_amount', values[:tapjoy_amount])
+        reward.put('offerpal_amount', values[:offerpal_amount])
+      end
+
       win_lb = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/Service1.asmx/'
       url = win_lb + "SubmitMoneyTxn?password=asfyrexvlkjewr214314" + 
         "&publisher_app_id=#{CGI::escape(reward.get('publisher_app_id'))}" +

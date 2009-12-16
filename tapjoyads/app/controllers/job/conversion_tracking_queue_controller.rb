@@ -34,7 +34,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       end
       
       unless click.get('currency_reward')
-        values = calculate_install_payouts(:currency => currency, :advertiser_app => app)
+        values = calculate_install_payouts(:currency => currency, :advertiser_app => adv_app)
 
         click.put('advertiser_amount', values[:advertiser_amount])
         click.put('publisher_amount', values[:publisher_amount])

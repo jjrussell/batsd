@@ -37,6 +37,7 @@ class Job::SqsReaderController < Job::JobController
         message.delete
       rescue Exception => e
         Rails.logger.warn "Error processing message. Error: #{e}"
+        raise e
       end
     end
     
