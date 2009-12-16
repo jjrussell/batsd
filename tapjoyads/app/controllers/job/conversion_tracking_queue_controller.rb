@@ -30,7 +30,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       if user.items.length == 0
         click.put('publisher_user_record_id_not_found',click.get('publisher_user_record_id'))
         click.save #save this item so we can look it up later
-        raise("Install record_id not found: #{record_id} with store click id: #{click.key}")
+        raise("Install record_id not found: #{click.get('publisher_user_record_id')} with store click id: #{click.key}")
       end
       
       unless click.get('currency_reward')
