@@ -94,7 +94,7 @@ class Job::CreateOffersController < Job::SqsReaderController
           
       end #offset loop
       
-      offer_list.sort do |a,b| 
+      offer_list.sort! do |a,b| 
         a.get('ordinal').to_i - b.get('ordinal').to_i
       end
       
