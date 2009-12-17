@@ -18,6 +18,11 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
     click = StoreClick.new("#{udid}.#{advertiser_app_id}")
 
     if (click.get('click_date') && (not click.get('installed')) ) #there has been a click but no install
+      web_request = WebRequest.new('store_install', nil, nil)
+      web_request.put('udid', udid)
+      web_request.put('advertiser_app_id', advertiser_app_id)
+      web_request.put('publisher_app_id', click.get('publisher_app_id'))
+      web_request.save
       
       adv_app = App.new(advertiser_app_id)
       

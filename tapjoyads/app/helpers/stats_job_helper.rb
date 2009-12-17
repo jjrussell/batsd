@@ -33,63 +33,46 @@ module StatsJobHelper
     
     hourly_impressions = get_hourly_impressions(start_hour, end_hour, time, domain_name, item_id, 
         stat.get('hourly_impressions'), 'adshown')
-    
     send_stat_to_windows(time.iso8601[0,10], 'AdImpressions', item_id, hourly_impressions.sum)
     send_stat_to_windows(time.iso8601[0,10], 'AdRequests', item_id, hourly_impressions.sum)
     send_stat_to_windows(time.iso8601[0,10], 'FillRate', item_id, 10000)
-        
     stat.put('hourly_impressions', hourly_impressions.join(','))
     
     if domain_name == 'app'
     
       hourly_impressions = get_hourly_impressions(start_hour, end_hour, time, domain_name, item_id, 
           stat.get('logins'), 'connect')
-    
       send_stat_to_windows(time.iso8601[0,10], 'GameSessions', item_id, hourly_impressions.sum)
-    
       stat.put('logins', hourly_impressions.join(','))
         
       paid_clicks = get_hourly_store_clicks(start_hour, end_hour, time, item_id, 
           stat.get('paid_clicks_to_store'), false, true)
-    
       send_stat_to_windows(time.iso8601[0,10], 'RewardedInstallClicks', item_id, paid_clicks.sum)
-          
       stat.put('paid_clicks_to_store', paid_clicks.join(','))
  
       paid_installs = get_hourly_store_clicks(start_hour, end_hour, time, item_id, 
           stat.get('paid_installs'), true, true)
-    
       send_stat_to_windows(time.iso8601[0,10], 'RewardedInstalls', item_id, paid_installs.sum)
-          
       stat.put('paid_installs', paid_installs.join(','))
       
       offer_clicks = get_hourly_offer_clicks(start_hour, end_hour, time, item_id, 
           stat.get('offer_clicks'))
-    
       send_stat_to_windows(time.iso8601[0,10], 'OfferClicks', item_id, paid_clicks.sum)
-          
       stat.put('offer_clicks', offer_clicks.join(','))
  
       paid_cvr = Array.new(24, 0)
       for i in (0..23)
         paid_cvr[i] = (paid_installs[i] / paid_clicks[i] * 10000.0).to_i if paid_clicks[i] > 0
       end
-      
       stat.put('paid_install_cvr', paid_cvr.join(','))
-      
       daily_paid_cvr = 0
       daily_paid_cvr = (paid_installs.sum / paid_clicks.sum * 10000.0).to_i if paid_clicks.sum > 0
-      
       send_stat_to_windows(time.iso8601[0,10], 'RewardedInstallConversionRate', item_id, daily_paid_cvr)
       
       new_users = get_hourly_new_users(start_hour, end_hour, time, item_id,
         stat.get('new_users'))
-
       send_stat_to_windows(time.iso8601[0,10], 'NewUsers', item_id, new_users.sum)      
-        
       stat.put('new_users', new_users.join(','))
-      
-             
     end
       
     stat.save
@@ -159,8 +142,7 @@ module StatsJobHelper
     return last_hour
   end
   
-  def get_hourly_new_users(last_hour, current_hour, time, item_id, 
-      new_users_string)
+  def get_hourly_new_users(last_hour, current_hour, time, item_id, new_users_string)
     if new_users_string
       new_users = new_users_string.split(',')
       new_users.each_index do |i|

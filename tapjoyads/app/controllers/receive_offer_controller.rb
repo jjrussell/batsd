@@ -68,7 +68,10 @@ class ReceiveOfferController < ApplicationController
     SqsGen2.new.queue(QueueNames::SEND_CURRENCY).send_message(message)
     SqsGen2.new.queue(QueueNames::SEND_MONEY_TXN).send_message(message)
 
-
+    web_request = WebRequest.new('receive_offer', params, request)
+    web_request.put('publisher_app_id', publisher_app_id)
+    web_request.put('offer_id', params[:offerid])
+    web_request.save
 
     render :template => 'layouts/success'
   end

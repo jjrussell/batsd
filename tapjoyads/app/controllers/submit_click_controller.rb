@@ -42,6 +42,9 @@ class SubmitClickController < ApplicationController
     click.put('offerpal_amount', values[:offerpal_amount])
     click.save
     
+    web_request = WebRequest.new('store_click', params, request)
+    web_request.save
+    
     if params[:redirect] == "1"
       app = App.new(params[:advertiser_app_id])
       redirect_to app.get('store_url')
@@ -64,19 +67,17 @@ class SubmitClickController < ApplicationController
     click.put('source', 'app')
     click.put('ip_address', request.remote_ip)
     click.save
-        
+    
+    web_request = WebRequest.new('offer_click', params, request)
+    web_request.save
+    
     render :template => 'layouts/success'
   end
   
   def ad
     return unless verify_params([:campaign_id, :app_id, :udid])
 
-    web_request = WebRequest.new('adclick')
-    web_request.put('campaign_id', params[:campaign_id])
-    web_request.put('app_id', params[:app_id])
-    web_request.put('udid', params[:udid])
-    web_request.put('ip_address', request.remote_ip)
-    
+    web_request = WebRequest.new('adclick', params, request)
     web_request.save
 
     render :template => 'layouts/success'
