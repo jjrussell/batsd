@@ -218,12 +218,12 @@ class GetadController < ApplicationController
       Rails.logger.info "Crisp click url: #{@tapjoy_ad.click_url}"
       image_url = json['mediaSourceURL']
       @tapjoy_ad.image = download_image(image_url) if image_url
-      @tapjoy_ad.open_in = "Webview"
+      @tapjoy_ad.open_in = "Safari"
       @tapjoy_ad.game_id = nil
     else
       @tapjoy_ad = TapjoyAd.new
       @tapjoy_ad.ad_html = json['html']
-      @tapjoy_ad.open_in = "Webview"
+      @tapjoy_ad.open_in = "Safari"
     end
   end
   
