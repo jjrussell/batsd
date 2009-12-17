@@ -142,8 +142,9 @@ class SimpledbResource
     end
   rescue Exception => e
     Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e}"
-    mmm = {:sdb => self.serialize, :options => options_copy}.to_json
-    SqsGen2.new.queue(QueueNames::FAILED_SDB_SAVES).send_message(mmm)
+    message = {:sdb => self.serialize, :options => options_copy}.to_json
+    sqs = SqsGen2.new({:multi_thread => true})
+    sqs.queue(QueueNames::FAILED_SDB_SAVES).send_message(message)
   ensure
     Rails.logger.flush
   end
