@@ -155,7 +155,7 @@ class ImportMssqlController < ApplicationController
         app.put('ad_optimization_interval_update_time','60')
     end
 
-    app.put('name',params[:name])
+    app.put('name',params[:name], {:cgi_escape => true})
     app.put('payment_for_install', params[:payment_for_install])
     app.put('rewarded_installs_ordinal', params[:rewarded_installs_ordinal])
     app.put('install_tracking', params[:install_tracking])
