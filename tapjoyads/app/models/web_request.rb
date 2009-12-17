@@ -2,7 +2,7 @@
 # Represents a single web request.
 class WebRequest < SimpledbResource
   
-  def initialize(path, params, headers)
+  def initialize(path, params, request)
     now = Time.now.utc
     date = now.iso8601[0,10]
     
