@@ -29,11 +29,16 @@ class WebRequest < SimpledbResource
       put('offer_id', params[:offer_id])
       put("publisher_app_id", params[:publisher_app_id])
       put("advertiser_app_id", params[:advertiser_app_id])
+      
+      put('ip_address', params[:device_ip])
     end
     
     if request
-      ip_address = request.headers['X-Forwarded-For'] || request.remote_ip
-      put('ip_address', ip_address)
+      unless get('ip_address')
+        ip_address = request.headers['X-Forwarded-For'] || request.remote_ip
+        ip_address.gsub!(/,.*$/, '')
+        put('ip_address', ip_address)
+      end
     end
   end
   
