@@ -32,7 +32,8 @@ class WebRequest < SimpledbResource
     end
     
     if request
-      put('ip_address', request.remote_ip)
+      ip_address = request.headers['X-Forwarded-For'] || request.remote_ip
+      put('ip_address', ip_address)
     end
   end
   

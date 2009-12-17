@@ -35,6 +35,10 @@ class Site::UsersController < Site::SiteController
     end    
   end
   
+  def create
+    
+  end
+  
   private
   
   def forbidden
