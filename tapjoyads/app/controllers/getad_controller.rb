@@ -215,6 +215,7 @@ class GetadController < ApplicationController
     elsif json['clickURL'] != '' && json['mediaSourceURL'] != ''
       @tapjoy_ad = TapjoyAd.new
       @tapjoy_ad.click_url = json['clickURL'].split(' ',2)[0].chop
+      Rails.logger.info "Crisp click url: #{@tapjoy_ad.click_url}"
       image_url = json['mediaSourceURL']
       @tapjoy_ad.image = download_image(image_url) if image_url
       @tapjoy_ad.open_in = "Webview"
