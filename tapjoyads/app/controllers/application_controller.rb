@@ -41,6 +41,13 @@ class ApplicationController < ActionController::Base
   end
   
   def fix_params
+    downcase_param(:udid)
+    downcase_param(:app_id)
+    downcase_param(:campaign_id)
+    downcase_param(:publisher_app_id)
+    downcase_param(:publisher_user_record_id)
+    downcase_param(:offer_id)
+    downcase_param(:type)
     set_param(:udid, :DeviceTag, true)
     set_param(:app_id, :AppID, true)
     set_param(:device_os_version, :DeviceOSVersion)
@@ -58,6 +65,10 @@ class ApplicationController < ActionController::Base
     set_param(:publisher_user_id, :PublisherUserID)
     set_param(:start, :Start)
     set_param(:max, :Max)
+  end
+  
+  def downcase_param(p)
+    params[p] = params[p].downcase if params[p]
   end
   
   def set_param(to, from, lower = false)
