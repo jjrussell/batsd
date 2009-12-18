@@ -8,4 +8,5 @@ module QueueNames
   RATE_OFFER               = RUN_MODE_PREFIX + 'RateOffer'
   SEND_MONEY_TXN           = RUN_MODE_PREFIX + 'SendMoneyTxn'
   SEND_CURRENCY            = RUN_MODE_PREFIX + 'SendCurrency'
+  REWARD_AGGREGATOR        = RUN_MODE_PREFIX + 'RewardAggregator'
 end
