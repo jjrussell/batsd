@@ -1,6 +1,7 @@
 class ReceiveOfferController < ApplicationController
   include RewardHelper
   include RightAws
+  include PublisherRecordHelper
   
   def receive_offer
     return record_offer
@@ -24,16 +25,8 @@ class ReceiveOfferController < ApplicationController
     
     ##
     # Find the user record by snuid
-    user = SimpledbResource.select('publisher-user-record','*', "int_record_id = '#{snuid}'")
-    if user.items.length == 0
-      received_offer.put('snuid_not_found_error',Time.now.utc.to_f.to_s)
-      received_offer.save #save this item so we can look it up later
-      raise("Receive offer snuid not found: #{snuid} with received_offer id: #{received_offer.key}")
-    end
-    
-    # use the record to get the publisher_app_id and the publisher_user_id (it's in the key)
-    record = user.items.first
-    parts = record.key.split('.')
+    record_key = lookup_by_int_record(snuid)
+    parts = record_key.split('.')
     publisher_app_id = parts[0]
     publisher_user_id = parts[1]    
     currency = Currency.new(publisher_app_id)

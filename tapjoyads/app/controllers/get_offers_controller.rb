@@ -23,6 +23,8 @@ XML_END
       record.put('int_record_id', uid.hash.abs.to_s) #this should work!
       record.put('udid', params[:udid])
       record.save({:replace => false})
+      save_to_cache("record_id.#{record.get('record_id')}", record.key)
+      save_to_cache("int_record_id.#{record.get('int_record_id')}", record.key)
     end
     
     currency = Currency.new(params[:app_id])

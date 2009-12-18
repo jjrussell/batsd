@@ -5,19 +5,17 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
     super QueueNames::REWARD_AGGREGATOR
   end
   
-  def self.test_message
-    on_message({:start_hour => (Time.now - 3.hours).to_f.to_s}.to_json)
-  end
-  
   private
   
-  def self.on_message(message)
+  ##
+  # params: start_hour, last_hour
+  
+  def on_message(message)
     json = JSON.parse(message.to_s)
     
     #start_hour is an epoch
-    start_hour = json['start_hour'].to_f
-    
-    last_hour = (Time.at(start_hour) + 1.hours).to_f
+    start_hour = json['start_hour'].to_f    
+    last_hour = json['last_hour'].to_f
     
     publishers = {}
     advertisers = {}
@@ -53,7 +51,7 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
       
       end
       
-      #next_token = rewards.next_token
+      next_token = rewards.next_token
       
     end while next_token != nil  
       
@@ -61,32 +59,34 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
     hour = Time.at(start_hour).hour
     publishers.each do |key, publisher|
       stat = Stats.new(get_stat_key('app', key, start_hour))
-            update_stat(stat, 'published_installs', publisher[:installs], hour)
-            update_stat(stat, 'installs_revenue', publisher[:installs_revenue], hour)
-            update_stat(stat, 'offers', publisher[:offers], hour)
-            update_stat(stat, 'offers_revenue', publisher[:offers_revenue], hour)
-            update_stat(stat, 'ratings', publisher[:ratings], hour)
-            update_stat(stat, 'rewards', publisher[:total_rewards], hour)
-            update_stat(stat, 'rewards_revenue', publisher[:total_revenue], hour)
+      update_stat(stat, 'published_installs', publisher[:installs], hour)
+      update_stat(stat, 'installs_revenue', publisher[:installs_revenue], hour)
+      update_stat(stat, 'offers', publisher[:offers], hour)
+      update_stat(stat, 'offers_revenue', publisher[:offers_revenue], hour)
+      update_stat(stat, 'ratings', publisher[:ratings], hour)
+      update_stat(stat, 'rewards', publisher[:total_rewards], hour)
+      update_stat(stat, 'rewards_revenue', publisher[:total_revenue], hour)
       
-      print "#{key}: #{stat.attributes}\n"
-      #stat.save          
+      stat.save          
     end
     
     advertisers.each do |key, advertiser|
+      clicks = SimpledbResource.count('store-click',
+        "advertiser_app_id = '#{key}' and click_date >= '#{start_hour}' and click_date < '#{last_hour}'")
+      
       stat = Stats.new(get_stat_key('app', key, start_hour))
       update_stat(stat, 'paid_installs', advertiser[:installs], hour)
       update_stat(stat, 'installs_spend', advertiser[:cost], hour)
+      update_stat(stat, 'paid_clicks', clicks, hour)
       
-      print "#{key}: #{stat.attributes}\n"
-      #stat.save
+      stat.save
     end
     
     return ""
     
   end
   
-  def self.update_stat(stat, field, value, hour)
+  def update_stat(stat, field, value, hour)
     
     val_string = stat.get(field)
     if val_string
@@ -101,7 +101,7 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
     
   end
   
-  def self.get_stat_key(item_type, item_id, time)
+  def get_stat_key(item_type, item_id, time)
     date = Time.at(time).iso8601[0,10]
     return "#{item_type}.#{date}.#{item_id}"
   end

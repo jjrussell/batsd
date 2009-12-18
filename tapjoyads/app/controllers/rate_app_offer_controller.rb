@@ -1,6 +1,7 @@
 class RateAppOfferController < ApplicationController
   include RightAws
   include RewardHelper
+  include PublisherRecordHelper
   
   def index
     
@@ -24,15 +25,8 @@ class RateAppOfferController < ApplicationController
     
       values = calculate_offer_payouts(:currency => currency, :offer_amount => 15)
     
-      ##
-      # Find the user record by snuid
-      user = SimpledbResource.select('publisher-user-record','*', "record_id = '#{record_id}'")
-      if user.items.length == 0
-        raise("Install record_id not found: #{record_id} with rate app_id: #{app_id}")
-      end
-      
-      record = user.items.first
-      publisher_user_id = record.key.split('.')[1]
+      record_key = lookup_by_record(record_id)
+      publisher_user_id = record_key.split('.')[1]
       
       #create the reward item and push to the queues
       reward = Reward.new
