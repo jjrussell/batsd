@@ -212,7 +212,7 @@ class GetadController < ApplicationController
     
     if !json or !json['html']
       no_ad
-    elsif json['clickURL'] != '' && json['mediaSourceURL'] != ''
+    elsif json['clickURL'] && json['clickURL'] != '' && json['mediaSourceURL'] != ''
       @tapjoy_ad = TapjoyAd.new
       @tapjoy_ad.click_url = json['clickURL'].split(' ',2)[0].chop
       Rails.logger.info "Crisp click url: #{@tapjoy_ad.click_url}"
