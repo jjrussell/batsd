@@ -19,11 +19,11 @@ class Site::UsersController < Site::SiteController
   #POST /site/users/login.xml   
   def login    
     success = true
-    success = false unless params[:user_name] and params[:password]                
+    success = false unless params[:user][:user_name] and params[:user][:password]                
     if success      
-      items = SimpledbResource.select('user', '*', "user_name='#{params[:user_name]}'")
-      @user = items[:items][0]      
-      success = false unless @user and verify_password(params[:password], @user.get('password'), @user.get('salt'))            
+      items = SimpledbResource.select('user', '*', "user_name='#{params[:user][:user_name]}'")
+      @user = items[:items][0]
+      success = false unless @user and verify_password(params[:user][:password], @user.get('password'), @user.get('salt'))            
     end    
     
     respond_to do |format|
@@ -34,11 +34,7 @@ class Site::UsersController < Site::SiteController
       end
     end    
   end
-  
-  def create
     
-  end
-  
   private
   
   def forbidden
