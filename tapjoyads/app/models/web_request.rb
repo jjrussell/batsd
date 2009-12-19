@@ -4,7 +4,7 @@ class WebRequest < SimpledbResource
   include MemcachedHelper
   
   PATH_TO_STAT_MAP = {
-    'connect' => 'login',
+    'connect' => 'logins',
     'new_user' => 'new_users',
     'adshown' => 'hourly_impressions'
   }

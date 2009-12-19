@@ -3,6 +3,15 @@ class Stats < SimpledbResource
 
   def initialize(key, options = {})
     super 'stats', key, options
+    
+    # Convert 'login' to 'logins'. A temporary fix, until 'login' is fully no longer being used.
+    login = get_hourly_count('login')
+    logins = get_hourly_count('logins')
+    new_logins = []
+    24.times do |i|
+      new_logins[i] = [login[i], logins[i]].max
+    end
+    put('logins', new_logins.join(','))
   end
   
   ##
