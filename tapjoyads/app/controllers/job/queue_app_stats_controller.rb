@@ -127,8 +127,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     url += "&item=#{item_id}"
     url += "&Data=#{CGI::escape(datas)}"
     
-    Rails.logger.info "If enabled, would have downloaded: #{url}"
-    #download_content(url, {:timeout => 30, :internal_authenticate => true})
+    download_content(url, {:timeout => 30, :internal_authenticate => true})
   end
   
   def aggregate_stat(stat_row, wr_path, app_key, first_hour, last_hour, time = @now)
