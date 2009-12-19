@@ -5,6 +5,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     super QueueNames::APP_STATS
     @now = Time.now.utc
     @date = @now.iso8601[0,10]
+    @paths_to_aggregate = %w(connect new_user adshown)
   end
   
   private
@@ -13,31 +14,58 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     puts message.to_s
     json = JSON.parse(message.to_s)
     app_key = json['app_key']
+    last_run_time = json['last_run_time']
     
     app = App.new(app_key)
     
-    first_hour = get_last_run_hour_in_day(app.get('last_run_time'))
+    first_hour = get_last_run_hour_in_day(last_run_time)
     last_hour = @now.hour - 1
     
     stat_row = Stats.new("app.#{@date}.#{app_key}")
     
-    aggregate_stat(stat_row, 'connect', app_key, first_hour, last_hour)
-    aggregate_stat(stat_row, 'new_user', app_key, first_hour, last_hour)
-    aggregate_stat(stat_row, 'adshown', app_key, first_hour, last_hour)
+    @paths_to_aggregate.each do |path|
+      aggregate_stat(stat_row, path, app_key, first_hour, last_hour)
+    end
     
     stat_row.save
     
     new_next_run_time = @now + get_interval(stat_row)
     app.put('next_run_time', new_next_run_time.to_f.to_s)
-    app.put('last_run_time', @now.to_f.to_s)
+    
+    # Set the last_run_time to 1 hour ago, since we only aggregated the stats up to that point.
+    app.put('last_run_time', (@now - 1.hour).to_f.to_s)
     app.save
     
-    send_stats_to_mssql(app.key, 'cst')
+    aggregate_yesterday(app)
     
+    send_stats_to_mssql(app.key, 'cst')
+  end
+  
+  ##
+  # Aggregate yesterday's complete stats - if it hasn't been done yet.
+  def aggregate_yesterday(app)
+    last_daily_run_time = app.get('last_daily_run_time')
+    if last_daily_run_time
+      if Time.at(last_daily_run_time.to_f).day == @now.day or @now.hour == 0
+        return
+      end
+    end
+    
+    time = @now - 1.day
+    date = time.iso8601[0,10]
+    stat_row = Stats.new("app.#{date}.#{app.key}")
+    
+    @paths_to_aggregate.each do |path|
+      aggregate_stat(stat_row, path, app.key, 0, 23, time)
+    end
+    
+    app.put('last_daily_run_time', Time.now.utc.to_f.to_s)
+    app.save
+    
+    # TODO: put daily stats in daily_stats domain.
   end
   
   def send_stats_to_mssql(key, time_zone)
-    
     item = key
     time = Time.now.utc + Time.zone_offset(time_zone)
     day = time.iso8601[0,10]
@@ -90,19 +118,17 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     end
     
     send_stats_to_windows(day, stat_types, key, datas)
-    
   end
   
   def send_stats_to_windows(date, stat_types, item_id, datas)
-    
     url = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/CronService.asmx/SubmitMultipleStats?'
     url += "Date=#{CGI::escape(date)}"
     url += "&StatTypes=#{CGI::escape(stat_types)}"
     url += "&item=#{item_id}"
     url += "&Data=#{CGI::escape(datas)}"
     
-    download_content(url, {:timeout => 30, :internal_authenticate => true})
-
+    Rails.logger.info "If enabled, would have downloaded: #{url}"
+    #download_content(url, {:timeout => 30, :internal_authenticate => true})
   end
   
   def aggregate_stat(stat_row, wr_path, app_key, first_hour, last_hour, time = @now)
