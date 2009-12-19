@@ -54,11 +54,7 @@ class WebRequest < SimpledbResource
     
     if PATH_TO_STAT_MAP.include?(get('path'))
       stat_name = PATH_TO_STAT_MAP[get('path')]
-      increment_count_in_cache(get_memcache_count_key(stat_name, get('app_id'), @now))
+      increment_count_in_cache(Stats.get_memcache_count_key(stat_name, get('app_id'), @now))
     end
-  end
-  
-  def self.get_memcache_count_key(stat_name, app_id, time)
-    "stats.#{app_id}.#{stat_name}.#{time.to_i / 1.hour}"
   end
 end
