@@ -129,7 +129,7 @@ module JobRunner
         if @next_run_time
           @next_run_time += 1.hours
         else
-          @next_run_time = Time.parse('00:00 GMT', Time.now.utc).utc + Time.now.utc.hour + @options[:hourly]
+          @next_run_time = Time.parse('00:00 GMT', Time.now.utc).utc + 1.hours + @options[:hourly]
           if Time.now.utc > @next_run_time
             @next_run_time += 1.hours
           end
