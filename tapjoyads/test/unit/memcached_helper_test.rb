@@ -44,7 +44,8 @@ class MemcachedHelperTest < ActiveSupport::TestCase
   end
   
   test "increment count" do
-    key = 'foo'
+    key = 'foocount'
+    key2 = 'foocount2'
     assert_equal 0, get_count_in_cache(key)
     
     assert_equal 1, increment_count_in_cache(key)
@@ -54,5 +55,12 @@ class MemcachedHelperTest < ActiveSupport::TestCase
     end
     
     assert_equal 6, get_count_in_cache(key)
+    
+    increment_count_in_cache(key, false, 1.week, 10)
+    assert_equal 16, get_count_in_cache(key)
+    
+    assert_equal 0, get_count_in_cache(key2)
+    assert_equal 5, increment_count_in_cache(key2, false, 1.week, 5)
+    assert_equal 5, get_count_in_cache(key2)
   end
 end
