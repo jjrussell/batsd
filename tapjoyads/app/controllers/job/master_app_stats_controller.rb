@@ -14,7 +14,7 @@ class Job::MasterAppStatsController < Job::JobController
 
       # Set next_run_time here to make sure that it doesn't get picked up next run.
       # It will get set to a more accurate value in the queue_app_stats reader.
-      app.put('next_run_time', app.get('next_run_time').to_f + 1.hour)
+      app.put('next_run_time', @now.to_f + 1.hour)
       app.save
       
       SqsGen2.new.queue(QueueNames::APP_STATS).send_message(message)
