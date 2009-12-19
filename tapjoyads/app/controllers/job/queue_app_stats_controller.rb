@@ -79,7 +79,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     
     map = {
       'new_users' => 'NewUsers',
-      'logins' => 'GameSessions',
+      'login' => 'GameSessions',
       'paid_installs' => 'RewardedInstalls',
       'paid_clicks' => 'RewardedInstallClicks',
       'rewards' => 'CompletedOffers',
