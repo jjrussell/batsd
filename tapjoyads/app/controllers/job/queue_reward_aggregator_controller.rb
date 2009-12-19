@@ -1,8 +1,18 @@
 class Job::QueueRewardAggregatorController < Job::SqsReaderController
   include DownloadContent
+  include TimeLogHelper
   
   def initialize
     super QueueNames::REWARD_AGGREGATOR
+  end
+  
+  def test
+    time = Time.now
+    min_time = Time.utc(time.year, time.month, time.day, time.hour, 0, 0, 0)
+    max_time = min_time + 1.hour
+    
+    msg = { 'start_hour' => min_time.to_f.to_s, 'last_hour' => max_time.to_f.to_s }.to_json
+    on_message(msg)
   end
   
   private
@@ -11,78 +21,90 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
   # params: start_hour, last_hour
   
   def on_message(message)
-    json = JSON.parse(message.to_s)
     
-    #start_hour is an epoch
-    start_hour = json['start_hour'].to_f    
-    last_hour = json['last_hour'].to_f
+    time_log('Aggregating reward stats') do
+      json = JSON.parse(message.to_s)
     
-    publishers = {}
-    advertisers = {}
+      #start_hour is an epoch
+      start_hour = json['start_hour'].to_f    
+      last_hour = json['last_hour'].to_f
     
-    next_token = nil
-    begin
+      publishers = {}
+      advertisers = {}
+    
+      next_token = nil
+      begin
       
-      rewards = SimpledbResource.select('reward','*',
-        "created >= '#{start_hour}' and created < '#{last_hour}'", nil, next_token)
+        rewards = SimpledbResource.select('reward','*',
+          "created >= '#{start_hour}' and created < '#{last_hour}'", nil, next_token)
         
-      rewards.items.each do |reward|
-        publishers[reward.get('publisher_app_id')] = { :installs => 0, :offers => 0, :ratings => 0, 
-          :offers_revenue => 0, :installs_revenue => 0, 
-          :total_rewards => 0, :total_revenue => 0 } unless publishers[reward.get('publisher_app_id')]
-        advertisers[reward.get('advertiser_app_id')] = { 
-          :installs => 0, :cost => 0 } unless advertisers[reward.get('advertiser_app_id')]
+        rewards.items.each do |reward|
+          publishers[reward.get('publisher_app_id')] = { :installs => 0, :offers => 0, :ratings => 0, 
+            :offers_revenue => 0, :installs_revenue => 0, 
+            :total_rewards => 0, :total_revenue => 0 } unless publishers[reward.get('publisher_app_id')]
+          advertisers[reward.get('advertiser_app_id')] = { 
+            :installs => 0, :cost => 0 } unless advertisers[reward.get('advertiser_app_id')]
 
-        case reward.get('type')
-        when 'install'
-          publishers[reward.get('publisher_app_id')][:installs] += 1 
-          publishers[reward.get('publisher_app_id')][:installs_revenue] += reward.get('publisher_amount').to_i
-          advertisers[reward.get('advertiser_app_id')][:installs] += 1
-          advertisers[reward.get('advertiser_app_id')][:cost] += reward.get('advertiser_amount').to_i
-        when 'offer'
-          publishers[reward.get('publisher_app_id')][:offers] += 1
-          publishers[reward.get('publisher_app_id')][:offers_revenue] += reward.get('publisher_amount').to_i        
-        when 'rating'
-          publishers[reward.get('publisher_app_id')][:ratings] += 1
+          case reward.get('type')
+          when 'install'
+            publishers[reward.get('publisher_app_id')][:installs] += 1 
+            publishers[reward.get('publisher_app_id')][:installs_revenue] += reward.get('publisher_amount').to_i
+            advertisers[reward.get('advertiser_app_id')][:installs] += 1
+            advertisers[reward.get('advertiser_app_id')][:cost] += reward.get('advertiser_amount').to_i
+          when 'offer'
+            publishers[reward.get('publisher_app_id')][:offers] += 1
+            publishers[reward.get('publisher_app_id')][:offers_revenue] += reward.get('publisher_amount').to_i        
+          when 'rating'
+            publishers[reward.get('publisher_app_id')][:ratings] += 1
+          end
+      
+          publishers[reward.get('publisher_app_id')][:total_rewards] += 1
+          publishers[reward.get('publisher_app_id')][:total_revenue] += reward.get('publisher_amount').to_i
+      
         end
       
-        publishers[reward.get('publisher_app_id')][:total_rewards] += 1
-        publishers[reward.get('publisher_app_id')][:total_revenue] += reward.get('publisher_amount').to_i
+        next_token = rewards.next_token
       
+      end while next_token != nil  
+      
+      #now that all the data is in publishers, advertisers, set the stats
+      hour = Time.at(start_hour).hour
+      publishers.each do |key, publisher|
+        offers_opened = SimpledbResource.count('offer-click',
+          "app_id = '#{key}' and click_date >= '#{start_hour}' and click_date < '#{last_hour}'")
+        installs_opened =   SimpledbResource.count('store-click',
+            "publisher_app_id = '#{key}' and click_date >= '#{start_hour}' and click_date < '#{last_hour}'")
+      
+        stat = Stats.new(get_stat_key('app', key, start_hour))
+      
+        update_stat(stat, 'published_installs', publisher[:installs], hour)
+        update_stat(stat, 'installs_revenue', publisher[:installs_revenue], hour)
+        update_stat(stat, 'offers', publisher[:offers], hour)
+        update_stat(stat, 'offers_revenue', publisher[:offers_revenue], hour)
+        update_stat(stat, 'offers_opened', offers_opened, hour)
+        update_stat(stat, 'installs_opened', apps_opened, hour)
+        update_stat(stat, 'ratings', publisher[:ratings], hour)
+        update_stat(stat, 'rewards', publisher[:total_rewards], hour)
+        update_stat(stat, 'rewards_revenue', publisher[:total_revenue], hour)
+        update_stat(stat, 'rewards_opened', offers_opened + installs_opened, hour)
+      
+        Rails.logger.info("Publisher {key}")
+        #stat.save          
       end
-      
-      next_token = rewards.next_token
-      
-    end while next_token != nil  
-      
-    #now that all the data is in publishers, advertisers, set the stats
-    hour = Time.at(start_hour).hour
-    publishers.each do |key, publisher|
-      stat = Stats.new(get_stat_key('app', key, start_hour))
-      update_stat(stat, 'published_installs', publisher[:installs], hour)
-      update_stat(stat, 'installs_revenue', publisher[:installs_revenue], hour)
-      update_stat(stat, 'offers', publisher[:offers], hour)
-      update_stat(stat, 'offers_revenue', publisher[:offers_revenue], hour)
-      update_stat(stat, 'ratings', publisher[:ratings], hour)
-      update_stat(stat, 'rewards', publisher[:total_rewards], hour)
-      update_stat(stat, 'rewards_revenue', publisher[:total_revenue], hour)
-      
-      stat.save          
-    end
     
-    advertisers.each do |key, advertiser|
-      clicks = SimpledbResource.count('store-click',
-        "advertiser_app_id = '#{key}' and click_date >= '#{start_hour}' and click_date < '#{last_hour}'")
+      advertisers.each do |key, advertiser|
+        clicks = SimpledbResource.count('store-click',
+          "advertiser_app_id = '#{key}' and click_date >= '#{start_hour}' and click_date < '#{last_hour}'")
       
-      stat = Stats.new(get_stat_key('app', key, start_hour))
-      update_stat(stat, 'paid_installs', advertiser[:installs], hour)
-      update_stat(stat, 'installs_spend', advertiser[:cost], hour)
-      update_stat(stat, 'paid_clicks', clicks, hour)
+        stat = Stats.new(get_stat_key('app', key, start_hour))
+        update_stat(stat, 'paid_installs', advertiser[:installs], hour)
+        update_stat(stat, 'installs_spend', advertiser[:cost], hour)
+        update_stat(stat, 'paid_clicks', clicks, hour)
       
-      stat.save
-    end
-    
-    return ""
+        Rails.logger.info("Advertiser {key}")
+        #stat.save
+      end
+    end #time log
     
   end
   

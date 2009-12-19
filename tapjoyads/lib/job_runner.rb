@@ -102,7 +102,7 @@ module JobRunner
         raise "Options must contain only one key"
       end
       
-      allowable_keys = [:interval, :daily]
+      allowable_keys = [:interval, :daily, :hourly]
       unless allowable_keys.include?(options.keys.first)
         raise "Options must contain one of: #{allowable_keys.join(', ')}"
       end
@@ -123,6 +123,15 @@ module JobRunner
           @next_run_time = Time.parse('00:00 GMT', Time.now.utc).utc + @options[:daily]
           if Time.now.utc > @next_run_time
             @next_run_time += 1.days
+          end
+        end
+      elsif @options[:hourly]
+        if @next_run_time
+          @next_run_time += 1.hours
+        else
+          @next_run_time = Time.parse('00:00 GMT', Time.now.utc).utc + Time.now.utc.hour + @options[:hourly]
+          if Time.now.utc > @next_run_time
+            @next_run_time += 1.hours
           end
         end
       end

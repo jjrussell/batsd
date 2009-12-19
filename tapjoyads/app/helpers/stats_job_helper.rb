@@ -38,43 +38,6 @@ module StatsJobHelper
     send_stat_to_windows(time.iso8601[0,10], 'FillRate', item_id, 10000)
     stat.put('hourly_impressions', hourly_impressions.join(','))
     
-    if domain_name == 'app'
-    
-      hourly_impressions = get_hourly_impressions(start_hour, end_hour, time, domain_name, item_id, 
-          stat.get('logins'), 'connect')
-      send_stat_to_windows(time.iso8601[0,10], 'GameSessions', item_id, hourly_impressions.sum)
-      stat.put('logins', hourly_impressions.join(','))
-        
-      paid_clicks = get_hourly_store_clicks(start_hour, end_hour, time, item_id, 
-          stat.get('paid_clicks_to_store'), false, true)
-      send_stat_to_windows(time.iso8601[0,10], 'RewardedInstallClicks', item_id, paid_clicks.sum)
-      stat.put('paid_clicks_to_store', paid_clicks.join(','))
- 
-      paid_installs = get_hourly_store_clicks(start_hour, end_hour, time, item_id, 
-          stat.get('paid_installs'), true, true)
-      send_stat_to_windows(time.iso8601[0,10], 'RewardedInstalls', item_id, paid_installs.sum)
-      stat.put('paid_installs', paid_installs.join(','))
-      
-      offer_clicks = get_hourly_offer_clicks(start_hour, end_hour, time, item_id, 
-          stat.get('offer_clicks'))
-      send_stat_to_windows(time.iso8601[0,10], 'OfferClicks', item_id, paid_clicks.sum)
-      stat.put('offer_clicks', offer_clicks.join(','))
- 
-      paid_cvr = Array.new(24, 0)
-      for i in (0..23)
-        paid_cvr[i] = (paid_installs[i] / paid_clicks[i] * 10000.0).to_i if paid_clicks[i] > 0
-      end
-      stat.put('paid_install_cvr', paid_cvr.join(','))
-      daily_paid_cvr = 0
-      daily_paid_cvr = (paid_installs.sum / paid_clicks.sum * 10000.0).to_i if paid_clicks.sum > 0
-      send_stat_to_windows(time.iso8601[0,10], 'RewardedInstallConversionRate', item_id, daily_paid_cvr)
-      
-      new_users = get_hourly_new_users(start_hour, end_hour, time, item_id,
-        stat.get('new_users'))
-      send_stat_to_windows(time.iso8601[0,10], 'NewUsers', item_id, new_users.sum)      
-      stat.put('new_users', new_users.join(','))
-    end
-      
     stat.save
    
   end
@@ -140,89 +103,6 @@ module StatsJobHelper
       end
     end
     return last_hour
-  end
-  
-  def get_hourly_new_users(last_hour, current_hour, time, item_id, new_users_string)
-    if new_users_string
-      new_users = new_users_string.split(',')
-      new_users.each_index do |i|
-        new_users[i] = new_users[i].to_i
-      end
-    else
-      new_users = Array.new(24, 0)
-    end
-    
-    date = time.iso8601[0,10]
-    
-    for hour in last_hour..current_hour
-      min_time = Time.utc(time.year, time.month, time.day, hour, 0, 0, 0)
-      max_time = min_time + 1.hour
-      
-      query = "`app.#{item_id}` >= '#{min_time.to_f.to_s}' and `app.#{item_id}` < '#{max_time.to_f.to_s}' "      
-
-      count = SimpledbResource.count("device_app_list_1", query)
-      new_users[hour] = count
-    end
-    return new_users
-  end  
-
-  def get_hourly_offer_clicks(last_hour, current_hour, time, item_id, 
-      hourly_counts_string)
-    if hourly_counts_string
-      hourly_counts = hourly_counts_string.split(',')
-      hourly_counts.each_index do |i|
-        hourly_counts[i] = hourly_counts[i].to_i
-      end
-    else
-      hourly_counts = Array.new(24, 0)
-    end
-    
-    date = time.iso8601[0,10]
-    
-    for hour in last_hour..current_hour
-      min_time = Time.utc(time.year, time.month, time.day, hour, 0, 0, 0)
-      max_time = min_time + 1.hour
-      
-      query = "click_date >= '#{min_time.to_f.to_s}' and click_date < '#{max_time.to_f.to_s}' "
-      query += "and app_id = '#{item_id}' "
-      
-      count = SimpledbResource.count("offer-click", query)
-      hourly_counts[hour] = count
-    end
-    
-    return hourly_counts
-  end
-    
-  def get_hourly_store_clicks(last_hour, current_hour, time, item_id, 
-      hourly_counts_string, installed = false, advertiser = false)
-    if hourly_counts_string
-      hourly_counts = hourly_counts_string.split(',')
-      hourly_counts.each_index do |i|
-        hourly_counts[i] = hourly_counts[i].to_i
-      end
-    else
-      hourly_counts = Array.new(24, 0)
-    end
-    
-    date = time.iso8601[0,10]
-    
-    for hour in last_hour..current_hour
-      min_time = Time.utc(time.year, time.month, time.day, hour, 0, 0, 0)
-      max_time = min_time + 1.hour
-      
-      query = "click_date >= '#{min_time.to_f.to_s}' and click_date < '#{max_time.to_f.to_s}' "
-      if advertiser
-        query += "and advertiser_app_id = '#{item_id}' "
-      else
-        query += "and publisher_app_id = '#{item_id}' "
-      end
-      
-      query += "and installed != '' " if installed
-      
-      count = SimpledbResource.count("store-click", query)
-      hourly_counts[hour] = count
-    end
-    return hourly_counts
   end
   
   def get_hourly_impressions(last_hour, current_hour, time, item_type, item_id, 

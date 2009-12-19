@@ -31,6 +31,67 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     app.put('next_run_time', new_next_run_time.to_f.to_s)
     app.put('last_run_time', @now.to_f.to_s)
     app.save
+    
+    send_stats_to_mssql(app.key, 'cst')
+    
+  end
+  
+  def send_stats_to_mssql(key, time_zone)
+    
+    item = key
+    time = Time.now.utc + Time.zone_offset(time_zone)
+    day = time.iso8601[0,10]
+    yesterday = (time - 1.days).iso8601[0,10]
+    
+    stat_today = Stats.new("app.#{day}.#{key}")
+    stat_yesterday = Stats.new("app.#{yesterday}.#{key}")
+    
+    current_hour = Time.now.utc.hour + 1
+    
+    map = {
+      'new_users' => 'NewUsers',
+      'logins' => 'GameSessions',
+      'paid_installs' => 'RewardedInstalls',
+      'paid_clicks' => 'RewardedInstallClicks',
+      'rewards' => 'CompletedOffers',
+      'rewards_revenue' => 'OfferRevenue',
+      'rewards_opened' => 'OffersOpened'
+    }
+    
+    stats = {}
+    map.each do |type, val|
+      today_sum = stat_today.get_hourly_count(type).sum
+      yesterday_sum = stat_yesterday.get_hourly_count(type)[current_hour, 24 - current_hour].sum
+      stats[val] = today_sum + yesterday_sum
+    end
+    
+    stats['RewardedInstallConversionRate'] = (stats['RewardedInstalls'] * 10000 / stats['RewardedInstallClicks']).to_i
+    stats['OfferCompletionRate'] = (stats['CompletedOffers'] * 10000 / stats['OffersOpened']).to_i
+    
+    stat_types = ''
+    datas = ''
+    
+    stats.each do |s, d|
+      stat_types += ',' unless stat_types == ''
+      stat_types += s
+      datas += ',' unless datas == ''
+      datas += d.to_s
+    end
+    
+    send_stats_to_windows(day, stat_types, key, datas)
+    
+  end
+  
+  def send_stats_to_windows(date, stat_types, item_id, datas)
+    
+    url = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/CronService.asmx/SubmitMultipleStats?'
+    url += "Date=#{CGI::escape(date)}"
+    url += "&StatTypes=#{CGI::escape(stat_types)}"
+    url += "&item=#{item_id}"
+    url += "&Data=#{CGI::escape(datas)}"
+    
+    download_content(url, {:timeout => 30, :internal_authenticate => true})
+
   end
   
   def aggregate_stat(stat_row, wr_path, app_key, first_hour, last_hour, time = @now)

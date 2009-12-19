@@ -68,6 +68,8 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
     
       reward.put('sent_currency', Time.now.utc.to_f.to_s)
       reward.save
+      
+      reward.update_counters
     
       download_with_retry(callback_url, {:timeout => 15},
           {:retries => 10, :alert => true, :final_action => 'send_currency_download_complete'}, 
