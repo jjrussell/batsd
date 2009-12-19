@@ -1,10 +1,17 @@
 ##
 # Represents a single web request.
 class WebRequest < SimpledbResource
+  include MemcachedHelper
+  
+  PATH_TO_STAT_MAP = {
+    'connect' => 'login',
+    'new_user' => 'new_user',
+    'adshown' => 'hourly_impressions'
+  }
   
   def initialize(path, params, request)
-    now = Time.now.utc
-    date = now.iso8601[0,10]
+    @now = Time.now.utc
+    date = @now.iso8601[0,10]
     
     key = UUIDTools::UUID.random_create.to_s
     num = rand(MAX_WEB_REQUEST_DOMAINS)
@@ -13,7 +20,7 @@ class WebRequest < SimpledbResource
     super domain_name, key, {:load => false}
     
     put('path', path)
-    put('time', now.to_f.to_s)
+    put('time', @now.to_f.to_s)
     
     if params
       put('campaign_id', params[:campaign_id])
@@ -45,5 +52,13 @@ class WebRequest < SimpledbResource
   def save
     super({:write_to_memcache => false})
     
+    if PATH_TO_STAT_MAP.include?(get('path'))
+      stat_name = PATH_TO_STAT_MAP[get('path')]
+      increment_count_in_cache(get_memcache_count_key(stat_name, get('app_id'), @now))
+    end
+  end
+  
+  def self.get_memcache_count_key(stat_name, app_id, time)
+    "stats.#{app_id}.#{stat_name}.#{time.to_i / 1.hour}"
   end
 end
