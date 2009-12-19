@@ -1,4 +1,5 @@
 class Job::MasterAppStatsController < Job::JobController
+  include RightAws
   
   def initialize
     @now = Time.now.utc
