@@ -89,8 +89,8 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
         update_stat(stat, 'rewards_revenue', publisher[:total_revenue], hour)
         update_stat(stat, 'rewards_opened', offers_opened + installs_opened, hour)
       
-        Rails.logger.info("Publisher {key}")
-        #stat.save          
+        Rails.logger.info("Publisher #{key}: #{publisher}")
+        stat.save          
       end
     
       advertisers.each do |key, advertiser|
@@ -102,8 +102,8 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
         update_stat(stat, 'installs_spend', advertiser[:cost], hour)
         update_stat(stat, 'paid_clicks', clicks, hour)
       
-        Rails.logger.info("Advertiser {key}")
-        #stat.save
+        Rails.logger.info("Advertiser #{key}: #{advertiser}")
+        stat.save
       end
     end #time log
     
