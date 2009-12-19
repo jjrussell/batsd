@@ -6,13 +6,15 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
     super QueueNames::REWARD_AGGREGATOR
   end
   
-  def test
-    time = Time.now
-    min_time = Time.utc(time.year, time.month, time.day, time.hour, 0, 0, 0)
-    max_time = min_time + 1.hour
+  def aggregate_day
+    time = Time.now.utc
+    24.times do |hour|
+      min_time = Time.utc(time.year, time.month, time.day, hour)
+      max_time = min_time + 1.hour
     
-    msg = { 'start_hour' => min_time.to_f.to_s, 'last_hour' => max_time.to_f.to_s }.to_json
-    on_message(msg)
+      msg = { 'start_hour' => min_time.to_f.to_s, 'last_hour' => max_time.to_f.to_s }.to_json
+      on_message(msg)
+    end
   end
   
   private
@@ -69,7 +71,7 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
       end while next_token != nil  
       
       #now that all the data is in publishers, advertisers, set the stats
-      hour = Time.at(start_hour).hour
+      hour = Time.at(start_hour).utc.hour
       publishers.each do |key, publisher|
         offers_opened = SimpledbResource.count('offer-click',
           "app_id = '#{key}' and click_date >= '#{start_hour}' and click_date < '#{last_hour}'")
@@ -125,7 +127,7 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
   end
   
   def get_stat_key(item_type, item_id, time)
-    date = Time.at(time).iso8601[0,10]
+    date = Time.at(time).utc.iso8601[0,10]
     return "#{item_type}.#{date}.#{item_id}"
   end
   
