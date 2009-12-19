@@ -46,7 +46,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       begin
         record_key = lookup_by_record(click.get('publisher_user_record_id'))
         publisher_user_id = record_key.split('.')[1]
-      rescue Exception => e
+      rescue RecordNotFoundException
         message.delete
         raise "Can't find record_id #{click.get('publisher_user_record_id')} on click #{click.key}"
       end

@@ -63,7 +63,7 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
       
         end
         
-        Rails.logger.info ("Processed #{rewards.items.length} rewards")
+        Rails.logger.info("Processed #{rewards.items.length} rewards")
         next_token = rewards.next_token
       
       end while next_token != nil  
