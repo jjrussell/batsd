@@ -9,7 +9,7 @@ class Reward < SimpledbResource
     # increment our memcached counters
     if get('type') != 'rating'
       increment_count_in_cache(
-        WebRequest.get_memcache_count_key('rewards_revenue', get('publisher_app_id'), Time.at(get('created').to_f)), 
+        Stats.get_memcache_count_key('rewards_revenue', get('publisher_app_id'), Time.at(get('created').to_f)), 
         false, 1.week, reward.get('publisher_amount').to_i)
     end
     
