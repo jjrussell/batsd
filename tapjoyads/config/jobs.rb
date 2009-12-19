@@ -19,7 +19,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'send_money_txn', :interval => 5.seconds
     s.add_job 'queue_send_currency', :interval => 5.seconds
     s.add_job 'queue_failed_downloads', :interval => 5.seconds
-    s.add_job 'queue_app_stats', :interval => 5.seconds
+    s.add_job 'queue_app_stats', :interval => 30.seconds
     s.add_job 'queue_reward_aggregator', :interval => 5.seconds
   elsif machine_type == 'masterjobs'
     s.add_job 'master_cleanup_web_requests', :daily => 2.hours
