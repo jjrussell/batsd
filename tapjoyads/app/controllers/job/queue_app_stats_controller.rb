@@ -46,7 +46,8 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     stat_today = Stats.new("app.#{day}.#{key}")
     stat_yesterday = Stats.new("app.#{yesterday}.#{key}")
     
-    current_hour = Time.now.utc.hour + 1
+    cst_hour = time.hour
+    utc_hour = Time.now.utc.hour 
     
     map = {
       'new_users' => 'NewUsers',
@@ -58,10 +59,20 @@ class Job::QueueAppStatsController < Job::SqsReaderController
       'rewards_opened' => 'OffersOpened'
     }
     
+    start_hour = utc_hour - cst_hour
+    length = cst_hour + 1
+    
     stats = {}
     map.each do |type, val|
-      today_sum = stat_today.get_hourly_count(type).sum
-      yesterday_sum = stat_yesterday.get_hourly_count(type)[current_hour, 24 - current_hour].sum
+      yesterday_sum = 0
+      today_start_hour = start_hour
+      if start_hour < 0
+        yesterday_sum = stat_yesterday.get_hourly_count(type)[24 + start_hour, 
+          0 - start_hour].sum
+        today_start_hour = 0
+        length = cst_hour
+      end
+      today_sum = stat_today.get_hourly_count(type)[today_start_hour,length].sum
       stats[val] = today_sum + yesterday_sum
     end
     
