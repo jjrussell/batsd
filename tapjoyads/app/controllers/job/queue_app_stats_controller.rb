@@ -125,7 +125,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     url += "Date=#{CGI::escape(date)}"
     url += "&StatTypes=#{CGI::escape(stat_types)}"
     url += "&item=#{item_id}"
-    url += "&Data=#{CGI::escape(datas)}"
+    url += "&Datas=#{CGI::escape(datas)}"
     
     download_content(url, {:timeout => 30, :internal_authenticate => true})
   end
