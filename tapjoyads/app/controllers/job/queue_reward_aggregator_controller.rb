@@ -62,7 +62,8 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
           publishers[reward.get('publisher_app_id')][:total_revenue] += reward.get('publisher_amount').to_i
       
         end
-      
+        
+        Rails.logger.info ("Processed #{rewards.items.length} rewards")
         next_token = rewards.next_token
       
       end while next_token != nil  
@@ -82,7 +83,7 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
         update_stat(stat, 'offers', publisher[:offers], hour)
         update_stat(stat, 'offers_revenue', publisher[:offers_revenue], hour)
         update_stat(stat, 'offers_opened', offers_opened, hour)
-        update_stat(stat, 'installs_opened', apps_opened, hour)
+        update_stat(stat, 'installs_opened', installs_opened, hour)
         update_stat(stat, 'ratings', publisher[:ratings], hour)
         update_stat(stat, 'rewards', publisher[:total_rewards], hour)
         update_stat(stat, 'rewards_revenue', publisher[:total_revenue], hour)
