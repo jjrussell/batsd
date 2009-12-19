@@ -5,7 +5,7 @@ class WebRequest < SimpledbResource
   
   PATH_TO_STAT_MAP = {
     'connect' => 'login',
-    'new_user' => 'new_user',
+    'new_user' => 'new_users',
     'adshown' => 'hourly_impressions'
   }
   
