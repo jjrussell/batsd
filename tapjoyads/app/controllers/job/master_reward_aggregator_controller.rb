@@ -2,7 +2,7 @@ class Job::MasterRewardAggregatorController < Job::JobController
   include RightAws
   
   def index
-    time = Time.now
+    time = Time.now.utc
     min_time = Time.utc(time.year, time.month, time.day, time.hour, 0, 0, 0)
     max_time = min_time + 1.hour
     
