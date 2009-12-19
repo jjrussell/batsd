@@ -56,6 +56,6 @@ class Job::SqsReaderController < Job::JobController
   ##
   # Returns a new key for every 5-minute window. The key is unique to this host and this queue.
   def get_memcache_error_count_key
-    "sqserrors.#{Socket.gethostname}.#{@queue_name}.#{Time.now.to_i / 5.minutes}"
+    "sqserrors.#{Socket.gethostname}.#{@queue_name}.#{(Time.now.to_i / 5.minutes).to_i}"
   end
 end
