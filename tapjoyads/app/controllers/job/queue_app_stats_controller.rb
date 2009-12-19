@@ -171,7 +171,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
   end
   
   def get_interval(stat_row)
-    return 1.hour
+    return 2.hour
     
     #TODO: calculate interval based on number of logins.
 
