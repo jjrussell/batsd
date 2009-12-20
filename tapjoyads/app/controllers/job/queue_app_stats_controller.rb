@@ -29,7 +29,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     
     stat_row.save
     
-    new_next_run_time = @now + get_interval(stat_row)
+    new_next_run_time = @now + get_interval(stat_row, app)
     app.put('next_run_time', new_next_run_time.to_f.to_s)
     
     # Set the last_run_time to 1 hour ago, since we only aggregated the stats up to that point.
@@ -169,12 +169,29 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     return last_hour
   end
   
-  def get_interval(stat_row)
-    return 2.hour
+  ##
+  # Gets the updates interval for this app, based on the contents of stat_row. 
+  def get_interval(stat_row, app)
+    if @now.hour <= 4
+      # Never calculate the interval during the first 4 hours of a day.
+      # This is because it's possible that stats haven't been tallied yet.
+      # Just use the previously set interval.
+      app_update_time = app.get('interval_update_time') || 1.hour
+      return [app_update_time.to_i, 1.hour].max
+    end
     
-    #TODO: calculate interval based on number of logins.
-
-    # logins_string = stat_row.get('connect') || ''
-    # logins = logins_string.split(',').map{|num| num.to_i }.sum
+    total_logins = stat_row.get_hourly_count('logins').sum
+    total_rewards = stat_row.get_hourly_count('rewards').sum
+    total_paid_clicks = stat_row.get_hourly_count('paid_clicks').sum
+    
+    if total_logins + total_rewards + total_paid_clicks > 0
+      new_interval = 1.hour
+    else
+      new_interval = 4.hour
+    end
+    
+    app.put('interval_update_time', new_interval.to_s)
+    
+    return new_interval
   end
 end
