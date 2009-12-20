@@ -3,15 +3,6 @@ class Stats < SimpledbResource
 
   def initialize(key, options = {})
     super 'stats', key, options
-    
-    # Convert 'login' to 'logins'. A temporary fix, until 'login' is fully no longer being used.
-    login = get_hourly_count('login')
-    logins = get_hourly_count('logins')
-    new_logins = []
-    24.times do |i|
-      new_logins[i] = [login[i], logins[i]].max
-    end
-    put('logins', new_logins.join(','))
   end
   
   ##
@@ -28,7 +19,7 @@ class Stats < SimpledbResource
     date, app_id = parse_key
     24.times do |i|
       time = date + i.hours
-      if hourly_stats[i] == 0 and now - 1.hour < time
+      if hourly_stats[i] == 0 and time <= now
         hourly_stats[i] = get_count_in_cache(Stats.get_memcache_count_key(stat_name, app_id, time))
       end
     end
