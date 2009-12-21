@@ -10,7 +10,7 @@ class Site::UsersController < Site::SiteController
       if @user.get('user_name')
         format.xml #show.builder
       else
-        format.xml {render :xml => {:message => "Resource Not found"}.to_xml(:root => "User"), :status => 404} 
+        format.xml {not_found("user")} 
       end
     end
   end
@@ -43,17 +43,13 @@ class Site::UsersController < Site::SiteController
       if success
         format.xml #login.builder
       else
-        format.xml {forbidden}
+        format.xml {forbidden("user")}
       end
     end    
   end
     
   private
-  
-  def forbidden
-    render :xml => {:message => "Forbidden access"}, :status => :forbidden
-  end
-  
+    
   def verify_password(password, hashed_password, salt)
     hashed_password == encode_password(password, salt)
   end

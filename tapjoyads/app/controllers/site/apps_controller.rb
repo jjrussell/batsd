@@ -2,15 +2,17 @@ class Site::AppsController < Site::SiteController
   
   def show
     @app = App.new(params[:id])
-    
-    unless @app.get('name')
-      render_not_found
-      return
+    respond_to do |format|
+      if @app.get('name')
+        format.xml #show.builder
+      else
+        format.xml {not_found("app")} 
+      end
     end
   end
   
-  def list
-    @apps = []
+  def index
+    @apps = Array.new
     partner = Partner.new(params[:partner_id])
     if partner.get('apps')
       Rails.logger.info partner.get('apps')
@@ -19,6 +21,10 @@ class Site::AppsController < Site::SiteController
         @apps.push(App.new(app_pair[0].downcase))
       end
     end
+    
+    respond_to do |format|
+      format.xml #index.builder
+    end      
   end
   
 end
