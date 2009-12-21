@@ -25,6 +25,7 @@ class ReturnOffer
       @Cost = "Paid" if offer.get('price') && offer.get('price').to_i > 0
       @Currency = currency.get('name')
       @Description = offer.get('description')
+      @Description = 'A great app' if @Description == nil || @Description == ''
       @Name = offer.get('name')
       @Amount = calculate_install_payouts(:currency => currency, :advertiser_app => offer)[:currency_reward]
       @TimeDelay = 'in seconds'
