@@ -1,4 +1,4 @@
 xml.instruct!
-apps.xml do
-  <%= render :partial => "app", :collection => @apps %> 
+xml.apps do
+  xml << render(:partial => "app", :collection => @apps)
 end

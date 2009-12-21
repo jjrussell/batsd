@@ -1,2 +1,2 @@
 xml.instruct!
-<%= render :partial => "app", :object => @app %> 
+xml << render(:partial => "app", :object => @app)

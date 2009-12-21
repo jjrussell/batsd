@@ -10,7 +10,15 @@ class Site::AppsController < Site::SiteController
   end
   
   def list
-    # Create @apps, using params[:partner_id]
+    @apps = []
+    partner = Partner.new(params[:partner_id])
+    if partner.get('apps')
+      Rails.logger.info partner.get('apps')
+      app_pairs = JSON.parse(partner.get('apps'))
+      app_pairs.each do |app_pair|
+        @apps.push(App.new(app_pair[0].downcase))
+      end
+    end
   end
   
 end
