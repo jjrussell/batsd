@@ -33,6 +33,7 @@ ActionController::Routing::Routes.draw do |map|
   # User controller is exposed as resource
   map.namespace :site do |site|
     site.resources :users, :only => [:show], :new => {:login => :post}
+    site.resources :apps, :only => [:show], :collection => {:list => :get}
   end
   
   # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
