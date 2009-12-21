@@ -5,13 +5,26 @@ class Site::UsersController < Site::SiteController
   #GET /site/users/:id.xml  
   def show
     user_id = params[:id]
-    @user = User.new(user_id)
-    
+    @user = User.new(user_id)    
     respond_to do |format|
       if @user.get('user_name')
         format.xml #show.builder
       else
         format.xml {render :xml => {:message => "Resource Not found"}.to_xml(:root => "User"), :status => 404} 
+      end
+    end
+  end
+  #POST /site/users.xml
+  def create    
+    #TODO: create a new user here need to implement errors so they can be sent
+    #back to ARes client     
+    respond_to do |format|
+      if @user.save        
+        #TODO: to_xml implemented in user model should be in parent class
+        format.xml  {render :xml => @user, :status => :created }
+      else
+        #TODO: implement errors collection as Hash
+        format.xml  { render @user.errors, :status => :unprocessable_entity } 
       end
     end
   end
