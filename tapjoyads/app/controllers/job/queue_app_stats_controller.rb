@@ -84,7 +84,8 @@ class Job::QueueAppStatsController < Job::SqsReaderController
       'paid_clicks' => 'RewardedInstallClicks',
       'rewards' => 'CompletedOffers',
       'rewards_revenue' => 'OfferRevenue',
-      'rewards_opened' => 'OffersOpened'
+      'rewards_opened' => 'OffersOpened',
+      'hourly_impressions' => 'AdImpressions'
     }
     
     start_hour = utc_hour - cst_hour
@@ -106,7 +107,8 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     
     stats['RewardedInstallConversionRate'] = (stats['RewardedInstalls'] * 10000 / stats['RewardedInstallClicks']).to_i if stats['RewardedInstallClicks'].to_i > 0
     stats['OfferCompletionRate'] = (stats['CompletedOffers'] * 10000 / stats['OffersOpened']).to_i if stats['OffersOpened'].to_i > 0
-    
+    stats['FillRate'] = 10000
+    stats['AdRequests'] = stats['AdImpressions']
     stat_types = ''
     datas = ''
     
