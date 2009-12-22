@@ -63,7 +63,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       unless secret_key.nil? or secret_key == 'None'
         hash_source = "#{reward.key}:#{publisher_user_id}:#{reward.get('currency_reward')}:#{secret_key}"
         hash = Digest::MD5.hexdigest(hash_source)
-        currency_url = "#{currency_url}&id=#{reward.key}&verifier=#{hash}"
+        callback_url = "#{callback_url}&id=#{reward.key}&verifier=#{hash}"
       end
     
       reward.put('sent_currency', Time.now.utc.to_f.to_s)
