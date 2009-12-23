@@ -6,6 +6,6 @@ xml.app do
   xml.tag!('store-url', app.get('store_url'))
   xml.price app.get('price')
   xml.platform '' # TODO: get real platform
-  xml.tag('store-id', '') # TODO: get real store-id
-  xml.color app.get('color')
+  xml.tag!('store-id', '') # TODO: get real store-id
+  #xml.color app.get('color') #TODO: this line is giving error for most of scenarios
 end

@@ -3,7 +3,7 @@ class Site::AppstatsController < Site::SiteController
   def index
     @appstat_list = []
     
-    partner = Partner.new(params[:id])
+    partner = Partner.new(params[:partner_id])
     if partner.get('apps')
       Rails.logger.info partner.get('apps')
       app_pairs = JSON.parse(partner.get('apps'))
@@ -11,10 +11,22 @@ class Site::AppstatsController < Site::SiteController
         @appstat_list.push(Appstats.new(app_pair[0].downcase, get_appstats_options_from_params))
       end
     end
+    
+    respond_to do |format|
+      format.xml #index.builder
+    end
   end
   
   def show
     @appstat = Appstats.new(params[:id], get_appstats_options_from_params)
+    
+    respond_to do |format|
+      unless @appstat.blank?
+        format.xml #show.builder
+      else
+        format.xml{not_found('appstat')}
+      end  
+    end
   end
   
   private
