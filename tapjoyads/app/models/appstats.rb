@@ -11,11 +11,14 @@ class Appstats
     @end_time = options.delete(:end_time) { now }
     @stat_types = options.delete(:stat_types) { ['logins', 'hourly_impressions', 'paid_installs', 
         'installs_spend', 'paid_clicks'] }
+    @type = options.delete(:type) { :granular }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     @stats = {}
     @stat_types.each do |stat_type|
-      if @granularity == :hourly
+      if @type == :sum
+        @stats[stat_type] = Array(get_daily_stats_over_range(stat_type, @start_time, @end_time).sum)
+      elsif @granularity == :hourly
         @stats[stat_type] = get_hourly_stats_over_range(stat_type, @start_time, @end_time)
       elsif @granularity == :daily
         @stats[stat_type] = get_daily_stats_over_range(stat_type, @start_time, @end_time)
