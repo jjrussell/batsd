@@ -109,6 +109,14 @@ XML_END
           end
         end
       end
+      
+      if install =~ /TAPJOY_IPHONE_ONLY/ 
+        add = false if params[:device_type] =~ /iPod/
+        install = install.gsub(/TAPJOY_IPHONE_ONLY/,'')
+      end
+        
+        
+      
       user_rewarded_installs.push install if add
     end
     
