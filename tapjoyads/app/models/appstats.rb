@@ -10,7 +10,7 @@ class Appstats
     @start_time = options.delete(:start_time) { Time.utc(now.year, now.month, now.day) }
     @end_time = options.delete(:end_time) { now }
     @stat_types = options.delete(:stat_types) { ['logins', 'hourly_impressions', 'paid_installs', 
-        'installs_spend', 'paid_clicks'] }
+        'installs_spend', 'paid_clicks', 'new_users'] }
     @type = options.delete(:type) { :granular }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
