@@ -1,4 +1,6 @@
 xml.instruct!
 xml.appstats(:type => "array") do
-  xml << render(:partial => "appstat", :collection => @appstat_list)
+  if  @appstat_list.size > 0
+    xml << render(:partial => "appstat", :collection => @appstat_list)
+  end  
 end
