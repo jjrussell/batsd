@@ -44,7 +44,8 @@ class GetadController < ApplicationController
     when "SocialReach"
       return socialreach
     when "TapjoyAds"
-      return publisher_ad('35e27740-d857-45a6-9f59-1529be64914a')  #4info microsoft
+      #return publisher_ad('35e27740-d857-45a6-9f59-1529be64914a')  #4info microsoft
+      return publisher_ad('ce91beeb-a19b-4389-acc4-a55e3cd626d4') #4info best buy
     when "PublisherAds"
       return publisher_ad(campaign.get('ad_id'))
     else
