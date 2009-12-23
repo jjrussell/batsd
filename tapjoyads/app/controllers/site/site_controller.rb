@@ -4,10 +4,6 @@ class Site::SiteController < ApplicationController
   
   protected
   
-  def render_not_found
-    render :text => "Resource not found", :status => 404
-  end
-  
   def not_found(root_element)
     render :xml => {:message => "Resource not found"}.to_xml(:root => root_element), :status => 404
   end
