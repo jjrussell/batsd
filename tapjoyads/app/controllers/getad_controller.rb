@@ -290,7 +290,8 @@ class GetadController < ApplicationController
   
   private
   def get_ip_address
-    ip_address = request.remote_ip
+    ip_address = request.headers['X-Forwarded-For'] || request.remote_ip
+    ip_address.gsub!(/,.*$/, '')
     if ip_address == '127.0.0.1'
       ip_address = '72.164.173.18'
     end
