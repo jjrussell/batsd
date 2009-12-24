@@ -10,9 +10,13 @@ class Appstats
     @start_time = options.delete(:start_time) { Time.utc(now.year, now.month, now.day) }
     @end_time = options.delete(:end_time) { now }
     @stat_types = options.delete(:stat_types) { ['logins', 'hourly_impressions', 'paid_installs', 
-        'installs_spend', 'paid_clicks', 'new_users'] }
+        'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'rewards', 'offers',
+        'rewards_revenue', 'offers_revenue', 'installs_revenue', 'published_installs',
+        'rewards_opened', 'offers_opened', 'installs_opened'] }
     @type = options.delete(:type) { :granular }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
+    @stat_rows = {}
     
     @stats = {}
     @stat_types.each do |stat_type|
@@ -47,7 +51,11 @@ class Appstats
     while time < end_time
       if date != time.iso8601[0,10]
         date = time.iso8601[0,10]
-        stat = Stats.new("app.#{date}.#{@app_key}")
+        key = "app.#{date}.#{@app_key}"
+        unless @stat_rows[key]
+          @stat_rows[key] = Stats.new(key)
+        end
+        stat = @stat_rows[key]
         hourly_stats = stat.get_hourly_count(stat_type)
       end
       hourly_stats_over_range.push(hourly_stats[time.hour])
@@ -62,7 +70,11 @@ class Appstats
     daily_stats_over_range = []
     while time < end_time
       date = time.iso8601[0,10]
-      stat = Stats.new("app.#{date}.#{@app_key}")
+      key = "app.#{date}.#{@app_key}"
+      unless @stat_rows[key]
+        @stat_rows[key] = Stats.new(key)
+      end
+      stat = @stat_rows[key]
       puts stat.get_hourly_count(stat_type).to_json + date
       daily_stats_over_range.push(stat.get_hourly_count(stat_type).sum)
       time = time + 1.day

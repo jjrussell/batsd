@@ -12,4 +12,15 @@ xml.appstat do
   xml.tag!('installs-spend', appstat.stats['installs_spend'].join(',')) if appstat.stats['installs_spend']
   xml.tag!('paid-clicks', appstat.stats['paid_clicks'].join(',')) if appstat.stats['paid_clicks']
   xml.cvr appstat.stats['cvr'].join(',') if appstat.stats['cvr']
+  
+  xml.ratings appstat.stats['ratings'].join(',') if appstat.stats['ratings']
+  xml.rewards appstat.stats['rewards'].join(',') if appstat.stats['rewards']
+  xml.offers appstat.stats['offers'].join(',') if appstat.stats['offers']
+  xml.tag!('rewards-revenue', appstat.stats['rewards_revenue'].join(',')) if appstat.stats['rewards_revenue']
+  xml.tag!('offers-revenue', appstat.stats['offers_revenue'].join(',')) if appstat.stats['offers_revenue']
+  xml.tag!('installs-revenue', appstat.stats['installs_revenue'].join(',')) if appstat.stats['installs_revenue']
+  xml.tag!('published-installs', appstat.stats['published_installs'].join(',')) if appstat.stats['published_installs']
+  xml.tag!('rewards-opened', appstat.stats['rewards_opened'].join(',')) if appstat.stats['rewards_opened']
+  xml.tag!('offers-opened', appstat.stats['offers_opened'].join(',')) if appstat.stats['offers_opened']
+  xml.tag!('installs-opened', appstat.stats['installs_opened'].join(',')) if appstat.stats['installs_opened']
 end
