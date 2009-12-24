@@ -7,5 +7,8 @@ xml.app do
   xml.price app.get('price')
   xml.platform '' # TODO: get real platform
   xml.tag!('store-id', '') # TODO: get real store-id
-  #xml.color app.get('color') #TODO: this line is giving error for most of scenarios
+  xml.color '' #TODO: change to app.get('color') once import_ms_sql fills color with valid values
+  xml.progress ''
+  xml.status app.get('payment_for_install') == '0' ? 'off' : 'on'
+  xml.tag!('bid-price', app.get('payment_for_install'))
 end
