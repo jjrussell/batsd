@@ -26,6 +26,17 @@ class Appstats
         raise "Unsupported granularity"
       end
     end
+    
+    if @stats['paid_clicks'] and @stats['paid_installs']
+      @stats['cvr'] = []
+      @stats['paid_clicks'].length.times do |i|
+        if @stats['paid_clicks'][i] == 0
+          @stats['cvr'][i] = 0
+        else
+          @stats['cvr'][i] = "%.2f" % (@stats['paid_installs'][i].to_f / @stats['paid_clicks'][i])
+        end
+      end
+    end
   end
   
   def get_hourly_stats_over_range(stat_type, start_time, end_time)

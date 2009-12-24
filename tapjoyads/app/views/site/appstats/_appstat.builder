@@ -11,4 +11,5 @@ xml.appstat do
   xml.tag!('paid-installs', appstat.stats['paid_installs'].join(',')) if appstat.stats['paid_installs']
   xml.tag!('installs-spend', appstat.stats['installs_spend'].join(',')) if appstat.stats['installs_spend']
   xml.tag!('paid-clicks', appstat.stats['paid_clicks'].join(',')) if appstat.stats['paid_clicks']
+  xml.cvr appstat.stats['cvr'].join(',') if appstat.stats['cvr']
 end
