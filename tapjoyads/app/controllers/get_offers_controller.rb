@@ -38,7 +38,7 @@ XML_END
       type = 'server.' if params[:server] == '1'
       type = 'redirect.' if params[:redirect] == '1'
       Rails.logger.info "type = #{type}"
-      xml += get_rewarded_installs(params[:start].to_i, params[:max].to_i, params[:udid], type)
+      xml += get_rewarded_installs(params[:start].to_i, params[:max].to_i, params[:udid], type, currency)
       xml += "<Message>Install one of the apps below to earn #{CGI::escapeHTML(currency.get('currency_name'))}</Message>\n"
     end
     xml += "</TapjoyConnectReturnObject>"
@@ -85,7 +85,7 @@ XML_END
     return offer.to_xml
   end
   
-  def get_rewarded_installs(start, max, udid, type)
+  def get_rewarded_installs(start, max, udid, type, currency)
     app_id = params[:app_id]
     
     device_app = DeviceAppList.new(params[:udid])
@@ -98,6 +98,9 @@ XML_END
     entire_rewarded_installs = xml.split('^^TAPJOY_SPLITTER^^')
     user_rewarded_installs = []
     
+    only_free_apps = false
+    only_free_apps = true if currency.get('only_free_apps') == '1'
+    
     entire_rewarded_installs.each do |install|
       add = true
       
@@ -109,6 +112,8 @@ XML_END
           end
         end
       end
+      
+      add = false if only_free_apps && install.include? '<Cost>Paid</Cost>'
       
       if install =~ /TAPJOY_IPHONE_ONLY/ 
         add = false if params[:device_type] =~ /iPod/

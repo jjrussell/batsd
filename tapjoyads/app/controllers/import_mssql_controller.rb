@@ -76,6 +76,7 @@ class ImportMssqlController < ApplicationController
     app.put('installs_money_share', params[:installs_money_share])
     app.put('disabled_offers', params[:disabled_offers])
     app.put('disabled_apps', params[:disabled_apps]) 
+    app.put('only_free_apps', params[:only_free_apps])
     app.put('show_rating_offer', params[:show_rating_offer])
 
     app.save
