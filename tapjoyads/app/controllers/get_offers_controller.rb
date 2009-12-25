@@ -113,7 +113,7 @@ XML_END
         end
       end
       
-      add = false if only_free_apps && install.include? '<Cost>Paid</Cost>'
+      add = false if only_free_apps && install.match('<Cost>Paid</Cost>') != nil
       
       if install =~ /TAPJOY_IPHONE_ONLY/ 
         add = false if params[:device_type] =~ /iPod/
