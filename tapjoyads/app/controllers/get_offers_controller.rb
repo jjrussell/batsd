@@ -15,6 +15,11 @@ class GetOffersController < ApplicationController
 </TapjoyConnectReturnObject>
 XML_END
 
+    #special code for Tapulous not sending udid
+    if params[:app_id] == 'e2479a17-ce5e-45b3-95be-6f24d2c85c6f'
+      params[:udid] = params[:publisher_user_id] if params[:udid] == nil or params[:udid] == ''
+    end
+  
     #first lookup the publisher_user_record_id for this user
     record = PublisherUserRecord.new("#{params[:app_id]}.#{params[:publisher_user_id]}")
     unless record.get('record_id') && record.get('int_record_id') && record.get('udid')
