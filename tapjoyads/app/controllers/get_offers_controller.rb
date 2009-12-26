@@ -114,6 +114,7 @@ XML_END
           id = app[0].split('.')[1] 
           if udid != '298c5159a3681207eaba5a04b3573aa7b4f13d99'
             add = false if install.include? "<AdvertiserAppID>#{id}</AdvertiserAppID>" 
+            add = false if install.include? "app_id=#{id}"
           end
         end
       end
