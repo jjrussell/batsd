@@ -2,6 +2,8 @@
 
 # Fixes the missed payments that were missed due to the mssql outage from 2:37 - 5:15 PM EST on 12/27/09
 
+include RightAws
+
 start_time = Time.parse("2:37 PM EST", Time.utc(2009, 12, 27)).utc
 end_time = Time.parse("5:15 PM EST", Time.utc(2009, 12, 27)).utc
 
