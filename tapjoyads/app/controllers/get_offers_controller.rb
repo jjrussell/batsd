@@ -36,7 +36,7 @@ XML_END
 
     xml = "<TapjoyConnectReturnObject>\n"
     if params[:type] == '0'
-      xml += get_offerpal_offers(params[:app_id], params[:udid], currency)
+      xml += get_offerpal_offers(params[:app_id], params[:udid], currency, params[:app_version])
       xml += "<Message>Complete one of the offers below to earn #{CGI::escapeHTML(currency.get('currency_name'))}</Message>\n"
     elsif params[:type] == '1'
       type = ''
@@ -58,7 +58,7 @@ XML_END
     end
   end
   
-  def get_offerpal_offers(app_id, udid, currency)
+  def get_offerpal_offers(app_id, udid, currency, version)
     country = CGI::escape("United States") #for now
     
     xml = get_from_cache_and_save("offers.s3.#{app_id}.#{country}") do
@@ -66,10 +66,10 @@ XML_END
     end
     
     if currency.get('show_rating_offer') == '1'
-      rate = RateApp.new("#{app_id}.#{udid}")
+      rate = RateApp.new("#{app_id}.#{udid}.#{version}")
       unless rate.get('rate-date')
         #they haven't rated the app before
-        offer = create_rating_offer(app_id, udid, currency)
+        offer = create_rating_offer(app_id, udid, currency, version)
         first_line = "<OfferArray>\n"
         old_xml = xml[first_line.length,xml.length]
         xml = first_line + offer + old_xml
@@ -80,12 +80,12 @@ XML_END
     
   end
   
-  def create_rating_offer(app_id, udid, currency)
+  def create_rating_offer(app_id, udid, currency, version)
     #thank god for memcached, but this should be optimized
     
     app = App.new(app_id)
     offer = ReturnOffer.new(3, app.get('name'), currency)
-    offer.ActionURL = "http://ws.tapjoyads.com/rate_app_offer?record_id=$PUBLISHER_USER_RECORD_ID&udid=#{udid}&app_id=#{app_id}"
+    offer.ActionURL = "http://ws.tapjoyads.com/rate_app_offer?record_id=$PUBLISHER_USER_RECORD_ID&udid=#{udid}&app_id=#{app_id}&app_version=#{version}"
     
     return offer.to_xml
   end

@@ -9,10 +9,12 @@ class RateAppOfferController < ApplicationController
       record_id = params[:record_id]
       udid = params[:udid]
       app_id = params[:app_id]
+      version = ""
+      version = ".#{params[:app_version]}" if params[:app_version]
       
       app = App.new(app_id)
       
-      rate = RateApp.new("#{app_id}.#{udid}")
+      rate = RateApp.new("#{app_id}.#{udid}#{version}")
       if rate.get('rate-date')
         redirect_to app.get('store_url') 
         return
