@@ -46,6 +46,7 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
       xml = ""
       app_list.each do |app|
         next if (banned_apps) && (banned_apps.include? app.key)
+        next if app.key == currency.key
         return_offer = ReturnOffer.new(1, app, currency)
         xml += return_offer.to_xml
         xml += "TAPJOY_IPHONE_ONLY" if app.get('iphone_only') == '1'
@@ -59,6 +60,7 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
       xml = ""
       app_list.each do |app|
         next if (banned_apps) && (banned_apps.include? app.key)
+        next if app.key == currency.key
         return_offer = ReturnOffer.new(1, app, currency)
         return_offer.AppID = currency.key
         xml += return_offer.to_server_xml
@@ -73,6 +75,7 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
       xml = ""
       app_list.each do |app|
         next if (banned_apps) && (banned_apps.include? app.key)
+        next if app.key == currency.key
         return_offer = ReturnOffer.new(1, app, currency)
         return_offer.AppID = currency.key
         xml += return_offer.to_server_xml_redirect
