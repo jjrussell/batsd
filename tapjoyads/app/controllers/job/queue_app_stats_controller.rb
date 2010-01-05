@@ -59,6 +59,8 @@ class Job::QueueAppStatsController < Job::SqsReaderController
       aggregate_stat(stat_row, path, app.key, 0, 23, time)
     end
     
+    stat_row.save
+    
     app.put('last_daily_run_time', Time.now.utc.to_f.to_s)
     app.save
     
