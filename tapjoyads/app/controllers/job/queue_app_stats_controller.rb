@@ -67,15 +67,16 @@ class Job::QueueAppStatsController < Job::SqsReaderController
   
   def send_stats_to_mssql(key, time_zone)
     item = key
-    time = Time.now.utc + Time.zone_offset(time_zone)
-    day = time.iso8601[0,10]
-    yesterday = (time - 1.days).iso8601[0,10]
+    utc_now = Time.now.utc
+    time =  utc_now + Time.zone_offset(time_zone)
+    day = utc_now.iso8601[0,10]
+    yesterday = (utc_now - 1.days).iso8601[0,10]
     
     stat_today = Stats.new("app.#{day}.#{key}")
     stat_yesterday = Stats.new("app.#{yesterday}.#{key}")
     
     cst_hour = time.hour
-    utc_hour = Time.now.utc.hour 
+    utc_hour = utc_now.hour
     
     map = {
       'new_users' => 'NewUsers',
