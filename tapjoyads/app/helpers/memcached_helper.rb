@@ -98,7 +98,8 @@ module MemcachedHelper
     return count
   end
   
-  def clone
+  module_function
+  def reset_connection
     Kernel.with_warnings_suppressed do
       MemcachedHelper.const_set('CACHE', CACHE.clone)
     end
