@@ -38,7 +38,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     
     aggregate_yesterday(app)
     
-    send_stats_to_mssql(app.key, 'cst')
+    send_stats_to_mssql(app.key, 'cst', @now)
   end
   
   ##
@@ -64,12 +64,13 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     app.put('last_daily_run_time', Time.now.utc.to_f.to_s)
     app.save
     
+    send_stats_to_mssql(app.key, 'cst', @now - 1.day)
+    
     # TODO: put daily stats in daily_stats domain.
   end
   
-  def send_stats_to_mssql(key, time_zone)
+  def send_stats_to_mssql(key, time_zone, utc_now)
     item = key
-    utc_now = Time.now.utc
     time =  utc_now + Time.zone_offset(time_zone)
     day = utc_now.iso8601[0,10]
     yesterday = (utc_now - 1.days).iso8601[0,10]
