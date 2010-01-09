@@ -2,6 +2,7 @@
 # Represents a single web request.
 class WebRequest < SimpledbResource
   include MemcachedHelper
+  include ApplicationHelper
   
   PATH_TO_STAT_MAP = {
     'connect' => 'logins',
@@ -42,9 +43,7 @@ class WebRequest < SimpledbResource
     
     if request
       unless get('ip_address')
-        ip_address = request.headers['X-Forwarded-For'] || request.remote_ip
-        ip_address.gsub!(/,.*$/, '')
-        put('ip_address', ip_address)
+        put('ip_address', get_ip_address(request))
       end
     end
   end

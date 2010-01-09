@@ -7,14 +7,6 @@ class GetOffersController < ApplicationController
          :render => {:text => missing_message}
     
   def index
-    xml = <<XML_END
-<?xml version="1.0" encoding="UTF-8"?>
-<TapjoyConnectReturnObject>
-<Success>false</Success>
-<ErrorMessage>Wrong Type</ErrorMessage>
-</TapjoyConnectReturnObject>
-XML_END
-
     #special code for Tapulous not sending udid
     if params[:app_id] == 'e2479a17-ce5e-45b3-95be-6f24d2c85c6f'
       params[:udid] = params[:publisher_user_id] if params[:udid] == nil or params[:udid] == ''
@@ -57,6 +49,8 @@ XML_END
       f.xml {render(:text => xml)}
     end
   end
+  
+  private
   
   def get_offerpal_offers(app_id, udid, currency, version)
     country = CGI::escape("United States") #for now
@@ -126,21 +120,44 @@ XML_END
         install = install.gsub(/TAPJOY_IPHONE_ONLY/,'')
       end
         
-        
-      
       user_rewarded_installs.push install if add
     end
     
     xml = "<OfferArray>\n"
+    
+    num_free_apps = 0
+    num_apps = 0
+    advertiser_app_ids = []
+    
     max.times do |i|
-      xml += user_rewarded_installs[start + i] if start + i < user_rewarded_installs.length
+      if start + i < user_rewarded_installs.length
+        xml_fragment = user_rewarded_installs[start + i]
+        xml += xml_fragment
+       
+        num_apps += 1
+        if xml_fragment =~ /<Cost>Free<\/Cost>/
+          num_free_apps += 1
+        end
+        advertiser_app_id = xml_fragment.match(/<AdvertiserAppID>(.*)<\/AdvertiserAppID>/)[1]
+        advertiser_app_ids.push(advertiser_app_id)
+      end
     end
-  
+    
     xml += "</OfferArray>\n"
     xml += "<MoreDataAvailable>#{user_rewarded_installs.length - max - start}</MoreDataAvailable>\n" if user_rewarded_installs.length - max - start > 0
+
+    offer_wall = OfferWall.new
+    offer_wall.put('type', 'rewarded_installs')
+    offer_wall.put('udid', udid)
+    offer_wall.put('num_free_apps', num_free_apps)
+    offer_wall.put('num_apps', num_apps)
+    offer_wall.put('advertiser_app_ids', advertiser_app_ids.join(','))
+    offer_wall.save
+    
+    # TODO: Add OfferWall's id to the xml's ActionURL. Also change ConnectController to handle
+    # the presence of an uuid before the url, and track conversions.
     
     return xml
-    
   end
   
 end
