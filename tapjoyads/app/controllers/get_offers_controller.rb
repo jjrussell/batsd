@@ -152,6 +152,7 @@ class GetOffersController < ApplicationController
     offer_wall.put('num_free_apps', num_free_apps)
     offer_wall.put('num_apps', num_apps)
     offer_wall.put('advertiser_app_ids', advertiser_app_ids.join(','))
+    offer_wall.put('publisher_app_id', app_id)
     offer_wall.save
     
     # TODO: Add OfferWall's id to the xml's ActionURL. Also change ConnectController to handle
