@@ -138,8 +138,8 @@ class GetOffersController < ApplicationController
         if xml_fragment =~ /<Cost>Free<\/Cost>/
           num_free_apps += 1
         end
-        advertiser_app_id = xml_fragment.match(/<AdvertiserAppID>(.*)<\/AdvertiserAppID>/)[1]
-        advertiser_app_ids.push(advertiser_app_id)
+        #advertiser_app_id = xml_fragment.match(/<AdvertiserAppID>(.*)<\/AdvertiserAppID>/)[1]
+        #advertiser_app_ids.push(advertiser_app_id)
       end
     end
     
@@ -151,7 +151,7 @@ class GetOffersController < ApplicationController
     offer_wall.put('udid', udid)
     offer_wall.put('num_free_apps', num_free_apps)
     offer_wall.put('num_apps', num_apps)
-    offer_wall.put('advertiser_app_ids', advertiser_app_ids.join(','))
+    #offer_wall.put('advertiser_app_ids', advertiser_app_ids.join(','))
     offer_wall.put('publisher_app_id', app_id)
     offer_wall.save
     
