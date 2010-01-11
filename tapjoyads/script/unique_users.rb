@@ -5,6 +5,8 @@
 # eg. `unique_users 2010-01-09 1` will calculate the unique users over the first hour fo Jan. 9
 # Omit the last argument to calculate the whole day.
 
+STDOUT.sync = true
+
 date = Time.parse("#{ARGV[2]} 00:00 GMT").utc
 num_hours = ARGV[3].to_f || 24
 date_string = date.iso8601[0,10]
