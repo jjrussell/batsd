@@ -316,21 +316,33 @@ class SimpledbResource
     query = query + " WHERE #{where}" if where
     query = query + " ORDER BY #{order}" if order
     
-    response = @@sdb.select(query, next_token)
-    
     sdb_item_array = []
-    response[:items].each do |item|
-      sdb_item = SimpledbResource.new(domain_name, item.keys[0], {:load => false})
-      sdb_item.attributes = item.values[0]
-      sdb_item_array.push(sdb_item)
+    box_usage = 0
+    
+    @@sdb.select(query, next_token) do |response|
+      response[:items].each do |item|
+        sdb_item = SimpledbResource.new(domain_name, item.keys[0], {:load => false})
+        sdb_item.attributes = item.values[0]
+        if block_given?
+          yield(sdb_item)
+        else
+          sdb_item_array.push(sdb_item)
+        end
+      end
+      box_usage += response[:box_usage].to_f
+      
+      unless block_given?
+        return {
+          :items => sdb_item_array,
+          :next_token => response[:next_token],
+          :box_usage => box_usage
+        }
+      end
+      
+      block_given?
     end
     
-    return {
-      :items => sdb_item_array,
-      :next_token => response[:next_token],
-      :box_usage => response[:box_usage]
-    }
-    
+    return {:box_usage => box_usage}
   rescue => e
     Rails.logger.error("Bad select query: #{query}")
     raise e
