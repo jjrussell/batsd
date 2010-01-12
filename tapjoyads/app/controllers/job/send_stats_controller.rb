@@ -37,6 +37,7 @@ class Job::SendStatsController < Job::JobController
     }
     
     app_count = 0
+    data_sent = 0
     
     SimpledbResource.select('app') do |app|
       Rails.logger.info "#{app.get('name')} #{app.key}"
@@ -59,18 +60,27 @@ class Job::SendStatsController < Job::JobController
       stat_types = ''
       datas = ''
 
+      should_send = false
+
       stats.each do |s, d|
         stat_types += ',' unless stat_types == ''
         stat_types += s
         datas += ',' unless datas == ''
         datas += d.to_s
+        
+        if d != 0 and d != 10000
+          should_send = true
+        end
       end
-
-      send_stats_to_windows(date_string, stat_types, app.key, datas)
+      
+      if should_send
+        send_stats_to_windows(date_string, stat_types, app.key, datas) 
+        data_sent += 1
+      end
       app_count += 1
     end
     
-    Rails.logger.info "Successfully sent stats for #{app_count} apps"
+    Rails.logger.info "Date: #{date_string}. Calculated stats for #{app_count} apps. Sent data for #{data_sent} apps."
   end
   
   def send_stats_to_windows(date, stat_types, item_id, datas)
