@@ -56,7 +56,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       reward.put('type', 'install')
       reward.put('publisher_app_id', publisher_app_id)
       reward.put('advertiser_app_id', advertiser_app_id)
-      reward.put('publisher_user_id', publisher_user_id)
+      reward.put('publisher_user_id', publisher_user_id, {:cgi_escape => true})
       reward.put('advertiser_amount', click.get('advertiser_amount'))
       reward.put('publisher_amount', click.get('publisher_amount'))
       reward.put('currency_reward', click.get('currency_reward'))
