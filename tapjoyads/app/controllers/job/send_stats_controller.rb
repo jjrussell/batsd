@@ -36,6 +36,8 @@ class Job::SendStatsController < Job::JobController
       'hourly_impressions' => 'AdImpressions'
     }
     
+    app_count = 0
+    
     SimpledbResource.select('app') do |app|
       Rails.logger.info "#{app.get('name')} #{app.key}"
       
@@ -65,7 +67,10 @@ class Job::SendStatsController < Job::JobController
       end
 
       send_stats_to_windows(date_string, stat_types, app.key, datas)
+      app_count += 1
     end
+    
+    Rails.logger.info "Successfully sent stats for #{app_count} apps"
   end
   
   def send_stats_to_windows(date, stat_types, item_id, datas)
