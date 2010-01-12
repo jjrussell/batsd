@@ -38,7 +38,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     
     aggregate_yesterday(app)
     
-    send_stats_to_mssql(app.key, 'cst', @now)
+    send_stats_to_mssql(app.key, @now)
   end
   
   ##
@@ -64,24 +64,23 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     app.put('last_daily_run_time', Time.now.utc.to_f.to_s)
     app.save
     
-    send_stats_to_mssql(app.key, 'cst', @now - 1.day)
+    send_stats_to_mssql(app.key, @now - 1.day)
     
     # TODO: put daily stats in daily_stats domain.
   end
   
-  def send_stats_to_mssql(key, time_zone, utc_now)
-    item = key
-    time =  utc_now + Time.zone_offset(time_zone)
-    day = utc_now.iso8601[0,10]
-    yesterday = (utc_now - 1.days).iso8601[0,10]
+  def send_stats_to_mssql(key, utc_date)
+    offset = -6 # CST timezone. Must be negative the way this is currently implemented.
     
-    stat_today = Stats.new("app.#{day}.#{key}")
-    stat_yesterday = Stats.new("app.#{yesterday}.#{key}")
+    today = utc_date.iso8601[0,10]
+    tomorrow = (utc_date + 1.days).iso8601[0,10]
     
-    cst_hour = time.hour
-    utc_hour = utc_now.hour
+    stat_today = Stats.new("app.#{today}.#{key}")
+    stat_tomorrow = Stats.new("app.#{tomorrow}.#{key}")
     
-    map = {
+    stats = {}
+    
+    stats_map = {
       'new_users' => 'NewUsers',
       'logins' => 'GameSessions',
       'paid_installs' => 'RewardedInstalls',
@@ -92,21 +91,11 @@ class Job::QueueAppStatsController < Job::SqsReaderController
       'hourly_impressions' => 'AdImpressions'
     }
     
-    start_hour = utc_hour - cst_hour
-    length = cst_hour + 1
-    
-    stats = {}
-    map.each do |type, val|
-      yesterday_sum = 0
-      today_start_hour = start_hour
-      if start_hour < 0
-        yesterday_sum = stat_yesterday.get_hourly_count(type)[24 + start_hour, 
-          0 - start_hour].sum
-        today_start_hour = 0
-        length = cst_hour
-      end
-      today_sum = stat_today.get_hourly_count(type)[today_start_hour,length].sum
-      stats[val] = today_sum + yesterday_sum
+    stats_map.each do |sdb_type, sql_type|
+      # Last 18 hours of utc-today, first 6 hours of utc-tomorrow.
+      today_sum = stat_today.get_hourly_count(sdb_type)[-offset, 24].sum
+      tomorrow_sum = stat_tomorrow.get_hourly_count(sdb_type)[0, -offset].sum
+      stats[sql_type] = today_sum + tomorrow_sum
     end
     
     stats['RewardedInstallConversionRate'] = (stats['RewardedInstalls'] * 10000 / stats['RewardedInstallClicks']).to_i if stats['RewardedInstallClicks'].to_i > 0
@@ -123,7 +112,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
       datas += d.to_s
     end
     
-    send_stats_to_windows(day, stat_types, key, datas)
+    send_stats_to_windows(today, stat_types, key, datas)
   end
   
   def send_stats_to_windows(date, stat_types, item_id, datas)
@@ -133,7 +122,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     url += "&item=#{item_id}"
     url += "&Datas=#{CGI::escape(datas)}"
     
-    download_content(url, {:timeout => 30, :internal_authenticate => true})
+    download_with_retry(url, {:timeout => 30}, {:retries => 2})
   end
   
   def aggregate_stat(stat_row, wr_path, app_key, first_hour, last_hour, time = @now)
