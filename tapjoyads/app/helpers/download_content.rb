@@ -59,7 +59,8 @@ module DownloadContent
         Rails.logger.info "Added to FailedDownloads queue."
       else
         if retry_options[:alert]
-          NewRelic::Agent.agent.error_collector.notice_error(Exception.new("Failed to download #{url}. No more retries."))
+          NewRelic::Agent.agent.error_collector.notice_error(
+              Exception.new("Failed to download #{url}. No more retries."), request)
         end
         call_final_action(final_action, 'max_retries', retry_options)
       end
