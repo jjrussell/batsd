@@ -35,7 +35,7 @@ class ApplicationController < ActionController::Base
   def log_missing_required_params
     Rails.logger.info "missing required params"
     NewRelic::Agent.agent.error_collector.notice_error(
-        Exception.new("Missing Require Params"), request)
+        Exception.new("Missing Require Params"), request, params[:action], params)
   end
   
   def fix_params
