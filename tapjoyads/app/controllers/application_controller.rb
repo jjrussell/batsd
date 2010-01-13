@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
   def verify_params(required_params)
     all_params = true
     required_params.each do |param|
-      unless params.include?(param)
+      unless params.include?(param) and params[param] != ''
         all_params = false
       end
     end
