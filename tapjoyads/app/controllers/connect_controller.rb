@@ -6,6 +6,13 @@ class ConnectController < ApplicationController
   def index
     return unless verify_params([:app_id, :udid, :device_type, :app_version, :device_os_version, :library_version])
     
+    if params[:udid] == '' or params[:app_id] == ''
+      log_missing_required_params
+      Rails.logger.info "missing required params"
+      render :text => "missing required params"
+      return
+    end
+    
     #add this app to the device list
     time_log("Check conversions and maybe add to sqs") do
       click = StoreClick.new("#{params[:udid]}.#{params[:app_id]}")
