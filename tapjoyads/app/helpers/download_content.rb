@@ -36,7 +36,7 @@ module DownloadContent
   # as long as retry_options[:retries] > 0.
   def download_with_retry(url, download_options = {}, retry_options = {}, action_options = {})
     num_retries = retry_options.delete(:retries) { 0 }
-    should_alert = retry_options.delete(:alert) { false }
+    should_alert = retry_options.delete(:alert) { true }
     final_action = retry_options.delete(:final_action)
     raise "Unknown retry_options #{options.keys.join(', ')}" unless retry_options.empty?
     
@@ -59,7 +59,7 @@ module DownloadContent
         Rails.logger.info "Added to FailedDownloads queue."
       else
         if retry_options[:alert]
-          # TODO: Alert via newrelic.
+          NewRelic::Agent.agent.error_collector.notice_error(Exception.new("Failed to download #{url}. No more retries."))
         end
         call_final_action(final_action, 'max_retries', retry_options)
       end

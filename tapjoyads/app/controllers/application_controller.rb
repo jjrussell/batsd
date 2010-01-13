@@ -26,18 +26,15 @@ class ApplicationController < ActionController::Base
     end
     
     unless all_params
-      Rails.logger.info "missing required params"
-      render :text => "missing required params"
       log_missing_required_params
+      render :text => "missing required params"
     end
     return all_params
   end
   
   def log_missing_required_params
-    error = Error.new
-    error.put('request', request.url)
-    error.put('ip', request.remote_ip)
-    error.save
+    Rails.logger.info "missing required params"
+    NewRelic::Agent.agent.error_collector.notice_error(Exception.new("Missing Require Params"))
   end
   
   def fix_params
