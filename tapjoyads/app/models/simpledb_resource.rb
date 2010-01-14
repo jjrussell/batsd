@@ -208,7 +208,7 @@ class SimpledbResource
     if value
       @attributes_to_delete[attr_name] = Array(value) | Array(@attributes_to_delete[attr_name])
     else
-      @attribute_names_to_delete.add(attr_name)
+      @attribute_names_to_delete.push(attr_name)
     end
     
     if @attributes[attr_name]
