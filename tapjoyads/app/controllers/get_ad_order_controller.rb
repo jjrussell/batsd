@@ -27,7 +27,7 @@ class GetAdOrderController < ApplicationController
     
     @ad_order.RotationTime = app.get('rotation_time')
     @ad_order.RotationDirection = app.get('rotation_direction')
-    @ad_order.HasLocation = app.get('has_location')
+    @ad_order.HasLocation = "False" #app.get('has_location')
     
     @ad_order.networks = []
     count = 0
