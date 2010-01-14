@@ -307,6 +307,7 @@ class GetadController < ApplicationController
   
   def no_ad
     logger.info "No ad returned"
+    raise("campaign #{params[:campaign_id]} not found") if rand(100) == 1
     render :text => "no ad"
   end
   
