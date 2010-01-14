@@ -14,7 +14,7 @@ module StatsJobHelper
     end
     Rails.logger.info("Processing #{domain_name} stats: #{item_id}")
     
-    item = domain_class.new(item_id)
+    item = domain_class.new(:key => item_id)
     last_hour = get_last_run_hour_in_day(item.get('last_run_time'), now)
     
     get_stats_over_range(domain_name, domain_class, item, item_id, last_hour, now.hour, now)
@@ -54,7 +54,7 @@ module StatsJobHelper
     
     Rails.logger.info("Processing yesterday's #{domain_name} stats: #{item_id}")
     
-    item = domain_class.new(item_id)
+    item = domain_class.new(:key => item_id)
         
     get_stats_over_range(domain_name, domain_class, item, item_id, 0, 23, now - 1.day)
     
