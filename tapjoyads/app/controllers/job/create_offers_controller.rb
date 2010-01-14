@@ -66,7 +66,7 @@ class Job::CreateOffersController < Job::SqsReaderController
             cached_offer.put('timeDelay', offer['timeDelay'])
             cached_offer.put('currency', 'TAPJOY_BUCKS')
             cached_offer.put('credit_card_required', offer['creditCardRequired'])
-            cached_offer.put('cached_offer_id', UUIDTools::UUID.random_create.to_s) unless dbOffer.get('cached_offer_id')
+            cached_offer.put('cached_offer_id', UUIDTools::UUID.random_create.to_s) unless cached_offer.get('cached_offer_id')
             
             amount = offer['amount'].to_i
             amount = -1 if amount == 0
