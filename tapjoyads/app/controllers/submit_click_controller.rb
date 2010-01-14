@@ -55,8 +55,8 @@ class SubmitClickController < ApplicationController
 
       #record that the user has this app, so we don't show it again
       device_app = DeviceAppList.new(params[:udid])
-      unless device_app.get('app.' + params[:app_id])
-        device_app.put('app.' + params[:app_id],  Time.now.utc.to_f.to_s)
+      unless device_app.get('app.' + params[:advertiser_app_id])
+        device_app.put('app.' + params[:advertiser_app_id],  Time.now.utc.to_f.to_s)
         device_app.save
       end
     end
