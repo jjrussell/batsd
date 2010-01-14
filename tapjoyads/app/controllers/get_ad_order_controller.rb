@@ -9,7 +9,7 @@ class GetAdOrderController < ApplicationController
     
     ad_order_data = get_from_cache(mc_key) do 
       ## get order
-      campaigns = SimpledbResource.select('campaign', 'ecpm, id1, id2, id3, library_name, event1, event2, event3, event4, event5, bar, custom_ad, test_percent, format, call_ad_shown', "status='1' and app_id='#{app_id}' and ecpm != ''", "ecpm desc")
+      campaigns = SimpledbResource.select('*', "status='1' and app_id='#{app_id}' and ecpm != ''", "ecpm desc")
       
       json = campaigns.items.to_json
       
