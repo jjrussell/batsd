@@ -1,0 +1,31 @@
+xml.instruct!
+
+xml.TapjoyConnectReturnObject do
+  xml.AdNetworkArray do
+    @ad_order.networks.each do |network|
+      xml.AdNetworkClass do
+        xml.AdLibraryName network.AdLibraryName
+        xml.AdCampaignId network.AdCampaignId
+        xml.MaxTimesToShowAdOnDevice network.MaxTimesToShowAdOnDevice
+        xml.CallAdShown network.CallAdShown
+        xml.EventInterval1 network.EventInterval1
+        xml.EventInterval2 network.EventInterval2
+        xml.EventInterval3 network.EventInterval3
+        xml.EventInterval4 network.EventInterval4
+        xml.EventInterval5 network.EventInterval5
+        xml.AdNetworkGameID1 network.AdNetworkGameID1 if network.AdNetworkGameID1
+        xml.AdNetworkGameID2 network.AdNetworkGameID2 if network.AdNetworkGameID2
+        xml.AdNetworkGameID3 network.AdNetworkGameID3 if network.AdNetworkGameID3
+        xml.AdFormat network.AdFormat
+        xml.CustomAd network.CustomAd
+        xml.Bar network.Bar
+      end
+    end
+  end
+  xml.AdOrderData do
+    xml.RotationTime @ad_order.RotationTime
+    xml.RotationDirection @ad_order.RotationDirection
+    xml.HasLocation @ad_order.HasLocation
+    xml.LastNetwork @ad_order.LastNetwork
+  end
+end
