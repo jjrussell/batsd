@@ -29,7 +29,7 @@ module StatsJobHelper
   
   def get_stats_over_range(domain_name, domain_class, item, item_id, start_hour, end_hour, time)
     
-    stat = Stats.new(get_stat_key(domain_name, item_id, time))
+    stat = Stats.new(:key => get_stat_key(domain_name, item_id, time))
     
     hourly_impressions = get_hourly_impressions(start_hour, end_hour, time, domain_name, item_id, 
         stat.get('hourly_impressions'), 'adshown')
@@ -77,8 +77,12 @@ module StatsJobHelper
   end
   
   def get_item_to_process(domain_name, item_name, time)
-    item_array = SimpledbResource.select(domain_name, item_name, 
-        "#{item_name} < '#{time.to_f.to_s}'", "#{item_name} asc").items
+    item_array = SimpledbResource.select({
+        :domain_name => domain_name, 
+        :attributes => item_name, 
+        :where => "#{item_name} < '#{time.to_f.to_s}'", 
+        :order_by => "#{item_name} asc",
+        :limit => '10'}).items
         
     if (item_array.length == 0)
       return nil
@@ -123,9 +127,9 @@ module StatsJobHelper
       max_time = min_time + 1.hour
       count = 0
       for i in (0..MAX_WEB_REQUEST_DOMAINS - 1)
-        count += SimpledbResource.count("web-request-#{date}-#{i}", 
-          "time >= '#{min_time.to_f.to_s}' and time < '#{max_time.to_f.to_s}' " +
-          "and #{item_type}_id = '#{item_id}' and path= '#{path}'")
+        count += SimpledbResource.count({:domain_name => "web-request-#{date}-#{i}", 
+            :where => "time >= '#{min_time.to_f.to_s}' and time < '#{max_time.to_f.to_s}' " +
+            "and #{item_type}_id = '#{item_id}' and path= '#{path}'"})
       end
       hourly_impressions[hour] = count
     end

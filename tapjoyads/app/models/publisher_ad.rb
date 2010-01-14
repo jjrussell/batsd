@@ -1,6 +1,3 @@
 class PublisherAd < SimpledbResource
-  
-  def initialize(key, options = {})
-    super 'publisher_ad', key, options
-  end
+  self.domain_name = 'publisher_ad'
 end

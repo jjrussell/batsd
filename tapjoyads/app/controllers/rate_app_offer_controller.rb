@@ -12,9 +12,9 @@ class RateAppOfferController < ApplicationController
       version = ""
       version = ".#{params[:app_version]}" if params[:app_version]
       
-      app = App.new(app_id)
+      app = App.new(:key => app_id)
       
-      rate = RateApp.new("#{app_id}.#{udid}#{version}")
+      rate = RateApp.new(:key => "#{app_id}.#{udid}#{version}")
       if rate.get('rate-date')
         redirect_to app.get('store_url') 
         return
@@ -23,7 +23,7 @@ class RateAppOfferController < ApplicationController
       rate.put('rate-date', Time.now.utc.to_f.to_s)
       rate.save
       
-      currency = Currency.new(app_id)
+      currency = Currency.new(:key => app_id)
     
       values = calculate_offer_payouts(:currency => currency, :offer_amount => 15)
     
@@ -43,7 +43,7 @@ class RateAppOfferController < ApplicationController
 
       reward.save
 
-      message = reward.serialize()
+      message = reward.serialize(:attributes_only => true)
 
       SqsGen2.new.queue(QueueNames::SEND_CURRENCY).send_message(message)
 

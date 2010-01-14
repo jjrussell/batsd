@@ -19,30 +19,27 @@ class ReceiveOfferController < ApplicationController
     snuid = params[:snuid]
     amount = params[:currency]
     
-    received_offer = ReceivedOffer.new
-    received_offer.put('snuid', snuid)
-    received_offer.put('amount', amount)
-    
-    ##
     # Find the user record by snuid
     record_key = lookup_by_int_record(snuid)
     parts = record_key.split('.')
     publisher_app_id = parts[0]
     publisher_user_id = parts[1]    
-    currency = Currency.new(publisher_app_id)
+    currency = Currency.new(:key => publisher_app_id)
     
     values = calculate_offer_payouts(:currency => currency, :offer_amount => amount)
+    
+    received_offer = ReceivedOffer.new
+    received_offer.put('snuid', snuid)
+    received_offer.put('amount', amount)
     received_offer.put('advertiser_amount', values[:advertiser_amount])
     received_offer.put('publisher_amount', values[:publisher_amount])
     received_offer.put('currency_reward', values[:currency_reward])
     received_offer.put('tapjoy_amount', values[:tapjoy_amount])
     received_offer.put('offerpal_amount', values[:offerpal_amount])
-    
     received_offer.put('customer_service', '1') if customer_service
-    
     received_offer.save
     
-    #create the reward item and push to the queues
+    # Create the reward item and push to the queues
     reward = Reward.new
     reward.put('type', 'offer')
     reward.put('publisher_app_id', publisher_app_id)
@@ -53,15 +50,14 @@ class ReceiveOfferController < ApplicationController
     reward.put('currency_reward', received_offer.get('currency_reward'))
     reward.put('tapjoy_amount', received_offer.get('tapjoy_amount'))
     reward.put('offerpal_amount', received_offer.get('offerpal_amount'))
-    
     reward.save
     
-    message = reward.serialize()
-    
+    message = reward.serialize(:attributes_only => true)
     SqsGen2.new.queue(QueueNames::SEND_CURRENCY).send_message(message)
     SqsGen2.new.queue(QueueNames::SEND_MONEY_TXN).send_message(message)
 
-    web_request = WebRequest.new('receive_offer', params, request)
+    web_request = WebRequest.new
+    web_request.put_values('receive_offer', params, request)
     web_request.put('publisher_app_id', publisher_app_id)
     web_request.put('offer_id', params[:offerid])
     web_request.save

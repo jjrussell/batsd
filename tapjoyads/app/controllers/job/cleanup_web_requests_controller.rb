@@ -78,20 +78,14 @@ class Job::CleanupWebRequestsController < Job::SqsReaderController
     time_log("Backed up domain: #{domain_name}") do
       file = open(file_name, 'w')
     
-      box_usage = 0
       count = 0
-      next_token = nil
-      begin 
+      response = SimpledbResource.select(:domain_name => domain_name) do |item|
         count += 1
-        response = SimpledbResource.select(domain_name, '*', nil, nil, next_token)
-        puts response
-        next_token = response[:next_token]
-        box_usage += response[:box_usage].to_f
-        response[:items].each do |item|
-          file.write(item.serialize)
-          file.write("\n")
-        end
-      end while next_token
+        file.write(item.serialize)
+        file.write("\n")
+      end
+      box_usage = response[:box_usage]
+      
       file.close
     
       Rails.logger.info "Made #{count} select queries. Total box usage: #{box_usage}"

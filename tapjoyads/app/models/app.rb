@@ -1,5 +1,4 @@
 class App < SimpledbResource
-  def initialize(key, options = {})
-    super 'app', key, options
-  end
+  self.domain_name = 'app'
+  self.key_format = 'app_guid'
 end

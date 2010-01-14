@@ -1,30 +1,27 @@
 class GetOffersController < ApplicationController
   include MemcachedHelper
     
-  missing_message = "missing required params"
-  verify :params => [:udid, :app_id],
-         :only => :index,
-         :render => {:text => missing_message}
-    
   def index
+    return unless verify_params([:app_id, :udid])
+    
     #special code for Tapulous not sending udid
     if params[:app_id] == 'e2479a17-ce5e-45b3-95be-6f24d2c85c6f'
       params[:udid] = params[:publisher_user_id] if params[:udid] == nil or params[:udid] == ''
     end
   
     #first lookup the publisher_user_record_id for this user
-    record = PublisherUserRecord.new("#{params[:app_id]}.#{params[:publisher_user_id]}")
+    record = PublisherUserRecord.new(:key => "#{params[:app_id]}.#{params[:publisher_user_id]}")
     unless record.get('record_id') && record.get('int_record_id') && record.get('udid')
       uid = UUIDTools::UUID.random_create.to_s
-      record.put('record_id',  uid)
-      record.put('int_record_id', uid.hash.abs.to_s) #this should work!
+      record.put('record_id',  uid, {:replace => false})
+      record.put('int_record_id', uid.hash.abs.to_s, {:replace => false}) #this should work!
       record.put('udid', params[:udid])
-      record.save({:replace => false})
+      record.save
       save_to_cache("record_id.#{record.get('record_id')}", record.key)
       save_to_cache("int_record_id.#{record.get('int_record_id')}", record.key)
     end
     
-    currency = Currency.new(params[:app_id])
+    currency = Currency.new(:key => params[:app_id])
 
     xml = "<TapjoyConnectReturnObject>\n"
     if params[:type] == '0'
@@ -60,7 +57,7 @@ class GetOffersController < ApplicationController
     end
     
     if currency.get('show_rating_offer') == '1'
-      rate = RateApp.new("#{app_id}.#{udid}.#{version}")
+      rate = RateApp.new(:key => "#{app_id}.#{udid}.#{version}")
       unless rate.get('rate-date')
         #they haven't rated the app before
         offer = create_rating_offer(app_id, udid, currency, version)
@@ -77,7 +74,7 @@ class GetOffersController < ApplicationController
   def create_rating_offer(app_id, udid, currency, version)
     #thank god for memcached, but this should be optimized
     
-    app = App.new(app_id)
+    app = App.new(:key => app_id)
     offer = ReturnOffer.new(3, app.get('name'), currency)
     offer.ActionURL = "http://ws.tapjoyads.com/rate_app_offer?record_id=$PUBLISHER_USER_RECORD_ID&udid=#{udid}&app_id=#{app_id}&app_version=#{version}"
     
@@ -87,7 +84,7 @@ class GetOffersController < ApplicationController
   def get_rewarded_installs(start, max, udid, type, currency)
     app_id = params[:app_id]
     
-    device_app = DeviceAppList.new(params[:udid])
+    device_app = DeviceAppList.new(:key => params[:udid])
     
     xml = get_from_cache_and_save("#{type}installs.s3.#{app_id}") do
       xml =  AWS::S3::S3Object.value "#{type}installs_#{app_id}", RUN_MODE_PREFIX + 'offer-data'

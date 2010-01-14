@@ -83,12 +83,12 @@ module DownloadContent
   
   def send_currency_download_complete(status, options)
     if status == 'max_retries'
-      app = App.new(options[:app_id])
+      app = App.new(:key => options[:app_id])
       app.put('send_currency_error', status)
       app.save
     end
     
-    reward = Reward.new(options[:reward_id])
+    reward = Reward.new(:key => options[:reward_id])
     reward.put('send_currency_status', status)
     reward.save
   end

@@ -2,7 +2,7 @@ class LookupOfferpalIdController < ApplicationController
          
   def index
     int_id = params[:int_id].gsub("'", '')
-    user = SimpledbResource.select('publisher-user-record','*', "int_record_id = '#{int_id}'")
+    user = PublisherUserRecord.select(:where => "int_record_id = '#{int_id}'")
     record = user.items.first
     
     if record
@@ -15,7 +15,7 @@ class LookupOfferpalIdController < ApplicationController
 
   def reverse
     record_id = params[:record_id].gsub("'", '')
-    user = SimpledbResource.select('publisher-user-record','*', "record_id = '#{record_id}'")
+    user = PublisherUserRecord.select(:where => "record_id = '#{record_id}'")
     record = user.items.first
     
     if record
@@ -27,8 +27,8 @@ class LookupOfferpalIdController < ApplicationController
   
   def store
     record_id = params[:record_id].gsub("'", '')
-    user = SimpledbResource.select('store-click','*', "publisher_user_record_id = '#{record_id}'")
-    record = user.items.first
+    store_click = StoreClick.select(:where => "publisher_user_record_id = '#{record_id}'")
+    record = store_click.items.first
     
     if record
       render :text => record.key  #this contains app_id.publisher_user_id

@@ -16,12 +16,12 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     app_key = json['app_key']
     last_run_time = json['last_run_time']
     
-    app = App.new(app_key)
+    app = App.new(:key => app_key)
     
     first_hour = get_last_run_hour_in_day(last_run_time)
     last_hour = @now.hour - 1
     
-    stat_row = Stats.new("app.#{@date}.#{app_key}")
+    stat_row = Stats.new(:key => "app.#{@date}.#{app_key}")
     
     @paths_to_aggregate.each do |path|
       aggregate_stat(stat_row, path, app_key, first_hour, last_hour)
@@ -53,7 +53,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     
     time = @now - 1.day
     date = time.iso8601[0,10]
-    stat_row = Stats.new("app.#{date}.#{app.key}")
+    stat_row = Stats.new(:key => "app.#{date}.#{app.key}")
     
     @paths_to_aggregate.each do |path|
       aggregate_stat(stat_row, path, app.key, 0, 23, time)
@@ -75,8 +75,8 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     today = utc_date.iso8601[0,10]
     tomorrow = (utc_date + 1.days).iso8601[0,10]
     
-    stat_today = Stats.new("app.#{today}.#{key}")
-    stat_tomorrow = Stats.new("app.#{tomorrow}.#{key}")
+    stat_today = Stats.new(:key => "app.#{today}.#{key}")
+    stat_tomorrow = Stats.new(:key => "app.#{tomorrow}.#{key}")
     
     stats = {}
     
@@ -142,9 +142,9 @@ class Job::QueueAppStatsController < Job::SqsReaderController
       
       count = 0
       MAX_WEB_REQUEST_DOMAINS.times do |i|
-        count += SimpledbResource.count("web-request-#{date}-#{i}", 
-          "time >= '#{min_time.to_f.to_s}' and time < '#{max_time.to_f.to_s}' " +
-          "and app_id = '#{app_key}' and path= '#{wr_path}'")
+        count += SimpledbResource.count({:domain_name => "web-request-#{date}-#{i}", 
+            :where => "time >= '#{min_time.to_f.to_s}' and time < '#{max_time.to_f.to_s}' " +
+            "and app_id = '#{app_key}' and path = '#{wr_path}'"})
       end
       hourly_stats[hour] = count
     end

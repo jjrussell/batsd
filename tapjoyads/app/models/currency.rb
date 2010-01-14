@@ -1,5 +1,3 @@
 class Currency < SimpledbResource
-  def initialize(key, options = {})
-    super 'currency', key, options
-  end
+  self.domain_name = 'currency'
 end

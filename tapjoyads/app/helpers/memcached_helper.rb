@@ -38,13 +38,13 @@ module MemcachedHelper
       rescue Memcached::NotFound
         Rails.logger.info("Memcache key not found: #{key}")
       rescue Memcached::ServerIsMarkedDead => e
-        Rails.logger.info("Memcache::ServerIsMarkedDead: #{key}")
+        Rails.logger.info("Memcached::ServerIsMarkedDead: #{key}")
       rescue Memcached::NoServersDefined => e
-        Rails.logger.info("Memcache::NoServersDefined: #{e}")
+        Rails.logger.info("Memcached::NoServersDefined: #{e}")
       rescue Memcached::ATimeoutOccurred => e
-        Rails.logger.info("ATimeoutOccurred::NoServersDefined: #{e}")
+        Rails.logger.info("Memcached::ATimeoutOccurred: #{e}")
       rescue Memcached::SystemError => e
-        Rails.logger.info("Memcache::SystemError: #{e.message}")
+        Rails.logger.info("Memcached::SystemError: #{e.message}")
       end
     end
     
@@ -96,6 +96,33 @@ module MemcachedHelper
     end
     
     return count
+  end
+
+  def compare_and_swap_in_cache(key, clone = false)
+    cache = clone ? CACHE.clone : CACHE
+    key = CGI::escape(key)
+    
+    begin
+      cache.cas(key) do |mc_val|
+        yield mc_val
+      end
+    rescue Memcached::NotFound
+      # Attribute hasn't been stored yet.
+      puts "initial set"
+      cache.set(key, yield(nil))
+    rescue Memcached::NotStored
+      # Attribute was modified before it could write.
+      puts "modified"
+      retry
+    end
+    
+  end
+  
+  def delete_from_cache(key, clone = false)
+    cache = clone ? CACHE.clone : CACHE
+    key = CGI::escape(key)
+    
+    cache.delete(key)
   end
   
   module_function

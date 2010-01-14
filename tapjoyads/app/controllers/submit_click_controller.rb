@@ -1,5 +1,6 @@
 class SubmitClickController < ApplicationController
   include RewardHelper
+  include ApplicationHelper
   include RightAws 
   
   def store
@@ -10,7 +11,7 @@ class SubmitClickController < ApplicationController
     ##
     # store the value of an install in this table
     # so the user gets the reward they think they earned
-    app = App.new(params[:advertiser_app_id])
+    app = App.new(:key => params[:advertiser_app_id])
     advertiser_amount = app.get('payment_for_install').to_i
     
     if advertiser_amount <= 0
@@ -23,7 +24,7 @@ class SubmitClickController < ApplicationController
     
     ##
     # store how much currency the user earns for this install    
-    currency = Currency.new(params[:publisher_app_id])
+    currency = Currency.new(:key => params[:publisher_app_id])
 
     values = calculate_install_payouts(:currency => currency, :advertiser_app => app)
     
@@ -31,7 +32,7 @@ class SubmitClickController < ApplicationController
     # each attribute that starts with publisher.<id> has a . separated value
     # the left of the . is when the click happened.  the right of the . is the publisher user record
     # so when the app is installed, we look at the timestamp to determine where the reward goes
-    click = StoreClick.new("#{params[:udid]}.#{params[:advertiser_app_id]}", {:load => false})
+    click = StoreClick.new(:key => "#{params[:udid]}.#{params[:advertiser_app_id]}", :load => false)
     click.put("click_date", "#{now.to_f.to_s}")
     click.put("publisher_app_id",params[:publisher_app_id])
     click.put("publisher_user_record_id", params[:publisher_user_record_id])
@@ -43,7 +44,8 @@ class SubmitClickController < ApplicationController
     click.put('offerpal_amount', values[:offerpal_amount])
     click.save
     
-    web_request = WebRequest.new('store_click', params, request)
+    web_request = WebRequest.new
+    web_request.put_values('store_click', params, request)
     web_request.save
     
     if app.get('pay_per_click') == '1'
@@ -54,7 +56,7 @@ class SubmitClickController < ApplicationController
       SqsGen2.new.queue(QueueNames::CONVERSION_TRACKING).send_message(message)
 
       #record that the user has this app, so we don't show it again
-      device_app = DeviceAppList.new(params[:udid])
+      device_app = DeviceAppList.new(:key => params[:udid])
       unless device_app.get('app.' + params[:advertiser_app_id])
         device_app.put('app.' + params[:advertiser_app_id],  Time.now.utc.to_f.to_s)
         device_app.save
@@ -62,7 +64,7 @@ class SubmitClickController < ApplicationController
     end
     
     if params[:redirect] == "1"
-      app = App.new(params[:advertiser_app_id])
+      app = App.new(:key => params[:advertiser_app_id])
       redirect_to app.get('store_url')
     else
       render :template => 'layouts/success'
@@ -74,17 +76,18 @@ class SubmitClickController < ApplicationController
     
     now = Time.now.utc
     
-    click = OfferClick.new(UUIDTools::UUID.random_create.to_s)
+    click = OfferClick.new
     click.put("click_date", "#{now.to_f.to_s}")
     click.put('offer_id', params[:offer_id])
     click.put('app_id', params[:app_id])
     click.put('udid', params[:udid])
     click.put('record_id', params[:publisher_user_record_id])
     click.put('source', 'app')
-    click.put('ip_address', request.remote_ip)
+    click.put('ip_address', get_ip_address(request))
     click.save
     
-    web_request = WebRequest.new('offer_click', params, request)
+    web_request = WebRequest.new
+    web_request.put_values('offer_click', params, request)
     web_request.save
     
     render :template => 'layouts/success'
@@ -93,7 +96,8 @@ class SubmitClickController < ApplicationController
   def ad
     return unless verify_params([:campaign_id, :app_id, :udid])
 
-    web_request = WebRequest.new('adclick', params, request)
+    web_request = WebRequest.new
+    web_request.put_values('adclick', params, request)
     web_request.save
 
     render :template => 'layouts/success'

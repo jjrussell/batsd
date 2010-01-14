@@ -1,7 +1,8 @@
 class Reward < SimpledbResource
-  def initialize(key = nil, options = {})
-    key = UUIDTools::UUID.random_create.to_s unless key
-    super 'reward', key, options
+  self.domain_name = 'reward'
+  
+  def initialize(options = {})
+    super
     put('created', Time.now.utc.to_f.to_s) unless get('created')
   end
   
@@ -27,10 +28,5 @@ class Reward < SimpledbResource
         Stats.get_memcache_count_key('offers_revenue', get('publisher_app_id'), Time.at(get('created').to_f)), 
         false, 1.week, get('publisher_amount').to_i)      
     end
-    
-
   end
-  
-  
-  
 end

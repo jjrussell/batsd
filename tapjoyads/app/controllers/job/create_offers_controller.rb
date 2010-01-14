@@ -16,16 +16,13 @@ class Job::CreateOffersController < Job::SqsReaderController
     country_list = AWS::S3::S3Object.value 'OfferpalCountryList.txt', 'offer-data'
     countries = country_list.split(/\n/)
     
-    next_token = nil
     app_currency_list = []
-    begin
-      app_items_list = SimpledbResource.select('currency','currency_name, conversion_rate, offers_money_share, disabled_offers', 
-        "currency_name != ''", nil, next_token)
-      next_token = app_items_list.next_token
-      app_items_list.items.each do |item|
-        app_currency_list.push(item)
-      end
-    end while next_token != nil
+    
+    Currency.select({
+        :attributes => 'currency_name, conversion_rate, offers_money_share, disabled_offers',
+        :where => "currency_name != ''"}) do |item|
+      app_currency_list.push(item)
+    end
     
     drop_id = 'b7b401f73d98ff21792b49117edd8b9f'
     
@@ -38,54 +35,48 @@ class Job::CreateOffersController < Job::SqsReaderController
         url = "http://pub.myofferpal.com/#{drop_id}/showoffersAPI.action?snuid=TAPJOY_GENERIC&country=#{CGI::escape(country)}" +
           "&category=iPhone%20Optimized&offset=#{offset}"
         
-        
         begin
           json_string = download_content(url, {:timeout => 30})
           json = JSON.parse(json_string)
           
           json['offerData'].each do |offer|
-            offerpalID = 'UNKNOWN'
-            actionURL = offer['actionURL']
-            puts actionURL
+            offerpal_id = 'UNKNOWN'
+            action_url = offer['actionURL']
             
-            getpart = actionURL.split('?',2)[1]
+            getpart = action_url.split('?',2)[1]
 
             pairs = getpart.split('&')
             pairs.each do |pair|
               kv = pair.split('=')
               if kv[0] == 'offerId'
-                offerpalID = kv[1]
+                offerpal_id = kv[1]
               end
             end
             
-            puts "#{offer['name']} => #{offerpalID}"
-            
-            next if offerpalID == 'UNKNOWN'
+            next if offerpal_id == 'UNKNOWN'
             
             #now we know what the offerpal id is
-            dbOffer = CachedOffer.new(offerpalID.to_s + CGI::escape(country))
+            cached_offer = CachedOffer.new(:key => offerpal_id.to_s + CGI::escape(country))
             
-            dbOffer.put('ordinal', 100) unless dbOffer.get('ordinal')
-            dbOffer.put('name', offer['name'], {:cgi_escape => true})
-            dbOffer.put('action_url', offer['actionURL'])
-            dbOffer.put('description', offer['description'], {:cgi_escape => true})
-            dbOffer.put('instructions', offer['instructions'], {:cgi_escape => true})
-            dbOffer.put('image_html', offer['imageHTML'])
-            dbOffer.put('timeDelay', offer['timeDelay'], {:cgi_escape => true})
-            dbOffer.put('currency', 'TAPJOY_BUCKS')
-            dbOffer.put('credit_card_required', offer['creditCardRequired'])
-            dbOffer.put('cached_offer_id', UUIDTools::UUID.random_create.to_s) unless dbOffer.get('cached_offer_id')
+            cached_offer.put('name', offer['name'])
+            cached_offer.put('action_url', offer['actionURL'])
+            cached_offer.put('description', offer['description'])
+            cached_offer.put('instructions', offer['instructions'])
+            cached_offer.put('image_html', offer['imageHTML'])
+            cached_offer.put('timeDelay', offer['timeDelay'])
+            cached_offer.put('currency', 'TAPJOY_BUCKS')
+            cached_offer.put('credit_card_required', offer['creditCardRequired'])
+            cached_offer.put('cached_offer_id', UUIDTools::UUID.random_create.to_s) unless dbOffer.get('cached_offer_id')
             
             amount = offer['amount'].to_i
             amount = -1 if amount == 0
             
-            dbOffer.put('amount', amount.to_s)
-            dbOffer.put('expires',Time.now.utc.to_f.to_s)
+            cached_offer.put('amount', amount.to_s)
+            cached_offer.put('expires',Time.now.utc.to_f.to_s)
             
-            dbOffer.save
+            cached_offer.save
             
-            offer_list.push(dbOffer)
-            
+            offer_list.push(cached_offer)
           end
           
         rescue Exception => e

@@ -10,16 +10,18 @@ class WebRequest < SimpledbResource
     'adshown' => 'hourly_impressions'
   }
   
-  def initialize(path, params, request)
+  def initialize(options = {})
+    super({:load => false}.merge(options))
+  end
+
+  def dynamic_domain_name
     @now = Time.now.utc
     date = @now.iso8601[0,10]
-    
-    key = UUIDTools::UUID.random_create.to_s
     num = rand(MAX_WEB_REQUEST_DOMAINS)
-    domain_name = "web-request-#{date}-#{num}"
-    
-    super domain_name, key, {:load => false}
-    
+    "web-request-#{date}-#{num}"
+  end
+  
+  def put_values(path, params, request)
     put('path', path)
     put('time', @now.to_f.to_s)
     

@@ -1,6 +1,8 @@
+# TODO: Don't use this domain any more. Report errors to new-relic instead.
 class Error < SimpledbResource
-  def initialize
-    key = UUIDTools::UUID.random_create.to_s
-    super 'error', key, {:load => false}
+  self.domain_name = 'error'
+  
+  def initialize(options = {})
+    super({:load => false}.merge(options))
   end
 end

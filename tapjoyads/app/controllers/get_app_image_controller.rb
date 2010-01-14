@@ -13,7 +13,7 @@ class GetAppImageController < ApplicationController
         AWS::S3::S3Object.value image_name, 'app-icons'
       end
       
-     send_data(image, :type => 'image/png', :filename => "#{app_id}.png", :disposition => 'inline')
+      send_data(image, :type => 'image/png', :filename => "#{app_id}.png", :disposition => 'inline')
     else
       image = get_from_cache_and_save("icon.s3.#{image_name.hash}") do
         image_content = AWS::S3::S3Object.value image_name, 'app-icons'

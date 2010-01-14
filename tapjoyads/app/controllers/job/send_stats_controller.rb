@@ -39,12 +39,12 @@ class Job::SendStatsController < Job::JobController
     app_count = 0
     data_sent = 0
     
-    SimpledbResource.select('app') do |app|
+    App.select do |app|
       Rails.logger.info "#{app.get('name')} #{app.key}"
       
       stats = {}
-      stat_today = Stats.new("app.#{today}.#{app.key}")
-      stat_tomorrow = Stats.new("app.#{tomorrow}.#{app.key}")
+      stat_today = Stats.new(:key => "app.#{today}.#{app.key}")
+      stat_tomorrow = Stats.new(:key => "app.#{tomorrow}.#{app.key}")
       
       stats_map.each do |sdb_type, sql_type|
         # Last 18 hours of today, first 6 hours of tomorrow.

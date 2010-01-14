@@ -1,5 +1,3 @@
 class Campaign < SimpledbResource
-  def initialize(key, options = {})
-    super 'campaign', key, options  
-  end
+  self.domain_name = 'campaign'
 end

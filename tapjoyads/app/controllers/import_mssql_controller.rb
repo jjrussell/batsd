@@ -7,9 +7,7 @@ class ImportMssqlController < ApplicationController
   protect_from_forgery :except => [:publisher_ad, :app, :campaign]
 
   def user
-    user_id = params[:user_id]
-
-    user = User.new(user_id)
+    user = User.new(:key => params[:user_id])
     user.put('user_id', params[:user_id])
     user.put('partner_id', params[:partner_id])
     user.put('email', params[:email])
@@ -24,20 +22,9 @@ class ImportMssqlController < ApplicationController
 
 
   def partner
-    if (not params[:partner_id])
-      error = Error.new
-      error.put('request', request.url)
-      error.put('function', 'connect')
-      error.put('ip', request.remote_ip)
-      error.save
-      Rails.logger.info "missing required params"
-      render :text => "missing required params"
-      return
-    end
+    return unless verify_params([:partner_id])
 
-    partner_id = params[:partner_id]
-
-    partner = Partner.new(partner_id)
+    partner = Partner.new(:key => params[:partner_id])
     partner.put('partner_id', params[:partner_id])
     partner.put('contact_name', params[:contact_name])
     partner.put('contact_phone', params[:contact_phone])
@@ -50,60 +37,41 @@ class ImportMssqlController < ApplicationController
   end
       
   def currency
-    if (not params[:app_id])
-      error = Error.new
-      error.put('request', request.url)
-      error.put('function', 'connect')
-      error.put('ip', request.remote_ip)
-      error.save
-      Rails.logger.info "missing required params"
-      render :text => "missing required params"
-      return
-    end
-
-    app_id = params[:app_id]
-
-    app = Currency.new(app_id)
+    return unless verify_params([:app_id])
     
-    app.put('currency_name',params[:currency_name])
-    app.put('conversion_rate', params[:conversion_rate])
-    app.put('initial_balance', params[:initial_balance])
-    app.put('virtual_goods_currency', params[:virtual_goods_currency])
-    app.put('secret_key', params[:secret_key]) if params[:secret_key] != ''
-    app.put('callback_url', params[:callback_url])
-    app.put('cs_callback_url', params[:cs_callback_url])
-    app.put('offers_money_share', params[:offers_money_share])
-    app.put('installs_money_share', params[:installs_money_share])
-    app.put('disabled_offers', params[:disabled_offers])
-    app.put('disabled_apps', params[:disabled_apps]) 
-    app.put('only_free_apps', params[:only_free_apps])
-    app.put('show_rating_offer', params[:show_rating_offer])
+    currency = Currency.new(:key => params[:app_id])
+    
+    currency.put('currency_name',params[:currency_name])
+    currency.put('conversion_rate', params[:conversion_rate])
+    currency.put('initial_balance', params[:initial_balance])
+    currency.put('virtual_goods_currency', params[:virtual_goods_currency])
+    currency.put('secret_key', params[:secret_key]) if params[:secret_key] != ''
+    currency.put('callback_url', params[:callback_url])
+    currency.put('cs_callback_url', params[:cs_callback_url])
+    currency.put('offers_money_share', params[:offers_money_share])
+    currency.put('installs_money_share', params[:installs_money_share])
+    currency.put('disabled_offers', params[:disabled_offers])
+    currency.put('disabled_apps', params[:disabled_apps]) 
+    currency.put('only_free_apps', params[:only_free_apps])
+    currency.put('show_rating_offer', params[:show_rating_offer])
 
-    app.save
+    currency.save
 
     render :template => 'layouts/success'
   end
   
   def publisher_ad
-    if ( (not params[:ad_id]) || (not params[:partner_id]) )
-      error = Error.new
-      error.put('request', request.url)
-      error.put('function', 'connect')
-      error.put('ip', request.remote_ip)
-      error.save
-      Rails.logger.info "missing required params"
-      render :text => "missing required params"
-      return
-    end
+    return unless verify_params([:ad_id, :partner_id])
     
     ad_id = params[:ad_id]
   
-    ad = PublisherAd.new(ad_id)
+    ad = PublisherAd.new(:key => ad_id)
+    
     unless ad.get('next_run_time')
-        next_run_time = (Time.now.utc).to_f.to_s
-        ad.put('next_run_time', next_run_time)     
-        ad.put('interval_update_time','60')
+      ad.put('next_run_time', Time.now.utc.to_f.to_s)     
+      ad.put('interval_update_time','60')
     end
+    
     ad.put('partner_id', params[:partner_id])
     ad.put('app_id_to_advertise', params[:app_id_to_advertise]) if params[:app_id_to_advertise]
     ad.put('app_id_restricted', params[:app_id_restricted]) if params[:app_id_restricted]
@@ -121,39 +89,27 @@ class ImportMssqlController < ApplicationController
     ad.save
   
     #store an image in s3
-    time_log("Stored in s3") do
-      AWS::S3::S3Object.store "raw." + ad_id, params[:image], 'publisher-ads'
-      AWS::S3::S3Object.store "base64." + ad_id, Base64.b64encode(params[:image]), 'publisher-ads'
-    end
+    AWS::S3::S3Object.store "raw." + ad_id, params[:image], 'publisher-ads'
+    AWS::S3::S3Object.store "base64." + ad_id, Base64.b64encode(params[:image]), 'publisher-ads'
   
     render :template => 'layouts/success'
   end
   
   def app
-    if (not params[:app_id])
-      error = Error.new
-      error.put('request', request.url)
-      error.put('function', 'connect')
-      error.put('ip', request.remote_ip)
-      error.save
-      Rails.logger.info "missing required params"
-      render :text => "missing required params"
-      return
-    end
+    return unless verify_params([:app_id])
 
     app_id = params[:app_id]
 
-    app = App.new(app_id)
+    app = App.new(:key => app_id)
+    
     unless app.get('next_run_time')
-        next_run_time = (Time.now.utc).to_f.to_s
-        app.put('next_run_time', next_run_time)     
-        app.put('interval_update_time','60')
+      app.put('next_run_time', Time.now.utc.to_f.to_s)     
+      app.put('interval_update_time','60')
     end
 
     unless app.get('next_ad_optimization_time')
-        next_run_time = (Time.now.utc).to_f.to_s
-        app.put('next_ad_optimization_time', next_run_time)     
-        app.put('ad_optimization_interval_update_time','60')
+      app.put('next_ad_optimization_time', Time.now.utc.to_f.to_s)     
+      app.put('ad_optimization_interval_update_time','60')
     end
 
     app.put('name',params[:name], {:cgi_escape => true})
@@ -174,58 +130,46 @@ class ImportMssqlController < ApplicationController
     app.put('rotation_direction', params[:rotation_direction])
     app.put('balance', params[:balance])
     app.put('iphone_only', params[:iphone_only]) if params[:iphone_only]
-    app.put('description_1',' ') if app.get('description_1')
-    app.put('description_2',' ') if app.get('description_2')
-    app.put('description_3',' ') if app.get('description_3')
+    
+    app.delete('description_1') if app.get('description_1')
+    app.delete('description_2') if app.get('description_2')
+    app.delete('description_3') if app.get('description_3')
 
     app.save
 
-    time_log("Stored in s3") do
-      AWS::S3::S3Object.store app_id, params[:icon], 'app-icons'
-      save_to_cache("icon.s3.#{app_id.hash}", Base64.encode64(params[:icon]))
-      AWS::S3::S3Object.store app_id, params[:screenshot], 'app-screenshots'
-    end
+    AWS::S3::S3Object.store app_id, params[:icon], 'app-icons'
+    save_to_cache("icon.s3.#{app_id.hash}", Base64.encode64(params[:icon]))
+    AWS::S3::S3Object.store app_id, params[:screenshot], 'app-screenshots'
 
     render :template => 'layouts/success'
   end
     
   def campaign
-    if ( (not params[:campaign_id]) || (not params[:app_id]) )
-      error = Error.new
-      error.put('request', request.url)
-      error.put('function', 'connect')
-      error.put('ip', request.remote_ip)
-      error.save
-      Rails.logger.info "missing required params"
-      render :text => "missing required params"
-      return
-    end
+    return unless verify_params([:app_id, :campaign_id])
     
     campaign_id = params[:campaign_id]
   
-    campaign = Campaign.new(campaign_id)
-    campaign.put('app_id', params[:app_id])
-    campaign.put('ad_space', '1')
+    campaign = Campaign.new(:key => campaign_id)
     
     unless campaign.get('next_run_time')
-        next_run_time = (Time.now.utc).to_f.to_s
-        campaign.put('next_run_time', next_run_time)     
-        campaign.put('interval_update_time','60')
+      campaign.put('next_run_time', Time.now.utc.to_f.to_s)     
+      campaign.put('interval_update_time','60')
     end
     
     unless campaign.get('next_ecpm_update')
-        next_run_time = (Time.now.utc).to_f.to_s
-        campaign.put('next_ecpm_update', next_run_time)     
-        campaign.put('ecpm_interval_update_time','3660') #update ecpm once an hour at most
+      campaign.put('next_ecpm_update', Time.now.utc.to_f.to_s)     
+      campaign.put('ecpm_interval_update_time','3660') #update ecpm once an hour at most
     end
 
     padded_ecpm = '%08d' % (params[:ecpm].to_f * 100)
-
+    campaign.put('ecpm', padded_ecpm)
+    
+    campaign.put('app_id', params[:app_id])
+    campaign.put('ad_space', '1')
     campaign.put('network_id', params[:network_id])
     campaign.put('network_name', params[:network_name])
     campaign.put('name', params[:name])
     campaign.put('description', params[:description])
-    campaign.put('ecpm', padded_ecpm)
     campaign.put('status', params[:status])
     campaign.put('call_ad_shown', params[:call_ad_shown])
     campaign.put('format', params[:format])

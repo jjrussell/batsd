@@ -63,4 +63,29 @@ class MemcachedHelperTest < ActiveSupport::TestCase
     assert_equal 5, increment_count_in_cache(key2, false, 1.week, 5)
     assert_equal 5, get_count_in_cache(key2)
   end
+  
+  test "compare and swap" do
+    
+    thread_list = []
+    expected_val = ''
+    10.times do
+      expected_val += 'a'
+      Thread.new do
+        compare_and_swap_in_cache('foo', true) do |mc_val|
+          if mc_val
+            val = mc_val + 'a'
+          else
+            val = 'a'
+          end
+          val
+        end
+      end
+    end
+    
+    thread_list.each do |thread|
+      thread.join
+    end
+    
+    assert_equal(expected_val, get_from_cache('foo'))
+  end
 end

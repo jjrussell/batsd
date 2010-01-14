@@ -1,5 +1,3 @@
 class PublisherUserRecord < SimpledbResource
-  def initialize(key, options = {})
-    super 'publisher-user-record', key, options  
-  end
+  self.domain_name = 'publisher-user-record'
 end

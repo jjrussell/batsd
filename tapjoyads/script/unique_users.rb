@@ -15,13 +15,13 @@ puts "Start date: #{date_string}, num hours: #{num_hours}"
 
 start_time = Time.now
 
-num_apps = SimpledbResource.count('app')
+num_apps = App.count
 puts "#{num_apps} total apps in the system."
 
 puts "Num\tAppName\tAppId\tTotalConnects\tUniqueConnects"
 
 app_num = 0
-SimpledbResource.select('app') do |app|
+Apps.select do |app|
   udids = {}
   app_num += 1
   print "#{app_num}\t#{app.get('name')}\t#{app.key}\t"
@@ -30,7 +30,8 @@ SimpledbResource.select('app') do |app|
   
   total_count = 0
   MAX_WEB_REQUEST_DOMAINS.times do |num|
-    total_count += SimpledbResource.count("web-request-#{date_string}-#{num}", where)
+    total_count += SimpledbResource.count(:domain_name => "web-request-#{date_string}-#{num}", 
+        :where => where)
   end
   
   print "#{total_count}\t"
@@ -40,7 +41,7 @@ SimpledbResource.select('app') do |app|
   end
   
   MAX_WEB_REQUEST_DOMAINS.times do |num|
-    SimpledbResource.select("web-request-#{date_string}-#{num}", '*', where) do |web_request|
+    SimpledbResource.select(:domain_name => "web-request-#{date_string}-#{num}", :where => where) do |web_request|
       udids[web_request.get('udid')] = true
     end
   end

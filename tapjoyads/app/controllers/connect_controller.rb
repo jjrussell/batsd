@@ -8,14 +8,13 @@ class ConnectController < ApplicationController
     
     if params[:udid] == '' or params[:app_id] == ''
       log_missing_required_params
-      Rails.logger.info "missing required params"
       render :text => "missing required params"
       return
     end
     
     #add this app to the device list
     time_log("Check conversions and maybe add to sqs") do
-      click = StoreClick.new("#{params[:udid]}.#{params[:app_id]}")
+      click = StoreClick.new(:key => "#{params[:udid]}.#{params[:app_id]}")
       unless (click.attributes.empty? || click.get('installed'))
         logger.info "Added conversion to sqs queue"
         message = {:udid => params[:udid], :app_id => params[:app_id], 
@@ -24,16 +23,18 @@ class ConnectController < ApplicationController
       end
     end
     
-    device_app = DeviceAppList.new(params[:udid])
+    device_app = DeviceAppList.new(:key => params[:udid])
     unless device_app.get('app.' + params[:app_id])
       device_app.put('app.' + params[:app_id],  Time.now.utc.to_f.to_s)
       device_app.save
       
-      web_request = WebRequest.new('new_user', params, request)
+      web_request = WebRequest.new
+      web_request.put_values('new_user', params, request)
       web_request.save
     end
 
-    web_request = WebRequest.new('connect', params, request)
+    web_request = WebRequest.new
+    web_request.put_values('connect', params, request)
     web_request.save
   
     render :template => 'layouts/success'

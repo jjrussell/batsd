@@ -1,5 +1,6 @@
 class DeviceAppList < SimpledbResource
-  def initialize(key, options = {})
+
+  def dynamic_domain_name
     # We need to lookup the domain number for this device, from the device_lookup domain.
     #lookup = DeviceLookup.new(key)
     #domain_number = lookup.get('app_list')
@@ -13,9 +14,7 @@ class DeviceAppList < SimpledbResource
     
     domain_number = 1 #todo: be smart with memcache
     
-    domain = "device_app_list_#{domain_number}"   
-
-    super domain, key, options
+    return  "device_app_list_#{domain_number}"
   end
   
   ##

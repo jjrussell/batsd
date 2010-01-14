@@ -1,5 +1,3 @@
 class RateApp < SimpledbResource
-  def initialize(key, options = {})
-    super 'rate_app', key, options
-  end
+  self.domain_name = 'rate_app'
 end

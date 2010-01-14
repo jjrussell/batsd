@@ -1,10 +1,8 @@
 class Stats < SimpledbResource
   include MemcachedHelper
 
-  def initialize(key, options = {})
-    super 'stats', key, options
-  end
-  
+  self.domain_name = 'stats'
+
   ##
   # Gets the hourly stats for a stat type, from memcache and simpledb.
   def get_hourly_count(stat_name)

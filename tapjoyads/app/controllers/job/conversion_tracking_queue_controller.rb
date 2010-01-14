@@ -19,17 +19,18 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
     click = StoreClick.new("#{udid}.#{advertiser_app_id}")
 
     if (click.get('click_date') && (not click.get('installed')) && 
-      click.get('click_date') > (Time.now.utc - 5.days).to_f.to_s ) #there has been a click but no install
-      web_request = WebRequest.new('store_install', nil, nil)
+        click.get('click_date') > (Time.now.utc - 5.days).to_f.to_s ) #there has been a click but no install
+      web_request = WebRequest.new
+      web_request.put('path', 'store_install')
       web_request.put('udid', udid)
       web_request.put('advertiser_app_id', advertiser_app_id)
       web_request.put('publisher_app_id', click.get('publisher_app_id'))
       web_request.save
       
-      adv_app = App.new(advertiser_app_id)
+      adv_app = App.new(:key => advertiser_app_id)
       
       publisher_app_id = click.get('publisher_app_id')
-      currency = Currency.new(publisher_app_id)
+      currency = Currency.new(:key => publisher_app_id)
       
       values = calculate_install_payouts(:currency => currency, :advertiser_app => adv_app)
       
@@ -41,7 +42,6 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
         click.put('currency_reward', values[:currency_reward])
         click.put('tapjoy_amount', values[:tapjoy_amount])
         click.put('offerpal_amount', values[:offerpal_amount])
-        
       end
       
       begin
@@ -65,12 +65,12 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       
       reward.save
       
-      message = reward.serialize()
+      message = reward.serialize(:attributes_only => true)
       
       SqsGen2.new.queue(QueueNames::SEND_CURRENCY).send_message(message)
       SqsGen2.new.queue(QueueNames::SEND_MONEY_TXN).send_message(message)
       
-      click.put('installed', "#{install_date.to_s}")
+      click.put('installed', install_date)
       click.save
     end
   end

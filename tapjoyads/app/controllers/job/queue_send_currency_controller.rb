@@ -9,7 +9,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
   
   def on_message(message)
     
-    reward = SimpledbResource.deserialize(message.to_s)
+    reward = Reward.deserialize(message.to_s)
     
     unless reward.get('sent_currency')
       publisher_user_id = reward.get('publisher_user_id')
@@ -18,7 +18,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         return
       end
 
-      currency = Currency.new(reward.get('publisher_app_id'))
+      currency = Currency.new(:key => reward.get('publisher_app_id'))
       callback_url = currency.get('callback_url')
     
       if callback_url == 'PLAYDOM_DEFINED'
@@ -39,13 +39,13 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
     
       if currency.get('send_offer') == '1'
         if (reward.get('type') == 'install')
-          adv_app = App.new(reward.get('advertiser_app_id'))
+          adv_app = App.new(:key => reward.get('advertiser_app_id'))
           name = adv_app.get('name')
           id = 'application'
         elsif (reward.get('type') == 'offer')
           offer_id = reward.get('cached_offer_id')
           if offer_id
-            offer = CachedOffer.new(offer_id)
+            offer = CachedOffer.new(:key => offer_id)
             id = offer.key
             name = offer.get('name')
           else
@@ -69,7 +69,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       reward.put('sent_currency', Time.now.utc.to_f.to_s)
       reward.save
       
-      Reward.new(reward.key).update_counters
+      reward.update_counters
     
       download_with_retry(callback_url, {:timeout => 15},
           {:retries => 10, :alert => true, :final_action => 'send_currency_download_complete'}, 

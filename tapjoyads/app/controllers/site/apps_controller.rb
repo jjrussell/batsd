@@ -1,7 +1,7 @@
 class Site::AppsController < Site::SiteController
   
   def show
-    @app = App.new(params[:id])
+    @app = App.new(:key => params[:id])
     respond_to do |format|
       if @app.get('name')
         format.xml #show.builder
@@ -13,12 +13,12 @@ class Site::AppsController < Site::SiteController
   
   def index
     @apps = Array.new
-    partner = Partner.new(params[:partner_id])
+    partner = Partner.new(:key => params[:partner_id])
     if partner.get('apps')
       Rails.logger.info partner.get('apps')
       app_pairs = JSON.parse(partner.get('apps'))
       app_pairs.each do |app_pair|
-        @apps.push(App.new(app_pair[0].downcase))
+        @apps.push(App.new(:key => app_pair[0].downcase))
       end
     end
     

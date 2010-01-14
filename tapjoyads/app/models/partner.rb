@@ -1,5 +1,3 @@
 class Partner < SimpledbResource
-  def initialize(key, options = {})
-    super 'partner', key, options
-  end
+  self.domain_name = 'partner'
 end

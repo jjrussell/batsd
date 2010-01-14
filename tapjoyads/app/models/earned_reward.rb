@@ -1,5 +1,3 @@
 class EarnedReward < SimpledbResource
-  def initialize(key, options = {})
-    super 'earned_reward', key, options
-  end
+  self.domain_name = 'earned_reward'
 end

@@ -11,6 +11,7 @@ include Magick
 class GetadController < ApplicationController
   include DownloadContent
   include MemcachedHelper
+  include ApplicationHelper
          
   around_filter :catch_exceptions
   
@@ -24,8 +25,7 @@ class GetadController < ApplicationController
       return socialreach
     end
     
-    campaign = Campaign.new(params[:campaign_id])
-    Rails.logger.info campaign.domain_name
+    campaign = Campaign.new(:key => params[:campaign_id])
     network_name = campaign.get('network_name')
 
     Rails.logger.info "network_name: #{network_name}"
@@ -246,16 +246,9 @@ class GetadController < ApplicationController
   end
   
   def publisher_ad(ad_id)
-    ad = PublisherAd.new(ad_id)
+    ad = PublisherAd.new(:key => ad_id)
     
     if (not ad.get('url'))
-      error = ::Error.new
-      error.put('request', request.url)
-      error.put('function', 'getad/publisher_ad')
-      error.put('ip', request.remote_ip)
-      error.save
-      Rails.logger.info "can't find ad_id in simpledb: #{ad_id}"
-
       no_ad
       return
     end
@@ -290,8 +283,7 @@ class GetadController < ApplicationController
   
   private
   def get_ip_address
-    ip_address = request.headers['X-Forwarded-For'] || request.remote_ip
-    ip_address.gsub!(/,.*$/, '')
+    ip_address = get_ip_address(request)
     if ip_address == '127.0.0.1'
       ip_address = '72.164.173.18'
     end

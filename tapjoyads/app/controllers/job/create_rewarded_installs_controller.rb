@@ -13,29 +13,18 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
   def on_message(message)
     
     #first get the list of all apps paying for installs
-    next_token = nil
     app_list = []
-    begin
-      app_items = SimpledbResource.select('app','*', 
-        "payment_for_install > '0' and install_tracking = '1' and rewarded_installs_ordinal != '' and balance > '0' ", " rewarded_installs_ordinal",
-        next_token)
-      next_token = app_items.next_token
-      app_items.items.each do |item|
-        app_list.push(item)
-      end
-    end while next_token != nil
+    App.select(
+        :where => "payment_for_install > '0' and install_tracking = '1' and rewarded_installs_ordinal != '' and balance > '0'",
+        :order_by => "rewarded_installs_ordinal") do |item|
+      app_list.push(item)
+    end
     
     #now get the list of all apps with currency
-    next_token = nil
     app_currency_list = []
-    begin
-      app_items_list = SimpledbResource.select('currency','*', 
-        "currency_name != ''", nil, next_token)
-      next_token = app_items_list.next_token
-      app_items_list.items.each do |item|
-        app_currency_list.push(item)
-      end
-    end while next_token != nil
+    Currency.select(:where => "currency_name != ''") do |item|
+      app_currency_list.push(item)
+    end
       
     #go through and create app-specific lists for each app
     app_currency_list.each do |currency|
@@ -86,8 +75,6 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
       AWS::S3::S3Object.store "redirect.installs_" + currency.key, 
         xml, RUN_MODE_PREFIX + 'offer-data'
       save_to_cache("redirect.installs.s3.#{currency.key}", xml)
-      
     end
-        
   end
 end

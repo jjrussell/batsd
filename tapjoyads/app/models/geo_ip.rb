@@ -1,5 +1,3 @@
 class GeoIP < SimpledbResource
-  def initialize(key, options = {})
-    super 'geo-ip', key, options  
-  end
+  self.domain_name = 'geo_ip'
 end

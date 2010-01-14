@@ -9,14 +9,15 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
   private
   
   def on_message(message)
-    reward = SimpledbResource.deserialize(message.to_s)
+    reward = Reward.deserialize(message.to_s)
     
     unless reward.get('sent_money_txn')
       Rails.logger.info "Sending money transaction to sql: #{reward.key}"
 
       unless reward.get('publisher_amount')
-        values = calculate_install_payouts(:currency => Currency.new(reward.get('publisher_app_id')), 
-            :advertiser_app => App.new(reward.get('advertiser_app_id')))
+        values = calculate_install_payouts(
+            :currency => Currency.new(:key => reward.get('publisher_app_id')), 
+            :advertiser_app => App.new(:key => reward.get('advertiser_app_id')))
 
         reward.put('advertiser_amount', values[:advertiser_amount])
         reward.put('publisher_amount', values[:publisher_amount])
