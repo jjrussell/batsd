@@ -21,8 +21,7 @@ class GetadController < ApplicationController
     return unless verify_params([:udid, :app_id, :campaign_id])
     
     if params[:campaign_id] == ""
-      no_ad
-      return
+      return socialreach
     end
     
     campaign = Campaign.new(params[:campaign_id])
