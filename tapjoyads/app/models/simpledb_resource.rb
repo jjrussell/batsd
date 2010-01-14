@@ -360,15 +360,13 @@ class SimpledbResource
     attrs_to_delete = json['attrs_to_delete']
     attr_names_to_delete = json['attr_names_to_delete']
     
-    return self.new({
-      :load => false,
-      :domain_name => domain_name, 
-      :key => key,
-      :attributes => attributes, 
-      :attrs_to_add => attrs_to_add,
-      :attrs_to_replace => attrs_to_replace,
-      :attrs_to_delete => attrs_to_delete,
-      :attr_names_to_delete => attr_names_to_delete})
+    options = {:load => false, :domain_name => domain_name, :key => key, :attributes => attributes}
+    options[:attrs_to_add] = attrs_to_add if attrs_to_add
+    options[:attrs_to_replace] = attrs_to_replace if attrs_to_replace
+    options[:attrs_to_delete] = attrs_to_delete if attrs_to_delete
+    options[:attr_names_to_delete] = attr_names_to_delete if attr_names_to_delete
+    
+    return self.new(options)
   end
   
   private
