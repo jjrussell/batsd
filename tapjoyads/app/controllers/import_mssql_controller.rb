@@ -164,11 +164,14 @@ class ImportMssqlController < ApplicationController
     app.put('partner_id', params[:partner_id])
     app.put('os', params[:os])
     app.put('launched', params[:launched])
+    app.put('pay_per_click', params[:pay_per_click])
     app.put('status', params[:status])
     app.put('color', params[:color])
     app.put('price', params[:price]) 
     app.put('description', params[:description], {:cgi_escape => true}) if params[:description]
     app.put('has_location', params[:has_location])
+    app.put('rotation_time', params[:rotation_time])
+    app.put('rotation_direction', params[:rotation_direction])
     app.put('balance', params[:balance])
     app.put('iphone_only', params[:iphone_only]) if params[:iphone_only]
     app.put('description_1',' ') if app.get('description_1')
