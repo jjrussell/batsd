@@ -64,7 +64,7 @@ class GetadController < ApplicationController
     url = 'http://ads.mp.mydas.mobi/getAd.php5' +
         "?apid=#{CGI::escape(apid)}" +
         "&auid=#{CGI::escape(auid)}" +
-        "&uip=#{get_ip_address}" +
+        "&uip=#{get_ip_address_local}" +
         "&ua=#{USER_AGENT}"
     
     content = download_content(url)
@@ -117,7 +117,7 @@ class GetadController < ApplicationController
         "&width=320&height=50" +
         "&platform=iphone" +
         "&fmt=json" +
-        "&clientip=#{get_ip_address}"
+        "&clientip=#{get_ip_address_local}"
     
     json_string = download_content(url)
     json = JSON.parse(json_string).first
@@ -150,7 +150,7 @@ class GetadController < ApplicationController
   
   def adfonic(slot_id)
     url = "http://adfonic.net/ad/#{CGI::escape(slot_id)}" +
-        "?r.ip=#{get_ip_address}" +
+        "?r.ip=#{get_ip_address_local}" +
         "&r.id=#{CGI::escape(params[:udid])}" +
         "&test=0" +
         "&t.format=json" +
@@ -282,7 +282,7 @@ class GetadController < ApplicationController
   end
   
   private
-  def get_ip_address
+  def get_ip_address_local
     ip_address = get_ip_address(request)
     if ip_address == '127.0.0.1'
       ip_address = '72.164.173.18'
