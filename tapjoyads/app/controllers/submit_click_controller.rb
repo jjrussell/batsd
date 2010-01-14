@@ -1,5 +1,6 @@
 class SubmitClickController < ApplicationController
   include RewardHelper
+  include RightAws
   
   def store
     return unless verify_params([:advertiser_app_id, :udid, :publisher_app_id, :publisher_user_record_id])
