@@ -219,12 +219,13 @@ class ImportMssqlController < ApplicationController
         campaign.put('ecpm_interval_update_time','3660') #update ecpm once an hour at most
     end
 
+    padded_ecpm = '%08d' % (params[:ecpm].to_f * 100)
 
     campaign.put('network_id', params[:network_id])
     campaign.put('network_name', params[:network_name])
     campaign.put('name', params[:name])
     campaign.put('description', params[:description])
-    campaign.put('ecpm', params[:ecpm])
+    campaign.put('ecpm', padded_ecpm)
     campaign.put('status', params[:status])
     campaign.put('call_ad_shown', params[:call_ad_shown])
     campaign.put('format', params[:format])
@@ -242,6 +243,7 @@ class ImportMssqlController < ApplicationController
     campaign.put('event3', params[:event3])
     campaign.put('event4', params[:event4])
     campaign.put('event5', params[:event5])
+    campaign.put('library_name', params[:library_name])
     
     campaign.save
   
