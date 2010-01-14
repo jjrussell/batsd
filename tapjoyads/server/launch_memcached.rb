@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 # Launches memcached servers. This will be run as webuser on startup on all memcached servers.
 
 `killall memcached`
