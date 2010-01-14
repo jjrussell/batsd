@@ -4,6 +4,8 @@ class CompleteOfferController < ApplicationController
   def index
     return unless verify_params([:offerid, :app_id, :udid, :url])
 
+    now = Time.now.utc
+    
     click = OfferClick.new
     click.put("click_date", "#{now.to_f.to_s}")
     click.put('offer_id', params[:offerid])
