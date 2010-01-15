@@ -52,7 +52,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
         raise "Can't find record_id #{click.get('publisher_user_record_id')} on click #{click.key}"
       end
       
-      reward = Reward.new
+      reward = Reward.new(:load => false)
       reward.put('type', 'install')
       reward.put('publisher_app_id', publisher_app_id)
       reward.put('advertiser_app_id', advertiser_app_id)
