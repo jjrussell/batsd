@@ -10,7 +10,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'yesterday_campaign_stats', :interval => 30.minutes
     
     # SQS Queues:
-    s.add_job 'conversion_tracking_queue', :interval => 5.seconds
+    s.add_job 'conversion_tracking_queue', :interval => 2.seconds
     s.add_job 'rate_offer_queue', :interval => 5.seconds
     s.add_job 'failed_sdb_saves_queue', :interval => 5.seconds
     s.add_job 'cleanup_web_requests', :interval => 1.minutes
