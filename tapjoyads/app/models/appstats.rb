@@ -53,7 +53,7 @@ class Appstats
         date = time.iso8601[0,10]
         key = "app.#{date}.#{@app_key}"
         unless @stat_rows[key]
-          @stat_rows[key] = Stats.new(key)
+          @stat_rows[key] = Stats.new(:key => key)
         end
         stat = @stat_rows[key]
         hourly_stats = stat.get_hourly_count(stat_type)
@@ -72,7 +72,7 @@ class Appstats
       date = time.iso8601[0,10]
       key = "app.#{date}.#{@app_key}"
       unless @stat_rows[key]
-        @stat_rows[key] = Stats.new(key)
+        @stat_rows[key] = Stats.new(:key => key)
       end
       stat = @stat_rows[key]
       puts stat.get_hourly_count(stat_type).to_json + date
