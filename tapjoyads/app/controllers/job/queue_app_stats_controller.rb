@@ -124,9 +124,9 @@ class Job::QueueAppStatsController < Job::SqsReaderController
   
   def send_stats_to_windows(date, stat_types, item_id, datas)
     # Amazon:
-    url = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/CronService.asmx/SubmitMultipleStats?'
+    #url = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/CronService.asmx/SubmitMultipleStats?'
     # Mosso:
-    #url = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/CronService.asmx/SubmitMultipleStats?'
+    url = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/CronService.asmx/SubmitMultipleStats?'
     
     url += "Date=#{CGI::escape(date)}"
     url += "&StatTypes=#{CGI::escape(stat_types)}"
