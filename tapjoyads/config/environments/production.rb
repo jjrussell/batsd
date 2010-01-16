@@ -26,10 +26,7 @@ config.action_controller.allow_forgery_protection    = false
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-MEMCACHE_SERVERS = ['10.254.203.164',
-                    '10.210.185.220',
-                    
-                    '10.241.35.51',
+MEMCACHE_SERVERS = ['10.241.35.51',
                     '10.240.58.197',
                     '10.241.29.206',
                     '10.240.85.188',
