@@ -28,8 +28,6 @@ config.action_controller.allow_forgery_protection    = false
 
 MEMCACHE_SERVERS = ['10.254.203.164',
                     '10.210.185.220',
-                    '10.254.131.86',
-                    '10.210.199.175',
                     
                     '10.241.35.51',
                     '10.240.58.197',
@@ -43,8 +41,6 @@ EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
 RUN_MODE_PREFIX = ''
 
 REDIRECT_URI = 'http://webservice-lb-624573684.us-east-1.elb.amazonaws.com/'
-
-NEXT_DEVICE_APP_LIST_TABLE = '1'
 
 MAX_DEVICE_APP_DOMAINS = 10
 MAX_WEB_REQUEST_DOMAINS = 10
