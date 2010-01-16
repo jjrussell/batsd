@@ -78,4 +78,4 @@ end
 # Must use the system command to run, not backticks, otherwise it will be non-interactive.
 system("script/cloudrun '#{server_groups}' 'cd server && svn update && ./deploy.rb #{version_number}'")
 
-puts "Done deploying"
+puts "Done deploying: #{Time.now}"
