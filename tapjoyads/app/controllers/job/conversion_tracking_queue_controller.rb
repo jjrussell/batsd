@@ -27,7 +27,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       reward_key = click.get('reward_key') || UUIDTools::UUID.random_create.to_s
       
       reward = Reward.new(:key => reward_key)
-      unless reward.attributes.empty?
+      if reward.get('publisher_app_id') 
         Rails.logger.info 'Reward already in system. Finished processing conversion.'
         return
       end
