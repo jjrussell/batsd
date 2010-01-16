@@ -20,6 +20,18 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
 
     if (click.get('click_date') && (not click.get('installed')) && 
         click.get('click_date') > (Time.now.utc - 5.days).to_f.to_s ) #there has been a click but no install
+      
+      click.put('installed', install_date)
+      click.save
+      
+      reward_key = click.get('reward_key') || UUIDTools::UUID.random_create.to_s
+      
+      reward = Reward.new(:key => reward_key)
+      unless reward.attributes.empty?
+        Rails.logger.info 'Reward already in system. Finished processing conversion.'
+        return
+      end
+      
       web_request = WebRequest.new
       web_request.add_path('store_install')
       web_request.put('udid', udid)
@@ -52,7 +64,6 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
         raise "Can't find record_id #{click.get('publisher_user_record_id')} on click #{click.key}"
       end
       
-      reward = Reward.new(:load => false)
       reward.put('type', 'install')
       reward.put('publisher_app_id', publisher_app_id)
       reward.put('advertiser_app_id', advertiser_app_id)
@@ -62,11 +73,11 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       reward.put('currency_reward', click.get('currency_reward'))
       reward.put('tapjoy_amount', click.get('tapjoy_amount'))
       reward.put('offerpal_amount', click.get('offerpal_amount'))
-      
+    
       reward.save
-      
+    
       message = reward.serialize(:attributes_only => true)
-      
+    
       SqsGen2.new.queue(QueueNames::SEND_CURRENCY).send_message(message)
       SqsGen2.new.queue(QueueNames::SEND_MONEY_TXN).send_message(message)
       
