@@ -21,7 +21,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
     if (click.get('click_date') && (not click.get('installed')) && 
         click.get('click_date') > (Time.now.utc - 5.days).to_f.to_s ) #there has been a click but no install
       web_request = WebRequest.new
-      web_request.put('path', 'store_install')
+      web_request.add_path('store_install')
       web_request.put('udid', udid)
       web_request.put('advertiser_app_id', advertiser_app_id)
       web_request.put('publisher_app_id', click.get('publisher_app_id'))

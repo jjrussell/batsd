@@ -84,7 +84,7 @@ class GetOffersController < ApplicationController
   def get_rewarded_installs(start, max, udid, type, currency)
     app_id = params[:app_id]
     
-    device_app = DeviceAppList.new(:key => params[:udid])
+    device_app_list = DeviceAppList.new(:key => params[:udid])
     
     xml = get_from_cache_and_save("#{type}installs.s3.#{app_id}") do
       xml =  AWS::S3::S3Object.value "#{type}installs_#{app_id}", RUN_MODE_PREFIX + 'offer-data'
@@ -100,13 +100,10 @@ class GetOffersController < ApplicationController
     entire_rewarded_installs.each do |install|
       add = true
       
-      device_app.attributes.each do |app|
-        if app[0] =~ /^app/ #assuming this is how you get the key from a hash in each
-          id = app[0].split('.')[1] 
-          if udid != '298c5159a3681207eaba5a04b3573aa7b4f13d99'
-            add = false if install.include? "<AdvertiserAppID>#{id}</AdvertiserAppID>" 
-            add = false if install.include? "advertiser_app_id=#{id}"
-          end
+      if udid != '298c5159a3681207eaba5a04b3573aa7b4f13d99' # Ben's udid. Show all apps on his device.
+        device_app_list.get_app_list.each do |app_id|
+          add = false if install.include? "<AdvertiserAppID>#{app_id}</AdvertiserAppID>" 
+          add = false if install.include? "advertiser_app_id=#{app_id}"
         end
       end
       

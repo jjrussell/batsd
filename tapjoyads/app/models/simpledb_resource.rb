@@ -28,7 +28,7 @@ class SimpledbResource
   def initialize(options = {})
     should_load =                options.delete(:load)                 { true }
     load_from_memcache =         options.delete(:load_from_memcache)   { true }
-    key_obj =                    options.delete(:key)
+    @key =                       get_key_from(options.delete(:key))
     @this_domain_name =          options.delete(:domain_name)          { dynamic_domain_name() }
     @attributes =                options.delete(:attributes)           { {} }
     @attributes_to_add =         options.delete(:attrs_to_add)         { {} }
@@ -38,7 +38,6 @@ class SimpledbResource
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     @this_domain_name = get_real_domain_name(@this_domain_name)
-    @key = get_key_from(key_obj)
     
     @special_values = {
       :newline => "^^TAPJOY_NEWLINE^^",

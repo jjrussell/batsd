@@ -56,10 +56,10 @@ class SubmitClickController < ApplicationController
       SqsGen2.new.queue(QueueNames::CONVERSION_TRACKING).send_message(message)
 
       #record that the user has this app, so we don't show it again
-      device_app = DeviceAppList.new(:key => params[:udid])
-      unless device_app.get('app.' + params[:advertiser_app_id])
-        device_app.put('app.' + params[:advertiser_app_id],  Time.now.utc.to_f.to_s)
-        device_app.save
+      device_app_list = DeviceAppList.new(:key => params[:udid])
+      unless device_app_list.has_app(params[:advertiser_app_id])
+        device_app_list.set_app_ran(params[:advertiser_app_id])
+        device_app_list.save
       end
     end
     
