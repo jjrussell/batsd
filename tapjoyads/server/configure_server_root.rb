@@ -25,6 +25,8 @@
 # Time
 # Allow the system clock to be changed. See http://ubuntuforums.org/showthread.php?t=1172252
 `echo 1 > /proc/sys/xen/independent_wallclock`
+# Sometimes servers don't run ntp correctly. Maybe sleeping will help?
+sleep(5)
 `ntpdate 0.fedora.pool.ntp.org`
 `ntpd -l /mnt/log/ntpd.log`
 
