@@ -105,14 +105,21 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     stat_types = ''
     datas = ''
     
+    should_send = false
     stats.each do |s, d|
       stat_types += ',' unless stat_types == ''
       stat_types += s
       datas += ',' unless datas == ''
       datas += d.to_s
+      
+      if d != 0 and d != 10000
+        should_send = true
+      end
     end
     
-    send_stats_to_windows(today, stat_types, key, datas)
+    if should_send
+      send_stats_to_windows(today, stat_types, key, datas)
+    end
   end
   
   def send_stats_to_windows(date, stat_types, item_id, datas)
