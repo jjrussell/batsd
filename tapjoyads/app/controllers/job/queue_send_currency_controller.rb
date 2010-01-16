@@ -71,7 +71,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       
       reward.update_counters
     
-      download_with_retry(callback_url, {:timeout => 15},
+      download_with_retry(callback_url, {:timeout => 30},
           {:retries => 10, :alert => true, :final_action => 'send_currency_download_complete'}, 
           { :reward_id => reward.key, :app_id => reward.get('publisher_app_id') })
     end

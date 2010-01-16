@@ -28,7 +28,7 @@ class Job::RateOfferQueueController < Job::SqsReaderController
       url = win_lb + "SubmitCompletedRatingOffer?password=nhytgbvfr" + 
         "&PublisherUserID=#{record_id}&AppID=#{app_id}&Currency=#{amount}"
       
-      download_with_retry(url, {:timeout => 15}, {:retries => 3})
+      download_with_retry(url, {:timeout => 30}, {:retries => 3})
     end
   end
 end
