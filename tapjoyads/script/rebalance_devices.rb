@@ -49,7 +49,8 @@ where = nil
 loop do
   start_time = Time.now.utc
   main_logger.info "Starting loop #{loop_count} at #{start_time}"
-  total_items = SimpledbResource.count(:domain_name => 'device_app_list_1', :where => where)
+  #total_items = SimpledbResource.count(:domain_name => 'device_app_list_1', :where => where)
+  total_items = 20000000
   main_logger.info "#{total_items} total items to rebalance this loop."
   
   num_rebalanced = 0
@@ -80,8 +81,10 @@ loop do
     num_rebalanced += 1
     
     if num_rebalanced % 100 == 0
-      main_logger.info "#{num_rebalanced} rebalanced out of #{total_items} (with #{num_skipped} skipped)"
+      main_logger.info "#{num_rebalanced} rebalanced out of approx. #{total_items} (with #{num_skipped} skipped)"
     end
+    
+    sleep(1) if rand(10) == 0
   end
   
   main_logger.info "Loop #{loop_count} complete in #{Time.now - start_time}s"
