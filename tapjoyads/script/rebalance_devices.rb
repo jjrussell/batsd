@@ -82,9 +82,8 @@ loop do
     
     if num_rebalanced % 100 == 0
       main_logger.info "#{num_rebalanced} rebalanced out of approx. #{total_items} (with #{num_skipped} skipped)"
+      sleep(0.5)
     end
-    
-    sleep(1) if rand(10) == 0
   end
   
   main_logger.info "Loop #{loop_count} complete in #{Time.now - start_time}s"
