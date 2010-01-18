@@ -5,7 +5,7 @@ class SimpledbResource
   include MemcachedHelper
   include RightAws
   
-  attr_accessor :key, :attributes, :this_domain_name
+  attr_accessor :key, :attributes, :this_domain_name, :is_new
   cattr_accessor :domain_name, :key_format
   superclass_delegating_accessor :domain_name, :key_format
   
@@ -45,6 +45,7 @@ class SimpledbResource
     }
     
     load(load_from_memcache) if should_load
+    @is_new = @attributes.empty?
   end
   
   ##

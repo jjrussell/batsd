@@ -17,6 +17,20 @@ class DeviceAppList < SimpledbResource
     return  "device_app_list_#{domain_number}"
   end
   
+  def save(options = {})
+    if @is_new
+      # Temporary. If this is a new item, place it in a random domain, and add to the lookup table.
+      # After rebalancing is complete, this will be done in dynamic_domain_name.
+      domain_number = rand(MAX_DEVICE_APP_DOMAINS)
+      @this_domain_name = get_real_domain_name("device_app_list_#{domain_number}")
+      
+      lookup = DeviceLookup.new(:key => @key)
+      lookup.put('app_list', domain_number)
+      lookup.save
+    end
+    super(options)
+  end
+  
   ##
   # Sets the last run time for app_id to now, potentially adding a new app if it's the first run.
   def set_app_ran(app_id)
