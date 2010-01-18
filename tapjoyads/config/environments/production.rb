@@ -44,5 +44,5 @@ RUN_MODE_PREFIX = ''
 
 REDIRECT_URI = 'http://webservice-lb-624573684.us-east-1.elb.amazonaws.com/'
 
-MAX_DEVICE_APP_DOMAINS = 10
+MAX_DEVICE_APP_DOMAINS = 20
 MAX_WEB_REQUEST_DOMAINS = 10
