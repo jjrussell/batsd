@@ -39,7 +39,7 @@ items_to_delete = []
 #   end
 # end
 
-main_logger Logger.new('rebalance_devices.log')
+main_logger = Logger.new('rebalance_devices.log')
 to_delete_logger = Logger.new('to_delete.log')
 
 loop_count = 0
