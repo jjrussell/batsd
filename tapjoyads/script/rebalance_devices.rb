@@ -4,8 +4,6 @@
 
 require 'logger'
 
-STDOUT.sync = true
-
 items_to_delete = []
 
 # Deletion thread. Deletes items that have been rebalanced 15 seconds after their rebalancing.
@@ -41,7 +39,7 @@ items_to_delete = []
 #   end
 # end
 
-
+main_logger Logger.new('rebalance_devices.log')
 to_delete_logger = Logger.new('to_delete.log')
 
 loop_count = 0
@@ -50,9 +48,9 @@ where = nil
 
 loop do
   start_time = Time.now.utc
-  puts "Starting loop #{loop_count} at #{start_time}"
+  main_logger.info "Starting loop #{loop_count} at #{start_time}"
   total_items = SimpledbResource.count(:domain_name => 'device_app_list_1', :where => where)
-  puts "#{total_items} total items to rebalance this loop."
+  main_logger.info "#{total_items} total items to rebalance this loop."
   
   num_rebalanced = 0
   num_skipped = 0
@@ -82,12 +80,12 @@ loop do
     num_rebalanced += 1
     
     if num_rebalanced % 100 == 0
-      puts "#{num_rebalanced} rebalanced out of #{total_items} (with #{num_skipped} skipped)"
+      main_logger.info "#{num_rebalanced} rebalanced out of #{total_items} (with #{num_skipped} skipped)"
     end
   end
   
-  puts "Loop #{loop_count} complete in #{Time.now - start_time}s"
-  puts "num_rebalanced: #{num_rebalanced}, num_skipped: #{num_skipped}"
+  main_logger.info "Loop #{loop_count} complete in #{Time.now - start_time}s"
+  main_logger.info "num_rebalanced: #{num_rebalanced}, num_skipped: #{num_skipped}"
   loop_count += 1
   sleep(15)
   
