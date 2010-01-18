@@ -108,11 +108,9 @@ module MemcachedHelper
       end
     rescue Memcached::NotFound
       # Attribute hasn't been stored yet.
-      puts "initial set"
       cache.set(key, yield(nil))
     rescue Memcached::NotStored
       # Attribute was modified before it could write.
-      puts "modified"
       retry
     end
     

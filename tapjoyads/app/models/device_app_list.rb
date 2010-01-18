@@ -1,21 +1,20 @@
 class DeviceAppList < SimpledbResource
 
   def dynamic_domain_name
-    return  "device_app_list_1"
+    # We need to lookup the domain number for this device from the device_lookup domain.
+    lookup = DeviceLookup.new(:key => @key)
+    domain_number = lookup.get('app_list')
+
+    if domain_number.nil?
+      # For now, if it's not found, we assume it is in '1'. After rebalancing, we'll enable the below code.
+      domain_number = 1
+      # # This is a new device, so add it to the DeviceLookup table.
+      # domain_number = rand(MAX_DEVICE_APP_DOMAINS) 
+      # lookup.put('app_list', domain_number)
+      # lookup.save
+    end
     
-    # TODO: enable this code after re-balancing.
-    # # We need to lookup the domain number for this device from the device_lookup domain.
-    # lookup = DeviceLookup.new(:key => @key)
-    # domain_number = lookup.get('app_list')
-    # 
-    # if domain_number.nil?
-    #  # This is a new device, so add it to the DeviceLookup table.
-    #  domain_number = rand(MAX_DEVICE_APP_DOMAINS) 
-    #  lookup.put('app_list', domain_number)
-    #  lookup.save(:updated_at => false)
-    # end
-    # 
-    # return  "device_app_list_#{domain_number}"
+    return  "device_app_list_#{domain_number}"
   end
   
   ##

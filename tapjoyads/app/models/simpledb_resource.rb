@@ -373,7 +373,7 @@ class SimpledbResource
   def load_from_sdb
     attributes = {}
     begin
-      response = @@sdb.get_attributes(@this_domain_name, key)
+      response = @@sdb.get_attributes(@this_domain_name, @key)
       attributes = response[:attributes]
     rescue AwsError => e
       if e.message.starts_with?("NoSuchDomain")

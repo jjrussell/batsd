@@ -29,5 +29,5 @@ RUN_MODE_PREFIX = 'test_'
 
 REDIRECT_URI = 'http://test-lb-310199522.us-east-1.elb.amazonaws.com/'
 
-MAX_DEVICE_APP_DOMAINS = 2
+MAX_DEVICE_APP_DOMAINS = 3
 MAX_WEB_REQUEST_DOMAINS = 2
