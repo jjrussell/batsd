@@ -120,7 +120,11 @@ module MemcachedHelper
     cache = clone ? CACHE.clone : CACHE
     key = CGI::escape(key)
     
-    cache.delete(key)
+    begin
+      cache.delete(key)
+    rescue Memcached::NotFound
+      Rails.logger.debug("Memcached::NotFound when deleting.")
+    end
   end
   
   module_function
