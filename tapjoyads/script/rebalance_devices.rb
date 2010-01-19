@@ -56,6 +56,10 @@ loop do
   num_rebalanced = 0
   num_skipped = 0
   
+  device_lookup_items = []
+  device_app_list_items = []
+  new_domain_number = rand(MAX_DEVICE_APP_DOMAINS)
+  
   SimpledbResource.select(:domain_name => 'device_app_list_1', :where => where) do |device_app_list|
     device_lookup = DeviceLookup.new(:key => device_app_list.key)
     unless device_lookup.attributes.empty?
@@ -63,26 +67,37 @@ loop do
       next
     end
     
-    new_domain_number = rand(MAX_DEVICE_APP_DOMAINS)
     if new_domain_number != 1
       new_device_app_list = SimpledbResource.new({:domain_name => "device_app_list_#{new_domain_number}",
           :key => device_app_list.key, :attrs_to_add => device_app_list.attributes, :load => false})
-      new_device_app_list.save(:updated_at => false)
+      device_app_list_items.push(new_device_app_list)
       
       to_delete_logger.info device_app_list.key
-      
       #items_to_delete.push({:time => Time.now.utc, :key => device_app_list.key, 
       #    :domain_number => new_domain_number})
     end
     
     device_lookup.put('app_list', new_domain_number)
-    device_lookup.save
+    device_lookup_items.push(device_lookup)
+    
+    if device_app_list_items.length == 25
+      SimpledbResource.put_items(device_app_list_items)
+      domain_name = device_app_list_items[0].this_domain_name
+      main_logger.info "Wrote 25 device_app_lists to #{domain_name}"
+      device_app_list_items.clear
+    end
+
+    if device_lookup_items.length == 25
+      SimpledbResource.put_items(device_lookup_items)
+      main_logger.info "Wrote 25 device_lookups with value #{new_domain_number}"
+      device_lookup_items.clear
+      new_domain_number = rand(MAX_DEVICE_APP_DOMAINS)
+    end
     
     num_rebalanced += 1
     
     if num_rebalanced % 100 == 0
       main_logger.info "#{num_rebalanced} rebalanced out of approx. #{total_items} (with #{num_skipped} skipped)"
-      sleep(1)
     end
   end
   
