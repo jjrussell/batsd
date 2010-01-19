@@ -82,7 +82,7 @@ loop do
     
     if num_rebalanced % 100 == 0
       main_logger.info "#{num_rebalanced} rebalanced out of approx. #{total_items} (with #{num_skipped} skipped)"
-      sleep(0.5)
+      sleep(1)
     end
   end
   
