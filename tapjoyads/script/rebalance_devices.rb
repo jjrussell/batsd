@@ -81,6 +81,10 @@ loop do
     device_lookup_items.push(device_lookup)
     
     if device_app_list_items.length == 25
+      device_app_list_items.each do |item|
+        item.save(:updated_at => false, :write_to_sdb => false)
+      end
+      
       SimpledbResource.put_items(device_app_list_items)
       domain_name = device_app_list_items[0].this_domain_name
       main_logger.info "Wrote 25 device_app_lists to #{domain_name}"
@@ -88,6 +92,10 @@ loop do
     end
 
     if device_lookup_items.length == 25
+      device_lookup_items.each do |item|
+        item.save(:updated_at => false, :write_to_sdb => false)
+      end
+      
       SimpledbResource.put_items(device_lookup_items)
       main_logger.info "Wrote 25 device_lookups with value #{new_domain_number}"
       device_lookup_items.clear
@@ -98,6 +106,9 @@ loop do
     
     if num_rebalanced % 100 == 0
       main_logger.info "#{num_rebalanced} rebalanced out of approx. #{total_items} (with #{num_skipped} skipped)"
+    end
+    if num_skipped % 10000 == 0
+      main_logger.info "#{num_skipped} skipped"
     end
   end
   

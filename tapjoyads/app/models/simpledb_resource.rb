@@ -77,10 +77,12 @@ class SimpledbResource
   # options:
   #   write_to_memcache: Whether to write these attributes to memcache.
   #   updated_at: Whether to include an updated-at attribute.
+  #   write_to_sdb: Save to sdb. This may be set to false if saves are occuring in a batch put.
   def serial_save(options = {})
     options_copy = options.clone
     write_to_memcache = options.delete(:write_to_memcache) { true }
     updated_at = options.delete(:updated_at) { true }
+    write_to_sdb = options.delete(:write_to_sdb) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     Rails.logger.info "Saving to #{@this_domain_name}"
@@ -88,19 +90,21 @@ class SimpledbResource
     put('updated-at', Time.now.utc.to_f.to_s) if updated_at
     
     time_log("Saving to sdb") do
-      begin
-        @@sdb.put_attributes(@this_domain_name, @key, @attributes_to_replace, true) unless @attributes_to_replace.empty?
-        @@sdb.put_attributes(@this_domain_name, @key, @attributes_to_add, false) unless @attributes_to_add.empty?
-        @@sdb.delete_attributes(@this_domain_name, @key, @attributes_to_delete) unless @attributes_to_delete.empty?
-        @@sdb.delete_attributes(@this_domain_name, @key, @attribute_names_to_delete) unless @attribute_names_to_delete.empty?
-      rescue AwsError => e
-        if e.message.starts_with?("NoSuchDomain")
-          time_log("Creating new domain: #{@this_domain_name}") do
-            @@sdb.create_domain(@this_domain_name)
+      if write_to_sdb
+        begin
+          @@sdb.put_attributes(@this_domain_name, @key, @attributes_to_replace, true) unless @attributes_to_replace.empty?
+          @@sdb.put_attributes(@this_domain_name, @key, @attributes_to_add, false) unless @attributes_to_add.empty?
+          @@sdb.delete_attributes(@this_domain_name, @key, @attributes_to_delete) unless @attributes_to_delete.empty?
+          @@sdb.delete_attributes(@this_domain_name, @key, @attribute_names_to_delete) unless @attribute_names_to_delete.empty?
+        rescue AwsError => e
+          if e.message.starts_with?("NoSuchDomain")
+            time_log("Creating new domain: #{@this_domain_name}") do
+              @@sdb.create_domain(@this_domain_name)
+            end
+            retry
+          else
+            raise e
           end
-          retry
-        else
-          raise e
         end
       end
       
@@ -228,7 +232,7 @@ class SimpledbResource
   ##
   # Performs a batch_put_attributes.
   def self.put_items(items, options = {})
-    replace = options.delete(:force_array) { false }
+    replace = options.delete(:replace) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     raise "Too many items to batch_put" if items.length >25
