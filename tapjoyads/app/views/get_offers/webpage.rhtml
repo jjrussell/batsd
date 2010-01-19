@@ -1,0 +1,67 @@
+<!-- app/views/get_offers/index.rhtml -->
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">
+	<html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<title>Earn <%= @app_name %> <%= @currency_name %></title>
+			<meta name="HandheldFriendly" content="True" />
+			<link rel="stylesheet" type="text/css" href="/stylesheets/offers.css" />
+		</head>
+
+		<body onload="initScreen()" onorientationchange="updateOrientation()">
+			<script type="text/javascript">
+				function initScreen() { setTimeout("window.scrollTo(0,1);",100); } 
+				function updateOrientation() { initScreen(); } 
+			</script>
+
+			<div>
+				<div>
+					<div>
+
+						<div id="nav">
+							<ul id="instructions">
+								<li>
+									<a>Important instructions: Install and OPEN one of the applications below to receive <%= @currency_name %>.  You will receive your <%= @currency_name %> within a few minutes after <i>opening</i> the downloaded application. </a>
+								</li>
+							</ul>
+						</div>
+
+
+					</div>
+					
+				</div>
+
+				<div class="home">
+					<ul class="post">
+						<dl>
+							
+							<% @app_list.each do |app| %>
+								<li>
+									<div class="lix-wrap"> 
+										<div class="title"> 
+											<h2> 
+												<a class="textwrapper" href="<%= app.url %>">	
+													<%= app.name %> (<%= app.cost %>)
+													 <br>Earn 
+													<span style="color:#008810;"><%= app.amount %> <%= @currency_name %></span> 
+													<div style="font-size:0.7em;"></div>
+												</a>
+											</h2>
+											<div class="clr"></div>
+										</div>
+										<div class="entry"> 
+											<a href="<%= app.url %>">
+												<img class="alignleft" src="<%= app.icon_url %>" alt="" height="160" width="200"/>
+											</a>
+										</div>
+									</div>																				
+								</li>
+					        <% end %>
+						</dl>
+					</ul>
+					<div id="footer">
+					</div>
+
+				</div>
+			</div>
+		</body>
+	</html>

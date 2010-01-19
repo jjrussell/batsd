@@ -1,5 +1,32 @@
 class GetOffersController < ApplicationController
   include MemcachedHelper
+  
+  def webpage
+    return unless verify_params([:app_id, :udid])
+  
+    #first lookup the publisher_user_record_id for this user
+    record = PublisherUserRecord.new(:key => "#{params[:app_id]}.#{params[:publisher_user_id]}")
+    unless record.get('record_id') && record.get('int_record_id') && record.get('udid')
+      uid = UUIDTools::UUID.random_create.to_s
+      record.put('record_id',  uid, {:replace => false})
+      record.put('int_record_id', uid.hash.abs.to_s, {:replace => false}) #this should work!
+      record.put('udid', params[:udid])
+      record.save
+      save_to_cache("record_id.#{record.get('record_id')}", record.key)
+      save_to_cache("int_record_id.#{record.get('int_record_id')}", record.key)
+    end
+    
+    currency = Currency.new(:key => params[:app_id])
+    
+    @currency_name = currency.get('currency_name')
+    @app_name = App.new(:key => params[:app_id]).get('name')
+    
+    @app_list = []
+
+    get_rewarded_installs(0, 30, params[:udid], "redirect.",currency, true, record.get('record_id', :force_array => true)[0])
+
+    
+  end
     
   def index
     return unless verify_params([:app_id, :udid])
@@ -81,7 +108,7 @@ class GetOffersController < ApplicationController
     return offer.to_xml
   end
   
-  def get_rewarded_installs(start, max, udid, type, currency)
+  def get_rewarded_installs(start, max, udid, type, currency, set_app_list = false, record_id = nil)
     app_id = params[:app_id]
     
     device_app_list = DeviceAppList.new(:key => params[:udid])
@@ -115,6 +142,7 @@ class GetOffersController < ApplicationController
       end
         
       user_rewarded_installs.push install if add
+      
     end
     
     xml = "<OfferArray>\n"
@@ -134,6 +162,20 @@ class GetOffersController < ApplicationController
         end
         #advertiser_app_id = xml_fragment.match(/<AdvertiserAppID>(.*)<\/AdvertiserAppID>/)[1]
         #advertiser_app_ids.push(advertiser_app_id)
+        if set_app_list
+          app = {}
+          begin
+            app['url'] = CGI::unescapeHTML(xml_fragment.match(/<RedirectURL>(.*)<\/RedirectURL>/)[1].gsub('$PUBLISHER_USER_RECORD_ID',record_id).gsub('$UDID',udid))
+            app['icon_url'] = xml_fragment.match(/<IconURL>(.*)<\/IconURL>/)[1]
+            app['name'] = xml_fragment.match(/<Name>(.*)<\/Name>/)[1]
+            app['amount'] = xml_fragment.match(/<Amount>(.*)<\/Amount>/)[1]
+            app['cost'] = xml_fragment.match(/<Cost>(.*)<\/Cost>/)[1]
+            @app_list.push(app)
+            Rails.logger.info "Adding app to list"
+          rescue Exception => e
+            Rails.logger.info "Exception adding #{e}"
+          end
+        end
       end
     end
     
