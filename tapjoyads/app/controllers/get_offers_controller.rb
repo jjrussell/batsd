@@ -171,7 +171,6 @@ class GetOffersController < ApplicationController
             app['amount'] = xml_fragment.match(/<Amount>(.*)<\/Amount>/)[1]
             app['cost'] = xml_fragment.match(/<Cost>(.*)<\/Cost>/)[1]
             @app_list.push(app)
-            Rails.logger.info "Adding app to list"
           rescue Exception => e
             Rails.logger.info "Exception adding #{e}"
           end
