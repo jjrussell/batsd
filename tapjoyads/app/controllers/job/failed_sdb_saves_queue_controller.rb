@@ -25,6 +25,6 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
     sdb_item.put('from_queue', Time.now.utc.to_f.to_s)
     sdb_item.serial_save(options)
     
-    bucket.move_key(json['uuid'], "complete/#{json['udid']}")
+    bucket.move_key(json['uuid'], "complete/#{json['uuid']}")
   end
 end
