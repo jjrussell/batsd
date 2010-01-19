@@ -83,6 +83,7 @@ class SimpledbResource
     write_to_memcache = options.delete(:write_to_memcache) { true }
     updated_at = options.delete(:updated_at) { true }
     write_to_sdb = options.delete(:write_to_sdb) { true }
+    catch_exceptions = options.delete(:catch_exceptions) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     Rails.logger.info "Saving to #{@this_domain_name}"
@@ -137,6 +138,10 @@ class SimpledbResource
       end
     end
   rescue Exception => e
+    unless catch_exceptions
+      raise e
+    end
+    
     Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e}"
     s3 = RightAws::S3.new(nil, nil, :multi_thread => true)
     sqs = SqsGen2.new(nil, nil, :multi_thread => true)
