@@ -8,14 +8,12 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
   def on_message(message)
     json = JSON.parse(message.to_s)
     
+    s3 = RightAws::S3.new(nil, nil, :multi_thread => true)
+    
     options = {}
-    if json['sdb']
-      sdb_string = json['sdb']
-    else
-      s3 = RightAws::S3.new(nil, nil, :multi_thread => true)
-      bucket = s3.bucket('failed-sdb-saves')
-      sdb_string = bucket.get(json['uuid'])
-    end
+    
+    bucket = s3.bucket('failed-sdb-saves')
+    sdb_string = bucket.get(json['uuid'])
     string_options = json['options']
     
     # Convert all keys to symbols, rather than strings.
@@ -27,9 +25,6 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
     sdb_item.put('from_queue', Time.now.utc.to_f.to_s)
     sdb_item.save(options)
     
-    if s3
-      s3.delete_folder(json['uuid'])
-    end
+    bucket.delete_folder(json['uuid'])
   end
-  
 end
