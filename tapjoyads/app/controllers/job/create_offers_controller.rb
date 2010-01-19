@@ -58,10 +58,10 @@ class Job::CreateOffersController < Job::SqsReaderController
             #now we know what the offerpal id is
             cached_offer = CachedOffer.new(:key => offerpal_id.to_s + CGI::escape(country))
             
-            cached_offer.put('name', offer['name'])
+            cached_offer.put('name', offer['name'], {:cgi_escape => true})
             cached_offer.put('action_url', offer['actionURL'])
-            cached_offer.put('description', offer['description'])
-            cached_offer.put('instructions', offer['instructions'])
+            cached_offer.put('description', offer['description'], {:cgi_escape => true})
+            cached_offer.put('instructions', offer['instructions'], {:cgi_escape => true})
             cached_offer.put('image_html', offer['imageHTML'])
             cached_offer.put('timeDelay', offer['timeDelay'])
             cached_offer.put('currency', 'TAPJOY_BUCKS')
