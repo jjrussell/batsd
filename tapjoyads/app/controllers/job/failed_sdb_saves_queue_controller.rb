@@ -12,7 +12,7 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
     if json['sdb']
       sdb_string = json['sdb']
     else
-      s3 = RightAws::S3.new(:multi_thread => true)
+      s3 = RightAws::S3.new(nil, nil, :multi_thread => true)
       bucket = s3.bucket('failed-sdb-saves')
       sdb_string = bucket.get(json['uuid'])
     end
