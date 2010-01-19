@@ -134,13 +134,14 @@ class SimpledbResource
     end
   rescue Exception => e
     Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e}"
-    s3 = RightAws::S3.new(:multi_thread => true)
-    sqs = SqsGen2.new(:multi_thread => true)
+    s3 = RightAws::S3.new(nil, nil, :multi_thread => true)
+    sqs = SqsGen2.new(nil, nil, :multi_thread => true)
     uuid = UUIDTools::UUID.random_create.to_s
     bucket = s3.bucket('failed-sdb-saves')
     bucket.put(uuid, self.serialize)
     message = {:uuid => uuid, :options => options_copy}.to_json
     sqs.queue(QueueNames::FAILED_SDB_SAVES).send_message(message)
+    Rails.logger.info "Successfully added to sqs. Message: #{message}"
   ensure
     Rails.logger.flush
   end
