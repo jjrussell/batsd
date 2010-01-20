@@ -53,7 +53,7 @@ class SubmitClickController < ApplicationController
       #assign the currency and consider the txn complete right now
       logger.info "Added fake conversion to sqs queue"
       message = {:udid => params[:udid], :app_id => params[:advertiser_app_id], 
-          :install_date => Time.now.to_f.to_s}.to_json
+          :install_date => Time.now.utc.to_f.to_s}.to_json
       SqsGen2.new.queue(QueueNames::CONVERSION_TRACKING).send_message(message)
 
       #record that the user has this app, so we don't show it again
