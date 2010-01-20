@@ -35,7 +35,9 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         end
       end
     
-      callback_url = "#{callback_url}?snuid=#{CGI::escape(publisher_user_id)}&currency=#{reward.get('currency_reward')}"
+      mark = '?'
+      mark = '&' if callback_url =~ /\?/
+      callback_url = "#{callback_url}#{mark}snuid=#{CGI::escape(publisher_user_id)}&currency=#{reward.get('currency_reward')}"
     
       if currency.get('send_offer') == '1'
         if (reward.get('type') == 'install')
