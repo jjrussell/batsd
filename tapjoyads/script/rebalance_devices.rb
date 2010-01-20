@@ -89,7 +89,14 @@ loop do
         item.save(:updated_at => false, :write_to_sdb => false)
       end
       
-      SimpledbResource.put_items(device_app_list_items)
+      begin
+        SimpledbResource.put_items(device_app_list_items)
+      rescue Exception => e
+        main_logger.info "Exception when batch putting device_app_list_items: #{e}"
+        sleep(1)
+        retry
+      end
+      
       domain_name = device_app_list_items[0].this_domain_name
       main_logger.info "Wrote 25 device_app_lists to #{domain_name}"
       device_app_list_items.clear
@@ -100,7 +107,14 @@ loop do
         item.save(:updated_at => false, :write_to_sdb => false)
       end
       
-      SimpledbResource.put_items(device_lookup_items)
+      begin
+        SimpledbResource.put_items(device_lookup_items)
+      rescue Exception => e
+        main_logger.info "Exception when batch putting device_lookup_items: #{e}"
+        sleep(1)
+        retry
+      end
+        
       main_logger.info "Wrote 25 device_lookups with value #{new_domain_number}"
       device_lookup_items.clear
       new_domain_number = rand(MAX_DEVICE_APP_DOMAINS)
