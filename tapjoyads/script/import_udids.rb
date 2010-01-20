@@ -80,7 +80,12 @@ File.open(filename, "r") do |file|
       end
     else
       num_repeat += 1
-      dal.serial_save
+      dal.save
+    end
+    
+    if num_repeat % 100 == 0
+      # Sleep every 100 num_repeats, so that the save threads get a chance to catch up.
+      sleep(0.5)
     end
     
     if (num_new + num_repeat) % 1000 == 0
