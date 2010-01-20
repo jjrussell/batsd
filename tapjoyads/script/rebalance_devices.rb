@@ -98,16 +98,19 @@ where = nil
         item.save(:updated_at => false, :write_to_sdb => false)
       end
       
+      domain_name = device_app_list_items[0].this_domain_name
+      
       begin
         SimpledbResource.put_items(device_app_list_items)
       rescue Exception => e
         main_logger.info "Exception when batch putting device_app_list_items: #{e}"
-        main_logger.info device_app_list_items.to_json
-        sleep(1)
-        retry
+        main_logger.info "Attempting to save each item individually"
+        device_app_list_items.each do |item|
+          main_logger.info "Saving #{domain_name}.#{item.key}"
+          item.serial_save
+        end
       end
       
-      domain_name = device_app_list_items[0].this_domain_name
       main_logger.info "Wrote 25 device_app_lists to #{domain_name}"
       device_app_list_items.clear
     end
