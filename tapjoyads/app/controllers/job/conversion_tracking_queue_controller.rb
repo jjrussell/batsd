@@ -17,8 +17,12 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
     
     Rails.logger.info "Checking for conversion on #{udid} for #{advertiser_app_id}"
     click = StoreClick.new(:key => "#{udid}.#{advertiser_app_id}")
-
-    if (click.get('click_date') && (not click.get('installed')) && 
+    
+    if not click.get('click_date')
+      raise ("Click not found, wait for failed sdb saves to catch up")
+    end
+    
+    if ((not click.get('installed')) && 
         click.get('click_date') > (Time.now.utc - 5.days).to_f.to_s ) #there has been a click but no install
       
       click.put('installed', install_date)
