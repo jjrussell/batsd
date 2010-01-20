@@ -29,7 +29,7 @@ class GetOffersController < ApplicationController
   end
     
   def index
-    return unless verify_params([:app_id, :udid])
+    return unless verify_params([:app_id, :udid], {:allow_empty => false})
     
     #special code for Tapulous not sending udid
     if params[:app_id] == 'e2479a17-ce5e-45b3-95be-6f24d2c85c6f'

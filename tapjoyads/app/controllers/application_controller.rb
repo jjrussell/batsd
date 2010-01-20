@@ -17,11 +17,15 @@ class ApplicationController < ActionController::Base
   
   private
   
-  def verify_params(required_params)
+  def verify_params(required_params, options = {})
+    allow_empty = options.delete(:allow_empty) { true }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
     all_params = true
     required_params.each do |param|
-      unless params.include?(param)
-        all_params = false
+      all_params = false unless params.include?(param)
+      unless allow_empty
+        all_params = false if params[param] == ''
       end
     end
     
