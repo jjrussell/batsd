@@ -31,7 +31,7 @@ class ReturnOffer
       @TimeDelay = 'in seconds'
       @ImageURL = nil
       @Instructions = 'Install and then run the app while online to receive credit.'
-      @ActionURL = offer.get('store_url')
+      @ActionURL = offer.get_linkshare_url
       @AdvertiserAppID = offer.key
       @PublisherUserRecordID = "$PUBLISHER_USER_RECORD_ID" #to be replaced
       @Type = type
