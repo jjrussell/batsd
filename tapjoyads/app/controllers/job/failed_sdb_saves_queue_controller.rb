@@ -22,7 +22,7 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
         bucket.get("complete/#{json['uuid']}")
         
         NewRelic::Agent.agent.error_collector.notice_error(
-            Exception.new("Duplicate FailedSdbSaves read. Already operated on #{json['uuid']}.")
+            Exception.new("Duplicate FailedSdbSaves read. Already operated on #{json['uuid']}."))
         return
       else
         raise e
