@@ -139,6 +139,7 @@ class ImportMssqlController < ApplicationController
 
     AWS::S3::S3Object.store app_id, params[:icon], 'app-icons'
     save_to_cache("icon.s3.#{app_id.hash}", Base64.encode64(params[:icon]))
+    save_to_cache("img.icon.s3.#{app_id.hash}", params[:icon])
     AWS::S3::S3Object.store app_id, params[:screenshot], 'app-screenshots'
 
     render :template => 'layouts/success'
