@@ -64,12 +64,16 @@ loop do
     device_lookup = DeviceLookup.new(:key => device_app_list.key)
     unless device_lookup.attributes.empty?
       num_skipped += 1
+      if num_skipped % 10000 == 0
+        main_logger.info "#{num_skipped} skipped"
+      end
       next
     end
     
     if new_domain_number != 1
       new_device_app_list = SimpledbResource.new({:domain_name => "device_app_list_#{new_domain_number}",
-          :key => device_app_list.key, :attrs_to_add => device_app_list.attributes, :load => false})
+          :key => device_app_list.key, :attrs_to_add => device_app_list.attributes, :load => false,
+          :attributes => device_app_list.attributes})
       device_app_list_items.push(new_device_app_list)
       
       to_delete_logger.info device_app_list.key
@@ -106,9 +110,6 @@ loop do
     
     if num_rebalanced % 100 == 0
       main_logger.info "#{num_rebalanced} rebalanced out of approx. #{total_items} (with #{num_skipped} skipped)"
-    end
-    if num_skipped % 10000 == 0
-      main_logger.info "#{num_skipped} skipped"
     end
   end
   
