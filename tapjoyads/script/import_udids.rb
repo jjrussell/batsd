@@ -82,10 +82,10 @@ File.open(filename, "r") do |file|
       num_repeat += 1
       dal.serial_save
     end
-  end
-  
-  if (num_new + num_repeat) % 1000 == 0
-    logger.info "*** Put #{num_new} new udids and #{num_repeat} repeat."
+    
+    if (num_new + num_repeat) % 1000 == 0
+      logger.info "*** Put #{num_new} new udids and #{num_repeat} repeat."
+    end
   end
 end
 
