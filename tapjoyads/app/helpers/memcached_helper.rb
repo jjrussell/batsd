@@ -45,6 +45,8 @@ module MemcachedHelper
         Rails.logger.info("Memcached::ATimeoutOccurred: #{e}")
       rescue Memcached::SystemError => e
         Rails.logger.info("Memcached::SystemError: #{e.message}")
+      rescue ArgumentError => e
+        Rails.logger.info("ArgumentError: #{e.message}")
       end
     end
     
