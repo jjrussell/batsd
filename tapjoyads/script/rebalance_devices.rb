@@ -56,7 +56,7 @@ where = nil
   num_rebalanced = 0
   num_skipped = 0
 
-  sdb = RightAws::SdbInterface.new(nil, nil, {:port => 80, :protocol => 'http'}
+  sdb = RightAws::SdbInterface.new(nil, nil, {:port => 80, :protocol => 'http'})
   next_token = nil
   begin
     response = sdb.select('select count(*) from device_app_list_1', next_token)
