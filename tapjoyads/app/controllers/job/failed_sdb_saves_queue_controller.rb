@@ -13,7 +13,22 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
     options = {}
     
     bucket = s3.bucket('failed-sdb-saves')
-    sdb_string = bucket.get(json['uuid'])
+    
+    begin
+      sdb_string = bucket.get(json['uuid'])
+    rescue RightAws::AwsError => e
+      if e.message.starts_with?('NoSuchKey')
+        # This will raise an error if the key is not found.
+        bucket.get("complete/#{json['uuid']}")
+        
+        NewRelic::Agent.agent.error_collector.notice_error(
+            Exception.new("Duplicate FailedSdbSaves read. Already operated on #{json['uuid']}.")
+        return
+      else
+        raise e
+      end
+    end
+    
     string_options = json['options']
     
     # Convert all keys to symbols, rather than strings.
