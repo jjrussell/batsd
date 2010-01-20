@@ -46,7 +46,7 @@ loop_count = 0
 start_time = nil
 where = nil
 
-loop do
+#loop do
   start_time = Time.now.utc
   main_logger.info "Starting loop #{loop_count} at #{start_time}"
   #total_items = SimpledbResource.count(:domain_name => 'device_app_list_1', :where => where)
@@ -55,12 +55,21 @@ loop do
   
   num_rebalanced = 0
   num_skipped = 0
+
+  sdb = RightAws::SdbInterface.new(nil, nil, {:port => 80, :protocol => 'http'}
+  next_token = nil
+  begin
+    response = sdb.select('select count(*) from device_app_list_1', next_token)
+    num_skipped += response[:items][0]['Domain']['Count'][0].to_i
+    next_token = response[:next_token]
+  end while num_skipped < 1500000
   
   device_lookup_items = []
   device_app_list_items = []
   new_domain_number = rand(MAX_DEVICE_APP_DOMAINS)
   
-  SimpledbResource.select(:domain_name => 'device_app_list_1', :where => where) do |device_app_list|
+  SimpledbResource.select(:next_token => next_token, :domain_name => 'device_app_list_1', 
+      :where => where) do |device_app_list|
     device_lookup = DeviceLookup.new(:key => device_app_list.key)
     unless device_lookup.attributes.empty?
       num_skipped += 1
@@ -93,6 +102,7 @@ loop do
         SimpledbResource.put_items(device_app_list_items)
       rescue Exception => e
         main_logger.info "Exception when batch putting device_app_list_items: #{e}"
+        main_logger.info device_app_list_items.to_json
         sleep(1)
         retry
       end
@@ -111,6 +121,7 @@ loop do
         SimpledbResource.put_items(device_lookup_items)
       rescue Exception => e
         main_logger.info "Exception when batch putting device_lookup_items: #{e}"
+        main_logger.info device_lookup_items.to_json
         sleep(1)
         retry
       end
@@ -127,10 +138,28 @@ loop do
     end
   end
   
+  begin
+    SimpledbResource.put_items(device_app_list_items)
+  rescue Exception => e
+    main_logger.info "Exception when batch putting final device_app_list_items: #{e}"
+    main_logger.info device_app_list_items.to_json
+    sleep(1)
+    retry
+  end
+  
+  begin
+    SimpledbResource.put_items(device_lookup_items)
+  rescue Exception => e
+    main_logger.info "Exception when batch putting final device_lookup_items: #{e}"
+    main_logger.info device_lookup_items.to_json
+    sleep(1)
+    retry
+  end
+  
   main_logger.info "Loop #{loop_count} complete in #{Time.now - start_time}s"
   main_logger.info "num_rebalanced: #{num_rebalanced}, num_skipped: #{num_skipped}"
   loop_count += 1
   sleep(15)
   
   where = "`updated-at` > '#{start_time.to_f}'"
-end
+#end
