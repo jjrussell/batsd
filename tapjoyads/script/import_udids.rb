@@ -35,6 +35,9 @@ def batch_put(dal_items)
 
   # Fix the domain name, so that they are all the same.
   domain_name = "device_app_list_#{domain_number}"
+  
+  start_time = Time.now
+  
   dal_items.each do |item|
     fixed_dal_item = DeviceAppList.new({
       :domain_name => domain_name,
@@ -49,6 +52,8 @@ def batch_put(dal_items)
     lookup.put('app_list', domain_number)
     lookup_items.push(lookup)
   end
+
+  puts "Object creation: #{Time.now.to_f - start_time.to_f}s"
 
   dal_items.clear()
   
@@ -109,7 +114,8 @@ File.open(filename, "r") do |file|
       num_new += 1
       dal_items.push(dal)
       if dal_items.length == 25
-        thread_list.push(batch_put(dal_items))
+        #thread_list.push(batch_put(dal_items))
+        batch_put(dal_items)
       end
     else
       num_repeat += 1
@@ -121,13 +127,17 @@ File.open(filename, "r") do |file|
       sleep(0.5)
     end
     
-    if thread_list.length >= 15
-      5.times do |i|
-        thread_list[i].join
-      end
-      
-      thread_list = thread_list[5,thread_list.length]
+    if num_new % 250 == 0
+      sleep(1)
     end
+    
+    # if thread_list.length >= 15
+    #   5.times do |i|
+    #     thread_list[i].join
+    #   end
+    #   
+    #   thread_list = thread_list[5,thread_list.length]
+    # end
     
     if (num_new + num_repeat) % 1000 == 0
       logger.info "*** Put #{num_new} new udids and #{num_repeat} repeat. #{num_new + num_repeat} total. (#{Time.now.to_f - t.to_f}s / 1000)"
