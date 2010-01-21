@@ -50,18 +50,18 @@ def batch_put(dal_items)
     lookup_items.push(lookup)
   end
 
-  # Write to memcache.
-  fixed_dal_items.each do |item|
-    item.is_new = false
-    item.save(:write_to_sdb => false)
-  end
-  lookup_items.each do |item|
-    item.save(:write_to_sdb => false)
-  end
-  
   dal_items.clear()
   
   return Thread.new(lookup_items, fixed_dal_items) do |lookup_items, fixed_dal_items|
+    # Write to memcache.
+    fixed_dal_items.each do |item|
+      item.is_new = false
+      item.save(:write_to_sdb => false)
+    end
+    lookup_items.each do |item|
+      item.save(:write_to_sdb => false)
+    end
+    
     # Now batch_put the items to sdb
     begin
       SimpledbResource.put_items(fixed_dal_items)
