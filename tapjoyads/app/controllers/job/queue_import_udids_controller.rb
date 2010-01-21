@@ -13,7 +13,7 @@ class Job::QueueImportUdidsController < Job::SqsReaderController
     
     dal_items = []
     
-    udid.each do |udid|
+    udid_list.each do |udid|
       dal = DeviceAppList.new(:key => udid)
       dal.set_app_ran(app_key)
     
