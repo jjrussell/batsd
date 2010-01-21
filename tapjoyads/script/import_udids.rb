@@ -61,14 +61,13 @@ def batch_put(dal_items)
   
   dal_items.clear()
   
-  return Thread.new(lookup_items, fixed_dal_items, logger) do |lookup_items, fixed_dal_items, logger|
+  return Thread.new(lookup_items, fixed_dal_items, logger) do |lookup_items, fixed_dal_items|
     # Now batch_put the items to sdb
     begin
       SimpledbResource.put_items(fixed_dal_items)
     rescue Exception => e
-      logger.info "Error batch_putting domain_app_list: #{e}"
-      logger.info fixed_dal_items.to_json
-      logger.flush
+      puts "Error batch_putting domain_app_list: #{e}"
+      puts fixed_dal_items.to_json
       sleep(1)
       retry
     end
@@ -76,15 +75,11 @@ def batch_put(dal_items)
     begin
       SimpledbResource.put_items(lookup_items)
     rescue Exception => e
-      logger.info "Error batch_putting lookup_items: #{e}"
-      logger.info lookup_items.to_json
-      logger.flush
+      puts "Error batch_putting lookup_items: #{e}"
+      puts lookup_items.to_json
       sleep(1)
       retry
     end
-    
-    logger.info "Successfully wrote 25 items to domain #{domain_number}"
-    logger.flush
   end
 end
 
