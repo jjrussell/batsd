@@ -10,10 +10,10 @@ class SimpledbResource
   superclass_delegating_accessor :domain_name, :key_format
   
   def self.reset_connection
-    sdb_ip_address = Socket::getaddrinfo('sdb.amazonaws.com', 'http')[0][3]
-    Rails.logger.info "Resetting sdb connection. Sdb ip address: #{sdb_ip_address}"
+    #sdb_ip_address = Socket::getaddrinfo('sdb.amazonaws.com', 'http')[0][3]
+    #Rails.logger.info "Resetting sdb connection. Sdb ip address: #{sdb_ip_address}"
     @@sdb = SdbInterface.new(nil, nil,
-        {:multi_thread => true, :port => 80, :protocol => 'http', :server => sdb_ip_address})
+        {:multi_thread => true, :port => 80, :protocol => 'http'})
   end
   self.reset_connection
   
@@ -54,8 +54,12 @@ class SimpledbResource
   # an empty attributes hash will be created.
   def load(load_from_memcache = true)
     if load_from_memcache
-      @attributes = get_from_cache_and_save(get_memcache_key) do
-        load_from_sdb
+      @attributes = get_from_cache(get_memcache_key) do
+        attrs = load_from_sdb
+        unless attrs.empty?
+          save_to_cache(get_memcache_key, attrs)
+        end
+        attrs
       end
     else
       @attributes = load_from_sdb
@@ -77,7 +81,9 @@ class SimpledbResource
   # options:
   #   write_to_memcache: Whether to write these attributes to memcache.
   #   updated_at: Whether to include an updated-at attribute.
-  #   write_to_sdb: Save to sdb. This may be set to false if saves are occuring in a batch put.
+  #   write_to_sdb: Whether to save to sdb. This may be set to false if saves are occuring in a batch put.
+  #   catch_exceptions: Whether to catch exceptions. If true, then any failed attempts to save will
+  #       result in the save getting written to sqs in order to be saved later.
   def serial_save(options = {})
     options_copy = options.clone
     write_to_memcache = options.delete(:write_to_memcache) { true }
@@ -246,7 +252,7 @@ class SimpledbResource
     batch_put_domain_name = items[0].this_domain_name
     items_object = {}
     items.each do |item|
-      raise "All domain names must be the same for batch_put_attributes" if item.this_domain_name != batch_put_domain_name
+      raise "All domain names must be the same for batch_put_attributes. #{item.this_domain_name} != #{batch_put_domain_name}" if item.this_domain_name != batch_put_domain_name
       items_object[item.key] = item.attributes
     end
     return @@sdb.batch_put_attributes(batch_put_domain_name, items_object, replace)
