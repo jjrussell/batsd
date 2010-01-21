@@ -24,7 +24,8 @@ class Job::QueueImportUdidsController < Job::SqsReaderController
           dal_items.clear
         end
       else
-        dal.serial_save
+        # Don't add to FailedSdbSaves queue on error. Keep errors in this queue.
+        dal.serial_save(:catch_exceptions => false)
       end
     end
     
