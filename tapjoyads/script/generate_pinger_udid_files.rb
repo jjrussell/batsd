@@ -10,7 +10,7 @@
 # The file names generated will be "pinger.<app_id>.txt", each with one udid per line.
 # The files output will be suitable for use by the import_udids.rb script.
 
-filename = ARGV[3]
+filename = ARGV[1]
 
 out_files = {}
 
