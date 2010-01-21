@@ -58,4 +58,8 @@ File.open(filename, "r") do |file|
   end
 end
 
-logger.info "Complete. number of new udids: #{num_new}. number of udids already in system: #{num_repeat}."
+msg = {'app_key' => app_key, 'udid_list' => udid_list}.to_json
+SqsGen2.new.queue(QueueNames::IMPORT_UDIDS).send_message(msg)
+num_msgs += 1
+
+logger.info "Complete. Put #{count - num_to_skip} udids to the queue, in #{num_msgs} msgs. "
