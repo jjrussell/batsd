@@ -6,7 +6,6 @@
 require 'logger'
 
 logger = Logger.new('import_udids.log')
-logger.sync = true
 
 app_key = ARGV[2]
 filename = ARGV[3]
