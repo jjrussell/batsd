@@ -134,7 +134,7 @@ File.open(filename, "r") do |file|
     end
     
     if (num_new + num_repeat) % 1000 == 0
-      logger.info "*** Put #{num_new} new udids and #{num_repeat} repeat. #{num_new + num_repeat} total. (#{Time.now - t.to_f}s / 1000)"
+      logger.info "*** Put #{num_new} new udids and #{num_repeat} repeat. #{num_new + num_repeat} total. (#{Time.now.to_f - t.to_f}s / 1000)"
       t = Time.now
     end
   end
