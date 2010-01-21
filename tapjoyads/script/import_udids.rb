@@ -61,7 +61,7 @@ def batch_put(dal_items)
   
   dal_items.clear()
   
-  return Thread.new(lookup_items, fixed_dal_items, logger) do |lookup_items, fixed_dal_items|
+  return Thread.new(lookup_items, fixed_dal_items) do |lookup_items, fixed_dal_items|
     # Now batch_put the items to sdb
     begin
       SimpledbResource.put_items(fixed_dal_items)
