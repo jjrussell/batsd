@@ -58,10 +58,10 @@ class Job::QueueImportUdidsController < Job::SqsReaderController
     # Write to memcache.
     fixed_dal_items.each do |item|
       item.is_new = false
-      item.save(:write_to_sdb => false)
+      item.save(:write_to_sdb => false, :catch_exceptions => false)
     end
     lookup_items.each do |item|
-      item.save(:write_to_sdb => false)
+      item.save(:write_to_sdb => false, :catch_exceptions => false)
     end
 
     # Now batch_put the items to sdb
