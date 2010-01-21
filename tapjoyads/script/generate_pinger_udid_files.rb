@@ -21,7 +21,7 @@ File.open(filename, "r") do |file|
     app_key = parts[1]
     
     out_file = out_files[app_key]
-    unless file
+    unless out_file
       out_file = File.new("pinger.#{app_key}.txt", 'w')
       out_files[app_key] = out_file
     end
