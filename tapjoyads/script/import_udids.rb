@@ -30,6 +30,8 @@ end
 
 count = 0
 udid_list = []
+num_new = 0
+num_repeat = 0
 
 t = Time.now
 
