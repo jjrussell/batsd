@@ -61,13 +61,13 @@ def batch_put(dal_items)
   
   dal_items.clear()
   
-  Thread.new(lookup_items, fixed_dal_items) do |lookup_items, fixed_dal_items|
+  return Thread.new(lookup_items, fixed_dal_items) do |lookup_items, fixed_dal_items|
     # Now batch_put the items to sdb
     begin
       SimpledbResource.put_items(fixed_dal_items)
     rescue Exception => e
-      batch_put_logger.info "Error batch_putting domain_app_list: #{e}"
-      batch_put_logger.info fixed_dal_items.to_json
+      logger.info "Error batch_putting domain_app_list: #{e}"
+      logger.info fixed_dal_items.to_json
       logger.flush
       sleep(1)
       retry
@@ -92,6 +92,7 @@ num_new = 0
 num_repeat = 0
 count = 0
 dal_items = []
+thread_list = []
 
 t = Time.now
 
@@ -113,7 +114,7 @@ File.open(filename, "r") do |file|
       num_new += 1
       dal_items.push(dal)
       if dal_items.length == 25
-        batch_put(dal_items)
+        thread_list.push(batch_put(dal_items))
       end
     else
       num_repeat += 1
@@ -126,7 +127,10 @@ File.open(filename, "r") do |file|
     end
     
     if num_new % 250 == 0
-      sleep(1)
+      thread_list.each do |thread|
+        thread.join
+      end
+      thread_list.clear
     end
     
     if (num_new + num_repeat) % 1000 == 0
@@ -137,5 +141,7 @@ File.open(filename, "r") do |file|
 end
 
 batch_put(dal_items)
+
+sleep(10)
 
 logger.info "Complete. number of new udids: #{num_new}. number of udids already in system: #{num_repeat}."
