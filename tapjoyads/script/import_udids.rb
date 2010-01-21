@@ -29,46 +29,46 @@ end
 
 def batch_put(dal_items)
   
-  Thread.new(dal_items) do |items|
-    batch_put_logger = Logger.new('import_udids_batch_puts.log')
-    
-    domain_number = rand(MAX_DEVICE_APP_DOMAINS)
-    lookup_items = []
-    fixed_dal_items = []
+  domain_number = rand(MAX_DEVICE_APP_DOMAINS)
+  lookup_items = []
+  fixed_dal_items = []
+
+  # Fix the domain name, so that they are all the same.
+  domain_name = "device_app_list_#{domain_number}"
+  dal_items.each do |item|
+    fixed_dal_item = DeviceAppList.new({
+      :domain_name => domain_name,
+      :key => item.key,
+      :attributes => item.attributes,
+      :attrs_to_replace => item.attributes,
+      :load => false
+    })
+    fixed_dal_items.push(fixed_dal_item)
   
-    # Fix the domain name, so that they are all the same.
-    domain_name = "device_app_list_#{domain_number}"
-    items.each do |item|
-      fixed_dal_item = DeviceAppList.new({
-        :domain_name => domain_name,
-        :key => item.key,
-        :attributes => item.attributes,
-        :attrs_to_replace => item.attributes,
-        :load => false
-      })
-      fixed_dal_items.push(fixed_dal_item)
-    
-    
-      lookup = DeviceLookup.new(:key => item.key)
-      lookup.put('app_list', domain_number)
-      lookup_items.push(lookup)
-    end
+    lookup = DeviceLookup.new(:key => item.key)
+    lookup.put('app_list', domain_number)
+    lookup_items.push(lookup)
+  end
+
+  # Write to memcache.
+  fixed_dal_items.each do |item|
+    item.is_new = false
+    item.save(:write_to_sdb => false)
+  end
+  lookup_items.each do |item|
+    item.save(:write_to_sdb => false)
+  end
   
-    # Write to memcache.
-    fixed_dal_items.each do |item|
-      item.is_new = false
-      item.save(:write_to_sdb => false)
-    end
-    lookup_items.each do |item|
-      item.save(:write_to_sdb => false)
-    end
+  dal_items.clear()
   
+  Thread.new(lookup_items, fixed_dal_items) do |lookup_items, fixed_dal_items|
     # Now batch_put the items to sdb
     begin
       SimpledbResource.put_items(fixed_dal_items)
     rescue Exception => e
       batch_put_logger.info "Error batch_putting domain_app_list: #{e}"
       batch_put_logger.info fixed_dal_items.to_json
+      logger.flush
       sleep(1)
       retry
     end
@@ -76,16 +76,16 @@ def batch_put(dal_items)
     begin
       SimpledbResource.put_items(lookup_items)
     rescue Exception => e
-      batch_put_logger.info "Error batch_putting lookup_items: #{e}"
-      batch_put_logger.info lookup_items.to_json
+      logger.info "Error batch_putting lookup_items: #{e}"
+      logger.info lookup_items.to_json
+      logger.flush
       sleep(1)
       retry
     end
     
-    batch_put_logger.info "Successfully wrote 25 items to domain #{domain_number}"
+    logger.info "Successfully wrote 25 items to domain #{domain_number}"
+    logger.flush
   end
-  
-  dal_items.clear()
 end
 
 num_new = 0
