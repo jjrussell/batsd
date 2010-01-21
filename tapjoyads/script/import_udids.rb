@@ -121,11 +121,12 @@ File.open(filename, "r") do |file|
       sleep(0.5)
     end
     
-    if num_new % 250 == 0
-      thread_list.each do |thread|
-        thread.join
+    if thread_list.length >= 15
+      5.times do |i|
+        thread_list[i].join
       end
-      thread_list.clear
+      
+      thread_list = thread_list[5,thread_list.length]
     end
     
     if (num_new + num_repeat) % 1000 == 0
@@ -136,6 +137,10 @@ File.open(filename, "r") do |file|
 end
 
 batch_put(dal_items)
+
+thread_list.each do |thread|
+  thread.join
+end
 
 sleep(10)
 
