@@ -4,7 +4,7 @@ class ConnectController < ApplicationController
   include RightAws
   
   def index
-    return unless verify_params([:app_id, :udid, :device_type, :app_version, :device_os_version, :library_version])
+    return unless verify_params([:app_id, :udid] #, :device_type, :app_version, :device_os_version, :library_version])
     return unless verify_params([:app_id, :udid], {:allow_empty => false})
     
     #add this app to the device list
