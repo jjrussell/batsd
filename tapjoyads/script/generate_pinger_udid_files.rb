@@ -20,13 +20,13 @@ File.open(filename, "r") do |file|
     udid = parts[0]
     app_key = parts[1]
     
-    file = out_files[app_key]
+    out_file = out_files[app_key]
     unless file
-      file = File.new("pinger.#{app_key}.txt", 'w')
-      out_files[app_key] = file
+      out_file = File.new("pinger.#{app_key}.txt", 'w')
+      out_files[app_key] = out_file
     end
     
-    file.puts(udid)
+    out_file.puts(udid)
   end
 end
 
