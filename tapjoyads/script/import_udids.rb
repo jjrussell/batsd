@@ -114,8 +114,7 @@ File.open(filename, "r") do |file|
       num_new += 1
       dal_items.push(dal)
       if dal_items.length == 25
-        #thread_list.push(batch_put(dal_items))
-        batch_put(dal_items)
+        thread_list.push(batch_put(dal_items))
       end
     else
       num_repeat += 1
@@ -127,17 +126,13 @@ File.open(filename, "r") do |file|
       sleep(0.5)
     end
     
-    if num_new % 250 == 0
-      sleep(1)
+    if thread_list.length >= 25
+      5.times do |i|
+        thread_list[i].join
+      end
+      
+      thread_list = thread_list[5,thread_list.length]
     end
-    
-    # if thread_list.length >= 15
-    #   5.times do |i|
-    #     thread_list[i].join
-    #   end
-    #   
-    #   thread_list = thread_list[5,thread_list.length]
-    # end
     
     if (num_new + num_repeat) % 1000 == 0
       logger.info "*** Put #{num_new} new udids and #{num_repeat} repeat. #{num_new + num_repeat} total. (#{Time.now.to_f - t.to_f}s / 1000)"
