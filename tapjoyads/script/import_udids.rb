@@ -45,7 +45,7 @@ def batch_put(dal_items)
     })
     fixed_dal_items.push(fixed_dal_item)
   
-    lookup = DeviceLookup.new(:key => item.key)
+    lookup = DeviceLookup.new(:key => item.key, :load => false)
     lookup.put('app_list', domain_number)
     lookup_items.push(lookup)
   end
