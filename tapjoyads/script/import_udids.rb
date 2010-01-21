@@ -99,6 +99,9 @@ File.open(filename, "r") do |file|
   while (line = file.gets)
     count += 1
     if count < num_to_skip
+      if count % 1000 == 0
+        logger.info "Skipped #{count} items so far."
+      end
       next
     end
     
