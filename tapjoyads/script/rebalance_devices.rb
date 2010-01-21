@@ -62,7 +62,7 @@ where = nil
     response = sdb.select('select count(*) from device_app_list_1', next_token)
     num_skipped += response[:items][0]['Domain']['Count'][0].to_i
     next_token = response[:next_token]
-  end while num_skipped < 1500000
+  end while num_skipped < 2500000
   
   device_lookup_items = []
   device_app_list_items = []
