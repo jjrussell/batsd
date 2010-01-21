@@ -11,4 +11,5 @@ module QueueNames
   REWARD_AGGREGATOR        = RUN_MODE_PREFIX + 'RewardAggregator'
   APP_STATS                = RUN_MODE_PREFIX + 'AppStats'
   PRE_CREATE_DOMAINS       = RUN_MODE_PREFIX + 'PreCreateDomains'
+  IMPORT_UDIDS             = RUN_MODE_PREFIX + 'ImportUdids'
 end

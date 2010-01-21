@@ -30,8 +30,7 @@ end
 
 count = 0
 udid_list = []
-num_new = 0
-num_repeat = 0
+num_msgs = 0
 
 t = Time.now
 
@@ -39,28 +38,21 @@ File.open(filename, "r") do |file|
   while (line = file.gets)
     count += 1
     if count < num_to_skip
-      if count % 1000 == 0
-        logger.info "Skipped #{count} items so far."
-      end
       next
     end
     
     udid = line.strip
-    #udid_list.push(udid)
+    udid_list.push(udid)
     
-    #SqsGen2.new.queue(QueueNames::IMPORT_UDIDS).send_message(msg)
-    
-    dal = DeviceAppList.new(:key => udid)
-    dal.set_app_ran(app_key)
-    
-    if dal.is_new
-      num_new += 1
-    else
-      num_repeat += 1
+    if udid_list.length == 120
+      msg = {'app_key' => app_key, 'udid_list' => udid_list}.to_json
+      SqsGen2.new.queue(QueueNames::IMPORT_UDIDS).send_message(msg)
+      num_msgs += 1
+      udid_list.clear
     end
     
-    if (num_new + num_repeat) % 1000 == 0
-      logger.info "*** Put #{num_new} new udids and #{num_repeat} repeat. #{num_new + num_repeat} total. (#{Time.now.to_f - t.to_f}s / 1000)"
+    if count % 1000 == 0
+      logger.info "*** Put #{count - num_to_skip} udids to the queue, in #{num_msgs} msgs. (skipped #{num_to_skip} udids). (#{Time.now.to_f - t.to_f}s / 1000)"
       t = Time.now
     end
   end
