@@ -1,4 +1,4 @@
-class Job::QueueImportudidsController < Job::SqsReaderController
+class Job::QueueImportUdidsController < Job::SqsReaderController
   def initialize
     super QueueNames::IMPORT_UDIDS
   end
