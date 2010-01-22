@@ -130,6 +130,7 @@ class ImportMssqlController < ApplicationController
     app.put('rotation_direction', params[:rotation_direction])
     app.put('balance', params[:balance])
     app.put('iphone_only', params[:iphone_only]) if params[:iphone_only]
+    app.put('daily_budget', params[:daily_budget]) if params[:daily_budget]
     
     app.delete('description_1') if app.get('description_1')
     app.delete('description_2') if app.get('description_2')
