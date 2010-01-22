@@ -50,14 +50,14 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     num_installs_today = StoreClick.count(:where => "installed > '#{end_of_day.to_f - 24.hours}' and advertiser_app_id = '#{app_key}'").to_f
     
     Rails.logger.info "Seconds left in day: #{seconds_left_in_day}"
-    Rails.logger.info "Num intalls today: #{num_installs_today}"
+    Rails.logger.info "Num installs today: #{num_installs_today}"
     
     balance = app.get('balance').to_f
     payment_for_install = app.get('payment_for_install').to_f
     target_installs = balance / payment_for_install
     
     daily_budget = app.get('daily_budget')
-    if daily_budget
+    if daily_budget and daily_budget.to_i > 0
       target_installs = [daily_budget.to_f - num_installs_today, target_installs].min
     end
     
@@ -74,6 +74,11 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     else
       new_show_rate = target_clicks / (possible_clicks_per_second * seconds_left_in_day)
       new_show_rate = 1 if new_show_rate > 1
+    end
+
+    if old_show_rate == 0 and target_installs > 0
+      Rails.logger.info "Setting new show rate to 0.1, since old show rate was 0."
+      new_show_rate = 0.1
     end
     
     Rails.logger.info "New show_rate: #{new_show_rate}"
