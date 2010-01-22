@@ -25,9 +25,9 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
       conversion_rate = overall_installs / overall_clicks
     end
     
-    if overall_clicks > 30 and overall_installs == 0
+    if overall_clicks > 30 and conversion_rate < 0.15
       NewRelic::Agent.agent.error_collector.notice_error(
-          Exception.new("App #{app_key} (#{app.get('name')}) has no installs on #{overall_clicks} clicks."))
+          Exception.new("App #{app_key} (#{app.get('name')}) has #{conversion_rate} cvr on #{overall_clicks} clicks."))
     end
     
     Rails.logger.info "Overall clicks: #{overall_clicks}"
