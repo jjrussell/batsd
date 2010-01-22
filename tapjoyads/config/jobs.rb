@@ -23,6 +23,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'queue_reward_aggregator', :interval => 5.seconds
     s.add_job 'queue_pre_create_domains', :interval => 1.minutes
     s.add_job 'queue_import_udids', :interval => 10.seconds
+    s.add_job 'queue_calculate_show_rate', :interval => 20.seconds
   elsif machine_type == 'masterjobs'
     s.add_job 'master_cleanup_web_requests', :daily => 2.hours
     s.add_job 'master_create_offers', :interval => 15.minutes
