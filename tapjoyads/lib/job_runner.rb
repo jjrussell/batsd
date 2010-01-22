@@ -76,7 +76,7 @@ module JobRunner
                 job.set_next_run_time
               end
             end
-            sleep(1)
+            sleep(0.2 + rand())
           end
         rescue Interrupt
           Rails.logger.info "JobRunner: caught interrupt"
@@ -115,7 +115,7 @@ module JobRunner
     # also keeping the average interval equal to the specified interval.
     def set_next_run_time
       if @options[:interval]
-        @next_run_time = Time.now.utc + (@options[:interval].to_f / 2) + (rand * @options[:interval])
+        @next_run_time = Time.now.utc + @options[:interval].to_f
       elsif @options[:daily]
         if @next_run_time
           @next_run_time += 1.days
