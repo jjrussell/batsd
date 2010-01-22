@@ -6,15 +6,7 @@ class GetOffersController < ApplicationController
   
     #first lookup the publisher_user_record_id for this user
     record = PublisherUserRecord.new(:key => "#{params[:app_id]}.#{params[:publisher_user_id]}")
-    unless record.get('record_id') && record.get('int_record_id') && record.get('udid')
-      uid = UUIDTools::UUID.random_create.to_s
-      record.put('record_id',  uid, {:replace => false})
-      record.put('int_record_id', uid.hash.abs.to_s, {:replace => false}) #this should work!
-      record.put('udid', params[:udid])
-      record.save
-      save_to_cache("record_id.#{record.get('record_id')}", record.key)
-      save_to_cache("int_record_id.#{record.get('int_record_id')}", record.key)
-    end
+    record.update(params[:udid])
     
     currency = Currency.new(:key => params[:app_id])
     
@@ -24,8 +16,6 @@ class GetOffersController < ApplicationController
     @app_list = []
 
     get_rewarded_installs(0, 30, params[:udid], "redirect.",currency, true, record.get('record_id', :force_array => true)[0])
-
-    
   end
     
   def index
@@ -38,15 +28,7 @@ class GetOffersController < ApplicationController
   
     #first lookup the publisher_user_record_id for this user
     record = PublisherUserRecord.new(:key => "#{params[:app_id]}.#{params[:publisher_user_id]}")
-    unless record.get('record_id') && record.get('int_record_id') && record.get('udid')
-      uid = UUIDTools::UUID.random_create.to_s
-      record.put('record_id',  uid, {:replace => false})
-      record.put('int_record_id', uid.hash.abs.to_s, {:replace => false}) #this should work!
-      record.put('udid', params[:udid])
-      record.save
-      save_to_cache("record_id.#{record.get('record_id')}", record.key)
-      save_to_cache("int_record_id.#{record.get('int_record_id')}", record.key)
-    end
+    record.update(params[:udid])
     
     currency = Currency.new(:key => params[:app_id])
 
