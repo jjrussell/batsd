@@ -11,7 +11,7 @@ class PublisherUserRecord < SimpledbResource
       put('record_id',  uuid, {:replace => false})
       put('int_record_id', uuid.hash.abs.to_s, {:replace => false})
       put('udid', device_id)
-      record.save
+      save
       save_to_cache("record_id.#{get('record_id')}", @key)
       save_to_cache("int_record_id.#{get('int_record_id')}", @key)
     end
