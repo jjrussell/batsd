@@ -12,6 +12,8 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
   
   def on_message(message)
     
+    bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')
+    
     #first get the list of all apps paying for installs
     app_list = []
     App.select(
@@ -19,6 +21,9 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
         :order_by => "rewarded_installs_ordinal") do |item|
       app_list.push(item)
     end
+    
+    bucket.put('rewarded_installs_list', app_list.to_json)
+    save_to_cache('installs.rewarded_installs_list', app_list.to_json)
     
     #now get the list of all apps with currency
     app_currency_list = []
@@ -41,9 +46,8 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
         xml += "TAPJOY_IPHONE_ONLY" if app.get('iphone_only') == '1'
         xml += "^^TAPJOY_SPLITTER^^"
       end
-        
-      AWS::S3::S3Object.store "installs_" + currency.key, 
-        xml, RUN_MODE_PREFIX + 'offer-data'
+      
+      bucket.put("installs_#{currency.key}", xml)
       save_to_cache("installs.s3.#{currency.key}", xml)
       
       xml = ""
@@ -57,8 +61,7 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
         xml += "^^TAPJOY_SPLITTER^^"
       end
         
-      AWS::S3::S3Object.store "server.installs_" + currency.key, 
-        xml, RUN_MODE_PREFIX + 'offer-data'
+      bucket.put("server.installs_#{currency.key}", xml)
       save_to_cache("server.installs.s3.#{currency.key}", xml)
       
       xml = ""
@@ -72,8 +75,7 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
         xml += "^^TAPJOY_SPLITTER^^"
       end
         
-      AWS::S3::S3Object.store "redirect.installs_" + currency.key, 
-        xml, RUN_MODE_PREFIX + 'offer-data'
+      bucket.put("redirect.installs_#{currency.key}", xml)
       save_to_cache("redirect.installs.s3.#{currency.key}", xml)
     end
   end
