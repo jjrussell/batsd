@@ -16,14 +16,16 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
     
     #first get the list of all apps paying for installs
     app_list = []
+    serialized_app_list = []
     App.select(
         :where => "payment_for_install > '0' and install_tracking = '1' and rewarded_installs_ordinal != '' and balance > '0'",
         :order_by => "rewarded_installs_ordinal") do |item|
       app_list.push(item)
+      serialized_app_list.push(item.serialize)
     end
     
-    bucket.put('rewarded_installs_list', app_list.to_json)
-    save_to_cache('installs.rewarded_installs_list', app_list.to_json)
+    bucket.put('rewarded_installs_list', serialized_app_list.to_json)
+    save_to_cache('installs.rewarded_installs_list', serialized_app_list.to_json)
     
     #now get the list of all apps with currency
     app_currency_list = []
