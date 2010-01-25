@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
-			<title>Earn <%= @app_name %> <%= @currency_name %></title>
+			<title>Earn <%= @publisher_app.get('name') %> <%= @currency.get('name') %></title>
 			<meta name="HandheldFriendly" content="True" />
 			<link rel="stylesheet" type="text/css" href="/stylesheets/offers.css" />
 		</head>
@@ -34,23 +34,25 @@
 					<ul class="post">
 						<dl>
 							
-							<% @app_list.each do |app| %>
+							<% @advertiser_app_list.each do |app| %>
 								<li>
 									<div class="lix-wrap"> 
 										<div class="title"> 
 											<h2> 
-												<a class="textwrapper" href="<%= app.url %>">	
-													<%= app.name %> (<%= app.cost %>)
+												<a class="textwrapper" href="<%= app.get_redirect_url(@publisher_user_record, params[:udid]) %>">	
+													<%= app.get('name') %> (<%= app.is_free ? 'Free' : 'Paid' %>)
 													 <br>Earn 
-													<span style="color:#008810;"><%= app.amount %> <%= @currency_name %></span> 
+													<span style="color:#008810;">
+													  <%= @currency.get_currency_reward(app) %> <%= @currency.get('name') %>
+													</span> 
 													<div style="font-size:0.7em;"></div>
 												</a>
 											</h2>
 											<div class="clr"></div>
 										</div>
 										<div class="entry"> 
-											<a href="<%= app.url %>">
-												<img class="alignleft" src="<%= app.icon_url %>" alt="" height="160" width="200"/>
+											<a href="<%= app.get_click_url(@publisher_user_record, params[:udid]) %>">
+												<img class="alignleft" src="<%= app.get_icon_url %>" alt="" height="160" width="200"/>
 											</a>
 										</div>
 									</div>																				

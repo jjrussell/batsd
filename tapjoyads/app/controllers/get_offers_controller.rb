@@ -2,20 +2,9 @@ class GetOffersController < ApplicationController
   include MemcachedHelper
   
   def webpage
-    return unless verify_params([:app_id, :udid])
+    return unless verify_params([:app_id, :udid], {:allow_empty => false})
   
-    #first lookup the publisher_user_record_id for this user
-    record = PublisherUserRecord.new(:key => "#{params[:app_id]}.#{params[:publisher_user_id]}")
-    record.update(params[:udid])
-    
-    currency = Currency.new(:key => params[:app_id])
-    
-    @currency_name = currency.get('currency_name')
-    @app_name = App.new(:key => params[:app_id]).get('name')
-    
-    @app_list = []
-
-    get_rewarded_installs(0, 30, params[:udid], "redirect.",currency, true, record.get('record_id', :force_array => true)[0])
+    rewarded_installs
   end
     
   def index
@@ -142,8 +131,6 @@ class GetOffersController < ApplicationController
         if xml_fragment =~ /<Cost>Free<\/Cost>/
           num_free_apps += 1
         end
-        #advertiser_app_id = xml_fragment.match(/<AdvertiserAppID>(.*)<\/AdvertiserAppID>/)[1]
-        #advertiser_app_ids.push(advertiser_app_id)
         if set_app_list
           app = {}
           begin
@@ -168,7 +155,6 @@ class GetOffersController < ApplicationController
     offer_wall.put('udid', udid)
     offer_wall.put('num_free_apps', num_free_apps)
     offer_wall.put('num_apps', num_apps)
-    #offer_wall.put('advertiser_app_ids', advertiser_app_ids.join(','))
     offer_wall.put('publisher_app_id', app_id)
     offer_wall.save
     
@@ -176,6 +162,32 @@ class GetOffersController < ApplicationController
     # the presence of an uuid before the url, and track conversions.
     
     return xml
+  end
+  
+  def rewarded_installs
+    #first lookup the publisher_user_record_id for this user
+    @publisher_user_record = PublisherUserRecord.new(
+        :key => "#{params[:app_id]}.#{params[:publisher_user_id]}")
+    @publisher_user_record.update(params[:udid])
+    
+    @currency = Currency.new(:key => params[:app_id])
+    @publisher_app = App.new(:key => params[:app_id])
+    @advertiser_app_list = @publisher_app.get_advertiser_app_list(params[:udid], 
+        :currency => @currency, :iphone => (not params[:device_type] =~ /iPod/))
+    
+    num_free_apps = 0
+    num_apps = @advertiser_app_list.length
+    @advertiser_app_list.each do |advertiser_app|
+      num_free_apps += 1 if advertiser_app.is_free
+    end
+        
+    offer_wall = OfferWall.new
+    offer_wall.put('type', 'rewarded_installs')
+    offer_wall.put('udid', params[:udid])
+    offer_wall.put('num_free_apps', num_free_apps)
+    offer_wall.put('num_apps', num_apps)
+    offer_wall.put('publisher_app_id', @publisher_app.key)
+    offer_wall.save
   end
   
 end
