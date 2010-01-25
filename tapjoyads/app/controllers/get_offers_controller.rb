@@ -26,12 +26,16 @@ class GetOffersController < ApplicationController
       xml += get_offerpal_offers(params[:app_id], params[:udid], currency, params[:app_version])
       xml += "<Message>Complete one of the offers below to earn #{CGI::escapeHTML(currency.get('currency_name'))}</Message>\n"
     elsif params[:type] == '1'
-      type = ''
-      type = 'server.' if params[:server] == '1'
-      type = 'redirect.' if params[:redirect] == '1'
-      Rails.logger.info "type = #{type}"
-      xml += get_rewarded_installs(params[:start].to_i, params[:max].to_i, params[:udid], type, currency)
-      xml += "<Message>Install one of the apps below to earn #{CGI::escapeHTML(currency.get('currency_name'))}</Message>\n"
+      rewarded_installs
+      
+      if params[:server] == '1'
+        render :template => 'get_offers/installs_server'
+      elsif params[:redirect] == '1'
+        render :template => 'get_offers/installs_redirect'
+      else
+        render :template => 'get_offers/installs'
+      end
+      return
     end
     xml += "</TapjoyConnectReturnObject>"
     
@@ -79,92 +83,10 @@ class GetOffersController < ApplicationController
     return offer.to_xml
   end
   
-  def get_rewarded_installs(start, max, udid, type, currency, set_app_list = false, record_id = nil)
-    app_id = params[:app_id]
-    
-    device_app_list = DeviceAppList.new(:key => params[:udid])
-    
-    xml = get_from_cache_and_save("#{type}installs.s3.#{app_id}") do
-      xml =  AWS::S3::S3Object.value "#{type}installs_#{app_id}", RUN_MODE_PREFIX + 'offer-data'
-    end
-    
-    # remove all apps this user already has
-    entire_rewarded_installs = xml.split('^^TAPJOY_SPLITTER^^')
-    user_rewarded_installs = []
-    
-    only_free_apps = false
-    only_free_apps = true if currency.get('only_free_apps') == '1'
-    
-    entire_rewarded_installs.each do |install|
-      add = true
-      
-      if udid != '298c5159a3681207eaba5a04b3573aa7b4f13d99' # Ben's udid. Show all apps on his device.
-        device_app_list.get_app_list.each do |app_id|
-          add = false if install.include? "<AdvertiserAppID>#{app_id}</AdvertiserAppID>" 
-          add = false if install.include? "advertiser_app_id=#{app_id}"
-        end
-      end
-      
-      add = false if only_free_apps && install.match('<Cost>Paid</Cost>') != nil
-      
-      if install =~ /TAPJOY_IPHONE_ONLY/ 
-        add = false if params[:device_type] =~ /iPod/
-        install = install.gsub(/TAPJOY_IPHONE_ONLY/,'')
-      end
-        
-      user_rewarded_installs.push install if add
-      
-    end
-    
-    xml = "<OfferArray>\n"
-    
-    num_free_apps = 0
-    num_apps = 0
-    advertiser_app_ids = []
-    
-    max.times do |i|
-      if start + i < user_rewarded_installs.length
-        xml_fragment = user_rewarded_installs[start + i]
-        xml += xml_fragment
-       
-        num_apps += 1
-        if xml_fragment =~ /<Cost>Free<\/Cost>/
-          num_free_apps += 1
-        end
-        if set_app_list
-          app = {}
-          begin
-            app['url'] = CGI::unescapeHTML(xml_fragment.match(/<RedirectURL>(.*)<\/RedirectURL>/)[1].gsub('$PUBLISHER_USER_RECORD_ID',record_id).gsub('$UDID',udid))
-            app['icon_url'] = xml_fragment.match(/<IconURL>(.*)<\/IconURL>/)[1]
-            app['name'] = xml_fragment.match(/<Name>(.*)<\/Name>/)[1]
-            app['amount'] = xml_fragment.match(/<Amount>(.*)<\/Amount>/)[1]
-            app['cost'] = xml_fragment.match(/<Cost>(.*)<\/Cost>/)[1]
-            @app_list.push(app)
-          rescue Exception => e
-            Rails.logger.info "Exception adding #{e}"
-          end
-        end
-      end
-    end
-    
-    xml += "</OfferArray>\n"
-    xml += "<MoreDataAvailable>#{user_rewarded_installs.length - max - start}</MoreDataAvailable>\n" if user_rewarded_installs.length - max - start > 0
-
-    offer_wall = OfferWall.new
-    offer_wall.put('type', 'rewarded_installs')
-    offer_wall.put('udid', udid)
-    offer_wall.put('num_free_apps', num_free_apps)
-    offer_wall.put('num_apps', num_apps)
-    offer_wall.put('publisher_app_id', app_id)
-    offer_wall.save
-    
-    # TODO: Add OfferWall's id to the xml's ActionURL. Also change ConnectController to handle
-    # the presence of an uuid before the url, and track conversions.
-    
-    return xml
-  end
-  
   def rewarded_installs
+    @start_index = (params[:start] || 0).to_i
+    @max_items = (params[:max] || 30).to_i
+    
     #first lookup the publisher_user_record_id for this user
     @publisher_user_record = PublisherUserRecord.new(
         :key => "#{params[:app_id]}.#{params[:publisher_user_id]}")

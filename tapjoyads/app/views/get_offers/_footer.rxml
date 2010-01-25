@@ -1,0 +1,4 @@
+xml.Message 'Install one of the apps below to earn ' + @currency.get('currency_name')
+if @advertiser_app_list.length - @max_items - @start_index > 0
+  xml.MoreDataAvailable (@advertiser_app_list.length - @max_items - @start_index)
+end

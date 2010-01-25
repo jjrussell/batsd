@@ -1,0 +1,20 @@
+xml.instruct!
+xml.TapjoyConnectReturnObject do
+  xml.OfferArray do
+    @max_items.times do |i|
+      app = @advertiser_app_list[@start_index + i]
+
+      xml.TapjoyApp do
+        xml.Cost app.get_cost
+        xml.Amount @currency.get_currency_reward(app)
+        xml.Description app.get('description')
+        xml.IconURL app.get_icon_url(true)
+        xml.Name app.get('name')
+        xml.ClickURL app.get_click_url(@publisher_user_record, params[:udid])
+        xml.StoreURL app.get_linkshare_url
+      end
+      
+    end
+  end
+  xml << render(:partial => "footer")
+end

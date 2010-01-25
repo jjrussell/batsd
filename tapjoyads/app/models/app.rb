@@ -93,4 +93,10 @@ class App < SimpledbResource
   def is_free
     return get('price').to_i <= 0
   end
+  
+  ##
+  # Return the string 'Free' or 'Paid'.
+  def get_cost
+    return is_free ? 'Free' : 'Paid'
+  end
 end

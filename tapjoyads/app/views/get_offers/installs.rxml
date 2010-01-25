@@ -1,0 +1,24 @@
+xml.instruct!
+xml.TapjoyConnectReturnObject do
+  xml.OfferArray do
+    @max_items.times do |i|
+      app = @advertiser_app_list[@start_index + i]
+      
+      xml.OfferReturnClass do
+        xml.Cost app.get_cost
+        xml.Amount @currency.get_currency_reward(app)
+        xml.CreditCardRequired 'false'
+        xml.Description app.get('description')
+        xml.Instructions 'Install and then run the app while online to receive credit.'
+        xml.Name app.get('name')
+        xml.TimeDelay 'in seconds'
+        xml.AdvertiserAppID app.key
+        xml.ActionURL app.get_linkshare_url
+        xml.PublisherUserRecordID @publisher_user_record.get_record_id
+        xml.Type '1'
+      end
+      
+    end
+  end
+  xml << render(:partial => "footer")
+end
