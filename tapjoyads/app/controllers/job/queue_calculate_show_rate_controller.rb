@@ -25,7 +25,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
       conversion_rate = overall_installs / overall_clicks
     end
     
-    min_conversion_rate = app.get('price').to_f > 0 ? 0.02 : 0.4
+    min_conversion_rate = app.get('price').to_f > 0 ? 0.02 : 0.3
     if overall_clicks > 30 and conversion_rate < min_conversion_rate
       NewRelic::Agent.agent.error_collector.notice_error(
           Exception.new("App #{app_key} (#{app.get('name')}) has #{conversion_rate} cvr on #{overall_clicks} clicks."))
