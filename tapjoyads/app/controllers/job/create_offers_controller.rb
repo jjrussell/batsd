@@ -54,6 +54,7 @@ class Job::CreateOffersController < Job::SqsReaderController
             end
             
             next if offerpal_id == 'UNKNOWN'
+            next if offer['name'] =~ /Home Depot/
             
             #now we know what the offerpal id is
             cached_offer = CachedOffer.new(:key => offerpal_id.to_s + CGI::escape(country))
