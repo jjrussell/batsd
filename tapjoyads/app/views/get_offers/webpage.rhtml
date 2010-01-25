@@ -20,7 +20,7 @@
 						<div id="nav">
 							<ul id="instructions">
 								<li>
-									<a>Important instructions: Install and OPEN one of the applications below to receive <%= @currency_name %>.  You will receive your <%= @currency_name %> within a few minutes after <i>opening</i> the downloaded application. </a>
+									<a>Important instructions: Install and OPEN one of the applications below to receive <%= @currency.get('currency_name') %>.  You will receive your <%= @currency.get('currency_name') %> within a few minutes after <i>opening</i> the downloaded application. </a>
 								</li>
 							</ul>
 						</div>
@@ -43,7 +43,7 @@
 													<%= app.get('name') %> (<%= app.is_free ? 'Free' : 'Paid' %>)
 													 <br>Earn 
 													<span style="color:#008810;">
-													  <%= @currency.get_currency_reward(app) %> <%= @currency.get('name') %>
+													  <%= @currency.get_currency_reward(app) %> <%= @currency.get('currency_name') %>
 													</span> 
 													<div style="font-size:0.7em;"></div>
 												</a>
