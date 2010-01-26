@@ -28,10 +28,10 @@ class GetOffersController < ApplicationController
     elsif params[:type] == '1'
       rewarded_installs
       
-      if params[:server] == '1'
-        render :template => 'get_offers/installs_server'
-      elsif params[:redirect] == '1'
+      if params[:redirect] == '1'
         render :template => 'get_offers/installs_redirect'
+      elsif params[:server] == '1'
+        render :template => 'get_offers/installs_server'
       else
         render :template => 'get_offers/installs'
       end
