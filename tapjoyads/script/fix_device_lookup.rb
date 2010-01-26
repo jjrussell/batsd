@@ -3,8 +3,8 @@
 # Usage:
 #   script/runner -e <runmode> script/fix_device_lookup.rb
 
-log_file = ARGV[3] || 'fix_device_lookup.log'
-num_to_skip = (ARGV[4] || 0).to_i
+log_file = ARGV[2] || 'fix_device_lookup.log'
+num_to_skip = (ARGV[3] || 0).to_i
 
 logger = Logger.new(log_file)
 
