@@ -20,7 +20,7 @@ DeviceLookup.select do |device_lookup|
     device_lookup.put('app_list', domain_number_array[0], :replace => true)
     
     begin
-      device_lookup.serial_save(:catch_exceptions => false, :updated_at => false)
+      #device_lookup.serial_save(:catch_exceptions => false, :updated_at => false)
     rescue Exception => e
       logger.info "Error saving device_lookup: #{e}"
       logger.info device_lookup.to_json
@@ -33,8 +33,8 @@ DeviceLookup.select do |device_lookup|
         :key => device_lookup.key})
     added_apps = []
     
-    for domain_number in 1..domain_number_array.length
-      device_app_list = SimpledbResource.new({:domain_name => "device_app_list_#{domain_number}",
+    for i in 1..domain_number_array.length - 1
+      device_app_list = SimpledbResource.new({:domain_name => "device_app_list_#{domain_number_array[i]}",
           :key => device_lookup.key})
       
       device_app_list.attributes.each do |attr_name, attr_value|
