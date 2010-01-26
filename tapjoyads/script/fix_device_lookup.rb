@@ -53,6 +53,7 @@ DeviceLookup.select do |device_lookup|
       retry
     end
     
+    logger.info "Fixed #{main_device_app_list.key}"
   end
   
   if num_total % 100 == 0
