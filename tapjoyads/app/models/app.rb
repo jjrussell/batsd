@@ -81,7 +81,7 @@ class App < SimpledbResource
     "http://ws.tapjoyads.com/submit_click/store?" +
         "advertiser_app_id=#{@key}" +
         "&publisher_app_id=#{@key}" +
-        "&publisher_user_record_id=#{publisher_user_record.key}" +
+        "&publisher_user_record_id=#{publisher_user_record.get_record_id}" +
         "&udid=#{udid}"
   end
   

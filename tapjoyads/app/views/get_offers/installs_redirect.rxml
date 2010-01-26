@@ -9,7 +9,7 @@ xml.TapjoyConnectReturnObject do
         xml.Cost app.get_cost
         xml.Amount @currency.get_currency_reward(app)
         xml.Description app.get('description')
-        xml.IconURL app.get_icon_url(true)
+        xml.IconURL app.get_icon_url
         xml.Name app.get('name')
         xml.RedirectURL app.get_redirect_url(@publisher_user_record, params[:udid])
       end
