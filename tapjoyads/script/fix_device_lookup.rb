@@ -73,7 +73,7 @@ DeviceLookup.select(:next_token => next_token) do |device_lookup|
   end
   
   if num_total % 100 == 0
-    logger.info "**#{num_broken} broken and now fixed out of #{num_total} (#{Time.now.to_f - t.to_f}s / 100) (#{num_to_skip skipped})"
+    logger.info "**#{num_broken} broken and now fixed out of #{num_total} (#{Time.now.to_f - t.to_f}s / 100) (#{num_to_skip} skipped)"
     t = Time.now
   end
 end
