@@ -3,14 +3,28 @@
 # Usage:
 #   script/runner -e <runmode> script/fix_device_lookup.rb
 
-logger = Logger.new('fix_device_lookup.log')
+log_file = ARGV[3] || 'fix_device_lookup.log'
+num_to_skip = (ARGV[4] || 0).to_i
+
+logger = Logger.new(log_file)
 
 num_broken = 0
 num_total = 0
+num_skipped = 0
+
+if num_to_skip > 0
+  sdb = RightAws::SdbInterface.new(nil, nil, {:port => 80, :protocol => 'http'})
+  next_token = nil
+  begin
+    response = sdb.select('select count(*) from device_lookup', next_token)
+    num_skipped += response[:items][0]['Domain']['Count'][0].to_i
+    next_token = response[:next_token]
+  end while num_skipped < num_to_skip
+end
 
 t = Time.now
 
-DeviceLookup.select do |device_lookup|
+DeviceLookup.select(:next_token => next_token) do |device_lookup|
   num_total += 1
   
   domain_number_array = device_lookup.get('app_list', :force_array => true)
@@ -55,11 +69,11 @@ DeviceLookup.select do |device_lookup|
       retry
     end
     
-    logger.info "**Fixed #{main_device_app_list.key}. Added #{added_apps.to_json}"
+    logger.info "Fixed #{main_device_app_list.key}. Added #{added_apps.to_json}"
   end
   
   if num_total % 100 == 0
-    logger.info "#{num_broken} broken (and now fixed) out of #{num_total} (#{Time.now.to_f - t.to_f}s / 100)"
+    logger.info "**#{num_broken} broken and now fixed out of #{num_total} (#{Time.now.to_f - t.to_f}s / 100) (#{num_to_skip skipped})"
     t = Time.now
   end
 end
