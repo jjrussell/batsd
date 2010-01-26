@@ -20,7 +20,7 @@ DeviceLookup.select do |device_lookup|
     device_lookup.put('app_list', domain_number_array[0], :replace => true)
     
     begin
-      #device_lookup.serial_save(:catch_exceptions => false, :updated_at => false)
+      device_lookup.serial_save(:catch_exceptions => false, :updated_at => false)
     rescue Exception => e
       logger.info "Error saving device_lookup: #{e}"
       logger.info device_lookup.to_json
@@ -55,7 +55,7 @@ DeviceLookup.select do |device_lookup|
       retry
     end
     
-    logger.info "Fixed #{main_device_app_list.key}. Added #{added_apps.to_json}"
+    logger.info "**Fixed #{main_device_app_list.key}. Added #{added_apps.to_json}"
   end
   
   if num_total % 100 == 0
