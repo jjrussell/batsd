@@ -31,6 +31,7 @@ DeviceLookup.select do |device_lookup|
     
     main_device_app_list = SimpledbResource.new({:domain_name => "device_app_list_#{domain_number_array[0]}",
         :key => device_lookup.key})
+    added_apps = []
     
     for domain_number in 1..domain_number_array.length
       device_app_list = SimpledbResource.new({:domain_name => "device_app_list_#{domain_number}",
@@ -40,6 +41,7 @@ DeviceLookup.select do |device_lookup|
         if attr_name.starts_with? 'app.'
           main_device_app_list.put(attr_name, attr_value)
         end
+        added_apps.push(attr_name)
       end
       device_app_list.delete_all
     end
@@ -53,7 +55,7 @@ DeviceLookup.select do |device_lookup|
       retry
     end
     
-    logger.info "Fixed #{main_device_app_list.key}"
+    logger.info "Fixed #{main_device_app_list.key}. Added #{added_apps.to_json}"
   end
   
   if num_total % 100 == 0
