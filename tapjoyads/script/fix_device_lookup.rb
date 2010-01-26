@@ -30,11 +30,11 @@ DeviceLookup.select do |device_lookup|
       
     
     main_device_app_list = SimpledbResource.new({:domain_name => "device_app_list_#{domain_number_array[0]}",
-        :key => device_lookup.key, :load_from_memcache => false})
+        :key => device_lookup.key})
     
     for domain_number in 1..domain_number_array.length
       device_app_list = SimpledbResource.new({:domain_name => "device_app_list_#{domain_number}",
-          :key => device_lookup.key, :load_from_memcache => false})
+          :key => device_lookup.key})
       
       device_app_list.attributes.each do |attr_name, attr_value|
         if attr_name.starts_with? 'app.'
@@ -58,6 +58,5 @@ DeviceLookup.select do |device_lookup|
   if num_total % 100 == 0
     logger.info "#{num_broken} broken (and now fixed) out of #{num_total} (#{Time.now.to_f - t.to_f}s / 100)"
     t = Time.now
-    break
   end
 end
