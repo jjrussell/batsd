@@ -4,6 +4,8 @@
 
 require 'logger'
 
+include MemcachedHelper
+
 items_to_delete = []
 
 # Deletion thread. Deletes items that have been rebalanced 15 seconds after their rebalancing.
@@ -49,8 +51,8 @@ where = nil
 #loop do
   start_time = Time.now.utc
   main_logger.info "Starting loop #{loop_count} at #{start_time}"
-  total_items = SimpledbResource.count(:domain_name => 'device_app_list_1', :where => where)
-  #total_items = 20000000
+  #total_items = SimpledbResource.count(:domain_name => 'device_app_list_1', :where => where)
+  total_items = 20600000
   main_logger.info "#{total_items} total items to rebalance this loop."
   
   num_rebalanced = 0
@@ -122,6 +124,7 @@ where = nil
         rescue Exception => e
           main_logger.info "Exception when saving device_lookup to memcache: #{e}"
           main_logger.info item.to_json
+          delete_from_cache("sdb.#{item.this_domain_name}.#{item.key}")
           sleep(0.1)
           retry
         end
