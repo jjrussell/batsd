@@ -84,6 +84,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     
     Rails.logger.info "New show_rate: #{new_show_rate}"
     
+    app.put('conversion_rate', conversion_rate)
     app.put('show_rate', new_show_rate)
     app.save
   end
