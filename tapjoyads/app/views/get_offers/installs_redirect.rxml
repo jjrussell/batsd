@@ -11,7 +11,7 @@ xml.TapjoyConnectReturnObject do
         xml.Description app.get('description')
         xml.IconURL app.get_icon_url(true)
         xml.Name app.get('name')
-        xml.ClickURL app.get_redirect_url(@publisher_user_record, params[:udid])
+        xml.RedirectURL app.get_redirect_url(@publisher_user_record, params[:udid])
       end
       
     end
