@@ -49,8 +49,8 @@ where = nil
 #loop do
   start_time = Time.now.utc
   main_logger.info "Starting loop #{loop_count} at #{start_time}"
-  #total_items = SimpledbResource.count(:domain_name => 'device_app_list_1', :where => where)
-  total_items = 20000000
+  total_items = SimpledbResource.count(:domain_name => 'device_app_list_1', :where => where)
+  #total_items = 20000000
   main_logger.info "#{total_items} total items to rebalance this loop."
   
   num_rebalanced = 0
@@ -62,7 +62,7 @@ where = nil
     response = sdb.select('select count(*) from device_app_list_1', next_token)
     num_skipped += response[:items][0]['Domain']['Count'][0].to_i
     next_token = response[:next_token]
-  end while num_skipped < 2500000
+  end while num_skipped < 15000000
   
   device_lookup_items = []
   device_app_list_items = []
@@ -117,7 +117,14 @@ where = nil
 
     if device_lookup_items.length == 25
       device_lookup_items.each do |item|
-        item.save(:updated_at => false, :write_to_sdb => false)
+        begin
+          item.serial_save(:updated_at => false, :write_to_sdb => false, :catch_exceptions => false)
+        rescue Exception => e
+          main_logger.info "Exception when saving device_lookup to memcache: #{e}"
+          main_logger.info item.to_json
+          sleep(0.1)
+          retry
+        end
       end
       
       begin
