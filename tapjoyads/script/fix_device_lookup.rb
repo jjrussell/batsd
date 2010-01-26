@@ -20,7 +20,7 @@ DeviceLookup.select do |device_lookup|
     device_lookup.put('app_list', domain_number_array[0], :replace => true)
     
     begin
-      device_lookup.serial_save(:catch_exceptions => false)
+      device_lookup.serial_save(:catch_exceptions => false, :updated_at => false)
     rescue Exception => e
       logger.info "Error saving device_lookup: #{e}"
       logger.info device_lookup.to_json
@@ -30,11 +30,11 @@ DeviceLookup.select do |device_lookup|
       
     
     main_device_app_list = SimpledbResource.new({:domain_name => "device_app_list_#{domain_number_array[0]}",
-        :key => device_lookup.key})
+        :key => device_lookup.key, :load_from_memcache => false})
     
     for domain_number in 1..domain_number_array.length
       device_app_list = SimpledbResource.new({:domain_name => "device_app_list_#{domain_number}",
-          :key => device_lookup.key})
+          :key => device_lookup.key, :load_from_memcache => false})
       
       device_app_list.attributes.each do |attr_name, attr_value|
         if attr_name.starts_with? 'app.'
@@ -56,7 +56,7 @@ DeviceLookup.select do |device_lookup|
   end
   
   if num_total % 100 == 0
-    logger.info "#{num_broken} broken (and now fixed) out of #{num_total} (#{Time.now.to_f - t}s / 100)"
+    logger.info "#{num_broken} broken (and now fixed) out of #{num_total} (#{Time.now.to_f - t.to_f}s / 100)"
     t = Time.now
     break
   end
