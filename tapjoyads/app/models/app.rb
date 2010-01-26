@@ -79,16 +79,16 @@ class App < SimpledbResource
         "type=10&tmpid=3909&RD_PARM1=#{CGI::escape(web_object_url)}"
   end
   
-  def get_click_url(publisher_user_record, udid)
+  def get_click_url(publisher_app, publisher_user_record, udid)
     "http://ws.tapjoyads.com/submit_click/store?" +
         "advertiser_app_id=#{@key}" +
-        "&publisher_app_id=#{@key}" +
+        "&publisher_app_id=#{publisher_app.key}" +
         "&publisher_user_record_id=#{publisher_user_record.get_record_id}" +
         "&udid=#{udid}"
   end
   
-  def get_redirect_url(publisher_user_record, udid)
-    return get_click_url(publisher_user_record, udid) + "&redirect=1"
+  def get_redirect_url(publisher_app, publisher_user_record, udid)
+    return get_click_url(publisher_app, publisher_user_record, udid) + "&redirect=1"
   end
   
   def get_icon_url(base64 = false)
