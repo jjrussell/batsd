@@ -12,8 +12,10 @@ class Job::CreateOffersController < Job::SqsReaderController
   
   def on_message(message)
     
+    bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')
+    
     #first get the list of countries supported by offerpal
-    country_list = AWS::S3::S3Object.value 'OfferpalCountryList.txt', 'offer-data'
+    country_list = bucket.get('OfferpalCountryList.txt')
     countries = country_list.split(/\n/)
     
     app_currency_list = []
@@ -90,6 +92,13 @@ class Job::CreateOffersController < Job::SqsReaderController
         a.get('ordinal').to_i - b.get('ordinal').to_i
       end
       
+      serialized_offer_list = []
+      offer_list.each do |offer|
+        serialized_offer_list.push(offer.serialize)
+      end
+      bucket.put('offer_list', serialized_offer_list.to_json)
+      save_to_cache('s3.offer-data.offer_list', offer_list)
+      
       #go through and create app-specific lists for each app
       app_currency_list.each do |currency|
         banned_offers = currency.get('disabled_offers').split(';') if currency.get('disabled_offers')
@@ -102,8 +111,7 @@ class Job::CreateOffersController < Job::SqsReaderController
         end
         xml += "</OfferArray>\n"
         
-        AWS::S3::S3Object.store "offers_" + currency.key + "." + CGI::escape(country), 
-          xml, RUN_MODE_PREFIX + 'offer-data'
+        bucket.put("offers_#{currency.key}.#{CGI::escape(country)}",  xml)
         save_to_cache("offers.s3.#{currency.key}.#{CGI::escape(country)}", xml)
       end
       

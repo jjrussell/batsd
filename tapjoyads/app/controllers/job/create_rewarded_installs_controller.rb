@@ -26,5 +26,6 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
     
     bucket.put('rewarded_installs_list', serialized_app_list.to_json)
     save_to_cache('installs.rewarded_installs_list', serialized_app_list.to_json)
+    save_to_cache('s3.offer-data.rewarded_installs_list', serialized_app_list.to_json)
   end
 end
