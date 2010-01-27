@@ -44,9 +44,7 @@ class App < SimpledbResource
       
       if udid != '298c5159a3681207eaba5a04b3573aa7b4f13d99' # Ben's udid. Show all apps on his device.
         reject = true if device_app_list.has_app(advertiser_app.key)
-        if advertiser_app.get('partner_id') == '70f54c6d-f078-426c-8113-d6e43ac06c6d'
-          reject = true if rand > (advertiser_app.get('show_rate') || 1).to_f
-        end
+        reject = true if rand > (advertiser_app.get('show_rate') || 1).to_f
       end
       
       reject
