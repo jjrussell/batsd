@@ -3,6 +3,7 @@ require 'patron'
 module DownloadContent
   include Patron
   include RightAws
+  include NewRelicHelper
   
   def download_content(url, options = {})
     headers = options.delete(:headers) { {} }
@@ -59,8 +60,7 @@ module DownloadContent
         Rails.logger.info "Added to FailedDownloads queue."
       else
         if retry_options[:alert]
-          NewRelic::Agent.agent.error_collector.notice_error(
-              Exception.new("Failed to download #{url}. No more retries."), request)
+          alert_new_relic(FailedToDownloadError, "Failed to download #{url}. No more retries.")
         end
         call_final_action(final_action, 'max_retries', retry_options)
       end

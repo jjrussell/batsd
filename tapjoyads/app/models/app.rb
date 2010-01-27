@@ -1,4 +1,6 @@
 class App < SimpledbResource
+  include NewRelicHelper
+  
   self.domain_name = 'app'
   self.key_format = 'app_guid'
   
@@ -76,8 +78,7 @@ class App < SimpledbResource
     end
     
     unless match and match[1]
-      NewRelic::Agent.agent.error_collector.notice_error(
-          Exception.new("Could not parse store id from #{store_url}"))
+      alert_new_relic(ParseStoreIdError, "Could not parse store id from #{store_url}")
       return nil
     end
     

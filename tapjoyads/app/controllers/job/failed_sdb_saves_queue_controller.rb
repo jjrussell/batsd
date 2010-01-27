@@ -1,4 +1,6 @@
 class Job::FailedSdbSavesQueueController < Job::SqsReaderController
+  include NewRelicHelper
+  
   def initialize
     super QueueNames::FAILED_SDB_SAVES
   end
@@ -21,8 +23,7 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
         # This will raise an error if the key is not found.
         bucket.get("complete/#{json['uuid']}")
         
-        NewRelic::Agent.agent.error_collector.notice_error(
-            Exception.new("Duplicate FailedSdbSaves read. Already operated on #{json['uuid']}."))
+        alert_new_relic(DuplicateFailedSdbSavesError, "Already operated on #{json['uuid']}")
         return
       else
         raise e
