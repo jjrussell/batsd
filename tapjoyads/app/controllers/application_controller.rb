@@ -2,6 +2,7 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+  include NewRelicHelper
   helper :all # include all helpers, all the time
   
   before_filter :fix_params
@@ -38,8 +39,7 @@ class ApplicationController < ActionController::Base
   
   def log_missing_required_params
     Rails.logger.info "missing required params"
-    NewRelic::Agent.agent.error_collector.notice_error(
-        Exception.new("Missing Require Params"), request, params[:action], params)
+    alert_new_relic(MissingRequiredParamsError, nil, request, params)
   end
   
   def fix_params
