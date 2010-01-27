@@ -13,6 +13,7 @@ xml.TapjoyConnectReturnObject do
         xml.Name app.get('name')
         xml.ClickURL app.get_click_url(@publisher_app, @publisher_user_record, params[:udid])
         xml.StoreURL app.get_linkshare_url
+        xml.StoreID app.get_store_id
       end
       
     end

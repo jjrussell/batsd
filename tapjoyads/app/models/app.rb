@@ -53,7 +53,21 @@ class App < SimpledbResource
     return advertiser_app_list
   end
   
-  def get_linkshare_url(request = nil, params = nil)
+  def get_linkshare_url
+    store_id = get_store_id
+    unless store_id
+      return get('store_url')
+    end
+    
+    web_object_url = "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
+    
+    return "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&" +
+        "type=10&tmpid=3909&RD_PARM1=#{CGI::escape(web_object_url)}"
+  end
+  
+  ##
+  # Returns the Apple store id for an app. Determines this from parsing the store url.
+  def get_store_id
     store_url = get('store_url')
     
     match = store_url.match(/\/id(\d*)\?/)
@@ -62,19 +76,12 @@ class App < SimpledbResource
     end
     
     unless match and match[1]
-      if request and params
-        NewRelic::Agent.agent.error_collector.notice_error(
-            Exception.new("Could not parse store id from #{store_url}"),
-            request, action, params)
-      end
-      return store_url
+      NewRelic::Agent.agent.error_collector.notice_error(
+          Exception.new("Could not parse store id from #{store_url}"))
+      return nil
     end
     
-    store_id = match[1]
-    web_object_url = "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
-    
-    return "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&" +
-        "type=10&tmpid=3909&RD_PARM1=#{CGI::escape(web_object_url)}"
+    return match[1]
   end
   
   def get_click_url(publisher_app, publisher_user_record, udid)

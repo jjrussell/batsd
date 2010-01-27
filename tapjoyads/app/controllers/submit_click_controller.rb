@@ -66,7 +66,7 @@ class SubmitClickController < ApplicationController
     
     if params[:redirect] == "1"
       app = App.new(:key => params[:advertiser_app_id])
-      redirect_to app.get_linkshare_url(request, params)
+      redirect_to app.get_linkshare_url
     else
       render :template => 'layouts/success'
     end
