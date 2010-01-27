@@ -53,9 +53,12 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     Rails.logger.info "Seconds left in day: #{seconds_left_in_day}"
     Rails.logger.info "Num installs today: #{num_installs_today}"
     
-    balance = app.get('balance').to_f
-    payment_for_install = app.get('payment_for_install').to_f
-    target_installs = balance / payment_for_install
+    # Disabled - uncomment to set upper limit based on balance.
+    #balance = app.get('balance').to_f
+    #payment_for_install = app.get('payment_for_install').to_f
+    #target_installs = balance / payment_for_install
+    
+    target_installs = 1.0 / 0
     
     daily_budget = app.get('daily_budget')
     if daily_budget and daily_budget.to_i > 0
@@ -64,8 +67,6 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     
     target_clicks = target_installs / conversion_rate
     
-    Rails.logger.info "Balance: #{balance}"
-    Rails.logger.info "Payment for install: #{payment_for_install}"
     Rails.logger.info "Daily budget: #{daily_budget}"
     Rails.logger.info "Target installs for remainder of day: #{target_installs}"
     Rails.logger.info "Target clicks for remainder of day: #{target_clicks}"
