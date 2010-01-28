@@ -20,7 +20,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     overall_clicks = StoreClick.count(:where => "click_date < '#{now.to_f - 10.minutes}' and advertiser_app_id = '#{app_key}'").to_f
     overall_installs = StoreClick.count(:where => "installed < '#{now.to_f - 10.minutes}' and advertiser_app_id = '#{app_key}'").to_f
     
-    if overall_installs == 0 or overall_clicks == 0
+    if overall_clicks == 0
       conversion_rate = app.get('price').to_f > 0 ? 0.3 : 0.75
     else
       conversion_rate = overall_installs / overall_clicks
