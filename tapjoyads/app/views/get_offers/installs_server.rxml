@@ -7,7 +7,7 @@ xml.TapjoyConnectReturnObject do
 
       xml.TapjoyApp do
         xml.Cost app.get_cost
-        xml.Amount @currency.get_currency_reward(app)
+        xml.Amount @currency.get_app_currency_reward(app)
         xml.Description app.get('description')
         xml.IconURL app.get_icon_url(true)
         xml.Name app.get('name')

@@ -55,6 +55,31 @@ class App < SimpledbResource
     return advertiser_app_list
   end
   
+  ##
+  # Returns a list of active offers that are not disabled for this app.
+  # currency: This app's currency. If none is provided, one is created using this app's key.
+  def get_offer_list(currency = nil)
+    currency = Currency.new(:key => @key) unless currency
+    
+    json_string = get_from_cache_and_save("s3.offer-data.offer_list") do
+      bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')
+      bucket.get('offer_list')
+    end
+    serialized_offer_list = JSON.parse(json_string)
+    offer_list = []
+    serialized_offer_list.each do |serialized_offer|
+      offer_list.push(CachedOffer.deserialize(serialized_offer))
+    end
+    
+    banned_offers = (currency.get('disabled_offers') || '').split(';')
+    
+    offer_list.reject! do |offer|
+      banned_offers.include?(offer.key)
+    end
+    
+    return offer_list
+  end
+  
   def get_linkshare_url
     store_id = get_store_id
     unless store_id

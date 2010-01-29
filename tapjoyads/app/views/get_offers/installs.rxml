@@ -7,7 +7,7 @@ xml.TapjoyConnectReturnObject do
       
       xml.OfferReturnClass do
         xml.Cost app.get_cost
-        xml.Amount @currency.get_currency_reward(app)
+        xml.Amount @currency.get_app_currency_reward(app)
         xml.CreditCardRequired 'false'
         xml.Description app.get('description')
         xml.Instructions 'Install and then run the app while online to receive credit.'
