@@ -10,7 +10,7 @@ xml.TapjoyConnectReturnObject do
         xml.Description offer.get_description(@currency, @publisher_app)
         xml.Instructions offer.get_instructions(@currency, @publisher_app)
         xml.Name offer.get_name(@currency, @publisher_app)
-        xml.ActionURL offer.get_action_url(@publisher_user_record, @publisher_app, params[:udid], params[:app_verion])
+        xml.ActionURL offer.get_action_url(@publisher_user_record, @publisher_app, params[:udid], params[:app_version])
         xml.TimeDelay offer.get('time_delay') if offer.get('time_delay')
         xml.ImageURL offer.get('image_url') if offer.get('image_url')
         xml.CachedOfferID offer.get('cached_offer_id')
