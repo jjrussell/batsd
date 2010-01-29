@@ -97,7 +97,7 @@ class Job::CreateOffersController < Job::SqsReaderController
         serialized_offer_list.push(offer.serialize)
       end
       bucket.put('offer_list', serialized_offer_list.to_json)
-      save_to_cache('s3.offer-data.offer_list', offer_list)
+      save_to_cache('s3.offer-data.offer_list', offer_list.to_json)
       
       #go through and create app-specific lists for each app
       app_currency_list.each do |currency|
