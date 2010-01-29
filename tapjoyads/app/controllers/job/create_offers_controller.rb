@@ -31,7 +31,7 @@ class Job::CreateOffersController < Job::SqsReaderController
     countries.each do |country|
       next if country != "United States"
       
-      offer_list = []
+      offer_hash = {}
       
       for offset in [0,30]
         url = "http://pub.myofferpal.com/#{drop_id}/showoffersAPI.action?snuid=TAPJOY_GENERIC&country=#{CGI::escape(country)}" +
@@ -75,11 +75,11 @@ class Job::CreateOffersController < Job::SqsReaderController
             amount = -1 if amount == 0
             
             cached_offer.put('amount', amount.to_s)
-            cached_offer.put('expires',Time.now.utc.to_f.to_s)
+            cached_offer.put('expires', Time.now.utc.to_f.to_s)
             
             cached_offer.save
             
-            offer_list.push(cached_offer)
+            offer_hash[cached_offer.key] = cached_offer
           end
           
         rescue Exception => e
@@ -87,6 +87,8 @@ class Job::CreateOffersController < Job::SqsReaderController
         end #begin/rescue
           
       end #offset loop
+      
+      offer_list = offer_hash.values
       
       offer_list.sort! do |a,b| 
         a.get('ordinal').to_i - b.get('ordinal').to_i
@@ -99,23 +101,6 @@ class Job::CreateOffersController < Job::SqsReaderController
       bucket.put('offer_list', serialized_offer_list.to_json)
       save_to_cache('s3.offer-data.offer_list', serialized_offer_list.to_json)
       
-      #go through and create app-specific lists for each app
-      app_currency_list.each do |currency|
-        banned_offers = currency.get('disabled_offers').split(';') if currency.get('disabled_offers')
-        
-        xml = "<OfferArray>\n"
-        offer_list.each do |offer|
-          next if (banned_offers) && (banned_offers.include? offer.key)
-          return_offer = ReturnOffer.new(0, offer, currency)
-          xml += return_offer.to_xml
-        end
-        xml += "</OfferArray>\n"
-        
-        bucket.put("offers_#{currency.key}.#{CGI::escape(country)}",  xml)
-        save_to_cache("offers.s3.#{currency.key}.#{CGI::escape(country)}", xml)
-      end
-      
     end #country loop
-    
   end
 end
