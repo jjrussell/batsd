@@ -44,6 +44,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
           adv_app = App.new(:key => reward.get('advertiser_app_id'))
           name = adv_app.get('name')
           id = 'application'
+          callback_url += "&storeId=#{CGI::escape(adv_app.get_store_id)}"
         elsif (reward.get('type') == 'offer')
           offer_id = reward.get('cached_offer_id')
           if offer_id
