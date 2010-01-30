@@ -1,9 +1,9 @@
 class Job::MasterCreateOffersController < Job::JobController
-  include RightAws
+  include SqsHelper
   
   def index
-    SqsGen2.new.queue(QueueNames::CREATE_OFFERS).send_message('run')
-    SqsGen2.new.queue(QueueNames::CREATE_REWARDED_INSTALLS).send_message('run')
+    send_to_sqs(QueueNames::CREATE_OFFERS, 'run')
+    send_to_sqs(QueueNames::CREATE_REWARDED_INSTALLS, 'run')
     
     render :text => 'ok'
   end

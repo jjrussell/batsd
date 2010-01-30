@@ -2,8 +2,8 @@ require 'patron'
 
 module DownloadContent
   include Patron
-  include RightAws
   include NewRelicHelper
+  include SqsHelper
   
   def download_content(url, options = {})
     headers = options.delete(:headers) { {} }
@@ -56,7 +56,7 @@ module DownloadContent
         retry_options[:retries] = num_retries - 1
         message = {:url => url, :download_options => download_options, 
             :retry_options => retry_options, :action_options => action_options}.to_json
-        SqsGen2.new.queue(QueueNames::FAILED_DOWNLOADS).send_message(message)
+        send_to_sqs(QueueNames::FAILED_DOWNLOADS, message)
         Rails.logger.info "Added to FailedDownloads queue."
       else
         if retry_options[:alert]

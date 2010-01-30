@@ -1,5 +1,5 @@
 class Job::MasterAppStatsController < Job::JobController
-  include RightAws
+  include SqsHelper
   
   def initialize
     @now = Time.now.utc
@@ -15,7 +15,7 @@ class Job::MasterAppStatsController < Job::JobController
       app.put('next_run_time', @now.to_f + 1.hour)
       app.save
       
-      SqsGen2.new.queue(QueueNames::APP_STATS).send_message(message)
+      send_to_sqs(QueueNames::APP_STATS, message)
     end
     
     render :text => 'ok'

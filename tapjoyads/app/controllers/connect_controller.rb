@@ -1,7 +1,7 @@
 class ConnectController < ApplicationController
   include DownloadContent
   include TimeLogHelper
-  include RightAws
+  include SqsHelper
   
   def index
     #return unless verify_params([:app_id, :udid, :device_type, :app_version, :device_os_version, :library_version])
@@ -14,7 +14,7 @@ class ConnectController < ApplicationController
         logger.info "Added conversion to sqs queue"
         message = {:udid => params[:udid], :app_id => params[:app_id], 
             :install_date => Time.now.utc.to_f.to_s}.to_json
-        SqsGen2.new.queue(QueueNames::CONVERSION_TRACKING).send_message(message)
+        send_to_sqs(QueueNames::CONVERSION_TRACKING, message)
       end
     end
     

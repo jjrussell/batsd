@@ -2,6 +2,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
   include DownloadContent
   include RewardHelper
   include PublisherRecordHelper
+  include SqsHelper
   
   def initialize
     super QueueNames::CONVERSION_TRACKING
@@ -86,8 +87,8 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
     
       message = reward.serialize(:attributes_only => true)
     
-      SqsGen2.new.queue(QueueNames::SEND_CURRENCY).send_message(message) if currency.get('callback_url')
-      SqsGen2.new.queue(QueueNames::SEND_MONEY_TXN).send_message(message)
+      send_to_sqs(QueueNames::SEND_CURRENCY, message) if currency.get('callback_url')
+      send_to_sqs(QueueNames::SEND_MONEY_TXN, message)
       
       click.put('installed', install_date)
       click.save

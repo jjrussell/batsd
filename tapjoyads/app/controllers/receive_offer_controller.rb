@@ -1,7 +1,7 @@
 class ReceiveOfferController < ApplicationController
   include RewardHelper
-  include RightAws
   include PublisherRecordHelper
+  include SqsHelper
   
   def receive_offer
     return record_offer
@@ -53,8 +53,8 @@ class ReceiveOfferController < ApplicationController
     reward.save
     
     message = reward.serialize(:attributes_only => true)
-    SqsGen2.new.queue(QueueNames::SEND_CURRENCY).send_message(message)
-    SqsGen2.new.queue(QueueNames::SEND_MONEY_TXN).send_message(message)
+    send_to_sqs(QueueNames::SEND_CURRENCY, message)
+    send_to_sqs(QueueNames::SEND_MONEY_TXN, message)
 
     web_request = WebRequest.new
     web_request.put_values('receive_offer', params, request)

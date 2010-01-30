@@ -1,7 +1,7 @@
 class RateAppOfferController < ApplicationController
-  include RightAws
   include RewardHelper
   include PublisherRecordHelper
+  include SqsHelper
   
   def index
     
@@ -45,7 +45,7 @@ class RateAppOfferController < ApplicationController
 
       message = reward.serialize(:attributes_only => true)
 
-      SqsGen2.new.queue(QueueNames::SEND_CURRENCY).send_message(message)
+      send_to_sqs(QueueNames::SEND_CURRENCY, message)
 
       redirect_to app.get_linkshare_url
       return

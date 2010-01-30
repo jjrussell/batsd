@@ -4,6 +4,7 @@ class SimpledbResource
   include TimeLogHelper
   include MemcachedHelper
   include RightAws
+  include SqsHelper
   
   attr_accessor :key, :attributes, :this_domain_name, :is_new
   cattr_accessor :domain_name, :key_format
@@ -150,12 +151,11 @@ class SimpledbResource
     
     Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e}"
     s3 = RightAws::S3.new(nil, nil, :multi_thread => true)
-    sqs = SqsGen2.new(nil, nil, :multi_thread => true)
     uuid = UUIDTools::UUID.random_create.to_s
     bucket = s3.bucket('failed-sdb-saves')
     bucket.put(uuid, self.serialize)
     message = {:uuid => uuid, :options => options_copy}.to_json
-    sqs.queue(QueueNames::FAILED_SDB_SAVES).send_message(message)
+    send_to_sqs(QueueNames::FAILED_SDB_SAVES, message)
     Rails.logger.info "Successfully added to sqs. Message: #{message}"
   ensure
     Rails.logger.flush

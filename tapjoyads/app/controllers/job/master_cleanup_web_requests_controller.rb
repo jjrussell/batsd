@@ -1,5 +1,5 @@
 class Job::MasterCleanupWebRequestsController < Job::JobController
-  include RightAws
+  include SqsHelper
   
   def index
     # Cleanup 2 days ago. Also cleanup through 7 days prior, in case any previous cleanups failed.
@@ -7,11 +7,9 @@ class Job::MasterCleanupWebRequestsController < Job::JobController
     # doesn't have any adverse affects.
     day = Time.now.utc - 2.days
     
-    queue = SqsGen2.new.queue(QueueNames::CLEANUP_WEB_REQUESTS)
-    
     7.times do
       date_string = day.iso8601[0,10]
-      queue.send_message(date_string)
+      send_to_sqs(QueueNames::CLEANUP_WEB_REQUESTS, date_string)
       day = day - 1.days
     end
     
