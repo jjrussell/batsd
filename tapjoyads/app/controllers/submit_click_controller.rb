@@ -1,7 +1,7 @@
 class SubmitClickController < ApplicationController
   include RewardHelper
   include ApplicationHelper
-  include RightAws 
+  include SqsHelper
   
   def store
     return unless verify_params([:advertiser_app_id, :udid, :publisher_app_id, :publisher_user_record_id])
@@ -63,7 +63,7 @@ class SubmitClickController < ApplicationController
       logger.info "Added fake conversion to sqs queue"
       message = {:udid => params[:udid], :app_id => params[:advertiser_app_id], 
           :install_date => Time.now.utc.to_f.to_s}.to_json
-      SqsGen2.new.queue(QueueNames::CONVERSION_TRACKING).send_message(message)
+      send_to_sqs(QueueNames::CONVERSION_TRACKING, message)
 
       #record that the user has this app, so we don't show it again
       device_app_list = DeviceAppList.new(:key => params[:udid])

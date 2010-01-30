@@ -26,4 +26,7 @@ module NewRelicHelper
   class ParseStoreIdError < RuntimeError
   end
   
+  class FailedToWriteToSqsError < RuntimeError
+  end
+  
 end
