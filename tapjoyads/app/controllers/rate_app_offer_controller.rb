@@ -16,7 +16,7 @@ class RateAppOfferController < ApplicationController
       
       rate = RateApp.new(:key => "#{app_id}.#{udid}#{version}")
       if rate.get('rate-date')
-        redirect_to app.get('store_url') 
+        redirect_to app.get_linkshare_url
         return
       end
       
@@ -47,7 +47,7 @@ class RateAppOfferController < ApplicationController
 
       SqsGen2.new.queue(QueueNames::SEND_CURRENCY).send_message(message)
 
-      redirect_to app.get('store_url')
+      redirect_to app.get_linkshare_url
       return
     end
   end

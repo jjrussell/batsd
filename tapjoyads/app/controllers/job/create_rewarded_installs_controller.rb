@@ -16,15 +16,54 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
     
     #first get the list of all apps paying for installs
     app_list = []
-    serialized_app_list = []
-    App.select(
-        :where => "payment_for_install > '0' and install_tracking = '1' and rewarded_installs_ordinal != '' and balance > '0'",
-        :order_by => "rewarded_installs_ordinal") do |item|
-      app_list.push(item)
-      serialized_app_list.push(item.serialize)
+    App.select(:where => 
+        "payment_for_install > '0' " +
+        " and install_tracking = '1'" +
+        " and rewarded_installs_ordinal != ''" +
+        " and balance > '0'") do |app|
+      app_list.push(app)
     end
+    
+    # Sort all apps based on cvr.
+    app_list.sort! do |app1, app2|
+      get_cvr_for_ranking(app2) - get_cvr_for_ranking(app1)
+    end
+    
+    # Re-order apps which have an ordinal set.
+    apps_to_swap = []
+    app_list.each do |app|
+      if app.get('rewarded_installs_ordinal').to_i < 100
+        apps_to_swap.push(app)
+      end
+    end
+    apps_to_swap.each do |app|
+      app_list.delete(app)
+      app_list.insert(app.get('rewarded_installs_ordinal').to_i - 1, app)
+    end
+    
+    serialized_app_list = []
+    app_list.each do |app|
+      serialized_app_list.push(app.serialize)
+    end
+    
     
     bucket.put('rewarded_installs_list', serialized_app_list.to_json)
     save_to_cache('s3.offer-data.rewarded_installs_list', serialized_app_list.to_json)
+  end
+  
+  def get_cvr_for_ranking(app)
+    boost = 0
+    if app.key == '875d39dd-8227-49a2-8af4-cbd5cb583f0e'
+      # MyTown: boost cvr by 20-30%
+      boost = 0.2 + rand * 0.1
+    elsif app.key == 'f8751513-67f1-4273-8e4e-73b1e685e83d'
+      # Movies: boost cvr by 25-25%
+      boost = 0.25 + rand * 0.1
+    elsif app.get('partner_id') == '70f54c6d-f078-426c-8113-d6e43ac06c6d'
+      # Tapjoy apps: reduce cvr by 5%
+      boost = -0.05
+    end
+    
+    app.get('pay_per_click') == '1' ? 0.75 + rand * 0.15 : app.get('conversion_rate').to_f + boost
   end
 end
