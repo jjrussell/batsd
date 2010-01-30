@@ -59,7 +59,7 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
     elsif app.key == 'f8751513-67f1-4273-8e4e-73b1e685e83d'
       # Movies: boost cvr by 25-25%
       boost = 0.25 + rand * 0.1
-    elsif app.get('partner_id') == '70f54c6d-f078-426c-8113-d6e43ac06c6d'
+    elsif app.get('partner_id') == '70f54c6d-f078-426c-8113-d6e43ac06c6d' and app.is_free
       # Tapjoy apps: reduce cvr by 5%
       boost = -0.05
     end
