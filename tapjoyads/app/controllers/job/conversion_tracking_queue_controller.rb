@@ -86,7 +86,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
     
       message = reward.serialize(:attributes_only => true)
     
-      SqsGen2.new.queue(QueueNames::SEND_CURRENCY).send_message(message)
+      SqsGen2.new.queue(QueueNames::SEND_CURRENCY).send_message(message) if currency.get('callback_url')
       SqsGen2.new.queue(QueueNames::SEND_MONEY_TXN).send_message(message)
       
       click.put('installed', install_date)

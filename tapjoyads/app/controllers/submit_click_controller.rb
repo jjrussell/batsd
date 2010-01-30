@@ -8,6 +8,7 @@ class SubmitClickController < ApplicationController
     
     now = Time.now.utc
     
+    
     ##
     # store the value of an install in this table
     # so the user gets the reward they think they earned
@@ -20,6 +21,14 @@ class SubmitClickController < ApplicationController
       else
         advertiser_amount = app.get('price').to_i / 2
       end
+    end
+    
+    ##
+    # don't store the click if it's Hottest Free App and 
+    # the user already has the app installed
+    if params[:publisher_app_id] == '469f7523-3b99-4b42-bcfb-e18d9c3c4576'
+      device = DeviceAppList.new(:key => params[:udid])
+      redirect_to app.get_linkshare_url if device.has_app(params[:advertiser_app_id])
     end
     
     ##
@@ -65,7 +74,6 @@ class SubmitClickController < ApplicationController
     end
     
     if params[:redirect] == "1"
-      app = App.new(:key => params[:advertiser_app_id])
       redirect_to app.get_linkshare_url
     else
       render :template => 'layouts/success'

@@ -16,7 +16,7 @@ file = File.new(outfile, "w")
 
 begin
   where_clause = "advertiser_app_id = '#{app_id}' and installed != ''"
-  response = SimpledbResource.select('store-click', '*', where_clause, nil, next_token)
+  response = StoreClick.select(:where => where_clause, :next_token => next_token)
   next_token = response[:next_token]
   items = response[:items]
   
