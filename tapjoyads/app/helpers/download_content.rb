@@ -44,7 +44,7 @@ module DownloadContent
     begin
       response = download_content(url, download_options.merge({:return_response => true}))
       if response.status == 403
-        call_final_action(final_action, '403', retry_options)
+        call_final_action(final_action, '403', action_options)
       elsif response.status < 200 or response.status > 399
         raise "#{response.status} error"
       else
@@ -62,7 +62,7 @@ module DownloadContent
         if retry_options[:alert]
           alert_new_relic(FailedToDownloadError, "Failed to download #{url}. No more retries.")
         end
-        call_final_action(final_action, 'max_retries', retry_options)
+        call_final_action(final_action, 'max_retries', action_options)
       end
     end
   end
