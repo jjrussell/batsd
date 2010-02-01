@@ -17,23 +17,23 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     now = Time.now.utc
     timeframe = 20.minutes
     
-    overall_clicks = StoreClick.count(:where => "click_date < '#{now.to_f - 10.minutes}' and advertiser_app_id = '#{app_key}'").to_f
-    overall_installs = StoreClick.count(:where => "installed < '#{now.to_f - 10.minutes}' and advertiser_app_id = '#{app_key}'").to_f
+    recent_clicks = StoreClick.count(:where => "click_date > '#{now.to_f - 1.hour}' and advertiser_app_id = '#{app_key}'").to_f
+    recent_installs = StoreClick.count(:where => "installed > '#{now.to_f - 1.hour}' and advertiser_app_id = '#{app_key}'").to_f
     
-    if overall_clicks == 0
+    if recent_clicks == 0
       conversion_rate = app.get('price').to_f > 0 ? 0.3 : 0.75
     else
-      conversion_rate = overall_installs / overall_clicks
+      conversion_rate = recent_installs / recent_clicks
     end
     
     min_conversion_rate = app.get('price').to_f > 0 ? 0.02 : 0.3
-    if overall_clicks > 30 and conversion_rate < min_conversion_rate
+    if recent_clicks > 10 and conversion_rate < min_conversion_rate
       alert_new_relic(ConversionRateTooLowError,
-          "App #{app_key} (#{app.get('name')}) has #{conversion_rate} cvr on #{overall_clicks} clicks.")
+          "App #{app_key} (#{app.get('name')}) has #{conversion_rate} cvr on #{recent_clicks} clicks.")
     end
     
-    Rails.logger.info "Overall clicks: #{overall_clicks}"
-    Rails.logger.info "Overall installs: #{overall_installs}"
+    Rails.logger.info "Recent clicks: #{recent_clicks}"
+    Rails.logger.info "Recent installs: #{recent_installs}"
     Rails.logger.info "cvr: #{conversion_rate}"
     
     clicks = StoreClick.count(:where => "click_date > '#{now.to_f - timeframe}' and advertiser_app_id = '#{app_key}'").to_f
