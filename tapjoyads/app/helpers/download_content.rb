@@ -45,6 +45,7 @@ module DownloadContent
       response = download_content(url, download_options.merge({:return_response => true}))
       if response.status == 403
         call_final_action(final_action, '403', action_options)
+        alert_new_relic(FailedToDownloadError, "Failed to download #{url}. 403 error.")
       elsif response.status < 200 or response.status > 399
         raise "#{response.status} error"
       else
