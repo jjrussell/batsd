@@ -14,7 +14,7 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
     unless reward.get('sent_money_txn')
       Rails.logger.info "Sending money transaction to sql: #{reward.key}"
 
-      unless reward.get('publisher_amount')
+      unless reward.get('publisher_amount') and reward.get('advertiser_app_id')
         values = calculate_install_payouts(
             :currency => Currency.new(:key => reward.get('publisher_app_id')), 
             :advertiser_app => App.new(:key => reward.get('advertiser_app_id')))
