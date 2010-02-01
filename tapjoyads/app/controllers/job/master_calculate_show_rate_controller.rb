@@ -7,7 +7,6 @@ class Job::MasterCalculateShowRateController < Job::JobController
     App.select(:attributes => 'itemName()', 
         :where => "install_tracking = '1' and payment_for_install > '0'") do |app|
       
-      queue.send_message(app.key)
       send_to_sqs(QueueNames::CALCULATE_SHOW_RATE, app.key)
       
     end
