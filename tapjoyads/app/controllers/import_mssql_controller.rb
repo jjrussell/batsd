@@ -20,7 +20,31 @@ class ImportMssqlController < ApplicationController
     render :template => 'layouts/success'  
   end
 
+  def vg
+    vg = VirtualGood.new(:key => params[:item_id])
+    vg.put('attributes', params[:attributes], :cgi_escape => true)
+    vg.put('values', params[:values], :cgi_escape => true)
+    vg.put('apple_id', params[:apple_id])
+    vg.put('price', params[:price])
+    vg.put('name', params[:name], :cgi_escape => true)
+    vg.put('description', params[:description], :cgi_escape => true)
+    vg.put('file_size', params[:file_size])
+    vg.put('disabled', params[:disabled])
+    vg.put('beta', params[:beta])
+    vg.put('title', params[:title])
+    vg.put('app_id', params[:app_id])
+    
+    vg.save
+    
+    AWS::S3::S3Object.store "icon.#{params[:item_id]}", params[:thumb_image], 'virtual_goods'
+    save_to_cache("vg.icon.s3.#{params[:item_id].hash}", Base64.encode64(params[:thumb_image]))
 
+    AWS::S3::S3Object.store  "datafile.#{params[:item_id]}", params[:datafile], 'virtual_goods'
+    save_to_cache("vg.datafile.s3.#{params[:item_id].hash}", params[:datafile])
+        
+    render :template => 'layouts/success' 
+  end
+  
   def partner
     return unless verify_params([:partner_id])
 
@@ -131,6 +155,7 @@ class ImportMssqlController < ApplicationController
     app.put('balance', params[:balance])
     app.put('iphone_only', params[:iphone_only]) if params[:iphone_only]
     app.put('daily_budget', params[:daily_budget]) if params[:daily_budget]
+    app.put('os_type', params[:os_type])
     
     app.delete('description_1') if app.get('description_1')
     app.delete('description_2') if app.get('description_2')
