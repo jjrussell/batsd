@@ -5,13 +5,13 @@ module NewRelicHelper
     begin
       raise exception.new(message)
     rescue Exception => e
-      if e.kind_of? EmailWorthyError
-        TapjoyMailer.deliver_newrelic_alert(e)
-      end
-      
       action = params ? params[:action] : nil
       
       NewRelic::Agent.agent.error_collector.notice_error(e, request, action, params)
+      
+      #if e.kind_of? EmailWorthyError
+      #  TapjoyMailer.deliver_newrelic_alert(e)
+      #end
     end
   end
   
