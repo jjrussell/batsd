@@ -18,14 +18,11 @@ Rails::Initializer.run do |config|
 
   # Skip frameworks you're not going to use. To use Rails without a database
   # you must remove the Active Record framework.
-  config.frameworks -= [ :active_record, :active_resource]
+  config.frameworks -= [ :active_record, :active_resource, :actionmailer]
 
   # Specify gems that this application depends on. 
   # They can then be installed with "rake gems:install" on new installations.
   # You have to specify the :lib option for libraries, where the Gem name (sqlite3-ruby) differs from the file itself (sqlite3)
-  # config.gem "bj"
-  # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
-  # config.gem "sqlite3-ruby", :lib => "sqlite3"
   config.gem "aws-s3", :lib => "aws/s3"
   config.gem 'memcached'
   config.gem 'patron'
@@ -106,4 +103,19 @@ Rails::Initializer.run do |config|
   # to the list of transient problems which will automatically get retried by RightAws.
   require 'right_aws'
   RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
+  
+  # Mailer:
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    :address => "smtp.gmail.com",
+    :port => 587,
+    :domain => 'tapjoy.com',
+    :user_name => "admin@tapjoy.com",
+    :password => "andoverbusiness1",
+    :authentication => :plain,
+    :tls => true,
+    :enable_starttls_auto => true
+  }
+  config.action_mailer.raise_delivery_errors = true
+  
 end
