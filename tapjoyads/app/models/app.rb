@@ -33,6 +33,7 @@ class App < SimpledbResource
     end
     
     banned_apps = (currency.get('disabled_apps') || '').split(';')
+    
     only_free_apps = currency.get('only_free_apps') == '1'
     
     advertiser_app_list.reject! do |advertiser_app|
@@ -42,6 +43,8 @@ class App < SimpledbResource
       reject = true if only_free_apps and not advertiser_app.is_free
       reject = true if advertiser_app.key == @key
       reject = true if advertiser_app.get('iphone_only') == '1' and not iphone
+      reject = true if advertiser_app.get('type') == 'iphone' and get('type') == 'android'
+      reject = true if advertiser_app.get('type') == 'android' and get('type') == 'iphone'
       
       if udid != '298c5159a3681207eaba5a04b3573aa7b4f13d99' # Ben's udid. Show all apps on his device.
         reject = true if device_app_list.has_app(advertiser_app.key)
