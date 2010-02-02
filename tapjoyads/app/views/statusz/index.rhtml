@@ -1,0 +1,76 @@
+<html>
+<head>
+  <title>Tapjoy Status</title>
+  <style type='text/css'>
+    table {
+      border-spacing: 10px;
+    }
+    
+    .appkey {
+      font-size:70%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tapjoy stats for last 24 hours</h1>
+  <h3>Total installs: <%= @install_count_24hours %></h3>
+  
+  <table>
+    <tr>
+      <td></td>
+      <td>App</td>
+      <td>Paid installs</td>
+      <td>Paid clicks</td>
+      <td>CVR</td>
+      <td>Connects</td>
+      <td>New users</td>
+    </tr>
+  
+    <% @app_list.length.times do |i| %>
+      <% app = @app_list[i]; appstats = @appstats_list[i] %>
+      <tr class='app'>
+        <td>
+          <img src="<%= app.get_icon_url %>" width="56px" height="56px" />
+        </td>
+        <td>
+          <%= app.get('name') %>
+          <br />
+          <span class='appkey'><%= app.key %></span>
+        </td>
+        
+        <td>
+          <span title="<%= appstats.stats['paid_installs'].join(', ') %>">
+            <%= appstats.stats['paid_installs'].sum %>
+          </span>
+        </td>
+        
+        <td>
+          <span title="<%= appstats.stats['paid_clicks'].join(', ') %>">
+            <%= appstats.stats['paid_clicks'].sum %>
+          </span>
+        </td>
+        
+        <td>
+          <span title="<%= appstats.stats['cvr'].join(', ') %>">
+            <%= "%.2f" % (appstats.stats['paid_installs'].sum.to_f / appstats.stats['paid_clicks'].sum) %>
+          </span>
+        </td>
+        
+        <td>
+          <span title="<%= appstats.stats['logins'].join(', ') %>">
+            <%= appstats.stats['logins'].sum %>
+          </span>
+        </td>
+        
+        <td>
+          <span title="<%= appstats.stats['new_users'].join(', ') %>">
+            <%= appstats.stats['new_users'].sum %>
+          </span>
+        </td>
+        
+      </tr>
+    <% end %>
+  
+  </table>
+</body>
+</html>
