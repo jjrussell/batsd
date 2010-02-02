@@ -39,7 +39,7 @@ class ApplicationController < ActionController::Base
   
   def log_missing_required_params
     Rails.logger.info "missing required params"
-    alert_new_relic(MissingRequiredParamsError, nil, request, params)
+    alert_new_relic(MissingRequiredParamsError, request.url, request, params)
   end
   
   def fix_params
