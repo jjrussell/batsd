@@ -1,0 +1,73 @@
+<html>
+<head>
+  <title>Create a Tapjoy Account</title>
+  <style type='text/css'>
+    .error {
+      background-color: red;
+      padding: 2px;
+    }
+    .info {
+      background-color: #96C800;
+      padding: 2px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Create a Tapjoy Account</h1>
+  <% if flash[:error] %>
+    <div><span class="error"><%=flash[:error]%></span></div>
+  <% end %>
+  <% if flash[:info] %>
+    <div><span class="info"><%=flash[:info]%></span></div>
+  <% end %>
+  
+  <% form_tag(:controller => 'create_account', :action => 'confirm') do %>
+    <table>
+      <tr>
+        <td><%= label_tag(:sales_person_id, "Sales Person ID:") %></td>
+        <td><%= text_field_tag(:sales_person_id, params[:sales_person_id]) %> </td>
+      </tr>
+      
+      <tr>
+        <td><%= label_tag(:email, "Email:") %></td>
+        <td><%= text_field_tag(:email, params[:email])%> </td>
+      </tr>
+      
+      <tr>
+        <td><%= label_tag(:password, "Password:") %></td>
+        <td><%= text_field_tag(:password, params[:password]) %> </td>
+      </tr>
+      
+      <tr>
+        <td><%= label_tag(:company_name, "Company name:") %></td>
+        <td><%= text_field_tag(:company_name, params[:company_name]) %> </td>
+      </tr>
+      
+      <tr>
+        <td><%= label_tag(:contact_name, "Contact name:") %></td>
+        <td><%= text_field_tag(:contact_name, params[:contact_name]) %> </td>
+      </tr>
+      
+      <tr>
+        <td><%= label_tag(:contact_email, "Contact email:") %></td>
+        <td><%= text_field_tag(:contact_email, params[:contact_email]) %> </td>
+      </tr>
+      
+      <tr>
+        <td><%= label_tag(:contact_phone, "Contact phone:") %></td>
+        <td><%= text_field_tag(:contact_phone, params[:contact_phone]) %> </td>
+      </tr>
+      
+      <tr>
+        <td><%= label_tag(:free_credits, "Free credits (in dollars):") %></td>
+        <td><%= text_field_tag(:free_credits, params[:free_credits]) %> </td>
+      </tr>
+      
+      <tr>
+        <td><%= submit_tag("Create Account") %></td>
+        <td></td>
+      </tr>
+    </table>
+  <% end %>
+</body>
+</html>

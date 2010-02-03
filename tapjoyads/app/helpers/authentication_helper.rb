@@ -17,4 +17,14 @@ module AuthenticationHelper
       username == 'website' && password == '91karWQpaN5q'
     end
   end
+  
+  def sales_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'sales'
+        'uew862nvm01ds'
+      else
+        USERS[username]
+      end
+    end
+  end
 end

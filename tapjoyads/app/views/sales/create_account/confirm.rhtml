@@ -1,0 +1,36 @@
+<html>
+<head>
+  <title>Create a Tapjoy Account</title>
+  <style type='text/css'>
+    
+  </style>
+</head>
+<body>
+  <h1>Confirm details</h1>
+  
+  Create and account for the company
+  <b><%=params[:company_name] %></b>
+  with the following details?<br />
+  Contact name: <b><%=params[:contact_name]%></b><br />
+  Contact email: <b><%=params[:contact_email]%></b><br />
+  Contact phone: <b><%=params[:contact_phone]%></b><br />
+  Email: <b><%=params[:email]%></b><br />
+  Password: <b><%=params[:password]%></b><br />
+  Free credits: <b>$<%=params[:free_credits]%></b><br />
+  
+  <br />
+  <% form_tag(:controller => 'create_account', :action => 'create') do %>
+    <%= hidden_field_tag(:sales_person_id, params[:sales_person_id]) %> </td>
+    <%= hidden_field_tag(:email, params[:email])%>
+    <%= hidden_field_tag(:password, params[:password]) %>
+    <%= hidden_field_tag(:company_name, params[:company_name]) %>
+    <%= hidden_field_tag(:contact_name, params[:contact_name]) %>
+    <%= hidden_field_tag(:contact_email, params[:contact_email]) %>
+    <%= hidden_field_tag(:contact_phone, params[:contact_phone]) %>
+    <%= hidden_field_tag(:free_credits, params[:free_credits]) %>
+    <b><%= submit_tag("Create Account") %></b>
+  <% end %>
+  
+  Or hit 'back' to go back and make edits.
+</body>
+</html>

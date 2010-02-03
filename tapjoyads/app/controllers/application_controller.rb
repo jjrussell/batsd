@@ -20,6 +20,7 @@ class ApplicationController < ActionController::Base
   
   def verify_params(required_params, options = {})
     allow_empty = options.delete(:allow_empty) { true }
+    render_missing_text = options.delete(:render_missing_text) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     all_params = true
@@ -32,7 +33,7 @@ class ApplicationController < ActionController::Base
     
     unless all_params
       log_missing_required_params
-      render :text => "missing required params"
+      render :text => "missing required params" if render_missing_text
     end
     return all_params
   end
