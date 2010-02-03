@@ -46,9 +46,6 @@ class App < SimpledbResource
       reject = true if advertiser_app.get('os_type') == 'iphone' and get('os_type') == 'android'
       reject = true if advertiser_app.get('os_type') == 'android' and get('os_type') == 'iphone'
       
-      # Manually disable Doodle-Buddy, until they fix their connect call.
-      reject = true if advertiser_app.key == '3cb9aacb-f0e6-4894-90fe-789ea6b8361d'
-      
       if udid != '298c5159a3681207eaba5a04b3573aa7b4f13d99' # Ben's udid. Show all apps on his device.
         reject = true if device_app_list.has_app(advertiser_app.key)
         srand((udid + (Time.now.to_f / 1.hour).to_i.to_s + advertiser_app.key).hash)
