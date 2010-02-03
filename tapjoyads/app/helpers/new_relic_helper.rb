@@ -9,9 +9,9 @@ module NewRelicHelper
       
       NewRelic::Agent.agent.error_collector.notice_error(e, request, action, params)
       
-      #if e.kind_of? EmailWorthyError
-      #  TapjoyMailer.deliver_newrelic_alert(e)
-      #end
+      if e.kind_of? EmailWorthyError
+       TapjoyMailer.deliver_newrelic_alert(e)
+      end
     end
   end
   
