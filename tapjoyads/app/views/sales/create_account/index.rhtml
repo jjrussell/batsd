@@ -29,13 +29,8 @@
       </tr>
       
       <tr>
-        <td><%= label_tag(:email, "Email:") %></td>
+        <td><%= label_tag(:email, "Email (used as account name):") %></td>
         <td><%= text_field_tag(:email, params[:email])%> </td>
-      </tr>
-      
-      <tr>
-        <td><%= label_tag(:password, "Password:") %></td>
-        <td><%= text_field_tag(:password, params[:password]) %> </td>
       </tr>
       
       <tr>
@@ -46,11 +41,6 @@
       <tr>
         <td><%= label_tag(:contact_name, "Contact name:") %></td>
         <td><%= text_field_tag(:contact_name, params[:contact_name]) %> </td>
-      </tr>
-      
-      <tr>
-        <td><%= label_tag(:contact_email, "Contact email:") %></td>
-        <td><%= text_field_tag(:contact_email, params[:contact_email]) %> </td>
       </tr>
       
       <tr>
