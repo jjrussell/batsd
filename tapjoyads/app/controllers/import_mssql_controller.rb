@@ -81,6 +81,7 @@ class ImportMssqlController < ApplicationController
     currency.put('disabled_apps', params[:disabled_apps]) 
     currency.put('only_free_apps', params[:only_free_apps])
     currency.put('show_rating_offer', params[:show_rating_offer])
+    currency.put('send_offer_data', params[:send_offer_data])
 
     currency.save
 
