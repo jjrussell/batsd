@@ -45,7 +45,9 @@ class WebRequest < SimpledbResource
       put("publisher_app_id", params[:publisher_app_id])
       put("advertiser_app_id", params[:advertiser_app_id])
 
-      put('device_ip', params[:device_ip]) if params[:device_ip]
+      put('device_ip', params[:device_ip])
+      put('type', params[:type])
+      put('publisher_user_id', params[:publisher_user_id])
     end
     
     if request
