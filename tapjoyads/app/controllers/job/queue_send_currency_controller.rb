@@ -39,7 +39,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       mark = '&' if callback_url =~ /\?/
       callback_url = "#{callback_url}#{mark}snuid=#{CGI::escape(publisher_user_id)}&currency=#{reward.get('currency_reward')}"
     
-      if currency.get('send_offer') == '1'
+      if currency.get('send_offer_data') == '1'
         if (reward.get('type') == 'install')
           adv_app = App.new(:key => reward.get('advertiser_app_id'))
           name = adv_app.get('name')
