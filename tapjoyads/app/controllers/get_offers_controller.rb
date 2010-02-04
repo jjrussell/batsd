@@ -55,6 +55,10 @@ class GetOffersController < ApplicationController
     
     @publisher_app = App.new(:key => params[:app_id])
     @currency = Currency.new(:key => params[:app_id])
+    
+    web_request = WebRequest.new
+    web_request.put_values('offers', params, request)
+    web_request.save
   end
   
   def rewarded_installs
