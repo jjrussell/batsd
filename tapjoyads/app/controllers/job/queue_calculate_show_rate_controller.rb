@@ -28,12 +28,11 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     end
     
     min_conversion_rate = app.get('price').to_f > 0 ? 0.02 : 0.3
+    min_conversion_rate = app.get('min_cvr').to_f if app.get('min_cvr')
     if recent_clicks > 30 and conversion_rate < min_conversion_rate
-      if (app_key != 'f8751513-67f1-4273-8e4e-73b1e685e83d' && app_key != '875d39dd-8227-49a2-8af4-cbd5cb583f0e')
-        #mytown and movies are alerting too frequently during low volume times
-        alert_new_relic(ConversionRateTooLowError,
-          "App #{app_key} (#{app.get('name')}) has #{conversion_rate} cvr on #{recent_clicks} clicks.")
-      end
+      #mytown and movies are alerting too frequently during low volume times
+      alert_new_relic(ConversionRateTooLowError,
+        "App #{app_key} (#{app.get('name')}) has #{conversion_rate} cvr on #{recent_clicks} clicks.")
     end
     
     Rails.logger.info "Recent clicks: #{recent_clicks}"
