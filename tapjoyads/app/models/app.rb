@@ -84,15 +84,21 @@ class App < SimpledbResource
   end
   
   def get_linkshare_url
-    store_id = get_store_id
-    unless store_id
-      return get('store_url')
+    
+    if get('os_type') == 'android'
+      return "market://search?q=#{get('store_url')}"
+    else
+      store_id = get_store_id
+      unless store_id
+        return get('store_url')
+      end
+      
+      web_object_url = "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
+    
+      return "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&" +
+        "type=10&tmpid=3909&RD_PARM1=#{CGI::escape(web_object_url)}"
     end
     
-    web_object_url = "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
-    
-    return "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&" +
-        "type=10&tmpid=3909&RD_PARM1=#{CGI::escape(web_object_url)}"
   end
   
   ##
