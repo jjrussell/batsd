@@ -70,7 +70,7 @@ class MemcachedHelperTest < ActiveSupport::TestCase
     expected_val = ''
     10.times do
       expected_val += 'a'
-      Thread.new do
+      thread = Thread.new do
         compare_and_swap_in_cache('foo', true) do |mc_val|
           if mc_val
             val = mc_val + 'a'
@@ -80,6 +80,7 @@ class MemcachedHelperTest < ActiveSupport::TestCase
           val
         end
       end
+      thread_list.push(thread)
     end
     
     thread_list.each do |thread|
@@ -87,5 +88,34 @@ class MemcachedHelperTest < ActiveSupport::TestCase
     end
     
     assert_equal(expected_val, get_from_cache('foo'))
+  end
+  
+  test "lock on key" do
+    thread_list = []
+    count = 0
+    num_retries = 0
+    
+    10.times do
+      thread = Thread.new do
+        begin
+          lock_on_key('key_to_lock_on') do
+            count += 1
+            sleep(0.1)
+          end
+        rescue KeyExists
+          num_retries += 1
+          sleep(0.1)
+          retry
+        end
+      end
+      thread_list.push(thread)
+    end
+    
+    thread_list.each do |thread|
+      thread.join
+    end
+    
+    assert_equal(10, count)
+    assert(num_retries > 0)
   end
 end

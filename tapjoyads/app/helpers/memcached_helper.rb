@@ -10,6 +10,8 @@ module MemcachedHelper
     CACHE.flush
   end
   
+  class KeyExists < RuntimeError; end
+  
   ##
   # Gets from object from cache which matches key.
   # If no object is found, then control is yielded, and the object
@@ -126,6 +128,18 @@ module MemcachedHelper
       cache.delete(key)
     rescue Memcached::NotFound
       Rails.logger.debug("Memcached::NotFound when deleting.")
+    end
+  end
+  
+  def lock_on_key(key, clone = false)
+    cache = clone ? CACHE.clone : CACHE
+    key = CGI::escape(key)
+    
+    begin cache.add(key, 'locked')
+      yield
+      cache.delete(key)
+    rescue Memcached::NotStored
+      raise KeyExists.new
     end
   end
   
