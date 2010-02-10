@@ -1,5 +1,41 @@
 require 'sdb_batchput'
 
+class StringConverter
+  def from_string(s)
+    s
+  end
+  def to_string(s)
+    s.to_s
+  end
+end
+
+class IntConverter
+  def from_string(s)
+    s.to_i
+  end
+  def to_string(i)
+    i.to_s
+  end
+end
+
+class FloatConverter
+  def from_string(s)
+    s.to_f
+  end
+  def to_string(f)
+    f.to_s
+  end
+end
+
+class TimeConverter
+  def from_string(s)
+    Time.at(s.to_f).utc
+  end
+  def to_string(t)
+    t.to_f.to_s
+  end
+end
+
 class SimpledbResource  
   include TimeLogHelper
   include MemcachedHelper
@@ -17,6 +53,13 @@ class SimpledbResource
         {:multi_thread => true, :port => 80, :protocol => 'http'})
   end
   self.reset_connection
+  
+  @@type_converters = {
+    :string => StringConverter.new,
+    :int => IntConverter.new,
+    :float => FloatConverter.new,
+    :time => TimeConverter.new
+  }
   
   ##
   # Initializes a new SimpledbResource, which represents a single row in a domain.
@@ -47,6 +90,20 @@ class SimpledbResource
     
     load(load_from_memcache) if should_load
     @is_new = @attributes.empty?
+  end
+  
+  def self.sdb_attr(name, type = :string, default_value = nil)
+    module_eval %Q{
+      def #{name.to_s}()
+        get('#{name.to_s}', :type => #{type.inspect}, :default_value => #{default_value.inspect}) 
+      end
+    }
+    
+    module_eval %Q{
+      def #{name.to_s}=(value)
+        put('#{name.to_s}', value, :type => :#{type})
+      end
+    }
   end
   
   ##
@@ -163,14 +220,26 @@ class SimpledbResource
   
   ##
   # Gets value(s) for a given attribute name.
+  # If the attr_name is associated with only one value, then that value is returned. 
+  # If it is associated with multiple values, then all values are returned in an array.
+  # options:
+  #   force_array: Forces the return value to be an array, even if the attr_name is only associated
+  #       with one value. Returns an empty array of no values are associated with attr_name.
+  #   default_value: The value to return if no values are associated with attr_name. Not used
+  #       if force_array is set to true.
+  #   type: The type of value that is being stored. The value will be converted to the type before
+  #       being returned. Acceptable values are listed in @@type_converters.
   def get(attr_name, options = {})
     force_array = options.delete(:force_array) { false }
+    default_value = options.delete(:default_value)
+    type = options.delete(:type) { :string }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    raise "Unknown type conversion: #{type}" unless @@type_converters.include?(type)
     
     attr_array = @attributes[attr_name]
     
     unless @attributes[attr_name]
-      return force_array ? [] : nil
+      return force_array ? [] : default_value
     end
     
     if not force_array and @attributes[attr_name].first.length >= 1000
@@ -182,17 +251,14 @@ class SimpledbResource
       
       joined_value += @attributes[attr_name].first if @attributes[attr_name]
       
-      return unescape_specials(joined_value)
+      attr_array = [joined_value]
     end
     
-    if not force_array and attr_array.length == 1
-      return unescape_specials(attr_array[0])
+    attr_array = attr_array.map do |value|
+      @@type_converters[type].from_string(unescape_specials(value))
     end
     
-    attr_array.map! do |value|
-      unescape_specials(value)
-    end
-    
+    return attr_array.first if not force_array and attr_array.length == 1
     return attr_array
   end
   
@@ -201,12 +267,14 @@ class SimpledbResource
   def put(attr_name, value, options = {})
     replace = options.delete(:replace) { true }
     cgi_escape = options.delete(:cgi_escape) { false }
+    type = options.delete(:type) { :string }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    raise "Unknown type conversion: #{type}" unless @@type_converters.include?(type)
     
     if value.nil? or value == ''
       return
     end
-    value = value.to_s
+    value = @@type_converters[type].to_string(value)
     
     value = escape_specials(value, {:cgi_escape => cgi_escape})
     

@@ -7,6 +7,22 @@ class SimpledbResourceTest < ActiveSupport::TestCase
   class Testing < SimpledbResource
     self.domain_name = 'testing'
     
+    self.sdb_attr :foo
+    self.sdb_attr :foo_10, :int, 10
+    self.sdb_attr :foo_time, :time
+    
+    def initialize(options = {})
+      super
+      saved_private_methods = self.private_methods
+      self.class_eval { public *saved_private_methods }
+    end
+  end
+  
+  class Testing2 < SimpledbResource
+    self.domain_name = 'testing'
+    
+    self.sdb_attr :foo2
+    
     def initialize(options = {})
       super
       saved_private_methods = self.private_methods
@@ -15,17 +31,19 @@ class SimpledbResourceTest < ActiveSupport::TestCase
   end
   
   ##
-  # All tests are merged into a single test case. This is because in order to guarantee 
+  # All "long" tests are merged into a single test case. This is because in order to guarantee 
   # consistency, we must sleep between writes. Therefore this is set up to have all writes
   # occur in write* methods, and all reads occur in read* methods. This test simply calls 
   # the write and read methods, with a single sleep in between.
-  test "all tests" do
+  test "long tests" do
     write_long_attributes
     write_newlines_in_attributes
     write_cgi_escape
     write_concurrent_saves
     write_concurrent_deletes
     write_select_and_count
+    write_type_conversion
+    write_sdb_attr
     
     sleep(10)
     
@@ -35,6 +53,13 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     read_concurrent_saves
     read_concurrent_deletes
     read_select_and_count
+    read_type_converstion
+    read_sdb_attr
+  end
+  
+  test "default value" do
+    m = Testing.new
+    assert_equal('default_value', m.get('foo', :default_value => 'default_value'))
   end
   
   def write_long_attributes
@@ -144,7 +169,9 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     end
     
     m = Testing.new(:key => 'concurrent_deletes')
-    assert_equal(@expected_attrs_concurrent_deletes, m.attributes)
+    @expected_attrs_concurrent_deletes.each do |key, value|
+      assert_equal(SortedSet.new(value), SortedSet.new(m.attributes[key]))
+    end
   end
   def read_concurrent_deletes
     m = Testing.new({:key => 'concurrent_deletes', :load_from_memcache => false})
@@ -182,5 +209,57 @@ class SimpledbResourceTest < ActiveSupport::TestCase
       m = Testing.new(:key => "select-#{i}")
       m.delete_all
     end
+  end
+  
+  def write_type_conversion
+    m = Testing.new(:key => 'type_conversion')
+    m.put('string_key', 'string_value', :type => :string)
+    m.put('int_key', 16, :type => :int)
+    m.put('float_key', 16.1616, :type => :float)
+    m.put('time_key', Time.at(16), :type => :time)
+    m.save
+
+    assert_equal('string_value', m.get('string_key', :type => :string))
+    assert_equal(16, m.get('int_key', :type => :int))
+    assert_equal(16.1616, m.get('float_key', :type => :float))
+    assert_equal(Time.at(16), m.get('time_key', :type => :time))
+  end
+  def read_type_converstion
+    m = Testing.new(:key => 'type_conversion')
+    
+    assert_equal('string_value', m.get('string_key', :type => :string))
+    assert_equal(16, m.get('int_key', :type => :int))
+    assert_equal(16.1616, m.get('float_key', :type => :float))
+    assert_equal(Time.at(16), m.get('time_key', :type => :time))
+    m.delete_all
+  end
+  
+  def write_sdb_attr
+    m = Testing.new(:key => 'sdb_attr')
+    m.foo = 'bar'
+    m.foo_time = Time.at(16)
+    assert_equal(10, m.foo_10)
+    m.foo_10 = 10
+    m.save
+    
+    assert_equal(10, m.foo_10)
+    assert_equal('bar', m.foo)
+    assert_equal(Time.at(16), m.foo_time)
+    
+    m2 = Testing2.new(:key => 'sdb_attr2')
+    m2.foo2 = 'foo2'
+    m2.save
+  end
+  def read_sdb_attr
+    m = Testing.new(:key => 'sdb_attr')
+    assert_equal(10, m.foo_10)
+    assert_equal('bar', m.foo)
+    assert_equal(Time.at(16), m.foo_time)
+    
+    m2 = Testing2.new(:key => 'sdb_attr2')
+    assert_equal('foo2', m2.foo2)
+    
+    m.delete_all
+    m2.delete_all
   end
 end
