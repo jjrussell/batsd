@@ -108,6 +108,7 @@ class SimpledbResource
     cgi_escape = options.delete(:cgi_escape) { false }
     force_array = options.delete(:force_array) { false }
     replace = options.delete(:replace) { true }
+    attr_name = options.delete(:attr_name) { name.to_s }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     get_options = {
@@ -124,16 +125,17 @@ class SimpledbResource
     
     module_eval %Q{
       def #{name.to_s}()
-        get('#{name.to_s}', #{get_options.inspect}) 
+        get('#{attr_name}', #{get_options.inspect}) 
       end
     }
     
     module_eval %Q{
       def #{name.to_s}=(value)
-        put('#{name.to_s}', value, #{put_options.inspect})
+        put('#{attr_name}', value, #{put_options.inspect})
       end
     }
   end
+  self.sdb_attr :updated_at, {:type => :time, :attr_name => 'updated-at'}
   
   ##
   # Attempt to load the item attributes from memcache. If they are not found,

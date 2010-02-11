@@ -267,6 +267,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     assert_equal(Time.at(16), m.foo_time)
     assert_equal(SortedSet.new(['a', 'b']), SortedSet.new(m.foo_array))
     assert_equal(true, m.foo_bool)
+    assert(m.updated_at > Time.now - 1.minutes)
     
     m2 = Testing2.new(:key => 'sdb_attr2')
     assert_equal('foo2', m2.foo2)
