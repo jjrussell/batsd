@@ -11,6 +11,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     self.sdb_attr :foo_10, {:type => :int, :default_value => 10}
     self.sdb_attr :foo_time, {:type => :time}
     self.sdb_attr :foo_array, {:cgi_escape => true, :replace => false, :force_array => true}
+    self.sdb_attr :foo_bool, {:type => :bool}
     
     def initialize(options = {})
       super
@@ -218,12 +219,14 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     m.put('int_key', 16, :type => :int)
     m.put('float_key', 16.1616, :type => :float)
     m.put('time_key', Time.at(16), :type => :time)
+    m.put('bool_key', false, :type => :bool)
     m.save
 
     assert_equal('string_value', m.get('string_key', :type => :string))
     assert_equal(16, m.get('int_key', :type => :int))
     assert_equal(16.1616, m.get('float_key', :type => :float))
     assert_equal(Time.at(16), m.get('time_key', :type => :time))
+    assert_equal(false, m.get('bool_key', :type => :bool))
   end
   def read_type_converstion
     m = Testing.new(:key => 'type_conversion')
@@ -232,6 +235,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     assert_equal(16, m.get('int_key', :type => :int))
     assert_equal(16.1616, m.get('float_key', :type => :float))
     assert_equal(Time.at(16), m.get('time_key', :type => :time))
+    assert_equal(false, m.get('bool_key', :type => :bool))
     m.delete_all
   end
   
@@ -243,12 +247,14 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     m.foo_10 = 10
     m.foo_array = 'a'
     m.foo_array = 'b'
+    m.foo_bool = true
     m.save
     
     assert_equal(10, m.foo_10)
     assert_equal('bar', m.foo)
     assert_equal(Time.at(16), m.foo_time)
     assert_equal(SortedSet.new(['a', 'b']), SortedSet.new(m.foo_array))
+    assert_equal(true, m.foo_bool)
     
     m2 = Testing2.new(:key => 'sdb_attr2')
     m2.foo2 = 'foo2'
@@ -260,6 +266,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     assert_equal('bar', m.foo)
     assert_equal(Time.at(16), m.foo_time)
     assert_equal(SortedSet.new(['a', 'b']), SortedSet.new(m.foo_array))
+    assert_equal(true, m.foo_bool)
     
     m2 = Testing2.new(:key => 'sdb_attr2')
     assert_equal('foo2', m2.foo2)

@@ -36,6 +36,15 @@ class TimeConverter
   end
 end
 
+class BoolConverter
+  def from_string(s)
+    s == '1'
+  end
+  def to_string(b)
+    b ? '1' : '0'
+  end
+end
+
 class SimpledbResource  
   include TimeLogHelper
   include MemcachedHelper
@@ -58,7 +67,8 @@ class SimpledbResource
     :string => StringConverter.new,
     :int => IntConverter.new,
     :float => FloatConverter.new,
-    :time => TimeConverter.new
+    :time => TimeConverter.new,
+    :bool => BoolConverter.new
   }
   
   ##
