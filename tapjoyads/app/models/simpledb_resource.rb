@@ -92,16 +92,35 @@ class SimpledbResource
     @is_new = @attributes.empty?
   end
   
-  def self.sdb_attr(name, type = :string, default_value = nil)
+  def self.sdb_attr(name, options = {})
+    type = options.delete(:type) { :string }
+    default_value = options.delete(:default_value)
+    cgi_escape = options.delete(:cgi_escape) { false }
+    force_array = options.delete(:force_array) { false }
+    replace = options.delete(:replace) { true }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
+    get_options = {
+      :type => type,
+      :force_array => force_array,
+      :default_value => default_value
+    }
+    
+    put_options = {
+      :type => type,
+      :cgi_escape => cgi_escape,
+      :replace => replace
+    }
+    
     module_eval %Q{
       def #{name.to_s}()
-        get('#{name.to_s}', :type => #{type.inspect}, :default_value => #{default_value.inspect}) 
+        get('#{name.to_s}', #{get_options.inspect}) 
       end
     }
     
     module_eval %Q{
       def #{name.to_s}=(value)
-        put('#{name.to_s}', value, :type => :#{type})
+        put('#{name.to_s}', value, #{put_options.inspect})
       end
     }
   end
@@ -226,7 +245,7 @@ class SimpledbResource
   #   force_array: Forces the return value to be an array, even if the attr_name is only associated
   #       with one value. Returns an empty array of no values are associated with attr_name.
   #   default_value: The value to return if no values are associated with attr_name. Not used
-  #       if force_array is set to true.
+  #       if force_array is set to true (an empty array will be returned instead).
   #   type: The type of value that is being stored. The value will be converted to the type before
   #       being returned. Acceptable values are listed in @@type_converters.
   def get(attr_name, options = {})

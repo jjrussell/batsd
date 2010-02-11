@@ -8,8 +8,9 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     self.domain_name = 'testing'
     
     self.sdb_attr :foo
-    self.sdb_attr :foo_10, :int, 10
-    self.sdb_attr :foo_time, :time
+    self.sdb_attr :foo_10, {:type => :int, :default_value => 10}
+    self.sdb_attr :foo_time, {:type => :time}
+    self.sdb_attr :foo_array, {:cgi_escape => true, :replace => false, :force_array => true}
     
     def initialize(options = {})
       super
@@ -240,11 +241,14 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     m.foo_time = Time.at(16)
     assert_equal(10, m.foo_10)
     m.foo_10 = 10
+    m.foo_array = 'a'
+    m.foo_array = 'b'
     m.save
     
     assert_equal(10, m.foo_10)
     assert_equal('bar', m.foo)
     assert_equal(Time.at(16), m.foo_time)
+    assert_equal(SortedSet.new(['a', 'b']), SortedSet.new(m.foo_array))
     
     m2 = Testing2.new(:key => 'sdb_attr2')
     m2.foo2 = 'foo2'
@@ -255,6 +259,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     assert_equal(10, m.foo_10)
     assert_equal('bar', m.foo)
     assert_equal(Time.at(16), m.foo_time)
+    assert_equal(SortedSet.new(['a', 'b']), SortedSet.new(m.foo_array))
     
     m2 = Testing2.new(:key => 'sdb_attr2')
     assert_equal('foo2', m2.foo2)
