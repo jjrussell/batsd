@@ -24,6 +24,11 @@
       <td>CVR</td>
       <td>Connects</td>
       <td>New users</td>
+      <td>Price</td>
+      <td>Payment for install</td>
+      <td>Balance</td>
+      <td>Daily Budget</td>
+      <td>Show rate</td>
     </tr>
   
     <% @app_list.length.times do |i| %>
@@ -33,7 +38,7 @@
           <img src="<%= app.get_icon_url %>" width="56px" height="56px" />
         </td>
         <td>
-          <%= app.get('name') %>
+          <%= app.name %>
           <br />
           <span class='appkey'><%= app.key %></span>
         </td>
@@ -68,6 +73,11 @@
           </span>
         </td>
         
+        <td><%= app.price %></td>
+        <td><%= app.payment_for_install %></td>
+        <td><%= app.balance %></td>
+        <td><%= app.daily_budget %></td>
+        <td><%= app.show_rate %></td>
       </tr>
     <% end %>
   

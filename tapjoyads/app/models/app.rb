@@ -4,6 +4,21 @@ class App < SimpledbResource
   self.domain_name = 'app'
   self.key_format = 'app_guid'
   
+  self.sdb_attr :name,                       {:cgi_escape => true}
+  self.sdb_attr :description,                {:cgi_escape => true}
+  self.sdb_attr :store_url
+  self.sdb_attr :partner_id
+  self.sdb_attr :payment_for_install,        {:type => :int}
+  self.sdb_attr :rewarded_installs_ordinal,  {:type => :int}
+  self.sdb_attr :install_tracking,           {:type => :bool}
+  self.sdb_attr :next_run_time,              {:type => :time}
+  self.sdb_attr :last_run_time,              {:type => :time}
+  self.sdb_attr :balance,                    {:type => :int}
+  self.sdb_attr :price,                      {:type => :int}
+  self.sdb_attr :daily_budget,               {:type => :int}
+  self.sdb_attr :conversion_rate,            {:type => :float}
+  self.sdb_attr :show_rate,                  {:type => :float}
+  
   ##
   # Returns a list of Apps which are advertising in this app.
   # Apps which are specifically banned by this app are filtered out.
@@ -96,7 +111,7 @@ class App < SimpledbResource
       web_object_url = "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
     
       return "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&" +
-        "type=10&tmpid=3909&RD_PARM1=#{CGI::escape(web_object_url)}"
+          "type=10&tmpid=3909&RD_PARM1=#{CGI::escape(web_object_url)}"
     end
     
   end
