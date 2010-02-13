@@ -5,29 +5,37 @@ class StatuszController < ApplicationController
   before_filter 'authenticate'
   
   def index
+    @install_count_24hours = get_from_cache('statusz.install_count_24hours')
+    @app_list = get_from_cache('statusz.app_list')
+    @appstats_list = get_from_cache('statusz.appstats_list')
+    @last_updated = get_from_cache('statusz.last_updated')
+    
+    if params[:reload] != '1' and @install_count_24hours and @app_list and @appstats_list and @last_updated
+      return
+    end
+    
     @install_count_24hours = StoreClick.count(:where => "installed > '#{Time.now.to_f - 1.day}'")
-    
-    json_string = get_from_cache_and_save("s3.offer-data.rewarded_installs_list") do
-      bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')
-      bucket.get('rewarded_installs_list')
-    end
-    serialized_advertiser_app_list = JSON.parse(json_string)
+
     @app_list = []
-    serialized_advertiser_app_list.each do |serialized_advertiser_app|
-      @app_list.push(App.deserialize(serialized_advertiser_app))
+    App.select(:where => "interval_update_time = '3600'") do |app|
+      @app_list.push(app)
     end
-    
-    #@app_list = @app_list[0,5]
-    
+
     now = Time.now.utc
     
     @appstats_list = []
     @app_list.each do |app|
       @appstats_list.push(Appstats.new(app.key, {
-        :stat_types => ['paid_installs', 'paid_clicks', 'logins', 'new_users'],
+        :stat_types => ['paid_installs', 'paid_clicks', 'logins', 'new_users', 'published_installs', 'installs_opened', 'hourly_impressions'],
         :start_time => now - 23.hours,
         :end_time => now + 1.hour}))
     end
+
+    @last_updated = Time.now
     
+    save_to_cache('statusz.install_count_24hours', @install_count_24hours)
+    save_to_cache('statusz.app_list', @app_list)
+    save_to_cache('statusz.appstats_list', @appstats_list)
+    save_to_cache('statusz.last_updated', @last_updated)
   end
 end

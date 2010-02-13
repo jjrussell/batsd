@@ -7,7 +7,12 @@
     }
     
     .appkey {
-      font-size:70%;
+      font-size:50%;
+    }
+    
+    .appname {
+      width: 100px;
+      overflow: hidden;
     }
   </style>
 </head>
@@ -29,6 +34,9 @@
       <td>Balance</td>
       <td>Daily Budget</td>
       <td>Show rate</td>
+      <td>Published installs</td>
+      <td>Published clicks</td>
+      <td>Ad impressions</td>
     </tr>
   
     <% @app_list.length.times do |i| %>
@@ -38,9 +46,11 @@
           <img src="<%= app.get_icon_url %>" width="56px" height="56px" />
         </td>
         <td>
-          <%= app.name %>
-          <br />
-          <span class='appkey'><%= app.key %></span>
+          <div class='appname'>
+            <%= app.name %>
+            <br />
+            <span class='appkey'><%= app.key %></span>
+          </div>
         </td>
         
         <td>
@@ -78,6 +88,24 @@
         <td><%= app.balance %></td>
         <td><%= app.daily_budget %></td>
         <td><%= app.show_rate %></td>
+        
+        <td>
+          <span title="<%= appstats.stats['published_installs'].join(', ') %>">
+            <%= appstats.stats['published_installs'].sum %>
+          </span>
+        </td>
+        
+        <td>
+          <span title="<%= appstats.stats['installs_opened'].join(', ') %>">
+            <%= appstats.stats['installs_opened'].sum %>
+          </span>
+        </td>
+        
+        <td>
+          <span title="<%= appstats.stats['hourly_impressions'].join(', ') %>">
+            <%= appstats.stats['hourly_impressions'].sum %>
+          </span>
+        </td>
       </tr>
     <% end %>
   
