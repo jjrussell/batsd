@@ -7,7 +7,14 @@ class WebRequest < SimpledbResource
   PATH_TO_STAT_MAP = {
     'connect' => 'logins',
     'new_user' => 'new_users',
-    'adshown' => 'hourly_impressions'
+    'adshown' => 'hourly_impressions',
+    'store_click' => 'paid_clicks',
+    'store_install' => 'paid_installs'
+  }
+  
+  PUBLISHER_PATH_TO_STAT_MAP = {
+    'store_click' => 'installs_opened',
+    'store_install' => 'published_installs'
   }
   
   def initialize(options = {})
@@ -29,7 +36,6 @@ class WebRequest < SimpledbResource
   # Puts attributes that come from the params and request object.
   def put_values(path, params, request)
     add_path(path)
-    put('time', @now.to_f.to_s)
     
     if params
       put('campaign_id', params[:campaign_id])
@@ -61,12 +67,20 @@ class WebRequest < SimpledbResource
   # Calls super.save, with write_to_memcache option set to false.
   # Also increments all stats associated with this webrequest.
   def save
+    put('time', @now.to_f.to_s)
     super({:write_to_memcache => false})
     
     get('path', {:force_array => true}).each do |path|
       stat_name = PATH_TO_STAT_MAP[path]
       unless stat_name.nil?
-        increment_count_in_cache(Stats.get_memcache_count_key(stat_name, get('app_id'), @now))
+        app_id = get('app_id') || get('advertiser_app_id')
+        increment_count_in_cache(Stats.get_memcache_count_key(stat_name, app_id, @now))
+      end
+      
+      stat_name = PUBLISHER_PATH_TO_STAT_MAP[path]
+      unless stat_name.nil?
+        app_id = get('publisher_app_id')
+        increment_count_in_cache(Stats.get_memcache_count_key(stat_name, app_id, @now))
       end
     end
   end

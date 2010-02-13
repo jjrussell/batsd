@@ -6,6 +6,10 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     @now = Time.now.utc
     @date = @now.iso8601[0,10]
     @paths_to_aggregate = %w(connect new_user adshown)
+    @publisher_paths_to_aggregate = []
+    # TODO: enable below (end disable above) once we are ready to start using web-requests for  store_click and store_install stats.
+    #@paths_to_aggregate = %w(connect new_user adshown store_click store_install)
+    #@publisher_paths_to_aggregate = %w(store_click store_install)
   end
   
   private
@@ -25,6 +29,9 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     
     @paths_to_aggregate.each do |path|
       aggregate_stat(stat_row, path, app_key, first_hour, last_hour)
+    end
+    @publisher_paths_to_aggregate.each do |path|
+      aggregate_stat(stat_row, path, app_key, first_hour, last_hour, @now, true)
     end
     
     stat_row.save
@@ -57,6 +64,9 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     
     @paths_to_aggregate.each do |path|
       aggregate_stat(stat_row, path, app.key, 0, 23, time)
+    end
+    @publisher_paths_to_aggregate.each do |path|
+      aggregate_stat(stat_row, path, app_key, 0, 23, time, true)
     end
     
     stat_row.save
@@ -136,8 +146,14 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     download_with_retry(url, {:timeout => 30}, {:retries => 2})
   end
   
-  def aggregate_stat(stat_row, wr_path, app_key, first_hour, last_hour, time = @now)
-    stat_name = WebRequest::PATH_TO_STAT_MAP[wr_path]
+  def aggregate_stat(stat_row, wr_path, app_key, first_hour, last_hour, time = @now, is_publisher_stat = false)
+    if is_publisher_stat
+      stat_name = WebRequest::PUBLISHER_PATH_TO_STAT_MAP[wr_path]
+      app_condition = "publisher_app_id = '#{app_key}'"
+    else
+      stat_name = WebRequest::PATH_TO_STAT_MAP[wr_path]
+      app_condition = "(app_id = '#{app_key}' or advertiser_app_id = '#{app_key}')"
+    end
     date = time.iso8601[0,10]
     
     hourly_stats_string = stat_row.get(stat_name)
@@ -155,7 +171,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
       MAX_WEB_REQUEST_DOMAINS.times do |i|
         count += SimpledbResource.count({:domain_name => "web-request-#{date}-#{i}", 
             :where => "time >= '#{min_time.to_f.to_s}' and time < '#{max_time.to_f.to_s}' " +
-            "and app_id = '#{app_key}' and path = '#{wr_path}'"})
+            "and path = '#{wr_path}' and #{app_condition}"})
       end
       hourly_stats[hour] = count
     end
@@ -189,8 +205,9 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     total_logins = stat_row.get_hourly_count('logins').sum
     total_rewards = stat_row.get_hourly_count('rewards').sum
     total_paid_clicks = stat_row.get_hourly_count('paid_clicks').sum
+    total_ad_impressions = stat_row.get_hourly_count('hourly_impressions').sum
     
-    if total_logins + total_rewards + total_paid_clicks > 0
+    if total_logins + total_rewards + total_paid_clicks + total_ad_impressions > 0
       new_interval = 1.hour
     else
       new_interval = 4.hour
