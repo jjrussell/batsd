@@ -42,6 +42,14 @@
   <script type="text/javascript" src="/javascripts/jquery-1.4.1.min.js"></script>
   <script type="text/javascript" src="/javascripts/jquery.tablesorter.js"></script>
   <script type="text/javascript">
+    function mapIdentity(value) {
+      return value;
+    }
+    
+    function mapToDollars(value) {
+      return '$' + (value / 100).toFixed(2);
+    }
+    
     function sumArray(array) {
       sum = 0;
       for (var i = 0; i < array.length; i++) {
@@ -50,8 +58,17 @@
       return sum;
     }
   
-    function getRowHtmlForStat(statArray) {
-      return "<td><span title='" + statArray.join(', ') + "'>" + sumArray(statArray) + '</span></td>';
+    function getRowHtmlForStat(statArray, mapper) {
+      if (mapper == null) {
+        mapper = mapIdentity;
+      }
+      mappedStatArray = []
+      for(var i = 0; i < statArray.length; i++) {
+        mappedStatArray[i] = mapper(statArray[i])
+      }
+      
+      return "<td><span title='" + mappedStatArray.join(', ') + "'>" + 
+          mapper(sumArray(statArray)) + '</span></td>';
     }
     
     function toggleAuto() {
@@ -85,20 +102,31 @@
               app['key'] + '</span></div></td>';
           rowHtml += getRowHtmlForStat(app['stats']['paid_installs']);
           rowHtml += getRowHtmlForStat(app['stats']['paid_clicks']);
+          rowHtml += getRowHtmlForStat(app['stats']['installs_spend'], mapToDollars)
           rowHtml += "<td><span title='" + app['stats']['cvr'].join(', ') + "'>" +
               ((sumArray(app['stats']['paid_installs']) / 
               sumArray(app['stats']['paid_clicks'])) || 0).toFixed(2) +
               '</span></td>';
           rowHtml += getRowHtmlForStat(app['stats']['logins']);
           rowHtml += getRowHtmlForStat(app['stats']['new_users']);
-          rowHtml += '<td>$' + (app['price'] / 100).toFixed(2) + '</td>';
-          rowHtml += '<td>$' + (app['payment_for_install'] / 100).toFixed(2) + '</td>';
-          rowHtml += '<td>$' + (app['balance'] / 100).toFixed(2) + '</td>';
+          rowHtml += '<td>' + mapToDollars(app['price']) + '</td>';
+          rowHtml += '<td>' + mapToDollars(app['payment_for_install']) + '</td>';
+          rowHtml += '<td>' + mapToDollars(app['balance']) + '</td>';
           rowHtml += '<td>' + (app['daily_budget'] || 0)+ '</td>';
           rowHtml += '<td>' + parseFloat(app['show_rate'] || 0).toFixed(2) + '</td>';
           
           rowHtml += getRowHtmlForStat(app['stats']['published_installs']);
           rowHtml += getRowHtmlForStat(app['stats']['installs_opened']);
+          rowHtml += getRowHtmlForStat(app['stats']['installs_revenue'], mapToDollars);
+
+          rowHtml += getRowHtmlForStat(app['stats']['offers']);
+          rowHtml += getRowHtmlForStat(app['stats']['offers_opened']);
+          rowHtml += getRowHtmlForStat(app['stats']['offers_revenue'], mapToDollars);
+
+          rowHtml += getRowHtmlForStat(app['stats']['ratings']);
+          
+          rowHtml += getRowHtmlForStat(app['stats']['rewards_revenue'], mapToDollars);
+          
           rowHtml += getRowHtmlForStat(app['stats']['hourly_impressions']);
           
           if ($('#' + app['key']).length > 0) {
@@ -154,6 +182,7 @@
       <th>App</th>
       <th>Paid installs</th>
       <th>Paid clicks</th>
+      <th>Installs spend</th>
       <th>CVR</th>
       <th>Connects</th>
       <th>New users</th>
@@ -164,6 +193,12 @@
       <th>Show rate</th>
       <th>Published installs</th>
       <th>Published clicks</th>
+      <th>Installs revenue</th>
+      <th>Offers completed</th>
+      <th>Offers clicked</th>
+      <th>Offers revenue</th>
+      <th>Ratings</th>
+      <th>Total revenue</th>
       <th>Ad impressions</th>
     </tr>
     </thead>
