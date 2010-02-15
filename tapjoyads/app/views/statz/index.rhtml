@@ -1,11 +1,8 @@
 <html>
 <head>
   <title>Tapjoy Status</title>
+  <link rel="stylesheet" href="../stylesheets/themes/blue/style.css" type="text/css" media="print, projection, screen" />
   <style type='text/css'>
-    table {
-      border-spacing: 10px;
-    }
-    
     .appkey {
       font-size:50%;
     }
@@ -15,31 +12,43 @@
       overflow: hidden;
     }
   </style>
+  <script type="text/javascript" src="/javascripts/jquery-1.4.1.min.js"></script>
+  <script type="text/javascript" src="/javascripts/jquery.tablesorter.js"></script>
+  <script type="text/javascript">
+
+
+    $(function() {   
+      $("#apps_table").tablesorter({sortList:[[1,0]], widgets: ['zebra']});
+    });  
+  </script>
 </head>
 <body>
   <h1>Tapjoy stats for last 24 hours</h1>
   <h3>Total installs: <%= @install_count_24hours %></h3>
   <h5>Last updated: <%= @last_updated %></h5>
   
-  <table>
+  <table id="apps_table" class="tablesorter">
+    <thead>
     <tr>
-      <td></td>
-      <td>App</td>
-      <td>Paid installs</td>
-      <td>Paid clicks</td>
-      <td>CVR</td>
-      <td>Connects</td>
-      <td>New users</td>
-      <td>Price</td>
-      <td>Payment for install</td>
-      <td>Balance</td>
-      <td>Daily Budget</td>
-      <td>Show rate</td>
-      <td>Published installs</td>
-      <td>Published clicks</td>
-      <td>Ad impressions</td>
+      <th></th>
+      <th>App</th>
+      <th>Paid installs</th>
+      <th>Paid clicks</th>
+      <th>CVR</th>
+      <th>Connects</th>
+      <th>New users</th>
+      <th>Price</th>
+      <th>Payment for install</th>
+      <th>Balance</th>
+      <th>Daily Budget</th>
+      <th>Show rate</th>
+      <th>Published installs</th>
+      <th>Published clicks</th>
+      <th>Ad impressions</th>
     </tr>
-  
+    </thead>
+    
+    <tbody>
     <% @app_list.length.times do |i| %>
       <% app = @app_list[i]; appstats = @appstats_list[i] %>
       <tr class='app'>
@@ -109,7 +118,7 @@
         </td>
       </tr>
     <% end %>
-  
+    </tbody>
   </table>
 </body>
 </html>
