@@ -29,7 +29,7 @@
       right: 5px;
     }
     
-    #do_refresh {
+    #toggle_refresh {
       cursor: pointer;
       text-decoration: underline;
       color: #A7A3FF;
@@ -54,8 +54,19 @@
       return "<td><span title='" + statArray.join(', ') + "'>" + sumArray(statArray) + '</span></td>';
     }
     
+    function toggleAuto() {
+      autoRefresh = !autoRefresh;
+      $("#toggle_refresh").empty();
+      $("#toggle_refresh").append(autoRefresh ? 'enabled' : 'disabled');
+      if (autoRefresh) {
+        loadApps();
+      } else {
+        clearTimeout(loadAppsTimeout);
+      }
+    }
+    
     function loadApps() {
-      clearTimeout(loadAppsTimeout)
+      clearTimeout(loadAppsTimeout);
       
       $("#loading").removeClass('hidden');
       $("#loaded").addClass('hidden')
@@ -102,13 +113,16 @@
         $("#loading").addClass('hidden');
         $("#loaded").removeClass('hidden');
         
-        loadAppsTimeout = setTimeout(loadApps, 60000)
+        if (autoRefresh) {
+          loadAppsTimeout = setTimeout(loadApps, 60000);
+        }
       });
     }
 
     $(function() {
       loadAppsTimeout = null;
-      $("#do_refresh").bind('click', loadApps)
+      autoRefresh = true;
+      $("#toggle_refresh").bind('click', toggleAuto)
       
       $("#apps_table").tablesorter({widgets: ['zebra'],
         headers: {
@@ -129,7 +143,7 @@
       <img src='/images/load-bar.gif' alt='loading' />
     </div>
     <div id="loaded" class="hidden">
-      Auto-refreshes every minute. <span id="do_refresh">Refresh now.</span>
+      Auto-refresh every minute: <span id="toggle_refresh">enabled</span>
     </div>
   </div>
   
