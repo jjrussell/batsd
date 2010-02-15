@@ -19,6 +19,7 @@ class StatzController < ApplicationController
       end
 
       now = Time.now.utc
+      @last_updated = now
 
       @appstats_list = []
       @app_list.each do |app|
@@ -27,8 +28,6 @@ class StatzController < ApplicationController
           :start_time => now - 23.hours,
           :end_time => now + 1.hour}))
       end
-
-      @last_updated = Time.now
 
       save_to_cache('statz.install_count_24hours', @install_count_24hours)
       save_to_cache('statz.app_list', @app_list)

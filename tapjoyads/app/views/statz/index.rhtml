@@ -3,6 +3,9 @@
   <title>Tapjoy Status</title>
   <link rel="stylesheet" href="../stylesheets/themes/blue/style.css" type="text/css" media="print, projection, screen" />
   <style type='text/css'>
+    table.tablesorter thead tr .header {
+      background-position: right bottom;
+    }
     .appkey {
       font-size:50%;
     }
@@ -15,22 +18,73 @@
   <script type="text/javascript" src="/javascripts/jquery-1.4.1.min.js"></script>
   <script type="text/javascript" src="/javascripts/jquery.tablesorter.js"></script>
   <script type="text/javascript">
+    function sumArray(array) {
+      sum = 0;
+      for (var i = 0; i < array.length; i++) {
+        sum += array[i]
+      }
+      return sum;
+    }
+  
+    function getRowHtmlForStat(statArray) {
+      return "<td><span title='" + statArray.join(', ') + "'>" + sumArray(statArray) + '</span></td>';
+    }
+    
+    function loadApps() {
+      $.get("/statz.json", function(json) {
+        data = eval(json);
+        $("#last_updated").empty();
+        $("#last_updated").append("Last updated: " + data["last_updated"]);
+        $("#total_installs").empty();
+        $("#install_count_24hours").append("Total installs: " + data["install_count_24hours"]);
+        
+        for (var i = 0; app = data['apps'][i]; i++) {
+          rowHtml = '';
+          rowHtml += '<td><img width="56px" height="56px" src="' + app['icon_url'] + '" /></td>';
+          rowHtml += '<td><div class="appname">' + app['name'] + '<br /><span class="appkey">' +
+              app['key'] + '</span></div></td>';
+          rowHtml += getRowHtmlForStat(app['stats']['paid_installs']);
+          rowHtml += getRowHtmlForStat(app['stats']['paid_clicks']);
+          rowHtml += "<td><span title='" + app['stats']['cvr'].join(', ') + "'>" +
+              ((sumArray(app['stats']['paid_installs']) / 
+              sumArray(app['stats']['paid_clicks'])) || 0).toFixed(2) +
+              '</span></td>';
+          rowHtml += getRowHtmlForStat(app['stats']['logins']);
+          rowHtml += getRowHtmlForStat(app['stats']['new_users']);
+          rowHtml += '<td>$' + (app['price'] / 100).toFixed(2) + '</td>';
+          rowHtml += '<td>$' + (app['payment_for_install'] / 100).toFixed(2) + '</td>';
+          rowHtml += '<td>$' + (app['balance'] / 100).toFixed(2) + '</td>';
+          rowHtml += '<td>' + (app['daily_budget'] || 0)+ '</td>';
+          rowHtml += '<td>' + (app['show_rate'] || 0).toFixed(2) + '</td>';
+          rowHtml += getRowHtmlForStat(app['stats']['published_installs']);
+          rowHtml += getRowHtmlForStat(app['stats']['installs_opened']);
+          rowHtml += getRowHtmlForStat(app['stats']['hourly_impressions']);
+          
+          $("#apps_tbody").append('<tr>' + rowHtml + '</tr>');
+        }
+        $("#apps_table").trigger('update');
+      });
+    }
 
-
-    $(function() {   
-      $("#apps_table").tablesorter({sortList:[[1,0]], widgets: ['zebra']});
+    $(function() {
+      $("#apps_table").tablesorter({widgets: ['zebra'],
+        headers: {
+          0: {sorter: false}
+        }
+      });
+      loadApps()
     });  
   </script>
 </head>
 <body>
   <h1>Tapjoy stats for last 24 hours</h1>
-  <h3>Total installs: <%= @install_count_24hours %></h3>
-  <h5>Last updated: <%= @last_updated %></h5>
+  <h3 id="install_count_24hours"></h3>
+  <h5 id="last_updated"></h5>
   
   <table id="apps_table" class="tablesorter">
     <thead>
     <tr>
-      <th></th>
+      <th class="{sorter: false}"></th>
       <th>App</th>
       <th>Paid installs</th>
       <th>Paid clicks</th>
@@ -48,76 +102,7 @@
     </tr>
     </thead>
     
-    <tbody>
-    <% @app_list.length.times do |i| %>
-      <% app = @app_list[i]; appstats = @appstats_list[i] %>
-      <tr class='app'>
-        <td>
-          <img src="<%= app.get_icon_url %>" width="56px" height="56px" />
-        </td>
-        <td>
-          <div class='appname'>
-            <%= app.name %>
-            <br />
-            <span class='appkey'><%= app.key %></span>
-          </div>
-        </td>
-        
-        <td>
-          <span title="<%= appstats.stats['paid_installs'].join(', ') %>">
-            <%= appstats.stats['paid_installs'].sum %>
-          </span>
-        </td>
-        
-        <td>
-          <span title="<%= appstats.stats['paid_clicks'].join(', ') %>">
-            <%= appstats.stats['paid_clicks'].sum %>
-          </span>
-        </td>
-        
-        <td>
-          <span title="<%= appstats.stats['cvr'].join(', ') %>">
-            <%= "%.2f" % (appstats.stats['paid_installs'].sum.to_f / appstats.stats['paid_clicks'].sum) %>
-          </span>
-        </td>
-        
-        <td>
-          <span title="<%= appstats.stats['logins'].join(', ') %>">
-            <%= appstats.stats['logins'].sum %>
-          </span>
-        </td>
-        
-        <td>
-          <span title="<%= appstats.stats['new_users'].join(', ') %>">
-            <%= appstats.stats['new_users'].sum %>
-          </span>
-        </td>
-        
-        <td><%= app.price %></td>
-        <td><%= app.payment_for_install %></td>
-        <td><%= app.balance %></td>
-        <td><%= app.daily_budget %></td>
-        <td><%= app.show_rate %></td>
-        
-        <td>
-          <span title="<%= appstats.stats['published_installs'].join(', ') %>">
-            <%= appstats.stats['published_installs'].sum %>
-          </span>
-        </td>
-        
-        <td>
-          <span title="<%= appstats.stats['installs_opened'].join(', ') %>">
-            <%= appstats.stats['installs_opened'].sum %>
-          </span>
-        </td>
-        
-        <td>
-          <span title="<%= appstats.stats['hourly_impressions'].join(', ') %>">
-            <%= appstats.stats['hourly_impressions'].sum %>
-          </span>
-        </td>
-      </tr>
-    <% end %>
+    <tbody id="apps_tbody">
     </tbody>
   </table>
 </body>
