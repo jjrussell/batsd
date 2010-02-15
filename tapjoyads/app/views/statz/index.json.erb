@@ -1,0 +1,29 @@
+{
+  "last_updated":"<%= @last_updated %>",
+  "install_count_24hours":"<%= @install_count_24hours %>",
+  "apps": [
+    <% @app_list.length.times do |i| %>
+      <% app = @app_list[i]; appstats = @appstats_list[i] %>
+      {
+        "name":"<%= app.name %>",
+        "key":"<%= app.key %>",
+        "price":"<%= app.price %>",
+        "payment_for_install":"<%= app.payment_for_install %>",
+        "balance":"<%= app.balance %>",
+        "daily_budget":"<%= app.daily_budget %>",
+        "show_rate":"<%= app.show_rate %>",
+        "stats": {
+          "paid_installs":[<%= appstats.stats['paid_installs'].join(',') %>],
+          "paid_clicks":[<%= appstats.stats['paid_clicks'].join(',') %>],
+          "cvr":[<%= appstats.stats['cvr'].join(',') %>],
+          "logins":[<%= appstats.stats['logins'].join(',') %>],
+          "new_users":[<%= appstats.stats['new_users'].join(',') %>],
+          "published_installs":[<%= appstats.stats['published_installs'].join(',') %>],
+          "installs_opened":[<%= appstats.stats['installs_opened'].join(',') %>],
+          "hourly_impressions":[<%= appstats.stats['hourly_impressions'].join(',') %>]
+        }
+      }
+      <%= ',' if i < @app_list.length - 1%>
+    <% end %>
+  ]
+}
