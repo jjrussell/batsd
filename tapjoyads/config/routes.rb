@@ -61,14 +61,19 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'Service1.asmx/GetOffersForPublisherCurrencyByType', :controller => 'get_offers'
   map.connect 'service1.asmx/GetTapjoyAd', :controller => 'getad'
   map.connect 'Service1.asmx/GetTapjoyAd', :controller => 'getad'
-
   map.connect 'service1.asmx/GetAdOrder', :controller => 'get_ad_order'
   map.connect 'Service1.asmx/GetAdOrder', :controller => 'get_ad_order'
-
   map.connect 'service1.asmx/SubmitOfferClick', :controller => 'submit_click', :action => 'offer'
   map.connect 'Service1.asmx/SubmitOfferClick', :controller => 'submit_click', :action => 'offer'
   #map.connect 'service1.asmx/GetUserOfferStatus', :controller => 'offer_status'
   #map.connect 'Service1.asmx/GetUserOfferStatus', :controller => 'offer_status'
+  map.connect 'service1.asmx/GetAllVGStoreItems', :controller => 'get_vg_store_items', :action => 'all'
+  map.connect 'Service1.asmx/GetAllVGStoreItems', :controller => 'get_vg_store_items', :action => 'all'
+  map.connect 'service1.asmx/GetPurchasedVGStoreItems', :controller => 'get_vg_store_items', :action => 'purchased'
+  map.connect 'Service1.asmx/GetPurchasedVGStoreItems', :controller => 'get_vg_store_items', :action => 'purchased'
+  map.connect 'service1.asmx/PurchaseVGWithCurrency', :controller => 'purchase_vg'
+  map.connect 'Service1.asmx/PurchaseVGWithCurrency', :controller => 'purchase_vg'
+  
   map.connect 'service1.asmx/:action', :controller => 'service1'
   map.connect 'Service1.asmx/:action', :controller => 'service1'
   
@@ -79,7 +84,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'ReceiveOffersService.asmx/ReceiveOffer', :controller => 'receive_offer', :action => 'receive_offer'
   map.connect 'ReceiveOffersService.asmx/ReceiveOfferCS', :controller => 'receive_offer', :action => 'receive_offer_cs'
   
-    
   # Generic windows redirectors. These will be transitions over to ruby controllers as
   # functionality is moved off of windows.
   map.connect 'TapDefenseCurrencyService.asmx/:action', :controller => 'win_redirector'
@@ -100,5 +104,6 @@ ActionController::Routing::Routes.draw do |map|
   # consider removing the them or commenting them out if you're using named routes and resources.
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
+  map.connect ':controller.:format'
     
 end
