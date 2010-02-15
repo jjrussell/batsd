@@ -60,7 +60,7 @@
       $("#loading").removeClass('hidden');
       $("#loaded").addClass('hidden')
       
-      $.get("/statz-4.json", function(json) {
+      $.get("/statz.json", function(json) {
         data = eval(json);
         $("#last_updated").empty();
         $("#last_updated").append("Last updated: " + data["last_updated"]);
