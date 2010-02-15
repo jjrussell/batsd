@@ -24,7 +24,6 @@ class StatzController < ApplicationController
       @appstats_list = []
       @app_list.each do |app|
         @appstats_list.push(Appstats.new(app.key, {
-          :stat_types => ['paid_installs', 'paid_clicks', 'logins', 'new_users', 'published_installs', 'installs_opened', 'hourly_impressions'],
           :start_time => now - 23.hours,
           :end_time => now + 1.hour}))
       end
