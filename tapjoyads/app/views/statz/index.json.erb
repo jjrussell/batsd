@@ -13,18 +13,8 @@
         "balance":"<%= app.balance %>",
         "daily_budget":"<%= app.daily_budget %>",
         "show_rate":"<%= app.show_rate %>",
-        "stats": {
-          "paid_installs":[<%= appstats.stats['paid_installs'].join(',') %>],
-          "paid_clicks":[<%= appstats.stats['paid_clicks'].join(',') %>],
-          "cvr":[<%= appstats.stats['cvr'].join(',') %>],
-          "logins":[<%= appstats.stats['logins'].join(',') %>],
-          "new_users":[<%= appstats.stats['new_users'].join(',') %>],
-          "published_installs":[<%= appstats.stats['published_installs'].join(',') %>],
-          "installs_opened":[<%= appstats.stats['installs_opened'].join(',') %>],
-          "hourly_impressions":[<%= appstats.stats['hourly_impressions'].join(',') %>]
-        }
-      }
-      <%= ',' if i < @app_list.length - 1%>
+        "stats": <%= appstats.stats.to_json %>
+      }<%= ',' if i < @app_list.length - 1%>
     <% end %>
   ]
 }
