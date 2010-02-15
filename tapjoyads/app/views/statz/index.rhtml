@@ -14,6 +14,30 @@
       width: 100px;
       overflow: hidden;
     }
+    
+    #last_updated {
+      position: absolute;
+      right: 5px;
+      top: 35px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    #refresh {
+      position: absolute;
+      top: 3px;
+      right: 5px;
+    }
+    
+    #do_refresh {
+      cursor: pointer;
+      text-decoration: underline;
+      color: #A7A3FF;
+    }
+    
+    .hidden {
+      display: none;
+    }
   </style>
   <script type="text/javascript" src="/javascripts/jquery-1.4.1.min.js"></script>
   <script type="text/javascript" src="/javascripts/jquery.tablesorter.js"></script>
@@ -31,11 +55,16 @@
     }
     
     function loadApps() {
-      $.get("/statz.json", function(json) {
+      clearTimeout(loadAppsTimeout)
+      
+      $("#loading").removeClass('hidden');
+      $("#loaded").addClass('hidden')
+      
+      $.get("/statz-4.json", function(json) {
         data = eval(json);
         $("#last_updated").empty();
         $("#last_updated").append("Last updated: " + data["last_updated"]);
-        $("#total_installs").empty();
+        $("#install_count_24hours").empty();
         $("#install_count_24hours").append("Total installs: " + data["install_count_24hours"]);
         
         for (var i = 0; app = data['apps'][i]; i++) {
@@ -61,13 +90,26 @@
           rowHtml += getRowHtmlForStat(app['stats']['installs_opened']);
           rowHtml += getRowHtmlForStat(app['stats']['hourly_impressions']);
           
-          $("#apps_tbody").append('<tr>' + rowHtml + '</tr>');
+          if ($('#' + app['key']).length > 0) {
+            $('#' + app['key']).empty()
+            $('#' + app['key']).append(rowHtml)
+          } else {
+            $("#apps_tbody").append('<tr id="' + app['key'] + '">' + rowHtml + '</tr>');
+          }
         }
         $("#apps_table").trigger('update');
+        
+        $("#loading").addClass('hidden');
+        $("#loaded").removeClass('hidden');
+        
+        loadAppsTimeout = setTimeout(loadApps, 60000)
       });
     }
 
     $(function() {
+      loadAppsTimeout = null;
+      $("#do_refresh").bind('click', loadApps)
+      
       $("#apps_table").tablesorter({widgets: ['zebra'],
         headers: {
           0: {sorter: false}
@@ -80,7 +122,16 @@
 <body>
   <h1>Tapjoy stats for last 24 hours</h1>
   <h3 id="install_count_24hours"></h3>
-  <h5 id="last_updated"></h5>
+  <div id="last_updated"></div>
+  
+  <div id='refresh'>
+    <div id="loading">
+      <img src='/images/load-bar.gif' alt='loading' />
+    </div>
+    <div id="loaded" class="hidden">
+      Auto-refreshes every minute. <span id="do_refresh">Refresh now.</span>
+    </div>
+  </div>
   
   <table id="apps_table" class="tablesorter">
     <thead>
