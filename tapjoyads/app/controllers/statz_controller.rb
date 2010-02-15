@@ -1,4 +1,4 @@
-class StatuszController < ApplicationController
+class StatzController < ApplicationController
   include AuthenticationHelper
   include MemcachedHelper
 
