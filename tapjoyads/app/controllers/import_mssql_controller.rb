@@ -27,6 +27,9 @@ class ImportMssqlController < ApplicationController
     pi = PointPurchases.new(:key => "#{udid}.#{app_id}")
     pi.add_virtual_good(params[:item_id])
     pi.save
+    
+    render :template => 'layouts/success'
+    
   end
 
   def vg
