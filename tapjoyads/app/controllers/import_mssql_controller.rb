@@ -37,13 +37,17 @@ class ImportMssqlController < ApplicationController
     
     vg.save
     
-    thumb_image = download_content(params[:thumb_image], :timeout => 30)
-    AWS::S3::S3Object.store "icon.#{params[:item_id]}", thumb_image, 'virtual_goods'
-    save_to_cache("vg.icon.s3.#{params[:item_id].hash}", Base64.encode64(thumb_image))
-
-    datafile = download_content(params[:datafile], :timeout => 30)
-    AWS::S3::S3Object.store  "datafile.#{params[:item_id]}", datafile, 'virtual_goods'
-    save_to_cache("vg.datafile.s3.#{params[:item_id].hash}", datafile)
+    if params[:thumb_image] != 'None'
+      thumb_image = download_content(params[:thumb_image], :timeout => 30)
+      AWS::S3::S3Object.store "icon.#{params[:item_id]}", thumb_image, 'virtual_goods'
+      save_to_cache("vg.icon.s3.#{params[:item_id].hash}", Base64.encode64(thumb_image))
+    end
+    
+    if params[:datafile] != 'None'
+      datafile = download_content(params[:datafile], :timeout => 30)
+      AWS::S3::S3Object.store  "datafile.#{params[:item_id]}", datafile, 'virtual_goods'
+      save_to_cache("vg.datafile.s3.#{params[:item_id].hash}", datafile)
+    end
         
     render :template => 'layouts/success' 
   end
