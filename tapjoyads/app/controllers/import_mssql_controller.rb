@@ -3,6 +3,7 @@ require 'base64'
 class ImportMssqlController < ApplicationController
   include TimeLogHelper
   include MemcachedHelper
+  include DownloadContent
   
   protect_from_forgery :except => [:publisher_ad, :app, :campaign]
 
