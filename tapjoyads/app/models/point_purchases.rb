@@ -20,7 +20,7 @@ class PointPurchases < SimpledbResource
     else
       user_virtual_goods[virtual_good_key] = 1
     end
-    set('virtual_goods', user_virtual_goods.to_json)
+    put('virtual_goods', user_virtual_goods.to_json)
   end
   
 end
