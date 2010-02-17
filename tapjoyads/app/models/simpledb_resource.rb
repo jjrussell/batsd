@@ -45,6 +45,15 @@ class BoolConverter
   end
 end
 
+class JsonConverter
+  def from_string(s)
+    JSON.parse(s)
+  end
+  def to_string(j)
+    j.to_json
+  end
+end
+
 class SimpledbResource  
   include TimeLogHelper
   include MemcachedHelper
@@ -68,7 +77,8 @@ class SimpledbResource
     :int => IntConverter.new,
     :float => FloatConverter.new,
     :time => TimeConverter.new,
-    :bool => BoolConverter.new
+    :bool => BoolConverter.new,
+    :json => JsonConverter.new
   }
   
   ##
