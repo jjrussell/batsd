@@ -135,9 +135,13 @@ module MemcachedHelper
     cache = clone ? CACHE.clone : CACHE
     key = CGI::escape(key)
     
-    begin cache.add(key, 'locked')
-      yield
-      cache.delete(key)
+    begin 
+      cache.add(key, 'locked')
+      begin
+        yield
+      ensure
+        cache.delete(key)
+      end
     rescue Memcached::NotStored
       raise KeyExists.new
     end
