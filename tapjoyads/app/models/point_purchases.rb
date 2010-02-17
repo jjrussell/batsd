@@ -4,16 +4,17 @@
 class PointPurchases < SimpledbResource
   self.key_format = "udid.app_id"
   
+  self.sdb_attr :points, :type => :int, :default_value => 0
+  self.sdb_attr :virtual_goods, :type => :json, :default_value => '{}'
+  
   def dynamic_domain_name
     domain_number = @key.hash % NUM_POINT_PURCHASES_DOMAINS
     
     return "point_purchases_#{domain_number}"
   end
   
-  
   def add_virtual_good(virtual_good_key)
-    virtual_goods_string = get('virtual_goods') || '{}'
-    user_virtual_goods = JSON.parse(virtual_goods_string)
+    user_virtual_goods = JSON.parse(virtual_goods)
 
     if user_virtual_goods[virtual_good_key]
       user_virtual_goods[virtual_good_key] += 1
@@ -21,6 +22,10 @@ class PointPurchases < SimpledbResource
       user_virtual_goods[virtual_good_key] = 1
     end
     put('virtual_goods', user_virtual_goods.to_json)
+  end
+  
+  def get_virtual_good_quantity(virtual_good_key)
+    return virtual_goods[virtual_good_key] || 0
   end
   
 end
