@@ -189,6 +189,7 @@ class ImportMssqlController < ApplicationController
     app.put('iphone_only', params[:iphone_only]) if params[:iphone_only]
     app.put('daily_budget', params[:daily_budget]) if params[:daily_budget]
     app.put('os_type', params[:os_type])
+    app.put('primary_color', params[:primary_color])
     
     app.delete('description_1') if app.get('description_1')
     app.delete('description_2') if app.get('description_2')
