@@ -38,7 +38,7 @@ end
 
 class BoolConverter
   def from_string(s)
-    s == '1'
+    s == '1' || s == 'True'
   end
   def to_string(b)
     b ? '1' : '0'
