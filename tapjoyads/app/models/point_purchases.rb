@@ -5,7 +5,7 @@ class PointPurchases < SimpledbResource
   self.key_format = "udid.app_id"
   
   self.sdb_attr :points,        :type => :int
-  self.sdb_attr :virtual_goods, :type => :json, :default_value => '{}'
+  self.sdb_attr :virtual_goods, :type => :json, :default_value => {}
   
   def initialize(options = {})
     super
@@ -26,7 +26,7 @@ class PointPurchases < SimpledbResource
   end
   
   def add_virtual_good(virtual_good_key)
-    user_virtual_goods = virtual_goods
+    user_virtual_goods = self.virtual_goods
 
     if user_virtual_goods[virtual_good_key]
       user_virtual_goods[virtual_good_key] += 1
