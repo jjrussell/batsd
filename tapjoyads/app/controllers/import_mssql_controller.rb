@@ -32,6 +32,17 @@ class ImportMssqlController < ApplicationController
     
   end
 
+  def points
+    udid = params[:udid]
+    app_id = params[:app_id]
+    pi = PointPurchases.new(:key => "#{udid}.#{app_id}")
+    pi.points = params[:points]
+    pi.save
+    
+    render :template => 'layouts/success'
+    
+  end
+
   def vg
     vg = VirtualGood.new(:key => params[:item_id])
     vg.put('attributes', params[:attributes], :cgi_escape => true)
