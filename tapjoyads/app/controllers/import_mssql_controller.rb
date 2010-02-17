@@ -179,7 +179,6 @@ class ImportMssqlController < ApplicationController
     app.put('launched', params[:launched])
     app.put('pay_per_click', params[:pay_per_click])
     app.put('status', params[:status])
-    app.put('color', params[:color])
     app.put('price', params[:price]) 
     app.put('description', params[:description], {:cgi_escape => true}) if params[:description]
     app.put('has_location', params[:has_location])

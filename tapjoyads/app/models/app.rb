@@ -18,6 +18,7 @@ class App < SimpledbResource
   self.sdb_attr :daily_budget,               {:type => :int}
   self.sdb_attr :conversion_rate,            {:type => :float}
   self.sdb_attr :show_rate,                  {:type => :float}
+  self.sdb_attr :primary_color
   
   ##
   # Returns a list of Apps which are advertising in this app.

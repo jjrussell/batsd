@@ -31,9 +31,10 @@ class ConnectController < ApplicationController
       
       web_request.add_path('new_user')
     end
-
+    
+    @app = App.new(:key => params[:app_id])
+    
     web_request.save
   
-    render :template => 'layouts/success'
   end
 end
