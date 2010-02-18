@@ -33,9 +33,29 @@ class DeviceAppList < SimpledbResource
   
   ##
   # Sets the last run time for app_id to now, potentially adding a new app if it's the first run.
+  # Returns a list of web-request paths that should be added. Potential paths are:
+  # 'new_user', 'daily_user', 'monthly_user'.
   def set_app_ran(app_id)
+    now = Time.now.utc
+    
+    path_list = []
+    last_run_time_string = get("app.#{app_id}")
+    if last_run_time_string.nil?
+      path_list.push('new_user')
+    end
+    last_run_time = Time.at((last_run_time_string || 0).to_f).utc
+    
+    if now.year != last_run_time.year or now.yday != last_run_time.yday
+      path_list.push('daily_user')
+    end
+    if now.year != last_run_time.year or now.month != last_run_time.month
+      path_list.push('monthly_user')
+    end
+    
     # TODO: If this device already has too many attributes, shard it accross multiple rows.
-    put('app.' + app_id,  Time.now.utc.to_f.to_s)
+    put("app.#{app_id}",  now.to_f.to_s)
+    
+    return path_list
   end
   
   ##

@@ -23,14 +23,12 @@ class ConnectController < ApplicationController
     web_request.put_values('connect', params, request)
     
     device_app_list = DeviceAppList.new(:key => params[:udid])
-    unless device_app_list.has_app(params[:app_id])
-      # TODO: once device_app_list is sharded, run set_app_ran on every call.
-      #       Add web-requests for dau's etc..
-      device_app_list.set_app_ran(params[:app_id])
-      device_app_list.save
-      
-      web_request.add_path('new_user')
+    path_list = device_app_list.set_app_ran(params[:app_id])
+    path_list.each do |path|
+      web_request.add_path(path)
     end
+    
+    device_app_list.save
     
     @app = App.new(:key => params[:app_id])
     
