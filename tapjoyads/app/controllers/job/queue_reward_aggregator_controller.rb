@@ -37,17 +37,15 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
         
       Reward.select(:where => "created >= '#{start_hour}' and created < '#{last_hour}'") do |reward|
         
-        publishers[reward.get('publisher_app_id')] = { :installs => 0, :offers => 0, :ratings => 0, 
+        publishers[reward.get('publisher_app_id')] = { :offers => 0, :ratings => 0, 
           :offers_revenue => 0, :installs_revenue => 0, 
           :total_rewards => 0, :total_revenue => 0 } unless publishers[reward.get('publisher_app_id')]
         advertisers[reward.get('advertiser_app_id')] = { 
-          :installs => 0, :cost => 0 } unless advertisers[reward.get('advertiser_app_id')]
+          :cost => 0 } unless advertisers[reward.get('advertiser_app_id')]
 
         case reward.get('type')
         when 'install'
-          publishers[reward.get('publisher_app_id')][:installs] += 1 
           publishers[reward.get('publisher_app_id')][:installs_revenue] += reward.get('publisher_amount').to_i
-          advertisers[reward.get('advertiser_app_id')][:installs] += 1
           advertisers[reward.get('advertiser_app_id')][:cost] += reward.get('advertiser_amount').to_i
         when 'offer'
           publishers[reward.get('publisher_app_id')][:offers] += 1
@@ -65,17 +63,13 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
       publishers.each do |key, publisher|
         offers_opened = OfferClick.count(
             :where => "app_id = '#{key}' and click_date >= '#{start_hour}' and click_date < '#{last_hour}'")
-        installs_opened = StoreClick.count(
-            :where => "publisher_app_id = '#{key}' and click_date >= '#{start_hour}' and click_date < '#{last_hour}'")
       
         stat = Stats.new(:key => get_stat_key('app', key, start_hour))
       
-        update_stat(stat, 'published_installs', publisher[:installs], hour)
         update_stat(stat, 'installs_revenue', publisher[:installs_revenue], hour)
         update_stat(stat, 'offers', publisher[:offers], hour)
         update_stat(stat, 'offers_revenue', publisher[:offers_revenue], hour)
         update_stat(stat, 'offers_opened', offers_opened, hour)
-        update_stat(stat, 'installs_opened', installs_opened, hour)
         update_stat(stat, 'ratings', publisher[:ratings], hour)
         update_stat(stat, 'rewards', publisher[:total_rewards], hour)
         update_stat(stat, 'rewards_revenue', publisher[:total_revenue], hour)
@@ -86,13 +80,8 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
       end
     
       advertisers.each do |key, advertiser|
-        clicks = StoreClick.count(
-          :where => "advertiser_app_id = '#{key}' and click_date >= '#{start_hour}' and click_date < '#{last_hour}'")
-      
         stat = Stats.new(:key => get_stat_key('app', key, start_hour))
-        update_stat(stat, 'paid_installs', advertiser[:installs], hour)
         update_stat(stat, 'installs_spend', advertiser[:cost], hour)
-        update_stat(stat, 'paid_clicks', clicks, hour)
       
         Rails.logger.info("Advertiser #{key}: #{advertiser}")
         stat.save
