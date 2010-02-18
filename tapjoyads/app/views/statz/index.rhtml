@@ -149,8 +149,8 @@
 
     $(function() {
       loadAppsTimeout = null;
-      autoRefresh = true;
-      $("#toggle_refresh").bind('click', toggleAuto)
+      autoRefresh = false;
+      $("#do_refresh").bind('click', loadApps)
       
       $("#apps_table").tablesorter({widgets: ['zebra'],
         headers: {
@@ -171,7 +171,7 @@
       <img src='/images/load-bar.gif' alt='loading' />
     </div>
     <div id="loaded" class="hidden">
-      Auto-refresh every minute: <span id="toggle_refresh">enabled</span>
+      <span id="do_refresh">Refresh</span>
     </div>
   </div>
   
