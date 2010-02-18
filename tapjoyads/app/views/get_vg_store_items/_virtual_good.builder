@@ -1,0 +1,20 @@
+xml.VGStoreItemReturnClass do
+  xml.VGStoreItemID virtual_good.key
+  xml.AppleProductID virtual_good.apple_id
+  xml.Price virtual_good.price
+  xml.Name virtual_good.name
+  xml.Description virtual_good.description
+  xml.VGStoreItemTypeName virtual_good.title
+  xml.AttributeValues do
+    virtual_good.extra_attributes.each |key, value| do
+      xml.VGStoreItemAttributeValueReturnClass do
+        xml.AttributeType key
+        xml.AttributeValue value
+      end
+    end
+  end
+  xml.NumberOwned point_purchases.get_virtual_good_quantity(virtual_good.key)
+  xml.ThumbImageURL virtual_good.icon_url
+  xml.DatafileURL virtual_good.data_url
+  xml.FileSize virtual_good.file_size
+end

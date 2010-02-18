@@ -1,0 +1,13 @@
+xml.instruct!
+xml.TapjoyConnectReturnObject do
+  xml.UserAccountObject do
+    xml.TapPoints @point_purchases.points
+    xml.CurrencyName @currency.currency_name
+    xml.PointsID @point_purchases.key
+  end
+  xml.AllVGStoreItemsArray do
+    xml << render(:partial => "virtual_good", :collection => @virtual_good_list, 
+        :locals => {:point_purchases => @point_purchases})
+  end
+  xml.Success true
+end

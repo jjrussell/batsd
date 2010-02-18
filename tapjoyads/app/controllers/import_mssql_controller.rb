@@ -45,32 +45,38 @@ class ImportMssqlController < ApplicationController
 
   def vg
     vg = VirtualGood.new(:key => params[:item_id])
-    vg.put('attributes', params[:attributes], :cgi_escape => true)
-    vg.put('values', params[:values], :cgi_escape => true)
-    vg.put('apple_id', params[:apple_id])
-    vg.put('price', params[:price])
-    vg.put('name', params[:name], :cgi_escape => true)
-    vg.put('description', params[:description], :cgi_escape => true)
-    vg.put('file_size', params[:file_size])
-    vg.put('disabled', params[:disabled])
-    vg.put('beta', params[:beta])
-    vg.put('title', params[:title])
-    vg.put('app_id', params[:app_id])
+    vg.apple_id = params[:apple_id]
+    vg.price = params[:price]
+    vg.name = params[:name]
+    vg.description = params[:description]
+    vg.file_size = params[:file_size]
+    vg.disabled = params[:disabled] == '1'
+    vg.beta = params[:beta] == 'True'
+    vg.title = params[:title]
+    vg.app_id = params[:app_id]
+    
+    extra_attributes = {}
+    keys = (params[:attributes] || '').split(';')
+    values = (params[:values] || '').split(';')
+    keys.each_index do |i|
+      extra_attributes[keys[i]] = values[i]
+    end
+    vg.extra_attributes = extra_attributes
+    
+    bucket = RightAws::S3.new.bucket('virtual_goods')
+    
+    if vg.has_icon = (params[:thumb_image] != 'None')
+      thumb_image = download_content(params[:thumb_image], :timeout => 30)
+      bucket.put("icons/#{params[:item_id]}.png", thumb_image)
+    end
+    
+    if vg.has_data = (params[:datafile] != 'None')
+      datafile = download_content(params[:datafile], :timeout => 30)
+      bucket.put('data/#{params[:item_id]}.zip', datafile)
+    end
     
     vg.save
     
-    if params[:thumb_image] != 'None'
-      thumb_image = download_content(params[:thumb_image], :timeout => 30)
-      AWS::S3::S3Object.store "icon.#{params[:item_id]}", thumb_image, 'virtual_goods'
-      save_to_cache("vg.icon.s3.#{params[:item_id].hash}", Base64.encode64(thumb_image))
-    end
-    
-    if params[:datafile] != 'None'
-      datafile = download_content(params[:datafile], :timeout => 30)
-      AWS::S3::S3Object.store  "datafile.#{params[:item_id]}", datafile, 'virtual_goods'
-      save_to_cache("vg.datafile.s3.#{params[:item_id].hash}", datafile)
-    end
-        
     render :template => 'layouts/success' 
   end
   
