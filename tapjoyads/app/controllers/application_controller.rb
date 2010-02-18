@@ -68,6 +68,7 @@ class ApplicationController < ActionController::Base
     set_param(:publisher_user_id, :PublisherUserID)
     set_param(:start, :Start)
     set_param(:max, :Max)
+    set_param(:virtual_good_id, :VirtualGoodID)
   end
   
   def downcase_param(p)
