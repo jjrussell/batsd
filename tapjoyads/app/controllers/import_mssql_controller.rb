@@ -72,7 +72,7 @@ class ImportMssqlController < ApplicationController
     
     if vg.has_data = (params[:datafile] != 'None')
       datafile = download_content(params[:datafile], :timeout => 30)
-      bucket.put('data/#{params[:item_id]}.zip', datafile)
+      bucket.put("data/#{params[:item_id]}.zip", datafile)
     end
     
     vg.save
