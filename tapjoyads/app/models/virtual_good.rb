@@ -10,6 +10,7 @@ class VirtualGood < SimpledbResource
   self.sdb_attr :disabled,    :type => :bool
   self.sdb_attr :has_icon,    :type => :bool
   self.sdb_attr :has_data,    :type => :bool
+  self.sdb_attr :app_id
   self.sdb_attr :apple_id
   self.sdb_attr :extra_attributes, :cgi_escape => true, :type => :json, :default_value => {}
   
