@@ -63,6 +63,8 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
       publishers.each do |key, publisher|
         offers_opened = OfferClick.count(
             :where => "app_id = '#{key}' and click_date >= '#{start_hour}' and click_date < '#{last_hour}'")
+        installs_opened = StoreClick.count(
+            :where => "publisher_app_id = '#{key}' and click_date >= '#{start_hour}' and click_date < '#{last_hour}'")
       
         stat = Stats.new(:key => get_stat_key('app', key, start_hour))
       
