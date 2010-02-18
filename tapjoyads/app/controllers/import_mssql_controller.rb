@@ -67,12 +67,12 @@ class ImportMssqlController < ApplicationController
     
     if vg.has_icon = (params[:thumb_image] != 'None')
       thumb_image = download_content(params[:thumb_image], :timeout => 30)
-      bucket.put("icons/#{params[:item_id]}.png", thumb_image)
+      bucket.put("icons/#{params[:item_id]}.png", thumb_image, {}, 'public-read')
     end
     
     if vg.has_data = (params[:datafile] != 'None')
       datafile = download_content(params[:datafile], :timeout => 30)
-      bucket.put("data/#{params[:item_id]}.zip", datafile)
+      bucket.put("data/#{params[:item_id]}.zip", datafile, {}, 'public-read')
     end
     
     vg.save
