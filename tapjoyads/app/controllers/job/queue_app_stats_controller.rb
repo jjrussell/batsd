@@ -5,7 +5,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     super QueueNames::APP_STATS
     @now = Time.now.utc
     @date = @now.iso8601[0,10]
-    @paths_to_aggregate = %w(connect new_user adshown store_click store_install)
+    @paths_to_aggregate = %w(connect new_user adshown store_click store_install daily_user monthly_user)
     @publisher_paths_to_aggregate = %w(store_click store_install)
   end
   

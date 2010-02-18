@@ -9,7 +9,9 @@ class WebRequest < SimpledbResource
     'new_user' => 'new_users',
     'adshown' => 'hourly_impressions',
     'store_click' => 'paid_clicks',
-    'store_install' => 'paid_installs'
+    'store_install' => 'paid_installs',
+    'daily_user' => 'daily_active_users',
+    'monthly_user' => 'monthly_active_users'
   }
   
   # Params that should use the advertiser_app_id, rather than the app_id for stat tracking.
