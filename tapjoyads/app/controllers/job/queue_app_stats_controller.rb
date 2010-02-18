@@ -63,7 +63,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
       aggregate_stat(stat_row, path, app.key, 0, 23, time)
     end
     @publisher_paths_to_aggregate.each do |path|
-      aggregate_stat(stat_row, path, app_key, 0, 23, time, true)
+      aggregate_stat(stat_row, path, app.key, 0, 23, time, true)
     end
     
     stat_row.save
