@@ -28,10 +28,7 @@ class ConnectController < ApplicationController
       web_request.add_path(path)
     end
     
-    # Disable DAUs for now.
-    if path_list.include? 'new_user'
-      device_app_list.save
-    end
+    device_app_list.save
     
     @app = App.new(:key => params[:app_id])
     
