@@ -6,8 +6,10 @@ xml.TapjoyConnectReturnObject do
     xml.PointsID @point_purchases.key
   end
   xml.PurchasedVGStoreItemsArray do
-    xml << render(:partial => "virtual_good", :collection => @virtual_good_list, 
-        :locals => {:point_purchases => @point_purchases})
+    unless @virtual_good_list.empty?
+      xml << render(:partial => "virtual_good", :collection => @virtual_good_list, 
+          :locals => {:point_purchases => @point_purchases})
+    end
   end
   xml.Success true
 end
