@@ -28,7 +28,9 @@ class ConnectController < ApplicationController
       web_request.add_path(path)
     end
     
-    device_app_list.save
+    if path_list.include? 'new_user'
+      device_app_list.save
+    end
     
     @app = App.new(:key => params[:app_id])
     
