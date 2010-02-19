@@ -13,7 +13,7 @@ class GetVgStoreItemsController < ApplicationController
       @point_purchases.get_virtual_good_quantity(virtual_good.key) > 0
     end
     
-    @virtual_good_list = @virtual_good_list[params[:start], params[:max]] || []
+    resize_virtual_good_list
   end
   
   ##
@@ -27,7 +27,7 @@ class GetVgStoreItemsController < ApplicationController
       @point_purchases.get_virtual_good_quantity(virtual_good.key) == 0
     end
     
-    @virtual_good_list = @virtual_good_list[params[:start], params[:max]] || []
+    resize_virtual_good_list 
   end
   
   private
@@ -53,6 +53,14 @@ class GetVgStoreItemsController < ApplicationController
         list
       end
     end
+  end
+  
+  ##
+  # Resizes the virtual good list based on the start and max params.
+  def resize_virtual_good_list
+    start = (params[:start] || 0).to_i
+    max = (params[:max] || 999).to_i
+    @virtual_good_list = @virtual_good_list[start, max] || []
   end
   
 end
