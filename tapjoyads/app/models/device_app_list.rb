@@ -39,11 +39,12 @@ class DeviceAppList < SimpledbResource
     now = Time.now.utc
     
     path_list = []
-    last_run_time_string = get("app.#{app_id}")
-    if last_run_time_string.nil?
+    last_run_time_array = get("app.#{app_id}", :force_array => true)
+    if last_run_time_array.empty?
       path_list.push('new_user')
+      last_run_time_array.push('0')
     end
-    last_run_time = Time.at((last_run_time_string || 0).to_f).utc
+    last_run_time = Time.at(last_run_time_array.last.to_f).utc
     
     if now.year != last_run_time.year or now.yday != last_run_time.yday
       path_list.push('daily_user')
