@@ -16,6 +16,8 @@ class StatuszController < ApplicationController
             "savefreq.#{domain_name}.#{((Time.now.to_i - 1.minutes) / 1.minutes).to_i}")
       end
     end
+  rescue Exception => e
+    render :text "Exception: #{e}"
   end
   
 end

@@ -11,7 +11,10 @@
   <script type="text/javascript" src="/javascripts/jquery.tablesorter.js"></script>
   <script type="text/javascript">
     $(function() {
-      $("#freq_table").tablesorter({widgets: ['zebra']});
+      $("#freq_table").tablesorter({widgets: ['zebra'],
+      sortList:[[1,1]],
+      headers: {0: {sorter: 'text'}}
+      });
     });
   </script>
 </head>
@@ -21,8 +24,7 @@
   <table id="freq_table" class="tablesorter">
     <thead>
     <tr>
-      <th>Domain</th>
-      <th>Saves/min</th>
+      <th class="{sorter: 'text'}">Domain</th>
       <th>Saves/sec</th>
     </tr>
     </thead>
@@ -30,8 +32,7 @@
       <% @domain_save_freq.each do |domain_name, freq| %>
         <tr>
           <td><%= domain_name %></td>
-          <td><%= freq %></td>
-          <td><%= freq.to_f / 60 %></td>
+          <td><%= "%.2f" % (freq.to_f / 60) %></td>
         </tr>
       <% end %>
     </tbody>
