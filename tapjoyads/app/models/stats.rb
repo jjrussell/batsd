@@ -17,7 +17,7 @@ class Stats < SimpledbResource
     date, app_id = parse_key
     24.times do |i|
       time = date + i.hours
-      if hourly_stats[i] == 0 and time <= now
+      if hourly_stats[i] == 0 and time <= now and time >= (now - 2.hours)
         hourly_stats[i] = get_count_in_cache(Stats.get_memcache_count_key(stat_name, app_id, time))
       end
     end
