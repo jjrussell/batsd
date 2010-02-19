@@ -12,6 +12,8 @@ class GetVgStoreItemsController < ApplicationController
       # TODO: don't reject items if they are allowed to be purchased multiple times.
       @point_purchases.get_virtual_good_quantity(virtual_good.key) > 0
     end
+    
+    @virtual_good_list = @virtual_good_list[params[:start], params[:max]] || []
   end
   
   ##
@@ -24,6 +26,8 @@ class GetVgStoreItemsController < ApplicationController
     @virtual_good_list.reject! do |virtual_good|
       @point_purchases.get_virtual_good_quantity(virtual_good.key) == 0
     end
+    
+    @virtual_good_list = @virtual_good_list[params[:start], params[:max]] || []
   end
   
   private
@@ -40,7 +44,15 @@ class GetVgStoreItemsController < ApplicationController
       list
     end
     
-    #TODO: Add beta virtual goods to @virtual_good_list if device is beta device.
+    if @currency.beta_devices.contains?(params[:udid])
+      @virtual_good_list = @virtual_good_list | get_from_cache_and_save("virtual_good_list.beta.#{params[:app_id]}", false, 5.minutes) do
+        list = []
+        VirtualGood.select(:where => "app_id='#{params[:app_id]}' and disabled != '1' and beta = '1'") do |item|
+          list.push(item)
+        end
+        list
+      end
+    end
   end
   
 end
