@@ -50,7 +50,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
   def aggregate_yesterday(app)
     last_daily_run_time = app.get('last_daily_run_time')
     if last_daily_run_time
-      if Time.at(last_daily_run_time.to_f).day == @now.day or @now.hour == 0
+      if Time.at(last_daily_run_time.to_f).day == @now.day or @now.hour <= 9
         return
       end
     end
