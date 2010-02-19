@@ -17,7 +17,7 @@ class StatuszController < ApplicationController
       end
     end
   rescue Exception => e
-    render :text "Exception: #{e}"
+    render :text => "Exception: #{e}"
   end
   
 end
