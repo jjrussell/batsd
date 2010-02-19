@@ -242,6 +242,8 @@ class SimpledbResource
         end
       end
     end
+    
+    increment_domain_freq_count
   rescue Exception => e
     unless catch_exceptions
       raise e
@@ -591,5 +593,12 @@ class SimpledbResource
       delete(attr_name)
       attr_name += '_'
     end
+  end
+  
+  ##
+  # Increments a count in memecache which counts how many times a domain is saved to per minute.
+  def increment_domain_freq_count
+    key = "savefreq.#{@this_domain_name}.#{(Time.now.to_i / 1.minutes).to_i}"
+    increment_count_in_cache(key, false, 10.minutes)
   end
 end
