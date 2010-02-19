@@ -109,6 +109,9 @@
               '</span></td>';
           rowHtml += getRowHtmlForStat(app['stats']['logins']);
           rowHtml += getRowHtmlForStat(app['stats']['new_users']);
+          rowHtml += getRowHtmlForStat(app['stats']['daily_active_users']);
+          rowHtml += getRowHtmlForStat(app['stats']['monthly_active_users']);
+          rowHtml += getRowHtmlForStat(app['stats']['ratings']);
           rowHtml += '<td>' + mapToDollars(app['price']) + '</td>';
           rowHtml += '<td>' + mapToDollars(app['payment_for_install']) + '</td>';
           rowHtml += '<td>' + mapToDollars(app['balance']) + '</td>';
@@ -186,6 +189,8 @@
       <th>CVR</th>
       <th>Connects</th>
       <th>New users</th>
+      <th>DAUs</th>
+      <th>MAUs</th>
       <th>Price</th>
       <th>Payment for install</th>
       <th>Balance</th>

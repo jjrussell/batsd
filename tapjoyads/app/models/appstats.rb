@@ -12,7 +12,8 @@ class Appstats
     @stat_types = options.delete(:stat_types) { ['logins', 'hourly_impressions', 'paid_installs', 
         'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'rewards', 'offers',
         'rewards_revenue', 'offers_revenue', 'installs_revenue', 'published_installs',
-        'rewards_opened', 'offers_opened', 'installs_opened'] }
+        'rewards_opened', 'offers_opened', 'installs_opened', 'daily_active_users', 
+        'monthly_active_users'] }
     @type = options.delete(:type) { :granular }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
