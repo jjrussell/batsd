@@ -6,7 +6,7 @@ xml.VGStoreItemReturnClass do
   xml.Description virtual_good.description
   xml.VGStoreItemTypeName virtual_good.title
   xml.AttributeValues do
-    virtual_good.extra_attributes.each |key, value| do
+    virtual_good.extra_attributes.each do |key, value|
       xml.VGStoreItemAttributeValueReturnClass do
         xml.AttributeType key
         xml.AttributeValue value
