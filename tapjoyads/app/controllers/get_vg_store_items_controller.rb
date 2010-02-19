@@ -44,7 +44,7 @@ class GetVgStoreItemsController < ApplicationController
       list
     end
     
-    if @currency.beta_devices.contains?(params[:udid])
+    if @currency.beta_devices.include?(params[:udid])
       @virtual_good_list = @virtual_good_list | get_from_cache_and_save("virtual_good_list.beta.#{params[:app_id]}", false, 5.minutes) do
         list = []
         VirtualGood.select(:where => "app_id='#{params[:app_id]}' and disabled != '1' and beta = '1'") do |item|
