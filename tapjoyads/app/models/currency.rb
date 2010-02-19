@@ -15,6 +15,7 @@ class Currency < SimpledbResource
   self.sdb_attr :secret_key
   self.sdb_attr :virtual_good_currency, :type => :bool
   self.sdb_attr :installs_money_share, :type => :float
+  self.sdb_attr :beta_devices, :type => :json, :default_value => []
   
   def get_app_currency_reward(app)
     return calculate_install_payouts(:currency => self, :advertiser_app => app)[:currency_reward]
