@@ -243,7 +243,7 @@ class SimpledbResource
       end
     end
     
-    increment_domain_freq_count
+    #increment_domain_freq_count
   rescue Exception => e
     unless catch_exceptions
       raise e
