@@ -151,7 +151,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     else
       stat_name = WebRequest::PATH_TO_STAT_MAP[wr_path]
       if WebRequest::USE_ADVERTISER_APP_ID.include?(wr_path)
-        app_condition = "advertiser_app_id = '#{app_key}')"
+        app_condition = "advertiser_app_id = '#{app_key}'"
       else
         app_condition = "app_id = '#{app_key}'"
       end
