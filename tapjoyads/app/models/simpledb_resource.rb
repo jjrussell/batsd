@@ -196,8 +196,8 @@ class SimpledbResource
     put('updated-at', Time.now.utc.to_f.to_s) if updated_at
     
     time_log("Saving to sdb") do
-      self.write_to_memcache if write_to_memcache
       self.write_to_sdb if write_to_sdb
+      self.write_to_memcache if write_to_memcache
     end
     
     increment_domain_freq_count
