@@ -9,12 +9,6 @@ class DeviceAppList < SimpledbResource
       # This is a new device, so add it to the DeviceLookup table.
       domain_number = rand(MAX_DEVICE_APP_DOMAINS)
       
-      ## device_app_list_11 is having problems
-      while domain_number == 11
-        domain_number = rand(MAX_DEVICE_APP_DOMAINS)
-      end
-      ###
-      
       lookup.put('app_list', domain_number)
       lookup.save
     end
