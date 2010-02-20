@@ -196,8 +196,8 @@ class SimpledbResource
     put('updated-at', Time.now.utc.to_f.to_s) if updated_at
     
     time_log("Saving to sdb") do
-      self.write_to_sdb if write_to_sdb
-      self.write_to_memcache if write_to_memcache
+      self.save_to_sdb if write_to_sdb
+      self.save_to_memcache if write_to_memcache
     end
     
     increment_domain_freq_count
@@ -559,7 +559,7 @@ class SimpledbResource
     increment_count_in_cache(key, false, 10.minutes)
   end
   
-  def write_to_memcache
+  def save_to_memcache
     compare_and_swap_in_cache(get_memcache_key) do |mc_attributes|
       if mc_attributes
         mc_attributes.merge!(@attributes_to_replace)
@@ -587,7 +587,7 @@ class SimpledbResource
     end
   end
   
-  def write_to_sdb
+  def save_to_sdb
     begin
       @@sdb.put_attributes(@this_domain_name, @key, @attributes_to_replace, true) unless @attributes_to_replace.empty?
       @@sdb.put_attributes(@this_domain_name, @key, @attributes_to_add, false) unless @attributes_to_add.empty?
