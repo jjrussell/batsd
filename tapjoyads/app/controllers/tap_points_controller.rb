@@ -1,5 +1,5 @@
 class TapPointsController < ApplicationController
-  include DownloadHelper
+  include DownloadContent
   
   def add
     
