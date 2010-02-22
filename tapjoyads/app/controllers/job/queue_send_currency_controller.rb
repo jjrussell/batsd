@@ -40,15 +40,14 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         parts = publisher_user_id.split('.')
 
         if parts.length < 2
-          url = "http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/Service1.asmx/LookupPointId?pointid=#{publisher_user_id}"
-          response = download_content(url, :return_response => true)
-          raise "snuid: #{publisher_user_id} not found in mosso lookup: #{response.body}" if response.status != 200 
-          parts = response.body.split('.')
+          record = PublisherUserRecord.new(:key => "#{reward.get('publisher_app_id')}.#{publisher_user_id}")
+          raise "snuid: #{publisher_user_id} not found in publisher-user-record lookup on #{record.key}" if record.get('udid').nil 
+          udid = record.get('udid')
+          app_id = reward.get('publisher_app_id')
+        else
+          udid = parts[0]
+          app_id = parts[1]
         end
-
-        udid = parts[0]
-        app_id = parts[1]
-
 
         amount = reward.get('currency_reward')
 
