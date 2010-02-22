@@ -10,8 +10,8 @@ class PointPurchases < SimpledbResource
   def initialize(options = {})
     super
     
-    if @is_new
-      Rails.logger.info "new point purcahses"
+    if self.point.nil?
+      Rails.logger.info "getting initial_balance from currency"
       app_key = @key.split('.')[1]
       currency = Currency.new(:key => app_key)
       self.points = currency.initial_balance
