@@ -18,9 +18,9 @@ class PurchaseVgController < ApplicationController
       raise BalanceTooLowError.new if point_purchases.points < 0
   
       point_purchases.serial_save(:catch_exceptions => false)
+      
+      @message = "You successfully purchased #{virtual_good.name}"
     end
-    
-    @message = "You successfully purchased #{virtual_good.name}"
     
     render :template => 'layouts/success'
   rescue KeyExists
