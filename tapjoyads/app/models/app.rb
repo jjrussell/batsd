@@ -128,7 +128,7 @@ class App < SimpledbResource
     end
     
     unless match and match[1]
-      alert_new_relic(ParseStoreIdError, "Could not parse store id from #{store_url}")
+      alert_new_relic(ParseStoreIdError, "Could not parse store id from #{store_url} for app #{self.to_s}")
       return nil
     end
     
@@ -161,5 +161,9 @@ class App < SimpledbResource
   # Return the string 'Free' or 'Paid'.
   def get_cost
     return is_free ? 'Free' : 'Paid'
+  end
+  
+  def to_s
+    "#{self.name} (@key)"
   end
 end
