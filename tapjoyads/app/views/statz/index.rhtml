@@ -117,7 +117,7 @@
           rowHtml += '<td>' + (app['daily_budget'] || 0)+ '</td>';
           rowHtml += '<td>' + parseFloat(app['show_rate'] || 0).toFixed(2) + '</td>';
           
-          rowHtml += getRowHtmlForStat(app['stats']['vg_purchases']]);
+          rowHtml += getRowHtmlForStat(app['stats']['vg_purchases']);
           
           rowHtml += getRowHtmlForStat(app['stats']['published_installs']);
           rowHtml += getRowHtmlForStat(app['stats']['installs_opened']);
