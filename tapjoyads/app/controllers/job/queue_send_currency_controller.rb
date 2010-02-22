@@ -37,17 +37,8 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       end
     
       if callback_url == 'TAP_POINTS_CURRENCY'
-        parts = publisher_user_id.split('.')
-
-        if parts.length < 2
-          record = PublisherUserRecord.new(:key => "#{reward.get('publisher_app_id')}.#{publisher_user_id}")
-          raise "snuid: #{publisher_user_id} not found in publisher-user-record lookup on #{record.key}" if record.get('udid').nil 
-          udid = record.get('udid')
-          app_id = reward.get('publisher_app_id')
-        else
-          udid = parts[0]
-          app_id = parts[1]
-        end
+        udid = publisher_user_id
+        app_id = reward.get('publisher_app_id')
 
         amount = reward.get('currency_reward')
 
