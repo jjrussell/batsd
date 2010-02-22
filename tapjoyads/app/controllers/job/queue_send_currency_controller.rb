@@ -20,6 +20,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
 
       currency = Currency.new(:key => reward.get('publisher_app_id'))
       callback_url = currency.get('callback_url')
+      
     
       if callback_url == 'PLAYDOM_DEFINED'
         first_char = publisher_user_id[0, 1]
@@ -35,6 +36,50 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         end
       end
     
+      if callback_url == 'TAP_POINTS_CURRENCY'
+        parts = publisher_user_id.split('.')
+
+        if parts.length < 2
+          url = "http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/Service1.asmx/LookupPointId?pointid=#{publisher_user_id}"
+          response = download_content(url, :return_response => true)
+          raise "snuid: #{publisher_user_id} not found in mosso lookup: #{response.body}" if response.status != 200 
+          parts = response.body.split('.')
+        end
+
+        udid = parts[0]
+        app_id = parts[1]
+
+
+        amount = reward.get('currency_reward')
+
+        begin
+          lock_on_key("lock.purchase_vg.#{udid}.#{app_id}") do
+            point_purchases = PointPurchases.new(:key => "#{udid}.#{app_id}")
+
+            Rails.logger.info "Adding #{amount} from #{udid}.#{app_id}, to user balance: #{point_purchases.points}"
+
+
+            point_purchases.points = point_purchases.points + amount.to_i
+
+            point_purchases.serial_save(:catch_exceptions => false)
+          end
+        rescue KeyExists
+          num_retries = num_retries.nil? ? 1 : num_retries + 1
+          if num_retries > 3
+            raise "Too many retries"
+          end
+          sleep(0.1)
+          retry
+        end
+      
+        reward.put('sent_currency', Time.now.utc.to_f.to_s)
+        reward.save
+
+        reward.update_counters
+        
+        return
+      end
+      
       mark = '?'
       mark = '&' if callback_url =~ /\?/
       callback_url = "#{callback_url}#{mark}snuid=#{CGI::escape(publisher_user_id)}&currency=#{reward.get('currency_reward')}"
