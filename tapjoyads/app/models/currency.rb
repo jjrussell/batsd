@@ -3,7 +3,7 @@ class Currency < SimpledbResource
   
   self.domain_name = 'currency'
   
-  self.sdb_attr :initial_balance, :type => :int
+  self.sdb_attr :initial_balance, :type => :int, :default_value => 0
   self.sdb_attr :only_free_apps, :type => :bool
   self.sdb_attr :disabled_apps
   self.sdb_attr :disabled_offers
