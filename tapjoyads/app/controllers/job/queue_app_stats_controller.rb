@@ -50,10 +50,17 @@ class Job::QueueAppStatsController < Job::SqsReaderController
   def aggregate_yesterday(app)
     last_daily_run_time = app.get('last_daily_run_time')
     if last_daily_run_time
-      if Time.at(last_daily_run_time.to_f).day == @now.day or @now.hour <= 9
+      if Time.at(last_daily_run_time.to_f).day == @now.day
+        return
+      end
+      
+      # Slowly ramp up running daily app stats.
+      if rand(10) >= @now.hour
         return
       end
     end
+    
+    Rails.logger.info "Aggregating daily stats for #{app.key}"
     
     time = @now - 1.day
     date = time.iso8601[0,10]
