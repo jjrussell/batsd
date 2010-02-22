@@ -164,6 +164,6 @@ class App < SimpledbResource
   end
   
   def to_s
-    "#{self.name} (@key)"
+    "#{self.name} (#{@key})"
   end
 end
