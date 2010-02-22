@@ -30,6 +30,12 @@ class GetVgStoreItemsController < ApplicationController
     resize_virtual_good_list 
   end
   
+  def user_account
+    return unless verify_params([:app_id, :udid])
+    
+    setup
+  end
+  
   private
   
   def setup

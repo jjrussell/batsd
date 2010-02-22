@@ -1,0 +1,5 @@
+xml.instruct!
+xml.TapjoyConnectReturnObject do
+  xml << render(:partial => "user_account_object")
+  xml.Success true
+end

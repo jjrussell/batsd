@@ -71,6 +71,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'Service1.asmx/GetAllVGStoreItems', :controller => 'get_vg_store_items', :action => 'all'
   map.connect 'service1.asmx/GetPurchasedVGStoreItems', :controller => 'get_vg_store_items', :action => 'purchased'
   map.connect 'Service1.asmx/GetPurchasedVGStoreItems', :controller => 'get_vg_store_items', :action => 'purchased'
+  map.connect 'service1.asmx/GetUserAccountObject', :controller => 'get_vg_store_items', :action => 'user_account'
+  map.connect 'Service1.asmx/GetUserAccountObject', :controller => 'get_vg_store_items', :action => 'user_account'
   map.connect 'service1.asmx/PurchaseVGWithCurrency', :controller => 'purchase_vg'
   map.connect 'Service1.asmx/PurchaseVGWithCurrency', :controller => 'purchase_vg'
   

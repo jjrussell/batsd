@@ -1,10 +1,6 @@
 xml.instruct!
 xml.TapjoyConnectReturnObject do
-  xml.UserAccountObject do
-    xml.TapPoints @point_purchases.points
-    xml.CurrencyName @currency.currency_name
-    xml.PointsID @point_purchases.get_udid
-  end
+  xml << render(:partial => "user_account_object")
   xml.AllVGStoreItemsArray do
     unless @virtual_good_list.empty?
       xml << render(:partial => "virtual_good", :collection => @virtual_good_list, 
