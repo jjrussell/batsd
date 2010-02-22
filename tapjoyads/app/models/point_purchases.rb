@@ -11,12 +11,12 @@ class PointPurchases < SimpledbResource
     super
     
     # TODO: enable this code once importing points from mssql is done.
-    # if is_new
-    #   Rails.logger.info "new"
-    #   app_key = @key.split('.')[1]
-    #   currency = Currency.new(:key => app_key)
-    #   self.points = currency.initial_balance
-    # end
+    if is_new
+      Rails.logger.info "new point purcahses"
+      app_key = @key.split('.')[1]
+      currency = Currency.new(:key => app_key)
+      self.points = currency.initial_balance
+    end
   end
   
   def dynamic_domain_name
