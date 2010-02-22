@@ -7,5 +7,6 @@ xml.TapjoyConnectReturnObject do
           :locals => {:point_purchases => @point_purchases})
     end
   end
+  xml.MoreDataAvailable @more_data_available if @more_data_available
   xml.Success true
 end
