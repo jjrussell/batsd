@@ -66,8 +66,8 @@ class GetVgStoreItemsController < ApplicationController
   def resize_virtual_good_list
     start = (params[:start] || 0).to_i
     max = (params[:max] || 999).to_i
-    @virtual_good_list = @virtual_good_list[start, max] || []
     @more_data_available = @virtual_good_list.length - max - start
+    @virtual_good_list = @virtual_good_list[start, max] || []    
   end
   
 end
