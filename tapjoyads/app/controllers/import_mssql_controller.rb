@@ -50,6 +50,7 @@ class ImportMssqlController < ApplicationController
     vg.name = params[:name]
     vg.description = params[:description]
     vg.file_size = params[:file_size]
+    vg.max_purchases = params[:max_purchases]
     vg.disabled = params[:disabled] == '1'
     vg.beta = params[:beta] == 'True'
     vg.title = params[:title]

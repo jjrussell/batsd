@@ -9,8 +9,7 @@ class GetVgStoreItemsController < ApplicationController
     setup
     
     @virtual_good_list.reject! do |virtual_good|
-      # TODO: don't reject items if they are allowed to be purchased multiple times.
-      @point_purchases.get_virtual_good_quantity(virtual_good.key) > 0
+      @point_purchases.get_virtual_good_quantity(virtual_good.key) >= virtual_good.max_purchases
     end
     
     resize_virtual_good_list
