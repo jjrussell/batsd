@@ -20,6 +20,8 @@ class PurchaseVgController < ApplicationController
       point_purchases.serial_save(:catch_exceptions => false)
     end
     
+    @message = "You successfully purchased #{virtual_good.name}"
+    
     render :template => 'layouts/success'
   rescue KeyExists
     num_retries = num_retries.nil? ? 1 : num_retries + 1
