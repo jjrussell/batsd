@@ -59,6 +59,7 @@ class WebRequest < SimpledbResource
       put('device_ip', params[:device_ip])
       put('type', params[:type])
       put('publisher_user_id', params[:publisher_user_id])
+      put('virtual_good_id', params[:virtual_good_id])
     end
     
     if request

@@ -22,6 +22,10 @@ class PurchaseVgController < ApplicationController
       @message = "You successfully purchased #{virtual_good.name}"
     end
     
+    web_request = WebRequest.new
+    web_request.put_values('purchased_vg', params, request)
+    web_request.save
+    
     render :template => 'layouts/success'
   rescue KeyExists
     num_retries = num_retries.nil? ? 1 : num_retries + 1
