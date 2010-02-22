@@ -41,4 +41,7 @@ class PointPurchases < SimpledbResource
     return virtual_goods[virtual_good_key] || 0
   end
   
+  def get_udid
+    @key.split('.')[0]
+  end
 end

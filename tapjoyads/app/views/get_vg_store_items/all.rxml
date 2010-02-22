@@ -3,7 +3,7 @@ xml.TapjoyConnectReturnObject do
   xml.UserAccountObject do
     xml.TapPoints @point_purchases.points
     xml.CurrencyName @currency.currency_name
-    xml.PointsID @point_purchases.key
+    xml.PointsID @point_purchases.get_udid
   end
   xml.AllVGStoreItemsArray do
     unless @virtual_good_list.empty?
