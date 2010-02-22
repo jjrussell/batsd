@@ -10,8 +10,7 @@ class PointPurchases < SimpledbResource
   def initialize(options = {})
     super
     
-    # TODO: enable this code once importing points from mssql is done.
-    if is_new
+    if @is_new
       Rails.logger.info "new point purcahses"
       app_key = @key.split('.')[1]
       currency = Currency.new(:key => app_key)
