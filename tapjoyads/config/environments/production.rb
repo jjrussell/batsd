@@ -49,6 +49,18 @@ RUN_MODE_PREFIX = ''
 
 REDIRECT_URI = 'http://webservice-lb-624573684.us-east-1.elb.amazonaws.com/'
 
+# Amazon services:
+amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
+ENV['AWS_ACCESS_KEY_ID'] = amazon['main']['access_key_id']
+ENV['AWS_SECRET_ACCESS_KEY'] = amazon['main']['secret_access_key']
+
+# AWS S3:
+require 'aws/s3'
+AWS::S3::Base.establish_connection!(
+    :access_key_id => ENV['AWS_ACCESS_KEY_ID'],
+    :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY'])
+
+
 MAX_DEVICE_APP_DOMAINS = 20
 MAX_WEB_REQUEST_DOMAINS = 15
 NUM_POINT_PURCHASES_DOMAINS = 10

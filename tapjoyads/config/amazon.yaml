@@ -1,3 +1,11 @@
 main:
     access_key_id: 'AKIAI6J2SCUP5ZFYF5FQ'
     secret_access_key: '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'
+    
+test:
+    access_key_id: 'AKIAJ7DKVQDPY55BZSHQ'
+    secret_access_key: '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'
+    
+dev:
+    access_key_id: 'AKIAJ7DKVQDPY55BZSHQ'
+    secret_access_key: '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'

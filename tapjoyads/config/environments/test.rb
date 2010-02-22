@@ -27,6 +27,16 @@ EXCEPTIONS_NOT_LOGGED = []
 
 RUN_MODE_PREFIX = 'test_'
 
+amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
+ENV['AWS_ACCESS_KEY_ID'] = amazon['test']['access_key_id']
+ENV['AWS_SECRET_ACCESS_KEY'] = amazon['test']['secret_access_key']
+
+# AWS S3:
+require 'aws/s3'
+AWS::S3::Base.establish_connection!(
+    :access_key_id => ENV['AWS_ACCESS_KEY_ID'],
+    :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY'])
+
 REDIRECT_URI = 'http://test-lb-310199522.us-east-1.elb.amazonaws.com/'
 
 MAX_DEVICE_APP_DOMAINS = 3

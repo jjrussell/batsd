@@ -78,17 +78,7 @@ Rails::Initializer.run do |config|
   # Please note that observers generated using script/generate observer need to have an _observer suffix
   # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
   
-  # Amazon services:
-  amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
-  ENV['AWS_ACCESS_KEY_ID'] = amazon['main']['access_key_id']
-  ENV['AWS_SECRET_ACCESS_KEY'] = amazon['main']['secret_access_key']
-  
-  # AWS S3:
-  require 'aws/s3'
-  AWS::S3::Base.establish_connection!(
-      :access_key_id => ENV['AWS_ACCESS_KEY_ID'],
-      :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY'])
-  
+ 
   # Memcached clone instance on passenger fork:
   if defined?(PhusionPassenger)
     PhusionPassenger.on_event(:starting_worker_process) do |forked|
