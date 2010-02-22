@@ -21,7 +21,7 @@ class TapPointsController < ApplicationController
     lock_on_key("lock.purchase_vg.#{udid}.#{app_id}") do
       point_purchases = PointPurchases.new(:key => "#{udid}.#{app_id}")
       
-      Rails.logger.info "Adding #{amount} from #{params[:snuid]}, to user balance: #{point_purchases.points}"
+      Rails.logger.info "Adding #{amount} from #{udid}.#{app_id}, to user balance: #{point_purchases.points}"
   
       
       point_purchases.points = point_purchases.points + amount.to_i
