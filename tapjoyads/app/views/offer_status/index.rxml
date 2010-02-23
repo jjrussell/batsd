@@ -1,0 +1,10 @@
+xml.instruct!
+xml.TapjoyConnectReturnObject do
+  xml.OfferStatusArray do
+    unless @status_items.empty?
+      xml << render(:partial => "status_item", :collection => @status_items, 
+          :locals => {:email => @email, :snuid => @snuid, })
+    end
+  end
+  xml.Success true
+end
