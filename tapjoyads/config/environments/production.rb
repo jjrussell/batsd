@@ -39,7 +39,8 @@ MEMCACHE_SERVERS = ['10.241.35.51',
                     '10.209.94.175',
                     '10.209.213.210',
                     '10.209.197.174',
-                    '10.209.99.177']
+                    '10.209.99.177',
+                    '10.209.195.176']
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
