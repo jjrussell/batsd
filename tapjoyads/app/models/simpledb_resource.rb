@@ -196,51 +196,8 @@ class SimpledbResource
     put('updated-at', Time.now.utc.to_f.to_s) if updated_at
     
     time_log("Saving to sdb") do
-      if write_to_sdb
-        begin
-          @@sdb.put_attributes(@this_domain_name, @key, @attributes_to_replace, true) unless @attributes_to_replace.empty?
-          @@sdb.put_attributes(@this_domain_name, @key, @attributes_to_add, false) unless @attributes_to_add.empty?
-          @@sdb.delete_attributes(@this_domain_name, @key, @attributes_to_delete) unless @attributes_to_delete.empty?
-          @@sdb.delete_attributes(@this_domain_name, @key, @attribute_names_to_delete) unless @attribute_names_to_delete.empty?
-        rescue AwsError => e
-          if e.message.starts_with?("NoSuchDomain")
-            time_log("Creating new domain: #{@this_domain_name}") do
-              @@sdb.create_domain(@this_domain_name)
-            end
-            retry
-          else
-            raise e
-          end
-        end
-      end
-      
-      if write_to_memcache
-        compare_and_swap_in_cache(get_memcache_key) do |mc_attributes|
-          if mc_attributes
-            mc_attributes.merge!(@attributes_to_replace)
-            @attributes_to_add.each do |key, values|
-              mc_attributes[key] = Array(mc_attributes[key]) | values
-            end
-                  
-            @attributes_to_delete.each do |key, values|
-              if mc_attributes[key]
-                values.each do |value|
-                  mc_attributes[key].delete(value)
-                end
-                mc_attributes.delete(key) if mc_attributes[key].empty?
-              end
-            end
-          
-            @attribute_names_to_delete.each do |attr_name|
-              mc_attributes.delete(attr_name)
-            end
-          
-            @attributes = mc_attributes
-          end
-          
-          @attributes
-        end
-      end
+      self.write_to_sdb if write_to_sdb
+      self.write_to_memcache if write_to_memcache
     end
     
     #increment_domain_freq_count
@@ -248,7 +205,6 @@ class SimpledbResource
     unless catch_exceptions
       raise e
     end
-    
     Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e}"
     s3 = RightAws::S3.new(nil, nil, :multi_thread => true)
     uuid = UUIDTools::UUID.random_create.to_s
@@ -494,6 +450,54 @@ class SimpledbResource
     options[:attr_names_to_delete] = attr_names_to_delete if attr_names_to_delete
     
     return self.new(options)
+  end
+  
+  protected
+  
+  def write_to_sdb
+    begin
+      @@sdb.put_attributes(@this_domain_name, @key, @attributes_to_replace, true) unless @attributes_to_replace.empty?
+      @@sdb.put_attributes(@this_domain_name, @key, @attributes_to_add, false) unless @attributes_to_add.empty?
+      @@sdb.delete_attributes(@this_domain_name, @key, @attributes_to_delete) unless @attributes_to_delete.empty?
+      @@sdb.delete_attributes(@this_domain_name, @key, @attribute_names_to_delete) unless @attribute_names_to_delete.empty?
+    rescue AwsError => e
+      if e.message.starts_with?("NoSuchDomain")
+        time_log("Creating new domain: #{@this_domain_name}") do
+          @@sdb.create_domain(@this_domain_name)
+        end
+        retry
+      else
+        raise e
+      end
+    end
+  end
+    
+  def write_to_memcache
+    compare_and_swap_in_cache(get_memcache_key) do |mc_attributes|
+      if mc_attributes
+        mc_attributes.merge!(@attributes_to_replace)
+        @attributes_to_add.each do |key, values|
+          mc_attributes[key] = Array(mc_attributes[key]) | values
+        end
+              
+        @attributes_to_delete.each do |key, values|
+          if mc_attributes[key]
+            values.each do |value|
+              mc_attributes[key].delete(value)
+            end
+            mc_attributes.delete(key) if mc_attributes[key].empty?
+          end
+        end
+      
+        @attribute_names_to_delete.each do |attr_name|
+          mc_attributes.delete(attr_name)
+        end
+      
+        @attributes = mc_attributes
+      end
+      
+      @attributes
+    end
   end
   
   private
