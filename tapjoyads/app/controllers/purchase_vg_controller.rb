@@ -12,8 +12,8 @@ class PurchaseVgController < ApplicationController
       
       Rails.logger.info "Purchasing virtual good for price: #{virtual_good.price}, from user balance: #{point_purchases.points}"
   
-      point_purchases.add_virtual_good(virtual_good.key)
       raise TooManyPurchases.new if point_purchases.get_virtual_good_quantity(virtual_good.key) >= virtual_good.max_purchases
+      point_purchases.add_virtual_good(virtual_good.key)
       
       point_purchases.points = point_purchases.points - virtual_good.price
       raise BalanceTooLowError.new if point_purchases.points < 0
