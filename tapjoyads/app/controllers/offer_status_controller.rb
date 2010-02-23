@@ -10,10 +10,8 @@ class OfferStatusController < ApplicationController
     currency = Currency.new(:key => "#{params[:app_id]}")
     
     @snuid = @publisher_user_record.get('int_record_id')
-    offerpal_status_url = "http://pub.myofferpal.com/b7b401f73d98ff21792b49117edd8b9f/userstatusAPI.action?snuid=#{@snuid}&callbackFormat=json"
-    
-    response = download_content(offerpal_status_url, :timeout => 4)   
-    
+    offerpal_status_url = "http://pub.myofferpal.com/b7b401f73d98ff21792b49117edd8b9f/userstatusAPI.action?snuid=#{@snuid}&callbackFormat=json"    
+    response = download_content(offerpal_status_url, :timeout => 4)       
     response = response.gsub('##CURRENCY', currency.get('currency_name'))
     
     json = JSON.parse(response)
@@ -23,7 +21,10 @@ class OfferStatusController < ApplicationController
     
     web_request = WebRequest.new
     web_request.put_values('offer_status', params, request)
+    web_request.put('status_items', @status_items.length.to_s) if @status_items
     web_request.save
-
+    
+  rescue 
+    render :template => 'layouts/success'
   end
 end
