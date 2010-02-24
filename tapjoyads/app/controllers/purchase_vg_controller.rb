@@ -49,9 +49,28 @@ class PurchaseVgController < ApplicationController
     render :template => 'layouts/error'
   end
   
+  ##
+  # Removes all virtual goods from a device, only if the device is a beta device.
+  def remove_all
+    return unless verify_params([:app_id, :udid])
+    
+    currency = Currency.new(:key => params[:app_id])
+    raise NotABetaDevice.new unless currency.beta_devices.include?(params[:udid])
+    
+    point_purchases = PointPurchases.new(:key => "#{params[:udid]}.#{params[:app_id]}")
+    point_purchases.virtual_goods = {}
+    point_purchases.serial_save(:catch_exceptions => false)
+    
+    render :template => 'layouts/success'
+  rescue NotABetaDevice
+    @error_message = "Not a beta device"
+    render :template => 'layouts/error'
+  end
+  
   private
   
   class TooManyPurchases < RuntimeError; end
   class BalanceTooLowError < RuntimeError; end
   class UnknownVirtualGood < RuntimeError; end
+  class NotABetaDevice < RuntimeError; end
 end
