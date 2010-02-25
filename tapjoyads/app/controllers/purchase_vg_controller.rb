@@ -27,7 +27,7 @@ class PurchaseVgController < ApplicationController
     web_request.put_values('purchased_vg', params, request)
     web_request.save
     
-    render :template => 'layouts/success'
+    render :template => 'layouts/tcro'
   rescue KeyExists
     num_retries = num_retries.nil? ? 1 : num_retries + 1
     if num_retries > 3
@@ -36,17 +36,13 @@ class PurchaseVgController < ApplicationController
     sleep(0.1)
     retry
   rescue RightAws::AwsError
-    @error_message = "Error contacting backend datastore"
-    render :template => 'layouts/error'
-  rescue BalanceTooLowError
-    @error_message = "Balance too low"
-    render :template => 'layouts/error'
-  rescue UnknownVirtualGood
-    @error_message = "Unknown virtual good"
-    render :template => 'layouts/error'
-  rescue TooManyPurchases
-    @error_message = "You have already purchased this item the maximum number of times"
-    render :template => 'layouts/error'
+    @message = "Error contacting backend datastore"
+    @success = false
+    render :template => 'layouts/tcro'
+  rescue BalanceTooLowError, UnknownVirtualGood, TooManyPurchases => e
+    @message = e.to_s
+    @success = false
+    render :template => 'layouts/tcro'
   end
   
   ##
@@ -61,16 +57,25 @@ class PurchaseVgController < ApplicationController
     point_purchases.virtual_goods = {}
     point_purchases.serial_save(:catch_exceptions => false)
     
-    render :template => 'layouts/success'
-  rescue NotABetaDevice
-    @error_message = "Not a beta device"
-    render :template => 'layouts/error'
+    render :template => 'layouts/tcro'
+  rescue NotABetaDevice => e
+    @message = e.to_s
+    @success = false
+    render :template => 'layouts/tcro'
   end
   
   private
   
-  class TooManyPurchases < RuntimeError; end
-  class BalanceTooLowError < RuntimeError; end
-  class UnknownVirtualGood < RuntimeError; end
-  class NotABetaDevice < RuntimeError; end
+  class TooManyPurchases < RuntimeError
+    def to_s; "You have already purchased this item the maximum number of times"; end
+  end
+  class BalanceTooLowError < RuntimeError
+    def to_s; "Balance too low"; end
+  end
+  class UnknownVirtualGood < RuntimeError;
+    def to_s; "Unknown virtual good"; end
+  end
+  class NotABetaDevice < RuntimeError
+    def to_s; "Not a beta device"; end
+  end
 end
