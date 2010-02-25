@@ -53,15 +53,15 @@ class PurchaseVgController < ApplicationController
     currency = Currency.new(:key => params[:app_id])
     raise NotABetaDevice.new unless currency.beta_devices.include?(params[:udid])
     
-    point_purchases = PointPurchases.new(:key => "#{params[:udid]}.#{params[:app_id]}")
-    point_purchases.virtual_goods = {}
-    point_purchases.serial_save(:catch_exceptions => false)
-    
-    render :template => 'layouts/tcro'
+    lock_on_key("lock.purchase_vg.#{params[:udid]}.#{params[:app_id]}") do
+      point_purchases = PointPurchases.new(:key => "#{params[:udid]}.#{params[:app_id]}")
+      point_purchases.virtual_goods = {}
+      point_purchases.points = currency.initial_balance
+      point_purchases.serial_save(:catch_exceptions => false)
+    end
+    @message = "You have successfully removed all virtual goods and reset the balance for this device."
   rescue NotABetaDevice => e
-    @message = e.to_s
-    @success = false
-    render :template => 'layouts/tcro'
+    @message = "Error: #{e.to_s}"
   end
   
   private
