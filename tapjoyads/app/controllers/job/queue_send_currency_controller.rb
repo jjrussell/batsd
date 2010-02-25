@@ -94,7 +94,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
           id = 'rating'
           name = 'rating'
         end
-        callback_url = "#{callback_url}&application=#{CGI::escape(name)}&id=#{CGI::escape(id)}"
+        callback_url = "#{callback_url}&application=#{CGI::escape(name)}"
       end
     
       secret_key = currency.get('secret_key')
