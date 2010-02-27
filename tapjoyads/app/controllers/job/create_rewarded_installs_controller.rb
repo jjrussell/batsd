@@ -65,6 +65,9 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
     elsif app.get('partner_id') == '70f54c6d-f078-426c-8113-d6e43ac06c6d' and app.is_free
       # Tapjoy apps: reduce cvr by 5%
       boost = -0.05
+    elsif not app.is_free
+      # Boost all paid apps by 0-15%, causing churn.
+      boost = rand * 0.15
     end
     
     app.get('pay_per_click') == '1' ? 0.75 + rand * 0.15 : app.get('conversion_rate').to_f + boost
