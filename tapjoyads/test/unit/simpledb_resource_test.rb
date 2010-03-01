@@ -43,6 +43,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     write_cgi_escape
     write_concurrent_saves
     write_concurrent_deletes
+    write_mixed_replace
     write_select_and_count
     write_type_conversion
     write_sdb_attr
@@ -54,6 +55,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     read_cgi_escape
     read_concurrent_saves
     read_concurrent_deletes
+    read_mixed_replace
     read_select_and_count
     read_type_converstion
     read_sdb_attr
@@ -120,7 +122,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     thread_list = []
     10.times do |i|
       m = Testing.new(:key => 'concurrent_saves')
-      m.put("#{i}", 'value')
+      m.put("#{i}", 'value', {:replace => false})
       m.put("#{i}", 'value2', {:replace => false})
       thread_list.push(m.save({:updated_at => false}))
       @expected_attrs_concurrent_saves["#{i}"] = ['value', 'value2']
@@ -136,7 +138,9 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     @expected_attrs_concurrent_saves['9'].push('value3')
     
     m = Testing.new(:key => 'concurrent_saves')
-    assert_equal(@expected_attrs_concurrent_saves, m.attributes)
+    @expected_attrs_concurrent_saves.each do |key, value|
+      assert_equal(SortedSet.new(value), SortedSet.new(m.attributes[key]))
+    end
   end
   def read_concurrent_saves
     m = Testing.new({:key => 'concurrent_saves', :load_from_memcache => false})
@@ -149,7 +153,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     
     m = Testing.new(:key => 'concurrent_deletes')
     10.times do |i|
-      m.put("#{i}", 'value')
+      m.put("#{i}", 'value', {:replace => false})
       m.put("#{i}", 'value2', {:replace => false})
       @expected_attrs_concurrent_deletes["#{i}"] = ['value', 'value2']
     end
@@ -166,6 +170,10 @@ class SimpledbResourceTest < ActiveSupport::TestCase
       @expected_attrs_concurrent_deletes["#{i}"] = ['value']
     end
     
+    m.delete('9')
+    thread_list.push(m.save({:updated_at => false}))
+    @expected_attrs_concurrent_deletes.delete('9')
+
     thread_list.each do |thread|
       thread.join
     end
@@ -178,6 +186,36 @@ class SimpledbResourceTest < ActiveSupport::TestCase
   def read_concurrent_deletes
     m = Testing.new({:key => 'concurrent_deletes', :load_from_memcache => false})
     assert_equal(@expected_attrs_concurrent_deletes, m.attributes)
+    m.delete_all
+  end
+  
+  def write_mixed_replace
+    @expected_attrs_mixed_replace = {}
+    m = Testing.new(:key => 'mixed_replace')
+    10.times do |i|
+      m.put("#{i}", 'value')
+      @expected_attrs_mixed_replace["#{i}"] = ['value']
+    end
+    
+    m.serial_save(:updated_at => false)
+    # Short sleep before writing a second time.
+    sleep(2)
+    
+    m = Testing.new(:key => 'mixed_replace')
+    m.put('1', 'replaced_value')
+    m.put('2', 'value2', {:replace => false})
+    @expected_attrs_mixed_replace['1'] = ['replaced_value']
+    @expected_attrs_mixed_replace['2'].push('value2')
+    m.serial_save(:updated_at => false)
+    
+    m = Testing.new(:key => 'mixed_replace')
+    @expected_attrs_mixed_replace.each do |key, value|
+      assert_equal(SortedSet.new(value), SortedSet.new(m.attributes[key]))
+    end
+  end
+  def read_mixed_replace
+    m = Testing.new({:key => 'mixed_replace', :load_from_memcache => false})
+    assert_equal(@expected_attrs_mixed_replace, m.attributes)
     m.delete_all
   end
   

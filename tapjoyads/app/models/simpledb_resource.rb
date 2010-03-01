@@ -1,4 +1,5 @@
 require 'sdb_batchput'
+require 'sdb_consistency'
 
 class StringConverter
   def from_string(s)
@@ -455,11 +456,19 @@ class SimpledbResource
   protected
   
   def write_to_sdb
+    attributes_to_put = @attributes_to_add.merge(@attributes_to_replace)
+    attributes_to_delete = @attributes_to_delete.clone
+    @attribute_names_to_delete.each do |attr_name_to_delete|
+      attributes_to_delete[attr_name_to_delete] = :all
+    end
+    
     begin
-      @@sdb.put_attributes(@this_domain_name, @key, @attributes_to_replace, true) unless @attributes_to_replace.empty?
-      @@sdb.put_attributes(@this_domain_name, @key, @attributes_to_add, false) unless @attributes_to_add.empty?
-      @@sdb.delete_attributes(@this_domain_name, @key, @attributes_to_delete) unless @attributes_to_delete.empty?
-      @@sdb.delete_attributes(@this_domain_name, @key, @attribute_names_to_delete) unless @attribute_names_to_delete.empty?
+      unless attributes_to_put.empty?
+        @@sdb.put_attributes(@this_domain_name, @key, attributes_to_put, @attributes_to_replace.keys)
+      end
+      unless attributes_to_delete.empty?
+        @@sdb.delete_attributes(@this_domain_name, @key, attributes_to_delete)
+      end
     rescue AwsError => e
       if e.message.starts_with?("NoSuchDomain")
         time_log("Creating new domain: #{@this_domain_name}") do
