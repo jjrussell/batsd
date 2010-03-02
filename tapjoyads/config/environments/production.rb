@@ -60,6 +60,10 @@ AWS::S3::Base.establish_connection!(
     :access_key_id => ENV['AWS_ACCESS_KEY_ID'],
     :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY'])
 
+# Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
+# to the list of transient problems which will automatically get retried by RightAws.
+require 'right_aws'
+RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
 
 MAX_DEVICE_APP_DOMAINS = 20
 MAX_WEB_REQUEST_DOMAINS = 15
