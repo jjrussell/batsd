@@ -1,9 +1,9 @@
-# Modifies RightAWS in order to add support for Conditional Puts.
+# Modifies RightAws in order to add support for Conditional Puts.
 # Also makes modifications to allow the replace paramater to be an array of attributes
 # to replace, rather than just a simple boolean. This allows mixed replace/non-replace put's
 # to be made in a single call.
 # Also modifies delete_attributes so you can either pass an array to delete_attributes
-# or pass a hash, with the value set to ':all'. So, eg, the following are eqivilent:
+# or pass a hash, with the value set to ':all'. So, eg, the following are equivalent:
 #   delete_attributes('domain', 'item', ['a', 'b'])
 #   delete_attributes('domain', 'item', {'a' => :all 'b' => :all})
 
@@ -11,7 +11,7 @@ module RightAws
 
   class SdbInterface < RightAwsBase
     
-    # Override from superclass, in order to support consistency.
+    # Override, in order to support consistency.
     API_VERSION = '2009-04-15'
     
     # Prepare attributes for putting or deleting.
@@ -28,9 +28,13 @@ module RightAws
           end
           
           # set expected attribute
-          unless expected_attributes[attribute].nil?
+          if expected_attributes.include?(attribute)
             result["Expected.#{idx}.Name"] = attribute
-            result["Expected.#{idx}.Value"] = ruby_to_sdb(expected_attributes[attribute])
+            if expected_attributes[attribute].nil?
+              result["Expected.#{idx}.Exists"] = 'false'
+            else
+              result["Expected.#{idx}.Value"] = expected_attributes[attribute]
+            end
           end
           
           # pack Name/Value
