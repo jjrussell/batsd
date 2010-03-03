@@ -33,8 +33,9 @@
 				<div class="home">
 					<ul class="post">
 						<dl>
-							
+							<% count = 0 %>
 							<% @advertiser_app_list.each do |app| %>
+								<% count += 1 %>
 								<li>
 									<div class="lix-wrap"> 
 										<div class="title"> 
@@ -58,6 +59,9 @@
 									</div>																				
 								</li>
 					        <% end %>
+							<% if count == 0 %>
+							   <div>There are no new apps available for you to install right now.  Check back soon!</div>
+							<% end %>
 						</dl>
 					</ul>
 					<div id="footer">
