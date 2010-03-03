@@ -4,6 +4,8 @@ module RewardHelper
     currency = params.fetch(:currency)
     advertiser_app = params.fetch(:advertiser_app)
     
+    publisher_app = App.new(:key => currency.key)
+    
     advertiser_amount_float = advertiser_app.get('payment_for_install').to_f
     
     if advertiser_amount_float <= 0.1
@@ -11,9 +13,16 @@ module RewardHelper
       advertiser_amount_float = advertiser_app.get('price').to_f / 2.0 if advertiser_app.get('price') > '0'
     end
     
-    publisher_amount_float = advertiser_amount_float.to_f * currency.get('installs_money_share').to_f
-    offerpal_amount = ((1.0 - currency.get('installs_money_share').to_f) / 2.0 * advertiser_amount_float).to_i
-    tapjoy_amount = advertiser_amount_float.to_i - publisher_amount_float.to_i - offerpal_amount.to_i
+    if publisher_app.get('partner_id') && publisher_app.get('partner_id') == advertiser_app.get('partner_id')
+      publisher_amount_float = advertiser_amount_float.to_f
+      offerpal_amount = 0
+      tapjoy_amount = 0
+    else    
+      publisher_amount_float = advertiser_amount_float.to_f * currency.get('installs_money_share').to_f
+      offerpal_amount = ((1.0 - currency.get('installs_money_share').to_f) / 2.0 * advertiser_amount_float).to_i
+      tapjoy_amount = advertiser_amount_float.to_i - publisher_amount_float.to_i - offerpal_amount.to_i
+    end
+    
     currency_reward = [publisher_amount_float.to_i * currency.get('conversion_rate').to_f / 100.0, 1.0].max
     
     return {
