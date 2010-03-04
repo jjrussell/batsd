@@ -15,6 +15,6 @@ xml.VGStoreItemReturnClass do
   end
   xml.NumberOwned point_purchases.get_virtual_good_quantity(virtual_good.key)
   xml.ThumbImageURL virtual_good.icon_url
-  xml.DatafileURL virtual_good.data_url
+  xml.DatafileURL virtual_good.data_url if virtual_good.has_data
   xml.FileSize virtual_good.file_size
 end
