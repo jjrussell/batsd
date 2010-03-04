@@ -72,7 +72,6 @@ class WebRequest < SimpledbResource
     
     geoip_data = get_geoip_data(params, request)
     put('country', geoip_data.country)
-    put('region', geoip_data.region)
   end
   
   ##
