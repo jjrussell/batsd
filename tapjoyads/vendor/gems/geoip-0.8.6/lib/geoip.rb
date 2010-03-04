@@ -624,7 +624,7 @@ class GeoIP
     def city(hostname)
         ip = hostname
         if ip.kind_of?(String) && ip !~ /^[0-9.]*$/
-            raise "Bad ip parameter: #{ip}"
+            return nil
         end
 
         # Convert numeric IP address to an integer
