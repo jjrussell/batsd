@@ -5,9 +5,22 @@ class GetOffersController < ApplicationController
     return unless verify_params([:app_id, :udid], {:allow_empty => false})
   
     setup
-    rewarded_installs
+    set_advertiser_app_list
+    store_offer_wall
   end
+  
+  def featured
+    return unless verify_params([:app_id, :udid], {:allow_empty => false})
     
+    setup
+    set_advertiser_app_list
+    
+    # TODO: Finish this up.
+    # @publisher_app.featured_offers.each do |featured_app_key|
+    #   
+    # end
+  end
+  
   def index
     #special code for Tapulous not sending udid
     if params[:app_id] == 'e2479a17-ce5e-45b3-95be-6f24d2c85c6f'
@@ -31,7 +44,8 @@ class GetOffersController < ApplicationController
       
       render :template => 'get_offers/offers'
     elsif params[:type] == '1'
-      rewarded_installs
+      set_advertiser_app_list
+      store_offer_wall
       
       if params[:redirect] == '1'
         render :template => 'get_offers/installs_redirect'
@@ -61,10 +75,12 @@ class GetOffersController < ApplicationController
     web_request.save
   end
   
-  def rewarded_installs
+  def set_advertiser_app_list
     @advertiser_app_list = @publisher_app.get_advertiser_app_list(params[:udid], 
         :currency => @currency, :iphone => (not params[:device_type] =~ /iPod/))
-    
+  end
+  
+  def store_offer_wall
     num_free_apps = 0
     num_apps = @advertiser_app_list.length
     @advertiser_app_list.each do |advertiser_app|
