@@ -3,6 +3,7 @@
 class WebRequest < SimpledbResource
   include MemcachedHelper
   include ApplicationHelper
+  include GeoipHelper
   
   PATH_TO_STAT_MAP = {
     'connect' => 'logins',
@@ -68,6 +69,10 @@ class WebRequest < SimpledbResource
         put('ip_address', get_ip_address(request))
       end
     end
+    
+    geoip_data = get_geoip_data(params, request)
+    put('country', geoip_data.country)
+    put('region', geoip_data.region)
   end
   
   ##
