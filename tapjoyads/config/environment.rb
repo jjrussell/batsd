@@ -10,6 +10,9 @@ RAILS_GEM_VERSION = '2.3.4' unless defined? RAILS_GEM_VERSION
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 
+# Silence missing spec warnings - specifically for geoip gem.
+Rails::VendorGemSourceIndex.silence_spec_warnings = true
+
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
   # Application configuration should go into files in config/initializers
@@ -32,6 +35,7 @@ Rails::Initializer.run do |config|
   config.gem 'json'
   config.gem 'right_aws'
   config.gem 'amazon-ec2', :lib => "AWS"
+  config.gem 'geoip'
   
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
