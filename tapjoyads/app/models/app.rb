@@ -19,6 +19,7 @@ class App < SimpledbResource
   self.sdb_attr :conversion_rate,            {:type => :float}
   self.sdb_attr :show_rate,                  {:type => :float}
   self.sdb_attr :primary_color
+  self.sdb_attr :countries                   {:type => :json, :default_value => []}
   
   ##
   # Returns a list of Apps which are advertising in this app.
