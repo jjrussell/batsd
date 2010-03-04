@@ -6,9 +6,15 @@ module GeoipHelper
   def get_geoip_data(params, request)
     data = {}
     ip_address = params[:device_ip] || get_ip_address(request)
-    array = GEOIP.city(ip_address)
     
-    if array
+    begin
+      array = GEOIP.city(ip_address)
+    rescue Exception => e
+      Rails.logger.info "Error getting GeoIP data: #{e}"
+      array = nil
+    end
+    
+    unless array.nil?
       data[:country] = array[2]
       data[:continent] = array[5]
       data[:region] = array[6]
