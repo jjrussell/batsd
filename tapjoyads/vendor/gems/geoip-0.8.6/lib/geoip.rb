@@ -624,9 +624,7 @@ class GeoIP
     def city(hostname)
         ip = hostname
         if ip.kind_of?(String) && ip !~ /^[0-9.]*$/
-            # Lookup IP address, we were given a name
-            ip = IPSocket.getaddress(hostname)
-            ip = '0.0.0.0' if ip == '::1'
+            raise "Bad ip parameter: #{ip}"
         end
 
         # Convert numeric IP address to an integer
