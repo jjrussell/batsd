@@ -5,6 +5,9 @@ module MemcachedHelper
     :support_cas => true, 
     :prefix_key => RUN_MODE_PREFIX
     })
+    
+  # Memcache counts can't go below 0. Set the offset to 2^32/2 for all counts.
+  COUNT_OFFSET = 2147483648
   
   unless ENV['RAILS_ENV'] == 'production'
     CACHE.flush
@@ -80,13 +83,20 @@ module MemcachedHelper
     key = CGI::escape(key)
     
     begin
-      count = cache.increment(key, offset)
+      if offset > 0
+        count = cache.increment(key, offset)
+      else
+        count = cache.decrement(key, -offset)
+      end
     rescue Memcached::NotFound
-      count = offset
+      count = offset + COUNT_OFFSET
       cache.set(key, count, time, false)
     end
     
-    return count
+    # Remove this code once all counters are using COUNT_OFFSET
+    return count if count < 1000000
+    
+    return count - COUNT_OFFSET
   end
   
   def get_count_in_cache(key, clone = false)
@@ -96,10 +106,13 @@ module MemcachedHelper
     begin
       count = cache.get(key, false).to_i
     rescue Memcached::NotFound
-      count = 0
+      count = COUNT_OFFSET
     end
     
-    return count
+    # Remove this code once all counters are using COUNT_OFFSET
+    return count if count < 1000000
+    
+    return count - COUNT_OFFSET
   end
 
   def compare_and_swap_in_cache(key, clone = false)

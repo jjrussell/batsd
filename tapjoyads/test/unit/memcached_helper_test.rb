@@ -60,8 +60,11 @@ class MemcachedHelperTest < ActiveSupport::TestCase
     assert_equal 16, get_count_in_cache(key)
     
     assert_equal 0, get_count_in_cache(key2)
-    assert_equal 5, increment_count_in_cache(key2, false, 1.week, 5)
-    assert_equal 5, get_count_in_cache(key2)
+    assert_equal -5, increment_count_in_cache(key2, false, 1.week, -5)
+    assert_equal -5, get_count_in_cache(key2)
+    assert_equal -6, increment_count_in_cache(key2, false, 1.week, -1)
+    assert_equal -4, increment_count_in_cache(key2, false, 1.week, 2)
+    assert_equal 3, increment_count_in_cache(key2, false, 1.week, 7)
   end
   
   test "compare and swap" do
