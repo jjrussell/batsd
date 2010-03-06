@@ -10,7 +10,7 @@ class WebRequest < SimpledbResource
   self.sdb_attr :advertiser_app_id
   self.sdb_attr :publisher_app_id
   self.sdb_attr :campaign_id
-  self.sdb_attr :pubisher_user_id
+  self.sdb_attr :publisher_user_id
   self.sdb_attr :virtual_good_id
   self.sdb_attr :ip_address
   self.sdb_attr :device_type
