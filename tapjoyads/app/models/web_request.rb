@@ -5,6 +5,23 @@ class WebRequest < SimpledbResource
   include ApplicationHelper
   include GeoipHelper
   
+  self.sdb_attr :udid
+  self.sdb_attr :app_id
+  self.sdb_attr :advertiser_app_id
+  self.sdb_attr :publisher_app_id
+  self.sdb_attr :campaign_id
+  self.sdb_attr :pubisher_user_id
+  self.sdb_attr :virtual_good_id
+  self.sdb_attr :ip_address
+  self.sdb_attr :device_type
+  self.sdb_attr :library_version
+  self.sdb_attr :device_os_version
+  self.sdb_attr :app_version
+  self.sdb_attr :type
+  self.sdb_attr :status_items
+  self.sdb_attr :time, :type => :time
+  self.sdb_attr :path, :force_array => true, :replace => false
+  
   PATH_TO_STAT_MAP = {
     'connect' => 'logins',
     'new_user' => 'new_users',
