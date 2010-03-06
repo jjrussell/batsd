@@ -11,6 +11,7 @@ class App < SimpledbResource
   self.sdb_attr :payment_for_install,        {:type => :int}
   self.sdb_attr :rewarded_installs_ordinal,  {:type => :int}
   self.sdb_attr :install_tracking,           {:type => :bool}
+  self.sdb_attr :iphone_only,                {:type => :bool}
   self.sdb_attr :next_run_time,              {:type => :time}
   self.sdb_attr :last_run_time,              {:type => :time}
   self.sdb_attr :balance,                    {:type => :int}
@@ -18,6 +19,7 @@ class App < SimpledbResource
   self.sdb_attr :daily_budget,               {:type => :int}
   self.sdb_attr :conversion_rate,            {:type => :float}
   self.sdb_attr :show_rate,                  {:type => :float}
+  self.sdb_attr :os_type
   self.sdb_attr :primary_color
   self.sdb_attr :countries,                  {:type => :json, :default_value => []}
   
@@ -32,6 +34,7 @@ class App < SimpledbResource
   def get_advertiser_app_list(udid, options = {})
     currency = options.delete(:currency)
     iphone = options.delete(:iphone) { true }
+    country = options.delete(:country)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     device_app_list = DeviceAppList.new(:key => udid)
@@ -59,11 +62,18 @@ class App < SimpledbResource
       reject = true if banned_apps.include?(advertiser_app.key)
       reject = true if only_free_apps and not advertiser_app.is_free
       reject = true if advertiser_app.key == @key
-      reject = true if advertiser_app.get('iphone_only') == '1' and not iphone
-      reject = true if advertiser_app.get('os_type') == 'iphone' and get('os_type') == 'android'
-      reject = true if advertiser_app.get('os_type') == 'android' and get('os_type') == 'iphone'
+      reject = true if advertiser_app.iphone_only and not iphone
+      reject = true if advertiser_app.os_type == 'iphone' and self.os_type == 'android'
+      reject = true if advertiser_app.os_type == 'android' and self.os_type == 'iphone'
       
-      if udid != '298c5159a3681207eaba5a04b3573aa7b4f13d99' # Ben's udid. Show all apps on his device.
+      # Country rejection - only for certain publisher apps for now.
+      if @key == '2349536b-c810-47d7-836c-2cd47cd3a796' or # TapDefense
+          @key == '1fd52023-a66d-479b-bc26-5a1f97144efc' or # Mobsters: Big Apple
+          @key == 'bb429429-642d-4c81-b87c-08cf66be05ac' # TapOut
+        reject = true unless advertiser_app.countries.empty? or country.nil? or advertiser_app.countries.include?(country)
+      end
+      
+      unless udid == '298c5159a3681207eaba5a04b3573aa7b4f13d99' # Ben's udid. Show all apps on his device.
         reject = true if device_app_list.has_app(advertiser_app.key)
         srand((udid + (Time.now.to_f / 1.hour).to_i.to_s + advertiser_app.key).hash)
         reject = true if rand > (advertiser_app.get('show_rate') || 1).to_f

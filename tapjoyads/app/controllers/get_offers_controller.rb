@@ -1,5 +1,6 @@
 class GetOffersController < ApplicationController
   include MemcachedHelper
+  include GeoipHelper
   
   def webpage
     return unless verify_params([:app_id, :udid], {:allow_empty => false})
@@ -77,7 +78,9 @@ class GetOffersController < ApplicationController
   
   def set_advertiser_app_list
     @advertiser_app_list = @publisher_app.get_advertiser_app_list(params[:udid], 
-        :currency => @currency, :iphone => (not params[:device_type] =~ /iPod/))
+        :currency => @currency, 
+        :iphone => (not params[:device_type] =~ /iPod/),
+        :country => get_geoip_data(params, request).country)
   end
   
   def store_offer_wall
