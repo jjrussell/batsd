@@ -2,7 +2,7 @@ class EnterPromotionController < ApplicationController
   def index
     return unless verify_params([:app_id, :udid])
     
-    pe = PromotionEntry.new
+    pe = PromotionEntry.new(:key => "#{params[:udid]}.#{params[:promo_id]}")
     pe.put('last5', params[:last5])
     pe.put('email', params[:email])
     pe.put('phone', params[:phone])
