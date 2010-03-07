@@ -8,6 +8,8 @@ class EnterPromotionController < ApplicationController
     pe.put('phone', params[:phone])
     pe.put('udid', params[:udid])
     pe.put('app_id', params[:app_id])
+    
+    pe.save
 
     render :template => 'layouts/success'
   end
