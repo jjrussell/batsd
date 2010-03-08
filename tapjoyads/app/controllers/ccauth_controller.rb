@@ -53,7 +53,7 @@ class CcauthController < ApplicationController
     phone = "+" + phone
     
     message = "Thank you for eating at Indietro. You will receive $10 off on your credit card statement.\n" +
-        "Explore nearby: http://bit.ly/cNwAAL"
+        "Explore nearby: http://bit.ly/19swDW"
 
     download_content("http://api.upsidewireless.com/soap/SMS.asmx/Send_Plain" +
         "?token=1ddcae34-b1a7-436d-8c48-04e61e5477cb" +
