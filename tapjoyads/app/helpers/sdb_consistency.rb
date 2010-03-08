@@ -9,6 +9,13 @@
 
 module RightAws
 
+  ##
+  # Reduce amount of retries - only retry up to 0.5 seconds rather than 5 seconds.
+  # Transient errors will be handled by writing to sqs or s3.
+  class AWSErrorHandler
+    @@reiteration_time = 0.5
+  end
+
   class SdbInterface < RightAwsBase
     
     # Override, in order to support consistency.
@@ -16,7 +23,7 @@ module RightAws
     
     # Prepare attributes for putting or deleting.
     # (used by put_attributes, delete_attributes and batch_put_attributes)
-    def pack_attributes(attributes, replace = false, expected_attributes = {}) #:nodoc:
+    def pack_attributes(attributes, replace = false, expected_attr = {}) #:nodoc:
       result = {}
       if attributes
         idx = 0
@@ -28,12 +35,12 @@ module RightAws
           end
           
           # set expected attribute
-          if expected_attributes.include?(attribute)
+          if expected_attr.include?(attribute)
             result["Expected.#{idx}.Name"] = attribute
-            if expected_attributes[attribute].nil?
+            if expected_attr[attribute].nil?
               result["Expected.#{idx}.Exists"] = 'false'
             else
-              result["Expected.#{idx}.Value"] = expected_attributes[attribute]
+              result["Expected.#{idx}.Value"] = expected_attr[attribute]
             end
           end
           
@@ -51,18 +58,18 @@ module RightAws
       result
     end
     
-    def put_attributes(domain_name, item_name, attributes, replace = false, expected_attributes = {})
+    def put_attributes(domain_name, item_name, attributes, replace = false, expected_attr = {})
       params = { 'DomainName' => domain_name,
-                 'ItemName'   => item_name }.merge(pack_attributes(attributes, replace, expected_attributes))
+                 'ItemName'   => item_name }.merge(pack_attributes(attributes, replace, expected_attr))
       link = generate_request("PutAttributes", params)
       request_info( link, QSdbSimpleParser.new )
     rescue Exception
       on_exception
     end
     
-    def delete_attributes(domain_name, item_name, attributes = nil, expected_attributes = {})
+    def delete_attributes(domain_name, item_name, attributes = nil, expected_attr = {})
       params = { 'DomainName' => domain_name,
-                 'ItemName'   => item_name }.merge(pack_attributes(attributes, false, expected_attributes))
+                 'ItemName'   => item_name }.merge(pack_attributes(attributes, false, expected_attr))
       link = generate_request("DeleteAttributes", params)
       request_info( link, QSdbSimpleParser.new )
     rescue Exception
