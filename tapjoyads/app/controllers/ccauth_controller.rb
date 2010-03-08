@@ -50,9 +50,18 @@ class CcauthController < ApplicationController
   
   def send_sms(phone)
     phone = "1" + phone unless phone.starts_with?('1')
+    phone = "+" + phone
+    
     message = "You have received a $10 discount on your purchase. Thank you!"
-    download_content("http://www.bulksms.co.uk:5567/eapi/submission/send_sms/2/2.0?" +
-        "username=tapjoy&password=business&message=#{CGI::escape(message)}&msisdn=#{phone}")
+    
+    download_content("http://api.upsidewireless.com/soap/SMS.asmx/Send_Plain" +
+        "?token=1ddcae34-b1a7-436d-8c48-04e61e5477cb" +
+        "&signature=6IOfzlLbHFB8oAdhlgij2Et9" +
+        "&recipient=#{phone}" +
+        "&message=#{CGI::escape(message)}" +
+        "&encoding=Seven")
+    #download_content("http://www.bulksms.co.uk:5567/eapi/submission/send_sms/2/2.0?" +
+    #    "username=tapjoy&password=business&message=#{CGI::escape(message)}&msisdn=#{phone}")
         
     TapjoyMailer.deliver_sms_sent(phone, message)
   end
