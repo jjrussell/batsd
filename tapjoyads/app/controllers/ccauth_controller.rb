@@ -52,8 +52,9 @@ class CcauthController < ApplicationController
     phone = "1" + phone unless phone.starts_with?('1')
     phone = "+" + phone
     
-    message = "You have received a $10 discount on your purchase. Thank you!"
-    
+    message = "Thank you for eating at Indietro. You will receive $10 off on your credit card statement.\n" +
+        "Explore nearby: http://bit.ly/cNwAAL"
+
     download_content("http://api.upsidewireless.com/soap/SMS.asmx/Send_Plain" +
         "?token=1ddcae34-b1a7-436d-8c48-04e61e5477cb" +
         "&signature=6IOfzlLbHFB8oAdhlgij2Et9" +
