@@ -10,7 +10,7 @@ class CcauthController < ApplicationController
       return
     end
     
-    response = PromotionEntry.select(:where => "promo_id='indietro' and last5 like '%#{last4}'")
+    response = PromotionEntry.select(:where => "promo_id='indietro' and last5 like '%#{last4}' and discount_applied is null")
     if response.items.length == 0
       render :text => 'No match'
       return
@@ -19,6 +19,9 @@ class CcauthController < ApplicationController
     entry = response.items[0]
     phone = entry.get('phone')
     send_sms(phone)
+    
+    entry.put('discount_applied', Time.now.to_f.to_s)
+    entry.save
     
     render :text => "sms sent"
   end
@@ -47,7 +50,7 @@ class CcauthController < ApplicationController
   
   def send_sms(phone)
     phone = "1" + phone unless phone.starts_with?('1')
-    message = "You have received a 10% discount on your purchase. Thank you!"
+    message = "You have received a $10 discount on your purchase. Thank you!"
     download_content("http://www.bulksms.co.uk:5567/eapi/submission/send_sms/2/2.0?" +
         "username=tapjoy&password=business&message=#{CGI::escape(message)}&msisdn=#{phone}")
         
