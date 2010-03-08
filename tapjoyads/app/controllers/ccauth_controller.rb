@@ -3,7 +3,12 @@ class CcauthController < ApplicationController
   include Patron
   
   def index
-    last4 = get_last4(params[:x_trans_id])
+    begin
+      last4 = get_last4(params[:x_trans_id])
+    rescue
+      render :text => 'last4 not found'
+      return
+    end
     
     response = PromotionEntry.select(:where => "promo_id='indietro' and last5 like '%#{last4}'")
     if response.items.length == 0
