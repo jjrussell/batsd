@@ -80,7 +80,9 @@ class GetOffersController < ApplicationController
     @advertiser_app_list = @publisher_app.get_advertiser_app_list(params[:udid], 
         :currency => @currency, 
         :iphone => (not params[:device_type] =~ /iPod/),
-        :country => get_geoip_data(params, request).country)
+        :country => get_geoip_data(params, request).country,
+        :start => @start_index,
+        :max => @max_items)
   end
   
   def store_offer_wall

@@ -35,6 +35,8 @@ class App < SimpledbResource
     currency = options.delete(:currency)
     iphone = options.delete(:iphone) { true }
     country = options.delete(:country)
+    start = options.delete(:start) { 0 }
+    max = options.delete(:max) { 25 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     device_app_list = DeviceAppList.new(:key => udid)
@@ -56,7 +58,11 @@ class App < SimpledbResource
     
     only_free_apps = currency.get('only_free_apps') == '1'
     
+    count = 0
     advertiser_app_list.reject! do |advertiser_app|
+      count += 1
+      break if count > start + max
+      
       reject = false
       
       reject = true if banned_apps.include?(advertiser_app.key)
@@ -81,6 +87,8 @@ class App < SimpledbResource
       
       reject
     end
+    
+    advertiser_app_list = advertiser_app_list[start,max]
     
     return advertiser_app_list
   end
