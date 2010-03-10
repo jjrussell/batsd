@@ -61,7 +61,6 @@ class App < SimpledbResource
     count = 0
     advertiser_app_list.reject! do |advertiser_app|
       count += 1
-      break if count > start + max
       
       reject = false
       
