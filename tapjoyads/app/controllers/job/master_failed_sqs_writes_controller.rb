@@ -15,7 +15,7 @@ class Job::MasterFailedSqsWritesController < Job::JobController
       
       begin
         SqsGen2.new.queue(queue_name).send_message(message)
-        bucket.delete(key)
+        bucket.delete_folder(key)
       rescue RightAws::AwsError => e
         log_line = "FailedSqsWrites job failed to write message #{message} to queue #{queue_name}, with error: #{e}"
         Rails.logger.info log_line
