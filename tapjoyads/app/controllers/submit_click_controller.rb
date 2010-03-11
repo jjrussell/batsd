@@ -28,7 +28,10 @@ class SubmitClickController < ApplicationController
     # the user already has the app installed
     if params[:publisher_app_id] == '469f7523-3b99-4b42-bcfb-e18d9c3c4576'
       device = DeviceAppList.new(:key => params[:udid])
-      redirect_to app.get_linkshare_url if device.has_app(params[:advertiser_app_id])
+      if device.has_app(params[:advertiser_app_id])
+        redirect_to app.get_linkshare_url 
+        return
+      end
     end
     
     ##
