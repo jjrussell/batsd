@@ -43,6 +43,10 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     
     possible_clicks_per_second = clicks / timeframe / old_show_rate
     
+    # Assume a higher click/second rate than reality. This helps ensure that budgets come in slightly
+    # under, rather than slightly over.
+    possible_clicks_per_second = 1.1 * possible_clicks_per_second
+    
     Rails.logger.info "Clicks last 20 mins: #{clicks}"
     Rails.logger.info "Installs last 20 mins: #{installs}"
     Rails.logger.info "Old show_rate: #{old_show_rate}"
@@ -82,8 +86,13 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     end
 
     if old_show_rate == 0 and target_installs > 0
-      Rails.logger.info "Setting new show rate to 0.1, since old show rate was 0."
-      new_show_rate = 0.1
+      Rails.logger.info "Setting new show rate to 0.01, since old show rate was 0."
+      new_show_rate = 0.01
+    end
+    
+    if num_installs_today > target_installs
+      Rails.logger.info "Pushed too many installs. Overriding any calculations and setting show rate to 0."
+      new_show_rate = 0
     end
     
     Rails.logger.info "New show_rate: #{new_show_rate}"
