@@ -90,7 +90,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
       new_show_rate = 0.01
     end
     
-    if num_installs_today > target_installs
+    if daily_budget and daily_budget.to_i > 0 and num_installs_today > daily_budget.to_i
       Rails.logger.info "Pushed too many installs. Overriding any calculations and setting show rate to 0."
       new_show_rate = 0
     end
