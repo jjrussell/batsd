@@ -159,6 +159,7 @@ common: &default_settings
     # to comma separated values
     #
     #ignore_errors: ActionController::RoutingError, ...
+    ignore_errors: ActionController::RoutingError
 
   # (Advanced) Uncomment this to ensure the cpu and memory samplers
   # won't run.  Useful when you are using the agent to monitor an
