@@ -16,7 +16,7 @@ class App < SimpledbResource
   self.sdb_attr :last_run_time,              {:type => :time}
   self.sdb_attr :balance,                    {:type => :int}
   self.sdb_attr :price,                      {:type => :int}
-  self.sdb_attr :daily_budget,               {:type => :int}
+  self.sdb_attr :daily_budget,               {:type => :int, :default_value => 0}
   self.sdb_attr :conversion_rate,            {:type => :float}
   self.sdb_attr :show_rate,                  {:type => :float}
   self.sdb_attr :os_type
@@ -87,7 +87,7 @@ class App < SimpledbResource
       reject
     end
     
-    advertiser_app_list = advertiser_app_list[start,max]
+    advertiser_app_list = advertiser_app_list[start, max]
     
     return advertiser_app_list
   end

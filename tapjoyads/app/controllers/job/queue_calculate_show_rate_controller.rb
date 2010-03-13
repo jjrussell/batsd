@@ -67,14 +67,13 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     
     target_installs = 1.0 / 0
     
-    daily_budget = app.get('daily_budget')
-    if daily_budget and daily_budget.to_i > 0
-      target_installs = [daily_budget.to_f - num_installs_today, target_installs].min
+    if app.daily_budget > 0
+      target_installs = [app.daily_budget.to_f - num_installs_today, target_installs].min
     end
     
     target_clicks = target_installs / conversion_rate
     
-    Rails.logger.info "Daily budget: #{daily_budget}"
+    Rails.logger.info "Daily budget: #{app.daily_budget}"
     Rails.logger.info "Target installs for remainder of day: #{target_installs}"
     Rails.logger.info "Target clicks for remainder of day: #{target_clicks}"
     
@@ -90,7 +89,14 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
       new_show_rate = 0.01
     end
     
-    if daily_budget and daily_budget.to_i > 0 and num_installs_today > daily_budget.to_i
+    # For low budget apps, don't just change to the new show_rate if it is larger than the old show_rate.
+    # Instead, just add 2%. This prevents a period of 20 minutes with no clicks from causing the
+    # show_rate to jump to 100% on the next run.
+    if app.daily_budget < 5000 and new_show_rate > old_show_rate
+      new_show_rate = [new_show_rate, old_show_rate + 0.02].min
+    end
+    
+    if app.daily_budget > 0 and num_installs_today > app.daily_budget
       Rails.logger.info "Pushed too many installs. Overriding any calculations and setting show rate to 0."
       new_show_rate = 0
     end
