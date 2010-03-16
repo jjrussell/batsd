@@ -87,8 +87,6 @@ class App < SimpledbResource
       reject
     end
     
-    advertiser_app_list = advertiser_app_list[start, max]
-    
     return advertiser_app_list
   end
   

@@ -83,6 +83,8 @@ class GetOffersController < ApplicationController
         :country => get_geoip_data(params, request).country,
         :start => @start_index,
         :max => @max_items)
+    @more_data_available = @advertiser_app_list.length - @max_items - @start_index
+    @advertiser_app_list = @advertiser_app_list[@start_index, @max_items]
   end
   
   def store_offer_wall
