@@ -177,7 +177,8 @@ class ImportMssqlController < ApplicationController
       app.put('ad_optimization_interval_update_time','60')
     end
 
-    app.put('name',params[:name], {:cgi_escape => true})
+    app.name = params[:name]
+    app.description = params[:description]
     app.put('payment_for_install', params[:payment_for_install])
     app.put('rewarded_installs_ordinal', params[:rewarded_installs_ordinal])
     app.put('install_tracking', params[:install_tracking])
@@ -188,7 +189,6 @@ class ImportMssqlController < ApplicationController
     app.put('pay_per_click', params[:pay_per_click])
     app.put('status', params[:status])
     app.put('price', params[:price]) 
-    app.put('description', params[:description], {:cgi_escape => true}) if params[:description]
     app.put('has_location', params[:has_location])
     app.put('rotation_time', params[:rotation_time])
     app.put('rotation_direction', params[:rotation_direction])
@@ -198,16 +198,12 @@ class ImportMssqlController < ApplicationController
     app.put('os_type', params[:os_type])
     app.put('primary_color', params[:primary_color])
     
-    app.delete('description_1') if app.get('description_1')
-    app.delete('description_2') if app.get('description_2')
-    app.delete('description_3') if app.get('description_3')
-
     app.save
 
-    AWS::S3::S3Object.store app_id, params[:icon], 'app-icons'
+    bucket = RightAws::S3.new.bucket('app_data')
+    bucket.put("icons/#{app_id}.png", params[:icon], {}, 'public-read')
+    bucket.put("screenshots/#{app_id}.png", params[:screenshot], {}, 'public-read')
     save_to_cache("icon.s3.#{app_id.hash}", Base64.encode64(params[:icon]))
-    save_to_cache("img.icon.s3.#{app_id.hash}", params[:icon])
-    AWS::S3::S3Object.store app_id, params[:screenshot], 'app-screenshots'
 
     render :template => 'layouts/success'
   end
