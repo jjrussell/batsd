@@ -5,18 +5,14 @@ class GetAppImageController < ApplicationController
     return unless verify_params([:app_id])
     
     app_id = params[:app_id].downcase
-    
-    image_name = "#{app_id}"
+    app = App.new(:key => app_id, :load => false)
 
     if params[:img] == '1'
-      image = get_from_cache_and_save("img.icon.s3.#{image_name.hash}") do
-        AWS::S3::S3Object.value image_name, 'app-icons'
-      end
-      
-      send_data(image, :type => 'image/png', :filename => "#{app_id}.png", :disposition => 'inline')
+      redirect_to app.get_icon_url
     else
       image = get_from_cache_and_save("icon.s3.#{image_name.hash}") do
-        image_content = AWS::S3::S3Object.value image_name, 'app-icons'
+        bucket = RightAws::S3.new.bucket('app_data')
+        image_content = bucket.get("icons/#{app_id}.png")
         Base64.encode64 image_content
       end
     

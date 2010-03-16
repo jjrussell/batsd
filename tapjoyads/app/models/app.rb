@@ -166,8 +166,11 @@ class App < SimpledbResource
   end
   
   def get_icon_url(base64 = false)
-    url = "http://ws.tapjoyads.com/get_app_image/icon?app_id=#{@key}"
-    url += "&img=1" unless base64
+    if base64
+      url = "http://ws.tapjoyads.com/get_app_image/icon?app_id=#{@key}"
+    else
+      url = "https://s3.amazonaws.com/app_data/icons/#{@key}.png"
+    end
     return url
   end
   
