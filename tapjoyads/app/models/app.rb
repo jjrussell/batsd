@@ -137,6 +137,9 @@ class App < SimpledbResource
   # Returns the Apple store id for an app. Determines this from parsing the store url.
   def get_store_id
     store_url = get('store_url')
+    if self.os_type == 'android'
+      return store_url
+    end
     
     match = store_url.match(/\/id(\d*)\?/)
     unless match
