@@ -6,7 +6,7 @@ class GetOffersController < ApplicationController
     return unless verify_params([:app_id, :udid], {:allow_empty => false})
   
     setup
-    set_advertiser_app_list
+    set_advertiser_app_list(:real_ip => true)
     store_offer_wall
   end
   
@@ -14,7 +14,7 @@ class GetOffersController < ApplicationController
     return unless verify_params([:app_id, :udid], {:allow_empty => false})
     
     setup
-    set_advertiser_app_list
+    set_advertiser_app_list(:real_ip => true)
     
     # TODO: Finish this up.
     # @publisher_app.featured_offers.each do |featured_app_key|
@@ -45,7 +45,9 @@ class GetOffersController < ApplicationController
       
       render :template => 'get_offers/offers'
     elsif params[:type] == '1'
-      set_advertiser_app_list
+      use_real_ip = (not(params[:redirect] == '1' or params[:server] == '1'))
+      
+      set_advertiser_app_list(:real_ip => use_real_ip)
       store_offer_wall
       
       if params[:redirect] == '1'
@@ -76,7 +78,16 @@ class GetOffersController < ApplicationController
     web_request.save
   end
   
-  def set_advertiser_app_list
+  def set_advertiser_app_list(options = {})
+    real_ip = options.delete(:real_ip){ true }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
+    if (not real_ip) and params[:device_ip].nil?
+      country = nil
+    else
+      country = get_geoip_data(params, request).country
+    end
+    
     @advertiser_app_list = @publisher_app.get_advertiser_app_list(params[:udid], 
         :currency => @currency, 
         :iphone => (not params[:device_type] =~ /iPod/),
