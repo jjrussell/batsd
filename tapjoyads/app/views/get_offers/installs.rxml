@@ -15,6 +15,7 @@ xml.TapjoyConnectReturnObject do
         xml.PublisherUserRecordID @publisher_user_record.get_record_id
         xml.Type '1'
         xml.StoreID app.get_store_id
+        xml.Currency @currency.currency_name
       end
       
     end
