@@ -1,11 +1,11 @@
-require 'AWS'
+require 'right_aws'
 
 module Ec2Helper
   ##
   # Returns an array of the public dns names of all running EC2 servers.
-  # If the group_id is specified, then only servers withing that security group are returned.
+  # If the group_id is specified, then only servers within that security group are returned.
   def get_dns_names(group_id = nil)
-    get_server_field('dnsName', group_id)
+    get_server_field(:dns_name, group_id)
   end  
   
   ##
@@ -40,27 +40,17 @@ module Ec2Helper
   private
   
   def get_server_field(field_name, group_id)
-    ec2 = AWS::EC2::Base.new({:access_key_id => ENV['AWS_ACCESS_KEY_ID'], 
-        :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY']})
+    ec2 = RightAws::Ec2.new(nil, nil, :logger => Logger.new(STDERR))
 
     instances = ec2.describe_instances
     dns_names = []
 
-    instances['reservationSet']['item'].each do |item|
-      instance_state = item['instancesSet']['item'][0]['instanceState']['name']
-
-      group_ids = []
-      item['groupSet']['item'].each do |h|
-        group_ids.push(h['groupId'])
-      end
-
-      group_id_match = true
-      group_id_match = group_ids.include?(group_id) if group_id
-
-      if instance_state == 'running' and group_id_match
-        dns_names.push(item['instancesSet']['item'][0][field_name])
+    instances.each do |instance|
+      if instance[:aws_state] == 'running' and instance[:aws_groups].include?(group_id)
+        dns_names.push(instance[field_name])
       end
     end
+
     return dns_names
   end
 end
