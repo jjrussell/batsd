@@ -219,7 +219,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     if total_logins + total_rewards + total_paid_clicks + total_ad_impressions > 0
       new_interval = 1.hour
     else
-      new_interval = 4.hour
+      new_interval = 8.hour
     end
     
     app.put('interval_update_time', new_interval.to_s)
