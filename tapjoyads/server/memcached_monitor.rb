@@ -14,5 +14,5 @@ begin
   end
 rescue
   logger.error "No connection could be made to 127.0.0.1:11211. Restarting memcached"
-  `/home/webuser/launch_memcached.rb`
+  `/home/webuser/server/launch_memcached.rb`
 end
