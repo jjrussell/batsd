@@ -29,7 +29,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     
     min_conversion_rate = app.get('price').to_f > 0 ? 0.005 : 0.12
     min_conversion_rate = app.get('min_cvr').to_f if app.get('min_cvr')
-    if recent_clicks > 30 and conversion_rate < min_conversion_rate
+    if recent_clicks > 100 and conversion_rate < min_conversion_rate
       alert_new_relic(ConversionRateTooLowError,
         "App #{app.to_s} has #{conversion_rate} cvr on #{recent_clicks} clicks.")
     end
