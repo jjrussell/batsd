@@ -13,6 +13,7 @@ ip_address = ifconfig.match(/inet addr:(.*?)\s/)[1]
 begin
   loop do
     t = TCPSocket.new(ip_address, 11211)
+    t.close
     retry_count = 0
     logger.info "OK"
     sleep(30)
