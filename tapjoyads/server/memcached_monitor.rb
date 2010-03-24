@@ -13,10 +13,19 @@ ip_address = ifconfig.match(/inet addr:(.*?)\s/)[1]
 begin
   loop do
     t = TCPSocket.new(ip_address, 11211)
+    retry_count = 0
     logger.info "OK"
     sleep(30)
   end
-rescue
-  logger.error "No connection could be made to #{ip_address}:11211. Restarting memcached"
-  `/home/webuser/server/launch_memcached.rb`
+rescue Errno::ECONNREFUSED
+  logger.error "No connection could be made to #{ip_address}:11211."
+  sleep(5)
+  if retry_count < 3
+    logger.error "Retrying."
+    retry_count += 1
+    retry
+  else
+    logger.error "Restarting memcached."
+    exec "/home/webuser/server/launch_memcached.rb"
+  end
 end
