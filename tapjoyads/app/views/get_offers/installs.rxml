@@ -11,7 +11,7 @@ xml.TapjoyConnectReturnObject do
         xml.Name app.get('name')
         xml.TimeDelay 'in seconds'
         xml.AdvertiserAppID app.key
-        xml.ActionURL app.get_linkshare_url
+        xml.ActionURL app.get_store_url(params[:udid])
         xml.PublisherUserRecordID @publisher_user_record.get_record_id
         xml.Type '1'
         xml.StoreID app.get_store_id

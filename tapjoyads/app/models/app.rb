@@ -12,6 +12,7 @@ class App < SimpledbResource
   self.sdb_attr :rewarded_installs_ordinal,  {:type => :int}
   self.sdb_attr :install_tracking,           {:type => :bool}
   self.sdb_attr :iphone_only,                {:type => :bool}
+  self.sdb_attr :use_raw_url,                {:type => :bool}
   self.sdb_attr :next_run_time,              {:type => :time}
   self.sdb_attr :last_run_time,              {:type => :time}
   self.sdb_attr :balance,                    {:type => :int}
@@ -110,7 +111,13 @@ class App < SimpledbResource
     return offer_list
   end
   
-  def get_linkshare_url
+  ##
+  # Returns a url which re-directs the the app store or market for this app.
+  # This url is not necessarily a direct url, it may be a linkshare url or a partner's tracking url.
+  def get_store_url(udid)
+    if self.use_raw_url
+      return self.store_url.gsub('TAPJOY_UDID', udid)
+    end
     
     if get('os_type') == 'android'
       return "market://search?q=#{get('store_url')}"
