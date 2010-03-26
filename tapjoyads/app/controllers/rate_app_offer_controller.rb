@@ -3,6 +3,8 @@ class RateAppOfferController < ApplicationController
   include PublisherRecordHelper
   include SqsHelper
   
+  layout 'iphone'
+  
   def index
     
     if request.headers['User-Agent'] && request.headers['User-Agent'].downcase =~ /safari/ && request.headers['User-Agent'].downcase =~ /mobile/ 
