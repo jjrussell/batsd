@@ -32,7 +32,7 @@ class ListSignupController < ApplicationController
       # an email to a given address, and how many times an IP address has sent an email.
       # Not needed for the trial though.
       
-      TapjoyMailer.deliver_list_signup(params[:email_address], signup.key, flash[:currency], flash[:publisher_app_name], flash[:amount])
+      TapjoyMailer.deliver_email_signup(params[:email_address], signup.key, flash[:currency], flash[:publisher_app_name], flash[:amount])
     else
       flash[:error] = "Invalid email address."
       flash[:email_address] = params[:email_address]
