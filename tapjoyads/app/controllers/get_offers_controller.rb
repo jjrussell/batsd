@@ -95,6 +95,7 @@ class GetOffersController < ApplicationController
         :iphone => (not params[:device_type] =~ /iPod/),
         :country => geoip_data[:country],
         :postal_code => geoip_data[:postal_code],
+        :city => geoip_data[:city],
         :start => @start_index,
         :max => @max_items)
     @more_data_available = @advertiser_app_list.length - @max_items - @start_index

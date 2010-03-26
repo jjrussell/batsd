@@ -25,6 +25,7 @@ class App < SimpledbResource
   self.sdb_attr :primary_color
   self.sdb_attr :countries,                  {:type => :json, :default_value => []}
   self.sdb_attr :postal_codes,               {:type => :json, :default_value => []}
+  self.sdb_attr :cities,                     {:type => :json, :default_value => []}
   
   ##
   # Returns a list of Apps which are advertising in this app.
@@ -39,6 +40,7 @@ class App < SimpledbResource
     iphone = options.delete(:iphone) { true }
     country = options.delete(:country)
     postal_code = options.delete(:postal_code)
+    city = options.delete(:city)
     start = options.delete(:start) { 0 }
     max = options.delete(:max) { 25 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -83,6 +85,7 @@ class App < SimpledbResource
         
         reject = true unless advertiser_app.countries.empty? or advertiser_app.countries.include?(country)
         reject = true unless advertiser_app.postal_codes.empty? or advertiser_app.postal_codes.include?(postal_code)
+        reject = true unless advertiser_app.cities.empty? or advertiser_app.cities.include?(city)
       end
       
       reject
