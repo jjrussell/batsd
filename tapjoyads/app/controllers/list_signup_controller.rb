@@ -8,10 +8,6 @@ class ListSignupController < ApplicationController
     @currency = Currency.new(:key => params[:publisher_app_id])
     @publisher_app = App.new(:key => params[:publisher_app_id])
     @advertiser_app = App.new(:key => params[:advertiser_app_id])
-    
-    flash[:currency] = @currency.currency_name
-    flash[:publisher_app_name] = @publisher_app.name
-    flash[:amount] = @currency.get_app_currency_reward(@advertiser_app)
   end
   
   def signup
