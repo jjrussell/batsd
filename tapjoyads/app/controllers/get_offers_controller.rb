@@ -88,10 +88,13 @@ class GetOffersController < ApplicationController
       country = get_geoip_data(params, request).country
     end
     
+    geoip_data = get_geoip_data(params, request)
+    
     @advertiser_app_list = @publisher_app.get_advertiser_app_list(params[:udid], 
         :currency => @currency, 
         :iphone => (not params[:device_type] =~ /iPod/),
-        :country => get_geoip_data(params, request).country,
+        :country => geoip_data[:country],
+        :postal_code => geoip_data[:postal_code]
         :start => @start_index,
         :max => @max_items)
     @more_data_available = @advertiser_app_list.length - @max_items - @start_index

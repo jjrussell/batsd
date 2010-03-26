@@ -21,6 +21,10 @@ module RewardHelper
       publisher_amount_float = advertiser_amount_float.to_f * currency.get('installs_money_share').to_f
       offerpal_amount = ((1.0 - currency.get('installs_money_share').to_f) / 2.0 * advertiser_amount_float).to_i
       tapjoy_amount = advertiser_amount_float.to_i - publisher_amount_float.to_i - offerpal_amount.to_i
+      
+      if advertiser_app.real_revenue_for_install
+        tapjoy_amount += advertiser_app.real_revenue_for_install - advertiser_app.payment_for_install
+      end
     end
     
     currency_reward = [publisher_amount_float.to_i * currency.get('conversion_rate').to_f / 100.0, 1.0].max

@@ -13,4 +13,11 @@ class TapjoyMailer < ActionMailer::Base
     subject "An SMS has been sent"
     body :text => "An sms has been sent to #{phone}, with the message: #{message}"
   end
+  
+  def email_signup(to_email, confirm_code, currency_name)
+    from "admin@tapjoy.com"
+    recipients to_email
+    subject "Confirmation email - get your #{currency_name}"
+    url = "http://ws.tapjoyads.com/list_signup/confirm?code=#{confirm_code}"
+    body :url => confirm_code, :currency => currency_name
 end
