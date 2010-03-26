@@ -18,7 +18,8 @@ class TapjoyMailer < ActionMailer::Base
     from "noreply@tapjoy.com"
     recipients to_email
     subject "Confirmation email - get #{amount} #{publisher_app_name} #{currency_name}"
+    content_type 'text/html'
     url = "http://ws.tapjoyads.com/list_signup/confirm?code=#{confirm_code}"
-    body :url => confirm_code, :currency => currency_name, :publisher_app_name => publisher_app_name, :amount => amount
+    body :url => url, :currency_name => currency_name, :publisher_app_name => publisher_app_name, :amount => amount
   end
 end
