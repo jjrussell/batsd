@@ -16,6 +16,11 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
     advertiser_app_id = json['app_id']
     install_date = json['install_date']
     
+    # Temporary code to delete invalid messages.
+    if json['app_id'].nil?
+      return
+    end
+    
     Rails.logger.info "Checking for conversion on #{udid} for #{advertiser_app_id}"
     click = StoreClick.new(:key => "#{udid}.#{advertiser_app_id}")
     
