@@ -20,4 +20,5 @@ class TapjoyMailer < ActionMailer::Base
     subject "Confirmation email - get your #{currency_name}"
     url = "http://ws.tapjoyads.com/list_signup/confirm?code=#{confirm_code}"
     body :url => confirm_code, :currency => currency_name
+  end
 end
