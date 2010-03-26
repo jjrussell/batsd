@@ -75,13 +75,14 @@ class App < SimpledbResource
       reject = true if advertiser_app.os_type == 'iphone' and self.os_type == 'android'
       reject = true if advertiser_app.os_type == 'android' and self.os_type == 'iphone'
       
-      reject = true unless advertiser_app.countries.empty? or advertiser_app.countries.include?(country)
-      reject = true unless advertiser_app.postal_codes.empty? or advertiser_app.postal_codes.include?(postal_code)
-      
       unless udid == '298c5159a3681207eaba5a04b3573aa7b4f13d99' # Ben's udid. Show all apps on his device.
         reject = true if device_app_list.has_app(advertiser_app.key)
+        
         srand((udid + (Time.now.to_f / 1.hour).to_i.to_s + advertiser_app.key).hash)
         reject = true if rand > (advertiser_app.get('show_rate') || 1).to_f
+        
+        reject = true unless advertiser_app.countries.empty? or advertiser_app.countries.include?(country)
+        reject = true unless advertiser_app.postal_codes.empty? or advertiser_app.postal_codes.include?(postal_code)
       end
       
       reject
