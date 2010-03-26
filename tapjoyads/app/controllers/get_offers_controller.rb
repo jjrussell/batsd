@@ -104,11 +104,15 @@ class GetOffersController < ApplicationController
   def store_offer_wall
     num_free_apps = 0
     num_apps = @advertiser_app_list.length
+    
+    offer_wall = OfferWall.new(:load => false)
+    
     @advertiser_app_list.each do |advertiser_app|
       num_free_apps += 1 if advertiser_app.is_free
+      offer_wall.put('offer_id', advertiser_app.key, :replace => false)
     end
         
-    offer_wall = OfferWall.new(:load => false)
+    
     offer_wall.put('type', 'rewarded_installs')
     offer_wall.put('udid', params[:udid])
     offer_wall.put('num_free_apps', num_free_apps)

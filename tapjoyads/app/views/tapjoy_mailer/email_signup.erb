@@ -1,3 +1,5 @@
-Please click the following link to receive your confirm your email address and receive your <%= @currency %>:
-
+Please click the following link to confirm your email address and receive <%= "#{@amount} #{@publisher_app_name} #{@currency_name}" %>:
+<br><br>
 <a href="<%= @url %>"><%= @url %></a>
+<br><br>
+This link will expire in 24 hours.
