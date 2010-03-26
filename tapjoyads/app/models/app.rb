@@ -9,6 +9,7 @@ class App < SimpledbResource
   self.sdb_attr :store_url
   self.sdb_attr :partner_id
   self.sdb_attr :payment_for_install,        {:type => :int}
+  self.sdb_attr :real_revenue_for_install,   {:type => :int}
   self.sdb_attr :rewarded_installs_ordinal,  {:type => :int}
   self.sdb_attr :install_tracking,           {:type => :bool}
   self.sdb_attr :iphone_only,                {:type => :bool}
@@ -23,6 +24,7 @@ class App < SimpledbResource
   self.sdb_attr :os_type
   self.sdb_attr :primary_color
   self.sdb_attr :countries,                  {:type => :json, :default_value => []}
+  self.sdb_attr :postal_codes,               {:type => :json, :default_value => []}
   
   ##
   # Returns a list of Apps which are advertising in this app.
@@ -36,6 +38,7 @@ class App < SimpledbResource
     currency = options.delete(:currency)
     iphone = options.delete(:iphone) { true }
     country = options.delete(:country)
+    postal_code = options.delete(:postal_code)
     start = options.delete(:start) { 0 }
     max = options.delete(:max) { 25 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -73,6 +76,7 @@ class App < SimpledbResource
       reject = true if advertiser_app.os_type == 'android' and self.os_type == 'iphone'
       
       reject = true unless advertiser_app.countries.empty? or advertiser_app.countries.include?(country)
+      reject = true unless advertiser_app.postal_codes.empty? or advertiser_app.postal_codes.include?(postal_code)
       
       unless udid == '298c5159a3681207eaba5a04b3573aa7b4f13d99' # Ben's udid. Show all apps on his device.
         reject = true if device_app_list.has_app(advertiser_app.key)
@@ -114,9 +118,11 @@ class App < SimpledbResource
   ##
   # Returns a url which re-directs the the app store or market for this app.
   # This url is not necessarily a direct url, it may be a linkshare url or a partner's tracking url.
-  def get_store_url(udid)
+  def get_store_url(udid, publisher_app_id = '')
     if self.use_raw_url
-      return self.store_url.gsub('TAPJOY_UDID', udid)
+      return self.store_url.
+          gsub('TAPJOY_UDID', udid).
+          gsub('TAPJOY_PUBLISHER_APP_ID', publisher_app_id)
     end
     
     if get('os_type') == 'android'
@@ -161,7 +167,7 @@ class App < SimpledbResource
   end
   
   def get_click_url(publisher_app, publisher_user_record, udid)
-    "http://ws.tapjoyads.com/submit_click/store?" +
+    return "http://ws.tapjoyads.com/submit_click/store?" +
         "advertiser_app_id=#{@key}" +
         "&publisher_app_id=#{publisher_app.key}" +
         "&publisher_user_record_id=#{publisher_user_record.get_record_id}" +
