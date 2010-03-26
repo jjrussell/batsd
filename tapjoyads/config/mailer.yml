@@ -2,5 +2,5 @@
   :address: smtp.gmail.com
   :port: 587
   :user_name: noreply@tapjoy.com
-  :password: andoverbusiness1
+  :password: tapmail
   :authentication: :plain
