@@ -24,6 +24,7 @@ module RewardHelper
       
       if advertiser_app.real_revenue_for_install
         tapjoy_amount += advertiser_app.real_revenue_for_install - advertiser_app.payment_for_install
+        advertiser_amount = advertiser_app.real_revenue_for_install
       end
     end
     
