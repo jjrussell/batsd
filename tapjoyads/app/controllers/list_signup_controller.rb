@@ -27,12 +27,16 @@ class ListSignupController < ApplicationController
       
       signup.save
       
+      @currency = Currency.new(:key => params[:publisher_app_id])
+      @publisher_app = App.new(:key => params[:publisher_app_id])
+      @advertiser_app = App.new(:key => params[:advertiser_app_id])
+      
       # If we wanted to be less prone to griefers here, we could confirm that the
       # udid hasn't filled out this offer yet. Also, check how many times we've sent
       # an email to a given address, and how many times an IP address has sent an email.
       # Not needed for the trial though.
       
-      TapjoyMailer.deliver_email_signup(params[:email_address], signup.key, flash[:currency], flash[:publisher_app_name], flash[:amount])
+      TapjoyMailer.deliver_email_signup(params[:email_address], signup.key, @currency.currency_name, @publisher_app.name, @currency.get_app_currency_reward(@advertiser_app))
     else
       flash[:error] = "Invalid email address."
       flash[:email_address] = params[:email_address]
@@ -50,6 +54,10 @@ class ListSignupController < ApplicationController
 
       @signup.confirmed = Time.now
       @signup.save
+      
+      device_app_list = DeviceAppList.new(:key => @signup.udid)
+      device_app_list.set_app_ran(@signup.advertiser_app_id)
+      device_app_list.save
       
       message = {:udid => @signup.udid, :app_id => @signup.advertiser_app_id, 
           :install_date => Time.now.utc.to_f.to_s}.to_json
