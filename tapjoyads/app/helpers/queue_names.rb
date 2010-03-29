@@ -13,4 +13,5 @@ module QueueNames
   PRE_CREATE_DOMAINS       = RUN_MODE_PREFIX + 'PreCreateDomains'
   IMPORT_UDIDS             = RUN_MODE_PREFIX + 'ImportUdids'
   CALCULATE_SHOW_RATE      = RUN_MODE_PREFIX + 'CalculateShowRate'
+  CLEANUP_STORE_CLICK      = RUN_MODE_PREFIX + 'CleanupStoreClick'
 end

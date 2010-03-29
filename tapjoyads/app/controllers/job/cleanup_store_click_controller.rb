@@ -1,11 +1,11 @@
-class Job::CleanupStoreCLickController < Job::SqsReaderController
+class Job::CleanupStoreClickController < Job::SqsReaderController
   include RightAws
   include TimeLogHelper
   
   def initialize
-    super QueueNames::CLEANUP_STORE_CLICKS
+    super QueueNames::CLEANUP_STORE_CLICK
     @s3 = S3.new
-    @bucket = S3::Bucket.create(@s3, 'store-clicks')
+    @bucket = S3::Bucket.create(@s3, RUN_MODE_PREFIX + 'store-clicks')
   end
 
   private
@@ -26,7 +26,6 @@ class Job::CleanupStoreCLickController < Job::SqsReaderController
     start_time = Time.parse(date_string).beginning_of_day.to_i
     end_time = start_time + 24.hours
     
-    
     Rails.logger.info "Backing up store-clicks on #{date_string}"
     file_name = "tmp/#{RUN_MODE_PREFIX}store-click_#{date_string}.sdb"
     gzip_file_name = "#{file_name}.gz"
@@ -35,13 +34,15 @@ class Job::CleanupStoreCLickController < Job::SqsReaderController
     time_log("Backing up store-clicks on #{date_string}") do
       file = open(file_name, 'w')
     
+      item_list = []
+    
       count = 0
       response = SimpledbResource.select(:domain_name => 'store-click', 
           :where => "click_date >= '#{start_time}' and click_date < '#{end_time}'") do |item|
         count += 1
         file.write(item.serialize)
         file.write("\n")
-        #item.delete_all
+        item_list << item
       end
       box_usage = response[:box_usage]
       
@@ -54,6 +55,10 @@ class Job::CleanupStoreCLickController < Job::SqsReaderController
       write_to_s3(s3_name, gzip_file_name, 3)
     end
     logger.info "Successfully backed up store-clicks for date: #{date_string}"
+    
+    # item_list.each do |item|
+    #   item.delete_all
+    # end
   rescue AwsError => e
     logger.info "Error while trying to back up store-clicks for date #{date_string}: #{e}"
   ensure
