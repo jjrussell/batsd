@@ -31,13 +31,13 @@ class Job::CleanupStoreClickController < Job::SqsReaderController
     gzip_file_name = "#{file_name}.gz"
     s3_name = "#{RUN_MODE_PREFIX}store-click_#{date_string}.sdb"
     
+    item_list = []
+    
     time_log("Backing up store-clicks on #{date_string}") do
       file = open(file_name, 'w')
     
-      item_list = []
-    
       count = 0
-      response = SimpledbResource.select(:domain_name => 'store-click', 
+      response = StoreClick.select(
           :where => "click_date >= '#{start_time}' and click_date < '#{end_time}'") do |item|
         count += 1
         file.write(item.serialize)
@@ -56,9 +56,13 @@ class Job::CleanupStoreClickController < Job::SqsReaderController
     end
     logger.info "Successfully backed up store-clicks for date: #{date_string}"
     
-    # item_list.each do |item|
-    #   item.delete_all
-    # end
+    logger.info "Deleting #{item_list.length} store-clicks"
+    
+    item_list.each do |item|
+      item.delete_all
+    end
+    logger.info "Successfully deleted #{item_list.length} store-clicks"
+    
   rescue AwsError => e
     logger.info "Error while trying to back up store-clicks for date #{date_string}: #{e}"
   ensure
