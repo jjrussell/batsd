@@ -7,7 +7,7 @@ class GetOffersController < ApplicationController
   
     setup
     set_advertiser_app_list(:real_ip => true)
-    store_offer_wall
+    #store_offer_wall
   end
   
   def featured
@@ -48,7 +48,7 @@ class GetOffersController < ApplicationController
       use_real_ip = (not(params[:redirect] == '1' or params[:server] == '1'))
       
       set_advertiser_app_list(:real_ip => use_real_ip)
-      store_offer_wall
+      #store_offer_wall
       
       if params[:redirect] == '1'
         render :template => 'get_offers/installs_redirect'
@@ -110,7 +110,7 @@ class GetOffersController < ApplicationController
     
     @advertiser_app_list.each do |advertiser_app|
       num_free_apps += 1 if advertiser_app.is_free
-      #offer_wall.put('offer_id', advertiser_app.key, :replace => false)
+      offer_wall.put('offer_id', advertiser_app.key, :replace => false)
     end
         
     
