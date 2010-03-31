@@ -44,6 +44,7 @@ ActionController::Routing::Routes.draw do |map|
   
   # Special paths:
   map.connect 'log_device_app/:action/:id', :controller => 'connect'
+  map.connect 'confirm_email_validation', :controller => 'list_signup', :action => 'confirm_api'
   
   # Service1.asmx redirects. (Must include both lower-case and capital: service1.asmx and Service1.asmx).
   # These paths will be supported indefinitely - or as long as we support the legacy api.

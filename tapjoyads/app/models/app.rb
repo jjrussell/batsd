@@ -8,6 +8,7 @@ class App < SimpledbResource
   self.sdb_attr :description,                {:cgi_escape => true}
   self.sdb_attr :store_url
   self.sdb_attr :partner_id
+  self.sdb_attr :custom_app_id
   self.sdb_attr :payment_for_install,        {:type => :int}
   self.sdb_attr :real_revenue_for_install,   {:type => :int}
   self.sdb_attr :rewarded_installs_ordinal,  {:type => :int}
