@@ -48,7 +48,8 @@ class GetAdOrderController < ApplicationController
       network.CallAdShown = campaign['call_ad_shown'] if campaign['call_ad_shown'] == 'False'
       network.AdLibraryName = campaign['library_name']
       network.AdFormat = campaign['format']
-      network.CustomAd = campaign['custom_ad'] if campaign['custom_ad'] == 'True'
+      network.CustomAd = (campaign['library_name'] == 'customsdk')
+      network.AdLibraryName = campaign['name'] if campaign['library_name'] == 'customsdk'
       network.Bar = campaign['bar'] if campaign['bar'] == 'True'
       @ad_order.networks[count] = network
       count += 1
