@@ -20,6 +20,7 @@ class App < SimpledbResource
   self.sdb_attr :balance,                    {:type => :int}
   self.sdb_attr :price,                      {:type => :int}
   self.sdb_attr :daily_budget,               {:type => :int, :default_value => 0}
+  self.sdb_attr :overall_budget,             {:type => :int, :default_value => 0}
   self.sdb_attr :conversion_rate,            {:type => :float}
   self.sdb_attr :show_rate,                  {:type => :float}
   self.sdb_attr :os_type
