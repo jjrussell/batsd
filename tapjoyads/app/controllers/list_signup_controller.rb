@@ -29,28 +29,24 @@ class ListSignupController < ApplicationController
       @publisher_app = App.new(:key => params[:publisher_app_id])
       @advertiser_app = App.new(:key => params[:advertiser_app_id])
       
-      # If we wanted to be less prone to griefers here, we could confirm that the
-      # udid hasn't filled out this offer yet. Also, check how many times we've sent
-      # an email to a given address, and how many times an IP address has sent an email.
-      # Not needed for the trial though.
+      # Send the mail via our gmail smtp server. Disabled, since we're using 4info to send the email.
+      #TapjoyMailer.deliver_email_signup(params[:email_address], signup.key, @currency.currency_name, @publisher_app.name, @currency.get_app_currency_reward(@advertiser_app))
       
-      TapjoyMailer.deliver_email_signup(params[:email_address], signup.key, @currency.currency_name, @publisher_app.name, @currency.get_app_currency_reward(@advertiser_app))
+      # Send the emails via 4info.
+      key = Digest::MD5.hexdigest("#{signup.email_address}xFBysLNwaCRhGYKGXkpHjzWbVehBhE")
       
-      # Send the emails via 4info. Disabled for now.
-      # key = Digest::MD5.hexdigest("#{signup.email_address}xFBysLNwaCRhGYKGXkpHjzWbVehBhE")
-      # 
-      # reward_text = CGI::escape(@currency.get_app_currency_reward(@advertiser_app) + ' ' +
-      #     @publisher_app.name + ' ' + @currency.currency_name)
-      # 
-      # url = 'http://www.4infoalerts.com/wap/tapjoy/post_email_address' +
-      #     "?campaignId=#{@advertiser_app.custom_app_id}" +
-      #     "&id=#{signup.key}" +
-      #     "&email=#{signup.email_address}" +
-      #     "&reward=#{reward_text}" +
-      #     "&udid=#{signup.udid}" +
-      #     "&key=#{key}"
-      # 
-      # download_with_retry(url, {:timeout => 5}, {:retries => 3})
+      reward_text = CGI::escape(@currency.get_app_currency_reward(@advertiser_app) + ' ' +
+          @publisher_app.name + ' ' + @currency.currency_name)
+      
+      url = 'http://www.4infoalerts.com/wap/tapjoy/post_email_address' +
+          "?campaignId=#{@advertiser_app.custom_app_id}" +
+          "&id=#{signup.key}" +
+          "&email=#{signup.email_address}" +
+          "&reward=#{reward_text}" +
+          "&udid=#{signup.udid}" +
+          "&key=#{key}"
+      
+      download_with_retry(url, {:timeout => 5}, {:retries => 3})
     else
       flash[:error] = "Invalid email address."
       flash[:email_address] = params[:email_address]
