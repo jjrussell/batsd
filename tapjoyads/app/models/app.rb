@@ -142,7 +142,7 @@ class App < SimpledbResource
     
       if publisher_app_id == 'e2479a17-ce5e-45b3-95be-6f24d2c85c6f' or
           publisher_app_id == '547f141c-fdf7-4953-9895-83f2545a48b4'
-        return web_object_url
+        return web_object_url.gsub(/^http/, 'itms')
       end
     
       return "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&" +
