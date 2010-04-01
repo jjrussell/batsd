@@ -138,12 +138,7 @@ class App < SimpledbResource
         return get('store_url')
       end
       
-      web_object_url = "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
-    
-      if publisher_app_id == 'e2479a17-ce5e-45b3-95be-6f24d2c85c6f' or
-          publisher_app_id == '547f141c-fdf7-4953-9895-83f2545a48b4'
-        web_object_url.gsub!(/itunes\./, 'phobos.')
-      end
+      web_object_url = "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
     
       return "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&" +
           "type=10&tmpid=3909&RD_PARM1=#{CGI::escape(web_object_url)}"
