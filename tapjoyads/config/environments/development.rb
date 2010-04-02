@@ -31,7 +31,7 @@ MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []
 
-RUN_MODE_PREFIX = 'test_'
+RUN_MODE_PREFIX = 'dev_'
 
 REDIRECT_URI = 'http://localhost:3000/'
 
