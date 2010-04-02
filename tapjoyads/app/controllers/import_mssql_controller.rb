@@ -8,7 +8,7 @@ class ImportMssqlController < ApplicationController
   protect_from_forgery :except => [:publisher_ad, :app, :campaign]
 
   def user
-    user = User.new(:key => params[:user_id])
+    user = SdbUser.new(:key => params[:user_id])
     user.put('user_id', params[:user_id])
     user.put('partner_id', params[:partner_id])
     user.put('email', params[:email])

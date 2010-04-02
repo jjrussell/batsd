@@ -5,7 +5,7 @@ class Site::UsersController < Site::SiteController
   #GET /site/users/:id.xml  
   def show
     user_id = params[:id]
-    @user = User.new(:key => user_id)    
+    @user = SdbUser.new(:key => user_id)    
     respond_to do |format|
       if @user.get('user_name')
         format.xml #show.builder
@@ -35,7 +35,7 @@ class Site::UsersController < Site::SiteController
     success = false unless params[:user][:user_name] and params[:user][:password]                
     if success
       user_name = params[:user][:user_name].gsub("'", '')
-      items = User.select(:where => "user_name='#{user_name}'")
+      items = SdbUser.select(:where => "user_name='#{user_name}'")
       @user = items[:items][0]
       success = false unless @user and verify_password(params[:user][:password], @user.get('password'), @user.get('salt'))            
     end    
