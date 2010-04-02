@@ -84,7 +84,7 @@ class ImportMssqlController < ApplicationController
   def partner
     return unless verify_params([:partner_id])
 
-    partner = Partner.new(:key => params[:partner_id])
+    partner = SdbPartner.new(:key => params[:partner_id])
     partner.put('partner_id', params[:partner_id])
     partner.put('contact_name', params[:contact_name])
     partner.put('contact_phone', params[:contact_phone])
