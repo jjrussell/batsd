@@ -3,7 +3,7 @@ class Site::AppstatsController < Site::SiteController
   def index
     @appstat_list = []
     
-    partner = Partner.new(:key => params[:partner_id])
+    partner = SdbPartner.new(:key => params[:partner_id])
     if partner.get('apps')
       Rails.logger.info partner.get('apps')
       app_pairs = JSON.parse(partner.get('apps'))
