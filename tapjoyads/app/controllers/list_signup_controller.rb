@@ -6,7 +6,7 @@ class ListSignupController < ApplicationController
   layout 'iphone'
   
   def index
-    return unless verify_params([:publisher_app_id, :advertiser_app_id], {:allow_empty => false})
+    return unless verify_params([:udid, :publisher_app_id, :advertiser_app_id], {:allow_empty => false})
     
     @currency = Currency.new(:key => params[:publisher_app_id])
     @publisher_app = App.new(:key => params[:publisher_app_id])
@@ -52,7 +52,7 @@ class ListSignupController < ApplicationController
     else
       flash[:error] = "Invalid email address."
       flash[:email_address] = params[:email_address]
-      redirect_to :back
+      redirect_to "/list_signup?udid=#{params[:udid]}&publisher_app_id=#{params[:publisher_app_id]}&advertiser_app_id=#{params[:advertiser_app_id]}"
     end
   end
   
