@@ -6,6 +6,8 @@ class ListSignupController < ApplicationController
   layout 'iphone'
   
   def index
+    return unless verify_params([:publisher_app_id, :advertiser_app_id], {:allow_empty => false})
+    
     @currency = Currency.new(:key => params[:publisher_app_id])
     @publisher_app = App.new(:key => params[:publisher_app_id])
     @advertiser_app = App.new(:key => params[:advertiser_app_id])
