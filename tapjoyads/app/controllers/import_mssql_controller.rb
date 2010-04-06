@@ -298,9 +298,12 @@ class ImportMssqlController < ApplicationController
     payout.updated_at = params[:updated_at]
     payout.created_at = params[:created_at]
     
-    payout.save!
+    payout.valid?
+    render :text => payout.errors.to_s
     
-    render :template => 'layouts/success'
+    #payout.save!
+    
+    #render :template => 'layouts/success'
   end
   
   def conversion
