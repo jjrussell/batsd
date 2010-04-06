@@ -96,18 +96,16 @@ class ImportMssqlController < ApplicationController
     
     partner.save
 
-    partner = Partner.new do |p|
-      p.id = params[:partner_id]
-      p.contact_name = params[:contact_name] 
-      p.contact_phone = params[:contact_phone]
-      p.balance = params[:balance]
-      p.pending_earnings = params[:pending_earnings]
-    end
+    partner = Partner.find_or_initialize_by_id(params[:partner_id])
+    partner.contact_name = params[:contact_name] 
+    partner.contact_phone = params[:contact_phone] unless params[:contact_phone].blank?
+    partner.balance = params[:balance]
+    partner.pending_earnings = params[:pending_earnings]
     partner.save!
 
     render :template => 'layouts/success' 
   end
-      
+  
   def currency
     return unless verify_params([:app_id])
     
@@ -268,19 +266,17 @@ class ImportMssqlController < ApplicationController
   end
   
   def order
-    order = Order.new do |o|
-      o.id = params[:id]
-      o.partner_id = params[:partner_id]
-      o.payment_txn_id = params[:payment_txn_id] unless params[:payment_txn_id].blank?
-      o.refund_txn_id = params[:refund_txn_id] unless params[:refund_txn_id].blank?
-      o.coupon_id = params[:coupon_id] unless params[:coupon_id].blank?
-      o.status = params[:status]
-      o.payment_method = params[:payment_method]
-      o.amount = params[:amount]
-      
-      o.updated_at = params[:updated_at]
-      o.created_at = params[:created_at]
-    end
+    order = Order.find_or_initialize_by_id(params[:id])
+    order.partner_id = params[:partner_id]
+    order.payment_txn_id = params[:payment_txn_id] unless params[:payment_txn_id].blank?
+    order.refund_txn_id = params[:refund_txn_id] unless params[:refund_txn_id].blank?
+    order.coupon_id = params[:coupon_id] unless params[:coupon_id].blank?
+    order.status = params[:status]
+    order.payment_method = params[:payment_method]
+    order.amount = params[:amount]
+    
+    order.updated_at = params[:updated_at]
+    order.created_at = params[:created_at]
     
     order.save!
     
@@ -288,15 +284,13 @@ class ImportMssqlController < ApplicationController
   end
   
   def payout
-    payout = Payout.new do |p|
-      p.id = params[:id]
-      p.amount = params[:amount]
-      p.month = params[:month]
-      p.year = params[:year]
-      
-      p.updated_at = params[:updated_at]
-      p.created_at = params[:created_at]
-    end
+    payout = Payout.find_or_initialize_by_id(params[:id])
+    payout.amount = params[:amount]
+    payout.month = params[:month]
+    payout.year = params[:year]
+    
+    payout.updated_at = params[:updated_at]
+    payout.created_at = params[:created_at]
     
     payout.save!
     
@@ -304,19 +298,18 @@ class ImportMssqlController < ApplicationController
   end
   
   def conversion
-    conversion = Conversion.new do |c|
-      c.id = params[:id]
-      c.reward_id = params[:reward_id] unless params[:reward_id].blank?
-      c.advertiser_app_id = params[:advertiser_app_id] unless params[:advertiser_app_id].blank?
-      c.publisher_app_id = params[:publisher_app_id]
-      c.advertiser_amount = params[:advertiser_amount]
-      c.publisher_amount = params[:publisher_amount]
-      c.tapjoy_amount = params[:tapjoy_amount].to_i + params[:offerpal_amount].to_i
-      c.reward_type = params[:reward_type]
-      
-      c.updated_at = params[:updated_at]
-      c.created_at = params[:created_at]
-    end
+    conversion = Conversion.find_or_initialize_by_id(params[:id])
+    conversion.reward_id = params[:reward_id] unless params[:reward_id].blank?
+    conversion.advertiser_app_id = params[:advertiser_app_id] unless params[:advertiser_app_id].blank?
+    conversion.publisher_app_id = params[:publisher_app_id]
+    conversion.advertiser_amount = params[:advertiser_amount]
+    conversion.publisher_amount = params[:publisher_amount]
+    conversion.tapjoy_amount = params[:tapjoy_amount].to_i + params[:offerpal_amount].to_i
+    conversion.reward_type = params[:reward_type]
+    
+    conversion.updated_at = params[:updated_at]
+    conversion.created_at = params[:created_at]
+    
     conversion.save!
     
     render :template => 'layouts/success'

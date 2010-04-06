@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(:version => 20100405231045) do
 
   create_table "partners", :force => true do |t|
     t.string   "contact_name",                    :null => false
-    t.string   "contact_phone",                   :null => false
+    t.string   "contact_phone"
     t.integer  "balance",          :default => 0, :null => false
     t.integer  "pending_earnings", :default => 0, :null => false
     t.datetime "created_at"
