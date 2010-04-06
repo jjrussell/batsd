@@ -283,6 +283,8 @@ class ImportMssqlController < ApplicationController
     end
     
     order.save
+    
+    render :template => 'layouts/success'
   end
   
   def payout
@@ -297,6 +299,8 @@ class ImportMssqlController < ApplicationController
     end
     
     payout.save
+    
+    render :template => 'layouts/success'
   end
   
   def conversion
