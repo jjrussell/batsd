@@ -42,7 +42,7 @@ ActiveRecord::Schema.define(:version => 20100405231045) do
   add_index "orders", ["partner_id"], :name => "index_orders_on_partner_id"
 
   create_table "partners", :force => true do |t|
-    t.string   "contact_name",                    :null => false
+    t.string   "contact_name"
     t.string   "contact_phone"
     t.integer  "balance",          :default => 0, :null => false
     t.integer  "pending_earnings", :default => 0, :null => false
