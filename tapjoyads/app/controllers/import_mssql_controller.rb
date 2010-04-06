@@ -318,5 +318,7 @@ class ImportMssqlController < ApplicationController
       c.created_at = params[:created_at]
     end
     conversion.save
+    
+    render :template => 'layouts/success'
   end
 end
