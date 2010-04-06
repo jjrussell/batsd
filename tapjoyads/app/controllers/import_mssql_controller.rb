@@ -96,6 +96,15 @@ class ImportMssqlController < ApplicationController
     
     partner.save
 
+    partner = Partner.new do |p|
+      p.id = params[:partner_id]
+      p.contact_name = params[:contact_name] 
+      p.contact_phone = params[:contact_phone]
+      p.balance = params[:balance]
+      p.pending_earnings = params[:pending_earnings]
+    end
+    partner.save
+
     render :template => 'layouts/success' 
   end
       
@@ -256,5 +265,54 @@ class ImportMssqlController < ApplicationController
     campaign.save
   
     render :template => 'layouts/success'
+  end
+  
+  def order
+    order = Order.new do |o|
+      o.id = params[:id]
+      o.partner_id = params[:partner_id]
+      o.payment_txn_id = params[:payment_txn_id] unless params[:payment_txn_id].blank?
+      o.refund_txn_id = params[:refund_txn_id] unless params[:refund_txn_id].blank?
+      o.coupon_id = params[:coupon_id] unless params[:coupon_id].blank?
+      o.status = params[:status]
+      o.payment_method = params[:payment_method]
+      o.amount = params[:amount]
+      
+      o.updated_at = params[:updated_at]
+      o.created_at = params[:created_at]
+    end
+    
+    order.save
+  end
+  
+  def payout
+    payout = Payout.new do |p|
+      p.id = params[:id]
+      p.amount = params[:amount]
+      p.month = params[:month]
+      p.year = params[:year]
+      
+      p.updated_at = params[:updated_at]
+      p.created_at = params[:created_at]
+    end
+    
+    payout.save
+  end
+  
+  def conversion
+    conversion = Conversion.new do |c|
+      c.id = params[:id]
+      c.reward_id = params[:reward_id] unless params[:reward_id].blank?
+      c.advertiser_app_id = params[:advertiser_app_id] unless params[:advertiser_app_id].blank?
+      c.publisher_app_id = params[:publisher_app_id]
+      c.advertiser_amount = params[:advertiser_amount]
+      c.publisher_amount = params[:publisher_amount]
+      c.tapjoy_amount = params[:tapjoy_amount].to_i + params[:offerpal_amount].to_i
+      c.reward_type = params[:reward_type]
+      
+      c.updated_at = params[:updated_at]
+      c.created_at = params[:created_at]
+    end
+    conversion.save
   end
 end
