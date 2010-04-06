@@ -21,8 +21,8 @@ class ListSignupController < ApplicationController
       signup.udid = params[:udid]
       signup.publisher_app_id = params[:publisher_app_id]
       signup.advertiser_app_id = params[:advertiser_app_id]
-      signup.email_address = params[:email_address]
       signup.postal_code = geoip_data[:postal_code]
+      signup.city = geoip_data[:city]
       signup.sent_date = Time.now
       
       signup.save
