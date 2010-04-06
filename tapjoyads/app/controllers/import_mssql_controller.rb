@@ -97,7 +97,7 @@ class ImportMssqlController < ApplicationController
     partner.save
     
     partner = Partner.find_or_initialize_by_id(params[:partner_id])
-    partner.contact_name = params[:contact_name] 
+    partner.contact_name = params[:contact_name] unless params[:contact_name].blank?
     partner.contact_phone = params[:contact_phone] unless params[:contact_phone].blank?
     partner.balance = params[:balance]
     partner.pending_earnings = params[:pending_earnings]
