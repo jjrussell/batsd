@@ -103,7 +103,7 @@ class ImportMssqlController < ApplicationController
       p.balance = params[:balance]
       p.pending_earnings = params[:pending_earnings]
     end
-    partner.save
+    partner.save!
 
     render :template => 'layouts/success' 
   end
@@ -282,7 +282,7 @@ class ImportMssqlController < ApplicationController
       o.created_at = params[:created_at]
     end
     
-    order.save
+    order.save!
     
     render :template => 'layouts/success'
   end
@@ -298,7 +298,7 @@ class ImportMssqlController < ApplicationController
       p.created_at = params[:created_at]
     end
     
-    payout.save
+    payout.save!
     
     render :template => 'layouts/success'
   end
@@ -317,7 +317,7 @@ class ImportMssqlController < ApplicationController
       c.updated_at = params[:updated_at]
       c.created_at = params[:created_at]
     end
-    conversion.save
+    conversion.save!
     
     render :template => 'layouts/success'
   end
