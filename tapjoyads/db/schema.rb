@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100406223457) do
+ActiveRecord::Schema.define(:version => 20100406231908) do
 
   create_table "conversions", :force => true do |t|
     t.string   "reward_id",         :limit => 36
@@ -59,7 +59,7 @@ ActiveRecord::Schema.define(:version => 20100406223457) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "partner_id", :limit => 36,                :null => false
-    t.integer  "status",                                  :null => false
+    t.integer  "status",                   :default => 1, :null => false
   end
 
   add_index "payouts", ["id"], :name => "index_payouts_on_id", :unique => true
