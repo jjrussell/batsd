@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100405231045) do
+ActiveRecord::Schema.define(:version => 20100406223457) do
 
   create_table "conversions", :force => true do |t|
     t.string   "reward_id",         :limit => 36
@@ -53,13 +53,16 @@ ActiveRecord::Schema.define(:version => 20100405231045) do
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
 
   create_table "payouts", :force => true do |t|
-    t.integer  "amount",     :default => 0, :null => false
-    t.integer  "month",                     :null => false
-    t.integer  "year",                      :null => false
+    t.integer  "amount",                   :default => 0, :null => false
+    t.integer  "month",                                   :null => false
+    t.integer  "year",                                    :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "partner_id", :limit => 36,                :null => false
+    t.integer  "status",                                  :null => false
   end
 
   add_index "payouts", ["id"], :name => "index_payouts_on_id", :unique => true
+  add_index "payouts", ["partner_id"], :name => "index_payouts_on_partner_id"
 
 end
