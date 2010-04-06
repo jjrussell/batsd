@@ -22,6 +22,7 @@ end
 deploy_group = ARGV[0] # 'api' or 'website'
 environment = ARGV[1] # 'production' or 'testing'
 version_number = ARGV[2] # 'trunk' or a deploy number
+svn_repo = File.exist?('.svn/')
 
 if environment == 'production'
   puts "PRODUCTION deploy"
@@ -46,7 +47,11 @@ unless server_groups
 end
 
 puts "\nUpdating local svn"
-puts `svn update`
+if svn_repo
+  puts `svn update`
+else
+  puts `git svn rebase`
+end
 
 unless version_number
   settings = YAML::load_file(SERVER_CONFIG_FILENAME)
@@ -71,7 +76,13 @@ unless version_number
        "-m \"Creating deploy branch #{version_number}\"")
        
     puts "Incrementing version in config file."
-    system("svn commit #{SERVER_CONFIG_FILENAME} -m 'Incrementing config version number to #{version_number}'")
+    if svn_repo
+      system("svn commit #{SERVER_CONFIG_FILENAME} -m 'Incrementing config version number to #{version_number}'")
+    else
+      system("git add #{SERVER_CONFIG_FILENAME}")
+      system("git commit -m 'Incrementing config version number to #{version_number}'")
+      system("git svn dcommit")
+    end
   end
 end
 
