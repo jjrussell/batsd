@@ -95,12 +95,16 @@ class ImportMssqlController < ApplicationController
     partner.put('apps',params[:apps], {:cgi_escape => true})
     
     partner.save
-
+    
     partner = Partner.find_or_initialize_by_id(params[:partner_id])
     partner.contact_name = params[:contact_name] 
     partner.contact_phone = params[:contact_phone] unless params[:contact_phone].blank?
     partner.balance = params[:balance]
     partner.pending_earnings = params[:pending_earnings]
+    
+    partner.updated_at = params[:updated_at]
+    partner.created_at = params[:created_at]
+    
     partner.save!
 
     render :template => 'layouts/success' 
