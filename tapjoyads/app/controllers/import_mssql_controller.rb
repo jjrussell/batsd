@@ -289,7 +289,7 @@ class ImportMssqlController < ApplicationController
   
   def payout
     payout = Payout.find_or_initialize_by_id(params[:id])
-    payout.partner_id = paramsp[:partner_id]
+    payout.partner_id = params[:partner_id]
     payout.amount = params[:amount]
     payout.month = params[:month]
     payout.year = params[:year]
