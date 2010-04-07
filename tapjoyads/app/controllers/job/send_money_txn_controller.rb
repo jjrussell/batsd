@@ -54,9 +54,9 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
         c.advertiser_amount = reward.get('advertiser_amount')
         c.publisher_amount = reward.get('publisher_amount')
         c.tapjoy_amount = values[:tapjoy_amount].to_i + values[:offerpal_amount].to_i
-        #c.reward_type = 
+        c.reward_type_string = reward.get('type')
       end
-      conversion.save
+      conversion.save!
       
       reward.put('sent_money_txn', Time.now.utc.to_f.to_s)
       reward.save      
