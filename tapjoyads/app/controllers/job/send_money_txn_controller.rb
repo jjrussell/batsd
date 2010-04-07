@@ -30,6 +30,8 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
         reward.put('offerpal_amount', values[:offerpal_amount])
       end
 
+      conversion_id = UUIDTools::UUID.random_create.to_s
+
       #win_lb = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/Service1.asmx/'
       win_lb = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/Service1.asmx/'
       url = win_lb + "SubmitMoneyTxn?password=asfyrexvlkjewr214314" + 
@@ -39,10 +41,22 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
         "&publisher_amount=#{CGI::escape(reward.get('publisher_amount'))}" +
         "&advertiser_amount=#{CGI::escape(reward.get('advertiser_amount'))}" +
         "&tapjoy_amount=#{CGI::escape(reward.get('tapjoy_amount'))}" +
-        "&offerpal_amount=#{CGI::escape(reward.get('offerpal_amount'))}"
-        
+        "&offerpal_amount=#{CGI::escape(reward.get('offerpal_amount'))}" +
+        "&money_txn_id=#{conversion_id}"
       
       download_with_retry(url, {:timeout => 30}, {:retries => 3, :alert => true})
+      
+      conversion = Conversion.new do |c|
+        c.id = conversion_id
+        c.reward_id = reward.key
+        c.advertiser_app_id = reward.get('advertiser_app_id')
+        c.publisher_app_id = reward.get('publisher_app_id')
+        c.advertiser_amount = reward.get('advertiser_amount')
+        c.publisher_amount = reward.get('publisher_amount')
+        c.tapjoy_amount = values[:tapjoy_amount].to_i + values[:offerpal_amount].to_i
+        #c.reward_type = 
+      end
+      conversion.save
       
       reward.put('sent_money_txn', Time.now.utc.to_f.to_s)
       reward.save      
