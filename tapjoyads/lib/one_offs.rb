@@ -5,6 +5,7 @@ class OneOffs
     line_counter = 0
     file.each_line do |line|
       line_counter += 1
+      puts line_counter if line_counter % 10000 == 0
 
       # the first 2 lines are headers
       if line_counter < 3
@@ -32,12 +33,17 @@ class OneOffs
         c.reward_type = 999
         c.created_at = Time.parse(vals[10] + ' CST').utc
         c.updated_at = Time.parse(vals[10] + ' CST').utc
-        c.save!
+        begin
+          c.save!
+        rescue Exception => e
+          puts "*** retrying *** #{e.message}"
+          retry
+        end
       end
     end
     file.close
   end
-  
+
   def self.get_udids(app_id, output_file)
     file = File.open(output_file, 'w')
     20.times do |i|
