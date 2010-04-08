@@ -8,4 +8,15 @@ class Payout < ActiveRecord::Base
   validates_numericality_of :year, :only_integer => true, :allow_nil => false, :greater_than => 2007
   validates_numericality_of :amount, :only_integer => true, :allow_nil => false
   validates_inclusion_of :status, :in => [ 0, 1 ]
+  
+  after_save :update_balance
+  
+private
+
+  def update_balance
+    return true if self.amount == 0
+    partner.pending_earning -= self.amount
+    partner.save!
+  end
+  
 end

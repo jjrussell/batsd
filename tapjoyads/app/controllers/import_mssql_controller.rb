@@ -99,14 +99,14 @@ class ImportMssqlController < ApplicationController
     partner = Partner.find_or_initialize_by_id(params[:partner_id])
     partner.contact_name = params[:contact_name] unless params[:contact_name].blank?
     partner.contact_phone = params[:contact_phone] unless params[:contact_phone].blank?
-    partner.balance = params[:balance]
-    partner.pending_earnings = params[:pending_earnings]
+    # partner.balance = params[:balance]
+    # partner.pending_earnings = params[:pending_earnings]
     
     partner.updated_at = Time.parse(params[:updated_at] + ' CST').utc
     partner.created_at = Time.parse(params[:created_at] + ' CST').utc
     
     partner.save!
-
+    
     render :template => 'layouts/success' 
   end
   
