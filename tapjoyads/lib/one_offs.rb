@@ -37,5 +37,22 @@ class OneOffs
     end
     file.close
   end
+  
+  def self.get_udids(app_id, output_file)
+    file = File.open(output_file, 'w')
+    20.times do |i|
+      counter = 0
+      SimpledbResource.select(:domain_name => "device_app_list_#{i}", :where => "`app.#{app_id}` != ''") do |device|
+        organic_paid = "organic"
+        click = StoreClick.new(:key => "#{device.key}.#{app_id}")
+        organic_paid = "paid" if click && click.get('installed')
+        file.puts "#{device.key}, #{organic_paid}"
+        counter += 1
+        puts "Finished #{counter}" if counter % 100 == 0
+      end
+      puts "Completed device_app_list_#{i}"
+    end
+    file.close
+  end
 
 end
