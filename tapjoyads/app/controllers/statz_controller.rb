@@ -2,7 +2,7 @@ class StatzController < ApplicationController
   include AuthenticationHelper
   include MemcachedHelper
 
-  before_filter 'authenticate'
+  before_filter 'statz_authenticate'
   
   def index
     @install_count_24hours = get_from_cache('statz.install_count_24hours')

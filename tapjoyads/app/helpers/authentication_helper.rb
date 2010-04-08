@@ -27,4 +27,13 @@ module AuthenticationHelper
       end
     end
   end
+  
+  def statz_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'internal'
+        password = 'TJ73business'
+      end
+      password
+    end
+  end
 end
