@@ -2,20 +2,18 @@ class OneOffs
 
   def self.import_conversions
     file = File.open('tmp/conversions.txt', 'r')
-    first_line = true
+    line_counter = 0
     file.each_line do |line|
+      line_counter += 1
 
-      # nasty hack alert!
-      # for some reason the first line of this imput file doesn't work so just print
-      # it and manually insert the record
-      if first_line
-        puts "*** first line ***"
-        puts line
-        first_line = false
+      # the first 2 lines are headers
+      if line_counter < 3
         next
       end
 
       vals = line.split(' ', 11)
+
+      # check to see if this line is a complete conversion record and not just a summary/blank line
       unless vals.length == 11
         puts "*** weird line ***"
         puts line
