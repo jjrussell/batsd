@@ -10,7 +10,7 @@ class Job::MasterCleanupWebRequestsController < Job::JobController
     3.times do
       date_string = day.iso8601[0,10]
       send_to_sqs(QueueNames::CLEANUP_WEB_REQUESTS, date_string)
-      day = day - 3.days
+      day = day - 7.days
     end
     
     render :text => 'ok'
