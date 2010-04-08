@@ -102,8 +102,8 @@ class ImportMssqlController < ApplicationController
     partner.balance = params[:balance]
     partner.pending_earnings = params[:pending_earnings]
     
-    partner.updated_at = params[:updated_at]
-    partner.created_at = params[:created_at]
+    partner.updated_at = Time.parse(params[:updated_at] + ' CST').utc
+    partner.created_at = Time.parse(params[:created_at] + ' CST').utc
     
     partner.save!
 
@@ -279,8 +279,8 @@ class ImportMssqlController < ApplicationController
     order.payment_method = params[:payment_method]
     order.amount = params[:amount]
     
-    order.updated_at = params[:updated_at]
-    order.created_at = params[:created_at]
+    order.updated_at = Time.parse(params[:updated_at] + ' CST').utc
+    order.created_at = Time.parse(params[:created_at] + ' CST').utc
     
     order.save!
     
@@ -295,8 +295,8 @@ class ImportMssqlController < ApplicationController
     payout.year = params[:year]
     payout.status = params[:status]
     
-    payout.updated_at = params[:updated_at]
-    payout.created_at = params[:created_at]
+    payout.updated_at = Time.parse(params[:updated_at] + ' CST').utc
+    payout.created_at = Time.parse(params[:created_at] + ' CST').utc
     
     payout.save!
     
@@ -317,8 +317,8 @@ class ImportMssqlController < ApplicationController
     conversion.tapjoy_amount = params[:tapjoy_amount].to_i + params[:offerpal_amount].to_i
     conversion.reward_type = 999
     
-    conversion.updated_at = params[:updated_at]
-    conversion.created_at = params[:created_at]
+    conversion.updated_at = Time.parse(params[:updated_at] + ' CST').utc
+    conversion.created_at = Time.parse(params[:created_at] + ' CST').utc
     
     conversion.save!
     

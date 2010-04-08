@@ -31,9 +31,9 @@ class OneOffs
         c.advertiser_amount = vals[4].to_i
         c.publisher_amount = vals[3].to_i
         c.tapjoy_amount = vals[5].to_i + vals[6].to_i
-        c.reward_type = vals[9].to_i
-        c.reward_type = 999 if c.reward_type == 6
-        c.created_at = Time.zone.parse(vals[10])
+        c.reward_type = 999
+        c.created_at = Time.parse(vals[10] + ' CST').utc
+        c.updated_at = Time.parse(vals[10] + ' CST').utc
         c.save!
       end
     end
