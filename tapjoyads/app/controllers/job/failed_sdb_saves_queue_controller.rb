@@ -42,7 +42,7 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
     
     if sdb_item.this_domain_name =~ /^device_app_list/
       num = sdb_item.this_domain_name.match(/^device_app_list_(.*)/)[1]
-      if num > 19
+      if num.to_i > 19
         bucket.move_key(json['uuid'], "complete/#{json['uuid']}")
         return
       end
