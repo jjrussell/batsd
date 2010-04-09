@@ -3,7 +3,7 @@ class DeviceAppList < SimpledbResource
   def dynamic_domain_name
     # We need to lookup the domain number for this device from the device_lookup domain.
     lookup = DeviceLookup.new(:key => @key)
-    domain_number = lookup.get('app_list')
+    domain_number = lookup.get('app_list', :force_array => true)[0]
 
     if domain_number.nil?
       # This is a new device, so add it to the DeviceLookup table.
