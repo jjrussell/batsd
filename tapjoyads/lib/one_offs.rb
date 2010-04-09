@@ -5,7 +5,7 @@ class OneOffs
     line_counter = 0
     file.each_line do |line|
       line_counter += 1
-      puts line_counter if line_counter % 10000 == 0
+      puts "#{line_counter} - #{Time.now}" if line_counter % 500 == 0
 
       # the first 2 lines are headers
       if line_counter < 3
