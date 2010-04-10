@@ -35,7 +35,7 @@ class ListSignupController < ApplicationController
       #TapjoyMailer.deliver_email_signup(params[:email_address], signup.key, @currency.currency_name, @publisher_app.name, @currency.get_app_currency_reward(@advertiser_app))
       
       # Send the emails via 4info.
-      key = Digest::MD5.hexdigest("#{signup.email_address}xFBysLNwaCRhGYKGXkpHjzWbVehBhE")
+      key = Digest::MD5.hexdigest("#{params[:email_address]}xFBysLNwaCRhGYKGXkpHjzWbVehBhE")
       
       reward_text = CGI::escape(@currency.get_app_currency_reward(@advertiser_app) + ' ' +
           @publisher_app.name + ' ' + @currency.currency_name)
