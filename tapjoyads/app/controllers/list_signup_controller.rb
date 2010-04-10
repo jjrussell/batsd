@@ -43,7 +43,7 @@ class ListSignupController < ApplicationController
       url = 'http://www.4infoalerts.com/wap/tapjoy/post_email_address' +
           "?campaignId=#{@advertiser_app.custom_app_id}" +
           "&id=#{signup.key}" +
-          "&email=#{params[:email_address]}" +
+          "&email=#{CGI::escape(params[:email_address])}" +
           "&reward=#{reward_text}" +
           "&udid=#{signup.udid}" +
           "&key=#{key}"
