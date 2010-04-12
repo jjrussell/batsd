@@ -49,7 +49,7 @@ class SdbBackup
         item.delete_all
       end
     end
-  rescue AwsError => e
+  rescue RightAws::AwsError => e
     logger.info "Error while trying to back up #{domain_name}: #{e}"
   ensure
     `rm #{file_name}`
@@ -63,7 +63,7 @@ class SdbBackup
         bucket.put(s3_name, open(local_name))
         Rails.logger.info "Successfully stored #{local_name} to s3 as #{s3_name}."
         return
-      rescue AwsError => e
+      rescue RightAws::AwsError => e
         Rails.logger.info "Failed attempt to store #{local_name} to s3. Error: #{e}"
       end
     end
