@@ -47,6 +47,7 @@ class BoolConverter
 end
 
 class JsonConverter
+  # TODO: Cache json once it's been parsed once.
   def from_string(s)
     JSON.parse(s)
   end
@@ -190,6 +191,7 @@ class SimpledbResource
     updated_at = options.delete(:updated_at) { true }
     write_to_sdb = options.delete(:write_to_sdb) { true }
     catch_exceptions = options.delete(:catch_exceptions) { true }
+    expected_attr = options.delete(:expected_attr) { {} }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     Rails.logger.info "Saving to #{@this_domain_name}"
@@ -197,11 +199,13 @@ class SimpledbResource
     put('updated-at', Time.now.utc.to_f.to_s) if updated_at
     
     time_log("Saving to sdb") do
+      self.write_to_sdb(expected_attr) if write_to_sdb
       self.write_to_memcache if write_to_memcache
-      self.write_to_sdb if write_to_sdb
     end
     
     #increment_domain_freq_count
+  rescue ExpectedAttributeError => e
+    raise e
   rescue Exception => e
     unless catch_exceptions
       raise e
@@ -306,6 +310,33 @@ class SimpledbResource
   def delete_all
     delete_from_cache(get_memcache_key)
     @@sdb.delete_attributes(@this_domain_name, key)
+  end
+  
+  ##
+  # Loads a single row from this domain, modifies it, and saves it. Uses SDB's Conditional Put
+  # on the 'version' attribute to ensure that the row has been unmodified during the course of
+  # the transaction. If the row has been modified, then the transaction will be retried, up to
+  # the amount of times s
+  def self.transaction(load_options, options = {})
+    version_attr = options.delete(:version_attr) { :version }
+    retries = options.delete(:retries) { 3 }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
+    begin
+      row = self.new(load_options)
+      initial_version = row.get(version_attr)
+      
+      yield(row)
+      
+      row.serial_save(:expected_attr => {version_attr => initial_version})
+    rescue ExpectedAttributeError => e
+      if retries > 0
+        retries -= 1
+        retry
+      else
+        raise e
+      end
+    end
   end
   
   ##
@@ -453,9 +484,11 @@ class SimpledbResource
     return self.new(options)
   end
   
+  class ExpectedAttributeError < RuntimeError; end
+  
   protected
   
-  def write_to_sdb
+  def write_to_sdb(expected_attr = {})
     attributes_to_put = @attributes_to_add.merge(@attributes_to_replace)
     attributes_to_delete = @attributes_to_delete.clone
     @attribute_names_to_delete.each do |attr_name_to_delete|
@@ -464,10 +497,10 @@ class SimpledbResource
     
     begin
       unless attributes_to_put.empty?
-        @@sdb.put_attributes(@this_domain_name, @key, attributes_to_put, @attributes_to_replace.keys)
+        @@sdb.put_attributes(@this_domain_name, @key, attributes_to_put, @attributes_to_replace.keys, expected_attr)
       end
       unless attributes_to_delete.empty?
-        @@sdb.delete_attributes(@this_domain_name, @key, attributes_to_delete)
+        @@sdb.delete_attributes(@this_domain_name, @key, attributes_to_delete, expected_attr)
       end
     rescue AwsError => e
       if e.message.starts_with?("NoSuchDomain")
@@ -475,6 +508,8 @@ class SimpledbResource
           @@sdb.create_domain(@this_domain_name)
         end
         retry
+      elsif e.message.starts_with?("ConditionalCheckFailed")
+        raise ExpectedAttributeError.new(e.message)
       else
         raise e
       end
