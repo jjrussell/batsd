@@ -50,7 +50,7 @@ class SdbBackup
       end
     end
   rescue RightAws::AwsError => e
-    logger.info "Error while trying to back up #{domain_name}: #{e}"
+    Rails.logger.info "Error while trying to back up #{domain_name}: #{e}"
   ensure
     `rm #{file_name}`
     `rm #{gzip_file_name}`
