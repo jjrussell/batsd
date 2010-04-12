@@ -101,10 +101,12 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
       new_show_rate = 0
     end
     
-    total_installs = StoreClick.count(:where => "installed != '' and advertiser_app_id = '#{app_key}'").to_f
-    if app.overall_budget > 0 and total_installs > app.overall_budget
-      Rails.logger.info "App over overall_budget. Overriding any calculations and setting show rate to 0."
-      new_show_rate = 0
+    if app.overall_budget > 0
+      total_installs = StoreClick.count(:where => "installed != '' and advertiser_app_id = '#{app_key}'").to_f
+      if total_installs > app.overall_budget
+        Rails.logger.info "App over overall_budget. Overriding any calculations and setting show rate to 0."
+        new_show_rate = 0
+      end
     end
     
     Rails.logger.info "New show_rate: #{new_show_rate}"
