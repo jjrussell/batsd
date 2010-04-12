@@ -58,64 +58,19 @@ class Job::CleanupWebRequestsController < Job::SqsReaderController
     date_string = message.to_s
     
     MAX_WEB_REQUEST_DOMAINS.times do |num|
-      backup_domain("web-request-#{date_string}-#{num}")
+      archive_domain("web-request-#{date_string}-#{num}")
     end
   end
   
   ##
   # Backs up the specified domain name to s3.
-  # Each line of the file represents a single item. The contents of the line are 
-  # determined by calling SimpledbResource.serialize.
-  # The file is then gzipped using the system `gzip` command.
-  # Next, the file is uploaded to s3, in to the 'web-requests' bucket.
-  # Finally, assuming no errors have occurred, the domain is deleted.
-  def backup_domain(domain_name)
-    Rails.logger.info "Backing up domain: #{domain_name}"
-    file_name = "tmp/#{RUN_MODE_PREFIX}#{domain_name}.sdb"
-    gzip_file_name = "#{file_name}.gz"
-    s3_name = "#{RUN_MODE_PREFIX}#{domain_name}.sdb"
+  # If no errors have occur while backing up, the domain is deleted.
+  def archive_domain(domain_name)
+    SdbBackup.backup_domain(domain_name, 'web-requests')
     
-    time_log("Backed up domain: #{domain_name}") do
-      file = open(file_name, 'w')
+    reponse = SimpledbResource.delete_domain(domain_name)
+    Rails.logger.info "Deleted domain. Box usage for delete: #{response[:box_usage]}"
     
-      count = 0
-      response = SimpledbResource.select(:domain_name => domain_name) do |item|
-        count += 1
-        file.write(item.serialize)
-        file.write("\n")
-      end
-      box_usage = response[:box_usage]
-      
-      file.close
-    
-      Rails.logger.info "Made #{count} select queries. Total box usage: #{box_usage}"
-    
-      `gzip -f #{file_name}`
-
-      write_to_s3(s3_name, gzip_file_name, 3)
-  
-      reponse = SimpledbResource.delete_domain(domain_name)
-      Rails.logger.info "Deleted domain. Box usage for delete: #{response[:box_usage]}"
-    end
     logger.info "Successfully backed up #{domain_name}"
-  rescue AwsError => e
-    logger.info "Error while trying to back up #{domain_name}: #{e}"
-  ensure
-    `rm #{file_name}`
-    `rm #{gzip_file_name}`
-  end
-  
-  
-  def write_to_s3(s3_name, local_name, num_retries)
-    num_retries.times do
-      begin
-        @bucket.put(s3_name, open(local_name))
-        Rails.logger.info "Successfully stored #{local_name} to s3 as #{s3_name}."
-        return
-      rescue AwsError => e
-        Rails.logger.info "Failed attempt to store #{local_name} to s3. Error: #{e}"
-      end
-    end
-    raise "Failed to save #{local_name} to s3."
   end
 end
