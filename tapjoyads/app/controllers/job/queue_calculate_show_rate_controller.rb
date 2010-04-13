@@ -18,8 +18,8 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     timeframe = 20.minutes
     
     cvr_timeframe = app.is_free ? 1.hour : 24.hours
-    recent_clicks = StoreClick.count(:where => "click_date > '#{now.to_f - cvr_timeframe}' and advertiser_app_id = '#{app_key}'").to_f
-    recent_installs = StoreClick.count(:where => "installed > '#{now.to_f - cvr_timeframe}' and advertiser_app_id = '#{app_key}'").to_f
+    recent_clicks = StoreClick.count(:where => "click_date > '#{now.to_f - cvr_timeframe}' and click_date < '#{now.to_f - 5.minutes}' and advertiser_app_id = '#{app_key}'").to_f
+    recent_installs = StoreClick.count(:where => "click_date > '#{now.to_f - cvr_timeframe}' and click_date < '#{now.to_f - 5.minutes}' and installed != '' and advertiser_app_id = '#{app_key}'").to_f
     
     if recent_clicks == 0
       conversion_rate = app.get('price').to_f > 0 ? 0.3 : 0.75
