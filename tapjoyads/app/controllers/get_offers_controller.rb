@@ -51,7 +51,11 @@ class GetOffersController < ApplicationController
       #store_offer_wall
       
       if params[:redirect] == '1'
-        render :template => 'get_offers/installs_redirect'
+        if params[:json] == '1'
+          render :template => 'get_offers/installs_redirect_json', :content_type => 'application/json'
+        else
+          render :template => 'get_offers/installs_redirect'
+        end
       elsif params[:server] == '1'
         render :template => 'get_offers/installs_server'
       else
