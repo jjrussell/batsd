@@ -4,7 +4,6 @@
     {
       "Cost":<%= app.get_cost.to_json %>,
       "Amount":<%= @currency.get_app_currency_reward(app).to_json %>,
-      "Description":<%= app.get('description').to_json %>,
       "IconURL":<%= app.get_icon_url(true).to_json %>,
       "Name":<%= app.get('name').to_json %>,
       "RedirectURL":<%= app.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid]).to_json %>,
