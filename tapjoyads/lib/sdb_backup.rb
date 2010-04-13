@@ -28,7 +28,7 @@ class SdbBackup
   
     item_list = []
     count = 0
-    response = SimpledbResource.select(:domain_name => domain_name, :where => where) do |item|
+    response = SimpledbResource.select(:domain_name => domain_name, :where => where, :retries => 200) do |item|
       count += 1
       file.write(item.serialize)
       file.write("\n")
