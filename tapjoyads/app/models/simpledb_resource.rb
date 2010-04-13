@@ -362,7 +362,9 @@ class SimpledbResource
   # and returns the number.
   def self.count(options = {})
     where =       options.delete(:where)
+    next_token =  options.delete(:next_token)
     domain_name = options.delete(:domain_name) { self.domain_name }
+    retries =     options.delete(:retries) { 10 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Must provide a domain name" unless domain_name
 
@@ -372,8 +374,22 @@ class SimpledbResource
     query += " WHERE #{where}" if where
     
     count = 0
-    response = @@sdb.select(query) do |response|
+    loop do
+      begin
+        response = @@sdb.select(query, next_token)
+      rescue AwsError => e
+        Rails.logger.info "Error: #{e}. Retrying up to #{retries} more times."
+        if retries > 0
+          retries -= 1
+          retry
+        else
+          raise e
+        end
+      end
+      
       count += response[:items][0]['Domain']['Count'][0].to_i
+      
+      break if response[:next_token].nil?
     end
     return count
   end
@@ -387,6 +403,7 @@ class SimpledbResource
     limit =       options.delete(:limit)
     next_token =  options.delete(:next_token)
     domain_name = options.delete(:domain_name) { self.domain_name }
+    retries =     options.delete(:retries) { 10 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Must provide a domain name" unless domain_name
     
@@ -400,7 +417,19 @@ class SimpledbResource
     sdb_item_array = []
     box_usage = 0
     
-    @@sdb.select(query, next_token) do |response|
+    loop do
+      begin
+        response = @@sdb.select(query, next_token)
+      rescue AwsError => e
+        Rails.logger.info "Error: #{e}. Retrying up to #{retries} more times."
+        if retries > 0
+          retries -= 1
+          retry
+        else
+          raise e
+        end
+      end
+      
       response[:items].each do |item|
         
         sdb_item = self.new({
@@ -425,7 +454,8 @@ class SimpledbResource
         }
       end
       
-      block_given?
+      next_token = response[:next_token]
+      break if next_token.nil?
     end
     
     return {:box_usage => box_usage}
