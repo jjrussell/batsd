@@ -46,7 +46,11 @@ class SdbBackup
     
     if delete_rows
       item_list.each do |item|
-        item.delete_all
+        begin
+          item.delete_all
+        rescue RightAws::AwsError =>e
+          retry
+        end
       end
     end
   rescue RightAws::AwsError => e
@@ -58,6 +62,11 @@ class SdbBackup
   
   def self.write_to_s3(s3_name, local_name, bucket_name, num_retries)
     bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + bucket_name)
+    
+    while bucket.key(s3_name).exists?
+      s3_name += '_2'
+    end
+    
     num_retries.times do
       begin
         bucket.put(s3_name, open(local_name))
