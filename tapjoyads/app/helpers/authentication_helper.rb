@@ -36,4 +36,13 @@ module AuthenticationHelper
       password
     end
   end
+  
+  def tapulous_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'tapulous'
+        password = 'TTR3ftw'
+      end
+      password
+    end
+  end
 end

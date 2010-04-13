@@ -1,0 +1,8 @@
+xml.instruct!
+xml.MarketingData do
+  xml.Date @date
+  xml.PaidInstalls @paid_installs
+  xml.Spend @spend
+  xml.PublishedInstalls @published_installs
+  xml.Revenue @revenue
+end
