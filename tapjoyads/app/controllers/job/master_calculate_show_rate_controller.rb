@@ -5,7 +5,7 @@ class Job::MasterCalculateShowRateController < Job::JobController
   
   def index
     App.select(:attributes => 'itemName()', 
-        :where => "install_tracking = '1' and payment_for_install > '0'") do |app|
+        :where => "install_tracking = '1' and payment_for_install > '0' and balance > '0'") do |app|
       
       send_to_sqs(QueueNames::CALCULATE_SHOW_RATE, app.key)
       
