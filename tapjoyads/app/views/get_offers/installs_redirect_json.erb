@@ -6,8 +6,7 @@
       "Amount":<%= @currency.get_app_currency_reward(app).to_json %>,
       "IconURL":<%= app.get_icon_url(true).to_json %>,
       "Name":<%= app.get('name').to_json %>,
-      "RedirectURL":<%= app.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid]).to_json %>,
-      "StoreID":<%= app.get_store_id.to_json %>
+      "RedirectURL":<%= app.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid]).to_json %>
     }
     <%= ',' if i < @advertiser_app_list.length - 1 -%>
   <% end %>
