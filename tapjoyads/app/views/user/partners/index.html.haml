@@ -1,0 +1,24 @@
+%h1 Partners
+
+= link_to 'New Partner', new_user_partner_path
+
+%table{ :border => '1px', :style => 'border-collapse: collapse;' }
+  %thead
+    %tr
+      %th ID
+      %th Contact Name
+      %th Contact Phone
+      %th Balance
+      %th Pending Earnings
+      %th
+  %tbody
+    - @partners.each do |partner|
+      %tr
+        %td= partner.id
+        %td= partner.contact_name
+        %td= partner.contact_phone
+        %td= number_to_currency(partner.balance / 100.0)
+        %td= number_to_currency(partner.pending_earnings / 100.0)
+        %td= link_to 'Edit', edit_user_partner_path(partner)
+
+= will_paginate(@partners)

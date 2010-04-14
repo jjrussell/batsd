@@ -1,0 +1,31 @@
+!!!
+
+%html
+  %head
+    %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
+    %title Tapjoy.com
+    = stylesheet_link_tag 'user'
+    = yield :included_stylesheets
+    
+  %body
+    #content
+      #user_nav
+        - if current_user
+          Welcome, #{current_user.username}.
+          = link_to 'Edit Profile', edit_user_user_path(:current)
+          |
+          = link_to 'Logout', user_logout_path
+        - else
+          = link_to 'Register', new_user_user_path
+          |
+          = link_to 'Login', user_login_path
+      
+      - flash.each do |name, msg|
+        .flash{ :id => "flash_#{name}" }= msg
+      
+      = yield
+      
+      = yield :included_javascripts
+      
+      %script{ :type => 'text/javascript', :charset => 'utf-8' }
+        = yield :page_javascript

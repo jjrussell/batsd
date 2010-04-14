@@ -1,0 +1,9 @@
+%h1 New User Role
+
+- form_for [ :user, @user_role ] do |f|
+  = f.error_messages
+  .field
+    = f.label :name
+    = f.text_field :name
+  .field
+    = f.submit 'Create'

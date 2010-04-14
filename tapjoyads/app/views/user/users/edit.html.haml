@@ -1,0 +1,18 @@
+%h1 Edit Profile
+
+- form_for [ :user, @user ] do |f|
+  = f.error_messages
+  .field
+    = f.label :username
+    = f.text_field :username
+  .field
+    = f.label :email
+    = f.text_field :email
+  .field
+    = f.label :password
+    = f.password_field :password
+  .field
+    = f.label :password_confirmation
+    = f.password_field :password_confirmation
+  .field
+    = f.submit 'Update'

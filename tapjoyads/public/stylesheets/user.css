@@ -1,0 +1,17 @@
+#user_nav {
+  float: right;
+}
+
+div.flash {
+  margin: 5px;
+  padding: 5px;
+  width: 60%;
+}
+
+#flash_notice {
+  background-color: green;
+}
+
+#flash_error {
+  background-color: red;
+}

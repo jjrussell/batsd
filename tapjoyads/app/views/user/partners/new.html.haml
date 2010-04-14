@@ -1,0 +1,12 @@
+%h1 New Partner
+
+- form_for [ :user, @partner ] do |f|
+  = f.error_messages
+  .field
+    = f.label :contact_name
+    = f.text_field :contact_name
+  .field
+    = f.label :contact_phone
+    = f.text_field :contact_phone
+  .field
+    = f.submit 'Create'

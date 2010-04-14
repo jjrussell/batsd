@@ -37,6 +37,16 @@ ActionController::Routing::Routes.draw do |map|
     site.resources :appstats, :only => [:show, :index]
   end
   
+  map.user 'user', :controller => 'user/dashboard', :action => 'show'
+  map.namespace :user do |user|
+    user.login 'login', :controller => 'user_sessions', :action => 'new'
+    user.logout 'logout', :controller => 'user_sessions', :action => 'destroy'
+    user.resources :users, :only => [ :new, :create, :edit, :update ]
+    user.resources :user_sessions, :only => [ :new, :create, :destroy ]
+    user.resources :partners, :except => [ :show, :destroy ]
+    user.resources :user_roles, :except => [ :show ]
+  end
+  
   # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
   # map.root :controller => "welcome"
 

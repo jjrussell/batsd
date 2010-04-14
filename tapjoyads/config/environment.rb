@@ -37,6 +37,10 @@ Rails::Initializer.run do |config|
   config.gem 'amazon-ec2', :lib => "AWS"
   config.gem 'geoip'
   config.gem 'hoptoad_notifier'
+  config.gem 'authlogic', :version => '2.1.3'
+  config.gem 'declarative_authorization', :version => '0.4.1'
+  config.gem 'haml', :version => '2.2.23'
+  config.gem 'will_paginate', :version => '2.3.12'
   
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
