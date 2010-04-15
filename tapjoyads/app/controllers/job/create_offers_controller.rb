@@ -25,7 +25,7 @@ class Job::CreateOffersController < Job::SqsReaderController
         :where => "currency_name != ''"}) do |item|
       app_currency_list.push(item)
     end
-    
+   
     drop_id = 'b7b401f73d98ff21792b49117edd8b9f'
     
     countries.each do |country|
@@ -34,7 +34,7 @@ class Job::CreateOffersController < Job::SqsReaderController
       offer_hash = {}
       
       for offset in [0,30]
-        url = "http://pub.myofferpal.com/#{drop_id}/showoffersAPI.action?snuid=TAPJOY_GENERIC&country=#{CGI::escape(country)}" +
+        url = "http://api110.myofferpal.com/#{drop_id}/showoffersAPI.action?snuid=TAPJOY_GENERIC&country=#{CGI::escape(country)}" +
           "&category=iPhone%20Optimized&offset=#{offset}"
         
         begin
