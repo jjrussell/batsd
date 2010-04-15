@@ -389,7 +389,8 @@ class SimpledbResource
       
       count += response[:items][0]['Domain']['Count'][0].to_i
       
-      break if response[:next_token].nil?
+      next_token = response[:next_token]
+      break if next_token.nil?
     end
     return count
   end
