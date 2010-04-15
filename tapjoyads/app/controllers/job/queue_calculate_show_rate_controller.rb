@@ -15,7 +15,6 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     old_show_rate = old_show_rate.to_f
     
     now = Time.now.utc
-    timeframe = 20.minutes
     
     cvr_timeframe = app.is_free ? 1.hour : 24.hours
     recent_clicks = StoreClick.count(:where => "click_date > '#{now.to_f - cvr_timeframe}' and click_date < '#{now.to_f - 5.minutes}' and advertiser_app_id = '#{app_key}'").to_f
@@ -38,17 +37,12 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     Rails.logger.info "Recent installs: #{recent_installs}"
     Rails.logger.info "cvr: #{conversion_rate}"
     
-    clicks = StoreClick.count(:where => "click_date > '#{now.to_f - timeframe}' and advertiser_app_id = '#{app_key}'").to_f
-    installs = StoreClick.count(:where => "installed > '#{now.to_f - timeframe}' and advertiser_app_id = '#{app_key}'").to_f
-    
-    possible_clicks_per_second = clicks / timeframe / old_show_rate
+    possible_clicks_per_second = recent_clicks / cvr_timeframe / old_show_rate
     
     # Assume a higher click/second rate than reality. This helps ensure that budgets come in slightly
     # under, rather than slightly over.
     possible_clicks_per_second = 1.1 * possible_clicks_per_second
     
-    Rails.logger.info "Clicks last 20 mins: #{clicks}"
-    Rails.logger.info "Installs last 20 mins: #{installs}"
     Rails.logger.info "Old show_rate: #{old_show_rate}"
     Rails.logger.info "Possible clicks per second: #{possible_clicks_per_second}"
     
