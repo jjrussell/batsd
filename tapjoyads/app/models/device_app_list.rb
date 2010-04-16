@@ -1,5 +1,7 @@
 class DeviceAppList < SimpledbResource
 
+  self.sdb_attr :apps, :type => :json, :default_value => {}
+
   def dynamic_domain_name
     # We need to lookup the domain number for this device from the device_lookup domain.
     lookup = DeviceLookup.new(:key => @key)
@@ -16,6 +18,14 @@ class DeviceAppList < SimpledbResource
     return  "device_app_list_#{domain_number}"
   end
   
+  def load(load_from_memcache = true)
+    super(load_from_memcache)
+    
+    if self.apps.empty?
+      convert_attributes
+    end
+  end
+  
   ##
   # Sets the last run time for app_id to now, potentially adding a new app if it's the first run.
   # Returns a list of web-request paths that should be added. Potential paths are:
@@ -24,12 +34,12 @@ class DeviceAppList < SimpledbResource
     now = Time.now.utc
     
     path_list = []
-    last_run_time_array = get("app.#{app_id}", :force_array => true)
-    if last_run_time_array.empty?
+    if self.apps[app_id].nil?
       path_list.push('new_user')
-      last_run_time_array.push('0')
+      last_run_time = Time.zone.at(0)
+    else
+      last_run_time = Time.zone.at(self.apps[app_id].to_f)
     end
-    last_run_time = Time.at(last_run_time_array.last.to_f).utc
     
     if now.year != last_run_time.year or now.yday != last_run_time.yday
       path_list.push('daily_user')
@@ -38,8 +48,9 @@ class DeviceAppList < SimpledbResource
       path_list.push('monthly_user')
     end
     
-    # TODO: If this device already has too many attributes, shard it accross multiple rows.
-    put("app.#{app_id}",  now.to_f.to_s)
+    apps_hash = self.apps
+    apps_hash[app_id] = now.to_f.to_s
+    self.apps = apps_hash
     
     return path_list
   end
@@ -47,13 +58,13 @@ class DeviceAppList < SimpledbResource
   ##
   # Returns true if we have seen this device run app_id.
   def has_app(app_id)
-    return !get('app.' + app_id).nil?
+    return !last_run_time(app_id).nil?
   end
   
   ##
   # Returns the last time this device has run app_id. Returns nil if the device has not run app_id.
   def last_run_time(app_id)
-    last_run_timestamp = get('app.' + app_id)
+    last_run_timestamp = self.apps[app_id]
     if last_run_timestamp.nil?
       return nil
     else
@@ -64,12 +75,22 @@ class DeviceAppList < SimpledbResource
   ##
   # Returns an array of all app_id's that this device has been known to run.
   def get_app_list
-    app_list = []
-    @attributes.each do |attr|
-      if attr[0] =~ /^app/
-        app_list.push(attr[0].split('.')[1])
+    return self.apps.keys
+  end
+  
+  ##
+  # Converts attributes from old-style: (many app.<app_id> attributes) to new-style: (one 'apps' attribute,
+  # which is a single json object).
+  def convert_attributes
+    apps_hash = {}
+    @attributes.each do |attr_name, value|
+      if attr_name =~ /^app/
+        app_id = attr_name.split('.')[1]
+        apps_hash[app_id] = self.get(attr_name)
+        self.delete(attr_name)
       end
     end
-    return app_list
+    
+    self.apps = apps_hash
   end
 end
