@@ -86,7 +86,7 @@ class DeviceAppList < SimpledbResource
     @attributes.each do |attr_name, value|
       if attr_name =~ /^app/
         app_id = attr_name.split('.')[1]
-        apps_hash[app_id] = self.get(attr_name)
+        apps_hash[app_id] = self.get(attr_name, :force_array => true)[0]
         self.delete(attr_name)
       end
     end
