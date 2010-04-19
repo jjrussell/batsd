@@ -68,7 +68,7 @@ class Job::CleanupWebRequestsController < Job::SqsReaderController
   def archive_domain(domain_name)
     SdbBackup.backup_domain(domain_name, 'web-requests')
     
-    reponse = SimpledbResource.delete_domain(domain_name)
+    response = SimpledbResource.delete_domain(domain_name)
     Rails.logger.info "Deleted domain. Box usage for delete: #{response[:box_usage]}"
     
     logger.info "Successfully backed up #{domain_name}"
