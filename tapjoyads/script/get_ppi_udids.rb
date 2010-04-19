@@ -8,6 +8,7 @@ include RightAws
 
 app_id = ARGV[2]
 outfile = ARGV[3]
+first_date = ARGV[4]
 
 next_token = nil
 count = 0
@@ -16,7 +17,13 @@ file = File.new(outfile, "w")
 
 begin
   where_clause = "advertiser_app_id = '#{app_id}' and installed != ''"
-  response = StoreClick.select(:where => where_clause, :next_token => next_token)
+  where_clause = where_clause + " and installed > '#{Time.parse(first_date).to_f}'" if first_date
+  begin
+    response = StoreClick.select(:where => where_clause, :next_token => next_token)
+  rescue
+    puts "Failed select"
+    retry
+  end
   next_token = response[:next_token]
   items = response[:items]
   
