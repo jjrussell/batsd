@@ -26,13 +26,13 @@ class SdbBackup
     
     file = open(file_name, 'w')
   
-    item_list = []
+    key_list = []
     count = 0
     response = SimpledbResource.select(:domain_name => domain_name, :where => where, :retries => 200) do |item|
       count += 1
       file.write(item.serialize)
       file.write("\n")
-      item_list << item
+      key_list << item.key if delete_rows
     end
     box_usage = response[:box_usage]
     
@@ -45,8 +45,9 @@ class SdbBackup
     self.write_to_s3(s3_name, gzip_file_name, s3_bucket, 3)
     
     if delete_rows
-      item_list.each do |item|
+      key_list.each do |key|
         begin
+          item = SimpledbResource.new(:key => key, :load => false, :domain_name => domain_name)
           item.delete_all
         rescue RightAws::AwsError =>e
           retry
