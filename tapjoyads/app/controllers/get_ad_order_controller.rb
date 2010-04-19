@@ -13,9 +13,9 @@ class GetAdOrderController < ApplicationController
           :order_by => "ecpm desc")
       
       
-      save_to_cache(mc_key, c, false, 5.minutes)
+      save_to_cache(mc_key, c.items, false, 5.minutes)
       
-      c
+      c.items
     end
     
     
@@ -30,25 +30,24 @@ class GetAdOrderController < ApplicationController
     @ad_order.networks = []
     count = 0
     
-    campaigns.each do |campaign_item|
+    campaigns.each do |campaign|
       network = AdOrderCampaign.new
-      campaign = campaign_item['attributes']
-      network.AdCampaignId = campaign_item['key']
+      network.AdCampaignId = campaign.key
       
-      network.AdNetworkGameID1 = campaign['id1'] if campaign['id1'] != 'None'
-      network.AdNetworkGameID2 = campaign['id2'] if campaign['id2'] != 'None'
-      network.AdNetworkGameID3 = campaign['id3'] if campaign['id3'] != 'None'
-      network.EventInterval1 = campaign['event1']
-      network.EventInterval2 = campaign['event2']
-      network.EventInterval3 = campaign['event3']
-      network.EventInterval4 = campaign['event4']
-      network.EventInterval5 = campaign['event5']
-      network.CallAdShown = campaign['call_ad_shown'] if campaign['call_ad_shown'] == 'False'
-      network.AdLibraryName = campaign['library_name'].join
-      network.AdFormat = campaign['format']
+      network.AdNetworkGameID1 = campaign.get('id1') if campaign.get('id1') != 'None'
+      network.AdNetworkGameID2 = campaign.get('id2') if campaign.get('id2') != 'None'
+      network.AdNetworkGameID3 = campaign.get('id3') if campaign.get('id3') != 'None'
+      network.EventInterval1 = campaign.get('event1')
+      network.EventInterval2 = campaign.get('event2')
+      network.EventInterval3 = campaign.get('event3')
+      network.EventInterval4 = campaign.get('event4')
+      network.EventInterval5 = campaign.get('event5')
+      network.CallAdShown = campaign.get('call_ad_shown') if campaign.get('call_ad_shown') == 'False'
+      network.AdLibraryName = campaign.get('library_name')
+      network.AdFormat = campaign.get('format')
       network.CustomAd = "true" if (network.AdLibraryName == "customsdk")
-      network.AdLibraryName = campaign['name'].join.strip if (network.AdLibraryName == "customsdk")
-      network.Bar = campaign['bar'] if campaign['bar'] == 'True'
+      network.AdLibraryName = campaign.get('name') if (network.AdLibraryName == "customsdk")
+      network.Bar = campaign.get('bar') if campaign.get('bar') == 'True'
       @ad_order.networks[count] = network
       count += 1
     end
