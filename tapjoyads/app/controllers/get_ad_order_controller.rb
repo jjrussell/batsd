@@ -5,21 +5,19 @@ class GetAdOrderController < ApplicationController
     return unless verify_params([:app_id, :udid])
 
     app_id = params[:app_id]
-    mc_key = "ad_order.#{params[:app_id]}"
+    mc_key = "raw_ad_order.#{params[:app_id]}"
     
-    ad_order_data = get_from_cache(mc_key) do 
+    campaigns = get_from_cache(mc_key) do 
       ## get order
-      campaigns = Campaign.select(:where => "status='1' and app_id='#{app_id}' and ecpm != ''", 
+      c = Campaign.select(:where => "status='1' and app_id='#{app_id}' and ecpm != ''", 
           :order_by => "ecpm desc")
       
-      json = campaigns.items.to_json
       
-      save_to_cache(mc_key, json, false, 5.minutes)
+      save_to_cache(mc_key, c, false, 5.minutes)
       
-      json
+      c
     end
     
-    json = JSON.parse(ad_order_data)
     
     app = App.new(:key => params[:app_id])
   
@@ -32,7 +30,7 @@ class GetAdOrderController < ApplicationController
     @ad_order.networks = []
     count = 0
     
-    json.each do |campaign_item|
+    campaigns.each do |campaign_item|
       network = AdOrderCampaign.new
       campaign = campaign_item['attributes']
       network.AdCampaignId = campaign_item['key']
