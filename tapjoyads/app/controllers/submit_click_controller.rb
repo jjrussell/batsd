@@ -27,6 +27,9 @@ class SubmitClickController < ApplicationController
       #this app is no longer enabled
       @app = app
       @params = params
+      web_request = WebRequest.new
+      web_request.put_values('disabled_offer', params, request)
+      web_request.save
       render :template => "submit_click/disabled_offer"
       return
     end
