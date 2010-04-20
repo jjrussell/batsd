@@ -28,6 +28,7 @@ class SdbApp < SimpledbResource
   self.sdb_attr :countries,                  {:type => :json, :default_value => []}
   self.sdb_attr :postal_codes,               {:type => :json, :default_value => []}
   self.sdb_attr :cities,                     {:type => :json, :default_value => []}
+  self.sdb_attr :allow_negative_balance,     {:type => :bool}
   
   ##
   # Returns a list of Apps which are advertising in this app.
