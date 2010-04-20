@@ -26,6 +26,7 @@ class SubmitClickController < ApplicationController
     if (app.payment_for_install <= 0) && (params[:redirect] == "1")
       #this app is no longer enabled
       @app = app
+      @params = params
       render :template => "submit_click/disabled_offer"
       return
     end
