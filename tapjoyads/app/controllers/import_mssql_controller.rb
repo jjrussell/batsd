@@ -252,7 +252,7 @@ class ImportMssqlController < ApplicationController
     offer.overall_budget = app.overall_budget
     offer.daily_budget = app.daily_budget
     offer.countries = app.countries.to_json
-    offer.cites = app.cites.to_json
+    offer.cities = app.cites.to_json
     offer.postal_codes = app.postal_codes.to_json
     offer.pay_per_click = params[:pay_per_click]
     offer.allow_negative_balance = app.allow_negative_balance
