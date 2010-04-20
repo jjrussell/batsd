@@ -215,10 +215,55 @@ class ImportMssqlController < ApplicationController
     bucket.put("icons/#{app_id}.png", params[:icon], {}, 'public-read')
     bucket.put("screenshots/#{app_id}.png", params[:screenshot], {}, 'public-read')
     save_to_cache("icon.s3.#{app_id.hash}", Base64.encode64(params[:icon]))
-
+    
+    offer = nil
+    unless params[:name].starts_with?('Email')
+      mysql_app = App.find_or_initialize_by_id(params[:app_id])
+      mysql_app.partner_id = params[:partner_id]
+      mysql_app.name = params[:name]
+      mysql_app.description = params[:description] unless params[:description].blank?
+      mysql_app.price = params[:price].to_i
+      mysql_app.platform = params[:os_type]
+      if params[:os_type] == 'android'
+        mysql_app.store_id = params[:store_url] unless params[:store_url].blank?
+      else
+        mysql_app.store_id = app.get_store_id unless params[:store_url].blank?
+      end
+      mysql_app.color = params[:primary_color].to_i
+      mysql_app.use_raw_url = app.use_raw_url
+      mysql_app.created_at = Time.parse(params[:created_at] + ' CST').utc
+      mysql_app.save!
+      offer = mysql_app.offer
+      if params[:iphone_only]
+        offer.device_types = [ 'iphone' ].to_json
+      end
+    else
+      email_offer = EmailOffer.find_or_initialize_by_id(params[:app_id])
+      email_offer.partner_id = params[:partner_id]
+      email_offer.name = params[:name]
+      email_offer.description = params[:description] unless params[:description].blank?
+      email_offer.third_party_id = app.custom_app_id
+      email_offer.created_at = Time.parse(params[:created_at] + ' CST').utc
+      email_offer.save!
+      offer = email_offer.offer
+    end
+    offer.tapjoy_enabled = params[:install_tracking]
+    offer.user_enabled = params[:payment_for_install].to_i > 0
+    offer.overall_budget = app.overall_budget
+    offer.daily_budget = app.daily_budget
+    offer.countries = app.countries.to_json
+    offer.cites = app.cites.to_json
+    offer.postal_codes = app.postal_codes.to_json
+    offer.pay_per_click = params[:pay_per_click]
+    offer.allow_negative_balance = app.allow_negative_balance
+    offer.payment = params[:payment_for_install].to_i
+    offer.actual_payment = app.real_revenue_for_install
+    offer.created_at = offer.item.created_at
+    offer.save!
+    
     render :template => 'layouts/success'
   end
-    
+  
   def campaign
     return unless verify_params([:app_id, :campaign_id])
     

@@ -10,6 +10,7 @@ class CreateOffers < ActiveRecord::Migration
       t.text :url
       t.integer :price
       t.integer :payment
+      t.integer :actual_payment
       t.integer :daily_budget
       t.integer :overall_budget
       t.integer :ordinal, :default => 500, :null => false
@@ -18,8 +19,9 @@ class CreateOffers < ActiveRecord::Migration
       t.text :postal_codes
       t.text :device_types
       t.boolean :pay_per_click, :default => false
-      t.datetime :user_enabled_at
-      t.datetime :tapjoy_enabled_at
+      t.boolean :allow_negative_balance, :default => false
+      t.boolean :user_enabled
+      t.boolean :tapjoy_enabled
       t.timestamps
     end
     
@@ -29,6 +31,7 @@ class CreateOffers < ActiveRecord::Migration
     add_index :offers, [ :item_type, :item_id ], :unique => true
     add_index :offers, :name
     add_index :offers, :ordinal
+    add_index :offers, [ :user_enabled, :tapjoy_enabled ]
   end
 
   def self.down

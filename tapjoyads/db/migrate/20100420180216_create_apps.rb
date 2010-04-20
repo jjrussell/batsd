@@ -7,9 +7,10 @@ class CreateApps < ActiveRecord::Migration
       t.text :description
       t.integer :price, :default => 0
       t.string :platform
-      t.string :store_id, :null => false
+      t.string :store_id
       t.text :store_url
       t.integer :color
+      t.boolean :use_raw_url, :default => false, :null => false
       t.datetime :first_pinged_at
       t.datetime :submitted_to_store_at
       t.datetime :approved_by_store_at

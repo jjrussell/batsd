@@ -12,14 +12,15 @@
 ActiveRecord::Schema.define(:version => 20100420180252) do
 
   create_table "apps", :force => true do |t|
-    t.string   "partner_id",            :limit => 36,                :null => false
-    t.string   "name",                                               :null => false
+    t.string   "partner_id",            :limit => 36,                    :null => false
+    t.string   "name",                                                   :null => false
     t.text     "description"
     t.integer  "price",                               :default => 0
     t.string   "platform"
-    t.string   "store_id",                                           :null => false
+    t.string   "store_id"
     t.text     "store_url"
     t.integer  "color"
+    t.boolean  "use_raw_url",                         :default => false, :null => false
     t.datetime "first_pinged_at"
     t.datetime "submitted_to_store_at"
     t.datetime "approved_by_store_at"
@@ -65,24 +66,26 @@ ActiveRecord::Schema.define(:version => 20100420180252) do
   add_index "email_offers", ["partner_id"], :name => "index_email_offers_on_partner_id"
 
   create_table "offers", :force => true do |t|
-    t.string   "partner_id",        :limit => 36,                    :null => false
-    t.string   "item_id",           :limit => 36,                    :null => false
-    t.string   "item_type",                                          :null => false
-    t.string   "name",                                               :null => false
+    t.string   "partner_id",             :limit => 36,                    :null => false
+    t.string   "item_id",                :limit => 36,                    :null => false
+    t.string   "item_type",                                               :null => false
+    t.string   "name",                                                    :null => false
     t.text     "description"
     t.text     "url"
     t.integer  "price"
     t.integer  "payment"
+    t.integer  "actual_payment"
     t.integer  "daily_budget"
     t.integer  "overall_budget"
-    t.integer  "ordinal",                         :default => 500,   :null => false
+    t.integer  "ordinal",                              :default => 500,   :null => false
     t.text     "countries"
     t.text     "cities"
     t.text     "postal_codes"
     t.text     "device_types"
-    t.boolean  "pay_per_click",                   :default => false
-    t.datetime "user_enabled_at"
-    t.datetime "tapjoy_enabled_at"
+    t.boolean  "pay_per_click",                        :default => false
+    t.boolean  "allow_negative_balance",               :default => false
+    t.boolean  "user_enabled"
+    t.boolean  "tapjoy_enabled"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -93,6 +96,7 @@ ActiveRecord::Schema.define(:version => 20100420180252) do
   add_index "offers", ["name"], :name => "index_offers_on_name"
   add_index "offers", ["ordinal"], :name => "index_offers_on_ordinal"
   add_index "offers", ["partner_id"], :name => "index_offers_on_partner_id"
+  add_index "offers", ["user_enabled", "tapjoy_enabled"], :name => "index_offers_on_user_enabled_and_tapjoy_enabled"
 
   create_table "orders", :force => true do |t|
     t.string   "partner_id",     :limit => 36,                :null => false
