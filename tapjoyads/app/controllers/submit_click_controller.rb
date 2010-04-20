@@ -12,7 +12,7 @@ class SubmitClickController < ApplicationController
     ##
     # store the value of an install in this table
     # so the user gets the reward they think they earned
-    app = App.new(:key => params[:advertiser_app_id])
+    app = SdbApp.new(:key => params[:advertiser_app_id])
     advertiser_amount = app.get('payment_for_install').to_i
     
     if advertiser_amount <= 0

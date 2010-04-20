@@ -176,7 +176,7 @@ class ImportMssqlController < ApplicationController
 
     app_id = params[:app_id]
 
-    app = App.new(:key => app_id)
+    app = SdbApp.new(:key => app_id)
     
     unless app.get('next_run_time')
       app.put('next_run_time', Time.now.utc.to_f.to_s)     

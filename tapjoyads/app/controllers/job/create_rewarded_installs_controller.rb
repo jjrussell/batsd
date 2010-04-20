@@ -16,7 +16,7 @@ class Job::CreateRewardedInstallsController < Job::SqsReaderController
     
     #first get the list of all apps paying for installs
     app_list = []
-    App.select(:where => 
+    SdbApp.select(:where => 
         "payment_for_install > '0' " +
         " and install_tracking = '1'" +
         " and rewarded_installs_ordinal != ''" +

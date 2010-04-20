@@ -39,7 +39,7 @@ class Job::SendStatsController < Job::JobController
     app_count = 0
     data_sent = 0
     
-    App.select do |app|
+    SdbApp.select do |app|
       Rails.logger.info "#{app.get('name')} #{app.key}"
       
       stats = {}

@@ -9,8 +9,8 @@ class ListSignupController < ApplicationController
     return unless verify_params([:udid, :publisher_app_id, :advertiser_app_id], {:allow_empty => false})
     
     @currency = Currency.new(:key => params[:publisher_app_id])
-    @publisher_app = App.new(:key => params[:publisher_app_id])
-    @advertiser_app = App.new(:key => params[:advertiser_app_id])
+    @publisher_app = SdbApp.new(:key => params[:publisher_app_id])
+    @advertiser_app = SdbApp.new(:key => params[:advertiser_app_id])
   end
   
   def signup
@@ -28,8 +28,8 @@ class ListSignupController < ApplicationController
       signup.save
       
       @currency = Currency.new(:key => params[:publisher_app_id])
-      @publisher_app = App.new(:key => params[:publisher_app_id])
-      @advertiser_app = App.new(:key => params[:advertiser_app_id])
+      @publisher_app = SdbApp.new(:key => params[:publisher_app_id])
+      @advertiser_app = SdbApp.new(:key => params[:advertiser_app_id])
       
       # Send the mail via our gmail smtp server. Disabled, since we're using 4info to send the email.
       #TapjoyMailer.deliver_email_signup(params[:email_address], signup.key, @currency.currency_name, @publisher_app.name, @currency.get_app_currency_reward(@advertiser_app))
@@ -77,7 +77,7 @@ class ListSignupController < ApplicationController
       return false
     else
       @currency = Currency.new(:key => @signup.publisher_app_id)
-      @publisher_app = App.new(:key => @signup.publisher_app_id)
+      @publisher_app = SdbApp.new(:key => @signup.publisher_app_id)
 
       @signup.confirmed = Time.now
       @signup.save

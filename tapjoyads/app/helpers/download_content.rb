@@ -84,7 +84,7 @@ module DownloadContent
   
   def send_currency_download_complete(status, options)
     if status == 'max_retries'
-      app = App.new(:key => options[:app_id])
+      app = SdbApp.new(:key => options[:app_id])
       app.put('send_currency_error', status)
       app.save
     end

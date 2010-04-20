@@ -48,7 +48,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       web_request.put('publisher_app_id', click.get('publisher_app_id'))
       web_request.save
       
-      adv_app = App.new(:key => advertiser_app_id)
+      adv_app = SdbApp.new(:key => advertiser_app_id)
       
       publisher_app_id = click.get('publisher_app_id')
       currency = Currency.new(:key => publisher_app_id)

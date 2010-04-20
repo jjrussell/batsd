@@ -4,7 +4,7 @@ module RewardHelper
     currency = params.fetch(:currency)
     advertiser_app = params.fetch(:advertiser_app)
     
-    publisher_app = App.new(:key => currency.key)
+    publisher_app = SdbApp.new(:key => currency.key)
     
     advertiser_amount_float = advertiser_app.get('payment_for_install').to_f
     

@@ -14,7 +14,7 @@ num_to_skip = ARGV[4] || 0
 
 num_to_skip = num_to_skip.to_i
 
-app = App.new(:key => app_key)
+app = SdbApp.new(:key => app_key)
 
 num_udids = `wc #{filename}`.split[0]
 

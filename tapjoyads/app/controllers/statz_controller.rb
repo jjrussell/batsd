@@ -14,7 +14,7 @@ class StatzController < ApplicationController
       @install_count_24hours = StoreClick.count(:where => "installed > '#{Time.now.to_f - 1.day}'")
 
       @app_list = []
-      App.select(:where => "interval_update_time = '3600'") do |app|
+      SdbApp.select(:where => "interval_update_time = '3600'") do |app|
         @app_list.push(app)
       end
 

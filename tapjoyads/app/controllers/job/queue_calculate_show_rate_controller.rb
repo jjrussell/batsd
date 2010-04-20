@@ -7,7 +7,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
 
   def on_message(message)
     app_key = message.to_s
-    app = App.new(:key => app_key)
+    app = SdbApp.new(:key => app_key)
     
     Rails.logger.info "Calculating new show_rate for #{app_key}, #{app.get('name')}"
     

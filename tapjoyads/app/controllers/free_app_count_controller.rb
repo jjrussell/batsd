@@ -2,7 +2,7 @@ class FreeAppCountController < ApplicationController
   def index
     return unless verify_params([:app_id, :udid], {:allow_empty => false})
     
-    publisher_app = App.new(:key => params[:app_id])
+    publisher_app = SdbApp.new(:key => params[:app_id])
     advertiser_app_list = publisher_app.get_advertiser_app_list(params[:udid], 
         :iphone => (not params[:device_type] =~ /iPod/))
     

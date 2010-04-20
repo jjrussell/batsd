@@ -30,7 +30,7 @@ class ConnectController < ApplicationController
     
     device_app_list.save
     
-    @app = App.new(:key => params[:app_id])
+    @app = SdbApp.new(:key => params[:app_id])
     
     web_request.save
   

@@ -5,7 +5,7 @@ class GetAppImageController < ApplicationController
     return unless verify_params([:app_id])
     
     app_id = params[:app_id].downcase
-    app = App.new(:key => app_id, :load => false)
+    app = SdbApp.new(:key => app_id, :load => false)
 
     if params[:img] == '1'
       redirect_to app.get_icon_url

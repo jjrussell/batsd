@@ -76,7 +76,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
     
       if currency.get('send_offer_data') == '1'
         if (reward.get('type') == 'install')
-          adv_app = App.new(:key => reward.get('advertiser_app_id'))
+          adv_app = SdbApp.new(:key => reward.get('advertiser_app_id'))
           name = adv_app.get('name')
           id = 'application'
           callback_url += "&storeId=#{CGI::escape(adv_app.get_store_id)}"

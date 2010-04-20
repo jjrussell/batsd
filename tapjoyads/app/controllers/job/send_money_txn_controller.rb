@@ -21,7 +21,7 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
         
         values = calculate_install_payouts(
             :currency => Currency.new(:key => reward.get('publisher_app_id')), 
-            :advertiser_app => App.new(:key => reward.get('advertiser_app_id')))
+            :advertiser_app => SdbApp.new(:key => reward.get('advertiser_app_id')))
 
         reward.put('advertiser_amount', values[:advertiser_amount])
         reward.put('publisher_amount', values[:publisher_amount])

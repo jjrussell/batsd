@@ -1,4 +1,4 @@
-class App < SimpledbResource
+class SdbApp < SimpledbResource
   include NewRelicHelper
   
   self.domain_name = 'app'
@@ -59,7 +59,7 @@ class App < SimpledbResource
 
     advertiser_app_list = []
     serialized_advertiser_app_list.each do |serialized_advertiser_app|
-      advertiser_app_list.push(App.deserialize(serialized_advertiser_app))
+      advertiser_app_list.push(SdbApp.deserialize(serialized_advertiser_app))
     end
     
     banned_apps = (currency.get('disabled_apps') || '').split(';')

@@ -14,7 +14,7 @@ class RateAppOfferController < ApplicationController
       version = ""
       version = ".#{params[:app_version]}" if params[:app_version]
       
-      app = App.new(:key => app_id)
+      app = SdbApp.new(:key => app_id)
       
       rate = RateApp.new(:key => "#{app_id}.#{udid}#{version}")
       if rate.get('rate-date')

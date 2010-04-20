@@ -19,7 +19,7 @@ class GetAdOrderController < ApplicationController
     end
     
     
-    app = App.new(:key => params[:app_id])
+    app = SdbApp.new(:key => params[:app_id])
   
     @ad_order = AdOrder.new
     

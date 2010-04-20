@@ -21,7 +21,7 @@ private
   
   def update_publisher_amount
     return true if self.publisher_amount == 0
-    app = App.new(:key => self.publisher_app_id)
+    app = SdbApp.new(:key => self.publisher_app_id)
     partner = Partner.find(app.partner_id)
     partner.pending_earnings += self.publisher_amount
     partner.save!
@@ -29,7 +29,7 @@ private
   
   def update_advertiser_amount
     return true if self.advertiser_amount == 0
-    app = App.new(:key => self.advertiser_app_id)
+    app = SdbApp.new(:key => self.advertiser_app_id)
     return true if app.partner_id.nil?
     partner = Partner.find(app.partner_id)
     partner.balance += self.advertiser_amount

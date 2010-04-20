@@ -1,7 +1,7 @@
 class Site::AppsController < Site::SiteController
   
   def show
-    @app = App.new(:key => params[:id])
+    @app = SdbApp.new(:key => params[:id])
     respond_to do |format|
       if @app.get('name')
         format.xml #show.builder
@@ -18,7 +18,7 @@ class Site::AppsController < Site::SiteController
       Rails.logger.info partner.get('apps')
       app_pairs = JSON.parse(partner.get('apps'))
       app_pairs.each do |app_pair|
-        @apps.push(App.new(:key => app_pair[0].downcase))
+        @apps.push(SdbApp.new(:key => app_pair[0].downcase))
       end
     end
     

@@ -17,7 +17,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     app_key = json['app_key']
     last_run_time = json['last_run_time']
     
-    app = App.new(:key => app_key)
+    app = SdbApp.new(:key => app_key)
     
     first_hour = get_last_run_hour_in_day(last_run_time)
     last_hour = @now.hour - 1

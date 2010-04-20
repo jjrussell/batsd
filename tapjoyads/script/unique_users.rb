@@ -15,13 +15,13 @@ puts "Start date: #{date_string}, num hours: #{num_hours}"
 
 start_time = Time.now
 
-num_apps = App.count
+num_apps = SdbApp.count
 puts "#{num_apps} total apps in the system."
 
 puts "Num\tAppName\tAppId\tTotalConnects\tUniqueConnects"
 
 app_num = 0
-Apps.select do |app|
+SdbApp.select do |app|
   udids = {}
   app_num += 1
   print "#{app_num}\t#{app.get('name')}\t#{app.key}\t"
