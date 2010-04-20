@@ -67,7 +67,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
       target_installs = [app.daily_budget.to_f - num_installs_today, target_installs].min
     end
     
-    unless app.allow_negative_balance?
+    unless app.allow_negative_balance
       max_paid_installs = app.balance / app.payment_for_install
       target_installs = max_paid_installs if target_installs > max_paid_installs
     end
