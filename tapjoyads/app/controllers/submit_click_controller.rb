@@ -3,6 +3,8 @@ class SubmitClickController < ApplicationController
   include ApplicationHelper
   include SqsHelper
   
+  layout "iphone"
+  
   def store
     return unless verify_params([:advertiser_app_id, :udid, :publisher_app_id, :publisher_user_record_id])
     
