@@ -23,6 +23,13 @@ class SubmitClickController < ApplicationController
       end
     end
     
+    if (app.payment_for_install <= 0) && (params[:redirect] == "1")
+      #this app is no longer enabled
+      @app = app
+      render :template => "submit_click/disabled_offer"
+      return
+    end
+    
     ##
     # don't store the click if it's Hottest Free App and 
     # the user already has the app installed
