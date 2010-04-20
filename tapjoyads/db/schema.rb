@@ -9,7 +9,29 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100414070806) do
+ActiveRecord::Schema.define(:version => 20100420180252) do
+
+  create_table "apps", :force => true do |t|
+    t.string   "partner_id",            :limit => 36,                :null => false
+    t.string   "name",                                               :null => false
+    t.text     "description"
+    t.integer  "price",                               :default => 0
+    t.string   "platform"
+    t.string   "store_id",                                           :null => false
+    t.text     "store_url"
+    t.integer  "color"
+    t.datetime "first_pinged_at"
+    t.datetime "submitted_to_store_at"
+    t.datetime "approved_by_store_at"
+    t.datetime "approved_by_tapjoy_at"
+    t.datetime "enabled_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
+  add_index "apps", ["name"], :name => "index_apps_on_name"
+  add_index "apps", ["partner_id"], :name => "index_apps_on_partner_id"
 
   create_table "conversions", :force => true do |t|
     t.string   "reward_id",         :limit => 36
@@ -28,6 +50,49 @@ ActiveRecord::Schema.define(:version => 20100414070806) do
   add_index "conversions", ["id"], :name => "index_conversions_on_id", :unique => true
   add_index "conversions", ["publisher_app_id"], :name => "index_conversions_on_publisher_app_id"
   add_index "conversions", ["reward_id"], :name => "index_conversions_on_reward_id"
+
+  create_table "email_offers", :force => true do |t|
+    t.string   "partner_id",     :limit => 36, :null => false
+    t.string   "name",                         :null => false
+    t.text     "description"
+    t.string   "third_party_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "email_offers", ["id"], :name => "index_email_offers_on_id", :unique => true
+  add_index "email_offers", ["name"], :name => "index_email_offers_on_name"
+  add_index "email_offers", ["partner_id"], :name => "index_email_offers_on_partner_id"
+
+  create_table "offers", :force => true do |t|
+    t.string   "partner_id",        :limit => 36,                    :null => false
+    t.string   "item_id",           :limit => 36,                    :null => false
+    t.string   "item_type",                                          :null => false
+    t.string   "name",                                               :null => false
+    t.text     "description"
+    t.text     "url"
+    t.integer  "price"
+    t.integer  "payment"
+    t.integer  "daily_budget"
+    t.integer  "overall_budget"
+    t.integer  "ordinal",                         :default => 500,   :null => false
+    t.text     "countries"
+    t.text     "cities"
+    t.text     "postal_codes"
+    t.text     "device_types"
+    t.boolean  "pay_per_click",                   :default => false
+    t.datetime "user_enabled_at"
+    t.datetime "tapjoy_enabled_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
+  add_index "offers", ["item_id"], :name => "index_offers_on_item_id", :unique => true
+  add_index "offers", ["item_type", "item_id"], :name => "index_offers_on_item_type_and_item_id", :unique => true
+  add_index "offers", ["name"], :name => "index_offers_on_name"
+  add_index "offers", ["ordinal"], :name => "index_offers_on_ordinal"
+  add_index "offers", ["partner_id"], :name => "index_offers_on_partner_id"
 
   create_table "orders", :force => true do |t|
     t.string   "partner_id",     :limit => 36,                :null => false

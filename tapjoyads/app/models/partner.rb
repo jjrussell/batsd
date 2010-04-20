@@ -4,6 +4,9 @@ class Partner < ActiveRecord::Base
   has_many :orders
   has_many :payouts
   has_many :users
+  has_many :apps
+  has_many :email_offers
+  has_many :offers
 
   validates_presence_of :balance, :pending_earnings
   validates_numericality_of :balance, :pending_earnings, :only_integer => true, :allow_nil => false
