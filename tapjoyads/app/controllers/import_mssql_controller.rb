@@ -225,9 +225,9 @@ class ImportMssqlController < ApplicationController
       mysql_app.price = params[:price].to_i
       mysql_app.platform = params[:os_type]
       if params[:os_type] == 'android'
-        mysql_app.store_id = params[:store_url] unless params[:store_url].blank?
+        mysql_app.store_id = params[:store_url] unless params[:store_url].blank? || params[:store_url] == 'None'
       else
-        mysql_app.store_id = app.get_store_id unless params[:store_url].blank?
+        mysql_app.store_id = app.get_store_id unless params[:store_url].blank? || params[:store_url] == 'None'
       end
       mysql_app.color = params[:primary_color].to_i
       mysql_app.use_raw_url = app.use_raw_url == true
