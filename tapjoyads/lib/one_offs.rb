@@ -60,5 +60,14 @@ class OneOffs
     end
     file.close
   end
-
+  
+  def self.calculate_partner_balances
+    Partner.find_each do |p|
+      p.balance = p.orders.sum(:amount) + p.conversions.sum(:advertiser_amount)
+      p.pending_earnings = p.conversions.sum(:publisher_amount) - p.payouts.sum(:amount)
+      p.save!
+    end
+    true
+  end
+  
 end
