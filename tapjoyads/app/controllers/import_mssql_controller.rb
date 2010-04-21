@@ -258,6 +258,7 @@ class ImportMssqlController < ApplicationController
     offer.allow_negative_balance = app.allow_negative_balance
     offer.payment = params[:payment_for_install].to_i
     offer.actual_payment = app.real_revenue_for_install
+    offer.ordinal = params[:rewarded_installs_ordinal].to_i unless params[:rewarded_installs_ordinal].blank?
     offer.created_at = offer.item.created_at
     offer.save!
     
