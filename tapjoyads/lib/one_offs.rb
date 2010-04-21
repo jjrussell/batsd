@@ -63,17 +63,21 @@ class OneOffs
   
   def self.calculate_partner_balances
     Benchmark.realtime do
+      counter = 0
       Partner.find_each do |p|
-        balance_sum = p.orders.sum(:amount)
+        counter += 1
+        orders_sum = p.orders.sum(:amount)
         payouts_sum = p.payouts.sum(:amount)
         publisher_conversions_sum = 0
+        advertiser_conversions_sum = 0
         p.apps.each do |a|
-          balance_sum += a.advertiser_conversions.sum(:advertiser_amount)
           publisher_conversions_sum += a.publisher_conversions.sum(:publisher_amount)
+          advertiser_conversions_sum += a.advertiser_conversions.sum(:advertiser_amount)
         end
-        p.balance = balance_sum
+        p.balance = orders_sum + advertiser_conversions_sum
         p.pending_earnings = publisher_conversions_sum - payouts_sum
         p.save!
+        puts "finished #{counter} partners" if counter % 100 == 0
       end
     end
   end
