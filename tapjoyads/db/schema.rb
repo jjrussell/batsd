@@ -84,8 +84,8 @@ ActiveRecord::Schema.define(:version => 20100420180252) do
     t.text     "device_types"
     t.boolean  "pay_per_click",                        :default => false
     t.boolean  "allow_negative_balance",               :default => false
-    t.boolean  "user_enabled"
-    t.boolean  "tapjoy_enabled"
+    t.boolean  "user_enabled",                         :default => false
+    t.boolean  "tapjoy_enabled",                       :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
