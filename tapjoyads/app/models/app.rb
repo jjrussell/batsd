@@ -33,7 +33,7 @@ class App < ActiveRecord::Base
 private
   
   def create_offer
-    self.offer = build_offer
+    self.offer = Offer.new(:item => self)
     self.offer.partner = partner
     self.offer.name = name
     self.offer.description = description
