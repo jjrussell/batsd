@@ -40,6 +40,7 @@ private
     self.offer.price = price
     self.offer.url = store_url
     self.offer.device_types = platform == 'android' ? Offer::ANDROID_DEVICES.to_json : Offer::IPHONE_DEVICES.to_json
+    self.offer.save!
   end
   
   def update_offer
@@ -47,6 +48,7 @@ private
     self.offer.description = description if description_changed?
     self.offer.price = price if price_changed?
     self.offer.url = store_url if store_url_changed? || use_raw_url_changed? || store_id_changed?
+    self.offer.save!
   end
   
 end
