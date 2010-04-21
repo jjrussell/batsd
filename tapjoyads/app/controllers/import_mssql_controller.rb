@@ -231,6 +231,7 @@ class ImportMssqlController < ApplicationController
       end
       mysql_app.color = params[:primary_color].to_i
       mysql_app.use_raw_url = app.use_raw_url == true
+      mysql_app.store_url = params[:store_url] unless params[:store_url].blank? || params[:store_url] == 'None'
       mysql_app.created_at = Time.parse(params[:created_at] + ' CST').utc
       mysql_app.save!
       offer = mysql_app.offer
