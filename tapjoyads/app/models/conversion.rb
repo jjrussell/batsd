@@ -31,9 +31,8 @@ private
   end
   
   def update_advertiser_amount
-    return true if self.advertiser_amount == 0
+    return true if self.advertiser_amount == 0 || advertiser_app.nil?
     partner = advertiser_app.partner
-    return true if partner.nil?
     partner.balance += self.advertiser_amount
     partner.save!
   end
