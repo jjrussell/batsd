@@ -9,7 +9,8 @@ class Offer < ActiveRecord::Base
   belongs_to :item, :polymorphic => true
   
   validates_presence_of :partner, :item, :name, :url
-  validates_numericality_of :price, :payment, :actual_payment, :ordinal, :only_integer => true
+  validates_numericality_of :price, :payment, :ordinal, :only_integer => true
+  validates_numericality_of :actual_payment, :only_integer => true, :allow_nil => true
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer )
   

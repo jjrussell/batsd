@@ -247,15 +247,15 @@ class ImportMssqlController < ApplicationController
       email_offer.save!
       offer = email_offer.offer
     end
-    offer.tapjoy_enabled = params[:install_tracking]
+    offer.tapjoy_enabled = params[:install_tracking] == '1'
     offer.user_enabled = params[:payment_for_install].to_i > 0
     offer.overall_budget = app.overall_budget
     offer.daily_budget = app.daily_budget
     offer.countries = app.countries.to_json
     offer.cities = app.cities.to_json
     offer.postal_codes = app.postal_codes.to_json
-    offer.pay_per_click = params[:pay_per_click]
-    offer.allow_negative_balance = app.allow_negative_balance
+    offer.pay_per_click = params[:pay_per_click] == '1'
+    offer.allow_negative_balance = app.allow_negative_balance == true
     offer.payment = params[:payment_for_install].to_i
     offer.actual_payment = app.real_revenue_for_install
     offer.ordinal = params[:rewarded_installs_ordinal].to_i unless params[:rewarded_installs_ordinal].blank?
