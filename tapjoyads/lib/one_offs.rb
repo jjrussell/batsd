@@ -62,12 +62,20 @@ class OneOffs
   end
   
   def self.calculate_partner_balances
-    Partner.find_each do |p|
-      p.balance = p.orders.sum(:amount) + p.conversions.sum(:advertiser_amount)
-      p.pending_earnings = p.conversions.sum(:publisher_amount) - p.payouts.sum(:amount)
-      p.save!
+    Benchmark.realtime do
+      Partner.find_each do |p|
+        balance_sum = p.orders.sum(:amount)
+        payouts_sum = p.payouts.sum(:amount)
+        publisher_conversions_sum = 0
+        p.apps.each do |a|
+          balance_sum += a.advertiser_conversions.sum(:advertiser_amount)
+          publisher_conversions_sum += a.publisher_conversions.sum(:publisher_amount)
+        end
+        p.balance = balance_sum
+        p.pending_earnings = publisher_conversions_sum - payouts_sum
+        p.save!
+      end
     end
-    true
   end
   
 end
