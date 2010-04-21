@@ -17,6 +17,7 @@ private
     self.offer.partner = partner
     self.offer.name = name
     self.offer.description = description
+    self.offer.price = 0
     self.offer.url = "http://ws.tapjoyads.com/list_signup?udid=TAPJOY_UDID&publisher_app_id=TAPJOY_PUBLISHER_APP_ID&advertiser_app_id=#{id}"
     self.offer.device_types = Offer::ALL_DEVICES.to_json
     self.offer.save!
