@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100420180252) do
+ActiveRecord::Schema.define(:version => 20100422194228) do
 
   create_table "apps", :force => true do |t|
     t.string   "partner_id",            :limit => 36,                    :null => false
@@ -35,18 +35,18 @@ ActiveRecord::Schema.define(:version => 20100420180252) do
   add_index "apps", ["partner_id"], :name => "index_apps_on_partner_id"
 
   create_table "conversions", :force => true do |t|
-    t.string   "reward_id",         :limit => 36
-    t.string   "advertiser_app_id", :limit => 36
-    t.string   "publisher_app_id",  :limit => 36, :null => false
-    t.integer  "advertiser_amount",               :null => false
-    t.integer  "publisher_amount",                :null => false
-    t.integer  "tapjoy_amount",                   :null => false
-    t.integer  "reward_type",                     :null => false
+    t.string   "reward_id",           :limit => 36
+    t.string   "advertiser_offer_id", :limit => 36
+    t.string   "publisher_app_id",    :limit => 36, :null => false
+    t.integer  "advertiser_amount",                 :null => false
+    t.integer  "publisher_amount",                  :null => false
+    t.integer  "tapjoy_amount",                     :null => false
+    t.integer  "reward_type",                       :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "conversions", ["advertiser_app_id"], :name => "index_conversions_on_advertiser_app_id"
+  add_index "conversions", ["advertiser_offer_id"], :name => "index_conversions_on_advertiser_app_id"
   add_index "conversions", ["created_at"], :name => "index_conversions_on_created_at"
   add_index "conversions", ["id"], :name => "index_conversions_on_id", :unique => true
   add_index "conversions", ["publisher_app_id"], :name => "index_conversions_on_publisher_app_id"

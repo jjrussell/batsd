@@ -3,7 +3,6 @@ class App < ActiveRecord::Base
   
   has_one :offer, :as => :item
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
-  has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_app_id
   
   belongs_to :partner
   

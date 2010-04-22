@@ -5,6 +5,8 @@ class Offer < ActiveRecord::Base
   ANDROID_DEVICES = %w( android )
   ALL_DEVICES = IPHONE_DEVICES + ANDROID_DEVICES
   
+  has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
+  
   belongs_to :partner
   belongs_to :item, :polymorphic => true
   
