@@ -51,7 +51,8 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
         "&advertiser_amount=#{CGI::escape(reward.get('advertiser_amount'))}" +
         "&tapjoy_amount=#{CGI::escape(reward.get('tapjoy_amount'))}" +
         "&offerpal_amount=#{CGI::escape(reward.get('offerpal_amount'))}" +
-        "&money_txn_id=#{conversion.id}"
+        # "&money_txn_id=#{conversion.id}"
+        "&money_txn_id=#{UUIDTools::UUID.random_create.to_s}"
       
       download_with_retry(url, {:timeout => 30}, {:retries => 3, :alert => true})
       
