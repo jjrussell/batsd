@@ -11,9 +11,9 @@ class StreetviewDataController < ApplicationController
     start_time = start_time.beginning_of_day
     
     # PST:
-    start_time = start_time - 8
+    start_time = start_time - 8.hours
     
-    @date = start_time.iso8601[0,10]
+    @date = (start_time + 1.day).iso8601[0,10] + ' PST'
     @appstats_list = []
     
     partner.apps.each do |app_pair|
