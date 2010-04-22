@@ -30,16 +30,16 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
         reward.put('offerpal_amount', values[:offerpal_amount])
       end
       
-      # conversion = Conversion.new do |c|
-      #   c.reward_id = reward.key
-      #   c.advertiser_offer = Offer.find_by_item_id(reward.get('advertiser_app_id')) unless reward.get('advertiser_app_id').nil?
-      #   c.publisher_app_id = reward.get('publisher_app_id')
-      #   c.advertiser_amount = reward.get('advertiser_amount')
-      #   c.publisher_amount = reward.get('publisher_amount')
-      #   c.tapjoy_amount = reward.get('tapjoy_amount').to_i + reward.get('offerpal_amount').to_i
-      #   c.reward_type_string = reward.get('type')
-      # end
-      # conversion.save!
+      conversion = Conversion.new do |c|
+        c.reward_id = reward.key
+        c.advertiser_offer = Offer.find_by_item_id(reward.get('advertiser_app_id')) unless reward.get('advertiser_app_id').nil?
+        c.publisher_app_id = reward.get('publisher_app_id')
+        c.advertiser_amount = reward.get('advertiser_amount')
+        c.publisher_amount = reward.get('publisher_amount')
+        c.tapjoy_amount = reward.get('tapjoy_amount').to_i + reward.get('offerpal_amount').to_i
+        c.reward_type_string = reward.get('type')
+      end
+      conversion.save!
       
       #win_lb = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/Service1.asmx/'
       win_lb = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/Service1.asmx/'
@@ -51,8 +51,7 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
         "&advertiser_amount=#{CGI::escape(reward.get('advertiser_amount'))}" +
         "&tapjoy_amount=#{CGI::escape(reward.get('tapjoy_amount'))}" +
         "&offerpal_amount=#{CGI::escape(reward.get('offerpal_amount'))}" +
-        # "&money_txn_id=#{conversion.id}"
-        "&money_txn_id=#{UUIDTools::UUID.random_create.to_s}"
+        "&money_txn_id=#{conversion.id}"
       
       download_with_retry(url, {:timeout => 30}, {:retries => 3, :alert => true})
       
