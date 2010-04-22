@@ -4,11 +4,11 @@ class StreetviewDataController < ApplicationController
   before_filter 'streetview_authenticate'
   
   def index
+    return unless verify_params([:date])
     
     partner = SdbPartner.new :key => '9827ebca-d1ad-4dea-b61b-f38dd0d298c1'
     
-    start_time = params[:date].nil? ? Time.now.utc : Time.zone.parse(params[:date])
-    start_time = start_time.beginning_of_day
+    start_time = Time.zone.parse(params[:date])
     
     # PST:
     start_time = start_time - 8.hours
