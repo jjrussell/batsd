@@ -45,4 +45,13 @@ module AuthenticationHelper
       password
     end
   end
+  
+  def streetview_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'streetview'
+        password = '*streetviewlabsisawesome!'
+      end
+      password
+    end
+  end
 end
