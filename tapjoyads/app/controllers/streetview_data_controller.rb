@@ -8,6 +8,7 @@ class StreetviewDataController < ApplicationController
     partner = SdbPartner.new :key => '9827ebca-d1ad-4dea-b61b-f38dd0d298c1'
     
     start_time = params[:date].nil? ? Time.now.utc : Time.zone.parse(params[:date])
+    start_time = start_time.beginning_of_day
     
     @date = start_time.iso8601[0,10]
     @appstats_list = []
