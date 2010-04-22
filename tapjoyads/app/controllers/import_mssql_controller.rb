@@ -350,25 +350,4 @@ class ImportMssqlController < ApplicationController
     render :template => 'layouts/success'
   end
   
-  def conversion
-    if Conversion.find(params[:id]).nil?
-      render(:template => 'layouts/success') and return
-    end
-    
-    conversion = Conversion.find_or_initialize_by_id(params[:id])
-    conversion.reward_id = params[:reward_id] unless params[:reward_id].blank?
-    conversion.advertiser_app_id = params[:advertiser_app_id] unless params[:advertiser_app_id].blank?
-    conversion.publisher_app_id = params[:publisher_app_id]
-    conversion.advertiser_amount = params[:advertiser_amount]
-    conversion.publisher_amount = params[:publisher_amount]
-    conversion.tapjoy_amount = params[:tapjoy_amount].to_i + params[:offerpal_amount].to_i
-    conversion.reward_type = 999
-    
-    conversion.updated_at = Time.parse(params[:updated_at] + ' CST').utc
-    conversion.created_at = Time.parse(params[:created_at] + ' CST').utc
-    
-    conversion.save!
-    
-    render :template => 'layouts/success'
-  end
 end
