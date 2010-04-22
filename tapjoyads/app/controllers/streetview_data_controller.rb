@@ -11,7 +11,7 @@ class StreetviewDataController < ApplicationController
     start_time = Time.zone.parse(params[:date])
     
     # PST:
-    start_time = start_time - 8.hours
+    start_time = start_time + 8.hours
     
     @date = (start_time + 1.day).iso8601[0,10] + ' PST'
     @appstats_list = []
