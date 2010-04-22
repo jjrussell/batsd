@@ -7,8 +7,8 @@ xml.MarketingData do
       xml.AppKey appstats.app_key
       xml.PaidInstalls appstats.stats['paid_installs'].sum
       xml.Spend appstats.stats['installs_spend'].sum
-      xml.PublishedInstalls appstats.stats['installs_revenue'].sum
-      xml.Revenue appstats.stats['published_installs'].sum
+      xml.PublishedInstalls appstats.stats['published_installs'].sum
+      xml.Revenue appstats.stats['installs_revenue'].sum
     end
   end
 end
