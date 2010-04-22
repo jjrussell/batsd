@@ -10,6 +10,9 @@ class StreetviewDataController < ApplicationController
     start_time = params[:date].nil? ? Time.now.utc : Time.zone.parse(params[:date])
     start_time = start_time.beginning_of_day
     
+    # PST:
+    start_time = start_time - 8
+    
     @date = start_time.iso8601[0,10]
     @appstats_list = []
     
