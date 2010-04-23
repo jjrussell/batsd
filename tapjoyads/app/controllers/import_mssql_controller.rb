@@ -28,7 +28,7 @@ class ImportMssqlController < ApplicationController
       user.partners << Partner.find(params[:partner_id]) unless params[:partner_id].blank? || params[:partner_id] == 'NULL'
     end
     user.created_at = Time.parse(params[:created_at] + ' CST').utc unless params[:created_at].blank?
-    user.save!
+    user.save(false)
     
     render :template => 'layouts/success'  
   end
