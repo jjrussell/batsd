@@ -42,24 +42,8 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
 
         amount = reward.get('currency_reward')
 
-        begin
-          lock_on_key("lock.purchase_vg.#{udid}.#{app_id}") do
-            point_purchases = PointPurchases.new(:key => "#{udid}.#{app_id}")
-
-            Rails.logger.info "Adding #{amount} from #{udid}.#{app_id}, to user balance: #{point_purchases.points}"
-
-
-            point_purchases.points = point_purchases.points + amount.to_i
-
-            point_purchases.serial_save(:catch_exceptions => false)
-          end
-        rescue KeyExists
-          num_retries = num_retries.nil? ? 1 : num_retries + 1
-          if num_retries > 3
-            raise "Too many retries"
-          end
-          sleep(0.1)
-          retry
+        PointPurchases.transaction(:key => "#{udid}.#{app_id}") do |point_purchases|
+          point_purchases.points = point_purchases.points + amount.to_i
         end
       
         reward.put('sent_currency', Time.now.utc.to_f.to_s)

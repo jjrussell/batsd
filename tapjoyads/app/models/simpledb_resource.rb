@@ -319,7 +319,7 @@ class SimpledbResource
   # the transaction. If the row has been modified, then the transaction will be retried, up to
   # the amount of times s
   def self.transaction(load_options, options = {})
-    version_attr = options.delete(:version_attr) { :version }
+    version_attr = options.delete(:version_attr) { 'version' }
     retries = options.delete(:retries) { 3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
@@ -329,8 +329,10 @@ class SimpledbResource
       
       yield(row)
       
+      row.put(version_attr, initial_version.to_i + 1)
       row.serial_save(:expected_attr => {version_attr => initial_version})
     rescue ExpectedAttributeError => e
+      Rails.logger.info "ExpectedAttributeError: #{e.to_s}."
       if retries > 0
         retries -= 1
         retry
