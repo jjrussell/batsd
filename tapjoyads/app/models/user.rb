@@ -1,14 +1,17 @@
 class User < ActiveRecord::Base
+  include UuidPrimaryKey
+  
   acts_as_authentic do |c|
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
     c.transition_from_crypto_providers = TapjoyCrypto
   end
   
-  has_many :role_assignments, :dependent => :destroy
+  has_many :role_assignments
+  has_many :partner_assignments
   has_many :user_roles, :through => :role_assignments
-  belongs_to :partner
+  has_many :partners, :through => :partner_assignments
   
-  validates_presence_of :partner
+  validates_uniqueness_of :username
   
   def role_symbols
     user_roles.map do |role|

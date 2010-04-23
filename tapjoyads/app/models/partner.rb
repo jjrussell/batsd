@@ -3,7 +3,8 @@ class Partner < ActiveRecord::Base
   
   has_many :orders
   has_many :payouts
-  has_many :users
+  has_many :partner_assignments
+  has_many :users, :through => :partner_assignments
   has_many :apps
   has_many :email_offers
   has_many :offers

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100422194228) do
+ActiveRecord::Schema.define(:version => 20100423190350) do
 
   create_table "apps", :force => true do |t|
     t.string   "partner_id",            :limit => 36,                    :null => false
@@ -114,6 +114,15 @@ ActiveRecord::Schema.define(:version => 20100422194228) do
   add_index "orders", ["id"], :name => "index_orders_on_id", :unique => true
   add_index "orders", ["partner_id"], :name => "index_orders_on_partner_id"
 
+  create_table "partner_assignments", :force => true do |t|
+    t.string "user_id",    :limit => 36, :null => false
+    t.string "partner_id", :limit => 36, :null => false
+  end
+
+  add_index "partner_assignments", ["id"], :name => "index_partner_assignments_on_id", :unique => true
+  add_index "partner_assignments", ["partner_id"], :name => "index_partner_assignments_on_partner_id"
+  add_index "partner_assignments", ["user_id", "partner_id"], :name => "index_partner_assignments_on_user_id_and_partner_id", :unique => true
+
   create_table "partners", :force => true do |t|
     t.string   "contact_name"
     t.string   "contact_phone"
@@ -139,11 +148,12 @@ ActiveRecord::Schema.define(:version => 20100422194228) do
   add_index "payouts", ["partner_id"], :name => "index_payouts_on_partner_id"
 
   create_table "role_assignments", :force => true do |t|
-    t.integer  "user_id",      :null => false
-    t.integer  "user_role_id", :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string "user_id",      :limit => 36, :null => false
+    t.string "user_role_id", :limit => 36, :null => false
   end
+
+  add_index "role_assignments", ["id"], :name => "index_role_assignments_on_id", :unique => true
+  add_index "role_assignments", ["user_id", "user_role_id"], :name => "index_role_assignments_on_user_id_and_user_role_id", :unique => true
 
   create_table "user_roles", :force => true do |t|
     t.string   "name",       :null => false
@@ -151,11 +161,11 @@ ActiveRecord::Schema.define(:version => 20100422194228) do
     t.datetime "updated_at"
   end
 
+  add_index "user_roles", ["id"], :name => "index_user_roles_on_id", :unique => true
   add_index "user_roles", ["name"], :name => "index_user_roles_on_name", :unique => true
 
   create_table "users", :force => true do |t|
-    t.string   "partner_id",        :limit => 36, :null => false
-    t.string   "username"
+    t.string   "username",          :null => false
     t.string   "email"
     t.string   "crypted_password"
     t.string   "password_salt"
@@ -164,6 +174,7 @@ ActiveRecord::Schema.define(:version => 20100422194228) do
     t.datetime "updated_at"
   end
 
-  add_index "users", ["partner_id"], :name => "index_users_on_partner_id"
+  add_index "users", ["id"], :name => "index_users_on_id", :unique => true
+  add_index "users", ["username"], :name => "index_users_on_username", :unique => true
 
 end
