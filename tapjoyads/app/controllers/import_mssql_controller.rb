@@ -15,9 +15,21 @@ class ImportMssqlController < ApplicationController
     user.put('user_name', params[:user_name])
     user.put('password', params[:password])
     user.put('salt', params[:salt])
-
+    
     user.save
-
+    
+    user = User.find_or_initialize_by_id(params[:user_id])
+    user.username = params[:user_name]
+    user.email = params[:email]
+    user.crypted_password = params[:password]
+    user.password_salt = params[:salt]
+    if user.new_record?
+      user.user_roles << UserRole.find_by_name('partner')
+      user.partners << Partner.find(params[:partner_id])
+    end
+    user.created_at = Time.parse(params[:created_at] + ' CST').utc unless params[:created_at].blank?
+    user.save!
+    
     render :template => 'layouts/success'  
   end
   
