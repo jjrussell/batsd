@@ -330,7 +330,7 @@ class SimpledbResource
       yield(row)
       
       row.put(version_attr, initial_version.to_i + 1)
-      row.serial_save(:expected_attr => {version_attr => initial_version})
+      row.serial_save(:catch_exceptions => false, :expected_attr => {version_attr => initial_version})
     rescue ExpectedAttributeError => e
       Rails.logger.info "ExpectedAttributeError: #{e.to_s}."
       if retries > 0
