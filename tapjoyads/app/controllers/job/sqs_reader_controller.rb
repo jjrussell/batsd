@@ -36,7 +36,7 @@ class Job::SqsReaderController < Job::JobController
       params[:message] = message.to_s
       
       begin
-        lock_on_key(get_memcache_lock_key) do 
+        lock_on_key(get_memcache_lock_key(message)) do 
           begin
             on_message(message)
             message.delete
