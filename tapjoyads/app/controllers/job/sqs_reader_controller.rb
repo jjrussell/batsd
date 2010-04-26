@@ -1,6 +1,7 @@
 class Job::SqsReaderController < Job::JobController
   include RightAws
   include MemcachedHelper
+  include NewRelicHelper
 
   def initialize(queue_name)
     @queue_name = queue_name
@@ -31,14 +32,22 @@ class Job::SqsReaderController < Job::JobController
     
     messages = queue.receive_messages(10)
     messages.each do |message|
-      Rails.logger.info "#{@queue_name} message recieved: #{message.to_s}"      
+      Rails.logger.info "#{@queue_name} message recieved: #{message.to_s}"
+      params[:message] = message.to_s
+      
       begin
-        on_message(message)
-        message.delete
-      rescue Exception => e
-        Rails.logger.warn "Error processing message. Error: #{e}"
-        params[:message] = message.to_s
-        raise e
+        lock_on_key(get_memcache_lock_key) do 
+          begin
+            on_message(message)
+            message.delete
+          rescue Exception => e
+            Rails.logger.warn "Error processing message. Error: #{e}"
+            raise e
+          end
+        end
+      rescue KeyExists => e
+        alert_new_relic(SqsLockExistsError, 'Lock exists for this message. Skipping processing.',
+            request, params)
       end
     end
     
@@ -58,5 +67,9 @@ class Job::SqsReaderController < Job::JobController
   # Returns a new key for every 5-minute window. The key is unique to this host and this queue.
   def get_memcache_error_count_key
     "sqserrors.#{Socket.gethostname}.#{@queue_name}.#{(Time.now.to_i / 5.minutes).to_i}"
+  end
+  
+  def get_memcache_lock_key(message)
+    "sqslocks.#{@queue_name}.#{message.hash}"
   end
 end

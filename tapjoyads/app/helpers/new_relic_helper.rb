@@ -20,6 +20,7 @@ module NewRelicHelper
   class ParseStoreIdError < RuntimeError; end
   class FailedToWriteToSqsError < RuntimeError; end
   class FailedToDownloadError < RuntimeError; end
+  class SqsLockExistsError < RuntimeError; end
 
   # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
   class EmailWorthyError < RuntimeError; end
