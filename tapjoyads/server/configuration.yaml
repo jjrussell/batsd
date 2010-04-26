@@ -1,4 +1,4 @@
 --- 
 config: 
-  api_deploy_version: "670"
+  api_deploy_version: "671"
   website_deploy_version: "1"
