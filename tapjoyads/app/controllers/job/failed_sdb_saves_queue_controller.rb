@@ -40,12 +40,9 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
     sdb_item = SimpledbResource.deserialize(sdb_string)
     sdb_item.put('from_queue', Time.now.utc.to_f.to_s)
     
-    if sdb_item.this_domain_name =~ /^device_app_list/
-      num = sdb_item.this_domain_name.match(/^device_app_list_(.*)/)[1]
-      if num.to_i > 19
-        bucket.move_key(json['uuid'], "complete/#{json['uuid']}")
-        return
-      end
+    if sdb_item.this_domain_name =~ /point_purchases/
+      bucket.move_key(json['uuid'], "complete/#{json['uuid']}")
+      return
     end
     
     sdb_item.serial_save(options.merge({:catch_exceptions => false}))
