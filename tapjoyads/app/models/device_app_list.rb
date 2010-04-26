@@ -21,7 +21,7 @@ class DeviceAppList < SimpledbResource
   def load(load_from_memcache = true)
     super(load_from_memcache)
     
-    if self.apps.empty?
+    if self.attributes['apps'].blank?
       convert_attributes
     end
   end
