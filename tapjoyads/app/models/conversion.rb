@@ -3,7 +3,9 @@ class Conversion < ActiveRecord::Base
   
   REWARD_TYPES = {
     'offer' => 0,
-    'install' => 1
+    'install' => 1,
+    'rating' => 2,
+    'imported' => 999
   }
   
   belongs_to :publisher_app, :class_name => 'App'
