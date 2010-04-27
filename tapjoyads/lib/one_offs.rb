@@ -108,7 +108,7 @@ class OneOffs
     num_intervals.times do
       print "queueing from #{start_time.to_s(:db)} to #{(start_time + interval).to_s(:db)}... "
       time = Benchmark.realtime do
-        Reward.select(:where => "(type='offer' or type='install') and created >= '#{Time.zone.parse(start_time).to_f}' and created < '#{Time.zone.parse(start_time + interval).to_f}'") do |reward|
+        Reward.select(:where => "(type='offer' or type='install') and created >= '#{start_time.to_f}' and created < '#{(start_time + interval).to_f}'") do |reward|
           reward.delete('sent_money_txn')
           queue.send_message(reward.serialize(:attributes_only => true))
         end
