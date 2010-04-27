@@ -1,5 +1,7 @@
 user_role = UserRole.create(:name => 'admin')
 UserRole.create(:name => 'tools_user')
+UserRole.create(:name => 'agency')
+UserRole.create(:name => 'partner')
 
 user = User.create(:username => 'testerman', :email => 'test@tapjoy.com', :password => 'asdf', :password_confirmation => 'asdf')
 
