@@ -106,14 +106,16 @@ class OneOffs
   def self.requeue_rewards(start_time, interval = 1.hour, num_intervals = 1)
     queue = RightAws::SqsGen2.new.queue(QueueNames::SEND_MONEY_TXN)
     num_intervals.times do
-      print "queueing from #{start_time.to_s(:db)} to #{(start_time + interval).to_s(:db)}... "
+      puts "queueing from #{start_time.to_s(:db)} to #{(start_time + interval).to_s(:db)}..."
       time = Benchmark.realtime do
+        counter = 0
         Reward.select(:where => "(type='offer' or type='install') and created >= '#{start_time.to_f}' and created < '#{(start_time + interval).to_f}'") do |reward|
+          counter += 1
           reward.delete('sent_money_txn')
           queue.send_message(reward.serialize(:attributes_only => true))
         end
       end
-      puts "completed in #{time} seconds."
+      puts "completed #{counter} in #{time.ceil} seconds."
       start_time += interval
       sleep(120)
     end
