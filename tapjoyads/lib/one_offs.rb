@@ -86,4 +86,10 @@ class OneOffs
     end
   end
   
+  def self.remove_dup_conversions
+    Conversion.find_each(:conditions => []) do |c|
+      
+    end
+  end
+  
 end
