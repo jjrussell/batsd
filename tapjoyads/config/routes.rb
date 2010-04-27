@@ -30,24 +30,10 @@ ActionController::Routing::Routes.draw do |map|
   #     admin.resources :products
   #   end
   
-  # User controller is exposed as resource
-  map.namespace :site do |site|
-    site.resources :users, :only => [:show, :create], :new => {:login => :post}
-    site.resources :apps, :only => [:show, :index]
-    site.resources :appstats, :only => [:show, :index]
-  end
-  
-  map.user 'user', :controller => 'user/dashboard', :action => 'show'
-  map.namespace :user do |user|
-    user.login 'login', :controller => 'user_sessions', :action => 'new'
-    user.logout 'logout', :controller => 'user_sessions', :action => 'destroy'
-    user.resources :users, :only => [ :new, :create, :edit, :update ]
-    user.resources :user_sessions, :only => [ :new, :create, :destroy ]
-    user.resources :partners, :except => [ :show, :destroy ]
-    user.resources :user_roles, :except => [ :show ]
-  end
-  
-  map.resources :balances, :only => [ :show ]
+  map.login 'login', :controller => 'user_sessions', :action => 'new'
+  map.logout 'logout', :controller => 'user_sessions', :action => 'destroy'
+  map.resources :user_sessions, :only => [ :new, :create, :destroy ]
+  map.resources :tools, :only => :index
   
   # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
   # map.root :controller => "welcome"

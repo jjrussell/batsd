@@ -1,4 +1,4 @@
-class User::UserSessionsController < UserController
+class UserSessionsController < UserController
   
   def new
     @user_session = UserSession.new
@@ -8,7 +8,7 @@ class User::UserSessionsController < UserController
     @user_session = UserSession.new(params[:user_session])
     if @user_session.save
       flash[:notice] = "Successfully logged in."
-      redirect_to user_path
+      redirect_to tools_path
     else
       render :action => 'new'
     end
@@ -18,7 +18,7 @@ class User::UserSessionsController < UserController
     @user_session = UserSession.find
     @user_session.destroy
     flash[:notice] = "Successfully logged out."
-    redirect_to user_login_path
+    redirect_to login_path
   end
   
 end
