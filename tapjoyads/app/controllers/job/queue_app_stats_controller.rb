@@ -148,7 +148,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     url += "&item=#{item_id}"
     url += "&Datas=#{CGI::escape(datas)}"
     
-    download_with_retry(url, {:timeout => 30}, {:retries => 2})
+    download_with_retry(url, {:timeout => 30})
   end
   
   def aggregate_stat(stat_row, wr_path, app_key, first_hour, last_hour, time = @now, is_publisher_stat = false)

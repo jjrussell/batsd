@@ -34,63 +34,27 @@ module DownloadContent
   ##
   # Makes a GET request to url. No data is returned.
   # If the download fails, it will be retried automatically via sqs, 
-  # as long as retry_options[:retries] > 0.
-  def download_with_retry(url, download_options = {}, retry_options = {}, action_options = {})
-    num_retries = retry_options.delete(:retries) { 0 }
-    should_alert = retry_options.delete(:alert) { true }
-    final_action = retry_options.delete(:final_action)
-    raise "Unknown retry_options #{options.keys.join(', ')}" unless retry_options.empty?
-    
+  def download_with_retry(url, download_options = {})
     begin
-      response = download_content(url, download_options.merge({:return_response => true}))
-      if response.status == 403
-        call_final_action(final_action, '403', action_options)
-        alert_new_relic(FailedToDownloadError, "Failed to download #{url}. 403 error.")
-      elsif response.status < 200 or response.status > 399
-        raise "#{response.status} error"
-      else
-        call_final_action(final_action, 'success', action_options)
-      end
+      download_strict(url, download_options)
     rescue Exception => e
       Rails.logger.info "Download failed. Error: #{e}"
-      if num_retries > 0
-        retry_options[:retries] = num_retries - 1
-        message = {:url => url, :download_options => download_options, 
-            :retry_options => retry_options, :action_options => action_options}.to_json
-        send_to_sqs(QueueNames::FAILED_DOWNLOADS, message)
-        Rails.logger.info "Added to FailedDownloads queue."
-      else
-        if retry_options[:alert]
-          alert_new_relic(FailedToDownloadError, "Failed to download #{url}. No more retries.")
-        end
-        call_final_action(final_action, 'max_retries', action_options)
-      end
+      message = {:url => url, :download_options => download_options}.to_json
+      send_to_sqs(QueueNames::FAILED_DOWNLOADS, message)
+      Rails.logger.info "Added to FailedDownloads queue."
     end
   end
   
-  private
-  
-  def call_final_action(action, status, options)
-    Rails.logger.info "Calling final action: '#{action}'"
-    case action
-    when 'send_currency_download_complete'
-      send_currency_download_complete(status, options)
-    when nil
-      Rails.logger.info "No final action to call."
-    else
-      raise "Unknown final action: '#{action}'"
-    end
-  end
-  
-  def send_currency_download_complete(status, options)
-    if status == 'max_retries'
-      app = SdbApp.new(:key => options[:app_id])
-      app.put('send_currency_error', status)
-      app.save
+  ##
+  # Download a url and return the response. Raises an exception if the response status is not normal.
+  def download_strict(url, download_options = {})
+    response = download_content(url, download_options.merge({:return_response => true}))
+    if response.status == 403
+      alert_new_relic(FailedToDownloadError, "Failed to download #{url}. 403 error.")
+    elsif response.status < 200 or response.status > 399
+      raise "#{response.status} error"
     end
     
-    reward = Reward.new(:key => options[:reward_id])
-    reward.put('send_currency_status', status)
-    reward.save
+    return response
   end
 end

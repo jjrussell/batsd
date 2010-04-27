@@ -93,7 +93,7 @@ class Job::SendStatsController < Job::JobController
     url += "&item=#{item_id}"
     url += "&Datas=#{CGI::escape(datas)}"
     
-    download_with_retry(url, {:timeout => 30}, {:retries => 2})
+    download_with_retry(url, {:timeout => 30})
   end
   
 end
