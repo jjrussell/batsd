@@ -30,23 +30,27 @@ class Job::SqsReaderController < Job::JobController
       end
     end
     
-    message = queue.receive
-    unless message.nil?
-      Rails.logger.info "#{@queue_name} message recieved: #{message.to_s}"
-      params[:message] = message.to_s
+    10.times do
+      message = queue.receive
+      unless message.nil?
+        Rails.logger.info "#{@queue_name} message recieved: #{message.to_s}"
+        params[:message] = message.to_s
       
-      begin
-        CACHE.add(get_memcache_lock_key(message), 'locked', queue.visibility.to_i)
         begin
-          on_message(message)
-          message.delete
-        rescue Exception => e
-          Rails.logger.warn "Error processing message. Error: #{e}"
-          raise e
+          CACHE.add(get_memcache_lock_key(message), 'locked', queue.visibility.to_i)
+          begin
+            on_message(message)
+            message.delete
+          rescue Exception => e
+            Rails.logger.warn "Error processing message. Error: #{e}"
+            raise e
+          end
+        rescue Memcached::NotStored => e
+          alert_new_relic(SqsLockExistsError, 'Lock exists for this message. Skipping processing.',
+              request, params)
         end
-      rescue Memcached::NotStored => e
-        alert_new_relic(SqsLockExistsError, 'Lock exists for this message. Skipping processing.',
-            request, params)
+      else
+        break
       end
     end
     
