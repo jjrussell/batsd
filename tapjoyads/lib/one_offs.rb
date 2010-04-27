@@ -105,7 +105,7 @@ class OneOffs
   
   def self.requeue_rewards(start_time, end_time)
     queue = RightAws::SqsGen2.new.queue(QueueNames::SEND_MONEY_TXN)
-    Reward.select(:where => "created >= '#{Time.zone.parse(start_time).to_f}' and created < '#{Time.zone.parse(end_time).to_f}'") do |reward|
+    Reward.select(:where => "(type='offer' or type='install') and created >= '#{Time.zone.parse(start_time).to_f}' and created < '#{Time.zone.parse(end_time).to_f}'") do |reward|
       queue.send_message(reward.serialize)
     end
   end
