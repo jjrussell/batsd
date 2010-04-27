@@ -86,23 +86,6 @@ class OneOffs
     end
   end
   
-  def self.remove_dup_conversions
-    Benchmark.realtime do
-      num_dups = 1000
-      while num_dups > 0
-        conversions = Conversion.find(:all, :conditions => "created_at > '2010-04-22'", :select => "count(*) as n, reward_id", :group => 'reward_id', :having => "n > 1", :limit => 1000)
-        num_dups = conversions.size
-        puts "found #{num_dups} dups"
-        conversions.each do |conversion|
-          Conversion.find_all_by_reward_id(conversion.reward_id).each_with_index do |c, i|
-            next if i == 0
-            c.delete
-          end
-        end
-      end
-    end
-  end
-  
   def self.requeue_rewards(start_time, interval = 1.hour, num_intervals = 1)
     queue = RightAws::SqsGen2.new.queue(QueueNames::SEND_MONEY_TXN)
     num_intervals.times do
@@ -118,7 +101,6 @@ class OneOffs
       start_time += interval
       puts "completed #{counter} in #{time.ceil} seconds."
     end
-    
   end
   
 end
