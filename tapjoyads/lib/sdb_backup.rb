@@ -28,7 +28,7 @@ class SdbBackup
   
     key_list = []
     count = 0
-    response = SimpledbResource.select(:domain_name => domain_name, :where => where, :retries => 200) do |item|
+    response = SimpledbResource.select(:domain_name => domain_name, :where => where, :retries => 2000) do |item|
       count += 1
       file.write(item.serialize)
       file.write("\n")
@@ -38,13 +38,14 @@ class SdbBackup
     
     file.close
   
-    Rails.logger.info "Made #{count} select queries. Total box usage: #{box_usage}"
+    Rails.logger.info "Made #{count} select queries. Total box usage: #{box_usage}. Retry count: #{response[:retry_count]}"
   
     `gzip -f #{file_name}`
     
     self.write_to_s3(s3_name, gzip_file_name, s3_bucket, 3)
     
     if delete_rows
+      Rails.logger.info "Deleting rows"
       key_list.each do |key|
         begin
           item = SimpledbResource.new(:key => key, :load => false, :domain_name => domain_name)
@@ -53,6 +54,7 @@ class SdbBackup
           retry
         end
       end
+      Rails.logger.info "Deleted #{key_list.length} rows."
     end
   rescue RightAws::AwsError => e
     Rails.logger.info "Error while trying to back up #{domain_name}: #{e}"

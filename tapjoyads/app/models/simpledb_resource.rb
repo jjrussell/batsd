@@ -420,14 +420,15 @@ class SimpledbResource
     
     sdb_item_array = []
     box_usage = 0
+    retry_count = 0
     
     loop do
       begin
         response = @@sdb.select(query, next_token)
       rescue AwsError => e
-        Rails.logger.info "Error: #{e}. Retrying up to #{retries} more times."
-        if retries > 0
-          retries -= 1
+        Rails.logger.info "Error: #{e}. Retrying up to #{retries - retry_count} more times."
+        if retry_count < retries
+          retry_count += 1
           retry
         else
           raise e
@@ -454,7 +455,8 @@ class SimpledbResource
         return {
           :items => sdb_item_array,
           :next_token => response[:next_token],
-          :box_usage => box_usage
+          :box_usage => box_usage,
+          :retry_count => retry_count
         }
       end
       
