@@ -6,6 +6,8 @@ class Job::CleanupStoreClickController < Job::SqsReaderController
   private
   
   def on_message(message)
+    message.delete
+    
     date_string = message.to_s
     start_time = Time.zone.parse(date_string).beginning_of_day.to_i
     end_time = start_time + 24.hours
