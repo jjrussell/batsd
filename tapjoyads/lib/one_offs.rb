@@ -68,8 +68,8 @@ class OneOffs
       counter = 0
       Partner.find_each do |p|
         counter += 1
-        orders_sum = p.orders.sum(:amount)
-        payouts_sum = p.payouts.sum(:amount)
+        orders_sum = p.orders.sum(:amount, :conditions => 'status = 1')
+        payouts_sum = p.payouts.sum(:amount, :conditions => 'status = 1')
         publisher_conversions_sum = p.publisher_conversions.sum(:publisher_amount)
         advertiser_conversions_sum = p.advertiser_conversions.sum(:advertiser_amount)
         p.balance = orders_sum + advertiser_conversions_sum
