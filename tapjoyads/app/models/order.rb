@@ -7,7 +7,7 @@ class Order < ActiveRecord::Base
   validates_inclusion_of :status, :payment_method, :in => [ 0, 1, 2 ]
   validates_numericality_of :amount, :only_integer => true, :allow_nil => false
   
-  after_save :update_balance
+  after_create :update_balance
   
 private
   

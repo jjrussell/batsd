@@ -9,7 +9,7 @@ class Payout < ActiveRecord::Base
   validates_numericality_of :amount, :only_integer => true, :allow_nil => false
   validates_inclusion_of :status, :in => [ 0, 1 ]
   
-  after_save :update_balance
+  after_create :update_balance
   
 private
   
