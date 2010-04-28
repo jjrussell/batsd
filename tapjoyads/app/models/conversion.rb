@@ -17,7 +17,7 @@ class Conversion < ActiveRecord::Base
   validates_inclusion_of :reward_type, :in => [ 0, 1, 2, 999 ]
   
   before_save :sanitize_reward_id
-  # after_save :update_publisher_amount, :update_advertiser_amount
+  after_save :update_publisher_amount, :update_advertiser_amount
   
   named_scope :created_since, lambda { |date| { :conditions => ["conversions.created_at >= ?", date] } }
   
