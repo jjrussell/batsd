@@ -70,14 +70,8 @@ class OneOffs
         counter += 1
         orders_sum = p.orders.sum(:amount)
         payouts_sum = p.payouts.sum(:amount)
-        publisher_conversions_sum = 0
-        advertiser_conversions_sum = 0
-        p.apps.each do |a|
-          publisher_conversions_sum += a.publisher_conversions.sum(:publisher_amount)
-        end
-        p.offers.each do |o|
-          advertiser_conversions_sum += o.advertiser_conversions.sum(:advertiser_amount)
-        end
+        publisher_conversions_sum = p.publisher_conversions.sum(:publisher_amount)
+        advertiser_conversions_sum = p.advertiser_conversions.sum(:advertiser_amount)
         p.balance = orders_sum + advertiser_conversions_sum
         p.pending_earnings = publisher_conversions_sum - payouts_sum
         p.save!
