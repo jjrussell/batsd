@@ -1,1 +1,5 @@
 %h1 Tools
+
+%ul
+  - if permitted_to? :payouts, :tools
+    %li= link_to 'Payouts', payouts_tools_path

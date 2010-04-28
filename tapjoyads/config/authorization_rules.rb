@@ -1,7 +1,7 @@
 authorization do
   
   role :tools_user do
-    has_permission_on :tools, :to => [ :index ]
+    has_permission_on :tools, :to => [ :payouts ]
   end
   
   role :admin do

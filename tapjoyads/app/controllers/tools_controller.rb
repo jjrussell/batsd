@@ -1,7 +1,10 @@
 class ToolsController < UserController
-  filter_resource_access
+  filter_access_to [ :payouts ]
   
   def index
+  end
+  
+  def payouts
   end
   
 end
