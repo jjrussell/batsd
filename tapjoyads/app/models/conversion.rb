@@ -19,6 +19,8 @@ class Conversion < ActiveRecord::Base
   before_save :sanitize_reward_id
   # after_save :update_publisher_amount, :update_advertiser_amount
   
+  named_scope :created_since, lambda { |date| { :conditions => ["conversions.created_at >= ?", date] } }
+  
   def reward_type_string=(string)
     self.write_attribute(:reward_type, REWARD_TYPES[string])
   end

@@ -6,6 +6,10 @@
     %title Tapjoy.com
     = stylesheet_link_tag 'website'
     = yield :included_stylesheets
+    = javascript_include_tag 'jquery-1.4.1.min'
+    %script{ :type => 'text/javascript', :charset => 'utf-8' }
+      jQuery.noConflict();
+    = javascript_include_tag 'prototype'
     
   %body
     #content

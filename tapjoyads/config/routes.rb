@@ -40,7 +40,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :only => [ :edit, :update ]
   
-  map.resources :tools, :only => :index, :collection => [ :payouts ]
+  map.resources :tools, :only => :index, :collection => { :payouts => :get }, :member => { :create_payout => :post }
   
   map.resources :balances, :only => :show
   
