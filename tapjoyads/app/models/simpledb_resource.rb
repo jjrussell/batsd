@@ -381,8 +381,8 @@ class SimpledbResource
       begin
         response = @@sdb.select(query, next_token)
       rescue AwsError => e
-        Rails.logger.info "Error: #{e}. Retrying up to #{retries} more times."
-        if retries > 0
+        if e.message.starts_with?("ServiceUnavailable") && retries > 0
+          Rails.logger.info "ServiceUnavailable Error. Retrying up to #{retries} more times."
           retries -= 1
           retry
         else
@@ -426,8 +426,8 @@ class SimpledbResource
       begin
         response = @@sdb.select(query, next_token)
       rescue AwsError => e
-        Rails.logger.info "Error: #{e}. Retrying up to #{retries - retry_count} more times."
-        if retry_count < retries
+        if e.message.starts_with?("ServiceUnavailable") && retry_count < retries 
+          Rails.logger.info "ServiceUnavailable Error. Retrying up to #{retries - retry_count} more times."
           retry_count += 1
           retry
         else
