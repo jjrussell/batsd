@@ -7,6 +7,8 @@
 ifconfig = `/sbin/ifconfig`
 ip_address = ifconfig.match(/inet addr:(.*?)\s/)[1]
 
+sleep 1
+
 `memcached -u webuser -d -c 2048 -m 1200 -l #{ip_address}`
 
 # exec "/home/webuser/server/memcached_monitor.rb"
