@@ -1,5 +1,5 @@
-class UserController < ApplicationController
-  layout 'user'
+class WebsiteController < ApplicationController
+  layout 'website'
   
   skip_before_filter :fix_params
   
