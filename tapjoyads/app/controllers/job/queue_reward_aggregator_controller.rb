@@ -35,7 +35,7 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
       publishers = {}
       advertisers = {}
         
-      Reward.select(:where => "created >= '#{start_hour}' and created < '#{last_hour}'") do |reward|
+      Reward.select(:where => "created >= '#{start_hour}' and created < '#{last_hour}'", :retries => 1000) do |reward|
         
         publishers[reward.get('publisher_app_id')] = { :offers => 0, :ratings => 0, 
           :offers_revenue => 0, :installs_revenue => 0, 
@@ -64,7 +64,8 @@ class Job::QueueRewardAggregatorController < Job::SqsReaderController
         offers_opened = OfferClick.count(
             :where => "app_id = '#{key}' and click_date >= '#{start_hour}' and click_date < '#{last_hour}'")
         installs_opened = StoreClick.count(
-            :where => "publisher_app_id = '#{key}' and click_date >= '#{start_hour}' and click_date < '#{last_hour}'")
+            :where => "publisher_app_id = '#{key}' and click_date >= '#{start_hour}' and click_date < '#{last_hour}'",
+            :retries => 1000)
       
         stat = Stats.new(:key => get_stat_key('app', key, start_hour))
       
