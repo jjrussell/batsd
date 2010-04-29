@@ -56,7 +56,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     # Assume all apps are CST for now.
     end_of_day = Time.parse('00:00 CST', Time.now.utc + 18.hours).utc
     seconds_left_in_day = end_of_day - now
-    num_installs_today = StoreClick.count(:where => "installed > '#{end_of_day.to_f - 24.hours}' and advertiser_app_id = '#{app_key}'").to_f
+    num_installs_today = StoreClick.count(:where => "installed > '#{end_of_day.to_f - 24.hours}' and advertiser_app_id = '#{app_key}'", :retries => 1000).to_f
     
     Rails.logger.info "Seconds left in day: #{seconds_left_in_day}"
     Rails.logger.info "Num installs today: #{num_installs_today}"
