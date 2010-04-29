@@ -46,7 +46,7 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
       rescue ActiveRecord::RecordInvalid => e
         if conversion.errors[:id] == 'has already been taken'
           params[:message] = message.to_s
-          alert_new_relic(DuplicateConversionBlocked.new, "blocked duplicate conversion with id: #{conversion.id}", request, params)
+          alert_new_relic(DuplicateConversionBlocked, "blocked duplicate conversion with id: #{conversion.id}", request, params)
           return
         else
           raise e
