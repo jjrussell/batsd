@@ -1,6 +1,7 @@
 class Job::SendMoneyTxnController < Job::SqsReaderController
   include DownloadContent
   include RewardHelper
+  include NewRelicHelper
   
   def initialize
     super QueueNames::SEND_MONEY_TXN
@@ -30,18 +31,26 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
         reward.put('offerpal_amount', values[:offerpal_amount])
       end
       
-      conversion = Conversion.find_by_reward_id(reward.key)
-      if conversion.nil?
-        conversion = Conversion.new do |c|
-          c.reward_id = reward.key
-          c.advertiser_offer = Offer.find_by_item_id(reward.get('advertiser_app_id')) unless reward.get('advertiser_app_id').nil?
-          c.publisher_app_id = reward.get('publisher_app_id')
-          c.advertiser_amount = reward.get('advertiser_amount')
-          c.publisher_amount = reward.get('publisher_amount')
-          c.tapjoy_amount = reward.get('tapjoy_amount').to_i + reward.get('offerpal_amount').to_i
-          c.reward_type_string = reward.get('type')
-        end
+      conversion = Conversion.new do |c|
+        c.id = reward.key
+        c.reward_id = reward.key
+        c.advertiser_offer = Offer.find_by_item_id(reward.get('advertiser_app_id')) unless reward.get('advertiser_app_id').nil?
+        c.publisher_app_id = reward.get('publisher_app_id')
+        c.advertiser_amount = reward.get('advertiser_amount')
+        c.publisher_amount = reward.get('publisher_amount')
+        c.tapjoy_amount = reward.get('tapjoy_amount').to_i + reward.get('offerpal_amount').to_i
+        c.reward_type_string = reward.get('type')
+      end
+      begin
         conversion.save!
+      rescue ActiveRecord::RecordInvalid => e
+        if conversion.errors[:id] == 'has already been taken'
+          params[:message] = message.to_s
+          alert_new_relic(DuplicateConversionBlocked.new, "blocked duplicate conversion with id: #{conversion.id}", request, params)
+          return
+        else
+          raise e
+        end
       end
       
       #win_lb = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/Service1.asmx/'
