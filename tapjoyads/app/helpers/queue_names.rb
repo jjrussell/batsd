@@ -14,4 +14,5 @@ module QueueNames
   IMPORT_UDIDS             = RUN_MODE_PREFIX + 'ImportUdids'
   CALCULATE_SHOW_RATE      = RUN_MODE_PREFIX + 'CalculateShowRate'
   CLEANUP_STORE_CLICK      = RUN_MODE_PREFIX + 'CleanupStoreClick'
+  CALCULATE_NEXT_PAYOUT    = RUN_MODE_PREFIX + 'CalculateNextPayout'
 end

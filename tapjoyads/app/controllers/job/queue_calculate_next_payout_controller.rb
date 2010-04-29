@@ -1,0 +1,16 @@
+class Job::QueueCalculateNextPayoutController < Job::SqsReaderController
+
+  def initialize
+    super QueueNames::CALCULATE_NEXT_PAYOUT
+  end
+
+  private
+
+  def on_message(message)
+    Partner.to_calculate_next_payout_amount.each do |partner|
+      partner.calculate_next_payout_amount
+      partner.save!
+    end
+  end
+  
+end
