@@ -3,13 +3,10 @@
 %html
   %head
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
-    %title Tapjoy.com
+    %title
+      = @page_title.blank? ? 'Tapjoy' : "#{@page_title} - Tapjoy"
     = stylesheet_link_tag 'website'
     = yield :included_stylesheets
-    = javascript_include_tag 'jquery-1.4.1.min'
-    %script{ :type => 'text/javascript', :charset => 'utf-8' }
-      jQuery.noConflict();
-    = javascript_include_tag 'prototype'
     
   %body
     #content
@@ -29,7 +26,8 @@
       
       = yield
       
+      = javascript_include_tag 'jquery-1.4.1.min'
       = yield :included_javascripts
-      
+        
       %script{ :type => 'text/javascript', :charset => 'utf-8' }
         = yield :page_javascript
