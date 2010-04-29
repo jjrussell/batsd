@@ -16,6 +16,7 @@ private
   def update_balance
     return true if self.amount == 0
     partner.pending_earnings -= self.amount
+    partner.next_payout_amount = 0
     partner.save!
   end
   

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100428174656) do
+ActiveRecord::Schema.define(:version => 20100429182112) do
 
   create_table "apps", :force => true do |t|
     t.string   "partner_id",            :limit => 36,                    :null => false
@@ -126,11 +126,12 @@ ActiveRecord::Schema.define(:version => 20100428174656) do
   create_table "partners", :force => true do |t|
     t.string   "contact_name"
     t.string   "contact_phone"
-    t.integer  "balance",          :default => 0,         :null => false
-    t.integer  "pending_earnings", :default => 0,         :null => false
+    t.integer  "balance",            :default => 0,         :null => false
+    t.integer  "pending_earnings",   :default => 0,         :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "payout_frequency", :default => "monthly", :null => false
+    t.string   "payout_frequency",   :default => "monthly", :null => false
+    t.integer  "next_payout_amount", :default => 0,         :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
