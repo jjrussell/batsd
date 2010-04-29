@@ -8,19 +8,11 @@ class Order < ActiveRecord::Base
   validates_numericality_of :amount, :only_integer => true, :allow_nil => false
   
   after_create :update_balance
-  after_update :this_will_be_deleted
   
 private
   
   def update_balance
     return true if self.amount == 0
-    partner.balance += self.amount
-    partner.save!
-  end
-  
-  def this_will_be_deleted
-    return true unless self.amount_changed?
-    partner.balance -= self.amount_was
     partner.balance += self.amount
     partner.save!
   end
