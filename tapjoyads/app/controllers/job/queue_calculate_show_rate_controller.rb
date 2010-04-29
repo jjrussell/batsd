@@ -24,8 +24,8 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     now = Time.now.utc
     
     cvr_timeframe = app.is_free ? 1.hour : 24.hours
-    recent_clicks = StoreClick.count(:where => "click_date > '#{now.to_f - cvr_timeframe}' and click_date < '#{now.to_f - 5.minutes}' and advertiser_app_id = '#{app_key}'").to_f
-    recent_installs = StoreClick.count(:where => "click_date > '#{now.to_f - cvr_timeframe}' and click_date < '#{now.to_f - 5.minutes}' and installed != '' and advertiser_app_id = '#{app_key}'").to_f
+    recent_clicks = StoreClick.count(:where => "click_date > '#{now.to_f - cvr_timeframe}' and click_date < '#{now.to_f - 5.minutes}' and advertiser_app_id = '#{app_key}'", :retries => 1000).to_f
+    recent_installs = StoreClick.count(:where => "click_date > '#{now.to_f - cvr_timeframe}' and click_date < '#{now.to_f - 5.minutes}' and installed != '' and advertiser_app_id = '#{app_key}'", :retries => 1000).to_f
     
     if recent_clicks == 0
       conversion_rate = app.get('price').to_f > 0 ? 0.3 : 0.75
@@ -103,7 +103,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     end
     
     if app.overall_budget > 0
-      total_installs = StoreClick.count(:where => "installed != '' and advertiser_app_id = '#{app_key}'").to_f
+      total_installs = StoreClick.count(:where => "installed != '' and advertiser_app_id = '#{app_key}'", :retries => 1000).to_f
       if total_installs > app.overall_budget
         Rails.logger.info "App over overall_budget. Overriding any calculations and setting show rate to 0."
         new_show_rate = 0
