@@ -1,18 +1,24 @@
+<%= 
+  unless params[:callback].nil?
+    params[:callback].gsub(/\W/, '') + '('
+  end
+-%>
 {"OfferArray": [
   <% @advertiser_app_list.each_index do |i| %>
     <% app = @advertiser_app_list[i] %>
     {
-      "Cost":<%= app.get_cost.to_json %>,
-      "Amount":<%= @currency.get_app_currency_reward(app).to_json %>,
-      "IconURL":<%= app.get_icon_url(true).to_json %>,
-      "Name":<%= app.get('name').to_json %>,
-      "RedirectURL":<%= app.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid]).to_json %>
+      "Cost":<%= app.get_cost.to_json -%>,
+      "Amount":<%= @currency.get_app_currency_reward(app).to_json -%>,
+      "IconURL":<%= app.get_icon_url(true).to_json -%>,
+      "Name":<%= app.get('name').to_json -%>,
+      "RedirectURL":<%= app.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid]).to_json -%>
     }
     <%= ',' if i < @advertiser_app_list.length - 1 -%>
   <% end %>
 ],
-"Message":<%=('Install one of the apps below to earn ' + @currency.get('currency_name')).to_json %>
+"Message":<%=('Install one of the apps below to earn ' + @currency.get('currency_name')).to_json -%>
 <% if @more_data_available > 0 %>
-  , "MoreDataAvailable":<%= @more_data_available.to_json %>
+  , "MoreDataAvailable":<%= @more_data_available.to_json -%>
 <% end %>
 }
+<%= ')' unless params[:callback].nil?  -%>
