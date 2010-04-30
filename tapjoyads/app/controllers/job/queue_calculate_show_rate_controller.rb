@@ -17,6 +17,9 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
       return
     end
     
+    if app.daily_budget == 0
+      return if rand < 0.9
+    end
     
     old_show_rate = app.get('show_rate') || 1
     old_show_rate = old_show_rate.to_f

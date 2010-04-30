@@ -9,6 +9,7 @@ class Job::MasterCalculateShowRateController < Job::JobController
       
       send_to_sqs(QueueNames::CALCULATE_SHOW_RATE, app.key)
       
+      sleep(1)
     end
     
     render :text => 'ok'
