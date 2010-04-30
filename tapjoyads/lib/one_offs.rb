@@ -118,7 +118,7 @@ class OneOffs
         counter += 1
         Conversion.connection.execute("UPDATE conversions SET advertiser_offer_id = '#{offer.item_id}' WHERE advertiser_offer_id = '#{offer.id}'")
         Offer.connection.execute("UPDATE offers SET id = '#{offer.item_id}' WHERE id = '#{offer.id}'")
-        puts "completed #{counter} offers" if counter % 100 == 0
+        puts "#{Time.zone.now.to_s(:db)} - completed #{counter} offers" if counter % 100 == 0
       end
     end
   end
@@ -142,7 +142,7 @@ class OneOffs
           app_list.serial_save :catch_exceptions => false
         rescue
           puts "app_list save failed for UDID: #{udid}   retrying..."
-          sleep .2
+          sleep(.2)
           retry
         end
         puts "#{Time.zone.now.to_s(:db)} - finished #{counter} UDIDs, #{new_udids} new, #{existing_udids} existing" if counter % 1000 == 0
