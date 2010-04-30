@@ -82,6 +82,8 @@ class DeviceAppList < SimpledbResource
   # Converts attributes from old-style: (many app.<app_id> attributes) to new-style: (one 'apps' attribute,
   # which is a single json object).
   def convert_attributes
+    return if @attributes.empty?
+    
     apps_hash = {}
     @attributes.each do |attr_name, value|
       if attr_name =~ /^app/
