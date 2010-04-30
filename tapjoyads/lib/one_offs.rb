@@ -127,6 +127,8 @@ class OneOffs
     counter = 0
     new_udids = 0
     existing_udids = 0
+    app_new_udids = 0
+    app_existing_udids = 0
     now = Time.zone.now.to_f.to_s
     file = File.open(filename, 'r')
     time = Benchmark.realtime do
@@ -135,17 +137,22 @@ class OneOffs
         udid = line.gsub("\n", "").downcase
         app_list = DeviceAppList.new :key => udid
         app_list.is_new ? new_udids += 1 : existing_udids += 1
-        apps_hash = app_list.apps
-        apps_hash[app_id] = now
-        app_list.apps = apps_hash
-        begin
-          app_list.serial_save :catch_exceptions => false
-        rescue
-          puts "app_list save failed for UDID: #{udid}   retrying..."
-          sleep 0.2
-          retry
+        if app_list.has_app app_id
+          app_existing_udids += 1
+        else
+          app_new_udids += 1
+          apps_hash = app_list.apps
+          apps_hash[app_id] = now
+          app_list.apps = apps_hash
+          begin
+            app_list.serial_save :catch_exceptions => false
+          rescue
+            puts "app_list save failed for UDID: #{udid}   retrying..."
+            sleep 0.2
+            retry
+          end
         end
-        puts "#{Time.zone.now.to_s(:db)} - finished #{counter} UDIDs, #{new_udids} new, #{existing_udids} existing" if counter % 1000 == 0
+        puts "#{Time.zone.now.to_s(:db)} - finished #{counter} UDIDs, #{new_udids} new (global), #{existing_udids} existing (global), #{app_new_udids} new (per app), #{app_existing_udids} existing (per app)" if counter % 1000 == 0
       end
     end
     puts "finished importing #{counter} UDIDs in #{time.ceil} seconds"
