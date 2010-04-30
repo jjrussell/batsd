@@ -1,5 +1,5 @@
 ip = `/sbin/ifconfig`.match(/inet addr:(.*?)\s/)[1]
-pid = "/home/webuser/memcached.pid"
+pid = "/home/webuser/server/pid/memcached.pid"
 
 God.watch do |w|
   w.name = "memcached"
