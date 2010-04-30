@@ -142,7 +142,7 @@ class OneOffs
           app_list.serial_save :catch_exceptions => false
         rescue
           puts "app_list save failed for UDID: #{udid}   retrying..."
-          sleep(.2)
+          sleep 0.2
           retry
         end
         puts "#{Time.zone.now.to_s(:db)} - finished #{counter} UDIDs, #{new_udids} new, #{existing_udids} existing" if counter % 1000 == 0
