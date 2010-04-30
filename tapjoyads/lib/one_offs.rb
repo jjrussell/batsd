@@ -111,4 +111,46 @@ class OneOffs
     counts
   end
   
+  def self.change_offer_ids_to_offer_item_ids
+    Benchmark.realtime do
+      counter = 0
+      Offer.find(:all, :select => "id, item_id").each do |offer|
+        counter += 1
+        Conversion.connection.execute("UPDATE conversions SET advertiser_offer_id = '#{offer.item_id}' WHERE advertiser_offer_id = '#{offer.id}'")
+        Offer.connection.execute("UPDATE offers SET id = '#{offer.item_id}' WHERE id = '#{offer.id}'")
+        puts "completed #{counter} offers" if counter % 100 == 0
+      end
+    end
+  end
+  
+  def self.import_udids(filename, app_id)
+    counter = 0
+    new_udids = 0
+    existing_udids = 0
+    now = Time.zone.now.to_f.to_s
+    file = File.open(filename, 'r')
+    time = Benchmark.realtime do
+      file.each_line do |line|
+        counter += 1
+        udid = line.gsub("\n", "").downcase
+        app_list = DeviceAppList.new :key => udid
+        app_list.is_new ? new_udids += 1 : existing_udids += 1
+        apps_hash = app_list.apps
+        apps_hash[app_id] = now
+        app_list.apps = apps_hash
+        begin
+          app_list.serial_save :catch_exceptions => false
+        rescue
+          puts "app_list save failed for UDID: #{udid}   retrying..."
+          sleep .2
+          retry
+        end
+        puts "#{Time.zone.now.to_s(:db)} - finished #{counter} UDIDs, #{new_udids} new, #{existing_udids} existing" if counter % 1000 == 0
+      end
+    end
+    puts "finished importing #{counter} UDIDs in #{time.ceil} seconds"
+    puts "new UDIDs: #{new_udids}"
+    puts "existing UDIDs: #{existing_udids}"
+  end
+  
 end
