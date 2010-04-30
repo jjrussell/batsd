@@ -309,7 +309,7 @@ class SimpledbResource
   ##
   # Deletes this entire row immediately (no need to call save after calling this).
   def delete_all(delete_from_memcache = true)
-    delete_from_cache(get_memcache_key) if delete_from_cache
+    delete_from_cache(get_memcache_key) if delete_from_memcache
     @@sdb.delete_attributes(@this_domain_name, key)
   end
   
