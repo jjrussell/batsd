@@ -156,8 +156,10 @@ class OneOffs
       end
     end
     puts "finished importing #{counter} UDIDs in #{time.ceil} seconds"
-    puts "new UDIDs: #{new_udids}"
-    puts "existing UDIDs: #{existing_udids}"
+    puts "new UDIDs (global): #{new_udids}"
+    puts "existing UDIDs (global): #{existing_udids}"
+    puts "new UDIDs (per app): #{app_new_udids}"
+    puts "existing UDIDs (per app): #{app_existing_udids}"
   end
   
 end
