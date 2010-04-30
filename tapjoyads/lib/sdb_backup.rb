@@ -49,7 +49,7 @@ class SdbBackup
       key_list.each do |key|
         begin
           item = SimpledbResource.new(:key => key, :load => false, :domain_name => domain_name)
-          item.delete_all
+          item.delete_all(false)
         rescue RightAws::AwsError =>e
           retry
         end
