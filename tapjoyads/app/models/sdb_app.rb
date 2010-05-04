@@ -79,6 +79,7 @@ class SdbApp < SimpledbResource
       reject = true if advertiser_app.iphone_only and not iphone
       reject = true if advertiser_app.os_type == 'iphone' and self.os_type == 'android'
       reject = true if advertiser_app.os_type == 'android' and self.os_type == 'iphone'
+      reject = true if advertiser_app.key == '4445a5be-9244-4ce7-b65d-646ee6050208' and device_app_list.apps['f8751513-67f1-4273-8e4e-73b1e685e83d'] == nil
       
       unless udid == '298c5159a3681207eaba5a04b3573aa7b4f13d99' # Ben's udid. Show all apps on his device.
         reject = true if device_app_list.has_app(advertiser_app.key)
