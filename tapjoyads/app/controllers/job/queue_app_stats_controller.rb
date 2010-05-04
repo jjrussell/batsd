@@ -101,6 +101,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
       'paid_installs' => 'RewardedInstalls',
       'paid_clicks' => 'RewardedInstallClicks',
       'rewards' => 'CompletedOffers',
+      'installs_spend' => 'MoneySpentOnInstalls',
       'rewards_revenue' => 'OfferRevenue',
       'rewards_opened' => 'OffersOpened',
       'hourly_impressions' => 'AdImpressions'
