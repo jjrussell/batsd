@@ -58,7 +58,7 @@
         %td= number_to_currency(app.payment_for_install / 100.0)
         %td= number_to_currency(app.balance / 100.0)
         %td= app.daily_budget
-        %td= "%.2f" % app.show_rate
+        %td= "%.2f" % (app.show_rate || 0)
         %td{:title => stats['vg_purchases'].join(', ')}= stats['vg_purchases'].sum
         %td{:title => stats['published_installs'].join(', ')}= stats['published_installs'].sum
         %td{:title => stats['installs_opened'].join(', ')}= stats['installs_opened'].sum
