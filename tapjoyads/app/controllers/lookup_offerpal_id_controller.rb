@@ -20,14 +20,7 @@ class LookupOfferpalIdController < ApplicationController
   end
   
   def store
-    record_id = params[:record_id].gsub("'", '')
-    store_click = StoreClick.select(:where => "publisher_user_record_id = '#{record_id}'").items.first
-    
-    if record
-      render :text => store_click.key
-    else
-      render :text => "not_found"
-    end
+    raise "Not implemented"
   end
   
 end
