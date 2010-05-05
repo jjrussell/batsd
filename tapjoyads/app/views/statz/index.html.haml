@@ -49,7 +49,7 @@
         %td{:title => stats['paid_installs'].join(', ')}= stats['paid_installs'].sum
         %td{:title => stats['paid_clicks'].join(', ')}= stats['paid_clicks'].sum
         %td{:title => stats['installs_spend'].join(', ')}= number_to_currency(stats['installs_spend'].sum)
-        %td{:title => stats['cvr'].join(', ')}= "%.2f" % stats['paid_installs'].sum.to_f / stats['paid_clicks'].sum
+        %td{:title => stats['cvr'].join(', ')}= "%.2f" % (stats['paid_installs'].sum.to_f / stats['paid_clicks'].sum)
         %td{:title => stats['connects'].join(', ')}= stats['connects'].sum
         %td{:title => stats['new_users'].join(', ')}= stats['new_users'].sum
         %td{:title => stats['daily_active_users'].join(', ')}= stats['daily_active_users'].sum
@@ -58,7 +58,7 @@
         %td{:title => stats['payment_for_install'].join(', ')}= number_to_currency(stats['payment_for_install'].sum)
         %td{:title => stats['balance'].join(', ')}= number_to_currency(stats['balance'].sum)
         %td{:title => stats['daily_budget'].join(', ')}= stats['daily_budget'].sum
-        %td{:title => stats['show_rate'].join(', ')}= "%.2f" % stats['show_rate'].sum 
+        %td{:title => stats['show_rate'].join(', ')}= "%.2f" % stats['show_rate'].sum
         %td{:title => stats['vg_purchases'].join(', ')}= stats['vg_purchases'].sum
         %td{:title => stats['published_installs'].join(', ')}= stats['published_installs'].sum
         %td{:title => stats['installs_opened'].join(', ')}= stats['installs_opened'].sum
