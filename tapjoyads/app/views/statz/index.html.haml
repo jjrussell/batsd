@@ -50,7 +50,7 @@
         %td{:title => stats['paid_clicks'].join(', ')}= stats['paid_clicks'].sum
         %td{:title => stats['installs_spend'].join(', ')}= number_to_currency(stats['installs_spend'].sum)
         %td{:title => stats['cvr'].join(', ')}= "%.2f" % (stats['paid_installs'].sum.to_f / stats['paid_clicks'].sum)
-        %td{:title => stats['connects'].join(', ')}= stats['connects'].sum
+        %td{:title => stats['logins'].join(', ')}= stats['logins'].sum
         %td{:title => stats['new_users'].join(', ')}= stats['new_users'].sum
         %td{:title => stats['daily_active_users'].join(', ')}= stats['daily_active_users'].sum
         %td{:title => stats['monthly_active_users'].join(', ')}= stats['monthly_active_users'].sum
