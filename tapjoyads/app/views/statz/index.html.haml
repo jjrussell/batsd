@@ -1,0 +1,119 @@
+- @page_title = 'Stats for last 24 hours'
+
+- content_for :included_stylesheets do
+  = stylesheet_link_tag 'themes/blue/style'
+
+- content_for :included_javascripts do
+  = javascript_include_tag 'jquery.tablesorter'
+
+%h1 Tapjoy stats for last 24 hours
+
+%h3#install_count_24hours= "Total installs: #{@install_count_24hours}"
+  
+#last_updated= "Last Updated: #{@last_updated}"
+  
+%table#apps_table.tablesorter
+  %thead
+    %tr
+      %th
+      %th App
+      %th Paid installs
+      %th Paid clicks
+      %th Installs spend
+      %th CVR
+      %th Connects
+      %th New users
+      %th DAUs
+      %th MAUs
+      %th Price
+      %th Payment for install
+      %th Balance
+      %th Daily Budget
+      %th Show rate
+      %th VG Purchases
+      %th Published installs
+      %th Published clicks
+      %th Installs revenue
+      %th Offers completed
+      %th Offers clicked
+      %th Offers revenue
+      %th Ratings
+      %th Total revenue
+      %th Ad impressions
+  %tbody#apps_tbody
+    - @app_list.each do |app|
+      - stats = @appstats_hash[app.key].stats
+      %tr
+        %td= image_tag(app.get_icon_url, :size => '56x56')
+        %td= app.name
+        %td{:title => stats['paid_installs'].join(', ')}= stats['paid_installs'].sum
+        %td{:title => stats['paid_clicks'].join(', ')}= stats['paid_clicks'].sum
+        %td{:title => stats['installs_spend'].join(', ')}= number_to_currency(stats['installs_spend'].sum)
+        %td{:title => stats['cvr'].join(', ')}= "%.2f" % stats['paid_installs'].sum.to_f / stats['paid_clicks'].sum
+        %td{:title => stats['connects'].join(', ')}= stats['connects'].sum
+        %td{:title => stats['new_users'].join(', ')}= stats['new_users'].sum
+        %td{:title => stats['daily_active_users'].join(', ')}= stats['daily_active_users'].sum
+        %td{:title => stats['monthly_active_users'].join(', ')}= stats['monthly_active_users'].sum
+        %td{:title => stats['price'].join(', ')}= number_to_currency(stats['price'].sum)
+        %td{:title => stats['payment_for_install'].join(', ')}= number_to_currency(stats['payment_for_install'].sum)
+        %td{:title => stats['balance'].join(', ')}= number_to_currency(stats['balance'].sum)
+        %td{:title => stats['daily_budget'].join(', ')}= stats['daily_budget'].sum
+        %td{:title => stats['show_rate'].join(', ')}= "%.2f" % stats['show_rate'].sum 
+        %td{:title => stats['vg_purchases'].join(', ')}= stats['vg_purchases'].sum
+        %td{:title => stats['published_installs'].join(', ')}= stats['published_installs'].sum
+        %td{:title => stats['installs_opened'].join(', ')}= stats['installs_opened'].sum
+        %td{:title => stats['installs_revenue'].join(', ')}= number_to_currency(stats['installs_revenue'].sum)
+        %td{:title => stats['offers'].join(', ')}= stats['offers'].sum
+        %td{:title => stats['offers_opened'].join(', ')}= stats['offers_opened'].sum
+        %td{:title => stats['offers_revenue'].join(', ')}= number_to_currency(stats['offers_revenue'].sum)
+        %td{:title => stats['ratings'].join(', ')}= stats['ratings'].sum
+        %td{:title => stats['rewards_revenue'].join(', ')}= number_to_currency(stats['rewards_revenue'].sum)
+        %td{:title => stats['hourly_impressions'].join(', ')}= stats['hourly_impressions'].sum
+  
+      
+-content_for :page_javascript do
+  :plain
+    $(function() {
+      $("#apps_table").tablesorter({widgets: ['zebra'],
+        headers: {
+          0: {sorter: false}
+        }
+      });
+    });
+
+-content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+    
+    table.tablesorter thead tr .header {
+      background-position: right bottom;
+    }
+    .appkey {
+      font-size:50%;
+    }
+    
+    .appname {
+      width: 100px;
+      overflow: hidden;
+    }
+    
+    #last_updated {
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    #reload {
+      
+    }
+    
+    #do_refresh {
+      cursor: pointer;
+      text-decoration: underline;
+      color: #A7A3FF;
+    }
+    
+    .hidden {
+      display: none;
+    }    
