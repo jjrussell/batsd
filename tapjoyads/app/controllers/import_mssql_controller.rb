@@ -103,12 +103,12 @@ class ImportMssqlController < ApplicationController
     partner.put('paypal', params[:paypal])
     partner.put('referrer', params[:referrer])
     partner.put('offerpal_sales', (params[:referrer][0..3] == "OPM-") ? '1' : '0')
-    partner.put('last_windows_login', Time.parse(params[:last_login] + ' CST').utc.to_f.to_s)
     partner.put('apps',params[:apps], {:cgi_escape => true})
     
     partner.save
     
     partner = Partner.find_or_initialize_by_id(params[:partner_id])
+    partner.name = params[:name] unless params[:name].blank?
     partner.contact_name = params[:contact_name] unless params[:contact_name].blank?
     partner.contact_phone = params[:contact_phone] unless params[:contact_phone].blank?
     # partner.balance = params[:balance]
