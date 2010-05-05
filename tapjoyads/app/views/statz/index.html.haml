@@ -48,26 +48,26 @@
         %td= app.name
         %td{:title => stats['paid_installs'].join(', ')}= stats['paid_installs'].sum
         %td{:title => stats['paid_clicks'].join(', ')}= stats['paid_clicks'].sum
-        %td{:title => stats['installs_spend'].join(', ')}= number_to_currency(stats['installs_spend'].sum)
+        %td{:title => stats['installs_spend'].map{|i| number_to_currency(i / 100.0)}.join(', ')}= number_to_currency(stats['installs_spend'].sum / 100.0)
         %td{:title => stats['cvr'].join(', ')}= "%.2f" % (stats['paid_installs'].sum.to_f / stats['paid_clicks'].sum)
         %td{:title => stats['logins'].join(', ')}= stats['logins'].sum
         %td{:title => stats['new_users'].join(', ')}= stats['new_users'].sum
         %td{:title => stats['daily_active_users'].join(', ')}= stats['daily_active_users'].sum
         %td{:title => stats['monthly_active_users'].join(', ')}= stats['monthly_active_users'].sum
-        %td{:title => stats['price'].join(', ')}= number_to_currency(stats['price'].sum)
-        %td{:title => stats['payment_for_install'].join(', ')}= number_to_currency(stats['payment_for_install'].sum)
-        %td{:title => stats['balance'].join(', ')}= number_to_currency(stats['balance'].sum)
-        %td{:title => stats['daily_budget'].join(', ')}= stats['daily_budget'].sum
-        %td{:title => stats['show_rate'].join(', ')}= "%.2f" % stats['show_rate'].sum
+        %td= number_to_currency(app.price / 100.0)
+        %td= number_to_currency(app.payment_for_install / 100.0)
+        %td= number_to_currency(app.balance / 100.0)
+        %td= app.daily_budget
+        %td= "%.2f" % app.show_rate
         %td{:title => stats['vg_purchases'].join(', ')}= stats['vg_purchases'].sum
         %td{:title => stats['published_installs'].join(', ')}= stats['published_installs'].sum
         %td{:title => stats['installs_opened'].join(', ')}= stats['installs_opened'].sum
-        %td{:title => stats['installs_revenue'].join(', ')}= number_to_currency(stats['installs_revenue'].sum)
+        %td{:title => stats['installs_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')}= number_to_currency(stats['installs_revenue'].sum / 100.0)
         %td{:title => stats['offers'].join(', ')}= stats['offers'].sum
         %td{:title => stats['offers_opened'].join(', ')}= stats['offers_opened'].sum
-        %td{:title => stats['offers_revenue'].join(', ')}= number_to_currency(stats['offers_revenue'].sum)
+        %td{:title => stats['offers_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')}= number_to_currency(stats['offers_revenue'].sum / 100.0)
         %td{:title => stats['ratings'].join(', ')}= stats['ratings'].sum
-        %td{:title => stats['rewards_revenue'].join(', ')}= number_to_currency(stats['rewards_revenue'].sum)
+        %td{:title => stats['rewards_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')}= number_to_currency(stats['rewards_revenue'].sum / 100.0)
         %td{:title => stats['hourly_impressions'].join(', ')}= stats['hourly_impressions'].sum
   
       
