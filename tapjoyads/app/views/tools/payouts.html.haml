@@ -10,7 +10,7 @@
       %th Pending Earnings
       %th Cutoff Date
       %th Payout Amount
-	  %th Partner ID
+      %th Partner ID
       %th
   %tbody
     - @partners.each do |partner|
@@ -20,7 +20,7 @@
         %td= number_to_currency(partner.pending_earnings / 100.0)
         %td= (partner.payout_cutoff_date - 1.day).to_s(:pub)
         %td= number_to_currency(partner.next_payout_amount / 100.0)
-		%td{ :style => 'font-size: small;' }= partner.id
+        %td{ :style => 'font-size: small;' }= partner.id
         %td
           - form_tag create_payout_tool_path(partner), :method => :post, :class => 'json', :style => 'height:20px;' do
             = submit_tag 'Create Payout', :class => 'submit'
