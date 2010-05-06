@@ -12,7 +12,7 @@ class Job::MasterReloadStatzController < Job::JobController
     end
 
     apps.each do |app|
-      appstats = Appstats.new(app.key, { :start_time => now - 23.hours, :end_time => now + 1.hour })
+      appstats = Appstats.new(app.key, { :start_time => now - 23.hours, :end_time => now + 1.hour }).stats
       
       this_apps_stats = {}
       this_apps_stats['icon_url'] = app.get_icon_url
