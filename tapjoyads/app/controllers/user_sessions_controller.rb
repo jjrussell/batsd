@@ -17,8 +17,10 @@ class UserSessionsController < WebsiteController
   
   def destroy
     @user_session = UserSession.find
-    @user_session.destroy
-    flash[:notice] = "Successfully logged out."
+    unless @user_session.nil?
+      @user_session.destroy
+      flash[:notice] = "Successfully logged out."
+    end
     redirect_to login_path
   end
   
