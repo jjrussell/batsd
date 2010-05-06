@@ -25,7 +25,7 @@ class Job::MasterReloadStatzController < Job::JobController
       this_apps_stats['payment_for_install'] = "$#{app.payment_for_install / 100.0}"
       this_apps_stats['balance'] = "$#{app.balance / 100.0}"
       this_apps_stats['daily_budget'] = app.daily_budget
-      this_apps_stats['show_rate'] = "%.2f" % app.show_rate
+      this_apps_stats['show_rate'] = "%.2f" % (app.show_rate || 0)
       this_apps_stats['vg_purchases'] = appstats['vg_purchases'].sum
       this_apps_stats['published_installs'] = appstats['published_installs'].sum
       this_apps_stats['installs_revenue'] = "$#{appstats['installs_revenue'] / 100.0}"
