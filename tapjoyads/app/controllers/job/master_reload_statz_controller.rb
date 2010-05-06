@@ -2,6 +2,8 @@ class Job::MasterReloadStatzController < Job::JobController
   include MemcachedHelper
   
   def index
+    now = Time.zone.now
+    
     cached_stats = {}
     
     apps = []
@@ -37,7 +39,7 @@ class Job::MasterReloadStatzController < Job::JobController
     install_count_24hours = StoreClick.count(:where => "installed > '#{Time.now.to_f - 1.day}'")
     save_to_cache('statz.install_count_24hours', install_count_24hours)
     
-    save_to_cache('statz.last_updated', Time.zone.now)
+    save_to_cache('statz.last_updated', now)
     
     render :text => 'ok'
   end
