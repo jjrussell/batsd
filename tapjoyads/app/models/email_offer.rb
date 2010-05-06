@@ -14,6 +14,7 @@ private
   
   def create_offer
     self.offer = Offer.new(:item => self)
+    self.offer.id = id
     self.offer.partner = partner
     self.offer.name = name
     self.offer.description = description
