@@ -11,10 +11,6 @@ class Job::MasterReloadStatzController < Job::JobController
       apps.push(app)
     end
 
-    apps.sort! do |a, b|
-      a.name <=> b.name
-    end
-
     apps.each do |app|
       appstats = Appstats.new(app.key, { :start_time => now - 23.hours, :end_time => now + 1.hour }).stats
       

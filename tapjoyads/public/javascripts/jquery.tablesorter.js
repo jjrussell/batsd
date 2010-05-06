@@ -95,7 +95,7 @@
 				cssHeader: "header",
 				cssAsc: "headerSortUp",
 				cssDesc: "headerSortDown",
-				sortInitialOrder: "asc",
+				sortInitialOrder: "desc",
 				sortMultiSortKey: "shiftKey",
 				sortForce: null,
 				sortAppend: null,
@@ -299,9 +299,9 @@
 		
 				$tableHeaders.each(function(index) {
 							
-					this.count = 0;
 					this.column = index;
 					this.order = formatSortingOrder(table.config.sortInitialOrder);
+					this.count = this.order;
 					
 					if(checkHeaderMetadata(this) || checkHeaderOptions(table,index)) this.sortDisabled = true;
 					
@@ -368,7 +368,7 @@
 			
 			function formatSortingOrder(v) {
 				
-				if(typeof(v) != "Number") {
+				if(typeof(v) != "number") {
 					i = (v.toLowerCase() == "desc") ? 1 : 0;
 				} else {
 					i = (v == (0 || 1)) ? v : 0;
