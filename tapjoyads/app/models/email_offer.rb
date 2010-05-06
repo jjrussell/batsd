@@ -27,7 +27,7 @@ private
   def update_offer
     self.offer.name = name if name_changed?
     self.offer.description = description if description_changed?
-    self.offer.save!
+    self.offer.save! if self.offer.changed?
   end
   
 end

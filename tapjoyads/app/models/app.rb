@@ -50,7 +50,7 @@ private
     self.offer.description = description if description_changed?
     self.offer.price = price if price_changed?
     self.offer.url = store_url if store_url_changed? || use_raw_url_changed? || store_id_changed?
-    self.offer.save!
+    self.offer.save! if self.offer.changed?
   end
   
 end
