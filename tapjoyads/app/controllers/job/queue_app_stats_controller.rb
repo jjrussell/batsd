@@ -55,7 +55,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
       end
       
       # Slowly ramp up running daily app stats.
-      if rand(10) >= @now.hour
+      if rand(16) >= @now.hour
         return
       end
     end
