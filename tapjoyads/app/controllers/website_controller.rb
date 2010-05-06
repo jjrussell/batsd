@@ -16,7 +16,7 @@ protected
   
   def permission_denied
     flash[:error] = "Sorry, you are not allowed to access that page."
-    redirect_to(current_user ? tools_path : login_path)
+    redirect_to(current_user ? tools_path : login_path(:goto => request.path))
   end
   
 private

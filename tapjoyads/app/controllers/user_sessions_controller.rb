@@ -2,13 +2,14 @@ class UserSessionsController < WebsiteController
   
   def new
     @user_session = UserSession.new
+    @goto = params[:goto] || tools_path
   end
   
   def create
     @user_session = UserSession.new(params[:user_session])
     if @user_session.save
       flash[:notice] = "Successfully logged in."
-      redirect_to tools_path
+      redirect_to params[:goto]
     else
       render :action => 'new'
     end

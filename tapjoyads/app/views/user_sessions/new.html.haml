@@ -4,6 +4,7 @@
 
 - form_for @user_session do |f|
   = f.error_messages
+  = hidden_field_tag 'goto', @goto
   .field
     = f.label :username
     = f.text_field :username
