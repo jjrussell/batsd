@@ -18,8 +18,7 @@ authorization do
   
   role :admin do
     includes :payops
-    has_permission_on :statz, :to => :index
-    has_permission_on :stats, :to => [ :index, :show ]
+    has_permission_on :statz, :to => [ :index, :show ]
   end
   
 end

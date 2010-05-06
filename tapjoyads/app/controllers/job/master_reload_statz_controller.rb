@@ -36,7 +36,7 @@ class Job::MasterReloadStatzController < Job::JobController
 
     save_to_cache('statz.cached_stats', cached_stats)
 
-    install_count_24hours = StoreClick.count(:where => "installed > '#{Time.now.to_f - 1.day}'")
+    install_count_24hours = StoreClick.count(:where => "installed > '#{now.to_f - 1.day}'")
     save_to_cache('statz.install_count_24hours', install_count_24hours)
     
     save_to_cache('statz.last_updated', now)
