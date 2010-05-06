@@ -3,6 +3,8 @@
 %h1= @app.name
 .icon= image_tag(@app.get_icon_url, :size => '56x56')
 
+%div As of: #{@now.to_s(:pub_ampm)}
+
 .metadata Store url: #{link_to(@app.store_url, @app.store_url)}
 .metadata Price: #{number_to_currency(@app.price / 100.0)}
 .metadata Balance: #{number_to_currency(@app.balance / 100.0)}
