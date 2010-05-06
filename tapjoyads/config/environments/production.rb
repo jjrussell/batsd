@@ -52,5 +52,5 @@ require 'right_aws'
 RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
 
 MAX_DEVICE_APP_DOMAINS = 20
-MAX_WEB_REQUEST_DOMAINS = 15
+MAX_WEB_REQUEST_DOMAINS = 20
 NUM_POINT_PURCHASES_DOMAINS = 10
