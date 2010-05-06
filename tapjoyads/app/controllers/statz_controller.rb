@@ -11,7 +11,6 @@ class StatzController < WebsiteController
   
   def show
     @now = Time.zone.now
-    
     @app = SdbApp.new :key => params[:id]
     @stats = Appstats.new(@app.key, { :start_time => @now - 23.hours, :end_time => @now + 1.hour }).stats
   end
