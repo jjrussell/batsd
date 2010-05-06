@@ -33,7 +33,7 @@
   %tbody#apps_tbody
     - @cached_stats.each do |app_key, stats|
       %tr
-        %td= image_tag(stats['icon_url'], :size => '56x56')
+        %td= link_to(image_tag(stats['icon_url'], :size => '56x56'), statz_path(app_key))
         %td= link_to(stats['app_name'], statz_path(app_key))
         %td= stats['paid_installs']
         %td= stats['connects']

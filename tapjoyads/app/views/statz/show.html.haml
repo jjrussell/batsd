@@ -1,0 +1,96 @@
+- @page_title = "Stats for app: #{@app.name}"
+
+%h1= @app.name
+.icon= image_tag(@app.get_icon_url, :size => '56x56')
+
+.metadata Store url: #{link_to(@app.store_url, @app.store_url)}
+.metadata Price: #{number_to_currency(@app.price / 100.0)}
+.metadata Balance: #{number_to_currency(@app.balance / 100.0)}
+.metadata Daily budget: #{@app.daily_budget}
+.metadata Show rate: #{@app.show_rate || 0}
+
+%table
+  %thead
+    %tr
+      %th Stat
+      %th Total
+      %th Hourly breakdown
+  %tbody
+    %tr
+      %td Paid Installs
+      %td= @stats['paid_installs'].join(', ')
+      %td= @stats['paid_installs'].sum
+    %tr
+      %td Paid Clicks
+      %td= @stats['paid_clicks'].join(', ')
+      %td= @stats['paid_clicks'].sum
+    %tr
+      %td Installs Spend
+      %td= @stats['installs_spend'].map{|i| number_to_currency(i / 100.0)}.join(', ')
+      %td= number_to_currency(@stats['installs_spend'].sum / 100.0)
+    %tr
+      %td CVR
+      %td= @stats['cvr'].join(', ')
+      %td= "%.2f" % (@stats['paid_installs'].sum.to_f / @stats['paid_clicks'].sum)
+    %tr
+      %td Connects
+      %td= @stats['logins'].join(', ')
+      %td= @stats['logins'].sum
+    %tr
+      %td New Users
+      %td= @stats['new_users'].join(', ')
+      %td= @stats['new_users'].sum
+    %tr
+      %td DAUs
+      %td= @stats['daily_active_users'].join(', ')
+      %td= @stats['daily_active_users'].sum
+    %tr
+      %td MAUs
+      %td= @stats['monthly_active_users'].join(', ')
+      %td= @stats['monthly_active_users'].sum
+    %tr
+      %td VG Purchases
+      %td= @stats['vg_purchases'].join(', ')
+      %td= @stats['vg_purchases'].sum
+    %tr
+      %td Published Installs
+      %td= @stats['published_installs'].join(', ')
+      %td= @stats['published_installs'].sum
+    %tr
+      %td Published Clicks
+      %td= @stats['installs_opened'].join(', ')
+      %td= @stats['installs_opened'].sum
+    %tr
+      %td Installs Revenue
+      %td= @stats['installs_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')
+      %td= number_to_currency(@stats['installs_revenue'].sum / 100.0)
+    %tr
+      %td Offers Completed
+      %td= @stats['offers'].join(', ')
+      %td= @stats['offers'].sum
+    %tr
+      %td Offers Clicked
+      %td= @stats['offers_opened'].join(', ')
+      %td= @stats['offers_opened'].sum
+    %tr
+      %td Offers Revenue
+      %td= @stats['offers_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')
+      %td= number_to_currency(@stats['offers_revenue'].sum / 100.0)
+    %tr
+      %td Ratings
+      %td= @stats['ratings'].join(', ')
+      %td= @stats['ratings'].sum
+    %tr
+      %td Total Revenue
+      %td= @stats['rewards_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')
+      %td= number_to_currency(@stats['rewards_revenue'].sum / 100.0)
+    %tr
+      %td Ad Impressions
+      %td= @stats['hourly_impressions'].join(', ')
+      %td= @stats['hourly_impressions'].sum
+
+-content_for :page_styles do
+  :plain
+    .icon {
+      float: left;
+    }
