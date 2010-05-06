@@ -18,13 +18,9 @@
       %th
       %th App
       %th Paid installs
-      %th Paid clicks
-      %th Installs spend
-      %th CVR
       %th Connects
       %th New users
       %th DAUs
-      %th MAUs
       %th Price
       %th Payment for install
       %th Balance
@@ -32,44 +28,26 @@
       %th Show rate
       %th VG Purchases
       %th Published installs
-      %th Published clicks
       %th Installs revenue
-      %th Offers completed
-      %th Offers clicked
-      %th Offers revenue
-      %th Ratings
-      %th Total revenue
       %th Ad impressions
   %tbody#apps_tbody
-    - @app_list.each do |app|
-      - stats = @appstats_hash[app.key].stats
+    - @cached_stats.each do |app_key, stats|
       %tr
-        %td= image_tag(app.get_icon_url, :size => '56x56')
-        %td= app.name
-        %td{:title => stats['paid_installs'].join(', ')}= stats['paid_installs'].sum
-        %td{:title => stats['paid_clicks'].join(', ')}= stats['paid_clicks'].sum
-        %td{:title => stats['installs_spend'].map{|i| number_to_currency(i / 100.0)}.join(', ')}= number_to_currency(stats['installs_spend'].sum / 100.0)
-        %td{:title => stats['cvr'].join(', ')}= "%.2f" % (stats['paid_installs'].sum.to_f / stats['paid_clicks'].sum)
-        %td{:title => stats['logins'].join(', ')}= stats['logins'].sum
-        %td{:title => stats['new_users'].join(', ')}= stats['new_users'].sum
-        %td{:title => stats['daily_active_users'].join(', ')}= stats['daily_active_users'].sum
-        %td{:title => stats['monthly_active_users'].join(', ')}= stats['monthly_active_users'].sum
-        %td= number_to_currency(app.price / 100.0)
-        %td= number_to_currency(app.payment_for_install / 100.0)
-        %td= number_to_currency(app.balance / 100.0)
-        %td= app.daily_budget
-        %td= "%.2f" % (app.show_rate || 0)
-        %td{:title => stats['vg_purchases'].join(', ')}= stats['vg_purchases'].sum
-        %td{:title => stats['published_installs'].join(', ')}= stats['published_installs'].sum
-        %td{:title => stats['installs_opened'].join(', ')}= stats['installs_opened'].sum
-        %td{:title => stats['installs_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')}= number_to_currency(stats['installs_revenue'].sum / 100.0)
-        %td{:title => stats['offers'].join(', ')}= stats['offers'].sum
-        %td{:title => stats['offers_opened'].join(', ')}= stats['offers_opened'].sum
-        %td{:title => stats['offers_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')}= number_to_currency(stats['offers_revenue'].sum / 100.0)
-        %td{:title => stats['ratings'].join(', ')}= stats['ratings'].sum
-        %td{:title => stats['rewards_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')}= number_to_currency(stats['rewards_revenue'].sum / 100.0)
-        %td{:title => stats['hourly_impressions'].join(', ')}= stats['hourly_impressions'].sum
-  
+        %td= image_tag(stats['icon_url'], :size => '56x56')
+        %td= link_to(stats['app_name'], statz_path(app_key))
+        %td= stats['paid_installs']
+        %td= stats['connects']
+        %td= stats['new_users']
+        %td= stats['daily_active_users']
+        %td= stats['price']
+        %td= stats['payment_for_install']
+        %td= stats['balance']
+        %td= stats['daily_budget']
+        %td= stats['show_rate']
+        %td= stats['vg_purchases']
+        %td= stats['published_installs']
+        %td= stats['installs_revenue']
+        %td= stats['ad_impressions']
       
 -content_for :page_javascript do
   :plain
@@ -90,6 +68,11 @@
     table.tablesorter thead tr .header {
       background-position: right bottom;
     }
+    
+    th, td {
+      border: 0;
+    }
+    
     .appkey {
       font-size:50%;
     }
@@ -104,10 +87,6 @@
       font-size: 14px;
     }
     
-    #reload {
-      
-    }
-    
     #do_refresh {
       cursor: pointer;
       text-decoration: underline;
@@ -116,4 +95,4 @@
     
     .hidden {
       display: none;
-    }    
+    }
