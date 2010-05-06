@@ -7,8 +7,12 @@ class Job::MasterReloadStatzController < Job::JobController
     cached_stats = {}
     
     apps = []
-    SdbApp.select(:where => "interval_update_time = '3600' and name is not null", :order_by => 'name') do |app|
+    SdbApp.select(:where => "interval_update_time = '3600'") do |app|
       apps.push(app)
+    end
+
+    apps.sort! do |a, b|
+      a.name <=> b.name
     end
 
     apps.each do |app|
