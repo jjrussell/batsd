@@ -17,6 +17,7 @@ class SdbApp < SimpledbResource
   self.sdb_attr :use_raw_url,                {:type => :bool}
   self.sdb_attr :next_run_time,              {:type => :time}
   self.sdb_attr :last_run_time,              {:type => :time}
+  self.sdb_attr :last_daily_run_time,        {:type => :time}
   self.sdb_attr :balance,                    {:type => :int}
   self.sdb_attr :price,                      {:type => :int}
   self.sdb_attr :daily_budget,               {:type => :int, :default_value => 0}

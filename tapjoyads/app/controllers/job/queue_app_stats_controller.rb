@@ -1,93 +1,135 @@
 class Job::QueueAppStatsController < Job::SqsReaderController
+  include NewRelicHelper
   include DownloadContent
   
   def initialize
     super QueueNames::APP_STATS
-    @now = Time.now.utc
-    @date = @now.iso8601[0,10]
     @paths_to_aggregate = %w(connect new_user adshown store_click store_install daily_user monthly_user purchased_vg)
     @publisher_paths_to_aggregate = %w(store_click store_install)
   end
   
-  private
+private
   
   def on_message(message)
-    puts message.to_s
     json = JSON.parse(message.to_s)
-    app_key = json['app_key']
-    last_run_time = json['last_run_time']
     
-    app = SdbApp.new(:key => app_key)
+    @app = SdbApp.new(:key => json['app_key'])
+    @now = Time.zone.now
+    @stat_rows = {}
     
-    first_hour = get_last_run_hour_in_day(last_run_time)
-    last_hour = @now.hour - 1
     
-    stat_row = Stats.new(:key => "app.#{@date}.#{app_key}")
+    start_time = Time.at(json['last_run_time'].to_f).beginning_of_hour
+    end_time = (@now - 5.minutes).beginning_of_hour
+    
+    Rails.logger.info "Aggregating stats for '#{@app.to_s}' from #{start_time} to #{end_time}"
+    
+    while start_time < end_time do
+      count_stats_for_hour(start_time)
+      start_time += 1.hour
+    end
+    
+    @stat_rows.each_value do |row|
+      row.save
+    end
+    
+    @app.next_run_time = @now + get_interval
+    @app.last_run_time = end_time
+    verify_yesterday
+    @app.save
+    
+    start_time = Time.at(json['last_run_time'].to_f).beginning_of_hour
+    start_time.to_date.upto(@now.to_date) do |date|
+      send_stats_to_mssql(date)
+    end
+  end
+  
+  def count_stats_for_hour(start_time)
+    end_time = start_time + 1.hour
+    date_string = start_time.to_date.to_s(:db)
+    stat_row = @stat_rows[date_string] || Stats.new(:key => "app.#{date_string}.#{@app.key}")
+    @stat_rows[date_string] = stat_row
+    
+    time_condition = "time >= '#{start_time.to_f.to_s}' and time < '#{end_time.to_f.to_s}'"
     
     @paths_to_aggregate.each do |path|
-      aggregate_stat(stat_row, path, app_key, first_hour, last_hour)
+      stat_name = WebRequest::PATH_TO_STAT_MAP[path]
+      app_condition = WebRequest::USE_ADVERTISER_APP_ID.include?(path) ? "advertiser_app_id = '#{@app.key}'" : "app_id = '#{@app.key}'"
+      
+      count = WebRequest.count(:date => date_string,
+          :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
+      
+      stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
+    
     @publisher_paths_to_aggregate.each do |path|
-      aggregate_stat(stat_row, path, app_key, first_hour, last_hour, @now, true)
+      stat_name = WebRequest::PUBLISHER_PATH_TO_STAT_MAP[path]
+      app_condition = "publisher_app_id = '#{@app.key}'"
+      
+      count = WebRequest.count(:date => date_string,
+          :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
+
+      stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
-    
-    stat_row.save
-    
-    new_next_run_time = @now + get_interval(stat_row, app)
-    app.put('next_run_time', new_next_run_time.to_f.to_s)
-    
-    # Set the last_run_time to 1 hour ago, since we only aggregated the stats up to that point.
-    app.put('last_run_time', (@now - 1.hour).to_f.to_s)
-    app.save
-    
-    aggregate_yesterday(app)
-    
-    send_stats_to_mssql(app.key, @now)
   end
   
   ##
-  # Aggregate yesterday's complete stats - if it hasn't been done yet.
-  def aggregate_yesterday(app)
-    last_daily_run_time = app.get('last_daily_run_time')
-    if last_daily_run_time
-      if Time.at(last_daily_run_time.to_f).day == @now.day
-        return
-      end
-      
-      # Slowly ramp up running daily app stats.
-      if rand(16) >= @now.hour
-        return
-      end
-    end
+  #
+  def verify_yesterday
+    return unless @app.last_daily_run_time.nil? || @app.last_daily_run_time.day != @now.day
     
-    Rails.logger.info "Aggregating daily stats for #{app.key}"
+    start_time = (@now - 1.day).beginning_of_day
+    end_time = start_time + 1.day
+    date_string = start_time.to_date.to_s(:db)
+    stat_row = @stat_rows[date_string] || Stats.new(:key => "app.#{date_string}.#{@app.key}")
+    @stat_rows[date_string] = stat_row
     
-    time = @now - 1.day
-    date = time.iso8601[0,10]
-    stat_row = Stats.new(:key => "app.#{date}.#{app.key}")
+    Rails.logger.info "Verifying stats for #{@app.to_s} for #{date_string}"
+    
+    time_condition = "time >= '#{start_time.to_f.to_s}' and time < '#{end_time.to_f.to_s}'"
     
     @paths_to_aggregate.each do |path|
-      aggregate_stat(stat_row, path, app.key, 0, 23, time)
+      stat_name = WebRequest::PATH_TO_STAT_MAP[path]
+      app_condition = WebRequest::USE_ADVERTISER_APP_ID.include?(path) ? "advertiser_app_id = '#{@app.key}'" : "app_id = '#{@app.key}'"
+      
+      count = WebRequest.count(:date => date_string, 
+          :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
+      hour_counts = stat_row.get(stat_name).split(',').map{|i| i.to_i}
+      
+      if count != hour_counts.sum
+        raise AppStatsVerifyError.new("#{stat_name}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")
+      end
+      Rails.logger.info "#{stat_name} verified, both counts are: #{count}."
     end
+    
     @publisher_paths_to_aggregate.each do |path|
-      aggregate_stat(stat_row, path, app.key, 0, 23, time, true)
+      stat_name = WebRequest::PUBLISHER_PATH_TO_STAT_MAP[path]
+      app_condition = "publisher_app_id = '#{@app.key}'"
+      
+      count = WebRequest.count(:date => date_string, 
+          :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
+      hour_counts = stat_row.get(stat_name).split(',').map{|i| i.to_i}
+      
+      if count != hour_counts.sum
+        raise AppStatsVerifyError.new("#{stat_name}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")
+      end
+      Rails.logger.info "#{stat_name} verified, both counts are: #{count}."
     end
     
-    stat_row.save
+    @app.last_daily_run_time = @now
+  rescue AppStatsVerifyError => e
+    @app.last_run_time = start_time
+    @app.next_run_time = @now
     
-    app.put('last_daily_run_time', Time.now.utc.to_f.to_s)
-    app.save
-    
-    send_stats_to_mssql(app.key, @now - 1.day)
-    
-    # TODO: put daily stats in daily_stats domain.
+    msg = "Verification of stats failed for app: #{@app.to_s}, for date: #{start_time.to_date}. #{e.message}" +
+    alert_new_relic(AppStatsVerifyError, msg, request, params)
   end
   
-  def send_stats_to_mssql(key, utc_date)
+  def send_stats_to_mssql(utc_date)
+    key = @app.key
     offset = -6 # CST timezone. Must be negative the way this is currently implemented.
     
-    today = utc_date.iso8601[0,10]
-    tomorrow = (utc_date + 1.days).iso8601[0,10]
+    today = utc_date.to_s(:db)
+    tomorrow = (utc_date + 1.days).to_s(:db)
     
     stat_today = Stats.new(:key => "app.#{today}.#{key}")
     stat_tomorrow = Stats.new(:key => "app.#{tomorrow}.#{key}")
@@ -143,72 +185,24 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     url = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/CronService.asmx/SubmitMultipleStats?'
     # Mosso:
     #url = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/CronService.asmx/SubmitMultipleStats?'
-    
+
     url += "Date=#{CGI::escape(date)}"
     url += "&StatTypes=#{CGI::escape(stat_types)}"
     url += "&item=#{item_id}"
     url += "&Datas=#{CGI::escape(datas)}"
-    
+
     download_with_retry(url, {:timeout => 30})
-  end
-  
-  def aggregate_stat(stat_row, wr_path, app_key, first_hour, last_hour, time = @now, is_publisher_stat = false)
-    if is_publisher_stat
-      stat_name = WebRequest::PUBLISHER_PATH_TO_STAT_MAP[wr_path]
-      app_condition = "publisher_app_id = '#{app_key}'"
-    else
-      stat_name = WebRequest::PATH_TO_STAT_MAP[wr_path]
-      if WebRequest::USE_ADVERTISER_APP_ID.include?(wr_path)
-        app_condition = "advertiser_app_id = '#{app_key}'"
-      else
-        app_condition = "app_id = '#{app_key}'"
-      end
-    end
-    date = time.iso8601[0,10]
-    
-    hourly_stats_string = stat_row.get(stat_name)
-    if hourly_stats_string
-      hourly_stats = hourly_stats_string.split(',').map{|num| num.to_i }
-    else
-      hourly_stats = Array.new(24, 0)
-    end
-    
-    for hour in first_hour..last_hour
-      min_time = Time.utc(time.year, time.month, time.day, hour, 0, 0, 0)
-      max_time = min_time + 1.hour
-      
-      count = 0
-      MAX_WEB_REQUEST_DOMAINS.times do |i|
-        count += SimpledbResource.count({:domain_name => "web-request-#{date}-#{i}", 
-            :where => "time >= '#{min_time.to_f.to_s}' and time < '#{max_time.to_f.to_s}' " +
-            "and path = '#{wr_path}' and #{app_condition}"})
-      end
-      hourly_stats[hour] = count
-    end
-    
-    stat_row.put(stat_name, hourly_stats.join(','))
-    return hourly_stats
-  end
-  
-  def get_last_run_hour_in_day(last_run_epoch)
-    last_hour = 0
-    if (last_run_epoch)
-      last_run_time = Time.at(last_run_epoch.to_f)
-      if last_run_time.day == @now.day
-        last_hour = last_run_time.hour
-      end
-    end
-    return last_hour
   end
   
   ##
   # Gets the updates interval for this app, based on the contents of stat_row. 
-  def get_interval(stat_row, app)
+  def get_interval
+    stat_row = @stat_rows.first[1]
     if @now.hour <= 4
       # Never calculate the interval during the first 4 hours of a day.
       # This is because it's possible that stats haven't been tallied yet.
       # Just use the previously set interval.
-      app_update_time = app.get('interval_update_time') || 1.hour
+      app_update_time = @app.get('interval_update_time') || 1.hour
       return [app_update_time.to_i, 1.hour].max
     end
     
@@ -223,8 +217,8 @@ class Job::QueueAppStatsController < Job::SqsReaderController
       new_interval = 8.hour
     end
     
-    app.put('interval_update_time', new_interval.to_s)
+    @app.put('interval_update_time', new_interval)
     
-    return new_interval
+    new_interval
   end
 end

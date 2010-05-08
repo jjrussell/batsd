@@ -22,6 +22,7 @@ module NewRelicHelper
   class FailedToDownloadError < RuntimeError; end
   class SqsLockExistsError < RuntimeError; end
   class DuplicateConversionBlocked < RuntimeError; end
+  class AppStatsVerifyError < RuntimeError; end
 
   # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
   class EmailWorthyError < RuntimeError; end

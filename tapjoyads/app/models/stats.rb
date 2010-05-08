@@ -31,6 +31,14 @@ class Stats < SimpledbResource
     "stats.#{stat_name}.#{app_id}.#{(time.to_i / 1.hour).to_i}"
   end
   
+  ##
+  # Updates the count of a stat for a given hour.
+  def update_stat_for_hour(stat_name, hour, count)
+    hour_counts = (get(stat_name) || Array.new(24, '0').join(',')).split(',')
+    hour_counts[hour] = count.to_s
+    put(stat_name, hour_counts.join(','))
+  end
+  
   private
   
   ##
