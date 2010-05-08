@@ -17,8 +17,7 @@ private
     @now = Time.zone.now
     @stat_rows = {}
     
-    
-    start_time = Time.at(json['last_run_time'].to_f).beginning_of_hour
+    start_time = Time.zone.at(json['last_run_time'].to_f).beginning_of_hour
     end_time = (@now - 5.minutes).beginning_of_hour
     
     Rails.logger.info "Aggregating stats for '#{@app.to_s}' from #{start_time} to #{end_time}"
@@ -48,6 +47,8 @@ private
     date_string = start_time.to_date.to_s(:db)
     stat_row = @stat_rows[date_string] || Stats.new(:key => "app.#{date_string}.#{@app.key}")
     @stat_rows[date_string] = stat_row
+    
+    Rails.logger.info "Counting hour from #{start_time} to #{end_time}"
     
     time_condition = "time >= '#{start_time.to_f.to_s}' and time < '#{end_time.to_f.to_s}'"
     
