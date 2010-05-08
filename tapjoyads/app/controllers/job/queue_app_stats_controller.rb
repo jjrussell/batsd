@@ -129,7 +129,8 @@ private
     @app.last_run_time = start_time
     @app.next_run_time = @now
     
-    msg = "Verification of stats failed for app: #{@app.to_s}, for date: #{start_time.to_date}. #{e.message}" +
+    msg = "Verification of stats failed for app: #{@app.to_s}, for date: #{start_time.to_date}. #{e.message}"
+    Rails.logger.info msg
     alert_new_relic(AppStatsVerifyError, msg, request, params)
   end
   
