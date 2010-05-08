@@ -94,11 +94,7 @@ private
       
       count = WebRequest.count(:date => date_string, 
           :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
-      if stat_row.get(stat_name)
-        hour_counts = stat_row.get(stat_name).split(',').map{|i| i.to_i}
-      else
-        hour_counts = Array.new(24, 0)
-      end
+      hour_counts = stat_row.get_hourly_counts(stat_name, 0)
       
       if count != hour_counts.sum
         raise AppStatsVerifyError.new("#{stat_name}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")
@@ -112,11 +108,7 @@ private
       
       count = WebRequest.count(:date => date_string, 
           :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
-      if stat_row.get(stat_name)
-        hour_counts = stat_row.get(stat_name).split(',').map{|i| i.to_i}
-      else
-        hour_counts = Array.new(24, 0)
-      end
+      hour_counts = stat_row.get_hourly_counts(stat_name, 0)
       
       if count != hour_counts.sum
         raise AppStatsVerifyError.new("#{stat_name}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")

@@ -5,7 +5,10 @@ class Stats < SimpledbResource
 
   ##
   # Gets the hourly stats for a stat type, from memcache and simpledb.
-  def get_hourly_count(stat_name)
+  # stat_name: The stat name to get.
+  # cache_hours: The number of hours in the past to look in memcache for stats. If set to 0, no stats
+  #     will be retrieved from memcache.
+  def get_hourly_count(stat_name, cache_hours = 2)
     hourly_stats_string = get(stat_name)
     if hourly_stats_string
       hourly_stats = hourly_stats_string.split(',').map{|n| n.to_i}
@@ -17,7 +20,7 @@ class Stats < SimpledbResource
     date, app_id = parse_key
     24.times do |i|
       time = date + i.hours
-      if hourly_stats[i] == 0 and time <= now and time >= (now - 12.hours)
+      if hourly_stats[i] == 0 and time <= now and time >= (now - cache_hours.hours)
         hourly_stats[i] = get_count_in_cache(Stats.get_memcache_count_key(stat_name, app_id, time))
       end
     end
