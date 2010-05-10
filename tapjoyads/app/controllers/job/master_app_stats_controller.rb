@@ -8,7 +8,7 @@ class Job::MasterAppStatsController < Job::JobController
   def index
     SdbApp.select(:where => "next_run_time < '#{@now.to_f.to_s}'", 
         :order_by => "next_run_time asc") do |app|
-      message = {:app_key => app.key, :last_run_time => app.get('last_run_time')}.to_json
+      message = {:app_key => app.key}.to_json
 
       # Set next_run_time here to make sure that it doesn't get picked up next run.
       # It will get set to a more accurate value in the queue_app_stats reader.

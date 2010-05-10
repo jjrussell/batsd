@@ -17,7 +17,9 @@ private
     @now = Time.zone.now
     @stat_rows = {}
     
-    start_time = Time.zone.at(json['last_run_time'].to_f).beginning_of_hour
+    last_run_time = @app.last_run_time || Time.zone.now.beginning_of_day
+    
+    start_time = last_run_time.beginning_of_hour
     end_time = (@now - 5.minutes).beginning_of_hour
     
     Rails.logger.info "Aggregating stats for '#{@app.to_s}' from #{start_time} to #{end_time}"
@@ -36,8 +38,7 @@ private
     verify_yesterday
     @app.save
     
-    start_time = Time.at(json['last_run_time'].to_f).beginning_of_hour
-    start_time.to_date.upto(@now.to_date) do |date|
+    last_run_time.to_date.upto(@now.to_date) do |date|
       send_stats_to_mssql(date)
     end
   end
