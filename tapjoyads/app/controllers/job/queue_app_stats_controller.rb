@@ -201,7 +201,7 @@ private
   # Gets the updates interval for this app, based on the contents of stat_row. 
   def get_interval
     stat_row = @stat_rows.values[0]
-    if @now.hour <= 4
+    if @now.hour <= 4 || stat_row.nil?
       # Never calculate the interval during the first 4 hours of a day.
       # This is because it's possible that stats haven't been tallied yet.
       # Just use the previously set interval.
