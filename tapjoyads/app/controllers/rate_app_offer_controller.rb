@@ -45,6 +45,11 @@ class RateAppOfferController < ApplicationController
 
       reward.save
 
+      web_request = WebRequest.new
+      params[:publisher_app_id] = app_id
+      web_request.put_values('rate_app', params, request)
+      web_request.save
+
       message = reward.serialize(:attributes_only => true)
 
       send_to_sqs(QueueNames::SEND_CURRENCY, message)

@@ -38,7 +38,9 @@ class WebRequest < SimpledbResource
   
   PUBLISHER_PATH_TO_STAT_MAP = {
     'store_click' => 'installs_opened',
-    'store_install' => 'published_installs'
+    'store_install' => 'published_installs',
+    'offer_click' => 'offers_opened',
+    'rate_app' => 'ratings'
   }
   
   def initialize(options = {})
