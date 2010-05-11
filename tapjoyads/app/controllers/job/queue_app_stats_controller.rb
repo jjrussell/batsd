@@ -5,7 +5,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
   def initialize
     super QueueNames::APP_STATS
     @paths_to_aggregate = %w(connect new_user adshown store_click daily_user monthly_user purchased_vg)
-    @publisher_paths_to_aggregate = %w(store_click offer_click ratings)
+    @publisher_paths_to_aggregate = %w(store_click offer_click rate_app)
   end
   
 private
@@ -76,7 +76,7 @@ private
           :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
       installs_opened = count if path == 'store_click'
       offers_opened = count if path == 'offer_click'
-      ratings_opened = count if path == 'ratings'
+      ratings_opened = count if path == 'rate_app'
 
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
