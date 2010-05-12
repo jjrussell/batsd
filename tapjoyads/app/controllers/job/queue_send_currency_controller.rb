@@ -34,6 +34,9 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         when 'P'
           'http://offer-dynamic-lb.playdom.com/tapjoy/mob/myspace/fp/main' #iphone url
         end
+        
+        publisher_revenue = reward.get('publisher_amount').to_f / 100
+        callback_url += "?rev=#{publisher_revenue}"
       end
     
       if callback_url == 'TAP_POINTS_CURRENCY'
