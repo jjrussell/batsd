@@ -54,4 +54,13 @@ module AuthenticationHelper
       password
     end
   end
+  
+  def pinger_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'pinger'
+        password = 'b3fegE?a'
+      end
+      password
+    end
+  end
 end
