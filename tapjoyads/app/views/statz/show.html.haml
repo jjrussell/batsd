@@ -3,7 +3,7 @@
 .icon= image_tag(@app.get_icon_url, :size => '56x56')
 %h1= @app.name
 
-.asof As of: #{@now.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)}
+.asof For: #{@start_time.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)} - #{@end_time.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)}
 
 .metadata App id: #{@app.key}
 .metadata Partner id: #{@app.partner_id}
