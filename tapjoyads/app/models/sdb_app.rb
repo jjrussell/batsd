@@ -158,6 +158,11 @@ class SdbApp < SimpledbResource
     end
     
     store_url = get('store_url')
+    if store_url.nil?
+      alert_new_relic(ParseStoreIdError, "Could not parse store id nil store_url for app #{self.to_s}")
+      return nil
+    end
+    
     if self.os_type == 'android'
       return store_url
     end
