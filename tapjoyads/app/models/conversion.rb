@@ -29,18 +29,12 @@ private
   
   def update_publisher_amount
     return true if self.publisher_amount == 0
-    Partner.connection.execute("update partners set pending_earnings = pending_earnings + #{self.publisher_amount} where id = '#{self.publisher_app.partner_id}'")
-    # partner = publisher_app.partner
-    # partner.pending_earnings += self.publisher_amount
-    # partner.save!
+    Partner.connection.execute("UPDATE partners SET pending_earnings = pending_earnings + #{self.publisher_amount} WHERE id = '#{self.publisher_app.partner_id}'")
   end
   
   def update_advertiser_amount
     return true if self.advertiser_amount == 0 || advertiser_offer.nil?
-    Partner.connection.execute("update partners set balance = balance + #{self.advertiser_amount} where id = '#{self.advertiser_offer.partner_id}'")
-    # partner = advertiser_offer.partner
-    # partner.balance += self.advertiser_amount
-    # partner.save!
+    Partner.connection.execute("UPDATE partners SET balance = balance + #{self.advertiser_amount} WHERE id = '#{self.advertiser_offer.partner_id}'")
   end
   
   def sanitize_reward_id

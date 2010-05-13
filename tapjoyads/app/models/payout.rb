@@ -15,9 +15,7 @@ private
   
   def update_balance
     return true if self.amount == 0
-    partner.pending_earnings -= self.amount
-    partner.next_payout_amount = 0
-    partner.save!
+    Partner.connection.execute("UPDATE partners SET pending_earnings = (pending_earnings - #{self.amount}), next_payout_amount = 0 WHERE id = '#{self.partner_id}'")
   end
   
 end

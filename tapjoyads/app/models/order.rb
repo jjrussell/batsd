@@ -13,8 +13,7 @@ private
   
   def update_balance
     return true if self.amount == 0
-    partner.balance += self.amount
-    partner.save!
+    Partner.connection.execute("UPDATE partners SET balance = balance + #{self.amount} WHERE id = '#{self.partner_id}'")
   end
   
 end
