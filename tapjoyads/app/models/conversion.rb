@@ -29,7 +29,7 @@ private
   
   def update_publisher_amount
     return true if self.publisher_amount == 0
-    Partner.connection.execute("update partners set pending_earnings = pendings_earnings + #{self.publisher_amount} where id = '#{self.publisher_app.partner_id}'")
+    Partner.connection.execute("update partners set pending_earnings = pending_earnings + #{self.publisher_amount} where id = '#{self.publisher_app.partner_id}'")
     # partner = publisher_app.partner
     # partner.pending_earnings += self.publisher_amount
     # partner.save!
