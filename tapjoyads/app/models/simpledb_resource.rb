@@ -62,7 +62,7 @@ class SimpledbResource
   include RightAws
   include SqsHelper
   
-  attr_accessor :key, :attributes, :this_domain_name, :is_new
+  attr_accessor :key, :attributes, :this_domain_name, :is_new, :key_hash
   cattr_accessor :domain_name, :key_format
   superclass_delegating_accessor :domain_name, :key_format
   
@@ -104,6 +104,7 @@ class SimpledbResource
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     @this_domain_name = get_real_domain_name(@this_domain_name)
+    setup_key_hash
     
     @special_values = {
       :newline => "^^TAPJOY_NEWLINE^^",
@@ -609,6 +610,20 @@ class SimpledbResource
       raise "hash key_obj not implemented yet"
     else
       return key_obj.to_s
+    end
+  end
+  
+  def setup_key_hash
+    key_hash = nil
+    unless key_format.nil?
+      key_hash = {}
+
+      key_parts = @key.split('.')
+      key_format_parts = key_format.split('.')
+      
+      key_format_parts.each_index do |i|
+        key_hash[key_format_parts[i].to_sym] = key_parts[i]
+      end
     end
   end
   
