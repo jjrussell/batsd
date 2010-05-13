@@ -12,6 +12,8 @@
 .metadata Balance: #{number_to_currency(@app.balance / 100.0)}
 .metadata Daily budget: #{@app.daily_budget}
 .metadata Show rate: #{"%.2f" % (@app.show_rate || 0)}
+.metadate Payment for install: #{@app.payment_for_install}
+.metadata Tapjoy enabled: #{@app.install_tracking}
 
 %table
   %thead
