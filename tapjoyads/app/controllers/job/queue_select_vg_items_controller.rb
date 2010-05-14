@@ -8,7 +8,7 @@ class Job::QueueSelectVgItemsController < Job::SqsReaderController
   private
   
   def on_message(message)
-    App.select(:attributes => 'itemName()') do |app|
+    SdbApp.select(:attributes => 'itemName()') do |app|
       mc_key = "virtual_good_list.#{@app.key}"
       list = []
       VirtualGood.select(:where => "app_id='#{@app.key}' and disabled != '1' and beta != '1'") do |item|
