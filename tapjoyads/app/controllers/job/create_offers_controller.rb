@@ -18,14 +18,6 @@ class Job::CreateOffersController < Job::SqsReaderController
     country_list = bucket.get('OfferpalCountryList.txt')
     countries = country_list.split(/\n/)
     
-    app_currency_list = []
-    
-    Currency.select({
-        :attributes => 'currency_name, conversion_rate, offers_money_share, disabled_offers',
-        :where => "currency_name != ''"}) do |item|
-      app_currency_list.push(item)
-    end
-   
     drop_id = 'b7b401f73d98ff21792b49117edd8b9f'
     
     countries.each do |country|
