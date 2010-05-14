@@ -9,16 +9,16 @@ class Job::QueueSelectVgItemsController < Job::SqsReaderController
   
   def on_message(message)
     SdbApp.select(:attributes => 'itemName()') do |app|
-      mc_key = "virtual_good_list.#{@app.key}"
+      mc_key = "virtual_good_list.#{app.key}"
       list = []
-      VirtualGood.select(:where => "app_id='#{@app.key}' and disabled != '1' and beta != '1'") do |item|
+      VirtualGood.select(:where => "app_id='#{app.key}' and disabled != '1' and beta != '1'") do |item|
         list.push(item)
       end
       save_to_cache(mc_key, list, false, 10.minutes)
       
-      mc_key = "virtual_good_list.beta.#{@app.key}"
+      mc_key = "virtual_good_list.beta.#{app.key}"
       list = []
-      VirtualGood.select(:where => "app_id='#{@app.key}' and disabled != '1' and beta = '1'") do |item|
+      VirtualGood.select(:where => "app_id='#{app.key}' and disabled != '1' and beta = '1'") do |item|
         list.push(item)
       end
       save_to_cache(mc_key, list, false, 10.minutes)
