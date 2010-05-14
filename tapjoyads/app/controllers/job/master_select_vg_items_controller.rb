@@ -1,4 +1,4 @@
-class Job::MasterSelectVgItemsontroller < Job::JobController
+class Job::MasterSelectVgItemsController < Job::JobController
     include SqsHelper
 
     def index
