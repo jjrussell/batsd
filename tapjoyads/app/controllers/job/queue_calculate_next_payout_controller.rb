@@ -8,8 +8,10 @@ class Job::QueueCalculateNextPayoutController < Job::SqsReaderController
 
   def on_message(message)
     Partner.to_calculate_next_payout_amount.each do |partner|
-      partner.calculate_next_payout_amount
-      partner.save!
+      Partner.transaction do
+        partner.reload.calculate_next_payout_amount
+        partner.save!
+      end
     end
   end
   
