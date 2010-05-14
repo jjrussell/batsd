@@ -49,7 +49,7 @@ class SubmitClickController < ApplicationController
     
     ##
     # store how much currency the user earns for this install    
-    currency = Currency.new(:key => params[:publisher_app_id])
+    currency = SdbCurrency.new(:key => params[:publisher_app_id])
 
     values = calculate_install_payouts(:currency => currency, :advertiser_app => app)
     

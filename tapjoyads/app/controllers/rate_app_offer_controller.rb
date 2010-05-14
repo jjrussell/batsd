@@ -25,7 +25,7 @@ class RateAppOfferController < ApplicationController
       rate.put('rate-date', Time.now.utc.to_f.to_s)
       rate.save
       
-      currency = Currency.new(:key => app_id)
+      currency = SdbCurrency.new(:key => app_id)
     
       values = calculate_offer_payouts(:currency => currency, :offer_amount => 15)
     

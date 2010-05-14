@@ -24,7 +24,7 @@ class ReceiveOfferController < ApplicationController
     parts = record_key.split('.')
     publisher_app_id = parts[0]
     publisher_user_id = parts[1]    
-    currency = Currency.new(:key => publisher_app_id)
+    currency = SdbCurrency.new(:key => publisher_app_id)
     
     values = calculate_offer_payouts(:currency => currency, :offer_amount => amount)
     

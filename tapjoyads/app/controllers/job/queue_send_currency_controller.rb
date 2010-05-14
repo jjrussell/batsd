@@ -18,7 +18,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         return
       end
 
-      currency = Currency.new(:key => reward.get('publisher_app_id'))
+      currency = SdbCurrency.new(:key => reward.get('publisher_app_id'))
       callback_url = currency.get('callback_url')
       
     

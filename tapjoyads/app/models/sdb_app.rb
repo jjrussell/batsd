@@ -50,7 +50,7 @@ class SdbApp < SimpledbResource
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     device_app_list = DeviceAppList.new(:key => udid)
-    currency = Currency.new(:key => @key) unless currency
+    currency = SdbCurrency.new(:key => @key) unless currency
     
     json_string = get_from_cache_and_save("s3.offer-data.rewarded_installs_list") do
       bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')
@@ -103,7 +103,7 @@ class SdbApp < SimpledbResource
   # Returns a list of active offers that are not disabled for this app.
   # currency: This app's currency. If none is provided, one is created using this app's key.
   def get_offer_list(currency = nil)
-    currency = Currency.new(:key => @key) unless currency
+    currency = SdbCurrency.new(:key => @key) unless currency
     
     json_string = get_from_cache_and_save("s3.offer-data.offer_list") do
       bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')

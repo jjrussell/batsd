@@ -39,7 +39,7 @@ class GetVgStoreItemsController < ApplicationController
   
   def setup
     @point_purchases = PointPurchases.new(:key => "#{params[:udid]}.#{params[:app_id]}")
-    @currency = Currency.new(:key => params[:app_id])
+    @currency = SdbCurrency.new(:key => params[:app_id])
     mc_key = "virtual_good_list.#{params[:app_id]}"
     @virtual_good_list = get_from_cache(mc_key) do
       list = []

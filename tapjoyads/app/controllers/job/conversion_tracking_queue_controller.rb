@@ -51,7 +51,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       adv_app = SdbApp.new(:key => advertiser_app_id)
       
       publisher_app_id = click.get('publisher_app_id')
-      currency = Currency.new(:key => publisher_app_id)
+      currency = SdbCurrency.new(:key => publisher_app_id)
       
       values = calculate_install_payouts(:currency => currency, :advertiser_app => adv_app)
       

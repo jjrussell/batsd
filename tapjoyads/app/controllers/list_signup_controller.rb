@@ -8,7 +8,7 @@ class ListSignupController < ApplicationController
   def index
     return unless verify_params([:udid, :publisher_app_id, :advertiser_app_id], {:allow_empty => false})
     
-    @currency = Currency.new(:key => params[:publisher_app_id])
+    @currency = SdbCurrency.new(:key => params[:publisher_app_id])
     @publisher_app = SdbApp.new(:key => params[:publisher_app_id])
     @advertiser_app = SdbApp.new(:key => params[:advertiser_app_id])
   end
@@ -27,7 +27,7 @@ class ListSignupController < ApplicationController
       
       signup.save
       
-      @currency = Currency.new(:key => params[:publisher_app_id])
+      @currency = SdbCurrency.new(:key => params[:publisher_app_id])
       @publisher_app = SdbApp.new(:key => params[:publisher_app_id])
       @advertiser_app = SdbApp.new(:key => params[:advertiser_app_id])
       
@@ -76,7 +76,7 @@ class ListSignupController < ApplicationController
     if @signup.is_new
       return false
     else
-      @currency = Currency.new(:key => @signup.publisher_app_id)
+      @currency = SdbCurrency.new(:key => @signup.publisher_app_id)
       @publisher_app = SdbApp.new(:key => @signup.publisher_app_id)
 
       @signup.confirmed = Time.now

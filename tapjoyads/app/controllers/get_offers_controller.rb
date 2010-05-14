@@ -73,7 +73,7 @@ class GetOffersController < ApplicationController
     @publisher_user_record.update(params[:udid])
     
     @publisher_app = SdbApp.new(:key => params[:app_id])
-    @currency = Currency.new(:key => params[:app_id])
+    @currency = SdbCurrency.new(:key => params[:app_id])
     
     web_request = WebRequest.new
     web_request.put_values('offers', params, request)

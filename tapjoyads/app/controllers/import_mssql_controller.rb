@@ -125,7 +125,7 @@ class ImportMssqlController < ApplicationController
   def currency
     return unless verify_params([:app_id])
     
-    currency = Currency.new(:key => params[:app_id])
+    currency = SdbCurrency.new(:key => params[:app_id])
     
     currency.put('currency_name',params[:currency_name])
     currency.put('conversion_rate', params[:conversion_rate])

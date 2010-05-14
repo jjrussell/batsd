@@ -21,7 +21,7 @@ class Job::RateOfferQueueController < Job::SqsReaderController
       rate.put('rate-date', Time.now.utc.to_f.to_s)
       rate.save
 
-      currency = Currency.new(:key => app_id)
+      currency = SdbCurrency.new(:key => app_id)
       amount = (10.0 * currency.get('conversion_rate').to_f / 100.0.to_f).to_i.to_s
 
       win_lb = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/Service1.asmx/'
