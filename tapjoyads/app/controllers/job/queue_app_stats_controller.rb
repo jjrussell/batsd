@@ -38,7 +38,7 @@ private
     verify_yesterday
     @app.save
     
-    last_run_time.to_date.upto(@now.to_date) do |date|
+    (last_run_time - 1.day).to_date.upto(@now.to_date) do |date|
       send_stats_to_mssql(date)
     end
   end
