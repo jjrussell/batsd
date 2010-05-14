@@ -15,4 +15,5 @@ module QueueNames
   CALCULATE_SHOW_RATE      = RUN_MODE_PREFIX + 'CalculateShowRate'
   CLEANUP_STORE_CLICK      = RUN_MODE_PREFIX + 'CleanupStoreClick'
   CALCULATE_NEXT_PAYOUT    = RUN_MODE_PREFIX + 'CalculateNextPayout'
+  SELECT_VG_ITEMS          = RUN_MODE_PREFIX + 'SelectVgItems'
 end
