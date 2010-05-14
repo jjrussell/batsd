@@ -22,7 +22,7 @@ class Job::QueueSelectVgItemsController < Job::SqsReaderController
         list.push(item)
       end
       save_to_cache(mc_key, list, false, 10.minutes)
-      list
+      sleep(0.05)
     end
   end
 end
