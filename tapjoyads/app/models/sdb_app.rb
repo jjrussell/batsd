@@ -64,7 +64,7 @@ class SdbApp < SimpledbResource
       advertiser_app_list.push(SdbApp.deserialize(serialized_advertiser_app))
     end
     
-    banned_apps = (currency.get('disabled_apps') || '').split(';')
+    disabled_apps = Set.new((currency.get('disabled_apps') || '').split(';'))
     
     only_free_apps = currency.get('only_free_apps') == '1'
     
@@ -74,7 +74,7 @@ class SdbApp < SimpledbResource
       
       reject = false
       
-      reject = true if banned_apps.include?(advertiser_app.key)
+      reject = true if disabled_apps.include?(advertiser_app.key)
       reject = true if only_free_apps and not advertiser_app.is_free
       reject = true if advertiser_app.key == @key
       reject = true if advertiser_app.iphone_only and not iphone
@@ -115,10 +115,10 @@ class SdbApp < SimpledbResource
       offer_list.push(CachedOffer.deserialize(serialized_offer))
     end
     
-    banned_offers = (currency.get('disabled_offers') || '').split(';')
+    disabled_offers = Set.new((currency.get('disabled_offers') || '').split(';'))
     
     offer_list.reject! do |offer|
-      banned_offers.include?(offer.key)
+      disabled_offers.include?(offer.key)
     end
     
     return offer_list
