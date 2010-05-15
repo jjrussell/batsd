@@ -97,7 +97,8 @@ private
   ##
   #
   def verify_yesterday
-    return unless @app.last_daily_run_time.nil? || @app.last_daily_run_time.day != @now.day || @now.hour != 0
+    return unless @app.last_daily_run_time.nil? || @app.last_daily_run_time.day != @now.day
+    return if @now.hour == 0
     
     start_time = (@now - 1.day).beginning_of_day
     end_time = start_time + 1.day
