@@ -92,11 +92,11 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     # For low budget apps, don't just change to the new show_rate if it is larger than the old show_rate.
     # Instead, just add 2%. This prevents a period of 20 minutes with no clicks from causing the
     # show_rate to jump to 100% on the next run.
-    if app.daily_budget < 5000 and new_show_rate > old_show_rate
+    if app.daily_budget > 0 && app.daily_budget < 5000 && new_show_rate > old_show_rate
       new_show_rate = [new_show_rate, old_show_rate + 0.02].min
     end
     
-    if app.daily_budget > 0 and num_installs_today > app.daily_budget
+    if app.daily_budget > 0 && num_installs_today > app.daily_budget
       Rails.logger.info "Pushed too many installs. Overriding any calculations and setting show rate to 0."
       new_show_rate = 0
     end
