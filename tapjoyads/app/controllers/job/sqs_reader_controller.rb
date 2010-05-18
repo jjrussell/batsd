@@ -35,21 +35,22 @@ class Job::SqsReaderController < Job::JobController
       unless message.nil?
         Rails.logger.info "#{@queue_name} message recieved: #{message.to_s}"
         params[:message] = message.to_s
-      
+        
         begin
           CACHE.add(get_memcache_lock_key(message), 'locked', queue.visibility.to_i)
           begin
-            # NewRelic truncates parameter length to ~250 chars so split the message up
-            custom_params = {}
-            message.to_s.scan(/.{1,250}/).each_with_index do |val, i|
-              custom_params["message#{i}"] = val
-            end
-            NewRelic::Agent.add_custom_parameters(custom_params)
-            
             on_message(message)
             message.delete
           rescue Exception => e
             Rails.logger.warn "Error processing message. Error: #{e}"
+            if message.to_s.length > 250
+              # NewRelic truncates parameter length to ~250 chars so split the message up
+              custom_params = {}
+              message.to_s.scan(/.{1,250}/).each_with_index do |val, i|
+                custom_params["message#{i}"] = val
+              end
+              NewRelic::Agent.add_custom_parameters(custom_params)
+            end
             raise e
           end
         rescue Memcached::NotStored => e
