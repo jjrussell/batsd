@@ -54,8 +54,7 @@ class Job::SqsReaderController < Job::JobController
             raise e
           end
         rescue Memcached::NotStored => e
-          alert_new_relic(SqsLockExistsError, 'Lock exists for this message. Skipping processing.',
-              request, params)
+          Rails.logger.info('Lock exists for this message. Skipping processing.')
         end
       else
         break

@@ -45,8 +45,7 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
         conversion.save!
       rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid => e
         if conversion.errors[:id] == 'has already been taken' || e.message =~ /Duplicate entry.*index_conversions_on_id/
-          params[:message] = message.to_s
-          alert_new_relic(DuplicateConversionBlocked, "#{e.class} when saving conversion: '#{conversion.id}'", request, params)
+          Rails.logger.info "Duplicate Conversion: #{e.class} when saving conversion: '#{conversion.id}'"
           return
         else
           raise e

@@ -20,8 +20,6 @@ module NewRelicHelper
   class ParseStoreIdError < RuntimeError; end
   class FailedToWriteToSqsError < RuntimeError; end
   class FailedToDownloadError < RuntimeError; end
-  class SqsLockExistsError < RuntimeError; end
-  class DuplicateConversionBlocked < RuntimeError; end
   class AppStatsVerifyError < RuntimeError; end
   class ConversionRateTooLowError < RuntimeError; end
   
