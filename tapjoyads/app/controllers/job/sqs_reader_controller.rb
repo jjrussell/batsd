@@ -39,6 +39,13 @@ class Job::SqsReaderController < Job::JobController
         begin
           CACHE.add(get_memcache_lock_key(message), 'locked', queue.visibility.to_i)
           begin
+            # NewRelic truncates parameter length to ~250 chars so split the message up
+            custom_params = {}
+            message.to_s.scan(/.{1,250}/).each_with_index do |val, i|
+              custom_params["message#{i}"] = val
+            end
+            NewRelic::Agent.add_custom_parameters(custom_params)
+            
             on_message(message)
             message.delete
           rescue Exception => e
