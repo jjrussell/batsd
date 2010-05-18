@@ -21,6 +21,7 @@ class Partner < ActiveRecord::Base
   
   def payout_cutoff_date(reference_date = nil)
     reference_date ||= Time.zone.now
+    reference_date -= 3.days
     case payout_frequency
     when 'semimonthly'
       reference_date.day > 15 ? (reference_date.beginning_of_month + 15.days) : reference_date.beginning_of_month
