@@ -16,7 +16,6 @@ module NewRelicHelper
   end
   
   class MissingRequiredParamsError < RuntimeError; end
-  class DuplicateFailedSdbSavesError < RuntimeError; end
   class ParseStoreIdError < RuntimeError; end
   class FailedToWriteToSqsError < RuntimeError; end
   class FailedToDownloadError < RuntimeError; end

@@ -23,7 +23,7 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
         # This will raise an error if the key is not found.
         bucket.get("complete/#{json['uuid']}")
         
-        alert_new_relic(DuplicateFailedSdbSavesError, "Already operated on #{json['uuid']}")
+        Rails.logger.info("Already operated on #{json['uuid']}")
         return
       else
         raise e
