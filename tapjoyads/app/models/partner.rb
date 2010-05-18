@@ -30,7 +30,7 @@ class Partner < ActiveRecord::Base
   end
   
   def calculate_next_payout_amount
-    self.next_payout_amount = pending_earnings - publisher_conversions.created_since(payout_cutoff_date).sum(:publisher_amount)
+    self.next_payout_amount = pending_earnings + payouts.created_since(payout_cutoff_date).sum(:amount) - publisher_conversions.created_since(payout_cutoff_date).sum(:publisher_amount)
   end
   
 end

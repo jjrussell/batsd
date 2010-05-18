@@ -11,11 +11,13 @@ class Payout < ActiveRecord::Base
   
   after_create :update_balance
   
+  named_scope :created_since, lambda { |date| { :conditions => ["payouts.created_at >= ?", date] } }
+  
 private
   
   def update_balance
     return true if self.amount == 0
-    Partner.connection.execute("UPDATE partners SET pending_earnings = (pending_earnings - #{self.amount}), next_payout_amount = 0 WHERE id = '#{self.partner_id}'")
+    Partner.connection.execute("UPDATE partners SET pending_earnings = (pending_earnings - #{self.amount}), next_payout_amount = (next_payout_amount - #{self.amount}) WHERE id = '#{self.partner_id}'")
   end
   
 end
