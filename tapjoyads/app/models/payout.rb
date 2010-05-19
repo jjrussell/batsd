@@ -11,8 +11,6 @@ class Payout < ActiveRecord::Base
   
   after_create :update_balance
   
-  named_scope :created_since, lambda { |date| { :conditions => ["payouts.created_at >= ?", date] } }
-  
 private
   
   def update_balance
