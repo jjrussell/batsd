@@ -26,7 +26,8 @@
         %td{ :style => 'font-size: small;' }= partner.id
         %td= partner.users.first.email
         %td
-          - form_tag create_payout_tool_path(partner), :method => :post, :class => 'json', :style => 'height:20px;' do
+          - form_tag create_payout_tool_path(partner), :method => :post, :class => 'json', :style => 'height:45px;' do
+            = text_field_tag 'amount', (partner.next_payout_amount / 100.0), :class => 'amount'
             = submit_tag 'Create Payout', :class => 'submit'
             %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
             %span.status
@@ -40,6 +41,7 @@
         
         var spinner = $(this).find('img.spinner');
         var submit = $(this).find('input.submit');
+        var amount = $(this).find('input.amount');
         var status = $(this).find('span.status');
         
         $.ajax({
@@ -48,6 +50,7 @@
           url: $(this).attr('action'),
           data: $(this).serialize(),
           beforeSend: function() {
+            amount.hide();
             submit.hide();
             spinner.show();
           },
