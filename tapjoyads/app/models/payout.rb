@@ -1,6 +1,10 @@
 class Payout < ActiveRecord::Base
   include UuidPrimaryKey
   
+  # Status Codes:
+  # 0: ?
+  # 1: normal payout
+  
   belongs_to :partner
   
   validates_presence_of :partner

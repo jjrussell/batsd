@@ -1,6 +1,11 @@
 class Order < ActiveRecord::Base
   include UuidPrimaryKey
   
+  # Status Codes:
+  # 0: ?
+  # 1: normal order/paid
+  # 2: refund? we don't do this anymore
+  
   belongs_to :partner
   
   validates_presence_of :partner
