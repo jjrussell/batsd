@@ -30,8 +30,26 @@ class Partner < ActiveRecord::Base
     end
   end
   
-  def calculate_next_payout_amount
-    self.next_payout_amount = pending_earnings - publisher_conversions.created_since(payout_cutoff_date).sum(:publisher_amount)
+  def calculate_next_payout_amount(do_save = false)
+    Partner.transaction do
+      self.lock!('FOR UPDATE') if do_save
+      self.reload
+      self.next_payout_amount = pending_earnings - publisher_conversions.created_since(payout_cutoff_date).sum(:publisher_amount)
+      self.save! if do_save
+    end
+  end
+  
+  def recalculate_balances(do_save = false)
+    Partner.transaction do
+      self.lock!('FOR UPDATE') if do_save
+      orders_sum = self.orders.sum(:amount, :conditions => 'status = 1')
+      payouts_sum = self.payouts.sum(:amount, :conditions => 'status = 1')
+      publisher_conversions_sum = self.publisher_conversions.sum(:publisher_amount)
+      advertiser_conversions_sum = self.advertiser_conversions.sum(:advertiser_amount)
+      self.balance = orders_sum + advertiser_conversions_sum
+      self.pending_earnings = publisher_conversions_sum - payouts_sum
+      self.save! if do_save
+    end
   end
   
 end

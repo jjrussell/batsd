@@ -68,13 +68,7 @@ class OneOffs
       counter = 0
       Partner.find_each do |p|
         counter += 1
-        orders_sum = p.orders.sum(:amount, :conditions => 'status = 1')
-        payouts_sum = p.payouts.sum(:amount, :conditions => 'status = 1')
-        publisher_conversions_sum = p.publisher_conversions.sum(:publisher_amount)
-        advertiser_conversions_sum = p.advertiser_conversions.sum(:advertiser_amount)
-        p.balance = orders_sum + advertiser_conversions_sum
-        p.pending_earnings = publisher_conversions_sum - payouts_sum
-        p.save!
+        p.recalculate_balances(true)
         puts "finished #{counter} partners" if counter % 100 == 0
       end
     end
