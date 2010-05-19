@@ -2,8 +2,8 @@ class Order < ActiveRecord::Base
   include UuidPrimaryKey
   
   # Status Codes:
-  # 0: ?
-  # 1: normal order/paid
+  # 0: promotional/marketing/unpaid
+  # 1: normal/paid
   # 2: refund? we don't do this anymore
   
   belongs_to :partner
