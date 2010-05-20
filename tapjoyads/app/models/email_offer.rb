@@ -25,6 +25,7 @@ private
   end
   
   def update_offer
+    offer.partner_id = partner_id if partner_id_changed?
     offer.name = name if name_changed?
     offer.description = description if description_changed?
     offer.save! if offer.changed?
