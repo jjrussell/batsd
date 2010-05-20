@@ -22,23 +22,23 @@ class Conversion < ActiveRecord::Base
   named_scope :created_since, lambda { |date| { :conditions => ["conversions.created_at >= ?", date] } }
   
   def reward_type_string=(string)
-    self.write_attribute(:reward_type, REWARD_TYPES[string])
+    write_attribute(:reward_type, REWARD_TYPES[string])
   end
   
 private
   
   def update_publisher_amount
-    return true if self.publisher_amount == 0
-    p_id = self.publisher_app.partner_id
+    return true if publisher_amount == 0
+    p_id = publisher_app.partner_id
     Partner.connection.execute("SELECT id FROM partners WHERE id = '#{p_id}' FOR UPDATE")
-    Partner.connection.execute("UPDATE partners SET pending_earnings = (pending_earnings + #{self.publisher_amount}) WHERE id = '#{p_id}'")
+    Partner.connection.execute("UPDATE partners SET pending_earnings = (pending_earnings + #{publisher_amount}) WHERE id = '#{p_id}'")
   end
   
   def update_advertiser_amount
-    return true if self.advertiser_amount == 0 || advertiser_offer.nil?
-    p_id = self.advertiser_offer.partner_id
+    return true if advertiser_amount == 0 || advertiser_offer.nil?
+    p_id = advertiser_offer.partner_id
     Partner.connection.execute("SELECT id FROM partners WHERE id = '#{p_id}' FOR UPDATE")
-    Partner.connection.execute("UPDATE partners SET balance = (balance + #{self.advertiser_amount}) WHERE id = '#{p_id}'")
+    Partner.connection.execute("UPDATE partners SET balance = (balance + #{advertiser_amount}) WHERE id = '#{p_id}'")
   end
   
   def sanitize_reward_id

@@ -17,9 +17,9 @@ class Order < ActiveRecord::Base
 private
   
   def update_balance
-    return true if self.amount == 0
-    Partner.connection.execute("SELECT id FROM partners WHERE id = '#{self.partner_id}' FOR UPDATE")
-    Partner.connection.execute("UPDATE partners SET balance = (balance + #{self.amount}) WHERE id = '#{self.partner_id}'")
+    return true if amount == 0
+    Partner.connection.execute("SELECT id FROM partners WHERE id = '#{partner_id}' FOR UPDATE")
+    Partner.connection.execute("UPDATE partners SET balance = (balance + #{amount}) WHERE id = '#{partner_id}'")
   end
   
 end

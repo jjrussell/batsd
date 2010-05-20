@@ -13,21 +13,21 @@ class EmailOffer < ActiveRecord::Base
 private
   
   def create_offer
-    self.offer = Offer.new(:item => self)
-    self.offer.id = id
-    self.offer.partner = partner
-    self.offer.name = name
-    self.offer.description = description
-    self.offer.price = 0
-    self.offer.url = "http://ws.tapjoyads.com/list_signup?udid=TAPJOY_UDID&publisher_app_id=TAPJOY_PUBLISHER_APP_ID&advertiser_app_id=#{id}"
-    self.offer.device_types = Offer::ALL_DEVICES.to_json
-    self.offer.save!
+    offer = Offer.new(:item => self)
+    offer.id = id
+    offer.partner = partner
+    offer.name = name
+    offer.description = description
+    offer.price = 0
+    offer.url = "http://ws.tapjoyads.com/list_signup?udid=TAPJOY_UDID&publisher_app_id=TAPJOY_PUBLISHER_APP_ID&advertiser_app_id=#{id}"
+    offer.device_types = Offer::ALL_DEVICES.to_json
+    offer.save!
   end
   
   def update_offer
-    self.offer.name = name if name_changed?
-    self.offer.description = description if description_changed?
-    self.offer.save! if self.offer.changed?
+    offer.name = name if name_changed?
+    offer.description = description if description_changed?
+    offer.save! if offer.changed?
   end
   
 end

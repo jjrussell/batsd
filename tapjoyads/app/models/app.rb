@@ -34,23 +34,23 @@ class App < ActiveRecord::Base
 private
   
   def create_offer
-    self.offer = Offer.new(:item => self)
-    self.offer.id = id
-    self.offer.partner = partner
-    self.offer.name = name
-    self.offer.description = description
-    self.offer.price = price
-    self.offer.url = store_url
-    self.offer.device_types = platform == 'android' ? Offer::ANDROID_DEVICES.to_json : Offer::IPHONE_DEVICES.to_json
-    self.offer.save!
+    offer = Offer.new(:item => self)
+    offer.id = id
+    offer.partner = partner
+    offer.name = name
+    offer.description = description
+    offer.price = price
+    offer.url = store_url
+    offer.device_types = platform == 'android' ? Offer::ANDROID_DEVICES.to_json : Offer::IPHONE_DEVICES.to_json
+    offer.save!
   end
   
   def update_offer
-    self.offer.name = name if name_changed?
-    self.offer.description = description if description_changed?
-    self.offer.price = price if price_changed?
-    self.offer.url = store_url if store_url_changed? || use_raw_url_changed? || store_id_changed?
-    self.offer.save! if self.offer.changed?
+    offer.name = name if name_changed?
+    offer.description = description if description_changed?
+    offer.price = price if price_changed?
+    offer.url = store_url if store_url_changed? || use_raw_url_changed? || store_id_changed?
+    offer.save! if offer.changed?
   end
   
 end
