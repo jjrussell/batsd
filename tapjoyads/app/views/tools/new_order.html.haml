@@ -11,9 +11,9 @@
     = text_field_tag 'order[amount]'
   .field
     = label_tag 'order[status]', 'Status'
-    = select_tag 'order[status]', '<option>0</option><option>1</option><option>2</option>'
+    = select_tag 'order[status]', '<option>1</option>'
   .field
     = label_tag 'order[payment_method]', 'Payment Method'
-    = select_tag 'order[payment_method]', '<option>0</option><option>1</option><option>2</option>'
+    = select_tag 'order[payment_method]', '<option value="1">Billable</option><option value="2">Marketing Expense</option>'
   .field
     = submit_tag 'Create Order'
