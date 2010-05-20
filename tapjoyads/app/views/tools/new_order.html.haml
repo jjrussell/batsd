@@ -1,0 +1,19 @@
+- @page_title = 'Create Order'
+
+%h1 Create Order
+
+- form_tag create_order_tools_path, :method => :post, :class => 'json' do
+  .field
+    = label_tag 'order[partner_id]', 'Partner ID'
+    = text_field_tag 'order[partner_id]', nil, :size => 40
+  .field
+    = label_tag 'order[amount]', 'Amount $'
+    = text_field_tag 'order[amount]'
+  .field
+    = label_tag 'order[status]', 'Status'
+    = select_tag 'order[status]', '<option>0</option><option>1</option><option>2</option>'
+  .field
+    = label_tag 'order[payment_method]', 'Payment Method'
+    = select_tag 'order[payment_method]', '<option>0</option><option>1</option><option>2</option>'
+  .field
+    = submit_tag 'Create Order'

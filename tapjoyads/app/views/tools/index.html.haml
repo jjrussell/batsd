@@ -3,6 +3,8 @@
 %h1 Tools
 
 %ul
+  - if permitted_to? :new_order, :tools
+    %li= link_to 'New Order', new_order_tools_path
   - if permitted_to? :payouts, :tools
     %li= link_to 'Payouts', payouts_tools_path
   - if permitted_to? :index, :statz
