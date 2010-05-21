@@ -46,15 +46,11 @@ class SubmitClickController < ApplicationController
       return
     end
     
-    ##
-    # don't store the click if it's Hottest Free App and 
-    # the user already has the app installed
-    if params[:publisher_app_id] == '469f7523-3b99-4b42-bcfb-e18d9c3c4576'
-      device = DeviceAppList.new(:key => params[:udid])
-      if device.has_app(params[:advertiser_app_id])
-        redirect_to app.get_store_url(params[:udid], params[:publisher_app_id])
-        return
-      end
+    # don't store the click if the user already has the app installed
+    device_app_list = DeviceAppList.new(:key => params[:udid])
+    if device_app_list.has_app(params[:advertiser_app_id])
+      redirect_to app.get_store_url(params[:udid], params[:publisher_app_id])
+      return
     end
     
     ##
@@ -67,7 +63,7 @@ class SubmitClickController < ApplicationController
     # each attribute that starts with publisher.<id> has a . separated value
     # the left of the . is when the click happened.  the right of the . is the publisher user record
     # so when the app is installed, we look at the timestamp to determine where the reward goes
-    click = StoreClick.new(:key => "#{params[:udid]}.#{params[:advertiser_app_id]}", :load => false)
+    click = StoreClick.new(:key => "#{params[:udid]}.#{params[:advertiser_app_id]}")
     click.put("click_date", "#{now.to_f.to_s}")
     click.put("publisher_app_id",params[:publisher_app_id])
     click.put("publisher_user_record_id", params[:publisher_user_record_id])
