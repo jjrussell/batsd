@@ -1,4 +1,5 @@
 class OneOffs
+  include SqsHelper
   
   def self.import_conversions
     Benchmark.realtime do
@@ -154,6 +155,36 @@ class OneOffs
     puts "existing UDIDs (global): #{existing_udids}"
     puts "new UDIDs (per app): #{app_new_udids}"
     puts "existing UDIDs (per app): #{app_existing_udids}"
+  end
+  
+  def self.fix_fluent_conversions
+    StoreClick.select(:where => "publisher_user_record_id like '.%'") do |click|
+      click.put('publisher_user_record_id', click.get('publisher_user_record_id').gsub('.', ''))
+      click.serial_save
+      if click.installed
+        reward = Reward.new(:key => click.get('reward_key'))
+        if reward.get('publisher_app_id')
+          puts "reward exists: #{reward.key}"
+        else
+          reward.put('type', 'install')
+          reward.put('publisher_app_id', click.get('publisher_app_id'))
+          reward.put('advertiser_app_id', click.get('advertiser_app_id'))
+          reward.put('publisher_user_id', click.get('publisher_user_record_id'), {:cgi_escape => true})
+          reward.put('advertiser_amount', click.get('advertiser_amount'))
+          reward.put('publisher_amount', click.get('publisher_amount'))
+          reward.put('currency_reward', click.get('currency_reward'))
+          reward.put('tapjoy_amount', click.get('tapjoy_amount'))
+          reward.put('offerpal_amount', click.get('offerpal_amount'))
+          
+          reward.serial_save
+          
+          message = reward.serialize(:attributes_only => true)
+          
+          send_to_sqs(QueueNames::SEND_CURRENCY, message)
+          send_to_sqs(QueueNames::SEND_MONEY_TXN, message)
+        end
+      end
+    end and true
   end
   
 end
