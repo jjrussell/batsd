@@ -16,10 +16,18 @@ class GetOffersController < ApplicationController
     setup
     set_advertiser_app_list(:real_ip => true)
     
-    # TODO: Finish this up.
-    # @publisher_app.featured_offers.each do |featured_app_key|
-    #   
-    # end
+    featured_app_id = 'a67b94ca-7f55-403d-bc67-862a4a020d2a' # Fluent News
+   
+    @advertiser_app_list.reject! do |app|
+      app.key != featured_app_id
+    end
+    @more_data_available = 0
+    
+    if params[:json] == '1'
+      render :template => 'get_offers/installs_json', :content_type => 'application/json'
+    else
+      render :template => 'get_offers/installs'
+    end
   end
   
   def index
