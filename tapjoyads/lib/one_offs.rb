@@ -159,8 +159,8 @@ class OneOffs
   def self.fix_fluent_conversions
     send_currency_queue = RightAws::SqsGen2.new.queue(QueueNames::SEND_CURRENCY)
     send_money_txn_queue = RightAws::SqsGen2.new.queue(QueueNames::SEND_MONEY_TXN)
-    StoreClick.select(:where => "publisher_user_record_id like '.%'") do |click|
-      click.put('publisher_user_record_id', click.get('publisher_user_record_id').gsub('.', ''))
+    StoreClick.select(:where => "publisher_user_record_id like '9dfa6164-9449-463f-acc4-7a7c6d7b5c81.%'") do |click|
+      click.put('publisher_user_record_id', click.get('publisher_user_record_id').gsub('9dfa6164-9449-463f-acc4-7a7c6d7b5c81.', ''))
       click.serial_save
       if click.installed
         reward = Reward.new(:key => click.get('reward_key'))
