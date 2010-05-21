@@ -11,6 +11,7 @@ class SubmitClickController < ApplicationController
       publisher_user_record = PublisherUserRecord.new(
           :key => "#{params[:app_id]}.#{params[:publisher_user_id]}")
       publisher_user_record.update(params[:udid])
+      publisher_user_record.save
       params[:publisher_user_record_id] = publisher_user_record.key
     end
     
