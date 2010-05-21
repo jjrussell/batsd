@@ -11,7 +11,7 @@ class SubmitClickController < ApplicationController
       publisher_user_record = PublisherUserRecord.new(
           :key => "#{params[:publisher_app_id]}.#{params[:publisher_user_id]}")
       publisher_user_record.update(params[:udid])
-      params[:publisher_user_record_id] = publisher_user_record.key
+      params[:publisher_user_record_id] = publisher_user_record.record_id
     end
     
     return unless verify_params([:advertiser_app_id, :udid, :publisher_app_id, :publisher_user_record_id])
