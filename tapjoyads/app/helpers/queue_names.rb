@@ -14,4 +14,5 @@ module QueueNames
   CLEANUP_STORE_CLICK      = RUN_MODE_PREFIX + 'CleanupStoreClick'
   CALCULATE_NEXT_PAYOUT    = RUN_MODE_PREFIX + 'CalculateNextPayout'
   SELECT_VG_ITEMS          = RUN_MODE_PREFIX + 'SelectVgItems'
+  VERIFICATIONS            = RUN_MODE_PREFIX + 'Verifications'
 end

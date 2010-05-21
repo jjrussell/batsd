@@ -24,5 +24,5 @@ module NewRelicHelper
   
   # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
   class EmailWorthyError < RuntimeError; end
-  class CalculateNextPayoutMismatch < EmailWorthyError; end
+  class BalancesMismatch < EmailWorthyError; end
 end

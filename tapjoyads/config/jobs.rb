@@ -25,6 +25,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'queue_calculate_show_rate', :interval => 20.seconds
     s.add_job 'queue_calculate_next_payout', :interval => 5.minutes
     s.add_job 'queue_select_vg_items', :interval => 5.seconds
+    s.add_job 'queue_verifications', :interval => 5.minutes
   elsif machine_type == 'masterjobs'
     s.add_job 'master_cleanup_web_requests', :daily => 5.hours
     s.add_job 'master_cleanup_store_click', :daily => 6.hours
@@ -36,6 +37,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'master_reload_statz', :interval => 10.minutes
     s.add_job 'master_calculate_next_payout', :daily => 4.hours
     s.add_job 'master_select_vg_items', :interval => 5.minutes
+    s.add_job 'master_verifications', :daily => 5.hours
   else
     Rails.logger.info "JobRunner: Not running any jobs. Not a job server."
   end
