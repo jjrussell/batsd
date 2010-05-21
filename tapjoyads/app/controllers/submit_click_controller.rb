@@ -9,18 +9,14 @@ class SubmitClickController < ApplicationController
     
     if params[:publisher_user_id]
       publisher_user_record = PublisherUserRecord.new(
-          :key => "#{params[:app_id]}.#{params[:publisher_user_id]}")
+          :key => "#{params[:publisher_app_id]}.#{params[:publisher_user_id]}")
       publisher_user_record.update(params[:udid])
-      publisher_user_record.save
       params[:publisher_user_record_id] = publisher_user_record.key
     end
     
     return unless verify_params([:advertiser_app_id, :udid, :publisher_app_id, :publisher_user_record_id])
     
-
-    
     now = Time.now.utc
-    
     
     ##
     # store the value of an install in this table
