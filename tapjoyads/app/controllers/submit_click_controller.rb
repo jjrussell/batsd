@@ -6,7 +6,17 @@ class SubmitClickController < ApplicationController
   layout "iphone"
   
   def store
+    
+    if params[:publisher_user_id]
+      publisher_user_record = PublisherUserRecord.new(
+          :key => "#{params[:app_id]}.#{params[:publisher_user_id]}")
+      publisher_user_record.update(params[:udid])
+      params[:publisher_user_record_id] = publisher_user_record.key
+    end
+    
     return unless verify_params([:advertiser_app_id, :udid, :publisher_app_id, :publisher_user_record_id])
+    
+
     
     now = Time.now.utc
     
