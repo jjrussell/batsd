@@ -34,7 +34,7 @@ class Partner < ActiveRecord::Base
     Partner.transaction do
       reload(:lock => (do_save ? 'FOR UPDATE' : false))
       self.next_payout_amount = pending_earnings - publisher_conversions.created_since(payout_cutoff_date).sum(:publisher_amount)
-      save! if do_save
+      save! if changed? && do_save
     end
   end
   
@@ -47,7 +47,7 @@ class Partner < ActiveRecord::Base
       advertiser_conversions_sum = advertiser_conversions.sum(:advertiser_amount)
       self.balance = orders_sum + advertiser_conversions_sum
       self.pending_earnings = publisher_conversions_sum - payouts_sum
-      save! if do_save
+      save! if changed? && do_save
     end
   end
   
