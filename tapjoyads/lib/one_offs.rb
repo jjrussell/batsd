@@ -1,5 +1,4 @@
 class OneOffs
-  include SqsHelper
   
   def self.import_conversions
     Benchmark.realtime do
@@ -158,6 +157,8 @@ class OneOffs
   end
   
   def self.fix_fluent_conversions
+    send_currency_queue = RightAws::SqsGen2.new.queue(QueueNames::SEND_CURRENCY)
+    send_money_txn_queue = RightAws::SqsGen2.new.queue(QueueNames::SEND_MONEY_TXN)
     StoreClick.select(:where => "publisher_user_record_id like '.%'") do |click|
       click.put('publisher_user_record_id', click.get('publisher_user_record_id').gsub('.', ''))
       click.serial_save
@@ -180,8 +181,10 @@ class OneOffs
           
           message = reward.serialize(:attributes_only => true)
           
-          send_to_sqs(QueueNames::SEND_CURRENCY, message)
-          send_to_sqs(QueueNames::SEND_MONEY_TXN, message)
+          puts "sending reward: #{reward.key} to sqs"
+          
+          send_currency_queue.send_message(message)
+          send_money_txn_queue.send_message(message)
         end
       end
     end and true
