@@ -40,7 +40,19 @@ class Job::SqsReaderController < Job::JobController
           CACHE.add(get_memcache_lock_key(message), 'locked', queue.visibility.to_i)
           begin
             on_message(message)
-            message.delete
+            
+            retries = 3
+            begin
+              message.delete
+            rescue AwsError => e
+              if e.message =~ /^ResourceUnavailable/ && retries > 0
+                retries -= 1
+                sleep(0.1)
+                retry
+              else
+                raise e
+              end
+            end
           rescue Exception => e
             Rails.logger.warn "Error processing message. Error: #{e}"
             if message.to_s.length > 250
