@@ -26,7 +26,7 @@ class GetOffersController < ApplicationController
     if params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
     else
-      render :template => 'get_offers/installs'
+      render :template => 'get_offers/installs_redirect'
     end
   end
   
