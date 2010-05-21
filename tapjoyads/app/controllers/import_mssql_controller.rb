@@ -142,9 +142,32 @@ class ImportMssqlController < ApplicationController
     currency.put('show_rating_offer', params[:show_rating_offer])
     currency.put('send_offer_data', params[:send_offer_data])
     currency.beta_devices = (params[:beta_devices] || '').split(';')
-
+    
     currency.save
-
+    
+    currency = Currency.find_or_initialize_by_app_id(params[:app_id])
+    currency.name = params[:currency_name]
+    currency.conversion_rate = params[:conversion_rate]
+    currency.initial_balance = params[:initial_balance]
+    currency.has_virtual_goods = params[:virtual_goods_currency] == 'True'
+    currency.secret_key = params[:secret_key] unless params[:secret_key].blank?
+    currency.callback_url = params[:callback_url]
+    currency.offers_money_share = params[:offers_money_share].to_f unless params[:offers_money_share].blank?
+    currency.installs_money_share = params[:installs_money_share].to_f unless params[:installs_money_share].blank?
+    currency.disabled_offers = ( (params[:disabled_offers] || '').split(';') + (params[:only_free_apps]) || '').split(';') ).uniq.reject {|item| item == '' }.join(';')
+    currency.only_free_offers = params[:only_free_apps] == '1'
+    currency.send_offer_data = params[:send_offer_data] == '1'
+    currency.test_devices = params[:beta_devices]
+    currency.save!
+    
+    if params[:show_rating_offer] == '1'
+      rating_offer = RatingOffer.find_or_initialize_by_app_id_and_partner_id(params[:app_id], currency.app.partner_id)
+      rating_offer.name = "Rate #{currency.app.name} in the App Store"
+      rating_offer.description = "You must Open in Safari.  Clicking Complete Offer will not work.  Click Open in Safari to go to the App Store where you can quickly submit a rating.  This is on the honor system.  When you return to #{currency.app.name} you will have earned your #{currency.name}."
+      rating_offer.instructions = "Just click the Open in Safari button to go to the App Store where you can rate #{currency.app.name}."
+      rating_offer.save!
+    end
+    
     render :template => 'layouts/success'
   end
   

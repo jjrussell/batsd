@@ -15,7 +15,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :payment, :only_integer => true, :if => Proc.new { |offer| offer.tapjoy_enabled? && offer.user_enabled? }
   validates_numericality_of :actual_payment, :only_integer => true, :allow_nil => true
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :in => [ true, false ]
-  validates_inclusion_of :item_type, :in => %w( App EmailOffer )
+  validates_inclusion_of :item_type, :in => %w( App EmailOffer RatingOffer )
   
   def cost
     price > 0 ? 'Paid' : 'Free'

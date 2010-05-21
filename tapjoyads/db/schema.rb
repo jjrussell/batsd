@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100505082941) do
+ActiveRecord::Schema.define(:version => 20100518230134) do
 
   create_table "apps", :force => true do |t|
     t.string   "partner_id",            :limit => 36,                    :null => false
@@ -51,6 +51,27 @@ ActiveRecord::Schema.define(:version => 20100505082941) do
   add_index "conversions", ["id"], :name => "index_conversions_on_id", :unique => true
   add_index "conversions", ["publisher_app_id"], :name => "index_conversions_on_publisher_app_id"
   add_index "conversions", ["reward_id"], :name => "index_conversions_on_reward_id"
+
+  create_table "currencies", :force => true do |t|
+    t.string   "app_id",               :limit => 36,                                                  :null => false
+    t.string   "name"
+    t.integer  "conversion_rate",                                                  :default => 100,   :null => false
+    t.integer  "initial_balance",                                                  :default => 0,     :null => false
+    t.boolean  "has_virtual_goods",                                                :default => false, :null => false
+    t.boolean  "only_free_offers",                                                 :default => false, :null => false
+    t.boolean  "send_offer_data",                                                  :default => false, :null => false
+    t.string   "secret_key"
+    t.string   "callback_url"
+    t.decimal  "offers_money_share",                 :precision => 8, :scale => 6, :default => 0.85,  :null => false
+    t.decimal  "installs_money_share",               :precision => 8, :scale => 6, :default => 0.7,   :null => false
+    t.text     "disabled_offers",                                                                     :null => false
+    t.text     "test_devices",                                                                        :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
+  add_index "currencies", ["id"], :name => "index_currencies_on_id", :unique => true
 
   create_table "email_offers", :force => true do |t|
     t.string   "partner_id",     :limit => 36, :null => false
@@ -149,6 +170,20 @@ ActiveRecord::Schema.define(:version => 20100505082941) do
 
   add_index "payouts", ["id"], :name => "index_payouts_on_id", :unique => true
   add_index "payouts", ["partner_id"], :name => "index_payouts_on_partner_id"
+
+  create_table "rating_offers", :force => true do |t|
+    t.string   "partner_id",   :limit => 36, :null => false
+    t.string   "app_id",       :limit => 36, :null => false
+    t.string   "name",                       :null => false
+    t.text     "description"
+    t.text     "instructions"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "rating_offers", ["app_id"], :name => "index_rating_offers_on_app_id"
+  add_index "rating_offers", ["id"], :name => "index_rating_offers_on_id", :unique => true
+  add_index "rating_offers", ["partner_id"], :name => "index_rating_offers_on_partner_id"
 
   create_table "role_assignments", :force => true do |t|
     t.string "user_id",      :limit => 36, :null => false

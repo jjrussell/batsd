@@ -3,6 +3,8 @@ class App < ActiveRecord::Base
   
   has_one :offer, :as => :item
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
+  has_one :currency
+  has_one :rating_offer
   
   belongs_to :partner
   
