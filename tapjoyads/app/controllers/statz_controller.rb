@@ -11,8 +11,8 @@ class StatzController < WebsiteController
   
   def show
     now = Time.zone.now
-    @start_time = now - 23.hours
-    @end_time = now + 1.hour
+    @start_time = now.beginning_of_hour - 23.hours
+    @end_time = now
     unless params[:date].blank?
       now = Time.zone.parse(params[:date])
       @start_time = now.beginning_of_day
