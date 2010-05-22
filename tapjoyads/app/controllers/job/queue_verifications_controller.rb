@@ -16,7 +16,7 @@ private
       balance = partner.balance
       pending_earnings = partner.pending_earnings
       
-      partner.recalculate_balances
+      partner.recalculate_balances(true)
       
       if balance != partner.balance
         alert_new_relic(BalancesMismatch, "Balance mismatch for partner: #{partner.id}, previously: #{balance}, now: #{partner.balance}", request, params)

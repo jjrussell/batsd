@@ -21,8 +21,8 @@ module NewRelicHelper
   class FailedToDownloadError < RuntimeError; end
   class AppStatsVerifyError < RuntimeError; end
   class ConversionRateTooLowError < RuntimeError; end
+  class BalancesMismatch < RuntimeError; end
   
   # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
   class EmailWorthyError < RuntimeError; end
-  class BalancesMismatch < EmailWorthyError; end
 end
