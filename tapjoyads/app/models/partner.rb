@@ -1,5 +1,6 @@
 class Partner < ActiveRecord::Base
   include UuidPrimaryKey
+  include NewRelicHelper
   
   has_many :orders
   has_many :payouts
@@ -39,7 +40,7 @@ class Partner < ActiveRecord::Base
     end
   end
   
-  def recalculate_balances(do_save = false)
+  def recalculate_balances(do_save = false, alert_on_mismatch = false)
     Partner.transaction do
       reload(:lock => (do_save ? 'FOR UPDATE' : false))
       orders_sum = orders.sum(:amount, :conditions => 'status = 1')
@@ -48,6 +49,14 @@ class Partner < ActiveRecord::Base
       advertiser_conversions_sum = advertiser_conversions.sum(:advertiser_amount)
       self.balance = orders_sum + advertiser_conversions_sum
       self.pending_earnings = publisher_conversions_sum - payouts_sum
+      if alert_on_mismatch
+        if balance_changed?
+          alert_new_relic(BalancesMismatch, "Balance mismatch for partner: #{id}, previously: #{balance_was}, now: #{balance}")
+        end
+        if pending_earnings_changed?
+          alert_new_relic(BalancesMismatch, "Pending Earnings mismatch for partner: #{id}, previously: #{pending_earnings_was}, now: #{pending_earnings}")
+        end
+      end
       save! if changed? && do_save
     end
   end
