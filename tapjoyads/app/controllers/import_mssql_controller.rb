@@ -150,11 +150,11 @@ class ImportMssqlController < ApplicationController
     currency.conversion_rate = params[:conversion_rate]
     currency.initial_balance = params[:initial_balance].to_i
     currency.has_virtual_goods = params[:virtual_goods_currency] == 'True'
-    currency.secret_key = params[:secret_key] unless params[:secret_key].blank?
+    currency.secret_key = (params[:secret_key] == 'None' || params[:secret_key].blank?) ? nil : params[:secret_key]
     currency.callback_url = params[:callback_url]
     currency.offers_money_share = params[:offers_money_share].to_f unless params[:offers_money_share].blank?
     currency.installs_money_share = params[:installs_money_share].to_f unless params[:installs_money_share].blank?
-    currency.disabled_offers = ( (params[:disabled_offers] || '').split(';') + (params[:only_free_apps] || '').split(';') ).uniq.reject {|item| item == '' }.join(';')
+    currency.disabled_offers = ( (params[:disabled_offers] || '').split(';') + (params[:disabled_apps] || '').split(';') ).uniq.reject {|item| item == '' }.join(';')
     currency.only_free_offers = params[:only_free_apps] == '1'
     currency.send_offer_data = params[:send_offer_data] == '1'
     currency.test_devices = params[:beta_devices]
