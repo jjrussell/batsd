@@ -148,7 +148,7 @@ class ImportMssqlController < ApplicationController
     currency = Currency.find_or_initialize_by_app_id(params[:app_id])
     currency.name = params[:currency_name]
     currency.conversion_rate = params[:conversion_rate]
-    currency.initial_balance = params[:initial_balance]
+    currency.initial_balance = params[:initial_balance].to_i
     currency.has_virtual_goods = params[:virtual_goods_currency] == 'True'
     currency.secret_key = params[:secret_key] unless params[:secret_key].blank?
     currency.callback_url = params[:callback_url]
