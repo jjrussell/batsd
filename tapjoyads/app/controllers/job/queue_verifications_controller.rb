@@ -8,7 +8,6 @@ class Job::QueueVerificationsController < Job::SqsReaderController
 private
   
   def on_message(message)
-    message.delete
     check_partner_balances
   end
   
