@@ -103,6 +103,7 @@ class GetOffersController < ApplicationController
     @advertiser_app_list = @publisher_app.get_advertiser_app_list(params[:udid], 
         :currency => @currency, 
         :iphone => (not params[:device_type] =~ /iPod/),
+        :ipad => params[:device_type] == 'iPad',
         :country => geoip_data[:country],
         :postal_code => geoip_data[:postal_code],
         :city => geoip_data[:city],

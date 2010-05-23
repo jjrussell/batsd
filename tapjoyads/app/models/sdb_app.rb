@@ -14,6 +14,7 @@ class SdbApp < SimpledbResource
   self.sdb_attr :rewarded_installs_ordinal,  {:type => :int}
   self.sdb_attr :install_tracking,           {:type => :bool}
   self.sdb_attr :iphone_only,                {:type => :bool}
+  self.sdb_attr :ipad_only,                  {:type => :bool}
   self.sdb_attr :use_raw_url,                {:type => :bool}
   self.sdb_attr :next_run_time,              {:type => :time}
   self.sdb_attr :last_run_time,              {:type => :time}
@@ -42,6 +43,7 @@ class SdbApp < SimpledbResource
   def get_advertiser_app_list(udid, options = {})
     currency = options.delete(:currency)
     iphone = options.delete(:iphone) { true }
+    ipad = options.delete(:ipad) { false }
     country = options.delete(:country)
     postal_code = options.delete(:postal_code)
     city = options.delete(:city)
@@ -78,6 +80,7 @@ class SdbApp < SimpledbResource
       reject = true if only_free_apps and not advertiser_app.is_free
       reject = true if advertiser_app.key == @key
       reject = true if advertiser_app.iphone_only and not iphone
+      reject = true if advertiser_app.ipad_only and not ipad
       reject = true if advertiser_app.os_type == 'iphone' and self.os_type == 'android'
       reject = true if advertiser_app.os_type == 'android' and self.os_type == 'iphone'
       reject = true if advertiser_app.key == '4445a5be-9244-4ce7-b65d-646ee6050208' and device_app_list.apps['f8751513-67f1-4273-8e4e-73b1e685e83d'] == nil
