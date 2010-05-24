@@ -31,7 +31,21 @@ class Job::SqsReaderController < Job::JobController
     end
     
     10.times do
-      message = queue.receive
+      # read a message off the queue
+      retries = 3
+      begin
+        message = queue.receive
+      rescue AwsError => e
+        if e.message =~ /^InternalError/ && retries > 0
+          retries -= 1
+          sleep(0.1)
+          retry
+        else
+          raise e
+        end
+      end
+      
+      # the queue must be empty so stop looping
       break if message.nil?
       
       Rails.logger.info "#{@queue_name} message recieved: #{message.to_s}"
