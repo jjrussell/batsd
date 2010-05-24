@@ -32,47 +32,44 @@ class Job::SqsReaderController < Job::JobController
     
     10.times do
       message = queue.receive
-      unless message.nil?
-        Rails.logger.info "#{@queue_name} message recieved: #{message.to_s}"
-        params[:message] = message.to_s
-        
-        # try to lock the message to prevent multiple machines from operating on the same message
-        begin
-          CACHE.add(get_memcache_lock_key(message), 'locked', queue.visibility.to_i)
-        rescue Memcached::NotStored => e
-          Rails.logger.info('Lock exists for this message. Skipping processing.')
-          next
-        end
-        
-        # operate on the message
-        begin
-          on_message(message)
-        rescue Exception => e
-          Rails.logger.warn "Error processing message. Error: #{e}"
+      break if message.nil?
+      
+      Rails.logger.info "#{@queue_name} message recieved: #{message.to_s}"
+      params[:message] = message.to_s
+      
+      # try to lock the message to prevent multiple machines from operating on the same message
+      begin
+        CACHE.add(get_memcache_lock_key(message), 'locked', queue.visibility.to_i)
+      rescue Memcached::NotStored => e
+        Rails.logger.info('Lock exists for this message. Skipping processing.')
+        next
+      end
+      
+      # operate on the message
+      begin
+        on_message(message)
+      rescue Exception => e
+        Rails.logger.warn "Error processing message. Error: #{e}"
+        add_custom_new_relic_params(message)
+        raise e
+      end
+      
+      # delete the message
+      retries = 3
+      begin
+        message.delete
+      rescue AwsError => e
+        if e.message =~ /^ResourceUnavailable/ && retries > 0
+          retries -= 1
+          sleep(0.1)
+          retry
+        else
           add_custom_new_relic_params(message)
           raise e
         end
-        
-        # delete the message
-        retries = 3
-        begin
-          message.delete
-        rescue AwsError => e
-          if e.message =~ /^ResourceUnavailable/ && retries > 0
-            retries -= 1
-            sleep(0.1)
-            retry
-          else
-            add_custom_new_relic_params(message)
-            raise e
-          end
-        end
-        
-      else
-        break
-      end # unless message.nil?
-      
-    end # 10.times do
+      end
+
+    end
     
     render :text => 'ok'
   end
