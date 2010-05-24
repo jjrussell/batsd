@@ -13,6 +13,7 @@ class SdbBackup
   #    delete_rows: If true, the rows will be deleted after backing up.
   #    suffix: The suffix of the filename when saving to s3.
   def self.backup_domain(domain_name, s3_bucket, options = {})
+    job_start_time = Time.zone.now
     where = options.delete(:where)
     delete_rows = options.delete(:delete_rows) { false }
     suffix = options.delete(:suffix) { '' }
@@ -49,8 +50,12 @@ class SdbBackup
       key_list.each do |key|
         begin
           item = SimpledbResource.new(:key => key, :load => false, :domain_name => domain_name)
+          if domain_name == 'store-click'
+            item.load
+            next if item.get('click_date').to_f > (job_start_time - 25.days).to_f
+          end
           item.delete_all(false)
-        rescue RightAws::AwsError =>e
+        rescue RightAws::AwsError => e
           retry
         end
       end
