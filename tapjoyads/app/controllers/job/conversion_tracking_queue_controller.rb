@@ -23,7 +23,8 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       sleep(5)
       click = StoreClick.new(:key => "#{udid}.#{advertiser_app_id}", :load_from_memcache => false)
       if not click.get('click_date')
-        raise "Click not found, wait for failed sdb saves to catch up.  app_id: #{advertiser_app_id}  udid: #{udid}"
+        #raise "Click not found, wait for failed sdb saves to catch up.  app_id: #{advertiser_app_id}  udid: #{udid}"
+        return
       end
     end
     
