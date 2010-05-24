@@ -36,42 +36,43 @@ class Job::SqsReaderController < Job::JobController
         Rails.logger.info "#{@queue_name} message recieved: #{message.to_s}"
         params[:message] = message.to_s
         
+        # try to lock the message to prevent multiple machines from operating on the same message
         begin
           CACHE.add(get_memcache_lock_key(message), 'locked', queue.visibility.to_i)
-          begin
-            on_message(message)
-            
-            retries = 3
-            begin
-              message.delete
-            rescue AwsError => e
-              if e.message =~ /^ResourceUnavailable/ && retries > 0
-                retries -= 1
-                sleep(0.1)
-                retry
-              else
-                raise e
-              end
-            end
-          rescue Exception => e
-            Rails.logger.warn "Error processing message. Error: #{e}"
-            if message.to_s.length > 250
-              # NewRelic truncates parameter length to ~250 chars so split the message up
-              custom_params = {}
-              message.to_s.scan(/.{1,250}/).each_with_index do |val, i|
-                custom_params["message#{i}"] = val
-              end
-              NewRelic::Agent.add_custom_parameters(custom_params)
-            end
-            raise e
-          end
         rescue Memcached::NotStored => e
           Rails.logger.info('Lock exists for this message. Skipping processing.')
+          next
         end
+        
+        # operate on the message
+        begin
+          on_message(message)
+        rescue Exception => e
+          Rails.logger.warn "Error processing message. Error: #{e}"
+          add_custom_new_relic_params(message)
+          raise e
+        end
+        
+        # delete the message
+        retries = 3
+        begin
+          message.delete
+        rescue AwsError => e
+          if e.message =~ /^ResourceUnavailable/ && retries > 0
+            retries -= 1
+            sleep(0.1)
+            retry
+          else
+            add_custom_new_relic_params(message)
+            raise e
+          end
+        end
+        
       else
         break
-      end
-    end
+      end # unless message.nil?
+      
+    end # 10.times do
     
     render :text => 'ok'
   end
@@ -81,7 +82,6 @@ class Job::SqsReaderController < Job::JobController
     
     render :text => 'ok'
   end
-
 
   private
   
@@ -94,4 +94,16 @@ class Job::SqsReaderController < Job::JobController
   def get_memcache_lock_key(message)
     "sqslocks.#{@queue_name}.#{message.hash}"
   end
+  
+  # NewRelic truncates parameter length to ~250 chars so split the message up
+  def add_custom_new_relic_params(message)
+    if message.to_s.length > 250
+      custom_params = {}
+      message.to_s.scan(/.{1,250}/).each_with_index do |val, i|
+        custom_params["message#{i}"] = val
+      end
+      NewRelic::Agent.add_custom_parameters(custom_params)
+    end
+  end
+  
 end
