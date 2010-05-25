@@ -10,7 +10,7 @@ class Offer < ActiveRecord::Base
   belongs_to :partner
   belongs_to :item, :polymorphic => true
   
-  validates_presence_of :partner, :item, :name, :url
+  validates_presence_of :partner, :item, :name, :url, :instructions, :time_delay
   validates_numericality_of :price, :ordinal, :only_integer => true
   validates_numericality_of :payment, :only_integer => true, :if => Proc.new { |offer| offer.tapjoy_enabled? && offer.user_enabled? }
   validates_numericality_of :actual_payment, :only_integer => true, :allow_nil => true
