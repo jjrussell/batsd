@@ -267,8 +267,10 @@ class ImportMssqlController < ApplicationController
       mysql_app.color = params[:primary_color].to_i
       mysql_app.use_raw_url = app.use_raw_url == true
       mysql_app.store_url = params[:store_url] unless params[:store_url].blank? || params[:store_url] == 'None'
+      mysql_app.self_promote_only = app.self_promote_only
       mysql_app.created_at = Time.parse(params[:created_at] + ' CST').utc
       mysql_app.save!
+      
       offer = mysql_app.offer
       if params[:iphone_only]
         offer.device_types = [ 'iphone' ].to_json
@@ -276,6 +278,7 @@ class ImportMssqlController < ApplicationController
       if app.ipad_only
         offer.device_types = [ 'ipad' ].to_json
       end
+      
     else
       email_offer = EmailOffer.find_or_initialize_by_id(params[:app_id])
       email_offer.partner_id = params[:partner_id]
@@ -284,7 +287,9 @@ class ImportMssqlController < ApplicationController
       email_offer.third_party_id = app.custom_app_id
       email_offer.created_at = Time.parse(params[:created_at] + ' CST').utc
       email_offer.save!
+      
       offer = email_offer.offer
+      
     end
     offer.tapjoy_enabled = params[:install_tracking] == '1'
     offer.user_enabled = params[:payment_for_install].to_i > 0

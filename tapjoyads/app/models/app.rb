@@ -9,7 +9,7 @@ class App < ActiveRecord::Base
   belongs_to :partner
   
   validates_presence_of :partner, :name
-  validates_inclusion_of :use_raw_url, :in => [ true, false ]
+  validates_inclusion_of :use_raw_url, :self_promote_only, :in => [ true, false ]
   
   after_create :create_offer
   after_update :update_offer
