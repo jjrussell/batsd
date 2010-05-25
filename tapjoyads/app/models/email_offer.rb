@@ -21,6 +21,9 @@ private
     offer.price = 0
     offer.url = "http://ws.tapjoyads.com/list_signup?udid=TAPJOY_UDID&publisher_app_id=TAPJOY_PUBLISHER_APP_ID&advertiser_app_id=#{id}"
     offer.device_types = Offer::ALL_DEVICES.to_json
+    offer.instructions = 'Confirm your email address to receive credit.'
+    offer.time_delay = 'in seconds'
+    offer.credit_card_require = false
     offer.save!
   end
   
