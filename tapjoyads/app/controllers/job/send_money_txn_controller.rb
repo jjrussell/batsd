@@ -53,18 +53,18 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
       end
       
       #win_lb = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/Service1.asmx/'
-      win_lb = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/Service1.asmx/'
-      url = win_lb + "SubmitMoneyTxn?password=asfyrexvlkjewr214314" + 
-        "&publisher_app_id=#{CGI::escape(reward.get('publisher_app_id'))}" +
-        "&advertiser_app_id=#{CGI::escape(reward.get('advertiser_app_id') || '')}" +
-        "&item_id=#{CGI::escape(reward.key)}" +
-        "&publisher_amount=#{CGI::escape(reward.get('publisher_amount'))}" +
-        "&advertiser_amount=#{CGI::escape(reward.get('advertiser_amount'))}" +
-        "&tapjoy_amount=#{CGI::escape(reward.get('tapjoy_amount'))}" +
-        "&offerpal_amount=#{CGI::escape(reward.get('offerpal_amount'))}" +
-        "&money_txn_id=#{conversion.id}"
-      
-      download_with_retry(url, {:timeout => 30})
+      # win_lb = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/Service1.asmx/'
+      # url = win_lb + "SubmitMoneyTxn?password=asfyrexvlkjewr214314" + 
+      #   "&publisher_app_id=#{CGI::escape(reward.get('publisher_app_id'))}" +
+      #   "&advertiser_app_id=#{CGI::escape(reward.get('advertiser_app_id') || '')}" +
+      #   "&item_id=#{CGI::escape(reward.key)}" +
+      #   "&publisher_amount=#{CGI::escape(reward.get('publisher_amount'))}" +
+      #   "&advertiser_amount=#{CGI::escape(reward.get('advertiser_amount'))}" +
+      #   "&tapjoy_amount=#{CGI::escape(reward.get('tapjoy_amount'))}" +
+      #   "&offerpal_amount=#{CGI::escape(reward.get('offerpal_amount'))}" +
+      #   "&money_txn_id=#{conversion.id}"
+      # 
+      # download_with_retry(url, {:timeout => 30})
       
       reward.put('sent_money_txn', Time.now.utc.to_f.to_s)
       reward.save
