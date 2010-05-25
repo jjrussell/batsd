@@ -164,8 +164,12 @@ class ImportMssqlController < ApplicationController
       rating_offer = RatingOffer.find_or_initialize_by_app_id_and_partner_id(params[:app_id], currency.app.partner_id)
       rating_offer.name = "Rate #{currency.app.name} in the App Store"
       rating_offer.description = "You must Open in Safari.  Clicking Complete Offer will not work.  Click Open in Safari to go to the App Store where you can quickly submit a rating.  This is on the honor system.  When you return to #{currency.app.name} you will have earned your #{currency.name}."
-      rating_offer.instructions = "Just click the Open in Safari button to go to the App Store where you can rate #{currency.app.name}."
       rating_offer.save!
+      offer = rating_offer.offer
+      offer.instructions = "Just click the Open in Safari button to go to the App Store where you can rate #{currency.app.name}."
+      offer.credit_card_required = false
+      offer.time_delay = 'in seconds'
+      offer.save!
     end
     
     render :template => 'layouts/success'
@@ -272,6 +276,7 @@ class ImportMssqlController < ApplicationController
       mysql_app.save!
       
       offer = mysql_app.offer
+      offer.instructions = 'Install and then run the app while online to receive credit.'
       if params[:iphone_only] == '1'
         offer.device_types = [ 'iphone' ].to_json
       elsif app.ipad_only
@@ -292,8 +297,11 @@ class ImportMssqlController < ApplicationController
       email_offer.save!
       
       offer = email_offer.offer
+      offer.instructions = 'Confirm your email address to receive credit.'
       
     end
+    offer.credit_card_required = false
+    offer.time_delay = 'in seconds'
     offer.tapjoy_enabled = params[:install_tracking] == '1'
     offer.user_enabled = params[:payment_for_install].to_i > 0
     offer.overall_budget = app.overall_budget

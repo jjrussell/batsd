@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100525190533) do
+ActiveRecord::Schema.define(:version => 20100525220932) do
 
   create_table "apps", :force => true do |t|
     t.string   "partner_id",            :limit => 36,                    :null => false
@@ -110,6 +110,9 @@ ActiveRecord::Schema.define(:version => 20100525190533) do
     t.boolean  "tapjoy_enabled",                       :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "instructions"
+    t.string   "time_delay"
+    t.boolean  "credit_card_required",                 :default => false, :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -173,11 +176,10 @@ ActiveRecord::Schema.define(:version => 20100525190533) do
   add_index "payouts", ["partner_id"], :name => "index_payouts_on_partner_id"
 
   create_table "rating_offers", :force => true do |t|
-    t.string   "partner_id",   :limit => 36, :null => false
-    t.string   "app_id",       :limit => 36, :null => false
-    t.string   "name",                       :null => false
+    t.string   "partner_id",  :limit => 36, :null => false
+    t.string   "app_id",      :limit => 36, :null => false
+    t.string   "name",                      :null => false
     t.text     "description"
-    t.text     "instructions"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
