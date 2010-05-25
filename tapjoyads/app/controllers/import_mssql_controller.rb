@@ -272,11 +272,14 @@ class ImportMssqlController < ApplicationController
       mysql_app.save!
       
       offer = mysql_app.offer
-      if params[:iphone_only]
+      if params[:iphone_only] == '1'
         offer.device_types = [ 'iphone' ].to_json
-      end
-      if app.ipad_only
+      elsif app.ipad_only
         offer.device_types = [ 'ipad' ].to_json
+      elsif mysql_app.platform == 'android'
+        offer.device_types = Offer::ANDROID_DEVICES.to_json
+      else
+        offer.device_types = Offer::APPLE_DEVICES.to_json
       end
       
     else

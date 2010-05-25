@@ -1,9 +1,9 @@
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
   
-  IPHONE_DEVICES = %w( iphone itouch ipad )
+  APPLE_DEVICES = %w( iphone itouch ipad )
   ANDROID_DEVICES = %w( android )
-  ALL_DEVICES = IPHONE_DEVICES + ANDROID_DEVICES
+  ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   

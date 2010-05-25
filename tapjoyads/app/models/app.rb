@@ -43,7 +43,7 @@ private
     offer.description = description
     offer.price = price
     offer.url = store_url
-    offer.device_types = platform == 'android' ? Offer::ANDROID_DEVICES.to_json : Offer::IPHONE_DEVICES.to_json
+    offer.device_types = platform == 'android' ? Offer::ANDROID_DEVICES.to_json : Offer::APPLE_DEVICES.to_json
     offer.save!
   end
   
