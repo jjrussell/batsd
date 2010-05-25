@@ -273,6 +273,9 @@ class ImportMssqlController < ApplicationController
       if params[:iphone_only]
         offer.device_types = [ 'iphone' ].to_json
       end
+      if app.ipad_only
+        offer.device_types = [ 'ipad' ].to_json
+      end
     else
       email_offer = EmailOffer.find_or_initialize_by_id(params[:app_id])
       email_offer.partner_id = params[:partner_id]
