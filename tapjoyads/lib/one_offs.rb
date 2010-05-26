@@ -190,4 +190,64 @@ class OneOffs
     end and true
   end
   
+  ##
+  # Reads all archived store-clicks, and prints out a file the udid's of all installs for a given app.
+  def self.get_ppi_udids_from_archive(app_id, output_file_name, start_date = '2009-11-18', end_date = nil)
+    end_date = end_date.nil? ? Time.zone.now.to_date : Time.zone.parse(end_date).to_date
+    
+    output_file = File.open(output_file_name, 'w')
+    gzip_file_name = 'tmp/store-clicks.sdb.gz'
+    file_name = 'tmp/store-clicks.sdb'
+    
+    s3 = RightAws::S3.new
+    bucket = s3.bucket('store-clicks')
+    
+    date = Time.zone.parse(start_date)
+    date -= 1.day
+    
+    count = 0
+    
+    loop do
+      date += 1.day
+      break if date > end_date
+      
+      key = "store-click_#{date.to_date.to_s(:db)}.sdb"
+      puts key
+      next unless RightAws::S3::Key.create(bucket, key).exists?
+      
+      puts "Processing #{key}"
+      
+      begin
+        gzip_file = open(gzip_file_name, 'w')
+        s3.interface.get(bucket.full_name, key) do |chunk|
+          gzip_file.write(chunk)
+        end
+        gzip_file.close
+      rescue Exception => e
+        `rm #{gzip_file_name}`
+        puts "Error reading from s3: #{e}. Retrying"
+        sleep(0.1)
+        retry
+      end
+      `gunzip -f #{gzip_file_name}`
+      
+      file = open(file_name)
+      items = []
+      file.each do |line|
+        click = StoreClick.deserialize(line)
+        if click.advertiser_app_id == app_id && click.installed_at
+          udid = click.key.split('.')[0]
+          output_file.puts("#{udid},#{click.installed_at.to_s(:db)}")
+          count +=1
+        end
+      end
+      
+      puts "#{count} total installs"
+
+      `rm #{file_name}`
+    end
+    output_file.close
+    
+  end
+  
 end
