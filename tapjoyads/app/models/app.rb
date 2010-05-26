@@ -46,7 +46,7 @@ private
     offer.device_types = platform == 'android' ? Offer::ANDROID_DEVICES.to_json : Offer::APPLE_DEVICES.to_json
     offer.instructions = 'Install and then run the app while online to receive credit.'
     offer.time_delay = 'in seconds'
-    offer.credit_card_require = false
+    offer.credit_card_required = false
     offer.save!
   end
   

@@ -23,7 +23,7 @@ private
     offer.device_types = Offer::ALL_DEVICES.to_json
     offer.instructions = 'Confirm your email address to receive credit.'
     offer.time_delay = 'in seconds'
-    offer.credit_card_require = false
+    offer.credit_card_required = false
     offer.save!
   end
   
