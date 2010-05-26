@@ -49,11 +49,12 @@ class SdbBackup
       Rails.logger.info "Deleting rows"
       key_list.each do |key|
         begin
-          item = SimpledbResource.new(:key => key, :load => false, :domain_name => domain_name)
           if domain_name == 'store-click'
-            item.load
-            next if item.get('click_date').to_f > (job_start_time - 25.days).to_f
+            click = StoreClick.new(:key => key)
+            next if click.clicked_at > job_start_time - 25.days
           end
+          
+          item = SimpledbResource.new(:key => key, :load => false, :domain_name => domain_name)
           item.delete_all(false)
         rescue RightAws::AwsError => e
           retry
