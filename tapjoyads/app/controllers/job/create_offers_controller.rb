@@ -73,6 +73,19 @@ class Job::CreateOffersController < Job::SqsReaderController
             cached_offer.save
             
             offer_hash[cached_offer.key] = cached_offer
+            
+            
+            # create the mysql OfferpalOffer
+            offerpal_offer = OfferpalOffer.find_or_initialize_by_offerpal_id(offerpal_id)
+            offerpal_offer.partner_id = "5c0caa42-4be1-4f92-b717-f824b4b2142e"
+            offerpal_offer.name = offer['name']
+            offerpal_offer.description = offer['description']
+            offerpal_offer.url = offer['actionURL']
+            offerpal_offer.instructions = offer['instructions']
+            offerpal_offer.time_delay = offer['timeDelay']
+            offerpal_offer.credit_card_required = offer['creditCardRequired'].to_s == '1'
+            offerpal_offer.payment = amount
+            offerpal_offer.save!
           end
           
         rescue Exception => e

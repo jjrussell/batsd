@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100525220932) do
+ActiveRecord::Schema.define(:version => 20100525221726) do
 
   create_table "apps", :force => true do |t|
     t.string   "partner_id",            :limit => 36,                    :null => false
@@ -86,6 +86,20 @@ ActiveRecord::Schema.define(:version => 20100525220932) do
   add_index "email_offers", ["id"], :name => "index_email_offers_on_id", :unique => true
   add_index "email_offers", ["name"], :name => "index_email_offers_on_name"
   add_index "email_offers", ["partner_id"], :name => "index_email_offers_on_partner_id"
+
+  create_table "offerpal_offers", :force => true do |t|
+    t.string   "partner_id",  :limit => 36, :null => false
+    t.string   "offerpal_id",               :null => false
+    t.string   "name",                      :null => false
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "offerpal_offers", ["id"], :name => "index_offerpal_offers_on_id", :unique => true
+  add_index "offerpal_offers", ["name"], :name => "index_offerpal_offers_on_name"
+  add_index "offerpal_offers", ["offerpal_id"], :name => "index_offerpal_offers_on_offerpal_id", :unique => true
+  add_index "offerpal_offers", ["partner_id"], :name => "index_offerpal_offers_on_partner_id"
 
   create_table "offers", :force => true do |t|
     t.string   "partner_id",             :limit => 36,                    :null => false
