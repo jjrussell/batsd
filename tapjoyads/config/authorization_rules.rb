@@ -16,9 +16,13 @@ authorization do
   role :executive do
   end
   
+  role :statz do
+    has_permission_on :statz, :to => [ :index, :show ]
+  end
+  
   role :admin do
     includes :payops
-    has_permission_on :statz, :to => [ :index, :show ]
+    includes :statz
   end
   
 end
