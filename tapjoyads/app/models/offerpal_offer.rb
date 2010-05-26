@@ -24,7 +24,7 @@ private
     offer.price = 0
     offer.device_types = Offer::ALL_DEVICES.to_json
     offer.url = @url
-    offer.intructions = @instructions
+    offer.instructions = @instructions
     offer.time_delay = @time_delay
     offer.credit_card_required = @credit_card_required
     offer.payment = @payment
@@ -36,7 +36,7 @@ private
     offer.name = name if name_changed?
     offer.description = description if description_changed?
     offer.url = @url unless @url.nil?
-    offer.intructions = @instructions unless @instructions.nil?
+    offer.instructions = @instructions unless @instructions.nil?
     offer.time_delay = @time_delay unless @time_delay.nil?
     offer.credit_card_required = @credit_card_required unless @credit_card_required.nil?
     offer.payment = @payment unless @payment.nil?
