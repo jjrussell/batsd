@@ -11,6 +11,7 @@ class Job::CreateOffersController < Job::SqsReaderController
   private
   
   def on_message(message)
+    bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')
     drop_id = 'b7b401f73d98ff21792b49117edd8b9f'
     country = 'United States'
     
