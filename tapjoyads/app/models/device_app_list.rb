@@ -34,17 +34,16 @@ class DeviceAppList < SimpledbResource
     now = Time.now.utc
     
     path_list = []
-    if self.apps[app_id].nil?
+    old_time = last_run_time(app_id)
+    if old_time.nil?
       path_list.push('new_user')
-      last_run_time = Time.zone.at(0)
-    else
-      last_run_time = Time.zone.at(self.apps[app_id].to_f)
+      old_time = Time.zone.at(0)
     end
     
-    if now.year != last_run_time.year or now.yday != last_run_time.yday
+    if now.year != old_time.year || now.yday != old_time.yday
       path_list.push('daily_user')
     end
-    if now.year != last_run_time.year or now.month != last_run_time.month
+    if now.year != old_time.year || now.month != old_time.month
       path_list.push('monthly_user')
     end
     
@@ -65,6 +64,11 @@ class DeviceAppList < SimpledbResource
   # Returns the last time this device has run app_id. Returns nil if the device has not run app_id.
   def last_run_time(app_id)
     last_run_timestamp = self.apps[app_id]
+    
+    if last_run_timestamp.is_a?(Array)
+      last_run_timestamp = last_run_timestamp[0]
+    end
+    
     if last_run_timestamp.nil?
       return nil
     else
