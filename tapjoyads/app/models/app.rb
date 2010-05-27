@@ -1,5 +1,6 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
+  include MemcachedHelper
   
   has_one :offer, :as => :item
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
@@ -13,6 +14,11 @@ class App < ActiveRecord::Base
   
   after_create :create_offer
   after_update :update_offer
+  after_save :update_memcached
+  
+  def self.find_in_cache(id)
+    App.new.get_from_cache_and_save("mysql.app.#{id}") { App.find(id) }
+  end
   
   def store_url
     if use_raw_url?
@@ -57,6 +63,10 @@ private
     offer.price = price if price_changed?
     offer.url = store_url if store_url_changed? || use_raw_url_changed? || store_id_changed?
     offer.save! if offer.changed?
+  end
+  
+  def update_memcached
+    save_to_cache("mysql.app.#{id}", self)
   end
   
 end
