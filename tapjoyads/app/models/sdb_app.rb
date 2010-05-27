@@ -30,6 +30,7 @@ class SdbApp < SimpledbResource
   self.sdb_attr :countries,                  {:type => :json, :default_value => []}
   self.sdb_attr :postal_codes,               {:type => :json, :default_value => []}
   self.sdb_attr :cities,                     {:type => :json, :default_value => []}
+  self.sdb_attr :pay_per_click,              {:type => :bool}
   self.sdb_attr :allow_negative_balance,     {:type => :bool}
   self.sdb_attr :self_promote_only,          {:type => :bool}
   
@@ -157,14 +158,16 @@ class SdbApp < SimpledbResource
   
   ##
   # Returns the Apple store id for an app. Determines this from parsing the store url.
-  def get_store_id
+  def get_store_id(alert_on_parse_fail = true)
     if self.use_raw_url
       return '00000000'
     end
     
     store_url = get('store_url')
     if store_url.nil?
-      alert_new_relic(ParseStoreIdError, "Could not parse store id from nil store_url for app #{self.to_s}")
+      if alert_on_parse_fail
+        alert_new_relic(ParseStoreIdError, "Could not parse store id from nil store_url for app #{self.to_s}")
+      end
       return nil
     end
     
@@ -178,7 +181,9 @@ class SdbApp < SimpledbResource
     end
     
     unless match and match[1]
-      alert_new_relic(ParseStoreIdError, "Could not parse store id from #{store_url} for app #{self.to_s}")
+      if alert_on_parse_fail
+        alert_new_relic(ParseStoreIdError, "Could not parse store id from #{store_url} for app #{self.to_s}")
+      end
       return nil
     end
     
