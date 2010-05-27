@@ -30,6 +30,7 @@ class Job::MasterReloadStatzController < Job::JobController
       this_apps_stats['published_installs'] = appstats['published_installs'].sum
       this_apps_stats['installs_revenue'] = "$#{appstats['installs_revenue'].sum / 100.0}"
       this_apps_stats['ad_impressions'] = appstats['hourly_impressions'].sum
+      this_apps_stats['os_type'] = app.os_type
       
       cached_stats[app.key] = this_apps_stats
     end
