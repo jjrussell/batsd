@@ -33,7 +33,7 @@ class SdbApp < SimpledbResource
   self.sdb_attr :pay_per_click,              {:type => :bool}
   self.sdb_attr :allow_negative_balance,     {:type => :bool}
   self.sdb_attr :self_promote_only,          {:type => :bool}
-  self.sdb_attr :age_rating,                 {:type => :int}
+  self.sdb_attr :age_rating,                 {:type => :int, :default_value => 0}
   
   ##
   # Returns a list of Apps which are advertising in this app.
