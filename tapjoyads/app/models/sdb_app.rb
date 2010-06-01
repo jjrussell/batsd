@@ -33,6 +33,7 @@ class SdbApp < SimpledbResource
   self.sdb_attr :pay_per_click,              {:type => :bool}
   self.sdb_attr :allow_negative_balance,     {:type => :bool}
   self.sdb_attr :self_promote_only,          {:type => :bool}
+  self.sdb_attr :age_rating,                 {:type => :int}
   
   ##
   # Returns a list of Apps which are advertising in this app.
@@ -87,6 +88,7 @@ class SdbApp < SimpledbResource
       reject = true if advertiser_app.os_type == 'android' and self.os_type == 'iphone'
       reject = true if advertiser_app.key == '4445a5be-9244-4ce7-b65d-646ee6050208' and device_app_list.apps['f8751513-67f1-4273-8e4e-73b1e685e83d'] == nil
       reject = true if advertiser_app.self_promote_only and partner_id != advertiser_app.partner_id
+      reject = true if currency.max_age_rating && currency.max_age_rating < advertiser_app.age_rating
       
       unless udid == '298c5159a3681207eaba5a04b3573aa7b4f13d99' # Ben's udid. Show all apps on his device.
         reject = true if device_app_list.has_app(advertiser_app.key)
