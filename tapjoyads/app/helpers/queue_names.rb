@@ -15,4 +15,5 @@ module QueueNames
   CALCULATE_NEXT_PAYOUT    = RUN_MODE_PREFIX + 'CalculateNextPayout'
   SELECT_VG_ITEMS          = RUN_MODE_PREFIX + 'SelectVgItems'
   VERIFICATIONS            = RUN_MODE_PREFIX + 'Verifications'
+  GET_STORE_INFO           = RUN_MODE_PREFIX + 'GetStoreInfo'
 end
