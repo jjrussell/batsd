@@ -82,7 +82,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         callback_url = "#{callback_url}&application=#{CGI::escape(name)}"
         
         publisher_revenue = reward.get('publisher_amount').to_f / 100
-        callback_url += "?rev=#{publisher_revenue}"
+        callback_url += "&rev=#{publisher_revenue}"
       end
     
       secret_key = currency.get('secret_key')
