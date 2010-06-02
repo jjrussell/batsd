@@ -6,6 +6,7 @@ class SdbCurrency < SimpledbResource
   self.sdb_attr :initial_balance, :type => :int, :default_value => 0
   self.sdb_attr :only_free_apps, :type => :bool
   self.sdb_attr :disabled_apps
+  self.sdb_attr :disabled_partners
   self.sdb_attr :disabled_offers
   self.sdb_attr :currency_name
   self.sdb_attr :conversion_rate, :type => :int
