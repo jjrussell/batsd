@@ -76,7 +76,7 @@ module JobRunner
                 job.set_next_run_time
               end
             end
-            sleep(rand() / 4)
+            sleep(rand() / 10)
           end
         rescue Interrupt
           Rails.logger.info "JobRunner: caught interrupt"
