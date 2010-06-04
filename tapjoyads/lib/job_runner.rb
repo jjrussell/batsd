@@ -63,15 +63,17 @@ module JobRunner
               if now > job.next_run_time
                 Rails.logger.info "JobRunner: Running #{job.job_path}"
                 Rails.logger.flush
-                Thread.new(job) do |job|
-                  sess = Patron::Session.new
-                  sess.base_url = base_url
-                  sess.timeout = 60
-                  sess.username = 'internal'
-                  sess.password = AuthenticationHelper::USERS[sess.username]
-                  sess.auth_type = :digest
+                2.times do
+                  Thread.new(job) do |job|
+                    sess = Patron::Session.new
+                    sess.base_url = base_url
+                    sess.timeout = 60
+                    sess.username = 'internal'
+                    sess.password = AuthenticationHelper::USERS[sess.username]
+                    sess.auth_type = :digest
 
-                  sess.get("/job/#{job.job_path}")
+                    sess.get("/job/#{job.job_path}")
+                  end
                 end
                 job.set_next_run_time
               end
