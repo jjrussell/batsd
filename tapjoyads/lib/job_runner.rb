@@ -63,7 +63,7 @@ module JobRunner
               if now > job.next_run_time
                 Rails.logger.info "JobRunner: Running #{job.job_path}"
                 Rails.logger.flush
-                2.times do
+                4.times do
                   Thread.new(job) do |job|
                     sess = Patron::Session.new
                     sess.base_url = base_url
