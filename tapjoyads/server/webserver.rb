@@ -1,5 +1,13 @@
 #!/usr/bin/env ruby
 
+# setup ssh
+`cp /home/webuser/server/ssh_host_rsa_key /etc/ssh/`
+`cp /home/webuser/server/ssh_host_rsa_key.pub /etc/ssh/`
+`/etc/init.d/ssh restart`
+
+# stop memcached
+`/etc/init.d/memcached stop`
+
 # setup log directories
 `mkdir -p /mnt/log/httpd`
 `mkdir -p /mnt/log/rails`
