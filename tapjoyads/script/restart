@@ -14,7 +14,6 @@ puts "Stopping jobs"
 
 puts "Killing remaining jobs"
 `server/kill_all.rb jobs`
-`server/kill_all.rb poller`
 
 puts "Restarting apache"
 `touch tmp/restart.txt`
