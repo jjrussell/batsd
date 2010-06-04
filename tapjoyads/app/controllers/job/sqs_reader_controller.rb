@@ -30,8 +30,7 @@ class Job::SqsReaderController < Job::JobController
       end
     end
     
-    num_times = @queue_name == QueueNames::CONVERSION_TRACKING || @queue_name == QueueNames::FAILED_SDB_SAVES ? 100 : 10
-    num_times.times do
+    40.times do
       # read a message off the queue
       retries = 3
       begin
