@@ -1,6 +1,5 @@
 class StatuszController < ApplicationController
   include AuthenticationHelper
-  include MemcachedHelper
   include RightAws
   
   before_filter 'basic_authenticate', :only => :queue_check
