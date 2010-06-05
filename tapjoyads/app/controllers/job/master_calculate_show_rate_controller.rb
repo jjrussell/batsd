@@ -12,7 +12,7 @@ class Job::MasterCalculateShowRateController < Job::JobController
       
       time = Benchmark.realtime { send_to_sqs(QueueNames::CALCULATE_SHOW_RATE, app.key) }
       
-      sleep((40.minutes.to_f / count) - time)
+      sleep((20.minutes.to_f / count) - time)
     end
     
     render :text => 'ok'
