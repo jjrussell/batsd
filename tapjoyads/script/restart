@@ -12,8 +12,8 @@ machine_type = `server/server_type.rb`
 puts "Stopping jobs"
 `script/jobs stop`
 
-# puts "Killing remaining jobs"
-# `server/kill_all.rb jobs`
+puts "Killing remaining jobs"
+`server/kill_all.rb jobs`
 
 puts "Restarting apache"
 `touch tmp/restart.txt`
