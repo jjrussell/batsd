@@ -3,7 +3,7 @@ class StatuszController < ApplicationController
   include MemcachedHelper
   include RightAws
 
-  before_filter 'authenticate'
+  before_filter 'basic_authenticate'
   
   def index
     sdb = SdbInterface.new(nil, nil, {:multi_thread => true, :port => 80, :protocol => 'http'})
@@ -18,6 +18,17 @@ class StatuszController < ApplicationController
     end
   rescue Exception => e
     render :text => "Exception: #{e}"
+  end
+  
+  def queue_check
+    queue = SqsGen2.new.queue(QueueNames::CONVERSION_TRACKING)
+    
+    result = "success"
+    if queue.size > 1000
+      result = "too long"
+    end
+    
+    render :text => result
   end
   
 end
