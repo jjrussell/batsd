@@ -12,34 +12,22 @@ def prompt_and_exit_if_not_yes
 end
 
 def print_usage_and_exit
-  puts "USAGE: script/deploy <deploy_group> [<environment>] [<version>]"
-  puts "  deploy_group is either 'api' or 'website'."
+  puts "USAGE: script/deploy [<environment>] [<version>]"
   puts "  environment is either 'production' or 'test'. Default is test."
   puts "  version can be 'trunk', or a specific version number. If left blank, a new version will be created."
   exit
 end
 
-deploy_group = ARGV[0] # 'api' or 'website'
-environment = ARGV[1] # 'production' or 'testing'
-version_number = ARGV[2] # 'trunk' or a deploy number
+environment = ARGV[0] # 'production' or 'testing'
+version_number = ARGV[1] # 'trunk' or a deploy number
 svn_repo = File.exist?('.svn/')
 
 if environment == 'production'
   puts "PRODUCTION deploy"
-  server_groups = case deploy_group
-  when 'api'
-    'webserver jobserver masterjobs'
-  when 'website'
-    'website'
-  end
+  server_groups = 'webserver jobserver masterjobs'
 else
   puts "TESTING deploy"
-  server_groups = case deploy_group
-  when 'api'
-    'testserver'
-  when 'website'
-    'testwebsite'
-  end
+  server_groups = 'testserver'
 end
 
 unless server_groups
@@ -56,7 +44,7 @@ end
 unless version_number
   settings = YAML::load_file(SERVER_CONFIG_FILENAME)
 
-  version_number = settings['config']["#{deploy_group}_deploy_version"].to_i
+  version_number = settings['config']["api_deploy_version"].to_i
   
   if environment == 'production'
     version_number += 1
@@ -64,7 +52,7 @@ unless version_number
     prompt_and_exit_if_not_yes
   
     
-    settings['config']["#{deploy_group}_deploy_version"] = version_number.to_s
+    settings['config']["api_deploy_version"] = version_number.to_s
   
     File.open(SERVER_CONFIG_FILENAME, 'w') do |f|
       f.write(settings.to_yaml)
