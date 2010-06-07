@@ -24,6 +24,7 @@ private
     offer.instructions = 'Confirm your email address to receive credit.'
     offer.time_delay = 'in seconds'
     offer.credit_card_required = false
+    offer.third_party_data = third_party_id
     offer.save!
   end
   
@@ -31,6 +32,7 @@ private
     offer.partner_id = partner_id if partner_id_changed?
     offer.name = name if name_changed?
     offer.description = description if description_changed?
+    offer.third_party_data = third_party_id if third_party_id_changed?
     offer.save! if offer.changed?
   end
   

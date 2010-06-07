@@ -250,4 +250,15 @@ class OneOffs
     
   end
   
+  def self.populate_third_party_data
+    Offer.find_each(:conditions => "item_type = 'App'") do |offer|
+      offer.third_party_data = offer.item.store_id
+      offer.save!
+    end
+    Offer.find_each(:conditions => "item_type = 'EmailOffer'") do |offer|
+      offer.third_party_data = offer.item.third_party_id
+      offer.save!
+    end
+  end
+  
 end

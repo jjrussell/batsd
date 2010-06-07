@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100525221726) do
+ActiveRecord::Schema.define(:version => 20100607215440) do
 
   create_table "apps", :force => true do |t|
     t.string   "partner_id",            :limit => 36,                    :null => false
@@ -127,6 +127,7 @@ ActiveRecord::Schema.define(:version => 20100525221726) do
     t.text     "instructions"
     t.string   "time_delay"
     t.boolean  "credit_card_required",                 :default => false, :null => false
+    t.string   "third_party_data"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

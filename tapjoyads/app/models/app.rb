@@ -53,6 +53,7 @@ private
     offer.instructions = 'Install and then run the app while online to receive credit.'
     offer.time_delay = 'in seconds'
     offer.credit_card_required = false
+    offer.third_party_data = store_id
     offer.save!
   end
   
@@ -62,6 +63,7 @@ private
     offer.description = description if description_changed?
     offer.price = price if price_changed?
     offer.url = store_url if store_url_changed? || use_raw_url_changed? || store_id_changed?
+    offer.third_party_data = store_id if store_id_changed?
     offer.save! if offer.changed?
   end
   
