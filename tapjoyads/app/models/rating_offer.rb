@@ -31,6 +31,7 @@ private
     offer.instructions = "Just click the Open in Safari button to go to the App Store where you can rate this app."
     offer.credit_card_required = false
     offer.time_delay = 'in seconds'
+    offer.payment = 15
     offer.save!
   end
   
