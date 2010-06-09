@@ -195,8 +195,6 @@ class SimpledbResource
     expected_attr = options.delete(:expected_attr) { {} }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
-    raise "device_app_list_8" if this_domain_name == 'device_app_list_8'
-
     Rails.logger.info "Saving to #{@this_domain_name}"
 
     put('updated-at', Time.now.utc.to_f.to_s) if updated_at
