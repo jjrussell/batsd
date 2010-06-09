@@ -200,7 +200,9 @@ class SimpledbResource
     put('updated-at', Time.now.utc.to_f.to_s) if updated_at
     
     time_log("Saving to sdb, domain: #{this_domain_name}") do
-      self.write_to_sdb(expected_attr) if write_to_sdb
+      Timeout.timeout(2) do
+        self.write_to_sdb(expected_attr) if write_to_sdb
+      end
       self.write_to_memcache if write_to_memcache
     end
     
