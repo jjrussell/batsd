@@ -32,6 +32,7 @@ private
     offer.credit_card_required = false
     offer.time_delay = 'in seconds'
     offer.payment = 15
+    offer.ordinal = 1
     offer.save!
   end
   
