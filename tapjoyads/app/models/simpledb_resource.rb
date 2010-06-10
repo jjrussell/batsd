@@ -195,6 +195,11 @@ class SimpledbResource
     expected_attr = options.delete(:expected_attr) { {} }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
+    if key == '0203fd6695c97278729481ff3e19fc381d7cd37a' and this_domain_name == 'device_app_list_8'
+      Rails.logger.info "Not saving udid: 0203fd6695c97278729481ff3e19fc381d7cd37a."
+      return
+    end
+
     Rails.logger.info "Saving to #{@this_domain_name}"
 
     put('updated-at', Time.now.utc.to_f.to_s) if updated_at
