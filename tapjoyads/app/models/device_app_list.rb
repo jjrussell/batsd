@@ -10,7 +10,6 @@ class DeviceAppList < SimpledbResource
     if domain_number.nil?
       # This is a new device, so add it to the DeviceLookup table.
       domain_number = rand(MAX_DEVICE_APP_DOMAINS)
-      domain_number = rand(MAX_DEVICE_APP_DOMAINS) if domain_number == 8
       
       lookup.put('app_list', domain_number)
       lookup.save
