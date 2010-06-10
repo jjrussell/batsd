@@ -8,7 +8,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
   def on_message(message)
     app_key = message.to_s
     app = SdbApp.new(:key => app_key)
-    mysql_app = App.find(app_key)
+    offer = Offer.find(app_key)
     
     Rails.logger.info "Calculating new show_rate for #{app_key}, #{app.get('name')}"
     
@@ -16,8 +16,8 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
       app.show_rate = 0
       app.save
       
-      mysql_app.show_rate = 0
-      mysql_app.save!
+      offer.show_rate = 0
+      offer.save!
       return
     end
     
@@ -118,8 +118,8 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     app.put('conversion_rate', conversion_rate)
     app.put('show_rate', new_show_rate)
     app.save
-    mysql_app.conversion_rate = conversion_rate
-    mysql_app.show_rate = new_show_rate
-    mysql_app.save!
+    offer.conversion_rate = conversion_rate
+    offer.show_rate = new_show_rate
+    offer.save!
   end
 end
