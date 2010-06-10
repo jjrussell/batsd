@@ -4,7 +4,7 @@ pid = "/home/webuser/server/pid/memcached.pid"
 God.watch do |w|
   w.name = "memcached"
   w.interval = 5.seconds
-  w.start = "/usr/local/bin/memcached -u webuser -c 2048 -m 6800 -l #{ip} -d -P #{pid}"
+  w.start = "/usr/local/bin/memcached -u webuser -c 4096 -m 6800 -l #{ip} -d -P #{pid}"
   w.stop = "/bin/cat #{pid} | /usr/bin/xargs /bin/kill"
   w.pid_file = pid
   w.grace = 5.seconds
