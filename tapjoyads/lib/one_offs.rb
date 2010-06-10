@@ -264,7 +264,7 @@ class OneOffs
   def self.populate_device_app_list_from_rate_app
     count = 0
     RateApp.select do |rate_app|
-      app_id, udid, version = rate_app.key.split('.')
+      app_id, udid, version = rate_app.key.split('.', 3)
 
       offer_id = RatingOffer.find_by_app_id(app_id).id
       if version
