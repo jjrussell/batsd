@@ -261,4 +261,24 @@ class OneOffs
     end
   end
   
+  def self.populate_device_app_list_from_rate_app
+    count = 0
+    RateApp.select do |rate_app|
+      app_id, udid, version = rate_app.key.split('.')
+
+      offer_id = RatingOffer.find_by_app_id(app_id).id
+      if version
+        offer_id += ".#{version}"
+      end
+      
+      device_app_list = DeviceAppList.new(:key => udid)
+      device_app_list.set_app_ran(offer_id)
+      device_app_list.serial_save
+      
+      count += 1
+      puts "Finished #{count}. #{Time.zone.now.to_s(:db)}" if count % 1000 == 0
+    end
+    puts "Success"
+  end
+  
 end
