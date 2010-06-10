@@ -263,17 +263,23 @@ class OneOffs
   
   def self.populate_device_app_list_from_rate_app
     count = 0
+    @failed_rate_app_keys = []
     RateApp.select do |rate_app|
-      app_id, udid, version = rate_app.key.split('.', 3)
+      begin
+        app_id, udid, version = rate_app.key.split('.', 3)
 
-      offer_id = RatingOffer.find_by_app_id(app_id).id
-      if version
-        offer_id += ".#{version}"
-      end
+        offer_id = RatingOffer.find_by_app_id(app_id).id
+        if version
+          offer_id += ".#{version}"
+        end
       
-      device_app_list = DeviceAppList.new(:key => udid)
-      device_app_list.set_app_ran(offer_id)
-      device_app_list.serial_save
+        device_app_list = DeviceAppList.new(:key => udid)
+        device_app_list.set_app_ran(offer_id)
+        device_app_list.serial_save
+      rescue Exception => e
+        puts "Exception: #{e} for key: #{rate_app.key}"
+        @failed_rate_app_keys.push(rate_app.key)
+      end
       
       count += 1
       puts "Finished #{count}. #{Time.zone.now.to_s(:db)}" if count % 1000 == 0
