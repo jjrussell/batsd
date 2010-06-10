@@ -42,10 +42,6 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
     
     params[:domain_name] = sdb_item.this_domain_name
     
-    if sdb_item.key == '0203fd6695c97278729481ff3e19fc381d7cd37a' and sdb_item.this_domain_name == 'device_app_list_8'
-      bucket.move_key(json['uuid'], "complete/#{json['uuid']}")
-    end
-    
     sdb_item.serial_save(options.merge({:catch_exceptions => false}))
     
     bucket.move_key(json['uuid'], "complete/#{json['uuid']}")
