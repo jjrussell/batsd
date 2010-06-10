@@ -264,11 +264,11 @@ class ImportMssqlController < ApplicationController
       mysql_app.color = params[:primary_color].to_i
       mysql_app.use_raw_url = app.use_raw_url == true
       mysql_app.store_url = params[:store_url] unless params[:store_url].blank? || params[:store_url] == 'None'
-      mysql_app.self_promote_only = app.self_promote_only == true
       mysql_app.created_at = Time.parse(params[:created_at] + ' CST').utc
       mysql_app.save!
       
       offer = mysql_app.offer
+      offer.self_promote_only = app.self_promote_only == true
       if params[:iphone_only] == '1'
         offer.device_types = [ 'iphone' ].to_json
       elsif app.ipad_only
