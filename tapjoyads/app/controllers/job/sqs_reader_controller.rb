@@ -3,6 +3,8 @@ class Job::SqsReaderController < Job::JobController
   include MemcachedHelper
   include NewRelicHelper
 
+  before_filter :limit_long_running_jobs, :only => :index
+
   def initialize(queue_name)
     @queue_name = queue_name
   end
@@ -114,6 +116,18 @@ class Job::SqsReaderController < Job::JobController
         custom_params["message#{i}"] = val
       end
       NewRelic::Agent.add_custom_parameters(custom_params)
+    end
+  end
+  
+  def limit_long_running_jobs
+    if @queue_name == QueueNames::CLEANUP_WEB_REQUESTS
+      unless Dir.glob("#{RAILS_ROOT}/tmp/web-request*.sdb*").empty?
+        render :text => 'ok' if rand > 0.15
+      end
+    elsif @queue_name == QueueNames::CLEANUP_STORE_CLICK
+      unless Dir.glob("#{RAILS_ROOT}/tmp/store-click*.sdb*").empty?
+        render :text => 'ok' if rand > 0.15
+      end
     end
   end
   
