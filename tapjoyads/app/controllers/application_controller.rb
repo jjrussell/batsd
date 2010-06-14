@@ -40,8 +40,10 @@ class ApplicationController < ActionController::Base
   
   def log_missing_required_params
     Rails.logger.info "missing required params"
-    NewRelic::Agent.add_custom_parameters({ :user_agent => request.headers['User-Agent'] })
-    alert_new_relic(MissingRequiredParamsError, request.url, request, params)
+    if params[:udid] != 'null'
+      NewRelic::Agent.add_custom_parameters({ :user_agent => request.headers['User-Agent'] })
+      alert_new_relic(MissingRequiredParamsError, request.url, request, params)
+    end
   end
   
   def fix_params
