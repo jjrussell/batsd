@@ -54,4 +54,14 @@ module AuthenticationHelper
       password
     end
   end
+
+  def zynga_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'zynga'
+        password = 'b73kshg2aksjdfh84'
+      end
+      password
+    end
+  end
+  
 end

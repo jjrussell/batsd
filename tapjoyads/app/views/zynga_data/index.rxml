@@ -1,0 +1,18 @@
+xml.instruct!
+xml.MarketingData do
+  xml.Date @date
+  @appstats_list.each do |appstats|
+    xml.App do
+      xml.Name SdbApp.new(:key => appstats.app_key).name
+      xml.AppKey appstats.app_key
+      xml.PaidInstalls appstats.stats['paid_installs'].sum
+      xml.PaidInstallsHourly appstats.stats['paid_installs'].join(',')
+      xml.Spend appstats.stats['installs_spend'].sum
+      xml.SpendHourly appstats.stats['installs_spend'].join(',')
+      xml.PublishedInstalls appstats.stats['published_installs'].sum
+      xml.PublishedInstallsHourly appstats.stats['published_installs'].join(',')
+      xml.Revenue appstats.stats['installs_revenue'].sum
+      xml.RevenueHourly appstats.stats['installs_revenue'].join(',')
+    end
+  end
+end
