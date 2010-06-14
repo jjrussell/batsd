@@ -1,4 +1,4 @@
-class PingerDataController < ApplicationController
+class ZyngaDataController < ApplicationController
   include AuthenticationHelper
   
   before_filter 'zynga_authenticate'
