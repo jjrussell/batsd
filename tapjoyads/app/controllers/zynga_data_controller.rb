@@ -6,7 +6,7 @@ class ZyngaDataController < ApplicationController
   def index
     return unless verify_params([:date])
     
-    partner = SdbPartner.new :key => '2972a93b-4284-48cb-9211-81a4484ea537'
+    partner = SdbPartner.new :key => '64e40a83-4724-4ba4-9b38-1c8ca906777a'
     
     start_time = Time.zone.parse(params[:date])
     
