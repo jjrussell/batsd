@@ -54,6 +54,7 @@ private
     offer.time_delay = 'in seconds'
     offer.credit_card_required = false
     offer.third_party_data = store_id
+    offer.age_rating = age_rating
     offer.save!
   end
   
@@ -64,6 +65,7 @@ private
     offer.price = price if price_changed?
     offer.url = store_url if store_url_changed? || use_raw_url_changed? || store_id_changed?
     offer.third_party_data = store_id if store_id_changed?
+    offer.age_rating = age_rating if age_rating_changed?
     offer.save! if offer.changed?
   end
   
