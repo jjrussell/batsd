@@ -88,7 +88,7 @@ class SdbApp < SimpledbResource
       reject = true if advertiser_app.ipad_only and not ipad
       reject = true if advertiser_app.os_type == 'iphone' and self.os_type == 'android'
       reject = true if advertiser_app.os_type == 'android' and self.os_type == 'iphone'
-      reject = true if advertiser_app.key == '4445a5be-9244-4ce7-b65d-646ee6050208' and device_app_list.apps['f8751513-67f1-4273-8e4e-73b1e685e83d'] == nil &&  device_app_list.apps['f8751513-67f1-4273-8e4e-73b1e685e83d'].to_f > (Time.now.to_f - 1.days) 
+      reject = true if advertiser_app.key == '4445a5be-9244-4ce7-b65d-646ee6050208' and device_app_list.apps['f8751513-67f1-4273-8e4e-73b1e685e83d'] == nil &&  device_app_list.last_run_time('f8751513-67f1-4273-8e4e-73b1e685e83d') > (Time.now.to_f - 1.days) 
       reject = true if advertiser_app.self_promote_only and partner_id != advertiser_app.partner_id
       reject = true if currency.max_age_rating && currency.max_age_rating < advertiser_app.age_rating
       
