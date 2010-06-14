@@ -18,6 +18,9 @@ class Offer < ActiveRecord::Base
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer OfferpalOffer RatingOffer )
   
+  named_scope :enabled_offers, {:joins => :partner, :conditions => "payment > 0 and tapjoy_enabled = true and user_enabled = true and partners.balance > 0", :order => "ordinal ASC"}
+  named_scope :classic_offers, {:conditions => "item_type in ('OfferpalOffer', 'RatingOffer')", :order => "ordinal ASC"}
+  
   def cost
     price > 0 ? 'Paid' : 'Free'
   end
