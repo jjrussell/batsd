@@ -41,7 +41,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :users, :only => [ :edit, :update ]
   
   map.resources :tools, :only => :index, :collection => { :new_order => :get, :create_order => :post, :payouts => :get }, :member => { :create_payout => :post }
-  map.resources :statz, :only => [ :index, :show ]
+  map.resources :statz, :only => [ :index, :show ], :collection => { :search => :get }
   
   map.resources :balances, :only => :show
   

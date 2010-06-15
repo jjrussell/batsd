@@ -1,12 +1,17 @@
 - @page_title = 'Stats for last 24 hours'
 
 - content_for :included_stylesheets do
-  = stylesheet_link_tag 'themes/blue/style'
+  = stylesheet_link_tag 'themes/blue/style', 'jquery.autocomplete'
 
 - content_for :included_javascripts do
-  = javascript_include_tag 'jquery.tablesorter'
+  = javascript_include_tag 'jquery.tablesorter', 'jquery.autocomplete.min'
 
 %h1 Tapjoy stats for last 24 hours
+
+- form_tag('', :id => 'search_form') do
+  = label_tag('search_box', 'App Name:')
+  = text_field_tag('search_box', '', :size => '30')
+  = submit_tag('View Details')
 
 %h3#install_count_24hours= "Total installs: #{@install_count_24hours}"
 
@@ -54,6 +59,22 @@
 -content_for :page_javascript do
   :plain
     $(function() {
+      var app_guid = '';
+      $('#search_box').keyup(function(event) {
+        if (!(event.keyCode == 9 || event.keyCode == 13)) {
+          app_guid = '';
+        }
+      });
+      $('#search_box').autocomplete('#{search_statz_path}', { cacheLength: 1, autoFill: true });
+      $('#search_box').result(function(event, data) {
+        app_guid = data[1];
+      });
+      $('#search_form').submit(function() {
+        window.location.assign('#{statz_index_url}/' + app_guid);
+        return false;
+      });
+      
+      
       $("#apps_table").tablesorter({widgets: ['zebra'],
         headers: {
           0: {sorter: false}
@@ -61,6 +82,7 @@
         sortList: [[2, 1]]
       });
     });
+  
 
 -content_for :page_styles do
   :plain

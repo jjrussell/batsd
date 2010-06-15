@@ -17,7 +17,7 @@ authorization do
   end
   
   role :statz do
-    has_permission_on :statz, :to => [ :index, :show ]
+    has_permission_on :statz, :to => [ :index, :show, :search ]
   end
   
   role :admin do

@@ -1,7 +1,7 @@
 class StatzController < WebsiteController
   include MemcachedHelper
   
-  filter_access_to [ :index, :show ]
+  filter_access_to [ :index, :show, :search ]
   
   def index
     @install_count_24hours = get_from_cache('statz.install_count_24hours') || "Not Available"
@@ -20,5 +20,15 @@ class StatzController < WebsiteController
     end
     @app = SdbApp.new :key => params[:id]
     @stats = Appstats.new(@app.key, { :start_time => @start_time, :end_time => @end_time }).stats
+  end
+  
+  def search
+    results = App.all(
+      :conditions => "name LIKE '#{params[:q]}%'",
+      :select => 'id, name',
+      :limit => params[:limit]
+    ).collect { |a| "#{a.name}|#{a.id}" }
+    
+    render(:text => results.join("\n"))  
   end
 end
