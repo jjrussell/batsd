@@ -65,7 +65,7 @@
           app_guid = '';
         }
       });
-      $('#search_box').autocomplete('#{search_statz_path}', { cacheLength: 1, autoFill: true });
+      $('#search_box').autocomplete('#{search_statz_path}', { cacheLength: 1, autoFill: true, max: 20 });
       $('#search_box').result(function(event, data) {
         app_guid = data[1];
       });

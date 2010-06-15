@@ -24,7 +24,7 @@ class StatzController < WebsiteController
   
   def search
     results = App.all(
-      :conditions => "name LIKE '#{params[:q]}%'",
+      :conditions => "name LIKE '%#{params[:q]}%'",
       :select => 'id, name',
       :limit => params[:limit]
     ).collect { |a| "#{a.name}|#{a.id}" }
