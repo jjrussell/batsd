@@ -38,19 +38,19 @@
 								<% count += 1 %>
 								<li>
 									<div class="lix-wrap"> 
-										<div class="title"> 
+										<a class="title" href="<%= app.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid]) %>"> 
 											<h2> 
-												<a class="textwrapper" href="<%= app.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid]) %>">	
+												<span class="textwrapper">	
 													<%= app.get('name') %> (<%= app.is_free ? 'Free' : 'Paid' %>)
 													 <br>Earn 
 													<span style="color:#008810;">
 													  <%= @currency.get_app_currency_reward(app) %> <%= @currency.get('currency_name') %>
 													</span> 
 													<div style="font-size:0.7em;"></div>
-												</a>
+												</span>
 											</h2>
 											<div class="clr"></div>
-										</div>
+										</a>
 										<div class="entry"> 
 											<a href="<%= app.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid]) %>">
 												<img class="alignleft" src="<%= app.get_icon_url %>" alt="" height="160" width="200"/>
