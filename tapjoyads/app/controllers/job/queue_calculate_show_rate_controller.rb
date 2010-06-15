@@ -113,6 +113,11 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
       end
     end
     
+    if new_show_rate.to_f.nan?
+      Rails.logger.info "Adjusted show_rate to 0.0 because it was NaN"
+      new_show_rate = 0
+    end
+    
     Rails.logger.info "New show_rate: #{new_show_rate}"
     
     app.put('conversion_rate', conversion_rate)
