@@ -8,7 +8,7 @@ class RatingOffer < ActiveRecord::Base
   
   validates_presence_of :partner, :app, :name
   
-  before_save :set_name_and_description
+  before_validation :set_name_and_description
   after_create :create_offer
   after_update :update_offer
   
