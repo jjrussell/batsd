@@ -40,6 +40,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'master_select_vg_items', :interval => 5.minutes
     s.add_job 'master_verifications', :daily => 5.hours
     s.add_job 'master_get_store_info', :daily => 7.hours
+    s.add_job 'master_cache_offers', :interval => 1.minute
   else
     Rails.logger.info "JobRunner: Not running any jobs. Not a job server."
   end
