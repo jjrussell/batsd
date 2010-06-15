@@ -1,15 +1,15 @@
 xml.instruct!
 xml.TapjoyConnectReturnObject do
   xml.OfferArray do
-    @advertiser_app_list.each do |app|
+    @offer_list.each do |offer|
       xml.TapjoyApp do
-        xml.Cost app.get_cost
-        xml.Amount @currency.get_app_currency_reward(app)
-        xml.Description app.get('description')
-        xml.IconURL app.get_icon_url
-        xml.Name app.get('name')
-        xml.RedirectURL app.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid])
-        xml.StoreID app.get_store_id
+        xml.Cost offer.cost
+        xml.Amount @currency.get_reward_amount(offer)
+        xml.Description offer.description
+        xml.IconURL offer.get_icon_url
+        xml.Name offer.name
+        xml.RedirectURL offer.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid])
+        xml.StoreID offer.third_party_data
       end
       
     end

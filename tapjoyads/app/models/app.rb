@@ -39,6 +39,29 @@ class App < ActiveRecord::Base
     end
   end
   
+  def get_offer_list(udid, options = {})
+    currency = options.delete(:currency)
+    device_type = options.delete(:device_type)
+    geoip_data = options.delete(:geoip_data)
+    type = options.delete(:type) { '1' }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
+    device_app_list = DeviceAppList.new(:key => udid)
+    currency = Currency.find_in_cache(id) unless currency
+    
+    if type == '0'
+      offer_list = Offer.get_classic_offers
+    else
+      offer_list = Offer.get_enabled_offers
+    end
+    
+    offer_list.reject! do |o|
+      o.should_reject?(self, device_app_list, currency, device_type, geoip_data)
+    end
+    
+    offer_list
+  end
+  
 private
   
   def create_offer

@@ -1,21 +1,21 @@
 xml.instruct!
 xml.TapjoyConnectReturnObject do
   xml.OfferArray do
-    @advertiser_app_list.each do |app|
+    @offer_list.each do |offer|
       xml.OfferReturnClass do
-        xml.Cost app.get_cost
-        xml.Amount @currency.get_app_currency_reward(app)
-        xml.CreditCardRequired 'false'
-        xml.Description app.get('description')
-        xml.Instructions 'Install and then run the app while online to receive credit.'
-        xml.Name app.get('name')
-        xml.TimeDelay 'in seconds'
-        xml.AdvertiserAppID app.key
-        xml.ActionURL app.get_store_url(params[:udid], params[:app_id])
+        xml.Cost offer.cost
+        xml.Amount @currency.get_reward_amount(offer)
+        xml.CreditCardRequired offer.credit_card_required?
+        xml.Description offer.description
+        xml.Instructions offer.instructions
+        xml.Name offer.name
+        xml.TimeDelay offer.time_delay
+        xml.AdvertiserAppID offer.id
+        xml.ActionURL offer.get_destination_url(params[:udid], params[:app_id])
         xml.PublisherUserRecordID @publisher_user_record.get_record_id
         xml.Type '1'
-        xml.StoreID app.get_store_id
-        xml.Currency @currency.currency_name
+        xml.StoreID offer.third_party_data
+        xml.Currency @currency.name
       end
       
     end

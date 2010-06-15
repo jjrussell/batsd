@@ -24,6 +24,7 @@ class DeviceAppList < SimpledbResource
     if self.attributes['apps'].blank?
       convert_attributes
     end
+    @parsed_apps = apps
   end
   
   ##
@@ -47,9 +48,11 @@ class DeviceAppList < SimpledbResource
       path_list.push('monthly_user')
     end
     
-    apps_hash = self.apps
+    apps_hash = apps
     apps_hash[app_id] = now.to_f.to_s
-    self.apps = apps_hash
+    apps = apps_hash
+    
+    @parsed_apps = apps
     
     return path_list
   end
@@ -63,7 +66,7 @@ class DeviceAppList < SimpledbResource
   ##
   # Returns the last time this device has run app_id. Returns nil if the device has not run app_id.
   def last_run_time(app_id)
-    last_run_timestamp = self.apps[app_id]
+    last_run_timestamp = @parsed_apps[app_id]
     
     if last_run_timestamp.is_a?(Array)
       last_run_timestamp = last_run_timestamp[0]
@@ -79,7 +82,7 @@ class DeviceAppList < SimpledbResource
   ##
   # Returns an array of all app_id's that this device has been known to run.
   def get_app_list
-    return self.apps.keys
+    return @parsed_apps.keys
   end
   
   ##

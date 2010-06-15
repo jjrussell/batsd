@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">
 	<html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
-			<title>Earn <%= @publisher_app.get('name') %> <%= @currency.get('name') %></title>
+			<title>Earn <%= @publisher_app.name %> <%= @currency.name %></title>
 			<meta name="HandheldFriendly" content="True" />
 			<link rel="stylesheet" type="text/css" href="/stylesheets/offers.css" />
 		</head>
@@ -16,35 +16,29 @@
 			<div>
 				<div>
 					<div>
-
 						<div id="nav">
 							<ul id="instructions">
 								<li>
-									<a>Important instructions: Install and OPEN one of the applications below to receive <%= @currency.get('currency_name') %>.  You will receive your <%= @currency.get('currency_name') %> within a few minutes after <i>opening</i> the downloaded application. </a>
+									<a>Important instructions: Install and OPEN one of the applications below to receive <%= @currency.name %>.  You will receive your <%= @currency.name %> within a few minutes after <i>opening</i> the downloaded application. </a>
 								</li>
 							</ul>
 						</div>
-
-
 					</div>
-					
 				</div>
 
 				<div class="home">
 					<ul class="post">
 						<dl>
-							<% count = 0 %>
-							<% @advertiser_app_list.each do |app| %>
-								<% count += 1 %>
+							<% @offer_list.each do |offer| %>
 								<li>
 									<div class="lix-wrap"> 
-										<a class="title" href="<%= app.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid]) %>"> 
+										<a class="title" href="<%= offer.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid]) %>"> 
 											<h2> 
-												<span class="textwrapper">	
-													<%= app.get('name') %> (<%= app.is_free ? 'Free' : 'Paid' %>)
+												<span class="textwrapper">
+												  <%= "#{offer.name} (#{offer.cost})" %>
 													 <br>Earn 
 													<span style="color:#008810;">
-													  <%= @currency.get_app_currency_reward(app) %> <%= @currency.get('currency_name') %>
+													  <%= "#{@currency.get_reward_amount(offer)} #{@currency.name}" %>
 													</span> 
 													<div style="font-size:0.7em;"></div>
 												</span>
@@ -52,21 +46,18 @@
 											<div class="clr"></div>
 										</a>
 										<div class="entry"> 
-											<a href="<%= app.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid]) %>">
-												<img class="alignleft" src="<%= app.get_icon_url %>" alt="" height="160" width="200"/>
+											<a href="<%= offer.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid]) %>">
+												<img class="alignleft" src="<%= offer.get_icon_url %>" alt="" height="160" width="200"/>
 											</a>
 										</div>
 									</div>																				
 								</li>
-					        <% end %>
-							<% if count == 0 %>
-							   <div>There are no new apps available for you to install right now.  Check back soon!</div>
+					    <% end %>
+							<% if @offer_list.empty? %>
+							  <div>There are no new apps available for you to install right now. Check back soon!</div>
 							<% end %>
 						</dl>
 					</ul>
-					<div id="footer">
-					</div>
-
 				</div>
 			</div>
 		</body>

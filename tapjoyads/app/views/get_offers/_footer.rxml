@@ -1,4 +1,4 @@
-xml.Message 'Install one of the apps below to earn ' + @currency.get('currency_name')
+xml.Message 'Install one of the apps below to earn ' + @currency.name
 if @more_data_available > 0
   xml.MoreDataAvailable @more_data_available
 end

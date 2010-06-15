@@ -16,6 +16,24 @@ class Currency < ActiveRecord::Base
     Currency.new.get_from_cache_and_save("mysql.currency.#{app_id}") { Currency.find_by_app_id(app_id) }
   end
   
+  def get_reward_amount(offer)
+    if offer.partner_id == app.partner_id
+      publisher_amount = offer.payment
+    else
+      publisher_amount = offer.payment * installs_money_share
+    end
+    
+    [publisher_amount * conversion_rate / 100.0, 1.0].max.to_i
+  end
+  
+  def get_disabled_offer_ids
+    Set.new(disabled_offers.split(';'))
+  end
+  
+  def get_disabled_partner_ids
+    Set.new(disabled_partners.split(';'))
+  end
+  
 private
   
   def update_memcached
