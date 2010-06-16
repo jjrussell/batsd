@@ -20,11 +20,13 @@ module MemcachedHelper
   # If no object is found, then control is yielded, and the object
   # returned from the yield block is saved and returned.
   def get_from_cache_and_save(key, clone = false, time = 1.week)
+    did_yield = false
     value = get_from_cache(key, clone) do
+      did_yield = true
       yield
     end
     
-    save_to_cache(key, value, clone, time)
+    save_to_cache(key, value, clone, time) if did_yield
     return value
   end
   

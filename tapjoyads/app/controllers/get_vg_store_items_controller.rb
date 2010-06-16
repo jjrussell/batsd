@@ -41,23 +41,21 @@ class GetVgStoreItemsController < ApplicationController
     @point_purchases = PointPurchases.new(:key => "#{params[:udid]}.#{params[:app_id]}")
     @currency = SdbCurrency.new(:key => params[:app_id])
     mc_key = "virtual_good_list.#{params[:app_id]}"
-    @virtual_good_list = get_from_cache(mc_key) do
+    @virtual_good_list = get_from_cache_and_save(mc_key, false, 5.minutes) do
       list = []
       VirtualGood.select(:where => "app_id='#{params[:app_id]}' and disabled != '1' and beta != '1'") do |item|
         list.push(item)
       end
-      save_to_cache(mc_key, list, false, 5.minutes)
       list
     end
     
     if @currency.beta_devices.include?(params[:udid])
       mc_key = "virtual_good_list.beta.#{params[:app_id]}"
-      @virtual_good_list = @virtual_good_list | get_from_cache(mc_key) do
+      @virtual_good_list = @virtual_good_list | get_from_cache_and_save(mc_key, false, 5.minutes) do
         list = []
         VirtualGood.select(:where => "app_id='#{params[:app_id]}' and disabled != '1' and beta = '1'") do |item|
           list.push(item)
         end
-        save_to_cache(mc_key, list, false, 5.minutes)
         list
       end
     end
