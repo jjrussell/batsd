@@ -290,7 +290,7 @@ class GetadController < ApplicationController
     return ip_address
   end
   
-  def download_image image_url
+  def download_image(image_url)
     get_from_cache_and_save("img.#{image_url.hash}") do 
       Base64.encode64 download_content(image_url)
     end
