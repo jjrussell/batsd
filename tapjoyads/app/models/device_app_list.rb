@@ -50,9 +50,9 @@ class DeviceAppList < SimpledbResource
     
     apps_hash = apps
     apps_hash[app_id] = now.to_f.to_s
-    apps = apps_hash
+    self.apps = apps_hash
     
-    @parsed_apps = apps
+    @parsed_apps = apps_hash
     
     return path_list
   end

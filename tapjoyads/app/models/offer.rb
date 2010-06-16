@@ -215,7 +215,7 @@ private
     
     if id == clash_of_titans_offer_id
       # Only show offer in TapFish:
-      return true if publisher_app.id != tap_fish_id || publisher_app.id != tap_fish_coins_id
+      return true unless publisher_app.id == tap_fish_id || publisher_app.id == tap_fish_coins_id
       
       # Only show offer if user has recently run flixter:
       return true if !device_app_list.has_app(flixter_id) || device_app_list.last_run_time(flixter_id) < (Time.zone.now - 1.days)
