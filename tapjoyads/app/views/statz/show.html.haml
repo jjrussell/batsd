@@ -10,6 +10,7 @@
   .metadata Partner id: #{@app.partner_id}
   .metadata Store id: #{link_to(@app.get_store_id(false), @app.store_url)}
   .metadata Price: #{number_to_currency(@app.price / 100.0)}
+  .metadata OS Type: #{@app.os_type}
   .metadata Balance: #{number_to_currency(@app.balance / 100.0)}
   .metadata Daily budget: #{@app.daily_budget}
   .metadata Show rate: #{"%.2f" % (@app.show_rate || 0)}
