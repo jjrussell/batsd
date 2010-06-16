@@ -19,7 +19,7 @@ class SubmitClickController < ApplicationController
     
     now = Time.now.utc
     
-    delete_from_cache("custom_offer_list.1.#{params[:udid]}")
+    delete_from_cache("custom_offer_list.1.#{params[:udid]}.#{params[:publisher_app_id]}")
     
     ##
     # store the value of an install in this table
