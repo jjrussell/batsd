@@ -23,7 +23,7 @@ class Currency < ActiveRecord::Base
       publisher_amount = offer.payment * installs_money_share
     end
     
-    [publisher_amount * conversion_rate / 100.0, 1.0].max.to_i
+    [publisher_amount.to_i * conversion_rate / 100.0, 1.0].max.to_i
   end
   
   def get_disabled_offer_ids
