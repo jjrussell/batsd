@@ -96,10 +96,12 @@ class Offer < ActiveRecord::Base
   end
   
   def get_icon_url(base64 = false)
+    name = item_type == 'RatingOffer' ? 'ratestar' : id 
+
     if base64
-      url = "http://ws.tapjoyads.com/get_app_image/icon?app_id=#{id}"
+      url = "http://ws.tapjoyads.com/get_app_image/icon?app_id=#{name}"
     else
-      url = "https://s3.amazonaws.com/app_data/icons/#{id}.png"
+      url = "https://s3.amazonaws.com/app_data/icons/#{name}.png"
     end
     url
   end
