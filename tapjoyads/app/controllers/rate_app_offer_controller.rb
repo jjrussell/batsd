@@ -22,7 +22,7 @@ class RateAppOfferController < ApplicationController
   
     values = calculate_offer_payouts(:currency => currency, :offer_amount => 15)
   
-    record_key = lookup_by_record(params[:record_id])
+    record_key = lookup_by_int_record(params[:record_id])
     publisher_user_id = record_key.split('.')[1]
     
     #create the reward item and push to the queues
