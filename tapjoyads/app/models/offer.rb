@@ -86,7 +86,7 @@ class Offer < ActiveRecord::Base
   
   def get_click_url(publisher_app, publisher_user_record, udid)
     if item_type == 'RatingOffer'
-      return "http://ws.tapjoyads.com/healthz"
+      return "http://ws.tapjoyads.com/healthz/success"
     end
     "http://ws.tapjoyads.com/submit_click/store?advertiser_app_id=#{id}&publisher_app_id=#{publisher_app.id}&publisher_user_record_id=#{publisher_user_record.get_record_id}&udid=#{udid}"
   end
