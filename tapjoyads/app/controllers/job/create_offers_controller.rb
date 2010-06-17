@@ -71,7 +71,7 @@ class Job::CreateOffersController < Job::SqsReaderController
         offerpal_offer.partner_id = "5c0caa42-4be1-4f92-b717-f824b4b2142e"
         offerpal_offer.name = offer['name']
         offerpal_offer.description = offer['description']
-        offerpal_offer.url = offer['actionURL']
+        offerpal_offer.url = offer['actionURL'].gsub(" ", "%20")
         offerpal_offer.instructions = offer['instructions']
         offerpal_offer.time_delay = offer['timeDelay']
         offerpal_offer.credit_card_required = offer['creditCardRequired'].to_s == '1'
