@@ -213,7 +213,7 @@ private
     id_for_device_app_list = id
     if item_type == 'RatingOffer'
       rating_offer = RatingOffer.find_in_cache(publisher_app.id)
-      id_for_device_app_list = rating_offer.get_id_for_device_app_list(params[:app_version])
+      id_for_device_app_list = rating_offer.get_id_for_device_app_list(app_version)
     end
     
     return device_app_list.has_app(id_for_device_app_list)
