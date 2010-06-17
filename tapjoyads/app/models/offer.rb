@@ -20,6 +20,7 @@ class Offer < ActiveRecord::Base
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer OfferpalOffer RatingOffer )
   
+  before_save :cleanup_url
   after_save :update_memcached
   
   named_scope :enabled_offers, { :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND ((partners.balance > 0 AND item_type IN ('App', 'EmailOffer')) OR item_type = 'RatingOffer')", :order => "ordinal ASC" }
@@ -257,5 +258,9 @@ private
   def update_memcached
     save_to_cache("mysql.offer.#{id}", self)
   end
-
+  
+  def cleanup_url
+    self.url = url.gsub(" ", "%20")
+  end
+  
 end
