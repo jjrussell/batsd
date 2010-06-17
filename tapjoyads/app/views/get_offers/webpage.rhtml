@@ -7,7 +7,11 @@
 			<link rel="stylesheet" type="text/css" href="/stylesheets/offers.css" />
 		</head>
 
-		<body>
+		<body onorientationchange="updateOrientation()">
+			<script type="text/javascript">
+				function updateOrientation() { setTimeout("window.scrollTo(0,1);", 100); } 
+			</script>
+
 			<div>
 				<div>
 					<div>
