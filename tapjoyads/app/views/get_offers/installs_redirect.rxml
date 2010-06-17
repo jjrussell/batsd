@@ -8,7 +8,7 @@ xml.TapjoyConnectReturnObject do
         xml.Description offer.description
         xml.IconURL offer.get_icon_url
         xml.Name offer.name
-        xml.RedirectURL offer.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid])
+        xml.RedirectURL offer.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid], params[:app_version])
         xml.StoreID offer.third_party_data
       end
       

@@ -10,7 +10,7 @@
       "Amount":<%= @currency.get_reward_amount(offer).to_json -%>,
       "IconURL":<%= offer.get_icon_url.to_json -%>,
       "Name":<%= offer.name.to_json -%>,
-      "RedirectURL":<%= offer.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid]).to_json -%>
+      "RedirectURL":<%= offer.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid], params[:app_version]).to_json -%>
     }
     <%= ',' if i < @offer_list.length - 1 -%>
   <% end %>

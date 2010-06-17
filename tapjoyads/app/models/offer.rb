@@ -76,25 +76,28 @@ class Offer < ActiveRecord::Base
     !is_paid?
   end
   
-  def get_destination_url(udid, publisher_app_id = '')
-    url.gsub('TAPJOY_UDID', udid).gsub('TAPJOY_PUBLISHER_APP_ID', publisher_app_id)
-  end
-  
-  def get_click_url(publisher_app, publisher_user_record, udid)
-    "http://ws.tapjoyads.com/submit_click/store?advertiser_app_id=#{id}&publisher_app_id=#{publisher_app.id}&publisher_user_record_id=#{publisher_user_record.get_record_id}&udid=#{udid}"
-  end
-  
-  def get_redirect_url(publisher_app, publisher_user_record, udid)
-    get_click_url(publisher_app, publisher_user_record, udid) + "&redirect=1"
-  end
-
-  def get_offerpal_destination_url(publisher_user_record, udid = nil, app_version = nil)
+  def get_destination_url(udid, publisher_app_id, publisher_user_record, app_version)
     url.gsub('TAPJOY_GENERIC', publisher_user_record.get_int_record_id).
         gsub('TAPJOY_PUBLISHER_USER_RECORD_ID', publisher_user_record.get_int_record_id).
         gsub('TAPJOY_UDID', udid.to_s).
-        gsub('TAPJOY_APP_VERSION', app_version.to_s)
+        gsub('TAPJOY_APP_VERSION', app_version.to_s).
+        gsub('TAPJOY_PUBLISHER_APP_ID', publisher_app_id.to_s)
   end
   
+  def get_click_url(publisher_app, publisher_user_record, udid)
+    if item_type == 'RatingOffer'
+      return "http://ws.tapjoyads.com/healthz"
+    end
+    "http://ws.tapjoyads.com/submit_click/store?advertiser_app_id=#{id}&publisher_app_id=#{publisher_app.id}&publisher_user_record_id=#{publisher_user_record.get_record_id}&udid=#{udid}"
+  end
+  
+  def get_redirect_url(publisher_app, publisher_user_record, udid, app_version)
+    if item_type == 'RatingOffer'
+      return get_destination_url(udid, publisher_app.id, publisher_user_record, app_version)
+    end
+    get_click_url(publisher_app, publisher_user_record, udid) + "&redirect=1"
+  end
+
   def get_icon_url(base64 = false)
     name = item_type == 'RatingOffer' ? 'ratestar' : id 
 
@@ -106,13 +109,13 @@ class Offer < ActiveRecord::Base
     url
   end
   
-  def get_email_url(publisher_user_record, publisher_app, udid)
+  def get_email_url(publisher_user_record, publisher_app, udid, app_version)
     "http://www.tapjoyconnect.com/complete_offer" +
         "?offerid=#{CGI::escape(id)}" +
         "&udid=#{udid}" +
         "&record_id=#{publisher_user_record.get_record_id}" +
         "&app_id=#{publisher_app.id}" +
-        "&url=#{CGI::escape(CGI::escape(get_offerpal_destination_url(publisher_user_record)))}"
+        "&url=#{CGI::escape(CGI::escape(get_destination_url(udid, publisher_app.id, publisher_user_record, app_version)))}"
   end
   
   def get_countries

@@ -9,7 +9,7 @@ xml.TapjoyConnectReturnObject do
         xml.IconURL offer.get_icon_url(true)
         xml.Name offer.name
         xml.ClickURL offer.get_click_url(@publisher_app, @publisher_user_record, params[:udid])
-        xml.StoreURL offer.get_destination_url(params[:udid], params[:app_id])
+        xml.StoreURL offer.get_destination_url(params[:udid], params[:app_id], @publisher_user_record, params[:app_version])
         xml.StoreID offer.third_party_data
       end
       
