@@ -1,5 +1,6 @@
 class RatingOffer < ActiveRecord::Base
   include UuidPrimaryKey
+  include MemcachedHelper
   
   has_one :offer, :as => :item
   
@@ -11,6 +12,11 @@ class RatingOffer < ActiveRecord::Base
   before_validation :set_name_and_description
   after_create :create_offer
   after_update :update_offer
+  after_save :update_memcached
+  
+  def self.find_in_cache(app_id)
+    RatingOffer.new.get_from_cache_and_save("mysql.rating_offer.#{app_id}") { RatingOffer.find_by_app_id(id) }
+  end
   
 private
   
@@ -41,6 +47,10 @@ private
     offer.name = name if name_changed?
     offer.description = description if description_changed?
     offer.save! if offer.changed?
+  end
+  
+  def update_memcached
+    save_to_cache("mysql.rating_offer.#{app_id}", self)
   end
   
 end
