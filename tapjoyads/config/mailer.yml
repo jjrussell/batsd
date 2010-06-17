@@ -4,3 +4,4 @@
   :user_name: noreply@tapjoy.com
   :password: tapmail
   :authentication: :plain
+  :enable_starttls_auto: true
