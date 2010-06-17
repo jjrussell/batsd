@@ -16,19 +16,14 @@ class RateAppOfferController < ApplicationController
       
       app = SdbApp.new(:key => app_id)
       
-      rate = RateApp.new(:key => "#{app_id}.#{udid}#{version}")
-      if rate.get('rate-date')
+      offer_id = RatingOffer.find_by_app_id(app_id).id + version
+      device_app_list = DeviceAppList.new(:key => udid)
+      if device_app_list.has_app(offer_id)
         redirect_to app.get_store_url(udid, params[:app_id])
         return
       end
-      rate.put('rate-date', Time.now.utc.to_f.to_s)
-      rate.save
-      
-      offer_id = RatingOffer.find_by_app_id(app_id).id + version
-      device_app_list = DeviceAppList.new(:key => udid)
       device_app_list.set_app_ran(offer_id)
       device_app_list.save
-      
       
       currency = SdbCurrency.new(:key => app_id)
     
