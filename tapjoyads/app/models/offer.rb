@@ -100,7 +100,7 @@ class Offer < ActiveRecord::Base
   end
 
   def get_icon_url(base64 = false)
-    name = item_type == 'RatingOffer' ? 'ratestar' : id 
+    name = item_type == 'RatingOffer' ? 'ratestar' : id
 
     if base64
       url = "http://ws.tapjoyads.com/get_app_image/icon?app_id=#{name}"
@@ -120,22 +120,23 @@ class Offer < ActiveRecord::Base
   end
   
   def get_countries
-    Set.new(JSON.parse(countries))
+    Set.new(countries.nil? ? nil : JSON.parse(countries))
   end
   
   def get_postal_codes
-    Set.new(JSON.parse(postal_codes))
+    Set.new(postal_codes.nil? ? nil : JSON.parse(postal_codes))
   end
   
   def get_cities
-    Set.new(JSON.parse(cities))
+    Set.new(cities.nil? ? nil : JSON.parse(cities))
   end
   
   def get_device_types
-    Set.new(JSON.parse(device_types))
+    Set.new(device_types.nil? ? nil : JSON.parse(device_types))
   end
   
   def adjust_cvr_for_ranking
+    srand( (id + (Time.now.to_f / 20.minutes).to_i.to_s).hash )
     boost = 0
     if id == '875d39dd-8227-49a2-8af4-cbd5cb583f0e'
       # MyTown: boost cvr by 20-30%

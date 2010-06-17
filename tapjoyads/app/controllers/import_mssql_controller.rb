@@ -295,9 +295,6 @@ class ImportMssqlController < ApplicationController
     offer.user_enabled = params[:payment_for_install].to_i > 0
     offer.overall_budget = app.overall_budget
     offer.daily_budget = app.daily_budget
-    offer.countries = app.countries.to_json
-    offer.cities = app.cities.to_json
-    offer.postal_codes = app.postal_codes.to_json
     offer.pay_per_click = params[:pay_per_click] == '1'
     offer.allow_negative_balance = app.allow_negative_balance == true
     offer.payment = params[:payment_for_install].to_i

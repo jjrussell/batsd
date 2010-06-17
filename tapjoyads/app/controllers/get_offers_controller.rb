@@ -85,14 +85,12 @@ class GetOffersController < ApplicationController
     
     type = params[:type] == '0' ? '0' : '1'
     
-    @offer_list = get_from_cache_and_save("custom_offer_list.#{type}.#{params[:udid]}.#{params[:app_id]}", false, 5.seconds) do
-      @publisher_app.get_offer_list(params[:udid], 
-          :currency => @currency,
-          :device_type => params[:device_type],
-          :geoip_data => geoip_data,
-          :type => type)
-    end
-    @more_data_available = @offer_list.length - @max_items - @start_index
+    @offer_list, @more_data_available = @publisher_app.get_offer_list(params[:udid], 
+        :currency => @currency,
+        :device_type => params[:device_type],
+        :geoip_data => geoip_data,
+        :type => type,
+        :required_length => (@start_index + @max_items))
     @offer_list = @offer_list[@start_index, @max_items] || []
   end
 end
