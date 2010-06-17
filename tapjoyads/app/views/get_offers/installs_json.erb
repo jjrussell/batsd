@@ -6,7 +6,7 @@
 {"OfferArray": [
   <% @offer_list.each_with_index do |offer, i| %>
     {
-      "Cost":<%= offer.get_cost.to_json -%>,
+      "Cost":<%= offer.cost.to_json -%>,
       "Amount":<%= @currency.get_reward_amount(offer).to_json -%>,
       "IconURL":<%= offer.get_icon_url.to_json -%>,
       "Name":<%= offer.name.to_json -%>,
