@@ -11,6 +11,8 @@ class Job::CreateOffersController < Job::SqsReaderController
   private
   
   def on_message(message)
+    Offer.connection.execute("UPDATE offers SET user_enabled = false WHERE item_type = 'OfferpalOffer'")
+    
     bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')
     drop_id = 'b7b401f73d98ff21792b49117edd8b9f'
     country = 'United States'
@@ -77,6 +79,7 @@ class Job::CreateOffersController < Job::SqsReaderController
         offerpal_offer.credit_card_required = offer['creditCardRequired'].to_s == '1'
         offerpal_offer.payment = amount
         offerpal_offer.save!
+        offerpal_offer.offer.update_attribute(:user_enabled, true)
       end
       
     end #offset loop

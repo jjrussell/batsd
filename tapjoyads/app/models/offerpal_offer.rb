@@ -28,6 +28,7 @@ private
     offer.time_delay = @time_delay
     offer.credit_card_required = @credit_card_required
     offer.payment = @payment
+    offer.tapjoy_enabled = true
     offer.save!
   end
   

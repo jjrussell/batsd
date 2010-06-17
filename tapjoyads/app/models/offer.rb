@@ -24,7 +24,7 @@ class Offer < ActiveRecord::Base
   after_save :update_memcached
   
   named_scope :enabled_offers, { :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND ((partners.balance > 0 AND item_type IN ('App', 'EmailOffer')) OR item_type = 'RatingOffer')", :order => "ordinal ASC" }
-  named_scope :classic_offers, { :conditions => "item_type = 'OfferpalOffer'", :order => "ordinal ASC" }
+  named_scope :classic_offers, { :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type = 'OfferpalOffer'", :order => "ordinal ASC" }
   
   def self.get_enabled_offers
     Offer.new.get_from_cache_and_save('s3.enabled_offers') do
