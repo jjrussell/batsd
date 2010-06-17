@@ -4,8 +4,6 @@ class SubmitClickController < ApplicationController
   include SqsHelper
   include MemcachedHelper
   
-  layout "iphone"
-  
   def store
     
     if params[:publisher_user_id]
@@ -42,7 +40,7 @@ class SubmitClickController < ApplicationController
       web_request = WebRequest.new
       web_request.put_values('disabled_offer', params, request)
       web_request.save
-      render :template => "submit_click/disabled_offer"
+      render :template => "submit_click/disabled_offer", :layout => 'iphone'
       return
     end
     
