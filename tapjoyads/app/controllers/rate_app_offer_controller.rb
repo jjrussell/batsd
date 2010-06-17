@@ -19,7 +19,7 @@ class RateAppOfferController < ApplicationController
     device_app_list.set_app_ran(rating_offer_id_with_version)
     device_app_list.save
     
-    currency = SdbCurrency.new(:key => app_id)
+    currency = SdbCurrency.new(:key => params[:app_id])
   
     values = calculate_offer_payouts(:currency => currency, :offer_amount => 15)
   
