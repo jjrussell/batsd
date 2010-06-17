@@ -52,7 +52,7 @@ class App < ActiveRecord::Base
     if type == '0'
       offer_list = Offer.get_classic_offers
       offer_list.reject! do |o|
-        o.app_id != id
+        o.item_type == 'RatingOffer' && o.id != id
       end
     else
       offer_list = Offer.get_enabled_offers
