@@ -90,7 +90,8 @@ class GetOffersController < ApplicationController
         :device_type => params[:device_type],
         :geoip_data => geoip_data,
         :type => type,
-        :required_length => (@start_index + @max_items))
+        :required_length => (@start_index + @max_items),
+        :app_version => params[:app_version])
     @offer_list = @offer_list[@start_index, @max_items] || []
   end
 end

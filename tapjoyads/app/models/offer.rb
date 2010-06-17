@@ -163,15 +163,15 @@ class Offer < ActiveRecord::Base
     self.conversion_rate = pay_per_click? ? (0.75 + rand * 0.15) : (conversion_rate + boost)
   end
 
-  def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data)
+  def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data, app_version)
     return is_disabled?(publisher_app, currency) ||
         platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device_app_list) ||
         age_rating_reject?(currency) ||
-        already_complete?(device_app_list) ||
+        rating_offer_reject?(publisher_app) ||
+        already_complete?(publisher_app, device_app_list, app_version) ||
         show_rate_reject?(device_app_list) ||
-        flixter_reject?(publisher_app, device_app_list) ||
-        rating_offer_reject?(publisher_app)
+        flixter_reject?(publisher_app, device_app_list)
   end
 
 private
@@ -207,10 +207,16 @@ private
     return false
   end
   
-  def already_complete?(device_app_list)
+  def already_complete?(publisher_app, device_app_list, app_version)
     return false if device_app_list.key == EXEMPT_UDID
     
-    return device_app_list.has_app(id)
+    id_for_device_app_list = id
+    if item_type == 'RatingOffer'
+      rating_offer = RatingOffer.find_in_cache(publisher_app.id)
+      id_for_device_app_list = rating_offer.get_id_for_device_app_list(params[:app_version])
+    end
+    
+    return device_app_list.has_app(id_for_device_app_list)
   end
   
   def show_rate_reject?(device_app_list)

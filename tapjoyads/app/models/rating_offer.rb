@@ -18,6 +18,10 @@ class RatingOffer < ActiveRecord::Base
     RatingOffer.new.get_from_cache_and_save("mysql.rating_offer.#{app_id}") { RatingOffer.find_by_app_id(app_id) }
   end
   
+  def get_id_for_device_app_list(app_version)
+    app_version.blank? ? id : (id + '.' + app_version)
+  end
+  
 private
   
   def set_name_and_description

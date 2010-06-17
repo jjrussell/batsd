@@ -8,15 +8,14 @@ class RateAppOfferController < ApplicationController
   def index
     offer = Offer.find_in_cache(params[:app_id])
     rating_offer = RatingOffer.find_in_cache(params[:app_id])
-    rating_offer_id_with_version = rating_offer.id
-    rating_offer_id_with_version += ".#{params[:app_version]}" if params[:app_version]
+    id_for_device_app_list = rating_offer.get_id_for_device_app_list(params[:app_version])
     device_app_list = DeviceAppList.new(:key => params[:udid])
     
-    if device_app_list.has_app(rating_offer_id_with_version)
+    if device_app_list.has_app(id_for_device_app_list)
       redirect_to(offer.get_destination_url(params[:udid], params[:app_id])) and return
     end
     
-    device_app_list.set_app_ran(rating_offer_id_with_version)
+    device_app_list.set_app_ran(id_for_device_app_list)
     device_app_list.save
     
     currency = SdbCurrency.new(:key => params[:app_id])
