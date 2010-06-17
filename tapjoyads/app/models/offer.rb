@@ -90,8 +90,7 @@ class Offer < ActiveRecord::Base
         gsub('TAPJOY_PUBLISHER_USER_RECORD_ID', int_record_id).
         gsub('TAPJOY_UDID', udid.to_s).
         gsub('TAPJOY_APP_VERSION', app_version.to_s).
-        gsub('TAPJOY_PUBLISHER_APP_ID', publisher_app_id.to_s).
-        gsub(" ","%20")
+        gsub('TAPJOY_PUBLISHER_APP_ID', publisher_app_id.to_s)
   end
   
   def get_click_url(publisher_app, publisher_user_record, udid)
