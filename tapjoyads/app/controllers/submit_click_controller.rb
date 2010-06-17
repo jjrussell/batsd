@@ -17,45 +17,32 @@ class SubmitClickController < ApplicationController
     
     now = Time.now.utc
     
-    delete_from_cache("custom_offer_list.1.#{params[:udid]}.#{params[:publisher_app_id]}")
+    offer = Offer.find_in_cache(params[:advertiser_app_id])
     
-    ##
-    # store the value of an install in this table
-    # so the user gets the reward they think they earned
-    app = SdbApp.new(:key => params[:advertiser_app_id])
-    advertiser_amount = app.get('payment_for_install').to_i
-    
-    if advertiser_amount <= 0
-      if app.get('price').to_i <= 0
-        advertiser_amount = 25
-      else
-        advertiser_amount = app.get('price').to_i / 2
-      end
-    end
-    
-    if (app.payment_for_install <= 0) && (params[:redirect] == "1")
+    if (offer.payment <= 0) && (params[:redirect] == "1")
       #this app is no longer enabled
-      @app = app
-      @params = params
+      @offer = offer
       web_request = WebRequest.new
       web_request.put_values('disabled_offer', params, request)
       web_request.save
-      render :template => "submit_click/disabled_offer", :layout => 'iphone'
-      return
+      render(:template => "submit_click/disabled_offer", :layout => 'iphone') and return
+    end
+    
+    if offer.item_type == 'RatingOffer'
+      render(:template => 'layouts/success') and return
     end
     
     # don't store the click if the user already has the app installed
     device_app_list = DeviceAppList.new(:key => params[:udid])
     if device_app_list.has_app(params[:advertiser_app_id])
-      redirect_to app.get_store_url(params[:udid], params[:publisher_app_id])
-      return
+      redirect_to(offer.get_destination_url(params[:udid], params[:publisher_app_id])) and return
     end
     
     ##
     # store how much currency the user earns for this install    
     currency = SdbCurrency.new(:key => params[:publisher_app_id])
-
-    values = calculate_install_payouts(:currency => currency, :advertiser_app => app)
+    sdb_app = SdbApp.new(:key => params[:advertiser_app_id])
+    values = calculate_install_payouts(:currency => currency, :advertiser_app => sdb_app)
     
     ##
     # each attribute that starts with publisher.<id> has a . separated value
@@ -78,7 +65,7 @@ class SubmitClickController < ApplicationController
     web_request.put_values('store_click', params, request)
     web_request.save
     
-    if app.get('pay_per_click') == '1'
+    if offer.pay_per_click?
       #assign the currency and consider the txn complete right now
       logger.info "Added fake conversion to sqs queue"
       message = {:udid => params[:udid], :app_id => params[:advertiser_app_id], 
@@ -94,9 +81,9 @@ class SubmitClickController < ApplicationController
     end
     
     if params[:redirect] == "1"
-      redirect_to app.get_store_url(params[:udid], params[:publisher_app_id])
+      redirect_to(offer.get_destination_url(params[:udid], params[:publisher_app_id]))
     else
-      render :template => 'layouts/success'
+      render(:template => 'layouts/success')
     end
   end
   
@@ -119,7 +106,7 @@ class SubmitClickController < ApplicationController
     web_request.put_values('offer_click', params, request)
     web_request.save
     
-    render :template => 'layouts/success'
+    render(:template => 'layouts/success')
   end
   
   def ad
@@ -129,6 +116,6 @@ class SubmitClickController < ApplicationController
     web_request.put_values('adclick', params, request)
     web_request.save
 
-    render :template => 'layouts/success'
+    render(:template => 'layouts/success')
   end
 end

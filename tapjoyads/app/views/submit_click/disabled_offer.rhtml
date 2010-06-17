@@ -17,8 +17,8 @@
 
 
 <div class="instructions">
-  The reward off for <span class="name"><%= @app.name %></span> is no longer enabled. You can return to the previous page and refresh to reload the latest offer list. <br><br>
+  The reward off for <span class="name"><%= @offer.name %></span> is no longer enabled. You can return to the previous page and refresh to reload the latest offer list. <br><br>
 	
-  <a href="<%= @app.get_store_url(@params[:udid], @params[:publisher_app_id]) %>">Or, click here to download <%= @app.name %> anyways.</a>
+  <a href="<%= @offer.get_destination_url(params[:udid], params[:publisher_app_id]) %>">Or, click here to download <%= @offer.name %> anyways.</a>
 </div>
 

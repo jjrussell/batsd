@@ -20,6 +20,8 @@ class Offer < ActiveRecord::Base
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer OfferpalOffer RatingOffer )
   
+  after_save :update_memcached
+  
   named_scope :enabled_offers, { :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND ((partners.balance > 0 AND item_type IN ('App', 'EmailOffer')) OR item_type = 'RatingOffer')", :order => "ordinal ASC" }
   named_scope :classic_offers, { :conditions => "item_type = 'OfferpalOffer'", :order => "ordinal ASC" }
   
@@ -64,6 +66,10 @@ class Offer < ActiveRecord::Base
     Offer.new.save_to_cache('s3.classic_offers', offer_list)
   end
   
+  def self.find_in_cache(id)
+    Offer.new.get_from_cache_and_save("mysql.offer.#{id}") { Offer.find(id) }
+  end
+  
   def cost
     price > 0 ? 'Paid' : 'Free'
   end
@@ -76,9 +82,11 @@ class Offer < ActiveRecord::Base
     !is_paid?
   end
   
-  def get_destination_url(udid, publisher_app_id, publisher_user_record, app_version)
-    url.gsub('TAPJOY_GENERIC', publisher_user_record.get_int_record_id).
-        gsub('TAPJOY_PUBLISHER_USER_RECORD_ID', publisher_user_record.get_int_record_id).
+  def get_destination_url(udid, publisher_app_id, publisher_user_record = nil, app_version = nil)
+    int_record_id = publisher_user_record.nil? ? '' : publisher_user_record.get_int_record_id
+    
+    url.gsub('TAPJOY_GENERIC', int_record_id).
+        gsub('TAPJOY_PUBLISHER_USER_RECORD_ID', int_record_id).
         gsub('TAPJOY_UDID', udid.to_s).
         gsub('TAPJOY_APP_VERSION', app_version.to_s).
         gsub('TAPJOY_PUBLISHER_APP_ID', publisher_app_id.to_s).
@@ -86,9 +94,6 @@ class Offer < ActiveRecord::Base
   end
   
   def get_click_url(publisher_app, publisher_user_record, udid)
-    if item_type == 'RatingOffer'
-      return "http://ws.tapjoyads.com/healthz/success"
-    end
     "http://ws.tapjoyads.com/submit_click/store?advertiser_app_id=#{id}&publisher_app_id=#{publisher_app.id}&publisher_user_record_id=#{publisher_user_record.get_record_id}&udid=#{udid}"
   end
   
@@ -247,6 +252,10 @@ private
     else
       nil
     end
+  end
+
+  def update_memcached
+    save_to_cache("mysql.offer.#{id}", self)
   end
 
 end
