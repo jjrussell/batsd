@@ -39,6 +39,9 @@ private
     offer.time_delay = 'in seconds'
     offer.payment = 15
     offer.ordinal = 1
+    offer.third_party_data = app_id
+    offer.tapjoy_enabled = true
+    offer.user_enabled = true
     offer.save!
   end
   

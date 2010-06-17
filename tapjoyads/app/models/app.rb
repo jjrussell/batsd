@@ -53,8 +53,6 @@ class App < ActiveRecord::Base
       offer_list = Offer.get_classic_offers
     else
       offer_list = Offer.get_enabled_offers
-      rate_offer = RatingOffer.find_in_cache(id)
-      offer_list.unshift(rate_offer) unless rate_offer.nil?
     end
     
     offer_list.reject! do |o|

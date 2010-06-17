@@ -20,7 +20,7 @@ class Offer < ActiveRecord::Base
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer OfferpalOffer RatingOffer )
   
-  named_scope :enabled_offers, { :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND partners.balance > 0", :order => "ordinal ASC" }
+  named_scope :enabled_offers, { :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND ((partners.balance > 0 AND item_type IN ('App', 'EmailOffer')) OR item_type = 'RatingOffer')", :order => "ordinal ASC" }
   named_scope :classic_offers, { :conditions => "item_type = 'OfferpalOffer'", :order => "ordinal ASC" }
   
   def self.get_enabled_offers
@@ -160,7 +160,8 @@ class Offer < ActiveRecord::Base
         age_rating_reject?(currency) ||
         already_complete?(device_app_list) ||
         show_rate_reject?(device_app_list) ||
-        flixter_reject?(publisher_app, device_app_list)
+        flixter_reject?(publisher_app, device_app_list) ||
+        rating_offer_reject?(publisher_app)
   end
 
 private
@@ -224,7 +225,11 @@ private
     end
     return false
   end
-
+  
+  def rating_offer_reject?(publisher_app)
+    return item_type == 'RatingOffer' && third_party_data != publisher_app.id
+  end
+  
   def normalize_device_type(device_type_param)
     if device_type_param =~ /iphone/i
       'iphone'
