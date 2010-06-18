@@ -49,7 +49,7 @@ class GetVgStoreItemsController < ApplicationController
       list
     end
     
-    if @currency.get_test_device_ids.include?(params[:udid])
+    if !@currency.nil? && @currency.get_test_device_ids.include?(params[:udid])
       mc_key = "virtual_good_list.beta.#{params[:app_id]}"
       @virtual_good_list = @virtual_good_list | get_from_cache_and_save(mc_key, false, 5.minutes) do
         list = []
