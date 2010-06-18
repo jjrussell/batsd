@@ -3,8 +3,9 @@ class Currency < ActiveRecord::Base
   include MemcachedHelper
   
   belongs_to :app
+  belongs_to :partner
   
-  validates_presence_of :app
+  validates_presence_of :app, :partner
   validates_numericality_of :conversion_rate, :initial_balance, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :offers_money_share, :installs_money_share, :greater_than_or_equal_to => 0
   validates_numericality_of :max_age_rating, :allow_nil => true, :only_integer => true

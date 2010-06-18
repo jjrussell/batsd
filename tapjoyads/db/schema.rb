@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100614220139) do
+ActiveRecord::Schema.define(:version => 20100618210811) do
 
   create_table "apps", :force => true do |t|
     t.string   "partner_id",            :limit => 36,                    :null => false
@@ -71,6 +71,7 @@ ActiveRecord::Schema.define(:version => 20100614220139) do
     t.datetime "updated_at"
     t.integer  "max_age_rating"
     t.text     "disabled_partners",                                                                   :null => false
+    t.string   "partner_id",           :limit => 36,                                                  :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
