@@ -66,7 +66,7 @@ class GetOffersController < ApplicationController
     @publisher_user_record.update(params[:udid])
     
     @publisher_app = App.find_in_cache(params[:app_id])
-    @currency = Currency.find_in_cache(params[:app_id])
+    @currency = Currency.find_in_cache_by_app_id(params[:app_id])
     
     web_request = WebRequest.new
     web_request.put_values('offers', params, request)

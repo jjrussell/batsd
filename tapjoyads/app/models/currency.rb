@@ -12,7 +12,7 @@ class Currency < ActiveRecord::Base
   
   after_save :update_memcached
   
-  def self.find_in_cache(app_id)
+  def self.find_in_cache_by_app_id(app_id)
     Currency.new.get_from_cache_and_save("mysql.currency.#{app_id}") { Currency.find_by_app_id(app_id) }
   end
   
