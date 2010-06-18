@@ -39,7 +39,7 @@ class GetVgStoreItemsController < ApplicationController
   
   def setup
     @point_purchases = PointPurchases.new(:key => "#{params[:udid]}.#{params[:app_id]}")
-    @currency = SdbCurrency.new(:key => params[:app_id])
+    @currency = Currency.find_in_cache_by_app_id(params[:app_id])
     mc_key = "virtual_good_list.#{params[:app_id]}"
     @virtual_good_list = get_from_cache_and_save(mc_key, false, 5.minutes) do
       list = []
@@ -49,7 +49,7 @@ class GetVgStoreItemsController < ApplicationController
       list
     end
     
-    if @currency.beta_devices.include?(params[:udid])
+    if @currency.get_test_device_ids.include?(params[:udid])
       mc_key = "virtual_good_list.beta.#{params[:app_id]}"
       @virtual_good_list = @virtual_good_list | get_from_cache_and_save(mc_key, false, 5.minutes) do
         list = []

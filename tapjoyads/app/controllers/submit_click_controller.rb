@@ -40,9 +40,8 @@ class SubmitClickController < ApplicationController
     
     ##
     # store how much currency the user earns for this install    
-    currency = SdbCurrency.new(:key => params[:publisher_app_id])
+    currency = Currency.find_in_cache_by_app_id(params[:publisher_app_id])
     sdb_app = SdbApp.new(:key => params[:advertiser_app_id])
-    values = calculate_install_payouts(:currency => currency, :advertiser_app => sdb_app)
     
     ##
     # each attribute that starts with publisher.<id> has a . separated value
@@ -50,14 +49,13 @@ class SubmitClickController < ApplicationController
     # so when the app is installed, we look at the timestamp to determine where the reward goes
     click = StoreClick.new(:key => "#{params[:udid]}.#{params[:advertiser_app_id]}")
     click.put("click_date", "#{now.to_f.to_s}")
-    click.put("publisher_app_id",params[:publisher_app_id])
+    click.put("publisher_app_id", params[:publisher_app_id])
     click.put("publisher_user_record_id", params[:publisher_user_record_id])
     click.put("advertiser_app_id", params[:advertiser_app_id])
-    click.put('advertiser_amount', values[:advertiser_amount])
-    click.put('publisher_amount', values[:publisher_amount])
-    click.put('currency_reward', values[:currency_reward])
-    click.put('tapjoy_amount', values[:tapjoy_amount])
-    click.put('offerpal_amount', values[:offerpal_amount])
+    click.put('advertiser_amount', currency.get_advertiser_amount(offer))
+    click.put('publisher_amount', currency.get_publisher_amount(offer))
+    click.put('currency_reward', currency.get_reward_amount(offer))
+    click.put('tapjoy_amount', currency.get_tapjoy_amount(offer))
     click.put('reward_key', UUIDTools::UUID.random_create.to_s)
     click.save
     

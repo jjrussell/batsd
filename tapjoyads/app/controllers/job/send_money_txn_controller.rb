@@ -20,15 +20,13 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
           return
         end
         
-        values = calculate_install_payouts(
-            :currency => SdbCurrency.new(:key => reward.get('publisher_app_id')), 
-            :advertiser_app => SdbApp.new(:key => reward.get('advertiser_app_id')))
-
-        reward.put('advertiser_amount', values[:advertiser_amount])
-        reward.put('publisher_amount', values[:publisher_amount])
-        reward.put('currency_reward', values[:currency_reward])
-        reward.put('tapjoy_amount', values[:tapjoy_amount])
-        reward.put('offerpal_amount', values[:offerpal_amount])
+        currency = Currency.find_in_cache_by_app_id(reward.get('publisher_app_id'))
+        offer = Offer.find_in_cache(reward.get('advertiser_app_id'))
+        
+        reward.put('advertiser_amount', currency.get_advertiser_amount(offer))
+        reward.put('publisher_amount', currency.get_publisher_amount(offer))
+        reward.put('currency_reward', currency.get_reward_amount(offer))
+        reward.put('tapjoy_amount', currency.get_tapjoy_amount(offer))
       end
       
       conversion = Conversion.new do |c|
@@ -51,20 +49,6 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
           raise e
         end
       end
-      
-      #win_lb = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/Service1.asmx/'
-      # win_lb = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/Service1.asmx/'
-      # url = win_lb + "SubmitMoneyTxn?password=asfyrexvlkjewr214314" + 
-      #   "&publisher_app_id=#{CGI::escape(reward.get('publisher_app_id'))}" +
-      #   "&advertiser_app_id=#{CGI::escape(reward.get('advertiser_app_id') || '')}" +
-      #   "&item_id=#{CGI::escape(reward.key)}" +
-      #   "&publisher_amount=#{CGI::escape(reward.get('publisher_amount'))}" +
-      #   "&advertiser_amount=#{CGI::escape(reward.get('advertiser_amount'))}" +
-      #   "&tapjoy_amount=#{CGI::escape(reward.get('tapjoy_amount'))}" +
-      #   "&offerpal_amount=#{CGI::escape(reward.get('offerpal_amount'))}" +
-      #   "&money_txn_id=#{conversion.id}"
-      # 
-      # download_with_retry(url, {:timeout => 30})
       
       reward.put('sent_money_txn', Time.now.utc.to_f.to_s)
       reward.save

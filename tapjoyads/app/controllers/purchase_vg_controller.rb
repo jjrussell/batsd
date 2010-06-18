@@ -39,8 +39,8 @@ class PurchaseVgController < ApplicationController
   def remove_all
     return unless verify_params([:app_id, :udid])
     
-    currency = SdbCurrency.new(:key => params[:app_id])
-    raise NotABetaDevice.new unless currency.beta_devices.include?(params[:udid])
+    currency = Currency.find_in_cache_by_app_id(params[:app_id])
+    raise NotABetaDevice.new unless currency.get_test_device_ids.include?(params[:udid])
     
     PointPurchases.transaction(:key => "#{params[:udid]}.#{params[:app_id]}") do |point_purchases|
       point_purchases.virtual_goods = {}

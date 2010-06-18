@@ -18,9 +18,8 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         return
       end
 
-      currency = SdbCurrency.new(:key => reward.get('publisher_app_id'))
-      callback_url = currency.get('callback_url')
-      
+      currency = Currency.find_in_cache_by_app_id(reward.get('publisher_app_id'))
+      callback_url = currency.callback_url
     
       if callback_url == 'PLAYDOM_DEFINED'
         first_char = publisher_user_id[0, 1]
@@ -59,7 +58,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       mark = '&' if callback_url =~ /\?/
       callback_url = "#{callback_url}#{mark}snuid=#{CGI::escape(publisher_user_id)}&currency=#{reward.get('currency_reward')}"
     
-      if currency.get('send_offer_data') == '1'
+      if currency.send_offer_data?
         if (reward.get('type') == 'install')
           adv_app = SdbApp.new(:key => reward.get('advertiser_app_id'))
           name = adv_app.get('name')
@@ -85,9 +84,8 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         callback_url += "&rev=#{publisher_revenue}"
       end
     
-      secret_key = currency.get('secret_key')
-      unless secret_key.nil? or secret_key == 'None'
-        hash_source = "#{reward.key}:#{publisher_user_id}:#{reward.get('currency_reward')}:#{secret_key}"
+      unless currency.secret_key.blank?
+        hash_source = "#{reward.key}:#{publisher_user_id}:#{reward.get('currency_reward')}:#{currency.secret_key}"
         hash = Digest::MD5.hexdigest(hash_source)
         callback_url = "#{callback_url}&id=#{reward.key}&verifier=#{hash}"
       end

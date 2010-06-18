@@ -18,15 +18,30 @@ class Currency < ActiveRecord::Base
   end
   
   def get_reward_amount(offer)
+    [get_publisher_amount(offer) * conversion_rate / 100.0, 1.0].max.to_i
+  end
+  
+  def get_publisher_amount(offer)
     if offer.item_type == 'RatingOffer' || offer.item_type == 'OfferpalOffer'
       publisher_amount = offer.payment * offers_money_share
-    elsif offer.partner_id == app.partner_id
+    elsif offer.partner_id == partner_id
       publisher_amount = offer.payment
     else
       publisher_amount = offer.payment * installs_money_share
     end
-    
-    [publisher_amount.to_i * conversion_rate / 100.0, 1.0].max.to_i
+    publisher_amount.to_i
+  end
+  
+  def get_advertiser_amount(offer)
+    -(offer.actual_payment || offer.payment)
+  end
+  
+  def get_tapjoy_amount(offer)
+    tapjoy_amount = -get_advertiser_amount(offer) - get_publisher_amount(offer)
+    unless offer.actual_payment.nil?
+      tapjoy_amount += offer.actual_payment - offer.payment
+    end
+    tapjoy_amount
   end
   
   def get_disabled_offer_ids
@@ -35,6 +50,10 @@ class Currency < ActiveRecord::Base
   
   def get_disabled_partner_ids
     Set.new(disabled_partners.split(';'))
+  end
+  
+  def get_test_device_ids
+    Set.new(test_devices.split(';'))
   end
   
 private

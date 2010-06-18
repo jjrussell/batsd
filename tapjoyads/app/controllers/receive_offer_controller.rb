@@ -24,18 +24,16 @@ class ReceiveOfferController < ApplicationController
     parts = record_key.split('.')
     publisher_app_id = parts[0]
     publisher_user_id = parts[1]    
-    currency = SdbCurrency.new(:key => publisher_app_id)
-    
-    values = calculate_offer_payouts(:currency => currency, :offer_amount => amount)
+    currency = Currency.find_in_cache_by_app_id(publisher_app_id)
+    offer = Offer.new(:item_type = 'OfferpalOffer', :payment => amount)
     
     received_offer = ReceivedOffer.new
     received_offer.put('snuid', snuid)
     received_offer.put('amount', amount)
-    received_offer.put('advertiser_amount', values[:advertiser_amount])
-    received_offer.put('publisher_amount', values[:publisher_amount])
-    received_offer.put('currency_reward', values[:currency_reward])
-    received_offer.put('tapjoy_amount', values[:tapjoy_amount])
-    received_offer.put('offerpal_amount', values[:offerpal_amount])
+    received_offer.put('advertiser_amount', currency.get_advertiser_amount(offer))
+    received_offer.put('publisher_amount', currency.get_publisher_amount(offer))
+    received_offer.put('currency_reward', currency.get_reward_amount(offer))
+    received_offer.put('tapjoy_amount', currency.get_tapjoy_amount(offer))
     received_offer.put('customer_service', '1') if customer_service
     received_offer.save
     
@@ -49,7 +47,6 @@ class ReceiveOfferController < ApplicationController
     reward.put('publisher_amount', received_offer.get('publisher_amount'))
     reward.put('currency_reward', received_offer.get('currency_reward'))
     reward.put('tapjoy_amount', received_offer.get('tapjoy_amount'))
-    reward.put('offerpal_amount', received_offer.get('offerpal_amount'))
     reward.save
     
     message = reward.serialize(:attributes_only => true)

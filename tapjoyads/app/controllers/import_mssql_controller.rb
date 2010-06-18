@@ -125,26 +125,6 @@ class ImportMssqlController < ApplicationController
   def currency
     return unless verify_params([:app_id])
     
-    currency = SdbCurrency.new(:key => params[:app_id])
-    
-    currency.put('currency_name',params[:currency_name])
-    currency.put('conversion_rate', params[:conversion_rate])
-    currency.put('initial_balance', params[:initial_balance])
-    currency.put('virtual_goods_currency', params[:virtual_goods_currency])
-    currency.put('secret_key', params[:secret_key]) if params[:secret_key] != ''
-    currency.put('callback_url', params[:callback_url])
-    currency.put('cs_callback_url', params[:cs_callback_url])
-    currency.put('offers_money_share', params[:offers_money_share])
-    currency.put('installs_money_share', params[:installs_money_share])
-    currency.put('disabled_offers', params[:disabled_offers])
-    currency.put('disabled_apps', params[:disabled_apps]) 
-    currency.put('only_free_apps', params[:only_free_apps])
-    currency.put('show_rating_offer', params[:show_rating_offer])
-    currency.put('send_offer_data', params[:send_offer_data])
-    currency.beta_devices = (params[:beta_devices] || '').split(';')
-    
-    currency.save
-    
     currency = Currency.find_or_initialize_by_app_id(params[:app_id])
     currency.partner = currency.app.partner
     currency.name = params[:currency_name]

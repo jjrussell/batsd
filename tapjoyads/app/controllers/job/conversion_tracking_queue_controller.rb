@@ -48,21 +48,14 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       web_request.put('publisher_app_id', click.get('publisher_app_id'))
       web_request.save
       
-      adv_app = SdbApp.new(:key => advertiser_app_id)
-      
-      publisher_app_id = click.get('publisher_app_id')
-      currency = SdbCurrency.new(:key => publisher_app_id)
-      
-      values = calculate_install_payouts(:currency => currency, :advertiser_app => adv_app)
+      currency = Currency.find_in_cache_by_app_id(click.get('publisher_app_id'))
+      offer = Offer.find_in_cache(advertiser_app_id)
       
       unless click.get('currency_reward')
-        values = calculate_install_payouts(:currency => currency, :advertiser_app => adv_app)
-
-        click.put('advertiser_amount', values[:advertiser_amount])
-        click.put('publisher_amount', values[:publisher_amount])
-        click.put('currency_reward', values[:currency_reward])
-        click.put('tapjoy_amount', values[:tapjoy_amount])
-        click.put('offerpal_amount', values[:offerpal_amount])
+        click.put('advertiser_amount', currency.get_advertiser_amount(offer))
+        click.put('publisher_amount', currency.get_publisher_amount(offer))
+        click.put('currency_reward', currency.get_reward_amount(offer))
+        click.put('tapjoy_amount', currency.get_tapjoy_amount(offer))
       end
       
       begin
@@ -74,20 +67,19 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       end
       
       reward.put('type', 'install')
-      reward.put('publisher_app_id', publisher_app_id)
+      reward.put('publisher_app_id', click.get('publisher_app_id'))
       reward.put('advertiser_app_id', advertiser_app_id)
       reward.put('publisher_user_id', publisher_user_id, {:cgi_escape => true})
       reward.put('advertiser_amount', click.get('advertiser_amount'))
       reward.put('publisher_amount', click.get('publisher_amount'))
       reward.put('currency_reward', click.get('currency_reward'))
       reward.put('tapjoy_amount', click.get('tapjoy_amount'))
-      reward.put('offerpal_amount', click.get('offerpal_amount'))
     
       reward.save
     
       message = reward.serialize(:attributes_only => true)
     
-      send_to_sqs(QueueNames::SEND_CURRENCY, message) if currency.get('callback_url')
+      send_to_sqs(QueueNames::SEND_CURRENCY, message) unless currency.callback_url.blank?
       send_to_sqs(QueueNames::SEND_MONEY_TXN, message)
       
       click.put('installed', install_date)

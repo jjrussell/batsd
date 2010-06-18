@@ -8,7 +8,8 @@ class ListSignupController < ApplicationController
   def index
     return unless verify_params([:udid, :publisher_app_id, :advertiser_app_id], {:allow_empty => false})
     
-    @currency = SdbCurrency.new(:key => params[:publisher_app_id])
+    @currency = Currency.find_in_cache_by_app_id(params[:publisher_app_id])
+    @offer = Offer.find_in_cache(params[:advertiser_app_id])
     @publisher_app = SdbApp.new(:key => params[:publisher_app_id])
     @advertiser_app = SdbApp.new(:key => params[:advertiser_app_id])
   end
@@ -27,18 +28,16 @@ class ListSignupController < ApplicationController
       
       signup.save
       
-      @currency = SdbCurrency.new(:key => params[:publisher_app_id])
+      @currency = Currency.find_in_cache_by_app_id(params[:publisher_app_id])
+      @offer = Offer.find_in_cache(params[:advertiser_app_id])
       @publisher_app = SdbApp.new(:key => params[:publisher_app_id])
       @advertiser_app = SdbApp.new(:key => params[:advertiser_app_id])
-      
-      # Send the mail via our gmail smtp server. Disabled, since we're using 4info to send the email.
-      #TapjoyMailer.deliver_email_signup(params[:email_address], signup.key, @currency.currency_name, @publisher_app.name, @currency.get_app_currency_reward(@advertiser_app))
       
       # Send the emails via 4info.
       key = Digest::MD5.hexdigest("#{params[:email_address]}xFBysLNwaCRhGYKGXkpHjzWbVehBhE")
       
-      reward_text = CGI::escape(@currency.get_app_currency_reward(@advertiser_app) + ' ' +
-          @publisher_app.name + ' ' + @currency.currency_name)
+      reward_text = CGI::escape(@currency.get_reward_amount(@offer) + ' ' +
+          @publisher_app.name + ' ' + @currency.name)
       
       url = 'http://www.4infoalerts.com/wap/tapjoy/post_email_address' +
           "?campaignId=#{@advertiser_app.custom_app_id}" +
@@ -76,7 +75,7 @@ class ListSignupController < ApplicationController
     if @signup.is_new
       return false
     else
-      @currency = SdbCurrency.new(:key => @signup.publisher_app_id)
+      @currency = Currency.find_in_cache_by_app_id(@signup.publisher_app_id)
       @publisher_app = SdbApp.new(:key => @signup.publisher_app_id)
 
       @signup.confirmed = Time.now

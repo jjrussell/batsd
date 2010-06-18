@@ -6,6 +6,7 @@ class RateAppOfferController < ApplicationController
   layout 'iphone'
   
   def index
+    currency = Currency.find_in_cache_by_app_id(params[:app_id])
     offer = Offer.find_in_cache(params[:app_id])
     rating_offer = RatingOffer.find_in_cache_by_app_id(params[:app_id])
     id_for_device_app_list = rating_offer.get_id_for_device_app_list(params[:app_version])
@@ -17,10 +18,6 @@ class RateAppOfferController < ApplicationController
     
     device_app_list.set_app_ran(id_for_device_app_list)
     device_app_list.save
-    
-    currency = SdbCurrency.new(:key => params[:app_id])
-  
-    values = calculate_offer_payouts(:currency => currency, :offer_amount => 15)
   
     record_key = lookup_by_int_record(params[:record_id])
     publisher_user_id = record_key.split('.')[1]
@@ -32,7 +29,7 @@ class RateAppOfferController < ApplicationController
     reward.put('publisher_user_id', publisher_user_id)
     reward.put('advertiser_amount', '0')
     reward.put('publisher_amount', '0')
-    reward.put('currency_reward', values[:currency_reward])
+    reward.put('currency_reward', currency.get_reward_amount(offer))
     reward.put('tapjoy_amount', '0')
     reward.put('offerpal_amount', '0')
 
