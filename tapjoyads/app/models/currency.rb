@@ -17,7 +17,9 @@ class Currency < ActiveRecord::Base
   end
   
   def get_reward_amount(offer)
-    if offer.partner_id == app.partner_id
+    if offer.item_type == 'RatingOffer' || offer.item_type == 'OfferpalOffer'
+      publisher_amount = offer.payment * offers_money_share
+    elsif offer.partner_id == app.partner_id
       publisher_amount = offer.payment
     else
       publisher_amount = offer.payment * installs_money_share
