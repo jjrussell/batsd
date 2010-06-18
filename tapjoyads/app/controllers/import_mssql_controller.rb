@@ -146,6 +146,7 @@ class ImportMssqlController < ApplicationController
     currency.save
     
     currency = Currency.find_or_initialize_by_app_id(params[:app_id])
+    currency.partner = currency.app.partner
     currency.name = params[:currency_name]
     currency.conversion_rate = params[:conversion_rate]
     currency.initial_balance = params[:initial_balance].to_i
