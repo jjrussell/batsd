@@ -13,6 +13,7 @@
 server_list = `script/ec2servers "#{ARGV.first}"`.split("\n")
 command = ARGV[1]
 user = ARGV[2] || 'webuser'
+serial_run = ARGV[3] || false
 
 # Add servers to ~/.ssh/known_hosts, so that ssh does not prompt you to type 'yes'.
 f = open(File.expand_path('~/.ssh/known_hosts'), 'r')
@@ -48,11 +49,9 @@ thread_list = []
 
 server_list.each do |s|
   thread = Thread.new do
-    puts "Running on #{s}",
-        `ssh #{user}@#{s} '#{command}'`,
-        "\n"
+    puts "Running on #{s}", `ssh #{user}@#{s} '#{command}'`, "\n"
   end
-  thread_list.push(thread)
+  serial_run && rand > 0.5 ? thread.join : thread_list.push(thread)
 end
 
 thread_list.each do |thread|
