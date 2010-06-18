@@ -25,7 +25,7 @@ class ReceiveOfferController < ApplicationController
     publisher_app_id = parts[0]
     publisher_user_id = parts[1]    
     currency = Currency.find_in_cache_by_app_id(publisher_app_id)
-    offer = Offer.new(:item_type = 'OfferpalOffer', :payment => amount)
+    offer = Offer.new(:item_type => 'OfferpalOffer', :payment => amount)
     
     received_offer = ReceivedOffer.new
     received_offer.put('snuid', snuid)
