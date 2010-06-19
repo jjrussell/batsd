@@ -40,6 +40,12 @@ class GetVgStoreItemsController < ApplicationController
   def setup
     @point_purchases = PointPurchases.new(:key => "#{params[:udid]}.#{params[:app_id]}")
     @currency = Currency.find_in_cache_by_app_id(params[:app_id])
+    unless @currency.nil?
+      @currency = Currency.new(:app_id => params[:app_id])
+      @currency.partner = @currency.app.partner
+      @currency.name = ''
+      @currency.save!
+    end
     mc_key = "virtual_good_list.#{params[:app_id]}"
     @virtual_good_list = get_from_cache_and_save(mc_key, false, 5.minutes) do
       list = []
