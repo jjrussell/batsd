@@ -25,7 +25,7 @@ class App < ActiveRecord::Base
       read_attribute(:store_url)
     else
       if platform == 'android'
-        "http://market.android.com/details?id=#{store_id}"
+        "market://search?q=#{store_id}"
       else
         web_object_url = "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
         "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&type=10&tmpid=3909&RD_PARM1=#{CGI::escape(web_object_url)}"
