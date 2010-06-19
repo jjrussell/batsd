@@ -42,7 +42,7 @@ class App < ActiveRecord::Base
   def get_offer_list(udid, options = {})
     currency = options.delete(:currency)
     device_type = options.delete(:device_type)
-    geoip_data = options.delete(:geoip_data)
+    geoip_data = options.delete(:geoip_data) { {} }
     type = options.delete(:type) { '1' }
     required_length = options.delete(:required_length) { 999 }
     app_version = options.delete(:app_version)
