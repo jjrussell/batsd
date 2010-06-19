@@ -8,16 +8,6 @@ class ImportMssqlController < ApplicationController
   protect_from_forgery :except => [:publisher_ad, :app, :campaign]
 
   def user
-    user = SdbUser.new(:key => params[:user_id])
-    user.put('user_id', params[:user_id])
-    user.put('partner_id', params[:partner_id])
-    user.put('email', params[:email])
-    user.put('user_name', params[:user_name])
-    user.put('password', params[:password])
-    user.put('salt', params[:salt])
-    
-    user.save
-    
     user = User.find_or_initialize_by_id(params[:user_id])
     user.username = params[:user_name]
     user.email = params[:email]
@@ -95,25 +85,11 @@ class ImportMssqlController < ApplicationController
   
   def partner
     return unless verify_params([:partner_id])
-
-    partner = SdbPartner.new(:key => params[:partner_id])
-    partner.put('partner_id', params[:partner_id])
-    partner.put('contact_name', params[:contact_name])
-    partner.put('contact_phone', params[:contact_phone])
-    partner.put('paypal', params[:paypal])
-    partner.put('referrer', params[:referrer])
-    partner.put('offerpal_sales', (params[:referrer][0..3] == "OPM-") ? '1' : '0')
-    partner.put('apps',params[:apps], {:cgi_escape => true})
-    
-    partner.save
     
     partner = Partner.find_or_initialize_by_id(params[:partner_id])
     partner.name = params[:name] unless params[:name].blank?
     partner.contact_name = params[:contact_name] unless params[:contact_name].blank?
     partner.contact_phone = params[:contact_phone] unless params[:contact_phone].blank?
-    # partner.balance = params[:balance]
-    # partner.pending_earnings = params[:pending_earnings]
-    
     partner.updated_at = Time.parse(params[:updated_at] + ' CST').utc
     partner.created_at = Time.parse(params[:created_at] + ' CST').utc
     

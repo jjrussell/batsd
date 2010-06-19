@@ -6,7 +6,7 @@ class StreetviewDataController < ApplicationController
   def index
     return unless verify_params([:date])
     
-    partner = SdbPartner.new :key => '9827ebca-d1ad-4dea-b61b-f38dd0d298c1'
+    partner = Partner.find('9827ebca-d1ad-4dea-b61b-f38dd0d298c1')
     
     start_time = Time.zone.parse(params[:date])
     
@@ -16,14 +16,12 @@ class StreetviewDataController < ApplicationController
     @date = start_time.iso8601[0,10]
     @appstats_list = []
     
-    partner.apps.each do |app_pair|
-      app_key = app_pair[0].downcase
-      
-      appstats = Appstats.new(app_key, {
+    partner.apps.each do |app|
+      appstats = Appstats.new(app.id, {
         :start_time => start_time,
         :end_time => start_time + 24.hours})
         
-      @appstats_list << appstats
+      @appstats_list << [ app, appstats ]
     end
   end
 end

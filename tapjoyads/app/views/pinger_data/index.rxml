@@ -1,10 +1,12 @@
 xml.instruct!
 xml.MarketingData do
   xml.Date @date
-  @appstats_list.each do |appstats|
+  @appstats_list.each do |app_with_stats|
+    app = app_with_stats[0]
+    appstats = app_with_stats[1]
     xml.App do
-      xml.Name SdbApp.new(:key => appstats.app_key).name
-      xml.AppKey appstats.app_key
+      xml.Name app.name
+      xml.AppKey app.id
       xml.PaidInstalls appstats.stats['paid_installs'].sum
       xml.PaidInstallsHourly appstats.stats['paid_installs'].join(',')
       xml.Spend appstats.stats['installs_spend'].sum
