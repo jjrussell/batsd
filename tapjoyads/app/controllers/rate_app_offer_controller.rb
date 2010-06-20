@@ -8,7 +8,7 @@ class RateAppOfferController < ApplicationController
   def index
     currency = Currency.find_in_cache_by_app_id(params[:app_id])
     rating_offer = RatingOffer.find_in_cache_by_app_id(params[:app_id])
-    offer = Offer.find_in_cache(rating_offer.offer_id)
+    offer = Offer.find_in_cache(rating_offer.id)
     app = App.find_in_cache(rating_offer.app_id)
     id_for_device_app_list = rating_offer.get_id_for_device_app_list(params[:app_version])
     device_app_list = DeviceAppList.new(:key => params[:udid])
