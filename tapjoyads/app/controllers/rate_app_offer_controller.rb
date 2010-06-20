@@ -7,13 +7,14 @@ class RateAppOfferController < ApplicationController
   
   def index
     currency = Currency.find_in_cache_by_app_id(params[:app_id])
-    offer = Offer.find_in_cache(params[:app_id])
     rating_offer = RatingOffer.find_in_cache_by_app_id(params[:app_id])
+    offer = Offer.find_in_cache(rating_offer.offer_id)
+    app = App.find_in_cache(rating_offer.app_id)
     id_for_device_app_list = rating_offer.get_id_for_device_app_list(params[:app_version])
     device_app_list = DeviceAppList.new(:key => params[:udid])
     
     if device_app_list.has_app(id_for_device_app_list)
-      redirect_to(offer.get_destination_url(params[:udid], params[:app_id])) and return
+      redirect_to(app.store_url) and return
     end
     
     device_app_list.set_app_ran(id_for_device_app_list)
@@ -44,6 +45,6 @@ class RateAppOfferController < ApplicationController
 
     send_to_sqs(QueueNames::SEND_CURRENCY, message)
 
-    redirect_to offer.get_destination_url(params[:udid], params[:app_id])
+    redirect_to(app.store_url)
   end
 end
