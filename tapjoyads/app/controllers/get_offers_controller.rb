@@ -2,6 +2,8 @@ class GetOffersController < ApplicationController
   include MemcachedHelper
   include GeoipHelper
   
+  layout 'iphone', :only => :webpage
+  
   def webpage
     return unless verify_params([:app_id, :udid], {:allow_empty => false})
   

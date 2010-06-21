@@ -1,0 +1,49 @@
+- @page_title = 'Signup for emails'
+
+#main
+  .description= @advertiser_app.description
+
+  .instructions
+    Earn 
+    %span.amount #{@currency.get_reward_amount(@offer)} #{@publisher_app.name} #{@currency.name}
+    when you signup for this email list. 
+    Once you've confirmed your email address, you'll receive your #{@currency.name}.
+
+  - form_tag(:controller => 'list_signup', :action => 'signup') do
+    = hidden_field_tag(:udid, params[:udid])
+    = hidden_field_tag(:publisher_app_id, params[:publisher_app_id])
+    = hidden_field_tag(:advertiser_app_id, params[:advertiser_app_id])
+    = label_tag(:email_address, "Email address:")
+    - if flash[:error]
+      %span.error= flash[:error]
+    %br
+    = text_field_tag(:email_address, flash[:email_address], :type => 'email')
+    %br
+    = submit_tag("Submit")
+
+-content_for :page_styles do
+  :plain
+    .error {
+      background-color: red;
+      padding: 1px;
+      -moz-border-radius: 4px;
+      -webkit-border-radius: 4px;
+    }
+    input {
+      width: 100%;
+      height: 25px;
+      margin-bottom: 5px;
+    }
+    div {
+      margin-bottom: 15px;
+    }
+    .description {
+      font-style: italic;
+    }
+    .instructions {
+      font-size: 115%;
+    }
+    .amount {
+      font-weight: bold;
+      color: #008810;
+    }
