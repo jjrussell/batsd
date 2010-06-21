@@ -19,9 +19,13 @@ class RateAppOfferController < ApplicationController
     
     device_app_list.set_app_ran(id_for_device_app_list)
     device_app_list.save
-  
-    record_key = lookup_by_int_record(params[:record_id])
-    publisher_user_id = record_key.split('.')[1]
+    
+    if params[:record_id].include?('.')
+      publisher_user_id = params[:record_id].split('.')[1]
+    else
+      record_key = lookup_by_int_record(params[:record_id])
+      publisher_user_id = record_key.split('.')[1]
+    end
     
     #create the reward item and push to the queues
     reward = Reward.new
