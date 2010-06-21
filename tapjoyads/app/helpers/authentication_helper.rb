@@ -63,5 +63,14 @@ module AuthenticationHelper
       password
     end
   end
+
+  def fluent_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'fluent'
+        password = 'nbuh24098uf2lk23ub'
+      end
+      password
+    end
+  end
   
 end
