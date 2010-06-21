@@ -56,6 +56,8 @@ class JsonConverter
   end
 end
 
+class ExpectedAttributeError < RuntimeError; end
+
 class SimpledbResource  
   include TimeLogHelper
   include MemcachedHelper
@@ -526,9 +528,7 @@ class SimpledbResource
     return self.new(options)
   end
   
-  class ExpectedAttributeError < RuntimeError; end
-  
-  protected
+protected
   
   def write_to_sdb(expected_attr = {})
     attributes_to_put = @attributes_to_add.merge(@attributes_to_replace)
@@ -586,7 +586,7 @@ class SimpledbResource
     end
   end
   
-  private
+private
   
   def load_from_sdb
     attributes = {}
