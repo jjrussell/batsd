@@ -42,7 +42,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
 
         amount = reward.get('currency_reward')
 
-        PointPurchases.transaction(:key => "#{udid}.#{app_id}", :load_from_memcache => false) do |point_purchases|
+        PointPurchases.transaction({:key => "#{udid}.#{app_id}", :load_from_memcache => false}) do |point_purchases|
           point_purchases.points = point_purchases.points + amount.to_i
         end
       
