@@ -17,7 +17,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :payment, :only_integer => true, :if => Proc.new { |offer| offer.tapjoy_enabled? && offer.user_enabled? }
   validates_numericality_of :actual_payment, :only_integer => true, :allow_nil => true
   validates_numericality_of :conversion_rate, :show_rate, :greater_than_or_equal_to => 0
-  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :in => [ true, false ]
+  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :featured, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer OfferpalOffer RatingOffer )
   
   before_save :cleanup_url
@@ -25,6 +25,7 @@ class Offer < ActiveRecord::Base
   
   named_scope :enabled_offers, { :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND ((partners.balance > 0 AND item_type IN ('App', 'EmailOffer')) OR item_type = 'RatingOffer')", :order => "ordinal ASC" }
   named_scope :classic_offers, { :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type = 'OfferpalOffer'", :order => "ordinal ASC" }
+  named_scope :featured, { :conditions => "featured = true" }
   
   def self.get_enabled_offers
     Offer.new.get_from_cache_and_save('s3.enabled_offers') do
@@ -37,6 +38,13 @@ class Offer < ActiveRecord::Base
     Offer.new.get_from_cache_and_save('s3.classic_offers') do
       bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')
       Marshal.restore(bucket.get('classic_offers'))
+    end
+  end
+  
+  def self.get_featured_offers
+    Offer.new.get_from_cache_and_save('s3.featured_offers') do
+      bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')
+      Marshal.restore(bucket.get('featured_offers'))
     end
   end
   
@@ -65,6 +73,13 @@ class Offer < ActiveRecord::Base
     offer_list = Offer.classic_offers
     bucket.put('classic_offers', Marshal.dump(offer_list))
     Offer.new.save_to_cache('s3.classic_offers', offer_list)
+  end
+  
+  def self.cache_featured_offers
+    bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')
+    offer_list = Offer.enabled_offers.featured
+    bucket.put('featured_offers', Marshal.dump(offer_list))
+    Offer.new.save_to_cache('s3.featured_offers', offer_list)
   end
   
   def self.find_in_cache(id)

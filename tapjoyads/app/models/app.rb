@@ -53,6 +53,8 @@ class App < ActiveRecord::Base
     
     if type == '0'
       offer_list = Offer.get_classic_offers
+    elsif type == '2'
+      offer_list = Offer.get_featured_offers
     else
       offer_list = Offer.get_enabled_offers
     end

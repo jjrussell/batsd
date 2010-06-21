@@ -12,14 +12,14 @@ class GetOffersController < ApplicationController
   def featured
     return unless verify_params([:app_id, :udid], {:allow_empty => false})
     
+    params[:type] = '2'
+    params[:start] = '0'
+    params[:max] = '999'
+    
     setup
     set_offer_list(:require_device_ip_param => false)
     
-    featured_app_id = 'a67b94ca-7f55-403d-bc67-862a4a020d2a' # Fluent News
-   
-    @offer_list.reject! do |offer|
-      offer.id != featured_app_id
-    end
+    @offer_list = @offer_list[rand(@offer_list.length).to_i, 1]
     @more_data_available = 0
     
     if params[:json] == '1'
@@ -74,7 +74,7 @@ class GetOffersController < ApplicationController
   end
   
   def set_offer_list(options = {})
-    require_device_ip_param = options.delete(:require_device_ip_param){ false }
+    require_device_ip_param = options.delete(:require_device_ip_param) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     if require_device_ip_param && params[:device_ip].blank?
@@ -83,7 +83,7 @@ class GetOffersController < ApplicationController
       geoip_data = get_geoip_data(params, request)
     end
     
-    type = params[:type] == '0' ? '0' : '1'
+    type = (params[:type] == '0' || params[:type] == '2') ? params[:type] : '1'
     
     @offer_list, @more_data_available = @publisher_app.get_offer_list(params[:udid], 
         :currency => @currency,
