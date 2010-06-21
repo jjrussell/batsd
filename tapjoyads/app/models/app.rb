@@ -43,7 +43,7 @@ class App < ActiveRecord::Base
     currency = options.delete(:currency)
     device_type = options.delete(:device_type)
     geoip_data = options.delete(:geoip_data) { {} }
-    type = options.delete(:type) { '1' }
+    type = options.delete(:type) { Offer::DEFAULT_OFFER_TYPE }
     required_length = options.delete(:required_length) { 999 }
     app_version = options.delete(:app_version)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -51,9 +51,9 @@ class App < ActiveRecord::Base
     device_app_list = DeviceAppList.new(:key => udid)
     currency = Currency.find_in_cache_by_app_id(id) unless currency
     
-    if type == '0'
+    if type == Offer::CLASSIC_OFFER_TYPE
       offer_list = Offer.get_classic_offers
-    elsif type == '2'
+    elsif type == Offer::FEATURED_OFFER_TYPE
       offer_list = Offer.get_featured_offers
     else
       offer_list = Offer.get_enabled_offers

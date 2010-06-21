@@ -12,7 +12,7 @@ class GetOffersController < ApplicationController
   def featured
     return unless verify_params([:app_id, :udid], {:allow_empty => false})
     
-    params[:type] = '2'
+    params[:type] = Offer::FEATURED_OFFER_TYPE
     params[:start] = '0'
     params[:max] = '999'
     
@@ -42,7 +42,7 @@ class GetOffersController < ApplicationController
     
     set_offer_list(:require_device_ip_param => require_device_ip_param)
     
-    if params[:type] == '0'
+    if params[:type] == Offer::CLASSIC_OFFER_TYPE
       render :template => 'get_offers/offers'
     elsif params[:redirect] == '1'
       render :template => 'get_offers/installs_redirect'
@@ -83,7 +83,14 @@ class GetOffersController < ApplicationController
       geoip_data = get_geoip_data(params, request)
     end
     
-    type = (params[:type] == '0' || params[:type] == '2') ? params[:type] : '1'
+    type = case params[:type]
+    when Offer::FEATURED_OFFER_TYPE
+      Offer::FEATURED_OFFER_TYPE
+    when Offer::CLASSIC_OFFER_TYPE
+      Offer::CLASSIC_OFFER_TYPE
+    else
+      Offer::DEFAULT_OFFER_TYPE
+    end
     
     @offer_list, @more_data_available = @publisher_app.get_offer_list(params[:udid], 
         :currency => @currency,

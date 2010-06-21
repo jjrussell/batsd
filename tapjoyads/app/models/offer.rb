@@ -7,6 +7,10 @@ class Offer < ActiveRecord::Base
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES
   EXEMPT_UDID = '298c5159a3681207eaba5a04b3573aa7b4f13d99'
   
+  CLASSIC_OFFER_TYPE  = '0'
+  DEFAULT_OFFER_TYPE  = '1'
+  FEATURED_OFFER_TYPE = '2'
+  
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   
   belongs_to :partner
