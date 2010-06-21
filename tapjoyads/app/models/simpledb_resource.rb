@@ -330,7 +330,7 @@ class SimpledbResource
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     begin
-      row = self.new(load_options)
+      row = self.new(load_options.dup)
       initial_version = row.get(version_attr)
       
       yield(row)
