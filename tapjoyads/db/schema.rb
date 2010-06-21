@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100618210811) do
+ActiveRecord::Schema.define(:version => 20100619102823) do
 
   create_table "apps", :force => true do |t|
     t.string   "partner_id",            :limit => 36,                    :null => false
@@ -135,6 +135,7 @@ ActiveRecord::Schema.define(:version => 20100618210811) do
     t.decimal  "show_rate",                            :precision => 8, :scale => 6, :default => 1.0,   :null => false
     t.boolean  "self_promote_only",                                                  :default => false, :null => false
     t.integer  "age_rating"
+    t.boolean  "featured",                                                           :default => false, :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
