@@ -1,0 +1,51 @@
+- @page_title = 'Money Stats'
+
+%h1 Tapjoy Money Stats
+
+#last_updated= "Last Updated: #{@last_updated.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)}"
+
+%table#apps_table.tablesorter
+  %thead
+    %tr
+      %th
+	  - @time_ranges do |tr|
+      	%th= tr
+      
+  %tbody
+    - @stat_types do |st|
+      %tr
+        %td= st
+		- @time_ranges do |tr|
+        	%td= @money_stats[tr][st]
+
+      
+
+-content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+    
+    table.tablesorter thead tr .header {
+      background-position: right bottom;
+    }
+    
+    th, td {
+      border: 0;
+    }
+    
+    
+    #last_updated {
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    #do_refresh {
+      cursor: pointer;
+      text-decoration: underline;
+      color: #A7A3FF;
+    }
+    
+    .hidden {
+      display: none;
+    }
