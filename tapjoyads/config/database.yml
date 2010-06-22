@@ -1,11 +1,9 @@
 development:
   adapter: mysql
   database: tapjoy_db
-  host: localhost
-  # host: dev-tapjoy-db-rds.cck8zbm50hdd.us-east-1.rds.amazonaws.com
-  username: ryan
-  # username: tapjoy
-  # password: andoverbusiness1
+  host: dev-tapjoy-db-rds.cck8zbm50hdd.us-east-1.rds.amazonaws.com
+  username: tapjoy
+  password: andoverbusiness1
 
 test:
   adapter: mysql
