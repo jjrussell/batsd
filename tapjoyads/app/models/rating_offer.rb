@@ -65,7 +65,7 @@ private
     begin
       bucket = RightAws::S3.new.bucket('app_data')
       image_data = bucket.get('icons/ratestar.png')
-      bucket.put("icons/#{id}.png" image_data, {}, 'public-read')
+      bucket.put("icons/#{id}.png", image_data, {}, 'public-read')
     rescue
       sleep 0.5
       retries -= 1
