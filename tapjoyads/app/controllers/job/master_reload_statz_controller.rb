@@ -4,6 +4,40 @@ class Job::MasterReloadStatzController < Job::JobController
   def index
     now = Time.zone.now
     
+    interval_strings = {}
+    interval_strings['24_hours'] = "_TABLE_.created_at > DATE_ADD(NOW(), INTERVAL -24 HOUR)"
+    interval_strings['this_month'] = "year(_TABLE_.created_at) = year(Now()) and month(_TABLE_.created_at) = month(NOW())"
+    interval_strings['today'] = interval_strings['this_month'] + " and day(_TABLE_.created_at) = day(NOW())"
+    interval_strings['since_mar_23'] = "_TABLE_.created_at > '2010-03-23'"
+    
+    money_stats = {}
+    
+    interval_strings.keys.each do |is|      
+      money_stats[is] = {}
+      
+      money_stats[is]['conversions'] = Conversion.count(:conditions => interval_strings[is].gsub('_TABLE_','conversions'))
+      
+      advertiser_spend = Conversion.sum(:advertiser_amount, :conditions => interval_strings[is].gsub('_TABLE_','conversions'))/-100.0      
+      money_stats[is]['advertiser_spend'] = number_to_currency(advertiser_spend)
+      
+      publisher_earnings = Conversion.sum(:publisher_amount, 
+        :conditions => interval_strings[is].gsub('_TABLE_','conversions') + " and partner_id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'",
+        :joins => "JOIN offers on publisher_app_id = offers.id")/100.0
+      
+      money_stats[is]['publisher_earnings'] = number_to_currency(publisher_earnings)  
+        
+      marketing_credits = Order.sum(:amount, interval_strings[is].gsub('_TABLE_','conversions') + " and payment_method = 2")/100.0
+      money_stats[is]['marketing_credits'] = number_to_currency(marketing_credits)
+      
+      money_stats[is]['orders'] = number_to_currency(Order.sum(:amount, interval_strings[is].gsub('_TABLE_','conversions') + " and payment_method != 2")/100.0)
+      money_stats[is]['payouts'] = number_to_currency(Payout.sum(:amount, interval_strings[is].gsub('_TABLE_','conversions'))/100.0)
+      money_stats[is]['revenue'] = number_to_currency(advertiser_spend - marketing_credits)
+      money_stats[is]['net_revenue'] = number_to_currency(advertiser_spend - marketing_credits - publisher_earnings)
+      
+    end
+    
+    save_to_cache('statz.money', money_stats)
+    
     cached_stats = {}
     
     apps = []
@@ -37,39 +71,7 @@ class Job::MasterReloadStatzController < Job::JobController
 
     save_to_cache('statz.cached_stats', cached_stats)
 
-    interval_strings = {}
-    interval_strings['24_hours'] = "_TABLE_created_at > DATE_ADD(NOW(), INTERVAL -24 HOUR)"
-    interval_strings['this_month'] = "year(_TABLE_created_at) = year(Now()) and month(_TABLE_.created_at) = month(NOW())"
-    interval_strings['today'] = interval_strings['this_month'] + " and day(_TABLE_created_at) = day(NOW())"
-    interval_strings['since_mar_23'] = "_TABLE_.created_at > '2010-03-23'"
-    
-    money_stats = {}
-    
-    interval_strings.keys.each do |is|      
-      money_stats[is] = {}
-      
-      money_stats[is]['conversions'] = Conversion.count(:conditions => interval_strings[is].gsub('_TABLE_','conversions'))
-      
-      advertiser_spend = Conversion.sum(:advertiser_amount, :conditions => interval_strings[is].gsub('_TABLE_','conversions'))/-100.0      
-      money_stats[is]['advertiser_spend'] = number_to_currency(advertiser_spend)
-      
-      publisher_earnings = Conversion.sum(:publisher_amount, 
-        :conditions => interval_strings[is].gsub('_TABLE_','conversions') + " and partner_id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'",
-        :joins => "JOIN offers on publisher_app_id = offers.id")/100.0
-      
-      money_stats[is]['publisher_earnings'] = number_to_currency(publisher_earnings)  
-        
-      marketing_credits = Order.sum(:amount, interval_strings[is].gsub('_TABLE_','conversions') + " and payment_method = 2")/100.0
-      money_stats[is]['marketing_credits'] = number_to_currency(marketing_credits)
-      
-      money_stats[is]['orders'] = number_to_currency(Order.sum(:amount, interval_strings[is].gsub('_TABLE_','conversions') + " and payment_method != 2")/100.0)
-      money_stats[is]['payouts'] = number_to_currency(Payout.sum(:amount, interval_strings[is].gsub('_TABLE_','conversions'))/100.0)
-      money_stats[is]['revenue'] = number_to_currency(advertiser_spend - marketing_credits)
-      money_stats[is]['net_revenue'] = number_to_currency(advertiser_spend - marketing_credits - publisher_earnings)
-      
-    end
-    
-    save_to_cache('statz.money', money_stats)
+
     save_to_cache('statz.last_updated', now)
     
     render :text => 'ok'
