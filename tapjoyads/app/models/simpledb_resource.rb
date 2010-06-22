@@ -226,6 +226,7 @@ class SimpledbResource
     message = {:uuid => uuid, :options => options_copy}.to_json
     send_to_sqs(QueueNames::FAILED_SDB_SAVES, message)
     Rails.logger.info "Successfully added to sqs. Message: #{message}"
+    increment_count_in_cache("failed_sdb_saves.#{@this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}")
   ensure
     Rails.logger.flush
   end
