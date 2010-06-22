@@ -10,7 +10,7 @@ class RatingOffer < ActiveRecord::Base
   validates_presence_of :partner, :app, :name
   
   before_validation :set_name_and_description
-  after_create :create_offer
+  after_create :create_offer, :create_icon
   after_update :update_offer
   after_save :update_memcached
   
@@ -58,6 +58,19 @@ private
   
   def update_memcached
     save_to_cache("mysql.rating_offer.#{app_id}", self)
+  end
+  
+  def create_icon
+    retries = 3
+    begin
+      bucket = RightAws::S3.new.bucket('app_data')
+      image_data = bucket.get('icons/ratestar.png')
+      bucket.put("icons/#{id}.png" image_data, {}, 'public-read')
+    rescue
+      sleep 0.5
+      retries -= 1
+      retry if retries > 0
+    end
   end
   
 end
