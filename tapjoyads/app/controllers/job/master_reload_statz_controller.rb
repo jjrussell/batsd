@@ -29,8 +29,8 @@ class Job::MasterReloadStatzController < Job::JobController
       marketing_credits = Order.sum(:amount, interval_strings[is].gsub('_TABLE_','conversions') + " and payment_method = 2")/100.0
       money_stats[is]['marketing_credits'] = number_to_currency(marketing_credits)
       
-      money_stats[is]['orders'] = number_to_currency(Order.sum(:amount, interval_strings[is].gsub('_TABLE_','conversions') + " and payment_method != 2")/100.0)
-      money_stats[is]['payouts'] = number_to_currency(Payout.sum(:amount, interval_strings[is].gsub('_TABLE_','conversions'))/100.0)
+      money_stats[is]['orders'] = number_to_currency(Order.sum(:amount, interval_strings[is].gsub('_TABLE_','orders') + " and payment_method != 2")/100.0)
+      money_stats[is]['payouts'] = number_to_currency(Payout.sum(:amount, interval_strings[is].gsub('_TABLE_','payouts'))/100.0)
       money_stats[is]['revenue'] = number_to_currency(advertiser_spend - marketing_credits)
       money_stats[is]['net_revenue'] = number_to_currency(advertiser_spend - marketing_credits - publisher_earnings)
       
