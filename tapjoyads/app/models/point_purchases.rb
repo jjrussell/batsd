@@ -8,7 +8,7 @@ class PointPurchases < SimpledbResource
   self.sdb_attr :virtual_goods, :type => :json, :default_value => {}
   
   def initialize(options = {})
-    super
+    super({:load_from_memcache => false}.merge(options))
     
     if self.points.nil?
       Rails.logger.info "getting initial_balance from currency"
