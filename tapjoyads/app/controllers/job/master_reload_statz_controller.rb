@@ -37,8 +37,15 @@ class Job::MasterReloadStatzController < Job::JobController
 
     save_to_cache('statz.cached_stats', cached_stats)
 
-    install_count_24hours = StoreClick.count(:where => "installed > '#{now.to_f - 1.day}'")
+    install_count_24hours = Conversion.count(:conditions => "created_at > DATE_ADD(NOW(), INTERVAL -24 HOUR)")
+    revenue_24hours = Conversion.sum(:advertiser_amount, :conditions => "created_at > DATE_ADD(NOW(), INTERVAL -24 HOUR)")/-100
+    payout_24hours = Conversion.sum(:publisher_amount, 
+      :conditions => "conversions.created_at > DATE_ADD(NOW(), INTERVAL -24 HOUR) and partner_id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'", 
+      :joins => "JOIN offers on publisher_app_id = offers.id")/100
+      
     save_to_cache('statz.install_count_24hours', install_count_24hours)
+    save_to_cache('statz.revenue_24hours', revenue_24hours)
+    save_to_cache('statz.payout_24hours', payout_24hours)
     
     save_to_cache('statz.last_updated', now)
     

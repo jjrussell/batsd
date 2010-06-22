@@ -5,6 +5,9 @@ class StatzController < WebsiteController
   
   def index
     @install_count_24hours = get_from_cache('statz.install_count_24hours') || "Not Available"
+    @revenue_24hours = get_from_cache('statz.revenue_24hours') || "Not Available"
+    @payout_24hours = get_from_cache('statz.payout_24hours') || "Not Available"
+    
     @last_updated = get_from_cache('statz.last_updated') || Time.at(8.hours.to_i)
     @cached_stats = get_from_cache('statz.cached_stats') || {}
   end

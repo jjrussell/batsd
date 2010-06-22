@@ -13,7 +13,7 @@
   = text_field_tag('search_box', '', :size => '30')
   = submit_tag('View Details')
 
-%h3#install_count_24hours= "Total installs: #{@install_count_24hours}"
+%h3#install_count_24hours= "Total installs: #{@install_count_24hours}  Total revenue: #{@revenue_24hours}   Total payouts: #{@payout_24hours}"
 
 #last_updated= "Last Updated: #{@last_updated.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)}"
 
