@@ -1,5 +1,9 @@
 class OneOffs
   
+  def self.check_syntax
+    true
+  end
+  
   def self.import_conversions
     Benchmark.realtime do
       file = File.open('tmp/conversions.txt', 'r')

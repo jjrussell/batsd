@@ -45,24 +45,30 @@ unless version_number
   settings = YAML::load_file(SERVER_CONFIG_FILENAME)
 
   version_number = settings['config']["api_deploy_version"].to_i
-  
+
   if environment == 'production'
     version_number += 1
     print "No deploy version number specified. Create new deploy version #{version_number}? [y/N] "
     prompt_and_exit_if_not_yes
-  
-    
+
+    system("script/runner -e production 'OneOffs.check_syntax'")
+    if $?.exitstatus != 0
+      puts "Syntax Check: FAILED"
+      exit
+    end
+    puts "Syntax Check: PASSED"
+
     settings['config']["api_deploy_version"] = version_number.to_s
-  
+
     File.open(SERVER_CONFIG_FILENAME, 'w') do |f|
       f.write(settings.to_yaml)
     end
-  
+
     puts "Creating new deploy branch."
     system("svn copy https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/trunk " +
        "https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{version_number} " +
        "-m \"Creating deploy branch #{version_number}\"")
-       
+
     puts "Incrementing version in config file."
     if svn_repo
       system("svn commit #{SERVER_CONFIG_FILENAME} -m 'Incrementing config version number to #{version_number}'")
