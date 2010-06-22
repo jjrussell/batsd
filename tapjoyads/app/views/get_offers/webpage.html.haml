@@ -6,16 +6,93 @@
   %i opening
   the downloaded application.
   
-%ul#offers
+#offers
   - @offer_list.each do |offer|
-    %li
-      %a{ :href => offer.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid], params[:app_version]) }
-        %img{ :src => offer.get_icon_url }
-        .offertext
-          %span.offername #{offer.name} (#{offer.cost})
-          %br
-          Earn
-          %span.amount #{@currency.get_reward_amount(offer)} #{@currency.name}
+    %a{ :href => offer.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid], params[:app_version]), :class => 'offer' }
+      %img{ :src => offer.get_icon_url }
+      .offertext
+        %span.offername #{offer.name} (#{offer.cost})
+        %br
+        Earn
+        %span.amount #{@currency.get_reward_amount(offer)} #{@currency.name}
+          
+-content_for :page_javascript do
+  addMoreLink(#{@more_data_available})
+  :plain
+    function addMoreLink(moreDataAvailable) {
+      if (!moreDataAvailable) {
+        return;
+      }
+    
+      count = Math.min(moreDataAvailable, 25)
+      document.getElementById('offers').innerHTML += "<a onclick='javascript:showMore(this)' id='showmore'>" +
+          "Show " + count + " more..."
+    }
+  
+    function showMore(e) {
+      e.innerHTML += "<img src='../images/load-circle.gif'>"
+      var head= document.getElementsByTagName('head')[0];
+      var script= document.createElement('script');
+      script.type= 'text/javascript';
+      script.src= getJsonLink();
+      head.appendChild(script);
+    }
+    
+    function getJsonLink() {
+      var type = param('type') || 1
+      
+      var url = "/get_offers?json=1&callback=parseOffers&max=25" + 
+          "&app_id=" + param('app_id') +
+          "&udid=" + param('udid') + 
+          "&start=" + getNextStart() +
+          "&device_type=" + param('device_type') +
+          "&app_version=" + param('app_version') +
+          "&type=" + type
+      return url;
+    }
+    
+    function getNextStart() {
+      var start = Number(param('start')) || 0
+      var max = Number(param('max')) || 25
+      var postLoadCount = window.postLoadCount || 0
+      
+      return start + max + postLoadCount;
+    }
+    
+    function param(name) {
+      var regex = new RegExp( "[\\?&]" + name + "=([^&#]*)" );
+      var results = regex.exec( window.location.href );
+      return results ? results[1] : '';
+    }
+    
+    function parseOffers(json) {
+      window.postLoadCount = Number(window.postLoadCount || 0)
+      offerArray = json['OfferArray']
+      window.postLoadCount += offerArray.length
+      
+      newHtml = [];
+      
+      for (var i = 0, offer; offer = offerArray[i]; i++) {
+        newHtml.push("<a class='offer' href='")
+        newHtml.push(offer['RedirectURL'])
+        newHtml.push("'>")
+        newHtml.push("<img src='")
+        newHtml.push(offer['IconURL'])
+        newHtml.push("'>")
+        newHtml.push("<div class='offertext'><span class='offername'>")
+        newHtml.push(offer['Name'] + ' (' + offer['Cost'] + ')')
+        newHtml.push("</span><br />Earn <span class='amount'>")
+        newHtml.push(offer['Amount'] + ' ' + json['CurrencyName'])
+        newHtml.push('</span></div></a>')
+      }
+      
+      var s = document.getElementById('showmore')
+      s.parentNode.removeChild(s)
+      
+      document.getElementById('offers').innerHTML += newHtml.join('')
+      addMoreLink(json['MoreDataAvailable'])
+    }
+    
           
 -content_for :page_styles do
   :plain
@@ -48,7 +125,7 @@
       margin: 0 3%;
       list-style: none;
     }
-
+    
     #offers a {
       display: block;
       padding: 5px;
@@ -57,22 +134,19 @@
       color: #004E09;
       font-weight: bold;
       height: 65px;
-    }
-
-    #offers li {
       border: 1px solid #d5d5d5;
       border-top: none;
       background: white url(../images/arrowicon.png) no-repeat right;
     }
 
-    #offers li a img {
+    #offers .offer img {
       padding-top: 5px;
       width: 57px;
       height: 57px;
       float: left;
     }
 
-    #offers li a .offertext {
+    #offers .offertext {
       height: 65px;
       display: table-cell;
       vertical-align: middle;
@@ -83,7 +157,21 @@
       color: rgb(0, 136, 16);
     }
 
-    #offers li:first-child {
+    #offers #showmore {
+      text-align: center;
+      font-size: 120%;
+      background: white;
+      padding-top: 20px;
+      height: 45px;
+    }
+    
+    #offers #showmore img {
+      display: block;
+      margin: 0 auto;
+      padding-top: 3px;
+    }
+    
+    #offers a:first-child {
       border-top:1px solid #d5d5d5;
       -moz-border-radius-topleft:10px;
       -webkit-border-top-left-radius:10px;
@@ -91,7 +179,7 @@
       -webkit-border-top-right-radius:10px;
     }
 
-    #offers li:last-child {
+    #offers a:last-child {
       -moz-border-radius-bottomleft:10px;
       -webkit-border-bottom-left-radius:10px;
       -moz-border-radius-bottomright:10px;

@@ -16,6 +16,7 @@
   <% end %>
 ],
 "Message":<%=('Install one of the apps below to earn ' + @currency.name).to_json -%>
+,"CurrencyName":<%=@currency.name.to_json -%>
 <% if @more_data_available > 0 %>
   , "MoreDataAvailable":<%= @more_data_available.to_json -%>
 <% end %>
