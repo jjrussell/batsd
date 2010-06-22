@@ -1,5 +1,6 @@
 class Job::MasterReloadStatzController < Job::JobController
   include MemcachedHelper
+  include ActionView::Helpers::NumberHelper
   
   def index
     now = Time.zone.now
@@ -55,14 +56,14 @@ class Job::MasterReloadStatzController < Job::JobController
       this_apps_stats['connects'] = appstats['logins'].sum
       this_apps_stats['new_users'] = appstats['new_users'].sum
       this_apps_stats['daily_active_users'] = appstats['daily_active_users'].sum
-      this_apps_stats['price'] = "$#{app.price / 100.0}"
-      this_apps_stats['payment_for_install'] = "$#{app.payment_for_install / 100.0}"
-      this_apps_stats['balance'] = "$#{app.balance / 100.0}"
+      this_apps_stats['price'] = number_to_currency(app.price / 100.0)
+      this_apps_stats['payment_for_install'] = number_to_currency(app.payment_for_install / 100.0)
+      this_apps_stats['balance'] = number_to_currency(app.balance / 100.0)
       this_apps_stats['daily_budget'] = app.daily_budget
       this_apps_stats['show_rate'] = "%.2f" % (app.show_rate || 0)
       this_apps_stats['vg_purchases'] = appstats['vg_purchases'].sum
       this_apps_stats['published_installs'] = appstats['published_installs'].sum
-      this_apps_stats['installs_revenue'] = "$#{appstats['installs_revenue'].sum / 100.0}"
+      this_apps_stats['installs_revenue'] = number_to_currency(appstats['installs_revenue'].sum / 100.0)
       this_apps_stats['ad_impressions'] = appstats['hourly_impressions'].sum
       this_apps_stats['os_type'] = app.os_type
       
