@@ -33,7 +33,7 @@ class ToolsController < WebsiteController
   end
   
   def money
-    @money_stats = get_from_cache('statz.money') || render(:text => "Not Available") and return
+    @money_stats = get_from_cache('statz.money') || (render(:text => "Not Available") and return)
     @time_ranges = @money_stats.keys
     
     @stat_types = @money_stats[@time_ranges.first].keys
