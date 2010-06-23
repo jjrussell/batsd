@@ -7,7 +7,7 @@ class Job::MasterReloadStatzController < Job::JobController
     
     interval_strings = {}
     interval_strings['24_hours'] = "DATE_ADD(NOW(), INTERVAL -24 HOUR)"
-    interval_strings['this_month'] = "curdate() - dayofmonth(now());"
+    interval_strings['this_month'] = "curdate() - dayofmonth(now())"
     interval_strings['today'] = "curdate()"
     interval_strings['7_days'] = "DATE_ADD(NOW(), INTERVAL -7 DAY)"
     interval_strings['since_mar_23'] = "'2010-03-23'"
