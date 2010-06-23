@@ -163,47 +163,10 @@ class ImportMssqlController < ApplicationController
   def app
     return unless verify_params([:app_id])
 
-    app_id = params[:app_id]
-
-    app = SdbApp.new(:key => app_id)
-    
-    unless app.get('next_run_time')
-      app.put('next_run_time', Time.now.utc.to_f.to_s)     
-      app.put('interval_update_time','60')
-    end
-
-    unless app.get('next_ad_optimization_time')
-      app.put('next_ad_optimization_time', Time.now.utc.to_f.to_s)     
-      app.put('ad_optimization_interval_update_time','60')
-    end
-
-    app.name = params[:name]
-    app.description = params[:description]
-    app.put('payment_for_install', params[:payment_for_install])
-    app.put('rewarded_installs_ordinal', params[:rewarded_installs_ordinal])
-    app.put('install_tracking', params[:install_tracking])
-    app.put('store_url', params[:store_url])
-    app.put('partner_id', params[:partner_id])
-    app.put('os', params[:os])
-    app.put('launched', params[:launched])
-    app.put('pay_per_click', params[:pay_per_click])
-    app.put('status', params[:status])
-    app.put('price', params[:price]) 
-    app.put('has_location', params[:has_location])
-    app.put('rotation_time', params[:rotation_time])
-    app.put('rotation_direction', params[:rotation_direction])
-    app.put('balance', params[:balance])
-    app.put('iphone_only', params[:iphone_only]) if params[:iphone_only]
-    app.put('daily_budget', params[:daily_budget]) if params[:daily_budget]
-    app.put('os_type', params[:os_type])
-    app.put('primary_color', params[:primary_color])
-    
-    app.save
-
     bucket = RightAws::S3.new.bucket('app_data')
-    bucket.put("icons/#{app_id}.png", params[:icon], {}, 'public-read')
-    bucket.put("screenshots/#{app_id}.png", params[:screenshot], {}, 'public-read')
-    save_to_cache("icon.s3.#{app_id}", Base64.encode64(params[:icon]))
+    bucket.put("icons/#{params[:app_id]}.png", params[:icon], {}, 'public-read')
+    bucket.put("screenshots/#{params[:app_id]}.png", params[:screenshot], {}, 'public-read')
+    save_to_cache("icon.s3.#{params[:app_id]}", Base64.encode64(params[:icon]))
     
     offer = nil
     unless params[:name].starts_with?('Email')
@@ -213,27 +176,23 @@ class ImportMssqlController < ApplicationController
       mysql_app.description = params[:description] unless params[:description].blank?
       mysql_app.price = params[:price].to_i
       mysql_app.platform = params[:os_type]
-      if params[:os_type] == 'android'
-        mysql_app.store_id = params[:store_url] unless params[:store_url].blank? || params[:store_url] == 'None'
-      else
-        mysql_app.store_id = app.get_store_id unless params[:store_url].blank? || params[:store_url] == 'None'
-      end
-      mysql_app.color = params[:primary_color].to_i
-      mysql_app.use_raw_url = app.use_raw_url == true
+      mysql_app.store_id = mysql_app.parse_store_id_from_url(params[:store_url])
       mysql_app.store_url = params[:store_url] unless params[:store_url].blank? || params[:store_url] == 'None'
+      mysql_app.color = params[:primary_color].to_i
+      mysql_app.rotation_direction = params[:rotation_direction]
+      mysql_app.rotation_time = params[:rotation_time]
       mysql_app.created_at = Time.parse(params[:created_at] + ' CST').utc
       mysql_app.save!
       
       offer = mysql_app.offer
-      offer.self_promote_only = app.self_promote_only == true
-      if params[:iphone_only] == '1'
-        offer.device_types = [ 'iphone' ].to_json
-      elsif app.ipad_only
-        offer.device_types = [ 'ipad' ].to_json
-      elsif mysql_app.platform == 'android'
-        offer.device_types = Offer::ANDROID_DEVICES.to_json
-      else
-        offer.device_types = Offer::APPLE_DEVICES.to_json
+      unless offer.device_types == [ 'ipad' ].to_json
+        if params[:iphone_only] == '1'
+          offer.device_types = [ 'iphone' ].to_json
+        elsif mysql_app.platform == 'android'
+          offer.device_types = Offer::ANDROID_DEVICES.to_json
+        else
+          offer.device_types = Offer::APPLE_DEVICES.to_json
+        end
       end
       
     else
@@ -241,7 +200,6 @@ class ImportMssqlController < ApplicationController
       email_offer.partner_id = params[:partner_id]
       email_offer.name = params[:name]
       email_offer.description = params[:description] unless params[:description].blank?
-      email_offer.third_party_id = app.custom_app_id
       email_offer.created_at = Time.parse(params[:created_at] + ' CST').utc
       email_offer.save!
       
@@ -250,13 +208,11 @@ class ImportMssqlController < ApplicationController
     end
     offer.tapjoy_enabled = params[:install_tracking] == '1'
     offer.user_enabled = params[:payment_for_install].to_i > 0
-    offer.overall_budget = app.overall_budget
-    offer.daily_budget = app.daily_budget
     offer.pay_per_click = params[:pay_per_click] == '1'
-    offer.allow_negative_balance = app.allow_negative_balance == true
     offer.payment = params[:payment_for_install].to_i
-    offer.actual_payment = app.real_revenue_for_install
     offer.ordinal = params[:rewarded_installs_ordinal].to_i unless params[:rewarded_installs_ordinal].blank?
+    offer.next_stats_aggregation_time = Time.zone.now if offer.next_stats_aggregation_time.blank?
+    offer.stats_aggregation_interval = 3600 if offer.stats_aggregation_interval.blank?
     offer.created_at = offer.item.created_at
     offer.save!
     

@@ -1,6 +1,7 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   include MemcachedHelper
+  include NewRelicHelper
   
   has_one :offer, :as => :item
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
@@ -16,8 +17,12 @@ class App < ActiveRecord::Base
   after_update :update_offer
   after_save :update_memcached
   
-  def self.find_in_cache(id)
-    App.new.get_from_cache_and_save("mysql.app.#{id}") { App.find(id) }
+  def self.find_in_cache(id, do_lookup = true)
+    if do_lookup
+      App.new.get_from_cache_and_save("mysql.app.#{id}") { App.find(id) }
+    else
+      App.new.get_from_cache("mysql.app.#{id}")
+    end
   end
   
   def store_url
@@ -36,6 +41,18 @@ class App < ActiveRecord::Base
   def store_url=(url)
     if use_raw_url?
       write_attribute(:store_url, url)
+    end
+  end
+  
+  def final_store_url
+    if use_raw_url?
+      read_attribute(:store_url)
+    else
+      if platform == 'android'
+        "http://www.cyrket.com/p/android/#{store_id}"
+      else
+        "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
+      end
     end
   end
   
@@ -71,6 +88,33 @@ class App < ActiveRecord::Base
     end
     
     [ final_offer_list, offer_list.length - final_offer_list.length - num_rejected ]
+  end
+  
+  def parse_store_id_from_url(url, alert_on_parse_fail = true)
+    if use_raw_url?
+      return nil
+    end
+    
+    if url.blank? || url == 'None'
+      alert_new_relic(ParseStoreIdError, "Could not parse store id from nil url for app #{name} (#{id})") if alert_on_parse_fail
+      return nil
+    end
+    
+    if platform == 'android'
+      return url
+    end
+    
+    match = url.match(/\/id(\d*)\?/)
+    unless match
+      match = url.match(/[&|?]id=(\d*)/)
+    end
+    
+    unless match && match[1]
+      alert_new_relic(ParseStoreIdError, "Could not parse store id from #{url} for app #{name} (#{id})") if alert_on_parse_fail
+      return nil
+    end
+    
+    return match[1]
   end
   
 private

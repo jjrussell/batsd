@@ -1,33 +1,34 @@
 - @page_title = "Stats for app: #{@app.name}"
 
-.icon= image_tag(@app.get_icon_url, :size => '56x56')
-%h1= @app.name
+.icon= image_tag(@offer.get_icon_url, :size => '56x56')
+%h1= @offer.name
 
 .asof For: #{@start_time.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)} - #{@end_time.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)}
 
 .left
-  .metadata App id: #{@app.key}
-  .metadata Partner id: #{@app.partner_id}
-  .metadata Store id: #{link_to(@app.get_store_id(false), @app.store_url)}
-  .metadata Price: #{number_to_currency(@app.price / 100.0)}
-  .metadata OS Type: #{@app.os_type}
-  .metadata Balance: #{number_to_currency(@app.balance / 100.0)}
-  .metadata Daily budget: #{@app.daily_budget}
-  .metadata Show rate: #{"%.2f" % (@app.show_rate || 0)}
-  .metadata Ordinal: #{@app.rewarded_installs_ordinal}
-  .metadata Payment for install: #{number_to_currency(@app.payment_for_install / 100.0)}
-  .metadata Tapjoy enabled: #{@app.install_tracking}
+  .metadata Offer id: #{@offer.id}
+  .metadata Partner id: #{@offer.partner_id}
+  - if @offer.item_type == 'App'
+    .metadata Store id: #{link_to(@offer.item.store_id, @offer.item.final_store_url)}
+  .metadata Price: #{number_to_currency(@offer.price / 100.0)}
+  .metadata Platform: #{@offer.get_platform}
+  .metadata Balance: #{number_to_currency(@offer.partner.balance / 100.0)}
+  .metadata Pending Earnings: #{number_to_currency(@offer.partner.pending_earnings / 100.0)}
+  .metadata Daily budget: #{@offer.daily_budget}
+  .metadata Show rate: #{"%.2f" % (@offer.show_rate || 0)}
+  .metadata Ordinal: #{@offer.ordinal}
+  .metadata Payment: #{number_to_currency(@offer.payment / 100.0)}
+  .metadata Featured Payment: #{number_to_currency(@offer.featured_payment / 100.0) rescue ''}
+  .metadata Tapjoy enabled: #{@offer.tapjoy_enabled}
 
 .right
-  .metadata Countries: #{@app.countries}
-  .metadata Cities: #{@app.cities}
-  .metadata Postal codes: #{@app.postal_codes}
-  .metadata Pay-per-click: #{@app.pay_per_click}
-  .metadata Use_raw_url: #{@app.use_raw_url}
-  .metadata iPhone only: #{@app.iphone_only}
-  .metadata iPad only: #{@app.ipad_only}
-  .metadata Allow negative balance: #{@app.allow_negative_balance}
-  .metadata Self promote only: #{@app.self_promote_only}
+  .metadata Countries: #{@offer.countries}
+  .metadata Cities: #{@offer.cities}
+  .metadata Postal codes: #{@offer.postal_codes}
+  .metadata Pay-per-click: #{@offer.pay_per_click?}
+  .metadata Device types: #{@offer.device_types}
+  .metadata Allow negative balance: #{@offer.allow_negative_balance?}
+  .metadata Self promote only: #{@offer.self_promote_only?}
 
 
 %table

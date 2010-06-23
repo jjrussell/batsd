@@ -13,8 +13,6 @@ class StatzController < WebsiteController
     @cached_stats = get_from_cache('statz.cached_stats') || {}
   end
   
-
-  
   def show
     now = Time.zone.now
     @start_time = now.beginning_of_hour - 23.hours
@@ -24,16 +22,16 @@ class StatzController < WebsiteController
       @start_time = now.beginning_of_day
       @end_time = @start_time + 24.hours
     end
-    @app = SdbApp.new :key => params[:id]
-    @stats = Appstats.new(@app.key, { :start_time => @start_time, :end_time => @end_time }).stats
+    @offer = Offer.find(params[:id])
+    @stats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time }).stats
   end
   
   def search
-    results = App.all(
+    results = Offer.find(:all
       :conditions => "name LIKE '%#{params[:q]}%'",
       :select => 'id, name',
       :limit => params[:limit]
-    ).collect { |a| "#{a.name}|#{a.id}" }
+    ).collect { |o| "#{o.name}|#{o.id}" }
     
     render(:text => results.join("\n"))  
   end

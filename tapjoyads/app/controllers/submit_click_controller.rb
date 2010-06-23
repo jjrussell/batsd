@@ -1,5 +1,4 @@
 class SubmitClickController < ApplicationController
-  include RewardHelper
   include ApplicationHelper
   include SqsHelper
   include MemcachedHelper
@@ -41,7 +40,6 @@ class SubmitClickController < ApplicationController
     ##
     # store how much currency the user earns for this install    
     currency = Currency.find_in_cache_by_app_id(params[:publisher_app_id])
-    sdb_app = SdbApp.new(:key => params[:advertiser_app_id])
     
     ##
     # each attribute that starts with publisher.<id> has a . separated value

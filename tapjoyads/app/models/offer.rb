@@ -30,6 +30,7 @@ class Offer < ActiveRecord::Base
   named_scope :enabled_offers, { :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND ((partners.balance > 0 AND item_type IN ('App', 'EmailOffer')) OR item_type = 'RatingOffer')", :order => "ordinal ASC" }
   named_scope :classic_offers, { :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type = 'OfferpalOffer'", :order => "ordinal ASC" }
   named_scope :featured, { :conditions => "featured = true" }
+  named_scope :to_aggregate_stats, lambda { { :conditions => ["next_stats_aggregation_time < ?", Time.zone.now], :order => "next_stats_aggregation_time ASC" } }
   
   def self.get_enabled_offers
     Offer.new.get_from_cache_and_save('s3.enabled_offers') do
@@ -164,6 +165,17 @@ class Offer < ActiveRecord::Base
   
   def get_device_types
     Set.new(device_types.nil? ? nil : JSON.parse(device_types))
+  end
+  
+  def get_platform
+    d_types = get_device_types
+    if d_types.length > 1 && d_types.include?('android')
+      'All'
+    elsif d_types.include?('android')
+      'Android'
+    else
+      'iOS'
+    end
   end
   
   def adjust_cvr_for_ranking

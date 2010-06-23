@@ -1,5 +1,4 @@
 class ReceiveOfferController < ApplicationController
-  include RewardHelper
   include PublisherRecordHelper
   include SqsHelper
   

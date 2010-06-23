@@ -2,20 +2,13 @@ class Job::MasterAppStatsController < Job::JobController
   include SqsHelper
   
   def initialize
-    @now = Time.now.utc
+    @now = Time.zone.now
   end
   
   def index
-    SdbApp.select(:where => "next_run_time < '#{@now.to_f.to_s}'", 
-        :order_by => "next_run_time asc") do |app|
-      message = {:app_key => app.key}.to_json
-
-      # Set next_run_time here to make sure that it doesn't get picked up next run.
-      # It will get set to a more accurate value in the queue_app_stats reader.
-      app.put('next_run_time', @now.to_f + 1.hour)
-      app.save
-      
-      send_to_sqs(QueueNames::APP_STATS, message)
+    Offer.to_aggregate_stats.each do |offer|
+      offer.update_attribute(:next_stats_aggregation_time, @now + 1.hour)
+      send_to_sqs(QueueNames::APP_STATS, offer.id)
     end
     
     render :text => 'ok'

@@ -30,7 +30,7 @@ class ConnectController < ApplicationController
     
     device_app_list.save
     
-    @app = SdbApp.new(:key => params[:app_id])
+    @app = App.find_in_cache(params[:app_id], false)
     
     web_request.save
   

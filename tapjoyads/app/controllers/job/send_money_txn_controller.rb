@@ -1,6 +1,5 @@
 class Job::SendMoneyTxnController < Job::SqsReaderController
   include DownloadContent
-  include RewardHelper
   include NewRelicHelper
   
   def initialize

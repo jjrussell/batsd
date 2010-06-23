@@ -1,6 +1,5 @@
 class Job::ConversionTrackingQueueController < Job::SqsReaderController
   include DownloadContent
-  include RewardHelper
   include PublisherRecordHelper
   include SqsHelper
   

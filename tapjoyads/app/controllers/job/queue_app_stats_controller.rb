@@ -11,18 +11,16 @@ class Job::QueueAppStatsController < Job::SqsReaderController
 private
   
   def on_message(message)
-    json = JSON.parse(message.to_s)
-    
-    @app = SdbApp.new(:key => json['app_key'])
+    @offer = Offer.find(message.to_s)
     @now = Time.zone.now
     @stat_rows = {}
     
-    last_run_time = @app.last_run_time || Time.zone.now.beginning_of_day
+    last_run_time = @offer.last_stats_aggregation_time || Time.zone.now.beginning_of_day
     
     start_time = last_run_time.beginning_of_hour
     end_time = (@now - 5.minutes).beginning_of_hour
     
-    Rails.logger.info "Aggregating stats for '#{@app.to_s}' from #{start_time} to #{end_time}"
+    Rails.logger.info "Aggregating stats for #{@offer.name} (#{@offer.id}) from #{start_time} to #{end_time}"
     
     while start_time < end_time do
       count_stats_for_hour(start_time)
@@ -33,10 +31,11 @@ private
       row.save
     end
     
-    @app.next_run_time = @now + get_interval
-    @app.last_run_time = end_time
+    @offer.stats_aggregation_interval = get_interval
+    @offer.next_stats_aggregation_time = @now + @offer.stats_aggregation_interval
+    @offer.last_stats_aggregation_time = end_time
     verify_yesterday
-    @app.save
+    @offer.save!
     
     (last_run_time - 1.day).to_date.upto(@now.to_date) do |date|
       send_stats_to_mssql(date)
@@ -55,22 +54,22 @@ private
     
     @paths_to_aggregate.each do |path|
       stat_name = WebRequest::PATH_TO_STAT_MAP[path]
-      app_condition = WebRequest::USE_ADVERTISER_APP_ID.include?(path) ? "advertiser_app_id = '#{@app.key}'" : "app_id = '#{@app.key}'"
+      app_condition = WebRequest::USE_ADVERTISER_APP_ID.include?(path) ? "advertiser_app_id = '#{@offer.id}'" : "app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string,
           :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
       
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
-    paid_installs = Conversion.count(:conditions => ["advertiser_offer_id = ? and created_at >= ? and created_at < ? and reward_type = 1", @app.key, start_time, end_time])
-    installs_spend = Conversion.sum(:advertiser_amount, :conditions => ["advertiser_offer_id = ? and created_at >= ? and created_at < ? and reward_type = 1", @app.key, start_time, end_time])
+    paid_installs = Conversion.count(:conditions => ["advertiser_offer_id = ? and created_at >= ? and created_at < ? and reward_type = 1", @offer.id, start_time, end_time])
+    installs_spend = Conversion.sum(:advertiser_amount, :conditions => ["advertiser_offer_id = ? and created_at >= ? and created_at < ? and reward_type = 1", @offer.id, start_time, end_time])
     stat_row.update_stat_for_hour('paid_installs', start_time.hour, paid_installs)
     stat_row.update_stat_for_hour('installs_spend', start_time.hour, installs_spend)
     
     installs_opened, offers_opened, ratings_opened = 0
     @publisher_paths_to_aggregate.each do |path|
       stat_name = WebRequest::PUBLISHER_PATH_TO_STAT_MAP[path]
-      app_condition = "publisher_app_id = '#{@app.key}'"
+      app_condition = "publisher_app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string,
           :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
@@ -80,10 +79,10 @@ private
 
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
-    published_installs = Conversion.count(:conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type = 1", @app.key, start_time, end_time])
-    installs_revenue = Conversion.sum(:publisher_amount, :conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type = 1", @app.key, start_time, end_time])
-    offers_completed = Conversion.count(:conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type = 0", @app.key, start_time, end_time])
-    offers_revenue = Conversion.sum(:publisher_amount, :conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type = 0", @app.key, start_time, end_time])
+    published_installs = Conversion.count(:conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type = 1", @offer.id, start_time, end_time])
+    installs_revenue = Conversion.sum(:publisher_amount, :conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type = 1", @offer.id, start_time, end_time])
+    offers_completed = Conversion.count(:conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type = 0", @offer.id, start_time, end_time])
+    offers_revenue = Conversion.sum(:publisher_amount, :conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type = 0", @offer.id, start_time, end_time])
     
     stat_row.update_stat_for_hour('published_installs', start_time.hour, published_installs)
     stat_row.update_stat_for_hour('installs_revenue', start_time.hour, installs_revenue)
@@ -97,22 +96,22 @@ private
   ##
   #
   def verify_yesterday
-    return unless @app.last_daily_run_time.nil? || @app.last_daily_run_time.day != @now.day
+    return unless @offer.last_daily_stats_aggregation_time.nil? || @offer.last_daily_stats_aggregation_time.day != @now.day
     return if @now.hour == 0
     
     start_time = (@now - 1.day).beginning_of_day
     end_time = start_time + 1.day
     date_string = start_time.to_date.to_s(:db)
-    stat_row = @stat_rows[date_string] || Stats.new(:key => "app.#{date_string}.#{@app.key}")
+    stat_row = @stat_rows[date_string] || Stats.new(:key => "app.#{date_string}.#{@offer.id}")
     @stat_rows[date_string] = stat_row
     
-    Rails.logger.info "Verifying stats for #{@app.to_s} for #{date_string}"
+    Rails.logger.info "Verifying stats for offer #{@offer.name} (#{@offer.id}) for #{date_string}"
     
     time_condition = "time >= '#{start_time.to_f.to_s}' and time < '#{end_time.to_f.to_s}'"
     
     @paths_to_aggregate.each do |path|
       stat_name = WebRequest::PATH_TO_STAT_MAP[path]
-      app_condition = WebRequest::USE_ADVERTISER_APP_ID.include?(path) ? "advertiser_app_id = '#{@app.key}'" : "app_id = '#{@app.key}'"
+      app_condition = WebRequest::USE_ADVERTISER_APP_ID.include?(path) ? "advertiser_app_id = '#{@offer.id}'" : "app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string, 
           :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
@@ -126,7 +125,7 @@ private
     
     @publisher_paths_to_aggregate.each do |path|
       stat_name = WebRequest::PUBLISHER_PATH_TO_STAT_MAP[path]
-      app_condition = "publisher_app_id = '#{@app.key}'"
+      app_condition = "publisher_app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string, 
           :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
@@ -138,25 +137,28 @@ private
       Rails.logger.info "#{stat_name} verified, both counts are: #{count}."
     end
     
-    @app.last_daily_run_time = @now
+    @offer.last_daily_stats_aggregation_time = @now
   rescue AppStatsVerifyError => e
-    @app.last_run_time = start_time
-    @app.next_run_time = @now
+    @offer.last_stats_aggregation_time = start_time
+    @offer.next_stats_aggregation_time = @now
     
-    msg = "Verification of stats failed for app: #{@app.to_s}, for date: #{start_time.to_date}. #{e.message}"
+    msg = "Verification of stats failed for offer: #{@offer.name} (#{@offer.id}), for date: #{start_time.to_date}. #{e.message}"
     Rails.logger.info msg
     alert_new_relic(AppStatsVerifyError, msg, request, params)
   end
   
   def send_stats_to_mssql(utc_date)
-    key = @app.key
+    unless @offer.item_type == 'App' || @offer.item_type == 'EmailOffer'
+      return
+    end
+    
     offset = -6 # CST timezone. Must be negative the way this is currently implemented.
     
     today = utc_date.to_s(:db)
     tomorrow = (utc_date + 1.days).to_s(:db)
     
-    stat_today = Stats.new(:key => "app.#{today}.#{key}")
-    stat_tomorrow = Stats.new(:key => "app.#{tomorrow}.#{key}")
+    stat_today = Stats.new(:key => "app.#{today}.#{@offer.id}")
+    stat_tomorrow = Stats.new(:key => "app.#{tomorrow}.#{@offer.id}")
     
     stats = {}
     
@@ -194,13 +196,13 @@ private
       datas += ',' unless datas == ''
       datas += d.to_s
       
-      if d != 0 and d != 10000
+      if d != 0 && d != 10000
         should_send = true
       end
     end
     
     if should_send
-      send_stats_to_windows(today, stat_types, key, datas)
+      send_stats_to_windows(today, stat_types, @offer.id, datas)
     end
   end
   
@@ -226,7 +228,7 @@ private
       # Never calculate the interval during the first 4 hours of a day.
       # This is because it's possible that stats haven't been tallied yet.
       # Just use the previously set interval.
-      app_update_time = @app.get('interval_update_time') || 1.hour
+      app_update_time = @offer.stats_aggregation_interval || 1.hour
       return [app_update_time.to_i, 1.hour].max
     end
     
@@ -236,13 +238,9 @@ private
     total_ad_impressions = stat_row.get_hourly_count('hourly_impressions').sum
     
     if total_logins + total_rewards + total_paid_clicks + total_ad_impressions > 0
-      new_interval = 1.hour
+      return 1.hour
     else
-      new_interval = 8.hour
+      return 8.hour
     end
-    
-    @app.put('interval_update_time', new_interval)
-    
-    new_interval
   end
 end

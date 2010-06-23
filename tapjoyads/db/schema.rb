@@ -138,12 +138,12 @@ ActiveRecord::Schema.define(:version => 20100623182126) do
     t.boolean  "self_promote_only",                                                             :default => false, :null => false
     t.integer  "age_rating"
     t.boolean  "featured",                                                                      :default => false, :null => false
+    t.integer  "featured_payment"
     t.decimal  "min_conversion_rate",                             :precision => 8, :scale => 6
     t.datetime "next_stats_aggregation_time"
     t.datetime "last_stats_aggregation_time"
     t.datetime "last_daily_stats_aggregation_time"
     t.integer  "stats_aggregation_interval"
-    t.integer  "featured_payment"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

@@ -60,22 +60,18 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
     
       if currency.send_offer_data?
         if (reward.get('type') == 'install')
-          adv_app = SdbApp.new(:key => reward.get('advertiser_app_id'))
-          name = adv_app.get('name')
-          id = 'application'
-          callback_url += "&storeId=#{CGI::escape(adv_app.get_store_id)}"
+          offer = Offer.find_in_cache(reward.get('advertiser_app_id'))
+          name = offer.name
+          callback_url += "&storeId=#{CGI::escape(offer.third_party_data)}" if offer.item_type == 'App'
         elsif (reward.get('type') == 'offer')
           offer_id = reward.get('cached_offer_id')
           if offer_id
             offer = CachedOffer.new(:key => offer_id)
-            id = offer.key
             name = offer.get('name')
           else
-            id = 'UNKNOWN'
             name = 'UNKNOWN'
           end
         elsif (reward.get('type') == 'rating')
-          id = 'rating'
           name = 'rating'
         end
         callback_url = "#{callback_url}&application=#{CGI::escape(name)}"

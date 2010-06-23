@@ -1,5 +1,4 @@
 class RateAppOfferController < ApplicationController
-  include RewardHelper
   include PublisherRecordHelper
   include SqsHelper
   

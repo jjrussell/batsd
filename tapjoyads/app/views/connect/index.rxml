@@ -2,6 +2,6 @@ xml.instruct!
 xml.TapjoyConnectReturnObject do
   xml.Success true
   xml.ConnectReturnObject do
-    xml.PrimaryColor @app.primary_color if @app.primary_color
+    xml.PrimaryColor @app.color if @app && @app.color
   end
 end

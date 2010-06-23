@@ -4,14 +4,11 @@ class Job::MasterCalculateShowRateController < Job::JobController
   include SqsHelper
   
   def index
-    where_clause = "install_tracking = '1' and payment_for_install > '0' and balance > '0' and itemName() is not null"
+    offers = Offer.enabled_offers + Offer.classic_offers
+    count = offers.length
     
-    count = SdbApp.count(:where => where_clause)
-    
-    SdbApp.select(:attributes => 'itemName()', :where => where_clause, :order_by => "itemName()") do |app|
-      
-      time = Benchmark.realtime { send_to_sqs(QueueNames::CALCULATE_SHOW_RATE, app.key) }
-      
+    offers.each do |offer|
+      time = Benchmark.realtime { send_to_sqs(QueueNames::CALCULATE_SHOW_RATE, offer.id) }
       sleep((20.minutes.to_f / count) - time)
     end
     

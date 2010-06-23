@@ -55,33 +55,29 @@ class Job::MasterReloadStatzController < Job::JobController
     
     cached_stats = {}
     
-    apps = []
-    SdbApp.select(:where => "interval_update_time = '3600'") do |app|
-      apps.push(app)
-    end
-
-    apps.each do |app|
-      appstats = Appstats.new(app.key, { :start_time => now - 23.hours, :end_time => now + 1.hour }).stats
+    Offer.find(:all, :conditions => "stats_aggregation_interval = 3600").each do |offer|
+      appstats = Appstats.new(offer.id, { :start_time => now - 23.hours, :end_time => now + 1.hour }).stats
       
       this_apps_stats = {}
-      this_apps_stats['icon_url'] = app.get_icon_url
-      this_apps_stats['app_name'] = app.name
-      this_apps_stats['paid_installs'] = appstats['paid_installs'].sum
+      this_apps_stats['icon_url'] = offer.get_icon_url
+      this_apps_stats['offer_name'] = offer.name
+      this_apps_stats['conversions'] = appstats['paid_installs'].sum
       this_apps_stats['connects'] = appstats['logins'].sum
       this_apps_stats['new_users'] = appstats['new_users'].sum
       this_apps_stats['daily_active_users'] = appstats['daily_active_users'].sum
-      this_apps_stats['price'] = number_to_currency(app.price / 100.0)
-      this_apps_stats['payment_for_install'] = number_to_currency(app.payment_for_install / 100.0)
-      this_apps_stats['balance'] = number_to_currency(app.balance / 100.0)
-      this_apps_stats['daily_budget'] = app.daily_budget
-      this_apps_stats['show_rate'] = "%.2f" % (app.show_rate || 0)
+      this_apps_stats['price'] = number_to_currency(offer.price / 100.0)
+      this_apps_stats['payment'] = number_to_currency(offer.payment / 100.0)
+      this_apps_stats['balance'] = number_to_currency(offer.partner.balance / 100.0)
+      this_apps_stats['pending_earnings'] = number_to_currency(offer.partner.pending_earnings / 100.0)
+      this_apps_stats['daily_budget'] = offer.daily_budget
+      this_apps_stats['show_rate'] = "%.2f" % (offer.show_rate || 0)
       this_apps_stats['vg_purchases'] = appstats['vg_purchases'].sum
       this_apps_stats['published_installs'] = appstats['published_installs'].sum
       this_apps_stats['installs_revenue'] = number_to_currency(appstats['installs_revenue'].sum / 100.0)
       this_apps_stats['ad_impressions'] = appstats['hourly_impressions'].sum
-      this_apps_stats['os_type'] = app.os_type
+      this_apps_stats['platform'] = offer.get_platform
       
-      cached_stats[app.key] = this_apps_stats
+      cached_stats[offer.id] = this_apps_stats
     end
 
     save_to_cache('statz.cached_stats', cached_stats)

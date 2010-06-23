@@ -9,11 +9,11 @@
 %h1 Tapjoy stats for last 24 hours
 
 - form_tag('', :id => 'search_form') do
-  = label_tag('search_box', 'App Name:')
+  = label_tag('search_box', 'Offer Name:')
   = text_field_tag('search_box', '', :size => '30')
   = submit_tag('View Details')
 
-%h3#install_count_24hours= "Total conversions: #{@cvr_count_24hours}  Total revenue: #{@ad_spend_24hours}   Total payouts: #{@publisher_earnings_24hours}"
+%h3#install_count_24hours= "Total conversions: #{@cvr_count_24hours} &nbsp; Total revenue: #{@ad_spend_24hours} &nbsp; Total payouts: #{@publisher_earnings_24hours}"
 
 #last_updated= "Last Updated: #{@last_updated.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)}"
 
@@ -21,35 +21,37 @@
   %thead
     %tr
       %th
-      %th App
-      %th Paid installs
+      %th Offer
+      %th Conversions
       %th Connects
       %th New users
       %th DAUs
       %th Price
-      %th Payment for install
+      %th Payment
       %th Balance
+      %th Pending Earnings
       %th Daily Budget
-      %th OS Type
+      %th Platform
       %th Show rate
       %th VG Purchases
       %th Published installs
       %th Installs revenue
       %th Ad impressions
   %tbody#apps_tbody
-    - @cached_stats.each do |app_key, stats|
+    - @cached_stats.each do |offer_id, stats|
       %tr
-        %td= link_to(image_tag(stats['icon_url'], :size => '56x56'), statz_path(app_key))
-        %td= link_to(stats['app_name'], statz_path(app_key))
-        %td= stats['paid_installs']
+        %td= link_to(image_tag(stats['icon_url'], :size => '56x56'), statz_path(offer_id))
+        %td= link_to(stats['offer_name'], statz_path(offer_id))
+        %td= stats['conversions']
         %td= stats['connects']
         %td= stats['new_users']
         %td= stats['daily_active_users']
         %td= stats['price']
-        %td= stats['payment_for_install']
+        %td= stats['payment']
         %td= stats['balance']
+        %td= stats['pending_earnings']
         %td= stats['daily_budget']
-        %td= stats['os_type']
+        %td= stats['platform']
         %td= stats['show_rate']
         %td= stats['vg_purchases']
         %td= stats['published_installs']
@@ -59,18 +61,18 @@
 -content_for :page_javascript do
   :plain
     $(function() {
-      var app_guid = '';
+      var offer_guid = '';
       $('#search_box').keyup(function(event) {
         if (!(event.keyCode == 9 || event.keyCode == 13)) {
-          app_guid = '';
+          offer_guid = '';
         }
       });
       $('#search_box').autocomplete('#{search_statz_path}', { cacheLength: 1, autoFill: true, max: 20, delay: 250 });
       $('#search_box').result(function(event, data) {
-        app_guid = data[1];
+        offer_guid = data[1];
       });
       $('#search_form').submit(function() {
-        window.location.assign('#{statz_index_url}/' + app_guid);
+        window.location.assign('#{statz_index_url}/' + offer_guid);
         return false;
       });
       

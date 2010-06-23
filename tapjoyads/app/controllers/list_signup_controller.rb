@@ -10,8 +10,7 @@ class ListSignupController < ApplicationController
     
     @currency = Currency.find_in_cache_by_app_id(params[:publisher_app_id])
     @offer = Offer.find_in_cache(params[:advertiser_app_id])
-    @publisher_app = SdbApp.new(:key => params[:publisher_app_id])
-    @advertiser_app = SdbApp.new(:key => params[:advertiser_app_id])
+    @publisher_app = App.find_in_cache(params[:publisher_app_id])
   end
   
   def signup
