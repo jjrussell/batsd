@@ -16,7 +16,7 @@ class Job::MasterReloadStatzController < Job::JobController
     interval_strings.keys.each do |is|      
       money_stats[is] = {}
       
-      money_stats[is]['conversions'] = Conversion.count(:conditions => interval_strings[is].gsub('_TABLE_','conversions'))
+      money_stats[is]['conversions'] = number_with_delimiter(Conversion.count(:conditions => interval_strings[is].gsub('_TABLE_','conversions')))
       
       advertiser_spend = Conversion.sum(:advertiser_amount, :conditions => interval_strings[is].gsub('_TABLE_','conversions'))/-100.0      
       money_stats[is]['advertiser_spend'] = number_to_currency(advertiser_spend)
@@ -34,6 +34,7 @@ class Job::MasterReloadStatzController < Job::JobController
       money_stats[is]['payouts'] = number_to_currency(Payout.sum(:amount, :conditions => interval_strings[is].gsub('_TABLE_','payouts'))/100.0)
       money_stats[is]['revenue'] = number_to_currency(advertiser_spend - marketing_credits)
       money_stats[is]['net_revenue'] = number_to_currency(advertiser_spend - marketing_credits - publisher_earnings)
+      money_stats[is]['margin'] = number_to_currency((advertiser_spend - marketing_credits - publisher_earnings) / (advertiser_spend - marketing_credits))
       
     end
     
