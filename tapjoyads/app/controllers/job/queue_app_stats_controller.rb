@@ -45,7 +45,7 @@ private
   def count_stats_for_hour(start_time)
     end_time = start_time + 1.hour
     date_string = start_time.to_date.to_s(:db)
-    stat_row = @stat_rows[date_string] || Stats.new(:key => "app.#{date_string}.#{@app.key}")
+    stat_row = @stat_rows[date_string] || Stats.new(:key => "app.#{date_string}.#{@offer.id}")
     @stat_rows[date_string] = stat_row
     
     Rails.logger.info "Counting hour from #{start_time} to #{end_time}"
