@@ -19,7 +19,7 @@ class SubmitClickController < ApplicationController
     
     offer = Offer.find_in_cache(params[:advertiser_app_id])
     
-    if (offer.payment <= 0) && (params[:redirect] == "1")
+    if (offer.get_payment_for_source(params[:source]) <= 0) && (params[:redirect] == "1")
       #this app is no longer enabled
       @offer = offer
       web_request = WebRequest.new
@@ -52,10 +52,10 @@ class SubmitClickController < ApplicationController
     click.put("publisher_app_id", params[:publisher_app_id])
     click.put("publisher_user_record_id", params[:publisher_user_record_id])
     click.put("advertiser_app_id", params[:advertiser_app_id])
-    click.put('advertiser_amount', currency.get_advertiser_amount(offer))
-    click.put('publisher_amount', currency.get_publisher_amount(offer))
-    click.put('currency_reward', currency.get_reward_amount(offer))
-    click.put('tapjoy_amount', currency.get_tapjoy_amount(offer))
+    click.put('advertiser_amount', currency.get_advertiser_amount(offer, params[:source]))
+    click.put('publisher_amount', currency.get_publisher_amount(offer, params[:source]))
+    click.put('currency_reward', currency.get_reward_amount(offer, params[:source]))
+    click.put('tapjoy_amount', currency.get_tapjoy_amount(offer, params[:source]))
     click.put('reward_key', UUIDTools::UUID.random_create.to_s)
     click.put('source', params[:source]) unless params[:source].blank?
     click.save

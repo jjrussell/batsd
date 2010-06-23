@@ -52,10 +52,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       offer = Offer.find_in_cache(advertiser_app_id)
       
       unless click.get('currency_reward')
-        click.put('advertiser_amount', currency.get_advertiser_amount(offer))
-        click.put('publisher_amount', currency.get_publisher_amount(offer))
-        click.put('currency_reward', currency.get_reward_amount(offer))
-        click.put('tapjoy_amount', currency.get_tapjoy_amount(offer))
+        raise "No amounts set for store-click: #{click.key}"
       end
       
       begin
@@ -74,6 +71,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       reward.put('publisher_amount', click.get('publisher_amount'))
       reward.put('currency_reward', click.get('currency_reward'))
       reward.put('tapjoy_amount', click.get('tapjoy_amount'))
+      reward.put('source', click.get('source')) unless click.get('source').blank?
     
       reward.save
     

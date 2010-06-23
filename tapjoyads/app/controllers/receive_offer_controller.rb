@@ -30,10 +30,10 @@ class ReceiveOfferController < ApplicationController
     received_offer = ReceivedOffer.new
     received_offer.put('snuid', snuid)
     received_offer.put('amount', amount)
-    received_offer.put('advertiser_amount', currency.get_advertiser_amount(offer))
-    received_offer.put('publisher_amount', currency.get_publisher_amount(offer))
-    received_offer.put('currency_reward', currency.get_reward_amount(offer))
-    received_offer.put('tapjoy_amount', currency.get_tapjoy_amount(offer))
+    received_offer.put('advertiser_amount', currency.get_advertiser_amount(offer, nil))
+    received_offer.put('publisher_amount', currency.get_publisher_amount(offer, nil))
+    received_offer.put('currency_reward', currency.get_reward_amount(offer, nil))
+    received_offer.put('tapjoy_amount', currency.get_tapjoy_amount(offer, nil))
     received_offer.put('customer_service', '1') if customer_service
     received_offer.save
     

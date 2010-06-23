@@ -14,7 +14,7 @@
         %span.offername #{offer.name} (#{offer.cost})
         %br
         Earn
-        %span.amount #{@currency.get_reward_amount(offer)} #{@currency.name}
+        %span.amount #{@currency.get_reward_amount(offer, @source)} #{@currency.name}
           
 -content_for :page_javascript do
   addMoreLink(#{@more_data_available})

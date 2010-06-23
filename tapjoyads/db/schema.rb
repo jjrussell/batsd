@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100619102823) do
+ActiveRecord::Schema.define(:version => 20100623182126) do
 
   create_table "apps", :force => true do |t|
     t.string   "partner_id",            :limit => 36,                    :null => false
@@ -29,6 +29,8 @@ ActiveRecord::Schema.define(:version => 20100619102823) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "age_rating"
+    t.integer  "rotation_direction",                  :default => 0,     :null => false
+    t.integer  "rotation_time",                       :default => 0,     :null => false
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -105,10 +107,10 @@ ActiveRecord::Schema.define(:version => 20100619102823) do
   add_index "offerpal_offers", ["partner_id"], :name => "index_offerpal_offers_on_partner_id"
 
   create_table "offers", :force => true do |t|
-    t.string   "partner_id",             :limit => 36,                                                  :null => false
-    t.string   "item_id",                :limit => 36,                                                  :null => false
-    t.string   "item_type",                                                                             :null => false
-    t.string   "name",                                                                                  :null => false
+    t.string   "partner_id",                        :limit => 36,                                                  :null => false
+    t.string   "item_id",                           :limit => 36,                                                  :null => false
+    t.string   "item_type",                                                                                        :null => false
+    t.string   "name",                                                                                             :null => false
     t.text     "description"
     t.text     "url"
     t.integer  "price"
@@ -116,26 +118,32 @@ ActiveRecord::Schema.define(:version => 20100619102823) do
     t.integer  "actual_payment"
     t.integer  "daily_budget"
     t.integer  "overall_budget"
-    t.integer  "ordinal",                                                            :default => 500,   :null => false
+    t.integer  "ordinal",                                                                       :default => 500,   :null => false
     t.text     "countries"
     t.text     "cities"
     t.text     "postal_codes"
     t.text     "device_types"
-    t.boolean  "pay_per_click",                                                      :default => false
-    t.boolean  "allow_negative_balance",                                             :default => false
-    t.boolean  "user_enabled",                                                       :default => false
-    t.boolean  "tapjoy_enabled",                                                     :default => false
+    t.boolean  "pay_per_click",                                                                 :default => false
+    t.boolean  "allow_negative_balance",                                                        :default => false
+    t.boolean  "user_enabled",                                                                  :default => false
+    t.boolean  "tapjoy_enabled",                                                                :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "instructions"
     t.string   "time_delay"
-    t.boolean  "credit_card_required",                                               :default => false, :null => false
+    t.boolean  "credit_card_required",                                                          :default => false, :null => false
     t.string   "third_party_data"
-    t.decimal  "conversion_rate",                      :precision => 8, :scale => 6, :default => 0.0,   :null => false
-    t.decimal  "show_rate",                            :precision => 8, :scale => 6, :default => 1.0,   :null => false
-    t.boolean  "self_promote_only",                                                  :default => false, :null => false
+    t.decimal  "conversion_rate",                                 :precision => 8, :scale => 6, :default => 0.0,   :null => false
+    t.decimal  "show_rate",                                       :precision => 8, :scale => 6, :default => 1.0,   :null => false
+    t.boolean  "self_promote_only",                                                             :default => false, :null => false
     t.integer  "age_rating"
-    t.boolean  "featured",                                                           :default => false, :null => false
+    t.boolean  "featured",                                                                      :default => false, :null => false
+    t.decimal  "min_conversion_rate",                             :precision => 8, :scale => 6
+    t.datetime "next_stats_aggregation_time"
+    t.datetime "last_stats_aggregation_time"
+    t.datetime "last_daily_stats_aggregation_time"
+    t.integer  "stats_aggregation_interval"
+    t.integer  "featured_payment"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

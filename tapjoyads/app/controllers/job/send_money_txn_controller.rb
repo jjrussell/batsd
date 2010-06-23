@@ -20,13 +20,7 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
           return
         end
         
-        currency = Currency.find_in_cache_by_app_id(reward.get('publisher_app_id'))
-        offer = Offer.find_in_cache(reward.get('advertiser_app_id'))
-        
-        reward.put('advertiser_amount', currency.get_advertiser_amount(offer))
-        reward.put('publisher_amount', currency.get_publisher_amount(offer))
-        reward.put('currency_reward', currency.get_reward_amount(offer))
-        reward.put('tapjoy_amount', currency.get_tapjoy_amount(offer))
+        raise "No amounts set for reward: #{reward.key}"
       end
       
       conversion = Conversion.new do |c|

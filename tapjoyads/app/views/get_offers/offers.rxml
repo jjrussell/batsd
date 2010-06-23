@@ -4,7 +4,7 @@ xml.TapjoyConnectReturnObject do
     @offer_list.each do |offer|
       xml.OfferReturnClass do
         xml.Cost "Free"
-        xml.Amount @currency.get_reward_amount(offer)
+        xml.Amount @currency.get_reward_amount(offer, @source)
         xml.Currency @currency.name
         xml.Description offer.description.gsub('TAPJOY_BUCKS', @currency.name)
         xml.Instructions offer.instructions.gsub('TAPJOY_BUCKS', @currency.name)

@@ -5,7 +5,7 @@
 
   .instructions
     Earn 
-    %span.amount #{@currency.get_reward_amount(@offer)} #{@publisher_app.name} #{@currency.name}
+    %span.amount #{@currency.get_reward_amount(@offer, nil)} #{@publisher_app.name} #{@currency.name}
     when you signup for this email list. 
     Once you've confirmed your email address, you'll receive your #{@currency.name}.
 
