@@ -33,8 +33,8 @@ class Job::MasterReloadStatzController < Job::JobController
       money_stats[is]['orders'] = number_to_currency(Order.sum(:amount, :conditions => interval_strings[is].gsub('_TABLE_','orders') + " and payment_method != 2")/100.0)
       money_stats[is]['payouts'] = number_to_currency(Payout.sum(:amount, :conditions => interval_strings[is].gsub('_TABLE_','payouts'))/100.0)
       money_stats[is]['revenue'] = number_to_currency(advertiser_spend - marketing_credits)
-      money_stats[is]['net_revenue'] = number_to_currency(advertiser_spend - marketing_credits - publisher_earnings)
-      money_stats[is]['margin'] = number_with_precision((advertiser_spend - marketing_credits - publisher_earnings) / (advertiser_spend - marketing_credits) * 100, :precision => 2) + "%"
+      money_stats[is]['net_revenue'] = number_to_currency(advertiser_spend - marketing_credits - (publisher_earnings - marketing_credits*0.7))
+      money_stats[is]['margin'] = number_with_precision((advertiser_spend - marketing_credits - (publisher_earnings - marketing_credits*0.7)) / (advertiser_spend - marketing_credits) * 100, :precision => 2) + "%"
       
     end
     
