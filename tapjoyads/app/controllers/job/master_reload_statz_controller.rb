@@ -18,7 +18,7 @@ class Job::MasterReloadStatzController < Job::JobController
     interval_strings.keys.each do |is|      
       money_stats[is] = {}
       
-      num_hours = Offer.count_by_sql("select HOUR(TIMEDIFF(now(), #{interval_strings[is]})))";
+      num_hours = Offer.count_by_sql("select HOUR(TIMEDIFF(now(), #{interval_strings[is]}))");
       
       conversions = Conversion.count(:conditions => "created_at > #{interval_strings[is]}")
       money_stats[is]['conversions'] = number_with_delimiter(conversions)
