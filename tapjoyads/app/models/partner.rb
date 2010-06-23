@@ -20,7 +20,7 @@ class Partner < ActiveRecord::Base
   @@per_page = 20
   
   named_scope :to_calculate_next_payout_amount, :conditions => 'pending_earnings >= 10000'
-  named_scope :to_payout, :conditions => 'next_payout_amount >= 10000'
+  named_scope :to_payout, :conditions => 'pending_earnings != 0'
   
   def payout_cutoff_date(reference_date = nil)
     reference_date ||= Time.zone.now
