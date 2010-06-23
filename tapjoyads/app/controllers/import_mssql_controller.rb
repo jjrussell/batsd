@@ -176,7 +176,7 @@ class ImportMssqlController < ApplicationController
       mysql_app.description = params[:description] unless params[:description].blank?
       mysql_app.price = params[:price].to_i
       mysql_app.platform = params[:os_type]
-      mysql_app.store_id = mysql_app.parse_store_id_from_url(params[:store_url])
+      mysql_app.store_id = mysql_app.parse_store_id_from_url(params[:store_url], false)
       mysql_app.store_url = params[:store_url] unless params[:store_url].blank? || params[:store_url] == 'None'
       mysql_app.color = params[:primary_color].to_i
       mysql_app.rotation_direction = params[:rotation_direction]
