@@ -27,7 +27,7 @@ class StatzController < WebsiteController
   end
   
   def search
-    results = Offer.find(:all
+    results = Offer.find(:all,
       :conditions => "name LIKE '%#{params[:q]}%'",
       :select => 'id, name',
       :limit => params[:limit]
