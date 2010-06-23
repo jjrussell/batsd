@@ -24,7 +24,7 @@
         %td= number_to_currency(partner.pending_earnings / 100.0 - partner.next_payout_amount / 100.0)
         %td= number_to_currency(partner.next_payout_amount / 100.0)
         %td{ :style => 'font-size: small;' }= partner.id
-        %td= partner.users.first.email || ''
+        %td= partner.users.first? ? partner.users.first.email : ''
         %td
           - form_tag create_payout_tool_path(partner), :method => :post, :class => 'json', :style => 'height:45px;' do
             = text_field_tag 'amount', (partner.next_payout_amount / 100.0), :class => 'amount'
