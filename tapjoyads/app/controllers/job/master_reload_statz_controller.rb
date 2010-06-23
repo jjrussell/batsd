@@ -9,6 +9,7 @@ class Job::MasterReloadStatzController < Job::JobController
     interval_strings['24_hours'] = "_TABLE_.created_at > DATE_ADD(NOW(), INTERVAL -24 HOUR)"
     interval_strings['this_month'] = "year(_TABLE_.created_at) = year(Now()) and month(_TABLE_.created_at) = month(NOW())"
     interval_strings['today'] = interval_strings['this_month'] + " and day(_TABLE_.created_at) = day(NOW())"
+    interval_strings['7_days'] = "_TABLE_.created_at > DATE_ADD(NOW(), INTERVAL -7 DAY)"
     interval_strings['since_mar_23'] = "_TABLE_.created_at > '2010-03-23'"
     
     money_stats = {}
@@ -16,7 +17,7 @@ class Job::MasterReloadStatzController < Job::JobController
     interval_strings.keys.each do |is|      
       money_stats[is] = {}
       
-      num_hours = Order.find(:all,:conditions => interval_strings[is].gsub('_TABLE_','orders') , 
+      num_hours = Conversion.find(:all,:conditions => interval_strings[is].gsub('_TABLE_','orders') , 
         :group =>  "year(created_at), month(created_at), day(created_at), hour(created_at)").length
       
       conversions = Conversion.count(:conditions => interval_strings[is].gsub('_TABLE_','conversions'))
@@ -40,7 +41,7 @@ class Job::MasterReloadStatzController < Job::JobController
       linkshare_est = conversions * 0.0123
       money_stats[is]['linkshare_est'] = number_to_currency(linkshare_est)
       
-      ads_est = 600.0 * num_hours / 24.0
+      ads_est = 600.0 / 24.0 * num_hours 
       money_stats[is]['ads_est']  =  number_to_currency(ads_est)
       
       revenue = advertiser_spend - marketing_credits + linkshare_est + ads_est
