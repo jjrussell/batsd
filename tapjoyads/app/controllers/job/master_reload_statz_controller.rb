@@ -6,39 +6,45 @@ class Job::MasterReloadStatzController < Job::JobController
     now = Time.zone.now
     
     interval_strings = {}
-    interval_strings['24_hours'] = "_TABLE_.created_at > DATE_ADD(NOW(), INTERVAL -24 HOUR)"
-    interval_strings['this_month'] = "year(_TABLE_.created_at) = year(Now()) and month(_TABLE_.created_at) = month(NOW())"
-    interval_strings['today'] = interval_strings['this_month'] + " and day(_TABLE_.created_at) = day(NOW())"
-    interval_strings['7_days'] = "_TABLE_.created_at > DATE_ADD(NOW(), INTERVAL -7 DAY)"
-    interval_strings['since_mar_23'] = "_TABLE_.created_at > '2010-03-23'"
+    interval_strings['24_hours'] = "DATE_ADD(NOW(), INTERVAL -24 HOUR)"
+    interval_strings['this_month'] = "curdate() - dayofmonth(now());"
+    interval_strings['today'] = "curdate()"
+    interval_strings['7_days'] = "DATE_ADD(NOW(), INTERVAL -7 DAY)"
+    interval_strings['since_mar_23'] = "'2010-03-23'"
+    interval_strings['1_month'] = "DATE_ADD(NOW(), INTERVAL -1 MONTH)"
     
     money_stats = {}
     
     interval_strings.keys.each do |is|      
       money_stats[is] = {}
       
-      conversions = Conversion.count(:conditions => interval_strings[is].gsub('_TABLE_','conversions'))
+      num_hours = Offer.count_by_sql("select HOUR(TIMEDIFF(now(), #{interval_strings[is]})))";
+      
+      conversions = Conversion.count(:conditions => "created_at > #{interval_strings[is]}")
       money_stats[is]['conversions'] = number_with_delimiter(conversions)
       
-      advertiser_spend = Conversion.sum(:advertiser_amount, :conditions => interval_strings[is].gsub('_TABLE_','conversions'))/-100.0      
+      advertiser_spend = Conversion.sum(:advertiser_amount, :conditions => "created_at > #{interval_strings[is]}")/-100.0      
       money_stats[is]['advertiser_spend'] = number_to_currency(advertiser_spend)
       
       publisher_earnings = Conversion.sum(:publisher_amount, 
-        :conditions => interval_strings[is].gsub('_TABLE_','conversions') + " and partner_id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'",
+        :conditions => "conversions.created_at > #{interval_strings[is]} and partner_id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'",
         :joins => "JOIN offers on publisher_app_id = offers.id")/100.0
       
       money_stats[is]['publisher_earnings'] = number_to_currency(publisher_earnings)  
         
-      marketing_credits = Order.sum(:amount, :conditions => interval_strings[is].gsub('_TABLE_','orders') + " and payment_method = 2")/100.0
+      marketing_credits = Order.sum(:amount, :conditions => "created_at > #{interval_strings[is]} and payment_method = 2")/100.0
       money_stats[is]['marketing_credits'] = number_to_currency(marketing_credits)
       
-      money_stats[is]['orders'] = number_to_currency(Order.sum(:amount, :conditions => interval_strings[is].gsub('_TABLE_','orders') + " and payment_method != 2")/100.0)
-      money_stats[is]['payouts'] = number_to_currency(Payout.sum(:amount, :conditions => interval_strings[is].gsub('_TABLE_','payouts'))/100.0)
+      money_stats[is]['orders'] = number_to_currency(Order.sum(:amount, :conditions =>"created_at > #{interval_strings[is]} and payment_method != 2")/100.0)
+      money_stats[is]['payouts'] = number_to_currency(Payout.sum(:amount, :conditions => "created_at > #{interval_strings[is]}")/100.0)
       
       linkshare_est = conversions * 0.0123
       money_stats[is]['linkshare_est'] = number_to_currency(linkshare_est)
       
-      revenue = advertiser_spend - marketing_credits + linkshare_est
+      ads_est = num_hours / 24.0 * 400.0
+      money_stats[is]['ads_est'] = number_to_currency(ads_est)
+      
+      revenue = advertiser_spend - marketing_credits + linkshare_est + ads_est
       money_stats[is]['revenue'] = number_to_currency(revenue)
       money_stats[is]['net_revenue'] = number_to_currency(revenue - (publisher_earnings - marketing_credits*0.7))
       money_stats[is]['margin'] = number_with_precision((revenue - (publisher_earnings - marketing_credits*0.7)) / (revenue) * 100, :precision => 2) + "%"
