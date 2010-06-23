@@ -18,8 +18,6 @@
   .metadata Show rate: #{"%.2f" % (@offer.show_rate || 0)}
   .metadata Ordinal: #{@offer.ordinal}
   .metadata Payment: #{number_to_currency(@offer.payment / 100.0)}
-  .metadata Featured: #{@offer.featured?}
-  .metadata Featured Payment: #{number_to_currency(@offer.featured_payment / 100.0) rescue ''}
   .metadata Tapjoy enabled: #{@offer.tapjoy_enabled}
 
 .right
@@ -30,6 +28,8 @@
   .metadata Device types: #{@offer.device_types}
   .metadata Allow negative balance: #{@offer.allow_negative_balance?}
   .metadata Self promote only: #{@offer.self_promote_only?}
+  .metadata Featured: #{@offer.featured?}
+  .metadata Featured Payment: #{number_to_currency(@offer.featured_payment / 100.0) rescue ''}
 
 
 %table
