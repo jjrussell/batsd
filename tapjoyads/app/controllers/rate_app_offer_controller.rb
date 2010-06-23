@@ -36,7 +36,6 @@ class RateAppOfferController < ApplicationController
     reward.put('publisher_amount', '0')
     reward.put('currency_reward', currency.get_reward_amount(offer))
     reward.put('tapjoy_amount', '0')
-    reward.put('offerpal_amount', '0')
 
     reward.save
 
