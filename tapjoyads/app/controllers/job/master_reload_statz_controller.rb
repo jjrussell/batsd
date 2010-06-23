@@ -17,9 +17,6 @@ class Job::MasterReloadStatzController < Job::JobController
     interval_strings.keys.each do |is|      
       money_stats[is] = {}
       
-      num_hours = Conversion.find(:all,:conditions => interval_strings[is].gsub('_TABLE_','conversions') , 
-        :group =>  "year(created_at), month(created_at), day(created_at), hour(created_at)").length
-      
       conversions = Conversion.count(:conditions => interval_strings[is].gsub('_TABLE_','conversions'))
       money_stats[is]['conversions'] = number_with_delimiter(conversions)
       
@@ -41,10 +38,7 @@ class Job::MasterReloadStatzController < Job::JobController
       linkshare_est = conversions * 0.0123
       money_stats[is]['linkshare_est'] = number_to_currency(linkshare_est)
       
-      ads_est = 600.0 / 24.0 * num_hours 
-      money_stats[is]['ads_est']  =  number_to_currency(ads_est)
-      
-      revenue = advertiser_spend - marketing_credits + linkshare_est + ads_est
+      revenue = advertiser_spend - marketing_credits + linkshare_est
       money_stats[is]['revenue'] = number_to_currency(revenue)
       money_stats[is]['net_revenue'] = number_to_currency(revenue - (publisher_earnings - marketing_credits*0.7))
       money_stats[is]['margin'] = number_with_precision((revenue - (publisher_earnings - marketing_credits*0.7)) / (revenue) * 100, :precision => 2) + "%"
