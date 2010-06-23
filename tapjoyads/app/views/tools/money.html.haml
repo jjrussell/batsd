@@ -8,14 +8,14 @@
   %thead
     %tr
       %th
-      - @time_ranges do |tr|
+      - @time_ranges.each do |tr|
         %th= tr
       
   %tbody
-    - @stat_types do |st|
+    - @stat_types.each do |st|
       %tr
         %td= st
-        - @time_ranges do |tr|
+        - @time_ranges.each do |tr|
           %td= @money_stats[tr][st]
 
       
