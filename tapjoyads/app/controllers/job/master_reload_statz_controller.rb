@@ -27,7 +27,7 @@ class Job::MasterReloadStatzController < Job::JobController
       
       money_stats[is]['publisher_earnings'] = number_to_currency(publisher_earnings)  
         
-      marketing_credits = Order.sum(:amount, interval_strings[is].gsub('_TABLE_','conversions') + " and payment_method = 2")/100.0
+      marketing_credits = Order.sum(:amount, interval_strings[is].gsub('_TABLE_','orders') + " and payment_method = 2")/100.0
       money_stats[is]['marketing_credits'] = number_to_currency(marketing_credits)
       
       money_stats[is]['orders'] = number_to_currency(Order.sum(:amount, interval_strings[is].gsub('_TABLE_','orders') + " and payment_method != 2")/100.0)
