@@ -23,6 +23,7 @@ class GetOffersController < ApplicationController
     
     @offer_list = @offer_list[rand(@offer_list.length).to_i, 1]
     @more_data_available = 0
+    @source = 'featured'
     
     if params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
@@ -49,6 +50,7 @@ class GetOffersController < ApplicationController
     elsif params[:redirect] == '1'
       render :template => 'get_offers/installs_redirect'
     elsif params[:server] == '1'
+      @source = 'server'
       render :template => 'get_offers/installs_server'
     elsif params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
@@ -62,6 +64,7 @@ class GetOffersController < ApplicationController
   def setup
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 999).to_i
+    @source = ''
     
     @publisher_user_record = PublisherUserRecord.new(
         :key => "#{params[:app_id]}.#{params[:publisher_user_id]}")

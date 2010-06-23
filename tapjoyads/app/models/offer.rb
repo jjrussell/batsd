@@ -113,15 +113,15 @@ class Offer < ActiveRecord::Base
         gsub('TAPJOY_PUBLISHER_APP_ID', publisher_app_id.to_s)
   end
   
-  def get_click_url(publisher_app, publisher_user_record, udid)
-    "http://ws.tapjoyads.com/submit_click/store?advertiser_app_id=#{id}&publisher_app_id=#{publisher_app.id}&publisher_user_record_id=#{publisher_user_record.get_record_id}&udid=#{udid}"
+  def get_click_url(publisher_app, publisher_user_record, udid, source)
+    "http://ws.tapjoyads.com/submit_click/store?advertiser_app_id=#{id}&publisher_app_id=#{publisher_app.id}&publisher_user_record_id=#{publisher_user_record.get_record_id}&udid=#{udid}&source=#{source}"
   end
   
-  def get_redirect_url(publisher_app, publisher_user_record, udid, app_version)
+  def get_redirect_url(publisher_app, publisher_user_record, udid, source, app_version)
     if item_type == 'RatingOffer'
       return get_destination_url(udid, publisher_app.id, publisher_user_record, app_version)
     end
-    get_click_url(publisher_app, publisher_user_record, udid) + "&redirect=1"
+    get_click_url(publisher_app, publisher_user_record, udid, source) + "&redirect=1"
   end
   
   def get_icon_url(base64 = false)
