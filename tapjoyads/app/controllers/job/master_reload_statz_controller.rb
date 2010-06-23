@@ -17,7 +17,7 @@ class Job::MasterReloadStatzController < Job::JobController
     interval_strings.keys.each do |is|      
       money_stats[is] = {}
       
-      num_hours = Conversion.find(:all,:conditions => interval_strings[is].gsub('_TABLE_','orders') , 
+      num_hours = Conversion.find(:all,:conditions => interval_strings[is].gsub('_TABLE_','conversions') , 
         :group =>  "year(created_at), month(created_at), day(created_at), hour(created_at)").length
       
       conversions = Conversion.count(:conditions => interval_strings[is].gsub('_TABLE_','conversions'))
