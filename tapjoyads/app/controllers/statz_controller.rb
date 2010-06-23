@@ -13,15 +13,7 @@ class StatzController < WebsiteController
     @cached_stats = get_from_cache('statz.cached_stats') || {}
   end
   
-  def money
-    @money_stats = get_from_cache('statz.money') || render(:text => "Not Available") and return
-    @time_ranges = @money_stats.keys
-    
-    @stat_types = @money_stats[@time_ranges.first].keys
-    
-    @last_updated = get_from_cache('statz.last_updated') || Time.at(8.hours.to_i)
-    
-  end
+
   
   def show
     now = Time.zone.now

@@ -9,3 +9,5 @@
     %li= link_to 'Payouts', payouts_tools_path
   - if permitted_to? :index, :statz
     %li= link_to 'Statz', statz_index_path
+  - if permitted_to? :money, :tools
+    %li= link_to 'Money', money_tools_path

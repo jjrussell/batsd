@@ -1,5 +1,7 @@
 class ToolsController < WebsiteController
-  filter_access_to [ :new_order, :create_order, :payouts, :create_payout ]
+  include MemcachedHelper
+  
+  filter_access_to [ :new_order, :create_order, :payouts, :create_payout, :money ]
   
   def index
   end
@@ -28,6 +30,16 @@ class ToolsController < WebsiteController
       flash[:error] = 'The order could not be created.'
     end
     redirect_to new_order_tools_path
+  end
+  
+  def money
+    @money_stats = get_from_cache('statz.money') || render(:text => "Not Available") and return
+    @time_ranges = @money_stats.keys
+    
+    @stat_types = @money_stats[@time_ranges.first].keys
+    
+    @last_updated = get_from_cache('statz.last_updated') || Time.at(8.hours.to_i)
+    
   end
   
 end

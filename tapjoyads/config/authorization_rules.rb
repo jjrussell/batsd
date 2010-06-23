@@ -18,6 +18,7 @@ authorization do
   
   role :statz do
     has_permission_on :statz, :to => [ :index, :show, :search ]
+    has_permission_on :tools, :to => [ :money ]
   end
   
   role :admin do
