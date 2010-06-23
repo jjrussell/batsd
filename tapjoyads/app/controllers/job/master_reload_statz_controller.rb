@@ -40,7 +40,7 @@ class Job::MasterReloadStatzController < Job::JobController
       linkshare_est = conversions * 0.0123
       money_stats[is]['linkshare_est'] = number_to_currency(linkshare_est)
       
-      ads_est = 600.0 * num_days / 24.0
+      ads_est = 600.0 * num_hours / 24.0
       money_stats[is]['ads_est']  =  number_to_currency(ads_est)
       
       revenue = advertiser_spend - marketing_credits + linkshare_est + ads_est
