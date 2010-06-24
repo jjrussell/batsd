@@ -63,7 +63,7 @@ class GetOffersController < ApplicationController
   
   def setup
     @start_index = (params[:start] || 0).to_i
-    @max_items = (params[:max] || 999).to_i
+    @max_items = (params[:max] || 25).to_i
     @source = ''
     
     @publisher_user_record = PublisherUserRecord.new(
