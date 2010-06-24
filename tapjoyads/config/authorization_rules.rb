@@ -14,6 +14,8 @@ authorization do
   end
   
   role :executive do
+    has_permission_on :tools, :to => [ :money ]
+    has_permission_on :statz, :to => [ :index, :show, :search ]
   end
   
   role :statz do
