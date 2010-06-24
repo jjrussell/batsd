@@ -64,10 +64,9 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
           name = offer.name
           callback_url += "&storeId=#{CGI::escape(offer.third_party_data)}" if offer.item_type == 'App' && offer.third_party_data?
         elsif (reward.get('type') == 'offer')
-          offer_id = reward.get('cached_offer_id')
-          if offer_id
-            offer = CachedOffer.new(:key => offer_id)
-            name = offer.get('name')
+          if reward.get('cached_offer_id')
+            offerpal_offer = OfferpalOffer.find_by_offerpal_id(reward.get('cached_offer_id'))
+            name = offerpal_offer.name
           else
             name = 'UNKNOWN'
           end
