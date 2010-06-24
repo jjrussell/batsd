@@ -1,7 +1,7 @@
 class ToolsController < WebsiteController
   include MemcachedHelper
   
-  filter_access_to [ :new_order, :create_order, :payouts, :create_payout, :money ]
+  filter_access_to [ :new_order, :create_order, :payouts, :create_payout, :money, :new_transfer, :create_transfer ]
   
   def index
   end
@@ -16,6 +16,39 @@ class ToolsController < WebsiteController
     amount = (params[:amount].to_f * 100).to_i
     payout = partner.payouts.build(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
     render :json => { :success => payout.save }
+  end
+  
+  def new_transfer
+  end
+  
+  def create_transfer
+    
+    begin
+      Partner.transaction do      
+        partner = Partner.find(params[:partner_id])
+        amount = (params[:transfer_amount].to_f * 100).to_i
+        payout = partner.payouts.build(:amount => amount, :month => Time.zone.now.month, :year => Time.zone.now.year, :payment_method => 3)
+        payout.save!
+    
+        order = Order.new(:partner_id => partner.id, :amount => amount, :status => 1, :payment_method => 3)
+        order.save!
+      
+        if params[:marketing_amount].to_f > 0
+          marketing_order = Order.new(:partner_id => partner.id, 
+            :amount => (params[:marketing_amount].to_f * 100).to_i, :status => 1, :payment_method => 2)
+          marketing_order.save!
+        end
+      
+      end
+    
+      flash[:notice] = 'The transfer was successfully created.'
+    
+    # rescue Exception => e
+    #       Rails.logger.info e
+    #       flash[:error] = 'The transfer could not be created.'
+    end
+  
+    redirect_to new_transfer_tools_path
   end
   
   def new_order

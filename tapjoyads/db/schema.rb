@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100623182126) do
+ActiveRecord::Schema.define(:version => 20100624232406) do
 
   create_table "apps", :force => true do |t|
     t.string   "partner_id",            :limit => 36,                    :null => false
@@ -138,12 +138,12 @@ ActiveRecord::Schema.define(:version => 20100623182126) do
     t.boolean  "self_promote_only",                                                             :default => false, :null => false
     t.integer  "age_rating"
     t.boolean  "featured",                                                                      :default => false, :null => false
-    t.integer  "featured_payment"
     t.decimal  "min_conversion_rate",                             :precision => 8, :scale => 6
     t.datetime "next_stats_aggregation_time"
     t.datetime "last_stats_aggregation_time"
     t.datetime "last_daily_stats_aggregation_time"
     t.integer  "stats_aggregation_interval"
+    t.integer  "featured_payment"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -194,13 +194,14 @@ ActiveRecord::Schema.define(:version => 20100623182126) do
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
 
   create_table "payouts", :force => true do |t|
-    t.integer  "amount",                   :default => 0, :null => false
-    t.integer  "month",                                   :null => false
-    t.integer  "year",                                    :null => false
+    t.integer  "amount",                       :default => 0, :null => false
+    t.integer  "month",                                       :null => false
+    t.integer  "year",                                        :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "partner_id", :limit => 36,                :null => false
-    t.integer  "status",                   :default => 1, :null => false
+    t.string   "partner_id",     :limit => 36,                :null => false
+    t.integer  "status",                       :default => 1, :null => false
+    t.integer  "payment_method",               :default => 1, :null => false
   end
 
   add_index "payouts", ["id"], :name => "index_payouts_on_id", :unique => true

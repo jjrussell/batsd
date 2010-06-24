@@ -1,7 +1,7 @@
 authorization do
   
   role :payops do
-    has_permission_on :tools, :to => [ :new_order, :create_order, :payouts, :create_payout, :money ]
+    has_permission_on :tools, :to => [ :new_order, :create_order, :payouts, :create_payout, :money, :new_transfer, :create_transfer ]
   end
   
   role :account_mgr do

@@ -9,7 +9,7 @@ class Order < ActiveRecord::Base
   belongs_to :partner
   
   validates_presence_of :partner
-  validates_inclusion_of :status, :payment_method, :in => [ 0, 1, 2 ]
+  validates_inclusion_of :status, :payment_method, :in => [ 0, 1, 2, 3 ]
   validates_numericality_of :amount, :only_integer => true, :allow_nil => false
   
   after_create :update_balance
