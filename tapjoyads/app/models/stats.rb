@@ -16,6 +16,10 @@ class Stats < SimpledbResource
       hourly_stats = Array.new(24, 0)
     end
     
+    if stat_name == 'overall_store_rank'
+      return hourly_stats_string ? hourly_stats_string.split(',') : Array.new(24, '0')
+    end
+    
     now = Time.now.utc
     date, app_id = parse_key
     24.times do |i|

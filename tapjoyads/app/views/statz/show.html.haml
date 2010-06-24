@@ -75,6 +75,10 @@
       %td= @stats['monthly_active_users'].sum
       %td.breakdown= @stats['monthly_active_users'].join(', ')
     %tr
+      %td Store Rank
+      %td= (@stats['overall_store_rank'].find_all{|r| r != '0'}.last || '-')
+      %td.breakdown= @stats['overall_store_rank'].join(', ')
+    %tr
       %td VG Purchases
       %td= @stats['vg_purchases'].sum
       %td.breakdown= @stats['vg_purchases'].join(', ')

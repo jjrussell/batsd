@@ -71,6 +71,7 @@ class Job::MasterReloadStatzController < Job::JobController
       this_apps_stats['connects'] = appstats['logins'].sum
       this_apps_stats['new_users'] = appstats['new_users'].sum
       this_apps_stats['daily_active_users'] = appstats['daily_active_users'].sum
+      this_apps_stats['overall_store_rank'] = (appstats['overall_store_rank'].find_all{|r| r != '0'}.last || '-')
       this_apps_stats['price'] = number_to_currency(offer.price / 100.0)
       this_apps_stats['payment'] = number_to_currency(offer.payment / 100.0)
       this_apps_stats['balance'] = number_to_currency(offer.partner.balance / 100.0)
