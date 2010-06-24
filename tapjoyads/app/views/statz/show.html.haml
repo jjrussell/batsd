@@ -13,6 +13,7 @@
   .metadata Offer type: #{@offer.item_type}
   - if @offer.item_type == 'App'
     .metadata Store id: #{link_to(@offer.item.store_id, @offer.item.final_store_url)}
+    .metadata Use raw url: #{@offer.item.use_raw_url?}
   .metadata Price: #{number_to_currency(@offer.price / 100.0)}
   .metadata Balance: #{number_to_currency(@offer.partner.balance / 100.0)}
   .metadata Pending Earnings: #{number_to_currency(@offer.partner.pending_earnings / 100.0)}
