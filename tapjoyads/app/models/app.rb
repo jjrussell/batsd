@@ -92,7 +92,7 @@ class App < ActiveRecord::Base
   
   def parse_store_id_from_url(url, alert_on_parse_fail = true)
     if use_raw_url?
-      return '00000000'
+      return store_id
     end
     
     if url.blank? || url == 'None'
