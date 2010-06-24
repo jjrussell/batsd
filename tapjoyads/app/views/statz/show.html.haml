@@ -1,16 +1,18 @@
-- @page_title = "Stats for app: #{@offer.name}"
+- @page_title = "Stats for offer: #{@offer.name}"
 
 .icon= image_tag(@offer.get_icon_url, :size => '56x56')
 %h1= @offer.name
 
-.asof For: #{@start_time.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)} - #{@end_time.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)}
+%p For: #{@start_time.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)} - #{@end_time.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)}
+
+%p= link_to('[Edit Offer]', edit_statz_path(@offer.id))
 
 .left
   .metadata Offer id: #{@offer.id}
   .metadata Partner id: #{@offer.partner_id}
+  .metadata Offer type: #{@offer.item_type}
   - if @offer.item_type == 'App'
     .metadata Store id: #{link_to(@offer.item.store_id, @offer.item.final_store_url)}
-  .metadata Offer type: #{@offer.item_type}
   .metadata Price: #{number_to_currency(@offer.price / 100.0)}
   .metadata Balance: #{number_to_currency(@offer.partner.balance / 100.0)}
   .metadata Pending Earnings: #{number_to_currency(@offer.partner.pending_earnings / 100.0)}
@@ -29,7 +31,7 @@
   .metadata Allow negative balance: #{@offer.allow_negative_balance?}
   .metadata Self promote only: #{@offer.self_promote_only?}
   .metadata Featured: #{@offer.featured?}
-  .metadata Featured Payment: #{number_to_currency(@offer.featured_payment / 100.0) rescue ''}
+  .metadata Featured payment: #{number_to_currency(@offer.featured_payment / 100.0) rescue ''}
 
 
 %table
@@ -120,10 +122,6 @@
     
     td.breakdown {
       font-size: small;
-    }
-    
-    .asof {
-      padding-bottom: 10px;
     }
     
     table {

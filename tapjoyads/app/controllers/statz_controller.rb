@@ -1,7 +1,7 @@
 class StatzController < WebsiteController
   include MemcachedHelper
   
-  filter_access_to [ :index, :show, :search ]
+  filter_access_to [ :index, :show, :edit, :update, :search ]
   
   def index
     money_stats = get_from_cache('statz.money') || {'24_hours' => {}}
@@ -24,6 +24,21 @@ class StatzController < WebsiteController
     end
     @offer = Offer.find(params[:id])
     @stats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time }).stats
+  end
+  
+  def edit
+    @offer = Offer.find(params[:id])
+  end
+  
+  def update
+    @offer = Offer.find(params[:id])
+    params[:offer][:device_types] = params[:offer][:device_types].to_json
+    if @offer.update_attributes(params[:offer])
+      flash[:notice] = "Successfully updated #{@offer.name}"
+      redirect_to statz_path(@offer)
+    else
+      render :action => :edit
+    end
   end
   
   def search

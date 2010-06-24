@@ -1,0 +1,66 @@
+- @page_title = "Edit offer: #{@offer.name}"
+
+.icon= image_tag(@offer.get_icon_url, :size => '56x56')
+%h1= @offer.name
+
+- form_for(:offer, @offer, :url => { :action => :update }, :html => { :method => :put }) do |f|
+  .field
+    = f.error_messages :header_message => nil
+  .field
+    = f.check_box(:tapjoy_enabled)
+    = f.label(:tapjoy_enabled)
+  .field
+    = f.check_box(:self_promote_only)
+    = f.label(:self_promote_only)
+  .field
+    = f.check_box(:allow_negative_balance)
+    = f.label(:allow_negative_balance)
+  .field
+    = f.check_box(:pay_per_click)
+    = f.label(:pay_per_click)
+  .field
+    = f.check_box(:featured)
+    = f.label(:featured)
+  .field
+    = f.label(:featured_payment)
+    = f.text_field(:featured_payment)
+  .field
+    = f.label(:ordinal)
+    = f.text_field(:ordinal)
+  .field
+    = f.label(:show_rate)
+    = f.text_field(:show_rate)
+  .field
+    = f.label(:countries)
+    = f.text_field(:countries)
+  .field
+    = f.label(:cities)
+    = f.text_field(:cities)
+  .field
+    = f.label(:postal_codes)
+    = f.text_field(:postal_codes)
+  .field
+    = f.label(:device_types)
+    = f.select(:device_types, options_for_select(Offer::ALL_DEVICES, @offer.get_device_types), {}, :multiple => true)
+  .field
+    = f.submit('Save Changes')
+    
+
+- content_for :page_styles do
+  :plain
+    .icon {
+      float: left;
+      padding-bottom: 20px;
+    }
+    
+    form {
+      clear: both;
+    }
+    
+    .errorExplanation {
+      background-color: red;
+      padding: 10px;
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+      margin-bottom: 10px;
+    }

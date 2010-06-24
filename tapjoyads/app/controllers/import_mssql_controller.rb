@@ -185,14 +185,8 @@ class ImportMssqlController < ApplicationController
       mysql_app.save!
       
       offer = mysql_app.offer
-      unless offer.device_types == [ 'ipad' ].to_json
-        if params[:iphone_only] == '1'
-          offer.device_types = [ 'iphone' ].to_json
-        elsif mysql_app.platform == 'android'
-          offer.device_types = Offer::ANDROID_DEVICES.to_json
-        else
-          offer.device_types = Offer::APPLE_DEVICES.to_json
-        end
+      if params[:iphone_only] == '1'
+        offer.device_types = [ 'iphone' ].to_json
       end
       
     else
@@ -206,11 +200,8 @@ class ImportMssqlController < ApplicationController
       offer = email_offer.offer
       
     end
-    offer.tapjoy_enabled = params[:install_tracking] == '1'
     offer.user_enabled = params[:payment_for_install].to_i > 0
-    offer.pay_per_click = params[:pay_per_click] == '1'
     offer.payment = params[:payment_for_install].to_i
-    offer.ordinal = params[:rewarded_installs_ordinal].to_i unless params[:rewarded_installs_ordinal].blank?
     offer.next_stats_aggregation_time = Time.zone.now if offer.next_stats_aggregation_time.blank?
     offer.stats_aggregation_interval = 3600 if offer.stats_aggregation_interval.blank?
     offer.created_at = offer.item.created_at

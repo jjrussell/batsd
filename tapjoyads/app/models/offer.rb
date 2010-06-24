@@ -20,9 +20,18 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :price, :ordinal, :only_integer => true
   validates_numericality_of :payment, :only_integer => true, :if => Proc.new { |offer| offer.tapjoy_enabled? && offer.user_enabled? }
   validates_numericality_of :actual_payment, :featured_payment, :only_integer => true, :allow_nil => true
-  validates_numericality_of :conversion_rate, :show_rate, :greater_than_or_equal_to => 0
+  validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
+  validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :featured, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer OfferpalOffer RatingOffer )
+  validates_each :countries, :cities, :postal_codes, :device_types, :allow_blank => true do |record, attribute, value|
+    begin
+      parsed = JSON.parse(value)
+      record.errors.add(attribute, 'is not an Array') unless parsed.is_a?(Array)
+    rescue
+      record.errors.add(attribute, 'is not valid JSON')
+    end
+  end
   
   before_save :cleanup_url
   after_save :update_memcached
@@ -152,19 +161,19 @@ class Offer < ActiveRecord::Base
   end
   
   def get_countries
-    Set.new(countries.nil? ? nil : JSON.parse(countries))
+    Set.new(countries.blank? ? nil : JSON.parse(countries))
   end
   
   def get_postal_codes
-    Set.new(postal_codes.nil? ? nil : JSON.parse(postal_codes))
+    Set.new(postal_codes.blank? ? nil : JSON.parse(postal_codes))
   end
   
   def get_cities
-    Set.new(cities.nil? ? nil : JSON.parse(cities))
+    Set.new(cities.blank? ? nil : JSON.parse(cities))
   end
   
   def get_device_types
-    Set.new(device_types.nil? ? nil : JSON.parse(device_types))
+    Set.new(device_types.blank? ? nil : JSON.parse(device_types))
   end
   
   def get_platform
