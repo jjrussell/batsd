@@ -91,6 +91,10 @@ private
     stat_row.update_stat_for_hour('rewards', start_time.hour, published_installs + offers_completed + ratings_opened)
     stat_row.update_stat_for_hour('rewards_revenue', start_time.hour, installs_revenue + offers_revenue)
     stat_row.update_stat_for_hour('rewards_opened', start_time.hour, installs_opened + offers_opened + ratings_opened)
+    
+    if @offer.item_type == 'App' && @offer.get_platform == 'iOS'
+      stat_row.update_stat_for_hour('overall_store_rank', start_time.hour, get_store_rank(@offer.third_party_data))
+    end
   end
   
   ##
@@ -242,5 +246,17 @@ private
     else
       return 8.hour
     end
+  end
+  
+  def get_store_rank(store_id)
+    top_list = get_from_cache_and_save('rankings.itunes.top100', false, 1.hour) do 
+      response = download_content('http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=25204&popId=27&genreId=36', 
+          :headers => {'User-Agent' => 'iTunes/9.1.1 (Macintosh; Intel Mac OS X 10.6.3) AppleWebKit/531.22.7'})
+      response.scan(/<GotoURL.*?url=\S*\/app\/\S*\id(\d*)\?/m).uniq.flatten
+    end
+    top_list.each_with_index do |id, index|
+      return index + 1 if id == store_id
+    end
+    return '-'
   end
 end
