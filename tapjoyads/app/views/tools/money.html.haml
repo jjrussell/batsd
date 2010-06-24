@@ -18,6 +18,8 @@
         - @time_ranges.each do |tr|
           %td= @money_stats[tr][st]
 
+%h3= "Total Balance: #{number_to_currency(@total_balance)}"
+%h3= "Total Pending Earnings:  #{number_to_currency(@total_pending_earnings)}"
       
 
 -content_for :page_styles do

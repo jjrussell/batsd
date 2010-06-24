@@ -40,6 +40,9 @@ class ToolsController < WebsiteController
     
     @last_updated = get_from_cache('statz.last_updated') || Time.at(8.hours.to_i)
     
+    @total_balance = get_from_cache('statz.balance') || 'Not Available'
+    @total_pending_earnings = get_from_cache('statz.pending_earnings') || 'Not Available'
+    
   end
   
 end
