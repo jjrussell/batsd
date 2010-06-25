@@ -5,7 +5,7 @@ class Offer < ActiveRecord::Base
   APPLE_DEVICES = %w( iphone itouch ipad )
   ANDROID_DEVICES = %w( android )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES
-  EXEMPT_UDID = '298c5159a3681207eaba5a04b3573aa7b4f13d99'
+  EXEMPT_UDID = 'c73e730913822be833766efffc7bb1cf239d855a'
   
   CLASSIC_OFFER_TYPE  = '0'
   DEFAULT_OFFER_TYPE  = '1'
