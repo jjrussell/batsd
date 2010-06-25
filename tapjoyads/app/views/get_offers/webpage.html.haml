@@ -11,10 +11,11 @@
     %a{ :href => offer.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid], @source, params[:app_version]), :class => 'offer' }
       %img{ :src => offer.get_icon_url }
       .offertext
-        %span.offername #{offer.name} (#{offer.cost})
-        %br
-        Earn
-        %span.amount #{@currency.get_reward_amount(offer, @source)} #{@currency.name}
+        .cell
+          %span.offername #{offer.name} (#{offer.cost})
+          %br
+          Earn
+          %span.amount #{@currency.get_reward_amount(offer, @source)} #{@currency.name}
           
 -content_for :page_javascript do
   addMoreLink(#{@more_data_available})
@@ -149,6 +150,10 @@
     }
 
     #offers .offertext {
+      float: left;
+    }
+    
+    #offers .offertext .cell {
       height: 65px;
       display: table-cell;
       vertical-align: middle;
