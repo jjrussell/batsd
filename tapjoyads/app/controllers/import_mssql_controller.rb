@@ -93,7 +93,7 @@ class ImportMssqlController < ApplicationController
     
     partner.created_at = Time.parse(params[:created_at] + ' CST').utc if partner.created_at.nil?
     
-    partner.save! id partner.changed?
+    partner.save! if partner.changed?
     
     render :template => 'layouts/success' 
   end
