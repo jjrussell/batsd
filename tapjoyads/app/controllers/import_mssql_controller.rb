@@ -90,10 +90,10 @@ class ImportMssqlController < ApplicationController
     partner.name = params[:name] unless params[:name].blank?
     partner.contact_name = params[:contact_name] unless params[:contact_name].blank?
     partner.contact_phone = params[:contact_phone] unless params[:contact_phone].blank?
-    partner.updated_at = Time.parse(params[:updated_at] + ' CST').utc
-    partner.created_at = Time.parse(params[:created_at] + ' CST').utc
     
-    partner.save!
+    partner.created_at = Time.parse(params[:created_at] + ' CST').utc if partner.created_at.nil?
+    
+    partner.save! id partner.changed?
     
     render :template => 'layouts/success' 
   end
