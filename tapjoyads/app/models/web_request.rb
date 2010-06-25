@@ -84,6 +84,8 @@ class WebRequest < SimpledbResource
       put('type', params[:type])
       put('publisher_user_id', params[:publisher_user_id])
       put('virtual_good_id', params[:virtual_good_id])
+      
+      put('source', params[:source])
     end
     
     if request
