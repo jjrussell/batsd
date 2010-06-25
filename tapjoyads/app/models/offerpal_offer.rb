@@ -29,6 +29,7 @@ private
     offer.credit_card_required = @credit_card_required
     offer.payment = @payment
     offer.tapjoy_enabled = true
+    offer.show_rate = 1.0
     offer.save!
   end
   
