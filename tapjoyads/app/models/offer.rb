@@ -247,9 +247,9 @@ private
   def geoip_reject?(geoip_data, device_app_list)
     return false if device_app_list.key == EXEMPT_UDID
 
-    return true if !countries.nil? && countries != '[]' && !get_countries.include?(geoip_data[:country])
-    return true if !postal_codes.nil? && postal_codes != '[]' && !get_postal_codes.include?(geoip_data[:postal_code])
-    return true if !cities.nil? && cities != '[]' && !get_cities.include?(geoip_data[:city])
+    return true if !countries.blank? && countries != '[]' && !get_countries.include?(geoip_data[:country])
+    return true if !postal_codes.blank? && postal_codes != '[]' && !get_postal_codes.include?(geoip_data[:postal_code])
+    return true if !cities.blank? && cities != '[]' && !get_cities.include?(geoip_data[:city])
         
     return false
   end
