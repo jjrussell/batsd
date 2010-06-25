@@ -4,7 +4,7 @@ class Job::MasterCalculateShowRateController < Job::JobController
   include SqsHelper
   
   def index
-    offers = Offer.enabled_offers + Offer.classic_offers
+    offers = Offer.enabled_offers
     count = offers.length
     
     offers.each do |offer|
