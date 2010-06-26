@@ -14,7 +14,7 @@ xml.VGStoreItemReturnClass do
     end
     xml.VGStoreItemAttributeValueReturnClass do
       xml.AttributeType 'quantity'
-      xml.AttributeValue virtual_good.quantity
+      xml.AttributeValue point_purchases.get_virtual_good_quantity(virtual_good.key)
     end
   end
   xml.NumberOwned point_purchases.get_virtual_good_quantity(virtual_good.key)
