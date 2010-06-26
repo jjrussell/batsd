@@ -12,6 +12,10 @@ xml.VGStoreItemReturnClass do
         xml.AttributeValue value
       end
     end
+    xml.VGStoreItemAttributeValueReturnClass do
+      xml.AttributeType 'quantity'
+      xml.AttributeValue virtual_good.quantity
+    end
   end
   xml.NumberOwned point_purchases.get_virtual_good_quantity(virtual_good.key)
   xml.ThumbImageURL virtual_good.icon_url
