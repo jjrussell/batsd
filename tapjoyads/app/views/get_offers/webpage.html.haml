@@ -16,88 +16,13 @@
           %br
           Earn
           %span.amount #{@currency.get_reward_amount(offer, @source)} #{@currency.name}
-          
--content_for :page_javascript do
-  addMoreLink(#{@more_data_available})
-  :plain
-    function addMoreLink(moreDataAvailable) {
-      if (!moreDataAvailable) {
-        return;
-      }
-    
-      count = Math.min(moreDataAvailable, 25)
-      document.getElementById('offers').innerHTML += "<a href='#' onclick='return showMore(this)' id='showmore'>" +
-          "Show " + count + " more..."
-    }
-  
-    function showMore(e) {
-      e.innerHTML += "<img src='../images/load-circle.gif'>"
-      var head= document.getElementsByTagName('head')[0];
-      var script= document.createElement('script');
-      script.type= 'text/javascript';
-      script.src= getJsonLink();
-      head.appendChild(script);
-      
-      return false;
-    }
-    
-    function getJsonLink() {
-      var type = param('type') || 1
-      
-      var url = "/get_offers?json=1&callback=parseOffers&max=25" + 
-          "&app_id=" + param('app_id') +
-          "&udid=" + param('udid') + 
-          "&start=" + getNextStart() +
-          "&device_type=" + param('device_type') +
-          "&app_version=" + param('app_version') +
-          "&type=" + type
-      return url;
-    }
-    
-    function getNextStart() {
-      var start = Number(param('start')) || 0
-      var max = Number(param('max')) || 25
-      var postLoadCount = window.postLoadCount || 0
-      
-      return start + max + postLoadCount;
-    }
-    
-    function param(name) {
-      var regex = new RegExp( "[\\?&]" + name + "=([^&#]*)" );
-      var results = regex.exec( window.location.href );
-      return results ? results[1] : '';
-    }
-    
-    function parseOffers(json) {
-      window.postLoadCount = Number(window.postLoadCount || 0)
-      offerArray = json['OfferArray']
-      window.postLoadCount += offerArray.length
-      
-      newHtml = [];
-      
-      for (var i = 0, offer; offer = offerArray[i]; i++) {
-        newHtml.push("<a class='offer' href='")
-        newHtml.push(offer['RedirectURL'])
-        newHtml.push("'>")
-        newHtml.push("<img src='")
-        newHtml.push(offer['IconURL'])
-        newHtml.push("'>")
-        newHtml.push("<div class='offertext'><span class='offername'>")
-        newHtml.push(offer['Name'] + ' (' + offer['Cost'] + ')')
-        newHtml.push("</span><br />Earn <span class='amount'>")
-        newHtml.push(offer['Amount'] + ' ' + json['CurrencyName'])
-        newHtml.push('</span></div></a>')
-      }
-      
-      var s = document.getElementById('showmore')
-      s.parentNode.removeChild(s)
-      
-      document.getElementById('offers').innerHTML += newHtml.join('')
-      addMoreLink(json['MoreDataAvailable'])
-    }
-    
-          
--content_for :page_styles do
+
+#pagination
+  .prev= get_previous_link
+  .next= get_next_link
+  .clear
+
+- content_for :page_styles do
   :plain
     * {
       margin: 0;
@@ -111,6 +36,7 @@
       vertical-align: baseline;
     }
 
+    #pagination,
     #instructions { 
       padding: 10px;
       margin: 10px 3%;
@@ -167,20 +93,6 @@
     #offers .amount {
       color: rgb(0, 136, 16);
     }
-
-    #offers #showmore {
-      text-align: center;
-      font-size: 120%;
-      background: white;
-      padding-top: 20px;
-      height: 45px;
-    }
-    
-    #offers #showmore img {
-      display: block;
-      margin: 0 auto;
-      padding-top: 3px;
-    }
     
     #offers a:first-child {
       -moz-border-radius-topleft:10px;
@@ -189,10 +101,28 @@
       -webkit-border-top-right-radius:10px;
     }
 
-    #showmore {
+    #offers a:last-child {
       -moz-border-radius-bottomleft:10px;
       -webkit-border-bottom-left-radius:10px;
       -moz-border-radius-bottomright:10px;
       -webkit-border-bottom-right-radius:10px;
     }
     
+    .prev a, .next a {
+      font-size: 120%;
+      color: #004E09;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    
+    .prev {
+      float: left;
+    }
+    
+    .next {
+      float: right;
+    }
+    
+    .clear {
+      clear: both;
+    }
