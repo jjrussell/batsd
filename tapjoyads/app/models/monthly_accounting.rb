@@ -73,7 +73,7 @@ class MonthlyAccounting < ActiveRecord::Base
     record = MonthlyAccounting.find_or_initialize_by_partner_id_and_month_and_year(partner.id, month, year)
         
     #Calculate the Balance side
-    orders = Order.sum(:amount, :conditions => "partner_id = '#{partner.id}' and month(created_at) = #{month} and year(created_at) = #{year}", :group => :payment_method)
+    orders = Order.sum(:amount, :conditions => "status = 1 and partner_id = '#{partner.id}' and month(created_at) = #{month} and year(created_at) = #{year}", :group => :payment_method)
     
     p orders
     
@@ -95,7 +95,7 @@ class MonthlyAccounting < ActiveRecord::Base
       record.spend #this is a negative value
     
     #Calculate the Pending Earnings side
-    payouts = Payout.sum(:amount, :conditions => "partner_id = '#{partner.id}' and month(created_at) = #{month} and year(created_at) = #{year}", :group => :payment_method)
+    payouts = Payout.sum(:amount, :conditions => "status = 1 and partner_id = '#{partner.id}' and month(created_at) = #{month} and year(created_at) = #{year}", :group => :payment_method)
     
     p payouts
     
