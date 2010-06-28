@@ -20,7 +20,7 @@
 %table#apps_table.tablesorter
   %thead
     %tr
-      %th= link_to('Icon', 'javascript:toggleIcons()')
+      %th= link_to('Icon', 'javascript:createIcons()')
       %th Offer
       %th Conversions
       %th Connects
@@ -41,7 +41,7 @@
   %tbody#apps_tbody
     - @cached_stats.each do |offer_id, stats|
       %tr
-        %td= link_to(image_tag(stats['icon_url'], :size => '56x56', :class => 'icon'), statz_path(offer_id))
+        %td.icon{:id => offer_id}
         %td= link_to(stats['offer_name'], statz_path(offer_id))
         %td= stats['conversions']
         %td= stats['connects']
@@ -61,7 +61,7 @@
         %td= stats['ad_impressions']
       
 -content_for :page_javascript do
-  var iconVisibilty = #{!!(request.headers['User-Agent'] && request.headers['User-Agent'].downcase =~ /ipod|iphone|ipad|android/)};
+  var iconsCreated = false;
   
   :plain
     $(function() {
@@ -87,19 +87,20 @@
         },
         sortList: [[2, 1]]
       });
-      
-      toggleIcons();
     });
     
-    function toggleIcons() {
-      iconVisibilty = !iconVisibilty;
-      if (iconVisibilty) {
-        $(".icon").show();
-      } else {
-        $(".icon").hide();
+    function createIcons() {
+      if (iconsCreated) {
+        return;
       }
+      
+      $(".icon").each(function(index) {
+        var url = 'http://s3.amazonaws.com/app_data/icons/' + $(this).id + '.png';
+        $(this).html('<img src="' + url + '" height="57" width="57" />');
+      });
+      iconsCreated = true;
     }
-
+    
 -content_for :page_styles do
   :plain
     table.tablesorter {
@@ -110,34 +111,13 @@
       background-position: right bottom;
     }
     
-    th, td {
+    th, 
+    td,
+    .icon img {
       border: 0;
-    }
-    
-    .appkey {
-      font-size:50%;
-    }
-    
-    .appname {
-      width: 100px;
-      overflow: hidden;
     }
     
     #last_updated {
       font-weight: bold;
       font-size: 14px;
-    }
-    
-    #do_refresh {
-      cursor: pointer;
-      text-decoration: underline;
-      color: #A7A3FF;
-    }
-    
-    .hidden {
-      display: none;
-    }
-    
-    .icon {
-      display: none;
     }
