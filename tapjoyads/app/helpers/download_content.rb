@@ -52,7 +52,7 @@ module DownloadContent
     if response.status == 403
       alert_new_relic(FailedToDownloadError, "Failed to download #{url}. 403 error.")
     elsif response.status < 200 or response.status > 399
-      raise "#{response.status} error"
+      raise "#{response.status} error from #{url}"
     end
     
     return response
