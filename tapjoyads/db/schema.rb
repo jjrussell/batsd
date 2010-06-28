@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100624232406) do
+ActiveRecord::Schema.define(:version => 20100628025614) do
 
   create_table "apps", :force => true do |t|
     t.string   "partner_id",            :limit => 36,                    :null => false
@@ -91,6 +91,31 @@ ActiveRecord::Schema.define(:version => 20100624232406) do
   add_index "email_offers", ["id"], :name => "index_email_offers_on_id", :unique => true
   add_index "email_offers", ["name"], :name => "index_email_offers_on_name"
   add_index "email_offers", ["partner_id"], :name => "index_email_offers_on_partner_id"
+
+  create_table "monthly_accountings", :force => true do |t|
+    t.string   "partner_id",                 :limit => 36, :null => false
+    t.integer  "month",                                    :null => false
+    t.integer  "year",                                     :null => false
+    t.integer  "beginning_balance",                        :null => false
+    t.integer  "ending_balance",                           :null => false
+    t.integer  "website_orders",                           :null => false
+    t.integer  "invoiced_orders",                          :null => false
+    t.integer  "marketing_orders",                         :null => false
+    t.integer  "transfer_orders",                          :null => false
+    t.integer  "spend",                                    :null => false
+    t.integer  "beginning_pending_earnings",               :null => false
+    t.integer  "ending_pending_earnings",                  :null => false
+    t.integer  "payment_payouts",                          :null => false
+    t.integer  "transfer_payouts",                         :null => false
+    t.integer  "earnings",                                 :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "monthly_accountings", ["id"], :name => "index_monthly_accountings_on_id", :unique => true
+  add_index "monthly_accountings", ["month", "year"], :name => "index_monthly_accountings_on_month_and_year"
+  add_index "monthly_accountings", ["partner_id", "month", "year"], :name => "index_monthly_accountings_on_partner_id_and_month_and_year", :unique => true
+  add_index "monthly_accountings", ["partner_id"], :name => "index_monthly_accountings_on_partner_id"
 
   create_table "offerpal_offers", :force => true do |t|
     t.string   "partner_id",  :limit => 36, :null => false
