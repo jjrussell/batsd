@@ -75,8 +75,6 @@ class MonthlyAccounting < ActiveRecord::Base
     #Calculate the Balance side
     orders = Order.sum(:amount, :conditions => "status = 1 and partner_id = '#{partner.id}' and month(created_at) = #{month} and year(created_at) = #{year}", :group => :payment_method)
     
-    p orders
-    
     record.beginning_balance = beginning_balance    
     record.website_orders = orders[0] || 0
     record.invoiced_orders = orders[1] || 0
@@ -88,16 +86,12 @@ class MonthlyAccounting < ActiveRecord::Base
       record.spend += Conversion.sum(:advertiser_amount, :conditions => "month(created_at) = #{month} and year(created_at) = #{year} and advertiser_offer_id = '#{app.id}'") 
     end
     
-    p record.spend
-    
     record.ending_balance = record.beginning_balance + 
       record.website_orders + record.invoiced_orders + record.marketing_orders + record.transfer_orders + 
       record.spend #this is a negative value
     
     #Calculate the Pending Earnings side
     payouts = Payout.sum(:amount, :conditions => "status = 1 and partner_id = '#{partner.id}' and month(created_at) = #{month} and year(created_at) = #{year}", :group => :payment_method)
-    
-    p payouts
     
     record.beginning_pending_earnings = beginning_pending_earnings
     record.payment_payouts = (payouts[1] || 0) * -1
@@ -107,8 +101,6 @@ class MonthlyAccounting < ActiveRecord::Base
     partner.apps.each do |app| 
       record.earnings += Conversion.sum(:publisher_amount, :conditions => "month(created_at) = #{month} and year(created_at) = #{year} and publisher_app_id = '#{app.id}'") 
     end
-    
-    p record.earnings
     
     record.ending_pending_earnings = record.beginning_pending_earnings +
       record.payment_payouts + record.transfer_payouts + #these are negative values
