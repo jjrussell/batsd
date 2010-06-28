@@ -34,12 +34,12 @@ module DownloadContent
   ##
   # Makes a GET request to url. No data is returned.
   # If the download fails, it will be retried automatically via sqs, 
-  def download_with_retry(url, download_options = {})
+  def download_with_retry(url, download_options = {}, failure_message = nil)
     begin
       download_strict(url, download_options)
     rescue Exception => e
       Rails.logger.info "Download failed. Error: #{e}"
-      message = {:url => url, :download_options => download_options}.to_json
+      message = {:url => url, :download_options => download_options, :failure_message => failure_message}.to_json
       send_to_sqs(QueueNames::FAILED_DOWNLOADS, message)
       Rails.logger.info "Added to FailedDownloads queue."
     end
