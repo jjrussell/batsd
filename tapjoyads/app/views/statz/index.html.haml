@@ -95,7 +95,7 @@
       }
       
       $(".icon").each(function(index) {
-        var url = 'http://s3.amazonaws.com/app_data/icons/' + $(this).id + '.png';
+        var url = 'http://s3.amazonaws.com/app_data/icons/' + this.id + '.png';
         $(this).html('<img src="' + url + '" height="57" width="57" />');
       });
       iconsCreated = true;
