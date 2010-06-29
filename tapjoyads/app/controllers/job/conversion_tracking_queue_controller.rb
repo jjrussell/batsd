@@ -70,7 +70,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       reward.put('publisher_amount', click.get('publisher_amount'))
       reward.put('currency_reward', click.get('currency_reward'))
       reward.put('tapjoy_amount', click.get('tapjoy_amount'))
-      reward.put('source', click.get('source')) unless click.get('source').blank?
+      reward.put('source', click.get('source'))
     
       reward.save
     

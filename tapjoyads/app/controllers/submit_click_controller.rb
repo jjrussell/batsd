@@ -55,7 +55,7 @@ class SubmitClickController < ApplicationController
     click.put('currency_reward', currency.get_reward_amount(offer, params[:source]))
     click.put('tapjoy_amount', currency.get_tapjoy_amount(offer, params[:source]))
     click.put('reward_key', UUIDTools::UUID.random_create.to_s)
-    click.put('source', params[:source]) unless params[:source].blank?
+    click.put('source', params[:source])
     click.save
     
     web_request = WebRequest.new
