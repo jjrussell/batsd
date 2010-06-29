@@ -20,7 +20,7 @@
 %table#apps_table.tablesorter
   %thead
     %tr
-      %th= link_to('Icon', 'javascript:createIcons()')
+      %th= link_to('Icon', 'javascript:toggleIcons()')
       %th Offer
       %th Conversions
       %th Connects
@@ -60,8 +60,9 @@
         %td= stats['installs_revenue']
         %td= stats['ad_impressions']
       
--content_for :page_javascript do
+- content_for :page_javascript do
   var iconsCreated = false;
+  var iconsVisible = false;
   
   :plain
     $(function() {
@@ -89,6 +90,16 @@
       });
     });
     
+    function toggleIcons() {
+      if (iconsVisible) {
+        $('.icon>img').hide();
+      } else {
+        createIcons();
+        $('.icon>img').show();
+      }
+      iconsVisible = !iconsVisible;
+    }
+    
     function createIcons() {
       if (iconsCreated) {
         return;
@@ -101,7 +112,7 @@
       iconsCreated = true;
     }
   
--content_for :page_styles do
+- content_for :page_styles do
   :plain
     table.tablesorter {
       border-collapse: separate;
