@@ -75,8 +75,8 @@ class Job::MasterReloadStatzController < Job::JobController
       this_apps_stats['balance'] = number_to_currency(offer.partner.balance / 100.0)
       this_apps_stats['pending_earnings'] = number_to_currency(offer.partner.pending_earnings / 100.0)
       this_apps_stats['daily_budget'] = offer.daily_budget
-      this_apps_stats['show_rate'] = "%.2f" % (offer.show_rate || 0)
-      this_apps_stats['conversion_rate'] = "%.2f" % (offer.conversion_rate || 0)
+      this_apps_stats['show_rate'] = "%.1f%" % ((offer.show_rate || 0) * 100.0)
+      this_apps_stats['conversion_rate'] = "%.1f%" % ((offer.conversion_rate || 0) * 100.0)
       this_apps_stats['vg_purchases'] = appstats['vg_purchases'].sum
       this_apps_stats['published_installs'] = appstats['published_installs'].sum
       this_apps_stats['installs_revenue'] = number_to_currency(appstats['installs_revenue'].sum / 100.0)

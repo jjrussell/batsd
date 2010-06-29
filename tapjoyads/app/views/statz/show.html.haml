@@ -18,7 +18,7 @@
   .metadata Balance: #{number_to_currency(@offer.partner.balance / 100.0)}
   .metadata Pending Earnings: #{number_to_currency(@offer.partner.pending_earnings / 100.0)}
   .metadata Daily budget: #{@offer.daily_budget}
-  .metadata Show rate: #{"%.2f" % (@offer.show_rate || 0)}
+  .metadata Show rate: #{"%.1f%" % ((@offer.show_rate || 0) * 100.0)}
   .metadata Ordinal: #{@offer.ordinal}
   .metadata Payment: #{number_to_currency(@offer.payment / 100.0)}
   .metadata Tapjoy enabled: #{@offer.tapjoy_enabled}
@@ -56,8 +56,8 @@
       %td.breakdown= @stats['installs_spend'].map{|i| number_to_currency(i / 100.0)}.join(', ')
     %tr
       %td CVR
-      %td= "%.2f" % (@stats['paid_installs'].sum.to_f / @stats['paid_clicks'].sum)
-      %td.breakdown= @stats['cvr'].join(', ')
+      %td= "%.1f%" % (@stats['paid_installs'].sum.to_f / @stats['paid_clicks'].sum * 100.0)
+      %td.breakdown= @stats['cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) }.join(', ')
     %tr
       %td Connects
       %td= @stats['logins'].sum
