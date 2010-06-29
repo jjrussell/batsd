@@ -13,6 +13,7 @@ class Partner < ActiveRecord::Base
   has_many :offers
   has_many :publisher_conversions, :through => :apps
   has_many :advertiser_conversions, :through => :offers
+  has_many :monthly_accountings
   
   validates_numericality_of :balance, :pending_earnings, :next_payout_amount, :only_integer => true, :allow_nil => false
   
