@@ -69,8 +69,6 @@ class Job::MasterReloadStatzController < Job::JobController
       this_apps_stats['offer_name'] = offer.name
       this_apps_stats['conversions'] = appstats['paid_installs'].sum
       this_apps_stats['connects'] = appstats['logins'].sum
-      this_apps_stats['new_users'] = appstats['new_users'].sum
-      this_apps_stats['daily_active_users'] = appstats['daily_active_users'].sum
       this_apps_stats['overall_store_rank'] = (appstats['overall_store_rank'].find_all{|r| r != '0'}.last || '-')
       this_apps_stats['price'] = number_to_currency(offer.price / 100.0)
       this_apps_stats['payment'] = number_to_currency(offer.payment / 100.0)
@@ -78,6 +76,7 @@ class Job::MasterReloadStatzController < Job::JobController
       this_apps_stats['pending_earnings'] = number_to_currency(offer.partner.pending_earnings / 100.0)
       this_apps_stats['daily_budget'] = offer.daily_budget
       this_apps_stats['show_rate'] = "%.2f" % (offer.show_rate || 0)
+      this_apps_stats['conversion_rate'] = "%.2f" % (offer.conversion_rate || 0)
       this_apps_stats['vg_purchases'] = appstats['vg_purchases'].sum
       this_apps_stats['published_installs'] = appstats['published_installs'].sum
       this_apps_stats['installs_revenue'] = number_to_currency(appstats['installs_revenue'].sum / 100.0)

@@ -24,8 +24,6 @@
       %th Offer
       %th Conversions
       %th Connects
-      %th New users
-      %th DAUs
       %th Store rank
       %th Price
       %th Payment
@@ -34,6 +32,7 @@
       %th Daily Budget
       %th Platform
       %th Show rate
+      %th CVR
       %th VG Purchases
       %th Published installs
       %th Installs revenue
@@ -41,12 +40,10 @@
   %tbody#apps_tbody
     - @cached_stats.each do |offer_id, stats|
       %tr
-        %td.icon{:id => offer_id}
+        %td.icon{ :id => offer_id }
         %td= link_to(stats['offer_name'], statz_path(offer_id))
         %td= stats['conversions']
         %td= stats['connects']
-        %td= stats['new_users']
-        %td= stats['daily_active_users']
         %td= stats['overall_store_rank']
         %td= stats['price']
         %td= stats['payment']
@@ -55,6 +52,7 @@
         %td= stats['daily_budget']
         %td= stats['platform']
         %td= stats['show_rate']
+        %td= stats['conversion_rate']
         %td= stats['vg_purchases']
         %td= stats['published_installs']
         %td= stats['installs_revenue']
