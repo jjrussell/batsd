@@ -79,12 +79,25 @@
         return false;
       });
       
-      
+      $.tablesorter.addParser({
+        id: 'currency-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          s = s.replace(/$/g, '');
+          return $.tablesorter.formatFloat(s.replace(new RegExp(/[^0-9.-]/g), ''));
+        }
+      });
       $("#apps_table").tablesorter({widgets: ['zebra'],
         headers: {
-          0: {sorter: false}
+          0: { sorter: false },
+          5: { sorter: 'currency-column' },
+          6: { sorter: 'currency-column' },
+          7: { sorter: 'currency-column' },
+          8: { sorter: 'currency-column' },
+          15: { sorter: 'currency-column' }
         },
-        sortList: [[2, 1]]
+        sortList: [ [2, 1] ]
       });
     });
     
