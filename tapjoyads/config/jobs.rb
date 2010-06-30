@@ -25,6 +25,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'queue_select_vg_items', :interval => 5.seconds
     s.add_job 'queue_verifications', :interval => 5.minutes
     s.add_job 'queue_get_store_info', :interval => 5.minutes
+    s.add_job 'queue_update_monthly_account', :interval => 30.seconds
   elsif machine_type == 'masterjobs'
     s.add_job 'master_cleanup_web_requests', :daily => 5.hours
     s.add_job 'master_cleanup_store_click', :daily => 6.hours

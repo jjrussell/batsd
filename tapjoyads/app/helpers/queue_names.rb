@@ -14,4 +14,5 @@ module QueueNames
   SELECT_VG_ITEMS          = RUN_MODE_PREFIX + 'SelectVgItems'
   VERIFICATIONS            = RUN_MODE_PREFIX + 'Verifications'
   GET_STORE_INFO           = RUN_MODE_PREFIX + 'GetStoreInfo'
+  UPDATE_MONTHLY_ACCOUNT   = RUN_MODE_PREFIX + 'UpdateMonthlyAccount'
 end
