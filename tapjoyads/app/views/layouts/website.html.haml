@@ -9,6 +9,7 @@
     = yield :included_stylesheets
     %style{ :type => 'text/css' }
       = yield :page_styles
+    = yield :custom_head
     
   %body
     #content

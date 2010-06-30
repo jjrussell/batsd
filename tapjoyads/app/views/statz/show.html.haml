@@ -45,81 +45,138 @@
     %tr
       %td Paid Installs
       %td= @stats['paid_installs'].sum
-      %td.breakdown= @stats['paid_installs'].join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['paid_installs'].join(', ')
     %tr
       %td Paid Clicks
       %td= @stats['paid_clicks'].sum
-      %td.breakdown= @stats['paid_clicks'].join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['paid_clicks'].join(', ')
     %tr
       %td Installs Spend
       %td= number_to_currency(@stats['installs_spend'].sum / 100.0)
-      %td.breakdown= @stats['installs_spend'].map{|i| number_to_currency(i / 100.0)}.join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['installs_spend'].map{|i| number_to_currency(i / 100.0)}.join(', ')
     %tr
       %td CVR
       %td= "%.1f%" % (@stats['paid_installs'].sum.to_f / @stats['paid_clicks'].sum * 100.0)
-      %td.breakdown= @stats['cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) }.join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) }.join(', ')
     %tr
       %td Connects
       %td= @stats['logins'].sum
-      %td.breakdown= @stats['logins'].join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['logins'].join(', ')
     %tr
       %td New Users
       %td= @stats['new_users'].sum
-      %td.breakdown= @stats['new_users'].join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['new_users'].join(', ')
     %tr
       %td DAUs
       %td= @stats['daily_active_users'].sum
-      %td.breakdown= @stats['daily_active_users'].join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['daily_active_users'].join(', ')
     %tr
       %td MAUs
       %td= @stats['monthly_active_users'].sum
-      %td.breakdown= @stats['monthly_active_users'].join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['monthly_active_users'].join(', ')
     %tr
       %td Store Rank
       %td= (@stats['overall_store_rank'].find_all{|r| r != '0'}.last || '-')
-      %td.breakdown= @stats['overall_store_rank'].join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['overall_store_rank'].join(', ')
     %tr
       %td VG Purchases
       %td= @stats['vg_purchases'].sum
-      %td.breakdown= @stats['vg_purchases'].join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['vg_purchases'].join(', ')
     %tr
       %td Published Installs
       %td= @stats['published_installs'].sum
-      %td.breakdown= @stats['published_installs'].join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['published_installs'].join(', ')
     %tr
       %td Published Clicks
       %td= @stats['installs_opened'].sum
-      %td.breakdown= @stats['installs_opened'].join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['installs_opened'].join(', ')
     %tr
       %td Installs Revenue
       %td= number_to_currency(@stats['installs_revenue'].sum / 100.0)
-      %td.breakdown= @stats['installs_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['installs_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')
     %tr
       %td Offers Completed
       %td= @stats['offers'].sum
-      %td.breakdown= @stats['offers'].join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['offers'].join(', ')
     %tr
       %td Offers Clicked
       %td= @stats['offers_opened'].sum
-      %td.breakdown= @stats['offers_opened'].join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['offers_opened'].join(', ')
     %tr
       %td Offers Revenue
       %td= number_to_currency(@stats['offers_revenue'].sum / 100.0)
-      %td.breakdown= @stats['offers_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['offers_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')
     %tr
       %td Ratings
       %td= @stats['ratings'].sum
-      %td.breakdown= @stats['ratings'].join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['ratings'].join(', ')
     %tr
       %td Total Revenue
       %td= number_to_currency(@stats['rewards_revenue'].sum / 100.0)
-      %td.breakdown= @stats['rewards_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['rewards_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')
     %tr
       %td Ad Impressions
       %td= @stats['hourly_impressions'].sum
-      %td.breakdown= @stats['hourly_impressions'].join(', ')
+      %td.breakdown
+        %canvas{:width => '500px', :height => '100px'}= @stats['hourly_impressions'].join(', ')
 
--content_for :page_styles do
+- content_for :custom_head do
+  = javascript_include_tag 'rgraph/RGraph.common.core'
+  = javascript_include_tag 'rgraph/RGraph.common.tooltips'
+  = javascript_include_tag 'rgraph/RGraph.line'
+  :plain
+    <!--[if IE]><script src="/javascripts/excanvas.js"></script><![endif]-->
+  
+- content_for :page_javascript do
+  var startDate = new Date('#{@start_time.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)}');
+  :plain
+    $(function() {
+      $('td.breakdown>canvas').each(function() {
+        drawGraph(this);
+      })
+    });
+    
+    function drawGraph(node) {
+      var stringData = $(node).text().split(', ')
+      var data = $.map(stringData, function(n){ return Number(n.replace(/\D/, ''));});
+
+      if (!node.id) {
+        node.id = 'id' + Math.floor(Math.random() * 9999999999)
+      }
+
+      var graph = new RGraph.Line(node.id, data);
+      graph.Set('chart.shadow', true);
+      graph.Set('chart.hmargin', 0);
+      graph.Set('chart.tickmarks', 'circle');
+      graph.Set('chart.ylabels.count', 3);
+      graph.Set('chart.tooltips', function(idx) {
+        var time = new Date(startDate.getTime() + 3600000 * idx).getHours() + ':00-' + new Date(startDate.getTime() + 3600000 * (idx + 1)).getHours() + ':00'
+        
+        return time + "<br>" + stringData[idx];
+      });
+      
+      graph.Draw();
+    }
+  
+- content_for :page_styles do
   :plain
     .icon {
       float: left;
