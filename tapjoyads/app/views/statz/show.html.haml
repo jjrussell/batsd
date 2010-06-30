@@ -157,7 +157,7 @@
     function drawGraph(node) {
       var stringData = $(node).text().split(', ')
       var data = $.map(stringData, function(n) { 
-        return Math.abs(Number(n.replace(/\$/, ''))) || 0;
+        return Math.abs(Number(n.replace(/\D/, '')));
       });
 
       if (!node.id) {
@@ -169,7 +169,6 @@
       graph.Set('chart.hmargin', 0);
       graph.Set('chart.tickmarks', 'circle');
       graph.Set('chart.ylabels.count', 3);
-      graph.Set('chart.ymin', min);
       graph.Set('chart.tooltips', function(idx) {
         var time = new Date(startDate.getTime() + 3600000 * idx).getHours() + ':00-' + new Date(startDate.getTime() + 3600000 * (idx + 1)).getHours() + ':00'
         
