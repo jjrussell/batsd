@@ -88,9 +88,19 @@
           return $.tablesorter.formatFloat(s.replace(new RegExp(/[^0-9.-]/g), ''));
         }
       });
+      $.tablesorter.addParser({
+        id: 'rank-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          s = s.replace(/-/g, '999999');
+          return $.tablesorter.formatFloat(s.replace(new RegExp(/[^0-9.-]/g), ''));
+        }
+      });
       $("#apps_table").tablesorter({widgets: ['zebra'],
         headers: {
           0: { sorter: false },
+          4: { sorter: 'rank-column' },
           5: { sorter: 'currency-column' },
           6: { sorter: 'currency-column' },
           7: { sorter: 'currency-column' },
