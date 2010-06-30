@@ -156,32 +156,20 @@
     
     function drawGraph(node) {
       var stringData = $(node).text().split(', ')
-      var min = 0;
       var data = $.map(stringData, function(n) { 
-        var num = Number(n.replace(/\D/, ''))
-        if (num < min) {
-          min = num;
-        }
-        return num;
+        return Math.abs(Number(n.replace(/\$/, ''))) || 0;
       });
 
       if (!node.id) {
         node.id = 'id' + Math.floor(Math.random() * 9999999999)
       }
       
-      var xAxisPos = 'bottom';
-      if (min < 0) {
-        xAxisPos = 'center';
-      }
-
       var graph = new RGraph.Line(node.id, data);
       graph.Set('chart.shadow', true);
       graph.Set('chart.hmargin', 0);
-      graph.Set('chart.gutter', 35);
       graph.Set('chart.tickmarks', 'circle');
       graph.Set('chart.ylabels.count', 3);
       graph.Set('chart.ymin', min);
-      graph.Set('chart.xaxispos', xAxisPos);
       graph.Set('chart.tooltips', function(idx) {
         var time = new Date(startDate.getTime() + 3600000 * idx).getHours() + ':00-' + new Date(startDate.getTime() + 3600000 * (idx + 1)).getHours() + ':00'
         
