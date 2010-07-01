@@ -37,17 +37,15 @@ ActionController::Routing::Routes.draw do |map|
   
   
   # website-specific routes
-  map.with_options :conditions => { :hosts => ['www.tapjoy.com'] } do |website|
-    website.login 'login', :controller => 'user_sessions', :action => 'new'
-    website.logout 'logout', :controller => 'user_sessions', :action => 'destroy'
-    website.resources :user_sessions, :only => [ :new, :create, :destroy ]
-    website.resources :users, :only => [ :edit, :update ]
-    
-    website.resources :tools, :only => :index, :collection => { :new_order => :get, :create_order => :post, :new_transfer => :get, :create_transfer => :post, :payouts => :get, :money => :get }, :member => { :create_payout => :post, :create_transfer => :post }
-    website.resources :statz, :only => [ :index, :show, :edit, :update ], :collection => { :search => :get }
-    
-    website.resources :balances, :only => :show
-  end
+  map.login 'login', :controller => 'user_sessions', :action => 'new'
+  map.logout 'logout', :controller => 'user_sessions', :action => 'destroy'
+  map.resources :user_sessions, :only => [ :new, :create, :destroy ]
+  map.resources :users, :only => [ :edit, :update ]
+  
+  map.resources :tools, :only => :index, :collection => { :new_order => :get, :create_order => :post, :new_transfer => :get, :create_transfer => :post, :payouts => :get, :money => :get }, :member => { :create_payout => :post, :create_transfer => :post }
+  map.resources :statz, :only => [ :index, :show, :edit, :update ], :collection => { :search => :get }
+  
+  map.resources :balances, :only => :show
   
   # Special paths:
   map.connect 'log_device_app/:action/:id', :controller => 'connect'

@@ -14,7 +14,7 @@ module ActionController
       
       def recognition_conditions
         result = orig_recognition_conditions
-        result << "conditions[:hosts].include?(env[:host])" if false && conditions[:hosts] && Rails.env == 'production'
+        result << "conditions[:hosts].include?(env[:host])" if conditions[:hosts] && Rails.env == 'production'
         result
       end
     end
