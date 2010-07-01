@@ -24,7 +24,7 @@ class MonthlyAccounting < ActiveRecord::Base
       end
     else
       #the record for this month already exists, so update it
-      if record.updated_at < Time.now.utc - 1.days
+      if record.updated_at < Time.now.utc - 1.hours
         create_or_update_record(partner, {
           :year => year, :month => month, 
           :beginning_balance => record.beginning_balance, :beginning_pending_earnings => record.beginning_pending_earnings })
