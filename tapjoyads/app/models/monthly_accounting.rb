@@ -13,7 +13,7 @@ class MonthlyAccounting < ActiveRecord::Base
     
     partner = Partner.find(partner_id)
     
-    throw "Partner didn't exist by #{year}-#{month}" if partner.created_at.beginning_of_month > Time.parse("#{year}-#{month}-01").utc
+    return if partner.created_at.beginning_of_month > Time.parse("#{year}-#{month}-01").utc
     
     record = MonthlyAccounting.find_by_partner_id_and_month_and_year(partner_id, month, year)
     
