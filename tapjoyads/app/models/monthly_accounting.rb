@@ -108,6 +108,7 @@ class MonthlyAccounting < ActiveRecord::Base
       record.payment_payouts + record.transfer_payouts + #these are negative values
       record.earnings
       
+    record.updated_at = Time.now.utc
     record.save!
     
     record
