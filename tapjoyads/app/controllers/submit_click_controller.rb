@@ -18,7 +18,7 @@ class SubmitClickController < ApplicationController
     
     offer = Offer.find_in_cache(params[:advertiser_app_id])
     
-    if (offer.get_payment_for_source(params[:source]) <= 0) && (params[:redirect] == "1")
+    if (offer.get_payment_for_source(params[:source]) <= 0 || !offer.tapjoy_enabled) && (params[:redirect] == "1")
       #this app is no longer enabled
       @offer = offer
       web_request = WebRequest.new
