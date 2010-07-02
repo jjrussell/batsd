@@ -158,7 +158,7 @@
     function drawGraph(node) {
       var stringData = $(node).text().split(', ')
       var data = $.map(stringData, function(n) { 
-        return Math.abs(Number(n.replace(/\D/, '')));
+        return Math.abs(Number(n.replace(/\D/, '').replace(',', '')));
       });
 
       if (!node.id) {
