@@ -5,7 +5,8 @@
 
 %p For: #{@start_time.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)} - #{@end_time.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)}
 
-%p= link_to('[Edit Offer]', edit_statz_path(@offer.id))
+- if permitted_to? :edit, :statz
+  %p= link_to('[Edit Offer]', edit_statz_path(@offer.id))
 
 .left
   .metadata Offer id: #{@offer.id}
