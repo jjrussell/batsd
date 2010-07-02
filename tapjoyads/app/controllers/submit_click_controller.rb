@@ -18,13 +18,17 @@ class SubmitClickController < ApplicationController
     
     offer = Offer.find_in_cache(params[:advertiser_app_id])
     
-    if (offer.get_payment_for_source(params[:source]) <= 0 || !offer.tapjoy_enabled) && (params[:redirect] == "1")
-      #this app is no longer enabled
+    if offer.get_payment_for_source(params[:source]) <= 0 || !offer.tapjoy_enabled
       @offer = offer
       web_request = WebRequest.new
       web_request.put_values('disabled_offer', params, request)
       web_request.save
-      render(:template => "submit_click/disabled_offer", :layout => 'iphone') and return
+      
+      if params[:redirect] == "1"
+        render(:template => "submit_click/disabled_offer", :layout => 'iphone') and return
+      else
+        render(:template => 'layouts/success') and return
+      end
     end
     
     if offer.item_type == 'RatingOffer'
