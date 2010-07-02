@@ -16,6 +16,9 @@
     = label_tag 'order[payment_method]', 'Payment Method'
     = select_tag 'order[payment_method]', '<option value="1">Billable</option><option value="2">Marketing Expense</option>'
   .field
+    = label_tag 'order[note]', 'Note'
+    = text_field_tag 'order[note]'
+  .field
     = submit_tag 'Create Order'
 
 = link_to "Don't forget to create an invoice in freshbooks", "http://tapjoy.freshbooks.com/"

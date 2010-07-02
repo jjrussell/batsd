@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100628025614) do
+ActiveRecord::Schema.define(:version => 20100702183437) do
 
   create_table "apps", :force => true do |t|
     t.string   "partner_id",            :limit => 36,                    :null => false
@@ -189,6 +189,7 @@ ActiveRecord::Schema.define(:version => 20100628025614) do
     t.integer  "amount",                       :default => 0, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "note"
   end
 
   add_index "orders", ["created_at"], :name => "index_orders_on_created_at"
