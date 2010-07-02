@@ -25,13 +25,11 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         first_char = publisher_user_id[0, 1]
         publisher_user_id = publisher_user_id[1, publisher_user_id.length]
       
-        callback_url = case first_char
-        when 'F'
-          'http://offer-dynamic-lb.playdom.com/tapjoy/mob/facebook/fp/main' #facebook url
-        when 'M'
-          'http://offer-dynamic-lb.playdom.com/tapjoy/mob/myspace/fp/main' #myspace url
-        when 'P'
-          'http://offer-dynamic-lb.playdom.com/tapjoy/mob/myspace/fp/main' #iphone url
+        callback_url = case first_char.downcase
+        when 'f'
+          'http://offer-dynamic-lb.playdom.com/tapjoy/mob/facebook/fp/main' #facebook url (starts with 'f')
+        else
+          'http://offer-dynamic-lb.playdom.com/tapjoy/mob/myspace/fp/main' #myspace/iphone url (starts with 'm' or 'p')
         end
         
       end
