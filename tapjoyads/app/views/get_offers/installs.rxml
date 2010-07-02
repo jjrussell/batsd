@@ -11,8 +11,8 @@ xml.TapjoyConnectReturnObject do
         xml.Name offer.name
         xml.TimeDelay offer.time_delay
         xml.AdvertiserAppID offer.id
-        xml.ActionURL offer.get_destination_url(params[:udid], params[:app_id], @publisher_user_record, params[:app_version])
-        xml.PublisherUserRecordID @publisher_user_record.get_record_id
+        xml.ActionURL offer.get_destination_url(params[:udid], params[:app_id], params[:publisher_user_id], params[:app_version])
+        xml.PublisherUserRecordID params[:publisher_user_id]
         xml.Type '1'
         xml.StoreID offer.third_party_data
         xml.Currency @currency.name

@@ -64,7 +64,7 @@ class ApplicationController < ActionController::Base
     set_param(:campaign_id, :AdCampaignID, true)
     set_param(:advertiser_app_id, :AdvertiserAppID, true)
     set_param(:publisher_app_id, :AppID, true)
-    set_param(:publisher_user_record_id, :PublisherUserRecordID, true)
+    set_param(:publisher_user_id, :PublisherUserRecordID, true)
     set_param(:campaign_id, :AdImpressionID, true)
     set_param(:offer_id, :CachedOfferID, true)
     set_param(:type, :Type, true)

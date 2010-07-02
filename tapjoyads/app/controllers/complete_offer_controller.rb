@@ -11,7 +11,7 @@ class CompleteOfferController < ApplicationController
     click.put('offer_id', params[:offerid])
     click.put('app_id', params[:app_id])
     click.put('udid', params[:udid])
-    click.put('record_id', params[:record_id])
+    click.put('publisher_user_id', params[:publisher_user_id])
     click.put('source', 'email')
     click.put('ip_address', get_ip_address(request))
     click.save

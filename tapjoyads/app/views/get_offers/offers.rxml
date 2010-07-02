@@ -9,12 +9,12 @@ xml.TapjoyConnectReturnObject do
         xml.Description offer.description.gsub('TAPJOY_BUCKS', @currency.name)
         xml.Instructions offer.instructions.gsub('TAPJOY_BUCKS', @currency.name)
         xml.Name offer.name.gsub('TAPJOY_BUCKS', @currency.name)
-        xml.ActionURL offer.get_destination_url(params[:udid], params[:app_id], @publisher_user_record, params[:app_version])
+        xml.ActionURL offer.get_destination_url(params[:udid], params[:app_id], params[:publisher_user_id], params[:app_version])
         xml.TimeDelay offer.time_delay
         xml.CachedOfferID ''
-        xml.PublisherUserRecordID @publisher_user_record.get_record_id
+        xml.PublisherUserRecordID params[:publisher_user_id]
         xml.Type '0'
-        xml.EmailURL offer.get_email_url(@publisher_user_record, @publisher_app, params[:udid], params[:app_version])
+        xml.EmailURL offer.get_email_url(params[:publisher_user_id], @publisher_app, params[:udid], params[:app_version])
       end
     end
     

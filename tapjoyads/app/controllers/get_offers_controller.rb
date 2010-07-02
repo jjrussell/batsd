@@ -66,10 +66,6 @@ class GetOffersController < ApplicationController
     @max_items = (params[:max] || 25).to_i
     @source = ''
     
-    @publisher_user_record = PublisherUserRecord.new(
-        :key => "#{params[:app_id]}.#{params[:publisher_user_id]}")
-    @publisher_user_record.update(params[:udid])
-    
     @publisher_app = App.find_in_cache(params[:app_id])
     @currency = Currency.find_in_cache_by_app_id(params[:app_id])
     

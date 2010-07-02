@@ -120,26 +120,25 @@ class Offer < ActiveRecord::Base
     end
   end
   
-  def get_destination_url(udid, publisher_app_id, publisher_user_record = nil, app_version = nil)
-    int_record_id = publisher_user_record.nil? ? '' : publisher_user_record.get_int_record_id
-    publisher_user_record_key = publisher_user_record.nil? ? '' : publisher_user_record.key
+  def get_destination_url(udid, publisher_app_id, publisher_user_id = nil, app_version = nil)
+    int_record_id = publisher_user_id.nil? ? '' : PublisherUserRecord.generate_int_record_id(publisher_app_id, publisher_user_id)
     
     url.gsub('TAPJOY_GENERIC', int_record_id).
-        gsub('TAPJOY_PUBLISHER_USER_RECORD_ID', publisher_user_record_key).
+        gsub('TAPJOY_PUBLISHER_USER_RECORD_ID', publisher_user_id.to_s).
         gsub('TAPJOY_UDID', udid.to_s).
         gsub('TAPJOY_APP_VERSION', app_version.to_s).
         gsub('TAPJOY_PUBLISHER_APP_ID', publisher_app_id.to_s)
   end
   
-  def get_click_url(publisher_app, publisher_user_record, udid, source)
-    "http://ws.tapjoyads.com/submit_click/store?advertiser_app_id=#{id}&publisher_app_id=#{publisher_app.id}&publisher_user_record_id=#{publisher_user_record.get_record_id}&udid=#{udid}&source=#{source}"
+  def get_click_url(publisher_app, publisher_user_id, udid, source)
+    "http://ws.tapjoyads.com/submit_click/store?advertiser_app_id=#{id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}"
   end
   
-  def get_redirect_url(publisher_app, publisher_user_record, udid, source, app_version)
+  def get_redirect_url(publisher_app, publisher_user_id, udid, source, app_version)
     if item_type == 'RatingOffer'
-      return get_destination_url(udid, publisher_app.id, publisher_user_record, app_version)
+      return get_destination_url(udid, publisher_app.id, publisher_user_id, app_version)
     end
-    get_click_url(publisher_app, publisher_user_record, udid, source) + "&redirect=1"
+    get_click_url(publisher_app, publisher_user_id, udid, source) + "&redirect=1"
   end
   
   def get_icon_url(base64 = false)
@@ -151,13 +150,13 @@ class Offer < ActiveRecord::Base
     url
   end
   
-  def get_email_url(publisher_user_record, publisher_app, udid, app_version)
+  def get_email_url(publisher_user_id, publisher_app, udid, app_version)
     "http://www.tapjoyconnect.com/complete_offer" +
         "?offerid=#{CGI::escape(id)}" +
         "&udid=#{udid}" +
-        "&record_id=#{publisher_user_record.get_record_id}" +
+        "&publisher_user_id=#{publisher_user_id}" +
         "&app_id=#{publisher_app.id}" +
-        "&url=#{CGI::escape(CGI::escape(get_destination_url(udid, publisher_app.id, publisher_user_record, app_version)))}"
+        "&url=#{CGI::escape(CGI::escape(get_destination_url(udid, publisher_app.id, publisher_user_id, app_version)))}"
   end
   
   def get_countries

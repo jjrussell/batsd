@@ -2,17 +2,17 @@ class SubmitClickController < ApplicationController
   include ApplicationHelper
   include SqsHelper
   include MemcachedHelper
+  include PublisherRecordHelper
   
   def store
     
-    if params[:publisher_user_id]
-      publisher_user_record = PublisherUserRecord.new(
-          :key => "#{params[:publisher_app_id]}.#{params[:publisher_user_id]}")
-      publisher_user_record.update(params[:udid])
-      params[:publisher_user_record_id] = publisher_user_record.get('record_id')
+    # TO REMOVE
+    if params[:publisher_user_record_id]
+      record_key = lookup_by_record(params[:publisher_user_record_id])
+      params[:publisher_user_id] = record_key.split('.')[1]
     end
     
-    return unless verify_params([:advertiser_app_id, :udid, :publisher_app_id, :publisher_user_record_id])
+    return unless verify_params([:advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id])
     
     now = Time.now.utc
     
@@ -52,7 +52,7 @@ class SubmitClickController < ApplicationController
     click = StoreClick.new(:key => "#{params[:udid]}.#{params[:advertiser_app_id]}")
     click.put("click_date", "#{now.to_f.to_s}")
     click.put("publisher_app_id", params[:publisher_app_id])
-    click.put("publisher_user_record_id", params[:publisher_user_record_id])
+    click.put("publisher_user_id", params[:publisher_user_id])
     click.put("advertiser_app_id", params[:advertiser_app_id])
     click.put('advertiser_amount', currency.get_advertiser_amount(offer, params[:source]))
     click.put('publisher_amount', currency.get_publisher_amount(offer, params[:source]))
@@ -89,7 +89,7 @@ class SubmitClickController < ApplicationController
   end
   
   def offer
-    return unless verify_params([:app_id, :udid, :offer_id, :publisher_user_record_id])
+    return unless verify_params([:app_id, :udid, :offer_id, :publisher_user_id])
     
     now = Time.now.utc
     
@@ -98,7 +98,7 @@ class SubmitClickController < ApplicationController
     click.put('offer_id', params[:offer_id])
     click.put('app_id', params[:app_id])
     click.put('udid', params[:udid])
-    click.put('record_id', params[:publisher_user_record_id])
+    click.put('publisher_user_id', params[:publisher_user_id])
     click.put('source', 'app')
     click.put('ip_address', get_ip_address(request))
     click.save

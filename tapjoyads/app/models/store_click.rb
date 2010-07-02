@@ -6,7 +6,7 @@ class StoreClick < SimpledbResource
   
   self.sdb_attr :publisher_app_id
   self.sdb_attr :advertiser_app_id
-  self.sdb_attr :publisher_user_record_id
+  self.sdb_attr :publisher_user_id
   self.sdb_attr :reward_key
   self.sdb_attr :click_date,        :type => :time
   self.sdb_attr :clicked_at,        :type => :time, :attr_name => :click_date
@@ -17,4 +17,5 @@ class StoreClick < SimpledbResource
   self.sdb_attr :tapjoy_amount,     :type => :int
   self.sdb_attr :offerpal_amount,   :type => :int
   self.sdb_attr :currency_reward,   :type => :int
+  self.sdb_attr :source
 end

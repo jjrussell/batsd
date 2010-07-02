@@ -1,5 +1,4 @@
 class ReceiveOfferController < ApplicationController
-  include PublisherRecordHelper
   include SqsHelper
   
   def receive_offer
@@ -14,15 +13,15 @@ class ReceiveOfferController < ApplicationController
   
   def record_offer(customer_service = nil)
     return unless verify_params([:snuid, :currency])
-
+    
     snuid = params[:snuid]
     amount = params[:currency]
     
     # Find the user record by snuid
-    record_key = lookup_by_int_record(snuid)
+    record_key = PublisherUserRecord.lookup_key_by_int_record_id(snuid)
     parts = record_key.split('.')
     publisher_app_id = parts[0]
-    publisher_user_id = parts[1]    
+    publisher_user_id = parts[1]
     currency = Currency.find_in_cache_by_app_id(publisher_app_id)
     offer = Offer.new(:item_type => 'OfferpalOffer', :payment => amount)
     
@@ -51,13 +50,13 @@ class ReceiveOfferController < ApplicationController
     message = reward.serialize(:attributes_only => true)
     send_to_sqs(QueueNames::SEND_CURRENCY, message)
     send_to_sqs(QueueNames::SEND_MONEY_TXN, message)
-
+    
     web_request = WebRequest.new
     web_request.put_values('receive_offer', params, request)
     web_request.put('publisher_app_id', publisher_app_id)
     web_request.put('offer_id', params[:offerid])
     web_request.save
-
+    
     render :template => 'layouts/success'
   end
 end

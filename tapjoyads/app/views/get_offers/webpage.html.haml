@@ -8,7 +8,7 @@
   
 #offers
   - @offer_list.each do |offer|
-    %a.offer{ :href => offer.get_redirect_url(@publisher_app, @publisher_user_record, params[:udid], @source, params[:app_version]), :onclick => "this.className = 'clicked';" }
+    %a.offer{ :href => offer.get_redirect_url(@publisher_app, params[:publisher_user_id], params[:udid], @source, params[:app_version]), :onclick => "this.className = 'clicked';" }
       %img{ :src => offer.get_icon_url }
       .offertext
         .cell
