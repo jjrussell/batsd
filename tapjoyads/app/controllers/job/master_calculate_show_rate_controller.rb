@@ -8,7 +8,7 @@ class Job::MasterCalculateShowRateController < Job::JobController
     count = offers.length
     
     offers.each do |offer|
-      next offer.item_type == 'RatingOffer'
+      next if offer.item_type == 'RatingOffer'
       
       time = Benchmark.realtime { send_to_sqs(QueueNames::CALCULATE_SHOW_RATE, offer.id) }
       sleep((20.minutes.to_f / count) - time)
