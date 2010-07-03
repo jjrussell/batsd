@@ -5,14 +5,14 @@ class GetOffersController < ApplicationController
   layout 'iphone', :only => :webpage
   
   def webpage
-    return unless verify_params([:app_id, :udid], {:allow_empty => false})
+    return unless verify_params([:app_id, :udid, :publisher_user_id], {:allow_empty => false})
   
     setup
     set_offer_list(:require_device_ip_param => false)
   end
   
   def featured
-    return unless verify_params([:app_id, :udid], {:allow_empty => false})
+    return unless verify_params([:app_id, :udid, :publisher_user_id], {:allow_empty => false})
     
     params[:type] = Offer::FEATURED_OFFER_TYPE
     params[:start] = '0'
@@ -37,7 +37,7 @@ class GetOffersController < ApplicationController
     if params[:app_id] == 'e2479a17-ce5e-45b3-95be-6f24d2c85c6f'
       params[:udid] = params[:publisher_user_id] if params[:udid].blank?
     end
-    return unless verify_params([:app_id, :udid], {:allow_empty => false})
+    return unless verify_params([:app_id, :udid, :publisher_user_id], {:allow_empty => false})
   
     setup
     
