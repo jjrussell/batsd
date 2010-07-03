@@ -30,7 +30,20 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       return
     end
     
-    publisher_user_record = PublisherUserRecord.new(:key => "#{click.publisher_app_id}.#{click.publisher_user_id}")
+    # TO REMOVE
+    if click.get('publisher_user_record_id')
+      begin
+        record_key = lookup_by_record(click.get('publisher_user_record_id'))
+        publisher_user_id = record_key.split('.')[1]
+      rescue RecordNotFoundException
+        message.delete
+        raise "Can't find record_id #{click.get('publisher_user_record_id')} on click #{click.key}"
+      end
+    else
+      publisher_user_id = click.publisher_user_id
+    end
+    
+    publisher_user_record = PublisherUserRecord.new(:key => "#{click.publisher_app_id}.#{publisher_user_id}")
     unless publisher_user_record.update(udid)
       message.delete
       raise "Too many UDIDs associated with publisher_user_record: #{publisher_user_record.key}"
@@ -56,19 +69,6 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
     
     currency = Currency.find_in_cache_by_app_id(click.publisher_app_id)
     offer = Offer.find_in_cache(advertiser_app_id)
-    
-    # TO REMOVE
-    if click.get('publisher_user_record_id')
-      begin
-        record_key = lookup_by_record(click.get('publisher_user_record_id'))
-        publisher_user_id = record_key.split('.')[1]
-      rescue RecordNotFoundException
-        message.delete
-        raise "Can't find record_id #{click.get('publisher_user_record_id')} on click #{click.key}"
-      end
-    else
-      publisher_user_id = click.publisher_user_id
-    end
     
     reward.put('type', 'install')
     reward.put('publisher_app_id', click.publisher_app_id)
