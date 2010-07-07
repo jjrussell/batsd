@@ -125,8 +125,6 @@ class Offer < ActiveRecord::Base
     
     url.gsub('TAPJOY_GENERIC', int_record_id).
         gsub('TAPJOY_PUBLISHER_USER_ID', publisher_user_id.to_s).
-        # TO REMOVE
-        gsub('TAPJOY_PUBLISHER_USER_RECORD_ID', publisher_user_id.to_s).
         gsub('TAPJOY_UDID', udid.to_s).
         gsub('TAPJOY_APP_VERSION', app_version.to_s).
         gsub('TAPJOY_PUBLISHER_APP_ID', publisher_app_id.to_s)
