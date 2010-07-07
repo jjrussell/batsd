@@ -103,6 +103,9 @@ class SubmitClickController < ApplicationController
     click.put('ip_address', get_ip_address(request))
     click.save
     
+    publisher_user_record = PublisherUserRecord.new(:key => "#{params[:app_id]}.#{params[:publisher_user_id]}")
+    publisher_user_record.update(params[:udid])
+    
     web_request = WebRequest.new
     web_request.put_values('offer_click', params, request)
     web_request.save
