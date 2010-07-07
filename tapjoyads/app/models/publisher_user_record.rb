@@ -34,7 +34,7 @@ class PublisherUserRecord < SimpledbResource
       return false
     else
       put('udid', device_id, :replace => false)
-      save
+      save unless changed?
       return true
     end
   end
