@@ -9,10 +9,11 @@ class StatuszController < ApplicationController
   end
   
   def queue_check
-    queue = SqsGen2.new.queue(QueueNames::CONVERSION_TRACKING)
+    conversion_tracking_queue = SqsGen2.new.queue(QueueNames::CONVERSION_TRACKING)
+    failed_sdb_saves_queue = SqsGen2.new.queue(QueueNames::FAILED_SDB_SAVES)
     
     result = "success"
-    if queue.size > 1000
+    if conversion_tracking_queue.size > 1000 || failed_sdb_saves_queue.size > 5000
       result = "too long"
     end
     
