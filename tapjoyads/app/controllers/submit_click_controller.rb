@@ -2,16 +2,8 @@ class SubmitClickController < ApplicationController
   include ApplicationHelper
   include SqsHelper
   include MemcachedHelper
-  include PublisherRecordHelper
   
   def store
-    
-    # TO REMOVE
-    if params[:publisher_user_record_id]
-      record_key = lookup_by_record(params[:publisher_user_record_id])
-      params[:publisher_user_id] = record_key.split('.')[1]
-    end
-    
     return unless verify_params([:advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id])
     
     now = Time.now.utc
