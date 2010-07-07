@@ -24,9 +24,10 @@ class PublisherUserRecord < SimpledbResource
   end
   
   def update(device_id)
-    unless get('int_record_id')
-      put('int_record_id', @key.hash.abs.to_s)
-      save_to_cache("int_record_id.#{get('int_record_id')}", @key)
+    new_int_record_id = @key.hash.abs.to_s
+    unless get('int_record_id') == new_int_record_id
+      put('int_record_id', new_int_record_id)
+      save_to_cache("int_record_id.#{new_int_record_id}", @key)
     end
     
     udids = get('udid', :force_array => true)
