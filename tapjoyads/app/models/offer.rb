@@ -123,11 +123,22 @@ class Offer < ActiveRecord::Base
   def get_destination_url(udid, publisher_app_id, publisher_user_id = nil, app_version = nil)
     int_record_id = publisher_user_id.nil? ? '' : PublisherUserRecord.generate_int_record_id(publisher_app_id, publisher_user_id)
     
-    url.gsub('TAPJOY_GENERIC', int_record_id).
-        gsub('TAPJOY_PUBLISHER_USER_ID', publisher_user_id.to_s).
-        gsub('TAPJOY_UDID', udid.to_s).
-        gsub('TAPJOY_APP_VERSION', app_version.to_s).
-        gsub('TAPJOY_PUBLISHER_APP_ID', publisher_app_id.to_s)
+    final_url = url.gsub('TAPJOY_UDID', udid.to_s)
+    if item_type == 'RatingOffer'
+      # TO REMOVE
+      if final_url =~ /TAPJOY_PUBLISHER_USER_ID/
+        final_url.gsub!('TAPJOY_PUBLISHER_USER_ID', publisher_user_id.to_s)
+        final_url.gsub!('TAPJOY_APP_VERSION', app_version.to_s)
+      else
+        final_url += "&publisher_user_id=#{publisher_user_id}&app_version=#{app_version}"
+      end
+    elsif item_type == 'OfferpalOffer'
+      final_url.gsub!('TAPJOY_GENERIC', int_record_id.to_s)
+    elsif item_type == 'EmailOffer'
+      final_url += "&publisher_app_id=#{publisher_app_id}"
+    end
+    
+    final_url
   end
   
   def get_click_url(publisher_app, publisher_user_id, udid, source)
