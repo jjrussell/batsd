@@ -32,7 +32,7 @@ class DeviceAppList < SimpledbResource
   # Returns a list of web-request paths that should be added. Potential paths are:
   # 'new_user', 'daily_user', 'monthly_user'.
   def set_app_ran(app_id)
-    now = Time.now.utc
+    now = Time.zone.now
     
     path_list = []
     old_time = last_run_time(app_id)
@@ -75,7 +75,7 @@ class DeviceAppList < SimpledbResource
     if last_run_timestamp.nil?
       return nil
     else
-      return Time.at(last_run_timestamp.to_f)
+      return Time.zone.at(last_run_timestamp.to_f)
     end
   end
   
