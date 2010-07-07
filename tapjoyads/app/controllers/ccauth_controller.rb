@@ -11,12 +11,12 @@ class CcauthController < ApplicationController
     end
     
     response = PromotionEntry.select(:where => "promo_id='indietro' and last5 like '%#{last4}' and discount_applied is null")
-    if response.items.length == 0
+    if response[:items].length == 0
       render :text => 'No match'
       return
     end
     
-    entry = response.items[0]
+    entry = response[:items][0]
     phone = entry.get('phone')
     send_sms(phone)
     

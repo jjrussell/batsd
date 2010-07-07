@@ -12,9 +12,9 @@ class GetAdOrderController < ApplicationController
           :order_by => "ecpm desc")
       
       
-      save_to_cache(mc_key, c.items, false, 5.minutes)
+      save_to_cache(mc_key, c[:items], false, 5.minutes)
       
-      c.items
+      c[:items]
     end
     
     

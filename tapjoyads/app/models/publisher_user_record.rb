@@ -8,11 +8,11 @@ class PublisherUserRecord < SimpledbResource
     # using App.new to get a reference to memcached helper. fix when memcached helper becomes a lib
     record_key = App.new.get_from_cache_and_save("int_record_id.#{int_record_id}") do
       result = PublisherUserRecord.select(:where => "int_record_id = '#{int_record_id}'")
-      if result.items.length == 0
+      if result[:items].length == 0
         raise("int_record_id not found: #{int_record_id}")
       end
       
-      record = result.items.first
+      record = result[:items].first
       record.key
     end
     

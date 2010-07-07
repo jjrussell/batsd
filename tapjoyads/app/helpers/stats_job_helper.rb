@@ -86,7 +86,7 @@ module StatsJobHelper
         :attributes => item_name, 
         :where => "#{item_name} < '#{time.to_f.to_s}'", 
         :order_by => "#{item_name} asc",
-        :limit => '10'}).items
+        :limit => '10'})[:items]
         
     if (item_array.length == 0)
       return nil
