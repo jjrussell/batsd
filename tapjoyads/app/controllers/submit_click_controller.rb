@@ -33,14 +33,8 @@ class SubmitClickController < ApplicationController
       redirect_to(offer.get_destination_url(params[:udid], params[:publisher_app_id])) and return
     end
     
-    ##
-    # store how much currency the user earns for this install    
     currency = Currency.find_in_cache_by_app_id(params[:publisher_app_id])
     
-    ##
-    # each attribute that starts with publisher.<id> has a . separated value
-    # the left of the . is when the click happened.  the right of the . is the publisher user record
-    # so when the app is installed, we look at the timestamp to determine where the reward goes
     click = StoreClick.new(:key => "#{params[:udid]}.#{params[:advertiser_app_id]}")
     click.put("click_date", "#{now.to_f.to_s}")
     click.put("publisher_app_id", params[:publisher_app_id])
