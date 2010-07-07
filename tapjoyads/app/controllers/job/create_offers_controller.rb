@@ -11,7 +11,10 @@ class Job::CreateOffersController < Job::SqsReaderController
 private
   
   def on_message(message)
-    Offer.connection.execute("UPDATE offers SET user_enabled = false WHERE item_type = 'OfferpalOffer'")
+    Offer.find_each(:conditions => "item_type = 'OfferpalOffer'") do |offer|
+      offer.user_enabled = false
+      offer.save!
+    end
     
     drop_id = 'b7b401f73d98ff21792b49117edd8b9f'
     country = 'United States'
