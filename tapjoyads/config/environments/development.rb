@@ -20,13 +20,6 @@ amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['dev']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['dev']['secret_access_key']
 
-# AWS S3:
-require 'aws/s3'
-AWS::S3::Base.establish_connection!(
-    :access_key_id => ENV['AWS_ACCESS_KEY_ID'],
-    :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY'])
-    
-
 MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []

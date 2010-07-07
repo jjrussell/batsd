@@ -6,7 +6,6 @@
 
 require 'yaml'
 require 'rubygems'
-require 'AWS'
 
 amazon = YAML::load_file('config/amazon.yaml')
 

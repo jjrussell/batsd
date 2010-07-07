@@ -26,7 +26,6 @@ Rails::Initializer.run do |config|
   # Specify gems that this application depends on. 
   # They can then be installed with "rake gems:install" on new installations.
   # You have to specify the :lib option for libraries, where the Gem name (sqlite3-ruby) differs from the file itself (sqlite3)
-  config.gem "aws-s3", :lib => "aws/s3"
   config.gem 'memcached'
   config.gem 'patron'
   config.gem 'hpricot'
@@ -34,7 +33,6 @@ Rails::Initializer.run do |config|
   config.gem 'uuidtools'
   config.gem 'json'
   config.gem 'right_aws'
-  config.gem 'amazon-ec2', :lib => "AWS"
   config.gem 'geoip'
   config.gem 'hoptoad_notifier'
   config.gem 'authlogic', :version => '2.1.3'

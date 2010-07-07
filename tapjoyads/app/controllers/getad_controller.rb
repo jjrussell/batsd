@@ -238,7 +238,8 @@ class GetadController < ApplicationController
     image_name = "socialreach-#{num}.jpg"
     
     image = get_from_cache_and_save("img.s3.#{image_name.hash}") do
-      image_content = AWS::S3::S3Object.value image_name, 'adimages'
+      bucket = RightAws::S3.new.bucket('adimages')
+      image_content = bucket.get(image_name)
       Base64.encode64 image_content
     end
     
@@ -274,7 +275,8 @@ class GetadController < ApplicationController
     @tapjoy_ad.ad_id = ad_id
     
     image = get_from_cache_and_save("img.s3.#{ad_id}") do
-      image_content = AWS::S3::S3Object.value "base64.#{ad_id}", 'publisher-ads'
+      bucket = RightAws::S3.new.bucket('publisher-ads')
+      image_content = bucket.get("base64.#{ad_id}")
     end
     
     @tapjoy_ad.image = image

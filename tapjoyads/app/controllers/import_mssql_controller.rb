@@ -152,11 +152,12 @@ class ImportMssqlController < ApplicationController
     ad.put('cpm', params[:cpm]) if params[:cpm]
     
     ad.save
-  
+    
     #store an image in s3
-    AWS::S3::S3Object.store "raw." + ad_id, params[:image], 'publisher-ads'
-    AWS::S3::S3Object.store "base64." + ad_id, Base64.b64encode(params[:image]), 'publisher-ads'
-  
+    bucket = RightAws::S3.new.bucket('publisher-ads')
+    bucket.put("raw.#{ad_id}", params[:image])
+    bucket.put("base64.#{ad_id}", Base64.b64encode(params[:image]))
+    
     render :template => 'layouts/success'
   end
   
