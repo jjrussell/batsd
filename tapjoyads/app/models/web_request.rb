@@ -95,7 +95,7 @@ class WebRequest < SimpledbResource
     end
     
     geoip_data = get_geoip_data(params, request)
-    put('country', geoip_data.country)
+    put('country', geoip_data[:country])
   end
   
   ##
