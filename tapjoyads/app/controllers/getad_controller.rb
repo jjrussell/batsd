@@ -1,11 +1,7 @@
 require 'cgi'
 require 'uri'
 require 'net/http'
-require 'json'
-require 'xml'
 require 'base64'
-require 'RMagick'
-require 'hpricot'
 include Magick
 
 class GetadController < ApplicationController

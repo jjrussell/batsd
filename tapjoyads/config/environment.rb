@@ -26,20 +26,27 @@ Rails::Initializer.run do |config|
   # Specify gems that this application depends on. 
   # They can then be installed with "rake gems:install" on new installations.
   # You have to specify the :lib option for libraries, where the Gem name (sqlite3-ruby) differs from the file itself (sqlite3)
+  
+  # These gems can't be vendored
+  config.gem 'daemons', :version => '1.0.10'
+  config.gem 'hpricot', :version => '0.8.1'
+  config.gem 'json', :version => '1.1.9'
+  config.gem 'libxml-ruby', :version => '1.1.3', :lib => 'xml'
   config.gem 'memcached'
-  config.gem 'patron'
-  config.gem 'hpricot'
-  config.gem 'daemons'
-  config.gem 'uuidtools'
-  config.gem 'json'
-  config.gem 'right_aws'
-  config.gem 'geoip'
-  config.gem 'hoptoad_notifier'
+  config.gem 'mysql', :version => '2.8.1'
+  config.gem 'patron', :version => '0.4.4'
+  config.gem 'right_aws', :version => '1.10.0'
+  config.gem 'rmagick', :version => '2.12.2', :lib => 'RMagick'
+  
+  # These gems should be vendored
   config.gem 'authlogic', :version => '2.1.3'
   config.gem 'declarative_authorization', :version => '0.4.1'
+  config.gem 'geoip', :version => '0.8.6'
   config.gem 'haml', :version => '2.2.23'
-  config.gem 'will_paginate', :version => '2.3.12'
+  config.gem 'hoptoad_notifier', :version => '2.2.2'
   config.gem 'plist', :version => '3.1.0'
+  config.gem 'uuidtools', :version => '2.0.0'
+  config.gem 'will_paginate', :version => '2.3.12'
   
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.

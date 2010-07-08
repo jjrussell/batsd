@@ -1,5 +1,3 @@
-require 'patron'
-
 module DownloadContent
   include Patron
   include NewRelicHelper

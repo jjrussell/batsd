@@ -42,7 +42,6 @@ ENV['AWS_SECRET_ACCESS_KEY'] = amazon['main']['secret_access_key']
 
 # Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
 # to the list of transient problems which will automatically get retried by RightAws.
-require 'right_aws'
 RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
 
 MAX_DEVICE_APP_DOMAINS = 20

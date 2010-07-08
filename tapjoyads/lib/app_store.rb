@@ -1,6 +1,3 @@
-require 'xml'
-require 'plist'
-
 class StoreRequestError < StandardError; end
 
 include DownloadContent

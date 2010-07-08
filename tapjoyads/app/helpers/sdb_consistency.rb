@@ -19,7 +19,9 @@ module RightAws
   class SdbInterface < RightAwsBase
     
     # Override, in order to support consistency.
-    API_VERSION = '2009-04-15'
+    silence_warnings do
+      API_VERSION = '2009-04-15'
+    end
     
     # Prepare attributes for putting or deleting.
     # (used by put_attributes, delete_attributes and batch_put_attributes)
