@@ -244,7 +244,7 @@ private
     if total_logins + total_rewards + total_paid_clicks + total_ad_impressions > 0
       return 1.hour
     else
-      return 8.hour
+      return 2.hour
     end
   end
   
