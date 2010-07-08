@@ -1,4 +1,4 @@
-module QueueNames
+class QueueNames
   CONVERSION_TRACKING      = RUN_MODE_PREFIX + 'ConversionTracking'
   FAILED_SDB_SAVES         = RUN_MODE_PREFIX + 'FailedSdbSaves'
   FAILED_DOWNLOADS         = RUN_MODE_PREFIX + 'FailedDownloads'
