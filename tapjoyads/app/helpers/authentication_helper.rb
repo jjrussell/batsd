@@ -64,6 +64,24 @@ module AuthenticationHelper
     end
   end
 
+  def glu_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'glu'
+        password = 'j348h83hngs84hsla8hskri56h'
+      end
+      password
+    end
+  end
+  
+  def gameview_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'gameview'
+        password = 'df223jhzsd2kjhv01308924hj'
+      end
+      password
+    end
+  end
+  
   def fluent_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'fluent'
