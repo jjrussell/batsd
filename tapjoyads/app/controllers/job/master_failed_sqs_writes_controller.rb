@@ -3,7 +3,6 @@
 # they orignially failed to write to.
 class Job::MasterFailedSqsWritesController < Job::JobController
   include RightAws
-  include NewRelicHelper
   
   def index
     bucket = S3.new.bucket('failed-sqs-writes')
@@ -19,7 +18,7 @@ class Job::MasterFailedSqsWritesController < Job::JobController
       rescue RightAws::AwsError => e
         log_line = "FailedSqsWrites job failed to write message #{message} to queue #{queue_name}, with error: #{e}"
         Rails.logger.info log_line
-        alert_new_relic(FailedToWriteToSqsError, log_line)
+        Notifier.alert_new_relic(FailedToWriteToSqsError, log_line)
       end
     end
     

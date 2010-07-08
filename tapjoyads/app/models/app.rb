@@ -1,7 +1,6 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   include MemcachedHelper
-  include NewRelicHelper
   
   has_one :offer, :as => :item
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
@@ -96,7 +95,7 @@ class App < ActiveRecord::Base
     end
     
     if url.blank? || url == 'None'
-      alert_new_relic(ParseStoreIdError, "Could not parse store id from nil url for app #{name} (#{id})") if alert_on_parse_fail
+      Notifier.alert_new_relic(ParseStoreIdError, "Could not parse store id from nil url for app #{name} (#{id})") if alert_on_parse_fail
       return nil
     end
     
@@ -110,7 +109,7 @@ class App < ActiveRecord::Base
     end
     
     unless match && match[1]
-      alert_new_relic(ParseStoreIdError, "Could not parse store id from #{url} for app #{name} (#{id})") if alert_on_parse_fail
+      Notifier.alert_new_relic(ParseStoreIdError, "Could not parse store id from #{url} for app #{name} (#{id})") if alert_on_parse_fail
       return nil
     end
     

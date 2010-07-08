@@ -1,6 +1,5 @@
 class PurchaseVgController < ApplicationController
   include MemcachedHelper
-  include NewRelicHelper
   
   def index
     return unless verify_params([:app_id, :udid, :virtual_good_id])

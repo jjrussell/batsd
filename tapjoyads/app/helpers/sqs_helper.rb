@@ -2,7 +2,6 @@
 # Functionality to write a message to sqs. If writing to sqs failes, the message will be stored in
 # the failed-sqs-writes s3 bucket.
 module SqsHelper
-  include NewRelicHelper
   include RightAws
   
   def send_to_sqs(queue_name, message)
@@ -20,7 +19,7 @@ module SqsHelper
       end
       
       # If we've gotten here, the message has failed to send to sqs. Write the message to S3.
-      alert_new_relic(FailedToWriteToSqsError)
+      Notifier.alert_new_relic(FailedToWriteToSqsError)
       
       s3_message = {:queue_name => queue_name, :message => message}.to_json
       

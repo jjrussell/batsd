@@ -1,7 +1,5 @@
 class Job::QueueUpdateMonthlyAccountController < Job::SqsReaderController
   
-  include NewRelicHelper
-  
   def initialize
     super QueueNames::UPDATE_MONTHLY_ACCOUNT
   end
@@ -21,6 +19,5 @@ private
     MonthlyAccounting.update_partner_record(partner.id, { :month => month, :year => year })
     
   end
-  
   
 end

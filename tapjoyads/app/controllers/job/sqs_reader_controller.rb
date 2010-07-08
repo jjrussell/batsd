@@ -1,7 +1,6 @@
 class Job::SqsReaderController < Job::JobController
   include RightAws
   include MemcachedHelper
-  include NewRelicHelper
 
   before_filter :limit_long_running_jobs, :only => :index
 

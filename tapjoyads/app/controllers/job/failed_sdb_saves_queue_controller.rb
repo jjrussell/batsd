@@ -1,5 +1,4 @@
 class Job::FailedSdbSavesQueueController < Job::SqsReaderController
-  include NewRelicHelper
   
   def initialize
     super QueueNames::FAILED_SDB_SAVES

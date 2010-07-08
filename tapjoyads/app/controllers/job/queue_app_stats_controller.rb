@@ -1,5 +1,4 @@
 class Job::QueueAppStatsController < Job::SqsReaderController
-  include NewRelicHelper
   include DownloadContent
   
   def initialize
@@ -148,7 +147,7 @@ private
     
     msg = "Verification of stats failed for offer: #{@offer.name} (#{@offer.id}), for date: #{start_time.to_date}. #{e.message}"
     Rails.logger.info msg
-    alert_new_relic(AppStatsVerifyError, msg, request, params)
+    Notifier.alert_new_relic(AppStatsVerifyError, msg, request, params)
   end
   
   def send_stats_to_mssql(utc_date)

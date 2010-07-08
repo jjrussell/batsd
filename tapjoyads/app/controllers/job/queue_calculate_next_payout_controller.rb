@@ -1,5 +1,4 @@
 class Job::QueueCalculateNextPayoutController < Job::SqsReaderController
-  include NewRelicHelper
   
   def initialize
     super QueueNames::CALCULATE_NEXT_PAYOUT

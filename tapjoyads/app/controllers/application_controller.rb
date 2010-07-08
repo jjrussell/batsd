@@ -2,7 +2,6 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  include NewRelicHelper
   helper :all # include all helpers, all the time
   
   before_filter :fix_params
@@ -42,7 +41,7 @@ class ApplicationController < ActionController::Base
     Rails.logger.info "missing required params"
     if params[:udid] != 'null'
       NewRelic::Agent.add_custom_parameters({ :user_agent => request.headers['User-Agent'] })
-      alert_new_relic(MissingRequiredParamsError, request.url, request, params)
+      Notifier.alert_new_relic(MissingRequiredParamsError, request.url, request, params)
     end
   end
   

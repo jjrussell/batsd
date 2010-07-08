@@ -1,6 +1,5 @@
 class Job::SendMoneyTxnController < Job::SqsReaderController
   include DownloadContent
-  include NewRelicHelper
   
   def initialize
     super QueueNames::SEND_MONEY_TXN

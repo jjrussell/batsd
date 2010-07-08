@@ -1,6 +1,5 @@
 class Partner < ActiveRecord::Base
   include UuidPrimaryKey
-  include NewRelicHelper
   
   has_many :orders
   has_many :payouts
@@ -53,10 +52,10 @@ class Partner < ActiveRecord::Base
       self.pending_earnings = publisher_conversions_sum - payouts_sum
       if alert_on_mismatch
         if balance_changed?
-          alert_new_relic(BalancesMismatch, "Balance mismatch for partner: #{id}, previously: #{balance_was}, now: #{balance}")
+          Notifier.alert_new_relic(BalancesMismatch, "Balance mismatch for partner: #{id}, previously: #{balance_was}, now: #{balance}")
         end
         if pending_earnings_changed?
-          alert_new_relic(BalancesMismatch, "Pending Earnings mismatch for partner: #{id}, previously: #{pending_earnings_was}, now: #{pending_earnings}")
+          Notifier.alert_new_relic(BalancesMismatch, "Pending Earnings mismatch for partner: #{id}, previously: #{pending_earnings_was}, now: #{pending_earnings}")
         end
       end
       save! if changed? && do_save
