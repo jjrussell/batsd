@@ -65,6 +65,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
     reward.put('currency_reward', click.currency_reward)
     reward.put('tapjoy_amount', click.tapjoy_amount)
     reward.put('source', click.source)
+    reward.put('udid', udid)
     
     reward.save
     
