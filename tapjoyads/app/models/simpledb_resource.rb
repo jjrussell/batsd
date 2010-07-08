@@ -59,7 +59,6 @@ end
 class ExpectedAttributeError < RuntimeError; end
 
 class SimpledbResource  
-  include TimeLogHelper
   include MemcachedHelper
   include RightAws
   include SqsHelper
@@ -201,7 +200,7 @@ class SimpledbResource
 
     put('updated-at', Time.now.utc.to_f.to_s) if updated_at
     
-    time_log("Saving to sdb, domain: #{this_domain_name}") do
+    Rails.logger.info_with_time("Saving to sdb, domain: #{this_domain_name}") do
       self.write_to_sdb(expected_attr) if write_to_sdb
       self.write_to_memcache if write_to_memcache
     end
@@ -546,7 +545,7 @@ protected
       end
     rescue AwsError => e
       if e.message.starts_with?("NoSuchDomain")
-        time_log("Creating new domain: #{@this_domain_name}") do
+        Rails.logger.info_with_time("Creating new domain: #{@this_domain_name}") do
           @@sdb.create_domain(@this_domain_name)
         end
         retry

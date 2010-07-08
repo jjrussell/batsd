@@ -1,3 +1,11 @@
+#
+# This allows us to do conditional routing based on the requested host.
+#
+# example usage:
+# map.with_options :conditions => { :hosts => [ 'example.com' ] } do |limited_route|
+#   limited_route.resources :some_resource
+# end
+#
 module ActionController
   module Routing
     
@@ -17,6 +25,35 @@ module ActionController
         result << "conditions[:hosts].include?(env[:host])" if conditions[:hosts] && Rails.env == 'production'
         result
       end
+    end
+    
+  end
+end
+
+#
+# This adds a _with_time logging method for each log severity level.
+# It will time how long it takes to execute a block and append the
+# number of seconds to the log message.
+#
+# example usage:
+# Rails.logger.info_with_time('some message') do
+#   method_that_takes_25_seconds
+# end
+#
+# resulting log output: "some message (25s)"
+#
+module ActiveSupport
+  class BufferedLogger
+    
+    for severity in Severity.constants
+      class_eval <<-EOT, __FILE__, __LINE__
+        def #{severity.downcase}_with_time(message)                 # def debug_with_time(message)
+          start_time = Time.zone.now                                #   start_time = Time.zone.now
+          yield                                                     #   yield
+          message += ' (' + (Time.zone.now - start_time).to_s + ')' #   message += ' (' + (Time.zone.now - start_time).to_s + ')'
+          add(#{severity}, message)                                 #   add(DEBUG, message)
+        end                                                         # end
+      EOT
     end
     
   end

@@ -1,6 +1,5 @@
 class ConnectController < ApplicationController
   include DownloadContent
-  include TimeLogHelper
   include SqsHelper
   
   def index
@@ -9,7 +8,7 @@ class ConnectController < ApplicationController
     return unless verify_params([:app_id, :udid], {:allow_empty => false})
     
     #add this app to the device list
-    time_log("Check conversions and maybe add to sqs") do
+    Rails.logger.info_with_time("Check conversions and maybe add to sqs") do
       click = StoreClick.new(:key => "#{params[:udid]}.#{params[:app_id]}")
       unless (click.attributes.empty? || click.get('installed'))
         logger.info "Added conversion to sqs queue"

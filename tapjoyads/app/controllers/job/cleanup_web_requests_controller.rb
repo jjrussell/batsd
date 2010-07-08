@@ -1,6 +1,5 @@
 class Job::CleanupWebRequestsController < Job::SqsReaderController
   include RightAws
-  include TimeLogHelper
   
   def initialize
     super QueueNames::CLEANUP_WEB_REQUESTS

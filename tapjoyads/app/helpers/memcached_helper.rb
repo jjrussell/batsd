@@ -1,5 +1,4 @@
 module MemcachedHelper
-  include TimeLogHelper
   
   CACHE = Memcached.new(MEMCACHE_SERVERS, {
     :support_cas => true, 
@@ -38,7 +37,7 @@ module MemcachedHelper
     cache = clone ? CACHE.clone : CACHE
     
     value = nil
-    time_log("Read from memcache") do
+    Rails.logger.info_with_time("Read from memcache") do
       begin
         value = cache.get(CGI::escape(key))
         Rails.logger.info("Memcache key found: #{key}")
@@ -72,7 +71,7 @@ module MemcachedHelper
     cache = clone ? CACHE.clone : CACHE
     
     if value
-      time_log("Wrote to memcache") do
+      Rails.logger.info_with_time("Wrote to memcache") do
         cache.set(CGI::escape(key), value, time)
       end
     end

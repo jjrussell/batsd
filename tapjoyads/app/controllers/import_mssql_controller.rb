@@ -1,7 +1,6 @@
 require 'base64'
 
 class ImportMssqlController < ApplicationController
-  include TimeLogHelper
   include MemcachedHelper
   include DownloadContent
   
