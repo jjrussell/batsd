@@ -1,5 +1,4 @@
 class SubmitClickController < ApplicationController
-  include SqsHelper
   include MemcachedHelper
   
   def store
@@ -61,7 +60,7 @@ class SubmitClickController < ApplicationController
       logger.info "Added fake conversion to sqs queue"
       message = {:udid => params[:udid], :app_id => params[:advertiser_app_id], 
           :install_date => Time.now.utc.to_f.to_s}.to_json
-      send_to_sqs(QueueNames::CONVERSION_TRACKING, message)
+      Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
 
       #record that the user has this app, so we don't show it again
       device_app_list = DeviceAppList.new(:key => params[:udid])

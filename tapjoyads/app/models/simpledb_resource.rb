@@ -61,7 +61,6 @@ class ExpectedAttributeError < RuntimeError; end
 class SimpledbResource  
   include MemcachedHelper
   include RightAws
-  include SqsHelper
   
   attr_accessor :key, :attributes, :this_domain_name, :is_new, :key_hash
   cattr_accessor :domain_name, :key_format
@@ -218,7 +217,7 @@ class SimpledbResource
     bucket = s3.bucket('failed-sdb-saves')
     bucket.put(uuid, self.serialize)
     message = {:uuid => uuid, :options => options_copy}.to_json
-    send_to_sqs(QueueNames::FAILED_SDB_SAVES, message)
+    Sqs.send_message(QueueNames::FAILED_SDB_SAVES, message)
     Rails.logger.info "Successfully added to sqs. Message: #{message}"
     increment_count_in_cache("failed_sdb_saves.#{@this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}")
   ensure

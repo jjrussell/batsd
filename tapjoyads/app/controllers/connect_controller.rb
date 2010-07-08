@@ -1,6 +1,5 @@
 class ConnectController < ApplicationController
   include DownloadContent
-  include SqsHelper
   
   def index
     #return unless verify_params([:app_id, :udid, :device_type, :app_version, :device_os_version, :library_version])
@@ -14,7 +13,7 @@ class ConnectController < ApplicationController
         logger.info "Added conversion to sqs queue"
         message = {:udid => params[:udid], :app_id => params[:app_id], 
             :install_date => Time.now.utc.to_f.to_s}.to_json
-        send_to_sqs(QueueNames::CONVERSION_TRACKING, message)
+        Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
       end
     end
     

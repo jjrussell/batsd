@@ -1,6 +1,4 @@
 class RateAppOfferController < ApplicationController
-  include SqsHelper
-  
   layout 'iphone'
   
   def index
@@ -37,7 +35,7 @@ class RateAppOfferController < ApplicationController
 
     message = reward.serialize(:attributes_only => true)
 
-    send_to_sqs(QueueNames::SEND_CURRENCY, message)
+    Sqs.send_message(QueueNames::SEND_CURRENCY, message)
 
     redirect_to(app.store_url)
   end

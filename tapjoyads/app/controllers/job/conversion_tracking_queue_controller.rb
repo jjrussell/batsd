@@ -1,6 +1,5 @@
 class Job::ConversionTrackingQueueController < Job::SqsReaderController
   include DownloadContent
-  include SqsHelper
   
   def initialize
     super QueueNames::CONVERSION_TRACKING
@@ -71,8 +70,8 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
     
     message = reward.serialize(:attributes_only => true)
     
-    send_to_sqs(QueueNames::SEND_CURRENCY, message) unless currency.callback_url.blank?
-    send_to_sqs(QueueNames::SEND_MONEY_TXN, message)
+    Sqs.send_message(QueueNames::SEND_CURRENCY, message) unless currency.callback_url.blank?
+    Sqs.send_message(QueueNames::SEND_MONEY_TXN, message)
     
     click.put('installed', install_date)
     click.save

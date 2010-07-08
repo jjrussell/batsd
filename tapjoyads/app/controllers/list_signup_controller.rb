@@ -1,5 +1,4 @@
 class ListSignupController < ApplicationController
-  include SqsHelper
   include DownloadContent
   
   layout 'iphone'
@@ -84,7 +83,7 @@ class ListSignupController < ApplicationController
       
       message = {:udid => @signup.udid, :app_id => @signup.advertiser_app_id, 
           :install_date => Time.now.utc.to_f.to_s}.to_json
-      send_to_sqs(QueueNames::CONVERSION_TRACKING, message)
+      Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
       
       return true
     end

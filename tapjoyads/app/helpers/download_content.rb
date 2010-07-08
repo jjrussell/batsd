@@ -1,6 +1,5 @@
 module DownloadContent
   include Patron
-  include SqsHelper
   
   def download_content(url, options = {})
     headers = options.delete(:headers) { {} }
@@ -37,7 +36,7 @@ module DownloadContent
     rescue Exception => e
       Rails.logger.info "Download failed. Error: #{e}"
       message = {:url => url, :download_options => download_options, :failure_message => failure_message}.to_json
-      send_to_sqs(QueueNames::FAILED_DOWNLOADS, message)
+      Sqs.send_message(QueueNames::FAILED_DOWNLOADS, message)
       Rails.logger.info "Added to FailedDownloads queue."
     end
   end

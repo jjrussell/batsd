@@ -1,6 +1,4 @@
 class Job::MasterUpdateMonthlyAccountController < Job::JobController
-  include SqsHelper
-  
   def index
 
     Partner.all.each do |partner|
@@ -10,7 +8,7 @@ class Job::MasterUpdateMonthlyAccountController < Job::JobController
       json['month'] = now.month
       json['year'] = now.year
       message = json.to_json
-      send_to_sqs(QueueNames::UPDATE_MONTHLY_ACCOUNT, message)
+      Sqs.send_message(QueueNames::UPDATE_MONTHLY_ACCOUNT, message)
       sleep(1) #don't want to overwhelm the job servers
     end
     

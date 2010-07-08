@@ -1,8 +1,6 @@
 ##
 # Sends one app_key to the queue for each app that should have its show_rate calculated.
 class Job::MasterCalculateShowRateController < Job::JobController
-  include SqsHelper
-  
   def index
     offers = Offer.enabled_offers
     count = offers.length
@@ -10,7 +8,7 @@ class Job::MasterCalculateShowRateController < Job::JobController
     offers.each do |offer|
       next if offer.item_type == 'RatingOffer'
       
-      time = Benchmark.realtime { send_to_sqs(QueueNames::CALCULATE_SHOW_RATE, offer.id) }
+      time = Benchmark.realtime { Sqs.send_message(QueueNames::CALCULATE_SHOW_RATE, offer.id) }
       sleep((20.minutes.to_f / count) - time)
     end
     

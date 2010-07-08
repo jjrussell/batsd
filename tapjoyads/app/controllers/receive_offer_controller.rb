@@ -1,5 +1,4 @@
 class ReceiveOfferController < ApplicationController
-  include SqsHelper
   
   def receive_offer
     return record_offer
@@ -48,8 +47,8 @@ class ReceiveOfferController < ApplicationController
     reward.save
     
     message = reward.serialize(:attributes_only => true)
-    send_to_sqs(QueueNames::SEND_CURRENCY, message)
-    send_to_sqs(QueueNames::SEND_MONEY_TXN, message)
+    Sqs.send_message(QueueNames::SEND_CURRENCY, message)
+    Sqs.send_message(QueueNames::SEND_MONEY_TXN, message)
     
     web_request = WebRequest.new
     web_request.put_values('receive_offer', params, get_ip_address, get_geoip_data)
