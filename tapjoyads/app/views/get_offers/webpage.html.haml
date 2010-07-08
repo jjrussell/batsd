@@ -12,7 +12,7 @@
       %img{ :src => offer.get_icon_url }
       .offertext
         .cell
-          %span.offername #{offer.name} (#{offer.cost})
+          %span.offername #{offer.name.gsub('&', '&amp;')} (#{offer.cost})
           %br
           Earn
           %span.amount #{@currency.get_reward_amount(offer, @source)} #{@currency.name}
