@@ -265,4 +265,55 @@ class OneOffs
     end
   end
   
+  def self.fix_missing_publisher_user_records_in_tap_resort
+    file = File.open('tapresort_missing_users.txt', 'w')
+    file.write('user_id,udid,currency_amount,original_conversion_date')
+
+    queue = RightAws::SqsGen2.new.queue(QueueNames::SEND_CURRENCY)
+    
+    count = 0
+    
+    Reward.select(:where => "publisher_app_id = '41df65f0-593c-470b-83a4-37be66740f34' and publisher_user_id is null") do |reward|
+      response = StoreClick.select(:where => "reward_key = '#{reward.key}'")
+      if response[:items].size != 1
+        puts "click not found for reward #{reward.key} (#{response[:items].size} clicks found)"
+        next
+      end
+      
+      click = response[:items][0]
+      udid = click.key.split('.')[0]
+
+      response = PublisherUserRecord.select(:where => "udid = '#{udid}' and itemName() like '41df65f0-593c-470b-83a4-37be66740f34.%'")
+      if response[:items].size != 1
+        puts "PublisherUserRecord not found for reward #{reward.key} (#{response[:items].size} records found)"
+        next
+      end
+      
+      record = response[:items][0]
+      user_id = record.key.split('.')[1]
+      
+      if user_id != udid
+        puts "user_id != udid: #{user_id} != #{udid} for reward: #{reward.key}"
+        next
+      end
+      
+      if reward.get('sent_currency')
+        puts "Already sent currency for reward: #{reward.key}"
+        next
+      end
+      
+      reward.put('publisher_user_id', user_id)
+      reward.serial_save
+      
+      message = reward.serialize(:attributes_only => true)
+      queue.send_message(message)
+      
+      file.write("#{user_id},#{udid},#{reward.get('currency_reward')},#{reward.get('created')}\n")
+      count += 1
+      
+      puts "#{count}: Found user_id: #{user_id} for reward: #{reward.key}"
+    end
+    file.close
+  end
+  
 end
