@@ -20,7 +20,7 @@ class ConnectController < ApplicationController
     end
     
     web_request = WebRequest.new
-    web_request.put_values('connect', params, request)
+    web_request.put_values('connect', params, get_ip_address, get_geoip_data)
     
     device_app_list = DeviceAppList.new(:key => params[:udid])
     path_list = device_app_list.set_app_ran(params[:app_id])

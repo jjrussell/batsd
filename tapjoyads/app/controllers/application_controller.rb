@@ -84,5 +84,35 @@ class ApplicationController < ActionController::Base
       params[to] = params[to].downcase.strip if lower
     end
   end
+  
+  def get_ip_address
+    ip_address = request.headers['X-Forwarded-For'] || request.remote_ip
+    ip_address.gsub(/,.*$/, '')
+  end
+  
+  def get_geoip_data
+    data = {}
+    ip_address = params[:device_ip] || get_ip_address
     
+    begin
+      array = GEOIP.city(ip_address)
+    rescue Exception => e
+      Rails.logger.info "Error getting GeoIP data: #{e}"
+      array = nil
+    end
+    
+    unless array.nil?
+      data[:country] = array[2]
+      data[:continent] = array[5]
+      data[:region] = array[6]
+      data[:city] = array[7]
+      data[:postal_code] = array[8]
+      data[:lat] = array[9]
+      data[:long] = array[10]
+      data[:area_code] = array[12]
+    end
+    
+    data
+  end
+  
 end

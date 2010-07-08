@@ -20,7 +20,7 @@ class PurchaseVgController < ApplicationController
     end
     
     web_request = WebRequest.new
-    web_request.put_values('purchased_vg', params, request)
+    web_request.put_values('purchased_vg', params, get_ip_address, get_geoip_data)
     web_request.save
     
     render :template => 'layouts/tcro'

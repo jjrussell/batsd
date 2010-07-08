@@ -1,5 +1,4 @@
 class CompleteOfferController < ApplicationController
-  include ApplicationHelper
   
   def index
     return unless verify_params([:offerid, :app_id, :udid, :url])
@@ -13,7 +12,7 @@ class CompleteOfferController < ApplicationController
     click.put('udid', params[:udid])
     click.put('publisher_user_id', params[:publisher_user_id])
     click.put('source', 'email')
-    click.put('ip_address', get_ip_address(request))
+    click.put('ip_address', get_ip_address)
     click.save
   
     # TODO: verify url. Add signature to url? Whitelist certain urls?

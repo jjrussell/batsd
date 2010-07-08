@@ -2,8 +2,6 @@
 # Represents a single web request.
 class WebRequest < SimpledbResource
   include MemcachedHelper
-  include ApplicationHelper
-  include GeoipHelper
   
   self.sdb_attr :udid
   self.sdb_attr :app_id
@@ -63,7 +61,7 @@ class WebRequest < SimpledbResource
   
   ##
   # Puts attributes that come from the params and request object.
-  def put_values(path, params, request)
+  def put_values(path, params, ip_address, geoip_data)
     add_path(path)
     
     if params
@@ -88,13 +86,10 @@ class WebRequest < SimpledbResource
       put('source', params[:source])
     end
     
-    if request
-      unless get('ip_address')
-        put('ip_address', get_ip_address(request))
-      end
+    unless get('ip_address')
+      put('ip_address', ip_address)
     end
     
-    geoip_data = get_geoip_data(params, request)
     put('country', geoip_data[:country])
   end
   

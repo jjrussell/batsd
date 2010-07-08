@@ -1,5 +1,4 @@
 class SubmitClickController < ApplicationController
-  include ApplicationHelper
   include SqsHelper
   include MemcachedHelper
   
@@ -18,7 +17,7 @@ class SubmitClickController < ApplicationController
     if offer.get_payment_for_source(params[:source]) <= 0 || !offer.tapjoy_enabled
       @offer = offer
       web_request = WebRequest.new
-      web_request.put_values('disabled_offer', params, request)
+      web_request.put_values('disabled_offer', params, get_ip_address, get_geoip_data)
       web_request.save
       
       if params[:redirect] == "1"
@@ -54,7 +53,7 @@ class SubmitClickController < ApplicationController
     click.save
     
     web_request = WebRequest.new
-    web_request.put_values('store_click', params, request)
+    web_request.put_values('store_click', params, get_ip_address, get_geoip_data)
     web_request.save
     
     if offer.pay_per_click?
@@ -91,14 +90,14 @@ class SubmitClickController < ApplicationController
     click.put('udid', params[:udid])
     click.put('publisher_user_id', params[:publisher_user_id])
     click.put('source', 'app')
-    click.put('ip_address', get_ip_address(request))
+    click.put('ip_address', get_ip_address)
     click.save
     
     publisher_user_record = PublisherUserRecord.new(:key => "#{params[:app_id]}.#{params[:publisher_user_id]}")
     publisher_user_record.update(params[:udid])
     
     web_request = WebRequest.new
-    web_request.put_values('offer_click', params, request)
+    web_request.put_values('offer_click', params, get_ip_address, get_geoip_data)
     web_request.save
     
     render(:template => 'layouts/success')
@@ -108,7 +107,7 @@ class SubmitClickController < ApplicationController
     return unless verify_params([:campaign_id, :app_id, :udid])
 
     web_request = WebRequest.new
-    web_request.put_values('adclick', params, request)
+    web_request.put_values('adclick', params, get_ip_address, get_geoip_data)
     web_request.save
 
     render(:template => 'layouts/success')

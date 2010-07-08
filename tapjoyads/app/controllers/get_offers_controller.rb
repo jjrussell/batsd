@@ -1,6 +1,5 @@
 class GetOffersController < ApplicationController
   include MemcachedHelper
-  include GeoipHelper
   
   layout 'iphone', :only => :webpage
   
@@ -70,7 +69,7 @@ class GetOffersController < ApplicationController
     @currency = Currency.find_in_cache_by_app_id(params[:app_id])
     
     web_request = WebRequest.new
-    web_request.put_values('offers', params, request)
+    web_request.put_values('offers', params, get_ip_address, get_geoip_data)
     web_request.save
   end
   
@@ -81,7 +80,7 @@ class GetOffersController < ApplicationController
     if require_device_ip_param && params[:device_ip].blank?
       geoip_data = {}
     else
-      geoip_data = get_geoip_data(params, request)
+      geoip_data = get_geoip_data
     end
     
     type = case params[:type]

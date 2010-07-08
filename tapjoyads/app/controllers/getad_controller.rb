@@ -7,8 +7,7 @@ include Magick
 class GetadController < ApplicationController
   include DownloadContent
   include MemcachedHelper
-  include ApplicationHelper
-         
+  
   around_filter :catch_exceptions
   
   USER_AGENT = CGI::escape("Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X)" +
@@ -281,7 +280,7 @@ class GetadController < ApplicationController
   
   private
   def get_ip_address_local
-    ip_address = get_ip_address(request)
+    ip_address = get_ip_address
     if ip_address == '127.0.0.1'
       ip_address = '72.164.173.18'
     end

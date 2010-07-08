@@ -32,7 +32,7 @@ class RateAppOfferController < ApplicationController
 
     web_request = WebRequest.new
     params[:publisher_app_id] = params[:app_id]
-    web_request.put_values('rate_app', params, request)
+    web_request.put_values('rate_app', params, get_ip_address, get_geoip_data)
     web_request.save
 
     message = reward.serialize(:attributes_only => true)

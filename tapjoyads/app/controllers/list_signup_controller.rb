@@ -1,5 +1,4 @@
 class ListSignupController < ApplicationController
-  include GeoipHelper
   include SqsHelper
   include DownloadContent
   
@@ -15,7 +14,7 @@ class ListSignupController < ApplicationController
   
   def signup
     if params[:email_address] =~ /.+@.+/
-      geoip_data = get_geoip_data(params, request)
+      geoip_data = get_geoip_data
       
       signup = EmailSignup.new
       signup.udid = params[:udid]

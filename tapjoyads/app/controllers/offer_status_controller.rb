@@ -20,7 +20,7 @@ class OfferStatusController < ApplicationController
     @email = json['customerServiceEmail']
     
     web_request = WebRequest.new
-    web_request.put_values('offer_status', params, request)
+    web_request.put_values('offer_status', params, get_ip_address, get_geoip_data)
     web_request.put('status_items', @status_items.length.to_s) if @status_items
     web_request.save
     

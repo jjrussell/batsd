@@ -52,7 +52,7 @@ class ReceiveOfferController < ApplicationController
     send_to_sqs(QueueNames::SEND_MONEY_TXN, message)
     
     web_request = WebRequest.new
-    web_request.put_values('receive_offer', params, request)
+    web_request.put_values('receive_offer', params, get_ip_address, get_geoip_data)
     web_request.put('publisher_app_id', publisher_app_id)
     web_request.put('offer_id', params[:offerid])
     web_request.save
