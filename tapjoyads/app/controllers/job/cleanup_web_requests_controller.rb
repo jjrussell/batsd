@@ -1,10 +1,9 @@
 class Job::CleanupWebRequestsController < Job::SqsReaderController
-  include RightAws
   
   def initialize
     super QueueNames::CLEANUP_WEB_REQUESTS
-    @s3 = S3.new
-    @bucket = S3::Bucket.create(@s3, 'web-requests')
+    @s3 = RightAws::S3.new
+    @bucket = RightAws::S3::Bucket.create(@s3, 'web-requests')
   end
   
   def backup_date

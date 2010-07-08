@@ -1,6 +1,5 @@
 class StatuszController < ApplicationController
   include AuthenticationHelper
-  include RightAws
   
   before_filter 'basic_authenticate', :only => :queue_check
   
@@ -9,8 +8,8 @@ class StatuszController < ApplicationController
   end
   
   def queue_check
-    conversion_tracking_queue = SqsGen2.new.queue(QueueNames::CONVERSION_TRACKING)
-    failed_sdb_saves_queue = SqsGen2.new.queue(QueueNames::FAILED_SDB_SAVES)
+    conversion_tracking_queue = RightAws::SqsGen2.new.queue(QueueNames::CONVERSION_TRACKING)
+    failed_sdb_saves_queue = RightAws::SqsGen2.new.queue(QueueNames::FAILED_SDB_SAVES)
     
     result = "success"
     if conversion_tracking_queue.size > 1000 || failed_sdb_saves_queue.size > 5000

@@ -2,8 +2,6 @@
 
 # Gets a list of udids who earned currency within a certain period of time
 
-include RightAws
-
 start_time = Time.parse("12:00 AM EST", Time.utc(2009, 12, 23)).utc
 end_time = Time.parse("9:00 PM EST", Time.utc(2009, 12, 29)).utc
 

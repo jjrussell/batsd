@@ -1,9 +1,5 @@
 #!/usr/bin/env ruby
 
-include RightAws
-
-
-
 filename = ARGV[2]
 
 count = 0
@@ -31,5 +27,3 @@ File.open(filename, "r") do |file|
   
   
 end
-    
-  

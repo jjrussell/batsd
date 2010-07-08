@@ -1,5 +1,4 @@
 class Job::SqsReaderController < Job::JobController
-  include RightAws
   include MemcachedHelper
 
   before_filter :limit_long_running_jobs, :only => :index
@@ -11,7 +10,7 @@ class Job::SqsReaderController < Job::JobController
   def index
     retries = 2
     begin
-      queue = SqsGen2.new.queue(@queue_name)
+      queue = RightAws::SqsGen2.new.queue(@queue_name)
     rescue AwsError => e
       Rails.logger.info "Error creating queue object: #{e}"
       if retries > 0

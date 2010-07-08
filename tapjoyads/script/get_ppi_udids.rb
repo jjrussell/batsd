@@ -4,8 +4,6 @@
 
 #usage: script/runner -e production script/get_ppi_udids.rb <app_id> <outfile>
 
-include RightAws
-
 app_id = ARGV[2]
 outfile = ARGV[3]
 first_date = ARGV[4]
