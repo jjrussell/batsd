@@ -60,7 +60,6 @@ class ExpectedAttributeError < RuntimeError; end
 
 class SimpledbResource  
   include MemcachedHelper
-  include RightAws
   
   attr_accessor :key, :attributes, :this_domain_name, :is_new, :key_hash
   cattr_accessor :domain_name, :key_format
@@ -69,7 +68,7 @@ class SimpledbResource
   def self.reset_connection
     #sdb_ip_address = Socket::getaddrinfo('sdb.amazonaws.com', 'http')[0][3]
     #Rails.logger.info "Resetting sdb connection. Sdb ip address: #{sdb_ip_address}"
-    @@sdb = SdbInterface.new(nil, nil,
+    @@sdb = RightAws::SdbInterface.new(nil, nil,
         {:multi_thread => true, :port => 80, :protocol => 'http'})
   end
   self.reset_connection
