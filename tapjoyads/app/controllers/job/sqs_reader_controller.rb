@@ -11,7 +11,7 @@ class Job::SqsReaderController < Job::JobController
     retries = 2
     begin
       queue = RightAws::SqsGen2.new.queue(@queue_name)
-    rescue AwsError => e
+    rescue RightAws::AwsError => e
       Rails.logger.info "Error creating queue object: #{e}"
       if retries > 0
         Rails.logger.info "Retrying up to #{retries} more times."
@@ -35,7 +35,7 @@ class Job::SqsReaderController < Job::JobController
       retries = 3
       begin
         message = queue.receive
-      rescue AwsError => e
+      rescue RightAws::AwsError => e
         if e.message =~ /^InternalError/ && retries > 0
           retries -= 1
           sleep(0.1)
@@ -72,7 +72,7 @@ class Job::SqsReaderController < Job::JobController
       retries = 3
       begin
         message.delete
-      rescue AwsError => e
+      rescue RightAws::AwsError => e
         if e.message =~ /^ResourceUnavailable/ && retries > 0
           retries -= 1
           sleep(0.1)

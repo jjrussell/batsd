@@ -69,7 +69,7 @@ class Job::CleanupWebRequestsController < Job::SqsReaderController
     retries = 3
     begin
       response = SimpledbResource.delete_domain(domain_name)
-    rescue AwsError => e
+    rescue RightAws::AwsError => e
       sleep(1)
       if retries > 0
         retries -= 1

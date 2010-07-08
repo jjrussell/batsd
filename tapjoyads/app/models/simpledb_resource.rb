@@ -385,7 +385,7 @@ class SimpledbResource
     loop do
       begin
         response = @@sdb.select(query, next_token)
-      rescue AwsError => e
+      rescue RightAws::AwsError => e
         if e.message =~ /^(ServiceUnavailable|QueryTimeout)/ && retries > 0
           Rails.logger.info "Error: #{e}. Retrying up to #{retries} more times."
           retries -= 1
@@ -430,7 +430,7 @@ class SimpledbResource
     loop do
       begin
         response = @@sdb.select(query, next_token)
-      rescue AwsError => e
+      rescue RightAws::AwsError => e
         if e.message =~ /^(ServiceUnavailable|QueryTimeout)/ && retry_count < retries 
           Rails.logger.info "Error: #{e}. Retrying up to #{retries - retry_count} more times."
           retry_count += 1
@@ -541,7 +541,7 @@ protected
       unless attributes_to_delete.empty?
         @@sdb.delete_attributes(@this_domain_name, @key, attributes_to_delete, expected_attr)
       end
-    rescue AwsError => e
+    rescue RightAws::AwsError => e
       if e.message.starts_with?("NoSuchDomain")
         Rails.logger.info_with_time("Creating new domain: #{@this_domain_name}") do
           @@sdb.create_domain(@this_domain_name)
@@ -590,7 +590,7 @@ private
     begin
       response = @@sdb.get_attributes(@this_domain_name, @key)
       attributes = response[:attributes]
-    rescue AwsError => e
+    rescue RightAws::AwsError => e
       if e.message.starts_with?("NoSuchDomain")
         Rails.logger.info "NoSuchDomain: #{@this_domain_name}, when attempting to load #{@key}"
         # Domain will be created on save.
