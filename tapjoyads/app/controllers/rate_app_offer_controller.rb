@@ -1,7 +1,8 @@
 class RateAppOfferController < ApplicationController
-  layout 'iphone'
   
   def index
+    return unless verify_params([:app_id, :udid, :publisher_user_id], {:allow_empty => false})
+    
     currency = Currency.find_in_cache_by_app_id(params[:app_id])
     rating_offer = RatingOffer.find_in_cache_by_app_id(params[:app_id])
     offer = Offer.find_in_cache(rating_offer.id)
