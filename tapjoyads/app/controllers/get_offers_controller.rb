@@ -3,19 +3,14 @@ class GetOffersController < ApplicationController
   
   layout 'iphone', :only => :webpage
   
+  before_filter :set_featured_params, :only => :featured
+  before_filter :setup
+  
   def webpage
-    setup
-    
     set_offer_list(:require_device_ip_param => false)
   end
   
   def featured
-    params[:type] = Offer::FEATURED_OFFER_TYPE
-    params[:start] = '0'
-    params[:max] = '999'
-    
-    setup
-    
     set_offer_list(:require_device_ip_param => false)
     
     @offer_list = @offer_list[rand(@offer_list.length).to_i, 1]
@@ -30,8 +25,6 @@ class GetOffersController < ApplicationController
   end
   
   def index
-    setup
-    
     require_device_ip_param = (params[:redirect] == '1' || params[:server] == '1')
     
     set_offer_list(:require_device_ip_param => require_device_ip_param)
@@ -99,4 +92,11 @@ private
         :app_version => params[:app_version])
     @offer_list = @offer_list[@start_index, @max_items] || []
   end
+  
+  def set_featured_params
+    params[:type] = Offer::FEATURED_OFFER_TYPE
+    params[:start] = '0'
+    params[:max] = '999'
+  end
+  
 end
