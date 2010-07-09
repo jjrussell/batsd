@@ -1,6 +1,3 @@
-require 'sdb_batchput'
-require 'sdb_consistency'
-
 class StringConverter
   def from_string(s)
     s
