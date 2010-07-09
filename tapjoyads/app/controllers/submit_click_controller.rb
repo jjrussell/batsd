@@ -7,7 +7,7 @@ class SubmitClickController < ApplicationController
       params[:publisher_user_id] = params[:udid]
     end
     
-    return unless verify_params([:advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id])
+    return unless verify_params([:advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id], {:allow_empty => false})
     
     now = Time.now.utc
     
@@ -78,7 +78,7 @@ class SubmitClickController < ApplicationController
   end
   
   def offer
-    return unless verify_params([:app_id, :udid, :offer_id, :publisher_user_id])
+    return unless verify_params([:app_id, :udid, :offer_id, :publisher_user_id], {:allow_empty => false})
     
     now = Time.now.utc
     

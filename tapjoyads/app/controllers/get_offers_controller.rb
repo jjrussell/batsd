@@ -4,20 +4,18 @@ class GetOffersController < ApplicationController
   layout 'iphone', :only => :webpage
   
   def webpage
-    return unless verify_params([:app_id, :udid, :publisher_user_id], {:allow_empty => false})
-  
     setup
+    
     set_offer_list(:require_device_ip_param => false)
   end
   
   def featured
-    return unless verify_params([:app_id, :udid, :publisher_user_id], {:allow_empty => false})
-    
     params[:type] = Offer::FEATURED_OFFER_TYPE
     params[:start] = '0'
     params[:max] = '999'
     
     setup
+    
     set_offer_list(:require_device_ip_param => false)
     
     @offer_list = @offer_list[rand(@offer_list.length).to_i, 1]
@@ -32,12 +30,6 @@ class GetOffersController < ApplicationController
   end
   
   def index
-    #special code for Tapulous not sending udid
-    if params[:app_id] == 'e2479a17-ce5e-45b3-95be-6f24d2c85c6f'
-      params[:udid] = params[:publisher_user_id] if params[:udid].blank?
-    end
-    return unless verify_params([:app_id, :udid, :publisher_user_id], {:allow_empty => false})
-  
     setup
     
     require_device_ip_param = (params[:redirect] == '1' || params[:server] == '1')
@@ -58,9 +50,15 @@ class GetOffersController < ApplicationController
     end
   end
   
-  private
+private
   
   def setup
+    # special code for Tapulous not sending udid
+    if params[:app_id] == 'e2479a17-ce5e-45b3-95be-6f24d2c85c6f'
+      params[:udid] = params[:publisher_user_id] if params[:udid].blank?
+    end
+    return unless verify_params([ :app_id, :udid, :publisher_user_id ], { :allow_empty => false })
+    
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 25).to_i
     @source = ''
