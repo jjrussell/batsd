@@ -14,14 +14,15 @@
 
 #offers
   - @offer_list.each do |offer|
-    %a.offer{ :href => offer.get_redirect_url(@publisher_app, params[:publisher_user_id], params[:udid], @source, params[:app_version]), :onclick => "this.className = 'clicked';" }
-      %img{ :src => offer.get_icon_url }
-      .offertext
-        .cell
-          %span.offername #{offer.name} (#{offer.cost})
-          %br
-          Earn
-          %span.amount #{@currency.get_reward_amount(offer, @source)} #{@currency.name}
+    .offer
+      %a{ :href => offer.get_redirect_url(@publisher_app, params[:publisher_user_id], params[:udid], @source, params[:app_version]), :onclick => "this.className = 'clicked';" }
+        %img{ :src => offer.get_icon_url }
+        .offertext
+          .cell
+            %span.offername #{offer.name} (#{offer.cost})
+            %br
+            Earn
+            %span.amount #{@currency.get_reward_amount(offer, @source)} #{@currency.name}
 
 .pagination
   .prev= get_previous_link
@@ -42,6 +43,7 @@
       font-size: inherit;
       font-family: inherit;
       vertical-align: baseline;
+      text-decoration: none;
     }
     
     .pagination,
@@ -49,8 +51,8 @@
       padding: 10px;
       margin: 10px 3%;
       color: #004E09;
-      font-weight: bold;
       font-size: 75%;
+      font-weight: bold;
       text-align: center;
       background: white;
       border: 1px solid #d5d5d5;
@@ -59,99 +61,92 @@
     }
     
     #offers {
-      margin: 0 3% 10px 3%;
-      list-style: none;
-    }
-    
-    #offers a {
-      display: block;
-      padding: 5px 25px 5px 5px;
-      text-decoration: none;
-      font-size: 90%;
-      color: #004E09;
-      font-weight: bold;
-      height: 65px;
+      margin: 10px 3%;
+      background: white;
       border: 1px solid #d5d5d5;
-      border-top: none;
-      background: white url(/images/arrow-right.png) no-repeat 98%;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
     }
     
-    #offers a.clicked {
-      background: white url(/images/load-circle.gif) no-repeat 99%;
+    #offers .offer {
+      padding: 5px 10px;
+      height: 65px;
+      font-size: 90%;
+      font-weight: bold;
+      border-bottom: 1px solid #d5d5d5;
     }
     
-    #offers .offer img,
-    #offers .clicked img {
-      padding-top: 5px;
+    #offers .offer:last-child {
+      border-bottom: none;
+    }
+    
+    #offers .offer a {
+      display: block;
+      padding-right: 16px;
+      color: #004E09;
+      background: transparent url(/images/arrow-right.png) no-repeat 100%;
+    }
+    
+    #offers .offer a.clicked {
+      background: transparent url(/images/load-circle.gif) no-repeat 100%;
+    }
+    
+    #offers .offer img {
+      padding-top: 4px;
       width: 57px;
       height: 57px;
       float: left;
     }
     
-    #offers .offertext {
+    #offers .offer .offertext {
       float: left;
     }
     
-    body:nth-of-type(1) #offers .offertext {
+    body:nth-of-type(1) #offers .offer .offertext {
        float: none;
     }
     
-    #offers .offertext .cell {
+    #offers .offer .offertext .cell {
       height: 65px;
       display: table-cell;
       vertical-align: middle;
       padding-left: 10px;
     }
     
-    #offers .amount {
+    #offers .offer .amount {
       color: rgb(0, 136, 16);
-    }
-    
-    #offers a:first-child {
-      -moz-border-radius-topleft:10px;
-      -webkit-border-top-left-radius:10px;
-      -moz-border-radius-topright:10px;
-      -webkit-border-top-right-radius:10px;
-    }
-    
-    #offers a:last-child {
-      -moz-border-radius-bottomleft:10px;
-      -webkit-border-bottom-left-radius:10px;
-      -moz-border-radius-bottomright:10px;
-      -webkit-border-bottom-right-radius:10px;
     }
     
     .pagination a {
       font-size: 120%;
-      color: #004E09;
       font-weight: bold;
-      text-decoration: none;
+      color: #004E09;
       display: block;
     }
     
-    .prev a {
+    .pagination .prev a {
       padding: 5px 0 5px 20px;
-      background: white url(/images/arrow-left-small.png) no-repeat 0%;
+      background: transparent url(/images/arrow-left-small.png) no-repeat 0%;
     }
     
-    .next a {
+    .pagination .next a {
       padding: 5px 20px 5px 0;
-      background: white url(/images/arrow-right-small.png) no-repeat 100%;
+      background: transparent url(/images/arrow-right-small.png) no-repeat 100%;
     }
     
-    .prev a.clicked {
-      background: white url(/images/load-circle.gif) no-repeat 0%;
+    .pagination .prev a.clicked {
+      background: transparent url(/images/load-circle.gif) no-repeat 0%;
     }
     
-    .next a.clicked {
-      background: white url(/images/load-circle.gif) no-repeat 100%;
+    .pagination .next a.clicked {
+      background: transparent url(/images/load-circle.gif) no-repeat 100%;
     }
     
-    .prev {
+    .pagination .prev {
       float: left;
     }
     
-    .next {
+    .pagination .next {
       float: right;
     }
     
