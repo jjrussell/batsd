@@ -1,5 +1,4 @@
 class ListSignupController < ApplicationController
-  include DownloadContent
   
   layout 'iphone'
   
@@ -43,7 +42,7 @@ class ListSignupController < ApplicationController
           "&udid=#{signup.udid}" +
           "&key=#{key}"
       
-      download_with_retry(url, {:timeout => 5})
+      Downloader.get_with_retry(url, {:timeout => 5})
     else
       flash[:error] = "Invalid email address."
       flash[:email_address] = params[:email_address]

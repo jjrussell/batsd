@@ -1,5 +1,4 @@
 class Job::ConversionTrackingQueueController < Job::SqsReaderController
-  include DownloadContent
   
   def initialize
     super QueueNames::CONVERSION_TRACKING

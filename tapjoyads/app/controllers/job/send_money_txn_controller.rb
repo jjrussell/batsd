@@ -1,5 +1,4 @@
 class Job::SendMoneyTxnController < Job::SqsReaderController
-  include DownloadContent
   
   def initialize
     super QueueNames::SEND_MONEY_TXN

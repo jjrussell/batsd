@@ -1,11 +1,7 @@
 class StoreRequestError < StandardError; end
 
-include DownloadContent
-  
 module AppStore
   extend self
-  
-
   
   def app_url
     @app_url ||= 'http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware'
@@ -35,7 +31,7 @@ module AppStore
     plist["items"].inject([]) { |arr,item| arr << App.new(item) unless item["type"] == "more"; arr }
   end
   
-  private
+private
   
   def request(url,params={})
     
@@ -45,12 +41,7 @@ module AppStore
       url += "#{param[0]}=#{CGI::escape(param[1])}"
     end
     
-    download_content(url, :headers => {"X-Apple-Store-Front" => '13441-1,2', "User-Agent" => 'iTunes-iPhone/3.0'}, :return_response => true)
-    
-    #@agent ||= WWW::Mechanize.new { |a| a.user_agent = 'iTunes-iPhone/3.0' }
-    ## @agent.set_proxy('localhost',8080)
-    #@agent.get(:url => url, :headers => {"X-Apple-Store-Front" => '13441-1,2'}, :params => params)
-    
+    Downloader.get(url, :headers => {"X-Apple-Store-Front" => '13441-1,2', "User-Agent" => 'iTunes-iPhone/3.0'}, :return_response => true)
   end
   
 end
@@ -67,7 +58,7 @@ class StoreInfoApp
     @icon_url     = hash["artwork-urls"][0]["url"]
     @price        = hash["store-offers"]["STDQ"]["price"]
     @release_date = hash["release-date"]
-    str_rating    =  hash["rating"]["label"]
+    str_rating    = hash["rating"]["label"]
     
     @age_rating = 1
     @age_rating = 2 if str_rating == "9+"

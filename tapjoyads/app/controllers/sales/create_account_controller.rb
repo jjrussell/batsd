@@ -1,5 +1,4 @@
 class Sales::CreateAccountController < Sales::SalesController
-  include DownloadContent
   
   def index
     
@@ -28,7 +27,7 @@ class Sales::CreateAccountController < Sales::SalesController
         "&contact_phone=#{CGI::escape(params[:contact_phone])}" +
         "&free_credits_in_cents=#{free_credits_in_cents}"
     
-    response = download_content(url, :timeout => 30)
+    response = Downloader.get(url, :timeout => 30)
     if response =~ />OK<\/string>/
       flash[:info] = "Successfully created account for #{params[:email]}"
     else

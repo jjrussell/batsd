@@ -1,5 +1,4 @@
 class Job::QueueFailedDownloadsController < Job::SqsReaderController
-  include DownloadContent
   
   def initialize
     super QueueNames::FAILED_DOWNLOADS
@@ -21,6 +20,6 @@ class Job::QueueFailedDownloadsController < Job::SqsReaderController
       download_options[key.to_sym] = value
     end
     
-    download_strict(url, download_options)
+    Downloader.get_strict(url, download_options)
   end
 end

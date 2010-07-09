@@ -1,7 +1,4 @@
 class CcauthController < ApplicationController
-  include DownloadContent
-  include Patron
-  
   def index
     begin
       last4 = get_last4(params[:x_trans_id])
@@ -34,7 +31,7 @@ class CcauthController < ApplicationController
     login_url = 'https://account.authorize.net/UI/themes/anet/logon.aspx'
     url = "https://account.authorize.net/UI/themes/anet/popup.aspx?page=history&sub=printtrandetail&transid=#{trans_id}"
     
-    sess = Session.new
+    sess = Patron::Session.new
     sess.handle_cookies
     login_page_content = sess.get(login_url).body
     view_state = login_page_content.match(/id="__VIEWSTATE" value="(.*)"/)[1]
@@ -55,13 +52,13 @@ class CcauthController < ApplicationController
     message = "Thank you for eating at Indietro. You will receive $10 off on your credit card statement.\n" +
         "Explore nearby: http://bit.ly/19swDW"
 
-    download_content("http://api.upsidewireless.com/soap/SMS.asmx/Send_Plain" +
+    Downloader.get("http://api.upsidewireless.com/soap/SMS.asmx/Send_Plain" +
         "?token=1ddcae34-b1a7-436d-8c48-04e61e5477cb" +
         "&signature=6IOfzlLbHFB8oAdhlgij2Et9" +
         "&recipient=#{phone}" +
         "&message=#{CGI::escape(message)}" +
         "&encoding=Seven")
-    #download_content("http://www.bulksms.co.uk:5567/eapi/submission/send_sms/2/2.0?" +
+    #Downloader.get("http://www.bulksms.co.uk:5567/eapi/submission/send_sms/2/2.0?" +
     #    "username=tapjoy&password=business&message=#{CGI::escape(message)}&msisdn=#{phone}")
         
     TapjoyMailer.deliver_sms_sent(phone, message)

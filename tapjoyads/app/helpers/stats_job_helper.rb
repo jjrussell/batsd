@@ -1,5 +1,4 @@
 module StatsJobHelper
-  include DownloadContent
   
   ##
   # Updates the hourly stats for a given domain.
@@ -76,7 +75,7 @@ module StatsJobHelper
     url += "&item=#{item_id}"
     url += "&Data=#{data}"
     
-    download_content(url, {:timeout => 30, :internal_authenticate => true})
+    Downloader.get(url, {:timeout => 30, :internal_authenticate => true})
 
   end
   

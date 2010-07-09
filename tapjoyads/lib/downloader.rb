@@ -1,7 +1,7 @@
-module DownloadContent
-  include Patron
-  
-  def download_content(url, options = {})
+class Downloader
+  ##
+  # Make a GET request to the specified url and return the contents of the response.
+  def self.get(url, options = {})
     headers = options.delete(:headers) { {} }
     timeout = options.delete(:timeout) { 2 }
     internal_authenticate = options.delete(:internal_authenticate) { false }
@@ -10,7 +10,7 @@ module DownloadContent
         
     start_time = Time.now.utc
     Rails.logger.info "Downloading #{url}"
-    sess = Session.new
+    sess = Patron::Session.new
     sess.timeout = timeout
 
     if internal_authenticate
@@ -29,10 +29,10 @@ module DownloadContent
   
   ##
   # Makes a GET request to url. No data is returned.
-  # If the download fails, it will be retried automatically via sqs, 
-  def download_with_retry(url, download_options = {}, failure_message = nil)
+  # If the download fails, it will be retried automatically via sqs.
+  def self.get_with_retry(url, download_options = {}, failure_message = nil)
     begin
-      download_strict(url, download_options)
+      Downloader.get_strict(url, download_options)
     rescue Exception => e
       Rails.logger.info "Download failed. Error: #{e}"
       message = {:url => url, :download_options => download_options, :failure_message => failure_message}.to_json
@@ -43,8 +43,8 @@ module DownloadContent
   
   ##
   # Download a url and return the response. Raises an exception if the response status is not normal.
-  def download_strict(url, download_options = {})
-    response = download_content(url, download_options.merge({:return_response => true}))
+  def self.get_strict(url, download_options = {})
+    response = Downloader.get(url, download_options.merge({:return_response => true}))
     if response.status == 403
       Notifier.alert_new_relic(FailedToDownloadError, "Failed to download #{url}. 403 error.")
     elsif response.status < 200 or response.status > 399

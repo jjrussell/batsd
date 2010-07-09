@@ -1,8 +1,6 @@
 class ConnectController < ApplicationController
-  include DownloadContent
-  
+
   def index
-    #return unless verify_params([:app_id, :udid, :device_type, :app_version, :device_os_version, :library_version])
     params[:app_id] = '7e81549a-7fc5-4940-9435-11371ee47fa9' if request.headers['User-Agent'] =~ /DeerHunting/
     return unless verify_params([:app_id, :udid], {:allow_empty => false})
     

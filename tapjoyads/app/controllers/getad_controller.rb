@@ -5,7 +5,6 @@ require 'base64'
 include Magick
 
 class GetadController < ApplicationController
-  include DownloadContent
   include MemcachedHelper
   
   around_filter :catch_exceptions
@@ -62,7 +61,7 @@ class GetadController < ApplicationController
         "&uip=#{get_ip_address_local}" +
         "&ua=#{USER_AGENT}"
     
-    content = download_content(url)
+    content = Downloader.get(url)
 
     @tapjoy_ad = TapjoyAd.new
     
@@ -96,7 +95,7 @@ class GetadController < ApplicationController
       
       #set tracking data for millennial
       tracker_url = (doc/"img")[1]["src"]
-      download_content tracker_url
+      Downloader.get(tracker_url)
     else
       logger.info "html ad"
       #@tapjoy_ad.ad_html = content
@@ -114,7 +113,7 @@ class GetadController < ApplicationController
         "&fmt=json" +
         "&clientip=#{get_ip_address_local}"
     
-    json_string = download_content(url)
+    json_string = Downloader.get(url)
     json = JSON.parse(json_string).first
     
     if !json or json.length == 0
@@ -152,7 +151,7 @@ class GetadController < ApplicationController
         "&t.markup=0" +
         "&h.user-agent=#{USER_AGENT}"
     
-    json_string = download_content(url)
+    json_string = Downloader.get(url)
     
     json = JSON.parse(json_string)
     
@@ -202,7 +201,7 @@ class GetadController < ApplicationController
         "&zonekey=#{CGI::escape(zone_key)}" +
         "&sectionkey=home"
     
-    json_string = download_content(url, {:headers => {'User-Agent' => request.headers['User-Agent']}})
+    json_string = Downloader.get(url, {:headers => {'User-Agent' => request.headers['User-Agent']}})
     
     json = JSON.parse(json_string)
     
@@ -289,7 +288,7 @@ class GetadController < ApplicationController
   
   def download_image(image_url)
     get_from_cache_and_save("img.#{image_url.hash}") do 
-      Base64.encode64 download_content(image_url)
+      Base64.encode64(Downloader.get(image_url))
     end
   end
   

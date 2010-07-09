@@ -1,7 +1,6 @@
 # Gets the list of offers from offerpal
 
 class Job::CreateOffersController < Job::SqsReaderController
-  include DownloadContent
   include MemcachedHelper
   
   def initialize
@@ -23,7 +22,7 @@ private
       url = "http://api110.myofferpal.com/#{drop_id}/showoffersAPI.action?snuid=TAPJOY_GENERIC&country=#{CGI::escape(country)}" +
         "&category=iPhone%20Optimized&offset=#{offset}"
       
-      json_string = download_content(url, {:timeout => 30})
+      json_string = Downloader.get(url, {:timeout => 30})
       json = JSON.parse(json_string)
       
       json['offerData'].each do |offer|

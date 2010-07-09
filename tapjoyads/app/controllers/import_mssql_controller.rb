@@ -2,7 +2,6 @@ require 'base64'
 
 class ImportMssqlController < ApplicationController
   include MemcachedHelper
-  include DownloadContent
   
   protect_from_forgery :except => [:publisher_ad, :app, :campaign]
 
@@ -68,12 +67,12 @@ class ImportMssqlController < ApplicationController
     bucket = RightAws::S3.new.bucket('virtual_goods')
     
     if vg.has_icon = (params[:thumb_image] != 'None')
-      thumb_image = download_content(params[:thumb_image], :timeout => 30)
+      thumb_image = Downloader.get(params[:thumb_image], :timeout => 30)
       bucket.put("icons/#{params[:item_id]}.png", thumb_image, {}, 'public-read')
     end
     
     if vg.has_data = (params[:datafile] != 'None')
-      datafile = download_content(params[:datafile], :timeout => 30)
+      datafile = Downloader.get(params[:datafile], :timeout => 30)
       bucket.put("data/#{params[:item_id]}.zip", datafile, {}, 'public-read')
     end
     

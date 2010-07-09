@@ -1,5 +1,4 @@
 class OfferStatusController < ApplicationController
-  include DownloadContent
   
   def index
     return unless verify_params([:app_id, :udid], {:allow_empty => false})
@@ -11,7 +10,7 @@ class OfferStatusController < ApplicationController
     
     @snuid = @publisher_user_record.get('int_record_id')
     offerpal_status_url = "http://pub.myofferpal.com/b7b401f73d98ff21792b49117edd8b9f/userstatusAPI.action?snuid=#{@snuid}&callbackFormat=json"    
-    response = download_content(offerpal_status_url, :timeout => 4)       
+    response = Downloader.get(offerpal_status_url, :timeout => 4)       
     response = response.gsub('##CURRENCY', currency.name)
     
     json = JSON.parse(response)

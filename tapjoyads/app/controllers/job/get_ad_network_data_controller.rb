@@ -1,7 +1,6 @@
 # Aggregates yesterday's stats for campaigns.
 
 class Job::GetAdNetworkDataController < Job::JobController
-  include DownloadContent
   
   def initialize
     @adnetwork_map = {
@@ -9,7 +8,7 @@ class Job::GetAdNetworkDataController < Job::JobController
       'f2eb272c-1783-4589-99a0-667e1a45ac51' => MillennialSite,
       '9054df9e-1d7e-4fa7-91d6-7373c1cd0aff' => AdfonicSite
     }
-    @download_content_options = {
+    @download_options = {
       :timeout => 30,
       :internal_authenticate => true
     }
@@ -17,7 +16,7 @@ class Job::GetAdNetworkDataController < Job::JobController
   
   def index
     url = "http://tapjoyconnect.com/CronService.asmx/GetAdCampaign?password=taptapcampaign"
-    content = download_content(url, @download_content_options)
+    content = Downloader.get(url, @download_options)
     
     doc = Hpricot.parse(content)
     ad_network_id = doc.search('//adcampaign/adnetwork').first.inner_text
@@ -63,7 +62,7 @@ class Job::GetAdNetworkDataController < Job::JobController
         "&CTR=#{data.ctr.to_s}" + 
         "&Date=#{data.date.to_s}"
     
-    response = download_content(url, @download_content_options)
+    response = Downloader.get(url, @download_options)
     doc = Hpricot.parse(response)
     response_string = doc.search('//string').first.inner_text
    
@@ -75,7 +74,6 @@ class Job::GetAdNetworkDataController < Job::JobController
   end
 
   class Site
-    include DownloadContent
     attr_accessor :today_data, :yesterday_data, :name
   end
 
@@ -245,7 +243,7 @@ class Job::GetAdNetworkDataController < Job::JobController
       @today_data = Data.new
       @yesterday_data = Data.new
 
-      csv = download_content(uri, {:timeout => 30})
+      csv = Downloader.get(uri, {:timeout => 30})
 
       get_next_line = false
       today = true

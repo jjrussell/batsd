@@ -1,5 +1,4 @@
 class Job::QueueSendCurrencyController < Job::SqsReaderController
-  include DownloadContent
   
   def initialize
     super QueueNames::SEND_CURRENCY
@@ -88,7 +87,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       
       reward.update_counters
     
-      download_with_retry(callback_url, {:timeout => 30}, reward.key)
+      Downloader.get_with_retry(callback_url, {:timeout => 30}, reward.key)
     end
   end
 end

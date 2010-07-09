@@ -1,5 +1,4 @@
 class Job::QueueAppStatsController < Job::SqsReaderController
-  include DownloadContent
   
   def initialize
     super QueueNames::APP_STATS
@@ -220,7 +219,7 @@ private
     url += "&item=#{item_id}"
     url += "&Datas=#{CGI::escape(datas)}"
 
-    download_with_retry(url, {:timeout => 30})
+    Downloader.get_with_retry(url, {:timeout => 30})
   end
   
   ##
@@ -249,7 +248,7 @@ private
   
   def get_store_rank(store_id)
     top_list = get_from_cache_and_save('rankings.itunes.top100', false, 1.hour) do 
-      response = download_content('http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=25204&popId=27&genreId=36', 
+      response = Downloader.get('http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=25204&popId=27&genreId=36', 
           :headers => {'User-Agent' => 'iTunes/9.1.1 (Macintosh; Intel Mac OS X 10.6.3) AppleWebKit/531.22.7'})
       response.scan(/<GotoURL.*?url=\S*\/app\/\S*\id(\d*)\?/m).uniq.flatten
     end
