@@ -5,7 +5,6 @@ require 'base64'
 include Magick
 
 class GetadController < ApplicationController
-  include MemcachedHelper
   
   around_filter :catch_exceptions
   
@@ -166,7 +165,7 @@ class GetadController < ApplicationController
         image = download_image image_url
       else
         text = json['components']['text']['content']
-        image = get_from_cache_and_save("img.#{text.hash}") do
+        image = Mc.get_and_put("img.#{text.hash}") do
           start_time = Time.now
           image_array = Image.read("caption:#{text}") do
             self.size = "320x50"
@@ -231,7 +230,7 @@ class GetadController < ApplicationController
     
     image_name = "socialreach-#{num}.jpg"
     
-    image = get_from_cache_and_save("img.s3.#{image_name.hash}") do
+    image = Mc.get_and_put("img.s3.#{image_name.hash}") do
       bucket = RightAws::S3.new.bucket('adimages')
       image_content = bucket.get(image_name)
       Base64.encode64 image_content
@@ -268,7 +267,7 @@ class GetadController < ApplicationController
     @tapjoy_ad.click_url = url
     @tapjoy_ad.ad_id = ad_id
     
-    image = get_from_cache_and_save("img.s3.#{ad_id}") do
+    image = Mc.get_and_put("img.s3.#{ad_id}") do
       bucket = RightAws::S3.new.bucket('publisher-ads')
       image_content = bucket.get("base64.#{ad_id}")
     end
@@ -287,7 +286,7 @@ class GetadController < ApplicationController
   end
   
   def download_image(image_url)
-    get_from_cache_and_save("img.#{image_url.hash}") do 
+    Mc.get_and_put("img.#{image_url.hash}") do 
       Base64.encode64(Downloader.get(image_url))
     end
   end

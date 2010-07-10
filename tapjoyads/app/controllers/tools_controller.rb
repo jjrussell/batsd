@@ -1,5 +1,4 @@
 class ToolsController < WebsiteController
-  include MemcachedHelper
   
   filter_access_to [ :new_order, :create_order, :payouts, :create_payout, :money, :new_transfer, :create_transfer ]
   
@@ -66,15 +65,15 @@ class ToolsController < WebsiteController
   end
   
   def money
-    @money_stats = get_from_cache('statz.money') || (render(:text => "Not Available") and return)
+    @money_stats = Mc.get('statz.money') || (render(:text => "Not Available") and return)
     @time_ranges = @money_stats.keys
     
     @stat_types = @money_stats[@time_ranges.first].keys
     
-    @last_updated = get_from_cache('statz.last_updated') || Time.at(8.hours.to_i)
+    @last_updated = Mc.get('statz.last_updated') || Time.at(8.hours.to_i)
     
-    @total_balance = get_from_cache('statz.balance') || 'Not Available'
-    @total_pending_earnings = get_from_cache('statz.pending_earnings') || 'Not Available'
+    @total_balance = Mc.get('statz.balance') || 'Not Available'
+    @total_pending_earnings = Mc.get('statz.pending_earnings') || 'Not Available'
     
   end
   

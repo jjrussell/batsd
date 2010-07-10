@@ -1,5 +1,4 @@
 class Job::MasterReloadStatzController < Job::JobController
-  include MemcachedHelper
   include ActionView::Helpers::NumberHelper
   
   def index
@@ -51,13 +50,13 @@ class Job::MasterReloadStatzController < Job::JobController
       
     end
     
-    save_to_cache('statz.money', money_stats)
+    Mc.put('statz.money', money_stats)
     
     total_balance = Partner.sum(:balance, :conditions => "id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'") / 100.0
     total_pending_earnings = Partner.sum(:pending_earnings, :conditions => "id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'") / 100.0
     
-    save_to_cache('statz.balance', total_balance)
-    save_to_cache('statz.pending_earnings', total_pending_earnings)
+    Mc.put('statz.balance', total_balance)
+    Mc.put('statz.pending_earnings', total_pending_earnings)
     
     cached_stats = {}
     
@@ -86,10 +85,8 @@ class Job::MasterReloadStatzController < Job::JobController
       cached_stats[offer.id] = this_apps_stats
     end
 
-    save_to_cache('statz.cached_stats', cached_stats)
-
-
-    save_to_cache('statz.last_updated', now)
+    Mc.put('statz.cached_stats', cached_stats)
+    Mc.put('statz.last_updated', now)
     
     render :text => 'ok'
   end

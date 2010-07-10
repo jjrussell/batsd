@@ -1,7 +1,6 @@
 require 'base64'
 
 class ImportMssqlController < ApplicationController
-  include MemcachedHelper
   
   protect_from_forgery :except => [:publisher_ad, :app, :campaign]
 
@@ -40,7 +39,6 @@ class ImportMssqlController < ApplicationController
     pi.save
     
     render :template => 'layouts/success'
-    
   end
 
   def vg
@@ -165,7 +163,7 @@ class ImportMssqlController < ApplicationController
     bucket = RightAws::S3.new.bucket('app_data')
     bucket.put("icons/#{params[:app_id]}.png", params[:icon], {}, 'public-read')
     bucket.put("screenshots/#{params[:app_id]}.png", params[:screenshot], {}, 'public-read')
-    save_to_cache("icon.s3.#{params[:app_id]}", Base64.encode64(params[:icon]))
+    Mc.put("icon.s3.#{params[:app_id]}", Base64.encode64(params[:icon]))
     
     offer = nil
     unless params[:name].starts_with?('Email')

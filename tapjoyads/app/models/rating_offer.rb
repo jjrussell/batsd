@@ -1,6 +1,5 @@
 class RatingOffer < ActiveRecord::Base
   include UuidPrimaryKey
-  include MemcachedHelper
   
   has_one :offer, :as => :item
   
@@ -15,7 +14,7 @@ class RatingOffer < ActiveRecord::Base
   after_save :update_memcached
   
   def self.find_in_cache_by_app_id(app_id)
-    RatingOffer.new.get_from_cache_and_save("mysql.rating_offer.#{app_id}") { RatingOffer.find_by_app_id(app_id) }
+    Mc.get_and_put("mysql.rating_offer.#{app_id}") { RatingOffer.find_by_app_id(app_id) }
   end
   
   def get_id_for_device_app_list(app_version)
@@ -57,7 +56,7 @@ private
   end
   
   def update_memcached
-    save_to_cache("mysql.rating_offer.#{app_id}", self)
+    Mc.put("mysql.rating_offer.#{app_id}", self)
   end
   
   def create_icon

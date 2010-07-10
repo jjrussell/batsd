@@ -98,7 +98,7 @@ Rails::Initializer.run do |config|
   if defined?(PhusionPassenger)
     PhusionPassenger.on_event(:starting_worker_process) do |forked|
       if forked
-        MemcachedHelper.reset_connection
+        Mc.reset_connection
         SimpledbResource.reset_connection
       end
     end

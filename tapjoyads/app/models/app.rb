@@ -1,6 +1,5 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
-  include MemcachedHelper
   
   has_one :offer, :as => :item
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
@@ -18,9 +17,9 @@ class App < ActiveRecord::Base
   
   def self.find_in_cache(id, do_lookup = true)
     if do_lookup
-      App.new.get_from_cache_and_save("mysql.app.#{id}") { App.find(id) }
+      Mc.get_and_put("mysql.app.#{id}") { App.find(id) }
     else
-      App.new.get_from_cache("mysql.app.#{id}")
+      Mc.get_and_put("mysql.app.#{id}")
     end
   end
   
@@ -147,7 +146,7 @@ private
   end
   
   def update_memcached
-    save_to_cache("mysql.app.#{id}", self)
+    Mc.put("mysql.app.#{id}", self)
   end
   
 end

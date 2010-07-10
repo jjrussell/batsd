@@ -1,6 +1,5 @@
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
-  include MemcachedHelper
   
   APPLE_DEVICES = %w( iphone itouch ipad )
   ANDROID_DEVICES = %w( android )
@@ -42,21 +41,21 @@ class Offer < ActiveRecord::Base
   named_scope :to_aggregate_stats, lambda { { :conditions => ["next_stats_aggregation_time < ?", Time.zone.now], :order => "next_stats_aggregation_time ASC" } }
   
   def self.get_enabled_offers
-    Offer.new.get_from_cache_and_save('s3.enabled_offers') do
+    Mc.get_and_put('s3.enabled_offers') do
       bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')
       Marshal.restore(bucket.get('enabled_offers'))
     end
   end
   
   def self.get_classic_offers
-    Offer.new.get_from_cache_and_save('s3.classic_offers') do
+    Mc.get_and_put('s3.classic_offers') do
       bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')
       Marshal.restore(bucket.get('classic_offers'))
     end
   end
   
   def self.get_featured_offers
-    Offer.new.get_from_cache_and_save('s3.featured_offers') do
+    Mc.get_and_put('s3.featured_offers') do
       bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')
       Marshal.restore(bucket.get('featured_offers'))
     end
@@ -79,25 +78,25 @@ class Offer < ActiveRecord::Base
     end
     
     bucket.put('enabled_offers', Marshal.dump(offer_list))
-    Offer.new.save_to_cache('s3.enabled_offers', offer_list)
+    Mc.put('s3.enabled_offers', offer_list)
   end
   
   def self.cache_classic_offers
     bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')
     offer_list = Offer.classic_offers
     bucket.put('classic_offers', Marshal.dump(offer_list))
-    Offer.new.save_to_cache('s3.classic_offers', offer_list)
+    Mc.put('s3.classic_offers', offer_list)
   end
   
   def self.cache_featured_offers
     bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'offer-data')
     offer_list = Offer.enabled_offers.featured
     bucket.put('featured_offers', Marshal.dump(offer_list))
-    Offer.new.save_to_cache('s3.featured_offers', offer_list)
+    Mc.put('s3.featured_offers', offer_list)
   end
   
   def self.find_in_cache(id)
-    Offer.new.get_from_cache_and_save("mysql.offer.#{id}") { Offer.find(id) }
+    Mc.get_and_put("mysql.offer.#{id}") { Offer.find(id) }
   end
   
   def cost
@@ -312,7 +311,7 @@ private
   end
 
   def update_memcached
-    save_to_cache("mysql.offer.#{id}", self)
+    Mc.put("mysql.offer.#{id}", self)
   end
   
   def cleanup_url

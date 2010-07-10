@@ -1,16 +1,15 @@
 class StatzController < WebsiteController
-  include MemcachedHelper
   
   filter_access_to [ :index, :show, :edit, :update, :search ]
   
   def index
-    money_stats = get_from_cache('statz.money') || {'24_hours' => {}}
+    money_stats = Mc.get('statz.money') || {'24_hours' => {}}
     @cvr_count_24hours = money_stats['24_hours']['conversions'] || "Not Available"
     @ad_spend_24hours =  money_stats['24_hours']['advertiser_spend'] || "Not Available"
     @publisher_earnings_24hours =  money_stats['24_hours']['publisher_earnings'] || "Not Available"
     
-    @last_updated = get_from_cache('statz.last_updated') || Time.at(8.hours.to_i)
-    @cached_stats = get_from_cache('statz.cached_stats') || {}
+    @last_updated = Mc.get('statz.last_updated') || Time.at(8.hours.to_i)
+    @cached_stats = Mc.get('statz.cached_stats') || {}
   end
   
   def show

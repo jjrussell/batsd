@@ -1,5 +1,4 @@
 class Job::SqsReaderController < Job::JobController
-  include MemcachedHelper
 
   before_filter :limit_long_running_jobs, :only => :index
 
@@ -18,7 +17,7 @@ class Job::SqsReaderController < Job::JobController
         retries -= 1
         retry
       elsif e.message =~ /temporarily unavailable/
-        error_count = increment_count_in_cache(get_memcache_error_count_key, false, 10.minutes)
+        error_count = Mc.increment_count(get_memcache_error_count_key, false, 10.minutes)
         Rails.logger.info "SQS temporarily unavailable. Incrementing 5-minute count in memcache to: #{error_count}"
         if error_count > 20
           raise e
@@ -53,7 +52,7 @@ class Job::SqsReaderController < Job::JobController
       
       # try to lock the message to prevent multiple machines from operating on the same message
       begin
-        CACHE.add(get_memcache_lock_key(message), 'locked', queue.visibility.to_i)
+        Mc.cache.add(get_memcache_lock_key(message), 'locked', queue.visibility.to_i)
       rescue Memcached::NotStored => e
         Rails.logger.info('Lock exists for this message. Skipping processing.')
         next

@@ -1,7 +1,6 @@
 ##
 # Represents a single web request.
 class WebRequest < SimpledbResource
-  include MemcachedHelper
   
   self.sdb_attr :udid
   self.sdb_attr :app_id
@@ -107,13 +106,13 @@ class WebRequest < SimpledbResource
         if USE_ADVERTISER_APP_ID.include?(path)
           app_id = get('advertiser_app_id')
         end
-        increment_count_in_cache(Stats.get_memcache_count_key(stat_name, app_id, @now))
+        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, @now))
       end
       
       stat_name = PUBLISHER_PATH_TO_STAT_MAP[path]
       unless stat_name.nil?
         app_id = get('publisher_app_id')
-        increment_count_in_cache(Stats.get_memcache_count_key(stat_name, app_id, @now))
+        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, @now))
       end
     end
   end

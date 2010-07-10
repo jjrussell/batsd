@@ -4,8 +4,6 @@
 
 require 'logger'
 
-include MemcachedHelper
-
 items_to_delete = []
 
 # Deletion thread. Deletes items that have been rebalanced 15 seconds after their rebalancing.
@@ -124,7 +122,7 @@ where = nil
         rescue Exception => e
           main_logger.info "Exception when saving device_lookup to memcache: #{e}"
           main_logger.info item.to_json
-          delete_from_cache("sdb.#{item.this_domain_name}.#{item.key}")
+          Mc.delete("sdb.#{item.this_domain_name}.#{item.key}")
           sleep(0.1)
           retry
         end

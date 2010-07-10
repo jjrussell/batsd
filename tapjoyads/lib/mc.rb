@@ -1,6 +1,7 @@
-module MemcachedHelper
+class Mc
+  cattr_accessor :cache
   
-  CACHE = Memcached.new(MEMCACHE_SERVERS, {
+  @@cache = Memcached.new(MEMCACHE_SERVERS, {
     :support_cas => true, 
     :prefix_key => RUN_MODE_PREFIX
     })
@@ -9,32 +10,30 @@ module MemcachedHelper
   COUNT_OFFSET = 2147483648
   
   unless ENV['RAILS_ENV'] == 'production'
-    CACHE.flush
+    @@cache.flush
   end
   
-  class KeyExists < RuntimeError; end
-  
   ##
-  # Gets from object from cache which matches key.
+  # Gets object from cache which matches key.
   # If no object is found, then control is yielded, and the object
-  # returned from the yield block is saved and returned.
-  def get_from_cache_and_save(key, clone = false, time = 1.week)
+  # returned from the yield block is put into cache and returned.
+  def self.get_and_put(key, clone = false, time = 1.week)
     did_yield = false
-    value = get_from_cache(key, clone) do
+    value = Mc.get(key, clone) do
       did_yield = true
       yield
     end
     
-    save_to_cache(key, value, clone, time) if did_yield
+    Mc.put(key, value, clone, time) if did_yield
     return value
   end
   
   ##
-  # Gets from object from cache which matches key.
+  # Gets object from cache which matches key.
   # If no object is found, then control is yielded, and the object
   # returned from the yield block is returned.
-  def get_from_cache(key, clone = false)
-    cache = clone ? CACHE.clone : CACHE
+  def self.get(key, clone = false)
+    cache = clone ? @@cache.clone : @@cache
     
     value = nil
     Rails.logger.info_with_time("Read from memcache") do
@@ -56,10 +55,8 @@ module MemcachedHelper
       end
     end
     
-    unless value
-      if block_given?
-        value = yield
-      end
+    if value.nil? && block_given?
+      value = yield
     end
     
     return value
@@ -67,8 +64,8 @@ module MemcachedHelper
   
   ##
   # Saves value to memcached, as long as value is not nil.
-  def save_to_cache(key, value, clone = false, time = 1.week)
-    cache = clone ? CACHE.clone : CACHE
+  def self.put(key, value, clone = false, time = 1.week)
+    cache = clone ? @@cache.clone : @@cache
     
     if value
       Rails.logger.info_with_time("Wrote to memcache") do
@@ -79,8 +76,8 @@ module MemcachedHelper
     Rails.logger.info "Memcache exception when setting key #{key}. Error: #{e}"
   end
   
-  def increment_count_in_cache(key, clone = false, time = 1.week, offset = 1)
-    cache = clone ? CACHE.clone : CACHE
+  def self.increment_count(key, clone = false, time = 1.week, offset = 1)
+    cache = clone ? @@cache.clone : @@cache
     key = CGI::escape(key)
     
     begin
@@ -94,14 +91,11 @@ module MemcachedHelper
       cache.set(key, count, time, false)
     end
     
-    # Remove this code once all counters are using COUNT_OFFSET
-    return count if count < 1000000
-    
     return count - COUNT_OFFSET
   end
   
-  def get_count_in_cache(key, clone = false)
-    cache = clone ? CACHE.clone : CACHE
+  def self.get_count(key, clone = false)
+    cache = clone ? @@cache.clone : @@cache
     key = CGI::escape(key)
     
     begin
@@ -110,32 +104,28 @@ module MemcachedHelper
       count = COUNT_OFFSET
     end
     
-    # Remove this code once all counters are using COUNT_OFFSET
-    return count if count < 1000000
-    
     return count - COUNT_OFFSET
   end
 
-  def compare_and_swap_in_cache(key, clone = false)
-    cache = clone ? CACHE.clone : CACHE
+  def self.compare_and_swap(key, clone = false)
+    c = clone ? @@cache.clone : @@cache
     key = CGI::escape(key)
     
     begin
-      cache.cas(key) do |mc_val|
+      c.cas(key) do |mc_val|
         yield mc_val
       end
     rescue Memcached::NotFound
       # Attribute hasn't been stored yet.
-      cache.set(key, yield(nil))
+      c.set(key, yield(nil))
     rescue Memcached::NotStored
       # Attribute was modified before it could write.
       retry
     end
-    
   end
   
-  def delete_from_cache(key, clone = false)
-    cache = clone ? CACHE.clone : CACHE
+  def self.delete(key, clone = false)
+    cache = clone ? @@cache.clone : @@cache
     key = CGI::escape(key)
     
     begin
@@ -145,37 +135,7 @@ module MemcachedHelper
     end
   end
   
-  def lock_on_key(key, clone = false)
-    cache = clone ? CACHE.clone : CACHE
-    key = CGI::escape(key)
-    
-    begin 
-      cache.add(key, 'locked')
-      begin
-        yield
-      ensure
-        cache.delete(key)
-      end
-    rescue Memcached::NotStored
-      raise KeyExists.new
-    end
-  end
-  
-  module_function
-  def reset_connection
-    Kernel.with_warnings_suppressed do
-      MemcachedHelper.const_set('CACHE', CACHE.clone)
-    end
-  end
-end
-
-module Kernel
-  # Suppresses warnings within a given block.
-  def with_warnings_suppressed
-    saved_verbosity = $-v
-    $-v = nil
-    yield
-  ensure
-    $-v = saved_verbosity
+  def self.reset_connection
+    @@cache = @@cache.clone
   end
 end

@@ -1,5 +1,4 @@
 class GetVgStoreItemsController < ApplicationController
-  include MemcachedHelper
 
   ##
   # All virtual goods that are available to be purchased for this app from this device.
@@ -47,7 +46,7 @@ class GetVgStoreItemsController < ApplicationController
     end
     @point_purchases = PointPurchases.new(:key => "#{params[:udid]}.#{params[:app_id]}")
     mc_key = "virtual_good_list.#{params[:app_id]}"
-    @virtual_good_list = get_from_cache_and_save(mc_key, false, 5.minutes) do
+    @virtual_good_list = Mc.get_and_put(mc_key, false, 5.minutes) do
       list = []
       VirtualGood.select(:where => "app_id='#{params[:app_id]}' and disabled != '1' and beta != '1'") do |item|
         list.push(item)
@@ -57,7 +56,7 @@ class GetVgStoreItemsController < ApplicationController
     
     if @currency.get_test_device_ids.include?(params[:udid])
       mc_key = "virtual_good_list.beta.#{params[:app_id]}"
-      @virtual_good_list = @virtual_good_list | get_from_cache_and_save(mc_key, false, 5.minutes) do
+      @virtual_good_list = @virtual_good_list | Mc.get_and_put(mc_key, false, 5.minutes) do
         list = []
         VirtualGood.select(:where => "app_id='#{params[:app_id]}' and disabled != '1' and beta = '1'") do |item|
           list.push(item)

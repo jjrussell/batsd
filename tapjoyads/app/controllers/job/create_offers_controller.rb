@@ -1,7 +1,6 @@
 # Gets the list of offers from offerpal
 
 class Job::CreateOffersController < Job::SqsReaderController
-  include MemcachedHelper
   
   def initialize
     super QueueNames::CREATE_OFFERS

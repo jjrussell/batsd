@@ -1,5 +1,4 @@
 class SubmitClickController < ApplicationController
-  include MemcachedHelper
   
   def store
     # Hottest App sends the same publisher_user_record_id for every click

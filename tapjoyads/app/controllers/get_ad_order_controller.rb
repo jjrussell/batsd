@@ -1,18 +1,17 @@
 class GetAdOrderController < ApplicationController
-  include MemcachedHelper
     
   def index
     return unless verify_params([:app_id, :udid])
 
     mc_key = "raw_ad_order.#{params[:app_id]}"
     
-    campaigns = get_from_cache(mc_key) do 
+    campaigns = Mc.get(mc_key) do 
       ## get order
       c = Campaign.select(:where => "status='1' and app_id='#{params[:app_id]}' and ecpm != ''", 
           :order_by => "ecpm desc")
       
       
-      save_to_cache(mc_key, c[:items], false, 5.minutes)
+      Mc.put(mc_key, c[:items], false, 5.minutes)
       
       c[:items]
     end

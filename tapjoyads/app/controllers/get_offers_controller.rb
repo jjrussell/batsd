@@ -1,5 +1,4 @@
 class GetOffersController < ApplicationController
-  include MemcachedHelper
   
   layout 'iphone', :only => :webpage
   

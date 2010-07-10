@@ -1,6 +1,5 @@
 class Stats < SimpledbResource
-  include MemcachedHelper
-
+  
   self.domain_name = 'stats'
 
   ##
@@ -25,7 +24,7 @@ class Stats < SimpledbResource
     24.times do |i|
       time = date + i.hours
       if hourly_stats[i] == 0 and time <= now and time >= (now - cache_hours.hours)
-        hourly_stats[i] = get_count_in_cache(Stats.get_memcache_count_key(stat_name, app_id, time))
+        hourly_stats[i] = Mc.get_count(Stats.get_memcache_count_key(stat_name, app_id, time))
       end
     end
     

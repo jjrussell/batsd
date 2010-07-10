@@ -56,7 +56,6 @@ end
 class ExpectedAttributeError < RuntimeError; end
 
 class SimpledbResource  
-  include MemcachedHelper
   
   attr_accessor :key, :attributes, :this_domain_name, :is_new, :key_hash
   cattr_accessor :domain_name, :key_format
@@ -152,10 +151,10 @@ class SimpledbResource
   # an empty attributes hash will be created.
   def load(load_from_memcache = true)
     if load_from_memcache
-      @attributes = get_from_cache(get_memcache_key) do
+      @attributes = Mc.get(get_memcache_key) do
         attrs = load_from_sdb
         unless attrs.empty?
-          save_to_cache(get_memcache_key, attrs)
+          Mc.put(get_memcache_key, attrs)
         end
         attrs
       end
@@ -215,7 +214,7 @@ class SimpledbResource
     message = {:uuid => uuid, :options => options_copy}.to_json
     Sqs.send_message(QueueNames::FAILED_SDB_SAVES, message)
     Rails.logger.info "Successfully added to sqs. Message: #{message}"
-    increment_count_in_cache("failed_sdb_saves.#{@this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}")
+    Mc.increment_count("failed_sdb_saves.#{@this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}")
   ensure
     Rails.logger.flush
   end
@@ -307,7 +306,7 @@ class SimpledbResource
   ##
   # Deletes this entire row immediately (no need to call save after calling this).
   def delete_all(delete_from_memcache = true)
-    delete_from_cache(get_memcache_key) if delete_from_memcache
+    Mc.delete(get_memcache_key) if delete_from_memcache
     @@sdb.delete_attributes(@this_domain_name, key)
   end
   
@@ -553,7 +552,7 @@ protected
   end
     
   def write_to_memcache
-    compare_and_swap_in_cache(get_memcache_key) do |mc_attributes|
+    Mc.compare_and_swap(get_memcache_key) do |mc_attributes|
       if mc_attributes
         mc_attributes.merge!(@attributes_to_replace)
         @attributes_to_add.each do |key, values|
@@ -697,6 +696,6 @@ private
   # Increments a count in memecache which counts how many times a domain is saved to per minute.
   def increment_domain_freq_count
     key = "savefreq.#{@this_domain_name}.#{(Time.now.to_i / 1.minutes).to_i}"
-    increment_count_in_cache(key, false, 10.minutes)
+    Mc.increment_count(key, false, 10.minutes)
   end
 end

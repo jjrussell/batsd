@@ -1,6 +1,5 @@
 class Currency < ActiveRecord::Base
   include UuidPrimaryKey
-  include MemcachedHelper
   
   belongs_to :app
   belongs_to :partner
@@ -14,7 +13,7 @@ class Currency < ActiveRecord::Base
   after_save :update_memcached
   
   def self.find_in_cache_by_app_id(app_id)
-    Currency.new.get_from_cache_and_save("mysql.currency.#{app_id}") { Currency.find_by_app_id(app_id) }
+    Mc.get_and_put("mysql.currency.#{app_id}") { Currency.find_by_app_id(app_id) }
   end
   
   def get_reward_amount(offer, source)
@@ -59,7 +58,7 @@ class Currency < ActiveRecord::Base
 private
   
   def update_memcached
-    save_to_cache("mysql.currency.#{app_id}", self)
+    Mc.put("mysql.currency.#{app_id}", self)
   end
   
 end
