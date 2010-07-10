@@ -19,7 +19,7 @@ class App < ActiveRecord::Base
     if do_lookup
       Mc.get_and_put("mysql.app.#{id}") { App.find(id) }
     else
-      Mc.get_and_put("mysql.app.#{id}")
+      Mc.get("mysql.app.#{id}")
     end
   end
   
