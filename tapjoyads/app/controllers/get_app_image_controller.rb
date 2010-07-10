@@ -1,11 +1,12 @@
 class GetAppImageController < ApplicationController
   
   def icon
-    return unless verify_params([:app_id])
+    return unless verify_params([:app_id], {:allow_empty => false})
     
     app_id = params[:app_id].downcase
     
-    if params[:img] == '1'
+    # Tap Fish sometimes sends malformated params like: app_id=guidimg=1
+    if app_id.gsub!('img=1', '') || params[:img] == '1'
       redirect_to "http://s3.amazonaws.com/app_data/icons/#{app_id}.png" and return
     end
     

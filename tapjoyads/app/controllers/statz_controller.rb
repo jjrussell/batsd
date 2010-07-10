@@ -2,6 +2,8 @@ class StatzController < WebsiteController
   
   filter_access_to [ :index, :show, :edit, :update, :search ]
   
+  before_filter :find_offer, :only => [ :show, :edit, :update ]
+  
   def index
     money_stats = Mc.get('statz.money') || {'24_hours' => {}}
     @cvr_count_24hours = money_stats['24_hours']['conversions'] || "Not Available"
@@ -21,16 +23,13 @@ class StatzController < WebsiteController
       @start_time = now.beginning_of_day
       @end_time = @start_time + 24.hours
     end
-    @offer = Offer.find(params[:id])
     @stats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time }).stats
   end
   
   def edit
-    @offer = Offer.find(params[:id])
   end
   
   def update
-    @offer = Offer.find(params[:id])
     params[:offer][:device_types] = params[:offer][:device_types].to_json
     if @offer.update_attributes(params[:offer])
       flash[:notice] = "Successfully updated #{@offer.name}"
@@ -53,4 +52,15 @@ class StatzController < WebsiteController
     
     render(:text => results.join("\n"))  
   end
+  
+private
+  
+  def find_offer
+    @offer = Offer.find(params[:id]) rescue nil
+    if @offer.nil?
+      flash[:error] = "Could not find an offer with ID: #{params[:id]}"
+      redirect_to statz_index_path
+    end
+  end
+  
 end

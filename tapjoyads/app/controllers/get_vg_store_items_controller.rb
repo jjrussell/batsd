@@ -1,12 +1,10 @@
 class GetVgStoreItemsController < ApplicationController
 
+  before_filter :setup
+
   ##
   # All virtual goods that are available to be purchased for this app from this device.
   def all
-    return unless verify_params([:app_id, :udid])
-    
-    setup
-    
     @virtual_good_list.reject! do |virtual_good|
       @point_purchases.get_virtual_good_quantity(virtual_good.key) >= virtual_good.max_purchases
     end
@@ -17,10 +15,6 @@ class GetVgStoreItemsController < ApplicationController
   ##
   # All virtual goods that have been purchased for this app from this device.
   def purchased
-    return unless verify_params([:app_id, :udid])
-    
-    setup
-    
     @virtual_good_list.reject! do |virtual_good|
       @point_purchases.get_virtual_good_quantity(virtual_good.key) == 0
     end
@@ -29,14 +23,13 @@ class GetVgStoreItemsController < ApplicationController
   end
   
   def user_account
-    return unless verify_params([:app_id, :udid])
-    
-    setup
   end
   
-  private
+private
   
   def setup
+    return unless verify_params([:app_id, :udid], {:allow_empty => false})
+    
     @currency = Currency.find_in_cache_by_app_id(params[:app_id])
     if @currency.nil?
       @currency = Currency.new(:app_id => params[:app_id])

@@ -1,7 +1,7 @@
 class PurchaseVgController < ApplicationController
   
   def index
-    return unless verify_params([:app_id, :udid, :virtual_good_id])
+    return unless verify_params([:app_id, :udid, :virtual_good_id], {:allow_empty => false})
     
     virtual_good = VirtualGood.new(:key => params[:virtual_good_id])
     raise UnknownVirtualGood.new if virtual_good.is_new
@@ -35,7 +35,7 @@ class PurchaseVgController < ApplicationController
   ##
   # Removes all virtual goods from a device, only if the device is a beta device.
   def remove_all
-    return unless verify_params([:app_id, :udid])
+    return unless verify_params([:app_id, :udid], {:allow_empty => false})
     
     currency = Currency.find_in_cache_by_app_id(params[:app_id])
     raise NotABetaDevice.new unless currency.get_test_device_ids.include?(params[:udid])
