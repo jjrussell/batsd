@@ -9,10 +9,6 @@ class Mc
   # Memcache counts can't go below 0. Set the offset to 2^32/2 for all counts.
   COUNT_OFFSET = 2147483648
   
-  unless ENV['RAILS_ENV'] == 'production'
-    @@cache.flush
-  end
-  
   ##
   # Gets object from cache which matches key.
   # If no object is found, then control is yielded, and the object

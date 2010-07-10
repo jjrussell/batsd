@@ -34,6 +34,7 @@ class Offer < ActiveRecord::Base
   
   before_save :cleanup_url
   after_save :update_memcached
+  before_destroy :clear_memcached
   
   named_scope :enabled_offers, { :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND ((partners.balance > 0 AND item_type IN ('App', 'EmailOffer')) OR item_type = 'RatingOffer')", :order => "ordinal ASC" }
   named_scope :classic_offers, { :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type = 'OfferpalOffer'", :order => "ordinal ASC" }
@@ -312,6 +313,10 @@ private
 
   def update_memcached
     Mc.put("mysql.offer.#{id}", self)
+  end
+  
+  def clear_memcached
+    Mc.delete("mysql.offer.#{id}")
   end
   
   def cleanup_url

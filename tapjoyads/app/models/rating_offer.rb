@@ -12,6 +12,7 @@ class RatingOffer < ActiveRecord::Base
   after_create :create_offer, :create_icon
   after_update :update_offer
   after_save :update_memcached
+  before_destroy :clear_memcached
   
   def self.find_in_cache_by_app_id(app_id)
     Mc.get_and_put("mysql.rating_offer.#{app_id}") { RatingOffer.find_by_app_id(app_id) }
@@ -57,6 +58,10 @@ private
   
   def update_memcached
     Mc.put("mysql.rating_offer.#{app_id}", self)
+  end
+  
+  def clear_memcached
+    Mc.delete("mysql.rating_offer.#{app_id}")
   end
   
   def create_icon

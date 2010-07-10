@@ -14,6 +14,7 @@ class App < ActiveRecord::Base
   after_create :create_offer
   after_update :update_offer
   after_save :update_memcached
+  before_destroy :clear_memcached
   
   def self.find_in_cache(id, do_lookup = true)
     if do_lookup
@@ -147,6 +148,10 @@ private
   
   def update_memcached
     Mc.put("mysql.app.#{id}", self)
+  end
+  
+  def clear_memcached
+    Mc.delete("mysql.app.#{id}")
   end
   
 end

@@ -11,6 +11,7 @@ class Currency < ActiveRecord::Base
   validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :in => [ true, false ]
   
   after_save :update_memcached
+  before_destroy :clear_memcached
   
   def self.find_in_cache_by_app_id(app_id)
     Mc.get_and_put("mysql.currency.#{app_id}") { Currency.find_by_app_id(app_id) }
@@ -59,6 +60,10 @@ private
   
   def update_memcached
     Mc.put("mysql.currency.#{app_id}", self)
+  end
+  
+  def clear_memcached
+    Mc.delete("mysql.currency.#{app_id}")
   end
   
 end
