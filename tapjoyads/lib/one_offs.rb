@@ -316,4 +316,31 @@ class OneOffs
     file.close
   end
   
+  def self.fix_point_purchases
+    total = 0
+    num_wrong = 0
+    num_mismatch = 0
+    
+    10.times do |dnum|
+      puts "point_purchases_#{dnum}"
+      PointPurchases.select(:domain_name => "point_purchases_#{dnum}") do |pp|
+        total += 1
+        if pp.key.hash % 10 != dnum
+          num_wrong += 1
+          real_pp = PointPurchases.new :key => pp.key
+          if pp.points != real_pp.points || pp.virtual_goods != real_pp.virtual_goods
+            puts "MISMATCH: #{pp.key}, #{pp.points}, #{real_pp.points}"
+            real_pp.points = real_pp.points + pp.points
+            real_pp.virtual_goods = pp.virtual_goods.merge(real_pp.virtual_goods)
+            real_pp.serial_save
+            num_mismatch += 1
+          end
+          # Merge complete. Delete the extraneous pp.
+          pp.delete_all
+        end
+        puts "Num mismatch: #{num_mismatch}, Num wrong: #{num_wrong}, total: #{total}"
+      end
+    end
+  end
+  
 end
