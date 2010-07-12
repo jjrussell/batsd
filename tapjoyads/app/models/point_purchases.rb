@@ -14,7 +14,12 @@ class PointPurchases < SimpledbResource
       Rails.logger.info "getting initial_balance from currency"
       app_key = @key.split('.')[1]
       currency = Currency.find_in_cache_by_app_id(app_key)
-      self.points = currency.initial_balance
+      if currency.nil?
+        Rails.logger.info "Unkown app id for key: #{key}"
+        self.points = 0
+      else
+        self.points = currency.initial_balance
+      end
     end
   end
   

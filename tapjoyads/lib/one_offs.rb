@@ -320,10 +320,16 @@ class OneOffs
     total = 0
     num_wrong = 0
     num_mismatch = 0
+    num_malformed = 0
     
     10.times do |dnum|
       puts "point_purchases_#{dnum}"
       PointPurchases.select(:domain_name => "point_purchases_#{dnum}") do |pp|
+        unless pp.key =~ '.'
+          num_malformed += 1
+          pp.delete_all
+        end
+        
         total += 1
         if pp.key.hash % 10 != dnum
           num_wrong += 1
@@ -338,7 +344,7 @@ class OneOffs
           # Merge complete. Delete the extraneous pp.
           pp.delete_all
         end
-        puts "Num mismatch: #{num_mismatch}, Num wrong: #{num_wrong}, total: #{total}"
+        puts "Num mismatch: #{num_mismatch}, Num wrong: #{num_wrong}, num_malformed: #{num_malformed},total: #{total}. Current domain: point_purchases_#{dnum}"
       end
     end
   end
