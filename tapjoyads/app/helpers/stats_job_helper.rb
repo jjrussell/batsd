@@ -64,10 +64,6 @@ module StatsJobHelper
   end
   
   def send_stat_to_windows(date, stat_type, item_id, data)
-    
-    # Amazon:
-    #url = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com/CronService.asmx/SubmitStat?'
-    # Mosso:
     url = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/CronService.asmx/SubmitStat?'
     
     url += "Date=#{CGI::escape(date)}"

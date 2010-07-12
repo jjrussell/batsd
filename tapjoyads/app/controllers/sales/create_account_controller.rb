@@ -17,7 +17,7 @@ class Sales::CreateAccountController < Sales::SalesController
   def create
     free_credits_in_cents = params[:free_credits].to_i * 100
     
-    url = 'http://winweb-lb-1369109554.us-east-1.elb.amazonaws.com' +
+    url = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com' +
         '/Service1.asmx/CreateAccount?sales_password=uew862nvm01ds' +
         "&email=#{CGI::escape(params[:email])}" +
         "&sales_person_id=#{CGI::escape(params[:sales_person_id])}" +
