@@ -325,7 +325,7 @@ class OneOffs
     10.times do |dnum|
       puts "point_purchases_#{dnum}"
       PointPurchases.select(:domain_name => "point_purchases_#{dnum}") do |pp|
-        unless pp.key =~ '.'
+        unless pp.key =~ /\./
           num_malformed += 1
           pp.delete_all
         end
