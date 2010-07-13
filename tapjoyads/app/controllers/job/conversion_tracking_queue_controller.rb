@@ -27,10 +27,17 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
       return
     end
     
+    # Try to stop Playdom users from click-frauding
+    currency = Currency.find_in_cache_by_app_id(click.publisher_app_id)
+    if currency && currency.callback_url == 'PLAYDOM_DEFINED' && ![ 'F', 'M', 'P' ].include?(click.publisher_user_id[0, 1])
+      Notifier.alert_new_relic(InvalidPlaydomUserId, "Playdom User id: '#{click.publisher_user_id}' is invalid")
+      return
+    end
+    
     publisher_user_record = PublisherUserRecord.new(:key => "#{click.publisher_app_id}.#{click.publisher_user_id}")
     unless publisher_user_record.update(udid)
-      message.delete
-      raise "Too many UDIDs associated with publisher_user_record: #{publisher_user_record.key}"
+      Notifier.alert_new_relic(TooManyUdidsForPublisherUserId, "Too many UDIDs associated with publisher_user_record: #{publisher_user_record.key}")
+      return
     end
     
     click.put('installed', install_date)
