@@ -21,15 +21,17 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       callback_url = currency.callback_url
     
       if callback_url == 'PLAYDOM_DEFINED'
-        first_char = publisher_user_id[0, 1].downcase
+        first_char = publisher_user_id[0, 1]
         publisher_user_id = publisher_user_id[1, publisher_user_id.length]
       
-        if first_char== 'f'
+        if first_char== 'F'
           #facebook url
           callback_url = 'http://offer-dynamic-lb.playdom.com/tapjoy/mob/facebook/fp/main'
-        elsif first_char == 'm' || first_char == 'p'
+        elsif first_char == 'M' || first_char == 'P'
           #myspace/iphone url
           callback_url = 'http://offer-dynamic-lb.playdom.com/tapjoy/mob/myspace/fp/main'
+        else
+          Notifier.alert_new_relic(InvalidPlaydomUserId, "Playdom User id: '#{publisher_user_id}' is invalid")
         end
         
       end
