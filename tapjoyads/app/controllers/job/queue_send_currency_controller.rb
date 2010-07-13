@@ -32,6 +32,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
           callback_url = 'http://offer-dynamic-lb.playdom.com/tapjoy/mob/myspace/fp/main'
         else
           Notifier.alert_new_relic(InvalidPlaydomUserId, "Playdom User id: '#{publisher_user_id}' is invalid")
+          return
         end
         
       end
