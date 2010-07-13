@@ -51,6 +51,11 @@ private
     end
     return unless verify_params([ :app_id, :udid, :publisher_user_id ], { :allow_empty => false })
     
+    if params[:type] == Offer::CLASSIC_OFFER_TYPE
+       publisher_user_record = PublisherUserRecord.new(:key => "#{params[:app_id]}.#{params[:publisher_user_id]}")
+       publisher_user_record.update(params[:udid])
+    end
+    
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 25).to_i
     @source = ''
