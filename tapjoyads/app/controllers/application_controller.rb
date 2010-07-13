@@ -86,8 +86,8 @@ class ApplicationController < ActionController::Base
   end
   
   def get_ip_address
-    ip_address = request.headers['X-Forwarded-For'] || request.remote_ip
-    ip_address.gsub(/,.*$/, '')
+    return @request_ip_address if defined?(@request_ip_address)
+    @request_ip_address = (request.headers['X-Forwarded-For'] || request.remote_ip).gsub(/,.*$/, '')
   end
   
   def get_geoip_data
@@ -117,7 +117,7 @@ class ApplicationController < ActionController::Base
   
   def reject_banned_ips
     banned_ips = Set.new(['174.120.96.162'])
-    render :text => 'banned' if banned_ips.include?(get_ip_address)
+    render :text => '' if banned_ips.include?(get_ip_address)
   end
   
 end
