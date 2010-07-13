@@ -316,6 +316,15 @@ class OneOffs
     file.close
   end
   
+  def self.fix_bad_store_click_dates(date_string)
+    
+    StoreClick.select(:where => "installed like '#{date_string}%'") do |click|
+      click.installed = Time.zone.parse(click.get('installed'))
+      click.serial_save
+    end
+    
+  end
+  
   def self.give_all_clicks_currency(app_id, date)
     #give everyone who clicked to app_id after date currency (and charge the advertiser)
     
