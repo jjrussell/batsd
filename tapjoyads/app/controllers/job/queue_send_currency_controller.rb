@@ -24,7 +24,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         first_char = publisher_user_id[0, 1]
         publisher_user_id = publisher_user_id[1, publisher_user_id.length]
       
-        if first_char== 'F'
+        if first_char == 'F'
           #facebook url
           callback_url = 'http://offer-dynamic-lb.playdom.com/tapjoy/mob/facebook/fp/main'
         elsif first_char == 'M' || first_char == 'P'
