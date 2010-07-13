@@ -326,7 +326,7 @@ class OneOffs
       
       p "Sent #{count} messages to the queue" if count % 1000 == 0
       message = {:udid => click.key.split('.')[0], :app_id => app_id, 
-            :install_date => click.click_date}.to_json
+            :install_date => click.click_date.to_f.to_s}.to_json
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
     end
     
