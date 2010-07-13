@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   
   before_filter :fix_params
+  before_filter :reject_banned_ips
 
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
@@ -112,6 +113,11 @@ class ApplicationController < ActionController::Base
     end
     
     data
+  end
+  
+  def reject_banned_ips
+    banned_ips = Set.new(['174.120.96.162'])
+    render :text => 'banned' if banned_ips.include?(get_ip_address)
   end
   
 end
