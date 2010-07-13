@@ -21,14 +21,15 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       callback_url = currency.callback_url
     
       if callback_url == 'PLAYDOM_DEFINED'
-        first_char = publisher_user_id[0, 1]
+        first_char = publisher_user_id[0, 1].downcase
         publisher_user_id = publisher_user_id[1, publisher_user_id.length]
       
-        callback_url = case first_char.downcase
-        when 'f'
-          'http://offer-dynamic-lb.playdom.com/tapjoy/mob/facebook/fp/main' #facebook url (starts with 'f')
-        else
-          'http://offer-dynamic-lb.playdom.com/tapjoy/mob/myspace/fp/main' #myspace/iphone url (starts with 'm' or 'p')
+        if first_char== 'f'
+          #facebook url
+          callback_url = 'http://offer-dynamic-lb.playdom.com/tapjoy/mob/facebook/fp/main'
+        elsif first_char == 'm' || first_char == 'p'
+          #myspace/iphone url
+          callback_url = 'http://offer-dynamic-lb.playdom.com/tapjoy/mob/myspace/fp/main'
         end
         
       end
