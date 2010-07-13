@@ -316,6 +316,22 @@ class OneOffs
     file.close
   end
   
+  def self.give_all_clicks_currency(app_id, date)
+    #give everyone who clicked to app_id after date currency (and charge the advertiser)
+    
+    count = 0
+    StoreClick.select(:where => "advertiser_app_id = '#{app_id}' and installed is null and click_date > '#{Time.zone.parse(date).to_f.to_s}'") do |click|
+      #just add to conversion tracking queue
+      count += 1
+      
+      p "Sent #{count} messages to the queue" if count % 1000 == 0
+      message = {:udid => click.key.split('.')[0], :app_id => app_id, 
+            :install_date => click.click_date}.to_json
+      Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
+    end
+    
+  end
+  
   def self.fix_point_purchases
     total = 0
     num_wrong = 0
