@@ -4,7 +4,7 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
     super QueueNames::CONVERSION_TRACKING
   end
   
-  private
+private
   
   def on_message(message)
     json = JSON.parse(message.to_s)
@@ -29,8 +29,8 @@ class Job::ConversionTrackingQueueController < Job::SqsReaderController
     
     currency = Currency.find_in_cache_by_app_id(click.publisher_app_id)
     
-    # Try to stop Playdom users from click-frauding
-    if currency.callback_url == 'PLAYDOM_DEFINED' && ![ 'F', 'M', 'P' ].include?(click.publisher_user_id[0, 1])
+    # Try to stop Playdom users from click-frauding (specifically from Mobsters: Big Apple)
+    if currency.callback_url == 'PLAYDOM_DEFINED' && click.publisher_user_id !~ /^(F|M|P)[0-9]+$/
       Notifier.alert_new_relic(InvalidPlaydomUserId, "Playdom User id: '#{click.publisher_user_id}' is invalid")
       return
     end
