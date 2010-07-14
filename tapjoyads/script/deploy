@@ -81,6 +81,6 @@ unless version_number
 end
 
 # Must use the system command to run, not backticks, otherwise it will be non-interactive.
-system("script/cloudrun '#{server_groups}' 'cd server && svn update && ./deploy.rb #{version_number}' 'webuser'")
+system("script/cloudrun '#{server_groups}' 'cd server && svn update && ./deploy.rb #{version_number}' 'webuser' 'remove_from_lb'")
 
 puts "Done deploying: #{Time.now}"

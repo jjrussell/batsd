@@ -1,20 +1,23 @@
 #!/usr/bin/env ruby
 
-# Logs in on all specified servers.
-# Usage: cloudlogin <server-group>
-#   where <server-group> is the same server group as specified in ec2servers
+require 'lib/ec2_tasks'
 
-server_list = `script/ec2servers "#{ARGV.first}"`.split("\n")
+unless ARGV[0]
+  puts "usage: cloudlogin <server_group> [<server_num> <user>]"
+  puts "    server_group (required): aws security group name of the server to connect to"
+  puts "    server_num (optional, defaults to 0): the server number to connect to"
+  puts "    user (optional, defaults to 'webuser'): the user to login as"
+  exit
+end
 
+dns_names = Ec2Tasks.get_dns_names(ARGV[0])
 server_num = (ARGV[1] || 0).to_i
-
-server = server_list[server_num]
-
 user = ARGV[2] || 'webuser'
 
-puts "#{server_list.length} total servers:"
-server_list.each_index do |i|
-  puts "#{i}. #{server_list[i]}"
+puts "#{dns_names.length} total servers:"
+dns_names.each_index do |i|
+  puts "#{i}. #{dns_names[i]}"
 end
-puts "Connecting to server #{server_num} as #{user}"
-system "ssh #{user}@#{server}"
+
+puts "Connecting to server #{dns_names[server_num]} as #{user}"
+system "ssh #{user}@#{dns_names[server_num]}"

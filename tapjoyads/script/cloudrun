@@ -1,59 +1,73 @@
 #!/usr/bin/env ruby
 
-# Runs a command on all specified servers.
-# Usage: cloudrun <server-group> "<command>" [<user>]
-#   where <server-group> is the same server group as specified in ec2servers
-#   <command> is the command to run, it must be surrounded by quotes if it contains spaces.
-#   <user> is the user to run as. If not specified, the user will be webuser.
-#
-# For example:
-#   cloudrun webserver "apachectl restart" root
-#   This will restart apache on all serves in the 'webserver' security group.
+require 'lib/ec2_tasks'
 
-server_list = `script/ec2servers "#{ARGV.first}"`.split("\n")
+unless ARGV[0] && ARGV[1]
+  puts "usage: cloudrun <server_group [server_group ...]> <command> [<user>]"
+  puts "    server_group(s) (required): aws security group name(s) of the servers to run on"
+  puts "    command (required): the command to execute on the servers"
+  puts "    user (optional, defaults to 'webuser'): the user to run command as"
+  exit
+end
+
+server_list = []
+ARGV[0].split.each do |server_group|
+  server_list += Ec2Tasks.get_dns_names_with_instance_ids(server_group)
+end
 command = ARGV[1]
 user = ARGV[2] || 'webuser'
-serial_run = ARGV[3] || false
+remove_from_lb = ARGV[3] || false
 
-# Add servers to ~/.ssh/known_hosts, so that ssh does not prompt you to type 'yes'.
+# add servers to ~/.ssh/known_hosts to prevent prompts
 f = open(File.expand_path('~/.ssh/known_hosts'), 'r')
 file_content = ''
 f.each do |line|
   file_content += line
 end
 f = open(File.expand_path('~/.ssh/known_hosts'), 'a')
-server_list.each do |s|
-  unless file_content.include?(s)
-    puts "Adding #{s} to known_hosts"
-    f.puts "#{s} ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEApZ4yGm+pCsxG/jyPfhn0Qqar0b2oA2eGgCGfcR9J1zMhcqoHUh" +
-           "8/2IVpAKsPzPL9UFcpo5dYCFzm2EHwmj6x8ervGIEgoicQ4HlmIGTLEWIo2xTyYdcKw/Bg1lKC9ZKBUAr8iyfXJJVs+" +
-           "4LiTUeKfZCtD31u0X+yfYjg5S3AwlWSrCApLJCOGuYHUG9TV0F480GThcZfo5FkQaoR6MnYD6NkpZ0Jmf9f/iXsdLc1" +
-           "oHTcwNoePbsn8zqQ/B1vwgVKYfcKMKYRiIRqOYn06kUJn+pHzqQzpRl2xRHbpFbViIiWt3B8OX9+eftdJT5rHUBJs4Y" +
-           "9YBjpT13lnvcj8gs60Q=="
+server_list.each do |server|
+  unless file_content.include?(server[:dns_name])
+    puts "Adding #{server[:dns_name]} to known_hosts"
+    f.puts "#{server[:dns_name]} ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEApZ4yGm+pCsxG/jyPfhn0Qqar0b2oA2eGgC" +
+           "GfcR9J1zMhcqoHUh8/2IVpAKsPzPL9UFcpo5dYCFzm2EHwmj6x8ervGIEgoicQ4HlmIGTLEWIo2xTyYdcKw/Bg1lKC9" +
+           "ZKBUAr8iyfXJJVs+4LiTUeKfZCtD31u0X+yfYjg5S3AwlWSrCApLJCOGuYHUG9TV0F480GThcZfo5FkQaoR6MnYD6Nk" +
+           "pZ0Jmf9f/iXsdLc1oHTcwNoePbsn8zqQ/B1vwgVKYfcKMKYRiIRqOYn06kUJn+pHzqQzpRl2xRHbpFbViIiWt3B8OX9" +
+           "+eftdJT5rHUBJs4Y9YBjpT13lnvcj8gs60Q=="
   end
 end
 f.close
 
-puts "Servers to run on: "
-puts server_list
+puts "Servers to run on:"
+server_list.each do |server|
+  puts server[:dns_name]
+end
 puts "User: #{user}"
 puts "Command: #{command}"
+
 print "Run command? [y/N] "
 answer = STDIN.gets
 if !/^y/i.match(answer)
   exit
 end
 
-
+has_elb_api_tools = File.executable?(`which elb-register-instances-with-lb`.gsub("\n", '')) &&
+                    File.executable?(`which elb-deregister-instances-from-lb`.gsub("\n", ''))
 thread_list = []
-
-server_list.each do |s|
+server_list.each do |server|
+  remove_server = has_elb_api_tools && remove_from_lb && server[:aws_groups].include?('webserver')
   thread = Thread.new do
-    puts "Running on #{s}", `ssh #{user}@#{s} '#{command}'`, "\n"
+    if remove_server
+      `elb-deregister-instances-from-lb webservice-lb --instances #{server[:aws_instance_id]}`
+    end
+    puts "Running on #{server[:dns_name]}", `ssh #{user}@#{server[:dns_name]} '#{command}'`, "\n"
+    if remove_server
+      `curl -s http://#{server[:dns_name]}:9898/healthz`
+      `elb-register-instances-with-lb webservice-lb --instances #{server[:aws_instance_id]}`
+      sleep 1
+    end
   end
-  serial_run && rand > 0.5 ? thread.join : thread_list.push(thread)
+  remove_server ? thread.join : thread_list.push(thread)
 end
-
 thread_list.each do |thread|
   thread.join
 end
