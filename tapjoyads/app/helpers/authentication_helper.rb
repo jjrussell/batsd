@@ -91,4 +91,13 @@ module AuthenticationHelper
     end
   end
   
+  def ngmoco_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'ngmoco'
+        password = 'oasB5l038gpq2p3AjY'
+      end
+      password
+    end
+  end
+  
 end
