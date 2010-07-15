@@ -18,4 +18,10 @@ class StoreClick < SimpledbResource
   self.sdb_attr :offerpal_amount,   :type => :int
   self.sdb_attr :currency_reward,   :type => :int
   self.sdb_attr :source
+  
+  ##
+  # Gets the udid from the key
+  def udid
+    return @key.split('.')[0]
+  end
 end
