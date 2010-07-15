@@ -12,13 +12,13 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
 
     # this month, up to now
     date = Time.zone.now
-    save_uuids(date)
+    save_udids(date)
 
     # finalize last month, if necessary
     path = "udids/#{date.strftime("%Y-%m")}/#{@advertiser_app_id}"
     previous_path = @bucket.get("latest/#{@advertiser_app_id}") rescue nil
     if path != previous_path
-      save_uuids(1.month.ago(date))
+      save_udids(1.month.ago(date))
     end
 
     # update latest to current path
@@ -29,18 +29,18 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
     # udids = path ? bucket.get(path) : ""
   end
 
-  def save_uuids(date)
+  def save_udids(date=Time.zone.now)
     path = "udids/#{date.strftime("%Y-%m")}/#{@advertiser_app_id}"
     first_day = Time.zone.parse("#{date.strftime("%Y-%m")}-01")
-    last_day = 1.day.ago(1.month.since(first_day))
+    last_day = 1.month.since(first_day) # first day of next month
     conditions = ["udid is not null",
       "advertiser_app_id = '#{@advertiser_app_id}'",
-      "created > '#{first_day.to_f}'",
+      "created >= '#{first_day.to_f}'",
       "created < '#{last_day.to_f}'"].join(" and ")
 
     udids = []
     Reward.select(:where => conditions) do |reward|
-      udids << reward.get("udid")
+      udids << [reward.get("udid"), reward.get("created")].join(",")
     end
     @bucket.put(path, udids.compact.uniq.join("\n"))
   end
