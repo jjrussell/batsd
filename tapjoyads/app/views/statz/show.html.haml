@@ -178,7 +178,7 @@
       
       "right": {
         "data": [
-          [ #{ @stats['overall_store_rank'].map{|r| r == '-' ? 'null' : r}.join(',') } ]
+          [ #{ @stats['overall_store_rank'].map{|r| r == '-' || r == '0'  ? 'null' : r}.join(',') } ]
         ],
         "names": [ "Rank" ],
         "totals": [ "#{ (@stats['overall_store_rank'].select{|r| r != '0'}.last || '-') }" ],
@@ -205,7 +205,7 @@
           [ #{@stats['installs_revenue'].map{|i| i / -100.0}.join(',')} ]
         ],
         "stringData": [
-          [ "#{@stats['installs_revenue'].map{|i| number_to_currency(i / -100.0)}.join('","')}" ]
+          [ "#{@stats['installs_revenue'].map{|i| number_to_currency(i / 100.0)}.join('","')}" ]
         ],
         "names": [ "Installs revenue" ],
         "unitPrefix": "$",
@@ -232,7 +232,7 @@
           [ #{@stats['offers_revenue'].map{|i| i / -100.0}.join(',')} ]
         ],
         "stringData": [
-          [ "#{@stats['offers_revenue'].map{|i| number_to_currency(i / -100.0)}.join('","')}" ]
+          [ "#{@stats['offers_revenue'].map{|i| number_to_currency(i / 100.0)}.join('","')}" ]
         ],
         "names": [ "Offers revenue" ],
         "unitPrefix": "$",
