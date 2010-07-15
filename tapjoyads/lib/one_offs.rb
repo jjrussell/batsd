@@ -374,4 +374,99 @@ class OneOffs
     end
   end
   
+  def self.import_udids_into_reward
+    total_clicks = 0
+    total_rewards = 0
+    total_rewards_modified = 0
+    
+    StoreClick.select do |click|
+      total_clicks += 1
+      if click.reward_key
+        total_rewards += 1
+        reward = Reward.new :key => click.reward_key
+        unless reward.udid
+          reward.udid = click.udid
+          reward.serial_save
+          total_rewards_modified += 1
+        end
+      end
+      
+      if total_clicks % 1000 == 0
+        puts "#{Time.zone.now.to_s(:db)}: Clicks: #{total_clicks}, Rewards: #{total_rewards}, Rewards modified: #{total_rewards_modified}"
+      end
+    end
+    
+    puts "Complete. #{Time.zone.now.to_s(:db)}: Clicks: #{total_clicks}, Rewards: #{total_rewards}, Rewards modified: #{total_rewards_modified}"
+  end
+  
+  def self.import_udids_into_reward_from_archive(start_date = '2009-11-18', end_date = nil)
+    end_date = end_date.nil? ? Time.zone.now.to_date : Time.zone.parse(end_date).to_date
+    
+    gzip_file_name = 'tmp/store-clicks.sdb.gz'
+    file_name = 'tmp/store-clicks.sdb'
+    
+    s3 = RightAws::S3.new
+    bucket = s3.bucket('store-clicks')
+    
+    date = Time.zone.parse(start_date)
+    date -= 1.day
+    
+    count = 0
+    
+    total_clicks = 0
+    total_rewards = 0
+    total_rewards_modified = 0
+    
+    loop do
+      date += 1.day
+      break if date > end_date
+      
+      key = "store-click_#{date.to_date.to_s(:db)}.sdb"
+      puts key
+      next unless RightAws::S3::Key.create(bucket, key).exists?
+      
+      puts "Processing #{key}"
+      
+      begin
+        gzip_file = open(gzip_file_name, 'w')
+        s3.interface.get(bucket.full_name, key) do |chunk|
+          gzip_file.write(chunk)
+        end
+        gzip_file.close
+      rescue Exception => e
+        `rm #{gzip_file_name}`
+        puts "Error reading from s3: #{e}. Retrying"
+        sleep(0.1)
+        retry
+      end
+      `gunzip -f #{gzip_file_name}`
+      
+      file = open(file_name)
+      items = []
+      file.each do |line|
+        total_clicks += 1
+        click = StoreClick.deserialize(line)
+        if click.reward_key
+          total_rewards += 1
+          reward = Reward.new :key => click.reward_key
+          unless reward.udid
+            reward.udid = click.udid
+            reward.serial_save
+            total_rewards_modified += 1
+          end
+        end
+        
+        if total_clicks % 1000 == 0
+          puts "#{Time.zone.now.to_s(:db)}: Clicks: #{total_clicks}, Rewards: #{total_rewards}, Rewards modified: #{total_rewards_modified}"
+        end
+        
+      end
+      
+      puts "Complete. #{Time.zone.now.to_s(:db)}: Clicks: #{total_clicks}, Rewards: #{total_rewards}, Rewards modified: #{total_rewards_modified}"
+
+      `rm #{file_name}`
+    end
+    
+  end
+  
 end
