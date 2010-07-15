@@ -23,7 +23,6 @@ JobRunner::Gateway.define do |s|
     s.add_job 'queue_calculate_show_rate', :interval => 20.seconds
     s.add_job 'queue_calculate_next_payout', :interval => 5.minutes
     s.add_job 'queue_select_vg_items', :interval => 5.seconds
-    s.add_job 'queue_verifications', :interval => 5.minutes
     s.add_job 'queue_get_store_info', :interval => 5.minutes
     s.add_job 'queue_update_monthly_account', :interval => 30.seconds
   elsif machine_type == 'masterjobs'
