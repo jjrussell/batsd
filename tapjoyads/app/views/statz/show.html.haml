@@ -178,10 +178,10 @@
       
       "right": {
         "data": [
-          [ #{@stats['overall_store_rank'].join(',')} ]
+          [ #{ @stats['overall_store_rank'].map{|r| r == '-' ? 'null' : r}.join(',') } ]
         ],
         "names": [ "Rank" ],
-        "totals": [ "#{ (@stats['overall_store_rank'].find_all{|r| r != '0'}.last || '-') }" ],
+        "totals": [ "#{ (@stats['overall_store_rank'].select{|r| r != '0'}.last || '-') }" ],
         "yMax": 100
       }
     };
