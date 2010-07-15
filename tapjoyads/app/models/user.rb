@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   has_many :partner_assignments
   has_many :user_roles, :through => :role_assignments
   has_many :partners, :through => :partner_assignments
+  belongs_to :current_partner, :class_name => 'Partner'
   
   validates_uniqueness_of :username
   

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100702183437) do
+ActiveRecord::Schema.define(:version => 20100715184418) do
 
   create_table "apps", :force => true do |t|
     t.string   "partner_id",            :limit => 36,                    :null => false
@@ -264,13 +264,14 @@ ActiveRecord::Schema.define(:version => 20100702183437) do
   add_index "user_roles", ["name"], :name => "index_user_roles_on_name", :unique => true
 
   create_table "users", :force => true do |t|
-    t.string   "username",          :null => false
+    t.string   "username",                         :null => false
     t.string   "email"
     t.string   "crypted_password"
     t.string   "password_salt"
     t.string   "persistence_token"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "current_partner_id", :limit => 36
   end
 
   add_index "users", ["id"], :name => "index_users_on_id", :unique => true
