@@ -202,7 +202,7 @@
       
       "right": {
         "data": [
-          [ #{@stats['installs_revenue'].map{|i| i / -100.0}.join(',')} ]
+          [ #{@stats['installs_revenue'].map{|i| i / 100.0}.join(',')} ]
         ],
         "stringData": [
           [ "#{@stats['installs_revenue'].map{|i| number_to_currency(i / 100.0)}.join('","')}" ]
@@ -229,7 +229,7 @@
       
       "right": {
         "data": [
-          [ #{@stats['offers_revenue'].map{|i| i / -100.0}.join(',')} ]
+          [ #{@stats['offers_revenue'].map{|i| i / 100.0}.join(',')} ]
         ],
         "stringData": [
           [ "#{@stats['offers_revenue'].map{|i| number_to_currency(i / 100.0)}.join('","')}" ]
@@ -407,6 +407,9 @@
           for (var j = 0, name; name = obj[group]['names'][j]; j++) {
             data = obj[group]['stringData'] ? obj[group]['stringData'] : obj[group]['data']
             var value = data[j][idx];
+            if (value == null) {
+              value = '-';
+            }
           
             html.push(name + ': ' + value);
           }
