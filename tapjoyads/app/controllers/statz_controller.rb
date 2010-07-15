@@ -24,6 +24,16 @@ class StatzController < WebsiteController
       @end_time = @start_time + 24.hours
     end
     @stats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time }).stats
+    
+    granularity = 1.hour
+    @intervals = []
+    @x_labels = []
+    25.times do |i|
+      @intervals << (@start_time + i * granularity).in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)
+    end
+    24.times do |i|
+      @x_labels << (@start_time + i * granularity).in_time_zone('Pacific Time (US & Canada)').to_s(:time)
+    end
   end
   
   def edit

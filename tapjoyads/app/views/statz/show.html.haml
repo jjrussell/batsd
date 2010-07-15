@@ -36,108 +36,70 @@
   .metadata Featured payment: #{number_to_currency(@offer.featured_payment / 100.0) rescue ''}
 .clear
 
-%table
-  %thead
-    %tr
-      %th Stat
-      %th Total
-      %th Hourly breakdown
-  %tbody
-    %tr
-      %td Paid Installs
-      %td= @stats['paid_installs'].sum
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['paid_installs'].join(', ')
-    %tr
-      %td Paid Clicks
-      %td= @stats['paid_clicks'].sum
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['paid_clicks'].join(', ')
-    %tr
-      %td Installs Spend
-      %td= number_to_currency(@stats['installs_spend'].sum / 100.0)
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['installs_spend'].map{|i| number_to_currency(i / 100.0)}.join(', ')
-    %tr
-      %td CVR
-      %td= "%.1f%" % (@stats['paid_installs'].sum.to_f / @stats['paid_clicks'].sum * 100.0)
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) }.join(', ')
-    %tr
-      %td Connects
-      %td= @stats['logins'].sum
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['logins'].join(', ')
-    %tr
-      %td New Users
-      %td= @stats['new_users'].sum
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['new_users'].join(', ')
-    %tr
-      %td DAUs
-      %td= @stats['daily_active_users'].sum
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['daily_active_users'].join(', ')
-    %tr
-      %td MAUs
-      %td= @stats['monthly_active_users'].sum
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['monthly_active_users'].join(', ')
-    %tr
-      %td Store Rank
-      %td= (@stats['overall_store_rank'].find_all{|r| r != '0'}.last || '-')
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['overall_store_rank'].join(', ')
-    %tr
-      %td VG Purchases
-      %td= @stats['vg_purchases'].sum
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['vg_purchases'].join(', ')
-    %tr
-      %td Published Installs
-      %td= @stats['published_installs'].sum
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['published_installs'].join(', ')
-    %tr
-      %td Published Clicks
-      %td= @stats['installs_opened'].sum
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['installs_opened'].join(', ')
-    %tr
-      %td Installs Revenue
-      %td= number_to_currency(@stats['installs_revenue'].sum / 100.0)
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['installs_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')
-    %tr
-      %td Offers Completed
-      %td= @stats['offers'].sum
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['offers'].join(', ')
-    %tr
-      %td Offers Clicked
-      %td= @stats['offers_opened'].sum
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['offers_opened'].join(', ')
-    %tr
-      %td Offers Revenue
-      %td= number_to_currency(@stats['offers_revenue'].sum / 100.0)
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['offers_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')
-    %tr
-      %td Ratings
-      %td= @stats['ratings'].sum
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['ratings'].join(', ')
-    %tr
-      %td Total Revenue
-      %td= number_to_currency(@stats['rewards_revenue'].sum / 100.0)
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['rewards_revenue'].map{|i| number_to_currency(i / 100.0)}.join(', ')
-    %tr
-      %td Ad Impressions
-      %td= @stats['hourly_impressions'].sum
-      %td.breakdown
-        %canvas{:width => '500px', :height => '150px'}= @stats['hourly_impressions'].join(', ')
+#connects.graph
+  %h3
+  .totals
+  .holder
+    %canvas#connects_graph{:width => '500px', :height => '300px'}
+    .bar
+    .tooltip
+
+#installs_spend.graph
+  %h3
+  .totals
+  .holder
+    %canvas#installs_spend_graph{:width => '500px', :height => '300px'}
+    .bar
+    .tooltip
+
+#installs_rank.graph
+  %h3
+  .totals
+  .holder
+    %canvas#installs_rank_graph{:width => '500px', :height => '300px'}
+    .bar
+    .tooltip
+
+#published_installs.graph
+  %h3
+  .totals
+  .holder
+    %canvas#published_installs_graph{:width => '500px', :height => '300px'}
+    .bar
+    .tooltip
+
+#published_offers.graph
+  %h3
+  .totals
+  .holder
+    %canvas#published_offers_graph{:width => '500px', :height => '300px'}
+    .bar
+    .tooltip
+
+#ratings.graph
+  %h3
+  .totals
+  .holder
+    %canvas#ratings_graph{:width => '500px', :height => '300px'}
+    .bar
+    .tooltip
+
+
+#virtual_goods.graph
+  %h3
+  .totals
+  .holder
+    %canvas#virtual_goods_graph{:width => '500px', :height => '300px'}
+    .bar
+    .tooltip
+
+#ads.graph
+  %h3
+  .totals
+  .holder
+    %canvas#ads_graph{:width => '500px', :height => '300px'}
+    .bar
+    .tooltip
 
 - content_for :custom_head do
   = javascript_include_tag 'rgraph/RGraph.common.core'
@@ -147,39 +109,330 @@
     <!--[if IE]><script src="/javascripts/excanvas.js"></script><![endif]-->
   
 - content_for :page_javascript do
-  var startDate = new Date('#{@start_time.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)}');
   :plain
+    var installData = {
+      "name": "Rewarded installs + spend",
+      "intervals": [ "#{@intervals.join('","')}" ],
+      "xLabels": [ "#{@x_labels.join('","')}" ],
+      
+      "main": {
+        "data":[
+           [ #{@stats['paid_installs'].join(',')} ],
+           [ #{@stats['paid_clicks'].join(',')} ]
+        ],
+        "names": ["Paid installs", "Paid clicks"],
+        "totals": [ #{@stats['paid_installs'].sum}, #{@stats['paid_clicks'].sum} ]
+      },
+      
+      "right": {
+        "data": [
+          [ #{@stats['installs_spend'].map{|i| i / -100.0}.join(',')} ]
+        ],
+        "stringData": [
+          [ "#{@stats['installs_spend'].map{|i| number_to_currency(i / -100.0)}.join('","')}" ]
+        ],
+        "names": [ "Spend" ],
+        "unitPrefix": "$",
+        "totals": [ "#{number_to_currency(@stats['installs_spend'].sum / 100.0)}" ]
+      },
+      
+      "extra": {
+        "data": [
+          [ "#{@stats['cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) }.join('","')}" ]
+        ],
+        "names": [ "Conversion rate" ],
+        "totals": [ "#{"%.1f%" % (@stats['paid_installs'].sum.to_f / @stats['paid_clicks'].sum * 100.0)}" ]
+      }
+    };
+    
+    var connectData = {
+      "name": "Connects",
+      "intervals": [ "#{@intervals.join('","')}" ],
+      "xLabels": [ "#{@x_labels.join('","')}" ],
+      
+      "main": {
+        "data":[
+           [ #{@stats['logins'].join(',')} ],
+           [ #{@stats['new_users'].join(',')} ],
+           [ #{@stats['daily_active_users'].join(',')} ],
+           [ #{@stats['monthly_active_users'].join(',')} ],
+        ],
+        "names": ["Connects", "New users", "DAUs", "MAUs"],
+        "totals": [ #{@stats['logins'].sum}, #{@stats['new_users'].sum}, #{@stats['daily_active_users'].sum}, #{@stats['monthly_active_users'].sum} ]
+      }
+    };
+    
+    var rankData = {
+      "name": "Rewarded installs + rank",
+      "intervals": [ "#{@intervals.join('","')}" ],
+      "xLabels": [ "#{@x_labels.join('","')}" ],
+      
+      "main": {
+        "data":[
+           [ #{@stats['paid_installs'].join(',')} ],
+           [ #{@stats['paid_clicks'].join(',')} ]
+        ],
+        "names": ["Paid installs", "Paid clicks"],
+        "totals": [ #{@stats['paid_installs'].sum}, #{@stats['paid_clicks'].sum} ]
+      },
+      
+      "right": {
+        "data": [
+          [ #{@stats['overall_store_rank'].join(',')} ]
+        ],
+        "names": [ "Rank" ],
+        "totals": [ "#{ (@stats['overall_store_rank'].find_all{|r| r != '0'}.last || '-') }" ],
+        "yMax": 100
+      }
+    };
+    
+    var publishedInstallsData = {
+      "name": "Published installs",
+      "intervals": [ "#{@intervals.join('","')}" ],
+      "xLabels": [ "#{@x_labels.join('","')}" ],
+      
+      "main": {
+        "data":[
+           [ #{@stats['published_installs'].join(',')} ],
+           [ #{@stats['installs_opened'].join(',')} ]
+        ],
+        "names": ["Published installs", "Published clicks"],
+        "totals": [ #{@stats['published_installs'].sum}, #{@stats['installs_opened'].sum} ]
+      },
+      
+      "right": {
+        "data": [
+          [ #{@stats['installs_revenue'].map{|i| i / -100.0}.join(',')} ]
+        ],
+        "stringData": [
+          [ "#{@stats['installs_revenue'].map{|i| number_to_currency(i / -100.0)}.join('","')}" ]
+        ],
+        "names": [ "Installs revenue" ],
+        "unitPrefix": "$",
+        "totals": [ "#{ number_to_currency(@stats['installs_revenue'].sum / 100.0) }" ]
+      },
+    };
+    
+    var publishedOffersData = {
+      "name": "Published offers",
+      "intervals": [ "#{@intervals.join('","')}" ],
+      "xLabels": [ "#{@x_labels.join('","')}" ],
+      
+      "main": {
+        "data":[
+           [ #{@stats['offers'].join(',')} ],
+           [ #{@stats['offers_opened'].join(',')} ]
+        ],
+        "names": ["Offers completed", "Offers clicked"],
+        "totals": [ #{@stats['offers'].sum}, #{@stats['offers_opened'].sum} ]
+      },
+      
+      "right": {
+        "data": [
+          [ #{@stats['offers_revenue'].map{|i| i / -100.0}.join(',')} ]
+        ],
+        "stringData": [
+          [ "#{@stats['offers_revenue'].map{|i| number_to_currency(i / -100.0)}.join('","')}" ]
+        ],
+        "names": [ "Offers revenue" ],
+        "unitPrefix": "$",
+        "totals": [ "#{ number_to_currency(@stats['offers_revenue'].sum / 100.0) }" ]
+      },
+    };
+    
+    var ratingsData = {
+      "name": "Ratings",
+      "intervals": [ "#{@intervals.join('","')}" ],
+      "xLabels": [ "#{@x_labels.join('","')}" ],
+      
+      "main": {
+        "data":[
+           [ #{@stats['ratings'].join(',')} ]
+        ],
+        "names": [ "Ratings" ],
+        "totals": [ #{@stats['ratings'].sum} ]
+      }
+    };
+    
+    var virtualGoodsData = {
+      "name": "Virtual goods",
+      "intervals": [ "#{@intervals.join('","')}" ],
+      "xLabels": [ "#{@x_labels.join('","')}" ],
+      
+      "main": {
+        "data":[
+           [ #{@stats['vg_purchases'].join(',')} ]
+        ],
+        "names": [ "Virtual good purchases" ],
+        "totals": [ #{@stats['offers'].sum} ]
+      }
+    };
+    
+    var adsData = {
+      "name": "Ad impressions",
+      "intervals": [ "#{@intervals.join('","')}" ],
+      "xLabels": [ "#{@x_labels.join('","')}" ],
+      
+      "main": {
+        "data":[
+           [ #{@stats['hourly_impressions'].join(',')} ]
+        ],
+        "names": [ "Ad impressions" ],
+        "totals": [ #{@stats['hourly_impressions'].sum} ]
+      }
+    };
+    
     $(function() {
-      $('td.breakdown>canvas').each(function() {
-        drawGraph(this);
-      })
+      drawLargeGraph(connectData, 'connects');
+      drawLargeGraph(installData, 'installs_spend');
+      drawLargeGraph(rankData, 'installs_rank');
+      drawLargeGraph(publishedInstallsData, 'published_installs');
+      drawLargeGraph(publishedOffersData, 'published_offers');
+      drawLargeGraph(ratingsData, 'ratings');
+      drawLargeGraph(virtualGoodsData, 'virtual_goods');
+      drawLargeGraph(adsData, 'ads');
     });
     
-    function drawGraph(node) {
-      var stringData = $(node).text().split(', ')
-      var data = $.map(stringData, function(n) { 
-        return Math.abs(Number(n.replace(/\D/, '').replace(',', '')));
-      });
-
-      if (!node.id) {
-        node.id = 'id' + Math.floor(Math.random() * 9999999999)
+    function setGraphProperties(g, options) {
+      g.Set('chart.shadow', true);
+      g.Set('chart.tickmarks', 'circle');
+      
+      g.Set('chart.hmargin', options.hMarginPx);
+      g.Set('chart.gutter', options.gutterPx);
+      
+      if (options.yAxisPos) {
+        g.Set('chart.yaxispos', options.yAxisPos);
       }
       
-      var graph = new RGraph.Line(node.id, data);
-      graph.Set('chart.shadow', true);
-      graph.Set('chart.hmargin', 0);
-      graph.Set('chart.tickmarks', 'circle');
-      graph.Set('chart.ylabels.count', 3);
-      graph.Set('chart.gutter', 50);
-      graph.Set('chart.tooltips.effect', 'none');
-      graph.Set('chart.tooltips', function(idx) {
-        var time = new Date(startDate.getTime() + 3600000 * idx).getHours() + ':00-' + new Date(startDate.getTime() + 3600000 * (idx + 1)).getHours() + ':00'
-        
-        return time + "<br>" + stringData[idx];
-      });
+      if (options.colors) {
+        g.Set('chart.colors', options.colors);
+      }
       
-      graph.Draw();
+      if (options.unitPrefix) {
+        g.Set('chart.units.pre', options.unitPrefix)
+      }
+      
+      if (options.yMax) {
+        g.Set('chart.ymax', options.yMax)
+      }
     }
+    
+    function drawLargeGraph(obj, id) {
+      $('#' + id + '>h3').html(obj['name'])
+      $('#' + id + '>.totals').html(getTotalsHtml(obj))
+
+      var gutterPx = 50;
+      var hMarginPx = 5;
+      var numPoints = obj['intervals'].length - 1;
+      
+      var legendKeys = obj['main']['names'];
+      if (obj['right']) {
+        legendKeys = legendKeys.concat(obj['right']['names']);
+      }
+      
+      var g = new RGraph.Line(id + '_graph');
+      g.original_data = obj['main']['data'];
+      
+      g.Set('chart.key', legendKeys);
+      g.Set('chart.key.background', 'rgba(255,255,255,0.5)');
+      g.Set('chart.key.position', 'gutter');
+      
+      g.Set('chart.labels', obj['xLabels']);
+      g.Set('chart.text.angle', 90);
+      
+      setGraphProperties(g, {
+        hMarginPx: hMarginPx, 
+        gutterPx: gutterPx,
+        unitPrefix: obj['main']['unitPrefix'],
+        yMax: obj['main']['yMax']
+      });
+      g.Draw();
+      
+      if (obj['right']) {
+        var g2 = new RGraph.Line(id + '_graph');
+        g2.original_data = obj['right']['data'];
+        
+        setGraphProperties(g2, { 
+          hMarginPx: hMarginPx, 
+          gutterPx: gutterPx,
+          unitPrefix: obj['right']['unitPrefix'],
+          colors: g2.properties['chart.colors'].slice(obj['main']['data'].length),
+          yAxisPos: 'right',
+          yMax: obj['right']['yMax']
+        })
+      
+        g2.Draw();
+      }
+      
+      var graphNode = $('#' + id + '_graph');
+      var barNode = $('#' + id + ' .bar')
+      var tooltipNode = $('#' + id + ' .tooltip')
+      
+      $('#' + id + '>.holder').hover(function() {
+        barNode.show();
+        tooltipNode.show();
+      },function() {
+        barNode.hide();
+        tooltipNode.hide();
+      }).mousemove(function(e) {
+        var graphInternalHeight = graphNode.height() - gutterPx * 2;
+        var graphInternalWidth = graphNode.width() - gutterPx * 2 - hMarginPx * 2;
+        var graphInternalTop = graphNode.offset().top + gutterPx;
+        var graphInternalLeft = graphNode.offset().left + gutterPx;
+      
+        var mouseX = e.pageX - graphInternalLeft;
+        var newX = mouseX - mouseX % (graphInternalWidth / (numPoints - 1));
+        newX = Math.max(newX, 0);
+        newX = Math.min(newX, graphInternalWidth);
+        
+        barNode.css('height', graphInternalHeight).css('top', graphInternalTop);
+        barNode.css('left', newX + graphInternalLeft + 4);
+        tooltipNode.css('left', newX + graphInternalLeft + 4).css('top', e.pageY);
+        
+        var activeId = Math.ceil(newX / graphInternalWidth * (numPoints - 1));
+        
+        tooltipNode.html(getTooltipHtml(obj, activeId));
+      });
+    }
+    
+    
+    function getTooltipHtml(obj, idx) {
+      idx = idx % (obj['intervals'].length - 1);
+      var html = [];
+      html.push(obj['intervals'][idx] + ' - ' + obj['intervals'][idx + 1]);
+      
+      groups = ['main', 'right', 'extra'];
+      for (var i = 0, group; group = groups[i]; i++) {
+        if (obj[group]) {
+          for (var j = 0, name; name = obj[group]['names'][j]; j++) {
+            data = obj[group]['stringData'] ? obj[group]['stringData'] : obj[group]['data']
+            var value = data[j][idx];
+          
+            html.push(name + ': ' + value);
+          }
+        }
+      }
+
+      return html.join('<br />')
+    }
+    
+    function getTotalsHtml(obj) {
+      var html = [];
+      
+      groups = ['main', 'right', 'extra'];
+      for (var i = 0, group; group = groups[i]; i++) {
+        if (obj[group]) {
+          for (var j = 0, name; name = obj[group]['names'][j]; j++) {
+            var value = obj[group]['totals'][j];
+          
+            html.push(name + ': ' + value);
+          }
+        }
+      }
+      
+      return html.join(',&nbsp; ')
+    }
+
   
 - content_for :page_styles do
   :plain
@@ -206,4 +459,43 @@
     }
     .right {
       float: right;
+    }
+    
+    .holder {
+      display: inline-block;
+    }
+    
+    .bar {
+      background-color: black;
+      width: 2px;
+      height: 400px;
+      position: absolute;
+      display: none;
+      opacity: 0.5;
+    }
+    
+    .tooltip {
+      position: absolute;
+      background-color: #ffe;
+      border: 1px solid #606060;
+      color: black;
+      display: inline;
+      font-family: Tahoma;
+      font-size: 10pt;
+      overflow: hidden;
+      padding-left: 3px;
+      padding-right: 3px;
+      z-index: 3;
+      opacity: 0.8;
+      -moz-border-radius: 5px 5px 5px 5px;
+      -moz-box-shadow: 3px 3px 3px rgba(96, 96, 96, 0.5);
+      -webkit-border-radius: 5px 5px 5px 5px;
+      -webkit-box-shadow: 3px 3px 3px rgba(96, 96, 96, 0.5);
+      border-radius: 5px 5px 5px 5px;
+      box-shadow: 3px 3px 3px rgba(96, 96, 96, 0.5);
+      display: none;
+    }
+    
+    .graph {
+      float: left;
     }
