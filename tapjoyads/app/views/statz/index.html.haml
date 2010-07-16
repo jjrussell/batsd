@@ -70,7 +70,7 @@
           offer_guid = '';
         }
       });
-      $('#search_box').autocomplete('#{search_statz_path}', { cacheLength: 1, autoFill: true, max: 20, delay: 250 });
+      $('#search_box').autocomplete('#{search_statz_path}', { cacheLength: 1, matchSubset: false, max: 20, delay: 250 });
       $('#search_box').result(function(event, data) {
         offer_guid = data[1];
       });
