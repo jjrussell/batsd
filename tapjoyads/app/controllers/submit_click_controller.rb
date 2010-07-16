@@ -48,6 +48,7 @@ class SubmitClickController < ApplicationController
     click.put('tapjoy_amount', currency.get_tapjoy_amount(offer, params[:source]))
     click.put('reward_key', UUIDTools::UUID.random_create.to_s)
     click.put('source', params[:source])
+    click.put('country', get_geoip_data[:country])
     click.save
     
     web_request = WebRequest.new

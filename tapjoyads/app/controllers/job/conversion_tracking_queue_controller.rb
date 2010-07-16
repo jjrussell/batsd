@@ -71,6 +71,7 @@ private
     reward.put('tapjoy_amount', click.tapjoy_amount)
     reward.put('source', click.source)
     reward.put('udid', udid)
+    reward.put('country', click.country)
     
     reward.save
     
