@@ -18,6 +18,7 @@ class StoreClick < SimpledbResource
   self.sdb_attr :offerpal_amount,   :type => :int
   self.sdb_attr :currency_reward,   :type => :int
   self.sdb_attr :source
+  self.sdb_attr :country
   
   ##
   # Gets the udid from the key

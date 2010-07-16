@@ -12,6 +12,7 @@ class Reward < SimpledbResource
   self.sdb_attr :source
   self.sdb_attr :type
   self.sdb_attr :udid
+  self.sdb_attr :country
   self.sdb_attr :created,           :type => :time
   self.sdb_attr :sent_currency,     :type => :time
   self.sdb_attr :sent_money_txn,    :type => :time
