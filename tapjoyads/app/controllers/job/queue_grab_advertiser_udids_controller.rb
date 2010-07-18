@@ -42,6 +42,7 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
     Reward.select(:where => conditions) do |reward|
       udids << [reward.get("udid"), reward.get("created")].join(",")
     end
-    @bucket.put(path, udids.compact.uniq.join("\n"))
+    udids = udids.compact.uniq
+    @bucket.put(path, udids.join("\n")) unless udids.blank?
   end
 end
