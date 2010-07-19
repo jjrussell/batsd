@@ -53,6 +53,8 @@ class StatzController < WebsiteController
     @udid_map = {
       'b4c86b4530a0ee889765a166d80492b46f7f3636' => 'Ryan iPhone',
       'f0910f7ab2a27a5d079dc9ed50d774fcab55f91d' => 'Ryan iPad',
+      '21e3f395b9bbaf56667782ea3fe1241656684e21' => 'Stephen iTouch',
+      'c720dd0a5f937735c1a76bce72fcd90ada73ad7d' => 'Kai iTouch',
     }
     @last_run_times = {}
     @udid_map.keys.each do |udid|
