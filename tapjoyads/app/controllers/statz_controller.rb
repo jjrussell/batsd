@@ -1,8 +1,8 @@
 class StatzController < WebsiteController
   
-  filter_access_to [ :index, :show, :edit, :update, :search ]
+  filter_access_to [ :index, :show, :edit, :update, :search, :last_run_times ]
   
-  before_filter :find_offer, :only => [ :show, :edit, :update ]
+  before_filter :find_offer, :only => [ :show, :edit, :update, :last_run_times ]
   
   def index
     money_stats = Mc.get('statz.money') || {'24_hours' => {}}
@@ -46,6 +46,22 @@ class StatzController < WebsiteController
       redirect_to statz_path(@offer)
     else
       render :action => :edit
+    end
+  end
+  
+  def last_run_times
+    @udid_map = {
+      'b4c86b4530a0ee889765a166d80492b46f7f3636' => 'Ryan iPhone',
+      'f0910f7ab2a27a5d079dc9ed50d774fcab55f91d' => 'Ryan iPad',
+    }
+    @last_run_times = {}
+    @udid_map.keys.each do |udid|
+      list = DeviceAppList.new(:key => udid)
+      if list.has_app(@offer.id)
+        @last_run_times[udid] = list.last_run_time(@offer.id).to_s(:db)
+      else
+        @last_run_times[udid] = 'Never'
+      end
     end
   end
   
