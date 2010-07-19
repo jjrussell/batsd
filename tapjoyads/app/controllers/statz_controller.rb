@@ -58,7 +58,7 @@ class StatzController < WebsiteController
     @udid_map.keys.each do |udid|
       list = DeviceAppList.new(:key => udid)
       if list.has_app(@offer.id)
-        @last_run_times[udid] = list.last_run_time(@offer.id).to_s(:db)
+        @last_run_times[udid] = list.last_run_time(@offer.id).in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)
       else
         @last_run_times[udid] = 'Never'
       end
