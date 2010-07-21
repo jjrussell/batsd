@@ -52,6 +52,11 @@ end
 
 has_elb_api_tools = File.executable?(`which elb-register-instances-with-lb`.gsub("\n", '')) &&
                     File.executable?(`which elb-deregister-instances-from-lb`.gsub("\n", ''))
+if remove_from_lb && server_list.detect { |server| server[:aws_groups].include?('webserver') } && !has_elb_api_tools
+  puts "You must have the Amazon ELB tools in your PATH!"
+  exit
+end
+
 thread_list = []
 server_list.each do |server|
   remove_server = has_elb_api_tools && remove_from_lb && server[:aws_groups].include?('webserver')
