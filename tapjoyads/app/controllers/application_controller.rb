@@ -116,7 +116,7 @@ class ApplicationController < ActionController::Base
   end
   
   def reject_banned_ips
-    banned_ips = Set.new(['174.120.96.162', '151.197.180.227', '74.63.224.218'])
+    banned_ips = Set.new(['174.120.96.162', '151.197.180.227', '74.63.224.218', '65.19.143.2'])
     render :text => '' if banned_ips.include?(get_ip_address)
   end
   
