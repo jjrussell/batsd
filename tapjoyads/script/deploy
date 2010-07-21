@@ -15,8 +15,7 @@ class Deploy
       :svn_repo => File.exist?('.svn/')
     }
     
-    OptionParser.new do |opts|
-      
+    option_parser = OptionParser.new do |opts|
       opts.on('-e', '--environment [ENVIRONMENT]') do |environment|
         if environment == 'production'
           @options[:environment] = 'production'
@@ -41,8 +40,12 @@ class Deploy
       opts.on_tail('-h', '--help') do
         print_usage_and_exit
       end
-      
-    end.parse!(args)
+    end
+    
+    unless option_parser.parse!(args).empty?
+      puts "Unknown options given."
+      print_usage_and_exit
+    end
     
     @options[:version] = 'trunk' if @options[:environment] == 'test' && @options[:version].nil?
   end
