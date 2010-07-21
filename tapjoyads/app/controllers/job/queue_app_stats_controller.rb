@@ -139,6 +139,11 @@ private
       Rails.logger.info "#{stat_name} verified, both counts are: #{count}."
     end
     
+    daily_date_string = start_time.strftime('%Y-%m')
+    daily_stat_row = Stats.new(:key => "app.#{daily_date_string}.#{@offer.id}")
+    daily_stat_row.populate_daily_from_hourly(stat_row, start_time.day - 1)
+    daily_stat_row.save
+    
     @offer.last_daily_stats_aggregation_time = @now
   rescue AppStatsVerifyError => e
     @offer.last_stats_aggregation_time = start_time

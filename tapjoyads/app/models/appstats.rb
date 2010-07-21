@@ -5,10 +5,10 @@ class Appstats
   def initialize(app_key, options = {})
     @app_key = app_key
     
-    now = Time.now.utc
+    @now = Time.zone.now
     @granularity = options.delete(:granularity) { :hourly }
-    @start_time = options.delete(:start_time) { Time.utc(now.year, now.month, now.day) }
-    @end_time = options.delete(:end_time) { now }
+    @start_time = options.delete(:start_time) { Time.utc(@now.year, @now.month, @now.day) }
+    @end_time = options.delete(:end_time) { @now }
     @stat_types = options.delete(:stat_types) { ['logins', 'hourly_impressions', 'paid_installs', 
         'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'rewards', 'offers',
         'rewards_revenue', 'offers_revenue', 'installs_revenue', 'published_installs',
@@ -44,6 +44,10 @@ class Appstats
     end
   end
   
+private
+
+  ##
+  # Returns an array of numbers, each representing a single hour's worth of stats.
   def get_hourly_stats_over_range(stat_type, start_time, end_time)
     time = start_time
     date = nil
@@ -52,11 +56,7 @@ class Appstats
     while time < end_time
       if date != time.iso8601[0,10]
         date = time.iso8601[0,10]
-        key = "app.#{date}.#{@app_key}"
-        unless @stat_rows[key]
-          @stat_rows[key] = Stats.new(:key => key)
-        end
-        stat = @stat_rows[key]
+        stat = load_stat_row("app.#{date}.#{@app_key}")
         hourly_stats = stat.get_hourly_count(stat_type)
       end
       hourly_stats_over_range.push(hourly_stats[time.hour])
@@ -65,21 +65,41 @@ class Appstats
     return hourly_stats_over_range
   end
 
+  ##
+  # Returns an array of numbers, each representing a single day's worth of stats.
   def get_daily_stats_over_range(stat_type, start_time, end_time)
-    # TODO: Get this stats from a stats_daily domain
     time = start_time
     daily_stats_over_range = []
+    date = nil
     while time < end_time
-      date = time.iso8601[0,10]
-      key = "app.#{date}.#{@app_key}"
-      unless @stat_rows[key]
-        @stat_rows[key] = Stats.new(:key => key)
+      if time + 28.hours > @now
+        date = time.iso8601[0,10]
+        stat = load_stat_row("app.#{date}.#{@app_key}")
+        hourly_stats = stat.get_hourly_count(stat_type)
+        
+        if stat_type == 'overall_store_rank'
+          daily_stats_over_range.push(stat.get_hourly_count(stat_type).reject{|r| r == '0' || r == '-'}.map{|i| i.to_i}.min || '-')
+        else
+          daily_stats_over_range.push(stat.get_hourly_count(stat_type).sum)
+        end
+      else
+        if date != time.strftime('%Y-%m')
+          date = time.strftime('%Y-%m')
+          stat = load_stat_row("app.#{date}.#{@app_key}")
+          daily_stats = stat.get_daily_count(stat_type)
+        end
+        
+        daily_stats_over_range.push(daily_stats[time.day - 1])
       end
-      stat = @stat_rows[key]
-      puts stat.get_hourly_count(stat_type).to_json + date
-      daily_stats_over_range.push(stat.get_hourly_count(stat_type).sum)
       time = time + 1.day
     end
     return daily_stats_over_range
+  end
+  
+  def load_stat_row(key)
+    unless @stat_rows[key]
+      @stat_rows[key] = Stats.new(:key => key)
+    end
+    @stat_rows[key]
   end
 end

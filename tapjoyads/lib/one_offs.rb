@@ -481,4 +481,29 @@ class OneOffs
     
   end
   
+  def self.populate_daily_stats
+    total_stats = 0
+    total_app_stats = 0
+    
+    Stats.select do |stat|
+      total_stats += 1
+      if stat.key =~ /app.\d{4}-\d{2}-\d{2}/
+        total_app_stats += 1
+        
+        date, app_id = stat.parse_key
+        
+        daily_date_string = date.strftime('%Y-%m')
+        daily_stat_row = Stats.new :key => "app.#{daily_date_string}.#{app_id}"
+        daily_stat_row.populate_daily_from_hourly(stat, date.day - 1)
+        daily_stat_row.serial_save
+      end
+      
+      if total_stats % 1000 == 0
+        puts "#{Time.zone.now.to_s(:db)}: Stats: #{total_stats}, App stats: #{total_app_stats}, Last operated on: #{stat.key}"
+      end
+    end
+    
+    puts "Complete. #{Time.zone.now.to_s(:db)}: Stats: #{total_stats}, App stats: #{total_app_stats}"
+  end
+  
 end
