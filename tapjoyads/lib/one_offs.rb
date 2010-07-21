@@ -340,7 +340,19 @@ class OneOffs
     end
     
   end
-  
+
+  def self.create_udid_list_for_all_advertisers
+    controller = Job::QueueGrabAdvertiserUdidsController.new
+    # January 2010 - June 2010
+    months = ["2010-01", "2010-02", "2010-03", "2010-04", "2010-05", "2010-06"]
+    Offer.find_each do |offer|
+      months.each do |month|
+        Sqs.send_message(QueueNames::GRAB_ADVERTISER_UDIDS, "#{offer.id}:#{month}-01")
+        sleep(1) #don't want to overwhelm the job servers
+      end
+    end
+  end
+
   def self.fix_point_purchases
     total = 0
     num_wrong = 0

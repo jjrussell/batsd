@@ -19,7 +19,7 @@ authorization do
   end
   
   role :statz do
-    has_permission_on :statz, :to => [ :index, :show, :edit, :update, :search, :last_run_times ]
+    has_permission_on :statz, :to => [ :index, :show, :edit, :update, :search, :last_run_times, :udids, :udid ]
     has_permission_on :tools, :to => [ :money ]
   end
   
