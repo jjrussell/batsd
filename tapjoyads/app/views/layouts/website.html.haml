@@ -6,25 +6,28 @@
     %title
       = @page_title.blank? ? 'Tapjoy' : "#{@page_title} - Tapjoy"
     = stylesheet_link_tag 'website'
-    = yield :included_stylesheets
     %style{ :type => 'text/css' }
       = yield :page_styles
-    = yield :custom_head
+    = yield :page_head
     
   %body
-    #content
-      #user_nav
+    #top_nav
+      .right
         - if current_user
-          Welcome, #{current_user.username}.
-          = link_to 'Tools', tools_path
+          = current_user.username
           |
-          = link_to 'Logout', logout_path
+          - if permitted_to?(:index, :home)
+            = link_to('Partner Home', home_index_path)
+            |
+          = link_to('Logout', logout_path)
         - else
-          = link_to 'Login', login_path
-      
-      - flash.each do |name, msg|
-        .flash{ :id => "flash_#{name}" }= msg
-      
+          = link_to('Member Login', login_path)
+      .clear
+    
+    - flash.each do |name, msg|
+      .flash{ :id => "flash_#{name}" }= msg
+    
+    #content
       = yield
       
     = javascript_include_tag 'jquery-1.4.1.min'

@@ -37,11 +37,17 @@ ActionController::Routing::Routes.draw do |map|
   
   
   # website-specific routes
+  map.root :controller => 'homepage', :action => 'index'
   map.login 'login', :controller => 'user_sessions', :action => 'new'
   map.logout 'logout', :controller => 'user_sessions', :action => 'destroy'
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :only => [ :edit, :update ]
-  
+  map.resources :home, :only => [ :index ]
+  map.resources :apps, :except => [ :destroy ]
+  map.resources :reporting, :only => [ :index ]
+  map.resources :billing, :only => [ :index ]
+  map.resources :account, :only => [ :index ]
+  map.resources :support, :only => [ :index ]
   map.resources :tools, :only => :index, :collection => { :new_order => :get, :create_order => :post, :new_transfer => :get, :create_transfer => :post, :payouts => :get, :money => :get }, :member => { :create_payout => :post, :create_transfer => :post }
   map.resources :statz, :only => [ :index, :show, :edit, :update ], :collection => { :search => :get }, :member => { :last_run_times => :get, :udids => :get }
   

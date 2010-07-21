@@ -2,9 +2,9 @@
 
 %h1 Tapjoy Money Stats
 
-#last_updated= "Last Updated: #{@last_updated.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)}"
+#last_updated= "Last Updated: #{@last_updated.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)}"
 
-%table#apps_table.tablesorter
+%table
   %thead
     %tr
       %th
@@ -20,21 +20,19 @@
 
 %h3= "Total Balance: #{number_to_currency(@total_balance)}"
 %h3= "Total Pending Earnings:  #{number_to_currency(@total_pending_earnings)}"
-      
 
 -content_for :page_styles do
   :plain
-   
-    th, td {
-      border: 1;
+    table {
+      border-collapse: collapse;
     }
     
+    th, td {
+      border: 1px solid gray;
+      padding: 5px;
+    }
     
     #last_updated {
       font-weight: bold;
       font-size: 14px;
-    }
-    
-    .hidden {
-      display: none;
     }

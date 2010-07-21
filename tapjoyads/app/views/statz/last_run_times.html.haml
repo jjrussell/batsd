@@ -3,7 +3,7 @@
 .icon= image_tag(@offer.get_icon_url, :size => '56x56')
 %h1= @offer.name
 
-.clear
+%p As of: #{Time.zone.now.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)}
 
 %table
   %tr
@@ -20,9 +20,13 @@
   :plain
     .icon {
       float: left;
-      padding-bottom: 20px;
     }
     
-    .clear {
-      clear: both;
+    table {
+      border-collapse: collapse;
+    }
+    
+    th, td {
+      border: 1px solid gray;
+      padding: 5px;
     }

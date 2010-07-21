@@ -1,6 +1,6 @@
 - @page_title = 'Stats for last 24 hours'
 
-- content_for :included_stylesheets do
+- content_for :page_head do
   = stylesheet_link_tag 'themes/blue/style', 'jquery.autocomplete'
 
 - content_for :included_javascripts do
@@ -15,7 +15,7 @@
 
 %h3#install_count_24hours= "Total conversions: #{@cvr_count_24hours} &nbsp; Total revenue: #{@ad_spend_24hours} &nbsp; Total payouts: #{@publisher_earnings_24hours}"
 
-#last_updated= "Last Updated: #{@last_updated.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)}"
+#last_updated= "Last Updated: #{@last_updated.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)}"
 
 %table#apps_table.tablesorter
   %thead

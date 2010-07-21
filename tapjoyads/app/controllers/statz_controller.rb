@@ -1,9 +1,10 @@
 class StatzController < WebsiteController
-
-  filter_access_to [ :index, :show, :edit, :update, :search, :last_run_times, :udids, :udid]
-
-  before_filter :find_offer, :only => [ :show, :edit, :update, :last_run_times, :udids, :udid]
-
+  layout 'tabbed'
+  
+  filter_access_to :all
+  
+  before_filter :find_offer, :only => [ :show, :edit, :update, :last_run_times, :udids, :udid ]
+  
   def index
     money_stats = Mc.get('statz.money') || {'24_hours' => {}}
     @cvr_count_24hours = money_stats['24_hours']['conversions'] || "Not Available"
@@ -13,8 +14,7 @@ class StatzController < WebsiteController
     @last_updated = Mc.get('statz.last_updated') || Time.at(8.hours.to_i)
     @cached_stats = Mc.get('statz.cached_stats') || {}
   end
-
-  # e.g.: http://localhost:3000/statz/udids/fccbbd34-7a7d-4fce-80a6-ae3fe595c1c0
+  
   def udids
     bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'ad-udids')
     @keys = bucket.keys('prefix' => App.udid_s3_key(@offer.id))
@@ -83,7 +83,7 @@ class StatzController < WebsiteController
     @udid_map.keys.each do |udid|
       list = DeviceAppList.new(:key => udid)
       if list.has_app(@offer.id)
-        @last_run_times[udid] = list.last_run_time(@offer.id).in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)
+        @last_run_times[udid] = list.last_run_time(@offer.id).in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)
       else
         @last_run_times[udid] = 'Never'
       end

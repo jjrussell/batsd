@@ -68,3 +68,14 @@
         return false;
       });
     });
+  
+- content_for :page_styles do
+  :plain
+    table {
+      border-collapse: collapse;
+    }
+    
+    th, td {
+      border: 1px solid gray;
+      padding: 5px;
+    }

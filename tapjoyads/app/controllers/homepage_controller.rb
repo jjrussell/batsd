@@ -1,0 +1,2 @@
+class HomepageController < WebsiteController
+end
