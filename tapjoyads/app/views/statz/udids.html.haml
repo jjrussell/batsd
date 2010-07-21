@@ -1,9 +1,7 @@
 - @page_title = "Monthly UDIDs for offer: #{@offer.name}"
 .icon= image_tag(@offer.get_icon_url, :size => '56x56')
 %h1= @offer.name
-%p UDIDs
-%table
-  - @keys.each do |key|
-    - date = key.name.split(/\//).last
-    %tr
-      %td= link_to date, {:action => "udid", :id => @offer.id, :params => {:date => date}}
+%p UDIDs for:
+- @keys.each do |key|
+  - date = key.name.split(/\//).last
+  .month= link_to date, {:action => "udid", :id => @offer.id, :params => {:date => date}}

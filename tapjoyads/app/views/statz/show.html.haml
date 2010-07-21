@@ -9,6 +9,8 @@
   %p= link_to('[Edit Offer]', edit_statz_path(@offer.id))
 - if permitted_to? :last_run_times, :statz
   %p= link_to('[View Last Run Times]', last_run_times_statz_path(@offer.id))
+- if permitted_to? :udids, :statz
+  %p= link_to('[View Monthly UDID Reports]', udids_statz_path(@offer.id))
 
 .left
   .metadata Offer id: #{@offer.id}
