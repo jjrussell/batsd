@@ -4,7 +4,6 @@ class Service1Controller < ApplicationController
   
   private
     def redirect
-      ruby_lb = REDIRECT_URI
       win_lb = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/Service1.asmx'
       
       standard_params = "?udid=#{get_param(:DeviceTag, true)}&app_id=#{get_param(:AppID, true)}" +

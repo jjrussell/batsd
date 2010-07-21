@@ -31,8 +31,6 @@ amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['test']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['test']['secret_access_key']
 
-REDIRECT_URI = 'http://test-lb-310199522.us-east-1.elb.amazonaws.com/'
-
 MAX_DEVICE_APP_DOMAINS = 3
 MAX_WEB_REQUEST_DOMAINS = 2
 NUM_POINT_PURCHASES_DOMAINS = 2

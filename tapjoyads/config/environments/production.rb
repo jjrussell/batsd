@@ -33,8 +33,6 @@ EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
 
 RUN_MODE_PREFIX = ''
 
-REDIRECT_URI = 'http://webservice-lb-624573684.us-east-1.elb.amazonaws.com/'
-
 # Amazon services:
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['main']['access_key_id']
