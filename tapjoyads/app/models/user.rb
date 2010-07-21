@@ -17,7 +17,7 @@ class User < ActiveRecord::Base
   def role_symbols
     user_roles.map do |role|
       role.name.underscore.to_sym
-    end
+    end << :partner
   end
   
 end
