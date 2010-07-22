@@ -49,11 +49,10 @@ class Job::MasterReloadMoneyController < Job::JobController
       money_stats[is]['margin'] = number_with_precision((revenue - (publisher_earnings - marketing_credits * 0.7)) / (revenue) * 100, :precision => 2) + "%"
     end
     
-    Mc.put('money.stats', money_stats)
-    
     total_balance = Partner.sum(:balance, :conditions => "id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'") / 100.0
     total_pending_earnings = Partner.sum(:pending_earnings, :conditions => "id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'") / 100.0
     
+    Mc.put('money.cached_stats', money_stats)
     Mc.put('money.total_balance', total_balance)
     Mc.put('money.total_pending_earnings', total_pending_earnings)
     Mc.put('money.last_updated', now)
