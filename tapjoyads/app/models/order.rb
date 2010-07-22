@@ -1,15 +1,21 @@
 class Order < ActiveRecord::Base
   include UuidPrimaryKey
   
-  # Status Codes:
-  # 0: promotional/marketing/unpaid
+  STATUS_CODES = [ 0, 1, 2 ]
+  # 0: invalid
   # 1: normal/paid
-  # 2: refund? we don't do this anymore
+  # 2: refunds
+  PAYMENT_METHODS = [ 0, 1, 2, 3 ]
+  # 0: website
+  # 1: freshbooks/billable/invoice
+  # 2: marketing expense
+  # 3: transfer
   
   belongs_to :partner
   
   validates_presence_of :partner
-  validates_inclusion_of :status, :payment_method, :in => [ 0, 1, 2, 3 ]
+  validates_inclusion_of :status, :in => STATUS_CODES
+  validates_inclusion_of :payment_method, :in => PAYMENT_METHODS
   validates_numericality_of :amount, :only_integer => true, :allow_nil => false
   
   after_create :update_balance

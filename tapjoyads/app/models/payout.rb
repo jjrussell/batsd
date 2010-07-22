@@ -1,9 +1,12 @@
 class Payout < ActiveRecord::Base
   include UuidPrimaryKey
   
-  # Status Codes:
-  # 0: ?
-  # 1: normal payout
+  STATUS_CODES = [ 0, 1 ]
+  # 0: invalid
+  # 1: normal
+  PAYMENT_METHODS = [ 1, 3 ]
+  # 1: paid
+  # 3: transfer
   
   belongs_to :partner
   
@@ -11,8 +14,8 @@ class Payout < ActiveRecord::Base
   validates_numericality_of :month, :only_integer => true, :allow_nil => false, :greater_than => 0, :less_than => 13
   validates_numericality_of :year, :only_integer => true, :allow_nil => false, :greater_than => 2007
   validates_numericality_of :amount, :only_integer => true, :allow_nil => false
-  validates_inclusion_of :payment_method, :in => [ 1, 3 ]
-  validates_inclusion_of :status, :in => [ 0, 1 ]
+  validates_inclusion_of :payment_method, :in => PAYMENT_METHODS
+  validates_inclusion_of :status, :in => STATUS_CODES
   
   after_create :update_balance
   

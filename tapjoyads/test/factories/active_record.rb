@@ -16,6 +16,7 @@ end
 
 Factory.define :order do |order|
   order.association :partner
+  order.payment_method 1
 end
 
 Factory.define :payout do |payout|
