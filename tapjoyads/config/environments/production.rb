@@ -42,6 +42,6 @@ ENV['AWS_SECRET_ACCESS_KEY'] = amazon['main']['secret_access_key']
 # to the list of transient problems which will automatically get retried by RightAws.
 RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
 
-MAX_DEVICE_APP_DOMAINS = 20
+MAX_DEVICE_APP_DOMAINS = 30
 MAX_WEB_REQUEST_DOMAINS = 20
 NUM_POINT_PURCHASES_DOMAINS = 10
