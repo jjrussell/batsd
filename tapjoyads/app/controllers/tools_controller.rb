@@ -87,9 +87,7 @@ class ToolsController < WebsiteController
   end
 
   def disabled_popular_offers
-    @offers_count_hash = Mc.get('tools.disabled_popular_offers') do
-      {}
-    end
+    @offers_count_hash = Mc.get('tools.disabled_popular_offers') { {} }
     @offers = Offer.find(@offers_count_hash.keys, :include => [:partner])
   end
 end
