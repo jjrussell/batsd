@@ -57,15 +57,15 @@ class ToolsController < WebsiteController
   end
   
   def money
-    @money_stats = Mc.get('statz.money') || (render(:text => "Not Available") and return)
+    @money_stats = Mc.get('money.stats') || (render(:text => "Not Available") and return)
     @time_ranges = @money_stats.keys
     
     @stat_types = @money_stats[@time_ranges.first].keys
     
-    @last_updated = Mc.get('statz.last_updated') || Time.zone.at(0)
+    @last_updated = Mc.get('money.last_updated') || Time.zone.at(0)
     
-    @total_balance = Mc.get('statz.balance') || 'Not Available'
-    @total_pending_earnings = Mc.get('statz.pending_earnings') || 'Not Available'
+    @total_balance = Mc.get('money.total_balance') || 'Not Available'
+    @total_pending_earnings = Mc.get('money.total_pending_earnings') || 'Not Available'
   end
   
   def failed_sdb_saves

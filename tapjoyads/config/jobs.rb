@@ -33,6 +33,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'master_calculate_show_rate', :interval => 20.minutes
     s.add_job 'master_failed_sqs_writes', :interval => 3.minutes
     s.add_job 'master_reload_statz', :interval => 10.minutes
+    s.add_job 'master_reload_money', :interval => 1.hour
     s.add_job 'master_calculate_next_payout', :daily => 4.hours
     s.add_job 'master_select_vg_items', :interval => 5.minutes
     s.add_job 'master_verifications', :daily => 5.hours
