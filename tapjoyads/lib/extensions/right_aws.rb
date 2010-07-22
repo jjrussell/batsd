@@ -1,4 +1,12 @@
 module RightAws
+  
+  ##
+  # Reduce amount of retries - only retry up to 1 seconds rather than 5 seconds.
+  # Transient errors will be handled by writing to sqs or s3.
+  class AWSErrorHandler
+    @@reiteration_time = 1
+  end
+  
   class SdbInterface
     
     # Override, in order to support consistency.
