@@ -21,6 +21,10 @@ config.action_controller.allow_forgery_protection    = false
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
 
+config.gem 'factory_girl', :version => '1.3.1'
+config.gem 'shoulda', :version => '2.11.1'
+config.gem 'shoulda-addons', :version => '0.2.2', :lib => 'shoulda_addons'
+
 MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []

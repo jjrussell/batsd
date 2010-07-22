@@ -45,8 +45,6 @@ Rails::Initializer.run do |config|
   config.gem 'haml', :version => '2.2.23'
   config.gem 'hoptoad_notifier', :version => '2.2.2'
   config.gem 'plist', :version => '3.1.0'
-  config.gem 'shoulda', :version => '2.11.1', :lib => false
-  config.gem 'shoulda-addons', :version => '0.2.2', :lib => false
   config.gem 'uuidtools', :version => '2.0.0'
   config.gem 'will_paginate', :version => '2.3.12'
   
