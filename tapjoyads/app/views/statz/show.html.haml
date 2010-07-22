@@ -3,7 +3,7 @@
 .icon= image_tag(@offer.get_icon_url, :size => '56x56')
 %h1= @offer.name
 
-%p For: #{@start_time.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)} - #{@end_time.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)}
+%p For: #{@start_time.to_s(:pub_ampm_sec)} UTC - #{@end_time.to_s(:pub_ampm_sec)} UTC
 
 - if permitted_to? :edit, :statz
   %p= link_to('[Edit Offer]', edit_statz_path(@offer.id))

@@ -40,21 +40,51 @@ class StatzController < WebsiteController
     @start_time = now.beginning_of_hour - 23.hours
     @end_time = now
     unless params[:date].blank?
-      now = Time.zone.parse(params[:date])
-      @start_time = now.beginning_of_day
+      @start_time = Time.zone.parse(params[:date]).beginning_of_day
       @end_time = @start_time + 24.hours
     end
-    @stats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time }).stats
     
-    granularity = 1.hour
+    unless params[:end_date].blank?
+      @end_time = Time.zone.parse(params[:end_date]).beginning_of_day
+    end
+    
+    if params[:granularity] == 'daily'
+      granularity_option = :daily
+      granularity_interval = 1.day
+    else
+      granularity_option = :hourly
+      granularity_interval = 1.hour
+    end
+    
+    @stats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time, :granularity => granularity_option }).stats
+    
     @intervals = []
     @x_labels = []
-    25.times do |i|
-      @intervals << (@start_time + i * granularity).in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm)
+    
+    time = @start_time
+    while time < @end_time
+      @intervals << time.to_s(:pub_ampm)
+      
+      if params[:granularity] == 'daily'
+        @x_labels << time.strftime('%m-%d')
+      else
+        @x_labels << time.to_s(:time)
+      end
+      
+      time += granularity_interval
     end
-    24.times do |i|
-      @x_labels << (@start_time + i * granularity).in_time_zone('Pacific Time (US & Canada)').to_s(:time)
+
+    if @x_labels.size > 30
+      skip_every = @x_labels.size / 30
+      @x_labels.size.times do |i|
+        if i % (skip_every + 1) != 0
+          @x_labels[i] = nil
+        end
+      end
     end
+
+    @intervals << time.to_s(:pub_ampm)
+    
   end
   
   def edit
