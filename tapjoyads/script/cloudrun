@@ -46,7 +46,7 @@ puts "Command: #{command}"
 
 print "Run command? [y/N] "
 answer = STDIN.gets
-if !/^y/i.match(answer)
+if answer !~ /^(y|yes)$/i
   exit
 end
 
