@@ -27,6 +27,7 @@
   .metadata Ordinal: #{@offer.ordinal}
   .metadata Payment: #{number_to_currency(@offer.payment / 100.0)}
   .metadata Tapjoy enabled: #{@offer.tapjoy_enabled}
+  .metadata Contact: #{@offer.partner.users.first.email if @offer.partner.users.first} 
 
 .right
   .metadata Countries: #{@offer.countries}
