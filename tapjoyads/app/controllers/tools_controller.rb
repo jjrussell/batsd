@@ -68,4 +68,22 @@ class ToolsController < WebsiteController
     @total_pending_earnings = Mc.get('statz.pending_earnings') || 'Not Available'
   end
   
+  def failed_sdb_saves
+    sdb = RightAws::SdbInterface.new(nil, nil, {:multi_thread => true, :port => 80, :protocol => 'http'})
+
+    @failed_sdb_saves = {}
+
+    this_hour_key = (Time.zone.now.to_f / 1.hour).to_i
+    last_hour_key = ((Time.zone.now.to_f - 1.hour) / 1.hour).to_i
+
+    sdb.list_domains do |result|
+      result[:domains].each do |domain_name|
+        this_hour_count = Mc.get_count("failed_sdb_saves.#{domain_name}.#{this_hour_key}")
+        last_hour_count = Mc.get_count("failed_sdb_saves.#{domain_name}.#{last_hour_key}")
+        
+        @failed_sdb_saves[domain_name] = [this_hour_count, last_hour_count]
+      end
+    end
+  end
+  
 end

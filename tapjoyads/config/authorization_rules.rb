@@ -43,6 +43,8 @@ authorization do
     includes :payops
     includes :executive
     includes :statz
+    
+    has_permission_on :tools, :to => [ :failed_sdb_saves ]
   end
   
 end

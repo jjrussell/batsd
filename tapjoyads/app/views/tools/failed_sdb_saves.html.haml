@@ -1,0 +1,38 @@
+- @page_title = 'Failed Sdb Saves'
+
+- content_for :page_head do
+  = stylesheet_link_tag 'themes/blue/style'
+
+- content_for :included_javascripts do
+  = javascript_include_tag 'jquery.tablesorter'
+
+%h1 Failed Sdb Saves
+
+%table#fails.tablesorter
+  %thead
+    %tr
+      %th Domain Name
+      %th This Hour
+      %th Last Hour
+  %tbody
+    - @failed_sdb_saves.each do |domain_name, counts|
+      %tr
+        %td= domain_name
+        %td= counts[0]
+        %td= counts[1]
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $("#fails").tablesorter( { widgets: ['zebra'] } );
+    });
+  
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+
+    table.tablesorter thead tr .header {
+      background-position: right bottom;
+    }

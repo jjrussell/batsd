@@ -48,7 +48,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :billing, :only => [ :index ]
   map.resources :account, :only => [ :index ]
   map.resources :support, :only => [ :index ]
-  map.resources :tools, :only => :index, :collection => { :new_order => :get, :create_order => :post, :new_transfer => :get, :create_transfer => :post, :payouts => :get, :money => :get }, :member => { :create_payout => :post, :create_transfer => :post }
+  map.resources :tools, :only => :index, :collection => { :new_order => :get, :create_order => :post, :new_transfer => :get, :create_transfer => :post, :payouts => :get, :money => :get, :failed_sdb_saves => :get }, :member => { :create_payout => :post, :create_transfer => :post }
   map.resources :statz, :only => [ :index, :show, :edit, :update ], :collection => { :search => :get }, :member => { :last_run_times => :get, :udids => :get }
   
   map.resources :balances, :only => :show
