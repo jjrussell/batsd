@@ -1,0 +1,16 @@
+- @page_title = 'Disabled Popular Offers'
+- @page_subtitle = 'Disabled Offers with >5 users in the last 24 hours'
+%table{:border=>1}
+  %tbody
+    %tr
+      %th # users
+      %th Offer id
+      %th Partner name
+      %th Store url
+      %th Price
+      %th Balance
+      %th Pending Earnings
+      %th Daily budget
+      %th Payment
+      %th Tapjoy enabled
+    = render :partial => 'offer', :collection => @offers

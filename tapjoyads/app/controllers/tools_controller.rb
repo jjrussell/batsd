@@ -87,6 +87,15 @@ class ToolsController < WebsiteController
   end
 
   def disabled_popular_offers
-    Mc.get('tools.disabled_popular_offers')
+    @offers_count_hash = Mc.get('disabled_popular_offers')
+=begin
+    # test data
+    @offers_count_hash = {
+      'f7cc285b-1518-4c98-979f-ac877bcf3173' => 42,
+      'f8622934-11a8-4796-9517-d73b1a084fb4' => 32,
+      'f87a90ad-3b18-4093-8a34-bc11e51d4ea6' => 22,
+    }
+=end
+    @offers = Offer.find(@offers_count_hash.keys, :include => [:partner])
   end
 end
