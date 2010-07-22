@@ -172,6 +172,10 @@ class SimpledbResource
     return thread
   end
   
+  def save!(options = {})
+    serial_save({ :catch_exceptions => false }.merge(options))
+  end
+  
   ##
   # Updates the 'updated-at' attribute of this item, and saves it to SimpleDB.
   # If the domain does not exist, then the domain is created.
