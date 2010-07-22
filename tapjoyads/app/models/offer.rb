@@ -267,6 +267,11 @@ private
       id_for_device_app_list = rating_offer.get_id_for_device_app_list(app_version)
     end
     
+    if id_for_device_app_list == '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424'
+      # Don't show 'Tap farm' offer to users that already have 'Tap farm', 'Tap farm 6', or 'Tap farm 5'
+      return device_app_list.has_app(id_for_device_app_list) || device_app_list.has_app('bad4b0ae-8458-42ba-97ba-13b302827234') || device_app_list.has_app('403014c2-9a1b-4c1d-8903-5a41aa09be0e')
+    end
+    
     return device_app_list.has_app(id_for_device_app_list)
   end
   
