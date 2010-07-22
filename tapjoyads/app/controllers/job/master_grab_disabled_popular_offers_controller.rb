@@ -3,7 +3,7 @@ class Job::MasterGrabDisabledPopularOffersController < Job::JobController
   end
 
   def index
-    Mc.get_and_put('disabled_popular_offers') do
+    Mc.get_and_put('tools.disabled_popular_offers') do
       now = Time.zone.now
       offers = {}
       Offer.find_each(:conditions => {:tapjoy_enabled => false}) do |offer|

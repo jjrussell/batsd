@@ -87,11 +87,10 @@ class ToolsController < WebsiteController
   end
 
   def disabled_popular_offers
-    @offers_count_hash = Mc.get('disabled_popular_offers') do
+    @offers_count_hash = Mc.get('tools.disabled_popular_offers') do
       {}
     end
 =begin
-    # test data
     @offers_count_hash = {
       'f7cc285b-1518-4c98-979f-ac877bcf3173' => 42,
       'f8622934-11a8-4796-9517-d73b1a084fb4' => 32,
