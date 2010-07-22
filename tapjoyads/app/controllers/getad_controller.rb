@@ -167,7 +167,7 @@ class GetadController < ApplicationController
             self.font = 'times'
             self.antialias = true
             self.stroke_width = 1
-            self.gravity = CenterGravity
+            self.gravity = Magick::CenterGravity
             self.stroke = 'white'
             self.fill = 'white'
             self.undercolor = 'black'
