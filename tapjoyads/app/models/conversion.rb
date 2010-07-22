@@ -42,11 +42,7 @@ private
   end
   
   def sanitize_reward_id
-    begin
-      UUIDTools::UUID.parse(reward_id) unless reward_id.blank?
-    rescue ArgumentError
-      self.reward_id = nil
-    end
+    self.reward_id = nil unless reward_id =~ UUID_REGEX
   end
   
 end
