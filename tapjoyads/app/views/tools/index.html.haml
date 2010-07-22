@@ -13,4 +13,5 @@
     %li= link_to 'Transfer Funds', new_transfer_tools_path
   - if permitted_to? :failed_sdb_saves, :tools
     %li= link_to 'Failed Sdb Saves', failed_sdb_saves_tools_path
-    
+  - if permitted_to? :disabled_popular_offers, :tools
+    %li= link_to 'Disabled Popular Offers', disabled_popular_offers_tools_path

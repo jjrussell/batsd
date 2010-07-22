@@ -85,5 +85,8 @@ class ToolsController < WebsiteController
       end
     end
   end
-  
+
+  def disabled_popular_offers
+    Mc.get('tools.disabled_popular_offers')
+  end
 end
