@@ -1,5 +1,3 @@
-require 'base64'
-
 JobRunner::Gateway.define do |s|
   
   machine_type = `#{ENV['APP_ROOT']}/server/server_type.rb`

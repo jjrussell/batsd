@@ -1,5 +1,3 @@
-require 'base64'
-
 class ImportMssqlController < ApplicationController
   
   protect_from_forgery :except => [:publisher_ad, :app, :campaign]
