@@ -1,9 +1,3 @@
-require 'cgi'
-require 'uri'
-require 'net/http'
-require 'base64'
-include Magick
-
 class GetadController < ApplicationController
   
   around_filter :catch_exceptions
@@ -167,7 +161,7 @@ class GetadController < ApplicationController
         text = json['components']['text']['content']
         image = Mc.get_and_put("img.#{text.hash}") do
           start_time = Time.now
-          image_array = Image.read("caption:#{text}") do
+          image_array = Magick::Image.read("caption:#{text}") do
             self.size = "320x50"
             self.pointsize = 18
             self.font = 'times'

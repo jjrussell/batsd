@@ -1,0 +1,70 @@
+--- !ruby/object:Gem::Specification 
+name: shoulda-addons
+version: !ruby/object:Gem::Version 
+  hash: 19
+  prerelease: false
+  segments: 
+  - 0
+  - 2
+  - 2
+  version: 0.2.2
+platform: ruby
+authors: 
+- Mathias Meyer
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2009-11-05 00:00:00 -08:00
+default_executable: 
+dependencies: []
+
+description: Some awesome addons for Shoulda to benchmark tests, or to get nicer output than just a dot, because what the dot?
+email: meyer@paperplanes.de
+executables: []
+
+extensions: []
+
+extra_rdoc_files: 
+- README.md
+files: 
+- README.md
+- lib/shoulda_addons.rb
+- lib/shoulda_benchmark.rb
+- lib/shoulda_list_runner.rb
+has_rdoc: true
+homepage: http://github.com/mattmatt/shoulda-addons
+licenses: []
+
+post_install_message: 
+rdoc_options: 
+- --charset=UTF-8
+require_paths: 
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+requirements: []
+
+rubyforge_project: 
+rubygems_version: 1.3.7
+signing_key: 
+specification_version: 3
+summary: Neat addons for Shoulda, because Shoulda is neat.
+test_files: []
+
