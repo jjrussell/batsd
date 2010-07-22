@@ -7,7 +7,7 @@ class Job::MasterReloadMoneyController < Job::JobController
     interval_strings = {}
     interval_strings['24_hours'] = "DATE_ADD(NOW(), INTERVAL -24 HOUR)"
     interval_strings['this_month'] = "DATE(CURDATE() - DAYOFMONTH(NOW()) + 1)"
-    interval_strings['today'] = "DAYOFMONTH()"
+    interval_strings['today'] = "CURDATE()"
     interval_strings['7_days'] = "DATE_ADD(NOW(), INTERVAL -7 DAY)"
     interval_strings['since_mar_23'] = "'2010-03-23'"
     interval_strings['1_month'] = "DATE_ADD(NOW(), INTERVAL -1 MONTH)"
