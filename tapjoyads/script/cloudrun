@@ -17,6 +17,12 @@ end
 command = ARGV[1]
 user = ARGV[2] || 'webuser'
 remove_from_lb = ARGV[3] || false
+has_elb_api_tools = File.executable?(`which elb-register-instances-with-lb`.gsub("\n", '')) &&
+                    File.executable?(`which elb-deregister-instances-from-lb`.gsub("\n", ''))
+if remove_from_lb && !has_elb_api_tools
+  puts "You must have the Amazon ELB tools in your PATH!"
+  exit
+end
 
 # add servers to ~/.ssh/known_hosts to prevent prompts
 f = open(File.expand_path('~/.ssh/known_hosts'), 'r')
@@ -39,7 +45,8 @@ f.close
 
 puts "Servers to run on:"
 server_list.each do |server|
-  puts server[:dns_name]
+  server[:remove_from_lb] = remove_from_lb && server[:aws_groups].include?('webserver')
+  puts server[:remove_from_lb] ? (server[:dns_name] + ' (will be removed from load balancer)') : server[:dns_name]
 end
 puts "User: #{user}"
 puts "Command: #{command}"
@@ -50,28 +57,20 @@ if answer !~ /^(y|yes)$/i
   exit
 end
 
-has_elb_api_tools = File.executable?(`which elb-register-instances-with-lb`.gsub("\n", '')) &&
-                    File.executable?(`which elb-deregister-instances-from-lb`.gsub("\n", ''))
-if remove_from_lb && server_list.detect { |server| server[:aws_groups].include?('webserver') } && !has_elb_api_tools
-  puts "You must have the Amazon ELB tools in your PATH!"
-  exit
-end
-
 thread_list = []
 server_list.each do |server|
-  remove_server = has_elb_api_tools && remove_from_lb && server[:aws_groups].include?('webserver')
   thread = Thread.new do
-    if remove_server
+    if server[:remove_from_lb]
       `elb-deregister-instances-from-lb webservice-lb --instances #{server[:aws_instance_id]}`
     end
     puts "Running on #{server[:dns_name]}", `ssh #{user}@#{server[:dns_name]} '#{command}'`, "\n"
-    if remove_server
+    if server[:remove_from_lb]
       `curl -s http://#{server[:dns_name]}:9898/healthz`
       `elb-register-instances-with-lb webservice-lb --instances #{server[:aws_instance_id]}`
       sleep 1
     end
   end
-  remove_server ? thread.join : thread_list.push(thread)
+  server[:remove_from_lb] ? thread.join : thread_list.push(thread)
 end
 thread_list.each do |thread|
   thread.join
