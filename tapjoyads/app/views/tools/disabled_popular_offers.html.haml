@@ -2,10 +2,10 @@
 - @page_subtitle = 'Disabled Offers with >5 users in the last 24 hours'
 
 - content_for :page_head do
-  = stylesheet_link_tag 'themes/blue/style', 'jquery.autocomplete'
+  = stylesheet_link_tag 'themes/blue/style'
 
 - content_for :included_javascripts do
-  = javascript_include_tag 'jquery.tablesorter', 'jquery.autocomplete.min'
+  = javascript_include_tag 'jquery.tablesorter'
 
 %table#apps_table.tablesorter
   %thead
