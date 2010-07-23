@@ -37,10 +37,10 @@
             %th &nbsp;
             %th Earnings
             %th Payouts
-            %th Advertising Cost
             %th Orders
+            %th Spending
             %th &nbsp;
-          = render :partial => 'statement', :collection => @statements
+          = render :partial => 'statement', :collection => @statements, :locals => {:format => :table}
     - else
       No Statements available for this date range
-    = button_to 'Export', {:action => 'export', :date_from => @date_from, :date_to => @date_to}
+    = button_to 'Export', {:method => 'GET', :action => 'export', :from_date => @date_from, :to_date => @date_to}
