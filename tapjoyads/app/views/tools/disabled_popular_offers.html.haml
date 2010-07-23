@@ -1,5 +1,6 @@
 - @page_title = 'Disabled Popular Offers'
 - @page_subtitle = 'Disabled Offers with >5 users in the last 24 hours'
+
 %table{:border=>1}
   %tbody
     %tr
@@ -19,10 +20,10 @@
         %td= link_to offer.name, statz_path(offer.id)
         %td= offer.partner.name
         %td
-          - if offer.item_type == 'App'
-            = link_to(offer.item.store_id || "?", offer.item.final_store_url)
+          - if offer.item_type == 'App' && offer.item.store_id
+            = link_to(offer.item.store_id, offer.item.final_store_url)
           - else
-            &nbsp;
+            None
         %td= number_to_currency(offer.price / 100.0)
         %td= number_to_currency(offer.partner.balance / 100.0)
         %td= number_to_currency(offer.partner.pending_earnings / 100.0)

@@ -15,6 +15,7 @@
 .left
   .metadata Offer id: #{@offer.id}
   .metadata Partner id: #{@offer.partner_id}
+  .metadata Contact: #{@offer.partner.users.first.email if @offer.partner.users.first}
   .metadata Offer type: #{@offer.item_type}
   - if @offer.item_type == 'App'
     .metadata Store id: #{link_to(@offer.item.store_id, @offer.item.final_store_url)}
@@ -27,7 +28,6 @@
   .metadata Ordinal: #{@offer.ordinal}
   .metadata Payment: #{number_to_currency(@offer.payment / 100.0)}
   .metadata Tapjoy enabled: #{@offer.tapjoy_enabled}
-  .metadata Contact: #{@offer.partner.users.first.email if @offer.partner.users.first} 
 
 .right
   .metadata Countries: #{@offer.countries}
