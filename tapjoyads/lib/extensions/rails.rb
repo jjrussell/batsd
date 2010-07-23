@@ -59,6 +59,10 @@ module ActiveSupport
   end
 end
 
+#
+# This patch allows the schema-dumper to function correctly for tables
+# where the primary key column is called 'id' and is NOT an integer.
+#
 module ActiveRecord
   module ConnectionAdapters
     class MysqlAdapter
