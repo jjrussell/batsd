@@ -6,7 +6,7 @@ class StatzController < WebsiteController
   before_filter :find_offer, :only => [ :show, :edit, :update, :last_run_times, :udids, :udid ]
   
   def index
-    money_stats = Mc.get('statz.money') || {'24_hours' => {}}
+    money_stats = Mc.get('money.cached_stats') || {'24_hours' => {}}
     @cvr_count_24hours = money_stats['24_hours']['conversions'] || "Not Available"
     @ad_spend_24hours =  money_stats['24_hours']['advertiser_spend'] || "Not Available"
     @publisher_earnings_24hours =  money_stats['24_hours']['publisher_earnings'] || "Not Available"
