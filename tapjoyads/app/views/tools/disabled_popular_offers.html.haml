@@ -1,11 +1,17 @@
 - @page_title = 'Disabled Popular Offers'
 - @page_subtitle = 'Disabled Offers with >5 users in the last 24 hours'
 
-%table{:border=>1}
-  %tbody
+- content_for :page_head do
+  = stylesheet_link_tag 'themes/blue/style', 'jquery.autocomplete'
+
+- content_for :included_javascripts do
+  = javascript_include_tag 'jquery.tablesorter', 'jquery.autocomplete.min'
+
+%table#apps_table.tablesorter
+  %thead
     %tr
       %th # users
-      %th Offer id
+      %th Offer name
       %th Partner name
       %th Store url
       %th Price
@@ -14,6 +20,7 @@
       %th Daily budget
       %th Payment
       %th Tapjoy enabled
+  %tbody#apps_tbody
     - @offers.each do |offer|
       %tr
         %td= @offers_count_hash[offer.id]
@@ -30,3 +37,26 @@
         %td= offer.daily_budget
         %td= number_to_currency(offer.payment / 100.0)
         %td= offer.tapjoy_enabled
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $.tablesorter.addParser({
+        id: 'currency-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          s = s.replace(/$/g, '');
+          return $.tablesorter.formatFloat(s.replace(new RegExp(/[^0-9.-]/g), ''));
+        }
+      });
+      $("#apps_table").tablesorter({widgets: ['zebra'],
+        headers: {
+          4: { sorter: 'currency-column' },
+          5: { sorter: 'currency-column' },
+          6: { sorter: 'currency-column' },
+          8: { sorter: 'currency-column' }
+        },
+        sortList: [ [0, 1, 2] ]
+      });
+    });
