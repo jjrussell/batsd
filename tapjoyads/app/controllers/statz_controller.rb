@@ -46,11 +46,11 @@ class StatzController < WebsiteController
     end
     
     unless params[:end_date].blank?
-      @end_time = Time.zone.parse(params[:end_date]).beginning_of_day
+      @end_time = Time.zone.parse(params[:end_date]).end_of_day
       @end_time = now if @end_time <= @start_time
     end
     
-    if params[:granularity] == 'daily'
+    if params[:granularity] == 'daily' || @end_time - @start_time > 7.days
       @granularity = :daily
       granularity_interval = 1.day
     else
@@ -67,7 +67,7 @@ class StatzController < WebsiteController
     while time < @end_time
       @intervals << time.to_s(:pub_ampm)
       
-      if params[:granularity] == 'daily'
+      if @granularity == :daily
         @x_labels << time.strftime('%m-%d')
       else
         @x_labels << time.to_s(:time)

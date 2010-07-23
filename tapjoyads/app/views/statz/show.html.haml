@@ -12,9 +12,7 @@
   \-
   %input.end{:name => 'end_date', :value => "#{@end_time.strftime('%m/%d/%Y')}"}
   
-  %select{:name => 'granularity'}
-    %option{:value => 'daily', :selected => "#{'selected' if @granularity == :daily}" } Daily
-    %option{:value => 'hourly', :selected => "#{'selected' if @granularity == :hourly}" } Hourly
+  = select_tag('granularity', options_for_select({ 'Daily' => :daily, 'Hourly' => :hourly }, @granularity))
   
   %input{:type => 'submit', :value => 'Change' }
 
