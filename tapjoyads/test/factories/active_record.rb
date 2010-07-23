@@ -26,19 +26,19 @@ Factory.define :payout do |payout|
 end
 
 Factory.define :app do |app|
-  
+  app.association :partner
 end
 
-Factory.define :email_offer do |offer|
-  
+Factory.define :email_offer do |email_offer|
+  email_offer.association :partner
 end
 
-Factory.define :offerpal_offer do |offer|
-  
+Factory.define :offerpal_offer do |offerpal_offer|
+  offerpal_offer.association :partner
 end
 
-Factory.define :rating_offer do |offer|
-  
+Factory.define :rating_offer do |rating_offer|
+  rating_offer.association :partner
 end
 
 Factory.define :offer do |offer|
@@ -53,6 +53,6 @@ Factory.define :currency do |currency|
   
 end
 
-Factory.define :monthly_accounting do |accounting|
-  
+Factory.define :monthly_accounting do |monthly_accounting|
+  monthly_accounting.association :partner
 end
