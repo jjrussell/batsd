@@ -11,7 +11,8 @@
 
 ActiveRecord::Schema.define(:version => 20100715184418) do
 
-  create_table "apps", :force => true do |t|
+  create_table "apps", :id => false, :force => true do |t|
+    t.string   "id",                    :limit => 36,                    :null => false
     t.string   "partner_id",            :limit => 36,                    :null => false
     t.string   "name",                                                   :null => false
     t.text     "description"
@@ -37,7 +38,8 @@ ActiveRecord::Schema.define(:version => 20100715184418) do
   add_index "apps", ["name"], :name => "index_apps_on_name"
   add_index "apps", ["partner_id"], :name => "index_apps_on_partner_id"
 
-  create_table "conversions", :force => true do |t|
+  create_table "conversions", :id => false, :force => true do |t|
+    t.string   "id",                  :limit => 36, :null => false
     t.string   "reward_id",           :limit => 36
     t.string   "advertiser_offer_id", :limit => 36
     t.string   "publisher_app_id",    :limit => 36, :null => false
@@ -55,7 +57,8 @@ ActiveRecord::Schema.define(:version => 20100715184418) do
   add_index "conversions", ["publisher_app_id"], :name => "index_conversions_on_publisher_app_id"
   add_index "conversions", ["reward_id"], :name => "index_conversions_on_reward_id"
 
-  create_table "currencies", :force => true do |t|
+  create_table "currencies", :id => false, :force => true do |t|
+    t.string   "id",                   :limit => 36,                                                  :null => false
     t.string   "app_id",               :limit => 36,                                                  :null => false
     t.string   "name"
     t.integer  "conversion_rate",                                                  :default => 100,   :null => false
@@ -79,7 +82,8 @@ ActiveRecord::Schema.define(:version => 20100715184418) do
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
   add_index "currencies", ["id"], :name => "index_currencies_on_id", :unique => true
 
-  create_table "email_offers", :force => true do |t|
+  create_table "email_offers", :id => false, :force => true do |t|
+    t.string   "id",             :limit => 36, :null => false
     t.string   "partner_id",     :limit => 36, :null => false
     t.string   "name",                         :null => false
     t.text     "description"
@@ -92,7 +96,8 @@ ActiveRecord::Schema.define(:version => 20100715184418) do
   add_index "email_offers", ["name"], :name => "index_email_offers_on_name"
   add_index "email_offers", ["partner_id"], :name => "index_email_offers_on_partner_id"
 
-  create_table "monthly_accountings", :force => true do |t|
+  create_table "monthly_accountings", :id => false, :force => true do |t|
+    t.string   "id",                         :limit => 36, :null => false
     t.string   "partner_id",                 :limit => 36, :null => false
     t.integer  "month",                                    :null => false
     t.integer  "year",                                     :null => false
@@ -117,7 +122,8 @@ ActiveRecord::Schema.define(:version => 20100715184418) do
   add_index "monthly_accountings", ["partner_id", "month", "year"], :name => "index_monthly_accountings_on_partner_id_and_month_and_year", :unique => true
   add_index "monthly_accountings", ["partner_id"], :name => "index_monthly_accountings_on_partner_id"
 
-  create_table "offerpal_offers", :force => true do |t|
+  create_table "offerpal_offers", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36, :null => false
     t.string   "partner_id",  :limit => 36, :null => false
     t.string   "offerpal_id",               :null => false
     t.string   "name",                      :null => false
@@ -131,7 +137,8 @@ ActiveRecord::Schema.define(:version => 20100715184418) do
   add_index "offerpal_offers", ["offerpal_id"], :name => "index_offerpal_offers_on_offerpal_id", :unique => true
   add_index "offerpal_offers", ["partner_id"], :name => "index_offerpal_offers_on_partner_id"
 
-  create_table "offers", :force => true do |t|
+  create_table "offers", :id => false, :force => true do |t|
+    t.string   "id",                                :limit => 36,                                                  :null => false
     t.string   "partner_id",                        :limit => 36,                                                  :null => false
     t.string   "item_id",                           :limit => 36,                                                  :null => false
     t.string   "item_type",                                                                                        :null => false
@@ -179,7 +186,8 @@ ActiveRecord::Schema.define(:version => 20100715184418) do
   add_index "offers", ["partner_id"], :name => "index_offers_on_partner_id"
   add_index "offers", ["user_enabled", "tapjoy_enabled"], :name => "index_offers_on_user_enabled_and_tapjoy_enabled"
 
-  create_table "orders", :force => true do |t|
+  create_table "orders", :id => false, :force => true do |t|
+    t.string   "id",             :limit => 36,                :null => false
     t.string   "partner_id",     :limit => 36,                :null => false
     t.string   "payment_txn_id", :limit => 36
     t.string   "refund_txn_id",  :limit => 36
@@ -196,7 +204,8 @@ ActiveRecord::Schema.define(:version => 20100715184418) do
   add_index "orders", ["id"], :name => "index_orders_on_id", :unique => true
   add_index "orders", ["partner_id"], :name => "index_orders_on_partner_id"
 
-  create_table "partner_assignments", :force => true do |t|
+  create_table "partner_assignments", :id => false, :force => true do |t|
+    t.string "id",         :limit => 36, :null => false
     t.string "user_id",    :limit => 36, :null => false
     t.string "partner_id", :limit => 36, :null => false
   end
@@ -205,21 +214,23 @@ ActiveRecord::Schema.define(:version => 20100715184418) do
   add_index "partner_assignments", ["partner_id"], :name => "index_partner_assignments_on_partner_id"
   add_index "partner_assignments", ["user_id", "partner_id"], :name => "index_partner_assignments_on_user_id_and_partner_id", :unique => true
 
-  create_table "partners", :force => true do |t|
+  create_table "partners", :id => false, :force => true do |t|
+    t.string   "id",                 :limit => 36,                        :null => false
     t.string   "contact_name"
     t.string   "contact_phone"
-    t.integer  "balance",            :default => 0,         :null => false
-    t.integer  "pending_earnings",   :default => 0,         :null => false
+    t.integer  "balance",                          :default => 0,         :null => false
+    t.integer  "pending_earnings",                 :default => 0,         :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "payout_frequency",   :default => "monthly", :null => false
-    t.integer  "next_payout_amount", :default => 0,         :null => false
+    t.string   "payout_frequency",                 :default => "monthly", :null => false
+    t.integer  "next_payout_amount",               :default => 0,         :null => false
     t.string   "name"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
 
-  create_table "payouts", :force => true do |t|
+  create_table "payouts", :id => false, :force => true do |t|
+    t.string   "id",             :limit => 36,                :null => false
     t.integer  "amount",                       :default => 0, :null => false
     t.integer  "month",                                       :null => false
     t.integer  "year",                                        :null => false
@@ -233,7 +244,8 @@ ActiveRecord::Schema.define(:version => 20100715184418) do
   add_index "payouts", ["id"], :name => "index_payouts_on_id", :unique => true
   add_index "payouts", ["partner_id"], :name => "index_payouts_on_partner_id"
 
-  create_table "rating_offers", :force => true do |t|
+  create_table "rating_offers", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36, :null => false
     t.string   "partner_id",  :limit => 36, :null => false
     t.string   "app_id",      :limit => 36, :null => false
     t.string   "name",                      :null => false
@@ -246,7 +258,8 @@ ActiveRecord::Schema.define(:version => 20100715184418) do
   add_index "rating_offers", ["id"], :name => "index_rating_offers_on_id", :unique => true
   add_index "rating_offers", ["partner_id"], :name => "index_rating_offers_on_partner_id"
 
-  create_table "role_assignments", :force => true do |t|
+  create_table "role_assignments", :id => false, :force => true do |t|
+    t.string "id",           :limit => 36, :null => false
     t.string "user_id",      :limit => 36, :null => false
     t.string "user_role_id", :limit => 36, :null => false
   end
@@ -254,8 +267,9 @@ ActiveRecord::Schema.define(:version => 20100715184418) do
   add_index "role_assignments", ["id"], :name => "index_role_assignments_on_id", :unique => true
   add_index "role_assignments", ["user_id", "user_role_id"], :name => "index_role_assignments_on_user_id_and_user_role_id", :unique => true
 
-  create_table "user_roles", :force => true do |t|
-    t.string   "name",       :null => false
+  create_table "user_roles", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36, :null => false
+    t.string   "name",                     :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -263,7 +277,8 @@ ActiveRecord::Schema.define(:version => 20100715184418) do
   add_index "user_roles", ["id"], :name => "index_user_roles_on_id", :unique => true
   add_index "user_roles", ["name"], :name => "index_user_roles_on_name", :unique => true
 
-  create_table "users", :force => true do |t|
+  create_table "users", :id => false, :force => true do |t|
+    t.string   "id",                 :limit => 36, :null => false
     t.string   "username",                         :null => false
     t.string   "email"
     t.string   "crypted_password"

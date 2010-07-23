@@ -58,3 +58,21 @@ module ActiveSupport
     
   end
 end
+
+module ActiveRecord
+  module ConnectionAdapters
+    class MysqlAdapter
+      alias_method :orig_pk_and_sequence_for, :pk_and_sequence_for
+      
+      def pk_and_sequence_for(table)
+        keys = []
+        result = execute("describe #{quote_table_name(table)}")
+        result.each_hash do |h|
+          keys << h["Field"] if h["Key"] == "PRI" && h["Type"] == "int(11)"
+        end
+        result.free
+        keys.length == 1 ? [keys.first, nil] : nil
+      end
+    end
+  end
+end
