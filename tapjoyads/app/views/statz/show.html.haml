@@ -3,7 +3,22 @@
 .icon= image_tag(@offer.get_icon_url, :size => '56x56')
 %h1= @offer.name
 
-%p For: #{@start_time.to_s(:pub_ampm_sec)} UTC - #{@end_time.to_s(:pub_ampm_sec)} UTC
+%p#display_date
+  For: #{@start_time.to_s(:pub_ampm_sec)} UTC - #{@end_time.to_s(:pub_ampm_sec)} UTC. 
+  Granularity: #{@granularity.to_s}.
+  %a{:href => 'javascript:void()'} [Change]
+%form#change_date{:method => 'get'}
+  %input.start{:name => 'date', :value => "#{@start_time.strftime('%m/%d/%Y')}" }
+  \-
+  %input.end{:name => 'end_date', :value => "#{@end_time.strftime('%m/%d/%Y')}"}
+  
+  %select{:name => 'granularity'}
+    %option{:value => 'daily', :selected => "#{'selected' if @granularity == :daily}" } Daily
+    %option{:value => 'hourly', :selected => "#{'selected' if @granularity == :hourly}" } Hourly
+  
+  %input{:type => 'submit', :value => 'Change' }
+
+  
 
 - if permitted_to? :edit, :statz
   %p= link_to('[Edit Offer]', edit_statz_path(@offer.id))
@@ -107,11 +122,15 @@
     .tooltip
 
 - content_for :page_head do
+  = stylesheet_link_tag 'jquery-ui-1.8.2.custom'
   = javascript_include_tag 'rgraph/RGraph.common.core'
   = javascript_include_tag 'rgraph/RGraph.common.tooltips'
   = javascript_include_tag 'rgraph/RGraph.line'
   :plain
     <!--[if IE]><script src="/javascripts/excanvas.js"></script><![endif]-->
+  
+- content_for :included_javascripts do
+  = javascript_include_tag 'jquery-ui-1.8.2.custom.min'
   
 - content_for :page_javascript do
   :plain
@@ -296,6 +315,14 @@
       drawLargeGraph(ratingsData, 'ratings');
       drawLargeGraph(virtualGoodsData, 'virtual_goods');
       drawLargeGraph(adsData, 'ads');
+      
+      $('#change_date .start').datepicker();
+      $('#change_date .end').datepicker();
+      
+      $('#display_date a').click(function() {
+        $('#display_date').hide();
+        $('#change_date').show();
+      })
     });
     
     function setGraphProperties(g, options) {
@@ -506,4 +533,8 @@
     
     .graph {
       float: left;
+    }
+
+    #change_date {
+      display: none;
     }

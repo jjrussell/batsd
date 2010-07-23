@@ -41,22 +41,24 @@ class StatzController < WebsiteController
     @end_time = now
     unless params[:date].blank?
       @start_time = Time.zone.parse(params[:date]).beginning_of_day
+      @start_time = now.beginning_of_hour - 23.hours if @start_time > now
       @end_time = @start_time + 24.hours
     end
     
     unless params[:end_date].blank?
       @end_time = Time.zone.parse(params[:end_date]).beginning_of_day
+      @end_time = now if @end_time <= @start_time
     end
     
     if params[:granularity] == 'daily'
-      granularity_option = :daily
+      @granularity = :daily
       granularity_interval = 1.day
     else
-      granularity_option = :hourly
+      @granularity = :hourly
       granularity_interval = 1.hour
     end
     
-    @stats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time, :granularity => granularity_option }).stats
+    @stats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity }).stats
     
     @intervals = []
     @x_labels = []
