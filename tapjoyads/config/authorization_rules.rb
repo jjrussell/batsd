@@ -24,7 +24,7 @@ authorization do
   
   role :payops do
     includes :tools
-    has_permission_on :tools, :to => [ :new_order, :create_order, :payouts, :create_payout, :money, :new_transfer, :create_transfer, :disabled_popular_offers ]
+    has_permission_on :tools, :to => [ :new_order, :create_order, :payouts, :create_payout, :money, :new_transfer, :create_transfer ]
   end
   
   role :executive do
@@ -35,6 +35,7 @@ authorization do
   
   role :statz do
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :search, :last_run_times, :udids, :udid ]
+    has_permission_on :tools, :to => [ :disabled_popular_offers ]
   end
   
   role :admin do
