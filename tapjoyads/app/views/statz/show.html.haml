@@ -58,7 +58,7 @@
   %h3
   .totals
   .holder
-    %canvas#connects_graph{:width => '500px', :height => '300px'}
+    %canvas#connects_graph{:width => '550px', :height => '330px'}
     .bar
     .tooltip
 
@@ -66,7 +66,7 @@
   %h3
   .totals
   .holder
-    %canvas#installs_spend_graph{:width => '500px', :height => '300px'}
+    %canvas#installs_spend_graph{:width => '550px', :height => '330px'}
     .bar
     .tooltip
 
@@ -74,7 +74,7 @@
   %h3
   .totals
   .holder
-    %canvas#installs_rank_graph{:width => '500px', :height => '300px'}
+    %canvas#installs_rank_graph{:width => '550px', :height => '330px'}
     .bar
     .tooltip
 
@@ -82,7 +82,7 @@
   %h3
   .totals
   .holder
-    %canvas#published_installs_graph{:width => '500px', :height => '300px'}
+    %canvas#published_installs_graph{:width => '550px', :height => '330px'}
     .bar
     .tooltip
 
@@ -90,7 +90,7 @@
   %h3
   .totals
   .holder
-    %canvas#published_offers_graph{:width => '500px', :height => '300px'}
+    %canvas#published_offers_graph{:width => '550px', :height => '330px'}
     .bar
     .tooltip
 
@@ -98,7 +98,7 @@
   %h3
   .totals
   .holder
-    %canvas#ratings_graph{:width => '500px', :height => '300px'}
+    %canvas#ratings_graph{:width => '550px', :height => '330px'}
     .bar
     .tooltip
 
@@ -107,7 +107,7 @@
   %h3
   .totals
   .holder
-    %canvas#virtual_goods_graph{:width => '500px', :height => '300px'}
+    %canvas#virtual_goods_graph{:width => '550px', :height => '330px'}
     .bar
     .tooltip
 
@@ -115,7 +115,7 @@
   %h3
   .totals
   .holder
-    %canvas#ads_graph{:width => '500px', :height => '300px'}
+    %canvas#ads_graph{:width => '550px', :height => '330px'}
     .bar
     .tooltip
 
@@ -351,7 +351,7 @@
       $('#' + id + '>h3').html(obj['name'])
       $('#' + id + '>.totals').html(getTotalsHtml(obj))
 
-      var gutterPx = 50;
+      var gutterPx = 60;
       var hMarginPx = 5;
       var numPoints = obj['intervals'].length - 1;
       
