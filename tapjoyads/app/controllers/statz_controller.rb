@@ -95,6 +95,17 @@ class StatzController < WebsiteController
   def update
     params[:offer][:device_types] = params[:offer][:device_types].to_json
     if @offer.update_attributes(params[:offer])
+      
+      mssql_url = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/Service1.asmx/SetAppData?Password=stephenisawesome'
+      mssql_url += "&AppID=#{@offer.id}"
+      mssql_url += "&Payment=#{@offer.payment}"
+      mssql_url += "&Budget=#{@offer.daily_budget}"
+      if @offer.item_type == 'App'
+        mssql_url += "&URL=#{CGI::escape(@offer.item.mssql_store_url)}"
+      end
+      
+      Downloader.get_with_retry(mssql_url, {:timeout => 30})
+      
       flash[:notice] = "Successfully updated #{@offer.name}"
       redirect_to statz_path(@offer)
     else

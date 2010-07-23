@@ -198,7 +198,7 @@ class ImportMssqlController < ApplicationController
     end
     offer.user_enabled = params[:payment_for_install].to_i > 0
     offer.payment = params[:payment_for_install].to_i
-    offer.daily_budget = params[:daily_budget].to_i unless offer.id == 'b330fd42-12f8-42ff-9f46-427a9b8bfad9'
+    offer.daily_budget = params[:daily_budget].to_i
     offer.next_stats_aggregation_time = Time.zone.now if offer.next_stats_aggregation_time.blank?
     offer.stats_aggregation_interval = 3600 if offer.stats_aggregation_interval.blank?
     offer.created_at = offer.item.created_at

@@ -42,10 +42,16 @@
   .field
     = f.label(:device_types)
     = f.select(:device_types, options_for_select(Offer::ALL_DEVICES, @offer.get_device_types), {}, :multiple => true)
-  - if @offer.id == 'b330fd42-12f8-42ff-9f46-427a9b8bfad9'
+  .field
+    = f.label(:payment, 'Payment (cents)')
+    = f.text_field(:payment)
+  .field
+    = f.label(:daily_budget, 'Daily install budget')
+    = f.text_field(:daily_budget)
+  - if @offer.item_type == 'App'
     .field
-      = f.label(:daily_budget, 'Daily install budget')
-      = f.text_field(:daily_budget)
+      = f.label(:store_id, 'Store ID')
+      = f.text_field(:store_id)
   .field
     = f.submit('Save Changes')
     
