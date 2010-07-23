@@ -5,7 +5,9 @@
 .right {
   float: right;
 }
-
+.centered {
+  text-align: center;
+}
 .clear {
   clear: both;
 }
@@ -36,4 +38,18 @@ div.flash {
 
 #flash_error {
   background-color: red;
+}
+
+input.date {
+  width: 100px;
+}
+#billing-summary table tr.subheader th {
+  font-size: 10px;
+}
+#billing-summary table tr.statement td {
+  border: 1px solid black;
+}
+#billing-summary table td.currency {
+  text-align: right;
+  min-width: 120px;
 }

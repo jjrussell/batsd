@@ -18,7 +18,11 @@ class Payout < ActiveRecord::Base
   validates_inclusion_of :status, :in => STATUS_CODES
   
   after_create :update_balance
-  
+
+  def <=> other
+    [year, month] <=> [other.year, other.month]
+  end
+
 private
   
   def update_balance

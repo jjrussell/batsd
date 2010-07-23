@@ -1,0 +1,7 @@
+%tr.statement
+  %th= Date::MONTHNAMES[statement[:month].to_i]
+  %td.currency= number_to_currency(statement.earnings/100.0)
+  %td.currency= number_to_currency(statement.payouts/100.0)
+  %td.currency= number_to_currency(statement.spend/100.0)
+  %td.currency= number_to_currency(statement.orders/100.0)
+  %td.currency= number_to_currency((statement.ending_balance + statement.ending_pending_earnings)/100.0)

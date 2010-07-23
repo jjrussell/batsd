@@ -113,5 +113,16 @@ class MonthlyAccounting < ActiveRecord::Base
     
     record
   end
-  
+
+  def orders
+    website_orders + invoiced_orders + marketing_orders + transfer_orders
+  end
+
+  def payouts
+    payment_payouts + transfer_payouts
+  end
+
+  def <=> other
+    [year, month] <=> [other.year, other.month]
+  end
 end

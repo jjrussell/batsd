@@ -1,3 +1,46 @@
 - @page_title = 'Billing'
+- @page_subtitle = 'Summary'
 
-%h1 Billing
+.box-full
+  .right= button_to 'Add funds', add_funds_billing_path
+  %h2 Billing Summary
+  .clear
+  .left
+    Current Balance:
+    = number_to_currency(@current_balance/100.0)
+  .right
+    Last Payment:
+    = number_to_currency(@last_payment/100.0)
+  .centered
+    Last Payout:
+    = number_to_currency(@last_payout/100.0)
+  .clear
+  %hr/
+.box-full
+  #billing-date-range
+    - form_tag({:action => 'index'}) do
+      = text_field 'from_date', @from_date, :class => 'date'
+      to
+      = text_field 'to_date', @to_date, :class => 'date'
+      = submit_tag 'Go'
+  #billing-summary
+    - unless @statements.blank?
+      %table
+        %thead
+        %tbody
+          %tr
+            %th &nbsp;
+            %th{:colspan => 2} Earnings
+            %th{:colspan => 2} Advertising Cost
+            %th Balance
+          %tr.subheader
+            %th &nbsp;
+            %th Earnings
+            %th Payouts
+            %th Advertising Cost
+            %th Orders
+            %th &nbsp;
+          = render :partial => 'statement', :collection => @statements
+    - else
+      No Statements available for this date range
+    = button_to 'Export', {:action => 'export', :date_from => @date_from, :date_to => @date_to}
