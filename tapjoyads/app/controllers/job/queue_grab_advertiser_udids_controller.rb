@@ -18,7 +18,7 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
     else
       # this month, up to now
       date = Time.zone.now
-      save_udids(@advertiser_app_id, date)
+      not_empty = save_udids(@advertiser_app_id, date)
 
       # finalize last month, if necessary
       path = App.udid_s3_key(@advertiser_app_id, date)
@@ -27,18 +27,14 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
         save_udids(@advertiser_app_id, 1.month.ago(date))
       end
 
-      # update latest to current path
-      @bucket.put("latest/#{@advertiser_app_id}", path)
-
-      # getting udid file given advertiser_id
-      # path = bucket.get("latest/#{app_id}") rescue nil
-      # udids = path ? bucket.get(path) : ""
+      # update latest to current path, unless empty
+      @bucket.put("latest/#{@advertiser_app_id}", path) if not_empty
     end
   end
 
   def save_udids(app_id, date)
     path = App.udid_s3_key(app_id, date)
-    first_day = Time.zone.parse("#{date.strftime("%Y-%m")}-01")
+    first_day = date.beginning_of_month
     last_day = 1.month.since(first_day) # first day of next month
     conditions = ["udid is not null",
       "advertiser_app_id = '#{app_id}'",
@@ -51,6 +47,6 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
     end
     udids = udids.compact.uniq
     @bucket.put(path, udids.join("\n"), {}, 'authenticated-read') unless udids.blank?
-    month = Time.zone.now.month
+    return !udids.blank?
   end
 end
