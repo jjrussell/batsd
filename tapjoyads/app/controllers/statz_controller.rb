@@ -107,7 +107,8 @@ class StatzController < WebsiteController
         mssql_url += "&AppID=#{@offer.id}"
         mssql_url += "&Payment=#{@offer.payment}"
         mssql_url += "&Budget=#{@offer.daily_budget}"
-        mssql_url += "&URL=#{CGI::escape(app.mssql_store_url)}" unless app.nil?
+        mssql_url += "&URL="
+        mssql_url += "#{CGI::escape(app.mssql_store_url)}" unless app.nil?
         
         Downloader.get_with_retry(mssql_url, {:timeout => 30})
       end
