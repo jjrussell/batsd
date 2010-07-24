@@ -32,9 +32,10 @@
   .metadata Offer type: #{@offer.item_type}
   - if @offer.item_type == 'App'
     .metadata Store id: #{@offer.item.store_id.blank? ? 'None' : link_to(@offer.item.store_id, @offer.item.final_store_url)}
-    .metadata Use raw url: #{@offer.item.use_raw_url?}
-    - if @offer.item.use_raw_url?
-      .metadata Raw url: #{@offer.item.store_url}
+    .metadata
+      Use raw url: #{@offer.item.use_raw_url?}
+      - if @offer.item.use_raw_url?
+        = link_to('[url]', @offer.item.store_url)
   .metadata Price: #{number_to_currency(@offer.price / 100.0)}
   .metadata Balance: #{number_to_currency(@offer.partner.balance / 100.0)}
   .metadata Pending Earnings: #{number_to_currency(@offer.partner.pending_earnings / 100.0)}
