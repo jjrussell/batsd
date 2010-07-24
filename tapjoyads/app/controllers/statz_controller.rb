@@ -96,12 +96,18 @@ class StatzController < WebsiteController
     params[:offer][:device_types] = params[:offer][:device_types].to_json
     if @offer.update_attributes(params[:offer])
       
-      if @offer.item_type == 'App'
+      app = nil
+      unless params[:app_store_id].blank?
+        app = @offer.item
+        app.update_attribute(:store_id, params[:app_store_id])
+      end
+      
+      if [ 'App', 'EmailOffer' ].include?(@offer.item_type)
         mssql_url = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/Service1.asmx/SetAppData?Password=stephenisawesome'
         mssql_url += "&AppID=#{@offer.id}"
         mssql_url += "&Payment=#{@offer.payment}"
         mssql_url += "&Budget=#{@offer.daily_budget}"
-        mssql_url += "&URL=#{CGI::escape(@offer.item.mssql_store_url)}"
+        mssql_url += "&URL=#{CGI::escape(app.mssql_store_url)}" unless app.nil?
         
         Downloader.get_with_retry(mssql_url, {:timeout => 30})
       end

@@ -224,18 +224,7 @@ class Offer < ActiveRecord::Base
         show_rate_reject?(device_app_list) ||
         flixter_reject?(publisher_app, device_app_list)
   end
-
-  def store_id
-    item_type == 'App' ? item.store_id : ''
-  end
   
-  def store_id=(s)
-    if item_type == 'App'
-      item.store_id = s
-      item.save!
-    end
-  end
-
 private
   
   def is_disabled?(publisher_app, currency)
