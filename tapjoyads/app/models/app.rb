@@ -44,14 +44,10 @@ class App < ActiveRecord::Base
   end
   
   def final_store_url
-    if use_raw_url?
-      read_attribute(:store_url)
+    if platform == 'android'
+      "http://www.cyrket.com/p/android/#{store_id}"
     else
-      if platform == 'android'
-        "http://www.cyrket.com/p/android/#{store_id}"
-      else
-        "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
-      end
+      "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
     end
   end
   
