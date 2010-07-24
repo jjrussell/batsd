@@ -225,7 +225,7 @@ class GetadController < ApplicationController
     image_name = "socialreach-#{num}.jpg"
     
     image = Mc.get_and_put("img.s3.#{image_name.hash}") do
-      bucket = RightAws::S3.new.bucket('adimages')
+      bucket = S3.bucket(BucketNames::ADIMAGES)
       image_content = bucket.get(image_name)
       Base64.encode64 image_content
     end
@@ -262,7 +262,7 @@ class GetadController < ApplicationController
     @tapjoy_ad.ad_id = ad_id
     
     image = Mc.get_and_put("img.s3.#{ad_id}") do
-      bucket = RightAws::S3.new.bucket('publisher-ads')
+      bucket = S3.bucket(BucketNames::PUBLISHER_ADS)
       image_content = bucket.get("base64.#{ad_id}")
     end
     

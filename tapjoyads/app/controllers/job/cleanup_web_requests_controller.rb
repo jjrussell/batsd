@@ -2,16 +2,17 @@ class Job::CleanupWebRequestsController < Job::SqsReaderController
   
   def initialize
     super QueueNames::CLEANUP_WEB_REQUESTS
-    @s3 = RightAws::S3.new
-    @bucket = RightAws::S3::Bucket.create(@s3, 'web-requests')
   end
   
   def backup_date
     date = params[:date]
     
-    on_message(date)
-    
-    render :text => 'ok'
+    if date =~ /[0-9]{4}-[0-9]{2}-[0-9]{2}/
+      on_message(date)
+      render :text => 'ok'
+    else
+      render :text => 'invalid date'
+    end
   end
   
   def recover_domain
@@ -21,7 +22,7 @@ class Job::CleanupWebRequestsController < Job::SqsReaderController
     s3_name = "#{RUN_MODE_PREFIX}#{domain_name}.sdb"
     
     gzip_file = open(gzip_file_name, 'w')
-    @s3.interface.get(@bucket.full_name, s3_name) do |chunk|
+    S3.s3.interface.get(BucketNames::WEB_REQUESTS, s3_name) do |chunk|
       gzip_file.write(chunk)
     end
     gzip_file.close
@@ -46,12 +47,12 @@ class Job::CleanupWebRequestsController < Job::SqsReaderController
     render :text => 'ok'
   end
   
-  private
+private
   
   def on_message(message)
     # Delete the message immediately. This is sure to take longer than 60 seconds.
     # If this fails, it will automatically be retried on later days.
-    message.delete
+    message.delete if message.is_a?(RightAws::SqsGen2::Message)
     
     date_string = message.to_s
     
@@ -64,7 +65,7 @@ class Job::CleanupWebRequestsController < Job::SqsReaderController
   # Backs up the specified domain name to s3.
   # If no errors have occur while backing up, the domain is deleted.
   def archive_domain(domain_name)
-    SdbBackup.backup_domain(domain_name, 'web-requests')
+    SdbBackup.backup_domain(domain_name, BucketNames::WEB_REQUESTS)
     
     retries = 3
     begin

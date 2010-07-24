@@ -3,7 +3,7 @@ class Job::CleanupStoreClickController < Job::SqsReaderController
     super QueueNames::CLEANUP_STORE_CLICK
   end
 
-  private
+private
   
   def on_message(message)
     message.delete
@@ -12,7 +12,7 @@ class Job::CleanupStoreClickController < Job::SqsReaderController
     start_time = Time.zone.parse(date_string).beginning_of_day.to_i
     end_time = start_time + 24.hours
     
-    SdbBackup.backup_domain('store-click', 'store-clicks',
+    SdbBackup.backup_domain('store-click', BucketNames::STORE_CLICKS,
         :where => "click_date >= '#{start_time}' and click_date < '#{end_time}'",
         :delete_rows => true, 
         :suffix => "_#{date_string}")

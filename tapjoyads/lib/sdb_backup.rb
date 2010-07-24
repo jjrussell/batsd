@@ -70,7 +70,7 @@ class SdbBackup
   end
   
   def self.write_to_s3(s3_name, local_name, bucket_name, num_retries)
-    bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + bucket_name)
+    bucket = S3.bucket(bucket_name)
     
     while bucket.key(s3_name).exists?
       s3_name += '_2'

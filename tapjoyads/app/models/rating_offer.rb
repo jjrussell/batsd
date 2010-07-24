@@ -67,7 +67,7 @@ private
   def create_icon
     retries = 3
     begin
-      bucket = RightAws::S3.new.bucket('app_data')
+      bucket = S3.bucket(BucketNames::APP_DATA)
       image_data = bucket.get('icons/ratestar.png')
       bucket.put("icons/#{id}.png", image_data, {}, 'public-read')
     rescue

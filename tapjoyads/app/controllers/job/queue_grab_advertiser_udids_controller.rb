@@ -10,7 +10,7 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
   def on_message(message)
     messages = message.to_s.split(':')
     @advertiser_app_id = messages[0]
-    @bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'ad-udids')
+    @bucket = S3.bucket(BucketNames::AD_UDIDS)
 
     if messages[1] # date was hard-coded
       date = Time.zone.parse(messages[1]) rescue Time.zone.now

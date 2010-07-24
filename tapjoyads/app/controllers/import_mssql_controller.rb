@@ -61,7 +61,7 @@ class ImportMssqlController < ApplicationController
     end
     vg.extra_attributes = extra_attributes
     
-    bucket = RightAws::S3.new.bucket('virtual_goods')
+    bucket = S3.bucket(BucketNames::VIRTUAL_GOODS)
     
     if vg.has_icon = (params[:thumb_image] != 'None')
       thumb_image = Downloader.get(params[:thumb_image], :timeout => 30)
@@ -149,7 +149,7 @@ class ImportMssqlController < ApplicationController
     ad.save
     
     #store an image in s3
-    bucket = RightAws::S3.new.bucket('publisher-ads')
+    bucket = S3.bucket(BucketNames::PUBLISHER_ADS)
     bucket.put("raw.#{ad_id}", params[:image])
     bucket.put("base64.#{ad_id}", Base64.b64encode(params[:image]))
     
@@ -159,7 +159,7 @@ class ImportMssqlController < ApplicationController
   def app
     return unless verify_params([:app_id])
 
-    bucket = RightAws::S3.new.bucket('app_data')
+    bucket = S3.bucket(BucketNames::APP_DATA)
     bucket.put("icons/#{params[:app_id]}.png", params[:icon], {}, 'public-read')
     bucket.put("screenshots/#{params[:app_id]}.png", params[:screenshot], {}, 'public-read')
     Mc.put("icon.s3.#{params[:app_id]}", Base64.encode64(params[:icon]))

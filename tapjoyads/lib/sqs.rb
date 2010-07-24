@@ -15,7 +15,7 @@ class Sqs
     @@queues[queue_name]
   end
   
-  def self.send_message(queue_name, message)
+  def self.send_message(queue_name, message, write_to_s3_on_failure = true)
     queue = Sqs.queue(queue_name)
     
     num_retries = 1
@@ -30,10 +30,12 @@ class Sqs
       # If we've gotten here, the message has failed to send to sqs. Write the message to S3.
       Notifier.alert_new_relic(FailedToWriteToSqsError)
       
-      s3_message = {:queue_name => queue_name, :message => message}.to_json
+      if write_to_s3_on_failure
+        s3_message = {:queue_name => queue_name, :message => message}.to_json
       
-      bucket = RightAws::S3.new(nil, nil, :multi_thread => true).bucket('failed-sqs-writes')
-      bucket.put(UUIDTools::UUID.random_create.to_s, s3_message)
+        bucket = S3.bucket(BucketNames::FAILED_SQS_WRITES)
+        bucket.put(UUIDTools::UUID.random_create.to_s, s3_message)
+      end
     end
   end
 end

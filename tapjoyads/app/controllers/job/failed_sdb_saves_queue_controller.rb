@@ -9,11 +9,9 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
   def on_message(message)
     json = JSON.parse(message.to_s)
     
-    s3 = RightAws::S3.new(nil, nil, :multi_thread => true)
-    
     options = {}
     
-    bucket = s3.bucket('failed-sdb-saves')
+    bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
     
     begin
       sdb_string = bucket.get(json['uuid'])

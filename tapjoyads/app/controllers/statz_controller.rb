@@ -16,7 +16,7 @@ class StatzController < WebsiteController
   end
   
   def udids
-    bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'ad-udids')
+    bucket = S3.bucket(BucketNames::AD_UDIDS)
     @keys = bucket.keys('prefix' => App.udid_s3_key(@offer.id))
   end
 
@@ -26,7 +26,7 @@ class StatzController < WebsiteController
       else
         Time.zone.now
       end
-    bucket = RightAws::S3.new.bucket(RUN_MODE_PREFIX + 'ad-udids')
+    bucket = S3.bucket(BucketNames::AD_UDIDS)
     @udids = bucket.get(App.udid_s3_key(@offer.id, @date))
 
     send_data(@udids,
