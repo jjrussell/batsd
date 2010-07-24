@@ -230,8 +230,10 @@ class Offer < ActiveRecord::Base
   end
   
   def store_id=(s)
-    item.store_id = s
-    item.save!
+    if item_type == 'App'
+      item.store_id = s
+      item.save!
+    end
   end
 
 private
