@@ -9,7 +9,7 @@ class Job::SqsReaderController < Job::JobController
   def index
     retries = 2
     begin
-      queue = RightAws::SqsGen2.new.queue(@queue_name)
+      queue = Sqs.queue(@queue_name)
     rescue RightAws::AwsError => e
       Rails.logger.info "Error creating queue object: #{e}"
       if retries > 0

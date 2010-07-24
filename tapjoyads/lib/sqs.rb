@@ -2,8 +2,21 @@
 # Functionality to write a message to sqs. If writing to sqs fails, the message will be stored in
 # the failed-sqs-writes s3 bucket.
 class Sqs
+  
+  cattr_reader :sqs
+  @@sqs = RightAws::SqsGen2.new(nil, nil, { :multi_thread => true })
+  
+  @@queues = {}
+  
+  def self.queue(queue_name, create = true, visibility = nil)
+    if @@queues[queue_name].nil? || @@queues[queue_name].name != queue_name
+      @@queues[queue_name] = @@sqs.queue(queue_name, create, visibility)
+    end
+    @@queues[queue_name]
+  end
+  
   def self.send_message(queue_name, message)
-    queue = RightAws::SqsGen2.new(nil, nil, :multi_thread => true).queue(queue_name)
+    queue = Sqs.queue(queue_name)
     
     num_retries = 1
     begin
