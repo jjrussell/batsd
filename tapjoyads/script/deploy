@@ -62,9 +62,9 @@ private
   
   def print_usage_and_exit
     puts "USAGE: script/deploy [options]"
-    puts "  -e, --environment (optional): The environment to deploy to. Can be 'test' or 'production'. Default is 'test'."
-    puts "  -v, --version (optional): The version to deploy. Defaults to 'trunk' for test deploys and will create a new branch for production deploys."
-    puts "  -f, --fast (optional): Specify this option to keep webservers in the load balancer during deploy."
+    puts "    -e, --environment (optional): The environment to deploy to. Can be 'test' or 'production'. Default is 'test'."
+    puts "    -v, --version (optional): The version to deploy. Defaults to 'trunk' for test deploys and will create a new branch for production deploys."
+    puts "    -f, --fast (optional): Specify this option to keep webservers in the load balancer during deploy."
     exit
   end
   
