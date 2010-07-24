@@ -34,8 +34,7 @@
       - tabs << { :tools     => tools_path }           if permitted_to?(:index, :tools)
       - tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :statz)
       = navigation(tabs)
-      #subtitle
-        = @page_subtitle || "#{@page_title} #{params[:action].camelcase}"
+    
     - flash.each do |name, msg|
       .flash{ :id => "flash_#{name}" }= msg
     
