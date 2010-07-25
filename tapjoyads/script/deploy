@@ -111,6 +111,9 @@ private
       f.write(settings.to_yaml)
     end
     
+    puts "Creating new deploy branch."
+    system("svn copy https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/trunk https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{@options[:version]} -m 'Creating deploy branch #{@options[:version]}'")
+    
     puts "Incrementing version in config file."
     if @options[:svn_repo]
       system("svn commit #{SERVER_CONFIG_FILENAME} -m 'Incrementing config version number to #{@options[:version]}'")
@@ -119,9 +122,6 @@ private
       system("git commit -m 'Incrementing config version number to #{@options[:version]}'")
       system("git svn dcommit")
     end
-    
-    puts "Creating new deploy branch."
-    system("svn copy https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/trunk https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{@options[:version]} -m 'Creating deploy branch #{@options[:version]}'")
   end
   
   def execute_cloudrun
