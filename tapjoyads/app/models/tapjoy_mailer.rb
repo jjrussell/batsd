@@ -22,4 +22,12 @@ class TapjoyMailer < ActionMailer::Base
     url = "http://ws.tapjoyads.com/list_signup/confirm?code=#{confirm_code}"
     body :url => url, :currency_name => currency_name, :publisher_app_name => publisher_app_name, :amount => amount
   end
+  
+  def low_conversion_rate_warning(error)
+    from "admin@tapjoy.com"
+    recipients "team@tapjoy.com"
+    subject "Low Conversion Rate Warning!"
+    body(:error => error)
+  end
+  
 end
