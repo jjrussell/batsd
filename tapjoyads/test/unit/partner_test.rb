@@ -21,9 +21,33 @@ class PartnerTest < ActiveSupport::TestCase
   should validate_numericality_of(:next_payout_amount)
   
   context "A Partner" do
+    setup do
+      @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000)
+      app = Factory(:app, :partner => @partner)
+      cutoff_date = @partner.payout_cutoff_date
+      Factory(:conversion, :publisher_app => app, :publisher_amount => 100, :created_at => (cutoff_date - 1))
+      Factory(:conversion, :publisher_app => app, :publisher_amount => 100, :created_at => cutoff_date)
+      Factory(:conversion, :publisher_app => app, :publisher_amount => 100, :created_at => (cutoff_date + 1))
+      @partner.reload
+    end
+    
+    should "calculate the next payout amount" do
+      assert_equal 10300, @partner.pending_earnings
+      @partner.calculate_next_payout_amount
+      assert_equal 10100, @partner.next_payout_amount
+    end
+    
+    should "recalculate balances" do
+      assert_equal 10300, @partner.pending_earnings
+      assert_equal 10000, @partner.balance
+      @partner.recalculate_balances
+      assert_equal 300, @partner.pending_earnings
+      assert_equal 0, @partner.balance
+    end
+    
     context "with monthly payouts" do
       setup do
-        @partner = Factory(:partner, :pending_earnings => 100000)
+        @partner.update_attribute(:payout_frequency, 'monthly')
       end
       
       should "determine payout cutoff dates from a reference date" do
@@ -32,15 +56,11 @@ class PartnerTest < ActiveSupport::TestCase
         assert_equal Time.zone.parse('2010-02-01'), @partner.payout_cutoff_date(Time.zone.parse('2010-02-04'))
         assert_equal Time.zone.parse('2010-02-01'), @partner.payout_cutoff_date(Time.zone.parse('2010-02-05'))
       end
-      
-      should "calculate the next payout amount" do
-        
-      end
     end
     
     context "with semimonthly payouts" do
       setup do
-        @partner = Factory(:partner, :payout_frequency => 'semimonthly')
+        @partner.update_attribute(:payout_frequency, 'semimonthly')
       end
       
       should "determine payout cutoff dates from a reference date" do

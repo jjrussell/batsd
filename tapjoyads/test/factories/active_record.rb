@@ -57,9 +57,9 @@ Factory.define :conversion do |conversion|
   conversion.advertiser_offer { Factory(:app).offer }
   conversion.reward_id UUIDTools::UUID.random_create.to_s
   conversion.reward_type Conversion::REWARD_TYPES['install']
-  conversion.publisher_amount 17
-  conversion.advertiser_amount -25
-  conversion.tapjoy_amount 8
+  conversion.publisher_amount 70
+  conversion.advertiser_amount -100
+  conversion.tapjoy_amount 30
 end
 
 Factory.define :currency do |currency|
