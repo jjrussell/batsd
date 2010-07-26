@@ -9,9 +9,6 @@ authorization do
     has_permission_on :support, :to => [ :index ]
   end
   
-  role :account_mgr do
-  end
-  
   role :partner do
   end
   
@@ -36,6 +33,11 @@ authorization do
   role :statz do
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :search, :last_run_times, :udids, :udid ]
     has_permission_on :tools, :to => [ :disabled_popular_offers ]
+  end
+  
+  role :account_mgr do
+    includes :payops
+    includes :statz
   end
   
   role :admin do
