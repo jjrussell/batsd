@@ -62,7 +62,10 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     end
     
     unless offer.allow_negative_balance?
-      max_paid_installs = offer.partner.balance / offer.payment
+      balance_buffer = offer.is_paid? ? 0 : 5000
+      balance = [ offer.partner.balance - balance_buffer, 0 ].max
+      
+      max_paid_installs = balance / offer.payment
       target_installs = max_paid_installs if target_installs > max_paid_installs
     end
     
