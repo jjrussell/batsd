@@ -19,9 +19,9 @@
   - unless @statements.blank?
     #billing-date-range
       %form#change_date{:method => 'get'}
-        = collection_select("billing", "start_date", @statements, :to_date, :to_mm_yyyy, :selected => @start_date)
+        = collection_select("billing", "start_date", @statements, :to_date, :to_mmm_yyyy, :selected => @start_date)
         to
-        = collection_select("billing", "end_date", @statements, :to_date, :to_mm_yyyy, :selected => @end_date)
+        = collection_select("billing", "end_date", @statements, :to_date, :to_mmm_yyyy, :selected => @end_date)
         = submit_tag "go"
     #billing-summary
       %table

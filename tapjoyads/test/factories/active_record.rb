@@ -68,4 +68,21 @@ end
 
 Factory.define :monthly_accounting do |monthly_accounting|
   monthly_accounting.association :partner
+  monthly_accounting.month                      { Date.today.month }
+  monthly_accounting.year                       { Date.today.year }
+
+  monthly_accounting.beginning_balance          { 0 }
+  monthly_accounting.ending_balance             { 5 }
+  monthly_accounting.website_orders             { 1 }
+  monthly_accounting.invoiced_orders            { 2 }
+  monthly_accounting.marketing_orders           { 3 }
+  monthly_accounting.transfer_orders            { 4 }
+  monthly_accounting.spend                      { 5 }
+
+  monthly_accounting.beginning_pending_earnings { 0 }
+  monthly_accounting.ending_pending_earnings    { 4 }
+  monthly_accounting.payment_payouts            { 6 }
+  monthly_accounting.transfer_payouts           { 7 }
+  monthly_accounting.earnings                   { 9 }
+
 end

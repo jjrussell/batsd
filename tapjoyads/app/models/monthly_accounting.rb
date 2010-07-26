@@ -130,7 +130,7 @@ class MonthlyAccounting < ActiveRecord::Base
     Date.parse("#{year}-#{month}-01")
   end
 
-  def to_mm_yyyy
-    "#{Date::MONTHNAMES[month]} #{year}"
+  def to_mmm_yyyy
+    to_date.strftime("%B %Y")
   end
 end
