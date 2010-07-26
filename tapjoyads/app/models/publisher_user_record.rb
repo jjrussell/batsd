@@ -30,12 +30,12 @@ class PublisherUserRecord < SimpledbResource
     end
     
     udids = get('udid', :force_array => true)
-    if udids.length > 5
-      return false
-    else
+    if udids.length < 5
       put('udid', device_id, :replace => false)
       save if changed?
       return true
+    else
+      return false
     end
   end
   
