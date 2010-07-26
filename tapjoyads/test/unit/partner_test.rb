@@ -23,7 +23,7 @@ class PartnerTest < ActiveSupport::TestCase
   context "A Partner" do
     context "with monthly payouts" do
       setup do
-        @partner = Factory(:partner)
+        @partner = Factory(:partner, :pending_earnings => 100000)
       end
       
       should "determine payout cutoff dates from a reference date" do
@@ -31,6 +31,10 @@ class PartnerTest < ActiveSupport::TestCase
         assert_equal Time.zone.parse('2010-01-01'), @partner.payout_cutoff_date(Time.zone.parse('2010-02-03'))
         assert_equal Time.zone.parse('2010-02-01'), @partner.payout_cutoff_date(Time.zone.parse('2010-02-04'))
         assert_equal Time.zone.parse('2010-02-01'), @partner.payout_cutoff_date(Time.zone.parse('2010-02-05'))
+      end
+      
+      should "calculate the next payout amount" do
+        
       end
     end
     

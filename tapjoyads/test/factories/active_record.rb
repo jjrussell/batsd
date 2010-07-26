@@ -27,26 +27,39 @@ end
 
 Factory.define :app do |app|
   app.association :partner
+  app.name { Factory.next(:name) }
 end
 
 Factory.define :email_offer do |email_offer|
   email_offer.association :partner
+  email_offer.name { Factory.next(:name) }
 end
 
 Factory.define :offerpal_offer do |offerpal_offer|
   offerpal_offer.association :partner
+  offerpal_offer.name { Factory.next(:name) }
+  offerpal_offer.offerpal_id UUIDTools::UUID.random_create.to_s
+  offerpal_offer.url 'http://ws.tapjoyads.com/healthz'
+  offerpal_offer.instructions 'complete the offer'
+  offerpal_offer.time_delay 'in seconds'
+  offerpal_offer.credit_card_required false
+  offerpal_offer.payment 100
 end
 
 Factory.define :rating_offer do |rating_offer|
   rating_offer.association :partner
-end
-
-Factory.define :offer do |offer|
-  
+  rating_offer.association :app
+  rating_offer.name { Factory.next(:name) }
 end
 
 Factory.define :conversion do |conversion|
-  
+  conversion.association :publisher_app, :factory => :app
+  conversion.advertiser_offer { Factory(:app).offer }
+  conversion.reward_id UUIDTools::UUID.random_create.to_s
+  conversion.reward_type Conversion::REWARD_TYPES['install']
+  conversion.publisher_amount 17
+  conversion.advertiser_amount -25
+  conversion.tapjoy_amount 8
 end
 
 Factory.define :currency do |currency|
