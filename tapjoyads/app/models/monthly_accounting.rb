@@ -125,4 +125,12 @@ class MonthlyAccounting < ActiveRecord::Base
   def <=> other
     [year, month] <=> [other.year, other.month]
   end
+
+  def to_date
+    Date.parse("#{year}-#{month}-01")
+  end
+
+  def to_mm_yyyy
+    "#{Date::MONTHNAMES[month]} #{year}"
+  end
 end

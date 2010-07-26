@@ -16,14 +16,14 @@
   .clear
   %hr/
 .box-full
-  #billing-date-range
-    - form_tag({:action => 'index'}) do
-      = text_field 'from_date', @from_date, :class => 'date'
-      to
-      = text_field 'to_date', @to_date, :class => 'date'
-      = submit_tag 'Go'
-  #billing-summary
-    - unless @statements.blank?
+  - unless @statements.blank?
+    #billing-date-range
+      %form#change_date{:method => 'get'}
+        = collection_select("billing", "start_date", @statements, :to_date, :to_mm_yyyy, :selected => @start_date)
+        to
+        = collection_select("billing", "end_date", @statements, :to_date, :to_mm_yyyy, :selected => @end_date)
+        = submit_tag "go"
+    #billing-summary
       %table
         %thead
         %tbody
@@ -39,7 +39,16 @@
             %th Orders
             %th Spending
             %th &nbsp;
-          = render :partial => 'statement', :collection => @statements, :locals => {:format => :table}
-    - else
-      No Statements available for this date range
-    = button_to 'Export', {:method => 'GET', :action => 'export', :from_date => @date_from, :to_date => @date_to}
+          = render :partial => 'statement', :collection => @selected_statements, :locals => {:format => :table}
+    = button_to 'Export', {:method => 'GET', :action => 'export', :billing => {:start_date => @start_date, :end_date => @end_date} }
+  - else
+    No Statements available
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('#change_date input[type=submit]').click(function() {
+        // TODO: ajax call instead of refresh
+      })
+    });
+

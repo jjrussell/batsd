@@ -1,2 +1,2 @@
 Date,Earnings,Payouts,Orders,Spending,Balance
-= render :partial => 'statement', :collection => @statements, :locals => {:format => :csv}
+= render :partial => 'statement', :collection => @selected_statements, :locals => {:format => :csv}
