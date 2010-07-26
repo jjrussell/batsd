@@ -6,7 +6,7 @@
 %p#display_date
   For: #{@start_time.to_s(:pub_ampm_sec)} UTC - #{@end_time.to_s(:pub_ampm_sec)} UTC. 
   Granularity: #{@granularity.to_s}.
-  %a{:href => 'javascript:'} [Change]
+  %a{:href => 'javascript:$.noop();'} [Change]
 %form#change_date{:method => 'get'}
   %input.start{:name => 'date', :value => "#{@start_time.strftime('%m/%d/%Y')}" }
   \-
