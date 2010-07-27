@@ -110,7 +110,7 @@ class StatzController < WebsiteController
         mssql_url += "&URL="
         mssql_url += "#{CGI::escape(app.mssql_store_url)}" unless app.nil?
         
-        Downloader.get_with_retry(mssql_url, {:timeout => 30})
+        Downloader.get_with_retry(mssql_url, {:timeout => 30}) if Rails.env == 'production'
       end
       
       flash[:notice] = "Successfully updated #{@offer.name}"
