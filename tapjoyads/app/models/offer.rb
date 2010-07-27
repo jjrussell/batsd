@@ -214,12 +214,12 @@ class Offer < ActiveRecord::Base
     self.conversion_rate = pay_per_click? ? (0.75 + rand * 0.15) : (conversion_rate + boost)
   end
 
-  def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data, app_version)
+  def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer)
     return is_disabled?(publisher_app, currency) ||
         platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device_app_list) ||
         age_rating_reject?(currency) ||
-        rating_offer_reject?(publisher_app) ||
+        rating_offer_reject?(publisher_app, reject_rating_offer) ||
         already_complete?(publisher_app, device_app_list, app_version) ||
         show_rate_reject?(device_app_list) ||
         flixter_reject?(publisher_app, device_app_list)
@@ -298,8 +298,8 @@ private
     return false
   end
   
-  def rating_offer_reject?(publisher_app)
-    return item_type == 'RatingOffer' && third_party_data != publisher_app.id
+  def rating_offer_reject?(publisher_app, reject_rating_offer)
+    return item_type == 'RatingOffer' && (reject_rating_offer || third_party_data != publisher_app.id)
   end
   
   def normalize_device_type(device_type_param)
