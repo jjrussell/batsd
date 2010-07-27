@@ -1,17 +1,9 @@
 - @page_title = 'Stats for last 24 hours'
 
-- content_for :page_head do
-  = stylesheet_link_tag 'themes/blue/style', 'jquery.autocomplete'
-
-- content_for :included_javascripts do
-  = javascript_include_tag 'jquery.tablesorter', 'jquery.autocomplete.min'
-
 %h1 Tapjoy stats for last 24 hours
 
-- form_tag('', :id => 'search_form') do
-  = label_tag('search_box', 'Offer Name:')
-  = text_field_tag('search_box', '', :size => '30')
-  = submit_tag('View Details')
+= label_tag('search_box', 'Offer Name:')
+= text_field_tag('search_box', '', :size => '40')
 
 %h3#install_count_24hours= "Total conversions: #{@cvr_count_24hours} &nbsp; Total revenue: #{@ad_spend_24hours} &nbsp; Total payouts: #{@publisher_earnings_24hours}"
 
@@ -64,20 +56,7 @@
   
   :plain
     $(function() {
-      var offer_guid = '';
-      $('#search_box').keyup(function(event) {
-        if (!(event.keyCode == 9 || event.keyCode == 13)) {
-          offer_guid = '';
-        }
-      });
-      $('#search_box').autocomplete('#{search_statz_path}', { cacheLength: 1, matchSubset: false, max: 20, delay: 250 });
-      $('#search_box').result(function(event, data) {
-        offer_guid = data[1];
-      });
-      $('#search_form').submit(function() {
-        window.location.assign('#{statz_index_url}/' + offer_guid);
-        return false;
-      });
+      $('#search_box').autocomplete({ source: '#{search_statz_path}', delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });
       
       $.tablesorter.addParser({
         id: 'currency-column',

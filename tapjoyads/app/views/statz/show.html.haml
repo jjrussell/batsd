@@ -123,15 +123,11 @@
     .tooltip
 
 - content_for :page_head do
-  = stylesheet_link_tag 'jquery-ui-1.8.2.custom'
   = javascript_include_tag 'rgraph/RGraph.common.core'
   = javascript_include_tag 'rgraph/RGraph.common.tooltips'
   = javascript_include_tag 'rgraph/RGraph.line'
   :plain
     <!--[if IE]><script src="/javascripts/excanvas.js"></script><![endif]-->
-  
-- content_for :included_javascripts do
-  = javascript_include_tag 'jquery-ui-1.8.2.custom.min'
   
 - content_for :page_javascript do
   :plain
@@ -468,7 +464,6 @@
       
       return html.join(',&nbsp; ')
     }
-
   
 - content_for :page_styles do
   :plain

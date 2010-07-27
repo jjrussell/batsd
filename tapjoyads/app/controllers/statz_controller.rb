@@ -145,16 +145,16 @@ class StatzController < WebsiteController
   
   def search
     results = Offer.find(:all,
-      :conditions => "name LIKE '%#{params[:q]}%'",
+      :conditions => "name LIKE '%#{params[:term]}%'",
       :select => 'id, name, tapjoy_enabled, payment',
-      :limit => params[:limit]
+      :limit => 10
     ).collect do |o|
-      result = "#{o.name}|#{o.id}"
-      result = "*#{result}" if o.tapjoy_enabled? && o.payment > 0
-      result
+      label_string = o.name
+      label_string += " (active)" if o.tapjoy_enabled? && o.payment > 0
+      { :label => label_string, :url => statz_path(o) }
     end
     
-    render(:text => results.join("\n"))  
+    render(:json => results.to_json)  
   end
   
 private
