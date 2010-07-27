@@ -237,7 +237,14 @@ private
   
   def platform_mismatch?(publisher_app, device_type_param)
     device_type = normalize_device_type(device_type_param)
-    device_type = publisher_app.platform if device_type.nil?
+    
+    if device_type.nil?
+      if publisher_app.platform == 'android'
+        device_type == 'android'
+      else
+        device_type = 'itouch'
+      end
+    end
     
     return !get_device_types.include?(device_type)
   end
