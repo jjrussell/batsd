@@ -221,7 +221,7 @@ private
     url += "&item=#{item_id}"
     url += "&Datas=#{CGI::escape(datas)}"
 
-    Downloader.get_with_retry(url, {:timeout => 30})
+    Downloader.get_with_retry(url, {:timeout => 30}) if Rails.env == 'production'
   end
   
   ##
