@@ -14,7 +14,7 @@ class Conversion < ActiveRecord::Base
   validates_presence_of :publisher_app
   validates_presence_of :advertiser_offer, :unless => Proc.new { |conversion| conversion.advertiser_offer_id.blank? }
   validates_numericality_of :advertiser_amount, :publisher_amount, :tapjoy_amount, :only_integer => true, :allow_nil => false
-  validates_inclusion_of :reward_type, :in => [ 0, 1, 2, 999 ]
+  validates_inclusion_of :reward_type, :in => REWARD_TYPES.values
   
   before_save :sanitize_reward_id
   after_create :update_publisher_amount, :update_advertiser_amount
