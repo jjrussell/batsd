@@ -8,6 +8,7 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
 
   # message = app_id[:yyyy-mm-dd]
   def on_message(message)
+    message.delete
     messages = message.to_s.split(':')
     @advertiser_app_id = messages[0]
     @bucket = S3.bucket(BucketNames::AD_UDIDS)
