@@ -2,14 +2,13 @@ class BillingController < WebsiteController
   layout 'tabbed'
 
   filter_access_to :all
-  before_filter :get_partner
   before_filter :get_statements, :only => [:index, :export]
 
   def index
-    @payouts = @partner.payouts.sort
-    @statements = @partner.monthly_accountings
+    @payouts = current_partner.payouts.sort
+    @statements = current_partner.monthly_accountings
 
-    @current_balance = @partner.balance
+    @current_balance = current_partner.balance
     @last_payout = @payouts.blank? ? 0 : @payouts.last.amount
     @last_payment = @statements.map do |s|
         s.orders unless s.orders == 0
@@ -34,12 +33,8 @@ class BillingController < WebsiteController
   end
 
   private
-    def get_partner
-      @partner = current_partner
-    end
-
     def get_statements
-      @statements = @partner.monthly_accountings.sort
+      @statements = current_partner.monthly_accountings.sort
 
       unless @statements.blank?
         @start_date =
