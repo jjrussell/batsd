@@ -29,13 +29,13 @@ class PointPurchases < SimpledbResource
     return "point_purchases_#{domain_number}"
   end
   
-  def add_virtual_good(virtual_good_key)
+  def add_virtual_good(virtual_good_key, quantity = 1)
     user_virtual_goods = self.virtual_goods
 
     if user_virtual_goods[virtual_good_key]
-      user_virtual_goods[virtual_good_key] += 1
+      user_virtual_goods[virtual_good_key] += quantity
     else
-      user_virtual_goods[virtual_good_key] = 1
+      user_virtual_goods[virtual_good_key] = quantity
     end
     
     self.virtual_goods = user_virtual_goods

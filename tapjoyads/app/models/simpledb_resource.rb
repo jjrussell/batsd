@@ -436,6 +436,7 @@ class SimpledbResource
           retry_count += 1
           retry
         else
+          Rails.logger.error "Error in query: #{query}"
           raise e
         end
       end

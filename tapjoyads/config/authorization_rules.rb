@@ -40,12 +40,17 @@ authorization do
     includes :statz
   end
   
+  role :raffle_manager do
+    has_permission_on :raffle_manager, :to => [ :index, :new, :create, :edit, :update ]
+  end
+  
   role :admin do
     includes :beta_website
     includes :tools
     includes :payops
     includes :executive
     includes :statz
+    includes :raffle_manager
     
     has_permission_on :tools, :to => [ :failed_sdb_saves ]
   end

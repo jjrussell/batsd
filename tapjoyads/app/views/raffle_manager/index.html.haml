@@ -1,0 +1,56 @@
+- @page_title = 'Raffle manager'
+
+- content_for :page_head do
+  = stylesheet_link_tag 'themes/blue/style'
+
+- content_for :included_javascripts do
+  = javascript_include_tag 'jquery.tablesorter'
+
+%p Current time: #{Time.zone.now.to_s(:db)} (UTC)
+
+%p= link_to('Create new raffle', new_raffle_manager_path)
+
+= @subtab == 'Active' ? 'Active' : link_to('Active', '/raffle_manager')
+|
+= @subtab == 'Complete' ? 'Complete' : link_to('Complete', '/raffle_manager?type=complete')
+|
+= @subtab == 'Upcoming' ? 'Upcoming' : link_to('Upcoming', '/raffle_manager?type=upcoming')
+|
+= @subtab == 'All' ? 'All' : link_to('All', '/raffle_manager?type=all')
+  
+%table#raffles_table.tablesorter
+  %thead
+    %tr
+      %th Icon
+      %th Name
+      %th Description
+      %th Prize value
+      %th Start date
+      %th End date
+      %th Total Purchased
+      %th Winning udid
+      %th Winning email
+      %th Email status
+      %th Distribution status
+  %tbody#raffles_tbody
+    - @raffles.each do |raffle|
+      %tr
+        %td= (raffle.has_icon ? image_tag(raffle.icon_url, :size => '57x57') : 'no icon')
+        %td= link_to(raffle.name, "/raffle_manager/#{raffle.key}/edit")
+        %td= raffle.description
+        %td= link_to(number_to_currency(raffle.prize_value / 100.0), raffle.prize_url)
+        %td= raffle.starts_at.to_s(:db)
+        %td= raffle.ends_at.to_s(:db)
+        %td= raffle.total_purchased
+        %td= raffle.winning_udid
+        %td= raffle.winning_email
+        %td= raffle.email_status
+        %td= raffle.distribution_status
+        
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $("#raffles_table").tablesorter({widgets: ['zebra'],
+        sortList: [ [5, 1] ]
+      });
+    });

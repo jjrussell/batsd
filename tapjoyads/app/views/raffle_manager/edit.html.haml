@@ -1,0 +1,47 @@
+%p= link_to('<< Back to active raffles', '/raffle_manager')
+
+- if @raffle_ticket && @raffle_ticket.has_icon
+  .icon= image_tag(@raffle_ticket.icon_url, :size => '57x57')
+%h1= @page_title
+
+- form_for(:raffle_ticket, @raffle_ticket, :url => { :action => @form_action }, :html => { :method => @form_method, :multipart => true }) do |f|
+  .field
+    = f.label(:name)
+    = f.text_field(:name)
+  .field
+    = f.label(:description)
+    = f.text_field(:description)
+  .field
+    = f.label(:icon)
+    = f.file_field(:icon)
+  .field
+    = f.label(:prize_value, 'Prize value (cents)')
+    = f.text_field(:prize_value)
+  .field
+    = f.label(:prize_url)
+    = f.text_field(:prize_url)
+  .field
+    = f.label(:starts_at, 'Start date (YYYY-MM-DD HH:mm:ss)')
+    = f.text_field(:starts_at, :value => (@raffle_ticket.nil? || @raffle_ticket.starts_at.nil?) ? '' : @raffle_ticket.starts_at.to_s(:db))
+  .field
+    = f.label(:ends_at, 'End date (YYYY-MM-DD HH:mm:ss)')
+    = f.text_field(:ends_at, :value =>  (@raffle_ticket.nil? || @raffle_ticket.ends_at.nil?) ? '' : @raffle_ticket.ends_at.to_s(:db))
+  - if params[:action] == 'edit'
+    .field
+      Winning udid: #{@raffle_ticket.winning_udid unless @raffle_ticket.nil?}
+    .field
+      Winning email: #{@raffle_ticket.winning_email unless @raffle_ticket.nil?}
+    .field
+      = f.label(:email_status)
+      = f.select(:email_status, options_for_select({'No action taken' => :no_action_taken, 'Email sent' => :email_sent}, :no_action_taken))
+    .field
+      = f.label(:distribution_status)
+      = f.select(:distribution_status, options_for_select({'No action taken ' => :no_action_taken, 'Prize sent' => :prize_sent}))
+  .field
+    = f.submit('Save')
+    
+- content_for :page_styles do
+  :plain
+    .icon {
+      float: left;
+    }
