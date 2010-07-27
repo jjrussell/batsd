@@ -1,8 +1,7 @@
 require 'test_helper'
 
 class UserRoleTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  test "the truth" do
-    assert true
-  end
+  subject { Factory(:user_role) }
+  
+  should validate_uniqueness_of(:name)
 end

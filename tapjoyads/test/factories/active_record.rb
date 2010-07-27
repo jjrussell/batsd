@@ -86,3 +86,7 @@ Factory.define :monthly_accounting do |monthly_accounting|
   monthly_accounting.earnings                   { 9 }
 
 end
+
+Factory.define :user_role do |user_role|
+  user_role.name { Factory.next(:name) }
+end
