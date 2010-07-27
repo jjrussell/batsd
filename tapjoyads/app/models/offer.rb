@@ -240,7 +240,7 @@ private
     
     if device_type.nil?
       if publisher_app.platform == 'android'
-        device_type == 'android'
+        device_type = 'android'
       else
         device_type = 'itouch'
       end
