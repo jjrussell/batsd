@@ -5,8 +5,8 @@
   %tbody
     %tr
       %td#bar-left
-        - @my_apps.each do |app|
-          .app-thumb{:id => "app_#{app.id}"}
+        - @my_apps.each_with_index do |app, index|
+          .app-thumb{:id => "app_#{index}"}
             .icon= image_tag(app.offer.get_icon_url, :size => '56x56')
             =truncate(app.name, 15)
             .clear
@@ -48,12 +48,13 @@
 
 - content_for :page_javascript do
   :plain
+    var myApps = [
+      #{@apps_data.join(",\n  ")}
+    ];
     $(function() {
       var loadApp = function(data) {
         if (!data) return;
         var app = data.app;
-        console.log(app);
-        console.log(app.offer);
         $('#selected-app .icon img').attr({src: app.offer.get_icon_url, width: 57, height: 57});
         $('#selected-app h2').html(app.name);
         $('#selected-app td#metadata-platform').html(app.platform);
@@ -65,9 +66,11 @@
       };
       $('#bar-left .app-thumb').not('.new-app').click(function(e){
         var id = $(e.currentTarget).attr('id').split(/_/)[1];
-        $.get('/apps/' + id, {}, loadApp, 'json');
+        loadApp(myApps[id]);
       });
-      loadApp(#{@app_data});
+      if (myApps.length > 0) {
+        loadApp(myApps[0]);
+      }
     });
 - content_for :page_styles do
   :plain

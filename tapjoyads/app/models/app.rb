@@ -127,6 +127,17 @@ class App < ActiveRecord::Base
     return match[1]
   end
 
+  def to_json_with_offer
+    self.to_json(
+      :include => {
+        :offer => {
+          :methods => [ :get_icon_url ]
+        }
+      },
+      :methods => [ :store_url ]
+    )
+  end
+
   def self.udid_s3_key(app_id, date=nil)
     "udids/#{app_id}/#{date && date.strftime("%Y-%m")}"
   end
