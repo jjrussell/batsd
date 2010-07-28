@@ -63,7 +63,8 @@ Factory.define :conversion do |conversion|
 end
 
 Factory.define :currency do |currency|
-  
+  currency.association :app
+  currency.association :partner
 end
 
 Factory.define :monthly_accounting do |monthly_accounting|
