@@ -31,7 +31,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     
     min_conversion_rate = offer.min_conversion_rate || (offer.is_paid? ? 0.005 : 0.12)
     if recent_clicks > 100 && conversion_rate < min_conversion_rate
-      Notifier.alert_new_relic(ConversionRateTooLowError, "#{offer.name} (#{offer.id}) has #{conversion_rate} cvr on #{recent_clicks} clicks.")
+      Notifier.alert_new_relic(ConversionRateTooLowError, "#{offer.name} (#{ statz_path(offer.id) }) has #{conversion_rate} cvr on #{recent_clicks} clicks.")
     end
     
     Rails.logger.info "Recent clicks: #{recent_clicks}"
