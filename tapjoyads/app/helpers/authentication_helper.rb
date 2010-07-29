@@ -100,4 +100,13 @@ module AuthenticationHelper
     end
   end
   
+  def gogii_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'gogii'
+        password = 'pMWl3M9jsgp0'
+      end
+      password
+    end
+  end
+  
 end
