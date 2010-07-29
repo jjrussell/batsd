@@ -14,7 +14,7 @@ namespace :admin do
   
   desc "Restarts apache on all the webservers"
   task :restart_apache do
-    system("script/cloudrun 'webserver' 'sleep 1 ; sudo /etc/init.d/apache2 restart ; curl http://localhost:9898/healthz' 'ubuntu' 'remove_from_lb'")
+    system("script/cloudrun 'webserver' 'sleep 5 ; sudo /etc/init.d/apache2 restart' 'ubuntu' 'remove_from_lb'")
   end
   
 end
