@@ -52,6 +52,6 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
 
   # avoid RequestTimeTooSkewed in save_udids by refreshing it each time
   def bucket
-    S3.bucket(BucketNames::AD_UDIDS)
+    RightAws::S3.new.bucket(BucketNames::AD_UDIDS)
   end
 end
