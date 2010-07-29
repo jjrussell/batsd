@@ -48,4 +48,39 @@ class PointPurchases < SimpledbResource
   def get_udid
     @key.split('.')[0]
   end
+  
+  def self.purchase_virtual_good(key, virtual_good_key, quantity = 1)
+    virtual_good = VirtualGood.new(:key => virtual_good_key)
+    raise UnknownVirtualGood.new if virtual_good.is_new
+    
+    message = ''
+    PointPurchases.transaction(:key => key) do |point_purchases|
+      Rails.logger.info "Purchasing virtual good for price: #{virtual_good.price}, from user balance: #{point_purchases.points}"
+      raise TooManyPurchases.new if virtual_good.max_purchases > 0 && point_purchases.get_virtual_good_quantity(virtual_good.key) >= virtual_good.max_purchases
+      
+      point_purchases.add_virtual_good(virtual_good.key, quantity)
+      point_purchases.points = point_purchases.points - (virtual_good.price * quantity)
+      
+      raise BalanceTooLowError.new if point_purchases.points < 0
+      message = "You successfully purchased #{virtual_good.name}"
+    end
+    
+    return true, message, virtual_good.name
+  rescue RightAws::AwsError
+    return false, "Error contacting backend datastore"
+  rescue BalanceTooLowError, UnknownVirtualGood, TooManyPurchases => e
+    return false, e.to_s, virtual_good.name
+  end
+  
+private
+  
+  class TooManyPurchases < RuntimeError
+    def to_s; "You have already purchased this item the maximum number of times"; end
+  end
+  class BalanceTooLowError < RuntimeError
+    def to_s; "Balance too low"; end
+  end
+  class UnknownVirtualGood < RuntimeError;
+    def to_s; "Unknown virtual good"; end
+  end
 end

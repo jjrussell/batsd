@@ -1,0 +1,126 @@
+- @page_title = "Play Tap n Win"
+
+#main
+  - flash.each do |name, msg|
+    .flash{ :id => "flash_#{name}" }= msg
+
+  %p #{@point_purchases.points} Tickets Available
+
+  %h1= @raffle.name
+  - unless @prev_raffle.nil?
+    %a{:href => "/raffles?udid=#{params[:udid]}&raffle_id=#{@prev_raffle.key}"} &#x21FD; Prev
+  - unless @next_raffle.nil?
+    %a{:href => "/raffles?udid=#{params[:udid]}&raffle_id=#{@next_raffle.key}"} Next &#x21FE;
+  %p= (@raffle.has_icon ? image_tag(@raffle.icon_url, :size => '57x57') : '')
+  %p= @raffle.description
+  %p 
+    Prize value:
+    = link_to(number_to_currency(@raffle.prize_value / 100.0), @raffle.prize_url)
+  %p
+    Ends at:
+    = @raffle.ends_at.to_s(:db)
+  %p
+    You own:
+    = @point_purchases.get_virtual_good_quantity(@raffle.key)
+  %p
+    Total entered:
+    = @raffle.total_purchased
+  
+  - form_tag(purchase_raffle_path(@raffle.key)) do
+    = hidden_field_tag(:udid, params[:udid])
+    %div
+      .down &#x21E9;
+      = text_field_tag(:quantity, '1', :pattern => "[0-9]*", :maxlength => 2)
+      .up &#x21E7;
+    = submit_tag('Enter Raffle', :id => 'submit')
+  .warning
+    You must have at least 1 ticket to enter the raffle
+
+-content_for :page_javascript do
+  :plain
+    var max = Math.min(#{@point_purchases.points}, 99);
+  
+    function changeQuantity(delta) {
+      value = Number($('#quantity').val()) || 1;
+      $('#quantity').val(value + delta);
+      $('#quantity').change()
+    }
+  
+    $('#quantity').change(function() {
+      value = Number($('#quantity').val()) || 1;
+      value = Math.max(1, Math.min(value, max));
+      $('#quantity').val(value);
+    });
+    
+    $('.up').click(function() {
+      changeQuantity(1);
+    });
+    
+    $('.down').click(function() {
+      changeQuantity(-1);
+    });
+    
+    $(function() {
+      if (max == 0) {
+        $('#submit').attr('disabled', 'disabled');
+        $('.warning').show();
+      }
+    });
+
+- content_for :included_javascripts do
+  = javascript_include_tag 'jquery-1.4.2.min'
+  
+- content_for :page_styles do
+  :plain
+    #main {
+      text-align: center;
+    }
+    
+    #quantity {
+      width: 30px;
+      text-align: center;
+      font-size: 20px;
+    }
+    
+    .up,
+    .down {
+      font-size: 40px;
+      font-weight: bold;
+      display: inline;
+      padding: 10px;
+      cursor: pointer;
+    }
+    
+    .prev,
+    .next {
+      font-size: 15px;
+      display: inline;
+    }
+    
+    #submit {
+      margin-top: 20px;
+      width: 200px;
+      height: 26px;
+      font-size: 16px;
+    }
+    
+    .warning {
+      color: red;
+      display: none;
+      padding-top: 5px;
+    }
+    
+    #flash_error,
+    #flash_notice {
+      -moz-border-radius: 7px;
+      -webkit-border-radius: 7px;
+      padding: 1px;
+    }
+    
+    #flash_notice {
+      background-color: YellowGreen;
+    }
+    
+    #flash_error {
+      background-color: red;
+    }

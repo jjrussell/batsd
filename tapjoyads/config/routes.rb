@@ -116,6 +116,8 @@ ActionController::Routing::Routes.draw do |map|
   # ruby controllers in time.
   map.connect 'CronService.asmx/:action', :controller => 'authenticated_win_redirector'
   
+  map.resources :raffles, :only => [ :index, :edit, :update ], :collection => { :status => :get }, :member => { :purchase => :post }
+  
   # Install the default routes as the lowest priority.
   # Note: These default routes make all actions in every controller accessible via GET requests. You should
   # consider removing the them or commenting them out if you're using named routes and resources.

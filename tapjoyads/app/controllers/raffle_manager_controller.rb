@@ -38,12 +38,12 @@ class RaffleManagerController < WebsiteController
   end
   
   def create
-    Rails.logger.info params.to_json
     @raffle_ticket = RaffleTicket.new
     @raffle_ticket.has_icon = false
     # @raffle_ticket.app_id = # TODO: Put Tap n win app_id here
     
     if update_raffle
+      RaffleTicket.cache_active_raffles
       flash[:notice] = 'Sucessfully created raffle'
       redirect_to "/raffle_manager/#{@raffle_ticket.key}/edit"
     else

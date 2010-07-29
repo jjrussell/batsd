@@ -26,7 +26,6 @@ class RaffleTicket < VirtualGood
 
     now_epoch = Time.zone.now.to_f.to_s
     RaffleTicket.select(:where => "type = 'R' and starts_at < '#{now_epoch}' and ends_at > '#{now_epoch}'") do |ticket|
-      ticket.total_purchased = ticket.get_realtime_total_purchased
       active_raffles << ticket
     end
     
@@ -47,6 +46,10 @@ class RaffleTicket < VirtualGood
   end
   
   def get_total_purchased_memcached_key
-    "vg.total_purchased.#{@key}"
+    RaffleTicket.get_total_purchased_memcached_key(@key)
+  end
+  
+  def self.get_total_purchased_memcached_key(key)
+    "vg.total_purchased.#{key}"
   end
 end
