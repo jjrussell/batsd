@@ -126,6 +126,7 @@ class StatzController < WebsiteController
       'f0910f7ab2a27a5d079dc9ed50d774fcab55f91d' => 'Ryan iPad',
       '21e3f395b9bbaf56667782ea3fe1241656684e21' => 'Stephen iTouch',
       'c720dd0a5f937735c1a76bce72fcd90ada73ad7d' => 'Kai iTouch',
+      '05f900a2b588c4ed140689145ddb4684a1681f20' => 'Kai iPad',
       '4b910938aceaa723e0c0313aa7fa9f9d838a595e' => 'Linda iPad',
       '820a1b9df38f3024f9018464c05dfbad5708f81e' => 'Linda iPhone',
       'c73e730913822be833766efffc7bb1cf239d855a' => 'Ben iPhone',
