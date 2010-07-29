@@ -5,11 +5,7 @@
   %tbody
     %tr
       %td#bar-left
-        - @my_apps.each_with_index do |app, index|
-          .app-thumb{:id => "app_#{index}"}
-            .icon= image_tag(app.offer.get_icon_url, :size => '56x56')
-            =truncate(app.name, 15)
-            .clear
+        = render :partial => 'my_app', :collection => @current_partner_apps
         %p &nbsp;
         .app-thumb.new-app
           .icon= image_tag("add_app.png", :size => '57x57')
@@ -84,8 +80,10 @@
     td#bar-left .app-thumb:hover {
       background-color: #ddd;
     }
-    td#selected-app {
+    td#bar-left, td#selected-app {
       vertical-align: top;
+    }
+    td#selected-app {
       min-width: 500px;
     }
     .app-thumb .icon {

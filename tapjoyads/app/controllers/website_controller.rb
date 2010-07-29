@@ -6,17 +6,19 @@ class WebsiteController < ApplicationController
   helper_method :current_user, :current_partner
   
   before_filter { |c| Authorization.current_user = c.current_user }
-  
+
   def current_user
-    return @current_user if defined?(@current_user)
-    @current_user = current_user_session && current_user_session.record
+    @current_user ||= current_user_session && current_user_session.record
   end
-  
+
   def current_partner
-    return @current_partner if defined?(@current_partner)
-    @current_partner = current_user && (current_user.current_partner || current_user.partners.first)
+    @current_partner ||= current_user && (current_user.current_partner || current_user.partners.first)
   end
-  
+
+  def current_partner_apps
+    @current_partner_apps ||= current_partner.apps
+  end
+
 protected
   
   def permission_denied
