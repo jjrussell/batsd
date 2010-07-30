@@ -37,6 +37,7 @@ class ActivityLog < SimpledbResource
   end
   
   def finalize_states
+    self.object_id = @state_object.id
     self.after_state = @state_object.attributes
     after_hash = self.after_state
     before_hash = self.before_state
