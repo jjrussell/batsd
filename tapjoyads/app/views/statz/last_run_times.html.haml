@@ -5,16 +5,21 @@
 
 %p As of: #{Time.zone.now.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)}
 
+- form_tag(last_run_times_statz_path, :method => :get) do
+  = label_tag(:other_udid, 'Other UDID')
+  = text_field_tag(:other_udid, '', :size => 50)
+  = submit_tag('Search')
+
 %table
   %tr
     %th Device
     %th UDID
     %th Last run time
-  - @udid_map.each do |udid, device|
+  - @udids_to_check.each do |hash|
     %tr
-      %td= device
-      %td= udid
-      %td= @last_run_times[udid]
+      %td= hash[:device_label]
+      %td= hash[:udid]
+      %td= hash[:last_run_time]
 
 - content_for :page_styles do
   :plain
@@ -29,4 +34,8 @@
     th, td {
       border: 1px solid gray;
       padding: 5px;
+    }
+    
+    form {
+      padding-bottom: 20px;
     }

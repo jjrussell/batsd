@@ -128,26 +128,28 @@ class StatzController < WebsiteController
   end
   
   def last_run_times
-    @udid_map = {
-      'b4c86b4530a0ee889765a166d80492b46f7f3636' => 'Ryan iPhone',
-      'f0910f7ab2a27a5d079dc9ed50d774fcab55f91d' => 'Ryan iPad',
-      '21e3f395b9bbaf56667782ea3fe1241656684e21' => 'Stephen iTouch',
-      'c720dd0a5f937735c1a76bce72fcd90ada73ad7d' => 'Kai iTouch',
-      '05f900a2b588c4ed140689145ddb4684a1681f20' => 'Kai iPad',
-      '4b910938aceaa723e0c0313aa7fa9f9d838a595e' => 'Linda iPad',
-      '820a1b9df38f3024f9018464c05dfbad5708f81e' => 'Linda iPhone',
-      'c73e730913822be833766efffc7bb1cf239d855a' => 'Ben iPhone',
-      '713ad9936e296243725a40799bea7c15c87bb4c8' => 'Lauren iPad',
-      '5c46e034cd005e5f2b08501820ecb235b0f13f33' => 'Hwan-Joon iPhone',
-      'a00000155c5106'                           => 'Linda Droid',
-    }
-    @last_run_times = {}
-    @udid_map.keys.each do |udid|
-      list = DeviceAppList.new(:key => udid)
+    @udids_to_check = [
+      { :udid => 'b4c86b4530a0ee889765a166d80492b46f7f3636', :last_run_time => 'Never', :device_label => 'Ryan iPhone'      },
+      { :udid => 'f0910f7ab2a27a5d079dc9ed50d774fcab55f91d', :last_run_time => 'Never', :device_label => 'Ryan iPad'        },
+      { :udid => '21e3f395b9bbaf56667782ea3fe1241656684e21', :last_run_time => 'Never', :device_label => 'Stephen iTouch'   },
+      { :udid => 'c720dd0a5f937735c1a76bce72fcd90ada73ad7d', :last_run_time => 'Never', :device_label => 'Kai iTouch'       },
+      { :udid => '05f900a2b588c4ed140689145ddb4684a1681f20', :last_run_time => 'Never', :device_label => 'Kai iPad'         },
+      { :udid => '4b910938aceaa723e0c0313aa7fa9f9d838a595e', :last_run_time => 'Never', :device_label => 'Linda iPad'       },
+      { :udid => '820a1b9df38f3024f9018464c05dfbad5708f81e', :last_run_time => 'Never', :device_label => 'Linda iPhone'     },
+      { :udid => 'c73e730913822be833766efffc7bb1cf239d855a', :last_run_time => 'Never', :device_label => 'Ben iPhone'       },
+      { :udid => '713ad9936e296243725a40799bea7c15c87bb4c8', :last_run_time => 'Never', :device_label => 'Lauren iPad'      },
+      { :udid => '5c46e034cd005e5f2b08501820ecb235b0f13f33', :last_run_time => 'Never', :device_label => 'Hwan-Joon iPhone' },
+      { :udid => 'a00000155c5106',                           :last_run_time => 'Never', :device_label => 'Linda Droid'      },
+    ]
+    
+    unless params[:other_udid].blank?
+      @udids_to_check.unshift({ :udid => params[:other_udid], :last_run_time => 'Never', :device_label => 'Other UDID' })
+    end
+    
+    @udids_to_check.each do |hash|
+      list = DeviceAppList.new(:key => hash[:udid])
       if list.has_app(@offer.id)
-        @last_run_times[udid] = list.last_run_time(@offer.id).in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)
-      else
-        @last_run_times[udid] = 'Never'
+        hash[:last_run_time] = list.last_run_time(@offer.id).in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)
       end
     end
   end
