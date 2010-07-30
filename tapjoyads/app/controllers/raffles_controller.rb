@@ -7,7 +7,7 @@ class RafflesController < ApplicationController
   def index
     return unless verify_params([:udid], {:allow_empty => false})
     @raffles = RaffleTicket.get_active_raffles
-    @point_purchases = PointPurchases.new :key => "#{params[:udid]}.#{APP_ID}"
+    @point_purchases = PointPurchases.new(:key => "#{params[:udid]}.#{APP_ID}")
 
     @raffle = @raffles.first
     @prev_raffle = nil
@@ -46,7 +46,7 @@ class RafflesController < ApplicationController
       flash[:error] = message
     end
 
-    redirect_to "/raffles?udid=#{params[:udid]}&raffle_id=#{params[:id]}"
+    redirect_to raffles_path(:udid => params[:udid], :raffle_id => params[:id])
   end
   
   def edit

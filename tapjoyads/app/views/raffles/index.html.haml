@@ -8,9 +8,9 @@
 
   %h1= @raffle.name
   - unless @prev_raffle.nil?
-    %a{:href => "/raffles?udid=#{params[:udid]}&raffle_id=#{@prev_raffle.key}"} &#x21FD; Prev
+    %a{:href => "#{raffles_path(:udid => params[:udid], :raffle_id => @prev_raffle.key)}"} &#x21FD; Prev
   - unless @next_raffle.nil?
-    %a{:href => "/raffles?udid=#{params[:udid]}&raffle_id=#{@next_raffle.key}"} Next &#x21FE;
+    %a{:href => "#{raffles_path(:udid => params[:udid], :raffle_id => @next_raffle.key)}"} Next &#x21FE;
   %p= (@raffle.has_icon ? image_tag(@raffle.icon_url, :size => '57x57') : '')
   %p= @raffle.description
   %p 

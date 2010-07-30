@@ -45,7 +45,7 @@ class RaffleManagerController < WebsiteController
     if update_raffle
       RaffleTicket.cache_active_raffles
       flash[:notice] = 'Sucessfully created raffle'
-      redirect_to "/raffle_manager/#{@raffle_ticket.key}/edit"
+      redirect_to edit_raffle_manager_path(@raffle_ticket.key)
     else
       new()
     end
@@ -60,7 +60,7 @@ class RaffleManagerController < WebsiteController
   def update
     if update_raffle
       flash[:notice] = 'Sucessfully updated raffle'
-      redirect_to "/raffle_manager/#{@raffle_ticket.key}/edit"
+      redirect_to edit_raffle_manager_path(@raffle_ticket.key)
     else
       edit()
     end

@@ -1,4 +1,4 @@
-%p= link_to('<< Back to active raffles', '/raffle_manager')
+%p= link_to('<< Back to active raffles', raffle_manager_index_path)
 
 - if @raffle_ticket && @raffle_ticket.has_icon
   .icon= image_tag(@raffle_ticket.icon_url, :size => '57x57')
