@@ -214,10 +214,8 @@ class SimpledbResource
     Rails.logger.info_with_time("Saving to sdb, domain: #{this_domain_name}") do
       self.write_to_sdb(expected_attr) if write_to_sdb
       self.write_to_memcache if write_to_memcache
+      @is_new = false
     end
-    
-    @is_new = false
-    #increment_domain_freq_count
   rescue ExpectedAttributeError => e
     raise e
   rescue Exception => e
