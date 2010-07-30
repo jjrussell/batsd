@@ -3,7 +3,7 @@ class StatzController < WebsiteController
   
   filter_access_to :all
   
-  before_filter :find_offer, :only => [ :show, :edit, :update, :last_run_times, :udids, :udid ]
+  before_filter :find_offer, :only => [ :show, :edit, :update, :last_run_times, :udids, :udid, :log ]
   after_filter :save_activity_logs, :only => [ :update ]
   
   def index
@@ -164,6 +164,13 @@ class StatzController < WebsiteController
     end
     
     render(:json => results.to_json)  
+  end
+  
+  def log
+    @activities = []
+    ActivityLog.select :where => "object_id = '#{params[:id]}'" do |a|
+      @activities << a
+    end
   end
   
 private
