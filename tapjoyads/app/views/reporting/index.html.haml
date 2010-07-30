@@ -1,3 +1,118 @@
 - @page_title = 'Reporting'
 
-%h1 Reporting
+%h1 Reporting Home
+%table
+  %tbody
+    %tr
+      %td#bar-left
+        = render :partial => 'apps/my_app', :collection => @current_partner_apps
+
+      %td#selected-app
+        .right
+          =select_tag "metric", "<option>Clicks</option><option>Offers</option>"
+        .right
+          %input.date{:value => "5/11/2010"}
+        .clear
+
+        #connects.graph{:style=>"border: 1px solid black;"}
+          %h3
+          .totals
+          .holder
+            %canvas#clicks_graph{:width => '550px', :height => '330px'}
+            .bar
+            .tooltip
+
+        .clear
+        .left
+          %table#clicks
+            %tbody
+              %tr
+                %th Clicks
+                %td
+              %tr
+                %th Installs
+                %td
+              %tr
+                %th Conversion Rate
+                %td
+              %tr
+                %th Spend
+                %td
+              %tr
+                %th Daily Budget
+                %td
+              %tr
+                %th Total Budget
+                %td
+              %tr
+                %th Cost per Install
+                %td
+        .right
+          %table#offers-data
+            %tbody
+              %tr
+                %th Offers
+                %td
+              %tr
+                %th Offers Opened
+                %td
+              %tr
+                %th Conversion Rate
+                %td
+              %tr
+                %th Revenue per Offer
+                %td
+              %tr
+                %th Average Revenue/Day
+                %td
+              %tr
+                %th Total Revenue
+                %td
+
+- include_tapjoy_graph
+
+- content_for :page_javascript do
+  :plain
+    var clickData = {
+      "name": "Rewarded installs + spend",
+      "intervals": [ "#{(1..10).to_a.join('","')}" ],
+      "xLabels": [ "#{('aa'..'aj').to_a.join('","')}" ],
+
+      "main": {
+        "data":[
+           [ #{(1..10).to_a.join(',')} ]
+        ],
+        "names": ["Clicks"],
+        "totals": [ #{(1..10).to_a.sum} ]
+      }
+    };
+
+    var myApps = [
+      #{@apps_data.join(",\n  ")}
+    ];
+
+    var loadApp = function(data) {
+      if (!data) return;
+      var app = data.app;
+      $('#selected-app .icon img').attr({src: app.offer.get_icon_url, width: 57, height: 57});
+      $('#selected-app h2').html(app.name);
+      $('#selected-app td#metadata-platform').html(app.platform);
+      $('#selected-app td#metadata-description').html(app.description);
+      $('#selected-app td#metadata-app-id').html(app.id);
+      $('#selected-app td#metadata-itunes-url a').attr('href', app.store_url);
+      $('#selected-app td#metadata-version').html(app.version);
+      $('#selected-app td#metadata-price').html('$' + app.price/100);
+    };
+
+    $(function() {
+      $('#bar-left .app-thumb').not('.new-app').click(function(e){
+        var id = $(e.currentTarget).attr('id').split(/_/)[1];
+        loadApp(myApps[id]);
+      });
+      if (myApps.length > 0) {
+        loadApp(myApps[0]);
+      }
+
+      Tapjoy.drawLargeGraph(clickData, 'clicks');
+    });
+
