@@ -8,7 +8,6 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
 
   # message = app_id[:yyyy-mm-dd]
   def on_message(message)
-    message.delete
     messages = message.to_s.split(':')
     @advertiser_app_id = messages[0]
 
@@ -52,6 +51,6 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
 
   # avoid RequestTimeTooSkewed in save_udids by refreshing it each time
   def bucket
-    RightAws::S3.new.bucket(BucketNames::AD_UDIDS)
+    S3.s3.bucket(BucketNames::AD_UDIDS)
   end
 end
