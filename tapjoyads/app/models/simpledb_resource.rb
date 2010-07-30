@@ -154,6 +154,10 @@ class SimpledbResource
     @key = key
   end
   
+  def new_record?
+    @is_new
+  end
+  
   ##
   # Attempt to load the item attributes from memcache. If they are not found,
   # they will attempt be loaded from simpledb. If thet are still not found,
@@ -212,6 +216,7 @@ class SimpledbResource
       self.write_to_memcache if write_to_memcache
     end
     
+    @is_new = false
     #increment_domain_freq_count
   rescue ExpectedAttributeError => e
     raise e

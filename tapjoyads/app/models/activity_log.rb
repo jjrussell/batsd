@@ -13,6 +13,7 @@ class ActivityLog < SimpledbResource
   
   def initialize(options = {})
     @state_object = nil
+    @state_object_new = false
     
     super({ :load_from_memcache => false }.merge(options))
   end
@@ -26,12 +27,13 @@ class ActivityLog < SimpledbResource
     else
       @state_object = klass.find(self.object_id)
     end
+    @state_object_new = false
     @state_object
   end
   
   def object=(obj)
     @state_object = obj
-    self.object_id = obj.id
+    @state_object_new = obj.new_record?
     self.object_type = obj.class.to_s
     self.before_state = obj.attributes
   end
@@ -39,21 +41,29 @@ class ActivityLog < SimpledbResource
   def finalize_states
     self.object_id = @state_object.id
     self.after_state = @state_object.attributes
-    after_hash = self.after_state
-    before_hash = self.before_state
+    before_hash = {}
+    after_hash = {}
     
-    after_hash.reject! do |k, v|
-      if before_hash[k] == v
-        before_hash.delete(k)
-        true
-      else
-        false
+    if @state_object_new
+      after_hash = self.after_state
+    else
+      before_hash = self.before_state
+      after_hash = self.after_state
+      
+      after_hash.reject! do |k, v|
+        if before_hash[k] == v
+          before_hash.delete(k)
+          true
+        else
+          false
+        end
+      end
+      
+      if before_hash.length == 1 && (before_hash['updated_at'] || before_hash['updated-at'])
+        before_hash = {}
       end
     end
     
-    if before_hash.length == 1 && (before_hash['updated_at'] || before_hash['updated-at'])
-      before_hash = {}
-    end
     if after_hash.length == 1 && (after_hash['updated_at'] || after_hash['updated-at'])
       after_hash = {}
     end
