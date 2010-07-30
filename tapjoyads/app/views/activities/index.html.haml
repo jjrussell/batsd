@@ -30,7 +30,7 @@
         %td
           #{activity.object_type}:
           %a{:href => "javascript:setValue('object_id', '#{activity.object.id}')"}
-            = activity.object.name rescue activity.object.id[0,6]...
+            = activity.object.name rescue "#{activity.object.id[0,6]}..."
         %td
           - activity.before_state.each do |key, value|
             - next if key == 'updated-at' || key == 'updated_at'
@@ -40,14 +40,14 @@
         %td
           - activity.after_state.each do |key, value|
             - next if key == 'updated-at' || key == 'updated_at'
-            %p 
+            %p
               #{key}:
               %b= value
         %td= activity.created_at.to_s(:db)
         %td= activity.controller
         %td= activity.action
         %td
-          %a{:href => "javascript:setValue('request_id', '#{activity.request_id}')"}= activity.request_id[0, 6]...
+          %a{:href => "javascript:setValue('request_id', '#{activity.request_id}')"}= "#{activity.request_id[0, 6]}..."
 
 = link_to('Next &rarr;', activities_path(:object_id => params[:object_id], :user => params[:user], :request_id => params[:request_id], :next_token => @next_token), :class => 'next') if @next_token
       
