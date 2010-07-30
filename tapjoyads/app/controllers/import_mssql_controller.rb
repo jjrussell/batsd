@@ -1,11 +1,12 @@
 class ImportMssqlController < ApplicationController
   
-  around_filter :log_activity
   protect_from_forgery :except => [:publisher_ad, :app, :campaign]
-
+  
+  after_filter :save_activity_logs, :except => [ :campaign ]
+  
   def user
     user = User.find_or_initialize_by_id(params[:user_id])
-    @activity_log.add_state_object(user)
+    log_activity(user)
     user.username = params[:user_name]
     user.email = params[:email]
     user.crypted_password = params[:password]
@@ -25,7 +26,7 @@ class ImportMssqlController < ApplicationController
     udid = params[:udid]
     app_id = params[:app_id]
     pi = PointPurchases.new(:key => "#{udid}.#{app_id}")
-    @activity_log.add_state_object(pi)
+    log_activity(pi)
     pi.add_virtual_good(params[:item_id])
     pi.save
     
@@ -37,7 +38,7 @@ class ImportMssqlController < ApplicationController
     udid = params[:udid]
     app_id = params[:app_id]
     pi = PointPurchases.new(:key => "#{udid}.#{app_id}")
-    @activity_log.add_state_object(pi)
+    log_activity(pi)
     pi.points = params[:points]
     pi.save
     
@@ -46,7 +47,7 @@ class ImportMssqlController < ApplicationController
 
   def vg
     vg = VirtualGood.new(:key => params[:item_id])
-    @activity_log.add_state_object(vg)
+    log_activity(vg)
     vg.apple_id = params[:apple_id]
     vg.price = params[:price]
     vg.name = params[:name]
@@ -87,7 +88,7 @@ class ImportMssqlController < ApplicationController
     return unless verify_params([:partner_id])
     
     partner = Partner.find_or_initialize_by_id(params[:partner_id])
-    @activity_log.add_state_object(partner)
+    log_activity(partner)
     partner.name = params[:name] unless params[:name].blank?
     partner.contact_name = params[:contact_name] unless params[:contact_name].blank?
     partner.contact_phone = params[:contact_phone] unless params[:contact_phone].blank?
@@ -103,7 +104,7 @@ class ImportMssqlController < ApplicationController
     return unless verify_params([:app_id])
     
     currency = Currency.find_or_initialize_by_app_id(params[:app_id])
-    @activity_log.add_state_object(currency)
+    log_activity(currency)
     currency.partner = currency.app.partner
     currency.name = params[:currency_name]
     currency.conversion_rate = params[:conversion_rate]
@@ -121,7 +122,7 @@ class ImportMssqlController < ApplicationController
     
     if params[:show_rating_offer] == '1'
       rating_offer = RatingOffer.find_or_initialize_by_app_id_and_partner_id(params[:app_id], currency.app.partner_id)
-      @activity_log.add_state_object(rating_offer)
+      log_activity(rating_offer)
       rating_offer.save!
     end
     
@@ -134,7 +135,7 @@ class ImportMssqlController < ApplicationController
     ad_id = params[:ad_id]
   
     ad = PublisherAd.new(:key => ad_id)
-    @activity_log.add_state_object(ad)
+    log_activity(ad)
     
     unless ad.get('next_run_time')
       ad.put('next_run_time', Time.now.utc.to_f.to_s)     
@@ -176,7 +177,7 @@ class ImportMssqlController < ApplicationController
     offer = nil
     unless params[:name].starts_with?('Email')
       mysql_app = App.find_or_initialize_by_id(params[:app_id])
-      @activity_log.add_state_object(mysql_app)
+      log_activity(mysql_app)
       mysql_app.partner_id = params[:partner_id]
       mysql_app.name = params[:name]
       mysql_app.description = params[:description] unless params[:description].blank?
@@ -191,14 +192,14 @@ class ImportMssqlController < ApplicationController
       mysql_app.save!
       
       offer = mysql_app.offer
-      @activity_log.add_state_object(offer)
+      log_activity(offer)
       if params[:iphone_only] == '1'
         offer.device_types = [ 'iphone' ].to_json
       end
       
     else
       email_offer = EmailOffer.find_or_initialize_by_id(params[:app_id])
-      @activity_log.add_state_object(email_offer)
+      log_activity(email_offer)
       email_offer.partner_id = params[:partner_id]
       email_offer.name = params[:name]
       email_offer.description = params[:description] unless params[:description].blank?
@@ -206,7 +207,7 @@ class ImportMssqlController < ApplicationController
       email_offer.save!
       
       offer = email_offer.offer
-      @activity_log.add_state_object(offer)
+      log_activity(offer)
       
     end
     offer.user_enabled = params[:payment_for_install].to_i > 0
@@ -226,7 +227,6 @@ class ImportMssqlController < ApplicationController
     campaign_id = params[:campaign_id]
   
     campaign = Campaign.new(:key => campaign_id)
-    @activity_log.add_state_object(campaign)
     
     unless campaign.get('next_run_time')
       campaign.put('next_run_time', Time.now.utc.to_f.to_s)     
@@ -273,7 +273,7 @@ class ImportMssqlController < ApplicationController
   
   def order
     order = Order.find_or_initialize_by_id(params[:id])
-    @activity_log.add_state_object(order)
+    log_activity(order)
     order.partner_id = params[:partner_id]
     order.payment_txn_id = params[:payment_txn_id] unless params[:payment_txn_id].blank?
     order.refund_txn_id = params[:refund_txn_id] unless params[:refund_txn_id].blank?
@@ -292,7 +292,7 @@ class ImportMssqlController < ApplicationController
   
   def payout
     payout = Payout.find_or_initialize_by_id(params[:id])
-    @activity_log.add_state_object(payout)
+    log_activity(payout)
     payout.partner_id = params[:partner_id]
     payout.amount = params[:amount]
     payout.month = params[:month]

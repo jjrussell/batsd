@@ -3,8 +3,8 @@ class StatzController < WebsiteController
   
   filter_access_to :all
   
-  around_filter :log_activity, :only => [ :update ]
   before_filter :find_offer, :only => [ :show, :edit, :update, :last_run_times, :udids, :udid ]
+  after_filter :save_activity_logs, :only => [ :update ]
   
   def index
     money_stats = Mc.get('money.cached_stats') || {'24_hours' => {}}
@@ -94,7 +94,7 @@ class StatzController < WebsiteController
   end
   
   def update
-    @activity_log.add_state_object(@offer)
+    log_activity(@offer)
     
     orig_payment = @offer.payment
     orig_budget = @offer.daily_budget
@@ -105,7 +105,7 @@ class StatzController < WebsiteController
       unless params[:app_store_id].blank?
         app = @offer.item
         orig_store_id = app.store_id
-        @activity_log.add_state_object(app)
+        log_activity(app)
         app.update_attribute(:store_id, params[:app_store_id])
       end
       

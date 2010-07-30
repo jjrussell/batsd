@@ -3,6 +3,8 @@ class ToolsController < WebsiteController
   
   filter_access_to :all
   
+  after_filter :save_activity_logs, :only => [ :create_payout, :create_transfer, :create_order ]
+  
   def index
   end
   
@@ -15,6 +17,7 @@ class ToolsController < WebsiteController
     cutoff_date = partner.payout_cutoff_date - 1.day
     amount = (params[:amount].to_f * 100).to_i
     payout = partner.payouts.build(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
+    log_activity(payout)
     render :json => { :success => payout.save }
   end
   
@@ -26,13 +29,16 @@ class ToolsController < WebsiteController
       partner = Partner.find(params[:partner_id])
       amount = (params[:transfer_amount].to_f * 100).to_i
       payout = partner.payouts.build(:amount => amount, :month => Time.zone.now.month, :year => Time.zone.now.year, :payment_method => 3)
+      log_activity(payout)
       payout.save!
       
       order = partner.orders.build(:amount => amount, :status => 1, :payment_method => 3)
+      log_activity(order)
       order.save!
       
       if params[:marketing_amount].to_f > 0
         marketing_order = partner.orders.build(:amount => (params[:marketing_amount].to_f * 100).to_i, :status => 1, :payment_method => 2)
+        log_activity(marketing_order)
         marketing_order.save!
       end
     end
@@ -48,6 +54,7 @@ class ToolsController < WebsiteController
   def create_order
     order = Order.new(params[:order])
     order.amount = (params[:order][:amount].to_f * 100).to_i
+    log_activity(order)
     if order.save
       flash[:notice] = 'The order was successfully created.'
     else

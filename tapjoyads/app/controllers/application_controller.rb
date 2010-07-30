@@ -120,15 +120,27 @@ private
     render :text => '' if banned_ips.include?(get_ip_address)
   end
   
-  def log_activity
-    @activity_log = ActivityLog.new({ :load => false })
-    @activity_log.user = 'system'
-    @activity_log.user = current_user.username if self.respond_to?(:current_user)
-    @activity_log.controller = params[:controller]
-    @activity_log.action = params[:action]
-    yield
-    @activity_log.finalize_states
-    @activity_log.save
+  def log_activity(object)
+    @request_id = UUIDTools::UUID.random_create.to_s unless defined?(@request_id)
+    @activity_logs = [] unless defined?(@activity_logs)
+    
+    activity_log = ActivityLog.new({ :load => false })
+    activity_log.request_id = @request_id
+    activity_log.user = 'system'
+    activity_log.user = current_user.username if self.respond_to?(:current_user)
+    activity_log.controller = params[:controller]
+    activity_log.action = params[:action]
+    activity_log.object = object
+    @activity_logs << activity_log
+  end
+  
+  def save_activity_logs
+    if defined?(@activity_logs)
+      @activity_logs.each do |activity_log|
+        activity_log.finalize_states
+        activity_log.save
+      end
+    end
   end
   
 end
