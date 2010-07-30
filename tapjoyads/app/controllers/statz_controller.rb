@@ -93,7 +93,7 @@ class StatzController < WebsiteController
   end
   
   def update
-    orig_payment = @offer.payout
+    orig_payment = @offer.payment
     orig_budget = @offer.daily_budget
     params[:offer][:device_types] = params[:offer][:device_types].to_json
     if @offer.update_attributes(params[:offer])
