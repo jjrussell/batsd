@@ -93,16 +93,19 @@ class StatzController < WebsiteController
   end
   
   def update
+    orig_payment = @offer.payout
+    orig_budget = @offer.daily_budget
     params[:offer][:device_types] = params[:offer][:device_types].to_json
     if @offer.update_attributes(params[:offer])
       
       app = nil
       unless params[:app_store_id].blank?
         app = @offer.item
+        orig_store_id = app.store_id
         app.update_attribute(:store_id, params[:app_store_id])
       end
       
-      if [ 'App', 'EmailOffer' ].include?(@offer.item_type)
+      if [ 'App', 'EmailOffer' ].include?(@offer.item_type) && (orig_payment != @offer.payment || orig_budget != @offer.daily_budget || (app && orig_store_id != app.store_id))
         mssql_url = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/Service1.asmx/SetAppData?Password=stephenisawesome'
         mssql_url += "&AppID=#{@offer.id}"
         mssql_url += "&Payment=#{@offer.payment}"
