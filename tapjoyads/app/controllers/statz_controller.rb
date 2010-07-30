@@ -3,6 +3,7 @@ class StatzController < WebsiteController
   
   filter_access_to :all
   
+  around_filter :log_activity, :only => [ :update ]
   before_filter :find_offer, :only => [ :show, :edit, :update, :last_run_times, :udids, :udid ]
   
   def index
@@ -93,6 +94,8 @@ class StatzController < WebsiteController
   end
   
   def update
+    @activity_log.add_state_object(@offer)
+    
     orig_payment = @offer.payment
     orig_budget = @offer.daily_budget
     params[:offer][:device_types] = params[:offer][:device_types].to_json
@@ -102,6 +105,7 @@ class StatzController < WebsiteController
       unless params[:app_store_id].blank?
         app = @offer.item
         orig_store_id = app.store_id
+        @activity_log.add_state_object(app)
         app.update_attribute(:store_id, params[:app_store_id])
       end
       

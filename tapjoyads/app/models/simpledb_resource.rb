@@ -146,6 +146,14 @@ class SimpledbResource
   end
   self.sdb_attr :updated_at, {:type => :time, :attr_name => 'updated-at'}
   
+  def id
+    @key
+  end
+  
+  def id=(key)
+    @key = key
+  end
+  
   ##
   # Attempt to load the item attributes from memcache. If they are not found,
   # they will attempt be loaded from simpledb. If thet are still not found,

@@ -16,7 +16,7 @@ class ApplicationController < ActionController::Base
   # from your application log (in this case, all fields with names like "password"). 
   filter_parameter_logging :password, :password_confirmation
   
-  private
+private
   
   def verify_params(required_params, options = {})
     allow_empty = options.delete(:allow_empty) { true }
@@ -118,6 +118,17 @@ class ApplicationController < ActionController::Base
   def reject_banned_ips
     banned_ips = Set.new(['174.120.96.162', '151.197.180.227', '74.63.224.218', '65.19.143.2'])
     render :text => '' if banned_ips.include?(get_ip_address)
+  end
+  
+  def log_activity
+    @activity_log = ActivityLog.new({ :load => false })
+    @activity_log.user = 'system'
+    @activity_log.user = current_user.username if self.respond_to?(:current_user)
+    @activity_log.controller = params[:controller]
+    @activity_log.action = params[:action]
+    yield
+    @activity_log.finalize_states
+    @activity_log.save
   end
   
 end
