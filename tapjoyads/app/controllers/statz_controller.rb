@@ -168,13 +168,6 @@ class StatzController < WebsiteController
     render(:json => results.to_json)  
   end
   
-  def log
-    @activities = []
-    ActivityLog.select :where => "object_id = '#{params[:id]}'" do |a|
-      @activities << a
-    end
-  end
-  
 private
   
   def find_offer
