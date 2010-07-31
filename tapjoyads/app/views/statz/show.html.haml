@@ -29,7 +29,7 @@
 
 .left
   .metadata Offer id: #{@offer.id}
-  .metadata Partner id: #{@offer.partner_id}
+  .metadata Partner id: #{link_to(@offer.partner_id, partner_path(@offer.partner_id))}
   .metadata Contact: #{@offer.partner.users.first.email if @offer.partner.users.first}
   .metadata Offer type: #{@offer.item_type}
   - if @offer.item_type == 'App'
