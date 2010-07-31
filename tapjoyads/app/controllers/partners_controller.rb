@@ -10,7 +10,8 @@ class PartnersController < WebsiteController
   def index
     @partners = Set.new
     if params[:q]
-      results = User.find(:all, :conditions => "email LIKE '%#{params[:q]}%'").each do |u|
+      query = params[:q].gsub("'", '')
+      results = User.find(:all, :conditions => "email LIKE '%#{query}%'").each do |u|
         @partners.merge(u.partners)
       end
     end
