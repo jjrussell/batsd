@@ -8,6 +8,12 @@ class PartnersController < WebsiteController
   before_filter :find_partner, :only => [ :show ]
 
   def index
+    @partners = Set.new
+    if params[:q]
+      results = User.find(:all, :conditions => "email LIKE '%#{params[:q]}%'").each do |u|
+        @partners.merge(u.partners)
+      end
+    end
   end
 
   def show

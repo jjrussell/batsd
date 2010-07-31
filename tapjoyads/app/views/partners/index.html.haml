@@ -1,3 +1,26 @@
 - @page_title = 'Partners'
 
-not implemented yet
+- form_tag(partners_path, :method => 'get', :id => 'form') do
+  = label_tag(:q, "Find a partner by email address:")
+  = text_field_tag(:q, params[:q])
+ 
+- @partners.each do |partner|
+  .result
+    = link_to(partner.contact_name, partner_path(partner))
+    .offers
+      - partner.offers.each do |offer|
+        = image_tag(offer.get_icon_url, :size => '20x20')
+        = link_to(offer.name, statz_path(offer))
+    
+- content_for :page_styles do
+  :plain
+    .result {
+      border-bottom: 1px dotted black;
+      padding-bottom: 10px;
+      padding-top: 10px;
+    }
+    
+    .offers {
+      padding-left: 30px;
+    }
+    
