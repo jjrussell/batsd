@@ -46,7 +46,7 @@ class WebRequest < SimpledbResource
 
   def dynamic_domain_name
     @now = Time.now.utc
-    date = @now.iso8601[0,10]
+    date = @now.strftime('%Y-%m-%d')
     num = rand(MAX_WEB_REQUEST_DOMAINS)
     if date == '2010-07-25' && num == 7
       num = rand(MAX_WEB_REQUEST_DOMAINS)
