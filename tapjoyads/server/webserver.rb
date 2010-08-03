@@ -24,3 +24,6 @@
 
 # start apache
 `/etc/init.d/apache2 start`
+
+# boot the app
+`su webuser -c 'curl -s http://localhost:9898/healthz'`
