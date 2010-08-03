@@ -4,12 +4,13 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
     super QueueNames::GRAB_ADVERTISER_UDIDS
   end
 
-  private
+private
 
   # message = app_id[:yyyy-mm-dd]
   def on_message(message)
     messages = message.to_s.split(':')
     @advertiser_app_id = messages[0]
+    @bucket = S3.s3.bucket(BucketNames::AD_UDIDS)
 
     if messages[1] # date was hard-coded
       date = Time.zone.parse(messages[1]) rescue Time.zone.now
@@ -21,13 +22,13 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
 
       # finalize last month, if necessary
       path = App.udid_s3_key(@advertiser_app_id, date)
-      previous_path = bucket.get("latest/#{@advertiser_app_id}") rescue nil
+      previous_path = @bucket.get("latest/#{@advertiser_app_id}") rescue nil
       if path != previous_path
         save_udids(@advertiser_app_id, 1.month.ago(date))
       end
 
       # update latest to current path, unless empty
-      bucket.put("latest/#{@advertiser_app_id}", path) if not_empty
+      @bucket.put("latest/#{@advertiser_app_id}", path) if not_empty
     end
   end
 
@@ -45,12 +46,8 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
       udids << [reward.get("udid"), reward.get("created")].join(",")
     end
     udids = udids.compact.uniq
-    bucket.put(path, udids.join("\n"), {}, 'authenticated-read') unless udids.blank?
+    @bucket.put(path, udids.join("\n"), {}, 'authenticated-read') unless udids.blank?
     return !udids.blank?
   end
 
-  # avoid RequestTimeTooSkewed in save_udids by refreshing it each time
-  def bucket
-    S3.s3.bucket(BucketNames::AD_UDIDS)
-  end
 end
