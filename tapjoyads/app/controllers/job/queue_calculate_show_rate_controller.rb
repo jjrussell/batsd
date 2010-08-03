@@ -62,7 +62,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     end
     
     unless offer.allow_negative_balance?
-      adjusted_balance = balance
+      adjusted_balance = offer.partner.balance
       if offer.is_free? && offer.partner.balance < 50000
         adjusted_balance = balance / 2
       end
