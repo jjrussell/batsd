@@ -79,6 +79,11 @@ class SimpledbResource
     :json => JsonConverter.new
   }
   
+  @@special_values = {
+    :newline => "^^TAPJOY_NEWLINE^^",
+    :escaped => "^^TAPJOY_ESCAPED^^"
+  }
+  
   ##
   # Initializes a new SimpledbResource, which represents a single row in a domain.
   # options:
@@ -101,11 +106,6 @@ class SimpledbResource
     
     @this_domain_name = get_real_domain_name(@this_domain_name)
     setup_key_hash
-    
-    @special_values = {
-      :newline => "^^TAPJOY_NEWLINE^^",
-      :escaped => "^^TAPJOY_ESCAPED^^"
-    }
     
     load(load_from_memcache) if should_load
     @is_new = @attributes.empty?
@@ -660,10 +660,10 @@ private
   end
   
   def unescape_specials(value)
-    value = value.gsub(@special_values[:newline], "\n")
+    value = value.gsub(@@special_values[:newline], "\n")
     
-    if value.starts_with?(@special_values[:escaped])
-      value = value.gsub(@special_values[:escaped], '')
+    if value.starts_with?(@@special_values[:escaped])
+      value = value.gsub(@@special_values[:escaped], '')
       value = CGI::unescape(value)
     end
     
@@ -675,11 +675,11 @@ private
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     if cgi_escape
-      value = @special_values[:escaped] + CGI::escape(value)
+      value = @@special_values[:escaped] + CGI::escape(value)
     else
-      value = value.gsub("\r\n", @special_values[:newline])
-      value = value.gsub("\n", @special_values[:newline])
-      value = value.gsub("\r", @special_values[:newline])
+      value = value.gsub("\r\n", @@special_values[:newline])
+      value = value.gsub("\n", @@special_values[:newline])
+      value = value.gsub("\r", @@special_values[:newline])
     end
     
     return value
