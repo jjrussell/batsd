@@ -27,7 +27,7 @@
 - if permitted_to? :index, :activities
   %p= link_to('[Activity Log]', activities_path(:object_id => @offer.id))
 - if @offer.item_type == 'App' && @offer.item.currency
-  .metadata= link_to('[View Offer Wall]', "/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDID}&publisher_user_id=testuser")
+  %p= link_to('[View Offer Wall]', "/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDID}&publisher_user_id=testuser")
 
 .left
   .metadata Offer id: #{@offer.id}
