@@ -31,8 +31,9 @@
     = f.label(:show_rate)
     = f.text_field(:show_rate)
   .field
-    = f.label(:countries, 'Countries (i.e. ["US"])')
+    = f.label(:countries, 'Countries (i.e. ["US", "CA"])')
     = f.text_field(:countries)
+    = link_to('Country codes', 'http://www.iso.org/iso/english_country_names_and_code_elements')
   .field
     = f.label(:cities, 'Cities (i.e. ["San Francisco"])')
     = f.text_field(:cities)
