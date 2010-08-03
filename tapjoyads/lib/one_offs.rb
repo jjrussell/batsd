@@ -46,7 +46,7 @@ class OneOffs
     time = Benchmark.realtime do
       file.each_line do |line|
         counter += 1
-        udid = line.gsub("\n", "").downcase
+        udid = line.gsub("\n", "").gsub('"', '').downcase
         app_list = DeviceAppList.new :key => udid
         app_list.is_new ? new_udids += 1 : existing_udids += 1
         if app_list.has_app app_id
