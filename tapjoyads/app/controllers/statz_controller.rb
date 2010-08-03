@@ -18,21 +18,28 @@ class StatzController < WebsiteController
   
   def udids
     bucket = S3.bucket(BucketNames::AD_UDIDS)
-    @keys = bucket.keys('prefix' => App.udid_s3_key(@offer.id))
+    @keys = bucket.keys('prefix' => App.udid_s3_key(@offer.id)).map do |key|
+      date = key.name.split(/\//).last[0..-4]
+    end.uniq
   end
 
   def udid
-    @date = if params[:date]
-        Time.zone.parse(params[:date] + "-01") rescue Time.zone.now
-      else
-        Time.zone.now
-      end
+    if params[:date]
+      date = Time.zone.parse(params[:date] + "-01") rescue Time.zone.now
+      prefix = App.udid_s3_key(@offer.id, date)[0..-4] # drop -01
+      filename = "#{@offer.id}.#{date.strftime("%Y-%m")}.csv"
+    else
+      prefix = App.udid_s3_key(@offer.id)
+      filename = "#{@offer.id}.csv"
+    end
     bucket = S3.bucket(BucketNames::AD_UDIDS)
-    @udids = bucket.get(App.udid_s3_key(@offer.id, @date))
+    @udids = bucket.keys('prefix' => prefix).map do |key|
+      bucket.get(key)
+    end.join("\n")
 
     send_data(@udids,
               :type => "text/csv",
-              :filename => "#{@offer.id}.#{@date.strftime("%Y-%m")}.csv",
+              :filename => filename,
               :disposition => "attachment")
   end
 

@@ -5,8 +5,8 @@
 
 %p UDIDs for:
 - @keys.each do |key|
-  - date = key.name.split(/\//).last
-  .month= link_to date, {:action => "udid", :id => @offer.id, :params => {:date => date}}
+  .month= link_to key, {:action => "udid", :id => @offer.id, :params => {:date => key}}
+.month= link_to "All time", {:action => "udid", :id => @offer.id}
 
 - content_for :page_styles do
   :plain
