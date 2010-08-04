@@ -3,10 +3,13 @@
 .icon= image_tag(@offer.get_icon_url, :size => '57x57')
 %h1= @offer.name
 
-%p UDIDs for:
-- @keys.each do |key|
-  .month= link_to key, {:action => "udid", :id => @offer.id, :params => {:date => key}}
-.month= link_to "All time", {:action => "udid", :id => @offer.id}
+- unless @keys.empty?
+  %p UDIDs for:
+  - @keys.each do |key|
+    .month= link_to key, {:action => "udid", :id => @offer.id, :params => {:date => key}}
+  .month= link_to "All time", {:action => "udid", :id => @offer.id}
+- else
+  (no UDID reports found)
 
 - content_for :page_styles do
   :plain

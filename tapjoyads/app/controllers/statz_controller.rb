@@ -15,11 +15,11 @@ class StatzController < WebsiteController
     @last_updated = Mc.get('statz.last_updated') || Time.at(8.hours.to_i)
     @cached_stats = Mc.get('statz.cached_stats') || {}
   end
-  
+
   def udids
     bucket = S3.bucket(BucketNames::AD_UDIDS)
     @keys = bucket.keys('prefix' => App.udid_s3_key(@offer.id)).map do |key|
-      date = key.name.split(/\//).last[0..-4]
+      date = key.name.split(/\//).last.match(/\d{4}\-\d{2}/).to_s
     end.uniq
   end
 
