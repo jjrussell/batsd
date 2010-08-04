@@ -8,7 +8,7 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
 
   # message = [ app_id, date, period ]
   def on_message(message)
-    messages = JSON.load(message)
+    messages = JSON.load(message.to_s)
     app_id = messages[0]
     today = Time.zone.at(messages[1])
     @type = messages[2] || "daily"
