@@ -27,7 +27,7 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
       day_in_the_past = 1.month.ago(date)
     end
 
-    return if @bucket.keys.map(&:names).include?(path) # don't overwrite
+    return if @bucket.key(path).exists? # don't overwrite
     conditions = [
       "advertiser_app_id = '#{app_id}'",
       "created >= '#{day_in_the_past.to_f}'",
