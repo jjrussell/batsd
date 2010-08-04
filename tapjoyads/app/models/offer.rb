@@ -197,25 +197,16 @@ class Offer < ActiveRecord::Base
   
   def adjust_cvr_for_ranking
     srand( (id + (Time.now.to_f / 20.minutes).to_i.to_s).hash )
-    boost = 0
-    if id == '875d39dd-8227-49a2-8af4-cbd5cb583f0e'
-      # MyTown: boost cvr by 20-30%
-      boost = 0.2 + rand * 0.1
-    elsif id == 'f8751513-67f1-4273-8e4e-73b1e685e83d'
-      # Movies: boost cvr by 35-40%
-      boost = 0.35 + rand * 0.05
-    elsif id == '547f141c-fdf7-4953-9895-83f2545a48b4'
-      # CauseWorld: US-only, so it has a low cvr. Boost it by 30-40%
-      boost = 0.3 + rand * 0.1
-    elsif partner_id == '70f54c6d-f078-426c-8113-d6e43ac06c6d' && is_free?
-      # Tapjoy apps: reduce cvr by 5%
-      boost = -0.05
+
+    if pay_per_click?
+      self.conversion_rate = 0.65 + rand * 0.15
     elsif is_paid?
-      # Boost all paid apps by 0-15%, causing churn.
-      boost = rand * 0.15
+      if rand < 0.02
+        self.conversion_rate = 0.5
+      else
+        self.conversion_rate = self.conversion_rate + (rand * 0.15)
+      end
     end
-    
-    self.conversion_rate = pay_per_click? ? (0.75 + rand * 0.15) : (conversion_rate + boost)
   end
 
   def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer)
