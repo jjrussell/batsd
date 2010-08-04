@@ -11,6 +11,7 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
     messages = JSON.load(message)
     app_id = messages[0]
     today = Time.zone.at(messages[1])
+    @type = messages[2] || "daily"
     @bucket = S3.s3.bucket(BucketNames::AD_UDIDS)
 
     save_udids(app_id, today)
@@ -20,10 +21,15 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
     Rails.logger.info "prepare to grab udids for #{app_id} for #{date.strftime('%Y-%m-%d')}"
 
     path = App.udid_s3_key(app_id, date)
-    day_ago = 1.day.ago(date)
+    day_in_the_past = 1.day.ago(date)
+    if @type == "monthly"
+      path = path[0..-4] # drop -01
+      day_in_the_past = 1.month.ago(date)
+    end
+
     conditions = [
       "advertiser_app_id = '#{app_id}'",
-      "created >= '#{day_ago.to_f}'",
+      "created >= '#{day_in_the_past.to_f}'",
       "created < '#{date.to_f}'"].join(" and ")
 
     udids = []
