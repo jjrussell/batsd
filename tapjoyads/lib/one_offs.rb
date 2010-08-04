@@ -158,7 +158,7 @@ class OneOffs
         date = Time.zone.parse(day) # first day of "next" month
         message = [offer.id, date, "monthly"].to_json
         Sqs.send_message(QueueNames::GRAB_ADVERTISER_UDIDS, message)
-        sleep(1) #don't want to overwhelm the job servers
+        sleep(60) #don't want to overwhelm the job servers
       end
     end
   end
