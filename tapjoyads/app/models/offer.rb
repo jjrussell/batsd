@@ -10,6 +10,8 @@ class Offer < ActiveRecord::Base
   DEFAULT_OFFER_TYPE  = '1'
   FEATURED_OFFER_TYPE = '2'
   
+  NUM_MEMCACHE_KEYS = 20
+  
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   
   belongs_to :partner
@@ -42,7 +44,7 @@ class Offer < ActiveRecord::Base
   named_scope :to_aggregate_stats, lambda { { :conditions => ["next_stats_aggregation_time < ?", Time.zone.now], :order => "next_stats_aggregation_time ASC" } }
   
   def self.get_enabled_offers
-    Mc.get_and_put('s3.enabled_offers') do
+    Mc.get_and_put("s3.enabled_offers_#{rand(NUM_MEMCACHE_KEYS)}") do
       bucket = S3.bucket(BucketNames::OFFER_DATA)
       Marshal.restore(bucket.get('enabled_offers'))
     end
@@ -79,7 +81,9 @@ class Offer < ActiveRecord::Base
     end
     
     bucket.put('enabled_offers', Marshal.dump(offer_list))
-    Mc.put('s3.enabled_offers', offer_list)
+    NUM_MEMCACHE_KEYS.times do |i|
+      Mc.put("s3.enabled_offers_#{i}", offer_list)
+    end
   end
   
   def self.cache_classic_offers
