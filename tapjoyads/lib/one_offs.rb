@@ -154,7 +154,7 @@ class OneOffs
     count = Offer.count
     index = 0
     Offer.find_each do |offer|
-      p "#{index += 1} / #{count} (#{offer.name rescue "?"})"
+      p "#{index += 1} / #{count} (#{offer.name rescue "?"} : #{offer.id})"
       date = Time.zone.parse("2010-0#{month+1}-01").to_f # first day of "next" month
       message = [offer.id, date, "monthly"].to_json
       Sqs.send_message(QueueNames::GRAB_ADVERTISER_UDIDS, message)
