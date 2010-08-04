@@ -18,8 +18,6 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
   end
 
   def save_udids(app_id, date)
-    Rails.logger.info "prepare to grab udids for #{app_id} for #{date.strftime('%Y-%m-%d')}"
-
     path = App.udid_s3_key(app_id, date)
     day_in_the_past = 1.day.ago(date)
     if @type == "monthly"
@@ -38,8 +36,6 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
       udids << [reward.get("udid"), reward.get("created")].join(",")
     end
     udids = udids.compact.uniq
-    @bucket.put(path, udids.join("\n"), {}, 'authenticated-read') unless udids.blank?
-
-    Rails.logger.info "saved udids for #{app_id} for #{date.strftime('%Y-%m-%d')}"
+    @bucket.put(path, udids.join("\n"), {}, 'authenticated-read')
   end
 end
