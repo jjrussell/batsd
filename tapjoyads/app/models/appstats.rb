@@ -13,7 +13,7 @@ class Appstats
         'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'rewards', 'offers',
         'rewards_revenue', 'offers_revenue', 'installs_revenue', 'published_installs',
         'rewards_opened', 'offers_opened', 'installs_opened', 'daily_active_users', 
-        'monthly_active_users', 'vg_purchases', 'overall_store_rank'] }
+        'monthly_active_users', 'vg_purchases', 'overall_store_rank', 'offerwall_views'] }
     @type = options.delete(:type) { :granular }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     

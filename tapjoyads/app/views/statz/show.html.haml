@@ -93,6 +93,14 @@
     .bar
     .tooltip
 
+#offerwall_views.graph
+  %h3
+  .totals
+  .holder
+    %canvas#offerwall_views_graph{:width => '550px', :height => '330px'}
+    .bar
+    .tooltip
+
 #published_offers.graph
   %h3
   .totals
@@ -233,6 +241,22 @@
       },
     };
     
+    var offerwallData = {
+      "name": "Offerwall views",
+      "intervals": [ "#{@intervals.join('","')}" ],
+      "xLabels": [ "#{@x_labels.join('","')}" ],
+      
+      "main": {
+        "data":[
+           [ #{@stats['published_installs'].join(',')} ],
+           [ #{@stats['installs_opened'].join(',')} ],
+           [ #{@stats['offerwall_views'].join(',')} ]
+        ],
+        "names": ["Published installs", "Published clicks", "Offerwall views"],
+        "totals": [ #{@stats['published_installs'].sum}, #{@stats['installs_opened'].sum}, #{@stats['offerwall_views'].sum} ]
+      }
+    };
+    
     var publishedOffersData = {
       "name": "Published offers",
       "intervals": [ "#{@intervals.join('","')}" ],
@@ -307,6 +331,7 @@
       Tapjoy.drawLargeGraph(installData, 'installs_spend');
       Tapjoy.drawLargeGraph(rankData, 'installs_rank');
       Tapjoy.drawLargeGraph(publishedInstallsData, 'published_installs');
+      Tapjoy.drawLargeGraph(offerwallData, 'offerwall_views');
       Tapjoy.drawLargeGraph(publishedOffersData, 'published_offers');
       Tapjoy.drawLargeGraph(ratingsData, 'ratings');
       Tapjoy.drawLargeGraph(virtualGoodsData, 'virtual_goods');
