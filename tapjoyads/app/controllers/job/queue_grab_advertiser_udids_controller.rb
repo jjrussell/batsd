@@ -12,7 +12,7 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
     app_id = messages[0]
     today = Time.zone.at(messages[1])
     @type = messages[2] || "daily"
-    @bucket = S3.s3.bucket(BucketNames::AD_UDIDS)
+    @bucket = S3.bucket(BucketNames::AD_UDIDS)
 
     save_udids(app_id, today)
   end

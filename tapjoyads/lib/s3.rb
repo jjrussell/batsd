@@ -1,9 +1,12 @@
 class S3
   
-  cattr_reader :s3
-  @@s3 = RightAws::S3.new(nil, nil, { :multi_thread => true })
+  def self.reset_connection
+    @@s3 = RightAws::S3.new(nil, nil, { :multi_thread => true })
+    @@buckets = {}
+  end
   
-  @@buckets = {}
+  cattr_reader :s3
+  self.reset_connection
   
   def self.bucket(bucket_name, create = false)
     if @@buckets[bucket_name].nil? || @@buckets[bucket_name].full_name != bucket_name

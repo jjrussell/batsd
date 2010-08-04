@@ -100,6 +100,8 @@ Rails::Initializer.run do |config|
       if forked
         Mc.reset_connection
         SimpledbResource.reset_connection
+        S3.reset_connection
+        Sqs.reset_connection
       end
     end
   end

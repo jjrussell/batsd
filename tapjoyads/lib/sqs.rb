@@ -3,10 +3,13 @@
 # the failed-sqs-writes s3 bucket.
 class Sqs
   
-  cattr_reader :sqs
-  @@sqs = RightAws::SqsGen2.new(nil, nil, { :multi_thread => true })
+  def self.reset_connection
+    @@sqs = RightAws::SqsGen2.new(nil, nil, { :multi_thread => true })
+    @@queues = {}
+  end
   
-  @@queues = {}
+  cattr_reader :sqs
+  self.reset_connection
   
   def self.queue(queue_name, create = true, visibility = nil)
     if @@queues[queue_name].nil? || @@queues[queue_name].name != queue_name
