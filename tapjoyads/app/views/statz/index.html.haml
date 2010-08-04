@@ -1,11 +1,20 @@
 - @page_title = 'Stats for last 24 hours'
 
-%h1 Tapjoy stats for last 24 hours
+%h1 
+  Tapjoy stats for last 
+  = @timeframe == '7_days' ? '7 days' : @timeframe == '1_month' ? '30 days' : '24 hours'
+
+.timeframes
+  = @timeframe == '24_hours' ? '24 hours' : link_to('24 hours', statz_index_path)
+  |
+  = @timeframe == '7_days' ? '7 days' : link_to('7 days', statz_index_path(:timeframe => '7_days'))
+  |
+  = @timeframe == '1_month' ? '30 days' : link_to('30 days', statz_index_path(:timeframe => '1_month'))
 
 = label_tag('search_box', 'Offer Name:')
 = text_field_tag('search_box', '', :size => '40')
 
-%h3#install_count_24hours= "Total conversions: #{@cvr_count_24hours} &nbsp; Total revenue: #{@ad_spend_24hours} &nbsp; Total payouts: #{@publisher_earnings_24hours}"
+%h3= "Total conversions: #{@cvr_count} &nbsp; Total revenue: #{@ad_spend} &nbsp; Total payouts: #{@publisher_earnings}"
 
 #last_updated= "Last Updated: #{@last_updated.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)}"
 
@@ -131,4 +140,8 @@
     #last_updated {
       font-weight: bold;
       font-size: 14px;
+    }
+    
+    .timeframes {
+      margin: -10px 0 10px;
     }

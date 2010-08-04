@@ -7,13 +7,15 @@ class StatzController < WebsiteController
   after_filter :save_activity_logs, :only => [ :update ]
   
   def index
-    money_stats = Mc.get('money.cached_stats') || {'24_hours' => {}}
-    @cvr_count_24hours = money_stats['24_hours']['conversions'] || "Not Available"
-    @ad_spend_24hours =  money_stats['24_hours']['advertiser_spend'] || "Not Available"
-    @publisher_earnings_24hours =  money_stats['24_hours']['publisher_earnings'] || "Not Available"
+    @timeframe = params[:timeframe] || '24_hours'
     
-    @last_updated = Mc.get('statz.last_updated') || Time.at(8.hours.to_i)
-    @cached_stats = Mc.get('statz.cached_stats') || {}
+    money_stats = Mc.get('money.cached_stats')
+    @cvr_count = money_stats[@timeframe]['conversions'] rescue "Not Available"
+    @ad_spend =  money_stats[@timeframe]['advertiser_spend'] rescue "Not Available"
+    @publisher_earnings =  money_stats[@timeframe]['publisher_earnings'] rescue "Not Available"
+    
+    @last_updated = Mc.get("statz.last_updated.#{@timeframe}") || Time.at(8.hours.to_i)
+    @cached_stats = Mc.get("statz.cached_stats.#{@timeframe}") || {}
   end
 
   def udids

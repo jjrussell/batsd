@@ -2,13 +2,36 @@ class Job::MasterReloadStatzController < Job::JobController
   include ActionView::Helpers::NumberHelper
   
   def index
+    cache_stats('24_hours')
+    
+    render :text => 'ok'
+  end
+  
+  def daily
+    cache_stats('7_days')
+    cache_stats('1_month')
+    
+    render :text => 'ok'
+  end
+  
+private
+
+  def cache_stats(timeframe)
     now = Time.zone.now
     
     cached_stats = {}
-    
+
+    granularity = timeframe == '24_hours' ? :hourly : :daily
+    start_time = now - 23.hours
+    if timeframe == '7_days'
+      start_time = now - 7.days
+    elsif timeframe == '1_month'
+      start_time = now - 30.days
+    end
+  
     Offer.find(:all, :conditions => "stats_aggregation_interval = 3600").each do |offer|
-      appstats = Appstats.new(offer.id, { :start_time => now - 23.hours, :end_time => now + 1.hour }).stats
-      
+      appstats = Appstats.new(offer.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity }).stats
+    
       this_apps_stats = {}
       this_apps_stats['icon_url'] = offer.get_icon_url
       this_apps_stats['offer_name'] = offer.name
@@ -27,14 +50,16 @@ class Job::MasterReloadStatzController < Job::JobController
       this_apps_stats['installs_revenue'] = number_to_currency(appstats['installs_revenue'].sum / 100.0)
       this_apps_stats['ad_impressions'] = appstats['hourly_impressions'].sum
       this_apps_stats['platform'] = offer.get_platform
-      
+    
       cached_stats[offer.id] = this_apps_stats
+      
+      if timeframe != '24_hours'
+        sleep(1)
+      end
     end
 
-    Mc.put('statz.cached_stats', cached_stats)
-    Mc.put('statz.last_updated', now)
-    
-    render :text => 'ok'
+    Mc.put("statz.cached_stats.#{timeframe}", cached_stats)
+    Mc.put("statz.last_updated.#{timeframe}", now)
   end
   
 end
