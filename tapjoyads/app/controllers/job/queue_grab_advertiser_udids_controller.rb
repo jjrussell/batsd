@@ -18,12 +18,12 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
   end
 
   def save_udids(app_id, date)
-    path = App.udid_s3_key(app_id, date)
     if @type == "monthly"
-      path = path[0..-4] # drop -01
       day_in_the_past = 1.month.ago(date)
+      path = App.udid_s3_key(app_id, day_in_the_past)[0..-4] # correct month, drop day
     else
       day_in_the_past = 1.day.ago(date)
+      path = App.udid_s3_key(app_id, date)
 
       # check if previous day's job failed
       previous_path = App.udid_s3_key(app_id, day_in_the_past)
