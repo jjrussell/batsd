@@ -2,7 +2,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
   
   def initialize
     super QueueNames::APP_STATS
-    @paths_to_aggregate = %w(connect new_user adshown store_click daily_user monthly_user purchased_vg)
+    @paths_to_aggregate = %w(connect new_user adshown store_click daily_user monthly_user purchased_vg offers)
     @publisher_paths_to_aggregate = %w(store_click offer_click rate_app)
   end
   
