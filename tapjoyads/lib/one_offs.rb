@@ -150,8 +150,7 @@ class OneOffs
   end
 
   def self.create_udid_list_for_all_advertisers(month)
-    return unless month.to_i < 7 and month.to_i > 0 # [1..6]
-    controller = Job::QueueGrabAdvertiserUdidsController.new
+    return unless month < 7 and month > 0 # [1..6]
     count = Offer.count
     index = 0
     Offer.find_each do |offer|
