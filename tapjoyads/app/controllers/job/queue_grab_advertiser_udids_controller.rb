@@ -40,11 +40,10 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
       "created >= '#{day_in_the_past.to_f}'",
       "created < '#{date.to_f}'"].join(" and ")
 
-    udids = []
+    data = ""
     Reward.select(:where => conditions) do |reward|
-      udids << [reward.get("udid"), reward.get("created")].join(",") unless reward.get("udid").blank?
+      data = "#{reward.udid},#{reward.get('created')}\n" unless reward.udid.blank?
     end
-    udids = udids.compact.uniq
-    @bucket.put(path, udids.join("\n"), {}, 'authenticated-read')
+    @bucket.put(path, data, {}, 'authenticated-read')
   end
 end
