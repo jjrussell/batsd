@@ -24,14 +24,20 @@
   %p= link_to('[View Last Run Times]', last_run_times_statz_path(@offer.id))
 - if permitted_to? :udids, :statz
   %p= link_to('[View Monthly UDID Reports]', udids_statz_path(@offer.id))
-- if permitted_to? :index, :activities
-  %p= link_to('[Activity Log]', activities_path(:object_id => @offer.id))
 - if @offer.item_type == 'App' && @offer.item.currency
   %p= link_to('[View Offer Wall]', "/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDID}&publisher_user_id=testuser&device_type=#{@offer.item.platform}")
 
 .left
-  .metadata Offer id: #{@offer.id}
-  .metadata Partner id: #{link_to(@offer.partner_id, partner_path(@offer.partner_id))}
+  .metadata
+    Offer id:
+    = @offer.id
+    - if permitted_to? :index, :activities
+      = " - " + link_to('[Activity Log]', activities_path(:object_id => @offer.id))
+  .metadata
+    Partner id:
+    = link_to(@offer.partner_id, partner_path(@offer.partner_id))
+    - if permitted_to? :index, :activities
+      = " - " + link_to('[Activity Log]', activities_path(:partner_id => @offer.partner_id))
   .metadata Contact: #{@offer.partner.users.first.email if @offer.partner.users.first}
   .metadata Offer type: #{@offer.item_type}
   - if @offer.item_type == 'App'

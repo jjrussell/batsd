@@ -9,6 +9,8 @@
   = text_field_tag(:object_id, params[:object_id])
   = label_tag(:request_id)
   = text_field_tag(:request_id, params[:request_id])
+  = label_tag(:partner_id)
+  = text_field_tag(:partner_id, params[:partner_id])
   = submit_tag("Change")
 
 %table#activities_table.tablesorter
@@ -16,6 +18,7 @@
     %tr
       %th User
       %th Object
+      %th Partner
       %th Before state
       %th After state
       %th Created
@@ -32,6 +35,10 @@
           %a{:href => "javascript:setValue('object_id', '#{activity.object.id}')"}
             = activity.object.name rescue "#{activity.object.id[0,6]}..."
         %td
+          - unless activity.partner_id.blank?
+            %a{:href => "javascript:setValue('partner_id', '#{activity.partner_id}')"}
+              = "#{activity.partner_id[0,6]}..."
+        %td
           - activity.before_state.each do |key, value|
             - next if key == 'updated-at' || key == 'updated_at'
             %p
@@ -43,7 +50,7 @@
             %p
               #{key}:
               %b= value
-        %td= activity.created_at.to_s(:db)
+        %td= activity.created_at.in_time_zone('Pacific Time (US & Canada)').to_s(:db) + " PT"
         %td= activity.controller
         %td= activity.action
         %td
@@ -55,7 +62,7 @@
   :plain
     $(function() {
       $("#activities_table").tablesorter({widgets: ['zebra'],
-        sortList: [ [4, 1] ]
+        sortList: [ [5, 1] ]
       });
       
       var formY = $('#form').position()['top']

@@ -7,6 +7,7 @@ class ActivityLog < SimpledbResource
   self.sdb_attr :request_id
   self.sdb_attr :object_id
   self.sdb_attr :object_type
+  self.sdb_attr :partner_id
   self.sdb_attr :before_state, :type => :json
   self.sdb_attr :after_state,  :type => :json
   self.sdb_attr :created_at,   :type => :time, :attr_name => 'updated-at'
@@ -34,13 +35,16 @@ class ActivityLog < SimpledbResource
   def object=(obj)
     @state_object = obj
     @state_object_new = obj.new_record?
-    self.object_type = obj.class.to_s
     self.before_state = obj.attributes
   end
   
   def finalize_states
     self.object_id = @state_object.id
+    self.object_type = @state_object.class.to_s
     self.after_state = @state_object.attributes
+    
+    self.partner_id = @state_object.partner.id if @state_object.respond_to?(:partner)
+    
     before_hash = {}
     after_hash = {}
     
