@@ -30,14 +30,14 @@ private
   def update_publisher_amount
     return true if publisher_amount == 0
     p_id = publisher_app.partner_id
-    Partner.connection.execute("SELECT id FROM partners WHERE id = '#{p_id}' FOR UPDATE")
+    # Partner.connection.execute("SELECT id FROM partners WHERE id = '#{p_id}' FOR UPDATE")
     Partner.connection.execute("UPDATE partners SET pending_earnings = (pending_earnings + #{publisher_amount}) WHERE id = '#{p_id}'")
   end
   
   def update_advertiser_amount
     return true if advertiser_amount == 0 || advertiser_offer.nil?
     p_id = advertiser_offer.partner_id
-    Partner.connection.execute("SELECT id FROM partners WHERE id = '#{p_id}' FOR UPDATE")
+    # Partner.connection.execute("SELECT id FROM partners WHERE id = '#{p_id}' FOR UPDATE")
     Partner.connection.execute("UPDATE partners SET balance = (balance + #{advertiser_amount}) WHERE id = '#{p_id}'")
   end
   

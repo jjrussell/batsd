@@ -6,6 +6,7 @@ class AppStatsVerifyError < RuntimeError; end
 class GetStoreInfoError < RuntimeError; end
 class InvalidPlaydomUserId < RuntimeError; end
 class TooManyUdidsForPublisherUserId < RuntimeError; end
+class BalancesMismatch < RuntimeError; end
 
 # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
 class EmailWorthyError < RuntimeError
@@ -13,7 +14,6 @@ class EmailWorthyError < RuntimeError
     TapjoyMailer.deliver_newrelic_alert(self)
   end
 end
-class BalancesMismatch < EmailWorthyError; end
 class ConversionRateTooLowError < EmailWorthyError
   def deliver_email
     TapjoyMailer.deliver_low_conversion_rate_warning(self)
