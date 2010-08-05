@@ -43,7 +43,11 @@ class ActivityLog < SimpledbResource
     self.object_type = @state_object.class.to_s
     self.after_state = @state_object.attributes
     
-    self.partner_id = @state_object.partner.id if @state_object.respond_to?(:partner)
+    if @state_object.respond_to?(:partner)
+      self.partner_id = @state_object.partner.id
+    elsif self.object_type == 'Partner'
+      self.partner_id = self.object_id
+    end
     
     before_hash = {}
     after_hash = {}
