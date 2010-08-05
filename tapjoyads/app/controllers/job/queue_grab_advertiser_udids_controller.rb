@@ -25,8 +25,8 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
     Reward.select(:where => conditions) do |reward|
       unless reward.get('udid').blank?
         first_new_timestamp ||= reward.get('created') # just the first one
-        line = [ reward.get('udid'), reward.get('created') ].join(",")
-        data = data.nil? ? line : [ data, line ].join("\n")
+        line = "#{reward.get('udid')},#{reward.get('created')}"
+        data = data.nil? ? line : "#{data}\n#{line}"
       end
     end
 
@@ -36,12 +36,11 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
       last_old_timestamp = last_line.split(/,/).last.to_f
       if last_old_timestamp <= first_new_timestamp
         # good: combine old data with current data
-        new_data = [old_data, data].join("\n")
-        bucket.put(path, new_data, {}, 'authenticated-read') unless data.blank?
+        bucket.put(path, "#{old_data}\n#{data}", {}, 'authenticated-read') unless data.blank?
       else
         # bad: store to failed_save directory
-        new_path = "failed_save/#{offer_id}/#{Time.zone.at(start_time).strftime("%Y-%m-%d")}"
-        bucket.put(new_path, data, {}, 'authenticated-read') unless data.blank?
+        message = "#{offer_id} for #{Time.zone.at(start_time).strftime("%Y-%m-%d")}: #{last_old_timestamp} is newer than #{first_new_timestamp}"
+        Notifier.alert_new_relic(UdidJobTimestampMismatch, "#{start_time}")
       end
     end
 
