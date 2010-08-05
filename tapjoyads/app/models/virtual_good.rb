@@ -7,6 +7,7 @@ class VirtualGood < SimpledbResource
   self.sdb_attr :price,         :type => :int
   self.sdb_attr :file_size,     :type => :int
   self.sdb_attr :max_purchases, :type => :int, :default_value => 1
+  self.sdb_attr :ordinal,       :type => :int, :default_value => 500
   self.sdb_attr :beta,          :type => :bool
   self.sdb_attr :disabled,      :type => :bool
   self.sdb_attr :has_icon,      :type => :bool

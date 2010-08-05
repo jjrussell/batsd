@@ -10,6 +10,7 @@ class GetVgStoreItemsController < ApplicationController
     end
     
     resize_virtual_good_list
+    sort_virtual_good_list
   end
   
   ##
@@ -19,7 +20,7 @@ class GetVgStoreItemsController < ApplicationController
       @point_purchases.get_virtual_good_quantity(virtual_good.key) == 0
     end
     
-    resize_virtual_good_list 
+    resize_virtual_good_list
   end
   
   def user_account
@@ -66,6 +67,12 @@ private
     max = (params[:max] || 999).to_i
     @more_data_available = @virtual_good_list.length - max - start
     @virtual_good_list = @virtual_good_list[start, max] || []    
+  end
+  
+  def sort_virtual_good_list
+    @virtual_good_list.sort! do |v1, v2|
+      v1.ordinal <=> v2.ordinal
+    end
   end
   
 end
