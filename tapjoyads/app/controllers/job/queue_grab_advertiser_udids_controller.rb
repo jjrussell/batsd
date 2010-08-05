@@ -24,14 +24,6 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
     else
       day_in_the_past = 1.day.ago(date)
       path = App.udid_s3_key(app_id, date)
-
-      # check if previous day's job failed
-      # previous_path = App.udid_s3_key(app_id, day_in_the_past)
-      # unless @bucket.key(previous_path).exists?
-      #   # push this to queue
-      #   message = [app_id, day_in_the_past.to_i].to_json
-      #   Sqs.send_message(QueueNames::GRAB_ADVERTISER_UDIDS, message)
-      # end
     end
 
     return if @bucket.key(path).exists? # don't overwrite
