@@ -24,7 +24,6 @@ private
   
   def update_balance
     return true if amount == 0
-    Partner.connection.execute("SELECT id FROM partners WHERE id = '#{partner_id}' FOR UPDATE")
     Partner.connection.execute("UPDATE partners SET balance = (balance + #{amount}) WHERE id = '#{partner_id}'")
   end
   
