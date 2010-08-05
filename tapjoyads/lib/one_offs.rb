@@ -150,14 +150,21 @@ class OneOffs
   end
 
   def self.create_udid_list_for_all_advertisers(month)
-    return unless month < 7 and month > 0 # [1..6]
+    return unless month < 9 and month > 0 # [1..8]
     count = Offer.count
     index = 0
     Offer.find_each do |offer|
-      p "#{index += 1} / #{count} (#{offer.name rescue "?"} : #{offer.id})"
-      date = Time.zone.parse("2010-0#{month+1}-01").to_f # first day of "next" month
-      message = [offer.id, date, "monthly"].to_json
+      start_time = Time.zone.parse("2010-0#{month}-01")
+      finish_time = 1.month.since(start_time)
+      # because we are running this in August
+      if (month == 8)
+        finish_time = 1.day.ago(Time.zone.now).beginning_of_day
+      end
+
+      message = {:offer_id => offer.id, :start_time => start_time.to_f, :finish_time => finish_time.to_f}.to_json
       Sqs.send_message(QueueNames::GRAB_ADVERTISER_UDIDS, message)
+      p "#{index += 1} / #{count} (#{offer.name rescue "?"} : #{offer.id}) #{start_time.strftime("%m-%d")} - #{finish_time.strftime("%m-%d")}"
+
       sleep(5) #don't want to overwhelm the job servers
     end
   end

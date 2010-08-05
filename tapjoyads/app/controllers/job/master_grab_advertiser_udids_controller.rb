@@ -5,14 +5,8 @@ class Job::MasterGrabAdvertiserUdidsController < Job::JobController
     yesterday = today - 1.day
 
     Offer.find_each do |offer|
-      message = [offer.id, today.to_i].to_json
-      Sqs.send_message(QueueNames::GRAB_ADVERTISER_UDIDS, message)
-
-      # check if previous day's job failed
-      unless bucket.key(App.udid_s3_key(offer.id, yesterday)).exists?
-        message = [offer.id, yesterday.to_i].to_json
-        Sqs.send_message(QueueNames::GRAB_ADVERTISER_UDIDS, message)
-      end
+      message = {:offer_id => offer.id, :start_time => yesterday.to_i, :finish_time => today.to_i}
+      Sqs.send_message(QueueNames::GRAB_ADVERTISER_UDIDS, message.to_json)
 
       sleep(2) #don't want to overwhelm the job servers
     end
