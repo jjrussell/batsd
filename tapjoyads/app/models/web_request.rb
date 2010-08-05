@@ -49,7 +49,7 @@ class WebRequest < SimpledbResource
     @now = Time.now.utc
     date = @now.strftime('%Y-%m-%d')
     num = rand(MAX_WEB_REQUEST_DOMAINS)
-    if date == '2010-08-02' && num == 14
+    if date == '2010-08-05' && num == 7
       num = rand(MAX_WEB_REQUEST_DOMAINS)
     end
     "web-request-#{date}-#{num}"
