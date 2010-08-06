@@ -31,6 +31,9 @@ private
   def setup
     return unless verify_params([:app_id, :udid], {:allow_empty => false})
     
+    publisher_user_id = params[:udid]
+    publisher_user_id = params[:publisher_user_id] unless params[:publisher_user_id].blank?
+    
     @currency = Currency.find_in_cache_by_app_id(params[:app_id])
     if @currency.nil?
       @currency = Currency.new(:app_id => params[:app_id])
@@ -38,7 +41,7 @@ private
       @currency.name = ''
       @currency.save!
     end
-    @point_purchases = PointPurchases.new(:key => "#{params[:udid]}.#{params[:app_id]}")
+    @point_purchases = PointPurchases.new(:key => "#{publisher_user_id}.#{params[:app_id]}")
     mc_key = "virtual_good_list.#{params[:app_id]}"
     @virtual_good_list = Mc.get_and_put(mc_key, false, 5.minutes) do
       list = []
