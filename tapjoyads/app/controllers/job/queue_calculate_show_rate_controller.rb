@@ -17,7 +17,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     
     old_show_rate = offer.show_rate
     
-    now = Time.now.utc
+    now = Time.zone.now
     
     cvr_timeframe = offer.is_free? ? 1.hour : 24.hours
     recent_clicks = StoreClick.count(:where => "click_date > '#{now.to_f - cvr_timeframe}' and click_date < '#{now.to_f - 5.minutes}' and advertiser_app_id = '#{offer.id}'", :retries => 1000).to_f
@@ -46,6 +46,13 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     
     Rails.logger.info "Old show_rate: #{old_show_rate}"
     Rails.logger.info "Possible clicks per second: #{possible_clicks_per_second}"
+    
+    possible_installs_per_second = possible_clicks_per_second * conversion_rate
+    potential_spend = (possible_installs_per_second * 12.hours) * offer.payment
+    if potential_spend > offer.partner.balance && (offer.last_balance_alert_time || Time.zone.at(0)) + 24.hours < now
+      offer.last_balance_alert_time = now
+      TapjoyMailer.deliver_balance_alert(offer)
+    end
     
     # Assume all apps are CST for now.
     end_of_day = Time.parse('00:00 CST', Time.now.utc + 18.hours).utc
