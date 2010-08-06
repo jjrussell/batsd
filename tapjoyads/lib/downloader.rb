@@ -44,17 +44,11 @@ class Downloader
   ##
   # Download a url and return the response. Raises an exception if the response status is not normal.
   def self.get_strict(url, download_options = {})
-    response = nil
-    if url =~ /api\.midomi\.com/
-      response = `curl -s -o /dev/null -w %{http_code} "#{url}"`
-      raise "Download failed: #{url}" unless response == '200'
-    else
-      response = Downloader.get(url, download_options.merge({:return_response => true}))
-      if response.status == 403
-        Notifier.alert_new_relic(FailedToDownloadError, "Failed to download #{url}. 403 error.")
-      elsif response.status < 200 or response.status > 399
-        raise "#{response.status} error from #{url}"
-      end
+    response = Downloader.get(url, download_options.merge({:return_response => true}))
+    if response.status == 403
+      Notifier.alert_new_relic(FailedToDownloadError, "Failed to download #{url}. 403 error.")
+    elsif response.status < 200 or response.status > 399
+      raise "#{response.status} error from #{url}"
     end
     
     return response
