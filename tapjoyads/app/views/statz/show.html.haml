@@ -30,14 +30,16 @@
 .left
   .metadata
     Offer id:
-    = @offer.id
+    = @offer.id + ' - '
     - if permitted_to? :index, :activities
-      = " - " + link_to('[Activity Log]', activities_path(:object_id => @offer.id))
+      = link_to('[Activity Log]', activities_path(:object_id => @offer.id)) + ' - '
+    = clippy(@offer.id)
   .metadata
     Partner id:
-    = link_to(@offer.partner_id, partner_path(@offer.partner_id))
+    = link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - '
     - if permitted_to? :index, :activities
-      = " - " + link_to('[Activity Log]', activities_path(:partner_id => @offer.partner_id))
+      = link_to('[Activity Log]', activities_path(:partner_id => @offer.partner_id)) + ' - '
+    = clippy(@offer.partner_id)
   .metadata Contact: #{@offer.partner.users.first.email if @offer.partner.users.first}
   .metadata Offer type: #{@offer.item_type}
   - if @offer.item_type == 'App'
