@@ -40,6 +40,15 @@ private
       end
     end
 
-    bucket.put(path, data, {}, 'authenticated-read') unless data.blank?
+    retries = 3
+    begin
+      bucket.put(path, data, {}, 'authenticated-read') unless data.blank?
+    rescue RightAws::AwsError => e
+      if retries > 0 && e.message =~ /^RequestTimeTooSkewed/
+        retries -= 1
+      else
+        raise e
+      end
+    end
   end
 end
