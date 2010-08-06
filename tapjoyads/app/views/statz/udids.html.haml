@@ -6,8 +6,7 @@
 - unless @keys.empty?
   %p UDIDs for:
   - @keys.each do |key|
-    .month= link_to key, {:action => "udid", :id => @offer.id, :params => {:date => key}}
-  .month= link_to "All time", {:action => "udid", :id => @offer.id}
+    .month= link_to(key, download_udids_statz_path(@offer.id, { :date => key }))
 - else
   (no UDID reports found)
 

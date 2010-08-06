@@ -3,7 +3,7 @@ class StatzController < WebsiteController
   
   filter_access_to :all
   
-  before_filter :find_offer, :only => [ :show, :edit, :update, :last_run_times, :udids, :udid, :log ]
+  before_filter :find_offer, :only => [ :show, :edit, :update, :last_run_times, :udids, :download_udids ]
   after_filter :save_activity_logs, :only => [ :update ]
   
   def index
@@ -20,29 +20,19 @@ class StatzController < WebsiteController
 
   def udids
     bucket = S3.bucket(BucketNames::AD_UDIDS)
-    @keys = bucket.keys('prefix' => App.udid_s3_key(@offer.id)).map do |key|
-      date = key.name.split(/\//).last.match(/\d{4}\-\d{2}/).to_s
-    end.uniq
+    base_path = App.udid_s3_key(@offer.id)
+    @keys = bucket.keys('prefix' => base_path).map do |key|
+      key.name.gsub(base_path, '')
+    end
   end
 
-  def udid
-    if params[:date]
-      date = Time.zone.parse(params[:date] + "-01") rescue Time.zone.now
-      prefix = App.udid_s3_key(@offer.id, date)[0..-4] # drop -01
-      filename = "#{@offer.id}.#{date.strftime("%Y-%m")}.csv"
-    else
-      prefix = App.udid_s3_key(@offer.id)
-      filename = "#{@offer.id}.csv"
-    end
+  def download_udids
+    return unless verify_params([ :date ], { :allow_empty => false }) && params[:date] =~ /^\d{4}-\d{2}$/
+    
     bucket = S3.bucket(BucketNames::AD_UDIDS)
-    @udids = bucket.keys('prefix' => prefix).map do |key|
-      bucket.get(key)
-    end.join("\n")
-
-    send_data(@udids,
-              :type => "text/csv",
-              :filename => filename,
-              :disposition => "attachment")
+    data = bucket.get(App.udid_s3_key(@offer.id) + params[:date])
+    
+    send_data(data, :type => 'text/csv', :filename => "#{@offer.id}_#{params[:date]}.csv")
   end
 
   def show
