@@ -11,6 +11,7 @@ class UserSessionsController < WebsiteController
       flash[:notice] = "Successfully logged in."
       redirect_to params[:goto]
     else
+      @goto = params[:goto]
       render :action => 'new'
     end
   end
