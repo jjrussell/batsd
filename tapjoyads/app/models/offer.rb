@@ -104,6 +104,10 @@ class Offer < ActiveRecord::Base
     Mc.get_and_put("mysql.offer.#{id}") { Offer.find(id) }
   end
   
+  def self.s3_udids_path(offer_id, date = nil)
+    "udids/#{offer_id}/#{date && date.strftime("%Y-%m")}"
+  end
+  
   def cost
     price > 0 ? 'Paid' : 'Free'
   end

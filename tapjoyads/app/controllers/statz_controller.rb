@@ -20,7 +20,7 @@ class StatzController < WebsiteController
 
   def udids
     bucket = S3.bucket(BucketNames::AD_UDIDS)
-    base_path = App.udid_s3_key(@offer.id)
+    base_path = Offer.s3_udids_path(@offer.id)
     @keys = bucket.keys('prefix' => base_path).map do |key|
       key.name.gsub(base_path, '')
     end
@@ -30,7 +30,7 @@ class StatzController < WebsiteController
     return unless verify_params([ :date ], { :allow_empty => false }) && params[:date] =~ /^\d{4}-\d{2}$/
     
     bucket = S3.bucket(BucketNames::AD_UDIDS)
-    data = bucket.get(App.udid_s3_key(@offer.id) + params[:date])
+    data = bucket.get(Offer.s3_udids_path(@offer.id) + params[:date])
     
     send_data(data, :type => 'text/csv', :filename => "#{@offer.id}_#{params[:date]}.csv")
   end

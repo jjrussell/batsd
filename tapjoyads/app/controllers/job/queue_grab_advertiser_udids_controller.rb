@@ -18,7 +18,7 @@ private
       "created < '#{finish_time}'"].join(" and ")
 
     bucket = S3.bucket(BucketNames::AD_UDIDS)
-    path = App.udid_s3_key(offer_id, Time.zone.at(start_time))
+    path = Offer.s3_udids_path(offer_id, Time.zone.at(start_time))
 
     data = ''
     do_regex_check = true

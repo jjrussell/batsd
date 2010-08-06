@@ -137,11 +137,7 @@ class App < ActiveRecord::Base
       :methods => [ :store_url ]
     )
   end
-
-  def self.udid_s3_key(app_id, date=nil)
-    "udids/#{app_id}/#{date && date.strftime("%Y-%m")}"
-  end
-
+  
 private
   
   def create_offer
