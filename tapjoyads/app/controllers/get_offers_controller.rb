@@ -7,6 +7,18 @@ class GetOffersController < ApplicationController
   
   def webpage
     set_offer_list(:require_device_ip_param => false)
+    
+    @message = nil
+    unless params[:featured_offer].blank?
+      featured_offer = Offer.find_in_cache(params[:featured_offer])
+      
+      if featured_offer.featured? && @offer_list.include?(featured_offer)
+        redirect_to featured_offer.get_redirect_url(@publisher_app, params[:publisher_user_id], params[:udid], 'featured', params[:app_version])
+        return
+      end
+      @message = "You have already installed #{featured_offer.name}. You can still complete " +
+          "one of the offers below to earn #{@currency.name}."
+    end
   end
   
   def featured

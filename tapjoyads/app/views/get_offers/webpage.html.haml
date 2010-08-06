@@ -1,5 +1,8 @@
 - @page_title = "Earn #{@publisher_app.name} #{@currency.name}"
 
+- unless @message.blank?
+  .message= @message
+
 #instructions
   Important instructions: Install and OPEN one of the applications below to receive #{@currency.name}.
   You will receive your #{@currency.name} within a few minutes after 
@@ -46,6 +49,7 @@
       text-decoration: none;
     }
     
+    .message,
     .pagination,
     #instructions { 
       padding: 10px;
