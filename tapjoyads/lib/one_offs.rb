@@ -149,23 +149,32 @@ class OneOffs
     
   end
 
-  def self.create_udid_list_for_all_advertisers(month)
-    return unless month < 9 and month > 0 # [1..8]
-    count = Offer.count
-    index = 0
+  def self.init_advertiser_udid_lists_for_august
+    start_time = Time.zone.parse('2010-08-01').to_i
+    finish_time = Time.zone.parse('2010-08-06').to_i
+    count = 0
+    total = Offer.count
     Offer.find_each do |offer|
-      start_time = Time.zone.parse("2010-0#{month}-01")
-      finish_time = 1.month.since(start_time)
-      # because we are running this in August
-      if (month == 8)
-        finish_time = 1.day.ago(Time.zone.now).beginning_of_day
-      end
-
-      message = {:offer_id => offer.id, :start_time => start_time.to_f, :finish_time => finish_time.to_f}.to_json
+      count += 1
+      puts "#{count} / #{total} : #{offer.id}"
+      message = { :offer_id => offer.id, :start_time => start_time, :finish_time => finish_time }.to_json
       Sqs.send_message(QueueNames::GRAB_ADVERTISER_UDIDS, message)
-      p "#{index += 1} / #{count} (#{offer.name rescue "?"} : #{offer.id}) #{start_time.strftime("%m-%d")} - #{finish_time.strftime("%m-%d")}"
+      sleep(2)
+    end
+  end
 
-      sleep(5) #don't want to overwhelm the job servers
+  def self.create_advertiser_udids_lists_for_month(month)
+    return unless month < 8 and month > 0 # [1..7]
+    total = Offer.count
+    count = 0
+    start_time = Time.zone.parse("2010-0#{month}-01").to_i
+    finish_time = Time.zone.parse("2010-0#{month + 1}-01").to_i
+    Offer.find_each do |offer|
+      count += 1
+      puts "#{count} / #{total} : #{offer.id}"
+      message = { :offer_id => offer.id, :start_time => start_time, :finish_time => finish_time }.to_json
+      Sqs.send_message(QueueNames::GRAB_ADVERTISER_UDIDS, message)
+      sleep(2)
     end
   end
   
