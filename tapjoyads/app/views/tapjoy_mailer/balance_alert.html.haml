@@ -1,2 +1,5 @@
 #{@offer.name} (http://ws.tapjoyads.com/statz/#{@offer.id}) is possibly going to run out of 
 balance within 12 hours.
+
+Current balance: #{number_to_currency(@offer.partner.balance / 100.0)}
+Potential spend over next 12 hours: #{number_to_currency(@potential_spend / 100.0)}

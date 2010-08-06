@@ -30,11 +30,11 @@ class TapjoyMailer < ActionMailer::Base
     body(:error => error)
   end
   
-  def balance_alert(offer)
+  def balance_alert(offer, potential_spend)
     from "support@tapjoy.com"
     recipients "stephen@tapjoy.com,ryan@tapjoy.com"
     subject "Balance is getting low for #{offer.name}"
-    body(:offer => offer)
+    body(:offer => offer, :potential_spend => potential_spend)
   end
   
 end

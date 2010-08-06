@@ -47,11 +47,11 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     Rails.logger.info "Old show_rate: #{old_show_rate}"
     Rails.logger.info "Possible clicks per second: #{possible_clicks_per_second}"
     
-    possible_installs_per_second = possible_clicks_per_second * conversion_rate
+    possible_installs_per_second = possible_clicks_per_second * conversion_rate * old_show_rate
     potential_spend = (possible_installs_per_second * 12.hours) * offer.payment
     if potential_spend > offer.partner.balance && (offer.last_balance_alert_time || Time.zone.at(0)) + 24.hours < now
       offer.last_balance_alert_time = now
-      TapjoyMailer.deliver_balance_alert(offer)
+      TapjoyMailer.deliver_balance_alert(offer, potential_spend)
     end
     
     # Assume all apps are CST for now.
