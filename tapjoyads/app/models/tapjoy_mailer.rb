@@ -25,7 +25,7 @@ class TapjoyMailer < ActionMailer::Base
   
   def low_conversion_rate_warning(error)
     from "admin@tapjoy.com"
-    recipients "team@tapjoy.com"
+    recipients "dev@tapjoy.com"
     subject "Low Conversion Rate Warning!"
     body(:error => error)
   end
