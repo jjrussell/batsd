@@ -16,7 +16,6 @@ private
     click = StoreClick.new(:key => "#{udid}.#{advertiser_app_id}")
     
     unless click.clicked_at
-      sleep(5)
       click = StoreClick.new(:key => "#{udid}.#{advertiser_app_id}", :load_from_memcache => false)
       unless click.clicked_at
         raise "Click not found, wait for failed sdb saves to catch up.  app_id: #{advertiser_app_id}  udid: #{udid}"
