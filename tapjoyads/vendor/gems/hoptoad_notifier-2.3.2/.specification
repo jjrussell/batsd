@@ -1,12 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: hoptoad_notifier
 version: !ruby/object:Gem::Version 
-  prerelease: false
-  segments: 
-  - 2
-  - 2
-  - 2
-  version: 2.2.2
+  version: 2.3.2
 platform: ruby
 authors: 
 - thoughtbot, inc
@@ -14,81 +9,69 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2010-03-09 00:00:00 -08:00
+date: 2010-07-05 00:00:00 -07:00
 default_executable: 
 dependencies: 
 - !ruby/object:Gem::Dependency 
   name: activesupport
-  prerelease: false
-  requirement: &id001 !ruby/object:Gem::Requirement 
+  type: :runtime
+  version_requirement: 
+  version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
     - - ">="
       - !ruby/object:Gem::Version 
-        segments: 
-        - 0
         version: "0"
-  type: :runtime
-  version_requirements: *id001
+    version: 
 - !ruby/object:Gem::Dependency 
   name: activerecord
-  prerelease: false
-  requirement: &id002 !ruby/object:Gem::Requirement 
+  type: :development
+  version_requirement: 
+  version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
     - - ">="
       - !ruby/object:Gem::Version 
-        segments: 
-        - 0
         version: "0"
-  type: :development
-  version_requirements: *id002
+    version: 
 - !ruby/object:Gem::Dependency 
   name: actionpack
-  prerelease: false
-  requirement: &id003 !ruby/object:Gem::Requirement 
+  type: :development
+  version_requirement: 
+  version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
     - - ">="
       - !ruby/object:Gem::Version 
-        segments: 
-        - 0
         version: "0"
-  type: :development
-  version_requirements: *id003
+    version: 
 - !ruby/object:Gem::Dependency 
   name: jferris-mocha
-  prerelease: false
-  requirement: &id004 !ruby/object:Gem::Requirement 
+  type: :development
+  version_requirement: 
+  version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
     - - ">="
       - !ruby/object:Gem::Version 
-        segments: 
-        - 0
         version: "0"
-  type: :development
-  version_requirements: *id004
+    version: 
 - !ruby/object:Gem::Dependency 
   name: nokogiri
-  prerelease: false
-  requirement: &id005 !ruby/object:Gem::Requirement 
+  type: :development
+  version_requirement: 
+  version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
     - - ">="
       - !ruby/object:Gem::Version 
-        segments: 
-        - 0
         version: "0"
-  type: :development
-  version_requirements: *id005
+    version: 
 - !ruby/object:Gem::Dependency 
   name: shoulda
-  prerelease: false
-  requirement: &id006 !ruby/object:Gem::Requirement 
+  type: :development
+  version_requirement: 
+  version_requirements: !ruby/object:Gem::Requirement 
     requirements: 
     - - ">="
       - !ruby/object:Gem::Version 
-        segments: 
-        - 0
         version: "0"
-  type: :development
-  version_requirements: *id006
+    version: 
 description: 
 email: support@hoptoadapp.com
 executables: []
@@ -120,11 +103,14 @@ files:
 - lib/hoptoad_notifier/rails/controller_methods.rb
 - lib/hoptoad_notifier/rails/error_lookup.rb
 - lib/hoptoad_notifier/rails.rb
+- lib/hoptoad_notifier/rails3_tasks.rb
+- lib/hoptoad_notifier/railtie.rb
 - lib/hoptoad_notifier/sender.rb
 - lib/hoptoad_notifier/tasks.rb
 - lib/hoptoad_notifier/version.rb
 - lib/hoptoad_notifier.rb
 - lib/hoptoad_tasks.rb
+- lib/rails/generators/hoptoad/hoptoad_generator.rb
 - test/backtrace_test.rb
 - test/catcher_test.rb
 - test/configuration_test.rb
@@ -154,20 +140,18 @@ required_ruby_version: !ruby/object:Gem::Requirement
   requirements: 
   - - ">="
     - !ruby/object:Gem::Version 
-      segments: 
-      - 0
       version: "0"
+  version: 
 required_rubygems_version: !ruby/object:Gem::Requirement 
   requirements: 
   - - ">="
     - !ruby/object:Gem::Version 
-      segments: 
-      - 0
       version: "0"
+  version: 
 requirements: []
 
 rubyforge_project: 
-rubygems_version: 1.3.6
+rubygems_version: 1.3.5
 signing_key: 
 specification_version: 3
 summary: Send your application errors to our hosted service and reclaim your inbox.

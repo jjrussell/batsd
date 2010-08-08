@@ -43,7 +43,7 @@ Rails::Initializer.run do |config|
   config.gem 'declarative_authorization', :version => '0.4.1'
   config.gem 'geoip', :version => '0.8.6'
   config.gem 'haml', :version => '2.2.23'
-  config.gem 'hoptoad_notifier', :version => '2.2.2'
+  config.gem 'hoptoad_notifier', :version => '2.3.2'
   config.gem 'plist', :version => '3.1.0'
   config.gem 'uuidtools', :version => '2.0.0'
   config.gem 'will_paginate', :version => '2.3.12'
