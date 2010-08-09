@@ -2,7 +2,7 @@ class SubmitClickController < ApplicationController
   
   def store
     # Hottest App sends the same publisher_user_record_id for every click
-    if params[:publisher_app_id] == '469f7523-3b99-4b42-bcfb-e18d9c3c4576' && params[:publisher_user_id].blank?
+    if params[:publisher_app_id] == '469f7523-3b99-4b42-bcfb-e18d9c3c4576'
       params[:publisher_user_id] = params[:udid]
     end
     
