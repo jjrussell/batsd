@@ -11,7 +11,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'conversion_tracking_queue', :interval => 1.seconds
     s.add_job 'failed_sdb_saves_queue', :interval => 1.seconds
     s.add_job 'cleanup_web_requests', :interval => 5.minutes
-    s.add_job 'cleanup_store_click', :interval => 5.minutes
+    # s.add_job 'cleanup_store_click', :interval => 5.minutes
     s.add_job 'create_offers', :interval => 5.seconds
     s.add_job 'send_money_txn', :interval => 1.seconds
     s.add_job 'queue_send_currency', :interval => 1.seconds
@@ -25,7 +25,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'queue_grab_advertiser_udids', :interval => 5.minutes
   elsif machine_type == 'masterjobs'
     s.add_job 'master_cleanup_web_requests', :daily => 5.hours
-    s.add_job 'master_cleanup_store_click', :daily => 6.hours
+    # s.add_job 'master_cleanup_store_click', :daily => 6.hours
     s.add_job 'master_create_offers', :interval => 10.minutes
     s.add_job 'master_app_stats', :interval => 2.minutes
     s.add_job 'master_pre_create_domains', :daily => 6.hours
