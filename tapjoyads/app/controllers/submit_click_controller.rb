@@ -8,7 +8,7 @@ class SubmitClickController < ApplicationController
     
     return unless verify_params([:advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id], {:allow_empty => false})
     
-    now = Time.now.utc
+    now = Time.zone.now
     
     offer = Offer.find_in_cache(params[:advertiser_app_id])
     
@@ -50,6 +50,19 @@ class SubmitClickController < ApplicationController
     click.put('source', params[:source])
     click.put('country', get_geoip_data[:country])
     click.save
+    sharded_click = Click.new(:key => "#{params[:udid]}.#{params[:advertiser_app_id]}")
+    sharded_click.clicked_at = now
+    sharded_click.publisher_app_id = params[:publisher_app_id]
+    sharded_click.publisher_user_id = params[:publisher_user_id]
+    sharded_click.advertiser_app_id = params[:advertiser_app_id]
+    sharded_click.advertiser_amount = currency.get_advertiser_amount(offer, params[:source])
+    sharded_click.publisher_amount = currency.get_publisher_amount(offer, params[:source])
+    sharded_click.currency_reward = currency.get_reward_amount(offer, params[:source])
+    sharded_click.tapjoy_amount = currency.get_tapjoy_amount(offer, params[:source])
+    sharded_click.reward_key = UUIDTools::UUID.random_create.to_s
+    sharded_click.source = params[:source]
+    sharded_click.country = get_geoip_data[:country]
+    sharded_click.save
     
     web_request = WebRequest.new
     web_request.put_values('store_click', params, get_ip_address, get_geoip_data)

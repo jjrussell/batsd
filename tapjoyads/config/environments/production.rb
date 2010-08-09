@@ -45,3 +45,4 @@ RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems 
 MAX_DEVICE_APP_DOMAINS = 30
 MAX_WEB_REQUEST_DOMAINS = 20
 NUM_POINT_PURCHASES_DOMAINS = 10
+NUM_CLICK_DOMAINS = 50

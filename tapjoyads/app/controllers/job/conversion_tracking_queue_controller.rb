@@ -14,11 +14,18 @@ private
     
     Rails.logger.info "Checking for conversion on #{udid} for #{advertiser_app_id}"
     click = StoreClick.new(:key => "#{udid}.#{advertiser_app_id}")
+    sharded_click = Click.new(:key => "#{udid}.#{advertiser_app_id}")
     
     unless click.clicked_at
       click = StoreClick.new(:key => "#{udid}.#{advertiser_app_id}", :load_from_memcache => false)
       unless click.clicked_at
         raise "Click not found, wait for failed sdb saves to catch up.  app_id: #{advertiser_app_id}  udid: #{udid}"
+      end
+    end
+    unless sharded_click.clicked_at
+      sharded_click = Click.new(:key => "#{udid}.#{advertiser_app_id}", :load_from_memcache => false)
+      unless sharded_click.clicked_at
+        sharded_click = nil
       end
     end
     
@@ -42,6 +49,10 @@ private
     
     click.put('installed', install_date)
     click.save
+    unless sharded_click.nil?
+      sharded_click.installed_at = Time.zone.at(install_date.to_f)
+      sharded_click.save
+    end
     
     reward_key = click.reward_key || UUIDTools::UUID.random_create.to_s
     
@@ -81,5 +92,9 @@ private
     
     click.put('installed', install_date)
     click.save
+    unless sharded_click.nil?
+      sharded_click.installed_at = Time.zone.at(install_date.to_f)
+      sharded_click.save
+    end
   end
 end
