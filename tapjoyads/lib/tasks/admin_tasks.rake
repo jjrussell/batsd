@@ -19,7 +19,7 @@ namespace :admin do
   
   desc "Lists the contents of the tmp dirs on each job machine for *sdb* and *s3*"
   task :view_long_jobs do
-    system("script/cloudrun 'jobserver' 'ls -lh tapjoyads/tmp/*sdb* tapjoyads/tmp/*s3* 2> /dev/null'")
+    system("script/cloudrun 'jobserver' 'uptime ; ls -lh tapjoyads/tmp/*sdb* tapjoyads/tmp/*s3* 2> /dev/null'")
   end
   
 end
