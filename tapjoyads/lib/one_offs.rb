@@ -148,7 +148,21 @@ class OneOffs
     end
     
   end
-
+  
+  def self.create_advertiser_udids_lists_for_august
+    total = Offer.count
+    count = 0
+    start_time = Time.zone.parse("2010-08-01").to_i
+    finish_time = Time.zone.parse("2010-08-10").to_i
+    Offer.find_each do |offer|
+      count += 1
+      puts "#{count} / #{total} : #{offer.id}"
+      message = { :offer_id => offer.id, :start_time => start_time, :finish_time => finish_time }.to_json
+      Sqs.send_message(QueueNames::GRAB_ADVERTISER_UDIDS, message)
+      sleep(2)
+    end
+  end
+  
   def self.create_advertiser_udids_lists_for_month(month)
     return unless month < 8 and month > 0 # [1..7]
     total = Offer.count
