@@ -19,6 +19,10 @@ class RatingOffer < ActiveRecord::Base
   end
   
   def get_id_for_device_app_list(app_version)
+    RatingOffer.get_id_for_device_app_list(id, app_version)
+  end
+  
+  def self.get_id_for_device_app_list(id, app_version)
     app_version.blank? ? id : (id + '.' + app_version)
   end
   

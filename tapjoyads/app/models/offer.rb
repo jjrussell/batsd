@@ -274,8 +274,7 @@ private
     
     id_for_device_app_list = id
     if item_type == 'RatingOffer'
-      rating_offer = RatingOffer.find_in_cache_by_app_id(publisher_app.id)
-      id_for_device_app_list = rating_offer.get_id_for_device_app_list(app_version)
+      id_for_device_app_list = RatingOffer.get_id_for_device_app_list(item_id, app_version)
     end
     
     if id_for_device_app_list == '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424'
