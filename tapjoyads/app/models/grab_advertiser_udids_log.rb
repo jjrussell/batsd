@@ -4,9 +4,9 @@ class GrabAdvertiserUdidsLog < SimpledbResource
   self.sdb_attr :offer_id
   self.sdb_attr :start_time,      :type => :int
   self.sdb_attr :finish_time,     :type => :int
-  self.sdb_attr :job_started_at,  :type => :date
-  self.sdb_attr :job_finished_at, :type => :date
-  self.sdb_attr :job_requeued_at, :type => :date
+  self.sdb_attr :job_started_at,  :type => :time
+  self.sdb_attr :job_finished_at, :type => :time
+  self.sdb_attr :job_requeued_at, :type => :time
   
   def initialize(options = {})
     super({ :load_from_memcache => false }.merge(options))
