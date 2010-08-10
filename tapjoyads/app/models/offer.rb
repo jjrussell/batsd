@@ -188,6 +188,10 @@ class Offer < ActiveRecord::Base
     Set.new(device_types.blank? ? nil : JSON.parse(device_types))
   end
   
+  def get_publisher_app_whitelist
+    Set.new(publisher_app_whitelist.split(';'))
+  end
+  
   def get_platform
     d_types = get_device_types
     if d_types.length > 1 && d_types.include?('android')
@@ -221,7 +225,8 @@ class Offer < ActiveRecord::Base
         rating_offer_reject?(publisher_app, reject_rating_offer) ||
         already_complete?(publisher_app, device_app_list, app_version) ||
         show_rate_reject?(device_app_list) ||
-        flixter_reject?(publisher_app, device_app_list)
+        flixter_reject?(publisher_app, device_app_list) ||
+        whitelist_reject?(publisher_app)
   end
   
 private
@@ -306,6 +311,10 @@ private
   
   def rating_offer_reject?(publisher_app, reject_rating_offer)
     return item_type == 'RatingOffer' && (reject_rating_offer || third_party_data != publisher_app.id)
+  end
+  
+  def whitelist_reject?(publisher_app)
+    return !publisher_app_whitelist.blank? && !get_publisher_app_whitelist.include?(publisher_app.id)
   end
   
   def normalize_device_type(device_type_param)
