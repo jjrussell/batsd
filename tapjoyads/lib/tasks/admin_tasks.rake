@@ -17,9 +17,9 @@ namespace :admin do
     system("script/cloudrun 'webserver' 'sleep 5 ; sudo /etc/init.d/apache2 restart' 'ubuntu' 'remove_from_lb'")
   end
   
-  desc "Lists the contents of the tmp dirs on each job machine for *sdb*"
-  task :view_backup_jobs do
-    system("script/cloudrun 'jobserver' 'ls -lh tapjoyads/tmp/*sdb*'")
+  desc "Lists the contents of the tmp dirs on each job machine for *sdb* and *s3*"
+  task :view_long_jobs do
+    system("script/cloudrun 'jobserver' 'ls -lh tapjoyads/tmp/*sdb* tapjoyads/tmp/*s3* 2> /dev/null'")
   end
   
 end
