@@ -212,7 +212,7 @@ class Offer < ActiveRecord::Base
       if rand < 0.02
         self.conversion_rate = 0.5
       else
-        self.conversion_rate = self.conversion_rate + (rand * 0.15)
+        self.conversion_rate = conversion_rate + (rand * 0.15)
       end
     end
   end
