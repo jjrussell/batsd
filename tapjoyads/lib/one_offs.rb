@@ -153,7 +153,7 @@ class OneOffs
     total = Offer.count
     count = 0
     start_time = Time.zone.parse("2010-08-01").to_i
-    finish_time = Time.zone.parse("2010-08-10").to_i
+    finish_time = Time.zone.parse("2010-08-11").to_i
     Offer.find_each do |offer|
       count += 1
       puts "#{count} / #{total} : #{offer.id}"
