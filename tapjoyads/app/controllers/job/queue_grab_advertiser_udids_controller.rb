@@ -8,6 +8,8 @@ private
 
   # message = { :offer_id => offer.id, :start_time => yesterday.to_i, :finish_time => today.to_i }
   def on_message(message)
+    message.delete
+    
     json = JSON.load(message.to_s)
     offer_id = json["offer_id"]
     start_time = json["start_time"]
