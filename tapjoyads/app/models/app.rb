@@ -10,7 +10,6 @@ class App < ActiveRecord::Base
   
   validates_presence_of :partner, :name
   validates_inclusion_of :use_raw_url, :in => [ true, false ]
-  validates_presence_of :description
   
   after_create :create_offer
   after_update :update_offer
