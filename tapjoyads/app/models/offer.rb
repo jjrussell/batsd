@@ -282,6 +282,11 @@ private
       return device_app_list.has_app(id_for_device_app_list) || device_app_list.has_app('bad4b0ae-8458-42ba-97ba-13b302827234') || device_app_list.has_app('403014c2-9a1b-4c1d-8903-5a41aa09be0e')
     end
     
+    if id_for_device_app_list == 'b23efaf0-b82b-4525-ad8c-4cd11b0aca91'
+      # Don't show 'Tap Store' offer to users that already have 'Tap Store', 'Tap Store Boost', or 'Tap Store Plus'
+      return device_app_list.has_app(id_for_device_app_list) || device_app_list.has_app('a994587c-390c-4295-a6b6-dd27713030cb') || device_app_list.has_app('6703401f-1cb2-42ec-a6a4-4c191f8adc27')
+    end
+    
     return device_app_list.has_app(id_for_device_app_list)
   end
   
