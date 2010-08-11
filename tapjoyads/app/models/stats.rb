@@ -2,6 +2,12 @@ class Stats < SimpledbResource
   
   self.domain_name = 'stats'
 
+  STAT_TYPES = ['logins', 'hourly_impressions', 'paid_installs', 
+      'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'rewards', 'offers',
+      'rewards_revenue', 'offers_revenue', 'installs_revenue', 'published_installs',
+      'rewards_opened', 'offers_opened', 'installs_opened', 'daily_active_users', 
+      'monthly_active_users', 'vg_purchases', 'overall_store_rank', 'offerwall_views']
+
   ##
   # Gets the hourly stats for a stat type, from memcache and simpledb.
   # stat_name: The stat name to get.
@@ -76,17 +82,12 @@ class Stats < SimpledbResource
   ##
   # Populates the daily_stat_row from an hourly_stat_row.
   def populate_daily_from_hourly(hourly_stat_row, day)
-    overall_rank = hourly_stat_row.get_hourly_count('overall_store_rank', 0).reject{|r| r == '0' || r == '-'}.map{|i| i.to_i}.min || '-'
-    update_stat_for_day('overall_store_rank', day, overall_rank)
-    
-    stat_names = ['logins', 'hourly_impressions', 'paid_installs', 
-        'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'rewards', 'offers',
-        'rewards_revenue', 'offers_revenue', 'installs_revenue', 'published_installs',
-        'rewards_opened', 'offers_opened', 'installs_opened', 'daily_active_users', 
-        'monthly_active_users', 'vg_purchases']
-    
-    stat_names.each do |stat_name|
-      count = hourly_stat_row.get_hourly_count(stat_name, 0).sum
+    Stats::STAT_TYPES.each do |stat_name|
+      if stat_name == 'overall_store_rank'
+        count = hourly_stat_row.get_hourly_count('overall_store_rank', 0).reject{|r| r == '0' || r == '-'}.map{|i| i.to_i}.min || '-'
+      else
+        count = hourly_stat_row.get_hourly_count(stat_name, 0).sum
+      end
       update_stat_for_day(stat_name, day, count)
     end
   end

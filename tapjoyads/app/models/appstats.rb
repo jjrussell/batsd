@@ -9,11 +9,7 @@ class Appstats
     @granularity = options.delete(:granularity) { :hourly }
     @start_time = options.delete(:start_time) { Time.utc(@now.year, @now.month, @now.day) }
     @end_time = options.delete(:end_time) { @now }
-    @stat_types = options.delete(:stat_types) { ['logins', 'hourly_impressions', 'paid_installs', 
-        'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'rewards', 'offers',
-        'rewards_revenue', 'offers_revenue', 'installs_revenue', 'published_installs',
-        'rewards_opened', 'offers_opened', 'installs_opened', 'daily_active_users', 
-        'monthly_active_users', 'vg_purchases', 'overall_store_rank', 'offerwall_views'] }
+    @stat_types = options.delete(:stat_types) { Stats::STAT_TYPES }
     @type = options.delete(:type) { :granular }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
