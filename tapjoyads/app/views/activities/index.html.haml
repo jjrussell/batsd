@@ -50,7 +50,7 @@
             %p
               #{key}:
               %b= value
-        %td= activity.created_at.in_time_zone('Pacific Time (US & Canada)').to_s(:db) + " PT"
+        %td= activity.created_at.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec) + " PT"
         %td= activity.controller
         %td= activity.action
         %td
