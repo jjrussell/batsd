@@ -28,6 +28,11 @@ class GetOffersController < ApplicationController
     @more_data_available = 0
     @source = 'featured'
     
+    # Set TapDefense as the featured app for NGMoco's staging app.
+    if @publisher_app.id == 'aa6a5056-c4c6-45ae-98c4-de8b45a26c63'
+      @offer_list = [ Offer.find_in_cache('2349536b-c810-47d7-836c-2cd47cd3a796') ]
+    end
+    
     if params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
     else
