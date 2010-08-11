@@ -38,13 +38,13 @@
       is: function(s) { return false; },
       type: 'numeric',
       format: function(s) {
-        s = s.replace(/$/g, '');
-        return $.tablesorter.formatFloat(s.replace(new RegExp(/[^0-9.-]/g), ''));
+        return s.replace(/\$/g, '');
       }
     });
-  
+    
     $(function() {
-      $("#apps_table").tablesorter({widgets: ['zebra'],
+      $("#apps_table").tablesorter({
+        widgets: ['zebra'],
         headers: {
           0: { sorter: false },
           3: { sorter: 'currency-column' },

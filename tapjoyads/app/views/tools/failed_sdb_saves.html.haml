@@ -20,7 +20,21 @@ Number of domains: #{@failed_sdb_saves.size}
 - content_for :page_javascript do
   :plain
     $(function() {
-      $("#fails").tablesorter( { widgets: ['zebra'], sortList: [ [1, 1], [2, 1] ] } );
+      $.tablesorter.addParser({
+        id: 'name-column',
+        is: function(s) { return false; },
+        type: 'text',
+        format: function(s) {
+          return s.replace(/-/g, '_');
+        }
+      });
+      $("#fails").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0: { sorter: 'name-column' }
+        },
+        sortList: [ [1, 1], [2, 1] ]
+      });
     });
   
 - content_for :page_styles do

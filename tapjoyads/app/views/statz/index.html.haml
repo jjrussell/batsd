@@ -72,8 +72,7 @@
         is: function(s) { return false; },
         type: 'numeric',
         format: function(s) {
-          s = s.replace(/$/g, '');
-          return $.tablesorter.formatFloat(s.replace(new RegExp(/[^0-9.-]/g), ''));
+          return s.replace(/\$/g, '');
         }
       });
       $.tablesorter.addParser({
@@ -81,11 +80,11 @@
         is: function(s) { return false; },
         type: 'numeric',
         format: function(s) {
-          s = s.replace(/-/g, '999999');
-          return $.tablesorter.formatFloat(s.replace(new RegExp(/[^0-9.-]/g), ''));
+          return s.replace(/-/g, '999999');
         }
       });
-      $("#apps_table").tablesorter({widgets: ['zebra'],
+      $("#apps_table").tablesorter({
+        widgets: ['zebra'],
         headers: {
           0: { sorter: false },
           4: { sorter: 'rank-column' },

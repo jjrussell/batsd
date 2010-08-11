@@ -39,11 +39,11 @@
         is: function(s) { return false; },
         type: 'numeric',
         format: function(s) {
-          s = s.replace(/$/g, '');
-          return $.tablesorter.formatFloat(s.replace(new RegExp(/[^0-9.-]/g), ''));
+          return s.replace(/\$/g, '');
         }
       });
-      $("#apps_table").tablesorter({widgets: ['zebra'],
+      $("#apps_table").tablesorter({
+        widgets: ['zebra'],
         headers: {
           4: { sorter: 'currency-column' },
           5: { sorter: 'currency-column' },
