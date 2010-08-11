@@ -38,7 +38,7 @@
       is: function(s) { return false; },
       type: 'numeric',
       format: function(s) {
-        return s.replace(/\$/g, '');
+        return s.replace(/\$/g, '').replace(/,/g, '');
       }
     });
     
