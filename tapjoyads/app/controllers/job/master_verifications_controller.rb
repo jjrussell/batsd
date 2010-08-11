@@ -9,7 +9,7 @@ class Job::MasterVerificationsController < Job::JobController
 private
   
   def check_grab_advertiser_udids_logs
-    GrabAdvertiserUdidsLog.select(:where => "job_started_at < '#{(Time.zone.now - 1.day).to_i}' and job_finished_at is null") do |log|
+    GrabAdvertiserUdidsLog.select(:where => "job_started_at < '#{(Time.zone.now - 16.hours).to_i}' and job_finished_at is null") do |log|
       next if log.job_requeued_at && log.job_requeued_at < log.job_started_at
       
       log.job_requeued_at = Time.zone.now
