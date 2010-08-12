@@ -3,19 +3,37 @@ class AppsController < WebsiteController
 
   filter_access_to :all
   before_filter :grab_partner_apps
+  before_filter :find_app, :only => [:show, :update]
 
   def index
-    @app = current_partner_apps.first
+    @app = current_partner_apps.select{|a|a.id == session[:last_shown_app]}.first
     render :action => "show"
   end
 
   def show
-    @app = App.find(params[:id])
+  end
+
+  def new
+    @app = App.new
+  end
+
+  def create
+    @app = App.new(params[:app])
+    @app.partner = current_partner
+    respond_to do |format|
+      if @app.save
+        flash[:notice] = 'Your app was successfully created.'
+        format.html { redirect_to(@app) }
+        format.xml  { render :xml => @app, :status => :created, :location => @app }
+      else
+        flash[:error] = 'Your app was not created.'
+        format.html { render :action => "new" }
+        format.xml  { render :xml => @app.errors, :status => :unprocessable_entity }
+      end
+    end
   end
 
   def update
-    @app = App.find(params[:id])
-
     respond_to do |format|
       if @app.update_attributes(params[:app])
         flash[:notice] = 'App was successfully updated.'
@@ -32,5 +50,10 @@ class AppsController < WebsiteController
 private
   def grab_partner_apps
     @apps = current_partner_apps
+    session[:last_shown_app] ||= @apps.first.id
+  end
+
+  def find_app
+    @app = App.find(params[:id])
   end
 end
