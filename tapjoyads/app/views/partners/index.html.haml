@@ -15,11 +15,11 @@
       %th Phone
       %th Balance
       %th Pending Earnings
-      %th Created
+      %th{ :class => params[:q].blank? ? 'up_arrow' : '' } Created
       %th Offers
   %tbody
     - @partners.each do |partner|
-      %tr
+      %tr{ :class => cycle('even', 'odd') }
         %td.nowrap= link_to(partner.name || 'Unknown', partner_path(partner))
         %td= partner.users.map(&:email).join(', ')
         %td.nowrap= partner.contact_phone
@@ -38,6 +38,13 @@
   :plain
     table.tablesorter {
       border-collapse: separate;
+    }
+    
+    table.tablesorter th.up_arrow {
+      background-position: 100% 50%;
+      background-repeat: no-repeat;
+      background-image: url(/stylesheets/themes/blue/asc.gif);
+      background-color: #8DBDD8;
     }
     
     .offer {
