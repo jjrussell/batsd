@@ -55,5 +55,6 @@ private
 
   def find_app
     @app = App.find(params[:id])
+    session[:last_shown_app] = @app.id
   end
 end
