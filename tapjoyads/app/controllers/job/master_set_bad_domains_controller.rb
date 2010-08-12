@@ -1,7 +1,7 @@
 class Job::MasterSetBadDomainsController < Job::JobController
   def index
     mc_key = 'failed_sdb_saves.bad_domains'
-    bad_domains = Mc.get(mc_key)
+    bad_domains = Mc.get(mc_key) || {}
     
     now = Time.zone.now
     date = now.strftime('%Y-%m-%d')
