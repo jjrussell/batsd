@@ -28,9 +28,9 @@ class GetOffersController < ApplicationController
     @more_data_available = 0
     @source = 'featured'
     
-    # Set Movies as the featured app for NGMoco's staging app.
+    # Set TapOut as the featured app for NGMoco's staging app.
     if @publisher_app.id == 'aa6a5056-c4c6-45ae-98c4-de8b45a26c63'
-      @offer_list = [ Offer.find_in_cache('f8751513-67f1-4273-8e4e-73b1e685e83d') ]
+      @offer_list = [ Offer.find_in_cache('bb429429-642d-4c81-b87c-08cf66be05ac') ]
     end
     
     if params[:json] == '1'
