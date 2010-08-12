@@ -87,32 +87,7 @@
       }
     };
 
-    var myApps = [
-      #{@apps_data.join(",\n  ")}
-    ];
-
-    var loadApp = function(data) {
-      if (!data) return;
-      var app = data.app;
-      $('#selected-app .icon img').attr({src: app.offer.get_icon_url, width: 57, height: 57});
-      $('#selected-app h2').html(app.name);
-      $('#selected-app td#metadata-platform').html(app.platform);
-      $('#selected-app td#metadata-description').html(app.description);
-      $('#selected-app td#metadata-app-id').html(app.id);
-      $('#selected-app td#metadata-itunes-url a').attr('href', app.store_url);
-      $('#selected-app td#metadata-version').html(app.version);
-      $('#selected-app td#metadata-price').html('$' + app.price/100);
-    };
-
     $(function() {
-      $('#bar-left .app-thumb').not('.new-app').click(function(e){
-        var id = $(e.currentTarget).attr('id').split(/_/)[1];
-        loadApp(myApps[id]);
-      });
-      if (myApps.length > 0) {
-        loadApp(myApps[0]);
-      }
-
       Tapjoy.drawLargeGraph(clickData, 'clicks');
     });
 

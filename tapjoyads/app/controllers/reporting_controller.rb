@@ -4,6 +4,6 @@ class ReportingController < WebsiteController
   filter_access_to :all
 
   def index
-    @apps_data = current_partner_apps.map(&:to_json_with_offer)
+    @apps_data = current_partner_apps
   end
 end
