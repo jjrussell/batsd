@@ -7,7 +7,7 @@ class GetAppImageController < ApplicationController
     
     # Tap Fish sometimes sends malformated params like: app_id=guidimg=1
     if app_id.gsub!('img=1', '') || params[:img] == '1'
-      redirect_to "http://s3.amazonaws.com/app_data/icons/#{app_id}.png" and return
+      redirect_to "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/#{app_id}.png" and return
     end
     
     @icon = Mc.get_and_put("icon.s3.#{app_id}") do

@@ -156,7 +156,7 @@ class Offer < ActiveRecord::Base
   
   def get_icon_url(base64 = false)
     if base64
-      url = "http://ws.tapjoyads.com/#{RUN_MODE_PREFIX}get_app_image/icon?app_id=#{id}"
+      url = "http://ws.tapjoyads.com/get_app_image/icon?app_id=#{id}"
     else
       url = "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/#{id}.png"
     end
