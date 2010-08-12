@@ -50,7 +50,7 @@ class AppsController < WebsiteController
 private
   def grab_partner_apps
     @apps = current_partner_apps
-    session[:last_shown_app] ||= @apps.first.id
+    session[:last_shown_app] ||= @apps.first.id unless @apps.blank?
   end
 
   def find_app
