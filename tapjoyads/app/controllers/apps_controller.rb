@@ -55,6 +55,7 @@ private
 
   def find_app
     @app = App.find(params[:id])
+    redirect_to apps_path and return unless current_partner_apps.include? @app
     session[:last_shown_app] = @app.id
   end
 end

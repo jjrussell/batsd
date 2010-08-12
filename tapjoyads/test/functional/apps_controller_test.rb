@@ -17,19 +17,22 @@ class AppsControllerTest < ActionController::TestCase
         assert_response(:success)
         assert_equal @partner.apps.first, assigns(:app)
       end
+    end
 
-      should "show last app user visited" do
+    context "Show" do
+      should "store last app user visited and use with Index" do
         get 'show', :id => @partner.apps.last.id
         assert_equal @partner.apps.last, assigns(:app)
         assert_equal @partner.apps.last.id, session[:last_shown_app]
         get 'index'
         assert_equal @partner.apps.last, assigns(:app)
       end
-    end
 
-    context "Show" do
       should "not display someone else's app" do
-
+        someone_else = Factory(:partner, :pending_earnings => 10000, :balance => 10000)
+        not_my_app = Factory(:app, :partner => someone_else)
+        get 'show', :id => not_my_app.id
+        assert_redirected_to(apps_path)
       end
     end
   end
