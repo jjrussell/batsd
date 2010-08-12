@@ -33,16 +33,15 @@
 
 - content_for :page_javascript do
   :plain
-    $.tablesorter.addParser({
-      id: 'currency-column',
-      is: function(s) { return false; },
-      type: 'numeric',
-      format: function(s) {
-        return s.replace(/\$/g, '').replace(/,/g, '');
-      }
-    });
-    
     $(function() {
+      $.tablesorter.addParser({
+        id: 'currency-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/\$/g, '').replace(/,/g, '');
+        }
+      });
       $("#apps_table").tablesorter({
         widgets: ['zebra'],
         headers: {

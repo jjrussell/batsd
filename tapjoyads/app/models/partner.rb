@@ -21,6 +21,7 @@ class Partner < ActiveRecord::Base
   
   named_scope :to_calculate_next_payout_amount, :conditions => 'pending_earnings >= 10000'
   named_scope :to_payout, :conditions => 'pending_earnings != 0'
+  named_scope :search, lambda { |name_or_email| { :joins => :users, :conditions => "partners.name LIKE '%#{name_or_email}%' OR users.email LIKE '%#{name_or_email}%'" } }
   
   def payout_cutoff_date(reference_date = nil)
     reference_date ||= Time.zone.now
