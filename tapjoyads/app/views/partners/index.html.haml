@@ -31,6 +31,8 @@
             .offer
               = image_tag(o.get_icon_url, :size => '20x20')
               = link_to(o.name, statz_path(o.id))
+              - if o.tapjoy_enabled? || o.user_enabled?
+                = '(' + (o.tapjoy_enabled? ? 'T' : '') + (o.user_enabled? ? 'U' : '') + ')'
 
 = will_paginate(@partners)
 
