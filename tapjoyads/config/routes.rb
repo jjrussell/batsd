@@ -44,7 +44,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :users, :only => [ :edit, :update ]
   map.resources :home, :only => [ :index ]
   map.resources :apps, :except => [ :destroy ] do |app|
-    app.resource :offer, :only => [ :edit, :update]
+    app.resource :offer, :only => [ :show, :update]
   end
   map.resources :reporting, :only => [ :index ]
   map.resources :billing, :only => [ :index, ], :collection => { :add_funds => :get }

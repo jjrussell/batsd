@@ -3,11 +3,18 @@ class OffersController < WebsiteController
   filter_access_to :all
   before_filter :find_offer
 
-  def edit
-    
-  end
-
   def update
+    respond_to do |format|
+      if @offer.update_attributes(params[:offer])
+        flash[:notice] = 'Offer was successfully updated.'
+        format.html { redirect_to(app_offer_path(@app)) }
+        format.xml  { head :ok }
+      else
+        flash[:error] = 'Update unsuccessful.'
+        format.html { render :action => "show" }
+        format.xml  { render :xml => @offer.errors, :status => :unprocessable_entity }
+      end
+    end
   end
 
 private

@@ -1,0 +1,17 @@
+= @offer.name
+- form_for @offer, :url => app_offer_path do |f|
+  %table.app{:cellpadding => 0, :cellspacing => 0, :border => 1}
+    %tbody
+      %tr
+        %th Name:
+        %td
+          = f.text_field :name, :size => 50
+          - if @offer.errors.on :name
+            = error_message_on @offer, :name
+      %tr
+        %th Description:
+        %td
+          = f.text_area :description, :size => "50x15"
+          - if @offer.errors.on :description
+            = error_message_on @offer, :description
+  = f.submit 'Update'
