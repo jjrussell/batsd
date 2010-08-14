@@ -67,6 +67,7 @@ private
     web_request.put('udid', udid)
     web_request.put('advertiser_app_id', advertiser_app_id)
     web_request.put('publisher_app_id', click.publisher_app_id)
+    web_request.put('offer_id', click.offer_id)
     web_request.save
     
     offer = Offer.find_in_cache(advertiser_app_id)

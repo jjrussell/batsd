@@ -7,6 +7,7 @@ class StoreClick < SimpledbResource
   self.sdb_attr :publisher_app_id
   self.sdb_attr :advertiser_app_id
   self.sdb_attr :publisher_user_id
+  self.sdb_attr :offer_id
   self.sdb_attr :reward_key
   self.sdb_attr :click_date,        :type => :time
   self.sdb_attr :clicked_at,        :type => :time, :attr_name => :click_date

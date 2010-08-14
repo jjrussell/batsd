@@ -144,7 +144,7 @@ class Offer < ActiveRecord::Base
   end
   
   def get_click_url(publisher_app, publisher_user_id, udid, source)
-    "http://ws.tapjoyads.com/submit_click/store?advertiser_app_id=#{id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}"
+    "http://ws.tapjoyads.com/submit_click/store?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}"
   end
   
   def get_redirect_url(publisher_app, publisher_user_id, udid, source, app_version)
@@ -217,7 +217,7 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer)
+  def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer, sdk_version)
     return is_disabled?(publisher_app, currency) ||
         platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device_app_list) ||
@@ -226,7 +226,8 @@ class Offer < ActiveRecord::Base
         already_complete?(publisher_app, device_app_list, app_version) ||
         show_rate_reject?(device_app_list) ||
         flixter_reject?(publisher_app, device_app_list) ||
-        whitelist_reject?(publisher_app)
+        whitelist_reject?(publisher_app) ||
+        secondary_offer_reject?(sdk_version)
   end
   
 private
@@ -272,7 +273,7 @@ private
   def already_complete?(publisher_app, device_app_list, app_version)
     return false if device_app_list.key == EXEMPT_UDID
     
-    id_for_device_app_list = id
+    id_for_device_app_list = item_id
     if item_type == 'RatingOffer'
       id_for_device_app_list = RatingOffer.get_id_for_device_app_list(item_id, app_version)
     end
@@ -319,6 +320,13 @@ private
   
   def whitelist_reject?(publisher_app)
     return !publisher_app_whitelist.blank? && !get_publisher_app_whitelist.include?(publisher_app.id)
+  end
+  
+  ##
+  # Reject all secondary offers if the request is coming from the old sdk.
+  def secondary_offer_reject?(sdk_version)
+    # Todo: TapFish et al report their sdk version as 3.3, but they actually don't need to reject here.
+    return item_id != id && sdk_version != 0 && sdk_version < 4
   end
   
   def normalize_device_type(device_type_param)

@@ -106,7 +106,8 @@ private
         :type => type,
         :required_length => (@start_index + @max_items),
         :app_version => params[:app_version],
-        :reject_rating_offer => params[:rate_app_offer] == '0')
+        :reject_rating_offer => params[:rate_app_offer] == '0',
+        :sdk_version => params[:library_version].to_f)
     @offer_list = @offer_list[@start_index, @max_items] || []
   end
   

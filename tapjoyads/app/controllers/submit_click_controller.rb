@@ -10,7 +10,8 @@ class SubmitClickController < ApplicationController
     
     now = Time.zone.now
     
-    offer = Offer.find_in_cache(params[:advertiser_app_id])
+    offer_id = params[:offer_id] || params[:advertiser_app_id]
+    offer = Offer.find_in_cache(offer_id)
     
     if offer.get_payment_for_source(params[:source]) <= 0 || !offer.tapjoy_enabled
       @offer = offer
@@ -42,6 +43,7 @@ class SubmitClickController < ApplicationController
     click.put("publisher_app_id", params[:publisher_app_id])
     click.put("publisher_user_id", params[:publisher_user_id])
     click.put("advertiser_app_id", params[:advertiser_app_id])
+    click.put("offer_id", params[:offer_id])
     click.put('advertiser_amount', currency.get_advertiser_amount(offer, params[:source]))
     click.put('publisher_amount', currency.get_publisher_amount(offer, params[:source]))
     click.put('currency_reward', currency.get_reward_amount(offer, params[:source]))
@@ -55,6 +57,7 @@ class SubmitClickController < ApplicationController
     sharded_click.publisher_app_id = params[:publisher_app_id]
     sharded_click.publisher_user_id = params[:publisher_user_id]
     sharded_click.advertiser_app_id = params[:advertiser_app_id]
+    sharded_click.offer_id = params[:offer_id]
     sharded_click.advertiser_amount = currency.get_advertiser_amount(offer, params[:source])
     sharded_click.publisher_amount = currency.get_publisher_amount(offer, params[:source])
     sharded_click.currency_reward = currency.get_reward_amount(offer, params[:source])
