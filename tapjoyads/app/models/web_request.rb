@@ -84,6 +84,7 @@ class WebRequest < SimpledbResource
       put('virtual_good_id', params[:virtual_good_id])
       
       put('source', params[:source])
+      put('offer_id', params[:offer_id])
     end
     
     unless get('ip_address')
