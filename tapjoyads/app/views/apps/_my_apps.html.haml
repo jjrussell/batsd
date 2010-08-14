@@ -1,0 +1,33 @@
+- hide_new_app ||= false
+#my_apps
+  - my_apps.each do |app|
+    .app-thumb
+      .icon= link_to image_tag(app.offer.get_icon_url, :size => '56x56'), app
+      = link_to truncate(app.name, :length => 15), app
+      .clear
+  - unless hide_new_app
+    %p &nbsp;
+    .app-thumb.new-app
+      .icon= image_tag("add_app.png", :size => '57x57')
+      = link_to "Add an App", new_app_path
+      .clear
+
+- content_for :page_styles do
+  :plain
+    .app-thumb .icon {
+      float: left;
+      border: 1px solid #000;
+    }
+    #my_apps {
+      float: left;
+      border: 1px solid #000;
+    }
+    #apps_main {
+      float: left;
+    }
+    table.app th {
+      text-align: left;
+    }
+    table.app td div.formError {
+      color: #f00;
+    }

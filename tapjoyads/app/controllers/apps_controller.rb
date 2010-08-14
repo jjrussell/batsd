@@ -3,14 +3,11 @@ class AppsController < WebsiteController
 
   filter_access_to :all
   before_filter :grab_partner_apps
-  before_filter :find_app, :only => [:show, :update]
+  before_filter :find_app, :only => [:show, :update, :confirm]
 
   def index
     @app = current_partner_apps.select{|a|a.id == session[:last_shown_app]}.first
     render :action => "show"
-  end
-
-  def show
   end
 
   def new
@@ -22,8 +19,7 @@ class AppsController < WebsiteController
     @app.partner = current_partner
     respond_to do |format|
       if @app.save
-        flash[:notice] = 'Your app was successfully created.'
-        format.html { redirect_to(@app) }
+        format.html { redirect_to(confirm_app_path(@app)) }
         format.xml  { render :xml => @app, :status => :created, :location => @app }
       else
         flash[:error] = 'Your app was not created.'
@@ -45,6 +41,9 @@ class AppsController < WebsiteController
         format.xml  { render :xml => @app.errors, :status => :unprocessable_entity }
       end
     end
+  end
+
+  def confirm
   end
 
 private

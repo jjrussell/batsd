@@ -1,0 +1,23 @@
+- @page_title = 'Apps'
+
+%h1 New application
+
+= render :partial => 'my_apps', :object => @apps
+
+#apps_main
+  %h3 Thanks, your application has been added
+  Please note your application details below:
+
+- content_for :page_styles do
+  :plain
+    td#bar-left {
+      border: 1px solid #000;
+      padding: 5px;
+    }
+    td#bar-left .app-thumb {
+      padding: 2px;
+    }
+    .app-thumb .icon {
+      float: left;
+      border: 1px solid #000;
+    }
