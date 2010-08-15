@@ -11,6 +11,7 @@ class Job::MasterReloadMoneyController < Job::JobController
     interval_strings['7_days'] = "DATE_ADD(NOW(), INTERVAL -7 DAY)"
     interval_strings['since_mar_23'] = "'2010-03-23'"
     interval_strings['1_month'] = "DATE_ADD(NOW(), INTERVAL -1 MONTH)"
+    interval_strings['this_year'] = "MAKEDATE(YEAR(CURDATE()), 1)"
     
     money_stats = {}
     
