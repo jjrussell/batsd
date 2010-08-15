@@ -15,7 +15,7 @@ class StatzController < WebsiteController
     @publisher_earnings =  money_stats[@timeframe]['publisher_earnings'] rescue "Not Available"
     
     @last_updated = Mc.get("statz.last_updated.#{@timeframe}") || Time.at(8.hours.to_i)
-    @cached_stats = Mc.get("statz.cached_stats.#{@timeframe}") || {}
+    @cached_stats = Mc.get("statz.cached_stats.#{@timeframe}") || []
   end
 
   def udids

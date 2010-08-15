@@ -29,7 +29,7 @@ private
       start_time = now - 30.days
     end
   
-    Offer.find(:all, :conditions => "stats_aggregation_interval = 3600").each do |offer|
+    Offer.find_each(:conditions => "stats_aggregation_interval = 3600") do |offer|
       appstats = Appstats.new(offer.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity }).stats
     
       this_apps_stats = {}
@@ -56,6 +56,10 @@ private
       if timeframe != '24_hours'
         sleep(1)
       end
+    end
+
+    cached_stats = cached_stats.sort do |s1, s2|
+      s2[1]['conversions'] <=> s1[1]['conversions']
     end
 
     Mc.put("statz.cached_stats.#{timeframe}", cached_stats)

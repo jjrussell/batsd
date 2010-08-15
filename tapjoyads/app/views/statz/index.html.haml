@@ -23,7 +23,7 @@
     %tr
       %th= link_to('Icon', 'javascript:toggleIcons()')
       %th Offer
-      %th Conversions
+      %th{:class => 'headerSortUp header'} Conversions
       %th Connects
       %th Store rank
       %th Price
@@ -86,15 +86,14 @@
       $("#apps_table").tablesorter({
         widgets: ['zebra'],
         headers: {
-          0: { sorter: false },
-          4: { sorter: 'rank-column' },
-          5: { sorter: 'currency-column' },
-          6: { sorter: 'currency-column' },
-          7: { sorter: 'currency-column' },
-          8: { sorter: 'currency-column' },
+          0:  { sorter: false },
+          4:  { sorter: 'rank-column' },
+          5:  { sorter: 'currency-column' },
+          6:  { sorter: 'currency-column' },
+          7:  { sorter: 'currency-column' },
+          8:  { sorter: 'currency-column' },
           15: { sorter: 'currency-column' }
-        },
-        sortList: [ [2, 1] ]
+        }
       });
     });
     
