@@ -70,21 +70,16 @@ class MemcachedTest < ActiveSupport::TestCase
     
     thread_list = []
     expected_val = ''
-    10.times do
+    100.times do
       expected_val += 'a'
       thread = Thread.new do
-        begin
-          Mc.compare_and_swap('foo', true) do |mc_val|
-            if mc_val
-              val = mc_val + 'a'
-            else
-              val = 'a'
-            end
-            val
+        Mc.compare_and_swap('foo', true) do |mc_val|
+          if mc_val
+            val = mc_val + 'a'
+          else
+            val = 'a'
           end
-        rescue Memcached::ConnectionDataExists
-          sleep(0.1)
-          retry
+          val
         end
       end
       thread_list.push(thread)

@@ -107,6 +107,7 @@ class Mc
     c = clone ? @@cache.clone : @@cache
     key = CGI::escape(key)
     
+    retries = 2
     begin
       c.cas(key) do |mc_val|
         yield mc_val
@@ -114,9 +115,14 @@ class Mc
     rescue Memcached::NotFound
       # Attribute hasn't been stored yet.
       c.set(key, yield(nil))
-    rescue Memcached::NotStored
+    rescue Memcached::ConnectionDataExists => e
       # Attribute was modified before it could write.
-      retry
+      if retries > 0
+        retries -= 1
+        retry
+      else
+        raise e
+      end
     end
   end
   
