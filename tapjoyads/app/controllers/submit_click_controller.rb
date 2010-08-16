@@ -10,8 +10,8 @@ class SubmitClickController < ApplicationController
     
     now = Time.zone.now
     
-    offer_id = params[:offer_id] || params[:advertiser_app_id]
-    offer = Offer.find_in_cache(offer_id)
+    params[:offer_id] = params[:advertiser_app_id] if params[:offer_id].blank?
+    offer = Offer.find_in_cache(params[:offer_id])
     
     if offer.get_payment_for_source(params[:source]) <= 0 || !offer.tapjoy_enabled
       @offer = offer
