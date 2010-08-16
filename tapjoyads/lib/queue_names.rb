@@ -9,7 +9,6 @@ class QueueNames
   APP_STATS                = RUN_MODE_PREFIX + 'AppStats'
   PRE_CREATE_DOMAINS       = RUN_MODE_PREFIX + 'PreCreateDomains'
   CALCULATE_SHOW_RATE      = RUN_MODE_PREFIX + 'CalculateShowRate'
-  CLEANUP_STORE_CLICK      = RUN_MODE_PREFIX + 'CleanupStoreClick'
   CALCULATE_NEXT_PAYOUT    = RUN_MODE_PREFIX + 'CalculateNextPayout'
   SELECT_VG_ITEMS          = RUN_MODE_PREFIX + 'SelectVgItems'
   GET_STORE_INFO           = RUN_MODE_PREFIX + 'GetStoreInfo'

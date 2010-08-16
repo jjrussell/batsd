@@ -38,34 +38,20 @@ class SubmitClickController < ApplicationController
     
     currency = Currency.find_in_cache_by_app_id(params[:publisher_app_id])
     
-    click = StoreClick.new(:key => "#{params[:udid]}.#{params[:advertiser_app_id]}")
-    click.put("click_date", "#{now.to_f.to_s}")
-    click.put("publisher_app_id", params[:publisher_app_id])
-    click.put("publisher_user_id", params[:publisher_user_id])
-    click.put("advertiser_app_id", params[:advertiser_app_id])
-    click.put("offer_id", params[:offer_id])
-    click.put('advertiser_amount', currency.get_advertiser_amount(offer, params[:source]))
-    click.put('publisher_amount', currency.get_publisher_amount(offer, params[:source]))
-    click.put('currency_reward', currency.get_reward_amount(offer, params[:source]))
-    click.put('tapjoy_amount', currency.get_tapjoy_amount(offer, params[:source]))
-    click.put('reward_key', UUIDTools::UUID.random_create.to_s)
-    click.put('source', params[:source])
-    click.put('country', get_geoip_data[:country])
+    click = Click.new(:key => "#{params[:udid]}.#{params[:advertiser_app_id]}")
+    click.clicked_at = now
+    click.publisher_app_id = params[:publisher_app_id]
+    click.publisher_user_id = params[:publisher_user_id]
+    click.advertiser_app_id = params[:advertiser_app_id]
+    click.offer_id = params[:offer_id]
+    click.advertiser_amount = currency.get_advertiser_amount(offer, params[:source])
+    click.publisher_amount = currency.get_publisher_amount(offer, params[:source])
+    click.currency_reward = currency.get_reward_amount(offer, params[:source])
+    click.tapjoy_amount = currency.get_tapjoy_amount(offer, params[:source])
+    click.reward_key = UUIDTools::UUID.random_create.to_s
+    click.source = params[:source]
+    click.country = get_geoip_data[:country]
     click.save
-    sharded_click = Click.new(:key => "#{params[:udid]}.#{params[:advertiser_app_id]}")
-    sharded_click.clicked_at = now
-    sharded_click.publisher_app_id = params[:publisher_app_id]
-    sharded_click.publisher_user_id = params[:publisher_user_id]
-    sharded_click.advertiser_app_id = params[:advertiser_app_id]
-    sharded_click.offer_id = params[:offer_id]
-    sharded_click.advertiser_amount = currency.get_advertiser_amount(offer, params[:source])
-    sharded_click.publisher_amount = currency.get_publisher_amount(offer, params[:source])
-    sharded_click.currency_reward = currency.get_reward_amount(offer, params[:source])
-    sharded_click.tapjoy_amount = currency.get_tapjoy_amount(offer, params[:source])
-    sharded_click.reward_key = UUIDTools::UUID.random_create.to_s
-    sharded_click.source = params[:source]
-    sharded_click.country = get_geoip_data[:country]
-    sharded_click.save
     
     web_request = WebRequest.new
     web_request.put_values('store_click', params, get_ip_address, get_geoip_data)

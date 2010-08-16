@@ -8,12 +8,12 @@ class ConnectController < ApplicationController
     
     #add this app to the device list
     Rails.logger.info_with_time("Check conversions and maybe add to sqs") do
-      click = StoreClick.new(:key => "#{params[:udid]}.#{params[:app_id]}")
-      unless (click.attributes.empty? || click.get('installed'))
+      click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}")
+      unless (click.attributes.empty? || click.installed_at)
         @country = click.country if click.clicked_at > (Time.zone.now - 2.days)
         logger.info "Added conversion to sqs queue"
-        message = {:udid => params[:udid], :app_id => params[:app_id], 
-            :install_date => Time.now.utc.to_f.to_s}.to_json
+        message = {:udid => params[:udid], :app_id => params[:app_id],
+            :install_date => Time.zone.now.to_f.to_s}.to_json
         Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
       end
     end

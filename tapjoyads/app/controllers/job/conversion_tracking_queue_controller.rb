@@ -10,22 +10,16 @@ private
     json = JSON.parse(message.to_s)
     udid = json['udid']
     advertiser_app_id = json['app_id']
-    install_date = json['install_date']
+    installed_at_epoch = json['install_date']
     
     Rails.logger.info "Checking for conversion on #{udid} for #{advertiser_app_id}"
-    click = StoreClick.new(:key => "#{udid}.#{advertiser_app_id}")
-    sharded_click = Click.new(:key => "#{udid}.#{advertiser_app_id}")
+    click = Click.new(:key => "#{udid}.#{advertiser_app_id}")
     
     unless click.clicked_at
-      click = StoreClick.new(:key => "#{udid}.#{advertiser_app_id}", :load_from_memcache => false)
+      sleep(2)
+      click = Click.new(:key => "#{udid}.#{advertiser_app_id}", :load_from_memcache => false)
       unless click.clicked_at
         raise "Click not found, wait for failed sdb saves to catch up.  app_id: #{advertiser_app_id}  udid: #{udid}"
-      end
-    end
-    unless sharded_click.clicked_at
-      sharded_click = Click.new(:key => "#{udid}.#{advertiser_app_id}", :load_from_memcache => false)
-      unless sharded_click.clicked_at
-        sharded_click = nil
       end
     end
     
@@ -47,17 +41,13 @@ private
       return
     end
     
-    click.put('installed', install_date)
+    click.put('installed_at', installed_at_epoch)
     click.save
-    unless sharded_click.nil?
-      sharded_click.installed_at = Time.zone.at(install_date.to_f)
-      sharded_click.save
-    end
     
     reward_key = click.reward_key || UUIDTools::UUID.random_create.to_s
     
     reward = Reward.new(:key => reward_key)
-    if reward.get('publisher_app_id') 
+    unless reward.publisher_app_id.blank?
       Rails.logger.info 'Reward already in system. Finished processing conversion.'
       return
     end
