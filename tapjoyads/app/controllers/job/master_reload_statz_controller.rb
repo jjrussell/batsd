@@ -41,15 +41,12 @@ private
       this_apps_stats['price'] = number_to_currency(offer.price / 100.0)
       this_apps_stats['payment'] = number_to_currency(offer.payment / 100.0)
       this_apps_stats['balance'] = number_to_currency(offer.partner.balance / 100.0)
-      this_apps_stats['pending_earnings'] = number_to_currency(offer.partner.pending_earnings / 100.0)
-      this_apps_stats['daily_budget'] = offer.daily_budget
-      this_apps_stats['show_rate'] = "%.1f%" % ((offer.show_rate || 0) * 100.0)
       this_apps_stats['conversion_rate'] = "%.1f%" % ((offer.conversion_rate || 0) * 100.0)
-      this_apps_stats['vg_purchases'] = appstats['vg_purchases'].sum
       this_apps_stats['published_installs'] = appstats['published_installs'].sum
       this_apps_stats['installs_revenue'] = number_to_currency(appstats['installs_revenue'].sum / 100.0)
-      this_apps_stats['ad_impressions'] = appstats['hourly_impressions'].sum
       this_apps_stats['platform'] = offer.get_platform
+      this_apps_stats['ordinal'] = offer.ordinal
+      this_apps_stats['featured'] = offer.featured?
       
       if this_apps_stats['conversions'] > 0 || this_apps_stats['published_installs'] > 0
         cached_stats[offer.id] = this_apps_stats
