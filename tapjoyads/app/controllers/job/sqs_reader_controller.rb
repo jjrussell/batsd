@@ -121,10 +121,6 @@ class Job::SqsReaderController < Job::JobController
       unless Dir.glob("#{RAILS_ROOT}/tmp/web-request*.sdb*").empty?
         render :text => 'ok' if rand > 0.01
       end
-    elsif @queue_name == QueueNames::CLEANUP_STORE_CLICK
-      unless Dir.glob("#{RAILS_ROOT}/tmp/store-click*.sdb*").empty?
-        render :text => 'ok' if rand > 0.01
-      end
     end
   end
   
