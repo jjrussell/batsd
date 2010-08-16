@@ -53,7 +53,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     potential_spend = (possible_installs_per_second * 12.hours) * offer.payment
     if potential_spend > offer.partner.balance && (offer.last_balance_alert_time || Time.zone.at(0)) + 24.hours < now
       offer.last_balance_alert_time = now
-      # TapjoyMailer.deliver_balance_alert(offer, potential_spend)
+      TapjoyMailer.deliver_balance_alert(offer, potential_spend)
     end
     
     # Assume all apps are CST for now.
