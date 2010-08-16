@@ -38,7 +38,7 @@ class Job::MasterReloadMoneyController < Job::JobController
       money_stats[is]['orders'] = number_to_currency(Order.sum(:amount, :conditions =>"created_at > #{interval_strings[is]} AND payment_method != 2") / 100.0)
       money_stats[is]['payouts'] = number_to_currency(Payout.sum(:amount, :conditions => "created_at > #{interval_strings[is]}") / 100.0)
       
-      linkshare_est = conversions * 0.0123
+      linkshare_est = conversions * 0.0138
       money_stats[is]['linkshare_est'] = number_to_currency(linkshare_est)
       
       ads_est = num_hours / 24.0 * 400.0
