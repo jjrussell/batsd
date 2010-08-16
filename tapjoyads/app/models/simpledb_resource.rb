@@ -222,7 +222,7 @@ class SimpledbResource
     unless catch_exceptions
       raise e
     end
-    Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e}"
+    Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e.class} - #{e}"
     uuid = UUIDTools::UUID.random_create.to_s
     bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
     bucket.put(uuid, self.serialize)

@@ -90,12 +90,5 @@ private
     
     Sqs.send_message(QueueNames::SEND_CURRENCY, message) unless currency.callback_url.blank?
     Sqs.send_message(QueueNames::SEND_MONEY_TXN, message)
-    
-    click.put('installed', install_date)
-    click.save
-    unless sharded_click.nil?
-      sharded_click.installed_at = Time.zone.at(install_date.to_f)
-      sharded_click.save
-    end
   end
 end
