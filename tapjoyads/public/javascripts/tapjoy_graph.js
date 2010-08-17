@@ -100,6 +100,7 @@ Tapjoy.drawLargeGraph = function(obj, id) {
 
     tooltipNode.html(Tapjoy.getTooltipHtml(obj, activeId));
   });
+  return [g, g2];
 };
 
 Tapjoy.getTooltipHtml = function(obj, idx) {

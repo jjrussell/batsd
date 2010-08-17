@@ -1,0 +1,229 @@
+- @page_title = 'Reporting'
+
+%h1 Reporting
+
+= render :partial => 'apps/my_apps', :object => @current_partner_apps, :locals => { :hide_new_app => true }
+
+#apps_main
+  .right
+    =select_tag "metric", "<option>Clicks</option><option>Offers</option>"
+  .right
+    %input.date{:value => "5/11/2010"}
+  .clear
+
+  #connects.graph
+    .holder
+      %canvas#connects_graph{:width => '550px', :height => '330px'}
+      .bar
+      .tooltip
+
+  #installs_spend.graph
+    .holder
+      %canvas#installs_spend_graph{:width => '550px', :height => '330px'}
+      .bar
+      .tooltip
+
+  #published_offers.graph
+    .holder
+      %canvas#published_offers_graph{:width => '550px', :height => '330px'}
+      .bar
+      .tooltip
+
+  .clear
+  .left
+    %table.totals
+      %tbody
+        %tr.connects
+          %th Clicks
+          %td= @stats['paid_clicks'].sum
+        %tr.connects
+          %th Installs
+          %td= @stats['paid_installs'].sum
+        %tr.connects
+          %th Conversion Rate
+          %td= @stats['paid_clicks'].sum==0 ? "0.0%" : "%.1f%" % (@stats['paid_installs'].sum.to_f / @stats['paid_clicks'].sum * 100.0 )
+        %tr.installs_spend
+          %th Spend
+          %td= number_to_currency(@stats['installs_spend'].sum / 100.0)
+        %tr.installs_spend
+          %th Daily Budget
+          %td= number_to_currency((@offer.daily_budget||0) / 100.0)
+        %tr.installs_spend
+          %th Total Budget
+          %td ?
+        %tr.installs_spend
+          %th Cost per Install
+          %td= @stats['paid_installs'].sum==0 ? "$0.00" : number_to_currency(@stats['installs_spend'].sum / @stats['paid_installs'].sum / 100)
+  .right
+    %table.totals
+      %tbody
+        %tr.published_offers
+          %th Offers Completed
+          %td= @stats['offers'].sum
+        %tr.published_offers
+          %th Offers Opened
+          %td= @stats['offers_opened'].sum
+        %tr.published_offers
+          %th Conversion Rate
+          %td= @stats['paid_installs'].sum==0 ? "0.0%" : "%.1f%" % (@stats['paid_installs'].sum.to_f / @stats['paid_clicks'].sum * 100.0 )
+        %tr.published_offers
+          %th Revenue per Offer
+          %td= @stats['offers'].sum==0 ? "$0.00" : number_to_currency(@stats['offers_revenue'].sum / @stats['offers'].sum / 100.0)
+        %tr.published_offers
+          %th Average Revenue/Day
+          - number_of_days = 1 # TODO: make this real
+          %td= number_to_currency(@stats['offers_revenue'].sum / number_of_days / 100.0)
+        %tr.published_offers
+          %th Total Revenue
+          %td= number_to_currency(@stats['offers_revenue'].sum / 100.0)
+
+- include_tapjoy_graph
+
+- content_for :page_javascript do
+  :plain
+    var installData = {
+      "name": "Rewarded installs + spend",
+      "intervals": [ "#{@intervals.join('","')}" ],
+      "xLabels": [ "#{@x_labels.join('","')}" ],
+
+      "main": {
+        "data":[
+           [ #{@stats['paid_installs'].join(',')} ],
+           [ #{@stats['paid_clicks'].join(',')} ]
+        ],
+        "names": ["Paid installs", "Paid clicks"],
+        "totals": [ #{@stats['paid_installs'].sum}, #{@stats['paid_clicks'].sum} ]
+      },
+
+      "right": {
+        "data": [
+          [ #{@stats['installs_spend'].map{|i| i / -100.0}.join(',')} ]
+        ],
+        "stringData": [
+          [ "#{@stats['installs_spend'].map{|i| number_to_currency(i / -100.0)}.join('","')}" ]
+        ],
+        "names": [ "Spend" ],
+        "unitPrefix": "$",
+        "totals": [ "#{number_to_currency(@stats['installs_spend'].sum / 100.0)}" ]
+      },
+
+      "extra": {
+        "data": [
+          [ "#{@stats['cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) }.join('","')}" ]
+        ],
+        "names": [ "Conversion rate" ],
+        "totals": [ "#{"%.1f%" % (@stats['paid_installs'].sum.to_f / @stats['paid_clicks'].sum * 100.0)}" ]
+      }
+    };
+
+    var connectData = {
+      "name": "Connects",
+      "intervals": [ "#{@intervals.join('","')}" ],
+      "xLabels": [ "#{@x_labels.join('","')}" ],
+
+      "main": {
+        "data":[
+           [ #{@stats['logins'].join(',')} ],
+           [ #{@stats['new_users'].join(',')} ],
+           [ #{@stats['daily_active_users'].join(',')} ],
+        ],
+        "names": ["Connects", "New users", "DAUs"],
+        "totals": [ #{@stats['logins'].sum}, #{@stats['new_users'].sum}, #{@stats['daily_active_users'].sum} ]
+      }
+    };
+
+    var publishedOffersData = {
+      "name": "Published offers",
+      "intervals": [ "#{@intervals.join('","')}" ],
+      "xLabels": [ "#{@x_labels.join('","')}" ],
+
+      "main": {
+        "data":[
+           [ #{@stats['offers'].join(',')} ],
+           [ #{@stats['offers_opened'].join(',')} ]
+        ],
+        "names": ["Offers completed", "Offers clicked"],
+        "totals": [ #{@stats['offers'].sum}, #{@stats['offers_opened'].sum} ]
+      },
+
+      "right": {
+        "data": [
+          [ #{@stats['offers_revenue'].map{|i| i / 100.0}.join(',')} ]
+        ],
+        "stringData": [
+          [ "#{@stats['offers_revenue'].map{|i| number_to_currency(i / 100.0)}.join('","')}" ]
+        ],
+        "names": [ "Offers revenue" ],
+        "unitPrefix": "$",
+        "totals": [ "#{ number_to_currency(@stats['offers_revenue'].sum / 100.0) }" ]
+      },
+    };
+
+    $(function() {
+      Tapjoy.drawLargeGraph(connectData, 'connects');
+      Tapjoy.drawLargeGraph(installData, 'installs_spend');
+      Tapjoy.drawLargeGraph(publishedOffersData, 'published_offers');
+
+      $('#connects').show();
+
+      $('tr.connects').click(function(){
+        $('.graph').not('#connects').hide();
+        $('#connects').show();
+      });
+      $('tr.installs_spend').click(function(){
+        $('.graph').not('#installs_spend').hide();
+        $('#installs_spend').show();
+      });
+      $('tr.published_offers').click(function(){
+        $('.graph').not('#published_offers').hide();
+        $('#published_offers').show();
+      });
+
+      $('#change_date .start').datepicker();
+      $('#change_date .end').datepicker();
+
+      $('#display_date a').click(function() {
+        $('#display_date').hide();
+        $('#change_date').show();
+      })
+    });
+
+- content_for :page_styles do
+  :plain
+    .icon {
+      float: left;
+    }
+
+    td.breakdown {
+      overflow: hidden;
+      font-size: small;
+    }
+
+    td.breakdown canvas {
+      margin: -40px 0;
+    }
+
+    table {
+      clear: both;
+    }
+
+    .left {
+      float: left;
+    }
+    .right {
+      float: right;
+    }
+
+    #change_date {
+      display: none;
+    }
+    .graph {
+      display: none;
+    }
+    table.totals tr {
+      cursor: pointer;
+    }
+    table.totals tr:hover th {
+      color: #00f;
+      text-decoration: underline;
+    }
