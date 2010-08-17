@@ -25,7 +25,24 @@
 - if permitted_to? :udids, :statz
   %p= link_to('[View Monthly UDID Reports]', udids_statz_path(@offer.id))
 - if @offer.item_type == 'App' && @offer.item.currency
-  %p= link_to('[View Offer Wall]', "/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDID}&publisher_user_id=testuser&device_type=#{@offer.item.platform}")
+  #currency
+    Currency: #{@offer.item.currency.name}
+    %a.more{ :href => '#' } [Show more details]
+    = link_to('[View Offer Wall]', "/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDID}&publisher_user_id=testuser&device_type=#{@offer.item.platform}")
+    .details
+      .metadata Conversion rate: #{@offer.item.currency.conversion_rate}
+      .metadata Callback url: #{@offer.item.currency.callback_url}
+      .metadata Secret key: #{@offer.item.currency.secret_key}
+      .metadata Initial balance: #{@offer.item.currency.initial_balance}
+      .metadata Only free offers: #{@offer.item.currency.only_free_offers?}
+      .metadata Has virtual goods: #{@offer.item.currency.has_virtual_goods?}
+      .metadata Send offer data: #{@offer.item.currency.send_offer_data?}
+      .metadata Offers money share: #{@offer.item.currency.offers_money_share}
+      .metadata Installs money share: #{@offer.item.currency.installs_money_share}
+      .metadata Max age rating: #{@offer.item.currency.max_age_rating}
+      .metadata Disabled offers: #{@offer.item.currency.disabled_offers}
+      .metadata Disabled partners: #{@offer.item.currency.disabled_partners}
+      .metadata Test devices: #{@offer.item.currency.test_devices}
 
 .left
   .metadata
@@ -358,7 +375,12 @@
       $('#display_date a').click(function() {
         $('#display_date').hide();
         $('#change_date').show();
-      })
+      });
+      
+      $('#currency .more').click(function() {
+        $('#currency .details').toggle();
+        return false;
+      });
     });
     
 - content_for :page_styles do
@@ -389,4 +411,13 @@
 
     #change_date {
       display: none;
+    }
+    
+    #currency {
+      margin-bottom: 16px;
+    }
+    
+    #currency .details {
+      display: none;
+      margin-left: 10px;
     }
