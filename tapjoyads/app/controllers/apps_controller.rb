@@ -14,6 +14,15 @@ class AppsController < WebsiteController
     @app = App.new
   end
 
+  def show
+    now = Time.zone.now
+    start_time = now.beginning_of_hour - 23.hours
+    end_time = now
+    granularity = 'daily'
+    stats = Appstats.new(@offer.id, { :start_time => start_time, :end_time => end_time, :granularity => granularity }).stats
+    @integrated = stats['logins'].sum > 0
+  end
+
   def create
     @app = App.new(params[:app])
     @app.partner = current_partner

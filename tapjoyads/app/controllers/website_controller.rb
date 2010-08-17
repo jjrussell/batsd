@@ -16,7 +16,7 @@ class WebsiteController < ApplicationController
   end
 
   def current_partner_apps
-    @current_partner_apps ||= current_partner.apps
+    @current_partner_apps ||= current_partner.apps.sort_by(&:name)
   end
 
 protected
