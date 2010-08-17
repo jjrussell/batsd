@@ -11,12 +11,6 @@
     %input.date{:value => "5/11/2010"}
   .clear
 
-  #connects.graph
-    .holder
-      %canvas#connects_graph{:width => '550px', :height => '330px'}
-      .bar
-      .tooltip
-
   #installs_spend.graph
     .holder
       %canvas#installs_spend_graph{:width => '550px', :height => '330px'}
@@ -33,13 +27,13 @@
   .left
     %table.totals
       %tbody
-        %tr.connects
+        %tr.installs_spend
           %th Clicks
           %td= @stats['paid_clicks'].sum
-        %tr.connects
+        %tr.installs_spend
           %th Installs
           %td= @stats['paid_installs'].sum
-        %tr.connects
+        %tr.installs_spend
           %th Conversion Rate
           %td= @stats['paid_clicks'].sum==0 ? "0.0%" : "%.1f%" % (@stats['paid_installs'].sum.to_f / @stats['paid_clicks'].sum * 100.0 )
         %tr.installs_spend
@@ -116,22 +110,6 @@
       }
     };
 
-    var connectData = {
-      "name": "Connects",
-      "intervals": [ "#{@intervals.join('","')}" ],
-      "xLabels": [ "#{@x_labels.join('","')}" ],
-
-      "main": {
-        "data":[
-           [ #{@stats['logins'].join(',')} ],
-           [ #{@stats['new_users'].join(',')} ],
-           [ #{@stats['daily_active_users'].join(',')} ],
-        ],
-        "names": ["Connects", "New users", "DAUs"],
-        "totals": [ #{@stats['logins'].sum}, #{@stats['new_users'].sum}, #{@stats['daily_active_users'].sum} ]
-      }
-    };
-
     var publishedOffersData = {
       "name": "Published offers",
       "intervals": [ "#{@intervals.join('","')}" ],
@@ -160,16 +138,11 @@
     };
 
     $(function() {
-      Tapjoy.drawLargeGraph(connectData, 'connects');
       Tapjoy.drawLargeGraph(installData, 'installs_spend');
       Tapjoy.drawLargeGraph(publishedOffersData, 'published_offers');
 
-      $('#connects').show();
+      $('#installs_spend').show();
 
-      $('tr.connects').click(function(){
-        $('.graph').not('#connects').hide();
-        $('#connects').show();
-      });
       $('tr.installs_spend').click(function(){
         $('.graph').not('#installs_spend').hide();
         $('#installs_spend').show();
