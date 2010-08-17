@@ -172,7 +172,7 @@ class StatzController < WebsiteController
 private
   
   def find_offer
-    @offer = Offer.find(params[:id]) rescue nil
+    @offer = Offer.find_by_id(params[:id])
     if @offer.nil?
       flash[:error] = "Could not find an offer with ID: #{params[:id]}"
       redirect_to statz_index_path

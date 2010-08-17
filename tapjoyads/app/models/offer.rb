@@ -36,11 +36,7 @@ class Offer < ActiveRecord::Base
   validates_each :publisher_app_whitelist, :allow_blank => true do |record, attribute, value|
     if record.publisher_app_whitelist_changed?
       value.split(';').each do |app_id|
-        begin
-          App.find(app_id)
-        rescue
-          record.errors.add(attribute, "contains an unknown app id: #{app_id}")
-        end
+        record.errors.add(attribute, "contains an unknown app id: #{app_id}") if App.find_by_id(app_id).nil?
       end
     end
   end

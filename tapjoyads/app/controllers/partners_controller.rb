@@ -22,7 +22,7 @@ class PartnersController < WebsiteController
 private
   
   def find_partner
-    @partner = Partner.find(params[:id]) rescue nil
+    @partner = Partner.find_by_id(params[:id])
     if @partner.nil?
       flash[:error] = "Could not find partner with ID: #{params[:id]}"
       redirect_to partners_path
