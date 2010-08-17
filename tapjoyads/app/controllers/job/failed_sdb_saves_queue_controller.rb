@@ -16,10 +16,6 @@ private
     
     if @bucket.key(@incomplete_path).exists?
       save_to_sdb
-    elsif @bucket.key(uuid).exists?
-      # TO REMOVE - remove this elsif condition
-      @incomplete_path = uuid
-      save_to_sdb
     elsif @bucket.key(@complete_path).exists?
       Rails.logger.info("Already operated on #{uuid}")
     else
