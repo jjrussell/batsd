@@ -13,7 +13,7 @@ Number of domains: #{@failed_sdb_saves.size}
   %tbody
     - @failed_sdb_saves.each do |domain_name, counts|
       %tr
-        %td= domain_name
+        %td{ :class => @bad_web_requests[domain_name] ? 'bad_domain' : '' }= domain_name
         %td= counts[0]
         %td= counts[1]
 
@@ -45,4 +45,8 @@ Number of domains: #{@failed_sdb_saves.size}
 
     table.tablesorter thead tr .header {
       background-position: right bottom;
+    }
+    
+    td.bad_domain {
+      border: 2px solid red;
     }
