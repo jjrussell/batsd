@@ -3,7 +3,7 @@ class AppsController < WebsiteController
 
   filter_access_to :all
   before_filter :grab_partner_apps
-  before_filter :find_app, :only => [:show, :pay_per_install, :update, :confirm]
+  before_filter :find_app, :only => [:show, :pay_per_action, :pay_per_install, :update, :confirm]
 
   def index
     @app = current_partner_apps.select{|a|a.id == session[:last_shown_app]}.first
@@ -18,8 +18,8 @@ class AppsController < WebsiteController
     now = Time.zone.now
     start_time = now.beginning_of_hour - 23.hours
     end_time = now
-    granularity = 'daily'
-    stats = Appstats.new(@offer.id, { :start_time => start_time, :end_time => end_time, :granularity => granularity }).stats
+    granularity = :daily
+    stats = Appstats.new(@app.id, { :start_time => start_time, :end_time => end_time, :granularity => granularity }).stats
     @integrated = stats['logins'].sum > 0
   end
 
@@ -53,6 +53,11 @@ class AppsController < WebsiteController
   end
 
   def confirm
+  end
+
+  def pay_per_action
+    # TODO: implement PPA first
+    redirect_to :action => 'show', :id => @app.id
   end
 
 private

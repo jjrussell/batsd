@@ -6,10 +6,9 @@
 
 #apps_main
   - unless @app.nil?
-    .right= button_to 'Add funds', add_funds_billing_path
     .app-thumb
       .icon
-        = image_tag(@app.offer.get_icon_url, :size => '57x57')
+        = image_tag(@app.offer.get_icon_url, :size => '57x57', :alt => 'icon')
 
       %h2
         = @app.name
@@ -28,10 +27,7 @@
                 - if @app.errors.on :description
                   = error_message_on @app, :description
             %tr
-              %th Tapjoy App ID:
-              %td= @app.id
-            %tr
-              %th iTunes URL:
+              %th Store URL:
               %td
                 = f.text_field :store_url, :size => 50
                 - if @app.errors.on :store_url
@@ -44,13 +40,20 @@
                 - if @app.errors.on :price
                   = error_message_on @app, :price
             %tr
+              %th Actions:
+              %td &nbsp;
+            %tr
               %th Integrated?:
               - if @integrated
                 %td.integrated YES
               - else
                 %td.not_integrated NO
         = f.submit 'Update'
-    = button_to "Pay-Per-Install", :action => "pay_per_install", :id => @app.id
+    %br/
+    %input.large{:type => 'submit', :value => 'Pay-Per-Install', :onclick => "location.href='/apps/pay_per_install/#{@app.id}';", :id => @app.id}
+
+    -# TODO: implement PPA first
+    %input.large{:type => 'submit', :value => 'Pay-Per-Action', :onclick => "location.href='/apps/pay_per_action/#{@app.id}';", :id => @app.id, :disabled => 'disabled' }
 
 - content_for :page_styles do
   :plain

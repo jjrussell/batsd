@@ -1,6 +1,6 @@
 - @page_title = 'Apps'
 
-%h1 App (Pay-per-install)
+%h1 App (Pay-per-action)
 
 = render :partial => 'my_apps', :object => @apps
 
@@ -10,7 +10,10 @@
       .icon
         = image_tag(@app.offer.get_icon_url, :size => '57x57', :alt => 'icon')
     = @app.name
-    - form_for @app do |f|
+    %h3 Set up actions for your app
+    - @actions.each do |action|
+      = action.name
+    - form_for @action do |f|
       Balance
       = #f.text_field :balance
       Daily Budget
