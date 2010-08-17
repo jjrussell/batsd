@@ -14,7 +14,7 @@ namespace :admin do
   
   desc "Restarts apache on all the webservers"
   task :restart_apache do
-    system("script/cloudrun 'webserver' 'sleep 5 ; sudo /etc/init.d/apache2 restart' 'ubuntu' 'remove_from_lb'")
+    system("script/cloudrun 'webserver' 'sleep 5 ; sudo /etc/init.d/apache2 stop ; sleep 2 ; sudo /etc/init.d/apache2 start' 'ubuntu' 'remove_from_lb'")
   end
   
   desc "Lists the contents of the tmp dirs on each job machine for *sdb* and *s3*"
