@@ -41,18 +41,28 @@ class WebRequest < SimpledbResource
     'rate_app' => 'ratings'
   }
   
+  @@bad_domains = {}
+  
   def initialize(options = {})
     super({:load => false}.merge(options))
+    @now = Time.zone.now
   end
 
   def dynamic_domain_name
-    @now = Time.now.utc
     date = @now.strftime('%Y-%m-%d')
     num = rand(MAX_WEB_REQUEST_DOMAINS)
-    if date == '2010-08-12' && num == 12
-      num = rand(MAX_WEB_REQUEST_DOMAINS)
+    domain_name = "web-request-#{date}-#{num}"
+
+    if rand(100) == 1 
+      @@bad_domains = Mc.get('failed_sdb_saves.bad_domains') || {}
     end
-    "web-request-#{date}-#{num}"
+    
+    if @@bad_domains[domain_name]
+      num = rand(MAX_WEB_REQUEST_DOMAINS)
+      domain_name = "web-request-#{date}-#{num}"
+    end
+    
+    domain_name
   end
   
   def add_path(path)
