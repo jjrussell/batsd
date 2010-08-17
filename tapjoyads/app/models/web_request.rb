@@ -44,8 +44,8 @@ class WebRequest < SimpledbResource
   @@bad_domains = {}
   
   def initialize(options = {})
-    super({:load => false}.merge(options))
     @now = Time.zone.now
+    super({:load => false}.merge(options))
   end
 
   def dynamic_domain_name
