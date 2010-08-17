@@ -1,0 +1,9 @@
+- @page_title = 'Apps'
+
+%h1 App (Pay-per-install)
+
+= render :partial => 'my_apps', :object => @apps
+
+#apps_main
+  - unless @app.nil?
+    x

@@ -3,7 +3,7 @@ class AppsController < WebsiteController
 
   filter_access_to :all
   before_filter :grab_partner_apps
-  before_filter :find_app, :only => [:show, :update, :confirm]
+  before_filter :find_app, :only => [:show, :pay_per_install, :update, :confirm]
 
   def index
     @app = current_partner_apps.select{|a|a.id == session[:last_shown_app]}.first

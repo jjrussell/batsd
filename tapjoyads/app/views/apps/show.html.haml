@@ -43,4 +43,20 @@
                 = f.text_field :price, :value => (number_to_currency @app.price/100, :unit => ''), :size => 10
                 - if @app.errors.on :price
                   = error_message_on @app, :price
+            %tr
+              %th Integrated?:
+              - if @integrated
+                %td.integrated YES
+              - else
+                %td.not_integrated NO
         = f.submit 'Update'
+    = button_to "Pay-Per-Install", :action => "pay_per_install", :id => @app.id
+
+- content_for :page_styles do
+  :plain
+    td.integrated {
+      color: #00f;
+    }
+    td.not_integrated {
+      color: #f00;
+    }
