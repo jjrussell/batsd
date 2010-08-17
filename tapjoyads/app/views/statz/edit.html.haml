@@ -43,6 +43,9 @@
   .field
     = f.label(:device_types)
     = f.select(:device_types, options_for_select(Offer::ALL_DEVICES, @offer.get_device_types), {}, :multiple => true)
+  .field
+    = f.label(:publisher_app_whitelist, "Publisher app whitelist (';' separated list of publisher app id's)")
+    = f.text_field(:publisher_app_whitelist)
   - if [ 'App', 'EmailOffer' ].include?(@offer.item_type)
     .field
       = f.label(:payment, 'Payment (cents)')
@@ -75,4 +78,9 @@
       -moz-border-radius: 5px;
       -webkit-border-radius: 5px;
       margin-bottom: 10px;
+    }
+    
+    .fieldWithErrors {
+      border: 3px solid red;
+      display: inline-block;
     }
