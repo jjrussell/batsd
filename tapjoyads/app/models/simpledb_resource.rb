@@ -209,7 +209,7 @@ class SimpledbResource
 
     Rails.logger.info "Saving to #{@this_domain_name}"
 
-    put('updated-at', Time.now.utc.to_f.to_s) if updated_at
+    put('updated-at', Time.zone.now.to_f.to_s) if updated_at
     
     Rails.logger.info_with_time("Saving to sdb, domain: #{this_domain_name}") do
       self.write_to_sdb(expected_attr) if write_to_sdb
@@ -225,8 +225,8 @@ class SimpledbResource
     Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e.class} - #{e}"
     uuid = UUIDTools::UUID.random_create.to_s
     bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
-    bucket.put(uuid, self.serialize)
-    message = {:uuid => uuid, :options => options_copy}.to_json
+    bucket.put("incomplete/#{uuid}", self.serialize)
+    message = { :uuid => uuid, :options => options_copy }.to_json
     Sqs.send_message(QueueNames::FAILED_SDB_SAVES, message)
     Rails.logger.info "Successfully added to sqs. Message: #{message}"
     Mc.increment_count("failed_sdb_saves.#{@this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}")

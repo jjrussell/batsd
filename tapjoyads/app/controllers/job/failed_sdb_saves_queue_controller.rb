@@ -2,45 +2,42 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
   
   def initialize
     super QueueNames::FAILED_SDB_SAVES
+    @bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
   end
   
-  private
+private
   
   def on_message(message)
     json = JSON.parse(message.to_s)
+    uuid = json['uuid']
+    @options = json['options'].symbolize_keys
+    @incomplete_path = "incomplete/#{uuid}"
+    @complete_path = "complete/#{uuid}"
     
-    options = {}
-    
-    bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
-    
-    begin
-      sdb_string = bucket.get(json['uuid'])
-    rescue RightAws::AwsError => e
-      if e.message.starts_with?('NoSuchKey')
-        # This will raise an error if the key is not found.
-        bucket.get("complete/#{json['uuid']}")
-        
-        Rails.logger.info("Already operated on #{json['uuid']}")
-        return
-      else
-        raise e
-      end
+    if @bucket.key(@incomplete_path).exists?
+      save_to_sdb
+    elsif @bucket.key(uuid).exists?
+      # TO REMOVE - remove this elsif condition
+      @incomplete_path = uuid
+      save_to_sdb
+    elsif @bucket.key(@complete_path).exists?
+      Rails.logger.info("Already operated on #{uuid}")
+    else
+      raise "Serialized SDB object not found in S3. Need to retry saving #{uuid}."
     end
-    
-    string_options = json['options']
-    
-    # Convert all keys to symbols, rather than strings.
-    string_options.each do |key, value|
-      options[key.to_sym] = value
-    end
+  end
+  
+  def save_to_sdb
+    sdb_string = @bucket.get(@incomplete_path)
     
     sdb_item = SimpledbResource.deserialize(sdb_string)
-    sdb_item.put('from_queue', Time.now.utc.to_f.to_s)
+    sdb_item.put('from_queue', Time.zone.now.to_f.to_s)
     
     params[:domain_name] = sdb_item.this_domain_name
     
-    sdb_item.serial_save(options.merge({:catch_exceptions => false}))
+    sdb_item.serial_save(@options.merge({ :catch_exceptions => false }))
     
-    bucket.move_key(json['uuid'], "complete/#{json['uuid']}")
+    @bucket.move_key(@incomplete_path, @complete_path)
   end
+  
 end
