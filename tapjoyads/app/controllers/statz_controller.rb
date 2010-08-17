@@ -157,7 +157,7 @@ class StatzController < WebsiteController
   
   def search
     results = Offer.find(:all,
-      :conditions => "name LIKE '%#{params[:term]}%'",
+      :conditions => [ "name LIKE ?", "%#{params[:term]}%" ],
       :select => 'id, name, tapjoy_enabled, payment',
       :limit => 10
     ).collect do |o|
