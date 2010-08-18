@@ -56,6 +56,7 @@ module JobRunner
         else 'http://localhost:3000'
         end
         
+        sleep(rand * 5)
         begin
           loop do
             now = Time.now.utc
