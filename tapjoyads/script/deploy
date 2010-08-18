@@ -76,7 +76,7 @@ private
   end
   
   def check_syntax
-    system("script/runner -e production 'OneOffs.check_syntax'")
+    system("script/runner 'OneOffs.check_syntax'")
     if $?.exitstatus != 0
       puts "Syntax Check: FAILED"
       exit

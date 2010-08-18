@@ -1,6 +1,7 @@
 class OneOffs
   
   def self.check_syntax
+    Rails::Initializer.run(:load_application_classes)
     true
   end
   
