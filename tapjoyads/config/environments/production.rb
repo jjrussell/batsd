@@ -44,6 +44,6 @@ ENV['AWS_SECRET_ACCESS_KEY'] = amazon['main']['secret_access_key']
 RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
 
 MAX_DEVICE_APP_DOMAINS = 30
-MAX_WEB_REQUEST_DOMAINS = 20
+MAX_WEB_REQUEST_DOMAINS = 30
 NUM_POINT_PURCHASES_DOMAINS = 10
 NUM_CLICK_DOMAINS = 50
