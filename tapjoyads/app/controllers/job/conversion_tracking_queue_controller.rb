@@ -41,27 +41,11 @@ private
       return
     end
     
-    click.put('installed_at', installed_at_epoch)
-    click.save
-    
-    reward_key = click.reward_key || UUIDTools::UUID.random_create.to_s
-    
-    reward = Reward.new(:key => reward_key)
-    unless reward.publisher_app_id.blank?
-      Rails.logger.info 'Reward already in system. Finished processing conversion.'
-      return
+    unless click.reward_key
+      raise "Click #{click.key} missing reward key!"
     end
     
-    web_request = WebRequest.new
-    web_request.add_path('store_install')
-    web_request.put('udid', udid)
-    web_request.put('advertiser_app_id', advertiser_app_id)
-    web_request.put('publisher_app_id', click.publisher_app_id)
-    web_request.put('offer_id', click.offer_id)
-    web_request.save
-    
-    offer = Offer.find_in_cache(advertiser_app_id)
-    
+    reward = Reward.new(:key => click.reward_key)
     reward.put('type', 'install')
     reward.put('publisher_app_id', click.publisher_app_id)
     reward.put('advertiser_app_id', advertiser_app_id)
@@ -74,7 +58,25 @@ private
     reward.put('udid', udid)
     reward.put('country', click.country)
     
-    reward.save
+    begin
+      reward.serial_save(:catch_exceptions => false, :expected_attr => { 'type' => nil })
+    rescue ExpectedAttributeError => e
+      Notifier.alert_new_relic(DuplicateConversionBlocked, "Reward: #{reward.key}.")
+      return
+    end
+    
+    click.put('installed_at', installed_at_epoch)
+    click.save
+    
+    web_request = WebRequest.new
+    web_request.add_path('store_install')
+    web_request.put('udid', udid)
+    web_request.put('advertiser_app_id', advertiser_app_id)
+    web_request.put('publisher_app_id', click.publisher_app_id)
+    web_request.put('offer_id', click.offer_id)
+    web_request.put('publisher_user_id', click.publisher_user_id)
+    web_request.put('source', click.source)
+    web_request.save
     
     message = reward.serialize(:attributes_only => true)
     
