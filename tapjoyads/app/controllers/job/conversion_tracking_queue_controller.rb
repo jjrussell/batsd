@@ -61,7 +61,6 @@ private
     begin
       reward.serial_save(:catch_exceptions => false, :expected_attr => { 'type' => nil })
     rescue ExpectedAttributeError => e
-      Notifier.alert_new_relic(DuplicateConversionBlocked, "Reward: #{reward.key}.")
       return
     end
     
