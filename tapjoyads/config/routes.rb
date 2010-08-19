@@ -46,7 +46,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :apps, :except => [ :destroy ],
     :member => { :confirm => :get, :pay_per_install => :get, :integrate => :get }
   map.resources :apps do |app|
-    app.resource :offer, :only => [ :show, :update]
+    app.resources :offers, :only => [ :show, :update]
   end
   map.resources :reporting, :only => [ :index ]
   map.resources :billing, :only => [ :index, ], :collection => { :add_funds => :get }

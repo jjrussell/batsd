@@ -7,7 +7,7 @@ class OffersController < WebsiteController
     respond_to do |format|
       if @offer.update_attributes(params[:offer])
         flash[:notice] = 'Offer was successfully updated.'
-        format.html { redirect_to(app_offer_path(@app)) }
+        format.html { redirect_to(app_offer_path(:app_id => @app.id, :id => @offer.id)) }
         format.xml  { head :ok }
       else
         flash[:error] = 'Update unsuccessful.'
