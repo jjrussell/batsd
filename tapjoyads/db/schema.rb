@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100810010443) do
+ActiveRecord::Schema.define(:version => 20100819055645) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -178,6 +178,7 @@ ActiveRecord::Schema.define(:version => 20100810010443) do
     t.integer  "stats_aggregation_interval"
     t.datetime "last_balance_alert_time"
     t.text     "publisher_app_whitelist",                                                                          :null => false
+    t.string   "name_suffix",                                                                   :default => ""
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
