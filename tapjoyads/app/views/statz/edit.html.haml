@@ -1,7 +1,7 @@
-- @page_title = "Edit offer: #{@offer.name}"
+- @page_title = "Edit offer: #{@offer.name_with_suffix}"
 
 .icon= image_tag(@offer.get_icon_url, :size => '57x57')
-%h1= @offer.name
+%h1= @offer.name_with_suffix
 
 - form_for(:offer, @offer, :url => { :action => :update }, :html => { :method => :put }) do |f|
   .field

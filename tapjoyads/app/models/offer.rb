@@ -115,6 +115,10 @@ class Offer < ActiveRecord::Base
     "udids/#{offer_id}/#{date && date.strftime("%Y-%m")}"
   end
   
+  def find_associated_offers
+    Offer.find(:all, :conditions => ["item_id = ? and id != ?", item_id, id])
+  end
+  
   def cost
     price > 0 ? 'Paid' : 'Free'
   end
@@ -133,6 +137,14 @@ class Offer < ActiveRecord::Base
     else
       payment
     end
+  end
+  
+  def is_primary?
+    item_id == id
+  end
+  
+  def is_secondary?
+    !is_primary?
   end
   
   def get_destination_url(udid, publisher_app_id, publisher_user_id = nil, app_version = nil)
@@ -223,7 +235,11 @@ class Offer < ActiveRecord::Base
       end
     end
   end
-
+  
+  def name_with_suffix
+    name_suffix.blank? ? name : "#{name} -- #{name_suffix}"
+  end
+  
   def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer, sdk_version)
     return is_disabled?(publisher_app, currency) ||
         platform_mismatch?(publisher_app, device_type) ||
@@ -333,7 +349,7 @@ private
   # Reject all secondary offers if the request is coming from the old sdk.
   def secondary_offer_reject?(sdk_version)
     # Todo: TapFish et al report their sdk version as 3.3, but they actually don't need to reject here.
-    return item_id != id && sdk_version != 0 && sdk_version < 4
+    return is_secondary? && sdk_version != 0 && sdk_version < 4
   end
   
   def normalize_device_type(device_type_param)

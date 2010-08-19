@@ -1,9 +1,17 @@
-- @page_title = "Stats for offer: #{@offer.name}"
+- @page_title = "Stats for offer: #{@offer.name_with_suffix}"
 
 .icon= image_tag(@offer.get_icon_url, :size => '57x57')
-%h1= @offer.name
+%h1= @offer.name_with_suffix
+.associated
+  %a#show_associated{:href => '#'} [#{@associated_offers.size} associated offers]
+  = link_to('[Create secondary offer]', new_statz_path(:id => @offer.id))
+#associated_list
+  %h5 Associated offers:
+  %ul
+    - @associated_offers.each do |offer|
+      %li= link_to(offer.name_with_suffix, statz_path(offer.id))
 
-%p#display_date
+#display_date
   For: #{@start_time.to_s(:pub_ampm_sec)} UTC - #{@end_time.to_s(:pub_ampm_sec)} UTC. 
   Granularity: #{@granularity.to_s}.
   %a{:href => 'javascript:$.noop();'} [Change]
@@ -381,6 +389,11 @@
         $('#currency .details').toggle();
         return false;
       });
+      
+      $('#show_associated').click(function() {
+        $('#associated_list').toggle();
+        return false;
+      });
     });
     
 - content_for :page_styles do
@@ -402,15 +415,30 @@
       clear: both;
     }
     
+    h1 {
+      display: inline-block;
+      margin-top: 0;
+    }
+    
+    .associated {
+      display: inline-block;
+      padding-left: 10px;
+    }
+    
     .left {
       float: left;
     }
     .right {
       float: right;
     }
-
+    
+    #associated_list,
     #change_date {
       display: none;
+    }
+    
+    #associated_list h5 {
+      margin-top: 0;
     }
     
     #currency {

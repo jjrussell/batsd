@@ -3,7 +3,7 @@ class StatzController < WebsiteController
   
   filter_access_to :all
   
-  before_filter :find_offer, :only => [ :show, :edit, :update, :last_run_times, :udids, :download_udids ]
+  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids ]
   after_filter :save_activity_logs, :only => [ :update ]
   
   def index
@@ -59,6 +59,7 @@ class StatzController < WebsiteController
     end
     
     @stats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity }).stats
+    @associated_offers = @offer.find_associated_offers
     
     @intervals = []
     @x_labels = []
@@ -108,7 +109,7 @@ class StatzController < WebsiteController
         app.update_attribute(:store_id, params[:app_store_id])
       end
       
-      if [ 'App', 'EmailOffer' ].include?(@offer.item_type) && (orig_payment != @offer.payment || orig_budget != @offer.daily_budget || (app && orig_store_id != app.store_id))
+      if [ 'App', 'EmailOffer' ].include?(@offer.item_type) && @offer.is_primary? && (orig_payment != @offer.payment || orig_budget != @offer.daily_budget || (app && orig_store_id != app.store_id))
         mssql_url = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/Service1.asmx/SetAppData?Password=stephenisawesome'
         mssql_url += "&AppID=#{@offer.id}"
         mssql_url += "&Payment=#{@offer.payment}"
@@ -124,6 +125,18 @@ class StatzController < WebsiteController
     else
       render :action => :edit
     end
+  end
+  
+  def new
+  end
+  
+  def create
+    new_offer = @offer.clone
+    new_offer.tapjoy_enabled = false
+    new_offer.name_suffix = params[:suffix]
+    new_offer.save!
+    flash[:notice] = "Successfully created offer"
+    redirect_to statz_path(new_offer)
   end
   
   def last_run_times

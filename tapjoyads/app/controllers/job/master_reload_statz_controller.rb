@@ -34,7 +34,7 @@ private
       
       this_apps_stats = {}
       this_apps_stats['icon_url'] = offer.get_icon_url
-      this_apps_stats['offer_name'] = offer.name
+      this_apps_stats['offer_name'] = offer.name_with_suffix
       this_apps_stats['conversions'] = appstats['paid_installs'].sum
       this_apps_stats['connects'] = appstats['logins'].sum
       this_apps_stats['overall_store_rank'] = (appstats['overall_store_rank'].find_all{|r| r != '0'}.last || '-')
