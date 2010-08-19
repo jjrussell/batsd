@@ -6,7 +6,7 @@ class GetOffersController < ApplicationController
   before_filter :setup
   
   def webpage
-    set_offer_list(:require_device_ip_param => false)
+    set_offer_list(:require_device_ip_param => false, :show_secondary_offers => true)
     
     @message = nil
     unless params[:featured_offer].blank?
@@ -22,7 +22,7 @@ class GetOffersController < ApplicationController
   end
   
   def featured
-    set_offer_list(:require_device_ip_param => false)
+    set_offer_list(:require_device_ip_param => false, :show_secondary_offers => true)
     
     @offer_list = @offer_list[rand(@offer_list.length).to_i, 1]
     @more_data_available = 0
@@ -36,17 +36,13 @@ class GetOffersController < ApplicationController
   end
   
   def index
-    require_device_ip_param = (params[:redirect] == '1' || params[:server] == '1')
-    
-    set_offer_list(:require_device_ip_param => require_device_ip_param)
+    redirect = params[:redirect] == '1'
+    set_offer_list(:require_device_ip_param => redirect, :show_secondary_offers => redirect)
     
     if params[:type] == Offer::CLASSIC_OFFER_TYPE
       render :template => 'get_offers/offers'
     elsif params[:redirect] == '1'
       render :template => 'get_offers/installs_redirect'
-    elsif params[:server] == '1'
-      @source = 'server'
-      render :template => 'get_offers/installs_server'
     elsif params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
     else
@@ -82,6 +78,7 @@ private
   
   def set_offer_list(options = {})
     require_device_ip_param = options.delete(:require_device_ip_param) { false }
+    show_secondary_offers = options.delete(:show_secondary_offers) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     if require_device_ip_param && params[:device_ip].blank?
@@ -107,7 +104,7 @@ private
         :required_length => (@start_index + @max_items),
         :app_version => params[:app_version],
         :reject_rating_offer => params[:rate_app_offer] == '0',
-        :sdk_version => params[:library_version].to_f)
+        :show_secondary_offers => show_secondary_offers)
     @offer_list = @offer_list[@start_index, @max_items] || []
   end
   

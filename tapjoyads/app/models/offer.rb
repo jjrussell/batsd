@@ -240,7 +240,7 @@ class Offer < ActiveRecord::Base
     name_suffix.blank? ? name : "#{name} -- #{name_suffix}"
   end
   
-  def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer, sdk_version)
+  def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer, show_secondary_offers)
     return is_disabled?(publisher_app, currency) ||
         platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device_app_list) ||
@@ -250,7 +250,7 @@ class Offer < ActiveRecord::Base
         show_rate_reject?(device_app_list) ||
         flixter_reject?(publisher_app, device_app_list) ||
         whitelist_reject?(publisher_app) ||
-        secondary_offer_reject?(sdk_version)
+        secondary_offer_reject?(show_secondary_offers)
   end
   
 private
@@ -347,9 +347,8 @@ private
   
   ##
   # Reject all secondary offers if the request is coming from the old sdk.
-  def secondary_offer_reject?(sdk_version)
-    # Todo: TapFish et al report their sdk version as 3.3, but they actually don't need to reject here.
-    return is_secondary? && sdk_version != 0 && sdk_version < 4
+  def secondary_offer_reject?(show_secondary_offers)
+    return is_secondary? && !show_secondary_offers
   end
   
   def normalize_device_type(device_type_param)
