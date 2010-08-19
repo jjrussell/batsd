@@ -30,10 +30,10 @@ class Sqs
         retry
       end
       
+      # If we've gotten here, the message has failed to send to sqs. Write the message to S3.
+      Notifier.alert_new_relic(FailedToWriteToSqsError, "#{queue_name} - #{message}")
+      
       if write_to_s3_on_failure
-        # If we've gotten here, the message has failed to send to sqs. Write the message to S3.
-        Notifier.alert_new_relic(FailedToWriteToSqsError, "#{queue_name} - #{message}")
-        
         s3_message = {:queue_name => queue_name, :message => message}.to_json
         
         bucket = S3.bucket(BucketNames::FAILED_SQS_WRITES)
