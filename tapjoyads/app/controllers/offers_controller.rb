@@ -19,7 +19,7 @@ class OffersController < WebsiteController
 
 private
   def find_offer
-    @app = App.find(params[:app_id], :include => [:offer])
+    @app = App.find(params[:app_id], :include => [:primary_offer])
     @offer = @app.primary_offer
   end
 end
