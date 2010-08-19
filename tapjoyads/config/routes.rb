@@ -44,7 +44,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :users, :only => [ :edit, :update ]
   map.resources :home, :only => [ :index ]
   map.resources :apps, :except => [ :destroy ],
-    :member => { :confirm => :get } do |app|
+    :member => { :confirm => :get, :pay_per_install => :get, :integrate => :get }
+  map.resources :apps do |app|
     app.resource :offer, :only => [ :show, :update]
   end
   map.resources :reporting, :only => [ :index ]
