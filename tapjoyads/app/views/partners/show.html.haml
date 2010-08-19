@@ -24,7 +24,7 @@
     - @partner.offers.each do |offer|
       %tr
         %td.icon= image_tag(offer.get_icon_url, :size => '57x57')
-        %td= link_to(offer.name, statz_path(offer.id))
+        %td= link_to(offer.name_with_suffix, statz_path(offer.id))
         %td= offer.item_type
         %td= number_to_currency(offer.price / 100.0)
         %td= number_to_currency(offer.payment / 100.0)

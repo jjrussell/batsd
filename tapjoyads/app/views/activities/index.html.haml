@@ -33,7 +33,12 @@
         %td
           #{activity.object_type}:
           %a{:href => "javascript:setValue('object_id', '#{activity.object.id}')"}
-            = activity.object.name rescue "#{activity.object.id[0,6]}..."
+            - if activity.object.respond_to?(:name_with_suffix)
+              = activity.object.name_with_suffix
+            - elsif activity.object.respond_to?(:name)
+              = activity.object.name
+            - else
+              = "#{activity.object.id[0,6]}..."
         %td
           - unless activity.partner_id.blank?
             %a{:href => "javascript:setValue('partner_id', '#{activity.partner_id}')"}
