@@ -25,19 +25,19 @@ class CurrencyTest < ActiveSupport::TestCase
       end
       
       should "calculate the publisher amount" do
-        assert_equal 85, @currency.get_publisher_amount(@offer, nil)
+        assert_equal 85, @currency.get_publisher_amount(@offer)
       end
       
       should "calculate the advertiser amount" do
-        assert_equal -100, @currency.get_advertiser_amount(@offer, nil)
+        assert_equal -100, @currency.get_advertiser_amount(@offer)
       end
       
       should "calculate the tapjoy amount" do
-        assert_equal 15, @currency.get_tapjoy_amount(@offer, nil)
+        assert_equal 15, @currency.get_tapjoy_amount(@offer)
       end
       
       should "calculate the reward amount" do
-        assert_equal 85, @currency.get_reward_amount(@offer, nil)
+        assert_equal 85, @currency.get_reward_amount(@offer)
       end
     end
     
@@ -47,7 +47,7 @@ class CurrencyTest < ActiveSupport::TestCase
       end
       
       should "calculate the reward amount" do
-        assert_equal 12, @currency.get_reward_amount(@offer, nil)
+        assert_equal 12, @currency.get_reward_amount(@offer)
       end
     end
     
@@ -58,19 +58,19 @@ class CurrencyTest < ActiveSupport::TestCase
       end
       
       should "calculate publisher amounts" do
-        assert_equal 25, @currency.get_publisher_amount(@offer, nil)
+        assert_equal 25, @currency.get_publisher_amount(@offer)
       end
       
       should "calculate advertiser amounts" do
-        assert_equal -25, @currency.get_advertiser_amount(@offer, nil)
+        assert_equal -25, @currency.get_advertiser_amount(@offer)
       end
       
       should "calculate tapjoy amounts" do
-        assert_equal 0, @currency.get_tapjoy_amount(@offer, nil)
+        assert_equal 0, @currency.get_tapjoy_amount(@offer)
       end
       
       should "calculate reward amounts" do
-        assert_equal 25, @currency.get_reward_amount(@offer, nil)
+        assert_equal 25, @currency.get_reward_amount(@offer)
       end
     end
     
@@ -81,19 +81,19 @@ class CurrencyTest < ActiveSupport::TestCase
       end
       
       should "calculate publisher amounts" do
-        assert_equal 17, @currency.get_publisher_amount(@offer, nil)
+        assert_equal 17, @currency.get_publisher_amount(@offer)
       end
       
       should "calculate advertiser amounts" do
-        assert_equal -25, @currency.get_advertiser_amount(@offer, nil)
+        assert_equal -25, @currency.get_advertiser_amount(@offer)
       end
       
       should "calculate tapjoy amounts" do
-        assert_equal 8, @currency.get_tapjoy_amount(@offer, nil)
+        assert_equal 8, @currency.get_tapjoy_amount(@offer)
       end
       
       should "calculate reward amounts" do
-        assert_equal 17, @currency.get_reward_amount(@offer, nil)
+        assert_equal 17, @currency.get_reward_amount(@offer)
       end
     end
     

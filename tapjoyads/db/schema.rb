@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100819080252) do
+ActiveRecord::Schema.define(:version => 20100819210814) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -170,7 +170,6 @@ ActiveRecord::Schema.define(:version => 20100819080252) do
     t.boolean  "self_promote_only",                                                             :default => false, :null => false
     t.integer  "age_rating"
     t.boolean  "featured",                                                                      :default => false, :null => false
-    t.integer  "featured_payment"
     t.decimal  "min_conversion_rate",                             :precision => 8, :scale => 6
     t.datetime "next_stats_aggregation_time"
     t.datetime "last_stats_aggregation_time"

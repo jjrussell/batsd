@@ -31,7 +31,7 @@ class ListSignupController < ApplicationController
       # Send the emails via 4info.
       key = Digest::MD5.hexdigest("#{params[:email_address]}xFBysLNwaCRhGYKGXkpHjzWbVehBhE")
       
-      reward_text = CGI::escape(@currency.get_reward_amount(@offer, nil).to_s + ' ' +
+      reward_text = CGI::escape(@currency.get_reward_amount(@offer).to_s + ' ' +
           @publisher_app.name + ' ' + @currency.name)
       
       url = 'http://www.4infoalerts.com/wap/tapjoy/post_email_address' +

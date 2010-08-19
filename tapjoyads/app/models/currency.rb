@@ -17,29 +17,29 @@ class Currency < ActiveRecord::Base
     Mc.get_and_put("mysql.currency.#{app_id}") { Currency.find_by_app_id(app_id) }
   end
   
-  def get_reward_amount(offer, source)
-    [get_publisher_amount(offer, source) * conversion_rate / 100.0, 1.0].max.to_i
+  def get_reward_amount(offer)
+    [get_publisher_amount(offer) * conversion_rate / 100.0, 1.0].max.to_i
   end
   
-  def get_publisher_amount(offer, source)
+  def get_publisher_amount(offer)
     if offer.item_type == 'RatingOffer' || offer.item_type == 'OfferpalOffer'
-      publisher_amount = offer.get_payment_for_source(source) * offers_money_share
+      publisher_amount = offer.payment * offers_money_share
     elsif offer.partner_id == partner_id
-      publisher_amount = offer.get_payment_for_source(source)
+      publisher_amount = offer.payment
     else
-      publisher_amount = offer.get_payment_for_source(source) * installs_money_share
+      publisher_amount = offer.payment * installs_money_share
     end
     publisher_amount.to_i
   end
   
-  def get_advertiser_amount(offer, source)
-    -(offer.actual_payment || offer.get_payment_for_source(source))
+  def get_advertiser_amount(offer)
+    -(offer.actual_payment || offer.payment)
   end
   
-  def get_tapjoy_amount(offer, source)
-    tapjoy_amount = -get_advertiser_amount(offer, source) - get_publisher_amount(offer, source)
+  def get_tapjoy_amount(offer)
+    tapjoy_amount = -get_advertiser_amount(offer) - get_publisher_amount(offer)
     unless offer.actual_payment.nil?
-      tapjoy_amount += offer.actual_payment - offer.get_payment_for_source(source)
+      tapjoy_amount += offer.actual_payment - offer.payment
     end
     tapjoy_amount
   end

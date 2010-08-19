@@ -13,7 +13,7 @@ class SubmitClickController < ApplicationController
     params[:offer_id] = params[:advertiser_app_id] if params[:offer_id].blank?
     offer = Offer.find_in_cache(params[:offer_id])
     
-    if offer.get_payment_for_source(params[:source]) <= 0 || !offer.tapjoy_enabled
+    if offer.payment <= 0 || !offer.tapjoy_enabled
       @offer = offer
       web_request = WebRequest.new
       web_request.put_values('disabled_offer', params, get_ip_address, get_geoip_data)
@@ -44,10 +44,10 @@ class SubmitClickController < ApplicationController
     click.publisher_user_id = params[:publisher_user_id]
     click.advertiser_app_id = params[:advertiser_app_id]
     click.offer_id = params[:offer_id]
-    click.advertiser_amount = currency.get_advertiser_amount(offer, params[:source])
-    click.publisher_amount = currency.get_publisher_amount(offer, params[:source])
-    click.currency_reward = currency.get_reward_amount(offer, params[:source])
-    click.tapjoy_amount = currency.get_tapjoy_amount(offer, params[:source])
+    click.advertiser_amount = currency.get_advertiser_amount(offer)
+    click.publisher_amount = currency.get_publisher_amount(offer)
+    click.currency_reward = currency.get_reward_amount(offer)
+    click.tapjoy_amount = currency.get_tapjoy_amount(offer)
     click.reward_key = UUIDTools::UUID.random_create.to_s
     click.source = params[:source]
     click.country = get_geoip_data[:country]

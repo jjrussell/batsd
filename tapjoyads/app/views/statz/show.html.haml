@@ -91,7 +91,6 @@
   .metadata Allow negative balance: #{@offer.allow_negative_balance?}
   .metadata Self promote only: #{@offer.self_promote_only?}
   .metadata Featured: #{@offer.featured?}
-  .metadata Featured payment: #{number_to_currency(@offer.featured_payment / 100.0) rescue ''}
 .clear
 
 - unless @offer.publisher_app_whitelist.blank?

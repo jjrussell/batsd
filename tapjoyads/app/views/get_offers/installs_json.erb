@@ -7,7 +7,7 @@
   <% @offer_list.each_with_index do |offer, i| %>
     {
       "Cost":<%= offer.cost.to_json -%>,
-      "Amount":<%= @currency.get_reward_amount(offer, @source).to_json -%>,
+      "Amount":<%= @currency.get_reward_amount(offer).to_json -%>,
       "IconURL":<%= offer.get_icon_url.to_json -%>,
       "Name":<%= offer.name.to_json -%>,
       "RedirectURL":<%= offer.get_redirect_url(@publisher_app, params[:publisher_user_id], params[:udid], @source, params[:app_version]).to_json -%>

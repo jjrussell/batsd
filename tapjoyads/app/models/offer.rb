@@ -20,7 +20,7 @@ class Offer < ActiveRecord::Base
   validates_presence_of :partner, :item, :name, :url, :instructions, :time_delay
   validates_numericality_of :price, :ordinal, :only_integer => true
   validates_numericality_of :payment, :only_integer => true, :if => Proc.new { |offer| offer.tapjoy_enabled? && offer.user_enabled? }
-  validates_numericality_of :actual_payment, :featured_payment, :only_integer => true, :allow_nil => true
+  validates_numericality_of :actual_payment, :only_integer => true, :allow_nil => true
   validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :featured, :in => [ true, false ]
@@ -142,14 +142,6 @@ class Offer < ActiveRecord::Base
   
   def is_free?
     !is_paid?
-  end
-  
-  def get_payment_for_source(source)
-    if source == 'featured'
-      featured_payment == 0 || featured_payment.nil? ? payment : featured_payment
-    else
-      payment
-    end
   end
   
   def is_primary?
