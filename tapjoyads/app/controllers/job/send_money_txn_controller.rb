@@ -23,7 +23,7 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
       conversion = Conversion.new do |c|
         c.id = reward.key
         c.reward_id = reward.key
-        c.advertiser_offer_id = reward.get('advertiser_app_id')
+        c.advertiser_offer_id = reward.get('offer_id') || reward.get('advertiser_app_id')
         c.publisher_app_id = reward.get('publisher_app_id')
         c.advertiser_amount = reward.get('advertiser_amount')
         c.publisher_amount = reward.get('publisher_amount')

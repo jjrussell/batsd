@@ -49,6 +49,7 @@ private
     reward.put('type', 'install')
     reward.put('publisher_app_id', click.publisher_app_id)
     reward.put('advertiser_app_id', advertiser_app_id)
+    reward.put('offer_id', click.offer_id)
     reward.put('publisher_user_id', click.publisher_user_id)
     reward.put('advertiser_amount', click.advertiser_amount)
     reward.put('publisher_amount', click.publisher_amount)
