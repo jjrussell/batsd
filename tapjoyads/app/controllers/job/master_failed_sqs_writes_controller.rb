@@ -11,8 +11,13 @@ class Job::MasterFailedSqsWritesController < Job::JobController
       message = json['message']
       queue_name = json['queue_name']
       
-      Sqs.send_message(queue_name, message, false)
-      bucket.delete_folder(key.to_s)
+      begin
+        Sqs.send_message(queue_name, message, false)
+      rescue
+        # don't delete the key because the SQS write failed
+      else
+        bucket.delete_folder(key.to_s)
+      end
     end
     
     render :text => 'OK'
