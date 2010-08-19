@@ -134,13 +134,19 @@ class SimpledbResource
     
     module_eval %Q{
       def #{name.to_s}()
-        get('#{attr_name}', #{get_options.inspect}) 
+        get('#{attr_name}', #{get_options.inspect})
       end
     }
     
     module_eval %Q{
       def #{name.to_s}=(value)
         put('#{attr_name}', value, #{put_options.inspect})
+      end
+    }
+    
+    module_eval %Q{
+      def #{name.to_s}?
+        !get('#{attr_name}', #{get_options.inspect}).blank?
       end
     }
   end
