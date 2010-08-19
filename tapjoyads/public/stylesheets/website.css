@@ -1,7 +1,6 @@
 .left {
   float: left;
 }
-
 .right {
   float: right;
 }
@@ -11,7 +10,9 @@
 .clear {
   clear: both;
 }
-
+#top_nav {
+  text-align: right;
+}
 ul.navigation {
 }
 

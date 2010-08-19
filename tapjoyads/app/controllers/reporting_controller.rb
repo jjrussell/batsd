@@ -12,8 +12,8 @@ class ReportingController < WebsiteController
   end
 
   def show
-    app = App.find(params[:id], :include => [:offer])
-    @offer = app.offer
+    app = App.find(params[:id], :include => [:offers])
+    @offer = app.primary_offer
     unless current_partner_apps.include?(app)
       # TODO: uncomment this after testing
       # redirect_to apps_path
