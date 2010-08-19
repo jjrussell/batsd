@@ -98,7 +98,7 @@ class StatzController < WebsiteController
     
     orig_payment = @offer.payment
     orig_budget = @offer.daily_budget
-    params[:offer][:device_types] = params[:offer][:device_types].to_json
+    params[:offer][:device_types] = params[:offer][:device_types].blank? ? '[]' : params[:offer][:device_types].to_json
     if @offer.update_attributes(params[:offer])
       
       app = nil

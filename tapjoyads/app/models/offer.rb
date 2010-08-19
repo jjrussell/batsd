@@ -25,10 +25,22 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :featured, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer OfferpalOffer RatingOffer )
-  validates_each :countries, :cities, :postal_codes, :device_types, :allow_blank => true do |record, attribute, value|
+  validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
     begin
       parsed = JSON.parse(value)
       record.errors.add(attribute, 'is not an Array') unless parsed.is_a?(Array)
+    rescue
+      record.errors.add(attribute, 'is not valid JSON')
+    end
+  end
+  validates_each :device_types, :allow_blank => false, :allow_nil => false do |record, attribute, value|
+    begin
+      types = JSON.parse(value)
+      record.errors.add(attribute, 'is not an Array') unless types.is_a?(Array)
+      record.errors.add(attribute, 'must contain at least one device type') if types.size < 1
+      types.each do |type|
+        record.errors.add(attribute, 'contains an invalid device type') unless ALL_DEVICES.include?(type)
+      end
     rescue
       record.errors.add(attribute, 'is not valid JSON')
     end
