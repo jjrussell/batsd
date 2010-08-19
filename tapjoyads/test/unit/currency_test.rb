@@ -21,7 +21,7 @@ class CurrencyTest < ActiveSupport::TestCase
     
     context "when dealing with an OfferpalOffer" do
       setup do
-        @offer = Factory(:offerpal_offer).offer
+        @offer = Factory(:offerpal_offer).primary_offer
       end
       
       should "calculate the publisher amount" do
@@ -43,7 +43,7 @@ class CurrencyTest < ActiveSupport::TestCase
     
     context "when dealing with a RatingOffer" do
       setup do
-        @offer = Factory(:rating_offer).offer
+        @offer = Factory(:rating_offer).primary_offer
       end
       
       should "calculate the reward amount" do
@@ -53,7 +53,7 @@ class CurrencyTest < ActiveSupport::TestCase
     
     context "when dealing with an offer from the same partner" do
       setup do
-        @offer = Factory(:app, :partner => @currency.partner).offer
+        @offer = Factory(:app, :partner => @currency.partner).primary_offer
         @offer.update_attribute(:payment, 25)
       end
       
@@ -76,7 +76,7 @@ class CurrencyTest < ActiveSupport::TestCase
     
     context "when dealing with any other offer" do
       setup do
-        @offer = Factory(:app).offer
+        @offer = Factory(:app).primary_offer
         @offer.update_attribute(:payment, 25)
       end
       

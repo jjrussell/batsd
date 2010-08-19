@@ -8,7 +8,7 @@
   - unless @app.nil?
     .app-thumb
       .icon
-        = image_tag(@app.offer.get_icon_url, :size => '57x57', :alt => 'icon')
+        = image_tag(@app.primary_offer.get_icon_url, :size => '57x57', :alt => 'icon')
 
       %h2
         = @app.name

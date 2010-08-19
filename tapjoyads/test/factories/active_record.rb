@@ -54,7 +54,7 @@ end
 
 Factory.define :conversion do |conversion|
   conversion.association :publisher_app, :factory => :app
-  conversion.advertiser_offer { Factory(:app).offer }
+  conversion.advertiser_offer { Factory(:app).primary_offer }
   conversion.reward_id UUIDTools::UUID.random_create.to_s
   conversion.reward_type Conversion::REWARD_TYPES['install']
   conversion.publisher_amount 70

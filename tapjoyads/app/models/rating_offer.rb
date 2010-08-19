@@ -1,7 +1,8 @@
 class RatingOffer < ActiveRecord::Base
   include UuidPrimaryKey
   
-  has_one :offer, :as => :item
+  has_many :offers, :as => :item
+  has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
   
   belongs_to :partner
   belongs_to :app

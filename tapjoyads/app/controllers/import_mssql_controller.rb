@@ -191,7 +191,7 @@ class ImportMssqlController < ApplicationController
       mysql_app.created_at = Time.parse(params[:created_at] + ' CST').utc
       mysql_app.save!
       
-      offer = mysql_app.offer
+      offer = mysql_app.primary_offer
       log_activity(offer)
       if params[:iphone_only] == '1'
         offer.device_types = [ 'iphone' ].to_json
@@ -206,7 +206,7 @@ class ImportMssqlController < ApplicationController
       email_offer.created_at = Time.parse(params[:created_at] + ' CST').utc
       email_offer.save!
       
-      offer = email_offer.offer
+      offer = email_offer.primary_offer
       log_activity(offer)
       
     end

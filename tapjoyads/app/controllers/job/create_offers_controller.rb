@@ -56,7 +56,7 @@ private
         offerpal_offer.credit_card_required = offer['creditCardRequired'].to_s == '1'
         offerpal_offer.payment = amount
         offerpal_offer.save!
-        offerpal_offer.offer.update_attribute(:user_enabled, true)
+        offerpal_offer.primary_offer.update_attribute(:user_enabled, true)
       end
       
     end

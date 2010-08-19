@@ -1,7 +1,8 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   
-  has_one :offer, :as => :item
+  has_many :offers, :as => :item
+  has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
   has_one :currency
   has_one :rating_offer
