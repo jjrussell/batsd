@@ -60,6 +60,7 @@ class Offer < ActiveRecord::Base
   named_scope :enabled_offers, { :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND ((partners.balance > 0 AND item_type IN ('App', 'EmailOffer')) OR item_type = 'RatingOffer')", :order => "ordinal ASC" }
   named_scope :classic_offers, { :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type = 'OfferpalOffer'", :order => "ordinal ASC" }
   named_scope :featured, { :conditions => "featured = true" }
+  named_scope :nonfeatured, { :conditions => "featured = false" }
   named_scope :to_aggregate_stats, lambda { { :conditions => ["next_stats_aggregation_time < ?", Time.zone.now], :order => "next_stats_aggregation_time ASC" } }
   
   def self.get_enabled_offers
@@ -85,7 +86,7 @@ class Offer < ActiveRecord::Base
   
   def self.cache_enabled_offers
     bucket = S3.bucket(BucketNames::OFFER_DATA)
-    offer_list = Offer.enabled_offers
+    offer_list = Offer.enabled_offers.nonfeatured
     
     offer_list.each do |o|
       o.adjust_cvr_for_ranking
