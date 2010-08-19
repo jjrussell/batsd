@@ -59,10 +59,10 @@ module JobRunner
         sleep(rand * 5)
         begin
           loop do
-            now = Time.now.utc
+            now = Time.zone.now
             jobs.each do |job|
               if now > job.next_run_time
-                Rails.logger.info "JobRunner: Running #{job.job_path}"
+                Rails.logger.info "#{now.to_s(:db)} - JobRunner: Running #{job.job_path}"
                 Rails.logger.flush
                 Thread.new(job) do |job|
                   sess = Patron::Session.new
