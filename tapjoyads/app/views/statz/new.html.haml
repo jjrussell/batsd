@@ -6,7 +6,6 @@
 
 %p Secondary offers will only show up in publisher apps that have integrated version 4.0 or greater of our sdk.
 
-%form{:method => 'post', :action => 'statz'}
 - form_tag(statz_index_path, :method => :post) do
   = hidden_field_tag(:id, @offer.id)
   .field
