@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100819072400) do
+ActiveRecord::Schema.define(:version => 20100819075220) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -183,7 +183,6 @@ ActiveRecord::Schema.define(:version => 20100819072400) do
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
   add_index "offers", ["item_id"], :name => "index_offers_on_item_id"
-  add_index "offers", ["item_type", "item_id"], :name => "index_offers_on_item_type_and_item_id", :unique => true
   add_index "offers", ["name"], :name => "index_offers_on_name"
   add_index "offers", ["ordinal"], :name => "index_offers_on_ordinal"
   add_index "offers", ["partner_id"], :name => "index_offers_on_partner_id"
