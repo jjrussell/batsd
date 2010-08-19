@@ -4,6 +4,7 @@ class Reward < SimpledbResource
   self.sdb_attr :publisher_app_id
   self.sdb_attr :advertiser_app_id
   self.sdb_attr :publisher_user_id
+  self.sdb_attr :offer_id
   self.sdb_attr :advertiser_amount, :type => :int
   self.sdb_attr :publisher_amount,  :type => :int
   self.sdb_attr :tapjoy_amount,     :type => :int
@@ -37,7 +38,7 @@ class Reward < SimpledbResource
         false, 1.week, get('publisher_amount').to_i)
         
       Mc.increment_count(
-        Stats.get_memcache_count_key('installs_spend', get('advertiser_app_id'), Time.at(get('created').to_f)), 
+        Stats.get_memcache_count_key('installs_spend', get('offer_id'), Time.at(get('created').to_f)), 
         false, 1.week, get('advertiser_amount').to_i)
     when 'offer'
       Mc.increment_count(
