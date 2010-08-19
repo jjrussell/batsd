@@ -10,8 +10,8 @@ class RatingOffer < ActiveRecord::Base
   validates_presence_of :partner, :app, :name
   
   before_validation :set_name_and_description
-  after_create :create_offer, :create_icon
-  after_update :update_offer
+  after_create :create_primary_offer, :create_icon
+  after_update :update_offers
   after_save :update_memcached
   before_destroy :clear_memcached
   
@@ -34,7 +34,7 @@ private
     self.description = "Go to the App Store where you can quickly submit a rating for #{app.name}. This is on the honor system."
   end
   
-  def create_offer
+  def create_primary_offer
     offer = Offer.new(:item => self)
     offer.id = id
     offer.partner = partner
@@ -54,11 +54,13 @@ private
     offer.save!
   end
   
-  def update_offer
-    offer.partner_id = partner_id if partner_id_changed?
-    offer.name = name if name_changed?
-    offer.description = description if description_changed?
-    offer.save! if offer.changed?
+  def update_offers
+    offers.each do |offer|
+      offer.partner_id = partner_id if partner_id_changed?
+      offer.name = name if name_changed?
+      offer.description = description if description_changed?
+      offer.save! if offer.changed?
+    end
   end
   
   def update_memcached

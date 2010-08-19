@@ -9,14 +9,14 @@ class OfferpalOffer < ActiveRecord::Base
   validates_presence_of :partner, :offerpal_id, :name
   validates_uniqueness_of :offerpal_id
   
-  after_create :create_offer
-  after_update :update_offer
+  after_create :create_primary_offer
+  after_update :update_offers
   
   attr_writer :url, :instructions, :time_delay, :credit_card_required, :payment
   
 private
   
-  def create_offer
+  def create_primary_offer
     offer = Offer.new(:item => self)
     offer.id = id
     offer.partner = partner
@@ -34,16 +34,18 @@ private
     offer.save!
   end
   
-  def update_offer
-    offer.partner_id = partner_id if partner_id_changed?
-    offer.name = name if name_changed?
-    offer.description = description if description_changed?
-    offer.url = @url unless @url.nil?
-    offer.instructions = @instructions unless @instructions.nil?
-    offer.time_delay = @time_delay unless @time_delay.nil?
-    offer.credit_card_required = @credit_card_required unless @credit_card_required.nil?
-    offer.payment = @payment unless @payment.nil?
-    offer.save! if offer.changed?
+  def update_offers
+    offers.each do |offer|
+      offer.partner_id = partner_id if partner_id_changed?
+      offer.name = name if name_changed?
+      offer.description = description if description_changed?
+      offer.url = @url unless @url.nil?
+      offer.instructions = @instructions unless @instructions.nil?
+      offer.time_delay = @time_delay unless @time_delay.nil?
+      offer.credit_card_required = @credit_card_required unless @credit_card_required.nil?
+      offer.payment = @payment unless @payment.nil?
+      offer.save! if offer.changed?
+    end
   end
   
 end

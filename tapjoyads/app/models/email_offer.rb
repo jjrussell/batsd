@@ -8,12 +8,12 @@ class EmailOffer < ActiveRecord::Base
   
   validates_presence_of :partner, :name
   
-  after_create :create_offer
-  after_update :update_offer
+  after_create :create_primary_offer
+  after_update :update_offers
   
 private
   
-  def create_offer
+  def create_primary_offer
     offer = Offer.new(:item => self)
     offer.id = id
     offer.partner = partner
@@ -29,12 +29,14 @@ private
     offer.save!
   end
   
-  def update_offer
-    offer.partner_id = partner_id if partner_id_changed?
-    offer.name = name if name_changed?
-    offer.description = description if description_changed?
-    offer.third_party_data = third_party_id if third_party_id_changed?
-    offer.save! if offer.changed?
+  def update_offers
+    offers.each do |offer|
+      offer.partner_id = partner_id if partner_id_changed?
+      offer.name = name if name_changed?
+      offer.description = description if description_changed?
+      offer.third_party_data = third_party_id if third_party_id_changed?
+      offer.save! if offer.changed?
+    end
   end
   
 end

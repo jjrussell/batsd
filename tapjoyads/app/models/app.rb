@@ -12,8 +12,8 @@ class App < ActiveRecord::Base
   validates_presence_of :partner, :name
   validates_inclusion_of :use_raw_url, :in => [ true, false ]
   
-  after_create :create_offer
-  after_update :update_offer
+  after_create :create_primary_offer
+  after_update :update_offers
   after_save :update_memcached
   before_destroy :clear_memcached
   
@@ -131,7 +131,7 @@ class App < ActiveRecord::Base
 
 private
   
-  def create_offer
+  def create_primary_offer
     offer = Offer.new(:item => self)
     offer.id = id
     offer.partner = partner
@@ -148,15 +148,17 @@ private
     offer.save!
   end
   
-  def update_offer
-    offer.partner_id = partner_id if partner_id_changed?
-    offer.name = name if name_changed?
-    offer.description = description if description_changed?
-    offer.price = price if price_changed?
-    offer.url = store_url if store_url_changed? || use_raw_url_changed? || store_id_changed?
-    offer.third_party_data = store_id if store_id_changed?
-    offer.age_rating = age_rating if age_rating_changed?
-    offer.save! if offer.changed?
+  def update_offers
+    offers.each do |offer|
+      offer.partner_id = partner_id if partner_id_changed?
+      offer.name = name if name_changed?
+      offer.description = description if description_changed?
+      offer.price = price if price_changed?
+      offer.url = store_url if store_url_changed? || use_raw_url_changed? || store_id_changed?
+      offer.third_party_data = store_id if store_id_changed?
+      offer.age_rating = age_rating if age_rating_changed?
+      offer.save! if offer.changed?
+    end
   end
   
   def update_memcached

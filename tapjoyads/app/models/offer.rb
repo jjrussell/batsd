@@ -163,9 +163,9 @@ class Offer < ActiveRecord::Base
   
   def get_icon_url(base64 = false)
     if base64
-      url = "http://ws.tapjoyads.com/get_app_image/icon?app_id=#{id}"
+      url = "http://ws.tapjoyads.com/get_app_image/icon?app_id=#{item_id}"
     else
-      url = "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/#{id}.png"
+      url = "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/#{item_id}.png"
     end
     url
   end
@@ -240,8 +240,8 @@ class Offer < ActiveRecord::Base
 private
   
   def is_disabled?(publisher_app, currency)
-    return id == currency.app_id || 
-        currency.get_disabled_offer_ids.include?(id) || 
+    return item_id == currency.app_id || 
+        currency.get_disabled_offer_ids.include?(item_id) || 
         currency.get_disabled_partner_ids.include?(partner_id) ||
         (currency.only_free_offers? && is_paid?) ||
         (self_promote_only? && partner_id != publisher_app.partner_id)
