@@ -32,7 +32,7 @@ class WebRequest < SimpledbResource
   }
   
   # Params that should use the advertiser_app_id, rather than the app_id for stat tracking.
-  USE_ADVERTISER_APP_ID = ['store_click', 'store_install']
+  USE_OFFER_ID = ['store_click', 'store_install']
   
   PUBLISHER_PATH_TO_STAT_MAP = {
     'store_click' => 'installs_opened',
@@ -115,8 +115,8 @@ class WebRequest < SimpledbResource
       stat_name = PATH_TO_STAT_MAP[path]
       unless stat_name.nil?
         app_id = get('app_id')
-        if USE_ADVERTISER_APP_ID.include?(path)
-          app_id = get('advertiser_app_id')
+        if USE_OFFER_ID.include?(path)
+          app_id = get('offer_id')
         end
         Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, @now))
       end
