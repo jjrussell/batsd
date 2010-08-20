@@ -16,11 +16,6 @@ private
       "offer_id = '#{offer_id}'",
       "created >= '#{start_time}'",
       "created < '#{finish_time}'"].join(" and ")
-    # TO REMOVE
-    conditions = [
-      "advertiser_app_id = '#{offer_id}'",
-      "created >= '#{start_time}'",
-      "created < '#{finish_time}'"].join(" and ")
 
     log = GrabAdvertiserUdidsLog.new(:key => "#{offer_id}.#{start_time}.#{finish_time}")
     return if log.job_finished_at?
