@@ -132,6 +132,20 @@ class Offer < ActiveRecord::Base
     Offer.find(:all, :conditions => ["item_id = ? and id != ?", item_id, id])
   end
   
+  def visual_cost
+    if price <= 0 then
+      'Free'
+    elsif price <= 100 then
+      '$'
+    elsif price <= 200 then
+      '$$'
+    elsif price <= 300 then
+      '$$$'
+    else 
+      '$$$$'
+    end
+  end
+  
   def cost
     price > 0 ? 'Paid' : 'Free'
   end
