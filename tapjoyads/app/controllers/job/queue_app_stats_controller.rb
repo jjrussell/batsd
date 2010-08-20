@@ -91,7 +91,9 @@ private
     stat_row.update_stat_for_hour('rewards_opened', start_time.hour, installs_opened + offers_opened + ratings_opened)
     
     if @offer.item_type == 'App' && @offer.get_platform == 'iOS'
-      stat_row.update_stat_for_hour('overall_store_rank', start_time.hour, get_store_rank(@offer.third_party_data))
+      if stat_row.get_hourly_count('overall_store_rank', 0)[start_time.hour].to_i == 0
+        stat_row.update_stat_for_hour('overall_store_rank', start_time.hour, get_store_rank(@offer.third_party_data))
+      end
     end
   end
   
