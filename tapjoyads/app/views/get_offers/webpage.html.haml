@@ -4,11 +4,8 @@
   .message= @message
 
 #instructions
-  Important instructions: Install and OPEN one of the applications below to receive #{@currency.name}.
-  You will receive your #{@currency.name} within a few minutes after 
-  %i opening
-  the downloaded application.
-
+  Install and OPEN one of the apps below to receive #{@currency.name}
+  
 - if @start_index > 0
   .pagination
     .prev= get_previous_link
@@ -31,6 +28,8 @@
   .prev= get_previous_link
   .next= get_next_link
   .clear
+
+#adsby Ads by Tapjoy
 
 %img.hidden{ :src => '/images/load-circle.gif' }
 
@@ -119,6 +118,14 @@
     
     #offers .offer .amount {
       color: rgb(0, 136, 16);
+    }
+    
+    #adsby {
+      font-size: 75%;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #004E09;
+      text-align: center;
     }
     
     .pagination a {
