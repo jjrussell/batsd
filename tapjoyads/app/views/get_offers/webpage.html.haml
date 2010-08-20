@@ -24,10 +24,11 @@
             Earn
             %span.amount #{@currency.get_reward_amount(offer)} #{@currency.name}
 
-.pagination
-  .prev= get_previous_link
-  .next= get_next_link
-  .clear
+- if @start_index > 0 || @more_data_available > 0
+  .pagination
+    .prev= get_previous_link
+    .next= get_next_link
+    .clear
 
 #adsby Ads by Tapjoy
 
