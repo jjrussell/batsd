@@ -152,6 +152,10 @@ class Offer < ActiveRecord::Base
     !is_primary?
   end
   
+  def is_enabled?
+    tapjoy_enabled? && user_enabled? && partner.balance > 0
+  end
+  
   def get_destination_url(udid, publisher_app_id, publisher_user_id = nil, app_version = nil)
     int_record_id = publisher_user_id.nil? ? '' : PublisherUserRecord.generate_int_record_id(publisher_app_id, publisher_user_id)
     

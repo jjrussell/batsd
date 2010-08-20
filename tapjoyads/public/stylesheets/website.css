@@ -37,7 +37,7 @@ ul.navigation li a {
   text-decoration: none;
   line-height: 100%;
   padding: 10px;
-  color: #888;
+  color: #444;
 }
 ul.navigation li:hover a {
   color: #222;

@@ -2,14 +2,6 @@
 
 .icon= image_tag(@offer.get_icon_url, :size => '57x57')
 %h1= @offer.name_with_suffix
-.associated
-  %a#show_associated{:href => '#'} [#{@associated_offers.size} associated offers]
-  = link_to('[Create secondary offer]', new_statz_path(:id => @offer.id))
-#associated_list
-  %h5 Associated offers:
-  %ul
-    - @associated_offers.each do |offer|
-      %li= link_to(offer.name_with_suffix, statz_path(offer.id))
 
 #display_date
   For: #{@start_time.to_s(:pub_ampm_sec)} UTC - #{@end_time.to_s(:pub_ampm_sec)} UTC. 
@@ -25,80 +17,77 @@
   %input{:type => 'submit', :value => 'Change' }
 
   
-
+%h4 Offer
 - if permitted_to? :edit, :statz
-  %p= link_to('[Edit Offer]', edit_statz_path(@offer.id))
+  = link_to('[Edit Offer]', edit_statz_path(@offer.id))
 - if permitted_to? :last_run_times, :statz
-  %p= link_to('[View Last Run Times]', last_run_times_statz_path(@offer.id))
+  = link_to('[View Last Run Times]', last_run_times_statz_path(@offer.id))
 - if permitted_to? :udids, :statz
-  %p= link_to('[View Monthly UDID Reports]', udids_statz_path(@offer.id))
+  = link_to('[View Monthly UDID Reports]', udids_statz_path(@offer.id))
+= link_to('[Activity Log]', activities_path(:object_id => @offer.id))
+%table.properties
+  - property_row('Enabled', @offer.is_enabled?, nil, @offer.is_enabled?.to_s)
+  - property_row('Tapjoy Enabled', @offer.user_enabled?, nil, @offer.tapjoy_enabled?.to_s)
+  - property_row('User Enabled', @offer.user_enabled?, nil, @offer.user_enabled?.to_s)
+  - property_row('Payment', number_to_currency(@offer.payment / 100.0))
+  - if @offer.item_type == 'App'
+    - if @offer.item.use_raw_url?
+      - property_row('Raw url', link_to('[url]', @offer.item.store_url), nil, @offer.item.store_url.blank? ? 'incomplete' : nil)
+    - else
+      - property_row('Store id', link_to(@offer.item.store_id, @offer.item.final_store_url), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
+  - property_row('Price', number_to_currency(@offer.price / 100.0))
+  - property_row('Daily budget', @offer.daily_budget, 0)
+  - property_row('Show rate', "%.1f%" % ((@offer.show_rate || 0) * 100.0), "100.0%")
+  - property_row('Ordinal', @offer.ordinal, 500)
+  - property_row('Countries', @offer.countries, '')
+  - property_row('Cities', @offer.cities, '')
+  - property_row('Postal codes', @offer.postal_codes, '')
+  - property_row('Pay-per-click', @offer.pay_per_click?, false)
+  - property_row('Device types', @offer.device_types, Offer::APPLE_DEVICES.to_json)
+  - property_row('Allow negative balance', @offer.allow_negative_balance?, false)
+  - property_row('Self promote only', @offer.self_promote_only?, false)
+  - property_row('Featured', @offer.featured?, false)
+  - unless @offer.publisher_app_whitelist.blank?
+    - property_row('Publisher app whitelist', @offer.get_publisher_app_whitelist.map{|id| link_to(App.find(id).name, statz_path(id)) }.join(', '))
+  - property_row('id', @offer.id + ' - ' + clippy(@offer.id))
+
+%a#show_associated{:href => '#'} [#{@associated_offers.size} associated offers]
+= link_to('[Create secondary offer]', new_statz_path(:id => @offer.id))
+#associated_list
+  %h5 Associated offers:
+  %ul
+    - @associated_offers.each do |offer|
+      %li= link_to(offer.name_with_suffix, statz_path(offer.id))
+
+%h4 Partner
+%table.properties
+  - if @offer.partner.users.first
+    - property_row('Contact', @offer.partner.users.first.email)
+  - property_row('Balance', number_to_currency(@offer.partner.balance / 100.0))
+  - property_row('Pending Earnings', number_to_currency(@offer.partner.pending_earnings / 100.0))
+  - property_row('id', link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - ' + clippy(@offer.partner.id))
+  = link_to('[Activity Log]', activities_path(:partner_id => @offer.partner_id))
+      
 - if @offer.item_type == 'App' && @offer.item.currency
+  %h4 Currency - #{@offer.item.currency.name}
   #currency
-    Currency: #{@offer.item.currency.name}
     %a.more{ :href => '#' } [Show more details]
     = link_to('[View Offer Wall]', "/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDID}&publisher_user_id=testuser&device_type=#{@offer.item.platform}")
     .details
-      .metadata Conversion rate: #{@offer.item.currency.conversion_rate}
-      .metadata Callback url: #{@offer.item.currency.callback_url}
-      .metadata Secret key: #{@offer.item.currency.secret_key}
-      .metadata Initial balance: #{@offer.item.currency.initial_balance}
-      .metadata Only free offers: #{@offer.item.currency.only_free_offers?}
-      .metadata Has virtual goods: #{@offer.item.currency.has_virtual_goods?}
-      .metadata Send offer data: #{@offer.item.currency.send_offer_data?}
-      .metadata Offers money share: #{@offer.item.currency.offers_money_share}
-      .metadata Installs money share: #{@offer.item.currency.installs_money_share}
-      .metadata Max age rating: #{@offer.item.currency.max_age_rating}
-      .metadata Disabled offers: #{@offer.item.currency.disabled_offers}
-      .metadata Disabled partners: #{@offer.item.currency.disabled_partners}
-      .metadata Test devices: #{@offer.item.currency.test_devices}
-
-.left
-  .metadata
-    Offer id:
-    = @offer.id + ' - '
-    - if permitted_to? :index, :activities
-      = link_to('[Activity Log]', activities_path(:object_id => @offer.id)) + ' - '
-    = clippy(@offer.id)
-  .metadata
-    Partner id:
-    = link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - '
-    - if permitted_to? :index, :activities
-      = link_to('[Activity Log]', activities_path(:partner_id => @offer.partner_id)) + ' - '
-    = clippy(@offer.partner_id)
-  .metadata Contact: #{@offer.partner.users.first.email if @offer.partner.users.first}
-  .metadata Offer type: #{@offer.item_type}
-  - if @offer.item_type == 'App'
-    .metadata Store id: #{@offer.item.store_id.blank? ? 'None' : link_to(@offer.item.store_id, @offer.item.final_store_url)}
-    .metadata
-      Use raw url: #{@offer.item.use_raw_url?}
-      - if @offer.item.use_raw_url?
-        = link_to('[url]', @offer.item.store_url)
-  .metadata Price: #{number_to_currency(@offer.price / 100.0)}
-  .metadata Balance: #{number_to_currency(@offer.partner.balance / 100.0)}
-  .metadata Pending Earnings: #{number_to_currency(@offer.partner.pending_earnings / 100.0)}
-  .metadata Daily budget: #{@offer.daily_budget}
-  .metadata Show rate: #{"%.1f%" % ((@offer.show_rate || 0) * 100.0)}
-  .metadata Ordinal: #{@offer.ordinal}
-  .metadata Payment: #{number_to_currency(@offer.payment / 100.0)}
-  .metadata Tapjoy enabled: #{@offer.tapjoy_enabled}
-
-.right
-  .metadata Countries: #{@offer.countries}
-  .metadata Cities: #{@offer.cities}
-  .metadata Postal codes: #{@offer.postal_codes}
-  .metadata Pay-per-click: #{@offer.pay_per_click?}
-  .metadata Device types: #{@offer.device_types}
-  .metadata Allow negative balance: #{@offer.allow_negative_balance?}
-  .metadata Self promote only: #{@offer.self_promote_only?}
-  .metadata Featured: #{@offer.featured?}
-.clear
-
-- unless @offer.publisher_app_whitelist.blank?
-  %h5 Publisher app whitelist (this offer will only be shown from the following apps):
-  %ul
-    - @offer.get_publisher_app_whitelist.each do |publisher_app_id|
-      - app = App.find(publisher_app_id)
-      %li= link_to(app.name, statz_path(app.id))
+      %table.properties
+        - property_row('Conversion rate', @offer.item.currency.conversion_rate)
+        - property_row('Callback url', @offer.item.currency.callback_url)
+        - property_row('Secret key', @offer.item.currency.secret_key)
+        - property_row('Initial balance', @offer.item.currency.initial_balance)
+        - property_row('Only free offer', @offer.item.currency.only_free_offers)
+        - property_row('Has virtual goods', @offer.item.currency.has_virtual_goods?)
+        - property_row('Offers money share', @offer.item.currency.offers_money_share)
+        - property_row('Installs money share', @offer.item.currency.installs_money_share)
+        - property_row('Max age rating', @offer.item.currency.max_age_rating)
+        - property_row('Disabled offers', @offer.item.currency.disabled_offers)
+        - property_row('Disabled partners', @offer.item.currency.disabled_partners)
+        - property_row('Test devices', @offer.item.currency.test_devices)
+        - property_row('id', @offer.item.currency.id + ' - ' + clippy(@offer.item.currency.id))
 
 #connects.graph
   %h3
@@ -414,23 +403,6 @@
       clear: both;
     }
     
-    h1 {
-      display: inline-block;
-      margin-top: 0;
-    }
-    
-    .associated {
-      display: inline-block;
-      padding-left: 10px;
-    }
-    
-    .left {
-      float: left;
-    }
-    .right {
-      float: right;
-    }
-    
     #associated_list,
     #change_date {
       display: none;
@@ -448,3 +420,33 @@
       display: none;
       margin-left: 10px;
     }
+    
+    h4 {
+      margin-bottom: 6px;
+    }
+    
+    .properties td {
+      border: 1px solid #ccc;
+      padding: 0 5px;
+      max-width: 500px;
+    }
+    
+    .properties tr td:first-child {
+      text-align: right;
+    }
+    
+    .true {
+      background: -webkit-gradient(linear, left top, right bottom, from(#494), to(#fff));
+      background: -moz-linear-gradient(left,  #494,  #fff);
+    }
+    
+    .false {
+      background: -webkit-gradient(linear, left top, right bottom, from(#ccc), to(#fff));
+      background: -moz-linear-gradient(left,  #ccc,  #fff);
+    }
+    
+    .incomplete {
+      background: -webkit-gradient(linear, left top, right bottom, from(#ccc), to(#fff));
+      background: -moz-linear-gradient(left,  #f40,  #fff);
+    }
+    
