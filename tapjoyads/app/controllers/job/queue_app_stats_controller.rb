@@ -115,7 +115,7 @@ private
     
     @paths_to_aggregate.each do |path|
       stat_name = WebRequest::PATH_TO_STAT_MAP[path]
-      app_condition = WebRequest::USE_OFFER_ID.include?(path) ? "advertiser_app_id = '#{@offer.id}'" : "app_id = '#{@offer.id}'"
+      app_condition = WebRequest::USE_OFFER_ID.include?(path) ? "offer_id = '#{@offer.id}'" : "app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string, 
           :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
