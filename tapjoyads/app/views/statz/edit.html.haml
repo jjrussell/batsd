@@ -22,6 +22,9 @@
     = f.check_box(:featured)
     = f.label(:featured)
   .field
+    = f.label(:name_suffix, 'Internal Suffix')
+    = f.text_field(:name_suffix)
+  .field
     = f.label(:ordinal)
     = f.text_field(:ordinal)
   .field
