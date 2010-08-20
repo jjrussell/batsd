@@ -13,25 +13,37 @@ private
     start_time = json["start_time"]
     finish_time = json["finish_time"]
     conditions = [
+      "offer_id = '#{offer_id}'",
+      "created >= '#{start_time}'",
+      "created < '#{finish_time}'"].join(" and ")
+    # TO REMOVE
+    conditions = [
       "advertiser_app_id = '#{offer_id}'",
       "created >= '#{start_time}'",
       "created < '#{finish_time}'"].join(" and ")
 
     log = GrabAdvertiserUdidsLog.new(:key => "#{offer_id}.#{start_time}.#{finish_time}")
+    return if log.job_finished_at?
+
+    expected_attr = { 'job_started_at' => log.job_started_at? ? log.job_started_at.to_f.to_s : nil }
+
     log.offer_id = offer_id
     log.start_time = start_time
     log.finish_time = finish_time
     log.job_started_at = Time.zone.now
-    log.save!
+    begin
+      log.save!(:expected_attr => expected_attr)
+    rescue ExpectedAttributeError => e
+      return
+    end
 
     message.delete
 
     bucket = S3.bucket(BucketNames::AD_UDIDS)
     path = Offer.s3_udids_path(offer_id, Time.zone.at(start_time))
     fs_path = "tmp/#{path.gsub('/', '_')}.s3"
-
+    write_to_s3 = false
     data = File.open(fs_path, 'w+')
-    do_regex_check = true
     if bucket.key(path).exists?
       data.write(bucket.get(path))
     end
@@ -39,22 +51,12 @@ private
     Reward.select(:where => conditions) do |reward|
       unless reward.udid.blank?
         line = "#{reward.udid},#{reward.created.to_s(:db)}"
-        if do_regex_check
-          data.rewind
-          if data.read =~ /#{line}/
-            log.job_finished_at = Time.zone.now
-            log.save
-            return
-          else
-            do_regex_check = false
-          end
-        end
         data.puts(line)
+        write_to_s3 = true
       end
     end
 
-    data.rewind
-    unless data.read.blank?
+    if write_to_s3
       retries = 3
       begin
         data.rewind
