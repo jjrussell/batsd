@@ -4,7 +4,7 @@
 
 - form_for @user_session do |f|
   = f.error_messages :header_message => nil
-  = hidden_field_tag 'goto', @goto
+  = hidden_field_tag 'goto', @goto unless @goto.nil?
   .field
     = f.label :username
     = f.text_field :username
