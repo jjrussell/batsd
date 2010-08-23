@@ -109,4 +109,13 @@ module AuthenticationHelper
     end
   end
   
+  def loopt_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'loopt'
+        password = '0t20yr6C5LnN'
+      end
+      password
+    end
+  end
+  
 end
