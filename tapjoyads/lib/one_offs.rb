@@ -58,27 +58,4 @@ class OneOffs
     puts "existing UDIDs (per app): #{app_existing_udids}"
   end
   
-  def self.archive_store_clicks
-    Benchmark.realtime do
-      count = 0
-      files = {}
-      SimpledbResource.select(:domain_name => 'store-click') do |click|
-        count += 1
-        puts "#{Time.zone.now.to_s(:db)} - Finished backing up #{count} clicks." if count % 1000 == 0
-        
-        next unless Click.new(:key => click.key, :load_from_memcache => false).is_new
-        next unless click.get('click_date')
-        
-        click_date_str = Time.zone.at(click.get('click_date').to_f).strftime("%Y-%m-%d")
-        files[click_date_str] = File.open("tmp/store-click_#{click_date_str}.sdb", 'w') if files[click_date_str].nil?
-        
-        files[click_date_str].puts(click.serialize)
-      end
-      
-      files.values.each do |file|
-        file.close
-      end
-    end
-  end
-  
 end
