@@ -100,7 +100,8 @@ class Offer < ActiveRecord::Base
       end
     end
     
-    bucket.put('enabled_offers', Marshal.dump(offer_list))
+    marshalled_offer_list = Marshal.dump(offer_list)
+    bucket.put('enabled_offers', marshalled_offer_list)
     NUM_MEMCACHE_KEYS.times do |i|
       Mc.put("s3.enabled_offers_#{i * 123123}", offer_list)
     end
@@ -109,14 +110,16 @@ class Offer < ActiveRecord::Base
   def self.cache_classic_offers
     bucket = S3.bucket(BucketNames::OFFER_DATA)
     offer_list = Offer.classic_offers
-    bucket.put('classic_offers', Marshal.dump(offer_list))
+    marshalled_offer_list = Marshal.dump(offer_list)
+    bucket.put('classic_offers', marshalled_offer_list)
     Mc.put('s3.classic_offers', offer_list)
   end
   
   def self.cache_featured_offers
     bucket = S3.bucket(BucketNames::OFFER_DATA)
     offer_list = Offer.enabled_offers.featured
-    bucket.put('featured_offers', Marshal.dump(offer_list))
+    marshalled_offer_list = Marshal.dump(offer_list)
+    bucket.put('featured_offers', marshalled_offer_list)
     Mc.put('s3.featured_offers', offer_list)
   end
   
