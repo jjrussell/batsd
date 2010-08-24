@@ -52,9 +52,8 @@ ul.navigation li.current a {
 }
 
 div.flash {
-  margin: 5px;
+  margin: 0px 40px;
   padding: 5px;
-  width: 60%;
 }
 
 #flash_notice {
