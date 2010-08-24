@@ -1,0 +1,7 @@
+- @page_title = 'Reporting'
+
+%ul
+  - current_partner_offers.each do |offer|
+    %li= link_to(offer.name, reporting_path(offer.id))
+
+%p Not implemented yet, select an app from above for now.

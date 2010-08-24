@@ -25,8 +25,11 @@ Tapjoy.setGraphProperties = function(g, options) {
 };
 
 Tapjoy.drawLargeGraph = function(obj, id) {
-  $('#' + id + '>h3').html(obj['name'])
-  $('#' + id + '>.totals').html(Tapjoy.getTotalsHtml(obj))
+  $('#' + id + '>h3').html(obj['name']);
+  if ($('#' + id + '>.totals').length == 1) {
+    alert('adding labels');
+    $('#' + id + '>.totals').html(Tapjoy.getTotalsHtml(obj));
+  }
 
   var gutterPx = 60;
   var hMarginPx = 5;

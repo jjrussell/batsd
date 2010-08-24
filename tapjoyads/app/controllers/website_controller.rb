@@ -3,7 +3,7 @@ class WebsiteController < ApplicationController
   
   skip_before_filter :fix_params
   
-  helper_method :current_user, :current_partner
+  helper_method :current_user, :current_partner, :current_partner_apps, :current_partner_offers
   
   before_filter { |c| Authorization.current_user = c.current_user }
 
@@ -17,6 +17,10 @@ class WebsiteController < ApplicationController
 
   def current_partner_apps
     @current_partner_apps ||= current_partner.apps.sort_by(&:name)
+  end
+  
+  def current_partner_offers
+    @current_partner_offers ||= current_partner.offers.sort_by(&:name)
   end
 
 protected
