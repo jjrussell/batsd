@@ -45,7 +45,7 @@ class ReportingController < WebsiteController
       line =  "#{@stats['paid_clicks'][i]},"
       line += "#{@stats['paid_installs'][i]},"
       line += "#{@stats['cvr'][i]},"
-      line += "#{number_to_currency(@stats['installs_spend'][i] / 100.0, :delimiter => '')},"
+      line += "#{number_to_currency(@stats['installs_spend'][i] / -100.0, :delimiter => '')},"
       line += "#{@stats['offerwall_views'][i]},"
       line += "#{@stats['rewards_opened'][i]},"
       line += "#{@stats['rewards'][i]},"
