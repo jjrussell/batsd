@@ -1,8 +1,8 @@
 - @page_title = 'Apps'
 
-%h1 New application
+= render :partial => 'apps', :object => @apps
 
-= render :partial => 'my_apps', :object => @apps
+%h1 New application
 
 #apps_main
   %h3 Thanks, your application has been added

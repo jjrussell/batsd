@@ -1,9 +1,9 @@
 - @page_title = 'New application'
 
+= render :partial => 'apps'
+
 %h1 Add new application
 %h3 Add a new application to the Tapjoy system.
-
-= render :partial => 'my_apps', :object => @apps
 
 #apps_main
   -form_for @app do |f|

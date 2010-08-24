@@ -1,3 +1,6 @@
+body {
+  font-family: arial, helvetica;
+}
 .left {
   float: left;
 }
@@ -13,9 +16,13 @@
 #top_nav {
   text-align: right;
 }
-ul.navigation {
+#content {
+  margin: 0px 40px;
+  border-top: 1px solid #888;
 }
-
+ul.navigation {
+  margin-bottom: 9px;
+}
 ul.navigation li {
   display: inline;
   border: 1px solid #888;
@@ -23,7 +30,6 @@ ul.navigation li {
   padding: 10px 0px;
   background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ccc));
   background: -moz-linear-gradient(top,  #fff,  #ccc);
-  font-family: arial, helvetica;
   text-shadow: 0px 1px 1px #fff;
 }
 ul.navigation li:hover {

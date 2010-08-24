@@ -1,0 +1,47 @@
+#apps_list
+  - apps.each do |app|
+    .app_div{:title => app.name, :class => (@app == app) ? "selected" : ""}
+      = link_to image_tag(app.primary_offer.get_icon_url, :size => '57x57', :alt => 'icon'), app_path(app)
+      %br/
+      .name= truncate(app.name, :length => 15)
+  .app_div.new_app_button
+    = button_to "Add App", new_app_path
+.clear
+
+- content_for :page_styles do
+  :plain
+    #apps_list {
+      margin: 0px;
+      padding-bottom: 7px;
+      height: 81px;
+      background: #f0f0f0;
+      border-bottom: 1px solid #888;
+    }
+    .app_div {
+      width: 120px;
+      height: 78px;
+      padding: 5px 0px;
+      float: left;
+      white-space: nowrap;
+      text-align: center;
+      overflow: hidden;
+    }
+    .app_div:hover {
+      background-color: #ddd;
+      cursor: pointer;
+    }
+    .app_div.selected {
+      background-color: #aaa;
+    }
+    .app_div img {
+      vertical-align: center;
+    }
+    .new_app_button {
+    }
+- content_for :page_javascript do
+  :plain
+    $(function(){
+      $('.app_tab').click(function(e){
+        location.href = $(e.currentTarget).find('a').attr('href');
+      });
+    });
