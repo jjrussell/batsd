@@ -114,7 +114,11 @@
           %td= number_to_currency((@stats['installs_revenue'].sum + @stats['offers_revenue'].sum) / 100.0)
 
   .data
-    = link_to('Download as CSV', export_reporting_path(@offer.id, { :date => @start_time.to_date.to_s(:mdy), :end_date => @end_time.to_date.to_s(:mdy), :granularity => @granularity }))
+    - form_tag(export_reporting_path(@offer.id)) do
+      = hidden_field_tag(:date, @start_time.to_date.to_s(:mdy))
+      = hidden_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
+      = hidden_field_tag(:granularity, @granularity)
+      = submit_tag('Download as CSV')
 
   .clear
 
