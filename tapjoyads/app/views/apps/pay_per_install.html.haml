@@ -1,6 +1,6 @@
 - @page_title = 'Apps'
 
-= render :partial => 'apps'
+= render :partial => 'apps', :object => @apps
 
 %h1 App (Pay-per-install)
 
@@ -21,4 +21,4 @@
       = #f.text_field :tapjoy_enabled
       Campaign Status
       = #f.select :campaign_status
-      = button_to 'Add funds', add_funds_billing_path
+      = link_to 'Add funds', add_funds_billing_path
