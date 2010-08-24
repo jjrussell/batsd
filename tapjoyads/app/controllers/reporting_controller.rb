@@ -64,7 +64,7 @@ private
     @offer = current_partner.offers.find_by_id(params[:id])
     if @offer.nil?
       flash[:notice] = 'Unknown offer id'
-      redirect_to reporting_index_path
+      redirect_to reporting_index_path and return
     end
     
     # setup the start/end times
