@@ -1,6 +1,7 @@
 - @page_title = 'Apps'
 
 = render :partial => 'apps', :object => @apps
+= render :partial => 'actions', :locals => {:app => @app}
 
 #apps_main
   - unless @app.nil?
@@ -60,4 +61,11 @@
     }
     td.not_integrated {
       color: #f00;
+    }
+    #apps_tools {
+      float: left;
+      width: 200px;
+    }
+    #apps_main {
+      margin-left: 210px;
     }

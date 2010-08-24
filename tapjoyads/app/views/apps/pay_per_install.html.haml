@@ -1,6 +1,7 @@
 - @page_title = 'Apps'
 
 = render :partial => 'apps', :object => @apps
+= render :partial => 'actions', :locals => {:app => @app}
 
 %h1 App (Pay-per-install)
 
