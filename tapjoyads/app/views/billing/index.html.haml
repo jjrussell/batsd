@@ -15,40 +15,111 @@
     = number_to_currency(@last_payout/100.0)
   .clear
   %hr/
+
+#billing-date-range
+  Date range:
+  %form#change_date{:method => 'get'}
+    = collection_select("billing", "start_date", @statements, :to_date, :to_mmm_yyyy, :selected => @start_date)
+    \-
+    = collection_select("billing", "end_date", @statements, :to_date, :to_mmm_yyyy, :selected => @end_date)
+    = submit_tag "Go"
+  
 .box-full
   - unless @statements.blank?
-    #billing-date-range
-      %form#change_date{:method => 'get'}
-        = collection_select("billing", "start_date", @statements, :to_date, :to_mmm_yyyy, :selected => @start_date)
-        to
-        = collection_select("billing", "end_date", @statements, :to_date, :to_mmm_yyyy, :selected => @end_date)
-        = submit_tag "go"
     #billing-summary
       %table
         %thead
-        %tbody
           %tr
             %th &nbsp;
-            %th{:colspan => 2} Earnings
-            %th{:colspan => 2} Advertising Cost
-            %th Balance
-          %tr.subheader
-            %th &nbsp;
-            %th Earnings
+            %th Payments
             %th Payouts
-            %th Orders
-            %th Spending
-            %th &nbsp;
-          = render :partial => 'statement', :collection => @selected_statements, :locals => {:format => :table}
-    = button_to 'Export', {:method => 'GET', :action => 'export', :billing => {:start_date => @start_date, :end_date => @end_date} }
+          %tbody
+            = render :partial => 'statement', :collection => @statements, :locals => {:format => :table}
+    #details
+      #details_explanation
+        Click one of the months on the left to see more details
+      = render :partial => 'statement_details', :collection => @statements, :as => :statement
+    #buttons
+      = button_to 'Export Statments', {:method => 'GET', :action => 'export_statements', :billing => {:start_date => @start_date, :end_date => @end_date} }
+      = button_to 'Export Payments', {:method => 'GET', :action => 'export_orders', :billing => {:start_date => @start_date, :end_date => @end_date} }
+      = button_to 'Export Payouts', {:method => 'GET', :action => 'export_payouts', :billing => {:start_date => @start_date, :end_date => @end_date} }
   - else
-    No Statements available
+    .none No statements available
 
 - content_for :page_javascript do
   :plain
-    $(function() {
-      $('#change_date input[type=submit]').click(function() {
-        // TODO: ajax call instead of refresh
-      })
-    });
-
+    var activeDetails = $('#details_explanation');
+    var activeRow = null;
+    
+    function showDetails(date, row) {
+      if (activeRow) {
+        activeRow.removeClass('active');
+      }
+      activeDetails.hide();
+      activeDetails = $('#details_' + date);
+      activeDetails.show();
+      activeRow = $(row);
+      activeRow.addClass('active');
+    }
+    
+- content_for :page_styles do
+  :plain
+    #billing-summary {
+      float: left;
+      padding: 10px 30px 10px 10px;
+    }
+  
+    table {
+      border-collapse: collapse;
+    }
+  
+    table th {
+      text-align: right;
+    }
+    table .statement {
+      border-bottom: 1px solid #ccc;
+    }
+    table td {
+      text-align: right;
+      min-width: 120px;
+    }
+    #billing-summary tr.statement:hover {
+      cursor: pointer;
+      background-color: #aed6ff;
+    }
+    
+    #billing-summary tr.active {
+      background-color: #00647b !important;
+    }
+  
+    #details {
+      float: left;
+    }
+    
+    #details_explanation {
+      color: #999;
+      font-size: 20px;
+      padding-top: 50px;
+    }
+    
+    #buttons {
+      clear: both;
+    }
+  
+    #change_date {
+      display: inline;
+    }
+    
+    .button-to {
+      padding-top: 10px;
+      display: inline-block;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .none {
+      font-style: italic;
+      padding: 15px 0;
+    }

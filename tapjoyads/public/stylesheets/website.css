@@ -68,16 +68,6 @@ div.flash {
 input.date {
   width: 100px;
 }
-#billing-summary table tr.subheader th {
-  font-size: 10px;
-}
-#billing-summary table tr.statement td {
-  border: 1px solid black;
-}
-#billing-summary table td.currency {
-  text-align: right;
-  min-width: 120px;
-}
 table.shaded {
   border: 1px solid gray;
   border-spacing: 0px;

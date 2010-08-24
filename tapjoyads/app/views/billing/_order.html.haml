@@ -1,0 +1,11 @@
+- options = {:delimiter => format == :csv ? '' : ','}
+- amount = number_to_currency(order.amount / 100.0, options)
+
+- if format == :csv
+  = "#{order.created_at.to_date.to_s(:db)},#{amount},#{order.payment_method_string},#{order.status_string}"
+- else
+  %tr.statement
+    %th= order.created_at.to_date.to_s(:db)
+    %td.currency= amount
+    %td= order.payment_method_string
+    %td= order.status_string

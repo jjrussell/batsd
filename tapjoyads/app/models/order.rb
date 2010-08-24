@@ -20,6 +20,27 @@ class Order < ActiveRecord::Base
   
   after_create :update_balance
   
+  def <=> other
+    created_at <=> other.created_at
+  end
+  
+  def status_string
+    case status
+    when 0; "Invalid"
+    when 1; "Normal"
+    when 2; "Refund"
+    end
+  end
+  
+  def payment_method_string
+    case payment_method
+    when 0; "Website"
+    when 1; "Invoice"
+    when 2; "Bonus"
+    when 3; "Transfer"
+    end
+  end
+  
 private
   
   def update_balance

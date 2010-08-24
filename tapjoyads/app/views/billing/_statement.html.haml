@@ -1,20 +1,12 @@
 - options = {:delimiter => format == :csv ? '' : ','}
-- earn = number_to_currency(statement.earnings/100.0, options)
-- payout = number_to_currency(statement.payouts/100.0, options)
-- order = number_to_currency(statement.orders/100.0, options)
-- spend = number_to_currency(statement.spend/100.0, options)
-- balance = number_to_currency((statement.ending_pending_earnings + statement.ending_balance)/100.0, options)
-- month = Date::MONTHNAMES[statement[:month].to_i]
-- date = Time.zone.parse("#{statement[:year]}-#{statement[:month]}-01").strftime("%Y-%m-%d")
+- payouts = number_to_currency(statement.payouts / 100.0, options)
+- orders = number_to_currency(statement.orders / 100.0, options)
+- month_with_year = Date::MONTHNAMES[statement.month.to_i] + " " + statement.year.to_s
 
 - if format == :csv
-  = "#{date},#{earn},#{payout},#{order},#{spend},#{balance}\n"
+  = "#{month_with_year},#{orders},#{payouts}"
 - else
-  %tr.statement
-    %th= month
-    %td.currency= earn
-    %td.currency= payout
-    %td.currency= order
-    %td.currency= spend
-    %td.currency= balance
-
+  %tr.statement{:onclick => "showDetails('#{statement.to_date}', this)"}
+    %th= month_with_year
+    %td.currency= orders
+    %td.currency= payouts

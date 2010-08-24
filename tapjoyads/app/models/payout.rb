@@ -20,7 +20,21 @@ class Payout < ActiveRecord::Base
   after_create :update_balance
 
   def <=> other
-    [year, month] <=> [other.year, other.month]
+    created_at <=> other.created_at
+  end
+  
+  def status_string
+    case status
+    when 0; "Invalid"
+    when 1; "Normal"
+    end
+  end
+  
+  def payment_method_string
+    case payment_method
+    when 1; "Paid"
+    when 3; "Transfer"
+    end
   end
 
 private
