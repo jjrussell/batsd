@@ -38,6 +38,28 @@ class Appstats
         end
       end
     end
+    
+    if @stats['rewards_opened'] and @stats['rewards']
+      @stats['rewards_cvr'] = []
+      @stats['rewards_opened'].length.times do |i|
+        if @stats['rewards_opened'][i] == 0
+          @stats['rewards_cvr'][i] = 0
+        else
+          @stats['rewards_cvr'][i] = "%.2f" % (@stats['rewards'][i].to_f / @stats['rewards_opened'][i])
+        end
+      end
+    end
+    
+    if @stats['offerwall_views'] and @stats['rewards_revenue']
+      @stats['offerwall_ecpm'] = []
+      @stats['offerwall_views'].length.times do |i|
+        if @stats['offerwall_views'][i] == 0
+          @stats['offerwall_ecpm'][i] = 0
+        else
+          @stats['offerwall_ecpm'] = @stats['rewards_revenue'][i].to_f / @stats['offerwall_views'][i] / 1000.0
+        end
+      end
+    end
   end
   
 private

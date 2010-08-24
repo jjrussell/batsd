@@ -39,18 +39,19 @@ class ReportingController < WebsiteController
   end
   
   def export
-    data = "paid_clicks,paid_installs,paid_cvr,spend,offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,revenue\n"
+    data = "paid_clicks,paid_installs,paid_cvr,spend,offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,revenue,offerwall_ecpm\n"
     
     @stats['paid_clicks'].length.times do |i|
       line =  "#{@stats['paid_clicks'][i]},"
       line += "#{@stats['paid_installs'][i]},"
-      line += "#{"%.1f%" % (@stats['paid_installs'][i].to_f / @stats['paid_clicks'][i] * 100.0)},"
+      line += "#{@stats['cvr'][i]},"
       line += "#{number_to_currency(@stats['installs_spend'][i] / 100.0, :delimiter => '')},"
       line += "#{@stats['offerwall_views'][i]},"
-      line += "#{@stats['installs_opened'][i] + @stats['offers_opened'][i]},"
-      line += "#{@stats['published_installs'][i] + @stats['offers'][i]},"
-      line += "#{"%.1f%" % ((@stats['published_installs'][i] + @stats['offers'][i]).to_f / (@stats['installs_opened'][i] + @stats['offers_opened'][i]) * 100.0)},"
-      line += "#{number_to_currency(@stats['installs_revenue'][i] / 100.0, :delimiter => '')}"
+      line += "#{@stats['rewards_opened'][i]},"
+      line += "#{@stats['rewards'][i]},"
+      line += "#{@stats['rewards_cvr'][i]},"
+      line += "#{number_to_currency(@stats['rewards_revenue'][i] / 100.0, :delimiter => '')},"
+      line += "#{number_to_currency(@stats['offerwall_ecpm'][i] / 100.0, :delimiter => '')}"
       data += "#{line}\n"
     end
     

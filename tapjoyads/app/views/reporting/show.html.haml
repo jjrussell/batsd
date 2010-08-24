@@ -71,19 +71,23 @@
       %tbody
         %tr
           %td Clicks
-          %td= @stats['paid_clicks'].sum
+          %td= number_with_delimiter(@stats['paid_clicks'].sum)
         %tr
           %td Installs
-          %td= @stats['paid_installs'].sum
+          %td= number_with_delimiter(@stats['paid_installs'].sum)
         %tr
           %td Conversion Rate
-          %td= "%.1f%" % (@stats['paid_installs'].sum.to_f / @stats['paid_clicks'].sum * 100.0)
+          %td
+            - if @stats['paid_clicks'].sum > 0
+              = "%.1f%" % (@stats['paid_installs'].sum.to_f / @stats['paid_clicks'].sum * 100.0)
+            - else
+              \-
         %tr
           %td Spend
           %td= number_to_currency(@stats['installs_spend'].sum / 100.0)
         %tr
           %td Daily Budget
-          %td= @offer.daily_budget
+          %td= number_with_delimiter(@offer.daily_budget)
         %tr
           %td Balance
           %td= number_to_currency(current_partner.balance / 100.0)
@@ -99,19 +103,30 @@
       %tbody
         %tr
           %td Offerwall Views
-          %td= @stats['offerwall_views'].sum
+          %td= number_with_delimiter(@stats['offerwall_views'].sum)
         %tr
           %td Offer Clicks
-          %td= @stats['installs_opened'].sum + @stats['offers_opened'].sum
+          %td= number_with_delimiter(@stats['rewards_opened'].sum)
         %tr
           %td Offers Completed
-          %td= @stats['published_installs'].sum + @stats['offers'].sum
+          %td= number_with_delimiter(@stats['rewards'].sum)
         %tr
           %td Conversion Rate
-          %td= "%.1f%" % ((@stats['published_installs'].sum + @stats['offers'].sum).to_f / (@stats['installs_opened'].sum + @stats['offers_opened'].sum) * 100.0)
+          %td
+            - if @stats['rewards_opened'].sum > 0
+              = "%.1f%" % (@stats['rewards'].sum.to_f / @stats['rewards_opened'].sum * 100.0)
+            - else
+              \-
         %tr
           %td Revenue
-          %td= number_to_currency((@stats['installs_revenue'].sum + @stats['offers_revenue'].sum) / 100.0)
+          %td= number_to_currency(@stats['rewards_revenue'].sum / 100.0)
+        %tr
+          %td Offerwall eCPM
+          %td
+            - if @stats['offerwall_views'].sum > 0
+              = number_to_currency(@stats['rewards_revenue'].sum.to_f / @stats['offerwall_views'].sum / 1000.0)
+            - else
+              $0.00
 
   .data
     - form_tag(export_reporting_path(@offer.id)) do
@@ -138,8 +153,7 @@
            [ #{@stats['daily_active_users'].join(',')} ],
            [ #{@stats['monthly_active_users'].join(',')} ],
         ],
-        "names": ["Connects", "New users", "DAUs", "MAUs"],
-        "totals": [ #{@stats['logins'].sum}, #{@stats['new_users'].sum}, #{@stats['daily_active_users'].sum}, #{@stats['monthly_active_users'].sum} ]
+        "names": ["Connects", "New users", "DAUs", "MAUs"]
       }
     };
     
@@ -153,8 +167,7 @@
            [ #{@stats['paid_installs'].join(',')} ],
            [ #{@stats['paid_clicks'].join(',')} ]
         ],
-        "names": ["Paid installs", "Paid clicks"],
-        "totals": [ #{@stats['paid_installs'].sum}, #{@stats['paid_clicks'].sum} ]
+        "names": ["Paid installs", "Paid clicks"]
       },
       
       "right": {
@@ -165,16 +178,14 @@
           [ "#{@stats['installs_spend'].map{|i| number_to_currency(i / -100.0)}.join('","')}" ]
         ],
         "names": [ "Spend" ],
-        "unitPrefix": "$",
-        "totals": [ "#{number_to_currency(@stats['installs_spend'].sum / 100.0)}" ]
+        "unitPrefix": "$"
       },
       
       "extra": {
         "data": [
           [ "#{@stats['cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) }.join('","')}" ]
         ],
-        "names": [ "Conversion rate" ],
-        "totals": [ "#{"%.1f%" % (@stats['paid_installs'].sum.to_f / @stats['paid_clicks'].sum * 100.0)}" ]
+        "names": [ "Conversion rate" ]
       }
     };
     
@@ -188,8 +199,7 @@
            [ #{@stats['paid_installs'].join(',')} ],
            [ #{@stats['paid_clicks'].join(',')} ]
         ],
-        "names": ["Paid installs", "Paid clicks"],
-        "totals": [ #{@stats['paid_installs'].sum}, #{@stats['paid_clicks'].sum} ]
+        "names": ["Paid installs", "Paid clicks"]
       },
       
       "right": {
@@ -197,7 +207,6 @@
           [ #{ @stats['overall_store_rank'].map{|r| r == '-' || r == '0'  ? 'null' : r}.join(',') } ]
         ],
         "names": [ "Rank" ],
-        "totals": [ "#{ (@stats['overall_store_rank'].select{|r| r != '0'}.last || '-') }" ],
         "yMax": 100
       }
     };
@@ -212,8 +221,7 @@
            [ #{@stats['published_installs'].join(',')} ],
            [ #{@stats['installs_opened'].join(',')} ]
         ],
-        "names": ["Published installs", "Published clicks"],
-        "totals": [ #{@stats['published_installs'].sum}, #{@stats['installs_opened'].sum} ]
+        "names": ["Published installs", "Published clicks"]
       },
       
       "right": {
@@ -224,8 +232,7 @@
           [ "#{@stats['installs_revenue'].map{|i| number_to_currency(i / 100.0)}.join('","')}" ]
         ],
         "names": [ "Installs revenue" ],
-        "unitPrefix": "$",
-        "totals": [ "#{ number_to_currency(@stats['installs_revenue'].sum / 100.0) }" ]
+        "unitPrefix": "$"
       },
     };
     
@@ -240,9 +247,19 @@
            [ #{@stats['installs_opened'].join(',')} ],
            [ #{@stats['offerwall_views'].join(',')} ]
         ],
-        "names": ["Published installs", "Published clicks", "Offerwall views"],
-        "totals": [ #{@stats['published_installs'].sum}, #{@stats['installs_opened'].sum}, #{@stats['offerwall_views'].sum} ]
-      }
+        "names": ["Published installs", "Published clicks", "Offerwall views"]
+      },
+      
+      "right": {
+        "data": [
+          [ #{@stats['offerwall_ecpm'].map{|i| i / 100.0}.join(',')} ]
+        ],
+        "stringData": [
+          [ "#{@stats['offerwall_ecpm'].map{|i| number_to_currency(i / 100.0)}.join('","')}" ]
+        ],
+        "names": [ "Offerwall eCPM" ],
+        "unitPrefix": "$"
+      },
     };
     
     var publishedOffersData = {
@@ -255,8 +272,7 @@
            [ #{@stats['offers'].join(',')} ],
            [ #{@stats['offers_opened'].join(',')} ]
         ],
-        "names": ["Offers completed", "Offers clicked"],
-        "totals": [ #{@stats['offers'].sum}, #{@stats['offers_opened'].sum} ]
+        "names": ["Offers completed", "Offers clicked"]
       },
       
       "right": {
@@ -267,8 +283,7 @@
           [ "#{@stats['offers_revenue'].map{|i| number_to_currency(i / 100.0)}.join('","')}" ]
         ],
         "names": [ "Offers revenue" ],
-        "unitPrefix": "$",
-        "totals": [ "#{ number_to_currency(@stats['offers_revenue'].sum / 100.0) }" ]
+        "unitPrefix": "$"
       },
     };
     
