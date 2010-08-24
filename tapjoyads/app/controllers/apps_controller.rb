@@ -3,6 +3,7 @@ class AppsController < WebsiteController
 
   filter_access_to :all
   before_filter :grab_partner_apps
+  before_filter :has_apps, :only => [:show, :index]
   before_filter :find_app, :only => [:show, :pay_per_action, :pay_per_install, :update, :confirm]
 
   def index
@@ -70,5 +71,9 @@ private
     @app = App.find(params[:id])
     redirect_to apps_path and return unless current_partner_apps.include? @app
     session[:last_shown_app] = @app.id
+  end
+
+  def has_apps
+    redirect_to new_app_path if current_partner_apps.empty?
   end
 end
