@@ -3,9 +3,9 @@ class Stats < SimpledbResource
   self.domain_name = 'stats'
 
   STAT_TYPES = ['logins', 'hourly_impressions', 'paid_installs', 
-      'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'rewards', 'offers',
-      'rewards_revenue', 'offers_revenue', 'installs_revenue', 'published_installs',
-      'rewards_opened', 'offers_opened', 'installs_opened', 'daily_active_users', 
+      'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'offers',
+      'offers_revenue', 'installs_revenue', 'published_installs',
+      'offers_opened', 'installs_opened', 'daily_active_users', 
       'monthly_active_users', 'vg_purchases', 'overall_store_rank', 'offerwall_views']
 
   ##

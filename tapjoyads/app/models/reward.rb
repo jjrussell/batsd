@@ -24,13 +24,6 @@ class Reward < SimpledbResource
   end
   
   def update_counters
-    # increment our memcached counters
-    if get('type') != 'rating'
-      Mc.increment_count(
-        Stats.get_memcache_count_key('rewards_revenue', get('publisher_app_id'), Time.at(get('created').to_f)), 
-        false, 1.week, get('publisher_amount').to_i)
-    end
-    
     case get('type')
     when 'install'
       Mc.increment_count(

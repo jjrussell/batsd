@@ -28,6 +28,7 @@ class Appstats
       end
     end
     
+    # cvr
     if @stats['paid_clicks'] and @stats['paid_installs']
       @stats['cvr'] = []
       @stats['paid_clicks'].length.times do |i|
@@ -39,6 +40,7 @@ class Appstats
       end
     end
     
+    # rewards_cvr
     if @stats['rewards_opened'] and @stats['rewards']
       @stats['rewards_cvr'] = []
       @stats['rewards_opened'].length.times do |i|
@@ -50,6 +52,7 @@ class Appstats
       end
     end
     
+    # offerwall_ecpm
     if @stats['offerwall_views'] and @stats['rewards_revenue']
       @stats['offerwall_ecpm'] = []
       @stats['offerwall_views'].length.times do |i|
@@ -58,6 +61,30 @@ class Appstats
         else
           @stats['offerwall_ecpm'][i] = @stats['rewards_revenue'][i].to_f / (@stats['offerwall_views'][i] / 1000.0)
         end
+      end
+    end
+    
+    # rewards
+    if @stats['published_installs'] and @stats['offers']
+      @stats['rewards'] = []
+      @stats['published_installs'].length.times do |i|
+        @stats['rewards'][i] = @stats['published_installs'][i] + @stats['offers'][i]
+      end
+    end
+    
+    # rewards_opened
+    if @stats['installs_opened'] and @stats['offers_opened']
+      @stats['rewards_opened'] = []
+      @stats['installs_opened'].length.times do |i|
+        @stats['rewards_opened'][i] = @stats['installs_opened'][i] + @stats['offers_opened'][i]
+      end
+    end
+    
+    # rewards_revenue
+    if @stats['installs_revenue'] and @stats['offers_revenue']
+      @stats['rewards_revenue'] = []
+      @stats['installs_revenue'].length.times do |i|
+        @stats['rewards_revenue'][i] = @stats['installs_revenue'][i] + @stats['offers_revenue'][i]
       end
     end
   end

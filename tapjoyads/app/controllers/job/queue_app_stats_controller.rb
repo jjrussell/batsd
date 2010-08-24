@@ -86,9 +86,11 @@ private
     stat_row.update_stat_for_hour('installs_revenue', start_time.hour, installs_revenue)
     stat_row.update_stat_for_hour('offers', start_time.hour, offers_completed)
     stat_row.update_stat_for_hour('offers_revenue', start_time.hour, offers_revenue)
-    stat_row.update_stat_for_hour('rewards', start_time.hour, published_installs + offers_completed + ratings_opened)
+    # TO REMOVE - when mssql is no more
+    stat_row.update_stat_for_hour('rewards', start_time.hour, published_installs + offers_completed)
     stat_row.update_stat_for_hour('rewards_revenue', start_time.hour, installs_revenue + offers_revenue)
-    stat_row.update_stat_for_hour('rewards_opened', start_time.hour, installs_opened + offers_opened + ratings_opened)
+    stat_row.update_stat_for_hour('rewards_opened', start_time.hour, installs_opened + offers_opened)
+    # END TO REMOVE
     
     if @offer.item_type == 'App' && @offer.get_platform == 'iOS'
       if stat_row.get_hourly_count('overall_store_rank', 0)[start_time.hour].to_i == 0
@@ -239,11 +241,11 @@ private
     end
     
     total_logins = stat_row.get_hourly_count('logins').sum
-    total_rewards = stat_row.get_hourly_count('rewards').sum
+    offerwall_views = stat_row.get_hourly_count('offerwall_views').sum
     total_paid_clicks = stat_row.get_hourly_count('paid_clicks').sum
     total_ad_impressions = stat_row.get_hourly_count('hourly_impressions').sum
     
-    if total_logins + total_rewards + total_paid_clicks + total_ad_impressions > 0
+    if total_logins + offerwall_views + total_paid_clicks + total_ad_impressions > 0
       return 1.hour
     else
       return 2.hour
