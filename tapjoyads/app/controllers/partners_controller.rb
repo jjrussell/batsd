@@ -5,7 +5,7 @@ class PartnersController < WebsiteController
   
   filter_access_to :all
   
-  before_filter :find_partner, :only => [ :show ]
+  before_filter :find_partner, :only => [ :show, :make_current ]
   
   def index
     if params[:q]
@@ -17,6 +17,16 @@ class PartnersController < WebsiteController
   end
   
   def show
+  end
+  
+  def make_current
+    if current_user.partner_ids.include?(@partner.id) || current_user.role_symbols.include?(:admin)
+      current_user.update_attribute(:current_partner_id, @partner.id)
+      flash[:notice] = 'Successfully switched partners.'
+    else
+      flash[:error] = 'Could not switch partners.'
+    end
+    redirect_to request.referer
   end
   
 private
