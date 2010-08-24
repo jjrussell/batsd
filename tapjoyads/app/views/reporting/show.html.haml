@@ -124,7 +124,7 @@
           %td Offerwall eCPM
           %td
             - if @stats['offerwall_views'].sum > 0
-              = number_to_currency(@stats['rewards_revenue'].sum.to_f / @stats['offerwall_views'].sum / 1000.0)
+              = number_to_currency(@stats['rewards_revenue'].sum.to_f / (@stats['offerwall_views'].sum / 1000.0))
             - else
               $0.00
 

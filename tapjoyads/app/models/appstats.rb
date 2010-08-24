@@ -56,7 +56,7 @@ class Appstats
         if @stats['offerwall_views'][i] == 0
           @stats['offerwall_ecpm'][i] = 0
         else
-          @stats['offerwall_ecpm'][i] = @stats['rewards_revenue'][i].to_f / @stats['offerwall_views'][i] / 1000.0
+          @stats['offerwall_ecpm'][i] = @stats['rewards_revenue'][i].to_f / (@stats['offerwall_views'][i] / 1000.0)
         end
       end
     end
