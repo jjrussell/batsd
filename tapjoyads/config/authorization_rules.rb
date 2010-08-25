@@ -4,6 +4,7 @@ authorization do
     has_permission_on :home, :to => [ :index ]
     has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :pay_per_install , :pay_per_action, :integrate ]
     has_permission_on :offers, :to => [ :show, :update ]
+    has_permission_on :currency, :to => [ :show, :update ]
     has_permission_on :reporting, :to => [ :index, :show, :export ]
     has_permission_on :billing, :to => [ :index, :add_funds, :export_statements, :export_orders, :export_payouts ]
     has_permission_on :account, :to => [ :index ]

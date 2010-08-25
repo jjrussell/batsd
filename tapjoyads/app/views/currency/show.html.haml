@@ -1,0 +1,107 @@
+- @page_title = 'Virtual currency'
+
+- form_for @currency, :url => app_currency_path do |f|
+  %table
+    %tr
+      %th Name
+      %td
+        = f.text_field :name, :init => @currency.name
+        = error_message_on(@currency, :name) if @currency.errors.on :name
+    %tr
+      %th Conversion rate
+      %td 
+        = f.text_field :conversion_rate, :init => @currency.conversion_rate
+        = error_message_on(@currency, :conversion_rate) if @currency.errors.on :conversion_rate
+    %tr
+      %th Initial balance
+      %td
+        = f.text_field :initial_balance, :init => @currency.initial_balance
+        = error_message_on(@currency, :initial_balance) if @currency.errors.on :initial_balance
+    %tr
+      %th Callback url
+      %td
+        = f.text_field :callback_url, :init => @currency.callback_url.to_s
+        = error_message_on(@currency, :callback_url) if @currency.errors.on :callback_url
+    %tr
+      %th Secret key
+      %td
+        = f.text_field :secret_key, :init => @currency.secret_key.to_s
+        = error_message_on(@currency, :secret_key) if @currency.errors.on :secret_key
+    %tr
+      %th Test devices
+      %td
+        = f.text_field :test_devices, :init => @currency.test_devices
+        = error_message_on(@currency, :test_devices) if @currency.errors.on :test_devices
+    %tr
+      %td &nbsp;
+      %td= f.submit
+  
+- content_for :page_javascript do
+  :plain
+    var numChanged = 0;
+  
+    $(function() {
+      $('input').each(function() {
+        if ($(this).val() != $(this).attr('init')) {
+          $(this).addClass('changed');
+          numChanged += 1;
+        } else {
+          $(this).removeClass('changed');
+          numChanged -= 1;
+        }
+      });
+    
+      $('input').focus(function() {
+        $(this).addClass('active');
+      });
+      
+      $('input').blur(function() {
+        $(this).removeClass('active');
+        if ($(this).val() != $(this).attr('init')) {
+          $(this).addClass('changed');
+          numChanged += 1;
+        } else {
+          $(this).removeClass('changed');
+          numChanged -= 1;
+        }
+      });
+      
+      if ($('#managed_by_tapjoy').attr('checked')) {
+        
+      }
+    });
+  
+- content_for :page_styles do
+  :plain
+    th {
+      text-align: right;
+    }
+    
+    input {
+      margin-left: 0;
+    }
+    
+    input[type=text] {
+      border: 0;
+      font-size: 16px;
+      width: 400px;
+    }
+    
+    input[type=text].active,
+    input[type=text]:hover {
+      border: 1px solid black;
+      margin: -1px;
+    }
+    
+    input[type=text].changed {
+      background-color: #ccc;
+    }
+    
+    .fieldWithErrors,
+    .formError {
+      display: inline;
+    }
+    
+    .formError {
+      color: red;
+    }

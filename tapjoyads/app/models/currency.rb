@@ -1,6 +1,8 @@
 class Currency < ActiveRecord::Base
   include UuidPrimaryKey
   
+  TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
+  
   belongs_to :app
   belongs_to :partner
   
