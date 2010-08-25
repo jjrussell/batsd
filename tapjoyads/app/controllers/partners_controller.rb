@@ -20,8 +20,7 @@ class PartnersController < WebsiteController
   end
   
   def make_current
-    if current_user.partner_ids.include?(@partner.id) || current_user.role_symbols.include?(:admin)
-      current_user.update_attribute(:current_partner_id, @partner.id)
+    if current_user.update_attribute(:current_partner_id, @partner.id)
       flash[:notice] = 'Successfully switched partners.'
     else
       flash[:error] = 'Could not switch partners.'
