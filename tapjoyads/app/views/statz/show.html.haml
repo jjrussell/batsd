@@ -113,11 +113,11 @@
     .bar
     .tooltip
 
-#published_installs.graph
+#published_offers.graph
   %h3
   .totals
   .holder
-    %canvas#published_installs_graph{:width => '550px', :height => '330px'}
+    %canvas#published_offers_graph{:width => '550px', :height => '330px'}
     .bar
     .tooltip
 
@@ -126,14 +126,6 @@
   .totals
   .holder
     %canvas#offerwall_views_graph{:width => '550px', :height => '330px'}
-    .bar
-    .tooltip
-
-#published_offers.graph
-  %h3
-  .totals
-  .holder
-    %canvas#published_offers_graph{:width => '550px', :height => '330px'}
     .bar
     .tooltip
 
@@ -242,30 +234,30 @@
       }
     };
     
-    var publishedInstallsData = {
-      "name": "Published installs",
+    var publishedOffersData = {
+      "name": "Published offers",
       "intervals": [ "#{@intervals.join('","')}" ],
       "xLabels": [ "#{@x_labels.join('","')}" ],
       
       "main": {
         "data":[
-           [ #{@stats['published_installs'].join(',')} ],
-           [ #{@stats['installs_opened'].join(',')} ]
+           [ #{@stats['rewards'].join(',')} ],
+           [ #{@stats['rewards_opened'].join(',')} ]
         ],
-        "names": ["Published installs", "Published clicks"],
-        "totals": [ #{@stats['published_installs'].sum}, #{@stats['installs_opened'].sum} ]
+        "names": ["Offers completed", "Offer clicks"],
+        "totals": [ #{@stats['rewards'].sum}, #{@stats['rewards_opened'].sum} ]
       },
       
       "right": {
         "data": [
-          [ #{@stats['installs_revenue'].map{|i| i / 100.0}.join(',')} ]
+          [ #{@stats['rewards_revenue'].map{|i| i / 100.0}.join(',')} ]
         ],
         "stringData": [
-          [ "#{@stats['installs_revenue'].map{|i| number_to_currency(i / 100.0)}.join('","')}" ]
+          [ "#{@stats['rewards_revenue'].map{|i| number_to_currency(i / 100.0)}.join('","')}" ]
         ],
-        "names": [ "Installs revenue" ],
+        "names": [ "Revenue" ],
         "unitPrefix": "$",
-        "totals": [ "#{ number_to_currency(@stats['installs_revenue'].sum / 100.0) }" ]
+        "totals": [ "#{ number_to_currency(@stats['rewards_revenue'].sum / 100.0) }" ]
       },
     };
     
@@ -276,40 +268,25 @@
       
       "main": {
         "data":[
-           [ #{@stats['published_installs'].join(',')} ],
-           [ #{@stats['installs_opened'].join(',')} ],
            [ #{@stats['offerwall_views'].join(',')} ]
         ],
-        "names": ["Published installs", "Published clicks", "Offerwall views"],
-        "totals": [ #{@stats['published_installs'].sum}, #{@stats['installs_opened'].sum}, #{@stats['offerwall_views'].sum} ]
-      }
-    };
-    
-    var publishedOffersData = {
-      "name": "Published offers",
-      "intervals": [ "#{@intervals.join('","')}" ],
-      "xLabels": [ "#{@x_labels.join('","')}" ],
-      
-      "main": {
-        "data":[
-           [ #{@stats['offers'].join(',')} ],
-           [ #{@stats['offers_opened'].join(',')} ]
-        ],
-        "names": ["Offers completed", "Offers clicked"],
-        "totals": [ #{@stats['offers'].sum}, #{@stats['offers_opened'].sum} ]
+        "names": ["Offerwall views"],
+        "totals": [ #{@stats['offerwall_views'].sum} ]
       },
       
       "right": {
         "data": [
-          [ #{@stats['offers_revenue'].map{|i| i / 100.0}.join(',')} ]
+          [ #{@stats['rewards_revenue'].map { |i| i / 100.0 }.join(',')} ],
+          [ #{@stats['offerwall_ecpm'].map { |i| i / 100.0 }.join(',')} ]
         ],
         "stringData": [
-          [ "#{@stats['offers_revenue'].map{|i| number_to_currency(i / 100.0)}.join('","')}" ]
+          [ "#{@stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) }.join('","')}" ],
+          [ "#{@stats['offerwall_ecpm'].map { |i| number_to_currency(i / 100.0) }.join('","')}" ]
         ],
-        "names": [ "Offers revenue" ],
+        "names": [ "Revenue", "Offerwall eCPM" ],
         "unitPrefix": "$",
-        "totals": [ "#{ number_to_currency(@stats['offers_revenue'].sum / 100.0) }" ]
-      },
+        "totals": [ "#{number_to_currency(@stats['rewards_revenue'].sum / 100.0)}", "#{number_to_currency(@stats['rewards_revenue'].sum.to_f / (@stats['offerwall_views'].sum / 1000.0) / 100.0)}" ]
+      }
     };
     
     var ratingsData = {
@@ -358,9 +335,8 @@
       Tapjoy.drawLargeGraph(connectData, 'connects');
       Tapjoy.drawLargeGraph(installData, 'installs_spend');
       Tapjoy.drawLargeGraph(rankData, 'installs_rank');
-      Tapjoy.drawLargeGraph(publishedInstallsData, 'published_installs');
-      Tapjoy.drawLargeGraph(offerwallData, 'offerwall_views');
       Tapjoy.drawLargeGraph(publishedOffersData, 'published_offers');
+      Tapjoy.drawLargeGraph(offerwallData, 'offerwall_views');
       Tapjoy.drawLargeGraph(ratingsData, 'ratings');
       Tapjoy.drawLargeGraph(virtualGoodsData, 'virtual_goods');
       Tapjoy.drawLargeGraph(adsData, 'ads');

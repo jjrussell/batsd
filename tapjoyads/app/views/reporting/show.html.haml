@@ -117,7 +117,7 @@
           %td Offerwall eCPM
           %td
             - if @stats['offerwall_views'].sum > 0
-              = number_to_currency(@stats['rewards_revenue'].sum.to_f / (@stats['offerwall_views'].sum / 1000.0))
+              = number_to_currency(@stats['rewards_revenue'].sum.to_f / (@stats['offerwall_views'].sum / 1000.0) / 100.0)
             - else
               $0.00
 
@@ -243,12 +243,12 @@
       
       "right": {
         "data": [
-          [ #{@stats['rewards_revenue'].map{|i| i / 100.0}.join(',')} ],
-          [ #{@stats['offerwall_ecpm'].map{|i| i / 100.0}.join(',')} ]
+          [ #{@stats['rewards_revenue'].map { |i| i / 100.0 }.join(',')} ],
+          [ #{@stats['offerwall_ecpm'].map { |i| i / 100.0 }.join(',')} ]
         ],
         "stringData": [
-          [ "#{@stats['rewards_revenue'].map{|i| number_to_currency(i / 100.0)}.join('","')}" ],
-          [ "#{@stats['offerwall_ecpm'].map{|i| number_to_currency(i / 100.0)}.join('","')}" ]
+          [ "#{@stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) }.join('","')}" ],
+          [ "#{@stats['offerwall_ecpm'].map { |i| number_to_currency(i / 100.0) }.join('","')}" ]
         ],
         "names": [ "Revenue", "Offerwall eCPM" ],
         "unitPrefix": "$"
