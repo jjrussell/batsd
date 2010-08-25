@@ -5,24 +5,35 @@
 
 #apps_main
   %h1 Add new application
-  %h3 Add a new application to the Tapjoy system.
-  -form_for @app do |f|
+  %h3 Add a new application to tde Tapjoy system.
+  -form_for @app, :html => {:multipart => true} do |f|
     %table.app{:cellpadding => 0, :cellspacing => 0, :border => 1}
       %tbody
         %tr
-          %th Application name
+          %td Application state
+          %td
+            = f.select :platform, %w(Inactive Live).zip(%w(not_live, live))
+        %tr
+          %td Platform
+          %td
+            = f.select :platform, %w(iPhone Android).zip(%w(iphone android))
+        %tr
+          %td Application name
           %td
             = f.text_field :name, :size => 50
             -if @app.errors.on :name
-              =error_message_on @app, :name
+              = error_message_on @app, :name
         %tr
-          %th iTunes URL:
+          %td Store URL:
           %td
             = f.text_field :store_url, :size => 50
             -if @app.errors.on :store_url
               =error_message_on @app, :store_url
         %tr
-          %th Platform
-          %td=f.select :platform, %w(iPhone Android).zip(%w(iphone android))
+          %td Icon
+          %td= f.file_field :attachment, :accept => 'image/png'
+        %tr
+          %td Description
+          %td
     = f.submit 'Create'
 
