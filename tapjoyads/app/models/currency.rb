@@ -6,11 +6,16 @@ class Currency < ActiveRecord::Base
   belongs_to :app
   belongs_to :partner
   
-  validates_presence_of :app, :partner
+  validates_presence_of :app, :partner, :name
   validates_numericality_of :conversion_rate, :initial_balance, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :offers_money_share, :installs_money_share, :greater_than_or_equal_to => 0
   validates_numericality_of :max_age_rating, :allow_nil => true, :only_integer => true
   validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :in => [ true, false ]
+  validates_each :callback_url do |record, attribute, value|
+    unless value == TAPJOY_MANAGED_CALLBACK_URL || value =~ /^https?:\/\//
+      record.errors.add(attribute, 'is not a valid url')
+    end
+  end
   
   after_save :update_memcached
   before_destroy :clear_memcached

@@ -13,16 +13,19 @@
         = f.text_field :conversion_rate, :init => @currency.conversion_rate
         = error_message_on(@currency, :conversion_rate) if @currency.errors.on :conversion_rate
     %tr
+      %th Managed by Tapjoy
+      %td= check_box_tag(:managed_by_tapjoy, nil, @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL)
+    %tr.managed
       %th Initial balance
       %td
         = f.text_field :initial_balance, :init => @currency.initial_balance
         = error_message_on(@currency, :initial_balance) if @currency.errors.on :initial_balance
-    %tr
+    %tr.unmanaged
       %th Callback url
       %td
         = f.text_field :callback_url, :init => @currency.callback_url.to_s
         = error_message_on(@currency, :callback_url) if @currency.errors.on :callback_url
-    %tr
+    %tr.unmanaged
       %th Secret key
       %td
         = f.text_field :secret_key, :init => @currency.secret_key.to_s
@@ -66,10 +69,23 @@
         }
       });
       
-      if ($('#managed_by_tapjoy').attr('checked')) {
-        
-      }
+      toggleManagedByTapjoy();
+      
+      $('#managed_by_tapjoy').change(function() {
+        toggleManagedByTapjoy();
+      });
     });
+    
+    function toggleManagedByTapjoy() {
+    
+      if ($('#managed_by_tapjoy').attr('checked')) {
+        $('.managed').show();
+        $('.unmanaged').hide();
+      } else {
+        $('.managed').hide();
+        $('.unmanaged').show();
+      }
+    }
   
 - content_for :page_styles do
   :plain
@@ -95,6 +111,14 @@
     
     input[type=text].changed {
       background-color: #ccc;
+    }
+    
+    .managed {
+      #{'display: none;' unless @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL}
+    }
+
+    .unmanaged {
+      #{'display: none;' if @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL}
     }
     
     .fieldWithErrors,

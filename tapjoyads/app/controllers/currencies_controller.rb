@@ -10,6 +10,10 @@ class CurrenciesController < WebsiteController
   end
   
   def update
+    if params[:managed_by_tapjoy]
+      params[:currency][:callback_url] = Currency::TAPJOY_MANAGED_CALLBACK_URL
+    end
+    
     if @currency.update_attributes(params[:currency])
       flash[:notice] = 'Currency was successfully updated.'
       redirect_to app_currency_path(:app_id => params[:app_id], :id => @currency.id)
@@ -22,15 +26,15 @@ class CurrenciesController < WebsiteController
   def new
     @app = App.find(params[:app_id])
     @currency = Currency.new
-    @currency.name = 'Gold'
     render :action => :show
   end
   
   def create
-    app = App.find(params[:app_id])
+    @app = App.find(params[:app_id])
     @currency = Currency.new
-    @currency.app = app
-    @currency.partner = app.partner
+    @currency.app = @app
+    @currency.partner = @app.partner
+    @currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
     update
   end
   
