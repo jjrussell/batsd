@@ -4,7 +4,7 @@ class AppsController < WebsiteController
   filter_access_to :all
   before_filter :grab_partner_apps
   before_filter :has_apps, :only => [:show, :index]
-  before_filter :find_app, :only => [:show, :pay_per_action, :pay_per_install, :update, :confirm]
+  before_filter :find_app, :only => [:show, :update, :confirm]
 
   def index
     @app = current_partner_apps.select{|a|a.id == session[:last_shown_app]}.first
@@ -54,11 +54,6 @@ class AppsController < WebsiteController
   end
 
   def confirm
-  end
-
-  def pay_per_action
-    # TODO: implement PPA first
-    redirect_to :action => 'show', :id => @app.id
   end
 
 private
