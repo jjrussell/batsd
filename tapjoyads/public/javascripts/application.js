@@ -1,3 +1,5 @@
 $(function(){
-  $('#flash_notice').delay(1000).slideUp(300);
+  $('.flash').click(function(){
+    $(this).slideUp();
+  })
 });
