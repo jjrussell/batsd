@@ -40,30 +40,6 @@ class Appstats
       end
     end
     
-    # rewards_cvr
-    if @stats['rewards_opened'] and @stats['rewards']
-      @stats['rewards_cvr'] = []
-      @stats['rewards_opened'].length.times do |i|
-        if @stats['rewards_opened'][i] == 0
-          @stats['rewards_cvr'][i] = 0
-        else
-          @stats['rewards_cvr'][i] = "%.2f" % (@stats['rewards'][i].to_f / @stats['rewards_opened'][i])
-        end
-      end
-    end
-    
-    # offerwall_ecpm
-    if @stats['offerwall_views'] and @stats['rewards_revenue']
-      @stats['offerwall_ecpm'] = []
-      @stats['offerwall_views'].length.times do |i|
-        if @stats['offerwall_views'][i] == 0
-          @stats['offerwall_ecpm'][i] = 0
-        else
-          @stats['offerwall_ecpm'][i] = @stats['rewards_revenue'][i].to_f / (@stats['offerwall_views'][i] / 1000.0)
-        end
-      end
-    end
-    
     # rewards
     if @stats['published_installs'] and @stats['offers']
       @stats['rewards'] = []
@@ -85,6 +61,30 @@ class Appstats
       @stats['rewards_revenue'] = []
       @stats['installs_revenue'].length.times do |i|
         @stats['rewards_revenue'][i] = @stats['installs_revenue'][i] + @stats['offers_revenue'][i]
+      end
+    end
+    
+    # rewards_cvr
+    if @stats['rewards_opened'] and @stats['rewards']
+      @stats['rewards_cvr'] = []
+      @stats['rewards_opened'].length.times do |i|
+        if @stats['rewards_opened'][i] == 0
+          @stats['rewards_cvr'][i] = 0
+        else
+          @stats['rewards_cvr'][i] = "%.2f" % (@stats['rewards'][i].to_f / @stats['rewards_opened'][i])
+        end
+      end
+    end
+    
+    # offerwall_ecpm
+    if @stats['offerwall_views'] and @stats['rewards_revenue']
+      @stats['offerwall_ecpm'] = []
+      @stats['offerwall_views'].length.times do |i|
+        if @stats['offerwall_views'][i] == 0
+          @stats['offerwall_ecpm'][i] = 0
+        else
+          @stats['offerwall_ecpm'][i] = @stats['rewards_revenue'][i].to_f / (@stats['offerwall_views'][i] / 1000.0)
+        end
       end
     end
   end
