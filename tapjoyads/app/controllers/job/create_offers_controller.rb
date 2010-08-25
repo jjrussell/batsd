@@ -40,7 +40,7 @@ private
         
         next if offerpal_id == 'UNKNOWN'
         next if offer['name'] =~ /Home Depot/
-        next unless offer['name'] =~ /Blockbuster|Gamefly|Disney/
+        next unless offer['name'] =~ /Blockbuster|Gamefly|Disney|William\ Hill/
         
         amount = offer['amount'].to_i
         amount = -1 if amount == 0
