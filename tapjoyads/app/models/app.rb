@@ -15,7 +15,6 @@ class App < ActiveRecord::Base
   after_create :create_primary_offer
   after_update :update_offers
   after_save :update_memcached
-  after_save :save_icon
   before_destroy :clear_memcached
   
   def self.find_in_cache(id, do_lookup = true)
@@ -63,29 +62,6 @@ class App < ActiveRecord::Base
         store_id
       else
         "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
-      end
-    end
-  end
-
-  def attachment=(file)
-    # need ID to process
-    @attachment = file
-  end
-
-  def save_icon
-    return if @attachment.nil?
-    bucket = S3.bucket(BucketNames::APP_DATA)
-    path = "icons/#{id}.png"
-    retries = 3
-    begin
-      @attachment.rewind
-      bucket.put(path, @attachment.read, {}, 'public-read')
-    rescue RightAws::AwsError => e
-      if retries > 0 && e.message =~ /^RequestTimeTooSkewed/
-        retries -= 1
-        retry
-      else
-        raise e
       end
     end
   end

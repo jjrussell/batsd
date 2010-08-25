@@ -6,7 +6,7 @@
 #apps_main
   %h1 Add new application
   %h3 Add a new application to tde Tapjoy system.
-  -form_for @app, :html => {:multipart => true} do |f|
+  -form_for @app do |f|
     %table.app{:cellpadding => 0, :cellspacing => 0, :border => 1}
       %tbody
         %tr
@@ -29,9 +29,6 @@
             = f.text_field :store_url, :size => 50
             -if @app.errors.on :store_url
               =error_message_on @app, :store_url
-        %tr
-          %td Icon
-          %td= f.file_field :attachment, :accept => 'image/png'
         %tr
           %td Description
           %td
