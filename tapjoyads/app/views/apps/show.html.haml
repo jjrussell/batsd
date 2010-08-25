@@ -1,6 +1,6 @@
 - @page_title = 'Apps'
 
-= render :partial => 'apps', :object => @apps
+= render :partial => 'apps', :object => current_partner_apps
 = render :partial => 'actions', :locals => {:app => @app}
 
 #apps_main
@@ -27,7 +27,8 @@
                 = error_message_on @app, :store_url
           %tr{:class => cycle('even', 'odd')}
             %td Icon (57x57):
-            %td= image_tag(@app.primary_offer.get_icon_url, :size => '57x57', :alt => 'icon')
+            %td
+              = image_tag(@app.primary_offer.get_icon_url, :size => '57x57', :alt => 'icon')
           %tr{:class => cycle('even', 'odd')}
             %td Price:
             %td

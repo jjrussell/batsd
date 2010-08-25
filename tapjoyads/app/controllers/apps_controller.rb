@@ -63,14 +63,15 @@ class AppsController < WebsiteController
 
 private
   def grab_partner_apps
-    @apps = current_partner_apps
-    session[:last_shown_app] ||= @apps.first.id unless @apps.blank?
+    session[:last_shown_app] ||= current_partner_apps.first.id unless current_partner_apps.blank?
   end
 
   def find_app
-    @app = App.find(params[:id])
-    redirect_to apps_path and return unless current_partner_apps.include? @app
+    @app = current_partner.apps.find(params[:id])
     session[:last_shown_app] = @app.id
+  rescue
+    flash[:error] = "App not found"
+    redirect_to apps_path
   end
 
   def has_apps

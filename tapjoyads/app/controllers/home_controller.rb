@@ -4,15 +4,13 @@ class HomeController < WebsiteController
   filter_access_to :all
 
   def index
-    @apps = current_partner_apps
-
     now = Time.zone.now
     @start_time = now.beginning_of_hour - 23.hours
     @end_time = now
     @granularity = :hourly
     granularity_interval = 1.hour
 
-    @stats = Appstats.new(@apps.first.id, { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity }).stats
+    @stats = Appstats.new(current_partner_apps.first.id, { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity }).stats
 
     @intervals = []
     @x_labels = []

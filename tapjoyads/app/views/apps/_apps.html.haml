@@ -4,7 +4,7 @@
       = link_to image_tag(app.primary_offer.get_icon_url, :size => '57x57', :alt => 'icon'), app_path(app)
       %br/
       .name= truncate(app.name, :length => 15)
-  .app_div.new_app_button
+  .new_app_button
     = button_to "Add App", new_app_path
 .clear
 

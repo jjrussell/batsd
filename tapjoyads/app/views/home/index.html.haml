@@ -15,12 +15,12 @@
             = link_to "Add Application", new_app_path
         - if permitted_to?(:pay_per_install, :apps)
           %li.icon
-            - path = @apps.blank? ? new_app_path : pay_per_install_app_path(@apps.first)
+            - path = current_partner_apps.blank? ? new_app_path : pay_per_install_app_path(current_partner_apps.first)
             = link_to image_tag("add_app.png", :size => '57x57'), path
             = link_to "Pay-Per-Install", path
         - if permitted_to?(:integrate, :apps)
           %li.icon
-            - path = @apps.blank? ? new_app_path : integrate_app_path(@apps.first)
+            - path = current_partner_apps.blank? ? new_app_path : integrate_app_path(current_partner_apps.first)
             = link_to image_tag("add_app.png", :size => '57x57'), path
             = link_to "Integrate", path
         %li.icon
@@ -36,7 +36,7 @@
     .clear
     #apps
       %ul
-        - @apps.each do |app|
+        - current_partner_apps.each do |app|
           %li= app.name
     #data
       %table.shaded
