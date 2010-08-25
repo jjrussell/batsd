@@ -17,44 +17,6 @@
   = select_tag(:granularity, options_for_select({ 'Daily' => :daily, 'Hourly' => :hourly }, @granularity))
   = submit_tag('Change')
 
-#charts
-  #connects.graph
-    %h3
-    .holder
-      %canvas#connects_graph{:width => '550px', :height => '330px'}
-      .bar
-      .tooltip
-
-  #installs_spend.graph
-    %h3
-    .holder
-      %canvas#installs_spend_graph{:width => '550px', :height => '330px'}
-      .bar
-      .tooltip
-
-  #installs_rank.graph
-    %h3
-    .holder
-      %canvas#installs_rank_graph{:width => '550px', :height => '330px'}
-      .bar
-      .tooltip
-
-  #published_offers.graph
-    %h3
-    .holder
-      %canvas#published_offers_graph{:width => '550px', :height => '330px'}
-      .bar
-      .tooltip
-
-  #offerwall_views.graph
-    %h3
-    .holder
-      %canvas#offerwall_views_graph{:width => '550px', :height => '330px'}
-      .bar
-      .tooltip
-
-.clear
-
 #tables
   .data
     %table
@@ -129,6 +91,44 @@
       = submit_tag('Download as CSV')
 
   .clear
+
+#charts
+  #connects.graph
+    %h3
+    .holder
+      %canvas#connects_graph{:width => '550px', :height => '330px'}
+      .bar
+      .tooltip
+
+  #installs_spend.graph
+    %h3
+    .holder
+      %canvas#installs_spend_graph{:width => '550px', :height => '330px'}
+      .bar
+      .tooltip
+
+  #installs_rank.graph
+    %h3
+    .holder
+      %canvas#installs_rank_graph{:width => '550px', :height => '330px'}
+      .bar
+      .tooltip
+
+  #published_offers.graph
+    %h3
+    .holder
+      %canvas#published_offers_graph{:width => '550px', :height => '330px'}
+      .bar
+      .tooltip
+
+  #offerwall_views.graph
+    %h3
+    .holder
+      %canvas#offerwall_views_graph{:width => '550px', :height => '330px'}
+      .bar
+      .tooltip
+
+.clear
 
 - include_tapjoy_graph
 
@@ -282,7 +282,7 @@
       display: none;
     }
     
-    #charts {
+    #tables {
       padding: 10px 0;
     }
     
