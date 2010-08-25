@@ -1,11 +1,11 @@
 - @page_title = 'Virtual currency'
 
-- form_for @currency, :url => app_currency_path do |f|
+- form_for [@app, @currency] do |f|
   %table
     %tr
       %th Name
       %td
-        = f.text_field :name, :init => @currency.name
+        = f.text_field :name, :init => @currency.name.to_s
         = error_message_on(@currency, :name) if @currency.errors.on :name
     %tr
       %th Conversion rate
