@@ -1,44 +1,49 @@
-module AppStore
-  extend self
+class AppStore
 
   APP_URL = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup'
   SEARCH_URL = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
 
   # returns hash of app info
-  def fetch_app_by_id(id)
-    response  = request(APP_URL, :id => id)
+  def self.fetch_app_by_id(id)
+    response = request(APP_URL, :id => id)
     if (response.status == 200) && (response.headers['Content-Type'] =~ /javascript/)
-      app_info(JSON.load(response.body)["results"].first)
+      return app_info(JSON.load(response.body)["results"].first)
+    else
+      return nil
     end
   end
 
   # returns an array of first 24 App instances matching "term"
-  def search(term)
+  def self.search(term)
     response = request(SEARCH_URL, {:media => 'software', :term => term})
     if (response.status == 200) && (response.headers['Content-Type'] =~ /javascript/)
-      JSON.load(response.body)["results"].map do |result|
+      results = JSON.load(response.body)["results"].map do |result|
         app_info(result)
       end
+      return results
+    else
+      return nil
     end
   end
 
 private
 
-  def request(url, params={})
+  def self.request(url, params={})
     unless params.empty?
-      url += "?" + params.map{|k,v| [k, CGI::escape(v)].join('=') }.join('&')
+      url += "?" + params.map { |k, v| [ k, CGI::escape(v) ].join('=') }.join('&')
     end
-    Downloader.get(url, :headers => {"X-Apple-Store-Front" => '13441-1,2', "User-Agent" => 'iTunes/9.2.1'}, :return_response => true)
+    Downloader.get(url, :return_response => true, :timeout => 30)
   end
 
-  def app_info(hash)
+  def self.app_info(hash)
     app_info = {
-      :item_id      => hash["trackId"],
-      :title        => hash["trackName"],
-      :url          => hash["trackViewUrl"],
-      :icon_url     => hash["artworkUrl60"],
-      :price        => hash["price"],
-      :release_date => hash["releaseDate"],
+      :item_id        => hash["trackId"],
+      :title          => hash["trackName"],
+      :url            => hash["trackViewUrl"],
+      :icon_url       => hash["artworkUrl60"],
+      :large_icon_url => hash["artworkUrl100"],
+      :price          => hash["price"],
+      :release_date   => hash["releaseDate"],
     }
 
     case hash["contentAdvisoryRating"]
@@ -52,7 +57,7 @@ private
         app_info[:age_rating] = 1
     end
 
-    return app_info
+    app_info
   end
 
 end
