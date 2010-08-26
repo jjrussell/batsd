@@ -38,7 +38,7 @@ private
     if @currency.nil?
       @currency = Currency.new(:app_id => params[:app_id])
       @currency.partner = @currency.app.partner
-      @currency.name = ''
+      @currency.name = 'DEFAULT_CURRENCY'
       @currency.save!
     end
     @point_purchases = PointPurchases.new(:key => "#{publisher_user_id}.#{params[:app_id]}")
