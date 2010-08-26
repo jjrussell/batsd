@@ -8,11 +8,10 @@ class AppStore
     response = request(APP_URL, :id => id)
     if (response.status == 200) && (response.headers['Content-Type'] =~ /javascript/)
       json = JSON.load(response.body)
-      if json['resultCount'] > 0
-        return app_info(json['results'].first)
-      end
+      return json['resultCount'] > 0 ? app_info(json['results'].first) : nil
+    else
+      raise "Invalid response from app store."
     end
-    return nil
   end
 
   # returns an array of first 24 App instances matching "term"
@@ -21,8 +20,9 @@ class AppStore
     if (response.status == 200) && (response.headers['Content-Type'] =~ /javascript/)
       json = JSON.load(response.body)
       return json['results'].map { |result| app_info(result) }
+    else
+      raise "Invalid response from app store."
     end
-    return nil
   end
 
 private
