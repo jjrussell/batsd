@@ -7,23 +7,22 @@ class AppStore
   def self.fetch_app_by_id(id)
     response = request(APP_URL, :id => id)
     if (response.status == 200) && (response.headers['Content-Type'] =~ /javascript/)
-      return app_info(JSON.load(response.body)["results"].first)
-    else
-      return nil
+      json = JSON.load(response.body)
+      if json['resultCount'] > 0
+        return app_info(json['results'].first)
+      end
     end
+    return nil
   end
 
   # returns an array of first 24 App instances matching "term"
   def self.search(term)
     response = request(SEARCH_URL, {:media => 'software', :term => term})
     if (response.status == 200) && (response.headers['Content-Type'] =~ /javascript/)
-      results = JSON.load(response.body)["results"].map do |result|
-        app_info(result)
-      end
-      return results
-    else
-      return nil
+      json = JSON.load(response.body)
+      return json['results'].map { |result| app_info(result) }
     end
+    return nil
   end
 
 private
