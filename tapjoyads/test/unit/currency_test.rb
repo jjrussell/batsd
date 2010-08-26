@@ -8,6 +8,7 @@ class CurrencyTest < ActiveSupport::TestCase
   
   should validate_presence_of(:app)
   should validate_presence_of(:partner)
+  should validate_presence_of(:name)
   should validate_numericality_of(:conversion_rate)
   should validate_numericality_of(:initial_balance)
   should validate_numericality_of(:offers_money_share)

@@ -65,6 +65,8 @@ end
 Factory.define :currency do |currency|
   currency.association :app
   currency.association :partner
+  currency.name 'TAPJOY_BUCKS'
+  currency.callback_url Currency::TAPJOY_MANAGED_CALLBACK_URL
 end
 
 Factory.define :monthly_accounting do |monthly_accounting|
