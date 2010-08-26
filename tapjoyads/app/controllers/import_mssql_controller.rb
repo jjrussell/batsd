@@ -188,6 +188,7 @@ class ImportMssqlController < ApplicationController
       mysql_app.color = params[:primary_color].to_i
       mysql_app.rotation_direction = params[:rotation_direction]
       mysql_app.rotation_time = params[:rotation_time]
+      mysql_app.hidden = params[:status] == '-1'
       mysql_app.created_at = Time.parse(params[:created_at] + ' CST').utc
       mysql_app.save!
       
@@ -203,6 +204,7 @@ class ImportMssqlController < ApplicationController
       email_offer.partner_id = params[:partner_id]
       email_offer.name = params[:name]
       email_offer.description = params[:description] unless params[:description].blank?
+      email_offer.hidden = params[:status] == '-1'
       email_offer.created_at = Time.parse(params[:created_at] + ' CST').utc
       email_offer.save!
       

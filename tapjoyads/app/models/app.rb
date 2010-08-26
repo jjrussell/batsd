@@ -10,12 +10,13 @@ class App < ActiveRecord::Base
   belongs_to :partner
   
   validates_presence_of :partner, :name
-  validates_inclusion_of :use_raw_url, :in => [ true, false ]
   
   after_create :create_primary_offer
   after_update :update_offers
   after_save :update_memcached
   before_destroy :clear_memcached
+  
+  named_scope :visible, :conditions => { :hidden => false }
   
   def self.find_in_cache(id, do_lookup = true)
     if do_lookup
@@ -157,6 +158,7 @@ private
       offer.url = store_url if store_url_changed? || use_raw_url_changed? || store_id_changed?
       offer.third_party_data = store_id if store_id_changed?
       offer.age_rating = age_rating if age_rating_changed?
+      offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?
     end
   end

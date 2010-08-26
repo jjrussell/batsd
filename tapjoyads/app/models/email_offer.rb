@@ -11,6 +11,8 @@ class EmailOffer < ActiveRecord::Base
   after_create :create_primary_offer
   after_update :update_offers
   
+  named_scope :visible, :conditions => { :hidden => false }
+  
 private
   
   def create_primary_offer
@@ -35,6 +37,7 @@ private
       offer.name = name if name_changed?
       offer.description = description if description_changed?
       offer.third_party_data = third_party_id if third_party_id_changed?
+      offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?
     end
   end

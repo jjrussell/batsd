@@ -15,6 +15,8 @@ class RatingOffer < ActiveRecord::Base
   after_save :update_memcached
   before_destroy :clear_memcached
   
+  named_scope :visible, :conditions => { :hidden => false }
+  
   def self.find_in_cache_by_app_id(app_id)
     Mc.get_and_put("mysql.rating_offer.#{app_id}") { RatingOffer.find_by_app_id(app_id) }
   end
@@ -59,6 +61,7 @@ private
       offer.partner_id = partner_id if partner_id_changed?
       offer.name = name if name_changed?
       offer.description = description if description_changed?
+      offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?
     end
   end

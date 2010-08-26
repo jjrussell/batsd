@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100819210814) do
+ActiveRecord::Schema.define(:version => 20100826213542) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -32,6 +32,7 @@ ActiveRecord::Schema.define(:version => 20100819210814) do
     t.integer  "age_rating"
     t.integer  "rotation_direction",                  :default => 0,     :null => false
     t.integer  "rotation_time",                       :default => 0,     :null => false
+    t.boolean  "hidden",                              :default => false, :null => false
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -83,13 +84,14 @@ ActiveRecord::Schema.define(:version => 20100819210814) do
   add_index "currencies", ["id"], :name => "index_currencies_on_id", :unique => true
 
   create_table "email_offers", :id => false, :force => true do |t|
-    t.string   "id",             :limit => 36, :null => false
-    t.string   "partner_id",     :limit => 36, :null => false
-    t.string   "name",                         :null => false
+    t.string   "id",             :limit => 36,                    :null => false
+    t.string   "partner_id",     :limit => 36,                    :null => false
+    t.string   "name",                                            :null => false
     t.text     "description"
     t.string   "third_party_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "hidden",                       :default => false, :null => false
   end
 
   add_index "email_offers", ["id"], :name => "index_email_offers_on_id", :unique => true
@@ -123,13 +125,14 @@ ActiveRecord::Schema.define(:version => 20100819210814) do
   add_index "monthly_accountings", ["partner_id"], :name => "index_monthly_accountings_on_partner_id"
 
   create_table "offerpal_offers", :id => false, :force => true do |t|
-    t.string   "id",          :limit => 36, :null => false
-    t.string   "partner_id",  :limit => 36, :null => false
-    t.string   "offerpal_id",               :null => false
-    t.string   "name",                      :null => false
+    t.string   "id",          :limit => 36,                    :null => false
+    t.string   "partner_id",  :limit => 36,                    :null => false
+    t.string   "offerpal_id",                                  :null => false
+    t.string   "name",                                         :null => false
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "hidden",                    :default => false, :null => false
   end
 
   add_index "offerpal_offers", ["id"], :name => "index_offerpal_offers_on_id", :unique => true
@@ -178,6 +181,7 @@ ActiveRecord::Schema.define(:version => 20100819210814) do
     t.datetime "last_balance_alert_time"
     t.text     "publisher_app_whitelist",                                                                          :null => false
     t.string   "name_suffix",                                                                   :default => ""
+    t.boolean  "hidden",                                                                        :default => false, :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -247,13 +251,14 @@ ActiveRecord::Schema.define(:version => 20100819210814) do
   add_index "payouts", ["partner_id"], :name => "index_payouts_on_partner_id"
 
   create_table "rating_offers", :id => false, :force => true do |t|
-    t.string   "id",          :limit => 36, :null => false
-    t.string   "partner_id",  :limit => 36, :null => false
-    t.string   "app_id",      :limit => 36, :null => false
-    t.string   "name",                      :null => false
+    t.string   "id",          :limit => 36,                    :null => false
+    t.string   "partner_id",  :limit => 36,                    :null => false
+    t.string   "app_id",      :limit => 36,                    :null => false
+    t.string   "name",                                         :null => false
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "hidden",                    :default => false, :null => false
   end
 
   add_index "rating_offers", ["app_id"], :name => "index_rating_offers_on_app_id"

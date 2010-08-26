@@ -12,6 +12,8 @@ class OfferpalOffer < ActiveRecord::Base
   after_create :create_primary_offer
   after_update :update_offers
   
+  named_scope :visible, :conditions => { :hidden => false }
+  
   attr_writer :url, :instructions, :time_delay, :credit_card_required, :payment
   
 private
@@ -44,6 +46,7 @@ private
       offer.time_delay = @time_delay unless @time_delay.nil?
       offer.credit_card_required = @credit_card_required unless @credit_card_required.nil?
       offer.payment = @payment unless @payment.nil?
+      offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?
     end
   end
