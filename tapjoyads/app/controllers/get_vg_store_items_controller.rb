@@ -39,6 +39,7 @@ private
       @currency = Currency.new(:app_id => params[:app_id])
       @currency.partner = @currency.app.partner
       @currency.name = 'DEFAULT_CURRENCY'
+      @currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
       @currency.save!
     end
     @point_purchases = PointPurchases.new(:key => "#{publisher_user_id}.#{params[:app_id]}")
