@@ -16,11 +16,11 @@ class WebsiteController < ApplicationController
   end
 
   def current_partner_apps
-    @current_partner_apps ||= current_partner.apps.sort_by(&:name)
+    @current_partner_apps ||= current_partner.apps.visible.sort_by(&:name)
   end
   
   def current_partner_offers
-    @current_partner_offers ||= current_partner.offers.sort_by(&:name)
+    @current_partner_offers ||= current_partner.offers.visible.sort_by(&:name)
   end
 
 protected
