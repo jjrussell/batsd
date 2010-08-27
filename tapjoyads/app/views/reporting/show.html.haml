@@ -26,20 +26,20 @@
       %tbody
         %tr
           %td Clicks
-          %td= number_with_delimiter(@stats['paid_clicks'].sum)
+          %td= number_with_delimiter(@appstats.stats['paid_clicks'].sum)
         %tr
           %td Installs
-          %td= number_with_delimiter(@stats['paid_installs'].sum)
+          %td= number_with_delimiter(@appstats.stats['paid_installs'].sum)
         %tr
           %td Conversion Rate
           %td
-            - if @stats['paid_clicks'].sum > 0
-              = "%.1f%" % (@stats['paid_installs'].sum.to_f / @stats['paid_clicks'].sum * 100.0)
+            - if @appstats.stats['paid_clicks'].sum > 0
+              = "%.1f%" % (@appstats.stats['paid_installs'].sum.to_f / @appstats.stats['paid_clicks'].sum * 100.0)
             - else
               \-
         %tr
           %td Spend
-          %td= number_to_currency(@stats['installs_spend'].sum / -100.0)
+          %td= number_to_currency(@appstats.stats['installs_spend'].sum / -100.0)
         %tr
           %td Daily Budget
           %td= number_with_delimiter(@offer.daily_budget)
@@ -58,28 +58,28 @@
       %tbody
         %tr
           %td Offerwall Views
-          %td= number_with_delimiter(@stats['offerwall_views'].sum)
+          %td= number_with_delimiter(@appstats.stats['offerwall_views'].sum)
         %tr
           %td Offer Clicks
-          %td= number_with_delimiter(@stats['rewards_opened'].sum)
+          %td= number_with_delimiter(@appstats.stats['rewards_opened'].sum)
         %tr
           %td Offers Completed
-          %td= number_with_delimiter(@stats['rewards'].sum)
+          %td= number_with_delimiter(@appstats.stats['rewards'].sum)
         %tr
           %td Conversion Rate
           %td
-            - if @stats['rewards_opened'].sum > 0
-              = "%.1f%" % (@stats['rewards'].sum.to_f / @stats['rewards_opened'].sum * 100.0)
+            - if @appstats.stats['rewards_opened'].sum > 0
+              = "%.1f%" % (@appstats.stats['rewards'].sum.to_f / @appstats.stats['rewards_opened'].sum * 100.0)
             - else
               \-
         %tr
           %td Revenue
-          %td= number_to_currency(@stats['rewards_revenue'].sum / 100.0)
+          %td= number_to_currency(@appstats.stats['rewards_revenue'].sum / 100.0)
         %tr
           %td Offerwall eCPM
           %td
-            - if @stats['offerwall_views'].sum > 0
-              = number_to_currency(@stats['rewards_revenue'].sum.to_f / (@stats['offerwall_views'].sum / 1000.0) / 100.0)
+            - if @appstats.stats['offerwall_views'].sum > 0
+              = number_to_currency(@appstats.stats['rewards_revenue'].sum.to_f / (@appstats.stats['offerwall_views'].sum / 1000.0) / 100.0)
             - else
               $0.00
 
@@ -96,35 +96,35 @@
   #connects.graph
     %h3
     .holder
-      %canvas#connects_graph{:width => '550px', :height => '330px'}
+      %canvas#connects_graph{ :width => '550px', :height => '330px' }
       .bar
       .tooltip
 
   #installs_spend.graph
     %h3
     .holder
-      %canvas#installs_spend_graph{:width => '550px', :height => '330px'}
+      %canvas#installs_spend_graph{ :width => '550px', :height => '330px' }
       .bar
       .tooltip
 
   #installs_rank.graph
     %h3
     .holder
-      %canvas#installs_rank_graph{:width => '550px', :height => '330px'}
+      %canvas#installs_rank_graph{ :width => '550px', :height => '330px' }
       .bar
       .tooltip
 
   #published_offers.graph
     %h3
     .holder
-      %canvas#published_offers_graph{:width => '550px', :height => '330px'}
+      %canvas#published_offers_graph{ :width => '550px', :height => '330px' }
       .bar
       .tooltip
 
   #offerwall_views.graph
     %h3
     .holder
-      %canvas#offerwall_views_graph{:width => '550px', :height => '330px'}
+      %canvas#offerwall_views_graph{ :width => '550px', :height => '330px' }
       .bar
       .tooltip
 
@@ -136,15 +136,15 @@
   :plain
     var connectData = {
       "name": "Connects",
-      "intervals": [ "#{@intervals.join('","')}" ],
-      "xLabels": [ "#{@x_labels.join('","')}" ],
+      "intervals": [ "#{@appstats.intervals.map { |time| time.to_s(:pub_ampm) }.join('","')}" ],
+      "xLabels": [ "#{@appstats.x_labels.join('","')}" ],
       
       "main": {
         "data": [
-           [ #{@stats['logins'].join(',')} ],
-           [ #{@stats['new_users'].join(',')} ],
-           [ #{@stats['daily_active_users'].join(',')} ],
-           [ #{@stats['monthly_active_users'].join(',')} ],
+           [ #{@appstats.stats['logins'].join(',')} ],
+           [ #{@appstats.stats['new_users'].join(',')} ],
+           [ #{@appstats.stats['daily_active_users'].join(',')} ],
+           [ #{@appstats.stats['monthly_active_users'].join(',')} ],
         ],
         "names": [ "Connects", "New users", "DAUs", "MAUs" ]
       }
@@ -152,23 +152,23 @@
     
     var installData = {
       "name": "Rewarded installs + spend",
-      "intervals": [ "#{@intervals.join('","')}" ],
-      "xLabels": [ "#{@x_labels.join('","')}" ],
+      "intervals": [ "#{@appstats.intervals.map { |time| time.to_s(:pub_ampm) }.join('","')}" ],
+      "xLabels": [ "#{@appstats.x_labels.join('","')}" ],
       
       "main": {
         "data": [
-           [ #{@stats['paid_installs'].join(',')} ],
-           [ #{@stats['paid_clicks'].join(',')} ]
+           [ #{@appstats.stats['paid_installs'].join(',')} ],
+           [ #{@appstats.stats['paid_clicks'].join(',')} ]
         ],
         "names": [ "Paid installs", "Paid clicks" ]
       },
       
       "right": {
         "data": [
-          [ #{@stats['installs_spend'].map { |i| i / -100.0 }.join(',')} ]
+          [ #{@appstats.stats['installs_spend'].map { |i| i / -100.0 }.join(',')} ]
         ],
         "stringData": [
-          [ "#{@stats['installs_spend'].map { |i| number_to_currency(i / -100.0) }.join('","')}" ]
+          [ "#{@appstats.stats['installs_spend'].map { |i| number_to_currency(i / -100.0) }.join('","')}" ]
         ],
         "names": [ "Spend" ],
         "unitPrefix": "$"
@@ -176,7 +176,7 @@
       
       "extra": {
         "data": [
-          [ "#{@stats['cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) }.join('","')}" ]
+          [ "#{@appstats.stats['cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) }.join('","')}" ]
         ],
         "names": [ "Conversion rate" ]
       }
@@ -184,20 +184,20 @@
     
     var rankData = {
       "name": "Rewarded installs + rank",
-      "intervals": [ "#{@intervals.join('","')}" ],
-      "xLabels": [ "#{@x_labels.join('","')}" ],
+      "intervals": [ "#{@appstats.intervals.map { |time| time.to_s(:pub_ampm) }.join('","')}" ],
+      "xLabels": [ "#{@appstats.x_labels.join('","')}" ],
       
       "main": {
         "data": [
-           [ #{@stats['paid_installs'].join(',')} ],
-           [ #{@stats['paid_clicks'].join(',')} ]
+           [ #{@appstats.stats['paid_installs'].join(',')} ],
+           [ #{@appstats.stats['paid_clicks'].join(',')} ]
         ],
         "names": [ "Paid installs", "Paid clicks" ]
       },
       
       "right": {
         "data": [
-          [ #{ @stats['overall_store_rank'].map{|r| r == '-' || r == '0'  ? 'null' : r}.join(',') } ]
+          [ #{@appstats.stats['overall_store_rank'].map { |r| r == '-' || r == '0'  ? 'null' : r }.join(',')} ]
         ],
         "names": [ "Rank" ],
         "yMax": 100
@@ -206,23 +206,23 @@
     
     var publishedOffersData = {
       "name": "Published offers",
-      "intervals": [ "#{@intervals.join('","')}" ],
-      "xLabels": [ "#{@x_labels.join('","')}" ],
+      "intervals": [ "#{@appstats.intervals.map { |time| time.to_s(:pub_ampm) }.join('","')}" ],
+      "xLabels": [ "#{@appstats.x_labels.join('","')}" ],
       
       "main": {
         "data": [
-           [ #{@stats['rewards'].join(',')} ],
-           [ #{@stats['rewards_opened'].join(',')} ]
+           [ #{@appstats.stats['rewards'].join(',')} ],
+           [ #{@appstats.stats['rewards_opened'].join(',')} ]
         ],
         "names": [ "Offers completed", "Offer clicks" ]
       },
       
       "right": {
         "data": [
-          [ #{@stats['rewards_revenue'].map { |i| i / 100.0 }.join(',')} ]
+          [ #{@appstats.stats['rewards_revenue'].map { |i| i / 100.0 }.join(',')} ]
         ],
         "stringData": [
-          [ "#{@stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) }.join('","')}" ]
+          [ "#{@appstats.stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) }.join('","')}" ]
         ],
         "names": [ "Revenue" ],
         "unitPrefix": "$"
@@ -231,24 +231,24 @@
     
     var offerwallData = {
       "name": "Offerwall views",
-      "intervals": [ "#{@intervals.join('","')}" ],
-      "xLabels": [ "#{@x_labels.join('","')}" ],
+      "intervals": [ "#{@appstats.intervals.map { |time| time.to_s(:pub_ampm) }.join('","')}" ],
+      "xLabels": [ "#{@appstats.x_labels.join('","')}" ],
       
       "main": {
         "data": [
-           [ #{@stats['offerwall_views'].join(',')} ]
+           [ #{@appstats.stats['offerwall_views'].join(',')} ]
         ],
         "names": [ "Offerwall views" ]
       },
       
       "right": {
         "data": [
-          [ #{@stats['rewards_revenue'].map { |i| i / 100.0 }.join(',')} ],
-          [ #{@stats['offerwall_ecpm'].map { |i| i / 100.0 }.join(',')} ]
+          [ #{@appstats.stats['rewards_revenue'].map { |i| i / 100.0 }.join(',')} ],
+          [ #{@appstats.stats['offerwall_ecpm'].map { |i| i / 100.0 }.join(',')} ]
         ],
         "stringData": [
-          [ "#{@stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) }.join('","')}" ],
-          [ "#{@stats['offerwall_ecpm'].map { |i| number_to_currency(i / 100.0) }.join('","')}" ]
+          [ "#{@appstats.stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) }.join('","')}" ],
+          [ "#{@appstats.stats['offerwall_ecpm'].map { |i| number_to_currency(i / 100.0) }.join('","')}" ]
         ],
         "names": [ "Revenue", "Offerwall eCPM" ],
         "unitPrefix": "$"

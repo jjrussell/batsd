@@ -10,48 +10,24 @@ class ReportingController < WebsiteController
   end
   
   def show
-    @intervals = []
-    @x_labels = []
-    
-    time = @start_time
-    while time < @end_time
-      @intervals << time.to_s(:pub_ampm)
-      
-      if @granularity == :daily
-        @x_labels << time.strftime('%m-%d')
-      else
-        @x_labels << time.to_s(:time)
-      end
-      
-      time += @granularity_interval
-    end
-    
-    if @x_labels.size > 30
-      skip_every = @x_labels.size / 30
-      @x_labels.size.times do |i|
-        if i % (skip_every + 1) != 0
-          @x_labels[i] = nil
-        end
-      end
-    end
-    
-    @intervals << time.to_s(:pub_ampm)
   end
   
   def export
-    data = "paid_clicks,paid_installs,paid_cvr,spend,offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,revenue,offerwall_ecpm\n"
+    data = "start_time,end_time,paid_clicks,paid_installs,paid_cvr,spend,offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,revenue,offerwall_ecpm\n"
     
-    @stats['paid_clicks'].length.times do |i|
-      line =  "#{@stats['paid_clicks'][i]},"
-      line += "#{@stats['paid_installs'][i]},"
-      line += "#{@stats['cvr'][i]},"
-      line += "#{number_to_currency(@stats['installs_spend'][i] / -100.0, :delimiter => '')},"
-      line += "#{@stats['offerwall_views'][i]},"
-      line += "#{@stats['rewards_opened'][i]},"
-      line += "#{@stats['rewards'][i]},"
-      line += "#{@stats['rewards_cvr'][i]},"
-      line += "#{number_to_currency(@stats['rewards_revenue'][i] / 100.0, :delimiter => '')},"
-      line += "#{number_to_currency(@stats['offerwall_ecpm'][i] / 100.0, :delimiter => '')}"
+    @appstats.stats['paid_clicks'].length.times do |i|
+      line =  "#{@appstats.intervals[i].to_s(:db)},"
+      line += "#{@appstats.intervals[i + 1].to_s(:db)},"
+      line += "#{@appstats.stats['paid_clicks'][i]},"
+      line += "#{@appstats.stats['paid_installs'][i]},"
+      line += "#{@appstats.stats['cvr'][i]},"
+      line += "#{number_to_currency(@appstats.stats['installs_spend'][i] / -100.0, :delimiter => '')},"
+      line += "#{@appstats.stats['offerwall_views'][i]},"
+      line += "#{@appstats.stats['rewards_opened'][i]},"
+      line += "#{@appstats.stats['rewards'][i]},"
+      line += "#{@appstats.stats['rewards_cvr'][i]},"
+      line += "#{number_to_currency(@appstats.stats['rewards_revenue'][i] / 100.0, :delimiter => '')},"
+      line += "#{number_to_currency(@appstats.stats['offerwall_ecpm'][i] / 100.0, :delimiter => '')}"
       data += "#{line}\n"
     end
     
@@ -85,14 +61,12 @@ private
     # setup granularity
     if params[:granularity] == 'daily' || @end_time - @start_time >= 7.days
       @granularity = :daily
-      @granularity_interval = 1.day
     else
       @granularity = :hourly
-      @granularity_interval = 1.hour
     end
     
     # lookup the stats
-    @stats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity }).stats
+    @appstats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true })
   end
   
 end

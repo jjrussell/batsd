@@ -1,6 +1,6 @@
 class Appstats
   
-  attr_accessor :app_key, :stats, :granularity, :start_time, :end_time
+  attr_accessor :app_key, :stats, :granularity, :start_time, :end_time, :x_labels, :intervals
   
   def initialize(app_key, options = {})
     @app_key = app_key
@@ -11,6 +11,7 @@ class Appstats
     @end_time = options.delete(:end_time) { @now }
     @stat_types = options.delete(:stat_types) { Stats::STAT_TYPES }
     @type = options.delete(:type) { :granular }
+    @include_labels = options.delete(:include_labels) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     @stat_rows = {}
@@ -87,6 +88,8 @@ class Appstats
         end
       end
     end
+    
+    get_labels_and_intervals(@start_time, @end_time) if @include_labels
   end
   
 private
@@ -147,4 +150,33 @@ private
     end
     @stat_rows[key]
   end
+  
+  def get_labels_and_intervals(start_time, end_time)
+    @intervals = []
+    @x_labels = []
+    
+    while start_time < end_time
+      @intervals << start_time
+      
+      if @granularity == :daily
+        @x_labels << start_time.strftime('%m-%d')
+      else
+        @x_labels << start_time.to_s(:time)
+      end
+      
+      start_time += (@granularity == :daily ? 1.day : 1.hour)
+    end
+    
+    if @x_labels.size > 30
+      skip_every = @x_labels.size / 30
+      @x_labels.size.times do |i|
+        if i % (skip_every + 1) != 0
+          @x_labels[i] = nil
+        end
+      end
+    end
+    
+    @intervals << start_time
+  end
+  
 end
