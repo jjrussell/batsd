@@ -32,9 +32,9 @@ class AppsController < WebsiteController
   end
 
   def create
+    params[:app]["price"] = (params[:app]["price"].to_f * 100).to_i.to_s
     @app = App.new(params[:app])
     @app.partner = current_partner
-    params[:app]["price"] = (params[:app]["price"].to_f * 100).to_i.to_s
     respond_to do |format|
       if @app.save
         format.html { redirect_to(confirm_app_path(@app)) }
