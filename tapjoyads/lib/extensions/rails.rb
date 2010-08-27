@@ -79,4 +79,11 @@ module ActiveRecord
       end
     end
   end
+  
+  class Base
+    def set_attributes(attributes, attr_names)
+      attr_names = Set.new(attr_names.map{|v| v.to_s})
+      self.update_attributes(attributes.reject{|k, v| !attr_names.include?(k.to_s) } )
+    end
+  end
 end
