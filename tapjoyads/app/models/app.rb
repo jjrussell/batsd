@@ -78,6 +78,12 @@ class App < ActiveRecord::Base
     end
   end
 
+  # TODO: maybe we don't want this public-facing?
+  def refresh_icon
+    icon_url = AppStore.fetch_app_by_id(store_id)[:icon_url]
+    save!
+  end
+
   def icon_url=(url)
     return if url.blank?
     set_primary_key if id.nil?

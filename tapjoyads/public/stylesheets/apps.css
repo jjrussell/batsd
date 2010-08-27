@@ -1,0 +1,47 @@
+#search_results {
+  display: none;
+  background-color: #eee;
+  border: 1px solid #888;
+  position: absolute;
+  padding: 3px;
+}
+#search_results img.load-circle{
+  display: none;
+}
+#search_results.searching img.load-circle{
+  display: inherit;
+}
+tr.app_store_url, tr.app_icon, input.search{
+  display: none;
+}
+#search_results .search-result:hover {
+  background-color: #ccc;
+}
+
+td.integrated {
+  color: #00f;
+}
+td.not_integrated {
+  color: #f00;
+}
+#apps_tools {
+  float: left;
+  width: 200px;
+}
+#apps_main {
+  margin-left: 210px;
+}
+table.app-data {
+  cellpadding: 0;
+  cellspacing: 0;
+  border-spacing: 0px;
+  border-color: #ddd;
+}
+table.app-data td {
+  padding: 5px;
+}
+table.app-data td textarea {
+  width: 100%;
+  font-size: 16px;
+  font-face: arial, helvetica;
+}

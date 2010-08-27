@@ -34,7 +34,7 @@ class AppsController < WebsiteController
   def create
     @app = App.new(params[:app])
     @app.partner = current_partner
-    params[:app][:price] = params[:app][:price].to_f * 100
+    params[:app]["price"] = (params[:app]["price"].to_f * 100).to_i.to_s
     respond_to do |format|
       if @app.save
         format.html { redirect_to(confirm_app_path(@app)) }
@@ -49,7 +49,7 @@ class AppsController < WebsiteController
 
   def update
     respond_to do |format|
-      params[:app][:price] = params[:app][:price].to_f * 100
+      params[:app]["price"] = (params[:app]["price"].to_f * 100).to_i.to_s
       if @app.update_attributes(params[:app])
         flash[:notice] = 'App was successfully updated.'
         format.html { redirect_to(@app) }
