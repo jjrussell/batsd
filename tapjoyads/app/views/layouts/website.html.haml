@@ -5,7 +5,7 @@
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
     %title
       = @page_title.blank? ? 'Tapjoy' : "#{@page_title} - Tapjoy"
-    = stylesheet_link_tag 'website', 'jquery-ui-1.8.2.custom', 'themes/blue/style'
+    = stylesheet_link_tag 'website', 'jquery-ui-1.8.4.custom', 'themes/blue/style'
     %style{ :type => 'text/css' }
       = yield :page_styles
     = yield :page_head
@@ -30,7 +30,7 @@
     #content
       = yield
       
-    = javascript_include_tag 'jquery-1.4.2.min', 'jquery-ui-1.8.2.custom.min', 'jquery.tablesorter'
+    = javascript_include_tag 'jquery-1.4.2.min', 'jquery-ui-1.8.4.custom.min', 'jquery.tablesorter'
     = yield :included_javascripts
       
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
