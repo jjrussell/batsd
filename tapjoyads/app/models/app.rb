@@ -10,7 +10,8 @@ class App < ActiveRecord::Base
   belongs_to :partner
   
   validates_presence_of :partner, :name
-  
+
+  after_create :fill_description
   after_create :create_primary_offer
   after_update :update_offers
   after_save :update_memcached
@@ -64,6 +65,16 @@ class App < ActiveRecord::Base
       else
         "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
       end
+    end
+  end
+
+  def fill_description
+    return unless description.blank? && store_id.present?
+    begin
+      self.description = AppStore.fetch_app_by_id(store_id)[:description]
+      save!
+    rescue
+      Notifier.alert_new_relic(AppDataFetchError, "description for app id #{id}")
     end
   end
 

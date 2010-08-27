@@ -43,6 +43,7 @@ private
       :icon_url       => hash["artworkUrl60"],
       :large_icon_url => hash["artworkUrl100"],
       :price          => hash["price"],
+      :description    => hash["description"],
       :release_date   => hash["releaseDate"],
     }
 
