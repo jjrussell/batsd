@@ -5,14 +5,14 @@
 
 #apps_main
   %h1 Add new application
-  %h3 Add a new application to tde Tapjoy system.
+  %h3 Add a new application to the Tapjoy system.
   -form_for @app do |f|
     %table.app{:cellpadding => 0, :cellspacing => 0, :border => 1}
       %tbody
         %tr
           %td Application state
           %td
-            = f.select :platform, %w(Inactive Live).zip(%w(not_live, live))
+            = select_tag "state", options_for_select(['Not live', 'Live'].zip(%w(not_live, live))), :id => "app_state"
         %tr
           %td Platform
           %td
@@ -21,16 +21,43 @@
           %td Application name
           %td
             = f.text_field :name, :size => 50
+            = button_to_function "Search", "search()", :class => 'search'
             -if @app.errors.on :name
               = error_message_on @app, :name
-        %tr
+            #search_results
+              = image_tag 'load-circle.gif', :class => 'load-circle'
+        %tr.app_store_url
           %td Store URL:
           %td
             = f.text_field :store_url, :size => 50
             -if @app.errors.on :store_url
               =error_message_on @app, :store_url
-        %tr
-          %td Description
-          %td
+        %tr.app_icon
+          %td Icon:
+          %td#app_icon &nbsp;
+    = f.hidden_field :store_id
+    = hidden_field_tag "app[icon_url]", nil, :id => "app_icon_url"
     = f.submit 'Create'
-
+- content_for :page_styles do
+  :plain
+    #search_results {
+      display: none;
+      background-color: #eee;
+      border: 1px solid #888;
+      position: absolute;
+      padding: 3px;
+    }
+    #search_results img.load-circle{
+      display: none;
+    }
+    #search_results.searching img.load-circle{
+      display: inherit;
+    }
+    tr.app_store_url, tr.app_icon, input.search{
+      display: none;
+    }
+    #search_results .search-result:hover {
+      background-color: #ccc;
+    }
+- content_for :included_javascripts do
+  = javascript_include_tag 'tapjoy/apps'

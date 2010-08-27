@@ -7,6 +7,7 @@ class GetStoreInfoError < RuntimeError; end
 class InvalidPlaydomUserId < RuntimeError; end
 class TooManyUdidsForPublisherUserId < RuntimeError; end
 class BadWebRequestDomain < RuntimeError; end
+class AppDataFetchError < RuntimeError; end
 
 # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
 class EmailWorthyError < RuntimeError

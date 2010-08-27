@@ -67,6 +67,18 @@ class App < ActiveRecord::Base
     end
   end
 
+  def icon_url=(url)
+    return if url.blank?
+    set_primary_key if id.nil?
+    begin
+      icon = Downloader.get(url, :return_response => true, :timeout => 30).body
+      bucket = S3.bucket(BucketNames::APP_DATA)
+      bucket.put("icons/#{id}.png", icon, {}, "public-read")
+    rescue
+      Notifier.alert_new_relic(AppDataFetchError, "icon url #{url} for app id #{id}")
+    end
+  end
+
   def get_offer_list(udid, options = {})
     currency = options.delete(:currency)
     device_type = options.delete(:device_type)

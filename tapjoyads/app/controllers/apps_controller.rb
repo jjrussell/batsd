@@ -15,6 +15,13 @@ class AppsController < WebsiteController
     @app = App.new
   end
 
+  def search
+    if params[:term].present?
+      results = AppStore.search(params[:term], params[:platform].downcase).sort_by{|item|item[:title]}
+      render :json => results
+    end
+  end
+
   def show
     now = Time.zone.now
     start_time = now.beginning_of_hour - 23.hours

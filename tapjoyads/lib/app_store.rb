@@ -15,7 +15,8 @@ class AppStore
   end
 
   # returns an array of first 24 App instances matching "term"
-  def self.search(term)
+  def self.search(term, platform='iphone')
+    # TODO: implement android
     response = request(SEARCH_URL, {:media => 'software', :term => term})
     if (response.status == 200) && (response.headers['Content-Type'] =~ /javascript/)
       json = JSON.load(response.body)
