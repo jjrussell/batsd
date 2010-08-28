@@ -22,6 +22,10 @@ Tapjoy.setGraphProperties = function(g, options) {
   if (options.yMax) {
     g.Set('chart.ymax', options.yMax)
   }
+
+  if (options.decimals) {
+    g.Set('chart.scale.decimals', options.decimals)
+  }
 };
 
 Tapjoy.drawLargeGraph = function(obj, id) {
@@ -53,7 +57,8 @@ Tapjoy.drawLargeGraph = function(obj, id) {
     hMarginPx: hMarginPx, 
     gutterPx: gutterPx,
     unitPrefix: obj['main']['unitPrefix'],
-    yMax: obj['main']['yMax']
+    yMax: obj['main']['yMax'],
+    decimals: obj['main']['decimals']
   });
   g.Draw();
 
@@ -67,7 +72,8 @@ Tapjoy.drawLargeGraph = function(obj, id) {
       unitPrefix: obj['right']['unitPrefix'],
       colors: g2.properties['chart.colors'].slice(obj['main']['data'].length),
       yAxisPos: 'right',
-      yMax: obj['right']['yMax']
+      yMax: obj['right']['yMax'],
+      decimals: obj['right']['decimals']
     })
 
     g2.Draw();
