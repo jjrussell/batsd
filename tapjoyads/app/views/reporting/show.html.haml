@@ -3,7 +3,7 @@
 %ul
   - current_partner_offers.each do |offer|
     - unless @offer.id == offer.id
-      %li= link_to(offer.name, reporting_path(offer.id, { :date => @start_time.to_date.to_s(:mdy), :end_date => @end_time.to_date.to_s(:mdy), :granularity => @granularity }))
+      %li= link_to(offer.name, reporting_path(offer.id, params))
 
 #display_date
   For: #{@start_time.to_s(:mdy)} - #{@end_time.to_s(:mdy)}. 
@@ -85,9 +85,9 @@
 
   .data
     - form_tag(export_reporting_path(@offer.id)) do
-      = hidden_field_tag(:date, @start_time.to_date.to_s(:mdy))
-      = hidden_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
-      = hidden_field_tag(:granularity, @granularity)
+      = hidden_field_tag(:date, params[:date])
+      = hidden_field_tag(:end_date, params[:end_date])
+      = hidden_field_tag(:granularity, params[:granularity])
       = submit_tag('Download as CSV')
 
   .clear
@@ -134,127 +134,6 @@
 
 - content_for :page_javascript do
   :plain
-    var connectData = {
-      "name": "Connects",
-      "intervals": [ "#{@appstats.intervals.map { |time| time.to_s(:pub_ampm) }.join('","')}" ],
-      "xLabels": [ "#{@appstats.x_labels.join('","')}" ],
-      
-      "main": {
-        "data": [
-           [ #{@appstats.stats['logins'].join(',')} ],
-           [ #{@appstats.stats['new_users'].join(',')} ],
-           [ #{@appstats.stats['daily_active_users'].join(',')} ],
-           [ #{@appstats.stats['monthly_active_users'].join(',')} ],
-        ],
-        "names": [ "Connects", "New users", "DAUs", "MAUs" ]
-      }
-    };
-    
-    var installData = {
-      "name": "Rewarded installs + spend",
-      "intervals": [ "#{@appstats.intervals.map { |time| time.to_s(:pub_ampm) }.join('","')}" ],
-      "xLabels": [ "#{@appstats.x_labels.join('","')}" ],
-      
-      "main": {
-        "data": [
-           [ #{@appstats.stats['paid_installs'].join(',')} ],
-           [ #{@appstats.stats['paid_clicks'].join(',')} ]
-        ],
-        "names": [ "Paid installs", "Paid clicks" ]
-      },
-      
-      "right": {
-        "data": [
-          [ #{@appstats.stats['installs_spend'].map { |i| i / -100.0 }.join(',')} ]
-        ],
-        "stringData": [
-          [ "#{@appstats.stats['installs_spend'].map { |i| number_to_currency(i / -100.0) }.join('","')}" ]
-        ],
-        "names": [ "Spend" ],
-        "unitPrefix": "$"
-      },
-      
-      "extra": {
-        "data": [
-          [ "#{@appstats.stats['cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) }.join('","')}" ]
-        ],
-        "names": [ "Conversion rate" ]
-      }
-    };
-    
-    var rankData = {
-      "name": "Rewarded installs + rank",
-      "intervals": [ "#{@appstats.intervals.map { |time| time.to_s(:pub_ampm) }.join('","')}" ],
-      "xLabels": [ "#{@appstats.x_labels.join('","')}" ],
-      
-      "main": {
-        "data": [
-           [ #{@appstats.stats['paid_installs'].join(',')} ],
-           [ #{@appstats.stats['paid_clicks'].join(',')} ]
-        ],
-        "names": [ "Paid installs", "Paid clicks" ]
-      },
-      
-      "right": {
-        "data": [
-          [ #{@appstats.stats['overall_store_rank'].map { |r| r == '-' || r == '0'  ? 'null' : r }.join(',')} ]
-        ],
-        "names": [ "Rank" ],
-        "yMax": 100
-      }
-    };
-    
-    var publishedOffersData = {
-      "name": "Published offers",
-      "intervals": [ "#{@appstats.intervals.map { |time| time.to_s(:pub_ampm) }.join('","')}" ],
-      "xLabels": [ "#{@appstats.x_labels.join('","')}" ],
-      
-      "main": {
-        "data": [
-           [ #{@appstats.stats['rewards'].join(',')} ],
-           [ #{@appstats.stats['rewards_opened'].join(',')} ]
-        ],
-        "names": [ "Offers completed", "Offer clicks" ]
-      },
-      
-      "right": {
-        "data": [
-          [ #{@appstats.stats['rewards_revenue'].map { |i| i / 100.0 }.join(',')} ]
-        ],
-        "stringData": [
-          [ "#{@appstats.stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) }.join('","')}" ]
-        ],
-        "names": [ "Revenue" ],
-        "unitPrefix": "$"
-      }
-    };
-    
-    var offerwallData = {
-      "name": "Offerwall views",
-      "intervals": [ "#{@appstats.intervals.map { |time| time.to_s(:pub_ampm) }.join('","')}" ],
-      "xLabels": [ "#{@appstats.x_labels.join('","')}" ],
-      
-      "main": {
-        "data": [
-           [ #{@appstats.stats['offerwall_views'].join(',')} ]
-        ],
-        "names": [ "Offerwall views" ]
-      },
-      
-      "right": {
-        "data": [
-          [ #{@appstats.stats['rewards_revenue'].map { |i| i / 100.0 }.join(',')} ],
-          [ #{@appstats.stats['offerwall_ecpm'].map { |i| i / 100.0 }.join(',')} ]
-        ],
-        "stringData": [
-          [ "#{@appstats.stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) }.join('","')}" ],
-          [ "#{@appstats.stats['offerwall_ecpm'].map { |i| number_to_currency(i / 100.0) }.join('","')}" ]
-        ],
-        "names": [ "Revenue", "Offerwall eCPM" ],
-        "unitPrefix": "$"
-      }
-    };
-    
     $(function() {
       $('#display_date a').click(function() {
         $('#display_date').hide();
@@ -265,11 +144,11 @@
       $('#date').datepicker();
       $('#end_date').datepicker();
       
-      Tapjoy.drawLargeGraph(connectData, 'connects');
-      Tapjoy.drawLargeGraph(installData, 'installs_spend');
-      Tapjoy.drawLargeGraph(rankData, 'installs_rank');
-      Tapjoy.drawLargeGraph(publishedOffersData, 'published_offers');
-      Tapjoy.drawLargeGraph(offerwallData, 'offerwall_views');
+      Tapjoy.drawLargeGraph(#{@connect_data.to_json}, 'connects');
+      Tapjoy.drawLargeGraph(#{@rewarded_installs_plus_spend_data.to_json}, 'installs_spend');
+      Tapjoy.drawLargeGraph(#{@rewarded_installs_plus_rank_data.to_json}, 'installs_rank');
+      Tapjoy.drawLargeGraph(#{@published_offers_data.to_json}, 'published_offers');
+      Tapjoy.drawLargeGraph(#{@offerwall_views_data.to_json}, 'offerwall_views');
     });
   
 - content_for :page_styles do
