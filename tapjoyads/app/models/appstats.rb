@@ -89,6 +89,18 @@ class Appstats
       end
     end
     
+    # arpdau
+    if @granularity == :daily and @stats['daily_active_users'] and @stats['rewards_revenue']
+      @stats['arpdau'] = []
+      @stats['daily_active_users'].length.times do |i|
+        if @stats['daily_active_users'][i] == 0
+          @stats['arpdau'][i] = 0
+        else
+          @stats['arpdau'][i] = @stats['rewards_revenue'][i].to_f / @stats['daily_active_users'][i]
+        end
+      end
+    end
+    
     get_labels_and_intervals(@start_time, @end_time) if @include_labels
   end
   
