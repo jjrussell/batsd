@@ -11,7 +11,7 @@ class App < ActiveRecord::Base
   
   validates_presence_of :partner, :name
 
-  after_create :fill_description
+  # after_create :fill_description
   after_create :create_primary_offer
   after_update :update_offers
   after_save :update_memcached
