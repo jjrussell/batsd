@@ -14,7 +14,7 @@ class CurrenciesController < WebsiteController
       params[:currency][:callback_url] = Currency::TAPJOY_MANAGED_CALLBACK_URL
     end
     
-    if @currency.set_attributes(params[:currency], [:name, :conversion_rate, :initial_balance, :callback_url, :secret_key, :test_devices])
+    if @currency.safe_update_attributes(params[:currency], [:name, :conversion_rate, :initial_balance, :callback_url, :secret_key, :test_devices])
       flash[:notice] = 'Currency was successfully updated.'
       redirect_to app_currency_path(:app_id => params[:app_id], :id => @currency.id)
     else

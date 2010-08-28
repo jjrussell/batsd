@@ -59,12 +59,13 @@ module ActiveSupport
   end
 end
 
-#
-# This patch allows the schema-dumper to function correctly for tables
-# where the primary key column is called 'id' and is NOT an integer.
-#
 module ActiveRecord
   module ConnectionAdapters
+    
+    #
+    # This patch allows the schema-dumper to function correctly for tables
+    # where the primary key column is called 'id' and is NOT an integer.
+    #
     class MysqlAdapter
       alias_method :orig_pk_and_sequence_for, :pk_and_sequence_for
       
@@ -75,15 +76,22 @@ module ActiveRecord
           keys << h["Field"] if h["Key"] == "PRI" && h["Type"] == "int(11)"
         end
         result.free
-        keys.length == 1 ? [keys.first, nil] : nil
+        keys.length == 1 ? [ keys.first, nil ] : nil
       end
     end
   end
   
+  #
+  # This patch allows us to specify which attributes are safe to update.
+  # This prevents a savy user from setting hidden fields by manipulating the DOM.
+  #
   class Base
-    def set_attributes(attributes, attr_names)
-      attr_names = Set.new(attr_names.map{|v| v.to_s})
-      self.update_attributes(attributes.reject{|k, v| !attr_names.include?(k.to_s) } )
+    def safe_update_attributes(attributes, allowed_attr_names)
+      allowed_attr_names = Set.new(allowed_attr_names.map { |v| v.to_s })
+      attributes.keys.each do |k|
+        raise RecordNotSaved.new("'#{k}' is not in the list of allowed attributes.") unless allowed_attr_names.include?(k.to_s)
+      end
+      self.update_attributes(attributes)
     end
   end
 end
