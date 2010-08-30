@@ -1,4 +1,6 @@
 class StatzController < WebsiteController
+  include ActionView::Helpers::NumberHelper
+  
   layout 'tabbed'
   
   filter_access_to :all
@@ -36,6 +38,7 @@ class StatzController < WebsiteController
   end
 
   def show
+    # setup the start/end times
     now = Time.zone.now
     @start_time = now.beginning_of_hour - 23.hours
     @end_time = now
@@ -44,50 +47,164 @@ class StatzController < WebsiteController
       @start_time = now.beginning_of_hour - 23.hours if @start_time > now
       @end_time = @start_time + 24.hours
     end
-    
     unless params[:end_date].blank?
       @end_time = Time.zone.parse(params[:end_date]).end_of_day
-      @end_time = now if @end_time <= @start_time
+      @end_time = now if @end_time <= @start_time || @end_time > now
     end
     
-    if params[:granularity] == 'daily' || @end_time - @start_time > 7.days
+    # setup granularity
+    if params[:granularity] == 'daily' || @end_time - @start_time >= 7.days
       @granularity = :daily
-      granularity_interval = 1.day
     else
       @granularity = :hourly
-      granularity_interval = 1.hour
     end
     
-    @stats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity }).stats
+    # lookup the stats
+    appstats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true })
+    
+    # setup the graph data
+    intervals = appstats.intervals.map { |time| time.to_s(:pub_ampm) }
+    
+    @connect_data = {
+      :name => 'Connects',
+      :intervals => intervals,
+      :xLabels => appstats.x_labels,
+      :main => {
+        :names => [ 'Connects', 'New Users' ],
+        :data => [ appstats.stats['logins'], appstats.stats['new_users'] ],
+        :totals => [ appstats.stats['logins'].sum, appstats.stats['new_users'].sum ]
+      }
+    }
+    if @granularity == :daily
+      @connect_data[:main][:names] << 'DAUs'
+      @connect_data[:main][:data] << appstats.stats['daily_active_users']
+      @connect_data[:main][:totals] << '-'
+      @connect_data[:right] = {
+        :unitPrefix => '$',
+        :decimals => 2,
+        :names => [ 'ARPDAU' ],
+        :data => [ appstats.stats['arpdau'].map { |i| i / 100.0 } ],
+        :stringData => [ appstats.stats['arpdau'].map { |i| number_to_currency(i / 100.0) } ],
+        :totals => [ '-' ]
+      }
+    end
+    
+    @rewarded_installs_plus_spend_data = {
+      :name => 'Rewarded installs + spend',
+      :intervals => intervals,
+      :xLabels => appstats.x_labels,
+      :main => {
+        :names => [ 'Paid installs', 'Paid clicks' ],
+        :data => [ appstats.stats['paid_installs'], appstats.stats['paid_clicks'] ],
+        :totals => [ appstats.stats['paid_installs'].sum, appstats.stats['paid_clicks'].sum ]
+      },
+      :right => {
+        :unitPrefix => '$',
+        :names => [ 'Spend' ],
+        :data => [ appstats.stats['installs_spend'].map { |i| i / -100.0 } ],
+        :stringData => [ appstats.stats['installs_spend'].map { |i| number_to_currency(i / -100.0) } ],
+        :totals => [ number_to_currency(appstats.stats['installs_spend'].sum / -100.0) ]
+      },
+      :extra => {
+        :names => [ 'CVR' ],
+        :data => [ appstats.stats['cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) } ],
+        :totals => [ appstats.stats['paid_clicks'].sum > 0 ? ("%.1f%" % (appstats.stats['paid_installs'].sum.to_f / appstats.stats['paid_clicks'].sum * 100.0)) : '-' ]
+      }
+    }
+    
+    @rewarded_installs_plus_rank_data = {
+      :name => 'Rewarded installs + rank',
+      :intervals => intervals,
+      :xLabels => appstats.x_labels,
+      :main => {
+        :names => [ 'Paid installs', 'Paid clicks' ],
+        :data => [ appstats.stats['paid_installs'], appstats.stats['paid_clicks'] ],
+        :totals => [ appstats.stats['paid_installs'].sum, appstats.stats['paid_clicks'].sum ]
+      },
+      :right => {
+        :yMax => 100,
+        :names => [ 'Rank' ],
+        :data => [ appstats.stats['overall_store_rank'].map { |r| r == '-' || r == '0' ? nil : r } ],
+        :totals => [ (appstats.stats['overall_store_rank'].select { |r| r != '0' }.last || '-') ]
+      }
+    }
+    
+    @published_offers_data = {
+      :name => 'Published offers',
+      :intervals => intervals,
+      :xLabels => appstats.x_labels,
+      :main => {
+        :names => [ 'Offers Completed', 'Offer clicks' ],
+        :data => [ appstats.stats['rewards'], appstats.stats['rewards_opened'] ],
+        :totals => [ appstats.stats['rewards'].sum, appstats.stats['rewards_opened'].sum ]
+      },
+      :right => {
+        :unitPrefix => '$',
+        :names => [ 'Revenue' ],
+        :data => [ appstats.stats['rewards_revenue'].map { |i| i / 100.0 } ],
+        :stringData => [ appstats.stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) } ],
+        :totals => [ number_to_currency(appstats.stats['rewards_revenue'].sum / 100.0) ]
+      },
+      :extra => {
+        :names => [ 'CVR' ],
+        :data => [ appstats.stats['rewards_cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) } ],
+        :totals => [ appstats.stats['rewards_opened'].sum > 0 ? ("%.1f%" % (appstats.stats['rewards'].sum.to_f / appstats.stats['rewards_opened'].sum * 100.0)) : '-' ]
+      }
+    }
+    
+    @offerwall_views_data = {
+      :name => 'Offerwall views',
+      :intervals => intervals,
+      :xLabels => appstats.x_labels,
+      :main => {
+        :names => [ 'Offerwall views' ],
+        :data => [ appstats.stats['offerwall_views'] ],
+        :totals => [ appstats.stats['offerwall_views'].sum ]
+      },
+      :right => {
+        :unitPrefix => '$',
+        :names => [ 'Offerwall eCPM' ],
+        :data => [ appstats.stats['offerwall_ecpm'].map { |i| i / 100.0 } ],
+        :stringData => [ appstats.stats['offerwall_ecpm'].map { |i| number_to_currency(i / 100.0) } ],
+        :totals => [ appstats.stats['offerwall_views'].sum > 0 ? number_to_currency(appstats.stats['rewards_revenue'].sum.to_f / (appstats.stats['offerwall_views'].sum / 1000.0) / 100.0) : '$0.00' ]
+      }
+    }
+    
+    @ratings_data = {
+      :name => 'Ratings',
+      :intervals => intervals,
+      :xLabels => appstats.x_labels,
+      :main => {
+        :names => [ 'Ratings' ],
+        :data => [ appstats.stats['ratings'] ],
+        :totals => [ appstats.stats['ratings'].sum ]
+      }
+    }
+    
+    @virtual_goods_data = {
+      :name => 'Virtual Goods',
+      :intervals => intervals,
+      :xLabels => appstats.x_labels,
+      :main => {
+        :names => [ 'Virtual good purchases' ],
+        :data => [ appstats.stats['vg_purchases'] ],
+        :totals => [ appstats.stats['vg_purchases'].sum ]
+      }
+    }
+    
+    @ads_data = {
+      :name => 'Ad impressions',
+      :intervals => intervals,
+      :xLabels => appstats.x_labels,
+      :main => {
+        :names => [ 'Ad impressions' ],
+        :data => [ appstats.stats['hourly_impressions'] ],
+        :totals => [ appstats.stats['hourly_impressions'].sum ]
+      }
+    }
+    
+    # lookup associated offers
     @associated_offers = @offer.find_associated_offers
-    
-    @intervals = []
-    @x_labels = []
-    
-    time = @start_time
-    while time < @end_time
-      @intervals << time.to_s(:pub_ampm)
-      
-      if @granularity == :daily
-        @x_labels << time.strftime('%m-%d')
-      else
-        @x_labels << time.to_s(:time)
-      end
-      
-      time += granularity_interval
-    end
-
-    if @x_labels.size > 30
-      skip_every = @x_labels.size / 30
-      @x_labels.size.times do |i|
-        if i % (skip_every + 1) != 0
-          @x_labels[i] = nil
-        end
-      end
-    end
-
-    @intervals << time.to_s(:pub_ampm)
-    
   end
   
   def edit
