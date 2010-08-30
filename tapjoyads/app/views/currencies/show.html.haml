@@ -1,43 +1,78 @@
 - @page_title = 'Virtual currency'
 
+= render :partial => 'apps/apps', :object => current_partner_apps
+= render :partial => 'apps/actions', :locals => {:app => @app}
+
 - form_for [@app, @currency] do |f|
   %table
     %tr
-      %th Name
+      %th 
+        #help_name.help ?
+        Name
       %td
         = f.text_field :name, :init => @currency.name.to_s
         = error_message_on(@currency, :name) if @currency.errors.on :name
     %tr
-      %th Conversion rate
+      %th 
+        #help_conversion_rate.help ?
+        Conversion rate
       %td 
         = f.text_field :conversion_rate, :init => @currency.conversion_rate
         = error_message_on(@currency, :conversion_rate) if @currency.errors.on :conversion_rate
     %tr
-      %th Managed by Tapjoy
+      %th 
+        #help_managed_by_tapjoy.help ?
+        Managed by Tapjoy
       %td= check_box_tag(:managed_by_tapjoy, nil, @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL)
     %tr.managed
-      %th Initial balance
+      %th 
+        #help_initial_balance.help ?
+        Initial balance
       %td
         = f.text_field :initial_balance, :init => @currency.initial_balance
         = error_message_on(@currency, :initial_balance) if @currency.errors.on :initial_balance
     %tr.unmanaged
-      %th Callback url
+      %th 
+        #help_callback_url.help ?
+        Callback URL
       %td
         = f.text_field :callback_url, :init => @currency.callback_url.to_s
         = error_message_on(@currency, :callback_url) if @currency.errors.on :callback_url
     %tr.unmanaged
-      %th Secret key
+      %th 
+        #help_secret_key.help ?
+        Secret key
       %td
         = f.text_field :secret_key, :init => @currency.secret_key.to_s
         = error_message_on(@currency, :secret_key) if @currency.errors.on :secret_key
     %tr
-      %th Test devices
+      %th 
+        #help_test_devices.help ?
+        Test devices
       %td
         = f.text_field :test_devices, :init => @currency.test_devices
         = error_message_on(@currency, :test_devices) if @currency.errors.on :test_devices
     %tr
       %td &nbsp;
       %td= f.submit
+  
+.hidden
+  #help_name_content{:name => 'Name'}
+    The name of the currency
+  #help_conversion_rate_content{:name => 'Conversion rate'}
+    Conversion rate help
+  #help_managed_by_tapjoy_content{:name => 'Managed by Tapjoy'}
+    Manged by Tapjoy help
+  #help_initial_balance_content{:name => 'Initial balance'}
+    Initial balance help
+  #help_callback_url_content{:name => 'Callback URL'}
+    Callback URL help
+  #help_secret_key_content{:name => 'Secret key'}
+    Secret key help
+  #help_test_devices_content{:name => 'Test devices'}
+    Test devices help
+
+
   
 - content_for :page_javascript do
   :plain
@@ -73,6 +108,12 @@
       
       $('#managed_by_tapjoy').change(function() {
         toggleManagedByTapjoy();
+      });
+      
+      $('.help').click(function() {
+        var content = $('#' + this.id + '_content');
+        position = [$(this).position().left - 300, $(this).position().top - $(window).scrollTop()]
+        content.dialog({title: "Help: " + content.attr('name'), position: position, minHeight: 75});
       });
     });
     
@@ -123,4 +164,26 @@
     
     .formError {
       color: red;
+    }
+    
+    .ui-dialog .ui-dialog-titlebar {
+      height: 5px;
+    }
+    
+    .ui-dialog .ui-dialog-title {
+      font-size: 14px;
+      margin-top: -8px;
+    }
+    
+    .ui-dialog .ui-dialog-content {
+      overflow: visible;
+      font-size: 12px;
+    }
+    
+    .help {
+      cursor: help;
+      display: inline;
+      font-weight: normal;
+      font-size: 10px;
+      vertical-align: middle;
     }

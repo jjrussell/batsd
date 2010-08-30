@@ -16,6 +16,9 @@ a img {
 .clear {
   clear: both;
 }
+.hidden {
+  display: none;
+}
 #top_nav {
   text-align: right;
   margin: 0px 40px;
