@@ -9,18 +9,12 @@
       .icon
         = image_tag(@app.primary_offer.get_icon_url, :size => '57x57', :alt => 'icon')
     = @app.name
-    - form_for @app do |f|
-      Balance
-      = #f.text_field :balance
-      Daily Budget
-      = #f.text_field :daily_budget
-      Bid
-      = #f.text_field :bid
-      Tapjoy Enabled
-      = #f.text_field :tapjoy_enabled
-      Campaign Status
-      = #f.select :campaign_status
-      = link_to 'Add funds', add_funds_billing_path
+    %br/
+    Balance
+    = number_to_currency(current_partner.balance / 100.0)
+    = button_to 'Add funds', add_funds_billing_path
+    - form_for(:offer, @offer, :url => { :action => :update }, :html => { :method => :put }) do |f|
+      %br/
 
   = @offer.name
   - form_for @offer, :url => app_offer_path do |f|
@@ -33,9 +27,22 @@
             - if @offer.errors.on :name
               = error_message_on @offer, :name
         %tr
-          %th Description:
+          %th Daily Budget:
+          %td= f.currency_field :daily_budget
+        %tr
+          %th Bid
+          %td= f.currency_field :payment
+        %tr
+          %th User Enabled
+          %td= f.select :tapjoy_enabled, ['Disabled', 'Enabled'].zip([0, 1]), :selected => @offer.tapjoy_enabled ? 1 : 0
+        %tr
+          %th Tapjoy Enabled
           %td
-            = f.text_area :description, :size => "50x15"
-            - if @offer.errors.on :description
-              = error_message_on @offer, :description
+            - if @offer.tapjoy_enabled
+              YES
+            - else
+              NO (Contact #{link_to "support@tapjoy.com", "mailto:support@tapjoy.com"})
+        %tr
+          %th Campaign Status
+          %td=# f.select :campaign_status
     = f.submit 'Update'
