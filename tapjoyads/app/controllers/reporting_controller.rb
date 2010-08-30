@@ -81,6 +81,10 @@ class ReportingController < WebsiteController
         :names => [ 'Revenue' ],
         :data => [ @appstats.stats['rewards_revenue'].map { |i| i / 100.0 } ],
         :stringData => [ @appstats.stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) } ]
+      },
+      :extra => {
+        :names => [ 'Conversion rate' ],
+        :data => [ @appstats.stats['rewards_cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) } ]
       }
     }
     
@@ -104,7 +108,7 @@ class ReportingController < WebsiteController
   def export
     data =  "start_time,end_time,paid_clicks,paid_installs,paid_cvr,spend,"
     data += "offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,revenue,offerwall_ecpm"
-    data += ",arpdau" if @granularity == :daily
+    data += ",daily_active_users,arpdau" if @granularity == :daily
     data += "\n"
     
     @appstats.stats['paid_clicks'].length.times do |i|
@@ -120,7 +124,10 @@ class ReportingController < WebsiteController
       line += "#{@appstats.stats['rewards_cvr'][i]},"
       line += "#{number_to_currency(@appstats.stats['rewards_revenue'][i] / 100.0, :delimiter => '')},"
       line += "#{number_to_currency(@appstats.stats['offerwall_ecpm'][i] / 100.0, :delimiter => '')}"
-      line += ",#{number_to_currency(@appstats.stats['arpdau'][i] / 100.0, :delimiter => '')}" if @granularity == :daily
+      if @granularity == :daily
+        line += ",#{@appstats.stats['daily_active_users'][i]}"
+        line += ",#{number_to_currency(@appstats.stats['arpdau'][i] / 100.0, :delimiter => '')}"
+      end
       data += "#{line}\n"
     end
     
