@@ -12,20 +12,21 @@ class AppsControllerTest < ActionController::TestCase
     end
 
     context "accessing apps index" do
-      should "be shown first app they own" do
+      should "be shown an app they own" do
         get 'index'
         assert_response(:success)
-        assert_equal @partner.apps.first, assigns(:app)
+        assert @partner.apps.include? assigns(:app)
       end
     end
 
     context "accessing app show" do
       should "be shown last app visited" do
-        get 'show', :id => @partner.apps.last.id
-        assert_equal @partner.apps.last, assigns(:app)
-        assert_equal @partner.apps.last.id, session[:last_shown_app]
+        last_app = @partner.apps.last
+        get 'show', :id => last_app.id
+        assert_equal last_app, assigns(:app)
+        assert_equal last_app.id, session[:last_shown_app]
         get 'index'
-        assert_equal @partner.apps.last, assigns(:app)
+        assert_equal last_app, assigns(:app)
       end
 
       should "not see someone else's app" do
