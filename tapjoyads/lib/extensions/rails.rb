@@ -101,7 +101,7 @@ module ActionView
     class FormBuilder
       include ActionView::Helpers::NumberHelper
       def currency_field(field, number_options={}, options={})
-        options.merge!({:value => number_to_currency(object.send(field) / 100.0, number_to_currency)})
+        options.merge!({:value => number_to_currency(object.send(field) / 100.0, number_options)})
         text_field(field, options)
       end
     end
