@@ -26,6 +26,7 @@ class CurrenciesController < WebsiteController
   def new
     @app = App.find(params[:app_id])
     @currency = Currency.new
+    @currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
     render :action => :show
   end
   
@@ -34,7 +35,6 @@ class CurrenciesController < WebsiteController
     @currency = Currency.new
     @currency.app = @app
     @currency.partner = @app.partner
-    @currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
     update
   end
   
