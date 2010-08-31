@@ -50,7 +50,7 @@
         #help_test_devices.help ?
         Test devices
       %td
-        = f.text_field :test_devices, :init => @currency.test_devices
+        = f.text_area :test_devices, :init => @currency.test_devices
         = error_message_on(@currency, :test_devices) if @currency.errors.on :test_devices
     %tr
       %td &nbsp;
@@ -64,15 +64,13 @@
   #help_managed_by_tapjoy_content{:name => 'Managed by Tapjoy'}
     Manged by Tapjoy help
   #help_initial_balance_content{:name => 'Initial balance'}
-    Initial balance help
+    The amount of currency that a new user starts with.
   #help_callback_url_content{:name => 'Callback URL'}
     Callback URL help
   #help_secret_key_content{:name => 'Secret key'}
     Secret key help
   #help_test_devices_content{:name => 'Test devices'}
-    Test devices help
-
-
+    A semi-colon (;) separated list of test udid's. These devices will see a special testing offer.
   
 - content_for :page_javascript do
   :plain
@@ -93,7 +91,7 @@
         $(this).addClass('active');
       });
       
-      $('input').blur(function() {
+      $('input,textarea').blur(function() {
         $(this).removeClass('active');
         if ($(this).val() != $(this).attr('init')) {
           $(this).addClass('changed');
@@ -132,14 +130,19 @@
   :plain
     th {
       text-align: right;
+      vertical-align: top;
+      padding-top: 3px;
     }
     
+    textarea,
     input[type=text] {
       border:1px solid transparent;
       font-size: 16px;
       width: 400px;
     }
     
+    textarea.active,
+    textarea:hover,
     input[type=text].active,
     input[type=text]:hover {
       border: 1px solid black;
@@ -147,6 +150,10 @@
     
     input[type=text].changed {
       background-color: #ccc;
+    }
+    
+    textarea {
+      height: 34px;
     }
     
     .managed {
