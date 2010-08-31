@@ -1,15 +1,16 @@
-%ul#apps_list.jcarousel-skin-tj
-  -apps.each do |app|
+%ul#carousel.jcarousel-skin-tj
+  -objects.each do |o|
+    - url = o.class.to_s == 'App' ? app_path(o) : reporting_path(o)
     %li
-      %a{:href => app_path(app), :title => app.name, :class => (@app == app) ? "selected" : ""}
-        = image_tag(app.primary_offer.get_icon_url, :size => '57x57', :alt => 'icon')
+      %a{:href => url, :title => o.name, :class => (o == object) ? "selected" : ""}
+        = image_tag(o.get_icon_url, :size => '57x57', :alt => '')
         %br/
-        .name= truncate(app.name, :length => 15)
+        .name= truncate(o.name, :length => 15)
 
 - content_for :page_styles do
   :plain
   
-    #apps_list a {
+    #carousel a {
       display: block;
       width: 100px;
       height: 80px;
@@ -21,32 +22,32 @@
       overflow: hidden;
     }
     
-    #apps_list a:hover {
+    #carousel a:hover {
       background-color: #ddd;
       cursor: pointer;
     }
     
-    #apps_list a.selected {
+    #carousel a.selected {
       background-color: #aaa;
     }
     
-    #apps_list img {
+    #carousel img {
       vertical-align: center;
     }
   
 - content_for :page_javascript do
-  var focused = #{apps.find_index{|a| a == @app} + 1};
-  var isLast = #{apps.last == @app};
+  var focused = #{(objects.find_index{|o| o == object} || 0) + 1};
+  var isLast = #{objects.last == object};
 
   :plain
     $(function(){
-      $('#apps_list').jcarousel({
+      $('#carousel').jcarousel({
         start: focused,
         itemFallbackDimension: 110
       });
       
       if (isLast) {
-        $('#apps_list').jcarousel('scrollTail');
+        $('#carousel').jcarousel('scrollTail');
       }
     });
   

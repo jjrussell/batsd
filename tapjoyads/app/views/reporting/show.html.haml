@@ -1,9 +1,6 @@
 - @page_title = "Reporting for #{@offer.name}"
 
-%ul
-  - current_partner_offers.each do |offer|
-    - unless @offer.id == offer.id
-      %li= link_to(offer.name, reporting_path(offer.id, params))
+= render :partial => 'apps/carousel', :locals => {:objects => current_partner_offers, :object => @offer}
 
 #display_date
   For: #{@start_time.to_s(:mdy)} - #{@end_time.to_s(:mdy)}. 

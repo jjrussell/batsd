@@ -1,6 +1,6 @@
 - @page_title = 'App offer'
 
-= render :partial => 'apps/apps', :object => current_partner_apps
+= render :partial => 'apps/carousel', :locals => {:objects => current_partner_apps, :object => @app}
 = render :partial => 'apps/actions', :locals => {:app => @app}
 
 #apps_main
