@@ -9,6 +9,9 @@ $(function(){
       $('tr.app_store_url').show();
       $('tr.app_icon').show();
       $('tr.price').show();
+      if ($('input#app_name').val()=='') {
+        $('input#app_name').focus();
+      }
     } else {
       $('.search').hide();
       $('tr.app_store_url').hide();

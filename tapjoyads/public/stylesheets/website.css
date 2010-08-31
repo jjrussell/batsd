@@ -85,6 +85,7 @@ table.editable th {
   text-align: right;
   vertical-align: top;
   padding-top: 3px;
+  padding-right: 10px;
 }
 
 table.editable textarea,

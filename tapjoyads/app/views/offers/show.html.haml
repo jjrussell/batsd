@@ -51,9 +51,3 @@
               -# TODO: replace the following with jquery ui?
               (Contact #{link_to "support@tapjoy.com", "mailto:support@tapjoy.com"})
     = f.submit 'Update'
-
-- content_for :page_javascript do
-  :plain
-    $(function(){
-      Tapjoy.watchTextFields();
-    });

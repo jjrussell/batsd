@@ -75,12 +75,9 @@
 - content_for :page_javascript do
   :plain
     $(function(){
-      Tapjoy.watchTextFields();
       toggleManagedByTapjoy();
 
-      $('#managed_by_tapjoy').change(function() {
-        toggleManagedByTapjoy();
-      });
+      $('#managed_by_tapjoy').change(toggleManagedByTapjoy);
 
       $('.help').click(function() {
         var content = $('#' + this.id + '_content');

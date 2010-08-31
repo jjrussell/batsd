@@ -8,17 +8,17 @@
   - unless @app.nil?
     %h2= @app.name
     - form_for @app do |f|
-      %table.shaded.app-data{:cellpadding => 0, :cellspacing => 0, :border => 1}
+      %table.editable
         %tbody
           %tr
-            %td Application state
+            %th Application state
             %td
               = select_tag "state", options_for_select(['Not live', 'Live'].zip(%w(not_live, live))), :id => "app_state"
           %tr
-            %td Platform
+            %th Platform
             %td= @app.platform=='iphone' ? 'iPhone' : 'Android'
           %tr
-            %td Name
+            %th Name
             %td
               = f.text_field :name, :size => 50
               = button_to_function "Search", "search()", :class => 'search'
@@ -27,29 +27,29 @@
               #search_results
                 = image_tag 'load-circle.gif', :class => 'load-circle'
           %tr
-            %td Description:
+            %th Description
             %td
               = f.text_area :description, :size => "50x7"
               - if @app.errors.on :description
                 = error_message_on @app, :description
           %tr.app_store_url
-            %td Store URL:
+            %th Store URL
             %td
               = f.text_field :store_url, :size => 80, :value => @app.store_id ? @app.final_store_url : ""
               - if @app.errors.on :store_url
                 = error_message_on @app, :store_url
           %tr.app_icon
-            %td Icon:
+            %th Icon
             %td#app_icon
               = image_tag(@app.primary_offer.get_icon_url, :size => '57x57', :alt => 'icon')
           %tr.price
-            %td Price:
+            %th Price
             %td
               = f.currency_field :price, {}, :size => 10
               - if @app.errors.on :price
                 = error_message_on @app, :price
           %tr
-            %td Integrated?:
+            %th Integrated?
             - if @integrated
               %td.integrated YES
             - else
