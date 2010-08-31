@@ -17,6 +17,8 @@
   .field
     = f.submit 'Login'
 
+= link_to('Reset Password', new_password_reset_path)
+
 - content_for :page_javascript do
   :plain
     $(document).ready(function() {

@@ -60,6 +60,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :raffle_manager, :only => [ :index, :edit, :update, :new, :create ]
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show ], :member => { :make_current => :post }
+  map.resources :password_resets, :only => [ :new, :create, :edit, :update ]
   
   map.resources :balances, :only => :show
   

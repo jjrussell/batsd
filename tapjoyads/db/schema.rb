@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100826213542) do
+ActiveRecord::Schema.define(:version => 20100831183431) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -285,8 +285,8 @@ ActiveRecord::Schema.define(:version => 20100826213542) do
   add_index "user_roles", ["name"], :name => "index_user_roles_on_name", :unique => true
 
   create_table "users", :id => false, :force => true do |t|
-    t.string   "id",                 :limit => 36, :null => false
-    t.string   "username",                         :null => false
+    t.string   "id",                 :limit => 36,                 :null => false
+    t.string   "username",                                         :null => false
     t.string   "email"
     t.string   "crypted_password"
     t.string   "password_salt"
@@ -294,9 +294,13 @@ ActiveRecord::Schema.define(:version => 20100826213542) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "current_partner_id", :limit => 36
+    t.string   "perishable_token",                 :default => "", :null => false
   end
 
+  add_index "users", ["email"], :name => "index_users_on_email"
   add_index "users", ["id"], :name => "index_users_on_id", :unique => true
+  add_index "users", ["perishable_token"], :name => "index_users_on_perishable_token"
+  add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"
   add_index "users", ["username"], :name => "index_users_on_username", :unique => true
 
 end

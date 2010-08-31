@@ -1,0 +1,29 @@
+- @page_title = 'Reset Password'
+
+%h1 Reset Password
+
+- form_for(:user, @user, :url => { :action => :update }, :html => { :method => :put }) do |f|
+  = f.error_messages :header_message => nil
+  .field
+    = f.label :password, 'New Password'
+    = f.password_field :password
+  .field
+    = f.label :password_confirmation, 'Confirm New Password'
+    = f.password_field :password_confirmation
+  .field
+    = f.submit 'Submit'
+
+- content_for :page_styles do
+  :plain
+    .errorExplanation {
+      background-color: red;
+      padding: 10px;
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    
+    .fieldWithErrors {
+      border: 3px solid red;
+      display: inline-block;
+    }
