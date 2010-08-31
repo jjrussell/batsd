@@ -277,7 +277,8 @@ class Offer < ActiveRecord::Base
         show_rate_reject?(device_app_list) ||
         flixter_reject?(publisher_app, device_app_list) ||
         whitelist_reject?(publisher_app) ||
-        secondary_offer_reject?(show_secondary_offers)
+        secondary_offer_reject?(show_secondary_offers) ||
+        gamevil_reject?(publisher_app)
   end
   
 private
@@ -346,6 +347,10 @@ private
     
     srand( (device_app_list.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     return rand > show_rate
+  end
+  
+  def gamevil_reject?(publisher_app)
+    return publisher_app.partner_id == 'cea789f9-7741-4197-9cc0-c6ac40a0801a' && partner_id != 'cea789f9-7741-4197-9cc0-c6ac40a0801a'
   end
   
   def flixter_reject?(publisher_app, device_app_list)
