@@ -32,8 +32,8 @@ class AppsController < WebsiteController
   end
 
   def create
-    params[:app]["price"] = (params[:app]["price"].to_f * 100).to_i.to_s
-    @app = App.new(params[:app])
+    params_app = sanitize_currency_params(params[:app], [:price])
+    @app = App.new(params_app)
     @app.partner = current_partner
     respond_to do |format|
       if @app.save
@@ -48,9 +48,9 @@ class AppsController < WebsiteController
   end
 
   def update
+    params_app = sanitize_currency_params(params[:app], [:price])
     respond_to do |format|
-      params[:app]["price"] = (params[:app]["price"].to_f * 100).to_i.to_s
-      if @app.update_attributes(params[:app])
+      if @app.safe_update_attributes(params_app, [:name, :price, :store_id, :description, :store_url])
         flash[:notice] = 'App was successfully updated.'
         format.html { redirect_to(@app) }
         format.xml  { head :ok }
