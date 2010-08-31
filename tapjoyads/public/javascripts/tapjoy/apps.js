@@ -24,7 +24,7 @@ $(function(){
 
   // hide search results on just about everything
   $(document).click(function(e){
-    if (e.srcElement.className != 'search' && !$('#search_results').hasClass('searching')) {
+    if (e.srcElement && e.srcElement.className != 'search' && !$('#search_results').hasClass('searching')) {
       $('#search_results').hide();
     }
   }).keydown(function(e){
