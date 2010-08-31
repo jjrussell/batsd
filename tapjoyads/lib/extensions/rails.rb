@@ -83,7 +83,7 @@ module ActiveRecord
   
   #
   # This patch allows us to specify which attributes are safe to update.
-  # This prevents a savy user from setting hidden fields by manipulating the DOM.
+  # This prevents a savvy user from setting hidden fields by manipulating the DOM.
   #
   class Base
     def safe_update_attributes(attributes, allowed_attr_names)
