@@ -12,7 +12,7 @@
     %br/
 
   - form_for(:offer, @offer, :url => { :action => :update }, :html => { :method => :put }) do |f|
-    %table.app{:cellpadding => 0, :cellspacing => 0, :border => 1}
+    %table.editable
       %tbody
         %tr
           %th Name:
@@ -51,3 +51,9 @@
               -# TODO: replace the following with jquery ui?
               (Contact #{link_to "support@tapjoy.com", "mailto:support@tapjoy.com"})
     = f.submit 'Update'
+
+- content_for :page_javascript do
+  :plain
+    $(function(){
+      Tapjoy.watchTextFields();
+    });

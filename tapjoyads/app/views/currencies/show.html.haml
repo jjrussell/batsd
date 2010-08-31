@@ -10,14 +10,14 @@
         #help_name.help ?
         Name
       %td
-        = f.text_field :name, :init => @currency.name.to_s
+        = f.text_field :name
         = error_message_on(@currency, :name) if @currency.errors.on :name
     %tr
       %th
         #help_conversion_rate.help ?
         Conversion rate
       %td
-        = f.text_field :conversion_rate, :init => @currency.conversion_rate
+        = f.text_field :conversion_rate
         = error_message_on(@currency, :conversion_rate) if @currency.errors.on :conversion_rate
     %tr
       %th
@@ -29,28 +29,28 @@
         #help_initial_balance.help ?
         Initial balance
       %td
-        = f.text_field :initial_balance, :init => @currency.initial_balance
+        = f.text_field :initial_balance
         = error_message_on(@currency, :initial_balance) if @currency.errors.on :initial_balance
     %tr.unmanaged
       %th
         #help_callback_url.help ?
         Callback URL
       %td
-        = f.text_field :callback_url, :init => @currency.callback_url.to_s
+        = f.text_field :callback_url
         = error_message_on(@currency, :callback_url) if @currency.errors.on :callback_url
     %tr.unmanaged
       %th
         #help_secret_key.help ?
         Secret key
       %td
-        = f.text_field :secret_key, :init => @currency.secret_key.to_s
+        = f.text_field :secret_key
         = error_message_on(@currency, :secret_key) if @currency.errors.on :secret_key
     %tr
       %th
         #help_test_devices.help ?
         Test devices
       %td
-        = f.text_area :test_devices, :init => @currency.test_devices
+        = f.text_area :test_devices
         = error_message_on(@currency, :test_devices) if @currency.errors.on :test_devices
     %tr
       %td &nbsp;
@@ -70,7 +70,7 @@
   #help_secret_key_content{:name => 'Secret key'}
     Secret key help
   #help_test_devices_content{:name => 'Test devices'}
-    A semi-colon (;) separated list of test udid's. These devices will see a special testing offer.
+    A semi-colon (;) separated list of test UDIDs. These devices will see a special testing offer.
 
 - content_for :page_javascript do
   :plain

@@ -7,11 +7,15 @@ $(function(){
 
   var numChanged = 0;
   Tapjoy.watchTextFields = function() {
-    $('input').focus(function() {
+    $('table.editable input[type=text], table.editable textarea').each(function() {
+      $(this).attr('init', $(this).val());
+    });
+
+    $('table.editable input[type=text], table.editable textarea').focus(function() {
       $(this).addClass('active');
     });
 
-    $('input,textarea').blur(function() {
+    $('table.editable input[type=text], table.editable textarea').blur(function() {
       $(this).removeClass('active');
       if ($(this).val() != $(this).attr('init')) {
         $(this).addClass('changed');
