@@ -3,7 +3,7 @@
 = render :partial => 'apps', :object => current_partner_apps
 = render :partial => 'actions', :locals => {:app => @app}
 .new_app_button= button_to "Add App", new_app_path
-  
+
 #apps_main
   - unless @app.nil?
     %h2= @app.name

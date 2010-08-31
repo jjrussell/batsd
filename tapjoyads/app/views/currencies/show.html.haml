@@ -4,49 +4,49 @@
 = render :partial => 'apps/actions', :locals => {:app => @app}
 
 - form_for [@app, @currency] do |f|
-  %table
+  %table.editable
     %tr
-      %th 
+      %th
         #help_name.help ?
         Name
       %td
         = f.text_field :name, :init => @currency.name.to_s
         = error_message_on(@currency, :name) if @currency.errors.on :name
     %tr
-      %th 
+      %th
         #help_conversion_rate.help ?
         Conversion rate
-      %td 
+      %td
         = f.text_field :conversion_rate, :init => @currency.conversion_rate
         = error_message_on(@currency, :conversion_rate) if @currency.errors.on :conversion_rate
     %tr
-      %th 
+      %th
         #help_managed_by_tapjoy.help ?
         Managed by Tapjoy
       %td= check_box_tag(:managed_by_tapjoy, nil, @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL)
     %tr.managed
-      %th 
+      %th
         #help_initial_balance.help ?
         Initial balance
       %td
         = f.text_field :initial_balance, :init => @currency.initial_balance
         = error_message_on(@currency, :initial_balance) if @currency.errors.on :initial_balance
     %tr.unmanaged
-      %th 
+      %th
         #help_callback_url.help ?
         Callback URL
       %td
         = f.text_field :callback_url, :init => @currency.callback_url.to_s
         = error_message_on(@currency, :callback_url) if @currency.errors.on :callback_url
     %tr.unmanaged
-      %th 
+      %th
         #help_secret_key.help ?
         Secret key
       %td
         = f.text_field :secret_key, :init => @currency.secret_key.to_s
         = error_message_on(@currency, :secret_key) if @currency.errors.on :secret_key
     %tr
-      %th 
+      %th
         #help_test_devices.help ?
         Test devices
       %td
@@ -55,7 +55,7 @@
     %tr
       %td &nbsp;
       %td= f.submit
-  
+
 .hidden
   #help_name_content{:name => 'Name'}
     The name of the currency
@@ -71,52 +71,26 @@
     Secret key help
   #help_test_devices_content{:name => 'Test devices'}
     A semi-colon (;) separated list of test udid's. These devices will see a special testing offer.
-  
+
 - content_for :page_javascript do
   :plain
-    var numChanged = 0;
-  
-    $(function() {
-      $('input').each(function() {
-        if ($(this).val() != $(this).attr('init')) {
-          $(this).addClass('changed');
-          numChanged += 1;
-        } else {
-          $(this).removeClass('changed');
-          numChanged -= 1;
-        }
-      });
-    
-      $('input').focus(function() {
-        $(this).addClass('active');
-      });
-      
-      $('input,textarea').blur(function() {
-        $(this).removeClass('active');
-        if ($(this).val() != $(this).attr('init')) {
-          $(this).addClass('changed');
-          numChanged += 1;
-        } else {
-          $(this).removeClass('changed');
-          numChanged -= 1;
-        }
-      });
-      
+    $(function(){
+      Tapjoy.watchTextFields();
       toggleManagedByTapjoy();
-      
+
       $('#managed_by_tapjoy').change(function() {
         toggleManagedByTapjoy();
       });
-      
+
       $('.help').click(function() {
         var content = $('#' + this.id + '_content');
         position = [$(this).position().left - 300, $(this).position().top - $(window).scrollTop()]
         content.dialog({title: "Help: " + content.attr('name'), position: position, minHeight: 75});
       });
     });
-    
+
     function toggleManagedByTapjoy() {
-    
+
       if ($('#managed_by_tapjoy').attr('checked')) {
         $('.managed').show();
         $('.unmanaged').hide();
@@ -125,72 +99,9 @@
         $('.unmanaged').show();
       }
     }
-  
+
 - content_for :page_styles do
   :plain
-    th {
-      text-align: right;
-      vertical-align: top;
-      padding-top: 3px;
-    }
-    
-    textarea,
-    input[type=text] {
-      border:1px solid transparent;
-      font-size: 16px;
-      width: 400px;
-    }
-    
-    textarea.active,
-    textarea:hover,
-    input[type=text].active,
-    input[type=text]:hover {
-      border: 1px solid black;
-    }
-    
-    input[type=text].changed {
-      background-color: #ccc;
-    }
-    
     textarea {
       height: 34px;
-    }
-    
-    .managed {
-      #{'display: none;' unless @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL}
-    }
-
-    .unmanaged {
-      #{'display: none;' if @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL}
-    }
-    
-    .fieldWithErrors,
-    .formError {
-      display: inline;
-    }
-    
-    .formError {
-      color: red;
-    }
-    
-    .ui-dialog .ui-dialog-titlebar {
-      height: 5px;
-    }
-    
-    .ui-dialog .ui-dialog-title {
-      font-size: 14px;
-      margin-top: -8px;
-    }
-    
-    .ui-dialog .ui-dialog-content {
-      overflow: visible;
-      font-size: 12px;
-    }
-    
-    .help {
-      cursor: help;
-      display: inline;
-      font-weight: normal;
-      font-size: 10px;
-      vertical-align: middle;
     }
