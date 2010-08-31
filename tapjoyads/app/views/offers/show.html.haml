@@ -8,16 +8,10 @@
     .app-thumb
       .icon
         = image_tag(@app.primary_offer.get_icon_url, :size => '57x57', :alt => 'icon')
-    = @app.name
+        = @app.name
     %br/
-    Balance
-    = number_to_currency(current_partner.balance / 100.0)
-    = button_to 'Add funds', add_funds_billing_path
-    - form_for(:offer, @offer, :url => { :action => :update }, :html => { :method => :put }) do |f|
-      %br/
 
-  = @offer.name
-  - form_for @offer, :url => app_offer_path do |f|
+  - form_for(:offer, @offer, :url => { :action => :update }, :html => { :method => :put }) do |f|
     %table.app{:cellpadding => 0, :cellspacing => 0, :border => 1}
       %tbody
         %tr
@@ -27,22 +21,33 @@
             - if @offer.errors.on :name
               = error_message_on @offer, :name
         %tr
+          %th Balance:
+          %td
+            .right
+              = link_to 'Add funds', add_funds_billing_path
+            = number_to_currency(current_partner.balance / 100.0)
+        %tr
           %th Daily Budget:
-          %td= f.currency_field :daily_budget
+          %td
+            = f.currency_field :daily_budget
+            = error_message_on @offer, :daily_budget
         %tr
           %th Bid
-          %td= f.currency_field :payment
+          %td
+            = f.currency_field :payment
+            = error_message_on @offer, :payment
         %tr
-          %th User Enabled
-          %td= f.select :tapjoy_enabled, ['Disabled', 'Enabled'].zip([0, 1]), :selected => @offer.tapjoy_enabled ? 1 : 0
+          %th Campaign Status
+          %td
+            = f.select :user_enabled, ['Paused', 'Started'].zip([0, 1]), :selected => @offer.user_enabled ? 1 : 0
+            = error_message_on @offer, :user_enabled
         %tr
           %th Tapjoy Enabled
           %td
             - if @offer.tapjoy_enabled
-              YES
+              Enabled
             - else
-              NO (Contact #{link_to "support@tapjoy.com", "mailto:support@tapjoy.com"})
-        %tr
-          %th Campaign Status
-          %td=# f.select :campaign_status
+              Disabled
+              -# TODO: replace the following with jquery ui?
+              (Contact #{link_to "support@tapjoy.com", "mailto:support@tapjoy.com"})
     = f.submit 'Update'

@@ -4,8 +4,9 @@ class OffersController < WebsiteController
   before_filter :find_offer
 
   def update
+    params_offer = sanitize_currency_params(params[:offer], [:daily_budget, :payment])
     respond_to do |format|
-      if @offer.update_attributes(params[:offer])
+      if @offer.safe_update_attributes(params_offer, [:daily_budget, :name, :payment, :user_enabled])
         flash[:notice] = 'Offer was successfully updated.'
         format.html { redirect_to(app_offer_path(:app_id => @app.id, :id => @offer.id)) }
         format.xml  { head :ok }

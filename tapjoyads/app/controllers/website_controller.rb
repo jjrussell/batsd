@@ -23,6 +23,15 @@ class WebsiteController < ApplicationController
     @current_partner_offers ||= current_partner.offers.visible.sort_by(&:name)
   end
 
+  def sanitize_currency_params(object, fields)
+    fields.each do |field|
+      if object[field]
+        object[field] = (object[field].gsub(/\$/,'').to_f * 100).to_i.to_s
+      end
+    end
+    object
+  end
+
 protected
   
   def permission_denied
