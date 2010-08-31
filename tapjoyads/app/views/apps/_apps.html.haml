@@ -1,67 +1,14 @@
-#apps_list_container
-  .prev &#x25C0;
-  .next &#x25B6;
-  #apps_list
-    %ul
-      -apps.each do |app|
-        %li
-          %a{:href => app_path(app), :title => app.name, :class => (@app == app) ? "selected" : ""}
-            = image_tag(app.primary_offer.get_icon_url, :size => '57x57', :alt => 'icon')
-            %br/
-            .name= truncate(app.name, :length => 15)
-  
+%ul#apps_list.jcarousel-skin-tj
+  -apps.each do |app|
+    %li
+      %a{:href => app_path(app), :title => app.name, :class => (@app == app) ? "selected" : ""}
+        = image_tag(app.primary_offer.get_icon_url, :size => '57x57', :alt => 'icon')
+        %br/
+        .name= truncate(app.name, :length => 15)
 
 - content_for :page_styles do
   :plain
   
-    #apps_list_container {
-      margin: 0 15px 10px;
-      position: relative;
-      border-bottom: 1px solid #888;
-    }
-    
-    #apps_list {
-      margin: 0px;
-      height: 90px;
-      width: auto !important;
-      background: #f0f0f0;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-    
-    #apps_list_container .next,
-    #apps_list_container .prev {
-      position: absolute;
-      height: 55px;
-      width: 15px;
-      padding-top: 35px;
-      cursor: pointer;
-      border-bottom: 1px solid #888;
-    }
-    
-    #apps_list_container .next {
-      right: -15px;
-      background: -webkit-gradient(linear, left top, right bottom, from(#f0f0f0), to(#ccc));
-      background: -moz-linear-gradient(left,  #f0f0f0,  #ccc);
-    }
-    
-    #apps_list_container .prev {
-      left: -15px;
-      background: #ccc;
-      background: -webkit-gradient(linear, left top, right bottom, from(#ccc), to(#f0f0f0));
-      background: -moz-linear-gradient(left,  #ccc,  #f0f0f0);
-    }
-    
-    #apps_list_container .next:hover {
-      background: -webkit-gradient(linear, left top, right bottom, from(#f0f0f0), to(#aaa));
-      background: -moz-linear-gradient(left,  #f0f0f0,  #aaa);
-    }
-    
-    #apps_list_container .prev:hover {
-      background: -webkit-gradient(linear, left top, right bottom, from(#aaa), to(#f0f0f0));
-      background: -moz-linear-gradient(left,  #aaa,  #f0f0f0);
-    }
-    
     #apps_list a {
       display: block;
       width: 100px;
@@ -88,24 +35,22 @@
     }
   
 - content_for :page_javascript do
+  var focused = #{apps.find_index{|a| a == @app} + 1};
+  var isLast = #{apps.last == @app};
+
   :plain
-    carouselOptions = {
-      btnNext: '#apps_list_container .next', 
-      btnPrev: '#apps_list_container .prev',
-      circular: false};
-  
     $(function(){
-      $('.app_tab').click(function(e){
-        location.href = $(e.currentTarget).find('a').attr('href');
+      $('#apps_list').jcarousel({
+        start: focused,
+        itemFallbackDimension: 110
       });
       
-      showCarousel();
+      if (isLast) {
+        $('#apps_list').jcarousel('scrollTail');
+      }
     });
-    
-    function showCarousel() {
-      var visible = Math.floor($('#apps_list').width() / 110);
-      carouselOptions.visible = visible;
-      $('#apps_list').jCarouselLite(carouselOptions);
-    }
   
-- content_for :included_javascripts, javascript_include_tag('jcarousellite_1.0.1.min')
+- content_for :included_javascripts do
+  = javascript_include_tag('jquery.jcarousel.min')
+- content_for :page_head do
+  = stylesheet_link_tag('jcarousel')
