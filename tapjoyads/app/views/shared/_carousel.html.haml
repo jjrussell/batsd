@@ -34,6 +34,17 @@
     #carousel img {
       vertical-align: center;
     }
+    
+    #carousel {
+      list-style-type: none;
+      height: 90px;
+      overflow: hidden;
+      margin: 0;
+      padding-left: 20px;
+    }
+    #carousel li {
+      float: left;
+    }
   
 - content_for :page_javascript do
   var focused = #{(objects.find_index{|o| o == object} || 0) + 1};
