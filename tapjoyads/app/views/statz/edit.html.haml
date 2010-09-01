@@ -53,6 +53,9 @@
     .field
       = f.label(:daily_budget, 'Daily install budget')
       = f.text_field(:daily_budget)
+    .field
+      = f.label(:overall_budget, 'Overall install budget')
+      = f.text_field(:overall_budget)
   - if @offer.item_type == 'App'
     .field
       = label_tag(:app_store_id, 'Store ID')

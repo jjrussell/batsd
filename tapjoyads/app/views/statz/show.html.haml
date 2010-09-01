@@ -35,6 +35,7 @@
       - property_row('Store id', link_to(@offer.item.store_id, @offer.item.final_store_url), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
   - property_row('Price', number_to_currency(@offer.price / 100.0))
   - property_row('Daily budget', @offer.daily_budget, 0)
+  - property_row('Overall budget', @offer.overall_budget, 0)
   - property_row('Show rate', "%.1f%" % ((@offer.show_rate || 0) * 100.0), "100.0%")
   - property_row('Ordinal', @offer.ordinal, 500)
   - property_row('Countries', @offer.countries, '')
