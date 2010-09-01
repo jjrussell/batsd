@@ -24,14 +24,14 @@ class CurrenciesController < WebsiteController
   end
   
   def new
-    @app = App.find(params[:app_id])
+    @app = current_partner.apps.find(params[:app_id])
     @currency = Currency.new
     @currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
     render :action => :show
   end
   
   def create
-    @app = App.find(params[:app_id])
+    @app = current_partner.apps.find(params[:app_id])
     @currency = Currency.new
     @currency.app = @app
     @currency.partner = @app.partner
@@ -41,12 +41,11 @@ class CurrenciesController < WebsiteController
 private
   
   def find_currency
-    @currency = Currency.find_by_id(params[:id])
+    @app = current_partner.apps.find(params[:app_id], :include => [:currency])
+    @currency = @app.currency
     if @currency.nil?
       flash[:error] = "Could not find currency"
       redirect_to apps_path
-    else
-      @app = @currency.app
     end
   end
   
