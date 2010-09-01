@@ -74,20 +74,12 @@
 
 - content_for :page_javascript do
   :plain
-    $(function(){
+    $(function($){
       toggleManagedByTapjoy();
-
       $('#managed_by_tapjoy').change(toggleManagedByTapjoy);
-
-      $('.help').click(function() {
-        var content = $('#' + this.id + '_content');
-        position = [$(this).position().left - 300, $(this).position().top - $(window).scrollTop()]
-        content.dialog({title: "Help: " + content.attr('name'), position: position, minHeight: 75});
-      });
     });
 
     function toggleManagedByTapjoy() {
-
       if ($('#managed_by_tapjoy').attr('checked')) {
         $('.managed').show();
         $('.unmanaged').hide();

@@ -11,14 +11,20 @@
       %table.editable
         %tbody
           %tr
-            %th Application state
+            %th
+              #help_application_state.help ?
+              Application state
             %td
               = select_tag "state", options_for_select(['Not live', 'Live'].zip(%w(not_live, live))), :id => "app_state"
           %tr
-            %th Platform
+            %th
+              #help_platform.help ?
+              Platform
             %td= @app.platform=='iphone' ? 'iPhone' : 'Android'
           %tr
-            %th Name
+            %th
+              #help_name.help ?
+              Name
             %td
               = f.text_field :name, :size => 50
               = button_to_function "Search", "search()", :class => 'search'
@@ -27,35 +33,63 @@
               #search_results
                 = image_tag 'load-circle.gif', :class => 'load-circle'
           %tr
-            %th Description
+            %th
+              #help_description.help ?
+              Description
             %td
               = f.text_area :description, :size => "50x7"
               - if @app.errors.on :description
                 = error_message_on @app, :description
           %tr.app_store_url
-            %th Store URL
+            %th
+              #help_store_url.help ?
+              Store URL
             %td
               = f.text_field :store_url, :size => 80, :value => @app.store_id ? @app.final_store_url : ""
               - if @app.errors.on :store_url
                 = error_message_on @app, :store_url
           %tr.app_icon
-            %th Icon
+            %th
+              #help_icon.help ?
+              Icon
             %td#app_icon
               = image_tag(@app.primary_offer.get_icon_url, :size => '57x57', :alt => 'icon')
           %tr.price
-            %th Price
+            %th
+              #help_price.help ?
+              Price
             %td
               = f.currency_field :price, {}, :size => 10
               - if @app.errors.on :price
                 = error_message_on @app, :price
           %tr
-            %th Integrated?
+            %th
+              #help_integrated.help ?
+              Integrated?
             - if @integrated
               %td.integrated YES
             - else
               %td.not_integrated NO
       = f.hidden_field :store_id
       = f.submit 'Update'
+
+.hidden
+  #help_application_state_content{:name => 'Application State'}
+    Application State
+  #help_platform_content{:name => 'Platform'}
+    Platform
+  #help_name_content{:name => 'Name'}
+    Name
+  #help_description_content{:name => 'Description'}
+    Description
+  #help_store_url_content{:name => 'Store URL'}
+    Store URL
+  #help_icon_content{:name => 'Icon'}
+    Icon
+  #help_price_content{:name => 'Price'}
+    Price
+  #help_integrated_content{:name => 'Integrated'}
+    Integrated
 
 - content_for :page_head, stylesheet_link_tag('apps')
 - content_for :included_javascripts, javascript_include_tag('tapjoy/apps')

@@ -1,6 +1,6 @@
 if (typeof(Tapjoy) == "undefined") Tapjoy = {};
 
-$(function(){
+$(function($){
   $('.flash').click(function(){
     $(this).slideUp();
   });
@@ -25,5 +25,11 @@ $(function(){
       numChanged -= 1;
     }
   });
-});
 
+  $('.help').click(function() {
+    $('.ui-dialog').remove();
+    var content = $('#' + this.id + '_content');
+    var position = [$(this).position().left - 300, $(this).position().top - $(window).scrollTop()];
+    content.dialog({title: "Help: " + content.attr('name'), position: position, minHeight: 75});
+  });
+});
