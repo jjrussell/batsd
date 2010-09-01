@@ -143,3 +143,18 @@ table.editable .help {
   vertical-align: middle;
 }
 
+.help-dialog .ui-dialog-titlebar {
+  height: 5px;
+}
+
+div.help-dialog .ui-dialog-title {
+  font-size: 14px;
+  margin-top: -8px;
+  display: block;
+  float: none;
+}
+
+.help-dialog .ui-dialog-content {
+  overflow: visible;
+  font-size: 12px;
+}

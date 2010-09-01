@@ -30,6 +30,6 @@ $(function($){
     $('.ui-dialog').remove();
     var content = $('#' + this.id + '_content');
     var position = [$(this).position().left - 300, $(this).position().top - $(window).scrollTop()];
-    content.dialog({title: "Help: " + content.attr('name'), position: position, minHeight: 75});
+    content.dialog({title: "Help: " + content.attr('name'), position: position, minHeight: 75, dialogClass: 'help-dialog'});
   });
 });
