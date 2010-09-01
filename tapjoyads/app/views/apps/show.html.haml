@@ -1,6 +1,6 @@
 - @page_title = 'Apps'
 
-= render :partial => 'apps/carousel', :locals => {:objects => current_partner_apps, :object => @app}
+= render :partial => 'shared/carousel', :locals => {:objects => current_partner_apps, :object => @app}
 = render :partial => 'actions', :locals => {:app => @app}
 .new_app_button= button_to "Add App", new_app_path
 

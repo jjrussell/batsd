@@ -1,6 +1,6 @@
 - @page_title = "Reporting for #{@offer.name}"
 
-= render :partial => 'apps/carousel', :locals => {:objects => current_partner_offers, :object => @offer}
+= render :partial => 'shared/carousel', :locals => {:objects => current_partner_offers, :object => @offer}
 
 #display_date
   For: #{@start_time.to_s(:mdy)} - #{@end_time.to_s(:mdy)}. 

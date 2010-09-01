@@ -1,6 +1,6 @@
 - @page_title = 'Virtual currency'
 
-= render :partial => 'apps/carousel', :locals => {:objects => current_partner_apps, :object => @app}
+= render :partial => 'shared/carousel', :locals => {:objects => current_partner_apps, :object => @app}
 = render :partial => 'apps/actions', :locals => {:app => @app}
 
 - form_for [@app, @currency] do |f|

@@ -1,0 +1,57 @@
+%ul#carousel.jcarousel-skin-tj
+  -objects.each do |o|
+    - url = o.class.to_s == 'App' ? app_path(o) : reporting_path(o)
+    %li
+      %a{:href => url, :title => o.name, :class => (o == object) ? "selected" : ""}
+        = image_tag(o.get_icon_url, :size => '57x57', :alt => '')
+        %br/
+        .name= truncate(o.name, :length => 15)
+
+- content_for :page_styles do
+  :plain
+  
+    #carousel a {
+      display: block;
+      width: 100px;
+      height: 80px;
+      padding: 5px;
+      text-decoration: none;
+      text-align: center;
+      color: black;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    
+    #carousel a:hover {
+      background-color: #ddd;
+      cursor: pointer;
+    }
+    
+    #carousel a.selected {
+      background-color: #aaa;
+    }
+    
+    #carousel img {
+      vertical-align: center;
+    }
+  
+- content_for :page_javascript do
+  var focused = #{(objects.find_index{|o| o == object} || 0) + 1};
+  var isLast = #{objects.last == object};
+
+  :plain
+    $(function(){
+      $('#carousel').jcarousel({
+        start: focused,
+        itemFallbackDimension: 110
+      });
+      
+      if (isLast) {
+        $('#carousel').jcarousel('scrollTail');
+      }
+    });
+  
+- content_for :included_javascripts do
+  = javascript_include_tag('jquery.jcarousel.min')
+- content_for :page_head do
+  = stylesheet_link_tag('jcarousel')
