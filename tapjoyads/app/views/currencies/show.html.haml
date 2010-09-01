@@ -7,48 +7,48 @@
   %table.editable
     %tr
       %th
-        #help_name.help ?
         Name
+        #help_name.help ?
       %td
         = f.text_field :name
         = error_message_on(@currency, :name) if @currency.errors.on :name
     %tr
       %th
-        #help_conversion_rate.help ?
         Conversion rate
+        #help_conversion_rate.help ?
       %td
         = f.text_field :conversion_rate
         = error_message_on(@currency, :conversion_rate) if @currency.errors.on :conversion_rate
     %tr
       %th
-        #help_managed_by_tapjoy.help ?
         Managed by Tapjoy
+        #help_managed_by_tapjoy.help ?
       %td= check_box_tag(:managed_by_tapjoy, nil, @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL)
     %tr.managed
       %th
-        #help_initial_balance.help ?
         Initial balance
+        #help_initial_balance.help ?
       %td
         = f.text_field :initial_balance
         = error_message_on(@currency, :initial_balance) if @currency.errors.on :initial_balance
     %tr.unmanaged
       %th
-        #help_callback_url.help ?
         Callback URL
+        #help_callback_url.help ?
       %td
         = f.text_field :callback_url
         = error_message_on(@currency, :callback_url) if @currency.errors.on :callback_url
     %tr.unmanaged
       %th
-        #help_secret_key.help ?
         Secret key
+        #help_secret_key.help ?
       %td
         = f.text_field :secret_key
         = error_message_on(@currency, :secret_key) if @currency.errors.on :secret_key
     %tr
       %th
-        #help_test_devices.help ?
         Test devices
+        #help_test_devices.help ?
       %td
         = f.text_area :test_devices
         = error_message_on(@currency, :test_devices) if @currency.errors.on :test_devices

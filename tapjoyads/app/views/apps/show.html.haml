@@ -12,19 +12,19 @@
         %tbody
           %tr
             %th
-              #help_application_state.help ?
               Application state
+              #help_application_state.help ?
             %td
               = select_tag "state", options_for_select(['Not live', 'Live'].zip(%w(not_live, live))), :id => "app_state"
           %tr
             %th
-              #help_platform.help ?
               Platform
+              #help_platform.help ?
             %td= @app.platform=='iphone' ? 'iPhone' : 'Android'
           %tr
             %th
-              #help_name.help ?
               Name
+              #help_name.help ?
             %td
               = f.text_field :name, :size => 50
               = button_to_function "Search", "search()", :class => 'search'
@@ -34,38 +34,38 @@
                 = image_tag 'load-circle.gif', :class => 'load-circle'
           %tr
             %th
-              #help_description.help ?
               Description
+              #help_description.help ?
             %td
               = f.text_area :description, :size => "50x7"
               - if @app.errors.on :description
                 = error_message_on @app, :description
           %tr.app_store_url
             %th
-              #help_store_url.help ?
               Store URL
+              #help_store_url.help ?
             %td
               = f.text_field :store_url, :size => 80, :value => @app.store_id ? @app.final_store_url : ""
               - if @app.errors.on :store_url
                 = error_message_on @app, :store_url
           %tr.app_icon
             %th
-              #help_icon.help ?
               Icon
+              #help_icon.help ?
             %td#app_icon
               = image_tag(@app.primary_offer.get_icon_url, :size => '57x57', :alt => 'icon')
           %tr.price
             %th
-              #help_price.help ?
               Price
+              #help_price.help ?
             %td
               = f.currency_field :price, {}, :size => 10
               - if @app.errors.on :price
                 = error_message_on @app, :price
           %tr
             %th
-              #help_integrated.help ?
               Integrated?
+              #help_integrated.help ?
             - if @integrated
               %td.integrated YES
             - else
