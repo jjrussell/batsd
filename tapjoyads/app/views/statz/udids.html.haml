@@ -1,6 +1,6 @@
 - @page_title = "Monthly UDIDs for offer: #{@offer.name_with_suffix}"
 
-.icon= image_tag(@offer.get_icon_url, :size => '57x57')
+.icon= image_tag(@offer.get_icon_url(request.protocol), :size => '57x57')
 %h1= @offer.name_with_suffix
 
 - unless @keys.empty?

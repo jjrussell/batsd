@@ -4,7 +4,7 @@
     - url = o.class.to_s == 'App' ? app_path(o, extra_url_params) : reporting_path(o, extra_url_params)
     %li
       %a{ :href => url, :title => o.name, :class => (o == object) ? "selected" : "" }
-        = image_tag(o.get_icon_url, :size => '57x57', :alt => '')
+        = image_tag(o.get_icon_url(request.protocol), :size => '57x57', :alt => '')
         %br
         .name= truncate(o.name, :length => 15)
 

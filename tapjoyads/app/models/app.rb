@@ -96,8 +96,8 @@ class App < ActiveRecord::Base
     end
   end
 
-  def get_icon_url
-    "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/#{id}.png"
+  def get_icon_url(protocol='http://')
+    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/#{id}.png"
   end
 
   def get_offer_list(udid, options = {})

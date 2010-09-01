@@ -1,10 +1,10 @@
 - @page_title = "Stats for offer: #{@offer.name_with_suffix}"
 
-.icon= image_tag(@offer.get_icon_url, :size => '57x57')
+.icon= image_tag(@offer.get_icon_url(request.protocol), :size => '57x57')
 %h1= @offer.name_with_suffix
 
 #display_date
-  For: #{@start_time.to_s(:mdy)} - #{@end_time.to_s(:mdy)}. 
+  For: #{@start_time.to_s(:mdy)} - #{@end_time.to_s(:mdy)}.
   Granularity: #{@granularity.to_s}.
   %a{ :href => '#' } [Change]
 

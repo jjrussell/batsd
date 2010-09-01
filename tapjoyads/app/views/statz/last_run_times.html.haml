@@ -1,6 +1,6 @@
 - @page_title = "Last run times for offer: #{@offer.name_with_suffix}"
 
-.icon= image_tag(@offer.get_icon_url, :size => '57x57')
+.icon= image_tag(@offer.get_icon_url(request.protocol), :size => '57x57')
 %h1= @offer.name_with_suffix
 
 %p As of: #{Time.zone.now.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)}

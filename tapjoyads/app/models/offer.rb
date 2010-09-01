@@ -200,11 +200,11 @@ class Offer < ActiveRecord::Base
     get_click_url(publisher_app, publisher_user_id, udid, source) + "&redirect=1"
   end
   
-  def get_icon_url(base64 = false)
+  def get_icon_url(protocol='http://', base64 = false)
     if base64
-      url = "http://ws.tapjoyads.com/get_app_image/icon?app_id=#{item_id}"
+      url = "#{protocol}ws.tapjoyads.com/get_app_image/icon?app_id=#{item_id}"
     else
-      url = "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/#{item_id}.png"
+      url = "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/#{item_id}.png"
     end
     url
   end
