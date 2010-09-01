@@ -24,13 +24,6 @@ td.integrated {
 td.not_integrated {
   color: #f00;
 }
-#apps_tools {
-  float: left;
-  width: 200px;
-}
-#apps_main {
-  margin-left: 210px;
-}
 .new_app_button {
   float: right;
 }
