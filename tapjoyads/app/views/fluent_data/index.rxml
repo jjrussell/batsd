@@ -9,6 +9,8 @@ xml.MarketingData do
       xml.AppKey app.id
       xml.PaidInstalls appstats.stats['paid_installs'].sum
       xml.PaidInstallsHourly appstats.stats['paid_installs'].join(',')
+      xml.PaidClicks appstats.stats['paid_clicks'].sum
+      xml.PaidClicksHourly appstats.stats['paid_clicks'].join(',')
       xml.Spend appstats.stats['installs_spend'].sum
       xml.SpendHourly appstats.stats['installs_spend'].join(',')
     end
