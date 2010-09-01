@@ -61,12 +61,12 @@ thread_list = []
 server_list.each do |server|
   thread = Thread.new do
     if server[:remove_from_lb]
-      `elb-deregister-instances-from-lb webservice-lb --instances #{server[:aws_instance_id]}`
+      `elb-deregister-instances-from-lb web-lb --instances #{server[:aws_instance_id]}`
     end
     puts "Running on #{server[:dns_name]}", `ssh #{user}@#{server[:dns_name]} '#{command}'`, "\n"
     if server[:remove_from_lb]
       `curl -s http://#{server[:dns_name]}:9898/healthz`
-      `elb-register-instances-with-lb webservice-lb --instances #{server[:aws_instance_id]}`
+      `elb-register-instances-with-lb web-lb --instances #{server[:aws_instance_id]}`
       sleep 1
     end
   end
