@@ -1,12 +1,4 @@
 module RightAws
-  
-  ##
-  # Reduce amount of retries - only retry up to 1 seconds rather than 5 seconds.
-  # Transient errors will be handled by writing to sqs or s3.
-  class AWSErrorHandler
-    @@reiteration_time = 1
-  end
-  
   class SdbInterface
     
     # Override, in order to support consistency.
@@ -17,6 +9,7 @@ module RightAws
     alias_method :orig_pack_attributes,   :pack_attributes
     alias_method :orig_put_attributes,    :put_attributes
     alias_method :orig_delete_attributes, :delete_attributes
+    alias_method :orig_request_info,      :request_info
     
     # Prepare attributes for putting or deleting.
     # (used by put_attributes, delete_attributes and batch_put_attributes)
@@ -69,6 +62,15 @@ module RightAws
       request_info( link, QSdbSimpleParser.new )
     rescue Exception
       on_exception
+    end
+    
+    # Overwrite request_info to modify the :http_connection_read_timeout option from 120 to 10, 
+    # and the :http_connection_retry_count option from 3 to 2. 
+    # This should help our servers not lock up when sdb goes down.
+    def request_info(request, parser)
+      thread = @params[:multi_thread] ? Thread.current : Thread.main
+      thread[:sdb_connection] ||= Rightscale::HttpConnection.new(:exception => AwsError, :logger => @logger, :http_connection_read_timeout => 10, :http_connection_retry_count => 2)
+      request_info_impl(thread[:sdb_connection], @@bench, request, parser)
     end
     
     # Add/Replace item attributes in Batch mode.
