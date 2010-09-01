@@ -4,7 +4,7 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
     super QueueNames::SEND_MONEY_TXN
   end
   
-  private
+private
   
   def on_message(message)
     reward = Reward.deserialize(message.to_s)
@@ -23,12 +23,13 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
       conversion = Conversion.new do |c|
         c.id = reward.key
         c.reward_id = reward.key
-        c.advertiser_offer_id = reward.get('offer_id')
-        c.publisher_app_id = reward.get('publisher_app_id')
-        c.advertiser_amount = reward.get('advertiser_amount')
-        c.publisher_amount = reward.get('publisher_amount')
-        c.tapjoy_amount = reward.get('tapjoy_amount')
-        c.reward_type_string = reward.get('type')
+        c.advertiser_offer_id = reward.offer_id
+        c.publisher_app_id = reward.publisher_app_id
+        c.advertiser_amount = reward.advertiser_amount
+        c.publisher_amount = reward.publisher_amount
+        c.tapjoy_amount = reward.tapjoy_amount
+        c.reward_type_string = reward.type
+        c.created_at = reward.created
       end
       begin
         conversion.save!
@@ -41,7 +42,7 @@ class Job::SendMoneyTxnController < Job::SqsReaderController
         end
       end
       
-      reward.put('sent_money_txn', Time.now.utc.to_f.to_s)
+      reward.put('sent_money_txn', Time.zone.now.to_f.to_s)
       reward.save
       
     end

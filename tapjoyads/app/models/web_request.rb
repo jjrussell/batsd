@@ -108,7 +108,7 @@ class WebRequest < SimpledbResource
   # Calls super.save, with write_to_memcache option set to false.
   # Also increments all stats associated with this webrequest.
   def save
-    put('time', @now.to_f.to_s)
+    put('time', @now.to_f.to_s) unless get('time')
     super({:write_to_memcache => false})
     
     get('path', {:force_array => true}).each do |path|
@@ -118,13 +118,13 @@ class WebRequest < SimpledbResource
         if USE_OFFER_ID.include?(path)
           app_id = get('offer_id')
         end
-        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, @now))
+        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time))
       end
       
       stat_name = PUBLISHER_PATH_TO_STAT_MAP[path]
       unless stat_name.nil?
         app_id = get('publisher_app_id')
-        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, @now))
+        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time))
       end
     end
   end

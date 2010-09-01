@@ -58,6 +58,7 @@ private
     reward.put('source', click.source)
     reward.put('udid', udid)
     reward.put('country', click.country)
+    reward.put('created', installed_at_epoch)
     
     begin
       reward.serial_save(:catch_exceptions => false, :expected_attr => { 'type' => nil })
@@ -76,6 +77,7 @@ private
     web_request.put('offer_id', click.offer_id)
     web_request.put('publisher_user_id', click.publisher_user_id)
     web_request.put('source', click.source)
+    web_request.put('time', installed_at_epoch)
     web_request.save
     
     message = reward.serialize(:attributes_only => true)
