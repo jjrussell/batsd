@@ -1,4 +1,6 @@
 class WebsiteController < ApplicationController
+  include SslRequirement
+  
   layout 'website'
   
   skip_before_filter :fix_params
@@ -37,6 +39,10 @@ protected
   def permission_denied
     flash[:error] = "Sorry, you are not allowed to access that page."
     redirect_to(login_path(:goto => request.path))
+  end
+  
+  def ssl_required?
+    Rails.env == 'production'
   end
   
 private
