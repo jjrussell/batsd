@@ -1,10 +1,11 @@
 %ul#carousel.jcarousel-skin-tj
-  -objects.each do |o|
-    - url = o.class.to_s == 'App' ? app_path(o) : reporting_path(o)
+  - extra_url_params ||= nil
+  - objects.each do |o|
+    - url = o.class.to_s == 'App' ? app_path(o, extra_url_params) : reporting_path(o, extra_url_params)
     %li
-      %a{:href => url, :title => o.name, :class => (o == object) ? "selected" : ""}
+      %a{ :href => url, :title => o.name, :class => (o == object) ? "selected" : "" }
         = image_tag(o.get_icon_url, :size => '57x57', :alt => '')
-        %br/
+        %br
         .name= truncate(o.name, :length => 15)
 
 - content_for :page_styles do
