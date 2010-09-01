@@ -153,10 +153,13 @@ table.editable .help {
   -webkit-border-radius: 10px;
   vertical-align: top;
 }
-
 table.editable .help:hover {
-  background-color: #fff;
+  background-color: #eee;
   color: #000;
+}
+table.editable .help:active {
+  background-color: #fff;
+  color: #444;
 }
 .help-dialog .ui-dialog-titlebar {
   height: 5px;

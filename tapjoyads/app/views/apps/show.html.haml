@@ -1,4 +1,6 @@
 - @page_title = 'Apps'
+- is_iphone = @app.platform=='iphone'
+- app_store_name = is_iphone ? 'AppStore' : 'Marketplace'
 
 = render :partial => 'shared/carousel', :locals => {:objects => current_partner_apps, :object => @app}
 = render :partial => 'actions', :locals => {:app => @app}
@@ -20,7 +22,7 @@
             %th
               Platform
               #help_platform.help ?
-            %td= @app.platform=='iphone' ? 'iPhone' : 'Android'
+            %td= is_iphone ? 'iPhone' : 'Android'
           %tr
             %th
               Name
@@ -75,21 +77,25 @@
 
 .hidden
   #help_application_state_content{:name => 'Application State'}
-    Application State
+    %li Not live: The app has not been submitted or approved yet.
+    %li Live: The app has been approved, and is currently listed in the #{app_store_name}.
   #help_platform_content{:name => 'Platform'}
-    Platform
+    Platform on which this app runs.
   #help_name_content{:name => 'Name'}
-    Name
+    App name
   #help_description_content{:name => 'Description'}
-    Description
+    App description
   #help_store_url_content{:name => 'Store URL'}
-    Store URL
+    - if is_iphone
+      %li e.g. http://itunes.apple.com/app/<b>app-name</b>/id<b>123456789</b>
+    - else
+      %li e.g. market://search?q=<b>123456789</b>.
   #help_icon_content{:name => 'Icon'}
-    Icon
+    We automatically retrieve the icon that is currently in the #{app_store_name}
   #help_price_content{:name => 'Price'}
-    Price
+    Price of the app on the #{app_store_name}
   #help_integrated_content{:name => 'Integrated'}
-    Integrated
+    Integration status - shows if the app has connected with our servers within the last 24-hour.
 
 - content_for :page_head, stylesheet_link_tag('apps')
 - content_for :included_javascripts, javascript_include_tag('tapjoy/apps')

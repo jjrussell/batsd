@@ -15,39 +15,77 @@
     %table.editable
       %tbody
         %tr
-          %th Name:
+          %th
+            Offer Name:
+            #help_offer_name.help ?
           %td
             = f.text_field :name, :size => 50
             - if @offer.errors.on :name
               = error_message_on @offer, :name
         %tr
-          %th Balance:
+          %th
+            Balance:
+            #help_balance.help ?
           %td
             .right
               = link_to 'Add funds', add_funds_billing_path
             = number_to_currency(current_partner.balance / 100.0)
         %tr
-          %th Daily Budget:
+          %th
+            Daily Budget:
+            #help_daily.help ?
           %td
             = f.currency_field :daily_budget
             = error_message_on @offer, :daily_budget
         %tr
-          %th Bid
+          %th
+            Bid
+            #help_bid.help ?
           %td
             = f.currency_field :payment
             = error_message_on @offer, :payment
         %tr
-          %th Campaign Status
+          %th
+            Campaign Status
+            #help_status.help ?
           %td
-            = f.select :user_enabled, ['Paused', 'Started'].zip([0, 1]), :selected => @offer.user_enabled ? 1 : 0
+            - started = @offer.user_enabled && !@offer.tapjoy_enabled ? 'Pending' : 'Started'
+            = f.select :user_enabled, ['Paused', started].zip([0, 1]), :selected => @offer.user_enabled ? 1 : 0
             = error_message_on @offer, :user_enabled
         %tr
-          %th Tapjoy Enabled
+          %th
+            Tapjoy Enabled
+            #help_enabled.help ?
           %td
             - if @offer.tapjoy_enabled
               Enabled
             - else
               Disabled
-              -# TODO: replace the following with jquery ui?
-              (Contact #{link_to "support@tapjoy.com", "mailto:support@tapjoy.com"})
     = f.submit 'Update'
+
+.hidden
+  #help_offer_name_content{:name => 'Offer Name'}
+    Name that will be displayed on offer walls.
+  #help_balance_content{:name => 'Balance'}
+    Current balance available.
+  #help_daily_content{:name => 'Daily Budget'}
+    Daily spending limits.
+    - if @offer.daily_budget == 0
+      This offer currently has no daily limits.
+    - else
+      Change this field to $0 for unlimited daily budget.
+  #help_bid_content{:name => 'Bid'}
+    Bidding amount per offer.
+    - if @app.price > 0
+      For paid apps, the minimum bid is 50% of the app price.
+    - else
+      For free apps, the minimum bid is $0.25.
+  #help_status_content{:name => 'Campaign Status'}
+    %li <b>Paused</b>: the campaign has not yet started, or has been disabled
+    - #TODO: once this process is automated, the help text should change accordingly
+    %li <b>Pending</b>: please contact #{link_to "support@tapjoy.com", "mailto:support@tapjoy.com"} to enable this offer
+    %li <b>Started</b>: the campaign has started.
+  #help_enabled_content{:name => 'Tapjoy Enabled'}
+    Tapjoy approval status
+    - unless @offer.tapjoy_enabled
+      Please contact #{link_to "support@tapjoy.com", "mailto:support@tapjoy.com"} to enable this offer.
