@@ -31,6 +31,8 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
       conversion_rate = recent_installs / recent_clicks
     end
     
+    conversion_rate = 1.0 if conversion_rate > 1.0
+    
     min_conversion_rate = offer.min_conversion_rate || (offer.is_paid? ? 0.005 : 0.12)
     if recent_clicks > 200 && conversion_rate < min_conversion_rate
       Notifier.alert_new_relic(ConversionRateTooLowError, "#{offer.name} (http://ws.tapjoyads.com/statz/#{offer.id}) has #{conversion_rate} cvr on #{recent_clicks} clicks.")
