@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100902065812) do
+ActiveRecord::Schema.define(:version => 20100902204130) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -151,13 +151,13 @@ ActiveRecord::Schema.define(:version => 20100902065812) do
     t.integer  "price"
     t.integer  "payment",                                                                       :default => 0,     :null => false
     t.integer  "actual_payment"
-    t.integer  "daily_budget"
-    t.integer  "overall_budget"
+    t.integer  "daily_budget",                                                                  :default => 0,     :null => false
+    t.integer  "overall_budget",                                                                :default => 0,     :null => false
     t.integer  "ordinal",                                                                       :default => 500,   :null => false
-    t.text     "countries"
-    t.text     "cities"
-    t.text     "postal_codes"
-    t.text     "device_types"
+    t.text     "countries",                                                                                        :null => false
+    t.text     "cities",                                                                                           :null => false
+    t.text     "postal_codes",                                                                                     :null => false
+    t.text     "device_types",                                                                                     :null => false
     t.boolean  "pay_per_click",                                                                 :default => false
     t.boolean  "allow_negative_balance",                                                        :default => false
     t.boolean  "user_enabled",                                                                  :default => false
