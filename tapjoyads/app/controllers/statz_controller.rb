@@ -280,10 +280,12 @@ class StatzController < WebsiteController
       @udids_to_check.unshift({ :udid => params[:other_udid], :last_run_time => 'Never', :device_label => 'Other UDID' })
     end
     
+    app_id = @offer.is_primary? ? @offer.id : @offer.item.primary_offer.id
+    
     @udids_to_check.each do |hash|
       list = DeviceAppList.new(:key => hash[:udid])
-      if list.has_app(@offer.id)
-        hash[:last_run_time] = list.last_run_time(@offer.id).in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)
+      if list.has_app(app_id)
+        hash[:last_run_time] = list.last_run_time(app_id).in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)
       end
     end
   end
