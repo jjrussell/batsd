@@ -1,5 +1,7 @@
 class OffersController < WebsiteController
   layout 'tabbed'
+  current_tab :apps
+
   filter_access_to :all
   before_filter :find_offer
 
