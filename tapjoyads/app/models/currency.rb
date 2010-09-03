@@ -26,7 +26,7 @@ class Currency < ActiveRecord::Base
   
   def get_reward_amount(offer)
     # TO REMOVE - after Shazam featured campaign is done. NGMoco is way too needy.
-    if offer.id == 'a77bffab-fbdd-4b11-a0c4-53cc30b9f8e9' && id == '4d777c48-db71-48fc-8d75-8afbc511a31c'
+    if offer.id == 'a77bffab-fbdd-4b11-a0c4-53cc30b9f8e9' && id == '81195fa3-227f-4dde-936a-989511d0b12d'
       return 5
     end
     [get_publisher_amount(offer) * conversion_rate / 100.0, 1.0].max.to_i
@@ -35,7 +35,7 @@ class Currency < ActiveRecord::Base
   def get_publisher_amount(offer)
     # TO REMOVE - after Shazam featured campaign is done.
     money_share = installs_money_share
-    if offer.id == 'a77bffab-fbdd-4b11-a0c4-53cc30b9f8e9' && id == '4d777c48-db71-48fc-8d75-8afbc511a31c'
+    if offer.id == 'a77bffab-fbdd-4b11-a0c4-53cc30b9f8e9' && id == '81195fa3-227f-4dde-936a-989511d0b12d'
       money_share = 0.9
     end
     
