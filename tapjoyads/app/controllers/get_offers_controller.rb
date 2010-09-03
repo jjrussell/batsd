@@ -24,6 +24,7 @@ class GetOffersController < ApplicationController
   def featured
     set_offer_list(:require_device_ip_param => false, :show_secondary_offers => true)
     
+    srand
     @offer_list = @offer_list[rand(@offer_list.length).to_i, 1]
     @more_data_available = 0
     @source = 'featured'
