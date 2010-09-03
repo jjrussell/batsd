@@ -176,3 +176,6 @@ div.help-dialog .ui-dialog-title {
   overflow: visible;
   font-size: 12px;
 }
+.description {
+  font-size: 85%;
+}

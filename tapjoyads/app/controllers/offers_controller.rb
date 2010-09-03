@@ -5,18 +5,17 @@ class OffersController < WebsiteController
   filter_access_to :all
   before_filter :find_offer
 
+  def show
+  end
+
   def update
-    params_offer = sanitize_currency_params(params[:offer], [:daily_budget, :payment])
-    respond_to do |format|
-      if @offer.safe_update_attributes(params_offer, [:daily_budget, :name, :payment, :user_enabled])
-        flash[:notice] = 'Offer was successfully updated.'
-        format.html { redirect_to(app_offer_path(:app_id => @app.id, :id => @offer.id)) }
-        format.xml  { head :ok }
-      else
-        flash[:error] = 'Update unsuccessful.'
-        format.html { render :action => "show" }
-        format.xml  { render :xml => @offer.errors, :status => :unprocessable_entity }
-      end
+    params_offer = sanitize_currency_params(params[:offer], [:payment])
+    if @offer.safe_update_attributes(params_offer, [:daily_budget, :name, :payment, :user_enabled])
+      flash[:notice] = 'Pay-per-install was successfully updated'
+      redirect_to(app_offer_path(:app_id => @app.id, :id => @offer.id))
+    else
+      flash[:error] = 'Update unsuccessful'
+      render :action => "show"
     end
   end
 

@@ -4,54 +4,57 @@
 = render :partial => 'apps/actions', :locals => {:app => @app}
 
 #apps_main
-  - unless @app.nil?
-    .app-thumb
-      .icon
-        = image_tag(@app.primary_offer.get_icon_url(request.protocol), :size => '57x57', :alt => 'icon')
-        = @app.name
-    %br/
+  %h3 Pay-Per-Install
+
+  %p.description
+    Pay-Per-Install lets you buy a pre-determined number of guaranteed installations for your app. Only pay when a user installs your app.
+  %p.description
+    Enter your bid per install below. The minimum bid is 50% of the purchase price for paid apps, or $0.35 for free apps. 
+    Higher bids will fetch more installs.
+  
 
   - form_for(:offer, @offer, :url => { :action => :update }, :html => { :method => :put }) do |f|
     %table.editable
       %tbody
         %tr
           %th
-            Offer Name:
-            #help_offer_name.help ?
+            Enable Installs
+            #help_user_enabled.help ?
           %td
-            = f.text_field :name, :size => 50
-            - if @offer.errors.on :name
-              = error_message_on @offer, :name
-        %tr
-          %th
-            Balance:
-            #help_balance.help ?
-          %td
-            .right
-              = link_to 'Add funds', add_funds_billing_path
-            = number_to_currency(current_partner.balance / 100.0)
-        %tr
-          %th
-            Daily Budget:
-            #help_daily.help ?
-          %td
-            = f.currency_field :daily_budget
-            = error_message_on @offer, :daily_budget
+            = f.check_box :user_enabled
+            = error_message_on @offer, :user_enabled
         %tr
           %th
             Bid
             #help_bid.help ?
           %td
-            = f.currency_field :payment
+            = f.currency_field :payment, {}, :class => 'togglable'
             = error_message_on @offer, :payment
         %tr
           %th
-            Campaign Status
-            #help_status.help ?
+            Offer Name
+            #help_offer_name.help ?
           %td
-            - started = @offer.user_enabled && !@offer.tapjoy_enabled ? 'Pending' : 'Started'
-            = f.select :user_enabled, ['Paused', started].zip([0, 1]), :selected => @offer.user_enabled ? 1 : 0
-            = error_message_on @offer, :user_enabled
+            = f.text_field :name, :class => 'togglable'
+            - if @offer.errors.on :name
+              = error_message_on @offer, :name
+        %tr
+          %th
+            Daily Install Limit
+            #help_daily.help ?
+          %td
+            = f.text_field :daily_budget, :class => 'togglable'
+            = error_message_on @offer, :daily_budget
+            #estimated_budget
+              Estimated daily budget: 
+              .value
+        %tr
+          %th
+            Balance
+            #help_balance.help ?
+          %td
+            = number_to_currency(current_partner.balance / 100.0)
+            = link_to 'Add funds', add_funds_billing_path, :class => 'addfunds'
         %tr
           %th
             Tapjoy Enabled
@@ -61,31 +64,90 @@
               Enabled
             - else
               Disabled
-    = f.submit 'Update'
+        %tr
+          %td &nbsp;
+          %td= f.submit 'Update'
 
 .hidden
   #help_offer_name_content{:name => 'Offer Name'}
-    Name that will be displayed on offer walls.
+    Name that will be displayed on offer walls. We recommend that you keep this the same as the app name, but you can modify it if you wish.
   #help_balance_content{:name => 'Balance'}
     Current balance available.
   #help_daily_content{:name => 'Daily Budget'}
-    Daily spending limits.
-    - if @offer.daily_budget == 0
-      This offer currently has no daily limits.
-    - else
-      Change this field to $0 for unlimited daily budget.
+    The maximum number of installs per day.
   #help_bid_content{:name => 'Bid'}
-    Bidding amount per offer.
+    Amount you'll pay per install.
     - if @app.price > 0
       For paid apps, the minimum bid is 50% of the app price.
     - else
-      For free apps, the minimum bid is $0.25.
-  #help_status_content{:name => 'Campaign Status'}
-    %li <b>Paused</b>: the campaign has not yet started, or has been disabled
-    - #TODO: once this process is automated, the help text should change accordingly
-    %li <b>Pending</b>: please contact #{link_to "support@tapjoy.com", "mailto:support@tapjoy.com"} to enable this offer
-    %li <b>Started</b>: the campaign has started.
+      For free apps, the minimum bid is $0.35.
+  #help_user_enabled_content{:name => 'Enable Installs'}
+    Enable installs to get your campaign started.
   #help_enabled_content{:name => 'Tapjoy Enabled'}
-    Tapjoy approval status
+    Tapjoy approval status.
     - unless @offer.tapjoy_enabled
       Please contact #{link_to "support@tapjoy.com", "mailto:support@tapjoy.com"} to enable this offer.
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      toggleUserEnabled();
+      $('#offer_user_enabled').change(toggleUserEnabled);
+      
+      setEstimatedBudget();
+      $('#offer_payment').change(function() {
+        $(this).val(numberToCurrency(stringToNumber($(this).val())));
+        setEstimatedBudget();
+      });
+      $('#offer_daily_budget').change(function() {
+        $(this).val(stringToNumber($(this).val()));
+        setEstimatedBudget();
+      });
+    });
+
+    function toggleUserEnabled() {
+      if ($('#offer_user_enabled').attr('checked')) {
+        $('.togglable').attr('disabled', false);
+        $('#estimated_budget').removeClass('disabled');
+      } else {
+        $('.togglable').attr('disabled', true);
+        $('#estimated_budget').addClass('disabled');
+      }
+    }
+    
+    function setEstimatedBudget() {
+      var bid = stringToNumber($('#offer_payment').val());
+      var installLimit = stringToNumber($('#offer_daily_budget').val())
+      budget = 'Unlimited'
+      if (installLimit > 0) {
+        budget = numberToCurrency(bid * installLimit);
+      }
+      $('#estimated_budget .value').html(budget);
+    }
+    
+    function numberToCurrency(number) {
+      return '$' + number.toFixed(2);
+    }
+    
+    function stringToNumber(currency) {
+      return Number(currency.replace(/[^\d\.]/g, ''));
+    }
+  
+  - content_for :page_styles do
+    :plain
+      .addfunds {
+        padding-left: 15px;
+      }
+      
+      #estimated_budget {
+        font-size: 85%;
+      }
+      
+      #estimated_budget.disabled {
+        color: #aaa;
+      }
+      
+      #estimated_budget .value {
+        font-weight: bold;
+        display: inline;
+      }
