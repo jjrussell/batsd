@@ -11,8 +11,9 @@ class GetOffersController < ApplicationController
     @message = nil
     unless params[:featured_offer].blank?
       featured_offer = Offer.find_in_cache(params[:featured_offer])
+      primary_offer = Offer.find_in_cache(featured_offer.item_id)
       
-      if featured_offer.featured? && @offer_list.include?(featured_offer)
+      if featured_offer.featured? && @offer_list.include?(primary_offer)
         redirect_to featured_offer.get_redirect_url(@publisher_app, params[:publisher_user_id], params[:udid], 'featured', params[:app_version])
         return
       end
