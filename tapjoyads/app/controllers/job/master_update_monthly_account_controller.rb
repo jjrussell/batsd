@@ -1,8 +1,8 @@
 class Job::MasterUpdateMonthlyAccountController < Job::JobController
   def index
 
-    Partner.all.each do |partner|
-      now = Time.now.utc
+    Partner.find_each do |partner|
+      now = Time.zone.now
       json = {}
       json['partner_id'] = partner.id
       json['month'] = now.month
