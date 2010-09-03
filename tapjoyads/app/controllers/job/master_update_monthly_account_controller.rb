@@ -10,7 +10,7 @@ class Job::MasterUpdateMonthlyAccountController < Job::JobController
         json['year'] = now.year
         message = json.to_json
         Sqs.send_message(QueueNames::UPDATE_MONTHLY_ACCOUNT, message)
-        sleep(1) # don't want to overwhelm the job servers
+        sleep(3) # don't want to overwhelm the job servers
       end
     end
     

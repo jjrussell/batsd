@@ -75,7 +75,7 @@ class MonthlyAccounting < ActiveRecord::Base
     end_time = start_time.end_of_month
     
     record = MonthlyAccounting.find_or_initialize_by_partner_id_and_month_and_year(partner.id, month, year)
-        
+    
     #Calculate the Balance side
     orders = Order.sum(:amount, :conditions => "status = 1 and partner_id = '#{partner.id}' and created_at >= '#{start_time.to_s(:db)}' and created_at < '#{end_time.to_s(:db)}'", :group => :payment_method)
     
