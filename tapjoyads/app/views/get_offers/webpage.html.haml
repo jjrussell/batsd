@@ -30,7 +30,10 @@
     .next= get_next_link
     .clear
 
-#adsby Ads by Tapjoy
+- # Don't show 'Ads by Tapjoy' for Gamevil.
+- # TODO: Don't hard-code id. Add a bit to the record or find some other solution.
+- if @currency.partner_id != 'cea789f9-7741-4197-9cc0-c6ac40a0801a'
+  #adsby Ads by Tapjoy
 
 %img.hidden{ :src => '/images/load-circle.gif' }
 
