@@ -59,13 +59,15 @@
       %li= link_to(offer.name_with_suffix, statz_path(offer.id))
 
 %h4 Partner
+= link_to('[Activity Log]', activities_path(:partner_id => @offer.partner_id))
+- form_tag(make_current_partner_path(@offer.partner), :style => 'display: inline;') do
+  = submit_tag('Act as Partner')
 %table.properties
   - if @offer.partner.users.first
     - property_row('Contact', @offer.partner.users.first.email)
   - property_row('Balance', number_to_currency(@offer.partner.balance / 100.0))
   - property_row('Pending Earnings', number_to_currency(@offer.partner.pending_earnings / 100.0))
   - property_row('id', link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - ' + clippy(@offer.partner.id))
-  = link_to('[Activity Log]', activities_path(:partner_id => @offer.partner_id))
 
 - if @offer.item_type == 'App' && @offer.item.currency
   %h4 Currency - #{@offer.item.currency.name}
