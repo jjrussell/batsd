@@ -33,7 +33,7 @@ private
     @payouts = current_partner.payouts.sort
     @orders = current_partner.orders.sort
 
-    start_date = [@payouts.first.created_at, @orders.first.created_at].min
+    start_date = [current_partner.created_at, (@payouts.first || current_partner).created_at, (@orders.first || current_partner).created_at].min
     end_date = Time.zone.now
 
     @statements = {}
