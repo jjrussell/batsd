@@ -16,14 +16,6 @@
   .clear
   %hr/
 
-#billing-date-range
-  Date range:
-  %form#change_date{:method => 'get'}
-    = collection_select("billing", "start_date", @statements, :to_date, :to_mmm_yyyy, :selected => @start_date)
-    \-
-    = collection_select("billing", "end_date", @statements, :to_date, :to_mmm_yyyy, :selected => @end_date)
-    = submit_tag "Go"
-  
 .box-full
   - unless @statements.blank?
     #billing-summary
@@ -39,12 +31,14 @@
       #details_explanation
         Click one of the months on the left to see more details
       = render :partial => 'statement_details', :collection => @statements, :as => :statement
-    #buttons
-      = button_to 'Export Statments', {:method => 'GET', :action => 'export_statements', :billing => {:start_date => @start_date, :end_date => @end_date} }
-      = button_to 'Export Payments', {:method => 'GET', :action => 'export_orders', :billing => {:start_date => @start_date, :end_date => @end_date} }
-      = button_to 'Export Payouts', {:method => 'GET', :action => 'export_payouts', :billing => {:start_date => @start_date, :end_date => @end_date} }
+   
   - else
     .none No statements available
+
+#buttons
+  = button_to 'Export Statments', {:method => 'GET', :action => 'export_statements' }
+  = button_to 'Export Payments', {:method => 'GET', :action => 'export_orders' }
+  = button_to 'Export Payouts', {:method => 'GET', :action => 'export_payouts' }
 
 - content_for :page_javascript do
   :plain
@@ -81,7 +75,7 @@
     }
     table td {
       text-align: right;
-      min-width: 120px;
+      min-width: 100px;
     }
     #billing-summary tr.statement:hover {
       cursor: pointer;
@@ -90,6 +84,11 @@
     
     #billing-summary tr.active {
       background-color: #00647b !important;
+    }
+  
+    #details {
+      margin-left: 350px;
+      padding-top: 1px;
     }
   
     #details_explanation {

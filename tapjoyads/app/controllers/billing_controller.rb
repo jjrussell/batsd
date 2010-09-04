@@ -11,24 +11,17 @@ class BillingController < WebsiteController
   end
 
   def export_statements
-    setup_export_headers("tapjoy_statements_#{@start_date.strftime("%Y-%m")}_#{@end_date.strftime("%Y-%m")}")
+    setup_export_headers("tapjoy_statements")
     render :layout => false
   end
 
   def export_orders
-    @orders = @orders.select do |o|
-      @start_date.to_time <= o.created_at && o.created_at < @end_date.to_time.end_of_month
-    end.sort
-    
-    setup_export_headers("tapjoy_payments_#{@start_date.strftime("%Y-%m")}_#{@end_date.strftime("%Y-%m")}")
+    setup_export_headers("tapjoy_payments")
     render :layout => false
   end
   
   def export_payouts
-    @payouts = @payouts.select do |p|
-      @start_date.to_time <= p.created_at && p.created_at < @end_date.to_time.end_of_month
-    end.sort
-    setup_export_headers("tapjoy_payouts_#{@start_date.strftime("%Y-%m")}_#{@end_date.strftime("%Y-%m")}")
+    setup_export_headers("tapjoy_payouts")
     render :layout => false
   end
 
@@ -37,29 +30,32 @@ class BillingController < WebsiteController
 
 private
   def get_statements
-    @statements = current_partner.monthly_accountings.sort
-    @payouts = current_partner.payouts
-    @orders = current_partner.orders
+    @payouts = current_partner.payouts.sort
+    @orders = current_partner.orders.sort
 
-    unless @statements.blank?
-      @start_date =
-        if params[:billing] && params[:billing][:start_date]
-          Date.parse(params[:billing][:start_date])
-        else
-          @statements.first.to_date
-        end
+    start_date = [@payouts.first.created_at, @orders.first.created_at].min
+    end_date = Time.zone.now
 
-      @end_date =
-        if params[:billing] && params[:billing][:end_date]
-          Date.parse(params[:billing][:end_date])
-        else
-          @statements.last.to_date
-        end
+    @statements = {}
+    date = start_date
+    while date < end_date
+      month = date.strftime("%Y-%m")
+      text_month = date.strftime("%B %Y")
+      @statements[month] = {:orders => 0, :payouts => 0, :text_month => text_month, :start_time => date.beginning_of_month, :end_time => date.end_of_month}
+      date = date.next_month
     end
-
-    @statements = @statements.select do |s|
-      @start_date <= s.to_date && s.to_date <= @end_date
+    
+    @orders.each do |order|
+      month = order.created_at.strftime("%Y-%m")
+      @statements[month][:orders] += order.amount
     end
+    
+    @payouts.each do |payout|
+      month = payout.created_at.strftime("%Y-%m")
+      @statements[month][:payouts] += payout.amount
+    end
+    
+    @statements = @statements.sort { |a, b| a[0] <=> b[0] }
   end
   
   def setup_export_headers(filename)

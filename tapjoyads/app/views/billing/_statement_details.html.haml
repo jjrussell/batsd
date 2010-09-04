@@ -1,8 +1,8 @@
-- orders = @orders.select {|o| o.created_at.month == statement.month && o.created_at.year == statement.year }.sort
-- payouts = @payouts.select {|o| o.created_at.month == statement.month && o.created_at.year == statement.year }.sort
+- orders = @orders.select {|o| o.created_at >= statement[1][:start_time] && o.created_at < statement[1][:end_time] }.sort
+- payouts = @payouts.select {|o| o.created_at >= statement[1][:start_time] && o.created_at < statement[1][:end_time] }.sort
 
-%div.hidden{:id => "details_#{statement.to_date}"}
-  %h3= Date::MONTHNAMES[statement[:month].to_i] + " " + statement[:year].to_s
+%div.hidden{:id => "details_#{statement[0]}"}
+  %h3= statement[1][:text_month]
   - unless orders.blank?
     %table
       %thead
