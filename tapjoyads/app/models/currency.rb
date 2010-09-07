@@ -2,6 +2,7 @@ class Currency < ActiveRecord::Base
   include UuidPrimaryKey
   
   TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
+  NO_CALLBACK_URL = 'NO_CALLBACK'
   
   belongs_to :app
   belongs_to :partner
@@ -12,7 +13,7 @@ class Currency < ActiveRecord::Base
   validates_numericality_of :max_age_rating, :allow_nil => true, :only_integer => true
   validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :in => [ true, false ]
   validates_each :callback_url do |record, attribute, value|
-    unless value == TAPJOY_MANAGED_CALLBACK_URL || value =~ /^https?:\/\//
+    unless value == TAPJOY_MANAGED_CALLBACK_URL || value == NO_CALLBACK || value =~ /^https?:\/\//
       record.errors.add(attribute, 'is not a valid url')
     end
   end
