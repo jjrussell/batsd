@@ -4,6 +4,7 @@ development:
   host: dev-tapjoy-db-rds.cck8zbm50hdd.us-east-1.rds.amazonaws.com
   username: tapjoy
   password: andoverbusiness1
+  reconnect: true
 
 test:
   adapter: mysql
@@ -11,6 +12,7 @@ test:
   host: localhost
   username: root
   password:
+  reconnect: true
 
 production:
   adapter: mysql
@@ -18,3 +20,4 @@ production:
   host: tapjoy-db-rds.cck8zbm50hdd.us-east-1.rds.amazonaws.com
   username: tapjoy
   password: andoverbusiness1
+  reconnect: true
