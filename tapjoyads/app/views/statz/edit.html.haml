@@ -31,6 +31,9 @@
     = f.label(:show_rate)
     = f.text_field(:show_rate)
   .field
+    = f.label(:min_conversion_rate, 'Min CVR (i.e. 0.1)')
+    = f.text_field(:min_conversion_rate)
+  .field
     = f.label(:countries, 'Countries (i.e. ["US", "CA"])')
     = f.text_field(:countries)
     = link_to('Country codes', 'http://www.iso.org/iso/english_country_names_and_code_elements')
