@@ -10,6 +10,7 @@ class App < ActiveRecord::Base
   belongs_to :partner
   
   validates_presence_of :partner, :name
+  validates_inclusion_of :platform, :in => %w( android iphone )
 
   # after_create :fill_description
   after_create :create_primary_offer
