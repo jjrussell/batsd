@@ -64,6 +64,13 @@ class Currency < ActiveRecord::Base
     tapjoy_amount
   end
   
+  def add_disabled_partner_id(partner_id)
+    unless get_disabled_partner_ids.include?(partner_id)
+      self.disabled_partners += ";#{partner_id}"
+      save!
+    end
+  end
+  
   def get_disabled_offer_ids
     Set.new(disabled_offers.split(';'))
   end
