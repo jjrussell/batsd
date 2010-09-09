@@ -66,7 +66,8 @@ class Currency < ActiveRecord::Base
   
   def add_disabled_partner_id(partner_id)
     unless get_disabled_partner_ids.include?(partner_id)
-      self.disabled_partners += ";#{partner_id}"
+      self.disabled_partners += ';' if disabled_partners.length > 0
+      self.disabled_partners += "#{partner_id}"
       save!
     end
   end
