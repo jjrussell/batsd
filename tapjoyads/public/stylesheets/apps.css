@@ -27,3 +27,8 @@ td.not_integrated {
 .new_app_button {
   float: right;
 }
+#app_description {
+  max-width: 400px;
+  max-height: 300px;
+  overflow: auto;
+}

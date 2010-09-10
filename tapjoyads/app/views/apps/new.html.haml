@@ -1,46 +1,46 @@
 - @page_title = 'New application'
 
-= render :partial => 'apps', :object => current_partner_apps
+= render :partial => 'shared/carousel', :locals => {:objects => current_partner_apps, :object => nil}
 = render :partial => 'actions', :locals => {:app => nil}
 
 #apps_main
-  %h1 Add new application
-  %h3 Add a new application to the Tapjoy system.
+  %h1 Add an app
   -form_for @app do |f|
     %table.editable
       %tbody
         %tr
-          %td Application state
+          %th Application state
           %td
             = select_tag "state", options_for_select(['Not live', 'Live'].zip(%w(not_live, live))), :id => "app_state"
         %tr
-          %td Platform
+          %th Platform
           %td
-            = f.select :platform, %w(iPhone Android).zip(%w(iphone android))
+            = f.select :platform, %w(iPhone).zip(%w(iphone))
+            (Android support coming soon to the beta webpage)
         %tr
-          %td Application name
+          %th Application name
           %td
-            = f.text_field :name, :size => 50
+            = f.text_field :name
             = button_to_function "Search", "search()", :class => 'search'
             -if @app.errors.on :name
               = error_message_on @app, :name
             #search_results
               = image_tag 'load-circle.gif', :class => 'load-circle'
-        %tr.app_store_url
-          %td Store URL:
+        %tr.app_data
+          %th Store ID
           %td
-            = f.text_field :store_url, :size => 80
-            -if @app.errors.on :store_url
-              =error_message_on @app, :store_url
-        %tr.app_icon
-          %td Icon:
+            %a#app_store_link
+        %tr.app_data
+          %th Icon
           %td#app_icon &nbsp;
-        %tr.price
-          %td Price:
+        %tr.app_data
+          %th Price
+          %td#app_price
+        %tr.app_data
+          %th Description
           %td
-            = f.currency_field :price, :size => 10
+            #app_description
     = f.hidden_field :store_id
-    = hidden_field_tag "app[icon_url]", nil, :id => "app_icon_url"
     = f.submit 'Create'
 
 - content_for :page_head, stylesheet_link_tag('apps')

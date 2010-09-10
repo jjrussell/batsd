@@ -12,7 +12,6 @@ class App < ActiveRecord::Base
   validates_presence_of :partner, :name
   validates_inclusion_of :platform, :in => %w( android iphone )
 
-  # after_create :fill_description
   after_create :create_primary_offer
   after_update :update_offers
   after_save :update_memcached
@@ -85,14 +84,27 @@ class App < ActiveRecord::Base
     save!
   end
 
-  def icon_url=(url)
+  ##
+  # Grab data from the app store and mutate self with data.
+  def fill_app_store_data
+    return if store_id.blank?
+    data = AppStore.fetch_app_by_id(store_id)
+    self.name = data[:title]
+    self.price = (data[:price] * 100).to_i
+    self.description = data[:description]
+    self.age_rating = data[:age_rating]
+    download_icon(data[:icon_url])
+  end
+
+  def download_icon(url)
     return if url.blank?
     set_primary_key if id.nil?
     begin
-      icon = Downloader.get(url, :return_response => true, :timeout => 30).body
+      icon = Downloader.get(url, :timeout => 30)
       bucket = S3.bucket(BucketNames::APP_DATA)
       bucket.put("icons/#{id}.png", icon, {}, "public-read")
     rescue
+      Rails.logger.info "Failed to download icon for url: #{url}"
       Notifier.alert_new_relic(AppDataFetchError, "icon url #{url} for app id #{id}")
     end
   end

@@ -6,24 +6,17 @@ $(function(){
   var toggleAppState = function() {
     if ($('select#app_state').val() == 'live') {
       $('.search').show();
-      $('tr.app_store_url').show();
-      $('tr.app_icon').show();
-      $('tr.price').show();
-      if ($('input#app_name').val()=='') {
-        $('input#app_name').focus();
-      }
+      $('.app_data').show();
     } else {
       $('.search').hide();
-      $('tr.app_store_url').hide();
-      $('tr.app_icon').hide();
-      $('tr.price').hide();
+      $('.app_data').hide();
     }
   };
   $('select#app_state').change(toggleAppState);
   if ($('input#app_store_id').val()) {
     $('select#app_state').val('live');
-    toggleAppState();
   }
+  toggleAppState();
 
   // hide search results on just about everything
   $(document).click(function(e){
@@ -41,7 +34,7 @@ $(function(){
   var width = $('input#app_name').width() - 2;
   var offset = $('input#app_name').offset();
   if (offset) {
-    offset.top += $('input#app_name').height() + 3;
+    offset.top += $('input#app_name').height() + 3 + $(window).scrollTop();
     $('#search_results').offset(offset).css('width', width + 'px');
   }
 
@@ -72,11 +65,13 @@ $(function(){
   var populate = function(){
     var app = $.data(this, 'data');
     $('input#app_name').val(app.title);
-    $('input#app_store_url').val(app.url);
     $('input#app_store_id').val(app.item_id);
-    $('input#app_icon_url').val(app.icon_url);
-    $('input#app_price').val(app.price);
-    $('td#app_icon').html($('<img/>').attr('src', app.icon_url));
+    $('#app_store_url').text(app.url);
+    $('#app_store_link').text(app.item_id);
+    $('#app_store_link').attr('href', app.url);
+    $('#app_price').text('$' + app.price);
+    $('#app_icon').html($('<img/>').attr('src', app.icon_url));
+    $('#app_description').html(app.description.replace("\n", "<br>"));
     $('#search_results').hide();
   };
 

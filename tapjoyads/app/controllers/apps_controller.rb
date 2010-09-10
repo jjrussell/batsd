@@ -32,18 +32,19 @@ class AppsController < WebsiteController
   end
 
   def create
-    params_app = sanitize_currency_params(params[:app], [:price])
-    @app = App.new(params_app)
+    @app = App.new
     @app.partner = current_partner
-    respond_to do |format|
-      if @app.save
-        format.html { redirect_to(confirm_app_path(@app)) }
-        format.xml  { render :xml => @app, :status => :created, :location => @app }
-      else
-        flash[:error] = 'Your app was not created.'
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @app.errors, :status => :unprocessable_entity }
-      end
+    @app.platform = params[:app][:platform]
+    @app.store_id = params[:app][:store_id]
+    
+    @app.fill_app_store_data
+    
+    if @app.save
+      flash[:notice] = 'App was successfully created.'
+      redirect_to(@app)
+    else
+      flash[:error] = 'Your app was not created.'
+      render :action => "new"
     end
   end
 
