@@ -68,22 +68,6 @@ class App < ActiveRecord::Base
     end
   end
 
-  def fill_description
-    return unless description.blank? && store_id.present?
-    begin
-      self.description = AppStore.fetch_app_by_id(store_id)[:description]
-      save!
-    rescue
-      Notifier.alert_new_relic(AppDataFetchError, "description for app id #{id}")
-    end
-  end
-
-  # TODO: maybe we don't want this public-facing?
-  def refresh_icon
-    icon_url = AppStore.fetch_app_by_id(store_id)[:icon_url]
-    save!
-  end
-
   ##
   # Grab data from the app store and mutate self with data.
   def fill_app_store_data
