@@ -34,5 +34,5 @@
 }
 
 .graph {
-  float: left;
+  display: inline-block;
 }

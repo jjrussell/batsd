@@ -1,5 +1,6 @@
 body {
   font-family: arial, helvetica;
+  background:url("/images/stripes.png") repeat scroll 0 0 #C7C7C7;
 }
 a img {
   border: none;
@@ -19,16 +20,24 @@ a img {
 .hidden {
   display: none;
 }
+#main {
+  padding: 10px 15px;
+  margin: 10px auto;
+  background: white;
+  border: 1px solid #d5d5d5;
+  -moz-border-radius: 7px;
+  -webkit-border-radius: 7px;
+  width: 960px;
+}
 #top_nav {
   text-align: right;
-  margin: 0px 40px;
 }
 #content {
-  margin: 0px 40px;
   border-top: 1px solid #888;
 }
 ul.navigation {
   margin: 6px 0 -1px;
+  padding: 0;
 }
 ul.navigation li {
   display: inline-block;
@@ -81,7 +90,7 @@ input.date {
   width: 100px;
 }
 
-table.editable th {
+.editable th {
   text-align: right;
   vertical-align: top;
   padding-top: 3px;
@@ -89,18 +98,20 @@ table.editable th {
   white-space: nowrap;
 }
 
-table.editable textarea,
-table.editable input[type=text] {
-  border:1px solid transparent;
+.editable textarea,
+.editable input[type=text] {
+  border:1px solid #bec5cb;
   font-size: 16px;
   width: 400px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
 }
 
-table.editable textarea.active,
-table.editable textarea:hover,
-table.editable input[type=text].active,
-table.editable input[type=text]:hover {
-  border: 1px solid black;
+.editable textarea.active,
+.editable textarea:hover,
+.editable input[type=text].active,
+.editable input[type=text]:hover {
+  background-color: #fffff0;
 }
 
 table.editable textarea.changed,

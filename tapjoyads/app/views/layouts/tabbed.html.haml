@@ -10,36 +10,37 @@
     = yield :page_head
   
   %body
-    #top_nav
-      .left
-        = link_to image_tag('tapjoylogo.png'), home_index_path
-      .right
-        = current_user.username
-        |
-        = link_to('Announcements')
-        |
-        = link_to('Contact Us')
-        |
-        = link_to('Sign Out', logout_path)
-      .clear
+    #main
+      #top_nav
+        .left
+          = link_to image_tag('tapjoylogo.png'), home_index_path
+        .right
+          = current_user.username
+          |
+          = link_to('Announcements')
+          |
+          = link_to('Contact Us')
+          |
+          = link_to('Sign Out', logout_path)
+        .clear
     
-    #tabs
-      - tabs = []
-      - tabs << { :home      => home_index_path }      if permitted_to?(:index, :home)
-      - tabs << { :apps      => apps_path }            if permitted_to?(:index, :apps)
-      - tabs << { :reporting => reporting_index_path } if permitted_to?(:index, :reporting)
-      - tabs << { :billing   => billing_index_path }   if permitted_to?(:index, :billing)
-      - tabs << { :account   => account_index_path }   if permitted_to?(:index, :account)
-      - #tabs << { :support   => support_index_path }   if permitted_to?(:index, :support)
-      - tabs << { :tools     => tools_path }           if permitted_to?(:index, :tools)
-      - tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :statz)
-      = navigation(tabs)
+      #tabs
+        - tabs = []
+        - tabs << { :home      => home_index_path }      if permitted_to?(:index, :home)
+        - tabs << { :apps      => apps_path }            if permitted_to?(:index, :apps)
+        - tabs << { :reporting => reporting_index_path } if permitted_to?(:index, :reporting)
+        - tabs << { :billing   => billing_index_path }   if permitted_to?(:index, :billing)
+        - tabs << { :account   => account_index_path }   if permitted_to?(:index, :account)
+        - #tabs << { :support   => support_index_path }   if permitted_to?(:index, :support)
+        - tabs << { :tools     => tools_path }           if permitted_to?(:index, :tools)
+        - tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :statz)
+        = navigation(tabs)
     
-    - flash.each do |name, msg|
-      .flash{ :id => "flash_#{name}" }= msg
+      - flash.each do |name, msg|
+        .flash{ :id => "flash_#{name}" }= msg
     
-    #content
-      = yield
+      #content
+        = yield
     
     = javascript_include_tag 'jquery-1.4.2.min', 'jquery-ui-1.8.4.custom.min', 'jquery.tablesorter', 'application'
     = yield :included_javascripts
