@@ -73,6 +73,13 @@ private
     @publisher_app = App.find_in_cache(params[:app_id])
     @currency = Currency.find_in_cache_by_app_id(params[:app_id])
     
+    ##
+    # Gameview hardcodes 'iphone' as their device type. This screws up real iphone-only targeting.
+    # Set the device type to 'ipod touch' for gameview until they fix their issue.
+    if @publisher_app.partner_id == "e9a6d51c-cef9-4ee4-a2c9-51eef1989c4e"
+      params[:device_type] = 'ipod touch'
+    end
+    
     web_request = WebRequest.new
     web_request.put_values('offers', params, get_ip_address, get_geoip_data)
     web_request.save
