@@ -19,6 +19,21 @@ class OneOffs
     counts
   end
   
+  def self.get_click_udids(filename, app_id)
+    file = File.open(filename, 'w')
+    50.times do |i|
+      count = 0
+      SimpledbResource.select(:domain_name => "clicks_#{i}", :where => "advertiser_app_id = '#{app_id}'") do |click|
+        udid = click.key.split('.')[0]
+        installed = click.get('installed_at') != nil
+        file.puts "#{udid}, #{installed}"
+        count += 1
+      end
+      puts "Wrote #{count} lines from click_#{i}"
+    end
+    file.close  
+  end
+  
   def self.import_udids(filename, app_id)
     counter = 0
     new_udids = 0
