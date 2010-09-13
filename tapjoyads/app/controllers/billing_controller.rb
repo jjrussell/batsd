@@ -38,7 +38,7 @@ private
 
     @statements = {}
     date = start_date
-    while date < end_date
+    while date < end_date.end_of_month
       month = date.strftime("%Y-%m")
       text_month = date.strftime("%B %Y")
       @statements[month] = {:orders => 0, :payouts => 0, :text_month => text_month, :start_time => date.beginning_of_month, :end_time => date.end_of_month}
