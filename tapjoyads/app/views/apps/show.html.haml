@@ -62,7 +62,7 @@
           %tr.app_data
             %th Description
             %td
-              #app_description= @app.description.gsub("\n", '<br>')
+              #app_description= (@app.description || '').gsub("\n", '<br>')
           %tr
             %td
             %td= f.submit 'Update'
