@@ -29,7 +29,7 @@ class OneOffs
         SimpledbResource.select(:domain_name => "clicks_#{i}", :where => "advertiser_app_id = '#{app_id}'") do |click|
           udid = click.key.split('.')[0]
           installed = click.get('installed_at') != nil
-          items[udid] = installed
+          items[udid] = "#{click.get('clicked_at')}, #{installed}"
         count += 1
         end
       rescue 
