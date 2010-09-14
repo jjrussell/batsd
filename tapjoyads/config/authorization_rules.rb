@@ -58,5 +58,8 @@ authorization do
     
     has_permission_on :tools, :to => [ :failed_sdb_saves ]
   end
-  
+
+  role :guest do
+    has_permission_on :users, :to => [ :new, :create ]
+  end
 end
