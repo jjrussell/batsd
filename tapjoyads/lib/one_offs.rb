@@ -24,11 +24,19 @@ class OneOffs
     50.times do |i|
       count = 0
       items = {}
-      SimpledbResource.select(:domain_name => "clicks_#{i}", :where => "advertiser_app_id = '#{app_id}'") do |click|
-        udid = click.key.split('.')[0]
-        installed = click.get('installed_at') != nil
-        items[udid] = installed
+      
+      begin
+        SimpledbResource.select(:domain_name => "clicks_#{i}", :where => "advertiser_app_id = '#{app_id}'") do |click|
+          udid = click.key.split('.')[0]
+          installed = click.get('installed_at') != nil
+          items[udid] = installed
         count += 1
+        end
+      rescue 
+        puts "Error in select after #{count} on clicks_#{i}"
+        count = 0
+        items = {}
+        retry
       end
       
       items.keys.each do |item|
