@@ -42,7 +42,6 @@ ActionController::Routing::Routes.draw do |map|
   map.logout 'logout', :controller => 'user_sessions', :action => 'destroy'
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
-  map.resources :home, :only => [ :index ]
   map.resources :apps, :except => [ :destroy ],
     :member => { :confirm => :get, :pay_per_install => :get, :integrate => :get }
   map.resources :apps do |app|

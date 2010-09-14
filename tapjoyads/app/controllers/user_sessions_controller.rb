@@ -22,13 +22,13 @@ class UserSessionsController < WebsiteController
       user_session.destroy
       flash[:notice] = "Successfully logged out."
     end
-    redirect_to login_path
+    redirect_to root_path
   end
 
-  private
+private
 
   def default_path
-    options = {:user => @user_session.record}
+    options = { :user => @user_session.record }
     if permitted_to?(:index, :statz, options)
       statz_index_path
     elsif permitted_to?(:index, :tools, options)
@@ -36,7 +36,8 @@ class UserSessionsController < WebsiteController
     elsif permitted_to?(:index, :apps, options)
       apps_path
     else
-      home_index_path
+      root_path
     end
   end
+
 end

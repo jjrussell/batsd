@@ -11,27 +11,27 @@
     = yield :page_head
     
   %body
-    #top_nav
-      .right
-        - if current_user
-          = current_user.username
-          |
-          - if permitted_to?(:index, :home)
-            = link_to('Partner Home', home_index_path)
+    #main
+      #top_nav
+        .left
+          = link_to image_tag('tapjoylogo.png'), root_path
+        .right
+          - if current_user
+            = current_user.username
             |
-          = link_to('Logout', logout_path)
-        - else
-          - if false # TODO: enable this when we want new account creation turned on
-            = link_to('Create Account', new_user_path)
-            |
-          = link_to('Login', login_path)
-      .clear
+            - if permitted_to?(:index, :apps)
+              = link_to('Partner Home', apps_path)
+              |
+            = link_to('Logout', logout_path)
+          - else
+            = link_to('Login', login_path)
+        .clear
     
-    - flash.each do |name, msg|
-      .flash{ :id => "flash_#{name}" }= msg
+      - flash.each do |name, msg|
+        .flash{ :id => "flash_#{name}" }= msg
     
-    #content
-      = yield
+      #content
+        = yield
       
     = javascript_include_tag 'jquery-1.4.2.min', 'jquery-ui-1.8.4.custom.min', 'jquery.tablesorter'
     = yield :included_javascripts

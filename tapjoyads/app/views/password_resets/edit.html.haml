@@ -4,19 +4,40 @@
 
 - form_for(:user, @user, :url => { :action => :update }, :html => { :method => :put }) do |f|
   = f.error_messages :header_message => nil
-  .field
-    = f.label :password, 'New Password'
-    = f.password_field :password
-  .field
-    = f.label :password_confirmation, 'Confirm New Password'
-    = f.password_field :password_confirmation
-  .field
-    = f.submit 'Submit'
+  
+  %table
+    %tr
+      %td= f.label :password, 'New Password'
+      %td= f.password_field :password, :size => 40
+    %tr
+      %td= f.label :password_confirmation, 'Confirm New Password'
+      %td= f.password_field :password_confirmation, :size => 40
+    %tr
+      %td{ :colspan => 2, :class => 'center' }= f.submit 'Submit'
 
+- content_for :page_javascript do
+  :plain
+    $(document).ready(function() {
+      $('#user_password').focus();
+    });
+  
 - content_for :page_styles do
   :plain
+    table {
+      border-collapse: collapse;
+    }
+    
+    td {
+      padding: 3px 5px;
+      text-align: right;
+    }
+    
+    td.center {
+      text-align: center;
+    }
+    
     .errorExplanation {
-      background-color: red;
+      background-color: #af1515;
       padding: 10px;
       -moz-border-radius: 5px;
       -webkit-border-radius: 5px;
@@ -24,6 +45,6 @@
     }
     
     .fieldWithErrors {
-      border: 3px solid red;
+      border: 3px solid #af1515;
       display: inline-block;
     }

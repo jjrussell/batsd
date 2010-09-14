@@ -13,20 +13,15 @@
     #main
       #top_nav
         .left
-          = link_to image_tag('tapjoylogo.png'), home_index_path
+          = link_to image_tag('tapjoylogo.png'), root_path
         .right
           = current_user.username
           |
-          = link_to('Announcements')
-          |
-          = link_to('Contact Us')
-          |
-          = link_to('Sign Out', logout_path)
+          = link_to('Logout', logout_path)
         .clear
     
       #tabs
         - tabs = []
-        - tabs << { :home      => home_index_path }      if permitted_to?(:index, :home)
         - tabs << { :apps      => apps_path }            if permitted_to?(:index, :apps)
         - tabs << { :reporting => reporting_index_path } if permitted_to?(:index, :reporting)
         - tabs << { :billing   => billing_index_path }   if permitted_to?(:index, :billing)

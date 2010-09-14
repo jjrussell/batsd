@@ -1,7 +1,6 @@
 authorization do
   
   role :beta_website do
-    has_permission_on :home, :to => [ :index ]
     has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :search ]
     has_permission_on :offers, :to => [ :show, :update ]
     has_permission_on :currencies, :to => [ :show, :update, :new, :create ]
