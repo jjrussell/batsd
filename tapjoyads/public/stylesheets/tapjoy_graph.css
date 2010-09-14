@@ -36,3 +36,7 @@
 .graph {
   display: inline-block;
 }
+
+.graph h3 {
+  margin-bottom: 0;
+}
