@@ -71,7 +71,7 @@ $(function(){
     $('#app_store_link').attr('href', app.url);
     $('#app_price').text('$' + app.price);
     $('#app_icon').html($('<img/>').attr('src', app.icon_url));
-    $('#app_description').html(app.description.replace("\n", "<br>"));
+    $('#app_description').html(app.description.replace(/\n/g, "<br>"));
     $('#search_results').hide();
   };
 

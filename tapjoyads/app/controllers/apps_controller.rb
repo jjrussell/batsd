@@ -49,17 +49,16 @@ class AppsController < WebsiteController
   end
 
   def update
-    params_app = sanitize_currency_params(params[:app], [:price])
-    respond_to do |format|
-      if @app.safe_update_attributes(params_app, [:name, :price, :store_id, :description, :store_url])
-        flash[:notice] = 'App was successfully updated.'
-        format.html { redirect_to(@app) }
-        format.xml  { head :ok }
-      else
-        flash[:error] = 'Update unsuccessful.'
-        format.html { render :action => "show" }
-        format.xml  { render :xml => @app.errors, :status => :unprocessable_entity }
-      end
+    @app.name = params[:app][:name]
+    @app.store_id = params[:app][:store_id]
+    @app.fill_app_store_data
+    
+    if @app.save
+      flash[:notice] = 'App was successfully updated.'
+      redirect_to(@app)
+    else
+      flash[:error] = 'Update unsuccessful.'
+      render :action => "show"
     end
   end
 

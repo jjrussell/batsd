@@ -6,6 +6,7 @@
 #apps_main
   %h1 Add an app
   -form_for @app do |f|
+    = f.hidden_field :store_id
     %table.editable
       %tbody
         %tr
@@ -40,8 +41,9 @@
           %th Description
           %td
             #app_description
-    = f.hidden_field :store_id
-    = f.submit 'Create'
+        %tr
+          %td
+          %td= f.submit 'Create'
 
 - content_for :page_head, stylesheet_link_tag('apps')
 - content_for :included_javascripts, javascript_include_tag('tapjoy/apps')

@@ -10,6 +10,7 @@
   - unless @app.nil?
     %h2= @app.name
     - form_for @app do |f|
+      = f.hidden_field :store_id
       %table.editable
         %tbody
           %tr
@@ -36,34 +37,9 @@
                 = image_tag 'load-circle.gif', :class => 'load-circle'
           %tr
             %th
-              Description
-              #help_description.help ?
-            %td
-              = f.text_area :description, :size => "50x7"
-              - if @app.errors.on :description
-                = error_message_on @app, :description
-          %tr.app_store_url
-            %th
-              Store URL
-              #help_store_url.help ?
-            %td
-              = f.text_field :store_url, :size => 80, :value => @app.store_id ? @app.final_store_url : ""
-              - if @app.errors.on :store_url
-                = error_message_on @app, :store_url
-          %tr.app_icon
-            %th
-              Icon
-              #help_icon.help ?
-            %td#app_icon
-              = image_tag(@app.primary_offer.get_icon_url(request.protocol), :size => '57x57', :alt => 'icon')
-          %tr.price
-            %th
-              Price
-              #help_price.help ?
-            %td
-              = f.currency_field :price, {}, :size => 10
-              - if @app.errors.on :price
-                = error_message_on @app, :price
+              App ID
+              #help_app_id.help ?
+            %td= @app.id
           %tr
             %th
               Integrated?
@@ -72,8 +48,24 @@
               %td.integrated YES
             - else
               %td.not_integrated NO
-      = f.hidden_field :store_id
-      = f.submit 'Update'
+          %tr.app_data
+            %th
+              Store ID
+            %td
+              = link_to(@app.store_id, @app.final_store_url)
+          %tr.app_data
+            %th Icon
+            %td#app_icon= image_tag(@app.get_icon_url(request.protocol), :size => '57x57', :alt => 'icon')
+          %tr.app_data
+            %th Price
+            %td= number_to_currency(@app.price / 100.0)
+          %tr.app_data
+            %th Description
+            %td
+              #app_description= @app.description.gsub("\n", '<br>')
+          %tr
+            %td
+            %td= f.submit 'Update'
 
 .hidden
   #help_application_state_content{:name => 'Application State'}
@@ -83,6 +75,8 @@
     Platform on which this app runs.
   #help_name_content{:name => 'Name'}
     App name
+  #help_app_id_content{:name => 'App ID'}
+    App ID. Use this when integrating.
   #help_description_content{:name => 'Description'}
     App description
   #help_store_url_content{:name => 'Store URL'}

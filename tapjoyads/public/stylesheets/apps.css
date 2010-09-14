@@ -29,6 +29,9 @@ td.not_integrated {
 }
 #app_description {
   max-width: 400px;
-  max-height: 300px;
+  max-height: 200px;
   overflow: auto;
+}
+.editable select {
+  width: 80px;
 }

@@ -74,7 +74,6 @@ ul.navigation li.current a {
 }
 
 div.flash {
-  margin: 0px 40px;
   padding: 5px;
 }
 
@@ -116,7 +115,7 @@ input.date {
 
 table.editable textarea.changed,
 table.editable input[type=text].changed {
-  background-color: #ccc;
+  background-color: #ddd;
 }
 
 table.editable .managed,
