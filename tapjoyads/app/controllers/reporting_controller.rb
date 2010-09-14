@@ -7,8 +7,8 @@ class ReportingController < WebsiteController
   before_filter :setup, :only => [ :show, :export ]
   
   def index
-    unless current_partner.offers.empty?
-      redirect_to :action => 'show', :id => current_partner.offers.first
+    unless current_partner_offers.empty?
+      redirect_to reporting_path(current_partner_offers.first)
     end
   end
   
