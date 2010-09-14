@@ -6,8 +6,8 @@ class User < ActiveRecord::Base
     c.transition_from_crypto_providers = TapjoyCrypto
   end
   
-  has_many :role_assignments
-  has_many :partner_assignments
+  has_many :role_assignments, :dependent => :destroy
+  has_many :partner_assignments, :dependent => :destroy
   has_many :user_roles, :through => :role_assignments
   has_many :partners, :through => :partner_assignments
   belongs_to :current_partner, :class_name => 'Partner'

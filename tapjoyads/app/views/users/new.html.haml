@@ -1,19 +1,22 @@
-- @page_title = 'Change Account Details'
+- @page_title = 'Add new user'
 
-%h1 Change account details
+%h1 Add new user
 
 - form_for @user do |f|
   = f.error_messages :header_message => nil
   
   %table
     %tr
+      %td= f.label :username, 'Login'
+      %td= f.text_field :username, :size => 40
+    %tr
       %td= f.label :email, 'Email Address'
       %td= f.text_field :email, :size => 40
     %tr
-      %td= f.label :password, 'New Password'
+      %td= f.label :password, 'Password'
       %td= f.password_field :password, :size => 40
     %tr
-      %td= f.label :password_confirmation, 'Confirm New Password'
+      %td= f.label :password_confirmation, 'Confirm Password'
       %td= f.password_field :password_confirmation, :size => 40
     %tr
       %td{ :colspan => 2, :class => 'center' }= f.submit

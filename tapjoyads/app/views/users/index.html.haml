@@ -1,0 +1,40 @@
+- @page_title = 'Account'
+
+%p Change your email address and password or create additional user accounts for other people.
+
+%ul
+  %li= link_to('Change email address or password', edit_user_path(current_user))
+  %li= link_to('Add new user', new_user_path)
+
+%h3 Users with access
+
+%table
+  %thead
+    %tr.underline
+      %th Login
+      %th Email
+      %th Last Login
+  %tbody
+    - @users.each do |user|
+      %tr
+        %td= user.username
+        %td= user.email
+        %td= user.current_login_at? ? user.current_login_at.to_s(:mday) : 'Never'
+
+- content_for :page_styles do
+  :plain
+    table {
+      table-layout: fixed;
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    
+    th, td {
+      text-align: left;
+      padding: 3px 5px;
+    }
+    
+    td {
+      border-top: 1px solid #888;
+    }

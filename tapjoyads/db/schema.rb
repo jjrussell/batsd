@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100902204130) do
+ActiveRecord::Schema.define(:version => 20100914210452) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -295,6 +295,8 @@ ActiveRecord::Schema.define(:version => 20100902204130) do
     t.datetime "updated_at"
     t.string   "current_partner_id", :limit => 36
     t.string   "perishable_token",                 :default => "", :null => false
+    t.datetime "current_login_at"
+    t.datetime "last_login_at"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
