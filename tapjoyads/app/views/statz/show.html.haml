@@ -91,69 +91,70 @@
         - property_row('Test devices', @offer.item.currency.test_devices)
         - property_row('id', @offer.item.currency.id + ' - ' + clippy(@offer.item.currency.id))
 
-#connects.graph
-  %h3
-  .totals
-  .holder
-    %canvas#connects_graph{ :width => '550px', :height => '330px' }
-    .bar
-    .tooltip
+#charts{ :style => "text-align: center;" }
+  #connects.graph
+    %h3
+    .totals
+    .holder
+      %canvas#connects_graph{ :width => '800px', :height => '440px' }
+      .bar
+      .tooltip
 
-#installs_spend.graph
-  %h3
-  .totals
-  .holder
-    %canvas#installs_spend_graph{ :width => '550px', :height => '330px' }
-    .bar
-    .tooltip
+  #installs_spend.graph
+    %h3
+    .totals
+    .holder
+      %canvas#installs_spend_graph{ :width => '800px', :height => '440px' }
+      .bar
+      .tooltip
 
-#installs_rank.graph
-  %h3
-  .totals
-  .holder
-    %canvas#installs_rank_graph{ :width => '550px', :height => '330px' }
-    .bar
-    .tooltip
+  #installs_rank.graph
+    %h3
+    .totals
+    .holder
+      %canvas#installs_rank_graph{ :width => '800px', :height => '440px' }
+      .bar
+      .tooltip
 
-#published_offers.graph
-  %h3
-  .totals
-  .holder
-    %canvas#published_offers_graph{ :width => '550px', :height => '330px' }
-    .bar
-    .tooltip
+  #published_offers.graph
+    %h3
+    .totals
+    .holder
+      %canvas#published_offers_graph{ :width => '800px', :height => '440px' }
+      .bar
+      .tooltip
 
-#offerwall_views.graph
-  %h3
-  .totals
-  .holder
-    %canvas#offerwall_views_graph{ :width => '550px', :height => '330px' }
-    .bar
-    .tooltip
+  #offerwall_views.graph
+    %h3
+    .totals
+    .holder
+      %canvas#offerwall_views_graph{ :width => '800px', :height => '440px' }
+      .bar
+      .tooltip
 
-#ratings.graph
-  %h3
-  .totals
-  .holder
-    %canvas#ratings_graph{ :width => '550px', :height => '330px' }
-    .bar
-    .tooltip
+  #ratings.graph
+    %h3
+    .totals
+    .holder
+      %canvas#ratings_graph{ :width => '800px', :height => '440px' }
+      .bar
+      .tooltip
 
-#virtual_goods.graph
-  %h3
-  .totals
-  .holder
-    %canvas#virtual_goods_graph{ :width => '550px', :height => '330px' }
-    .bar
-    .tooltip
+  #virtual_goods.graph
+    %h3
+    .totals
+    .holder
+      %canvas#virtual_goods_graph{ :width => '800px', :height => '440px' }
+      .bar
+      .tooltip
 
-#ads.graph
-  %h3
-  .totals
-  .holder
-    %canvas#ads_graph{ :width => '550px', :height => '330px' }
-    .bar
-    .tooltip
+  #ads.graph
+    %h3
+    .totals
+    .holder
+      %canvas#ads_graph{ :width => '800px', :height => '440px' }
+      .bar
+      .tooltip
 
 - include_tapjoy_graph
 
