@@ -13,6 +13,9 @@
       %td= f.label :email, 'Email Address'
       %td= f.text_field :email, :size => 40
     %tr
+      %td= label_tag :partner_name, 'Company Name'
+      %td= text_field_tag :partner_name, params[:partner_name], :size => 40
+    %tr
       %td= f.label :password, 'Password'
       %td= f.password_field :password, :size => 40
     %tr

@@ -12,7 +12,7 @@ class SignUpController < WebsiteController
     @user.password = params[:user][:password]
     @user.password_confirmation = params[:user][:password_confirmation]
     @user.user_roles << UserRole.find_by_name("beta_website")
-    @user.current_partner = Partner.new(:contact_name => @user.email)
+    @user.current_partner = Partner.new(:name => params[:partner_name], :contact_name => @user.email)
     @user.partners << @user.current_partner
     if @user.save
       flash[:notice] = 'Account successfully created.'
