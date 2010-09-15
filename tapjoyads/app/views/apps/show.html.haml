@@ -49,16 +49,20 @@
             - else
               %td.not_integrated NO
           %tr.app_data
-            %th
-              Store ID
-            %td
-              = link_to(@app.store_id, @app.final_store_url)
+            %th Store ID
+            %td= link_to(@app.store_id, @app.final_store_url)
           %tr.app_data
             %th Icon
             %td#app_icon= image_tag(@app.get_icon_url(request.protocol), :size => '57x57', :alt => 'icon')
           %tr.app_data
-            %th Price
-            %td= number_to_currency(@app.price / 100.0)
+            %th
+              Price
+              #help_price.help ?
+            %td
+              = f.currency_field :price, {}, :size => 10
+              - if @app.errors.on :price
+                = error_message_on @app, :price
+              App ID
           %tr.app_data
             %th Description
             %td
