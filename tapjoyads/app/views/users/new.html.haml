@@ -4,8 +4,8 @@
 
 - form_for @user do |f|
   = f.error_messages :header_message => nil
-  
-  %table
+
+  %table.with_form
     %tr
       %td= f.label :username, 'Login'
       %td= f.text_field :username, :size => 40
@@ -20,31 +20,3 @@
       %td= f.password_field :password_confirmation, :size => 40
     %tr
       %td{ :colspan => 2, :class => 'center' }= f.submit
-
-- content_for :page_styles do
-  :plain
-    table {
-      border-collapse: collapse;
-    }
-    
-    td {
-      padding: 3px 5px;
-      text-align: right;
-    }
-    
-    td.center {
-      text-align: center;
-    }
-    
-    .errorExplanation {
-      background-color: #af1515;
-      padding: 10px;
-      -moz-border-radius: 5px;
-      -webkit-border-radius: 5px;
-      margin-bottom: 10px;
-    }
-    
-    .fieldWithErrors {
-      border: 3px solid #af1515;
-      display: inline-block;
-    }

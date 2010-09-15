@@ -189,3 +189,33 @@ div.help-dialog .ui-dialog-title {
 .description {
   font-size: 85%;
 }
+
+table.with_form {
+  border-collapse: collapse;
+}
+
+table.with_form td {
+  padding: 3px 5px;
+  text-align: right;
+}
+
+table.with_form td.center {
+  text-align: center;
+}
+
+table.with_form td.left {
+  text-align: left;
+}
+
+.errorExplanation {
+  background-color: #af1515;
+  padding: 10px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.fieldWithErrors {
+  border: 3px solid #af1515;
+  display: inline-block;
+}
