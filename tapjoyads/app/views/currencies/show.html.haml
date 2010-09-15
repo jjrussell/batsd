@@ -3,8 +3,10 @@
 = render :partial => 'shared/carousel', :locals => {:objects => current_partner_apps, :object => @app}
 = render :partial => 'apps/actions', :locals => {:app => @app}
 
-- form_for [@app, @currency] do |f|
-  %table.editable
+%h3 Virtual Currency
+
+- form_for [@app, @currency], :html => {:class => 'editable'} do |f|
+  %table
     %tr
       %th
         Name
@@ -52,9 +54,9 @@
       %td
         = f.text_area :test_devices
         = error_message_on(@currency, :test_devices) if @currency.errors.on :test_devices
-    %tr
-      %td &nbsp;
-      %td= f.submit
+    - if permitted_to?(:index, :statz)
+      = render :partial => 'admin_fields', :locals => {:f => f}
+  = f.submit
 
 .hidden
   #help_name_content{:name => 'Name'}
@@ -71,6 +73,7 @@
     Secret key help
   #help_test_devices_content{:name => 'Test devices'}
     A semi-colon (;) separated list of test UDIDs. These devices will see a special testing offer.
+  = yield :extra_help
 
 - content_for :page_javascript do
   :plain

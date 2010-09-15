@@ -92,6 +92,10 @@ div.flash {
   background-color: #AF1515;
 }
 
+form {
+  display: inline-block;
+}
+
 input.date {
   width: 100px;
 }
@@ -120,40 +124,45 @@ input.date {
   background-color: #fffff0;
 }
 
-table.editable textarea.changed,
-table.editable input[type=text].changed {
+.editable textarea.changed,
+.editable input[type=text].changed {
   background-color: #ddd;
 }
 
-table.editable .managed,
-table.editable .unmanaged {
+.editable input[type=submit] {
+  margin-top: 10px;
+  float: right;
+}
+
+.editable .managed,
+.editable .unmanaged {
   display: none;
 }
 
-table.editable .fieldWithErrors,
-table.editable .formError {
+.editable .fieldWithErrors,
+.editable .formError {
   display: inline;
 }
 
-table.editable .formError {
+.editable .formError {
   color: red;
 }
 
-table.editable .ui-dialog .ui-dialog-titlebar {
+.editable .ui-dialog .ui-dialog-titlebar {
   height: 5px;
 }
 
-table.editable .ui-dialog .ui-dialog-title {
+.editable .ui-dialog .ui-dialog-title {
   font-size: 14px;
   margin-top: -8px;
 }
 
-table.editable .ui-dialog .ui-dialog-content {
+.editable .ui-dialog .ui-dialog-content {
   overflow: visible;
   font-size: 12px;
 }
 
-table.editable .help {
+.editable .help {
   cursor: help;
   display: inline-block;
   width: 12px;
@@ -170,11 +179,11 @@ table.editable .help {
   -webkit-border-radius: 10px;
   vertical-align: top;
 }
-table.editable .help:hover {
+.editable .help:hover {
   background-color: #eee;
   color: #000;
 }
-table.editable .help:active {
+.editable .help:active {
   background-color: #fff;
   color: #444;
 }

@@ -1,0 +1,69 @@
+%tr.admin
+  %td{:colspan => 2} Admin-only fields:
+%tr.admin
+  %th
+    Disabled offers
+    #help_disabled_offers.help ?
+  %td
+    = f.text_area :disabled_offers
+    = error_message_on(@currency, :disabled_offers) if @currency.errors.on :disabled_offers
+%tr.admin
+  %th
+    Disabled partners
+    #help_disabled_partners.help ?
+  %td
+    = f.text_area :disabled_partners
+    = error_message_on(@currency, :disabled_partners) if @currency.errors.on :disabled_partners
+%tr.admin
+  %th
+    Max age rating
+    #help_max_age_rating.help ?
+  %td
+    = f.select :max_age_rating, options_for_select(%w(17+ 12+ 9+ 4+).zip(%w(4 3 2 1)), :selected => @currency.max_age_rating.to_s)
+%tr.admin
+  %th 
+    Only free offers
+    #help_only_free_offers.help ?
+  %td
+    = f.check_box :only_free_offers
+%tr.admin
+  %th
+    Installs money share
+    #help_installs_money_share.help ?
+  %td
+    = f.text_field :installs_money_share
+    = error_message_on(@currency, :installs_money_share) if @currency.errors.on :installs_money_share
+%tr.admin
+  %th
+    Offers money share
+    #help_offers_money_share.help ?
+  %td
+    = f.text_field :offers_money_share
+    = error_message_on(@currency, :offers_money_share) if @currency.errors.on :offers_money_share
+    
+-content_for :extra_help do
+  #help_disabled_offers_content{:name => 'Disabled offers'}
+    A semi-colon (;) separated list of offer id's. Offers that match these id's will not be shown in
+    this app's offerwall.
+  #help_disabled_partners_content{:name => 'Disabled partners'}
+    A semi-colon (;) separated list of partner id's. Offers belonging to partners that match these id's
+    will not be shown in this app's offerwall.
+  #help_max_age_rating_content{:name => 'Max age rating'}
+    The maximum age-rating of offers to show.
+    %ul
+      %li 17+: No age-rating restrictions
+      %li 12+: Only show offers rated 12+ and below
+      %li 9+: Only show offers rated 9+ and below
+      %li 4+: Only show offers rated 4+ and below
+  #help_only_free_offers_content{:name => 'Only free offers'}
+    If true, only free offers will be shown in this app's offerwall.
+  #help_installs_money_share_content{:name => 'Installs money share'}
+    The percent share of app install offer revenue that this publisher gets.
+  #help_offers_money_share_content{:name => 'Offers money share'}
+    The percent share of offerpal offer revenue that this publisher gets.
+    
+- content_for :page_styles do
+  :plain
+    .admin th {
+      color: blue;
+    }
