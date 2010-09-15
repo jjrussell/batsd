@@ -296,31 +296,16 @@ class ImportMssqlController < ApplicationController
   end
   
   def payout
-    payout = Payout.find_or_initialize_by_id(params[:id])
-    log_activity(payout)
-    payout.partner_id = params[:partner_id]
-    payout.amount = params[:amount]
-    payout.month = params[:month]
-    payout.year = params[:year]
-    payout.status = params[:status]
-    
-    payout.updated_at = Time.parse(params[:updated_at] + ' CST').utc
-    payout.created_at = Time.parse(params[:created_at] + ' CST').utc
-    
-    payout.save!
-    
-    render :template => 'layouts/success'
+    raise "import_mssql/payout should no longer be used"
   end
   
 private
   
   def is_beta_partner?(partner)
-    beta_role = UserRole.find_by_name('beta_website')
-    
     return false if partner.nil?
     
     partner.users.each do |user|
-      if user.user_roles.include?(beta_role)
+      if user.role_symbols.include?(:beta_website)
         Rails.logger.info "User: '#{user.username}' is a member of the beta website group, and will not have its associated data imported from mssql."
         render :template => 'layouts/success' 
         return true 
