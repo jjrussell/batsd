@@ -1,0 +1,22 @@
+- @page_title = 'Account Creation'
+
+%h1 Account Creation
+
+- form_for(:user, @user, :url => { :action => :create }, :html => { :method => :put }) do |f|
+  = f.error_messages :header_message => nil
+
+  %table.with_form
+    %tr
+      %td= f.label :username, 'Login'
+      %td= f.text_field :username, :size => 40
+    %tr
+      %td= f.label :email, 'Email Address'
+      %td= f.text_field :email, :size => 40
+    %tr
+      %td= f.label :password, 'Password'
+      %td= f.password_field :password, :size => 40
+    %tr
+      %td= f.label :password_confirmation, 'Confirm Password'
+      %td= f.password_field :password_confirmation, :size => 40
+    %tr
+      %td{ :colspan => 2, :class => 'center' }= f.submit "Create Account"
