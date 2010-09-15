@@ -6,6 +6,8 @@ class ImportMssqlController < ApplicationController
   
   def user
     user = User.find_or_initialize_by_id(params[:user_id])
+    return if is_beta_partner?(user.partners.first)
+    
     log_activity(user)
     user.username = params[:user_name]
     user.email = params[:email]
@@ -23,29 +25,17 @@ class ImportMssqlController < ApplicationController
   end
   
   def purchased_item
-    udid = params[:udid]
-    app_id = params[:app_id]
-    pi = PointPurchases.new(:key => "#{udid}.#{app_id}")
-    log_activity(pi)
-    pi.add_virtual_good(params[:item_id])
-    pi.save
-    
-    render :template => 'layouts/success'
-    
+    raise "import_mssql/purchased_item should no longer be used"
   end
 
   def points
-    udid = params[:udid]
-    app_id = params[:app_id]
-    pi = PointPurchases.new(:key => "#{udid}.#{app_id}")
-    log_activity(pi)
-    pi.points = params[:points]
-    pi.save
-    
-    render :template => 'layouts/success'
+    raise "import_mssql/points should no longer be used"
   end
 
   def vg
+    app = App.find_or_initialize_by_id(params[:app_id])
+    return if is_beta_partner?(app.partner)
+    
     vg = VirtualGood.new(:key => params[:item_id])
     log_activity(vg)
     vg.apple_id = params[:apple_id]
@@ -88,6 +78,8 @@ class ImportMssqlController < ApplicationController
     return unless verify_params([:partner_id])
     
     partner = Partner.find_or_initialize_by_id(params[:partner_id])
+    return if is_beta_partner?(partner)
+    
     log_activity(partner)
     partner.name = params[:name] unless params[:name].blank?
     partner.contact_name = params[:contact_name] unless params[:contact_name].blank?
@@ -104,6 +96,8 @@ class ImportMssqlController < ApplicationController
     return unless verify_params([:app_id])
     
     currency = Currency.find_or_initialize_by_app_id(params[:app_id])
+    return if is_beta_partner?(currency.partner)
+    
     log_activity(currency)
     currency.partner = currency.app.partner
     currency.name = params[:currency_name]
@@ -131,6 +125,9 @@ class ImportMssqlController < ApplicationController
   
   def publisher_ad
     return unless verify_params([:ad_id, :partner_id])
+    
+    partner = Partner.find_or_initialize_by_id(params[:partner_id])
+    return if is_beta_partner?(partner)
     
     ad_id = params[:ad_id]
   
@@ -168,6 +165,9 @@ class ImportMssqlController < ApplicationController
   
   def app
     return unless verify_params([:app_id])
+
+    offer = Offer.find_or_initialize_by_id(params[:app_id])
+    return if is_beta_partner?(offer.partner)
 
     bucket = S3.bucket(BucketNames::APP_DATA)
     bucket.put("icons/#{params[:app_id]}.png", params[:icon], {}, 'public-read')
@@ -225,6 +225,9 @@ class ImportMssqlController < ApplicationController
   
   def campaign
     return unless verify_params([:app_id, :campaign_id])
+    
+    app = App.find_or_initialize_by_id(params[:app_id])
+    return if is_beta_partner?(app.partner)
     
     campaign_id = params[:campaign_id]
   
@@ -309,4 +312,22 @@ class ImportMssqlController < ApplicationController
     render :template => 'layouts/success'
   end
   
+private
+  
+  def is_beta_partner?(partner)
+    beta_role = UserRole.find_by_name('beta_website')
+    
+    return false if partner.nil?
+    
+    partner.users.each do |user|
+      if user.user_roles.include?(beta_role)
+        Rails.logger.info "User: '#{user.username}' is a member of the beta website group, and will not have its associated data imported from mssql."
+        render :template => 'layouts/success' 
+        return true 
+      end
+    end
+    
+    return false
+  end
+    
 end

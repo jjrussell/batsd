@@ -96,4 +96,18 @@ class ToolsController < WebsiteController
     @offers_count_hash = Mc.get('tools.disabled_popular_offers') { {} }
     @offers = Offer.find(@offers_count_hash.keys, :include => [:partner, :item])
   end
+  
+  def beta_websiters
+    beta_role = UserRole.find_by_name('beta_website')
+    @users = []
+    RoleAssignment.find(:all, :conditions => ['user_role_id = ?', beta_role.id] ).each do |role|
+      @users << role.user
+    end
+    
+    @users.sort! do |u1, u2|
+      u1.partners.first.id <=> u2.partners.first.id
+    end
+  end
+    
+    
 end

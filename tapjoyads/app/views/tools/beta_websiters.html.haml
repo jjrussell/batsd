@@ -1,0 +1,16 @@
+- @page_title = 'Beta Websiters'
+
+%h1 Beta Websiters
+
+%h5 Who has access to the beta webpage?
+
+%ul
+  %li Username (partners)
+
+%ul
+  - @users.each do |user|
+    %li
+      = user.username
+      (
+      = user.partners.map { |p| link_to((p.name ||p.id), partner_path(p))}.join(', ')
+      )
