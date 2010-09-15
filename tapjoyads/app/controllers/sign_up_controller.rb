@@ -1,7 +1,7 @@
 class SignUpController < WebsiteController
 
   def new
-    redirect_to account_index_path if current_user
+    redirect_to users_path if current_user
     @user = User.new
   end
 
@@ -12,13 +12,13 @@ class SignUpController < WebsiteController
     @user.password = params[:user][:password]
     @user.password_confirmation = params[:user][:password_confirmation]
     @user.user_roles << UserRole.find_by_name("beta_website")
-    @user.current_partner = Partner.new
+    @user.current_partner = Partner.new(:contact_name => @user.email)
     @user.partners << @user.current_partner
     if @user.save
       flash[:notice] = 'Account successfully created.'
-      redirect_to users_path
+      redirect_to apps_path
     else
-      render 'new', :layout => 'website'
+      render :action => :new
     end
   end
 

@@ -2,7 +2,7 @@
 
 %h1 Account Creation
 
-- form_for(:user, @user, :url => { :action => :create }, :html => { :method => :put }) do |f|
+- form_for(:user, @user, :url => { :action => :create }, :html => { :method => :post }) do |f|
   = f.error_messages :header_message => nil
 
   %table.with_form
