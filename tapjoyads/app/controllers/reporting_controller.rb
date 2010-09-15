@@ -109,7 +109,7 @@ class ReportingController < WebsiteController
   end
   
   def export
-    data =  "start_time,end_time,paid_clicks,paid_installs,paid_cvr,spend,"
+    data =  "start_time,end_time,paid_clicks,paid_installs,paid_cvr,spend,store_rank,"
     data += "offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,revenue,offerwall_ecpm"
     data += ",daily_active_users,arpdau" if @granularity == :daily
     data += "\n"
@@ -121,6 +121,7 @@ class ReportingController < WebsiteController
       line += "#{@appstats.stats['paid_installs'][i]},"
       line += "#{@appstats.stats['cvr'][i]},"
       line += "#{number_to_currency(@appstats.stats['installs_spend'][i] / -100.0, :delimiter => '')},"
+      line += "#{@appstats.stats['overall_store_rank'][i]},"
       line += "#{@appstats.stats['offerwall_views'][i]},"
       line += "#{@appstats.stats['rewards_opened'][i]},"
       line += "#{@appstats.stats['rewards'][i]},"
