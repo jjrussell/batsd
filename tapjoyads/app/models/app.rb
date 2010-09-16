@@ -164,10 +164,6 @@ class App < ActiveRecord::Base
     return match[1]
   end
 
-  def find_virtual_good(virtual_good_id)
-    self.virtual_goods.find{ |vg| vg.key == virtual_good_id }
-  end
-
   def cache_active_virtual_goods
     #TODO: implement this
   end

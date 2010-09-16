@@ -86,8 +86,8 @@ private
   end
 
   def find_virtual_good
-    @virtual_good = @app.find_virtual_good(params[:id])
-    if @virtual_good.is_new
+    @virtual_good = VirtualGood.new(:key => params[:id])
+    if @virtual_good.is_new || @virtual_good.app_id != @app.id
       flash[:error] = "Could not find virtual good with ID: #{params[:id]}"
       redirect_to apps_path
     end
