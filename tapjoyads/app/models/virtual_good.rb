@@ -27,6 +27,11 @@ class VirtualGood < SimpledbResource
   def price_in_dollars
     app = App.find_by_id(self.app_id)
     return 0 if app.currency.nil?
-    [self.price / app.currency.conversion_rate / 100.0, 0.01].max.to_f
+    [self.price.to_f / app.currency.conversion_rate.to_f, 0.01].max
+  end
+
+  def <=> good
+    [ self.disabled? ? 1 : 0, self.beta? ? 1 : 0, self.ordinal] <=>
+    [ good.disabled? ? 1 : 0, good.beta? ? 1 : 0, good.ordinal]
   end
 end

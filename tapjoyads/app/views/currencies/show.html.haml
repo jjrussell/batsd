@@ -15,18 +15,22 @@
         %td
           = f.text_field :name
           = error_message_on(@currency, :name) if @currency.errors.on :name
+        %td &nbsp;
       %tr
         %th
-          Conversion rate
+          Conversion rate ($1=)
           #help_conversion_rate.help ?
         %td
           = f.text_field :conversion_rate
           = error_message_on(@currency, :conversion_rate) if @currency.errors.on :conversion_rate
+        %td#currency_name_text
+          = @app.currency && @app.currency.name
       %tr
         %th
           Managed by Tapjoy
           #help_managed_by_tapjoy.help ?
         %td= check_box_tag(:managed_by_tapjoy, nil, @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL)
+        %td &nbsp;
       %tr.managed
         %th
           Initial balance
@@ -34,6 +38,7 @@
         %td
           = f.text_field :initial_balance
           = error_message_on(@currency, :initial_balance) if @currency.errors.on :initial_balance
+        %td &nbsp;
       %tr.unmanaged
         %th
           Callback URL
@@ -41,6 +46,7 @@
         %td
           = f.text_field :callback_url
           = error_message_on(@currency, :callback_url) if @currency.errors.on :callback_url
+        %td &nbsp;
       %tr.unmanaged
         %th
           Secret key
@@ -48,6 +54,7 @@
         %td
           = f.text_field :secret_key
           = error_message_on(@currency, :secret_key) if @currency.errors.on :secret_key
+        %td &nbsp;
       %tr
         %th
           Test devices
@@ -55,6 +62,7 @@
         %td
           = f.text_area :test_devices
           = error_message_on(@currency, :test_devices) if @currency.errors.on :test_devices
+        %td &nbsp;
       - if permitted_to?(:index, :statz)
         = render :partial => 'admin_fields', :locals => {:f => f}
     = f.submit
@@ -81,6 +89,9 @@
     $(function($){
       toggleManagedByTapjoy();
       $('#managed_by_tapjoy').change(toggleManagedByTapjoy);
+      $('#currency_name').keyup(function(){
+        $('#currency_name_text').text($('#currency_name').val());
+      });
     });
 
     function toggleManagedByTapjoy() {

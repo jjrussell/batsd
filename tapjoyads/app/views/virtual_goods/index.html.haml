@@ -15,8 +15,8 @@
         %th Price (#{@app.currency.name})
         %th Price ($)
     %tbody
-      - @virtual_goods.each do |vg|
-        %tr
+      - @virtual_goods.sort.each do |vg|
+        %tr.virtual-good{:class => vg.disabled? ? "disabled" : vg.beta? ? "beta" : ""}
           %td
             = vg.name
             = link_to "edit", app_virtual_good_path({:app_id => @app.id, :id => vg.id})
@@ -28,3 +28,11 @@
             = vg.price
           %td
             = number_to_currency(vg.price_in_dollars)
+- content_for :page_styles do
+  :plain
+    tr.virtual-good.disabled {
+      color: #888;
+    }
+    tr.virtual-good.beta {
+      color: #00f;
+    }
