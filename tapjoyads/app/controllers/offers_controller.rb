@@ -4,7 +4,8 @@ class OffersController < WebsiteController
 
   filter_access_to :all
   before_filter :find_offer
-
+  after_filter :save_activity_logs, :only => [ :update, :create ]
+  
   def show
   end
 
@@ -23,5 +24,6 @@ private
   def find_offer
     @app = current_partner.apps.find(params[:app_id], :include => [:primary_offer])
     @offer = @app.primary_offer
+    log_activity(@offer)
   end
 end

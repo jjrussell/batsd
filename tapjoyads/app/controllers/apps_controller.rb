@@ -5,6 +5,7 @@ class AppsController < WebsiteController
   before_filter :grab_partner_apps
   before_filter :has_apps, :only => [:show, :index]
   before_filter :find_app, :only => [:show, :index, :update, :confirm]
+  after_filter :save_activity_logs, :only => [ :update, :create ]
 
   def index
     render :action => "show"
@@ -33,6 +34,8 @@ class AppsController < WebsiteController
 
   def create
     @app = App.new
+    log_activity(@app)
+    
     @app.partner = current_partner
     @app.platform = params[:app][:platform]
     @app.store_id = params[:app][:store_id]
@@ -49,6 +52,8 @@ class AppsController < WebsiteController
   end
 
   def update
+    log_activity(@app)
+    
     @app.name = params[:app][:name]
     @app.store_id = params[:app][:store_id]
     @app.fill_app_store_data
