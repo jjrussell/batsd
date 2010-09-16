@@ -26,7 +26,7 @@ class ActivityLog < SimpledbResource
     if klass.respond_to?(:sdb)
       @state_object = klass.new(:key => self.object_id)
     else
-      @state_object = klass.find(self.object_id)
+      @state_object = klass.find_by_id(self.object_id)
     end
     @state_object_new = false
     @state_object
