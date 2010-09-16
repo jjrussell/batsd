@@ -96,7 +96,6 @@
       
       setEstimatedBudget();
       $('#offer_payment').change(function() {
-        $(this).val(numberToCurrency(stringToNumber($(this).val())));
         setEstimatedBudget();
       });
       $('#offer_daily_budget').change(function() {
@@ -124,30 +123,22 @@
       }
       $('#estimated_budget .value').html(budget);
     }
-    
-    function numberToCurrency(number) {
-      return '$' + number.toFixed(2);
-    }
-    
-    function stringToNumber(currency) {
-      return Number(currency.replace(/[^\d\.]/g, ''));
-    }
   
-  - content_for :page_styles do
-    :plain
-      .addfunds {
-        padding-left: 15px;
-      }
-      
-      #estimated_budget {
-        font-size: 85%;
-      }
-      
-      #estimated_budget.disabled {
-        color: #aaa;
-      }
-      
-      #estimated_budget .value {
-        font-weight: bold;
-        display: inline;
-      }
+- content_for :page_styles do
+  :plain
+    .addfunds {
+      padding-left: 15px;
+    }
+    
+    #estimated_budget {
+      font-size: 85%;
+    }
+    
+    #estimated_budget.disabled {
+      color: #aaa;
+    }
+    
+    #estimated_budget .value {
+      font-weight: bold;
+      display: inline;
+    }

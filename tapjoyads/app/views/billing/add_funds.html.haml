@@ -30,19 +30,3 @@
       %td{ :class => 'left' }= f.currency_field :amount
     %tr
       %td{ :colspan => 2, :class => 'center' }= f.submit 'Add Funds'
-
-- content_for :page_javascript do
-  :plain
-    function numberToCurrency(number) {
-      return '$' + number.toFixed(2);
-    }
-    
-    function stringToNumber(currency) {
-      return Number(currency.replace(/[^\d\.]/g, ''));
-    }
-    
-    $(function() {
-      $('#credit_card_amount').change(function() {
-        $(this).val(numberToCurrency(stringToNumber($(this).val())));
-      });
-    });
