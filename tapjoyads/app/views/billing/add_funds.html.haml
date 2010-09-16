@@ -2,5 +2,47 @@
 
 %h2 Add funds
 
-Adding funds via credit card is not yet implemented. 
-Please email support@tapjoy.com, and we'll be happy to invoice you.
+%h3 Current Balance: #{number_to_currency(current_partner.balance / 100.0)}
+
+- form_for(:credit_card, @credit_card, :url => { :action => :create_order }) do |f|
+  = f.error_messages :header_message => nil
+  
+  %table.with_form
+    %tr
+      %td= f.label :first_name, 'First Name'
+      %td= f.text_field :first_name, :size => 40
+    %tr
+      %td= f.label :last_name, 'Last Name'
+      %td= f.text_field :last_name, :size => 40
+    %tr
+      %td= f.label :number, 'Card Number'
+      %td= f.text_field :number, :size => 40
+    %tr
+      %td= f.label :verification_value, 'CVV Code'
+      %td{ :class => 'left' }= f.text_field :verification_value, :size => 6
+    %tr
+      %td= f.label :expiration, 'Expiration'
+      %td{ :class => 'left' }
+        = f.select :month, (1..12).to_a
+        = f.select :year, (Date.today.year..(Date.today.year + 8)).to_a
+    %tr
+      %td= f.label :amount, 'Amount'
+      %td{ :class => 'left' }= f.currency_field :amount
+    %tr
+      %td{ :colspan => 2, :class => 'center' }= f.submit 'Add Funds'
+
+- content_for :page_javascript do
+  :plain
+    function numberToCurrency(number) {
+      return '$' + number.toFixed(2);
+    }
+    
+    function stringToNumber(currency) {
+      return Number(currency.replace(/[^\d\.]/g, ''));
+    }
+    
+    $(function() {
+      $('#credit_card_amount').change(function() {
+        $(this).val(numberToCurrency(stringToNumber($(this).val())));
+      });
+    });

@@ -26,9 +26,30 @@ class BillingController < WebsiteController
   end
 
   def add_funds
+    @credit_card = ActiveMerchant::Billing::CreditCardWithAmount.new
+  end
+  
+  def create_order
+    cc_params = sanitize_currency_params(params[:credit_card], [ :amount ])
+    @credit_card = ActiveMerchant::Billing::CreditCardWithAmount.new(cc_params)
+    @order = Order.new(:partner => current_partner, :amount => @credit_card.amount, :status => 1, :payment_method => 0)
+    if @credit_card.valid? && @order.valid?
+      gateway = ActiveMerchant::Billing::AuthorizeNetGateway.new(:login => '6d68x2KxXVM', :password => '6fz7YyU9424pZDc6', :test => Rails.env != 'production')
+      response = gateway.purchase(@credit_card.amount, @credit_card)
+      if response.success?
+        @order.payment_txn_id = response.authorization
+        @order.save!
+        flash[:notice] = 'Successfully added funds.'
+        redirect_to billing_index_path and return
+      else
+        flash[:error] = response.message
+      end
+    end
+    render :action => :add_funds
   end
 
 private
+
   def get_statements
     @payouts = current_partner.payouts.sort
     @orders = current_partner.orders.sort
@@ -62,4 +83,5 @@ private
     response.headers['Content-Type'] = "text/csv"
     response.headers['Content-Disposition'] = "attachment; filename=#{filename}.csv"
   end
+
 end

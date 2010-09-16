@@ -96,12 +96,16 @@ module ActiveRecord
   end
 end
 
+#
+# This adds a currency_field that automatically converts a currency from cents to dollars.
+#
 module ActionView
   module Helpers
     class FormBuilder
       include ActionView::Helpers::NumberHelper
-      def currency_field(field, number_options={}, options={})
-        options.merge!({:value => number_to_currency(object.send(field) / 100.0, number_options)})
+      
+      def currency_field(field, number_options = {}, options = {})
+        options.merge!({ :value => number_to_currency(object.send(field) / 100.0, number_options) }) unless object.send(field).nil?
         text_field(field, options)
       end
     end

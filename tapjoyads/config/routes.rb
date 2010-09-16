@@ -51,7 +51,7 @@ ActionController::Routing::Routes.draw do |map|
     app.resources :virtual_goods, :only => [ :show, :update, :new, :create, :index ]
   end
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post }
-  map.resources :billing, :only => [ :index, ], :collection => { :add_funds => :get }
+  map.resources :billing, :only => [ :index, ], :collection => { :add_funds => :get, :create_order => :post }
   map.resources :support, :only => [ :index ]
   map.resources :tools, :only => :index,
     :collection => { :new_order => :get, :create_order => :post, :new_transfer => :get, :create_transfer => :post, :payouts => :get, :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :beta_websiters => :get },
