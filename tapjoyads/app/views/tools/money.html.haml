@@ -2,7 +2,7 @@
 
 %h1 Money Stats
 
-- unless @money_stats.empty? || @daily_money_stats.empty?
+- unless @money_stats.empty? && @daily_money_stats.empty?
   - time_ranges = @money_stats.keys + @daily_money_stats.keys
   %table
     %thead
