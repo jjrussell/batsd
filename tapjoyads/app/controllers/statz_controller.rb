@@ -210,11 +210,13 @@ class StatzController < WebsiteController
   def update
     log_activity(@offer)
     
+    offer_params = sanitize_currency_params(params[:offer], [ :payment ])
+    
     orig_payment = @offer.payment
     orig_budget = @offer.daily_budget
-    params[:offer][:device_types] = params[:offer][:device_types].blank? ? '[]' : params[:offer][:device_types].to_json
-    params[:offer][:user_enabled] = params[:offer][:payment].to_i > 0
-    if @offer.update_attributes(params[:offer])
+    offer_params[:device_types] = offer_params[:device_types].blank? ? '[]' : offer_params[:device_types].to_json
+    offer_params[:user_enabled] = offer_params[:payment].to_i > 0
+    if @offer.update_attributes(offer_params)
       
       app = nil
       unless params[:app_store_id].blank?

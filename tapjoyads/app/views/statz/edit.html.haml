@@ -51,8 +51,8 @@
     = f.text_field(:publisher_app_whitelist)
   - if [ 'App', 'EmailOffer' ].include?(@offer.item_type)
     .field
-      = f.label(:payment, 'Payment (cents)')
-      = f.text_field(:payment)
+      = f.label(:payment)
+      = f.currency_field(:payment)
     .field
       = f.label(:daily_budget, 'Daily install budget')
       = f.text_field(:daily_budget)
