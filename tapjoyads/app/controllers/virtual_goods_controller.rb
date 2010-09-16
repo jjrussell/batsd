@@ -82,6 +82,7 @@ private
 
   def find_app
     @app = current_partner.apps.find(params[:app_id])
+    @virtual_good_types = @app.virtual_goods.map(&:title).uniq
   end
 
   def find_virtual_good

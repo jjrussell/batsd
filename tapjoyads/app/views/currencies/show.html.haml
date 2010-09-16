@@ -3,77 +3,78 @@
 = render :partial => 'shared/carousel', :locals => {:objects => current_partner_apps, :object => @app}
 = render :partial => 'apps/actions', :locals => {:app => @app}
 
-%h3 Virtual Currency
+#content-with-links
+  %h3 Virtual Currency
 
-- form_for [@app, @currency], :html => {:class => 'editable'} do |f|
-  %table
-    %tr
-      %th
-        Name
-        #help_name.help ?
-      %td
-        = f.text_field :name
-        = error_message_on(@currency, :name) if @currency.errors.on :name
-    %tr
-      %th
-        Conversion rate
-        #help_conversion_rate.help ?
-      %td
-        = f.text_field :conversion_rate
-        = error_message_on(@currency, :conversion_rate) if @currency.errors.on :conversion_rate
-    %tr
-      %th
-        Managed by Tapjoy
-        #help_managed_by_tapjoy.help ?
-      %td= check_box_tag(:managed_by_tapjoy, nil, @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL)
-    %tr.managed
-      %th
-        Initial balance
-        #help_initial_balance.help ?
-      %td
-        = f.text_field :initial_balance
-        = error_message_on(@currency, :initial_balance) if @currency.errors.on :initial_balance
-    %tr.unmanaged
-      %th
-        Callback URL
-        #help_callback_url.help ?
-      %td
-        = f.text_field :callback_url
-        = error_message_on(@currency, :callback_url) if @currency.errors.on :callback_url
-    %tr.unmanaged
-      %th
-        Secret key
-        #help_secret_key.help ?
-      %td
-        = f.text_field :secret_key
-        = error_message_on(@currency, :secret_key) if @currency.errors.on :secret_key
-    %tr
-      %th
-        Test devices
-        #help_test_devices.help ?
-      %td
-        = f.text_area :test_devices
-        = error_message_on(@currency, :test_devices) if @currency.errors.on :test_devices
-    - if permitted_to?(:index, :statz)
-      = render :partial => 'admin_fields', :locals => {:f => f}
-  = f.submit
+  - form_for [@app, @currency], :html => {:class => 'editable'} do |f|
+    %table
+      %tr
+        %th
+          Name
+          #help_name.help ?
+        %td
+          = f.text_field :name
+          = error_message_on(@currency, :name) if @currency.errors.on :name
+      %tr
+        %th
+          Conversion rate
+          #help_conversion_rate.help ?
+        %td
+          = f.text_field :conversion_rate
+          = error_message_on(@currency, :conversion_rate) if @currency.errors.on :conversion_rate
+      %tr
+        %th
+          Managed by Tapjoy
+          #help_managed_by_tapjoy.help ?
+        %td= check_box_tag(:managed_by_tapjoy, nil, @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL)
+      %tr.managed
+        %th
+          Initial balance
+          #help_initial_balance.help ?
+        %td
+          = f.text_field :initial_balance
+          = error_message_on(@currency, :initial_balance) if @currency.errors.on :initial_balance
+      %tr.unmanaged
+        %th
+          Callback URL
+          #help_callback_url.help ?
+        %td
+          = f.text_field :callback_url
+          = error_message_on(@currency, :callback_url) if @currency.errors.on :callback_url
+      %tr.unmanaged
+        %th
+          Secret key
+          #help_secret_key.help ?
+        %td
+          = f.text_field :secret_key
+          = error_message_on(@currency, :secret_key) if @currency.errors.on :secret_key
+      %tr
+        %th
+          Test devices
+          #help_test_devices.help ?
+        %td
+          = f.text_area :test_devices
+          = error_message_on(@currency, :test_devices) if @currency.errors.on :test_devices
+      - if permitted_to?(:index, :statz)
+        = render :partial => 'admin_fields', :locals => {:f => f}
+    = f.submit
 
-.hidden
-  #help_name_content{:name => 'Name'}
-    The name of the currency
-  #help_conversion_rate_content{:name => 'Conversion rate'}
-    Conversion rate help
-  #help_managed_by_tapjoy_content{:name => 'Managed by Tapjoy'}
-    Manged by Tapjoy help
-  #help_initial_balance_content{:name => 'Initial balance'}
-    The amount of currency that a new user starts with.
-  #help_callback_url_content{:name => 'Callback URL'}
-    Callback URL help
-  #help_secret_key_content{:name => 'Secret key'}
-    Secret key help
-  #help_test_devices_content{:name => 'Test devices'}
-    A semi-colon (;) separated list of test UDIDs. These devices will see a special testing offer.
-  = yield :extra_help
+  .hidden
+    #help_name_content{:name => 'Name'}
+      The name of the currency
+    #help_conversion_rate_content{:name => 'Conversion rate'}
+      Conversion rate help
+    #help_managed_by_tapjoy_content{:name => 'Managed by Tapjoy'}
+      Manged by Tapjoy help
+    #help_initial_balance_content{:name => 'Initial balance'}
+      The amount of currency that a new user starts with.
+    #help_callback_url_content{:name => 'Callback URL'}
+      Callback URL help
+    #help_secret_key_content{:name => 'Secret key'}
+      Secret key help
+    #help_test_devices_content{:name => 'Test devices'}
+      A semi-colon (;) separated list of test UDIDs. These devices will see a special testing offer.
+    = yield :extra_help
 
 - content_for :page_javascript do
   :plain
