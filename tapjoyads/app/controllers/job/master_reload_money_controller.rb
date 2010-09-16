@@ -5,6 +5,8 @@ class Job::MasterReloadMoneyController < Job::JobController
     interval_strings = {}
     interval_strings['24_hours'] = "DATE_ADD(NOW(), INTERVAL -24 HOUR)"
     interval_strings['today'] = "CURDATE()"
+    interval_strings['7_days'] = "DATE_ADD(NOW(), INTERVAL -7 DAY)"
+    interval_strings['1_month'] = "DATE_ADD(NOW(), INTERVAL -1 MONTH)"
     money_stats = get_money_stats(interval_strings)
     total_balance = Partner.sum(:balance, :conditions => "id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'") / 100.0
     total_pending_earnings = Partner.sum(:pending_earnings, :conditions => "id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'") / 100.0
@@ -20,9 +22,7 @@ class Job::MasterReloadMoneyController < Job::JobController
   def daily
     interval_strings = {}
     interval_strings['this_month'] = "DATE(CURDATE() - DAYOFMONTH(NOW()) + 1)"
-    interval_strings['7_days'] = "DATE_ADD(NOW(), INTERVAL -7 DAY)"
     interval_strings['since_mar_23'] = "'2010-03-23'"
-    interval_strings['1_month'] = "DATE_ADD(NOW(), INTERVAL -1 MONTH)"
     interval_strings['this_year'] = "MAKEDATE(YEAR(CURDATE()), 1)"
     daily_money_stats = get_money_stats(interval_strings)
     
@@ -37,7 +37,7 @@ private
   def get_money_stats(interval_strings)
     money_stats = {}
     
-    interval_strings.keys.each do |is|      
+    interval_strings.keys.each do |is|
       money_stats[is] = {}
       
       num_hours = Offer.count_by_sql("SELECT DATEDIFF(NOW(), #{interval_strings[is]}) * 24 + HOUR(NOW()) - HOUR(#{interval_strings[is]})")
