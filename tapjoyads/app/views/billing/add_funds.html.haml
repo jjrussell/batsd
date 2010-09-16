@@ -4,7 +4,7 @@
 
 %p
   Enter your credit card information and the amount you would like to add to your balance.
-  We accept Visa, MasterCard, American Express and Discover cards.
+  We accept Visa, MasterCard, Discover and American Express and cards.
 
 %h3 Current Balance: #{number_to_currency(current_partner.balance / 100.0)}
 
@@ -19,6 +19,9 @@
       %td= f.label :last_name, 'Last Name'
       %td= f.text_field :last_name, :size => 40
     %tr
+      %td
+      %td.center= image_tag('credit_card_logos.gif')
+    %tr
       %td= f.label :number, 'Card Number'
       %td= f.text_field :number, :size => 40
     %tr
@@ -31,6 +34,6 @@
         = f.select :year, (Date.today.year..(Date.today.year + 8)).to_a
     %tr
       %td= f.label :amount, 'Amount'
-      %td{ :class => 'left' }= f.currency_field :amount
+      %td{ :class => 'left' }= f.currency_field :amount, {}, :size => 20
     %tr
       %td{ :colspan => 2, :class => 'center' }= f.submit 'Add Funds'
