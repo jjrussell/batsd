@@ -82,6 +82,7 @@ class ActivityLog < SimpledbResource
   
   def serial_save(options = {})
     return unless is_new
+    return if self.object.respond_to?(:errors) && self.object.errors.is_a?(ActiveRecord::Errors) && self.object.errors.present?
     
     if self.before_state.length > 0 || self.after_state.length > 0
       super({ :write_to_memcache => false }.merge(options))
