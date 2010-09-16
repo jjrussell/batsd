@@ -1,6 +1,6 @@
 class VirtualGood < SimpledbResource
   self.domain_name = 'virtual_good'
-  
+
   self.sdb_attr :name,          :cgi_escape => true
   self.sdb_attr :description,   :cgi_escape => true
   self.sdb_attr :title,         :cgi_escape => true
@@ -15,12 +15,18 @@ class VirtualGood < SimpledbResource
   self.sdb_attr :app_id
   self.sdb_attr :apple_id
   self.sdb_attr :extra_attributes, :cgi_escape => true, :type => :json, :default_value => {}
-  
+
   def icon_url
     "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}virtual_goods/icons/#{@key}.png"
   end
-  
+
   def data_url
     "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}virtual_goods/data/#{@key}.zip"
+  end
+
+  def price_in_dollars
+    app = App.find_by_id(self.app_id)
+    return 0 if app.currency.nil?
+    [self.price / app.currency.conversion_rate / 100.0, 0.01].max.to_f
   end
 end

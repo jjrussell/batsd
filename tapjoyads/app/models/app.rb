@@ -164,10 +164,6 @@ class App < ActiveRecord::Base
     return match[1]
   end
 
-  def cache_active_virtual_goods
-    #TODO: implement this
-  end
-
 private
   
   def create_primary_offer

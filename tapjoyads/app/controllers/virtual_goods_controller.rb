@@ -21,7 +21,6 @@ class VirtualGoodsController < WebsiteController
     @virtual_good = VirtualGood.new
 
     if update_virtual_good
-      @app.cache_active_virtual_goods
       flash[:notice] = 'Sucessfully created virtual good'
       redirect_to app_virtual_good_path({ :app_id => @app.id, :id => @virtual_good.key })
     else

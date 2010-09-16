@@ -4,18 +4,27 @@
 = render :partial => 'apps/actions', :locals => {:app => @app}
 
 #content-with-links
-  %h3 Virtual Good Types
-
-  %table.with_form
-    - @virtual_good_types.each do |title|
-      %tr
-        %td= title
-
   %h3 Virtual Goods
 
   %table.with_form
-    - @virtual_goods.each do |vg|
+    %thead
       %tr
-        %td
-          #{vg.name} (#{vg.title})
-          = link_to "edit", app_virtual_good_path({:app_id => @app.id, :id => vg.id})
+        %th Name
+        %th Type
+        %th Status
+        %th Price (#{@app.currency.name})
+        %th Price ($)
+    %tbody
+      - @virtual_goods.each do |vg|
+        %tr
+          %td
+            = vg.name
+            = link_to "edit", app_virtual_good_path({:app_id => @app.id, :id => vg.id})
+          %td
+            = vg.title
+          %td
+            = vg.disabled? ? "Disabled" : vg.beta? ? "Beta" : "&nbsp;"
+          %td
+            = vg.price
+          %td
+            = number_to_currency(vg.price_in_dollars)
