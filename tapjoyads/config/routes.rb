@@ -48,6 +48,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :apps do |app|
     app.resources :offers, :only => [ :show, :update ]
     app.resources :currencies, :only => [ :show, :update, :new, :create ]
+    app.resources :virtual_goods, :only => [ :show, :update, :new, :create, :index ]
   end
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post }
   map.resources :billing, :only => [ :index, ], :collection => { :add_funds => :get }

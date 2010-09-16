@@ -1,0 +1,82 @@
+- @page_title = 'Virtual goods'
+
+= render :partial => 'shared/carousel', :locals => {:objects => current_partner_apps, :object => @app}
+= render :partial => 'apps/actions', :locals => {:app => @app}
+
+- if @virtual_good && @virtual_good.has_icon
+  .icon= image_tag(@virtual_good.icon_url, :size => '57x57')
+
+- form_for(:virtual_good, @virtual_good, :url => { :action => @form_action }, :html => { :method => @form_method, :multipart => true }) do |f|
+  %table.editable
+    %tr
+      %th
+        = f.label(:name)
+        #help_name.help ?
+      %td
+        = f.text_field(:name)
+    %tr
+      %th
+        = f.label(:title)
+        #help_title.help ?
+      %td
+        = f.text_field(:title)
+    %tr
+      %th
+        = f.label(:description)
+        #help_description.help ?
+      %td
+        = f.text_field(:description)
+    %tr
+      %th
+        = f.label(:price)
+        #help_price.help ?
+      %td
+        = f.text_field(:price)
+    %tr
+      %th
+        = f.label(:max_purchases)
+        #help_max_purchases.help ?
+      %td
+        = f.text_field(:max_purchases)
+    %tr
+      %th
+        = f.label(:icon)
+        #help_name.help ?
+      %td
+        = f.file_field(:icon)
+        (Optional)
+    %tr
+      %th
+        = f.label(:data)
+        #help_name.help ?
+      %td
+        = f.file_field(:data)
+        (Optional)
+    %tr
+      %th
+        = f.label(:beta)
+        #help_beta.help ?
+      %td
+        = f.check_box(:beta)
+    %tr
+      %th
+        = f.label(:disabled)
+        #help_disabled.help ?
+      %td
+        = f.check_box(:disabled)
+    - if false
+      %tr
+        %th
+          = f.label(:extra_attributes)
+          #help_extra_attributes.help ?
+        %td
+          = f.text_field(:extra_attributes)
+    %tr
+      %td &nbsp;
+      %td= f.submit
+
+- content_for :page_styles do
+  :plain
+    .icon {
+      float: left;
+    }

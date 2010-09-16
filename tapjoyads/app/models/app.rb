@@ -26,7 +26,11 @@ class App < ActiveRecord::Base
       Mc.get("mysql.app.#{id}")
     end
   end
-  
+
+  def virtual_goods
+    VirtualGood.select(:where => "app_id = '#{self.id}'")[:items]
+  end
+
   def store_url
     if use_raw_url?
       read_attribute(:store_url)
@@ -158,6 +162,14 @@ class App < ActiveRecord::Base
     end
     
     return match[1]
+  end
+
+  def find_virtual_good(virtual_good_id)
+    self.virtual_goods.find{ |vg| vg.key == virtual_good_id }
+  end
+
+  def cache_active_virtual_goods
+    #TODO: implement this
   end
 
 private

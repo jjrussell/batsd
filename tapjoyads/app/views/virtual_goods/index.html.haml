@@ -1,0 +1,14 @@
+- @page_title = 'Virtual Goods'
+
+= render :partial => 'shared/carousel', :locals => {:objects => current_partner_apps, :object => @app}
+= render :partial => 'apps/actions', :locals => {:app => @app}
+
+%h3= @page_title
+
+%table.with_form
+  - @virtual_goods.each do |vg|
+    %tr
+      %td
+        #{vg.name} (#{vg.title})
+        = link_to "edit", app_virtual_good_path({:app_id => @app.id, :id => vg.id})
+
