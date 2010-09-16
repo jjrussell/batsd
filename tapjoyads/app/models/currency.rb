@@ -83,7 +83,10 @@ class Currency < ActiveRecord::Base
   def get_test_device_ids
     Set.new(test_devices.split(';'))
   end
-  
+
+  def tapjoy_managed?
+    callback_url == TAPJOY_MANAGED_CALLBACK_URL
+  end
 private
   
   def update_memcached

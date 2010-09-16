@@ -7,6 +7,7 @@ class VirtualGoodsController < WebsiteController
   before_filter :find_app, :only => [ :create, :new, :show, :update, :index ]
   before_filter :find_virtual_good, :only => [ :show, :update ]
   before_filter :find_all_virtual_goods, :only => :index
+  before_filter :check_virtual_currency
 
   def new
     @page_title = 'Create new virtual good'
@@ -95,5 +96,9 @@ private
 
   def find_all_virtual_goods
     @virtual_goods = @app.virtual_goods
+  end
+
+  def check_virtual_currency
+    render 'disabled' unless @app.currency && @app.currency.tapjoy_managed?
   end
 end
