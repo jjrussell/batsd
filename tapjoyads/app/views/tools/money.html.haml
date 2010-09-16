@@ -1,25 +1,30 @@
 - @page_title = 'Money Stats'
 
-%h1 Tapjoy Money Stats
+%h1 Money Stats
 
-#last_updated= "Last Updated: #{@last_updated.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)}"
-
-%table
-  %thead
-    %tr
-      %th
-      - @time_ranges.each do |tr|
-        %th= tr
-      
-  %tbody
-    - @stat_types.each do |st|
+- unless @money_stats.empty? || @daily_money_stats.empty?
+  - time_ranges = @money_stats.keys + @daily_money_stats.keys
+  %table
+    %thead
       %tr
-        %td= st
-        - @time_ranges.each do |tr|
-          %td= @money_stats[tr][st]
+        %th Last Updated
+        %th{ :colspan => @money_stats.size }= @last_updated.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)
+        %th{ :colspan => @daily_money_stats.size }= @daily_last_updated.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)
+      %tr
+        %th
+        - time_ranges.each do |time_range|
+          %th= time_range
+    %tbody
+      - @combined_money_stats[time_ranges.first].keys.each do |stat_type|
+        %tr
+          %td= stat_type
+          - time_ranges.each do |time_range|
+            %td= @combined_money_stats[time_range][stat_type]
+- else
+  %h3 Not Available
 
-%h3= "Total Balance: #{number_to_currency(@total_balance)}"
-%h3= "Total Pending Earnings:  #{number_to_currency(@total_pending_earnings)}"
+%h3 Total Balance: #{number_to_currency(@total_balance)}
+%h3 Total Pending Earnings: #{number_to_currency(@total_pending_earnings)}
 
 -content_for :page_styles do
   :plain
@@ -30,9 +35,4 @@
     th, td {
       border: 1px solid gray;
       padding: 5px;
-    }
-    
-    #last_updated {
-      font-weight: bold;
-      font-size: 14px;
     }

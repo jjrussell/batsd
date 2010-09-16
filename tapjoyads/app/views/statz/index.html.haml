@@ -1,7 +1,7 @@
 - timeframe = @timeframe == '7_days' ? '7 days' : @timeframe == '1_month' ? '30 days' : '24 hours'
 - @page_title = "Stats for last #{timeframe}"
 
-%h1 Tapjoy stats for last #{timeframe}
+%h1 Stats for last #{timeframe}
 
 %ul.timeframes
   %li= @timeframe == '24_hours' ? '24 hours' : link_to('24 hours', statz_index_path)
@@ -11,7 +11,13 @@
 = label_tag('search_box', 'Offer Name:')
 = text_field_tag('search_box', '', :size => '40')
 
-%h3 Total conversions: #{@cvr_count} &nbsp; Total revenue: #{@ad_spend} &nbsp; Total payouts: #{@publisher_earnings}
+- if @money_stats
+  %h3
+    Total conversions: #{@money_stats[@timeframe]['conversions']} &nbsp;
+    Total revenue: #{@money_stats[@timeframe]['advertiser_spend']} &nbsp;
+    Total payouts: #{@money_stats[@timeframe]['publisher_earnings']}
+- else
+  %h3 Not available
 
 #last_updated Last Updated: #{@last_updated.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)}
 

@@ -2,17 +2,39 @@ class Job::MasterReloadMoneyController < Job::JobController
   include ActionView::Helpers::NumberHelper
   
   def index
-    now = Time.zone.now
-    
     interval_strings = {}
     interval_strings['24_hours'] = "DATE_ADD(NOW(), INTERVAL -24 HOUR)"
-    interval_strings['this_month'] = "DATE(CURDATE() - DAYOFMONTH(NOW()) + 1)"
     interval_strings['today'] = "CURDATE()"
+    money_stats = get_money_stats(interval_strings)
+    total_balance = Partner.sum(:balance, :conditions => "id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'") / 100.0
+    total_pending_earnings = Partner.sum(:pending_earnings, :conditions => "id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'") / 100.0
+    
+    Mc.put('money.cached_stats', money_stats)
+    Mc.put('money.total_balance', total_balance)
+    Mc.put('money.total_pending_earnings', total_pending_earnings)
+    Mc.put('money.last_updated', Time.zone.now)
+    
+    render :text => 'ok'
+  end
+  
+  def daily
+    interval_strings = {}
+    interval_strings['this_month'] = "DATE(CURDATE() - DAYOFMONTH(NOW()) + 1)"
     interval_strings['7_days'] = "DATE_ADD(NOW(), INTERVAL -7 DAY)"
     interval_strings['since_mar_23'] = "'2010-03-23'"
     interval_strings['1_month'] = "DATE_ADD(NOW(), INTERVAL -1 MONTH)"
     interval_strings['this_year'] = "MAKEDATE(YEAR(CURDATE()), 1)"
+    daily_money_stats = get_money_stats(interval_strings)
     
+    Mc.put('money.daily_cached_stats', daily_money_stats)
+    Mc.put('money.daily_last_updated', Time.zone.now)
+    
+    render :text => 'ok'
+  end
+  
+private
+  
+  def get_money_stats(interval_strings)
     money_stats = {}
     
     interval_strings.keys.each do |is|      
@@ -50,15 +72,7 @@ class Job::MasterReloadMoneyController < Job::JobController
       money_stats[is]['margin'] = number_with_precision((revenue - (publisher_earnings - marketing_credits * 0.7)) / (revenue) * 100, :precision => 2) + "%"
     end
     
-    total_balance = Partner.sum(:balance, :conditions => "id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'") / 100.0
-    total_pending_earnings = Partner.sum(:pending_earnings, :conditions => "id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'") / 100.0
-    
-    Mc.put('money.cached_stats', money_stats)
-    Mc.put('money.total_balance', total_balance)
-    Mc.put('money.total_pending_earnings', total_pending_earnings)
-    Mc.put('money.last_updated', now)
-    
-    render :text => 'ok'
+    return money_stats
   end
   
 end

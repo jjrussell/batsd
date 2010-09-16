@@ -64,15 +64,13 @@ class ToolsController < WebsiteController
   end
   
   def money
-    @money_stats = Mc.get('money.cached_stats') || (render(:text => "Not Available") and return)
-    @time_ranges = @money_stats.keys
-    
-    @stat_types = @money_stats[@time_ranges.first].keys
-    
+    @money_stats = Mc.get('money.cached_stats') || {}
+    @daily_money_stats = Mc.get('money.daily_cached_stats') || {}
+    @combined_money_stats = @money_stats.merge(@daily_money_stats)
     @last_updated = Mc.get('money.last_updated') || Time.zone.at(0)
-    
-    @total_balance = Mc.get('money.total_balance') || 'Not Available'
-    @total_pending_earnings = Mc.get('money.total_pending_earnings') || 'Not Available'
+    @daily_last_updated = Mc.get('money.daily_last_updated') || Time.zone.at(0)
+    @total_balance = Mc.get('money.total_balance') || 0
+    @total_pending_earnings = Mc.get('money.total_pending_earnings') || 0
   end
   
   def failed_sdb_saves

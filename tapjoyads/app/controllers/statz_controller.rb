@@ -11,10 +11,7 @@ class StatzController < WebsiteController
   def index
     @timeframe = params[:timeframe] || '24_hours'
     
-    money_stats = Mc.get('money.cached_stats')
-    @cvr_count = money_stats[@timeframe]['conversions'] rescue "Not Available"
-    @ad_spend =  money_stats[@timeframe]['advertiser_spend'] rescue "Not Available"
-    @publisher_earnings =  money_stats[@timeframe]['publisher_earnings'] rescue "Not Available"
+    @money_stats = @timeframe == '24_hours' ? Mc.get('money.cached_stats') : Mc.get('money.daily_cached_stats')
     
     @last_updated = Mc.get("statz.last_updated.#{@timeframe}") || Time.at(8.hours.to_i)
     @cached_stats = Mc.get("statz.cached_stats.#{@timeframe}") || []
