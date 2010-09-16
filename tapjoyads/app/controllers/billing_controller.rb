@@ -40,7 +40,7 @@ class BillingController < WebsiteController
         @order.payment_txn_id = response.authorization
         @order.save!
         flash[:notice] = 'Successfully added funds.'
-        redirect_to billing_index_path and return
+        render :action => :receipt and return
       else
         flash[:error] = response.message
       end

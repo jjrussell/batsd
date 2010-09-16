@@ -1,0 +1,39 @@
+- @page_title = 'Order Confirmation'
+
+%h1 Thank you for your order
+
+%h3 Order Details
+
+%table
+  %tr
+    %td.right Date
+    %td= @order.created_at.to_s(:mday)
+  %tr
+    %td.right Amount
+    %td= number_to_currency(@order.amount / 100.0)
+  %tr
+    %td.right Name
+    %td= @credit_card.name
+  %tr
+    %td.right Card Type
+    %td= @credit_card.type.humanize
+  %tr
+    %td.right Card Number
+    %td= @credit_card.display_number
+  %tr
+    %td.right Card Expiration
+    %td= @credit_card.expiry_date.expiration.to_date.to_s(:my)
+
+- content_for :page_styles do
+  :plain
+    table {
+      border-collapse: collapse;
+    }
+    
+    th, td {
+      padding: 3px 5px;
+    }
+    
+    td.right {
+      text-align: right;
+    }
