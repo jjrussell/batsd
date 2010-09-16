@@ -24,7 +24,7 @@ class PasswordResetsController < WebsiteController
   def update
     if @user.safe_update_attributes(params[:user], [ :password, :password_confirmation ])
       flash[:notice] = "Password successfully updated."
-      redirect_to home_index_path
+      redirect_to apps_path
     else
       render :action => :edit
     end
