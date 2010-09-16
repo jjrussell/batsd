@@ -19,10 +19,10 @@
           = f.text_field(:name)
       %tr
         %th
-          = f.label(:title)
+          = f.label(:title, "Type")
           #help_title.help ?
         %td
-          = f.text_field(:title)
+          = f.select(:title, @virtual_good_types)
       %tr
         %th
           = f.label(:description)
