@@ -23,8 +23,7 @@ module ActiveMerchant
       
       alias_method :orig_validate_card_type, :validate_card_type
       def validate_card_type
-        errors.add :type, "is required" if type.blank?
-        errors.add :type, "is not accepted" unless ACCEPTED_CARD_TYPES.include?(type)
+        errors.add :number, "does not map to an accepted card type" unless ACCEPTED_CARD_TYPES.include?(type)
       end
     end
   end
