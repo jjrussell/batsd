@@ -41,20 +41,21 @@
           #help_max_purchases.help ?
         %td
           = f.text_field(:max_purchases)
-      %tr
-        %th
-          = f.label(:icon)
-          #help_name.help ?
-        %td
-          = f.file_field(:icon)
-          (Optional)
-      %tr
-        %th
-          = f.label(:data)
-          #help_name.help ?
-        %td
-          = f.file_field(:data)
-          (Optional)
+      - if false #TODO: icon and data are disabled for now
+        %tr
+          %th
+            = f.label(:icon)
+            #help_name.help ?
+          %td
+            = f.file_field(:icon)
+            (Optional)
+        %tr
+          %th
+            = f.label(:data)
+            #help_name.help ?
+          %td
+            = f.file_field(:data)
+            (Optional)
       %tr
         %th
           = f.label(:beta)
