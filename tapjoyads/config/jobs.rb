@@ -24,6 +24,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'queue_grab_advertiser_udids', :interval => 5.minutes
   elsif machine_type == 'masterjobs'
     # jobs with high impact on overall system performance
+    s.add_job 'master_calculate_next_payout', :daily => 4.hours
     s.add_job 'master_grab_advertiser_udids', :daily => 7.hours
     s.add_job 'master_update_monthly_account', :daily => 8.hours
     s.add_job 'master_verifications', :daily => 5.hours
@@ -38,7 +39,6 @@ JobRunner::Gateway.define do |s|
     
     # jobs with low impact on overall system performance
     s.add_job 'master_cache_offers', :interval => 1.minute
-    s.add_job 'master_calculate_next_payout', :daily => 4.hours
     s.add_job 'master_cleanup_web_requests', :daily => 5.hours
     s.add_job 'master_create_offers', :interval => 10.minutes
     s.add_job 'master_failed_sqs_writes', :interval => 3.minutes
