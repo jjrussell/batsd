@@ -34,7 +34,8 @@ $(function(){
   var width = $('input#app_name').width() - 2;
   var offset = $('input#app_name').offset();
   if (offset) {
-    offset.top += $('input#app_name').height() + 3 + $(window).scrollTop();
+    offset.top += $('input#app_name').height() + 7 + $(window).scrollTop();
+    offset.left += 1;
     $('#search_results').offset(offset).css('width', width + 'px');
   }
 
