@@ -13,26 +13,26 @@
     Higher bids will fetch more installs.
   
 
-  - form_for(:offer, @offer, :url => { :action => :update }, :html => { :method => :put }) do |f|
-    %table.editable
+  - form_for(:offer, @offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform' }) do |f|
+    %table
       %tbody
         %tr
           %th
-            Enable Installs
+            = f.label :user_enabled, 'Enable Installs'
             #help_user_enabled.help ?
           %td
             = f.check_box :user_enabled
             = error_message_on @offer, :user_enabled
         %tr
           %th
-            Bid
+            = f.label :payment, 'Bid'
             #help_bid.help ?
           %td
             = f.currency_field :payment, {}, :class => 'togglable'
             = error_message_on @offer, :payment
         %tr
           %th
-            Offer Name
+            = f.label :name, 'Offer Name'
             #help_offer_name.help ?
           %td
             = f.text_field :name, :class => 'togglable'
@@ -40,7 +40,7 @@
               = error_message_on @offer, :name
         %tr
           %th
-            Daily Install Limit
+            = f.label :daily_budget, 'Daily Install Limit'
             #help_daily.help ?
           %td
             = f.text_field :daily_budget, :class => 'togglable'
@@ -141,4 +141,9 @@
     #estimated_budget .value {
       font-weight: bold;
       display: inline;
+    }
+    
+    textarea,
+    input[type=text] {
+      width: 400px;
     }

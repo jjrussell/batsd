@@ -2,40 +2,40 @@
   %td{:colspan => 2} Admin-only fields:
 %tr.admin
   %th
-    Disabled offers
+    = f.label :disabled_offers, 'Disabled offers'
     #help_disabled_offers.help ?
   %td
     = f.text_area :disabled_offers
     = error_message_on(@currency, :disabled_offers) if @currency.errors.on :disabled_offers
 %tr.admin
   %th
-    Disabled partners
+    = f.label :disabled_partners, 'Disabled partners'
     #help_disabled_partners.help ?
   %td
     = f.text_area :disabled_partners
     = error_message_on(@currency, :disabled_partners) if @currency.errors.on :disabled_partners
 %tr.admin
   %th
-    Max age rating
+    = f.label :max_age_rating, 'Max age rating'
     #help_max_age_rating.help ?
   %td
     = f.select :max_age_rating, options_for_select(%w(17+ 12+ 9+ 4+).zip(%w(4 3 2 1)), :selected => @currency.max_age_rating.to_s)
 %tr.admin
   %th 
-    Only free offers
+    = f.label :only_free_offers, 'Only free offers'
     #help_only_free_offers.help ?
   %td
     = f.check_box :only_free_offers
 %tr.admin
   %th
-    Installs money share
+    = f.label :installs_money_share, 'Installs money share'
     #help_installs_money_share.help ?
   %td
     = f.text_field :installs_money_share
     = error_message_on(@currency, :installs_money_share) if @currency.errors.on :installs_money_share
 %tr.admin
   %th
-    Offers money share
+    = f.label :offers_money_share, 'Offers money share'
     #help_offers_money_share.help ?
   %td
     = f.text_field :offers_money_share
