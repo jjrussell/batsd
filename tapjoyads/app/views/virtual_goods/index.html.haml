@@ -10,6 +10,7 @@
     %thead
       %tr
         %th &nbsp;
+        %th &nbsp;
         %th Name
         %th Type
         %th Status
@@ -22,8 +23,10 @@
           %td
             %span.ui-icon.ui-icon-arrowthick-2-n-s
           %td
+            .button
+              = link_to "edit", app_virtual_good_path({:app_id => @app.id, :id => vg.id})
+          %td
             = vg.name
-            = link_to "edit", app_virtual_good_path({:app_id => @app.id, :id => vg.id})
           %td
             = vg.title
           %td
@@ -32,6 +35,8 @@
             = vg.price
           %td
             = number_to_currency(vg.price_in_dollars)
+  = button_to_function('Save new order', 'saveOrder();')
+
 - content_for :page_styles do
   :plain
     tr.virtual-good.disabled {
@@ -40,11 +45,39 @@
     tr.virtual-good.beta {
       color: #00f;
     }
+    .button a {
+      display: inline-block;
+      color: #222;
+      font-size: 12px;
+      text-decoration: none;
+      text-shadow: 0px 1px 1px #fff;
+      margin: 3px 0px;
+      margin-right: 2px;
+      padding: 2px;
+      border: 1px solid #888;
+      background: #ddd;
+      background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ccc));
+      background: -moz-linear-gradient(top,  #fff,  #ccc);
+      -moz-border-radius: 4px;
+      -webkit-border-radius: 4px;
+    }
+    .button a:hover {
+      background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#bbb));
+      background: -moz-linear-gradient(top, #fff, #bbb);
+    }
+    .button a:active {
+      background: -webkit-gradient(linear, left top, left bottom, from(#aaa), to(#ddd));
+      background: -moz-linear-gradient(top, #aaa, #ddd);
+    }
+
 - content_for :page_javascript do
   :plain
     $(function($){
       $('a#toggle-disabled').click(function(){
         $('.disabled').toggle();
       });
-      $('#virtual_goods').sortable();
+      $('#virtual_goods').sortable({ opacity: 0.5, cursor: 'move', axis: 'y' });
     });
+    var saveOrder = function(){
+      console.log($('#virtual_goods').click('asdf'));
+    };
