@@ -9,8 +9,8 @@
   - if @virtual_good && @virtual_good.has_icon
     .icon= image_tag(@virtual_good.icon_url, :size => '57x57')
 
-  - form_for(:virtual_good, @virtual_good, :url => { :action => @form_action }, :html => { :method => @form_method, :multipart => true }) do |f|
-    %table.editable
+  - form_for(:virtual_good, @virtual_good, :url => { :action => @form_action }, :html => { :method => @form_method, :multipart => true, :class => 'tjform' }) do |f|
+    %table
       %tr
         %th
           = f.label(:name)
