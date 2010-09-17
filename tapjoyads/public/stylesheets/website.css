@@ -109,10 +109,16 @@ form.tjform {
 .tjform textarea,
 .tjform input[type=text],
 .tjform input[type=password] {
-  border:1px solid #bec5cb;
+  padding: 2px;
+  border: 2px solid #bec5cb;
   font-size: 16px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
+}
+.tjform .fieldWithErrors textarea,
+.tjform .fieldWithErrors input[type=text],
+.tjform .fieldWithErrors input[type=password] {
+  border: 2px solid #af1515;
 }
 .tjform textarea:hover,
 .tjform textarea:focus,
@@ -126,12 +132,8 @@ form.tjform {
   margin-top: 10px;
   float: right;
 }
-.tjform .fieldWithErrors,
-.tjform .formError {
-  display: inline-block;
-}
 .tjform .fieldWithErrors {
-  border: 3px solid #af1515;
+  display: inline-block;
 }
 .tjform .formError {
   color: #af1515;
