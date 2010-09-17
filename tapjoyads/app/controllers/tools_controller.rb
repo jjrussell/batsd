@@ -74,7 +74,7 @@ class ToolsController < WebsiteController
   end
   
   def failed_sdb_saves
-    @bad_web_requests = Mc.get('failed_sdb_saves.bad_domains')
+    @bad_web_requests = Mc.get('failed_sdb_saves.bad_domains') || {}
     @failed_sdb_saves = {}
 
     this_hour_key = (Time.zone.now.to_f / 1.hour).to_i
