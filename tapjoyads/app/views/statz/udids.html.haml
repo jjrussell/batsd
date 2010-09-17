@@ -1,7 +1,10 @@
 - @page_title = "Monthly UDIDs for offer: #{@offer.name_with_suffix}"
 
 .icon= image_tag(@offer.get_icon_url(request.protocol), :size => '57x57')
+
 %h1= @offer.name_with_suffix
+
+.clear
 
 - unless @keys.empty?
   %p UDIDs for:
@@ -14,4 +17,5 @@
   :plain
     .icon {
       float: left;
+      padding: 20px 0;
     }

@@ -1,7 +1,10 @@
 - @page_title = "Stats for offer: #{@offer.name_with_suffix}"
 
 .icon= image_tag(@offer.get_icon_url(request.protocol), :size => '57x57')
+
 %h1= @offer.name_with_suffix
+
+.clear
 
 #display_date
   For: #{@start_time.to_s(:mdy)} - #{@end_time.to_s(:mdy)}.
@@ -193,11 +196,8 @@
 - content_for :page_styles do
   :plain
     .icon {
+      padding: 20px 0;
       float: left;
-    }
-    
-    table {
-      clear: both;
     }
     
     #associated_list,
