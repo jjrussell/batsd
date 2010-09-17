@@ -48,6 +48,7 @@ $(function(){
                                  addClass('search-result').
                                  append($('<img/>').attr('src', app.icon_url)).
                                  append(app.title).
+                                 append(' (' + app.item_id + ')').
                                  click(populate);
         $.data(result[0], 'data', app);
         $('#search_results').append(result);
