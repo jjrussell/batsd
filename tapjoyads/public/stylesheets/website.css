@@ -78,7 +78,7 @@ ul.navigation {
   padding: 0;
 }
 ul.navigation li {
-  display: inline-block;
+  display: inline;
   border: 1px solid #888;
   padding: 10px 0px;
   margin-right: 2px;
