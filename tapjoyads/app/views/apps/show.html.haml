@@ -9,9 +9,9 @@
 #apps_main
   - unless @app.nil?
     %h2= @app.name
-    - form_for @app do |f|
+    - form_for(@app, :html => { :class => 'tjform' }) do |f|
       = f.hidden_field :store_id
-      %table.editable
+      %table
         %tbody
           %tr
             %th
@@ -48,18 +48,18 @@
               %td.integrated YES
             - else
               %td.not_integrated NO
-          %tr.app_data
+          %tr.app_data.hidden
             %th
               Store ID
             %td
               = link_to(@app.store_id, @app.final_store_url)
-          %tr.app_data
+          %tr.app_data.hidden
             %th Icon
             %td#app_icon= image_tag(@app.get_icon_url(request.protocol), :size => '57x57', :alt => 'icon')
-          %tr.app_data
+          %tr.app_data.hidden
             %th Price
             %td= number_to_currency(@app.price / 100.0)
-          %tr.app_data
+          %tr.app_data.hidden
             %th Description
             %td
               #app_description= (@app.description || '').gsub("\n", '<br>')

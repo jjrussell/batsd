@@ -32,6 +32,6 @@ td.not_integrated {
   max-height: 200px;
   overflow: auto;
 }
-.editable select {
+.tjform select {
   width: 80px;
 }

@@ -20,6 +20,7 @@ a img {
 .hidden {
   display: none;
 }
+
 #main {
   padding: 10px 15px;
   margin: 10px auto;
@@ -39,12 +40,14 @@ a img {
   -moz-border-radius: 6px 6px 0 0;
   -webkit-border-radius: 6px 6px 0 0;
 }
+
 #content {
   border-top: 1px solid #888;
 }
 #content-with-links {
   margin-left: 150px;
 }
+
 ul.navigation {
   margin: 6px 0 -1px;
   padding: 0;
@@ -86,86 +89,62 @@ ul.navigation li.current a {
 div.flash {
   padding: 5px;
 }
-
 #flash_notice {
   background-color: #328F0D;
 }
-
 #flash_error {
   background-color: #AF1515;
 }
 
-form {
+form.tjform {
   display: inline-block;
 }
-
-input.date {
-  width: 100px;
-}
-
-.editable th {
+.tjform th {
   text-align: right;
   vertical-align: top;
   padding-top: 3px;
   padding-right: 10px;
   white-space: nowrap;
 }
-
-.editable textarea,
-.editable input[type=text] {
+.tjform textarea,
+.tjform input[type=text] {
   border:1px solid #bec5cb;
   font-size: 16px;
-  width: 400px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
 }
-
-.editable textarea.active,
-.editable textarea:hover,
-.editable input[type=text].active,
-.editable input[type=text]:hover {
+.tjform textarea:hover,
+.tjform textarea:active,
+.tjform input[type=text]:hover,
+.tjform input[type=text]:active {
   background-color: #fffff0;
 }
-
-.editable textarea.changed,
-.editable input[type=text].changed {
-  background-color: #ddd;
-}
-
-.editable input[type=submit] {
+.tjform input[type=submit] {
   margin-top: 10px;
   float: right;
 }
-
-.editable .managed,
-.editable .unmanaged {
-  display: none;
+.tjform .fieldWithErrors,
+.tjform .formError {
+  display: inline-block;
 }
-
-.editable .fieldWithErrors,
-.editable .formError {
-  display: inline;
+.tjform .fieldWithErrors {
+  border: 3px solid #af1515;
 }
-
-.editable .formError {
-  color: red;
+.tjform .formError {
+  color: #af1515;
 }
-
-.editable .ui-dialog .ui-dialog-titlebar {
+.tjform .ui-dialog .ui-dialog-titlebar {
   height: 5px;
 }
-
-.editable .ui-dialog .ui-dialog-title {
+.tjform .ui-dialog .ui-dialog-title {
   font-size: 14px;
   margin-top: -8px;
 }
-
-.editable .ui-dialog .ui-dialog-content {
+.tjform .ui-dialog .ui-dialog-content {
   overflow: visible;
   font-size: 12px;
 }
-
-.editable .help {
+.tjform .help {
   cursor: help;
   display: inline-block;
   width: 12px;
@@ -182,14 +161,15 @@ input.date {
   -webkit-border-radius: 10px;
   vertical-align: top;
 }
-.editable .help:hover {
+.tjform .help:hover {
   background-color: #eee;
   color: #000;
 }
-.editable .help:active {
+.tjform .help:active {
   background-color: #fff;
   color: #444;
 }
+
 .help-dialog .ui-dialog-titlebar {
   height: 5px;
 }
@@ -205,36 +185,7 @@ div.help-dialog .ui-dialog-title {
   overflow: visible;
   font-size: 12px;
 }
+
 .description {
   font-size: 85%;
-}
-
-table.with_form {
-  border-collapse: collapse;
-}
-
-table.with_form td {
-  padding: 3px 5px;
-  text-align: right;
-}
-
-table.with_form td.center {
-  text-align: center;
-}
-
-table.with_form td.left {
-  text-align: left;
-}
-
-.errorExplanation {
-  background-color: #af1515;
-  padding: 10px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  margin-bottom: 10px;
-}
-
-.fieldWithErrors {
-  border: 3px solid #af1515;
-  display: inline-block;
 }
