@@ -49,7 +49,7 @@ class VirtualGoodsController < WebsiteController
       ordinal = 500
       keys.each_with_index do |key, index|
         virtual_good = VirtualGood.new(:key => key)
-        if virtual_good.is_new || @virtual_good.app_id != @app.id
+        if virtual_good.is_new || virtual_good.app_id != @app.id
           raise "Virtual good ordering error"
         end
         virtual_good.ordinal = ordinal + index
