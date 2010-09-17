@@ -2,15 +2,16 @@
 
 %h1 Create Transfer
 
-- form_tag create_transfer_tools_path, :method => :post do
-  .field
-    = label_tag 'partner_id', 'Partner ID'
-    = text_field_tag 'partner_id', nil, :size => 40
-  .field
-    = label_tag 'transfer_amount', 'Amount $'
-    = text_field_tag 'transfer_amount'
-  .field
-    = label_tag 'marketing_amount', 'Marketing Credits'
-    = text_field_tag 'marketing_amount'
-  .field
-    = submit_tag 'Create Transfer'
+- form_tag create_transfer_tools_path, :method => :post, :class => 'tjform' do
+  %table
+    %tr
+      %th= label_tag 'partner_id', 'Partner ID'
+      %td= text_field_tag 'partner_id', '', :size => 50
+    %tr
+      %th= label_tag 'transfer_amount', 'Amount'
+      %td= text_field_tag 'transfer_amount', '$0.00', :class => 'currency_field'
+    %tr
+      %th= label_tag 'marketing_amount', 'Marketing Credits'
+      %td= text_field_tag 'marketing_amount', '$0.00', :class => 'currency_field'
+    %tr
+      %td{ :colspan => 2 }= submit_tag 'Create Transfer'

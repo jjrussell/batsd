@@ -25,9 +25,15 @@ class ToolsController < WebsiteController
   end
   
   def create_transfer
+    sanitized_params = sanitize_currency_params(params, [ :transfer_amount, :marketing_amount ])
     Partner.transaction do      
-      partner = Partner.find(params[:partner_id])
-      amount = (params[:transfer_amount].to_f * 100).to_i
+      partner = Partner.find_by_id(params[:partner_id])
+      if partner.nil?
+        flash[:notice] = "Could not find partner with id: #{params[:partner_id]}"
+        redirect_to new_transfer_tools_path and return
+      end
+      
+      amount = sanitized_params[:transfer_amount].to_i
       payout = partner.payouts.build(:amount => amount, :month => Time.zone.now.month, :year => Time.zone.now.year, :payment_method => 3)
       log_activity(payout)
       payout.save!
@@ -36,8 +42,9 @@ class ToolsController < WebsiteController
       log_activity(order)
       order.save!
       
-      if params[:marketing_amount].to_f > 0
-        marketing_order = partner.orders.build(:amount => (params[:marketing_amount].to_f * 100).to_i, :status => 1, :payment_method => 2)
+      marketing_amount = sanitized_params[:marketing_amount].to_i
+      if marketing_amount > 0
+        marketing_order = partner.orders.build(:amount => marketing_amount, :status => 1, :payment_method => 2)
         log_activity(marketing_order)
         marketing_order.save!
       end
@@ -49,18 +56,19 @@ class ToolsController < WebsiteController
   end
   
   def new_order
+    @order = Order.new
   end
   
   def create_order
-    order = Order.new(params[:order])
-    order.amount = (params[:order][:amount].to_f * 100).to_i
-    log_activity(order)
-    if order.save
+    order_params = sanitize_currency_params(params[:order], [ :amount ])
+    @order = Order.new(order_params)
+    log_activity(@order)
+    if @order.save
       flash[:notice] = 'The order was successfully created.'
+      redirect_to new_order_tools_path
     else
-      flash[:error] = 'The order could not be created.'
+      render :action => :new_order
     end
-    redirect_to new_order_tools_path
   end
   
   def money

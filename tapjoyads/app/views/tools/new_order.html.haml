@@ -2,23 +2,34 @@
 
 %h1 Create Order
 
-- form_tag create_order_tools_path, :method => :post, :class => 'json' do
-  .field
-    = label_tag 'order[partner_id]', 'Partner ID'
-    = text_field_tag 'order[partner_id]', nil, :size => 40
-  .field
-    = label_tag 'order[amount]', 'Amount $'
-    = text_field_tag 'order[amount]'
-  .field
-    = label_tag 'order[status]', 'Status'
-    = select_tag 'order[status]', '<option>1</option>'
-  .field
-    = label_tag 'order[payment_method]', 'Payment Method'
-    = select_tag 'order[payment_method]', '<option value="1">Billable</option><option value="2">Marketing Expense</option>'
-  .field
-    = label_tag 'order[note]', 'Note'
-    = text_field_tag 'order[note]'
-  .field
-    = submit_tag 'Create Order'
-
-= link_to "Don't forget to create an invoice in freshbooks", "http://tapjoy.freshbooks.com/"
+- form_for :order, @order, :url => { :action => :create_order }, :html => { :method => :post, :class => 'tjform' } do |f|
+  %table
+    %tr
+      %th= f.label :partner_id, 'Partner ID'
+      %td
+        = f.text_field :partner_id, :size => 50
+        = error_message_on @order, :partner
+    %tr
+      %th= f.label :amount
+      %td
+        = f.currency_field :amount
+        = error_message_on @order, :amount
+    %tr
+      %th= f.label :status
+      %td
+        = f.select :status, '<option>1</option>'
+        = error_message_on @order, :status
+    %tr
+      %th= f.label :payment_method
+      %td
+        = f.select :payment_method, '<option value="1">Billable</option><option value="2">Marketing Expense</option>'
+        = error_message_on @order, :payment_method
+    %tr
+      %th= f.label :note
+      %td
+        = f.text_field :note, :size => 50
+        = error_message_on @order, :note
+    %tr
+      %td{ :colspan => 2 }= f.submit 'Create Order'
+    %tr
+      %td{ :colspan => 2 }= link_to "Don't forget to create an invoice in freshbooks", "http://tapjoy.freshbooks.com/"
