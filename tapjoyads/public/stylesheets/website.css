@@ -82,11 +82,13 @@ ul.navigation li {
   border: 1px solid #888;
   padding: 10px 0px;
   margin-right: 2px;
+  background: #ccc;
   background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ccc));
   background: -moz-linear-gradient(top,  #fff,  #ccc);
   text-shadow: 0px 1px 1px #fff;
 }
 ul.navigation li:hover {
+  background: #bbb;
 	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#bbb));
 	background: -moz-linear-gradient(top, #fff, #bbb);
 }
@@ -103,12 +105,13 @@ ul.navigation li:hover a {
   color: #222;
 }
 ul.navigation li.current {
+  background: #337BC8;
   background: -webkit-gradient(linear, left top, left bottom, from(#37ADE0), to(#337BC8));
   background: -moz-linear-gradient(top, #37ADE0, #337BC8);
   text-shadow: 0px 1px 1px #6D6C9E;
 }
 ul.navigation li.current a {
-  color: white;
+  color: #fff;
 }
 
 div.flash {
