@@ -37,7 +37,7 @@ class VirtualGoodsController < WebsiteController
   def update
     if update_virtual_good
       flash[:notice] = 'Sucessfully updated virtual good'
-      redirect_to app_virtual_good_path({ :app_id => @app.id, :id => @virtual_good.key })
+      redirect_to app_virtual_goods_path({ :app_id => @app.id })
     else
       show()
     end

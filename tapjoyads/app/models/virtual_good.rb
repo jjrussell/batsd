@@ -31,7 +31,6 @@ class VirtualGood < SimpledbResource
   end
 
   def <=> good
-    [ self.disabled? ? 1 : 0, self.beta? ? 1 : 0, self.ordinal] <=>
-    [ good.disabled? ? 1 : 0, good.beta? ? 1 : 0, good.ordinal]
+    self.ordinal <=> good.ordinal
   end
 end

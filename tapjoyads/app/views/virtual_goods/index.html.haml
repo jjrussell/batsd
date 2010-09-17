@@ -4,19 +4,23 @@
 = render :partial => 'apps/actions', :locals => {:app => @app}
 
 #content-with-links
-  %h3 Virtual Goods
-
+  %h3
+    Virtual Goods
   %table.with_form
     %thead
       %tr
+        %th &nbsp;
         %th Name
         %th Type
         %th Status
         %th Price (#{@app.currency.name})
         %th Price ($)
-    %tbody
+    %tbody#virtual_goods
       - @virtual_goods.sort.each do |vg|
-        %tr.virtual-good{:class => vg.disabled? ? "disabled" : vg.beta? ? "beta" : ""}
+        - tr_class = vg.disabled? ? "disabled" : vg.beta? ? "beta" : ""
+        %tr.virtual-good{:class => tr_class, :id => vg.key}
+          %td
+            %span.ui-icon.ui-icon-arrowthick-2-n-s
           %td
             = vg.name
             = link_to "edit", app_virtual_good_path({:app_id => @app.id, :id => vg.id})
@@ -31,8 +35,16 @@
 - content_for :page_styles do
   :plain
     tr.virtual-good.disabled {
-      color: #888;
+      color: #bbb;
     }
     tr.virtual-good.beta {
       color: #00f;
     }
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('a#toggle-disabled').click(function(){
+        $('.disabled').toggle();
+      });
+      $('#virtual_goods').sortable();
+    });
