@@ -11,12 +11,16 @@
 - form_for(:credit_card, @credit_card, :url => { :action => :create_order }, :html => { :class => 'tjform' }) do |f|
   %table
     %tr
-      %th= f.label :first_name, 'First Name'
+      %th
+        = f.label :first_name, 'First Name'
+        #help_first_name.help ?
       %td
         = f.text_field :first_name
         = error_message_on @credit_card, :first_name
     %tr
-      %th= f.label :last_name, 'Last Name'
+      %th
+        = f.label :last_name, 'Last Name'
+        #help_last_name.help ?
       %td
         = f.text_field :last_name
         = error_message_on @credit_card, :last_name
@@ -24,29 +28,45 @@
       %th
       %td= image_tag('credit_card_logos.gif', :class => 'logos')
     %tr
-      %th= f.label :number, 'Card Number'
+      %th
+        = f.label :number, 'Card Number'
+        #help_card_number.help ?
       %td
         = f.text_field :number
         = error_message_on @credit_card, :number
     %tr
-      %th= f.label :verification_value, 'CVV Code'
+      %th
+        = f.label :verification_value, 'CVV Code'
+        #help_cvv_code.help ?
       %td
         = f.text_field :verification_value, :size => 6
         = error_message_on @credit_card, :verification_value
     %tr
-      %th= f.label :expiration, 'Expiration'
+      %th
+        = f.label :expiration, 'Expiration'
+        #help_expiration.help ?
       %td
         = f.select :month, (1..12).to_a
         = f.select :year, (Date.today.year..(Date.today.year + 8)).to_a
         = error_message_on @credit_card, :month
         = error_message_on @credit_card, :year
     %tr
-      %th= f.label :amount, 'Amount'
+      %th
+        = f.label :amount, 'Amount'
+        #help_amount.help ?
       %td
         = f.currency_field :amount, {}, :size => 12
         = error_message_on @credit_card, :amount
     %tr
       %td{ :colspan => 2 }= f.submit 'Add Funds'
+
+.hidden
+  #help_first_name_content{ :name => 'First Name' } The first name as it appears on the credit card.
+  #help_last_name_content{ :name => 'Last Name' } The last name as it appears on the credit card.
+  #help_card_number_content{ :name => 'Card Number' } The credit card number.
+  #help_cvv_code_content{ :name => 'CVV Code' } For Visa, MasterCard and Discover this is the 3 digit code on the back of the card. For American Express it is the 4 digit code on the front of the card.
+  #help_expiration_content{ :name => 'Expiration' } The expiration date of the credit card.
+  #help_amount_content{ :name => 'Amount' } The amount you would like added to your balance. Your card will be charged this amount.
 
 - content_for :page_styles do
   :plain
