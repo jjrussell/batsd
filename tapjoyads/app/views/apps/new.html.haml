@@ -22,8 +22,7 @@
             Platform
             #help_platform.help ?
           %td
-            = f.select :platform, %w(iPhone).zip(%w(iphone))
-            (Android support coming soon to the beta webpage)
+            = f.select :platform, %w(iPhone Android).zip(%w(iphone android))
         %tr
           %th
             Name
@@ -68,4 +67,8 @@
   :plain
     .app_data {
       display: none;
+    }
+    
+    input[type=text] {
+      width: 400px;
     }

@@ -76,7 +76,7 @@ class App < ActiveRecord::Base
   # Grab data from the app store and mutate self with data.
   def fill_app_store_data
     return if store_id.blank?
-    data = AppStore.fetch_app_by_id(store_id)
+    data = AppStore.fetch_app_by_id(store_id, platform)
     self.name = data[:title]
     self.price = (data[:price] * 100).to_i
     self.description = data[:description]

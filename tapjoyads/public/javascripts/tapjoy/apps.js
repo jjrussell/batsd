@@ -82,7 +82,7 @@ $(function(){
 
     var term = $('input#app_name').val();
     if (term != "") {
-      var platform = $('select#app_platform').val()
+      var platform = $('#app_platform').val() || $('#app_platform').text()
       $.ajax({
         url: '/apps/search/;',
         data: { term: term, platform: platform },
