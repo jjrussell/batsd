@@ -4,31 +4,16 @@
 
 %p Enter the email address associated with your account and we will send you a link to reset your password.
 
-- form_tag(password_resets_path) do
+- form_tag(password_resets_path, :class => 'tjform') do
   %table
     %tr
-      %td= label_tag(:email, 'Email Address')
-      %td= text_field_tag(:email, '', :size => '40')
+      %th= label_tag(:email, 'Email Address')
+      %td= text_field_tag(:email)
     %tr
-      %td{ :colspan => 2, :class => 'center' }= submit_tag('Submit')
+      %td{ :colspan => 2 }= submit_tag('Submit')
 
 - content_for :page_javascript do
   :plain
-    $(document).ready(function() {
+    $(function() {
       $('#email').focus();
     });
-  
-- content_for :page_styles do
-  :plain
-    table {
-      border-collapse: collapse;
-    }
-    
-    td {
-      padding: 3px 5px;
-      text-align: right;
-    }
-    
-    td.center {
-      text-align: center;
-    }

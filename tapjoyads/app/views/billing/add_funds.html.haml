@@ -8,32 +8,48 @@
 
 %h3 Current Balance: #{number_to_currency(current_partner.balance / 100.0)}
 
-- form_for(:credit_card, @credit_card, :url => { :action => :create_order }) do |f|
-  = f.error_messages :header_message => nil
-  
-  %table.with_form
+- form_for(:credit_card, @credit_card, :url => { :action => :create_order }, :html => { :class => 'tjform' }) do |f|
+  %table
     %tr
-      %td= f.label :first_name, 'First Name'
-      %td= f.text_field :first_name, :size => 40
-    %tr
-      %td= f.label :last_name, 'Last Name'
-      %td= f.text_field :last_name, :size => 40
-    %tr
+      %th= f.label :first_name, 'First Name'
       %td
-      %td.center= image_tag('credit_card_logos.gif')
+        = f.text_field :first_name
+        = error_message_on @credit_card, :first_name
     %tr
-      %td= f.label :number, 'Card Number'
-      %td= f.text_field :number, :size => 40
+      %th= f.label :last_name, 'Last Name'
+      %td
+        = f.text_field :last_name
+        = error_message_on @credit_card, :last_name
     %tr
-      %td= f.label :verification_value, 'CVV Code'
-      %td{ :class => 'left' }= f.text_field :verification_value, :size => 6
+      %th
+      %td= image_tag('credit_card_logos.gif', :class => 'logos')
     %tr
-      %td= f.label :expiration, 'Expiration'
-      %td{ :class => 'left' }
+      %th= f.label :number, 'Card Number'
+      %td
+        = f.text_field :number
+        = error_message_on @credit_card, :number
+    %tr
+      %th= f.label :verification_value, 'CVV Code'
+      %td
+        = f.text_field :verification_value, :size => 6
+        = error_message_on @credit_card, :verification_value
+    %tr
+      %th= f.label :expiration, 'Expiration'
+      %td
         = f.select :month, (1..12).to_a
         = f.select :year, (Date.today.year..(Date.today.year + 8)).to_a
+        = error_message_on @credit_card, :month
+        = error_message_on @credit_card, :year
     %tr
-      %td= f.label :amount, 'Amount'
-      %td{ :class => 'left' }= f.currency_field :amount, {}, :size => 20
+      %th= f.label :amount, 'Amount'
+      %td
+        = f.currency_field :amount, {}, :size => 12
+        = error_message_on @credit_card, :amount
     %tr
-      %td{ :colspan => 2, :class => 'center' }= f.submit 'Add Funds'
+      %td{ :colspan => 2 }= f.submit 'Add Funds'
+
+- content_for :page_styles do
+  :plain
+    img.logos {
+      padding-left: 3px;
+    }

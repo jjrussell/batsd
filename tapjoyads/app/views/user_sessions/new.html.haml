@@ -2,23 +2,27 @@
 
 %h1 Login
 
-- form_for @user_session do |f|
-  = f.error_messages :header_message => nil
+- form_for(@user_session, :html => { :class => 'tjform' }) do |f|
   = hidden_field_tag 'goto', @goto unless @goto.nil?
 
-  %table.with_form
+  %table
     %tr
-      %td= f.label :username
-      %td= f.text_field :username, :size => 40
+      %th= f.label :username
+      %td
+        = f.text_field :username
+        = error_message_on @user_session, :username
     %tr
-      %td= f.label :password
-      %td= f.password_field :password, :size => 40
+      %th= f.label :password
+      %td
+        = f.password_field :password
+        = error_message_on @user_session, :password
+      %td= link_to('Forgot Password?', new_password_reset_path)
     %tr
-      %td= f.label :remember_me
-      %td{ :class => 'left' }= f.check_box :remember_me
+      %th= f.label :remember_me
+      %td= f.check_box :remember_me
     %tr
-      %td= f.submit 'Login'
-      %td{ :class => 'left' }= link_to('Reset Password', new_password_reset_path)
+      %td{ :colspan => 2 }= f.submit 'Login'
+      %td
 
 - content_for :page_javascript do
   :plain
