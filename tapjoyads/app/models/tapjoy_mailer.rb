@@ -47,4 +47,12 @@ class TapjoyMailer < ActionMailer::Base
     body(:reset_link => reset_link)
   end
   
+  def new_secondary_account(user_email, reset_link)
+    from "support@tapjoy.com"
+    recipients user_email
+    subject "New Account Created - Tapjoy.com"
+    content_type 'text/html'
+    body(:reset_link => reset_link)
+  end
+  
 end

@@ -5,7 +5,9 @@
 - form_for @user, :html => { :class => 'tjform' } do |f|
   %table
     %tr
-      %th= f.label :email, 'Email Address'
+      %th
+        = f.label :email, 'Email Address'
+        #help_email.help ?
       %td
         = f.text_field :email
         = error_message_on @user, :email
@@ -21,3 +23,6 @@
         = error_message_on @user, :password_confirmation
     %tr
       %td{ :colspan => 2 }= f.submit
+
+.hidden
+  #help_email_content{ :name => 'Email Address' } Your preferred contact email address. Password reset requests will go to this address.
