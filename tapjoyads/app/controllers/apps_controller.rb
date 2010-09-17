@@ -39,7 +39,7 @@ class AppsController < WebsiteController
     @app.partner = current_partner
     @app.platform = params[:app][:platform]
     @app.store_id = params[:app][:store_id]
-    
+    @app.name = params[:app][:name]
     @app.fill_app_store_data
     
     if @app.save
