@@ -107,16 +107,19 @@ form.tjform {
   white-space: nowrap;
 }
 .tjform textarea,
-.tjform input[type=text] {
+.tjform input[type=text],
+.tjform input[type=password] {
   border:1px solid #bec5cb;
   font-size: 16px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
 }
 .tjform textarea:hover,
-.tjform textarea:active,
+.tjform textarea:focus,
 .tjform input[type=text]:hover,
-.tjform input[type=text]:active {
+.tjform input[type=text]:focus,
+.tjform input[type=password]:hover,
+.tjform input[type=password]:focus {
   background-color: #fffff0;
 }
 .tjform input[type=submit] {
