@@ -2,24 +2,41 @@
 
 %h1 Account Creation
 
-- form_for(:user, @user, :url => { :action => :create }, :html => { :method => :post }) do |f|
-  = f.error_messages :header_message => nil
+- form_for(:user, @user, :url => { :action => :create }, :html => { :method => :post, :class => 'tjform' }) do |f|
+  %table
+    %tr
+      %th
+        = f.label :username, 'Login'
+        #help_login.help ?
+      %td
+        = f.text_field :username
+        = error_message_on @user, :username
+    %tr
+      %th
+        = f.label :email, 'Email Address'
+        #help_email.help ?
+      %td
+        = f.text_field :email
+        = error_message_on @user, :email
+    %tr
+      %th
+        = label_tag :partner_name, 'Company Name'
+        #help_company_name.help ?
+      %td= text_field_tag :partner_name, params[:partner_name]
+    %tr
+      %th= f.label :password, 'Password'
+      %td
+        = f.password_field :password
+        = error_message_on @user, :password
+    %tr
+      %th= f.label :password_confirmation, 'Confirm Password'
+      %td
+        = f.password_field :password_confirmation
+        = error_message_on @user, :password_confirmation
+    %tr
+      %td{ :colspan => 2 }= f.submit "Create Account"
 
-  %table.with_form
-    %tr
-      %td= f.label :username, 'Login'
-      %td= f.text_field :username, :size => 40
-    %tr
-      %td= f.label :email, 'Email Address'
-      %td= f.text_field :email, :size => 40
-    %tr
-      %td= label_tag :partner_name, 'Company Name'
-      %td= text_field_tag :partner_name, params[:partner_name], :size => 40
-    %tr
-      %td= f.label :password, 'Password'
-      %td= f.password_field :password, :size => 40
-    %tr
-      %td= f.label :password_confirmation, 'Confirm Password'
-      %td= f.password_field :password_confirmation, :size => 40
-    %tr
-      %td{ :colspan => 2, :class => 'center' }= f.submit "Create Account"
+.hidden
+  #help_login_content{ :name => 'Login' } The username you would like to use when logging in. Most people use their email address.
+  #help_email_content{ :name => 'Email Address' } Your preferred contact email address. Password reset requests will go to this address.
+  #help_company_name_content{ :name => 'Company Name' } The name of your company.
