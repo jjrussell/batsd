@@ -78,7 +78,7 @@
       %td
         = f.text_field(:countries)
         = error_message_on @offer, :countries
-      %td= link_to('Country codes', 'http://www.iso.org/iso/english_country_names_and_code_elements')
+      %td= link_to('Country codes', 'http://www.iso.org/iso/english_country_names_and_code_elements', :tabindex => 100)
     %tr
       %th
         = f.label(:cities)
