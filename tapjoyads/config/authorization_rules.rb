@@ -4,7 +4,7 @@ authorization do
     has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :search ]
     has_permission_on :offers, :to => [ :show, :update ]
     has_permission_on :currencies, :to => [ :show, :update, :new, :create ]
-    has_permission_on :virtual_goods, :to => [ :show, :update, :new, :create, :index ]
+    has_permission_on :virtual_goods, :to => [ :show, :update, :new, :create, :index, :reorder ]
     has_permission_on :reporting, :to => [ :index, :show, :export ]
     has_permission_on :billing, :to => [ :index, :add_funds, :create_order, :export_statements, :export_orders, :export_payouts ]
     has_permission_on :users, :to => [ :index, :new, :create, :edit, :update ]

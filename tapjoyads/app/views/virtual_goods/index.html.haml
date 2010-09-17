@@ -13,29 +13,29 @@
         %th &nbsp;
         %th Name
         %th Type
-        %th Status
         %th Price (#{@app.currency.name})
         %th Price ($)
+        %th Status
+        - if permitted_to?(:index, :statz)
+          %th Ordinal
     %tbody#virtual_goods
       - @virtual_goods.sort.each do |vg|
         - tr_class = vg.disabled? ? "disabled" : vg.beta? ? "beta" : ""
         %tr.virtual-good{:class => tr_class, :id => vg.key}
-          %td
+          %th.handler
             %span.ui-icon.ui-icon-arrowthick-2-n-s
           %td
-            .button
-              = link_to "edit", app_virtual_good_path({:app_id => @app.id, :id => vg.id})
-          %td
-            = vg.name
-          %td
-            = vg.title
-          %td
-            = vg.disabled? ? "Disabled" : vg.beta? ? "Beta" : "&nbsp;"
-          %td
-            = vg.price
-          %td
-            = number_to_currency(vg.price_in_dollars)
-  = button_to_function('Save new order', 'saveOrder();')
+            .button= link_to "edit", app_virtual_good_path({:app_id => @app.id, :id => vg.id})
+          %td= vg.name
+          %td= vg.title
+          %td= vg.price
+          %td= number_to_currency(vg.price_in_dollars)
+          %td= vg.disabled? ? "Disabled" : vg.beta? ? "Beta" : "&nbsp;"
+          - if permitted_to?(:index, :statz)
+            %td= vg.ordinal
+  - form_tag(reorder_app_virtual_goods_path(:app_id => @app.id), :id => "reorder-virtual-goods") do
+    = hidden_field_tag('virtual_goods')
+    = submit_tag('Save new order', :id => 'virtual-goods-order-submit', :style => "display:none;")
 
 - content_for :page_styles do
   :plain
@@ -44,6 +44,9 @@
     }
     tr.virtual-good.beta {
       color: #00f;
+    }
+    th.handler {
+      cursor: move;
     }
     .button a {
       display: inline-block;
@@ -73,11 +76,19 @@
 - content_for :page_javascript do
   :plain
     $(function($){
-      $('a#toggle-disabled').click(function(){
-        $('.disabled').toggle();
+      $('a#toggle-disabled').click(function(){ $('.disabled').toggle(); });
+      $('#virtual_goods').sortable({
+        opacity: 0.5,
+        handle: 'th.handler',
+        cursor: 'move',
+        axis: 'y',
+        change: function() {
+          $('#virtual-goods-order-submit').fadeIn();
+        }
       });
-      $('#virtual_goods').sortable({ opacity: 0.5, cursor: 'move', axis: 'y' });
+      $('form#reorder-virtual-goods').submit(function(){
+        var data = $('#virtual_goods').sortable("toArray");
+        $('input#virtual_goods').val(JSON.stringify(data));
+        return true;
+      });
     });
-    var saveOrder = function(){
-      console.log($('#virtual_goods').click('asdf'));
-    };

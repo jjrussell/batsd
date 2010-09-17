@@ -4,7 +4,7 @@ class VirtualGoodsController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_app, :only => [ :create, :new, :show, :update, :index ]
+  before_filter :find_app, :only => [ :create, :new, :show, :update, :index, :reorder ]
   before_filter :find_virtual_good, :only => [ :show, :update ]
   before_filter :find_all_virtual_goods, :only => :index
   before_filter :check_virtual_currency
@@ -41,6 +41,22 @@ class VirtualGoodsController < WebsiteController
     else
       show()
     end
+  end
+
+  def reorder
+    if params[:virtual_goods]
+      keys = JSON.load(params[:virtual_goods])
+      ordinal = 500
+      keys.each_with_index do |key, index|
+        virtual_good = VirtualGood.new(:key => key)
+        if virtual_good.is_new || @virtual_good.app_id != @app.id
+          raise "Virtual good ordering error"
+        end
+        virtual_good.ordinal = ordinal + index
+        virtual_good.save!
+      end
+    end
+    redirect_to :action => 'index'
   end
 
 private
