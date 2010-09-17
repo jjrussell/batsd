@@ -11,7 +11,7 @@
   Granularity: #{@granularity.to_s}.
   %a{ :href => '#' } [Change]
 
-%form#change_date{ :method => 'get' }
+%form#change_date{ :method => :get, :class => 'tjform' }
   = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
   \-
   = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
@@ -245,4 +245,9 @@
     .incomplete {
       background: -webkit-gradient(linear, left top, right bottom, from(#ccc), to(#fff));
       background: -moz-linear-gradient(left,  #f40,  #fff);
+    }
+    
+    .tjform input[type=submit] {
+      margin: 0;
+      float: none;
     }

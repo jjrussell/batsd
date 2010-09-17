@@ -2,12 +2,18 @@
 
 = render :partial => 'shared/carousel', :locals => { :objects => current_partner_offers, :object => @offer, :extra_url_params => params }
 
+.icon= image_tag(@offer.get_icon_url(request.protocol), :size => '57x57')
+
+%h1 Reporting for #{@offer.name}
+
+.clear
+
 #display_date
   For: #{@start_time.to_s(:mdy)} - #{@end_time.to_s(:mdy)}. 
   Granularity: #{@granularity.to_s}.
   %a{ :href => '#' } [Change]
 
-%form#change_date{ :method => 'get' }
+%form#change_date{ :method => :get, :class => 'tjform' }
   = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
   \-
   = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
@@ -150,8 +156,10 @@
   
 - content_for :page_styles do
   :plain
-    .clear {
-      clear: both;
+    .icon {
+      padding-bottom: 20px;
+      padding-right: 10px;
+      float: left;
     }
     
     #change_date {
@@ -182,4 +190,9 @@
     
     td {
       text-align: left;
+    }
+    
+    .tjform input[type=submit] {
+      margin: 0;
+      float: none;
     }

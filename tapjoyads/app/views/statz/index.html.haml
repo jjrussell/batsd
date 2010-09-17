@@ -8,8 +8,9 @@
   %li= @timeframe == '7_days' ? '7 days' : link_to('7 days', statz_index_path(:timeframe => '7_days'))
   %li= @timeframe == '1_month' ? '30 days' : link_to('30 days', statz_index_path(:timeframe => '1_month'))
 
-= label_tag('search_box', 'Offer Name:')
-= text_field_tag('search_box', '', :size => '40')
+.tjform
+  = label_tag('search_box', 'Offer Name:')
+  = text_field_tag('search_box', '', :size => '40')
 
 - if @money_stats
   %h3

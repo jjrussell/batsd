@@ -2,7 +2,7 @@
 
 %h1 Partners
 
-- form_tag(partners_path, :method => 'get', :id => 'form') do
+- form_tag(partners_path, :method => :get, :class => 'tjform') do
   = label_tag(:q, "Name or Email Address:")
   = text_field_tag(:q, params[:q], :size => '40')
   = submit_tag('Search')
@@ -57,4 +57,9 @@
     
     .nowrap {
       white-space: nowrap;
+    }
+    
+    .tjform input[type=submit] {
+      margin: 0;
+      float: none;
     }

@@ -2,15 +2,15 @@
 
 %h1 Activity log
 
-- form_tag(activities_path, :method => 'get', :id => 'form') do
+- form_tag(activities_path, :method => :get, :id => 'form', :class => 'tjform') do
   = label_tag(:user)
-  = text_field_tag(:user, params[:user])
+  = text_field_tag(:user, params[:user], :size => 15)
   = label_tag(:object_id)
-  = text_field_tag(:object_id, params[:object_id])
+  = text_field_tag(:object_id, params[:object_id], :size => 15)
   = label_tag(:request_id)
-  = text_field_tag(:request_id, params[:request_id])
+  = text_field_tag(:request_id, params[:request_id], :size => 15)
   = label_tag(:partner_id)
-  = text_field_tag(:partner_id, params[:partner_id])
+  = text_field_tag(:partner_id, params[:partner_id], :size => 15)
   = submit_tag("Change")
 
 %table#activities_table.tablesorter
@@ -118,4 +118,9 @@
     
     .next {
       float: right;
+    }
+    
+    .tjform input[type=submit] {
+      margin: 0;
+      float: none;
     }
