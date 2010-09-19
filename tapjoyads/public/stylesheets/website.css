@@ -76,9 +76,9 @@ input[type=submit]:active, input[type=button]:active {
 ul.navigation {
   margin: 6px 0 -1px;
   padding: 0;
+  *margin-bottom: 20px; /* IE hack :( */
 }
 ul.navigation li {
-  display: inline;
   border: 1px solid #888;
   padding: 10px 0px;
   margin-right: 2px;
@@ -86,6 +86,8 @@ ul.navigation li {
   background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ccc));
   background: -moz-linear-gradient(top,  #fff,  #ccc);
   text-shadow: 0px 1px 1px #fff;
+  display: inline-block;
+ *display: inline; /* IE hack :( */
 }
 ul.navigation li:hover {
   background: #bbb;
