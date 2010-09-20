@@ -71,17 +71,17 @@
     #help_name_content{:name => 'Name'}
       The name of the currency
     #help_conversion_rate_content{:name => 'Conversion rate'}
-      Conversion rate help
+      Amount of virtual currency that $1 will be exchanged for.
     #help_managed_by_tapjoy_content{:name => 'Managed by Tapjoy'}
-      Manged by Tapjoy help
+      In order to use Tapjoy virtual goods, your virtual currency must be managed by Tapjoy.
     #help_initial_balance_content{:name => 'Initial balance'}
       The amount of currency that a new user starts with.
     #help_callback_url_content{:name => 'Callback URL'}
-      Callback URL help
+      This is the URL Tapjoy will access when a virtual currency transaction is made.
     #help_secret_key_content{:name => 'Secret key'}
-      Secret key help
+      Secret key to be used with the callback.
     #help_test_devices_content{:name => 'Test devices'}
-      A semi-colon (;) separated list of test UDIDs. These devices will see a special testing offer.
+      A semicolon (;) separated list of test UDIDs. These devices will see a special testing offer.
     = yield :extra_help
 
 - content_for :page_javascript do
@@ -101,6 +101,9 @@
       } else {
         $('.managed').hide();
         $('.unmanaged').show();
+        if ($('#currency_callback_url').val() == '#{Currency::TAPJOY_MANAGED_CALLBACK_URL}') {
+          $('#currency_callback_url').val('');
+        }
       }
     }
 
