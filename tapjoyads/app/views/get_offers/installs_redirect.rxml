@@ -5,7 +5,7 @@ xml.TapjoyConnectReturnObject do
       xml.TapjoyApp do
         xml.Cost offer.cost
         xml.Amount @currency.get_reward_amount(offer)
-        xml.Description offer.description
+        xml.Description offer.description || 'An app.'
         xml.IconURL offer.get_icon_url
         xml.Name offer.name
         xml.RedirectURL offer.get_redirect_url(@publisher_app, params[:publisher_user_id], params[:udid], @source, params[:app_version])

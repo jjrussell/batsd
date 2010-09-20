@@ -6,7 +6,7 @@ xml.TapjoyConnectReturnObject do
         xml.Cost offer.cost
         xml.Amount @currency.get_reward_amount(offer)
         xml.CreditCardRequired offer.credit_card_required?
-        xml.Description offer.description
+        xml.Description offer.description || 'An app.'
         xml.Instructions offer.instructions
         xml.Name offer.name
         xml.TimeDelay offer.time_delay
