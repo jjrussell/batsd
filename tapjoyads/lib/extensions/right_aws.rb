@@ -69,7 +69,7 @@ module RightAws
     # This should help our servers not lock up when sdb goes down.
     def request_info(request, parser)
       thread = @params[:multi_thread] ? Thread.current : Thread.main
-      thread[:sdb_connection] ||= Rightscale::HttpConnection.new(:exception => AwsError, :logger => @logger, :http_connection_read_timeout => 10, :http_connection_retry_count => 2)
+      thread[:sdb_connection] ||= Rightscale::HttpConnection.new(:exception => AwsError, :logger => @logger, :http_connection_read_timeout => 10, :http_connection_retry_count => 0)
       request_info_impl(thread[:sdb_connection], @@bench, request, parser)
     end
     
