@@ -1,7 +1,7 @@
 if (typeof(Tapjoy) == "undefined") Tapjoy = {};
 
 Tapjoy.setGraphProperties = function(g, options) {
-  g.Set('chart.shadow', true);
+  g.Set('chart.shadow', false);
   g.Set('chart.tickmarks', 'circle');
 
   g.Set('chart.hmargin', options.hMarginPx);
