@@ -14,9 +14,11 @@ class ImportMssqlController < ApplicationController
     user.crypted_password = params[:password]
     user.password_salt = params[:salt]
     partner = (params[:partner_id].blank? || params[:partner_id] == 'NULL') ? nil : Partner.find(params[:partner_id])
-    user.current_partner = partner unless partner.nil?
-    if user.new_record? && !partner.nil?
-      user.partners << partner
+    unless partner.nil?
+      user.current_partner = partner
+      unless user.partner_ids.include?(partner.id)
+        user.partners << partner
+      end
     end
     user.created_at = Time.parse(params[:created_at] + ' CST').utc unless params[:created_at].blank?
     user.save(false)
