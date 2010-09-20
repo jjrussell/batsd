@@ -53,6 +53,13 @@ class Offer < ActiveRecord::Base
       end
     end
   end
+  validates_each :payment do |record, attribute, value|
+    if record.payment_changed? || record.min_payment_changed?
+      if record.payment > 0 && record.payment < record.min_payment.to_i
+        record.errors.add(attribute, "is below the minimum")
+      end
+    end
+  end
   
   before_save :cleanup_url
   after_save :update_memcached
