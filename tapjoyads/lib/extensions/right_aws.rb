@@ -64,8 +64,8 @@ module RightAws
       on_exception
     end
     
-    # Overwrite request_info to modify the :http_connection_read_timeout option from 120 to 10, 
-    # and the :http_connection_retry_count option from 3 to 2. 
+    # Overwrite request_info to modify the :http_connection_read_timeout option from 120,
+    # and the :http_connection_retry_count option from 3.
     # This should help our servers not lock up when sdb goes down.
     def request_info(request, parser)
       thread = @params[:multi_thread] ? Thread.current : Thread.main
