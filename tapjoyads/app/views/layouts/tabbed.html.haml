@@ -21,7 +21,7 @@
           = link_to image_tag('tapjoylogo.png'), root_path
         .right
           = current_user.username
-          - if permitted_to?(:index, :statz) && !current_user.partners.include?(current_partner)
+          - if current_user.is_one_of?([:admin, :agency, :account_mgr])
             %span#acting_as
               acting as
               = link_to current_partner.contact_name, partner_path(current_partner)

@@ -17,5 +17,8 @@ class User < ActiveRecord::Base
       role.name.underscore.to_sym
     end << :partner
   end
-  
+
+  def is_one_of?(array)
+    (role_symbols & array).present?
+  end
 end
