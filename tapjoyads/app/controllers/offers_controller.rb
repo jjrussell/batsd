@@ -10,8 +10,18 @@ class OffersController < WebsiteController
   end
 
   def update
-    params_offer = sanitize_currency_params(params[:offer], [:payment])
-    if @offer.safe_update_attributes(params_offer, [:daily_budget, :name, :payment, :user_enabled])
+    offer_params = sanitize_currency_params(params[:offer], [ :payment, :min_payment ])
+    offer_params[:device_types] = offer_params[:device_types].blank? ? '[]' : offer_params[:device_types].to_json
+    
+    safe_attributes = [:daily_budget, :name, :payment, :user_enabled]
+    if permitted_to?(:index, :statz)
+      safe_attributes += [:tapjoy_enabled, :self_promote_only, :allow_negative_balance, :pay_per_click, 
+          :featured, :min_payment, :name_suffix, :ordinal, :show_rate, :min_conversion_rate, :countries, 
+          :cities, :postal_codes, :device_types, :publisher_app_whitelist, :payment, :daily_budget, 
+          :overall_budget]
+    end
+    
+    if @offer.safe_update_attributes(offer_params, safe_attributes)
       flash[:notice] = 'Pay-per-install was successfully updated'
       redirect_to(app_offer_path(:app_id => @app.id, :id => @offer.id))
     else

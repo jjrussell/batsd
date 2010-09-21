@@ -117,6 +117,13 @@
           = error_message_on @offer, :payment
       %tr
         %th
+          = f.label(:min_payment)
+          #help_min_payment.help ?
+        %td
+          = f.currency_field(:min_payment)
+          = error_message_on @offer, :min_payment
+      %tr
+        %th
           = f.label(:daily_budget)
           #help_daily_budget.help ?
         %td
