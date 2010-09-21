@@ -21,3 +21,6 @@
 
 # boot the app
 `su webuser -c 'curl -s http://localhost:9898/healthz'`
+
+# install cronjob
+`echo "* * * * * /home/webuser/server/ensure_apache_running.rb" | crontab -u ubuntu -`
