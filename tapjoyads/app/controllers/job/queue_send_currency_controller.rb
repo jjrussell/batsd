@@ -90,7 +90,8 @@ private
       
       reward.update_counters
       
-      Downloader.get_with_retry(callback_url, {:timeout => 30}, reward.key) if Rails.env == 'production'
+      failure_message = "reward_key: #{reward.key}, app_id: #{reward.get('publisher_app_id')}"
+      Downloader.get_with_retry(callback_url, { :timeout => 30 }, failure_message) if Rails.env == 'production'
     end
   end
 end
