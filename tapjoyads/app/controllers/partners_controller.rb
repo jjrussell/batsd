@@ -15,10 +15,7 @@ class PartnersController < WebsiteController
       @partners = Partner.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
     end
   end
-  
-  def show
-  end
-  
+
   def make_current
     if current_user.update_attribute(:current_partner_id, @partner.id)
       flash[:notice] = 'Successfully switched partners.'
@@ -27,7 +24,17 @@ class PartnersController < WebsiteController
     end
     redirect_to request.referer
   end
-  
+
+  def remove_current
+    return if current_user.partners.include?(current_partner)
+
+    if current_user.update_attribute(:current_partner_id, nil)
+      flash[:notice] = 'Successfully stopped acting as this partner.'
+    else
+      flash[:error] = 'Could not remove partners.'
+    end
+    redirect_to request.referer
+  end
 private
   
   def find_partner

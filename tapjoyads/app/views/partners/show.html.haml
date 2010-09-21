@@ -2,8 +2,12 @@
 
 %h1 Partner data
 
-- form_tag(make_current_partner_path(@partner)) do
-  = submit_tag('Act as Partner')
+- if current_user.partners.include?(current_partner)
+  - form_tag(make_current_partner_path(@partner)) do
+    = submit_tag('Act as Partner')
+- else
+  - form_tag(remove_current_partner_path(@partner)) do
+    = submit_tag('Stop acting as this Partner')
 
 .metadata Contact name: #{@partner.contact_name}
 .metadata Contact phone: #{@partner.contact_phone}

@@ -7,6 +7,11 @@
     = stylesheet_link_tag 'website', 'jquery-ui-1.8.4.custom', 'themes/blue/style'
     %style{ :type => 'text/css' }
       = yield :page_styles
+      :plain
+        #acting_as {
+          font-size: 0.5em;
+          background-color: yellow;
+        }
     = yield :page_head
   
   %body
@@ -16,6 +21,10 @@
           = link_to image_tag('tapjoylogo.png'), root_path
         .right
           = current_user.username
+          - if permitted_to?(:index, :statz) && !current_user.partners.include?(current_partner)
+            %span#acting_as
+              acting as
+              = link_to current_partner.contact_name, partner_path(current_partner)
           |
           = link_to('Logout', logout_path)
         .clear

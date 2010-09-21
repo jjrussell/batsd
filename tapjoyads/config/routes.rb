@@ -60,7 +60,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ], :collection => { :search => :get }, :member => { :last_run_times => :get, :udids => :get, :download_udids => :get }
   map.resources :raffle_manager, :only => [ :index, :edit, :update, :new, :create ]
   map.resources :activities, :only => [ :index ]
-  map.resources :partners, :only => [ :index, :show ], :member => { :make_current => :post }
+  map.resources :partners, :only => [ :index, :show ], :member => { :make_current => :post, :remove_current => :post }
   map.resources :password_resets, :only => [ :new, :create, :edit, :update ]
   
   map.resources :balances, :only => :show
