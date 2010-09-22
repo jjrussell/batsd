@@ -8,9 +8,10 @@
     = image_tag(selected.get_icon_url(request.protocol), :size => '24x24', :alt => '')
     = selected.name
 #apps_dropdown.hidden
-  #search_box
-    Search:
-    = text_field_tag(:app_name)
+  - if false
+    #search_box
+      Search:
+      = text_field_tag(:app_name)
   - objects.each do |o|
     - url = o.class.to_s == 'App' ? app_path(o, extra_url_params) : reporting_path(o, extra_url_params)
     - class_name = o == selected ? "selected" : ""
