@@ -2,7 +2,7 @@
 - is_iphone = @app.platform=='iphone'
 - app_store_name = is_iphone ? 'AppStore' : 'Marketplace'
 
-= render :partial => 'shared/carousel', :locals => {:objects => current_partner_apps, :object => nil}
+= render :partial => 'shared/dropdown_select', :locals => {:objects => current_partner_apps, :selected => nil}
 = render :partial => 'actions', :locals => {:app => nil}
 
 #apps_main

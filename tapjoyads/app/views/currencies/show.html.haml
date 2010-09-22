@@ -1,6 +1,6 @@
 - @page_title = 'Virtual currency'
 
-= render :partial => 'shared/carousel', :locals => {:objects => current_partner_apps, :object => @app}
+= render :partial => 'shared/dropdown_select', :locals => {:objects => current_partner_apps, :selected => @app}
 = render :partial => 'apps/actions', :locals => {:app => @app}
 
 #content-with-links

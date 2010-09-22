@@ -1,24 +1,24 @@
 - return if objects.blank?
 - extra_url_params ||= nil
 #selected_app{ :title => "Select your app" }
-  - if object.nil?
+  - if selected.nil?
     = image_tag('new_app', :size => '24x24', :alt => '')
     Add a new App
   - else
-    = image_tag(object.get_icon_url(request.protocol), :size => '24x24', :alt => '')
-    = object.name
+    = image_tag(selected.get_icon_url(request.protocol), :size => '24x24', :alt => '')
+    = selected.name
 #apps_dropdown.hidden
   #search_box
     Search:
     = text_field_tag(:app_name)
   - objects.each do |o|
     - url = o.class.to_s == 'App' ? app_path(o, extra_url_params) : reporting_path(o, extra_url_params)
-    - class_name = o == object ? "selected" : ""
+    - class_name = o == selected ? "selected" : ""
     .app{ :class => class_name, :title => o.name }
       = image_tag(o.get_icon_url(request.protocol), :size => '24x24', :alt => '')
       = o.name
       = link_to('#', url, :class => "hidden")
-  .app{ :class => "new_app #{object.nil? ? 'selected' : ''}", :title => 'Add a new App' }
+  .app{ :class => "new_app #{selected.nil? ? 'selected' : ''}", :title => 'Add a new App' }
     = image_tag('new_app', :size => '24x24', :alt => '')
     Add a new App
     = link_to('#', new_app_path, :class => "hidden")
@@ -87,12 +87,11 @@
     }
     .app:hover {
       background: #bbb;
-      color: #000;
     }
     .app img {
       opacity: 0.75;
     }
-    .app:hover img {
+    .app:hover img, .app.selected img {
       opacity: 1.0;
     }
     input#app_name {
