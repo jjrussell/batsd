@@ -141,13 +141,19 @@
 
       $('#app_name').keyup(function(e){
         var matchText = $('#app_name').val().toLowerCase().replace(/\W/g, '');
+        var visibleApp = null, count = 0;
         $('.app').each(function(){
-          var text = $(this).children('span.app_name').text().toLowerCase().replace(/\W/g, '')
+          var text = $(this).children('span.app_name').text().toLowerCase().replace(/\W/g, '');
           if (!text.match(matchText)) {
             $(this).hide();
           } else {
             $(this).show();
+            visibleApp = $(this);
+            count++;
           }
         });
+        if (e.which == 13 && count == 1) {
+          visibleApp.trigger('click');
+        }
       });
     });
