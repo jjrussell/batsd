@@ -56,7 +56,7 @@ authorization do
     includes :statz
     includes :raffle_manager
     
-    has_permission_on :tools, :to => [ :failed_sdb_saves ]
+    has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata ]
   end
   
 end

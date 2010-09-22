@@ -108,5 +108,33 @@ module RightAws
       on_exception
     end
     
+    def domain_metadata(domain_name)
+      params = { 'DomainName' => domain_name }
+      link = generate_request("DomainMetadata", params)
+      request_info(link, QSdbDomainMetadataParser.new)
+    rescue Exception
+      on_exception
+    end
+    
+    
+    class QSdbDomainMetadataParser < RightAWSParser #:nodoc:
+      def reset
+        @result = {}
+      end
+      def tagend(name)
+        case name
+        when 'BoxUsage'  then @result[:box_usage]  =  @text
+        when 'RequestId' then @result[:request_id] =  @text
+          
+        when 'ItemCount'                then @result[:item_count]                  =  @text.to_i
+        when 'ItemNamesSizeBytes'       then @result[:item_name_size_bytes]        =  @text.to_i
+        when 'AttributeNameCount'       then @result[:attribute_name_count]        =  @text.to_i
+        when 'AttributeNamesSizeBytes'  then @result[:attribute_names_size_bytes]  =  @text.to_i  
+        when 'AttributeValueCount'      then @result[:attribute_value_count]       =  @text.to_i
+        when 'AttributeValuesSizeBytes' then @result[:attribute_values_size_bytes] =  @text.to_i 
+        when 'Timestamp'                then @result[:timestamp]                   =  Time.zone.at(@text.to_i)
+        end
+      end
+    end
   end
 end

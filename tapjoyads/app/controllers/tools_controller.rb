@@ -98,6 +98,15 @@ class ToolsController < WebsiteController
     end
   end
 
+  def sdb_metadata
+    @metadata = {}
+    SimpledbResource.sdb.list_domains do |result|
+      result[:domains].each do |domain_name|
+        @metadata[domain_name] = SimpledbResource.sdb.domain_metadata(domain_name)
+      end
+    end
+  end
+
   def disabled_popular_offers
     @offers_count_hash = Mc.get('tools.disabled_popular_offers') { {} }
     @offers = Offer.find(@offers_count_hash.keys, :include => [:partner, :item])
