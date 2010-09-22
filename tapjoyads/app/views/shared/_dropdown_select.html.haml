@@ -147,7 +147,7 @@
         var visibleApp = null, count = 0;
         $('.app').each(function(){
           var text = $(this).children('span.app-name').text().toLowerCase().replace(/\W/g, '');
-          if (!text.match(regex)) {
+          if (!text.match(searchRegex)) {
             $(this).hide();
           } else {
             $(this).show();
