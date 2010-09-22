@@ -79,7 +79,6 @@ private
     @app = current_partner.apps.find_by_id(params[:id] || session[:last_shown_app])
     if @app.nil?
       session[:last_shown_app] = nil if params[:id].nil?
-      flash[:error] = "App not found"
       redirect_to apps_path
     else
       session[:last_shown_app] = @app.id
