@@ -173,6 +173,7 @@ private
     offer.name = name
     offer.description = description
     offer.price = price
+    offer.payment = offer.is_paid? ? price / 2 : 35
     offer.url = store_url
     offer.device_types = platform == 'android' ? Offer::ANDROID_DEVICES.to_json : Offer::APPLE_DEVICES.to_json
     offer.instructions = 'Install and then run the app while online to receive credit.'
