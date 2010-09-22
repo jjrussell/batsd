@@ -3,22 +3,22 @@
 #selected_app{ :title => "Select your app" }
   - if selected.nil?
     = image_tag('new_app', :size => '24x24', :alt => '')
-    Add a new App
+    Select another app
   - else
     = image_tag(selected.get_icon_url(request.protocol), :size => '24x24', :alt => '')
     = selected.name
 #apps_dropdown.hidden
-  - if false
-    #search_box
-      Search:
-      = text_field_tag(:app_name)
-  - objects.each do |o|
-    - url = o.class.to_s == 'App' ? app_path(o, extra_url_params) : reporting_path(o, extra_url_params)
-    - class_name = o == selected ? "selected" : ""
-    .app{ :class => class_name, :title => o.name }
-      = image_tag(o.get_icon_url(request.protocol), :size => '24x24', :alt => '')
-      = o.name
-      = link_to('#', url, :class => "hidden")
+  #search_box
+    Search:
+    = text_field_tag(:app_name)
+  #apps_box
+    - objects.each do |o|
+      - url = o.class.to_s == 'App' ? app_path(o, extra_url_params) : reporting_path(o, extra_url_params)
+      - class_name = o == selected ? "selected" : ""
+      .app{ :class => class_name, :title => o.name }
+        = image_tag(o.get_icon_url(request.protocol), :size => '24x24', :alt => '')
+        %span.app_name= o.name
+        = link_to('#', url, :class => "hidden")
   .app{ :class => "new_app #{selected.nil? ? 'selected' : ''}", :title => 'Add a new App' }
     = image_tag('new_app', :size => '24x24', :alt => '')
     Add a new App
@@ -66,13 +66,16 @@
     #apps_dropdown {
       background-color: #eee;
       border: 1px solid #888;
-      -moz-border-radius: 4px;
-      -webkit-border-radius: 4px;
       position: absolute;
       width: 480px;
-      max-height: 320px;
       padding: 3px 0px;
+      -moz-border-radius: 4px;
+      -webkit-border-radius: 4px;
+    }
+    #apps_dropdown #apps_box {
       overflow-y: auto;
+      min-height: 34px;
+      max-height: 320px;
     }
     .app {
       color: #222;
@@ -113,7 +116,8 @@
 
         // move div to the proper position
         var offset = $('#selected_app').offset();
-        $('#apps_dropdown').css({ left: offset.left, top: offset.top });
+        var searchHeight = $('#search_box').outerHeight();
+        $('#apps_dropdown').css({ left: offset.left, top: offset.top - searchHeight });
         $('#apps_dropdown input#app_name').focus();
       });
 
@@ -133,5 +137,17 @@
         if (e.which == 27) {
           $('#apps_dropdown').hide();
         }
+      });
+
+      $('#app_name').keyup(function(e){
+        var matchText = $('#app_name').val().toLowerCase().replace(/\W/g, '');
+        $('.app').each(function(){
+          var text = $(this).children('span.app_name').text().toLowerCase().replace(/\W/g, '')
+          if (!text.match(matchText)) {
+            $(this).hide();
+          } else {
+            $(this).show();
+          }
+        });
       });
     });
