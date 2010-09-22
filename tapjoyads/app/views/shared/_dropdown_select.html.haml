@@ -140,11 +140,14 @@
       });
 
       $('#dropdown_app_name').keyup(function(e){
-        var matchText = $('#dropdown_app_name').val().toLowerCase().replace(/\W/g, '');
+        var matchText = $('#dropdown_app_name').val().toLowerCase().
+          replace(/\W/g, '').
+          replace(new RegExp('', 'g'),'.*');
+        var searchRegex = new RegExp(matchText, "i");
         var visibleApp = null, count = 0;
         $('.app').each(function(){
           var text = $(this).children('span.app-name').text().toLowerCase().replace(/\W/g, '');
-          if (!text.match(matchText)) {
+          if (!text.match(regex)) {
             $(this).hide();
           } else {
             $(this).show();
