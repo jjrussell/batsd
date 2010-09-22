@@ -8,11 +8,22 @@ class ReportingController < WebsiteController
   
   def index
     unless current_partner_offers.empty?
-      redirect_to reporting_path(current_partner_offers.first)
+      if session[:last_shown_app].present?
+        @app = current_partner.apps.find_by_id(session[:last_shown_app])
+        @offer = current_partner.offers.find_by_id(@app.primary_offer.id)
+      end
+      if @offer.nil?
+        redirect_to reporting_path(current_partner_offers.first)
+      else
+        redirect_to reporting_path(@offer)
+      end
     end
   end
   
   def show
+    if @offer.item.is_a?(App)
+      session[:last_shown_app] = @offer.item.id
+    end
     intervals = @appstats.intervals.map { |time| time.to_s(:pub_ampm) }
     
     @connect_data = {
