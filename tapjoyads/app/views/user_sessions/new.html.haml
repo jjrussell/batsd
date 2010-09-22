@@ -9,10 +9,7 @@
     %tr
       %th= f.label :username
       %td
-        - if is_mobile?
-          = f.email_field :username, :autocapitalize => 'off', :autocorrect => 'off'
-        - else
-          = f.text_field :username
+        = f.email_field :username, :autocapitalize => 'off', :autocorrect => 'off'
         = error_message_on @user_session, :username
     %tr
       %th= f.label :password
