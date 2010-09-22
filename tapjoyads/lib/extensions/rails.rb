@@ -103,13 +103,30 @@ module ActionView
   module Helpers
     class FormBuilder
       include ActionView::Helpers::NumberHelper
-      
+
       def currency_field(field, number_options = {}, options = {})
         html_classes = options[:class].nil? ? [] : options[:class].split(' ')
         html_classes << 'currency_field' unless html_classes.include?('currency_field')
         options.merge!({ :class => html_classes.join(' ') })
         options.merge!({ :value => number_to_currency(object.send(field) / 100.0, number_options) }) unless object.send(field).nil?
         text_field(field, options)
+      end
+
+      def email_field(method, options = {})
+        @template.email_field(@object_name, method, objectify_options(options))
+      end
+    end
+
+    module FormHelper
+      # stolen from Rails3
+      def email_field(object_name, method, options = {})
+        InstanceTag.new(object_name, method, self, options.delete(:object)).to_input_field_tag("email", options)
+      end
+    end
+
+    module FormTagHelper
+      def email_field_tag(name, value = nil, options = {})
+        tag :input, { "type" => "email", "name" => name, "id" => sanitize_to_id(name), "value" => value }.update(options.stringify_keys)
       end
     end
   end

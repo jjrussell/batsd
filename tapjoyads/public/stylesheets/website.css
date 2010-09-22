@@ -138,6 +138,7 @@ form.tjform {
 }
 .tjform textarea,
 .tjform input[type=text],
+.tjform input[type=email],
 .tjform input[type=password] {
   padding: 2px;
   border: 2px solid #bec5cb;
@@ -147,6 +148,7 @@ form.tjform {
 }
 .tjform .fieldWithErrors textarea,
 .tjform .fieldWithErrors input[type=text],
+.tjform .fieldWithErrors input[type=email],
 .tjform .fieldWithErrors input[type=password] {
   border: 2px solid #af1515;
 }
@@ -154,6 +156,8 @@ form.tjform {
 .tjform textarea:focus,
 .tjform input[type=text]:hover,
 .tjform input[type=text]:focus,
+.tjform input[type=email]:hover,
+.tjform input[type=email]:focus,
 .tjform input[type=password]:hover,
 .tjform input[type=password]:focus {
   background-color: #fffff0;

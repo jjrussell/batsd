@@ -7,7 +7,11 @@ module ApplicationHelper
       '<!--[if IE]><script src="/javascripts/excanvas.js"></script><![endif]-->'
     end
   end
-  
+
+  def is_mobile?
+    request.env["HTTP_USER_AGENT"][/mobile/i]
+  end
+
   def clippy(text, bgcolor = '#FFFFFF')
     @clippy_id = 0 unless defined?(@clippy_id)
     @clippy_id += 1
