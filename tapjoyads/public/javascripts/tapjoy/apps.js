@@ -20,7 +20,7 @@ $(function(){
 
   // hide search results on just about everything
   $(document).click(function(e){
-    if (e.srcElement && e.srcElement.className != 'search' && !$('#search_results').hasClass('searching')) {
+    if (!$(e.srcElement || e.originalTarget).hasClass('search') && !$('#search_results').hasClass('searching')) {
       $('#search_results').hide();
     }
   }).keydown(function(e){
@@ -29,15 +29,6 @@ $(function(){
       $('#search_results').hide();
     }
   });
-
-  // calculate correct position/offset
-  var width = $('input#app_name').width() - 2;
-  var offset = $('input#app_name').offset();
-  if (offset) {
-    offset.top += $('input#app_name').height() + 7 + $(window).scrollTop();
-    offset.left += 1;
-    $('#search_results').offset(offset).css('width', width + 'px');
-  }
 
   // on success
   var success = function(data){
@@ -81,6 +72,13 @@ $(function(){
   search = function(){
     $('.search-result').remove();
     $('#search_results').show().addClass('searching');
+
+    // calculate correct position/offset
+    var width = $('input#app_name').width() - 2;
+    var offset = $('input#app_name').offset();
+    offset.top += $('input#app_name').height() + 7;
+    offset.left += 1;
+    $('#search_results').css({ left: offset.left, top: offset.top, width: width });
 
     var term = $('input#app_name').val();
     if (term != "") {
