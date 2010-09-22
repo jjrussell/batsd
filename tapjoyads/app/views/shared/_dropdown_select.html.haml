@@ -10,14 +10,14 @@
 #apps_dropdown.hidden
   #search_box
     Search:
-    = text_field_tag(:app_name)
+    = text_field_tag(:dropdown_app_name)
   #apps_box
     - objects.each do |o|
       - url = o.class.to_s == 'App' ? app_path(o, extra_url_params) : reporting_path(o, extra_url_params)
       - class_name = o == selected ? "selected" : ""
       .app{ :class => class_name, :title => o.name }
         = image_tag(o.get_icon_url(request.protocol), :size => '24x24', :alt => '')
-        %span.app_name= o.name
+        %span.app-name= o.name
         = link_to('#', url, :class => "hidden")
   .app{ :class => "new_app #{selected.nil? ? 'selected' : ''}", :title => 'Add a new App' }
     = image_tag('add_app.png', :size => '24x24', :alt => '')
@@ -101,7 +101,7 @@
     .app:hover img, .app.selected img {
       opacity: 1.0;
     }
-    input#app_name {
+    input#dropdown_app_name {
       width: 360px;
     }
 - content_for :page_javascript do
@@ -118,7 +118,7 @@
         var offset = $('#selected_app').offset();
         var searchHeight = $('#search_box').outerHeight();
         $('#apps_dropdown').css({ left: offset.left, top: offset.top - searchHeight });
-        $('#apps_dropdown input#app_name').focus();
+        $('#apps_dropdown input#dropdown_app_name').focus();
       });
 
       $('#apps_dropdown .app').not('.selected').click(function(e) {
@@ -139,11 +139,11 @@
         }
       });
 
-      $('#app_name').keyup(function(e){
-        var matchText = $('#app_name').val().toLowerCase().replace(/\W/g, '');
+      $('#dropdown_app_name').keyup(function(e){
+        var matchText = $('#dropdown_app_name').val().toLowerCase().replace(/\W/g, '');
         var visibleApp = null, count = 0;
         $('.app').each(function(){
-          var text = $(this).children('span.app_name').text().toLowerCase().replace(/\W/g, '');
+          var text = $(this).children('span.app-name').text().toLowerCase().replace(/\W/g, '');
           if (!text.match(matchText)) {
             $(this).hide();
           } else {
