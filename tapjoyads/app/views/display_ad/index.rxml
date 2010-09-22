@@ -1,0 +1,8 @@
+xml.instruct!
+
+xml.TapjoyAd do
+  if @click_url.present? && @image_url.present?
+    xml.ClickURL @click_url
+    xml.ImageURL @image_url
+  end
+end

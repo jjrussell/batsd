@@ -87,6 +87,7 @@ class WebRequest < SimpledbResource
       put('offer_id', params[:offer_id])
       put("publisher_app_id", params[:publisher_app_id])
       put("advertiser_app_id", params[:advertiser_app_id])
+      put("display_app_id", params[:display_app_id])
 
       put('device_ip', params[:device_ip])
       put('type', params[:type])
