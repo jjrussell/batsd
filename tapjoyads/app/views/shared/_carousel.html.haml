@@ -1,7 +1,12 @@
+- return if objects.blank?
 - extra_url_params ||= nil
 #selected_app{ :title => "Select your app" }
-  = image_tag(object.get_icon_url(request.protocol), :size => '24x24', :alt => '')
-  = object.name
+  - if object.nil?
+    = image_tag('new_app', :size => '24x24', :alt => '')
+    Add a new App
+  - else
+    = image_tag(object.get_icon_url(request.protocol), :size => '24x24', :alt => '')
+    = object.name
 #apps_dropdown.hidden
   #search_box
     Search:
@@ -13,6 +18,10 @@
       = image_tag(o.get_icon_url(request.protocol), :size => '24x24', :alt => '')
       = o.name
       = link_to('#', url, :class => "hidden")
+  .app{ :class => "new_app #{object.nil? ? 'selected' : ''}", :title => 'Add a new App' }
+    = image_tag('new_app', :size => '24x24', :alt => '')
+    Add a new App
+    = link_to('#', new_app_path, :class => "hidden")
 .clear
 - content_for :page_styles do
   :plain
@@ -44,7 +53,7 @@
     }
     #selected_app img, .app img {
       vertical-align: middle;
-      margin-left: 10px;
+      margin: 0px 10px;
     }
     #search_box {
       padding: 5px 10px;
@@ -57,11 +66,13 @@
       -webkit-border-radius: 4px;
       position: absolute;
       width: 480px;
-      height: 320px;
+      max-height: 320px;
       padding: 3px 0px;
       overflow-y: auto;
     }
     .app {
+      color: #222;
+      text-shadow: 0px 1px 1px #fff;
       overflow-x: hidden;
       white-space: nowrap;
       padding: 5px 5px;
@@ -72,6 +83,8 @@
     }
     .app:hover {
       background: #337BC8;
+      color: #fff;
+      text-shadow: 0px 1px 1px #ddd;
     }
     .app img {
       opacity: 0.75;
@@ -100,7 +113,7 @@
           if ($(e.srcElement).hasClass('app')) {
             $('#apps_dropdown').hide();
             if (!$(e.srcElement).hasClass('selected')) {
-              // selected new app
+              // switch apps
               $('.app.selected').removeClass('selected');
               $(e.srcElement).addClass('selected');
               $('#selected_app').html($(e.srcElement).html());
