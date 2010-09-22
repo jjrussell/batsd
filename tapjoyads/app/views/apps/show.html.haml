@@ -57,11 +57,10 @@
             %td#app_icon= image_tag(@app.get_icon_url(request.protocol), :size => '57x57', :alt => 'icon')
           %tr.app_data.hidden
             %th Price
-            %td= number_to_currency(@app.price / 100.0)
+            %td#app_price= number_to_currency(@app.price / 100.0)
           %tr.app_data.hidden
             %th Description
-            %td
-              #app_description= (@app.description || '').gsub("\n", '<br>')
+            %td#app_description= (@app.description || '').gsub("\n", '<br>')
           %tr
             %td
             %td= f.submit 'Update'

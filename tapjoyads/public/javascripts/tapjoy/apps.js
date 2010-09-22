@@ -57,6 +57,7 @@ $(function(){
   // on item select
   var populate = function(){
     var app = $.data(this, 'data');
+    console.log(app)
     $('input#app_name').val(app.title);
     $('input#app_store_id').val(app.item_id);
     $('#app_store_url').text(app.url);
