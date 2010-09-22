@@ -1,71 +1,122 @@
-%ul#carousel.jcarousel-skin-tj
-  - extra_url_params ||= nil
+- extra_url_params ||= nil
+#selected_app{ :title => "Select your app" }
+  = image_tag(object.get_icon_url(request.protocol), :size => '24x24', :alt => '')
+  = object.name
+#apps_dropdown.hidden
+  #search_box
+    Search:
+    = text_field_tag(:app_name)
   - objects.each do |o|
     - url = o.class.to_s == 'App' ? app_path(o, extra_url_params) : reporting_path(o, extra_url_params)
-    %li
-      %a{ :href => url, :title => o.name, :class => (o == object) ? "selected" : "" }
-        = image_tag(o.get_icon_url(request.protocol), :size => '57x57', :alt => '')
-        %br
-        .name= truncate(o.name, :length => 15)
-
+    - class_name = o == object ? "selected" : ""
+    .app{ :class => class_name, :title => o.name }
+      = image_tag(o.get_icon_url(request.protocol), :size => '24x24', :alt => '')
+      = o.name
+      = link_to('#', url, :class => "hidden")
+.clear
 - content_for :page_styles do
   :plain
-  
-    #carousel a {
-      display: block;
-      width: 100px;
-      height: 80px;
-      padding: 5px;
+    .hidden {
+      display: none;
+    }
+    #selected_app {
+      margin-top: 5px;
+      border: 1px solid #888;
+      -moz-border-radius: 4px;
+      -webkit-border-radius: 4px;
+      width: 480px;
+      height: 24px;
+      vertical-align: middle;
+      float: right;
+      color: #222;
+      font-size: 16px;
       text-decoration: none;
-      text-align: center;
-      color: black;
+      text-shadow: 0px 1px 1px #fff;
+      padding: 7px 0px;
+      background: #ddd;
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #fff), color-stop(0.5, #ddd), color-stop(1.0, #fff));
+      background: -moz-linear-gradient(top, #fff, #ddd, #fff);
+    }
+    #selected_app:hover {
+      background: #ccc;
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #eee), color-stop(0.5, #ccc), color-stop(1.0, #eee));
+      background: -moz-linear-gradient(top, #eee, #ccc, #eee);
+    }
+    #selected_app img, .app img {
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+    #search_box {
+      padding: 5px 10px;
+      height: 24px;
+    }
+    #apps_dropdown {
+      background-color: #eee;
+      border: 1px solid #888;
+      -moz-border-radius: 4px;
+      -webkit-border-radius: 4px;
+      position: absolute;
+      width: 480px;
+      height: 320px;
+      padding: 3px 0px;
+      overflow-y: auto;
+    }
+    .app {
+      overflow-x: hidden;
       white-space: nowrap;
-      overflow: hidden;
+      padding: 5px 5px;
+      height: 24px;
     }
-    
-    #carousel a:hover {
-      background-color: #ddd;
-      cursor: pointer;
+    .app.selected {
+      background: #bbb;
     }
-    
-    #carousel a.selected {
-      background-color: #aaa;
+    .app:hover {
+      background: #337BC8;
     }
-    
-    #carousel img {
-      vertical-align: center;
+    .app img {
+      opacity: 0.75;
     }
-    
-    #carousel {
-      list-style-type: none;
-      height: 90px;
-      overflow: hidden;
-      margin: 0 0 10px 0;
-      padding-left: 20px;
-      border-bottom: 1px solid #888;
-      background-color: #F0F0F0;
+    .app:hover img {
+      opacity: 1.0;
     }
-    #carousel li {
-      float: left;
+    input#app_name {
+      width: 360px;
     }
-  
 - content_for :page_javascript do
-  var focused = #{(objects.find_index{|o| o == object} || 0) + 1};
-  var isLast = #{objects.last == object};
-
   :plain
-    $(function(){
-      $('#carousel').jcarousel({
-        start: focused,
-        itemFallbackDimension: 110
+    $(function($){
+      $('#selected_app').click(function(){
+        var offset = $('#selected_app').offset();
+        if (offset) {
+          offset.top += $(window).scrollTop();
+          $('#apps_dropdown').css({ left: offset.left, top: offset.top });
+        }
+        $('#apps_dropdown').show();
+        $('#apps_dropdown input#app_name').focus();
       });
-      
-      if (isLast) {
-        $('#carousel').jcarousel('scrollTail');
-      }
+
+      $(document).click(function(e){
+        if (e.srcElement) {
+          if ($(e.srcElement).hasClass('app')) {
+            $('#apps_dropdown').hide();
+            if (!$(e.srcElement).hasClass('selected')) {
+              // selected new app
+              $('.app.selected').removeClass('selected');
+              $(e.srcElement).addClass('selected');
+              $('#selected_app').html($(e.srcElement).html());
+              location.href = $(e.srcElement).children('a').attr('href');
+            }
+          } else {
+            var id = $(e.srcElement).attr('id');
+            if (id != 'selected_app' && id != 'app_name') {
+              $('#apps_dropdown').hide();
+            }
+          }
+        }
+      }).keydown(function(e){
+        // 27 = escape
+        if (e.which == 27) {
+          $('#apps_dropdown').hide();
+        }
+      });
     });
-  
-- content_for :included_javascripts do
-  = javascript_include_tag('jquery.jcarousel.min')
-- content_for :page_head do
-  = stylesheet_link_tag('jcarousel')
