@@ -94,9 +94,10 @@
     $(function($){
       toggleUserEnabled();
       $('#offer_user_enabled').change(toggleUserEnabled);
-      
+
       setEstimatedBudget();
       $('#offer_payment').change(function() {
+        checkMinimumPrice();
         setEstimatedBudget();
       });
       $('#offer_daily_budget').change(function() {
@@ -105,7 +106,7 @@
       });
     });
 
-    function toggleUserEnabled() {
+    var toggleUserEnabled = function() {
       if ($('#offer_user_enabled').attr('checked')) {
         $('.togglable').attr('disabled', false);
         $('#estimated_budget').removeClass('disabled');
@@ -114,8 +115,8 @@
         $('#estimated_budget').addClass('disabled');
       }
     }
-    
-    function setEstimatedBudget() {
+
+    var setEstimatedBudget = function() {
       var bid = stringToNumber($('#offer_payment').val());
       var installLimit = stringToNumber($('#offer_daily_budget').val())
       budget = 'Unlimited'
@@ -124,7 +125,15 @@
       }
       $('#estimated_budget .value').html(budget);
     }
-  
+
+    var checkMinimumPrice = function() {
+      var minimumPrice = #{(@offer.min_payment||0) / 100.0};
+      var currentPrice = stringToNumber($('#offer_payment').val());
+      if (currentPrice < minimumPrice) {
+        $('#offer_payment').val(numberToCurrency(minimumPrice));
+      }
+    }
+
 - content_for :page_styles do
   :plain
     .addfunds {
