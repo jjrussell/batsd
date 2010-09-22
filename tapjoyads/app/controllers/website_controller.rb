@@ -18,11 +18,11 @@ class WebsiteController < ApplicationController
   end
 
   def current_partner_apps
-    @current_partner_apps ||= current_partner.apps.visible.sort_by(&:name)
+    @current_partner_apps ||= current_partner.apps.visible.sort_by{|app| app.name.downcase}
   end
   
   def current_partner_offers
-    @current_partner_offers ||= current_partner.offers.visible.sort_by(&:name)
+    @current_partner_offers ||= current_partner.offers.visible.sort_by{|app|app.name.downcase}
   end
 
   def sanitize_currency_params(object, fields)
