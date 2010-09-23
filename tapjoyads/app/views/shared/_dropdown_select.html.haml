@@ -1,15 +1,18 @@
 - return if objects.blank?
 - options ||= {}
 #selected_app{ :title => "Select your app" }
-  - if selected.nil?
-    %span{:style => 'padding-left:10px;'}
-    Select another app
-  - else
-    = image_tag(selected.get_icon_url(request.protocol), :size => '24x24', :alt => '')
-    = selected.name
+  #selected_app_arrow{ :title => "Select your app" }
+    = image_tag('dropdown_arrow.png')
+  #selected_app_text
+    - if selected.nil?
+      %span{:style => 'padding-left:10px;'}
+      Select another app
+    - else
+      = image_tag(selected.get_icon_url(request.protocol), :size => '24x24', :alt => '')
+      = selected.name
 #apps_dropdown.hidden
-  #search_box
-    Search:
+  #filter_box
+    Filter:
     = text_field_tag(:dropdown_app_name)
   #apps_box
     - objects.each do |o|
@@ -19,10 +22,11 @@
         = image_tag(o.get_icon_url(request.protocol), :size => '24x24', :alt => '')
         %span.app-name= o.name
         = link_to('#', url, :class => "hidden")
-  .app{ :class => "new_app #{selected.nil? ? 'selected' : ''}", :title => 'Add a new App' }
-    = image_tag('add_app.png', :size => '24x24', :alt => '')
-    Add a new App
-    = link_to('#', new_app_path, :class => "hidden")
+  #new_app_box
+    .app{ :class => "new_app #{selected.nil? ? 'selected' : ''}", :title => 'Add a new App' }
+      = image_tag('add_app.png', :size => '24x24', :alt => '')
+      Add a new App
+      = link_to('#', new_app_path, :class => "hidden")
 - if options[:with_new_app_button]
   = button_to "Add App", new_app_path, :method => 'get', :id => 'new_app_button'
 .clear
@@ -38,37 +42,63 @@
     }
     #selected_app {
       margin-top: 5px;
-      border: 1px solid #888;
-      -moz-border-radius: 4px;
-      -webkit-border-radius: 4px;
       width: 480px;
-      height: 24px;
       vertical-align: middle;
       float: left;
       color: #222;
       font-size: 16px;
       text-decoration: none;
       text-shadow: 0px 1px 1px #fff;
-      padding: 7px 0px;
-      background: #ddd;
-      background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #fff), color-stop(0.5, #ddd), color-stop(1.0, #fff));
-      background: -moz-linear-gradient(top, #fff, #ddd, #fff);
+      border-radius: 4px;
+      -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      box-shadow: 1px 1px 4px #888;
+      -webkit-box-shadow: 1px 1px 4px #888;
+      -moz-box-shadow: 1px 1px 4px #888;
     }
     #selected_app:hover {
       background: #ccc;
       background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #eee), color-stop(0.5, #ccc), color-stop(1.0, #eee));
       background: -moz-linear-gradient(top, #eee, #ccc, #eee);
     }
+    #selected_app_text, #selected_app_arrow {
+      border: 1px solid #888;
+      border-radius: 4px;
+      -moz-border-radius: 4px;
+      height: 24px;
+      padding: 7px 0px;
+    }
+    #selected_app_text {
+      background: #ddd;
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #fff), color-stop(0.5, #ddd), color-stop(1.0, #fff));
+      background: -moz-linear-gradient(top, #fff, #ddd, #fff);
+    }
+    #selected_app_arrow {
+      float: right;
+      background: #ddf;
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #dde9f4), color-stop(0.5, #67b8e9), color-stop(1.0, #b9f6f9));
+      background: -moz-linear-gradient(top, #dde9f4, #67b8e9, #b9f6f9);
+      border-top-left-radius: 0px;
+      border-bottom-left-radius: 0px;
+      -moz-border-radius-topleft: 0px;
+      -moz-border-radius-bottomleft: 0px;
+    }
     #selected_app img, .app img {
       vertical-align: middle;
       margin: 0px 10px;
     }
+    #selected_app_arrow img {
+      margin: 0px 4px;
+    }
     .app img {
       margin-left: 5px;
     }
-    #search_box {
-      padding: 5px 10px;
-      height: 24px;
+    #filter_box {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      padding: 2px 10px;
+      font-size: 12px;
     }
     #apps_dropdown {
       background-color: #eee;
@@ -76,12 +106,17 @@
       position: absolute;
       width: 480px;
       padding: 3px 0px;
-      -moz-border-radius: 4px;
+      border-radius: 4px;
       -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
+      box-shadow: 1px 1px 4px #888;
+      -webkit-box-shadow: 1px 1px 4px #888;
+      -moz-box-shadow: 1px 1px 4px #888;
     }
     #apps_dropdown #apps_box {
+      border-bottom: 1px solid #ddd;
       overflow-y: auto;
-      min-height: 34px;
+      min-height: 80px;
       max-height: 320px;
     }
     .app {
@@ -108,39 +143,41 @@
     .app:hover img, .app.selected img {
       opacity: 1.0;
     }
-    input#dropdown_app_name {
-      width: 360px;
-    }
 - content_for :page_javascript do
   :plain
     $(function($){
       $('#selected_app').click(function(){
+        if ($('#apps_dropdown').is(':hidden')) {
+          // scroll to selected app
+          $('#apps_dropdown').css({left: -10000, top: -10000}).show();
+          var height = $('.app.selected').attr('offsetTop');
+          $('#apps_box').scrollTop(height - 2);
 
-        // scroll to selected app
-        $('#apps_dropdown').css({left: -10000, top: -10000}).show();
-        var height = $('.app.selected').attr('offsetTop');
-        $('#apps_dropdown').scrollTop(height - 2);
-
-        // move div to the proper position
-        var offset = $('#selected_app').offset();
-        var searchHeight = $('#search_box').outerHeight();
-        $('#apps_dropdown').css({ left: offset.left, top: offset.top - searchHeight });
-        $('#apps_dropdown input#dropdown_app_name').focus();
+          // move div to the proper position
+          var offset = $('#selected_app').offset();
+          var height = $('#selected_app').outerHeight();
+          $('#apps_dropdown').css({ left: offset.left, top: offset.top + height });
+          $('#apps_dropdown input#dropdown_app_name').focus();
+        } else {
+          $('#apps_dropdown').hide();
+        }
       });
 
       $('#apps_dropdown .app').not('.selected').click(function(e) {
         $('.app.selected').removeClass('selected');
         $(this).addClass('selected');
-        $('#selected_app').html($(this).html());
+        $('#selected_app_text').html($(this).html());
         location.href = $(this).children('a').attr('href');
       });
 
       $(document).click(function(e){
-        if ($(e.srcElement || e.originalTarget).attr('id') != 'selected_app') {
-          $('#apps_dropdown').hide();
+        var element = $(e.srcElement || e.originalTarget);
+        if (element.attr('id') != 'selected_app' &&
+          element.parents('#filter_box').length == 0 &&
+          element.parents('#selected_app').length == 0) {
+          if (!$('#apps_dropdown').is(':hidden')) { $('#apps_dropdown').hide(); }
         }
       }).keydown(function(e){
-        // 27 = escape
         if (e.which == 27) {
           $('#apps_dropdown').hide();
         }
@@ -148,13 +185,13 @@
 
       $('#dropdown_app_name').keyup(function(e){
         var matchText = $('#dropdown_app_name').val().toLowerCase().
-          replace(/\W/g, '').
-          replace(new RegExp('', 'g'),'.*');
-        var searchRegex = new RegExp(matchText, "i");
+          replace(/[^\w\s]/g, '').
+          replace(/\s/g,'.*');
+        var filterRegex = new RegExp(matchText, "i");
         var visibleApp = null, count = 0;
-        $('.app').each(function(){
+        $('.app').not('.new_app').each(function(){
           var text = $(this).children('span.app-name').text().toLowerCase().replace(/\W/g, '');
-          if (!text.match(searchRegex)) {
+          if (!text.match(filterRegex)) {
             $(this).hide();
           } else {
             $(this).show();
