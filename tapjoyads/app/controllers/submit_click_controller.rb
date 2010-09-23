@@ -61,8 +61,7 @@ class SubmitClickController < ApplicationController
     if offer.pay_per_click?
       #assign the currency and consider the txn complete right now
       logger.info "Added fake conversion to sqs queue"
-      message = {:udid => params[:udid], :app_id => params[:advertiser_app_id], 
-          :install_date => Time.now.utc.to_f.to_s}.to_json
+      message = { :click => click.serialize(:attributes_only => true), :install_timestamp => Time.zone.now.to_f.to_s }.to_json
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
 
       #record that the user has this app, so we don't show it again

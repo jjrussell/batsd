@@ -8,20 +8,23 @@ private
   
   def on_message(message)
     json = JSON.parse(message.to_s)
-    udid = json['udid']
-    advertiser_app_id = json['app_id']
-    installed_at_epoch = json['install_date']
     
-    Rails.logger.info "Checking for conversion on #{udid} for #{advertiser_app_id}"
-    click = Click.new(:key => "#{udid}.#{advertiser_app_id}")
-    
-    unless click.clicked_at
-      sleep(5)
-      click = Click.new(:key => "#{udid}.#{advertiser_app_id}", :load_from_memcache => false)
+    # TO REMOVE
+    if json['click'].blank?
+      click = Click.new(:key => "#{json['udid']}.#{json['app_id']}")
       unless click.clicked_at
-        raise "Click not found, wait for failed sdb saves to catch up.  app_id: #{advertiser_app_id}  udid: #{udid}"
+        raise "couldn't find click #{click.key}"
       end
+      new_message = { :click => click.serialize(:attributes_only => true), :install_timestamp => json['install_date'] }.to_json
+      Sqs.send_message(QueueNames::CONVERSION_TRACKING, new_message)
+      return
     end
+    
+    click = Click.deserialize(json['click'])
+    installed_at_epoch = json['install_timestamp']
+    
+    # TO REMOVE - read the udid from the click starting sometime after 9/25/2010 3:00pm PT
+    udid = click.key.split('.')[0]
     
     if click.installed_at || click.clicked_at < (Time.zone.now - 2.days)
       return
@@ -48,7 +51,7 @@ private
     reward = Reward.new(:key => click.reward_key)
     reward.put('type', 'install')
     reward.put('publisher_app_id', click.publisher_app_id)
-    reward.put('advertiser_app_id', advertiser_app_id)
+    reward.put('advertiser_app_id', click.advertiser_app_id)
     reward.put('offer_id', click.offer_id)
     reward.put('publisher_user_id', click.publisher_user_id)
     reward.put('advertiser_amount', click.advertiser_amount)
@@ -72,7 +75,7 @@ private
     web_request = WebRequest.new
     web_request.add_path('store_install')
     web_request.put('udid', udid)
-    web_request.put('advertiser_app_id', advertiser_app_id)
+    web_request.put('advertiser_app_id', click.advertiser_app_id)
     web_request.put('publisher_app_id', click.publisher_app_id)
     web_request.put('offer_id', click.offer_id)
     web_request.put('publisher_user_id', click.publisher_user_id)

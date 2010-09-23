@@ -80,8 +80,9 @@ class ListSignupController < ApplicationController
       device_app_list.set_app_ran(@signup.advertiser_app_id)
       device_app_list.save
       
-      message = {:udid => @signup.udid, :app_id => @signup.advertiser_app_id, 
-          :install_date => Time.now.utc.to_f.to_s}.to_json
+      click = Click.new(:key => "#{@signup.udid}.#{@signup.advertiser_app_id}")
+      
+      message = { :click => click.serialize(:attributes_only => true), :install_timestamp => Time.zone.now.to_f.to_s }.to_json
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
       
       return true

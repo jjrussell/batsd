@@ -12,8 +12,7 @@ class ConnectController < ApplicationController
       unless (click.attributes.empty? || click.installed_at)
         @country = click.country if click.clicked_at > (Time.zone.now - 2.days)
         logger.info "Added conversion to sqs queue"
-        message = {:udid => params[:udid], :app_id => params[:app_id],
-            :install_date => Time.zone.now.to_f.to_s}.to_json
+        message = { :click => click.serialize(:attributes_only => true), :install_timestamp => Time.zone.now.to_f.to_s }.to_json
         Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
       end
     end
