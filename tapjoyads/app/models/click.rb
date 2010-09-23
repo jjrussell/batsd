@@ -1,6 +1,7 @@
 class Click < SimpledbResource
   self.key_format = 'udid.advertiser_app_id'
   
+  self.sdb_attr :udid
   self.sdb_attr :publisher_app_id
   self.sdb_attr :advertiser_app_id
   self.sdb_attr :publisher_user_id
@@ -19,10 +20,6 @@ class Click < SimpledbResource
     domain_number = @key.hash % NUM_CLICK_DOMAINS
     
     return "clicks_#{domain_number}"
-  end
-  
-  def udid
-    @key.split('.')[0]
   end
   
 end

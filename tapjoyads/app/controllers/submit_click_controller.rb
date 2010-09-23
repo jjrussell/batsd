@@ -40,6 +40,7 @@ class SubmitClickController < ApplicationController
     
     click = Click.new(:key => "#{params[:udid]}.#{params[:advertiser_app_id]}")
     click.clicked_at = now
+    click.udid = params[:udid]
     click.publisher_app_id = params[:publisher_app_id]
     click.publisher_user_id = params[:publisher_user_id]
     click.advertiser_app_id = params[:advertiser_app_id]
