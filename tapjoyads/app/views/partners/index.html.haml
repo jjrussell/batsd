@@ -21,7 +21,11 @@
     - @partners.each do |partner|
       %tr{ :class => cycle('even', 'odd') }
         %td.nowrap= link_to(partner.name || 'Unknown', partner_path(partner))
-        %td= partner.users.map(&:email).join(', ')
+        %td
+          = partner.users.map(&:email).join(', ')
+          %br/
+          - form_tag(make_current_partner_path(partner)) do
+            = submit_tag('Act as this partner', :style => 'font-size: 10px;padding:2px;')
         %td.nowrap= partner.contact_phone
         %td= number_to_currency(partner.balance / 100.0)
         %td= number_to_currency(partner.pending_earnings / 100.0)
