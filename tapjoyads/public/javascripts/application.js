@@ -4,8 +4,12 @@ function numberToCurrency(number) {
   return '$' + number.toFixed(2);
 }
 
-function stringToNumber(currency) {
-  return Number(currency.replace(/[^\d\.]/g, ''));
+function stringToNumber(currency, allowNegative) {
+  if (allowNegative) {
+    return Number(currency.replace(/[^\d\.\-]/g, ''));
+  } else {
+    return Number(currency.replace(/[^\d\.]/g, ''));
+  }
 }
 
 $(function($){
@@ -21,6 +25,6 @@ $(function($){
   });
 
   $('input.currency_field').change(function() {
-    $(this).val(numberToCurrency(stringToNumber($(this).val())));
+    $(this).val(numberToCurrency(stringToNumber($(this).val(), $(this).hasClass('allow_negative'))));
   });
 });

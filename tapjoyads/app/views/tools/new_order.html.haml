@@ -12,7 +12,7 @@
     %tr
       %th= f.label :amount
       %td
-        = f.currency_field :amount
+        = f.currency_field :amount, {}, {:class => 'allow_negative'}
         = error_message_on @order, :amount
     %tr
       %th= f.label :status

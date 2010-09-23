@@ -9,7 +9,7 @@
       %td= text_field_tag 'partner_id', '', :size => 50
     %tr
       %th= label_tag 'transfer_amount', 'Amount'
-      %td= text_field_tag 'transfer_amount', '$0.00', :class => 'currency_field'
+      %td= text_field_tag 'transfer_amount', '$0.00', :class => 'currency_field allow_negative'
     %tr
       %th= label_tag 'marketing_amount', 'Marketing Credits'
       %td= text_field_tag 'marketing_amount', '$0.00', :class => 'currency_field'
