@@ -29,13 +29,12 @@
               |
             = link_to('Login', login_path)
         .clear
-    
-      - flash.each do |name, msg|
-        .flash{ :id => "flash_#{name}" }= msg
-    
+
       #content
+        - flash.each do |name, msg|
+          .flash{ :id => "flash_#{name}" }= msg
         = yield
-      
+
     = javascript_include_tag 'jquery-1.4.2.min', 'jquery-ui-1.8.4.custom.min', 'jquery.tablesorter', 'application'
     = yield :included_javascripts
       
