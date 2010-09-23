@@ -1,5 +1,17 @@
 #!/usr/bin/env ruby
 
-if `ps aux | grep -v grep | grep -i passenger`.empty?
-  `sudo /etc/init.d/apache2 restart`
+require 'timeout'
+
+def passenger_responding?
+  begin
+    Timeout.timeout(20) do
+      result = `curl -s http://localhost:9898/healthz`
+      return result == 'OK'
+    end
+  rescue Timeout::Error
+    return false
+  end
 end
+
+
+`sudo /etc/init.d/apache2 restart` unless passenger_responding?
