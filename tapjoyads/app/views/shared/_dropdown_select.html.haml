@@ -1,8 +1,8 @@
 - return if objects.blank?
-- extra_url_params ||= nil
+- options ||= {}
 #selected_app{ :title => "Select your app" }
   - if selected.nil?
-    = image_tag('add_app.png', :size => '24x24', :alt => '')
+    %span{:style => 'padding-left:10px;'}
     Select another app
   - else
     = image_tag(selected.get_icon_url(request.protocol), :size => '24x24', :alt => '')
@@ -13,7 +13,7 @@
     = text_field_tag(:dropdown_app_name)
   #apps_box
     - objects.each do |o|
-      - url = o.class.to_s == 'App' ? app_path(o, extra_url_params) : reporting_path(o, extra_url_params)
+      - url = o.is_a?(App) ? app_path(o, options[:extra_url_params]) : reporting_path(o, options[:extra_url_params])
       - class_name = o == selected ? "selected" : ""
       .app{ :class => class_name, :title => o.name }
         = image_tag(o.get_icon_url(request.protocol), :size => '24x24', :alt => '')
@@ -23,11 +23,18 @@
     = image_tag('add_app.png', :size => '24x24', :alt => '')
     Add a new App
     = link_to('#', new_app_path, :class => "hidden")
+- if options[:with_new_app_button]
+  = button_to "Add App", new_app_path, :method => 'get', :id => 'new_app_button'
 .clear
 - content_for :page_styles do
   :plain
     .hidden {
       display: none;
+    }
+    #new_app_button {
+      margin-top: 5px;
+      margin-left: 5px;
+      height: 40px;
     }
     #selected_app {
       margin-top: 5px;
@@ -37,7 +44,7 @@
       width: 480px;
       height: 24px;
       vertical-align: middle;
-      float: right;
+      float: left;
       color: #222;
       font-size: 16px;
       text-decoration: none;

@@ -2,8 +2,8 @@
 - is_iphone = @app.platform=='iphone'
 - app_store_name = is_iphone ? 'AppStore' : 'Marketplace'
 
-= render :partial => 'shared/dropdown_select', :locals => {:objects => current_partner_apps, :selected => @app}
-= render :partial => 'actions', :locals => {:app => @app}
+= render :partial => 'shared/dropdown_select', :locals => { :objects => current_partner_apps, :selected => @app, :options => {:with_new_app_button => true} }
+= render :partial => 'actions', :locals => { :app => @app }
 
 #apps_main
   - unless @app.nil?

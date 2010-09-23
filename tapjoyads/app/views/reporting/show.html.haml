@@ -1,6 +1,6 @@
 - @page_title = "Reporting for #{@offer.name}"
 
-= render :partial => 'shared/dropdown_select', :locals => {:objects => current_partner_offers, :selected => @offer, :extra_url_params => params }
+= render :partial => 'shared/dropdown_select', :locals => {:objects => current_partner_offers, :selected => @offer, :options => {:extra_url_params => params} }
 
 .icon= image_tag(@offer.get_icon_url(request.protocol), :size => '57x57')
 
