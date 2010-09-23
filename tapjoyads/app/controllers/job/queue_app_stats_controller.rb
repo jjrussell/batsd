@@ -159,7 +159,7 @@ private
   end
   
   def send_stats_to_mssql(utc_date)
-    unless @offer.item_type == 'App' || @offer.item_type == 'EmailOffer'
+    unless @offer.is_primary? && (@offer.item_type == 'App' || @offer.item_type == 'EmailOffer')
       return
     end
     
