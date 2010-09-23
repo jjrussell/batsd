@@ -102,7 +102,10 @@ class ToolsController < WebsiteController
     @metadata = {}
     SimpledbResource.sdb.list_domains do |result|
       result[:domains].each do |domain_name|
-        @metadata[domain_name] = SimpledbResource.sdb.domain_metadata(domain_name)
+        begin
+          @metadata[domain_name] = SimpledbResource.sdb.domain_metadata(domain_name)
+        rescue RightAws::AwsError
+        end
       end
     end
   end
