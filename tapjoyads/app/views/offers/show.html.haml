@@ -60,10 +60,10 @@
             Tapjoy Enabled
             #help_enabled.help ?
           %td
-            - if @offer.tapjoy_enabled
-              Enabled
+            - if !@offer.tapjoy_enabled
+              .tapjoy-enabled Enabled
             - else
-              Disabled
+              .tapjoy-disabled Disabled
         - if permitted_to?(:index, :statz)
           = render :partial => 'admin_fields', :locals => {:f => f}
     = f.submit 'Update'
@@ -139,21 +139,27 @@
     .addfunds {
       padding-left: 15px;
     }
-    
+
     #estimated_budget {
       font-size: 85%;
     }
-    
+
     #estimated_budget.disabled {
       color: #aaa;
     }
-    
+
     #estimated_budget .value {
       font-weight: bold;
       display: inline;
     }
-    
+
     textarea,
     input[type=text] {
       width: 400px;
+    }
+    .tapjoy-enabled {
+      color: #328F0D;
+    }
+    .tapjoy-disabled {
+      color: #AF1515;
     }
