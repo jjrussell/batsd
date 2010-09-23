@@ -8,18 +8,6 @@ private
   
   def on_message(message)
     json = JSON.parse(message.to_s)
-    
-    # TO REMOVE
-    if json['click'].blank?
-      click = Click.new(:key => "#{json['udid']}.#{json['app_id']}")
-      unless click.clicked_at
-        raise "couldn't find click #{click.key}"
-      end
-      new_message = { :click => click.serialize(:attributes_only => true), :install_timestamp => json['install_date'] }.to_json
-      Sqs.send_message(QueueNames::CONVERSION_TRACKING, new_message)
-      return
-    end
-    
     click = Click.deserialize(json['click'])
     installed_at_epoch = json['install_timestamp']
     
