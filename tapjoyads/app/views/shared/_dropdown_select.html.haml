@@ -1,206 +1,217 @@
-- return if objects.blank?
-- options ||= {}
-#selected_app{ :title => "Select your app" }
-  #selected_app_arrow{ :title => "Select your app" }
-    = image_tag('dropdown_arrow.png')
-  #selected_app_text
-    - if selected.nil?
-      %span{:style => 'padding-left:10px;'}
-      Select another app
-    - else
-      = image_tag(selected.get_icon_url(request.protocol), :size => '24x24', :alt => '')
-      = selected.name
-#apps_dropdown.hidden
-  #filter_box
-    Filter:
-    = text_field_tag(:dropdown_app_name)
-  #apps_box
-    - objects.each do |o|
-      - url = o.is_a?(App) ? app_path(o, options[:extra_url_params]) : reporting_path(o, options[:extra_url_params])
-      - class_name = o == selected ? "selected" : ""
-      .app{ :class => class_name, :title => o.name }
-        = image_tag(o.get_icon_url(request.protocol), :size => '24x24', :alt => '')
-        %span.app-name= o.name
-        = link_to('#', url, :class => "hidden")
-  #new_app_box
-    .app{ :class => "new_app #{selected.nil? ? 'selected' : ''}", :title => 'Add a new App' }
-      = image_tag('add_app.png', :size => '24x24', :alt => '')
-      Add a new App
-      = link_to('#', new_app_path, :class => "hidden")
-- if options[:with_new_app_button]
-  = button_to "Add App", new_app_path, :method => 'get', :id => 'new_app_button'
-.clear
-- content_for :page_styles do
-  :plain
-    .hidden {
-      display: none;
-    }
-    #new_app_button {
-      margin-top: 5px;
-      margin-left: 5px;
-      height: 40px;
-    }
-    #selected_app {
-      margin-top: 5px;
-      width: 480px;
-      vertical-align: middle;
-      float: left;
-      color: #222;
-      font-size: 16px;
-      text-decoration: none;
-      text-shadow: 0px 1px 1px #fff;
-      border-radius: 4px;
-      -webkit-border-radius: 4px;
-      -moz-border-radius: 4px;
-      box-shadow: 1px 1px 4px #888;
-      -webkit-box-shadow: 1px 1px 4px #888;
-      -moz-box-shadow: 1px 1px 4px #888;
-    }
-    #selected_app:hover {
-      background: #ccc;
-      background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #eee), color-stop(0.5, #ccc), color-stop(1.0, #eee));
-      background: -moz-linear-gradient(top, #eee, #ccc, #eee);
-    }
-    #selected_app_text, #selected_app_arrow {
-      border: 1px solid #888;
-      border-radius: 4px;
-      -moz-border-radius: 4px;
-      height: 24px;
-      padding: 7px 0px;
-    }
-    #selected_app_text {
-      background: #ddd;
-      background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #fff), color-stop(0.5, #ddd), color-stop(1.0, #fff));
-      background: -moz-linear-gradient(top, #fff, #ddd, #fff);
-    }
-    #selected_app_arrow {
-      float: right;
-      background: #ddf;
-      background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #dde9f4), color-stop(0.5, #67b8e9), color-stop(1.0, #b9f6f9));
-      background: -moz-linear-gradient(top, #dde9f4, #67b8e9, #b9f6f9);
-      border-top-left-radius: 0px;
-      border-bottom-left-radius: 0px;
-      -moz-border-radius-topleft: 0px;
-      -moz-border-radius-bottomleft: 0px;
-    }
-    #selected_app img, .app img {
-      vertical-align: middle;
-      margin: 0px 10px;
-    }
-    #selected_app_arrow img {
-      margin: 0px 4px;
-    }
-    .app img {
-      margin-left: 5px;
-    }
-    #filter_box {
-      position: absolute;
-      bottom: 5px;
-      right: 5px;
-      padding: 2px 10px;
-      font-size: 12px;
-    }
-    #apps_dropdown {
-      background-color: #eee;
-      border: 1px solid #888;
-      position: absolute;
-      width: 480px;
-      padding: 3px 0px;
-      border-radius: 4px;
-      -webkit-border-radius: 4px;
-      -moz-border-radius: 4px;
-      box-shadow: 1px 1px 4px #888;
-      -webkit-box-shadow: 1px 1px 4px #888;
-      -moz-box-shadow: 1px 1px 4px #888;
-    }
-    #apps_dropdown #apps_box {
-      border-bottom: 1px solid #ddd;
-      overflow-y: auto;
-      min-height: 80px;
-      max-height: 320px;
-    }
-    .app {
-      color: #222;
-      text-shadow: 0px 1px 1px #fff;
-      overflow-x: hidden;
-      white-space: nowrap;
-      padding: 5px 5px;
-      height: 24px;
-    }
-    .app.selected {
-      background: #337BC8;
-      background: -webkit-gradient(linear, left top, left bottom, from(#37ADE0), to(#337BC8));
-      background: -moz-linear-gradient(top, #37ADE0, #337BC8);
-      color: #fff;
-      text-shadow: 0px 1px 1px #6D6C9E;
-    }
-    .app:hover {
-      background: #bbb;
-    }
-    .app img {
-      opacity: 0.75;
-    }
-    .app:hover img, .app.selected img {
-      opacity: 1.0;
-    }
-- content_for :page_javascript do
-  :plain
-    $(function($){
-      $('#selected_app').click(function(){
-        if ($('#apps_dropdown').is(':hidden')) {
-          // scroll to selected app
-          $('#apps_dropdown').css({left: -10000, top: -10000}).show();
-          var height = $('.app.selected').attr('offsetTop');
-          $('#apps_box').scrollTop(height - 2);
+- if objects.blank? # no apps to display
+  %h1 Add an app
+- else
+  - options ||= {}
+  #selected_app{ :title => "Select your app" }
+    #selected_app_arrow{ :title => "Select your app" }
+      = image_tag('dropdown_arrow.png')
+    #selected_app_text
+      - if selected.nil?
+        = image_tag('add_app.png', :size => '24x24', :alt => '')
+        Add a new App
+        = link_to('#', new_app_path, :class => "hidden")
+      - else
+        = image_tag(selected.get_icon_url(request.protocol), :size => '24x24', :alt => '')
+        = selected.name
+  #apps_dropdown.hidden
+    #filter_box
+      Filter:
+      = text_field_tag(:dropdown_app_name)
+    #apps_box
+      - objects.each do |o|
+        - url = o.is_a?(App) ? app_path(o, options[:extra_url_params]) : reporting_path(o, options[:extra_url_params])
+        - class_name = o == selected ? "selected" : ""
+        .app{ :class => class_name, :title => o.name }
+          = image_tag(o.get_icon_url(request.protocol), :size => '24x24', :alt => '')
+          %span.app-name= o.name
+          = link_to('#', url, :class => "hidden")
+    #new_app_box
+      .app{ :class => "new_app #{selected.nil? ? 'selected' : ''}", :title => 'Add a new App' }
+        = image_tag('add_app.png', :size => '24x24', :alt => '')
+        Add a new App
+        = link_to('#', new_app_path, :class => "hidden")
+  - if options[:with_new_app_button]
+    = button_to "Add App", new_app_path, :method => 'get', :id => 'new_app_button'
+  .clear
+  - content_for :page_styles do
+    :plain
+      .hidden {
+        display: none;
+      }
+      #new_app_button {
+        margin-top: 5px;
+        margin-left: 5px;
+        height: 40px;
+      }
+      #selected_app {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        cursor: default;
+        margin-top: 5px;
+        width: 640px;
+        vertical-align: middle;
+        float: left;
+        color: #222;
+        font-size: 16px;
+        text-decoration: none;
+        text-shadow: 0px 1px 1px #fff;
+        border-radius: 4px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        box-shadow: 1px 1px 4px #888;
+        -webkit-box-shadow: 1px 1px 4px #888;
+        -moz-box-shadow: 1px 1px 4px #888;
+      }
+      #selected_app:hover {
+        background: #ccc;
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #eee), color-stop(0.5, #ccc), color-stop(1.0, #eee));
+        background: -moz-linear-gradient(top, #eee, #ccc, #eee);
+      }
+      #selected_app_text, #selected_app_arrow {
+        border: 1px solid #888;
+        border-radius: 4px;
+        -moz-border-radius: 4px;
+        height: 24px;
+        padding: 7px 0px;
+      }
+      #selected_app_text {
+        background: #ddd;
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #fff), color-stop(0.5, #ddd), color-stop(1.0, #fff));
+        background: -moz-linear-gradient(top, #fff, #ddd, #fff);
+      }
+      #selected_app_arrow {
+        float: right;
+        background: #ddf;
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #dde9f4), color-stop(0.5, #67b8e9), color-stop(1.0, #b9f6f9));
+        background: -moz-linear-gradient(top, #dde9f4, #67b8e9, #b9f6f9);
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+        -moz-border-radius-topleft: 0px;
+        -moz-border-radius-bottomleft: 0px;
+      }
+      #selected_app img, .app img {
+        vertical-align: middle;
+        margin: 0px 10px;
+      }
+      #selected_app_arrow img {
+        margin: 0px 4px;
+      }
+      .app img {
+        margin-left: 5px;
+      }
+      #filter_box {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        padding: 2px 10px;
+        font-size: 12px;
+        -webkit-user-select: all;
+        -moz-user-select: all;
+      }
+      #filter_box input {
+        width: 180px;
+      }
+      #apps_dropdown {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        cursor: pointer;
+        background-color: #eee;
+        border: 1px solid #888;
+        position: absolute;
+        width: 640px;
+        box-shadow: 1px 1px 4px #888;
+        -webkit-box-shadow: 1px 1px 4px #888;
+        -moz-box-shadow: 1px 1px 4px #888;
+      }
+      #apps_dropdown #apps_box {
+        cursor: pointer;
+        border-bottom: 1px solid #ddd;
+        overflow-y: auto;
+        min-height: 40px;
+        max-height: 320px;
+      }
+      .app {
+        color: #222;
+        text-shadow: 0px 1px 1px #fff;
+        overflow-x: hidden;
+        white-space: nowrap;
+        padding: 5px 5px;
+        height: 24px;
+      }
+      .app.selected {
+        background: #337BC8;
+        background: -webkit-gradient(linear, left top, left bottom, from(#37ADE0), to(#337BC8));
+        background: -moz-linear-gradient(top, #37ADE0, #337BC8);
+        color: #fff;
+        text-shadow: 0px 1px 1px #6D6C9E;
+      }
+      .app:hover {
+        background: #bbb;
+      }
+      .app img {
+        opacity: 0.75;
+      }
+      .app:hover img, .app.selected img {
+        opacity: 1.0;
+      }
+  - content_for :page_javascript do
+    :plain
+      $(function($){
+        $('#selected_app').click(function(){
+          if ($('#apps_dropdown').is(':hidden')) {
+            // scroll to selected app
+            $('#apps_dropdown').css({left: -10000, top: -10000}).show();
+            var height = $('.app.selected').attr('offsetTop');
+            $('#apps_box').scrollTop(height - 2);
 
-          // move div to the proper position
-          var offset = $('#selected_app').offset();
-          var height = $('#selected_app').outerHeight();
-          $('#apps_dropdown').css({ left: offset.left, top: offset.top + height });
-          $('#apps_dropdown input#dropdown_app_name').focus();
-        } else {
-          $('#apps_dropdown').hide();
-        }
-      });
-
-      $('#apps_dropdown .app').not('.selected').click(function(e) {
-        $('.app.selected').removeClass('selected');
-        $(this).addClass('selected');
-        $('#selected_app_text').html($(this).html());
-        location.href = $(this).children('a').attr('href');
-      });
-
-      $(document).click(function(e){
-        var element = $(e.srcElement || e.originalTarget);
-        if (element.attr('id') != 'selected_app' &&
-          element.parents('#filter_box').length == 0 &&
-          element.parents('#selected_app').length == 0) {
-          if (!$('#apps_dropdown').is(':hidden')) { $('#apps_dropdown').hide(); }
-        }
-      }).keydown(function(e){
-        if (e.which == 27) {
-          $('#apps_dropdown').hide();
-        }
-      });
-
-      $('#dropdown_app_name').keyup(function(e){
-        var matchText = $('#dropdown_app_name').val().toLowerCase().
-          replace(/[^\w\s]/g, '').
-          replace(/\s/g,'.*');
-        var filterRegex = new RegExp(matchText, "i");
-        var visibleApp = null, count = 0;
-        $('.app').not('.new_app').each(function(){
-          var text = $(this).children('span.app-name').text().toLowerCase().replace(/\W/g, '');
-          if (!text.match(filterRegex)) {
-            $(this).hide();
+            // move div to the proper position
+            var offset = $('#selected_app').offset();
+            var height = $('#selected_app').outerHeight();
+            $('#apps_dropdown').css({ left: offset.left, top: offset.top + height });
+            $('#apps_dropdown input#dropdown_app_name').focus();
           } else {
-            $(this).show();
-            visibleApp = $(this);
-            count++;
+            $('#apps_dropdown').hide();
           }
         });
-        if (e.which == 13 && count == 1) {
-          visibleApp.trigger('click');
-        }
+
+        $('#apps_dropdown .app').not('.selected').click(function(e) {
+          $('.app.selected').removeClass('selected');
+          $(this).addClass('selected');
+          $('#selected_app_text').html($(this).html());
+          location.href = $(this).children('a').attr('href');
+        });
+
+        $(document).click(function(e){
+          var element = $(e.srcElement || e.originalTarget);
+          if (element.attr('id') != 'selected_app' &&
+            element.parents('#filter_box').length == 0 &&
+            element.parents('#selected_app').length == 0) {
+            if (!$('#apps_dropdown').is(':hidden')) { $('#apps_dropdown').hide(); }
+          }
+        }).keydown(function(e){
+          if (e.which == 27) {
+            $('#apps_dropdown').hide();
+          }
+        });
+
+        $('#dropdown_app_name').keyup(function(e){
+          var matchText = $('#dropdown_app_name').val().toLowerCase().
+            replace(/[^\w\s]/g, '').
+            replace(/\s/g,'.*');
+          var filterRegex = new RegExp(matchText, "i");
+          var visibleApp = null, count = 0;
+          $('.app').not('.new_app').each(function(){
+            var text = $(this).children('span.app-name').text().toLowerCase().replace(/\W/g, '');
+            if (!text.match(filterRegex)) {
+              $(this).hide();
+            } else {
+              $(this).show();
+              visibleApp = $(this);
+              count++;
+            }
+          });
+          if (e.which == 13 && count == 1) {
+            visibleApp.trigger('click');
+          }
+        });
       });
-    });

@@ -1,15 +1,10 @@
 - @page_title = "Reporting for #{@offer.name}"
 
-= render :partial => 'shared/dropdown_select', :locals => {:objects => current_partner_offers, :selected => @offer, :options => {:extra_url_params => params} }
-
-.icon= image_tag(@offer.get_icon_url(request.protocol), :size => '57x57')
-
-%h1 Reporting for #{@offer.name}
-
-.clear
+= render :partial => 'shared/dropdown_select', :locals => {:objects => current_partner_offers, :selected => @offer, :options => {:extra_url_params => params, :title_prefix => 'Reporting for'} }
+%br/
 
 #display_date
-  For: #{@start_time.to_s(:mdy)} - #{@end_time.to_s(:mdy)}. 
+  For: #{@start_time.to_s(:mdy_ampm)} UTC - #{@end_time.to_s(:mdy_ampm)} UTC.
   Granularity: #{@granularity.to_s}.
   %a{ :href => '#' } [Change]
 

@@ -1,10 +1,10 @@
-- @page_title = 'Virtual goods'
+- @page_title = 'Edit Virtual Good'
 
 = render :partial => 'shared/dropdown_select', :locals => {:objects => current_partner_apps, :selected => @app}
 = render :partial => 'apps/actions', :locals => {:app => @app}
 
 #content-with-links
-  %h3 Virtual Good
+  %h3 Edit Virtual Good
 
   - if @virtual_good && @virtual_good.has_icon
     .icon= image_tag(@virtual_good.icon_url, :size => '57x57')

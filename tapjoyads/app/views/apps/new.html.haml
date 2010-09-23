@@ -6,7 +6,6 @@
 = render :partial => 'actions', :locals => {:app => nil}
 
 #apps_main
-  %h1 Add an app
   - form_for(@app, :html => { :class => 'tjform' }) do |f|
     = f.hidden_field :store_id
     %table
@@ -66,8 +65,4 @@
   :plain
     .app_data {
       display: none;
-    }
-    
-    input[type=text] {
-      width: 400px;
     }
