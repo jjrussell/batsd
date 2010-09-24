@@ -44,4 +44,9 @@ namespace :admin do
     system("rm -f tmp/tapjoy_db.sql")
   end
   
+  desc "Prints the apache restarts logs"
+  task :view_apache_restarts do
+    system("script/cloudrun 'masterjobs jobserver webserver' 'if [ -f /mnt/log/apache_restarts.log ] ; then cat /mnt/log/apache_restarts.log ; fi' 'ubuntu'")
+  end
+  
 end
