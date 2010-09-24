@@ -1,16 +1,15 @@
-- @page_title = 'App Integration'
+- @page_title = 'Publisher Integration'
 
 = render :partial => 'shared/dropdown_select', :locals => { :objects => current_partner_apps, :selected => @app, :options => {:with_new_app_button => true} }
 = render :partial => 'actions', :locals => { :app => @app }
 
 #apps_main
-  %h3 Integrate your application
+  %h3 Publisher Integration
   %ol
-    %li Download the lightweight, open source SDK
+    %li Select our Offers (Virtual Currency Monetization) or Virtual Goods SDK
     %li Add it to your project directory
     %li Compile and run your project
     %li Add the Tapjoy credentials (provided below) to your app
-    %li Run your app
     %li
       Email
       = link_to 'support@tapjoy.com', 'mailto:support@tapjoy.com'
@@ -18,12 +17,14 @@
   %strong Tapjoy App ID:
   = text_field 'app', 'id', :value => @app.id
   = clippy(@app.id)
-
   #sdk_links
-    %button Advertiser SDK Download
+    %button Offers SDK Download
+    %button Virtual Goods SDK Download
 
-  For more detailed documentation, please visit our
-  = link_to '#', Advertiser Getting Started Guide
+  For more detailed documentation, please visit the
+  = link_to '#', Offers Getting Started Guide
+  and the
+  = link_to '#', Virtual Goods Getting Started Guide
 
   Need help? Please contact our
   = link_to 'support team', 'mailto:support@tapjoy.com'

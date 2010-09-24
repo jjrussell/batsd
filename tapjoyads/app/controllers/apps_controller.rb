@@ -3,8 +3,8 @@ class AppsController < WebsiteController
 
   filter_access_to :all
   before_filter :grab_partner_apps
-  before_filter :has_apps, :only => [:show, :index]
-  before_filter :find_app, :only => [:show, :index, :update, :confirm]
+  before_filter :has_apps, :only => [:show, :index, :integrate, :publisher_integrate]
+  before_filter :find_app, :only => [:show, :index, :integrate, :publisher_integrate, :update, :confirm]
   after_filter :save_activity_logs, :only => [ :update, :create ]
 
   def index

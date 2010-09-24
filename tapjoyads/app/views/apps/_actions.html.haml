@@ -3,15 +3,19 @@
     - unless app.nil?
       - currency_path = app.currency.nil? ? new_app_currency_path({:app_id => app.id}) : app_currency_path({:app_id => app.id, :id => app.currency.id})
       - virtual_goods_path = app.virtual_goods.blank? ? new_app_virtual_good_path({:app_id => app.id}) : app_virtual_goods_path({:app_id => app.id})
-      %li= link_to 'Details', app_path(app), :class => (request.path_parameters['controller'] == 'apps' ? 'selected' : '')
+      %li= link_to 'Details', app_path(app), :class => (request.path_parameters['controller'] == 'apps' && !request.path_parameters['action'][/integrate/] ? 'selected' : '')
       %li= link_to 'Pay-Per-Install', app_offer_path(:id => app.primary_offer.id, :app_id => app.id), :class => (request.path_parameters['controller'] == 'offers' ? 'selected' : '')
       %li= link_to 'Virtual Currency', currency_path, :class => (request.path_parameters['controller'] == 'currencies' ? 'selected' : '')
       %li= link_to 'Virtual Goods', virtual_goods_path, :class => (request.path_parameters['controller'] == 'virtual_goods' ? 'selected' : '')
+      - if false # disable for now
+        %li= link_to 'Integrate', integrate_app_path, :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action'][/integrate/] ? 'selected' : '')
     - else
       %li.disabled Details
       %li.disabled Pay-Per-Install
       %li.disabled Virtual Currency
       %li.disabled Virtual Goods
+      - if false # disable for now
+        %li.disabled Integrate
 
 - content_for :page_styles do
   :plain
