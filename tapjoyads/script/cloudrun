@@ -65,7 +65,7 @@ server_list.each do |server|
     if server[:remove_from_lb]
       `elb-deregister-instances-from-lb web-lb --instances #{server[:aws_instance_id]}`
     end
-    puts "Running on #{server[:dns_name]} (#{count} / #{server_list.length})", `ssh #{user}@#{server[:dns_name]} '#{command}'`, "\n"
+    puts "Running on #{server[:aws_groups].to_s.gsub('tapbase', '')} #{server[:dns_name]} (#{count} / #{server_list.length})", `ssh #{user}@#{server[:dns_name]} '#{command}'`, "\n"
     if server[:remove_from_lb]
       `curl -s http://#{server[:dns_name]}:9898/healthz`
       `elb-register-instances-with-lb web-lb --instances #{server[:aws_instance_id]}`
