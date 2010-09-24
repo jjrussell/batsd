@@ -65,4 +65,8 @@ class Partner < ActiveRecord::Base
     end
   end
   
+  def name_or_contact_name
+    name.present? ? name : contact_name
+  end
+  
 end

@@ -24,7 +24,7 @@
           - if current_user.is_one_of?([:admin, :agency, :account_mgr])
             %span#acting_as
               acting as
-              = link_to current_partner.contact_name, partner_path(current_partner)
+              = link_to current_partner.name_or_contact_name, partner_path(current_partner)
           |
           = link_to('Logout', logout_path)
         .clear
