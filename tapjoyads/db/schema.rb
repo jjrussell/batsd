@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100920204447) do
+ActiveRecord::Schema.define(:version => 20100921190445) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -98,6 +98,23 @@ ActiveRecord::Schema.define(:version => 20100920204447) do
   add_index "email_offers", ["name"], :name => "index_email_offers_on_name"
   add_index "email_offers", ["partner_id"], :name => "index_email_offers_on_partner_id"
 
+  create_table "generic_offers", :id => false, :force => true do |t|
+    t.string   "id",               :limit => 36,                    :null => false
+    t.string   "partner_id",       :limit => 36,                    :null => false
+    t.string   "name",                                              :null => false
+    t.text     "description"
+    t.integer  "price",                          :default => 0
+    t.string   "url",                                               :null => false
+    t.string   "third_party_data"
+    t.boolean  "hidden",                         :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true
+  add_index "generic_offers", ["partner_id"], :name => "index_generic_offers_on_partner_id"
+  add_index "generic_offers", ["third_party_data"], :name => "index_generic_offers_on_third_party_data"
+
   create_table "monthly_accountings", :id => false, :force => true do |t|
     t.string   "id",                         :limit => 36, :null => false
     t.string   "partner_id",                 :limit => 36, :null => false
@@ -183,6 +200,8 @@ ActiveRecord::Schema.define(:version => 20100920204447) do
     t.string   "name_suffix",                                                                   :default => ""
     t.boolean  "hidden",                                                                        :default => false, :null => false
     t.integer  "min_payment"
+    t.integer  "payment_range_low"
+    t.integer  "payment_range_high"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

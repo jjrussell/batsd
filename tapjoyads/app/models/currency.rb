@@ -27,15 +27,36 @@ class Currency < ActiveRecord::Base
     Mc.get_and_put("mysql.currency.#{app_id}") { Currency.find_by_app_id(app_id) }
   end
   
-  def get_reward_amount(offer)
-    [get_publisher_amount(offer) * conversion_rate / 100.0, 1.0].max.to_i
+  def get_visual_reward_amount(offer)
+    if offer.has_variable_payment?
+      orig_payment = offer.payment
+      offer.payment = offer.payment_range_low
+      visual_amount = "#{get_reward_amount(offer)} - "
+      offer.payment = offer.payment_range_high
+      visual_amount += "#{get_reward_amount(offer)}"
+      offer.payment = orig_payment
+    else
+      visual_amount = get_reward_amount(offer).to_s
+    end
+    visual_amount
   end
   
-  def get_publisher_amount(offer)
-    if offer.item_type == 'RatingOffer' || offer.item_type == 'OfferpalOffer'
+  def get_reward_amount(offer)
+    if offer.item_type == 'RatingOffer'
       publisher_amount = offer.payment * offers_money_share
     elsif offer.partner_id == partner_id
       publisher_amount = offer.payment
+    else
+      publisher_amount = get_publisher_amount(offer)
+    end
+    [publisher_amount * conversion_rate / 100.0, 1.0].max.to_i
+  end
+  
+  def get_publisher_amount(offer)
+    if offer.item_type == 'RatingOffer' || offer.partner_id == partner_id
+      publisher_amount = 0
+    elsif offer.item_type == 'OfferpalOffer'
+      publisher_amount = offer.payment * offers_money_share
     else
       publisher_amount = offer.payment * installs_money_share
     end
@@ -43,7 +64,12 @@ class Currency < ActiveRecord::Base
   end
   
   def get_advertiser_amount(offer)
-    -(offer.actual_payment || offer.payment)
+    if offer.item_type == 'RatingOffer' || offer.partner_id == partner_id
+      advertiser_amount = 0
+    else
+      advertiser_amount = -(offer.actual_payment || offer.payment)
+    end
+    advertiser_amount
   end
   
   def get_tapjoy_amount(offer)

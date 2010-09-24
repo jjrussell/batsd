@@ -1,13 +1,13 @@
 <%= 
-  unless params[:callback].nil?
+  unless params[:callback].blank?
     params[:callback].gsub(/\W/, '') + '('
   end
 -%>
 {"OfferArray": [
   <% @offer_list.each_with_index do |offer, i| %>
     {
-      "Cost":<%= offer.cost.to_json -%>,
-      "Amount":<%= @currency.get_reward_amount(offer).to_json -%>,
+      "Cost":<%= offer.visual_cost.to_json -%>,
+      "Amount":<%= @currency.get_visual_reward_amount(offer).to_json -%>,
       "IconURL":<%= offer.get_icon_url.to_json -%>,
       "Name":<%= offer.name.to_json -%>,
       "RedirectURL":<%= offer.get_redirect_url(@publisher_app, params[:publisher_user_id], params[:udid], @source, params[:app_version]).to_json -%>
@@ -21,4 +21,4 @@
   , "MoreDataAvailable":<%= @more_data_available.to_json -%>
 <% end %>
 }
-<%= ')' unless params[:callback].nil?  -%>
+<%= ')' unless params[:callback].blank? -%>

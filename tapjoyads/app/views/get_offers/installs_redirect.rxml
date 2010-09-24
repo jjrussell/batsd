@@ -3,8 +3,8 @@ xml.TapjoyConnectReturnObject do
   xml.OfferArray do
     @offer_list.each do |offer|
       xml.TapjoyApp do
-        xml.Cost offer.cost
-        xml.Amount @currency.get_reward_amount(offer)
+        xml.Cost offer.visual_cost
+        xml.Amount @currency.get_visual_reward_amount(offer)
         xml.Description offer.description || 'An app.'
         xml.IconURL offer.get_icon_url
         xml.Name offer.name

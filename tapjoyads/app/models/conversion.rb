@@ -5,6 +5,7 @@ class Conversion < ActiveRecord::Base
     'offer' => 0,
     'install' => 1,
     'rating' => 2,
+    'generic' => 3,
     'imported' => 999
   }
   

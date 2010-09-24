@@ -61,7 +61,7 @@ private
     click.save
     
     web_request = WebRequest.new
-    web_request.add_path('store_install')
+    web_request.add_path('conversion')
     web_request.put('udid', udid)
     web_request.put('advertiser_app_id', click.advertiser_app_id)
     web_request.put('publisher_app_id', click.publisher_app_id)

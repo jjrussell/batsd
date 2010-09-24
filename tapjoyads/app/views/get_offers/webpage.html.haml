@@ -22,7 +22,7 @@
             %span.offername #{offer.name} (#{offer.visual_cost})
             %br
             Earn
-            %span.amount #{@currency.get_reward_amount(offer)} #{@currency.name}
+            %span.amount #{@currency.get_visual_reward_amount(offer)} #{@currency.name}
 
 - if @start_index > 0 || @more_data_available > 0
   .pagination

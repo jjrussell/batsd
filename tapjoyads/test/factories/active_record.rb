@@ -58,6 +58,12 @@ Factory.define :rating_offer do |rating_offer|
   rating_offer.name { Factory.next(:name) }
 end
 
+Factory.define :generic_offer do |generic_offer|
+  generic_offer.association :partner
+  generic_offer.name { Factory.next(:name) }
+  generic_offer.url 'http://ws.tapjoyads.com/healthz?click_key=TAPJOY_GENERIC'
+end
+
 Factory.define :conversion do |conversion|
   conversion.association :publisher_app, :factory => :app
   conversion.advertiser_offer { Factory(:app).primary_offer }

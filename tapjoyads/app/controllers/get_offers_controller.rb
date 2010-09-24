@@ -6,7 +6,7 @@ class GetOffersController < ApplicationController
   before_filter :setup
   
   def webpage
-    set_offer_list(:require_device_ip_param => false, :show_secondary_offers => true)
+    set_offer_list(:is_server_to_server => false, :is_old_sdk => false)
     
     @message = nil
     unless params[:featured_offer].blank?
@@ -23,7 +23,7 @@ class GetOffersController < ApplicationController
   end
   
   def featured
-    set_offer_list(:require_device_ip_param => false, :show_secondary_offers => true)
+    set_offer_list(:is_server_to_server => false, :is_old_sdk => false)
     
     srand
     @offer_list = @offer_list[rand(@offer_list.length).to_i, 1]
@@ -38,8 +38,9 @@ class GetOffersController < ApplicationController
   end
   
   def index
-    redirect = params[:redirect] == '1'
-    set_offer_list(:require_device_ip_param => redirect, :show_secondary_offers => redirect)
+    is_server_to_server = params[:redirect] == '1' || (params[:json] == '1' && params[:callback].blank?)
+    is_old_sdk = !(params[:redirect] == '1' || params[:json] == '1')
+    set_offer_list(:is_server_to_server => is_server_to_server, :is_old_sdk => is_old_sdk)
     
     if params[:type] == Offer::CLASSIC_OFFER_TYPE
       render :template => 'get_offers/offers'
@@ -86,11 +87,11 @@ private
   end
   
   def set_offer_list(options = {})
-    require_device_ip_param = options.delete(:require_device_ip_param) { false }
-    show_secondary_offers = options.delete(:show_secondary_offers) { false }
+    is_server_to_server = options.delete(:is_server_to_server) { false }
+    is_old_sdk = options.delete(:is_old_sdk) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
-    if require_device_ip_param && params[:device_ip].blank?
+    if is_server_to_server && params[:device_ip].blank?
       geoip_data = {}
     else
       geoip_data = get_geoip_data
@@ -113,7 +114,7 @@ private
         :required_length => (@start_index + @max_items),
         :app_version => params[:app_version],
         :reject_rating_offer => params[:rate_app_offer] == '0',
-        :show_secondary_offers => show_secondary_offers)
+        :is_old_sdk => is_old_sdk)
     @offer_list = @offer_list[@start_index, @max_items] || []
   end
   

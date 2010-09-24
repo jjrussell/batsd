@@ -24,20 +24,21 @@ class WebRequest < SimpledbResource
     'new_user' => 'new_users',
     'adshown' => 'hourly_impressions',
     'store_click' => 'paid_clicks',
-    'store_install' => 'paid_installs',
+    'offer_click' => 'paid_clicks',
+    'conversion' => 'paid_installs',
     'daily_user' => 'daily_active_users',
     'monthly_user' => 'monthly_active_users',
     'purchased_vg' => 'vg_purchases',
     'offers' => 'offerwall_views'
   }
   
-  # Params that should use the advertiser_app_id, rather than the app_id for stat tracking.
-  USE_OFFER_ID = ['store_click', 'store_install']
+  # Params that should use the offer_id, rather than the app_id for stat tracking.
+  USE_OFFER_ID = [ 'store_click', 'offer_click', 'conversion' ]
   
   PUBLISHER_PATH_TO_STAT_MAP = {
     'store_click' => 'installs_opened',
-    'store_install' => 'published_installs',
     'offer_click' => 'offers_opened',
+    'conversion' => 'published_installs',
     'rate_app' => 'ratings'
   }
   

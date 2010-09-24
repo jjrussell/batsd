@@ -109,7 +109,7 @@ class App < ActiveRecord::Base
     required_length = options.delete(:required_length) { 999 }
     app_version = options.delete(:app_version)
     reject_rating_offer = options.delete(:reject_rating_offer) { false }
-    show_secondary_offers = options.delete(:show_secondary_offers) { false }
+    is_old_sdk = options.delete(:is_old_sdk) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     device_app_list = DeviceAppList.new(:key => udid)
@@ -126,7 +126,7 @@ class App < ActiveRecord::Base
     final_offer_list = []
     num_rejected = 0
     offer_list.each do |o|
-      if o.should_reject?(self, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer, show_secondary_offers)
+      if o.should_reject?(self, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer, is_old_sdk)
         num_rejected += 1
       else
         final_offer_list << o

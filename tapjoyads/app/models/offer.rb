@@ -24,8 +24,9 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :allow_blank => false, :greater_than_or_equal_to => 0
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
+  validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_blank => false, :allow_nil => true, :greater_than => 0
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :featured, :in => [ true, false ]
-  validates_inclusion_of :item_type, :in => %w( App EmailOffer OfferpalOffer RatingOffer )
+  validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer )
   validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
     begin
       parsed = JSON.parse(value)
@@ -55,9 +56,21 @@ class Offer < ActiveRecord::Base
   end
   validates_each :payment do |record, attribute, value|
     if record.payment_changed? || record.min_payment_changed?
-      if record.payment > 0 && record.payment < record.min_payment.to_i
+      if value > 0 && value < record.min_payment.to_i
         record.errors.add(attribute, "is below the minimum")
       end
+    end
+  end
+  validates_each :payment_range_low do |record, attribute, value|
+    if record.payment_range_low.present?
+      record.errors.add(attribute, "must equal payment") if value != record.payment
+    end
+  end
+  validates_each :payment_range_high do |record, attribute, value|
+    if record.payment_range_low.present?
+      record.errors.add(attribute, "must be greater than payment_range_low") if value.blank? || value <= record.payment_range_low
+    else
+      record.errors.add(attribute, "must not be set if low payment range is not set") if value.present?
     end
   end
   
@@ -65,7 +78,7 @@ class Offer < ActiveRecord::Base
   after_save :update_memcached
   before_destroy :clear_memcached
   
-  named_scope :enabled_offers, { :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND ((partners.balance > 0 AND item_type IN ('App', 'EmailOffer')) OR item_type = 'RatingOffer')", :order => "ordinal ASC" }
+  named_scope :enabled_offers, { :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND ((partners.balance > 0 AND item_type IN ('App', 'EmailOffer', 'GenericOffer')) OR item_type = 'RatingOffer')", :order => "ordinal ASC" }
   named_scope :classic_offers, { :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type = 'OfferpalOffer'", :order => "ordinal ASC" }
   named_scope :featured, :conditions => { :featured => true }
   named_scope :nonfeatured, :conditions => { :featured => false }
@@ -145,15 +158,15 @@ class Offer < ActiveRecord::Base
   end
   
   def visual_cost
-    if price <= 0 then
+    if price <= 0
       'Free'
-    elsif price <= 100 then
+    elsif price <= 100
       '$'
-    elsif price <= 200 then
+    elsif price <= 200
       '$$'
-    elsif price <= 300 then
+    elsif price <= 300
       '$$$'
-    else 
+    else
       '$$$$'
     end
   end
@@ -182,25 +195,36 @@ class Offer < ActiveRecord::Base
     tapjoy_enabled? && user_enabled? && partner.balance > 0
   end
   
-  def get_destination_url(udid, publisher_app_id, publisher_user_id = nil, app_version = nil)
-    int_record_id = publisher_user_id.nil? ? '' : PublisherUserRecord.generate_int_record_id(publisher_app_id, publisher_user_id)
-    
+  def has_variable_payment?
+    payment_range_low.present? && payment_range_high.present?
+  end
+  
+  def get_destination_url(udid, publisher_app_id, publisher_user_id = nil, app_version = nil, click_key = nil)
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
     if item_type == 'RatingOffer'
       final_url += "&publisher_user_id=#{publisher_user_id}&app_version=#{app_version}"
     elsif item_type == 'OfferpalOffer'
+      int_record_id = publisher_user_id.nil? ? '' : PublisherUserRecord.generate_int_record_id(publisher_app_id, publisher_user_id)
       final_url.gsub!('TAPJOY_GENERIC', int_record_id.to_s)
     elsif item_type == 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
+    elsif item_type == 'GenericOffer'
+      final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
     end
     
     final_url
   end
   
   def get_click_url(publisher_app, publisher_user_id, udid, source, display_app_id = nil)
-    url = "http://ws.tapjoyads.com/submit_click/store?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}"
-    url += "&display_app_id=#{display_app_id}" if display_app_id.present?
-    url
+    click_url = "http://ws.tapjoyads.com/"
+    if item_type == 'GenericOffer'
+      click_url += "click/generic?"
+    else
+      click_url += "submit_click/store?"
+    end
+    click_url += "advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}"
+    click_url += "&display_app_id=#{display_app_id}" if display_app_id.present?
+    click_url
   end
   
   def get_redirect_url(publisher_app, publisher_user_id, udid, source, app_version, display_app_id = nil)
@@ -277,7 +301,7 @@ class Offer < ActiveRecord::Base
     name_suffix.blank? ? name : "#{name} -- #{name_suffix}"
   end
   
-  def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer, show_secondary_offers)
+  def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer, is_old_sdk)
     return is_disabled?(publisher_app, currency) ||
         platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device_app_list) ||
@@ -287,7 +311,7 @@ class Offer < ActiveRecord::Base
         show_rate_reject?(device_app_list) ||
         flixter_reject?(publisher_app, device_app_list) ||
         whitelist_reject?(publisher_app) ||
-        secondary_offer_reject?(show_secondary_offers) ||
+        old_sdk_reject?(is_old_sdk) ||
         gamevil_reject?(publisher_app)
   end
   
@@ -389,9 +413,9 @@ private
   end
   
   ##
-  # Reject all secondary offers if the request is coming from the old sdk.
-  def secondary_offer_reject?(show_secondary_offers)
-    return is_secondary? && !show_secondary_offers
+  # Reject all offers that don't work with the old sdk if the request is coming from the old sdk.
+  def old_sdk_reject?(is_old_sdk)
+    return is_old_sdk && (is_secondary? || item_type == 'GenericOffer')
   end
   
   def normalize_device_type(device_type_param)

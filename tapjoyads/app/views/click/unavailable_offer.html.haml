@@ -1,0 +1,23 @@
+- @page_title = 'Unavailable Offer'
+
+#main
+  We're sorry but
+  %span.name #{@offer.name}
+  is no longer available. You can return to the previous page and refresh to view the latest offer list.
+  %br
+  %br
+
+  - if @offer.item_type == 'App'
+    %a{ :href => @offer.get_destination_url(params[:udid], params[:publisher_app_id]) }
+      Or, click here to download #{@offer.name} anyway.
+
+- content_for :page_styles do
+  :plain
+    #main {
+      padding-bottom: 15px;
+      font-size: 115%;
+    }
+    .name {
+      font-weight: bold;
+      color: #008810;
+    }

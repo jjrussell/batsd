@@ -9,6 +9,7 @@ class Partner < ActiveRecord::Base
   has_many :email_offers
   has_many :rating_offers
   has_many :offerpal_offers
+  has_many :generic_offers
   has_many :offers
   has_many :publisher_conversions, :through => :apps
   has_many :advertiser_conversions, :through => :offers

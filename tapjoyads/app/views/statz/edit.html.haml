@@ -107,7 +107,7 @@
       %td
         = f.text_field(:publisher_app_whitelist)
         = error_message_on @offer, :publisher_app_whitelist
-    - if [ 'App', 'EmailOffer' ].include?(@offer.item_type)
+    - if [ 'App', 'EmailOffer', 'GenericOffer' ].include?(@offer.item_type)
       %tr
         %th
           = f.label(:payment)
