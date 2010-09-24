@@ -59,44 +59,39 @@ class DisplayAdController < ApplicationController
     
     width = 320
     height = 50
+    border = 2
     
     publisher = App.find_in_cache(params[:publisher_app_id])
     offer = Offer.find_in_cache(params[:advertiser_app_id])
     publisher_icon_blob = Downloader.get("http://s3.amazonaws.com/app_data/icons/#{params[:publisher_app_id]}.png")
     offer_icon_blob = Downloader.get("http://s3.amazonaws.com/app_data/icons/#{params[:advertiser_app_id]}.png")
     
-    publisher_icon = Magick::Image.from_blob(publisher_icon_blob)[0].resize(50, 50)
-    offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(50, 50)
+    publisher_icon = Magick::Image.from_blob(publisher_icon_blob)[0].resize(44, 44)
+    offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(44, 44)
     
     publisher_icon_color = get_main_color(publisher_icon)
     offer_icon_color = get_main_color(offer_icon)
     
     gradient_fill = Magick::GradientFill.new(0, 0, 0, height, publisher_icon_color, offer_icon_color)
     
-    img = Magick::Image.new(width, height, gradient_fill)
+    img = Magick::Image.new(width - border * 2, height - border * 2)
     img.format = 'png'
     
-    img.composite!(publisher_icon, Magick::WestGravity, Magick::AtopCompositeOp)
-    img.composite!(offer_icon, Magick::EastGravity, Magick::AtopCompositeOp)
+    img.composite!(publisher_icon, 1, 1, Magick::AtopCompositeOp)
+    img.composite!(offer_icon, width - 50, 1, Magick::AtopCompositeOp)
     
-    text = "Earn #{publisher.currency.get_reward_amount(offer)} #{publisher.currency.name} in #{publisher.name}!\n Download and run #{offer.name}."
+    text = "Earn #{publisher.currency.get_reward_amount(offer)} #{publisher.currency.name} in #{publisher.name}!\n Install #{offer.name} for free."
     
     draw = Magick::Draw.new
     
     img.annotate(draw, width - 100, height, 50, 0, text) {
       self.pointsize = 14
-      self.stroke = 'white'
-      self.stroke_width = 1
+      self.stroke = 'transparent'
       self.gravity = Magick::CenterGravity
       self.font_weight = Magick::BoldWeight
     }
     
-    img.annotate(draw, width - 100, height, 50, 0, text) {
-      self.pointsize = 14
-      self.stroke = 'white'
-      self.gravity = Magick::CenterGravity
-      self.font_weight = Magick::BoldWeight
-    }
+    img.border!(border, border, 'black')
     
     send_data img.to_blob, :type => 'image/png', :disposition => 'inline'
   end
