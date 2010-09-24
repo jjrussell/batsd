@@ -11,8 +11,8 @@ private
     click = Click.deserialize(json['click'])
     installed_at_epoch = json['install_timestamp']
     
-    # TO REMOVE - read the udid from the click starting sometime after 9/25/2010 3:00pm PT
-    udid = click.key.split('.')[0]
+    # TO REMOVE - always read the udid from the click starting sometime after 9/25/2010 3:00pm PT
+    udid = click.udid || click.key.split('.')[0]
     
     if click.installed_at || click.clicked_at < (Time.zone.now - 2.days)
       return
@@ -37,7 +37,7 @@ private
     end
     
     reward = Reward.new(:key => click.reward_key)
-    reward.put('type', 'install')
+    reward.put('type', (click.type || 'install')) # TO REMOVE - always get type from the click starting sometime after 9/25/2010 6:00pm PT
     reward.put('publisher_app_id', click.publisher_app_id)
     reward.put('advertiser_app_id', click.advertiser_app_id)
     reward.put('offer_id', click.offer_id)

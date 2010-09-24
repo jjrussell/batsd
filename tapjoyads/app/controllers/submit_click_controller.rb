@@ -52,6 +52,7 @@ class SubmitClickController < ApplicationController
     click.reward_key = UUIDTools::UUID.random_create.to_s
     click.source = params[:source]
     click.country = get_geoip_data[:country]
+    click.type = 'install'
     click.save
     
     web_request = WebRequest.new
