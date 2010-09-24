@@ -13,5 +13,7 @@ def passenger_responding?
   end
 end
 
-
-`sudo /etc/init.d/apache2 restart` unless passenger_responding?
+unless passenger_responding?
+  `sudo /etc/init.d/apache2 restart`
+  `date >> /mnt/log/apache_restarts.log`
+end

@@ -8,6 +8,7 @@
 # setup log directories
 `mkdir -p /mnt/log/apache2`
 `mkdir -p /mnt/log/rails`
+`chmod 777 /mnt/log`
 `chown -R webuser:webuser /mnt/log`
 `rm -rf /var/log/apache2`
 `ln -s /mnt/log/apache2 /var/log/apache2`
