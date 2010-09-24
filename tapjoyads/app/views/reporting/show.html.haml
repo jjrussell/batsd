@@ -3,11 +3,6 @@
 = render :partial => 'shared/dropdown_select', :locals => {:objects => current_partner_offers, :selected => @offer, :options => {:extra_url_params => params, :title_prefix => 'Reporting for'} }
 %br/
 
-#display_date
-  For: #{@start_time.to_s(:mdy_ampm)} UTC - #{@end_time.to_s(:mdy_ampm)} UTC.
-  Granularity: #{@granularity.to_s}.
-  %a{ :href => '#' } [Change]
-
 %form#change_date{ :method => :get, :class => 'tjform' }
   = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
   \-
@@ -133,12 +128,6 @@
 - content_for :page_javascript do
   :plain
     $(function() {
-      $('#display_date a').click(function() {
-        $('#display_date').hide();
-        $('#change_date').show();
-        return false;
-      });
-      
       $('#date').datepicker();
       $('#end_date').datepicker();
       
@@ -155,10 +144,6 @@
       padding-bottom: 20px;
       padding-right: 10px;
       float: left;
-    }
-    
-    #change_date {
-      display: none;
     }
     
     #tables {

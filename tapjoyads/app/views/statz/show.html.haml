@@ -6,11 +6,6 @@
 
 .clear
 
-#display_date
-  For: #{@start_time.to_s(:mdy)} - #{@end_time.to_s(:mdy)}.
-  Granularity: #{@granularity.to_s}.
-  %a{ :href => '#' } [Change]
-
 %form#change_date{ :method => :get, :class => 'tjform' }
   = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
   \-
@@ -164,12 +159,6 @@
 - content_for :page_javascript do
   :plain
     $(function() {
-      $('#display_date a').click(function() {
-        $('#display_date').hide();
-        $('#change_date').show();
-        return false;
-      });
-      
       $('#date').datepicker();
       $('#end_date').datepicker();
       
@@ -200,8 +189,7 @@
       float: left;
     }
     
-    #associated_list,
-    #change_date {
+    #associated_list {
       display: none;
     }
     
