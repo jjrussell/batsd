@@ -21,6 +21,10 @@ a img {
   display: none;
 }
 
+h1 span.small, h2 span.small, h3 span.small {
+  font-size: 12px;
+  font-weight: normal;
+}
 input[type=submit], input[type=button] {
   display: inline-block;
   color: #222;

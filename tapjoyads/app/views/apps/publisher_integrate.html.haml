@@ -6,27 +6,29 @@
 #apps_main
   %h3 Publisher Integration
   %ol
-    %li Select our Offers (Virtual Currency Monetization) or Virtual Goods SDK
-    %li Add it to your project directory
-    %li Compile and run your project
-    %li Add the Tapjoy credentials (provided below) to your app
+    %li Select our Offers (Virtual Currency Monetization) or Virtual Goods SDK.
+    %li Add it to your project directory.
+    %li Compile and run your project.
+    %li Add the Tapjoy credentials (provided below) to your app.
     %li
       Email
       = link_to 'support@tapjoy.com', 'mailto:support@tapjoy.com'
-      for confirmation and to make your campaign live
-  %strong Tapjoy App ID:
-  = text_field 'app', 'id', :value => @app.id
-  = clippy(@app.id)
+      for confirmation and to make your campaign live.
   #sdk_links
     %button Offers SDK Download
     %button Virtual Goods SDK Download
 
-  For more detailed documentation, please visit the
-  = link_to 'Offers Getting Started Guide', '#'
-  and the
-  = link_to 'Virtual Goods Getting Started Guide', '#'
+  %p
+    For more detailed documentation, please visit the
+    = link_to 'Offers Getting Started Guide', '#'
+    and the
+    = link_to 'Virtual Goods Getting Started Guide', '#'
 
-  Need help? Please contact our
-  = link_to 'support team', 'mailto:support@tapjoy.com'
+  %p
+    Need help? Please contact our
+    = link_to 'support team', 'mailto:support@tapjoy.com'
 
-  = link_to 'Integrating as a publisher?', publisher_integrate_app_path
+  %p
+    %strong Tapjoy App ID:
+    = text_field 'app', 'id', :value => @app.id, :size => 50
+    = clippy(@app.id)

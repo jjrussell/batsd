@@ -4,28 +4,31 @@
 = render :partial => 'actions', :locals => { :app => @app }
 
 #apps_main
-  %h3 Integrate your application
+  %h3
+    Integrate your application
+    %span.small= link_to 'Integrating as a publisher?', publisher_integrate_app_path
   %ol
-    %li Download the lightweight, open source SDK
-    %li Add it to your project directory
-    %li Compile and run your project
-    %li Add the Tapjoy credentials (provided below) to your app
-    %li Run your app
+    %li Download the lightweight, open source SDK.
+    %li Add it to your project directory.
+    %li Compile and run your project.
+    %li Add the Tapjoy credentials (provided below) to your app.
     %li
       Email
       = link_to 'support@tapjoy.com', 'mailto:support@tapjoy.com'
-      for confirmation and to make your campaign live
-  %strong Tapjoy App ID:
-  = text_field 'app', 'id', :value => @app.id
-  = clippy(@app.id)
+      for confirmation and to make your campaign live.
 
-  #sdk_links
+  %p
     %button Advertiser SDK Download
 
-  For more detailed documentation, please visit our
-  = link_to '#', Advertiser Getting Started Guide
+  %p
+    For more detailed documentation, please visit our
+    = link_to 'Advertiser Getting Started Guide', '#'
 
-  Need help? Please contact our
-  = link_to 'support team', 'mailto:support@tapjoy.com'
+  %p
+    Need help? Please contact our
+    = link_to 'support team', 'mailto:support@tapjoy.com'
 
-  = link_to 'Integrating as a publisher?', publisher_integrate_app_path
+  %p
+    %strong Tapjoy App ID:
+    = text_field 'app', 'id', :value => @app.id, :size => 50
+    = clippy(@app.id)
