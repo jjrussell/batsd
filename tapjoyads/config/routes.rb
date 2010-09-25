@@ -37,31 +37,34 @@ ActionController::Routing::Routes.draw do |map|
   
   
   # website-specific routes
-  map.root :controller => 'homepage', :action => 'index'
-  map.signup 'signup', :controller => 'sign_up', :action => 'new'
-  map.login 'login', :controller => 'user_sessions', :action => 'new'
-  map.logout 'logout', :controller => 'user_sessions', :action => 'destroy'
+  map.root :controller => :homepage, :action => :index
+  map.signup 'signup', :controller => :sign_up, :action => :new
+  map.login 'login', :controller => :user_sessions, :action => :new
+  map.logout 'logout', :controller => :user_sessions, :action => :destroy
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
-  map.resources :apps, :except => [ :destroy ],
-    :member => { :confirm => :get, :pay_per_install => :get, :integrate => :get, :publisher_integrate => :get }
-  map.resources :apps do |app|
+  map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :pay_per_install => :get, :integrate => :get, :publisher_integrate => :get } do |app|
     app.resources :offers, :only => [ :show, :update ]
     app.resources :currencies, :only => [ :show, :update, :new, :create ]
-    app.resources :virtual_goods, :only => [ :show, :update, :new, :create, :index ],
+    app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
       :collection => { :reorder => :post }
   end
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post }
-  map.resources :billing, :only => [ :index, ], :collection => { :add_funds => :get, :create_order => :post }
+  map.resources :billing, :only => [ :index, ], :collection => { :create_order => :post }
+  map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
   map.resources :support, :only => [ :index ]
   map.resources :tools, :only => :index,
-    :collection => { :new_order => :get, :create_order => :post, :new_transfer => :get, :create_transfer => :post, :payouts => :get, :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :beta_websiters => :get, :sdb_metadata => :get },
+    :collection => { :new_order => :get, :create_order => :post, :new_transfer => :get, :create_transfer => :post,
+                     :payouts => :get, :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get,
+                     :beta_websiters => :get, :sdb_metadata => :get },
     :member => { :create_payout => :post, :create_transfer => :post }
-  map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ], :collection => { :search => :get }, :member => { :last_run_times => :get, :udids => :get, :download_udids => :get }
+  map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
+    :collection => { :search => :get },
+    :member => { :last_run_times => :get, :udids => :get, :download_udids => :get }
   map.resources :raffle_manager, :only => [ :index, :edit, :update, :new, :create ]
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show ], :member => { :make_current => :post }
-  map.resources :password_resets, :only => [ :new, :create, :edit, :update ]
+  map.resources :password_resets, :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
   
   map.resources :balances, :only => :show
   
