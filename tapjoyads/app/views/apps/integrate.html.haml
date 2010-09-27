@@ -18,10 +18,7 @@
       for confirmation and to make your campaign live.
 
   %p
-    %button Advertiser SDK Download
-
-  %p
-    For more detailed documentation, please visit our
+    For more detailed documentation, please visit the
     = link_to 'Advertiser Getting Started Guide', '#'
 
   %p
@@ -32,3 +29,7 @@
     %strong Tapjoy App ID:
     = text_field 'app', 'id', :value => @app.id, :size => 50
     = clippy(@app.id)
+
+  %p
+    .left= button_to 'Advertiser SDK Download', :action => 'sdk_download', :sdk => 'offers'
+    .clear

@@ -7,7 +7,7 @@
       %li= link_to 'Pay-Per-Install', app_offer_path(:id => app.primary_offer.id, :app_id => app.id), :class => (request.path_parameters['controller'] == 'offers' ? 'selected' : '')
       %li= link_to 'Virtual Currency', currency_path, :class => (request.path_parameters['controller'] == 'currencies' ? 'selected' : '')
       %li= link_to 'Virtual Goods', virtual_goods_path, :class => (request.path_parameters['controller'] == 'virtual_goods' ? 'selected' : '')
-      %li= link_to 'Integrate', integrate_app_path, :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action'][/integrate/] ? 'selected' : '')
+      %li= link_to 'Integrate', integrate_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action'][/integrate/] ? 'selected' : '')
     - else
       %li.disabled Details
       %li.disabled Pay-Per-Install

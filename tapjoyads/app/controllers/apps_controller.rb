@@ -67,7 +67,12 @@ class AppsController < WebsiteController
     end
   end
 
-  def confirm
+  def sdk_download
+    return if params[:sdk].nil?
+    file_name = "tapjoy_sdk_#{params[:sdk]}.zip"
+    bucket = S3.bucket(BucketNames::APP_DATA)
+    data = bucket.get("sdks/#{file_name}")
+    send_data(data, :type => 'application/zip', :filename => file_name)
   end
 
 private
