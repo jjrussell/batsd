@@ -1,5 +1,5 @@
 - @page_title = @app.name
-- is_iphone = @app.platform=='iphone'
+- is_iphone = !@app.is_android?
 - app_store_name = is_iphone ? 'AppStore' : 'Marketplace'
 
 = render :partial => 'shared/dropdown_select', :locals => { :objects => current_partner_apps, :selected => @app, :options => {:with_new_app_button => true} }

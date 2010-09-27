@@ -1,23 +1,23 @@
-- @page_title = 'Apps'
+- @page_title = @app.name
 
-= render :partial => 'apps', :object => current_partner_apps
-
-%h1 New application
+= render :partial => 'shared/dropdown_select', :locals => { :objects => current_partner_apps, :selected => @app, :options => {:with_new_app_button => true} }
+= render :partial => 'actions', :locals => { :app => @app }
 
 #apps_main
-  %h3 Thanks, your application has been added
+  %h3 Thanks, your application has been added.
   Please note your application details below:
 
-- content_for :page_styles do
-  :plain
-    td#bar-left {
-      border: 1px solid #000;
-      padding: 5px;
-    }
-    td#bar-left .app-thumb {
-      padding: 2px;
-    }
-    .app-thumb .icon {
-      float: left;
-      border: 1px solid #000;
-    }
+  %p &nbsp;
+
+  %table.tjform
+    %tbody
+      %tr
+        %tr
+          %th App Name
+          %td= @app.name
+        %tr
+          %th App Icon
+          %td#app_icon= image_tag(@app.get_icon_url(request.protocol), :size => '57x57', :alt => 'icon')
+        %tr
+          %th App ID
+          %td= @app.id
