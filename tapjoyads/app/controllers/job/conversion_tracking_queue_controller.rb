@@ -11,9 +11,6 @@ private
     click = Click.deserialize(json['click'])
     installed_at_epoch = json['install_timestamp']
     
-    # TO REMOVE - always read the udid from the click starting sometime after 9/25/2010 3:00pm PT
-    udid = click.udid || click.key.split('.')[0]
-    
     if click.installed_at || click.clicked_at < (Time.zone.now - 2.days)
       return
     end
@@ -27,7 +24,7 @@ private
     end
     
     publisher_user_record = PublisherUserRecord.new(:key => "#{click.publisher_app_id}.#{click.publisher_user_id}")
-    unless publisher_user_record.update(udid)
+    unless publisher_user_record.update(click.udid)
       Notifier.alert_new_relic(TooManyUdidsForPublisherUserId, "Too many UDIDs associated with publisher_user_record: #{publisher_user_record.key}, for click: #{click.key}")
       return
     end
@@ -37,7 +34,7 @@ private
     end
     
     reward = Reward.new(:key => click.reward_key)
-    reward.put('type', (click.type || 'install')) # TO REMOVE - always get type from the click starting sometime after 9/25/2010 6:00pm PT
+    reward.put('type', click.type)
     reward.put('publisher_app_id', click.publisher_app_id)
     reward.put('advertiser_app_id', click.advertiser_app_id)
     reward.put('offer_id', click.offer_id)
@@ -47,7 +44,7 @@ private
     reward.put('currency_reward', click.currency_reward)
     reward.put('tapjoy_amount', click.tapjoy_amount)
     reward.put('source', click.source)
-    reward.put('udid', udid)
+    reward.put('udid', click.udid)
     reward.put('country', click.country)
     reward.put('created', installed_at_epoch)
     
@@ -62,7 +59,7 @@ private
     
     web_request = WebRequest.new
     web_request.add_path('conversion')
-    web_request.put('udid', udid)
+    web_request.put('udid', click.udid)
     web_request.put('advertiser_app_id', click.advertiser_app_id)
     web_request.put('publisher_app_id', click.publisher_app_id)
     web_request.put('offer_id', click.offer_id)

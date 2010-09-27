@@ -19,7 +19,9 @@ class App < ActiveRecord::Base
   
   named_scope :visible, :conditions => { :hidden => false }
 
-  def is_android?; platform=='android'; end
+  def is_android?
+    platform == 'android'
+  end
 
   def self.find_in_cache(id, do_lookup = true)
     if do_lookup
