@@ -5,6 +5,7 @@ class AppsController < WebsiteController
   before_filter :grab_partner_apps
   before_filter :has_apps, :only => [:show, :index, :integrate, :publisher_integrate]
   before_filter :find_app, :only => [:show, :index, :integrate, :publisher_integrate, :update, :confirm]
+  before_filter :deprecation_notice, :only => [:integrate, :publisher_integrate]
   after_filter :save_activity_logs, :only => [ :update, :create ]
 
   def index
@@ -69,7 +70,11 @@ class AppsController < WebsiteController
 
   def sdk_download
     return if params[:sdk].nil?
-    file_name = "tapjoy_sdk_#{params[:sdk]}.zip"
+    if params[:android] == 'true'
+      file_name = "tapjoy_sdk_android_#{params[:sdk]}.zip"
+    else
+      file_name = "tapjoy_sdk_#{params[:sdk]}.zip"
+    end
     bucket = S3.bucket(BucketNames::APP_DATA)
     data = bucket.get("sdks/#{file_name}")
     send_data(data, :type => 'application/zip', :filename => file_name)
@@ -92,5 +97,15 @@ private
 
   def has_apps
     redirect_to new_app_path if current_partner_apps.empty?
+  end
+
+  def deprecation_notice
+    # TODO: after 2010-11-15, we should just remove this
+    if Time.now.to_i < 1288828800 # 2010-11-04 UTC
+      # don't display for new users
+      if current_user.created_at.to_i < 1286150400 # 2010-10-04 UTC
+        flash[:notice] = 'App Password and App Version have been deprecated in the new Tapjoy system.'
+      end
+    end
   end
 end

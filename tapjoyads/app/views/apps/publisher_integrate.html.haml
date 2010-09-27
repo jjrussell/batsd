@@ -31,6 +31,9 @@
     = clippy(@app.id)
 
   %p
-    .left= button_to 'Offers SDK Download', :action => 'sdk_download', :sdk => 'offers'
-    .left= button_to 'Virtual Goods SDK Download', :action => 'sdk_download', :sdk => 'virtual_goods'
+    - if @app.is_android?
+      .left= button_to 'Offers/Virtual Goods SDK Download', :action => 'sdk_download', :sdk => 'offers', :android => @app.is_android?
+    - else
+      .left= button_to 'Offers SDK Download', :action => 'sdk_download', :sdk => 'offers', :android => @app.is_android?
+      .left= button_to 'Virtual Goods SDK Download', :action => 'sdk_download', :sdk => 'virtual_goods'
     .clear
