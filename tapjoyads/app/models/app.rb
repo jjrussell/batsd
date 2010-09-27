@@ -18,7 +18,9 @@ class App < ActiveRecord::Base
   before_destroy :clear_memcached
   
   named_scope :visible, :conditions => { :hidden => false }
-  
+
+  def is_android?; platform=='android'; end
+
   def self.find_in_cache(id, do_lookup = true)
     if do_lookup
       Mc.get_and_put("mysql.app.#{id}") { App.find(id) }
@@ -35,7 +37,7 @@ class App < ActiveRecord::Base
     if use_raw_url?
       read_attribute(:store_url)
     else
-      if platform == 'android'
+      if is_android?
         "market://search?q=#{store_id}"
       else
         web_object_url = "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
@@ -51,7 +53,7 @@ class App < ActiveRecord::Base
   end
   
   def final_store_url
-    if platform == 'android'
+    if is_android?
       "http://www.cyrket.com/p/android/#{store_id}"
     else
       "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
@@ -64,7 +66,7 @@ class App < ActiveRecord::Base
     if use_raw_url?
       read_attribute(:store_url)
     else
-      if platform == 'android'
+      if is_android?
         store_id
       else
         "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
@@ -147,7 +149,7 @@ class App < ActiveRecord::Base
       return nil
     end
     
-    if platform == 'android'
+    if is_android?
       return url
     end
     
@@ -176,7 +178,7 @@ private
     offer.min_payment = offer.is_paid? ? (price.to_f / 2).ceil : 25
     offer.payment = offer.min_payment
     offer.url = store_url
-    offer.device_types = platform == 'android' ? Offer::ANDROID_DEVICES.to_json : Offer::APPLE_DEVICES.to_json
+    offer.device_types = is_android? ? Offer::ANDROID_DEVICES.to_json : Offer::APPLE_DEVICES.to_json
     offer.instructions = 'Install and then run the app while online to receive credit.'
     offer.time_delay = 'in seconds'
     offer.credit_card_required = false
