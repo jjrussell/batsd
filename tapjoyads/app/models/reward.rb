@@ -1,4 +1,5 @@
 class Reward < SimpledbResource
+  # TO REMOVE
   self.domain_name = 'reward'
   
   self.sdb_attr :publisher_app_id
@@ -20,7 +21,7 @@ class Reward < SimpledbResource
   
   def initialize(options = {})
     super
-    put('created', Time.now.utc.to_f.to_s) unless get('created')
+    put('created', Time.zone.now.to_f.to_s) unless get('created')
   end
   
   def update_counters
@@ -42,4 +43,22 @@ class Reward < SimpledbResource
         false, 1.week, get('advertiser_amount').to_i)
     end
   end
+  
+  # def dynamic_domain_name
+  #   domain_number = @key.hash % NUM_REWARD_DOMAINS
+  #   
+  #   return "rewards_#{domain_number}"
+  # end
+  
+  # TO REMOVE
+  def serial_save(options = {})
+    super(options)
+    
+    # save to both locations
+    domain_number = @key.hash % NUM_REWARD_DOMAINS
+    self.this_domain_name = "#{RUN_MODE_PREFIX}rewards_#{domain_number}"
+    super(options)
+    self.this_domain_name = "#{RUN_MODE_PREFIX}reward"
+  end
+  
 end
