@@ -35,6 +35,10 @@
           .flash{ :id => "flash_#{name}" }= msg
         = yield
 
+      #footer
+        &copy; #{Time.now.year} Copyright Tapjoy. All rights reserved.
+        = link_to 'Privacy Policy', '/privacy.html', :target => '_blank'
+
     = javascript_include_tag 'jquery-1.4.2.min', 'jquery-ui-1.8.4.custom.min', 'jquery.tablesorter', 'application'
     = yield :included_javascripts
       

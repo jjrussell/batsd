@@ -76,7 +76,13 @@ input[type=submit]:active, input[type=button]:active {
 #content-with-links {
   margin-left: 150px;
 }
-
+#footer {
+  clear: both;
+  margin-top: 25px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+}
 ul.navigation {
   margin: 6px 0 -1px;
   padding: 0;
