@@ -11,7 +11,6 @@ JobRunner::Gateway.define do |s|
     s.add_job 'conversion_tracking_queue', :interval => 2.seconds
     s.add_job 'failed_sdb_saves_queue', :interval => 5.seconds
     s.add_job 'cleanup_web_requests', :interval => 5.minutes
-    s.add_job 'create_offers', :interval => 5.seconds
     s.add_job 'send_money_txn', :interval => 2.seconds
     s.add_job 'queue_send_currency', :interval => 2.seconds
     s.add_job 'queue_failed_downloads', :interval => 20.seconds
@@ -40,7 +39,6 @@ JobRunner::Gateway.define do |s|
     # jobs with low impact on overall system performance
     s.add_job 'master_cache_offers', :interval => 1.minute
     s.add_job 'master_cleanup_web_requests', :daily => 5.hours
-    s.add_job 'master_create_offers', :interval => 10.minutes
     s.add_job 'master_failed_sqs_writes', :interval => 3.minutes
     s.add_job 'master_get_store_info', :daily => 7.hours
     s.add_job 'master_grab_disabled_popular_offers', :daily => 8.hours

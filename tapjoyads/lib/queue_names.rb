@@ -3,7 +3,6 @@ class QueueNames
   FAILED_SDB_SAVES         = RUN_MODE_PREFIX + 'FailedSdbSaves'
   FAILED_DOWNLOADS         = RUN_MODE_PREFIX + 'FailedDownloads'
   CLEANUP_WEB_REQUESTS     = RUN_MODE_PREFIX + 'CleanupWebRequests'
-  CREATE_OFFERS            = RUN_MODE_PREFIX + 'CreateOffers'
   SEND_MONEY_TXN           = RUN_MODE_PREFIX + 'SendMoneyTxn'
   SEND_CURRENCY            = RUN_MODE_PREFIX + 'SendCurrency'
   APP_STATS                = RUN_MODE_PREFIX + 'AppStats'
