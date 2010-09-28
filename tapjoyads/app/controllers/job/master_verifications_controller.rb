@@ -27,7 +27,7 @@ private
       next unless partner.id.hash % 7 == day_of_week
       
       partner.recalculate_balances(false, true)
-      sleep(2)
+      sleep(10)
     end
   end
   
