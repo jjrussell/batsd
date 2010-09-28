@@ -7,7 +7,10 @@
       %li= link_to 'Pay-Per-Install', app_offer_path(:id => app.primary_offer.id, :app_id => app.id), :class => (request.path_parameters['controller'] == 'offers' ? 'selected' : '')
       %li= link_to 'Virtual Currency', currency_path, :class => (request.path_parameters['controller'] == 'currencies' ? 'selected' : '')
       %li= link_to 'Virtual Goods', virtual_goods_path, :class => (request.path_parameters['controller'] == 'virtual_goods' ? 'selected' : '')
-      %li= link_to 'Integrate', integrate_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action'][/integrate/] ? 'selected' : '')
+      %li= link_to 'Integrate', integrate_app_path(@app)
+      -if request.path_parameters['controller'] == 'apps' && request.path_parameters['action'][/integrate/]
+        %li.inception= link_to 'Advertiser', integrate_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action']=='integrate' ? 'selected' : '')
+        %li.inception= link_to 'Publisher', publisher_integrate_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action']=='publisher_integrate' ? 'selected' : '')
     - else
       %li.disabled Details
       %li.disabled Pay-Per-Install
@@ -21,15 +24,12 @@
       float: left;
       width: 150px;
     }
-    
     #apps_tools ul {
       padding-left: 0;
     }
-    
     #apps_tools li {
       list-style: none;
     }
-    
     #apps_tools li.disabled,
     #apps_tools a {
       text-decoration: none;
@@ -37,23 +37,27 @@
       color: black;
       padding: 5px;
     }
-    
+    #apps_tools li.inception {
+      list-style: square inside;
+    }
+    #apps_tools li.inception a {
+      padding-left: 20px;
+      font-size: 12px;
+    }
     #apps_tools a:hover {
       background: #ccc;
       background: -webkit-gradient(linear, left top, right bottom, from(#ccc), to(#fff));
       background: -moz-linear-gradient(left,  #ccc,  #fff);
     }
-    
     #apps_tools a.selected {
       background: #337BC8;
       background: -webkit-gradient(linear, left top, right bottom, from(#337BC8), to(#fff));
       background: -moz-linear-gradient(left,  #337BC8,  #fff);
     }
-    
     #apps_tools li.disabled {
       color: #aaa;
     }
-    
     #apps_main {
       margin-left: 160px;
     }
+
