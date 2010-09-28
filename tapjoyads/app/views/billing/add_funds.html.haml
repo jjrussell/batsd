@@ -6,6 +6,10 @@
   Enter your credit card information and the amount you would like to add to your balance.
   We accept Visa, MasterCard, Discover and American Express cards.
 
+%p
+  If you would like to use alternate forms of payment,
+  please email #{ link_to 'support@tapjoy.com', 'mailto:support@tapjoy.com' }.
+
 %h3 Current Balance: #{number_to_currency(current_partner.balance / 100.0)}
 
 - form_for(:credit_card, @credit_card, :url => { :action => :create_order }, :html => { :class => 'tjform' }) do |f|

@@ -24,7 +24,7 @@
           %tr
             %th &nbsp;
             %th Payments
-            %th Payouts
+            %th Earnings
           %tbody
             = render :partial => 'statement', :collection => @statements, :locals => {:format => :table}
     #details
@@ -36,9 +36,9 @@
     .none No statements available
 
 #buttons
-  = button_to 'Export Statments', {:method => 'GET', :action => 'export_statements' }
-  = button_to 'Export Payments', {:method => 'GET', :action => 'export_orders' }
-  = button_to 'Export Payouts', {:method => 'GET', :action => 'export_payouts' }
+  = button_to 'Export Monthly Statments', {:method => 'GET', :action => 'export_statements' }
+  = button_to 'Export Payments Statements', {:method => 'GET', :action => 'export_orders' }
+  = button_to 'Export Payouts Statements', {:method => 'GET', :action => 'export_payouts' }
 
 - content_for :page_javascript do
   :plain
