@@ -6,13 +6,18 @@
 #apps_main
   %h3 Publisher Integration
   %ol
-    %li Select our Offers (Virtual Currency Monetization) or Virtual Goods SDK.
-    %li Add it to your project directory.
+    - if @app.is_android?
+      %li Select our #{ link_to 'Offers (Virtual Currency Monetization) / Virtual Goods Library', {:action => 'sdk_download', :sdk => 'offers', :android => @app.is_android?} }.
+    - else
+      %li
+        Select our #{ link_to 'Offers (Virtual Currency Monetization)', {:action => 'sdk_download', :sdk => 'offers', :android => @app.is_android?} }
+        or #{ link_to 'Virtual Goods Library', {:action => 'sdk_download', :sdk => 'virtual_goods'} }.
+    %li Add the Tapjoy library to your project directory.
     %li Compile and run your project.
     %li Add the Tapjoy credentials (provided below) to your app.
     %li
       Email
-      = link_to 'support@tapjoy.com', 'mailto:support@tapjoy.com'
+      = link_to 'support+enableapp@tapjoy.com', 'mailto:support+enableapp@tapjoy.com'
       for confirmation and to make your campaign live.
 
   %p
@@ -32,8 +37,8 @@
 
   %p
     - if @app.is_android?
-      .left= button_to 'Offers/Virtual Goods SDK Download', :action => 'sdk_download', :sdk => 'offers', :android => @app.is_android?
+      .left= button_to 'Offers / Virtual Goods Library Download', :action => 'sdk_download', :sdk => 'offers', :android => @app.is_android?
     - else
-      .left= button_to 'Offers SDK Download', :action => 'sdk_download', :sdk => 'offers', :android => @app.is_android?
-      .left= button_to 'Virtual Goods SDK Download', :action => 'sdk_download', :sdk => 'virtual_goods'
+      .left= button_to 'Offers Library Download', :action => 'sdk_download', :sdk => 'offers', :android => @app.is_android?
+      .left= button_to 'Virtual Goods Library Download', :action => 'sdk_download', :sdk => 'virtual_goods'
     .clear
