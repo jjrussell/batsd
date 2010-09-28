@@ -40,6 +40,12 @@ class DeviceAppList < SimpledbResource
     now = Time.zone.now
     
     path_list = []
+    
+    unless app_id =~ UUID_REGEX
+      Notifier.alert_new_relic(InvalidAppIdForDeviceAppList, "udid: #{@key}, app_id: #{app_id}")
+      return path_list
+    end
+    
     old_time = last_run_time(app_id)
     if old_time.nil?
       path_list.push('new_user')
