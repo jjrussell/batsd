@@ -104,7 +104,7 @@ private
     if Time.now.to_i < 1288828800 # 2010-11-04 UTC
       # don't display for new users
       if current_user.created_at.to_i < 1286150400 # 2010-10-04 UTC
-        flash[:notice] = 'App Password and App Version have been deprecated in the new Tapjoy system.'
+        @deprecation_notice = 'App Password and App Version have been deprecated in the new Tapjoy system.'
       end
     end
   end

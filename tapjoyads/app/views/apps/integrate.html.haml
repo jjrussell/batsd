@@ -1,5 +1,10 @@
 - @page_title = 'App Integration'
 
+- unless @deprecation_notice.nil?
+  .flash#flash_notice
+    %strong Notice:
+    = @deprecation_notice
+
 = render :partial => 'shared/dropdown_select', :locals => { :objects => current_partner_apps, :selected => @app, :options => {:with_new_app_button => true} }
 = render :partial => 'actions', :locals => { :app => @app }
 
