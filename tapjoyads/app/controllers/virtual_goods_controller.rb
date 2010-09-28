@@ -76,7 +76,7 @@ private
 
     if params[:virtual_good][:icon]
       icon_file = params[:virtual_good][:icon]
-      if icon_file.size <= (100 << 10) # 100KB
+      if icon_file.size <= (200 << 10) # 200KB
         begin
           raise unless icon_file.read(4)[1..4] == 'PNG'
           dimensions = icon_file.read(20)[12..20].unpack('NN')
