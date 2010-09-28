@@ -26,7 +26,7 @@ class VirtualGoodsController < WebsiteController
       flash[:notice] = 'Sucessfully created virtual good'
       redirect_to app_virtual_good_path({ :app_id => @app.id, :id => @virtual_good.key })
     else
-      new()
+      redirect_to :back
     end
   end
 
@@ -41,7 +41,7 @@ class VirtualGoodsController < WebsiteController
       flash[:notice] = 'Sucessfully updated virtual good'
       redirect_to app_virtual_goods_path({ :app_id => @app.id })
     else
-      show()
+      redirect_to :back
     end
   end
 
@@ -75,12 +75,26 @@ private
 
 
     if params[:virtual_good][:icon]
-      if params[:virtual_good][:icon].size <= (200 << 10) # 200KB
-        bucket = S3.bucket(BucketNames::VIRTUAL_GOODS)
-        bucket.put("icons/#{@virtual_good.key}.png", params[:virtual_good][:icon].read, {}, 'public-read')
-        @virtual_good.has_icon = true
+      icon_file = params[:virtual_good][:icon]
+      if icon_file.size <= (100 << 10) # 100KB
+        begin
+          raise unless icon_file.read(4)[1..4] == 'PNG'
+          dimensions = icon_file.read(20)[12..20].unpack('NN')
+          if dimensions[0] <= 100 && dimensions[1] <= 200
+            icon_file.rewind
+            bucket = S3.bucket(BucketNames::VIRTUAL_GOODS)
+            bucket.put("icons/#{@virtual_good.key}.png", icon_file.read, {}, 'public-read')
+            @virtual_good.has_icon = true
+          else
+            flash[:error] = "icon file dimensions (#{dimensions.join('x')}) is too large"
+            return false
+          end
+        rescue
+          flash[:error] = "icon file may not be of PNG format"
+          return false
+        end
       else
-        flash[:error] = "icon file size (#{number_to_human_size(params[:virtual_good][:icon].size)}) is too large"
+        flash[:error] = "icon file size (#{number_to_human_size(icon_file.size)}) is too large"
         return false
       end
     end

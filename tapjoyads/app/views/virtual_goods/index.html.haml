@@ -12,15 +12,13 @@
         %th &nbsp;
         %th Name
         %th Type
-        %th Price (#{@app.currency.name})
-        %th Price ($)
+        %th.price= link_to 'Price', 'javascript:$.noop();', :title => 'Toggle between virtual currency and dollars'
         %th Status
         - if permitted_to?(:index, :statz)
           %th.admin
             Ordinal
             %br/
             (Admin-only field)
-        %th &nbsp;
     %tbody#virtual_goods
       - @virtual_goods.sort.each do |vg|
         - tr_class = vg.disabled? ? "disabled" : vg.beta? ? "beta" : ""
@@ -30,15 +28,19 @@
           %th
             - if vg.has_icon
               %span.icon= image_tag(vg.icon_url, :height => 50)
-          %td= vg.name
+            - else
+              (no icon)
+          %td= link_to vg.name, app_virtual_good_path({:app_id => @app.id, :id => vg.id}), :title => "Edit #{vg.name}"
           %td= vg.title
-          %td= vg.price
-          %td= number_to_currency(vg.price_in_dollars)
+          %td.currency
+            .price_in_vc
+              = vg.price
+              = @app.currency.name
+            .price_in_dollars.hidden
+              = number_to_currency(vg.price_in_dollars)
           %td= vg.disabled? ? "Disabled" : vg.beta? ? "Beta" : "&nbsp;"
           - if permitted_to?(:index, :statz)
             %td.admin= vg.ordinal
-          %td
-            .button= link_to "edit", app_virtual_good_path({:app_id => @app.id, :id => vg.id})
   - form_tag(reorder_app_virtual_goods_path(:app_id => @app.id), :id => "reorder-virtual-goods") do
     = hidden_field_tag('virtual_goods')
     = submit_tag('Save new order', :id => 'virtual-goods-order-submit', :style => "display:none;")
@@ -57,29 +59,8 @@
     td, th {
       padding: 0px 5px
     }
-    .button a {
-      display: inline-block;
-      color: #222;
-      font-size: 12px;
-      text-decoration: none;
-      text-shadow: 0px 1px 1px #fff;
-      margin: 3px 0px;
-      margin-right: 2px;
-      padding: 2px;
-      border: 1px solid #888;
-      background: #ddd;
-      background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ccc));
-      background: -moz-linear-gradient(top,  #fff,  #ccc);
-      -moz-border-radius: 4px;
-      -webkit-border-radius: 4px;
-    }
-    .button a:hover {
-      background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#bbb));
-      background: -moz-linear-gradient(top, #fff, #bbb);
-    }
-    .button a:active {
-      background: -webkit-gradient(linear, left top, left bottom, from(#aaa), to(#ddd));
-      background: -moz-linear-gradient(top, #aaa, #ddd);
+    td.currency {
+      text-align: right;
     }
   - if permitted_to?(:index, :statz)
     :plain
@@ -103,5 +84,14 @@
         var data = $('#virtual_goods').sortable("toArray");
         $('input#virtual_goods').val(JSON.stringify(data));
         return true;
+      });
+      $('th.price a').click(function(){
+        if ($('.price_in_vc').is(':hidden')) {
+          $('.price_in_vc').show();
+          $('.price_in_dollars').hide();
+        } else {
+          $('.price_in_vc').hide();
+          $('.price_in_dollars').show();
+        }
       });
     });
