@@ -1,4 +1,6 @@
 class VirtualGoodsController < WebsiteController
+  include ActionView::Helpers::NumberHelper
+
   layout 'tabbed'
   current_tab :apps
 
@@ -71,29 +73,42 @@ private
     @virtual_good.beta                = params[:virtual_good][:beta] == '1'
     @virtual_good.disabled            = params[:virtual_good][:disabled] == '1'
 
-=begin
+
     if params[:virtual_good][:icon]
-      bucket = S3.bucket(BucketNames::VIRTUAL_GOODS)
-      bucket.put("icons/#{@virtual_good.key}.png", params[:virtual_good][:icon].read, {}, 'public-read')
-      @virtual_good.has_icon = true
+      if params[:virtual_good][:icon].size <= (200 << 10) # 200KB
+        bucket = S3.bucket(BucketNames::VIRTUAL_GOODS)
+        bucket.put("icons/#{@virtual_good.key}.png", params[:virtual_good][:icon].read, {}, 'public-read')
+        @virtual_good.has_icon = true
+      else
+        flash[:error] = "icon file size (#{number_to_human_size(params[:virtual_good][:icon].size)}) is too large"
+        return false
+      end
     end
+
     if params[:virtual_good][:data]
-      bucket = S3.bucket(BucketNames::VIRTUAL_GOODS)
-      bucket.put("data/#{@virtual_good.key}.zip", params[:virtual_good][:data].read, {}, 'public-read')
-      @virtual_good.has_data = true
-      @virtual_good.file_size = 0
+      if params[:virtual_good][:data].size <= (200 << 10) # 200KB
+        bucket = S3.bucket(BucketNames::VIRTUAL_GOODS)
+        bucket.put("data/#{@virtual_good.key}.zip", params[:virtual_good][:data].read, {}, 'public-read')
+        @virtual_good.has_data = true
+        @virtual_good.file_size = 0
+      else
+        flash[:error] = "data file size (#{number_to_human_size(params[:virtual_good][:icon].size)}) is too large"
+        return false
+      end
     end
+
+=begin
+# this is going to take some more work
+# each vg type has associated extra attributes
     @virtual_good.extra_attributes    = params[:virtual_good][:extra_attributes]
-    @virtual_good.ordinal             = params[:virtual_good][:ordinal]
 =end
     if params[:virtual_good][:name].blank?
       flash[:error] = 'Name cannot be blank'
+      return false
     else
       @virtual_good.save!
       return true
     end
-
-    return false
   end
 
   def find_app

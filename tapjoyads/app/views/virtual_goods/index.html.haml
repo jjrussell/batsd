@@ -16,22 +16,29 @@
         %th Price ($)
         %th Status
         - if permitted_to?(:index, :statz)
-          %th Ordinal
+          %th.admin
+            Ordinal
+            %br/
+            (Admin-only field)
+        %th &nbsp;
     %tbody#virtual_goods
       - @virtual_goods.sort.each do |vg|
         - tr_class = vg.disabled? ? "disabled" : vg.beta? ? "beta" : ""
         %tr.virtual-good{:class => tr_class, :id => vg.key}
           %th.handler
             %span.ui-icon.ui-icon-arrowthick-2-n-s
-          %td
-            .button= link_to "edit", app_virtual_good_path({:app_id => @app.id, :id => vg.id})
+          %th
+            - if vg.has_icon
+              %span.icon= image_tag(vg.icon_url, :height => 50)
           %td= vg.name
           %td= vg.title
           %td= vg.price
           %td= number_to_currency(vg.price_in_dollars)
           %td= vg.disabled? ? "Disabled" : vg.beta? ? "Beta" : "&nbsp;"
           - if permitted_to?(:index, :statz)
-            %td= vg.ordinal
+            %td.admin= vg.ordinal
+          %td
+            .button= link_to "edit", app_virtual_good_path({:app_id => @app.id, :id => vg.id})
   - form_tag(reorder_app_virtual_goods_path(:app_id => @app.id), :id => "reorder-virtual-goods") do
     = hidden_field_tag('virtual_goods')
     = submit_tag('Save new order', :id => 'virtual-goods-order-submit', :style => "display:none;")
@@ -46,6 +53,9 @@
     }
     th.handler {
       cursor: move;
+    }
+    td, th {
+      padding: 0px 5px
     }
     .button a {
       display: inline-block;
@@ -71,7 +81,11 @@
       background: -webkit-gradient(linear, left top, left bottom, from(#aaa), to(#ddd));
       background: -moz-linear-gradient(top, #aaa, #ddd);
     }
-
+  - if permitted_to?(:index, :statz)
+    :plain
+      th.admin, td.admin {
+        color: blue;
+      }
 - content_for :page_javascript do
   :plain
     $(function($){

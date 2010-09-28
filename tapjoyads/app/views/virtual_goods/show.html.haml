@@ -6,7 +6,7 @@
 #content-with-links
   %h3 Edit Virtual Good
 
-  - if @virtual_good && @virtual_good.has_icon
+  - if @virtual_good.has_icon
     .icon= image_tag(@virtual_good.icon_url, :size => '57x57')
 
   - form_for(:virtual_good, @virtual_good, :url => { :action => @form_action }, :html => { :method => @form_method, :multipart => true, :class => 'tjform' }) do |f|
@@ -41,21 +41,20 @@
           #help_max_purchases.help ?
         %td
           = f.text_field(:max_purchases)
-      - if false #TODO: icon and data are disabled for now
-        %tr
-          %th
-            = f.label(:icon)
-            #help_name.help ?
-          %td
-            = f.file_field(:icon)
-            (Optional)
-        %tr
-          %th
-            = f.label(:data)
-            #help_name.help ?
-          %td
-            = f.file_field(:data)
-            (Optional)
+      %tr
+        %th
+          = f.label(:icon)
+          #help_icon.help ?
+        %td
+          = f.file_field(:icon)
+          (Optional)
+      %tr
+        %th
+          = f.label(:data)
+          #help_data.help ?
+        %td
+          = f.file_field(:data)
+          (Optional)
       %tr
         %th
           = f.label(:beta)
@@ -81,7 +80,24 @@
 
     .hidden
       #help_name_content{:name => 'Name'}
-        The name of the currency
+        The name of this virtual good
+      #help_type_content{:name => 'Type'}
+        Virtual good type
+      #help_description_content{:name => 'Description'}
+        Description that will appear with this virtual good
+      #help_price_content{:name => 'Price'}
+        Price in #{@app.currency.name} for this virtual good
+      #help_max_purchases_content{:name => 'Maximum Purchases'}
+        Maximum number of times a user can purchase this item.
+      #help_icon_content{:name => 'Icon'}
+        Maximum file size is 200KB and maximum dimension is 100x200 pixels.
+      #help_data_content{:name => 'Data'}
+        Zip file to download with the virtual good
+      #help_beta_content{:name => 'Beta Items'}
+        Items marked as "beta" will only be visible to devices marked as
+        = link_to "virtual currency beta user.", app_currency_path({:app_id => @app.id, :id => @app.currency.id})
+      #help_disabled_content{:name => 'Disabled Items'}
+        Items marked as "disabled" will not be visible to anyone.
 - content_for :page_styles do
   :plain
     .icon {
