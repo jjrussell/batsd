@@ -127,15 +127,22 @@
 
 - content_for :page_javascript do
   :plain
-    $(function() {
+    var loadData = function(data) {
+      Tapjoy.drawLargeGraph(data.connect_data, 'connects');
+      Tapjoy.drawLargeGraph(data.rewarded_installs_plus_spend_data, 'installs_spend');
+      Tapjoy.drawLargeGraph(data.rewarded_installs_plus_rank_data, 'installs_rank');
+      Tapjoy.drawLargeGraph(data.published_offers_data, 'published_offers');
+      Tapjoy.drawLargeGraph(data.offerwall_views_data, 'offerwall_views');
+
+      $('#date').val(data.date);
+      $('#end_date').val(data.end_date);
+      $('#granularity').val(data.granularity);
+    };
+
+    $(function($) {
       $('#date').datepicker();
       $('#end_date').datepicker();
-
-      Tapjoy.drawLargeGraph(#{@connect_data.to_json}, 'connects');
-      Tapjoy.drawLargeGraph(#{@rewarded_installs_plus_spend_data.to_json}, 'installs_spend');
-      Tapjoy.drawLargeGraph(#{@rewarded_installs_plus_rank_data.to_json}, 'installs_rank');
-      Tapjoy.drawLargeGraph(#{@published_offers_data.to_json}, 'published_offers');
-      Tapjoy.drawLargeGraph(#{@offerwall_views_data.to_json}, 'offerwall_views');
+      loadData(#{@data.to_json});
 
       $('#download_as_csv').click(function(){
         $('input#download_date').val($('#date').val());
