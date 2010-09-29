@@ -4,13 +4,17 @@
   .right= link_to 'Add funds', add_funds_billing_path
   %h2 Billing Summary
   .clear
-  .left
-    Current Balance:
-    = number_to_currency(@current_balance/100.0)
-  .right
+  #balance-info.left
+    .line
+      Current Balance:
+      = number_to_currency(@current_balance/100.0)
+    .line
+      Pending Earnings:
+      = number_to_currency(@pending_earnings/100.0)
+  #payment-info.right
     Last Payment:
     = number_to_currency(@last_payment/100.0)
-  .centered
+  #payout-info.centered
     Last Payout:
     = number_to_currency(@last_payout/100.0)
   .clear
@@ -58,16 +62,17 @@
     
 - content_for :page_styles do
   :plain
+    #balance-info {
+      text-align: right;
+    }
     #billing-summary {
       float: left;
       padding: 10px 30px 10px 10px;
     }
-  
     table {
       border-collapse: collapse;
       margin-bottom: 20px;
     }
-  
     table th {
       text-align: right;
     }
@@ -82,40 +87,29 @@
       cursor: pointer;
       background-color: #aed6ff;
     }
-    
     #billing-summary tr.active {
       background-color: #00647b !important;
     }
-  
     #details {
       margin-left: 350px;
       padding-top: 1px;
     }
-  
     #details_explanation {
       color: #999;
       font-size: 20px;
       padding-top: 50px;
       text-align: center;
     }
-    
     #buttons {
       clear: both;
     }
-  
     #change_date {
       display: inline;
     }
-    
     .button-to {
       padding-top: 10px;
       display: inline-block;
     }
-    
-    .hidden {
-      display: none;
-    }
-    
     .none {
       font-style: italic;
       padding: 15px 0;

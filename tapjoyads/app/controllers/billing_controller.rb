@@ -6,6 +6,7 @@ class BillingController < WebsiteController
 
   def index
     @current_balance = current_partner.balance
+    @pending_earnings = current_partner.pending_earnings
     @last_payout = @payouts.blank? ? 0 : @payouts.last.amount
     @last_payment = @orders.blank? ? 0 : @orders.last.amount
   end
