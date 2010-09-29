@@ -80,6 +80,8 @@
       loadData(#{@data.to_json});
       $('#date, #end_date, #granularity').change(function(){
         // TODO: disable input boxes while ajax is loading
+        $('#date, #end_date, #granularity').attr('disabled', true);
+        $('#tables, #charts').css('opacity', 0.3);
         var url = '#{request.env['PATH_INFO']}';
         var params = {
           date: $('#date').val(),
@@ -90,6 +92,8 @@
         $.get(url, params, function(response, status, request){
           loadData(response.data);
           $('#tables').html(response.stats_table);
+          $('#date, #end_date, #granularity').attr('disabled', false);
+          $('#tables, #charts').css('opacity', 1.0);
         }, 'json');
       });
 
