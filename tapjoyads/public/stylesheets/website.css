@@ -133,6 +133,8 @@ div.flash {
   background-color: #f8f8f8;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
+  border: 2px solid #AF6F15;
+  color: #AF6F15;
 }
 #flash_notice {
   border: 2px solid #328F0D;

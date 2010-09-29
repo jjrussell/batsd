@@ -1,5 +1,15 @@
 - @page_title = "Reporting for #{@offer.name}"
 
+- if is_msie?
+  .flash
+    %strong Warning:
+    Advanced reporting features may not be available in Internet Explorer.
+    Please download
+    = link_to 'Firefox', 'http://www.mozilla.com/firefox/', :target => '_blank'
+    or
+    = link_to 'Chrome', 'http://www.google.com/chrome', :target => '_blank'
+    \.
+
 = render :partial => 'shared/dropdown_select', :locals => {:objects => current_partner_offers, :selected => @offer, :options => {:extra_url_params => params, :title_prefix => 'Reporting for'} }
 %br/
 

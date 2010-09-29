@@ -12,6 +12,10 @@ module ApplicationHelper
     request.env["HTTP_USER_AGENT"][/mobile/i]
   end
 
+  def is_msie?
+    request.env["HTTP_USER_AGENT"][/msie/i]
+  end
+
   def clippy(text, bgcolor = '#FFFFFF')
     @clippy_id = 0 unless defined?(@clippy_id)
     @clippy_id += 1
