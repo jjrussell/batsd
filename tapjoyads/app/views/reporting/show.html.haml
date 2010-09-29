@@ -4,18 +4,12 @@
 %br/
 
 .left
-  %form#change_date{ :method => :get, :class => 'tjform' }
+  - form_tag(export_reporting_path(@offer.id), :id => 'download') do
     = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
     \-
     = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
     = select_tag(:granularity, options_for_select({ 'Daily' => :daily, 'Hourly' => :hourly }, @granularity))
-    = submit_tag('Change')
-    %input#change{ :type => 'button', :value => 'ajax' }
-    %input#download_as_csv{ :type => 'button', :value => 'Download as CSV' }
-  - form_tag(export_reporting_path(@offer.id), :id => 'download') do
-    %input#download_date{ :type => 'hidden', :name => 'date' }
-    %input#download_end_date{ :type => 'hidden', :name => 'end_date' }
-    %input#download_granularity{ :type => 'hidden', :name => 'granularity' }
+    = submit_tag('Download as CSV')
 .clear
 
 #tables
@@ -148,12 +142,16 @@
       $('#date').datepicker();
       $('#end_date').datepicker();
       loadData(#{@data.to_json});
-      $('#change').click(function(){
+      $('#date, #end_date, #granularity').change(function(){
+        // TODO: disable input boxes while ajax is loading
         var url = '#{request.env['PATH_INFO']}';
-        var params = { date: '09/24/2010', end_date: '09/28/2010', granularity: 'daily', format: 'json'};
-        console.log([url, params]);
+        var params = {
+          date: $('#date').val(),
+          end_date: $('#end_date').val(),
+          granularity: $('#granularity').val(),
+          format: 'json'
+        };
         $.get(url, params, function(data, status, request){
-          console.log([data, status, request]);
           loadData(data);
         }, 'json');
       });
