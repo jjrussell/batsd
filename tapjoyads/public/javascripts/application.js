@@ -1,4 +1,5 @@
 if (typeof(Tapjoy) == "undefined") Tapjoy = {};
+if (typeof(console) == "undefined") console={log:$.noop};
 
 function numberToCurrency(number) {
   return '$' + number.toFixed(2);
