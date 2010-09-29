@@ -18,7 +18,7 @@
           - else
             \-
       %tr
-        %td Spend
+        %td Advertising Spend
         %td= number_to_currency(@appstats.stats['installs_spend'].sum / -100.0)
       %tr
         %td Daily Budget
@@ -27,7 +27,7 @@
         %td Balance
         %td= number_to_currency(current_partner.balance / 100.0)
       %tr
-        %td Cost per Install
+        %td Bid
         %td= number_to_currency(@offer.payment / 100.0)
 
 .data

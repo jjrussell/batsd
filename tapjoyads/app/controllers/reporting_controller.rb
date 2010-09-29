@@ -22,17 +22,17 @@ class ReportingController < WebsiteController
     intervals = @appstats.intervals.map { |time| time.to_s(:pub_ampm) }
     @data = {
       :connect_data => {
-        :name => 'Connects',
+        :name => 'Sessions',
         :intervals => intervals,
         :xLabels => @appstats.x_labels,
         :main => {
-          :names => [ 'Connects', 'New Users' ],
+          :names => [ 'Sessions', 'New Users' ],
           :data => [ @appstats.stats['logins'], @appstats.stats['new_users'] ]
         }
       },
 
       :rewarded_installs_plus_spend_data => {
-        :name => 'Rewarded installs + spend',
+        :name => 'Paid installs + Advertising spend',
         :intervals => intervals,
         :xLabels => @appstats.x_labels,
         :main => {
@@ -41,7 +41,7 @@ class ReportingController < WebsiteController
         },
         :right => {
           :unitPrefix => '$',
-          :names => [ 'Spend' ],
+          :names => [ 'Advertising Spend' ],
           :data => [ @appstats.stats['installs_spend'].map { |i| i / -100.0 } ],
           :stringData => [ @appstats.stats['installs_spend'].map { |i| number_to_currency(i / -100.0) } ]
         },
@@ -52,7 +52,7 @@ class ReportingController < WebsiteController
       },
 
       :rewarded_installs_plus_rank_data => {
-        :name => 'Rewarded installs + rank',
+        :name => 'Paid installs + Rank',
         :intervals => intervals,
         :xLabels => @appstats.x_labels,
         :main => {
@@ -67,11 +67,11 @@ class ReportingController < WebsiteController
       },
 
       :published_offers_data => {
-        :name => 'Published offers',
+        :name => 'Revenue',
         :intervals => intervals,
         :xLabels => @appstats.x_labels,
         :main => {
-          :names => [ 'Offers Completed', 'Offer clicks' ],
+          :names => [ 'Offers completed', 'Offer clicks' ],
           :data => [ @appstats.stats['rewards'], @appstats.stats['rewards_opened'] ]
         },
         :right => {
