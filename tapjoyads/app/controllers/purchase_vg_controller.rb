@@ -30,9 +30,8 @@ class PurchaseVgController < ApplicationController
     
     PointPurchases.transaction(:key => "#{publisher_user_id}.#{params[:app_id]}") do |point_purchases|
       point_purchases.virtual_goods = {}
-      point_purchases.points = currency.initial_balance
     end
-    @message = "You have successfully removed all virtual goods and reset the balance for this device."
+    @message = "You have successfully removed all virtual goods."
   rescue NotABetaDevice => e
     @message = "Error: #{e.to_s}"
   end
