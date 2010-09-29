@@ -88,6 +88,7 @@
           granularity: $('#granularity').val()
         };
         $.get(url, params, function(response, status, request){
+          loadData(response.data);
           $('#tables').html(response.stats_table);
           $('#date, #end_date, #granularity').attr('disabled', false);
           $('#tables, #charts').css('opacity', 1.0);
@@ -95,19 +96,18 @@
             '#date=' + $('#date').val() +
             '&end_date=' + $('#end_date').val() +
             '&granularity=' + $('#granularity').val();
-          loadData(response.data);
         }, 'json');
       };
+      $('#date, #end_date, #granularity').change(ajaxCall);
       // load appropriate data from anchor
       var anchor = location.href.split(/#/)[1];
       if (anchor) {
         $(anchor.split(/&/)).each(function(i, pair){
           pair = pair.split(/=/);
           $('#'+pair[0]).val(pair[1]);
+          ajaxCall();
         });
-        ajaxCall();
       }
-      $('#date, #end_date, #granularity').change(ajaxCall);
     });
 
 - content_for :page_styles do
