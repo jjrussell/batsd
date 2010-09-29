@@ -46,7 +46,7 @@ namespace :admin do
   
   desc "Prints the apache restarts logs"
   task :view_apache_restarts do
-    system("script/cloudrun 'masterjobs jobserver webserver' 'uptime ; if [ -f /mnt/log/apache_restarts.log ] ; then cat /mnt/log/apache_restarts.log ; fi' 'ubuntu'")
+    system("script/cloudrun 'webserver' 'uptime ; if [ -f /mnt/log/apache_restarts.log ] ; then cat /mnt/log/apache_restarts.log ; fi' 'ubuntu'")
   end
   
 end
