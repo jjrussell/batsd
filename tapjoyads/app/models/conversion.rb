@@ -26,6 +26,10 @@ class Conversion < ActiveRecord::Base
     write_attribute(:reward_type, REWARD_TYPES[string])
   end
   
+  def reward_type_string_for_displayer=(string)
+    write_attribute(:reward_type, REWARD_TYPES[string] + 1000)
+  end
+  
 private
   
   def update_publisher_amount

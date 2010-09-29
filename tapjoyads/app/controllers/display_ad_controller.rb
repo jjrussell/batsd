@@ -2,7 +2,7 @@ class DisplayAdController < ApplicationController
   
   # A hard-coded list of publisher apps that support ABC ads. The main requirement is that
   # udid == publisher_user_id.
-  @@allowed_publisher_apps = Set.new([
+  @@allowed_publisher_app_ids = Set.new([
       "41df65f0-593c-470b-83a4-37be66740f34", # TapResort
       "2349536b-c810-47d7-836c-2cd47cd3a796", # TapDefense
       ])
@@ -37,48 +37,56 @@ private
     return unless verify_params([ :app_id, :udid ], { :allow_empty => false })
 
     now = Time.zone.now
-
     geoip_data = get_geoip_data
+    params[:displayer_app_id] = params[:app_id]
     
     web_request = WebRequest.new
-    web_request.put_values('display_ad', params, get_ip_address, geoip_data)
-    web_request.save
-
+    web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data)
+    
     # Randomly choose one publisher app that the user has run:
     device_app_list = DeviceAppList.new(:key => params[:udid])
-    publisher_apps = []
-    @@allowed_publisher_apps.each do |app_id|
+    publisher_app_ids = []
+    @@allowed_publisher_app_ids.each do |app_id|
      last_run_time = device_app_list.last_run_time(app_id)
      if last_run_time.present? && last_run_time > now - 1.week
-       publisher_apps << app_id
+       publisher_app_ids << app_id
      end
     end
-    return if publisher_apps.empty?
-    publisher_app_id = publisher_apps[rand(publisher_apps.size)]
-    publisher_app = App.find_in_cache(publisher_app_id)
+    
+    unless publisher_app_ids.empty?
+      publisher_app_id = publisher_app_ids[rand(publisher_app_ids.size)]
+      publisher_app = App.find_in_cache(publisher_app_id)
 
-    # Randomly choose a free offer that is converting at greater than 50%
-    offer_list, more_data_available = publisher_app.get_offer_list(params[:udid], 
-       :device_type => params[:device_type],
-       :geoip_data => geoip_data,
-       :required_length => 25,
-       :reject_rating_offer => true)
+      # Randomly choose a free offer that is converting at greater than 50%
+      offer_list, more_data_available = publisher_app.get_offer_list(params[:udid], 
+         :device_type => params[:device_type],
+         :geoip_data => geoip_data,
+         :required_length => 25,
+         :reject_rating_offer => true)
     
-    offer_list.reject! do |offer|
-      offer.is_paid? || offer.conversion_rate < 0.5
+      offer_list.reject! do |offer|
+        offer.is_paid? || offer.conversion_rate < 0.5 || offer.item_id == params[:app_id]
+      end
+      srand
+      offer = offer_list[rand(offer_list.size)]
+    
+      @click_url = offer.get_redirect_url(publisher_app, params[:udid], params[:udid], 'display_ad', nil, params[:app_id])
+      @image = get_ad_image(publisher_app, offer)
+      
+      params[:offer_id] = offer.id
+      params[:publisher_app_id] = publisher_app.id
+      
+      web_request.add_path('display_ad_shown')
     end
-    srand
-    offer = offer_list[rand(offer_list.size)]
-    
-    @click_url = offer.get_redirect_url(publisher_app, params[:udid], params[:udid], 'display_ad', nil, params[:app_id])
-    @image = get_ad_image(publisher_app, offer)
+      
+    web_request.save
   end
 
   def get_ad_image(publisher, offer)
     
     Mc.get_and_put("display_ad.#{publisher.id}.#{offer.id}", false, 1.hour) do
       width = 320
-      height = 48
+      height = 50
       border = 2
       
       publisher_icon_blob = Downloader.get("http://s3.amazonaws.com/app_data/icons/#{publisher.id}.png")
@@ -104,7 +112,7 @@ private
 
       img.border!(border, border, 'black')
       
-      Base64.encode64(img.to_blob)
+      Base64.encode64(img.to_blob).gsub("\n", '')
     end
   end
   

@@ -52,7 +52,7 @@ class Currency < ActiveRecord::Base
     [publisher_amount * conversion_rate / 100.0, 1.0].max.to_i
   end
   
-  def get_publisher_amount(offer)
+  def get_publisher_amount(offer, displayer_app = nil)
     if offer.item_type == 'RatingOffer' || offer.partner_id == partner_id
       publisher_amount = 0
     elsif offer.item_type == 'OfferpalOffer'
@@ -60,6 +60,11 @@ class Currency < ActiveRecord::Base
     else
       publisher_amount = offer.payment * installs_money_share
     end
+    
+    if displayer_app.present?
+      publisher_amount *= 0.5
+    end
+    
     publisher_amount.to_i
   end
   
@@ -72,12 +77,20 @@ class Currency < ActiveRecord::Base
     advertiser_amount
   end
   
-  def get_tapjoy_amount(offer)
-    tapjoy_amount = -get_advertiser_amount(offer) - get_publisher_amount(offer)
-    unless offer.actual_payment.nil?
+  def get_tapjoy_amount(offer, displayer_app = nil)
+    tapjoy_amount = -get_advertiser_amount(offer) - get_publisher_amount(offer, displayer_app) - get_displayer_amount(offer, displayer_app)
+    if offer.actual_payment.present?
       tapjoy_amount += offer.actual_payment - offer.payment
     end
     tapjoy_amount
+  end
+  
+  def get_displayer_amount(offer, displayer_app = nil)
+    if displayer_app.present?
+      offer.payment * displayer_app.display_money_share
+    else
+      0
+    end
   end
   
   def add_disabled_partner_id(partner_id)

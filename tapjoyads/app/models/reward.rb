@@ -4,10 +4,12 @@ class Reward < SimpledbResource
   
   self.sdb_attr :publisher_app_id
   self.sdb_attr :advertiser_app_id
+  self.sdb_attr :displayer_app_id
   self.sdb_attr :publisher_user_id
   self.sdb_attr :offer_id
   self.sdb_attr :advertiser_amount, :type => :int
   self.sdb_attr :publisher_amount,  :type => :int
+  self.sdb_attr :displayer_amount,  :type => :int
   self.sdb_attr :tapjoy_amount,     :type => :int
   self.sdb_attr :offerpal_amount,   :type => :int
   self.sdb_attr :currency_reward,   :type => :int
@@ -15,6 +17,7 @@ class Reward < SimpledbResource
   self.sdb_attr :type
   self.sdb_attr :udid
   self.sdb_attr :country
+  self.sdb_attr :reward_key_2
   self.sdb_attr :created,           :type => :time
   self.sdb_attr :sent_currency,     :type => :time
   self.sdb_attr :sent_money_txn,    :type => :time

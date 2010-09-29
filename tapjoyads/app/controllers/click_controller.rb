@@ -69,6 +69,12 @@ private
   
   def create_click(type, generic = false)
     currency = Currency.find_in_cache_by_app_id(params[:publisher_app_id])
+    displayer_app = nil
+    reward_key_2 = nil
+    if params[:displayer_app_id].present?
+      displayer_app = App.find_in_cache(params[:displayer_app_id])
+      reward_key_2 = UUIDTools::UUID.random_create.to_s
+    end
     
     @click = Click.new(:key => (generic ? UUIDTools::UUID.random_create.to_s : "#{params[:udid]}.#{params[:advertiser_app_id]}"))
     @click.clicked_at        = @now
@@ -76,15 +82,18 @@ private
     @click.publisher_app_id  = params[:publisher_app_id]
     @click.publisher_user_id = params[:publisher_user_id]
     @click.advertiser_app_id = params[:advertiser_app_id]
+    @click.displayer_app_id  = params[:displayer_app_id]
     @click.offer_id          = params[:offer_id]
     @click.reward_key        = UUIDTools::UUID.random_create.to_s
+    @click.reward_key_2      = reward_key_2
     @click.source            = params[:source]
     @click.country           = get_geoip_data[:country]
     @click.type              = type
     @click.advertiser_amount = currency.get_advertiser_amount(@offer)
-    @click.publisher_amount  = currency.get_publisher_amount(@offer)
+    @click.publisher_amount  = currency.get_publisher_amount(@offer, displayer_app)
     @click.currency_reward   = currency.get_reward_amount(@offer)
-    @click.tapjoy_amount     = currency.get_tapjoy_amount(@offer)
+    @click.displayer_amount  = currency.get_displayer_amount(@offer, displayer_app)
+    @click.tapjoy_amount     = currency.get_tapjoy_amount(@offer, displayer_app)
     @click.save
   end
   

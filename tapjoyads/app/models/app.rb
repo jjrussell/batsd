@@ -168,6 +168,10 @@ class App < ActiveRecord::Base
     return match[1]
   end
 
+  def display_money_share
+    0.4
+  end
+
 private
   
   def create_primary_offer

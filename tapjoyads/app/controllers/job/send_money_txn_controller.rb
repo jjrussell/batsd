@@ -31,15 +31,21 @@ private
         c.reward_type_string = reward.type
         c.created_at = reward.created
       end
-      begin
-        conversion.save!
-      rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid => e
-        if conversion.errors[:id] == 'has already been taken' || e.message =~ /Duplicate entry.*index_conversions_on_id/
-          Rails.logger.info "Duplicate Conversion: #{e.class} when saving conversion: '#{conversion.id}'"
-          return
-        else
-          raise e
+      save_conversion(conversion)
+      
+      if reward.displayer_app_id.present?
+        conversion = Conversion.new do |c|
+          c.id = reward.reward_key_2
+          c.reward_id = reward.key
+          c.advertiser_offer_id = reward.offer_id
+          c.publisher_app_id = reward.displayer_app_id
+          c.advertiser_amount = 0
+          c.publisher_amount = reward.displayer_amount
+          c.tapjoy_amount = 0
+          c.reward_type_string_for_displayer = reward.type
+          c.created_at = reward.created
         end
+        save_conversion(conversion)
       end
       
       reward.put('sent_money_txn', Time.zone.now.to_f.to_s)
@@ -47,4 +53,17 @@ private
       
     end
   end
+  
+  def save_conversion(conversion)
+    begin
+      conversion.save!
+    rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid => e
+      if conversion.errors[:id] == 'has already been taken' || e.message =~ /Duplicate entry.*index_conversions_on_id/
+        Rails.logger.info "Duplicate Conversion: #{e.class} when saving conversion: '#{conversion.id}'"
+      else
+        raise e
+      end
+    end
+  end
+  
 end
