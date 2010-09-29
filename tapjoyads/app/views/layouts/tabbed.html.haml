@@ -52,7 +52,9 @@
         &copy; #{Time.now.year} Copyright Tapjoy. All rights reserved.
         = link_to 'Privacy Policy', '/privacy.html', :target => '_blank'
 
-    = javascript_include_tag 'jquery-1.4.2.min', 'jquery-ui-1.8.4.custom.min', 'jquery.tablesorter', 'application'
+    = javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.#{'min.' if Rails.env!='development'}js"
+    = javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.#{'min.' if Rails.env!='development'}js"
+    = javascript_include_tag 'jquery.tablesorter', 'application'
     = yield :included_javascripts
     
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
