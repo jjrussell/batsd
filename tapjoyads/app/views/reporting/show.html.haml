@@ -13,72 +13,8 @@
 .clear
 
 #tables
-  .data
-    %table
-      %thead
-        %tr
-          %th{ :colspan => 2 } Advertiser Data
-      %tbody
-        %tr
-          %td Clicks
-          %td= number_with_delimiter(@appstats.stats['paid_clicks'].sum)
-        %tr
-          %td Installs
-          %td= number_with_delimiter(@appstats.stats['paid_installs'].sum)
-        %tr
-          %td Conversion Rate
-          %td
-            - if @appstats.stats['paid_clicks'].sum > 0
-              = "%.1f%" % (@appstats.stats['paid_installs'].sum.to_f / @appstats.stats['paid_clicks'].sum * 100.0)
-            - else
-              \-
-        %tr
-          %td Spend
-          %td= number_to_currency(@appstats.stats['installs_spend'].sum / -100.0)
-        %tr
-          %td Daily Budget
-          %td= number_with_delimiter(@offer.daily_budget)
-        %tr
-          %td Balance
-          %td= number_to_currency(current_partner.balance / 100.0)
-        %tr
-          %td Cost per Install
-          %td= number_to_currency(@offer.payment / 100.0)
-
-  .data
-    %table
-      %thead
-        %tr
-          %th{ :colspan => 2 } Publisher Data
-      %tbody
-        %tr
-          %td Offerwall Views
-          %td= number_with_delimiter(@appstats.stats['offerwall_views'].sum)
-        %tr
-          %td Offer Clicks
-          %td= number_with_delimiter(@appstats.stats['rewards_opened'].sum)
-        %tr
-          %td Offers Completed
-          %td= number_with_delimiter(@appstats.stats['rewards'].sum)
-        %tr
-          %td Conversion Rate
-          %td
-            - if @appstats.stats['rewards_opened'].sum > 0
-              = "%.1f%" % (@appstats.stats['rewards'].sum.to_f / @appstats.stats['rewards_opened'].sum * 100.0)
-            - else
-              \-
-        %tr
-          %td Revenue
-          %td= number_to_currency(@appstats.stats['rewards_revenue'].sum / 100.0)
-        %tr
-          %td Offerwall eCPM
-          %td
-            - if @appstats.stats['offerwall_views'].sum > 0
-              = number_to_currency(@appstats.stats['rewards_revenue'].sum.to_f / (@appstats.stats['offerwall_views'].sum / 1000.0) / 100.0)
-            - else
-              $0.00
-
-  .clear
+  = render :partial => 'stats_table'
+.clear
 
 #charts{ :style => "text-align: center;" }
   #connects.graph
@@ -123,7 +59,7 @@
 - content_for :page_javascript do
   :plain
     var loadData = function(data) {
-      $('div#charts div.graph div.holder canvas').each(function(){
+      $('div#charts canvas').each(function(){
         RGraph.Clear(this);
       });
 
@@ -151,8 +87,9 @@
           granularity: $('#granularity').val(),
           format: 'json'
         };
-        $.get(url, params, function(data, status, request){
-          loadData(data);
+        $.get(url, params, function(response, status, request){
+          loadData(response.data);
+          $('#tables').html(response.stats_table);
         }, 'json');
       });
 
@@ -163,7 +100,7 @@
         $('form#download').submit();
       });
     });
-  
+
 - content_for :page_styles do
   :plain
     .icon {
@@ -171,33 +108,26 @@
       padding-right: 10px;
       float: left;
     }
-    
     #tables {
       padding: 20px 0;
     }
-    
     .data {
       float: left;
       padding: 0 10px;
     }
-    
     table {
       border-collapse: collapse;
     }
-    
     th, td {
       border: 1px solid #ccc;
       padding: 2px 5px;
     }
-    
     th {
       text-align: center;
     }
-    
     td {
       text-align: left;
     }
-    
     .tjform input[type=submit] {
       margin: 0;
       float: none;

@@ -120,7 +120,12 @@ class ReportingController < WebsiteController
     end
     respond_to do |format|
       format.html
-      format.json { render :json => @data.to_json }
+      format.json do
+        render :json => {
+          :data => @data,
+          :stats_table => render_to_string(:action => '_stats_table.html.haml')
+        }.to_json
+      end
     end
   end
 

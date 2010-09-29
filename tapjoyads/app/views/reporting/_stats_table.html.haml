@@ -1,0 +1,64 @@
+.data
+  %table
+    %thead
+      %tr
+        %th{ :colspan => 2 } Advertiser Data
+    %tbody
+      %tr
+        %td Clicks
+        %td= number_with_delimiter(@appstats.stats['paid_clicks'].sum)
+      %tr
+        %td Installs
+        %td= number_with_delimiter(@appstats.stats['paid_installs'].sum)
+      %tr
+        %td Conversion Rate
+        %td
+          - if @appstats.stats['paid_clicks'].sum > 0
+            = "%.1f%" % (@appstats.stats['paid_installs'].sum.to_f / @appstats.stats['paid_clicks'].sum * 100.0)
+          - else
+            \-
+      %tr
+        %td Spend
+        %td= number_to_currency(@appstats.stats['installs_spend'].sum / -100.0)
+      %tr
+        %td Daily Budget
+        %td= number_with_delimiter(@offer.daily_budget)
+      %tr
+        %td Balance
+        %td= number_to_currency(current_partner.balance / 100.0)
+      %tr
+        %td Cost per Install
+        %td= number_to_currency(@offer.payment / 100.0)
+
+.data
+  %table
+    %thead
+      %tr
+        %th{ :colspan => 2 } Publisher Data
+    %tbody
+      %tr
+        %td Offerwall Views
+        %td= number_with_delimiter(@appstats.stats['offerwall_views'].sum)
+      %tr
+        %td Offer Clicks
+        %td= number_with_delimiter(@appstats.stats['rewards_opened'].sum)
+      %tr
+        %td Offers Completed
+        %td= number_with_delimiter(@appstats.stats['rewards'].sum)
+      %tr
+        %td Conversion Rate
+        %td
+          - if @appstats.stats['rewards_opened'].sum > 0
+            = "%.1f%" % (@appstats.stats['rewards'].sum.to_f / @appstats.stats['rewards_opened'].sum * 100.0)
+          - else
+            \-
+      %tr
+        %td Revenue
+        %td= number_to_currency(@appstats.stats['rewards_revenue'].sum / 100.0)
+      %tr
+        %td Offerwall eCPM
+        %td
+          - if @appstats.stats['offerwall_views'].sum > 0
+            = number_to_currency(@appstats.stats['rewards_revenue'].sum.to_f / (@appstats.stats['offerwall_views'].sum / 1000.0) / 100.0)
+          - else
+            $0.00
