@@ -118,7 +118,10 @@ class ReportingController < WebsiteController
         :stringData => [ @appstats.stats['arpdau'].map { |i| number_to_currency(i / 100.0) } ]
       }
     end
-
+    respond_to do |format|
+      format.html
+      format.json { render :json => @data.to_json }
+    end
   end
 
   def export

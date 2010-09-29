@@ -10,6 +10,7 @@
     = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
     = select_tag(:granularity, options_for_select({ 'Daily' => :daily, 'Hourly' => :hourly }, @granularity))
     = submit_tag('Change')
+    %input#change{ :type => 'button', :value => 'ajax' }
     %input#download_as_csv{ :type => 'button', :value => 'Download as CSV' }
   - form_tag(export_reporting_path(@offer.id), :id => 'download') do
     %input#download_date{ :type => 'hidden', :name => 'date' }
@@ -128,6 +129,10 @@
 - content_for :page_javascript do
   :plain
     var loadData = function(data) {
+      $('div#charts div.graph div.holder canvas').each(function(){
+        RGraph.Clear(this);
+      });
+
       Tapjoy.drawLargeGraph(data.connect_data, 'connects');
       Tapjoy.drawLargeGraph(data.rewarded_installs_plus_spend_data, 'installs_spend');
       Tapjoy.drawLargeGraph(data.rewarded_installs_plus_rank_data, 'installs_rank');
@@ -143,6 +148,15 @@
       $('#date').datepicker();
       $('#end_date').datepicker();
       loadData(#{@data.to_json});
+      $('#change').click(function(){
+        var url = '#{request.env['PATH_INFO']}';
+        var params = { date: '09/24/2010', end_date: '09/28/2010', granularity: 'daily', format: 'json'};
+        console.log([url, params]);
+        $.get(url, params, function(data, status, request){
+          console.log([data, status, request]);
+          loadData(data);
+        }, 'json');
+      });
 
       $('#download_as_csv').click(function(){
         $('input#download_date').val($('#date').val());
