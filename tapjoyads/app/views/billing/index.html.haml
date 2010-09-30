@@ -5,17 +5,21 @@
   %h2 Billing Summary
   .clear
   .box-summary.first
-    Current Balance:
-    = number_to_currency(@current_balance/100.0)
+    Current Balance
+    #help_current_balance.help ?
+    .money= number_to_currency(@current_balance/100.0)
   .box-summary
-    Pending Earnings:
-    = number_to_currency(@pending_earnings/100.0)
+    Pending Earnings
+    #help_pending_earnings.help ?
+    .money= number_to_currency(@pending_earnings/100.0)
   .box-summary
-    Last Order:
-    = number_to_currency(@last_payment/100.0)
+    Last Order
+    #help_last_order.help ?
+    .money= number_to_currency(@last_payment/100.0)
   .box-summary.last
-    Last Payout:
-    = number_to_currency(@last_payout/100.0)
+    Last Payout
+    #help_last_payout.help ?
+    .money= number_to_currency(@last_payout/100.0)
   .clear
   %hr/
 
@@ -42,6 +46,16 @@
   = button_to 'Export Monthly Statments', {:method => 'GET', :action => 'export_statements' }
   = button_to 'Export Payments Statements', {:method => 'GET', :action => 'export_orders' }
   = button_to 'Export Payouts Statements', {:method => 'GET', :action => 'export_payouts' }
+
+.hidden
+  #help_current_balance_content{:name => 'Current Balance'}
+    Current balance is the amount of advertising budget available to you.
+  #help_pending_earnings_content{:name => 'Pending Earnings'}
+    Pending earnings is the amount you have earned as a publisher.
+  #help_last_order_content{:name => 'Last Order'}
+    Last order is the last advertising order you have placed.
+  #help_last_payout_content{:name => 'Last Payout'}
+    Last payout is the last payout you have received.
 
 - content_for :page_javascript do
   :plain
@@ -119,9 +133,6 @@
       float: left;
       text-align: center;
     }
-    .box-summary.first {
-      text-align: left;
-    }
-    .box-summary.last {
-      text-align: right;
+    .box-summary .money {
+      font-weight: bold;
     }

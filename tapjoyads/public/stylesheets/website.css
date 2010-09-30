@@ -202,7 +202,7 @@ form.tjform {
   overflow: visible;
   font-size: 12px;
 }
-.tjform .help {
+.help {
   cursor: help;
   display: inline-block;
   width: 12px;
@@ -219,11 +219,11 @@ form.tjform {
   -webkit-border-radius: 10px;
   vertical-align: top;
 }
-.tjform .help:hover {
+.help:hover {
   background-color: #eee;
   color: #000;
 }
-.tjform .help:active {
+.help:active {
   background-color: #fff;
   color: #444;
 }
