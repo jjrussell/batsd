@@ -4,17 +4,16 @@
   .right= link_to 'Add funds', add_funds_billing_path
   %h2 Billing Summary
   .clear
-  #balance-info.left
-    .line
-      Current Balance:
-      = number_to_currency(@current_balance/100.0)
-    .line
-      Pending Earnings:
-      = number_to_currency(@pending_earnings/100.0)
-  #payment-info.right
+  .box-summary.first
+    Current Balance:
+    = number_to_currency(@current_balance/100.0)
+  .box-summary
+    Pending Earnings:
+    = number_to_currency(@pending_earnings/100.0)
+  .box-summary
     Last Payment:
     = number_to_currency(@last_payment/100.0)
-  #payout-info.centered
+  .box-summary.last
     Last Payout:
     = number_to_currency(@last_payout/100.0)
   .clear
@@ -113,4 +112,15 @@
     .none {
       font-style: italic;
       padding: 15px 0;
+    }
+    .box-summary {
+      width: 25%;
+      float: left;
+      text-align: center;
+    }
+    .box-summary.first {
+      text-align: left;
+    }
+    .box-summary.last {
+      text-align: right;
     }
