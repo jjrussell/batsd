@@ -86,5 +86,31 @@ class OneOffs
     puts "new UDIDs (per app): #{app_new_udids}"
     puts "existing UDIDs (per app): #{app_existing_udids}"
   end
-  
+
+  # enable beta website for individual users
+  def self.add_beta(options={})
+    if options[:uid]
+      user = User.find_by_id(options[:uid])
+    elsif options[:pid]
+      user = Partner.find_by_id(options[:pid]).users.first
+    elsif options[:email]
+      user = User.find_by_email(options[:email])
+    elsif options.is_a?(String)
+      user = User.find_by_email(options)
+    else
+      puts "Usage:"
+      puts ">> OneOffs.enable_beta('hc5duke@gmail.com')"
+      puts ">> OneOffs.enable_beta(:uid => user_id)"
+      puts ">> OneOffs.enable_beta(:pid => partner_id)"
+      return
+    end
+    if user.nil?
+      puts "Unable to find user with #{options.inspect}"
+    else
+      beta = UserRole.find_by_name("beta_website")
+      user.user_roles << beta unless user.user_roles.include?(beta)
+      puts "[[ Success! ]]\n"
+      return user
+    end
+  end
 end
