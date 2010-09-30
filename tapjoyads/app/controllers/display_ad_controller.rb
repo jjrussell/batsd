@@ -65,7 +65,7 @@ private
          :reject_rating_offer => true)
     
       offer_list.reject! do |offer|
-        offer.is_paid? || offer.conversion_rate < 0.5 || offer.item_id == params[:app_id]
+        offer.is_paid? || offer.conversion_rate < 0.5 || offer.item_id == params[:app_id] || offer.name.size > 30
       end
       srand
       offer = offer_list[rand(offer_list.size)]
@@ -96,19 +96,33 @@ private
       publisher_icon = Magick::Image.from_blob(publisher_icon_blob)[0].resize(icon_height, icon_height)
       offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
 
+      publisher_icon = publisher_icon.vignette(-5, -5, 10, 2)
+      offer_icon = offer_icon.vignette(-5, -5, 10, 2)
+
       img = Magick::Image.new(width - border * 2, height - border * 2)
       img.format = 'png'
 
       img.composite!(publisher_icon, 1, 1, Magick::AtopCompositeOp)
       img.composite!(offer_icon, width - icon_height - 5, 1, Magick::AtopCompositeOp)
 
-      text = "Earn #{publisher.currency.get_reward_amount(offer)} #{publisher.currency.name} in #{publisher.name}!\n Install #{offer.name} for free."
+      text = "Earn #{publisher.currency.get_reward_amount(offer)} #{publisher.currency.name} in #{publisher.name}!\n Install #{offer.name}"
       image_label = Magick::Image.read("label:#{text}") do
         self.size = "220x44"
         self.gravity = Magick::CenterGravity
         self.stroke = 'transparent'
+        self.background_color = 'transparent'
       end
-      img.composite!(image_label[0], 50, 0, Magick::AtopCompositeOp)
+      img.composite!(image_label[0], 40, 0, Magick::AtopCompositeOp)
+
+      free_label = Magick::Image.read("label:F\nR\nE\nE") do
+        self.size = "8x44"
+        self.gravity = Magick::CenterGravity
+        self.stroke = 'transparent'
+        self.fill = 'white'
+        self.undercolor = 'red'
+        self.background_color = 'red'
+      end
+      img.composite!(free_label[0], 262, 1, Magick::AtopCompositeOp)
 
       img.border!(border, border, 'black')
       
