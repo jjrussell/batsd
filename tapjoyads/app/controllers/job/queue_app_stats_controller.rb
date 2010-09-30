@@ -4,6 +4,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     super QueueNames::APP_STATS
     @paths_to_aggregate = %w(connect new_user adshown store_click daily_user monthly_user purchased_vg offers)
     @publisher_paths_to_aggregate = %w(store_click offer_click rate_app)
+    @displayer_paths_to_aggregate = %w(display_ad_requested display_ad_shown store_click)
   end
   
 private
@@ -92,6 +93,18 @@ private
     stat_row.update_stat_for_hour('rewards_opened', start_time.hour, installs_opened + offers_opened)
     # END TO REMOVE
     
+    @displayer_paths_to_aggregate.each do |path|
+      stat_name = WebRequest::DISPLAYER_PATH_TO_STAT_MAP[path]
+      app_condition = "displayer_app_id = '#{@offer.id}'"
+      count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
+      stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
+    end
+    display_conversions = Conversion.count(:conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type in (1000, 1001, 1003)", @offer.id, start_time, end_time])
+    display_revenue = Conversion.sum(:publisher_amount, :conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type in (1000, 1001, 1003)", @offer.id, start_time, end_time])
+    
+    stat_row.update_stat_for_hour('display_conversions', start_time.hour, display_conversions)
+    stat_row.update_stat_for_hour('display_revenue', start_time.hour, display_revenue)
+    
     if @offer.item_type == 'App' && @offer.get_platform == 'iOS'
       if stat_row.get_hourly_count('overall_store_rank', 0)[start_time.hour].to_i == 0
         stat_row.update_stat_for_hour('overall_store_rank', start_time.hour, get_store_rank(@offer.third_party_data))
@@ -134,6 +147,19 @@ private
     @publisher_paths_to_aggregate.each do |path|
       stat_name = WebRequest::PUBLISHER_PATH_TO_STAT_MAP[path]
       app_condition = "publisher_app_id = '#{@offer.id}'"
+      
+      count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
+      hour_counts = stat_row.get_hourly_count(stat_name, 0)
+      
+      if count != hour_counts.sum
+        raise AppStatsVerifyError.new("#{stat_name}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")
+      end
+      Rails.logger.info "#{stat_name} verified, both counts are: #{count}."
+    end
+    
+    @displayer_paths_to_aggregate.each do |path|
+      stat_name = WebRequest::DISPLAYER_PATH_TO_STAT_MAP[path]
+      app_condition = "displayer_app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
       hour_counts = stat_row.get_hourly_count(stat_name, 0)
@@ -256,7 +282,8 @@ private
   def get_store_rank(store_id)
     top_list = Mc.get_and_put('rankings.itunes.top100', false, 1.hour) do 
       response = Downloader.get('http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=25204&popId=27&genreId=36', 
-          :headers => {'User-Agent' => 'iTunes/9.1.1 (Macintosh; Intel Mac OS X 10.6.3) AppleWebKit/531.22.7'})
+          :headers => {'User-Agent' => 'iTunes/9.1.1 (Macintosh; Intel Mac OS X 10.6.3) AppleWebKit/531.22.7'},
+          :timeout => 30)
       response.scan(/<GotoURL.*?url=\S*\/app\/\S*\id(\d*)\?/m).uniq.flatten
     end
     top_list.each_with_index do |id, index|

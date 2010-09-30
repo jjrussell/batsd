@@ -30,20 +30,26 @@ class Reward < SimpledbResource
   def update_counters
     if type == 'install'
       Mc.increment_count(
-        Stats.get_memcache_count_key('installs_revenue', get('publisher_app_id'), Time.at(get('created').to_f)), 
-        false, 1.week, get('publisher_amount').to_i)
+        Stats.get_memcache_count_key('installs_revenue', publisher_app_id, created), 
+        false, 1.week, publisher_amount)
         
       Mc.increment_count(
-        Stats.get_memcache_count_key('installs_spend', get('offer_id'), Time.at(get('created').to_f)), 
-        false, 1.week, get('advertiser_amount').to_i)
+        Stats.get_memcache_count_key('installs_spend', offer_id, created), 
+        false, 1.week, advertiser_amount)
     elsif type == 'offer' || type == 'generic'
       Mc.increment_count(
-        Stats.get_memcache_count_key('offers_revenue', get('publisher_app_id'), Time.at(get('created').to_f)), 
-        false, 1.week, get('publisher_amount').to_i)
+        Stats.get_memcache_count_key('offers_revenue', publisher_app_id, created), 
+        false, 1.week, publisher_amount)
       
       Mc.increment_count(
-        Stats.get_memcache_count_key('installs_spend', get('offer_id'), Time.at(get('created').to_f)), 
-        false, 1.week, get('advertiser_amount').to_i)
+        Stats.get_memcache_count_key('installs_spend', offer_id, created), 
+        false, 1.week, advertiser_amount)
+    end
+    
+    if displayer_app_id.present?
+      Mc.increment_count(
+        Stats.get_memcache_count_key('display_revenue', displayer_app_id, created),
+        false, 1.week, displayer_amount)
     end
   end
   

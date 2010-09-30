@@ -6,7 +6,11 @@ class Conversion < ActiveRecord::Base
     'install' => 1,
     'rating' => 2,
     'generic' => 3,
-    'imported' => 999
+    'imported' => 999,
+    'display_offer' => 1000,
+    'display_install' => 1001,
+    'display_rating' => 1002,
+    'display_generic' => 1003,
   }
   
   belongs_to :publisher_app, :class_name => 'App'

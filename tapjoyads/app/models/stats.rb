@@ -6,7 +6,9 @@ class Stats < SimpledbResource
       'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'offers',
       'offers_revenue', 'installs_revenue', 'published_installs',
       'offers_opened', 'installs_opened', 'daily_active_users', 
-      'monthly_active_users', 'vg_purchases', 'overall_store_rank', 'offerwall_views']
+      'monthly_active_users', 'vg_purchases', 'overall_store_rank', 'offerwall_views',
+      'display_ads_requested', 'display_ads_shown', 'display_clicks', 'display_conversions',
+      'display_revenue']
 
   ##
   # Gets the hourly stats for a stat type, from memcache and simpledb.

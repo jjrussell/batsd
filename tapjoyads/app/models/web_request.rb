@@ -42,6 +42,13 @@ class WebRequest < SimpledbResource
     'rate_app' => 'ratings'
   }
   
+  DISPLAYER_PATH_TO_STAT_MAP = {
+    'display_ad_requested' => 'display_ads_requested',
+    'display_ad_shown' => 'display_ads_shown',
+    'store_click' => 'display_clicks',
+    'conversion' => 'display_conversions'
+  }
+  
   @@bad_domains = {}
   
   def initialize(options = {})
@@ -115,7 +122,7 @@ class WebRequest < SimpledbResource
     
     get('path', {:force_array => true}).each do |path|
       stat_name = PATH_TO_STAT_MAP[path]
-      unless stat_name.nil?
+      if stat_name.present?
         app_id = get('app_id')
         if USE_OFFER_ID.include?(path)
           app_id = get('offer_id')
@@ -124,8 +131,14 @@ class WebRequest < SimpledbResource
       end
       
       stat_name = PUBLISHER_PATH_TO_STAT_MAP[path]
-      unless stat_name.nil?
+      if stat_name.present?
         app_id = get('publisher_app_id')
+        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time))
+      end
+      
+      stat_name = DISPLAYER_PATH_TO_STAT_MAP[path]
+      app_id = get('displayer_app_id')
+      if stat_name.present? && app_id.present?
         Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time))
       end
     end

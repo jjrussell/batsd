@@ -101,6 +101,42 @@ class Appstats
       end
     end
     
+    # display_fill_rate
+    if @stats['display_ads_requested'] and @stats['display_ads_shown']
+      @stats['display_fill_rate'] = []
+      @stats['display_ads_requested'].length.times do |i|
+        if @stats['display_ads_requested'][i] == 0
+          @stats['display_fill_rate'][i] = 0
+        else
+          @stats['display_fill_rate'][i] = @stats['display_ads_shown'][i].to_f / @stats['display_ads_requested'][i].to_f
+        end
+      end
+    end
+    
+    #display_ctr
+    if @stats['display_ads_shown'] and @stats['display_clicks']
+      @stats['display_ctr'] = []
+      @stats['display_ads_shown'].length.times do |i|
+        if @stats['display_ads_shown'][i] == 0
+          @stats['display_ctr'][i] = 0
+        else
+          @stats['display_ctr'][i] = @stats['display_clicks'][i].to_f / @stats['display_ads_shown'][i].to_f
+        end
+      end
+    end
+    
+    #display_cvr
+    if @stats['display_clicks'] and @stats['display_conversions']
+      @stats['display_cvr'] = []
+      @stats['display_clicks'].length.times do |i|
+        if @stats['display_clicks'][i] == 0
+          @stats['display_cvr'][i] = 0
+        else
+          @stats['display_cvr'][i] = @stats['display_conversions'][i].to_f / @stats['display_clicks'][i].to_f
+        end
+      end
+    end
+    
     get_labels_and_intervals(@start_time, @end_time) if @include_labels
   end
   
