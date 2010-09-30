@@ -41,7 +41,7 @@ class DeviceAppList < SimpledbResource
     
     path_list = []
     
-    unless app_id =~ UUID_REGEX
+    unless app_id =~ /^(\w|\.|-)*$/
       Notifier.alert_new_relic(InvalidAppIdForDeviceAppList, "udid: #{@key}, app_id: #{app_id}")
       return path_list
     end
