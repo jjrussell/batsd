@@ -9,7 +9,7 @@ class AppsController < WebsiteController
   after_filter :save_activity_logs, :only => [ :update, :create ]
 
   def index
-    render :action => "show"
+    redirect_to @app
   end
 
   def new
