@@ -1,5 +1,6 @@
-- orders = @orders.select {|o| o.created_at >= statement[1][:start_time] && o.created_at < statement[1][:end_time] }.sort
-- payouts = @payouts.select {|o| o.created_at >= statement[1][:start_time] && o.created_at < statement[1][:end_time] }.sort
+- orders = statement[1][:orders]
+- payouts = statement[1][:payouts]
+- transfers = statement[1][:others]
 
 %div.hidden{:id => "details_#{statement[0]}"}
   %h3= statement[1][:text_month]
@@ -31,3 +32,17 @@
         = render :partial => 'payout', :collection => payouts, :locals => {:format => :table}
   - else
     .none No payouts made during this time
+  - unless transfers.blank?
+    %table
+      %thead
+        %tr
+          %th{:colspan => 4, :style => 'text-align: center;'} Transfers
+        %tr
+          %th &nbsp;
+          %th Amount
+          %th Method
+          %th Status
+      %tbody
+        = render :partial => 'transfer', :collection => transfers, :locals => {:format => :table}
+  - else
+    .none No transfers made during this time

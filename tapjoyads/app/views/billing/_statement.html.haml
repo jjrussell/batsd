@@ -1,12 +1,14 @@
 - options = {:delimiter => format == :csv ? '' : ','}
-- payouts = number_to_currency(statement[1][:payouts] / 100.0, options)
-- orders = number_to_currency(statement[1][:orders] / 100.0, options)
+- payouts = number_to_currency(statement[1][:payouts].map(&:amount).sum / 100.0, options)
+- orders = number_to_currency(statement[1][:orders].map(&:amount).sum / 100.0, options)
+- others = number_to_currency(statement[1][:others].map(&:amount).sum / 100.0, options)
 - month_with_year = statement[1][:text_month]
 
 - if format == :csv
-  = "#{month_with_year},#{orders},#{payouts}"
+  = "#{month_with_year},#{orders},#{payouts},#{others}"
 - else
   %tr.statement{:onclick => "showDetails('#{statement[0]}', this)"}
     %th= month_with_year
     %td.currency= orders
     %td.currency= payouts
+    %td.currency= others

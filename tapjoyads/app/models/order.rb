@@ -31,7 +31,7 @@ class Order < ActiveRecord::Base
     when 2; "Refund"
     end
   end
-  
+
   def payment_method_string
     case payment_method
     when 0; "Website"
@@ -40,7 +40,11 @@ class Order < ActiveRecord::Base
     when 3; "Transfer"
     end
   end
-  
+  def is_order?;    payment_method==0;  end
+  def is_invoiced?; payment_method==1;  end
+  def is_bonus?;    payment_method==2;  end
+  def is_transfer?; payment_method==3;  end
+
 private
   
   def update_balance

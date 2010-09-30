@@ -67,13 +67,17 @@
           #help_disabled.help ?
         %td
           = f.check_box(:disabled)
-      - if false
+      %tr
+        %td &nbsp;
+        %td
+          %strong Extra Attributes
+      - @virtual_good.extra_attributes.each do |key, attr|
+        - field_name = "virtual_good[extra_attributes][#{key}]"
         %tr
           %th
-            = f.label(:extra_attributes)
-            #help_extra_attributes.help ?
+            = label_tag field_name, key
           %td
-            = f.text_field(:extra_attributes)
+            = text_field_tag field_name, attr
       %tr
         %td &nbsp;
         %td= f.submit

@@ -11,7 +11,7 @@
     Pending Earnings:
     = number_to_currency(@pending_earnings/100.0)
   .box-summary
-    Last Payment:
+    Last Order:
     = number_to_currency(@last_payment/100.0)
   .box-summary.last
     Last Payout:
@@ -26,15 +26,15 @@
         %thead
           %tr
             %th &nbsp;
-            %th Payments
-            %th Earnings
+            %th Orders
+            %th Payouts
+            %th Transfers
           %tbody
             = render :partial => 'statement', :collection => @statements, :locals => {:format => :table}
     #details
       #details_explanation
         Click one of the months on the left to see more details
       = render :partial => 'statement_details', :collection => @statements, :as => :statement
-   
   - else
     .none No statements available
 
@@ -47,7 +47,7 @@
   :plain
     var activeDetails = $('#details_explanation');
     var activeRow = null;
-    
+
     function showDetails(date, row) {
       if (activeRow) {
         activeRow.removeClass('active');
@@ -58,7 +58,7 @@
       activeRow = $(row);
       activeRow.addClass('active');
     }
-    
+
 - content_for :page_styles do
   :plain
     #balance-info {
@@ -90,8 +90,9 @@
       background-color: #00647b !important;
     }
     #details {
-      margin-left: 350px;
+      float: left;
       padding-top: 1px;
+      border: 1px solid red;
     }
     #details_explanation {
       color: #999;

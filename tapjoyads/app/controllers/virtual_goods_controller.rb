@@ -111,11 +111,8 @@ private
       end
     end
 
-=begin
-# this is going to take some more work
-# each vg type has associated extra attributes
-    @virtual_good.extra_attributes    = params[:virtual_good][:extra_attributes]
-=end
+    @virtual_good.extra_attributes = params[:virtual_good][:extra_attributes] if params[:virtual_good][:extra_attributes]
+
     if params[:virtual_good][:name].blank?
       flash[:error] = 'Name cannot be blank'
       return false

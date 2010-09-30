@@ -63,20 +63,27 @@ private
     while date < end_date.end_of_month
       month = date.strftime("%Y-%m")
       text_month = date.strftime("%B %Y")
-      @statements[month] = {:orders => 0, :payouts => 0, :text_month => text_month, :start_time => date.beginning_of_month, :end_time => date.end_of_month}
+      @statements[month] = {:orders => [], :payouts => [], :others => [], :text_month => text_month, :start_time => date.beginning_of_month, :end_time => date.end_of_month}
       date = date.next_month
     end
-    
+
     @orders.each do |order|
-      month = order.created_at.strftime("%Y-%m")
-      @statements[month][:orders] += order.amount
+      if order.is_transfer? || order.is_bonus?
+        month = order.created_at.strftime("%Y-%m")
+        @statements[month][:others] << order
+      else
+        month = order.created_at.strftime("%Y-%m")
+        @statements[month][:orders] << order
+      end
     end
-    
+
     @payouts.each do |payout|
-      month = payout.created_at.strftime("%Y-%m")
-      @statements[month][:payouts] += payout.amount
+      unless payout.is_transfer?
+        month = payout.created_at.strftime("%Y-%m")
+        @statements[month][:payouts] << payout
+      end
     end
-    
+
     @statements = @statements.sort { |a, b| a[0] <=> b[0] }
   end
   

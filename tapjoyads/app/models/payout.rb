@@ -29,13 +29,14 @@ class Payout < ActiveRecord::Base
     when 1; "Normal"
     end
   end
-  
+
   def payment_method_string
     case payment_method
     when 1; "Paid"
     when 3; "Transfer"
     end
   end
+  def is_transfer?; payment_method==3; end
 
 private
   
