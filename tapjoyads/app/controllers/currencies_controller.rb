@@ -45,16 +45,20 @@ class CurrenciesController < WebsiteController
     @currency.partner = @app.partner
     update
   end
-  
+
 private
-  
+
   def find_currency
-    @app = current_partner.apps.find(params[:app_id], :include => [:currency])
+    @app = current_partner.apps.find_by_id(params[:app_id], :include => [:currency])
+    if @app.nil?
+      redirect_to apps_path
+      return
+    end
     @currency = @app.currency
     if @currency.nil?
       flash[:error] = "Could not find currency"
       redirect_to apps_path
     end
   end
-  
+
 end
