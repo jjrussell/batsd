@@ -33,10 +33,10 @@
             %th Orders
             %th Payouts
             %th Transfers
-          %tbody
-            = render :partial => 'statement', :collection => @statements, :locals => {:format => :table}
+        %tbody
+          = render :partial => 'statement', :collection => @statements, :locals => {:format => :table}
     #details
-      #details_explanation
+      #details_explanation.details
         Click one of the months on the left to see more details
       = render :partial => 'statement_details', :collection => @statements, :as => :statement
   - else
@@ -59,19 +59,15 @@
 
 - content_for :page_javascript do
   :plain
-    var activeDetails = $('#details_explanation');
-    var activeRow = null;
-
-    function showDetails(date, row) {
-      if (activeRow) {
-        activeRow.removeClass('active');
-      }
-      activeDetails.hide();
-      activeDetails = $('#details_' + date);
-      activeDetails.show();
-      activeRow = $(row);
-      activeRow.addClass('active');
-    }
+    $(function($){
+      $('tr.month-row').click(function() {
+        var date = $(this).attr('id');
+        $('.active').removeClass('active');
+        $('.details').hide();
+        $('#details_' + date).show();
+        $(this).addClass('active');
+      });
+    });
 
 - content_for :page_styles do
   :plain

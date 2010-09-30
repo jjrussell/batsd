@@ -2,7 +2,7 @@
 - payouts = statement[1][:payouts]
 - transfers = statement[1][:others]
 
-%div.hidden{:id => "details_#{statement[0]}"}
+%div.details.hidden{:id => "details_#{statement[0]}"}
   %h3= statement[1][:text_month]
   - unless orders.blank?
     %table

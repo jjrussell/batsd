@@ -7,7 +7,7 @@
 - if format == :csv
   = "#{month_with_year},#{orders},#{payouts},#{others}"
 - else
-  %tr.statement{:onclick => "showDetails('#{statement[0]}', this)"}
+  %tr.statement.month-row{:id => statement[0]}
     %th= month_with_year
     %td.currency= orders
     %td.currency= payouts
