@@ -82,12 +82,12 @@
           currentBalance = numberToCurrency(currentBalance);
           pendingEarnings = numberToCurrency(pendingEarnings);
           if ($('#current_balance').text() != currentBalance) {
-            timeout = 1000;
+            timeout = 10000;
             $('#current_balance').text(currentBalance).
               effect('highlight', {color:'#ffffdd'}, 1000);
           }
           if ($('#pending_earnings').text() != pendingEarnings) {
-            timeout = 1000;
+            timeout = 10000;
             $('#pending_earnings').text(pendingEarnings).
               effect('highlight', {color:'#ffffdd'}, 1000);
           }
