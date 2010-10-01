@@ -7,10 +7,20 @@ class BillingController < WebsiteController
   def index
     @current_balance = current_partner.balance
     @pending_earnings = current_partner.pending_earnings
-    @payouts.reject!{ |p| p.is_transfer? }
-    @orders.reject! { |o| o.is_transfer? || o.is_bonus? }
-    @last_payout = @payouts.blank? ? 0 : @payouts.last.amount
-    @last_payment = @orders.blank? ? 0 : @orders.last.amount
+    respond_to do |format|
+      format.html do
+        @payouts.reject!{ |p| p.is_transfer? }
+        @orders.reject! { |o| o.is_transfer? || o.is_bonus? }
+        @last_payout = @payouts.blank? ? 0 : @payouts.last.amount
+        @last_payment = @orders.blank? ? 0 : @orders.last.amount
+      end
+      format.json do
+        render :json => {
+          :current_balance => current_partner.balance,
+          :pending_earnings => current_partner.pending_earnings,
+        }.to_json
+      end
+    end
   end
 
   def export_statements

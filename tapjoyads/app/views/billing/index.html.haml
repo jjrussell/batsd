@@ -4,22 +4,26 @@
   .right= link_to 'Add funds', add_funds_billing_path
   %h2 Billing Summary
   .clear
-  .box-summary.first
+  .box-summary
     Current Balance
     #help_current_balance.help ?
-    .money= number_to_currency(@current_balance/100.0)
+    .money
+      %span#current_balance= number_to_currency(@current_balance/100.0)
   .box-summary
     Pending Earnings
     #help_pending_earnings.help ?
-    .money= number_to_currency(@pending_earnings/100.0)
+    .money
+      %span#pending_earnings= number_to_currency(@pending_earnings/100.0)
   .box-summary
     Last Order
     #help_last_order.help ?
-    .money= number_to_currency(@last_payment/100.0)
-  .box-summary.last
+    .money
+      %span= number_to_currency(@last_payment/100.0)
+  .box-summary
     Last Payout
     #help_last_payout.help ?
-    .money= number_to_currency(@last_payout/100.0)
+    .money
+      %span= number_to_currency(@last_payout/100.0)
   .clear
   %hr/
 
@@ -67,6 +71,34 @@
         $('#details_' + date).show();
         $(this).addClass('active');
       });
+
+      var url = '/billing';
+      var timeout = 10000; // 10sec
+      var callback = function(data) {
+        timeout *= 2;
+        var currentBalance = data.current_balance / 100;
+        var pendingEarnings = data.pending_earnings / 100;
+        if (isFinite(currentBalance) && isFinite(pendingEarnings)) {
+          currentBalance = numberToCurrency(currentBalance);
+          pendingEarnings = numberToCurrency(pendingEarnings);
+          if ($('#current_balance').text() != currentBalance) {
+            timeout = 1000;
+            $('#current_balance').text(currentBalance).
+              effect('highlight', {color:'#ffffdd'}, 1000);
+          }
+          if ($('#pending_earnings').text() != pendingEarnings) {
+            timeout = 1000;
+            $('#pending_earnings').text(pendingEarnings).
+              effect('highlight', {color:'#ffffdd'}, 1000);
+          }
+        }
+        setTimeout(function() {
+          $.get(url, {format:'json'}, callback);
+        }, timeout);
+      };
+      setTimeout(function() {
+        $.get(url, {format:'json'}, callback);
+      }, timeout);
     });
 
 - content_for :page_styles do
