@@ -4,7 +4,7 @@ class Offer < ActiveRecord::Base
   APPLE_DEVICES = %w( iphone itouch ipad )
   ANDROID_DEVICES = %w( android )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES
-  EXEMPT_UDID = 'c73e730913822be833766efffc7bb1cf239d855a'
+  EXEMPT_UDIDS = Set.new(['c73e730913822be833766efffc7bb1cf239d855a', '354957032544960', '354635032977030', '357988020276502', 'a000002256c234'])
   
   CLASSIC_OFFER_TYPE  = '0'
   DEFAULT_OFFER_TYPE  = '1'
@@ -346,7 +346,7 @@ private
   end
   
   def geoip_reject?(geoip_data, device_app_list)
-    return false if device_app_list.key == EXEMPT_UDID
+    return false if EXEMPT_UDIDS.include?(device_app_list.key)
 
     return true if !countries.blank? && countries != '[]' && !get_countries.include?(geoip_data[:country])
     return true if !postal_codes.blank? && postal_codes != '[]' && !get_postal_codes.include?(geoip_data[:postal_code])
@@ -356,7 +356,7 @@ private
   end
   
   def already_complete?(publisher_app, device_app_list, app_version)
-    return false if device_app_list.key == EXEMPT_UDID
+    return false if EXEMPT_UDIDS.include?(device_app_list.key)
     
     id_for_device_app_list = item_id
     if item_type == 'RatingOffer'
@@ -377,7 +377,7 @@ private
   end
   
   def show_rate_reject?(device_app_list)
-    return false if device_app_list.key == EXEMPT_UDID
+    return false if EXEMPT_UDIDS.include?(device_app_list.key)
     
     srand( (device_app_list.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     return rand > show_rate
