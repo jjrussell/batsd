@@ -1,10 +1,13 @@
 class DisplayAdController < ApplicationController
   
-  # A hard-coded list of publisher apps that support ABC ads. The main requirement is that
-  # udid == publisher_user_id.
+  # A hard-coded list of publisher apps that support ABC ads.
   @@allowed_publisher_app_ids = Set.new([
-      "41df65f0-593c-470b-83a4-37be66740f34", # TapResort
-      "2349536b-c810-47d7-836c-2cd47cd3a796", # TapDefense
+      "41df65f0-593c-470b-83a4-37be66740f34", # Tap Resort
+      "262294a6-0304-48d9-a6d0-e0b7bf60f345", # Tap Resport Party
+      "9dfa6164-9449-463f-acc4-7a7c6d7b5c81", # TapFish
+      "b91369a6-36bc-4ede-80e5-009f48466539", # Tap Birds
+      "0fd33f9d-5edf-4377-941c-3b93e5814f39", # Tap Ranch
+      "c3fc6075-57a9-41d1-b0ee-e1c0cbbe4ef3", # Tap Zoo
       ])
   
   before_filter :setup, :except => :image
@@ -70,7 +73,7 @@ private
       srand
       offer = offer_list[rand(offer_list.size)]
     
-      @click_url = offer.get_redirect_url(publisher_app, params[:udid], params[:udid], 'display_ad', nil, params[:app_id])
+      @click_url = offer.get_redirect_url(publisher_app, get_user_id_from_udid(params[:udid], params[:app_id]), params[:udid], 'display_ad', nil, params[:app_id])
       @image = get_ad_image(publisher_app, offer)
       
       params[:offer_id] = offer.id
@@ -130,4 +133,16 @@ private
     end
   end
   
+  def get_user_id_from_udid(udid, app_id)
+    case app_id
+    when "9dfa6164-9449-463f-acc4-7a7c6d7b5c81" # TapFish
+      "TF:#{udid}"
+    when "b91369a6-36bc-4ede-80e5-009f48466539" # Tap Birds
+      "TB:#{udid}"
+    when "0fd33f9d-5edf-4377-941c-3b93e5814f39" # Tap Ranch
+      "TR:#{udid}"
+    else
+      udid
+    end
+  end
 end
