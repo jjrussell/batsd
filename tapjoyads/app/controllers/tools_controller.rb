@@ -26,32 +26,37 @@ class ToolsController < WebsiteController
   
   def create_transfer
     sanitized_params = sanitize_currency_params(params, [ :transfer_amount, :marketing_amount ])
-    Partner.transaction do      
+    Partner.transaction do
       partner = Partner.find_by_id(params[:partner_id])
       if partner.nil?
         flash[:notice] = "Could not find partner with id: #{params[:partner_id]}"
         redirect_to new_transfer_tools_path and return
       end
-      
+
       amount = sanitized_params[:transfer_amount].to_i
       payout = partner.payouts.build(:amount => amount, :month => Time.zone.now.month, :year => Time.zone.now.year, :payment_method => 3)
       log_activity(payout)
       payout.save!
-      
+
       order = partner.orders.build(:amount => amount, :status => 1, :payment_method => 3)
       log_activity(order)
       order.save!
-      
+
+      dollars = amount.to_s
+      dollars[-2..-3] = "." if dollars.length > 1
+      email = order.partner.users.first.email rescue "(no email)"
+      flash[:notice] = "The transfer of <b>$#{dollars}</b> to <b>#{email}</b> was successfully created."
+
       marketing_amount = sanitized_params[:marketing_amount].to_i
       if marketing_amount > 0
         marketing_order = partner.orders.build(:amount => marketing_amount, :status => 1, :payment_method => 2)
         log_activity(marketing_order)
         marketing_order.save!
       end
+      dollars = marketing_amount.to_s
+      dollars[-2..-3] = "." if dollars.length > 1
+      flash[:notice] += "<br/>The marketing credit of <b>$#{dollars}</b> to <b>#{email}</b> was successfully created."
     end
-    
-    flash[:notice] = 'The transfer was successfully created.'
-    
     redirect_to new_transfer_tools_path
   end
   
@@ -61,10 +66,13 @@ class ToolsController < WebsiteController
   
   def create_order
     order_params = sanitize_currency_params(params[:order], [ :amount ])
-    @order = Order.new(order_params)
-    log_activity(@order)
-    if @order.save
-      flash[:notice] = 'The order was successfully created.'
+    order = Order.new(order_params)
+    log_activity(order)
+    if order.save
+      dollars = order.amount.to_s
+      dollars[-2..-3] = "." if dollars.length > 1
+      email = order.partner.users.first.email rescue "(no email)"
+      flash[:notice] = "The order of <b>$#{dollars}</b> to <b>#{email}</b> was successfully created."
       redirect_to new_order_tools_path
     else
       render :action => :new_order
@@ -114,18 +122,32 @@ class ToolsController < WebsiteController
     @offers_count_hash = Mc.get('tools.disabled_popular_offers') { {} }
     @offers = Offer.find(@offers_count_hash.keys, :include => [:partner, :item])
   end
-  
+
   def beta_websiters
     beta_role = UserRole.find_by_name('beta_website')
     @users = []
     RoleAssignment.find(:all, :conditions => ['user_role_id = ?', beta_role.id] ).each do |role|
       @users << role.user
     end
-    
+
     @users.sort! do |u1, u2|
       u1.partners.first.id <=> u2.partners.first.id
     end
   end
-    
-    
+
+  def add_to_beta
+    @partner = Partner.find_by_id(params[:partner] && params[:partner][:id])
+    if @partner.nil?
+      flash[:error] = "unable to find partner with ID #{params[:partner][:id] rescue ''}"
+    elsif @partner.users.count == 0
+      flash[:error] = "partner with ID #{params[:partner_id]} has no associated users"
+    else
+      beta_role = UserRole.find_by_name('beta_website')
+      @partner.users.each do |user|
+        user.user_roles << beta_role unless user.user_roles.include?(beta_role)
+      end
+      flash[:notice] = "Successfully added <b>#{@partner.users.first.email rescue "(no email)"}</b> as a beta website user."
+    end
+    redirect_to beta_websiters_tools_path
+  end
 end

@@ -23,7 +23,7 @@ authorization do
   
   role :payops do
     includes :tools
-    has_permission_on :tools, :to => [ :new_order, :create_order, :payouts, :create_payout, :money, :new_transfer, :create_transfer, :beta_websiters ]
+    has_permission_on :tools, :to => [ :new_order, :create_order, :payouts, :create_payout, :money, :new_transfer, :create_transfer, :beta_websiters, :add_to_beta ]
   end
   
   role :executive do

@@ -1,16 +1,30 @@
 - @page_title = 'Beta Websiters'
 
 %h1 Beta Websiters
+%h3 Add partner to beta:
+- form_tag :controller =>'tools', :action => 'add_to_beta' do
+  = text_field :partner, :id
+  = submit_tag 'Add to beta'
+%h3 Who has access to the beta webpage?
 
-%h5 Who has access to the beta webpage?
+%table.tjform
+  %thead
+    %tr
+      %td
+        %strong Username
+      %td
+        %strong Partner(s)
+      %td
+        %strong Partner ID(s)
+  %tbody
+    - @users.each do |user|
+      %tr
+        %td= user.username
+        %td= user.partners.map { |p| "#{p.name||"&nbsp;"}" }.join(', ')
+        %td= user.partners.map { |p| "#{link_to(p.id, p)}#{clippy(p.id)}"}.join(', ')
 
-%ul
-  %li Username (partners)
-
-%ul
-  - @users.each do |user|
-    %li
-      = user.username
-      (
-      = user.partners.map { |p| link_to((p.name ||p.id), partner_path(p))}.join(', ')
-      )
+- content_for :page_styles do
+  :plain
+    table.tjform td {
+      padding-bottom: 15px;
+    }
