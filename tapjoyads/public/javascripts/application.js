@@ -2,7 +2,7 @@ if (typeof(Tapjoy) == "undefined") Tapjoy = {};
 if (typeof(console) == "undefined") console={log:$.noop};
 
 function numberToCurrency(number) {
-  return '$' + number.toFixed(2);
+  return '$' + Number(number).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
 }
 
 function stringToNumber(currency, allowNegative) {
