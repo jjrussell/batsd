@@ -43,7 +43,7 @@ private
     @user = User.find_using_perishable_token(params[:id])
     if @user.nil?
       flash[:notice] = "We're sorry, but we could not locate your account."
-      redirect_to root_path
+      redirect_to login_path
     end
   end
   
