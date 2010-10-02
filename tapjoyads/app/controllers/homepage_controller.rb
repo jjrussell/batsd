@@ -1,4 +1,5 @@
 class HomepageController < WebsiteController
+  layout nil
   def index
     if current_user.nil?
       redirect_to '/site/index.html'

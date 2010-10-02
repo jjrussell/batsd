@@ -75,7 +75,7 @@ padding:0px 0px 8px 0px;
 color:#0d034e;
 background:url(../images/site/menu_hover_bg.gif) repeat-x left bottom;
 }
-#nav li.lastItem
+#nav li:last-child
 {
 border-right:none;
 padding-right:none;

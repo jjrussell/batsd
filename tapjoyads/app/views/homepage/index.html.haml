@@ -1,5 +1,99 @@
-- unless has_role?(:beta_website)
-  %p
-    Please contact
-    = link_to 'support@tapjoy.com', 'mailto:support@tapjoy.com'
-    for further assistance.
+!!!
+
+%html
+  %head
+    %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
+    %title Tapjoy
+    = stylesheet_link_tag 'base', 'slider', '/fonts.css'
+    :plain
+      <!--[if IE]>
+       <link href="/stylesheets/ie.css" rel="stylesheet" type="text/css" />
+      <![endif]-->
+      <!--[if IE 6]>
+       <link href="/stylesheets/ie6.css" rel="stylesheet" type="text/css" />
+      <![endif]-->
+  %body
+    #sub1.wrapper
+      .shadow
+        .header
+          %h1= link_to image_tag('site/logo.gif'), root_path
+          .quickLinks
+            %span CLIENT LOGIN
+            = link_to 'MOBILE', login_path
+            |
+            = link_to 'WEB', 'http://onboard.offerpalmedia.com/'
+          .mainmenu
+            %ul#nav
+              %li= link_to 'APP DEVELOPERS', '/site/appDevelopers.html', :class => 'link0'
+              %li= link_to 'ADVERTISERS', '/site/advertisers.html', :class => 'link1'
+              %li= link_to 'GAMING PLATFORMS', '/site/gamingPlatforms.html', :class => 'link2'
+              %li= link_to 'ABOUT', '/site/aboutus.html', :class => 'link3'
+        .contentArea
+          .banner.nobannerbg
+            .anythingSlider
+              .slidewrapper
+                %ul
+                  %li= link_to image_tag('site/01.jpg', :alt => "App Developers. Distribute your app everywhere."), '/site/contactus.html'
+                  %li= link_to image_tag('site/02.jpg', :alt => "App Developers. Boost your revenue by 100% or more."), '/site/contactus.html'
+                  %li= link_to image_tag('site/03.jpg', :alt => "Advertisers. Reach 100+ Million Social & Mobile Customers."), '/site/advertisersContact.html'
+          .ticker
+            %p
+              MOBILE DEVELOPERS:
+              %span CRACK THE TOP 25!
+              GET 100,000+ INSTALLS DAILY ON A CPI BASIS.
+              = link_to 'START NOW.', login_path
+          .services
+            .section1
+              %h2 APP DEVELOPERS
+              = image_tag('site/appdev_img.gif', :alt => "APP DEVELOPERS")
+              %p Fuel your application's growth with industry-leading monetization and distribution services.
+              = link_to 'Learn More!', '/site/appDevelopers.html'
+            .section2
+              %h2 ADVERTISERS
+              = image_tag('site/ads_img.gif', :alt => 'ADVERTISERS')
+              %p Reach more than 100 million consumers on leading social networks and mobile platforms.
+              = link_to 'Learn More!', '/site/advertisers.html'
+            .section3{ :style => "border:none;" }
+              %h2 GAMING PLATFORMS
+              = image_tag('site/gamedev_img.gif', :alt => "GAME DEVELOPERS")
+              %p Integrate virtual currency payments and popular gaming content into your platform.
+              = link_to 'Learn More!', "/site/gamingPlatforms.html"
+      .partnerList
+        = image_tag 'site/partlist_img.gif'
+      .footer
+        = link_to 'BLOG', 'http://blog.offerpalmedia.com/', :style => 'padding-left:0px;'
+        |
+        = link_to 'PRESS', '/site/press.html'
+        |
+        = link_to 'JOBS', '/site/careers.html'
+        |
+        = link_to 'TEAM', '/site/team.html'
+        |
+        = link_to 'CONTACT', '/site/contact.html'
+        %p
+          Copyright 2010 Tapjoy. &nbsp;
+          = link_to 'Privacy Policy', '/privacy.html'
+    = javascript_include_tag 'jquery-1.4.2.min.js', 'jquery.easing.1.2.js', 'jquery.anythingslider.js', 'pluginpage.js', 'jquery.pngFix.pack.js'
+    %script{ :type => 'text/javascript', :charset => 'utf-8' }
+      :plain
+        function formatText(index, panel) {
+            return index + "";
+          };
+        $(function ($) {
+          $('.anythingSlider').anythingSlider({
+            easing: "easeInOutExpo",        // Anything other than "linear" or "swing" requires the easing plugin
+            autoPlay: true,                 // This turns off the entire FUNCTIONALY, not just if it starts running or not.
+            delay: 7000,                    // How long between slide transitions in AutoPlay mode
+            startStopped: false,            // If autoPlay is on, this can force it to start stopped
+            animationTime: 600,             // How long the slide transition takes
+            hashTags: true,                 // Should links change the hashtag in the URL?
+            buildNavigation: true,          // If true, builds and list of anchor links to link to each slide
+            pauseOnHover: true,             // If true, and autoPlay is enabled, the show will pause on hover
+            startText: "Go",                // Start text
+            stopText: "Stop",               // Stop text
+            navigationFormatter: formatText // Details at the top of the file on this use (advanced use)
+          });
+          $("#slide-jump").click(function(){
+            $('.anythingSlider').anythingSlider(4);
+          });
+        });
