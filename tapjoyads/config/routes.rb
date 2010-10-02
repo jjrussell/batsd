@@ -37,7 +37,8 @@ ActionController::Routing::Routes.draw do |map|
   
   
   # website-specific routes
-  map.root :controller => :homepage, :action => :index
+  map.root :controller => :homepage, :action => 'start'
+  map.connect 'index.html', :controller => 'homepage', :action => 'index'
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
