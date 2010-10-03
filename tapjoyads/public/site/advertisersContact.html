@@ -15,7 +15,7 @@
 </head>
 <body>
 <div class="wrapper">
-	<div class="shadow">
+  <div class="shadow">
             <div class="header">
                 <h1><a href="/index.html"><img src="/images/site/logo.gif" alt="" /></a></h1>
                 <div class="quickLinks">
@@ -37,121 +37,121 @@
                    <img src="/images/site/appdev_img.gif" alt="" />
                    <h3 class="sub">CONTACT US</h3>
                 </div>
-                <form name="advtForm" action="action/submitContact.php" method="">
+                <form name="advtForm" action="/site/contact" method="post">
                     <div class="contact_form">
                         <h2>Advertise with us! </h2>
                         <p>Please complete the form below and we’ll get right back to you. </p>
                         <div class="form_row">
-                        	<label for="firstname">First Name*</label>
-                            <input type="text" name="firstname" id="firstname" />
+                          <label for="first">First Name*</label>
+                            <input type="text" name="info[first]" id="info_first" />
                         </div>
                         <div class="form_row">
-                        	<label for="lastname">Last Name*</label>
-                            <input type="text" name="lastname" id="lastname" />
+                          <label for="last">Last Name*</label>
+                            <input type="text" name="info[last]" id="info_last" />
                         </div>
                         <div class="form_row">
-                        	<label for="positiontitle">Title</label>
-                            <input type="text" name="positiontitle" id="positiontitle" />
+                          <label for="positiontitle">Title</label>
+                            <input type="text" name="info[title]" id="info_title" />
                         </div>
                         <div class="form_row">
-                        	<label for="company">Company*</label>
-                            <input type="text" name="company" id="company" />
+                          <label for="company">Company*</label>
+                            <input type="text" name="info[company]" id="info_company" />
                         </div>
                         <div class="form_row">
-                        	<label for="email">Email Address*</label>
-                            <input type="text" name="email" id="email" />
+                          <label for="email">Email Address*</label>
+                            <input type="text" name="info[email]" id="info_email" />
                         </div>
                         <div class="form_row">
-                        	<label for="phonenumber">Phone Number</label>
-                            <input type="text" name="phonenumber" id="phonenumber" />
+                          <label for="phone">Phone Number</label>
+                            <input type="text" name="info[phone]" id="info_phone" />
                         </div>
                         <div class="form_row">
-                        	<label for="positiontitle">Comments</label>
-                            <textarea rows="5" name="comments"></textarea>
+                          <label for="comments">Comments</label>
+                            <textarea rows="5" name="info[comments]" id="info_comments" ></textarea>
                         </div>
                         <div class="form_row">
-                        	<label>&nbsp;</label>
+                          <label>&nbsp;</label>
                            <img src="/images/site/submit_btn.gif" onclick="subForm();" />
                         </div>
                     </div>
                 </form>
             </div>
-			<div class="footer">
-				<a href="http://blog.offerpalmedia.com/" style="padding-left:0px;">BLOG</a> | <a href="press.html">PRESS</a> | <a href="careers.html">JOBS</a> | <a href="team.html">TEAM</a> | <a href="contact.html">CONTACT</a>
+      <div class="footer">
+        <a href="http://blog.offerpalmedia.com/" style="padding-left:0px;">BLOG</a> | <a href="press.html">PRESS</a> | <a href="careers.html">JOBS</a> | <a href="team.html">TEAM</a> | <a href="contact.html">CONTACT</a>
                 <p>Copyright 2010 Tapjoy.    &nbsp; <a href="privacyPolicy.html">Privacy Policy</a></p>
-			</div>
-	</div>
+      </div>
+  </div>
 </div>
 <script>
 function subForm() {
-var stat = true;
-var firstName = document.getElementById("firstname").value;
-var lastname = document.getElementById("lastname").value;;
-var company = document.getElementById("company").value;
-var email = document.getElementById("email").value;
-if(!requiredField(firstName)){
-alert("Please enter a first name");
-document.getElementById("firstname").focus();
-} else if(!requiredField(lastname)) {
-alert("Please enter a last name");
-document.getElementById("lastname").focus();
-} else if(!requiredField(company)) {
-alert("Please enter a company");
-document.getElementById("company").focus();
-} else if(!emailCheck(email)) {
-alert("Please enter a valid email address");
-document.getElementById("email").focus();
-} else {
-document.advtForm.submit();
-}
+  var stat = true;
+  var firstName = document.getElementById("info_first").value;
+  var lastname = document.getElementById("info_last").value;
+  var company = document.getElementById("info_company").value;
+  var email = document.getElementById("info_email").value;
+  if(!requiredField(firstName)){
+    alert("Please enter a first name");
+    document.getElementById("first").focus();
+  } else if(!requiredField(lastname)) {
+    alert("Please enter a last name");
+    document.getElementById("last").focus();
+  } else if(!requiredField(company)) {
+    alert("Please enter a company");
+    document.getElementById("company").focus();
+  } else if(!emailCheck(email)) {
+    alert("Please enter a valid email address");
+    document.getElementById("email").focus();
+  } else {
+    document.advtForm.submit();
+  }
 }
 
 var requiredField = function(value) {
-	if(value == null || value == '') {
-		return false;
-	}
-	return true;
+  if(value == null || value == '') {
+    return false;
+  }
+  return true;
 }
 
 function emailCheck(value) {
 
-	if(value == null || value == '') {
-		return false;
-	}
-	var at="@"
-	var dot="."
-	var lat=value.indexOf(at)
-	var lstr=value.length
-	var ldot=value.indexOf(dot)
-	if (value.indexOf(at)==-1){
-	   return false
-	}
+  if(value == null || value == '') {
+    return false;
+  }
+  var at="@"
+  var dot="."
+  var lat=value.indexOf(at)
+  var lstr=value.length
+  var ldot=value.indexOf(dot)
+  if (value.indexOf(at)==-1){
+    return false
+  }
 
-	if (value.indexOf(at)==-1 || value.indexOf(at)==0 || value.indexOf(at)==lstr){
-	   return false
-	}
+  if (value.indexOf(at)==-1 || value.indexOf(at)==0 || value.indexOf(at)==lstr){
+    return false
+  }
 
-	if (value.indexOf(dot)==-1 || value.indexOf(dot)==0 || value.indexOf(dot)==lstr){
-	    return false
-	}
+  if (value.indexOf(dot)==-1 || value.indexOf(dot)==0 || value.indexOf(dot)==lstr){
+    return false
+  }
 
-	 if (value.indexOf(at,(lat+1))!=-1){
-	    return false
-	 }
+  if (value.indexOf(at,(lat+1))!=-1){
+    return false
+  }
 
-	 if (value.substring(lat-1,lat)==dot || value.substring(lat+1,lat+2)==dot){
-	    return false
-	 }
+  if (value.substring(lat-1,lat)==dot || value.substring(lat+1,lat+2)==dot){
+    return false
+  }
 
-	 if (value.indexOf(dot,(lat+2))==-1){
-	    return false
-	 }
+  if (value.indexOf(dot,(lat+2))==-1){
+    return false
+  }
 
-	 if (value.indexOf(" ")!=-1){
-	    return false
-	 }
+  if (value.indexOf(" ")!=-1){
+    return false
+  }
 
-		 return true
+  return true
 }
 </script>
 

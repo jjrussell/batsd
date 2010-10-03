@@ -58,5 +58,4 @@ authorization do
     
     has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata ]
   end
-  
 end

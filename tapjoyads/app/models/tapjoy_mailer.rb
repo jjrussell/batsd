@@ -54,5 +54,12 @@ class TapjoyMailer < ActionMailer::Base
     content_type 'text/html'
     body(:reset_link => reset_link)
   end
-  
+
+  def contact_us(info)
+    from info[:email]
+    recipients "support+contactus@tapjoy.com"
+    content_type 'text/html'
+    subject "Tapjoy - Inquiry from website"
+    body(:info => info)
+  end
 end

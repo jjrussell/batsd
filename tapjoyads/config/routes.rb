@@ -38,7 +38,9 @@ ActionController::Routing::Routes.draw do |map|
   
   # website-specific routes
   map.root :controller => :homepage, :action => 'start'
+  map.connect 'site/:action', :controller => 'homepage'
   map.connect 'index.html', :controller => 'homepage', :action => 'index'
+
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
@@ -53,7 +55,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post }
   map.resources :billing, :only => [ :index, ], :collection => { :create_order => :post }
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
-  map.resources :support, :only => [ :index ]
+  map.resources :support, :only => [ :index ],
+    :collection => { :contact => :post }
   map.resources :tools, :only => :index,
     :collection => { :new_order => :get, :create_order => :post, :new_transfer => :get, :create_transfer => :post,
                      :payouts => :get, :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get,
