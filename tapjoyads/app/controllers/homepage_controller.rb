@@ -13,7 +13,7 @@ class HomepageController < WebsiteController
   end
 
   def contact
-    # TapjoyMailer.deliver_contact_us(params[:info])
+    TapjoyMailer.deliver_contact_us(params[:info])
     redirect_to :action => 'contact-thanks'
   end
 end
