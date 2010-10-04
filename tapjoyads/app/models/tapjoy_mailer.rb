@@ -57,7 +57,11 @@ class TapjoyMailer < ActionMailer::Base
 
   def contact_us(info)
     from info[:email]
-    recipients "support+contactus@tapjoy.com"
+    if Rails.env == 'development'
+      recipients "dev@tapjoy.com"
+    else
+      recipients "support+contactus@tapjoy.com"
+    end
     content_type 'text/html'
     subject "Tapjoy - Inquiry from website"
     body(:info => info)
