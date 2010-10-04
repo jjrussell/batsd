@@ -653,10 +653,14 @@ margin: 0px 0px 10px 0px;
 padding: 0px 0px 0px 0px;
 font-size:1.5em;
 }
-div.partnerList table td a
+div.partnerList table td
 {
-margin: 10px 0px 0px 0px;
-padding: 0px 0px 0px 40px;
+text-align: center;
+}
+div.partnerList table td span
+{
+margin: 0px;
+padding: 0px;
 font-size:0.9em;
 text-decoration:none;
 color:#666;
