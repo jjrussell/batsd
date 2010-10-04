@@ -7,7 +7,7 @@
 
   %table
     %tr
-      %th= f.label :username
+      %th= f.label :username, "Email Address"
       %td
         - if is_mobile?
           = f.email_field :username, :autocapitalize => 'off', :autocorrect => 'off'
