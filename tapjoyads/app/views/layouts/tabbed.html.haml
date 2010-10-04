@@ -53,8 +53,9 @@
         &copy; #{Time.now.year} Copyright Tapjoy. All rights reserved.
         = link_to 'Privacy Policy', '/privacy.html', :target => '_blank'
 
-    :plain
-      <!-- Begin Olark Chat --><script type="text/javascript">(function(){document.write(unescape('%3Cscript src=%27' + (document.location.protocol == 'https:' ? "https:" : "http:") + '//static.olark.com/js/wc.js%27 type=%27text/javascript%27%3E%3C/script%3E'));})();</script><div id="olark-data"><a class="olark-key" id="olark-2379-949-10-5905" title="Powered by Olark" href="http://olark.com/about" rel="nofollow">Powered by Olark</a></div> <script type="text/javascript"> wc_init();</script><!-- /End Olark Chat -->
+    - unless Rails.env == 'development'
+      :plain
+        <!-- Begin Olark Chat --><script type="text/javascript">(function(){document.write(unescape('%3Cscript src=%27' + (document.location.protocol == 'https:' ? "https:" : "http:") + '//static.olark.com/js/wc.js%27 type=%27text/javascript%27%3E%3C/script%3E'));})();</script><div id="olark-data"><a class="olark-key" id="olark-2379-949-10-5905" title="Powered by Olark" href="http://olark.com/about" rel="nofollow">Powered by Olark</a></div> <script type="text/javascript"> wc_init();</script><!-- /End Olark Chat -->
     = javascript_include_tag "https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.#{'min.' if Rails.env!='development'}js"
     = javascript_include_tag "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.#{'min.' if Rails.env!='development'}js"
     = javascript_include_tag 'jquery.tablesorter', 'application'
