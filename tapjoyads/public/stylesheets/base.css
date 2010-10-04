@@ -7,7 +7,7 @@ line-height:normal;
 font-size:0.8em;
 margin:0;
 padding:0;
-background:#053f7e url(../images/site/bg.gif) repeat-x left top;
+background:url("/images/stripes.png") repeat scroll 0 0 #C7C7C7;
 }
 img, table, table tr td, h1, h2, h3, h4, h5, h6, ul, ul li, a, p
 {
