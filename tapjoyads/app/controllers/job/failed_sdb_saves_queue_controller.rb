@@ -33,13 +33,6 @@ private
     
     sdb_item.serial_save(@options.merge({ :catch_exceptions => false }))
     
-    # TO REMOVE
-    if sdb_item.this_domain_name == "#{RUN_MODE_PREFIX}reward"
-      domain_number = sdb_item.key.hash % NUM_REWARD_DOMAINS
-      sdb_item.this_domain_name = "#{RUN_MODE_PREFIX}rewards_#{domain_number}"
-      sdb_item.serial_save(@options.merge({ :catch_exceptions => false }))
-    end
-    
     @bucket.move_key(@incomplete_path, @complete_path)
   end
   
