@@ -68,18 +68,6 @@ class AppsController < WebsiteController
     end
   end
 
-  def sdk_download
-    return if params[:sdk].nil?
-    if params[:android] == 'true'
-      file_name = "tapjoy_sdk_android_#{params[:sdk]}.zip"
-    else
-      file_name = "tapjoy_sdk_#{params[:sdk]}.zip"
-    end
-    bucket = S3.bucket(BucketNames::APP_DATA)
-    data = bucket.get("sdks/#{file_name}")
-    send_data(data, :type => 'application/zip', :filename => file_name)
-  end
-
 private
   def grab_partner_apps
     session[:last_shown_app] ||= current_partner_apps.first.id unless current_partner_apps.empty?
