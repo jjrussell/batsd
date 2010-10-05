@@ -646,10 +646,10 @@ cursor:pointer;
 Conatct Form
 */
 
-div.footer
-{
-margin: 30px 0px 0px 35px;
-padding: 0px 0px 0px 0px;
+div.footer {
+  text-align: center;
+  margin: 30px 0px 0px 35px;
+  padding: 0px 0px 0px 0px;
 }
 div.partnerList
 {
