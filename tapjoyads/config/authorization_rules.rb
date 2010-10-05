@@ -1,6 +1,6 @@
 authorization do
   
-  role :beta_website do
+  role :partner do
     has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :publisher_integrate, :search, :sdk_download ]
     has_permission_on :offers, :to => [ :show, :update ]
     has_permission_on :currencies, :to => [ :show, :update, :new, :create ]
@@ -9,9 +9,6 @@ authorization do
     has_permission_on :billing, :to => [ :index, :add_funds, :create_order, :export_statements, :export_orders, :export_payouts ]
     has_permission_on :users, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :support, :to => [ :index ]
-  end
-  
-  role :partner do
   end
   
   role :agency do
@@ -23,7 +20,7 @@ authorization do
   
   role :payops do
     includes :tools
-    has_permission_on :tools, :to => [ :new_order, :create_order, :payouts, :create_payout, :money, :new_transfer, :create_transfer, :beta_websiters, :add_to_beta ]
+    has_permission_on :tools, :to => [ :new_order, :create_order, :payouts, :create_payout, :money, :new_transfer, :create_transfer ]
   end
   
   role :executive do
@@ -49,7 +46,6 @@ authorization do
   end
   
   role :admin do
-    includes :beta_website
     includes :tools
     includes :payops
     includes :executive

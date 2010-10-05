@@ -21,5 +21,3 @@
     %li= link_to 'Activity Log', activities_path
   - if permitted_to? :index, :partners
     %li= link_to 'Partners', partners_path
-  - if permitted_to? :beta_websiters, :tools
-    %li= link_to 'Beta website users', beta_websiters_tools_path

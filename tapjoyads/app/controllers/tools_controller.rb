@@ -123,31 +123,4 @@ class ToolsController < WebsiteController
     @offers = Offer.find(@offers_count_hash.keys, :include => [:partner, :item])
   end
 
-  def beta_websiters
-    beta_role = UserRole.find_by_name('beta_website')
-    @users = []
-    RoleAssignment.find(:all, :conditions => ['user_role_id = ?', beta_role.id] ).each do |role|
-      @users << role.user
-    end
-
-    @users.sort! do |u1, u2|
-      u1.partners.first.id <=> u2.partners.first.id
-    end
-  end
-
-  def add_to_beta
-    @partner = Partner.find_by_id(params[:partner] && params[:partner][:id])
-    if @partner.nil?
-      flash[:error] = "unable to find partner with ID #{params[:partner][:id] rescue ''}"
-    elsif @partner.users.count == 0
-      flash[:error] = "partner with ID #{params[:partner_id]} has no associated users"
-    else
-      beta_role = UserRole.find_by_name('beta_website')
-      @partner.users.each do |user|
-        user.user_roles << beta_role unless user.user_roles.include?(beta_role)
-      end
-      flash[:notice] = "Successfully added <b>#{@partner.users.first.email rescue "(no email)"}</b> as a beta website user."
-    end
-    redirect_to beta_websiters_tools_path
-  end
 end

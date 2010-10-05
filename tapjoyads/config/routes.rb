@@ -60,7 +60,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :tools, :only => :index,
     :collection => { :new_order => :get, :create_order => :post, :new_transfer => :get, :create_transfer => :post,
                      :payouts => :get, :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get,
-                     :beta_websiters => :get, :add_to_beta => :post, :sdb_metadata => :get },
+                     :sdb_metadata => :get },
     :member => { :create_payout => :post, :create_transfer => :post }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :collection => { :search => :get },
