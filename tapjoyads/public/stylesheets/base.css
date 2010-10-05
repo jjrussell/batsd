@@ -154,7 +154,7 @@ margin: 0px 0px 0px 0px;
 padding: 0px 35px 0px 20px;
 width:auto;
 display:table;
-background:#f4f4f4 url(../images/site/main_hdr_bg.gif) repeat-x left bottom;
+background-color:#f4f4f4;
 }
 
 div.header h1
@@ -175,12 +175,22 @@ border: 2px solid #bbb;
 border-top:none;
 border-bottom-left-radius: 10px;
 border-bottom-right-radius: 10px;
+-moz-border-radius-bottomleft: 7px;
+-moz-border-radius-bottomright: 7px;
+-webkit-border-bottom-left-radius: 7px;
+-webkit-border-bottom-right-radius: 7px;
 }
 div.quickLinks a
 {
 padding: 5px 10px;
+border-radius: 10px;
+-moz-border-radius: 7px;
+-webkit-border-radius: 7px;
 color:#171492;
 text-decoration:none;
+}
+div.quickLinks:hover a{
+  color:#225bd1;
 }
 div.quickLinks a:hover
 {
@@ -681,8 +691,11 @@ div.footer a
 margin: 0px 0px 0px 0px;
 padding: 0px 10px 0px 10px;
 font-size:0.85em;
-color:#555;
+color:#171492;
 text-decoration:none;
+}
+div.footer a:hover {
+  text-decoration:underline;
 }
 div.footer p
 {
