@@ -4,6 +4,8 @@ class UsersController < WebsiteController
   
   filter_access_to :all
   
+  after_filter :save_activity_logs, :only => [ :create, :update ]
+  
   def index
     @users = current_partner.users
   end
@@ -14,7 +16,9 @@ class UsersController < WebsiteController
   
   def create
     @user = User.new
-    @user.username = params[:user][:username]
+    log_activity(@user)
+    
+    @user.username = params[:user][:email]
     @user.email = params[:user][:email]
     pwd = UUIDTools::UUID.random_create.to_s
     @user.password = pwd
@@ -37,7 +41,10 @@ class UsersController < WebsiteController
   
   def update
     @user = current_user
-    if @user.safe_update_attributes(params[:user], [ :email, :password, :password_confirmation ])
+    log_activity(@user)
+    
+    params[:user][:username] = params[:user][:email]
+    if @user.safe_update_attributes(params[:user], [ :username, :email, :password, :password_confirmation ])
       flash[:notice] = 'Successfully updated account.'
       redirect_to users_path
     else
