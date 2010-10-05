@@ -37,6 +37,7 @@ input[type=submit], input[type=button] {
   background: #ddd;
   background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ccc));
   background: -moz-linear-gradient(top,  #fff,  #ccc);
+  border-radius: 4px;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
 }
@@ -131,6 +132,7 @@ div.flash {
   margin-top: 5px;
   font-size: 12px;
   background-color: #f8f8f8;
+  border-radius: 4px;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border: 2px solid #AF6F15;
