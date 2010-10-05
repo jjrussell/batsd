@@ -127,15 +127,14 @@ div.outerwrapper {
 }
 div.wrapper
 {
-overflow:hidden;
-  padding: 0px 0px 10px;
-  margin: 10px auto;
-  background: #fff;
-  width: 990px;
-  border: 1px solid #d5d5d5;
-  border-radius: 7px;
-  -moz-border-radius: 7px;
-  -webkit-border-radius: 7px;
+padding: 0px 0px 10px;
+margin: 10px auto;
+background: #fff;
+width: 990px;
+border: 1px solid #d5d5d5;
+border-radius: 7px;
+-moz-border-radius: 7px;
+-webkit-border-radius: 7px;
 }
 div.shadow
 {
@@ -249,8 +248,8 @@ div.contentArea
 {
 width:100%;
 display:table;
-margin: -9px 0px 0px 0px;
-padding: 0px 0px 0px 0px;
+margin: 0;
+padding: 0;
 }
 
 
@@ -477,7 +476,7 @@ font-weight:bold;
 div.types
 {
 background:#fff url(../images/site/2block_bg.gif) repeat-x left bottom ;
-padding: 30px 0px 0px 0px;
+padding: 30px 0px;
 width:100%;
 display:table;
 }
@@ -536,14 +535,19 @@ vertical-align:bottom;
 }
 div.block1_bg
 {
-background:url(../images/site/arrows.gif) no-repeat right 7.6em;
+background:url(../images/site/arrows.gif) no-repeat 80% 7.6em;
+height:250px;
+}
+div.block2_bg
+{
+border:none;
 height:250px;
 }
 div.block2 img.spray
 {
-position:absolute;
-right:2px;
-bottom:167px;
+position:relative;
+left:35px;
+bottom:30px;
 z-index:100;
 }
 div.mobile_dev
@@ -561,7 +565,7 @@ position:relative;
 div.titleHeader
 {
 margin: 0px 0px 0px 0px;
-padding: 13px 0px 0px 35px;
+padding: 13px 35px;
 width:100%;
 display:table;
 background:url(../images/site/header_titlebg.gif) repeat-x left top;
@@ -574,15 +578,13 @@ font-size:3em;
 color:#f16613;
 float:left;
 }
-div.titleHeader img
-{
-margin: 0px 0px 0px 0px;
-padding: 0px 10px 0px 20px;
-float:left;
-}
 div.titleHeader h3.sub
 {
 color:#616161;
+}
+div.titleHeader h3.separater
+{
+color:#b1b1b1;
 }
 /*
 Conatct Form
