@@ -6,13 +6,6 @@
   %table
     %tr
       %th
-        = f.label :username, 'Login'
-        #help_login.help ?
-      %td
-        = f.text_field :username
-        = error_message_on @user, :username
-    %tr
-      %th
         = f.label :email, 'Email Address'
         #help_email.help ?
       %td
@@ -37,6 +30,5 @@
       %td{ :colspan => 2 }= f.submit "Create Account"
 
 .hidden
-  #help_login_content{ :name => 'Login' } The username you would like to use when logging in. Most people use their email address.
-  #help_email_content{ :name => 'Email Address' } Your preferred contact email address. Password reset requests will go to this address.
+  #help_email_content{ :name => 'Email Address' } Your preferred contact email address. Password reset requests will go to this address and you will use it to login.
   #help_company_name_content{ :name => 'Company Name' } The name of your company.
