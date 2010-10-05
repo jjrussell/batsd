@@ -6,6 +6,8 @@
     %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
     %title= @title || 'Tapjoy'
     = stylesheet_link_tag 'base', 'slider', '/fonts.css'
+    %style{ :type => 'text/css' }
+      = yield :page_styles
     :plain
       <!--[if IE]>
        <link href="/stylesheets/ie.css" rel="stylesheet" type="text/css" />
@@ -25,10 +27,10 @@
             = link_to 'WEB', 'http://onboard.offerpalmedia.com/'
           .mainmenu
             %ul#nav
-              %li= link_to 'APP DEVELOPERS', '/site/appDevelopers.html', :class => 'link0'
-              %li= link_to 'ADVERTISERS', '/site/advertisers.html', :class => 'link1'
-              %li= link_to 'GAMING PLATFORMS', '/site/gamingPlatforms.html', :class => 'link2'
-              %li= link_to 'ABOUT', '/site/aboutus.html', :class => 'link3'
+              %li= link_to 'APP DEVELOPERS', {:action => 'app_developers'}, :class => "link0#{' selec' if params[:action]=='app_developer'}"
+              %li= link_to 'ADVERTISERS', {:action => 'advertisers'}, :class => "link1#{' selec' if params[:action]=='advertisers'}"
+              %li= link_to 'GAMING PLATFORMS', {:action => 'gaming_platforms'}, :class => "link2#{' selec' if params[:action]=='gaming_platform'}"
+              %li= link_to 'ABOUT', '/site/aboutus.html', :class => "link3"
         .contentArea
           = yield
       .footer

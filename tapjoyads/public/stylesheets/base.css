@@ -251,6 +251,9 @@ text-decoration:none;
 }
 div.contentArea
 {
+border-top: 2px solid #ccc!important;
+margin-top: -10px!important;
+background-color: #fff;
 width:100%;
 display:table;
 margin: 0;
@@ -548,13 +551,6 @@ div.block2_bg
 border:none;
 height:250px;
 }
-div.block2 img.spray
-{
-position:relative;
-left:35px;
-bottom:30px;
-z-index:100;
-}
 div.mobile_dev
 {
 background:url(../images/site/mobile_dev_bg.gif) no-repeat center 3.3em;
@@ -708,4 +704,58 @@ div.footer p a
 {
 font-size:0.95em!important;
 padding:0px;
+}
+
+div.image_height {
+  height: 337px;
+}
+div.image_height .large-header {
+  font-size: 3.2em;
+  text-transform: uppercase;
+}
+div.image_height .small-header {
+  font-size: 1.2em;
+  font-style: oblique;
+  color: #444;
+  letter-spacing: 1px;
+  padding: 1.2em 0em;
+}
+
+input[type=submit].blue, input[type=button].blue {
+  width: 360px;
+  height: 45px;
+  cursor: pointer;
+  display: inline-block;
+  text-transform: uppercase;
+  color: #fff;
+  font-family: 'AvantGarde-Demi', sans-serif;
+  font-size: 1.2em;
+  letter-spacing: 1px;
+  text-decoration: none;
+  padding: 3px 10px;
+  background-color: #083898;
+  background: -webkit-gradient(linear, left top, left bottom, from(#083898), to(#247));
+  background: -moz-linear-gradient(top, #083898, #247);
+  border: 0px;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  box-shadow: 1px 1px 4px #444;
+  -webkit-box-shadow: 1px 1px 4px #444;
+  -moz-box-shadow: 1px 1px 4px #444;
+}
+input[type=submit].blue:hover, input[type=button].blue:hover {
+  background-color: #336999;
+  background: -webkit-gradient(linear, left top, left bottom, from(#0848a8), to(#248));
+  background: -moz-linear-gradient(top, #0848a8, #248);
+}
+input[type=submit].blue:active, input[type=button].blue:active {
+  background-color: #3868c8;
+  background: -webkit-gradient(linear, left top, left bottom, from(#246), to(#082868));
+  background: -moz-linear-gradient(top, #246, #082868);
+  margin-top: 1px;
+  margin-left: 1px;
+  box-shadow: 0px 0px 4px #444;
+  -webkit-box-shadow: 0px 0px 4px #444;
+  -moz-box-shadow: 0px 0px 4px #444;
 }

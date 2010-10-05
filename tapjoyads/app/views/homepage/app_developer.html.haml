@@ -1,79 +1,58 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link content='image/vnd.microsoft.icon' href='/favicon.ico' rel='shortcut icon' />
-<title>Tapjoy</title>
-<link href="/stylesheets/base.css" rel="stylesheet" type="text/css"  media="all"/>
-<link rel="stylesheet" href="/fonts.css" type="text/css" media="screen" />
-<!--[if IE]>
- <link href="/stylesheets/ie.css" rel="stylesheet" type="text/css" />
-<![endif]-->
-<!--[if IE 6]>
- <link href="/stylesheets/ie6.css" rel="stylesheet" type="text/css" />
-<![endif]-->
+.banner.image_height#app-developer-banner
+  .large-header
+    Drive 100,000+ app installs
+    %br/
+    daily and grow your
+    %br/
+    revenue by 100%
 
-</head>
-<body style="overflow-x:hidden;">
-  <div class="outerwrapper">
-    <div class="wrapper">
-      <div class="shadow">
-        <div class="header">
-          <h1><a href="/index.html"><img src="/images/site/logo.gif" alt="" /></a></h1>
-          <div class="quickLinks">
-            <span>CLIENT LOGIN</span>
-            <a href="/login">MOBILE</a> | <a href="http://onboard.offerpalmedia.com/">WEB</a>
-          </div>
-          <div class="mainmenu">
-            <ul id="nav">
-              <li><a href="appDevelopers.html" class="link0 selec">APP DEVELOPERS</a></li>
-              <li><a href="advertisers.html" class="link1">ADVERTISERS</a></li>
-              <li><a href="gamingPlatforms.html" class="link2">GAMING PLATFORMS  </a></li>
-              <li class="lastItem"><a href="aboutus.html" class="link3">ABOUT</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="contentArea">
-          <div class="banner">
-            <img src="/images/site/app_developers.gif" alt="" name="" id="" usemap="#appDevelopersBanner" />
-            <map name="appDevelopersBanner">
-              <area shape="rect" coords="44,256,387,298" href="contactus.html" alt="Contact Us Today to Learn More" />
-            </map>
-          </div>
-          <div class="types">
-            <div class="block1 block1_bg">
-              <h2>DOUBLE YOUR REVENUE</h2>
-              <p>Increase conversion rates and generate incremental revenue with Tapjoy’s industry-leading alternative payment solutions.</p>
-              <ul>
-                <li>Earn 2–5 times more per day</li>
-                <li>Convert 20% more from free to paid</li>
-                <li>Monetize international audiences</li>
-              </ul>
-            </div>
-            <div class="block2 block2_bg">
-              <h2>DISTRIBUTE YOUR APP EVERYWHERE</h2>
-              <p>Acquire new users and re-engage with existing ones wherever they are on the Web or their mobile devices.</p>
-              <ul>
-                <li>Pay-Per-Install starting at $0.40</li>
-                <li>Drive 100,000+ installs daily</li>
-                <li>Crack the Top 25 apps</li>
-              </ul>
-              <img src="/images/site/icons_spray.png" align="right" class="spray" />
-            </div>
-          </div>
-          </div>
-          <div class="partnerList">
-            <img src="/images/site/partlist_img.gif" alt="" />
-          </div>
-          <div class="footer">
-            <a href="press.html">PRESS</a> | <a href="careers.html">CAREERS</a> | <a href="team.html">TEAM</a> | <a href="contact.html">CONTACT</a>
-            <p>Copyright 2010 Tapjoy.    &nbsp; <a href="privacyPolicy.html">Privacy Policy</a></p>
-          </div>
-      </div>
-    </div>
-  </div>
-  <!-- Begin Olark Chat --><script type="text/javascript">(function(){document.write(unescape('%3Cscript src=%27' + (document.location.protocol == 'https:' ? "https:" : "http:") + '//static.olark.com/js/wc.js%27 type=%27text/javascript%27%3E%3C/script%3E'));})();</script><div id="olark-data"><a class="olark-key" id="olark-2379-949-10-5905" title="Powered by Olark" href="http://olark.com/about" rel="nofollow">Powered by Olark</a></div> <script type="text/javascript"> wc_init();</script><!-- /End Olark Chat -->
-<script type="text/javascript">var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-5323442-1']);_gaq.push(['_trackPageview']);
-(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();</script>
-</body>
-</html>
+  .small-header
+    Tapjoy delivers the broadest distribution services and the
+    %br/
+    highest ARPU monetization for your web and mobile
+    %br/
+    applications, no matter what platform they are on.
+  = button_to 'Sign up today', '/site/contactus.html', :method => 'get', :title => "Contact Us Today to Learn More", :class => 'blue'
+
+.types
+  .block1.block1_bg
+    %h2 DOUBLE YOUR REVENUE
+    %p Increase conversion rates and generate incremental revenue with Tapjoy’s industry-leading alternative payment solutions.
+    %ul
+      %li Earn 2–5 times more per day
+      %li Convert 20% more from free to paid
+      %li Monetize international audiences
+  %div.block2.block2_bg
+    %h2 DISTRIBUTE YOUR APP EVERYWHERE
+    %p Acquire new users and re-engage with existing ones wherever they are on the Web or their mobile devices.
+    %ul
+      %li Pay-Per-Install starting at $0.35
+      %li Drive 100,000+ installs daily
+      %li Crack the Top 25 apps
+    = image_tag "/images/site/icons_spray.png", :align => "right", :class => "spray"
+.partnerList
+  = image_tag '/images/site/partlist_img.gif'
+
+- content_for :page_styles do
+  :plain
+    #app-developer-banner {
+      background:url(/images/site/app_developers.gif) no-repeat right top!important;
+      display: block;
+      width: auto;
+      margin: 20px 20px 20px 50px !important;
+    }
+    .types {
+      border-top: 2px solid #ccc!important;
+    }
+    .block2_bg {
+      overflor-y: hidden!important;
+    }
+    div.types {
+      padding-bottom: 0px!important;
+    }
+    div.block2 img.spray {
+      position:relative;
+      left:35px;
+      bottom:20px;
+      z-index:100;
+    }
