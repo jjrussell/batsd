@@ -474,11 +474,15 @@ font-size::1em;
 }
 div.section1 a, div.section2 a, div.section3 a
 {
-color:#f75f00;
+color:#171492;
 margin: 0px 0px 0px 0px;
 text-decoration:none;
 font-size:1em;
 font-weight:bold;
+}
+div.section1 a:hover, div.section2 a:hover, div.section3 a:hover
+{
+text-decoration:underline;
 }
 
 div.types
