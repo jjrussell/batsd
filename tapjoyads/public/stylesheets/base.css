@@ -569,7 +569,7 @@ margin: 0px 0px 0px 0px;
 padding: 13px 35px;
 width:920px;
 display:inline-block;
-background:url(../images/site/header_titlebg.gif) repeat-x left top;
+background-color: #f3f3f3;
 }
 div.titleHeader h3
 {
@@ -706,14 +706,10 @@ font-size:0.95em!important;
 padding:0px;
 }
 
-div.image_height {
-  height: 337px;
-}
-div.image_height .large-header {
-  font-size: 3.2em;
+div.large-header {
   text-transform: uppercase;
 }
-div.image_height .small-header {
+div.small-header {
   font-size: 1.2em;
   font-style: oblique;
   color: #444;
@@ -730,6 +726,7 @@ input[type=submit].blue, input[type=button].blue {
   color: #fff;
   font-family: 'AvantGarde-Demi', sans-serif;
   font-size: 1.2em;
+  text-shadow: 1px 1px 1px #666;
   letter-spacing: 1px;
   text-decoration: none;
   padding: 3px 10px;

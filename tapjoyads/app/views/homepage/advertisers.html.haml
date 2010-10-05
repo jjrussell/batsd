@@ -1,107 +1,98 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link content='image/vnd.microsoft.icon' href='/favicon.ico' rel='shortcut icon' />
-<title>Tapjoy</title>
-<link href="/stylesheets/base.css" rel="stylesheet" type="text/css"  media="all"/>
-<link rel="stylesheet" href="/fonts.css" type="text/css" media="screen" />
-<!--[if IE]>
- <link href="/stylesheets/ie.css" rel="stylesheet" type="text/css" />
-<![endif]-->
-<!--[if IE 6]>
- <link href="/stylesheets/ie6.css" rel="stylesheet" type="text/css" />
-<![endif]-->
+.banner#advertiser-banner
+  .large-header
+    We reach more than 100 million consumers
+    %br/
+    every month, including many that
+    %br/
+    no one else can.
+  .small-header
+    Our platform is deeply integrated into more than 2,000
+    %br/
+    of the most popular social and mobile gaming
+    %br/
+    applications across every leading platform, helping you
+    %br/
+    reach highly engaged consumers that no other ad
+    %br/
+    network has access to.
+  = button_to 'Contact us today to learn more', '/site/advertisersContact.html', :title => "Contact Us Today to Learn More", :class => 'blue'
 
-</head>
-<body>
-<div class="wrapper">
-  <div class="shadow">
-            <div class="header">
-                <h1><a href="/index.html"><img src="/images/site/logo.gif" alt="" /></a></h1>
-                <div class="quickLinks">
-                       <span>CLIENT LOGIN</span>
-                       <a href="/login">MOBILE</a> | <a href="http://onboard.offerpalmedia.com/">WEB</a>
-                </div>
-                <div class="mainmenu">
-                    <ul id="nav">
-                        <li><a href="appDevelopers.html" class="link0">APP DEVELOPERS</a></li>
-                        <li><a href="advertisers.html" class="link1 selec">ADVERTISERS</a></li>
-                        <li><a href="gamingPlatforms.html" class="link2">GAMING PLATFORMS  </a></li>
-                        <li class="lastItem"><a href="aboutus.html" class="link3">ABOUT</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="contentArea">
-                <div class="banner">
-                    <img src="/images/site/advertiser_banner.gif" alt="" name="" border="0" usemap="#advertisersBanner" id="" />
-                    <map name="advertisersBanner" id="advertisersBanner">
-                      <area shape="rect" coords="44,256,387,298" href="advertisersContact.html" alt="Contact Us Today to Learn More" />
-                    </map>
-              </div>
-                <div class="types">
-                    <div class="block1">
-                        <h2>APP DEVELOPERS</h2>
-                        <span>Pay for performance, not just clicks.</span>
-                        <p>
-                        We are one of the largest performance advertising networks in the world,
-                        offering low cost customer acquisition campaigns with the scalability and flexibility
-                        to meet any needs.
+.types
+  .block1
+    %h2 APP DEVELOPERS
+    %span Pay for performance, not just clicks.
+    %p
+      We are one of the largest performance advertising networks in the world,
+      offering low cost customer acquisition campaigns with the scalability and flexibility
+      to meet any needs.
+    %ul
+      %li Buy on a CPA, CPL, CPC basis and more
+      %li Drive 100,000+ new users per day
+      %li Prices as low as $0.05 per action
+    = image_tag 'site/netflix_img.gif', :title => 'Ads'
+  .block2{ :style => "border:none;"}
+    %h2 BRAND ADVERTISERS
+    %span Inject your brand into the gaming experience
+    %p
+      Get your message in front of the right audience at the right time—during in-game play,
+      when users are relaxed, having fun and receptive to what you have to say.
+    %ul
+      %li Reach millions of users other networks can't
+      %li Target based on location, behavior &amp; profile
+      %li In-game integrations for better engagement
+    = image_tag 'site/bookEli_img.gif', :title => 'Ads'
+.partnerList
+  %h2 AD PRODUCTS
+  %table{ :width => "100%", :border => "0", :cellspacing => "0", :cellpadding => "0" }
+    %tbody
+      %tr
+        %td= image_tag 'site/ads_1.gif', :size => '119x68'
+        %td= image_tag 'site/ads_2.gif', :size => '119x68'
+        %td= image_tag 'site/ads_3.gif', :size => '119x68'
+        %td= image_tag 'site/ads_4.gif', :size => '119x68'
+        %td= image_tag 'site/ads_5.gif', :size => '119x68'
+        %td= image_tag 'site/ads_6.gif', :size => '119x68'
+        %td= image_tag 'site/ads_7.gif', :size => '119x68'
+      %tr
+        %td
+          %span Offers
+        %td
+          %span Local
+        %td
+          %span Shopping
+        %td
+          %span Surveys
+        %td
+          %span Mobile
+        %td
+          %span Video
+        %td
+          %span In Game Promos
 
-                        </p>
-                        <ul>
-                          <li>Buy on a CPA, CPL, CPC basis and more</li>
-                          <li>Drive 100,000+ new users per day</li>
-                          <li>Prices as low as $0.05 per action</li>
-                        </ul>
-                        <img src="/images/site/netflix_img.gif" alt="Ads"  />
-                    </div>
-                    <div class="block2" style="border:none;">
-                        <h2>BRAND ADVERTISERS</h2>
-                        <span>Inject your brand into the gaming experience </span>
-                        <p>
-                        Get your message in front of the right audience at the right time—during in-game play,
-                        when users are relaxed, having fun and receptive to what you have to say.
-                        </p>
-                        <ul>
-                          <li>Reach millions of users other networks can’t </li>
-                            <li>Target based on location, behavior & profile</li>
-                            <li>In-game integrations for better engagement </li>
-                        </ul>
-                        <img src="/images/site/bookEli_img.gif" alt="Ads"  />
-                    </div>
-                </div>
-            </div>
-            <div class="partnerList">
-                <h2>AD PRODUCTS</h2>
-                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td><img src="/images/site/ads_1.gif" width="119" height="68" /><br /></td>
-                        <td><img src="/images/site/ads_2.gif" width="119" height="68" /></td>
-                        <td><img src="/images/site/ads_3.gif" width="119" height="68" /></td>
-                        <td><img src="/images/site/ads_4.gif" width="119" height="68" /></td>
-                        <td><img src="/images/site/ads_5.gif" width="119" height="68" /></td>
-                        <td><img src="/images/site/ads_6.gif" width="119" height="68" /></td>
-                        <td><img src="/images/site/ads_7.gif" width="119" height="68" /></td>
-                      </tr>
-                      <tr>
-                        <td><span>Offers</span></td>
-                        <td><span>Local</span></td>
-                        <td><span>Shopping</span></td>
-                        <td><span>Surveys</span></td>
-                        <td><span>Mobile</span></td>
-                        <td><span>Video</span></td>
-                        <td><span>In Game Promos</span></td>
-                      </tr>
-                    </table>
-                </div>
-                <div class="footer">
-        <a href="press.html">PRESS</a> | <a href="careers.html">CAREERS</a> | <a href="team.html">TEAM</a> | <a href="contact.html">CONTACT</a>
-        <p>Copyright 2010 Tapjoy.    &nbsp; <a href="privacyPolicy.html">Privacy Policy</a></p>
-      </div>
-  </div>
-</div>
-<script type="text/javascript">var _gaq = _gaq || [];_gaq.push(['_setAccount', 'UA-5323442-1']);_gaq.push(['_trackPageview']);
-(function() {var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);})();</script>
-<!-- Begin Olark Chat --><script type="text/javascript">(function(){document.write(unescape('%3Cscript src=%27' + (document.location.protocol == 'https:' ? "https:" : "http:") + '//static.olark.com/js/wc.js%27 type=%27text/javascript%27%3E%3C/script%3E'));})();</script><div id="olark-data"><a class="olark-key" id="olark-2379-949-10-5905" title="Powered by Olark" href="http://olark.com/about" rel="nofollow">Powered by Olark</a></div> <script type="text/javascript"> wc_init();</script><!-- /End Olark Chat --></body>
-</html>
+- content_for :page_styles do
+  :plain
+    #advertiser-banner {
+      background:url(/images/site/advertisers.gif) no-repeat right top!important;
+      height: 310px;
+      display: block;
+      width: auto;
+      padding: 25px 20px 0px 80px !important;
+    }
+    .large-header {
+      font-size: 2em;
+    }
+    .types {
+      border-top: 2px solid #ccc!important;
+    }
+    .block2_bg {
+      overflor-y: hidden!important;
+    }
+    div.types {
+      padding-bottom: 0px!important;
+    }
+    div.block2 img.spray {
+      position:relative;
+      left:35px;
+      bottom:20px;
+      z-index:100;
+    }
