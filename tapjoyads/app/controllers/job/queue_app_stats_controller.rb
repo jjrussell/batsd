@@ -35,10 +35,6 @@ private
     @offer.last_stats_aggregation_time = end_time
     verify_yesterday
     @offer.save!
-    
-    (last_run_time - 1.day).to_date.upto(@now.to_date) do |date|
-      send_stats_to_mssql(date)
-    end
   end
   
   def count_stats_for_hour(start_time)
@@ -87,11 +83,6 @@ private
     stat_row.update_stat_for_hour('installs_revenue', start_time.hour, installs_revenue)
     stat_row.update_stat_for_hour('offers', start_time.hour, offers_completed)
     stat_row.update_stat_for_hour('offers_revenue', start_time.hour, offers_revenue)
-    # TO REMOVE - when mssql is no more
-    stat_row.update_stat_for_hour('rewards', start_time.hour, published_installs + offers_completed)
-    stat_row.update_stat_for_hour('rewards_revenue', start_time.hour, installs_revenue + offers_revenue)
-    stat_row.update_stat_for_hour('rewards_opened', start_time.hour, installs_opened + offers_opened)
-    # END TO REMOVE
     
     @displayer_paths_to_aggregate.each do |path|
       stat_name = WebRequest::DISPLAYER_PATH_TO_STAT_MAP[path]
@@ -183,76 +174,6 @@ private
     msg = "Verification of stats failed for offer: #{@offer.name} (#{@offer.id}), for date: #{start_time.to_date}. #{e.message}"
     Rails.logger.info msg
     Notifier.alert_new_relic(AppStatsVerifyError, msg, request, params)
-  end
-  
-  def send_stats_to_mssql(utc_date)
-    unless @offer.is_primary? && (@offer.item_type == 'App' || @offer.item_type == 'EmailOffer')
-      return
-    end
-    
-    offset = -6 # CST timezone. Must be negative the way this is currently implemented.
-    
-    today = utc_date.to_s(:db)
-    tomorrow = (utc_date + 1.days).to_s(:db)
-    
-    stat_today = Stats.new(:key => "app.#{today}.#{@offer.id}")
-    stat_tomorrow = Stats.new(:key => "app.#{tomorrow}.#{@offer.id}")
-    
-    stats = {}
-    
-    stats_map = {
-      'new_users' => 'NewUsers',
-      'logins' => 'GameSessions',
-      'daily_active_users' => 'UniqueUsers',
-      'paid_installs' => 'RewardedInstalls',
-      'paid_clicks' => 'RewardedInstallClicks',
-      'rewards' => 'CompletedOffers',
-      'installs_spend' => 'MoneySpentOnInstalls',
-      'rewards_revenue' => 'OfferRevenue',
-      'rewards_opened' => 'OffersOpened',
-      'hourly_impressions' => 'AdImpressions'
-    }
-    
-    stats_map.each do |sdb_type, sql_type|
-      # Last 18 hours of utc-today, first 6 hours of utc-tomorrow.
-      today_sum = stat_today.get_hourly_count(sdb_type)[-offset, 24].sum
-      tomorrow_sum = stat_tomorrow.get_hourly_count(sdb_type)[0, -offset].sum
-      stats[sql_type] = today_sum + tomorrow_sum
-    end
-    
-    stats['RewardedInstallConversionRate'] = (stats['RewardedInstalls'] * 10000 / stats['RewardedInstallClicks']).to_i if stats['RewardedInstallClicks'].to_i > 0
-    stats['OfferCompletionRate'] = (stats['CompletedOffers'] * 10000 / stats['OffersOpened']).to_i if stats['OffersOpened'].to_i > 0
-    stats['FillRate'] = 10000
-    stats['AdRequests'] = stats['AdImpressions']
-    stat_types = ''
-    datas = ''
-    
-    should_send = false
-    stats.each do |s, d|
-      stat_types += ',' unless stat_types == ''
-      stat_types += s
-      datas += ',' unless datas == ''
-      datas += d.to_s
-      
-      if d != 0 && d != 10000
-        should_send = true
-      end
-    end
-    
-    if should_send
-      send_stats_to_windows(today, stat_types, @offer.id, datas)
-    end
-  end
-  
-  def send_stats_to_windows(date, stat_types, item_id, datas)
-    url = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/CronService.asmx/SubmitMultipleStats?'
-
-    url += "Date=#{CGI::escape(date)}"
-    url += "&StatTypes=#{CGI::escape(stat_types)}"
-    url += "&item=#{item_id}"
-    url += "&Datas=#{CGI::escape(datas)}"
-
-    Downloader.get_with_retry(url, {:timeout => 30}) if Rails.env == 'production'
   end
   
   ##
