@@ -5,7 +5,6 @@ font-weight: normal;
 font-style: normal;
 line-height:normal;
 font-size:0.8em;
-margin:0;
 padding:0;
 background-color:#053f7e;
 }
@@ -83,7 +82,7 @@ padding-right:none;
 /* Colored Links*/
 a.link0
 {
-color:#0c0a53!important;
+color:#171492!important;
 }
 a.link1
 {
@@ -91,15 +90,15 @@ color:#171492!important;
 }
 a.link2
 {
-color:#143e92!important;
+color:#171492!important;
 }
 a.link3
 {
-color:#225bd1!important;
+color:#171492!important;
 }
 a.link4
 {
-color:#143e92!important;
+color:#171492!important;
 }
 
 a.selec
@@ -169,15 +168,24 @@ float:right;
 width:28%;
 text-align:left;
 font-size:0.9em;
-padding: 8px 10px 25px 0px;
-margin: 0px 0px 0px 0px;
-background:url(../images/site/qcklink_bg.gif) no-repeat top right;
+padding: 8px 5px 10px 0px;
+margin: 0px 5px 15px 0px;
+background-color: #eee;
+border: 2px solid #bbb;
+border-top:none;
+border-bottom-left-radius: 10px;
+border-bottom-right-radius: 10px;
 }
 div.quickLinks a
 {
-padding: 0px 10px 0px 10px;
-color:#464646;
+padding: 5px 10px;
+color:#171492;
 text-decoration:none;
+}
+div.quickLinks a:hover
+{
+color:#fff;
+background-color:#171492;
 }
 div.quickLinks span
 {
