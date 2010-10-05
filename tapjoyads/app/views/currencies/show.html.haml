@@ -15,22 +15,21 @@
         %td
           = f.text_field :name
           = error_message_on(@currency, :name)
-        %td &nbsp;
       %tr
         %th
           = f.label :conversion_rate, 'Conversion rate ($1=)'
           #help_conversion_rate.help ?
         %td
-          = f.text_field :conversion_rate
-          = error_message_on(@currency, :conversion_rate)
-        %td#currency_name_text
-          = @app.currency && @app.currency.name
+          #conversion_rate_box
+            = f.text_field :conversion_rate
+            = error_message_on(@currency, :conversion_rate)
+            #currency_name_text
+              = @app.currency && @app.currency.name
       %tr
         %th
           = label_tag(:managed_by_tapjoy, 'Managed by Tapjoy')
           #help_managed_by_tapjoy.help ?
         %td= check_box_tag(:managed_by_tapjoy, nil, @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL)
-        %td &nbsp;
       %tr.managed
         %th
           = f.label :initial_balance, 'Initial balance'
@@ -38,7 +37,6 @@
         %td
           = f.text_field :initial_balance
           = error_message_on(@currency, :initial_balance)
-        %td &nbsp;
       %tr.unmanaged
         %th
           = f.label :callback_url, 'Callback URL'
@@ -46,7 +44,6 @@
         %td
           = f.text_field :callback_url
           = error_message_on(@currency, :callback_url)
-        %td &nbsp;
       %tr.unmanaged
         %th
           = f.label :secret_key, 'Secret key'
@@ -54,7 +51,6 @@
         %td
           = f.text_field :secret_key
           = error_message_on(@currency, :secret_key)
-        %td &nbsp;
       %tr
         %th
           = f.label :test_devices, 'Test devices'
@@ -62,7 +58,6 @@
         %td
           = f.text_area :test_devices
           = error_message_on(@currency, :test_devices)
-        %td &nbsp;
       - if permitted_to?(:index, :statz)
         = render :partial => 'admin_fields', :locals => {:f => f}
     = f.submit
@@ -121,5 +116,16 @@
     .managed,
     .unmanaged {
       display: hidden;
+    }
+    
+    #conversion_rate_box {
+      position: relative;
+    }
+    
+    #currency_name_text {
+      position: absolute;
+      left: 100%;
+      margin-left: 3px;
+      margin-top: -23px;
     }
     
