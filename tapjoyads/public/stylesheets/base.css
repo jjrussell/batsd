@@ -442,10 +442,15 @@ padding:0px 0px 0px 0px;
 
 div.services
 {
-padding: 30px 0px 0px 0px;
-height:275px;
+margin-top:20px;
+padding:20px 0px 0px 36px;
 width:100%;
 display:table;
+border-top: 2px solid #ccc;
+}
+div.services a
+{
+text-decoration:none;
 }
 div.section1, div.section2, div.section3
 {
@@ -454,6 +459,10 @@ border-right:1px solid #acacac;
 width:303px;
 padding: 20px 0px 0px 0px;
 text-align:center;
+}
+div.section3
+{
+border:none;
 }
 div.section1 h2, div.section2 h2, div.section3 h2
 {
@@ -470,18 +479,6 @@ margin: 0px 0px 10px 0px;
 text-align:center;
 font-family:"Trebuchet MS";
 font-size::1em;
-}
-div.section1 a, div.section2 a, div.section3 a
-{
-color:#171492;
-margin: 0px 0px 0px 0px;
-text-decoration:none;
-font-size:1em;
-font-weight:bold;
-}
-div.section1 a:hover, div.section2 a:hover, div.section3 a:hover
-{
-text-decoration:underline;
 }
 
 div.types
@@ -652,12 +649,12 @@ Conatct Form
 
 div.footer {
   text-align: center;
-  margin: 30px 0px 0px 35px;
+  margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
 }
 div.partnerList
 {
-margin: 30px 20px 0px 35px;
+margin: 30px 52px;
 padding: 0px 0px 0px 0px;
 }
 div.partnerList img

@@ -6,21 +6,21 @@
         %li= link_to image_tag('site/02.jpg', :alt => "App Developers. Boost your revenue by 100% or more."), '/site/contactus.html'
         %li= link_to image_tag('site/03.jpg', :alt => "Advertisers. Reach 100+ Million Social & Mobile Customers."), '/site/advertisersContact.html'
 .services
-  .section1
-    %h2 APP DEVELOPERS
-    = image_tag('site/appdev_img.gif', :alt => "APP DEVELOPERS")
-    %p Fuel your application's growth with industry-leading monetization and distribution services.
-    = link_to 'Learn More', '/site/appDevelopers.html'
-  .section2
-    %h2 ADVERTISERS
-    = image_tag('site/ads_img.gif', :alt => 'ADVERTISERS')
-    %p Reach more than 100 million consumers on leading social networks and mobile platforms.
-    = link_to 'Learn More', '/site/advertisers.html'
-  .section3{ :style => "border:none;" }
-    %h2 GAMING PLATFORMS
-    = image_tag('site/gamedev_img.gif', :alt => "GAME DEVELOPERS")
-    %p Integrate virtual currency payments and popular gaming content into your platform.
-    = link_to 'Learn More', "/site/gamingPlatforms.html"
+  %a{ :href => '/site/app_developers' }
+    .section1
+      %h2 APP DEVELOPERS
+      = image_tag('site/appdev_img.gif', :alt => "APP DEVELOPERS")
+      %p Fuel your application's growth with industry-leading monetization and distribution services.
+  %a{ :href => '/site/advertisers' }
+    .section2
+      %h2 ADVERTISERS
+      = image_tag('site/ads_img.gif', :alt => 'ADVERTISERS')
+      %p Reach more than 100 million consumers on leading social networks and mobile platforms.
+  %a{ :href => '/site/gaming_platforms' }
+    .section3
+      %h2 GAMING PLATFORMS
+      = image_tag('site/gamedev_img.gif', :alt => "GAME DEVELOPERS")
+      %p Integrate virtual currency payments and popular gaming content into your platform.
 .partnerList= image_tag 'site/partlist_img.gif'
 
 - content_for :included_javascripts do
