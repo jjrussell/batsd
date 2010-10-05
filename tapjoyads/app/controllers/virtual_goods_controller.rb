@@ -10,6 +10,7 @@ class VirtualGoodsController < WebsiteController
   before_filter :find_virtual_good, :only => [ :show, :update ]
   before_filter :find_all_virtual_goods, :only => :index
   before_filter :check_virtual_currency
+  after_filter :save_activity_logs, :only => [ :update, :create ]
 
   def new
     @page_title = 'Create new virtual good'
@@ -21,6 +22,7 @@ class VirtualGoodsController < WebsiteController
 
   def create
     @virtual_good = VirtualGood.new
+    log_activity(@virtual_good)
 
     if update_virtual_good
       flash[:notice] = 'Sucessfully created virtual good'
@@ -37,6 +39,7 @@ class VirtualGoodsController < WebsiteController
   end
 
   def update
+    log_activity(@virtual_good)
     if update_virtual_good
       flash[:notice] = 'Sucessfully updated virtual good'
       redirect_to app_virtual_goods_path({ :app_id => @app.id })
