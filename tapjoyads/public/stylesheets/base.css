@@ -444,8 +444,8 @@ div.services
 {
 margin-top:20px;
 padding:20px 0px 0px 36px;
-width:100%;
-display:table;
+width:954px;
+display:inline-block;
 border-top: 2px solid #ccc;
 }
 div.services a
