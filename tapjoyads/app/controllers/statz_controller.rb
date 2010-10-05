@@ -245,23 +245,11 @@ class StatzController < WebsiteController
     offer_params[:user_enabled] = offer_params[:payment].to_i > 0
     if @offer.update_attributes(offer_params)
       
-      app = nil
       unless params[:app_store_id].blank?
         app = @offer.item
         orig_store_id = app.store_id
         log_activity(app)
         app.update_attribute(:store_id, params[:app_store_id])
-      end
-      
-      if [ 'App', 'EmailOffer' ].include?(@offer.item_type) && @offer.is_primary? && (orig_payment != @offer.payment || orig_budget != @offer.daily_budget || (app && orig_store_id != app.store_id))
-        mssql_url = 'http://www.tapjoyconnect.com.asp1-3.dfw1-1.websitetestlink.com/Service1.asmx/SetAppData?Password=stephenisawesome'
-        mssql_url += "&AppID=#{@offer.id}"
-        mssql_url += "&Payment=#{@offer.payment}"
-        mssql_url += "&Budget=#{@offer.daily_budget}"
-        mssql_url += "&URL="
-        mssql_url += "#{CGI::escape(app.mssql_store_url)}" unless app.nil?
-        
-        Downloader.get_with_retry(mssql_url, {:timeout => 30}) if Rails.env == 'production'
       end
       
       flash[:notice] = "Successfully updated #{@offer.name}"
