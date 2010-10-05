@@ -219,10 +219,14 @@ float:right;
 }
 div.ticker
 {
-margin: 15px 40px;
-padding: 10px 10px 25px 10px;
-color:#fff;
-background-color:#000;
+  text-align:center;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  margin: 15px 50px;
+  padding: 10px 10px 15px 10px;
+  color:#fff;
+  background-color:#000;
 }
 div.ticker p
 {
