@@ -122,16 +122,9 @@ margin:0;
 padding:0;
 border:0;
 }
-
-div.outerwrapper
-{
-width:1041px;
-margin-left:auto;
-margin-right:auto;
-position:relative;
-overflow-x:hidden!important;
+div.outerwrapper {
+  position:relative;
 }
-
 div.wrapper
 {
 overflow:hidden;
@@ -550,7 +543,7 @@ div.block2 img.spray
 {
 position:absolute;
 right:2px;
-bottom:147px;
+bottom:167px;
 z-index:100;
 }
 div.mobile_dev
