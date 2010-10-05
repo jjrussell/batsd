@@ -1,21 +1,18 @@
 .anythingSlider	{
-
-width: 933px;
-height: 357px;
-position: relative;
-margin: 0px 10px 0px 0px;
+  width: 933px;
+  height: 357px;
+  position: relative;
+  margin: 0px 10px 0px 0px;
 }
 
 .anythingSlider .slidewrapper {
-
-width: 875px;
-overflow: auto;
-height: 357px;
-margin: 0px 0px 0px 29px;
-position: absolute;
-top: 0;
-left: 0;
-
+  width: 875px;
+  overflow: auto;
+  height: 357px;
+  margin: 0px 0px 0px 49px;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 
@@ -58,17 +55,13 @@ cursor: pointer;
 }
 
 .anythingSlider .forward {
-
-background-position: 0 0;
-right: -35px;
-
+  background-position: 0 0;
+  right: -58px;
 }
 
 .anythingSlider .back {
-
-background-position: -67px 0;
-left: -35px;
-
+  background-position: -67px 0;
+  left: -18px;
 }
 
 .anythingSlider .forward:hover {

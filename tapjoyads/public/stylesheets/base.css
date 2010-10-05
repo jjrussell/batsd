@@ -206,7 +206,7 @@ display:table;
 div.nobannerbg
 {
 background:none;
-padding: 0px 10px 0px 10px;
+padding: 10px 10px 0px 10px;
 }
 div.nobannerbg a img
 {
@@ -218,10 +218,10 @@ float:right;
 }
 div.ticker
 {
-margin: 15px 0px 0px 40px;
+margin: 15px 40px;
 padding: 10px 10px 25px 10px;
-background:url(../images/site/ticker_bg.gif) no-repeat;
 color:#fff;
+background-color:#000;
 }
 div.ticker p
 {
