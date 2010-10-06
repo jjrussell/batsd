@@ -27,7 +27,7 @@
             %span.ui-icon.ui-icon-arrowthick-2-n-s
           %th
             - if vg.has_icon
-              %span.icon= image_tag(vg.icon_url, :height => 50)
+              %span.icon= image_tag(vg.icon_url('https://'), :height => 50)
             - else
               (no icon)
           %td= link_to vg.name, app_virtual_good_path({:app_id => @app.id, :id => vg.id}), :title => "Edit #{vg.name}"
