@@ -5,7 +5,7 @@
         %li
           .slide#slide1
             .title
-              .medium App developers...
+              .small App developers...
               .large Distribute your app
               .orange.largest Everywhere.
             .body
@@ -21,8 +21,8 @@
         %li
           .slide#slide2
             .title
-              .medium App developers...
-              .large Boost your revenue by
+              .small App developers...
+              .medium Boost your revenue by
               .orange.larger 100% or more.
             .body
               .list
@@ -34,6 +34,22 @@
               .list
                 = image_tag "/images/site/arrow-orange.png"
                 Direct and indirect payments in nearly 200 countries
+        %li
+          .slide#slide3
+            .title
+              .small Advertisers...
+              .orange.large Reach 100+ million
+              .medium Social &amp; mobile consumers
+            .body
+              .list
+                = image_tag "/images/site/arrow-orange.png"
+                Includes users other networks can't reach
+              .list
+                = image_tag "/images/site/arrow-orange.png"
+                Deepest relationships with top app developers
+              .list
+                = image_tag "/images/site/arrow-orange.png"
+                Ideal for both performance and brand advertising
 
 .ticker
   %p
@@ -67,17 +83,23 @@
     .title {
       text-transform: uppercase;
       padding-left: 60px;
-      padding-top: 25px;
+      padding-top: 40px;
     }
-    .medium {
+    .title div {
+      padding: 0px auto;
+    }
+    .small {
       font-size: 1.6em;
       padding-bottom: 10px;
     }
+    .medium {
+      font-size: 2.8em;
+    }
     .large {
-      font-size: 2.4em;
+      font-size: 3.6em;
     }
     .larger {
-      font-size: 4.4em;
+      font-size: 4.8em;
     }
     .largest {
       font-size: 6em;
@@ -90,7 +112,8 @@
       font-size: 1.2em;
       font-style: oblique;
       padding-left: 60px;
-      padding-top: 10px;
+      padding-top: 0px;
+      padding-bottom: 5px;
     }
     #slide1 {
       background: url(/images/site/01.jpg) no-repeat right top;
@@ -102,11 +125,10 @@
       background: url(/images/site/03.jpg) no-repeat right top;
     }
     div.list {
-      padding-bottom: 10px;
+      padding-bottom: 5px;
     }
     div.list img {
       float: none;
-      padding-top: 5px;
       padding-right: 10px;
     }
 - content_for :included_javascripts do
@@ -129,6 +151,6 @@
         navigationFormatter: formatText // Details at the top of the file on this use (advanced use)
       });
       $("#slide-jump").click(function(){
-        $('.anythingSlider').anythingSlider(4);
+        $('.anythingSlider').anythingSlider(3);
       });
     });
