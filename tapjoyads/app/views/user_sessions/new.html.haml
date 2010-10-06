@@ -31,24 +31,23 @@
       %td
         = f.check_box :remember_me
         = f.submit 'Login'
-    %tr
-      %td.register-now{:colspan => 2}
-        Don't have an account?
-        =link_to('Register now.', register_path)
-      %td &nbsp;
+  .registration
+    Don't have an account?
+    = link_to('Register now.', register_path)
+  .registration
+    Looking for #{link_to('Offerpal Console', 'http://onboard.offerpalmedia.com/')}?
 
 - content_for :page_javascript do
   :plain
     $(function($) {
       $('#user_session_username').focus();
     });
-  
+
 - content_for :page_styles do
   :plain
     .tjform input[type="submit"] {
       margin-top: 0;
     }
-    
-    .register-now {
+    .registration {
       padding-top: 15px;
     }
