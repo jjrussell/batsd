@@ -18,6 +18,7 @@
               .list
                 = image_tag "/images/site/arrow-orange.png"
                 Pay per install acquisition and re-engagement
+            .button
               = button_to 'Sign up today', '/site/contactus.html', :method => 'get', :title => "Sign up today", :class => 'blue'
         %li
           .slide#slide2
@@ -35,6 +36,7 @@
               .list
                 = image_tag "/images/site/arrow-orange.png"
                 Direct and indirect payments in nearly 200 countries
+            .button
               = button_to 'Start earning now', '/site/contactus.html', :method => 'get', :title => "Sign up today", :class => 'blue'
         %li
           .slide#slide3
@@ -52,6 +54,7 @@
               .list
                 = image_tag "/images/site/arrow-orange.png"
                 Ideal for both performance and brand advertising
+            .button
               = button_to 'Contact us to learn more', '/site/advertisersContact.html', :method => 'get', :title => "Sign up today", :class => 'blue'
 
 .services
@@ -77,9 +80,11 @@
       width:875px;
       height:357px;
     }
+    .title, .body, .button {
+      padding-left: 60px;
+    }
     .title {
       text-transform: uppercase;
-      padding-left: 60px;
       padding-top: 40px;
     }
     .title div {
@@ -108,9 +113,10 @@
       color: #444;
       font-size: 1.2em;
       font-style: oblique;
-      padding-left: 60px;
       padding-top: 0px;
       padding-bottom: 5px;
+      position: absolute;
+      top: 210px;
     }
     #slide1 {
       background: url(/images/site/01.jpg) no-repeat right top;
@@ -128,9 +134,9 @@
       float: none;
       padding-right: 10px;
     }
-    input.blue {
-      position: relative!important;
-      bottom: 0px!important;
+    .button {
+      position: absolute;
+      top: 285px;
     }
 - content_for :included_javascripts do
   :plain
