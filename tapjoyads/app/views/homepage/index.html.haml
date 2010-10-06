@@ -2,9 +2,45 @@
   .anythingSlider
     .slidewrapper
       %ul
-        %li= link_to image_tag('site/01.jpg', :alt => "App Developers. Distribute your app everywhere."), '/site/contactus.html'
-        %li= link_to image_tag('site/02.jpg', :alt => "App Developers. Boost your revenue by 100% or more."), '/site/contactus.html'
-        %li= link_to image_tag('site/03.jpg', :alt => "Advertisers. Reach 100+ Million Social & Mobile Customers."), '/site/advertisersContact.html'
+        %li
+          .slide#slide1
+            .title
+              .medium App developers...
+              .large Distribute your app
+              .orange.largest Everywhere.
+            .body
+              .list
+                = image_tag "/images/site/arrow-orange.png"
+                Break into the top 25 in the app charts
+              .list
+                = image_tag "/images/site/arrow-orange.png"
+                Distribute on Mobile and Web platforms
+              .list
+                = image_tag "/images/site/arrow-orange.png"
+                Pay per install acquisition and re-engagement
+        %li
+          .slide#slide2
+            .title
+              .medium App developers...
+              .large Boost your revenue by
+              .orange.larger 100% or more.
+            .body
+              .list
+                = image_tag "/images/site/arrow-orange.png"
+                The proven leader in monetizing web and mobile apps
+              .list
+                = image_tag "/images/site/arrow-orange.png"
+                Turn-key virtual goods &amp; microtransactions platform
+              .list
+                = image_tag "/images/site/arrow-orange.png"
+                Direct and indirect payments in nearly 200 countries
+
+.ticker
+  %p
+    MOBILE DEVELOPERS:
+    %span CRACK THE TOP 25!
+    GET 100,000+ INSTALLS DAILY ON A CPI BASIS.
+    = link_to 'START NOW.', login_path
 .services
   %a{ :href => '/site/app_developers' }
     .section1
@@ -22,7 +58,57 @@
       = image_tag('site/gamedev_img.gif', :alt => "GAME DEVELOPERS")
       %p Integrate virtual currency payments and popular gaming content into your platform.
 .partnerList= image_tag 'site/partlist_img.gif'
-
+- content_for :page_styles do
+  :plain
+    .slide {
+      width:875px;
+      height:357px;
+    }
+    .title {
+      text-transform: uppercase;
+      padding-left: 60px;
+      padding-top: 25px;
+    }
+    .medium {
+      font-size: 1.6em;
+      padding-bottom: 10px;
+    }
+    .large {
+      font-size: 2.4em;
+    }
+    .larger {
+      font-size: 4.4em;
+    }
+    .largest {
+      font-size: 6em;
+    }
+    .orange {
+      color: #fa5c03
+    }
+    .body {
+      color: #666;
+      font-size: 1.2em;
+      font-style: oblique;
+      padding-left: 60px;
+      padding-top: 10px;
+    }
+    #slide1 {
+      background: url(/images/site/01.jpg) no-repeat right top;
+    }
+    #slide2 {
+      background: url(/images/site/02.jpg) no-repeat right top;
+    }
+    #slide3 {
+      background: url(/images/site/03.jpg) no-repeat right top;
+    }
+    div.list {
+      padding-bottom: 10px;
+    }
+    div.list img {
+      float: none;
+      padding-top: 5px;
+      padding-right: 10px;
+    }
 - content_for :included_javascripts do
   :plain
     function formatText(index, panel) {
