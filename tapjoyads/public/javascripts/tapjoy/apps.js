@@ -7,9 +7,11 @@ $(function($){
     if ($('select#app_state').val() == 'live') {
       $('.search').show();
       $('.app_data').show();
+      $('#save_button').val('Update from App Store');
     } else {
       $('.search').hide();
       $('.app_data').hide();
+      $('#save_button').val('Save');
     }
   };
   $('select#app_state').change(toggleAppState);

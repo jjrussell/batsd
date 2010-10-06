@@ -63,7 +63,7 @@
           %td#app_description= (@app.description || '').gsub("\n", '<br>')
         %tr
           %td
-          %td= f.submit 'Update'
+          %td= f.submit 'Save', :id => 'save_button'
 
 .hidden
   #help_application_state_content{:name => 'Application State'}
