@@ -1,5 +1,9 @@
 - @page_title = "Stats for offer: #{@offer.name_with_suffix}"
 
+.tjform{:style => 'margin-top: 5px;'}
+  = label_tag('search_box', 'Offer Name:')
+  = text_field_tag('search_box', '', :size => '40')
+
 .icon= image_tag(@offer.get_icon_url(request.protocol), :size => '57x57')
 
 %h1= @offer.name_with_suffix
@@ -166,6 +170,8 @@
 
 - content_for :page_javascript do
   :plain
+    $('#search_box').autocomplete({ source: '#{search_statz_path}', delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });
+  
     $(function() {
       $('#date').datepicker();
       $('#end_date').datepicker();
