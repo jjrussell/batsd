@@ -724,7 +724,7 @@ input[type=submit].blue, input[type=button].blue {
   display: inline-block;
   text-transform: uppercase;
   color: #fff;
-  font-family: 'AvantGarde-Demi', sans-serif;
+  font-family: 'AvantGardeDemiRegular', sans-serif;
   font-size: 1.2em;
   text-shadow: 1px 1px 1px #666;
   letter-spacing: 1px;
