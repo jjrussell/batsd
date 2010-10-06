@@ -18,6 +18,7 @@
               .list
                 = image_tag "/images/site/arrow-orange.png"
                 Pay per install acquisition and re-engagement
+              = button_to 'Sign up today', '/site/contactus.html', :method => 'get', :title => "Sign up today", :class => 'blue'
         %li
           .slide#slide2
             .title
@@ -34,6 +35,7 @@
               .list
                 = image_tag "/images/site/arrow-orange.png"
                 Direct and indirect payments in nearly 200 countries
+              = button_to 'Start earning now', '/site/contactus.html', :method => 'get', :title => "Sign up today", :class => 'blue'
         %li
           .slide#slide3
             .title
@@ -50,6 +52,7 @@
               .list
                 = image_tag "/images/site/arrow-orange.png"
                 Ideal for both performance and brand advertising
+              = button_to 'Contact us to learn more', '/site/advertisersContact.html', :method => 'get', :title => "Sign up today", :class => 'blue'
 
 .ticker
   %p
@@ -108,7 +111,7 @@
       color: #fa5c03
     }
     .body {
-      color: #666;
+      color: #444;
       font-size: 1.2em;
       font-style: oblique;
       padding-left: 60px;
@@ -130,6 +133,10 @@
     div.list img {
       float: none;
       padding-right: 10px;
+    }
+    input.blue {
+      position: relative!important;
+      bottom: 0px!important;
     }
 - content_for :included_javascripts do
   :plain
