@@ -17,7 +17,7 @@ private
     last_run_time = @offer.last_stats_aggregation_time || Time.zone.now.beginning_of_day
     
     start_time = last_run_time.beginning_of_hour
-    end_time = (@now - 5.minutes).beginning_of_hour
+    end_time = (@now - 30.minutes).beginning_of_hour
     
     Rails.logger.info "Aggregating stats for #{@offer.name} (#{@offer.id}) from #{start_time} to #{end_time}"
     
