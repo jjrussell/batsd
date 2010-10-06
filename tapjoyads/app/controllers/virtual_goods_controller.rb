@@ -13,7 +13,7 @@ class VirtualGoodsController < WebsiteController
   after_filter :save_activity_logs, :only => [ :update, :create ]
 
   def new
-    @page_title = 'Create new virtual good'
+    @page_title = 'Create New Virtual Good'
     @virtual_good = VirtualGood.new unless defined? @virtual_good
     @form_action = :create
     @form_method = :post
@@ -33,7 +33,7 @@ class VirtualGoodsController < WebsiteController
   end
 
   def show
-    @page_title = 'Edit virtual good'
+    @page_title = 'Edit Virtual Good'
     @form_action = :update
     @form_method = :put
   end
@@ -131,7 +131,10 @@ private
       redirect_to apps_path
       return
     end
-    @virtual_good_types = @app.virtual_goods.map(&:title).uniq
+    @virtual_good_types = {}
+    @app.virtual_goods.each do |vg|
+      @virtual_good_types[vg.title] ||= vg.extra_attributes.keys
+    end
   end
 
   def find_virtual_good

@@ -1,92 +1,109 @@
-- @page_title = 'Edit Virtual Good'
-
 = render :partial => 'shared/dropdown_select', :locals => {:objects => current_partner_apps, :selected => @app}
 = render :partial => 'apps/actions', :locals => {:app => @app}
 
 #content-with-links
-  %h3 Edit Virtual Good
+  %h3= @page_title
 
   - if @virtual_good.has_icon
     .icon= image_tag(@virtual_good.icon_url('https://'), :size => '57x57')
 
   - form_for(:virtual_good, @virtual_good, :url => { :action => @form_action }, :html => { :method => @form_method, :multipart => true, :class => 'tjform' }) do |f|
     %table
-      %tr
-        %th
-          = f.label(:name)
-          #help_name.help ?
-        %td
-          = f.text_field(:name)
-      %tr
-        %th
-          = f.label(:title, "Type")
-          #help_title.help ?
-        %td
-          = f.select(:title, @virtual_good_types)
-      %tr
-        %th
-          = f.label(:description)
-          #help_description.help ?
-        %td
-          = f.text_field(:description)
-      %tr
-        %th
-          = f.label(:price)
-          #help_price.help ?
-        %td
-          = f.text_field(:price)
-      %tr
-        %th
-          = f.label(:max_purchases)
-          #help_max_purchases.help ?
-        %td
-          = f.text_field(:max_purchases)
-      %tr
-        %th
-          = f.label(:icon)
-          #help_icon.help ?
-        %td
-          = f.file_field(:icon, :accept => "image/png")
-          (Optional)
-      %tr
-        %th
-          = f.label(:data)
-          #help_data.help ?
-        %td
-          = f.file_field(:data)
-          (Optional)
-      %tr
-        %th
-          = f.label(:beta)
-          #help_beta.help ?
-        %td
-          = f.check_box(:beta)
-      %tr
-        %th
-          = f.label(:disabled)
-          #help_disabled.help ?
-        %td
-          = f.check_box(:disabled)
-      %tr
-        %td &nbsp;
-        %td
-          %strong Extra Attributes
-      - @virtual_good.extra_attributes.each do |key, attr|
-        - field_name = "virtual_good[extra_attributes][#{key}]"
+      %tbody
         %tr
           %th
-            = label_tag field_name, key
+            = f.label(:name)
+            #help_name.help ?
           %td
-            = text_field_tag field_name, attr
-      %tr
-        %td &nbsp;
-        %td= f.submit
+            = f.text_field(:name)
+        %tr
+          %th
+            = f.label(:title, "Type")
+            #help_type.help ?
+          %td
+            = f.text_field(:title)
+        %tr
+          %th
+            = f.label(:description)
+            #help_description.help ?
+          %td
+            = f.text_field(:description)
+        %tr
+          %th
+            = f.label(:price)
+            #help_price.help ?
+          %td
+            = f.text_field(:price)
+        %tr
+          %th
+            = f.label(:max_purchases)
+            #help_max_purchases.help ?
+          %td
+            = f.text_field(:max_purchases)
+        %tr
+          %th
+            = f.label(:icon)
+            #help_icon.help ?
+          %td
+            = f.file_field(:icon, :accept => "image/png")
+            (Optional)
+        %tr
+          %th
+            = f.label(:data)
+            #help_data.help ?
+          %td
+            = f.file_field(:data)
+            (Optional)
+        %tr
+          %th
+            = f.label(:beta)
+            #help_beta.help ?
+          %td
+            = f.check_box(:beta)
+        %tr
+          %th
+            = f.label(:disabled)
+            #help_disabled.help ?
+          %td
+            = f.check_box(:disabled)
+    %h3 Custom fields (Optional)
+    %table
+      %tbody
+        %tr
+          %th Field (e.g. Country)
+          %th Value (e.g. U.S.A.)
+        - if @virtual_good.blank?
+          - 5.times do
+            - field_name = "virtual_good[extra_attributes][#{key}]"
+            %tr
+              %th
+                = label_tag field_name, key
+              %td
+                = text_field_tag field_name, attr
+        - else
+          - @virtual_good.extra_attributes.each do |key, attr|
+            - key_field_name = "virtual_good[extra_attributes][keys][]"
+            - attr_field_name = "virtual_good[extra_attributes][attrs][]"
+            %tr
+              %th
+                = text_field_tag key_field_name, key
+              %td
+                = text_field_tag attr_field_name, attr
+        %tr
+          %td &nbsp;
+          %td= f.submit
 
     .hidden
       #help_name_content{:name => 'Name'}
         The name of this virtual good
       #help_type_content{:name => 'Type'}
-        Virtual good type
+        Define a new virtual good type
+        - unless @virtual_good_types.blank?
+          or choose from one you have previously defined:
+          %ul
+            - @virtual_good_types.keys.each do |key|
+              %li
+                = link_to key, 'javascript:$.noop();', :class => 'extra_attribute_key'
       #help_description_content{:name => 'Description'}
         Description that will appear with this virtual good
       #help_price_content{:name => 'Price'}
@@ -107,10 +124,28 @@
     .icon {
       float: left;
     }
+    .extra_attribute_key {
+      color: blue;
+      text-decoration: underline;
+      cursor: pointer;
+    }
 - content_for :page_javascript do
   :plain
     $(function($){
       $('.icon').click(function(){
         $('#virtual_good_icon').click();
+      });
+
+      var types = #{ @virtual_good_types.keys.to_json };
+      var select = function(event, data){
+        if (data.item) data = data.item.value;
+        console.log(data);
+        console.log(#{@virtual_good_types.to_json}[data]);
+      };
+      $('#virtual_good_title').autocomplete({ source: types, delay: 100, select: select});
+      $('.extra_attribute_key').click(function(){
+        var data = $(this).text();
+        $('#virtual_good_title').val(data);
+        select(null, data);
       });
     });
