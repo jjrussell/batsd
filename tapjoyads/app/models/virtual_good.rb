@@ -17,7 +17,7 @@ class VirtualGood < SimpledbResource
   self.sdb_attr :extra_attributes, :cgi_escape => true, :type => :json, :default_value => {}
 
   def icon_url(protocol='http://')
-    "#{protocol}http://s3.amazonaws.com/#{RUN_MODE_PREFIX}virtual_goods/icons/#{@key}.png"
+    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}virtual_goods/icons/#{@key}.png"
   end
 
   def data_url
