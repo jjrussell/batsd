@@ -3,6 +3,7 @@ class BillingController < WebsiteController
 
   filter_access_to :all
   before_filter :get_statements, :only => [:index, :export_statements, :export_orders, :export_payouts]
+  after_filter :save_activity_logs, :only => [ :create_order ]
 
   def index
     @current_balance = current_partner.balance
@@ -50,6 +51,7 @@ class BillingController < WebsiteController
       gateway = ActiveMerchant::Billing::AuthorizeNetGateway.new(:login => '6d68x2KxXVM', :password => '6fz7YyU9424pZDc6', :test => Rails.env != 'production')
       response = gateway.purchase(@credit_card.amount, @credit_card)
       if response.success?
+        log_activity(@order)
         @order.payment_txn_id = response.authorization
         @order.save!
         flash[:notice] = 'Successfully added funds.'
