@@ -76,6 +76,9 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'log_device_app/:action/:id', :controller => 'connect'
   map.connect 'confirm_email_validation', :controller => 'list_signup', :action => 'confirm_api'
   
+  # Route old login page to new login page.
+  map.connect 'Connect/Publish/Default.aspx', :controller => :user_sessions, :action => :new
+  
   # Service1.asmx redirects. (Must include both lower-case and capital: service1.asmx and Service1.asmx).
   # These paths will be supported indefinitely - or as long as we support the legacy api.
   map.connect 'service1.asmx/Connect', :controller => 'connect'
