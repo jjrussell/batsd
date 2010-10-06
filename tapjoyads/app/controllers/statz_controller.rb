@@ -307,11 +307,13 @@ class StatzController < WebsiteController
   def search
     results = Offer.find(:all,
       :conditions => [ "name LIKE ?", "%#{params[:term]}%" ],
-      :select => 'id, name, name_suffix, tapjoy_enabled, payment',
+      :select => 'id, name, name_suffix, tapjoy_enabled, payment, hidden',
+      :order => 'hidden ASC, name ASC',
       :limit => 10
     ).collect do |o|
       label_string = o.name_with_suffix
       label_string += " (active)" if o.tapjoy_enabled? && o.payment > 0
+      label_string += " (hidden)" if o.hidden?
       { :label => label_string, :url => statz_path(o) }
     end
     
