@@ -22,7 +22,7 @@ class UserSessionsController < WebsiteController
       user_session.destroy
       flash[:notice] = "Successfully logged out."
     end
-    redirect_to login_path
+    redirect_to root_path
   end
 
 private
