@@ -15,14 +15,14 @@
       %th= f.label :username, "Email Address"
       %td
         - if is_mobile?
-          = f.email_field :username, :autocapitalize => 'off', :autocorrect => 'off'
+          = f.email_field :username, :autocapitalize => 'off', :autocorrect => 'off', :size => 30
         - else
-          = f.text_field :username
+          = f.text_field :username, :size => 30
         = error_message_on @user_session, :username
     %tr
       %th= f.label :password
       %td
-        = f.password_field :password
+        = f.password_field :password, :size => 30
         = error_message_on @user_session, :password
       %td= link_to('Forgot Password?', new_password_reset_path, :tabindex => 100)
     %tr
