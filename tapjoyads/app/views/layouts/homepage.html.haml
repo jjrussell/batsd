@@ -29,7 +29,7 @@
             %ul#nav
               %li= link_to 'APP DEVELOPERS', {:action => 'app_developers'}, :class => "link0#{' selec' if params[:action]=='app_developer'}"
               %li= link_to 'ADVERTISERS', {:action => 'advertisers'}, :class => "link1#{' selec' if params[:action]=='advertisers'}"
-              %li= link_to 'GAMING PLATFORMS', {:action => 'gaming_platforms'}, :class => "link2#{' selec' if params[:action]=='gaming_platform'}"
+              %li= link_to 'GAMING PLATFORMS', {:action => 'gaming_platforms'}, :class => "link2#{' selec' if params[:action]=='gaming_platforms'}"
               %li= link_to 'ABOUT', '/site/aboutus.html', :class => "link3"
         .contentArea
           = yield
