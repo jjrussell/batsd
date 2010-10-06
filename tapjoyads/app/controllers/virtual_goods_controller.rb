@@ -114,7 +114,13 @@ private
       end
     end
 
-    @virtual_good.extra_attributes = params[:virtual_good][:extra_attributes] if params[:virtual_good][:extra_attributes]
+    if params[:virtual_good][:extra_attributes]
+      keys = params[:virtual_good][:extra_attributes][:keys]
+      attrs = params[:virtual_good][:extra_attributes][:attrs]
+      extra_attributes = Hash[keys.zip(attrs)]
+      extra_attributes.delete_if{|k,v|k.blank?}
+      @virtual_good.extra_attributes = extra_attributes
+    end
 
     if params[:virtual_good][:name].blank?
       flash[:error] = 'Name cannot be blank'

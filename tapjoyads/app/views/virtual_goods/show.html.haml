@@ -2,7 +2,7 @@
 = render :partial => 'apps/actions', :locals => {:app => @app}
 
 #content-with-links
-  %h3= @page_title
+  %h2= @page_title
 
   - if @virtual_good.has_icon
     .icon= image_tag(@virtual_good.icon_url('https://'), :size => '57x57')
@@ -66,12 +66,17 @@
             #help_disabled.help ?
           %td
             = f.check_box(:disabled)
-    %h3 Custom fields (Optional)
+    %p &nbsp;
+    %h3
+      Custom fields (Optional):
+      #help_custom_field.help ?
     %table
       %tbody
         %tr
-          %th Field (e.g. Country)
-          %th Value (e.g. U.S.A.)
+          %th{:style => 'text-align:center;'}
+            Field name
+          %th{:style => 'text-align:center;'}
+            Value
         - if @virtual_good.blank?
           - 5.times do
             - field_name = "virtual_good[extra_attributes][#{key}]"
@@ -81,14 +86,29 @@
               %td
                 = text_field_tag field_name, attr
         - else
+          - i = 0
           - @virtual_good.extra_attributes.each do |key, attr|
+            - i += 1
             - key_field_name = "virtual_good[extra_attributes][keys][]"
             - attr_field_name = "virtual_good[extra_attributes][attrs][]"
+            - id = "virtual_good_extra_attributes_values_#{i}"
             %tr
               %th
-                = text_field_tag key_field_name, key
+                .custom_field_name_label= key
+                = text_field_tag key_field_name, key, :id => id, :class => 'hidden custom_field_name_input'
               %td
                 = text_field_tag attr_field_name, attr
+          - (5 - @virtual_good.extra_attributes.length).times do
+            - i += 1
+            - key_field_name = "virtual_good[extra_attributes][keys][]"
+            - attr_field_name = "virtual_good[extra_attributes][attrs][]"
+            - id = "virtual_good_extra_attributes_values_#{i}"
+            %tr
+              %th
+                .hidden.custom_field_name_label &nbsp;
+                = text_field_tag key_field_name, '', :id => id, :class => 'custom_field_name_input'
+              %td
+                = text_field_tag attr_field_name, '', :id => id
         %tr
           %td &nbsp;
           %td= f.submit
@@ -119,6 +139,8 @@
         = link_to "virtual currency beta user.", app_currency_path({:app_id => @app.id, :id => @app.currency.id})
       #help_disabled_content{:name => 'Disabled Items'}
         Items marked as "disabled" will not be visible to anyone.
+      #help_custom_field_content{:name => 'Custom Fields'}
+        Up to 5 custom fields can be defined. Please specify field names (e.g. "Country") and field values (e.g. "United States")
 - content_for :page_styles do
   :plain
     .icon {
@@ -128,6 +150,13 @@
       color: blue;
       text-decoration: underline;
       cursor: pointer;
+    }
+    .custom_field_name_label:hover {
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .custom_field_name_label:hover {
+      border: 1px solid #aaa;
     }
 - content_for :page_javascript do
   :plain
@@ -139,13 +168,19 @@
       var types = #{ @virtual_good_types.keys.to_json };
       var select = function(event, data){
         if (data.item) data = data.item.value;
-        console.log(data);
-        console.log(#{@virtual_good_types.to_json}[data]);
       };
       $('#virtual_good_title').autocomplete({ source: types, delay: 100, select: select});
       $('.extra_attribute_key').click(function(){
         var data = $(this).text();
         $('#virtual_good_title').val(data);
         select(null, data);
+      });
+      $('.custom_field_name_label').click(function(){
+        $(this).hide().siblings('.custom_field_name_input').show().focus();
+      });
+      $('.custom_field_name_input').blur(function(){
+        if ($(this).val() != '') {
+          $(this).hide().siblings('.custom_field_name_label').text($(this).val()).show();
+        }
       });
     });
