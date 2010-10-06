@@ -51,7 +51,7 @@ $(function($){
 
   // on error
   var error = function(data){
-    var result = $('<div/>').addClass('search-result').text("Error: please try again.");
+    var result = $('<div/>').addClass('search-result').text("Error searching the app store. Please try again.");
     $('#search_results').removeClass('searching');
     $('#search_results').append(result);
   };

@@ -51,7 +51,7 @@
           %th
             Store ID
           %td
-            = link_to(@app.store_id, @app.final_store_url)
+            = link_to(@app.store_id, @app.final_store_url, :target => '_new', :id => 'app_store_link')
         %tr.app_data.hidden
           %th Icon
           %td#app_icon= image_tag(@app.get_icon_url(request.protocol), :size => '57x57', :alt => 'icon')
