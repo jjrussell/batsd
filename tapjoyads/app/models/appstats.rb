@@ -19,11 +19,11 @@ class Appstats
     @stats = {}
     @stat_types.each do |stat_type|
       if @type == :sum
-        @stats[stat_type] = Array(get_daily_stats_over_range(stat_type, @start_time, @end_time).sum)
+        @stats[stat_type] = Array(get_daily_stats_over_range(stat_type, @start_time.utc, @end_time.utc).sum)
       elsif @granularity == :hourly
-        @stats[stat_type] = get_hourly_stats_over_range(stat_type, @start_time, @end_time)
+        @stats[stat_type] = get_hourly_stats_over_range(stat_type, @start_time.utc, @end_time.utc)
       elsif @granularity == :daily
-        @stats[stat_type] = get_daily_stats_over_range(stat_type, @start_time, @end_time)
+        @stats[stat_type] = get_daily_stats_over_range(stat_type, @start_time.utc, @end_time.utc)
       else
         raise "Unsupported granularity"
       end

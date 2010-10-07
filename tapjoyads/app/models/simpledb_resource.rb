@@ -27,7 +27,7 @@ end
 
 class TimeConverter
   def from_string(s)
-    Time.at(s.to_f).utc
+    Time.zone.at(s.to_f)
   end
   def to_string(t)
     t.to_f.to_s
