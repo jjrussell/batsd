@@ -37,6 +37,9 @@ class DisplayAdController < ApplicationController
 private
 
   def setup
+    # TO REMOVE. We are temporarily disabling display ads. Remove after next update of TapDefense.
+    return
+    
     return unless verify_params([ :app_id, :udid ], { :allow_empty => false })
 
     now = Time.zone.now
