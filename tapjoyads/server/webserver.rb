@@ -16,7 +16,12 @@
 `ln -s /mnt/log/rails /home/webuser/tapjoyads/log`
 
 # deploy the latest code
-`su webuser -c '/home/webuser/server/deploy.rb'`
+server_type = `/home/webuser/server/server_type.rb`
+if server_type == 'test'
+  `su webuser -c '/home/webuser/server/deploy.rb trunk'`
+else
+  `su webuser -c '/home/webuser/server/deploy.rb'`
+end
 
 # start apache
 `/etc/init.d/apache2 start`
@@ -25,7 +30,6 @@
 `su webuser -c 'curl -s http://localhost:9898/healthz'`
 
 # install cronjob on webservers
-server_type = `/home/webuser/server/server_type.rb`
 if server_type == 'web'
   `echo "* * * * * /home/webuser/server/ensure_apache_running.rb" | crontab -u ubuntu -`
 end
