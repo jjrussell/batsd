@@ -45,6 +45,8 @@
     = hidden_field_tag('virtual_goods')
     = submit_tag('Save new order', :id => 'virtual-goods-order-submit', :style => "display:none;")
 
+  %br/
+  = button_to("Create new Virtual Good", new_app_virtual_good_path, :method => 'get')
 - content_for :page_styles do
   :plain
     tr.virtual-good.disabled {

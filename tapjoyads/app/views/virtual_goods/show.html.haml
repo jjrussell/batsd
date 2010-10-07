@@ -71,44 +71,36 @@
       Custom fields (Optional):
       #help_custom_field.help ?
     %table
-      %tbody
+      %thead
         %tr
           %th{:style => 'text-align:center;'}
             Field name
           %th{:style => 'text-align:center;'}
             Value
-        - if @virtual_good.blank?
-          - 5.times do
-            - field_name = "virtual_good[extra_attributes][#{key}]"
-            %tr
-              %th
-                = label_tag field_name, key
-              %td
-                = text_field_tag field_name, attr
-        - else
-          - i = 0
-          - @virtual_good.extra_attributes.each do |key, attr|
-            - i += 1
-            - key_field_name = "virtual_good[extra_attributes][keys][]"
-            - attr_field_name = "virtual_good[extra_attributes][attrs][]"
-            - id = "virtual_good_extra_attributes_values_#{i}"
-            %tr
-              %th
-                .custom_field_name_label= key
-                = text_field_tag key_field_name, key, :id => id, :class => 'hidden custom_field_name_input'
-              %td
-                = text_field_tag attr_field_name, attr
-          - (5 - @virtual_good.extra_attributes.length).times do
-            - i += 1
-            - key_field_name = "virtual_good[extra_attributes][keys][]"
-            - attr_field_name = "virtual_good[extra_attributes][attrs][]"
-            - id = "virtual_good_extra_attributes_values_#{i}"
-            %tr
-              %th
-                .hidden.custom_field_name_label &nbsp;
-                = text_field_tag key_field_name, '', :id => id, :class => 'custom_field_name_input'
-              %td
-                = text_field_tag attr_field_name, '', :id => id
+      %tbody
+        - i = 0
+        - @virtual_good.extra_attributes.each do |key, attr|
+          - i += 1
+          - key_field_name = "virtual_good[extra_attributes][keys][]"
+          - attr_field_name = "virtual_good[extra_attributes][attrs][]"
+          - id = "virtual_good_extra_attributes_values_#{i}"
+          %tr
+            %th
+              .custom_field_name_label= key
+              = text_field_tag key_field_name, key, :id => id, :class => 'hidden custom_field_name_input'
+            %td
+              = text_field_tag attr_field_name, attr
+        - (5 - @virtual_good.extra_attributes.length).times do
+          - i += 1
+          - key_field_name = "virtual_good[extra_attributes][keys][]"
+          - attr_field_name = "virtual_good[extra_attributes][attrs][]"
+          - id = "virtual_good_extra_attributes_values_#{i}"
+          %tr
+            %th
+              .hidden.custom_field_name_label &nbsp;
+              = text_field_tag key_field_name, '', :id => id, :class => 'custom_field_name_input'
+            %td
+              = text_field_tag attr_field_name, '', :id => id
         %tr
           %td &nbsp;
           %td= f.submit
@@ -166,8 +158,19 @@
       });
 
       var types = #{ @virtual_good_types.keys.to_json };
+      var attrs = #{ @virtual_good_types.to_json };
       var select = function(event, data){
         if (data.item) data = data.item.value;
+        //$('.custom_field_name_label').text('').hide();
+        $('.custom_field_name_input').each(function(i){
+          if (attrs[data][i]) {
+            $(this).val(attrs[data][i]).hide();
+            $(this).siblings().text(attrs[data][i]).show();
+          } else {
+            $(this).val('').show();
+            $(this).siblings().text('').hide();
+          }
+        });
       };
       $('#virtual_good_title').autocomplete({ source: types, delay: 100, select: select});
       $('.extra_attribute_key').click(function(){
