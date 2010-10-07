@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100921190445) do
+ActiveRecord::Schema.define(:version => 20101006213509) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -305,8 +305,8 @@ ActiveRecord::Schema.define(:version => 20100921190445) do
   add_index "user_roles", ["name"], :name => "index_user_roles_on_name", :unique => true
 
   create_table "users", :id => false, :force => true do |t|
-    t.string   "id",                 :limit => 36,                 :null => false
-    t.string   "username",                                         :null => false
+    t.string   "id",                 :limit => 36,                    :null => false
+    t.string   "username",                                            :null => false
     t.string   "email"
     t.string   "crypted_password"
     t.string   "password_salt"
@@ -314,9 +314,10 @@ ActiveRecord::Schema.define(:version => 20100921190445) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "current_partner_id", :limit => 36
-    t.string   "perishable_token",                 :default => "", :null => false
+    t.string   "perishable_token",                 :default => "",    :null => false
     t.datetime "current_login_at"
     t.datetime "last_login_at"
+    t.string   "time_zone",                        :default => "UTC", :null => false
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"

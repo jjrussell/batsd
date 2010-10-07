@@ -44,7 +44,7 @@ class UsersController < WebsiteController
     log_activity(@user)
     
     params[:user][:username] = params[:user][:email]
-    if @user.safe_update_attributes(params[:user], [ :username, :email, :password, :password_confirmation ])
+    if @user.safe_update_attributes(params[:user], [ :username, :email, :password, :password_confirmation, :time_zone ])
       flash[:notice] = 'Successfully updated account.'
       redirect_to users_path
     else

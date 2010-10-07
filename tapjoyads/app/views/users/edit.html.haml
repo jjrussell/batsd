@@ -22,6 +22,13 @@
         = f.password_field :password_confirmation
         = error_message_on @user, :password_confirmation
     %tr
+      %th
+        = f.label :time_zone, 'Time Zone'
+      %td
+        = f.time_zone_select :time_zone, ActiveSupport::TimeZone.all
+        = error_message_on @user, :time_zone
+	
+    %tr
       %td{ :colspan => 2 }= f.submit
 
 .hidden
