@@ -29,7 +29,7 @@
         %td.nowrap= partner.contact_phone
         %td= number_to_currency(partner.balance / 100.0)
         %td= number_to_currency(partner.pending_earnings / 100.0)
-        %td.nowrap= partner.created_at.in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec) + " PT"
+        %td.nowrap= partner.created_at.to_s(:pub_ampm_sec)
         %td
           - partner.offers.each do |o|
             .offer
