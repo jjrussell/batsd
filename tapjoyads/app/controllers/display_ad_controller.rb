@@ -10,12 +10,9 @@ class DisplayAdController < ApplicationController
       "c3fc6075-57a9-41d1-b0ee-e1c0cbbe4ef3", # Tap Zoo
       ])
   
-  # TODO: We are temporarily disabling display ads. Re-enable after next update of TapDefense.
-  # before_filter :setup, :except => :image
+  before_filter :setup, :except => :image
   
   def index
-    # TO REMOVE: after re-enabling
-    render :text => ''
   end
   
   def webview
