@@ -73,13 +73,16 @@ private
       srand
       offer = offer_list[rand(offer_list.size)]
     
-      @click_url = offer.get_redirect_url(publisher_app, get_user_id_from_udid(params[:udid], params[:app_id]), params[:udid], 'display_ad', nil, params[:app_id])
-      @image = get_ad_image(publisher_app, offer)
+      if offer.present?
+        @click_url = offer.get_redirect_url(publisher_app, get_user_id_from_udid(params[:udid], params[:app_id]), params[:udid], 'display_ad', nil, params[:app_id])
+        @image = get_ad_image(publisher_app, offer)
       
-      params[:offer_id] = offer.id
-      params[:publisher_app_id] = publisher_app.id
+        params[:offer_id] = offer.id
+        params[:publisher_app_id] = publisher_app.id
       
-      web_request.add_path('display_ad_shown')
+        
+        web_request.add_path('display_ad_shown')
+      end
     end
       
     web_request.save
