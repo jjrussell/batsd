@@ -11,6 +11,7 @@
 `chmod 777 /mnt/log`
 `chown -R webuser:webuser /mnt/log`
 `rm -rf /var/log/apache2`
+`rm -rf /home/webuser/tapjoyads/log`
 `ln -s /mnt/log/apache2 /var/log/apache2`
 `ln -s /mnt/log/rails /home/webuser/tapjoyads/log`
 
