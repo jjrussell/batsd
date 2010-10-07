@@ -141,8 +141,13 @@ class ReportingController < WebsiteController
     data += "\n"
     
     @appstats.stats['paid_clicks'].length.times do |i|
-      line =  "#{@appstats.intervals[i].to_s(:db)},"
-      line += "#{@appstats.intervals[i + 1].to_s(:db)},"
+      if @granularity == :daily
+        line =  "#{@appstats.intervals[i].to_s(:mdy_ampm)} UTC,"
+        line += "#{@appstats.intervals[i + 1].to_s(:mdy_ampm)} UTC,"
+      else
+        line =  "#{@appstats.intervals[i].to_s(:mdy_ampm)},"
+        line += "#{@appstats.intervals[i + 1].to_s(:mdy_ampm)},"
+      end
       line += "#{@appstats.stats['paid_clicks'][i]},"
       line += "#{@appstats.stats['paid_installs'][i]},"
       line += "#{@appstats.stats['cvr'][i]},"
