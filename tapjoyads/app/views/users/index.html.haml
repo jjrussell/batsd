@@ -1,10 +1,10 @@
 - @page_title = 'Account'
 
-%p Change your email address and password or create additional user accounts for other people.
+%p Create additional user accounts for other people or change your email address, password, or preferred time zone.
 
 %ul
-  %li= link_to('Change your email address or password', edit_user_path(current_user))
   %li= link_to('Add new user', new_user_path)
+  %li= link_to('Change your account details', edit_user_path(current_user))
 
 %h3 Users with access
 

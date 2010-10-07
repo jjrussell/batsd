@@ -13,7 +13,7 @@ class Job::MasterReloadMoneyController < Job::JobController
     Mc.put('money.cached_stats', money_stats)
     Mc.put('money.total_balance', total_balance)
     Mc.put('money.total_pending_earnings', total_pending_earnings)
-    Mc.put('money.last_updated', Time.zone.now)
+    Mc.put('money.last_updated', Time.zone.now.to_f)
     
     render :text => 'ok'
   end
@@ -27,7 +27,7 @@ class Job::MasterReloadMoneyController < Job::JobController
     daily_money_stats = get_money_stats(interval_strings)
     
     Mc.put('money.daily_cached_stats', daily_money_stats)
-    Mc.put('money.daily_last_updated', Time.zone.now)
+    Mc.put('money.daily_last_updated', Time.zone.now.to_f)
     
     render :text => 'ok'
   end

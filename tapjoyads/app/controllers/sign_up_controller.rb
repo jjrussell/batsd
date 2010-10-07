@@ -11,6 +11,7 @@ class SignUpController < WebsiteController
     @user.password = params[:user][:password]
     @user.password_confirmation = params[:user][:password_confirmation]
     @user.current_partner = Partner.new(:name => params[:partner_name], :contact_name => @user.email)
+    @user.time_zone = params[:user][:time_zone]
     @user.partners << @user.current_partner
     if @user.save
       flash[:notice] = 'Account successfully created.'

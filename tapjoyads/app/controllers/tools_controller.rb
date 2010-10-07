@@ -83,8 +83,8 @@ class ToolsController < WebsiteController
     @money_stats = Mc.get('money.cached_stats') || {}
     @daily_money_stats = Mc.get('money.daily_cached_stats') || {}
     @combined_money_stats = @money_stats.merge(@daily_money_stats)
-    @last_updated = Mc.get('money.last_updated') || Time.zone.at(8.hours.to_i)
-    @daily_last_updated = Mc.get('money.daily_last_updated') || Time.zone.at(8.hours.to_i)
+    @last_updated = Time.zone.parse(Mc.get('money.last_updated') || 0)
+    @daily_last_updated = Time.zone.parse(Mc.get('money.daily_last_updated') || 0)
     @total_balance = Mc.get('money.total_balance') || 0
     @total_pending_earnings = Mc.get('money.total_pending_earnings') || 0
   end

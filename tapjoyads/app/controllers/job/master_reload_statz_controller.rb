@@ -62,7 +62,7 @@ private
     end
     
     Mc.put("statz.cached_stats.#{timeframe}", cached_stats)
-    Mc.put("statz.last_updated.#{timeframe}", now)
+    Mc.put("statz.last_updated.#{timeframe}", now.to_f)
   end
   
 end

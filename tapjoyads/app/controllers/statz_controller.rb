@@ -13,7 +13,7 @@ class StatzController < WebsiteController
     
     @money_stats = @timeframe == '1_month' ? Mc.get('money.daily_cached_stats') : Mc.get('money.cached_stats')
     
-    @last_updated = Mc.get("statz.last_updated.#{@timeframe}") || Time.zone.at(8.hours.to_i)
+    @last_updated = Time.zone.parse(Mc.get("statz.last_updated.#{@timeframe}") || 0)
     @cached_stats = Mc.get("statz.cached_stats.#{@timeframe}") || []
   end
 
