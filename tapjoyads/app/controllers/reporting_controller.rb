@@ -19,7 +19,12 @@ class ReportingController < WebsiteController
   def show
     session[:last_shown_app] = @offer.item_id if @offer.item_type == 'App'
 
-    intervals = @appstats.intervals.map { |time| time.to_s(:pub_ampm) }
+    if @granularity == :daily
+      intervals = @appstats.intervals.map { |time| time.to_s(:pub) + " UTC"  }
+    else
+      intervals = @appstats.intervals.map { |time| time.to_s(:pub_ampm) }
+    end
+      
     @data = {
       :connect_data => {
         :name => 'Sessions',
