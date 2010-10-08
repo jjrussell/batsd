@@ -1,6 +1,6 @@
 class Job::MasterUpdateMonthlyAccountController < Job::JobController
   def index
-    now = Time.zone.now
+    now = Time.zone.now - 7.days
     
     Partner.find_each do |partner|
       next unless partner.id.hash % 7 == now.wday

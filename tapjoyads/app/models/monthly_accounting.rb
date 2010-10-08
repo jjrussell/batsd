@@ -24,7 +24,7 @@ class MonthlyAccounting < ActiveRecord::Base
       end
     else
       #the record for this month already exists, so update it
-      if record.updated_at < Time.now.utc - 1.hours
+      if record.updated_at < Time.zone.now - 1.hours
         create_or_update_record(partner, {
           :year => year, :month => month, 
           :beginning_balance => record.beginning_balance, :beginning_pending_earnings => record.beginning_pending_earnings })
@@ -37,7 +37,7 @@ class MonthlyAccounting < ActiveRecord::Base
 
     last_record = MonthlyAccounting.find_by_partner_id(partner.id, :order => "year desc, month desc")
     
-    unless last_record
+    if last_record.nil?
       
       next_year = partner.created_at.year
       next_month = partner.created_at.month
@@ -72,7 +72,7 @@ class MonthlyAccounting < ActiveRecord::Base
     beginning_balance = options.delete(:beginning_balance) { 0 }
     beginning_pending_earnings = options.delete(:beginning_pending_earnings) { 0 }
     start_time = Time.zone.parse("#{year}-#{month}-01")
-    end_time = start_time.end_of_month
+    end_time = start_time + 1.month
     
     record = MonthlyAccounting.find_or_initialize_by_partner_id_and_month_and_year(partner.id, month, year)
     
@@ -84,11 +84,7 @@ class MonthlyAccounting < ActiveRecord::Base
     record.invoiced_orders = orders[1] || 0
     record.marketing_orders = orders[2] || 0
     record.transfer_orders = orders[3] || 0
-    record.spend = 0
-    
-    partner.offers.each do |app| 
-      record.spend += Conversion.sum(:advertiser_amount, :conditions => "created_at >= '#{start_time.to_s(:db)}' and created_at < '#{end_time.to_s(:db)}' and advertiser_offer_id = '#{app.id}'")
-    end
+    record.spend = partner.advertiser_conversions.sum(:advertiser_amount, :conditions => "conversions.created_at >= '#{start_time.to_s(:db)}' and conversions.created_at < '#{end_time.to_s(:db)}'")
     
     record.ending_balance = record.beginning_balance + 
       record.website_orders + record.invoiced_orders + record.marketing_orders + record.transfer_orders + 
@@ -100,17 +96,12 @@ class MonthlyAccounting < ActiveRecord::Base
     record.beginning_pending_earnings = beginning_pending_earnings
     record.payment_payouts = (payouts[1] || 0) * -1
     record.transfer_payouts = (payouts[3] || 0) * -1    
-    record.earnings = 0
-      
-    partner.apps.each do |app| 
-      record.earnings += Conversion.sum(:publisher_amount, :conditions => "created_at >= '#{start_time.to_s(:db)}' and created_at < '#{end_time.to_s(:db)}' and publisher_app_id = '#{app.id}'") 
-    end
+    record.earnings = partner.publisher_conversions.sum(:publisher_amount, :conditions => "conversions.created_at >= '#{start_time.to_s(:db)}' and conversions.created_at < '#{end_time.to_s(:db)}'")
     
     record.ending_pending_earnings = record.beginning_pending_earnings +
       record.payment_payouts + record.transfer_payouts + #these are negative values
       record.earnings
-      
-    record.updated_at = Time.now.utc
+    
     record.save!
     
     record
