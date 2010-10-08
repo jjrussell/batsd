@@ -77,26 +77,36 @@ class MonthlyAccounting < ActiveRecord::Base
     record = MonthlyAccounting.find_or_initialize_by_partner_id_and_month_and_year(partner.id, month, year)
     
     #Calculate the Balance side
-    orders = Order.sum(:amount, :conditions => "status = 1 and partner_id = '#{partner.id}' and created_at >= '#{start_time.to_s(:db)}' and created_at < '#{end_time.to_s(:db)}'", :group => :payment_method)
+    orders = nil
+    Order.using_slave_db do
+      orders = Order.sum(:amount, :conditions => "status = 1 and partner_id = '#{partner.id}' and created_at >= '#{start_time.to_s(:db)}' and created_at < '#{end_time.to_s(:db)}'", :group => :payment_method)
+    end
     
     record.beginning_balance = beginning_balance    
     record.website_orders = orders[0] || 0
     record.invoiced_orders = orders[1] || 0
     record.marketing_orders = orders[2] || 0
     record.transfer_orders = orders[3] || 0
-    record.spend = partner.advertiser_conversions.sum(:advertiser_amount, :conditions => "conversions.created_at >= '#{start_time.to_s(:db)}' and conversions.created_at < '#{end_time.to_s(:db)}'")
+    Partner.using_slave_db do
+      record.spend = partner.advertiser_conversions.sum(:advertiser_amount, :conditions => "conversions.created_at >= '#{start_time.to_s(:db)}' and conversions.created_at < '#{end_time.to_s(:db)}'")
+    end
     
     record.ending_balance = record.beginning_balance + 
       record.website_orders + record.invoiced_orders + record.marketing_orders + record.transfer_orders + 
       record.spend #this is a negative value
     
     #Calculate the Pending Earnings side
-    payouts = Payout.sum(:amount, :conditions => "status = 1 and partner_id = '#{partner.id}' and created_at >= '#{start_time.to_s(:db)}' and created_at < '#{end_time.to_s(:db)}'", :group => :payment_method)
+    payouts = nil
+    Payout.using_slave_db do
+      payouts = Payout.sum(:amount, :conditions => "status = 1 and partner_id = '#{partner.id}' and created_at >= '#{start_time.to_s(:db)}' and created_at < '#{end_time.to_s(:db)}'", :group => :payment_method)
+    end
     
     record.beginning_pending_earnings = beginning_pending_earnings
     record.payment_payouts = (payouts[1] || 0) * -1
-    record.transfer_payouts = (payouts[3] || 0) * -1    
-    record.earnings = partner.publisher_conversions.sum(:publisher_amount, :conditions => "conversions.created_at >= '#{start_time.to_s(:db)}' and conversions.created_at < '#{end_time.to_s(:db)}'")
+    record.transfer_payouts = (payouts[3] || 0) * -1
+    Partner.using_slave_db do
+      record.earnings = partner.publisher_conversions.sum(:publisher_amount, :conditions => "conversions.created_at >= '#{start_time.to_s(:db)}' and conversions.created_at < '#{end_time.to_s(:db)}'")
+    end
     
     record.ending_pending_earnings = record.beginning_pending_earnings +
       record.payment_payouts + record.transfer_payouts + #these are negative values
