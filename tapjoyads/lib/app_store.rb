@@ -69,9 +69,11 @@ private
 
   def self.search_apple_app_store(term)
     response = request(SEARCH_URL, {:media => 'software', :term => term})
+    response_ipad = request(SEARCH_URL, {:media => 'software', :entity => 'iPadSoftware', :term => term})
     if (response.status == 200) && (response.headers['Content-Type'] =~ /javascript/)
-      json = JSON.load(response.body)
-      return json['results'].map { |result| app_info_from_apple(result) }
+      results_iphone = JSON.load(response.body)['results']
+      results_ipad = JSON.load(response_ipad.body)['results']
+      return results_iphone.concat(results_ipad).map { |result| app_info_from_apple(result) }
     else
       raise "Invalid response from app store."
     end
