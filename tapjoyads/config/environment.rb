@@ -45,6 +45,7 @@ Rails::Initializer.run do |config|
   config.gem 'haml', :version => '2.2.23'
   config.gem 'hoptoad_notifier', :version => '2.3.2'
   config.gem 'plist', :version => '3.1.0'
+  config.gem 'read_from_slave', :version => '0.4.0'
   config.gem 'uuidtools', :version => '2.0.0'
   config.gem 'will_paginate', :version => '2.3.12'
   

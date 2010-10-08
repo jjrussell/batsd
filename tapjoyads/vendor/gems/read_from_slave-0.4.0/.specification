@@ -1,0 +1,73 @@
+--- !ruby/object:Gem::Specification 
+name: read_from_slave
+version: !ruby/object:Gem::Version 
+  version: 0.4.0
+platform: ruby
+authors: 
+- Stephen Sykes
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2010-08-13 00:00:00 -07:00
+default_executable: 
+dependencies: []
+
+description: Read_from_slave for Rails enables database reads from a slave database, while writes continue to go to the master
+email: sdsykes@gmail.com
+executables: []
+
+extensions: []
+
+extra_rdoc_files: 
+- README
+- README.textile
+files: 
+- README
+- README.textile
+- Rakefile
+- VERSION.yml
+- lib/read_from_slave.rb
+- test/active_record_setup.rb
+- test/helper.rb
+- test/models/course.rb
+- test/read_from_slave_test.rb
+- test/schema/schema.rb
+- test/setup.rb
+- test/test.rb
+has_rdoc: true
+homepage: http://github.com/sdsykes/read_from_slave
+licenses: []
+
+post_install_message: 
+rdoc_options: 
+- --charset=UTF-8
+require_paths: 
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      version: "0"
+  version: 
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      version: "0"
+  version: 
+requirements: []
+
+rubyforge_project: 
+rubygems_version: 1.3.5
+signing_key: 
+specification_version: 3
+summary: Read_from_slave - Utilise your slave databases with rails
+test_files: 
+- test/active_record_setup.rb
+- test/helper.rb
+- test/models/course.rb
+- test/read_from_slave_test.rb
+- test/schema/schema.rb
+- test/setup.rb
+- test/test.rb

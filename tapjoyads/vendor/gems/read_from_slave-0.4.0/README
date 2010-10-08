@@ -1,0 +1,96 @@
+Read_from_slave
+
+Read_from_slave for Rails enables database reads from a slave database, while writes continue to go to the master
+
+Read_from_slave will work with Rails 2.2 and above, including Rails 3 versions.
+
+Installation
+
+gem install read_from_slave
+
+Configuration
+
+In config/environments/production.rb (for instance)
+
+  config.gem "read_from_slave"
+
+In config/database.yml
+
+  production:
+    adapter: mysql
+    database: mydatabase
+    username: myuser
+    password: mypassword
+    host: my.main.database.server.com
+    port: 3306
+
+  slave_for_mydatabase:
+    adapter: mysql
+    database: mydatabase
+    username: myuser
+    password: mypassword
+    socket: /var/lib/mysql/mysql.sock
+
+Just use the regular YAML format to specify your slave database, it could equally well be on
+another server as the local example given above.
+
+Phusion Passenger
+
+Note that if you are using Passenger, you need to make sure that the slave database is reconnected
+if there is any chance that it was accessed before the spawner forks.  This could be because
+database was accessed during the generation of routes, or perhaps if you are using the has_many_polymorphs
+gem.
+
+The safest thing to do is to have something like this in your production.rb or environment.rb:
+
+  PhusionPassenger.on_event(:starting_worker_process) do |forked|
+    if forked
+      # We're in smart spawning mode.                                                               
+      ActiveRecord::Base.establish_slave_connections
+    else
+      # We're in conservative spawning mode. We don't need to do anything.                          
+    end
+  end
+
+Documentation
+
+http://rdoc.info/projects/sdsykes/read_from_slave
+
+Tests
+
+Clone the git repository, and you can run the read_from_slave tests or entire ActiveRecord test suite to prove that read_from_slave works correctly.
+
+  $ rake test
+  ...snip..
+  Finished in 0.046365 seconds.
+  
+  7 tests, 7 assertions, 0 failures, 0 errors
+  
+  $ rake test_with_active_record
+  ...snip...
+  Finished in 51.904306 seconds.
+  
+  2057 tests, 6685 assertions, 0 failures, 0 errors
+
+Todo
+
+* Support a pool of multiple slaves
+
+References
+
+"Masochism":http://github.com/technoweenie/masochism/tree/master
+not thread safe
+won't work with apps that talk to multiple (master) databases
+
+"Acts as readonlyable":http://rubyforge.org/projects/acts-as-with-ro/
+old, not suitable for Rails 2.x
+
+"master_slave_adapter":http://github.com/mauricio/master_slave_adapter/tree/master
+similar to read_from_slave, but adapter based approach
+
+"multi_db":http://github.com/schoefmax/multi_db/tree/master
+another one, proxy connection approach
+looks like it won't work with apps that talk to multiple (master) databases
+more complex than read_from_slave
+
+(c) 2009 Stephen Sykes
