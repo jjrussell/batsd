@@ -29,6 +29,7 @@
     %tr
       %th
         = f.label :time_zone, 'Time Zone'
+        #help_time_zone.help ?
       %td
         = f.time_zone_select :time_zone, ActiveSupport::TimeZone.all
         = error_message_on @user, :time_zone        
@@ -38,3 +39,4 @@
 .hidden
   #help_email_content{ :name => 'Email Address' } Your preferred contact email address. Password reset requests will go to this address and you will use it to login.
   #help_company_name_content{ :name => 'Company Name' } The name of your company.
+  #help_time_zone_content{ :name => 'Time Zone' } All times will be displayed in this time zone with the exception of daily stats, which are always in Universal Time (UTC).
