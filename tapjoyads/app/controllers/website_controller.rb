@@ -29,7 +29,7 @@ class WebsiteController < ApplicationController
   def sanitize_currency_params(object, fields)
     fields.each do |field|
       if object[field]
-        object[field] = (object[field].gsub(/[\$,]/,'').to_f * 100).to_i.to_s
+        object[field] = (object[field].gsub(/[\$,]/,'').to_f * 100).round.to_s
       end
     end
     object
