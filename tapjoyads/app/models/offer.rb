@@ -74,6 +74,7 @@ class Offer < ActiveRecord::Base
     end
   end
   
+  before_create :set_stats_aggregation_times
   before_save :cleanup_url
   after_save :update_memcached
   before_destroy :clear_memcached
@@ -442,6 +443,11 @@ private
   
   def cleanup_url
     self.url = url.gsub(" ", "%20")
+  end
+  
+  def set_stats_aggregation_times
+    self.next_stats_aggregation_time = Time.zone.now if next_stats_aggregation_time.blank?
+    self.stats_aggregation_interval = 3600 if stats_aggregation_interval.blank?
   end
   
 end
