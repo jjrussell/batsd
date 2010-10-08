@@ -86,4 +86,46 @@ class OneOffs
     puts "new UDIDs (per app): #{app_new_udids}"
     puts "existing UDIDs (per app): #{app_existing_udids}"
   end
+  
+  def self.populate_partner_names
+    App.find_each(:conditions => "store_id is not null and store_id != ''") do |app|
+      puts ""
+      puts "Fetching data for app: #{app.name} (#{app.id}). Store id: #{app.store_id}"
+      begin
+        data = AppStore.fetch_app_by_id(app.store_id, app.platform)
+        raise "Data is nil" if data.nil?
+      rescue Exception => e
+        puts "Error fetching data from app store: #{e}."
+        print "Retry? [Y/n]"
+        answer = STDIN.gets
+        if answer =~ /^(n|no)$/i
+          next
+        else
+          app = app.reload
+          retry
+        end
+      end
+      
+      if app.partner.name.nil?
+        puts "Partner name was missing in our system. Now is: '#{data[:publisher]}'"
+        app.partner.name = data[:publisher]
+        app.partner.save!
+        puts "Partner name updated."
+      elsif app.partner.name == data[:publisher]
+        puts "Partner name is: '#{data[:publisher]}' in both our system and app store."
+        puts "No change made."
+      else
+        puts "Partner name is: '#{app.partner.name}' in our system, but '#{data[:publisher]}' on app store."
+        print "Update partner name from app store? [y/N] "
+        answer = STDIN.gets
+        if answer =~ /^(y|yes)$/i
+          app.partner.name = data[:publisher]
+          app.partner.save!
+          puts "Partner name updated."
+        else
+          puts "No change made."
+        end
+      end
+    end
+  end
 end
