@@ -13,7 +13,7 @@ class PasswordResetsController < WebsiteController
       TapjoyMailer.deliver_password_reset(@user.email, edit_password_reset_url(@user.perishable_token))
       flash[:notice] = "A password reset link has just been emailed to you. Please check your email."
     else
-      flash[:notice] = "No user found with that email address."
+      flash[:error] = "No user found with that email address."
     end
     render :action => :new
   end
@@ -34,7 +34,7 @@ private
   
   def require_no_user
     unless current_user.nil?
-      flash[:notice] = "You must be logged out to reset passwords."
+      flash[:error] = "You must be logged out to reset passwords."
       redirect_to users_path
     end
   end
@@ -42,7 +42,7 @@ private
   def find_user_using_perishable_token
     @user = User.find_using_perishable_token(params[:id])
     if @user.nil?
-      flash[:notice] = "We're sorry, but we could not locate your account."
+      flash[:error] = "We're sorry, but we could not locate your account."
       redirect_to login_path
     end
   end
