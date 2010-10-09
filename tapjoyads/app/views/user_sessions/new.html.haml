@@ -37,7 +37,7 @@
       %table
         %tr
           %th= label_tag(:email, 'Email Address')
-          %td= text_field_tag(:email)
+          %td= text_field_tag(:email, '', :class => 'login')
         %tr
           %th &nbsp;
           %td= link_to_function('back to Login', 'toggleForgotPassword("mobile")', :tabindex => 100, :class => 'forgot_password')
