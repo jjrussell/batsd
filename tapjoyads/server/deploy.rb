@@ -28,6 +28,8 @@ puts `cd /home/webuser/tapjoyads && svn switch #{svn_url}`
 
 if server_type == 'jobs' || server_type == 'masterjobs'
   `mv /home/webuser/tapjoyads/config/newrelic-jobs.yml /home/webuser/tapjoyads/config/newrelic.yml`
+elsif server_type == 'test'
+  `mv /home/webuser/tapjoyads/config/newrelic-test.yml /home/webuser/tapjoyads/config/newrelic.yml`
 end
 
 puts `cd /home/webuser/tapjoyads && script/restart #{run_mode}`
