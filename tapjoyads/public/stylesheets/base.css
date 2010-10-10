@@ -417,7 +417,7 @@ margin:0px 0px 10px 0px;
 padding:0px 0px 0px 0px;
 font-size:1.3em;
 }
-strong.jobTitle{
+strong.job_title{
 margin:0px 0px 0px 0px;
 font-size:1.3em;
 color:#555;
@@ -470,7 +470,6 @@ font-size::1em;
 
 div.types
 {
-background:#fff url(../images/site/2block_bg.gif) repeat-x left bottom ;
 padding: 30px 0px;
 width:100%;
 display:table;
@@ -540,13 +539,11 @@ height:250px;
 }
 div.mobile_dev
 {
-background:url(../images/site/mobile_dev_bg.gif) no-repeat center 3.3em;
 height:420px;
 position:relative;
 }
 div.web_dev
 {
-background:url(../images/site/web_dev_bg.gif) no-repeat center 3.3em;
 height:420px;
 position:relative;
 }
@@ -570,6 +567,7 @@ div.titleHeader h3.sub
 {
 color:#616161;
 }
+div.titleHeader h3.separator,
 div.titleHeader h3.separater
 {
 color:#b1b1b1;
@@ -720,7 +718,7 @@ input[type=submit].blue, input[type=button].blue {
   background-color: #083898;
   background: -webkit-gradient(linear, left top, left bottom, from(#083898), to(#247));
   background: -moz-linear-gradient(top, #083898, #247);
-  border: 0px;
+  border-width: 2px;
   border-radius: 10px;
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;

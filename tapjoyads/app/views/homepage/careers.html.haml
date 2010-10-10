@@ -1,0 +1,24 @@
+.titleHeader
+  %h3 COMPANY OVERVIEW
+  %h3.separator /
+  %h3.sub CAREERS
+
+.splitLayout
+  = render :partial => 'about_left_nav'
+  .team.plain_template
+    .management.innercontents
+      %h5 Careers
+      %p Join one of the hottest companies in San Francisco and the Silicon Valley!
+      %strong Engineering
+      %ul
+        %li Systems Administrator
+        %li Flash / Flex / UI Developer
+        %li Senior / Principal Java Developer
+        %li Ruby on Rails Developer
+      %strong Sales
+      %ul
+        %li Manager, Performance Advertising
+        %li Publisher Operations Manager
+        %li Account Executive, Publisher Development
+        %li Account Manager, Publisher Development
+      %p For immediate consideration, please send a resume to #{mail_to 'careers@tapjoy.com'}.

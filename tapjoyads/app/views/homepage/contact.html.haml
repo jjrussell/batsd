@@ -1,0 +1,63 @@
+.titleHeader
+  %h3 COMPANY OVERVIEW
+  %h3.separator /
+  %h3.sub CONTACT US
+
+.splitLayout
+  = render :partial => 'about_left_nav'
+  .team.plain_template
+    .management.innercontents
+      %h5 Contact Us
+      .info
+        %p How can we help you?
+
+      .info
+        %strong Headquarters
+        %p
+          425 Market Street, 22nd Floor
+          %br/
+          Suite 2214
+          %br/
+          San Francisco, CA 94105
+          %br/
+          Telephone: 510-403-7300
+          %br/
+          Fax: 510-979-9334
+
+      .info
+        %strong Email
+        %p
+          Customer Service:
+          = mail_to 'help@tapjoy.com'
+          %br/
+          Company Information:
+          = mail_to 'info@tapjoy.com'
+          %br/
+          Publisher Support:
+          = mail_to 'publishersupport@tapjoy.com'
+          %br/
+          Advertisers:
+          = mail_to 'info@tapjoy.com'
+          %br/
+          Mobile Support:
+          = mail_to 'mobilesupport@tapjoy.com'
+
+      .info
+        %strong Customer Service Inquiries:
+        %p
+          To better assist you, we ask that you provide the following: the application that you are using, social network, your profile URL, and your offer id (you can find this out from the view offer status page).
+          %ol.instructions
+            %li Go to the main offers page of the application on which you experienced an issue.
+            %li Click on the link for missing currency (found in the upper right, above the offers).
+            %li Fill out the form on the ensuing page, and an Offerpal Media representative will respond to your request shortly.
+            %li You may also contact #{mail_to 'help@tapjoy.com'}.
+
+- content_for :page_styles do
+  :plain
+    p.info {
+      padding: 1px;
+    }
+    ol.instructions {
+      list-style-position: inside;
+      padding-left: 0px;
+    }

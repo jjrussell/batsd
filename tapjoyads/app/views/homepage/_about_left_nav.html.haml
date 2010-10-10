@@ -1,0 +1,7 @@
+.leftNav
+  %h4 About Us
+  %ul
+    %li= link_to 'Team',    { :controller => 'homepage', :action => 'team' }, :class => params[:action] == 'team' ? 'selec' : ''
+    %li= link_to 'Press',   '/press/index.html'
+    %li= link_to 'Careers', { :controller => 'homepage', :action => 'careers' }, :class => params[:action] == 'careers' ? 'selec' : ''
+    %li= link_to 'Contact', { :controller => 'homepage', :action => 'contact' }, :class => params[:action] == 'contact' ? 'selec' : ''

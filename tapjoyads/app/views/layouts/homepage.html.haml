@@ -27,18 +27,18 @@
               %li= link_to 'APP DEVELOPERS', {:action => 'app_developers'}, :class => "link0#{' selec' if params[:action]=='app_developers'}"
               %li= link_to 'ADVERTISERS', {:action => 'advertisers'}, :class => "link1#{' selec' if params[:action]=='advertisers'}"
               %li= link_to 'GAMING PLATFORMS', {:action => 'gaming_platforms'}, :class => "link2#{' selec' if params[:action]=='gaming_platforms'}"
-              %li= link_to 'ABOUT', '/site/aboutus.html', :class => "link3"
+              %li= link_to 'ABOUT', {:action => 'about_us'}, :class => "link3 #{'selec' if params[:action]=='aboutus'}"
           .clear{:style => 'clear:both;'}
         .contentArea
           = yield
       .footer
-        = link_to 'PRESS', '/site/press.html'
+        = link_to 'PRESS', '/press/index.html'
         |
-        = link_to 'CAREERS', '/site/careers.html'
+        = link_to 'CAREERS', :controller => 'homepage', :action => 'careers'
         |
-        = link_to 'TEAM', '/site/team.html'
+        = link_to 'TEAM', :controller => 'homepage', :action => 'team'
         |
-        = link_to 'CONTACT', '/site/contact.html'
+        = link_to 'CONTACT', :controller => 'homepage', :action => 'contact'
         %p
           &copy; #{Time.now.year} Tapjoy, Inc.
           = link_to 'Privacy Policy', '/privacy.html'
@@ -48,7 +48,7 @@
     = javascript_include_tag "https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.#{'min.' if Rails.env!='development'}js"
     = javascript_include_tag 'jquery.easing.1.2.js', 'jquery.anythingslider.js', 'pluginpage.js', 'jquery.pngFix.pack.js'
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
-      = yield :included_javascripts
+      = yield :page_javascript
       - unless Rails.env == 'development'
         :plain
           var _gaq = _gaq || [];

@@ -19,7 +19,7 @@
                 = image_tag "/images/site/arrow-orange.png"
                 Pay per install acquisition and re-engagement
             .button
-              = button_to 'Sign up today', '/site/contactus.html', :method => 'get', :title => "Sign up today", :class => 'blue'
+              = button_to 'Sign up today', {:action => 'contact_us'}, :method => 'get', :title => "Sign up today", :class => 'blue'
         %li
           .slide#slide2
             .title
@@ -37,7 +37,7 @@
                 = image_tag "/images/site/arrow-orange.png"
                 Direct and indirect payments in nearly 200 countries
             .button
-              = button_to 'Start earning now', '/site/contactus.html', :method => 'get', :title => "Sign up today", :class => 'blue'
+              = button_to 'Start earning now', {:action => 'contact_us'}, :method => 'get', :title => "Sign up today", :class => 'blue'
         %li
           .slide#slide3
             .title
@@ -55,7 +55,7 @@
                 = image_tag "/images/site/arrow-orange.png"
                 Ideal for both performance and brand advertising
             .button
-              = button_to 'Contact us to learn more', '/site/advertisersContact.html', :method => 'get', :title => "Sign up today", :class => 'blue'
+              = button_to 'Contact us to learn more', {:action => 'advertisers_contact'}, :method => 'get', :title => "Sign up today", :class => 'blue'
 
 .services
   %a{ :href => '/site/app_developers' }
@@ -139,7 +139,7 @@
       position: absolute;
       top: 285px;
     }
-- content_for :included_javascripts do
+- content_for :page_javascript do
   :plain
     function formatText(index, panel) {
       return index + "";

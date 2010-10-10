@@ -1,0 +1,56 @@
+- @advertiser_selected = true
+- form_for('info', :url => {:action => 'contact'}, :id => 'contact_form') do |f|
+  .contact_form
+    %h2 Advertise with us!
+    %p Please complete the form below and we’ll get right back to you.
+    .form_row
+      = f.label :first, 'First Name*'
+      = f.text_field :first
+    .form_row
+      = f.label :last, 'Last Name*'
+      = f.text_field :last
+    .form_row
+      = f.label :title
+      = f.text_field :title
+    .form_row
+      = f.label :company, 'Company*'
+      = f.text_field :company
+    .form_row
+      = f.label :email, 'Email Address*'
+      = f.text_field :email
+    .form_row
+      = f.label :phone, 'Phone Number'
+      = f.text_field :phone
+    .form_row
+      = f.label :comments
+      = f.text_area :comments, :rows => 5
+    .form_row
+      %label &nbsp;
+      = image_tag 'site/submit_btn.gif', :class => 'submit'
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      var checkEmail = function() {
+        var filter = /^([a-zA-Z0-9_.\-+])+@(([a-zA-Z0-9-])+.)+([a-zA-Z0-9]{2,4})+$/;
+        return filter.test($("#info_email").val());
+      };
+      $('img.submit').click(function(){
+        if(!$("#info_first").val()) {
+          alert("Please enter a first name");
+          $('#info_first').focus();
+        } else if(!$("#info_last").val()) {
+          alert("Please enter a last name");
+          $('#info_last').focus();
+        } else if(!$("#info_company").val()) {
+          alert("Please enter a company");
+          $('#info_company').focus();
+        } else if(!checkEmail()) {
+          alert("Please enter a valid email address");
+          $('#info_email').focus();
+        } else {
+          $('#contact_form').submit();
+        }
+      });
+    });
+
