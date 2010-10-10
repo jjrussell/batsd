@@ -24,10 +24,10 @@
             = link_to 'CLIENT LOGIN', login_path
           .mainmenu
             %ul#nav
-              %li= link_to 'APP DEVELOPERS', {:action => 'app_developers'}, :class => "link0#{' selec' if params[:action]=='app_developers'}"
-              %li= link_to 'ADVERTISERS', {:action => 'advertisers'}, :class => "link1#{' selec' if params[:action]=='advertisers'}"
-              %li= link_to 'GAMING PLATFORMS', {:action => 'gaming_platforms'}, :class => "link2#{' selec' if params[:action]=='gaming_platforms'}"
-              %li= link_to 'ABOUT', {:action => 'about_us'}, :class => "link3 #{'selec' if params[:action]=='aboutus'}"
+              %li= link_to 'APP DEVELOPERS', {:action => 'app_developers'}, :class => params[:action]=='app_developers' ? 'selec' : ''
+              %li= link_to 'ADVERTISERS', {:action => 'advertisers'}, :class => params[:action]=='advertisers' ? 'selec' : ''
+              %li= link_to 'GAMING PLATFORMS', {:action => 'gaming_platforms'}, :class => params[:action]=='gaming_platforms' ? 'selec' : ''
+              %li= link_to 'ABOUT', {:action => 'about_us'}, :class => @about_us ? 'selec' : ''
           .clear{:style => 'clear:both;'}
         .contentArea
           = yield
