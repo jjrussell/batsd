@@ -109,7 +109,7 @@ private
         @virtual_good.has_data = true
         @virtual_good.file_size = 0
       else
-        flash[:error] = "data file size (#{number_to_human_size(params[:virtual_good][:icon].size)}) is too large"
+        flash[:error] = "data file size (#{number_to_human_size(params[:virtual_good][:data].size)}) is too large"
         return false
       end
     end
