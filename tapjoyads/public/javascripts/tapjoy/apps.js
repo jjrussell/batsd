@@ -1,5 +1,6 @@
 // apps.js
 var search = $.noop;
+var deleteApp = $.noop;
 $(function($){
 
   // app state

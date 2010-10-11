@@ -1,7 +1,7 @@
 authorization do
   
   role :partner do
-    has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :publisher_integrate, :search, :sdk_download ]
+    has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :publisher_integrate, :search, :sdk_download, :archive ]
     has_permission_on :offers, :to => [ :show, :update ]
     has_permission_on :currencies, :to => [ :show, :update, :new, :create ]
     has_permission_on :virtual_goods, :to => [ :show, :update, :new, :create, :index, :reorder ]
@@ -16,6 +16,7 @@ authorization do
   
   role :tools do
     has_permission_on :tools, :to => [ :index ]
+    has_permission_on :apps, :to => [ :unarchive ]
   end
   
   role :payops do

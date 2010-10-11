@@ -4,9 +4,9 @@ class AppsController < WebsiteController
   filter_access_to :all
   before_filter :grab_partner_apps
   before_filter :has_apps, :only => [:show, :index, :integrate, :publisher_integrate]
-  before_filter :find_app, :only => [:show, :index, :integrate, :publisher_integrate, :update, :confirm]
+  before_filter :find_app, :only => [:show, :index, :integrate, :publisher_integrate, :update, :confirm, :archive, :unarchive ]
   before_filter :deprecation_notice, :only => [:integrate, :publisher_integrate]
-  after_filter :save_activity_logs, :only => [ :update, :create ]
+  after_filter :save_activity_logs, :only => [ :update, :create, :archive, :unarchive ]
 
   def index
     redirect_to @app
@@ -31,6 +31,7 @@ class AppsController < WebsiteController
     granularity = :daily
     stats = Appstats.new(@app.id, { :start_time => start_time, :end_time => end_time, :granularity => granularity, :stat_types => [ 'logins' ] }).stats
     @integrated = stats['logins'].sum > 0
+    flash[:error] = "You are looking at a deleted app." if @app.hidden?
   end
 
   def create
@@ -72,13 +73,42 @@ class AppsController < WebsiteController
       render :action => "show"
       return
     end
-    
+
     if @app.save
       flash[:notice] = 'App was successfully updated.'
       redirect_to(@app)
     else
       flash[:error] = 'Update unsuccessful.'
       render :action => "show"
+    end
+  end
+
+  def archive
+    @app.hidden = true
+    @app.offers.each do |o|
+      o.tapjoy_enabled = false
+      o.user_enabled = false
+      o.save
+    end
+    if @app.save
+      flash[:notice] = "App #{@app.name} was successfully deleted."
+      session[:last_shown_app] = nil # reset last shown app
+      redirect_to(apps_path)
+    else
+      flash[:error] = "Your app #{@app.name} could not be deleted."
+      redirect_to(@app)
+    end
+  end
+
+  def unarchive
+    @app.hidden = false
+    if @app.save
+      flash[:notice] = "App #{@app.name} was successfully undeleted."
+      session[:last_shown_app] = nil # reset last shown app
+      redirect_to(apps_path)
+    else
+      flash[:error] = "App #{@app.name} could not be undeleted."
+      redirect_to(@app)
     end
   end
 
