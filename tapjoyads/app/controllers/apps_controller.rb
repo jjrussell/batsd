@@ -84,6 +84,11 @@ class AppsController < WebsiteController
   end
 
   def archive
+    if @app.offers.any?{|o| o.is_enabled?}
+      flash[:error] = "Apps cannot be deleted until all offers are disabled"
+      redirect_to(@app)
+      return
+    end
     @app.hidden = true
     @app.offers.each do |o|
       o.tapjoy_enabled = false
