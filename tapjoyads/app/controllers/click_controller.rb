@@ -2,6 +2,22 @@ class ClickController < ApplicationController
   
   before_filter :setup
   
+  def app
+    return unless verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id ], { :allow_empty => false })
+    
+    @offer = Offer.find_in_cache(params[:offer_id])
+    return if offer_disabled?
+    
+    @device_app_list = DeviceAppList.new(:key => params[:udid])
+    return if offer_completed?
+    
+    create_web_request
+    create_click('install')
+    handle_pay_per_click
+    
+    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id]))
+  end
+  
   def generic
     return unless verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id ], { :allow_empty => false })
     
@@ -12,14 +28,10 @@ class ClickController < ApplicationController
     return if offer_completed?
     
     create_web_request
-    create_click('generic', true)
+    create_click('generic')
     handle_pay_per_click
     
-    if params[:redirect] == '1'
-      redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], nil, nil, @click.key))
-    else
-      render(:template => 'layouts/success')
-    end
+    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], nil, nil, @click.key))
   end
   
 private
@@ -27,7 +39,7 @@ private
   def setup
     @now = Time.zone.now
     
-    # Hottest App sends the same publisher_user_record_id for every click
+    # Hottest App sends the same publisher_user_id for every click
     if params[:publisher_app_id] == '469f7523-3b99-4b42-bcfb-e18d9c3c4576'
       params[:publisher_user_id] = params[:udid]
     end
@@ -67,7 +79,7 @@ private
     web_request.save
   end
   
-  def create_click(type, generic = false)
+  def create_click(type)
     currency = Currency.find_in_cache_by_app_id(params[:publisher_app_id])
     displayer_app = nil
     reward_key_2 = nil
@@ -76,7 +88,7 @@ private
       reward_key_2 = UUIDTools::UUID.random_create.to_s
     end
     
-    @click = Click.new(:key => (generic ? UUIDTools::UUID.random_create.to_s : "#{params[:udid]}.#{params[:advertiser_app_id]}"))
+    @click = Click.new(:key => (type == 'generic' ? UUIDTools::UUID.random_create.to_s : "#{params[:udid]}.#{params[:advertiser_app_id]}"))
     @click.clicked_at        = @now
     @click.udid              = params[:udid]
     @click.publisher_app_id  = params[:publisher_app_id]

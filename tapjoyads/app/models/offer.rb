@@ -218,7 +218,9 @@ class Offer < ActiveRecord::Base
   
   def get_click_url(publisher_app, publisher_user_id, udid, source, displayer_app_id = nil)
     click_url = "http://ws.tapjoyads.com/"
-    if item_type == 'GenericOffer'
+    if item_type == 'App'
+      click_url += "click/app?"
+    elsif item_type == 'GenericOffer'
       click_url += "click/generic?"
     else
       click_url += "submit_click/store?"
@@ -235,7 +237,7 @@ class Offer < ActiveRecord::Base
     get_click_url(publisher_app, publisher_user_id, udid, source, displayer_app_id) + "&redirect=1"
   end
   
-  def get_icon_url(protocol='http://', base64 = false)
+  def get_icon_url(protocol = 'http://', base64 = false)
     if base64
       url = "#{protocol}ws.tapjoyads.com/get_app_image/icon?app_id=#{item_id}"
     else
