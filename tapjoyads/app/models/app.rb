@@ -96,6 +96,7 @@ class App < ActiveRecord::Base
       icon = Downloader.get(url, :timeout => 30)
       bucket = S3.bucket(BucketNames::APP_DATA)
       bucket.put("icons/#{id}.png", icon, {}, "public-read")
+      Mc.delete("icon.s3.#{id}")
     rescue
       Rails.logger.info "Failed to download icon for url: #{url}"
       Notifier.alert_new_relic(AppDataFetchError, "icon url #{url} for app id #{id}")
