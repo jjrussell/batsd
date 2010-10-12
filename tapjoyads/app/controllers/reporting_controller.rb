@@ -120,7 +120,7 @@ class ReportingController < WebsiteController
         :decimals => 2,
         :names => [ 'ARPDAU' ],
         :data => [ @appstats.stats['arpdau'].map { |i| i / 100.0 } ],
-        :stringData => [ @appstats.stats['arpdau'].map { |i| number_to_currency(i / 100.0) } ]
+        :stringData => [ @appstats.stats['arpdau'].map { |i| number_to_currency(i / 100.0, :precision => 4) } ]
       }
     end
     respond_to do |format|
