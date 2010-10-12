@@ -51,6 +51,7 @@ class Partner < ActiveRecord::Base
           Notifier.alert_new_relic(BalancesMismatch, "Pending Earnings mismatch for partner: #{partner.id}, previously: #{partner.pending_earnings_was}, now: #{partner.pending_earnings}")
         end
       end
+      return partner
     end
   ensure
     Partner.using_slave_db do
