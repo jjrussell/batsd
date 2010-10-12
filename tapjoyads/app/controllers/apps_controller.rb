@@ -89,6 +89,7 @@ class AppsController < WebsiteController
       redirect_to(@app)
       return
     end
+    log_activity(@app)
     @app.hidden = true
     if @app.save
       flash[:notice] = "App #{@app.name} was successfully deleted."
@@ -101,6 +102,7 @@ class AppsController < WebsiteController
   end
 
   def unarchive
+    log_activity(@app)
     @app.hidden = false
     if @app.save
       flash[:notice] = "App #{@app.name} was successfully undeleted."
