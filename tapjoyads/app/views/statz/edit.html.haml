@@ -17,6 +17,13 @@
         = error_message_on @offer, :tapjoy_enabled
     %tr
       %th
+        = f.label(:user_enabled)
+        #help_user_enabled.help ?
+      %td
+        = f.check_box(:user_enabled)
+        = error_message_on @offer, :user_enabled
+    %tr
+      %th
         = f.label(:self_promote_only)
         #help_self_promote_only.help ?
       %td
@@ -146,7 +153,8 @@
       %td{ :colspan => 2 }= f.submit('Save Changes')
 
 .hidden
-  #help_tapjoy_enabled_content{ :name => 'Tapjoy Enabled' } Whether or not the offer is enabled for installs.
+  #help_tapjoy_enabled_content{ :name => 'Tapjoy Enabled' } Whether or not the offer is enabled for installs by Tapjoy.
+  #help_user_enabled_content{ :name => 'User Enabled' } Whether or not the offer is enabled for installs by the user.
   #help_self_promote_only_content{ :name => 'Self Promote Only' } Only show this offer on offerwalls from the same partner.
   #help_allow_negative_balance_content{ :name => 'Allow Negative Balance' } Allow this partner's balance to go below zero. This effectively locks show rate to 1.0.
   #help_pay_per_click_content{ :name => 'Pay-Per-Click' } Charge the advertiser and award the user immediately on click.

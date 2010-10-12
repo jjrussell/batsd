@@ -242,7 +242,6 @@ class StatzController < WebsiteController
     orig_payment = @offer.payment
     orig_budget = @offer.daily_budget
     offer_params[:device_types] = offer_params[:device_types].blank? ? '[]' : offer_params[:device_types].to_json
-    offer_params[:user_enabled] = offer_params[:payment].to_i > 0
     if @offer.update_attributes(offer_params)
       
       unless params[:app_store_id].blank?
