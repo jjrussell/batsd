@@ -55,7 +55,7 @@
           alert("Please enter a valid email address");
           $('#info_email').focus();
         } else {
-          $('#contact_form').submit();
+          $('#info_email').parents('form').submit();
         }
       });
     });
