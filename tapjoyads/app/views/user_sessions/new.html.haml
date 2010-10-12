@@ -6,7 +6,14 @@
   \.
 
 #left-panel
-  %h2 Tapjoy for Mobile developers
+  %h2
+    Tapjoy for
+    %span.highlight Mobile
+    developers
+  %span.small
+    iPhone and Android
+    = image_tag 'icon_apple.png'
+    = image_tag 'icon_android.png'
   #login_mobile
     - form_for(@user_session, :html => { :id => '', :class => 'tjform' }) do |f|
       = hidden_field_tag 'goto', @goto unless @goto.nil?
@@ -49,8 +56,15 @@
 
 #right-panel
   %h2
-    Tapjoy for Web developers
+    Tapjoy for
+    %span.highlight Web
+    developers
     %span.small (formerly Offerpal Console)
+  %span.small
+    Social networks
+    = image_tag 'icon_facebook.png'
+    = image_tag 'icon_myspace.png'
+
   #login_web
     - form_tag("http://onboard.offerpalmedia.com/index.php?do=login", :class => 'tjform' ) do
       %table
@@ -136,4 +150,19 @@
       width: 480px;
       border-left: 1px solid #888;
       padding-left: 20px;
+    }
+    h2 {
+      margin-bottom: 1px;
+    }
+    #right-panel span.highlight {
+      color: #0d5368;
+    }
+    #left-panel span.highlight {
+      color: #00749c;
+    }
+    span.small {
+      font-size: 0.8em;
+    }
+    #login_mobile, #login_web {
+      margin-top: 20px;
     }
