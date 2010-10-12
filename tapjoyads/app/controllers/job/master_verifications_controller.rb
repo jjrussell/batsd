@@ -26,8 +26,7 @@ private
     Partner.find_each do |partner|
       next unless partner.id.hash % 7 == day_of_week
       
-      partner.recalculate_balances(false, true)
-      sleep(10)
+      Partner.verify_balances(partner.id, true)
     end
   end
   

@@ -26,6 +26,38 @@ class Partner < ActiveRecord::Base
       :conditions => [ "partners.name LIKE ? OR users.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
     }
   
+  def self.calculate_next_payout_amount(partner_id)
+    Partner.using_slave_db do
+      Partner.slave_connection.execute("BEGIN")
+      partner = Partner.find(partner_id)
+      return partner.pending_earnings - partner.publisher_conversions.created_since(partner.payout_cutoff_date).sum(:publisher_amount)
+    end
+  ensure
+    Partner.using_slave_db do
+      Partner.slave_connection.execute("COMMIT")
+    end
+  end
+  
+  def self.verify_balances(partner_id, alert_on_mismatch = false)
+    Partner.using_slave_db do
+      Partner.slave_connection.execute("BEGIN")
+      partner = Partner.find(partner_id)
+      partner.recalculate_balance_and_pending_earnings
+      if alert_on_mismatch
+        if partner.balance_changed?
+          Notifier.alert_new_relic(BalancesMismatch, "Balance mismatch for partner: #{partner.id}, previously: #{partner.balance_was}, now: #{partner.balance}")
+        end
+        if partner.pending_earnings_changed?
+          Notifier.alert_new_relic(BalancesMismatch, "Pending Earnings mismatch for partner: #{partner.id}, previously: #{partner.pending_earnings_was}, now: #{partner.pending_earnings}")
+        end
+      end
+    end
+  ensure
+    Partner.using_slave_db do
+      Partner.slave_connection.execute("COMMIT")
+    end
+  end
+  
   def payout_cutoff_date(reference_date = nil)
     reference_date ||= Time.zone.now
     reference_date -= 3.days
@@ -37,33 +69,24 @@ class Partner < ActiveRecord::Base
     end
   end
   
-  def calculate_next_payout_amount(do_save = false)
+  def reset_balances
     Partner.transaction do
-      reload(:lock => (do_save ? 'FOR UPDATE' : false))
-      self.next_payout_amount = pending_earnings - publisher_conversions.created_since(payout_cutoff_date).sum(:publisher_amount)
-      save! if changed? && do_save
+      reload(:lock => 'FOR UPDATE')
+      recalculate_balance_and_pending_earnings
+      save!
     end
   end
   
-  def recalculate_balances(do_save = false, alert_on_mismatch = false)
-    Partner.transaction do
-      reload(:lock => (do_save ? 'FOR UPDATE' : false))
-      orders_sum = orders.sum(:amount, :conditions => 'status = 1')
-      payouts_sum = payouts.sum(:amount, :conditions => 'status = 1')
-      publisher_conversions_sum = publisher_conversions.sum(:publisher_amount)
-      advertiser_conversions_sum = advertiser_conversions.sum(:advertiser_amount)
-      self.balance = orders_sum + advertiser_conversions_sum
-      self.pending_earnings = publisher_conversions_sum - payouts_sum
-      if alert_on_mismatch
-        if balance_changed?
-          Notifier.alert_new_relic(BalancesMismatch, "Balance mismatch for partner: #{id}, previously: #{balance_was}, now: #{balance}")
-        end
-        if pending_earnings_changed?
-          Notifier.alert_new_relic(BalancesMismatch, "Pending Earnings mismatch for partner: #{id}, previously: #{pending_earnings_was}, now: #{pending_earnings}")
-        end
-      end
-      save! if changed? && do_save
-    end
+  # This method will most likely not produce accurate sums unless
+  # called from within some sort of transaction. See reset_balances
+  # and Partner.verify_balances for examples.
+  def recalculate_balance_and_pending_earnings
+    orders_sum = orders.sum(:amount, :conditions => 'status = 1')
+    payouts_sum = payouts.sum(:amount, :conditions => 'status = 1')
+    publisher_conversions_sum = publisher_conversions.sum(:publisher_amount)
+    advertiser_conversions_sum = advertiser_conversions.sum(:advertiser_amount)
+    self.balance = orders_sum + advertiser_conversions_sum
+    self.pending_earnings = publisher_conversions_sum - payouts_sum
   end
   
   def name_or_contact_name
