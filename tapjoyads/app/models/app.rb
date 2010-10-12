@@ -202,6 +202,7 @@ private
       offer.third_party_data = store_id if store_id_changed?
       offer.age_rating = age_rating if age_rating_changed?
       offer.hidden = hidden if hidden_changed?
+      offer.tapjoy_enabled = false if hidden? && hidden_changed?
       offer.save! if offer.changed?
     end
   end

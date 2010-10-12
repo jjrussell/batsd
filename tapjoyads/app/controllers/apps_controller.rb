@@ -90,14 +90,9 @@ class AppsController < WebsiteController
       return
     end
     @app.hidden = true
-    @app.offers.each do |o|
-      o.tapjoy_enabled = false
-      o.user_enabled = false
-      o.save
-    end
     if @app.save
       flash[:notice] = "App #{@app.name} was successfully deleted."
-      session[:last_shown_app] = nil # reset last shown app
+      session[:last_shown_app] = nil
       redirect_to(apps_path)
     else
       flash[:error] = "Your app #{@app.name} could not be deleted."
@@ -109,8 +104,8 @@ class AppsController < WebsiteController
     @app.hidden = false
     if @app.save
       flash[:notice] = "App #{@app.name} was successfully undeleted."
-      session[:last_shown_app] = nil # reset last shown app
-      redirect_to(apps_path)
+      session[:last_shown_app] = @app.id
+      redirect_to(@app)
     else
       flash[:error] = "App #{@app.name} could not be undeleted."
       redirect_to(@app)
