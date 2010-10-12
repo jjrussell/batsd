@@ -38,14 +38,14 @@ class WebRequest < SimpledbResource
   PUBLISHER_PATH_TO_STAT_MAP = {
     'store_click' => 'installs_opened',
     'offer_click' => 'offers_opened',
-    'conversion' => 'published_installs',
-    'rate_app' => 'ratings'
+    'conversion' => 'published_installs'
   }
   
   DISPLAYER_PATH_TO_STAT_MAP = {
     'display_ad_requested' => 'display_ads_requested',
     'display_ad_shown' => 'display_ads_shown',
     'store_click' => 'display_clicks',
+    'offer_click' => 'display_clicks',
     'conversion' => 'display_conversions'
   }
   

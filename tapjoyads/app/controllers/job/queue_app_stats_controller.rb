@@ -2,9 +2,9 @@ class Job::QueueAppStatsController < Job::SqsReaderController
   
   def initialize
     super QueueNames::APP_STATS
-    @paths_to_aggregate = %w(connect new_user adshown store_click daily_user monthly_user purchased_vg offers)
-    @publisher_paths_to_aggregate = %w(store_click offer_click rate_app)
-    @displayer_paths_to_aggregate = %w(display_ad_requested display_ad_shown store_click)
+    @paths_to_aggregate = %w(connect new_user adshown offer_click daily_user monthly_user purchased_vg offers)
+    @publisher_paths_to_aggregate = %w(store_click offer_click)
+    @displayer_paths_to_aggregate = %w(display_ad_requested display_ad_shown offer_click)
   end
   
 private
@@ -52,32 +52,29 @@ private
       app_condition = WebRequest::USE_OFFER_ID.include?(path) ? "offer_id = '#{@offer.id}'" : "app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
-      if path == 'store_click'
-        count += WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'offer_click' and #{app_condition}")
+      if path == 'offer_click'
+        count += WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'store_click' and #{app_condition}")
       end
       
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
-    paid_installs = Conversion.count(:conditions => ["advertiser_offer_id = ? and created_at >= ? and created_at < ? and reward_type in (0, 1, 3)", @offer.id, start_time, end_time])
-    installs_spend = Conversion.sum(:advertiser_amount, :conditions => ["advertiser_offer_id = ? and created_at >= ? and created_at < ? and reward_type in (0, 1, 3)", @offer.id, start_time, end_time])
+    paid_installs = Conversion.count(:conditions => ["advertiser_offer_id = ? and created_at >= ? and created_at < ? and reward_type in (0, 1, 2, 3)", @offer.id, start_time, end_time])
+    installs_spend = Conversion.sum(:advertiser_amount, :conditions => ["advertiser_offer_id = ? and created_at >= ? and created_at < ? and reward_type in (0, 1, 2, 3)", @offer.id, start_time, end_time])
     stat_row.update_stat_for_hour('paid_installs', start_time.hour, paid_installs)
     stat_row.update_stat_for_hour('installs_spend', start_time.hour, installs_spend)
     
-    installs_opened, offers_opened = 0
     @publisher_paths_to_aggregate.each do |path|
       stat_name = WebRequest::PUBLISHER_PATH_TO_STAT_MAP[path]
       app_condition = "publisher_app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
-      installs_opened = count if path == 'store_click'
-      offers_opened = count if path == 'offer_click'
 
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
     published_installs = Conversion.count(:conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type = 1", @offer.id, start_time, end_time])
     installs_revenue = Conversion.sum(:publisher_amount, :conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type = 1", @offer.id, start_time, end_time])
-    offers_completed = Conversion.count(:conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type in (0, 3)", @offer.id, start_time, end_time])
-    offers_revenue = Conversion.sum(:publisher_amount, :conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type in (0, 3)", @offer.id, start_time, end_time])
+    offers_completed = Conversion.count(:conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type in (0, 2, 3)", @offer.id, start_time, end_time])
+    offers_revenue = Conversion.sum(:publisher_amount, :conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type in (0, 2, 3)", @offer.id, start_time, end_time])
     
     stat_row.update_stat_for_hour('published_installs', start_time.hour, published_installs)
     stat_row.update_stat_for_hour('installs_revenue', start_time.hour, installs_revenue)
@@ -87,11 +84,16 @@ private
     @displayer_paths_to_aggregate.each do |path|
       stat_name = WebRequest::DISPLAYER_PATH_TO_STAT_MAP[path]
       app_condition = "displayer_app_id = '#{@offer.id}'"
+      
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
+      if path == 'offer_click'
+        count += WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'store_click' and #{app_condition}")
+      end
+      
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
-    display_conversions = Conversion.count(:conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type in (1000, 1001, 1003)", @offer.id, start_time, end_time])
-    display_revenue = Conversion.sum(:publisher_amount, :conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type in (1000, 1001, 1003)", @offer.id, start_time, end_time])
+    display_conversions = Conversion.count(:conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type in (1000, 1001, 1002, 1003)", @offer.id, start_time, end_time])
+    display_revenue = Conversion.sum(:publisher_amount, :conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type in (1000, 1001, 1002, 1003)", @offer.id, start_time, end_time])
     
     stat_row.update_stat_for_hour('display_conversions', start_time.hour, display_conversions)
     stat_row.update_stat_for_hour('display_revenue', start_time.hour, display_revenue)
@@ -124,8 +126,8 @@ private
       app_condition = WebRequest::USE_OFFER_ID.include?(path) ? "offer_id = '#{@offer.id}'" : "app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
-      if path == 'store_click'
-        count += WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'offer_click' and #{app_condition}")
+      if path == 'offer_click'
+        count += WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'store_click' and #{app_condition}")
       end
       hour_counts = stat_row.get_hourly_count(stat_name, 0)
       
@@ -153,6 +155,9 @@ private
       app_condition = "displayer_app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
+      if path == 'offer_click'
+        count += WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'store_click' and #{app_condition}")
+      end
       hour_counts = stat_row.get_hourly_count(stat_name, 0)
       
       if count != hour_counts.sum

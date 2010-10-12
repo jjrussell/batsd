@@ -14,6 +14,7 @@ class App < ActiveRecord::Base
 
   after_create :create_primary_offer
   after_update :update_offers
+  after_update :update_rating_offer
   after_save :update_memcached
   before_destroy :clear_memcached
   
@@ -204,6 +205,15 @@ private
       offer.hidden = hidden if hidden_changed?
       offer.tapjoy_enabled = false if hidden? && hidden_changed?
       offer.save! if offer.changed?
+    end
+  end
+  
+  def update_rating_offer
+    if store_id_changed? && rating_offer.present?
+      rating_offer.offers.each do |offer|
+        offer.url = store_url
+        offer.save!
+      end
     end
   end
   

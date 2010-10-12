@@ -43,7 +43,7 @@ private
     offer.name = name
     offer.description = description
     offer.price = 0
-    offer.url = "http://ws.tapjoyads.com/rate_app_offer?udid=TAPJOY_UDID&app_id=#{app_id}"
+    offer.url = app.store_url
     offer.device_types = Offer::ALL_DEVICES.to_json
     offer.instructions = "Go to the App Store where you can rate this app."
     offer.credit_card_required = false
@@ -53,6 +53,7 @@ private
     offer.third_party_data = app_id
     offer.tapjoy_enabled = false
     offer.user_enabled = true
+    offer.pay_per_click = true
     offer.save!
   end
   

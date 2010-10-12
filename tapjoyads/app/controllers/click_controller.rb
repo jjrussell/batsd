@@ -34,6 +34,22 @@ class ClickController < ApplicationController
     redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], nil, nil, @click.key))
   end
   
+  def rating
+    return unless verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id ], { :allow_empty => false })
+    
+    @offer = Offer.find_in_cache(params[:offer_id])
+    return if offer_disabled?
+    
+    @device_app_list = DeviceAppList.new(:key => params[:udid])
+    return if offer_completed?
+    
+    create_web_request
+    create_click('rating')
+    handle_pay_per_click
+    
+    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id]))
+  end
+  
 private
   
   def setup
@@ -56,7 +72,12 @@ private
   end
   
   def offer_completed?
-    completed = @device_app_list.has_app(params[:advertiser_app_id])
+    if @offer.item_type == 'RatingOffer'
+      id_for_device_app_list = RatingOffer.get_id_for_device_app_list(params[:advertiser_app_id], params[:app_version])
+    else
+      id_for_device_app_list = params[:advertiser_app_id]
+    end
+    completed = @device_app_list.has_app(id_for_device_app_list)
     if completed
       create_web_request('completed_offer')
       handle_unavailable_offer
@@ -111,7 +132,12 @@ private
   
   def handle_pay_per_click
     if @offer.pay_per_click?
-      @device_app_list.set_app_ran(params[:advertiser_app_id])
+      if @offer.item_type == 'RatingOffer'
+        id_for_device_app_list = RatingOffer.get_id_for_device_app_list(params[:advertiser_app_id], params[:app_version])
+      else
+        id_for_device_app_list = params[:advertiser_app_id]
+      end
+      @device_app_list.set_app_ran(id_for_device_app_list)
       @device_app_list.save
       
       message = { :click => @click.serialize(:attributes_only => true), :install_timestamp => @now.to_f.to_s }.to_json
