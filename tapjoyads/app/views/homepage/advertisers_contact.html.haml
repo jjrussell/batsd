@@ -22,6 +22,9 @@
       = f.label :phone, 'Phone Number'
       = f.text_field :phone
     .form_row
+      = f.label :platform, 'Platform*'
+      = f.select :platform, ['Mobile', 'Web', 'Both'], :prompt => 'Please select a platform.'
+    .form_row
       = f.label :comments
       = f.text_area :comments, :rows => 5
     .form_row
@@ -37,14 +40,17 @@
       };
       $('img.submit').click(function(){
         if(!$("#info_first").val()) {
-          alert("Please enter a first name");
+          alert("Please enter your first name.");
           $('#info_first').focus();
         } else if(!$("#info_last").val()) {
-          alert("Please enter a last name");
+          alert("Please enter your last name.");
           $('#info_last').focus();
         } else if(!$("#info_company").val()) {
-          alert("Please enter a company");
+          alert("Please enter your company name.");
           $('#info_company').focus();
+        } else if (!$('#info_platform').val()) {
+          alert('Please select the platform (mobile or web) about which you wish to inquire.');
+          $('#info_platform').focus();
         } else if(!checkEmail()) {
           alert("Please enter a valid email address");
           $('#info_email').focus();
