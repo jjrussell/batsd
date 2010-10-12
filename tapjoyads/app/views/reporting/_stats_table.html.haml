@@ -56,6 +56,13 @@
         %td Revenue
         %td= number_to_currency(@appstats.stats['rewards_revenue'].sum / 100.0)
       %tr
+        %td ARPDAU
+        %td
+          - if @appstats.stats['arpdau']
+            = number_to_currency(@appstats.stats['arpdau'].sum / 100.0)
+          - else
+            n/a
+      %tr
         %td Offerwall eCPM
         %td
           - if @appstats.stats['offerwall_views'].sum > 0
