@@ -415,7 +415,7 @@ private
   ##
   # Reject all offers that don't work with the old sdk if the request is coming from the old sdk.
   def old_sdk_reject?(is_old_sdk)
-    return is_old_sdk && (is_secondary? || item_type == 'GenericOffer')
+    return is_old_sdk && (is_secondary? || item_type == 'GenericOffer' || item_type == 'RatingOffer')
   end
   
   def normalize_device_type(device_type_param)
