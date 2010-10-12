@@ -62,7 +62,7 @@ private
   end
   
   def offer_disabled?
-    disabled = @offer.payment <= 0 || !@offer.tapjoy_enabled
+    disabled = !@offer.is_enabled?
     if disabled
       create_web_request('disabled_offer')
       handle_unavailable_offer
