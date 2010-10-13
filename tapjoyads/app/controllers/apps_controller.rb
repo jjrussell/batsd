@@ -19,8 +19,12 @@ class AppsController < WebsiteController
   def search
     if params[:term].present?
       params[:platform] ||= "iphone"
-      results = AppStore.search(params[:term], params[:platform].downcase)
-      render :json => results
+      begin
+        results = AppStore.search(params[:term], params[:platform].downcase)
+        render :json => results
+      rescue
+        render :json => { :error => true }
+      end
     end
   end
 

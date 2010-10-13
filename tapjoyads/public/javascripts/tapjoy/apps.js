@@ -36,7 +36,9 @@ $(function($){
   // on success
   var success = function(data){
     $('#search_results').removeClass('searching');
-    if (data.length > 0) {
+    if (data['error']) {
+      error();
+    } else if (data.length > 0) {
       $(data).each(function(i,app){
         var result = $('<div/>').attr('id', 'app_' + app.item_id).
                                  addClass('search-result').
