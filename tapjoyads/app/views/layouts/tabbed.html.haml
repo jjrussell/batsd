@@ -36,6 +36,7 @@
         - tabs << { :reporting => reporting_index_path } if permitted_to?(:index, :reporting)
         - tabs << { :billing   => billing_index_path }   if permitted_to?(:index, :billing)
         - tabs << { :account   => users_path }           if permitted_to?(:index, :users)
+        - tabs << { :partners  => partners_path }        if permitted_to?(:index, :partners)
         - #tabs << { :support   => support_index_path }   if permitted_to?(:index, :support)
         - tabs << { :tools     => tools_path }           if permitted_to?(:index, :tools)
         - tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :statz)

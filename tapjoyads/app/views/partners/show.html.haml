@@ -3,12 +3,15 @@
 %h1 Partner data
 
 - form_tag(make_current_partner_path(@partner)) do
-  = submit_tag('Act as Partner')
+  - if current_user.current_partner == @partner
+    = submit_tag('Acting as this Partner', :disabled => true)
+  - else  
+    = submit_tag('Act as this Partner')
 
 .metadata Name: #{@partner.name}
 .metadata Contact name: #{@partner.contact_name}
 .metadata Contact phone: #{@partner.contact_phone}
-.metadata Contact email: #{@partner.users.first.email if @partner.users.first}
+.metadata Contact email(s): #{@partner.users.collect(&:email).join(", ")}
 .metadata Balance: #{number_to_currency(@partner.balance / 100.0)}
 .metadata Pending Earnings: #{number_to_currency(@partner.pending_earnings / 100.0)}
 .metadata Payout Frequency: #{@partner.payout_frequency}
@@ -28,7 +31,7 @@
     - @partner.offers.each do |offer|
       %tr
         %td.icon= image_tag(offer.get_icon_url(request.protocol), :size => '57x57')
-        %td= link_to(offer.name_with_suffix, statz_path(offer.id))
+        %td= link_to_offer(offer)
         %td= offer.item_type
         %td= number_to_currency(offer.price / 100.0)
         %td= number_to_currency(offer.payment / 100.0)
