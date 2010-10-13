@@ -1,3 +1,5 @@
+# TO REMOVE - this entire controller whenever we're satisfied that no more completions will come from offerpal
+
 class ReceiveOfferController < ApplicationController
   
   def receive_offer
