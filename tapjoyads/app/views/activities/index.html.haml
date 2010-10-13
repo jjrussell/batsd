@@ -61,7 +61,7 @@
         %td
           %a{:href => "javascript:setValue('request_id', '#{activity.request_id}')"}= "#{activity.request_id[0, 6]}..."
 
-= link_to('Next &rarr;', activities_path(:object_id => params[:object_id], :user => params[:user], :request_id => params[:request_id], :next_token => @next_token), :class => 'next') if @next_token
+= link_to('Next &rarr;', activities_path(:object_id => params[:object_id], :user => params[:user], :request_id => params[:request_id], :partner_id => params[:partner_id], :next_token => @next_token), :class => 'next') if @next_token
 
 - content_for :page_javascript do
   :plain
