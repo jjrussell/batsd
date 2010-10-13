@@ -11,13 +11,13 @@ private
     reward = Reward.deserialize(message.to_s)
     
     unless reward.get('sent_currency')
-      publisher_user_id = reward.get('publisher_user_id')
+      publisher_user_id = reward.publisher_user_id
       unless publisher_user_id
         Rails.logger.info "No publisher_user_id found for reward key: #{reward.key}"
         return
       end
       
-      currency = Currency.find_in_cache_by_app_id(reward.get('publisher_app_id'))
+      currency = Currency.find_in_cache_by_app_id(reward.publisher_app_id)
       callback_url = currency.callback_url
       
       if callback_url == 'PLAYDOM_DEFINED'
@@ -38,15 +38,15 @@ private
       
       if callback_url == 'TAP_POINTS_CURRENCY'
         udid = publisher_user_id
-        app_id = reward.get('publisher_app_id')
+        app_id = reward.publisher_app_id
         
-        amount = reward.get('currency_reward')
+        amount = reward.currency_reward
         
         PointPurchases.transaction(:key => "#{udid}.#{app_id}") do |point_purchases|
-          point_purchases.points = point_purchases.points + amount.to_i
+          point_purchases.points = point_purchases.points + amount
         end
         
-        reward.put('sent_currency', Time.now.utc.to_f.to_s)
+        reward.sent_currency = Time.zone.now
         reward.save
         
         reward.update_counters
@@ -56,31 +56,29 @@ private
       
       mark = '?'
       mark = '&' if callback_url =~ /\?/
-      callback_url = "#{callback_url}#{mark}snuid=#{CGI::escape(publisher_user_id)}&currency=#{reward.get('currency_reward')}"
+      callback_url = "#{callback_url}#{mark}snuid=#{CGI::escape(publisher_user_id)}&currency=#{reward.currency_reward}"
       
       if currency.send_offer_data?
-        if (reward.get('type') == 'install')
-          offer = Offer.find_in_cache(reward.get('advertiser_app_id'))
-          name = offer.name
-          callback_url += "&storeId=#{CGI::escape(offer.third_party_data)}" if offer.item_type == 'App' && offer.third_party_data?
-        elsif (reward.get('type') == 'offer')
+        if reward.type == 'offer'
           if reward.get('cached_offer_id')
             offerpal_offer = OfferpalOffer.find_by_offerpal_id(reward.get('cached_offer_id'))
             name = offerpal_offer.name
           else
             name = 'UNKNOWN'
           end
-        elsif (reward.get('type') == 'rating')
-          name = 'rating'
+        else
+          offer = Offer.find_in_cache(reward.offer_id)
+          name = offer.name
+          callback_url += "&storeId=#{CGI::escape(offer.third_party_data)}" if offer.item_type == 'App' && offer.third_party_data?
         end
         callback_url = "#{callback_url}&application=#{CGI::escape(name)}"
         
-        publisher_revenue = reward.get('publisher_amount').to_f / 100
+        publisher_revenue = reward.publisher_amount / 100.0
         callback_url += "&rev=#{publisher_revenue}"
       end
       
       unless currency.secret_key.blank?
-        hash_source = "#{reward.key}:#{publisher_user_id}:#{reward.get('currency_reward')}:#{currency.secret_key}"
+        hash_source = "#{reward.key}:#{publisher_user_id}:#{reward.currency_reward}:#{currency.secret_key}"
         hash = Digest::MD5.hexdigest(hash_source)
         callback_url = "#{callback_url}&id=#{reward.key}&verifier=#{hash}"
       end
@@ -90,7 +88,7 @@ private
       
       reward.update_counters
       
-      failure_message = "reward_key: #{reward.key}, app_id: #{reward.get('publisher_app_id')}"
+      failure_message = "reward_key: #{reward.key}, app_id: #{reward.publisher_app_id}"
       Downloader.get_with_retry(callback_url, { :timeout => 30 }, failure_message) if Rails.env == 'production'
     end
   end
