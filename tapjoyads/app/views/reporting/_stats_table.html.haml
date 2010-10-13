@@ -27,17 +27,8 @@
         %td Balance
         %td= number_to_currency(current_partner.balance / 100.0)
       %tr
-        %td
-          Bid
-          - if @bids.length > 1
-            range
-        %td
-          - if @bids.length > 1
-            = number_to_currency(@bids.min / 100.0)
-            \-
-            = number_to_currency(@bids.max / 100.0)
-          - else
-            = number_to_currency(@bids.first / 100.0)
+        %td Bid
+        %td= number_to_currency(@offer.payment / 100.0)
 
 .data
   %table

@@ -202,19 +202,6 @@ private
     
     # lookup the stats
     @appstats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true })
-
-    @bids = [@offer.payment]
-    # historical bids if daily
-    if params[:granularity] == 'daily'
-      conditions = ["object_id = '#{@offer.id}'",
-        "`updated-at` >= '#{@start_time.to_i}'",
-        "`updated-at` < '#{@end_time.to_i}'",
-        "controller = 'offers' and action = 'update'"].join(" and ")
-      ActivityLog.select(:where => conditions) do |item|
-        @bids << JSON.load(item.attributes["before_state"].first)["payment"].to_i
-      end
-      @bids.uniq!
-    end
   end
-
+  
 end
