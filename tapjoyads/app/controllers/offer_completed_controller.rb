@@ -1,8 +1,10 @@
 class OfferCompletedController < ApplicationController
   
   def index
+    @is_gambit = false
     # Gambit sends the click_key as subid1
     if params[:subid1].present?
+      @is_gambit = true
       params[:click_key] = params[:subid1]
     end
     
@@ -56,14 +58,26 @@ class OfferCompletedController < ApplicationController
     message = { :click => click.serialize(:attributes_only => true), :install_timestamp => now.to_f.to_s }.to_json
     Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
     
-    render(:template => 'layouts/success')
+    render_success
   end
   
 private
   
+  def render_success
+    if @is_gambit
+      render :text => 'OK'
+    else
+      render(:template => 'layouts/success')
+    end
+  end
+  
   def notify_and_render_error
     Notifier.alert_new_relic(GenericOfferCallbackError, @error_message, request, params)
-    render(:template => 'layouts/error', :status => 500)
+    if @is_gambit
+      render :text => 'ERROR:FATAL'
+    else
+      render(:template => 'layouts/error', :status => 500)
+    end
   end
   
 end
