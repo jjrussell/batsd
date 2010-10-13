@@ -65,7 +65,7 @@ private
     disabled = !@offer.is_enabled?
     if disabled
       create_web_request('disabled_offer')
-      handle_unavailable_offer
+      render(:template => 'click/unavailable_offer', :layout => 'iphone')
     end
     
     return disabled
@@ -80,18 +80,10 @@ private
     completed = @device_app_list.has_app(id_for_device_app_list)
     if completed
       create_web_request('completed_offer')
-      handle_unavailable_offer
+      render(:template => 'click/unavailable_offer', :layout => 'iphone')
     end
     
     return completed
-  end
-  
-  def handle_unavailable_offer
-    if params[:redirect] == '1'
-      render(:template => 'click/unavailable_offer', :layout => 'iphone')
-    else
-      render(:template => 'layouts/success')
-    end
   end
   
   def create_web_request(path = 'offer_click')
