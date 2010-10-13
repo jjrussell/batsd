@@ -65,9 +65,9 @@ class SubmitClickController < ApplicationController
     click.type = 'install'
     click.save
     
-    web_request = WebRequest.new
-    web_request.put_values('store_click', params, get_ip_address, get_geoip_data)
-    web_request.save
+    # web_request = WebRequest.new
+    # web_request.put_values('store_click', params, get_ip_address, get_geoip_data)
+    # web_request.save
     
     if offer.pay_per_click?
       #assign the currency and consider the txn complete right now

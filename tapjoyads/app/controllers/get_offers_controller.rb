@@ -6,7 +6,7 @@ class GetOffersController < ApplicationController
   before_filter :setup
   
   def webpage
-    set_offer_list(:is_server_to_server => false, :is_old_sdk => false)
+    set_offer_list(:is_server_to_server => false)
     
     @message = nil
     unless params[:featured_offer].blank?
@@ -14,7 +14,7 @@ class GetOffersController < ApplicationController
       primary_offer = Offer.find_in_cache(featured_offer.item_id)
       
       if featured_offer.featured? && @offer_list.include?(primary_offer)
-        redirect_to featured_offer.get_redirect_url(@publisher_app, params[:publisher_user_id], params[:udid], 'featured', params[:app_version])
+        redirect_to featured_offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], 'featured', params[:app_version])
         return
       end
       @message = "You have already installed #{featured_offer.name}. You can still complete " +
@@ -23,7 +23,7 @@ class GetOffersController < ApplicationController
   end
   
   def featured
-    set_offer_list(:is_server_to_server => false, :is_old_sdk => false)
+    set_offer_list(:is_server_to_server => false)
     
     srand
     @offer_list = @offer_list[rand(@offer_list.length).to_i, 1]
@@ -39,8 +39,7 @@ class GetOffersController < ApplicationController
   
   def index
     is_server_to_server = params[:redirect] == '1' || (params[:json] == '1' && params[:callback].blank?)
-    is_old_sdk = !(params[:redirect] == '1' || params[:json] == '1')
-    set_offer_list(:is_server_to_server => is_server_to_server, :is_old_sdk => is_old_sdk)
+    set_offer_list(:is_server_to_server => is_server_to_server)
     
     if params[:type] == Offer::CLASSIC_OFFER_TYPE
       render :template => 'get_offers/offers'
@@ -88,7 +87,6 @@ private
   
   def set_offer_list(options = {})
     is_server_to_server = options.delete(:is_server_to_server) { false }
-    is_old_sdk = options.delete(:is_old_sdk) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     if is_server_to_server && params[:device_ip].blank?
@@ -113,8 +111,7 @@ private
         :type => type,
         :required_length => (@start_index + @max_items),
         :app_version => params[:app_version],
-        :reject_rating_offer => params[:rate_app_offer] == '0',
-        :is_old_sdk => is_old_sdk)
+        :reject_rating_offer => params[:rate_app_offer] == '0')
     @offer_list = @offer_list[@start_index, @max_items] || []
   end
   

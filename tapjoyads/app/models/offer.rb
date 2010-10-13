@@ -215,23 +215,19 @@ class Offer < ActiveRecord::Base
   end
   
   def get_click_url(publisher_app, publisher_user_id, udid, source, app_version, displayer_app_id = nil)
-    click_url = "http://ws.tapjoyads.com/"
-    if item_type == 'App'
-      click_url += "click/app?"
+    click_url = "http://ws.tapjoyads.com/click/"
+    if item_type == 'App' || item_type == 'EmailOffer'
+      click_url += "app?"
     elsif item_type == 'GenericOffer'
-      click_url += "click/generic?"
+      click_url += "generic?"
     elsif item_type == 'RatingOffer'
-      click_url += "click/rating?"
+      click_url += "rating?"
     else
-      click_url += "submit_click/store?"
+      raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end
     click_url += "advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}"
     click_url += "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
     click_url
-  end
-  
-  def get_redirect_url(publisher_app, publisher_user_id, udid, source, app_version, displayer_app_id = nil)
-    get_click_url(publisher_app, publisher_user_id, udid, source, app_version, displayer_app_id) + "&redirect=1"
   end
   
   def get_icon_url(protocol = 'http://', base64 = false)
@@ -301,7 +297,7 @@ class Offer < ActiveRecord::Base
     name_suffix.blank? ? name : "#{name} -- #{name_suffix}"
   end
   
-  def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer, is_old_sdk)
+  def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer)
     return is_disabled?(publisher_app, currency) ||
         platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device_app_list) ||
@@ -311,7 +307,6 @@ class Offer < ActiveRecord::Base
         show_rate_reject?(device_app_list) ||
         flixter_reject?(publisher_app, device_app_list) ||
         whitelist_reject?(publisher_app) ||
-        old_sdk_reject?(is_old_sdk) ||
         gamevil_reject?(publisher_app)
   end
   
@@ -410,12 +405,6 @@ private
   
   def whitelist_reject?(publisher_app)
     return !publisher_app_whitelist.blank? && !get_publisher_app_whitelist.include?(publisher_app.id)
-  end
-  
-  ##
-  # Reject all offers that don't work with the old sdk if the request is coming from the old sdk.
-  def old_sdk_reject?(is_old_sdk)
-    return is_old_sdk && (is_secondary? || item_type == 'GenericOffer' || item_type == 'RatingOffer')
   end
   
   def normalize_device_type(device_type_param)
