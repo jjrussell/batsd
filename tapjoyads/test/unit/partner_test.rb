@@ -34,14 +34,21 @@ class PartnerTest < ActiveSupport::TestCase
     
     should "calculate the next payout amount" do
       assert_equal 10300, @partner.pending_earnings
-      @partner.calculate_next_payout_amount
-      assert_equal 10100, @partner.next_payout_amount
+      assert_equal 10100, Partner.calculate_next_payout_amount(@partner.id)
     end
     
-    should "recalculate balances" do
+    should "verify balances" do
       assert_equal 10300, @partner.pending_earnings
       assert_equal 10000, @partner.balance
-      @partner.recalculate_balances
+      p = Partner.verify_balances(@partner.id)
+      assert_equal 300, p.pending_earnings
+      assert_equal 0, p.balance
+    end
+    
+    should "reset balances" do
+      assert_equal 10300, @partner.pending_earnings
+      assert_equal 10000, @partner.balance
+      @partner.reset_balances
       assert_equal 300, @partner.pending_earnings
       assert_equal 0, @partner.balance
     end

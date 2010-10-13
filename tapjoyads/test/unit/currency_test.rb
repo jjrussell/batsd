@@ -47,7 +47,19 @@ class CurrencyTest < ActiveSupport::TestCase
         @offer = Factory(:rating_offer).primary_offer
       end
       
-      should "calculate the reward amount" do
+      should "calculate publisher amounts" do
+        assert_equal 0, @currency.get_publisher_amount(@offer)
+      end
+      
+      should "calculate advertiser amounts" do
+        assert_equal 0, @currency.get_advertiser_amount(@offer)
+      end
+      
+      should "calculate tapjoy amounts" do
+        assert_equal 0, @currency.get_tapjoy_amount(@offer)
+      end
+      
+      should "calculate reward amounts" do
         assert_equal 12, @currency.get_reward_amount(@offer)
       end
     end
@@ -59,11 +71,11 @@ class CurrencyTest < ActiveSupport::TestCase
       end
       
       should "calculate publisher amounts" do
-        assert_equal 25, @currency.get_publisher_amount(@offer)
+        assert_equal 0, @currency.get_publisher_amount(@offer)
       end
       
       should "calculate advertiser amounts" do
-        assert_equal -25, @currency.get_advertiser_amount(@offer)
+        assert_equal 0, @currency.get_advertiser_amount(@offer)
       end
       
       should "calculate tapjoy amounts" do
@@ -95,6 +107,34 @@ class CurrencyTest < ActiveSupport::TestCase
       
       should "calculate reward amounts" do
         assert_equal 17, @currency.get_reward_amount(@offer)
+      end
+    end
+    
+    context "when dealing with a displayer offer" do
+      setup do
+        @offer = Factory(:app).primary_offer
+        @offer.update_attribute(:payment, 25)
+        @displayer_app = Factory(:app)
+      end
+      
+      should "calculate publisher amounts" do
+        assert_equal 8, @currency.get_publisher_amount(@offer, @displayer_app)
+      end
+      
+      should "calculate advertiser amounts" do
+        assert_equal -25, @currency.get_advertiser_amount(@offer)
+      end
+      
+      should "calculate tapjoy amounts" do
+        assert_equal 7, @currency.get_tapjoy_amount(@offer, @displayer_app)
+      end
+      
+      should "calculate reward amounts" do
+        assert_equal 17, @currency.get_reward_amount(@offer)
+      end
+      
+      should "calculate displayer amounts" do
+        assert_equal 10, @currency.get_displayer_amount(@offer, @displayer_app)
       end
     end
     

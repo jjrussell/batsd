@@ -87,7 +87,7 @@ class Currency < ActiveRecord::Base
   
   def get_displayer_amount(offer, displayer_app = nil)
     if displayer_app.present?
-      offer.payment * displayer_app.display_money_share
+      (offer.payment * displayer_app.display_money_share).to_i
     else
       0
     end
