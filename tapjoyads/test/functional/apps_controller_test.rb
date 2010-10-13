@@ -14,7 +14,7 @@ class AppsControllerTest < ActionController::TestCase
     context "accessing apps index" do
       should "be shown an app they own" do
         get 'index'
-        assert_response(:success)
+        assert_response(:redirect)
         assert @partner.apps.include? assigns(:app)
       end
     end
