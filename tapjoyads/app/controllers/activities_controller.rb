@@ -13,6 +13,6 @@ class ActivitiesController < WebsiteController
     
     response = ActivityLog.select(:where => where_clause, :order_by => '`updated-at` desc', :next_token => CGI::unescape(params[:next_token] || ''))
     @activities = response[:items]
-    @next_token = response[:next_token]
+    @next_token = CGI::escape(response[:next_token] || '')
   end
 end
