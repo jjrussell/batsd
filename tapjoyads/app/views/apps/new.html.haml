@@ -27,7 +27,7 @@
             Name
             #help_name.help ?
           %td
-            = f.text_field :name
+            = f.text_field :name, :size => 50
             = button_to_function "Search", "search()", :class => 'search'
             -if @app.errors.on :name
               = error_message_on @app, :name
