@@ -272,6 +272,7 @@ class StatzController < WebsiteController
   
   def last_run_times
     @udids_to_check = [
+      { :udid => 'ade749ccc744336ad81cbcdbf36a5720778c6f13', :last_run_time => 'Never', :device_label => 'Amir iPhone'      },
       { :udid => 'c73e730913822be833766efffc7bb1cf239d855a', :last_run_time => 'Never', :device_label => 'Ben iPhone'       },
       { :udid => '9ac478517b48da604bdb9fc15a3e48139d59660d', :last_run_time => 'Never', :device_label => 'Christine iPhone' },
       { :udid => 'f3de44744a306beb47407b9a23cd97d9fe03339a', :last_run_time => 'Never', :device_label => 'Christine iPad'   },
