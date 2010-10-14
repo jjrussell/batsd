@@ -49,7 +49,11 @@
             %td.not_integrated NO
         %tr.app_data.hidden
           %th Store ID
-          %td= link_to(@app.store_id, @app.final_store_url, :target => '_blank', :id => 'app_store_link')
+          %td
+            - if @app.store_id.present?
+              = link_to(@app.store_id, @app.final_store_url, :target => '_blank', :id => 'app_store_link')
+            - else
+              %a#app_store_link{ :target => '_blank' }
         %tr.app_data.hidden
           %th Icon
           %td#app_icon= image_tag(@app.get_icon_url(request.protocol), :size => '57x57', :alt => 'icon')
@@ -109,14 +113,15 @@
 - content_for :page_javascript do
   :plain
     $(function($){
-      var toggleStoreId = function() {
-        if ($('input#app_store_id').val()) {
+      var toggleSubmitButton = function() {
+        if ($('input#app_store_id').val() && $('select#app_state').val() == 'live') {
           $('#submit_button').val('Update from #{@app.store_name}');
         } else {
           $('#submit_button').val('Save');
         }
       };
-      $('input#app_store_id').change(toggleStoreId);
+      $('select#app_state').change(toggleSubmitButton);
+      $('input#app_store_id').change(toggleSubmitButton);
     })
   
   - if @app.hidden?

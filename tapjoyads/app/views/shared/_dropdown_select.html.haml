@@ -1,6 +1,4 @@
-- if objects.blank? # no apps to display
-  %h1 Add an app
-- else
+- unless objects.blank? # no apps to display
   - options ||= {}
   #selected_app{ :title => "Select your app" }
     #selected_app_arrow{ :title => "Select your app" }

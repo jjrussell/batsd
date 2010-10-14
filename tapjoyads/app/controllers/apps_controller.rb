@@ -44,11 +44,11 @@ class AppsController < WebsiteController
     
     @app.partner = current_partner
     @app.platform = params[:app][:platform]
-    @app.store_id = params[:app][:store_id]
+    @app.store_id = params[:app][:store_id] if params[:state] == 'live'
     @app.name = params[:app][:name]
     
     begin
-      @app.fill_app_store_data
+      @app.fill_app_store_data if params[:state] == 'live'
     rescue
       flash[:error] = 'Grabbing app data from app store failed. Please try again.'
       render :action => "new"
@@ -68,10 +68,10 @@ class AppsController < WebsiteController
     log_activity(@app)
     
     @app.name = params[:app][:name]
-    @app.store_id = params[:app][:store_id]
+    @app.store_id = params[:app][:store_id] if params[:state] == 'live'
     
     begin
-      @app.fill_app_store_data
+      @app.fill_app_store_data if params[:state] == 'live'
     rescue
       flash[:error] = 'Grabbing app data from app store failed. Please try again.'
       render :action => "show"
