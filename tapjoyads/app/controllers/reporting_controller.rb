@@ -123,8 +123,15 @@ class ReportingController < WebsiteController
         :stringData => [ @appstats.stats['arpdau'].map { |i| number_to_currency(i / 100.0, :precision => 4) } ]
       }
     end
+
     respond_to do |format|
-      format.html
+      format.html do
+        bucket = S3.bucket(BucketNames::AD_UDIDS)
+        base_path = Offer.s3_udids_path(@offer.id)
+        @udids = bucket.keys('prefix' => base_path).map do |key|
+          key.name.gsub(base_path, '')
+        end
+      end
       format.json do
         render :json => {
           :data => @data,
