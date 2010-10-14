@@ -14,7 +14,7 @@
     #main
       #top_nav
         .left
-          = link_to image_tag('tapjoylogo.png'), root_path
+          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo.png"), root_path
         .right
           - if current_user
             = current_user.username
