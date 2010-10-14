@@ -104,17 +104,25 @@
           granularity: $('#granularity').val()
         };
         
-        $.get(url, params, function(response, status, request){
-          loadData(response.data);
-          $('#tables').html(response.stats_table);
-          $('#date, #end_date, #granularity').attr('disabled', false);
-          $('#tables, #charts').css('opacity', 1.0);
-          location.href = updateURL(location.href);
-          $('#apps_box .app a').each(function() {
-            $(this).attr('href', updateURL($(this).attr('href')));
-          })
-        }, 'json');
-        
+        $.ajax({
+          url: url,
+          data: params,
+          success: function(response, status, request) {
+            loadData(response.data);
+            $('#tables').html(response.stats_table);
+            $('#date, #end_date, #granularity').attr('disabled', false);
+            $('#tables, #charts').css('opacity', 1.0);
+            location.href = updateURL(location.href);
+            $('#apps_box .app a').each(function() {
+              $(this).attr('href', updateURL($(this).attr('href')));
+            })
+          },
+          error: function() { 
+            alert('Could not generate reports. Check the date range and try again.');
+            $('#date, #end_date, #granularity').attr('disabled', false); 
+          },
+          dataType: 'json'
+        })
       };
       $('#date, #end_date, #granularity').change(ajaxCall);
       // load appropriate data from anchor
