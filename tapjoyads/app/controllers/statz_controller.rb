@@ -312,7 +312,7 @@ class StatzController < WebsiteController
       :limit => 10
     ).collect do |o|
       label_string = o.name_with_suffix
-      label_string += " (active)" if o.tapjoy_enabled? && o.payment > 0
+      label_string += " (active)" if o.is_enabled?
       label_string += " (hidden)" if o.hidden?
       { :label => label_string, :url => statz_path(o) }
     end
