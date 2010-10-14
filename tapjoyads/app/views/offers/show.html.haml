@@ -11,7 +11,6 @@
   %p.description
     Enter your bid per install below. The minimum bid is 50% of the purchase price for paid apps, or $0.35 for free apps. 
     Higher bids will fetch more installs.
-  
 
   - form_for(:offer, @offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform' }) do |f|
     %table
@@ -92,6 +91,35 @@
 - content_for :page_javascript do
   :plain
     $(function($){
+
+      toggleUserEnabled = function() {
+        if ($('#offer_user_enabled').attr('checked')) {
+          $('.togglable').attr('disabled', false);
+          $('#estimated_budget').removeClass('disabled');
+        } else {
+          $('.togglable').attr('disabled', true);
+          $('#estimated_budget').addClass('disabled');
+        }
+      };
+
+      setEstimatedBudget = function() {
+        var bid = stringToNumber($('#offer_payment').val());
+        var installLimit = stringToNumber($('#offer_daily_budget').val())
+        budget = 'Unlimited'
+        if (installLimit > 0) {
+          budget = numberToCurrency(bid * installLimit);
+        }
+        $('#estimated_budget .value').html(budget);
+      };
+
+      checkMinimumPrice = function() {
+        var minimumPrice = #{(@offer.min_payment||0) / 100.0};
+        var currentPrice = stringToNumber($('#offer_payment').val());
+        if (currentPrice < minimumPrice) {
+          $('#offer_payment').val(numberToCurrency(minimumPrice));
+        }
+      };
+
       toggleUserEnabled();
       $('#offer_user_enabled').change(toggleUserEnabled);
 
@@ -100,39 +128,16 @@
         checkMinimumPrice();
         setEstimatedBudget();
       });
+
       $('#offer_daily_budget').change(function() {
         $(this).val(stringToNumber($(this).val()));
         setEstimatedBudget();
       });
     });
 
-    var toggleUserEnabled = function() {
-      if ($('#offer_user_enabled').attr('checked')) {
-        $('.togglable').attr('disabled', false);
-        $('#estimated_budget').removeClass('disabled');
-      } else {
-        $('.togglable').attr('disabled', true);
-        $('#estimated_budget').addClass('disabled');
-      }
-    }
-
-    var setEstimatedBudget = function() {
-      var bid = stringToNumber($('#offer_payment').val());
-      var installLimit = stringToNumber($('#offer_daily_budget').val())
-      budget = 'Unlimited'
-      if (installLimit > 0) {
-        budget = numberToCurrency(bid * installLimit);
-      }
-      $('#estimated_budget .value').html(budget);
-    }
-
-    var checkMinimumPrice = function() {
-      var minimumPrice = #{(@offer.min_payment||0) / 100.0};
-      var currentPrice = stringToNumber($('#offer_payment').val());
-      if (currentPrice < minimumPrice) {
-        $('#offer_payment').val(numberToCurrency(minimumPrice));
-      }
-    }
+    var toggleUserEnabled = $.noop;
+    var setEstimatedBudget = $.noop;
+    var checkMinimumPrice = $.noop;
 
 - content_for :page_styles do
   :plain
