@@ -178,13 +178,13 @@
         return false;
       });
 
-      Tapjoy.GraphdrawLargeGraph(#{@connect_data.to_json}, 'connects');
-      Tapjoy.GraphdrawLargeGraph(#{@rewarded_installs_plus_spend_data.to_json}, 'installs_spend');
-      Tapjoy.GraphdrawLargeGraph(#{@rewarded_installs_plus_rank_data.to_json}, 'installs_rank');
-      Tapjoy.GraphdrawLargeGraph(#{@published_offers_data.to_json}, 'published_offers');
-      Tapjoy.GraphdrawLargeGraph(#{@offerwall_views_data.to_json}, 'offerwall_views');
-      Tapjoy.GraphdrawLargeGraph(#{@display_ads_data.to_json}, 'display_ads');
-      Tapjoy.GraphdrawLargeGraph(#{@virtual_goods_data.to_json}, 'virtual_goods');
+      Tapjoy.Graph.drawLargeGraph(#{@connect_data.to_json}, 'connects');
+      Tapjoy.Graph.drawLargeGraph(#{@rewarded_installs_plus_spend_data.to_json}, 'installs_spend');
+      Tapjoy.Graph.drawLargeGraph(#{@rewarded_installs_plus_rank_data.to_json}, 'installs_rank');
+      Tapjoy.Graph.drawLargeGraph(#{@published_offers_data.to_json}, 'published_offers');
+      Tapjoy.Graph.drawLargeGraph(#{@offerwall_views_data.to_json}, 'offerwall_views');
+      Tapjoy.Graph.drawLargeGraph(#{@display_ads_data.to_json}, 'display_ads');
+      Tapjoy.Graph.drawLargeGraph(#{@virtual_goods_data.to_json}, 'virtual_goods');
       Tapjoy.Graph.drawLargeGraph(#{@ads_data.to_json}, 'ads');
     });
 
