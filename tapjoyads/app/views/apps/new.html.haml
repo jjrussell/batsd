@@ -25,7 +25,7 @@
             Name
             #help_name.help ?
           %td
-            = f.text_field :name, :size => 60
+            = f.text_field :name
             = error_message_on @app, :name
             #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
           %td= button_to_function "Search #{@app.store_name}", 'search()', :class => 'search hidden', :id => 'search_button'

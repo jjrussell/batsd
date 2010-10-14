@@ -34,3 +34,7 @@ td.not_integrated {
 .tjform select {
   width: 80px;
 }
+
+.tjform input#app_name {
+  width: 400px;
+}
