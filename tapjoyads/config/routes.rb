@@ -70,8 +70,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :partners, :only => [ :index, :show, :new, :create ], :member => { :make_current => :post }
   map.resources :password_resets, :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
   
-  map.resources :balances, :only => :show
-  
   # Special paths:
   map.connect 'log_device_app/:action/:id', :controller => 'connect'
   map.connect 'confirm_email_validation', :controller => 'list_signup', :action => 'confirm_api'
