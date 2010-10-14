@@ -1,6 +1,8 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   
+  PLATFORMS = { 'android' => 'Android', 'iphone' => 'iPhone' }
+  
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
@@ -10,7 +12,7 @@ class App < ActiveRecord::Base
   belongs_to :partner
   
   validates_presence_of :partner, :name
-  validates_inclusion_of :platform, :in => %w( android iphone )
+  validates_inclusion_of :platform, :in => PLATFORMS.keys
 
   after_create :create_primary_offer
   after_update :update_offers
@@ -22,6 +24,14 @@ class App < ActiveRecord::Base
 
   def is_android?
     platform == 'android'
+  end
+  
+  def platform_name
+    PLATFORMS[platform]
+  end
+  
+  def store_name
+    is_android? ? 'Marketplace' : 'App Store'
   end
 
   def self.find_in_cache(id, do_lookup = true)

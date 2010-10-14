@@ -13,9 +13,6 @@
 #search_results.searching img.load-circle{
   display: inherit;
 }
-tr.app_store_url, tr.app_icon, input.search{
-  display: none;
-}
 #search_results .search-result:hover {
   background-color: #ccc;
 }

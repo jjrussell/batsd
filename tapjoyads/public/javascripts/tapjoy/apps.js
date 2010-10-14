@@ -6,20 +6,27 @@ $(function($){
   // app state
   var toggleAppState = function() {
     if ($('select#app_state').val() == 'live') {
-      $('.search').show();
+      $('#search_button').show();
       $('.app_data').show();
-      $('#save_button').val('Update from App Store');
     } else {
-      $('.search').hide();
+      $('#search_button').hide();
       $('.app_data').hide();
-      $('#save_button').val('Save');
     }
   };
   $('select#app_state').change(toggleAppState);
-  if ($('input#app_store_id').val()) {
-    $('select#app_state').val('live');
-  }
   toggleAppState();
+
+  // app platform
+  var toggleAppPlatform = function() {
+    if ($('select#app_platform').val() == 'iphone') {
+      $('#search_button').val('Search App Store');
+      $('span#app_store_name').text('App Store.')
+    } else {
+      $('#search_button').val('Search Marketplace');
+      $('span#app_store_name').text('Marketplace.')
+    }
+  };
+  $('select#app_platform').change(toggleAppPlatform);
 
   // hide search results on just about everything
   $(document).click(function(e){
@@ -64,7 +71,7 @@ $(function($){
     var app = $.data(this, 'data');
     $('input#app_name').val(app.title);
     $('input#app_store_id').val(app.item_id);
-    $('#app_store_url').text(app.url);
+    $('input#app_store_id').change();
     $('#app_store_link').text(app.item_id);
     $('#app_store_link').attr('href', app.url);
     $('#app_price').text('$' + app.price);

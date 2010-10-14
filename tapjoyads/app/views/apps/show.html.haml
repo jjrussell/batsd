@@ -1,17 +1,15 @@
 - @page_title = @app.name
-- is_iphone = !@app.is_android?
-- app_store_name = is_iphone ? 'AppStore' : 'Marketplace'
 
 = render :partial => 'shared/dropdown_select', :locals => { :objects => current_partner_apps, :selected => @app, :options => {:with_new_app_button => true} }
 - if @app.hidden?
-  %h2
+  %h3
     Please contact
     = mail_to 'support@tapjoy.com'
     to undelete this app.
 = render :partial => 'actions', :locals => { :app => @app }
 
 #apps_main
-  %h3 App details
+  %h3 App Details
 
   - form_for(@app, :html => { :class => 'tjform' }) do |f|
     = f.hidden_field :store_id
@@ -19,26 +17,23 @@
       %tbody
         %tr
           %th
-            Application state
+            Application State
             #help_application_state.help ?
-          %td
-            = select_tag "state", options_for_select(['Not live', 'Live'].zip(%w(not_live, live))), :id => "app_state"
+          %td= select_tag 'state', options_for_select({ 'Not Live' => 'not_live', 'Live' => 'live' }, @app.store_id? ? 'live' : 'not_live'), :id => 'app_state'
         %tr
           %th
             Platform
             #help_platform.help ?
-          %td#app_platform= is_iphone ? 'iPhone' : 'Android'
+          %td#app_platform= @app.platform_name
         %tr
           %th
             Name
             #help_name.help ?
           %td
-            = f.text_field :name, :size => 50
-            = button_to_function "Search", "search()", :class => 'search'
-            -if @app.errors.on :name
-              = error_message_on @app, :name
-            #search_results
-              = image_tag 'load-circle.gif', :class => 'load-circle'
+            = f.text_field :name, :size => 60
+            = error_message_on @app, :name
+            #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
+          %td= button_to_function "Search #{@app.store_name}", 'search()', :class => 'search hidden', :id => 'search_button'
         %tr
           %th
             App ID
@@ -53,10 +48,8 @@
           - else
             %td.not_integrated NO
         %tr.app_data.hidden
-          %th
-            Store ID
-          %td
-            = link_to(@app.store_id, @app.final_store_url, :target => '_new', :id => 'app_store_link')
+          %th Store ID
+          %td= link_to(@app.store_id, @app.final_store_url, :target => '_blank', :id => 'app_store_link')
         %tr.app_data.hidden
           %th Icon
           %td#app_icon= image_tag(@app.get_icon_url(request.protocol), :size => '57x57', :alt => 'icon')
@@ -67,33 +60,22 @@
           %th Description
           %td#app_description= (@app.description || '').gsub("\n", '<br>')
         %tr
-          %td
-          %td= f.submit 'Save', :id => 'save_button'
+          %td{ :colspan => 2 }= f.submit @app.store_id.present? ? "Update from #{@app.store_name}" : 'Save', :id => 'submit_button'
 
 .hidden
   #help_application_state_content{:name => 'Application State'}
     %li Not live: The app has not been submitted or approved yet.
-    %li Live: The app has been approved, and is currently listed in the #{app_store_name}.
+    %li
+      Live: The app has been approved, and is currently listed in the
+      %span{:id => 'app_store_name'} #{@app.store_name}.
   #help_platform_content{:name => 'Platform'}
     Platform on which this app runs.
   #help_name_content{:name => 'Name'}
     App name
   #help_app_id_content{:name => 'App ID'}
     App ID. Use this when integrating.
-  #help_description_content{:name => 'Description'}
-    App description
-  #help_store_url_content{:name => 'Store URL'}
-    - if is_iphone
-      %li e.g. http://itunes.apple.com/app/<b>app-name</b>/id<b>123456789</b>
-    - else
-      %li e.g. market://search?q=<b>123456789</b>.
-  #help_icon_content{:name => 'Icon'}
-    We automatically retrieve the icon that is currently in the #{app_store_name}
-  #help_price_content{:name => 'Price'}
-    Price of the app on the #{app_store_name}
   #help_integrated_content{:name => 'Integrated'}
     Integration status - shows if the app has connected with our servers within the last 24-hours.
-  = yield :extra_help
 .clear
 - if @app.hidden?
   - if permitted_to?(:index, :tools)
@@ -123,8 +105,21 @@
     input.trash:active {
       background-position: 1px 1px;
     }
-- if @app.hidden?
-  - content_for :page_javascript do
+  
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      var toggleStoreId = function() {
+        if ($('input#app_store_id').val()) {
+          $('#submit_button').val('Update from #{@app.store_name}');
+        } else {
+          $('#submit_button').val('Save');
+        }
+      };
+      $('input#app_store_id').change(toggleStoreId);
+    })
+  
+  - if @app.hidden?
     :plain
       $(function($){
         $('input[type=text], input[type=button].search, input[type=submit]#save_button').attr('disabled', true);
