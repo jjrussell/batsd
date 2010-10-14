@@ -19,5 +19,3 @@
     %li= link_to 'Disabled Popular Offers', disabled_popular_offers_tools_path
   - if permitted_to? :index, :activities
     %li= link_to 'Activity Log', activities_path
-  - if permitted_to? :index, :partners
-    %li= link_to 'Partners', partners_path
