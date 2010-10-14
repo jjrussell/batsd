@@ -163,84 +163,73 @@
 - content_for :page_javascript do
   :plain
     $('#search_box').autocomplete({ source: '#{search_statz_path}', delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });
-  
+
     $(function() {
       $('#date').datepicker();
       $('#end_date').datepicker();
-      
+
       $('#currency .more').click(function() {
         $('#currency .details').toggle();
         return false;
       });
-      
+
       $('#show_associated').click(function() {
         $('#associated_list').toggle();
         return false;
       });
-      
-      Tapjoy.drawLargeGraph(#{@connect_data.to_json}, 'connects');
-      Tapjoy.drawLargeGraph(#{@rewarded_installs_plus_spend_data.to_json}, 'installs_spend');
-      Tapjoy.drawLargeGraph(#{@rewarded_installs_plus_rank_data.to_json}, 'installs_rank');
-      Tapjoy.drawLargeGraph(#{@published_offers_data.to_json}, 'published_offers');
-      Tapjoy.drawLargeGraph(#{@offerwall_views_data.to_json}, 'offerwall_views');
-      Tapjoy.drawLargeGraph(#{@display_ads_data.to_json}, 'display_ads');
-      Tapjoy.drawLargeGraph(#{@virtual_goods_data.to_json}, 'virtual_goods');
-      Tapjoy.drawLargeGraph(#{@ads_data.to_json}, 'ads');
+
+      Tapjoy.GraphdrawLargeGraph(#{@connect_data.to_json}, 'connects');
+      Tapjoy.GraphdrawLargeGraph(#{@rewarded_installs_plus_spend_data.to_json}, 'installs_spend');
+      Tapjoy.GraphdrawLargeGraph(#{@rewarded_installs_plus_rank_data.to_json}, 'installs_rank');
+      Tapjoy.GraphdrawLargeGraph(#{@published_offers_data.to_json}, 'published_offers');
+      Tapjoy.GraphdrawLargeGraph(#{@offerwall_views_data.to_json}, 'offerwall_views');
+      Tapjoy.GraphdrawLargeGraph(#{@display_ads_data.to_json}, 'display_ads');
+      Tapjoy.GraphdrawLargeGraph(#{@virtual_goods_data.to_json}, 'virtual_goods');
+      Tapjoy.Graph.drawLargeGraph(#{@ads_data.to_json}, 'ads');
     });
-  
+
 - content_for :page_styles do
   :plain
     .icon {
       padding: 20px 0;
       float: left;
     }
-    
     #associated_list {
       display: none;
     }
-    
     #associated_list h5 {
       margin-top: 0;
     }
-    
     #currency {
       margin-bottom: 16px;
     }
-    
     #currency .details {
       display: none;
       margin-left: 10px;
     }
-    
     h4 {
       margin-bottom: 6px;
     }
-    
     .properties td {
       border: 1px solid #ccc;
       padding: 0 5px;
       max-width: 500px;
     }
-    
     .properties tr td:first-child {
       text-align: right;
     }
-    
     .true {
       background: -webkit-gradient(linear, left top, right bottom, from(#494), to(#fff));
       background: -moz-linear-gradient(left,  #494,  #fff);
     }
-    
     .false {
       background: -webkit-gradient(linear, left top, right bottom, from(#ccc), to(#fff));
       background: -moz-linear-gradient(left,  #ccc,  #fff);
     }
-    
     .incomplete {
       background: -webkit-gradient(linear, left top, right bottom, from(#ccc), to(#fff));
       background: -moz-linear-gradient(left,  #f40,  #fff);
     }
-    
     .tjform input[type=submit] {
       margin: 0;
       float: none;

@@ -29,3 +29,15 @@ $(function($){
     $(this).val(numberToCurrency(stringToNumber($(this).val(), $(this).hasClass('allow_negative'))));
   });
 });
+
+Tapjoy.anchorToParams = function(){
+  var params = {};
+  var anchor = location.href.split(/#/)[1];
+  if (anchor) {
+    $(anchor.split(/&/)).each(function(i, pair){
+      pair = pair.split(/=/);
+      params[pair[0]] = pair[1];
+    });
+  }
+  return params;
+};
