@@ -17,7 +17,19 @@
       = text_field_tag(:dropdown_app_name)
     #apps_box
       - objects.each do |o|
-        - url = o.is_a?(App) ? app_path(o, options[:extra_url_params]) : reporting_path(o, options[:extra_url_params])
+        - if o.is_a?(App)
+          - case params[:controller]
+          - when 'currencies'
+            - if o.currency.nil?
+              - url = new_app_currency_path(:app_id => o.id)
+            - else
+              - url = app_currency_path(:app_id => o.id, :id => o.currency.id)
+          - when 'virtual_goods'
+            - url = app_virtual_goods_path(:app_id => o.id)
+          - else
+            - url = app_path(o, options[:extra_url_params])
+        - else
+          - url = reporting_path(o, options[:extra_url_params])
         - class_name = o == selected ? "selected" : ""
         .app{ :class => class_name, :title => o.name }
           = image_tag(o.get_icon_url(request.protocol), :size => '24x24', :alt => '')
