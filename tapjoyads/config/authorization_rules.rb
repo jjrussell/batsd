@@ -12,7 +12,7 @@ authorization do
   end
   
   role :agency do
-    has_permission_on :partners, :to => [ :index, :show, :make_current ]
+    has_permission_on :partners, :to => [ :index, :show, :make_current, :new, :create ]
   end
   
   role :tools do

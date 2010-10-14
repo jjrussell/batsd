@@ -2,6 +2,9 @@
 
 %h1 Partners
 
+- if permitted_to? :new, :partners
+  =link_to 'Create a New Partner Account', new_partner_path
+
 - unless current_user.role_symbols.include?(:agency)
   - form_tag(partners_path, :method => :get, :class => 'tjform') do
     = label_tag(:q, "Name or Email Address:")

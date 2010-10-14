@@ -17,6 +17,25 @@ class PartnersController < WebsiteController
       @partners = Partner.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
     end
   end
+  
+  def new
+    @partner = Partner.new
+  end
+  
+  def create
+    @partner = Partner.new
+    @partner.name = params[:partner][:name]
+    @partner.contact_name = params[:partner][:contact_name]
+    @partner.contact_phone = params[:partner][:contact_phone]
+    @partner.users << current_user
+    
+    if @partner.save
+      flash[:notice] = 'Partner successfully created.'
+      redirect_to partners_path
+    else
+      render :action => :new
+    end
+  end
 
   def make_current
     if current_user.update_attribute(:current_partner_id, @partner.id)
