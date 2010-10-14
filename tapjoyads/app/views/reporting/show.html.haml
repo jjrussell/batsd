@@ -22,8 +22,9 @@
     = submit_tag('Download as CSV')
 .clear
 
+.load-circle
+  = image_tag('load-circle.gif')
 #tables
-  = render :partial => 'stats_table'
 .clear
 
 #charts{ :style => "text-align: center;" }
@@ -83,7 +84,7 @@
       $('#end_date').val(data.end_date);
       $('#granularity').val(data.granularity);
     };
-    
+
     var updateURL = function(oldURL) {
       return oldURL.split(/#/)[0] +
         '#date=' + $('#date').val() +
@@ -95,6 +96,7 @@
       $('#date').datepicker();
       $('#end_date').datepicker();
       var ajaxCall = function(){
+        $('.load-circle').show();
         $('#date, #end_date, #granularity').attr('disabled', true);
         $('#tables, #charts').css('opacity', 0.3);
         var url = '#{request.env['PATH_INFO']}';
@@ -103,7 +105,7 @@
           end_date: $('#end_date').val(),
           granularity: $('#granularity').val()
         };
-        
+
         $.ajax({
           url: url,
           data: params,
@@ -115,11 +117,14 @@
             location.href = updateURL(location.href);
             $('#apps_box .app a').each(function() {
               $(this).attr('href', updateURL($(this).attr('href')));
-            })
+            });
           },
-          error: function() { 
+          error: function() {
             alert('Could not generate reports. Check the date range and try again.');
-            $('#date, #end_date, #granularity').attr('disabled', false); 
+            $('#date, #end_date, #granularity').attr('disabled', false);
+          },
+          complete: function() {
+            $('.load-circle').hide();
           },
           dataType: 'json'
         })
@@ -163,4 +168,7 @@
     .tjform input[type=submit] {
       margin: 0;
       float: none;
+    }
+    .load-circle {
+      text-align: center;
     }
