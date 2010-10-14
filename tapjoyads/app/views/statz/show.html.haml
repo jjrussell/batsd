@@ -142,14 +142,6 @@
       .bar
       .tooltip
 
-  #ratings.graph
-    %h3
-    .totals
-    .holder
-      %canvas#ratings_graph{ :width => '800px', :height => '440px' }
-      .bar
-      .tooltip
-
   #virtual_goods.graph
     %h3
     .totals
@@ -192,7 +184,6 @@
       Tapjoy.drawLargeGraph(#{@published_offers_data.to_json}, 'published_offers');
       Tapjoy.drawLargeGraph(#{@offerwall_views_data.to_json}, 'offerwall_views');
       Tapjoy.drawLargeGraph(#{@display_ads_data.to_json}, 'display_ads');
-      Tapjoy.drawLargeGraph(#{@ratings_data.to_json}, 'ratings');
       Tapjoy.drawLargeGraph(#{@virtual_goods_data.to_json}, 'virtual_goods');
       Tapjoy.drawLargeGraph(#{@ads_data.to_json}, 'ads');
     });

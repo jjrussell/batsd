@@ -194,17 +194,6 @@ class StatzController < WebsiteController
       }
     }
     
-    @ratings_data = {
-      :name => 'Ratings',
-      :intervals => intervals,
-      :xLabels => appstats.x_labels,
-      :main => {
-        :names => [ 'Ratings' ],
-        :data => [ appstats.stats['ratings'] ],
-        :totals => [ appstats.stats['ratings'].sum ]
-      }
-    }
-    
     @virtual_goods_data = {
       :name => 'Virtual Goods',
       :intervals => intervals,
