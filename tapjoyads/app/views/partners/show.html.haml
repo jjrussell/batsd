@@ -3,7 +3,7 @@
 %h1 Partner data
 
 - form_tag(make_current_partner_path(@partner)) do
-  - if current_user.current_partner == @partner
+  - if current_partner == @partner
     = submit_tag('Acting as this Partner', :disabled => true)
   - else  
     = submit_tag('Act as this Partner')
