@@ -72,20 +72,6 @@ class App < ActiveRecord::Base
       "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
     end
   end
-  
-  ##
-  # Returns the value that the url should be set to on mssql.
-  def mssql_store_url
-    if use_raw_url?
-      read_attribute(:store_url)
-    else
-      if is_android?
-        store_id
-      else
-        "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
-      end
-    end
-  end
 
   ##
   # Grab data from the app store and mutate self with data.
