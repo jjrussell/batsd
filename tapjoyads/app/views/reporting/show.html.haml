@@ -95,7 +95,15 @@
     $(function($) {
       $('#date').datepicker();
       $('#end_date').datepicker();
+
       var ajaxCall = function(){
+        if ($('#granularity').val()=='hourly') {
+          var diff = new Date($('#end_date').val()) - new Date($('#date').val());
+          if (diff > 518400000) { // 7 days
+            $('#flash_warning span.message').text('Hourly reports are only available for date ranges of seven or fewer days.');
+            $('#flash_warning').fadeIn();
+          }
+        }
         $('.load-circle').show();
         $('#date, #end_date, #granularity').attr('disabled', true);
         $('#tables, #charts').css('opacity', 0.3);
