@@ -30,6 +30,7 @@
 #charts{ :style => "text-align: center;" }
   #connects.graph
     %h3
+    .totals
     .holder
       %canvas#connects_graph{ :width => '800px', :height => '440px' }
       .bar
@@ -37,6 +38,7 @@
 
   #installs_spend.graph
     %h3
+    .totals
     .holder
       %canvas#installs_spend_graph{ :width => '800px', :height => '440px' }
       .bar
@@ -44,6 +46,7 @@
 
   #installs_rank.graph
     %h3
+    .totals
     .holder
       %canvas#installs_rank_graph{ :width => '800px', :height => '440px' }
       .bar
@@ -52,6 +55,7 @@
   - if @is_publisher
     #published_offers.graph
       %h3
+      .totals
       .holder
         %canvas#published_offers_graph{ :width => '800px', :height => '440px' }
         .bar
@@ -59,6 +63,7 @@
 
     #offerwall_views.graph
       %h3
+      .totals
       .holder
         %canvas#offerwall_views_graph{ :width => '800px', :height => '440px' }
         .bar
