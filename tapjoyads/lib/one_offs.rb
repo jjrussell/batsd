@@ -19,6 +19,33 @@ class OneOffs
     counts
   end
   
+  def self.get_hourly_new_users_by_partner(filename, partner_id, start_date, end_date)
+    return if Time.now(end_date) < Time.now(start_date)
+    file = File.open(filename, 'w')
+    file.puts "app, month, day, hour, new_users, paid_installs"
+    App.find_by_partner_id(partner_id) do |app|
+      as = Appstats.new app.id, {
+        :granularity => :hourly, 
+        :start_time => Time.parse(start_date), 
+        :end_time => Time.parse(end_date), 
+        :stat_types => ['new_users','paid_installs'], 
+        :include_labels => :true, 
+        :type => :granular} 
+      
+      day = Time.parse(start_date)
+      last = Time.parse(end_date)
+      c = 0
+      begin
+        24.times do |hour|
+          file.puts "#{app.name}, #{day.month}, #{day.day}, #{hour}, #{as.stats['new_users'][c]}, #{as.stats['paid_installs'][c]}"
+          c += 1
+        end
+        day = day + 1.day        
+      while day != last            
+    end
+    file.close
+  end
+  
   def self.get_click_udids(filename, app_id)
     file = File.open(filename, 'w')
     50.times do |i|
