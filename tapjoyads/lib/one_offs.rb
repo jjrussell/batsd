@@ -20,7 +20,6 @@ class OneOffs
   end
   
   def self.get_hourly_new_users_by_partner(filename, partner_id, start_date, end_date)
-    return if Time.now(end_date) < Time.now(start_date)
     file = File.open(filename, 'w')
     file.puts "app, month, day, hour, new_users, paid_installs"
     App.find_by_partner_id(partner_id) do |app|
