@@ -56,7 +56,7 @@ class ReportingController < WebsiteController
         :extra => {
           :names => [ 'Conversion rate' ],
           :data => [ @appstats.stats['cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) } ],
-          :totals => [ @appstats.stats['paid_clicks'].sum > 0 ? ("%.1f%" % (@appstats.stats['paid_installs'].sum.to_f / appstats.stats['paid_clicks'].sum * 100.0)) : '-' ]
+          :totals => [ @appstats.stats['paid_clicks'].sum > 0 ? ("%.1f%" % (@appstats.stats['paid_installs'].sum.to_f / @appstats.stats['paid_clicks'].sum * 100.0)) : '-' ]
         }
       },
 
@@ -96,7 +96,7 @@ class ReportingController < WebsiteController
         :extra => {
           :names => [ 'Conversion rate' ],
           :data => [ @appstats.stats['rewards_cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) } ],
-          :totals => [ @appstats.stats['rewards_opened'].sum > 0 ? ("%.1f%" % (@appstats.stats['rewards'].sum.to_f / appstats.stats['rewards_opened'].sum * 100.0)) : '-' ]
+          :totals => [ @appstats.stats['rewards_opened'].sum > 0 ? ("%.1f%" % (@appstats.stats['rewards'].sum.to_f / @appstats.stats['rewards_opened'].sum * 100.0)) : '-' ]
         }
       },
 
@@ -114,7 +114,7 @@ class ReportingController < WebsiteController
           :names => [ 'Offerwall eCPM' ],
           :data => [ @appstats.stats['offerwall_ecpm'].map { |i| i / 100.0 } ],
           :stringData => [ @appstats.stats['offerwall_ecpm'].map { |i| number_to_currency(i / 100.0) } ],
-          :totals => [ @appstats.stats['offerwall_views'].sum > 0 ? number_to_currency(@appstats.stats['rewards_revenue'].sum.to_f / (appstats.stats['offerwall_views'].sum / 1000.0) / 100.0) : '$0.00' ]
+          :totals => [ @appstats.stats['offerwall_views'].sum > 0 ? number_to_currency(@appstats.stats['rewards_revenue'].sum.to_f / (@appstats.stats['offerwall_views'].sum / 1000.0) / 100.0) : '$0.00' ]
         }
       },
 
