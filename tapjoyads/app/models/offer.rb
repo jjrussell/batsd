@@ -205,7 +205,7 @@ class Offer < ActiveRecord::Base
   
   def get_destination_url(udid, publisher_app_id, click_key = nil, itunes_link_affiliate = 'linksynergy')
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
-    if item_type == 'App' && final_url =~ /phobos\.apple\.com/
+    if (item_type == 'App' || item_type == 'RatingOffer') && final_url =~ /phobos\.apple\.com/
       if itunes_link_affiliate == 'tradedoubler'
         final_url += '&partnerId=2003&tduid=UK1800811'
       else
