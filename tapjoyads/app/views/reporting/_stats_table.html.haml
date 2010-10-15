@@ -30,42 +30,43 @@
         %td Bid
         %td= number_to_currency(@offer.payment / 100.0)
 
-.data
-  %table
-    %thead
-      %tr
-        %th{ :colspan => 2 } Publisher Data
-    %tbody
-      %tr
-        %td Offerwall Views
-        %td= number_with_delimiter(@appstats.stats['offerwall_views'].sum)
-      %tr
-        %td Offer Clicks
-        %td= number_with_delimiter(@appstats.stats['rewards_opened'].sum)
-      %tr
-        %td Offers Completed
-        %td= number_with_delimiter(@appstats.stats['rewards'].sum)
-      %tr
-        %td Conversion Rate
-        %td
-          - if @appstats.stats['rewards_opened'].sum > 0
-            = "%.1f%" % (@appstats.stats['rewards'].sum.to_f / @appstats.stats['rewards_opened'].sum * 100.0)
-          - else
-            \-
-      %tr
-        %td Revenue
-        %td= number_to_currency(@appstats.stats['rewards_revenue'].sum / 100.0)
-      %tr
-        %td ARPDAU
-        %td
-          - if @appstats.stats['arpdau']
-            = number_to_currency(@appstats.stats['arpdau'].sum / 100.0)
-          - else
-            n/a
-      %tr
-        %td Offerwall eCPM
-        %td
-          - if @appstats.stats['offerwall_views'].sum > 0
-            = number_to_currency(@appstats.stats['rewards_revenue'].sum.to_f / (@appstats.stats['offerwall_views'].sum / 1000.0) / 100.0)
-          - else
-            $0.00
+- if @is_publisher
+  .data
+    %table
+      %thead
+        %tr
+          %th{ :colspan => 2 } Publisher Data
+      %tbody
+        %tr
+          %td Offerwall Views
+          %td= number_with_delimiter(@appstats.stats['offerwall_views'].sum)
+        %tr
+          %td Offer Clicks
+          %td= number_with_delimiter(@appstats.stats['rewards_opened'].sum)
+        %tr
+          %td Offers Completed
+          %td= number_with_delimiter(@appstats.stats['rewards'].sum)
+        %tr
+          %td Conversion Rate
+          %td
+            - if @appstats.stats['rewards_opened'].sum > 0
+              = "%.1f%" % (@appstats.stats['rewards'].sum.to_f / @appstats.stats['rewards_opened'].sum * 100.0)
+            - else
+              \-
+        %tr
+          %td Revenue
+          %td= number_to_currency(@appstats.stats['rewards_revenue'].sum / 100.0)
+        %tr
+          %td ARPDAU
+          %td
+            - if @appstats.stats['arpdau']
+              = number_to_currency(@appstats.stats['arpdau'].sum / 100.0)
+            - else
+              n/a
+        %tr
+          %td Offerwall eCPM
+          %td
+            - if @appstats.stats['offerwall_views'].sum > 0
+              = number_to_currency(@appstats.stats['rewards_revenue'].sum.to_f / (@appstats.stats['offerwall_views'].sum / 1000.0) / 100.0)
+            - else
+              $0.00

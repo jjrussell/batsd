@@ -123,6 +123,14 @@ class ReportingController < WebsiteController
         :stringData => [ @appstats.stats['arpdau'].map { |i| number_to_currency(i / 100.0, :precision => 4) } ]
       }
     end
+    sum = (@appstats.stats['offerwall_views'] + @appstats.stats['rewards']).inject{|sum,n| sum + n}
+    if sum.zero? && @offer.item.currency.nil?
+      @is_publisher = false
+    else
+      @is_publisher = true
+    end
+
+
 
     respond_to do |format|
       format.html do

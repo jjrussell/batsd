@@ -49,19 +49,20 @@
       .bar
       .tooltip
 
-  #published_offers.graph
-    %h3
-    .holder
-      %canvas#published_offers_graph{ :width => '800px', :height => '440px' }
-      .bar
-      .tooltip
+  - if @is_publisher
+    #published_offers.graph
+      %h3
+      .holder
+        %canvas#published_offers_graph{ :width => '800px', :height => '440px' }
+        .bar
+        .tooltip
 
-  #offerwall_views.graph
-    %h3
-    .holder
-      %canvas#offerwall_views_graph{ :width => '800px', :height => '440px' }
-      .bar
-      .tooltip
+    #offerwall_views.graph
+      %h3
+      .holder
+        %canvas#offerwall_views_graph{ :width => '800px', :height => '440px' }
+        .bar
+        .tooltip
 
 .clear
 
@@ -83,9 +84,10 @@
       Tapjoy.Graph.drawLargeGraph(data.connect_data, 'connects');
       Tapjoy.Graph.drawLargeGraph(data.rewarded_installs_plus_spend_data, 'installs_spend');
       Tapjoy.Graph.drawLargeGraph(data.rewarded_installs_plus_rank_data, 'installs_rank');
-      Tapjoy.Graph.drawLargeGraph(data.published_offers_data, 'published_offers');
-      Tapjoy.Graph.drawLargeGraph(data.offerwall_views_data, 'offerwall_views');
-
+      if (#{@is_publisher}) {
+        Tapjoy.Graph.drawLargeGraph(data.published_offers_data, 'published_offers');
+        Tapjoy.Graph.drawLargeGraph(data.offerwall_views_data, 'offerwall_views');
+      }
       $('#date').val(data.date);
       $('#end_date').val(data.end_date);
       $('#granularity').val(data.granularity);
