@@ -2,6 +2,9 @@ class App < ActiveRecord::Base
   include UuidPrimaryKey
   
   PLATFORMS = { 'android' => 'Android', 'iphone' => 'iPhone' }
+  # TO REMOVE - and uncomment the one below when we're ready to start using tradedoubler
+  TRADEDOUBLER_COUNTRIES = Set.new(%w( ))
+  # TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
   
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
@@ -53,8 +56,7 @@ class App < ActiveRecord::Base
       if is_android?
         "market://search?q=#{store_id}"
       else
-        web_object_url = "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
-        "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&type=10&tmpid=3909&RD_PARM1=#{CGI::escape(web_object_url)}"
+        "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
       end
     end
   end

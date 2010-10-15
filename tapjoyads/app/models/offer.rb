@@ -203,11 +203,16 @@ class Offer < ActiveRecord::Base
     payment_range_low.present? && payment_range_high.present?
   end
   
-  def get_destination_url(udid, publisher_app_id, publisher_user_id = nil, app_version = nil, click_key = nil)
+  def get_destination_url(udid, publisher_app_id, click_key = nil, itunes_link_affiliate = 'linksynergy')
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
-    if item_type == 'OfferpalOffer'
-      int_record_id = publisher_user_id.nil? ? '' : PublisherUserRecord.generate_int_record_id(publisher_app_id, publisher_user_id)
-      final_url.gsub!('TAPJOY_GENERIC', int_record_id.to_s)
+    if item_type == 'App' && final_url =~ /phobos\.apple\.com/
+      if itunes_link_affiliate == 'tradedoubler'
+        final_url += '&partnerId=2003&tduid=UK1800811'
+      else
+        final_url = "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&type=10&tmpid=3909&RD_PARM1=#{CGI::escape(final_url)}"
+      end
+    elsif item_type == 'OfferpalOffer'
+      raise "destination_url requested for an offer that should not be enabled. offer_id: #{id}"
     elsif item_type == 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
     elsif item_type == 'GenericOffer'
@@ -242,13 +247,13 @@ class Offer < ActiveRecord::Base
     url
   end
   
-  def get_email_url(publisher_user_id, publisher_app, udid, app_version)
+  def get_email_url(publisher_user_id, publisher_app, udid)
     "http://www.tapjoyconnect.com/complete_offer" +
         "?offerid=#{CGI::escape(id)}" +
         "&udid=#{udid}" +
         "&publisher_user_id=#{publisher_user_id}" +
         "&app_id=#{publisher_app.id}" +
-        "&url=#{CGI::escape(CGI::escape(get_destination_url(udid, publisher_app.id, publisher_user_id, app_version)))}"
+        "&url=#{CGI::escape(CGI::escape(get_destination_url(udid, publisher_app.id)))}"
   end
   
   def get_countries

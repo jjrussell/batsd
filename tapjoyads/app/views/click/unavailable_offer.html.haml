@@ -8,7 +8,7 @@
   %br
 
   - if @offer.item_type == 'App'
-    %a{ :href => @offer.get_destination_url(params[:udid], params[:publisher_app_id]) }
+    %a{ :href => @offer.get_destination_url(params[:udid], params[:publisher_app_id], nil, @itunes_link_affiliate) }
       Or, click here to download #{@offer.name} anyway.
 
 - content_for :page_styles do

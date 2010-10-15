@@ -1,5 +1,6 @@
 class ClickController < ApplicationController
   
+  before_filter :determine_link_affiliates, :except => :generic
   before_filter :setup
   
   def app
@@ -15,7 +16,7 @@ class ClickController < ApplicationController
     create_click('install')
     handle_pay_per_click
     
-    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id]))
+    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], nil, @itunes_link_affiliate))
   end
   
   def generic
@@ -31,7 +32,7 @@ class ClickController < ApplicationController
     create_click('generic')
     handle_pay_per_click
     
-    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], nil, nil, @click.key))
+    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], @click.key))
   end
   
   def rating
@@ -47,7 +48,7 @@ class ClickController < ApplicationController
     create_click('rating')
     handle_pay_per_click
     
-    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id]))
+    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], nil, @itunes_link_affiliate))
   end
   
 private
