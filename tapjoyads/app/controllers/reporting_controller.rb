@@ -124,10 +124,10 @@ class ReportingController < WebsiteController
       }
     end
     
-    if @offer.item_type == 'App' && @offer.item.currency.nil?
-      @is_publisher = false
-    else
+    if @offer.item_type == 'App' && @offer.item.currency.present?
       @is_publisher = true
+    else
+      @is_publisher = false
     end
 
 
