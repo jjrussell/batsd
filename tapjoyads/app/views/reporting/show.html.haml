@@ -26,48 +26,14 @@
   = image_tag('load-circle.gif')
 #tables
 .clear
-
+- #Add 'App Data' table with Connects, DAUs, last rank
 #charts{ :style => "text-align: center;" }
   #connects.graph
-    %h3
-    .totals
-    .holder
-      %canvas#connects_graph{ :width => '800px', :height => '440px' }
-      .bar
-      .tooltip
-
   #installs_spend.graph
-    %h3
-    .totals
-    .holder
-      %canvas#installs_spend_graph{ :width => '800px', :height => '440px' }
-      .bar
-      .tooltip
-
   #installs_rank.graph
-    %h3
-    .totals
-    .holder
-      %canvas#installs_rank_graph{ :width => '800px', :height => '440px' }
-      .bar
-      .tooltip
-
   - if @is_publisher
     #published_offers.graph
-      %h3
-      .totals
-      .holder
-        %canvas#published_offers_graph{ :width => '800px', :height => '440px' }
-        .bar
-        .tooltip
-
     #offerwall_views.graph
-      %h3
-      .totals
-      .holder
-        %canvas#offerwall_views_graph{ :width => '800px', :height => '440px' }
-        .bar
-        .tooltip
 
 .clear
 
@@ -106,6 +72,8 @@
     }
 
     $(function($) {
+      Tapjoy.Graph.initGraphs($('#charts .graph'));
+
       $('#date').datepicker();
       $('#end_date').datepicker();
 

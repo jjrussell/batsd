@@ -1,6 +1,21 @@
 if (typeof(Tapjoy) == "undefined") Tapjoy = {};
 
 Tapjoy.Graph = {
+
+  initGraphs: function(graphs) {
+    graphs.each(function(){
+      var id = $(this).attr('id');
+      var holder = $('<div class="holder">').
+        append( $('<canvas id="' + id + '_graph" width="800px" height="440px">') ).
+        append( $('<div class="bar">') ).
+        append( $('<div class="tooltip">') );
+      $(this).
+        append( $('<h3>') ).
+        append( $('<div class="totals">') ).
+        append( holder );
+    });
+  },
+
   setGraphProperties: function(g, options) {
     g.Set('chart.shadow', false);
     g.Set('chart.tickmarks', 'circle');
