@@ -2,6 +2,8 @@ class GetOffersController < ApplicationController
   
   layout 'iphone', :only => :webpage
   
+  # TO REMOVE - once the tap defense connect bug has been fixed and is sufficiently adopted
+  before_filter :fake_connect_call, :only => :featured
   before_filter :set_featured_params, :only => :featured
   before_filter :setup
   
@@ -119,6 +121,33 @@ private
     params[:type] = Offer::FEATURED_OFFER_TYPE
     params[:start] = '0'
     params[:max] = '999'
+  end
+  
+  # TO REMOVE - once the tap defense connect bug has been fixed and is sufficiently adopted
+  def fake_connect_call
+    if params[:app_id] == '2349536b-c810-47d7-836c-2cd47cd3a796' && (params[:app_version] == '3.2.2' || params[:app_version] == '3.2.1') && params[:library_version] == '5.0.1'
+      
+      Rails.logger.info_with_time("Check conversions and maybe add to sqs") do
+        click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}")
+        unless (click.attributes.empty? || click.installed_at)
+          logger.info "Added conversion to sqs queue"
+          message = { :click => click.serialize(:attributes_only => true), :install_timestamp => Time.zone.now.to_f.to_s }.to_json
+          Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
+        end
+      end
+      
+      web_request = WebRequest.new
+      web_request.put_values('connect', params, get_ip_address, get_geoip_data)
+    
+      device_app_list = Device.new(:key => params[:udid])
+      path_list = device_app_list.set_app_ran(params[:app_id])
+      path_list.each do |path|
+        web_request.add_path(path)
+      end
+      
+      device_app_list.save
+      web_request.save
+    end
   end
   
 end
