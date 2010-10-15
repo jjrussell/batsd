@@ -37,7 +37,11 @@ class OffersController < WebsiteController
 
 private
   def find_offer
-    @app = current_partner.apps.find(params[:app_id], :include => [:primary_offer])
+    if permitted_to? :udids, :statz
+      @app = App.find(params[:app_id], :include => [:primary_offer])
+    else
+      @app = current_partner.apps.find(params[:app_id], :include => [:primary_offer])
+    end
     @offer = @app.primary_offer
     log_activity(@offer)
   end
