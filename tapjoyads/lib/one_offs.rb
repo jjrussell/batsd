@@ -30,12 +30,13 @@ class OneOffs
         :end_time => Time.parse(end_date), 
         :stat_types => ['new_users','paid_installs'], 
         :include_labels => :true, 
-        :type => :granular} 
+        :type => :granular
+        } 
       
       day = Time.parse(start_date)
       last = Time.parse(end_date)
       c = 0
-      begin
+      do
         24.times do |hour|
           file.puts "#{app.name}, #{day.month}, #{day.day}, #{hour}, #{as.stats['new_users'][c]}, #{as.stats['paid_installs'][c]}"
           c += 1
