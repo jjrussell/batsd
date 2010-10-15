@@ -22,7 +22,7 @@ class OneOffs
   def self.get_hourly_new_users_by_partner(filename, partner_id, start_date, end_date)
     file = File.open(filename, 'w')
     file.puts "app, month, day, hour, new_users, paid_installs"
-    App.find_by_partner_id(partner_id) do |app|
+    App.find_all_by_partner_id(partner_id).each do |app|
       as = Appstats.new app.id, {
         :granularity => :hourly, 
         :start_time => Time.parse(start_date), 
