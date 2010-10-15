@@ -565,7 +565,7 @@ protected
           @@sdb.create_domain(@this_domain_name)
         end
         retry
-      elsif e.message.starts_with?("ConditionalCheckFailed")
+      elsif e.message.starts_with?("ConditionalCheckFailed") || e.message.starts_with?("AttributeDoesNotExist")
         raise ExpectedAttributeError.new(e.message)
       else
         raise e
