@@ -5,7 +5,7 @@ class StatzController < WebsiteController
   
   filter_access_to :all
   
-  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids ]
+  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids ]
   after_filter :save_activity_logs, :only => [ :update ]
   
   def index
@@ -23,15 +23,6 @@ class StatzController < WebsiteController
     @keys = bucket.keys('prefix' => base_path).map do |key|
       key.name.gsub(base_path, '')
     end
-  end
-
-  def download_udids
-    return unless verify_params([ :date ], { :allow_empty => false }) && params[:date] =~ /^\d{4}-\d{2}$/
-    
-    bucket = S3.bucket(BucketNames::AD_UDIDS)
-    data = bucket.get(Offer.s3_udids_path(@offer.id) + params[:date])
-    
-    send_data(data, :type => 'text/csv', :filename => "#{@offer.id}_#{params[:date]}.csv")
   end
 
   def show

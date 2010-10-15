@@ -42,7 +42,8 @@
   %h3 UDIDs Reports
   %ul.udid-reports
     - @udids.each do |key|
-      .li= link_to(key, download_udids_statz_path(@offer.id, { :date => key }))
+      .li= link_to(key, download_udids_app_offer_path(:app_id => @offer.item.id, :id => @offer.id, :date => key))
+
 - include_tapjoy_graph
 
 - content_for :page_javascript do

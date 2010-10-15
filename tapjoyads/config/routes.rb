@@ -47,7 +47,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post } do |app|
-    app.resources :offers, :only => [ :show, :update ]
+    app.resources :offers, :only => [ :show, :update ] , :member => { :download_udids => :get }
     app.resources :currencies, :only => [ :show, :update, :new, :create ]
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
       :collection => { :reorder => :post }
@@ -64,7 +64,7 @@ ActionController::Routing::Routes.draw do |map|
     :member => { :create_payout => :post, :create_transfer => :post }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :collection => { :search => :get },
-    :member => { :last_run_times => :get, :udids => :get, :download_udids => :get }
+    :member => { :last_run_times => :get, :udids => :get }
   map.resources :raffle_manager, :only => [ :index, :edit, :update, :new, :create ]
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create ], :member => { :make_current => :post }

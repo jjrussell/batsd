@@ -29,6 +29,12 @@ class OffersController < WebsiteController
     end
   end
 
+  def download_udids
+    bucket = S3.bucket(BucketNames::AD_UDIDS)
+    data = bucket.get(Offer.s3_udids_path(@offer.id) + params[:date])
+    send_data(data, :type => 'text/csv', :filename => "#{@offer.id}_#{params[:date]}.csv")
+  end
+
 private
   def find_offer
     @app = current_partner.apps.find(params[:app_id], :include => [:primary_offer])
