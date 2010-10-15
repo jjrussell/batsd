@@ -51,7 +51,7 @@ class OfferCompletedController < ApplicationController
       click.save
     end
     
-    device_app_list = DeviceAppList.new(:key => click.udid)
+    device_app_list = Device.new(:key => click.udid)
     device_app_list.set_app_ran(click.advertiser_app_id)
     device_app_list.save
     

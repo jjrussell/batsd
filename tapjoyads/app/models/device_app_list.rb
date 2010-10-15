@@ -1,3 +1,5 @@
+# TO REMOVE - when all device_app_list domains have finished converting to devices domains
+
 class DeviceAppList < SimpledbResource
 
   self.sdb_attr :apps, :type => :json, :default_value => {}

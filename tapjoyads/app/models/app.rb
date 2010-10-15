@@ -113,7 +113,7 @@ class App < ActiveRecord::Base
     reject_rating_offer = options.delete(:reject_rating_offer) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
-    device_app_list = DeviceAppList.new(:key => udid)
+    device_app_list = Device.new(:key => udid)
     currency = Currency.find_in_cache_by_app_id(id) unless currency
     
     if type == Offer::CLASSIC_OFFER_TYPE

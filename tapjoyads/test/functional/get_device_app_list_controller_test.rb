@@ -1,3 +1,5 @@
+# TO REMOVE - when we're sure the controller is removed
+
 require 'test_helper'
 
 class GetDeviceAppListControllerTest < ActionController::TestCase

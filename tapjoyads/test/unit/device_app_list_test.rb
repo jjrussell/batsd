@@ -1,3 +1,5 @@
+# TO REMOVE - when all device_app_list domains have finished converting to devices domains
+
 require 'test_helper'
 
 class DeviceAppListTest < ActiveSupport::TestCase

@@ -8,7 +8,7 @@ class ClickController < ApplicationController
     @offer = Offer.find_in_cache(params[:offer_id])
     return if offer_disabled?
     
-    @device_app_list = DeviceAppList.new(:key => params[:udid])
+    @device_app_list = Device.new(:key => params[:udid])
     return if offer_completed?
     
     create_web_request
@@ -24,7 +24,7 @@ class ClickController < ApplicationController
     @offer = Offer.find_in_cache(params[:offer_id])
     return if offer_disabled?
     
-    @device_app_list = DeviceAppList.new(:key => params[:udid])
+    @device_app_list = Device.new(:key => params[:udid])
     return if offer_completed?
     
     create_web_request
@@ -40,7 +40,7 @@ class ClickController < ApplicationController
     @offer = Offer.find_in_cache(params[:offer_id])
     return if offer_disabled?
     
-    @device_app_list = DeviceAppList.new(:key => params[:udid])
+    @device_app_list = Device.new(:key => params[:udid])
     return if offer_completed?
     
     create_web_request
