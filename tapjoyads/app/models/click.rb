@@ -19,6 +19,7 @@ class Click < SimpledbResource
   self.sdb_attr :source
   self.sdb_attr :country
   self.sdb_attr :type
+  self.sdb_attr :exp
   
   def dynamic_domain_name
     domain_number = @key.hash % NUM_CLICK_DOMAINS

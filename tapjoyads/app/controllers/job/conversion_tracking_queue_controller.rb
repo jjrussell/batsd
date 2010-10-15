@@ -49,6 +49,7 @@ private
     reward.put('udid', click.udid)
     reward.put('country', click.country)
     reward.put('reward_key_2', click.reward_key_2)
+    reward.put('exp', click.exp)
     reward.put('created', installed_at_epoch)
     
     begin
@@ -70,6 +71,7 @@ private
     web_request.put('publisher_user_id', click.publisher_user_id)
     web_request.put('source', click.source)
     web_request.put('time', installed_at_epoch)
+    web_request.put('exp', click.exp)
     web_request.save
     
     message = reward.serialize(:attributes_only => true)

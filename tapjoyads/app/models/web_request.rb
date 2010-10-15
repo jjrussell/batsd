@@ -18,6 +18,7 @@ class WebRequest < SimpledbResource
   self.sdb_attr :status_items
   self.sdb_attr :time, :type => :time
   self.sdb_attr :path, :force_array => true, :replace => false
+  self.sdb_attr :exp
   
   PATH_TO_STAT_MAP = {
     'connect' => 'logins',
@@ -103,6 +104,7 @@ class WebRequest < SimpledbResource
       put('virtual_good_id', params[:virtual_good_id])
       
       put('source', params[:source])
+      put('exp', params[:exp])
     end
     
     unless get('ip_address')

@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   
   before_filter :fix_params
   before_filter :reject_banned_ips
+  before_filter :choose_experiment
 
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
@@ -150,6 +151,10 @@ private
     else
       @itunes_link_affiliate = 'linksynergy'
     end
+  end
+    
+  def choose_experiment
+    params[:exp] = Experiments.choose(params[:udid]) unless params[:exp].present?
   end
   
 end
