@@ -1,6 +1,8 @@
 class GetVgStoreItemsController < ApplicationController
 
   before_filter :setup
+  # TO REMOVE - once the tap defense connect bug has been fixed and is sufficiently adopted
+  before_filter :fake_connect_call, :only => :purchased
 
   ##
   # All virtual goods that are available to be purchased for this app from this device.
@@ -76,6 +78,33 @@ private
   def sort_virtual_good_list
     @virtual_good_list.sort! do |v1, v2|
       v1.ordinal <=> v2.ordinal
+    end
+  end
+  
+  # TO REMOVE - once the tap defense connect bug has been fixed and is sufficiently adopted
+  def fake_connect_call
+    if params[:app_id] == '2349536b-c810-47d7-836c-2cd47cd3a796' && params[:app_version] == '3.2.2' && params[:library_version] == '5.0.1'
+      
+      Rails.logger.info_with_time("Check conversions and maybe add to sqs") do
+        click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}")
+        unless (click.attributes.empty? || click.installed_at)
+          logger.info "Added conversion to sqs queue"
+          message = { :click => click.serialize(:attributes_only => true), :install_timestamp => Time.zone.now.to_f.to_s }.to_json
+          Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
+        end
+      end
+      
+      web_request = WebRequest.new
+      web_request.put_values('connect', params, get_ip_address, get_geoip_data)
+    
+      device_app_list = Device.new(:key => params[:udid])
+      path_list = device_app_list.set_app_ran(params[:app_id])
+      path_list.each do |path|
+        web_request.add_path(path)
+      end
+      
+      device_app_list.save
+      web_request.save
     end
   end
   
