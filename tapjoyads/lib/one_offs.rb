@@ -36,13 +36,13 @@ class OneOffs
       day = Time.parse(start_date)
       last = Time.parse(end_date)
       c = 0
-      do
+      begin
         24.times do |hour|
           file.puts "#{app.name}, #{day.month}, #{day.day}, #{hour}, #{as.stats['new_users'][c]}, #{as.stats['paid_installs'][c]}"
           c += 1
         end
         day = day + 1.day        
-      while day != last            
+      end while day != last            
     end
     file.close
   end
