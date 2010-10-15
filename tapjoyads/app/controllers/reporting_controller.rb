@@ -123,7 +123,8 @@ class ReportingController < WebsiteController
         :stringData => [ @appstats.stats['arpdau'].map { |i| number_to_currency(i / 100.0, :precision => 4) } ]
       }
     end
-    if @offer.item.currency.nil?
+    
+    if @offer.item_type == 'App' && @offer.item.currency.nil?
       @is_publisher = false
     else
       @is_publisher = true
