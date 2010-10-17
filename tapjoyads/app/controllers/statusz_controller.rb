@@ -24,8 +24,8 @@ class StatuszController < ApplicationController
     
     User.using_slave_db do
       hash = User.slave_connection.execute("SHOW SLAVE STATUS").fetch_hash
-      if hash['Seconds_Behind_Master'].to_i > 300
-        result = 'too far behind'
+      if hash['Slave_IO_Running'] != 'Yes' || hash['Slave_SQL_Running'] != 'Yes' || hash['Seconds_Behind_Master'].to_i > 300
+        result = 'fail'
       end
     end
     
