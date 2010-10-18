@@ -155,11 +155,13 @@ Tapjoy.Graph = {
 
     groups = ['main', 'right', 'extra'];
     for (var i = 0, group; group = groups[i]; i++) {
-      if (obj[group]) {
+      if (obj[group] && obj[group]['totals']) {
         for (var j = 0, name; name = obj[group]['names'][j]; j++) {
           var value = obj[group]['totals'][j];
-
-          html.push(name + ': ' + value);
+          
+          if (value || value == 0) {
+            html.push(name + ': ' + value);
+          }
         }
       }
     }
