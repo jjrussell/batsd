@@ -16,7 +16,7 @@
   - @offer_list.each do |offer|
     .offer
       %a{ :href => offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], @source, params[:app_version]), :onclick => "this.className = 'clicked';" }
-        %img{ :src => offer.get_icon_url }
+        %img{ :src => 'http://s3.amazonaws.com/app_data/icons/blank.png', :s => offer.get_icon_url }
         .offertext
           .cell
             %span.offername #{offer.name} (#{offer.visual_cost})
@@ -36,6 +36,31 @@
   #adsby Ads by Tapjoy
 
 %img.hidden{ :src => '/images/load-circle.gif' }
+
+- content_for :page_javascript do
+  :plain
+    window.onload = init;
+    window.onscroll = scroll;
+    document.body.ontouchmove = scroll;
+
+    function init() {
+      window.setTimeout(scroll, 0);
+    }
+
+    function scroll() {
+      images = document.getElementsByTagName('img');
+      for (var i = 0, image; image = images[i]; i++) {
+        if (window.scrollY + window.innerHeight > image.offsetTop) {
+          loadImage(image);
+        }
+      }
+    }
+
+    function loadImage(image) {
+      if (image.getAttribute('s') && image.src != image.getAttribute('s')) {
+        image.src = image.getAttribute('s');
+      }
+    }
 
 - content_for :page_styles do
   :plain
