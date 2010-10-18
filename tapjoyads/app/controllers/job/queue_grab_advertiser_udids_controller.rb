@@ -28,7 +28,7 @@ private
     log.job_started_at = Time.zone.now
     begin
       log.save!(:expected_attr => expected_attr)
-    rescue ExpectedAttributeError => e
+    rescue Simpledb::ExpectedAttributeError => e
       return
     end
 

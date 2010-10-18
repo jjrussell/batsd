@@ -177,7 +177,7 @@ class OneOffs
       if device.pulled_from_device_app_list
         begin
           device.serial_save(:catch_exceptions => false, :expected_attr => { 'updated-at' => nil })
-        rescue ExpectedAttributeError => e
+        rescue Simpledb::ExpectedAttributeError => e
           race_condition_count += 1
           next
         rescue

@@ -54,7 +54,7 @@ private
     
     begin
       reward.serial_save(:catch_exceptions => false, :expected_attr => { 'type' => nil })
-    rescue ExpectedAttributeError => e
+    rescue Simpledb::ExpectedAttributeError => e
       return
     end
     
