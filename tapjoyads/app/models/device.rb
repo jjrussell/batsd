@@ -25,7 +25,9 @@ class Device < SimpledbShardedResource
       end
     end
     # END TO REMOVE
-    
+  end
+  
+  def after_initialize(options = {})
     @parsed_apps = apps
   end
   

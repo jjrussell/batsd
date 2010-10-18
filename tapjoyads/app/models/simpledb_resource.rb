@@ -56,6 +56,11 @@ class SimpledbResource
     
     load(load_from_memcache) if should_load
     @is_new = @attributes.empty?
+    
+    after_initialize
+  end
+  
+  def after_initialize(options = {})
   end
   
   def self.sdb_attr(name, options = {})
