@@ -57,7 +57,7 @@ class ExpectedAttributeError < RuntimeError; end
 
 class SimpledbResource  
   
-  cattr_reader :sdb
+  cattr_reader :sdb, :attribute_names
   attr_accessor :key, :attributes, :this_domain_name, :is_new, :key_hash
   cattr_accessor :domain_name, :key_format
   superclass_delegating_accessor :domain_name, :key_format
@@ -83,6 +83,8 @@ class SimpledbResource
     :newline => "^^TAPJOY_NEWLINE^^",
     :escaped => "^^TAPJOY_ESCAPED^^"
   }
+  
+  @@attribute_names = []
   
   ##
   # Initializes a new SimpledbResource, which represents a single row in a domain.
@@ -149,6 +151,8 @@ class SimpledbResource
         !get('#{attr_name}', #{get_options.inspect}).blank?
       end
     }
+    
+    @@attribute_names << attr_name
   end
   self.sdb_attr :updated_at, {:type => :time, :attr_name => 'updated-at'}
   
