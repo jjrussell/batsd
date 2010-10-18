@@ -2,9 +2,7 @@ class App < ActiveRecord::Base
   include UuidPrimaryKey
   
   PLATFORMS = { 'android' => 'Android', 'iphone' => 'iPhone' }
-  # TO REMOVE - and uncomment the one below when we're ready to start using tradedoubler
-  TRADEDOUBLER_COUNTRIES = Set.new(%w( ))
-  # TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
+  TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
   
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
