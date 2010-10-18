@@ -1,5 +1,6 @@
-class Click < SimpledbResource
+class Click < SimpledbShardedResource
   self.key_format = 'udid.advertiser_app_id'
+  self.num_domains = NUM_CLICK_DOMAINS
   
   self.sdb_attr :udid
   self.sdb_attr :publisher_app_id

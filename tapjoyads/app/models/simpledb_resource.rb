@@ -1,61 +1,6 @@
-class StringConverter
-  def from_string(s)
-    s
-  end
-  def to_string(s)
-    s.to_s
-  end
-end
-
-class IntConverter
-  def from_string(s)
-    s.to_i
-  end
-  def to_string(i)
-    i.to_s
-  end
-end
-
-class FloatConverter
-  def from_string(s)
-    s.to_f
-  end
-  def to_string(f)
-    f.to_s
-  end
-end
-
-class TimeConverter
-  def from_string(s)
-    Time.zone.at(s.to_f)
-  end
-  def to_string(t)
-    t.to_f.to_s
-  end
-end
-
-class BoolConverter
-  def from_string(s)
-    s == '1' || s == 'True'
-  end
-  def to_string(b)
-    b ? '1' : '0'
-  end
-end
-
-class JsonConverter
-  # TODO: Cache json once it's been parsed once.
-  def from_string(s)
-    JSON.parse(s)
-  end
-  def to_string(j)
-    j.to_json
-  end
-end
-
-class ExpectedAttributeError < RuntimeError; end
-
-class SimpledbResource  
+class SimpledbResource
+  
+  include Simpledb
   
   cattr_reader :sdb, :attribute_names
   attr_accessor :key, :attributes, :this_domain_name, :is_new, :key_hash
@@ -84,7 +29,7 @@ class SimpledbResource
     :escaped => "^^TAPJOY_ESCAPED^^"
   }
   
-  @@attribute_names = []
+  @@attribute_names = [ 'id', 'key' ]
   
   ##
   # Initializes a new SimpledbResource, which represents a single row in a domain.
@@ -152,7 +97,7 @@ class SimpledbResource
       end
     }
     
-    @@attribute_names << attr_name
+    @@attribute_names << attr_name.to_s
   end
   self.sdb_attr :updated_at, {:type => :time, :attr_name => 'updated-at'}
   
@@ -547,6 +492,43 @@ class SimpledbResource
     return self.new(options)
   end
   
+  ##
+  # Generates ActiveRecord-like find_by_#{attribute_name}(attribute_value) methods when appropriate.
+  # Both "id" and "key" can be used to look up SimpleDB itemname() values.
+  # examples: 
+  # ActivityLog.find_all_by_user_and_controller('ryan', 'statz')
+  # finds all ActivityLog records with user='ryan' and controller='statz'
+  #
+  # ActivityLog.find_by_object_type_and_id('Currency', 'b6bc028f-fa71-4a4d-8311-8005474e9353')
+  # finds the first ActivityLog record with object_type='Currency' and id = 'b6bc028f-fa71-4a4d-8311-8005474e9353'
+  #
+  def self.method_missing(method_id, *arguments, &block)
+    if match = DynamicFinderMatch.match(method_id)
+      matched_attribute_names = match.attribute_names
+      super unless matched_attribute_names.all? { |name| attribute_names.include?(name) }
+      
+      self.class_eval %{
+        def self.#{method_id}(*args)
+          options = args.extract_options!
+          where_attributes = {}
+          [:#{matched_attribute_names.join(',:')}].each_with_index { |name, idx| where_attributes[name] = args[idx] }
+          
+          where_attributes["itemname()"] = where_attributes[:key] if where_attributes[:key]
+          where_attributes["itemname()"] = where_attributes[:id] if where_attributes[:id]
+          where_attributes.delete(:key)
+          where_attributes.delete(:id)
+          
+          options[:where] = where_attributes.collect { |key, value| key.to_s + " = " + "'" + value.to_s + "'" }.join(" and ")
+          find(:#{match.finder}, options)
+        end
+      }, __FILE__, __LINE__
+      
+      send(method_id, *arguments)
+    else
+      super
+    end
+  end
+  
 protected
   
   def write_to_sdb(expected_attr = {})
@@ -724,4 +706,5 @@ private
     key = "savefreq.#{@this_domain_name}.#{(Time.now.to_i / 1.minutes).to_i}"
     Mc.increment_count(key, false, 10.minutes)
   end
+  
 end

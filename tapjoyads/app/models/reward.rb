@@ -1,4 +1,5 @@
-class Reward < SimpledbResource
+class Reward < SimpledbShardedResource
+  self.num_domains = NUM_REWARD_DOMAINS
   
   self.sdb_attr :publisher_app_id
   self.sdb_attr :advertiser_app_id

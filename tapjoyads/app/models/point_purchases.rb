@@ -1,8 +1,9 @@
 ##
 # Store information about a single udid's currency, virtual good purchases, and challenges 
 # for a single app.
-class PointPurchases < SimpledbResource
+class PointPurchases < SimpledbShardedResource
   self.key_format = "udid.app_id"
+  self.num_domains = NUM_POINT_PURCHASES_DOMAINS
   
   self.sdb_attr :points,        :type => :int
   self.sdb_attr :virtual_goods, :type => :json, :default_value => {}
