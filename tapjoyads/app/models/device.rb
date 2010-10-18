@@ -70,4 +70,18 @@ class Device < SimpledbResource
     last_run_timestamp.present? ? Time.zone.at(last_run_timestamp.to_f) : nil
   end
   
+  def self.count(options = {})
+    if options[:domain_name]
+      super(options)
+    else
+      where = options.delete(:where)
+      retries = options.delete(:retries) { 10 }
+      raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
+      NUM_DEVICES_DOMAINS.times.inject(0) do |sum, domain_number|
+        sum + SimpledbResource.count(:domain_name => "devices_#{domain_number}", :where => where, :retries => retries)
+      end
+    end
+  end
+  
 end
