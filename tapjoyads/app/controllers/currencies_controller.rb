@@ -5,7 +5,7 @@ class CurrenciesController < WebsiteController
   filter_access_to :all
 
   before_filter :find_currency, :only => [ :show, :update, :reset_beta_device ]
-  after_filter :save_activity_logs, :only => [ :update, :create, :reset_beta_device ]
+  after_filter :save_activity_logs, :only => [ :update, :create ]
 
   def show
   end
