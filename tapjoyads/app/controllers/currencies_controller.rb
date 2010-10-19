@@ -4,7 +4,7 @@ class CurrenciesController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_currency, :only => [ :show, :update, :reset_beta_device ]
+  before_filter :find_currency, :only => [ :show, :update, :reset_test_device ]
   after_filter :save_activity_logs, :only => [ :update, :create ]
 
   def show
@@ -46,10 +46,7 @@ class CurrenciesController < WebsiteController
     update
   end
 
-
-  ##
-  # Removes all virtual goods from a device, only if the device is a beta device.
-  def reset_beta_device
+  def reset_test_device
     if @app.currency.get_test_device_ids.include?(params[:udid])
       PointPurchases.transaction(:key => "#{params[:udid]}.#{params[:app_id]}") do |point_purchases|
         point_purchases.virtual_goods = {}
@@ -60,6 +57,7 @@ class CurrenciesController < WebsiteController
     end
     redirect_to app_currency_path
   end
+
 private
 
   def find_currency
@@ -74,4 +72,5 @@ private
       redirect_to apps_path
     end
   end
+
 end
