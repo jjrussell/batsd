@@ -134,14 +134,6 @@ class ReportingController < WebsiteController
         :stringData => [ @appstats.stats['arpdau'].map { |i| number_to_currency(i / 100.0, :precision => 4) } ]
       }
     end
-    
-    if @offer.item_type == 'App' && @offer.item.currency.present?
-      @is_publisher = true
-    else
-      @is_publisher = false
-    end
-
-
 
     respond_to do |format|
       format.html do
@@ -199,7 +191,7 @@ private
   
   def setup
     # find the offer
-    @offer = current_partner.offers.find_by_id(params[:id])
+    @offer = current_partner.offers.find_by_id(params[:id], :include => 'item')
     if @offer.nil?
       flash[:notice] = 'Unknown offer id'
       redirect_to reporting_index_path and return

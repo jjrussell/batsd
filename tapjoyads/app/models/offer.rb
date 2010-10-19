@@ -174,7 +174,11 @@ class Offer < ActiveRecord::Base
       '$$$$'
     end
   end
-  
+
+  def is_publisher_offer?
+    item_type == 'App' && item.currency.present?
+  end
+
   def cost
     price > 0 ? 'Paid' : 'Free'
   end

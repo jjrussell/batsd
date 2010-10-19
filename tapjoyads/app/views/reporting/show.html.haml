@@ -31,7 +31,7 @@
   #connects.graph
   #installs_spend.graph
   #installs_rank.graph
-  - if @is_publisher
+  - if @offer.is_publisher_offer?
     #published_offers.graph
     #offerwall_views.graph
 
@@ -56,7 +56,7 @@
       Tapjoy.Graph.drawLargeGraph(data.connect_data, 'connects');
       Tapjoy.Graph.drawLargeGraph(data.rewarded_installs_plus_spend_data, 'installs_spend');
       Tapjoy.Graph.drawLargeGraph(data.rewarded_installs_plus_rank_data, 'installs_rank');
-      if (#{@is_publisher}) {
+      if (#{@offer.is_publisher_offer?}) {
         Tapjoy.Graph.drawLargeGraph(data.published_offers_data, 'published_offers');
         Tapjoy.Graph.drawLargeGraph(data.offerwall_views_data, 'offerwall_views');
       }
