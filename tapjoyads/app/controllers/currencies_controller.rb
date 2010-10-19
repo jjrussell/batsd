@@ -50,20 +50,15 @@ class CurrenciesController < WebsiteController
   ##
   # Removes all virtual goods from a device, only if the device is a beta device.
   def reset_beta_device
-    return unless verify_params([:app_id, :udid], {:allow_empty => false})
-    publisher_user_id = params[:udid]
-    publisher_user_id = params[:publisher_user_id] unless params[:publisher_user_id].blank?
-    raise NotABetaDevice.new unless @app.currency.get_test_device_ids.include?(params[:udid])
-
-    PointPurchases.transaction(:key => "#{publisher_user_id}.#{params[:app_id]}") do |point_purchases|
-      point_purchases.virtual_goods = {}
+    if @app.currency.get_test_device_ids.include?(params[:udid])
+      PointPurchases.transaction(:key => "#{params[:udid]}.#{params[:app_id]}") do |point_purchases|
+        point_purchases.virtual_goods = {}
+      end
+      flash[:notice] = "You have successfully removed all virtual goods for #{params[:udid]}."
+    else
+      flash[:error] = "#{params[:udid]} is not a test device."
     end
-
-    flash[:notice] = "You have successfully removed all virtual goods for #{params[:udid]}."
-  rescue NotABetaDevice => e
-    flash[:error] = "Error: Not a beta device"
-  ensure
-    redirect_to :back
+    redirect_to app_currency_path
   end
 private
 
@@ -79,6 +74,4 @@ private
       redirect_to apps_path
     end
   end
-
-  class NotABetaDevice < RuntimeError;end
 end
