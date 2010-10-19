@@ -37,7 +37,6 @@ Rails::Initializer.run do |config|
   config.gem 'patron', :version => '0.4.4'
   config.gem 'right_aws', :version => '1.10.0'
   config.gem 'rmagick', :version => '2.12.2', :lib => 'RMagick'
-  config.gem 'hominid', :version => '2.2.0'
 
   # These gems should be vendored
   config.gem 'authlogic', :version => '2.1.3'
@@ -49,6 +48,7 @@ Rails::Initializer.run do |config|
   config.gem 'read_from_slave', :version => '0.4.0'
   config.gem 'uuidtools', :version => '2.0.0'
   config.gem 'will_paginate', :version => '2.3.12'
+  config.gem 'hominid', :version => '2.2.0'
   
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
