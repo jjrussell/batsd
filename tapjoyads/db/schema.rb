@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101006213509) do
+ActiveRecord::Schema.define(:version => 20101018233437) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -241,16 +241,20 @@ ActiveRecord::Schema.define(:version => 20101006213509) do
   add_index "partner_assignments", ["user_id", "partner_id"], :name => "index_partner_assignments_on_user_id_and_partner_id", :unique => true
 
   create_table "partners", :id => false, :force => true do |t|
-    t.string   "id",                 :limit => 36,                        :null => false
+    t.string   "id",                         :limit => 36,                        :null => false
     t.string   "contact_name"
     t.string   "contact_phone"
-    t.integer  "balance",                          :default => 0,         :null => false
-    t.integer  "pending_earnings",                 :default => 0,         :null => false
+    t.integer  "balance",                                  :default => 0,         :null => false
+    t.integer  "pending_earnings",                         :default => 0,         :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "payout_frequency",                 :default => "monthly", :null => false
-    t.integer  "next_payout_amount",               :default => 0,         :null => false
+    t.string   "payout_frequency",                         :default => "monthly", :null => false
+    t.integer  "next_payout_amount",                       :default => 0,         :null => false
     t.string   "name"
+    t.integer  "calculated_advertiser_tier"
+    t.integer  "calculated_publisher_tier"
+    t.integer  "custom_advertiser_tier"
+    t.integer  "custom_publisher_tier"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
