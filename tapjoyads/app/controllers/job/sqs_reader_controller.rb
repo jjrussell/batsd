@@ -1,9 +1,10 @@
 class Job::SqsReaderController < Job::JobController
 
-  before_filter :limit_long_running_jobs, :only => :index
+  before_filter :limit_sdb_backup_jobs, :only => :index
 
   def initialize(queue_name)
     @queue_name = queue_name
+    @num_reads = 40
   end
 
   def index
@@ -29,7 +30,7 @@ class Job::SqsReaderController < Job::JobController
       end
     end
     
-    40.times do
+    @num_reads.times do
       # read a message off the queue
       retries = 3
       begin
@@ -93,7 +94,7 @@ class Job::SqsReaderController < Job::JobController
     render :text => 'ok'
   end
 
-  private
+private
   
   ##
   # Returns a new key for every 5-minute window. The key is unique to this host and this queue.
@@ -116,10 +117,11 @@ class Job::SqsReaderController < Job::JobController
     end
   end
   
-  def limit_long_running_jobs
-    if @queue_name == QueueNames::CLEANUP_WEB_REQUESTS
-      unless Dir.glob("#{RAILS_ROOT}/tmp/web-request*.sdb*").empty?
-        render :text => 'ok' if rand > 0.01
+  def limit_sdb_backup_jobs
+    if @queue_name == QueueNames::SDB_BACKUPS
+      @num_reads = 1
+      unless Dir.glob("#{RAILS_ROOT}/tmp/*.sdb*").empty?
+        render :text => 'ok'
       end
     end
   end

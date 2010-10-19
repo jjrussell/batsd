@@ -10,7 +10,6 @@ JobRunner::Gateway.define do |s|
     # SQS Queues:
     s.add_job 'conversion_tracking_queue', :interval => 2.seconds
     s.add_job 'failed_sdb_saves_queue', :interval => 5.seconds
-    s.add_job 'cleanup_web_requests', :interval => 5.minutes
     s.add_job 'send_money_txn', :interval => 2.seconds
     s.add_job 'queue_send_currency', :interval => 2.seconds
     s.add_job 'queue_failed_downloads', :interval => 20.seconds
@@ -21,6 +20,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'queue_get_store_info', :interval => 5.minutes
     s.add_job 'queue_update_monthly_account', :interval => 1.minute
     s.add_job 'queue_grab_advertiser_udids', :interval => 5.minutes
+    s.add_job 'queue_sdb_backups', :interval => 1.minute
   elsif machine_type == 'masterjobs'
     # jobs with high impact on overall system performance
     s.add_job 'master_calculate_next_payout', :daily => 4.hours

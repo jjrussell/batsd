@@ -2,7 +2,6 @@ class QueueNames
   CONVERSION_TRACKING      = RUN_MODE_PREFIX + 'ConversionTracking'
   FAILED_SDB_SAVES         = RUN_MODE_PREFIX + 'FailedSdbSaves'
   FAILED_DOWNLOADS         = RUN_MODE_PREFIX + 'FailedDownloads'
-  CLEANUP_WEB_REQUESTS     = RUN_MODE_PREFIX + 'CleanupWebRequests'
   SEND_MONEY_TXN           = RUN_MODE_PREFIX + 'SendMoneyTxn'
   SEND_CURRENCY            = RUN_MODE_PREFIX + 'SendCurrency'
   APP_STATS                = RUN_MODE_PREFIX + 'AppStats'
@@ -12,4 +11,5 @@ class QueueNames
   GET_STORE_INFO           = RUN_MODE_PREFIX + 'GetStoreInfo'
   UPDATE_MONTHLY_ACCOUNT   = RUN_MODE_PREFIX + 'UpdateMonthlyAccount'
   GRAB_ADVERTISER_UDIDS    = RUN_MODE_PREFIX + 'GrabAdvertiserUdids'
+  SDB_BACKUPS              = RUN_MODE_PREFIX + 'SdbBackups'
 end

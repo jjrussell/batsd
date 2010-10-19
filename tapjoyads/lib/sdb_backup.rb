@@ -17,6 +17,7 @@ class SdbBackup
     where = options.delete(:where)
     delete_rows = options.delete(:delete_rows) { false }
     suffix = options.delete(:suffix) { '' }
+    delete_domain = options.delete(:delete_domain) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     Rails.logger.info "Backing up domain: #{domain_name}"
@@ -44,6 +45,23 @@ class SdbBackup
     `gzip -f #{file_name}`
     
     self.write_to_s3(s3_name, gzip_file_name, s3_bucket, 3)
+    
+    if delete_domain
+      Rails.logger.info "Deleting domain"
+      retries = 3
+      begin
+        response = SimpledbResource.delete_domain(domain_name)
+      rescue RightAws::AwsError => e
+        sleep(1)
+        if retries > 0
+          retries -= 1
+          retry
+        else
+          raise e
+        end
+      end
+      Rails.logger.info "Deleted domain #{domain_name}"
+    end
     
     if delete_rows
       Rails.logger.info "Deleting rows"
