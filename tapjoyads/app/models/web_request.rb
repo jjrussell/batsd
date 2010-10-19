@@ -17,6 +17,7 @@ class WebRequest < SimpledbResource
   self.sdb_attr :type
   self.sdb_attr :status_items
   self.sdb_attr :time, :type => :time
+  self.sdb_attr :viewed_at, :type => :time
   self.sdb_attr :path, :force_array => true, :replace => false
   self.sdb_attr :exp
   
@@ -53,7 +54,7 @@ class WebRequest < SimpledbResource
   @@bad_domains = {}
   
   def initialize(options = {})
-    @now = Time.zone.now
+    @now = options.delete(:time) { Time.zone.now }
     super({:load => false}.merge(options))
   end
 
@@ -102,7 +103,7 @@ class WebRequest < SimpledbResource
       put('type', params[:type])
       put('publisher_user_id', params[:publisher_user_id])
       put('virtual_good_id', params[:virtual_good_id])
-      
+
       put('source', params[:source])
       put('exp', params[:exp])
     end

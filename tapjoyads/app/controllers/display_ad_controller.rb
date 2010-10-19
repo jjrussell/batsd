@@ -43,7 +43,7 @@ private
     geoip_data = get_geoip_data
     params[:displayer_app_id] = params[:app_id]
     
-    web_request = WebRequest.new
+    web_request = WebRequest.new(:time => now)
     web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data)
     
     # Randomly choose one publisher app that the user has run:
@@ -74,7 +74,7 @@ private
       offer = offer_list[rand(offer_list.size)]
     
       if offer.present?
-        @click_url = offer.get_click_url(publisher_app, get_user_id_from_udid(params[:udid], params[:app_id]), params[:udid], 'display_ad', nil, params[:app_id])
+        @click_url = offer.get_click_url(publisher_app, get_user_id_from_udid(params[:udid], params[:app_id]), params[:udid], 'display_ad', nil, now, params[:app_id])
         @image = get_ad_image(publisher_app, offer)
       
         params[:offer_id] = offer.id

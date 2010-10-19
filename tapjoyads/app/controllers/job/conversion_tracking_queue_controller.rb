@@ -51,6 +51,7 @@ private
     reward.put('reward_key_2', click.reward_key_2)
     reward.put('exp', click.exp)
     reward.put('created', installed_at_epoch)
+    reward.viewed_at = click.viewed_at
     
     begin
       reward.serial_save(:catch_exceptions => false, :expected_attr => { 'type' => nil })
@@ -72,6 +73,7 @@ private
     web_request.put('source', click.source)
     web_request.put('time', installed_at_epoch)
     web_request.put('exp', click.exp)
+    web_request.viewed_at = click.viewed_at
     web_request.save
     
     message = reward.serialize(:attributes_only => true)

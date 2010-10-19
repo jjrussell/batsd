@@ -10,6 +10,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :offer_id
   self.sdb_attr :reward_key
   self.sdb_attr :reward_key_2
+  self.sdb_attr :viewed_at,         :type => :time
   self.sdb_attr :clicked_at,        :type => :time
   self.sdb_attr :installed_at,      :type => :time
   self.sdb_attr :advertiser_amount, :type => :int

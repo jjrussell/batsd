@@ -18,6 +18,7 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :country
   self.sdb_attr :reward_key_2
   self.sdb_attr :exp
+  self.sdb_attr :viewed_at,         :type => :time
   self.sdb_attr :created,           :type => :time
   self.sdb_attr :sent_currency,     :type => :time
   self.sdb_attr :sent_money_txn,    :type => :time

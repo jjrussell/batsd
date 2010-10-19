@@ -7,7 +7,7 @@ class Experiments
     if udid.present?
       udid_hash = udid.hash % 10000
 
-      if udid_hash < 100 && Time.zone.now.to_date == Date.parse('2010-10-16')
+      if udid_hash < 100
         return EXPERIMENTS[:no_change]
       end
       

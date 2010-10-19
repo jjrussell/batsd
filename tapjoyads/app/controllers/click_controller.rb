@@ -90,6 +90,7 @@ private
   def create_web_request(path = 'offer_click')
     web_request = WebRequest.new
     web_request.put_values(path, params, get_ip_address, get_geoip_data)
+    web_request.viewed_at = Time.zone.at(params[:viewed_at].to_f) if params[:viewed_at].present?
     web_request.save
   end
   
@@ -104,6 +105,7 @@ private
     
     @click = Click.new(:key => (type == 'generic' ? UUIDTools::UUID.random_create.to_s : "#{params[:udid]}.#{params[:advertiser_app_id]}"))
     @click.clicked_at        = @now
+    @click.viewed_at         = Time.zone.at(params[:viewed_at].to_f)
     @click.udid              = params[:udid]
     @click.publisher_app_id  = params[:publisher_app_id]
     @click.publisher_user_id = params[:publisher_user_id]

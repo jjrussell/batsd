@@ -16,7 +16,7 @@ class GetOffersController < ApplicationController
       primary_offer = Offer.find_in_cache(featured_offer.item_id)
       
       if featured_offer.featured? && @offer_list.include?(primary_offer)
-        redirect_to featured_offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], 'featured', params[:app_version])
+        redirect_to featured_offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], 'featured', params[:app_version], @now)
         return
       end
       @message = "You have already installed #{featured_offer.name}. You can still complete " +
@@ -68,6 +68,7 @@ private
        publisher_user_record.update(params[:udid])
     end
     
+    @now = Time.zone.now
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 25).to_i
     @source = ''
@@ -82,7 +83,7 @@ private
       params[:device_type] = 'ipod touch'
     end
     
-    web_request = WebRequest.new
+    web_request = WebRequest.new(:time => @now)
     web_request.put_values('offers', params, get_ip_address, get_geoip_data)
     web_request.save
   end
