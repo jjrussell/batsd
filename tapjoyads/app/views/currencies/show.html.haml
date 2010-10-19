@@ -62,6 +62,26 @@
         = render :partial => 'admin_fields', :locals => {:f => f}
     = f.submit
 
+  - unless @currency.test_devices.blank?
+    %p &nbsp;
+    %h3
+      Reset Test Device Virtual Goods
+      #help_reset_test_devices.help ?
+    - form_tag({:action => 'reset_beta_device'}, {:class => 'tjform'}) do
+      %table
+        %tbody
+          %tr
+            %th= label_tag :udid, "UDID"
+            %td= select_tag 'udid', options_for_select(@currency.test_devices.split(';'))
+          %tr.hidden#publisher_user_id_field
+            %th
+              = label_tag :publisher_user_id, "User ID"
+            %td
+              = text_field_tag 'publisher_user_id'
+              %br/
+              (Leave this field blank if you are not sure)
+      = submit_tag('Reset this device')
+
   .hidden
     #help_name_content{:name => 'Name'}
       The name of the currency
@@ -77,6 +97,11 @@
       Secret key to be used with the callback.
     #help_test_devices_content{:name => 'Test devices'}
       A semicolon (;) separated list of test UDIDs. These devices will see beta virtual goods.
+    #help_reset_test_devices_content{:name => 'Reset Virtual Goods'}
+      Remove all virtual good purchases from a test device.
+      If your app uses 'publisher_user_id' callbacks,
+      = link_to_function 'click here', 'enablePublisherUserIdTr()'
+      \. If you are not sure what that is, please leave it blank.
     = yield :extra_help
 
 - content_for :page_javascript do
@@ -89,6 +114,9 @@
       });
     });
 
+    var enablePublisherUserIdTr = function(){
+      $('#publisher_user_id_field').show();
+    };
     function toggleManagedByTapjoy() {
       if ($('#managed_by_tapjoy').attr('checked')) {
         $('.managed').show();

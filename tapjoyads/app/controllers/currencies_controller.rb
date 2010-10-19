@@ -4,8 +4,8 @@ class CurrenciesController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_currency, :only => [ :show, :update ]
-  after_filter :save_activity_logs, :only => [ :update, :create ]
+  before_filter :find_currency, :only => [ :show, :update, :reset_beta_device ]
+  after_filter :save_activity_logs, :only => [ :update, :create, :reset_beta_device ]
 
   def show
   end
@@ -46,6 +46,25 @@ class CurrenciesController < WebsiteController
     update
   end
 
+
+  ##
+  # Removes all virtual goods from a device, only if the device is a beta device.
+  def reset_beta_device
+    return unless verify_params([:app_id, :udid], {:allow_empty => false})
+    publisher_user_id = params[:udid]
+    publisher_user_id = params[:publisher_user_id] unless params[:publisher_user_id].blank?
+    raise NotABetaDevice.new unless @app.currency.get_test_device_ids.include?(params[:udid])
+
+    PointPurchases.transaction(:key => "#{publisher_user_id}.#{params[:app_id]}") do |point_purchases|
+      point_purchases.virtual_goods = {}
+    end
+
+    flash[:notice] = "You have successfully removed all virtual goods for #{params[:udid]}."
+  rescue NotABetaDevice => e
+    flash[:error] = "Error: Not a beta device"
+  ensure
+    redirect_to :back
+  end
 private
 
   def find_currency
@@ -61,4 +80,5 @@ private
     end
   end
 
+  class NotABetaDevice < RuntimeError;end
 end
