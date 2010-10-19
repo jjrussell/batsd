@@ -30,7 +30,7 @@
         %td Bid
         %td= number_to_currency(@offer.payment / 100.0)
 
-- if @offer.is_publisher?
+- if @offer.is_publisher_offer?
   .data
     %table
       %thead
