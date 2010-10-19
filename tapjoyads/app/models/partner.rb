@@ -93,5 +93,8 @@ class Partner < ActiveRecord::Base
   def name_or_contact_name
     name.present? ? name : contact_name
   end
-  
+
+  def has_publisher_offer?
+    offers.any?{|offer| offer.is_publisher_offer?}
+  end
 end

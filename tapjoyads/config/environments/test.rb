@@ -41,3 +41,7 @@ NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2
 NUM_REWARD_DOMAINS = 2
 NUM_DEVICES_DOMAINS = 2
+
+mail_chimp = YAML::load_file("#{RAILS_ROOT}/config/mail_chimp.yaml")['test']
+MAIL_CHIMP_API_KEY = mail_chimp['api_key']
+MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']

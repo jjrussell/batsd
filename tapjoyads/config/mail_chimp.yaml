@@ -1,0 +1,9 @@
+production:
+    api_key: '44facf9acdebc24658a78844cb776beb-us2'
+    partners_list_id: 'd132d495b9'
+test:
+    api_key: 'ac14495cc872e548179a99675e93aea1-us2'
+    partners_list_id: 'ce6f97f269'
+development:
+    api_key: 'ac14495cc872e548179a99675e93aea1-us2'
+    partners_list_id: 'ce6f97f269'

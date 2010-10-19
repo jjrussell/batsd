@@ -26,7 +26,7 @@ Rails::Initializer.run do |config|
   # Specify gems that this application depends on. 
   # They can then be installed with "rake gems:install" on new installations.
   # You have to specify the :lib option for libraries, where the Gem name (sqlite3-ruby) differs from the file itself (sqlite3)
-  
+
   # These gems can't be vendored
   config.gem 'daemons', :version => '1.0.10'
   config.gem 'hpricot', :version => '0.8.1'
@@ -37,7 +37,8 @@ Rails::Initializer.run do |config|
   config.gem 'patron', :version => '0.4.4'
   config.gem 'right_aws', :version => '1.10.0'
   config.gem 'rmagick', :version => '2.12.2', :lib => 'RMagick'
-  
+  config.gem 'hominid', :version => '2.2.0'
+
   # These gems should be vendored
   config.gem 'authlogic', :version => '2.1.3'
   config.gem 'declarative_authorization', :version => '0.4.1'
@@ -111,4 +112,5 @@ Rails::Initializer.run do |config|
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = true
+
 end

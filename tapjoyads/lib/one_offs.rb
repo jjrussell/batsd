@@ -201,5 +201,14 @@ class OneOffs
     rate = (count / elapsed_seconds).round_with_precision(2)
     puts "finished migrating #{count} in #{elapsed_hours} hours at a rate of #{rate} per second - failed to migrate: #{failed_to_migrate_count}, already migrated: #{record_already_migrated_count}, race conditions encountered: #{race_condition_count}"
   end
-  
+
+  def self.add_partners_to_chimp
+    return # don't do anything for now
+    partners = []
+    Partner.find_each(:include => ['users']) do |partner|
+      partners << partner unless partner.users.blank?
+    end
+    MailChimp.add_partners(partners)
+  end
+
 end
