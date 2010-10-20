@@ -20,10 +20,10 @@
           = f.label :conversion_rate, 'Conversion rate ($1=)'
           #help_conversion_rate.help ?
         %td
-          #conversion_rate_box
+          .box_with_right_label
             = f.text_field :conversion_rate
             = error_message_on(@currency, :conversion_rate)
-            #currency_name_text
+            #currency_name_text.right_label
               = @app.currency && @app.currency.name
       %tr
         %th
@@ -49,8 +49,11 @@
           = f.label :secret_key, 'Secret key'
           #help_secret_key.help ?
         %td
-          = f.text_field :secret_key
-          = error_message_on(@currency, :secret_key)
+          .box_with_right_label
+            = f.text_field :secret_key
+            = error_message_on(@currency, :secret_key)
+            .right_label
+              = link_to("Generate random", "javascript:$.noop();", :id => 'generate_link')
       %tr
         %th
           = f.label :test_devices, 'Test devices'
@@ -80,13 +83,44 @@
     #help_conversion_rate_content{:name => 'Conversion rate'}
       Amount of virtual currency that $1 will be exchanged for.
     #help_managed_by_tapjoy_content{:name => 'Managed by Tapjoy'}
+      Whether we keep track of the user's currency, or you keep track on your own servers.
+      %br
       In order to use Tapjoy virtual goods, your virtual currency must be managed by Tapjoy.
     #help_initial_balance_content{:name => 'Initial balance'}
       The amount of currency that a new user starts with.
     #help_callback_url_content{:name => 'Callback URL'}
-      This is the URL Tapjoy will access when a virtual currency transaction is made.
+      %p
+        When a user has earned currency by completing an offer, we will make an HTTP request to this URL.
+      %p
+        The format of the parameters will be:
+      %p
+        &lt;callback_url>?snuid=&lt;publisher_user_id>&currency=&lt;amount>
+      %p
+        The default request parameters include:
+      %p
+        %strong snuid:
+        This is the user id which was included in the original request for showOffers.
+        %br
+        %strong currency:
+        How much currency should be added to the user's account.
     #help_secret_key_content{:name => 'Secret key'}
-      Secret key to be used with the callback.
+      %p
+        Optional secret key used to sign the callback. If this is present then we'll also add the following parameters to the callback request:
+
+      %p
+        %strong id:
+        A unique identifier to mark this specific currency award. This will be a guid that is unique to each reward.
+        %br
+        %strong verifier:
+        An MD5 hash of the id, snuid, currency and secret key.
+
+      %p
+        The verifier is computed by taking the MD5 hash of the id, snuid, currency and secret key, separated by colons. In ruby code, this would be:
+      %pre
+        Digest::MD5.hexdigest("\#{id}:\#{snuid}:\#{currency}:\#{secret_key}")
+
+      %p
+        Your server should recompute the verifier, and reject any requests that do not match. The server should respond with a 403 Forbidden if the verifier does not match.
     #help_test_devices_content{:name => 'Test devices'}
       A semicolon (;) separated list of test UDIDs. These devices will see beta virtual goods.
     #help_reset_test_devices_content{:name => 'Reset Virtual Goods'}
@@ -96,16 +130,17 @@
 - content_for :page_javascript do
   :plain
     $(function($){
-      toggleManagedByTapjoy();
       $('#managed_by_tapjoy').change(toggleManagedByTapjoy);
-      $('#currency_name').keyup(function(){
-        $('#currency_name_text').text($('#currency_name').val());
-      });
+      $('#currency_name').keyup(copyCurrencyName);
+      $('#generate_link').click(generateSecretKey);
+      
+      toggleManagedByTapjoy();
+      copyCurrencyName();
     });
-
-    var enablePublisherUserIdTr = function(){
-      $('#publisher_user_id_field').show();
-    };
+    
+    function copyCurrencyName() {
+      $('#currency_name_text').text($('#currency_name').val());
+    }
     function toggleManagedByTapjoy() {
       if ($('#managed_by_tapjoy').attr('checked')) {
         $('.managed').show();
@@ -117,6 +152,25 @@
           $('#currency_callback_url').val('');
         }
       }
+    }
+    function generateSecretKey() {
+      var values = [];
+      for (var i = 0; i < 10; i++) {
+        values.push(i);
+      }
+      for (var i = 0; i < 26; i++) {
+        values.push(String.fromCharCode(65 + i));
+      }
+      for (var i = 0; i < 26; i++) {
+        values.push(String.fromCharCode(97 + i));
+      }
+      
+      key = [];
+      for (var i = 0; i < 20; i++) {
+        key.push(values[Math.floor(Math.random() * values.length)])
+      }
+      
+      $('#currency_secret_key').val(key.join(''));
     }
 
 - content_for :page_styles do
@@ -135,14 +189,18 @@
       display: hidden;
     }
     
-    #conversion_rate_box {
+    .box_with_right_label {
       position: relative;
     }
     
-    #currency_name_text {
+    .right_label {
       position: absolute;
       left: 100%;
+      top: 4px;
       margin-left: 3px;
-      margin-top: -23px;
+    }
+    
+    #generate_link {
+      white-space: nowrap;
     }
     
