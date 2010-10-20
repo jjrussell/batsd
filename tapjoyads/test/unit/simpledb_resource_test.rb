@@ -3,7 +3,7 @@ require 'test_helper'
 class SimpledbResourceTest < ActiveSupport::TestCase
   ##
   # A real model, which interfaces with real simpledb.
-  # All private methods are made punlic.
+  # All private methods are made public.
   class Testing < SimpledbResource
     self.domain_name = 'testing'
     
@@ -313,4 +313,5 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     m.delete_all
     m2.delete_all
   end
+  
 end
