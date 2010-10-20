@@ -33,7 +33,7 @@ class AppsController < WebsiteController
     start_time = now.beginning_of_hour - 23.hours
     end_time = now
     granularity = :daily
-    stats = Appstats.new(@app.id, { :start_time => start_time, :end_time => end_time, :granularity => granularity, :stat_types => [ 'logins' ] }).stats
+    stats = Appstats.new(@app.offers.first.id, { :start_time => start_time, :end_time => end_time, :granularity => granularity, :stat_types => [ 'logins' ] }).stats
     @integrated = stats['logins'].sum > 0
     flash[:error] = "You are looking at a deleted app." if @app.hidden?
   end
