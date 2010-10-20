@@ -287,9 +287,9 @@ class StatzController < WebsiteController
   def search
     results = Offer.find(:all,
       :conditions => [ "name LIKE ?", "%#{params[:term]}%" ],
-      :select => 'id, name, name_suffix, tapjoy_enabled, payment, hidden',
       :order => 'hidden ASC, name ASC',
-      :limit => 10
+      :limit => 10,
+      :include => :partner
     ).collect do |o|
       label_string = o.name_with_suffix
       label_string += " (active)" if o.is_enabled?
