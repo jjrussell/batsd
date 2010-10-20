@@ -3,7 +3,7 @@ Factory.sequence :name do |n|
 end
 
 Factory.sequence :email do |n|
-  "user#{n}@tapjoy.com"
+  "user#{Time.now.to_f}@tapjoy.com"
 end
 
 Factory.sequence :udid do |n|
