@@ -96,24 +96,21 @@ class ToolsController < WebsiteController
     this_hour_key = (Time.zone.now.to_f / 1.hour).to_i
     last_hour_key = ((Time.zone.now.to_f - 1.hour) / 1.hour).to_i
 
-    SimpledbResource.sdb.list_domains do |result|
-      result[:domains].each do |domain_name|
-        this_hour_count = Mc.get_count("failed_sdb_saves.#{domain_name}.#{this_hour_key}")
-        last_hour_count = Mc.get_count("failed_sdb_saves.#{domain_name}.#{last_hour_key}")
-        
-        @failed_sdb_saves[domain_name] = [this_hour_count, last_hour_count]
-      end
+    SimpledbResource.get_domain_names.each do |domain_name|
+      this_hour_count = Mc.get_count("failed_sdb_saves.#{domain_name}.#{this_hour_key}")
+      last_hour_count = Mc.get_count("failed_sdb_saves.#{domain_name}.#{last_hour_key}")
+
+      @failed_sdb_saves[domain_name] = [this_hour_count, last_hour_count]
     end
   end
 
   def sdb_metadata
     @metadata = {}
-    SimpledbResource.sdb.list_domains do |result|
-      result[:domains].each do |domain_name|
-        begin
-          @metadata[domain_name] = SimpledbResource.sdb.domain_metadata(domain_name)
-        rescue RightAws::AwsError
-        end
+    SimpledbResource.get_domain_names.each do |domain_name|
+      begin
+        @metadata[domain_name] = SimpledbResource.sdb.domain_metadata(domain_name)
+      rescue RightAws::AwsError
+        # do nothing
       end
     end
   end

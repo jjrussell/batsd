@@ -457,6 +457,16 @@ class SimpledbResource
     return @@sdb.delete_domain(domain_name)
   end
   
+  def self.get_domain_names
+    domain_names = Set.new
+    @@sdb.list_domains do |result|
+      result[:domains].each do |domain_name|
+        domain_names << domain_name
+      end
+    end
+    domain_names
+  end
+  
   ##
   # Stores the domain name, item key and attributes to a json string.
   # options:
