@@ -15,27 +15,38 @@ class Experiments
     end
   end
   
-  def self.report(date, experiment_id)
+  def self.report(start_time, end_time, experiment_id)
     # For the math and a detailed explanation of the process see:
     # http://20bits.com/articles/statistical-analysis-and-ab-testing/
     
     # Prefixes: "c_" is the control group. "e_" is the experimental group.
     
-    start_time = Date.parse(date).to_time
-    end_time = start_time + 1.day
     experiment_id = experiment_id.to_s
     
-    c_offerwall_views = WebRequest.count :date => date, :where => "path = 'offers' and exp is null"
-    c_clicks = WebRequest.count :date => date, :where => "path = 'offer_click' and exp is null"
-    c_conversions = WebRequest.count :date => date, :where => "path = 'conversion' and exp is null"
-    e_offerwall_views = WebRequest.count :date => date, :where => "path = 'offers' and exp = '#{experiment_id}'"
-    e_clicks = WebRequest.count :date => date, :where => "path = 'offer_click' and exp = '#{experiment_id}'"
-    e_conversions = WebRequest.count :date => date, :where => "path = 'conversion' and exp = '#{experiment_id}'"
+    viewed_at_condition = "viewed_at >= '#{start_time.to_i}' and viewed_at < '#{end_time.to_i}'"
+    
+    c_offerwall_views = c_clicks = c_conversions = e_offerwall_views = e_clicks = e_conversions = 0
+    
+    date = start_time.to_date
+    while date <= end_time.to_date + 2.days && date <= Time.zone.now.to_date
+      puts date
+      
+      c_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and time >= '#{start_time.to_i}' and time < '#{end_time.to_i}' and exp is null"
+      e_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and time >= '#{start_time.to_i}' and time < '#{end_time.to_i}' and exp = '#{experiment_id}'"
+      
+      c_clicks += WebRequest.count :date => date, :where => "path = 'offer_click' and #{viewed_at_condition} and exp is null"
+      e_clicks += WebRequest.count :date => date, :where => "path = 'offer_click' and #{viewed_at_condition} and exp = '#{experiment_id}'"
+      
+      c_conversions += WebRequest.count :date => date, :where => "path = 'conversion' and #{viewed_at_condition} and exp is null"
+      e_conversions += WebRequest.count :date => date, :where => "path = 'conversion' and #{viewed_at_condition} and exp = '#{experiment_id}'"
+      
+      date += 1.day
+    end
     
     c_revenues = []
     e_revenues = []
     NUM_REWARD_DOMAINS.times do |i|
-      Reward.select :domain_name => "rewards_#{i}", :where => "created >= '#{start_time.to_i}' and created < '#{end_time.to_i}'" do |reward|
+      Reward.select :domain_name => "rewards_#{i}", :where => viewed_at_condition do |reward|
         if reward.exp.nil?
           c_revenues << reward.publisher_amount
         elsif reward.exp == experiment_id
@@ -63,14 +74,14 @@ class Experiments
       rev = c_revenues[i] || 0
       c_rev_diff_mean_squares << (rev - c_avg_rev) ** 2
     end
-    c_rev_variance = c_rev_diff_mean_squares.sum.to_f / c_rev_diff_mean_squares.size
+    c_rev_variance = c_offerwall_views == 0 ? 0 : c_rev_diff_mean_squares.sum.to_f / c_offerwall_views
     
     e_rev_diff_mean_squares = []
     e_offerwall_views.times do |i|
       rev = e_revenues[i] || 0
       e_rev_diff_mean_squares << (rev - e_avg_rev) ** 2
     end
-    e_rev_variance = e_rev_diff_mean_squares.sum.to_f / e_rev_diff_mean_squares.size
+    e_rev_variance = e_offerwall_views == 0 ? 0 : e_rev_diff_mean_squares.sum.to_f / e_offerwall_views
 
     ctr_z_score = (e_ctr - c_ctr) / Math.sqrt(e_ctr_variance + c_ctr_variance)
     cvr_z_score = (e_cvr - c_cvr) / Math.sqrt(e_cvr_variance + c_cvr_variance)
