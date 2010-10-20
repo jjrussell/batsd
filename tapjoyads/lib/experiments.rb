@@ -21,6 +21,8 @@ class Experiments
     
     # Prefixes: "c_" is the control group. "e_" is the experimental group.
     
+    puts "Report for experiment '#{experiment_id}', from #{start_time.to_s} to #{end_time.to_s}"
+    
     experiment_id = experiment_id.to_s
     
     viewed_at_condition = "viewed_at >= '#{start_time.to_i}' and viewed_at < '#{end_time.to_i}'"
@@ -29,7 +31,7 @@ class Experiments
     
     date = start_time.to_date
     while date <= end_time.to_date + 2.days && date <= Time.zone.now.to_date
-      puts date
+      puts "Counting from #{date}..."
       
       c_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and time >= '#{start_time.to_i}' and time < '#{end_time.to_i}' and exp is null"
       e_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and time >= '#{start_time.to_i}' and time < '#{end_time.to_i}' and exp = '#{experiment_id}'"
@@ -43,6 +45,7 @@ class Experiments
       date += 1.day
     end
     
+    puts "Aggregating revenues..."
     c_revenues = []
     e_revenues = []
     NUM_REWARD_DOMAINS.times do |i|
