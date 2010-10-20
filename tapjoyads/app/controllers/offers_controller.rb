@@ -7,6 +7,19 @@ class OffersController < WebsiteController
   after_filter :save_activity_logs, :only => [ :update, :create ]
 
   def show
+    if @offer.item_type == "App" && !@offer.tapjoy_enabled?
+      now = Time.zone.now
+      start_time = now.beginning_of_hour - 23.hours
+      end_time = now
+      granularity = :hourly
+      stats = Appstats.new(@offer.item.id, { :start_time => start_time, :end_time => end_time, :granularity => granularity, :stat_types => [ 'logins' ] }).stats
+      if stats['logins'].sum > 0
+        flash[:notice] = "When you are ready to go live with this campaign, please email <a href='support+enable@tapjoy.com'>support+enable@tapjoy.com</a>."
+      else
+        sdk_url = @offer.item.is_android? ? 'https://s3.amazonaws.com/app_data/sdks/TapjoyConnectSDK_Android_v7.0.0.zip' : 'https://s3.amazonaws.com/app_data/sdks/TapjoyConnectSDK_iPhone_v7.0.0.zip'
+        flash[:warning] = "Please note that you must integrate the <a href='#{sdk_url}'>Tapjoy advertiser library</a> before we can enable your campaign"
+      end
+    end
   end
 
   def update
