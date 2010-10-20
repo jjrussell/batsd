@@ -544,6 +544,10 @@ class SimpledbResource
     end
   end
   
+  def ==(other)
+    other.is_a?(SimpledbResource) && (self.attributes == other.attributes) && (self.id == other.id) && (self.domain_name == other.domain_name)
+  end
+  
 protected
   
   def write_to_sdb(expected_attr = {})
