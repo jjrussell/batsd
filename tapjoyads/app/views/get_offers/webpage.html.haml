@@ -30,13 +30,6 @@
     .next= get_next_link
     .clear
 
-- if @now > Time.zone.parse('2010-10-19 23:00') && @now < Time.zone.parse('2010-10-20')
-  .message{:style => 'font-size: 85%;'}
-    Find more great apps
-    %form{ :method => :get, :action => 'http://chomp.com/syn/tapjoy', :style => 'margin-top: 5px;' }
-      = text_field_tag(:q)
-      = submit_tag('Search')
-
 - # Don't show 'Ads by Tapjoy' for Gamevil.
 - # TODO: Don't hard-code id. Add a bit to the record or find some other solution.
 - if @currency.partner_id != 'cea789f9-7741-4197-9cc0-c6ac40a0801a'
