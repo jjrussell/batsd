@@ -1,10 +1,6 @@
 class Device < SimpledbShardedResource
   self.num_domains = NUM_DEVICES_DOMAINS
   
-  # TO REMOVE - when all device_app_list domains have finished converting to devices domains
-  attr_accessor :pulled_from_device_app_list
-  # END TO REMOVE
-  
   self.sdb_attr :apps, :type => :json, :default_value => {}
   
   def dynamic_domain_name
@@ -12,22 +8,7 @@ class Device < SimpledbShardedResource
     "devices_#{domain_number}"
   end
   
-  def load(load_from_memcache = true)
-    super(load_from_memcache)
-    
-    # TO REMOVE - when all device_app_list domains have finished converting to devices domains
-    @pulled_from_device_app_list = false
-    if @attributes.empty?
-      device_app_list = DeviceAppList.new(:key => @key)
-      unless device_app_list.new_record?
-        @pulled_from_device_app_list = true
-        self.apps = device_app_list.apps
-      end
-    end
-    # END TO REMOVE
-  end
-  
-  def after_initialize(options = {})
+  def after_initialize
     @parsed_apps = apps
   end
   

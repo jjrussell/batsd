@@ -155,52 +155,6 @@ class OneOffs
       end
     end
   end
-  
-  def self.migrate_device_app_list(num)
-    count = 0
-    failed_to_migrate_count = 0
-    race_condition_count = 0
-    record_already_migrated_count = 0
-    total_count = DeviceLookup.count(:where => "app_list = '#{num}'")
-    start_time = Time.zone.now
-    puts "starting to migrate #{total_count} devices from device_app_list_#{num}"
-    DeviceLookup.select(:where => "app_list = '#{num}'", :retries => 1000) do |item|
-      count += 1
-      begin
-        device = Device.new(:key => item.key)
-      rescue
-        failed_to_migrate_count += 1
-        item.put('failed_to_migrate', 'true')
-        item.serial_save({:updated_at => false})
-        next
-      end
-      if device.pulled_from_device_app_list
-        begin
-          device.serial_save(:catch_exceptions => false, :expected_attr => { 'updated-at' => nil })
-        rescue Simpledb::ExpectedAttributeError => e
-          race_condition_count += 1
-          next
-        rescue
-          sleep 1
-          puts "retrying to save device: #{device.key}"
-          retry
-        end
-      else
-        record_already_migrated_count += 1
-      end
-      if count % 1000 == 0
-        elapsed_seconds = Time.zone.now - start_time
-        elapsed_hours = (elapsed_seconds / 3600).round_with_precision(2)
-        rate = (count / elapsed_seconds).round_with_precision(2)
-        estimated_hours_remaining = ((total_count - count) / rate / 3600).round_with_precision(2)
-        puts "finished migrating #{count} in #{elapsed_hours} hours at a rate of #{rate} per second - hours remaining: #{estimated_hours_remaining}, failed to migrate: #{failed_to_migrate_count}, already migrated: #{record_already_migrated_count}, race conditions encountered: #{race_condition_count}"
-      end
-    end
-    elapsed_seconds = Time.zone.now - start_time
-    elapsed_hours = (elapsed_seconds / 3600).round_with_precision(2)
-    rate = (count / elapsed_seconds).round_with_precision(2)
-    puts "finished migrating #{count} in #{elapsed_hours} hours at a rate of #{rate} per second - failed to migrate: #{failed_to_migrate_count}, already migrated: #{record_already_migrated_count}, race conditions encountered: #{race_condition_count}"
-  end
 
   def self.add_partners_to_chimp
     return # don't do anything for now

@@ -60,7 +60,7 @@ class SimpledbResource
     after_initialize
   end
   
-  def after_initialize(options = {})
+  def after_initialize
   end
   
   def self.sdb_attr(name, options = {})
