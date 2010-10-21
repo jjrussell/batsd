@@ -8,8 +8,8 @@
 = render :partial => 'shared/dropdown_select', :locals => { :objects => current_partner_apps, :selected => @app, :options => {:with_new_app_button => true} }
 = render :partial => 'actions', :locals => { :app => @app }
 
-- offers_sdk_url = @app.is_android? ? 'https://s3.amazonaws.com/app_data/sdks/TapjoyConnectOffersSDK_Android_v7.0.0.zip' : 'https://s3.amazonaws.com/app_data/sdks/TapjoyConnectOffersSDK_iPhone_v7.1.0.zip'
-- vg_sdk_url = @app.is_android? ? 'https://s3.amazonaws.com/app_data/sdks/TapjoyHS_VG_OffersSDK.zip' : 'https://s3.amazonaws.com/app_data/sdks/TapjoyConnectVirtualGoodsSDK_iPhone_v7.1.0.zip'
+- offers_sdk_url = @app.is_android? ? ANDROID_OFFERS_SDK : IPHONE_OFFERS_SDK
+- vg_sdk_url = @app.is_android? ? ANDROID_VG_SDK : IPHONE_VG_SDK
 
 #apps_main
   %h3 Publisher Integration

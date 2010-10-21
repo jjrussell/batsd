@@ -16,7 +16,7 @@ class OffersController < WebsiteController
       if stats['logins'].sum > 0
         flash[:notice] = "When you are ready to go live with this campaign, please email <a href='support+enable@tapjoy.com'>support+enable@tapjoy.com</a>."
       else
-        sdk_url = @offer.item.is_android? ? 'https://s3.amazonaws.com/app_data/sdks/TapjoyConnectSDK_Android_v7.0.0.zip' : 'https://s3.amazonaws.com/app_data/sdks/TapjoyConnectSDK_iPhone_v7.0.0.zip'
+        sdk_url = @offer.item.is_android? ? ANDROID_CONNECT_SDK : IPHONE_CONNECT_SDK
         flash[:warning] = "Please note that you must integrate the <a href='#{sdk_url}'>Tapjoy advertiser library</a> before we can enable your campaign"
       end
     end

@@ -7,6 +7,7 @@ class BucketNames
   OFFER_DATA            = RUN_MODE_PREFIX + 'offer-data'
   PUBLISHER_ADS         = RUN_MODE_PREFIX + 'publisher-ads'
   STORE_CLICKS          = RUN_MODE_PREFIX + 'store-clicks'
+  TAPJOY                = RUN_MODE_PREFIX + 'tapjoy'
   VIRTUAL_GOODS         = RUN_MODE_PREFIX + 'virtual_goods'
   WEB_REQUESTS          = RUN_MODE_PREFIX + 'web-requests'
 end
