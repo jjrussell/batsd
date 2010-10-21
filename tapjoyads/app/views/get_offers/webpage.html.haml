@@ -15,7 +15,7 @@
 #offers
   - @offer_list.each do |offer|
     .offer
-      %a{ :href => offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], @source, params[:app_version], @now), :onclick => "this.className = 'clicked';" }
+      %a{ :href => offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], @source, params[:app_version], @now, nil, params[:exp]), :onclick => "this.className = 'clicked';" }
         %img{ :src => 'http://s3.amazonaws.com/app_data/icons/blank.png', :s => offer.get_icon_url }
         .offertext
           .cell

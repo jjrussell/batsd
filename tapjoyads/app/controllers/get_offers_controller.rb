@@ -2,6 +2,7 @@ class GetOffersController < ApplicationController
   
   layout 'iphone', :only => :webpage
   
+  before_filter :choose_experiment, :except => :featured
   # TO REMOVE - once the tap defense connect bug has been fixed and is sufficiently adopted
   before_filter :fake_connect_call, :only => :featured
   before_filter :set_featured_params, :only => :featured
@@ -16,7 +17,7 @@ class GetOffersController < ApplicationController
       primary_offer = Offer.find_in_cache(featured_offer.item_id)
       
       if featured_offer.featured? && @offer_list.include?(primary_offer)
-        redirect_to featured_offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], 'featured', params[:app_version], @now)
+        redirect_to featured_offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], 'featured', params[:app_version], @now, nil, params[:exp])
         return
       end
       @message = "You have already installed #{featured_offer.name}. You can still complete " +
