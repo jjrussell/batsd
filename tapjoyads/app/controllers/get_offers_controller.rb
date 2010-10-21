@@ -31,7 +31,6 @@ class GetOffersController < ApplicationController
     srand
     @offer_list = @offer_list[rand(@offer_list.length).to_i, 1]
     @more_data_available = 0
-    @source = 'featured'
     
     if params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
@@ -72,7 +71,6 @@ private
     @now = Time.zone.now
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 25).to_i
-    @source = ''
     
     @publisher_app = App.find_in_cache(params[:app_id])
     @currency = Currency.find_in_cache_by_app_id(params[:app_id])
