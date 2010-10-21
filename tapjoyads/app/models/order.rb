@@ -21,8 +21,8 @@ class Order < ActiveRecord::Base
   after_create :update_balance
   
   named_scope :paid, :conditions => 'status = 1'
-  named_scope :created_after, lambda { |after| { :conditions => [ "created_at > ?", after ] } }
-  named_scope :for_discount, lambda { paid.created_after(30.days.ago).scope(:find) }
+  named_scope :created_since, lambda { |date| { :conditions => [ "created_at > ?", date ] } }
+  named_scope :for_discount, lambda { paid.created_since(30.days.ago).scope(:find) }
   
   def <=> other
     created_at <=> other.created_at
