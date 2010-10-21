@@ -84,6 +84,7 @@ private
       params[:device_type] = 'ipod touch'
     end
     
+    params[:source] = 'offerwall' if params[:source].blank?
     web_request = WebRequest.new(:time => @now)
     web_request.put_values('offers', params, get_ip_address, get_geoip_data)
     web_request.save
@@ -123,6 +124,7 @@ private
     params[:type] = Offer::FEATURED_OFFER_TYPE
     params[:start] = '0'
     params[:max] = '999'
+    params[:source] = 'featured'
   end
   
   # TO REMOVE - once the tap defense connect bug has been fixed and is sufficiently adopted

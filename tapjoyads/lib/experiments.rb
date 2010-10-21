@@ -36,13 +36,13 @@ class Experiments
     while date <= end_time.to_date + 2.days && date <= Time.zone.now.to_date
       puts "Counting from #{date}..."
       
-      c_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and time >= '#{start_time.to_i}' and time < '#{end_time.to_i}' and exp is null and source != 'featured'"
+      c_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and time >= '#{start_time.to_i}' and time < '#{end_time.to_i}' and exp is null and (source is null or source != 'featured')"
       e_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and time >= '#{start_time.to_i}' and time < '#{end_time.to_i}' and exp = '#{experiment_id}'"
       
-      c_clicks += WebRequest.count :date => date, :where => "path = 'offer_click' and #{viewed_at_condition} and exp is null and source != 'featured'"
+      c_clicks += WebRequest.count :date => date, :where => "path = 'offer_click' and #{viewed_at_condition} and exp is null and (source is null or source != 'featured')"
       e_clicks += WebRequest.count :date => date, :where => "path = 'offer_click' and #{viewed_at_condition} and exp = '#{experiment_id}'"
       
-      c_conversions += WebRequest.count :date => date, :where => "path = 'conversion' and #{viewed_at_condition} and exp is null and source != 'featured'"
+      c_conversions += WebRequest.count :date => date, :where => "path = 'conversion' and #{viewed_at_condition} and exp is null and (source is null or source != 'featured')"
       e_conversions += WebRequest.count :date => date, :where => "path = 'conversion' and #{viewed_at_condition} and exp = '#{experiment_id}'"
       
       date += 1.day
