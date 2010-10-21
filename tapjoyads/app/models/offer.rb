@@ -82,8 +82,9 @@ class Offer < ActiveRecord::Base
   after_save :update_memcached
   before_destroy :clear_memcached
   
-  named_scope :enabled_offers, { :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND ((partners.balance > 0 AND item_type IN ('App', 'EmailOffer', 'GenericOffer')) OR item_type = 'RatingOffer')", :order => "ordinal ASC" }
-  named_scope :classic_offers, { :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type = 'OfferpalOffer'", :order => "ordinal ASC" }
+  named_scope :enabled_offers, :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND ((partners.balance > 0 AND item_type IN ('App', 'EmailOffer', 'GenericOffer')) OR item_type = 'RatingOffer')"
+  named_scope :classic_offers, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type = 'OfferpalOffer'"
+  named_scope :by_ordinal, :order => 'ordinal ASC'
   named_scope :featured, :conditions => { :featured => true }
   named_scope :nonfeatured, :conditions => { :featured => false }
   named_scope :visible, :conditions => { :hidden => false }
@@ -110,9 +111,20 @@ class Offer < ActiveRecord::Base
     end
   end
   
+  def self.get_enabled_offers_experimental(exp)
+    if exp == Experiments::EXPERIMENTS[:rank_without_ordinal]
+      Mc.get_and_put("s3.enabled_offers_#{rand(NUM_MEMCACHE_KEYS) * 123123}.rank_without_ordinal") do
+        bucket = S3.bucket(BucketNames::OFFER_DATA)
+        Marshal.restore(bucket.get('enabled_offers.rank_without_ordinal'))
+      end
+    else
+      get_enabled_offers
+    end
+  end
+  
   def self.cache_enabled_offers
     bucket = S3.bucket(BucketNames::OFFER_DATA)
-    offer_list = Offer.enabled_offers.nonfeatured
+    offer_list = Offer.enabled_offers.nonfeatured.by_ordinal
     
     offer_list.each do |o|
       o.adjust_cvr_for_ranking
@@ -135,7 +147,7 @@ class Offer < ActiveRecord::Base
   
   def self.cache_classic_offers
     bucket = S3.bucket(BucketNames::OFFER_DATA)
-    offer_list = Offer.classic_offers
+    offer_list = Offer.classic_offers.by_ordinal
     marshalled_offer_list = Marshal.dump(offer_list)
     bucket.put('classic_offers', marshalled_offer_list)
     Mc.put('s3.classic_offers', offer_list)
@@ -143,10 +155,29 @@ class Offer < ActiveRecord::Base
   
   def self.cache_featured_offers
     bucket = S3.bucket(BucketNames::OFFER_DATA)
-    offer_list = Offer.enabled_offers.featured
+    offer_list = Offer.enabled_offers.featured.by_ordinal
     marshalled_offer_list = Marshal.dump(offer_list)
     bucket.put('featured_offers', marshalled_offer_list)
     Mc.put('s3.featured_offers', offer_list)
+  end
+  
+  def self.cache_enabled_offers_experimental
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
+    offer_list = Offer.enabled_offers.nonfeatured
+    
+    offer_list.each do |o|
+      o.adjust_cvr_for_ranking
+    end
+    
+    offer_list.sort! do |o1, o2|
+      o2.conversion_rate <=> o1.conversion_rate
+    end
+    
+    marshalled_offer_list = Marshal.dump(offer_list)
+    bucket.put('enabled_offers.rank_without_ordinal', marshalled_offer_list)
+    NUM_MEMCACHE_KEYS.times do |i|
+      Mc.put("s3.enabled_offers_#{i * 123123}.rank_without_ordinal", offer_list)
+    end
   end
   
   def self.find_in_cache(id)

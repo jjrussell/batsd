@@ -116,10 +116,14 @@ class App < ActiveRecord::Base
     device_app_list = Device.new(:key => udid)
     currency = Currency.find_in_cache_by_app_id(id) unless currency
     
+    exp = Experiments.choose(udid)
+    
     if type == Offer::CLASSIC_OFFER_TYPE
       offer_list = Offer.get_classic_offers
     elsif type == Offer::FEATURED_OFFER_TYPE
       offer_list = Offer.get_featured_offers
+    elsif exp.present?
+      offer_list = Offer.get_enabled_offers_experimental(exp)
     else
       offer_list = Offer.get_enabled_offers
     end

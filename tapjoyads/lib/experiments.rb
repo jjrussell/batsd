@@ -1,13 +1,16 @@
 class Experiments
   EXPERIMENTS = {
     :no_change => '1',
+    :rank_without_ordinal => '2'
   }
   
   def self.choose(udid)
     if udid.present?
       udid_hash = udid.hash % 10000
-
-      if udid_hash < 100
+      
+      if [ 'ade749ccc744336ad81cbcdbf36a5720778c6f13', 'b4c86b4530a0ee889765a166d80492b46f7f3636' ].include?(udid)
+        return EXPERIMENTS[:rank_without_ordinal]
+      elsif udid_hash < 100
         return EXPERIMENTS[:no_change]
       end
       
