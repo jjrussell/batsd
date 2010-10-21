@@ -8,7 +8,7 @@
 = render :partial => 'shared/dropdown_select', :locals => { :objects => current_partner_apps, :selected => @app, :options => {:with_new_app_button => true} }
 = render :partial => 'actions', :locals => { :app => @app }
 
-- sdk_url = @app.is_android? ? 'https://s3.amazonaws.com/app_data/sdks/TapjoyConnectSDK_Android_v7.0.0.zip' : 'https://s3.amazonaws.com/app_data/sdks/TapjoyConnectSDK_iPhone_v7.0.0.zip'
+- sdk_url = @app.is_android? ? 'https://s3.amazonaws.com/app_data/sdks/TapjoyConnectSDK_Android_v7.0.0.zip' : 'https://s3.amazonaws.com/app_data/sdks/TapjoyConnectSDK_iPhone_v7.1.0.zip'
 
 #apps_main
   %h3
