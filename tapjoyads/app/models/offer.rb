@@ -384,6 +384,11 @@ class Offer < ActiveRecord::Base
     end
   end
   
+  def calculate_rank_score(weights = {})
+    weights = { :conversion_rate => 0, :payment => 0, :price => 0, :show_rate => 0 }.merge(weights)
+    self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send(key)) }
+  end
+  
   def name_with_suffix
     name_suffix.blank? ? name : "#{name} -- #{name_suffix}"
   end
@@ -527,11 +532,6 @@ private
   def set_stats_aggregation_times
     self.next_stats_aggregation_time = Time.zone.now if next_stats_aggregation_time.blank?
     self.stats_aggregation_interval = 3600 if stats_aggregation_interval.blank?
-  end
-  
-  def calculate_rank_score(weights = {})
-    weights = { :conversion_rate => 0, :payment => 0, :price => 0, :show_rate => 0 }.merge(weights)
-    self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send(key)) }
   end
   
 end
