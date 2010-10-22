@@ -1,5 +1,6 @@
 class Experiments
   EXPERIMENTS = {
+    :control => '0'
     :no_change => '1',
     :rank_without_ordinal => '2',
     :using_rank_score => '3'
@@ -9,12 +10,14 @@ class Experiments
     if udid.present?
       udid_hash = udid.hash % 100
       
-      if udid_hash < 5
+      if udid_hash < 1
+        EXPERIMENTS[:no_change]
+      elsif udid_hash < 6
         EXPERIMENTS[:using_rank_score]
       elsif [ 'ade749ccc744336ad81cbcdbf36a5720778c6f13', 'b4c86b4530a0ee889765a166d80492b46f7f3636', 'c73e730913822be833766efffc7bb1cf239d855a' ].include?(udid)
         EXPERIMENTS[:using_rank_score]
       else
-        EXPERIMENTS[:no_change]
+        EXPERIMENTS[:control]
       end
       
     end
@@ -38,13 +41,13 @@ class Experiments
     while date <= end_time.to_date + 2.days && date <= Time.zone.now.to_date
       puts "Counting from #{date}..."
       
-      c_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and #{viewed_at_condition} and exp = '#{EXPERIMENTS[:no_change]}'"
+      c_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and #{viewed_at_condition} and exp = '#{EXPERIMENTS[:control]}'"
       e_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and #{viewed_at_condition} and exp = '#{experiment_id}'"
       
-      c_clicks += WebRequest.count :date => date, :where => "path = 'offer_click' and #{viewed_at_condition} and exp = '#{EXPERIMENTS[:no_change]}'"
+      c_clicks += WebRequest.count :date => date, :where => "path = 'offer_click' and #{viewed_at_condition} and exp = '#{EXPERIMENTS[:control]}'"
       e_clicks += WebRequest.count :date => date, :where => "path = 'offer_click' and #{viewed_at_condition} and exp = '#{experiment_id}'"
       
-      c_conversions += WebRequest.count :date => date, :where => "path = 'conversion' and #{viewed_at_condition} and exp = '#{EXPERIMENTS[:no_change]}'"
+      c_conversions += WebRequest.count :date => date, :where => "path = 'conversion' and #{viewed_at_condition} and exp = '#{EXPERIMENTS[:control]}'"
       e_conversions += WebRequest.count :date => date, :where => "path = 'conversion' and #{viewed_at_condition} and exp = '#{experiment_id}'"
       
       date += 1.day
