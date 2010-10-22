@@ -1,4 +1,7 @@
-.admin
-  %p
-    %strong Select market to search in:
-    = select_tag 'app_country', options_for_select(countries.invert.sort, :us)
+%tr
+  %th.admin Country (admin)
+  %td.admin
+    - options = countries.invert.sort
+    - options.unshift(["Select a country", ""])
+    = select_tag 'app_country', options_for_select(options)
+    iPhone-only; only use for search

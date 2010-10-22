@@ -25,6 +25,8 @@
             Platform
             #help_platform.help ?
           %td#app_platform= @app.platform_name
+        - if permitted_to?(:index, :tools)
+          = render :partial => 'select_country'
         %tr
           %th
             Name
@@ -89,9 +91,6 @@
 - else
   - form_tag archive_app_path(@app) do
     = submit_tag '', :class => "trash", :title => "Delete this app", :confirm => "Are you sure you want to delete this app?"
-
-- if permitted_to?(:index, :tools)
-  = render :partial => 'select_country'
 
 - content_for :page_head, stylesheet_link_tag('apps')
 - content_for :included_javascripts, javascript_include_tag('tapjoy/apps')

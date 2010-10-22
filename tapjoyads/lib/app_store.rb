@@ -7,16 +7,16 @@ class AppStore
   ANDROID_APP_URL = 'http://www.cyrket.com/p/android/'
 
   # returns hash of app info
-  def self.fetch_app_by_id(id, platform='iphone')
+  def self.fetch_app_by_id(id, platform='iphone', country='')
     if platform == 'android'
       return self.fetch_app_by_id_for_android(id)
     else
-      return self.fetch_app_by_id_for_apple(id)
+      return self.fetch_app_by_id_for_apple(id, country)
     end
   end
 
   # returns an array of first 24 App instances matching "term"
-  def self.search(term, platform='iphone', country='us')
+  def self.search(term, platform='iphone', country='')
     if platform == 'android'
       return self.search_android_marketplace(term)
     else
@@ -26,8 +26,9 @@ class AppStore
 
 private
 
-  def self.fetch_app_by_id_for_apple(id)
-    response = request(APP_URL, :id => id)
+  def self.fetch_app_by_id_for_apple(id, country)
+    country = 'us' if country.blank?
+    response = request(APP_URL, {:id => id, :country => country.to_s[0..1]})
     if (response.status == 200) && (response.headers['Content-Type'] =~ /javascript/)
       json = JSON.load(response.body)
       return json['resultCount'] > 0 ? app_info_from_apple(json['results'].first) : nil

@@ -73,11 +73,23 @@ class App < ActiveRecord::Base
     end
   end
 
+  def primary_country
+    countries = primary_offer.present? && self.primary_offer.countries
+    if countries.present? && !JSON.parse(countries).include?("US")
+      JSON.parse(countries).first
+    else
+      "us"
+    end
+  end
+
   ##
   # Grab data from the app store and mutate self with data.
-  def fill_app_store_data
+  def fill_app_store_data(country=nil)
     return if store_id.blank?
-    data = AppStore.fetch_app_by_id(store_id, platform)
+    data = AppStore.fetch_app_by_id(store_id, platform, country)
+    if (data.nil?) # might not be available in the US market
+      data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
+    end
     self.name = data[:title]
     self.price = (data[:price] * 100).to_i
     self.description = data[:description]
