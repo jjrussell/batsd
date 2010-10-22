@@ -1,6 +1,6 @@
 class Experiments
   EXPERIMENTS = {
-    :control => '0'
+    :control => '0',
     :no_change => '1',
     :rank_without_ordinal => '2',
     :using_rank_score => '3'
