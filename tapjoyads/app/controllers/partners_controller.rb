@@ -12,7 +12,7 @@ class PartnersController < WebsiteController
       @partners = current_user.partners.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
     elsif params[:q]
       query = params[:q].gsub("'", '')
-      @partners = Partner.search(query).scoped(:include => [ :offers, :users ]).paginate(:page => params[:page])
+      @partners = Partner.search(query).scoped(:include => [ :offers, :users ]).paginate(:page => params[:page]).uniq
     else
       @partners = Partner.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
     end

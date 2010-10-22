@@ -2,7 +2,7 @@ require 'test_helper'
 
 class PartnerTest < ActiveSupport::TestCase
   subject { Factory(:partner) }
-  
+
   should have_many(:orders)
   should have_many(:payouts)
   should have_many(:partner_assignments)
@@ -16,11 +16,11 @@ class PartnerTest < ActiveSupport::TestCase
   should have_many(:publisher_conversions).through(:apps)
   should have_many(:advertiser_conversions).through(:offers)
   should have_many(:monthly_accountings)
-  
+
   should validate_numericality_of(:balance)
   should validate_numericality_of(:pending_earnings)
   should validate_numericality_of(:next_payout_amount)
-  
+
   context "A Partner" do
     setup do
       @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000)
@@ -31,7 +31,26 @@ class PartnerTest < ActiveSupport::TestCase
       Factory(:conversion, :publisher_app => app, :publisher_amount => 100, :created_at => (cutoff_date + 1))
       @partner.reload
     end
-    
+
+    should "add account_mgr as account manager" do
+      manager_role = Factory(:user_role, :name => "account_mgr")
+      manager_user = Factory(:user, :user_roles => [manager_role])
+      @partner.users << manager_user
+      assert_equal 1, @partner.account_managers.length
+    end
+
+    should "add agency as account manager" do
+      agency_role = Factory(:user_role, :name => "agency")
+      agency_user = Factory(:user, :user_roles => [agency_role])
+      @partner.users << agency_user
+      assert_equal 1, @partner.account_managers.length
+    end
+
+    should "add normal users but not as account manager" do
+      @partner.users << Factory(:user)
+      assert_equal 0, @partner.account_managers.length
+    end
+
     should "calculate the next payout amount" do
       assert_equal 10300, @partner.pending_earnings
       assert_equal 10100, Partner.calculate_next_payout_amount(@partner.id)

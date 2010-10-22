@@ -15,10 +15,14 @@
   %thead
     %tr
       %th Name
-      %th Email(s)
-      %th Phone
+      %th Contact
+      - if current_user.is_one_of?([:admin, :account_mgr])
+        %th Account Manager
       %th Balance
-      %th Pending Earnings
+      %th
+        Pending
+        %br/
+        Earnings
       %th{ :class => params[:q].blank? ? 'up_arrow' : '' } Created
       %th Offers
   %tbody
@@ -26,17 +30,29 @@
       %tr{ :class => cycle('even', 'odd') }
         %td.nowrap= link_to(partner.name || 'Unknown', partner_path(partner))
         %td
-          = partner.users.map(&:email).join(', ')
+          = partner.non_managers.map(&:email).join(', ')
+          %br/
+          = partner.contact_phone
           %br/
           - form_tag(make_current_partner_path(partner)) do
             - if current_partner == partner
-              = submit_tag('Acting as this partner', :style => 'font-size: 10px;padding:2px;', :disabled => true)
+              = submit_tag("Acting as this partner", :class => 'act_as_button', :disabled => true)
             - else
-              = submit_tag('Act as this partner', :style => 'font-size: 10px;padding:2px;')
-        %td.nowrap= partner.contact_phone
+              = submit_tag("Act as this partner", :class => 'act_as_button')
+        - if current_user.is_one_of?([:admin, :account_mgr])
+          %td
+            - if partner.account_managers.present?
+              - partner.account_managers.each do |manager|
+                - if manager.is_one_of?([:agency])
+                  = mail_to manager.email, nil, :class => "agency"
+                  (Agency)
+                - else
+                  = mail_to manager.email
+            - else
+              \-
         %td= number_to_currency(partner.balance / 100.0)
         %td= number_to_currency(partner.pending_earnings / 100.0)
-        %td.nowrap= partner.created_at.to_s(:pub_ampm_sec)
+        %td.nowrap= partner.created_at.to_s(:pub)
         %td
           - partner.offers.each do |o|
             .offer
@@ -73,4 +89,11 @@
     .tjform input[type=submit] {
       margin: 0;
       float: none;
+    }
+    .act_as_button {
+      font-size: 10px!important;
+      padding:2px!important;
+    }
+    .agency {
+      color: red;
     }

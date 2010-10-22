@@ -58,7 +58,15 @@ class Partner < ActiveRecord::Base
       Partner.slave_connection.execute("COMMIT")
     end
   end
-  
+
+  def account_managers
+    users.select{|user| user.is_one_of?([:admin, :account_mgr, :agency])}
+  end
+
+  def non_managers
+    users.reject{|user| user.is_one_of?([:admin, :account_mgr, :agency])}
+  end
+
   def payout_cutoff_date(reference_date = nil)
     reference_date ||= Time.zone.now
     reference_date -= 3.days
