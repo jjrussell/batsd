@@ -29,7 +29,7 @@ class Experiments
     
     # Prefixes: "c_" is the control group. "e_" is the experimental group.
     
-    puts "Report for experiment '#{experiment_id}', from #{start_time.to_s} to #{end_time.to_s}"
+    puts "Report for experiment group '#{experiment_id}' and control group '#{control_id}', from #{start_time.to_s} to #{end_time.to_s}"
     
     experiment_id = experiment_id.to_s
     control_id = control_id.to_s
