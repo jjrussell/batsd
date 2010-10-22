@@ -15,7 +15,7 @@ class Offer < ActiveRecord::Base
   
   NUM_MEMCACHE_KEYS = 30
   
-  attr_accessor :rank_score
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_payment, :normal_price, :normal_show_rate
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   
@@ -193,10 +193,10 @@ class Offer < ActiveRecord::Base
     show_rate_std_dev = show_rates.standard_deviation
     
     offer_list.each do |offer|
-      offer.conversion_rate = (offer.conversion_rate - cvr_mean) / cvr_std_dev
-      offer.payment         = (offer.payment - payment_mean) / payment_std_dev
-      offer.price           = (offer.price - price_mean) / price_std_dev
-      offer.show_rate       = (offer.show_rate - show_rate_mean) / show_rate_std_dev
+      offer.normal_conversion_rate = (offer.conversion_rate - cvr_mean) / cvr_std_dev
+      offer.normal_payment         = (offer.payment - payment_mean) / payment_std_dev
+      offer.normal_price           = (offer.price - price_mean) / price_std_dev
+      offer.normal_show_rate       = (offer.show_rate - show_rate_mean) / show_rate_std_dev
       offer.calculate_rank_score({ :conversion_rate => 1, :payment => 1, :price => 1, :show_rate => 1 })
     end
     
@@ -386,7 +386,7 @@ class Offer < ActiveRecord::Base
   
   def calculate_rank_score(weights = {})
     weights = { :conversion_rate => 0, :payment => 0, :price => 0, :show_rate => 0 }.merge(weights)
-    self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send(key)) }
+    self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send("normal_#{key}")) }
   end
   
   def name_with_suffix
