@@ -201,7 +201,7 @@ class Offer < ActiveRecord::Base
       offer.normal_price           = (offer.price - price_mean) / price_std_dev
       offer.normal_show_rate       = (offer.show_rate - show_rate_mean) / show_rate_std_dev
       offer.normal_avg_revenue     = (offer.avg_revenue - avg_revenue_mean) / avg_revenue_std_dev
-      offer.calculate_rank_score({ :conversion_rate => 1, :payment => 1, :price => 1, :show_rate => 1, :avg_revenue => 1 })
+      offer.calculate_rank_score({ :conversion_rate => 1, :payment => 1, :price => 1, :show_rate => 1, :avg_revenue => 1, :random => 1 })
     end
     
     offer_list.sort! do |o1, o2|
@@ -393,8 +393,10 @@ class Offer < ActiveRecord::Base
   end
   
   def calculate_rank_score(weights = {})
+    random_weight = weights.delete(:random) { 0 }
     weights = { :conversion_rate => 0, :payment => 0, :price => 0, :show_rate => 0, :avg_revenue => 0 }.merge(weights)
     self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send("normal_#{key}")) }
+    self.rank_score += rand * random_weight
   end
   
   def name_with_suffix
