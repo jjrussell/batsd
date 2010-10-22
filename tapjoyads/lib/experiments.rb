@@ -7,17 +7,16 @@ class Experiments
   
   def self.choose(udid)
     if udid.present?
-      udid_hash = udid.hash % 10000
+      udid_hash = udid.hash % 100
       
-      if udid_hash < 100
-        return EXPERIMENTS[:no_change]
-      elsif udid_hash < 600
-        return EXPERIMENTS[:using_rank_score]
+      if udid_hash < 5
+        EXPERIMENTS[:using_rank_score]
       elsif [ 'ade749ccc744336ad81cbcdbf36a5720778c6f13', 'b4c86b4530a0ee889765a166d80492b46f7f3636', 'c73e730913822be833766efffc7bb1cf239d855a' ].include?(udid)
-        return EXPERIMENTS[:using_rank_score]
+        EXPERIMENTS[:using_rank_score]
+      else
+        EXPERIMENTS[:no_change]
       end
       
-      return nil
     end
   end
   
@@ -39,13 +38,13 @@ class Experiments
     while date <= end_time.to_date + 2.days && date <= Time.zone.now.to_date
       puts "Counting from #{date}..."
       
-      c_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and time >= '#{start_time.to_i}' and time < '#{end_time.to_i}' and exp is null and (source is null or source != 'featured')"
-      e_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and time >= '#{start_time.to_i}' and time < '#{end_time.to_i}' and exp = '#{experiment_id}'"
+      c_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and #{viewed_at_condition} and exp = '#{EXPERIMENTS[:no_change]}'"
+      e_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and #{viewed_at_condition} and exp = '#{experiment_id}'"
       
-      c_clicks += WebRequest.count :date => date, :where => "path = 'offer_click' and #{viewed_at_condition} and exp is null and (source is null or source != 'featured')"
+      c_clicks += WebRequest.count :date => date, :where => "path = 'offer_click' and #{viewed_at_condition} and exp = '#{EXPERIMENTS[:no_change]}'"
       e_clicks += WebRequest.count :date => date, :where => "path = 'offer_click' and #{viewed_at_condition} and exp = '#{experiment_id}'"
       
-      c_conversions += WebRequest.count :date => date, :where => "path = 'conversion' and #{viewed_at_condition} and exp is null and (source is null or source != 'featured')"
+      c_conversions += WebRequest.count :date => date, :where => "path = 'conversion' and #{viewed_at_condition} and exp = '#{EXPERIMENTS[:no_change]}'"
       e_conversions += WebRequest.count :date => date, :where => "path = 'conversion' and #{viewed_at_condition} and exp = '#{experiment_id}'"
       
       date += 1.day

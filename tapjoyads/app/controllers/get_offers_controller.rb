@@ -85,6 +85,7 @@ private
     params[:source] = 'offerwall' if params[:source].blank?
     web_request = WebRequest.new(:time => @now)
     web_request.put_values('offers', params, get_ip_address, get_geoip_data)
+    web_request.put('viewed_at', @now.to_f.to_s)
     web_request.save
   end
   
