@@ -1,7 +1,8 @@
 class Experiments
   EXPERIMENTS = {
     :no_change => '1',
-    :rank_without_ordinal => '2'
+    :rank_without_ordinal => '2',
+    :using_rank_score => '3'
   }
   
   def self.choose(udid)
@@ -12,6 +13,8 @@ class Experiments
         return EXPERIMENTS[:no_change]
       elsif udid_hash < 600
         return EXPERIMENTS[:rank_without_ordinal]
+      elsif [ 'ade749ccc744336ad81cbcdbf36a5720778c6f13', 'b4c86b4530a0ee889765a166d80492b46f7f3636' ].include?(udid)
+        return EXPERIMENTS[:using_rank_score]
       end
       
       return nil

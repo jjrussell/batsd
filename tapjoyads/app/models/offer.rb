@@ -15,6 +15,8 @@ class Offer < ActiveRecord::Base
   
   NUM_MEMCACHE_KEYS = 30
   
+  attr_accessor :rank_score
+  
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   
   belongs_to :partner
@@ -117,6 +119,11 @@ class Offer < ActiveRecord::Base
         bucket = S3.bucket(BucketNames::OFFER_DATA)
         Marshal.restore(bucket.get('enabled_offers.rank_without_ordinal'))
       end
+    elsif exp == Experiments::EXPERIMENTS[:using_rank_score]
+      Mc.get_and_put("s3.enabled_offers_#{rand(NUM_MEMCACHE_KEYS) * 123123}.using_rank_score") do
+        bucket = S3.bucket(BucketNames::OFFER_DATA)
+        Marshal.restore(bucket.get('enabled_offers.using_rank_score'))
+      end
     else
       get_enabled_offers
     end
@@ -143,25 +150,13 @@ class Offer < ActiveRecord::Base
     NUM_MEMCACHE_KEYS.times do |i|
       Mc.put("s3.enabled_offers_#{i * 123123}", offer_list)
     end
+    
+    # cache the experimental offers too
+    cache_enabled_offers_experimental_2
+    cache_enabled_offers_experimental_3
   end
   
-  def self.cache_classic_offers
-    bucket = S3.bucket(BucketNames::OFFER_DATA)
-    offer_list = Offer.classic_offers.by_ordinal
-    marshalled_offer_list = Marshal.dump(offer_list)
-    bucket.put('classic_offers', marshalled_offer_list)
-    Mc.put('s3.classic_offers', offer_list)
-  end
-  
-  def self.cache_featured_offers
-    bucket = S3.bucket(BucketNames::OFFER_DATA)
-    offer_list = Offer.enabled_offers.featured.by_ordinal
-    marshalled_offer_list = Marshal.dump(offer_list)
-    bucket.put('featured_offers', marshalled_offer_list)
-    Mc.put('s3.featured_offers', offer_list)
-  end
-  
-  def self.cache_enabled_offers_experimental
+  def self.cache_enabled_offers_experiment_2
     bucket = S3.bucket(BucketNames::OFFER_DATA)
     offer_list = Offer.enabled_offers.nonfeatured
     
@@ -178,6 +173,58 @@ class Offer < ActiveRecord::Base
     NUM_MEMCACHE_KEYS.times do |i|
       Mc.put("s3.enabled_offers_#{i * 123123}.rank_without_ordinal", offer_list)
     end
+  end
+  
+  def self.cache_enabled_offers_experiment_3
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
+    offer_list = Offer.enabled_offers.nonfeatured
+    
+    conversion_rates  = offer_list.collect(&:conversion_rate)
+    payments          = offer_list.collect(&:payment)
+    prices            = offer_list.collect(&:price)
+    show_rates        = offer_list.collect(&:show_rate)
+    cvr_mean          = conversion_rates.mean
+    cvr_std_dev       = conversion_rates.standard_deviation
+    payment_mean      = payments.mean
+    payment_std_dev   = payments.standard_deviation
+    price_mean        = prices.mean
+    price_std_dev     = prices.standard_deviation
+    show_rate_mean    = show_rates.mean
+    show_rate_std_dev = show_rates.standard_deviation
+    
+    offer_list.each do |offer|
+      offer.conversion_rate = (offer.conversion_rate - cvr_mean) / cvr_std_dev
+      offer.payment         = (offer.payment - payment_mean) / payment_std_dev
+      offer.price           = (offer.price - price_mean) / price_std_dev
+      offer.show_rate       = (offer.show_rate - show_rate_mean) / show_rate_std_dev
+      offer.calculate_rank_score({ :conversion_rate => 1, :payment => 1, :price => 1, :show_rate => 1 })
+    end
+    
+    offer_list.sort! do |o1, o2|
+      o2.rank_score <=> o1.rank_score
+    end
+    
+    marshalled_offer_list = Marshal.dump(offer_list)
+    bucket.put('enabled_offers.using_rank_score', marshalled_offer_list)
+    NUM_MEMCACHE_KEYS.times do |i|
+      Mc.put("s3.enabled_offers_#{i * 123123}.using_rank_score", offer_list)
+    end
+  end
+  
+  def self.cache_classic_offers
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
+    offer_list = Offer.classic_offers.by_ordinal
+    marshalled_offer_list = Marshal.dump(offer_list)
+    bucket.put('classic_offers', marshalled_offer_list)
+    Mc.put('s3.classic_offers', offer_list)
+  end
+  
+  def self.cache_featured_offers
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
+    offer_list = Offer.enabled_offers.featured.by_ordinal
+    marshalled_offer_list = Marshal.dump(offer_list)
+    bucket.put('featured_offers', marshalled_offer_list)
+    Mc.put('s3.featured_offers', offer_list)
   end
   
   def self.find_in_cache(id)
@@ -480,6 +527,11 @@ private
   def set_stats_aggregation_times
     self.next_stats_aggregation_time = Time.zone.now if next_stats_aggregation_time.blank?
     self.stats_aggregation_interval = 3600 if stats_aggregation_interval.blank?
+  end
+  
+  def calculate_rank_score(weights = {})
+    weights = { :conversion_rate => 0, :payment => 0, :price => 0, :show_rate => 0 }.merge(weights)
+    self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send(key)) }
   end
   
 end

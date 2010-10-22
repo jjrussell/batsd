@@ -16,7 +16,6 @@ class Job::MasterCacheOffersController < Job::JobController
     Offer.cache_enabled_offers
     Offer.cache_classic_offers
     Offer.cache_featured_offers
-    Offer.cache_enabled_offers_experimental
     
     render :text => 'ok'
   end
