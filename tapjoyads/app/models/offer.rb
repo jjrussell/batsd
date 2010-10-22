@@ -16,6 +16,7 @@ class Offer < ActiveRecord::Base
   NUM_MEMCACHE_KEYS = 30
   
   attr_accessor :rank_score, :normal_conversion_rate, :normal_payment, :normal_price, :normal_show_rate, :normal_avg_revenue
+  cattr_accessor :rank_weights
   @@rank_weights = { :conversion_rate => 1, :payment => 1, :price => 1, :show_rate => 1, :avg_revenue => 5, :random => 1 }
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
