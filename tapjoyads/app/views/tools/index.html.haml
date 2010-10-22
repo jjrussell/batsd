@@ -19,3 +19,5 @@
     %li= link_to 'Disabled Popular Offers', disabled_popular_offers_tools_path
   - if permitted_to? :index, :activities
     %li= link_to 'Activity Log', activities_path
+  - if permitted_to? :reset_device, :tools
+    %li= link_to 'Reset Device', reset_device_tools_path

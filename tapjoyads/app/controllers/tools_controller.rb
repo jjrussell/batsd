@@ -120,4 +120,22 @@ class ToolsController < WebsiteController
     @offers = Offer.find(@offers_count_hash.keys, :include => [:partner, :item])
   end
 
+
+  def reset_device
+    if params[:udid]
+      clicks_deleted = 0
+      
+      device = Device.new(:key => params[:udid])
+      device.apps.keys.each do |app_id|
+        click = Click.new(:key => "#{params[:udid]}.#{app_id}")
+        unless click.new_record?
+          click.delete_all 
+          clicks_deleted += 1
+        end
+      end
+      
+      device.delete_all
+      flash[:notice] = "Device successfully reset and #{clicks_deleted} clicks deleted"
+    end
+  end
 end
