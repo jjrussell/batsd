@@ -152,8 +152,8 @@ class Offer < ActiveRecord::Base
     end
     
     # cache the experimental offers too
-    cache_enabled_offers_experimental_2
-    cache_enabled_offers_experimental_3
+    cache_enabled_offers_experiment_2
+    cache_enabled_offers_experiment_3
   end
   
   def self.cache_enabled_offers_experiment_2
