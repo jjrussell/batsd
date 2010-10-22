@@ -123,17 +123,17 @@ class ToolsController < WebsiteController
 
   def reset_device
     if params[:udid]
+      udid = params[:udid].downcase
       clicks_deleted = 0
       
-      device = Device.new(:key => params[:udid])
-      device.apps.keys.each do |app_id|
-        click = Click.new(:key => "#{params[:udid]}.#{app_id}")
-        unless click.new_record?
-          click.delete_all 
+      device = Device.new(:key => udid)
+      NUM_CLICK_DOMAINS.times do |i|
+        Click.select(:domain_name => "clicks_#{i}", :where => "itemName() like '#{udid}.%'") do |click|
+          click.delete_all
           clicks_deleted += 1
         end
       end
-      
+        
       device.delete_all
       flash[:notice] = "Device successfully reset and #{clicks_deleted} clicks deleted"
     end
