@@ -4,26 +4,30 @@
     %span.amount
       #{@currency.get_visual_reward_amount(@offer)} 
     #{@currency.name}!
-  %img{ :src => @offer.get_icon_url, :class => 'icon' }
-  
   %p.offertext
-    Just download and run #{@offer.name}.
-  %a{ :class => 'skip', :href => 'javascript:skip();' } Skip
+    Just download and run
+  %img{ :src => @offer.get_large_icon_url, :class => 'icon' }
+  .offername
+    #{@offer.name}
+  .clear
+  %a{ :class => 'skip', :href => 'javascript:dismiss();' } Skip
   %a{ :class => 'download', :href => @offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], params[:source], params[:app_version], @viewed_at, nil, params[:exp]) }
     Download
+  .showOffers
+    %a{ :href => 'javascript:showOffers();' } Show more apps
   .adsby
     Ads by
     %img{ :src => "http://s3.amazonaws.com/tapjoy/images/tapjoylogo-small.png", :alt => "Tapjoy"}
 
 - content_for :page_javascript do
   :plain
-    function skip() {}
+    function dismiss() {}
+    function showOffers() {}
 
 - content_for :page_styles do
   :plain
   
     h1 {
-      
       color: #004E09;
       font-size: 22px;
     }
@@ -32,6 +36,8 @@
       font-size: 20px;
       text-align: center;
       height: 100%;
+      min-height: 480px;
+      position: relative;
     }
     
     .amount {
@@ -42,11 +48,19 @@
       color: #004E09;
     }
     
+    .offername {
+      font-weight: bold;
+      color: #008810;
+      margin-bottom: 30px;
+    }
+    
     img.icon {
       border: 1px solid #aaa;
       display: block;
       margin: 0 auto;
       padding: 3px;
+      width: 256px;
+      height: 256px;
       -moz-border-radius: 7px;
       -webkit-border-radius: 7px;
     }
@@ -60,7 +74,7 @@
     }
     
     .skip {
-      padding: 8px 5px 5px 5px; 
+      padding: 5px; 
       margin-right: 20px;
       color: #555;
       background-color: #eee;
@@ -72,16 +86,25 @@
       display; block;
       
       background-color: #ccc;
-      padding: 8px 35px 5px 15px;
+      padding: 5px 35px 5px 15px;
+    }
+    
+    .showOffers {
+      position: absolute;
+      bottom: 5px;
+      left: 5px;
+      font-size: 12px;
+      text-decoration: none;
     }
     
     .adsby {
-      margin-top: 10px;
-      text-align: right;
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
       font-size: 12px;
     }
     
     .adsby img {
-      vertical-align: middle;
+      vertical-align: bottom;
     }
       

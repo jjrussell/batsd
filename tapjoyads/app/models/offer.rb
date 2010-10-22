@@ -348,6 +348,10 @@ class Offer < ActiveRecord::Base
     url
   end
   
+  def get_large_icon_url(protocol = 'http://')
+    get_icon_url(protocol)
+  end
+  
   def get_email_url(publisher_user_id, publisher_app, udid)
     "http://www.tapjoyconnect.com/complete_offer" +
         "?offerid=#{CGI::escape(id)}" +
