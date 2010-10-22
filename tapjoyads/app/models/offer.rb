@@ -16,6 +16,7 @@ class Offer < ActiveRecord::Base
   NUM_MEMCACHE_KEYS = 30
   
   attr_accessor :rank_score, :normal_conversion_rate, :normal_payment, :normal_price, :normal_show_rate, :normal_avg_revenue
+  @@rank_weights = { :conversion_rate => 1, :payment => 1, :price => 1, :show_rate => 1, :avg_revenue => 5, :random => 1 }
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   
@@ -201,7 +202,7 @@ class Offer < ActiveRecord::Base
       offer.normal_price           = (offer.price - price_mean) / price_std_dev
       offer.normal_show_rate       = (offer.show_rate - show_rate_mean) / show_rate_std_dev
       offer.normal_avg_revenue     = (offer.avg_revenue - avg_revenue_mean) / avg_revenue_std_dev
-      offer.calculate_rank_score({ :conversion_rate => 1, :payment => 1, :price => 1, :show_rate => 1, :avg_revenue => 1, :random => 1 })
+      offer.calculate_rank_score(@@rank_weights)
     end
     
     offer_list.sort! do |o1, o2|
