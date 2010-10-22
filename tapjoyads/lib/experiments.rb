@@ -23,7 +23,7 @@ class Experiments
     end
   end
   
-  def self.report(start_time, end_time, experiment_id)
+  def self.report(start_time, end_time, experiment_id, control_id = EXPERIMENTS[:control])
     # For the math and a detailed explanation of the process see:
     # http://20bits.com/articles/statistical-analysis-and-ab-testing/
     
@@ -32,6 +32,7 @@ class Experiments
     puts "Report for experiment '#{experiment_id}', from #{start_time.to_s} to #{end_time.to_s}"
     
     experiment_id = experiment_id.to_s
+    control_id = control_id.to_s
     
     viewed_at_condition = "viewed_at >= '#{start_time.to_i}' and viewed_at < '#{end_time.to_i}'"
     
@@ -41,13 +42,13 @@ class Experiments
     while date <= end_time.to_date + 2.days && date <= Time.zone.now.to_date
       puts "Counting from #{date}..."
       
-      c_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and #{viewed_at_condition} and exp = '#{EXPERIMENTS[:control]}'"
+      c_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and #{viewed_at_condition} and exp = '#{control_id}'"
       e_offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and #{viewed_at_condition} and exp = '#{experiment_id}'"
       
-      c_clicks += WebRequest.count :date => date, :where => "path = 'offer_click' and #{viewed_at_condition} and exp = '#{EXPERIMENTS[:control]}'"
+      c_clicks += WebRequest.count :date => date, :where => "path = 'offer_click' and #{viewed_at_condition} and exp = '#{control_id}'"
       e_clicks += WebRequest.count :date => date, :where => "path = 'offer_click' and #{viewed_at_condition} and exp = '#{experiment_id}'"
       
-      c_conversions += WebRequest.count :date => date, :where => "path = 'conversion' and #{viewed_at_condition} and exp = '#{EXPERIMENTS[:control]}'"
+      c_conversions += WebRequest.count :date => date, :where => "path = 'conversion' and #{viewed_at_condition} and exp = '#{control_id}'"
       e_conversions += WebRequest.count :date => date, :where => "path = 'conversion' and #{viewed_at_condition} and exp = '#{experiment_id}'"
       
       date += 1.day
@@ -58,7 +59,7 @@ class Experiments
     e_revenues = []
     NUM_REWARD_DOMAINS.times do |i|
       Reward.select :domain_name => "rewards_#{i}", :where => viewed_at_condition do |reward|
-        if reward.exp == EXPERIMENTS[:control]
+        if reward.exp == control_id
           c_revenues << reward.publisher_amount
         end
         if reward.exp == experiment_id
