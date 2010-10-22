@@ -1,7 +1,7 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   
-  PLATFORMS = { 'android' => 'Android', 'iphone' => 'iPhone' }
+  PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS' }
   TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
   
   has_many :offers, :as => :item
