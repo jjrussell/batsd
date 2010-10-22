@@ -1,11 +1,12 @@
 - @page_title = 'Partners'
 
 %h1 Partners
-
 - if permitted_to? :new, :partners
-  =link_to 'Create a New Partner Account', new_partner_path
+  = link_to 'Create a New Partner Account', new_partner_path
 
 - unless current_user.role_symbols.include?(:agency)
+  .right
+    = link_to 'Show only partners I manage', partners_path(:mine => true)
   - form_tag(partners_path, :method => :get, :class => 'tjform') do
     = label_tag(:q, "Name or Email Address:")
     = text_field_tag(:q, params[:q], :size => '40')
@@ -44,10 +45,10 @@
             - if partner.account_managers.present?
               - partner.account_managers.each do |manager|
                 - if manager.is_one_of?([:agency])
-                  = mail_to manager.email, nil, :class => "agency"
+                  %span.agency= manager.email
                   (Agency)
                 - else
-                  = mail_to manager.email
+                  = manager.email
             - else
               \-
         %td= number_to_currency(partner.balance / 100.0)

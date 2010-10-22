@@ -5,7 +5,7 @@ class PartnersController < WebsiteController
   
   filter_access_to :all
   
-  before_filter :find_partner, :only => [ :show, :make_current ]
+  before_filter :find_partner, :only => [ :show, :make_current, :manage ]
   
   def index
     if current_user.role_symbols.include?(:agency)
@@ -13,6 +13,8 @@ class PartnersController < WebsiteController
     elsif params[:q]
       query = params[:q].gsub("'", '')
       @partners = Partner.search(query).scoped(:include => [ :offers, :users ]).paginate(:page => params[:page]).uniq
+    elsif params[:mine] == "true"
+      @partners = current_user.partners.scoped(:include => [ :offers, :users ]).paginate(:page => params[:page])
     else
       @partners = Partner.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
     end
@@ -35,6 +37,24 @@ class PartnersController < WebsiteController
     else
       render :action => :new
     end
+  end
+
+  def manage
+    if current_user.partners << @partner
+      flash[:notice] = "You are now managing #{@partner.name}."
+    else
+      flash[:error] = 'Could not manage partner.'
+    end
+    redirect_to request.referer
+  end
+
+  def stop_managing
+    if current_user.partners.delete(@partner)
+      flash[:notice] = "You are no longer managing #{@partner.name}."
+    else
+      flash[:error] = 'Could not un-manage partner.'
+    end
+    redirect_to request.referer
   end
 
   def make_current

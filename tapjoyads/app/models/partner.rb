@@ -60,11 +60,11 @@ class Partner < ActiveRecord::Base
   end
 
   def account_managers
-    users.select{|user| user.is_one_of?([:admin, :account_mgr, :agency])}
+    users.select{|user| user.can_manage_account?}
   end
 
   def non_managers
-    users.reject{|user| user.is_one_of?([:admin, :account_mgr, :agency])}
+    users.reject{|user| user.can_manage_account?}
   end
 
   def payout_cutoff_date(reference_date = nil)

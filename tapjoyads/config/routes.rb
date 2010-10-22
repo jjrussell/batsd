@@ -68,7 +68,7 @@ ActionController::Routing::Routes.draw do |map|
     :member => { :last_run_times => :get, :udids => :get }
   map.resources :raffle_manager, :only => [ :index, :edit, :update, :new, :create ]
   map.resources :activities, :only => [ :index ]
-  map.resources :partners, :only => [ :index, :show, :new, :create ], :member => { :make_current => :post }
+  map.resources :partners, :only => [ :index, :show, :new, :create ], :member => { :make_current => :post, :manage => :post, :stop_managing => :post }
   map.resources :password_resets, :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
   
   # Special paths:
