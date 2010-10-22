@@ -10,9 +10,9 @@ class Experiments
     if udid.present?
       udid_hash = udid.hash % 100
       
-      if udid_hash < 1
+      if udid_hash < 5
         EXPERIMENTS[:no_change]
-      elsif udid_hash < 6
+      elsif udid_hash < 10
         EXPERIMENTS[:using_rank_score]
       elsif [ 'ade749ccc744336ad81cbcdbf36a5720778c6f13', 'b4c86b4530a0ee889765a166d80492b46f7f3636', 'c73e730913822be833766efffc7bb1cf239d855a' ].include?(udid)
         EXPERIMENTS[:using_rank_score]
