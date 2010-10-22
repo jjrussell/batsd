@@ -1,0 +1,4 @@
+.admin
+  %p
+    %strong Select market to search in:
+    = select_tag 'app_country', options_for_select(countries.invert.sort, :us)

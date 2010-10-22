@@ -56,5 +56,8 @@
   #help_name_content{:name => 'Name'}
     App name
 
+- if permitted_to?(:index, :tools)
+  = render :partial => 'select_country'
+
 - content_for :page_head, stylesheet_link_tag('apps')
 - content_for :included_javascripts, javascript_include_tag('tapjoy/apps')

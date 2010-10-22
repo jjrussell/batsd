@@ -93,10 +93,11 @@ $(function($){
 
     var term = $('input#app_name').val();
     if (term != "") {
-      var platform = $('#app_platform').val() || $('#app_platform').text()
+      var platform = $('#app_platform').val() || $('#app_platform').text();
+      var country = $('#app_country').val() || "us";
       $.ajax({
         url: '/apps/search/;',
-        data: { term: term, platform: platform },
+        data: { term: term, platform: platform, country: country},
         dataType: 'json',
         success: success,
         error: error

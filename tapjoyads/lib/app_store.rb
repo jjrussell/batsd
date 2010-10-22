@@ -16,11 +16,11 @@ class AppStore
   end
 
   # returns an array of first 24 App instances matching "term"
-  def self.search(term, platform='iphone')
+  def self.search(term, platform='iphone', country='us')
     if platform == 'android'
       return self.search_android_marketplace(term)
     else
-      return self.search_apple_app_store(term)
+      return self.search_apple_app_store(term, country)
     end
   end
 
@@ -67,8 +67,8 @@ private
     }
   end
 
-  def self.search_apple_app_store(term)
-    response = request(SEARCH_URL, {:media => 'software', :term => term})
+  def self.search_apple_app_store(term, country)
+    response = request(SEARCH_URL, {:media => 'software', :term => term, :country => country})
     response_ipad = request(SEARCH_URL, {:media => 'software', :entity => 'iPadSoftware', :term => term})
     if (response.status == 200) && (response.headers['Content-Type'] =~ /javascript/)
       results_iphone = JSON.load(response.body)['results']
