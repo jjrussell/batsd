@@ -12,7 +12,7 @@
       "Name":<%= offer.name.to_json -%>,
       "RedirectURL":<%= offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], params[:source], params[:app_version], @now, nil, params[:exp]).to_json -%>
       <% if params[:source] == 'featured' %>
-        , "FullScreenAdURL":<%= offer.get_fullscreen_ad_url(@publisher_app, params[:publisher_user_id], params[:udid], params[:source], params[:app_version], @now, nil, params[:exp]) -%>
+        , "FullScreenAdURL":<%= offer.get_fullscreen_ad_url(@publisher_app, params[:publisher_user_id], params[:udid], params[:source], params[:app_version], @now, nil, params[:exp]).to_json -%>
       <% end %>
     }
     <%= ',' if i < @offer_list.length - 1 -%>

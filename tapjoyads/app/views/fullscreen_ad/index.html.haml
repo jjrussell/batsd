@@ -1,32 +1,87 @@
-%a.ad{ :href => @offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], params[:source], params[:app_version], @viewed_at, nil, params[:exp]) }
-  %p
-    Earn #{@currency.get_visual_reward_amount(@offer)} #{@currency.name}. 
-  %p
-    Just download and run #{@offer.name}.
-  %img{ :src => @offer.get_icon_url }
+#main
+  %h1
+    Earn 
+    %span.amount
+      #{@currency.get_visual_reward_amount(@offer)} 
+    #{@currency.name}!
+  %img{ :src => @offer.get_icon_url, :class => 'icon' }
   
+  %p.offertext
+    Just download and run #{@offer.name}.
+  %a{ :class => 'skip', :href => 'javascript:skip();' } Skip
+  %a{ :class => 'download', :href => @offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], params[:source], params[:app_version], @viewed_at, nil, params[:exp]) }
+    Download
+  .adsby
+    Ads by
+    %img{ :src => "http://s3.amazonaws.com/tapjoy/images/tapjoylogo-small.png", :alt => "Tapjoy"}
+
+- content_for :page_javascript do
+  :plain
+    function skip() {}
+
 - content_for :page_styles do
   :plain
-    body {
-      margin: 0;
-      padding: 0;
+  
+    h1 {
+      
+      color: #004E09;
+      font-size: 22px;
     }
   
-    .ad {
-      display: block;
-      width: 280px;
-      height: 440px;
-      color: black;
-      text-decoration: none;
-      padding: 20px;
+    #main {
       font-size: 20px;
       text-align: center;
-      background: url('http://s3.amazonaws.com/tapjoy/images/brushed-metal-320x480.png');
+      height: 100%;
     }
     
-    img {
-      border: 0;
+    .amount {
+      color: #008810;
+    }
+    
+    .offertext {
+      color: #004E09;
+    }
+    
+    img.icon {
+      border: 1px solid #aaa;
       display: block;
       margin: 0 auto;
+      padding: 3px;
+      -moz-border-radius: 7px;
+      -webkit-border-radius: 7px;
+    }
+    
+    .skip,
+    .download {
+      border: 1px solid #aaa;
+      -moz-border-radius: 7px;
+      -webkit-border-radius: 7px; 
+      text-decoration: none;
+    }
+    
+    .skip {
+      padding: 8px 5px 5px 5px; 
+      margin-right: 20px;
+      color: #555;
+      background-color: #eee;
+    }
+    
+    .download {
+      background: url("/images/arrow-right.png") no-repeat scroll 98% 50% transparent;
+      color: #004E09;
+      display; block;
+      
+      background-color: #ccc;
+      padding: 8px 35px 5px 15px;
+    }
+    
+    .adsby {
+      margin-top: 10px;
+      text-align: right;
+      font-size: 12px;
+    }
+    
+    .adsby img {
+      vertical-align: middle;
     }
       
