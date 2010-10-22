@@ -60,7 +60,8 @@ class Experiments
       Reward.select :domain_name => "rewards_#{i}", :where => viewed_at_condition do |reward|
         if reward.exp == EXPERIMENTS[:control]
           c_revenues << reward.publisher_amount
-        elsif reward.exp == experiment_id
+        end
+        if reward.exp == experiment_id
           e_revenues << reward.publisher_amount
         end
       end
