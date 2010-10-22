@@ -10,9 +10,10 @@ Delete all clicks and all records of which apps a device has run.
 %form{:method => :get, :action => reset_device_tools_path}
   = label_tag :udid, "Device id:"
   = text_field_tag :udid, nil, :size => 50
+  = submit_tag "Reset"
   
 - content_for :page_javascript do
   :plain
     $('form').submit(function() {
       if (!confirm('Are you sure you want to clear this device?')) { return false; }
-    }
+    });
