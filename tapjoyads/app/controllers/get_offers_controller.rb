@@ -78,6 +78,7 @@ private
     if params[:type] == Offer::CLASSIC_OFFER_TYPE
        publisher_user_record = PublisherUserRecord.new(:key => "#{params[:app_id]}.#{params[:publisher_user_id]}")
        publisher_user_record.update(params[:udid])
+       params[:exp] = nil
     end
     
     @now = Time.zone.now
