@@ -10,11 +10,11 @@
   .offername
     #{@offer.name}
   .clear
-  %a{ :class => 'skip', :href => 'javascript:dismiss();' } Skip
+  %a{ :class => 'skip', :href => 'dismiss' } Skip
   %a{ :class => 'download', :href => @offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], params[:source], params[:app_version], @viewed_at, nil, params[:exp]) }
     Download
   .showOffers
-    %a{ :href => 'javascript:showOffers();' } Show more apps
+    %a{ :href => 'showOffers' } Show more apps
   .adsby
     Ads by
     %img{ :src => "http://s3.amazonaws.com/tapjoy/images/tapjoylogo-small.png", :alt => "Tapjoy"}
