@@ -73,7 +73,6 @@
   - property_row('id', link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - ' + clippy(@offer.partner.id))
 
 %h4 Account manager(s)
-=# select_tag 'account_managers', options_for_select(User.account_managers.map(&:email).sort, @offer.partner.account_managers.map(&:email)), :multiple => true
 - form_for @offer.partner do |f|
   - options = options_from_collection_for_select(User.account_managers, "id", "email", @offer.partner.account_managers.map(&:id))
   = f.select :account_managers, options, {}, {:multiple => true, :style => "height:200px;"}

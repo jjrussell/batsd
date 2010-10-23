@@ -31,6 +31,8 @@ class User < ActiveRecord::Base
   end
 
   def self.account_managers
-    RoleAssignment.find_all_by_user_role_id(UserRole.find_by_name("account_mgr")).map(&:user).sort_by(&:email)
+    Mc.get_and_put('account_managers', false, 1.day) do
+      RoleAssignment.find_all_by_user_role_id(UserRole.find_by_name("account_mgr")).map(&:user).sort_by(&:email)
+    end
   end
 end

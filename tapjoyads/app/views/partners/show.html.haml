@@ -6,12 +6,11 @@
 - else
   - form_tag(make_current_partner_path(@partner)) do
     = submit_tag('Act as this Partner')
-- if current_user.managing?(@partner)
-  - form_tag(stop_managing_partner_path(@partner)) do
-    = submit_tag("Stop managing this partner", :class => 'act_as_button')
-- else
-  - form_tag(manage_partner_path(@partner)) do
-    = submit_tag("Manage this partner", :class => 'act_as_button')
+
+- form_for @partner do |f|
+  - options = options_from_collection_for_select(User.account_managers, "id", "email", @partner.account_managers.map(&:id))
+  = f.select :account_managers, options, {}, {:multiple => true, :style => "height:200px;"}
+  = submit_tag "Update account managers"
 
 %h1 Partner data
 .metadata Name: #{@partner.name}
