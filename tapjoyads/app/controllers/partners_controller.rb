@@ -1,12 +1,12 @@
 class PartnersController < WebsiteController
   layout 'tabbed'
-  
+
   current_tab :partners
-  
+
   filter_access_to :all
-  
-  before_filter :find_partner, :only => [ :show, :make_current, :manage ]
-  
+
+  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update ]
+
   def index
     if current_user.role_symbols.include?(:agency)
       @partners = current_user.partners.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
@@ -37,6 +37,17 @@ class PartnersController < WebsiteController
     else
       render :action => :new
     end
+  end
+
+  def update
+    users = User.find_all_by_id(params[:partner][:account_managers])
+    @partner.account_managers = users
+    if @partner.save
+      flash[:notice] = 'Partner was successfully updated.'
+    else
+      flash[:error] = 'Partner update unsuccessful.'
+    end
+    redirect_to :back
   end
 
   def manage

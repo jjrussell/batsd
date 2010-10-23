@@ -41,6 +41,7 @@ authorization do
   role :account_mgr do
     includes :payops
     includes :statz
+    has_permission_on :partners, :to => [ :update ]
   end
   
   role :raffle_manager do

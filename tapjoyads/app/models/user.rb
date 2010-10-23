@@ -29,4 +29,8 @@ class User < ActiveRecord::Base
   def managing?(partner)
     self.can_manage_account? && partner.users.include?(self)
   end
+
+  def self.account_managers
+    RoleAssignment.find_all_by_user_role_id(UserRole.find_by_name("account_mgr")).map(&:user).sort_by(&:email)
+  end
 end

@@ -59,6 +59,12 @@ class Partner < ActiveRecord::Base
     end
   end
 
+  def account_managers=(managers=[])
+    # replace
+    users.delete(account_managers)
+    users << managers
+  end
+
   def account_managers
     users.select{|user| user.can_manage_account?}
   end
