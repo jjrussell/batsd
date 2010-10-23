@@ -30,7 +30,7 @@ class Partner < ActiveRecord::Base
     Partner.using_slave_db do
       Partner.slave_connection.execute("BEGIN")
       partner = Partner.find(partner_id)
-      return partner.pending_earnings - partner.publisher_conversions.created_since(partner.payout_cutoff_date).sum(:publisher_amount)
+      return partner.pending_earnings - Conversion.created_since(partner.payout_cutoff_date).sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", partner.app_ids ])
     end
   ensure
     Partner.using_slave_db do
@@ -98,8 +98,8 @@ class Partner < ActiveRecord::Base
   def recalculate_balance_and_pending_earnings
     orders_sum = orders.sum(:amount, :conditions => 'status = 1')
     payouts_sum = payouts.sum(:amount, :conditions => 'status = 1')
-    publisher_conversions_sum = publisher_conversions.sum(:publisher_amount)
-    advertiser_conversions_sum = advertiser_conversions.sum(:advertiser_amount)
+    publisher_conversions_sum = Conversion.sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", app_ids ])
+    advertiser_conversions_sum = Conversion.sum(:advertiser_amount, :conditions => [ "advertiser_offer_id IN (?)", offer_ids ])
     self.balance = orders_sum + advertiser_conversions_sum
     self.pending_earnings = publisher_conversions_sum - payouts_sum
   end

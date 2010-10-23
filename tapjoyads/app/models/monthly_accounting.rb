@@ -88,7 +88,7 @@ class MonthlyAccounting < ActiveRecord::Base
     record.marketing_orders = orders[2] || 0
     record.transfer_orders = orders[3] || 0
     Partner.using_slave_db do
-      record.spend = partner.advertiser_conversions.sum(:advertiser_amount, :conditions => "conversions.created_at >= '#{start_time.to_s(:db)}' and conversions.created_at < '#{end_time.to_s(:db)}'")
+      record.spend = Conversion.created_between(start_time, end_time).sum(:advertiser_amount, :conditions => [ "advertiser_offer_id IN (?)", partner.offer_ids ])
     end
     
     record.ending_balance = record.beginning_balance + 
@@ -105,7 +105,7 @@ class MonthlyAccounting < ActiveRecord::Base
     record.payment_payouts = (payouts[1] || 0) * -1
     record.transfer_payouts = (payouts[3] || 0) * -1
     Partner.using_slave_db do
-      record.earnings = partner.publisher_conversions.sum(:publisher_amount, :conditions => "conversions.created_at >= '#{start_time.to_s(:db)}' and conversions.created_at < '#{end_time.to_s(:db)}'")
+      record.earnings = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", partner.app_ids ])
     end
     
     record.ending_pending_earnings = record.beginning_pending_earnings +

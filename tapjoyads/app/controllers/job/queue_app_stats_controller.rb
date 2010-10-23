@@ -58,8 +58,8 @@ private
       
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
-    paid_installs = Conversion.count(:conditions => ["advertiser_offer_id = ? and created_at >= ? and created_at < ? and reward_type in (0, 1, 2, 3)", @offer.id, start_time, end_time])
-    installs_spend = Conversion.sum(:advertiser_amount, :conditions => ["advertiser_offer_id = ? and created_at >= ? and created_at < ? and reward_type in (0, 1, 2, 3)", @offer.id, start_time, end_time])
+    paid_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["advertiser_offer_id = ? AND reward_type IN (0, 1, 2, 3)", @offer.id])
+    installs_spend = Conversion.created_between(start_time, end_time).sum(:advertiser_amount, :conditions => ["advertiser_offer_id = ? AND reward_type IN (0, 1, 2, 3)", @offer.id])
     stat_row.update_stat_for_hour('paid_installs', start_time.hour, paid_installs)
     stat_row.update_stat_for_hour('installs_spend', start_time.hour, installs_spend)
     
@@ -71,10 +71,10 @@ private
 
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
-    published_installs = Conversion.count(:conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type = 1", @offer.id, start_time, end_time])
-    installs_revenue = Conversion.sum(:publisher_amount, :conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type = 1", @offer.id, start_time, end_time])
-    offers_completed = Conversion.count(:conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type in (0, 2, 3)", @offer.id, start_time, end_time])
-    offers_revenue = Conversion.sum(:publisher_amount, :conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type in (0, 2, 3)", @offer.id, start_time, end_time])
+    published_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["publisher_app_id = ? AND reward_type = 1", @offer.id])
+    installs_revenue = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id = ? AND reward_type = 1", @offer.id])
+    offers_completed = Conversion.created_between(start_time, end_time).count(:conditions => ["publisher_app_id = ? AND reward_type IN (0, 2, 3)", @offer.id])
+    offers_revenue = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id = ? AND reward_type IN (0, 2, 3)", @offer.id])
     
     stat_row.update_stat_for_hour('published_installs', start_time.hour, published_installs)
     stat_row.update_stat_for_hour('installs_revenue', start_time.hour, installs_revenue)
@@ -92,8 +92,8 @@ private
       
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
-    display_conversions = Conversion.count(:conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type in (1000, 1001, 1002, 1003)", @offer.id, start_time, end_time])
-    display_revenue = Conversion.sum(:publisher_amount, :conditions => ["publisher_app_id = ? and created_at >= ? and created_at < ? and reward_type in (1000, 1001, 1002, 1003)", @offer.id, start_time, end_time])
+    display_conversions = Conversion.created_between(start_time, end_time).count(:conditions => ["publisher_app_id = ? AND reward_type IN (1000, 1001, 1002, 1003)", @offer.id])
+    display_revenue = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id = ? AND reward_type IN (1000, 1001, 1002, 1003)", @offer.id])
     
     stat_row.update_stat_for_hour('display_conversions', start_time.hour, display_conversions)
     stat_row.update_stat_for_hour('display_revenue', start_time.hour, display_revenue)
