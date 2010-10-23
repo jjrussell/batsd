@@ -60,7 +60,7 @@ class Experiments
     c_revenues = []
     e_revenues = []
     NUM_REWARD_DOMAINS.times do |i|
-      Reward.select :domain_name => "rewards_#{i}", :where => viewed_at_condition do |reward|
+      Reward.select :domain_name => "rewards_#{i}", :where => "#{viewed_at_condition} and (exp = '#{control_id}' or exp = '#{experiment_id}')" do |reward|
         if reward.exp == control_id
           c_revenues << reward.publisher_amount
         end
