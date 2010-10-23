@@ -94,16 +94,18 @@ class App < ActiveRecord::Base
     self.price = (data[:price] * 100).to_i
     self.description = data[:description]
     self.age_rating = data[:age_rating]
-    download_icon(data[:icon_url])
+    download_icon(data[:icon_url], data[:large_icon_url])
   end
 
-  def download_icon(url)
+  def download_icon(url, large_url)
     return if url.blank?
     set_primary_key if id.nil?
     begin
       icon = Downloader.get(url, :timeout => 30)
+      large_icon = Downloader.get(large_url, :timeout => 30)
       bucket = S3.bucket(BucketNames::APP_DATA)
       bucket.put("icons/#{id}.png", icon, {}, "public-read")
+      bucket.put("icons/large/#{id}.png", large_icon, {}, "public-read")
       Mc.delete("icon.s3.#{id}")
     rescue
       Rails.logger.info "Failed to download icon for url: #{url}"

@@ -349,7 +349,7 @@ class Offer < ActiveRecord::Base
   end
   
   def get_large_icon_url(protocol = 'http://')
-    get_icon_url(protocol)
+    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/large/#{item_id}.png"
   end
   
   def get_email_url(publisher_user_id, publisher_app, udid)
