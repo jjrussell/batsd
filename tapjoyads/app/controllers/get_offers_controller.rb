@@ -2,9 +2,11 @@ class GetOffersController < ApplicationController
   
   layout 'iphone', :only => :webpage
   
+  before_filter :fix_tapulous
   before_filter :choose_experiment, :except => :featured
   # TO REMOVE - once the tap defense connect bug has been fixed and is sufficiently adopted
   before_filter :fake_connect_call, :only => :featured
+  # END TO REMOVE
   before_filter :set_featured_params, :only => :featured
   before_filter :setup
   
@@ -56,11 +58,21 @@ class GetOffersController < ApplicationController
   
 private
   
-  def setup
+  def fix_tapulous
     # special code for Tapulous not sending udid
     if params[:app_id] == 'e2479a17-ce5e-45b3-95be-6f24d2c85c6f'
       params[:udid] = params[:publisher_user_id] if params[:udid].blank?
     end
+  end
+  
+  def set_featured_params
+    params[:type] = Offer::FEATURED_OFFER_TYPE
+    params[:start] = '0'
+    params[:max] = '999'
+    params[:source] = 'featured'
+  end
+  
+  def setup
     return unless verify_params([ :app_id, :udid, :publisher_user_id ], { :allow_empty => false })
     
     if params[:type] == Offer::CLASSIC_OFFER_TYPE
@@ -119,13 +131,6 @@ private
     @offer_list = @offer_list[@start_index, @max_items] || []
   end
   
-  def set_featured_params
-    params[:type] = Offer::FEATURED_OFFER_TYPE
-    params[:start] = '0'
-    params[:max] = '999'
-    params[:source] = 'featured'
-  end
-  
   # TO REMOVE - once the tap defense connect bug has been fixed and is sufficiently adopted
   def fake_connect_call
     if params[:app_id] == '2349536b-c810-47d7-836c-2cd47cd3a796' && (params[:app_version] == '3.2.2' || params[:app_version] == '3.2.1') && params[:library_version] == '5.0.1'
@@ -152,5 +157,6 @@ private
       web_request.save
     end
   end
+  # END TO REMOVE
   
 end
