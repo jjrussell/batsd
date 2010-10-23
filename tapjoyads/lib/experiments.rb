@@ -8,6 +8,8 @@ class Experiments
   
   def self.choose(udid)
     if udid.present?
+      return "test_#{udid.hash % 100}"
+      
       udid_hash = udid.hash % 100
       
       if udid_hash < 5
