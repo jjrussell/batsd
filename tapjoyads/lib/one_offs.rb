@@ -80,7 +80,6 @@ class OneOffs
     partners = {}
     count = 0
     Currency.find_each do |c|
-    currencies.each do |c|
       (4..10).each do |month|
         month_start = Time.utc(2010,month,01)
         s = Appstats.new(c.app.id, {:type => :sum, :start_time => month_start, :end_time => month_start.end_of_month})
