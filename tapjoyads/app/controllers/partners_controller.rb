@@ -93,6 +93,6 @@ private
   end
 
   def get_account_managers
-    @account_managers = User.account_managers.map(&:email).sort.unshift(["All",""])
+    @account_managers = User.account_managers.map{|u|[u.email, u.id]}.sort.unshift(["All", ""])
   end
 end
