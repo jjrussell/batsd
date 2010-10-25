@@ -93,8 +93,8 @@ class OneOffs
         puts "Wrote #{count} apps data to file" if count % 100 == 0
       end
     end
-    partners.each do |p|
-      Partner.find(p).name
+    partners.keys.each do |p|
+      name = Partner.find(p).name
       partners[p].keys.each do |m|
         file.puts "#{m}, partner, #{p}, #{name}, #{partners[p][m]}"
       end
