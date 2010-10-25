@@ -82,11 +82,17 @@ class OneOffs
     Currency.find_each do |c|
       (4..10).each do |month|
         month_start = Time.utc(2010,month,01)
-        s = Appstats.new(c.app.id, {:type => :sum, :start_time => month_start, :end_time => month_start.end_of_month})
-        file.puts "#{month}, app, #{c.app.id}, #{c.app.name}, #{s.stats['monthly_active_users'].first}"
+        maus = 0
+        begin
+          s = Appstats.new(c.app.id, {:type => :sum, :start_time => month_start, :end_time => month_start.end_of_month})
+          maus = s.stats['monthly_active_users'].first
+        rescue 
+          maus = 0
+        end
+        file.puts "#{month}, app, #{c.app.id}, #{c.app.name}, #{maus}"
         partners[c.partner_id] = {} if partners[c.partner_id].nil?
         partners[c.partner_id][month] = 0 if partners[c.partner_id][month].nil?
-        partners[c.partner_id][month] += s.stats['monthly_active_users'].first
+        partners[c.partner_id][month] += maus
         count += 1
         puts "Wrote #{count} apps data to file" if count % 100 == 0
       end
