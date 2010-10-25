@@ -75,6 +75,40 @@ class OneOffs
     file.close  
   end
   
+  def self.merge_doodle_buddy_vgs(filename)
+    holiday_id = '0f791872-31ec-4b8e-a519-779983a3ea1a'
+    regular_id = '3cb9aacb-f0e6-4894-90fe-789ea6b8361d'
+    
+    map = {}
+    VirtualGood.select :where => "app_id = '#{holiday_id}'" do |hvg|
+      rvg = VirtualGood.select :where => "app_id = '#{regular_id}' and name = '^^TAPJOY_ESCAPED^^#{CGI::escape(hvg.name)}'"
+      next if rvg.nil? or rvg[:items].first.nil?
+      map[hvg.key] = rvg[:items].first.name
+      puts "#{hvg.key}, #{rvg[:items].first.name}"
+    end
+    
+    ok = 0
+    10.times do |i|
+      PointPurchases.select :where => "itemName() like '%#{holiday_id}' and added_to_regular is null", :domain_name => "point_purchases_#{i}" do |hpp|
+        PointPurchases.transaction :key => hpp.key.gsub(holiday_id, regular_id) do |rpp|
+          rpp.points += hpp.points - 170
+          hpp.virtual_goods.each do |vg|
+            #puts "VG not found: #{vg[0]}" unless map[vg[0]]
+            #puts "VG #{vg[0]} maps to #{map[vg[0]]}" unless map[vg[0]].nil?
+            unless map[vg[0]].nil?
+              ok += 1 
+              puts "#{ok} ok" if ok % 100 == 0
+              rpp.add_virtual_good(map[vg[0]])
+            end
+          end
+        end  
+        hpp.put('added_to_regular',Time.zone.now.to_i.to_s)
+        hpp.save!   
+      end
+    end
+    
+  end
+  
   def self.get_monthly_actives(filename)
     file = File.open(filename, 'w')
     partners = {}
