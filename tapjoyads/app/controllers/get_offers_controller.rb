@@ -149,7 +149,7 @@ private
       web_request.put_values('connect', params, get_ip_address, get_geoip_data)
     
       device_app_list = Device.new(:key => params[:udid])
-      path_list = device_app_list.set_app_ran(params[:app_id])
+      path_list = device_app_list.set_app_ran(params[:app_id], params)
       path_list.each do |path|
         web_request.add_path(path)
       end

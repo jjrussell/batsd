@@ -133,7 +133,7 @@ private
       else
         id_for_device_app_list = params[:advertiser_app_id]
       end
-      @device_app_list.set_app_ran(id_for_device_app_list)
+      @device_app_list.set_app_ran(id_for_device_app_list, params)
       @device_app_list.save
       
       message = { :click => @click.serialize(:attributes_only => true), :install_timestamp => @now.to_f.to_s }.to_json

@@ -2,6 +2,8 @@ class Device < SimpledbShardedResource
   self.num_domains = NUM_DEVICES_DOMAINS
   
   self.sdb_attr :apps, :type => :json, :default_value => {}
+  self.sdb_attr :is_jailbroken, :type => :bool, :default_value => false
+  self.sdb_attr :country
   
   def dynamic_domain_name
     domain_number = @key.hash % NUM_DEVICES_DOMAINS
@@ -12,7 +14,7 @@ class Device < SimpledbShardedResource
     @parsed_apps = apps
   end
   
-  def set_app_ran(app_id)
+  def set_app_ran(app_id, params)
     now = Time.zone.now
     
     path_list = []
@@ -36,6 +38,21 @@ class Device < SimpledbShardedResource
     
     @parsed_apps[app_id] = now.to_f.to_s
     self.apps = @parsed_apps
+    
+    if params[:lad].present?
+      if params[:lad] == '0'
+        Notifier.alert_new_relic(DeviceNoLongerJailbroken) if self.is_jailbroken
+      else
+        self.is_jailbroken = true
+      end
+    end
+    
+    if params[:country].present?
+      if self.country.present? && self.country != params[:country]
+        Notifier.alert_new_relic(DeviceCountryChanged, "Country for udid: #{@key} changed from #{self.country} to #{params[:country]}")
+      end
+      self.country = params[:country]
+    end
     
     path_list
   end

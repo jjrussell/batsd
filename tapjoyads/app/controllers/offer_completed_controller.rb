@@ -52,7 +52,7 @@ class OfferCompletedController < ApplicationController
     end
     
     device_app_list = Device.new(:key => click.udid)
-    device_app_list.set_app_ran(click.advertiser_app_id)
+    device_app_list.set_app_ran(click.advertiser_app_id, params)
     device_app_list.save
     
     message = { :click => click.serialize(:attributes_only => true), :install_timestamp => now.to_f.to_s }.to_json

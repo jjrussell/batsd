@@ -10,6 +10,8 @@ class BadWebRequestDomain < RuntimeError; end
 class AppDataFetchError < RuntimeError; end
 class GenericOfferCallbackError < RuntimeError; end
 class InvalidAppIdForDevices < RuntimeError; end
+class DeviceCountryChanged < RuntimeError; end
+class DeviceNoLongerJailbroken < RuntimeError; end
 
 # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
 class EmailWorthyError < RuntimeError
