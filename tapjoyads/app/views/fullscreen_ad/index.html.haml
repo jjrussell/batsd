@@ -6,7 +6,7 @@
     #{@currency.name}!
   %p.offertext
     Just download and run
-  %img{ :src => @offer.get_large_icon_url, :class => 'icon' }
+  %img{ :src => @offer.get_large_icon_url, :class => 'icon', :id => 'icon' }
   .offername
     #{@offer.name}
   .clear
@@ -18,6 +18,26 @@
   .adsby
     Ads by
     %img{ :src => "http://s3.amazonaws.com/tapjoy/images/tapjoylogo-small.png", :alt => "Tapjoy"}
+
+- content_for :page_javascript do
+  :plain
+    window.onload = function() {
+      document.ontouchmove = function(e){ e.preventDefault(); }
+      init();
+    }
+    window.onorientationchange = init;
+    
+    function init() {
+      icon = document.getElementById('icon');
+      main = document.getElementById('main');
+      if (document.documentElement.clientHeight >= 480) {
+        icon.setAttribute('style', 'width: 96px; height: 96px;');
+        main.setAttribute('style', 'min-height: 300px;');
+      } else {
+        icon.setAttribute('style', 'width: 256px; height: 256px;');
+        main.setAttribute('style', 'min-height: 460px;');
+      }
+    }
 
 - content_for :page_styles do
   :plain
