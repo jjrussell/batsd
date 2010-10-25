@@ -105,8 +105,6 @@ class OneOffs
         end  
         hpp.put('added_to_regular',Time.zone.now.to_i.to_s)
         hpp.save!  
-
-        break 
       end
     end
     
