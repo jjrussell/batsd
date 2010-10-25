@@ -88,7 +88,7 @@ class OneOffs
     end
     
     ok = 0
-    1.times do |i|
+    10.times do |i|
       PointPurchases.select :where => "itemName() like '%#{holiday_id}' and added_to_regular is null", :domain_name => "point_purchases_#{i}" do |hpp|
         PointPurchases.transaction :key => hpp.key.gsub(holiday_id, regular_id) do |rpp|
           rpp.points = rpp.points + hpp.points
