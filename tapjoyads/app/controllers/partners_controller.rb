@@ -20,8 +20,14 @@ class PartnersController < WebsiteController
   end
 
   def managed_by
-    user = User.find_by_id(params[:id], :include => [ :partners ])
-    @partners = user.partners.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
+    if params[:id] == 'none'
+      @partners = Partner.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page]).reject do |partner|
+        partner.account_managers.present?
+      end
+    else
+      user = User.find_by_id(params[:id], :include => [ :partners ])
+      @partners = user.partners.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
+    end
     render 'index'
   end
 
@@ -93,6 +99,8 @@ private
   end
 
   def get_account_managers
-    @account_managers = User.account_managers.map{|u|[u.email, u.id]}.sort.unshift(["All", ""])
+    @account_managers = User.account_managers.map{|u|[u.email, u.id]}.sort
+    @account_managers.unshift(["All", "all"])
+    @account_managers.push(["Not assigned", "none"])
   end
 end

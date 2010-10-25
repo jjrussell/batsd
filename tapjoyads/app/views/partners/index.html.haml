@@ -101,10 +101,12 @@
   :plain
     $(function($){
       $('#managed_by').change(function(){
-        if ($(this).val()) {
-          location.href = '/partners/managed_by/' + $(this).val();
-        } else {
+        if ($(this).val() == 'all') {
           location.href = '/partners/';
+        } else if ($(this).val() == 'none') {
+          location.href = '/partners/managed_by/none';
+        } else {
+          location.href = '/partners/managed_by/' + $(this).val();
         }
       });
     });
