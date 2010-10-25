@@ -82,9 +82,9 @@ class StatzController < WebsiteController
       :intervals => intervals,
       :xLabels => appstats.x_labels,
       :main => {
-        :names => [ 'Paid installs', 'Paid clicks' ],
-        :data => [ appstats.stats['paid_installs'], appstats.stats['paid_clicks'] ],
-        :totals => [ appstats.stats['paid_installs'].sum, appstats.stats['paid_clicks'].sum ]
+        :names => [ 'Paid installs', 'Paid clicks', 'Jailbroken installs' ],
+        :data => [ appstats.stats['paid_installs'], appstats.stats['paid_clicks'], appstats.stats['jailbroken_installs'] ],
+        :totals => [ appstats.stats['paid_installs'].sum, appstats.stats['paid_clicks'].sum, appstats.stats['jailbroken_installs'].sum ]
       },
       :right => {
         :unitPrefix => '$',

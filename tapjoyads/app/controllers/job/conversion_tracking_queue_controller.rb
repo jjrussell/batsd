@@ -33,6 +33,16 @@ private
       raise "Click #{click.key} missing reward key!"
     end
     
+    wr_path = 'conversion'
+    offer = Offer.find_in_cache(click.offer_id)
+    device = Device.new(:key => click.udid)
+    if device.is_jailbroken && offer.is_paid? && offer.item_type == 'App' && click.type == 'install'
+      click.tapjoy_amount += click.advertiser_amount
+      click.advertiser_amount = 0
+      click.type = 'install_jailbroken'
+      wr_path += '_jailbroken'
+    end
+    
     reward = Reward.new(:key => click.reward_key)
     reward.put('type', click.type)
     reward.put('publisher_app_id', click.publisher_app_id)
@@ -63,7 +73,7 @@ private
     click.save
     
     web_request = WebRequest.new
-    web_request.add_path('conversion')
+    web_request.add_path(wr_path)
     web_request.put('udid', click.udid)
     web_request.put('advertiser_app_id', click.advertiser_app_id)
     web_request.put('publisher_app_id', click.publisher_app_id)

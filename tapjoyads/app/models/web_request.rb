@@ -28,6 +28,7 @@ class WebRequest < SimpledbResource
     'store_click' => 'paid_clicks',
     'offer_click' => 'paid_clicks',
     'conversion' => 'paid_installs',
+    'conversion_jailbroken' => 'jailbroken_installs',
     'daily_user' => 'daily_active_users',
     'monthly_user' => 'monthly_active_users',
     'purchased_vg' => 'vg_purchases',
@@ -35,12 +36,13 @@ class WebRequest < SimpledbResource
   }
   
   # Params that should use the offer_id, rather than the app_id for stat tracking.
-  USE_OFFER_ID = [ 'store_click', 'offer_click', 'conversion' ]
+  USE_OFFER_ID = [ 'store_click', 'offer_click', 'conversion', 'conversion_jailbroken' ]
   
   PUBLISHER_PATH_TO_STAT_MAP = {
     'store_click' => 'installs_opened',
     'offer_click' => 'offers_opened',
-    'conversion' => 'published_installs'
+    'conversion' => 'published_installs',
+    'conversion_jailbroken' => 'published_installs'
   }
   
   DISPLAYER_PATH_TO_STAT_MAP = {
@@ -48,7 +50,8 @@ class WebRequest < SimpledbResource
     'display_ad_shown' => 'display_ads_shown',
     'store_click' => 'display_clicks',
     'offer_click' => 'display_clicks',
-    'conversion' => 'display_conversions'
+    'conversion' => 'display_conversions',
+    'conversion_jailbroken' => 'display_conversions'
   }
   
   @@bad_domains = {}
