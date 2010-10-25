@@ -17,7 +17,6 @@ class Offer < ActiveRecord::Base
   
   attr_accessor :rank_score, :normal_conversion_rate, :normal_payment, :normal_price, :normal_show_rate, :normal_avg_revenue
   cattr_accessor :rank_weights
-  @@rank_weights = { :conversion_rate => 1, :payment => 1, :price => -1, :show_rate => 0.3, :avg_revenue => 5, :random => 1 }
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   
@@ -126,6 +125,11 @@ class Offer < ActiveRecord::Base
         bucket = S3.bucket(BucketNames::OFFER_DATA)
         Marshal.restore(bucket.get('enabled_offers.using_rank_score'))
       end
+    elsif exp == Experiments::EXPERIMENTS[:make_no_money]
+      Mc.get_and_put("s3.enabled_offers_#{rand(NUM_MEMCACHE_KEYS) * 123123}.make_no_money") do
+        bucket = S3.bucket(BucketNames::OFFER_DATA)
+        Marshal.restore(bucket.get('enabled_offers.make_no_money'))
+      end
     else
       get_enabled_offers
     end
@@ -156,6 +160,7 @@ class Offer < ActiveRecord::Base
     # cache the experimental offers too
     cache_enabled_offers_experiment_2
     cache_enabled_offers_experiment_3
+    cache_enabled_offers_experiment_4
   end
   
   def self.cache_enabled_offers_experiment_2
@@ -203,7 +208,7 @@ class Offer < ActiveRecord::Base
       offer.normal_price           = (offer.price - price_mean) / price_std_dev
       offer.normal_show_rate       = (offer.show_rate - show_rate_mean) / show_rate_std_dev
       offer.normal_avg_revenue     = (offer.avg_revenue - avg_revenue_mean) / avg_revenue_std_dev
-      offer.calculate_rank_score(@@rank_weights.dup)
+      offer.calculate_rank_score({ :conversion_rate => 1, :payment => 1, :price => -1, :show_rate => 0.3, :avg_revenue => 5, :random => 1 })
     end
     
     offer_list.sort! do |o1, o2|
@@ -214,6 +219,46 @@ class Offer < ActiveRecord::Base
     bucket.put('enabled_offers.using_rank_score', marshalled_offer_list)
     NUM_MEMCACHE_KEYS.times do |i|
       Mc.put("s3.enabled_offers_#{i * 123123}.using_rank_score", offer_list)
+    end
+  end
+  
+  def self.cache_enabled_offers_experiment_4
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
+    offer_list = Offer.enabled_offers.nonfeatured
+    
+    conversion_rates    = offer_list.collect(&:conversion_rate)
+    payments            = offer_list.collect(&:payment)
+    prices              = offer_list.collect(&:price)
+    show_rates          = offer_list.collect(&:show_rate)
+    avg_revenues        = offer_list.collect(&:avg_revenue)
+    cvr_mean            = conversion_rates.mean
+    cvr_std_dev         = conversion_rates.standard_deviation
+    payment_mean        = payments.mean
+    payment_std_dev     = payments.standard_deviation
+    price_mean          = prices.mean
+    price_std_dev       = prices.standard_deviation
+    show_rate_mean      = show_rates.mean
+    show_rate_std_dev   = show_rates.standard_deviation
+    avg_revenue_mean    = avg_revenues.mean
+    avg_revenue_std_dev = avg_revenues.standard_deviation
+    
+    offer_list.each do |offer|
+      offer.normal_conversion_rate = (offer.conversion_rate - cvr_mean) / cvr_std_dev
+      offer.normal_payment         = (offer.payment - payment_mean) / payment_std_dev
+      offer.normal_price           = (offer.price - price_mean) / price_std_dev
+      offer.normal_show_rate       = (offer.show_rate - show_rate_mean) / show_rate_std_dev
+      offer.normal_avg_revenue     = (offer.avg_revenue - avg_revenue_mean) / avg_revenue_std_dev
+      offer.calculate_rank_score({ :conversion_rate => -5, :random => 1 })
+    end
+    
+    offer_list.sort! do |o1, o2|
+      o2.rank_score <=> o1.rank_score
+    end
+    
+    marshalled_offer_list = Marshal.dump(offer_list)
+    bucket.put('enabled_offers.make_no_money', marshalled_offer_list)
+    NUM_MEMCACHE_KEYS.times do |i|
+      Mc.put("s3.enabled_offers_#{i * 123123}.make_no_money", offer_list)
     end
   end
   
