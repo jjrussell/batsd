@@ -6,7 +6,10 @@
 
 - unless current_user.role_symbols.include?(:agency)
   .right
-    = link_to 'Show only partners I manage', partners_path(:mine => true)
+    Managed by:
+    - options = options_from_collection_for_select(User.account_managers, "id", "email", params[:id])
+    = select_tag('managed_by', options_for_select(options))
+    -# partners_path(:mine => true)}
   - form_tag(partners_path, :method => :get, :class => 'tjform') do
     = label_tag(:q, "Name or Email Address:")
     = text_field_tag(:q, params[:q], :size => '40')
@@ -69,24 +72,20 @@
     table.tablesorter {
       border-collapse: separate;
     }
-    
     table.tablesorter th.up_arrow {
       background-position: 100% 50%;
       background-repeat: no-repeat;
       background-image: url(/stylesheets/themes/blue/asc.gif);
       background-color: #8DBDD8;
     }
-    
     .offer {
       display: inline-block;
       padding-right: 10px;
       padding-top: 5px;
     }
-    
     .nowrap {
       white-space: nowrap;
     }
-    
     .tjform input[type=submit] {
       margin: 0;
       float: none;
@@ -98,3 +97,10 @@
     .agency {
       color: red;
     }
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('#managed_by').change(function(){
+        location.href = '/partners/managed_by/' + $(this).val();
+      });
+    });

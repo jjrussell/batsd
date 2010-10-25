@@ -6,6 +6,7 @@ class PartnersController < WebsiteController
   filter_access_to :all
 
   before_filter :find_partner, :only => [ :show, :make_current, :manage, :update ]
+  before_filter :get_account_managers, :only => [ :index, :managed_by ]
 
   def index
     if current_user.role_symbols.include?(:agency)
@@ -13,13 +14,17 @@ class PartnersController < WebsiteController
     elsif params[:q]
       query = params[:q].gsub("'", '')
       @partners = Partner.search(query).scoped(:include => [ :offers, :users ]).paginate(:page => params[:page]).uniq
-    elsif params[:mine] == "true"
-      @partners = current_user.partners.scoped(:include => [ :offers, :users ]).paginate(:page => params[:page])
     else
       @partners = Partner.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
     end
   end
-  
+
+  def managed_by
+    user = User.find_by_id(params[:id], :include => [ :partners ])
+    @partners = user.partners.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
+    render 'index'
+  end
+
   def new
     @partner = Partner.new
   end
@@ -86,5 +91,8 @@ private
       redirect_to partners_path
     end
   end
-  
+
+  def get_account_managers
+    @account_managers = User.account_managers.map(&:email).sort.unshift(["All",""])
+  end
 end
