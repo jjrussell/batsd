@@ -63,20 +63,13 @@
 
 %h4 Partner
 = link_to('[Activity Log]', activities_path(:partner_id => @offer.partner_id))
-- form_tag(make_current_partner_path(@offer.partner), :style => 'display: inline;') do
-  = submit_tag('Act as Partner')
 %table.properties
   - if @offer.partner.users.first
     - property_row('Contact(s)', @offer.partner.users.map(&:email).join(', '))
   - property_row('Balance', number_to_currency(@offer.partner.balance / 100.0))
   - property_row('Pending Earnings', number_to_currency(@offer.partner.pending_earnings / 100.0))
   - property_row('id', link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - ' + clippy(@offer.partner.id))
-
-%h4 Account manager(s)
-- form_for @offer.partner do |f|
-  - options = options_from_collection_for_select(User.account_managers, "id", "email", @offer.partner.account_managers.map(&:id))
-  = f.select :account_managers, options, {}, {:multiple => true, :style => "height:200px;"}
-  = submit_tag "Update account managers"
+= render :partial => 'partners/tools', :locals => {:partner => @offer.partner}
 
 - if @offer.item_type == 'App' && @offer.item.currency
   %h4 Currency - #{@offer.item.currency.name}

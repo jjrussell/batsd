@@ -7,6 +7,7 @@ class PartnersController < WebsiteController
 
   before_filter :find_partner, :only => [ :show, :make_current, :manage, :update ]
   before_filter :get_account_managers, :only => [ :index, :managed_by ]
+  after_filter :save_activity_logs, :only => [ :update ]
 
   def index
     if current_user.role_symbols.include?(:agency)
@@ -51,13 +52,15 @@ class PartnersController < WebsiteController
   end
 
   def update
-    users = User.find_all_by_id(params[:partner][:account_managers])
-    @partner.account_managers = users
-    if @partner.save
+    params[:partner][:account_managers] = User.find_all_by_id(params[:partner][:account_managers])
+
+    safe_attributes = [ :account_managers, :account_manager_notes ]
+    if @partner.safe_update_attributes(params[:partner], safe_attributes)
       flash[:notice] = 'Partner was successfully updated.'
     else
       flash[:error] = 'Partner update unsuccessful.'
     end
+
     redirect_to :back
   end
 
@@ -89,13 +92,15 @@ class PartnersController < WebsiteController
   end
 
 private
-  
+
   def find_partner
     @partner = Partner.find_by_id(params[:id])
     if @partner.nil?
       flash[:error] = "Could not find partner with ID: #{params[:id]}"
       redirect_to partners_path
     end
+
+    log_activity(@partner)
   end
 
   def get_account_managers

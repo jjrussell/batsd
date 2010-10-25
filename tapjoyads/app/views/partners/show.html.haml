@@ -1,16 +1,8 @@
 - @page_title = 'Partner'
 
-%h1 Partner tools
-- if current_partner == @partner
-  = submit_tag('Acting as this Partner', :disabled => true)
-- else
-  - form_tag(make_current_partner_path(@partner)) do
-    = submit_tag('Act as this Partner')
-
-- form_for @partner do |f|
-  - options = options_from_collection_for_select(User.account_managers, "id", "email", @partner.account_managers.map(&:id))
-  = f.select :account_managers, options, {}, {:multiple => true, :style => "height:200px;"}
-  = submit_tag "Update account managers"
+.box.right
+  %h1 Partner tools
+  = render :partial => 'tools', :locals => {:partner => @partner}
 
 %h1 Partner data
 .metadata Name: #{@partner.name}
@@ -21,6 +13,8 @@
 .metadata Pending Earnings: #{number_to_currency(@partner.pending_earnings / 100.0)}
 .metadata Payout Frequency: #{@partner.payout_frequency}
 .metadata Created: #{@partner.created_at.to_s(:db)}
+
+.clear
 
 %table#apps_table.tablesorter
   %thead
@@ -70,13 +64,14 @@
     table.tablesorter {
       border-collapse: separate;
     }
-    
-    th, 
+    th,
     td,
     .icon img {
       border: 0;
     }
-    
     form {
       padding-bottom: 20px;
+    }
+    .box {
+      width: 45%;
     }

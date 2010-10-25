@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101018233437) do
+ActiveRecord::Schema.define(:version => 20101025200149) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -255,6 +255,7 @@ ActiveRecord::Schema.define(:version => 20101018233437) do
     t.integer  "calculated_publisher_tier"
     t.integer  "custom_advertiser_tier"
     t.integer  "custom_publisher_tier"
+    t.text     "account_manager_notes"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
