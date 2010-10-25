@@ -79,8 +79,7 @@ class OneOffs
     file = File.open(filename, 'w')
     partners = {}
     count = 0
-    currencies = [Currency.find_by_app_id('4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424')]
-    #Currency.find_each do |c|
+    Currency.find_each do |c|
     currencies.each do |c|
       (4..10).each do |month|
         month_start = Time.utc(2010,month,01)
@@ -95,7 +94,7 @@ class OneOffs
     end
     partners.keys.each do |p|
       name = Partner.find(p).name
-      partners[p].keys.each do |m|
+      partners[p].keys.sort.each do |m|
         file.puts "#{m}, partner, #{p}, #{name}, #{partners[p][m]}"
       end
     end
