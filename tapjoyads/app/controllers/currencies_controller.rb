@@ -19,7 +19,7 @@ class CurrenciesController < WebsiteController
     
     safe_attributes = [:name, :conversion_rate, :initial_balance, :callback_url, :secret_key, :test_devices]
     if permitted_to?(:index, :statz)
-      safe_attributes += [:disabled_offers, :disabled_partners, :max_age_rating, :only_free_offers, :offers_money_share, :installs_money_share]
+      safe_attributes += [:disabled_offers, :disabled_partners, :max_age_rating, :only_free_offers, :installs_money_share]
     end
     
     if @currency.safe_update_attributes(params[:currency], safe_attributes)

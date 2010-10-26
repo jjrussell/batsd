@@ -86,35 +86,13 @@ class Offer < ActiveRecord::Base
   before_destroy :clear_memcached
   
   named_scope :enabled_offers, :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND ((partners.balance > 0 AND item_type IN ('App', 'EmailOffer', 'GenericOffer')) OR item_type = 'RatingOffer')"
-  named_scope :classic_offers, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type = 'OfferpalOffer'"
   named_scope :by_ordinal, :order => 'ordinal ASC'
   named_scope :featured, :conditions => { :featured => true }
   named_scope :nonfeatured, :conditions => { :featured => false }
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :to_aggregate_stats, lambda { { :conditions => ["next_stats_aggregation_time < ?", Time.zone.now], :order => "next_stats_aggregation_time ASC" } }
   
-  def self.get_enabled_offers
-    Mc.get_and_put("s3.enabled_offers_#{rand(NUM_MEMCACHE_KEYS) * 123123}") do
-      bucket = S3.bucket(BucketNames::OFFER_DATA)
-      Marshal.restore(bucket.get('enabled_offers'))
-    end
-  end
-  
-  def self.get_classic_offers
-    Mc.get_and_put('s3.classic_offers') do
-      bucket = S3.bucket(BucketNames::OFFER_DATA)
-      Marshal.restore(bucket.get('classic_offers'))
-    end
-  end
-  
-  def self.get_featured_offers
-    Mc.get_and_put('s3.featured_offers') do
-      bucket = S3.bucket(BucketNames::OFFER_DATA)
-      Marshal.restore(bucket.get('featured_offers'))
-    end
-  end
-  
-  def self.get_enabled_offers_experimental(exp)
+  def self.get_enabled_offers(exp = nil)
     if exp == Experiments::EXPERIMENTS[:rank_without_ordinal]
       Mc.get_and_put("s3.enabled_offers_#{rand(NUM_MEMCACHE_KEYS) * 123123}.rank_without_ordinal") do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
@@ -126,7 +104,17 @@ class Offer < ActiveRecord::Base
         Marshal.restore(bucket.get('enabled_offers.using_rank_score'))
       end
     else
-      get_enabled_offers
+      Mc.get_and_put("s3.enabled_offers_#{rand(NUM_MEMCACHE_KEYS) * 123123}") do
+        bucket = S3.bucket(BucketNames::OFFER_DATA)
+        Marshal.restore(bucket.get('enabled_offers'))
+      end
+    end
+  end
+  
+  def self.get_featured_offers
+    Mc.get_and_put('s3.featured_offers') do
+      bucket = S3.bucket(BucketNames::OFFER_DATA)
+      Marshal.restore(bucket.get('featured_offers'))
     end
   end
   
@@ -153,11 +141,11 @@ class Offer < ActiveRecord::Base
     end
     
     # cache the experimental offers too
-    cache_enabled_offers_experiment_2
-    cache_enabled_offers_experiment_3
+    cache_enabled_offers_rank_without_ordinal
+    cache_enabled_offers_using_rank_score
   end
   
-  def self.cache_enabled_offers_experiment_2
+  def self.cache_enabled_offers_rank_without_ordinal
     bucket = S3.bucket(BucketNames::OFFER_DATA)
     offer_list = Offer.enabled_offers.nonfeatured
     
@@ -176,7 +164,7 @@ class Offer < ActiveRecord::Base
     end
   end
   
-  def self.cache_enabled_offers_experiment_3
+  def self.cache_enabled_offers_using_rank_score
     bucket = S3.bucket(BucketNames::OFFER_DATA)
     offer_list = Offer.enabled_offers.nonfeatured
     
@@ -214,14 +202,6 @@ class Offer < ActiveRecord::Base
     NUM_MEMCACHE_KEYS.times do |i|
       Mc.put("s3.enabled_offers_#{i * 123123}.using_rank_score", offer_list)
     end
-  end
-  
-  def self.cache_classic_offers
-    bucket = S3.bucket(BucketNames::OFFER_DATA)
-    offer_list = Offer.classic_offers.by_ordinal
-    marshalled_offer_list = Marshal.dump(offer_list)
-    bucket.put('classic_offers', marshalled_offer_list)
-    Mc.put('s3.classic_offers', offer_list)
   end
   
   def self.cache_featured_offers
@@ -302,8 +282,6 @@ class Offer < ActiveRecord::Base
       else
         final_url = "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&type=10&tmpid=3909&RD_PARM1=#{CGI::escape(final_url)}"
       end
-    elsif item_type == 'OfferpalOffer'
-      raise "destination_url requested for an offer that should not be enabled. offer_id: #{id}"
     elsif item_type == 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
     elsif item_type == 'GenericOffer'

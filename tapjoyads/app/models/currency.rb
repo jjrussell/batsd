@@ -11,7 +11,7 @@ class Currency < ActiveRecord::Base
   
   validates_presence_of :app, :partner, :name
   validates_numericality_of :conversion_rate, :initial_balance, :only_integer => true, :greater_than_or_equal_to => 0
-  validates_numericality_of :offers_money_share, :installs_money_share, :greater_than_or_equal_to => 0
+  validates_numericality_of :installs_money_share, :greater_than_or_equal_to => 0
   validates_numericality_of :max_age_rating, :allow_nil => true, :only_integer => true
   validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :in => [ true, false ]
   validates_each :callback_url do |record, attribute, value|
@@ -42,9 +42,7 @@ class Currency < ActiveRecord::Base
   end
   
   def get_reward_amount(offer)
-    if offer.item_type == 'RatingOffer'
-      publisher_amount = offer.payment * offers_money_share
-    elsif offer.partner_id == partner_id
+    if offer.item_type == 'RatingOffer' || offer.partner_id == partner_id
       publisher_amount = offer.payment
     else
       publisher_amount = get_publisher_amount(offer)
@@ -55,8 +53,6 @@ class Currency < ActiveRecord::Base
   def get_publisher_amount(offer, displayer_app = nil)
     if offer.item_type == 'RatingOffer' || offer.partner_id == partner_id
       publisher_amount = 0
-    elsif offer.item_type == 'OfferpalOffer'
-      publisher_amount = offer.payment * offers_money_share
     else
       publisher_amount = offer.payment * installs_money_share
     end

@@ -75,12 +75,6 @@ private
   def setup
     return unless verify_params([ :app_id, :udid, :publisher_user_id ], { :allow_empty => false })
     
-    if params[:type] == Offer::CLASSIC_OFFER_TYPE
-       publisher_user_record = PublisherUserRecord.new(:key => "#{params[:app_id]}.#{params[:publisher_user_id]}")
-       publisher_user_record.update(params[:udid])
-       params[:exp] = nil
-    end
-    
     @now = Time.zone.now
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 25).to_i
@@ -96,6 +90,7 @@ private
     end
     
     params[:source] = 'offerwall' if params[:source].blank?
+    params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
     web_request = WebRequest.new(:time => @now)
     web_request.put_values('offers', params, get_ip_address, get_geoip_data)
     web_request.put('viewed_at', @now.to_f.to_s)

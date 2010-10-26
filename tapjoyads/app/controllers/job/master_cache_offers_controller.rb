@@ -14,7 +14,6 @@ class Job::MasterCacheOffersController < Job::JobController
     S3.reset_connection
     
     Offer.cache_enabled_offers
-    Offer.cache_classic_offers
     Offer.cache_featured_offers
     
     render :text => 'ok'

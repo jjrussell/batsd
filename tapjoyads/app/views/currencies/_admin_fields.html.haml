@@ -33,13 +33,6 @@
   %td
     = f.text_field :installs_money_share
     = error_message_on(@currency, :installs_money_share) if @currency.errors.on :installs_money_share
-%tr.admin
-  %th
-    = f.label :offers_money_share, 'Offers money share'
-    #help_offers_money_share.help ?
-  %td
-    = f.text_field :offers_money_share
-    = error_message_on(@currency, :offers_money_share) if @currency.errors.on :offers_money_share
     
 -content_for :extra_help do
   #help_disabled_offers_content{:name => 'Disabled offers'}
@@ -59,8 +52,6 @@
     If true, only free offers will be shown in this app's offerwall.
   #help_installs_money_share_content{:name => 'Installs money share'}
     The percent share of app install offer revenue that this publisher gets.
-  #help_offers_money_share_content{:name => 'Offers money share'}
-    The percent share of offerpal offer revenue that this publisher gets.
     
 - content_for :page_styles do
   :plain

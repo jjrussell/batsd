@@ -11,35 +11,12 @@ class CurrencyTest < ActiveSupport::TestCase
   should validate_presence_of(:name)
   should validate_numericality_of(:conversion_rate)
   should validate_numericality_of(:initial_balance)
-  should validate_numericality_of(:offers_money_share)
   should validate_numericality_of(:installs_money_share)
   should validate_numericality_of(:max_age_rating)
   
   context "A Currency" do
     setup do
       @currency = Factory(:currency)
-    end
-    
-    context "when dealing with an OfferpalOffer" do
-      setup do
-        @offer = Factory(:offerpal_offer).primary_offer
-      end
-      
-      should "calculate the publisher amount" do
-        assert_equal 85, @currency.get_publisher_amount(@offer)
-      end
-      
-      should "calculate the advertiser amount" do
-        assert_equal -100, @currency.get_advertiser_amount(@offer)
-      end
-      
-      should "calculate the tapjoy amount" do
-        assert_equal 15, @currency.get_tapjoy_amount(@offer)
-      end
-      
-      should "calculate the reward amount" do
-        assert_equal 85, @currency.get_reward_amount(@offer)
-      end
     end
     
     context "when dealing with a RatingOffer" do
@@ -60,7 +37,7 @@ class CurrencyTest < ActiveSupport::TestCase
       end
       
       should "calculate reward amounts" do
-        assert_equal 12, @currency.get_reward_amount(@offer)
+        assert_equal 15, @currency.get_reward_amount(@offer)
       end
     end
     
@@ -94,7 +71,7 @@ class CurrencyTest < ActiveSupport::TestCase
       end
       
       should "calculate publisher amounts" do
-        assert_equal 17, @currency.get_publisher_amount(@offer)
+        assert_equal 12, @currency.get_publisher_amount(@offer)
       end
       
       should "calculate advertiser amounts" do
@@ -102,11 +79,11 @@ class CurrencyTest < ActiveSupport::TestCase
       end
       
       should "calculate tapjoy amounts" do
-        assert_equal 8, @currency.get_tapjoy_amount(@offer)
+        assert_equal 13, @currency.get_tapjoy_amount(@offer)
       end
       
       should "calculate reward amounts" do
-        assert_equal 17, @currency.get_reward_amount(@offer)
+        assert_equal 12, @currency.get_reward_amount(@offer)
       end
     end
     
@@ -118,7 +95,7 @@ class CurrencyTest < ActiveSupport::TestCase
       end
       
       should "calculate publisher amounts" do
-        assert_equal 8, @currency.get_publisher_amount(@offer, @displayer_app)
+        assert_equal 6, @currency.get_publisher_amount(@offer, @displayer_app)
       end
       
       should "calculate advertiser amounts" do
@@ -126,11 +103,11 @@ class CurrencyTest < ActiveSupport::TestCase
       end
       
       should "calculate tapjoy amounts" do
-        assert_equal 7, @currency.get_tapjoy_amount(@offer, @displayer_app)
+        assert_equal 9, @currency.get_tapjoy_amount(@offer, @displayer_app)
       end
       
       should "calculate reward amounts" do
-        assert_equal 17, @currency.get_reward_amount(@offer)
+        assert_equal 12, @currency.get_reward_amount(@offer)
       end
       
       should "calculate displayer amounts" do

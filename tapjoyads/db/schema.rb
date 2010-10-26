@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101026085215) do
+ActiveRecord::Schema.define(:version => 20101026203044) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -69,7 +69,6 @@ ActiveRecord::Schema.define(:version => 20101026085215) do
     t.boolean  "send_offer_data",                                                  :default => false, :null => false
     t.string   "secret_key"
     t.string   "callback_url"
-    t.decimal  "offers_money_share",                 :precision => 8, :scale => 6, :default => 0.85,  :null => false
     t.decimal  "installs_money_share",               :precision => 8, :scale => 6, :default => 0.5,   :null => false
     t.text     "disabled_offers",                                                                     :null => false
     t.text     "test_devices",                                                                        :null => false

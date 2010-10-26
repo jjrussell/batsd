@@ -56,23 +56,12 @@ private
       
       mark = '?'
       mark = '&' if callback_url =~ /\?/
-      callback_url = "#{callback_url}#{mark}snuid=#{CGI::escape(publisher_user_id)}&currency=#{reward.currency_reward}"
+      callback_url += "#{mark}snuid=#{CGI::escape(publisher_user_id)}&currency=#{reward.currency_reward}"
       
       if currency.send_offer_data?
-        if reward.type == 'offer'
-          if reward.get('cached_offer_id')
-            offerpal_offer = OfferpalOffer.find_by_offerpal_id(reward.get('cached_offer_id'))
-            name = offerpal_offer.name
-          else
-            name = 'UNKNOWN'
-          end
-        else
-          offer = Offer.find_in_cache(reward.offer_id)
-          name = offer.name
-          callback_url += "&storeId=#{CGI::escape(offer.third_party_data)}" if offer.item_type == 'App' && offer.third_party_data?
-        end
-        callback_url = "#{callback_url}&application=#{CGI::escape(name)}"
-        
+        offer = Offer.find_in_cache(reward.offer_id)
+        callback_url += "&storeId=#{CGI::escape(offer.third_party_data)}" if offer.item_type == 'App' && offer.third_party_data?
+        callback_url += "&application=#{CGI::escape(offer.name)}"
         publisher_revenue = reward.publisher_amount / 100.0
         callback_url += "&rev=#{publisher_revenue}"
       end
@@ -80,10 +69,10 @@ private
       unless currency.secret_key.blank?
         hash_source = "#{reward.key}:#{publisher_user_id}:#{reward.currency_reward}:#{currency.secret_key}"
         hash = Digest::MD5.hexdigest(hash_source)
-        callback_url = "#{callback_url}&id=#{reward.key}&verifier=#{hash}"
+        callback_url += "&id=#{reward.key}&verifier=#{hash}"
       end
       
-      reward.put('sent_currency', Time.now.utc.to_f.to_s)
+      reward.sent_currency = Time.zone.now
       reward.save
       
       reward.update_counters
