@@ -8,7 +8,7 @@
     #{@currency.name}!
   %p.offertext
     Just download and run
-  %a{ :href => click_url }
+  %a{ :href => click_url, :class => 'image-link' }
     %img{ :src => 'http://s3.amazonaws.com/app_data/icons/blank.png', :s => @offer.get_medium_icon_url, :class => 'icon', :id => 'icon' }
     .offername
       #{@offer.name}
@@ -60,7 +60,7 @@
     body {
       margin: 0;
     }
-  
+    
     #main {
       font-size: 20px;
       text-align: center;
@@ -78,11 +78,15 @@
       color: #004E09;
     }
     
+    .image-link {
+      text-decoration: none;
+      display: inline-block;
+    }
+    
     .offername {
       font-weight: bold;
       color: #008810;
       margin-bottom: 20px;
-      text-decoration: none;
     }
     
     img.icon {
