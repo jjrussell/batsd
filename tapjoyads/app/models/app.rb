@@ -108,7 +108,7 @@ class App < ActiveRecord::Base
       bucket = S3.bucket(BucketNames::APP_DATA)
       bucket.put("icons/#{id}.png", icon, {}, "public-read")
       bucket.put("icons/large/#{id}.png", large_icon, {}, "public-read")
-      bucket.put("icons/medium/#{id}.png", medium_icon, {}, "public-read")
+      bucket.put("icons/medium/#{id}.jpg", medium_icon, {}, "public-read")
       
       Mc.delete("icon.s3.#{id}")
     rescue
