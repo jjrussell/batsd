@@ -14,7 +14,7 @@ xml.TapjoyConnectReturnObject do
         xml.CachedOfferID offer.id
         xml.PublisherUserRecordID params[:publisher_user_id]
         xml.Type '0'
-        xml.EmailURL offer.get_email_url(params[:publisher_user_id], @publisher_app, params[:udid])
+        xml.EmailURL 'https://www.tapjoy.com'
       end
     end
     

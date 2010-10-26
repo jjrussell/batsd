@@ -114,13 +114,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'service1.asmx/:action', :controller => 'service1'
   map.connect 'Service1.asmx/:action', :controller => 'service1'
   
-  # OFFERS TODO
-  # Route GetOffersForPublsherCurrencyByType to get_offers
-  # Route SubmitOfferClick to submit_click/offer
-  
-  map.connect 'ReceiveOffersService.asmx/ReceiveOffer', :controller => 'receive_offer', :action => 'receive_offer'
-  map.connect 'ReceiveOffersService.asmx/ReceiveOfferCS', :controller => 'receive_offer', :action => 'receive_offer_cs'
-  
   # Generic windows redirectors. These will be transitions over to ruby controllers as
   # functionality is moved off of windows.
   map.connect 'TapDefenseCurrencyService.asmx/:action', :controller => 'win_redirector'

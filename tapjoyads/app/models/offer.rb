@@ -333,15 +333,6 @@ class Offer < ActiveRecord::Base
     "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/medium/#{item_id}.jpg"
   end
   
-  def get_email_url(publisher_user_id, publisher_app, udid)
-    "http://www.tapjoyconnect.com/complete_offer" +
-        "?offerid=#{CGI::escape(id)}" +
-        "&udid=#{udid}" +
-        "&publisher_user_id=#{publisher_user_id}" +
-        "&app_id=#{publisher_app.id}" +
-        "&url=#{CGI::escape(CGI::escape(get_destination_url(udid, publisher_app.id)))}"
-  end
-  
   def get_countries
     Set.new(countries.blank? ? nil : JSON.parse(countries))
   end
