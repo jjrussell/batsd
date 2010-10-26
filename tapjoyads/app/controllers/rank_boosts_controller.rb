@@ -20,7 +20,7 @@ class RankBoostsController < WebsiteController
   def create
     @rank_boost = RankBoost.new(params[:rank_boost])
     if @rank_boost.save
-      flash[:success] = 'Rank Boost created.'
+      flash[:notice] = 'Rank Boost created.'
       redirect_to rank_boosts_path and return
     else
       render :new
@@ -33,7 +33,7 @@ class RankBoostsController < WebsiteController
   
   def update
     if @rank_boost.update_attributes(params[:rank_boost])
-      flash[:success] = 'Rank Boost updated.'
+      flash[:notice] = 'Rank Boost updated.'
       redirect_to rank_boosts_path and return
     else
       render :edit
@@ -42,6 +42,7 @@ class RankBoostsController < WebsiteController
   
   def destroy
     @rank_boost.destroy
+    flash[:notice] = 'Rank Boost destroyed.'
     redirect_to rank_boosts_path and return
   end
   
