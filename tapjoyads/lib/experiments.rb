@@ -1,9 +1,9 @@
 class Experiments
   EXPERIMENTS = {
-    :control => '0',
-    :no_change => '1',
-    :rank_without_ordinal => '2',
-    :using_rank_score => '3'
+    :control => '10',
+    :less_random => '11',
+    :more_random => '12',
+    :no_random => '13'
   }
   
   def self.choose(udid)
@@ -12,11 +12,11 @@ class Experiments
       udid_hash = udid.hash % 100
       
       if udid_hash < 10
-        EXPERIMENTS[:no_change]
+        EXPERIMENTS[:no_random]
       elsif udid_hash < 20
-        EXPERIMENTS[:using_rank_score]
-      elsif [ 'ade749ccc744336ad81cbcdbf36a5720778c6f13', 'b4c86b4530a0ee889765a166d80492b46f7f3636' ].include?(udid)
-        EXPERIMENTS[:using_rank_score]
+        EXPERIMENTS[:less_random]
+      elsif udid_hash < 30
+        EXPERIMENTS[:more_random]
       else
         EXPERIMENTS[:control]
       end

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101026203044) do
+ActiveRecord::Schema.define(:version => 20101026230419) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -169,7 +169,6 @@ ActiveRecord::Schema.define(:version => 20101026203044) do
     t.integer  "actual_payment"
     t.integer  "daily_budget",                                                                  :default => 0,     :null => false
     t.integer  "overall_budget",                                                                :default => 0,     :null => false
-    t.integer  "ordinal",                                                                       :default => 500,   :null => false
     t.text     "countries",                                                                                        :null => false
     t.text     "cities",                                                                                           :null => false
     t.text     "postal_codes",                                                                                     :null => false
@@ -207,7 +206,6 @@ ActiveRecord::Schema.define(:version => 20101026203044) do
   add_index "offers", ["item_id"], :name => "index_offers_on_item_id"
   add_index "offers", ["item_type", "item_id"], :name => "index_offers_on_item_type_and_item_id"
   add_index "offers", ["name"], :name => "index_offers_on_name"
-  add_index "offers", ["ordinal"], :name => "index_offers_on_ordinal"
   add_index "offers", ["partner_id"], :name => "index_offers_on_partner_id"
   add_index "offers", ["user_enabled", "tapjoy_enabled"], :name => "index_offers_on_user_enabled_and_tapjoy_enabled"
 

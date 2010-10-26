@@ -44,13 +44,6 @@
     = error_message_on @offer, :name_suffix
 %tr.admin
   %th
-    = f.label(:ordinal)
-    #help_ordinal.help ?
-  %td
-    = f.text_field(:ordinal)
-    = error_message_on @offer, :ordinal
-%tr.admin
-  %th
     = f.label(:show_rate)
     #help_show_rate.help ?
   %td
@@ -130,7 +123,6 @@
   #help_featured_content{ :name => 'Featured' } Enables this offer in our featured offers feed.
   #help_min_payment_content{ :name => 'Min Payment' } The minimum payment that the publisher is allowed to set their payment to.
   #help_internal_suffix_content{ :name => 'Internal Suffix' } Internal identifier for offers. i.e. 'featured' or 'us only'
-  #help_ordinal_content{ :name => 'Ordinal' } The position of this offer on the offerwall. Default is 500.
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.
   #help_min_conversion_rate_content{ :name => 'Min CVR' } This is used to prevent low conversion rate warnings. A warning will only be issued if the conversion rate falls below this threshold. Allowed values are blank or 0.0 - 1.0
   #help_countries_content{ :name => 'Countries' } Targets this offer to these countries. Must be an array of 2-character country codes or blank for no targeting. i.e. ["US", "GB"]

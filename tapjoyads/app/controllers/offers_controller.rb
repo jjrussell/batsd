@@ -29,7 +29,7 @@ class OffersController < WebsiteController
     if permitted_to?(:index, :statz)
       offer_params[:device_types] = offer_params[:device_types].blank? ? '[]' : offer_params[:device_types].to_json
       safe_attributes += [:tapjoy_enabled, :self_promote_only, :allow_negative_balance, :pay_per_click,
-          :featured, :min_payment, :name_suffix, :ordinal, :show_rate, :min_conversion_rate, :countries,
+          :featured, :min_payment, :name_suffix, :show_rate, :min_conversion_rate, :countries,
           :cities, :postal_codes, :device_types, :publisher_app_whitelist, :overall_budget]
     end
 

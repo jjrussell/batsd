@@ -37,7 +37,6 @@
       %th CVR
       %th Published installs
       %th Installs revenue
-      %th Ordinal
       %th Featured
   %tbody#apps_tbody
     - @cached_stats.each do |offer_id, stats|
@@ -54,7 +53,6 @@
         %td= stats['conversion_rate']
         %td= stats['published_installs']
         %td= stats['installs_revenue']
-        %td= stats['ordinal']
         %td= stats['featured']
       
 - content_for :page_javascript do
