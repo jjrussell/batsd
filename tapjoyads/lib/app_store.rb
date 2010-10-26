@@ -20,7 +20,7 @@ class AppStore
     if platform == 'android'
       return self.search_android_marketplace(term)
     else
-      return self.search_apple_app_store(term, country)
+      return self.search_apple_app_store(term.gsub(/\s/, '+'), country)
     end
   end
 
