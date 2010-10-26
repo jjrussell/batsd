@@ -1,4 +1,6 @@
 class SearchController < WebsiteController
+
+  filter_access_to :all
   
   def offers
     results = Offer.find(:all,

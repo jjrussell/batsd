@@ -28,11 +28,13 @@ authorization do
   role :executive do
     includes :tools
     has_permission_on :tools, :to => [ :money ]
-    has_permission_on :statz, :to => [ :index, :show, :search ]
+    has_permission_on :statz, :to => [ :index, :show ]
+    has_permission_on :search, :to => [ :offers  ]
   end
   
   role :statz do
-    has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :search, :last_run_times, :udids ]
+    has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids ]
+    has_permission_on :search, :to => [ :offers ]
     has_permission_on :tools, :to => [ :disabled_popular_offers ]
     has_permission_on :activities, :to => [ :index ]
     has_permission_on :partners, :to => [ :index, :show, :make_current, :manage, :stop_managing ]
