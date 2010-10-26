@@ -1,3 +1,5 @@
+- click_url = @offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], params[:source], params[:app_version], @viewed_at, nil, params[:exp])
+
 #main
   %h1
     Earn 
@@ -6,12 +8,13 @@
     #{@currency.name}!
   %p.offertext
     Just download and run
-  %img{ :src => 'http://s3.amazonaws.com/app_data/icons/blank.png', :s => @offer.get_large_icon_url, :class => 'icon', :id => 'icon' }
-  .offername
-    #{@offer.name}
+  %a{ :href => click_url }
+    %img{ :src => 'http://s3.amazonaws.com/app_data/icons/blank.png', :s => @offer.get_large_icon_url, :class => 'icon', :id => 'icon' }
+    .offername
+      #{@offer.name}
   .clear
   %a{ :class => 'skip', :href => 'dismiss' } Skip
-  %a{ :class => 'download', :href => @offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], params[:source], params[:app_version], @viewed_at, nil, params[:exp]) }
+  %a{ :class => 'download', :href => click_url }
     Download
   .showOffers
     %a{ :href => 'showOffers' } Show more apps
@@ -35,10 +38,10 @@
       
       if (document.documentElement.clientHeight < 480) {
         icon.setAttribute('style', 'width: 96px; height: 96px;');
-        main.setAttribute('style', 'min-height: 295px;');
+        main.setAttribute('style', 'min-height: 294px;');
       } else {
         icon.setAttribute('style', 'width: 256px; height: 256px;');
-        main.setAttribute('style', 'min-height: 455px;');
+        main.setAttribute('style', 'min-height: 454px;');
       }
     }
 
@@ -54,12 +57,17 @@
       margin: 10px 0;
     }
   
+    body {
+      margin: 0;
+    }
+  
     #main {
       font-size: 20px;
       text-align: center;
       height: 100%;
-      min-height: 455px;
+      min-height: 454px;
       position: relative;
+      margin: 8px;
     }
     
     .amount {
