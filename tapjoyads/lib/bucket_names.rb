@@ -6,6 +6,7 @@ class BucketNames
   FAILED_SQS_WRITES     = RUN_MODE_PREFIX + 'failed-sqs-writes'
   OFFER_DATA            = RUN_MODE_PREFIX + 'offer-data'
   PUBLISHER_ADS         = RUN_MODE_PREFIX + 'publisher-ads'
+  SDB_BACKUPS           = RUN_MODE_PREFIX + 'sdb-backups'
   STORE_CLICKS          = RUN_MODE_PREFIX + 'store-clicks'
   TAPJOY                = RUN_MODE_PREFIX + 'tapjoy'
   VIRTUAL_GOODS         = RUN_MODE_PREFIX + 'virtual_goods'
