@@ -26,8 +26,10 @@ class TapjoyMailer < ActionMailer::Base
   def low_conversion_rate_warning(error, params)
     from "admin@tapjoy.com"
     partner = Partner.find_by_id(params[:partner_id], :include => [ :users ])
-    account_managers = partner.account_managers.map(&:email).join(', ')
-    account_managers = "dev@tapjoy.com, adops@tapjoy.com" if account_managers.blank?
+    account_managers = partner.account_managers.map(&:email)
+    account_managers << "adops@tapjoy.com" if account_managers.blank?
+    account_managers << "dev@tapjoy.com"
+    account_managers = account_managers.join(', ')
     reply_to account_managers
     recipients account_managers
     subject "Low Conversion Rate Warning!"
