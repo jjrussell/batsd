@@ -103,9 +103,13 @@ class App < ActiveRecord::Base
     begin
       icon = Downloader.get(url, :timeout => 30)
       large_icon = Downloader.get(large_url, :timeout => 30)
+      medium_icon = Magick::Image.from_blob(large_icon)[0].resize(256, 256).to_blob{|i| i.format = 'JPG'}
+      
       bucket = S3.bucket(BucketNames::APP_DATA)
       bucket.put("icons/#{id}.png", icon, {}, "public-read")
       bucket.put("icons/large/#{id}.png", large_icon, {}, "public-read")
+      bucket.put("icons/medium/#{id}.png", medium_icon, {}, "public-read")
+      
       Mc.delete("icon.s3.#{id}")
     rescue
       Rails.logger.info "Failed to download icon for url: #{url}"

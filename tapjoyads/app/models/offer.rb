@@ -329,6 +329,10 @@ class Offer < ActiveRecord::Base
     "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/large/#{item_id}.png"
   end
   
+  def get_medium_icon_url(protocol = 'http://')
+    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/medium/#{item_id}.png"
+  end
+  
   def get_email_url(publisher_user_id, publisher_app, udid)
     "http://www.tapjoyconnect.com/complete_offer" +
         "?offerid=#{CGI::escape(id)}" +
