@@ -284,22 +284,6 @@ class StatzController < WebsiteController
     end
   end
   
-  def search
-    results = Offer.find(:all,
-      :conditions => [ "name LIKE ?", "%#{params[:term]}%" ],
-      :order => 'hidden ASC, name ASC',
-      :limit => 10,
-      :include => :partner
-    ).collect do |o|
-      label_string = o.name_with_suffix
-      label_string += " (active)" if o.is_enabled?
-      label_string += " (hidden)" if o.hidden?
-      { :label => label_string, :url => statz_path(o) }
-    end
-    
-    render(:json => results.to_json)
-  end
-  
 private
   
   def find_offer
