@@ -16,14 +16,14 @@ class JailbrokenInstall < RuntimeError; end
 
 # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
 class EmailWorthyError < RuntimeError
-  def deliver_email
+  def deliver_email(params={})
     TapjoyMailer.deliver_newrelic_alert(self)
   end
 end
 class BalancesMismatch < EmailWorthyError; end
 class ConversionRateTooLowError < EmailWorthyError
-  def deliver_email
-    TapjoyMailer.deliver_low_conversion_rate_warning(self)
+  def deliver_email(params={})
+    TapjoyMailer.deliver_low_conversion_rate_warning(self, params)
   end
 end
 
@@ -40,7 +40,7 @@ class Notifier
       NewRelic::Agent.agent.error_collector.notice_error(e, request, action, params)
       
       if e.kind_of?(EmailWorthyError)
-        e.deliver_email
+        e.deliver_email(params)
       end
     end
   end
