@@ -1,0 +1,61 @@
+- @page_title = 'Rank Boosts'
+
+%h1 Offer Rank Boosts
+
+View: 
+- form_tag('', :class => 'tjform', :method => :get, :id => "filter-form") do
+  = select_tag "filter", options_for_select([ "All", "Active" ], params[:filter])
+
+%br
+%br
+  
+= link_to('New Rank Boost', new_rank_boost_path)
+
+%table#rank_boosts.tablesorter
+  %thead
+    %tr
+      %th Offer
+      %th Start Time
+      %th End Time
+      %th Amount
+      %th &nbsp;
+  %tbody
+    - if @rank_boosts.empty?
+      %tr
+        %td{ :colspan => 5 }= "No rank boosts to display."
+    - @rank_boosts.each do |rb|
+      %tr
+        %td= link_to_offer(rb.offer)
+        %td= rb.start_time.to_s :mdy_ampm
+        %td= rb.end_time.to_s :mdy_ampm
+        %td= rb.amount
+        %td
+          = link_to "Edit", edit_rank_boost_path(rb)
+          = link_to "Destroy", rank_boost_path(rb), :method => :delete, :confirm => 'Are you sure?'
+          
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('#filter').change(function() {
+        $('#filter-form').submit()
+      })
+      
+      $.tablesorter.addParser({
+        id: 'date-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return new Date(s).getTime();
+        }
+      });
+      
+      $("#rank_boosts").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          1: { sorter: 'date-column' },
+          2: { sorter: 'date-column' },
+          4: { sorter: false }
+        },
+        sortList: [ [2, 1] ]
+      });
+    })

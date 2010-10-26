@@ -19,6 +19,7 @@ class Offer < ActiveRecord::Base
   cattr_accessor :rank_weights
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
+  has_many :rank_boosts
   
   belongs_to :partner
   belongs_to :item, :polymorphic => true
@@ -380,13 +381,22 @@ class Offer < ActiveRecord::Base
   
   def calculate_rank_score(weights = {})
     random_weight = weights.delete(:random) { 0 }
+    boost_weight = weights.delete(:boost) { 1 }
     weights = { :conversion_rate => 0, :payment => 0, :price => 0, :show_rate => 0, :avg_revenue => 0 }.merge(weights)
     self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send("normal_#{key}")) }
     self.rank_score += rand * random_weight
+    self.rank_score += rank_boosts.active.sum(:amount) * boost_weight
   end
   
   def name_with_suffix
     name_suffix.blank? ? name : "#{name} -- #{name_suffix}"
+  end
+  
+  def search_result_name
+    search_name = name_with_suffix
+    search_name += " (active)" if is_enabled?
+    search_name += " (hidden)" if hidden?
+    search_name
   end
   
   def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer)

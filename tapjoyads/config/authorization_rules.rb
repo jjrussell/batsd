@@ -41,6 +41,7 @@ authorization do
   role :account_mgr do
     includes :payops
     includes :statz
+    has_permission_on :rank_boosts, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :partners, :to => [ :update, :managed_by ]
   end
   
@@ -54,6 +55,7 @@ authorization do
     includes :executive
     includes :statz
     includes :raffle_manager
+    includes :account_mgr
     
     has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device ]
   end

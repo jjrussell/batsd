@@ -21,3 +21,5 @@
     %li= link_to 'Activity Log', activities_path
   - if permitted_to? :reset_device, :tools
     %li= link_to 'Reset Device', reset_device_tools_path
+  - if permitted_to? :index, :rank_boosts
+    %li= link_to 'Manage Rank Boosts', rank_boosts_path
