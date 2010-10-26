@@ -97,7 +97,7 @@ private
     @partner = Partner.find_by_id(params[:id])
     if @partner.nil?
       flash[:error] = "Could not find partner with ID: #{params[:id]}"
-      redirect_to partners_path
+      redirect_to partners_path and return
     end
 
     log_activity(@partner)
