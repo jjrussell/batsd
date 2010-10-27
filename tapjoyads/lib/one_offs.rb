@@ -223,12 +223,25 @@ class OneOffs
   end
 
   def self.add_partners_to_chimp
-    return # don't do anything for now
     partners = []
-    Partner.find_each(:include => ['users']) do |partner|
-      partners << partner unless partner.users.blank?
+    publishers = []
+
+    Partner.using_slave_db do
+      Partner.slave_connection.execute("BEGIN")
+        Partner.find_each(:include => ['users', 'offers']) do |partner|
+          if partner.non_managers.blank?
+            partners << partner
+            publishers << partner if partner.has_publisher_offer?
+            raise if partners.count == 10
+          end
+        end
+        errors = MailChimp.add_partners(partners)
+      end
     end
-    MailChimp.add_partners(partners)
+  ensure
+    Partner.using_slave_db do
+      Partner.slave_connection.execute("COMMIT")
+    end
   end
 
 end

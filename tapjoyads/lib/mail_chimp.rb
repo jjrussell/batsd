@@ -11,16 +11,30 @@ class MailChimp
     add_partners([partner])
   end
 
+  def self.lookup_user_id(email)
+    chimp.member_info(MAIL_CHIMP_PARTNERS_LIST_ID, email)["id"]
+  end
+
   def self.add_partners(partners)
-    list = partners.map do |partner|
-      {
-        'EMAIL' => partner.users.first.email,
-        'NAME' => partner.contact_name,
-        'ID' => partner.id,
-        'ADV_TIER' => partner.advertiser_tier,
-        'PUB_TIER' => partner.publisher_tier
-      }
+    errors = []
+    partners.map do |partner|
+      email = partner.non_managers.first.email
+      if email.blank?
+        nil
+      else
+        name = partner.contact_name
+        name = email if name.blank?
+        {
+          'EMAIL' => email,
+          'NAME' => name,
+          'ID' => partner.id,
+          'IS_PUB' => partner.has_publisher_offer?
+        }
+      end
+    end.compact.each_slice(100) do |slice|
+      results = chimp.subscribe_many(MAIL_CHIMP_PARTNERS_LIST_ID, slice)
+      errors << results["errors"]
     end
-    chimp.subscribe_many(MAIL_CHIMP_PARTNERS_LIST_ID, list)
+    errors.flatten
   end
 end
