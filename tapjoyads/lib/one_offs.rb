@@ -228,14 +228,10 @@ class OneOffs
 
     Partner.using_slave_db do
       Partner.slave_connection.execute("BEGIN")
-        Partner.find_each(:include => ['users', 'offers']) do |partner|
-          if partner.non_managers.blank?
-            partners << partner
-            publishers << partner if partner.has_publisher_offer?
-          end
-        end
-        errors = MailChimp.add_partners(partners)
+      Partner.find_each(:include => ['users', 'offers']) do |partner|
+        partners << partner unless partner.non_managers.blank?
       end
+      errors = MailChimp.add_partners(partners)
     end
   ensure
     Partner.using_slave_db do
