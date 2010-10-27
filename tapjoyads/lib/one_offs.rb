@@ -232,7 +232,6 @@ class OneOffs
           if partner.non_managers.blank?
             partners << partner
             publishers << partner if partner.has_publisher_offer?
-            raise if partners.count == 10
           end
         end
         errors = MailChimp.add_partners(partners)
