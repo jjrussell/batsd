@@ -52,5 +52,20 @@ class Downloader
     end
     
     return response
+  rescue Exception => e
+    mc_key = "failed_downloads.#{(Time.zone.now.to_f / 1.hour).to_i}"
+    url_key = url.gsub(/\?.*$/, '')
+    
+    Mc.compare_and_swap(mc_key) do |failed_downloads|
+      if failed_downloads
+        failed_downloads[url_key] = (failed_downloads[url_key] || 0) + 1
+        failed_downloads
+      else
+        { url_key => 1 }
+      end
+    end
+    
+    raise e
   end
+  
 end

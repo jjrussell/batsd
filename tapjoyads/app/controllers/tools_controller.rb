@@ -89,6 +89,19 @@ class ToolsController < WebsiteController
     @total_pending_earnings = Mc.get('money.total_pending_earnings') || 0
   end
   
+  def failed_downloads
+    this_hour_counts = Mc.get("failed_downloads.#{(Time.zone.now.to_f / 1.hour).to_i}") { {} }
+    last_hour_counts = Mc.get("failed_downloads.#{((Time.zone.now.to_f - 1.hour) / 1.hour).to_i}") { {} }
+    @this_hour_total = this_hour_counts.values.sum
+    @last_hour_total = last_hour_counts.values.sum
+    @combined_counts = {}
+    (this_hour_counts.keys + last_hour_counts.keys).uniq.each do |url|
+      app_ids = Currency.find(:all, :conditions => "callback_url LIKE '#{url}%'").map(&:app_id)
+      offers = Offer.find(app_ids)
+      @combined_counts[url] = [ (this_hour_counts[url] || 0), (last_hour_counts[url] || 0), offers ]
+    end
+  end
+  
   def failed_sdb_saves
     @bad_web_requests = Mc.get('failed_sdb_saves.bad_domains') || {}
     @failed_sdb_saves = {}
@@ -119,7 +132,6 @@ class ToolsController < WebsiteController
     @offers_count_hash = Mc.get('tools.disabled_popular_offers') { {} }
     @offers = Offer.find(@offers_count_hash.keys, :include => [:partner, :item])
   end
-
 
   def reset_device
     if params[:udid]

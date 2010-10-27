@@ -1,0 +1,52 @@
+- @page_title = 'Failed Downloads'
+
+%h1 Failed Downloads
+
+Total failures this hour: #{@this_hour_total}
+%br
+Total failures last hour: #{@last_hour_total}
+
+%table#fails.tablesorter
+  %thead
+    %tr
+      %th URL
+      %th This Hour
+      %th Last Hour
+      %th Currency Apps
+  %tbody
+    - @combined_counts.each do |url, data|
+      %tr
+        %td= url
+        %td= data[0]
+        %td= data[1]
+        %td
+          - data[2].each do |offer|
+            = image_tag(offer.get_icon_url(request.protocol), :size => '20x20')
+            = link_to_offer(offer)
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $("#fails").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0: { sorter: false },
+          3: { sorter: false }
+        },
+        sortList: [ [1, 1], [2, 1] ]
+      });
+    });
+  
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+
+    table.tablesorter thead tr .header {
+      background-position: right bottom;
+    }
+    
+    td.bad_domain {
+      border: 2px solid red;
+    }
