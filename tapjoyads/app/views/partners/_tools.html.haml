@@ -12,6 +12,6 @@
   %strong Account manager(s):
   %br/
   - options = options_from_collection_for_select(User.account_managers, "id", "email", partner.account_managers.map(&:id))
-  = f.select :account_managers, options, {}, {:multiple => true, :style => "height:200px;"}
+  = f.select :account_managers, options, {:include_blank => '(no one)'}
   %br/
   = submit_tag "Update"

@@ -44,16 +44,12 @@
             - else
               = submit_tag("Act as this partner", :class => 'act_as_button')
         - if current_user.is_one_of?([:admin, :account_mgr])
-          %td
-            - if partner.account_managers.present?
-              - partner.account_managers.each do |manager|
-                - if manager.is_one_of?([:agency])
-                  %span.agency= manager.email
-                  (Agency)
-                - else
-                  = manager.email
-            - else
-              \-
+          %td.account_manager
+            - form_for(partner) do |f|
+              - options = options_from_collection_for_select(User.account_managers, "id", "email", partner.account_managers.map(&:id))
+              = f.select :account_managers, options, {:include_blank => '(no one)'}
+            = image_tag 'load-circle.gif', :class => 'hidden'
+            .message.hidden
         %td= number_to_currency(partner.balance / 100.0)
         %td= number_to_currency(partner.pending_earnings / 100.0)
         %td.nowrap= partner.created_at.to_s(:pub)
@@ -108,5 +104,24 @@
         } else {
           location.href = '/partners/managed_by/' + $(this).val();
         }
+      });
+      $('td.account_manager select').change(function(){
+        var form = $(this).parent('form');
+        var url = form.attr('action');
+        var data = {"partner[account_managers]": [$(this).val()]};
+        form.siblings('img').show();
+        $.ajax({
+          data: data,
+          error: function() {
+            form.siblings('.message').show().text('fail!!!');
+            form.siblings('img').hide();
+          },
+          success: function() {
+            form.siblings('.message').show().text('success!');
+            form.siblings('img').hide();
+          },
+          type: 'put',
+          url: url
+        });
       });
     });
