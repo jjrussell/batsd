@@ -3,7 +3,7 @@ class RankBoost < ActiveRecord::Base
   
   belongs_to :offer
   
-  validates_presence_of :start_time, :end_time, :id, :offer, :amount
+  validates_presence_of :start_time, :end_time, :offer, :amount
   validate :check_times
   
   named_scope :active, lambda { { :conditions => [ "start_time <= ? AND end_time >= ?", Time.zone.now, Time.zone.now ]} }
