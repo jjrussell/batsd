@@ -19,8 +19,6 @@ class Experiments
         EXPERIMENTS[:cvr_boost]
       elsif udid_hash < 30
         EXPERIMENTS[:more_random]
-      elsif udid_hash < 40
-        EXPERIMENTS[:payment_boost]
       else
         EXPERIMENTS[:control]
       end

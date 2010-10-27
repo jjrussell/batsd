@@ -102,11 +102,6 @@ class Offer < ActiveRecord::Base
         bucket = S3.bucket(BucketNames::OFFER_DATA)
         Marshal.restore(bucket.get('enabled_offers.cvr_boost'))
       end
-    elsif exp == Experiments::EXPERIMENTS[:payment_boost]
-      Mc.get_and_put("s3.enabled_offers_#{rand(NUM_MEMCACHE_KEYS) * 123123}.payment_boost") do
-        bucket = S3.bucket(BucketNames::OFFER_DATA)
-        Marshal.restore(bucket.get('enabled_offers.payment_boost'))
-      end
     elsif exp == Experiments::EXPERIMENTS[:more_random]
       Mc.get_and_put("s3.enabled_offers_#{rand(NUM_MEMCACHE_KEYS) * 123123}.more_random") do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
@@ -132,7 +127,6 @@ class Offer < ActiveRecord::Base
     cache_enabled_offers_for_experiment('more_random', { :conversion_rate => 1, :payment => 1, :price => -1, :show_rate => 0.3, :avg_revenue => 5, :random => 2 })
     cache_enabled_offers_for_experiment('no_random', { :conversion_rate => 1, :payment => 1, :price => -1, :show_rate => 0.3, :avg_revenue => 5, :random => 0 })
     cache_enabled_offers_for_experiment('cvr_boost', { :conversion_rate => 5, :payment => 1, :price => -1, :show_rate => 0.3, :avg_revenue => 1, :random => 1 })
-    cache_enabled_offers_for_experiment('payment_boost', { :conversion_rate => 1, :payment => 5, :price => -1, :show_rate => 0.3, :avg_revenue => 1, :random => 1 })
   end
   
   def self.cache_enabled_offers_for_experiment(cache_key_suffix, weights)
