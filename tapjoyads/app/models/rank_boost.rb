@@ -6,7 +6,7 @@ class RankBoost < ActiveRecord::Base
   validates_presence_of :start_time, :end_time, :offer, :amount
   validate :check_times
   
-  named_scope :active, lambda { { :conditions => [ "start_time <= ? AND end_time >= ?", Time.zone.now, Time.zone.now ]} }
+  named_scope :active, lambda { { :conditions => [ "start_time <= ? AND end_time > ?", Time.zone.now, Time.zone.now ]} }
   
   def partner_id
     offer.partner_id
@@ -14,7 +14,7 @@ class RankBoost < ActiveRecord::Base
   
   def active?
     now = Time.zone.now
-    start_time <= now && end_time >= now
+    start_time <= now && end_time > now
   end
   
   def deactivate!
