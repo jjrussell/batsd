@@ -13,8 +13,9 @@ class GetOffersController < ApplicationController
   def webpage
     set_offer_list(:is_server_to_server => false)
     
+    # TO REMOVE - when gameview integrates properly
     @message = nil
-    unless params[:featured_offer].blank?
+    if params[:featured_offer].present?
       featured_offer = Offer.find_in_cache(params[:featured_offer])
       primary_offer = Offer.find_in_cache(featured_offer.item_id)
       
@@ -25,6 +26,7 @@ class GetOffersController < ApplicationController
       @message = "You have already installed #{featured_offer.name}. You can still complete " +
           "one of the offers below to earn #{@currency.name}."
     end
+    # END TO REMOVE
   end
   
   def featured
@@ -91,6 +93,9 @@ private
     
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
+    # TO REMOVE - when gameview integrates properly
+    params[:exp] = nil if params[:featured_offer].present?
+    # END TO REMOVE
     web_request = WebRequest.new(:time => @now)
     web_request.put_values('offers', params, get_ip_address, get_geoip_data)
     web_request.put('viewed_at', @now.to_f.to_s)
