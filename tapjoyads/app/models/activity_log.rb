@@ -35,13 +35,13 @@ class ActivityLog < SimpledbResource
   def object=(obj)
     @state_object = obj
     @state_object_new = obj.new_record?
-    self.before_state = obj.attributes
+    self.before_state = fix_time_zones(obj.attributes)
   end
   
   def finalize_states
     self.object_id = @state_object.id
     self.object_type = @state_object.class.to_s
-    self.after_state = @state_object.attributes
+    self.after_state = fix_time_zones(@state_object.attributes)
     
     if @state_object.respond_to?(:partner_id)
       self.partner_id = @state_object.partner_id
@@ -87,6 +87,15 @@ class ActivityLog < SimpledbResource
     if self.before_state.length > 0 || self.after_state.length > 0
       super({ :write_to_memcache => false }.merge(options))
     end
+  end
+  
+private
+  
+  def fix_time_zones(attrs)
+    attrs.each do |k, v|
+      attrs[k] = v.utc if v.respond_to?(:utc)
+    end
+    attrs
   end
   
 end
