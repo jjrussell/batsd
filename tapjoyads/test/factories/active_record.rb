@@ -105,3 +105,10 @@ end
 Factory.define :user_role do |user_role|
   user_role.name { Factory.next(:name) }
 end
+
+Factory.define :rank_boost do |rank_boost|
+  rank_boost.offer { Factory(:app).primary_offer }
+  rank_boost.amount 1
+  rank_boost.start_time { Time.zone.now }
+  rank_boost.end_time { Time.zone.now + 1.hour }
+end
