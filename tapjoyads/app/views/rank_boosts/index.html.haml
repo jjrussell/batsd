@@ -2,13 +2,19 @@
 
 %h1 Offer Rank Boosts
 
-View: 
-- form_tag('', :class => 'tjform', :method => :get, :id => "filter-form") do
-  = select_tag "filter", options_for_select([ "All", "Active" ], params[:filter])
+.filters
+  - form_tag('', :class => 'tjform', :method => :get, :id => 'filter-form') do
+    %table
+      %tr
+        %th= label_tag 'filter', 'View:'
+        %td= select_tag 'filter', options_for_select([ ['All', 'all'], ['Active', 'active'] ], params[:filter])
+      %tr
+        %th= label_tag 'search_box', 'Offer Name:'
+        %td
+          = text_field_tag('search_box', @offer.present? ? @offer.search_result_name : '', :size => '40')
+          = hidden_field_tag('offer_id', @offer.present? ? @offer.id : '')
+          = link_to('[Reset]', rank_boosts_path)
 
-%br
-%br
-  
 = link_to('New Rank Boost', new_rank_boost_path)
 
 %table#rank_boosts.tablesorter
@@ -37,9 +43,19 @@ View:
 - content_for :page_javascript do
   :plain
     $(function() {
-      $('#filter').change(function() {
-        $('#filter-form').submit()
-      })
+      $('select#filter').change(function() {
+        $('#filter-form').submit();
+      });
+      
+      $('#search_box').autocomplete({
+        source: '#{search_offers_path}',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          $('input#offer_id').val(ui.item.id);
+          $('#filter-form').submit();
+        }
+      });
       
       $.tablesorter.addParser({
         id: 'date-column',
@@ -59,4 +75,10 @@ View:
         },
         sortList: [ [2, 1] ]
       });
-    })
+    });
+  
+- content_for :page_styles do
+  :plain
+    .filters {
+      padding-bottom: 20px;
+    }

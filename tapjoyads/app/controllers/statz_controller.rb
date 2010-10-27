@@ -207,8 +207,9 @@ class StatzController < WebsiteController
       }
     }
     
-    # lookup associated offers
     @associated_offers = @offer.find_associated_offers
+    @active_boosts = @offer.rank_boosts.active
+    @total_boost = @active_boosts.map(&:amount).sum
   end
   
   def edit

@@ -52,6 +52,20 @@
     - property_row('Publisher app whitelist', @offer.get_publisher_app_whitelist.map { |id| link_to(App.find(id).name, statz_path(id)) }.join(', '))
   - property_row('id', @offer.id + ' - ' + clippy(@offer.id))
 
+%a#show_boosts{:href => '#'} [#{@active_boosts.size} active rank boosts]
+= link_to('[Create rank boost]', new_rank_boost_path(:offer_id => @offer.id))
+= link_to('[View all boosts]', rank_boosts_path(:offer_id => @offer.id))
+#boosts_list
+  %h5 Total Active Boost: #{@total_boost}x
+  %ul
+    - @active_boosts.each do |boost|
+      %li
+        #{boost.amount}x: #{boost.start_time.to_s(:mdy_ampm)} - #{boost.end_time.to_s(:mdy_ampm)} --
+        = link_to('[Edit]', edit_rank_boost_path(boost))
+        = link_to('[Deactivate]', deactivate_rank_boost_path(boost), :method => :post, :confirm => 'Are you sure?')
+
+.clear
+
 %a#show_associated{:href => '#'} [#{@associated_offers.size} associated offers]
 = link_to('[Create secondary offer]', new_statz_path(:id => @offer.id))
 #associated_list
@@ -119,6 +133,11 @@
         $('#associated_list').toggle();
         return false;
       });
+      
+      $('#show_boosts').click(function() {
+        $('#boosts_list').toggle();
+        return false;
+      });
 
       Tapjoy.Graph.initGraphs($('#charts .graph'));
       Tapjoy.Graph.drawLargeGraph(#{@connect_data.to_json}, 'connects');
@@ -137,11 +156,13 @@
       padding: 20px 0;
       float: left;
     }
-    #associated_list {
+    #associated_list,
+    #boosts_list {
       display: none;
     }
-    #associated_list h5 {
-      margin-top: 0;
+    #associated_list h5,
+    #boosts_list h5 {
+      margin: 5px;
     }
     #currency {
       margin-bottom: 16px;
