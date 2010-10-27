@@ -25,6 +25,7 @@
   padding-right: 3px;
   z-index: 3;
   opacity: 0.8;
+  margin: 0 6px 0 10px;
   -moz-border-radius: 5px 5px 5px 5px;
   -moz-box-shadow: 3px 3px 3px rgba(96, 96, 96, 0.5);
   -webkit-border-radius: 5px 5px 5px 5px;

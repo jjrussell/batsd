@@ -115,6 +115,7 @@ Tapjoy.Graph = {
       var newX = mouseX - mouseX % (graphInternalWidth / (numPoints - 1));
       newX = Math.max(newX, 0);
       newX = Math.min(newX, graphInternalWidth);
+      newX = Math.floor(newX);
 
       barNode.css('height', graphInternalHeight).css('top', graphInternalTop);
       barNode.css('left', newX + graphInternalLeft + 4);
