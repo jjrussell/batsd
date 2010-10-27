@@ -8,7 +8,16 @@ class RankBoost < ActiveRecord::Base
   
   named_scope :active, lambda { { :conditions => [ "start_time <= ? AND end_time >= ?", Time.zone.now, Time.zone.now ]} }
   
-  private
+  def partner_id
+    offer.partner_id
+  end
+  
+  def active?
+    now = Time.zone.now
+    start_time <= now && end_time >= now
+  end
+  
+private
   
   def check_times
     if (start_time.present? && end_time.present? && start_time >= end_time)

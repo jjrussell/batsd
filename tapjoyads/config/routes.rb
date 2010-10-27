@@ -71,7 +71,7 @@ ActionController::Routing::Routes.draw do |map|
     :member => { :make_current => :post, :manage => :post, :stop_managing => :post },
     :collection => { :managed_by => :get }
   map.resources :password_resets, :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
-  map.resources :rank_boosts, :except => [ :show ]
+  map.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
   map.with_options(:controller => 'search') do |m|
     m.search_offers 'search/offers', :action => 'offers'
   end

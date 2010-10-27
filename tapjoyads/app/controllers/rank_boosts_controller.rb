@@ -4,6 +4,7 @@ class RankBoostsController < WebsiteController
   filter_access_to :all
   
   before_filter :setup
+  after_filter :save_activity_logs, :only => [ :create, :update, :deactivate ]
 
   def index
     if params[:filter] == 'Active'
@@ -19,34 +20,40 @@ class RankBoostsController < WebsiteController
   
   def create
     @rank_boost = RankBoost.new(params[:rank_boost])
+    log_activity(@rank_boost)
     if @rank_boost.save
       flash[:notice] = 'Rank Boost created.'
-      redirect_to rank_boosts_path and return
+      redirect_to rank_boosts_path
     else
       render :new
     end
   end
   
   def edit
-    
   end
   
   def update
+    log_activity(@rank_boost)
     if @rank_boost.update_attributes(params[:rank_boost])
       flash[:notice] = 'Rank Boost updated.'
-      redirect_to rank_boosts_path and return
+      redirect_to rank_boosts_path
     else
       render :edit
     end
   end
   
-  def destroy
-    @rank_boost.destroy
-    flash[:notice] = 'Rank Boost destroyed.'
-    redirect_to rank_boosts_path and return
+  def deactivate
+    log_activity(@rank_boost)
+    @rank_boost.end_time = Time.zone.now
+    if @rank_boost.save
+      flash[:notice] = 'Rank Boost deactivated.'
+    else
+      flash[:error] = 'Rank Boost could not be deactivated.'
+    end
+    redirect_to rank_boosts_path
   end
   
-  private
+private
   
   def setup
     @rank_boost = RankBoost.find(params[:id]) if params[:id]

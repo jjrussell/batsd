@@ -31,7 +31,8 @@ View:
         %td= rb.amount
         %td
           = link_to "Edit", edit_rank_boost_path(rb)
-          = link_to "Destroy", rank_boost_path(rb), :method => :delete, :confirm => 'Are you sure?'
+          - if rb.active?
+            = link_to "Deactivate", deactivate_rank_boost_path(rb), :method => :post, :confirm => 'Are you sure?'
           
 - content_for :page_javascript do
   :plain

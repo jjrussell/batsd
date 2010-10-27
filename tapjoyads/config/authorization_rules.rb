@@ -29,7 +29,7 @@ authorization do
     includes :tools
     has_permission_on :tools, :to => [ :money ]
     has_permission_on :statz, :to => [ :index, :show ]
-    has_permission_on :search, :to => [ :offers  ]
+    has_permission_on :search, :to => [ :offers ]
   end
   
   role :statz do
@@ -43,7 +43,7 @@ authorization do
   role :account_mgr do
     includes :payops
     includes :statz
-    has_permission_on :rank_boosts, :to => [ :index, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
     has_permission_on :partners, :to => [ :update, :managed_by ]
   end
   
