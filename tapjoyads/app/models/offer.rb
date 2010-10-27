@@ -330,20 +330,6 @@ class Offer < ActiveRecord::Base
     end
   end
   
-  def adjust_cvr_for_ranking
-    srand( (id + (Time.now.to_f / 20.minutes).to_i.to_s).hash )
-
-    if pay_per_click?
-      self.conversion_rate = 0.65 + rand * 0.15
-    elsif is_paid?
-      if rand < 0.02
-        self.conversion_rate = 0.5
-      else
-        self.conversion_rate = conversion_rate + (rand * 0.15)
-      end
-    end
-  end
-  
   def calculate_rank_score(weights = {})
     random_weight = weights.delete(:random) { 0 }
     boost_weight = weights.delete(:boost) { 1 }
