@@ -5,7 +5,8 @@
 %ul
   %li= link_to('Add new user', new_user_path)
   %li= link_to('Change your account details', edit_user_path(current_user))
-
+  - unless @mail_chimp_url.nil?
+    %li= link_to('Change your email notification settings', @mail_chimp_url)
 %h3 Users with access
 
 %table
