@@ -11,7 +11,8 @@ class StatzController < WebsiteController
   def index
     @timeframe = params[:timeframe] || '24_hours'
     
-    @money_stats = Mc.get('money.cached_stats')
+    @money_stats = Mc.get('money.cached_stats') || { @timeframe => {} }
+    @money_last_updated = Time.zone.at(Mc.get("money.last_updated") || 0)
     
     @last_updated = Time.zone.at(Mc.get("statz.last_updated.#{@timeframe}") || 0)
     @cached_stats = Mc.get("statz.cached_stats.#{@timeframe}") || []

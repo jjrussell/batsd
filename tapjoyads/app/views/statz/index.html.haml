@@ -12,15 +12,14 @@
   = label_tag('search_box', 'Offer Name:')
   = text_field_tag('search_box', '', :size => '40')
 
-- if @money_stats
+#money_totals
+  .last_updated Totals Last Updated: #{@money_last_updated.to_s(:pub_ampm_sec)}
   %h3
     Total conversions: #{@money_stats[@timeframe]['conversions']} &nbsp;
     Total revenue: #{@money_stats[@timeframe]['advertiser_spend']} &nbsp;
     Total payouts: #{@money_stats[@timeframe]['publisher_earnings']}
-- else
-  %h3 Not available
 
-#last_updated Last Updated: #{@last_updated.to_s(:pub_ampm_sec)}
+.last_updated Last Updated: #{@last_updated.to_s(:pub_ampm_sec)}
 
 %table#apps_table.tablesorter
   %thead
@@ -130,7 +129,7 @@
       border: 0;
     }
     
-    #last_updated {
+    .last_updated {
       font-weight: bold;
       font-size: 14px;
     }
@@ -147,4 +146,11 @@
     }
     ul.timeframes li:last-child:after {
       content: "";
+    }
+    
+    #money_totals {
+      margin-top: 15px;
+    }
+    #money_totals h3 {
+      margin-top: 5px;
     }
