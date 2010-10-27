@@ -52,3 +52,4 @@ NUM_DEVICES_DOMAINS = 300
 mail_chimp = YAML::load_file("#{RAILS_ROOT}/config/mail_chimp.yaml")['production']
 MAIL_CHIMP_API_KEY = mail_chimp['api_key']
 MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
+MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
