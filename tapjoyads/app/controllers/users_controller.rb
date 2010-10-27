@@ -29,7 +29,6 @@ class UsersController < WebsiteController
     @user.current_partner = current_partner
     @user.partners << current_partner
     if @user.save
-      @user.reset_perishable_token!
       TapjoyMailer.deliver_new_secondary_account(@user.email, edit_password_reset_url(@user.perishable_token))
       flash[:notice] = 'Account successfully created.'
       redirect_to users_path
