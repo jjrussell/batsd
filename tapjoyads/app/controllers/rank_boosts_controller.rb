@@ -44,8 +44,7 @@ class RankBoostsController < WebsiteController
   
   def deactivate
     log_activity(@rank_boost)
-    @rank_boost.end_time = Time.zone.now
-    if @rank_boost.save
+    if @rank_boost.deactivate!
       flash[:notice] = 'Rank Boost deactivated.'
     else
       flash[:error] = 'Rank Boost could not be deactivated.'

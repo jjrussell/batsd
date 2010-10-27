@@ -17,6 +17,11 @@ class RankBoost < ActiveRecord::Base
     start_time <= now && end_time >= now
   end
   
+  def deactivate!
+    self.end_time = Time.zone.now if (end_time > Time.zone.now)
+    self.save
+  end
+  
 private
   
   def check_times
