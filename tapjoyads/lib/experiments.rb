@@ -3,7 +3,9 @@ class Experiments
     :control => '10',
     :less_random => '11',
     :more_random => '12',
-    :no_random => '13'
+    :no_random => '13',
+    :cvr_boost => '14',
+    :payment_boost => '15'
   }
   
   def self.choose(udid)
@@ -14,9 +16,11 @@ class Experiments
       if udid_hash < 10
         EXPERIMENTS[:no_random]
       elsif udid_hash < 20
-        EXPERIMENTS[:less_random]
+        EXPERIMENTS[:cvr_boost]
       elsif udid_hash < 30
         EXPERIMENTS[:more_random]
+      elsif udid_hash < 40
+        EXPERIMENTS[:payment_boost]
       else
         EXPERIMENTS[:control]
       end
