@@ -7,10 +7,6 @@ class MailChimp
     @lists ||= chimp.lists
   end
 
-  def self.add_partner(partner)
-    add_partners([partner])
-  end
-
   def self.lookup_user_id(email)
     chimp.member_info(MAIL_CHIMP_PARTNERS_LIST_ID, email)["id"]
   end
@@ -19,6 +15,10 @@ class MailChimp
     values = {}
     values[field] = new_value
     chimp.update_member(MAIL_CHIMP_PARTNERS_LIST_ID, email, values)
+  end
+
+  def self.add_partner(partner)
+    add_partners([partner])
   end
 
   def self.add_partners(partners)

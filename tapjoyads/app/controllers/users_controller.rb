@@ -60,7 +60,11 @@ class UsersController < WebsiteController
     email = current_user.email
     yield
     if email != current_user.email
-      message = { :email => email, :field => 'EMAIL', :new_value => current_user.email }.to_json
+      message = {
+        :type => "update",
+        :email => email,
+        :field => 'EMAIL',
+        :new_value => current_user.email }.to_json
       Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)
     end
   end

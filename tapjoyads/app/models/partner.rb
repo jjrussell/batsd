@@ -26,7 +26,9 @@ class Partner < ActiveRecord::Base
   named_scope :search, lambda { |name_or_email| { :joins => :users,
       :conditions => [ "partners.name LIKE ? OR users.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
     }
-  
+
+  after_create :create_mail_chimp_entry
+
   def self.calculate_next_payout_amount(partner_id)
     Partner.using_slave_db do
       Partner.slave_connection.execute("BEGIN")
@@ -111,5 +113,12 @@ class Partner < ActiveRecord::Base
 
   def has_publisher_offer?
     offers.any?{|offer| offer.is_publisher_offer?}
+  end
+
+  private
+
+  def create_mail_chimp_entry
+    message = { :type => "create", :partner_id => self.id }.to_json
+    Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)
   end
 end

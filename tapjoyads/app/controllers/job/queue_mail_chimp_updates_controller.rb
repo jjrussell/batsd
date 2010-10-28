@@ -8,6 +8,11 @@ private
 
   def on_message(message)
     message = JSON.load(message.to_s)
-    MailChimp.update(message["email"], message["field"], message["new_value"])
+    case message["type"]
+    when "update"
+      MailChimp.update(message["email"], message["field"], message["new_value"])
+    when "create"
+      MailChimp.add_partner(Partner.find_by_id(message["partner_id"]))
+    end
   end
 end
