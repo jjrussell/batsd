@@ -71,4 +71,10 @@ class Device < SimpledbShardedResource
     last_run_timestamp.present? ? Time.zone.at(last_run_timestamp.to_f) : nil
   end
   
+  def unset_app_ran!(app_id)
+    @parsed_apps.delete(app_id)
+    self.apps = @parsed_apps
+    save!
+  end
+  
 end
