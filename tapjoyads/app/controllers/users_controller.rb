@@ -8,10 +8,19 @@ class UsersController < WebsiteController
   around_filter :update_mail_chimp_email, :only => [ :update ]
 
   def index
-    @users = current_partner.users
-    # disabled until one_offs runs
-    # mail_chimp_id = MailChimp.lookup_user(current_user.email)["id"]
-    # @mail_chimp_url = "http://tapjoy.us2.list-manage.com/profile?u=#{MAIL_CHIMP_SETTINGS_KEY}&id=#{MAIL_CHIMP_PARTNERS_LIST_ID}&e=#{mail_chimp_id}"
+    if permitted_to?(:index, :statz)
+      @users = current_partner.users
+    else
+      @users = current_partner.non_managers
+    end
+=begin
+# commented out until mail chimp stuff is ready
+    begin
+      mail_chimp_id = MailChimp.lookup_user(current_user.email)["id"]
+      @mail_chimp_url = "http://tapjoy.us2.list-manage.com/profile?u=#{MAIL_CHIMP_SETTINGS_KEY}&id=#{MAIL_CHIMP_PARTNERS_LIST_ID}&e=#{mail_chimp_id}"
+    rescue
+    end
+=end
   end
   
   def new
