@@ -75,6 +75,7 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options(:controller => 'search') do |m|
     m.search_offers 'search/offers', :action => 'offers'
   end
+  map.connect 'mail_chimp_callback/:key', :controller => 'mail_chimp_callback', :action => 'callback'
   
   # Special paths:
   map.connect 'log_device_app/:action/:id', :controller => 'connect'

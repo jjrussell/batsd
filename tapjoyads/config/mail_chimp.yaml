@@ -2,11 +2,14 @@ production:
     api_key: '44facf9acdebc24658a78844cb776beb-us2'
     settings_key: 'a3cbc747964ff17cb84f6f49e'
     partners_list_id: 'd132d495b9'
+    webhook_key: 'KILA3WgoaZRWywfY'
 test:
     api_key: 'ac14495cc872e548179a99675e93aea1-us2'
     settings_key: '3f3bd12048d95319e060f75b1'
     partners_list_id: 'ce6f97f269'
+    webhook_key: 'KILA3WgoaZRWywfY'
 development:
     api_key: 'ac14495cc872e548179a99675e93aea1-us2'
     settings_key: '3f3bd12048d95319e060f75b1'
     partners_list_id: 'ce6f97f269'
+    webhook_key: 'KILA3WgoaZRWywfY'
