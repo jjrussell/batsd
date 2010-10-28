@@ -15,6 +15,12 @@ class MailChimp
     chimp.member_info(MAIL_CHIMP_PARTNERS_LIST_ID, email)["id"]
   end
 
+  def self.update(email, field, new_value)
+    values = {}
+    values[field] = new_value
+    chimp.update_member(MAIL_CHIMP_PARTNERS_LIST_ID, email, values)
+  end
+
   def self.add_partners(partners)
     errors = []
     partners.map do |partner|

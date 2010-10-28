@@ -5,7 +5,8 @@ class UsersController < WebsiteController
   filter_access_to :all
   
   after_filter :save_activity_logs, :only => [ :create, :update ]
-  
+  around_filter :update_mail_chimp_email, :only => [ :update ]
+
   def index
     @users = current_partner.users
     # disabled until one_offs runs
@@ -53,5 +54,14 @@ class UsersController < WebsiteController
       render :action => :edit
     end
   end
-  
+
+  private
+  def update_mail_chimp_email
+    email = current_user.email
+    yield
+    if email != current_user.email
+      message = { :email => email, :field => 'EMAIL', :new_value => current_user.email }.to_json
+      Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)
+    end
+  end
 end

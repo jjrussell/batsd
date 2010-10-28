@@ -12,4 +12,5 @@ class QueueNames
   UPDATE_MONTHLY_ACCOUNT   = RUN_MODE_PREFIX + 'UpdateMonthlyAccount'
   GRAB_ADVERTISER_UDIDS    = RUN_MODE_PREFIX + 'GrabAdvertiserUdids'
   SDB_BACKUPS              = RUN_MODE_PREFIX + 'SdbBackups'
+  MAIL_CHIMP_UPDATES       = RUN_MODE_PREFIX + 'MailChimpUpdates'
 end
