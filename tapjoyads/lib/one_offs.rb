@@ -239,4 +239,48 @@ class OneOffs
     end
   end
 
+  def self.update_partner_data_from_currencies
+    inconsistent_count = 0
+    file = File.open('inconsistent_currencies', 'w')
+    
+    Partner.find_each do |partner|
+      size = partner.currencies.size
+      print "#{partner.name} (#{partner.id}): #{size} currencies... "
+      
+      if size > 0
+        matches = true
+        installs_money_share_set = Set.new
+        disabled_partners_set = Set.new
+        
+        partner.currencies.each do |currency|
+          installs_money_share_set << currency.installs_money_share
+          disabled_partners_set << currency.get_disabled_partner_ids
+        end
+        
+        if installs_money_share_set.size == 1 && disabled_partners_set.size == 1
+          partner.installs_money_share = installs_money_share_set.first
+          partner.disabled_partners = disabled_partners_set.first.to_a.join(';')
+          partner.save!
+          puts 'Success.'
+        else
+          inconsistent_count += 1
+          puts "Fail. Inconsistent values. Details follow:"
+          file.puts("#{partner.name} (#{partner.id})")
+          partner.currencies.each do |currency|
+            puts "  #{currency.name} (#{currency.id})"
+            puts "    installs_money_share: #{currency.installs_money_share}"
+            puts "    disabled_partners: #{currency.disabled_partners}"
+            file.puts "  #{currency.name} (#{currency.id})"
+            file.puts "    installs_money_share: #{currency.installs_money_share}"
+            file.puts "    disabled_partners: #{currency.disabled_partners}"
+          end
+        end
+      else
+        puts ''
+      end
+    end
+    file.close
+    puts "Finished. #{inconsistent_count} partners with inconsistent currencies."
+  end
+
 end
