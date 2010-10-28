@@ -28,7 +28,8 @@ class MailChimp
           'EMAIL' => email,
           'NAME' => name,
           'ID' => partner.id,
-          'IS_PUB' => partner.has_publisher_offer? ? 'true' : 'false'
+          'IS_PUB' => partner.has_publisher_offer? ? 'true' : 'false',
+          'CAN_EMAIL' => 'true'
         }
       end
     end.compact.each_slice(100) do |slice|
