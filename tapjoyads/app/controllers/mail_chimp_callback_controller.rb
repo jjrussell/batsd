@@ -5,7 +5,7 @@ class MailChimpCallbackController < WebsiteController
 
   # http://www.mailchimp.com/api/webhooks/
   def callback
-    raise unless params[:key] == MAIL_CHIMP_SECRET_KEY
+    raise unless params[:key] == MAIL_CHIMP_WEBHOOK_KEY
     if params[:type] == "upemail" && params[:data][:list_id] == MAIL_CHIMP_PARTNERS_LIST_ID
       @user = User.find_by_email(params[:data][:old_email])
       log_activity(@user)
