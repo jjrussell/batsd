@@ -32,10 +32,22 @@ class PartnersController < WebsiteController
     render 'index'
   end
 
+  def mail_chimp_info
+    begin
+      info = MailChimp.lookup_user(params[:email])
+      subscribed = info["status"]=="subscribed"
+      can_email = info["merges"]["CAN_EMAIL"]=="true"
+    rescue
+      subscribed = false
+      can_email = false
+    end
+    render :json => { :subscribed => subscribed, :can_email => can_email }.to_json
+  end
+
   def new
     @partner = Partner.new
   end
-  
+
   def create
     @partner = Partner.new
     @partner.name = params[:partner][:name]

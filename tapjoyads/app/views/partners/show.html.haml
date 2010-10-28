@@ -8,7 +8,14 @@
 .metadata Name: #{@partner.name}
 .metadata Contact name: #{@partner.contact_name}
 .metadata Contact phone: #{@partner.contact_phone}
-.metadata Contact email(s): #{@partner.users.collect(&:email).join(", ")}
+.metadata Contact email(s):
+%ul
+  - @partner.users.each do |user|
+    %li
+      %span.email= user.email
+      = image_tag('mailchimp.png', :class => "mail_chimp_button", :title => "Subscriber status")
+      .mail_chimp_info.hidden
+        = image_tag 'load-circle.gif'
 .metadata Balance: #{number_to_currency(@partner.balance / 100.0)}
 .metadata Pending Earnings: #{number_to_currency(@partner.pending_earnings / 100.0)}
 .metadata Payout Frequency: #{@partner.payout_frequency}
@@ -39,7 +46,7 @@
 
 - content_for :page_javascript do
   :plain
-    $(function() {
+    $(function($) {
       $.tablesorter.addParser({
         id: 'currency-column',
         is: function(s) { return false; },
@@ -57,8 +64,22 @@
         },
         sortList: [ [1, 0] ]
       });
+      $('.mail_chimp_button').click(function(){
+        if ($(this).siblings('div').is(':hidden')) {
+          var div = $(this).siblings('div');
+          div.show();
+          var email = $(this).siblings('span.email').text();
+          console.log(email);
+          var url = '/partners/mail_chimp_info/;';
+          $.get(url, {email: email}, function(data){
+            div.children('img').hide();
+            div.append("Subscriber?: " + data.subscribed);
+            div.append("<br/>Can email?: " + data.can_email);
+          });
+        }
+      });
     });
-  
+
 - content_for :page_styles do
   :plain
     table.tablesorter {
@@ -75,3 +96,7 @@
     .box {
       width: 45%;
     }
+    img.mail_chimp_button {
+      cursor: pointer;
+    }
+

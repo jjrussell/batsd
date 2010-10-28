@@ -10,7 +10,7 @@ class UsersController < WebsiteController
   def index
     @users = current_partner.users
     # disabled until one_offs runs
-    # mail_chimp_id = MailChimp.lookup_user_id(current_user.email)
+    # mail_chimp_id = MailChimp.lookup_user(current_user.email)["id"]
     # @mail_chimp_url = "http://tapjoy.us2.list-manage.com/profile?u=#{MAIL_CHIMP_SETTINGS_KEY}&id=#{MAIL_CHIMP_PARTNERS_LIST_ID}&e=#{mail_chimp_id}"
   end
   
