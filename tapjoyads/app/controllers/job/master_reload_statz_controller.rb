@@ -46,6 +46,7 @@ private
       this_apps_stats['installs_revenue'] = number_to_currency(appstats['installs_revenue'].sum / 100.0)
       this_apps_stats['platform'] = offer.get_platform
       this_apps_stats['featured'] = offer.featured?
+      this_apps_stats['item_id'] = offer.item_id
       
       if this_apps_stats['conversions'] > 0 || this_apps_stats['published_installs'] > 0
         cached_stats[offer.id] = this_apps_stats

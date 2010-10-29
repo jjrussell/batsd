@@ -24,7 +24,8 @@
 %table#apps_table.tablesorter
   %thead
     %tr
-      %th= link_to('Icon', 'javascript:toggleIcons()')
+      %th
+        %a{ :id => 'toggle_icons', :href => '#' } Icon
       %th Offer
       %th{ :class => 'headerSortUp header' } Conversions
       %th Connects
@@ -40,7 +41,8 @@
   %tbody#apps_tbody
     - @cached_stats.each do |offer_id, stats|
       %tr
-        %td.icon{ :id => offer_id }
+        %td
+          %img.icon.hidden{ :s => "#{request.protocol}s3.amazonaws.com/app_data/icons/#{stats['item_id']}.png" }
         %td= link_to(stats['offer_name'], statz_path(offer_id))
         %td= stats['conversions']
         %td= stats['connects']
@@ -55,9 +57,6 @@
         %td= stats['featured']
       
 - content_for :page_javascript do
-  var iconsCreated = false;
-  var iconsVisible = false;
-  
   :plain
     $(function() {
       $('#search_box').autocomplete({ source: '#{search_offers_path}', delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });
@@ -89,29 +88,26 @@
           11: { sorter: 'currency-column' }
         }
       });
-    });
-    
-    function toggleIcons() {
-      if (iconsVisible) {
-        $('.icon>img').hide();
-      } else {
-        createIcons();
-        $('.icon>img').show();
-      }
-      iconsVisible = !iconsVisible;
-    }
-    
-    function createIcons() {
-      if (iconsCreated) {
-        return;
-      }
       
-      $(".icon").each(function(index) {
-        var url = '#{request.protocol}s3.amazonaws.com/app_data/icons/' + this.id + '.png';
-        $(this).html('<img src="' + url + '" height="57" width="57" />');
+      var iconsLoaded = false;
+      var iconsVisible = false;
+      $('#toggle_icons').click(function() {
+        if (iconsVisible) {
+          $('img.icon').hide();
+          iconsVisible = false;
+        } else {
+          if (!iconsLoaded) {
+            $('img.icon').each(function() {
+              $(this).attr('src', $(this).attr('s'));
+            });
+            iconsLoaded = true;
+          }
+          $('img.icon').show();
+          iconsVisible = true;
+        }
+        return false;
       });
-      iconsCreated = true;
-    }
+    });
   
 - content_for :page_styles do
   :plain
@@ -124,9 +120,13 @@
     }
     
     th, 
-    td,
-    .icon img {
+    td {
       border: 0;
+    }
+    
+    img.icon {
+      width: 57px;
+      height: 57px;
     }
     
     .last_updated {
