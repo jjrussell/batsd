@@ -20,7 +20,8 @@
     #help_disabled_partners.help ?
     = f.text_area :disabled_partners
     = error_message_on(@partner, :disabled_partners) if @partner.errors.on :disabled_partners
-    = @partner.get_disabled_partner_ids.map { |id| link_to((Partner.find(id).name rescue "UNKNOWN"), partner_path(id)) }.join(', ')
+    .disabled_partner_names
+      = @partner.get_disabled_partner_ids.map { |id| link_to((Partner.find(id).name rescue "UNKNOWN"), partner_path(id)) }.join(', ')
 
   = submit_tag "Update"
 
@@ -58,4 +59,9 @@
     .field {
       margin-bottom: 5px;
       margin-left: 200px;
+    }
+    
+    .disabled_partner_names {
+      width: 400px;
+      margin-left: 20px;
     }
