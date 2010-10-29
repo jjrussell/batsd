@@ -21,20 +21,20 @@
     = f.check_box :only_free_offers
 %tr.admin
   %th
-    = f.label :installs_money_share, 'Installs money share'
+    Installs money share
     #help_installs_money_share.help ?
   %td
     = @currency.installs_money_share
 %tr.admin
   %th
-    = f.label :disabled_partners, 'Disabled partners'
+    Disabled partners
     #help_disabled_partners.help ?
     .msg
       = link_to('Edit partner', edit_partner_path(@app.partner_id))
   %td
-    = @currency.get_disabled_partner_ids.map { |id| link_to(Partner.find(id).name, partner_path(id)) }.join(', ')
+    = @currency.get_disabled_partners.map { |p| link_to(p.name, partner_path(p)) }.join(', ')
     
--content_for :extra_help do
+- content_for :extra_help do
   #help_disabled_offers_content{:name => 'Disabled offers'}
     A semi-colon (;) separated list of offer id's. Offers that match these id's will not be shown in
     this app's offerwall.

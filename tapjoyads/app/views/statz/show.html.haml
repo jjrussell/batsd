@@ -85,7 +85,7 @@
   - property_row('Account mangers', @offer.partner.account_managers.map{|u| u.username}.join(', '))
   - property_row('Internal notes', @offer.partner.account_manager_notes, '')
   - property_row('id', link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - ' + clippy(@offer.partner.id))
-= render :partial => 'partners/make_current_button', :locals => {:partner => @offer.partner}
+= render 'partners/make_current_button', :partner => @offer.partner
 
 - if @offer.item_type == 'App' && @offer.item.currency
   %h4 Currency - #{@offer.item.currency.name}

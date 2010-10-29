@@ -4,7 +4,7 @@
 
 = link_to("Edit", edit_partner_path(@partner))
 
-= render :partial => 'make_current_button', :locals => {:partner => @partner}
+= render 'make_current_button', :partner => @partner
 
 .metadata Name: #{@partner.name}
 .metadata Contact name: #{@partner.contact_name}

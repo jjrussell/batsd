@@ -98,6 +98,10 @@ class Currency < ActiveRecord::Base
     Set.new(disabled_partners.split(';'))
   end
   
+  def get_disabled_partners
+    Partner.find_all_by_id(disabled_partners.split(';'))
+  end
+  
   def get_test_device_ids
     Set.new(test_devices.split(';'))
   end
@@ -105,12 +109,13 @@ class Currency < ActiveRecord::Base
   def tapjoy_managed?
     callback_url == TAPJOY_MANAGED_CALLBACK_URL
   end
-private
   
   def set_values_from_partner
     self.disabled_partners = partner.disabled_partners
     self.installs_money_share = partner.installs_money_share
   end
+  
+private
   
   def update_memcached
     Mc.put("mysql.currency.#{app_id}", self)

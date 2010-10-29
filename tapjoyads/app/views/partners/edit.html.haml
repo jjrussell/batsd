@@ -21,7 +21,7 @@
     = f.text_area :disabled_partners
     = error_message_on(@partner, :disabled_partners) if @partner.errors.on :disabled_partners
     .disabled_partner_names
-      = @partner.get_disabled_partner_ids.map { |id| link_to((Partner.find(id).name rescue "UNKNOWN"), partner_path(id)) }.join(', ')
+      = @partner.get_disabled_partners.map { |p| link_to(p.name, partner_path(p)) }.join(', ')
 
   = submit_tag "Update"
 

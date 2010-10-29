@@ -87,6 +87,10 @@ class Partner < ActiveRecord::Base
   def get_disabled_partner_ids
     Set.new(disabled_partners.split(';'))
   end
+  
+  def get_disabled_partners
+    Partner.find_all_by_id(disabled_partners.split(';'))
+  end
 
   def payout_cutoff_date(reference_date = nil)
     reference_date ||= Time.zone.now
@@ -135,10 +139,11 @@ private
   end
   
   def update_currencies
-    currencies.each do |c|
-      c.installs_money_share = installs_money_share
-      c.disabled_partners = disabled_partners
-      c.save!
+    if installs_money_share_changed? || disabled_partners_changed?
+      currencies.each do |c|
+        c.set_values_from_partner
+        c.save!
+      end
     end
   end
   
