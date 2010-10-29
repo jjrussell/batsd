@@ -41,7 +41,7 @@ private
       click.advertiser_amount = 0
       click.type = 'install_jailbroken'
       wr_path += '_jailbroken'
-      Notifier.alert_new_relic(JailbrokenInstall, "Device: #{click.udid} is jailbroken and installed a paid app.")
+      Notifier.alert_new_relic(JailbrokenInstall, "Device: #{click.udid} is jailbroken and installed a paid app: #{click.advertiser_app_id}")
     end
     
     reward = Reward.new(:key => click.reward_key)
