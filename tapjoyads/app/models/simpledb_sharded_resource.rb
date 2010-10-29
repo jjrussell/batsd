@@ -21,11 +21,11 @@ class SimpledbShardedResource < SimpledbResource
   private
   
   def self.num_domains  
-    @@num_domains ||= 0
+    @num_domains ||= 0
   end
   
   def self.num_domains=(num)
-    @@num_domains = num
+    @num_domains = num
   end
   
 end
