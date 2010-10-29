@@ -16,7 +16,7 @@ class CurrencyTest < ActiveSupport::TestCase
   
   context "A Currency" do
     setup do
-      @currency = Factory(:currency)
+      @currency = Factory.build(:currency)
     end
     
     context "when dealing with a RatingOffer" do
@@ -112,6 +112,25 @@ class CurrencyTest < ActiveSupport::TestCase
       
       should "calculate displayer amounts" do
         assert_equal 10, @currency.get_displayer_amount(@offer, @displayer_app)
+      end
+    end
+    
+    context "when created" do
+      setup do
+        partner = Factory(:partner)
+        partner.installs_money_share = 0.42
+        partner.disabled_partners = "foo"
+        @currency.partner = partner
+      end
+      
+      should "have same installs_money_share as its partner" do
+        @currency.save!
+        assert_equal 0.42, @currency.installs_money_share
+      end
+      
+      should "have the same disabled_partners as its partner" do
+        @currency.save!
+        assert_equal 'foo', @currency.disabled_partners
       end
     end
     

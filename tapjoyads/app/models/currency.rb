@@ -20,6 +20,7 @@ class Currency < ActiveRecord::Base
     end
   end
   
+  before_create :set_values_from_partner
   after_save :update_memcached
   before_destroy :clear_memcached
   
@@ -89,14 +90,6 @@ class Currency < ActiveRecord::Base
     end
   end
   
-  def add_disabled_partner_id(partner_id)
-    unless get_disabled_partner_ids.include?(partner_id)
-      self.disabled_partners += ';' if disabled_partners.length > 0
-      self.disabled_partners += "#{partner_id}"
-      save!
-    end
-  end
-  
   def get_disabled_offer_ids
     Set.new(disabled_offers.split(';'))
   end
@@ -113,6 +106,11 @@ class Currency < ActiveRecord::Base
     callback_url == TAPJOY_MANAGED_CALLBACK_URL
   end
 private
+  
+  def set_values_from_partner
+    self.disabled_partners = partner.disabled_partners
+    self.installs_money_share = partner.installs_money_share
+  end
   
   def update_memcached
     Mc.put("mysql.currency.#{app_id}", self)

@@ -5,7 +5,7 @@ class PartnersController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update ]
+  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit ]
   before_filter :get_account_managers, :only => [ :index, :managed_by ]
   after_filter :save_activity_logs, :only => [ :update ]
 
@@ -62,18 +62,23 @@ class PartnersController < WebsiteController
       render :action => :new
     end
   end
+  
+  def edit
+  end
 
   def update
+    log_activity(@partner)
+    
     params[:partner][:account_managers] = User.find_all_by_id(params[:partner][:account_managers])
 
-    safe_attributes = [ :account_managers, :account_manager_notes ]
+    safe_attributes = [ :account_managers, :account_manager_notes, :installs_money_share, :disabled_partners ]
     if @partner.safe_update_attributes(params[:partner], safe_attributes)
       flash[:notice] = 'Partner was successfully updated.'
     else
       flash[:error] = 'Partner update unsuccessful.'
     end
 
-    redirect_to :back
+    render :action => :edit
   end
 
   def manage
@@ -111,8 +116,6 @@ private
       flash[:error] = "Could not find partner with ID: #{params[:id]}"
       redirect_to partners_path and return
     end
-
-    log_activity(@partner)
   end
 
   def get_account_managers

@@ -97,5 +97,23 @@ class PartnerTest < ActiveSupport::TestCase
         assert_equal Time.zone.parse('2010-02-16'), @partner.payout_cutoff_date(Time.zone.parse('2010-02-20'))
       end
     end
+    
+    context "with currencies" do
+      setup do
+        @currency1 = Factory(:currency, :partner => @partner)
+        @currency2 = Factory(:currency, :partner => @partner)
+      end
+      
+      should "update its currencies's installs_money_share when saved" do
+        @partner.installs_money_share = 0.42
+        @partner.save!
+        
+        @currency1.reload
+        @currency2.reload
+        assert_equal 0.42, @currency1.installs_money_share
+        assert_equal 0.42, @currency2.installs_money_share
+      end
+    end
+    
   end
 end

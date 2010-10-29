@@ -17,6 +17,16 @@ class Partner < ActiveRecord::Base
   has_many :monthly_accountings
   
   validates_numericality_of :balance, :pending_earnings, :next_payout_amount, :only_integer => true, :allow_nil => false
+  validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
+    if record.disabled_partners_changed?
+      value.split(';').each do |partner_id|
+        record.errors.add(attribute, "contains an unknown partner id: #{partner_id}") if Partner.find_by_id(partner_id).nil?
+      end
+    end
+  end
+  
+  after_create :create_mail_chimp_entry
+  after_save :update_currencies
   
   cattr_reader :per_page
   @@per_page = 20
@@ -26,8 +36,6 @@ class Partner < ActiveRecord::Base
   named_scope :search, lambda { |name_or_email| { :joins => :users,
       :conditions => [ "partners.name LIKE ? OR users.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
     }
-
-  after_create :create_mail_chimp_entry
 
   def self.calculate_next_payout_amount(partner_id)
     Partner.using_slave_db do
@@ -76,6 +84,10 @@ class Partner < ActiveRecord::Base
     users.reject{|user| user.can_manage_account?}
   end
 
+  def get_disabled_partner_ids
+    Set.new(disabled_partners.split(';'))
+  end
+
   def payout_cutoff_date(reference_date = nil)
     reference_date ||= Time.zone.now
     reference_date -= 3.days
@@ -115,10 +127,19 @@ class Partner < ActiveRecord::Base
     offers.any?{|offer| offer.is_publisher_offer?}
   end
 
-  private
+private
 
   def create_mail_chimp_entry
     message = { :type => "create", :partner_id => self.id }.to_json
     Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)
   end
+  
+  def update_currencies
+    currencies.each do |c|
+      c.installs_money_share = installs_money_share
+      c.disabled_partners = disabled_partners
+      c.save!
+    end
+  end
+  
 end

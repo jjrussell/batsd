@@ -9,13 +9,6 @@
     = error_message_on(@currency, :disabled_offers) if @currency.errors.on :disabled_offers
 %tr.admin
   %th
-    = f.label :disabled_partners, 'Disabled partners'
-    #help_disabled_partners.help ?
-  %td
-    = f.text_area :disabled_partners
-    = error_message_on(@currency, :disabled_partners) if @currency.errors.on :disabled_partners
-%tr.admin
-  %th
     = f.label :max_age_rating, 'Max age rating'
     #help_max_age_rating.help ?
   %td
@@ -31,16 +24,23 @@
     = f.label :installs_money_share, 'Installs money share'
     #help_installs_money_share.help ?
   %td
-    = f.text_field :installs_money_share
-    = error_message_on(@currency, :installs_money_share) if @currency.errors.on :installs_money_share
+    = @currency.installs_money_share
+%tr.admin
+  %th
+    = f.label :disabled_partners, 'Disabled partners'
+    #help_disabled_partners.help ?
+    .msg
+      = link_to('Edit partner', edit_partner_path(@app.partner_id))
+  %td
+    = @currency.get_disabled_partner_ids.map { |id| link_to(Partner.find(id).name, partner_path(id)) }.join(', ')
     
 -content_for :extra_help do
   #help_disabled_offers_content{:name => 'Disabled offers'}
     A semi-colon (;) separated list of offer id's. Offers that match these id's will not be shown in
     this app's offerwall.
   #help_disabled_partners_content{:name => 'Disabled partners'}
-    A semi-colon (;) separated list of partner id's. Offers belonging to partners that match these id's
-    will not be shown in this app's offerwall.
+    Offers belonging to partners that are in this list will not be shown in this app's offerwall.
+    To edit these values, you must edit the associated partner.
   #help_max_age_rating_content{:name => 'Max age rating'}
     The maximum age-rating of offers to show.
     %ul
@@ -57,4 +57,13 @@
   :plain
     .admin th {
       color: blue;
+    }
+    
+    .admin td {
+      width: 400px;
+    }
+    
+    .admin .msg {
+      font-size: 85%;
+      margin-right: 20px;
     }

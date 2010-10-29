@@ -1,0 +1,61 @@
+%h1= @partner.name
+
+- form_for(@partner, nil, :html => { :class => 'tjform' }) do |f|
+  .field
+    = f.label(:account_manager_notes, 'Internal notes')
+    #help_account_manager_notes.help ?
+    = f.text_area :account_manager_notes
+  .field
+    = f.label(:account_managers, 'Account manager(s)')
+    #help_account_managers.help ?
+    - options = options_from_collection_for_select(User.account_managers, "id", "email", @partner.account_managers.map(&:id))
+    = f.select :account_managers, options, {:include_blank => '(no one)'}
+  .field
+    = f.label :installs_money_share, 'Installs money share'
+    #help_installs_money_share.help ?
+    = f.text_field :installs_money_share
+    = error_message_on(@partner, :installs_money_share) if @partner.errors.on :installs_money_share
+  .field
+    = f.label :disabled_partners, 'Disabled partners'
+    #help_disabled_partners.help ?
+    = f.text_area :disabled_partners
+    = error_message_on(@partner, :disabled_partners) if @partner.errors.on :disabled_partners
+    = @partner.get_disabled_partner_ids.map { |id| link_to((Partner.find(id).name rescue "UNKNOWN"), partner_path(id)) }.join(', ')
+
+  = submit_tag "Update"
+
+.hidden
+  #help_account_manager_notes_content{:name => 'Internal notes'}
+    Internal notes, only viewable by tapjoyers.
+  #help_account_managers_content{:name => 'Account manager(s)'}
+    Who is managing this partner?
+  #help_disabled_partners_content{:name => 'Disabled partners'}
+    Offers belonging to partners that are in this list will not be shown in this partner's offerwalls.
+  #help_installs_money_share_content{:name => 'Installs money share'}
+    The percent share of app install offer revenue that this publisher gets.
+
+- content_for :page_styles do
+  :plain
+    
+    label {
+      vertical-align: top;
+      font-weight: bold;
+      text-align: right;
+      display: inline-block;
+      width: 200px;
+      margin-left: -200px;
+    }
+    
+    textarea {
+      width: 500px;
+      height: 75px;
+    }
+    
+    input[type=submit] {
+      float: right;
+    }
+    
+    .field {
+      margin-bottom: 5px;
+      margin-left: 200px;
+    }

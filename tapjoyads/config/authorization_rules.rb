@@ -37,7 +37,7 @@ authorization do
     has_permission_on :search, :to => [ :offers ]
     has_permission_on :tools, :to => [ :disabled_popular_offers ]
     has_permission_on :activities, :to => [ :index ]
-    has_permission_on :partners, :to => [ :index, :show, :make_current, :manage, :stop_managing, :mail_chimp_info ]
+    has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info ]
   end
   
   role :account_mgr do
