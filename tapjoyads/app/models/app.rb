@@ -131,7 +131,7 @@ class App < ActiveRecord::Base
     reject_rating_offer = options.delete(:reject_rating_offer) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
-    device_app_list = Device.new(:key => udid)
+    device = Device.new(:key => udid)
     currency = Currency.find_in_cache_by_app_id(id) unless currency
     
     if type == Offer::CLASSIC_OFFER_TYPE
@@ -146,7 +146,7 @@ class App < ActiveRecord::Base
     final_offer_list = []
     num_rejected = 0
     offer_list.each do |o|
-      if o.should_reject?(self, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer)
+      if o.should_reject?(self, device, currency, device_type, geoip_data, app_version, reject_rating_offer)
         num_rejected += 1
       else
         final_offer_list << o

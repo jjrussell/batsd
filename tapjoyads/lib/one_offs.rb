@@ -153,19 +153,19 @@ class OneOffs
       file.each_line do |line|
         counter += 1
         udid = line.gsub("\n", "").gsub('"', '').downcase
-        app_list = Device.new :key => udid
-        app_list.is_new ? new_udids += 1 : existing_udids += 1
-        if app_list.has_app app_id
+        device = Device.new :key => udid
+        device.is_new ? new_udids += 1 : existing_udids += 1
+        if device.has_app app_id
           app_existing_udids += 1
         else
           app_new_udids += 1
-          apps_hash = app_list.apps
+          apps_hash = device.apps
           apps_hash[app_id] = now
-          app_list.apps = apps_hash
+          device.apps = apps_hash
           begin
-            app_list.serial_save :catch_exceptions => false
+            device.save!
           rescue
-            puts "app_list save failed for UDID: #{udid}   retrying..."
+            puts "device save failed for UDID: #{udid}   retrying..."
             sleep 0.2
             retry
           end

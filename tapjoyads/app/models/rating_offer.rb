@@ -21,11 +21,11 @@ class RatingOffer < ActiveRecord::Base
     Mc.get_and_put("mysql.rating_offer.#{app_id}") { RatingOffer.find_by_app_id(app_id) }
   end
   
-  def get_id_for_device_app_list(app_version)
-    RatingOffer.get_id_for_device_app_list(id, app_version)
+  def get_id_with_app_version(app_version)
+    RatingOffer.get_id_with_app_version(id, app_version)
   end
   
-  def self.get_id_for_device_app_list(id, app_version)
+  def self.get_id_with_app_version(id, app_version)
     app_version.blank? ? id : (id + '.' + app_version)
   end
   

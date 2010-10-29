@@ -279,9 +279,9 @@ class StatzController < WebsiteController
     app_id = @offer.is_primary? ? @offer.id : @offer.item.primary_offer.id
     
     @udids_to_check.each do |hash|
-      list = Device.new(:key => hash[:udid])
-      if list.has_app(app_id)
-        hash[:last_run_time] = list.last_run_time(app_id).in_time_zone('Pacific Time (US & Canada)').to_s(:pub_ampm_sec)
+      device = Device.new(:key => hash[:udid])
+      if device.has_app(app_id)
+        hash[:last_run_time] = device.last_run_time(app_id).to_s(:pub_ampm_sec)
       end
     end
   end

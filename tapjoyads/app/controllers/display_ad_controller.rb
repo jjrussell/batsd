@@ -47,10 +47,10 @@ private
     web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data)
     
     # Randomly choose one publisher app that the user has run:
-    device_app_list = Device.new(:key => params[:udid])
+    device = Device.new(:key => params[:udid])
     publisher_app_ids = []
     @@allowed_publisher_app_ids.each do |app_id|
-     last_run_time = device_app_list.last_run_time(app_id)
+     last_run_time = device.last_run_time(app_id)
      if last_run_time.present? && last_run_time > now - 1.week
        publisher_app_ids << app_id
      end

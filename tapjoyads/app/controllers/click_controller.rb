@@ -9,7 +9,7 @@ class ClickController < ApplicationController
     @offer = Offer.find_in_cache(params[:offer_id])
     return if offer_disabled?
     
-    @device_app_list = Device.new(:key => params[:udid])
+    @device = Device.new(:key => params[:udid])
     return if offer_completed?
     
     create_web_request
@@ -25,7 +25,7 @@ class ClickController < ApplicationController
     @offer = Offer.find_in_cache(params[:offer_id])
     return if offer_disabled?
     
-    @device_app_list = Device.new(:key => params[:udid])
+    @device = Device.new(:key => params[:udid])
     return if offer_completed?
     
     create_web_request
@@ -41,7 +41,7 @@ class ClickController < ApplicationController
     @offer = Offer.find_in_cache(params[:offer_id])
     return if offer_disabled?
     
-    @device_app_list = Device.new(:key => params[:udid])
+    @device = Device.new(:key => params[:udid])
     return if offer_completed?
     
     create_web_request
@@ -73,12 +73,11 @@ private
   end
   
   def offer_completed?
+    app_id_for_device = params[:advertiser_app_id]
     if @offer.item_type == 'RatingOffer'
-      id_for_device_app_list = RatingOffer.get_id_for_device_app_list(params[:advertiser_app_id], params[:app_version])
-    else
-      id_for_device_app_list = params[:advertiser_app_id]
+      app_id_for_device = RatingOffer.get_id_with_app_version(params[:advertiser_app_id], params[:app_version])
     end
-    completed = @device_app_list.has_app(id_for_device_app_list)
+    completed = @device.has_app(app_id_for_device)
     if completed
       create_web_request('completed_offer')
       render(:template => 'click/unavailable_offer', :layout => 'iphone')
@@ -128,13 +127,12 @@ private
   
   def handle_pay_per_click
     if @offer.pay_per_click?
+      app_id_for_device = params[:advertiser_app_id]
       if @offer.item_type == 'RatingOffer'
-        id_for_device_app_list = RatingOffer.get_id_for_device_app_list(params[:advertiser_app_id], params[:app_version])
-      else
-        id_for_device_app_list = params[:advertiser_app_id]
+        app_id_for_device = RatingOffer.get_id_with_app_version(params[:advertiser_app_id], params[:app_version])
       end
-      @device_app_list.set_app_ran(id_for_device_app_list, params)
-      @device_app_list.save
+      @device.set_app_ran(app_id_for_device, params)
+      @device.save
       
       message = { :click => @click.serialize(:attributes_only => true), :install_timestamp => @now.to_f.to_s }.to_json
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)

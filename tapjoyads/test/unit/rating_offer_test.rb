@@ -16,8 +16,8 @@ class RatingOfferTest < ActiveSupport::TestCase
     end
     
     should "append the app version to the id" do
-      assert_equal "#{@rating_offer.id}", @rating_offer.get_id_for_device_app_list(nil)
-      assert_equal "#{@rating_offer.id}.1.0", @rating_offer.get_id_for_device_app_list('1.0')
+      assert_equal "#{@rating_offer.id}", @rating_offer.get_id_with_app_version(nil)
+      assert_equal "#{@rating_offer.id}.1.0", @rating_offer.get_id_with_app_version('1.0')
     end
   end
 end

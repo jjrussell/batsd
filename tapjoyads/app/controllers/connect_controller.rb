@@ -20,13 +20,13 @@ class ConnectController < ApplicationController
     web_request = WebRequest.new
     web_request.put_values('connect', params, get_ip_address, get_geoip_data)
     
-    device_app_list = Device.new(:key => params[:udid])
-    path_list = device_app_list.set_app_ran(params[:app_id], params)
+    device = Device.new(:key => params[:udid])
+    path_list = device.set_app_ran(params[:app_id], params)
     path_list.each do |path|
       web_request.add_path(path)
     end
     
-    device_app_list.save
+    device.save
     
     @app = App.find_in_cache(params[:app_id], false)
     

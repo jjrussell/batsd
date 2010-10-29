@@ -51,9 +51,9 @@ class OfferCompletedController < ApplicationController
       click.save
     end
     
-    device_app_list = Device.new(:key => click.udid)
-    device_app_list.set_app_ran(click.advertiser_app_id, params)
-    device_app_list.save
+    device = Device.new(:key => click.udid)
+    device.set_app_ran(click.advertiser_app_id, params)
+    device.save
     
     message = { :click => click.serialize(:attributes_only => true), :install_timestamp => now.to_f.to_s }.to_json
     Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)

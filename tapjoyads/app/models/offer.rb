@@ -350,15 +350,15 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
-  def should_reject?(publisher_app, device_app_list, currency, device_type, geoip_data, app_version, reject_rating_offer)
+  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, reject_rating_offer)
     return is_disabled?(publisher_app, currency) ||
         platform_mismatch?(publisher_app, device_type) ||
-        geoip_reject?(geoip_data, device_app_list) ||
+        geoip_reject?(geoip_data, device) ||
         age_rating_reject?(currency) ||
         rating_offer_reject?(publisher_app, reject_rating_offer) ||
-        already_complete?(publisher_app, device_app_list, app_version) ||
-        show_rate_reject?(device_app_list) ||
-        flixter_reject?(publisher_app, device_app_list) ||
+        already_complete?(publisher_app, device, app_version) ||
+        show_rate_reject?(device) ||
+        flixter_reject?(publisher_app, device) ||
         whitelist_reject?(publisher_app) ||
         gamevil_reject?(publisher_app)
   end
@@ -393,8 +393,8 @@ private
     return currency.max_age_rating < age_rating
   end
   
-  def geoip_reject?(geoip_data, device_app_list)
-    return false if EXEMPT_UDIDS.include?(device_app_list.key)
+  def geoip_reject?(geoip_data, device)
+    return false if EXEMPT_UDIDS.include?(device.key)
 
     return true if !countries.blank? && countries != '[]' && !get_countries.include?(geoip_data[:country])
     return true if !postal_codes.blank? && postal_codes != '[]' && !get_postal_codes.include?(geoip_data[:postal_code])
@@ -403,40 +403,41 @@ private
     return false
   end
   
-  def already_complete?(publisher_app, device_app_list, app_version)
-    return false if EXEMPT_UDIDS.include?(device_app_list.key)
+  def already_complete?(publisher_app, device, app_version)
+    return false if EXEMPT_UDIDS.include?(device.key)
     
-    id_for_device_app_list = item_id
+    app_id_for_device = item_id
     if item_type == 'RatingOffer'
-      id_for_device_app_list = RatingOffer.get_id_for_device_app_list(item_id, app_version)
+      app_id_for_device = RatingOffer.get_id_with_app_version(item_id, app_version)
     end
     
-    if id_for_device_app_list == '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424'
+    if app_id_for_device == '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424'
       # Don't show 'Tap farm' offer to users that already have 'Tap farm', 'Tap farm 6', or 'Tap farm 5'
-      return device_app_list.has_app(id_for_device_app_list) || device_app_list.has_app('bad4b0ae-8458-42ba-97ba-13b302827234') || device_app_list.has_app('403014c2-9a1b-4c1d-8903-5a41aa09be0e')
+      return device.has_app(app_id_for_device) || device.has_app('bad4b0ae-8458-42ba-97ba-13b302827234') || device.has_app('403014c2-9a1b-4c1d-8903-5a41aa09be0e')
     end
     
-    if id_for_device_app_list == 'b23efaf0-b82b-4525-ad8c-4cd11b0aca91'
+    if app_id_for_device == 'b23efaf0-b82b-4525-ad8c-4cd11b0aca91'
       # Don't show 'Tap Store' offer to users that already have 'Tap Store', 'Tap Store Boost', or 'Tap Store Plus'
-      return device_app_list.has_app(id_for_device_app_list) || device_app_list.has_app('a994587c-390c-4295-a6b6-dd27713030cb') || device_app_list.has_app('6703401f-1cb2-42ec-a6a4-4c191f8adc27')
+      return device.has_app(app_id_for_device) || device.has_app('a994587c-390c-4295-a6b6-dd27713030cb') || device.has_app('6703401f-1cb2-42ec-a6a4-4c191f8adc27')
     end
     
-    return device_app_list.has_app(id_for_device_app_list)
+    return device.has_app(app_id_for_device)
   end
   
-  def show_rate_reject?(device_app_list)
-    return false if EXEMPT_UDIDS.include?(device_app_list.key)
+  def show_rate_reject?(device)
+    return false if EXEMPT_UDIDS.include?(device.key)
     
-    srand( (device_app_list.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
+    srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     return rand > show_rate
   end
   
-  #TO REMOVE
+  # TO REMOVE
   def gamevil_reject?(publisher_app)
     return publisher_app.partner_id == 'cea789f9-7741-4197-9cc0-c6ac40a0801a' && partner_id != 'cea789f9-7741-4197-9cc0-c6ac40a0801a'
   end
+  # END TO REMOVE
   
-  def flixter_reject?(publisher_app, device_app_list)
+  def flixter_reject?(publisher_app, device)
     clash_of_titans_offer_id = '4445a5be-9244-4ce7-b65d-646ee6050208'
     tap_fish_id = '9dfa6164-9449-463f-acc4-7a7c6d7b5c81'
     tap_fish_coins_id = 'b24b873f-d949-436e-9902-7ff712f7513d'
@@ -447,7 +448,7 @@ private
       return true unless publisher_app.id == tap_fish_id || publisher_app.id == tap_fish_coins_id
       
       # Only show offer if user has recently run flixter:
-      return true if !device_app_list.has_app(flixter_id) || device_app_list.last_run_time(flixter_id) < (Time.zone.now - 1.days)
+      return true if !device.has_app(flixter_id) || device.last_run_time(flixter_id) < (Time.zone.now - 1.days)
     end
     return false
   end
