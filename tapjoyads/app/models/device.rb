@@ -41,7 +41,7 @@ class Device < SimpledbShardedResource
     
     if params[:lad].present?
       if params[:lad] == '0'
-        Notifier.alert_new_relic(DeviceNoLongerJailbroken) if self.is_jailbroken
+        Notifier.alert_new_relic(DeviceNoLongerJailbroken, "device_id: #{@key}", nil, params) if self.is_jailbroken
       else
         self.is_jailbroken = true
       end
