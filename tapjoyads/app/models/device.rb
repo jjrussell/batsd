@@ -49,7 +49,7 @@ class Device < SimpledbShardedResource
     
     if params[:country].present?
       if self.country.present? && self.country != params[:country]
-        Notifier.alert_new_relic(DeviceCountryChanged, "Country for udid: #{@key} changed from #{self.country} to #{params[:country]}")
+        Notifier.alert_new_relic(DeviceCountryChanged, "Country for udid: #{@key} changed from #{self.country} to #{params[:country]}", nil, params)
       end
       self.country = params[:country]
     end
