@@ -12,14 +12,8 @@ class RatingOffer < ActiveRecord::Base
   before_validation :set_name_and_description
   after_create :create_primary_offer, :create_icon
   after_update :update_offers
-  after_save :update_memcached
-  before_destroy :clear_memcached
   
   named_scope :visible, :conditions => { :hidden => false }
-  
-  def self.find_in_cache_by_app_id(app_id)
-    Mc.get_and_put("mysql.rating_offer.#{app_id}") { RatingOffer.find_by_app_id(app_id) }
-  end
   
   def get_id_with_app_version(app_version)
     RatingOffer.get_id_with_app_version(id, app_version)
@@ -64,14 +58,6 @@ private
       offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?
     end
-  end
-  
-  def update_memcached
-    Mc.put("mysql.rating_offer.#{app_id}", self)
-  end
-  
-  def clear_memcached
-    Mc.delete("mysql.rating_offer.#{app_id}")
   end
   
   def create_icon
