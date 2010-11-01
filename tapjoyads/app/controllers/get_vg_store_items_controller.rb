@@ -39,7 +39,7 @@ private
     publisher_user_id = params[:udid]
     publisher_user_id = params[:publisher_user_id] unless params[:publisher_user_id].blank?
     
-    @currency = Currency.find_in_cache_by_app_id(params[:app_id])
+    @currency = Currency.find_in_cache(params[:app_id])
     if @currency.nil?
       @error_message = "There is no currency for this app. Please create one to use the virtual goods API."
       Notifier.alert_new_relic(NoCurrencyForVirtualGoods, "couldn't find Currency for #{params[:app_id]}", request, params)

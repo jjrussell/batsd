@@ -15,7 +15,7 @@ private
       return
     end
     
-    currency = Currency.find_in_cache_by_app_id(click.publisher_app_id)
+    currency = Currency.find_in_cache(click.publisher_app_id)
     
     # Try to stop Playdom users from click-frauding (specifically from Mobsters: Big Apple)
     if currency.callback_url == 'PLAYDOM_DEFINED' && click.publisher_user_id !~ /^(F|M|P)[0-9]+$/

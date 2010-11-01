@@ -24,8 +24,8 @@ class Currency < ActiveRecord::Base
   after_save :update_memcached
   before_destroy :clear_memcached
   
-  def self.find_in_cache_by_app_id(app_id)
-    Mc.get_and_put("mysql.currency.#{app_id}") { Currency.find_by_app_id(app_id) }
+  def self.find_in_cache(id)
+    Mc.get_and_put("mysql.currency.#{id}") { Currency.find(id) }
   end
   
   def get_visual_reward_amount(offer)
@@ -118,11 +118,11 @@ class Currency < ActiveRecord::Base
 private
   
   def update_memcached
-    Mc.put("mysql.currency.#{app_id}", self)
+    Mc.put("mysql.currency.#{id}", self)
   end
   
   def clear_memcached
-    Mc.delete("mysql.currency.#{app_id}")
+    Mc.delete("mysql.currency.#{id}")
   end
   
 end

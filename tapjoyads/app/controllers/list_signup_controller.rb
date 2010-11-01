@@ -5,7 +5,7 @@ class ListSignupController < ApplicationController
   def index
     return unless verify_params([:udid, :publisher_app_id, :advertiser_app_id], {:allow_empty => false})
     
-    @currency = Currency.find_in_cache_by_app_id(params[:publisher_app_id])
+    @currency = Currency.find_in_cache(params[:publisher_app_id])
     @offer = Offer.find_in_cache(params[:advertiser_app_id])
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
   end
@@ -24,7 +24,7 @@ class ListSignupController < ApplicationController
       
       signup.save
       
-      @currency = Currency.find_in_cache_by_app_id(params[:publisher_app_id])
+      @currency = Currency.find_in_cache(params[:publisher_app_id])
       @offer = Offer.find_in_cache(params[:advertiser_app_id])
       @publisher_app = App.find_in_cache(params[:publisher_app_id])
       
@@ -70,7 +70,7 @@ class ListSignupController < ApplicationController
     if @signup.is_new
       return false
     else
-      @currency = Currency.find_in_cache_by_app_id(@signup.publisher_app_id)
+      @currency = Currency.find_in_cache(@signup.publisher_app_id)
       @publisher_app = App.find_in_cache(@signup.publisher_app_id)
 
       @signup.confirmed = Time.now

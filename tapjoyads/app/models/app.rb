@@ -132,7 +132,7 @@ class App < ActiveRecord::Base
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     device = Device.new(:key => udid)
-    currency = Currency.find_in_cache_by_app_id(id) unless currency
+    currency = Currency.find_in_cache(id) unless currency
     
     if type == Offer::CLASSIC_OFFER_TYPE
       offer_list = []

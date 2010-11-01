@@ -2,7 +2,7 @@ class FreeAppCountController < ApplicationController
   def index
     return unless verify_params([:app_id, :udid], {:allow_empty => false})
     
-    currency = Currency.find_in_cache_by_app_id(params[:app_id])
+    currency = Currency.find_in_cache(params[:app_id])
     publisher_app = App.find_in_cache(params[:app_id])
     offer_list, more_data_available = publisher_app.get_offer_list(params[:udid], 
         :currency => currency,

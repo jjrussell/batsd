@@ -17,7 +17,7 @@ private
         return
       end
       
-      currency = Currency.find_in_cache_by_app_id(reward.publisher_app_id)
+      currency = Currency.find_in_cache(reward.publisher_app_id)
       callback_url = currency.callback_url
       
       if callback_url == 'PLAYDOM_DEFINED'
