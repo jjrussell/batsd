@@ -41,6 +41,7 @@ class CurrenciesController < WebsiteController
   def create
     @app = current_partner.apps.find(params[:app_id])
     @currency = Currency.new
+    @currency.id = @app.id
     @currency.app = @app
     @currency.partner = @app.partner
     update
