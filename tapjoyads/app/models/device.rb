@@ -20,7 +20,7 @@ class Device < SimpledbShardedResource
     path_list = []
     
     unless app_id =~ /^(\w|\.|-)*$/
-      Notifier.alert_new_relic(InvalidAppIdForDevices, "udid: #{@key}, app_id: #{app_id}")
+      Notifier.alert_new_relic(InvalidAppIdForDevices, "udid: #{@key}, app_id: #{app_id}", nil, params)
       return path_list
     end
     
