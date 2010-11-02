@@ -89,7 +89,7 @@ class Currency < ActiveRecord::Base
       0
     end
   end
-  
+
   def get_disabled_offer_ids
     Set.new(disabled_offers.split(';'))
   end

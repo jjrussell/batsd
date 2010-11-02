@@ -67,6 +67,18 @@
 
   - unless @currency.test_devices.blank?
     %h3
+      Test Device Last-run time
+      #help_reset_test_device_last_run_time.help ?
+    %table
+      %tr
+        %th UDID
+        %th Last run time
+      - @udids_to_check.each do |arr|
+        %tr
+          %td= arr[0]
+          %td= arr[1]
+
+    %h3
       Reset Test Device Virtual Goods
       #help_reset_test_devices.help ?
     - form_tag({:action => 'reset_test_device'}, {:class => 'tjform'}) do
@@ -74,7 +86,8 @@
         %tbody
           %tr
             %th= label_tag :udid, "Device ID"
-            %td= select_tag 'udid', options_for_select(@currency.test_devices.split(';'))
+            %td= select_tag 'udid', options_for_select(@currency.get_test_device_ids)
+
       = submit_tag('Reset this device')
 
   .hidden
