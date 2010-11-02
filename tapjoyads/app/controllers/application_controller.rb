@@ -4,6 +4,7 @@
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   
+  before_filter :set_time_zone
   before_filter :fix_params
   before_filter :reject_banned_ips
 
@@ -44,6 +45,10 @@ private
       NewRelic::Agent.add_custom_parameters({ :user_agent => request.headers['User-Agent'] })
       Notifier.alert_new_relic(MissingRequiredParamsError, request.url, request, params)
     end
+  end
+  
+  def set_time_zone
+    Time.zone = ActiveSupport::TimeZone.new('UTC')
   end
   
   def fix_params

@@ -8,7 +8,6 @@ class WebsiteController < ApplicationController
   helper_method :current_user, :current_partner, :current_partner_apps, :current_partner_offers
   
   before_filter { |c| Authorization.current_user = c.current_user }
-  before_filter :set_time_zone
 
   def current_user
     @current_user ||= current_user_session && current_user_session.record
@@ -54,7 +53,11 @@ private
   end
   
   def set_time_zone
-    Time.zone = current_user.time_zone if current_user
+    if current_user
+      Time.zone = current_user.time_zone 
+    else
+      Time.zone = ActiveSupport::TimeZone.new('UTC')
+    end
   end
   
 end
