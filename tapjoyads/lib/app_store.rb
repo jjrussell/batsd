@@ -17,7 +17,7 @@ class AppStore
 
   # returns an array of first 24 App instances matching "term"
   def self.search(term, platform='iphone', country='')
-    if platform == 'android'
+    if /android/i =~ platform
       return self.search_android_marketplace(term)
     else
       return self.search_apple_app_store(term.gsub(/\s/, '+'), country)
