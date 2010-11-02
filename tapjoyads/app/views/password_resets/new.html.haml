@@ -8,7 +8,7 @@
   %table
     %tr
       %th= label_tag(:email, 'Email Address')
-      %td= text_field_tag(:email)
+      %td= text_field_tag(:email, '', :class => 'login')
     %tr
       %td{ :colspan => 2 }= submit_tag('Submit')
 
@@ -17,3 +17,9 @@
     $(function() {
       $('#email').focus();
     });
+  
+- content_for :page_styles do
+  :plain
+    .login {
+      width: 200px;
+    }
