@@ -95,7 +95,7 @@ private
   
   def create_click(type)
     # TO CHANGE - make currency_id a required param 2 days after deploy
-    currency = Currency.find_in_cache(params[:currency_id] || params[:publisher_app_id])
+    currency = Currency.find_in_cache(params[:publisher_app_id])
     displayer_app = nil
     reward_key_2 = nil
     if params[:displayer_app_id].present?

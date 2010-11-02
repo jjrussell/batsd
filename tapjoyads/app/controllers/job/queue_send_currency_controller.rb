@@ -18,7 +18,7 @@ private
       end
       
       # TO CHANGE - always use currency_id 2 days after deploy
-      currency = Currency.find_in_cache(reward.currency_id || reward.publisher_app_id)
+      currency = Currency.find_in_cache(reward.publisher_app_id)
       callback_url = currency.callback_url
       
       if callback_url == 'PLAYDOM_DEFINED'
