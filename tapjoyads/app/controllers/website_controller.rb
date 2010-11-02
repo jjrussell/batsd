@@ -56,7 +56,7 @@ private
     if current_user
       Time.zone = current_user.time_zone 
     else
-      Time.zone = ActiveSupport::TimeZone.new('UTC')
+      Time.zone = 'UTC'
     end
   end
   

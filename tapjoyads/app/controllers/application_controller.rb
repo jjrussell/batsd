@@ -46,7 +46,7 @@ private
   end
   
   def set_time_zone
-    Time.zone = ActiveSupport::TimeZone.new('UTC')
+    Time.zone = 'UTC'
   end
   
   def fix_params
