@@ -68,7 +68,7 @@
   - unless @currency.test_devices.blank?
     %h3
       Test Device Last-run time
-      #help_reset_test_device_last_run_time.help ?
+      #help_test_device_last_run_time.help ?
     %table
       %tr
         %th UDID
@@ -138,6 +138,8 @@
       A semicolon (;) separated list of test UDIDs. These devices will see beta virtual goods.
     #help_reset_test_devices_content{:name => 'Reset Virtual Goods'}
       Remove all virtual good purchases from a test device.
+    #help_test_device_last_run_time_content{:name => 'Test device last run time'}
+      Displays the last time a test device ran this app.
     = yield :extra_help
 
 - content_for :page_javascript do
