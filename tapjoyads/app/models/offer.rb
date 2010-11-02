@@ -1,5 +1,6 @@
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
+  include MemcachedRecord
   
   APPLE_DEVICES = %w( iphone itouch ipad )
   ANDROID_DEVICES = %w( android )
@@ -82,8 +83,6 @@ class Offer < ActiveRecord::Base
   
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
-  after_save :update_memcached
-  before_destroy :clear_memcached
   
   named_scope :enabled_offers, :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND ((partners.balance > 0 AND item_type IN ('App', 'EmailOffer', 'GenericOffer')) OR item_type = 'RatingOffer')"
   named_scope :featured, :conditions => { :featured => true }
@@ -175,10 +174,6 @@ class Offer < ActiveRecord::Base
     marshalled_offer_list = Marshal.dump(offer_list)
     bucket.put('featured_offers', marshalled_offer_list)
     Mc.put('s3.featured_offers', offer_list)
-  end
-  
-  def self.find_in_cache(id)
-    Mc.get_and_put("mysql.offer.#{id}") { Offer.find(id) }
   end
   
   def self.s3_udids_path(offer_id, date = nil)
@@ -473,14 +468,6 @@ private
     else
       nil
     end
-  end
-
-  def update_memcached
-    Mc.put("mysql.offer.#{id}", self)
-  end
-  
-  def clear_memcached
-    Mc.delete("mysql.offer.#{id}")
   end
   
   def cleanup_url

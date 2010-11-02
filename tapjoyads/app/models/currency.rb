@@ -1,5 +1,6 @@
 class Currency < ActiveRecord::Base
   include UuidPrimaryKey
+  include MemcachedRecord
   
   TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
   NO_CALLBACK_URL = 'NO_CALLBACK'
@@ -21,12 +22,6 @@ class Currency < ActiveRecord::Base
   end
   
   before_create :set_values_from_partner
-  after_save :update_memcached
-  before_destroy :clear_memcached
-  
-  def self.find_in_cache(id)
-    Mc.get_and_put("mysql.currency.#{id}") { Currency.find(id) }
-  end
   
   def get_visual_reward_amount(offer)
     if offer.has_variable_payment?
@@ -113,16 +108,6 @@ class Currency < ActiveRecord::Base
   def set_values_from_partner
     self.disabled_partners = partner.disabled_partners
     self.installs_money_share = partner.installs_money_share
-  end
-  
-private
-  
-  def update_memcached
-    Mc.put("mysql.currency.#{id}", self)
-  end
-  
-  def clear_memcached
-    Mc.delete("mysql.currency.#{id}")
   end
   
 end

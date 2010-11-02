@@ -1,5 +1,6 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
+  include MemcachedRecord
   
   PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS' }
   TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
@@ -18,8 +19,6 @@ class App < ActiveRecord::Base
   after_create :create_primary_offer
   after_update :update_offers
   after_update :update_rating_offer
-  after_save :update_memcached
-  before_destroy :clear_memcached
   
   named_scope :visible, :conditions => { :hidden => false }
 
@@ -33,14 +32,6 @@ class App < ActiveRecord::Base
   
   def store_name
     is_android? ? 'Marketplace' : 'App Store'
-  end
-
-  def self.find_in_cache(id, do_lookup = true)
-    if do_lookup
-      Mc.get_and_put("mysql.app.#{id}") { App.find(id) }
-    else
-      Mc.get("mysql.app.#{id}")
-    end
   end
 
   def virtual_goods
@@ -234,14 +225,6 @@ private
         offer.save!
       end
     end
-  end
-  
-  def update_memcached
-    Mc.put("mysql.app.#{id}", self)
-  end
-  
-  def clear_memcached
-    Mc.delete("mysql.app.#{id}")
   end
   
 end

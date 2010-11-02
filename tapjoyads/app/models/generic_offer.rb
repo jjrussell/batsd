@@ -10,18 +10,8 @@ class GenericOffer < ActiveRecord::Base
   
   after_create :create_primary_offer
   after_update :update_offers
-  after_save :update_memcached
-  before_destroy :clear_memcached
   
   named_scope :visible, :conditions => { :hidden => false }
-  
-  def self.find_in_cache(id, do_lookup = true)
-    if do_lookup
-      Mc.get_and_put("mysql.generic_offer.#{id}") { GenericOffer.find(id) }
-    else
-      Mc.get("mysql.generic_offer.#{id}")
-    end
-  end
   
 private
   
@@ -51,14 +41,6 @@ private
       offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?
     end
-  end
-  
-  def update_memcached
-    Mc.put("mysql.generic_offer.#{id}", self)
-  end
-  
-  def clear_memcached
-    Mc.delete("mysql.generic_offer.#{id}")
   end
   
 end
