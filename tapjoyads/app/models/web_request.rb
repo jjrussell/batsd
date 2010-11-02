@@ -91,6 +91,7 @@ class WebRequest < SimpledbResource
       put('campaign_id', params[:campaign_id])
       put('app_id', params[:app_id])
       put('udid', params[:udid])
+      put('currency_id', params[:currency_id])
     
       put('app_version', params[:app_version])
       put('device_os_version', params[:device_os_version])

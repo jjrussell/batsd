@@ -20,7 +20,7 @@ class GetOffersController < ApplicationController
       primary_offer = Offer.find_in_cache(featured_offer.item_id)
       
       if featured_offer.featured? && @offer_list.include?(primary_offer)
-        redirect_to featured_offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], 'featured', params[:app_version], @now, nil, params[:exp])
+        redirect_to featured_offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], @currency.id, 'featured', params[:app_version], @now, nil, params[:exp])
         return
       end
       @message = "You have already installed #{featured_offer.name}. You can still complete " +
@@ -82,7 +82,7 @@ private
     @max_items = (params[:max] || 25).to_i
     
     @publisher_app = App.find_in_cache(params[:app_id])
-    @currency = Currency.find_in_cache(params[:app_id])
+    @currency = Currency.find_in_cache(params[:currency_id] || params[:app_id])
     
     ##
     # Gameview hardcodes 'iphone' as their device type. This screws up real iphone-only targeting.

@@ -59,9 +59,11 @@ private
     unless publisher_app_ids.empty?
       publisher_app_id = publisher_app_ids[rand(publisher_app_ids.size)]
       publisher_app = App.find_in_cache(publisher_app_id)
+      currency = Currency.find_in_cache(publisher_app_id)
 
       # Randomly choose a free offer that is converting at greater than 50%
       offer_list, more_data_available = publisher_app.get_offer_list(params[:udid], 
+         :currency => currency,
          :device_type => params[:device_type],
          :geoip_data => geoip_data,
          :required_length => 25,
@@ -74,12 +76,11 @@ private
       offer = offer_list[rand(offer_list.size)]
     
       if offer.present?
-        @click_url = offer.get_click_url(publisher_app, get_user_id_from_udid(params[:udid], params[:app_id]), params[:udid], 'display_ad', nil, now, params[:app_id])
+        @click_url = offer.get_click_url(publisher_app, get_user_id_from_udid(params[:udid], params[:app_id]), params[:udid], currency.id, 'display_ad', nil, now, params[:app_id])
         @image = get_ad_image(publisher_app, offer)
       
         params[:offer_id] = offer.id
         params[:publisher_app_id] = publisher_app.id
-      
         
         web_request.add_path('display_ad_shown')
       end

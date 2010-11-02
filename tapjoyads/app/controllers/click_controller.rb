@@ -94,7 +94,8 @@ private
   end
   
   def create_click(type)
-    currency = Currency.find_in_cache(params[:publisher_app_id])
+    # TO CHANGE - make currency_id a required param 2 days after deploy
+    currency = Currency.find_in_cache(params[:currency_id] || params[:publisher_app_id])
     displayer_app = nil
     reward_key_2 = nil
     if params[:displayer_app_id].present?
@@ -111,6 +112,7 @@ private
     @click.advertiser_app_id = params[:advertiser_app_id]
     @click.displayer_app_id  = params[:displayer_app_id]
     @click.offer_id          = params[:offer_id]
+    @click.currency_id       = currency.id
     @click.reward_key        = UUIDTools::UUID.random_create.to_s
     @click.reward_key_2      = reward_key_2
     @click.source            = params[:source]

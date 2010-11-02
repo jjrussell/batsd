@@ -6,6 +6,7 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :displayer_app_id
   self.sdb_attr :publisher_user_id
   self.sdb_attr :offer_id
+  self.sdb_attr :currency_id
   self.sdb_attr :advertiser_amount, :type => :int
   self.sdb_attr :publisher_amount,  :type => :int
   self.sdb_attr :displayer_amount,  :type => :int

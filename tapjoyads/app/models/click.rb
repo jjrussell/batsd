@@ -8,6 +8,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :displayer_app_id
   self.sdb_attr :publisher_user_id
   self.sdb_attr :offer_id
+  self.sdb_attr :currency_id
   self.sdb_attr :reward_key
   self.sdb_attr :reward_key_2
   self.sdb_attr :viewed_at,         :type => :time
