@@ -40,11 +40,6 @@ private
     publisher_user_id = params[:publisher_user_id] unless params[:publisher_user_id].blank?
     
     @currency = Currency.find_in_cache(params[:app_id])
-    if @currency.nil?
-      @error_message = "There is no currency for this app. Please create one to use the virtual goods API."
-      Notifier.alert_new_relic(NoCurrencyForVirtualGoods, "couldn't find Currency for #{params[:app_id]}", request, params)
-      render :template => 'layouts/error' and return
-    end
     @point_purchases = PointPurchases.new(:key => "#{publisher_user_id}.#{params[:app_id]}")
     mc_key = "virtual_good_list.#{params[:app_id]}"
     @virtual_good_list = Mc.get_and_put(mc_key, false, 5.minutes) do
