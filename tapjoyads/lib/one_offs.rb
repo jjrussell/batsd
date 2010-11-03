@@ -110,6 +110,25 @@ class OneOffs
     
   end
   
+  
+  def self.award_doodle_buddy_holiday_earnings(date)
+    holiday_id = '0f791872-31ec-4b8e-a519-779983a3ea1a'
+    regular_id = '3cb9aacb-f0e6-4894-90fe-789ea6b8361d'
+    
+    created_date = Time.parse(date).to_f.to_s
+    
+    50.times do |i|
+      Reward.select :domain_name => "rewards_#{i}", :where => "publisher_app_id = '#{holiday_id}' and created_at > '#{created_date}' and added_to_db != ''" do |r|
+        PointPurchases.transaction :key => "#{r.udid}.#{regular_id}" do |pp|
+          pp.points = pp.points + r.currency_reward
+        end
+        r.put('added_to_db',Time.now.to_f.to_s)
+        r.save!
+      end
+    end
+    
+  end
+  
   def self.get_monthly_actives(filename)
     file = File.open(filename, 'w')
     partners = {}
