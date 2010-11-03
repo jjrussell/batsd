@@ -283,4 +283,34 @@ class OneOffs
     puts "Finished. #{inconsistent_count} partners with inconsistent currencies."
   end
 
+  def self.reset_memcached
+    keys = [ 'statz.cached_stats.24_hours',
+             'statz.cached_stats.7_days',
+             'statz.cached_stats.1_month',
+             'statz.last_updated.24_hours',
+             'statz.last_updated.7_days',
+             'statz.last_updated.1_month',
+             'money.cached_stats',
+             'money.total_balance',
+             'money.total_pending_earnings',
+             'money.last_updated',
+             'money.daily_cached_stats',
+             'money.daily_last_updated',
+             'tools.disabled_popular_offers' ]
+    data = {}
+    keys.each do |key|
+      data[key] = Mc.get(key)
+    end
+    
+    Mc.cache.flush
+    
+    data.each do |k, v|
+      Mc.put(k, v)
+    end
+    
+    Offer.cache_enabled_offers
+    Offer.cache_featured_offers
+    true
+  end
+
 end
