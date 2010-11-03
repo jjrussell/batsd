@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101027183850) do
+ActiveRecord::Schema.define(:version => 20101102224710) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -200,6 +200,7 @@ ActiveRecord::Schema.define(:version => 20101027183850) do
     t.integer  "min_payment"
     t.integer  "payment_range_low"
     t.integer  "payment_range_high"
+    t.integer  "bid",                                                                           :default => 0,     :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -255,6 +256,10 @@ ActiveRecord::Schema.define(:version => 20101027183850) do
     t.text     "account_manager_notes"
     t.text     "disabled_partners",                                                                             :null => false
     t.decimal  "installs_money_share",                     :precision => 8, :scale => 6, :default => 0.5,       :null => false
+    t.integer  "premier_discount",                                                       :default => 0,         :null => false
+    t.string   "exclusivity_level_type"
+    t.date     "exclusivity_expires_on"
+    t.date     "premier_expires_on"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
@@ -335,6 +340,7 @@ ActiveRecord::Schema.define(:version => 20101027183850) do
     t.datetime "current_login_at"
     t.datetime "last_login_at"
     t.string   "time_zone",                        :default => "UTC", :null => false
+    t.boolean  "can_email",                        :default => true
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"

@@ -3,7 +3,7 @@ class ToolsController < WebsiteController
   
   filter_access_to :all
   
-  after_filter :save_activity_logs, :only => [ :create_payout, :create_transfer, :create_order ]
+  after_filter :save_activity_logs, :only => [ :create_payout, :create_transfer, :create_order, :update_user ]
   
   def index
   end
@@ -149,5 +149,22 @@ class ToolsController < WebsiteController
       device.delete_all
       flash[:notice] = "Device successfully reset and #{clicks_deleted} clicks deleted"
     end
+  end
+
+  def sanitize_users
+    @partners = Partner.scoped(:order => 'created_at DESC', :include => { :offers => [], :users => [:partners]}).paginate(:page => params[:page])
+  end
+
+  def update_user
+    @user = User.find_by_id(params[:id])
+    log_activity(@user)
+    @user.username = @user.email = params[:user][:email] unless params[:user][:email].blank?
+    @user.can_email = params[:user][:can_email] unless params[:user][:can_email].blank?
+    if @user.save
+      render :json => {:success => true}
+    else
+      render :json => {:success => false}
+    end
+
   end
 end
