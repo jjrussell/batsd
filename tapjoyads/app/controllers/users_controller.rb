@@ -36,6 +36,7 @@ class UsersController < WebsiteController
     pwd = UUIDTools::UUID.random_create.to_s
     @user.password = pwd
     @user.password_confirmation = pwd
+    @user.time_zone = params[:user][:time_zone]
     @user.current_partner = current_partner
     @user.partners << current_partner
     if @user.save
