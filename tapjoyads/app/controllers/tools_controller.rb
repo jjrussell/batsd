@@ -158,9 +158,22 @@ class ToolsController < WebsiteController
   def update_user
     @user = User.find_by_id(params[:id])
     log_activity(@user)
+    email = @user.email
     @user.username = @user.email = params[:user][:email] unless params[:user][:email].blank?
     @user.can_email = params[:user][:can_email] unless params[:user][:can_email].blank?
     if @user.save
+      message = {
+        :type => "update",
+        :email => email,
+        :field => 'EMAIL',
+        :new_value => @user.email }.to_json
+      Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)
+      message = {
+        :type => "update",
+        :email => email,
+        :field => 'CAN_EMAIL',
+        :new_value => @user.can_email.to_s }.to_json
+      Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)
       render :json => {:success => true}
     else
       render :json => {:success => false}
