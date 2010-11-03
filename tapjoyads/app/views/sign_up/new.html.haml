@@ -32,7 +32,14 @@
         #help_time_zone.help ?
       %td
         = f.time_zone_select :time_zone, ActiveSupport::TimeZone.all
-        = error_message_on @user, :time_zone        
+        = error_message_on @user, :time_zone
+    %tr
+      %td &nbsp;
+      %td.terms
+        = check_box_tag 'agree_terms'
+        = label_tag 'agree_terms', 'I agree to the '
+        = link_to 'Tajoy Terms and Conditions.', '/tos.html', :target => '_new'
+        = error_message_on @user, :agree_terms
     %tr
       %td{ :colspan => 2 }= f.submit "Create Account"
 
@@ -40,3 +47,9 @@
   #help_email_content{ :name => 'Email Address' } Your preferred contact email address. Password reset requests will go to this address and you will use it to login.
   #help_company_name_content{ :name => 'Company Name' } The name of your company.
   #help_time_zone_content{ :name => 'Time Zone' } All times will be displayed in this time zone with the exception of daily stats, which are always in Universal Time (UTC).
+
+- content_for :page_styles do
+  :plain
+    .terms {
+      font-size: 12px;
+    }

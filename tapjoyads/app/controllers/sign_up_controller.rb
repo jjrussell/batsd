@@ -13,11 +13,17 @@ class SignUpController < WebsiteController
     @user.current_partner = Partner.new(:name => params[:partner_name], :contact_name => @user.email)
     @user.time_zone = params[:user][:time_zone]
     @user.partners << @user.current_partner
-    if @user.save
-      flash[:notice] = 'Account successfully created.'
-      redirect_to apps_path
-    else
+    unless params[:agree_terms] == '1'
+      @user.valid?
+      @user.errors.add('agree_terms', "You muts agree to the Tapjoy Terms and Conditions.")
       render :action => :new
+    else
+      if @user.save
+        flash[:notice] = 'Account successfully created.'
+        redirect_to apps_path
+      else
+        render :action => :new
+      end
     end
   end
 
