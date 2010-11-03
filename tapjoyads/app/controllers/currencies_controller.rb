@@ -43,8 +43,6 @@ class CurrenciesController < WebsiteController
   def new
     @app = current_partner.apps.find(params[:app_id])
     @currency = Currency.new
-    @currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
-    render :action => :show
   end
   
   def create
@@ -53,7 +51,18 @@ class CurrenciesController < WebsiteController
     @currency.id = @app.id
     @currency.app = @app
     @currency.partner = @app.partner
-    update
+    @currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
+    
+    log_activity(@currency)
+    @currency.name = params[:currency][:name]
+    
+    if @currency.save
+      flash[:notice] = 'Currency was successfully created.'
+      redirect_to app_currency_path(:app_id => params[:app_id], :id => @currency.id)
+    else
+      flash[:error] = 'Failed to create currency.'
+      render :action => :new
+    end
   end
 
   def reset_test_device
