@@ -13,6 +13,9 @@ class User < ActiveRecord::Base
   has_many :partners, :through => :partner_assignments
   belongs_to :current_partner, :class_name => 'Partner'
 
+  attr_accessor :terms_of_service
+  validates_acceptance_of :terms_of_service, :on => :create
+
   def role_symbols
     user_roles.map do |role|
       role.name.underscore.to_sym

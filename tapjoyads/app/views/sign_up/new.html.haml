@@ -15,7 +15,7 @@
       %th
         = label_tag :partner_name, 'Company Name'
         #help_company_name.help ?
-      %td= text_field_tag :partner_name, params[:partner_name]
+      %td= text_field_tag :partner_name, params[:partner_name], :size => 30
     %tr
       %th= f.label :password, 'Password'
       %td
@@ -36,10 +36,10 @@
     %tr
       %td &nbsp;
       %td.terms
-        = check_box_tag 'agree_terms'
-        = label_tag 'agree_terms', 'I agree to the '
-        = link_to 'Tajoy Terms and Conditions.', '/tos.html', :target => '_new'
-        = error_message_on @user, :agree_terms
+        = f.check_box :terms_of_service
+        = f.label :terms_of_service, 'I Agree to the '
+        = link_to 'Terms of Service', '/tos.html', :target => '_blank'
+        = error_message_on @user, :terms_of_service
     %tr
       %td{ :colspan => 2 }= f.submit "Create Account"
 
