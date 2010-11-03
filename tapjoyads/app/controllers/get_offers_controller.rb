@@ -91,6 +91,11 @@ private
       params[:device_type] = 'ipod touch'
     end
     
+    #TO REMOVE: hackey stuff for doodle buddy, remove on Jan 1, 2011
+    doodle_buddy_holiday_id = '0f791872-31ec-4b8e-a519-779983a3ea1a'
+    doodle_buddy_regular_id = '3cb9aacb-f0e6-4894-90fe-789ea6b8361d'
+    params[:app_id] = doodle_buddy_regular_id if params[:app_id] == doodle_buddy_holiday_id
+    
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
     # TO REMOVE - when gameview integrates properly
