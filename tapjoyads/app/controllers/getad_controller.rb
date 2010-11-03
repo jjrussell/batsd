@@ -6,11 +6,11 @@ class GetadController < ApplicationController
       " AppleWebKit/525.18.1 (KHTML, like Gecko) Version/3.1.1 Mobile/5A345 Safari/525.20")
       
   def index
-    return unless verify_params([:udid, :app_id, :campaign_id])
-    
     if params[:campaign_id] == ""
       return socialreach
     end
+    
+    return unless verify_params([:udid, :app_id, :campaign_id])
     
     campaign = Campaign.new(:key => params[:campaign_id])
     network_name = campaign.get('network_name')

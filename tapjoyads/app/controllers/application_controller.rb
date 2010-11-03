@@ -20,15 +20,19 @@ class ApplicationController < ActionController::Base
 private
   
   def verify_params(required_params, options = {})
-    allow_empty = options.delete(:allow_empty) { true }
     render_missing_text = options.delete(:render_missing_text) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
+    if params[:udid] == 'null'
+      render :text => "missing required params" if render_missing_text
+      return false
+    end
+    
     all_params = true
     required_params.each do |param|
-      all_params = false unless params.include?(param)
-      unless allow_empty
-        all_params = false if params[param] == ''
+      if params[param].blank?
+        all_params = false
+        break
       end
     end
     

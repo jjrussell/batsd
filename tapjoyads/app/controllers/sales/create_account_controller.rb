@@ -7,7 +7,7 @@ class Sales::CreateAccountController < Sales::SalesController
   def confirm
     unless verify_params([:sales_person_id, :email, :company_name, :contact_name,
         :contact_phone, :free_credits], 
-        {:allow_empty => false, :render_missing_text => false})
+        { :render_missing_text => false })
       flash[:error] = "Cannot leave any fields blank"
       render 'index'
       return

@@ -1,7 +1,7 @@
 class CreateAccountController < ApplicationController
   
   def index
-    unless verify_params([ :agency_id, :email, :password, :app_name ], { :allow_empty => false, :render_missing_text => false })
+    unless verify_params([ :agency_id, :email, :password, :app_name ], { :render_missing_text => false })
       render(:json => { :error => "missing required parameters" }) and return
     end
     

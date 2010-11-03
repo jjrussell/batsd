@@ -5,7 +5,7 @@ class RafflesController < ApplicationController
   APP_ID = 'TapNWinAppId'
   
   def index
-    return unless verify_params([:udid], {:allow_empty => false})
+    return unless verify_params([:udid])
     @raffles = RaffleTicket.get_active_raffles
     @point_purchases = PointPurchases.new(:key => "#{params[:udid]}.#{APP_ID}")
 
@@ -26,12 +26,11 @@ class RafflesController < ApplicationController
   end
   
   def status
-    return unless verify_params([:udid], {:allow_empty => false})
-    
+    return unless verify_params([:udid])
   end
   
   def purchase
-    return unless verify_params([:udid], {:allow_empty => false})
+    return unless verify_params([:udid])
     
     quantity = params[:quantity].to_i
     

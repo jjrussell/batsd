@@ -2,7 +2,7 @@ class ConnectController < ApplicationController
 
   def index
     params[:app_id] = '7e81549a-7fc5-4940-9435-11371ee47fa9' if request.headers['User-Agent'] =~ /DeerHunting/
-    return unless verify_params([:app_id, :udid], {:allow_empty => false})
+    return unless verify_params([:app_id, :udid])
     
     @country = nil
     

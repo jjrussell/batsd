@@ -4,7 +4,7 @@ class ClickController < ApplicationController
   before_filter :setup
   
   def app
-    return unless verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id ], { :allow_empty => false })
+    return unless verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id ])
     
     @offer = Offer.find_in_cache(params[:offer_id])
     return if offer_disabled?
@@ -20,7 +20,7 @@ class ClickController < ApplicationController
   end
   
   def generic
-    return unless verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id ], { :allow_empty => false })
+    return unless verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id ])
     
     @offer = Offer.find_in_cache(params[:offer_id])
     return if offer_disabled?
@@ -36,7 +36,7 @@ class ClickController < ApplicationController
   end
   
   def rating
-    return unless verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id ], { :allow_empty => false })
+    return unless verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id ])
     
     @offer = Offer.find_in_cache(params[:offer_id])
     return if offer_disabled?

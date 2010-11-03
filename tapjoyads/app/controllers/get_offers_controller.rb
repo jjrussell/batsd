@@ -75,7 +75,7 @@ private
   end
   
   def setup
-    return unless verify_params([ :app_id, :udid, :publisher_user_id ], { :allow_empty => false })
+    return unless verify_params([ :app_id, :udid, :publisher_user_id ])
     
     @now = Time.zone.now
     @start_index = (params[:start] || 0).to_i

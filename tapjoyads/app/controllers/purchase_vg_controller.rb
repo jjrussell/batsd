@@ -1,7 +1,7 @@
 class PurchaseVgController < ApplicationController
   
   def index
-    return unless verify_params([:app_id, :udid, :virtual_good_id], {:allow_empty => false})
+    return unless verify_params([:app_id, :udid, :virtual_good_id])
     
     #TO REMOVE: hackey stuff for doodle buddy, remove on Jan 1, 2011
     doodle_buddy_holiday_id = '0f791872-31ec-4b8e-a519-779983a3ea1a'

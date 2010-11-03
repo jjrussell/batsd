@@ -1,7 +1,7 @@
 class GetAdOrderController < ApplicationController
     
   def index
-    return unless verify_params([:app_id, :udid], {:allow_empty => false})
+    return unless verify_params([:app_id, :udid])
 
     mc_key = "raw_ad_order.#{params[:app_id]}"
     

@@ -1,7 +1,7 @@
 class GetAppImageController < ApplicationController
   
   def icon
-    return unless verify_params([:app_id], {:allow_empty => false})
+    return unless verify_params([:app_id])
     
     app_id = params[:app_id].downcase
     

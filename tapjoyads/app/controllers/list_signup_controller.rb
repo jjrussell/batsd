@@ -3,7 +3,7 @@ class ListSignupController < ApplicationController
   layout 'iphone'
   
   def index
-    return unless verify_params([:udid, :publisher_app_id, :advertiser_app_id], {:allow_empty => false})
+    return unless verify_params([:udid, :publisher_app_id, :advertiser_app_id])
     
     @currency = Currency.find_in_cache(params[:publisher_app_id])
     @offer = Offer.find_in_cache(params[:advertiser_app_id])

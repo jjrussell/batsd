@@ -20,7 +20,7 @@ class DisplayAdController < ApplicationController
   end
   
   def image
-    return unless verify_params([ :publisher_app_id, :advertiser_app_id, :displayer_app_id, :size ], { :allow_empty => false })
+    return unless verify_params([ :publisher_app_id, :advertiser_app_id, :displayer_app_id, :size ])
     
     web_request = WebRequest.new
     web_request.put_values('display_ad_image', params, get_ip_address, get_geoip_data)
@@ -37,7 +37,7 @@ class DisplayAdController < ApplicationController
 private
 
   def setup
-    return unless verify_params([ :app_id, :udid ], { :allow_empty => false })
+    return unless verify_params([ :app_id, :udid ])
 
     now = Time.zone.now
     geoip_data = get_geoip_data
