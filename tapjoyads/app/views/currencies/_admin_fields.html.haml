@@ -34,7 +34,7 @@
   %td
     = @currency.get_disabled_partners.map { |p| link_to(p.name, partner_path(p)) }.join(', ')
     
-- content_for :extra_help do
+.hidden
   #help_disabled_offers_content{:name => 'Disabled offers'}
     A semi-colon (;) separated list of offer id's. Offers that match these id's will not be shown in
     this app's offerwall.

@@ -115,7 +115,7 @@
       = f.text_field(:overall_budget)
       = error_message_on @offer, :overall_budget
     
--content_for :extra_help do
+.hidden
   #help_tapjoy_enabled_content{ :name => 'Tapjoy Enabled' } Whether or not the offer is enabled for installs.
   #help_self_promote_only_content{ :name => 'Self Promote Only' } Only show this offer on offerwalls from the same partner.
   #help_allow_negative_balance_content{ :name => 'Allow Negative Balance' } Allow this partner's balance to go below zero. This effectively locks show rate to 1.0.
