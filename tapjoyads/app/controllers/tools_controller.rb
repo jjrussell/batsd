@@ -15,7 +15,7 @@ class ToolsController < WebsiteController
   def create_payout
     partner = Partner.find(params[:id])
     cutoff_date = partner.payout_cutoff_date - 1.day
-    amount = (params[:amount].to_f * 100).round.to_i
+    amount = (params[:amount].to_f * 100).round
     payout = partner.payouts.build(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
     log_activity(payout)
     render :json => { :success => payout.save }

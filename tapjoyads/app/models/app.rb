@@ -82,7 +82,7 @@ class App < ActiveRecord::Base
       data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
     end
     self.name = data[:title]
-    self.price = (data[:price] * 100).round.to_i
+    self.price = (data[:price] * 100).round
     self.description = data[:description]
     self.age_rating = data[:age_rating]
     download_icon(data[:icon_url], data[:large_icon_url])
