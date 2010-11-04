@@ -20,13 +20,13 @@ private
     
     # Try to stop Playdom users from click-frauding (specifically from Mobsters: Big Apple)
     if currency.callback_url == 'PLAYDOM_DEFINED' && click.publisher_user_id !~ /^(F|M|P)[0-9]+$/
-      Notifier.alert_new_relic(InvalidPlaydomUserId, "Playdom User id: '#{click.publisher_user_id}' is invalid")
+      Notifier.alert_new_relic(InvalidPlaydomUserId, "Playdom User id: '#{click.publisher_user_id}' is invalid", request, params)
       return
     end
     
     publisher_user_record = PublisherUserRecord.new(:key => "#{click.publisher_app_id}.#{click.publisher_user_id}")
     unless publisher_user_record.update(click.udid)
-      Notifier.alert_new_relic(TooManyUdidsForPublisherUserId, "Too many UDIDs associated with publisher_user_record: #{publisher_user_record.key}, for click: #{click.key}")
+      Notifier.alert_new_relic(TooManyUdidsForPublisherUserId, "Too many UDIDs associated with publisher_user_record: #{publisher_user_record.key}, for click: #{click.key}", request, params)
       return
     end
     
@@ -42,7 +42,7 @@ private
       click.advertiser_amount = 0
       click.type = 'install_jailbroken'
       wr_path += '_jailbroken'
-      Notifier.alert_new_relic(JailbrokenInstall, "Device: #{click.udid} is jailbroken and installed a paid app: #{click.advertiser_app_id}")
+      Notifier.alert_new_relic(JailbrokenInstall, "Device: #{click.udid} is jailbroken and installed a paid app: #{click.advertiser_app_id}", request, params)
     end
     
     reward = Reward.new(:key => click.reward_key)
