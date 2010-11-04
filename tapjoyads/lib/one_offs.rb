@@ -118,9 +118,10 @@ class OneOffs
     created_date = Time.parse(date).to_f.to_s
     
     50.times do |i|
-      Reward.select :domain_name => "rewards_#{i}", :where => "publisher_app_id = '#{holiday_id}' and created_at > '#{created_date}' and added_to_db != ''" do |r|
+      Reward.select :domain_name => "rewards_#{i}", :where => "publisher_app_id = '#{holiday_id}' and created_at > '#{created_date}' and added_to_db is null" do |r|
         PointPurchases.transaction :key => "#{r.udid}.#{regular_id}" do |pp|
           pp.points = pp.points + r.currency_reward
+          puts "Added money to #{r.udid}"
         end
         r.put('added_to_db',Time.now.to_f.to_s)
         r.save!
