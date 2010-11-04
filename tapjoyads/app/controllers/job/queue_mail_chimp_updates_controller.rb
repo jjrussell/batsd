@@ -10,7 +10,7 @@ private
     message = JSON.load(message.to_s)
     case message["type"]
     when "update"
-      MailChimp.update(message["email"], message["field"], message["new_value"])
+      MailChimp.update(message["email"], message["merge_tags"])
     when "create"
       MailChimp.add_partner(Partner.find_by_id(message["partner_id"]))
     end

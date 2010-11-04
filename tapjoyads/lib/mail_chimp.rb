@@ -11,10 +11,8 @@ class MailChimp
     chimp.member_info(MAIL_CHIMP_PARTNERS_LIST_ID, email)
   end
 
-  def self.update(email, field, new_value)
-    values = {}
-    values[field] = new_value
-    chimp.update_member(MAIL_CHIMP_PARTNERS_LIST_ID, email, values)
+  def self.update(email, merge_tags)
+    chimp.update_member(MAIL_CHIMP_PARTNERS_LIST_ID, email, merge_tags)
   end
 
   def self.add_partner(partner)

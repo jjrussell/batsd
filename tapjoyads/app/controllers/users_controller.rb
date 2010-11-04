@@ -73,8 +73,11 @@ class UsersController < WebsiteController
       message = {
         :type => "update",
         :email => email,
-        :field => 'EMAIL',
-        :new_value => current_user.email }.to_json
+        :merge_tags => {
+          'EMAIL': current_user.email,
+          'CAN_EMAIL': @user.can_email.to_s
+        }
+      }.to_json
       Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)
     end
   end
