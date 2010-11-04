@@ -3,6 +3,7 @@
     %tr
       %th Partner
       %th Can Email? / Email Address
+      %th Account Manager
       %th Apps
   %tbody
     - @partners.each do |partner|
@@ -19,6 +20,11 @@
           - if partner.users.blank?
             &nbsp;
         %td
+          - form_for(partner) do |f|
+            - options = options_from_collection_for_select(User.account_managers, "id", "email", partner.account_managers.map(&:id))
+            = f.select :account_managers, options, {:include_blank => '(no one)'}, {:class => 'account_manager'}
+            = image_tag 'load-circle.gif', :class => 'hidden'
+        %td
           - partner.offers.each do |offer|
             %span.offer{:title => offer.name}
               - link = statz_path(offer.id)
@@ -26,6 +32,7 @@
               = link_to truncate(offer.name, :length => 10), link
           - if partner.offers.blank?
             &nbsp;
+
 = will_paginate(@partners)
 
 - content_for :page_styles do
@@ -88,4 +95,25 @@
             url: url
           });
         });
+      $('select.account_manager').change(function(){
+        var form = $(this).parent('form');
+        var url = form.attr('action');
+        var data = {"partner[account_managers]": [$(this).val()]};
+        form.children('img').show();
+        $.ajax({
+          data: data,
+          error: function() {
+            alert('something went wrong for an account manager assignment');
+            form.parents('td').css('background-color','red');
+            form.children('img').hide();
+          },
+          success: function() {
+            form.parents('td').css('background-color','inherit');
+            form.siblings('.message').show().text('success!');
+            form.children('img').hide();
+          },
+          type: 'put',
+          url: url
+        });
+      });
     });
