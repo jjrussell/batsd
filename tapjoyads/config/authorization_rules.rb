@@ -17,7 +17,6 @@ authorization do
   
   role :tools do
     has_permission_on :tools, :to => [ :index ]
-    has_permission_on :apps, :to => [ :unarchive ]
   end
   
   role :payops do
@@ -41,6 +40,7 @@ authorization do
     has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info ]
     has_permission_on :rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
     has_permission_on :partners, :to => [ :update, :managed_by ]
+    has_permission_on :apps, :to => [ :unarchive ]
   end
   
   role :raffle_manager do

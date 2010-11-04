@@ -25,7 +25,7 @@
             Platform
             #help_platform.help ?
           %td#app_platform= @app.platform_name
-        - if permitted_to?(:index, :tools)
+        - if permitted_to?(:edit, :statz)
           = render :partial => 'select_country'
         %tr
           %th
@@ -84,7 +84,7 @@
     Integration status - shows if the app has connected with our servers within the last 24-hours.
 .clear
 - if @app.hidden?
-  - if permitted_to?(:index, :tools)
+  - if permitted_to?(:unarchive, :apps)
     - form_tag unarchive_app_path(@app) do
       %strong Admin:
       = submit_tag 'Undelete this app'

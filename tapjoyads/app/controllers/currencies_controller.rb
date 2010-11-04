@@ -27,7 +27,7 @@ class CurrenciesController < WebsiteController
     end
     
     safe_attributes = [:name, :conversion_rate, :initial_balance, :callback_url, :secret_key, :test_devices]
-    if permitted_to?(:index, :statz)
+    if permitted_to?(:edit, :statz)
       safe_attributes += [:disabled_offers, :max_age_rating, :only_free_offers]
     end
     

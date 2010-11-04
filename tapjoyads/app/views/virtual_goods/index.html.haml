@@ -14,7 +14,7 @@
         %th Type
         %th.price= link_to 'Price', 'javascript:$.noop();', :title => 'Toggle between virtual currency and dollars'
         %th Status
-        - if permitted_to?(:index, :statz)
+        - if permitted_to?(:edit, :statz)
           %th.admin
             Ordinal
             %br/
@@ -39,7 +39,7 @@
             .price_in_dollars.hidden
               = number_to_currency(vg.price_in_dollars)
           %td= vg.disabled? ? "Disabled" : vg.beta? ? "Beta" : "&nbsp;"
-          - if permitted_to?(:index, :statz)
+          - if permitted_to?(:edit, :statz)
             %td.admin= vg.ordinal
   - form_tag(reorder_app_virtual_goods_path(:app_id => @app.id), :id => "reorder-virtual-goods") do
     = hidden_field_tag('virtual_goods')
@@ -64,7 +64,7 @@
     td.currency {
       text-align: right;
     }
-  - if permitted_to?(:index, :statz)
+  - if permitted_to?(:edit, :statz)
     :plain
       th.admin, td.admin {
         color: blue;

@@ -8,7 +8,7 @@ class UsersController < WebsiteController
   around_filter :update_mail_chimp_email, :only => [ :update ]
 
   def index
-    if permitted_to?(:index, :statz)
+    if permitted_to?(:edit, :statz)
       @users = current_partner.users
     else
       @users = current_partner.non_managers

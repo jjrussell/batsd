@@ -4,7 +4,7 @@ class OffersController < WebsiteController
 
   filter_access_to :all
   before_filter :find_offer
-  after_filter :save_activity_logs, :only => [ :update, :create ]
+  after_filter :save_activity_logs, :only => [ :update ]
 
   def show
     if @offer.item_type == "App" && !@offer.tapjoy_enabled?
@@ -26,7 +26,7 @@ class OffersController < WebsiteController
     offer_params = sanitize_currency_params(params[:offer], [ :payment, :min_payment ])
 
     safe_attributes = [:daily_budget, :name, :payment, :user_enabled]
-    if permitted_to?(:index, :statz)
+    if permitted_to?(:edit, :statz)
       offer_params[:device_types] = offer_params[:device_types].blank? ? '[]' : offer_params[:device_types].to_json
       safe_attributes += [:tapjoy_enabled, :self_promote_only, :allow_negative_balance, :pay_per_click,
           :featured, :min_payment, :name_suffix, :show_rate, :min_conversion_rate, :countries,
@@ -50,7 +50,7 @@ class OffersController < WebsiteController
 
 private
   def find_offer
-    if permitted_to? :udids, :statz
+    if permitted_to? :edit, :statz
       @app = App.find(params[:app_id], :include => [:primary_offer])
     else
       @app = current_partner.apps.find(params[:app_id], :include => [:primary_offer])

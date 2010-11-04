@@ -63,7 +63,7 @@
               .tapjoy-enabled Enabled
             - else
               .tapjoy-disabled Disabled
-        - if permitted_to?(:index, :statz)
+        - if permitted_to?(:edit, :statz)
           = render :partial => 'admin_fields', :locals => {:f => f}
     = f.submit 'Update'
 

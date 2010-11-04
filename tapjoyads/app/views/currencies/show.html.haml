@@ -61,7 +61,7 @@
         %td
           = f.text_area :test_devices
           = error_message_on(@currency, :test_devices)
-      - if permitted_to?(:index, :statz)
+      - if permitted_to?(:edit, :statz)
         = render :partial => 'admin_fields', :locals => {:f => f}
     = f.submit
 
