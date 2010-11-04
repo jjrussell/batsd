@@ -127,7 +127,7 @@ class SimpledbResource
       @attributes = Mc.get(get_memcache_key) do
         attrs = load_from_sdb
         unless attrs.empty?
-          Mc.put(get_memcache_key, attrs)
+          Mc.put(get_memcache_key, attrs) rescue nil
         end
         attrs
       end
@@ -172,14 +172,20 @@ class SimpledbResource
     put('updated-at', Time.zone.now.to_f.to_s) if updated_at
     
     Rails.logger.info_with_time("Saving to sdb, domain: #{this_domain_name}") do
-      self.write_to_sdb(expected_attr) if write_to_sdb
       self.write_to_memcache if write_to_memcache
+      self.write_to_sdb(expected_attr) if write_to_sdb
       @is_new = false
     end
   rescue ExpectedAttributeError => e
+    if write_to_memcache
+      Mc.delete(get_memcache_key) rescue nil
+    end
     raise e
   rescue Exception => e
     unless catch_exceptions
+      if write_to_memcache
+        Mc.delete(get_memcache_key) rescue nil
+      end
       raise e
     end
     Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e.class} - #{e}"

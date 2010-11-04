@@ -5,17 +5,10 @@ class GetAdOrderController < ApplicationController
 
     mc_key = "raw_ad_order.#{params[:app_id]}"
     
-    campaigns = Mc.get(mc_key) do 
-      ## get order
-      c = Campaign.select(:where => "status='1' and app_id='#{params[:app_id]}' and ecpm != ''", 
-          :order_by => "ecpm desc")
-      
-      
-      Mc.put(mc_key, c[:items], false, 5.minutes)
-      
+    campaigns = Mc.get_and_put(mc_key, false, 5.minutes) do 
+      c = Campaign.select(:where => "status='1' and app_id='#{params[:app_id]}' and ecpm != ''", :order_by => "ecpm desc")
       c[:items]
     end
-    
     
     app = App.find_in_cache(params[:app_id])
   

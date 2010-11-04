@@ -3,7 +3,8 @@ class Mc
   
   @@cache = Memcached.new(MEMCACHE_SERVERS, {
     :support_cas => true, 
-    :prefix_key => RUN_MODE_PREFIX
+    :prefix_key => RUN_MODE_PREFIX,
+    :auto_eject_hosts => false
     })
     
   # Memcache counts can't go below 0. Set the offset to 2^32/2 for all counts.
@@ -20,7 +21,9 @@ class Mc
       yield
     end
     
-    Mc.put(key, value, clone, time) if did_yield
+    if did_yield
+      Mc.put(key, value, clone, time) rescue nil
+    end
     return value
   end
   
@@ -68,8 +71,6 @@ class Mc
         cache.set(CGI::escape(key), value, time)
       end
     end
-  rescue => e
-    Rails.logger.info "Memcache exception when setting key #{key}. Error: #{e}"
   end
   
   def self.increment_count(key, clone = false, time = 1.week, offset = 1)
