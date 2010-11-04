@@ -151,9 +151,19 @@ class ToolsController < WebsiteController
     end
   end
 
+  def managed_partner_ids
+    Mc.get_and_put('managed_partners', false, 1.minute) do
+      User.account_managers.map(&:partners).flatten.uniq.map(&:id)
+    end
+  end
+
   def sanitize_users
     Partner.using_slave_db do
-      @partners = Partner.scoped(:order => 'pending_earnings DESC, balance DESC', :include => { :offers => [], :users => [:partners]}).paginate(:page => params[:page])
+      @partners = Partner.scoped(
+        :conditions => "partners.id not in ('#{managed_partner_ids.join("','")}')",
+        :order => 'partners.pending_earnings DESC, partners.balance DESC',
+        :include => { :offers => [], :users => [:partners]}
+      ).paginate(:page => params[:page])
     end
   end
 
