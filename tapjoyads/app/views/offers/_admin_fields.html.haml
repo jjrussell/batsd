@@ -37,6 +37,14 @@
     = error_message_on @offer, :featured
 %tr.admin
   %th
+    = f.label(:name, 'Offer Name')
+    #help_admin_offer_name.help ?
+  %td
+    = f.text_field(:name)
+    = error_message_on @offer, :name
+  %td= link_to('Use App Name', '#', :id => 'use_app_name')
+%tr.admin
+  %th
     = f.label(:name_suffix, 'Internal Suffix')
     #help_internal_suffix.help ?
   %td
@@ -116,6 +124,7 @@
       = error_message_on @offer, :overall_budget
     
 .hidden
+  #help_admin_offer_name_content{:name => 'Offer Name'} Name that will be displayed on offer walls.
   #help_tapjoy_enabled_content{ :name => 'Tapjoy Enabled' } Whether or not the offer is enabled for installs.
   #help_self_promote_only_content{ :name => 'Self Promote Only' } Only show this offer on offerwalls from the same partner.
   #help_allow_negative_balance_content{ :name => 'Allow Negative Balance' } Allow this partner's balance to go below zero. This effectively locks show rate to 1.0.
@@ -132,7 +141,16 @@
   #help_publisher_app_whitelist_content{ :name => 'Publisher App Whitelist' } Restrict this offer to these publisher apps. Must be a ";" separated list of publisher app IDs.
   #help_daily_budget_content{ :name => 'Daily Budget' } The maximum number of conversions to complete in one day.
   #help_overall_budget_content{ :name => 'Overall Budget' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
-    
+
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      $('#use_app_name').click(function() {
+        $('input#offer_name').val('#{@offer.item.name}');
+        return false;
+      });
+    });
+  
 - content_for :page_styles do
   :plain
     .admin th {

@@ -203,6 +203,7 @@ private
   def update_offers
     offers.each do |offer|
       offer.partner_id = partner_id if partner_id_changed?
+      offer.name = name if name_changed? && name_was == offer.name
       offer.description = description if description_changed?
       if price_changed?
         offer.price = price

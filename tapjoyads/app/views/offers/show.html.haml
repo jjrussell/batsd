@@ -31,12 +31,9 @@
             = error_message_on @offer, :payment
         %tr
           %th
-            = f.label :name, 'Offer Name'
+            Offer Name
             #help_offer_name.help ?
-          %td
-            = f.text_field :name, :class => 'togglable'
-            - if @offer.errors.on :name
-              = error_message_on @offer, :name
+          %td= @offer.name
         %tr
           %th
             = f.label :daily_budget, 'Daily Install Limit'
@@ -65,11 +62,12 @@
               .tapjoy-disabled Disabled
         - if permitted_to?(:edit, :statz)
           = render :partial => 'admin_fields', :locals => {:f => f}
-    = f.submit 'Update'
+        %tr
+          %td{ :colspan => 2 }= f.submit 'Update'
 
 .hidden
   #help_offer_name_content{:name => 'Offer Name'}
-    Name that will be displayed on offer walls. We recommend that you keep this the same as the app name, but you can modify it if you wish.
+    Name that will be displayed on offer walls.
   #help_balance_content{:name => 'Balance'}
     Current balance available.
   #help_daily_content{:name => 'Daily Budget'}
