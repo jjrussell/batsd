@@ -165,14 +165,14 @@ class ToolsController < WebsiteController
       message = {
         :type => "update",
         :email => email,
-        :field => 'EMAIL',
-        :new_value => @user.email }.to_json
+        :field => 'CAN_EMAIL',
+        :new_value => @user.can_email.to_s }.to_json
       Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)
       message = {
         :type => "update",
         :email => email,
-        :field => 'CAN_EMAIL',
-        :new_value => @user.can_email.to_s }.to_json
+        :field => 'EMAIL',
+        :new_value => @user.email }.to_json
       Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)
       render :json => {:success => true}
     else
