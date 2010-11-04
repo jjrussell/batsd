@@ -44,7 +44,7 @@ class SdbBackup
   
     `gzip -f #{file_name}`
     
-    self.write_to_s3(s3_name, gzip_file_name, s3_bucket, 3)
+    self.write_to_s3(s3_name, gzip_file_name, s3_bucket, 10)
     
     if delete_domain
       Rails.logger.info "Deleting domain"
@@ -97,6 +97,7 @@ class SdbBackup
       rescue RightAws::AwsError => e
         Rails.logger.info "Failed attempt to store #{local_name} to s3. Error: #{e}"
       end
+      sleep(5)
     end
     raise "Failed to save #{local_name} to s3."
   end
