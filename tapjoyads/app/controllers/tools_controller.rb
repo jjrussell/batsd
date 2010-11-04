@@ -152,7 +152,9 @@ class ToolsController < WebsiteController
   end
 
   def sanitize_users
-    @partners = Partner.scoped(:order => 'created_at DESC', :include => { :offers => [], :users => [:partners]}).paginate(:page => params[:page])
+    Partner.using_slave_db do
+      @partners = Partner.scoped(:order => 'pending_earnings DESC, balance DESC', :include => { :offers => [], :users => [:partners]}).paginate(:page => params[:page])
+    end
   end
 
   def update_user
