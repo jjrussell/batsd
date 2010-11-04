@@ -166,8 +166,8 @@ class ToolsController < WebsiteController
         :type => "update",
         :email => email,
         :merge_tags => {
-          'EMAIL': @user.email,
-          'CAN_EMAIL': @user.can_email.to_s
+          'EMAIL' => @user.email,
+          'CAN_EMAIL' => @user.can_email.to_s
         }
       }.to_json
       Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)
