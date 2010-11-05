@@ -10,7 +10,6 @@ class OfferDiscount < ActiveRecord::Base
   validates_inclusion_of :source, :in => OfferDiscount::SOURCES, :allow_nil => false, :allow_blank => false
   
   named_scope :active, lambda { { :conditions => [ "expires_on > ?", Time.zone.today ] } }
-  named_scope :by_expires_on, lambda { |exp| { :conditions => [ "expires_on = ?", exp ] } }
   
   after_save :recalculate_premier_discount_for_partner
   
