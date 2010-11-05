@@ -103,13 +103,6 @@
 - if [ 'App', 'EmailOffer', 'GenericOffer' ].include?(@offer.item_type)
   %tr.admin
     %th
-      = f.label(:min_payment)
-      #help_min_payment.help ?
-    %td
-      = f.currency_field(:min_payment)
-      = error_message_on @offer, :min_payment
-  %tr.admin
-    %th
       = f.label(:daily_budget)
       #help_daily_budget.help ?
     %td
@@ -130,7 +123,6 @@
   #help_allow_negative_balance_content{ :name => 'Allow Negative Balance' } Allow this partner's balance to go below zero. This effectively locks show rate to 1.0.
   #help_pay_per_click_content{ :name => 'Pay-Per-Click' } Charge the advertiser and award the user immediately on click.
   #help_featured_content{ :name => 'Featured' } Enables this offer in our featured offers feed.
-  #help_min_payment_content{ :name => 'Min Payment' } The minimum payment that the publisher is allowed to set their payment to.
   #help_internal_suffix_content{ :name => 'Internal Suffix' } Internal identifier for offers. i.e. 'featured' or 'us only'
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.
   #help_min_conversion_rate_content{ :name => 'Min CVR' } This is used to prevent low conversion rate warnings. A warning will only be issued if the conversion rate falls below this threshold. Allowed values are blank or 0.0 - 1.0

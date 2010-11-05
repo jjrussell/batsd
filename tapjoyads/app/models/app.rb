@@ -188,8 +188,7 @@ private
     offer.name = name
     offer.description = description
     offer.price = price
-    offer.min_payment = offer.is_paid? ? (price.to_f / 2).ceil : 35
-    offer.payment = offer.min_payment
+    offer.bid = offer.min_bid
     offer.url = store_url
     offer.device_types = is_android? ? Offer::ANDROID_DEVICES.to_json : Offer::APPLE_DEVICES.to_json
     offer.instructions = 'Install and then run the app while online to receive credit.'
@@ -207,8 +206,7 @@ private
       offer.description = description if description_changed?
       if price_changed?
         offer.price = price
-        offer.min_payment = offer.is_paid? ? (price.to_f / 2).ceil : 35
-        offer.payment = offer.min_payment if offer.payment < offer.min_payment
+        offer.bid = offer.min_bid if offer.bid < offer.min_bid
       end
       offer.url = store_url if store_url_changed? || use_raw_url_changed? || store_id_changed?
       offer.third_party_data = store_id if store_id_changed?

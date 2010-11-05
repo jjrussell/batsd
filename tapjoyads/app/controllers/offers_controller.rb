@@ -23,13 +23,13 @@ class OffersController < WebsiteController
   end
 
   def update
-    offer_params = sanitize_currency_params(params[:offer], [ :payment, :min_payment ])
+    offer_params = sanitize_currency_params(params[:offer], [ :bid ])
 
-    safe_attributes = [:daily_budget, :payment, :user_enabled]
+    safe_attributes = [:daily_budget, :user_enabled, :bid]
     if permitted_to?(:edit, :statz)
       offer_params[:device_types] = offer_params[:device_types].blank? ? '[]' : offer_params[:device_types].to_json
       safe_attributes += [:tapjoy_enabled, :self_promote_only, :allow_negative_balance, :pay_per_click,
-          :featured, :min_payment, :name, :name_suffix, :show_rate, :min_conversion_rate, :countries,
+          :featured, :name, :name_suffix, :show_rate, :min_conversion_rate, :countries,
           :cities, :postal_codes, :device_types, :publisher_app_whitelist, :overall_budget]
     end
 

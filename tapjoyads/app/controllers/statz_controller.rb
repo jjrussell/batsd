@@ -219,7 +219,7 @@ class StatzController < WebsiteController
   def update
     log_activity(@offer)
     
-    offer_params = sanitize_currency_params(params[:offer], [ :payment, :min_payment ])
+    offer_params = sanitize_currency_params(params[:offer], [ :bid ])
     
     orig_payment = @offer.payment
     orig_budget = @offer.daily_budget

@@ -9,6 +9,7 @@ authorization do
     has_permission_on :billing, :to => [ :index, :add_funds, :create_order, :export_statements, :export_orders, :export_payouts ]
     has_permission_on :users, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :support, :to => [ :index ]
+    has_permission_on :premier, :to => [ :edit, :update ]
   end
 
   role :agency do
@@ -41,6 +42,7 @@ authorization do
     has_permission_on :rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
     has_permission_on :partners, :to => [ :update, :managed_by ]
     has_permission_on :apps, :to => [ :unarchive ]
+    has_permission_on :partners_offer_discounts, :to => [ :index, :new, :create, :deactivate ]
   end
   
   role :raffle_manager do

@@ -30,7 +30,7 @@ private
     offer.instructions = @instructions
     offer.time_delay = @time_delay
     offer.credit_card_required = @credit_card_required
-    offer.payment = @payment
+    offer.bid = @payment
     offer.tapjoy_enabled = true
     offer.show_rate = 1.0
     offer.save!
@@ -45,7 +45,7 @@ private
       offer.instructions = @instructions unless @instructions.nil?
       offer.time_delay = @time_delay unless @time_delay.nil?
       offer.credit_card_required = @credit_card_required unless @credit_card_required.nil?
-      offer.payment = @payment unless @payment.nil?
+      offer.bid = @payment unless @payment.nil?
       offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?
     end

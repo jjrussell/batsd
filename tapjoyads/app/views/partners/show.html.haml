@@ -21,8 +21,19 @@
 .metadata Pending Earnings: #{number_to_currency(@partner.pending_earnings / 100.0)}
 .metadata Payout Frequency: #{@partner.payout_frequency}
 .metadata Created: #{@partner.created_at.to_s(:db)}
-.metadata Account managers: #{@partner.account_managers.map{|u| u.username}.join(', ')}
-.metadata Internal notes: #{@partner.account_manager_notes}
+- if permitted_to?(:edit, :partners)
+  .metadata Account managers: #{@partner.account_managers.map{|u| u.username}.join(', ')}
+  .metadata Internal notes: #{@partner.account_manager_notes}
+  .metadata
+    Current Offer Discount: 
+    = number_to_currency(@partner.premier_discount * 0.01)
+    = "(#{link_to('edit', partner_offer_discounts_path(@partner))})"
+  .metadata
+    Current Exclusivity Level:
+    = @partner.exclusivity_level_type || "None"
+  .metadata
+    Exclusivity Expires On:
+    = @partner.exclusivity_expires_on ? @partner.exclusivity_expires_on.to_s(:pub) : "N/A"
 
 .clear
 

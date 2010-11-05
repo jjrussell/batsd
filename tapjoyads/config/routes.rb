@@ -69,12 +69,15 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
     :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get },
-    :collection => { :managed_by => :get }
+    :collection => { :managed_by => :get } do |partner|
+      partner.resources :offer_discounts, :only => [ :index, :new, :create ], :member => { :deactivate => :post }, :controller => 'partners/offer_discounts'
+  end
   map.resources :password_resets, :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
   map.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
   map.with_options(:controller => 'search') do |m|
     m.search_offers 'search/offers', :action => 'offers'
   end
+  map.premier 'premier', :controller => :premier, :action => :edit
 
   # Special paths:
   map.connect 'log_device_app/:action/:id', :controller => 'connect'

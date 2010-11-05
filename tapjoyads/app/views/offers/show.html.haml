@@ -27,8 +27,8 @@
             = f.label :payment, 'Bid'
             #help_bid.help ?
           %td
-            = f.currency_field :payment, {}, :class => 'togglable'
-            = error_message_on @offer, :payment
+            = f.currency_field :bid, {}, :class => 'togglable'
+            = error_message_on @offer, :bid
         %tr
           %th
             Offer Name
@@ -100,7 +100,7 @@
       };
 
       setEstimatedBudget = function() {
-        var bid = stringToNumber($('#offer_payment').val());
+        var bid = stringToNumber($('#offer_bid').val());
         var installLimit = stringToNumber($('#offer_daily_budget').val())
         budget = 'Unlimited'
         if (installLimit > 0) {
@@ -110,10 +110,10 @@
       };
 
       checkMinimumPrice = function() {
-        var minimumPrice = #{(@offer.min_payment||0) / 100.0};
-        var currentPrice = stringToNumber($('#offer_payment').val());
+        var minimumPrice = #{([ @offer.bid, @offer.min_bid ].min) / 100.0};
+        var currentPrice = stringToNumber($('#offer_bid').val());
         if (currentPrice < minimumPrice) {
-          $('#offer_payment').val(numberToCurrency(minimumPrice));
+          $('#offer_bid').val(numberToCurrency(minimumPrice));
         }
       };
 
@@ -121,7 +121,7 @@
       $('#offer_user_enabled').change(toggleUserEnabled);
 
       setEstimatedBudget();
-      $('#offer_payment').change(function() {
+      $('#offer_bid').change(function() {
         checkMinimumPrice();
         setEstimatedBudget();
       });

@@ -302,6 +302,20 @@ class OneOffs
     file.close
     puts "Finished. #{inconsistent_count} partners with inconsistent currencies."
   end
+  
+  def self.set_initial_offer_discounts
+    Partner.find_each do |partner|
+      order = partner.orders.scoped(:order => 'created_at DESC', :conditions => [ 'created_at >= ?', 3.months.ago ]).first
+      order.send :create_spend_discount if order
+    end
+  end
+  
+  def self.set_initial_bids
+    Offer.find_each do |offer|
+      offer.bid = offer.payment
+      offer.save_without_validation
+    end
+  end
 
   def self.reset_memcached
     keys = [ 'statz.cached_stats.24_hours',

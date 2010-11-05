@@ -110,18 +110,11 @@
     - if [ 'App', 'EmailOffer', 'GenericOffer' ].include?(@offer.item_type)
       %tr
         %th
-          = f.label(:payment)
-          #help_payment.help ?
+          = f.label(:bid)
+          #help_bid.help ?
         %td
-          = f.currency_field(:payment)
-          = error_message_on @offer, :payment
-      %tr
-        %th
-          = f.label(:min_payment)
-          #help_min_payment.help ?
-        %td
-          = f.currency_field(:min_payment)
-          = error_message_on @offer, :min_payment
+          = f.currency_field(:bid)
+          = error_message_on @offer, :bid
       %tr
         %th
           = f.label(:daily_budget)
@@ -160,10 +153,10 @@
   #help_postal_codes_content{ :name => 'Postal Codes' } Targets this offer to these postal codes. Must be an array of postal codes or blank for no targeting. i.e. ["94105"]
   #help_device_types_content{ :name => 'Device Types' } Targets this offer to these device types. At least one device type must be selected.
   #help_publisher_app_whitelist_content{ :name => 'Publisher App Whitelist' } Restrict this offer to these publisher apps. Must be a ";" separated list of publisher app IDs.
-  #help_payment_content{ :name => 'Payment' } The price per conversion.
   #help_daily_budget_content{ :name => 'Daily Budget' } The maximum number of conversions to complete in one day.
   #help_overall_budget_content{ :name => 'Overall Budget' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
   #help_app_store_id_content{ :name => 'Store ID' } The App Store ID or Android Market name of this app. i.e. '297558390' for Apple, 'com.tapjoy.tapout' for Android
+  #help_bid_content{ :name => 'Bid' } The bid affects your payment and your offerwall rank.
 
 - content_for :page_styles do
   :plain

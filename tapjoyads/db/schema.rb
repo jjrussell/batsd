@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101102224710) do
+ActiveRecord::Schema.define(:version => 20101102224711) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -140,6 +140,19 @@ ActiveRecord::Schema.define(:version => 20101102224710) do
   add_index "monthly_accountings", ["partner_id", "month", "year"], :name => "index_monthly_accountings_on_partner_id_and_month_and_year", :unique => true
   add_index "monthly_accountings", ["partner_id"], :name => "index_monthly_accountings_on_partner_id"
 
+  create_table "offer_discounts", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36, :null => false
+    t.string   "partner_id", :limit => 36, :null => false
+    t.string   "source",                   :null => false
+    t.date     "expires_on",               :null => false
+    t.integer  "amount",                   :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "offer_discounts", ["id"], :name => "index_offer_discounts_on_id", :unique => true
+  add_index "offer_discounts", ["partner_id"], :name => "index_offer_discounts_on_partner_id"
+
   create_table "offerpal_offers", :id => false, :force => true do |t|
     t.string   "id",          :limit => 36,                    :null => false
     t.string   "partner_id",  :limit => 36,                    :null => false
@@ -259,7 +272,6 @@ ActiveRecord::Schema.define(:version => 20101102224710) do
     t.integer  "premier_discount",                                                       :default => 0,         :null => false
     t.string   "exclusivity_level_type"
     t.date     "exclusivity_expires_on"
-    t.date     "premier_expires_on"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

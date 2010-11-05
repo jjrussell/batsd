@@ -16,7 +16,7 @@ class Offer < ActiveRecord::Base
   
   NUM_MEMCACHE_KEYS = 30
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_payment, :normal_price, :normal_show_rate, :normal_avg_revenue
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_payment, :normal_price, :normal_show_rate, :normal_avg_revenue, :normal_bid, :normal_bid_difference
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -26,7 +26,7 @@ class Offer < ActiveRecord::Base
   
   validates_presence_of :partner, :item, :name, :url, :instructions, :time_delay
   validates_numericality_of :price, :only_integer => true
-  validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_blank => false, :allow_nil => false
+  validates_numericality_of :bid, :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_blank => false, :allow_nil => false
   validates_numericality_of :actual_payment, :only_integer => true, :allow_nil => true
   validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :allow_blank => false, :greater_than_or_equal_to => 0
@@ -61,13 +61,6 @@ class Offer < ActiveRecord::Base
       end
     end
   end
-  validates_each :payment do |record, attribute, value|
-    if record.payment_changed? || record.min_payment_changed?
-      if value > 0 && value < record.min_payment.to_i
-        record.errors.add(attribute, "is below the minimum")
-      end
-    end
-  end
   validates_each :payment_range_low do |record, attribute, value|
     if record.payment_range_low.present?
       record.errors.add(attribute, "must equal payment") if value != record.payment
@@ -80,9 +73,17 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "must not be set if low payment range is not set") if value.present?
     end
   end
+  validates_each :bid do |record, attribute, value|
+    if record.bid_changed? || record.price_changed?
+      if value < record.min_bid
+        record.errors.add(attribute, "is below the minimum")
+      end
+    end
+  end
   
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
+  before_save :update_payment
   
   named_scope :enabled_offers, :joins => :partner, :conditions => "payment > 0 AND tapjoy_enabled = true AND user_enabled = true AND ((partners.balance > 0 AND item_type IN ('App', 'EmailOffer', 'GenericOffer')) OR item_type = 'RatingOffer')"
   named_scope :featured, :conditions => { :featured => true }
@@ -132,21 +133,27 @@ class Offer < ActiveRecord::Base
     bucket = S3.bucket(BucketNames::OFFER_DATA)
     offer_list = Offer.enabled_offers.nonfeatured
     
-    conversion_rates    = offer_list.collect(&:conversion_rate)
-    payments            = offer_list.collect(&:payment)
-    prices              = offer_list.collect(&:price)
-    show_rates          = offer_list.collect(&:show_rate)
-    avg_revenues        = offer_list.collect(&:avg_revenue)
-    cvr_mean            = conversion_rates.mean
-    cvr_std_dev         = conversion_rates.standard_deviation
-    payment_mean        = payments.mean
-    payment_std_dev     = payments.standard_deviation
-    price_mean          = prices.mean
-    price_std_dev       = prices.standard_deviation
-    show_rate_mean      = show_rates.mean
-    show_rate_std_dev   = show_rates.standard_deviation
-    avg_revenue_mean    = avg_revenues.mean
-    avg_revenue_std_dev = avg_revenues.standard_deviation
+    conversion_rates       = offer_list.collect(&:conversion_rate)
+    payments               = offer_list.collect(&:payment)
+    prices                 = offer_list.collect(&:price)
+    show_rates             = offer_list.collect(&:show_rate)
+    avg_revenues           = offer_list.collect(&:avg_revenue)
+    bids                   = offer_list.collect(&:bid)
+    bid_differences        = offer_list.collect(&:bid_difference)
+    cvr_mean               = conversion_rates.mean
+    cvr_std_dev            = conversion_rates.standard_deviation
+    payment_mean           = payments.mean
+    payment_std_dev        = payments.standard_deviation
+    price_mean             = prices.mean
+    price_std_dev          = prices.standard_deviation
+    show_rate_mean         = show_rates.mean
+    show_rate_std_dev      = show_rates.standard_deviation
+    avg_revenue_mean       = avg_revenues.mean
+    avg_revenue_std_dev    = avg_revenues.standard_deviation
+    bid_mean               = bids.mean
+    bid_std_dev            = bids.standard_deviation
+    bid_difference_mean    = bid_differences.mean
+    bid_difference_std_dev = bid_differences.standard_deviation
     
     offer_list.each do |offer|
       offer.normal_conversion_rate = (offer.conversion_rate - cvr_mean) / cvr_std_dev
@@ -154,6 +161,8 @@ class Offer < ActiveRecord::Base
       offer.normal_price           = (offer.price - price_mean) / price_std_dev
       offer.normal_show_rate       = (offer.show_rate - show_rate_mean) / show_rate_std_dev
       offer.normal_avg_revenue     = (offer.avg_revenue - avg_revenue_mean) / avg_revenue_std_dev
+      offer.normal_bid             = (offer.bid - bid_mean) / bid_std_dev
+      offer.normal_bid_difference  = (offer.bid_difference - bid_difference_mean) / bid_difference_std_dev
       offer.calculate_rank_score(weights)
     end
     
@@ -327,7 +336,7 @@ class Offer < ActiveRecord::Base
   def calculate_rank_score(weights = {})
     random_weight = weights.delete(:random) { 0 }
     boost_weight = weights.delete(:boost) { 1 }
-    weights = { :conversion_rate => 0, :payment => 0, :price => 0, :show_rate => 0, :avg_revenue => 0 }.merge(weights)
+    weights = { :conversion_rate => 0, :payment => 0, :price => 0, :show_rate => 0, :avg_revenue => 0, :bid => 0, :bid_difference => 0 }.merge(weights)
     self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send("normal_#{key}")) }
     self.rank_score += rand * random_weight
     self.rank_score += rank_boosts.active.sum(:amount) * boost_weight
@@ -356,6 +365,33 @@ class Offer < ActiveRecord::Base
         flixter_reject?(publisher_app, device) ||
         whitelist_reject?(publisher_app) ||
         gamevil_reject?(publisher_app)
+  end
+  
+  def update_payment(force_update = false)
+    if (force_update || bid_changed?)
+      if (item_type == 'App')
+        self.payment = is_paid? ? bid * (100 - partner.premier_discount) / 100 : [ (bid - partner.premier_discount), 0 ].max 
+      else
+        self.payment = bid
+      end
+    end
+  end
+  
+  def update_payment!
+    update_payment(true)
+    save!
+  end
+  
+  def min_bid
+    if item_type == 'App'
+      is_paid? ? (price * 0.50).round : 35
+    else
+      0
+    end
+  end
+  
+  def bid_difference
+    bid - min_bid
   end
   
 private
