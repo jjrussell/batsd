@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101102224711) do
+ActiveRecord::Schema.define(:version => 20101104233220) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -210,7 +210,6 @@ ActiveRecord::Schema.define(:version => 20101102224711) do
     t.text     "publisher_app_whitelist",                                                                          :null => false
     t.string   "name_suffix",                                                                   :default => ""
     t.boolean  "hidden",                                                                        :default => false, :null => false
-    t.integer  "min_payment"
     t.integer  "payment_range_low"
     t.integer  "payment_range_high"
     t.integer  "bid",                                                                           :default => 0,     :null => false
