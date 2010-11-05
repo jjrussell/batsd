@@ -28,7 +28,7 @@
         %td= number_to_currency(current_partner.balance / 100.0)
       %tr
         %td Bid
-        %td= number_to_currency(@offer.payment / 100.0)
+        %td= number_to_currency(@offer.bid / 100.0)
 
 - if @offer.is_publisher_offer?
   .data
