@@ -83,6 +83,8 @@ class SdbBackup
   end
   
   def self.write_to_s3(s3_name, local_name, bucket_name, num_retries)
+    S3.reset_connection
+    
     bucket = S3.bucket(bucket_name)
     
     while bucket.key(s3_name).exists?
