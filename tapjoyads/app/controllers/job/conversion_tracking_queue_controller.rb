@@ -15,8 +15,7 @@ private
       return
     end
     
-    # TO CHANGE - always use currency_id 2 days after deploy
-    currency = Currency.find_in_cache(click.publisher_app_id)
+    currency = Currency.find_in_cache(click.currency_id)
     
     # Try to stop Playdom users from click-frauding (specifically from Mobsters: Big Apple)
     if currency.callback_url == 'PLAYDOM_DEFINED' && click.publisher_user_id !~ /^(F|M|P)[0-9]+$/
@@ -51,7 +50,7 @@ private
     reward.put('advertiser_app_id', click.advertiser_app_id)
     reward.put('displayer_app_id', click.displayer_app_id)
     reward.put('offer_id', click.offer_id)
-    reward.put('currency_id', currency.id)
+    reward.put('currency_id', click.currency_id)
     reward.put('publisher_user_id', click.publisher_user_id)
     reward.put('advertiser_amount', click.advertiser_amount)
     reward.put('publisher_amount', click.publisher_amount)

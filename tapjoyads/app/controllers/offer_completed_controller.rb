@@ -41,8 +41,7 @@ class OfferCompletedController < ApplicationController
         notify_and_render_error and return
       end
       
-      # TO CHANGE - always use currency_id 2 days after deploy
-      currency = Currency.find_in_cache(click.currency_id || click.publisher_app_id)
+      currency = Currency.find_in_cache(click.currency_id)
       offer.payment = payment
       
       click.advertiser_amount = currency.get_advertiser_amount(offer)
