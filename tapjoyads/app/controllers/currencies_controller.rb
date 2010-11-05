@@ -80,7 +80,7 @@ class CurrenciesController < WebsiteController
 private
 
   def find_currency
-    @app = current_partner.apps.find_by_id(params[:app_id], :include => [:currency])
+    @app = current_partner.apps.find_by_id(params[:app_id], :include => [:primary_currency])
     if @app.nil?
       redirect_to apps_path
       return
