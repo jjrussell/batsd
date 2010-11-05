@@ -24,7 +24,7 @@
             = f.text_field :conversion_rate
             = error_message_on(@currency, :conversion_rate)
             #currency_name_text.right_label
-              = @app.primary_currency && @app.primary_currency.name
+              = @currency.name
       %tr
         %th
           = label_tag(:managed_by_tapjoy, 'Managed by Tapjoy')
