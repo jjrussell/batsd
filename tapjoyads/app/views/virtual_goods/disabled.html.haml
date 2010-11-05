@@ -5,11 +5,11 @@
 
 #content-with-links
   %h3 Virtual Goods
-  - if @app.currency.nil?
+  - if @app.primary_currency.nil?
     You must
     = link_to 'enable Tapjoy-managed virtual currency', new_app_currency_path({:app_id => @app.id})
   - else
     Your
-    = link_to 'virtual currency must be managed by Tapjoy', app_currency_path({:app_id => @app.id, :id => @app.currency.id})
+    = link_to 'virtual currency must be managed by Tapjoy', app_currency_path({:app_id => @app.id, :id => @app.primary_currency.id})
   in order to use Tapjoy virtual goods.
 .clear

@@ -20,10 +20,10 @@
         - if o.is_a?(App)
           - case params[:controller]
           - when 'currencies'
-            - if o.currency.nil?
+            - if o.primary_currency.nil?
               - url = new_app_currency_path(:app_id => o.id)
             - else
-              - url = app_currency_path(:app_id => o.id, :id => o.currency.id)
+              - url = app_currency_path(:app_id => o.id, :id => o.primary_currency.id)
           - when 'virtual_goods'
             - url = app_virtual_goods_path(:app_id => o.id)
           - else

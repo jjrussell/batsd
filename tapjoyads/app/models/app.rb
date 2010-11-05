@@ -8,7 +8,8 @@ class App < ActiveRecord::Base
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
-  has_one :currency
+  has_many :currencies
+  has_one :primary_currency, :class_name => 'Currency', :conditions => 'id = app_id'
   has_one :rating_offer
   
   belongs_to :partner

@@ -156,6 +156,6 @@ private
   end
 
   def check_virtual_currency
-    render 'disabled' unless @app.currency && @app.currency.tapjoy_managed?
+    render 'disabled' unless @app.primary_currency && @app.primary_currency.tapjoy_managed?
   end
 end

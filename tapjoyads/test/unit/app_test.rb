@@ -5,7 +5,8 @@ class AppTest < ActiveSupport::TestCase
   
   should have_many(:offers)
   should have_one(:primary_offer)
-  should have_one(:currency)
+  should have_many(:currencies)
+  should have_one(:primary_currency)
   should have_one(:rating_offer)
   should have_many(:publisher_conversions)
   should belong_to(:partner)

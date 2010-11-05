@@ -112,7 +112,7 @@ private
       img.composite!(publisher_icon, 1, 1, Magick::AtopCompositeOp)
       img.composite!(offer_icon, width - icon_height - 5, 1, Magick::AtopCompositeOp)
 
-      text = "Earn #{publisher.currency.get_reward_amount(offer)} #{publisher.currency.name} in #{publisher.name}!\n Install #{offer.name}"
+      text = "Earn #{publisher.primary_currency.get_reward_amount(offer)} #{publisher.primary_currency.name} in #{publisher.name}!\n Install #{offer.name}"
       image_label = Magick::Image.read("label:#{text}") do
         self.size = "220x44"
         self.gravity = Magick::CenterGravity

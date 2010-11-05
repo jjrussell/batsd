@@ -208,7 +208,7 @@ class Offer < ActiveRecord::Base
   end
 
   def is_publisher_offer?
-    item_type == 'App' && item.currency.present?
+    item_type == 'App' && item.primary_currency.present?
   end
 
   def avg_revenue

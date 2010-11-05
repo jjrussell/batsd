@@ -119,7 +119,7 @@
       #help_description_content{:name => 'Description'}
         Description that will appear with this virtual good
       #help_price_content{:name => 'Price'}
-        Price in #{@app.currency.name} for this virtual good
+        Price in #{@app.primary_currency.name} for this virtual good
       #help_max_purchases_content{:name => 'Maximum Purchases'}
         Maximum number of times a user can purchase this item.
       #help_icon_content{:name => 'Icon'}
@@ -128,7 +128,7 @@
         Zip file to download with the virtual good. Maximum file size is 200KB.
       #help_beta_content{:name => 'Beta Items'}
         Items marked as "beta" will only be visible to devices marked as
-        = link_to "virtual currency beta user.", app_currency_path({:app_id => @app.id, :id => @app.currency.id})
+        = link_to "virtual currency beta user.", app_currency_path({:app_id => @app.id, :id => @app.primary_currency.id})
       #help_disabled_content{:name => 'Disabled Items'}
         Items marked as "disabled" will not be visible to anyone.
       #help_custom_field_content{:name => 'Custom Fields'}

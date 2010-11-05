@@ -66,7 +66,7 @@ class CurrenciesController < WebsiteController
   end
 
   def reset_test_device
-    if @app.currency.get_test_device_ids.include?(params[:udid])
+    if @app.primary_currency.get_test_device_ids.include?(params[:udid])
       PointPurchases.transaction(:key => "#{params[:udid]}.#{params[:app_id]}") do |point_purchases|
         point_purchases.virtual_goods = {}
       end
@@ -85,7 +85,7 @@ private
       redirect_to apps_path
       return
     end
-    @currency = @app.currency
+    @currency = @app.primary_currency
     if @currency.nil?
       flash[:error] = "Could not find currency"
       redirect_to apps_path
