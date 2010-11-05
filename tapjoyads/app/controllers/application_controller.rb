@@ -23,7 +23,7 @@ private
     render_missing_text = options.delete(:render_missing_text) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
-    if params[:udid] == 'null' || params[:udid] == 'todo todo todo todo'
+    if params[:udid] == 'null' || params[:app_id] == 'todo todo todo todo'
       render :text => "missing required params" if render_missing_text
       return false
     end
