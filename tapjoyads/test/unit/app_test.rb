@@ -14,5 +14,18 @@ class AppTest < ActiveSupport::TestCase
   should validate_presence_of(:partner)
   should validate_presence_of(:name)
   
+  context "An App" do
+    setup do
+      @app = Factory(:app, :price => 200)
+    end
+    
+    should "update its offers' bids when its price changes" do
+      @offer = @app.primary_offer
+      @current_offer_bid = @offer.bid
+      @app.update_attribute(:price, 400)
+      @offer.reload
+      assert_equal 200, @offer.bid
+    end
+  end
   
 end
