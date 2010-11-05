@@ -93,6 +93,8 @@ class App < ActiveRecord::Base
     return if url.blank?
     set_primary_key if id.nil?
     begin
+      large_url = url if large_url.nil?
+      
       icon = Downloader.get(url, :timeout => 30)
       large_icon = Downloader.get(large_url, :timeout => 30)
       medium_icon = Magick::Image.from_blob(large_icon)[0].resize(256, 256).to_blob{|i| i.format = 'JPG'}
@@ -103,9 +105,9 @@ class App < ActiveRecord::Base
       bucket.put("icons/medium/#{id}.jpg", medium_icon, {}, "public-read")
       
       Mc.delete("icon.s3.#{id}")
-    rescue
-      Rails.logger.info "Failed to download icon for url: #{url}"
-      Notifier.alert_new_relic(AppDataFetchError, "icon url #{url} for app id #{id}")
+    rescue Exception => e
+      Rails.logger.info "Failed to download icon for url: #{url}. Error: #{e}"
+      Notifier.alert_new_relic(AppDataFetchError, "icon url #{url} for app id #{id}. Error: #{e}")
     end
   end
 
