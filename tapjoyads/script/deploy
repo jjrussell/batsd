@@ -53,6 +53,7 @@ class Deploy
   def deploy
     puts "#{@options[:environment].upcase} deploy"
     update_working_copy
+    check_syntax
     create_deploy_branch unless @options[:version]
     execute_cloudrun
     puts "Done deploying: #{Time.now}"
@@ -103,8 +104,6 @@ private
     
     print "No deploy branch specified. Create new deploy branch #{@options[:version]}? [y/N] "
     prompt_and_exit_if_not_yes
-    
-    check_syntax
     
     settings['config']["api_deploy_version"] = @options[:version]
     File.open(SERVER_CONFIG_FILENAME, 'w') do |f|
