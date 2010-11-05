@@ -27,6 +27,7 @@
       %th Request id
   %tbody
     - @activities.each do |activity|
+      - next if activity.object.nil?
       %tr
         %td
           %a{:href => "javascript:setValue('user', '#{activity.user}')"}= activity.user
