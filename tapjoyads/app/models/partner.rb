@@ -167,7 +167,7 @@ class Partner < ActiveRecord::Base
   end
   
   def expire_exclusivity_level
-    self.exclusivity_level = nil
+    self.exclusivity_level_type = nil
     self.exclusivity_expires_on = nil
   end
   
