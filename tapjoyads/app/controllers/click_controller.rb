@@ -4,8 +4,6 @@ class ClickController < ApplicationController
   before_filter :setup
   
   def app
-    return unless verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id ])
-    
     @offer = Offer.find_in_cache(params[:offer_id])
     return if offer_disabled?
     
@@ -20,8 +18,6 @@ class ClickController < ApplicationController
   end
   
   def generic
-    return unless verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id ])
-    
     @offer = Offer.find_in_cache(params[:offer_id])
     return if offer_disabled?
     
@@ -36,8 +32,6 @@ class ClickController < ApplicationController
   end
   
   def rating
-    return unless verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id ])
-    
     @offer = Offer.find_in_cache(params[:offer_id])
     return if offer_disabled?
     
@@ -66,6 +60,7 @@ private
     doodle_buddy_regular_id = '3cb9aacb-f0e6-4894-90fe-789ea6b8361d'
     params[:publisher_app_id] = doodle_buddy_regular_id if params[:publisher_app_id] == doodle_buddy_holiday_id
     
+    verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id, :currency_id ])
   end
   
   def offer_disabled?
