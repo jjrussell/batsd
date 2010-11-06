@@ -24,7 +24,7 @@ class MailChimp
     partners.map do |partner|
       unless partner.non_managers.blank?
         email = partner.non_managers.first.email
-        if email.blank?
+        if email.blank? || (/mailinator\.com/ =~ email)
           nil
         else
           name = partner.contact_name
