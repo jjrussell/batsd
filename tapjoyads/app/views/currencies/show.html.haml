@@ -63,11 +63,12 @@
           = error_message_on(@currency, :test_devices)
       - if permitted_to?(:edit, :statz)
         = render :partial => 'admin_fields', :locals => {:f => f}
-    = f.submit
+      %tr
+        %td{ :colspan => 2 }= f.submit
 
-  - unless @currency.test_devices.blank?
+  - if @udids_to_check.present?
     %h3
-      Test Device Last-run time
+      Test Device Last-run time(s)
       #help_test_device_last_run_time.help ?
     %table
       %tr
@@ -87,8 +88,8 @@
           %tr
             %th= label_tag :udid, "Device ID"
             %td= select_tag 'udid', options_for_select(@currency.get_test_device_ids)
-
-      = submit_tag('Reset this device')
+          %tr
+            %td{ :colspan => 2 }= submit_tag('Reset this device')
 
   .hidden
     #help_name_content{:name => 'Name'}
