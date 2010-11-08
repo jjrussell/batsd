@@ -14,6 +14,12 @@
     .next= get_next_link
     .clear
 
+- if @test_offer.present?
+  .message
+    = link_to("Test Offer - Click to receive 10 #{@currency.name}", @test_offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], @currency.id, params[:source], params[:app_version], @now, nil, params[:exp]))
+    %br
+    (This is only visible to Test Devices)
+
 #offers
   - @offer_list.each do |offer|
     .offer
@@ -63,7 +69,7 @@
         image.src = image.getAttribute('s');
       }
     }
-
+  
 - content_for :page_styles do
   :plain
     * {

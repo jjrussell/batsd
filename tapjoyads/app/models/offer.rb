@@ -267,6 +267,8 @@ class Offer < ActiveRecord::Base
       click_url += "generic?"
     elsif item_type == 'RatingOffer'
       click_url += "rating?"
+    elsif item_type == 'TestOffer'
+      click_url += "test_offer?"
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end

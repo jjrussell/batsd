@@ -11,6 +11,10 @@ class GetOffersController < ApplicationController
   before_filter :setup
   
   def webpage
+    if @currency.get_test_device_ids.include?(params[:udid])
+      @test_offer = Offer.new(:id => @publisher_app.id, :item_id => @publisher_app.id, :item_type => 'TestOffer')
+    end
+    
     set_offer_list(:is_server_to_server => false)
     
     # TO REMOVE - when gameview integrates properly

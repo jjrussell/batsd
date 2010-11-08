@@ -1,6 +1,6 @@
 class ClickController < ApplicationController
   
-  before_filter :determine_link_affiliates, :except => :generic
+  before_filter :determine_link_affiliates, :except => [ :generic, :test_offer ]
   before_filter :setup
   
   def app
@@ -43,6 +43,26 @@ class ClickController < ApplicationController
     handle_pay_per_click
     
     redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], nil, @itunes_link_affiliate))
+  end
+  
+  def test_offer
+    test_reward = Reward.new
+    test_reward.type              = 'test_offer'
+    test_reward.udid              = params[:udid]
+    test_reward.publisher_user_id = params[:publisher_user_id]
+    test_reward.currency_id       = params[:currency_id]
+    test_reward.publisher_app_id  = params[:publisher_app_id]
+    test_reward.advertiser_app_id = params[:publisher_app_id]
+    test_reward.offer_id          = params[:publisher_app_id]
+    test_reward.currency_reward   = 10
+    test_reward.publisher_amount  = 0
+    test_reward.advertiser_amount = 0
+    test_reward.tapjoy_amount     = 0
+    
+    message = test_reward.serialize(:attributes_only => true)
+    Sqs.send_message(QueueNames::SEND_CURRENCY, message)
+    
+    render :text => "This device should receive 10 currency."
   end
   
 private
