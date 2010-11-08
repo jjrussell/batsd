@@ -96,6 +96,9 @@ private
     doodle_buddy_regular_id = '3cb9aacb-f0e6-4894-90fe-789ea6b8361d'
     params[:app_id] = doodle_buddy_regular_id if params[:app_id] == doodle_buddy_holiday_id
     
+    #TO REMOVE: hackey fix for mini tycoon
+    params[:publisher_user_id] = params[:udid] if params[:app_id] == 'f90a1f37-d669-4c98-b0ee-af5290d32509'
+    
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
     # TO REMOVE - when gameview integrates properly
