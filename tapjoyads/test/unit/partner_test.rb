@@ -173,6 +173,20 @@ class PartnerTest < ActiveSupport::TestCase
         assert_nil @partner.exclusivity_level
         assert_nil @partner.exclusivity_expires_on
       end
+      
+      should "not need its exclusivity expired" do
+        assert !@partner.needs_exclusivity_expired?
+      end
+      
+      context "with exclusivity_expires_on in the past" do
+        setup do
+          @partner.exclusivity_expires_on = 1.month.ago
+        end
+        
+        should "need its exclusivity expired" do
+          assert @partner.needs_exclusivity_expired?
+        end
+      end
     end
     
   end

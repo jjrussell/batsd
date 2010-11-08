@@ -185,6 +185,10 @@ class Partner < ActiveRecord::Base
     save!
   end
   
+  def needs_exclusivity_expired?
+    exclusivity_expires_on && exclusivity_expires_on <= Date.today
+  end
+  
 private
 
   def create_mail_chimp_entry

@@ -5,7 +5,7 @@ class PremierTasks
       save_partner = false
       
       # expire exclusivity levels
-      if partner.exclusivity_expires_on && partner.exclusivity_expires_on <= Date.today
+      if partner.needs_exclusivity_expired?
         partner.expire_exclusivity
         save_partner = true
       elsif partner.exclusivity_expires_on && partner.exclusivity_expires_on == Date.today + 7
