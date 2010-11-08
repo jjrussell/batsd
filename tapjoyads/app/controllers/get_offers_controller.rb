@@ -12,7 +12,8 @@ class GetOffersController < ApplicationController
   
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
-      @test_offer = Offer.new(:id => @publisher_app.id, :item_id => @publisher_app.id, :item_type => 'TestOffer')
+      @test_offer = Offer.new(:item_id => @publisher_app.id, :item_type => 'TestOffer')
+      @test_offer.id = @publisher_app.id
     end
     
     set_offer_list(:is_server_to_server => false)
