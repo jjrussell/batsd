@@ -13,8 +13,6 @@ class Offer < ActiveRecord::Base
   DEFAULT_OFFER_TYPE  = '1'
   FEATURED_OFFER_TYPE = '2'
   
-  NUM_MEMCACHE_KEYS = 30
-  
   attr_accessor :rank_score, :normal_conversion_rate, :normal_payment, :normal_price, :normal_show_rate, :normal_avg_revenue, :normal_bid, :normal_bid_difference
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
@@ -92,12 +90,12 @@ class Offer < ActiveRecord::Base
   
   def self.get_enabled_offers(exp = nil)
     if exp == Experiments::EXPERIMENTS[:no_show_rate]
-      Mc.get_and_put("s3.enabled_offers_#{rand(NUM_MEMCACHE_KEYS) * 123123}.no_show_rate") do
+      Mc.distributed_get_and_put('s3.enabled_offers.no_show_rate') do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
         Marshal.restore(bucket.get('enabled_offers.no_show_rate'))
       end
     else
-      Mc.get_and_put("s3.enabled_offers_#{rand(NUM_MEMCACHE_KEYS) * 123123}.control") do
+      Mc.distributed_get_and_put('s3.enabled_offers.control') do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
         Marshal.restore(bucket.get('enabled_offers.control'))
       end
@@ -105,7 +103,7 @@ class Offer < ActiveRecord::Base
   end
   
   def self.get_featured_offers
-    Mc.get_and_put('s3.featured_offers') do
+    Mc.distributed_get_and_put('s3.featured_offers') do
       bucket = S3.bucket(BucketNames::OFFER_DATA)
       Marshal.restore(bucket.get('featured_offers'))
     end
@@ -159,9 +157,7 @@ class Offer < ActiveRecord::Base
     
     marshalled_offer_list = Marshal.dump(offer_list)
     bucket.put("enabled_offers.#{cache_key_suffix}", marshalled_offer_list)
-    NUM_MEMCACHE_KEYS.times do |i|
-      Mc.put("s3.enabled_offers_#{i * 123123}.#{cache_key_suffix}", offer_list)
-    end
+    Mc.distributed_put("s3.enabled_offers.#{cache_key_suffix}", offer_list)
   end
   
   def self.cache_featured_offers
@@ -169,7 +165,7 @@ class Offer < ActiveRecord::Base
     offer_list = Offer.enabled_offers.featured
     marshalled_offer_list = Marshal.dump(offer_list)
     bucket.put('featured_offers', marshalled_offer_list)
-    Mc.put('s3.featured_offers', offer_list)
+    Mc.distributed_put('s3.featured_offers', offer_list)
   end
   
   def self.s3_udids_path(offer_id, date = nil)

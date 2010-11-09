@@ -1,12 +1,20 @@
 class Mc
-  cattr_accessor :cache
   
-  @@cache = Memcached.new(MEMCACHE_SERVERS, {
-    :support_cas => true, 
-    :prefix_key => RUN_MODE_PREFIX,
-    :auto_eject_hosts => false
-    })
-    
+  def self.reset_connection
+    options = {
+      :support_cas      => true,
+      :prefix_key       => RUN_MODE_PREFIX,
+      :auto_eject_hosts => false
+    }
+    @@cache = Memcached.new(MEMCACHE_SERVERS, options)
+    @@individual_caches = MEMCACHE_SERVERS.map do |server|
+      Memcached.new(server, options)
+    end
+  end
+  
+  cattr_accessor :cache, :individual_caches
+  self.reset_connection
+  
   # Memcache counts can't go below 0. Set the offset to 2^32/2 for all counts.
   COUNT_OFFSET = 2147483648
   
@@ -27,12 +35,26 @@ class Mc
     return value
   end
   
+  def self.distributed_get_and_put(key, clone = false, time = 1.week)
+    did_yield = false
+    value = Mc.distributed_get(key, clone) do
+      did_yield = true
+      yield
+    end
+    
+    if did_yield
+      Mc.distributed_put(key, value, clone, time) rescue nil
+    end
+    return value
+  end
+  
   ##
   # Gets object from cache which matches key.
   # If no object is found, then control is yielded, and the object
   # returned from the yield block is returned.
-  def self.get(key, clone = false)
-    cache = clone ? @@cache.clone : @@cache
+  def self.get(key, clone = false, cache = nil)
+    cache ||= @@cache
+    cache = cache.clone if clone
     
     value = nil
     Rails.logger.info_with_time("Read from memcache") do
@@ -61,14 +83,40 @@ class Mc
     return value
   end
   
+  def self.distributed_get(key, clone = false)
+    cache_num = rand(@@individual_caches.size)
+    
+    value = Mc.get(key, clone, @@individual_caches[cache_num]) do
+      yield if block_given?
+    end
+    
+    return value
+  end
+  
   ##
   # Saves value to memcached, as long as value is not nil.
-  def self.put(key, value, clone = false, time = 1.week)
-    cache = clone ? @@cache.clone : @@cache
-    
+  def self.put(key, value, clone = false, time = 1.week, cache = nil)
     if value
+      cache ||= @@cache
+      cache = cache.clone if clone
+      
       Rails.logger.info_with_time("Wrote to memcache") do
         cache.set(CGI::escape(key), value, time)
+      end
+    end
+  end
+  
+  def self.distributed_put(key, value, clone = false, time = 1.week)
+    if value
+      begin
+        Rails.logger.info_with_time("Wrote to memcache - distributed") do
+          @@individual_caches.each do |cache|
+            Mc.put(key, value, clone, time, cache)
+          end
+        end
+      rescue Exception => e
+        Mc.distributed_delete(key, clone)
+        raise e
       end
     end
   end
@@ -127,8 +175,9 @@ class Mc
     end
   end
   
-  def self.delete(key, clone = false)
-    cache = clone ? @@cache.clone : @@cache
+  def self.delete(key, clone = false, cache = nil)
+    cache ||= @@cache
+    cache = cache.clone if clone
     key = CGI::escape(key)
     
     begin
@@ -138,7 +187,11 @@ class Mc
     end
   end
   
-  def self.reset_connection
-    @@cache = @@cache.clone
+  def self.distributed_delete(key, clone = false)
+    @@individual_caches.each do |cache|
+      Mc.delete(key, clone, cache) rescue nil
+    end
+    nil
   end
+  
 end

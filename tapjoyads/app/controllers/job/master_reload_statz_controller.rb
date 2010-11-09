@@ -61,7 +61,7 @@ private
       s2[1]['conversions'] <=> s1[1]['conversions']
     end
     
-    Mc.put("statz.cached_stats.#{timeframe}", cached_stats)
+    Mc.distributed_put("statz.cached_stats.#{timeframe}", cached_stats)
     Mc.put("statz.last_updated.#{timeframe}", now.to_f)
   end
   

@@ -11,7 +11,7 @@ class Job::MasterGrabDisabledPopularOffersController < Job::JobController
       offers[offer.id] = sum if sum > 5
     end
 
-    Mc.put('tools.disabled_popular_offers', offers)
+    Mc.distributed_put('tools.disabled_popular_offers', offers)
 
     render :text => 'ok'
   end

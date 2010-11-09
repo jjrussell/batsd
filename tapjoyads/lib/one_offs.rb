@@ -318,10 +318,7 @@ class OneOffs
   end
 
   def self.reset_memcached
-    keys = [ 'statz.cached_stats.24_hours',
-             'statz.cached_stats.7_days',
-             'statz.cached_stats.1_month',
-             'statz.last_updated.24_hours',
+    keys = [ 'statz.last_updated.24_hours',
              'statz.last_updated.7_days',
              'statz.last_updated.1_month',
              'money.cached_stats',
@@ -329,21 +326,28 @@ class OneOffs
              'money.total_pending_earnings',
              'money.last_updated',
              'money.daily_cached_stats',
-             'money.daily_last_updated',
-             'tools.disabled_popular_offers' ]
+             'money.daily_last_updated' ]
+    distributed_keys = [ 'statz.cached_stats.24_hours',
+                         'statz.cached_stats.7_days',
+                         'statz.cached_stats.1_month',
+                         'tools.disabled_popular_offers' ]
     data = {}
-    keys.each do |key|
+    (keys + distributed_keys).each do |key|
       data[key] = Mc.get(key)
     end
     
     Mc.cache.flush
     
     data.each do |k, v|
-      Mc.put(k, v)
+      if distributed_keys.include?(k)
+        Mc.distributed_put(k, v)
+      else
+        Mc.put(k, v)
+      end
     end
     
-    Offer.cache_enabled_offers
     Offer.cache_featured_offers
+    Offer.cache_enabled_offers
     true
   end
 
