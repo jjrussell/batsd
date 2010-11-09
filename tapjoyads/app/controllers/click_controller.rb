@@ -46,6 +46,11 @@ class ClickController < ApplicationController
   end
   
   def test_offer
+    currency = Currency.find_in_cache(params[:currency_id])
+    unless currency.get_test_device_ids.include?(params[:udid])
+      raise "not a test device"
+    end
+    
     test_reward = Reward.new
     test_reward.type              = 'test_offer'
     test_reward.udid              = params[:udid]
