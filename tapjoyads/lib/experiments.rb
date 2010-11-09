@@ -1,28 +1,18 @@
 class Experiments
   EXPERIMENTS = {
-    :control => '10',
-    :less_random => '11',
-    :more_random => '12',
-    :no_random => '13',
-    :cvr_boost => '14',
-    :payment_boost => '15'
+    :control => '20',
+    :no_show_rate => '21'
   }
   
   def self.choose(udid)
     if udid.present?
-      
       udid_hash = udid.hash % 100
       
-      if udid_hash < 10
-        EXPERIMENTS[:no_random]
-      elsif udid_hash < 20
-        EXPERIMENTS[:cvr_boost]
-      elsif udid_hash < 30
-        EXPERIMENTS[:more_random]
+      if udid_hash < 20
+        EXPERIMENTS[:no_show_rate]
       else
         EXPERIMENTS[:control]
-      end
-      
+      end 
     end
   end
   
