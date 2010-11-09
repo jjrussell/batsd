@@ -7,6 +7,13 @@
   Current Offer Discount:
   = number_to_currency(@partner.premier_discount * 0.01)
 
+.filters
+  - form_tag('', :class => 'tjform', :method => :get, :id => 'filter-form') do
+    %table
+      %tr
+        %th= label_tag 'filter', 'View:'
+        %td= select_tag 'filter', options_for_select([ ['All', 'all'], ['Active', 'active'] ], params[:filter])
+
 %table#offer_discounts_table.tablesorter
   %thead
     %tr
@@ -26,3 +33,11 @@
         %td{ :colspan => 4 } This partner has no offer discounts.
     
 = will_paginate(@offer_discounts)
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('select#filter').change(function() {
+        $('#filter-form').submit();
+      });
+    });

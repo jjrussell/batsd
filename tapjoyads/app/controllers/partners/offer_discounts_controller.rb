@@ -8,7 +8,11 @@ class Partners::OfferDiscountsController < WebsiteController
   after_filter :save_activity_logs, :only => [ :create, :deactivate ]
   
   def index
-    @offer_discounts = @partner.offer_discounts.paginate(:page => params[:page], :per_page => 20)
+    if params[:filter] == 'active'
+      @offer_discounts = @partner.offer_discounts.active.paginate(:page => params[:page], :per_page => 20)
+    else
+      @offer_discounts = @partner.offer_discounts.paginate(:page => params[:page], :per_page => 20)
+    end
   end
   
   def new
