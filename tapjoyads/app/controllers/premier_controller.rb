@@ -5,11 +5,13 @@ class PremierController < WebsiteController
   filter_access_to :all
 
   before_filter :set_partner
+  after_filter :save_activity_logs, :only => [ :update ]
 
   def edit
   end
   
   def update
+    log_activity(@partner)
     if @partner.set_exclusivity_level! params[:partner][:exclusivity_level_type]
       flash[:notice] = 'You have successfully updated your Tapjoy Premier level.'
     else
