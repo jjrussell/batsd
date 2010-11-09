@@ -1,3 +1,5 @@
+require 'rank_boost'
+
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
   include MemcachedRecord
