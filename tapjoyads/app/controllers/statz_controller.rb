@@ -266,11 +266,13 @@ class StatzController < WebsiteController
       { :udid => 'a00000155c5106',                           :last_run_time => 'Never', :device_label => 'Linda Droid'      },
       { :udid => '4b910938aceaa723e0c0313aa7fa9f9d838a595e', :last_run_time => 'Never', :device_label => 'Linda iPad'       },
       { :udid => '820a1b9df38f3024f9018464c05dfbad5708f81e', :last_run_time => 'Never', :device_label => 'Linda iPhone'     },
+      { :udid => '77d8d2e438fbd686c17851c1fc902b151234583e', :last_run_time => 'Never', :device_label => 'Reina iPhone'     },
       { :udid => 'b4c86b4530a0ee889765a166d80492b46f7f3636', :last_run_time => 'Never', :device_label => 'Ryan iPhone'      },
       { :udid => 'f0910f7ab2a27a5d079dc9ed50d774fcab55f91d', :last_run_time => 'Never', :device_label => 'Ryan iPad'        },
       { :udid => 'a100000d9833c5',                           :last_run_time => 'Never', :device_label => 'Stephen Evo'      },
       { :udid => 'cb662f568a4016a5b2e0bd617e53f70480133290', :last_run_time => 'Never', :device_label => 'Stephen iPad'     },
       { :udid => '21e3f395b9bbaf56667782ea3fe1241656684e21', :last_run_time => 'Never', :device_label => 'Stephen iTouch'   },
+      { :udid => '2e75bbe138c85e6dc8bd8677220ef8898f40a1c7', :last_run_time => 'Never', :device_label => 'Sunny iPhone'     },
     ]
     
     unless params[:other_udid].blank?
