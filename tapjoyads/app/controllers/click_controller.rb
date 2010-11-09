@@ -1,6 +1,6 @@
 class ClickController < ApplicationController
   
-  before_filter :determine_link_affiliates, :except => [ :generic, :test_offer ]
+  before_filter :determine_link_affiliates, :only => :app
   before_filter :setup
   
   def app
