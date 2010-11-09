@@ -64,7 +64,7 @@ class ClickController < ApplicationController
     test_reward.advertiser_amount = 0
     test_reward.tapjoy_amount     = 0
     
-    message = test_reward.serialize(:attributes_only => true)
+    message = test_reward.serialize
     Sqs.send_message(QueueNames::SEND_CURRENCY, message)
     
     render :text => "This device should receive 10 currency."
