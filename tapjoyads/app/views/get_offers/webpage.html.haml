@@ -38,10 +38,17 @@
     .next= get_next_link
     .clear
 
+#privacy
+  = link_to('Privacy policy', 'http://www.tapjoy.com/privacy')
+
 - # Don't show 'Ads by Tapjoy' for Gamevil.
 - # TODO: Don't hard-code id. Add a bit to the record or find some other solution.
 - if @currency.partner_id != 'cea789f9-7741-4197-9cc0-c6ac40a0801a'
-  #adsby Ads by Tapjoy
+  #adsby 
+    Ads by
+    %img{ :src => "http://s3.amazonaws.com/tapjoy/images/tapjoylogo-small.png", :alt => "Tapjoy"}
+
+.clear
 
 %img.hidden{ :src => '/images/load-circle.gif' }
 
@@ -82,6 +89,10 @@
       font-family: inherit;
       vertical-align: baseline;
       text-decoration: none;
+    }
+    
+    body {
+      margin-bottom: 10px;
     }
     
     img {
@@ -160,12 +171,26 @@
       color: rgb(0, 136, 16);
     }
     
-    #adsby {
+    #adsby, 
+    #privacy a {
       font-size: 75%;
-      font-weight: bold;
-      margin-bottom: 5px;
       color: #004E09;
-      text-align: center;
+    }
+    
+    #adsby {
+      margin-top: 2px;
+      float: right;
+      margin-right: 5%;
+    }
+    
+    #adsby img {
+      vertical-align: bottom;
+    }
+    
+    #privacy {
+      float: left;
+      margin-left: 5%;
+      text-decoration: underline;
     }
     
     .pagination a {
