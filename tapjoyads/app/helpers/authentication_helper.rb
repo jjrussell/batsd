@@ -46,6 +46,15 @@ module AuthenticationHelper
     end
   end
   
+  def sgn_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'sgn'
+        password = 'h58ck120xhb3'
+      end
+      password
+    end
+  end
+  
   def pinger_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'pinger'
