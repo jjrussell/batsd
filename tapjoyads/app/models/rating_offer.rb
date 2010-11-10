@@ -63,7 +63,7 @@ private
   def create_icon
     retries = 3
     begin
-      bucket = S3.bucket(BucketNames::APP_DATA)
+      bucket = S3.bucket(BucketNames::TAPJOY)
       image_data = bucket.get('icons/ratestar.png')
       bucket.put("icons/#{id}.png", image_data, {}, 'public-read')
     rescue

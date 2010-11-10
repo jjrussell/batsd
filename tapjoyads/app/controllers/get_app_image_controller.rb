@@ -11,7 +11,7 @@ class GetAppImageController < ApplicationController
     end
     
     @icon = Mc.get_and_put("icon.s3.#{app_id}") do
-      bucket = S3.bucket(BucketNames::APP_DATA)
+      bucket = S3.bucket(BucketNames::TAPJOY)
       image_content = bucket.get("icons/#{app_id}.png")
       Base64.encode64 image_content
     end
