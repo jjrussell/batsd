@@ -5,10 +5,10 @@
 .metadata
   Current Exclusivity Level:
   = @partner.exclusivity_level_type || "None"
-  
-.metadata
-  Exclusivity Expires On:
-  = @partner.exclusivity_expires_on ? @partner.exclusivity_expires_on.to_s(:pub) : "N/A"
+- unless @partner.exclusivity_level_type.nil?
+  .metadata
+    Exclusivity Expires On:
+    = @partner.exclusivity_expires_on ? @partner.exclusivity_expires_on.to_s(:pub) : "N/A"
 
 - form_for @partner, :url => { :action => :update }, :html => { :class => 'tjform' } do |f|
   %table
@@ -16,7 +16,7 @@
       %th
         = f.label :exclusivity_level, 'Exclusivity Level'
       %td
-        = f.select :exclusivity_level_type, ExclusivityLevel::TYPES
+        = f.select :exclusivity_level_type, options_for_select(ExclusivityLevel::TYPES.map{|t|t.underscore.humanize.pluralize}.zip(ExclusivityLevel::TYPES), ExclusivityLevel::TYPES.last)
         = error_message_on @partner, :exclusivity_level_type
     %tr
       %td{ :colspan => 2 }= f.submit 'Submit'
