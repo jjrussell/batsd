@@ -128,4 +128,44 @@ module RightAws
       end
     end
   end
+  
+  class  AcfInterface < RightAwsBase
+    
+    # Override, in order to support invalidation.
+    silence_warnings do
+      API_VERSION = '2010-11-01'
+    end
+    
+    def invalidate(aws_id, paths, caller_reference)
+      paths_str = ''
+      paths.each do |path|
+        paths_str << "<Path>#{path}</Path>"
+      end
+      
+      body = <<-EOXML
+        <?xml version="1.0" encoding="UTF-8"?>
+        <InvalidationBatch>
+           #{paths_str}
+           <CallerReference>#{caller_reference}</CallerReference>
+        </InvalidationBatch>
+      EOXML
+      
+      request_hash = generate_request('POST', "distribution/#{aws_id}/invalidation", body.strip)
+      request_info(request_hash, AcfInvalidationParser.new)
+    end
+    
+    
+    class AcfInvalidationParser < RightAWSParser #:nodoc:
+      def reset
+        @result = {}
+      end
+      def tagend(name)
+        case name
+        when 'Id'         then @result[:id]          = @text
+        when 'Status'     then @result[:status]      = @text
+        when 'CreateTime' then @result[:create_time] = @text
+        end
+      end
+    end
+  end
 end

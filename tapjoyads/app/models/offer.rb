@@ -289,6 +289,18 @@ class Offer < ActiveRecord::Base
     "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/medium/#{item_id}.jpg"
   end
   
+  def get_cloudfront_icon_url(protocol='http://')
+    "#{protocol}content.tapjoy.com/icons/#{id}.png"
+  end
+  
+  def get_large_cloudfront_icon_url(protocol='http://')
+    "#{protocol}content.tapjoy.com/icons/large/#{id}.png"
+  end
+  
+  def get_medium_cloudfront_icon_url(protocol='http://')
+    "#{protocol}content.tapjoy.com/icons/medium/#{id}.png"
+  end
+  
   def get_countries
     Set.new(countries.blank? ? nil : JSON.parse(countries))
   end

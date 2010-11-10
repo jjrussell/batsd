@@ -9,7 +9,7 @@
   %p.offertext
     Just download and run
   %a{ :href => click_url, :class => 'image-link' }
-    %img{ :src => 'http://s3.amazonaws.com/app_data/icons/blank.png', :s => @offer.get_medium_icon_url, :class => 'icon', :id => 'icon' }
+    %img{ :src => 'http://content.tapjoy.com/images/blank.png', :s => @offer.get_medium_cloudfront_icon_url, :class => 'icon', :id => 'icon' }
     .offername
       #{@offer.name}
   .clear
@@ -20,7 +20,7 @@
     %a{ :href => 'showOffers' } Show more apps
   .adsby
     Ads by
-    %img{ :src => "http://s3.amazonaws.com/tapjoy/images/tapjoylogo-small.png", :alt => "Tapjoy"}
+    %img{ :src => "http://content.tapjoy.com/images/tapjoylogo-small.png", :alt => "Tapjoy"}
 
 - content_for :page_javascript do
   :plain

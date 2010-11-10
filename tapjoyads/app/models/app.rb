@@ -93,18 +93,31 @@ class App < ActiveRecord::Base
     return if url.blank?
     set_primary_key if id.nil?
     begin
-      large_url = url if large_url.nil?
-      
+      bucket = S3.bucket(BucketNames::TAPJOY)
       icon = Downloader.get(url, :timeout => 30)
-      large_icon = Downloader.get(large_url, :timeout => 30)
-      medium_icon = Magick::Image.from_blob(large_icon)[0].resize(256, 256).to_blob{|i| i.format = 'JPG'}
+      old_icon = bucket.get("icons/#{id}.png") rescue ''
       
-      bucket = S3.bucket(BucketNames::APP_DATA)
-      bucket.put("icons/#{id}.png", icon, {}, "public-read")
-      bucket.put("icons/large/#{id}.png", large_icon, {}, "public-read")
-      bucket.put("icons/medium/#{id}.jpg", medium_icon, {}, "public-read")
+      if Digest::MD5.hexdigest(icon) != Digest::MD5.hexdigest(old_icon)
+        large_url = url if large_url.nil?
+        large_icon = Downloader.get(large_url, :timeout => 30)
+        medium_icon = Magick::Image.from_blob(large_icon)[0].resize(256, 256).to_blob{|i| i.format = 'JPG'}
+        
+        bucket.put("icons/#{id}.png", icon, {}, "public-read")
+        bucket.put("icons/large/#{id}.png", large_icon, {}, "public-read")
+        bucket.put("icons/medium/#{id}.jpg", medium_icon, {}, "public-read")
       
-      Mc.delete("icon.s3.#{id}")
+        Mc.delete("icon.s3.#{id}")
+        
+        # Invalidate cloudfront
+        if old_icon.present?
+          begin
+            acf = RightAws::AcfInterface.new
+            acf.invalidate('E1MG6JDV6GH0F2', ["/icons/#{id}.png", "/icons/large/#{id}.png", "/icons/medium/#{id}.jpg"], "#{id}.#{Time.now.to_i}")
+          rescue Exception => e
+            Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message, request, params)
+          end
+        end
+      end
     rescue Exception => e
       Rails.logger.info "Failed to download icon for url: #{url}. Error: #{e}"
       Notifier.alert_new_relic(AppDataFetchError, "icon url #{url} for app id #{id}. Error: #{e}")
@@ -113,6 +126,10 @@ class App < ActiveRecord::Base
 
   def get_icon_url(protocol='http://')
     "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/#{id}.png"
+  end
+
+  def get_cloudfront_icon_url(protocol='http://')
+    "#{protocol}content.tapjoy.com/icons/#{id}.png"
   end
 
   def get_offer_list(udid, options = {})

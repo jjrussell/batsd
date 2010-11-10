@@ -24,7 +24,7 @@
   - @offer_list.each do |offer|
     .offer
       %a{ :href => offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], @currency.id, params[:source], params[:app_version], @now, nil, params[:exp]), :onclick => "this.className = 'clicked';" }
-        %img{ :src => 'http://s3.amazonaws.com/app_data/icons/blank.png', :s => offer.get_icon_url }
+        %img{ :src => 'http://content.tapjoy.com/images/blank.png', :s => offer.get_cloudfront_icon_url }
         .offertext
           .cell
             %span.offername #{offer.name} (#{offer.visual_cost})
@@ -46,11 +46,11 @@
 - if @currency.partner_id != 'cea789f9-7741-4197-9cc0-c6ac40a0801a'
   #adsby 
     Ads by
-    %img{ :src => "http://s3.amazonaws.com/tapjoy/images/tapjoylogo-small.png", :alt => "Tapjoy"}
+    %img{ :src => "http://content.tapjoy.com/images/tapjoylogo-small.png", :alt => "Tapjoy"}
 
 .clear
 
-%img.hidden{ :src => '/images/load-circle.gif' }
+%img.hidden{ :src => 'http://content.tapjoy.com/images/load-circle.gif' }
 
 - content_for :page_javascript do
   :plain
@@ -65,7 +65,7 @@
     function scroll() {
       images = document.getElementsByTagName('img');
       for (var i = 0, image; image = images[i]; i++) {
-        if (window.scrollY + window.innerHeight > image.offsetTop) {
+        if (window.scrollY + window.innerHeight + 150 > image.offsetTop) {
           loadImage(image);
         }
       }
