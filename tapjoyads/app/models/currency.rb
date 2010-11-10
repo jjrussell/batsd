@@ -22,6 +22,16 @@ class Currency < ActiveRecord::Base
   end
   
   before_create :set_values_from_partner
+  after_save :update_memcached_by_app_id
+  before_destroy :clear_memcached_by_app_id
+  
+  def self.find_all_in_cache_by_app_id(app_id, do_lookup = true)
+    if do_lookup
+      Mc.get_and_put("mysql.app_currencies.#{app_id}") { find_all_by_app_id(app_id, :order => 'ordinal ASC') }
+    else
+      Mc.get("mysql.app_currencies.#{app_id}")
+    end
+  end
   
   def get_visual_reward_amount(offer)
     if offer.has_variable_payment?
@@ -108,6 +118,20 @@ class Currency < ActiveRecord::Base
   def set_values_from_partner
     self.disabled_partners = partner.disabled_partners
     self.installs_money_share = partner.installs_money_share
+  end
+  
+private
+  
+  def update_memcached_by_app_id
+    Mc.put("mysql.app_currencies.#{app_id}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'))
+    
+    if app_id_changed?
+      Mc.delete("mysql.app_currencies.#{app_id_was}")
+    end
+  end
+  
+  def clear_memcached_by_app_id
+    Mc.delete("mysql.app_currencies.#{app_id}")
   end
   
 end
