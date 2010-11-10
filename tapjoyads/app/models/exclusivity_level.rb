@@ -1,5 +1,5 @@
 class ExclusivityLevel
-  TYPES = %w( ThreeMonth SixMonth TwelveMonth )
+  TYPES = %w( ThreeMonth SixMonth NineMonth )
   attr_reader :months, :discount, :name
 end
 
@@ -14,16 +14,16 @@ end
 class SixMonth < ExclusivityLevel
   def initialize
     @months = 6
-    @discount = 7
+    @discount = 10
     @name = "6 Months"
   end
 end
 
-class TwelveMonth < ExclusivityLevel
+class NineMonth < ExclusivityLevel
   def initialize
-    @months = 12
-    @discount = 10
-    @name = "12 Months"
+    @months = 9
+    @discount = 15
+    @name = "9 Months"
   end
 end
 
