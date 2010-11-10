@@ -60,6 +60,13 @@
               .tapjoy-enabled Enabled
             - else
               .tapjoy-disabled Disabled
+        - if @offer.partner.exclusivity_level
+          %tr
+            %th
+              Tapjoy Premier
+              #help_premier.help ?
+            %td
+              = "Member until #{@offer.partner.exclusivity_expires_on.to_s :mdy}"
         - if permitted_to?(:edit, :statz)
           = render :partial => 'admin_fields', :locals => {:f => f}
         %tr
@@ -84,6 +91,8 @@
     Tapjoy approval status.
     - unless @offer.tapjoy_enabled
       Please contact #{link_to "support@tapjoy.com", "mailto:support@tapjoy.com"} to enable this offer.
+  #help_premier_content{:name => 'Tapjoy Premier'}
+    When your Tapjoy Premier exclusivity expires.
 
 - content_for :page_javascript do
   :plain
