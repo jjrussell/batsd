@@ -357,7 +357,12 @@ class Offer < ActiveRecord::Base
   def update_payment(force_update = false)
     if (force_update || bid_changed?)
       if (item_type == 'App')
-        self.payment = is_paid? ? bid * (100 - partner.premier_discount) / 100 : [ (bid - partner.premier_discount), 0 ].max 
+        if is_paid?
+          self.payment = (bid * 100 - price * partner.premier_discount) / 100
+        else
+          self.payment = bid - partner.premier_discount
+        end
+        self.payment = 0 if self.payment < 0
       else
         self.payment = bid
       end
@@ -372,6 +377,8 @@ class Offer < ActiveRecord::Base
   def min_bid
     if item_type == 'App'
       is_paid? ? (price * 0.50).round : 35
+      # uncomment for tapjoy premier
+      # is_paid? ? (price * 0.65).round : 50
     else
       0
     end
