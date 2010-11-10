@@ -27,6 +27,9 @@
               acting as
               = link_to current_partner.name_or_contact_name, partner_path(current_partner)
           |
+          - if premier_enabled?
+            = mail_to "premiersupport@tapjoy.com", "Support", :subject => "Premier Support"
+            |
           = link_to('Logout', logout_path)
         .clear
     
