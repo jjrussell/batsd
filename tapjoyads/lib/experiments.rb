@@ -63,11 +63,10 @@ class Experiments
   end
   
   def self.report_multiple(start_time, end_time, experiment_ids, control_id = EXPERIMENTS[:control], csv_filename = nil)
-    control = get_experiment_data(start_time, end_time, control_id).merge({ :name => 'Control' })
-    
     puts "Report started at: #{Time.zone.now}"
     puts "Start time: #{start_time}"
     puts "End time: #{end_time}"
+    control = get_experiment_data(start_time, end_time, control_id).merge({ :name => 'Control' })
     
     if csv_filename
       csv = File.new(csv_filename, 'w')
