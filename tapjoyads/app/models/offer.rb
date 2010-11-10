@@ -15,7 +15,7 @@ class Offer < ActiveRecord::Base
   DEFAULT_OFFER_TYPE  = '1'
   FEATURED_OFFER_TYPE = '2'
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_payment, :normal_price, :normal_show_rate, :normal_avg_revenue, :normal_bid, :normal_bid_difference
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_payment, :normal_price, :normal_avg_revenue, :normal_bid, :normal_bid_difference
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -115,7 +115,6 @@ class Offer < ActiveRecord::Base
     conversion_rates       = offer_list.collect(&:conversion_rate)
     payments               = offer_list.collect(&:payment)
     prices                 = offer_list.collect(&:price)
-    show_rates             = offer_list.collect(&:show_rate)
     avg_revenues           = offer_list.collect(&:avg_revenue)
     bids                   = offer_list.collect(&:bid)
     bid_differences        = offer_list.collect(&:bid_difference)
@@ -125,8 +124,6 @@ class Offer < ActiveRecord::Base
     payment_std_dev        = payments.standard_deviation
     price_mean             = prices.mean
     price_std_dev          = prices.standard_deviation
-    show_rate_mean         = show_rates.mean
-    show_rate_std_dev      = show_rates.standard_deviation
     avg_revenue_mean       = avg_revenues.mean
     avg_revenue_std_dev    = avg_revenues.standard_deviation
     bid_mean               = bids.mean
@@ -138,7 +135,6 @@ class Offer < ActiveRecord::Base
       offer.normal_conversion_rate = (offer.conversion_rate - cvr_mean) / cvr_std_dev
       offer.normal_payment         = (offer.payment - payment_mean) / payment_std_dev
       offer.normal_price           = (offer.price - price_mean) / price_std_dev
-      offer.normal_show_rate       = (offer.show_rate - show_rate_mean) / show_rate_std_dev
       offer.normal_avg_revenue     = (offer.avg_revenue - avg_revenue_mean) / avg_revenue_std_dev
       offer.normal_bid             = (offer.bid - bid_mean) / bid_std_dev
       offer.normal_bid_difference  = (offer.bid_difference - bid_difference_mean) / bid_difference_std_dev
@@ -327,7 +323,7 @@ class Offer < ActiveRecord::Base
   def calculate_rank_score(weights = {})
     random_weight = weights.delete(:random) { 0 }
     boost_weight = weights.delete(:boost) { 1 }
-    weights = { :conversion_rate => 0, :payment => 0, :price => 0, :show_rate => 0, :avg_revenue => 0, :bid => 0, :bid_difference => 0 }.merge(weights)
+    weights = { :conversion_rate => 0, :payment => 0, :price => 0, :avg_revenue => 0, :bid => 0, :bid_difference => 0 }.merge(weights)
     self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send("normal_#{key}")) }
     self.rank_score += rand * random_weight
     self.rank_score += rank_boosts.active.sum(:amount) * boost_weight
