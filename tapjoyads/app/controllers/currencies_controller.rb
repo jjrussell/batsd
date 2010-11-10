@@ -52,6 +52,7 @@ class CurrenciesController < WebsiteController
     @currency.app = @app
     @currency.partner = @app.partner
     @currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
+    @currency.ordinal = 1
     
     log_activity(@currency)
     @currency.name = params[:currency][:name]
