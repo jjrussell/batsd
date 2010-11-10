@@ -103,7 +103,7 @@ private
     end
 
     if params[:virtual_good][:data]
-      if params[:virtual_good][:data].size <= (200 << 10) # 200KB
+      if params[:virtual_good][:data].size <= (1 << 15) # 1MB
         bucket = S3.bucket(BucketNames::VIRTUAL_GOODS)
         bucket.put("data/#{@virtual_good.key}.zip", params[:virtual_good][:data].read, {}, 'public-read')
         @virtual_good.has_data = true
