@@ -160,11 +160,11 @@ class PartnerTest < ActiveSupport::TestCase
         assert_equal Date.today + 6.months, @partner.exclusivity_expires_on
       end
       
-      should "be able to switch to a TwelveMonth ExclusivityLevel" do
-        assert @partner.set_exclusivity_level!("TwelveMonth")
+      should "be able to switch to a NineMonth ExclusivityLevel" do
+        assert @partner.set_exclusivity_level!("NineMonth")
         @partner.reload
-        assert_equal TwelveMonth, @partner.exclusivity_level.class
-        assert_equal Date.today + 12.months, @partner.exclusivity_expires_on
+        assert_equal NineMonth, @partner.exclusivity_level.class
+        assert_equal Date.today + 9.months, @partner.exclusivity_expires_on
       end
       
       should "have exclusivity_level and exclusivity_expires_on set to nil when expired" do
