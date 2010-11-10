@@ -73,8 +73,8 @@ class Experiments
       csv = File.new(csv_filename, 'w')
       puts "Writing to #{csv_filename}..."
       csv.puts <<-END
-Experiment Group,Views,Clicks,Conversions,Revenue,CTR,CVR,AvgRev,CTR-Z,CVR-Z,AvgRev-Z
-Control,#{control[:offerwall_views]},#{control[:clicks]},#{control[:conversions]},$#{control[:total_rev] / 100.0},#{control[:ctr]},#{control[:cvr]},$#{control[:avg_rev] / 100.0},0,0,0
+Experiment Group,Views,Clicks,Conversions,Revenue,CTR,CVR,AvgRev,CTR-Z,CVR-Z,AvgRev-Z,AvgRevChange
+Control,#{control[:offerwall_views]},#{control[:clicks]},#{control[:conversions]},$#{control[:total_rev] / 100.0},#{control[:ctr]},#{control[:cvr]},$#{control[:avg_rev] / 100.0},0,0,0,0
       END
       puts "Wrote Control Group"
     else  
@@ -85,7 +85,7 @@ Control,#{control[:offerwall_views]},#{control[:clicks]},#{control[:conversions]
       experiment = calculate_z_scores(get_experiment_data(start_time, end_time, experiment_id), control)
       if csv_filename
         puts "Wrote #{experiment_id}"
-        csv.puts "#{experiment_id},#{experiment[:offerwall_views]},#{experiment[:clicks]},#{experiment[:conversions]},$#{experiment[:total_rev] / 100.0},#{experiment[:ctr]},#{experiment[:cvr]},$#{experiment[:avg_rev] / 100.0},#{experiment[:ctr_z_score]},#{experiment[:cvr_z_score]},#{experiment[:avg_rev_z_score]}"
+        csv.puts "#{experiment_id},#{experiment[:offerwall_views]},#{experiment[:clicks]},#{experiment[:conversions]},$#{experiment[:total_rev] / 100.0},#{experiment[:ctr]},#{experiment[:cvr]},$#{experiment[:avg_rev] / 100.0},#{experiment[:ctr_z_score]},#{experiment[:cvr_z_score]},#{experiment[:avg_rev_z_score]},#{experiment[:avg_rev_change]}"
       else
         print_data(experiment)
       end
@@ -100,6 +100,7 @@ Control,#{control[:offerwall_views]},#{control[:clicks]},#{control[:conversions]
     experiment[:ctr_z_score] = (experiment[:ctr] - control[:ctr]) / Math.sqrt(experiment[:ctr_variance] + control[:ctr_variance])
     experiment[:cvr_z_score] = (experiment[:cvr] - control[:cvr]) / Math.sqrt(experiment[:cvr_variance] + control[:cvr_variance])
     experiment[:avg_rev_z_score] = (experiment[:avg_rev] - control[:avg_rev]) / Math.sqrt(experiment[:rev_variance] + control[:rev_variance])
+    experiment[:avg_rev_change] = (experiment[:avg_rev] - control[:avg_rev]) / control[:avg_rev] * 100
     experiment
   end
   
@@ -116,6 +117,7 @@ Control,#{control[:offerwall_views]},#{control[:clicks]},#{control[:conversions]
       CTR-Z:            #{experiment[:ctr_z_score] || 0}
       CVR-Z:            #{experiment[:cvr_z_score] || 0}
       Avg Revenue Z:    #{experiment[:avg_rev_z_score] || 0}
+      Avg Rev Change:   #{experiment[:avg_rev_change] || 0}%
     END
   end
 end
