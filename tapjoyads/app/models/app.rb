@@ -125,7 +125,7 @@ class App < ActiveRecord::Base
   end
 
   def get_icon_url(protocol='http://')
-    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/#{id}.png"
+    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/#{id}.png"
   end
 
   def get_cloudfront_icon_url(protocol='http://')

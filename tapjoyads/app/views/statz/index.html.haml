@@ -42,7 +42,7 @@
     - @cached_stats.each do |offer_id, stats|
       %tr
         %td
-          %img.icon.hidden{ :s => "#{request.protocol}s3.amazonaws.com/app_data/icons/#{stats['item_id']}.png" }
+          %img.icon.hidden{ :s => "#{request.protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/#{stats['item_id']}.png" }
         %td= link_to(stats['offer_name'], statz_path(offer_id))
         %td= stats['conversions']
         %td= stats['connects']

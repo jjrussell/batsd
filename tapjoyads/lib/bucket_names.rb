@@ -1,7 +1,6 @@
 class BucketNames
   ADIMAGES              = RUN_MODE_PREFIX + 'adimages'
   AD_UDIDS              = RUN_MODE_PREFIX + 'ad-udids'
-  APP_DATA              = RUN_MODE_PREFIX + 'app_data'
   FAILED_SDB_SAVES      = RUN_MODE_PREFIX + 'failed-sdb-saves'
   FAILED_SQS_WRITES     = RUN_MODE_PREFIX + 'failed-sqs-writes'
   OFFER_DATA            = RUN_MODE_PREFIX + 'offer-data'

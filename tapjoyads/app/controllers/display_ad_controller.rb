@@ -96,8 +96,8 @@ private
       height = 50
       border = 2
       
-      publisher_icon_blob = Downloader.get("http://s3.amazonaws.com/app_data/icons/#{publisher.id}.png")
-      offer_icon_blob = Downloader.get("http://s3.amazonaws.com/app_data/icons/#{offer.id}.png")
+      publisher_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{publisher.id}.png")
+      offer_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{offer.id}.png")
 
       icon_height = height - border * 2 - 2
       publisher_icon = Magick::Image.from_blob(publisher_icon_blob)[0].resize(icon_height, icon_height)

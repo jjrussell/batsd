@@ -276,17 +276,17 @@ class Offer < ActiveRecord::Base
     if base64
       url = "#{protocol}ws.tapjoyads.com/get_app_image/icon?app_id=#{item_id}"
     else
-      url = "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/#{item_id}.png"
+      url = "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/#{item_id}.png"
     end
     url
   end
   
   def get_large_icon_url(protocol = 'http://')
-    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/large/#{item_id}.png"
+    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/large/#{item_id}.png"
   end
   
   def get_medium_icon_url(protocol = 'http://')
-    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}app_data/icons/medium/#{item_id}.jpg"
+    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/medium/#{item_id}.jpg"
   end
   
   def get_cloudfront_icon_url(protocol='http://')
