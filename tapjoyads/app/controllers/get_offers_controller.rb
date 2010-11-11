@@ -87,7 +87,10 @@ private
     @max_items = (params[:max] || 25).to_i
     
     @publisher_app = App.find_in_cache(params[:app_id])
-    @currency = Currency.find_in_cache(params[:currency_id].present? ? params[:currency_id] : params[:app_id])
+    
+    params[:currency_id] = params[:app_id] if params[:currency_id].blank?
+    @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])
+    @currency = @currencies.select { |c| c.id == params[:currency_id] }.first
     
     ##
     # Gameview hardcodes 'iphone' as their device type. This screws up real iphone-only targeting.

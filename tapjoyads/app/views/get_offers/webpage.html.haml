@@ -5,6 +5,9 @@
   .message= @message
 - # END TO REMOVE
 
+- if @currencies.size > 1
+  = render :partial => 'currency_selector'
+
 #instructions
   Install and OPEN one of the apps below to receive #{@currency.name}
   

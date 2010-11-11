@@ -16,4 +16,10 @@ module GetOffersHelper
     link_to("Next #{[@more_data_available, @max_items].min}", "/get_offers/webpage?#{tmp_params.to_query}", :onclick => "this.className = 'clicked';")
   end
   
+  def get_currency_link(currency)
+    tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
+    tmp_params['currency_id'] = currency.id
+    link_to(currency.name, "/get_offers/webpage?#{tmp_params.to_query}", :class => currency.id == @currency.id ? 'current' : '')
+  end
+  
 end
