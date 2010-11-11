@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101110200335) do
+ActiveRecord::Schema.define(:version => 20101110232547) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -214,6 +214,7 @@ ActiveRecord::Schema.define(:version => 20101110200335) do
     t.integer  "payment_range_low"
     t.integer  "payment_range_high"
     t.integer  "bid",                                                                           :default => 0,     :null => false
+    t.integer  "reward_value"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
