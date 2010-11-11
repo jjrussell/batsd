@@ -8,6 +8,9 @@ class PremierController < WebsiteController
   after_filter :save_activity_logs, :only => [ :update ]
 
   def edit
+    if @partner.exclusivity_level.nil?
+      render :action => 'new'
+    end
   end
   
   def update
