@@ -29,14 +29,18 @@
           %td
             = f.currency_field :bid, {}, :class => 'togglable'
             = error_message_on @offer, :bid
-        - if false
+        - if Rails.env == 'development' || request.host == 'test.tapjoy.com'
           %tr
             %th
               = f.label :payment, 'Payment'
               #help_payment.help ?
             %td
-              = f.currency_field :payment, {}, :class => 'togglable'
+              = f.currency_field :payment, {}, :disabled => 'disabled'
               = error_message_on @offer, :payment
+              - if @offer.partner.exclusivity_level.nil?
+                .premier
+                  Want to reduce your payment?
+                  = link_to 'Learn more about the Tapjoy Premier Program', premier_path
         %tr
           %th
             Offer Name
@@ -176,7 +180,9 @@
       font-weight: bold;
       display: inline;
     }
-
+    .premier {
+      font-size: 12px;
+    }
     textarea,
     input[type=text] {
       width: 400px;
