@@ -50,7 +50,7 @@ class Currency < ActiveRecord::Base
   def get_reward_amount(offer)
     if offer.reward_value.present?
       reward_value = offer.reward_value
-    elsif offer.item_type == 'RatingOffer' || offer.partner_id == partner_id
+    elsif offer.partner_id == partner_id
       reward_value = offer.payment
     else
       reward_value = get_publisher_amount(offer)
@@ -59,7 +59,7 @@ class Currency < ActiveRecord::Base
   end
   
   def get_publisher_amount(offer, displayer_app = nil)
-    if offer.item_type == 'RatingOffer' || offer.partner_id == partner_id
+    if offer.partner_id == partner_id
       publisher_amount = 0
     else
       publisher_amount = offer.payment * installs_money_share
@@ -73,7 +73,7 @@ class Currency < ActiveRecord::Base
   end
   
   def get_advertiser_amount(offer)
-    if offer.item_type == 'RatingOffer' || offer.partner_id == partner_id
+    if offer.partner_id == partner_id
       advertiser_amount = 0
     else
       advertiser_amount = -(offer.actual_payment || offer.payment)

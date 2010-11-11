@@ -77,6 +77,9 @@ class Offer < ActiveRecord::Base
       if value < record.min_bid
         record.errors.add(attribute, "is below the minimum")
       end
+      if record.item_type == 'RatingOffer' && value != 0
+        record.errors.add(attribute, "must be 0 for RatingOffers")
+      end
     end
   end
   
