@@ -9,12 +9,6 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     
     Rails.logger.info "Calculating new show_rate for offer #{offer.name} (#{offer.id})"
     
-    if offer.payment <= 0
-      offer.show_rate = 0
-      offer.save!
-      return
-    end
-    
     old_show_rate = offer.show_rate
     
     now = Time.zone.now
