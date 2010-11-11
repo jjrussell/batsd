@@ -1,44 +1,27 @@
 #currencies
-  .left Earn:
-  .right
-    - @currencies.each do |currency|
-      = get_currency_link(currency)
-  .clear
+  - @currencies.each do |currency|
+    = get_currency_link(currency)
 
 - content_for :page_styles do
   :plain
-    #currencies { 
-      padding: 5px;
+    #currencies {
       margin: 10px 3%;
-      color: #004E09;
       font-size: 90%;
       font-weight: bold;
       text-align: center;
-      background: white;
-      border: 1px solid #d5d5d5;
-      -moz-border-radius: 7px;
-      -webkit-border-radius: 7px;
-    }
-    #currencies .left {
-      float: left;
-      padding: 5px;
-    }
-    #currencies .right {
-      float: right;
     }
     #currencies a {
       display: inline-block;
-      margin: 0;
       padding: 5px;
       border: 1px solid #888;
       background: -moz-linear-gradient(top, #fff, #ccc);
       background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ccc));
-      color: inherit;
+      color: #004E09;
       -moz-border-radius: 5px;
       -webkit-border-radius: 5px;
     }
     #currencies a.current {
       background: -moz-linear-gradient(top, rgb(0, 136, 16), #004E09);
       background: -webkit-gradient(linear, left top, left bottom, from(rgb(0, 136, 16)), to(#004E09));
-      color: white;
+      color: #fff;
     }
