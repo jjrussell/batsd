@@ -278,15 +278,15 @@ class Offer < ActiveRecord::Base
   end
   
   def get_cloudfront_icon_url(protocol='http://')
-    "#{protocol}content.tapjoy.com/icons/#{id}.png"
+    "#{protocol}content.tapjoy.com/icons/#{item_id}.png"
   end
   
   def get_large_cloudfront_icon_url(protocol='http://')
-    "#{protocol}content.tapjoy.com/icons/large/#{id}.png"
+    "#{protocol}content.tapjoy.com/icons/large/#{item_id}.png"
   end
   
   def get_medium_cloudfront_icon_url(protocol='http://')
-    "#{protocol}content.tapjoy.com/icons/medium/#{id}.png"
+    "#{protocol}content.tapjoy.com/icons/medium/#{item_id}.jpg"
   end
   
   def get_countries
