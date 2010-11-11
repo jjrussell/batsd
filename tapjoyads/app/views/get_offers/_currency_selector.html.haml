@@ -1,6 +1,6 @@
 #currencies
   - @currencies.each do |currency|
-    = get_currency_link(currency)
+    %span>= get_currency_link(currency)
 
 - content_for :page_styles do
   :plain
@@ -14,11 +14,19 @@
       display: inline-block;
       padding: 5px;
       border: 1px solid #888;
+      border-right: 0;
       background: -moz-linear-gradient(top, #fff, #ccc);
       background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ccc));
       color: #004E09;
-      -moz-border-radius: 5px;
-      -webkit-border-radius: 5px;
+    }
+    #currencies span:first-child a {
+      -moz-border-radius: 5px 0 0 5px;
+      -webkit-border-radius: 5px 0 0 5px;
+    }
+    #currencies span:last-child a {
+      border-right: 1px solid #888;
+      -moz-border-radius: 0 5px 5px 0;
+      -webkit-border-radius: 0 5px 5px 0;
     }
     #currencies a.current {
       background: -moz-linear-gradient(top, rgb(0, 136, 16), #004E09);
