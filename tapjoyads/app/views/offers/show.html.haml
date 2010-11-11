@@ -24,11 +24,18 @@
             = error_message_on @offer, :user_enabled
         %tr
           %th
-            = f.label :payment, 'Bid'
+            = f.label :bid, 'Bid'
             #help_bid.help ?
           %td
             = f.currency_field :bid, {}, :class => 'togglable'
             = error_message_on @offer, :bid
+        %tr
+          %th
+            = f.label :payment, 'Payment'
+            #help_payment.help ?
+          %td
+            = f.currency_field :payment, {}, :class => 'togglable'
+            = error_message_on @offer, :payment
         %tr
           %th
             Offer Name
@@ -80,11 +87,14 @@
   #help_daily_content{:name => 'Daily Budget'}
     The maximum number of installs per day.
   #help_bid_content{:name => 'Bid'}
-    Amount you'll pay per install.
+    The amount you are willing to pay for an install. A higher bid will result in more traffic. The minimum bid is
     - if @app.price > 0
-      For paid apps, the minimum bid is 50% of the app price.
+      50% of the app price.
     - else
-      For free apps, the minimum bid is $0.35.
+      $0.35.
+  #help_payment_content{:name => 'Payment'}
+    The amount that you pay for install. This value is equal to the Bid
+    unless you participate in the Tapjoy Premier program, or reach monthly spend figures
   #help_user_enabled_content{:name => 'Enable Installs'}
     Enable installs to get your campaign started.
   #help_enabled_content{:name => 'Tapjoy Enabled'}
@@ -98,7 +108,7 @@
   :plain
     $(function($){
 
-      toggleUserEnabled = function() {
+      var toggleUserEnabled = function() {
         if ($('#offer_user_enabled').attr('checked')) {
           $('.togglable').attr('disabled', false);
           $('#estimated_budget').removeClass('disabled');
@@ -108,7 +118,7 @@
         }
       };
 
-      setEstimatedBudget = function() {
+      var setEstimatedBudget = function() {
         var bid = stringToNumber($('#offer_bid').val());
         var installLimit = stringToNumber($('#offer_daily_budget').val())
         budget = 'Unlimited'
@@ -118,12 +128,14 @@
         $('#estimated_budget .value').html(budget);
       };
 
-      checkMinimumPrice = function() {
+      var checkMinimumPrice = function() {
         var minimumPrice = #{([ @offer.bid, @offer.min_bid ].min) / 100.0};
         var currentPrice = stringToNumber($('#offer_bid').val());
         if (currentPrice < minimumPrice) {
-          $('#offer_bid').val(numberToCurrency(minimumPrice));
+          currentPrice = minimumPrice;
         }
+        $('#offer_bid').val(numberToCurrency(currentPrice));
+        $('#offer_payment').val(numberToCurrency(currentPrice - #{@offer.partner.premier_discount/100.0}));
       };
 
       toggleUserEnabled();
@@ -139,11 +151,11 @@
         $(this).val(stringToNumber($(this).val()));
         setEstimatedBudget();
       });
-    });
 
-    var toggleUserEnabled = $.noop;
-    var setEstimatedBudget = $.noop;
-    var checkMinimumPrice = $.noop;
+      $('form').submit(function() {
+        checkMinimumPrice();
+      })
+    });
 
 - content_for :page_styles do
   :plain

@@ -23,6 +23,7 @@ class OffersController < WebsiteController
   end
 
   def update
+    params[:offer].delete(:payment)
     offer_params = sanitize_currency_params(params[:offer], [ :bid ])
 
     safe_attributes = [:daily_budget, :user_enabled, :bid]
