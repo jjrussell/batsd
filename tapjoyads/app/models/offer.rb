@@ -15,7 +15,7 @@ class Offer < ActiveRecord::Base
   DEFAULT_OFFER_TYPE  = '1'
   FEATURED_OFFER_TYPE = '2'
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_payment, :normal_price, :normal_avg_revenue, :normal_bid, :normal_bid_difference
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -94,10 +94,15 @@ class Offer < ActiveRecord::Base
   named_scope :to_aggregate_stats, lambda { { :conditions => ["next_stats_aggregation_time < ?", Time.zone.now], :order => "next_stats_aggregation_time ASC" } }
   
   def self.get_enabled_offers(exp = nil)
-    if exp == Experiments::EXPERIMENTS[:bid_difference]
-      Mc.distributed_get_and_put('s3.enabled_offers.bid_difference') do
+    if exp == Experiments::EXPERIMENTS[:more_bid]
+      Mc.distributed_get_and_put('s3.enabled_offers.more_bid') do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
-        Marshal.restore(bucket.get('enabled_offers.bid_difference'))
+        Marshal.restore(bucket.get('enabled_offers.more_bid'))
+      end
+    elsif exp == Experiments::EXPERIMENTS[:more_bid_less_revenue]
+      Mc.distributed_get_and_put('s3.enabled_offers.more_bid_less_revenue') do
+        bucket = S3.bucket(BucketNames::OFFER_DATA)
+        Marshal.restore(bucket.get('enabled_offers.more_bid_less_revenue'))
       end
     else
       Mc.distributed_get_and_put('s3.enabled_offers.control') do
@@ -115,8 +120,9 @@ class Offer < ActiveRecord::Base
   end
   
   def self.cache_enabled_offers
-    cache_enabled_offers_for_experiment('control', { :conversion_rate => 1, :payment => 1, :price => -1, :avg_revenue => 5, :random => 1 })
-    cache_enabled_offers_for_experiment('bid_difference', { :conversion_rate => 1, :payment => 1, :price => -1, :avg_revenue => 5, :random => 1, :bid_difference => 5 })
+    cache_enabled_offers_for_experiment('control', { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1 })
+    cache_enabled_offers_for_experiment('more_bid', { :conversion_rate => 1, :bid => 5, :price => -5, :avg_revenue => 5, :random => 1 })
+    cache_enabled_offers_for_experiment('more_bid_less_revenue', { :conversion_rate => 1, :bid => 5, :price => -5, :avg_revenue => 1, :random => 1 })
   end
   
   def self.cache_enabled_offers_for_experiment(cache_key_suffix, weights)
@@ -124,31 +130,23 @@ class Offer < ActiveRecord::Base
     offer_list = Offer.enabled_offers.nonfeatured
     
     conversion_rates       = offer_list.collect(&:conversion_rate)
-    payments               = offer_list.collect(&:payment)
     prices                 = offer_list.collect(&:price)
     avg_revenues           = offer_list.collect(&:avg_revenue)
     bids                   = offer_list.collect(&:bid)
-    bid_differences        = offer_list.collect(&:bid_difference)
     cvr_mean               = conversion_rates.mean
     cvr_std_dev            = conversion_rates.standard_deviation
-    payment_mean           = payments.mean
-    payment_std_dev        = payments.standard_deviation
     price_mean             = prices.mean
     price_std_dev          = prices.standard_deviation
     avg_revenue_mean       = avg_revenues.mean
     avg_revenue_std_dev    = avg_revenues.standard_deviation
     bid_mean               = bids.mean
     bid_std_dev            = bids.standard_deviation
-    bid_difference_mean    = bid_differences.mean
-    bid_difference_std_dev = bid_differences.standard_deviation
     
     offer_list.each do |offer|
       offer.normal_conversion_rate = (offer.conversion_rate - cvr_mean) / cvr_std_dev
-      offer.normal_payment         = (offer.payment - payment_mean) / payment_std_dev
       offer.normal_price           = (offer.price - price_mean) / price_std_dev
       offer.normal_avg_revenue     = (offer.avg_revenue - avg_revenue_mean) / avg_revenue_std_dev
       offer.normal_bid             = (offer.bid - bid_mean) / bid_std_dev
-      offer.normal_bid_difference  = (offer.bid_difference - bid_difference_mean) / bid_difference_std_dev
       offer.calculate_rank_score(weights)
     end
     
@@ -334,7 +332,7 @@ class Offer < ActiveRecord::Base
   def calculate_rank_score(weights = {})
     random_weight = weights.delete(:random) { 0 }
     boost_weight = weights.delete(:boost) { 1 }
-    weights = { :conversion_rate => 0, :payment => 0, :price => 0, :avg_revenue => 0, :bid => 0, :bid_difference => 0 }.merge(weights)
+    weights = { :conversion_rate => 0, :price => 0, :avg_revenue => 0, :bid => 0 }.merge(weights)
     self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send("normal_#{key}")) }
     self.rank_score += rand * random_weight
     self.rank_score += rank_boosts.active.sum(:amount) * boost_weight
@@ -393,10 +391,6 @@ class Offer < ActiveRecord::Base
     else
       0
     end
-  end
-  
-  def bid_difference
-    [ bid - min_bid, 0 ].max
   end
   
 private
