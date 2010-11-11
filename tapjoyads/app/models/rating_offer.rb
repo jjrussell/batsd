@@ -42,7 +42,8 @@ private
     offer.instructions = "Go to the App Store where you can rate this app."
     offer.credit_card_required = false
     offer.time_delay = 'in seconds'
-    offer.bid = 15
+    offer.bid = 0
+    offer.reward_value = 15
     offer.third_party_data = app_id
     offer.tapjoy_enabled = false
     offer.user_enabled = true

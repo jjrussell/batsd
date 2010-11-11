@@ -351,4 +351,13 @@ class OneOffs
     true
   end
 
+  def self.migrate_ratings_to_use_reward_value
+    Offer.find_each(:conditions => "item_type = 'RatingOffer'") do |offer|
+      offer.reward_value = offer.bid
+      offer.bid = 0
+      offer.payment = 0
+      offer.save!
+    end
+  end
+
 end

@@ -48,12 +48,14 @@ class Currency < ActiveRecord::Base
   end
   
   def get_reward_amount(offer)
-    if offer.item_type == 'RatingOffer' || offer.partner_id == partner_id
-      publisher_amount = offer.payment
+    if offer.reward_value.present?
+      reward_value = offer.reward_value
+    elsif offer.item_type == 'RatingOffer' || offer.partner_id == partner_id
+      reward_value = offer.payment
     else
-      publisher_amount = get_publisher_amount(offer)
+      reward_value = get_publisher_amount(offer)
     end
-    [publisher_amount * conversion_rate / 100.0, 1.0].max.to_i
+    [reward_value * conversion_rate / 100.0, 1.0].max.to_i
   end
   
   def get_publisher_amount(offer, displayer_app = nil)
