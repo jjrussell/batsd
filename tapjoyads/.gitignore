@@ -4,3 +4,4 @@ tmp/
 coverage/
 *.swo
 coverage.data
+config/newrelic.yml

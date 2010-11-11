@@ -5,14 +5,13 @@ require 'optparse'
 
 class Deploy
   
-  SERVER_CONFIG_FILENAME = 'server/configuration.yaml'
+  VERSION_FILENAME = '../server/version.yaml'
   
   def initialize(args)
     @options = {
       :environment => 'test',
       :server_groups => 'testserver',
-      :fast => false,
-      :svn_repo => File.exist?('.svn/')
+      :fast => false
     }
     
     option_parser = OptionParser.new do |opts|
@@ -26,7 +25,7 @@ class Deploy
       end
       
       opts.on('-v', '--version [VERSION]') do |version|
-        if version =~ /^(trunk|[0-9]+)$/
+        if version =~ /^(master|[0-9]+)$/
           @options[:version] = version
         else
           print_usage_and_exit
@@ -47,14 +46,14 @@ class Deploy
       print_usage_and_exit
     end
     
-    @options[:version] = 'trunk' if @options[:environment] == 'test' && @options[:version].nil?
+    @options[:version] = 'master' if @options[:environment] == 'test' && @options[:version].nil?
   end
   
   def deploy
     puts "#{@options[:environment].upcase} deploy"
     update_working_copy
     check_syntax
-    create_deploy_branch unless @options[:version]
+    create_deploy_tag unless @options[:version]
     execute_cloudrun
     puts "Done deploying: #{Time.now}"
   end
@@ -64,7 +63,7 @@ private
   def print_usage_and_exit
     puts "USAGE: script/deploy [options]"
     puts "    -e, --environment (optional): The environment to deploy to. Can be 'test' or 'production'. Default is 'test'."
-    puts "    -v, --version (optional): The version to deploy. Defaults to 'trunk' for test deploys, otherwise creates a new branch."
+    puts "    -v, --version (optional): The version to deploy. Defaults to 'master' for test deploys, otherwise creates a new tag."
     puts "    -f, --fast (optional): Specify this option to keep webservers in the load balancer during deploy."
     exit
   end
@@ -87,44 +86,42 @@ private
   
   def update_working_copy
     puts "Updating working copy"
-    if @options[:svn_repo]
-      system("svn update")
-    else
-      if `git status` !~ /working directory clean/
-        puts "You must have a clean working directory!"
-        exit
-      end
-      system("git svn rebase")
+    git_status = `git status`
+    if git_status !~ /branch master/
+      puts "You must be on the master branch!"
+      exit
     end
+    if git_status !~ /working directory clean/
+      puts "You must have a clean working directory!"
+      exit
+    end
+    system("git pull origin master")
   end
   
-  def create_deploy_branch
-    settings = YAML::load_file(SERVER_CONFIG_FILENAME)
-    @options[:version] = (settings['config']["api_deploy_version"].to_i + 1).to_s
+  def create_deploy_tag
+    yaml_version = YAML::load_file(VERSION_FILENAME)
+    @options[:version] = (yaml_version['current'].to_i + 1).to_s
     
-    print "No deploy branch specified. Create new deploy branch #{@options[:version]}? [y/N] "
+    print "No deploy tag specified. Create new deploy tag #{@options[:version]}? [y/N] "
     prompt_and_exit_if_not_yes
     
-    settings['config']["api_deploy_version"] = @options[:version]
-    File.open(SERVER_CONFIG_FILENAME, 'w') do |f|
-      f.write(settings.to_yaml)
+    puts "Incrementing version file."
+    yaml_version['current'] = @options[:version]
+    File.open(VERSION_FILENAME, 'w') do |f|
+      f.write(yaml_version.to_yaml)
     end
+    system("git add #{VERSION_FILENAME}")
+    system("git commit -m 'Incrementing version number to #{@options[:version]}'")
     
-    puts "Creating new deploy branch."
-    system("svn copy https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/trunk https://tapjoy.unfuddle.com/svn/tapjoy_tapjoyads/deploy/#{@options[:version]} -m 'Creating deploy branch #{@options[:version]}'")
+    puts "Creating new deploy tag."
+    system("git tag -a -m 'Creating deploy tag #{@options[:version]}' #{@options[:version]}")
     
-    puts "Incrementing version in config file."
-    if @options[:svn_repo]
-      system("svn commit #{SERVER_CONFIG_FILENAME} -m 'Incrementing config version number to #{@options[:version]}'")
-    else
-      system("git add #{SERVER_CONFIG_FILENAME}")
-      system("git commit -m 'Incrementing config version number to #{@options[:version]}'")
-      system("git svn dcommit")
-    end
+    puts "Pushing new version."
+    system("git push --tags origin master")
   end
   
   def execute_cloudrun
-    command = "script/cloudrun '#{@options[:server_groups]}' 'cd server && svn update && ./deploy.rb #{@options[:version]}' 'webuser'"
+    command = "script/cloudrun '#{@options[:server_groups]}' 'tapjoyserver/server/deploy.rb #{@options[:version]}' 'webuser'"
     command += " 'remove_from_lb'" unless @options[:fast]
     system(command)
   end
