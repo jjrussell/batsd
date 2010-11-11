@@ -1,4 +1,13 @@
 - @page_title = 'Tapjoy Premier'
 %h1 Tapjoy Premier
-= text_area_tag 'hello'
-= submit_tag
+- form_for @partner, :url => { :action => :update }, :html => { :class => 'tjform' } do |f|
+  = text_area_tag 'agreement', "Tapjoy Premier Agreement"
+  %table
+    %tr
+      %th
+        = f.label :exclusivity_level, 'Exclusivity Level'
+      %td
+        = f.select :exclusivity_level_type, options_for_select(ExclusivityLevel::TYPES.map{|t|[t.underscore.humanize.pluralize, t]}, ExclusivityLevel::TYPES.last)
+        = error_message_on @partner, :exclusivity_level_type
+    %tr
+      %td{ :colspan => 2 }= f.submit 'Submit'
