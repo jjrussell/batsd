@@ -94,9 +94,16 @@ class Offer < ActiveRecord::Base
   named_scope :to_aggregate_stats, lambda { { :conditions => ["next_stats_aggregation_time < ?", Time.zone.now], :order => "next_stats_aggregation_time ASC" } }
   
   def self.get_enabled_offers(exp = nil)
-    Mc.distributed_get_and_put('s3.enabled_offers.control') do
-      bucket = S3.bucket(BucketNames::OFFER_DATA)
-      Marshal.restore(bucket.get('enabled_offers.control'))
+    if exp == Experiments::EXPERIMENTS[:bid_difference]
+      Mc.distributed_get_and_put('s3.enabled_offers.bid_difference') do
+        bucket = S3.bucket(BucketNames::OFFER_DATA)
+        Marshal.restore(bucket.get('enabled_offers.bid_difference'))
+      end
+    else
+      Mc.distributed_get_and_put('s3.enabled_offers.control') do
+        bucket = S3.bucket(BucketNames::OFFER_DATA)
+        Marshal.restore(bucket.get('enabled_offers.control'))
+      end
     end
   end
   
@@ -109,6 +116,7 @@ class Offer < ActiveRecord::Base
   
   def self.cache_enabled_offers
     cache_enabled_offers_for_experiment('control', { :conversion_rate => 1, :payment => 1, :price => -1, :avg_revenue => 5, :random => 1 })
+    cache_enabled_offers_for_experiment('bid_difference', { :conversion_rate => 1, :payment => 1, :price => -1, :avg_revenue => 5, :random => 1, :bid_difference => 5 })
   end
   
   def self.cache_enabled_offers_for_experiment(cache_key_suffix, weights)
@@ -388,7 +396,7 @@ class Offer < ActiveRecord::Base
   end
   
   def bid_difference
-    bid - min_bid
+    [ bid - min_bid, 0 ].max
   end
   
 private
