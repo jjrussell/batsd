@@ -11,8 +11,8 @@
 %table
   %thead
     %tr
-      %th 
-      %th 
+      %th
+      %th
   %tbody
     %tr
       %td spend
@@ -43,13 +43,13 @@
       %td
     %tr
       %td new_orders
-      %td= @new_orders
+      %td= number_to_currency(@new_orders)
     %tr
       %td payouts
-      %td= @payouts
+      %td= number_to_currency(@payouts)
     %tr
       %td transfers
-      %td= @transfers
+      %td= number_to_currency(@transfers)
 
 -content_for :page_styles do
   :plain
