@@ -83,7 +83,7 @@
     - property_row('Contact(s)', @offer.partner.users.map(&:email).join(', '))
   - property_row('Balance', number_to_currency(@offer.partner.balance / 100.0))
   - property_row('Pending Earnings', number_to_currency(@offer.partner.pending_earnings / 100.0))
-  - property_row('Account mangers', @offer.partner.account_managers.map{|u| u.username}.join(', '))
+  - property_row('Account managers', @offer.partner.account_managers.map{|u| u.username}.join(', '))
   - property_row('Internal notes', @offer.partner.account_manager_notes, '')
   - property_row('id', link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - ' + clippy(@offer.partner.id))
 = render 'partners/make_current_button', :partner => @offer.partner
