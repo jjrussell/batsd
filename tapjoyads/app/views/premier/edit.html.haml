@@ -10,7 +10,7 @@
     Exclusivity Expires On:
     = @partner.exclusivity_expires_on ? @partner.exclusivity_expires_on.to_s(:pub) : "N/A"
 
-%h3 Change exclusivity length:
+%h3 Renew:
 - form_for @partner, :url => { :action => :update }, :html => { :class => 'tjform' } do |f|
   %table
     %tr
