@@ -59,7 +59,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :support, :only => [ :index ],
     :collection => { :contact => :post }
   map.resources :tools, :only => :index,
-    :collection => { :new_order => :get, :create_order => :post, :new_transfer => :get, :create_transfer => :post,
+    :collection => { :new_order => :get, :create_order => :post, :monthly_data => :get, :new_transfer => :get, :create_transfer => :post,
                      :payouts => :get, :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get,
                      :sdb_metadata => :get, :reset_device => :get, :failed_downloads => :get, :sanitize_users => :get },
     :member => { :create_payout => :post, :create_transfer => :post }

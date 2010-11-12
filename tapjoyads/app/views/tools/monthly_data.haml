@@ -1,0 +1,64 @@
+- @page_title = 'Monthly Data'
+
+%h1 Monthly data for #{@period}
+
+- form_tag('/tools/monthly_data', :method => "get") do
+  %select{:name => "period", :onchange => "this.form.submit()"}
+    - @months.each do |str|
+      %option{:value => str.split('.')[1], :selected => str.split('.')[1] == @input}= str.split('.')[0]
+    end
+
+%table
+  %thead
+    %tr
+      %th 
+      %th 
+  %tbody
+    %tr
+      %td spend
+      %td= @spend
+    %tr
+      %td marketing
+      %td= @marketing
+    %tr
+      %td linkshare_est
+      %td= @linkshare_est
+    %tr
+      %td ads_est
+      %td= @ads_est
+    %tr
+      %td revenue
+      %td= @revenue
+    %tr
+      %td earnings
+      %td= @earnings
+    %tr
+      %td net_revenue
+      %td= @net_revenue
+    %tr
+      %td margin
+      %td= @margin  
+    %tr
+      %td
+      %td
+    %tr
+      %td new_orders
+      %td= @new_orders
+    %tr
+      %td payouts
+      %td= @payouts
+    %tr
+      %td transfers
+      %td= @transfers
+      
+-content_for :page_styles do
+  :plain
+    table {
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid gray;
+      padding: 5px;
+      text-align: right;
+    }

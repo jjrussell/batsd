@@ -1,4 +1,5 @@
 class ToolsController < WebsiteController
+  include ActionView::Helpers::NumberHelper
   layout 'tabbed'
   
   filter_access_to :all
@@ -77,6 +78,54 @@ class ToolsController < WebsiteController
     else
       render :action => :new_order
     end
+  end
+  
+  def monthly_data
+    params[:period] = (Time.now - 1.month).strftime("%Y-%m") unless params[:period]
+    
+    parts = params[:period].split('-')
+    month = parts[1]
+    year = parts[0]
+    
+    current = Time.parse('2009-06-01') #the first month of the platform
+    @months = []
+    while current.end_of_month < Time.now
+      @months.push "#{current.strftime("%b %Y")}.#{current.strftime("%Y-%m")}"
+      current = current + 1.month
+    end
+    
+    @input = params[:period]
+    @period = Time.parse("#{year}-#{month}-01").strftime("%b %Y")
+    
+    MonthlyAccounting.using_slave_db do
+      spend = MonthlyAccounting.sum(:spend, :conditions => "month = #{month} and year = #{year} and id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'")/-100.0
+      marketing = MonthlyAccounting.sum(:marketing_orders,  :conditions => "month = #{month} and year = #{year} and id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'")/100.0
+      new_orders = 
+        MonthlyAccounting.sum(:website_orders,  :conditions => "month = #{month} and year = #{year} and id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'")/100.0 + 
+        MonthlyAccounting.sum(:invoiced_orders,  :conditions => "month = #{month} and year = #{year} and id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'")/100.0
+      transfers = MonthlyAccounting.sum(:transfer_orders,  :conditions => "month = #{month} and year = #{year} and id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'")/100.0
+      earnings = MonthlyAccounting.sum(:earnings,  :conditions => "month = #{month} and year = #{year} and id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'")/100.0
+      payouts = MonthlyAccounting.sum(:payment_payouts,  :conditions => "month = #{month} and year = #{year} and id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'")/-100.0
+      
+      linkshare_est = spend.to_f * 0.035
+      ads_est = 400.0 * 30
+      
+      revenue = spend + linkshare_est + ads_est - marketing
+      net_revenue = revenue - earnings       
+      
+      @margin = number_with_precision(net_revenue.to_f * 100.0 / revenue.to_f, :precision => 2) + "%"
+      @net_revenue = number_to_currency(net_revenue) 
+      @revenue = number_to_currency(revenue)
+      @spend = number_to_currency(spend)
+      @marketing = number_to_currency(marketing)
+      @new_orders = number_to_currency(new_orders)
+      @earnings = number_to_currency(earnings)
+      @transfers = number_to_currency(transfers)
+      @payouts = number_to_currency(payouts)
+      @linkshare_est = number_to_currency(linkshare_est)
+      @ads_est = number_to_currency(ads_est)
+    end
+    
   end
   
   def money
