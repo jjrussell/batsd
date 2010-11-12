@@ -1,13 +1,42 @@
 - @page_title = 'Tapjoy Premier'
+- text = "Tapjoy Premier Agreement\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWaiting on terms\n"
 %h1 Tapjoy Premier
 - form_for @partner, :url => { :action => :update }, :html => { :class => 'tjform' } do |f|
-  = text_area_tag 'agreement', "Tapjoy Premier Agreement"
-  %table
+  = text_area_tag 'agreement', text , :size => '80x15', :disabled => true
+  %table{:width => '500px'}
     %tr
-      %th
-        = f.label :exclusivity_level, 'Exclusivity Level'
+      %th= f.label :exclusivity_level, 'Exclusivity Level'
       %td
         = f.select :exclusivity_level_type, options_for_select(ExclusivityLevel::TYPES.map{|t|[t.underscore.humanize.pluralize, t]}, ExclusivityLevel::TYPES.last)
         = error_message_on @partner, :exclusivity_level_type
+      %td
+        = f.submit 'Submit'
     %tr
-      %td{ :colspan => 2 }= f.submit 'Submit'
+      %th Expires
+      %td#expires{:colspan => 2}
+        = (Date.today+9.months).to_s(:long)
+    %tr
+      %th Discount
+      %td{:colspan => 2}
+        <span id="discount_percent">15</span>% (paid) / <span id="discount_dollar">$0.15</span> (free)
+
+- content_for :page_javascript do
+  :plain
+    $(function(){
+      $('select#partner_exclusivity_level_type').change(function(){
+        var level = $(this).val(), discount = '';
+        if (level == '#{ExclusivityLevel::TYPES[0]}') {
+          discount = '#{ExclusivityLevel::TYPES[0].constantize.new.discount}';
+          date = '#{(Date.today+ExclusivityLevel::TYPES[0].constantize.new.months.months).to_s(:long)}';
+        } else if (level == '#{ExclusivityLevel::TYPES[1]}') {
+          discount = '#{ExclusivityLevel::TYPES[1].constantize.new.discount}';
+          date = '#{(Date.today+ExclusivityLevel::TYPES[1].constantize.new.months.months).to_s(:long)}';
+        } else if (level == '#{ExclusivityLevel::TYPES[2]}') {
+          discount = '#{ExclusivityLevel::TYPES[2].constantize.new.discount}';
+          date = '#{(Date.today+ExclusivityLevel::TYPES[2].constantize.new.months.months).to_s(:long)}';
+        }
+        $('span#discount_dollar').text(numberToCurrency(discount/100));
+        $('span#discount_percent').text(discount);
+        $('td#expires').text(date);
+      });
+    });

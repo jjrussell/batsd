@@ -1,7 +1,7 @@
 class PremierController < WebsiteController
   layout 'tabbed'
   current_tab :premier
-  
+
   filter_access_to :all
 
   before_filter :set_partner
@@ -9,10 +9,12 @@ class PremierController < WebsiteController
 
   def edit
     if @partner.exclusivity_level.nil?
-      render :action => 'new'
+      if Rails.env == 'development' || request.host == 'test.tapjoy.com'
+        render :action => 'new'
+      end
     end
   end
-  
+
   def update
     log_activity(@partner)
     if @partner.set_exclusivity_level! params[:partner][:exclusivity_level_type]
@@ -22,7 +24,7 @@ class PremierController < WebsiteController
     end
     render :edit
   end
-  
+
 private
 
   def set_partner
