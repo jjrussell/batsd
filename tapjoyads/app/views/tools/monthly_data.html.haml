@@ -1,12 +1,9 @@
 - @page_title = 'Monthly Data'
 
-%h1 Monthly data for #{@period}
+%h1 Monthly data for #{@period.strftime("%b %Y")}
 
 - form_tag('/tools/monthly_data', :method => "get") do
-  %select{:name => "period", :onchange => "this.form.submit()"}
-    - @months.each do |str|
-      %option{:value => str.split('.')[1], :selected => str.split('.')[1] == @input}= str.split('.')[0]
-    end
+  = select_tag('period', options_for_select(@months, @period.strftime("%b %Y")), { :onchange => "this.form.submit()" })
 
 %table
   %thead

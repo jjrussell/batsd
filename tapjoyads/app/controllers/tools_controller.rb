@@ -80,25 +80,20 @@ class ToolsController < WebsiteController
   end
 
   def monthly_data
-    params[:period] = (Time.now - 1.month).strftime("%Y-%m") unless params[:period]
+    @period = Date.current - 1.month
+    @period = Date.parse(params[:period]) unless params[:period].blank?
 
-    parts = params[:period].split('-')
-    month = parts[1]
-    year = parts[0]
-
-    current = Time.parse('2009-06-01') #the first month of the platform
+    month = @period.month
+    year  = @period.year
     @months = []
-    while current.end_of_month < Time.now
-      @months.push "#{current.strftime("%b %Y")}.#{current.strftime("%Y-%m")}"
-      current = current + 1.month
+    date = Date.parse('2009-06-01') #the first month of the platform
+    while (date < Date.current.beginning_of_month) do
+      @months << date.strftime('%b %Y')
+      date += 1.month
     end
 
-    @input = params[:period]
-    @period = Time.parse("#{year}-#{month}-01").strftime("%b %Y")
-
+    conditions = "month = #{month} and year = #{year} and id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'"
     MonthlyAccounting.using_slave_db do
-      conditions = "month = #{month} and year = #{year} and id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'"
-
       @spend      = MonthlyAccounting.sum(:spend,             :conditions => conditions) /-100.0
       @marketing  = MonthlyAccounting.sum(:marketing_orders,  :conditions => conditions) / 100.0
       @new_orders = MonthlyAccounting.sum(:website_orders,    :conditions => conditions) / 100.0 +
@@ -107,12 +102,12 @@ class ToolsController < WebsiteController
       @earnings   = MonthlyAccounting.sum(:earnings,          :conditions => conditions) / 100.0
       @payouts    = MonthlyAccounting.sum(:payment_payouts,   :conditions => conditions) /-100.0
     end
+
     @linkshare_est = @spend.to_f * 0.035
     @ads_est = 400.0 * 30
     @revenue = @spend + @linkshare_est + @ads_est - @marketing
     @net_revenue = @revenue - @earnings
     @margin = @net_revenue.to_f * 100.0 / @revenue.to_f
-
   end
 
   def money
