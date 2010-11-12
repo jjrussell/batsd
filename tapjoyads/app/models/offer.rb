@@ -15,6 +15,8 @@ class Offer < ActiveRecord::Base
   DEFAULT_OFFER_TYPE  = '1'
   FEATURED_OFFER_TYPE = '2'
   
+  CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1 }
+  
   attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
@@ -112,6 +114,13 @@ class Offer < ActiveRecord::Base
     end
   end
   
+  def self.get_stats_for_ranks
+    Mc.get_and_put('s3.offer_rank_statistics') do
+      bucket = S3.bucket(BucketNames::OFFER_DATA)
+      Marshal.restore(bucket.get('offer_rank_statistics'))
+    end
+  end
+  
   def self.get_featured_offers
     Mc.distributed_get_and_put('s3.featured_offers') do
       bucket = S3.bucket(BucketNames::OFFER_DATA)
@@ -120,15 +129,7 @@ class Offer < ActiveRecord::Base
   end
   
   def self.cache_enabled_offers
-    cache_enabled_offers_for_experiment('control', { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1 })
-    cache_enabled_offers_for_experiment('more_bid', { :conversion_rate => 1, :bid => 5, :price => -5, :avg_revenue => 5, :random => 1 })
-    cache_enabled_offers_for_experiment('more_bid_less_revenue', { :conversion_rate => 1, :bid => 5, :price => -5, :avg_revenue => 1, :random => 1 })
-  end
-  
-  def self.cache_enabled_offers_for_experiment(cache_key_suffix, weights)
-    bucket = S3.bucket(BucketNames::OFFER_DATA)
     offer_list = Offer.enabled_offers.nonfeatured
-    
     conversion_rates       = offer_list.collect(&:conversion_rate)
     prices                 = offer_list.collect(&:price)
     avg_revenues           = offer_list.collect(&:avg_revenue)
@@ -142,21 +143,36 @@ class Offer < ActiveRecord::Base
     bid_mean               = bids.mean
     bid_std_dev            = bids.standard_deviation
     
+    stats = { :cvr_mean => cvr_mean, :cvr_std_dev => cvr_std_dev, :price_mean => price_mean, :price_std_dev => price_std_dev,
+      :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
+    
     offer_list.each do |offer|
-      offer.normal_conversion_rate = (offer.conversion_rate - cvr_mean) / cvr_std_dev
-      offer.normal_price           = (offer.price - price_mean) / price_std_dev
-      offer.normal_avg_revenue     = (offer.avg_revenue - avg_revenue_mean) / avg_revenue_std_dev
-      offer.normal_bid             = (offer.bid - bid_mean) / bid_std_dev
+      offer.normalize_stats(stats)
+    end
+    
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
+    bucket.put("offer_rank_statistics", Marshal.dump(stats))
+    Mc.put("s3.offer_rank_statistics", stats)
+    
+    cache_enabled_offers_for_experiment('control', CONTROL_WEIGHTS, offer_list)
+    cache_enabled_offers_for_experiment('more_bid', { :conversion_rate => 1, :bid => 5, :price => -5, :avg_revenue => 5, :random => 1 }, offer_list)
+    cache_enabled_offers_for_experiment('more_bid_less_revenue', { :conversion_rate => 1, :bid => 5, :price => -5, :avg_revenue => 1, :random => 1 }, offer_list)
+  end
+
+  
+  def self.cache_enabled_offers_for_experiment(cache_key_suffix, weights, offers_to_cache)
+    offers_to_cache.each do |offer|
       offer.calculate_rank_score(weights)
     end
     
-    offer_list.sort! do |o1, o2|
+    offers_to_cache.sort! do |o1, o2|
       o2.rank_score <=> o1.rank_score
     end
     
-    marshalled_offer_list = Marshal.dump(offer_list)
+    marshalled_offer_list = Marshal.dump(offers_to_cache)
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
     bucket.put("enabled_offers.#{cache_key_suffix}", marshalled_offer_list)
-    Mc.distributed_put("s3.enabled_offers.#{cache_key_suffix}", offer_list)
+    Mc.distributed_put("s3.enabled_offers.#{cache_key_suffix}", offers_to_cache)
   end
   
   def self.cache_featured_offers
@@ -329,6 +345,13 @@ class Offer < ActiveRecord::Base
     end
   end
   
+  def normalize_stats(stats)
+    self.normal_conversion_rate = (conversion_rate - stats[:cvr_mean]) / stats[:cvr_std_dev]
+    self.normal_price           = (price - stats[:price_mean]) / stats[:price_std_dev]
+    self.normal_avg_revenue     = (avg_revenue - stats[:avg_revenue_mean]) / stats[:avg_revenue_std_dev]
+    self.normal_bid             = (bid - stats[:bid_mean]) / stats[:bid_std_dev]
+  end
+  
   def calculate_rank_score(weights = {})
     random_weight = weights.delete(:random) { 0 }
     boost_weight = weights.delete(:boost) { 1 }
@@ -337,6 +360,14 @@ class Offer < ActiveRecord::Base
     self.rank_score += rand * random_weight
     self.rank_score += rank_boosts.active.sum(:amount) * boost_weight
     self.rank_score += 999999 if item_type == 'RatingOffer'
+  end
+  
+  def estimated_percentile(weights = CONTROL_WEIGHTS)
+    normalize_stats(Offer.get_stats_for_ranks)
+    calculate_rank_score(weights)
+    ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' }
+    worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
+    100 * worse_offers.size / ranked_offers.size
   end
   
   def name_with_suffix
