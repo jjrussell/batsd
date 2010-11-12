@@ -140,6 +140,7 @@ class App < ActiveRecord::Base
     required_length = options.delete(:required_length) { 999 }
     app_version = options.delete(:app_version)
     reject_rating_offer = options.delete(:reject_rating_offer) { false }
+    exp = options.delete(:exp)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     device = Device.new(:key => udid)
@@ -150,7 +151,6 @@ class App < ActiveRecord::Base
     elsif type == Offer::FEATURED_OFFER_TYPE
       offer_list = Offer.get_featured_offers
     else
-      exp = Experiments.choose(udid)
       offer_list = Offer.get_enabled_offers(exp)
     end
     

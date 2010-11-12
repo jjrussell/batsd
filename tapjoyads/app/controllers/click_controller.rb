@@ -1,4 +1,5 @@
 class ClickController < ApplicationController
+  layout 'iphone'
   
   before_filter :determine_link_affiliates, :only => :app
   before_filter :setup
@@ -46,8 +47,8 @@ class ClickController < ApplicationController
   end
   
   def test_offer
-    currency = Currency.find_in_cache(params[:currency_id])
-    unless currency.get_test_device_ids.include?(params[:udid])
+    @currency = Currency.find_in_cache(params[:currency_id])
+    unless @currency.get_test_device_ids.include?(params[:udid])
       raise "not a test device"
     end
     
@@ -66,8 +67,6 @@ class ClickController < ApplicationController
     
     message = test_reward.serialize
     Sqs.send_message(QueueNames::SEND_CURRENCY, message)
-    
-    render :text => "This device should receive 10 currency."
   end
   
 private
@@ -92,7 +91,7 @@ private
     disabled = !@offer.is_enabled?
     if disabled
       create_web_request('disabled_offer')
-      render(:template => 'click/unavailable_offer', :layout => 'iphone')
+      render(:template => 'click/unavailable_offer')
     end
     
     return disabled
@@ -106,7 +105,7 @@ private
     completed = @device.has_app(app_id_for_device)
     if completed
       create_web_request('completed_offer')
-      render(:template => 'click/unavailable_offer', :layout => 'iphone')
+      render(:template => 'click/unavailable_offer')
     end
     
     return completed

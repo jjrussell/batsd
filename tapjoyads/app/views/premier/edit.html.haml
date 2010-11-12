@@ -10,11 +10,12 @@
     Exclusivity Expires On:
     = @partner.exclusivity_expires_on ? @partner.exclusivity_expires_on.to_s(:pub) : "N/A"
 
+%h3 Renew:
 - form_for @partner, :url => { :action => :update }, :html => { :class => 'tjform' } do |f|
   %table
     %tr
       %th
-        = f.label :exclusivity_level, 'Exclusivity Level'
+        = f.label :exclusivity_level_type, 'Exclusivity Level'
       %td
         = f.select :exclusivity_level_type, options_for_select(ExclusivityLevel::TYPES.map{|t|[t.underscore.humanize.pluralize, t]}, ExclusivityLevel::TYPES.last)
         = error_message_on @partner, :exclusivity_level_type
