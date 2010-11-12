@@ -1,0 +1,86 @@
+.message
+  Instructions: Fill out this short survey to earn #{@click.currency_reward} #{@currency.name}
+
+#error.message{:style => 'display: none;'}
+  Please complete all questions!
+
+#main
+  - form_tag(surveys_path) do
+    = hidden_field_tag(:udid, params[:udid])
+    = hidden_field_tag(:click_key, params[:click_key])
+    
+    .field
+      .question
+        Your gender?
+      .answer
+        = radio_button_tag(:gender, "male")
+        = label_tag(:gender_male, "Male")
+        = radio_button_tag(:gender, "female")
+        = label_tag(:gender_female, "Female")
+    .field
+      .question
+        = label_tag(:birth_year, "Year you were born?")
+      .answer
+        = text_field_tag(:birth_year, nil, :pattern => "[0-9]*")
+    .field
+      .question
+        = label_tag(:postal_code, "Postal code where you live?")
+      .answer
+        = text_field_tag(:postal_code, nil, :pattern => "[0-9]*")
+    = submit_tag("Submit Survey", :onclick => 'return checkValues()')
+
+- content_for :page_javascript do
+  :plain
+    function checkValues() {
+      var isGenderChecked = document.getElementById('gender_male').checked || document.getElementById('gender_female').checked
+      var birthYear = document.getElementById('birth_year').value
+      var postalCode = document.getElementById('postal_code').value
+      
+      if (!isGenderChecked || !birthYear || ! postalCode) {
+        document.getElementById('error').style.display = "block"
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+- content_for :page_styles do
+  :plain
+    .message {
+      margin-bottom: 10px;
+      padding: 10px;
+      margin: 10px 3%;
+      color: #004E09;
+      font-size: 85%;
+      font-weight: bold;
+      text-align: center;
+      background: white;
+      border: 1px solid #d5d5d5;
+      -moz-border-radius: 7px;
+      -webkit-border-radius: 7px;
+    }
+    #error {
+      background-color: darkRed;
+      color: white;
+      padding: 3px 0;
+    }
+    input {
+      -webkit-text-size-adjust: 140%;
+    }
+    input[type=text] {
+      width: 50px;
+    }
+    input[type=submit] {
+      width: 100%;
+    }
+    .field {
+      margin: 10px 0;
+      border-bottom: 1px dotted #ccc;
+      padding-bottom: 5px;
+    }
+    .question {
+      color: #004E09;
+    }
+    .answer {
+      margin-top: 5px;
+    }

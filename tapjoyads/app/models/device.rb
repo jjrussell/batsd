@@ -4,6 +4,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :apps, :type => :json, :default_value => {}
   self.sdb_attr :is_jailbroken, :type => :bool, :default_value => false
   self.sdb_attr :country
+  self.sdb_attr :survey_answers, :type => :json, :default_value => {}
   
   def dynamic_domain_name
     domain_number = @key.hash % NUM_DEVICES_DOMAINS
