@@ -1,7 +1,6 @@
 class Experiments
   EXPERIMENTS = {
     :control => '30',
-    :more_bid => '32',
     :more_bid_less_revenue => '33'
   }
   
@@ -9,9 +8,7 @@ class Experiments
     if udid.present?
       udid_hash = udid.hash % 100
       
-      if udid_hash >= 90
-        EXPERIMENTS[:more_bid]
-      elsif udid_hash >= 80
+      if udid_hash >= 80
         EXPERIMENTS[:more_bid_less_revenue]
       else
         EXPERIMENTS[:control]
