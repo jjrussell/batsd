@@ -12,7 +12,7 @@ else
   # setup log directories
   `mkdir -p /mnt/log/apache2`
   `mkdir -p /mnt/log/rails`
-  `mkdir -p /mnt/tmp`
+  `mkdir -p /mnt/tmp/rails`
   `chmod 777 /mnt/log`
   `chmod 777 /mnt/tmp`
   `chown -R webuser:webuser /mnt/log`
@@ -22,7 +22,7 @@ else
   `rm -rf /home/webuser/tapjoyserver/tapjoyads/tmp`
   `ln -s /mnt/log/apache2 /var/log/apache2`
   `ln -s /mnt/log/rails /home/webuser/tapjoyserver/tapjoyads/log`
-  `ln -s /mnt/tmp /home/webuser/tapjoyserver/tapjoyads/tmp`
+  `ln -s /mnt/tmp/rails /home/webuser/tapjoyserver/tapjoyads/tmp`
 
   # deploy the latest code
   if server_type == 'test'
