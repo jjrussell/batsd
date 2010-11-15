@@ -89,7 +89,7 @@ class Offer < ActiveRecord::Base
   before_save :cleanup_url
   before_save :update_payment
   
-  named_scope :enabled_offers, :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND ((payment > 0 AND partners.balance > 0) OR reward_value > 0)"
+  named_scope :enabled_offers, :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND ((payment > 0 AND partners.balance > 0) OR (payment = 0 AND reward_value > 0))"
   named_scope :featured, :conditions => { :featured => true }
   named_scope :nonfeatured, :conditions => { :featured => false }
   named_scope :visible, :conditions => { :hidden => false }
@@ -228,7 +228,7 @@ class Offer < ActiveRecord::Base
   end
   
   def is_enabled?
-    tapjoy_enabled? && user_enabled? && partner.balance > 0
+    tapjoy_enabled? && user_enabled? && ((payment > 0 && partner.balance > 0) || (payment == 0 && reward_value > 0))
   end
   
   def has_variable_payment?
