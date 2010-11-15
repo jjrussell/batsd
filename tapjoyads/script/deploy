@@ -87,7 +87,7 @@ private
   def update_working_copy
     puts "Updating working copy"
     git_status = `git status`
-    if git_status !~ /branch master/
+    if git_status !~ /On branch master/
       puts "You must be on the master branch!"
       exit
     end
