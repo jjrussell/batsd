@@ -36,4 +36,10 @@ else
   if server_type == 'web'
     `echo "* * * * * /home/webuser/tapjoyserver/server/ensure_apache_running.rb" | crontab -u ubuntu -`
   end
+
+  # start memcached and mysql on testservers
+  if server_type == 'test'
+    `/etc/init.d/memcached start`
+    `start mysql`
+  end
 end

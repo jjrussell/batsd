@@ -1,6 +1,6 @@
 JobRunner::Gateway.define do |s|
   
-  machine_type = `#{ENV['APP_ROOT']}/server/server_type.rb`
+  machine_type = `#{ENV['APP_ROOT']}/../server/server_type.rb`
   
   if machine_type == 'jobs' || machine_type == 'test'
     s.add_job 'get_ad_network_data', :interval => 8.minutes    
