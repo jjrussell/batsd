@@ -46,7 +46,7 @@ class Partner < ActiveRecord::Base
   @@per_page = 20
   
   named_scope :to_calculate_next_payout_amount, :conditions => 'pending_earnings >= 10000'
-  named_scope :to_payout, :conditions => 'pending_earnings != 0'
+  named_scope :to_payout, :conditions => 'pending_earnings != 0', :order => 'name ASC, contact_name ASC'
   named_scope :search, lambda { |name_or_email| { :joins => :users,
       :conditions => [ "partners.name LIKE ? OR users.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
     }
