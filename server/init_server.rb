@@ -12,18 +12,23 @@ else
   # setup log directories
   `mkdir -p /mnt/log/apache2`
   `mkdir -p /mnt/log/rails`
+  `mkdir -p /mnt/tmp`
   `chmod 777 /mnt/log`
+  `chmod 777 /mnt/tmp`
   `chown -R webuser:webuser /mnt/log`
+  `chown -R webuser:webuser /mnt/tmp`
   `rm -rf /var/log/apache2`
   `rm -rf /home/webuser/tapjoyserver/tapjoyads/log`
+  `rm -rf /home/webuser/tapjoyserver/tapjoyads/tmp`
   `ln -s /mnt/log/apache2 /var/log/apache2`
   `ln -s /mnt/log/rails /home/webuser/tapjoyserver/tapjoyads/log`
+  `ln -s /mnt/tmp /home/webuser/tapjoyserver/tapjoyads/tmp`
 
   # deploy the latest code
   if server_type == 'test'
-    `su webuser -c '/home/webuser/tapjoyserver/server/deploy.rb master'`
+    `su webuser -c 'cd /home/webuser/tapjoyserver && server/deploy.rb master'`
   else
-    `su webuser -c '/home/webuser/tapjoyserver/server/deploy.rb'`
+    `su webuser -c 'cd /home/webuser/tapjoyserver && server/deploy.rb'`
   end
 
   # start apache
