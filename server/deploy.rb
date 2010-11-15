@@ -4,7 +4,10 @@
 
 require 'yaml'
 
-`cd /home/webuser/tapjoyserver`
+if `pwd` != "/home/webuser/tapjoyserver\n"
+  puts "This script must be run from /home/webuser/tapjoyserver"
+  exit
+end
 
 system "git checkout master"
 system "git pull --tags origin master"
@@ -17,24 +20,22 @@ puts "Deploying version: #{deploy_version}"
 
 system "git checkout #{deploy_version}"
 
-`cd tapjoyads`
-
 if server_type == 'jobs' || server_type == 'masterjobs'
-  `cp config/newrelic-jobs.yml config/newrelic.yml`
+  `cp tapjoyads/config/newrelic-jobs.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'test'
-  `cp config/newrelic-test.yml config/newrelic.yml`
+  `cp tapjoyads/config/newrelic-test.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'web'
-  `cp config/newrelic-web.yml config/newrelic.yml`
+  `cp tapjoyads/config/newrelic-web.yml tapjoyads/config/newrelic.yml`
 end
 
 puts "Stopping jobs"
-`script/jobs stop`
+`tapjoyads/script/jobs stop`
 `ps aux | grep -v grep | grep jobs`.each { |line| `kill #{line.split(' ')[1]}` }
 
 puts "Restarting apache"
-`touch tmp/restart.txt`
+`touch tapjoyads/tmp/restart.txt`
 
 if server_type == 'jobs' || server_type == 'masterjobs'
   puts "Starting jobs"
-  `script/jobs start -- production`
+  `tapjoyads/script/jobs start -- production`
 end
