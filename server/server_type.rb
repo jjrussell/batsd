@@ -10,13 +10,15 @@ end
 
 security_groups = `curl -s http://169.254.169.254/latest/meta-data/security-groups`.split("\n")
 if security_groups.include? 'testserver'
-  machine_type = 'test'
+  server_type = 'test'
 elsif security_groups.include? 'jobserver'
-  machine_type = 'jobs'
+  server_type = 'jobs'
 elsif security_groups.include? 'masterjobs'
-  machine_type = 'masterjobs'
+  server_type = 'masterjobs'
 elsif security_groups.include? 'webserver'
-  machine_type = 'web'
+  server_type = 'web'
+elsif security_groups.include? 'memcached'
+  server_type = 'memcached'
 end
 
-print machine_type
+print server_type
