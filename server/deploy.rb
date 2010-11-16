@@ -4,8 +4,12 @@
 
 require 'yaml'
 
-if `pwd` != "/home/webuser/tapjoyserver\n"
+if ENV['PWD'] != '/home/webuser/tapjoyserver'
   puts "This script must be run from /home/webuser/tapjoyserver"
+  exit
+end
+if ENV['USER'] != 'webuser'
+  puts "This script must be run by webuser."
   exit
 end
 
