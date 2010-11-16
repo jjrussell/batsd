@@ -189,6 +189,6 @@ class WebRequest < SimpledbResource
     
     hydra.run
     
-    return
+    return count
   end
 end
