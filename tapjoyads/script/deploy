@@ -95,7 +95,7 @@ private
       puts "You must have a clean working directory!"
       exit
     end
-    system("git pull origin master")
+    system("git pull")
   end
   
   def create_deploy_tag
