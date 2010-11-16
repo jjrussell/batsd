@@ -1,0 +1,88 @@
+%h1= "Offerwall Preview for Experiment #{params[:id]}"
+
+= render 'select_experiment'
+
+%br
+Display: 
+= label_tag "App", "Apps"
+= check_box_tag "App", "", true
+
+= label_tag "RatingOffer", "RatingOffers"
+= check_box_tag "RatingOffer", "", false
+
+= label_tag "GenericOffer", "GenericOffers"
+= check_box_tag "GenericOffer", "", true
+
+%table#offers.tablesorter
+  %thead
+    %tr
+      %th Avg Rank
+      %th Rank Score
+      %th Name
+      %th Show Rate
+      %th CVR
+      %th Price
+      %th Avg Revenue
+      %th Bid
+      %th Boost
+      %th Devices
+      %th Type
+  %tbody#offers_tbody
+    - rank = 1
+    - @offers.each do |offer|
+      %tr{ "data-item_type" => offer.item_type }
+        %td= rank.floor.to_i.to_s
+        %td= offer.rank_score
+        %td= (permitted_to? :show, :statz) ? link_to(offer.name, statz_path(offer)) : offer.name
+        %td= offer.show_rate
+        %td= offer.conversion_rate
+        %td= number_to_currency(0.01 * offer.price)
+        %td= offer.avg_revenue
+        %td= offer.bid
+        %td= offer.rank_boost
+        %td= offer.get_device_types.to_a.join(",")
+        %td= offer.item_type
+      - rank += offer.show_rate unless offer.item_type == 'RatingOffer'
+        
+- content_for :page_javascript do
+  :plain
+    function resetTable() {
+      $('#offers').tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          6: { sorter: 'float-column' }
+        },
+      });
+    }
+    
+    function toggleOffers(item_type) {
+      $('#offers_tbody tr[data-item_type="' + item_type + '"]').toggle()
+    }
+  
+    $(function() {
+
+      $.tablesorter.addParser({
+        id: 'float-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s;
+        }
+      });
+      
+      $('#RatingOffer').click(function() {
+        toggleOffers('RatingOffer')
+      })
+      
+      $('#GenericOffer').click(function() {
+        toggleOffers('GenericOffer')
+      })
+      
+      $('#App').click(function() {
+        toggleOffers('App')
+      })
+      
+      resetTable();
+      
+      $('#offers_tbody tr[data-item_type="RatingOffer"]').hide();
+    });

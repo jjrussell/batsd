@@ -133,19 +133,19 @@ class WebRequest < SimpledbResource
         if USE_OFFER_ID.include?(path)
           app_id = get('offer_id')
         end
-        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time))
+        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
       end
       
       stat_name = PUBLISHER_PATH_TO_STAT_MAP[path]
       if stat_name.present?
         app_id = get('publisher_app_id')
-        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time))
+        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
       end
       
       stat_name = DISPLAYER_PATH_TO_STAT_MAP[path]
       app_id = get('displayer_app_id')
       if stat_name.present? && app_id.present?
-        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time))
+        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
       end
     end
   end

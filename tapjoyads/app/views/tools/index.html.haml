@@ -29,3 +29,5 @@
     %li= link_to 'Manage Rank Boosts', rank_boosts_path
   - if permitted_to? :sanitize_users, :tools
     %li= link_to 'Sanitizer Users Table', sanitize_users_tools_path
+  - if permitted_to? :index, :preview_experiments
+    %li= link_to 'Preview Experiment Offerwalls', preview_experiments_path

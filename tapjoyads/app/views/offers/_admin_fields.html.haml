@@ -42,7 +42,7 @@
   %td
     = f.text_field(:name)
     = error_message_on @offer, :name
-  %td= link_to('Use App Name', '#', :id => 'use_app_name')
+  %td= link_to('Use App Name', '#', :id => 'use_app_name', :tabindex => 99)
 %tr.admin
   %th
     = f.label(:name_suffix, 'Internal Suffix')

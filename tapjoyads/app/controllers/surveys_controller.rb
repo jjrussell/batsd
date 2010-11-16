@@ -2,32 +2,40 @@ class SurveysController < ApplicationController
   
   layout 'iphone'
   
-  before_filter :read_click
+  before_filter :read_click, :only => [ :create ]
   
   def new
     return unless verify_params([:udid, :click_key])
   end
   
   def create
-    answers = {
-      :gender => params[:gender][0, 10],
-      :birth_year => params[:birth_year][0, 10],
-      :postal_code => params[:postal_code][0, 10]
-    }
+    unless verify_params([:gender, :birth_year, :postal_code], :render_missing_text => false)
+      @missing_params = true
+      render :action => :new
+      return
+    end
     
-    survey_result = SurveyResult.new
-    survey_result.udid = params[:udid]
-    survey_result.click_key = params[:click_key]
-    survey_result.geoip_data = get_geoip_data
-    survey_result.answers = answers
-    survey_result.save
+    if @click.installed_at.nil?
+      answers = {
+        :gender => params[:gender][0, 10],
+        :birth_year => params[:birth_year][0, 10],
+        :postal_code => params[:postal_code][0, 10]
+      }
     
-    device = Device.new(:key => params[:udid])
-    device.survey_answers = answers
-    device.save
+      survey_result = SurveyResult.new
+      survey_result.udid = params[:udid]
+      survey_result.click_key = params[:click_key]
+      survey_result.geoip_data = get_geoip_data
+      survey_result.answers = answers
+      survey_result.save
     
-    if Rails.env == 'production'
-      Downloader.get "http://ws.tapjoyads.com/offer_completed?click_key=#{params[:click_key]}"
+      device = Device.new(:key => params[:udid])
+      device.survey_answers = answers
+      device.save
+    
+      if Rails.env == 'production'
+        Downloader.get_with_retry "http://ws.tapjoyads.com/offer_completed?click_key=#{params[:click_key]}"
+      end
     end
     
     render :template => "surveys/survey_complete"

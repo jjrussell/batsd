@@ -1,7 +1,7 @@
 .message
-  Instructions: Fill out this short survey to earn #{@click.currency_reward} #{@currency.name}
+  Instructions: Fill out this short survey
 
-#error.message{:style => 'display: none;'}
+#error.message{:style => (@missing_params ? '' : 'display: none;') }
   Please complete all questions!
 
 #main
@@ -11,7 +11,7 @@
     
     .field
       .question
-        Your gender?
+        What is your gender?
       .answer
         = radio_button_tag(:gender, "male")
         = label_tag(:gender_male, "Male")
@@ -19,31 +19,31 @@
         = label_tag(:gender_female, "Female")
     .field
       .question
-        = label_tag(:birth_year, "Year you were born?")
+        = label_tag(:birth_year, "What year were you born?")
       .answer
         = text_field_tag(:birth_year, nil, :pattern => "[0-9]*")
     .field
       .question
-        = label_tag(:postal_code, "Postal code where you live?")
+        = label_tag(:postal_code, "What is your postal code?")
       .answer
         = text_field_tag(:postal_code, nil, :pattern => "[0-9]*")
-    = submit_tag("Submit Survey", :onclick => 'return checkValues()')
+    = submit_tag("Submit Survey", :onclick => 'return checkValues();')
 
 - content_for :page_javascript do
   :plain
     function checkValues() {
-      var isGenderChecked = document.getElementById('gender_male').checked || document.getElementById('gender_female').checked
-      var birthYear = document.getElementById('birth_year').value
-      var postalCode = document.getElementById('postal_code').value
+      var isGenderChecked = document.getElementById('gender_male').checked || document.getElementById('gender_female').checked;
+      var birthYear = document.getElementById('birth_year').value;
+      var postalCode = document.getElementById('postal_code').value;
       
-      if (!isGenderChecked || !birthYear || ! postalCode) {
-        document.getElementById('error').style.display = "block"
+      if (!isGenderChecked || !birthYear || !postalCode) {
+        document.getElementById('error').style.display = "block";
         return false;
       } else {
         return true;
       }
     }
-
+  
 - content_for :page_styles do
   :plain
     .message {

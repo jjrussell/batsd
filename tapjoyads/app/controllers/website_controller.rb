@@ -28,10 +28,14 @@ class WebsiteController < ApplicationController
   def sanitize_currency_params(object, fields)
     fields.each do |field|
       if object[field]
-        object[field] = (object[field].gsub(/[\$,]/,'').to_f * 100).round.to_s
+        object[field] = sanitize_currency_param(object[field])
       end
     end
     object
+  end
+  
+  def sanitize_currency_param(field)
+    (field.gsub(/[\$,]/,'').to_f * 100).round.to_s
   end
   
   def premier_enabled?
