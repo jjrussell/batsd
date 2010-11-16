@@ -16,7 +16,11 @@ class DisplayAdController < ApplicationController
   end
   
   def webview
-    render :layout => false
+    if @click_url.present? && @image.present?
+      render :layout => false
+    else
+      render :text => ''
+    end
   end
   
   def image
