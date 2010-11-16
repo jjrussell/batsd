@@ -66,6 +66,54 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     assert_equal('default_value', m.get('foo', :default_value => 'default_value'))
   end
   
+  test "async count" do
+    models = []
+    
+    20.times do |i|
+      m = Testing.new(:key => "count_async_#{i}", :load => false)
+      m.put('val', '%02d' % i)
+      m.save!
+      models << m
+    end
+    
+    hydra = Typhoeus::Hydra.new
+    total_count, total_count_limit, count_10 = 0
+    
+    Testing.count_async(:where => "itemName() like 'count_async_%'", :hydra => hydra, :consistent => true) do |c|
+      total_count = c
+    end
+    
+    Testing.count_async(:where => "itemName() like 'count_async_%'", :hydra => hydra, :consistent => true, :limit => 3) do |c|
+      total_count_limit = c
+    end
+    
+    Testing.count_async(:where => "itemName() like 'count_async_%' and val < '10'", :hydra => hydra, :consistent => true) do |c|
+      count_10 = c
+    end
+    
+    hydra.run
+    
+    assert_equal(20, total_count)
+    assert_equal(20, total_count_limit)
+    assert_equal(10, count_10)
+    
+    models.each do |m|
+      m.delete_all
+    end
+  end
+  
+  test "async count error handling" do
+    hydra = Testing.count_async(:where => "invalid query")
+    
+    begin
+      hydra.run
+    rescue RightAws::AwsError => e
+      assert(e.message =~ /InvalidQueryExpression/)
+    else
+      fail("Error for InvalidQueryExpression should be raised and rescued")
+    end
+  end
+  
   def write_long_attributes
     m = Testing.new(:key => 'long_attrs')
     @long_value = ''

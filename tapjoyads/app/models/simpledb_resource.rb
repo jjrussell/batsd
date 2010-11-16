@@ -380,6 +380,53 @@ class SimpledbResource
     return count
   end
   
+  def self.count_async(options = {})
+    where =       options.delete(:where)
+    next_token =  options.delete(:next_token)
+    domain_name = options.delete(:domain_name) { self.domain_name }
+    limit =       options.delete(:limit)
+    consistent =  options.delete(:consistent) { false }
+    hydra =       options.delete(:hydra) { Typhoeus::Hydra.new }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    raise "Must provide a domain name" unless domain_name
+    
+    domain_name = get_real_domain_name(domain_name)
+    
+    query = "SELECT count(*) FROM `#{domain_name}`"
+    query += " WHERE #{where}" if where
+    query += " LIMIT #{limit}" if limit
+    
+    self.send_count_async_request(query, next_token, consistent, hydra) do |count|
+      yield count
+    end
+    
+    return hydra
+  end
+  
+  def self.send_count_async_request(query, next_token, consistent, hydra)
+    sdb_request = @@sdb.generate_request('Select', { 'SelectExpression' => query, 'NextToken' => next_token, 'ConsistentRead' => consistent })
+    url = "#{sdb_request[:protocol]}://#{sdb_request[:server]}:#{sdb_request[:port]}#{sdb_request[:request].path}"
+    request = Typhoeus::Request.new(url)
+    request.on_complete do |response|
+      if response.code != 200
+        raise RightAws::AwsError.new("Async count encountered an error. Response: #{response.body}", response.code)
+      end
+        
+      parser = RightAws::SdbInterface::QSdbSelectParser.new
+      parser.parse(response.body)
+      count = parser.result[:items][0]['Domain']['Count'][0].to_i
+      next_token = parser.result[:next_token]
+      if next_token.present?
+        self.send_count_async_request(query, next_token, consistent, hydra) do |c|
+          yield count + c
+        end
+      else
+        yield count
+      end
+    end
+    hydra.queue(request)
+  end
+  
   ##
   # Returns an array of items which match the specified select parameters.
   def self.select(options = {})

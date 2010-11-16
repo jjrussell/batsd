@@ -37,6 +37,7 @@ Rails::Initializer.run do |config|
   config.gem 'patron', :version => '0.4.4'
   config.gem 'right_aws', :version => '1.10.0'
   config.gem 'rmagick', :version => '2.12.2', :lib => 'RMagick'
+  config.gem 'typhoeus', :version => '0.2.0'
 
   # These gems should be vendored
   config.gem 'authlogic', :version => '2.1.3'
