@@ -2,7 +2,7 @@ authorization do
 
   role :partner do
     has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :publisher_integrate, :search, :sdk_download, :archive ]
-    has_permission_on :offers, :to => [ :show, :update, :download_udids ]
+    has_permission_on :offers, :to => [ :show, :update, :download_udids, :percentile ]
     has_permission_on :currencies, :to => [ :show, :update, :new, :create, :reset_test_device ]
     has_permission_on :virtual_goods, :to => [ :show, :update, :new, :create, :index, :reorder ]
     has_permission_on :reporting, :to => [ :index, :show, :export ]
@@ -43,6 +43,7 @@ authorization do
     has_permission_on :partners, :to => [ :update, :managed_by ]
     has_permission_on :apps, :to => [ :unarchive ]
     has_permission_on :partners_offer_discounts, :to => [ :index, :new, :create, :deactivate ]
+    has_permission_on :preview_experiments, :to => [ :index, :show ]
   end
   
   role :raffle_manager do

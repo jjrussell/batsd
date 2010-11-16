@@ -1,0 +1,15 @@
+- include_blank ||= false
+- experiment_options = (include_blank ? "<option></option>" : "") + options_for_select(@experiments.collect { |k, v| [ k.to_s.titleize + " (#{v})", v.to_s ] }, params[:id])
+- form_tag('', :class => 'tjform', :method => :get, :id => 'experiments-form') do
+  %table
+    %tr
+      %th= label_tag 'experiments-list', 'Select Experiment:'
+      %td= select_tag 'experiments-list', experiment_options
+      
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('#experiments-list').change(function() {
+        window.location = '#{preview_experiments_url}' + '/' + $('#experiments-list').val();
+      });
+    });
