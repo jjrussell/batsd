@@ -76,7 +76,7 @@ private
     if @is_gambit
       render :text => 'ERROR:FATAL'
     else
-      render(:template => 'layouts/error', :status => 500)
+      render(:template => 'layouts/error', :status => 403)
     end
   end
   
