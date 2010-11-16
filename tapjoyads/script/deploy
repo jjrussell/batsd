@@ -117,7 +117,7 @@ private
     system("git tag -a -m 'Creating deploy tag #{@options[:version]}' #{@options[:version]}")
     
     puts "Pushing new version."
-    system("git push --tags")
+    system("git push --tags origin master")
   end
   
   def execute_cloudrun
