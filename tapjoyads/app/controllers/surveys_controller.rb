@@ -9,6 +9,12 @@ class SurveysController < ApplicationController
   end
   
   def create
+    unless verify_params([:gender, :birth_year, :postal_code], :render_missing_text => false)
+      @missing_params = true
+      render :action => :new
+      return
+    end
+    
     if @click.installed_at.nil?
       answers = {
         :gender => params[:gender][0, 10],

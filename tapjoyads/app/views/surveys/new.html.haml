@@ -1,7 +1,7 @@
 .message
   Instructions: Fill out this short survey
 
-#error.message{:style => 'display: none;'}
+#error.message{:style => "#{@missing_params ? '' : 'display: none;'}" }
   Please complete all questions!
 
 #main
@@ -36,7 +36,7 @@
       var birthYear = document.getElementById('birth_year').value;
       var postalCode = document.getElementById('postal_code').value;
       
-      if (!isGenderChecked || !birthYear || ! postalCode) {
+      if (!isGenderChecked || !birthYear || !postalCode) {
         document.getElementById('error').style.display = "block";
         return false;
       } else {
