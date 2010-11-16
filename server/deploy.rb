@@ -9,16 +9,15 @@ if `pwd` != "/home/webuser/tapjoyserver\n"
   exit
 end
 
-system "git checkout master"
-system "git pull --tags origin master"
-
 server_type = `server/server_type.rb`
 current_version = YAML::load_file('server/version.yaml')['current']
 deploy_version = ARGV.first || current_version
 
 puts "Deploying version: #{deploy_version}"
 
-system "git checkout #{deploy_version}"
+system "git checkout master 2>&1"
+system "git pull --tags 2>&1"
+system "git checkout #{deploy_version} 2>&1"
 
 if server_type == 'jobs' || server_type == 'masterjobs'
   `cp tapjoyads/config/newrelic-jobs.yml tapjoyads/config/newrelic.yml`
