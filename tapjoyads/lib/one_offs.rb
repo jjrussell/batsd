@@ -8,13 +8,12 @@ class OneOffs
   # returns a hash of yesterday's store_click counts by country for the given advertiser_app_id
   def self.installs_by_country_for_advertiser_app_id(advertiser_app_id, start_date, end_date)
     st = Time.zone.parse(start_date).to_f.to_s
-    et = Time.zone.parse(end_date).endofday.to_f.to_s
+    et = Time.zone.parse(end_date).end_of_day.to_f.to_s
     counts = {}
     50.times do |i|
-      items = Reward.select(:where => "advertiser_app_id = '#{advertiser_app_id}' and created >= '#{st}' and created <= '#{et}'", :domain_name => "rewards_#{i}")[:items]
-      items.each do |item|
-        country = item.get('country')
-        counts[country] = ((counts[country] || 0) + 1)
+      Reward.select(:where => "advertiser_app_id = '#{advertiser_app_id}' and created >= '#{st}' and created < '#{et}'", :domain_name => "rewards_#{i}") do |reward|
+       country = reward.country
+       counts[country] = ((counts[country] || 0) + 1)
       end
     end
     counts
