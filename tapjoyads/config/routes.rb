@@ -78,6 +78,7 @@ ActionController::Routing::Routes.draw do |map|
     m.search_offers 'search/offers', :action => 'offers'
   end
   map.premier 'premier', :controller => :premier, :action => :edit
+  map.resources :preview_experiments, :only => [ :index, :show ]
 
   # Special paths:
   map.connect 'log_device_app/:action/:id', :controller => 'connect'

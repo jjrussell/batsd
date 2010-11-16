@@ -17,7 +17,7 @@ class Offer < ActiveRecord::Base
   
   CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1 }
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -352,7 +352,8 @@ class Offer < ActiveRecord::Base
     weights = { :conversion_rate => 0, :price => 0, :avg_revenue => 0, :bid => 0 }.merge(weights)
     self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send("normal_#{key}")) }
     self.rank_score += rand * random_weight
-    self.rank_score += rank_boosts.active.sum(:amount) * boost_weight
+    self.rank_boost = rank_boosts.active.sum(:amount)
+    self.rank_score += rank_boost * boost_weight
     self.rank_score += 999999 if item_type == 'RatingOffer'
   end
   
