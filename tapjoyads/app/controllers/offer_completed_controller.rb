@@ -8,6 +8,11 @@ class OfferCompletedController < ApplicationController
       params[:click_key] = params[:subid1]
     end
     
+    # Boku sends the click_key as param
+    if params[:param].present?
+      params[:click_key] = params[:param]
+    end
+    
     if params[:click_key].blank?
       @error_message = "click_key required"
       notify_and_render_error and return
