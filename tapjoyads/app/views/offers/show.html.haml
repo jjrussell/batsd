@@ -31,11 +31,11 @@
             = error_message_on @offer, :bid
             - if Rails.env == 'development' || request.host == 'test.tapjoy.com'
               #percentile-info.percentile-details
-                This bid approximately places you in the
-                %span#percentile= @offer.estimated_percentile.ordinalize rescue 'N/A'
-                percentile of offers.
+                This bid places you above approximately
+                %span#percentile= "#{@offer.estimated_percentile}%" rescue 'N/A'
+                of offers on the offerwall.
               #percentile-info-loading.percentile-details{ :style => 'display: none' }
-                Estimating new percentile...
+                Estimating new offerwall placement...
               .percentile-details
                 The bid is just one of many factors affecting your offerwall ranking.
         - if Rails.env == 'development' || request.host == 'test.tapjoy.com'
@@ -49,7 +49,7 @@
               - if @offer.partner.exclusivity_level.nil?
                 .premier
                   Want to reduce your payment?
-                  = link_to 'Learn more about the Tapjoy Premier Program', premier_path
+                  = link_to 'Learn more about the Tapjoy Premier Program', premier_path, :tabindex => 97
         %tr
           %th
             Offer Name
@@ -71,7 +71,7 @@
             #help_balance.help ?
           %td
             = number_to_currency(current_partner.balance / 100.0)
-            = link_to 'Add funds', add_funds_billing_path, :class => 'addfunds'
+            = link_to 'Add funds', add_funds_billing_path, :class => 'addfunds', :tabindex => 98
         %tr
           %th
             Tapjoy Enabled
@@ -134,8 +134,8 @@
 
       var setEstimatedBudget = function() {
         var bid = stringToNumber($('#offer_bid').val());
-        var installLimit = stringToNumber($('#offer_daily_budget').val())
-        budget = 'Unlimited'
+        var installLimit = stringToNumber($('#offer_daily_budget').val());
+        budget = 'Unlimited';
         if (installLimit > 0) {
           budget = numberToCurrency(bid * installLimit);
         }
@@ -156,14 +156,14 @@
         $.ajax({
           data: { "bid" : $('#offer_bid').val() },
           beforeSend: function() {
-            $('#percentile-info').hide()
-            $('#percentile-info-loading').show()
+            $('#percentile-info').hide();
+            $('#percentile-info-loading').show();
           },
           success: function(result) {
-            $('#percentile').html(result.ordinalized_percentile);
-            $('#percentile-info-loading').hide()
-            $('#percentile-info').show()
-            $('#percentile').effect('highlight', {}, 1500)
+            $('#percentile').html(result.percentile + "%");
+            $('#percentile-info-loading').hide();
+            $('#percentile-info').show();
+            $('#percentile').effect('highlight', {}, 1500);
           },
           type: 'post',
           url: '#{percentile_app_offer_url(@app, @offer)}'
