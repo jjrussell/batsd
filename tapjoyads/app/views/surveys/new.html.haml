@@ -1,7 +1,7 @@
 .message
   Instructions: Fill out this short survey
 
-#error.message{:style => "#{@missing_params ? '' : 'display: none;'}" }
+#error.message{:style => (@missing_params ? '' : 'display: none;') }
   Please complete all questions!
 
 #main
