@@ -358,7 +358,8 @@ class Offer < ActiveRecord::Base
   
   def estimated_percentile(weights = CONTROL_WEIGHTS)
     normalize_stats(Offer.get_stats_for_ranks)
-    calculate_rank_score(weights)
+    calculate_rank_score(weights.merge({ :random => 0 }))
+    self.rank_score += weights[:random] * 0.5
     ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' }
     worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
     100 * worse_offers.size / ranked_offers.size
