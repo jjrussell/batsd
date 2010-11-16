@@ -7,6 +7,8 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
   def on_message(message)
     offer = Offer.find(message.to_s)
     
+    return if offer.payment == 0
+    
     Rails.logger.info "Calculating new show_rate for offer #{offer.name} (#{offer.id})"
     
     old_show_rate = offer.show_rate
