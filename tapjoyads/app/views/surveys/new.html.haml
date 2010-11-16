@@ -27,23 +27,23 @@
         = label_tag(:postal_code, "What is your postal code?")
       .answer
         = text_field_tag(:postal_code, nil, :pattern => "[0-9]*")
-    = submit_tag("Submit Survey", :onclick => 'return checkValues()')
+    = submit_tag("Submit Survey", :onclick => 'return checkValues();')
 
 - content_for :page_javascript do
   :plain
     function checkValues() {
-      var isGenderChecked = document.getElementById('gender_male').checked || document.getElementById('gender_female').checked
-      var birthYear = document.getElementById('birth_year').value
-      var postalCode = document.getElementById('postal_code').value
+      var isGenderChecked = document.getElementById('gender_male').checked || document.getElementById('gender_female').checked;
+      var birthYear = document.getElementById('birth_year').value;
+      var postalCode = document.getElementById('postal_code').value;
       
       if (!isGenderChecked || !birthYear || ! postalCode) {
-        document.getElementById('error').style.display = "block"
+        document.getElementById('error').style.display = "block";
         return false;
       } else {
         return true;
       }
     }
-
+  
 - content_for :page_styles do
   :plain
     .message {
