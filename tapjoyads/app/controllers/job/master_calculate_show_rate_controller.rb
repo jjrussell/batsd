@@ -9,7 +9,7 @@ class Job::MasterCalculateShowRateController < Job::JobController
       next if offer.payment == 0
       
       time = Benchmark.realtime { Sqs.send_message(QueueNames::CALCULATE_SHOW_RATE, offer.id) }
-      sleep((20.minutes.to_f / count) - time)
+      sleep([(20.minutes.to_f / count) - time, 0].max)
     end
     
     render :text => 'ok'
