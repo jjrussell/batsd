@@ -2,7 +2,7 @@ class SurveysController < ApplicationController
   
   layout 'iphone'
   
-  before_filter :read_click
+  before_filter :read_click, :only => [ :create ]
   
   def new
     return unless verify_params([:udid, :click_key])
@@ -27,7 +27,7 @@ class SurveysController < ApplicationController
     device.save
     
     if Rails.env == 'production'
-      Downloader.get "http://ws.tapjoyads.com/offer_completed?click_key=#{params[:click_key]}"
+      Downloader.get_with_retry "http://ws.tapjoyads.com/offer_completed?click_key=#{params[:click_key]}"
     end
     
     render :template => "surveys/survey_complete"

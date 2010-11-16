@@ -1,5 +1,5 @@
 .message
-  Instructions: Fill out this short survey to earn #{@click.currency_reward} #{@currency.name}
+  Instructions: Fill out this short survey
 
 #error.message{:style => 'display: none;'}
   Please complete all questions!
@@ -11,7 +11,7 @@
     
     .field
       .question
-        Your gender?
+        What is your gender?
       .answer
         = radio_button_tag(:gender, "male")
         = label_tag(:gender_male, "Male")
@@ -19,12 +19,12 @@
         = label_tag(:gender_female, "Female")
     .field
       .question
-        = label_tag(:birth_year, "Year you were born?")
+        = label_tag(:birth_year, "What year you were born?")
       .answer
         = text_field_tag(:birth_year, nil, :pattern => "[0-9]*")
     .field
       .question
-        = label_tag(:postal_code, "Postal code where you live?")
+        = label_tag(:postal_code, "What is your postal code?")
       .answer
         = text_field_tag(:postal_code, nil, :pattern => "[0-9]*")
     = submit_tag("Submit Survey", :onclick => 'return checkValues()')
