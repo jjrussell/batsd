@@ -28,14 +28,14 @@ elsif server_type == 'web'
   `cp tapjoyads/config/newrelic-web.yml tapjoyads/config/newrelic.yml`
 end
 
-puts "Stopping jobs"
-`tapjoyads/script/jobs stop`
-`ps aux | grep -v grep | grep jobs`.each { |line| `kill #{line.split(' ')[1]}` }
-
-puts "Restarting apache"
-`touch tapjoyads/tmp/restart.txt`
-
 if server_type == 'jobs' || server_type == 'masterjobs'
+  puts "Stopping jobs"
+  `tapjoyads/script/jobs stop`
+  `ps aux | grep -v grep | grep jobs`.each { |line| `kill #{line.split(' ')[1]}` }
+
   puts "Starting jobs"
   `tapjoyads/script/jobs start -- production`
 end
+
+puts "Restarting passenger"
+`touch tapjoyads/tmp/restart.txt`
