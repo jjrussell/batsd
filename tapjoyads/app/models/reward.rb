@@ -33,25 +33,25 @@ class Reward < SimpledbShardedResource
     if type == 'install'
       Mc.increment_count(
         Stats.get_memcache_count_key('installs_revenue', publisher_app_id, created), 
-        false, 1.week, publisher_amount)
+        false, 1.day, publisher_amount)
         
       Mc.increment_count(
         Stats.get_memcache_count_key('installs_spend', offer_id, created), 
-        false, 1.week, advertiser_amount)
+        false, 1.day, advertiser_amount)
     elsif type == 'offer' || type == 'generic'
       Mc.increment_count(
         Stats.get_memcache_count_key('offers_revenue', publisher_app_id, created), 
-        false, 1.week, publisher_amount)
+        false, 1.day, publisher_amount)
       
       Mc.increment_count(
         Stats.get_memcache_count_key('installs_spend', offer_id, created), 
-        false, 1.week, advertiser_amount)
+        false, 1.day, advertiser_amount)
     end
     
     if displayer_app_id.present?
       Mc.increment_count(
         Stats.get_memcache_count_key('display_revenue', displayer_app_id, created),
-        false, 1.week, displayer_amount)
+        false, 1.day, displayer_amount)
     end
   end
   
