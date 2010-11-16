@@ -11,10 +11,9 @@ class OneOffs
     et = Time.zone.parse(end_date).end_of_day.to_f.to_s
     counts = {}
     50.times do |i|
-      items = Reward.select(:where => "advertiser_app_id = '#{advertiser_app_id}' and created >= '#{st}' and created <= '#{et}'", :domain_name => "rewards_#{i}")[:items]
-      items.each do |item|
-        country = item.get('country')
-        counts[country] = ((counts[country] || 0) + 1)
+      Reward.select(:where => "advertiser_app_id = '#{advertiser_app_id}' and created >= '#{st}' and created < '#{et}'", :domain_name => "rewards_#{i}") do |reward|
+       country = reward.country
+       counts[country] = ((counts[country] || 0) + 1)
       end
     end
     counts
