@@ -22,7 +22,7 @@ authorization do
   
   role :payops do
     includes :tools
-    has_permission_on :tools, :to => [ :new_order, :create_order, :payouts, :create_payout, :money, :monthly_data, :new_transfer, :create_transfer, :unresolved_clicks, :create_connect ]
+    has_permission_on :tools, :to => [ :new_order, :create_order, :payouts, :create_payout, :money, :monthly_data, :new_transfer, :create_transfer ]
   end
   
   role :executive do
@@ -36,7 +36,7 @@ authorization do
     includes :payops
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids ]
     has_permission_on :search, :to => [ :offers ]
-    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user ]
+    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :unresolved_clicks, :resolve_clicks ]
     has_permission_on :activities, :to => [ :index ]
     has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info ]
     has_permission_on :rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]

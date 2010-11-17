@@ -188,13 +188,15 @@ class ToolsController < WebsiteController
     end
   end
 
-  def create_connect
-    # something
+  def resolve_clicks
+    click = Click.new(:key => params[:click_id])
+    click.clicked_at = Time.zone.now - 1.minute
+    click.save
+    redirect_to :controller => 'connect', :action => 'index', :app_id => click.advertiser_app_id, :udid => click.udid
   end
 
   def unresolved_clicks
-# app = 0fd33f9d-5edf-4377-941c-3b93e5814f39
-    @udid = params[:udid] || 'c73e730913822be833766efffc7bb1cf239d855a'
+    @udid = params[:udid]
     @num_hours = params[:num_hours].nil? ? 48 : params[:num_hours].to_i
     @clicks = []
     cut_off = (Time.zone.now - @num_hours.hours).to_f

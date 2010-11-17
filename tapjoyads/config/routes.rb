@@ -62,8 +62,8 @@ ActionController::Routing::Routes.draw do |map|
     :collection => { :new_order => :get, :create_order => :post, :monthly_data => :get, :new_transfer => :get, :create_transfer => :post,
                      :payouts => :get, :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get,
                      :sdb_metadata => :get, :reset_device => :get, :failed_downloads => :get, :sanitize_users => :get,
-                     :unresolved_clicks => :get },
-    :member => { :create_payout => :post, :create_transfer => :post, :create_connect => :post }
+                     :unresolved_clicks => :get, :resolve_clicks => :post },
+    :member => { :create_payout => :post, :create_transfer => :post }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get }
   map.resources :raffle_manager, :only => [ :index, :edit, :update, :new, :create ]
