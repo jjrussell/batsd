@@ -190,9 +190,28 @@ class ToolsController < WebsiteController
 
   def resolve_clicks
     click = Click.new(:key => params[:click_id])
-    click.clicked_at = Time.zone.now - 1.minute
+
+    if click.clicked_at < Time.zone.now - 47.hours
+      click.clicked_at = Time.zone.now - 1.minute
+      flash[:error] = "Because the click was from 48+ hours ago this might fail. If it doens't go through, try again in a few minutes."
+    end
+
+    if click.currency_id.nil? # old clicks don't have currency_id
+      currencies = App.find_by_id(click.publisher_app_id).currencies
+      if currencies.length == 1
+        click.currency_id = currencies.first.id
+      else
+        flash[:error] = "Ambiguity -- the publisher app has more than one currency and currency_id was not specified."
+      end
+    end
+
     click.save
-    redirect_to :controller => 'connect', :action => 'index', :app_id => click.advertiser_app_id, :udid => click.udid
+
+    if Rails.env == 'production'
+      Downloader.get_with_retry "http://ws.tapjoyads.com/connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
+    end
+
+    redirect_to :back
   end
 
   def unresolved_clicks
