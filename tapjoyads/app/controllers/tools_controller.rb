@@ -188,6 +188,27 @@ class ToolsController < WebsiteController
     end
   end
 
+  def create_connect
+    # something
+  end
+
+  def unresolved_clicks
+# app = 0fd33f9d-5edf-4377-941c-3b93e5814f39
+    @udid = params[:udid] || 'c73e730913822be833766efffc7bb1cf239d855a'
+    @num_hours = params[:num_hours].nil? ? 48 : params[:num_hours].to_i
+    @clicks = []
+    cut_off = (Time.zone.now - @num_hours.hours).to_f
+
+    if @udid
+      NUM_CLICK_DOMAINS.times do |i|
+        Click.select(:domain_name => "clicks_#{i}", :where => "itemName() like '#{@udid}.%'") do |click|
+          @clicks << [click.clicked_at, click] if click.installed_at.nil? && click.clicked_at.to_f > cut_off
+        end
+      end
+    end
+    @clicks.sort!
+  end
+
   def sanitize_users
     Partner.using_slave_db do
       @partners = Partner.scoped(

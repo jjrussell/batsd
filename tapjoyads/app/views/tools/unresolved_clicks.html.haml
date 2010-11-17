@@ -1,0 +1,35 @@
+- @title = "Unresolved clicks tool"
+- form_tag unresolved_clicks_tools_path, :method => :get do
+  Connects from
+  = text_field_tag :udid, @udid, :style => 'width: 300px;'
+  for the last
+  = text_field_tag :num_hours, @num_hours, :style => 'width: 30px;'
+  hours
+  = submit_tag 'Refresh'
+%table
+  %thead
+    %tr
+      %th{:colspan => 3} Last run
+      %th Pub app
+      %th Adv app
+      %th Reward
+  %tbody
+    - @clicks.each do |arr|
+      %tr
+        - clicked_at = arr[0]
+        - click = arr[1]
+        - pub = App.find_by_id(click.publisher_app_id)
+        - adv = App.find_by_id(click.advertiser_app_id)
+        %td= clicked_at.to_s(:day)
+        %td.right-align= clicked_at.to_s(:ampm)
+        %td.right-align (#{time_ago_in_words(clicked_at)} ago)
+        %td= link_to(pub.name, pub)
+        %td= link_to(adv.name, adv)
+        %td= click.currency_reward
+
+- content_for :page_styles do
+  :plain
+    .right-align {
+      text-align: right;
+    }
+

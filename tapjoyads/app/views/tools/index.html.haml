@@ -31,3 +31,5 @@
     %li= link_to 'Sanitizer Users Table', sanitize_users_tools_path
   - if permitted_to? :index, :preview_experiments
     %li= link_to 'Preview Experiment Offerwalls', preview_experiments_path
+  - if permitted_to? :unresolved_clicks, :tools
+    %li= link_to 'Unresolved Clicks', unresolved_clicks_tools_path
