@@ -54,10 +54,10 @@ private
     device = Device.new(:key => params[:udid])
     publisher_app_ids = []
     @@allowed_publisher_app_ids.each do |app_id|
-     last_run_time = device.last_run_time(app_id)
-     if last_run_time.present? && last_run_time > now - 1.week
-       publisher_app_ids << app_id
-     end
+      last_run_time = device.last_run_time(app_id)
+      if last_run_time.present? && last_run_time > now - 1.week
+        publisher_app_ids << app_id
+      end
     end
     
     unless publisher_app_ids.empty?
@@ -72,9 +72,18 @@ private
          :geoip_data => geoip_data,
          :required_length => 25,
          :reject_rating_offer => true)
+
+      displayer_currency = Currency.find_in_cache(params[:app_id]) rescue nil
+      disabled_offer_ids = displayer_currency.nil? ? Set.new : displayer_currency.get_disabled_offer_ids
+      disabled_partner_ids = displayer_currency.nil? ? Set.new : displayer_currency.get_disabled_partner_ids
     
       offer_list.reject! do |offer|
-        offer.is_paid? || offer.conversion_rate < 0.5 || offer.item_id == params[:app_id] || offer.name.size > 30
+        offer.is_paid? || 
+        offer.conversion_rate < 0.5 || 
+        offer.item_id == params[:app_id] || 
+        offer.name.size > 30 ||
+        disabled_offer_ids.include?(offer.id) ||
+        disabled_partner_ids.include?(offer.partner_id)
       end
       srand
       offer = offer_list[rand(offer_list.size)]
