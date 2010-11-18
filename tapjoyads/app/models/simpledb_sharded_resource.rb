@@ -9,12 +9,19 @@ class SimpledbShardedResource < SimpledbResource
       super(options)
     else
       where = options.delete(:where)
-      retries = options.delete(:retries) { 10 }
       raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
       
-      all_domain_names.inject(0) do |sum, current_domain_name|
-        sum + SimpledbResource.count(:domain_name => current_domain_name, :where => where, :retries => retries)        
+      hydra = Typhoeus::Hydra.new
+      count = 0
+
+      all_domain_names.each do |current_domain_name|
+        SimpledbResource.count_async(:domain_name => current_domain_name, :where => where, :hydra => hydra) do |c|
+          count += c
+        end
       end
+
+      hydra.run
+      count
     end
   end
   
