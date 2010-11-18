@@ -118,6 +118,33 @@ class ReportingController < WebsiteController
         }
       },
 
+      :display_ads_data => {
+        :name => 'Display ads',
+        :intervals => intervals,
+        :xLabels => @appstats.x_labels,
+        :main => {
+          :names => [ 'Ads requested', 'Ads shown', 'Clicks', 'Conversions' ],
+          :data => [ @appstats.stats['display_ads_requested'], @appstats.stats['display_ads_shown'], @appstats.stats['display_clicks'], @appstats.stats['display_conversions'] ],
+          :totals => [ @appstats.stats['display_ads_requested'].sum, @appstats.stats['display_ads_shown'].sum, @appstats.stats['display_clicks'].sum, @appstats.stats['display_conversions'].sum ]
+        },
+        :right => {
+          :unitPrefix => '$',
+          :names => [ 'Revenue', 'eCPM' ],
+          :data => [ @appstats.stats['display_revenue'].map { |i| i / 100.0 }, @appstats.stats['display_ecpm'].map { |i| i / 100.0 } ],
+          :stringData => [ @appstats.stats['display_revenue'].map { |i| number_to_currency(i / 100.0) }, @appstats.stats['display_ecpm'].map { |i| number_to_currency(i / 100.0) } ],
+          :totals => [ number_to_currency(@appstats.stats['display_revenue'].sum / 100.0), @appstats.stats['display_ads_shown'].sum > 0 ? number_to_currency(@appstats.stats['display_revenue'].sum.to_f / (@appstats.stats['display_ads_shown'].sum / 1000.0) / 100.0) : '$0.00' ]
+        },
+        :extra => {
+          :names => [ 'Fill rate', 'CTR', 'CVR' ],
+          :data => [ @appstats.stats['display_fill_rate'].map { |r| "%.0f%" % (r.to_f * 100.0) },
+                     @appstats.stats['display_ctr'].map { |r| "%.0f%" % (r.to_f * 100.0) },
+                     @appstats.stats['display_cvr'].map { |r| "%.0f%" % (r.to_f * 100.0) } ],
+          :totals => [ @appstats.stats['display_ads_requested'].sum > 0 ? ("%.1f%" % (@appstats.stats['display_ads_shown'].sum.to_f / @appstats.stats['display_ads_requested'].sum * 100.0)) : '-',
+                       @appstats.stats['display_ads_shown'].sum > 0 ? ("%.1f%" % (@appstats.stats['display_clicks'].sum.to_f / @appstats.stats['display_ads_shown'].sum * 100.0)) : '-',
+                       @appstats.stats['display_clicks'].sum > 0 ? ("%.1f%" % (@appstats.stats['display_conversions'].sum.to_f / @appstats.stats['display_clicks'].sum * 100.0)) : '-' ]
+        }
+      },
+
       :granularity => @granularity,
       :date => @start_time.to_date.to_s(:mdy),
       :end_date => @end_time.to_date.to_s(:mdy)
