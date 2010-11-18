@@ -34,6 +34,7 @@
   - if @offer.is_publisher_offer?
     #published_offers.graph
     #offerwall_views.graph
+    #display_ads.graph
 
 .clear
 
@@ -59,6 +60,7 @@
       if (#{@offer.is_publisher_offer?}) {
         Tapjoy.Graph.drawLargeGraph(data.published_offers_data, 'published_offers');
         Tapjoy.Graph.drawLargeGraph(data.offerwall_views_data, 'offerwall_views');
+        Tapjoy.Graph.drawLargeGraph(data.display_ads_data, 'display_ads');
       }
       $('#date').val(data.date);
       $('#end_date').val(data.end_date);
