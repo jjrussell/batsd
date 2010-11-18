@@ -159,23 +159,6 @@ class WebRequest < SimpledbResource
   def self.count(options = {})
     date_string = options.delete(:date) { Time.zone.now.to_date.to_s(:db) }
     where =       options.delete(:where)
-    retries =     options.delete(:retries) { 10 }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
-    count = 0
-    MAX_WEB_REQUEST_DOMAINS.times do |i|
-      count += SimpledbResource.count(
-          :domain_name => "web-request-#{date_string}-#{i}", 
-          :where => where,
-          :retries => retries)
-    end
-    
-    count
-  end
-  
-  def self.count_async(options = {})
-    date_string = options.delete(:date) { Time.zone.now.to_date.to_s(:db) }
-    where =       options.delete(:where)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     hydra = Typhoeus::Hydra.new
