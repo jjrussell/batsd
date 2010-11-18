@@ -188,6 +188,48 @@ class ToolsController < WebsiteController
     end
   end
 
+  def resolve_clicks
+    click = Click.new(:key => params[:click_id])
+
+    if click.clicked_at < Time.zone.now - 47.hours
+      click.clicked_at = Time.zone.now - 1.minute
+      flash[:error] = "Because the click was from 48+ hours ago this might fail. If it doens't go through, try again in a few minutes."
+    end
+
+    if click.currency_id.nil? # old clicks don't have currency_id
+      currencies = App.find_by_id(click.publisher_app_id).currencies
+      if currencies.length == 1
+        click.currency_id = currencies.first.id
+      else
+        flash[:error] = "Ambiguity -- the publisher app has more than one currency and currency_id was not specified."
+      end
+    end
+
+    click.save
+
+    if Rails.env == 'production'
+      Downloader.get_with_retry "http://ws.tapjoyads.com/connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
+    end
+
+    redirect_to :back
+  end
+
+  def unresolved_clicks
+    @udid = params[:udid]
+    @num_hours = params[:num_hours].nil? ? 48 : params[:num_hours].to_i
+    @clicks = []
+    cut_off = (Time.zone.now - @num_hours.hours).to_f
+
+    if @udid
+      NUM_CLICK_DOMAINS.times do |i|
+        Click.select(:domain_name => "clicks_#{i}", :where => "itemName() like '#{@udid}.%'") do |click|
+          @clicks << [click.clicked_at, click] if click.installed_at.nil? && click.clicked_at.to_f > cut_off
+        end
+      end
+    end
+    @clicks.sort!
+  end
+
   def sanitize_users
     Partner.using_slave_db do
       @partners = Partner.scoped(

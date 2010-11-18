@@ -1,18 +1,8 @@
 class OfferCompletedController < ApplicationController
   
+  before_filter :setup
+  
   def index
-    @is_gambit = false
-    # Gambit sends the click_key as subid1
-    if params[:subid1].present?
-      @is_gambit = true
-      params[:click_key] = params[:subid1]
-    end
-    
-    # Boku sends the click_key as param
-    if params[:param].present?
-      params[:click_key] = params[:param]
-    end
-    
     if params[:click_key].blank?
       @error_message = "click_key required"
       notify_and_render_error and return
@@ -68,9 +58,29 @@ class OfferCompletedController < ApplicationController
   
 private
   
+  def setup
+    @source = nil
+    
+    if params[:source] == 'gambit'
+      @source = 'gambit'
+      params[:click_key] = params[:subid1]
+    elsif params[:source] == 'boku'
+      @source = 'boku'
+      @trx_id = params['trx-id']
+      if request.query_parameters[:action] == 'billingresult' && params['result-code'] == '0' && params[:param].present?
+        params[:click_key] = params[:param]
+      else
+        @error_message = "unexpected boku callback"
+        notify_and_render_error and return
+      end
+    end
+  end
+  
   def render_success
-    if @is_gambit
+    if @source == 'gambit'
       render :text => 'OK'
+    elsif @source == 'boku'
+      render(:template => 'layouts/boku')
     else
       render(:template => 'layouts/success')
     end
@@ -78,8 +88,10 @@ private
   
   def notify_and_render_error
     Notifier.alert_new_relic(GenericOfferCallbackError, @error_message, request, params)
-    if @is_gambit
+    if @source == 'gambit'
       render :text => 'ERROR:FATAL'
+    elsif @source == 'boku'
+      render(:template => 'layouts/boku')
     else
       render(:template => 'layouts/error', :status => 403)
     end
