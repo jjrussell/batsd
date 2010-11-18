@@ -196,7 +196,7 @@ class App < ActiveRecord::Base
   end
 
   def display_money_share
-    0.4
+    0.6
   end
 
 private

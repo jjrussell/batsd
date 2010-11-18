@@ -137,6 +137,18 @@ class Appstats
       end
     end
     
+    #display_ecpm
+    if @stats['display_ads_shown'] and @stats['display_revenue']
+      @stats['display_ecpm'] = []
+      @stats['display_ads_shown'].length.times do |i|
+        if @stats['display_ads_shown'][i] == 0
+          @stats['display_ecpm'][i] = 0
+        else
+          @stats['display_ecpm'][i] = @stats['display_revenue'][i].to_f / (@stats['display_ads_shown'][i] / 1000.0)
+        end
+      end
+    end
+    
     get_labels_and_intervals(@start_time, @end_time) if @include_labels
   end
   

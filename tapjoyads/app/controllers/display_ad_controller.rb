@@ -2,12 +2,26 @@ class DisplayAdController < ApplicationController
   
   # A hard-coded list of publisher apps that support ABC ads.
   @@allowed_publisher_app_ids = Set.new([
+      # Brooklyn Packet Co.
       "41df65f0-593c-470b-83a4-37be66740f34", # Tap Resort
       "262294a6-0304-48d9-a6d0-e0b7bf60f345", # Tap Resport Party
+      "bda9f852-0548-40c3-906e-f0b85709c6be", # Tap Galaxy
+      "918bc82f-edc6-4ebe-b5d2-073f8484038d", # Tiny Chef
+      
+      # BayView Labs
       "9dfa6164-9449-463f-acc4-7a7c6d7b5c81", # TapFish
       "b91369a6-36bc-4ede-80e5-009f48466539", # Tap Birds
       "0fd33f9d-5edf-4377-941c-3b93e5814f39", # Tap Ranch
+      
+      # Streetview Labs
       "c3fc6075-57a9-41d1-b0ee-e1c0cbbe4ef3", # Tap Zoo
+      "b23efaf0-b82b-4525-ad8c-4cd11b0aca91", # Tap Store
+      
+      # Get Set Games
+      "d85f0eb8-2b78-4a41-b41c-d15e2407f115", # Mega Jump
+      
+      # Playforge
+      "e26bd54e-a9ec-4f60-b84d-82b4f678343a", # Zombie Farm
       ])
   
   before_filter :setup, :except => :image

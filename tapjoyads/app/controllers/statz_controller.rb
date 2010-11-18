@@ -170,10 +170,10 @@ class StatzController < WebsiteController
       },
       :right => {
         :unitPrefix => '$',
-        :names => [ 'Revenue' ],
-        :data => [ appstats.stats['display_revenue'].map { |i| i / 100.0 } ],
-        :stringData => [ appstats.stats['display_revenue'].map { |i| number_to_currency(i / 100.0) } ],
-        :totals => [ number_to_currency(appstats.stats['display_revenue'].sum / 100.0) ]
+        :names => [ 'Revenue', 'eCPM' ],
+        :data => [ appstats.stats['display_revenue'].map { |i| i / 100.0 }, appstats.stats['display_ecpm'].map { |i| i / 100.0 } ],
+        :stringData => [ appstats.stats['display_revenue'].map { |i| number_to_currency(i / 100.0) }, appstats.stats['display_ecpm'].map { |i| number_to_currency(i / 100.0) } ],
+        :totals => [ number_to_currency(appstats.stats['display_revenue'].sum / 100.0), appstats.stats['display_ads_shown'].sum > 0 ? number_to_currency(appstats.stats['display_revenue'].sum.to_f / (appstats.stats['display_ads_shown'].sum / 1000.0) / 100.0) : '$0.00' ]
       },
       :extra => {
         :names => [ 'Fill rate', 'CTR', 'CVR' ],
