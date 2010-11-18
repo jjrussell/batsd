@@ -10,7 +10,7 @@ class OneOffs
     st = Time.zone.parse(start_date).to_f.to_s
     et = Time.zone.parse(end_date).end_of_day.to_f.to_s
     counts = {}
-    50.times do |i|
+    NUM_REWARD_DOMAINS.times do |i|
       Reward.select(:where => "advertiser_app_id = '#{advertiser_app_id}' and created >= '#{st}' and created < '#{et}'", :domain_name => "rewards_#{i}") do |reward|
        country = reward.country
        counts[country] = ((counts[country] || 0) + 1)
@@ -88,7 +88,7 @@ class OneOffs
     end
     
     ok = 0
-    10.times do |i|
+    NUM_POINT_PURCHASES_DOMAINS.times do |i|
       PointPurchases.select :where => "itemName() like '%#{holiday_id}' and added_to_regular is null", :domain_name => "point_purchases_#{i}" do |hpp|
         PointPurchases.transaction :key => hpp.key.gsub(holiday_id, regular_id) do |rpp|
           rpp.points = rpp.points + hpp.points
@@ -117,7 +117,7 @@ class OneOffs
     
     created_date = Time.parse(date).to_f.to_s
     
-    50.times do |i|
+    NUM_REWARD_DOMAINS.times do |i|
       Reward.select :domain_name => "rewards_#{i}", :where => "publisher_app_id = '#{holiday_id}' and created > '#{created_date}' and added_to_db is null" do |r|
         PointPurchases.transaction :key => "#{r.udid}.#{regular_id}" do |pp|
           pp.points = pp.points + r.currency_reward
