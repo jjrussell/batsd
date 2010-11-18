@@ -7,23 +7,24 @@
   hours
   = submit_tag 'Refresh'
 - unless @clicks.blank?
-  %table
+  %table{:cellspacing => 0, :cellspan => 0}
     %thead
       %tr
-        %th{:colspan => 3} Last run
+        %th Clicked
+        %th Last run
         %th Pub app
         %th Adv app
         %th Reward
     %tbody
       - @clicks.each do |arr|
-        %tr
+        %tr.click
           - clicked_at = arr[0]
-          - click = arr[1]
+          - run_at = arr[1]
+          - click = arr[2]
           - pub = App.find_by_id(click.publisher_app_id)
           - adv = App.find_by_id(click.advertiser_app_id)
-          %td= clicked_at.to_s(:day)
-          %td.right-align= clicked_at.to_s(:ampm)
-          %td.right-align (~ #{((Time.zone.now - clicked_at)/1.day).round} days ago)
+          %td= clicked_at.to_s(:pub_ampm)
+          %td= run_at.nil? ? '<b>never</b>' : run_at.to_s(:pub_ampm)
           %td= link_to(pub.name, pub)
           %td= link_to(adv.name, adv)
           %td= click.currency_reward
@@ -35,5 +36,11 @@
   :plain
     .right-align {
       text-align: right;
+    }
+    td {
+      padding: 3px 10px;
+    }
+    .click:hover {
+      background-color: #ddd;
     }
 

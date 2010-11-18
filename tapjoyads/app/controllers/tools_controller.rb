@@ -219,11 +219,17 @@ class ToolsController < WebsiteController
     @num_hours = params[:num_hours].nil? ? 48 : params[:num_hours].to_i
     @clicks = []
     cut_off = (Time.zone.now - @num_hours.hours).to_f
+    device = Device.new(:key => @udid)
 
     if @udid
       NUM_CLICK_DOMAINS.times do |i|
         Click.select(:domain_name => "clicks_#{i}", :where => "itemName() like '#{@udid}.%'") do |click|
-          @clicks << [click.clicked_at, click] if click.installed_at.nil? && click.clicked_at.to_f > cut_off
+          if click.installed_at.nil? && click.clicked_at.to_f > cut_off
+            @clicks << [
+              click.clicked_at,
+              device.last_run_time(click.advertiser_app_id),
+              click]
+          end
         end
       end
     end
