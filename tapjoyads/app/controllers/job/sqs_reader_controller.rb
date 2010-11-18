@@ -123,6 +123,8 @@ private
       unless Dir.glob("#{RAILS_ROOT}/tmp/*.sdb*").empty?
         render :text => 'ok'
       end
+    elsif @queue_name == QueueNames::APP_STATS
+      @num_reads = 5
     end
   end
   
