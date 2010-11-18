@@ -1,6 +1,6 @@
 class Job::SqsReaderController < Job::JobController
 
-  before_filter :limit_sdb_backup_jobs, :only => :index
+  before_filter :setup, :only => :index
 
   def initialize(queue_name)
     @queue_name = queue_name
@@ -117,7 +117,7 @@ private
     end
   end
   
-  def limit_sdb_backup_jobs
+  def setup
     if @queue_name == QueueNames::SDB_BACKUPS
       @num_reads = 1
       unless Dir.glob("#{RAILS_ROOT}/tmp/*.sdb*").empty?
