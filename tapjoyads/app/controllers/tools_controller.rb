@@ -197,7 +197,7 @@ class ToolsController < WebsiteController
     end
 
     if click.currency_id.nil? # old clicks don't have currency_id
-      currencies = App.find_by_id(click.publisher_app_id).currencies
+      currencies = Currency.find_all_by_app_id(click.publisher_app_id)
       if currencies.length == 1
         click.currency_id = currencies.first.id
       else
