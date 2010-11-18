@@ -3,12 +3,41 @@ class OfferCompletedController < ApplicationController
   before_filter :setup
   
   def index
+    complete_conversion
+  end
+  
+  def boku
+    @source = 'boku'
+    @trx_id = params['trx-id']
+    if request.query_parameters[:action] == 'billingresult' && params['result-code'] == '0' && params[:param].present?
+      params[:click_key] = params[:param]
+    else
+      @error_message = "unexpected boku callback"
+      notify_and_render_error and return
+    end
+    
+    complete_conversion
+  end
+  
+  def gambit
+    @source = 'gambit'
+    params[:click_key] = params[:subid1]
+    
+    complete_conversion
+  end
+  
+private
+  
+  def setup
+    @now = Time.zone.now
+  end
+  
+  def complete_conversion
     if params[:click_key].blank?
       @error_message = "click_key required"
       notify_and_render_error and return
     end
     
-    now = Time.zone.now
     click = Click.new(:key => params[:click_key])
     
     if click.is_new
@@ -17,7 +46,7 @@ class OfferCompletedController < ApplicationController
     elsif click.installed_at.present?
       @error_message = "click has already converted (#{click.key})"
       notify_and_render_error and return
-    elsif click.clicked_at < (now - 2.days)
+    elsif click.clicked_at < (@now - 2.days)
       @error_message = "click too old (#{click.key})"
       notify_and_render_error and return
     end
@@ -50,30 +79,10 @@ class OfferCompletedController < ApplicationController
     device.set_app_ran(click.advertiser_app_id, params)
     device.save
     
-    message = { :click => click.serialize(:attributes_only => true), :install_timestamp => now.to_f.to_s }.to_json
+    message = { :click => click.serialize(:attributes_only => true), :install_timestamp => @now.to_f.to_s }.to_json
     Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
     
     render_success
-  end
-  
-private
-  
-  def setup
-    @source = nil
-    
-    if params[:source] == 'gambit'
-      @source = 'gambit'
-      params[:click_key] = params[:subid1]
-    elsif params[:source] == 'boku'
-      @source = 'boku'
-      @trx_id = params['trx-id']
-      if request.query_parameters[:action] == 'billingresult' && params['result-code'] == '0' && params[:param].present?
-        params[:click_key] = params[:param]
-      else
-        @error_message = "unexpected boku callback"
-        notify_and_render_error and return
-      end
-    end
   end
   
   def render_success
