@@ -60,7 +60,7 @@ class ClickController < ApplicationController
     test_reward.publisher_app_id  = params[:publisher_app_id]
     test_reward.advertiser_app_id = params[:publisher_app_id]
     test_reward.offer_id          = params[:publisher_app_id]
-    test_reward.currency_reward   = 10
+    test_reward.currency_reward   = @currency.conversion_rate
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
     test_reward.tapjoy_amount     = 0
