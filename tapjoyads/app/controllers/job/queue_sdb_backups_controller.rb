@@ -1,7 +1,10 @@
 class Job::QueueSdbBackupsController < Job::SqsReaderController
   
+  before_filter :limit_concurrent_jobs, :only => :index
+  
   def initialize
     super(QueueNames::SDB_BACKUPS)
+    @num_reads = 1
   end
   
 private
@@ -16,6 +19,12 @@ private
     message.delete
     
     SdbBackup.backup_domain(domain_name, s3_bucket, backup_options)
+  end
+  
+  def limit_concurrent_jobs
+    if Dir.glob("#{RAILS_ROOT}/tmp/*.sdb").length > 0
+      render :text => 'ok'
+    end
   end
   
 end

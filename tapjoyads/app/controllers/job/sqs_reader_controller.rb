@@ -1,7 +1,5 @@
 class Job::SqsReaderController < Job::JobController
 
-  before_filter :setup, :only => :index
-
   def initialize(queue_name)
     @queue_name = queue_name
     @num_reads = 40
@@ -114,17 +112,6 @@ private
         custom_params["message#{i}"] = val
       end
       NewRelic::Agent.add_custom_parameters(custom_params)
-    end
-  end
-  
-  def setup
-    if @queue_name == QueueNames::SDB_BACKUPS
-      @num_reads = 1
-      unless Dir.glob("#{RAILS_ROOT}/tmp/*.sdb*").empty?
-        render :text => 'ok'
-      end
-    elsif @queue_name == QueueNames::APP_STATS
-      @num_reads = 5
     end
   end
   

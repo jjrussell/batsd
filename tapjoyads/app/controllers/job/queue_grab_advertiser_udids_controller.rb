@@ -2,6 +2,7 @@ class Job::QueueGrabAdvertiserUdidsController < Job::SqsReaderController
 
   def initialize
     super QueueNames::GRAB_ADVERTISER_UDIDS
+    @num_reads = 5
   end
 
 private
