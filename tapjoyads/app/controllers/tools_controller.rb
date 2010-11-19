@@ -66,12 +66,12 @@ class ToolsController < WebsiteController
   
   def create_order
     order_params = sanitize_currency_params(params[:order], [ :amount ])
-    order = Order.new(order_params)
-    log_activity(order)
-    if order.save
-      dollars = order.amount.to_s
+    @order = Order.new(order_params)
+    log_activity(@order)
+    if @order.save
+      dollars = @order.amount.to_s
       dollars[-2..-3] = "." if dollars.length > 1
-      email = order.partner.users.first.email rescue "(no email)"
+      email = @order.partner.users.first.email rescue "(no email)"
       flash[:notice] = "The order of <b>$#{dollars}</b> to <b>#{email}</b> was successfully created."
       redirect_to new_order_tools_path
     else
