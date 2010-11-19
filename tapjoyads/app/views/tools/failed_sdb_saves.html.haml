@@ -8,14 +8,18 @@ Number of domains: #{@failed_sdb_saves.size}
   %thead
     %tr
       %th Domain Name
-      %th This Hour
-      %th Last Hour
+      %th This Hour (SDB)
+      %th Last Hour (SDB)
+      %th This Hour (MC)
+      %th Last Hour (MC)
   %tbody
     - @failed_sdb_saves.each do |domain_name, counts|
       %tr
         %td{ :class => @bad_web_requests[domain_name] ? 'bad_domain' : '' }= domain_name
-        %td= counts[0]
-        %td= counts[1]
+        %td= counts[:sdb_this_hour]
+        %td= counts[:sdb_last_hour]
+        %td= counts[:mc_this_hour]
+        %td= counts[:mc_last_hour]
 
 - content_for :page_javascript do
   :plain
