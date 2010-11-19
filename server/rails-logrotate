@@ -5,6 +5,6 @@
     notifempty
     sharedscripts
     postrotate
-	    touch /home/webuser/tapjoyads/tmp/restart.txt
+	    touch /home/webuser/tapjoyserver/tapjoyads/tmp/restart.txt
     endscript
 }
