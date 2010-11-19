@@ -75,8 +75,6 @@ class SdbBackup
       end
       Rails.logger.info "Deleted #{key_list.length} rows."
     end
-  rescue RightAws::AwsError => e
-    Rails.logger.info "Error while trying to back up #{domain_name}: #{e}"
   ensure
     `rm #{file_name}`
     `rm #{gzip_file_name}`
