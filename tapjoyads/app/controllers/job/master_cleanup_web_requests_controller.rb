@@ -5,7 +5,7 @@ class Job::MasterCleanupWebRequestsController < Job::JobController
     backup_options = { :delete_domain => true }
     domain_names = SimpledbResource.get_domain_names
 
-    2.times do
+    3.times do
       MAX_WEB_REQUEST_DOMAINS.times do |num|
         domain_name = "web-request-#{day.to_s}-#{num}"
 
@@ -15,7 +15,7 @@ class Job::MasterCleanupWebRequestsController < Job::JobController
         Sqs.send_message(QueueNames::SDB_BACKUPS, message)
       end
 
-      day -= 7.days
+      day -= 1.day
     end
 
     render :text => 'ok'
