@@ -26,9 +26,11 @@ class WebsiteController < ApplicationController
   end
 
   def sanitize_currency_params(object, fields)
-    fields.each do |field|
-      if object[field]
-        object[field] = sanitize_currency_param(object[field])
+    unless object.nil?
+      fields.each do |field|
+        if object[field]
+          object[field] = sanitize_currency_param(object[field])
+        end
       end
     end
     object
