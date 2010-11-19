@@ -413,7 +413,7 @@ class SimpledbResource
     request = Typhoeus::Request.new(url)
     request.on_complete do |response|
       if response.code != 200
-        raise RightAws::AwsError.new("Async count encountered an error. Response: #{response.body}", response.code)
+        raise RightAws::AwsError.new("Async count encountered an error. Code: #{response.code}, Response: #{response.body}", response.code)
       end
         
       parser = RightAws::SdbInterface::QSdbSelectParser.new
