@@ -161,7 +161,7 @@ class WebRequest < SimpledbResource
     where =       options.delete(:where)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
-    hydra = Typhoeus::Hydra.new
+    hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
     count = 0
     
     MAX_WEB_REQUEST_DOMAINS.times do |i|
