@@ -160,9 +160,9 @@ class SimpledbResource
   #       result in the save getting written to sqs in order to be saved later.
   def serial_save(options = {})
     options_copy = options.clone
-    write_to_memcache = options.delete(:write_to_memcache) { true }
+    save_to_memcache = options.delete(:write_to_memcache) { true }
     updated_at = options.delete(:updated_at) { true }
-    write_to_sdb = options.delete(:write_to_sdb) { true }
+    save_to_sdb = options.delete(:write_to_sdb) { true }
     catch_exceptions = options.delete(:catch_exceptions) { true }
     expected_attr = options.delete(:expected_attr) { {} }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -172,18 +172,18 @@ class SimpledbResource
     put('updated-at', Time.zone.now.to_f.to_s) if updated_at
     
     Rails.logger.info_with_time("Saving to sdb, domain: #{this_domain_name}") do
-      self.write_to_memcache if write_to_memcache
-      self.write_to_sdb(expected_attr) if write_to_sdb
+      self.write_to_memcache if save_to_memcache
+      self.write_to_sdb(expected_attr) if save_to_sdb
       @is_new = false
     end
   rescue ExpectedAttributeError => e
-    if write_to_memcache
+    if save_to_memcache
       Mc.delete(get_memcache_key) rescue nil
     end
     raise e
   rescue Exception => e
     unless catch_exceptions
-      if write_to_memcache
+      if save_to_memcache
         Mc.delete(get_memcache_key) rescue nil
       end
       raise e
