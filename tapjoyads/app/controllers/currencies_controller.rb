@@ -21,19 +21,21 @@ class CurrenciesController < WebsiteController
 
   def update
     log_activity(@currency)
+
+    currency_params = sanitize_currency_params(params[:currency], [ :minimum_featured_bid ])
     
     if params[:managed_by_tapjoy]
       params[:currency][:callback_url] = Currency::TAPJOY_MANAGED_CALLBACK_URL
     end
     
-    safe_attributes = [:name, :conversion_rate, :initial_balance, :callback_url, :secret_key, :test_devices]
+    safe_attributes = [:name, :conversion_rate, :initial_balance, :callback_url, :secret_key, :test_devices, :minimum_featured_bid]
     if permitted_to?(:edit, :statz)
       safe_attributes += [:disabled_offers, :max_age_rating, :only_free_offers]
     end
     
-    if @currency.safe_update_attributes(params[:currency], safe_attributes)
+    if @currency.safe_update_attributes(currency_params, safe_attributes)
       flash[:notice] = 'Currency was successfully updated.'
-      redirect_to app_currency_path(:app_id => params[:app_id], :id => @currency.id)
+      redirect_to app_currency_path(:app_id => @app.id, :id => @currency.id)
     else
       flash[:error] = 'Update unsuccessful'
       render :action => :show
