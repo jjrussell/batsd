@@ -139,11 +139,6 @@ class SimpledbResource
   ##
   # Calls serial_save in a separate thread.
   def save(options = {})
-    @attributes = @attributes.dup
-    @attributes_to_add = @attributes_to_add.dup
-    @attributes_to_replace = @attributes_to_replace.dup
-    @attributes_to_delete = @attributes_to_delete.dup
-    @attribute_names_to_delete = @attribute_names_to_delete.dup
     thread = Thread.new(options) do |opts|
       serial_save(opts)
     end
