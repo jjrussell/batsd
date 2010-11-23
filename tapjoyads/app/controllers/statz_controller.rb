@@ -218,17 +218,12 @@ class StatzController < WebsiteController
   
   def update
     log_activity(@offer)
-    
     offer_params = sanitize_currency_params(params[:offer], [ :bid ])
-    
-    orig_payment = @offer.payment
-    orig_budget = @offer.daily_budget
     offer_params[:device_types] = offer_params[:device_types].blank? ? '[]' : offer_params[:device_types].to_json
     if @offer.update_attributes(offer_params)
       
       unless params[:app_store_id].blank?
         app = @offer.item
-        orig_store_id = app.store_id
         log_activity(app)
         app.update_attribute(:store_id, params[:app_store_id])
       end
