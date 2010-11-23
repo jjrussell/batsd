@@ -90,7 +90,7 @@ private
   end
   
   def offer_disabled?
-    disabled = !@offer.is_enabled?
+    disabled = !@offer.accepting_clicks?
     if disabled
       create_web_request('disabled_offer')
       render(:template => 'click/unavailable_offer')
