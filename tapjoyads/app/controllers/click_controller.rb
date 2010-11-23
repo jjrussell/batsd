@@ -23,7 +23,9 @@ class ClickController < ApplicationController
     return if offer_disabled?
     
     @device = Device.new(:key => params[:udid])
-    return if offer_completed?
+    unless @offer.multi_complete?
+      return if offer_completed?
+    end
     
     create_web_request
     create_click('generic')

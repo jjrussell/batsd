@@ -33,7 +33,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :allow_blank => false, :greater_than_or_equal_to => 0
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_blank => false, :allow_nil => true, :greater_than => 0
-  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :featured, :in => [ true, false ]
+  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :featured, :multi_complete, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer )
   validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
     begin
@@ -82,6 +82,12 @@ class Offer < ActiveRecord::Base
       if record.item_type == 'RatingOffer' && value != 0
         record.errors.add(attribute, "must be 0 for RatingOffers")
       end
+    end
+  end
+  validates_each :multi_complete do |record, attribute, value|
+    if value
+      record.errors.add(attribute, "is only for GenericOffers") unless record.item_type == 'GenericOffer'
+      record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
     end
   end
   
@@ -460,7 +466,7 @@ private
   end
   
   def already_complete?(publisher_app, device, app_version)
-    return false if EXEMPT_UDIDS.include?(device.key)
+    return false if EXEMPT_UDIDS.include?(device.key) || multi_complete?
     
     app_id_for_device = item_id
     if item_type == 'RatingOffer'
