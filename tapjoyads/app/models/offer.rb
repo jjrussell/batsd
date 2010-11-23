@@ -166,8 +166,37 @@ class Offer < ActiveRecord::Base
   end
   
   def self.cache_featured_offers
-    bucket = S3.bucket(BucketNames::OFFER_DATA)
     offer_list = Offer.enabled_offers.featured
+    
+    conversion_rates       = offer_list.collect(&:conversion_rate)
+    prices                 = offer_list.collect(&:price)
+    avg_revenues           = offer_list.collect(&:avg_revenue)
+    bids                   = offer_list.collect(&:bid)
+    cvr_mean               = conversion_rates.mean
+    cvr_std_dev            = conversion_rates.standard_deviation
+    price_mean             = prices.mean
+    price_std_dev          = prices.standard_deviation
+    avg_revenue_mean       = avg_revenues.mean
+    avg_revenue_std_dev    = avg_revenues.standard_deviation
+    bid_mean               = bids.mean
+    bid_std_dev            = bids.standard_deviation
+    
+    stats = { :cvr_mean => cvr_mean, :cvr_std_dev => cvr_std_dev, :price_mean => price_mean, :price_std_dev => price_std_dev,
+      :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
+    
+    offer_list.each do |offer|
+      offer.normalize_stats(stats)
+    end
+    
+    offer_list.each do |offer|
+      offer.calculate_rank_score(CONTROL_WEIGHTS)
+    end
+    
+    offer_list.sort! do |o1, o2|
+      o2.rank_score <=> o1.rank_score
+    end
+    
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
     marshalled_offer_list = Marshal.dump(offer_list)
     bucket.put('featured_offers', marshalled_offer_list)
     Mc.distributed_put('s3.featured_offers', offer_list)
@@ -415,9 +444,13 @@ class Offer < ActiveRecord::Base
   
   def min_bid
     if item_type == 'App'
-      is_paid? ? (price * 0.50).round : 35
-      # uncomment for tapjoy premier & change show.html line 92-ish
-      # is_paid? ? (price * 0.65).round : 50
+      if featured?
+        65
+      else
+        is_paid? ? (price * 0.50).round : 35
+        # uncomment for tapjoy premier & change show.html line 92-ish
+        # is_paid? ? (price * 0.65).round : 50
+      end
     else
       0
     end
