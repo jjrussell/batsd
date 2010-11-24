@@ -102,16 +102,9 @@ class Offer < ActiveRecord::Base
   named_scope :to_aggregate_stats, lambda { { :conditions => ["next_stats_aggregation_time < ?", Time.zone.now], :order => "next_stats_aggregation_time ASC" } }
   
   def self.get_enabled_offers(exp = nil)
-    if exp == Experiments::EXPERIMENTS[:no_cvr]
-      Mc.distributed_get_and_put('s3.enabled_offers.no_cvr') do
-        bucket = S3.bucket(BucketNames::OFFER_DATA)
-        Marshal.restore(bucket.get('enabled_offers.no_cvr'))
-      end
-    else
-      Mc.distributed_get_and_put('s3.enabled_offers.control') do
-        bucket = S3.bucket(BucketNames::OFFER_DATA)
-        Marshal.restore(bucket.get('enabled_offers.control'))
-      end
+    Mc.distributed_get_and_put('s3.enabled_offers.control') do
+      bucket = S3.bucket(BucketNames::OFFER_DATA)
+      Marshal.restore(bucket.get('enabled_offers.control'))
     end
   end
   
@@ -156,7 +149,6 @@ class Offer < ActiveRecord::Base
     Mc.put("s3.offer_rank_statistics", stats)
     
     cache_enabled_offers_for_experiment('control', CONTROL_WEIGHTS, offer_list)
-    cache_enabled_offers_for_experiment('no_cvr', { :conversion_rate => 0, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1 }, offer_list)
   end
   
   def self.cache_enabled_offers_for_experiment(cache_key_suffix, weights, offers_to_cache)
