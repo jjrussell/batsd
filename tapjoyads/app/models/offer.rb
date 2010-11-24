@@ -236,6 +236,10 @@ class Offer < ActiveRecord::Base
     tapjoy_enabled? && user_enabled? && ((payment > 0 && partner.balance > 0) || (payment == 0 && reward_value > 0))
   end
   
+  def accepting_clicks?
+    tapjoy_enabled? && user_enabled? && (payment > 0 || (payment == 0 && reward_value > 0))
+  end
+  
   def has_variable_payment?
     payment_range_low.present? && payment_range_high.present?
   end
