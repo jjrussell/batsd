@@ -10,6 +10,7 @@ module RightAws
     alias_method :orig_put_attributes,    :put_attributes
     alias_method :orig_delete_attributes, :delete_attributes
     alias_method :orig_request_info,      :request_info
+    alias_method :orig_get_attributes,    :get_attributes
     
     # Prepare attributes for putting or deleting.
     # (used by put_attributes, delete_attributes and batch_put_attributes)
@@ -107,6 +108,42 @@ module RightAws
       on_exception
     end
     
+    def get_attributes(domain_name, item_name, attribute_name=nil, consistent = false)
+      link = generate_request("GetAttributes", 'DomainName'     => domain_name,
+                                               'ItemName'       => item_name,
+                                               'AttributeName'  => attribute_name,
+                                               'ConsistentRead' => consistent )
+      res = request_info(link, QSdbGetAttributesParser.new)
+      res[:attributes].each_value do |values|
+        values.collect! { |e| sdb_to_ruby(e) }
+      end
+      res
+    rescue Exception
+      on_exception
+    end
+    
+    def select(select_expression, next_token = nil, consistent = false)
+      select_expression      = query_expression_from_array(select_expression) if select_expression.is_a?(Array)
+      @last_query_expression = select_expression
+      #
+      request_params = { 'SelectExpression' => select_expression,
+                         'NextToken'        => next_token,
+                         'ConsistentRead'   => consistent }
+      link   = generate_request("Select", request_params)
+      result = select_response_to_ruby(request_info( link, QSdbSelectParser.new ))
+      return result unless block_given?
+      # loop if block if given
+      begin
+        # the block must return true if it wanna continue
+        break unless yield(result) && result[:next_token]
+        # make new request
+        request_params['NextToken'] = result[:next_token]
+        link   = generate_request("Select", request_params)
+        result = select_response_to_ruby(request_info( link, QSdbSelectParser.new ))
+      end while true
+    rescue Exception
+      on_exception
+    end
     
     class QSdbDomainMetadataParser < RightAWSParser #:nodoc:
       def reset

@@ -39,4 +39,14 @@ class ActiveSupport::TestCase
   def login_as(user)
     UserSession.create(user)
   end
+  
+  # Tests equality of attribute hashes. An attribute hash has the form:
+  # { :key1 => [value1, value2], :key2 => [value3]}
+  # The value arrays may be in any order.
+  def assert_attributes_equal(expected, actual, message = nil)
+    assert_equal(expected.keys.sort, actual.keys.sort, "Keys do not match. #{message}")
+    expected.each do |key, value|
+      assert_equal(SortedSet.new(value), SortedSet.new(actual[key]), "Values don't match for key '#{key}'. #{message}")
+    end
+  end
 end

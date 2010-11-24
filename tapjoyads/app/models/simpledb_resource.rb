@@ -42,6 +42,7 @@ class SimpledbResource
   def initialize(options = {})
     should_load =                options.delete(:load)                 { true }
     load_from_memcache =         options.delete(:load_from_memcache)   { true }
+    consistent =                 options.delete(:consistent)           { false }
     @key =                       get_key_from(options.delete(:key))
     @this_domain_name =          options.delete(:domain_name)          { dynamic_domain_name() }
     @attributes =                options.delete(:attributes)           { {} }
@@ -54,7 +55,7 @@ class SimpledbResource
     @this_domain_name = get_real_domain_name(@this_domain_name)
     setup_key_hash
     
-    load(load_from_memcache) if should_load
+    load(load_from_memcache, consistent) if should_load
     @is_new = @attributes.empty?
     
     after_initialize
@@ -122,7 +123,7 @@ class SimpledbResource
   # Attempt to load the item attributes from memcache. If they are not found,
   # they will attempt be loaded from simpledb. If thet are still not found,
   # an empty attributes hash will be created.
-  def load(load_from_memcache = true)
+  def load(load_from_memcache = true, consistent = false)
     if load_from_memcache
       @attributes = Mc.get(get_memcache_key) do
         attrs = load_from_sdb
@@ -132,7 +133,7 @@ class SimpledbResource
         attrs
       end
     else
-      @attributes = load_from_sdb
+      @attributes = load_from_sdb(consistent)
     end
   end
   
@@ -354,6 +355,7 @@ class SimpledbResource
     next_token =  options.delete(:next_token)
     domain_name = options.delete(:domain_name) { self.domain_name }
     retries =     options.delete(:retries) { 10 }
+    consistent =  options.delete(:consistent) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Must provide a domain name" unless domain_name
 
@@ -365,7 +367,7 @@ class SimpledbResource
     count = 0
     loop do
       begin
-        response = @@sdb.select(query, next_token)
+        response = @@sdb.select(query, next_token, consistent)
       rescue RightAws::AwsError => e
         if e.message =~ /^(ServiceUnavailable|QueryTimeout)/ && retries > 0
           Rails.logger.info "Error: #{e}. Retrying up to #{retries} more times."
@@ -441,6 +443,7 @@ class SimpledbResource
     next_token =  options.delete(:next_token)
     domain_name = options.delete(:domain_name) { self.domain_name }
     retries =     options.delete(:retries) { 10 }
+    consistent =  options.delete(:consistent) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Must provide a domain name" unless domain_name
     
@@ -457,7 +460,7 @@ class SimpledbResource
     
     loop do
       begin
-        response = @@sdb.select(query, next_token)
+        response = @@sdb.select(query, next_token, consistent)
       rescue RightAws::AwsError => e
         if e.message =~ /^(ServiceUnavailable|QueryTimeout)/ && retry_count < retries 
           Rails.logger.info "Error: #{e}. Retrying up to #{retries - retry_count} more times."
@@ -665,10 +668,10 @@ protected
   
 private
   
-  def load_from_sdb
+  def load_from_sdb(consistent = false)
     attributes = {}
     begin
-      response = @@sdb.get_attributes(@this_domain_name, @key)
+      response = @@sdb.get_attributes(@this_domain_name, @key, nil, consistent)
       attributes = response[:attributes]
     rescue RightAws::AwsError => e
       if e.message.starts_with?("NoSuchDomain")
