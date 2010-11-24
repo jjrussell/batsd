@@ -27,6 +27,21 @@
               acting as
               = link_to current_partner.name_or_contact_name, partner_path(current_partner)
           |
+          = link_to_function "<span id='number_of_active_offers'>#{current_partner_active_offers.length}</span> active campaigns", '$.noop()', :class => 'soft-link', :id => 'active_campaigns'
+          - if current_partner_active_offers.length > 0
+            #active_campaigns_box.hidden
+              %table{:cellspacing => 0}
+                %tbody
+                  - current_partner_active_offers.each do |offer|
+                    %tr
+                      %td
+                        - form_tag toggle_app_offer_path(:id => offer.id, :app_id => offer.item.id) do
+                          = check_box_tag("toggle_offer_#{offer.id}", '1', {}, :class => 'toggle_offer')
+                          = link_to truncate(offer.name, :length => 15), [offer.item, offer], :title => offer.name
+                      %td
+                        = number_to_currency(offer.bid / 100.0)
+
+          |
           - if premier_enabled?
             = mail_to "premiersupport@tapjoy.com", "Support", :subject => "Premier Support"
             |

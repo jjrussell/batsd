@@ -4,7 +4,7 @@ class OffersController < WebsiteController
 
   filter_access_to :all
   before_filter :find_offer
-  after_filter :save_activity_logs, :only => [ :update ]
+  after_filter :save_activity_logs, :only => [ :update, :toggle ]
 
   def show
     if @offer.item_type == "App" && !@offer.tapjoy_enabled?
@@ -40,6 +40,15 @@ class OffersController < WebsiteController
     else
       flash[:error] = 'Update unsuccessful'
       render :action => "show"
+    end
+  end
+
+  def toggle
+    @offer.user_enabled = params[:user_enabled]
+    if @offer.save
+      render :nothing => true
+    else
+      render :json => {:error => true}
     end
   end
 
