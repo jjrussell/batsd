@@ -281,8 +281,11 @@ class Offer < ActiveRecord::Base
   end
   
   def get_fullscreen_ad_url(publisher_app, publisher_user_id, udid, source, app_version, viewed_at, displayer_app_id = nil, exp = nil)
-    ad_url = "http://ws.tapjoyads.com/fullscreen_ad?"
-    ad_url += "advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}"
+    ad_url = "http://ws.tapjoyads.com/fullscreen_ad"
+    if item_type == 'TestOffer'
+      ad_url += "/test_offer"
+    end
+    ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}"
     ad_url += "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
     ad_url += "&exp=#{exp}" if exp.present?
     ad_url
