@@ -29,6 +29,7 @@ class TapjoyMailer < ActionMailer::Base
     account_managers = partner.account_managers.map(&:email)
     account_managers << "adops@tapjoy.com" if account_managers.blank?
     account_managers << "dev@tapjoy.com"
+    account_managers.delete "oso@tapjoy.com"
     account_managers = account_managers.join(', ')
     reply_to account_managers
     recipients account_managers
