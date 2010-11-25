@@ -1,4 +1,4 @@
-class CurrenciesController < WebsiteController
+class Apps::CurrenciesController < WebsiteController
   layout 'tabbed'
   current_tab :apps
 

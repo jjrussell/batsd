@@ -49,9 +49,9 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post } do |app|
     app.resources :offers, :only => [ :show, :update ] , :member => { :download_udids => :get, :percentile => :post, :toggle => :post }, :controller => 'apps/offers'
     app.resources :currencies, :only => [ :show, :update, :new, :create ],
-      :member => { :reset_test_device => :post }
+      :member => { :reset_test_device => :post }, :controller => 'apps/currencies'
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
-      :collection => { :reorder => :post }
+      :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
     app.resources :featured_offers, :only => [ :new, :create, :edit, :update ], :controller => 'apps/featured_offers'
   end
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post }

@@ -1,4 +1,4 @@
-class VirtualGoodsController < WebsiteController
+class Apps::VirtualGoodsController < WebsiteController
   include ActionView::Helpers::NumberHelper
 
   layout 'tabbed'
