@@ -49,13 +49,23 @@
             - next if key == 'updated-at' || key == 'updated_at'
             %p
               #{key}:
-              %b= value
+              %b{ :full_value => value.to_s }
+                - if value.to_s.length > 40
+                  = "#{value.to_s[0, 40]}..."
+                  = link_to('[more]', '#', :class => 'show_more')
+                - else
+                  = value.to_s
         %td
           - activity.after_state.each do |key, value|
             - next if key == 'updated-at' || key == 'updated_at'
             %p
               #{key}:
-              %b= value
+              %b{ :full_value => value.to_s }
+                - if value.to_s.length > 40
+                  = "#{value.to_s[0, 40]}..."
+                  = link_to('[more]', '#', :class => 'show_more')
+                - else
+                  = value.to_s
         %td= activity.created_at.to_s(:pub_ampm_sec)
         %td= activity.controller
         %td= activity.action
@@ -85,19 +95,24 @@
         sortList: [ [5, 1] ]
       });
       
-      var formY = $('#form').position()['top']
+      var formY = $('#form').position()['top'];
       $(window).scroll(function(event) {
-        
         if ($(window).scrollTop() > formY) {
-          $('#form').css({position: 'fixed', top: 0})
+          $('#form').css({position: 'fixed', top: 0});
         } else {
-          $('#form').css({position: 'absolute', top: 'auto'})
+          $('#form').css({position: 'absolute', top: 'auto'});
         }
+      });
+      
+      $('a.show_more').click(function() {
+        var b_tag = $(this).parent();
+        b_tag.html(b_tag.attr('full_value'));
+        return false;
       });
     });
     
     function setValue(id, value) {
-      $('#' + id).val(value)
+      $('#' + id).val(value);
     }
   
 - content_for :page_styles do
