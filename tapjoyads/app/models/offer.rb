@@ -390,12 +390,21 @@ class Offer < ActiveRecord::Base
   end
   
   def estimated_percentile(weights = CONTROL_WEIGHTS)
-    normalize_stats(Offer.get_stats_for_ranks)
-    calculate_rank_score(weights.merge({ :random => 0 }))
-    self.rank_score += weights[:random] * 0.5
-    ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' }
-    worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
-    100 * worse_offers.size / ranked_offers.size
+    if featured?
+      normalize_stats(Offer.get_stats_for_ranks)
+      calculate_rank_score(weights.merge({ :random => 0 }))
+      self.rank_score += weights[:random] * 0.5
+      ranked_offers = Offer.get_featured_offers.reject { |offer| offer.item_type == 'RatingOffer' }
+      worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
+      100 * worse_offers.size / ranked_offers.size
+    else
+      normalize_stats(Offer.get_stats_for_ranks)
+      calculate_rank_score(weights.merge({ :random => 0 }))
+      self.rank_score += weights[:random] * 0.5
+      ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' }
+      worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
+      100 * worse_offers.size / ranked_offers.size
+    end
   end
   
   def name_with_suffix
@@ -454,6 +463,15 @@ class Offer < ActiveRecord::Base
     else
       0
     end
+  end
+  
+  def create_featured_clone
+    featured_offer = self.clone
+    featured_offer.featured = true
+    featured_offer.name_suffix = "featured"
+    featured_offer.bid = featured_offer.min_bid
+    featured_offer.save!
+    featured_offer
   end
   
 private

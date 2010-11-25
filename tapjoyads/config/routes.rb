@@ -47,11 +47,12 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post } do |app|
-    app.resources :offers, :only => [ :show, :update ] , :member => { :download_udids => :get, :percentile => :post, :toggle => :post }
+    app.resources :offers, :only => [ :show, :update ] , :member => { :download_udids => :get, :percentile => :post, :toggle => :post }, :controller => 'apps/offers'
     app.resources :currencies, :only => [ :show, :update, :new, :create ],
       :member => { :reset_test_device => :post }
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
       :collection => { :reorder => :post }
+    app.resources :featured_offers, :only => [ :new, :create, :edit, :update ], :controller => 'apps/featured_offers'
   end
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post }
   map.resources :billing, :only => [ :index, ], :collection => { :create_order => :post }

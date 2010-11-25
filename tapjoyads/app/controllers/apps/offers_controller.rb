@@ -1,4 +1,4 @@
-class OffersController < WebsiteController
+class Apps::OffersController < WebsiteController
   layout 'tabbed'
   current_tab :apps
 
