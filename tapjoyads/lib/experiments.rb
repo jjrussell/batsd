@@ -1,18 +1,13 @@
 class Experiments
   EXPERIMENTS = {
-    :control => '40',
-    :no_cvr => '41'
+    :control => '40'
   }
   
   def self.choose(udid)
     if udid.present?
       udid_hash = udid.hash % 100
       
-      if udid_hash < 20
-        EXPERIMENTS[:no_cvr]
-      else
-        EXPERIMENTS[:control]
-      end
+      EXPERIMENTS[:control]
     end
   end
   

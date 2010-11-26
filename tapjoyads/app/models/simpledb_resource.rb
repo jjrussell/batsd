@@ -42,6 +42,7 @@ class SimpledbResource
   def initialize(options = {})
     should_load =                options.delete(:load)                 { true }
     load_from_memcache =         options.delete(:load_from_memcache)   { true }
+    consistent =                 options.delete(:consistent)           { false }
     @key =                       get_key_from(options.delete(:key))
     @this_domain_name =          options.delete(:domain_name)          { dynamic_domain_name() }
     @attributes =                options.delete(:attributes)           { {} }
@@ -54,7 +55,7 @@ class SimpledbResource
     @this_domain_name = get_real_domain_name(@this_domain_name)
     setup_key_hash
     
-    load(load_from_memcache) if should_load
+    load(load_from_memcache, consistent) if should_load
     @is_new = @attributes.empty?
     
     after_initialize
@@ -122,7 +123,7 @@ class SimpledbResource
   # Attempt to load the item attributes from memcache. If they are not found,
   # they will attempt be loaded from simpledb. If thet are still not found,
   # an empty attributes hash will be created.
-  def load(load_from_memcache = true)
+  def load(load_from_memcache = true, consistent = false)
     if load_from_memcache
       @attributes = Mc.get(get_memcache_key) do
         attrs = load_from_sdb
@@ -132,7 +133,7 @@ class SimpledbResource
         attrs
       end
     else
-      @attributes = load_from_sdb
+      @attributes = load_from_sdb(consistent)
     end
   end
   
@@ -160,9 +161,9 @@ class SimpledbResource
   #       result in the save getting written to sqs in order to be saved later.
   def serial_save(options = {})
     options_copy = options.clone
-    write_to_memcache = options.delete(:write_to_memcache) { true }
+    save_to_memcache = options.delete(:write_to_memcache) { true }
     updated_at = options.delete(:updated_at) { true }
-    write_to_sdb = options.delete(:write_to_sdb) { true }
+    save_to_sdb = options.delete(:write_to_sdb) { true }
     catch_exceptions = options.delete(:catch_exceptions) { true }
     expected_attr = options.delete(:expected_attr) { {} }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -172,23 +173,23 @@ class SimpledbResource
     put('updated-at', Time.zone.now.to_f.to_s) if updated_at
     
     Rails.logger.info_with_time("Saving to sdb, domain: #{this_domain_name}") do
-      self.write_to_memcache if write_to_memcache
-      self.write_to_sdb(expected_attr) if write_to_sdb
+      self.write_to_memcache if save_to_memcache
+      self.write_to_sdb(expected_attr) if save_to_sdb
       @is_new = false
     end
   rescue ExpectedAttributeError => e
-    if write_to_memcache
+    if save_to_memcache
       Mc.delete(get_memcache_key) rescue nil
     end
     raise e
   rescue Exception => e
     unless catch_exceptions
-      if write_to_memcache
+      if save_to_memcache
         Mc.delete(get_memcache_key) rescue nil
       end
       raise e
     end
-    Rails.logger.info "Sdb save failed. Adding to sqs. Exception: #{e.class} - #{e}"
+    Rails.logger.info "Sdb save failed. Adding to sqs. Domain: #{@this_domain_name} Key: #{@key} Exception: #{e.class} - #{e}"
     uuid = UUIDTools::UUID.random_create.to_s
     bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
     bucket.put("incomplete/#{uuid}", self.serialize)
@@ -354,6 +355,7 @@ class SimpledbResource
     next_token =  options.delete(:next_token)
     domain_name = options.delete(:domain_name) { self.domain_name }
     retries =     options.delete(:retries) { 10 }
+    consistent =  options.delete(:consistent) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Must provide a domain name" unless domain_name
 
@@ -365,7 +367,7 @@ class SimpledbResource
     count = 0
     loop do
       begin
-        response = @@sdb.select(query, next_token)
+        response = @@sdb.select(query, next_token, consistent)
       rescue RightAws::AwsError => e
         if e.message =~ /^(ServiceUnavailable|QueryTimeout)/ && retries > 0
           Rails.logger.info "Error: #{e}. Retrying up to #{retries} more times."
@@ -413,7 +415,7 @@ class SimpledbResource
     request = Typhoeus::Request.new(url)
     request.on_complete do |response|
       if response.code != 200
-        raise RightAws::AwsError.new("Async count encountered an error. Response: #{response.body}", response.code)
+        raise RightAws::AwsError.new("Async count encountered an error. Code: #{response.code}, Response: #{response.body}", response.code)
       end
         
       parser = RightAws::SdbInterface::QSdbSelectParser.new
@@ -441,6 +443,7 @@ class SimpledbResource
     next_token =  options.delete(:next_token)
     domain_name = options.delete(:domain_name) { self.domain_name }
     retries =     options.delete(:retries) { 10 }
+    consistent =  options.delete(:consistent) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Must provide a domain name" unless domain_name
     
@@ -457,7 +460,7 @@ class SimpledbResource
     
     loop do
       begin
-        response = @@sdb.select(query, next_token)
+        response = @@sdb.select(query, next_token, consistent)
       rescue RightAws::AwsError => e
         if e.message =~ /^(ServiceUnavailable|QueryTimeout)/ && retry_count < retries 
           Rails.logger.info "Error: #{e}. Retrying up to #{retries - retry_count} more times."
@@ -665,10 +668,10 @@ protected
   
 private
   
-  def load_from_sdb
+  def load_from_sdb(consistent = false)
     attributes = {}
     begin
-      response = @@sdb.get_attributes(@this_domain_name, @key)
+      response = @@sdb.get_attributes(@this_domain_name, @key, nil, consistent)
       attributes = response[:attributes]
     rescue RightAws::AwsError => e
       if e.message.starts_with?("NoSuchDomain")

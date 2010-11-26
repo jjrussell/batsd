@@ -33,7 +33,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :allow_blank => false, :greater_than_or_equal_to => 0
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_blank => false, :allow_nil => true, :greater_than => 0
-  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :featured, :in => [ true, false ]
+  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :featured, :multi_complete, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer )
   validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
     begin
@@ -84,6 +84,12 @@ class Offer < ActiveRecord::Base
       end
     end
   end
+  validates_each :multi_complete do |record, attribute, value|
+    if value
+      record.errors.add(attribute, "is only for GenericOffers") unless record.item_type == 'GenericOffer'
+      record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
+    end
+  end
   
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
@@ -96,16 +102,9 @@ class Offer < ActiveRecord::Base
   named_scope :to_aggregate_stats, lambda { { :conditions => ["next_stats_aggregation_time < ?", Time.zone.now], :order => "next_stats_aggregation_time ASC" } }
   
   def self.get_enabled_offers(exp = nil)
-    if exp == Experiments::EXPERIMENTS[:no_cvr]
-      Mc.distributed_get_and_put('s3.enabled_offers.no_cvr') do
-        bucket = S3.bucket(BucketNames::OFFER_DATA)
-        Marshal.restore(bucket.get('enabled_offers.no_cvr'))
-      end
-    else
-      Mc.distributed_get_and_put('s3.enabled_offers.control') do
-        bucket = S3.bucket(BucketNames::OFFER_DATA)
-        Marshal.restore(bucket.get('enabled_offers.control'))
-      end
+    Mc.distributed_get_and_put('s3.enabled_offers.control') do
+      bucket = S3.bucket(BucketNames::OFFER_DATA)
+      Marshal.restore(bucket.get('enabled_offers.control'))
     end
   end
   
@@ -150,7 +149,6 @@ class Offer < ActiveRecord::Base
     Mc.put("s3.offer_rank_statistics", stats)
     
     cache_enabled_offers_for_experiment('control', CONTROL_WEIGHTS, offer_list)
-    cache_enabled_offers_for_experiment('no_cvr', { :conversion_rate => 0, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1 }, offer_list)
   end
   
   def self.cache_enabled_offers_for_experiment(cache_key_suffix, weights, offers_to_cache)
@@ -230,6 +228,10 @@ class Offer < ActiveRecord::Base
     tapjoy_enabled? && user_enabled? && ((payment > 0 && partner.balance > 0) || (payment == 0 && reward_value > 0))
   end
   
+  def accepting_clicks?
+    tapjoy_enabled? && user_enabled? && (payment > 0 || (payment == 0 && reward_value > 0))
+  end
+  
   def has_variable_payment?
     payment_range_low.present? && payment_range_high.present?
   end
@@ -271,8 +273,11 @@ class Offer < ActiveRecord::Base
   end
   
   def get_fullscreen_ad_url(publisher_app, publisher_user_id, udid, source, app_version, viewed_at, displayer_app_id = nil, exp = nil)
-    ad_url = "http://ws.tapjoyads.com/fullscreen_ad?"
-    ad_url += "advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}"
+    ad_url = "http://ws.tapjoyads.com/fullscreen_ad"
+    if item_type == 'TestOffer'
+      ad_url += "/test_offer"
+    end
+    ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}"
     ad_url += "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
     ad_url += "&exp=#{exp}" if exp.present?
     ad_url
@@ -460,7 +465,7 @@ private
   end
   
   def already_complete?(publisher_app, device, app_version)
-    return false if EXEMPT_UDIDS.include?(device.key)
+    return false if EXEMPT_UDIDS.include?(device.key) || multi_complete?
     
     app_id_for_device = item_id
     if item_type == 'RatingOffer'

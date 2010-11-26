@@ -12,8 +12,7 @@ class GetOffersController < ApplicationController
   
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
-      @test_offer = Offer.new(:item_id => @publisher_app.id, :item_type => 'TestOffer')
-      @test_offer.id = @publisher_app.id
+      @test_offer = build_test_offer(@publisher_app, @currency)
     end
     
     set_offer_list(:is_server_to_server => false)
@@ -35,10 +34,13 @@ class GetOffersController < ApplicationController
   end
   
   def featured
-    set_offer_list(:is_server_to_server => false)
-    
-    srand
-    @offer_list = @offer_list[rand(@offer_list.length).to_i, 1]
+    if @currency.get_test_device_ids.include?(params[:udid])
+      @offer_list = [ build_test_offer(@publisher_app, @currency) ]
+    else
+      set_offer_list(:is_server_to_server => false)
+      srand
+      @offer_list = @offer_list[rand(@offer_list.length).to_i, 1]
+    end
     @more_data_available = 0
     
     if params[:json] == '1'

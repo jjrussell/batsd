@@ -32,6 +32,7 @@ else
   end
 
   # start apache
+  `cp /home/webuser/tapjoyserver/server/apache2.conf /etc/apache2/`
   `/etc/init.d/apache2 start`
 
   # boot the app

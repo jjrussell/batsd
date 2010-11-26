@@ -14,11 +14,11 @@ class Job::MasterSetBadDomainsController < Job::JobController
     
     MAX_WEB_REQUEST_DOMAINS.times do |num|
       domain_name = "web-request-#{date}-#{num}"
-      count = Mc.get_count("failed_sdb_saves.#{domain_name}.#{hour_key}")
+      count = Mc.get_count("failed_sdb_saves.sdb.#{domain_name}.#{hour_key}")
       seconds = (now - minumum_interval).hour == now.hour ? now - now.beginning_of_hour : 1.hour
       fail_rate = count.to_f / seconds
       
-      if fail_rate > 0.25 && bad_domains[domain_name].nil?
+      if fail_rate > 0.20 && bad_domains[domain_name].nil?
         bad_domains[domain_name] = now
         Notifier.alert_new_relic(BadWebRequestDomain, 
           "#{domain_name} has been marked bad. #{fail_rate} fails/second over last #{seconds} seconds.",

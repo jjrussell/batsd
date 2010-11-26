@@ -11,6 +11,7 @@ class PointPurchasesTest < ActiveSupport::TestCase
     
     should "hash to the correct domain" do
       assert_equal 'point_purchases_1', @pp.dynamic_domain_name
+      assert_equal 1469972363, @pp.key.hash
     end
   end
   
