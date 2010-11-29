@@ -310,6 +310,8 @@ class SimpledbResource
     retries = options.delete(:retries) { 3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
+    load_options = {:consistent => true, :load_from_memcache => false}.merge(load_options)
+    
     begin
       row = self.new(load_options.dup)
       initial_version = row.get(version_attr)

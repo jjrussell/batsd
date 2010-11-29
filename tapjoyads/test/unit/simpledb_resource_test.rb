@@ -226,6 +226,23 @@ class SimpledbResourceTest < ActiveSupport::TestCase
       assert_equal('2', @model.get('version'))
       assert_equal('bar', @model.foo)
     end
+    
+    should "handle concurrent transactions" do
+      thread_list = []
+      3.times do
+        thread_list << Thread.new do
+          Testing.transaction({:key => @model.key}, {:retries => 10}) do |m|
+            m.foo_10 += 1
+          end
+        end
+      end
+      
+      thread_list.each(&:join)
+      
+      m = Testing.new(:key => @model.key, :load_from_memcache => false, :consistent => true)
+      
+      assert_equal(13, m.foo_10)
+    end
   end
 
   context "Many Simpledb rows" do
