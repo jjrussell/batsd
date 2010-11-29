@@ -17,6 +17,7 @@ Tapjoy.Graph = {
   },
 
   setGraphProperties: function(g, options) {
+    g.Set('chart.linewidth', 1.1);
     g.Set('chart.shadow', true);
     g.Set('chart.tickmarks', 'circle');
 
