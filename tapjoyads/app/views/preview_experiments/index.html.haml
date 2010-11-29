@@ -1,6 +1,6 @@
 %h1 Preview Experiment Offerwalls
 
-- experiment_options = "<option></option>" + options_for_select(@experiments.collect { |k, v| [ k.to_s.titleize + " (#{v})", v.to_s ] }, params[:id])
+- experiment_options = "<option></option>" + "<option value=\"featured\">Featured</option>" + options_for_select(@experiments.collect { |k, v| [ k.to_s.titleize + " (#{v})", v.to_s ] }, params[:id])
 - form_tag('', :id => 'experiments-form') do
   %table
     %tr
