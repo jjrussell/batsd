@@ -17,7 +17,7 @@ Tapjoy.Graph = {
   },
 
   setGraphProperties: function(g, options) {
-    g.Set('chart.shadow', false);
+    g.Set('chart.shadow', true);
     g.Set('chart.tickmarks', 'circle');
 
     g.Set('chart.hmargin', options.hMarginPx);
@@ -50,7 +50,7 @@ Tapjoy.Graph = {
       $('#' + id + '>.totals').html(Tapjoy.Graph.getTotalsHtml(obj));
     }
 
-    var gutterPx = 60;
+    var gutterPx = 80;
     var hMarginPx = 5;
     var numPoints = obj['intervals'].length - 1;
 
