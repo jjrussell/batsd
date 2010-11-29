@@ -15,23 +15,27 @@
     /**
     * Initialise the various objects
     */
-    if (typeof(RGraph) == 'undefined') RGraph = {};
+    if (typeof(RGraph) == 'undefined') RGraph = {isRGraph:true,type:'common'};
 
 
     RGraph.Registry       = {};
-    RGraph.Registry.store = []
+    RGraph.Registry.store = [];
+    RGraph.Registry.store['chart.event.handlers'] = [];
     RGraph.background     = {};
     RGraph.objects        = [];
     RGraph.Resizing       = {};
+    RGraph.events         = [];
+    
 
 
     /**
     * Returns five values which are used as a nice scale
     * 
-    * @param  max int The maximum value of the graph
-    * @return     int The highest value in the scale
+    * @param  max int    The maximum value of the graph
+    * @param  obj object The graph object
+    * @return     array   An appropriate scale
     */
-    RGraph.getScale = function (max)
+    RGraph.getScale = function (max, obj)
     {
         /**
         * Special case for 0
@@ -50,7 +54,7 @@
                 return [0.2,0.4,0.6,0.8, Number(1).toFixed(1)];
 
             } else if (max >= 0.1) {
-                return [0.1,0.2,0.3,0.4,0.5];
+                return obj.Get('chart.scale.round') ? [0.2,0.4,0.6,0.8,1] : [0.1,0.2,0.3,0.4,0.5];
 
             } else {
 
@@ -94,8 +98,15 @@
         if (max < 10) {
             topValue = (Number(original_max) <= 5 ? 5 : 10);
         }
+        
+        /**
+        * Added 02/11/2010 to create "nicer" scales
+        */
+        if (obj && typeof(obj.Get('chart.scale.round')) == 'boolean' && obj.Get('chart.scale.round')) {
+            topValue = 10 * interval;
+        }
 
-        return [topValue * (1/5), topValue * (2/5), topValue * (3/5), topValue * (4/5), topValue];
+        return [topValue * 0.2, topValue * 0.4, topValue * 0.6, topValue * 0.8, topValue];
     }
 
 
@@ -111,7 +122,9 @@
         var max = null;
         
         for (var i=0; i<arr.length; ++i) {
-            max = (max ? Math.max(max, arguments[1] ? Math.abs(arr[i]) : arr[i]) : arr[i]);
+            if (typeof(arr[i]) == 'number') {
+                max = (max ? Math.max(max, arguments[1] ? Math.abs(arr[i]) : arr[i]) : arr[i]);
+            }
         }
         
         return max;
@@ -230,21 +243,7 @@
         
             var nextline = text.replace(/^.*\r?\n/, '');
 
-            RGraph.Text(
-                        context,
-                        font,
-                        size,
-                        arguments[9] == -90 ? (x + (size * 1.5)) : x,
-                        y + (size * 1.5),
-                        nextline,
-                        arguments[6] ? arguments[6] : null,
-                        'center',
-                        arguments[8],
-                        arguments[9],
-                        arguments[10],
-                        arguments[11],
-                        arguments[12]
-                       );
+            RGraph.Text(context, font, size, arguments[9] == -90 ? (x + (size * 1.5)) : x, y + (size * 1.5), nextline, arguments[6] ? arguments[6] : null, 'center', arguments[8], arguments[9], arguments[10], arguments[11], arguments[12]);
 
             text = text.replace(/\r?\n.*$/, '');
 
@@ -252,11 +251,13 @@
 
 
         // Accommodate MSIE
-        if (document.all) {
+        if (RGraph.isIE8()) {
             y += 2;
         }
 
+
         context.font = (arguments[11] ? 'Bold ': '') + size + 'pt ' + font;
+
         var i;
         var origX = x;
         var origY = y;
@@ -268,7 +269,7 @@
         if (typeof(arguments[7]) == null) arguments[7]  = 'left';   // Horizontal alignment. Default to left
         if (typeof(arguments[8]) == null) arguments[8]  = null;     // Show a bounding box. Useful for positioning during development. Defaults to false
         if (typeof(arguments[9]) == null) arguments[9]  = 0;        // Angle (IN DEGREES) that the text should be drawn at. 0 is middle right, and it goes clockwise
-        if (typeof(arguments[12]) == null) arguments[12] = true;       // Whether the bounding box has the placement indicator
+        if (typeof(arguments[12]) == null) arguments[12] = true;    // Whether the bounding box has the placement indicator
 
         // The alignment is recorded here for purposes of Opera compatibility
         if (navigator.userAgent.indexOf('Opera') != -1) {
@@ -316,21 +317,6 @@
                     }
                 }
             }
-
-            /**
-            * If requested, draw a background for the text
-            */
-            if (arguments[10]) {
-
-                var offset = 3;
-                var ieOffset = document.all ? 2 : 0;
-                var width = context.measureText(text).width
-
-                //context.strokeStyle = 'gray';
-                context.fillStyle = arguments[10];
-                context.fillRect(x - offset, y - size - offset - ieOffset, width + (2 * offset), size + (2 * offset));
-                //context.strokeRect(x - offset, y - size - offset - ieOffset, width + (2 * offset), size + (2 * offset));
-            }
             
             
             context.fillStyle = originalFillStyle;
@@ -342,11 +328,34 @@
                  context.fillText(text,0,0);
                  context.lineWidth = 0.5;
                 
-                // Draw the bounding box if need be
                 if (arguments[8]) {
+
                     var width = context.measureText(text).width;
+                    var ieOffset = RGraph.isIE8() ? 2 : 0;
+
                     context.translate(x, y);
-                    context.strokeRect(0 - 3, 0 - 3 - size, width + 6, 0 + size + 6);
+                    context.strokeRect(0 - 3, 0 - 3 - size - ieOffset, width + 6, 0 + size + 6);
+    
+                    /**
+                    * If requested, draw a background for the text
+                    */
+                    if (arguments[10]) {
+        
+                        var offset = 3;
+                        var ieOffset = RGraph.isIE8() ? 2 : 0;
+                        var width = context.measureText(text).width
+
+                        //context.strokeStyle = 'gray';
+                        context.fillStyle = arguments[10];
+                        context.fillRect(x - offset, y - size - offset - ieOffset, width + (2 * offset), size + (2 * offset));
+                        //context.strokeRect(x - offset, y - size - offset - ieOffset, width + (2 * offset), size + (2 * offset));
+                    }
+                    
+                    /**
+                    * Do the actual drawing of the text
+                    */
+                    context.fillStyle = originalFillStyle;
+                    context.fillText(text,0,0);
 
                     if (arguments[12]) {
                         context.fillRect(
@@ -379,7 +388,7 @@
 
         context = canvas.getContext('2d');
         context.beginPath();
-        context.fillRect(0,0,canvas.width,canvas.height);
+        context.fillRect(-5,-5,canvas.width + 5,canvas.height + 5);
         context.fill();
         
         if (RGraph.ClearAnnotations) {
@@ -404,7 +413,8 @@
         var size    = arguments[4] ? arguments[4] : 12;
         var centerx = (arguments[3] ? arguments[3] : canvas.width / 2);
         var keypos  = obj.Get('chart.key.position');
-        var vpos = gutter / 2;
+        var vpos    = gutter / 2;
+        var hpos    = obj.Get('chart.title.hpos');
         
         // Account for 3D effect by faking the key position
         if (obj.type == 'bar' && obj.Get('chart.variant') == '3d') {
@@ -431,11 +441,17 @@
         if (typeof(obj.Get('chart.title.vpos')) == 'number') {
             vpos = obj.Get('chart.title.vpos') * gutter;
         }
+
+        // if chart.title.hpos is a number, use that. It's multiplied with the (entire) canvas width
+        if (typeof(hpos) == 'number') {
+            centerx = hpos * canvas.width;
+        }
         
         // Set the colour
         if (typeof(obj.Get('chart.title.color') != null)) {
             var oldColor = context.fillStyle
-            context.fillStyle = obj.Get('chart.title.color');
+            var newColor = obj.Get('chart.title.color')
+            context.fillStyle = newColor ? newColor : 'black';
         }
         
         /**
@@ -460,11 +476,11 @@
     */
     RGraph.getMouseXY = function (e)
     {
-        var obj = (document.all ? event.srcElement : e.target);
+        var obj = (RGraph.isIE8() ? event.srcElement : e.target);
         var x;
         var y;
         
-        if (document.all) e = event;
+        if (RGraph.isIE8()) e = event;
 
         // Browser with offsetX and offsetY
         if (typeof(e.offsetX) == 'number' && typeof(e.offsetY) == 'number') {
@@ -504,12 +520,13 @@
         var obj = canvas;
 
         do {
+
             x += obj.offsetLeft;
             y += obj.offsetTop;
 
             obj = obj.offsetParent;
 
-        } while (obj.tagName.toLowerCase() != 'body');
+        } while (obj && obj.tagName.toLowerCase() != 'body');
 
         return [x, y];
     }
@@ -537,7 +554,13 @@
     RGraph.Redraw = function ()
     {
         for (i in RGraph.objects) {
-            if (typeof(i) == 'string' && typeof(RGraph.objects[i]) == 'object')  {
+            // TODO FIXME Maybe include more intense checking for whether the object is an RGraph object, eg obj.isRGraph == true ...?
+            if (
+                   typeof(i) == 'string'
+                && typeof(RGraph.objects[i]) == 'object'
+                && typeof(RGraph.objects[i].type) == 'string'
+                && RGraph.objects[i].isRGraph)  {
+
                 if (!arguments[0] || arguments[0] != RGraph.objects[i].id) {
                     RGraph.Clear(RGraph.objects[i].canvas, arguments[1] ? arguments[1] : null);
                     RGraph.objects[i].Draw();
@@ -892,10 +915,10 @@
             * Stipulate the shadow for the key box
             */
             if (obj.Get('chart.key.shadow')) {
-                context.shadowColor = '#666';
-                context.shadowBlur = 3;
-                context.shadowOffsetX = 2;
-                context.shadowOffsetY = 2;
+                context.shadowColor = obj.Get('chart.key.shadow.color');
+                context.shadowBlur = obj.Get('chart.key.shadow.blur');
+                context.shadowOffsetX = obj.Get('chart.key.shadow.offsetx');
+                context.shadowOffsetY = obj.Get('chart.key.shadow.offsety');
             }
 
             /**
@@ -905,6 +928,7 @@
             context.fillStyle   = obj.Get('chart.key.background');
             context.strokeStyle = 'black';
 
+            // TODO Allow for chart.key.x and chart.key.y here
             // The x position of the key box
             var xpos = canvas.width - width - gutter;
             
@@ -916,19 +940,52 @@
             if (arguments[3] != false) {
 
                 // Manually draw the MSIE shadow
-                if (document.all && obj.Get('chart.key.shadow')) {
+                if (RGraph.isIE8() && obj.Get('chart.key.shadow')) {
                     context.beginPath();
                     context.fillStyle   = '#666';
-                    context.fillRect(xpos + 2, gutter + 5 + 2, width - 5, 5 + ( (textsize + 5) * key.length));
+                    
+                    if (obj.Get('chart.key.rounded')) {        
+                        RGraph.NoShadow(obj);
+                        context.beginPath();
+                            RGraph.filledCurvyRect(context,
+                                                   xpos + obj.Get('chart.key.shadow.offsetx'),
+                                                   gutter + 5 + obj.Get('chart.key.shadow.offsety'),
+                                                   width - 5,
+                                                   5 + ( (textsize + 5) * key.length),
+                                                   5);
+                        context.closePath();
+                        context.fill();
+
+                    } else {
+                        context.fillRect(xpos + 2, gutter + 5 + 2, width - 5, 5 + ( (textsize + 5) * key.length));
+                    }
                     context.fill();
                     context.fillStyle   = obj.Get('chart.key.background');
                 }
 
-                context.strokeRect(xpos, gutter + 5, width - 5, 5 + ( (textsize + 5) * key.length));
-                context.fillRect(xpos, gutter + 5, width - 5, 5 + ( (textsize + 5) * key.length) );
+                // The older square rectangled key
+                if (obj.Get('chart.key.rounded') == true) {
+                    context.beginPath();
+                        context.strokeStyle = '#333';
+                        RGraph.strokedCurvyRect(context, xpos, gutter + 5, width - 5, 5 + ( (textsize + 5) * key.length),4);
+                    context.closePath();
+                    context.stroke();
+    
+                    RGraph.NoShadow(obj);
+                    context.beginPath();
+                        RGraph.filledCurvyRect(context, xpos, gutter + 5, width - 5, 5 + ( (textsize + 5) * key.length), 5);
+                    context.closePath();
+                    context.fill();
+                } else {
+                    context.strokeRect(xpos, gutter + 5, width - 5, 5 + ( (textsize + 5) * key.length));
+                    context.fillRect(xpos, gutter + 5, width - 5, 5 + ( (textsize + 5) * key.length) );
+                }
             }
+            
+            context.beginPath();
 
             // Turns off the shadow
+            // TODO Use RGraph.NoShadow(); instead ????
             context.shadowColor = 'rgba(0,0,0,0)';
 
             // Draw the labels given
@@ -939,19 +996,12 @@
                 context.fillStyle = colors[i];
                 context.fillRect(xpos + 5, 5 + gutter + (5 * j) + (textsize * j) - (textsize), textsize, textsize);
     
-                context.fill();
                 context.stroke();
+                context.fill();
 
                 context.fillStyle = obj.Get('chart.text.color');
 
-                RGraph.Text(
-                            context,
-                            obj.Get('chart.text.font'),
-                            textsize,
-                            xpos + 21,
-                            gutter + (5 * j) + (textsize * j) + 4,
-                            key[i]
-                           );
+                RGraph.Text(context,obj.Get('chart.text.font'),textsize,xpos + 21,gutter + (5 * j) + (textsize * j) + 4,key[i]);
             }
         
         } else {
@@ -1023,16 +1073,22 @@
     * Formats a number with thousand seperators so it's easier to read
     * 
     * @param  integer num The number to format
+    * @param  string      The (optional) string to prepend to the string
+    * @param  string      The (optional) string to ap
+    * pend to the string
     * @return string      The formatted number
     */
-    RGraph.number_format = function (num)
+    RGraph.number_format = function (obj, num)
     {
         var i;
-        var prepend = arguments[1] ? String(arguments[1]) : '';
-        var append  = arguments[2] ? String(arguments[2]) : '';
+        var prepend = arguments[2] ? String(arguments[2]) : '';
+        var append  = arguments[3] ? String(arguments[3]) : '';
         var output  = '';
         var decimal = '';
+        var decimal_seperator  = obj.Get('chart.scale.point') ? obj.Get('chart.scale.point') : '.';
+        var thousand_seperator = obj.Get('chart.scale.thousand') ? obj.Get('chart.scale.thousand') : ',';
         RegExp.$1   = '';
+        var i,j;
 
         // Ignore the preformatted version of "1e-2"
         if (String(num).indexOf('e') > 0) {
@@ -1050,7 +1106,7 @@
 
         // Thousand seperator
         //var seperator = arguments[1] ? String(arguments[1]) : ',';
-        var seperator = ',';
+        var seperator = thousand_seperator;
         
         /**
         * Work backwards adding the thousand seperators
@@ -1083,7 +1139,7 @@
 
         // Reappend the decimal
         if (decimal.length) {
-            output =  output + '.' + decimal;
+            output =  output + decimal_seperator + decimal;
             decimal = '';
             RegExp.$1 = '';
         }
@@ -1138,6 +1194,11 @@
                 hbars[i][1] = -1 * (obj.max + hbars[i][0]);
             }
 
+            // If the X axis is at the bottom, and a negative max is given, warn the user
+            if (obj.Get('chart.xaxispos') == 'bottom' && (hbars[i][0] < 0 || (hbars[i][1] + hbars[i][1] < 0)) ) {
+                alert('[' + obj.type.toUpperCase() + ' (ID: ' + obj.id + ') BACKGROUND HBARS] You have a negative value in one of your background hbars values, whilst the X axis is in the center');
+            }
+
             var ystart = (obj.grapharea - ((hbars[i][0] / obj.max) * obj.grapharea));
             var height = (Math.min(hbars[i][1], obj.max - hbars[i][0]) / obj.max) * obj.grapharea;
 
@@ -1178,63 +1239,148 @@
         var canvas  = obj.canvas;
         var context = obj.context;
         var labels  = obj.Get('chart.labels.ingraph');
+        var labels_processed = [];
+        
+        // Defaults
+        var fgcolor   = 'black';
+        var bgcolor   = 'white';
+        var direction = 1;
+
+        if (!labels) {
+            return;
+        }
+
+        /**
+        * Preprocess the labels array. Numbers are expanded
+        */
+        for (var i=0; i<labels.length; ++i) {
+            if (typeof(labels[i]) == 'number') {
+                for (var j=0; j<labels[i]; ++j) {
+                    labels_processed.push(null);
+                }
+            } else if (typeof(labels[i]) == 'string' || typeof(labels[i]) == 'object') {
+                labels_processed.push(labels[i]);
+            
+            } else {
+                labels_processed.push('');
+            }
+        }
 
         /**
         * Turn off any shadow
         */
         RGraph.NoShadow(obj);
 
-        if (labels && labels.length > 0) {
+        if (labels_processed && labels_processed.length > 0) {
 
-            for (var i=0; i<labels.length; ++i) {
-                if (labels[i]) {
+            for (var i=0; i<labels_processed.length; ++i) {
+                if (labels_processed[i]) {
                     var coords = obj.coords[i];
                     
                     if (coords && coords.length > 0) {
-                        var x = (obj.type == 'bar' ? coords[0] + (coords[2] / 2) : coords[0]);
-                        var y = (obj.type == 'bar' ? coords[1] + (coords[3] / 2) : coords[1]) - 5;
+                        var x      = (obj.type == 'bar' ? coords[0] + (coords[2] / 2) : coords[0]);
+                        var y      = (obj.type == 'bar' ? coords[1] + (coords[3] / 2) : coords[1]);
+                        var length = typeof(labels_processed[i][4]) == 'number' ? labels_processed[i][4] : 25;
     
                         context.beginPath();
-                        context.fillStyle = 'black';
-                        context.strokeStyle = '#666';
+                        context.fillStyle   = 'black';
+                        context.strokeStyle = 'black';
+                        
     
                         if (obj.type == 'bar') {
     
                             if (obj.Get('chart.variant') == 'dot') {
-                                context.moveTo(x, y - 15);
-                                context.lineTo(x, y - 25);
+                                context.moveTo(x, obj.coords[i][1] - 5);
+                                context.lineTo(x, obj.coords[i][1] - 5 - length);
+                                
+                                var text_x = x;
+                                var text_y = obj.coords[i][1] - 5 - length;
                             
                             } else if (obj.Get('chart.variant') == 'arrow') {
-                                context.moveTo(x, y - 15);
-                                context.lineTo(x, y - 25);
+                                context.moveTo(x, obj.coords[i][1] - 5);
+                                context.lineTo(x, obj.coords[i][1] - 5 - length);
+                                
+                                var text_x = x;
+                                var text_y = obj.coords[i][1] - 5 - length;
                             
                             } else {
     
-                                context.arc(x, y, 1, 0, 6.28, 0);
+                                context.arc(x, y, 2.5, 0, 6.28, 0);
                                 context.moveTo(x, y);
-                                context.lineTo(x, y - 25);
+                                context.lineTo(x, y - length);
+
+                                var text_x = x;
+                                var text_y = y - length;
                             }
+
+                            context.stroke();
+                            context.fill();
+                            
     
                         } else if (obj.type == 'line') {
-    
-                            context.moveTo(x, y - 5);
-                            context.lineTo(x, y - 25);
+                        
+                            if (
+                                typeof(labels_processed[i]) == 'object' &&
+                                typeof(labels_processed[i][3]) == 'number' &&
+                                labels_processed[i][3] == -1
+                               ) {
+
+                                context.moveTo(x, y + 5);
+                                context.lineTo(x, y + 5 + length);
+                                
+                                context.stroke();
+                                context.beginPath();                                
+                                
+                                // This draws the arrow
+                                context.moveTo(x, y + 5);
+                                context.lineTo(x - 3, y + 10);
+                                context.lineTo(x + 3, y + 10);
+                                context.closePath();
+                                
+                                var text_x = x;
+                                var text_y = y + 5 + length;
                             
-                            // This draws the arrow
-                            context.moveTo(x, y);
-                            context.lineTo(x - 3, y - 7);
-                            context.lineTo(x + 3, y - 7);
-                            context.closePath();
-                            
-                            
+                            } else {
+                                
+                                var text_x = x;
+                                var text_y = y - 5 - length;
+
+                                context.moveTo(x, y - 5);
+                                context.lineTo(x, y - 5 - length);
+                                
+                                context.stroke();
+                                context.beginPath();
+                                
+                                // This draws the arrow
+                                context.moveTo(x, y - 5);
+                                context.lineTo(x - 3, y - 10);
+                                context.lineTo(x + 3, y - 10);
+                                context.closePath();
+                            }
+                        
+                            context.fill();
                         }
+
     
-                        context.stroke();
-                        context.fill();
-    
-                        var width = context.measureText(labels[i]).width;
-                        RGraph.Text(context, obj.Get('chart.text.font'), obj.Get('chart.text.size'), x, y - 25, String(labels[i]), 'bottom', 'center', true, null, 'white');
-    
+                        // Taken out on the 10th Nov 2010 - unnecessary
+                        //var width = context.measureText(labels[i]).width;
+                        
+                        context.beginPath();
+                            
+                            // Fore ground color
+                            context.fillStyle = (typeof(labels_processed[i]) == 'object' && typeof(labels_processed[i][1]) == 'string') ? labels_processed[i][1] : 'black';
+
+                            RGraph.Text(context,
+                                        obj.Get('chart.text.font'),
+                                        obj.Get('chart.text.size'),
+                                        text_x,
+                                        text_y,
+                                        (typeof(labels_processed[i]) == 'object' && typeof(labels_processed[i][0]) == 'string') ? labels_processed[i][0] : labels_processed[i],
+                                        'bottom',
+                                        'center',
+                                        true,
+                                        null,
+                                        (typeof(labels_processed[i]) == 'object' && typeof(labels_processed[i][2]) == 'string') ? labels_processed[i][2] : 'white');
                         context.fill();
                     }
                 }
@@ -1250,7 +1396,7 @@
     */
     RGraph.FixEventObject = function (e)
     {
-        if (document.all) {
+        if (RGraph.isIE8()) {
             
             var e = event;
 
@@ -1271,6 +1417,11 @@
             e.offsetY = coords[1];
         }
         
+        // Any browser that doesn't implement stopPropagation() (MSIE)
+        if (!e.stopPropagation) {
+            e.stopPropagation = function () {window.event.cancelBubble = true;}
+        }
+        
         return e;
     }
 
@@ -1286,11 +1437,12 @@
             var canvas  = obj.canvas;
             var context = obj.context;
             
-            if (obj.Get('chart.tooltips') && obj.Get('chart.tooltips').length > 0) {
-                alert('[' + obj.type.toUpperCase() + '] Sorry - you cannot have crosshairs enabled with tooltips! Turning off crosshairs...');
-                obj.Set('chart.crosshairs', false);
-                return;
-            }
+            // 5th November 2010 - removed now that tooltips are DOM2 based.
+            //if (obj.Get('chart.tooltips') && obj.Get('chart.tooltips').length > 0) {
+                //alert('[' + obj.type.toUpperCase() + '] Sorry - you cannot have crosshairs enabled with tooltips! Turning off crosshairs...');
+                //obj.Set('chart.crosshairs', false);
+                //return;
+            //}
             
             canvas.onmousemove = function (e)
             {
@@ -1300,18 +1452,24 @@
                 var gutter  = obj.Get('chart.gutter');
                 var width   = canvas.width;
                 var height  = canvas.height;
+                var adjustments = obj.Get('chart.tooltips.coords.adjust');
     
                 var mouseCoords = RGraph.getMouseXY(e);
                 var x = mouseCoords[0];
                 var y = mouseCoords[1];
+                
+                if (typeof(adjustments) == 'object' && adjustments[0] && adjustments[1]) {
+                    x = x - adjustments[0];
+                    y = y - adjustments[1];
+                }
 
                 RGraph.Clear(canvas);
                 obj.Draw();
 
-                if (   x > gutter
-                    && y > gutter
-                    && x < (width - gutter)
-                    && y < (height - gutter)
+                if (   x >= gutter
+                    && y >= gutter
+                    && x <= (width - gutter)
+                    && y <= (height - gutter)
                    ) {
 
                     var linewidth = obj.Get('chart.crosshairs.linewidth');
@@ -1329,8 +1487,90 @@
                     context.lineTo(width - gutter, y);
 
                     context.stroke();
+                    
+                    /**
+                    * Need to show the coords?
+                    */
+                    if (obj.Get('chart.crosshairs.coords')) {
+                        if (obj.type == 'scatter') {
+
+                            var xCoord = (((x - obj.Get('chart.gutter')) / (obj.canvas.width - (2 * obj.Get('chart.gutter')))) * (obj.Get('chart.xmax') - obj.Get('chart.xmin'))) + obj.Get('chart.xmin');
+                                xCoord = xCoord.toFixed(obj.Get('chart.scale.decimals'));
+                            var yCoord = obj.max - (((y - obj.Get('chart.gutter')) / (obj.canvas.height - (2 * obj.Get('chart.gutter')))) * obj.max);
+                                yCoord = yCoord.toFixed(obj.Get('chart.scale.decimals'));
+                            var div    = RGraph.Registry.Get('chart.coordinates.coords.div');
+                            var mouseCoords = RGraph.getMouseXY(e);
+                            var canvasXY = RGraph.getCanvasXY(canvas);
+                            
+                            if (!div) {
+
+                                div = document.createElement('DIV');
+                                div.__object__     = obj;
+                                div.style.position = 'absolute';
+                                div.style.backgroundColor = 'white';
+                                div.style.border = '1px solid black';
+                                div.style.fontFamily = 'Arial, Verdana, sans-serif';
+                                div.style.fontSize = '10pt'
+                                div.style.padding = '2px';
+                                div.style.opacity = 1;
+                                div.style.WebkitBorderRadius = '3px';
+                                div.style.borderRadius = '3px';
+                                div.style.MozBorderRadius = '3px';
+                                document.body.appendChild(div);
+                                
+                                RGraph.Registry.Set('chart.coordinates.coords.div', div);
+                            }
+                            
+                            // Convert the X/Y pixel coords to correspond to the scale
+                            
+                            div.style.opacity = 1;
+                            div.style.display = 'inline';
+
+                            if (!obj.Get('chart.crosshairs.coords.fixed')) {
+                                div.style.left = Math.max(2, (e.pageX - div.offsetWidth - 3)) + 'px';
+                                div.style.top = Math.max(2, (e.pageY - div.offsetHeight - 3))  + 'px';
+                            } else {
+                                div.style.left = canvasXY[0] + obj.Get('chart.gutter') + 3 + 'px';
+                                div.style.top  = canvasXY[1] + obj.Get('chart.gutter') + 3 + 'px';
+                            }
+
+                            div.innerHTML = '<span style="color: #666">' + obj.Get('chart.crosshairs.coords.labels.x') + ':</span> ' + xCoord + '<br><span style="color: #666">' + obj.Get('chart.crosshairs.coords.labels.y') + ':</span> ' + yCoord;
+                            
+                            canvas.addEventListener('mouseout', RGraph.HideCrosshairCoords, false);
+
+                        } else {
+                            alert('[RGRAPH] Showing crosshair coordinates is only supported on the Scatter chart');
+                        }
+                    }
+                } else {
+                    RGraph.HideCrosshairCoords();
                 }
             }
+        }
+    }
+
+    /**
+    * Thisz function hides the crosshairs coordinates
+    */
+    RGraph.HideCrosshairCoords = function ()
+    {
+        var div = RGraph.Registry.Get('chart.coordinates.coords.div');
+
+        if (   div
+            && div.style.opacity == 1
+            && div.__object__.Get('chart.crosshairs.coords.fadeout')
+           ) {
+            setTimeout(function() {RGraph.Registry.Get('chart.coordinates.coords.div').style.opacity = 0.9;}, 50);
+            setTimeout(function() {RGraph.Registry.Get('chart.coordinates.coords.div').style.opacity = 0.8;}, 100);
+            setTimeout(function() {RGraph.Registry.Get('chart.coordinates.coords.div').style.opacity = 0.7;}, 150);
+            setTimeout(function() {RGraph.Registry.Get('chart.coordinates.coords.div').style.opacity = 0.6;}, 200);
+            setTimeout(function() {RGraph.Registry.Get('chart.coordinates.coords.div').style.opacity = 0.5;}, 250);
+            setTimeout(function() {RGraph.Registry.Get('chart.coordinates.coords.div').style.opacity = 0.4;}, 300);
+            setTimeout(function() {RGraph.Registry.Get('chart.coordinates.coords.div').style.opacity = 0.3;}, 350);
+            setTimeout(function() {RGraph.Registry.Get('chart.coordinates.coords.div').style.opacity = 0.2;}, 400);
+            setTimeout(function() {RGraph.Registry.Get('chart.coordinates.coords.div').style.opacity = 0.1;}, 450);
+            setTimeout(function() {RGraph.Registry.Get('chart.coordinates.coords.div').style.opacity = 0;}, 500);
+            setTimeout(function() {RGraph.Registry.Get('chart.coordinates.coords.div').style.display = 'none';}, 550);
         }
     }
 
@@ -1448,6 +1688,19 @@
             context.fillText    = function (text, targetX, targetY)
             {
                 return false;
+            }
+        }
+        
+        // If IE8, add addEventListener()
+        if (!context.canvas.addEventListener) {
+            window.addEventListener = function (ev, func, bubble)
+            {
+                return this.attachEvent('on' + ev, func);
+            }
+
+            context.canvas.addEventListener = function (ev, func, bubble)
+            {
+                return this.attachEvent('on' + ev, func);
             }
         }
     }
@@ -1726,7 +1979,8 @@
 
             // Now fill it in
             context.fillRect(x + r, y, w - r - r, h);
-            context.fillRect(x, y + r, w, h - r - r);
+            context.fillRect(x, y + r, r, h - r - r);
+            context.fillRect(x + w - r, y + r, r, h - r - r);
 
         context.fill();
     }
@@ -1791,4 +2045,150 @@
         if (typeof(__zoomedbackground__) == 'object') {
             setTimeout("__zoomedbackground__.style.display = 'none'", obj.Get('chart.zoom.fade.out') ? 310 : 0);
         }
+    }
+
+
+    /**
+    * Adds an event handler
+    * 
+    * @param object obj   The graph object
+    * @param string event The name of the event, eg ontooltip
+    * @param object func  The callback function
+    */
+    RGraph.AddCustomEventListener = function (obj, name, func)
+    {
+        if (typeof(RGraph.events[obj.id]) == 'undefined') {
+            RGraph.events[obj.id] = [];
+        }
+
+        RGraph.events[obj.id].push([obj, name, func]);
+    }
+
+
+    /**
+    * Used to fire one of the RGraph custom events
+    * 
+    * @param object obj   The graph object that fires the event
+    * @param string event The name of the event to fire
+    */
+    RGraph.FireCustomEvent = function (obj, name)
+    {
+        for (i in RGraph.events) {
+            if (typeof(i) == 'string' && i == obj.id && RGraph.events[i].length > 0) {
+                for(var j=0; j<RGraph.events[i].length; ++j) {
+                    if (RGraph.events[i][j][1] == name) {
+                        RGraph.events[i][j][2](obj);
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+    * Checks the browser for traces of MSIE8
+    */
+    RGraph.isIE8 = function ()
+    {
+        return navigator.userAgent.indexOf('MSIE 8') > 0;
+    }
+
+
+    /**
+    * Checks the browser for traces of MSIE9
+    */
+    RGraph.isIE9 = function ()
+    {
+        return navigator.userAgent.indexOf('MSIE 9') > 0;
+    }
+
+
+    /**
+    * Checks the browser for traces of MSIE9
+    */
+    RGraph.isIE9up = function ()
+    {
+        navigator.userAgent.match(/MSIE (\d+)/);
+
+        return Number(RegExp.$1) >= 9;
+    }
+
+
+    /**
+    * This clears a canvases event handlers.
+    * 
+    * @param string id The ID of the canvas whose event handlers will be cleared
+    */
+    RGraph.ClearEventListeners = function (id)
+    {
+        for (var i=0; i<RGraph.Registry.Get('chart.event.handlers').length; ++i) {
+
+            var el = RGraph.Registry.Get('chart.event.handlers')[i];
+
+            if (el && (el[0] == id || el[0] == ('window_' + id)) ) {
+                if (el[0].substring(0, 7) == 'window_') {
+                    window.removeEventListener(el[1], el[2], false);
+                } else {
+                    document.getElementById(id).removeEventListener(el[1], el[2], false);
+                }
+                
+                RGraph.Registry.Get('chart.event.handlers')[i] = null;
+            }
+        }
+    }
+
+
+    /**
+    * 
+    */
+    RGraph.AddEventListener = function (id, e, func)
+    {
+        RGraph.Registry.Get('chart.event.handlers').push([id, e, func]);
+    }
+
+
+    /**
+    * This function suggests a gutter size based on the widest left label. Given that the bottom
+    * labels may be longer, this may be a little out.
+    * 
+    * @param object obj  The graph object
+    * @param array  data An array of graph data
+    * @return int        A suggested gutter setting
+    */
+    RGraph.getGutterSuggest = function (obj, data)
+    {
+        var str = RGraph.number_format(obj, RGraph.array_max(RGraph.getScale(RGraph.array_max(data), obj)), obj.Get('chart.units.pre'), obj.Get('chart.units.post'));
+
+        // Take into account the HBar
+        if (obj.type == 'hbar') {
+
+            var str = '';
+            var len = 0;
+
+            for (var i=0; i<obj.Get('chart.labels').length; ++i) {
+                str = (obj.Get('chart.labels').length > str.length ? obj.Get('chart.labels')[i] : str);
+            }
+        }
+
+        obj.context.font = obj.Get('chart.text.size') + 'pt ' + obj.Get('chart.text.font');
+
+        len = obj.context.measureText(str).width + 5;
+
+        return (obj.type == 'hbar' ? len / 3 : len);
+    }
+
+
+    /**
+    * A basic Array shift gunction
+    * 
+    * @param  object The numerical array to work on
+    * @return        The new array
+    */
+    RGraph.array_shift = function (arr)
+    {
+        var ret = [];
+        
+        for (var i=1; i<arr.length; ++i) ret.push(arr[i]);
+        
+        return ret;
     }

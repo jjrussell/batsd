@@ -1,4 +1,4 @@
-        /**
+    /**
     * o------------------------------------------------------------------------------o
     * | This file is part of the RGraph package - you can learn more at:             |
     * |                                                                              |
@@ -21,16 +21,17 @@
     */
     RGraph.Pie = function (id, data)
     {
-        this.id         = id;
-        this.canvas     = document.getElementById(id);
-        this.context    = this.canvas.getContext("2d");
+        this.id                = id;
+        this.canvas            = document.getElementById(id);
+        this.context           = this.canvas.getContext("2d");
         this.canvas.__object__ = this;
-        this.total      = 0;
-        this.subTotal   = 0;
-        this.angles     = [];
-        this.data       = data;
-        this.properties = [];
-        this.type       = 'pie';
+        this.total             = 0;
+        this.subTotal          = 0;
+        this.angles            = [];
+        this.data              = data;
+        this.properties        = [];
+        this.type              = 'pie';
+        this.isRGraph          = true;
 
 
         /**
@@ -48,6 +49,7 @@
             'chart.segments':               [],
             'chart.gutter':                 25,
             'chart.title':                  '',
+            'chart.title.hpos':             null,
             'chart.title.vpos':             null,
             'chart.shadow':                 false,
             'chart.shadow.color':           'rgba(0,0,0,0.5)',
@@ -61,6 +63,7 @@
             'chart.tooltips':               [],
             'chart.tooltips.effect':         'fade',
             'chart.tooltips.css.class':      'RGraph_tooltip',
+            'chart.tooltips.highlight':     true,
             'chart.radius':                 null,
             'chart.highlight.style':        '3d',
             'chart.border':                 false,
@@ -124,6 +127,18 @@
     */
     RGraph.Pie.prototype.Draw = function ()
     {
+        /**
+        * Fire the onbeforedraw event
+        */
+        RGraph.FireCustomEvent(this, 'onbeforedraw');
+
+
+        /**
+        * Clear all of this canvases event handlers (the ones installed by RGraph)
+        */
+        RGraph.ClearEventListeners(this.id);
+
+
         this.diameter    = Math.min(this.canvas.height, this.canvas.width) - (2 * this.Get('chart.gutter'));
         this.radius      = this.Get('chart.radius') ? this.Get('chart.radius') : this.diameter / 2;
         // this.centerx now defined below
@@ -191,7 +206,7 @@
 
             for (var i=0,len=this.angles.length; i<len; ++i) {
                 this.context.moveTo(this.centerx, this.centery);
-                this.context.arc(this.centerx, this.centery, this.radius, this.angles[i][0] / 57.3, this.angles[i][0] / 57.3, 0);
+                this.context.arc(this.centerx, this.centery, this.radius, this.angles[i][0] / 57.3, (this.angles[i][0] + 0.01) / 57.3, 0);
             }
             
             this.context.stroke();
@@ -269,7 +284,8 @@
             /**
             * The onclick event
             */
-            this.canvas.onclick = function (e)
+            //this.canvas.onclick = function (e)
+            var canvas_onclick_func = function (e)
             {
                 RGraph.HideZoomedCanvas();
 
@@ -391,7 +407,7 @@
                     }
 
                     if (text) {
-                        RGraph.Tooltip(canvas, text, e.pageX, e.pageY);
+                        RGraph.Tooltip(canvas, text, e.pageX, e.pageY, segment[5]);
                     }
 
                     /**
@@ -402,11 +418,12 @@
                     }
 
                     e.stopPropagation();
-                    e.cancelBubble = true;
 
                     return;
                 }
             }
+            this.canvas.addEventListener('click', canvas_onclick_func, false);
+            RGraph.AddEventListener(this.id, 'click', canvas_onclick_func);
 
 
 
@@ -418,7 +435,8 @@
             /**
             * The onmousemove event for changing the cursor
             */
-            this.canvas.onmousemove = function (e)
+            //this.canvas.onmousemove = function (e)
+            var canvas_onmousemove_func = function (e)
             {
                 RGraph.HideZoomedCanvas();
 
@@ -427,7 +445,7 @@
                 var segment = RGraph.getSegment(e);
 
                 if (segment) {
-                    e.target.style.cursor = document.all ? 'hand' : 'pointer';
+                    e.target.style.cursor = 'pointer';
 
                     return;
                 }
@@ -437,15 +455,8 @@
                 */
                 e.target.style.cursor = 'default';
             }
-
-
-
-
-
-        // This resets the canvas events - getting rid of any installed event handlers
-        } else {
-            this.canvas.onclick     = null;
-            this.canvas.onmousemove = null;
+            this.canvas.addEventListener('mousemove', canvas_onmousemove_func, false);
+            RGraph.AddEventListener(this.id, 'mousemove', canvas_onmousemove_func);
         }
 
 
@@ -511,6 +522,11 @@
         if (this.Get('chart.resizable')) {
             RGraph.AllowResizing(this);
         }
+        
+        /**
+        * Fire the RGraph ondraw event
+        */
+        RGraph.FireCustomEvent(this, 'ondraw');
     }
 
 
@@ -649,7 +665,7 @@
                         this.centery,
                         this.radius + 7,
                         midpoint,
-                        midpoint,
+                        midpoint + 0.01,
                         0);
             
             
@@ -657,7 +673,7 @@
                         this.centery,
                         this.radius - offset,
                         midpoint,
-                        midpoint,
+                        midpoint + 0.01,
                         0);
 
             context.stroke();

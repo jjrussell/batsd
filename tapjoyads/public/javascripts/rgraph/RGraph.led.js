@@ -28,6 +28,7 @@
         this.context           = this.canvas.getContext ? this.canvas.getContext("2d") : null;
         this.canvas.__object__ = this;
         this.type              = 'led';
+        this.isRGraph          = true;
 
 
         /**
@@ -143,6 +144,12 @@
     */
     RGraph.LED.prototype.Draw = function ()
     {
+        /**
+        * Fire the onbeforedraw event
+        */
+        RGraph.FireCustomEvent(this, 'onbeforedraw');
+
+
         // First clear the canvas, using the background colour
         RGraph.Clear(this.canvas, this.Get('chart.background'));
         
@@ -176,6 +183,11 @@
         if (this.Get('chart.resizable')) {
             RGraph.AllowResizing(this);
         }
+        
+        /**
+        * Fire the RGraph ondraw event
+        */
+        RGraph.FireCustomEvent(this, 'ondraw');
     }
 
 

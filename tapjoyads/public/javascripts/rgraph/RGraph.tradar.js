@@ -1,4 +1,4 @@
-    /**
+/**
     * o------------------------------------------------------------------------------o
     * | This file is part of the RGraph package - you can learn more at:             |
     * |                                                                              |
@@ -22,15 +22,16 @@
     */
     RGraph.Tradar = function (id, data)
     {
-        this.id      = id;
-        this.canvas  = document.getElementById(id);
-        this.context = this.canvas.getContext('2d');
+        this.id                = id;
+        this.canvas            = document.getElementById(id);
+        this.context           = this.canvas.getContext('2d');
         this.canvas.__object__ = this;
-        this.size     = null;// Set in the .Draw() method
-        this.data    = data;
-        this.max     = RGraph.array_max(this.data);
-        this.type    = 'tradar';
-        this.coords  = [];
+        this.size              = null;// Set in the .Draw() method
+        this.data              = data;
+        this.max               = RGraph.array_max(this.data);
+        this.type              = 'tradar';
+        this.coords            = [];
+        this.isRGraph          = true;
 
 
         /**
@@ -54,6 +55,7 @@
             'chart.text.font':             'Verdana',
             'chart.text.color':            'black',
             'chart.title':                 '',
+            'chart.title.hpos':            null,
             'chart.title.vpos':            null,
             'chart.title.color':           'black',
             'chart.linewidth':             1,
@@ -61,6 +63,10 @@
             'chart.key.background':        'white',
             'chart.key.position':          'gutter',
             'chart.key.shadow':            false,
+            'chart.key.shadow.color':       '#666',
+            'chart.key.shadow.blur':        3,
+            'chart.key.shadow.offsetx':     2,
+            'chart.key.shadow.offsety':     2,
             'chart.contextmenu':           null,
             'chart.annotatable':           false,
             'chart.annotate.color':        'black',
@@ -79,7 +85,10 @@
             'chart.zoom.action':            'zoom',
             'chart.tooltips.effect':        'fade',
             'chart.tooltips.css.class':      'RGraph_tooltip',
-            'chart.resizable':              false
+            'chart.tooltips.highlight':     true,
+            'chart.resizable':              false,
+            'chart.labels.axes':            'nsew',
+            'chart.ymax':                   null
         }
         
         // Must have at least 3 points
@@ -130,13 +139,41 @@
     */
     RGraph.Tradar.prototype.Draw = function ()
     {
+        /**
+        * Fire the onbeforedraw event
+        */
+        RGraph.FireCustomEvent(this, 'onbeforedraw');
+
+        /**
+        * Clear all of this canvases event handlers (the ones installed by RGraph)
+        */
+        RGraph.ClearEventListeners(this.id);
+
         this.centerx  = this.canvas.width / 2;
         this.centery  = this.canvas.height / 2;
         this.size     = Math.min(this.canvas.width, this.canvas.height) - (2 * this.Get('chart.gutter'));
+    
+        // Work out the maximum value and the sum
+        if (!this.Get('chart.ymax')) {
+            this.scale = RGraph.getScale(RGraph.array_max(this.data), this);
+            this.max = this.scale[4];
+        } else {
+            var ymax = this.Get('chart.ymax');
+
+            this.scale = [
+                          ymax * 0.2,
+                          ymax * 0.4,
+                          ymax * 0.6,
+                          ymax * 0.8,
+                          ymax * 1
+                         ];
+            this.max = this.scale[4];
+        }
 
         this.DrawBackground();
         this.DrawAxes();
         this.DrawCircle();
+        this.DrawAxisLabels();
         this.DrawChart();
         this.DrawLabels();
         
@@ -187,6 +224,11 @@
         if (this.Get('chart.adjustable')) {
             RGraph.AllowAdjusting(this);
         }
+        
+        /**
+        * Fire the RGraph ondraw event
+        */
+        RGraph.FireCustomEvent(this, 'ondraw');
     }
 
 
@@ -205,7 +247,7 @@
            this.context.strokeStyle = color;
            this.context.beginPath();
 
-           for (var r=5; r<(this.size / 2); r+=10) {
+           for (var r=5; r<(this.size / 2); r+=15) {
 
                 this.context.moveTo(this.centerx, this.centery);
                 this.context.arc(this.centerx, this.centery,r, 0, 6.28, 0);
@@ -218,14 +260,12 @@
         /**
         * Draw diagonals
         */
-        if (0) {
-            this.context.strokeStyle = color;
-            for (var i=0; i<360; i+=10) {
-                this.context.beginPath();
-                this.context.arc(this.centerx, this.centery, this.size / 2, (i / 360) * (2 * Math.PI), (i / 360) * (2 * Math.PI), 0);
-                this.context.lineTo(this.centerx, this.centery);
-                this.context.stroke();
-            }
+        this.context.strokeStyle = color;
+        for (var i=0; i<360; i+=15) {
+            this.context.beginPath();
+            this.context.arc(this.centerx, this.centery, this.size / 2, (i / 360) * (2 * Math.PI), ((i+0.01) / 360) * (2 * Math.PI), 0); // The 0.01 avoids a bug in Chrome 6
+            this.context.lineTo(this.centerx, this.centery);
+            this.context.stroke();
         }
     }
 
@@ -322,7 +362,7 @@
             
             RGraph.Register(this);
             
-            this.canvas.onmousemove = function (e)
+            var canvas_onmousemove_func = function (e)
             {
                 e = RGraph.FixEventObject(e);
                 
@@ -368,24 +408,25 @@
                             if (typeof(text) == 'string' && text.length) {
                        
                                 overHotspot = true;
-                                obj.canvas.style.cursor = document.all ? 'hand' : 'pointer';
+                                obj.canvas.style.cursor = 'pointer';
 
                                 RGraph.Clear(obj.canvas);
                                 obj.Draw();
-    
-                                obj.context.beginPath();
-                                obj.context.strokeStyle = 'gray';
-                                obj.context.fillStyle   = 'white';
-                                obj.context.arc(xCoord, yCoord, 2, 0, 6.28, 0);
-                                obj.context.fill();
-                                obj.context.stroke();
                                 
-                                RGraph.Tooltip(obj.canvas, text, e.pageX, e.pageY);
-                                RGraph.Registry.Get('chart.tooltip').__index__ = idx;
+                                if (obj.Get('chart.tooltips.highlight')) {
+                                    obj.context.beginPath();
+                                    obj.context.strokeStyle = 'gray';
+                                    obj.context.fillStyle   = 'white';
+                                    obj.context.arc(xCoord, yCoord, 2, 0, 6.28, 0);
+                                    obj.context.fill();
+                                    obj.context.stroke();
+                                }
+                                
+                                RGraph.Tooltip(obj.canvas, text, e.pageX, e.pageY, idx);
                             }
                         } else if (RGraph.Registry.Get('chart.tooltip') && RGraph.Registry.Get('chart.tooltip').__index__ == idx) {
                             overHotspot = true;
-                            obj.canvas.style.cursor = document.all ? 'hand' : 'pointer';
+                            obj.canvas.style.cursor = 'pointer';
                         }
                     }
                 }
@@ -394,6 +435,8 @@
                     obj.canvas.style.cursor = 'default';
                 }
             }
+            this.canvas.addEventListener('mousemove', canvas_onmousemove_func, false);
+            RGraph.AddEventListener(this.id, 'mousemove', canvas_onmousemove_func);
         }
     }
 
@@ -506,4 +549,62 @@
             this.context.fill();
             this.context.stroke();
         }
+    }
+
+
+    /**
+    * Unsuprisingly, draws the labels
+    */
+    RGraph.Tradar.prototype.DrawAxisLabels = function ()
+    {
+        this.context.lineWidth = 1;
+        
+        // Set the color to black
+        this.context.fillStyle = 'black';
+        this.context.strokeStyle = 'black';
+
+        var r         = (this.size/ 2);
+        var font_face = this.Get('chart.text.font');
+        var font_size = this.Get('chart.text.size');
+        var context   = this.context;
+        var axes      = this.Get('chart.labels.axes').toLowerCase();
+        var color     = 'rgba(255,255,255,0.8)';
+
+        // The "North" axis labels
+        if (axes.indexOf('n') > -1) {
+            RGraph.Text(context,font_face,font_size,this.centerx,this.centery - (r * 0.2),String(this.scale[0]),'center','center',true,false,color);
+            RGraph.Text(context, font_face, font_size, this.centerx, this.centery - (r * 0.4), String(this.scale[1]), 'center', 'center', true, false, color);
+            RGraph.Text(context, font_face, font_size, this.centerx, this.centery - (r * 0.6), String(this.scale[2]), 'center', 'center', true, false, color);
+            RGraph.Text(context, font_face, font_size, this.centerx, this.centery - (r * 0.8), String(this.scale[3]), 'center', 'center', true, false, color);
+            RGraph.Text(context, font_face, font_size, this.centerx, this.centery - r, String(this.scale[4]), 'center', 'center', true, false, color);
+        }
+
+        // The "South" axis labels
+        if (axes.indexOf('s') > -1) {
+            RGraph.Text(context, font_face, font_size, this.centerx, this.centery + (r * 0.2), String(this.scale[0]), 'center', 'center', true, false, color);
+            RGraph.Text(context, font_face, font_size, this.centerx, this.centery + (r * 0.4), String(this.scale[1]), 'center', 'center', true, false, color);
+            RGraph.Text(context, font_face, font_size, this.centerx, this.centery + (r * 0.6), String(this.scale[2]), 'center', 'center', true, false, color);
+            RGraph.Text(context, font_face, font_size, this.centerx, this.centery + (r * 0.8), String(this.scale[3]), 'center', 'center', true, false, color);
+            RGraph.Text(context, font_face, font_size, this.centerx, this.centery + r, String(this.scale[4]), 'center', 'center', true, false, color);
+        }
+        
+        // The "East" axis labels
+        if (axes.indexOf('e') > -1) {
+            RGraph.Text(context, font_face, font_size, this.centerx + (r * 0.2), this.centery, String(this.scale[0]), 'center', 'center', true, false, color);
+            RGraph.Text(context, font_face, font_size, this.centerx + (r * 0.4), this.centery, String(this.scale[1]), 'center', 'center', true, false, color);
+            RGraph.Text(context, font_face, font_size, this.centerx + (r * 0.6), this.centery, String(this.scale[2]), 'center', 'center', true, false, color);
+            RGraph.Text(context, font_face, font_size, this.centerx + (r * 0.8), this.centery, String(this.scale[3]), 'center', 'center', true, false, color);
+            RGraph.Text(context, font_face, font_size, this.centerx + r, this.centery, String(this.scale[4]), 'center', 'center', true, false, color);
+        }
+
+        // The "West" axis labels
+        if (axes.indexOf('w') > -1) {
+            RGraph.Text(context, font_face, font_size, this.centerx - (r * 0.2), this.centery, String(this.scale[0]), 'center', 'center', true, false, color);
+            RGraph.Text(context, font_face, font_size, this.centerx - (r * 0.4), this.centery, String(this.scale[1]), 'center', 'center', true, false, color);
+            RGraph.Text(context, font_face, font_size, this.centerx - (r * 0.6), this.centery, String(this.scale[2]), 'center', 'center', true, false, color);
+            RGraph.Text(context, font_face, font_size, this.centerx - (r * 0.8), this.centery, String(this.scale[3]), 'center', 'center', true, false, color);
+            RGraph.Text(context, font_face, font_size, this.centerx - r, this.centery, String(this.scale[4]), 'center', 'center', true, false, color);
+        }
+
+        RGraph.Text(context, font_face, font_size, this.centerx,  this.centery, '0', 'center', 'center', true, false, color);
     }
