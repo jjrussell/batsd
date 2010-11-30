@@ -38,8 +38,7 @@ class GetOffersController < ApplicationController
       @offer_list = [ build_test_offer(@publisher_app, @currency) ]
     else
       set_offer_list(:is_server_to_server => false)
-      srand
-      @offer_list = @offer_list[rand(@offer_list.length).to_i, 1]
+      @offer_list = @offer_list[0, 1]
     end
     @more_data_available = 0
     
