@@ -471,6 +471,7 @@ class Offer < ActiveRecord::Base
     featured_offer.featured = true
     featured_offer.name_suffix = "featured"
     featured_offer.bid = featured_offer.min_bid
+    featured_offer.tapjoy_enabled = false
     featured_offer.save!
     featured_offer
   end
