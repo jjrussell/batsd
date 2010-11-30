@@ -428,7 +428,8 @@ class Offer < ActiveRecord::Base
         show_rate_reject?(device) ||
         flixter_reject?(publisher_app, device) ||
         whitelist_reject?(publisher_app) ||
-        gamevil_reject?(publisher_app)
+        gamevil_reject?(publisher_app) ||
+        minimum_featured_bid_reject?(currency)
   end
   
   def update_payment(force_update = false)
@@ -570,6 +571,11 @@ private
   
   def whitelist_reject?(publisher_app)
     return !publisher_app_whitelist.blank? && !get_publisher_app_whitelist.include?(publisher_app.id)
+  end
+  
+  def minimum_featured_bid_reject?(currency)
+    return false unless (featured? && currency.minimum_featured_bid)
+    bid < currency.minimum_featured_bid
   end
   
   def normalize_device_type(device_type_param)
