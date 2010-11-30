@@ -4,7 +4,7 @@
     %tbody
       %tr
         %th
-          = f.label :user_enabled, 'Enable Installs'
+          = f.label :user_enabled, featured ? 'Enable Featured Installs' : 'Enable Installs'
           #help_user_enabled.help ?
         %td
           = f.check_box :user_enabled
@@ -19,7 +19,7 @@
           - if Rails.env == 'development' || request.host == 'test.tapjoy.com'
             - if featured
               #percentile-info.percentile-details
-                This bid makes you more likely to be featured than
+                This bid will make your offer more prioritized than
                 %span#percentile= "#{@offer.estimated_percentile}%" rescue 'N/A'
                 of featured offers.
               #percentile-info-loading.percentile-details{ :style => 'display: none' }

@@ -79,6 +79,12 @@ private
     else
       @app = current_partner.apps.find(params[:app_id], :include => [:primary_offer])
     end
-    @offer = @app.primary_offer
+    
+    if params[:id]
+      @offer = @app.offers.find(params[:id])
+    else
+      @offer = @app.primary_offer
+    end
+    log_activity(@offer)
   end
 end
