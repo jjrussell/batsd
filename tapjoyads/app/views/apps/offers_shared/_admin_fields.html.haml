@@ -108,6 +108,12 @@
     %td
       = f.text_field(:overall_budget)
       = error_message_on @offer, :overall_budget
+%tr.admin
+  %th
+    = f.label(:rank_score)
+    #help_rank_score.help ?
+  %td
+    = @offer.rank_score || "N/A"
     
 .hidden
   #help_admin_offer_name_content{:name => 'Offer Name'} Name that will be displayed on offer walls.
@@ -126,6 +132,7 @@
   #help_publisher_app_whitelist_content{ :name => 'Publisher App Whitelist' } Restrict this offer to these publisher apps. Must be a ";" separated list of publisher app IDs.
   #help_daily_budget_content{ :name => 'Daily Budget' } The maximum number of conversions to complete in one day.
   #help_overall_budget_content{ :name => 'Overall Budget' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
+  #help_rank_score_content{ :name => 'Rank Score' } The last computed rank score for this offer.
 
 - content_for :page_javascript do
   :plain
