@@ -128,6 +128,10 @@ class ToolsController < WebsiteController
     end
   end
 
+  def sqs_lengths
+    @queues = Sqs.sqs.queues
+  end
+
   def disabled_popular_offers
     @offers_count_hash = Mc.distributed_get('tools.disabled_popular_offers') { {} }
     @offers = Offer.find(@offers_count_hash.keys, :include => [:partner, :item])
