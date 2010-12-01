@@ -48,3 +48,6 @@ MAIL_CHIMP_API_KEY = mail_chimp['api_key']
 MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
+
+APSALAR_URL = 'https://livebeef42.apsalar.com'
+APSALAR_SECRET = 'Tn0oWhQ4k3rahJ45vy4RI3vzausCOoyo'

@@ -55,6 +55,8 @@
         - tabs = []
         - tabs << { :apps      => apps_path }            if permitted_to?(:index, :apps)
         - tabs << { :reporting => reporting_index_path } if permitted_to?(:index, :reporting)
+        - if RAILS_ENV == 'development'
+          - tabs << { :analytics => analytics_path }     if permitted_to?(:index, :analytics)
         - tabs << { :billing   => billing_index_path }   if permitted_to?(:index, :billing)
         - tabs << { :account   => users_path }           if permitted_to?(:index, :users)
         - tabs << { :partners  => partners_path }        if permitted_to?(:index, :partners)

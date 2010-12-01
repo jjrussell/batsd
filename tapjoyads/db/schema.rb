@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110201232320) do
+ActiveRecord::Schema.define(:version => 20110208215659) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",            :limit => 36,                    :null => false
@@ -298,6 +298,9 @@ ActiveRecord::Schema.define(:version => 20110201232320) do
     t.decimal  "transfer_bonus",                           :precision => 8, :scale => 6, :default => 0.0,       :null => false
     t.decimal  "rev_share",                                :precision => 8, :scale => 6, :default => 0.5,       :null => false
     t.decimal  "direct_pay_share",                         :precision => 8, :scale => 6, :default => 1.0,       :null => false
+    t.string   "apsalar_username"
+    t.string   "apsalar_api_secret"
+    t.text     "apsalar_url"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
