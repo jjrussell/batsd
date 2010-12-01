@@ -318,6 +318,11 @@ class OneOffs
   end
 
   def self.reset_memcached
+    save_memcached_state
+    restore_memcached_state
+  end
+
+  def self.save_memcached_state
     keys = [ 'statz.last_updated.24_hours',
              'statz.last_updated.7_days',
              'statz.last_updated.1_month',
@@ -331,21 +336,40 @@ class OneOffs
                          'statz.cached_stats.7_days',
                          'statz.cached_stats.1_month',
                          'tools.disabled_popular_offers' ]
-    data = {}
     (keys + distributed_keys).each do |key|
-      data[key] = Mc.get(key)
+      data = Mc.get(key)
+      f = File.open("tmp/mc_#{key}", 'w')
+      f.write(Marshal.dump(data))
+      f.close
     end
-    
+    true
+  end
+
+  def self.restore_memcached_state
+    keys = [ 'statz.last_updated.24_hours',
+             'statz.last_updated.7_days',
+             'statz.last_updated.1_month',
+             'money.cached_stats',
+             'money.total_balance',
+             'money.total_pending_earnings',
+             'money.last_updated',
+             'money.daily_cached_stats',
+             'money.daily_last_updated' ]
+    distributed_keys = [ 'statz.cached_stats.24_hours',
+                         'statz.cached_stats.7_days',
+                         'statz.cached_stats.1_month',
+                         'tools.disabled_popular_offers' ]
     Mc.cache.flush
-    
-    data.each do |k, v|
-      if distributed_keys.include?(k)
-        Mc.distributed_put(k, v)
+    (keys + distributed_keys).each do |key|
+      f = File.open("tmp/mc_#{key}", 'r')
+      data = Marshal.restore(f.read)
+      f.close
+      if distributed_keys.include?(key)
+        Mc.distributed_put(key, data)
       else
-        Mc.put(k, v)
+        Mc.put(key, data)
       end
     end
-    
     Offer.cache_featured_offers
     Offer.cache_enabled_offers
     true
