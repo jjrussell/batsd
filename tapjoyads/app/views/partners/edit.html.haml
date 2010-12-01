@@ -16,6 +16,11 @@
     = f.text_field :installs_money_share
     = error_message_on(@partner, :installs_money_share) if @partner.errors.on :installs_money_share
   .field
+    = f.label :transfer_bonus, 'Transfer bonus'
+    #help_transfer_bonus.help ?
+    = f.text_field :transfer_bonus
+    = error_message_on(@partner, :transfer_bonus) if @partner.errors.on :transfer_bonus
+  .field
     = f.label :disabled_partners, 'Disabled partners'
     #help_disabled_partners.help ?
     = f.text_area :disabled_partners
@@ -34,6 +39,8 @@
     Offers belonging to partners that are in this list will not be shown in this partner's offerwalls.
   #help_installs_money_share_content{:name => 'Installs money share'}
     The share of app install offer revenue that this publisher gets. A number between 0 an 1.
+  #help_transfer_bonus_content{:name => 'Transfer bonus'}
+    The bonus that this partner gets when transferring between pending earnings and balance. A value of 0.1 will give a 10% bonus.
 
 - content_for :page_styles do
   :plain

@@ -1,17 +1,9 @@
 - @page_title = 'Create Transfer'
 
-%h1 Create Transfer
+%p
+The transfer tool has been moved, and is now part of the 
+= link_to("partner page", partners_path) + "."
 
-- form_tag create_transfer_tools_path, :method => :post, :class => 'tjform' do
-  %table
-    %tr
-      %th= label_tag 'partner_id', 'Partner ID'
-      %td= text_field_tag 'partner_id', '', :size => 50
-    %tr
-      %th= label_tag 'transfer_amount', 'Amount'
-      %td= text_field_tag 'transfer_amount', '$0.00', :class => 'currency_field allow_negative'
-    %tr
-      %th= label_tag 'marketing_amount', 'Marketing Credits'
-      %td= text_field_tag 'marketing_amount', '$0.00', :class => 'currency_field'
-    %tr
-      %td{ :colspan => 2 }= submit_tag 'Create Transfer'
+%p{:style => "font-size: 110%; font-weight: bold;"}
+ Make sure the edit the Transfer Bonus field before making a transfer for the first time for a partner.
+

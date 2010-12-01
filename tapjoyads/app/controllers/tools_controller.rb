@@ -24,42 +24,6 @@ class ToolsController < WebsiteController
   def new_transfer
   end
   
-  def create_transfer
-    sanitized_params = sanitize_currency_params(params, [ :transfer_amount, :marketing_amount ])
-    Partner.transaction do
-      partner = Partner.find_by_id(params[:partner_id])
-      if partner.nil?
-        flash[:notice] = "Could not find partner with id: #{params[:partner_id]}"
-        redirect_to new_transfer_tools_path and return
-      end
-
-      amount = sanitized_params[:transfer_amount].to_i
-      payout = partner.payouts.build(:amount => amount, :month => Time.zone.now.month, :year => Time.zone.now.year, :payment_method => 3)
-      log_activity(payout)
-      payout.save!
-
-      order = partner.orders.build(:amount => amount, :status => 1, :payment_method => 3)
-      log_activity(order)
-      order.save!
-
-      dollars = amount.to_s
-      dollars[-2..-3] = "." if dollars.length > 1
-      email = order.partner.users.first.email rescue "(no email)"
-      flash[:notice] = "The transfer of <b>$#{dollars}</b> to <b>#{email}</b> was successfully created."
-
-      marketing_amount = sanitized_params[:marketing_amount].to_i
-      if marketing_amount > 0
-        marketing_order = partner.orders.build(:amount => marketing_amount, :status => 1, :payment_method => 2)
-        log_activity(marketing_order)
-        marketing_order.save!
-      end
-      dollars = marketing_amount.to_s
-      dollars[-2..-3] = "." if dollars.length > 1
-      flash[:notice] += "<br/>The marketing credit of <b>$#{dollars}</b> to <b>#{email}</b> was successfully created."
-    end
-    redirect_to new_transfer_tools_path
-  end
-  
   def new_order
     @order = Order.new
   end

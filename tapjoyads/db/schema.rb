@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101123094137) do
+ActiveRecord::Schema.define(:version => 20101130222931) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -274,6 +274,7 @@ ActiveRecord::Schema.define(:version => 20101123094137) do
     t.integer  "premier_discount",                                                       :default => 0,         :null => false
     t.string   "exclusivity_level_type"
     t.date     "exclusivity_expires_on"
+    t.decimal  "transfer_bonus",                           :precision => 8, :scale => 6, :default => 0.0,       :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

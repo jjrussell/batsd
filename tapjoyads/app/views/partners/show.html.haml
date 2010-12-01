@@ -2,8 +2,13 @@
 
 %h1 Partner data - #{@partner.name}
 
-= link_to("Edit", edit_partner_path(@partner))
-
+- if permitted_to?(:edit, :partners)
+  = link_to("Edit", edit_partner_path(@partner))
+  |
+  = link_to("Create transfer", new_transfer_partner_path(@partner))
+  |
+  = link_to('Activity Log', activities_path(:partner_id => @partner.id))
+  %br
 = render 'make_current_button', :partner => @partner
 
 .metadata Name: #{@partner.name}

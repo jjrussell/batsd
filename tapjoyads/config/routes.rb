@@ -59,7 +59,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :support, :only => [ :index ],
     :collection => { :contact => :post }
   map.resources :tools, :only => :index,
-    :collection => { :new_order => :get, :create_order => :post, :monthly_data => :get, :new_transfer => :get, :create_transfer => :post,
+    :collection => { :new_order => :get, :create_order => :post, :monthly_data => :get, :new_transfer => :get,
                      :payouts => :get, :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get,
                      :sdb_metadata => :get, :reset_device => :get, :failed_downloads => :get, :sanitize_users => :get,
                      :unresolved_clicks => :get, :resolve_clicks => :post },
@@ -69,7 +69,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :raffle_manager, :only => [ :index, :edit, :update, :new, :create ]
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
-    :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get },
+    :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post },
     :collection => { :managed_by => :get } do |partner|
       partner.resources :offer_discounts, :only => [ :index, :new, :create ], :member => { :deactivate => :post }, :controller => 'partners/offer_discounts'
   end

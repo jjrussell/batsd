@@ -5,9 +5,9 @@ class PartnersController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit ]
+  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer ]
   before_filter :get_account_managers, :only => [ :index, :managed_by ]
-  after_filter :save_activity_logs, :only => [ :update ]
+  after_filter :save_activity_logs, :only => [ :update, :create_transfer ]
 
   def index
     if current_user.role_symbols.include?(:agency)
@@ -71,7 +71,7 @@ class PartnersController < WebsiteController
     
     params[:partner][:account_managers] = User.find_all_by_id(params[:partner][:account_managers])
 
-    safe_attributes = [ :account_managers, :account_manager_notes, :installs_money_share, :disabled_partners ]
+    safe_attributes = [ :account_managers, :account_manager_notes, :installs_money_share, :transfer_bonus, :disabled_partners ]
     if @partner.safe_update_attributes(params[:partner], safe_attributes)
       flash[:notice] = 'Partner was successfully updated.'
     else
@@ -106,6 +106,39 @@ class PartnersController < WebsiteController
       flash[:error] = 'Could not switch partners.'
     end
     redirect_to request.referer
+  end
+
+  def new_transfer
+  end
+  
+  def create_transfer
+    sanitized_params = sanitize_currency_params(params, [ :transfer_amount ])
+    Partner.transaction do
+      amount = sanitized_params[:transfer_amount].to_i
+      payout = @partner.payouts.build(:amount => amount, :month => Time.zone.now.month, :year => Time.zone.now.year, :payment_method => 3)
+      log_activity(payout)
+      payout.save!
+
+      order = @partner.orders.build(:amount => amount, :status => 1, :payment_method => 3)
+      log_activity(order)
+      order.save!
+
+      dollars = amount.to_s
+      dollars[-2..-3] = "." if dollars.length > 1
+      email = order.partner.users.first.email rescue "(no email)"
+      flash[:notice] = "The transfer of <b>$#{dollars}</b> to <b>#{email}</b> was successfully created."
+
+      marketing_amount = (amount * @partner.transfer_bonus).to_i
+      if marketing_amount > 0
+        marketing_order = @partner.orders.build(:amount => marketing_amount, :status => 1, :payment_method => 2)
+        log_activity(marketing_order)
+        marketing_order.save!
+      end
+      dollars = marketing_amount.to_s
+      dollars[-2..-3] = "." if dollars.length > 1
+      flash[:notice] += "<br/>The marketing credit of <b>$#{dollars}</b> to <b>#{email}</b> was successfully created."
+    end
+    redirect_to partner_path(@partner)
   end
 
 private
