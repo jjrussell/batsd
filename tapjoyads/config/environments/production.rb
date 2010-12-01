@@ -35,9 +35,9 @@ EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
 RUN_MODE_PREFIX = ''
 
 # Amazon services:
-amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
-ENV['AWS_ACCESS_KEY_ID'] = amazon['main']['access_key_id']
-ENV['AWS_SECRET_ACCESS_KEY'] = amazon['main']['secret_access_key']
+amazon = YAML::load_file("#{ENV['HOME']}/.tapjoy_aws_credentials.yaml")
+ENV['AWS_ACCESS_KEY_ID'] = amazon['production']['access_key_id']
+ENV['AWS_SECRET_ACCESS_KEY'] = amazon['production']['secret_access_key']
 
 # Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
 # to the list of transient problems which will automatically get retried by RightAws.

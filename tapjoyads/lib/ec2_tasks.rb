@@ -12,9 +12,9 @@ class Ec2Tasks
   end
   
   def self.get_field_values(field_names, group_id)
-    amazon_credentials = YAML::load_file('config/amazon.yaml')
-    ENV['AWS_ACCESS_KEY_ID'] = amazon_credentials['main']['access_key_id'] unless ENV['AWS_ACCESS_KEY_ID']
-    ENV['AWS_SECRET_ACCESS_KEY'] = amazon_credentials['main']['secret_access_key'] unless ENV['AWS_SECRET_ACCESS_KEY']
+    amazon_credentials = YAML::load_file("#{ENV['HOME']}/.tapjoy_aws_credentials.yaml")
+    ENV['AWS_ACCESS_KEY_ID'] = amazon_credentials['production']['access_key_id'] unless ENV['AWS_ACCESS_KEY_ID']
+    ENV['AWS_SECRET_ACCESS_KEY'] = amazon_credentials['production']['secret_access_key'] unless ENV['AWS_SECRET_ACCESS_KEY']
     ec2 = RightAws::Ec2.new(nil, nil, :logger => Logger.new(STDERR))
     
     field_names << :aws_groups

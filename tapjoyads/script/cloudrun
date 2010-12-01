@@ -34,11 +34,11 @@ f = open(File.expand_path('~/.ssh/known_hosts'), 'a')
 server_list.each do |server|
   unless file_content.include?(server[:dns_name])
     puts "Adding #{server[:dns_name]} to known_hosts"
-    f.puts "#{server[:dns_name]} ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEApZ4yGm+pCsxG/jyPfhn0Qqar0b2oA2eGgC" +
-           "GfcR9J1zMhcqoHUh8/2IVpAKsPzPL9UFcpo5dYCFzm2EHwmj6x8ervGIEgoicQ4HlmIGTLEWIo2xTyYdcKw/Bg1lKC9" +
-           "ZKBUAr8iyfXJJVs+4LiTUeKfZCtD31u0X+yfYjg5S3AwlWSrCApLJCOGuYHUG9TV0F480GThcZfo5FkQaoR6MnYD6Nk" +
-           "pZ0Jmf9f/iXsdLc1oHTcwNoePbsn8zqQ/B1vwgVKYfcKMKYRiIRqOYn06kUJn+pHzqQzpRl2xRHbpFbViIiWt3B8OX9" +
-           "+eftdJT5rHUBJs4Y9YBjpT13lnvcj8gs60Q=="
+    f.puts "#{server[:dns_name]} ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvR002E1erByLHXDqGG+2dcDSmkUdRHBPi+" +
+           "WgbD9/jgrbXPTL6+Sk1ThvfE/EfmZ5jheX/Tbqb5cHJK9ezLQdJOkNe6aa6Ki+Av26iVqS4gYeIAS2Jb1ywevg6tL71" +
+           "ls8WbeJotTsXWrWqY1A+7JQSmLwMnoUYer9MRHfWBQbDf4ATs4PLlLIWYkZHEpXBjuy55ILyKGgCdykDa01nRBo+bfL" +
+           "Xc2OwMSxkgOY+O8zPHHrfv9hgerAhC4t3QB08LQ46pOhkhr1X8gydMWcWzDFe/t5P0IvKnCEB2F1somIBtxMymsmcmc" +
+           "sfS6mK0LZGgdULjCcbnOrT2IyVKZQuZ9ssw=="
   end
 end
 f.close
