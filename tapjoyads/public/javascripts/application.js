@@ -78,6 +78,7 @@ $(function($){
           $('#number_of_active_offers').text(numOffers);
           if (numOffers == 0) {
             $('#active_campaigns_box').remove();
+            $('#active_campaigns').addClass('inactive');
           }
         }
       },
