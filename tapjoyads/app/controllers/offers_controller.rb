@@ -23,6 +23,8 @@ class OffersController < WebsiteController
   end
 
   def update
+    log_activity(@offer)
+
     params[:offer].delete(:payment)
     offer_params = sanitize_currency_params(params[:offer], [ :bid ])
 
@@ -45,6 +47,7 @@ class OffersController < WebsiteController
 
   def toggle
     log_activity(@offer)
+
     @offer.user_enabled = params[:user_enabled]
     if @offer.save
       render :nothing => true
@@ -76,6 +79,5 @@ private
       @app = current_partner.apps.find(params[:app_id], :include => [:primary_offer])
     end
     @offer = @app.primary_offer
-    log_activity(@offer)
   end
 end
