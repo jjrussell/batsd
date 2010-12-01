@@ -161,10 +161,6 @@
       toggleManagedByTapjoy();
       copyCurrencyName();
       
-      $('#currency_minimum_featured_bid').change(function() {
-        var currentMinimumFeaturedBid = stringToNumber($('#currency_minimum_featured_bid').val());
-        $('#currency_minimum_featured_bid').val(numberToCurrency(currentMinimumFeaturedBid));
-      });
     });
     
     function copyCurrencyName() {
