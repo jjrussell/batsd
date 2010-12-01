@@ -290,3 +290,10 @@ div.help-dialog .ui-dialog-title {
 #active_campaigns_box td {
   padding: 3px;
 }
+
+a.soft-link.inactive {
+  color: #888;
+  text-decoration: none;
+  border-bottom: none;
+  cursor: text;
+}

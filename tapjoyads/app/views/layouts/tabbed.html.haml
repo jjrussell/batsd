@@ -27,8 +27,10 @@
               acting as
               = link_to current_partner.name_or_contact_name, partner_path(current_partner)
           |
-          = link_to_function "<span id='number_of_active_offers'>#{current_partner_active_offers.length}</span> active campaigns", '$.noop()', :class => 'soft-link', :id => 'active_campaigns'
-          - if current_partner_active_offers.length > 0
+          - link_text = "<span id='number_of_active_offers'>#{current_partner_active_offers.length}</span> active campaigns"
+          - link_class = "soft-link #{current_partner_active_offers.blank? ? 'inactive' : ''}"
+          = link_to_function link_text, '$.noop()', :class => link_class, :id => 'active_campaigns'
+          - unless current_partner_active_offers.blank?
             #active_campaigns_box.hidden
               %table{:cellspacing => 0}
                 %tbody
