@@ -44,6 +44,7 @@ class OffersController < WebsiteController
   end
 
   def toggle
+    log_activity(@offer)
     @offer.user_enabled = params[:user_enabled]
     if @offer.save
       render :nothing => true
