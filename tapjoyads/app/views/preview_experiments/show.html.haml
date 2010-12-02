@@ -1,4 +1,6 @@
-%h1= "Offer Ranks for " + (params[:id] == "featured" ? "Featured Offers" : "Experiment #{params[:id]}")
+- @page_title = "Offer Ranks for " + (params[:id] == "featured" ? "Featured Offers" : "Experiment #{params[:id]}")
+
+%h1= @page_title
 
 - if params[:id] == "featured" && !@offers.empty?
   - weight_scale = 1 - @offers.last.rank_score

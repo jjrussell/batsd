@@ -1,4 +1,6 @@
-%h1 Offer Rankings
+- @page_title = "Offer Rankings"
+
+%h1= @page_title
 
 - experiment_options = "<option></option>" + "<option value=\"featured\">Featured</option>" + options_for_select(@experiments.collect { |k, v| [ k.to_s.titleize + " (#{v})", v.to_s ] }, params[:id])
 - form_tag('', :id => 'experiments-form') do
