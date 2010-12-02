@@ -1,5 +1,10 @@
 %h1= "Offer Ranks for " + (params[:id] == "featured" ? "Featured Offers" : "Experiment #{params[:id]}")
 
+- if params[:id] == "featured" && !@offers.empty?
+  - weight_scale = 1 - @offers.last.rank_score
+  - weights = @offers.collect { |offer| offer.rank_score + weight_scale }
+  - total_weight = weights.sum
+
 - experiment_options = "<option value=\"featured\">Featured</option>" + options_for_select(@experiments.collect { |k, v| [ k.to_s.titleize + " (#{v})", v.to_s ] }, params[:id])
 %table
   - form_tag('', :id => 'experiments-form') do
@@ -11,25 +16,6 @@
     %tr
       %td= label_tag 'devices-list', 'Device:'
       %td= select_tag 'devices-list', options_for_select(["all"] + Offer::ALL_DEVICES, params[:device])
-  
-- if params[:id] == "featured"
-  - weight_scale = 1 - @offers.last.rank_score
-  - weights = @offers.collect { |offer| offer.rank_score + weight_scale }
-  - total_weight = weights.sum
-
-- content_for :page_javascript do
-  :plain
-    function updateLocation() {
-      window.location = '#{preview_experiments_url}' + '/' + $('#experiments-list').val() + "?device=" + $('#devices-list').val();
-    }    
-    $(function() {
-      $('#experiments-list').change(function() {
-        updateLocation();
-      });
-      $('#devices-list').change(function() {
-        updateLocation();
-      });
-    });
 
 %br
 Display: 
@@ -93,6 +79,10 @@ Display:
     function toggleOffers(item_type) {
       $('#offers_tbody tr[data-item_type="' + item_type + '"]').toggle()
     }
+    
+    function updateLocation() {
+      window.location = '#{preview_experiments_url}' + '/' + $('#experiments-list').val() + "?device=" + $('#devices-list').val();
+    }    
   
     $(function() {
 
@@ -120,4 +110,12 @@ Display:
       resetTable();
       
       $('#offers_tbody tr[data-item_type="RatingOffer"]').hide();
+      
+      $('#experiments-list').change(function() {
+        updateLocation();
+      });
+      
+      $('#devices-list').change(function() {
+        updateLocation();
+      });
     });
