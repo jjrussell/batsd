@@ -5,7 +5,7 @@ class WebsiteController < ApplicationController
   
   skip_before_filter :fix_params
   
-  helper_method :current_user, :current_partner, :current_partner_apps, :current_partner_offers, :current_partner_active_offers, :premier_enabled?
+  helper_method :current_user, :current_partner, :current_partner_apps, :current_partner_offers, :current_partner_app_offers, :current_partner_active_app_offers, :premier_enabled?
   
   before_filter { |c| Authorization.current_user = c.current_user }
 
@@ -22,11 +22,15 @@ class WebsiteController < ApplicationController
   end
 
   def current_partner_offers
-    @current_partner_offers ||= current_partner.offers.visible.sort_by{|app|app.name.downcase}
+    @current_partner_offers ||= current_partner.offers.visible.sort_by{|app| app.name.downcase}
   end
 
-  def current_partner_active_offers
-    @current_partner_active_offers ||= current_partner_offers.select(&:is_enabled?)
+  def current_partner_app_offers
+    @current_partner_app_offers ||= current_partner.offers.visible.scoped(:conditions => "item_type = 'App'").sort_by{|app| app.name.downcase}
+  end
+
+  def current_partner_active_app_offers
+    @current_partner_active_app_offers ||= current_partner_app_offers.select(&:is_enabled?)
   end
 
   def sanitize_currency_params(object, fields)

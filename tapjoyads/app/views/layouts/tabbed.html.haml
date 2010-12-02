@@ -27,14 +27,14 @@
               acting as
               = link_to current_partner.name_or_contact_name, partner_path(current_partner)
           |
-          - link_text = "<span id='number_of_active_offers'>#{current_partner_active_offers.length}</span> active campaigns"
-          - link_class = "soft-link #{current_partner_active_offers.blank? ? 'inactive' : ''}"
+          - link_text = "<span id='number_of_active_offers'>#{current_partner_active_app_offers.length}</span> active campaigns"
+          - link_class = "soft-link #{current_partner_active_app_offers.blank? ? 'inactive' : ''}"
           = link_to_function link_text, '$.noop()', :class => link_class, :id => 'active_campaigns'
-          - unless current_partner_active_offers.blank?
+          - unless current_partner_active_app_offers.blank?
             #active_campaigns_box.hidden
               %table{:cellspacing => 0}
                 %tbody
-                  - current_partner_active_offers.each do |offer|
+                  - current_partner_active_app_offers.each do |offer|
                     %tr
                       %td
                         - form_tag toggle_app_offer_path(:id => offer.id, :app_id => offer.item.id) do
