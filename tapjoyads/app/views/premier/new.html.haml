@@ -17,25 +17,24 @@
     %tr
       %th Discount
       %td{:colspan => 2}
-        <span id="discount_percent">15</span>% (paid) / <span id="discount_dollar">$0.15</span> (free)
+        Level <span id="discount_level">3</span>
 
 - content_for :page_javascript do
   :plain
     $(function(){
       $('select#partner_exclusivity_level_type').change(function(){
-        var level = $(this).val(), discount = '';
+        var level = $(this).val(), discount = '', date = '';
         if (level == '#{ExclusivityLevel::TYPES[0]}') {
-          discount = '#{ExclusivityLevel::TYPES[0].constantize.new.discount}';
+          discount = 1;
           date = '#{(Date.today+ExclusivityLevel::TYPES[0].constantize.new.months.months).to_s(:long)}';
         } else if (level == '#{ExclusivityLevel::TYPES[1]}') {
-          discount = '#{ExclusivityLevel::TYPES[1].constantize.new.discount}';
+          discount = 2;
           date = '#{(Date.today+ExclusivityLevel::TYPES[1].constantize.new.months.months).to_s(:long)}';
         } else if (level == '#{ExclusivityLevel::TYPES[2]}') {
-          discount = '#{ExclusivityLevel::TYPES[2].constantize.new.discount}';
+          discount = 3;
           date = '#{(Date.today+ExclusivityLevel::TYPES[2].constantize.new.months.months).to_s(:long)}';
         }
-        $('span#discount_dollar').text(numberToCurrency(discount/100));
-        $('span#discount_percent').text(discount);
+        $('span#discount_level').text(discount);
         $('td#expires').text(date);
       });
     });
