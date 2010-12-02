@@ -114,6 +114,13 @@ class Offer < ActiveRecord::Base
     end
   end
   
+  def self.get_stats_for_featured_ranks
+    Mc.get_and_put('s3.featured_offer_rank_statistics') do
+      bucket = S3.bucket(BucketNames::OFFER_DATA)
+      Marshal.restore(bucket.get('featured_offer_rank_statistics'))
+    end
+  end
+  
   def self.get_featured_offers
     Mc.distributed_get_and_put('s3.featured_offers') do
       bucket = S3.bucket(BucketNames::OFFER_DATA)
@@ -183,13 +190,17 @@ class Offer < ActiveRecord::Base
     
     stats = { :cvr_mean => cvr_mean, :cvr_std_dev => cvr_std_dev, :price_mean => price_mean, :price_std_dev => price_std_dev,
       :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
+      
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
+    bucket.put("featured_offer_rank_statistics", Marshal.dump(stats))
+    Mc.put("s3.featured_offer_rank_statistics", stats)
     
     offer_list.each do |offer|
       offer.normalize_stats(stats)
     end
     
     offer_list.each do |offer|
-      offer.calculate_rank_score(CONTROL_WEIGHTS)
+      offer.calculate_rank_score(CONTROL_WEIGHTS.merge({:random => 0}))
     end
     
     offer_list.sort! do |o1, o2|
@@ -372,10 +383,10 @@ class Offer < ActiveRecord::Base
   end
   
   def normalize_stats(stats)
-    self.normal_conversion_rate = (conversion_rate - stats[:cvr_mean]) / stats[:cvr_std_dev]
-    self.normal_price           = (price - stats[:price_mean]) / stats[:price_std_dev]
-    self.normal_avg_revenue     = (avg_revenue - stats[:avg_revenue_mean]) / stats[:avg_revenue_std_dev]
-    self.normal_bid             = (bid - stats[:bid_mean]) / stats[:bid_std_dev]
+    self.normal_conversion_rate = (stats[:cvr_std_dev] == 0) ? 0 : (conversion_rate - stats[:cvr_mean]) / stats[:cvr_std_dev]
+    self.normal_price           = (stats[:price_std_dev] == 0) ? 0 : (price - stats[:price_mean]) / stats[:price_std_dev]
+    self.normal_avg_revenue     = (stats[:avg_revenue_std_dev] == 0) ? 0 : (avg_revenue - stats[:avg_revenue_mean]) / stats[:avg_revenue_std_dev]
+    self.normal_bid             = (stats[:bid_std_dev] == 0) ? 0 : (bid - stats[:bid_mean]) / stats[:bid_std_dev]
   end
   
   def calculate_rank_score(weights = {})
@@ -390,18 +401,22 @@ class Offer < ActiveRecord::Base
   end
   
   def estimated_percentile(weights = CONTROL_WEIGHTS)
+    if conversion_rate == 0
+      self.conversion_rate = is_paid? ? 0.05 : 0.50
+    end
+    
     if featured?
-      normalize_stats(Offer.get_stats_for_ranks)
+      self.conversion_rate = 0.50
+      normalize_stats(Offer.get_stats_for_featured_ranks)
       calculate_rank_score(weights.merge({ :random => 0 }))
-      self.rank_score += weights[:random] * 0.5
-      ranked_offers = Offer.get_featured_offers.reject { |offer| offer.item_type == 'RatingOffer' }
+      ranked_offers = Offer.get_featured_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
       worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
       100 * worse_offers.size / ranked_offers.size
     else
       normalize_stats(Offer.get_stats_for_ranks)
       calculate_rank_score(weights.merge({ :random => 0 }))
       self.rank_score += weights[:random] * 0.5
-      ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' }
+      ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
       worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
       100 * worse_offers.size / ranked_offers.size
     end

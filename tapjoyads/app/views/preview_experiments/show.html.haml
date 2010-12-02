@@ -1,4 +1,5 @@
-%h1= "Offerwall Preview for Experiment #{params[:id]}"
+%h1= "Offer Ranks for " + (params[:id] == "featured" ? "Featured Offers" : "Experiment #{params[:id]}")
+
 - experiment_options = "<option value=\"featured\">Featured</option>" + options_for_select(@experiments.collect { |k, v| [ k.to_s.titleize + " (#{v})", v.to_s ] }, params[:id])
 %table
   - form_tag('', :id => 'experiments-form') do
@@ -10,6 +11,11 @@
     %tr
       %td= label_tag 'devices-list', 'Device:'
       %td= select_tag 'devices-list', options_for_select(["all"] + Offer::ALL_DEVICES, params[:device])
+  
+- if params[:id] == "featured"
+  - weight_scale = 1 - @offers.last.rank_score
+  - weights = @offers.collect { |offer| offer.rank_score + weight_scale }
+  - total_weight = weights.sum
 
 - content_for :page_javascript do
   :plain
@@ -39,7 +45,9 @@ Display:
 %table#offers.tablesorter
   %thead
     %tr
-      - unless params[:id] == "featured"
+      - if params[:id] == "featured"
+        %th Display %
+      - else
         %th Avg Rank
       %th Rank Score
       %th Name
@@ -53,9 +61,11 @@ Display:
       %th Type
   %tbody#offers_tbody
     - rank = 1
-    - @offers.each do |offer|
+    - @offers.each_with_index do |offer, i|
       %tr{ "data-item_type" => offer.item_type }
-        - unless params[:id] == "featured"
+        - if params[:id] == "featured"
+          %td= "#{(100.0 * weights[i] / total_weight).round(2)}%"
+        - else
           %td= rank.floor.to_i.to_s
         %td= offer.rank_score
         %td= (permitted_to? :show, :statz) ? link_to(offer.name, statz_path(offer)) : offer.name
