@@ -1,8 +1,7 @@
 - @page_title = 'Tapjoy Premier'
-- text = "Tapjoy Premier Agreement\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWaiting on terms\n"
 %h1 Tapjoy Premier
 - form_for @partner, :url => { :action => :update }, :html => { :class => 'tjform' } do |f|
-  = text_area_tag 'agreement', text , :size => '80x15', :disabled => true
+  = text_area_tag 'agreement', @agreement, :size => '80x15', :disabled => true
   %table{:width => '500px'}
     %tr
       %th= f.label :exclusivity_level, 'Exclusivity Level'
