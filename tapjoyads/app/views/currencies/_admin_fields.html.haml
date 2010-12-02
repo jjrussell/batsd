@@ -21,10 +21,10 @@
     = f.check_box :only_free_offers
 %tr.admin
   %th
-    Installs money share
-    #help_installs_money_share.help ?
+    Spend share
+    #help_spend_share.help ?
   %td
-    = @currency.installs_money_share
+    = @currency.spend_share
 %tr.admin
   %th
     Disabled partners
@@ -50,8 +50,8 @@
       %li 4+: Only show offers rated 4+ and below
   #help_only_free_offers_content{:name => 'Only free offers'}
     If true, only free offers will be shown in this app's offerwall.
-  #help_installs_money_share_content{:name => 'Installs money share'}
-    The percent share of app install offer revenue that this publisher gets.
+  #help_spend_share_content{:name => 'Installs money share'}
+    The percent share of offer spending that this publisher gets. Computed as: (this partner's rev share) * (spend share ratio).
     
 - content_for :page_styles do
   :plain

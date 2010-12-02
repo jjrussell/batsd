@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101202061034) do
+ActiveRecord::Schema.define(:version => 20101202061035) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -78,6 +78,7 @@ ActiveRecord::Schema.define(:version => 20101202061034) do
     t.text     "disabled_partners",                                                                   :null => false
     t.string   "partner_id",           :limit => 36,                                                  :null => false
     t.integer  "ordinal",                                                          :default => 500,   :null => false
+    t.decimal  "spend_share",                        :precision => 8, :scale => 6, :default => 0.5,   :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -274,6 +275,7 @@ ActiveRecord::Schema.define(:version => 20101202061034) do
     t.string   "exclusivity_level_type"
     t.date     "exclusivity_expires_on"
     t.decimal  "transfer_bonus",                           :precision => 8, :scale => 6, :default => 0.0,       :null => false
+    t.decimal  "rev_share",                                :precision => 8, :scale => 6, :default => 0.5,       :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
