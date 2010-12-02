@@ -26,6 +26,16 @@ class OfferCompletedController < ApplicationController
     complete_conversion
   end
   
+  def paypal
+    @source = 'paypal'
+    params[:click_key] = params[:custom]
+    
+    postback_data = "cmd=_notify-validate&#{request.query_string}"
+    paypal_response = Downloader.post('http://www.paypal.com', postback_data, { :timeout => 10 })
+    
+    complete_conversion if paypal_response == 'VERIFIED'
+  end
+  
 private
   
   def setup
@@ -101,6 +111,8 @@ private
       render :text => 'ERROR:FATAL'
     elsif @source == 'boku'
       render(:template => 'layouts/boku')
+    elsif @source == 'paypal'
+      render(:template => 'layouts/error')
     else
       render(:template => 'layouts/error', :status => 403)
     end
