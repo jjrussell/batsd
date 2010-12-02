@@ -10,6 +10,9 @@ class PreviewExperimentsController < WebsiteController
 
   def show
     @offers = Offer.get_enabled_offers(params[:id]).reject { |offer| offer.show_rate == 0 }
+    if params[:device] && params[:device] != 'all'
+      @offers.reject! { |o| !o.device_types.include?(params[:device]) }
+    end
   end
 
 private
