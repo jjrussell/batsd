@@ -8,7 +8,8 @@ class PremierController < WebsiteController
   after_filter :save_activity_logs, :only => [ :update ]
 
   def edit
-    if @partner.exclusivity_level.nil?
+    spend_discounts = @partner.offer_discounts.active.select{|discount| discount.source == 'Spend'}
+    if @partner.exclusivity_level.nil? && spend_discounts.blank?
       if Rails.env == 'development' || request.host == 'test.tapjoy.com'
         @agreement = """
 Tapjoy Premier Program
