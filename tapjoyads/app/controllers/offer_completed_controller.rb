@@ -33,7 +33,9 @@ class OfferCompletedController < ApplicationController
     postback_data = "cmd=_notify-validate&#{request.query_string}"
     paypal_response = Downloader.post('http://www.paypal.com', postback_data, { :timeout => 10 })
     
-    complete_conversion if paypal_response == 'VERIFIED'
+    if paypal_response == 'VERIFIED' && params[:payment_status] == 'Completed' && params[:receiver_email] == 'paypal@tapjoy.com'
+      complete_conversion
+    end
   end
   
 private
