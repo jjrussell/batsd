@@ -3,8 +3,7 @@
 %h1 Tapjoy Premier
 
 .metadata
-  Current Exclusivity Level:
-  = @partner.exclusivity_level_type || "None"
+  Membership status: Premier
 - unless @partner.exclusivity_level_type.nil?
   .metadata
     Exclusivity Expires On:
@@ -17,7 +16,9 @@
       %th
         = f.label :exclusivity_level_type, 'Exclusivity Level'
       %td
-        - levels = ExclusivityLevel::TYPES.reject{|t| t.constantize.new.months < @partner.exclusivity_level.months}
+        - levels = ExclusivityLevel::TYPES
+        - unless @partner.exclusivity_level.nil?
+          - levels.reject!{|t| t.constantize.new.months < @partner.exclusivity_level.months}
         - levels.map!{|t|[t.underscore.humanize.pluralize, t]}
         = f.select :exclusivity_level_type, options_for_select(levels)
         = error_message_on @partner, :exclusivity_level_type
