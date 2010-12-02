@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101130222931) do
+ActiveRecord::Schema.define(:version => 20101202061034) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -180,7 +180,6 @@ ActiveRecord::Schema.define(:version => 20101130222931) do
     t.text     "url"
     t.integer  "price"
     t.integer  "payment",                                                                       :default => 0,     :null => false
-    t.integer  "actual_payment"
     t.integer  "daily_budget",                                                                  :default => 0,     :null => false
     t.integer  "overall_budget",                                                                :default => 0,     :null => false
     t.text     "countries",                                                                                        :null => false

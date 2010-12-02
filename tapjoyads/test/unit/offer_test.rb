@@ -19,7 +19,6 @@ class OfferTest < ActiveSupport::TestCase
   should validate_numericality_of :payment
   should validate_numericality_of :daily_budget
   should validate_numericality_of :overall_budget
-  should validate_numericality_of :actual_payment
   should validate_numericality_of :conversion_rate
   should validate_numericality_of :min_conversion_rate
   should validate_numericality_of :show_rate

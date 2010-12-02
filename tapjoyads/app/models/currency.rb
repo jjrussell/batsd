@@ -76,17 +76,13 @@ class Currency < ActiveRecord::Base
     if offer.partner_id == partner_id
       advertiser_amount = 0
     else
-      advertiser_amount = -(offer.actual_payment || offer.payment)
+      advertiser_amount = -offer.payment
     end
     advertiser_amount
   end
   
   def get_tapjoy_amount(offer, displayer_app = nil)
-    tapjoy_amount = -get_advertiser_amount(offer) - get_publisher_amount(offer, displayer_app) - get_displayer_amount(offer, displayer_app)
-    if offer.actual_payment.present?
-      tapjoy_amount += offer.actual_payment - offer.payment
-    end
-    tapjoy_amount
+    -get_advertiser_amount(offer) - get_publisher_amount(offer, displayer_app) - get_displayer_amount(offer, displayer_app)
   end
   
   def get_displayer_amount(offer, displayer_app = nil)
