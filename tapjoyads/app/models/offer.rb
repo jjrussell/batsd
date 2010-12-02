@@ -455,7 +455,7 @@ class Offer < ActiveRecord::Base
   def min_bid
     if item_type == 'App'
       if featured?
-        65
+        is_paid? ? price : 65
       else
         is_paid? ? (price * 0.50).round : 35
         # uncomment for tapjoy premier & change show.html line 92-ish
