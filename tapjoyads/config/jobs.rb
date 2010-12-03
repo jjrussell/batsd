@@ -3,10 +3,6 @@ JobRunner::Gateway.define do |s|
   machine_type = `#{ENV['APP_ROOT']}/../server/server_type.rb`
   
   if machine_type == 'jobs' || machine_type == 'test'
-    s.add_job 'get_ad_network_data', :interval => 8.minutes    
-    s.add_job 'campaign_stats', :interval => 10.seconds
-    s.add_job 'yesterday_campaign_stats', :interval => 30.minutes
-    
     # SQS Queues:
     s.add_job 'conversion_tracking_queue', :interval => 2.seconds
     s.add_job 'failed_sdb_saves_queue', :interval => 5.seconds
