@@ -17,7 +17,7 @@
       %td= label_tag 'devices-list', 'Device:'
       %td= select_tag 'devices-list', options_for_select(["all"] + Offer::ALL_DEVICES, params[:device])
     %tr
-      %td= label_tag 'offers', 'Offers:'
+      %td= label_tag 'offers', 'Offer Types:'
       %td.offers_options
         = check_box_tag "App", "", true
         = label_tag "App", "Apps"
