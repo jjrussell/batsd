@@ -38,9 +38,11 @@ class GetOffersController < ApplicationController
       @offer_list = [ build_test_offer(@publisher_app, @currency) ]
     else
       set_offer_list(:is_server_to_server => false)
-      weight_scale = 1 - @offer_list.last.rank_score
-      weights = @offer_list.collect { |offer| offer.rank_score + weight_scale }
-      @offer_list = @offer_list.weighted_rand weights
+      unless @offer_list.empty?
+        weight_scale = 1 - @offer_list.last.rank_score
+        weights = @offer_list.collect { |offer| offer.rank_score + weight_scale }
+        @offer_list = [ @offer_list.weighted_rand(weights) ]
+      end
     end
     @more_data_available = 0
     
