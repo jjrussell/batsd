@@ -19,7 +19,8 @@
     #main
       #top_nav
         .left
-          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo.png"), root_path
+          - premier_suffix = current_partner.offer_discounts.active.blank? ? '' : '_premier'
+          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo#{premier_suffix}.png"), root_path
         .right
           = current_user.username
           - if current_user.can_manage_account?
