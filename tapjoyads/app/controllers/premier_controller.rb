@@ -17,12 +17,13 @@ class PremierController < WebsiteController
   def update
     log_activity(@partner)
     if params[:agree]
+      new_premier = @partner.exclusivity_level.nil?
       if @partner.set_exclusivity_level!(params[:partner][:exclusivity_level_type])
         flash.delete :error
-        flash[:notice] = 'You have successfully updated your Tapjoy Premier level.'
+        flash[:notice] = new_premier ? 'You have successfully joined Tapjoy Premier!' : 'You have successfully renewed your Tapjoy Premier membership!'
       else
         flash.delete :notice
-        flash[:error] = 'Your Tapjoy Premier level could not be updated.'
+        flash[:error] = 'Your Tapjoy Premier membership status could not be changed.'
       end
     else
       flash.delete :notice
@@ -35,18 +36,5 @@ private
 
   def set_partner
     @partner = current_partner
-    @agreement = """
-Tapjoy Premier Program
-
-Tapjoy Premier is a membership program that gives you access to new Tapjoy features, dedicated support and pricing discounts. Benefits of the Tapjoy Premier Program include:
-
-* Access to Tapjoy Premier Support with a unique support alias and guaranteed 24-hour response time
-* Early beta access to new ad and site features
-* Discounts for Tapjoy services
-
-By joining the Tapjoy Premier Program, you agree to enter into an exclusivity period whereby Tapjoy is the sole provider of incentivized pay-per-install services for your mobile applications. To join the program, please select your membership duration below.
-
-If you have any questions, please contact your account manager or support@tapjoy.com
-"""
   end
 end
