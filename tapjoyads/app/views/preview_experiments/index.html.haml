@@ -16,3 +16,20 @@
         window.location = '#{preview_experiments_url}' + '/' + $('#experiments-list').val();
       });
     });
+
+- content_for :page_styles do
+  :plain
+    form td {
+      vertical-align: top;
+      padding-bottom: 6px;
+      padding-right: 6px;
+    }
+    form select {
+      width: 150px;
+    }
+    label {
+      font-weight: bold;
+    }
+    td.offers_options label {
+      font-weight: normal;
+    }

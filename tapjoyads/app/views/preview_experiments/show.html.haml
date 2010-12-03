@@ -8,27 +8,26 @@
   - total_weight = weights.sum
 
 - experiment_options = "<option value=\"featured\">Featured</option>" + options_for_select(@experiments.collect { |k, v| [ k.to_s.titleize + " (#{v})", v.to_s ] }, params[:id])
-%table
-  - form_tag('', :id => 'experiments-form') do
+- form_tag('', :id => 'experiments-form') do
+  %table
     %tr
       %td= label_tag 'experiments-list', 'Offers:'
       %td= select_tag 'experiments-list', experiment_options
-      
-  - form_tag('', :id => 'devices-form') do
     %tr
       %td= label_tag 'devices-list', 'Device:'
       %td= select_tag 'devices-list', options_for_select(["all"] + Offer::ALL_DEVICES, params[:device])
+    %tr
+      %td= label_tag 'offers', 'Offers:'
+      %td.offers_options
+        = check_box_tag "App", "", true
+        = label_tag "App", "Apps"
+        %br
+        = check_box_tag "RatingOffer", "", false
+        = label_tag "RatingOffer", "RatingOffers"
+        %br
+        = check_box_tag "GenericOffer", "", true
+        = label_tag "GenericOffer", "GenericOffers"
 
-%br
-Display: 
-= label_tag "App", "Apps"
-= check_box_tag "App", "", true
-
-= label_tag "RatingOffer", "RatingOffers"
-= check_box_tag "RatingOffer", "", false
-
-= label_tag "GenericOffer", "GenericOffers"
-= check_box_tag "GenericOffer", "", true
 
 %table#offers.tablesorter
   %thead
@@ -121,3 +120,20 @@ Display:
         updateLocation();
       });
     });
+    
+- content_for :page_styles do
+  :plain
+    form td {
+      vertical-align: top;
+      padding-bottom: 6px;
+      padding-right: 6px;
+    }
+    form select {
+      width: 150px;
+    }
+    label {
+      font-weight: bold;
+    }
+    td.offers_options label {
+      font-weight: normal;
+    }
