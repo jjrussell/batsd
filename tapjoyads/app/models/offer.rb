@@ -450,12 +450,7 @@ class Offer < ActiveRecord::Base
   def update_payment(force_update = false)
     if (force_update || bid_changed?)
       if (item_type == 'App')
-        if is_paid?
-          self.payment = (bid * 100 - price * partner.premier_discount) / 100
-        else
-          self.payment = bid - partner.premier_discount
-        end
-        self.payment = 0 if self.payment < 0
+        self.payment = bid * (100 - partner.premier_discount) / 100
       else
         self.payment = bid
       end
