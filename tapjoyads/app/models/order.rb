@@ -18,7 +18,7 @@ class Order < ActiveRecord::Base
   validates_inclusion_of :payment_method, :in => PAYMENT_METHODS
   validates_numericality_of :amount, :only_integer => true, :allow_nil => false
   
-  after_create :update_balance #, :create_spend_discount
+  after_create :update_balance, :create_spend_discount
   
   named_scope :paid, :conditions => 'status = 1'
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at > ?", date ] } }

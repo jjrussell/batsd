@@ -10,9 +10,7 @@ class PremierController < WebsiteController
   def edit
     spend_discounts = @partner.offer_discounts.active.select{|discount| discount.source == 'Spend'}
     if @partner.exclusivity_level.nil? && spend_discounts.blank?
-      if Rails.env == 'development' || request.host == 'test.tapjoy.com'
-        render :action => 'new'
-      end
+      render :action => 'new'
     end
   end
 
@@ -42,9 +40,9 @@ Tapjoy Premier Program
 
 Tapjoy Premier is a membership program that gives you access to new Tapjoy features, dedicated support and pricing discounts. Benefits of the Tapjoy Premier Program include:
 
-Access to Tapjoy Premier Support with a unique support alias and guaranteed 24-hour response time
-Early beta access to new ad and site features
-Discounts for Tapjoy services
+* Access to Tapjoy Premier Support with a unique support alias and guaranteed 24-hour response time
+* Early beta access to new ad and site features
+* Discounts for Tapjoy services
 
 By joining the Tapjoy Premier Program, you agree to enter into an exclusivity period whereby Tapjoy is the sole provider of incentivized pay-per-install services for your mobile applications. To join the program, please select your membership duration below.
 
