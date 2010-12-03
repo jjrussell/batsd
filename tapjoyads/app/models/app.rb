@@ -11,6 +11,8 @@ class App < ActiveRecord::Base
   has_many :currencies
   has_one :primary_currency, :class_name => 'Currency', :conditions => 'id = app_id'
   has_one :rating_offer
+  has_many :featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured = true"
+  has_one :primary_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured = true", :order => "created_at"
   
   belongs_to :partner
   

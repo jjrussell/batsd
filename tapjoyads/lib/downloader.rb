@@ -7,24 +7,43 @@ class Downloader
     internal_authenticate = options.delete(:internal_authenticate) { false }
     return_response = options.delete(:return_response) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-        
-    start_time = Time.now.utc
-    Rails.logger.info "Downloading #{url}"
+    
+    start_time = Time.zone.now
+    Rails.logger.info "Downloading (GET) #{url}"
+    
     sess = Patron::Session.new
     sess.timeout = timeout
-
+    
     if internal_authenticate
       sess.username = 'internal'
       sess.password = AuthenticationHelper::USERS[sess.username]
       sess.auth_type = :digest
     end
-
+    
     response = sess.get(url, headers)
     
-    Rails.logger.info "Download complete (#{Time.now.utc - start_time}s)"
+    Rails.logger.info "Download complete (#{Time.zone.now - start_time}s)"
     
-    return response if return_response
-    return response.body
+    return return_response ? response : response.body
+  end
+  
+  def self.post(url, data, options = {})
+    headers = options.delete(:headers) { {} }
+    timeout = options.delete(:timeout) { 2 }
+    return_response = options.delete(:return_response) { false }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
+    start_time = Time.zone.now
+    Rails.logger.info "Downloading (POST) #{url}"
+    
+    sess = Patron::Session.new
+    sess.timeout = timeout
+    
+    response = sess.post(url, data, headers)
+    
+    Rails.logger.info "Download complete (#{Time.zone.now - start_time}s)"
+    
+    return return_response ? response : response.body
   end
   
   ##

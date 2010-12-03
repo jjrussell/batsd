@@ -8,21 +8,28 @@ class PremierController < WebsiteController
   after_filter :save_activity_logs, :only => [ :update ]
 
   def edit
-    if @partner.exclusivity_level.nil?
-      if Rails.env == 'development' || request.host == 'test.tapjoy.com'
-        render :action => 'new'
-      end
+    spend_discounts = @partner.offer_discounts.active.select{|discount| discount.source == 'Spend'}
+    if @partner.exclusivity_level.nil? && spend_discounts.blank?
+      render :action => 'new'
     end
   end
 
   def update
     log_activity(@partner)
-    if @partner.set_exclusivity_level! params[:partner][:exclusivity_level_type]
-      flash[:notice] = 'You have successfully updated your Tapjoy Premier level.'
+    if params[:agree]
+      new_premier = @partner.exclusivity_level.nil?
+      if @partner.set_exclusivity_level!(params[:partner][:exclusivity_level_type])
+        flash.delete :error
+        flash[:notice] = new_premier ? 'You have successfully joined Tapjoy Premier!' : 'You have successfully renewed your Tapjoy Premier membership!'
+      else
+        flash.delete :notice
+        flash[:error] = 'Your Tapjoy Premier membership status could not be changed.'
+      end
     else
-      flash[:error] = 'Your Tapjoy Premier level could not be updated.'
+      flash.delete :notice
+      flash[:error] = 'Please mark the checkbox indicating that you agree to the Tapjoy Premier terms and conditions.'
     end
-    render :edit
+    redirect_to premier_path
   end
 
 private

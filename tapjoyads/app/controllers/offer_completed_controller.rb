@@ -26,6 +26,21 @@ class OfferCompletedController < ApplicationController
     complete_conversion
   end
   
+  def paypal
+    @source = 'paypal'
+    params[:click_key] = params[:custom]
+    
+    postback_data = "cmd=_notify-validate&#{request.query_string}"
+    paypal_response = Downloader.post('http://www.paypal.com', postback_data, { :timeout => 10 })
+    
+    if paypal_response == 'VERIFIED' && params[:payment_status] == 'Completed' && params[:receiver_email] == 'paypal@tapjoy.com'
+      complete_conversion
+    else
+      @error_message = "unexpected paypal callback"
+      notify_and_render_error
+    end
+  end
+  
 private
   
   def setup
@@ -101,6 +116,8 @@ private
       render :text => 'ERROR:FATAL'
     elsif @source == 'boku'
       render(:template => 'layouts/boku')
+    elsif @source == 'paypal'
+      render(:template => 'layouts/error')
     else
       render(:template => 'layouts/error', :status => 403)
     end

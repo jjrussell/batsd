@@ -79,6 +79,7 @@ ActiveRecord::Schema.define(:version => 20101202061035) do
     t.string   "partner_id",           :limit => 36,                                                  :null => false
     t.integer  "ordinal",                                                          :default => 500,   :null => false
     t.decimal  "spend_share",                        :precision => 8, :scale => 6, :default => 0.5,   :null => false
+    t.integer  "minimum_featured_bid"
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"

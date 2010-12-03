@@ -1,4 +1,4 @@
-class OffersController < WebsiteController
+class Apps::OffersController < WebsiteController
   layout 'tabbed'
   current_tab :apps
 
@@ -20,6 +20,7 @@ class OffersController < WebsiteController
         flash[:warning] = "Please note that you must integrate the <a href='#{sdk_url}'>Tapjoy advertiser library</a> before we can enable your campaign"
       end
     end
+
   end
 
   def update
@@ -78,6 +79,12 @@ private
     else
       @app = current_partner.apps.find(params[:app_id], :include => [:primary_offer])
     end
-    @offer = @app.primary_offer
+    
+    if params[:id]
+      @offer = @app.offers.find(params[:id])
+    else
+      @offer = @app.primary_offer
+    end
+    log_activity(@offer)
   end
 end

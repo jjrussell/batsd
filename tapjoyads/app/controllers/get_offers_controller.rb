@@ -38,8 +38,11 @@ class GetOffersController < ApplicationController
       @offer_list = [ build_test_offer(@publisher_app, @currency) ]
     else
       set_offer_list(:is_server_to_server => false)
-      srand
-      @offer_list = @offer_list[rand(@offer_list.length).to_i, 1]
+      unless @offer_list.empty?
+        weight_scale = 1 - @offer_list.last.rank_score
+        weights = @offer_list.collect { |offer| offer.rank_score + weight_scale }
+        @offer_list = [ @offer_list.weighted_rand(weights) ]
+      end
     end
     @more_data_available = 0
     
@@ -93,6 +96,22 @@ private
     params[:currency_id] = params[:app_id] if params[:currency_id].blank?
     @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])
     @currency = @currencies.select { |c| c.id == params[:currency_id] }.first
+    
+    # TO CHANGE: cleanup this messy hack
+    d = Device.new(:key => params[:udid])
+    if d.opted_out?
+      @offer_list = []
+      @more_data_available = 0
+      if params[:action] == 'webpage'
+        @message = "You have opted out."
+        render :template => 'get_offers/webpage'
+      elsif params[:json] == '1'
+        render :template => 'get_offers/installs_json', :content_type => 'application/json'
+      else
+        render :template => 'get_offers/installs_redirect'
+      end
+      return
+    end
     
     ##
     # Gameview hardcodes 'iphone' as their device type. This screws up real iphone-only targeting.

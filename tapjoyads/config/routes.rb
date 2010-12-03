@@ -47,11 +47,12 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post } do |app|
-    app.resources :offers, :only => [ :show, :update ] , :member => { :download_udids => :get, :percentile => :post, :toggle => :post }
+    app.resources :offers, :only => [ :show, :update ] , :member => { :download_udids => :get, :percentile => :post, :toggle => :post }, :controller => 'apps/offers'
     app.resources :currencies, :only => [ :show, :update, :new, :create ],
-      :member => { :reset_test_device => :post }
+      :member => { :reset_test_device => :post }, :controller => 'apps/currencies'
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
-      :collection => { :reorder => :post }
+      :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
+    app.resources :featured_offers, :only => [ :new, :create, :edit, :update ], :controller => 'apps/featured_offers'
   end
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post }
   map.resources :billing, :only => [ :index, ], :collection => { :create_order => :post }
@@ -84,6 +85,9 @@ ActionController::Routing::Routes.draw do |map|
   # Special paths:
   map.connect 'log_device_app/:action/:id', :controller => 'connect'
   map.connect 'confirm_email_validation', :controller => 'list_signup', :action => 'confirm_api'
+  map.connect 'privacy', :controller => 'homepage', :action => 'privacy'
+  map.connect 'privacy.html', :controller => 'homepage', :action => 'privacy'
+  map.resources :opt_outs, :only => :create
   
   # Route old login page to new login page.
   map.connect 'Connect/Publish/Default.aspx', :controller => :user_sessions, :action => :new

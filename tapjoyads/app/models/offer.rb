@@ -114,6 +114,13 @@ class Offer < ActiveRecord::Base
     end
   end
   
+  def self.get_stats_for_featured_ranks
+    Mc.get_and_put('s3.featured_offer_rank_statistics') do
+      bucket = S3.bucket(BucketNames::OFFER_DATA)
+      Marshal.restore(bucket.get('featured_offer_rank_statistics'))
+    end
+  end
+  
   def self.get_featured_offers
     Mc.distributed_get_and_put('s3.featured_offers') do
       bucket = S3.bucket(BucketNames::OFFER_DATA)
@@ -166,8 +173,41 @@ class Offer < ActiveRecord::Base
   end
   
   def self.cache_featured_offers
-    bucket = S3.bucket(BucketNames::OFFER_DATA)
     offer_list = Offer.enabled_offers.featured
+    
+    conversion_rates       = offer_list.collect(&:conversion_rate)
+    prices                 = offer_list.collect(&:price)
+    avg_revenues           = offer_list.collect(&:avg_revenue)
+    bids                   = offer_list.collect(&:bid)
+    cvr_mean               = conversion_rates.mean
+    cvr_std_dev            = conversion_rates.standard_deviation
+    price_mean             = prices.mean
+    price_std_dev          = prices.standard_deviation
+    avg_revenue_mean       = avg_revenues.mean
+    avg_revenue_std_dev    = avg_revenues.standard_deviation
+    bid_mean               = bids.mean
+    bid_std_dev            = bids.standard_deviation
+    
+    stats = { :cvr_mean => cvr_mean, :cvr_std_dev => cvr_std_dev, :price_mean => price_mean, :price_std_dev => price_std_dev,
+      :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
+      
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
+    bucket.put("featured_offer_rank_statistics", Marshal.dump(stats))
+    Mc.put("s3.featured_offer_rank_statistics", stats)
+    
+    offer_list.each do |offer|
+      offer.normalize_stats(stats)
+    end
+    
+    offer_list.each do |offer|
+      offer.calculate_rank_score(CONTROL_WEIGHTS.merge({:random => 0}))
+    end
+    
+    offer_list.sort! do |o1, o2|
+      o2.rank_score <=> o1.rank_score
+    end
+    
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
     marshalled_offer_list = Marshal.dump(offer_list)
     bucket.put('featured_offers', marshalled_offer_list)
     Mc.distributed_put('s3.featured_offers', offer_list)
@@ -343,10 +383,10 @@ class Offer < ActiveRecord::Base
   end
   
   def normalize_stats(stats)
-    self.normal_conversion_rate = (conversion_rate - stats[:cvr_mean]) / stats[:cvr_std_dev]
-    self.normal_price           = (price - stats[:price_mean]) / stats[:price_std_dev]
-    self.normal_avg_revenue     = (avg_revenue - stats[:avg_revenue_mean]) / stats[:avg_revenue_std_dev]
-    self.normal_bid             = (bid - stats[:bid_mean]) / stats[:bid_std_dev]
+    self.normal_conversion_rate = (stats[:cvr_std_dev] == 0) ? 0 : (conversion_rate - stats[:cvr_mean]) / stats[:cvr_std_dev]
+    self.normal_price           = (stats[:price_std_dev] == 0) ? 0 : (price - stats[:price_mean]) / stats[:price_std_dev]
+    self.normal_avg_revenue     = (stats[:avg_revenue_std_dev] == 0) ? 0 : (avg_revenue - stats[:avg_revenue_mean]) / stats[:avg_revenue_std_dev]
+    self.normal_bid             = (stats[:bid_std_dev] == 0) ? 0 : (bid - stats[:bid_mean]) / stats[:bid_std_dev]
   end
   
   def calculate_rank_score(weights = {})
@@ -361,12 +401,25 @@ class Offer < ActiveRecord::Base
   end
   
   def estimated_percentile(weights = CONTROL_WEIGHTS)
-    normalize_stats(Offer.get_stats_for_ranks)
-    calculate_rank_score(weights.merge({ :random => 0 }))
-    self.rank_score += weights[:random] * 0.5
-    ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' }
-    worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
-    100 * worse_offers.size / ranked_offers.size
+    if conversion_rate == 0
+      self.conversion_rate = is_paid? ? 0.05 : 0.50
+    end
+    
+    if featured?
+      self.conversion_rate = 0.50
+      normalize_stats(Offer.get_stats_for_featured_ranks)
+      calculate_rank_score(weights.merge({ :random => 0 }))
+      ranked_offers = Offer.get_featured_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
+      worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
+      100 * worse_offers.size / ranked_offers.size
+    else
+      normalize_stats(Offer.get_stats_for_ranks)
+      calculate_rank_score(weights.merge({ :random => 0 }))
+      self.rank_score += weights[:random] * 0.5
+      ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
+      worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
+      100 * worse_offers.size / ranked_offers.size
+    end
   end
   
   def name_with_suffix
@@ -390,7 +443,8 @@ class Offer < ActiveRecord::Base
         show_rate_reject?(device) ||
         flixter_reject?(publisher_app, device) ||
         whitelist_reject?(publisher_app) ||
-        gamevil_reject?(publisher_app)
+        gamevil_reject?(publisher_app) ||
+        minimum_featured_bid_reject?(currency)
   end
   
   def update_payment(force_update = false)
@@ -415,12 +469,26 @@ class Offer < ActiveRecord::Base
   
   def min_bid
     if item_type == 'App'
-      is_paid? ? (price * 0.50).round : 35
-      # uncomment for tapjoy premier & change show.html line 92-ish
-      # is_paid? ? (price * 0.65).round : 50
+      if featured?
+        is_paid? ? price : 65
+      else
+        is_paid? ? (price * 0.50).round : 35
+        # uncomment for tapjoy premier & change show.html line 92-ish
+        # is_paid? ? (price * 0.65).round : 50
+      end
     else
       0
     end
+  end
+  
+  def create_featured_clone
+    featured_offer = self.clone
+    featured_offer.featured = true
+    featured_offer.name_suffix = "featured"
+    featured_offer.bid = featured_offer.min_bid
+    featured_offer.tapjoy_enabled = false
+    featured_offer.save!
+    featured_offer
   end
   
 private
@@ -519,6 +587,11 @@ private
   
   def whitelist_reject?(publisher_app)
     return !publisher_app_whitelist.blank? && !get_publisher_app_whitelist.include?(publisher_app.id)
+  end
+  
+  def minimum_featured_bid_reject?(currency)
+    return false unless (featured? && currency.minimum_featured_bid)
+    bid < currency.minimum_featured_bid
   end
   
   def normalize_device_type(device_type_param)

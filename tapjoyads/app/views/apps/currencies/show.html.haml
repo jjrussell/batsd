@@ -61,6 +61,13 @@
         %td
           = f.text_area :test_devices
           = error_message_on(@currency, :test_devices)
+      %tr
+        %th
+          = f.label :minimum_featured_bid, 'Minimum featured bid'
+          #help_minimum_featured_bid.help ?
+        %td
+          = f.currency_field :minimum_featured_bid
+          = error_message_on(@currency, :minimum_featured_bid)
       - if permitted_to?(:edit, :statz)
         = render :partial => 'admin_fields', :locals => {:f => f}
       %tr
@@ -141,6 +148,8 @@
       Remove all virtual good purchases from a test device.
     #help_test_device_last_run_time_content{:name => 'Test device last run time'}
       Displays the last time a test device ran this app.
+    #help_minimum_featured_bid_content{:name => 'Minimum featured bid'}
+      If you are displaying featured offers, only featured offers with a bid higher than this will be shown.
 
 - content_for :page_javascript do
   :plain
@@ -151,6 +160,7 @@
       
       toggleManagedByTapjoy();
       copyCurrencyName();
+      
     });
     
     function copyCurrencyName() {

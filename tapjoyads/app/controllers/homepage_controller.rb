@@ -18,4 +18,9 @@ class HomepageController < WebsiteController
       redirect_to :action => 'contact-thanks'
     end
   end
+
+  def privacy
+    render :layout => false
+  end
+
 end
