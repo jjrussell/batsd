@@ -50,6 +50,15 @@
   <p>Tapjoy does not send unsolicited e-mails to non-public addresses or to anyone who has asked us not to contact him or her. Any newsletters that we send are only sent to those who have subscribed to them. To stop receiving e-mails or newsletters from Tapjoy, click on the unsubscribe link in the e-mail or newsletter.</p>
   <h3>13. Tapjoy Contact Information</h3>
   <p>Please contact Tapjoy with any questions or comments about this Privacy Policy, your personal information, and our third-party disclosure practices or your consent choices at: Tapjoy Inc., 111 Sutter Street, 13th Floor, San Francisco, CA 94104, USA or by email at <a href='mailto:help@tapjoy.com'>help@tapjoy.com</a>. We will respond to your inquiry within 30 days of its receipt.</p>
+  <h3>14. Opt-Out</h3>
+  <p>To opt your mobile device out of Tapjoy services, please submit your device id below. </p>
+  <p><i>iOS Devices:</i> Connect your device to iTunes and click on the Serial Number to reveal your device id. (Identifier - UDID)</p>
+  <p><i>Android Devices:</i> From your device, go to Settings -> About Phone -> Status. Your device id will be listed either as IMEI or MEID depending on your carrier.</p>
+  <% form_tag '/opt_outs' do %>
+    <label for="udid">Device ID:</label>
+    <input type="text" name="udid" size="60" />
+    <input type="submit" value="Submit" />
+  <% end %>
   <script charset='utf-8' type='text/javascript'>
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-5323442-1']);

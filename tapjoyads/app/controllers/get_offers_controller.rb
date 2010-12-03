@@ -85,6 +85,12 @@ private
   def setup
     return unless verify_params([ :app_id, :udid, :publisher_user_id ])
     
+    d = Device.new(:key => params[:udid])
+    if d.opted_out?
+      render :text => "You have opted out."
+      return
+    end
+    
     @now = Time.zone.now
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 25).to_i
