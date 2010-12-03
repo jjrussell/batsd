@@ -9,9 +9,16 @@ class PremierController < WebsiteController
 
   def edit
     spend_discounts = @partner.offer_discounts.active.select{|discount| discount.source == 'Spend'}
-    if @partner.exclusivity_level.nil? && spend_discounts.blank?
-      render :action => 'new'
+    @is_new = @partner.exclusivity_level.nil? && spend_discounts.blank?
+
+    if @is_new || @partner.exclusivity_level.nil?
+      @levels = ExclusivityLevel::TYPES
+      @default_level = @levels.last
+    else
+      @levels = ExclusivityLevel::TYPES.reject{|t| t.constantize.new.months < @partner.exclusivity_level.months}
+      @default_level = @levels.first
     end
+    @levels = @levels.map{|t|[t.underscore.humanize.pluralize, t]}
   end
 
   def update
