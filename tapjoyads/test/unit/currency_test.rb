@@ -11,7 +11,7 @@ class CurrencyTest < ActiveSupport::TestCase
   should validate_presence_of(:name)
   should validate_numericality_of(:conversion_rate)
   should validate_numericality_of(:initial_balance)
-  should validate_numericality_of(:installs_money_share)
+  should validate_numericality_of(:spend_share)
   should validate_numericality_of(:max_age_rating)
   
   context "A Currency" do
@@ -118,14 +118,14 @@ class CurrencyTest < ActiveSupport::TestCase
     context "when created" do
       setup do
         partner = Factory(:partner)
-        partner.installs_money_share = 0.42
+        partner.rev_share = 0.42
         partner.disabled_partners = "foo"
         @currency.partner = partner
       end
       
-      should "have same installs_money_share as its partner" do
+      should "copy spend_share from its partner's rev_share" do
         @currency.save!
-        assert_equal 0.42, @currency.installs_money_share
+        assert_equal 0.42, @currency.spend_share
       end
       
       should "have the same disabled_partners as its partner" do

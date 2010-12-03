@@ -20,6 +20,7 @@ class PartnerTest < ActiveSupport::TestCase
   should validate_numericality_of(:balance)
   should validate_numericality_of(:pending_earnings)
   should validate_numericality_of(:next_payout_amount)
+  should validate_numericality_of(:rev_share)
 
   context "A Partner" do
     setup do
@@ -104,14 +105,14 @@ class PartnerTest < ActiveSupport::TestCase
         @currency2 = Factory(:currency, :partner => @partner)
       end
       
-      should "update its currencies's installs_money_share when saved" do
-        @partner.installs_money_share = 0.42
+      should "update its currencies's spend_share when saved" do
+        @partner.rev_share = 0.42
         @partner.save!
         
         @currency1.reload
         @currency2.reload
-        assert_equal 0.42, @currency1.installs_money_share
-        assert_equal 0.42, @currency2.installs_money_share
+        assert_equal 0.42, @currency1.spend_share
+        assert_equal 0.42, @currency2.spend_share
       end
     end
     
