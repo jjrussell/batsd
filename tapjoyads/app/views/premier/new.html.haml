@@ -5,23 +5,25 @@
   .agreement
     I Agree to the terms and conditions above.
     = check_box_tag 'agree', 1, true
-  .agreement
-    = f.submit 'Submit'
-  %table{:width => '500px'}
+  %table
     %tr
-      %th= f.label :exclusivity_level, 'Exclusivity Level'
+      %td.right
+        %b= f.label :exclusivity_level, 'Exclusivity Level'
       %td{:colspan => 2}
         = f.select :exclusivity_level_type, options_for_select(ExclusivityLevel::TYPES.map{|t|[t.underscore.humanize.pluralize, t]}, ExclusivityLevel::TYPES.last)
         = error_message_on @partner, :exclusivity_level_type
     %tr
-      %th Expires
+      %td.right
+        %b Expires
       %td#expires{:colspan => 2}
         = (Date.today+9.months).to_s(:pub)
     %tr
-      %th Discount
+      %td.right
+        %b Discount
       %td{:colspan => 2}
         Level
         %span#discount_level
+  = f.submit 'Join Tapjoy Premier', :class => 'join'
 
 - content_for :page_javascript do
   :plain
@@ -44,3 +46,16 @@
       $('select#partner_exclusivity_level_type').change(onSelectChange);
       onSelectChange();
     });
+
+- content_for :page_styles do
+  :plain
+    .tjform input.join {
+      float: none;
+    }
+    table {
+      padding-top: 8px;
+    }
+    td.right {
+      padding-right: 8px;
+      padding-bottom: 3px;
+    }

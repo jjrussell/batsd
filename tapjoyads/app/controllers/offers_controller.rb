@@ -20,6 +20,7 @@ class OffersController < WebsiteController
         flash[:warning] = "Please note that you must integrate the <a href='#{sdk_url}'>Tapjoy advertiser library</a> before we can enable your campaign"
       end
     end
+
   end
 
   def update

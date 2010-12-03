@@ -121,7 +121,9 @@
 - content_for :page_javascript do
   :plain
     $(function($){
-
+      if ($('#flash_notice').is(':hidden')) {
+        $('#flash_notice').html('#{link_to 'Learn more about the Tapjoy Premier Program', premier_path}').show();
+      }
       var toggleUserEnabled = function() {
         if ($('#offer_user_enabled').attr('checked')) {
           $('.togglable').attr('disabled', false);
