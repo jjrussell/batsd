@@ -21,16 +21,27 @@
         Agreement
       %td
         = check_box_tag 'agree', 1, true
+
+
+  %table{:width => '500px'}
     %tr
       %th
         = f.label :exclusivity_level_type, 'Exclusivity Level'
       %td
         - levels = ExclusivityLevel::TYPES
         - unless @partner.exclusivity_level.nil?
-          - levels.reject!{|t| t.constantize.new.months < @partner.exclusivity_level.months}
-        - levels.map!{|t|[t.underscore.humanize.pluralize, t]}
+          - levels = levels.reject{|t| t.constantize.new.months < @partner.exclusivity_level.months}
+        - levels = levels.map{|t|[t.underscore.humanize.pluralize, t]}
         = f.select :exclusivity_level_type, options_for_select(levels)
         = error_message_on @partner, :exclusivity_level_type
+    %tr
+      %th Expires
+      %td#expires{:colspan => 2}
+        = (Date.today+9.months).to_s(:pub)
+    %tr
+      %th Discount
+      %td{:colspan => 2}
+        Level <span id="discount_level"></span>
     %tr
       %td{ :colspan => 2 }= f.submit 'Submit'
 
@@ -39,3 +50,22 @@
     var showTerms = function() {
       $('#agreement').show();
     };
+    $(function(){
+      var onSelectChange = function(){
+        var level = $('select#partner_exclusivity_level_type').val(), discount = '', date = '';
+        if (level == '#{ExclusivityLevel::TYPES[0]}') {
+          discount = 1;
+          date = '#{(Date.today+ExclusivityLevel::TYPES[0].constantize.new.months.months).to_s(:pub)}';
+        } else if (level == '#{ExclusivityLevel::TYPES[1]}') {
+          discount = 2;
+          date = '#{(Date.today+ExclusivityLevel::TYPES[1].constantize.new.months.months).to_s(:pub)}';
+        } else if (level == '#{ExclusivityLevel::TYPES[2]}') {
+          discount = 3;
+          date = '#{(Date.today+ExclusivityLevel::TYPES[2].constantize.new.months.months).to_s(:pub)}';
+        }
+        $('span#discount_level').text(discount);
+        $('td#expires').text(date);
+      };
+      $('select#partner_exclusivity_level_type').change(onSelectChange);
+      onSelectChange();
+    });
