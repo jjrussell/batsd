@@ -85,6 +85,7 @@ ActionController::Routing::Routes.draw do |map|
   # Special paths:
   map.connect 'log_device_app/:action/:id', :controller => 'connect'
   map.connect 'confirm_email_validation', :controller => 'list_signup', :action => 'confirm_api'
+  map.connect 'privacy', :controller => 'homepage', :action => 'privacy'
   map.connect 'privacy.html', :controller => 'homepage', :action => 'privacy'
   map.resources :opt_outs, :only => :create
   
