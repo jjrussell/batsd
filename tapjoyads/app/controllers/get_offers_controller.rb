@@ -85,12 +85,6 @@ private
   def setup
     return unless verify_params([ :app_id, :udid, :publisher_user_id ])
     
-    d = Device.new(:key => params[:udid])
-    if d.opted_out?
-      render :text => "You have opted out."
-      return
-    end
-    
     @now = Time.zone.now
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 25).to_i
@@ -100,6 +94,22 @@ private
     params[:currency_id] = params[:app_id] if params[:currency_id].blank?
     @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])
     @currency = @currencies.select { |c| c.id == params[:currency_id] }.first
+    
+    # TO CHANGE: cleanup this messy hack
+    d = Device.new(:key => params[:udid])
+    if d.opted_out?
+      @offer_list = []
+      @more_data_available = 0
+      if params[:action] == 'webpage'
+        @message = "You have opted out."
+        render :template => 'get_offers/webpage'
+      elsif params[:json] == '1'
+        render :template => 'get_offers/installs_json', :content_type => 'application/json'
+      else
+        render :template => 'get_offers/installs_redirect'
+      end
+      return
+    end
     
     ##
     # Gameview hardcodes 'iphone' as their device type. This screws up real iphone-only targeting.
