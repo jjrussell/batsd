@@ -43,7 +43,7 @@ class SurveysController < ApplicationController
   
 private
   def read_click
-    @click = Click.find(params[:click_key])
+    @click = Click.find(params[:click_key], :consistent => true)
     @currency = Currency.find_in_cache(@click.currency_id)
   end
   
