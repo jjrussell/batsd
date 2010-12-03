@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101202061035) do
+ActiveRecord::Schema.define(:version => 20101202220859) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -69,7 +69,6 @@ ActiveRecord::Schema.define(:version => 20101202061035) do
     t.boolean  "send_offer_data",                                                  :default => false, :null => false
     t.string   "secret_key"
     t.string   "callback_url"
-    t.decimal  "installs_money_share",               :precision => 8, :scale => 6, :default => 0.5,   :null => false
     t.text     "disabled_offers",                                                                     :null => false
     t.text     "test_devices",                                                                        :null => false
     t.datetime "created_at"
@@ -78,8 +77,8 @@ ActiveRecord::Schema.define(:version => 20101202061035) do
     t.text     "disabled_partners",                                                                   :null => false
     t.string   "partner_id",           :limit => 36,                                                  :null => false
     t.integer  "ordinal",                                                          :default => 500,   :null => false
-    t.decimal  "spend_share",                        :precision => 8, :scale => 6, :default => 0.5,   :null => false
     t.integer  "minimum_featured_bid"
+    t.decimal  "spend_share",                        :precision => 8, :scale => 6, :default => 0.5,   :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -271,7 +270,6 @@ ActiveRecord::Schema.define(:version => 20101202061035) do
     t.integer  "custom_publisher_tier"
     t.text     "account_manager_notes"
     t.text     "disabled_partners",                                                                             :null => false
-    t.decimal  "installs_money_share",                     :precision => 8, :scale => 6, :default => 0.5,       :null => false
     t.integer  "premier_discount",                                                       :default => 0,         :null => false
     t.string   "exclusivity_level_type"
     t.date     "exclusivity_expires_on"
