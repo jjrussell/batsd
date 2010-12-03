@@ -4,6 +4,9 @@
   = text_area_tag 'agreement', @agreement, :size => '80x15', :disabled => true
   %table{:width => '500px'}
     %tr
+      %th I Agree
+      %td= check_box_tag 'agree', 1, true
+    %tr
       %th= f.label :exclusivity_level, 'Exclusivity Level'
       %td
         = f.select :exclusivity_level_type, options_for_select(ExclusivityLevel::TYPES.map{|t|[t.underscore.humanize.pluralize, t]}, ExclusivityLevel::TYPES.last)

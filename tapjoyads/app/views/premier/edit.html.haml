@@ -6,12 +6,21 @@
   Membership status: Premier
 - unless @partner.exclusivity_level_type.nil?
   .metadata
-    Exclusivity Expires On:
+    Expires On:
     = @partner.exclusivity_expires_on ? @partner.exclusivity_expires_on.to_s(:pub) : "N/A"
 
 %h3 Renew:
 - form_for @partner, :url => { :action => :update }, :html => { :class => 'tjform' } do |f|
   %table
+    %tr
+      %td{ :colspan => 2}
+        = text_area_tag 'agreement', @agreement, :size => '80x15', :disabled => true, :class => 'hidden'
+    %tr
+      %td
+        = link_to 'Terms and Conditions', 'javascript:showTerms();'
+        Agreement
+      %td
+        = check_box_tag 'agree', 1, true
     %tr
       %th
         = f.label :exclusivity_level_type, 'Exclusivity Level'
@@ -24,3 +33,9 @@
         = error_message_on @partner, :exclusivity_level_type
     %tr
       %td{ :colspan => 2 }= f.submit 'Submit'
+
+- content_for :page_javascript do
+  :plain
+    var showTerms = function() {
+      $('#agreement').show();
+    };
