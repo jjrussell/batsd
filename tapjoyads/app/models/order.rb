@@ -61,7 +61,7 @@ private
     sum = 0
     partner.orders.for_discount.each do |order|
       sum += order.amount
-      if sum >= 10000000
+      if sum >= 15000000
         OfferDiscount.create!(:partner => partner, :source => 'Spend', :amount => 15, :expires_on => order.created_at + 3.months)
         break
       end

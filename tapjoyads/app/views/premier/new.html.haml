@@ -8,8 +8,9 @@
     %li Discounts for Tapjoy services
   %p There are two ways to join the Tapjoy Premier program:
   %ol
-    %li Spend more than $100,000 within a three month period. Based on your spend levels, you will be automatically entered into the program.
+    %li Spend more than $150,000 within a three month period. Based on your spend levels, you will be automatically entered into the program.
     %li Enter into an exclusivity period whereby Tapjoy is the sole provider of incentivized pay-per-install services for your mobile applications. Please select your membership duration below.
+  %p The discounts will go into effect on December 10, 2010.
   %p 
     If you have any questions, please contact your account manager or 
     = mail_to "support@tapjoy.com"
@@ -37,7 +38,6 @@
       %td.right
         %b Discount
       %td
-        Level
         %span#discount_level
   = f.submit 'Join Tapjoy Premier', :class => 'join'
 
@@ -47,13 +47,13 @@
       var onSelectChange = function(){
         var level = $('select#partner_exclusivity_level_type').val(), discount = '', date = '';
         if (level == '#{ExclusivityLevel::TYPES[0]}') {
-          discount = 1;
+          discount = '5%';
           date = '#{(Date.today+ExclusivityLevel::TYPES[0].constantize.new.months.months).to_s(:pub)}';
         } else if (level == '#{ExclusivityLevel::TYPES[1]}') {
-          discount = 2;
+          discount = '10%';
           date = '#{(Date.today+ExclusivityLevel::TYPES[1].constantize.new.months.months).to_s(:pub)}';
         } else if (level == '#{ExclusivityLevel::TYPES[2]}') {
-          discount = 3;
+          discount = '15%';
           date = '#{(Date.today+ExclusivityLevel::TYPES[2].constantize.new.months.months).to_s(:pub)}';
         }
         $('span#discount_level').text(discount);
