@@ -5,7 +5,7 @@
   .message= @message
 - # END TO REMOVE
 
-- if @currencies.size > 1
+- if @currencies.size > 1 && params[:currency_selector] == '1'
   = render :partial => 'currency_selector'
 
 #instructions
