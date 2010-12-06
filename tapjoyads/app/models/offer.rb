@@ -389,7 +389,8 @@ class Offer < ActiveRecord::Base
     self.normal_bid             = (stats[:bid_std_dev] == 0) ? 0 : (bid - stats[:bid_mean]) / stats[:bid_std_dev]
   end
   
-  def calculate_rank_score(weights = {})
+  def calculate_rank_score(rank_weights = {})
+    weights = rank_weights.clone
     random_weight = weights.delete(:random) { 0 }
     boost_weight = weights.delete(:boost) { 1 }
     weights = { :conversion_rate => 0, :price => 0, :avg_revenue => 0, :bid => 0 }.merge(weights)
