@@ -113,7 +113,7 @@
 - content_for :page_javascript do
   :plain
     $(function($){
-      if (#{current_partner.is_premier?} && $('#flash_notice').is(':hidden')) {
+      if (#{!current_partner.is_premier?} && $('#flash_notice').is(':hidden')) {
         $('#flash_notice').html('<b>Notice:</b> #{link_to 'Learn more about the Tapjoy Premier Program', premier_path}').show();
       }
 
