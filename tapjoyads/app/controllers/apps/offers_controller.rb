@@ -82,6 +82,9 @@ private
     
     if params[:id]
       @offer = @app.offers.find(params[:id])
+      if @offer.featured?
+        redirect_to edit_app_featured_offer_path(@app, @offer) and return
+      end
     else
       @offer = @app.primary_offer
     end
