@@ -487,6 +487,16 @@ class Offer < ActiveRecord::Base
     featured_offer
   end
   
+  def needs_higher_bid?
+    show_rate == 1 && estimated_percentile < 85
+  rescue
+    false
+  end
+  
+  def needs_more_funds?
+    show_rate != 1 && (daily_budget == 0 || (daily_budget > 0 && low_balance?))
+  end
+  
 private
   
   def is_disabled?(publisher_app, currency)
