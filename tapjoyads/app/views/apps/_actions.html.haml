@@ -16,7 +16,7 @@
         - app.currencies.each do |c|
           %li.inception= link_to c.name, app_currency_path({:app_id => app.id, :id => c.id}), :class => (currency_selected && params[:id] == c.id ? 'selected' : '')
         - if app.can_have_new_currency?
-          %li.inception= link_to 'New Currency', new_app_currency_path({:app_id => app.id}), :class => (currency_selected && controller.action_name == 'new' ? 'selected' : '')
+          %li.inception= link_to 'Create Currency', new_app_currency_path({:app_id => app.id}), :class => (currency_selected && controller.action_name == 'new' ? 'selected' : '')
 
       - virtual_goods_path = app.virtual_goods.blank? ? new_app_virtual_good_path({:app_id => app.id}) : app_virtual_goods_path({:app_id => app.id})
       %li= link_to 'Virtual Goods', virtual_goods_path, :class => (controller.controller_name == 'virtual_goods' ? 'selected' : '')
