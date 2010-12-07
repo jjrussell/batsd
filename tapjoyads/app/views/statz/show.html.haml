@@ -94,26 +94,26 @@
 = render 'partners/make_current_button', :partner => @offer.partner
 
 - if @offer.is_publisher_offer?
-  - c = @offer.item.primary_currency
-  %h4 Currency - #{c.name}
-  #currency
-    %a.more{ :href => '#' } [Show more details]
-    = link_to('[View Offer Wall]', "http://ws.tapjoyads.com/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDIDS.first}&publisher_user_id=testuser&device_type=#{@offer.item.platform}")
-    .details
-      %table.properties
-        - property_row('Conversion rate', c.conversion_rate)
-        - property_row('Callback url', c.callback_url)
-        - property_row('Secret key', c.secret_key)
-        - property_row('Initial balance', c.initial_balance)
-        - property_row('Only free offers', c.only_free_offers?)
-        - property_row('Has virtual goods', c.has_virtual_goods?)
-        - property_row('Spend share', c.spend_share)
-        - property_row('Direct-pay share', c.direct_pay_share)
-        - property_row('Max age rating', c.max_age_rating)
-        - property_row('Disabled offers', c.disabled_offers)
-        - property_row('Disabled partners', c.disabled_partners)
-        - property_row('Test devices', c.test_devices)
-        - property_row('id', c.id + ' - ' + clippy(c.id))
+  - @offer.item.currencies.each do |c|
+    %h4 Currency - #{c.name}
+    .currency
+      %a.more{ :href => '#', :c_id => c.id } [Show more details]
+      = link_to('[View Offer Wall]', "http://ws.tapjoyads.com/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDIDS.first}&publisher_user_id=testuser&currency_id=#{c.id}&device_type=#{@offer.item.platform}")
+      .details{ :id => "details_#{c.id}"}
+        %table.properties
+          - property_row('Conversion rate', c.conversion_rate)
+          - property_row('Callback url', c.callback_url)
+          - property_row('Secret key', c.secret_key)
+          - property_row('Initial balance', c.initial_balance)
+          - property_row('Only free offers', c.only_free_offers?)
+          - property_row('Has virtual goods', c.has_virtual_goods?)
+          - property_row('Spend share', c.spend_share)
+          - property_row('Direct-pay share', c.direct_pay_share)
+          - property_row('Max age rating', c.max_age_rating)
+          - property_row('Disabled offers', c.disabled_offers)
+          - property_row('Disabled partners', c.disabled_partners)
+          - property_row('Test devices', c.test_devices)
+          - property_row('id', c.id + ' - ' + clippy(c.id))
 
 .load-circle= image_tag('load-circle.gif')
 
@@ -136,8 +136,8 @@
   :plain
     $('#search_box').autocomplete({ source: '#{search_offers_path}', delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });
 
-    $('#currency .more').click(function() {
-      $('#currency .details').toggle();
+    $('.currency .more').click(function() {
+      $('#details_' + $(this).attr('c_id')).toggle();
       return false;
     });
 
@@ -150,4 +150,3 @@
       $('#boosts_list').toggle();
       return false;
     });
-
