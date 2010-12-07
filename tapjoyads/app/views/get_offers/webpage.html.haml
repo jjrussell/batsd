@@ -1,16 +1,14 @@
 - @page_title = "Earn #{@currency.name}"
 
-- # TO REMOVE - when gameview integrates properly
 - unless @message.blank?
   .message= @message
-- # END TO REMOVE
 
 - if @currencies.size > 1 && params[:currency_selector] == '1'
   = render :partial => 'currency_selector'
 
 #instructions
   Install and OPEN one of the apps below to receive #{@currency.name}
-  
+
 - if @start_index > 0
   .pagination
     .prev= get_previous_link

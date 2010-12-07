@@ -80,12 +80,13 @@ private
       currency = Currency.find_in_cache(publisher_app_id)
 
       # Randomly choose a free offer that is converting at greater than 50%
-      offer_list, more_data_available = publisher_app.get_offer_list(params[:udid], 
-         :currency => currency,
-         :device_type => params[:device_type],
-         :geoip_data => geoip_data,
-         :required_length => 25,
-         :reject_rating_offer => true)
+      offer_list, more_data_available = publisher_app.get_offer_list(params[:udid],
+          :device => device,
+          :currency => currency,
+          :device_type => params[:device_type],
+          :geoip_data => geoip_data,
+          :required_length => 25,
+          :reject_rating_offer => true)
 
       displayer_currency = Currency.find_in_cache(params[:app_id]) rescue nil
       disabled_offer_ids = displayer_currency.nil? ? Set.new : displayer_currency.get_disabled_offer_ids
