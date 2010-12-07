@@ -8,7 +8,7 @@ class App < ActiveRecord::Base
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
-  has_many :currencies
+  has_many :currencies, :order => 'ordinal ASC'
   has_one :primary_currency, :class_name => 'Currency', :conditions => 'id = app_id'
   has_one :rating_offer
   has_many :featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured = true"
@@ -197,6 +197,10 @@ class App < ActiveRecord::Base
 
   def display_money_share
     0.6
+  end
+
+  def can_have_new_currency?
+    currencies.empty? || !currencies.any? { |c| Currency::SPECIAL_CALLBACK_URLS.include?(c.callback_url) }
   end
 
 private

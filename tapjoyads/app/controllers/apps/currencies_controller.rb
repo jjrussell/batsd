@@ -30,7 +30,7 @@ class Apps::CurrenciesController < WebsiteController
     
     safe_attributes = [:name, :conversion_rate, :initial_balance, :callback_url, :secret_key, :test_devices, :minimum_featured_bid]
     if permitted_to?(:edit, :statz)
-      safe_attributes += [:disabled_offers, :max_age_rating, :only_free_offers]
+      safe_attributes += [:disabled_offers, :max_age_rating, :only_free_offers, :ordinal]
     end
     
     if @currency.safe_update_attributes(currency_params, safe_attributes)
@@ -48,13 +48,23 @@ class Apps::CurrenciesController < WebsiteController
   end
   
   def create
-    @app = current_partner.apps.find(params[:app_id])
-    @currency = Currency.new
-    @currency.id = @app.id
-    @currency.app = @app
-    @currency.partner = @app.partner
-    @currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
-    @currency.ordinal = 1
+    @app = current_partner.apps.find(params[:app_id], :include => :currencies)
+    unless @app.can_have_new_currency?
+      flash[:error] = 'Cannot create currency for this app.'
+      redirect_to apps_path and return
+    end
+    
+    if @app.currencies.empty?
+      @currency = Currency.new
+      @currency.id = @app.id
+      @currency.app = @app
+      @currency.partner = @app.partner
+      @currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
+      @currency.ordinal = 1
+    else
+      @currency = @app.currencies.first.clone
+      @currency.ordinal = @app.currencies.last.ordinal + 100
+    end
     
     log_activity(@currency)
     @currency.name = params[:currency][:name]
@@ -88,7 +98,7 @@ private
       redirect_to apps_path
       return
     end
-    @currency = @app.primary_currency
+    @currency = @app.currencies.find_by_id(params[:id])
     if @currency.nil?
       flash[:error] = "Could not find currency"
       redirect_to apps_path
