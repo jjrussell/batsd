@@ -144,7 +144,7 @@
           currentPrice = minimumPrice;
         }
         $('#offer_bid').val(numberToCurrency(currentPrice));
-        $('#offer_payment').val(numberToCurrency(currentPrice - #{@offer.partner.premier_discount/100.0}));
+        $('#offer_payment').val(numberToCurrency(currentPrice * #{(100.0 - @offer.partner.premier_discount)/100.0}));
       };
 
       var updatePercentile = function() {
