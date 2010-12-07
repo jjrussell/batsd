@@ -67,7 +67,7 @@ class UsersController < WebsiteController
 
   private
   def update_mail_chimp_email
-    email = @user.email
+    email = current_user.email
     yield
     if @user.valid? && email != @user.email
       message = {
