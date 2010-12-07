@@ -28,12 +28,12 @@ class OfferCompletedController < ApplicationController
   
   def paypal
     @source = 'paypal'
-    params[:click_key] = params[:custom]
+    params[:click_key] = params[:memo]
     
     postback_data = "cmd=_notify-validate&#{request.query_string}"
     paypal_response = Downloader.post('http://www.paypal.com', postback_data, { :timeout => 10 })
     
-    if paypal_response == 'VERIFIED' && params[:payment_status] == 'Completed' && params[:receiver_email] == 'paypal@tapjoy.com'
+    if paypal_response == 'VERIFIED' && params[:status] == 'COMPLETED' && params[:transaction]['0']['.receiver'] == 'support@tapjoy.com'
       complete_conversion
     else
       @error_message = "unexpected paypal callback"
