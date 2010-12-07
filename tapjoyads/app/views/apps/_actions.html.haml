@@ -12,7 +12,7 @@
       - if app.currencies.empty?
         %li= link_to 'Virtual Currency', new_app_currency_path({:app_id => app.id}), :class => (currency_selected && controller.action_name == 'new' ? 'selected' : '')
       - else
-        %li Virtual Currency
+        %li.with_padding Virtual Currency
         - app.currencies.each do |c|
           %li.inception= link_to c.name, app_currency_path({:app_id => app.id, :id => c.id}), :class => (currency_selected && params[:id] == c.id ? 'selected' : '')
         - if app.can_have_new_currency?
@@ -44,6 +44,9 @@
     }
     #apps_tools li {
       list-style: none;
+    }
+    #apps_tools li.with_padding {
+      padding: 5px;
     }
     #apps_tools li.disabled,
     #apps_tools a {
