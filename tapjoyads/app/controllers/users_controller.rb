@@ -67,15 +67,14 @@ class UsersController < WebsiteController
 
   private
   def update_mail_chimp_email
-    email = current_user.email
+    email = @user.email
     yield
-    if email != current_user.email
+    if @user.valid? && email != @user.email
       message = {
         :type => "update",
         :email => email,
         :merge_tags => {
-          'EMAIL' => current_user.email,
-          'CAN_EMAIL' => @user.can_email.to_s
+          'EMAIL' => @user.email
         }
       }.to_json
       Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)
