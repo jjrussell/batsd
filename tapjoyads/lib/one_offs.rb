@@ -132,7 +132,7 @@ class OneOffs
     
   end
   
-  def self.get_monthly_data_by_app(partner_id, year, month)
+  def self.get_monthly_data_by_partner(partner_id, year, month)
     
     month_start = Time.utc(year, month, 01)
     
