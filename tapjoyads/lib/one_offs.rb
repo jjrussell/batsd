@@ -137,6 +137,8 @@ class OneOffs
     total_revenue = 0
     total_spend = 0
     
+    puts "App, Revenue, Spend"
+    
     Offer.find_all_by_partner_id(partner_id).each do |offer|
       s = Appstats.new(offer.id, {:type => :sum, :start_time => month_start, :end_time => month_start.end_of_month})
       revenue = s.stats['rewards_revenue'].first + s.stats['display_revenue'].first
