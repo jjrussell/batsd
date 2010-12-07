@@ -1,7 +1,5 @@
 class OneOffs
   
-  include ActionView::Helpers::NumberHelper
-  
   def self.check_syntax
     Rails::Initializer.run(:load_application_classes)
     true
@@ -133,7 +131,7 @@ class OneOffs
   end
   
   def self.get_monthly_data_by_partner(partner_id, year, month)
-    
+      
     month_start = Time.utc(year, month, 01)
     
     total_revenue = 0
@@ -142,13 +140,13 @@ class OneOffs
     Offer.find_all_by_partner_id(partner_id).each do |offer|
       s = Appstats.new(offer.id, {:type => :sum, :start_time => month_start, :end_time => month_start.end_of_month})
       revenue = s.stats['rewards_revenue'].first + s.stats['display_revenue'].first
-      spend = s.stats['installs_spend'].first
+      spend = -s.stats['installs_spend'].first
       total_revenue += revenue
       total_spend += spend
-      puts "#{offer.name.gsub(',','_')}, #{number_to_currency(revenue/100.0)}, #{number_to_currency(spend/-100.0)}" if revenue != 0 or spend != 0
+      puts "#{offer.name.gsub(',','_')}, $#{(revenue/100.0)}, $#{(spend/100.0)}" if revenue != 0 or spend != 0
     end
     
-    puts "Total, #{number_to_currency(total_revenue/100.0)}, #{number_to_currency(total_spend/-100.0)}"
+    puts "Total, $#{(total_revenue/100.0)}, $#{(total_spend/100.0)}"
     
     
   end
