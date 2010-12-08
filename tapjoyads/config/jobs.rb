@@ -18,6 +18,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'queue_grab_advertiser_udids', :interval => 5.minutes
     s.add_job 'queue_sdb_backups', :interval => 1.minute
     s.add_job 'queue_mail_chimp_updates', :interval => 1.minute
+    s.add_job 'queue_partner_notifications', :interval => 5.minutes
   elsif machine_type == 'masterjobs'
     # jobs with high impact on overall system performance
     s.add_job 'master_calculate_next_payout', :daily => 4.hours
@@ -44,6 +45,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'master_set_bad_domains', :interval => 1.minutes
     s.add_job 'master_update_rev_share', :daily => 1.hour
     s.add_job 'master_set_exclusivity_and_premier_discounts', :daily => 2.hours
+    s.add_job 'master_partner_notifications', :daily => 3.hours
   else
     Rails.logger.info "JobRunner: Not running any jobs. Not a job server."
   end

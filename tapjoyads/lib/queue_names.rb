@@ -13,4 +13,5 @@ class QueueNames
   GRAB_ADVERTISER_UDIDS    = RUN_MODE_PREFIX + 'GrabAdvertiserUdids'
   SDB_BACKUPS              = RUN_MODE_PREFIX + 'SdbBackups'
   MAIL_CHIMP_UPDATES       = RUN_MODE_PREFIX + 'MailChimpUpdates'
+  PARTNER_NOTIFICATIONS    = RUN_MODE_PREFIX + 'PartnerNotifications'
 end
