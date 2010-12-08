@@ -36,7 +36,7 @@ class OfferCompletedController < ApplicationController
     if paypal_response == 'VERIFIED' && params[:status] == 'COMPLETED' && params[:transaction]['0']['.receiver'] == 'support@tapjoy.com'
       complete_conversion
     else
-      @error_message = "unexpected paypal callback"
+      @error_message = "unexpected paypal callback - #{paypal_response}"
       notify_and_render_error
     end
   end
