@@ -1,4 +1,5 @@
 - featured ||= false
+
 - form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform' }) do |f|
   %table
     %tbody
@@ -215,3 +216,17 @@
     #percentile {
       font-weight: bold;
     }
+    
+    #offer_status {
+    	padding: .8em;
+    	margin-bottom: 1em;
+    	border: 2px solid #ddd;
+    }
+
+    #offer_status.bad { background: #FBB3B4; color: #6a0f01; border-color: #FB8284; }
+    #offer_status.mediocre { background: #FFF6BF; color: #514721; border-color: #FFD324; }
+    #offer_status.good { background: #E6EFC2; color: #264409; border-color: #C6D880; }
+
+    #offer_status.bad a { color:#6a0f01; }
+    #offer_status.mediocre a { color:#514721; }
+    #offer_status.good a { color:#264409; }
