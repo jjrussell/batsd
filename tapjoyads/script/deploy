@@ -43,6 +43,7 @@ class Deploy
     end
     
     if @options[:environment] == 'production' && !@options[:version].nil? && @options[:version] !~ /^[0-9]+$/
+      puts "invalid version for production deploy, must be a version number"
       print_usage_and_exit
     end
     @options[:version] = 'master' if @options[:environment] == 'test' && @options[:version].nil?
