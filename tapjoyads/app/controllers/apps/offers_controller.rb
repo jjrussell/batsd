@@ -82,7 +82,7 @@ private
     
     if params[:id]
       @offer = @app.offers.find(params[:id])
-      if @offer.featured?
+      if @offer.featured? && params[:action] != 'percentile'
         redirect_to edit_app_featured_offer_path(@app, @offer) and return
       end
     else
