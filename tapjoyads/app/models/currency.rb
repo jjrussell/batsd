@@ -12,7 +12,7 @@ class Currency < ActiveRecord::Base
   
   validates_presence_of :app, :partner, :name
   validates_numericality_of :conversion_rate, :initial_balance, :ordinal, :only_integer => true, :greater_than_or_equal_to => 0
-  validates_numericality_of :spend_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
+  validates_numericality_of :spend_share, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :allow_nil => true, :only_integer => true
   validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :in => [ true, false ]
   validates_each :callback_url do |record, attribute, value|
@@ -61,6 +61,8 @@ class Currency < ActiveRecord::Base
   def get_publisher_amount(offer, displayer_app = nil)
     if offer.partner_id == partner_id
       publisher_amount = 0
+    elsif offer.direct_pay?
+      publisher_amount = offer.payment * direct_pay_share
     else
       publisher_amount = offer.payment * spend_share
     end
@@ -116,6 +118,7 @@ class Currency < ActiveRecord::Base
   def set_values_from_partner
     self.disabled_partners = partner.disabled_partners
     self.spend_share = partner.rev_share * get_spend_share_ratio
+    self.direct_pay_share = partner.direct_pay_share
   end
   
 private

@@ -43,6 +43,13 @@
       %td
         = f.check_box(:pay_per_click)
         = error_message_on @offer, :pay_per_click
+    %tr
+      %th
+        = f.label(:featured)
+        #help_featured.help ?
+      %td
+        = f.check_box(:featured)
+        = error_message_on @offer, :featured
     - if @offer.item_type == 'GenericOffer'
       %tr
         %th
@@ -51,13 +58,13 @@
         %td
           = f.check_box(:multi_complete)
           = error_message_on @offer, :multi_complete
-    %tr
-      %th
-        = f.label(:featured)
-        #help_featured.help ?
-      %td
-        = f.check_box(:featured)
-        = error_message_on @offer, :featured
+      %tr
+        %th
+          = f.label(:direct_pay, 'Direct-pay')
+          #help_direct_pay.help ?
+        %td
+          = f.select(:direct_pay, options_for_select(Offer::DIRECT_PAY_PROVIDERS, @offer.direct_pay), { :include_blank => true })
+          = error_message_on @offer, :direct_pay
     %tr
       %th
         = f.label(:name_suffix, 'Internal Suffix')
@@ -125,6 +132,12 @@
           = error_message_on @offer, :bid
       %tr
         %th
+          = f.label(:allow_any_bid)
+          #help_allow_any_bid.help ?
+        %td
+          = check_box_tag 'offer[allow_any_bid]'
+      %tr
+        %th
           = f.label(:daily_budget)
           #help_daily_budget.help ?
         %td
@@ -142,7 +155,7 @@
         %th
           = label_tag(:app_store_id, 'Store ID')
           #help_app_store_id.help ?
-        %td= text_field_tag(:app_store_id, @offer.item.store_id)
+        %td= text_field_tag(:app_store_id, @offer.item.store_id)        
     %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
 
@@ -153,6 +166,7 @@
   #help_allow_negative_balance_content{ :name => 'Allow Negative Balance' } Allow this partner's balance to go below zero. This effectively locks show rate to 1.0.
   #help_pay_per_click_content{ :name => 'Pay-Per-Click' } Charge the advertiser and award the user immediately on click.
   #help_multi_complete_content{ :name => 'Multi-complete' } Allow this offer to be completed multiple times per device.
+  #help_direct_pay_content{ :name => 'Direct-pay' } Select a direct-pay provider from the list to designate this offer as a direct-pay offer. Revenue generated will be split up using the publisher's direct-pay share.
   #help_featured_content{ :name => 'Featured' } Enables this offer in our featured offers feed.
   #help_internal_suffix_content{ :name => 'Internal Suffix' } Internal identifier for offers. i.e. 'featured' or 'us only'
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.
@@ -166,6 +180,7 @@
   #help_overall_budget_content{ :name => 'Overall Budget' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
   #help_app_store_id_content{ :name => 'Store ID' } The App Store ID or Android Market name of this app. i.e. '297558390' for Apple, 'com.tapjoy.tapout' for Android
   #help_bid_content{ :name => 'Bid' } The bid affects your payment and your offerwall rank.
+  #help_allow_any_bid_content{ :name => 'Allow any Bid' } Check this box if you need to set a bid that is lower than the allowed minimum bid.
 
 - content_for :page_styles do
   :plain

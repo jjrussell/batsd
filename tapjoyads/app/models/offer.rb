@@ -16,8 +16,9 @@ class Offer < ActiveRecord::Base
   FEATURED_OFFER_TYPE = '2'
   
   CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
+  DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :allow_any_bid
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -34,6 +35,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_blank => false, :allow_nil => true, :greater_than => 0
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :featured, :multi_complete, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer )
+  validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
     begin
       parsed = JSON.parse(value)
@@ -73,22 +75,13 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "must not be set if low payment range is not set") if value.present?
     end
   end
-  validates_each :bid do |record, attribute, value|
-    if record.bid_changed? || record.price_changed?
-      if value < record.min_bid
-        record.errors.add(attribute, "is below the minimum")
-      end
-      if record.item_type == 'RatingOffer' && value != 0
-        record.errors.add(attribute, "must be 0 for RatingOffers")
-      end
-    end
-  end
   validates_each :multi_complete do |record, attribute, value|
     if value
       record.errors.add(attribute, "is only for GenericOffers") unless record.item_type == 'GenericOffer'
       record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
     end
   end
+  validate :bid_higher_than_min_bid, :unless => :allow_any_bid
   
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
@@ -650,6 +643,15 @@ private
       ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
       worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
       100 * worse_offers.size / ranked_offers.size
+
+  def bid_higher_than_min_bid
+    if bid_changed? || price_changed?
+      if bid < min_bid
+        errors.add :bid, "is below the minimum (#{min_bid} cents)"
+      end
+      if item_type == 'RatingOffer' && bid != 0
+        errors.add :bid, "must be 0 for RatingOffers"
+      end
     end
   end
   
