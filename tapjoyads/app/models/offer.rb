@@ -403,26 +403,11 @@ class Offer < ActiveRecord::Base
     self.rank_score += 999999 if item_type == 'RatingOffer'
   end
   
-  def estimated_percentile(weights = CONTROL_WEIGHTS)
-    if conversion_rate == 0
-      self.conversion_rate = is_paid? ? 0.05 : 0.50
+  def estimated_percentile
+    if @estimated_percentile.nil? || changed?
+      @estimated_percentile = recalculate_estimated_percentile
     end
-    
-    if featured?
-      self.conversion_rate = 0.50
-      normalize_stats(Offer.get_stats_for_featured_ranks)
-      calculate_rank_score(weights.merge({ :random => 0 }))
-      ranked_offers = Offer.get_featured_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
-      worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
-      100 * worse_offers.size / ranked_offers.size
-    else
-      normalize_stats(Offer.get_stats_for_ranks)
-      calculate_rank_score(weights.merge({ :random => 0 }))
-      self.rank_score += weights[:random] * 0.5
-      ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
-      worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
-      100 * worse_offers.size / ranked_offers.size
-    end
+    @estimated_percentile
   end
   
   def name_with_suffix
@@ -490,13 +475,33 @@ class Offer < ActiveRecord::Base
   end
   
   def needs_higher_bid?
-    show_rate == 1 && estimated_percentile < 85
-  rescue
-    false
+    bid_is_bad? || bid_is_passable?
   end
   
   def needs_more_funds?
     show_rate != 1 && (daily_budget == 0 || (daily_budget > 0 && low_balance?))
+  end
+  
+  def on_track_for_budget?
+    show_rate != 1 && !needs_more_funds?
+  end
+  
+  def bid_is_good?
+    show_rate == 1 && estimated_percentile >= 85
+  rescue
+    false
+  end
+  
+  def bid_is_passable?
+    show_rate == 1 && estimated_percentile >= 50 && estimated_percentile < 85
+  rescue
+    false
+  end
+  
+  def bid_is_bad?
+    show_rate == 1 && estimated_percentile < 50
+  rescue
+    false
   end
   
 private
@@ -623,6 +628,29 @@ private
   def set_stats_aggregation_times
     self.next_stats_aggregation_time = Time.zone.now if next_stats_aggregation_time.blank?
     self.stats_aggregation_interval = 3600 if stats_aggregation_interval.blank?
+  end
+  
+  def recalculate_estimated_percentile
+    weights = CONTROL_WEIGHTS
+    if conversion_rate == 0
+      self.conversion_rate = is_paid? ? 0.05 : 0.50
+    end
+    
+    if featured?
+      self.conversion_rate = 0.50
+      normalize_stats(Offer.get_stats_for_featured_ranks)
+      calculate_rank_score(weights.merge({ :random => 0 }))
+      ranked_offers = Offer.get_featured_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
+      worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
+      100 * worse_offers.size / ranked_offers.size
+    else
+      normalize_stats(Offer.get_stats_for_ranks)
+      calculate_rank_score(weights.merge({ :random => 0 }))
+      self.rank_score += weights[:random] * 0.5
+      ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
+      worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
+      100 * worse_offers.size / ranked_offers.size
+    end
   end
   
 end
