@@ -43,6 +43,13 @@
       %td
         = f.check_box(:pay_per_click)
         = error_message_on @offer, :pay_per_click
+    %tr
+      %th
+        = f.label(:featured)
+        #help_featured.help ?
+      %td
+        = f.check_box(:featured)
+        = error_message_on @offer, :featured
     - if @offer.item_type == 'GenericOffer'
       %tr
         %th
@@ -51,13 +58,13 @@
         %td
           = f.check_box(:multi_complete)
           = error_message_on @offer, :multi_complete
-    %tr
-      %th
-        = f.label(:featured)
-        #help_featured.help ?
-      %td
-        = f.check_box(:featured)
-        = error_message_on @offer, :featured
+      %tr
+        %th
+          = f.label(:direct_pay, 'Direct-pay')
+          #help_direct_pay.help ?
+        %td
+          = f.select(:direct_pay, options_for_select(Offer::DIRECT_PAY_PROVIDERS, @offer.direct_pay), { :include_blank => true })
+          = error_message_on @offer, :direct_pay
     %tr
       %th
         = f.label(:name_suffix, 'Internal Suffix')
@@ -159,6 +166,7 @@
   #help_allow_negative_balance_content{ :name => 'Allow Negative Balance' } Allow this partner's balance to go below zero. This effectively locks show rate to 1.0.
   #help_pay_per_click_content{ :name => 'Pay-Per-Click' } Charge the advertiser and award the user immediately on click.
   #help_multi_complete_content{ :name => 'Multi-complete' } Allow this offer to be completed multiple times per device.
+  #help_direct_pay_content{ :name => 'Direct-pay' } Select a direct-pay provider from the list to designate this offer as a direct-pay offer. Revenue generated will be split up using the publisher's direct-pay share.
   #help_featured_content{ :name => 'Featured' } Enables this offer in our featured offers feed.
   #help_internal_suffix_content{ :name => 'Internal Suffix' } Internal identifier for offers. i.e. 'featured' or 'us only'
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.

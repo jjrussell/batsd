@@ -15,6 +15,8 @@ class Offer < ActiveRecord::Base
   DEFAULT_OFFER_TYPE  = '1'
   FEATURED_OFFER_TYPE = '2'
   
+  DIRECT_PAY_PROVIDERS = %w( boku paypal )
+  
   CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1 }
   
   attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :allow_any_bid
@@ -34,6 +36,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_blank => false, :allow_nil => true, :greater_than => 0
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :featured, :multi_complete, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer )
+  validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
     begin
       parsed = JSON.parse(value)
