@@ -643,6 +643,8 @@ private
       ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
       worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
       100 * worse_offers.size / ranked_offers.size
+    end
+  end
 
   def bid_higher_than_min_bid
     if bid_changed? || price_changed?
