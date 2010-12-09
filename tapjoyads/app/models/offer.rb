@@ -17,7 +17,7 @@ class Offer < ActiveRecord::Base
   
   CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1 }
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :allow_any_bid
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -73,22 +73,13 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "must not be set if low payment range is not set") if value.present?
     end
   end
-  validates_each :bid do |record, attribute, value|
-    if record.bid_changed? || record.price_changed?
-      if value < record.min_bid
-        record.errors.add(attribute, "is below the minimum")
-      end
-      if record.item_type == 'RatingOffer' && value != 0
-        record.errors.add(attribute, "must be 0 for RatingOffers")
-      end
-    end
-  end
   validates_each :multi_complete do |record, attribute, value|
     if value
       record.errors.add(attribute, "is only for GenericOffers") unless record.item_type == 'GenericOffer'
       record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
     end
   end
+  validate :bid_higher_than_min_bid, :unless => :allow_any_bid
   
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
@@ -611,6 +602,17 @@ private
   def set_stats_aggregation_times
     self.next_stats_aggregation_time = Time.zone.now if next_stats_aggregation_time.blank?
     self.stats_aggregation_interval = 3600 if stats_aggregation_interval.blank?
+  end
+  
+  def bid_higher_than_min_bid
+    if bid_changed? || price_changed?
+      if bid < min_bid
+        errors.add :bid, "is below the minimum (#{min_bid} cents)"
+      end
+      if item_type == 'RatingOffer' && bid != 0
+        errors.add :bid, "must be 0 for RatingOffers"
+      end
+    end
   end
   
 end
