@@ -61,7 +61,7 @@ class App < ActiveRecord::Base
   
   def final_store_url
     if is_android?
-      "http://www.cyrket.com/p/android/#{store_id}"
+      "http://www.appbrain.com/app/#{store_id}"
     else
       "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
     end
@@ -135,7 +135,8 @@ class App < ActiveRecord::Base
   end
 
   def get_offer_list(udid, options = {})
-    currency = options.delete(:currency)
+    device = options.delete(:device) { Device.new(:key => udid) }
+    currency = options.delete(:currency) { Currency.find_in_cache(id) }
     device_type = options.delete(:device_type)
     geoip_data = options.delete(:geoip_data) { {} }
     type = options.delete(:type) { Offer::DEFAULT_OFFER_TYPE }
@@ -144,9 +145,6 @@ class App < ActiveRecord::Base
     reject_rating_offer = options.delete(:reject_rating_offer) { false }
     exp = options.delete(:exp)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
-    device = Device.new(:key => udid)
-    currency = Currency.find_in_cache(id) unless currency
     
     if type == Offer::CLASSIC_OFFER_TYPE
       offer_list = []

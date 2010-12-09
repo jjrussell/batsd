@@ -18,7 +18,7 @@ class Job::MasterSetBadDomainsController < Job::JobController
       seconds = (now - minumum_interval).hour == now.hour ? now - now.beginning_of_hour : 1.hour
       fail_rate = count.to_f / seconds
       
-      if fail_rate > 0.20 && bad_domains[domain_name].nil?
+      if fail_rate > 0.15 && bad_domains[domain_name].nil?
         bad_domains[domain_name] = now
         Notifier.alert_new_relic(BadWebRequestDomain, 
           "#{domain_name} has been marked bad. #{fail_rate} fails/second over last #{seconds} seconds.",

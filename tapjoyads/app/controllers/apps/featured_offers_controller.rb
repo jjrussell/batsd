@@ -46,7 +46,7 @@ private
     end
     
     if params[:id]
-      @offer = @app.primary_featured_offer
+      @offer = @app.featured_offers.find(params[:id])
       log_activity(@offer)
     end
   end

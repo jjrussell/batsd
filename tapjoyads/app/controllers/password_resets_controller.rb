@@ -42,8 +42,8 @@ private
   def find_user_using_perishable_token
     @user = User.find_using_perishable_token(params[:id])
     if @user.nil?
-      flash[:error] = "Your password reset token has expired. Please submit another password reset request."
-      redirect_to new_password_reset_path
+      flash[:error] = "Your password reset token has expired. Please use the 'Forgot password?' link below to request a new one."
+      redirect_to login_path
     end
   end
   

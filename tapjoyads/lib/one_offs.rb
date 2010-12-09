@@ -130,6 +130,29 @@ class OneOffs
     
   end
   
+  def self.get_monthly_data_by_partner(partner_id, year, month)
+      
+    month_start = Time.utc(year, month, 01)
+    
+    total_revenue = 0
+    total_spend = 0
+    
+    puts "App, Revenue, Spend"
+    
+    Offer.find_all_by_partner_id(partner_id).each do |offer|
+      s = Appstats.new(offer.id, {:type => :sum, :start_time => month_start, :end_time => month_start.end_of_month})
+      revenue = s.stats['rewards_revenue'].first + s.stats['display_revenue'].first
+      spend = -s.stats['installs_spend'].first
+      total_revenue += revenue
+      total_spend += spend
+      puts "#{offer.name.gsub(',','_')}, $#{(revenue/100.0)}, $#{(spend/100.0)}" if revenue != 0 or spend != 0
+    end
+    
+    puts "Total, $#{(total_revenue/100.0)}, $#{(total_spend/100.0)}"
+    
+    
+  end
+  
   def self.get_monthly_actives(filename)
     file = File.open(filename, 'w')
     partners = {}
@@ -337,6 +360,13 @@ class OneOffs
       offer.bid = 0
       offer.payment = 0
       offer.save!
+    end
+  end
+  
+  def self.update_exclusivity_offer_discounts
+    OfferDiscount.scoped(:conditions => "source = 'Exclusivity'").each do |offer_discount|
+      offer_discount.amount = od.partner.exclusivity_level.discount
+      offer_discount.save!
     end
   end
 

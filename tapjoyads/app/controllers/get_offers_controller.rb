@@ -97,9 +97,8 @@ private
     @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])
     @currency = @currencies.select { |c| c.id == params[:currency_id] }.first
     
-    # TO CHANGE: cleanup this messy hack
-    d = Device.new(:key => params[:udid])
-    if d.opted_out?
+    @device = Device.new(:key => params[:udid])
+    if @device.opted_out?
       @offer_list = []
       @more_data_available = 0
       if params[:action] == 'webpage'
@@ -158,7 +157,8 @@ private
       Offer::DEFAULT_OFFER_TYPE
     end
     
-    @offer_list, @more_data_available = @publisher_app.get_offer_list(params[:udid], 
+    @offer_list, @more_data_available = @publisher_app.get_offer_list(params[:udid],
+        :device => @device,
         :currency => @currency,
         :device_type => params[:device_type],
         :geoip_data => geoip_data,

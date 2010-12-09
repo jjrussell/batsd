@@ -85,6 +85,10 @@ class Partner < ActiveRecord::Base
     end
   end
 
+  def is_premier?
+    offer_discounts.active.present?
+  end
+
   def account_managers=(managers=[])
     # replace
     users.delete(account_managers)

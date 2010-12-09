@@ -1,17 +1,18 @@
 - @page_title = 'Tapjoy Premier'
+- @terms_class = @is_new ? '' : 'hidden'
+- @submit_text = @is_new ? 'Join Tapjoy Premier' : 'Renew Tapjoy Premier'
 
 %h1 Tapjoy Premier Program
-
-.metadata
-  Membership Status: Premier
-- unless @partner.exclusivity_level_type.nil?
+- unless @is_new
   .metadata
-    Expires On:
-    = @partner.exclusivity_expires_on ? @partner.exclusivity_expires_on.to_s(:pub) : "N/A"
+    Membership Status: Premier
+  - unless @partner.exclusivity_level_type.nil?
+    .metadata
+      Expires On:
+      = @partner.exclusivity_expires_on ? @partner.exclusivity_expires_on.to_s(:pub) : "N/A"
+  %h3 Renew:
 
-%h3 Renew:
-
-#terms_and_conditions.hidden
+#terms_and_conditions{ :class => @terms_class }
   %p Tapjoy Premier is a membership program that gives you access to new Tapjoy features, dedicated support, and pricing discounts. Benefits of the Tapjoy Premier Program include:
   %ul
     %li Access to Tapjoy Premier Support with a unique support alias and guaranteed 24-hour response time
@@ -22,39 +23,41 @@
     %li Spend more than $150,000 within a three month period. Based on your spend levels, you will be automatically entered into the program.
     %li Enter into an exclusivity period whereby Tapjoy is the sole provider of incentivized pay-per-install services for your mobile applications. Please select your membership duration below.
   %p The discounts will go into effect on December 10, 2010.
-  %p 
-    If you have any questions, please contact your account manager or 
-    = mail_to "support@tapjoy.com" 
+  %p
+    If you have any questions, please contact your account manager or
+    = mail_to "support@tapjoy.com"
 
-- form_for @partner, :url => { :action => :update }, :html => { :class => 'tjform' } do |f|    
+%br
+
+- form_for @partner, :url => { :action => :update }, :html => { :class => 'tjform' } do |f|
   %table
     %tr
       %td{ :colspan => 2 }
-        = check_box_tag 'agree', 1
+        = check_box_tag 'agree'
         %b
-          I agree to the 
-          = link_to("Terms and Conditions", "javascript:showTerms()") + "."
+          - if @is_new
+            I agree to the Terms and Conditions above.
+          - else
+            I agree to the #{link_to("Terms and Conditions", "javascript:showTerms()")}.
     %tr
       %td.right
         %b= f.label :exclusivity_level, 'Exclusivity&nbsp;Level'
       %td
-        - levels = ExclusivityLevel::TYPES
-        - unless @partner.exclusivity_level.nil?
-          - levels = levels.reject{|t| t.constantize.new.months < @partner.exclusivity_level.months}
-        - levels = levels.map{|t|[t.underscore.humanize.pluralize, t]}
-        = f.select :exclusivity_level_type, options_for_select(levels)
+        = f.select :exclusivity_level_type, options_for_select(@levels, @default_level)
         = error_message_on @partner, :exclusivity_level_type
     %tr
       %td.right
         %b Expires
       %td#expires
-        = (Date.today+9.months).to_s(:pub)
+        = (Date.today + 9.months).to_s(:pub)
     %tr
       %td.right
         %b Discount
       %td
         %span#discount_level
-  = f.submit 'Renew Tapjoy Premier', :class => 'join'
+        (starting December 10)
+
+  = f.submit @submit_text, :class => 'join'
 
 - content_for :page_javascript do
   :plain
@@ -85,16 +88,16 @@
     .tjform input.join {
       float: none;
     }
-    table {
+    .tjform table {
       padding-top: 8px;
     }
-    td {
+    .tjform td {
       height: 22px;
       padding-bottom: 3px;
       vertical-align: top;
       width: 100%;
     }
-    td.right {
+    .tjform td.right {
       text-align: right;
       padding-right: 8px;
     }

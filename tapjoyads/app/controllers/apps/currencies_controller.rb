@@ -69,7 +69,7 @@ class Apps::CurrenciesController < WebsiteController
   end
 
   def reset_test_device
-    if @app.primary_currency.get_test_device_ids.include?(params[:udid])
+    if @currency.get_test_device_ids.include?(params[:udid])
       PointPurchases.transaction(:key => "#{params[:udid]}.#{params[:app_id]}") do |point_purchases|
         point_purchases.virtual_goods = {}
       end
@@ -77,7 +77,7 @@ class Apps::CurrenciesController < WebsiteController
     else
       flash[:error] = "#{params[:udid]} is not a test device."
     end
-    redirect_to app_currency_path
+    redirect_to app_currency_path(:app_id => @app.id, :id => @currency.id)
   end
 
 private

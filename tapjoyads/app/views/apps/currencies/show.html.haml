@@ -86,17 +86,18 @@
           %td= arr[0]
           %td= arr[1]
 
-    %h3
-      Reset Test Device Virtual Goods
-      #help_reset_test_devices.help ?
-    - form_tag({:action => 'reset_test_device'}, {:class => 'tjform'}) do
-      %table
-        %tbody
-          %tr
-            %th= label_tag :udid, "Device ID"
-            %td= select_tag 'udid', options_for_select(@currency.get_test_device_ids)
-          %tr
-            %td{ :colspan => 2 }= submit_tag('Reset this device')
+    - if @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL
+      %h3
+        Reset Test Device Virtual Goods
+        #help_reset_test_devices.help ?
+      - form_tag({:action => 'reset_test_device'}, {:class => 'tjform'}) do
+        %table
+          %tbody
+            %tr
+              %th= label_tag :udid, "Device ID"
+              %td= select_tag 'udid', options_for_select(@currency.get_test_device_ids)
+            %tr
+              %td{ :colspan => 2 }= submit_tag('Reset this device')
 
   .hidden
     #help_name_content{:name => 'Name'}
@@ -115,7 +116,7 @@
       %p
         The format of the parameters will be:
       %p
-        &lt;callback_url>?snuid=&lt;publisher_user_id>&currency=&lt;amount>
+        &lt;callback_url&gt;?snuid=&lt;publisher_user_id&gt;&amp;currency=&lt;amount&gt;
       %p
         The default request parameters include:
       %p
