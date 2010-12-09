@@ -42,7 +42,7 @@ class Deploy
       print_usage_and_exit
     end
     
-    if @options[:environment] == 'production' && @options[:version].present? && @options[:version] !~ /^[0-9]+$/
+    if @options[:environment] == 'production' && !@options[:version].nil? && @options[:version] !~ /^[0-9]+$/
       print_usage_and_exit
     end
     @options[:version] = 'master' if @options[:environment] == 'test' && @options[:version].nil?
