@@ -111,7 +111,7 @@ class StatzController < WebsiteController
         :totals => [ appstats.stats['paid_installs'].sum, appstats.stats['paid_clicks'].sum ]
       },
       :right => {
-        :yMax => 100,
+        :yMax => 200,
         :names => [ 'Rank' ],
         :data => [ appstats.stats['overall_store_rank'].map { |r| r == '-' || r == '0' ? nil : r } ],
         :totals => [ (appstats.stats['overall_store_rank'].select { |r| r != '0' }.last || '-') ]
