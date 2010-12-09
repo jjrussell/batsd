@@ -31,6 +31,8 @@
   - property_row('User Enabled', @offer.user_enabled?, nil, @offer.user_enabled?.to_s)
   - property_row('Bid', number_to_currency(@offer.bid / 100.0))
   - property_row('Payment', number_to_currency(@offer.payment / 100.0))
+  - if @offer.reward_value.present?
+    - property_row('Reward Value', number_to_currency(@offer.reward_value / 100.0))
   - if @offer.item_type == 'App'
     - if @offer.item.use_raw_url?
       - property_row('Raw url', link_to('[url]', @offer.item.store_url), nil, @offer.item.store_url.blank? ? 'incomplete' : nil)
