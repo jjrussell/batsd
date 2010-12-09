@@ -24,7 +24,7 @@ class ReportingController < WebsiteController
     else
       intervals = @appstats.intervals.map { |time| time.to_s(:pub_ampm) }
     end
-      
+
     @data = {
       :connect_data => {
         :name => 'Sessions',
@@ -145,6 +145,28 @@ class ReportingController < WebsiteController
         }
       },
 
+      :virtual_goods_data => {
+        :name => 'Virtual Goods',
+        :intervals => intervals,
+        :xLabels => @appstats.x_labels,
+        :main => {
+          :names => [ 'Virtual good purchases' ],
+          :data => [ @appstats.stats['vg_purchases'] ],
+          :totals => [ @appstats.stats['vg_purchases'].sum ]
+        }
+      },
+
+      :ads_data => {
+        :name => 'Ad impressions',
+        :intervals => intervals,
+        :xLabels => @appstats.x_labels,
+        :main => {
+          :names => [ 'Ad impressions' ],
+          :data => [ @appstats.stats['hourly_impressions'] ],
+          :totals => [ @appstats.stats['hourly_impressions'].sum ]
+        }
+      },
+
       :granularity => @granularity,
       :date => @start_time.to_date.to_s(:mdy),
       :end_date => @end_time.to_date.to_s(:mdy)
@@ -153,12 +175,14 @@ class ReportingController < WebsiteController
     if @granularity == :daily
       @data[:connect_data][:main][:names] << 'DAUs'
       @data[:connect_data][:main][:data] << @appstats.stats['daily_active_users']
+      @data[:connect_data][:main][:totals] << '-'
       @data[:connect_data][:right] = {
         :unitPrefix => '$',
         :decimals => 2,
         :names => [ 'ARPDAU' ],
         :data => [ @appstats.stats['arpdau'].map { |i| i / 100.0 } ],
-        :stringData => [ @appstats.stats['arpdau'].map { |i| number_to_currency(i / 100.0, :precision => 4) } ]
+        :stringData => [ @appstats.stats['arpdau'].map { |i| number_to_currency(i / 100.0, :precision => 4) } ],
+        :totals => [ '-' ]
       }
     end
 
@@ -171,6 +195,13 @@ class ReportingController < WebsiteController
         end
       end
       format.json do
+        if permitted_to?(:index, :statz)
+          # jailbroken data
+          @data[:rewarded_installs_plus_spend_data][:main][:names]  << 'Jailbroken installs'
+          @data[:rewarded_installs_plus_spend_data][:main][:data]   << @appstats.stats['jailbroken_installs']
+          @data[:rewarded_installs_plus_spend_data][:main][:totals] << @appstats.stats['jailbroken_installs'].sum
+        end
+
         render :json => {
           :data => @data,
           :stats_table => render_to_string(:action => '_stats_table.html.haml')
