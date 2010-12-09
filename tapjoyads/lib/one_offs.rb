@@ -362,5 +362,12 @@ class OneOffs
       offer.save!
     end
   end
+  
+  def self.update_exclusivity_offer_discounts
+    OfferDiscount.scoped(:conditions => "source = 'Exclusivity'").each do |offer_discount|
+      offer_discount.amount = od.partner.exclusivity_level.discount
+      offer_discount.save!
+    end
+  end
 
 end

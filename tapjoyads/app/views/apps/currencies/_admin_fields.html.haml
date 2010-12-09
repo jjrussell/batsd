@@ -33,6 +33,14 @@
     = @currency.spend_share
 %tr.admin
   %th
+    Direct-pay share
+    #help_direct_pay_share.help ?
+    .msg
+      = link_to('Edit partner', edit_partner_path(@app.partner_id))
+  %td
+    = @currency.direct_pay_share
+%tr.admin
+  %th
     Disabled partners
     #help_disabled_partners.help ?
     .msg
@@ -58,8 +66,10 @@
     If true, only free offers will be shown in this app's offerwall.
   #help_ordinal{:name => 'Ordinal'}
     Determines the order of the currency selector buttons on the offer wall webpage.
-  #help_spend_share_content{:name => 'Installs money share'}
+  #help_spend_share_content{:name => 'Spend share'}
     The percent share of offer spending that this publisher gets. Computed as: (this partner's rev share) * (spend share ratio).
+  #help_direct_pay_share_content{:name => 'Direct-pay share'}
+    The percent share of direct-pay revenue that this publisher gets.
     
 - content_for :page_styles do
   :plain

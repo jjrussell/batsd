@@ -31,11 +31,15 @@
   - property_row('User Enabled', @offer.user_enabled?, nil, @offer.user_enabled?.to_s)
   - property_row('Bid', number_to_currency(@offer.bid / 100.0))
   - property_row('Payment', number_to_currency(@offer.payment / 100.0))
+  - if @offer.reward_value.present?
+    - property_row('Reward Value', number_to_currency(@offer.reward_value / 100.0))
   - if @offer.item_type == 'App'
     - if @offer.item.use_raw_url?
       - property_row('Raw url', link_to('[url]', @offer.item.store_url), nil, @offer.item.store_url.blank? ? 'incomplete' : nil)
     - else
       - property_row('Store id', link_to(@offer.item.store_id, @offer.item.final_store_url), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
+  - else
+    - property_row('Destination url', link_to(truncate(@offer.url, :length => 60), @offer.url))
   - property_row('Price', number_to_currency(@offer.price / 100.0))
   - property_row('Daily budget', @offer.daily_budget, 0)
   - property_row('Overall budget', @offer.overall_budget, 0)
@@ -49,6 +53,7 @@
   - property_row('Allow negative balance', @offer.allow_negative_balance?, false)
   - property_row('Self promote only', @offer.self_promote_only?, false)
   - property_row('Featured', @offer.featured?, false)
+  - property_row('Direct-pay', @offer.direct_pay, nil)
   - unless @offer.publisher_app_whitelist.blank?
     - property_row('Publisher app whitelist', @offer.get_publisher_app_whitelist.map { |id| link_to(App.find(id).name, statz_path(id)) }.join(', '))
   - property_row('id', @offer.id + ' - ' + clippy(@offer.id))
@@ -103,6 +108,7 @@
           - property_row('Only free offers', c.only_free_offers?)
           - property_row('Has virtual goods', c.has_virtual_goods?)
           - property_row('Spend share', c.spend_share)
+          - property_row('Direct-pay share', c.direct_pay_share)
           - property_row('Max age rating', c.max_age_rating)
           - property_row('Disabled offers', c.disabled_offers)
           - property_row('Disabled partners', c.disabled_partners)

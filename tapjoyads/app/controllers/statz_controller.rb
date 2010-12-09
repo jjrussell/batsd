@@ -111,7 +111,7 @@ class StatzController < WebsiteController
         :totals => [ appstats.stats['paid_installs'].sum, appstats.stats['paid_clicks'].sum ]
       },
       :right => {
-        :yMax => 100,
+        :yMax => 200,
         :names => [ 'Rank' ],
         :data => [ appstats.stats['overall_store_rank'].map { |r| r == '-' || r == '0' ? nil : r } ],
         :totals => [ (appstats.stats['overall_store_rank'].select { |r| r != '0' }.last || '-') ]
@@ -261,6 +261,7 @@ class StatzController < WebsiteController
       { :udid => 'a00000155c5106',                           :last_run_time => 'Never', :device_label => 'Linda Droid'      },
       { :udid => '4b910938aceaa723e0c0313aa7fa9f9d838a595e', :last_run_time => 'Never', :device_label => 'Linda iPad'       },
       { :udid => '820a1b9df38f3024f9018464c05dfbad5708f81e', :last_run_time => 'Never', :device_label => 'Linda iPhone'     },
+      { :udid => '354957031929568',                          :last_run_time => 'Never', :device_label => 'Linda Nexus One'  },
       { :udid => '77d8d2e438fbd686c17851c1fc902b151234583e', :last_run_time => 'Never', :device_label => 'Reina iPhone'     },
       { :udid => 'b4c86b4530a0ee889765a166d80492b46f7f3636', :last_run_time => 'Never', :device_label => 'Ryan iPhone'      },
       { :udid => 'f0910f7ab2a27a5d079dc9ed50d774fcab55f91d', :last_run_time => 'Never', :device_label => 'Ryan iPad'        },
