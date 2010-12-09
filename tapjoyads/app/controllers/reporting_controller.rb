@@ -251,6 +251,9 @@ private
   def setup
     # find the offer
     @offer = current_partner.offers.find_by_id(params[:id], :include => 'item')
+    if @offer.nil? && permitted_to?(:index, :statz)
+      @offer = Offer.find_by_id(params[:id], :include => 'item')
+    end
     if @offer.nil?
       flash[:notice] = 'Unknown offer id'
       redirect_to reporting_index_path and return
