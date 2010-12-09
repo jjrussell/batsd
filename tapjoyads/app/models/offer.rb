@@ -414,7 +414,7 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
-  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, reject_rating_offer)
+  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, reject_rating_offer, direct_pay_providers)
     return is_disabled?(publisher_app, currency) ||
         platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device) ||
@@ -425,7 +425,8 @@ class Offer < ActiveRecord::Base
         flixter_reject?(publisher_app, device) ||
         whitelist_reject?(publisher_app) ||
         gamevil_reject?(publisher_app) ||
-        minimum_featured_bid_reject?(currency)
+        minimum_featured_bid_reject?(currency) ||
+        direct_pay_reject?(direct_pay_providers)
   end
   
   def update_payment(force_update = false)
@@ -598,6 +599,10 @@ private
   def minimum_featured_bid_reject?(currency)
     return false unless (featured? && currency.minimum_featured_bid)
     bid < currency.minimum_featured_bid
+  end
+  
+  def direct_pay_reject?(direct_pay_providers)
+    return direct_pay? && !direct_pay_providers.include?(direct_pay)
   end
   
   def normalize_device_type(device_type_param)
