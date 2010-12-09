@@ -125,6 +125,12 @@
           = error_message_on @offer, :bid
       %tr
         %th
+          = f.label(:allow_any_bid)
+          #help_allow_any_bid.help ?
+        %td
+          = check_box_tag 'offer[allow_any_bid]'
+      %tr
+        %th
           = f.label(:daily_budget)
           #help_daily_budget.help ?
         %td
@@ -142,7 +148,7 @@
         %th
           = label_tag(:app_store_id, 'Store ID')
           #help_app_store_id.help ?
-        %td= text_field_tag(:app_store_id, @offer.item.store_id)
+        %td= text_field_tag(:app_store_id, @offer.item.store_id)        
     %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
 
@@ -166,6 +172,7 @@
   #help_overall_budget_content{ :name => 'Overall Budget' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
   #help_app_store_id_content{ :name => 'Store ID' } The App Store ID or Android Market name of this app. i.e. '297558390' for Apple, 'com.tapjoy.tapout' for Android
   #help_bid_content{ :name => 'Bid' } The bid affects your payment and your offerwall rank.
+  #help_allow_any_bid_content{ :name => 'Allow any Bid' } Check this box if you need to set a bid that is lower than the allowed minimum bid.
 
 - content_for :page_styles do
   :plain
