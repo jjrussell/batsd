@@ -1,0 +1,31 @@
+- @page_title = 'Create Generic Offer'
+
+%h1 Create Generic Offer
+
+- form_for :generic_offer, @generic_offer, :url => { :action => :create_generic_offer }, :html => { :method => :post, :class => 'tjform', :multipart => true } do |f|
+  %table
+    %tr
+      %th= f.label :partner_id, 'Partner ID'
+      %td
+        = f.text_field :partner_id, :size => 50
+        = error_message_on @generic_offer, :partner
+    %tr
+      %th= f.label :name
+      %td
+        = f.text_field :name, :size => 50
+        = error_message_on @generic_offer, :name
+    %tr
+      %th= f.label :price
+      %td
+        = f.currency_field :price
+        = error_message_on @generic_offer, :price
+    %tr
+      %th= f.label :url
+      %td
+        = f.text_field :url, :size => 100
+        = error_message_on @generic_offer, :url
+    %tr
+      %th= label_tag :icon, 'Icon'
+      %td= file_field_tag :icon
+    %tr
+      %td{ :colspan => 2 }= f.submit 'Create Generic Offer'
