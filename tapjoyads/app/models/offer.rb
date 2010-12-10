@@ -468,6 +468,10 @@ class Offer < ActiveRecord::Base
     featured_offer
   end
   
+  def budget_may_not_be_met?
+    (daily_budget > 0) && needs_higher_bid?
+  end
+  
   def needs_higher_bid?
     bid_is_bad? || bid_is_passable?
   end

@@ -1,0 +1,34 @@
+%p Dear Tapjoy Partner,
+
+- if !@offers_not_meeting_budget.empty? || !@offers_needing_higher_bids.empty?
+  %p We noticed that your following campaign(s) are not receiving the maximum traffic available from our network:
+  %ul
+    - @offers_not_meeting_budget.each do |o|
+      %li= "#{o.name}: Daily budget of #{o.daily_budget} will not be met"
+    - @offers_needing_higher_bids.each do |o|
+      %li= "#{o.name}: Unlimited budget: Not on the first page of the Tapjoy wall"
+  %p 
+    You can increase the amount of traffic to your app by bidding higher. To increase your bid, please login to 
+    = link_to "https://www.tapjoy.com", "https://www.tapjoy.com"
+    and go to the Pay-Per-Install page on the Apps tab.
+    
+- if @low_balance
+  %p Your account balance is running low and we are slowing traffic to your campaign(s). Your funds are expected to run out within the next 24 hours. Currently you have the following funds in your account:
+  %p= number_to_currency(0.01 * @account_balance)
+  %p To add more funds to your account, please go to the Add Funds page on the Billing tab or contact us directly to be invoiced.
+  
+- if @account_manager_email
+  %p
+    If you have any questions, please reach out to
+    = mail_to @account_manager_email
+    or email us at
+    = mail_to "support@tapjoy.com"
+- else
+  %p
+    If you have any questions, please email us at
+    = mail_to "support@tapjoy.com"
+
+%p Cheers,
+%p Team Tapjoy
+
+%p Please Note: This email was sent from a notification-only account that cannot accept incoming email. Please do not reply to this email. To unsubscribe from these automated notifications, please access your account preferences in the Account tab and uncheck the "Receive Campaign Emails" box.
