@@ -135,3 +135,19 @@
 - content_for :page_javascript do
   :plain
     $('#search_box').autocomplete({ source: '#{search_offers_path}', delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });
+
+    $('#currency .more').click(function() {
+      $('#currency .details').toggle();
+      return false;
+    });
+
+    $('#show_associated').click(function() {
+      $('#associated_list').toggle();
+      return false;
+    });
+
+    $('#show_boosts').click(function() {
+      $('#boosts_list').toggle();
+      return false;
+    });
+
