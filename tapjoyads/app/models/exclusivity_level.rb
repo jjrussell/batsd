@@ -6,7 +6,7 @@ end
 class ThreeMonth < ExclusivityLevel
   def initialize
     @months = 3
-    @discount = 0
+    @discount = 5
     @name = "3 Months"
   end
 end
@@ -14,7 +14,7 @@ end
 class SixMonth < ExclusivityLevel
   def initialize
     @months = 6
-    @discount = 0
+    @discount = 10
     @name = "6 Months"
   end
 end
@@ -22,7 +22,7 @@ end
 class NineMonth < ExclusivityLevel
   def initialize
     @months = 9
-    @discount = 0
+    @discount = 15
     @name = "9 Months"
   end
 end
