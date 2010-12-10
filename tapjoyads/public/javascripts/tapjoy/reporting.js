@@ -55,7 +55,11 @@ $(function($) {
         $('#tables').html(response.stats_table);
         $('#date, #end_date, #granularity').attr('disabled', false);
         $('#tables, #charts').css('opacity', 1.0);
-        location.href = updateURL(location.href);
+        if (window.history && window.history.replaceState) {
+          window.history.replaceState({},'', updateURL(location.href));
+        } else {
+          location.href = updateURL(location.href);
+        }
         $('#apps_box .app a').each(function() {
           $(this).attr('href', updateURL($(this).attr('href')));
         });
