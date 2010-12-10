@@ -473,7 +473,7 @@ class Offer < ActiveRecord::Base
   end
   
   def needs_higher_bid?
-    bid_is_bad? || bid_is_passable?
+    is_free? && (bid_is_bad? || bid_is_passable?)
   end
   
   def needs_more_funds?
