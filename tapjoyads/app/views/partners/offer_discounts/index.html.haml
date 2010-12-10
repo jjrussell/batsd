@@ -5,7 +5,7 @@
 
 .metadata
   Current Offer Discount:
-  = number_to_currency(@partner.premier_discount * 0.01)
+  = "#{@partner.premier_discount}%"
 
 .filters
   - form_tag('', :class => 'tjform', :method => :get, :id => 'filter-form') do

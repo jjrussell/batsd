@@ -4,7 +4,7 @@
 
 .metadata
   Current Offer Discount:
-  = number_to_currency(@partner.premier_discount * 0.01)
+  = "#{@partner.premier_discount}%"
 
 - form_for [ @partner, @offer_discount ], :html => { :class => 'tjform' } do |f|
   %table
