@@ -627,12 +627,13 @@ protected
         @@sdb.delete_attributes(@this_domain_name, @key, attributes_to_delete, expected_attr)
       end
     rescue RightAws::AwsError => e
-      if e.message.starts_with?("NoSuchDomain")
-        Rails.logger.info_with_time("Creating new domain: #{@this_domain_name}") do
-          @@sdb.create_domain(@this_domain_name)
-        end
-        retry
-      elsif e.message.starts_with?("ConditionalCheckFailed") || e.message.starts_with?("AttributeDoesNotExist")
+      # if e.message.starts_with?("NoSuchDomain")
+      #   Rails.logger.info_with_time("Creating new domain: #{@this_domain_name}") do
+      #     @@sdb.create_domain(@this_domain_name)
+      #   end
+      #   retry
+      # elsif e.message.starts_with?("ConditionalCheckFailed") || e.message.starts_with?("AttributeDoesNotExist")
+      if e.message.starts_with?("ConditionalCheckFailed") || e.message.starts_with?("AttributeDoesNotExist")
         raise ExpectedAttributeError.new(e.message)
       else
         raise e
