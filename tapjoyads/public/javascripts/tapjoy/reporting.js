@@ -18,6 +18,32 @@ var loadData = function(data) {
 };
 
 var updateURL = function(oldURL) {
+  if (window.history && window.history.replaceState) {
+    var split = oldURL.split('#')[0].split('?');
+    var url = split[0];
+
+    var hash = {};
+    if (split[1]) {
+      var params = split[1].split('&');
+      for (var i in params) {
+        var pair = params[i].split('=');
+        hash[pair[0]] = pair[1];
+      }
+    }
+
+    // overwrite
+    hash.date = $('#date').val();
+    hash.end_date = $('#end_date').val();
+    hash.granularity = $('#granularity').val();
+
+    // recreate query string
+    var arr = [];
+    for (var key in hash) {
+      arr.push(key + '=' + hash[key]);
+    }
+
+    return url + '?' + arr.join('&');
+  }
   return oldURL.split(/#/)[0] +
     '#date=' + $('#date').val() +
     '&end_date=' + $('#end_date').val() +
