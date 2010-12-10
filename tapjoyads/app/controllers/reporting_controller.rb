@@ -273,14 +273,19 @@ private
       @end_time = Time.zone.parse(params[:end_date]).end_of_day
       @end_time = now if @end_time <= @start_time || @end_time > now
     end
-    
+
     # setup granularity
     if params[:granularity] == 'daily' || @end_time - @start_time >= 7.days
       @granularity = :daily
     else
       @granularity = :hourly
     end
-    
+
+    if (@end_time - @start_time < 1.day) && @granularity == :daily
+      @start_time = @start_time.beginning_of_day
+      @end_time = @end_time.end_of_day
+    end
+
     # lookup the stats
     @appstats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true })
   end
