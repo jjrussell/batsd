@@ -282,20 +282,6 @@ class OneOffs
     end
   end
 
-  def self.set_initial_offer_discounts
-    Partner.find_each do |partner|
-      order = partner.orders.scoped(:order => 'created_at DESC', :conditions => [ 'created_at >= ?', 3.months.ago ]).first
-      order.send :create_spend_discount if order
-    end
-  end
-  
-  def self.set_initial_bids
-    Offer.find_each do |offer|
-      offer.bid = offer.payment
-      offer.save_without_validation
-    end
-  end
-
   def self.reset_memcached
     save_memcached_state
     restore_memcached_state
@@ -360,13 +346,6 @@ class OneOffs
       offer.bid = 0
       offer.payment = 0
       offer.save!
-    end
-  end
-  
-  def self.update_exclusivity_offer_discounts
-    OfferDiscount.scoped(:conditions => "source = 'Exclusivity'").each do |offer_discount|
-      offer_discount.amount = od.partner.exclusivity_level.discount
-      offer_discount.save!
     end
   end
 
