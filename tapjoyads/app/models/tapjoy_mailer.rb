@@ -73,12 +73,13 @@ class TapjoyMailer < ActionMailer::Base
     body(:info => info)
   end
   
-  def campaign_status(email_recipients, low_balance, account_balance, account_manager_email, offers_not_meeting_budget, offers_needing_higher_bids, premier)
-    from 'do-not-reply@tapjoy.com'
+  def campaign_status(email_recipients, low_balance, account_balance, account_manager_email, offers_not_meeting_budget, offers_needing_higher_bids, premier, premier_discount)
+    from 'noreply@tapjoy.com'
     recipients email_recipients
     subject 'Tapjoy Campaign Status'
     content_type 'text/html'
+    account_manager_email = nil if account_manager_email == 'oso@tapjoy.com'
     body(:low_balance => low_balance, :account_balance => account_balance, :account_manager_email => account_manager_email, 
-      :offers_not_meeting_budget => offers_not_meeting_budget, :offers_needing_higher_bids => offers_needing_higher_bids, :premier => premier)
+      :offers_not_meeting_budget => offers_not_meeting_budget, :offers_needing_higher_bids => offers_needing_higher_bids, :premier => premier, :premier_discount => premier_discount)
   end
 end
