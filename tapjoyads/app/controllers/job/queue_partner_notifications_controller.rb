@@ -26,10 +26,10 @@ class Job::QueuePartnerNotificationsController < Job::SqsReaderController
       end
     end
     
-    if !offers_needing_more_funds.empty? || !offers_needing_higher_bids.empty? || !offers_not_meeting_budget.empty?
-      recipients = partner.non_managers.reject { |user| !user.receive_campaign_emails }.collect(&:email).reject { |email| email.blank? }
+    unless offers_needing_more_funds.empty? && offers_needing_higher_bids.empty? && offers_not_meeting_budget.empty?
+      recipients = partner.non_managers.reject { |user| !user.receive_campaign_emails? }.collect(&:email).reject { |email| email.blank? }
       unless recipients.empty?
-        low_balance = !offers_needing_more_funds.empty?
+        low_balance = offers_needing_more_funds.present?
         account_balance = partner.balance
         account_manager = partner.account_managers.first
         account_manager_email = account_manager ? account_manager.email : nil

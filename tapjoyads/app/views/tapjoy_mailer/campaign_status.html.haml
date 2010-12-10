@@ -1,6 +1,6 @@
 %p Dear Tapjoy Partner,
 
-- if !@offers_not_meeting_budget.empty? || !@offers_needing_higher_bids.empty?
+- if @offers_not_meeting_budget.present? || @offers_needing_higher_bids.present?
   %p We noticed that your following campaign(s) are not receiving the maximum traffic available from our network:
   %p
     - @offers_not_meeting_budget.each do |o|
@@ -41,7 +41,7 @@
     If you have any questions, please email us at
     = "#{mail_to "support@tapjoy.com"}."
     
-- if @premier    
+- if @premier
   %p
     Since you are a member of Tapjoy Premier, you are receiving a
     = "#{@premier_discount}%"
@@ -56,6 +56,6 @@
 %p Team Tapjoy
 
 %p
-  Please Note: This email was sent from a notification-only account that cannot accept incoming email. Please do not reply to this email. To unsubscribe from these automated notifications, please access your account preferences in the
+  To unsubscribe from these automated notifications, please access your account preferences in the
   %b Account
   tab and uncheck the "Receive Campaign Emails" box.

@@ -74,7 +74,7 @@ class TapjoyMailer < ActionMailer::Base
   end
   
   def campaign_status(email_recipients, low_balance, account_balance, account_manager_email, offers_not_meeting_budget, offers_needing_higher_bids, premier, premier_discount)
-    from 'noreply@tapjoy.com'
+    from 'support@tapjoy.com'
     recipients email_recipients
     subject 'Tapjoy Campaign Status'
     content_type 'text/html'
