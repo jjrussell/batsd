@@ -41,10 +41,10 @@ td {
 #boosts_list h5 {
   margin: 5px;
 }
-#currency {
+.currency {
   margin-bottom: 16px;
 }
-#currency .details {
+.currency .details {
   display: none;
   margin-left: 10px;
 }
