@@ -21,6 +21,7 @@ class PartnerTest < ActiveSupport::TestCase
   should validate_numericality_of(:pending_earnings)
   should validate_numericality_of(:next_payout_amount)
   should validate_numericality_of(:rev_share)
+  should validate_numericality_of(:direct_pay_share)
 
   context "A Partner" do
     setup do
@@ -113,6 +114,16 @@ class PartnerTest < ActiveSupport::TestCase
         @currency2.reload
         assert_equal 0.42, @currency1.spend_share
         assert_equal 0.42, @currency2.spend_share
+      end
+      
+      should "update its currencies's direct_pay_share when saved" do
+        @partner.direct_pay_share = 0.42
+        @partner.save!
+        
+        @currency1.reload
+        @currency2.reload
+        assert_equal 0.42, @currency1.direct_pay_share
+        assert_equal 0.42, @currency2.direct_pay_share
       end
     end
     

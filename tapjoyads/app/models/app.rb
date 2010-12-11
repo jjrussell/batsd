@@ -143,6 +143,7 @@ class App < ActiveRecord::Base
     required_length = options.delete(:required_length) { 999 }
     app_version = options.delete(:app_version)
     reject_rating_offer = options.delete(:reject_rating_offer) { false }
+    direct_pay_providers = options.delete(:direct_pay_providers) { [] }
     exp = options.delete(:exp)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
@@ -157,7 +158,7 @@ class App < ActiveRecord::Base
     final_offer_list = []
     num_rejected = 0
     offer_list.each do |o|
-      if o.should_reject?(self, device, currency, device_type, geoip_data, app_version, reject_rating_offer)
+      if o.should_reject?(self, device, currency, device_type, geoip_data, app_version, reject_rating_offer, direct_pay_providers)
         num_rejected += 1
       else
         final_offer_list << o

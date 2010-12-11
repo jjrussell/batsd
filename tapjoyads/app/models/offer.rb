@@ -15,9 +15,8 @@ class Offer < ActiveRecord::Base
   DEFAULT_OFFER_TYPE  = '1'
   FEATURED_OFFER_TYPE = '2'
   
+  CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
-  
-  CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1 }
   
   attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :allow_any_bid
   
@@ -387,34 +386,21 @@ class Offer < ActiveRecord::Base
     weights = rank_weights.clone
     random_weight = weights.delete(:random) { 0 }
     boost_weight = weights.delete(:boost) { 1 }
+    over_threshold_weight = weights.delete(:over_threshold) { 0 }
     weights = { :conversion_rate => 0, :price => 0, :avg_revenue => 0, :bid => 0 }.merge(weights)
     self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send("normal_#{key}")) }
     self.rank_score += rand * random_weight
     self.rank_boost = rank_boosts.active.sum(:amount)
     self.rank_score += rank_boost * boost_weight
+    self.rank_score += over_threshold_weight if bid >= 40
     self.rank_score += 999999 if item_type == 'RatingOffer'
   end
   
-  def estimated_percentile(weights = CONTROL_WEIGHTS)
-    if conversion_rate == 0
-      self.conversion_rate = is_paid? ? 0.05 : 0.50
+  def estimated_percentile
+    if @estimated_percentile.nil? || changed?
+      @estimated_percentile = recalculate_estimated_percentile
     end
-    
-    if featured?
-      self.conversion_rate = 0.50
-      normalize_stats(Offer.get_stats_for_featured_ranks)
-      calculate_rank_score(weights.merge({ :random => 0 }))
-      ranked_offers = Offer.get_featured_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
-      worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
-      100 * worse_offers.size / ranked_offers.size
-    else
-      normalize_stats(Offer.get_stats_for_ranks)
-      calculate_rank_score(weights.merge({ :random => 0 }))
-      self.rank_score += weights[:random] * 0.5
-      ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
-      worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
-      100 * worse_offers.size / ranked_offers.size
-    end
+    @estimated_percentile
   end
   
   def name_with_suffix
@@ -428,7 +414,7 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
-  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, reject_rating_offer)
+  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, reject_rating_offer, direct_pay_providers)
     return is_disabled?(publisher_app, currency) ||
         platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device) ||
@@ -439,7 +425,8 @@ class Offer < ActiveRecord::Base
         flixter_reject?(publisher_app, device) ||
         whitelist_reject?(publisher_app) ||
         gamevil_reject?(publisher_app) ||
-        minimum_featured_bid_reject?(currency)
+        minimum_featured_bid_reject?(currency) ||
+        direct_pay_reject?(direct_pay_providers)
   end
   
   def update_payment(force_update = false)
@@ -479,6 +466,40 @@ class Offer < ActiveRecord::Base
     featured_offer.tapjoy_enabled = false
     featured_offer.save!
     featured_offer
+  end
+  
+  def budget_may_not_be_met?
+    (daily_budget > 0) && needs_higher_bid?
+  end
+  
+  def needs_higher_bid?
+    is_free? && (bid_is_bad? || bid_is_passable?)
+  end
+  
+  def needs_more_funds?
+    show_rate != 1 && (daily_budget == 0 || (daily_budget > 0 && low_balance?))
+  end
+  
+  def on_track_for_budget?
+    show_rate != 1 && !needs_more_funds?
+  end
+  
+  def bid_is_good?
+    show_rate == 1 && estimated_percentile >= 85
+  rescue
+    false
+  end
+  
+  def bid_is_passable?
+    show_rate == 1 && estimated_percentile >= 50 && estimated_percentile < 85
+  rescue
+    false
+  end
+  
+  def bid_is_bad?
+    show_rate == 1 && estimated_percentile < 50
+  rescue
+    false
   end
   
 private
@@ -584,6 +605,10 @@ private
     bid < currency.minimum_featured_bid
   end
   
+  def direct_pay_reject?(direct_pay_providers)
+    return direct_pay? && !direct_pay_providers.include?(direct_pay)
+  end
+  
   def normalize_device_type(device_type_param)
     if device_type_param =~ /iphone/i
       'iphone'
@@ -607,6 +632,29 @@ private
     self.stats_aggregation_interval = 3600 if stats_aggregation_interval.blank?
   end
   
+  def recalculate_estimated_percentile
+    weights = CONTROL_WEIGHTS
+    if conversion_rate == 0
+      self.conversion_rate = is_paid? ? 0.05 : 0.50
+    end
+    
+    if featured?
+      self.conversion_rate = 0.50
+      normalize_stats(Offer.get_stats_for_featured_ranks)
+      calculate_rank_score(weights.merge({ :random => 0 }))
+      ranked_offers = Offer.get_featured_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
+      worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
+      100 * worse_offers.size / ranked_offers.size
+    else
+      normalize_stats(Offer.get_stats_for_ranks)
+      calculate_rank_score(weights.merge({ :random => 0 }))
+      self.rank_score += weights[:random] * 0.5
+      ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
+      worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
+      100 * worse_offers.size / ranked_offers.size
+    end
+  end
+
   def bid_higher_than_min_bid
     if bid_changed? || price_changed?
       if bid < min_bid

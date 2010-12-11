@@ -15,7 +15,7 @@ function stringToNumber(currency, allowNegative) {
 
 $(function($){
   $('.flash').click(function(){
-    if (!$(this).children('a, span a')) {
+    if ($(this).children('a, span a').length == 0) {
       $(this).slideUp();
     }
   });

@@ -25,11 +25,7 @@ class Deploy
       end
       
       opts.on('-v', '--version [VERSION]') do |version|
-        if version =~ /^(master|[0-9]+)$/
-          @options[:version] = version
-        else
-          print_usage_and_exit
-        end
+        @options[:version] = version
       end
       
       opts.on('-f', '--fast') do
@@ -46,6 +42,10 @@ class Deploy
       print_usage_and_exit
     end
     
+    if @options[:environment] == 'production' && !@options[:version].nil? && @options[:version] !~ /^[0-9]+$/
+      puts "invalid version for production deploy, must be a version number"
+      print_usage_and_exit
+    end
     @options[:version] = 'master' if @options[:environment] == 'test' && @options[:version].nil?
   end
   
@@ -63,7 +63,7 @@ private
   def print_usage_and_exit
     puts "USAGE: script/deploy [options]"
     puts "    -e, --environment (optional): The environment to deploy to. Can be 'test' or 'production'. Default is 'test'."
-    puts "    -v, --version (optional): The version to deploy. Defaults to 'master' for test deploys, otherwise creates a new tag."
+    puts "    -v, --version (optional): The version to deploy. Defaults to 'master' for test deploys, creates a new tag for production deploys."
     puts "    -f, --fast (optional): Specify this option to keep webservers in the load balancer during deploy."
     exit
   end
