@@ -11,11 +11,15 @@
 .clear
 
 %form#change_date{ :method => :get, :class => 'tjform' }
-  = text_field_tag(:date)
-  \-
-  = text_field_tag(:end_date)
+  - if @end_time - @start_time > 24.hours
+    = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
+    \-
+    = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
+  - else
+    = text_field_tag(:date)
+    \-
+    = text_field_tag(:end_date)
   = select_tag(:granularity, options_for_select({ 'Daily' => :daily, 'Hourly' => :hourly }, @granularity))
-  = submit_tag('Change')
 
 %h4 Offer
 - if permitted_to? :edit, :statz
