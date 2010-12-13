@@ -1,6 +1,7 @@
 %p Dear Tapjoy Partner,
 
 - if @offers_not_meeting_budget.present? || @offers_needing_higher_bids.present?
+  - free_apps = (@offers_not_meeting_budget + @offers_needing_higher_bids).select { |o| o.is_free? }
   %p We noticed that your following campaign(s) are not receiving the maximum traffic available from our network:
   %p
     - @offers_not_meeting_budget.each do |o|
@@ -18,7 +19,10 @@
     %b Pay-Per-Install
     page on the 
     %b Apps
-    tab.
+    tab. 
+  - if free_apps.present?
+    %p
+      To position a free app on the front page, your should bid should be at least $0.40.
     
 - if @low_balance
   %p Your account balance is running low and we are slowing traffic to your campaign(s). Your funds are expected to run out within the next 24 hours. Currently you have the following funds in your account:
@@ -29,17 +33,6 @@
     page on the
     %b Billing
     tab or contact us directly to be invoiced.
-  
-- if @account_manager_email
-  %p
-    If you have any questions, please reach out to
-    = mail_to @account_manager_email
-    or email us at
-    = "#{mail_to "support@tapjoy.com"}."
-- else
-  %p
-    If you have any questions, please email us at
-    = "#{mail_to "support@tapjoy.com"}."
     
 - if @premier
   %p
@@ -51,6 +44,17 @@
     To receive a discount of up to 15%, join the Tapjoy Premier Program. To learn more, login to the site and click on the
     %b Premier
     tab.
+    
+- if @account_manager_email
+  %p
+    If you have any questions, please reach out to
+    = mail_to @account_manager_email
+    or email us at
+    = "#{mail_to "support@tapjoy.com"}."
+- else
+  %p
+    If you have any questions, please email us at
+    = "#{mail_to "support@tapjoy.com"}."
 
 %p Cheers,
 %p --Team Tapjoy
