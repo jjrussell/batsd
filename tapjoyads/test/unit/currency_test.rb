@@ -88,7 +88,7 @@ class CurrencyTest < ActiveSupport::TestCase
       end
     end
     
-    context "when dealing with a displayer offer" do
+    context "when dealing with a 3-party displayer offer" do
       setup do
         @offer = Factory(:app).primary_offer
         @offer.update_attribute(:payment, 25)
@@ -113,6 +113,34 @@ class CurrencyTest < ActiveSupport::TestCase
       
       should "calculate displayer amounts" do
         assert_equal 15, @currency.get_displayer_amount(@offer, @displayer_app)
+      end
+    end
+    
+    context "when dealing with a 2-party displayer offer" do
+      setup do
+        @offer = Factory(:app).primary_offer
+        @offer.update_attribute(:payment, 25)
+        @displayer_app = @currency.app
+      end
+      
+      should "calculate publisher amounts" do
+        assert_equal 0, @currency.get_publisher_amount(@offer, @displayer_app)
+      end
+      
+      should "calculate advertiser amounts" do
+        assert_equal -25, @currency.get_advertiser_amount(@offer)
+      end
+      
+      should "calculate tapjoy amounts" do
+        assert_equal 13, @currency.get_tapjoy_amount(@offer, @displayer_app)
+      end
+      
+      should "calculate reward amounts" do
+        assert_equal 12, @currency.get_reward_amount(@offer)
+      end
+      
+      should "calculate displayer amounts" do
+        assert_equal 12, @currency.get_displayer_amount(@offer, @displayer_app)
       end
     end
     

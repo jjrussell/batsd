@@ -24,6 +24,18 @@ class DisplayAdController < ApplicationController
       "e26bd54e-a9ec-4f60-b84d-82b4f678343a", # Zombie Farm
       ])
   
+  # List of apps that are "AB" advertisers; ie apps which advertise their own currency.
+  @@banner_app_ids = Set.new([
+      # Glu
+      "0da90aad-b122-41b9-a0f9-fa849b6fbfbd", # Gun Bros
+    
+      # Pinger
+      "3cb9aacb-f0e6-4894-90fe-789ea6b8361d", # Doodle Buddy
+      
+      # Tapjoy
+      "2349536b-c810-47d7-836c-2cd47cd3a796", # TapDefense
+      ])
+  
   before_filter :setup, :except => :image
   
   def index
@@ -67,14 +79,18 @@ private
     # Randomly choose one publisher app that the user has run:
     device = Device.new(:key => params[:udid])
     publisher_app_ids = []
-    @@allowed_publisher_app_ids.each do |app_id|
-      last_run_time = device.last_run_time(app_id)
-      if last_run_time.present? && last_run_time > now - 1.week
-        publisher_app_ids << app_id
+    if @@banner_app_ids.include?(params[:app_id])
+      publisher_app_ids << params[:app_id]
+    else
+      @@allowed_publisher_app_ids.each do |app_id|
+        last_run_time = device.last_run_time(app_id)
+        if last_run_time.present? && last_run_time > now - 1.week
+          publisher_app_ids << app_id
+        end
       end
     end
     
-    unless publisher_app_ids.empty?
+    if publisher_app_ids.present?
       publisher_app_id = publisher_app_ids[rand(publisher_app_ids.size)]
       publisher_app = App.find_in_cache(publisher_app_id)
       currency = Currency.find_in_cache(publisher_app_id)
@@ -97,6 +113,7 @@ private
         offer.conversion_rate < 0.5 || 
         offer.item_id == params[:app_id] || 
         offer.name.size > 30 ||
+        offer.item_type != "App" ||
         disabled_offer_ids.include?(offer.id) ||
         disabled_partner_ids.include?(offer.partner_id)
       end
@@ -123,31 +140,41 @@ private
       width = 320
       height = 50
       border = 2
-      
-      publisher_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{publisher.id}.png")
-      offer_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{offer.id}.png")
-
       icon_height = height - border * 2 - 2
-      publisher_icon = Magick::Image.from_blob(publisher_icon_blob)[0].resize(icon_height, icon_height)
+      
+      text = "Earn #{publisher.primary_currency.get_reward_amount(offer)} #{publisher.primary_currency.name}"
+      text += " in #{publisher.name}" unless @@banner_app_ids.include?(publisher.id)
+      text += "!\n Install #{offer.name}"
+      
+      offer_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{offer.id}.png")
       offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
-
-      publisher_icon = publisher_icon.vignette(-5, -5, 10, 2)
       offer_icon = offer_icon.vignette(-5, -5, 10, 2)
+
+      text_area_left_offset = 0
+      text_area_size = "260x40"
+
+      unless @@banner_app_ids.include?(publisher.id)
+        publisher_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{publisher.id}.png")
+        publisher_icon = Magick::Image.from_blob(publisher_icon_blob)[0].resize(icon_height, icon_height)
+        publisher_icon = publisher_icon.vignette(-5, -5, 10, 2)
+        
+        text_area_left_offset = 40
+        text_area_size = "220x40"
+      end
 
       img = Magick::Image.new(width - border * 2, height - border * 2)
       img.format = 'png'
 
-      img.composite!(publisher_icon, 1, 1, Magick::AtopCompositeOp)
+      img.composite!(publisher_icon, 1, 1, Magick::AtopCompositeOp) unless @@banner_app_ids.include?(publisher.id)
       img.composite!(offer_icon, width - icon_height - 5, 1, Magick::AtopCompositeOp)
 
-      text = "Earn #{publisher.primary_currency.get_reward_amount(offer)} #{publisher.primary_currency.name} in #{publisher.name}!\n Install #{offer.name}"
       image_label = Magick::Image.read("label:#{text}") do
-        self.size = "220x44"
+        self.size = text_area_size
         self.gravity = Magick::CenterGravity
         self.stroke = 'transparent'
         self.background_color = 'transparent'
       end
-      img.composite!(image_label[0], 40, 0, Magick::AtopCompositeOp)
+      img.composite!(image_label[0], text_area_left_offset, 2, Magick::AtopCompositeOp)
 
       free_label = Magick::Image.read("label:F\nR\nE\nE") do
         self.size = "8x44"
