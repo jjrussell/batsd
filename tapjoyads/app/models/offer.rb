@@ -508,9 +508,10 @@ class Offer < ActiveRecord::Base
     while estimated_percentile < percentile_goal do
       self.bid += 1
       self.recommended_bid = bid
-      update_payment
+      update_payment(true)
     end
     self.bid = original_bid
+    update_payment(true)
     recommended_bid
   end
   
