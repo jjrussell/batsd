@@ -6,6 +6,9 @@
 - unless @is_new
   .metadata
     Membership Status: Premier
+  .metadata
+    Premier Discount:
+    = "#{@partner.premier_discount}%"
   - unless @partner.exclusivity_level_type.nil?
     .metadata
       Expires On:
