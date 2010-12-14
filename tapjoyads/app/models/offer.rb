@@ -18,7 +18,7 @@ class Offer < ActiveRecord::Base
   CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :allow_any_bid
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :allow_any_bid, :recommended_bid
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -388,9 +388,9 @@ class Offer < ActiveRecord::Base
     boost_weight = weights.delete(:boost) { 1 }
     over_threshold_weight = weights.delete(:over_threshold) { 0 }
     weights = { :conversion_rate => 0, :price => 0, :avg_revenue => 0, :bid => 0 }.merge(weights)
+    self.rank_boost ||= rank_boosts.active.sum(:amount)
     self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send("normal_#{key}")) }
     self.rank_score += rand * random_weight
-    self.rank_boost = rank_boosts.active.sum(:amount)
     self.rank_score += rank_boost * boost_weight
     self.rank_score += over_threshold_weight if bid >= 40
     self.rank_score += 999999 if item_type == 'RatingOffer'
@@ -500,6 +500,18 @@ class Offer < ActiveRecord::Base
     show_rate == 1 && estimated_percentile < 50
   rescue
     false
+  end
+  
+  def bid_for_percentile(percentile_goal)
+    self.recommended_bid = bid
+    original_bid = bid
+    while estimated_percentile < percentile_goal do
+      self.bid += 1
+      self.recommended_bid = bid
+      update_payment
+    end
+    self.bid = original_bid
+    recommended_bid
   end
   
 private
@@ -635,23 +647,24 @@ private
   def recalculate_estimated_percentile
     weights = CONTROL_WEIGHTS
     if conversion_rate == 0
-      self.conversion_rate = is_paid? ? 0.05 : 0.50
+      self.conversion_rate = is_paid? ? (0.05 / price) : 0.50
     end
     
     if featured?
-      self.conversion_rate = 0.50
-      normalize_stats(Offer.get_stats_for_featured_ranks)
+      @stats ||= Offer.get_stats_for_featured_ranks
+      normalize_stats(@stats)
       calculate_rank_score(weights.merge({ :random => 0 }))
-      ranked_offers = Offer.get_featured_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
-      worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
-      100 * worse_offers.size / ranked_offers.size
+      @ranked_offers ||= ranked_offers = Offer.get_featured_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
+      worse_offers = @ranked_offers.select { |offer| offer.rank_score < rank_score }
+      100 * worse_offers.size / @ranked_offers.size
     else
-      normalize_stats(Offer.get_stats_for_ranks)
+      @stats ||= Offer.get_stats_for_ranks
+      normalize_stats(@stats)
       calculate_rank_score(weights.merge({ :random => 0 }))
       self.rank_score += weights[:random] * 0.5
-      ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
-      worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
-      100 * worse_offers.size / ranked_offers.size
+      @ranked_offers ||= ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
+      worse_offers = @ranked_offers.select { |offer| offer.rank_score < rank_score }
+      100 * worse_offers.size / @ranked_offers.size
     end
   end
 

@@ -11,8 +11,8 @@
   %p.description
     Enter your bid per install below. The minimum bid is 50% of the purchase price for paid apps, or $0.35 for free apps. 
     Higher bids will fetch more installs.
-  - if @offer.is_free? && @offer.bid < 40
-    %p.description
-      To position a free app on the front page, your should bid should be at least $0.40.
+  - if !@offer.on_track_for_budget? && @offer.needs_higher_bid?
+    %p.description= "To position your app better on the offerwall, your should bid should be at least #{number_to_currency(0.01 * @offer.bid_for_percentile(85))}."
+
 
   = render('apps/offers_shared/form')
