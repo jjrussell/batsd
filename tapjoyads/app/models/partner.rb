@@ -51,6 +51,15 @@ class Partner < ActiveRecord::Base
   named_scope :search, lambda { |name_or_email| { :joins => :users,
       :conditions => [ "partners.name LIKE ? OR users.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
     }
+    
+  def applied_offer_discounts
+    offer_discounts.active.scoped(:conditions => [ "amount = ?", premier_discount ])
+  end
+  
+  def discount_expires_on
+    active_offer_discount = applied_offer_discounts.max { |a,b| a.expires_on <=> b.expires_on }
+    active_offer_discount ? active_offer_discount.expires_on : nil
+  end
 
   def self.calculate_next_payout_amount(partner_id)
     Partner.using_slave_db do
