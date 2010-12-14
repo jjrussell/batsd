@@ -24,8 +24,6 @@ class Apps::OffersController < WebsiteController
   end
 
   def update
-    log_activity(@offer)
-
     params[:offer].delete(:payment)
     offer_params = sanitize_currency_params(params[:offer], [ :bid ])
 
@@ -47,8 +45,6 @@ class Apps::OffersController < WebsiteController
   end
 
   def toggle
-    log_activity(@offer)
-
     @offer.user_enabled = params[:user_enabled]
     if @offer.save
       render :nothing => true
