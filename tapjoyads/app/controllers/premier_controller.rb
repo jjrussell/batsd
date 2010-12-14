@@ -8,8 +8,7 @@ class PremierController < WebsiteController
   after_filter :save_activity_logs, :only => [ :update ]
 
   def edit
-    spend_discounts = @partner.offer_discounts.active.select{|discount| discount.source == 'Spend'}
-    @is_new = @partner.exclusivity_level.nil? && spend_discounts.blank?
+    @is_new = !@partner.is_premier?
 
     if @is_new || @partner.exclusivity_level.nil?
       @levels = ExclusivityLevel::TYPES

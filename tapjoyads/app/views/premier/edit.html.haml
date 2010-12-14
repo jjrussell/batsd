@@ -6,10 +6,15 @@
 - unless @is_new
   .metadata
     Membership Status: Premier
-  - unless @partner.exclusivity_level_type.nil?
-    .metadata
-      Expires On:
-      = @partner.exclusivity_expires_on ? @partner.exclusivity_expires_on.to_s(:pub) : "N/A"
+  .metadata
+    Premier Source:
+    = @partner.applied_offer_discounts.collect(&:source).uniq.to_sentence
+  .metadata
+    Premier Discount:
+    = "#{@partner.premier_discount}%"
+  .metadata
+    Discount Expires On:
+    = @partner.discount_expires_on ? @partner.discount_expires_on.to_s(:pub) : "N/A"
   %h3 Renew:
 
 #terms_and_conditions{ :class => @terms_class }
@@ -40,7 +45,7 @@
             I agree to the #{link_to("Terms and Conditions", "javascript:showTerms()")}.
     %tr
       %td.right
-        %b= f.label :exclusivity_level, 'Exclusivity&nbsp;Level'
+        %b= f.label :exclusivity_level, 'Exclusivity&nbsp;Length'
       %td
         = f.select :exclusivity_level_type, options_for_select(@levels, @default_level)
         = error_message_on @partner, :exclusivity_level_type
