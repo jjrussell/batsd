@@ -473,7 +473,7 @@ class Offer < ActiveRecord::Base
   end
   
   def needs_higher_bid?
-    is_free? && (bid_is_bad? || bid_is_passable?)
+    bid_is_bad? || bid_is_passable?
   end
   
   def needs_more_funds?
@@ -512,6 +512,7 @@ class Offer < ActiveRecord::Base
     end
     self.bid = original_bid
     update_payment(true)
+    @estimated_percentile = recalculate_estimated_percentile
     recommended_bid
   end
   
