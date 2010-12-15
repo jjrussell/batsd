@@ -15,6 +15,8 @@ xml.MarketingData do
       xml.PublishedInstallsHourly appstats.stats['published_installs'].join(',')
       xml.Revenue appstats.stats['installs_revenue'].sum
       xml.RevenueHourly appstats.stats['installs_revenue'].join(',')
+      xml.DisplayRevenue appstats.stats['display_revenue'].sum
+      xml.DisplayRevenueHourly appstats.stats['display_revenue'].join(',')
     end
   end
 end
