@@ -3,6 +3,7 @@ class HomepageController < WebsiteController
   protect_from_forgery :except => [:contact]
 
   def start
+    require 'ruby-debug';debugger
     if permitted_to?(:index, :statz)
       redirect_to statz_index_path
     elsif permitted_to?(:index, :apps)
