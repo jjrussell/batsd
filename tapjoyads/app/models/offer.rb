@@ -18,7 +18,7 @@ class Offer < ActiveRecord::Base
   CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :allow_any_bid, :recommended_bid
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :allow_any_bid
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -503,15 +503,13 @@ class Offer < ActiveRecord::Base
   end
   
   def bid_for_percentile(percentile_goal)
-    self.recommended_bid = bid
-    original_bid = bid
     while estimated_percentile < percentile_goal do
       self.bid += 1
-      self.recommended_bid = bid
       update_payment(true)
     end
-    self.bid = original_bid
-    update_payment(true)
+    recommended_bid = bid
+    self.bid = bid_was
+    self.payment = payment_was
     @estimated_percentile = recalculate_estimated_percentile
     recommended_bid
   end
