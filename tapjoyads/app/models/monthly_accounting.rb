@@ -45,11 +45,11 @@ class MonthlyAccounting < ActiveRecord::Base
   end
 
   def start_time
-    Time.zone.parse("#{year}-#{month}-01").beginning_of_month
+    Time.zone.parse("#{year}-#{month}-01")
   end
 
   def end_time
-    Time.zone.parse("#{year}-#{month}-01").end_of_month
+    start_time.next_month
   end
 
   def total_orders

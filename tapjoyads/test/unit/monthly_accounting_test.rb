@@ -30,7 +30,7 @@ class MonthlyAccountingTest < ActiveSupport::TestCase
 
     should "have start and end times" do
       assert_equal @now.beginning_of_month, @monthly_accounting.start_time
-      assert_equal @now.end_of_month, @monthly_accounting.end_time
+      assert_equal @now.beginning_of_month.next_month, @monthly_accounting.end_time
     end
 
     should "format dates" do
