@@ -9,7 +9,7 @@ class MonthlyAccounting < ActiveRecord::Base
   validates_uniqueness_of :partner_id, :scope => [ :month, :year ]
 
   def calculate_totals!
-    last_month = partner.monthly_accountings.find(:first, :order => "year DESC, month DESC")
+    last_month = partner.monthly_accountings.find_by_month_and_year((start_time - 1).month, (start_time - 1).year)
     if last_month.present?
       self.beginning_balance          = last_month.ending_balance
       self.beginning_pending_earnings = last_month.ending_pending_earnings
