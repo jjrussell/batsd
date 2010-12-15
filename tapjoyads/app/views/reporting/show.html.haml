@@ -15,15 +15,7 @@
 
 .left
   - form_tag(export_reporting_path(@offer.id), :id => 'download', :class => 'tjform') do
-    - if @end_time - @start_time > 24.hours
-      = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
-      \-
-      = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
-    - else
-      = text_field_tag(:date)
-      \-
-      = text_field_tag(:end_date)
-    = select_tag(:granularity, options_for_select({ 'Daily' => :daily, 'Hourly' => :hourly }, @granularity))
+    = render :partial => 'date_range_fields'
     = submit_tag('Download as CSV')
 .clear
 
