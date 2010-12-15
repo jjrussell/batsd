@@ -1,5 +1,10 @@
 xml.instruct!
 xml.TapjoyConnectReturnObject do
-  xml << render(:partial => "user_account_object")
-  xml.Success true
+  xml << render(:partial => "get_vg_store_items/user_account_object") if @point_purchases.present?
+  if defined? @success
+    xml.Success @success
+  else
+    xml.Success true
+  end
+  xml.Message @message if defined? @message
 end
