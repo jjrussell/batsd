@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101215020651) do
+ActiveRecord::Schema.define(:version => 20101210101052) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -118,22 +118,22 @@ ActiveRecord::Schema.define(:version => 20101215020651) do
   add_index "generic_offers", ["third_party_data"], :name => "index_generic_offers_on_third_party_data"
 
   create_table "monthly_accountings", :id => false, :force => true do |t|
-    t.string   "id",                         :limit => 36,                :null => false
-    t.string   "partner_id",                 :limit => 36,                :null => false
-    t.integer  "month",                                                   :null => false
-    t.integer  "year",                                                    :null => false
-    t.integer  "beginning_balance",                        :default => 0, :null => false
-    t.integer  "ending_balance",                           :default => 0, :null => false
-    t.integer  "website_orders",                           :default => 0, :null => false
-    t.integer  "invoiced_orders",                          :default => 0, :null => false
-    t.integer  "marketing_orders",                         :default => 0, :null => false
-    t.integer  "transfer_orders",                          :default => 0, :null => false
-    t.integer  "spend",                                    :default => 0, :null => false
-    t.integer  "beginning_pending_earnings",               :default => 0, :null => false
-    t.integer  "ending_pending_earnings",                  :default => 0, :null => false
-    t.integer  "payment_payouts",                          :default => 0, :null => false
-    t.integer  "transfer_payouts",                         :default => 0, :null => false
-    t.integer  "earnings",                                 :default => 0, :null => false
+    t.string   "id",                         :limit => 36, :null => false
+    t.string   "partner_id",                 :limit => 36, :null => false
+    t.integer  "month",                                    :null => false
+    t.integer  "year",                                     :null => false
+    t.integer  "beginning_balance",                        :null => false
+    t.integer  "ending_balance",                           :null => false
+    t.integer  "website_orders",                           :null => false
+    t.integer  "invoiced_orders",                          :null => false
+    t.integer  "marketing_orders",                         :null => false
+    t.integer  "transfer_orders",                          :null => false
+    t.integer  "spend",                                    :null => false
+    t.integer  "beginning_pending_earnings",               :null => false
+    t.integer  "ending_pending_earnings",                  :null => false
+    t.integer  "payment_payouts",                          :null => false
+    t.integer  "transfer_payouts",                         :null => false
+    t.integer  "earnings",                                 :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
