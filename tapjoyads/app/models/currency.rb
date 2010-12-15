@@ -68,7 +68,11 @@ class Currency < ActiveRecord::Base
     end
     
     if displayer_app.present?
-      publisher_amount *= 0.5
+      if displayer_app.id == app_id
+        publisher_amount = 0
+      else
+        publisher_amount *= 0.5
+      end
     end
     
     publisher_amount.to_i
@@ -89,7 +93,11 @@ class Currency < ActiveRecord::Base
   
   def get_displayer_amount(offer, displayer_app = nil)
     if displayer_app.present?
-      (offer.payment * displayer_app.display_money_share).to_i
+      if displayer_app.id == app_id
+        get_publisher_amount(offer)
+      else
+        (offer.payment * displayer_app.display_money_share).to_i
+      end
     else
       0
     end
