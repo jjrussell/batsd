@@ -15,7 +15,7 @@ private
     
     return if partner.monthly_accountings.find_by_month_and_year(month, year).present?
     
-    monthly_accounting = MonthlyAccounting.create!(:partner => partner, :month => month, :year => year)
+    monthly_accounting = MonthlyAccounting.new(:partner => partner, :month => month, :year => year)
     monthly_accounting.calculate_totals!
   end
   
