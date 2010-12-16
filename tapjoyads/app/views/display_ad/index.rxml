@@ -2,7 +2,7 @@ xml.instruct!
 
 xml.TapjoyAd do
   if @click_url.present? && @image.present?
-    xml.ClickURL @click_url
+    xml.ClickURL (API_URL + @click_url)
     xml.Image @image
   end
 end
