@@ -146,6 +146,7 @@ private
       
       text = "Earn #{publisher.primary_currency.get_reward_amount(offer)} #{publisher.primary_currency.name}"
       text += " in #{publisher.name}" unless @@banner_app_ids.include?(publisher.id)
+      text += " to buy Towers" if publisher.id == "2349536b-c810-47d7-836c-2cd47cd3a796" # TapDefense
       text += "!\n Install #{offer.name}"
       
       offer_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{offer.id}.png")
