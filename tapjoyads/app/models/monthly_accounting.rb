@@ -13,6 +13,9 @@ class MonthlyAccounting < ActiveRecord::Base
     if last_month.present?
       self.beginning_balance          = last_month.ending_balance
       self.beginning_pending_earnings = last_month.ending_pending_earnings
+    else
+      self.beginning_balance          = 0
+      self.beginning_pending_earnings = 0
     end
     
     # balance components
