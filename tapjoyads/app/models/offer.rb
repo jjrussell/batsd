@@ -286,7 +286,7 @@ class Offer < ActiveRecord::Base
   end
   
   def get_click_url(publisher_app, publisher_user_id, udid, currency_id, source, app_version, viewed_at, displayer_app_id = nil, exp = nil)
-    click_url = "/click/"
+    click_url = "#{API_URL}/click/"
     if item_type == 'App' || item_type == 'EmailOffer'
       click_url += "app?"
     elsif item_type == 'GenericOffer'
@@ -305,7 +305,7 @@ class Offer < ActiveRecord::Base
   end
   
   def get_fullscreen_ad_url(publisher_app, publisher_user_id, udid, currency_id, source, app_version, viewed_at, displayer_app_id = nil, exp = nil)
-    ad_url = "/fullscreen_ad"
+    ad_url = "#{API_URL}/fullscreen_ad"
     if item_type == 'TestOffer'
       ad_url += "/test_offer"
     end
