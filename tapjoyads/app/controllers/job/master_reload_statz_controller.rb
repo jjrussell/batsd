@@ -33,7 +33,7 @@ private
       appstats = Appstats.new(offer.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity }).stats
       
       this_apps_stats = {}
-      this_apps_stats['icon_url'] = offer.get_icon_url
+      this_apps_stats['icon_url'] = offer.get_cloudfront_icon_url
       this_apps_stats['offer_name'] = offer.name_with_suffix
       this_apps_stats['conversions'] = appstats['paid_installs'].sum
       this_apps_stats['connects'] = appstats['logins'].sum

@@ -181,7 +181,7 @@ class ToolsController < WebsiteController
     click.save
 
     if Rails.env == 'production'
-      Downloader.get_with_retry "http://ws.tapjoyads.com/connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
+      Downloader.get_with_retry "#{API_URL}/connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
     end
 
     redirect_to :back

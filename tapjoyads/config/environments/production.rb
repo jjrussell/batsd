@@ -33,6 +33,8 @@ EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
 
 RUN_MODE_PREFIX = ''
+API_URL = 'https://api.tapjoy.com'
+CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 
 # Amazon services:
 amazon = YAML::load_file("#{ENV['HOME']}/.tapjoy_aws_credentials.yaml")

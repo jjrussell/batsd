@@ -122,19 +122,19 @@ class Offer < ActiveRecord::Base
   end
   
   def self.cache_enabled_offers
-    offer_list = Offer.enabled_offers.nonfeatured
-    conversion_rates       = offer_list.collect(&:conversion_rate)
-    prices                 = offer_list.collect(&:price)
-    avg_revenues           = offer_list.collect(&:avg_revenue)
-    bids                   = offer_list.collect(&:bid)
-    cvr_mean               = conversion_rates.mean
-    cvr_std_dev            = conversion_rates.standard_deviation
-    price_mean             = prices.mean
-    price_std_dev          = prices.standard_deviation
-    avg_revenue_mean       = avg_revenues.mean
-    avg_revenue_std_dev    = avg_revenues.standard_deviation
-    bid_mean               = bids.mean
-    bid_std_dev            = bids.standard_deviation
+    offer_list          = Offer.enabled_offers.nonfeatured
+    conversion_rates    = offer_list.collect(&:conversion_rate)
+    prices              = offer_list.collect(&:price)
+    avg_revenues        = offer_list.collect(&:avg_revenue)
+    bids                = offer_list.collect(&:bid)
+    cvr_mean            = conversion_rates.mean
+    cvr_std_dev         = conversion_rates.standard_deviation
+    price_mean          = prices.mean
+    price_std_dev       = prices.standard_deviation
+    avg_revenue_mean    = avg_revenues.mean
+    avg_revenue_std_dev = avg_revenues.standard_deviation
+    bid_mean            = bids.mean
+    bid_std_dev         = bids.standard_deviation
     
     stats = { :cvr_mean => cvr_mean, :cvr_std_dev => cvr_std_dev, :price_mean => price_mean, :price_std_dev => price_std_dev,
       :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
@@ -168,18 +168,18 @@ class Offer < ActiveRecord::Base
   def self.cache_featured_offers
     offer_list = Offer.enabled_offers.featured
     
-    conversion_rates       = offer_list.collect(&:conversion_rate)
-    prices                 = offer_list.collect(&:price)
-    avg_revenues           = offer_list.collect(&:avg_revenue)
-    bids                   = offer_list.collect(&:bid)
-    cvr_mean               = conversion_rates.mean
-    cvr_std_dev            = conversion_rates.standard_deviation
-    price_mean             = prices.mean
-    price_std_dev          = prices.standard_deviation
-    avg_revenue_mean       = avg_revenues.mean
-    avg_revenue_std_dev    = avg_revenues.standard_deviation
-    bid_mean               = bids.mean
-    bid_std_dev            = bids.standard_deviation
+    conversion_rates    = offer_list.collect(&:conversion_rate)
+    prices              = offer_list.collect(&:price)
+    avg_revenues        = offer_list.collect(&:avg_revenue)
+    bids                = offer_list.collect(&:bid)
+    cvr_mean            = conversion_rates.mean
+    cvr_std_dev         = conversion_rates.standard_deviation
+    price_mean          = prices.mean
+    price_std_dev       = prices.standard_deviation
+    avg_revenue_mean    = avg_revenues.mean
+    avg_revenue_std_dev = avg_revenues.standard_deviation
+    bid_mean            = bids.mean
+    bid_std_dev         = bids.standard_deviation
     
     stats = { :cvr_mean => cvr_mean, :cvr_std_dev => cvr_std_dev, :price_mean => price_mean, :price_std_dev => price_std_dev,
       :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
@@ -286,7 +286,7 @@ class Offer < ActiveRecord::Base
   end
   
   def get_click_url(publisher_app, publisher_user_id, udid, currency_id, source, app_version, viewed_at, displayer_app_id = nil, exp = nil)
-    click_url = "http://ws.tapjoyads.com/click/"
+    click_url = "#{API_URL}/click/"
     if item_type == 'App' || item_type == 'EmailOffer'
       click_url += "app?"
     elsif item_type == 'GenericOffer'
@@ -305,7 +305,7 @@ class Offer < ActiveRecord::Base
   end
   
   def get_fullscreen_ad_url(publisher_app, publisher_user_id, udid, currency_id, source, app_version, viewed_at, displayer_app_id = nil, exp = nil)
-    ad_url = "http://ws.tapjoyads.com/fullscreen_ad"
+    ad_url = "#{API_URL}/fullscreen_ad"
     if item_type == 'TestOffer'
       ad_url += "/test_offer"
     end
@@ -315,33 +315,33 @@ class Offer < ActiveRecord::Base
     ad_url
   end
   
-  def get_icon_url(protocol = 'http://', base64 = false)
+  def get_icon_url(protocol = 'https://', base64 = false)
     if base64
-      url = "#{protocol}ws.tapjoyads.com/get_app_image/icon?app_id=#{item_id}"
+      url = "#{API_URL}/get_app_image/icon?app_id=#{item_id}"
     else
       url = "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/#{item_id}.png"
     end
     url
   end
   
-  def get_large_icon_url(protocol = 'http://')
+  def get_large_icon_url(protocol = 'https://')
     "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/large/#{item_id}.png"
   end
   
-  def get_medium_icon_url(protocol = 'http://')
+  def get_medium_icon_url(protocol = 'https://')
     "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/medium/#{item_id}.jpg"
   end
   
-  def get_cloudfront_icon_url(protocol='http://')
-    "#{protocol}content.tapjoy.com/icons/#{item_id}.png"
+  def get_cloudfront_icon_url
+    "#{CLOUDFRONT_URL}/icons/#{item_id}.png"
   end
   
-  def get_large_cloudfront_icon_url(protocol='http://')
-    "#{protocol}content.tapjoy.com/icons/large/#{item_id}.png"
+  def get_large_cloudfront_icon_url
+    "#{CLOUDFRONT_URL}/icons/large/#{item_id}.png"
   end
   
-  def get_medium_cloudfront_icon_url(protocol='http://')
-    "#{protocol}content.tapjoy.com/icons/medium/#{item_id}.jpg"
+  def get_medium_cloudfront_icon_url
+    "#{CLOUDFRONT_URL}/icons/medium/#{item_id}.jpg"
   end
   
   def get_countries

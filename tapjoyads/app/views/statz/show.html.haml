@@ -94,7 +94,7 @@
   %h4 Currency - #{c.name}
   #currency
     %a.more{ :href => '#' } [Show more details]
-    = link_to('[View Offer Wall]', "http://ws.tapjoyads.com/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDIDS.first}&publisher_user_id=testuser&device_type=#{@offer.item.platform}")
+    = link_to('[View Offer Wall]', "#{API_URL}/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDIDS.first}&publisher_user_id=testuser&device_type=#{@offer.item.platform}")
     .details
       %table.properties
         - property_row('Conversion rate', c.conversion_rate)
