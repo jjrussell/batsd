@@ -44,6 +44,7 @@ authorization do
     has_permission_on :apps, :to => [ :unarchive ]
     has_permission_on :partners_offer_discounts, :to => [ :index, :new, :create, :deactivate ]
     has_permission_on :preview_experiments, :to => [ :index, :show ]
+    has_permission_on :tools_premier_partners, :to => [ :index ]
   end
   
   role :raffle_manager do
