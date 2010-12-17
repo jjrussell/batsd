@@ -6,6 +6,7 @@ class AppStore
   ANDROID_SEARCH_URL = 'http://tapandmar.appspot.com/search/'
   ANDROID_APP_URL = 'http://tapandmar.appspot.com/search/'
   ANDROID_ICON_URL = 'http://tapandmar.appspot.com/icon/'
+  CYRKET_ICON_URL = 'http://cache.cyrket.com/p/android/'
 
   # returns hash of app info
   def self.fetch_app_by_id(id, platform='iphone', country='')
@@ -39,7 +40,7 @@ private
   end
 
   def self.fetch_app_by_id_for_android(id)
-    self.search_android_marketplace(id).first
+    self.search_android_marketplace(id, false).first
   end
 
   def self.search_apple_app_store(term, country)
@@ -54,16 +55,21 @@ private
     end
   end
 
-  def self.search_android_marketplace(term)
-    response = request(ANDROID_SEARCH_URL + term.gsub(/\s/, '+'))
+  def self.search_android_marketplace(term, cyrket_icon=true)
+    response = request(ANDROID_SEARCH_URL + CGI::escape(term.gsub(/\s/, '+').downcase))
     if response.status == 200
       items = JSON.load(response.body)
       return items['app'].map do |hash|
+        if cyrket_icon
+          icon_url = CYRKET_ICON_URL + hash['packageName'] + '/icon'
+        else
+          icon_url = ANDROID_ICON_URL + hash['packageName']
+        end
         price = hash['price'].nil? ? 0 : hash['price'].gsub(/[^\d\.\-]/,'').to_f
         {
           :item_id      => hash['packageName'],
           :title        => hash['title'],
-          :icon_url     => ANDROID_ICON_URL + hash['packageName'],
+          :icon_url     => icon_url,
           :price        => "%.2f" % price,
           :description  => hash['ExtendedInfo']['description'],
           :publisher    => hash['creator']
