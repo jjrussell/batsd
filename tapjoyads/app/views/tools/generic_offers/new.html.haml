@@ -2,7 +2,7 @@
 
 %h1 Create Generic Offer
 
-- form_for :generic_offer, @generic_offer, :url => { :action => :create_generic_offer }, :html => { :method => :post, :class => 'tjform', :multipart => true } do |f|
+- form_for [ :tools, @generic_offer ], :html => { :class => 'tjform', :multipart => true } do |f|
   %table
     %tr
       %th= f.label :partner_id, 'Partner ID'

@@ -35,7 +35,7 @@
     %li= link_to 'View Offer Ranks', preview_experiments_path
   - if permitted_to? :unresolved_clicks, :tools
     %li= link_to 'Unresolved Clicks', unresolved_clicks_tools_path
-  - if permitted_to? :new_generic_offer, :tools
-    %li= link_to 'Create Generic Offer', new_generic_offer_tools_path
+  - if permitted_to? :new, :tools_generic_offers
+    %li= link_to 'Create Generic Offer', new_tools_generic_offer_path
   - if permitted_to? :index, :tools_premier_partners
     %li= link_to 'Premier Partners', tools_premier_partners_path
