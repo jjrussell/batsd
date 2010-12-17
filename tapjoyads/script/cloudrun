@@ -46,7 +46,8 @@ f.close
 puts "Servers to run on:"
 server_list.each do |server|
   server[:remove_from_lb] = remove_from_lb && server[:aws_groups].include?('webserver')
-  puts server[:remove_from_lb] ? (server[:dns_name] + ' (will be removed from load balancer)') : server[:dns_name]
+  server[:boot_app] = server[:remove_from_lb] || server[:aws_groups].include?('website')
+  puts server[:remove_from_lb] ? "#{server[:dns_name]} (will be removed from load balancer)" : "#{server[:dns_name]}"
 end
 puts "User: #{user}"
 puts "Command: #{command}"
@@ -66,8 +67,10 @@ server_list.each do |server|
       `elb-deregister-instances-from-lb web-lb --instances #{server[:aws_instance_id]}`
     end
     puts "Running on #{server[:aws_groups].to_s.gsub('tapbase', '')} #{server[:dns_name]} (#{count} / #{server_list.length})", `ssh #{user}@#{server[:dns_name]} '#{command}'`, "\n"
-    if server[:remove_from_lb]
+    if server[:boot_app]
       `curl -s http://#{server[:dns_name]}:9898/healthz`
+    end
+    if server[:remove_from_lb]
       `elb-register-instances-with-lb web-lb --instances #{server[:aws_instance_id]}`
       sleep 1
     end
