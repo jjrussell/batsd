@@ -26,7 +26,7 @@
         %td{ :style => 'font-size: small;' }= partner.id
         %td= partner.users.first != nil ? partner.users.first.email : ''
         %td
-          - form_tag create_payout_tool_path(partner), :method => :post, :class => 'json', :style => 'height:45px;' do
+          - form_tag tools_payouts_path(:partner_id => partner.id), :method => :post, :class => 'json', :style => 'height:45px;' do
             = text_field_tag 'amount', (partner.next_payout_amount / 100.0), :class => 'amount'
             = submit_tag 'Create Payout', :class => 'submit'
             %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }

@@ -5,8 +5,8 @@
 %ul
   - if permitted_to? :new, :tools_orders
     %li= link_to 'New Order', new_tools_order_path
-  - if permitted_to? :payouts, :tools
-    %li= link_to 'Payouts', payouts_tools_path
+  - if permitted_to? :index, :tools_payouts
+    %li= link_to 'Payouts', tools_payouts_path
   - if permitted_to? :money, :tools
     %li= link_to 'Money', money_tools_path
   - if permitted_to? :monthly_data, :tools

@@ -23,7 +23,9 @@ authorization do
   
   role :payops do
     includes :tools
-    has_permission_on :tools, :to => [ :new_order, :create_order, :payouts, :create_payout, :money, :monthly_data ]
+    has_permission_on :tools, :to => [ :money, :monthly_data ]
+    has_permission_on :tools_orders, :to => [ :new, :create ]
+    has_permission_on :tools_payouts, :to => [ :index, :create ]
   end
   
   role :executive do

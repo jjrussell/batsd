@@ -3,22 +3,9 @@ class ToolsController < WebsiteController
   
   filter_access_to :all
   
-  after_filter :save_activity_logs, :only => [ :create_payout, :update_user ]
+  after_filter :save_activity_logs, :only => [ :update_user ]
   
   def index
-  end
-  
-  def payouts
-    @partners = Partner.to_payout
-  end
-  
-  def create_payout
-    partner = Partner.find(params[:id])
-    cutoff_date = partner.payout_cutoff_date - 1.day
-    amount = (params[:amount].to_f * 100).round
-    payout = partner.payouts.build(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
-    log_activity(payout)
-    render :json => { :success => payout.save }
   end
   
   def new_transfer
