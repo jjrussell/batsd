@@ -55,15 +55,16 @@ private
   end
 
   def self.search_android_marketplace(term)
-    response = request(ANDROID_SEARCH_URL + term)
+    response = request(ANDROID_SEARCH_URL + term.gsub(/\s/, '+'))
     if response.status == 200
       items = JSON.load(response.body)
       return items['app'].map do |hash|
+        price = hash['price'].nil? ? 0 : hash['price'].gsub(/[^\d\.\-]/,'').to_f
         {
           :item_id      => hash['packageName'],
           :title        => hash['title'],
           :icon_url     => ANDROID_ICON_URL + hash['packageName'],
-          :price        => hash['price'].nil? ? 0 : hash['price'].gsub(/[^\d\.\-]/,'').to_f,
+          :price        => "%.2f" % price,
           :description  => hash['ExtendedInfo']['description'],
           :publisher    => hash['creator']
         }
