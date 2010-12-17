@@ -45,6 +45,13 @@ class DisplayAdController < ApplicationController
   
   def webview
     if @click_url.present? && @image.present?
+      if params[:app_id] == "2349536b-c810-47d7-836c-2cd47cd3a796"
+        # Ensure TapDefense is always https, so that AdMarvel can test their implementation.
+        @click_url.gsub!(/^http:\/\/ws.tapjoyads.com/, 'https://www.tapjoy.com') 
+      else
+        # Ensure all other apps are always http, so that AdMarvel will work.
+        @click_url.gsub!(/^https/, 'http') 
+      end
       render :layout => false
     else
       render :text => ''
