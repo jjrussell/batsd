@@ -2,7 +2,7 @@
 
 %h1 Create Order
 
-- form_for :order, @order, :url => { :action => :create_order }, :html => { :method => :post, :class => 'tjform' } do |f|
+- form_for [ :tools, @order ], :html => { :class => 'tjform' } do |f|
   %table
     %tr
       %th= f.label :partner_id, 'Partner ID'

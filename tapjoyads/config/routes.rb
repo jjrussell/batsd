@@ -60,7 +60,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :support, :only => [ :index ],
     :collection => { :contact => :post }
   map.resources :tools, :only => :index,
-    :collection => { :new_order => :get, :create_order => :post, :monthly_data => :get, :new_transfer => :get,
+    :collection => { :monthly_data => :get, :new_transfer => :get,
                      :payouts => :get, :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get,
                      :sdb_metadata => :get, :reset_device => :get, :failed_downloads => :get, :sanitize_users => :get,
                      :unresolved_clicks => :post, :resolve_clicks => :post, :sqs_lengths => :get },
@@ -84,6 +84,7 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :tools do |tools|
     tools.resources :premier_partners, :only => [ :index ]
     tools.resources :generic_offers, :only => [ :new, :create ]
+    tools.resources :orders, :only => [ :new, :create ]
   end
 
   # Special paths:

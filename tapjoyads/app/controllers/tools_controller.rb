@@ -3,7 +3,7 @@ class ToolsController < WebsiteController
   
   filter_access_to :all
   
-  after_filter :save_activity_logs, :only => [ :create_payout, :create_transfer, :create_order, :update_user ]
+  after_filter :save_activity_logs, :only => [ :create_payout, :create_transfer, :update_user ]
   
   def index
   end
@@ -22,25 +22,6 @@ class ToolsController < WebsiteController
   end
   
   def new_transfer
-  end
-  
-  def new_order
-    @order = Order.new
-  end
-  
-  def create_order
-    order_params = sanitize_currency_params(params[:order], [ :amount ])
-    @order = Order.new(order_params)
-    log_activity(@order)
-    if @order.save
-      dollars = @order.amount.to_s
-      dollars[-2..-3] = "." if dollars.length > 1
-      email = @order.partner.users.first.email rescue "(no email)"
-      flash[:notice] = "The order of <b>$#{dollars}</b> to <b>#{email}</b> was successfully created."
-      redirect_to new_order_tools_path
-    else
-      render :action => :new_order
-    end
   end
 
   def monthly_data
