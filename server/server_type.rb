@@ -19,6 +19,8 @@ elsif security_groups.include? 'webserver'
   server_type = 'web'
 elsif security_groups.include? 'memcached'
   server_type = 'memcached'
+elsif security_groups.include? 'website'
+  server_type = 'website'
 end
 
 print server_type
