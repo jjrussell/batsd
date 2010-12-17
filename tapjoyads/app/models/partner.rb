@@ -51,9 +51,10 @@ class Partner < ActiveRecord::Base
   named_scope :search, lambda { |name_or_email| { :joins => :users,
       :conditions => [ "partners.name LIKE ? OR users.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
     }
+  named_scope :premier, lambda { { :joins => :offer_discounts, :conditions => [ "offer_discounts.expires_on > ? ", Time.zone.today ], :group => "partners.id" } }
     
   def applied_offer_discounts
-    offer_discounts.active.scoped(:conditions => [ "amount = ?", premier_discount ])
+    offer_discounts.select { |discount| discount.active? && discount.amount == premier_discount }
   end
   
   def discount_expires_on

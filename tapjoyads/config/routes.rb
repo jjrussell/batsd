@@ -82,6 +82,9 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.premier 'premier', :controller => :premier, :action => :edit
   map.resources :preview_experiments, :only => [ :index, :show ]
+  map.namespace :tools do |tools|
+    tools.resources :premier_partners, :only => [ :index ]
+  end
 
   # Special paths:
   map.connect 'log_device_app/:action/:id', :controller => 'connect'
