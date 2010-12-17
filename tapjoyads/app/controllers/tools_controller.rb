@@ -3,7 +3,7 @@ class ToolsController < WebsiteController
   
   filter_access_to :all
   
-  after_filter :save_activity_logs, :only => [ :create_payout, :create_transfer, :update_user ]
+  after_filter :save_activity_logs, :only => [ :create_payout, :update_user ]
   
   def index
   end
