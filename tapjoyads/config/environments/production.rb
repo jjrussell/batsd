@@ -33,7 +33,7 @@ EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
 
 RUN_MODE_PREFIX = ''
-API_URL = 'http://ws.tapjoyads.com'
+API_URL = 'https://ws.tapjoyads.com'
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 
 # Amazon services:

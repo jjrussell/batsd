@@ -2,6 +2,9 @@
 
 %h1 Premier Partners
 
+%div= "Number of partners: #{@partners.length}"
+%br
+
 .right
   Managed by:
   - form_tag(tools_premier_partners_path, :method => :get, :class => 'tjform') do
