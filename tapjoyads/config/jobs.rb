@@ -3,10 +3,6 @@ JobRunner::Gateway.define do |s|
   machine_type = `#{ENV['APP_ROOT']}/../server/server_type.rb`
   
   if machine_type == 'jobs' || machine_type == 'test'
-    s.add_job 'get_ad_network_data', :interval => 8.minutes    
-    s.add_job 'campaign_stats', :interval => 10.seconds
-    s.add_job 'yesterday_campaign_stats', :interval => 30.minutes
-    
     # SQS Queues:
     s.add_job 'conversion_tracking_queue', :interval => 2.seconds
     s.add_job 'failed_sdb_saves_queue', :interval => 5.seconds
@@ -22,11 +18,12 @@ JobRunner::Gateway.define do |s|
     s.add_job 'queue_grab_advertiser_udids', :interval => 5.minutes
     s.add_job 'queue_sdb_backups', :interval => 1.minute
     s.add_job 'queue_mail_chimp_updates', :interval => 1.minute
+    s.add_job 'queue_partner_notifications', :interval => 5.minutes
   elsif machine_type == 'masterjobs'
     # jobs with high impact on overall system performance
     s.add_job 'master_calculate_next_payout', :daily => 4.hours
     s.add_job 'master_grab_advertiser_udids', :daily => 7.hours
-    s.add_job 'master_update_monthly_account', :daily => 8.hours
+    # s.add_job 'master_update_monthly_account', :daily => 8.hours
     s.add_job 'master_verifications', :daily => 5.hours
     
     # jobs with moderate impact on overall system performance
@@ -46,7 +43,9 @@ JobRunner::Gateway.define do |s|
     s.add_job 'master_pre_create_domains', :daily => 6.hours
     s.add_job 'master_select_vg_items', :interval => 5.minutes
     s.add_job 'master_set_bad_domains', :interval => 1.minutes
-    # s.add_job 'master_set_exclusivity_and_premier_discounts', :daily => 2.hours
+    s.add_job 'master_update_rev_share', :daily => 1.hour
+    s.add_job 'master_set_exclusivity_and_premier_discounts', :daily => 2.hours
+    s.add_job 'master_partner_notifications', :daily => 17.hours
   else
     Rails.logger.info "JobRunner: Not running any jobs. Not a job server."
   end

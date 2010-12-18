@@ -1,11 +1,11 @@
 - @page_title = 'Offer Discounts'
 
-%h1 Offer Discounts
+%h1= "#{link_to(@partner.name, @partner)} :: Offer Discounts"
 = link_to 'Create an Offer Discount', new_partner_offer_discount_path(@partner)
 
 .metadata
   Current Offer Discount:
-  = number_to_currency(@partner.premier_discount * 0.01)
+  = "#{@partner.premier_discount}%"
 
 .filters
   - form_tag('', :class => 'tjform', :method => :get, :id => 'filter-form') do
@@ -18,6 +18,7 @@
   %thead
     %tr
       %th Expires On
+      %th Created At
       %th Amount
       %th Source
       %th
@@ -25,6 +26,7 @@
     - @offer_discounts.each do |discount|
       %tr
         %td= discount.expires_on.to_s(:pub)
+        %td= discount.created_at.to_s(:pub)
         %td= number_to_currency(discount.amount * 0.01)
         %td= discount.source
         %td= link_to("Deactivate", deactivate_partner_offer_discount_path(@partner, discount), :method => :post, :confirm => "Are you sure?") if discount.source == 'Admin' && discount.active?
@@ -37,7 +39,7 @@
 - content_for :page_javascript do
   :plain
     $(function() {
-      $('select#filter').change(function() {
+      $('#filter').change(function() {
         $('#filter-form').submit();
       });
     });

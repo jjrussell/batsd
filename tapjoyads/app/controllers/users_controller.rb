@@ -57,7 +57,7 @@ class UsersController < WebsiteController
     log_activity(@user)
     
     params[:user][:username] = params[:user][:email]
-    if @user.safe_update_attributes(params[:user], [ :username, :email, :password, :password_confirmation, :time_zone ])
+    if @user.safe_update_attributes(params[:user], [ :username, :email, :password, :password_confirmation, :time_zone, :receive_campaign_emails ])
       flash[:notice] = 'Successfully updated account.'
       redirect_to users_path
     else
@@ -69,13 +69,12 @@ class UsersController < WebsiteController
   def update_mail_chimp_email
     email = current_user.email
     yield
-    if email != current_user.email
+    if @user.valid? && email != @user.email
       message = {
         :type => "update",
         :email => email,
         :merge_tags => {
-          'EMAIL' => current_user.email,
-          'CAN_EMAIL' => @user.can_email.to_s
+          'EMAIL' => @user.email
         }
       }.to_json
       Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)

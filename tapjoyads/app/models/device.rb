@@ -5,6 +5,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :is_jailbroken, :type => :bool, :default_value => false
   self.sdb_attr :country
   self.sdb_attr :survey_answers, :type => :json, :default_value => {}, :cgi_escape => true
+  self.sdb_attr :opted_out, :type => :bool, :default_value => false
   
   def dynamic_domain_name
     domain_number = @key.hash % NUM_DEVICES_DOMAINS
@@ -43,8 +44,9 @@ class Device < SimpledbShardedResource
     if params[:lad].present?
       if params[:lad] == '0'
         Notifier.alert_new_relic(DeviceNoLongerJailbroken, "device_id: #{@key}", nil, params) if self.is_jailbroken
+        self.is_jailbroken = false
       else
-        self.is_jailbroken = true
+        self.is_jailbroken = true unless app_id == 'f4398199-6316-4680-9acf-d6dbf7f8104a' # Feed Al has inaccurate jailbroken detection
       end
     end
     

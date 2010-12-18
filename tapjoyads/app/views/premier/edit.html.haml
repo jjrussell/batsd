@@ -1,23 +1,109 @@
 - @page_title = 'Tapjoy Premier'
+- @terms_class = @is_new ? '' : 'hidden'
+- @submit_text = @is_new ? 'Join Tapjoy Premier' : 'Renew Tapjoy Premier'
 
-%h1 Tapjoy Premier
-
-.metadata
-  Current Exclusivity Level:
-  = @partner.exclusivity_level_type || "None"
-- unless @partner.exclusivity_level_type.nil?
+%h1 Tapjoy Premier Program
+- unless @is_new
   .metadata
-    Exclusivity Expires On:
-    = @partner.exclusivity_expires_on ? @partner.exclusivity_expires_on.to_s(:pub) : "N/A"
+    Membership Status: Premier
+  .metadata
+    Premier Source:
+    = @partner.applied_offer_discounts.collect(&:source).uniq.to_sentence
+  .metadata
+    Premier Discount:
+    = "#{@partner.premier_discount}%"
+  .metadata
+    Discount Expires On:
+    = @partner.discount_expires_on ? @partner.discount_expires_on.to_s(:pub) : "N/A"
+  %h3 Renew:
 
-%h3 Renew:
+#terms_and_conditions{ :class => @terms_class }
+  %p Tapjoy Premier is a membership program that gives you access to new Tapjoy features, dedicated support, and pricing discounts. Benefits of the Tapjoy Premier Program include:
+  %ul
+    %li Access to Tapjoy Premier Support with a unique support alias and guaranteed 24-hour response time
+    %li Early beta access to new ad and site features
+    %li Discounts for Tapjoy services
+  %p There are two ways to join the Tapjoy Premier program:
+  %ol
+    %li Spend more than $150,000 within a three month period. Based on your spend levels, you will be automatically entered into the program.
+    %li Enter into an exclusivity period whereby Tapjoy is the sole provider of incentivized pay-per-install services for your mobile applications. Please select your membership duration below.
+  %p
+    If you have any questions, please contact your account manager or
+    = mail_to "support@tapjoy.com"
+
+%br
+
 - form_for @partner, :url => { :action => :update }, :html => { :class => 'tjform' } do |f|
   %table
     %tr
-      %th
-        = f.label :exclusivity_level_type, 'Exclusivity Level'
+      %td{ :colspan => 2 }
+        = check_box_tag 'agree'
+        %b
+          - if @is_new
+            I agree to the Terms and Conditions above.
+          - else
+            I agree to the #{link_to("Terms and Conditions", "javascript:showTerms()")}.
+    %tr
+      %td.right
+        %b= f.label :exclusivity_level, 'Exclusivity&nbsp;Length'
       %td
-        = f.select :exclusivity_level_type, options_for_select(ExclusivityLevel::TYPES.map{|t|[t.underscore.humanize.pluralize, t]}, ExclusivityLevel::TYPES.last)
+        = f.select :exclusivity_level_type, options_for_select(@levels, @default_level)
         = error_message_on @partner, :exclusivity_level_type
     %tr
-      %td{ :colspan => 2 }= f.submit 'Submit'
+      %td.right
+        %b Expires
+      %td#expires
+        = (Date.today + 9.months).to_s(:pub)
+    %tr
+      %td.right
+        %b Discount
+      %td
+        %span#discount_level
+
+  = f.submit @submit_text, :class => 'join'
+
+- content_for :page_javascript do
+  :plain
+    var showTerms = function() {
+      $('#terms_and_conditions').show();
+    };
+    $(function(){
+      var onSelectChange = function(){
+        var level = $('select#partner_exclusivity_level_type').val(), discount = '', date = '';
+        if (level == '#{ExclusivityLevel::TYPES[0]}') {
+          discount = '5%';
+          date = '#{(Date.today+ExclusivityLevel::TYPES[0].constantize.new.months.months).to_s(:pub)}';
+        } else if (level == '#{ExclusivityLevel::TYPES[1]}') {
+          discount = '10%';
+          date = '#{(Date.today+ExclusivityLevel::TYPES[1].constantize.new.months.months).to_s(:pub)}';
+        } else if (level == '#{ExclusivityLevel::TYPES[2]}') {
+          discount = '15%';
+          date = '#{(Date.today+ExclusivityLevel::TYPES[2].constantize.new.months.months).to_s(:pub)}';
+        }
+        $('span#discount_level').text(discount);
+        $('td#expires').text(date);
+      };
+      $('select#partner_exclusivity_level_type').change(onSelectChange);
+      onSelectChange();
+    });
+- content_for :page_styles do
+  :plain
+    .tjform input.join {
+      float: none;
+    }
+    .tjform table {
+      padding-top: 8px;
+    }
+    .tjform td {
+      height: 22px;
+      padding-bottom: 3px;
+      vertical-align: top;
+      width: 100%;
+    }
+    .tjform td.right {
+      text-align: right;
+      padding-right: 8px;
+    }
+    h3 {
+      margin-bottom: 0;
+    }

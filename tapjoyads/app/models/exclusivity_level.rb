@@ -3,7 +3,7 @@ class ExclusivityLevel
   attr_reader :months, :discount, :name
 end
 
-class ThreeMonth < ExclusivityLevel  
+class ThreeMonth < ExclusivityLevel
   def initialize
     @months = 3
     @discount = 5

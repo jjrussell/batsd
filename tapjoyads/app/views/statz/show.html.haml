@@ -11,11 +11,7 @@
 .clear
 
 %form#change_date{ :method => :get, :class => 'tjform' }
-  = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
-  \-
-  = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
-  = select_tag(:granularity, options_for_select({ 'Daily' => :daily, 'Hourly' => :hourly }, @granularity))
-  = submit_tag('Change')
+  = render :partial => 'reporting/date_range_fields'
 
 %h4 Offer
 - if permitted_to? :edit, :statz
@@ -31,11 +27,15 @@
   - property_row('User Enabled', @offer.user_enabled?, nil, @offer.user_enabled?.to_s)
   - property_row('Bid', number_to_currency(@offer.bid / 100.0))
   - property_row('Payment', number_to_currency(@offer.payment / 100.0))
+  - if @offer.reward_value.present?
+    - property_row('Reward Value', number_to_currency(@offer.reward_value / 100.0))
   - if @offer.item_type == 'App'
     - if @offer.item.use_raw_url?
       - property_row('Raw url', link_to('[url]', @offer.item.store_url), nil, @offer.item.store_url.blank? ? 'incomplete' : nil)
     - else
       - property_row('Store id', link_to(@offer.item.store_id, @offer.item.final_store_url), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
+  - else
+    - property_row('Destination url', link_to(truncate(@offer.url, :length => 60), @offer.url))
   - property_row('Price', number_to_currency(@offer.price / 100.0))
   - property_row('Daily budget', @offer.daily_budget, 0)
   - property_row('Overall budget', @offer.overall_budget, 0)
@@ -49,6 +49,7 @@
   - property_row('Allow negative balance', @offer.allow_negative_balance?, false)
   - property_row('Self promote only', @offer.self_promote_only?, false)
   - property_row('Featured', @offer.featured?, false)
+  - property_row('Direct-pay', @offer.direct_pay, nil)
   - unless @offer.publisher_app_whitelist.blank?
     - property_row('Publisher app whitelist', @offer.get_publisher_app_whitelist.map { |id| link_to(App.find(id).name, statz_path(id)) }.join(', '))
   - property_row('id', @offer.id + ' - ' + clippy(@offer.id))
@@ -93,7 +94,7 @@
   %h4 Currency - #{c.name}
   #currency
     %a.more{ :href => '#' } [Show more details]
-    = link_to('[View Offer Wall]', "http://ws.tapjoyads.com/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDIDS.first}&publisher_user_id=testuser&device_type=#{@offer.item.platform}")
+    = link_to('[View Offer Wall]', "#{API_URL}/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDIDS.first}&publisher_user_id=testuser&device_type=#{@offer.item.platform}")
     .details
       %table.properties
         - property_row('Conversion rate', c.conversion_rate)
@@ -102,104 +103,47 @@
         - property_row('Initial balance', c.initial_balance)
         - property_row('Only free offers', c.only_free_offers?)
         - property_row('Has virtual goods', c.has_virtual_goods?)
-        - property_row('Installs money share', c.installs_money_share)
+        - property_row('Spend share', c.spend_share)
+        - property_row('Direct-pay share', c.direct_pay_share)
         - property_row('Max age rating', c.max_age_rating)
         - property_row('Disabled offers', c.disabled_offers)
         - property_row('Disabled partners', c.disabled_partners)
         - property_row('Test devices', c.test_devices)
         - property_row('id', c.id + ' - ' + clippy(c.id))
 
+.load-circle= image_tag('load-circle.gif')
+
 #charts{ :style => "text-align: center;" }
   #connects.graph
   #installs_spend.graph
   #installs_rank.graph
-  #published_offers.graph
-  #offerwall_views.graph
-  #display_ads.graph
-  #virtual_goods.graph
-  #ads.graph
+  - if @offer.is_publisher_offer?
+    #published_offers.graph
+    #offerwall_views.graph
+    #display_ads.graph
+    #virtual_goods.graph
+    #ads.graph
 
 - include_tapjoy_graph
-
+- content_for :included_javascripts, javascript_include_tag('tapjoy/reporting')
+- content_for :include_labels
+- content_for :page_head, stylesheet_link_tag('reporting')
 - content_for :page_javascript do
   :plain
     $('#search_box').autocomplete({ source: '#{search_offers_path}', delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });
 
-    $(function() {
-      $('#date').datepicker();
-      $('#end_date').datepicker();
-
-      $('#currency .more').click(function() {
-        $('#currency .details').toggle();
-        return false;
-      });
-
-      $('#show_associated').click(function() {
-        $('#associated_list').toggle();
-        return false;
-      });
-      
-      $('#show_boosts').click(function() {
-        $('#boosts_list').toggle();
-        return false;
-      });
-
-      Tapjoy.Graph.initGraphs($('#charts .graph'));
-      Tapjoy.Graph.drawLargeGraph(#{@connect_data.to_json}, 'connects');
-      Tapjoy.Graph.drawLargeGraph(#{@rewarded_installs_plus_spend_data.to_json}, 'installs_spend');
-      Tapjoy.Graph.drawLargeGraph(#{@rewarded_installs_plus_rank_data.to_json}, 'installs_rank');
-      Tapjoy.Graph.drawLargeGraph(#{@published_offers_data.to_json}, 'published_offers');
-      Tapjoy.Graph.drawLargeGraph(#{@offerwall_views_data.to_json}, 'offerwall_views');
-      Tapjoy.Graph.drawLargeGraph(#{@display_ads_data.to_json}, 'display_ads');
-      Tapjoy.Graph.drawLargeGraph(#{@virtual_goods_data.to_json}, 'virtual_goods');
-      Tapjoy.Graph.drawLargeGraph(#{@ads_data.to_json}, 'ads');
+    $('#currency .more').click(function() {
+      $('#currency .details').toggle();
+      return false;
     });
 
-- content_for :page_styles do
-  :plain
-    .icon {
-      padding: 20px 0;
-      float: left;
-    }
-    #associated_list,
-    #boosts_list {
-      display: none;
-    }
-    #associated_list h5,
-    #boosts_list h5 {
-      margin: 5px;
-    }
-    #currency {
-      margin-bottom: 16px;
-    }
-    #currency .details {
-      display: none;
-      margin-left: 10px;
-    }
-    h4 {
-      margin-bottom: 6px;
-    }
-    .properties td {
-      border: 1px solid #ccc;
-      padding: 0 5px;
-      max-width: 500px;
-    }
-    .properties tr td:first-child {
-      text-align: right;
-    }
-    .true {
-      background: -webkit-gradient(linear, left top, right bottom, from(#494), to(#fff));
-      background: -moz-linear-gradient(left,  #494,  #fff);
-    }
-    .false {
-      background: -webkit-gradient(linear, left top, right bottom, from(#ccc), to(#fff));
-      background: -moz-linear-gradient(left,  #ccc,  #fff);
-    }
-    .incomplete {
-      background: -webkit-gradient(linear, left top, right bottom, from(#ccc), to(#fff));
-      background: -moz-linear-gradient(left,  #f40,  #fff);
-    }
-    .tjform input[type=submit] {
-      margin: 0;
-      float: none;
-    }
+    $('#show_associated').click(function() {
+      $('#associated_list').toggle();
+      return false;
+    });
+
+    $('#show_boosts').click(function() {
+      $('#boosts_list').toggle();
+      return false;
+    });
+

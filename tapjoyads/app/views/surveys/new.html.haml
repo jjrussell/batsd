@@ -26,7 +26,7 @@
       .question
         = label_tag(:postal_code, "What is your postal code?")
       .answer
-        = text_field_tag(:postal_code, nil, :pattern => "[0-9]*")
+        = text_field_tag(:postal_code)
     = submit_tag("Submit Survey", :onclick => 'return checkValues();')
 
 - content_for :page_javascript do

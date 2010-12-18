@@ -97,11 +97,11 @@ private
   ##
   # Returns a new key for every 5-minute window. The key is unique to this host and this queue.
   def get_memcache_error_count_key
-    "sqserrors.#{Socket.gethostname}.#{@queue_name}.#{(Time.now.to_i / 5.minutes).to_i}"
+    "sqserrors.#{Socket.gethostname}.#{@queue_name}.#{Time.now.to_i / 5.minutes}"
   end
   
   def get_memcache_lock_key(message)
-    "sqslocks.#{@queue_name}.#{message.hash}"
+    "sqslocks.#{@queue_name}.#{message.hash}.#{Time.now.to_i / 5.minutes}"
   end
   
   # NewRelic truncates parameter length to ~250 chars so split the message up

@@ -9,21 +9,32 @@ class OfferCompletedController < ApplicationController
   def boku
     @source = 'boku'
     @trx_id = params['trx-id']
-    if request.query_parameters[:action] == 'billingresult' && params['result-code'] == '0' && params[:param].present?
-      params[:click_key] = params[:param]
+    @adjusted_payment = params['reference-receivable-net'].to_i
+    params[:click_key] = params[:param]
+    if request.query_parameters[:action] == 'billingresult' && params['result-code'] == '0'
+      complete_conversion
     else
       @error_message = "unexpected boku callback"
-      notify_and_render_error and return
+      notify_and_render_error
     end
-    
-    complete_conversion
   end
   
   def gambit
     @source = 'gambit'
     params[:click_key] = params[:subid1]
-    
     complete_conversion
+  end
+  
+  def paypal
+    @source = 'paypal'
+    @adjusted_payment = (params[:transaction]['0']['.amount'].to_s.gsub('USD ', '').to_f * 100).to_i
+    params[:click_key] = params[:memo]
+    if params[:status] == 'COMPLETED' && params[:transaction]['0']['.receiver'] == 'paypal@tapjoy.com'
+      complete_conversion
+    else
+      @error_message = "unexpected paypal callback"
+      notify_and_render_error
+    end
   end
   
 private
@@ -59,20 +70,27 @@ private
         notify_and_render_error and return
       end
       
-      payment = params[:payment].to_i
-      if payment < offer.payment_range_low || payment > offer.payment_range_high
-        @error_message = "payment (#{payment}) out of range (#{offer.payment_range_low}-#{offer.payment_range_high}) for click (#{click.key})"
+      @adjusted_payment = params[:payment].to_i
+      if @adjusted_payment < offer.payment_range_low || @adjusted_payment > offer.payment_range_high
+        @error_message = "payment (#{@adjusted_payment}) out of range (#{offer.payment_range_low}-#{offer.payment_range_high}) for click (#{click.key})"
         notify_and_render_error and return
       end
-      
-      currency = Currency.find_in_cache(click.currency_id)
-      offer.payment = payment
-      
-      click.advertiser_amount = currency.get_advertiser_amount(offer)
-      click.publisher_amount  = currency.get_publisher_amount(offer)
-      click.currency_reward   = currency.get_reward_amount(offer)
-      click.tapjoy_amount     = currency.get_tapjoy_amount(offer)
-      click.save
+    end
+    
+    if @adjusted_payment.present?
+      if @adjusted_payment > 0
+        currency = Currency.find_in_cache(click.currency_id)
+        offer.payment = @adjusted_payment
+        
+        click.advertiser_amount = currency.get_advertiser_amount(offer)
+        click.publisher_amount  = currency.get_publisher_amount(offer)
+        click.currency_reward   = currency.get_reward_amount(offer)
+        click.tapjoy_amount     = currency.get_tapjoy_amount(offer)
+        click.save
+      else
+        @error_message = "invalid adjusted payment (#{@adjusted_payment}) for click (#{click.key})"
+        notify_and_render_error and return
+      end
     end
     
     device = Device.new(:key => click.udid)
@@ -101,6 +119,8 @@ private
       render :text => 'ERROR:FATAL'
     elsif @source == 'boku'
       render(:template => 'layouts/boku')
+    elsif @source == 'paypal'
+      render(:template => 'layouts/error')
     else
       render(:template => 'layouts/error', :status => 403)
     end

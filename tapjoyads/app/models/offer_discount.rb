@@ -19,7 +19,7 @@ class OfferDiscount < ActiveRecord::Base
   
   def deactivate!
     if source == 'Admin' && expires_on > Time.zone.today
-      self.expires_on = Time.zone.today 
+      self.expires_on = Time.zone.today
       self.save
     else
       false

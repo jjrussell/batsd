@@ -9,3 +9,8 @@ end
 Factory.define :email_signup do |email_signup|
   email_signup.email_address { Factory.next(:email) }
 end
+
+Factory.define :virtual_good do |virtual_good|
+  virtual_good.key { Factory.next(:guid) }
+  virtual_good.name { Factory.next(:name) }
+end

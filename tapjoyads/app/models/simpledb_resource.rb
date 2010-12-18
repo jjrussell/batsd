@@ -320,6 +320,7 @@ class SimpledbResource
       
       row.put(version_attr, initial_version.to_i + 1)
       row.serial_save(:catch_exceptions => false, :expected_attr => {version_attr => initial_version}, :write_to_memcache => false)
+      return row
     rescue ExpectedAttributeError => e
       Rails.logger.info "ExpectedAttributeError: #{e.to_s}."
       if retries > 0
@@ -627,7 +628,7 @@ protected
         @@sdb.delete_attributes(@this_domain_name, @key, attributes_to_delete, expected_attr)
       end
     rescue RightAws::AwsError => e
-      if e.message.starts_with?("NoSuchDomain")
+      if e.message.starts_with?("NoSuchDomain") && Rails.env != 'production'
         Rails.logger.info_with_time("Creating new domain: #{@this_domain_name}") do
           @@sdb.create_domain(@this_domain_name)
         end

@@ -19,7 +19,7 @@ class TapjoyMailer < ActionMailer::Base
     recipients to_email
     subject "Confirmation email - get #{amount} #{publisher_app_name} #{currency_name}"
     content_type 'text/html'
-    url = "http://ws.tapjoyads.com/list_signup/confirm?code=#{confirm_code}"
+    url = "#{API_URL}/list_signup/confirm?code=#{confirm_code}"
     body :url => url, :currency_name => currency_name, :publisher_app_name => publisher_app_name, :amount => amount
   end
   
@@ -71,5 +71,15 @@ class TapjoyMailer < ActionMailer::Base
     content_type 'text/html'
     subject "Website form inquiry from #{info[:first]} #{info[:last]} at #{info[:company]}"
     body(:info => info)
+  end
+  
+  def campaign_status(email_recipients, low_balance, account_balance, account_manager_email, offers_not_meeting_budget, offers_needing_higher_bids, premier, premier_discount)
+    from 'support@tapjoy.com'
+    recipients email_recipients
+    subject 'Tapjoy Campaign Status'
+    content_type 'text/html'
+    account_manager_email = nil if account_manager_email == 'oso@tapjoy.com'
+    body(:low_balance => low_balance, :account_balance => account_balance, :account_manager_email => account_manager_email, 
+      :offers_not_meeting_budget => offers_not_meeting_budget, :offers_needing_higher_bids => offers_needing_higher_bids, :premier => premier, :premier_discount => premier_discount)
   end
 end

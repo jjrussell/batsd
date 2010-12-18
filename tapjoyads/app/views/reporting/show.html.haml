@@ -5,7 +5,7 @@
     %strong Warning:
     Advanced reporting features may not be available in Internet Explorer.
     Please download
-    = link_to 'Firefox', 'http://www.mozilla.com/firefox/', :target => '_blank'
+    = link_to 'Firefox', 'http://www.mozilla.com/', :target => '_blank'
     or
     = link_to 'Chrome', 'http://www.google.com/chrome', :target => '_blank'
     \.
@@ -15,15 +15,11 @@
 
 .left
   - form_tag(export_reporting_path(@offer.id), :id => 'download', :class => 'tjform') do
-    = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
-    \-
-    = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
-    = select_tag(:granularity, options_for_select({ 'Daily' => :daily, 'Hourly' => :hourly }, @granularity))
+    = render :partial => 'date_range_fields'
     = submit_tag('Download as CSV')
 .clear
 
-.load-circle
-  = image_tag('load-circle.gif')
+.load-circle= image_tag('load-circle.gif')
 #tables
 .clear
 - #Add 'App Data' table with Connects, DAUs, last rank
@@ -46,121 +42,7 @@
       .li= link_to(key, download_udids_app_offer_path(:app_id => @offer.item.id, :id => @offer.id, :date => key))
 
 - include_tapjoy_graph
+- content_for :included_javascripts, javascript_include_tag('tapjoy/reporting')
+- content_for :include_labels
+- content_for :page_head, stylesheet_link_tag('reporting')
 
-- content_for :page_javascript do
-  :plain
-    var loadData = function(data) {
-      $('div#charts canvas').each(function(){
-        RGraph.Clear(this);
-      });
-
-      Tapjoy.Graph.drawLargeGraph(data.connect_data, 'connects');
-      Tapjoy.Graph.drawLargeGraph(data.rewarded_installs_plus_spend_data, 'installs_spend');
-      Tapjoy.Graph.drawLargeGraph(data.rewarded_installs_plus_rank_data, 'installs_rank');
-      if (#{@offer.is_publisher_offer?}) {
-        Tapjoy.Graph.drawLargeGraph(data.published_offers_data, 'published_offers');
-        Tapjoy.Graph.drawLargeGraph(data.offerwall_views_data, 'offerwall_views');
-        Tapjoy.Graph.drawLargeGraph(data.display_ads_data, 'display_ads');
-      }
-      $('#date').val(data.date);
-      $('#end_date').val(data.end_date);
-      $('#granularity').val(data.granularity);
-    };
-
-    var updateURL = function(oldURL) {
-      return oldURL.split(/#/)[0] +
-        '#date=' + $('#date').val() +
-        '&end_date=' + $('#end_date').val() +
-        '&granularity=' + $('#granularity').val();
-    }
-
-    $(function($) {
-      Tapjoy.Graph.initGraphs($('#charts .graph'));
-
-      $('#date').datepicker();
-      $('#end_date').datepicker();
-
-      var ajaxCall = function(){
-        if ($('#granularity').val()=='hourly') {
-          var diff = new Date($('#end_date').val()) - new Date($('#date').val());
-          if (diff > 518400000) { // 7 days
-            $('#flash_warning span.message').text('Hourly reports are only available for date ranges of seven or fewer days.');
-            $('#flash_warning').fadeIn();
-          }
-        }
-        $('.load-circle').show();
-        $('#date, #end_date, #granularity').attr('disabled', true);
-        $('#tables, #charts').css('opacity', 0.3);
-        var url = '#{request.env['PATH_INFO']}';
-        var params = {
-          date: $('#date').val(),
-          end_date: $('#end_date').val(),
-          granularity: $('#granularity').val()
-        };
-
-        $.ajax({
-          url: url,
-          data: params,
-          success: function(response, status, request) {
-            loadData(response.data);
-            $('#tables').html(response.stats_table);
-            $('#date, #end_date, #granularity').attr('disabled', false);
-            $('#tables, #charts').css('opacity', 1.0);
-            location.href = updateURL(location.href);
-            $('#apps_box .app a').each(function() {
-              $(this).attr('href', updateURL($(this).attr('href')));
-            });
-          },
-          error: function() {
-            alert('Could not generate reports. Check the date range and try again.');
-            $('#date, #end_date, #granularity').attr('disabled', false);
-          },
-          complete: function() {
-            $('.load-circle').hide();
-          },
-          dataType: 'json'
-        })
-      };
-      $('#date, #end_date, #granularity').change(ajaxCall);
-      // load appropriate data from anchor
-      $.each(Tapjoy.anchorToParams(), function(key,val){
-        $('#'+key).val(val);
-      });
-      ajaxCall();
-
-    });
-  
-- content_for :page_styles do
-  :plain
-    .icon {
-      padding-bottom: 20px;
-      padding-right: 10px;
-      float: left;
-    }
-    #tables {
-      padding: 20px 0;
-    }
-    .data {
-      float: left;
-      padding: 0 10px;
-    }
-    table {
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 2px 5px;
-    }
-    th {
-      text-align: center;
-    }
-    td {
-      text-align: left;
-    }
-    .tjform input[type=submit] {
-      margin: 0;
-      float: none;
-    }
-    .load-circle {
-      text-align: center;
-    }

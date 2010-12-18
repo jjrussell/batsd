@@ -12,8 +12,8 @@ class Currency < ActiveRecord::Base
   
   validates_presence_of :app, :partner, :name
   validates_numericality_of :conversion_rate, :initial_balance, :ordinal, :only_integer => true, :greater_than_or_equal_to => 0
-  validates_numericality_of :installs_money_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
-  validates_numericality_of :max_age_rating, :allow_nil => true, :only_integer => true
+  validates_numericality_of :spend_share, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
+  validates_numericality_of :max_age_rating, :minimum_featured_bid, :allow_nil => true, :only_integer => true
   validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :in => [ true, false ]
   validates_each :callback_url do |record, attribute, value|
     unless SPECIAL_CALLBACK_URLS.include?(value) || value =~ /^https?:\/\//
@@ -61,12 +61,18 @@ class Currency < ActiveRecord::Base
   def get_publisher_amount(offer, displayer_app = nil)
     if offer.partner_id == partner_id
       publisher_amount = 0
+    elsif offer.direct_pay?
+      publisher_amount = offer.payment * direct_pay_share
     else
-      publisher_amount = offer.payment * installs_money_share
+      publisher_amount = offer.payment * spend_share
     end
     
     if displayer_app.present?
-      publisher_amount *= 0.5
+      if displayer_app.id == app_id
+        publisher_amount = 0
+      else
+        publisher_amount *= 0.5
+      end
     end
     
     publisher_amount.to_i
@@ -76,22 +82,22 @@ class Currency < ActiveRecord::Base
     if offer.partner_id == partner_id
       advertiser_amount = 0
     else
-      advertiser_amount = -(offer.actual_payment || offer.payment)
+      advertiser_amount = -offer.payment
     end
     advertiser_amount
   end
   
   def get_tapjoy_amount(offer, displayer_app = nil)
-    tapjoy_amount = -get_advertiser_amount(offer) - get_publisher_amount(offer, displayer_app) - get_displayer_amount(offer, displayer_app)
-    if offer.actual_payment.present?
-      tapjoy_amount += offer.actual_payment - offer.payment
-    end
-    tapjoy_amount
+    -get_advertiser_amount(offer) - get_publisher_amount(offer, displayer_app) - get_displayer_amount(offer, displayer_app)
   end
   
   def get_displayer_amount(offer, displayer_app = nil)
     if displayer_app.present?
-      (offer.payment * displayer_app.display_money_share).to_i
+      if displayer_app.id == app_id
+        get_publisher_amount(offer)
+      else
+        (offer.payment * displayer_app.display_money_share).to_i
+      end
     else
       0
     end
@@ -119,7 +125,8 @@ class Currency < ActiveRecord::Base
   
   def set_values_from_partner
     self.disabled_partners = partner.disabled_partners
-    self.installs_money_share = partner.installs_money_share
+    self.spend_share = partner.rev_share * get_spend_share_ratio
+    self.direct_pay_share = partner.direct_pay_share
   end
   
 private
@@ -134,6 +141,18 @@ private
   
   def clear_memcached_by_app_id
     Mc.delete("mysql.app_currencies.#{app_id}")
+  end
+  
+  def get_spend_share_ratio
+    Mc.get_and_put('currency.spend_share_ratio') do 
+      orders = Order.created_since(1.month.ago.to_date)
+      
+      sum_all_orders = orders.collect(&:amount).sum
+      sum_website_orders = orders.select{|o| o.payment_method == 0}.collect(&:amount).sum
+      sum_marketing_orders = orders.select{|o| o.payment_method == 2}.collect(&:amount).sum
+      
+      sum_all_orders == 0 ? 1 : (sum_all_orders - sum_marketing_orders - 0.025 * sum_website_orders) / sum_all_orders
+    end
   end
   
 end

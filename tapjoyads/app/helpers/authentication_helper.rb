@@ -127,4 +127,13 @@ module AuthenticationHelper
     end
   end
   
+  def adways_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'adways'
+        password = 'ed37P7YL2Nqs'
+      end
+      password
+    end
+  end
+  
 end

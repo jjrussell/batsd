@@ -11,7 +11,8 @@ class CurrencyTest < ActiveSupport::TestCase
   should validate_presence_of(:name)
   should validate_numericality_of(:conversion_rate)
   should validate_numericality_of(:initial_balance)
-  should validate_numericality_of(:installs_money_share)
+  should validate_numericality_of(:spend_share)
+  should validate_numericality_of(:direct_pay_share)
   should validate_numericality_of(:max_age_rating)
   
   context "A Currency" do
@@ -87,7 +88,7 @@ class CurrencyTest < ActiveSupport::TestCase
       end
     end
     
-    context "when dealing with a displayer offer" do
+    context "when dealing with a 3-party displayer offer" do
       setup do
         @offer = Factory(:app).primary_offer
         @offer.update_attribute(:payment, 25)
@@ -115,17 +116,76 @@ class CurrencyTest < ActiveSupport::TestCase
       end
     end
     
+    context "when dealing with a 2-party displayer offer" do
+      setup do
+        @offer = Factory(:app).primary_offer
+        @offer.update_attribute(:payment, 25)
+        @displayer_app = @currency.app
+      end
+      
+      should "calculate publisher amounts" do
+        assert_equal 0, @currency.get_publisher_amount(@offer, @displayer_app)
+      end
+      
+      should "calculate advertiser amounts" do
+        assert_equal -25, @currency.get_advertiser_amount(@offer)
+      end
+      
+      should "calculate tapjoy amounts" do
+        assert_equal 13, @currency.get_tapjoy_amount(@offer, @displayer_app)
+      end
+      
+      should "calculate reward amounts" do
+        assert_equal 12, @currency.get_reward_amount(@offer)
+      end
+      
+      should "calculate displayer amounts" do
+        assert_equal 12, @currency.get_displayer_amount(@offer, @displayer_app)
+      end
+    end
+    
+    context "when dealing with a direct-pay offer" do
+      setup do
+        @offer = Factory(:app).primary_offer
+        @offer.payment = 100
+        @offer.reward_value = 50
+        @offer.direct_pay = Offer::DIRECT_PAY_PROVIDERS.first
+      end
+      
+      should "calculate publisher amounts" do
+        assert_equal 100, @currency.get_publisher_amount(@offer)
+      end
+      
+      should "calculate advertiser amounts" do
+        assert_equal -100, @currency.get_advertiser_amount(@offer)
+      end
+      
+      should "calculate tapjoy amounts" do
+        assert_equal 0, @currency.get_tapjoy_amount(@offer)
+      end
+      
+      should "calculate reward amounts" do
+        assert_equal 50, @currency.get_reward_amount(@offer)
+      end
+    end
+    
     context "when created" do
       setup do
         partner = Factory(:partner)
-        partner.installs_money_share = 0.42
+        partner.rev_share = 0.42
+        partner.direct_pay_share = 0.8
         partner.disabled_partners = "foo"
         @currency.partner = partner
       end
       
-      should "have same installs_money_share as its partner" do
+      should "copy spend_share from its partner's rev_share" do
         @currency.save!
-        assert_equal 0.42, @currency.installs_money_share
+        assert_equal 0.42, @currency.spend_share
+      end
+      
+      should "have the same direct_pay_share as its partner" do
+        @currency.save!
+        assert_equal 0.8, @currency.direct_pay_share
       end
       
       should "have the same disabled_partners as its partner" do

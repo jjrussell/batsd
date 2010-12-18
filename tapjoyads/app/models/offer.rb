@@ -15,9 +15,10 @@ class Offer < ActiveRecord::Base
   DEFAULT_OFFER_TYPE  = '1'
   FEATURED_OFFER_TYPE = '2'
   
-  CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1 }
+  CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
+  DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :allow_any_bid
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -28,13 +29,13 @@ class Offer < ActiveRecord::Base
   validates_presence_of :partner, :item, :name, :url, :instructions, :time_delay
   validates_numericality_of :price, :only_integer => true
   validates_numericality_of :bid, :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_blank => false, :allow_nil => false
-  validates_numericality_of :actual_payment, :only_integer => true, :allow_nil => true
   validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :allow_blank => false, :greater_than_or_equal_to => 0
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_blank => false, :allow_nil => true, :greater_than => 0
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :featured, :multi_complete, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer )
+  validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
     begin
       parsed = JSON.parse(value)
@@ -74,22 +75,13 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "must not be set if low payment range is not set") if value.present?
     end
   end
-  validates_each :bid do |record, attribute, value|
-    if record.bid_changed? || record.price_changed?
-      if value < record.min_bid
-        record.errors.add(attribute, "is below the minimum")
-      end
-      if record.item_type == 'RatingOffer' && value != 0
-        record.errors.add(attribute, "must be 0 for RatingOffers")
-      end
-    end
-  end
   validates_each :multi_complete do |record, attribute, value|
     if value
       record.errors.add(attribute, "is only for GenericOffers") unless record.item_type == 'GenericOffer'
       record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
     end
   end
+  validate :bid_higher_than_min_bid, :unless => :allow_any_bid
   
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
@@ -115,6 +107,13 @@ class Offer < ActiveRecord::Base
     end
   end
   
+  def self.get_stats_for_featured_ranks
+    Mc.get_and_put('s3.featured_offer_rank_statistics') do
+      bucket = S3.bucket(BucketNames::OFFER_DATA)
+      Marshal.restore(bucket.get('featured_offer_rank_statistics'))
+    end
+  end
+  
   def self.get_featured_offers
     Mc.distributed_get_and_put('s3.featured_offers') do
       bucket = S3.bucket(BucketNames::OFFER_DATA)
@@ -123,19 +122,19 @@ class Offer < ActiveRecord::Base
   end
   
   def self.cache_enabled_offers
-    offer_list = Offer.enabled_offers.nonfeatured
-    conversion_rates       = offer_list.collect(&:conversion_rate)
-    prices                 = offer_list.collect(&:price)
-    avg_revenues           = offer_list.collect(&:avg_revenue)
-    bids                   = offer_list.collect(&:bid)
-    cvr_mean               = conversion_rates.mean
-    cvr_std_dev            = conversion_rates.standard_deviation
-    price_mean             = prices.mean
-    price_std_dev          = prices.standard_deviation
-    avg_revenue_mean       = avg_revenues.mean
-    avg_revenue_std_dev    = avg_revenues.standard_deviation
-    bid_mean               = bids.mean
-    bid_std_dev            = bids.standard_deviation
+    offer_list          = Offer.enabled_offers.nonfeatured
+    conversion_rates    = offer_list.collect(&:conversion_rate)
+    prices              = offer_list.collect(&:price)
+    avg_revenues        = offer_list.collect(&:avg_revenue)
+    bids                = offer_list.collect(&:bid)
+    cvr_mean            = conversion_rates.mean
+    cvr_std_dev         = conversion_rates.standard_deviation
+    price_mean          = prices.mean
+    price_std_dev       = prices.standard_deviation
+    avg_revenue_mean    = avg_revenues.mean
+    avg_revenue_std_dev = avg_revenues.standard_deviation
+    bid_mean            = bids.mean
+    bid_std_dev         = bids.standard_deviation
     
     stats = { :cvr_mean => cvr_mean, :cvr_std_dev => cvr_std_dev, :price_mean => price_mean, :price_std_dev => price_std_dev,
       :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
@@ -167,8 +166,41 @@ class Offer < ActiveRecord::Base
   end
   
   def self.cache_featured_offers
-    bucket = S3.bucket(BucketNames::OFFER_DATA)
     offer_list = Offer.enabled_offers.featured
+    
+    conversion_rates    = offer_list.collect(&:conversion_rate)
+    prices              = offer_list.collect(&:price)
+    avg_revenues        = offer_list.collect(&:avg_revenue)
+    bids                = offer_list.collect(&:bid)
+    cvr_mean            = conversion_rates.mean
+    cvr_std_dev         = conversion_rates.standard_deviation
+    price_mean          = prices.mean
+    price_std_dev       = prices.standard_deviation
+    avg_revenue_mean    = avg_revenues.mean
+    avg_revenue_std_dev = avg_revenues.standard_deviation
+    bid_mean            = bids.mean
+    bid_std_dev         = bids.standard_deviation
+    
+    stats = { :cvr_mean => cvr_mean, :cvr_std_dev => cvr_std_dev, :price_mean => price_mean, :price_std_dev => price_std_dev,
+      :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
+      
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
+    bucket.put("featured_offer_rank_statistics", Marshal.dump(stats))
+    Mc.put("s3.featured_offer_rank_statistics", stats)
+    
+    offer_list.each do |offer|
+      offer.normalize_stats(stats)
+    end
+    
+    offer_list.each do |offer|
+      offer.calculate_rank_score(CONTROL_WEIGHTS.merge({:random => 0}))
+    end
+    
+    offer_list.sort! do |o1, o2|
+      o2.rank_score <=> o1.rank_score
+    end
+    
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
     marshalled_offer_list = Marshal.dump(offer_list)
     bucket.put('featured_offers', marshalled_offer_list)
     Mc.distributed_put('s3.featured_offers', offer_list)
@@ -254,7 +286,7 @@ class Offer < ActiveRecord::Base
   end
   
   def get_click_url(publisher_app, publisher_user_id, udid, currency_id, source, app_version, viewed_at, displayer_app_id = nil, exp = nil)
-    click_url = "http://ws.tapjoyads.com/click/"
+    click_url = "#{API_URL}/click/"
     if item_type == 'App' || item_type == 'EmailOffer'
       click_url += "app?"
     elsif item_type == 'GenericOffer'
@@ -272,44 +304,44 @@ class Offer < ActiveRecord::Base
     click_url
   end
   
-  def get_fullscreen_ad_url(publisher_app, publisher_user_id, udid, source, app_version, viewed_at, displayer_app_id = nil, exp = nil)
-    ad_url = "http://ws.tapjoyads.com/fullscreen_ad"
+  def get_fullscreen_ad_url(publisher_app, publisher_user_id, udid, currency_id, source, app_version, viewed_at, displayer_app_id = nil, exp = nil)
+    ad_url = "#{API_URL}/fullscreen_ad"
     if item_type == 'TestOffer'
       ad_url += "/test_offer"
     end
-    ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}"
+    ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}"
     ad_url += "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
     ad_url += "&exp=#{exp}" if exp.present?
     ad_url
   end
   
-  def get_icon_url(protocol = 'http://', base64 = false)
+  def get_icon_url(protocol = 'https://', base64 = false)
     if base64
-      url = "#{protocol}ws.tapjoyads.com/get_app_image/icon?app_id=#{item_id}"
+      url = "#{API_URL}/get_app_image/icon?app_id=#{item_id}"
     else
       url = "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/#{item_id}.png"
     end
     url
   end
   
-  def get_large_icon_url(protocol = 'http://')
+  def get_large_icon_url(protocol = 'https://')
     "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/large/#{item_id}.png"
   end
   
-  def get_medium_icon_url(protocol = 'http://')
+  def get_medium_icon_url(protocol = 'https://')
     "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/medium/#{item_id}.jpg"
   end
   
-  def get_cloudfront_icon_url(protocol='http://')
-    "#{protocol}content.tapjoy.com/icons/#{item_id}.png"
+  def get_cloudfront_icon_url
+    "#{CLOUDFRONT_URL}/icons/#{item_id}.png"
   end
   
-  def get_large_cloudfront_icon_url(protocol='http://')
-    "#{protocol}content.tapjoy.com/icons/large/#{item_id}.png"
+  def get_large_cloudfront_icon_url
+    "#{CLOUDFRONT_URL}/icons/large/#{item_id}.png"
   end
   
-  def get_medium_cloudfront_icon_url(protocol='http://')
-    "#{protocol}content.tapjoy.com/icons/medium/#{item_id}.jpg"
+  def get_medium_cloudfront_icon_url
+    "#{CLOUDFRONT_URL}/icons/medium/#{item_id}.jpg"
   end
   
   def get_countries
@@ -344,30 +376,31 @@ class Offer < ActiveRecord::Base
   end
   
   def normalize_stats(stats)
-    self.normal_conversion_rate = (conversion_rate - stats[:cvr_mean]) / stats[:cvr_std_dev]
-    self.normal_price           = (price - stats[:price_mean]) / stats[:price_std_dev]
-    self.normal_avg_revenue     = (avg_revenue - stats[:avg_revenue_mean]) / stats[:avg_revenue_std_dev]
-    self.normal_bid             = (bid - stats[:bid_mean]) / stats[:bid_std_dev]
+    self.normal_conversion_rate = (stats[:cvr_std_dev] == 0) ? 0 : (conversion_rate - stats[:cvr_mean]) / stats[:cvr_std_dev]
+    self.normal_price           = (stats[:price_std_dev] == 0) ? 0 : (price - stats[:price_mean]) / stats[:price_std_dev]
+    self.normal_avg_revenue     = (stats[:avg_revenue_std_dev] == 0) ? 0 : (avg_revenue - stats[:avg_revenue_mean]) / stats[:avg_revenue_std_dev]
+    self.normal_bid             = (stats[:bid_std_dev] == 0) ? 0 : (bid - stats[:bid_mean]) / stats[:bid_std_dev]
   end
   
-  def calculate_rank_score(weights = {})
+  def calculate_rank_score(rank_weights = {})
+    weights = rank_weights.clone
     random_weight = weights.delete(:random) { 0 }
     boost_weight = weights.delete(:boost) { 1 }
+    over_threshold_weight = weights.delete(:over_threshold) { 0 }
     weights = { :conversion_rate => 0, :price => 0, :avg_revenue => 0, :bid => 0 }.merge(weights)
+    self.rank_boost ||= rank_boosts.active.sum(:amount)
     self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send("normal_#{key}")) }
     self.rank_score += rand * random_weight
-    self.rank_boost = rank_boosts.active.sum(:amount)
     self.rank_score += rank_boost * boost_weight
+    self.rank_score += over_threshold_weight if bid >= 40
     self.rank_score += 999999 if item_type == 'RatingOffer'
   end
   
-  def estimated_percentile(weights = CONTROL_WEIGHTS)
-    normalize_stats(Offer.get_stats_for_ranks)
-    calculate_rank_score(weights.merge({ :random => 0 }))
-    self.rank_score += weights[:random] * 0.5
-    ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' }
-    worse_offers = ranked_offers.select { |offer| offer.rank_score < rank_score }
-    100 * worse_offers.size / ranked_offers.size
+  def estimated_percentile
+    if @estimated_percentile.nil? || changed?
+      @estimated_percentile = recalculate_estimated_percentile
+    end
+    @estimated_percentile
   end
   
   def name_with_suffix
@@ -381,7 +414,7 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
-  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, reject_rating_offer)
+  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, reject_rating_offer, direct_pay_providers)
     return is_disabled?(publisher_app, currency) ||
         platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device) ||
@@ -391,18 +424,15 @@ class Offer < ActiveRecord::Base
         show_rate_reject?(device) ||
         flixter_reject?(publisher_app, device) ||
         whitelist_reject?(publisher_app) ||
-        gamevil_reject?(publisher_app)
+        gamevil_reject?(publisher_app) ||
+        minimum_featured_bid_reject?(currency) ||
+        direct_pay_reject?(direct_pay_providers)
   end
   
   def update_payment(force_update = false)
     if (force_update || bid_changed?)
       if (item_type == 'App')
-        if is_paid?
-          self.payment = (bid * 100 - price * partner.premier_discount) / 100
-        else
-          self.payment = bid - partner.premier_discount
-        end
-        self.payment = 0 if self.payment < 0
+        self.payment = bid * (100 - partner.premier_discount) / 100
       else
         self.payment = bid
       end
@@ -416,12 +446,72 @@ class Offer < ActiveRecord::Base
   
   def min_bid
     if item_type == 'App'
-      is_paid? ? (price * 0.50).round : 35
-      # uncomment for tapjoy premier & change show.html line 92-ish
-      # is_paid? ? (price * 0.65).round : 50
+      if featured?
+        is_paid? ? price : 65
+      else
+        is_paid? ? (price * 0.50).round : 35
+        # uncomment for tapjoy premier & change show.html line 92-ish
+        # is_paid? ? (price * 0.65).round : 50
+      end
     else
       0
     end
+  end
+  
+  def create_featured_clone
+    featured_offer = self.clone
+    featured_offer.featured = true
+    featured_offer.name_suffix = "featured"
+    featured_offer.bid = featured_offer.min_bid
+    featured_offer.tapjoy_enabled = false
+    featured_offer.save!
+    featured_offer
+  end
+  
+  def budget_may_not_be_met?
+    (daily_budget > 0) && needs_higher_bid?
+  end
+  
+  def needs_higher_bid?
+    bid_is_bad? || bid_is_passable?
+  end
+  
+  def needs_more_funds?
+    show_rate != 1 && (daily_budget == 0 || (daily_budget > 0 && low_balance?))
+  end
+  
+  def on_track_for_budget?
+    show_rate != 1 && !needs_more_funds?
+  end
+  
+  def bid_is_good?
+    show_rate == 1 && estimated_percentile >= 85
+  rescue
+    false
+  end
+  
+  def bid_is_passable?
+    show_rate == 1 && estimated_percentile >= 50 && estimated_percentile < 85
+  rescue
+    false
+  end
+  
+  def bid_is_bad?
+    show_rate == 1 && estimated_percentile < 50
+  rescue
+    false
+  end
+  
+  def bid_for_percentile(percentile_goal)
+    while estimated_percentile < percentile_goal do
+      self.bid += 1
+      update_payment(true)
+    end
+    recommended_bid = bid
+    self.bid = bid_was
+    self.payment = payment_was
+    @estimated_percentile = recalculate_estimated_percentile
+    recommended_bid
   end
   
 private
@@ -522,6 +612,15 @@ private
     return !publisher_app_whitelist.blank? && !get_publisher_app_whitelist.include?(publisher_app.id)
   end
   
+  def minimum_featured_bid_reject?(currency)
+    return false unless (featured? && currency.minimum_featured_bid)
+    bid < currency.minimum_featured_bid
+  end
+  
+  def direct_pay_reject?(direct_pay_providers)
+    return direct_pay? && !direct_pay_providers.include?(direct_pay)
+  end
+  
   def normalize_device_type(device_type_param)
     if device_type_param =~ /iphone/i
       'iphone'
@@ -543,6 +642,41 @@ private
   def set_stats_aggregation_times
     self.next_stats_aggregation_time = Time.zone.now if next_stats_aggregation_time.blank?
     self.stats_aggregation_interval = 3600 if stats_aggregation_interval.blank?
+  end
+  
+  def recalculate_estimated_percentile
+    weights = CONTROL_WEIGHTS
+    if conversion_rate == 0
+      self.conversion_rate = is_paid? ? (0.05 / price) : 0.50
+    end
+    
+    if featured?
+      @stats ||= Offer.get_stats_for_featured_ranks
+      normalize_stats(@stats)
+      calculate_rank_score(weights.merge({ :random => 0 }))
+      @ranked_offers ||= ranked_offers = Offer.get_featured_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
+      worse_offers = @ranked_offers.select { |offer| offer.rank_score < rank_score }
+      100 * worse_offers.size / @ranked_offers.size
+    else
+      @stats ||= Offer.get_stats_for_ranks
+      normalize_stats(@stats)
+      calculate_rank_score(weights.merge({ :random => 0 }))
+      self.rank_score += weights[:random] * 0.5
+      @ranked_offers ||= ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
+      worse_offers = @ranked_offers.select { |offer| offer.rank_score < rank_score }
+      100 * worse_offers.size / @ranked_offers.size
+    end
+  end
+
+  def bid_higher_than_min_bid
+    if bid_changed? || price_changed?
+      if bid < min_bid
+        errors.add :bid, "is below the minimum (#{min_bid} cents)"
+      end
+      if item_type == 'RatingOffer' && bid != 0
+        errors.add :bid, "must be 0 for RatingOffers"
+      end
+    end
   end
   
 end

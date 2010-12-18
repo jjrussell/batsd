@@ -179,7 +179,7 @@ private
     time = start_time
     daily_stats_over_range = []
     date = nil
-    while time < end_time
+    while time + 1.hour < end_time
       if time + 28.hours > @now
         date = time.iso8601[0,10]
         stat = load_stat_row("app.#{date}.#{@app_key}")

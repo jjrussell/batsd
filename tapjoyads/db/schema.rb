@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101130222931) do
+ActiveRecord::Schema.define(:version => 20101210101052) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -69,7 +69,6 @@ ActiveRecord::Schema.define(:version => 20101130222931) do
     t.boolean  "send_offer_data",                                                  :default => false, :null => false
     t.string   "secret_key"
     t.string   "callback_url"
-    t.decimal  "installs_money_share",               :precision => 8, :scale => 6, :default => 0.5,   :null => false
     t.text     "disabled_offers",                                                                     :null => false
     t.text     "test_devices",                                                                        :null => false
     t.datetime "created_at"
@@ -78,6 +77,9 @@ ActiveRecord::Schema.define(:version => 20101130222931) do
     t.text     "disabled_partners",                                                                   :null => false
     t.string   "partner_id",           :limit => 36,                                                  :null => false
     t.integer  "ordinal",                                                          :default => 500,   :null => false
+    t.decimal  "spend_share",                        :precision => 8, :scale => 6, :default => 0.5,   :null => false
+    t.integer  "minimum_featured_bid"
+    t.decimal  "direct_pay_share",                   :precision => 8, :scale => 6, :default => 1.0,   :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -180,7 +182,6 @@ ActiveRecord::Schema.define(:version => 20101130222931) do
     t.text     "url"
     t.integer  "price"
     t.integer  "payment",                                                                       :default => 0,     :null => false
-    t.integer  "actual_payment"
     t.integer  "daily_budget",                                                                  :default => 0,     :null => false
     t.integer  "overall_budget",                                                                :default => 0,     :null => false
     t.text     "countries",                                                                                        :null => false
@@ -216,6 +217,8 @@ ActiveRecord::Schema.define(:version => 20101130222931) do
     t.integer  "bid",                                                                           :default => 0,     :null => false
     t.integer  "reward_value"
     t.boolean  "multi_complete",                                                                :default => false, :null => false
+    t.string   "direct_pay"
+    t.boolean  "low_balance",                                                                   :default => false, :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -270,11 +273,12 @@ ActiveRecord::Schema.define(:version => 20101130222931) do
     t.integer  "custom_publisher_tier"
     t.text     "account_manager_notes"
     t.text     "disabled_partners",                                                                             :null => false
-    t.decimal  "installs_money_share",                     :precision => 8, :scale => 6, :default => 0.5,       :null => false
     t.integer  "premier_discount",                                                       :default => 0,         :null => false
     t.string   "exclusivity_level_type"
     t.date     "exclusivity_expires_on"
     t.decimal  "transfer_bonus",                           :precision => 8, :scale => 6, :default => 0.0,       :null => false
+    t.decimal  "rev_share",                                :precision => 8, :scale => 6, :default => 0.5,       :null => false
+    t.decimal  "direct_pay_share",                         :precision => 8, :scale => 6, :default => 1.0,       :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
@@ -342,20 +346,21 @@ ActiveRecord::Schema.define(:version => 20101130222931) do
   add_index "user_roles", ["name"], :name => "index_user_roles_on_name", :unique => true
 
   create_table "users", :id => false, :force => true do |t|
-    t.string   "id",                 :limit => 36,                    :null => false
-    t.string   "username",                                            :null => false
+    t.string   "id",                      :limit => 36,                    :null => false
+    t.string   "username",                                                 :null => false
     t.string   "email"
     t.string   "crypted_password"
     t.string   "password_salt"
     t.string   "persistence_token"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "current_partner_id", :limit => 36
-    t.string   "perishable_token",                 :default => "",    :null => false
+    t.string   "current_partner_id",      :limit => 36
+    t.string   "perishable_token",                      :default => "",    :null => false
     t.datetime "current_login_at"
     t.datetime "last_login_at"
-    t.string   "time_zone",                        :default => "UTC", :null => false
-    t.boolean  "can_email",                        :default => true
+    t.string   "time_zone",                             :default => "UTC", :null => false
+    t.boolean  "can_email",                             :default => true
+    t.boolean  "receive_campaign_emails",               :default => true,  :null => false
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"

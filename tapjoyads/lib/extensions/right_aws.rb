@@ -205,4 +205,32 @@ module RightAws
       end
     end
   end
+  
+  class SqsGen2Interface
+    def get_extra_queue_attributes(queue_url, attribute='All')
+      req_hash = generate_request('GetQueueAttributes', 'AttributeName' => attribute, 'Version' => '2009-02-01', :queue_url  => queue_url)
+      request_info(req_hash, SqsGetQueueAttributesParser.new(:logger => @logger))
+    rescue
+      on_exception
+    end
+    
+    def get_queue_length_not_visible(queue_url)
+      get_extra_queue_attributes(queue_url)['ApproximateNumberOfMessagesNotVisible'].to_i
+    rescue
+      on_exception
+    end
+  end
+  
+  class SqsGen2
+    class Queue
+      def get_extra_attribute(attribute='All')
+        attributes = @sqs.interface.get_extra_queue_attributes(@url, attribute)
+        attribute=='All' ? attributes : attributes[attribute]
+      end
+      
+      def size_not_visible
+        @sqs.interface.get_queue_length_not_visible(@url)
+      end
+    end
+  end
 end

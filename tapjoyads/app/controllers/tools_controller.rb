@@ -3,7 +3,7 @@ class ToolsController < WebsiteController
   
   filter_access_to :all
   
-  after_filter :save_activity_logs, :only => [ :create_payout, :create_transfer, :create_order, :update_user ]
+  after_filter :save_activity_logs, :only => [ :create_payout, :create_transfer, :create_order, :update_user, :create_generic_offer ]
   
   def index
   end
@@ -128,6 +128,10 @@ class ToolsController < WebsiteController
     end
   end
 
+  def sqs_lengths
+    @queues = Sqs.sqs.queues
+  end
+
   def disabled_popular_offers
     @offers_count_hash = Mc.distributed_get('tools.disabled_popular_offers') { {} }
     @offers = Offer.find(@offers_count_hash.keys, :include => [:partner, :item])
@@ -177,7 +181,7 @@ class ToolsController < WebsiteController
     click.save
 
     if Rails.env == 'production'
-      Downloader.get_with_retry "http://ws.tapjoyads.com/connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
+      Downloader.get_with_retry "#{API_URL}/connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
     end
 
     redirect_to :back
@@ -235,6 +239,26 @@ class ToolsController < WebsiteController
     else
       render :json => {:success => false}
     end
-
   end
+
+  def new_generic_offer
+    @generic_offer = GenericOffer.new
+  end
+
+  def create_generic_offer
+    generic_offer_params = sanitize_currency_params(params[:generic_offer], [ :price ])
+    @generic_offer = GenericOffer.new(generic_offer_params)
+    log_activity(@generic_offer)
+    if @generic_offer.save
+      unless params[:icon].blank?
+        b = S3.bucket(BucketNames::TAPJOY)
+        b.put("icons/#{@generic_offer.id}.png", params[:icon], {}, "public-read")
+      end
+      flash[:notice] = 'Successfully created Generic Offer'
+      redirect_to statz_path(@generic_offer.primary_offer)
+    else
+      render :action => :new_generic_offer
+    end
+  end
+
 end

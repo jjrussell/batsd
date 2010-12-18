@@ -46,6 +46,8 @@ Tapjoy.Graph = {
   },
 
   drawLargeGraph: function(obj, id) {
+    if ($('#' + id).length == 0) return;
+
     $('#' + id + '>h3').html(obj['name']);
     if ($('#' + id + '>.totals').length == 1) {
       $('#' + id + '>.totals').html(Tapjoy.Graph.getTotalsHtml(obj));

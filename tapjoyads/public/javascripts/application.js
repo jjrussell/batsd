@@ -15,7 +15,9 @@ function stringToNumber(currency, allowNegative) {
 
 $(function($){
   $('.flash').click(function(){
-    $(this).slideUp();
+    if ($(this).children('a, span a').length == 0) {
+      $(this).slideUp();
+    }
   });
 
   $('.help').click(function() {
@@ -27,6 +29,64 @@ $(function($){
 
   $('input.currency_field').change(function() {
     $(this).val(numberToCurrency(stringToNumber($(this).val(), $(this).hasClass('allow_negative'))));
+  });
+
+  $(document).click(function(e){
+    if (!$(e.target).is('#active_campaigns') &&
+      !$(e.target).parents().is('#active_campaigns_box')) {
+      $('#active_campaigns_box').hide();
+    }
+  });
+
+  $('a#active_campaigns').click(function() {
+    var link = $(this);
+    var box = $('#active_campaigns_box');
+    if (box.is(':hidden')) {
+      var top = link.attr('offsetTop') + link.height();
+      var left = link.attr('offsetLeft');
+      box.css({left: left, top: top});
+      box.show();
+    } else {
+      box.hide();
+    }
+  });
+
+  $('input.toggle_offer').change(function() {
+    var checkbox = $(this);
+    var form = checkbox.parent();
+    var url = form.attr('action');
+    form.attr('action', '');
+    var loadingImage = $("<img src='/images/load-circle.gif'>");
+
+    $.ajax({
+      data: { action : "toggle", user_enabled: false },
+      dataType: 'json',
+      beforeSend: function() {
+        checkbox.attr('disabled', 'disabled');
+        checkbox.hide();
+        checkbox.after(loadingImage);
+      },
+      complete: function(result) {
+        if (result.error) {
+          $('#flash_warning').text('Error - please try again');
+          $('#flash_warning').fadeIn();
+          checkbox.attr('disabled', '');
+          checkbox.attr('checked', true);
+          checkbox.show();
+          loadingImage.remove();
+        } else {
+          checkbox.parents('tr').remove();
+          var numOffers = $('input.toggle_offer').length;
+          $('#number_of_active_offers').text(numOffers);
+          if (numOffers == 0) {
+            $('#active_campaigns_box').remove();
+            $('#active_campaigns').addClass('inactive');
+          }
+        }
+      },
+      type: 'post',
+      url: url
+    });
   });
 });
 

@@ -14,8 +14,7 @@ module Simpledb
       end
       
       def find_by_id(id, options = {})
-        raise InvalidOptionsError.new("Cannot use any options when finding a SimpledbResource by id") unless options.blank?
-        result = self.new(:key => id)
+        result = self.new(options.merge({:key => id}))
         result.new_record? ? nil : result
       end
       

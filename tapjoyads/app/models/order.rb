@@ -18,11 +18,11 @@ class Order < ActiveRecord::Base
   validates_inclusion_of :payment_method, :in => PAYMENT_METHODS
   validates_numericality_of :amount, :only_integer => true, :allow_nil => false
   
-  after_create :update_balance #, :create_spend_discount
+  after_create :update_balance, :create_spend_discount
   
   named_scope :paid, :conditions => 'status = 1'
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at > ?", date ] } }
-  
+  named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
   named_scope :for_discount, lambda { paid.created_since(3.months.ago.to_date).scoped(:order => 'created_at DESC').scope(:find) }
   
   def <=> other
@@ -61,7 +61,7 @@ private
     sum = 0
     partner.orders.for_discount.each do |order|
       sum += order.amount
-      if sum >= 5000000
+      if sum >= 15000000
         OfferDiscount.create!(:partner => partner, :source => 'Spend', :amount => 15, :expires_on => order.created_at + 3.months)
         break
       end

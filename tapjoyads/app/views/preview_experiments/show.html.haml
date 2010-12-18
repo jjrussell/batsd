@@ -1,22 +1,41 @@
-%h1= "Offerwall Preview for Experiment #{params[:id]}"
+- @page_title = "Offer Ranks for " + (params[:id] == "featured" ? "Featured Offers" : "Experiment #{params[:id]}")
 
-= render 'select_experiment'
+%h1= @page_title
 
-%br
-Display: 
-= label_tag "App", "Apps"
-= check_box_tag "App", "", true
+- if params[:id] == "featured" && !@offers.empty?
+  - weight_scale = 1 - @offers.last.rank_score
+  - weights = @offers.collect { |offer| offer.rank_score + weight_scale }
+  - total_weight = weights.sum
 
-= label_tag "RatingOffer", "RatingOffers"
-= check_box_tag "RatingOffer", "", false
+- experiment_options = "<option value=\"featured\">Featured</option>" + options_for_select(@experiments.collect { |k, v| [ k.to_s.titleize + " (#{v})", v.to_s ] }, params[:id])
+- form_tag('', :id => 'experiments-form') do
+  %table
+    %tr
+      %td= label_tag 'experiments-list', 'Offers:'
+      %td= select_tag 'experiments-list', experiment_options
+    %tr
+      %td= label_tag 'devices-list', 'Device:'
+      %td= select_tag 'devices-list', options_for_select(["all"] + Offer::ALL_DEVICES, params[:device])
+    %tr
+      %td= label_tag 'offers', 'Offer Types:'
+      %td.offers_options
+        = check_box_tag "App", "", true
+        = label_tag "App", "Apps"
+        %br
+        = check_box_tag "RatingOffer", "", false
+        = label_tag "RatingOffer", "RatingOffers"
+        %br
+        = check_box_tag "GenericOffer", "", true
+        = label_tag "GenericOffer", "GenericOffers"
 
-= label_tag "GenericOffer", "GenericOffers"
-= check_box_tag "GenericOffer", "", true
 
 %table#offers.tablesorter
   %thead
     %tr
-      %th Avg Rank
+      - if params[:id] == "featured"
+        %th Display %
+      - else
+        %th Avg Rank
       %th Rank Score
       %th Name
       %th Show Rate
@@ -29,9 +48,12 @@ Display:
       %th Type
   %tbody#offers_tbody
     - rank = 1
-    - @offers.each do |offer|
+    - @offers.each_with_index do |offer, i|
       %tr{ "data-item_type" => offer.item_type }
-        %td= rank.floor.to_i.to_s
+        - if params[:id] == "featured"
+          %td= "#{(100.0 * weights[i] / total_weight).round(2)}%"
+        - else
+          %td= rank.floor.to_i.to_s
         %td= offer.rank_score
         %td= (permitted_to? :show, :statz) ? link_to(offer.name, statz_path(offer)) : offer.name
         %td= offer.show_rate
@@ -58,6 +80,10 @@ Display:
     function toggleOffers(item_type) {
       $('#offers_tbody tr[data-item_type="' + item_type + '"]').toggle()
     }
+    
+    function updateLocation() {
+      window.location = '#{preview_experiments_url}' + '/' + $('#experiments-list').val() + "?device=" + $('#devices-list').val();
+    }    
   
     $(function() {
 
@@ -85,4 +111,29 @@ Display:
       resetTable();
       
       $('#offers_tbody tr[data-item_type="RatingOffer"]').hide();
+      
+      $('#experiments-list').change(function() {
+        updateLocation();
+      });
+      
+      $('#devices-list').change(function() {
+        updateLocation();
+      });
     });
+    
+- content_for :page_styles do
+  :plain
+    form td {
+      vertical-align: top;
+      padding-bottom: 6px;
+      padding-right: 6px;
+    }
+    form select {
+      width: 150px;
+    }
+    label {
+      font-weight: bold;
+    }
+    td.offers_options label {
+      font-weight: normal;
+    }

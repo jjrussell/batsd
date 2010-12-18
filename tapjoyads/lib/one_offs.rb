@@ -130,6 +130,29 @@ class OneOffs
     
   end
   
+  def self.get_monthly_data_by_partner(partner_id, year, month)
+      
+    month_start = Time.utc(year, month, 01)
+    
+    total_revenue = 0
+    total_spend = 0
+    
+    puts "App, Revenue, Spend"
+    
+    Offer.find_all_by_partner_id(partner_id).each do |offer|
+      s = Appstats.new(offer.id, {:type => :sum, :start_time => month_start, :end_time => month_start.end_of_month})
+      revenue = s.stats['rewards_revenue'].first + s.stats['display_revenue'].first
+      spend = -s.stats['installs_spend'].first
+      total_revenue += revenue
+      total_spend += spend
+      puts "#{offer.name.gsub(',','_')}, $#{(revenue/100.0)}, $#{(spend/100.0)}" if revenue != 0 or spend != 0
+    end
+    
+    puts "Total, $#{(total_revenue/100.0)}, $#{(total_spend/100.0)}"
+    
+    
+  end
+  
   def self.get_monthly_actives(filename)
     file = File.open(filename, 'w')
     partners = {}
@@ -199,123 +222,6 @@ class OneOffs
     puts "new UDIDs (per app): #{app_new_udids}"
     puts "existing UDIDs (per app): #{app_existing_udids}"
   end
-  
-  def self.populate_partner_names
-    App.find_each(:conditions => "store_id is not null and store_id != ''") do |app|
-      puts ""
-      puts "Fetching data for app: #{app.name} (#{app.id}). Store id: #{app.store_id}"
-      begin
-        data = AppStore.fetch_app_by_id(app.store_id, app.platform)
-        raise "Data is nil" if data.nil?
-      rescue Exception => e
-        puts "Error fetching data from app store: #{e}."
-        print "Retry? [Y/n]"
-        answer = STDIN.gets
-        if answer =~ /^(n|no)$/i
-          next
-        else
-          app = app.reload
-          retry
-        end
-      end
-      
-      if app.partner.name.nil?
-        puts "Partner name was missing in our system. Now is: '#{data[:publisher]}'"
-        app.partner.name = data[:publisher]
-        app.partner.save!
-        puts "Partner name updated."
-      elsif app.partner.name == data[:publisher]
-        puts "Partner name is: '#{data[:publisher]}' in both our system and app store."
-        puts "No change made."
-      else
-        puts "Partner name is: '#{app.partner.name}' in our system, but '#{data[:publisher]}' on app store."
-        print "Update partner name from app store? [y/N] "
-        answer = STDIN.gets
-        if answer =~ /^(y|yes)$/i
-          app.partner.name = data[:publisher]
-          app.partner.save!
-          puts "Partner name updated."
-        else
-          puts "No change made."
-        end
-      end
-    end
-  end
-
-  def self.add_partners_to_chimp
-    partners = []
-    publishers = []
-
-    Partner.using_slave_db do
-      Partner.slave_connection.execute("BEGIN")
-      Partner.find_each(:include => ['users', 'offers']) do |partner|
-        partners << partner unless partner.non_managers.blank?
-      end
-      errors = MailChimp.add_partners(partners)
-    end
-  ensure
-    Partner.using_slave_db do
-      Partner.slave_connection.execute("COMMIT")
-    end
-  end
-
-  def self.update_partner_data_from_currencies
-    inconsistent_count = 0
-    file = File.open('inconsistent_currencies', 'w')
-    
-    Partner.find_each do |partner|
-      size = partner.currencies.size
-      print "#{partner.name} (#{partner.id}): #{size} currencies... "
-      
-      if size > 0
-        matches = true
-        installs_money_share_set = Set.new
-        disabled_partners_set = Set.new
-        
-        partner.currencies.each do |currency|
-          installs_money_share_set << currency.installs_money_share
-          disabled_partners_set << currency.get_disabled_partner_ids
-        end
-        
-        if installs_money_share_set.size == 1 && disabled_partners_set.size == 1
-          partner.installs_money_share = installs_money_share_set.first
-          partner.disabled_partners = disabled_partners_set.first.to_a.join(';')
-          partner.save!
-          puts 'Success.'
-        else
-          inconsistent_count += 1
-          puts "Fail. Inconsistent values. Details follow:"
-          file.puts("#{partner.name} (#{partner.id})")
-          partner.currencies.each do |currency|
-            puts "  #{currency.name} (#{currency.id})"
-            puts "    installs_money_share: #{currency.installs_money_share}"
-            puts "    disabled_partners: #{currency.disabled_partners}"
-            file.puts "  #{currency.name} (#{currency.id})"
-            file.puts "    installs_money_share: #{currency.installs_money_share}"
-            file.puts "    disabled_partners: #{currency.disabled_partners}"
-          end
-        end
-      else
-        puts ''
-      end
-    end
-    file.close
-    puts "Finished. #{inconsistent_count} partners with inconsistent currencies."
-  end
-  
-  def self.set_initial_offer_discounts
-    Partner.find_each do |partner|
-      order = partner.orders.scoped(:order => 'created_at DESC', :conditions => [ 'created_at >= ?', 3.months.ago ]).first
-      order.send :create_spend_discount if order
-    end
-  end
-  
-  def self.set_initial_bids
-    Offer.find_each do |offer|
-      offer.bid = offer.payment
-      offer.save_without_validation
-    end
-  end
 
   def self.reset_memcached
     save_memcached_state
@@ -373,15 +279,6 @@ class OneOffs
     Offer.cache_featured_offers
     Offer.cache_enabled_offers
     true
-  end
-
-  def self.migrate_ratings_to_use_reward_value
-    Offer.find_each(:conditions => "item_type = 'RatingOffer'") do |offer|
-      offer.reward_value = offer.bid
-      offer.bid = 0
-      offer.payment = 0
-      offer.save!
-    end
   end
 
 end

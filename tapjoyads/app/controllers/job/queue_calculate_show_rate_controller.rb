@@ -20,6 +20,9 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     
     recent_clicks = appstats.stats['paid_clicks'].sum.to_f
     recent_installs = appstats.stats['paid_installs'].sum.to_f
+    if appstats.stats['jailbroken_installs'].present?
+      recent_installs += appstats.stats['jailbroken_installs'].sum.to_f
+    end
     
     if recent_clicks == 0
       conversion_rate = offer.is_paid? ? 0.3 : 0.75
@@ -49,10 +52,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     
     possible_installs_per_second = possible_clicks_per_second * conversion_rate * old_show_rate
     potential_spend = (possible_installs_per_second * 12.hours) * offer.payment
-    if potential_spend > offer.partner.balance && (offer.last_balance_alert_time || Time.zone.at(0)) + 24.hours < now
-      offer.last_balance_alert_time = now
-      TapjoyMailer.deliver_balance_alert(offer, potential_spend)
-    end
+    offer.low_balance = (potential_spend > offer.partner.balance)
     
     # Assume all apps are CST for now.
     end_of_cst_day = Time.parse('00:00 CST', now + 18.hours).utc

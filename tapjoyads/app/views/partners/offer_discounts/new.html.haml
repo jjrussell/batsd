@@ -1,10 +1,10 @@
 - @page_title = 'Create Offer Discount'
 
-%h1 Create Offer Discount
+%h1= "#{link_to(@partner.name, @partner)} :: Create Offer Discount"
 
 .metadata
   Current Offer Discount:
-  = number_to_currency(@partner.premier_discount * 0.01)
+  = "#{@partner.premier_discount}%"
 
 - form_for [ @partner, @offer_discount ], :html => { :class => 'tjform' } do |f|
   %table

@@ -11,6 +11,8 @@ class App < ActiveRecord::Base
   has_many :currencies
   has_one :primary_currency, :class_name => 'Currency', :conditions => 'id = app_id'
   has_one :rating_offer
+  has_many :featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured = true"
+  has_one :primary_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured = true", :order => "created_at"
   
   belongs_to :partner
   
@@ -59,7 +61,7 @@ class App < ActiveRecord::Base
   
   def final_store_url
     if is_android?
-      "http://www.cyrket.com/p/android/#{store_id}"
+      "http://www.appbrain.com/app/#{store_id}"
     else
       "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
     end
@@ -83,7 +85,7 @@ class App < ActiveRecord::Base
       data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
     end
     self.name = data[:title]
-    self.price = (data[:price] * 100).round
+    self.price = (data[:price].to_f * 100).round
     self.description = data[:description]
     self.age_rating = data[:age_rating]
     download_icon(data[:icon_url], data[:large_icon_url])
@@ -124,27 +126,26 @@ class App < ActiveRecord::Base
     end
   end
 
-  def get_icon_url(protocol='http://')
+  def get_icon_url(protocol='https://')
     "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/#{id}.png"
   end
 
-  def get_cloudfront_icon_url(protocol='http://')
-    "#{protocol}content.tapjoy.com/icons/#{id}.png"
+  def get_cloudfront_icon_url
+    "#{CLOUDFRONT_URL}/icons/#{id}.png"
   end
 
   def get_offer_list(udid, options = {})
-    currency = options.delete(:currency)
+    device = options.delete(:device) { Device.new(:key => udid) }
+    currency = options.delete(:currency) { Currency.find_in_cache(id) }
     device_type = options.delete(:device_type)
     geoip_data = options.delete(:geoip_data) { {} }
     type = options.delete(:type) { Offer::DEFAULT_OFFER_TYPE }
     required_length = options.delete(:required_length) { 999 }
     app_version = options.delete(:app_version)
     reject_rating_offer = options.delete(:reject_rating_offer) { false }
+    direct_pay_providers = options.delete(:direct_pay_providers) { [] }
     exp = options.delete(:exp)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
-    device = Device.new(:key => udid)
-    currency = Currency.find_in_cache(id) unless currency
     
     if type == Offer::CLASSIC_OFFER_TYPE
       offer_list = []
@@ -157,7 +158,7 @@ class App < ActiveRecord::Base
     final_offer_list = []
     num_rejected = 0
     offer_list.each do |o|
-      if o.should_reject?(self, device, currency, device_type, geoip_data, app_version, reject_rating_offer)
+      if o.should_reject?(self, device, currency, device_type, geoip_data, app_version, reject_rating_offer, direct_pay_providers)
         num_rejected += 1
       else
         final_offer_list << o

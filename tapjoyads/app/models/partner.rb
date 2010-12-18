@@ -20,7 +20,7 @@ class Partner < ActiveRecord::Base
   
   validates_numericality_of :balance, :pending_earnings, :next_payout_amount, :only_integer => true, :allow_nil => false
   validates_numericality_of :premier_discount, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => false
-  validates_numericality_of :installs_money_share, :transfer_bonus, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
+  validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_inclusion_of :exclusivity_level_type, :in => ExclusivityLevel::TYPES, :allow_nil => true, :allow_blank => false
   validate :exclusivity_level_legal
   validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
@@ -51,6 +51,16 @@ class Partner < ActiveRecord::Base
   named_scope :search, lambda { |name_or_email| { :joins => :users,
       :conditions => [ "partners.name LIKE ? OR users.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
     }
+  named_scope :premier, lambda { { :joins => :offer_discounts, :conditions => [ "offer_discounts.expires_on > ? ", Time.zone.today ], :group => "partners.id" } }
+    
+  def applied_offer_discounts
+    offer_discounts.select { |discount| discount.active? && discount.amount == premier_discount }
+  end
+  
+  def discount_expires_on
+    active_offer_discount = applied_offer_discounts.max { |a,b| a.expires_on <=> b.expires_on }
+    active_offer_discount ? active_offer_discount.expires_on : nil
+  end
 
   def self.calculate_next_payout_amount(partner_id)
     Partner.using_slave_db do
@@ -83,6 +93,10 @@ class Partner < ActiveRecord::Base
     Partner.using_slave_db do
       Partner.slave_connection.execute("COMMIT")
     end
+  end
+
+  def is_premier?
+    offer_discounts.active.present?
   end
 
   def account_managers=(managers=[])
@@ -198,7 +212,7 @@ private
   end
   
   def update_currencies
-    if installs_money_share_changed? || disabled_partners_changed?
+    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed?
       currencies.each do |c|
         c.set_values_from_partner
         c.save!
