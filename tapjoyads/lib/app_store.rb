@@ -56,9 +56,10 @@ private
   end
 
   def self.search_android_marketplace(term, cyrket_icon=true)
-    response = request(ANDROID_SEARCH_URL + CGI::escape(term.gsub(/\s/, '+').downcase))
+    response = request(ANDROID_SEARCH_URL + CGI::escape(term.strip.gsub(/\s/, '+').downcase))
     if response.status == 200
       items = JSON.load(response.body)
+      return [] if items["entriesCount"].to_i == 0
       return items['app'].map do |hash|
         if cyrket_icon
           icon_url = CYRKET_ICON_URL + hash['packageName'] + '/icon'
