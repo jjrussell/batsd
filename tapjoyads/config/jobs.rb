@@ -23,7 +23,7 @@ JobRunner::Gateway.define do |s|
     # jobs with high impact on overall system performance
     s.add_job 'master_calculate_next_payout', :daily => 4.hours
     s.add_job 'master_grab_advertiser_udids', :daily => 7.hours
-    # s.add_job 'master_update_monthly_account', :daily => 8.hours
+    s.add_job 'master_update_monthly_account', :daily => 8.hours
     s.add_job 'master_verifications', :daily => 5.hours
     
     # jobs with moderate impact on overall system performance
