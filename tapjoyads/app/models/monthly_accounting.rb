@@ -8,6 +8,17 @@ class MonthlyAccounting < ActiveRecord::Base
   validates_numericality_of :year, :only_integer => true, :allow_nil => false, :greater_than => 2007
   validates_uniqueness_of :partner_id, :scope => [ :month, :year ]
 
+  def self.expected_count
+    now = Time.zone.now
+    start = Time.zone.parse('2009-01-01')
+    total = 0
+    while start < now do
+      total += Partner.count(:conditions => ["created_at < ?", start])
+      start = start.next_month
+    end
+    total
+  end
+
   def calculate_totals!
     last_month = partner.monthly_accountings.find_by_month_and_year((start_time - 1).month, (start_time - 1).year)
     if last_month.present?
