@@ -27,9 +27,9 @@ class OfferCompletedController < ApplicationController
   
   def paypal
     @source = 'paypal'
-    @adjusted_payment = (params[:transaction]['0']['.amount'].to_s.gsub('USD ', '').to_f * 100).to_i
-    params[:click_key] = params[:memo]
-    if params[:status] == 'COMPLETED' && params[:transaction]['0']['.receiver'] == 'paypal@tapjoy.com'
+    @adjusted_payment = ((params[:payment_gross].to_f - params[:payment_fee].to_f) * 100).to_i
+    params[:click_key] = params[:custom]
+    if params[:payment_status] == 'Completed' && params[:receiver_email] == 'paypal@tapjoy.com'
       complete_conversion
     else
       @error_message = "unexpected paypal callback"
