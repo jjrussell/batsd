@@ -134,7 +134,7 @@
       };
 
       var setEstimatedBudget = function() {
-        var bid = stringToNumber($('#offer_bid').val());
+        var bid = stringToNumber($('#offer_payment').val());
         var installLimit = stringToNumber($('#offer_daily_budget').val());
         budget = 'Unlimited';
         if (installLimit >= 0) {
