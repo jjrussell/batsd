@@ -37,10 +37,10 @@ module AuthenticationHelper
     end
   end
   
-  def streetview_authenticate
+  def pocketgems_authenticate
     authenticate_or_request_with_http_digest do |username|
-      if username == 'streetview'
-        password = '*streetviewlabsisawesome!'
+      if username == 'pocketgems'
+        password = 'saP3UkA8adRa'
       end
       password
     end
@@ -131,6 +131,15 @@ module AuthenticationHelper
     authenticate_or_request_with_http_digest do |username|
       if username == 'adways'
         password = 'ed37P7YL2Nqs'
+      end
+      password
+    end
+  end
+  
+  def brooklyn_packet_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'brooklyn_packet'
+        password = 'hU2AzeTayUsu'
       end
       password
     end
