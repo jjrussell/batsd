@@ -27,7 +27,8 @@ config.action_controller.allow_forgery_protection    = false
 # config.action_mailer.raise_delivery_errors = false
 
 MEMCACHE_SERVERS = [ '10.241.110.160', '10.241.57.219', '10.241.58.96',   '10.240.43.96',   '10.241.51.79',   # east-1b
-                     '10.196.55.240',  '10.202.69.124', '10.195.165.124', '10.202.221.219', '10.194.22.4'   ] # east-1d
+                     '10.196.55.240',  '10.202.69.124', '10.195.165.124', '10.202.221.219', '10.194.22.4',    # east-1d
+                     '10.252.103.64', '10.252.102.239', '10.127.127.78', '10.252.98.191', '10.122.210.10', '10.127.111.80', '10.220.21.71', '10.127.155.126', '10.122.246.9', '10.252.78.96' ] # east-1c
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
