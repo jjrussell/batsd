@@ -27,7 +27,7 @@ class OfferCompletedController < ApplicationController
   
   def paypal
     paypal_verifier_url = "https://www.paypal.com/cgi-bin/webscr"
-    paypal_verifier_data = "cmd=_notify-validate#{request.raw_post}"
+    paypal_verifier_data = "cmd=_notify-validate&#{request.raw_post}"
     paypal_response = Downloader.post(paypal_verifier_url, paypal_verifier_data, :timeout => 30)
     
     @source = 'paypal'
