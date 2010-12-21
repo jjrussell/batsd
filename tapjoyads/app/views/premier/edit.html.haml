@@ -40,9 +40,9 @@
         = check_box_tag 'agree'
         %b
           - if @is_new
-            I agree to the Terms and Conditions above.
+            = label_tag :agree, "I agree to the Terms and Conditions above."
           - else
-            I agree to the #{link_to("Terms and Conditions", "javascript:showTerms()")}.
+            = label_tag :agree, "I agree to the #{link_to("Terms and Conditions", "javascript:showTerms()")}."
     %tr
       %td.right
         %b= f.label :exclusivity_level, 'Exclusivity&nbsp;Length'
