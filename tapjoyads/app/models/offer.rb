@@ -143,6 +143,8 @@ class Offer < ActiveRecord::Base
       offer.normalize_stats(stats)
     end
     
+    offer_list = offer_list[0..150]
+    
     bucket = S3.bucket(BucketNames::OFFER_DATA)
     bucket.put("offer_rank_statistics", Marshal.dump(stats))
     Mc.put("s3.offer_rank_statistics", stats)
