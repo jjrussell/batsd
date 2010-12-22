@@ -2,6 +2,7 @@
 
 server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
 if server_type == 'memcached'
+  `cp /home/webuser/tapjoyserver/server/memcached.conf /etc/`
   `/etc/init.d/memcached start`
 else
   # setup log directories
@@ -40,6 +41,7 @@ else
 
   # start memcached and mysql on testservers
   if server_type == 'test'
+    `cp /home/webuser/tapjoyserver/server/memcached.conf /etc/`
     `/etc/init.d/memcached start`
     `start mysql`
   end
