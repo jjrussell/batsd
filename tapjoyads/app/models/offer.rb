@@ -143,8 +143,6 @@ class Offer < ActiveRecord::Base
       offer.normalize_stats(stats)
     end
     
-    offer_list = offer_list[0..150]
-    
     bucket = S3.bucket(BucketNames::OFFER_DATA)
     bucket.put("offer_rank_statistics", Marshal.dump(stats))
     Mc.put("s3.offer_rank_statistics", stats)
@@ -160,6 +158,8 @@ class Offer < ActiveRecord::Base
     offers_to_cache.sort! do |o1, o2|
       o2.rank_score <=> o1.rank_score
     end
+    
+    offers_to_cache = offers_to_cache[0..250]
     
     marshalled_offer_list = Marshal.dump(offers_to_cache)
     bucket = S3.bucket(BucketNames::OFFER_DATA)
