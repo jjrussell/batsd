@@ -29,6 +29,7 @@ else
 
   # start apache
   `cp /home/webuser/tapjoyserver/server/apache2.conf /etc/apache2/`
+  `cp /home/webuser/tapjoyserver/server/passenger.conf /etc/apache2/mods-available/`
   `/etc/init.d/apache2 start`
 
   # boot the app
