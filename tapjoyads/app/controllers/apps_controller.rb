@@ -121,7 +121,6 @@ class AppsController < WebsiteController
 private
   def grab_partner_apps
     session[:last_shown_app] ||= current_partner_apps.first.id unless current_partner_apps.empty?
-    flash[:error] = "We are experiencing intermittent service interruptions due to server issues, so you may notice slow response times using our web site and issues with reporting.<br/><br/>We are doing everything in our ability to resolve the issues ASAP, and should be back to 100% shortly. We apologize for the inconvenience."
   end
 
   def find_app
