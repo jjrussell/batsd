@@ -123,7 +123,6 @@ class Offer < ActiveRecord::Base
   
   def self.cache_enabled_offers
     offer_list          = Offer.enabled_offers.nonfeatured
-    offer_list          = offer_list[0, 200]
     conversion_rates    = offer_list.collect(&:conversion_rate)
     prices              = offer_list.collect(&:price)
     avg_revenues        = offer_list.collect(&:avg_revenue)
