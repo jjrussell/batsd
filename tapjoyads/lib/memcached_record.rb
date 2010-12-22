@@ -9,9 +9,9 @@ module MemcachedRecord
 
       def model.find_in_cache(id, do_lookup = true)
         if do_lookup
-          Mc.get_and_put("mysql.#{class_name.underscore}.#{id}") { find(id) }
+          Mc.distributed_get_and_put("mysql.#{class_name.underscore}.#{id}") { find(id) }
         else
-          Mc.get("mysql.#{class_name.underscore}.#{id}")
+          Mc.distributed_get("mysql.#{class_name.underscore}.#{id}")
         end
       end
     end
@@ -20,11 +20,11 @@ module MemcachedRecord
 private
 
   def update_memcached
-    Mc.put("mysql.#{self.class.class_name.underscore}.#{id}", self)
+    Mc.distributed_put("mysql.#{self.class.class_name.underscore}.#{id}", self)
   end
 
   def clear_memcached
-    Mc.delete("mysql.#{self.class.class_name.underscore}.#{id}")
+    Mc.distributed_delete("mysql.#{self.class.class_name.underscore}.#{id}")
   end
 
 end

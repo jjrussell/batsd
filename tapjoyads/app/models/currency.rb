@@ -27,9 +27,9 @@ class Currency < ActiveRecord::Base
   
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = true)
     if do_lookup
-      Mc.get_and_put("mysql.app_currencies.#{app_id}") { find_all_by_app_id(app_id, :order => 'ordinal ASC') }
+      Mc.distributed_get_and_put("mysql.app_currencies.#{app_id}") { find_all_by_app_id(app_id, :order => 'ordinal ASC') }
     else
-      Mc.get("mysql.app_currencies.#{app_id}")
+      Mc.distributed_get("mysql.app_currencies.#{app_id}")
     end
   end
   
@@ -132,19 +132,19 @@ class Currency < ActiveRecord::Base
 private
   
   def update_memcached_by_app_id
-    Mc.put("mysql.app_currencies.#{app_id}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'))
+    Mc.distributed_put("mysql.app_currencies.#{app_id}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'))
     
     if app_id_changed?
-      Mc.delete("mysql.app_currencies.#{app_id_was}")
+      Mc.distributed_delete("mysql.app_currencies.#{app_id_was}")
     end
   end
   
   def clear_memcached_by_app_id
-    Mc.delete("mysql.app_currencies.#{app_id}")
+    Mc.distributed_delete("mysql.app_currencies.#{app_id}")
   end
   
   def get_spend_share_ratio
-    Mc.get_and_put('currency.spend_share_ratio') do 
+    Mc.distributed_get_and_put('currency.spend_share_ratio') do 
       orders = Order.created_since(1.month.ago.to_date)
       
       sum_all_orders = orders.collect(&:amount).sum
