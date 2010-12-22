@@ -128,6 +128,11 @@ class WebRequest < SimpledbResource
     
     get('path', {:force_array => true}).each do |path|
       stat_name = PATH_TO_STAT_MAP[path]
+      
+      # TODO: Remove this once we get memcached working.
+      # Skip all realtime stats for user counts.
+      next if ['logins', 'daily_active_users', 'monthly_active_users'].include?(stat_name)
+      
       if stat_name.present?
         app_id = get('app_id')
         if USE_OFFER_ID.include?(path)

@@ -28,7 +28,8 @@ class ConnectController < ApplicationController
     
     device.save
     
-    @app = App.find_in_cache(params[:app_id], false)
+    # TODO: Add this line back, once we figure out memcahced issues.
+    #@app = App.find_in_cache(params[:app_id], false)
     
     web_request.save
   
