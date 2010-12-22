@@ -17,7 +17,7 @@ class ReportingController < WebsiteController
   end
 
   def show
-    flash[:error] = "We are experiencing intermittent service interruptions, so you may notice slow response times using our web site, and issues with reporting. Your campaigns are live and running. We are doing everything in our ability to resolve the issues ASAP, and should be back to 100% shortly."
+    flash[:error] = "We are experiencing intermittent service interruptions due to server issues, so you may notice slow response times using our web site and issues with reporting.<br/><br/>We are doing everything in our ability to resolve the issues ASAP, and should be back to 100% shortly. We apologize for the inconvenience."
     session[:last_shown_app] = @offer.item_id if @offer.item_type == 'App'
 
     if @granularity == :daily
