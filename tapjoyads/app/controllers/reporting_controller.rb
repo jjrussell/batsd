@@ -17,7 +17,6 @@ class ReportingController < WebsiteController
   end
 
   def show
-    flash[:error] = 'Due to high demand, reporting data is currently delayed. Rest assured that your campaign is still active and users can still earn currency.'
     session[:last_shown_app] = @offer.item_id if @offer.item_type == 'App'
 
     if @granularity == :daily
