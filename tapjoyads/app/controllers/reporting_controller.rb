@@ -17,6 +17,7 @@ class ReportingController < WebsiteController
   end
 
   def show
+    flash[:error] = 'We are currently experiencing server problems. Please note that reporting data is currently delayed.'
     session[:last_shown_app] = @offer.item_id if @offer.item_type == 'App'
 
     if @granularity == :daily
