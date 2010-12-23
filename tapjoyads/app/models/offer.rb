@@ -99,7 +99,7 @@ class Offer < ActiveRecord::Base
     group = 0
     bucket = S3.bucket(BucketNames::OFFER_DATA)
     
-    while true do    
+    loop do
       additional_offers = Mc.distributed_get_and_put("s3.enabled_offers.control.#{group}") do
         Marshal.restore(bucket.get("enabled_offers.control.#{group}")) rescue []
       end
@@ -176,7 +176,7 @@ class Offer < ActiveRecord::Base
       offers.compact!
       marshalled_offer_list = Marshal.dump(offers)
       bucket.put("enabled_offers.#{cache_key_suffix}.#{group}", marshalled_offer_list)
-      offers_for_mc[group] = offers
+      offers_for_mc << offers
       group += 1
     end
     offers_for_mc.each_with_index do |current_offers, i|
