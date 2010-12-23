@@ -226,35 +226,49 @@ class OneOffs
   def self.grab_groupon_udids
     date = Time.zone.parse('2010-09-15').to_date
     end_date = Time.zone.now.to_date
-    bucket = S3.bucket(BucketNames::WEB_REQUESTS)
-    outfile = open('groupon_udids.txt', 'w')
+    
+    threads = []
     
     while date < end_date
-      puts date
-      MAX_WEB_REQUEST_DOMAINS.times do |num|
-        s3_name = "web-request-#{date.to_s}-#{num}.sdb"
-        next unless bucket.key(s3_name).exists?
-        puts "Found #{s3_name}"
-        
-        gzip_file = open('domain.gz')
-        S3.s3.interface.get(bucket.full_name, s3_name) do |chunk|
-          gzip_file.write(chunk)
-        end
-        gzip_file.close
-        `gunzip -f domain.gz`
-        
-        domain = open('domain')
-        domain.each do |line|
-          wr = WebRequest.deserialize(line)
-          if wr.app_id == '192e6d0b-cc2f-44c2-957c-9481e3c223a0' && wr.path.include?('new_user')
-            outfile.write(wr.udid)
-            outfile.write("\n")
-          end
-        end
-        domain.close
-        `rm domain`
+      puts "Spawning new thread for #{date}"
+      threads << Thread.new do
+        self.grab_groupon_udids_for_date(date)
       end
+      
+      if threads.size >= 20
+        threads.first.join
+        threads.shift
+      end
+      
       date += 1.day
+    end
+  end
+
+  def self.grab_groupon_udids_for_date(date)
+    bucket = S3.bucket(BucketNames::WEB_REQUESTS)
+    outfile = open("groupon_udids_#{date.to_s}.txt", 'w')
+    MAX_WEB_REQUEST_DOMAINS.times do |num|
+      s3_name = "web-request-#{date.to_s}-#{num}.sdb"
+      next unless bucket.key(s3_name).exists?
+      puts "Found #{s3_name}"
+      
+      gzip_file = open("#{s3_name}.gz", 'w')
+      S3.s3.interface.get(bucket.full_name, s3_name) do |chunk|
+        gzip_file.write(chunk)
+      end
+      gzip_file.close
+      `gunzip -f #{s3_name}.gz`
+      
+      domain = open(s3_name)
+      domain.each do |line|
+        wr = WebRequest.deserialize(line)
+        if wr.app_id == '192e6d0b-cc2f-44c2-957c-9481e3c223a0' && wr.path.include?('new_user')
+          outfile.write(wr.udid)
+          outfile.write("\n")
+        end
+      end
+      domain.close
+      `rm #{s3_name}`
     end
     
     outfile.close
