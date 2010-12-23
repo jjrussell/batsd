@@ -14,6 +14,7 @@ class Offer < ActiveRecord::Base
   CLASSIC_OFFER_TYPE  = '0'
   DEFAULT_OFFER_TYPE  = '1'
   FEATURED_OFFER_TYPE = '2'
+  GROUP_SIZE = 300
   
   CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
@@ -94,10 +95,20 @@ class Offer < ActiveRecord::Base
   named_scope :to_aggregate_stats, lambda { { :conditions => ["next_stats_aggregation_time < ?", Time.zone.now], :order => "next_stats_aggregation_time ASC" } }
   
   def self.get_enabled_offers(exp = nil)
-    Mc.distributed_get_and_put('s3.enabled_offers.control') do
-      bucket = S3.bucket(BucketNames::OFFER_DATA)
-      Marshal.restore(bucket.get('enabled_offers.control'))
+    offers = []
+    group = 0
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
+    
+    while true do    
+      additional_offers = Mc.distributed_get_and_put("s3.enabled_offers.control.#{group}") do
+        Marshal.restore(bucket.get("enabled_offers.control.#{group}")) rescue []
+      end
+    
+      offers += additional_offers
+      group += 1
+      break unless additional_offers.length == GROUP_SIZE
     end
+    offers
   end
   
   def self.get_stats_for_ranks
@@ -158,13 +169,19 @@ class Offer < ActiveRecord::Base
     offers_to_cache.sort! do |o1, o2|
       o2.rank_score <=> o1.rank_score
     end
-    
-    offers_to_cache = offers_to_cache[0..250]
-    
-    marshalled_offer_list = Marshal.dump(offers_to_cache)
+    offers_for_mc = []
+    group = 0
     bucket = S3.bucket(BucketNames::OFFER_DATA)
-    bucket.put("enabled_offers.#{cache_key_suffix}", marshalled_offer_list)
-    Mc.distributed_put("s3.enabled_offers.#{cache_key_suffix}", offers_to_cache)
+    offers_to_cache.in_groups_of(GROUP_SIZE) do |offers|
+      offers.compact!
+      marshalled_offer_list = Marshal.dump(offers)
+      bucket.put("enabled_offers.#{cache_key_suffix}.#{group}", marshalled_offer_list)
+      offers_for_mc[group] = offers
+      group += 1
+    end
+    offers_for_mc.each_with_index do |current_offers, i|
+      Mc.distributed_put("s3.enabled_offers.#{cache_key_suffix}.#{i}", current_offers)
+    end
   end
   
   def self.cache_featured_offers
