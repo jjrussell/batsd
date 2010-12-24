@@ -3,6 +3,7 @@ class Apps::FeaturedOffersController < WebsiteController
   current_tab :apps
   before_filter :setup
   filter_access_to :all
+  after_filter :save_activity_logs, :only => [ :update ]
   
   def new
     redirect_to edit_app_featured_offer_path(@app, @app.primary_featured_offer) if @app.primary_featured_offer
