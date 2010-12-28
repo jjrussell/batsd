@@ -36,9 +36,9 @@ else
   `su webuser -c 'curl -s http://localhost:9898/healthz'`
 
   # install cronjob on webservers
-  # if server_type == 'web'
-  #   `echo "* * * * * /home/webuser/tapjoyserver/server/ensure_apache_running.rb" | crontab -u ubuntu -`
-  # end
+  if server_type == 'web'
+    `echo "* * * * * /home/webuser/tapjoyserver/server/ensure_apache_running.rb" | crontab -u ubuntu -`
+  end
 
   # start memcached and mysql on testservers
   if server_type == 'test'
