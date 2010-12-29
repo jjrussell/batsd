@@ -183,6 +183,11 @@ class SimpledbResource
     end
     raise e
   rescue Exception => e
+    if e.is_a?(RightAws::AwsError)
+      Mc.increment_count("failed_sdb_saves.sdb.#{@this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}", false, 1.day)
+    else
+      Mc.increment_count("failed_sdb_saves.mc.#{@this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}", false, 1.day)
+    end
     unless catch_exceptions
       if save_to_memcache
         Mc.delete(get_memcache_key) rescue nil
@@ -196,11 +201,6 @@ class SimpledbResource
     message = { :uuid => uuid, :options => options_copy }.to_json
     Sqs.send_message(QueueNames::FAILED_SDB_SAVES, message)
     Rails.logger.info "Successfully added to sqs. Message: #{message}"
-    if e.is_a?(RightAws::AwsError)
-      Mc.increment_count("failed_sdb_saves.sdb.#{@this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}", false, 1.day)
-    else
-      Mc.increment_count("failed_sdb_saves.mc.#{@this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}", false, 1.day)
-    end
   ensure
     Rails.logger.flush
   end
