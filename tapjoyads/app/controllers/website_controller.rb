@@ -22,7 +22,7 @@ class WebsiteController < ApplicationController
   end
 
   def current_partner_offers
-    @current_partner_offers ||= current_partner.offers.visible.sort_by{|app| app.name.downcase}
+    @current_partner_offers ||= current_partner.offers.visible.sort_by{|offer| offer.name_with_suffix.downcase}
   end
 
   def current_partner_app_offers
