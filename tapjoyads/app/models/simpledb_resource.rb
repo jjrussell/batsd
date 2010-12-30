@@ -614,6 +614,7 @@ class SimpledbResource
 protected
   
   def write_to_sdb(expected_attr = {})
+    sdb_interface = RightAws::SdbInterface.new(nil, nil, {:multi_thread => true, :port => 80, :protocol => 'http'})
     attributes_to_put = @attributes_to_add.merge(@attributes_to_replace)
     attributes_to_delete = @attributes_to_delete.clone
     @attribute_names_to_delete.each do |attr_name_to_delete|
@@ -622,15 +623,15 @@ protected
     
     begin
       unless attributes_to_put.empty?
-        @@sdb.put_attributes(@this_domain_name, @key, attributes_to_put, @attributes_to_replace.keys, expected_attr)
+        sdb_interface.put_attributes(@this_domain_name, @key, attributes_to_put, @attributes_to_replace.keys, expected_attr)
       end
       unless attributes_to_delete.empty?
-        @@sdb.delete_attributes(@this_domain_name, @key, attributes_to_delete, expected_attr)
+        sdb_interface.delete_attributes(@this_domain_name, @key, attributes_to_delete, expected_attr)
       end
     rescue RightAws::AwsError => e
       if e.message.starts_with?("NoSuchDomain") && Rails.env != 'production'
         Rails.logger.info_with_time("Creating new domain: #{@this_domain_name}") do
-          @@sdb.create_domain(@this_domain_name)
+          sdb_interface.create_domain(@this_domain_name)
         end
         retry
       elsif e.message.starts_with?("ConditionalCheckFailed") || e.message.starts_with?("AttributeDoesNotExist")
