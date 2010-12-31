@@ -449,10 +449,6 @@ class Offer < ActiveRecord::Base
         direct_pay_reject?(direct_pay_providers)
   end
 
-  def jailbroken_reject?(device)
-    is_paid? && device.is_jailbroken
-  end
-
   def update_payment(force_update = false)
     if (force_update || bid_changed?)
       if (item_type == 'App')
@@ -639,6 +635,10 @@ private
   def minimum_featured_bid_reject?(currency)
     return false unless (featured? && currency.minimum_featured_bid)
     bid < currency.minimum_featured_bid
+  end
+  
+  def jailbroken_reject?(device)
+    is_paid? && device.is_jailbroken?
   end
   
   def direct_pay_reject?(direct_pay_providers)
