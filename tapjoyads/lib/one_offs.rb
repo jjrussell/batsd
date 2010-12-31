@@ -224,21 +224,12 @@ class OneOffs
   end
 
   def self.grab_groupon_udids
-    date = Time.zone.parse('2010-09-15').to_date
+    date = Time.zone.parse('2010-10-04').to_date
     end_date = Time.zone.now.to_date
     
-    threads = []
-    
     while date < end_date
-      puts "Spawning new thread for #{date}"
-      threads << Thread.new do
-        self.grab_groupon_udids_for_date(date)
-      end
-      
-      if threads.size >= 20
-        threads.first.join
-        threads.shift
-      end
+      puts "Running #{date}"
+      self.grab_groupon_udids_for_date(date)
       
       date += 1.day
     end

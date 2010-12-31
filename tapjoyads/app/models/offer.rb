@@ -445,9 +445,14 @@ class Offer < ActiveRecord::Base
         whitelist_reject?(publisher_app) ||
         gamevil_reject?(publisher_app) ||
         minimum_featured_bid_reject?(currency) ||
+        jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers)
   end
-  
+
+  def jailbroken_reject?(device)
+    is_paid? && device.is_jailbroken
+  end
+
   def update_payment(force_update = false)
     if (force_update || bid_changed?)
       if (item_type == 'App')

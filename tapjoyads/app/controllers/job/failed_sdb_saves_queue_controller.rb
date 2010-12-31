@@ -31,6 +31,13 @@ private
     
     params[:domain_name] = sdb_item.this_domain_name
     
+    # Randomly choose a new web-request domain, if the failed write is a web-request.
+    if (sdb_item.this_domain_name =~ /^web-request/)
+      date = sdb_item.this_domain_name.scan(/^web-request-(\d{4}-\d{2}-\d{2})/)[0][0]
+      num = rand(MAX_WEB_REQUEST_DOMAINS)
+      sdb_item.this_domain_name = "web-request-#{date}-#{num}"
+    end
+    
     sdb_item.serial_save(@options.merge({ :catch_exceptions => false }))
     
     @bucket.move_key(@incomplete_path, @complete_path)
