@@ -4,11 +4,11 @@
   %p We noticed that your following campaign(s) are not receiving the maximum traffic available from our network:
   %p
     - @offers_not_meeting_budget.each do |o|
-      %b><= "#{o.name}"
+      %b><= "#{o.name_with_suffix}"
       = ": Daily budget of #{o.daily_budget} will not be met"
       %br
     - @offers_needing_higher_bids.each do |o|
-      %b><= "#{o.name}"
+      %b><= "#{o.name_with_suffix}"
       = ": Unlimited budget - Not showing on the first page of the Tapjoy wall"
       %br
   %p 
