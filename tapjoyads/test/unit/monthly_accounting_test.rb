@@ -39,7 +39,7 @@ class MonthlyAccountingTest < ActiveSupport::TestCase
     end
 
     should "be ordered by dates" do
-      ma_from_last_month = Factory(:monthly_accounting, :month => 1.month.ago(@today).month)
+      ma_from_last_month = Factory(:monthly_accounting, :month => 1.month.ago(@today).month, :year => 1.year.ago(@today).year)
 
       assert_equal -1, ma_from_last_month <=> @monthly_accounting
       assert_equal  0, @monthly_accounting <=> @monthly_accounting
