@@ -160,18 +160,31 @@ class WebRequest < SimpledbResource
   def self.count(options = {})
     date_string = options.delete(:date) { Time.zone.now.to_date.to_s(:db) }
     where =       options.delete(:where)
+    retries =     options.delete(:retries) { 5 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
-    hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
-    count = 0
+    sleep_time = 0.1
+    begin
+      hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
+      count = 0
     
-    MAX_WEB_REQUEST_DOMAINS.times do |i|
-      SimpledbResource.count_async(:domain_name => "web-request-#{date_string}-#{i}", :where => where, :hydra => hydra) do |c|
-        count += c
+      MAX_WEB_REQUEST_DOMAINS.times do |i|
+        SimpledbResource.count_async(:domain_name => "web-request-#{date_string}-#{i}", :where => where, :hydra => hydra) do |c|
+          count += c
+        end
+      end
+    
+      hydra.run
+    rescue RightAws::AwsError => e
+      if retries > 0
+        retries -= 1
+        sleep_time *= 2
+        sleep(sleep_time)
+        retry
+      else
+        raise e
       end
     end
-    
-    hydra.run
     
     return count
   end
