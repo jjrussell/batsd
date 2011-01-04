@@ -445,9 +445,10 @@ class Offer < ActiveRecord::Base
         whitelist_reject?(publisher_app) ||
         gamevil_reject?(publisher_app) ||
         minimum_featured_bid_reject?(currency) ||
+        jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers)
   end
-  
+
   def update_payment(force_update = false)
     if (force_update || bid_changed?)
       if (item_type == 'App')
@@ -492,7 +493,7 @@ class Offer < ActiveRecord::Base
   end
   
   def needs_higher_bid?
-    bid_is_bad? || bid_is_passable?
+    !self_promote_only? && (bid_is_bad? || bid_is_passable?)
   end
   
   def needs_more_funds?
@@ -634,6 +635,10 @@ private
   def minimum_featured_bid_reject?(currency)
     return false unless (featured? && currency.minimum_featured_bid)
     bid < currency.minimum_featured_bid
+  end
+  
+  def jailbroken_reject?(device)
+    is_paid? && device.is_jailbroken?
   end
   
   def direct_pay_reject?(direct_pay_providers)

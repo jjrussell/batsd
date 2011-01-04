@@ -10,7 +10,7 @@
         = link_to('#', new_app_path, :class => "hidden")
       - else
         = image_tag(selected.get_icon_url(request.protocol), :size => '24x24', :alt => '')
-        = selected.name
+        = selected.is_a?(App) ? selected.name : selected.name_with_suffix
   #apps_dropdown.hidden
     #filter_box
       Filter:
