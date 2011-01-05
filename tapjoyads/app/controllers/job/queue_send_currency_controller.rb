@@ -56,6 +56,7 @@ private
           end
           reward.send_currency_status = 'OK'
         else
+          params[:callback_url] = callback_url
           response = Downloader.get_strict(callback_url, { :timeout => 30 })
           reward.send_currency_status = response.status
         end
