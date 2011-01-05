@@ -45,7 +45,6 @@ private
     end
     
     reward.sent_currency = Time.zone.now
-    reward.update_counters
     
     if Rails.env == 'production'
       reward.serial_save(:catch_exceptions => false, :expected_attr => {'sent_currency' => nil})
