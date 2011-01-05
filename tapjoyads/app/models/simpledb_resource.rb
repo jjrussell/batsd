@@ -176,6 +176,10 @@ class SimpledbResource
       self.write_to_memcache if save_to_memcache
       self.write_to_sdb(expected_attr) if save_to_sdb
       @is_new = false
+      @attributes_to_add.clear
+      @attributes_to_replace.clear
+      @attributes_to_delete.clear
+      @attribute_names_to_delete.clear
     end
   rescue ExpectedAttributeError => e
     if save_to_memcache

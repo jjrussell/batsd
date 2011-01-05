@@ -46,7 +46,12 @@ private
     end
     
     reward.sent_money_txn = Time.zone.now
-    reward.save
+    begin
+      reward.serial_save(:catch_exceptions => false, :expected_attr => {'sent_money_txn' => nil})
+      reward.update_counters
+    rescue Simpledb::ExpectedAttributeError => e
+      # Do nothing
+    end
   end
   
   def save_conversion(conversion)
