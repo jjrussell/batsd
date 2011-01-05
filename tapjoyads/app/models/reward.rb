@@ -62,7 +62,7 @@ class Reward < SimpledbShardedResource
     return "rewards_#{domain_number}"
   end
   
-  def serial_save
+  def serial_save(options = {})
     super({ :write_to_memcache => false }.merge(options))
   end
   
