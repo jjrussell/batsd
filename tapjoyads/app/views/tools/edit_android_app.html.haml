@@ -13,8 +13,14 @@
       %tbody
         %tr
           %td= label_tag 'store_id', 'Android Package ID'
-          %td= text_field_tag 'store_id'
+          %td= text_field_tag 'store_id', @app.store_id, :size => 50
+          %td &nbsp;
         %tr
           %td= label_tag 'url', 'Icon URL'
-          %td= text_field_tag 'url'
+          %td= text_field_tag 'url', '', :size => 50
+          %td= image_tag @app.get_icon_url, :size => '57x57', :alt => 'icon'
+        %tr
+          %td= label_tag 'price', 'Price (cents)'
+          %td= text_field_tag 'price', @app.price, :size => 50
+          %td &nbsp;
     = submit_tag 'Update'
