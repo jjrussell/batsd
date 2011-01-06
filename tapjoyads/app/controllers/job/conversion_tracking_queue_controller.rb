@@ -18,7 +18,7 @@ private
     currency = Currency.find_in_cache(click.currency_id)
     
     # Try to stop Playdom users from click-frauding (specifically from Mobsters: Big Apple)
-    if currency.callback_url == 'PLAYDOM_DEFINED' && click.publisher_user_id !~ /^(F|M|P)[0-9]+$/
+    if currency.callback_url == Currency::PLAYDOM_CALLBACK_URL && click.publisher_user_id !~ /^(F|M|P)[0-9]+$/
       Notifier.alert_new_relic(InvalidPlaydomUserId, "Playdom User id: '#{click.publisher_user_id}' is invalid", request, params)
       return
     end

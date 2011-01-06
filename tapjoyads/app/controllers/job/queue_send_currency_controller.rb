@@ -14,7 +14,7 @@ private
     publisher_user_id = reward.publisher_user_id
     callback_url = currency.callback_url
     
-    if callback_url == 'PLAYDOM_DEFINED'
+    if callback_url == Currency::PLAYDOM_CALLBACK_URL
       first_char = publisher_user_id[0, 1]
       publisher_user_id = publisher_user_id[1..-1]
       
@@ -50,7 +50,8 @@ private
       reward.serial_save(:catch_exceptions => false, :expected_attr => {'sent_currency' => nil})
       
       begin
-        if currency.callback_url == 'TAP_POINTS_CURRENCY'
+        if currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL
+          params[:callback_url] = Currency::TAPJOY_MANAGED_CALLBACK_URL
           PointPurchases.transaction(:key => "#{publisher_user_id}.#{reward.publisher_app_id}") do |point_purchases|
             point_purchases.points = point_purchases.points + reward.currency_reward
           end
@@ -60,6 +61,7 @@ private
           response = Downloader.get_strict(callback_url, { :timeout => 30 })
           reward.send_currency_status = response.status
         end
+        params[:callback_url] = nil
       rescue Exception => e
         reward.delete('sent_currency')
         reward.serial_save
