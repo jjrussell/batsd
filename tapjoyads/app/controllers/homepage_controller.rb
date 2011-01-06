@@ -23,4 +23,7 @@ class HomepageController < WebsiteController
     render :layout => false
   end
 
+  def press
+    redirect_to '/press/'
+  end
 end
