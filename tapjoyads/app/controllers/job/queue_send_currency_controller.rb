@@ -47,7 +47,16 @@ private
     reward.sent_currency = Time.zone.now
     
     if Rails.env == 'production'
-      reward.serial_save(:catch_exceptions => false, :expected_attr => {'sent_currency' => nil})
+      begin
+        reward.serial_save(:catch_exceptions => false, :expected_attr => {'sent_currency' => nil})
+      rescue Simpledb::ExpectedAttributeError => e
+        reward = Reward.new(:key => reward.key, :consistent => true)
+        if reward.send_currency_status?
+          return
+        else
+          raise e
+        end
+      end
       
       begin
         if currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL
