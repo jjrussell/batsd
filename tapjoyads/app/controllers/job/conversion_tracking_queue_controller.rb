@@ -87,7 +87,7 @@ private
     web_request.put('time', installed_at_epoch)
     web_request.put('exp', click.exp)
     web_request.viewed_at = click.viewed_at
-    web_request.save
+    web_request.serial_save
     
     message = reward.serialize(:attributes_only => true)
     

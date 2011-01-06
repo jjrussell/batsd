@@ -120,11 +120,11 @@ class WebRequest < SimpledbResource
   end
   
   ##
-  # Calls super.save, with write_to_memcache option set to false.
+  # Calls super.serial_save, with write_to_memcache option set to false.
   # Also increments all stats associated with this webrequest.
-  def save
+  def serial_save(options = {})
     put('time', @now.to_f.to_s) unless get('time')
-    super({:write_to_memcache => false})
+    super({:write_to_memcache => false}.merge(options))
     
     get('path', {:force_array => true}).each do |path|
       stat_name = PATH_TO_STAT_MAP[path]
