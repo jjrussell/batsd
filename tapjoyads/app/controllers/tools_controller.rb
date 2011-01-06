@@ -2,9 +2,9 @@ class ToolsController < WebsiteController
   layout 'tabbed'
   
   filter_access_to :all
-  
-  after_filter :save_activity_logs, :only => [ :update_user ]
-  
+
+  after_filter :save_activity_logs, :only => [ :update_user, :update_android_app ]
+
   def index
   end
   
@@ -209,4 +209,31 @@ class ToolsController < WebsiteController
     end
   end
 
+  def edit_android_app
+    unless params[:id].nil?
+      @app = App.find_by_id(params[:id])
+      if @app.nil?
+        flash[:error] = "Could not find Android app with ID #{params[:id]}."
+      elsif @app.platform != "android"
+        flash[:error] = "'#{@app.name}' is not an Android app."
+        @app = nil
+      end
+    end
+  end
+
+  def update_android_app
+    @app = App.find_by_id_and_platform(params[:id], "android")
+    log_activity(@app)
+    @app.store_id = params[:store_id] unless params[:store_id].blank?
+    @app.price = params[:price].to_i
+
+    if @app.save
+      @app.download_icon(params[:url], nil) unless params[:url].blank?
+      flash[:notice] = 'App was successfully updated'
+      redirect_to statz_path(@app)
+    else
+      flash[:error] = 'Update unsuccessful'
+      render :action => "edit_android_app"
+    end
+  end
 end

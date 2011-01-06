@@ -39,3 +39,5 @@
     %li= link_to 'Create Generic Offer', new_tools_generic_offer_path
   - if permitted_to? :index, :tools_premier_partners
     %li= link_to 'Premier Partners', tools_premier_partners_path
+  - if permitted_to? :edit_android_app, :tools
+    %li= link_to 'Manually edit Android app', :action => :edit_android_app

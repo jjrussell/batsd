@@ -39,7 +39,7 @@ authorization do
     includes :payops
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids ]
     has_permission_on :search, :to => [ :offers ]
-    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :unresolved_clicks, :resolve_clicks, :new_transfer ]
+    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :unresolved_clicks, :resolve_clicks, :new_transfer, :edit_android_app, :update_android_app ]
     has_permission_on :activities, :to => [ :index ]
     has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :new_transfer, :create_transfer ]
     has_permission_on :rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
