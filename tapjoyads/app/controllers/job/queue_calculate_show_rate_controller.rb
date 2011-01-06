@@ -51,7 +51,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     Rails.logger.info "Possible clicks per second: #{possible_clicks_per_second}"
     
     possible_installs_per_second = possible_clicks_per_second * conversion_rate * old_show_rate
-    potential_spend = (possible_installs_per_second * 12.hours) * offer.payment
+    potential_spend = (possible_installs_per_second * 48.hours) * offer.payment
     offer.low_balance = (potential_spend > offer.partner.balance)
     
     # Assume all apps are CST for now.

@@ -32,7 +32,7 @@ private
     end
     
     @offer.stats_aggregation_interval = get_interval
-    @offer.next_stats_aggregation_time = @now + @offer.stats_aggregation_interval
+    @offer.next_stats_aggregation_time = @now + @offer.stats_aggregation_interval + rand(600)
     @offer.last_stats_aggregation_time = end_time
     verify_yesterday
     @offer.save!
