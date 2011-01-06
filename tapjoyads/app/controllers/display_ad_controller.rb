@@ -36,6 +36,9 @@ class DisplayAdController < ApplicationController
       
       # Tapjoy
       "2349536b-c810-47d7-836c-2cd47cd3a796", # TapDefense
+      
+      # Alley Labs
+      "bb5485be-9ac3-4995-a71e-b5d3097b21a6", # Pocket Cafe
       ])
   
   before_filter :setup, :except => :image
