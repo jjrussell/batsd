@@ -64,7 +64,7 @@ ActionController::Routing::Routes.draw do |map|
                      :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get,
                      :sdb_metadata => :get, :reset_device => :get, :failed_downloads => :get, :sanitize_users => :get,
                      :unresolved_clicks => :post, :resolve_clicks => :post, :sqs_lengths => :get },
-    :member => {  :edit_android_app => :get, :update_android_app => :post }
+    :member => {  :edit_android_app => :get, :update_android_app => :post, :device_info => :get }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get }
   map.resources :raffle_manager, :only => [ :index, :edit, :update, :new, :create ]

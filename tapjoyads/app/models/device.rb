@@ -4,6 +4,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :apps, :type => :json, :default_value => {}
   self.sdb_attr :is_jailbroken, :type => :bool, :default_value => false
   self.sdb_attr :country
+  self.sdb_attr :internal_notes, :cgi_escape => true
   self.sdb_attr :survey_answers, :type => :json, :default_value => {}, :cgi_escape => true
   self.sdb_attr :opted_out, :type => :bool, :default_value => false
   
