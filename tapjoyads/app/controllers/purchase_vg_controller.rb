@@ -16,7 +16,7 @@ class PurchaseVgController < ApplicationController
     
     if @success
       web_request = WebRequest.new
-      web_request.put_values('purchased_vg', params, get_ip_address, get_geoip_data)
+      web_request.put_values('purchased_vg', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
       web_request.save
     end
     
@@ -39,7 +39,7 @@ class PurchaseVgController < ApplicationController
     
     if @success
       web_request = WebRequest.new
-      web_request.put_values('spend_points', params, get_ip_address, get_geoip_data)
+      web_request.put_values('spend_points', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
       web_request.save
     end
     

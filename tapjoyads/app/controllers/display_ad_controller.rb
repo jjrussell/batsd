@@ -63,7 +63,7 @@ class DisplayAdController < ApplicationController
     return unless verify_params([ :publisher_app_id, :advertiser_app_id, :displayer_app_id, :size ])
     
     web_request = WebRequest.new
-    web_request.put_values('display_ad_image', params, get_ip_address, get_geoip_data)
+    web_request.put_values('display_ad_image', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     web_request.save
     
     publisher = App.find_in_cache(params[:publisher_app_id])
@@ -84,7 +84,7 @@ private
     params[:displayer_app_id] = params[:app_id]
     
     web_request = WebRequest.new(:time => now)
-    web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data)
+    web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
     
     # Randomly choose one publisher app that the user has run:
     device = Device.new(:key => params[:udid])

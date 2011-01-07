@@ -133,7 +133,7 @@ private
     params[:exp] = nil if params[:featured_offer].present?
     # END TO REMOVE
     web_request = WebRequest.new(:time => @now)
-    web_request.put_values('offers', params, get_ip_address, get_geoip_data)
+    web_request.put_values('offers', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     web_request.put('viewed_at', @now.to_f.to_s)
     web_request.save
   end
@@ -185,7 +185,7 @@ private
       end
       
       web_request = WebRequest.new
-      web_request.put_values('connect', params, get_ip_address, get_geoip_data)
+      web_request.put_values('connect', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     
       device = Device.new(:key => params[:udid])
       path_list = device.set_app_ran(params[:app_id], params)
