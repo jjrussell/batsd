@@ -16,7 +16,7 @@ class PocketgemsDataController < ApplicationController
     @date = start_time.iso8601[0,10]
     @appstats_list = []
     
-    partner.apps.each do |app|
+    partner.offers.each do |app|
       appstats = Appstats.new(app.id, {
         :start_time => start_time,
         :end_time => start_time + 24.hours})
