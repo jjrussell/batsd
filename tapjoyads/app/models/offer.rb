@@ -19,7 +19,7 @@ class Offer < ActiveRecord::Base
   CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :allow_any_bid
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -30,6 +30,7 @@ class Offer < ActiveRecord::Base
   validates_presence_of :partner, :item, :name, :url, :instructions, :time_delay
   validates_numericality_of :price, :only_integer => true
   validates_numericality_of :bid, :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_blank => false, :allow_nil => false
+  validates_numericality_of :min_bid_override, :only_integer => true, :greater_than_or_equal_to => 0, :if => :min_bid_override
   validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :allow_blank => false, :greater_than_or_equal_to => 0
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
@@ -82,7 +83,7 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
     end
   end
-  validate :bid_higher_than_min_bid, :unless => :allow_any_bid
+  validate :bid_higher_than_min_bid
   
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
@@ -465,6 +466,8 @@ class Offer < ActiveRecord::Base
   end
   
   def min_bid
+    return min_bid_override if min_bid_override
+    
     if item_type == 'App'
       if featured?
         is_paid? ? price : 65

@@ -55,7 +55,7 @@ class StatzController < WebsiteController
 
   def update
     log_activity(@offer)
-    offer_params = sanitize_currency_params(params[:offer], [ :bid ])
+    offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
     offer_params[:device_types] = offer_params[:device_types].blank? ? '[]' : offer_params[:device_types].to_json
     if @offer.update_attributes(offer_params)
       
