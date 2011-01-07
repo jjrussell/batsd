@@ -22,7 +22,7 @@ class Job::QueuePartnerNotificationsController < Job::SqsReaderController
       elsif offer.budget_may_not_be_met?
         offers_not_meeting_budget << offer
       elsif offer.is_free? && offer.needs_higher_bid?
-        offers_needing_higher_bids << offer
+        offers_needing_higher_bids << offer unless offer.device_types == "[\"android\"]"
       end
     end
     
