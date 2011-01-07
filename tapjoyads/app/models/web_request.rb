@@ -20,6 +20,7 @@ class WebRequest < SimpledbResource
   self.sdb_attr :type
   self.sdb_attr :status_items
   self.sdb_attr :device_ip
+  self.sdb_attr :user_agent
   self.sdb_attr :time, :type => :time
   self.sdb_attr :viewed_at, :type => :time
   self.sdb_attr :path, :force_array => true, :replace => false
@@ -90,7 +91,7 @@ class WebRequest < SimpledbResource
   
   ##
   # Puts attributes that come from the params and request object.
-  def put_values(path, params, ip_address, geoip_data)
+  def put_values(path, params, ip_address, geoip_data, user_agent)
     add_path(path)
     
     if params
@@ -110,6 +111,7 @@ class WebRequest < SimpledbResource
       self.displayer_app_id  = params[:displayer_app_id]
 
       self.device_ip         = params[:device_ip]
+      self.user_agent        = user_agent
       self.type              = params[:type]
       self.publisher_user_id = params[:publisher_user_id]
       self.virtual_good_id   = params[:virtual_good_id]
