@@ -4,10 +4,10 @@ class StoreRank
   ##
   # Populates the 'overall_store_rank' stat, which is the app's location in the US free app chart.
   def self.populate_overall_store_rank(store_id, stat_row, hour)
-    if stat_row.get_hourly_count('overall_store_rank', 0)[hour].to_i == 0
+    if stat_row.get_hourly_count(['ranks', 'overall.free.united_states'])[hour].nil?
       rank_hash = get_ranks_hash(itunes_category_ids['overall'], itunes_pop_ids['free'], itunes_country_ids['united_states'])
-      rank = rank_hash[store_id] || '-'
-      stat_row.update_stat_for_hour('overall_store_rank', hour, rank)
+      rank = rank_hash[store_id]
+      stat_row.update_stat_for_hour(['ranks', 'overall.free.united_states'], hour, rank)
     end
   end
   
@@ -30,7 +30,18 @@ class StoreRank
   end
   
   def self.populate_ranks(store_id, stat_row, hour)
-    # TODO: populate every combination of ranks
+    itunes_category_ids.each do |category_key, category_id|
+      itunes_pop_ids.each do |pop_key, pop_id|
+        itunes_country_ids.each do |country_key, country_id|
+          stat_type = "#{category_key}.#{pop_key}.#{country_key}"
+          if stat_row.get_hourly_count(['ranks', stat_type])[hour].nil?
+            rank_hash = get_ranks_hash(category_id, pop_id, country_id)
+            rank = rank_hash[store_id]
+            stat_row.update_stat_for_hour(['ranks', stat_type], hour, rank)
+          end
+        end
+      end
+    end
   end
   
   @@itunes_category_ids = {

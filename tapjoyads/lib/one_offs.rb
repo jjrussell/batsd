@@ -140,9 +140,9 @@ class OneOffs
     puts "App, Revenue, Spend"
     
     Offer.find_all_by_partner_id(partner_id).each do |offer|
-      s = Appstats.new(offer.id, {:type => :sum, :start_time => month_start, :end_time => month_start.end_of_month})
-      revenue = s.stats['rewards_revenue'].first + s.stats['display_revenue'].first
-      spend = -s.stats['installs_spend'].first
+      s = Appstats.new(offer.id, {:granularity => :daily, :start_time => month_start, :end_time => month_start.end_of_month})
+      revenue = s.stats['rewards_revenue'].sum + s.stats['display_revenue'].sum
+      spend = -s.stats['installs_spend'].sum
       total_revenue += revenue
       total_spend += spend
       puts "#{offer.name.gsub(',','_')}, $#{(revenue/100.0)}, $#{(spend/100.0)}" if revenue != 0 or spend != 0
@@ -162,8 +162,8 @@ class OneOffs
         month_start = Time.utc(2010,month,01)
         maus = 0
         begin
-          s = Appstats.new(c.app.id, {:type => :sum, :start_time => month_start, :end_time => month_start.end_of_month})
-          maus = s.stats['monthly_active_users'].first
+          s = Appstats.new(c.app.id, {:granularity => :daily, :start_time => month_start, :end_time => month_start.end_of_month})
+          maus = s.stats['monthly_active_users'].sum
         rescue 
           maus = 0
         end
@@ -321,6 +321,12 @@ class OneOffs
     Offer.cache_featured_offers
     Offer.cache_enabled_offers
     true
+  end
+
+  def self.convert_stats_to_new_format
+    Stats.select do |stat|
+      stat.save!
+    end
   end
 
 end

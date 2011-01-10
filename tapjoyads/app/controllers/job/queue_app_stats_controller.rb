@@ -110,7 +110,6 @@ private
     
     if @offer.item_type == 'App' && @offer.get_platform == 'iOS'
       StoreRank.populate_overall_store_rank(@offer.third_party_data, stat_row, start_time.hour)
-      StoreRank.populate_ranks(@offer.third_party_data, stat_row, start_time.hour)
     end
   end
   
@@ -138,7 +137,7 @@ private
       if path == 'offer_click'
         count += WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'store_click' and #{app_condition}")
       end
-      hour_counts = stat_row.get_hourly_count(stat_name, 0)
+      hour_counts = stat_row.get_hourly_count(stat_name)
       
       if count != hour_counts.sum
         raise AppStatsVerifyError.new("#{stat_name}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")
@@ -151,7 +150,7 @@ private
       app_condition = "publisher_app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
-      hour_counts = stat_row.get_hourly_count(stat_name, 0)
+      hour_counts = stat_row.get_hourly_count(stat_name)
       
       if count != hour_counts.sum
         raise AppStatsVerifyError.new("#{stat_name}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")
@@ -167,7 +166,7 @@ private
       if path == 'offer_click'
         count += WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'store_click' and #{app_condition}")
       end
-      hour_counts = stat_row.get_hourly_count(stat_name, 0)
+      hour_counts = stat_row.get_hourly_count(stat_name)
       
       if count != hour_counts.sum
         raise AppStatsVerifyError.new("#{stat_name}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")

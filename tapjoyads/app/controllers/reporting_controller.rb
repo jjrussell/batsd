@@ -34,6 +34,9 @@ class ReportingController < WebsiteController
         end
       end
       format.json do
+        puts '******'
+        puts @appstats.stats['ranks'].inspect
+        
         @data = {
           :connect_data => {
             :name => 'Sessions',
@@ -81,8 +84,8 @@ class ReportingController < WebsiteController
             :right => {
               :yMax => 200,
               :names => [ 'Rank' ],
-              :data => [ @appstats.stats['overall_store_rank'].map { |r| r == '-' || r == '0' ? nil : r } ],
-              :totals => [ (@appstats.stats['overall_store_rank'].select { |r| r != '0' }.last || '-') ]
+              :data => [ Array(@appstats.stats['ranks']['overall.free.united_states']) ],
+              :totals => [ (Array(@appstats.stats['ranks']['overall.free.united_states']).reject { |r| r.nil? }.last || '-') ]
             }
           },
 
@@ -227,7 +230,7 @@ class ReportingController < WebsiteController
         @appstats.stats['new_users'][i],
         @appstats.stats['cvr'][i],
         number_to_currency(@appstats.stats['installs_spend'][i] / -100.0, :delimiter => ''),
-        @appstats.stats['overall_store_rank'][i],
+        (Array(@appstats.stats['ranks']['overall.free.united_states'])[i] || '-'),
         @appstats.stats['offerwall_views'][i],
         @appstats.stats['rewards_opened'][i],
         @appstats.stats['rewards'][i],
