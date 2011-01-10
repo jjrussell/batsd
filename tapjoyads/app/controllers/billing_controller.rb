@@ -49,7 +49,7 @@ class BillingController < WebsiteController
     @order = Order.new(:partner => current_partner, :amount => @credit_card.amount, :status => 1, :payment_method => 0)
     if @credit_card.valid? && @order.valid?
       gateway = ActiveMerchant::Billing::AuthorizeNetGateway.new(:login => '6d68x2KxXVM', :password => '6fz7YyU9424pZDc6', :test => Rails.env != 'production')
-      response = gateway.purchase(@credit_card.amount, @credit_card)
+      response = gateway.purchase(@credit_card.amount, @credit_card, { :description => current_partner.id })
       if response.success?
         log_activity(@order)
         @order.payment_txn_id = response.authorization
