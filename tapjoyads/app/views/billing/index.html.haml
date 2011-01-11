@@ -16,7 +16,7 @@
       %span#pending_earnings= number_to_currency(@pending_earnings/100.0)
   .box-summary
     Last Payment
-    #help_last_order.help ?
+    #help_last_payment.help ?
     .money
       %span= number_to_currency(@last_payment/100.0)
   .box-summary
@@ -56,8 +56,8 @@
     Current balance is the amount of advertising budget available to you.
   #help_pending_earnings_content{:name => 'Pending Earnings'}
     Pending earnings is the amount you have earned as a publisher.
-  #help_last_order_content{:name => 'Last Payment'}
-    Last order is the last advertising order you have placed.
+  #help_last_payment_content{:name => 'Last Payment'}
+    Last payment is the last advertising payment you have made.
   #help_last_payout_content{:name => 'Last Payout'}
     Last payout is the last payout you have received.
 
