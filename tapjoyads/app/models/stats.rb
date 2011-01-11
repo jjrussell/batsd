@@ -164,6 +164,11 @@ private
         @parsed_values[stat_name] = counts        
       end
     end
+    
+    @attributes.keys.each do |key|
+      delete(key) unless key == 'updated-at' || key == 'values'
+    end
+    
     self.values = @parsed_values
   end
 end
