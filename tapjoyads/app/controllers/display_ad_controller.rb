@@ -30,6 +30,7 @@ class DisplayAdController < ApplicationController
       "0da90aad-b122-41b9-a0f9-fa849b6fbfbd", # Gun Bros
       "68788308-05c8-401f-9aba-f48b57a17f75", # Toyshop Adventures 
       "2cc8b4e6-e800-408d-9dd9-bd5fe969a9ce", # World Series of Poker
+      "49ad1827-80ea-4408-b18f-fc613b0ab11e", # Deer Hunter Challenge
     
       # Pinger
       "3cb9aacb-f0e6-4894-90fe-789ea6b8361d", # Doodle Buddy

@@ -53,12 +53,6 @@ class Apps::OffersController < WebsiteController
     end
   end
 
-  def download_udids
-    bucket = S3.bucket(BucketNames::AD_UDIDS)
-    data = bucket.get(Offer.s3_udids_path(@offer.id) + params[:date])
-    send_data(data, :type => 'text/csv', :filename => "#{@offer.id}_#{params[:date]}.csv")
-  end
-
   def percentile
     @offer.bid = sanitize_currency_param(params[:bid])
     @offer.update_payment
@@ -78,7 +72,7 @@ private
     
     if params[:id]
       @offer = @app.offers.find(params[:id])
-      if @offer.featured? && params[:action] != 'percentile'
+      if @offer.featured? && params[:action] == 'edit'
         redirect_to edit_app_featured_offer_path(@app, @offer) and return
       end
     else
