@@ -34,9 +34,6 @@ class ReportingController < WebsiteController
         end
       end
       format.json do
-        puts '******'
-        puts @appstats.stats['ranks'].inspect
-        
         @data = {
           :connect_data => {
             :name => 'Sessions',

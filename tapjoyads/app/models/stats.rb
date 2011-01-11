@@ -3,6 +3,8 @@ class Stats < SimpledbResource
   self.domain_name = 'stats'
 
   self.sdb_attr :values, :type => :json, :default_value => {}
+  
+  attr_reader :parsed_values
 
   STAT_TYPES = ['logins', 'hourly_impressions', 'paid_installs', 
       'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'offers',
@@ -54,8 +56,6 @@ class Stats < SimpledbResource
   end
 
   def update_stat(stat_name_or_path, ordinal, count, length)
-    return if count == 0 || count.nil?
-    
     counts = get_counts_object(stat_name_or_path, length)
     counts[ordinal] = count
     self.values = @parsed_values
@@ -66,7 +66,7 @@ class Stats < SimpledbResource
   # hourly_stat_row: Source of data.
   # day: The 0-based day of the month in which to populate.
   def populate_daily_from_hourly(hourly_stat_row, day)
-    hourly_stat_row.values.each do |key, value|
+    hourly_stat_row.parsed_values.each do |key, value|
       if key == 'ranks'
         value.each do |rank_key, rank_value|
           stat_path = ['ranks', rank_key]
@@ -90,7 +90,23 @@ class Stats < SimpledbResource
     return date, parts[2]
   end
   
+  def serial_save(options = {})
+    strip_defaults(@parsed_values)
+    self.values = @parsed_values
+    super(options)
+  end
+  
 private
+
+  def strip_defaults(hash)
+    hash.each do |key, value|
+      if value.is_a?(Array)
+        hash.delete(key) if value.all? { |i| i.nil? || i == 0 }
+      else
+        strip_defaults(value)
+      end
+    end
+  end
 
   def get_counts_object(stat_name_or_path, length)
     obj = @parsed_values

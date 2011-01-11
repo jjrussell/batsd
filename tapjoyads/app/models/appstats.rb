@@ -11,6 +11,7 @@ class Appstats
     @end_time = options.delete(:end_time) { @now }
     @stat_types = options.delete(:stat_types) { Stats::STAT_TYPES }
     @include_labels = options.delete(:include_labels) { false }
+    cache_hours = options.delete(:cache_hours) { 3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     @stat_rows = {}
@@ -18,9 +19,9 @@ class Appstats
     @stats = {}
     @stat_types.each do |stat_type|
       if @granularity == :hourly
-        @stats[stat_type] = get_hourly_stats(stat_type, @start_time.utc, @end_time.utc)
+        @stats[stat_type] = get_hourly_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
       elsif @granularity == :daily
-        @stats[stat_type] = get_daily_stats(stat_type, @start_time.utc, @end_time.utc)
+        @stats[stat_type] = get_daily_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
       else
         raise "Unsupported granularity"
       end
@@ -157,15 +158,16 @@ private
   # value representing a single hour's worth of stats.
   # If stat_name_or_path corresponds to a set of stats (e.g. 'ranks'), then the returned object will be a 
   # hash, with the values of the hash being arrays of hourly stats.
-  def get_hourly_stats(stat_name_or_path, start_time, end_time, cache_hours = 3)
+  def get_hourly_stats(stat_name_or_path, start_time, end_time, cache_hours)
     time = start_time
     date = nil
     hourly_stats_over_range = []
     hourly_stats = []
+    size = ((end_time - start_time) / 1.hour).ceil
     index = 0
     while time < end_time
-      if date != time.iso8601[0,10]
-        date = time.iso8601[0,10]
+      if date != time.strftime('%Y-%m-%d')
+        date = time.strftime('%Y-%m-%d')
         stat = load_stat_row("app.#{date}.#{@app_key}")
         populate_hourly_stats_from_memcached(stat, stat_name_or_path, cache_hours)
         hourly_stats = stat.get_hourly_count(stat_name_or_path)
@@ -174,7 +176,7 @@ private
       if hourly_stats.is_a?(Hash)
         hourly_stats_over_range = {} if hourly_stats_over_range.blank?
         hourly_stats.each do |key, value|
-          hourly_stats_over_range[key] = [] if hourly_stats_over_range[key].nil?
+          hourly_stats_over_range[key] = Array.new(size, nil) if hourly_stats_over_range[key].nil?
           hourly_stats_over_range[key][index] = value[time.hour]
         end
       else
@@ -189,11 +191,12 @@ private
 
   ##
   # Returns the daily stats for stat_name_or_path, an array or a hash. See #get_hourly_stats.
-  def get_daily_stats(stat_name_or_path, start_time, end_time, cache_hours = 3)
+  def get_daily_stats(stat_name_or_path, start_time, end_time, cache_hours)
     time = start_time
     daily_stats_over_range = []
     daily_stats = []
     date = nil
+    size = ((end_time - start_time) / 1.day).ceil
     index = 0
     while time + 1.hour < end_time
       if date != time.strftime('%Y-%m')
@@ -210,7 +213,7 @@ private
       if daily_stats.is_a?(Hash)
         daily_stats_over_range = {} if daily_stats_over_range.blank?
         daily_stats.each do |key, value|
-          daily_stats_over_range[key] = [] if daily_stats_over_range[key].nil?
+          daily_stats_over_range[key] = Array.new(size, nil) if daily_stats_over_range[key].nil?
           daily_stats_over_range[key][index] = value[time.day - 1]
         end
       else
@@ -230,7 +233,7 @@ private
     @stat_rows[key]
   end
   
-  def populate_hourly_stats_from_memcached(stat_row, stat_name_or_path, cache_hours = 3)
+  def populate_hourly_stats_from_memcached(stat_row, stat_name_or_path, cache_hours)
     counts = stat_row.get_hourly_count(stat_name_or_path)
     
     if cache_hours > 0 && counts.is_a?(Array)
@@ -242,6 +245,8 @@ private
         end
       end
     end
+    
+    stat_row.values = stat_row.parsed_values
   end
   
   def get_labels_and_intervals(start_time, end_time)
