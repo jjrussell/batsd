@@ -44,6 +44,9 @@ class DisplayAdController < ApplicationController
       # Tapstic
       "8b56015f-3f42-4d65-bfe2-220135ce9cab", # Vampire Stories 2
       "5bc0dab6-908f-4f8a-811b-f6a42b626f66", # Heroes Battle 4
+      
+      # Craneballs
+      "d30be666-c616-4ac9-af18-c3a0f5e85b54", # Superfall Pro
       ])
   
   before_filter :setup, :except => :image
