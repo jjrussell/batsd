@@ -45,7 +45,7 @@ private
     end
 
     NUM_REWARD_DOMAINS.times do |i|
-      SimpledbResource.select(:domain_name => "#{RUN_MODE_PREFIX}rewards_#{i}", :where => conditions) do |reward|
+      Reward.select(:domain_name => "#{RUN_MODE_PREFIX}rewards_#{i}", :where => conditions) do |reward|
         if reward.udid?
           line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country}"
           data.puts(line)
