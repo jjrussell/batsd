@@ -2,7 +2,7 @@ class Stats < SimpledbResource
   
   self.domain_name = 'stats'
 
-  self.sdb_attr :values, :type => :json, :default_value => {}
+  self.sdb_attr :values, :type => :json, :default_value => { 'ranks' => {} }
   
   attr_reader :parsed_values
 
@@ -15,11 +15,10 @@ class Stats < SimpledbResource
       'display_revenue', 'jailbroken_installs', 'ranks']
 
   def after_initialize
-    if (values.blank?)
+    if get('values').blank?
       convert_to_new_format
     end
     @parsed_values = values
-    @parsed_values['ranks'] = {} if @parsed_values['ranks'].blank?
   end
 
   ##
@@ -42,6 +41,9 @@ class Stats < SimpledbResource
   
   ##
   # Updates the count of a stat for a given hour.
+  # stat_name_or_path: Which stat to update
+  # hour: The 0-based hour of the day.
+  # count: The value to set.
   def update_stat_for_hour(stat_name_or_path, hour, count)
     update_stat(stat_name_or_path, hour, count, 24)
   end
@@ -129,8 +131,7 @@ private
   #
   # TO REMOVE: Temporary method. Remove after all stats are converted.
   def convert_to_new_format
-    @parsed_values = {}
-    @parsed_values['ranks'] = {}
+    @parsed_values = values
     
     ["rewards_opened", "rewards", "rewards_revenue"].each do |stat_name|
       delete(stat_name) if get(stat_name).present?
