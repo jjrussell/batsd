@@ -47,14 +47,14 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post } do |app|
-    app.resources :offers, :only => [ :show, :update ] , :member => { :download_udids => :get, :percentile => :post, :toggle => :post }, :controller => 'apps/offers'
+    app.resources :offers, :only => [ :show, :update ] , :member => { :percentile => :post, :toggle => :post }, :controller => 'apps/offers'
     app.resources :currencies, :only => [ :show, :update, :new, :create ],
       :member => { :reset_test_device => :post }, :controller => 'apps/currencies'
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
       :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
     app.resources :featured_offers, :only => [ :new, :create, :edit, :update ], :controller => 'apps/featured_offers'
   end
-  map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post }
+  map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }
   map.resources :billing, :only => [ :index, ], :collection => { :create_order => :post }
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
   map.resources :support, :only => [ :index ],
