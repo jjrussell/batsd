@@ -4,6 +4,7 @@ class ReportingController < WebsiteController
   layout 'tabbed'
   
   filter_access_to :all
+  before_filter :find_offer, :only => [ :show, :export, :download_udids ]
   before_filter :setup, :only => [ :show, :export ]
   
   def index
@@ -246,10 +247,15 @@ class ReportingController < WebsiteController
     send_data(data.join("\n"), :type => 'text/csv', :filename => "#{@offer.id}_#{@start_time.to_date.to_s(:db_date)}_#{@end_time.to_date.to_s(:db_date)}.csv")
   end
   
+  def download_udids
+    bucket = S3.bucket(BucketNames::AD_UDIDS)
+    data = bucket.get(Offer.s3_udids_path(@offer.id) + params[:date])
+    send_data(data, :type => 'text/csv', :filename => "#{@offer.id}_#{params[:date]}.csv")
+  end
+  
 private
   
-  def setup
-    # find the offer
+  def find_offer
     if permitted_to?(:index, :statz)
       @offer = Offer.find_by_id(params[:id], :include => 'item')
     else
@@ -259,7 +265,9 @@ private
       flash[:notice] = 'Unknown offer id'
       redirect_to reporting_index_path and return
     end
-    
+  end
+  
+  def setup
     # setup the start/end times
     now = Time.zone.now
     @start_time = now.beginning_of_hour - 23.hours
