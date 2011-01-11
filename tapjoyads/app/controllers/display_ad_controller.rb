@@ -162,7 +162,7 @@ private
       img = Magick::Image.new(width - border * 2, height - border * 2)
       img.format = 'png'
 
-      img.composite!(publisher_icon, 1, 1, Magick::AtopCompositeOp) unless @@banner_app_ids.include?(publisher.id)
+      img.composite!(publisher_icon, 1, 1, Magick::AtopCompositeOp) unless self_ad
       img.composite!(offer_icon, width - icon_height - 5, 1, Magick::AtopCompositeOp)
 
       image_label = Magick::Image.read("label:#{text}") do
