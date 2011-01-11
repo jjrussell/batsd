@@ -331,7 +331,7 @@ class OneOffs
       else
         stat.save!
       end
-      puts count if count % 1000 == 0
+      puts "#{Time.zone.now.to_s(:db)}: #{count}" if count % 1000 == 0
       count += 1
     end
   end
