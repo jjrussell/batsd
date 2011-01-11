@@ -324,12 +324,15 @@ class OneOffs
   end
 
   def self.convert_stats_to_new_format
+    count = 0
     Stats.select do |stat|
       if stat.key =~ /^campaign/
         stat.delete_all
       else
         stat.save!
       end
+      puts count if count % 1000 == 0
+      count += 1
     end
   end
 
