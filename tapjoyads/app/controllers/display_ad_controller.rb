@@ -149,12 +149,6 @@ private
       end
     end
     
-    # TO REMOVE - make sure there is always a display ad for Tap Colors!
-    if params[:app_id] == '09913ef6-906c-47ed-bd05-567c91dfa7fd' && @click_url.nil?
-      @click_url = "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=297558390&mt=8"
-      @image = get_tap_defense_ad
-    end
-    
     web_request.save
   end
 
@@ -230,48 +224,4 @@ private
     end
   end
   
-  def get_tap_defense_ad
-    Mc.distributed_get_and_put("display_ad.tap_defense", false, 1.hour) do
-      width = 320
-      height = 50
-      border = 2
-      icon_height = height - border * 2 - 2
-      
-      text = "Try TapDefense!\nA free tower defense game."
-      
-      offer_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/2349536b-c810-47d7-836c-2cd47cd3a796.png")
-      offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
-      offer_icon = offer_icon.vignette(-5, -5, 10, 2)
-
-      text_area_left_offset = 0
-      text_area_size = "260x40"
-
-      img = Magick::Image.new(width - border * 2, height - border * 2)
-      img.format = 'png'
-
-      img.composite!(offer_icon, width - icon_height - 5, 1, Magick::AtopCompositeOp)
-
-      image_label = Magick::Image.read("label:#{text}") do
-        self.size = text_area_size
-        self.gravity = Magick::CenterGravity
-        self.stroke = 'transparent'
-        self.background_color = 'transparent'
-      end
-      img.composite!(image_label[0], text_area_left_offset, 2, Magick::AtopCompositeOp)
-
-      free_label = Magick::Image.read("label:F\nR\nE\nE") do
-        self.size = "8x44"
-        self.gravity = Magick::CenterGravity
-        self.stroke = 'transparent'
-        self.fill = 'white'
-        self.undercolor = 'red'
-        self.background_color = 'red'
-      end
-      img.composite!(free_label[0], 262, 1, Magick::AtopCompositeOp)
-
-      img.border!(border, border, 'black')
-      
-      Base64.encode64(img.to_blob).gsub("\n", '')
-    end
-  end
 end
