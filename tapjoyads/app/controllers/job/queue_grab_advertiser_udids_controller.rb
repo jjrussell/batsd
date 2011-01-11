@@ -46,8 +46,8 @@ private
 
     NUM_REWARD_DOMAINS.times do |i|
       SimpledbResource.select(:domain_name => "#{RUN_MODE_PREFIX}rewards_#{i}", :where => conditions) do |reward|
-        unless reward.get('udid').blank?
-          line = "#{reward.get('udid')},#{reward.get('created', { :type => :time }).to_s(:db)}"
+        if reward.udid?
+          line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country}"
           data.puts(line)
           write_to_s3 = true
         end
