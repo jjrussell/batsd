@@ -14,7 +14,7 @@ class Currency < ActiveRecord::Base
   validates_numericality_of :conversion_rate, :initial_balance, :ordinal, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :spend_share, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :allow_nil => true, :only_integer => true
-  validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :in => [ true, false ]
+  validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :banner_advertiser, :in => [ true, false ]
   validates_each :callback_url do |record, attribute, value|
     unless SPECIAL_CALLBACK_URLS.include?(value) || value =~ /^https?:\/\//
       record.errors.add(attribute, 'is not a valid url')
