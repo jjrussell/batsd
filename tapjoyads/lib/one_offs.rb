@@ -325,7 +325,11 @@ class OneOffs
 
   def self.convert_stats_to_new_format
     Stats.select do |stat|
-      stat.save!
+      if stat.key =~ /^campaign/
+        stat.delete_all
+      else
+        stat.save!
+      end
     end
   end
 
