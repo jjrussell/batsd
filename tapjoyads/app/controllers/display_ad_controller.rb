@@ -24,31 +24,6 @@ class DisplayAdController < ApplicationController
       "e26bd54e-a9ec-4f60-b84d-82b4f678343a", # Zombie Farm
       ])
   
-  # List of apps that are "AB" advertisers; ie apps which advertise their own currency.
-  @@banner_app_ids = Set.new([
-      # Glu
-      "0da90aad-b122-41b9-a0f9-fa849b6fbfbd", # Gun Bros
-      "68788308-05c8-401f-9aba-f48b57a17f75", # Toyshop Adventures 
-      "2cc8b4e6-e800-408d-9dd9-bd5fe969a9ce", # World Series of Poker
-      "49ad1827-80ea-4408-b18f-fc613b0ab11e", # Deer Hunter Challenge
-    
-      # Pinger
-      "3cb9aacb-f0e6-4894-90fe-789ea6b8361d", # Doodle Buddy
-      
-      # Tapjoy
-      "2349536b-c810-47d7-836c-2cd47cd3a796", # TapDefense
-      
-      # Alley Labs
-      "bb5485be-9ac3-4995-a71e-b5d3097b21a6", # Pocket Cafe
-      
-      # Tapstic
-      "8b56015f-3f42-4d65-bfe2-220135ce9cab", # Vampire Stories 2
-      "5bc0dab6-908f-4f8a-811b-f6a42b626f66", # Heroes Battle 4
-      
-      # Craneballs
-      "d30be666-c616-4ac9-af18-c3a0f5e85b54", # Superfall Pro
-      ])
-  
   before_filter :setup, :except => :image
   
   def index
@@ -77,7 +52,8 @@ class DisplayAdController < ApplicationController
     publisher = App.find_in_cache(params[:publisher_app_id])
     offer = Offer.find_in_cache(params[:advertiser_app_id])
     
-    ad_image_base64 = get_ad_image(publisher, offer)
+    self_ad = (params[:publisher_app_id] == params[:displayer_app_id])
+    ad_image_base64 = get_ad_image(publisher, offer, self_ad)
     
     send_data Base64.decode64(ad_image_base64), :type => 'image/png', :disposition => 'inline'
   end
@@ -94,10 +70,13 @@ private
     web_request = WebRequest.new(:time => now)
     web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
     
+    displayer_currency = Currency.find_in_cache(params[:app_id]) rescue nil
+    self_ad = (displayer_currency.present? && displayer_currency.banner_advertiser?)
+    
     # Randomly choose one publisher app that the user has run:
     device = Device.new(:key => params[:udid])
     publisher_app_ids = []
-    if @@banner_app_ids.include?(params[:app_id])
+    if self_ad
       publisher_app_ids << params[:app_id]
     else
       @@allowed_publisher_app_ids.each do |app_id|
@@ -122,7 +101,6 @@ private
           :required_length => 25,
           :reject_rating_offer => true)
 
-      displayer_currency = Currency.find_in_cache(params[:app_id]) rescue nil
       disabled_offer_ids = displayer_currency.nil? ? Set.new : displayer_currency.get_disabled_offer_ids
       disabled_partner_ids = displayer_currency.nil? ? Set.new : displayer_currency.get_disabled_partner_ids
     
@@ -140,7 +118,7 @@ private
     
       if offer.present?
         @click_url = offer.get_click_url(publisher_app, get_user_id_from_udid(params[:udid], params[:app_id]), params[:udid], currency.id, 'display_ad', nil, now, params[:app_id])
-        @image = get_ad_image(publisher_app, offer)
+        @image = get_ad_image(publisher_app, offer, self_ad)
       
         params[:offer_id] = offer.id
         params[:publisher_app_id] = publisher_app.id
@@ -152,7 +130,7 @@ private
     web_request.save
   end
 
-  def get_ad_image(publisher, offer)
+  def get_ad_image(publisher, offer, self_ad)
     
     Mc.get_and_put("display_ad.#{publisher.id}.#{offer.id}", false, 1.hour) do
       width = 320
@@ -161,7 +139,7 @@ private
       icon_height = height - border * 2 - 2
       
       text = "Earn #{publisher.primary_currency.get_reward_amount(offer)} #{publisher.primary_currency.name}"
-      text += " in #{publisher.name}" unless @@banner_app_ids.include?(publisher.id)
+      text += " in #{publisher.name}" unless self_ad
       text += " to buy Towers" if publisher.id == "2349536b-c810-47d7-836c-2cd47cd3a796" # TapDefense
       text += "!\n Install #{offer.name}"
       
@@ -172,7 +150,7 @@ private
       text_area_left_offset = 0
       text_area_size = "260x40"
 
-      unless @@banner_app_ids.include?(publisher.id)
+      unless self_ad
         publisher_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{publisher.id}.png")
         publisher_icon = Magick::Image.from_blob(publisher_icon_blob)[0].resize(icon_height, icon_height)
         publisher_icon = publisher_icon.vignette(-5, -5, 10, 2)
