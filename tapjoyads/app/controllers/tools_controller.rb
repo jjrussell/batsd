@@ -3,7 +3,7 @@ class ToolsController < WebsiteController
   
   filter_access_to :all
 
-  after_filter :save_activity_logs, :only => [ :update_user, :update_android_app ]
+  after_filter :save_activity_logs, :only => [ :update_user, :update_android_app, :update_device ]
 
   def index
   end
@@ -144,6 +144,48 @@ class ToolsController < WebsiteController
     end
   end
 
+  def device_info
+    if params[:udid]
+      udid = params[:udid].downcase
+      @device = Device.new(:key => udid)
+      conditions = "itemName() like '#{udid}.%'"
+      @clicks = []
+      @rewarded_clicks_count = 0
+      click_app_ids = []
+      NUM_CLICK_DOMAINS.times do |i|
+        Click.select(:domain_name => "#{RUN_MODE_PREFIX}clicks_#{i}", :where => conditions) do |click|
+          @clicks << click
+          @rewarded_clicks_count += 1 if click.installed_at?
+          click_app_ids << [click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id]
+        end
+      end
+
+      # find all apps at once and store in look up table
+      @click_apps = {}
+      Offer.find_all_by_id(click_app_ids.flatten.uniq).each do |app|
+        @click_apps[app.id] = app
+      end
+
+      last_run_times = @device.apps
+      @apps = Offer.find_all_by_id(@device.apps.keys).map do |app|
+        [Time.zone.at(last_run_times[app.id].to_f), app]
+      end.sort.reverse
+    end
+  end
+
+  def update_device
+    device = Device.new :key => params[:udid]
+    log_activity(device)
+    if params[:internal_notes].blank?
+      device.delete('internal_notes') if device.internal_notes?
+    else
+      device.internal_notes = params[:internal_notes]
+    end
+    device.save
+    flash[:notice] = 'Internal notes successfully updated.'
+    redirect_to :action => :device_info, :udid => params[:udid]
+  end
+
   def managed_partner_ids
     Mc.get_and_put('managed_partners', false, 1.minute) do
       User.account_managers.map(&:partners).flatten.uniq.map(&:id)
@@ -231,7 +273,7 @@ class ToolsController < WebsiteController
   end
 
   def edit_android_app
-    unless params[:id].nil?
+    unless params[:id].blank?
       @app = App.find_by_id(params[:id])
       if @app.nil?
         flash[:error] = "Could not find Android app with ID #{params[:id]}."

@@ -11,12 +11,13 @@ unless ARGV[0] && ARGV[1]
 end
 
 server_list = []
-ARGV[0].split.each do |server_group|
+server_groups = ARGV[0].split
+server_groups.each do |server_group|
   server_list += Ec2Tasks.get_dns_names_with_instance_ids(server_group)
 end
 command = ARGV[1]
 user = ARGV[2] || 'webuser'
-remove_from_lb = ARGV[3] || false
+remove_from_lb = (ARGV[3] || false) && server_groups.include?('webserver')
 if remove_from_lb
   elb_interface = Ec2Tasks.get_elb_interface
   registered_webservers = elb_interface.describe_instance_health('web-lb').collect { |instance| instance[:instance_id] }
