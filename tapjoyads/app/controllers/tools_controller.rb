@@ -115,6 +115,12 @@ class ToolsController < WebsiteController
     end
   end
 
+  def as_groups
+    as_interface = RightAws::AsInterface.new
+    @as_groups = as_interface.describe_auto_scaling_groups
+    @as_groups.sort! { |a, b| a[:auto_scaling_group_name] <=> b[:auto_scaling_group_name] }
+  end
+
   def disabled_popular_offers
     @offers_count_hash = Mc.distributed_get('tools.disabled_popular_offers') { {} }
     @offers = Offer.find(@offers_count_hash.keys, :include => [:partner, :item])

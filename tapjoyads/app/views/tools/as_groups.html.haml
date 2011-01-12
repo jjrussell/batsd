@@ -1,0 +1,55 @@
+- @page_title = 'Auto-Scaling Groups'
+
+%h1 Auto-Scaling Groups
+
+As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
+
+- @as_groups.each do |group|
+  %h3= group[:auto_scaling_group_name]
+
+  %table.tablesorter.details
+    %thead
+      %tr
+        %th{ :colspan => 2 } Details
+    %tbody
+      %tr
+        %td Min Size
+        %td= group[:min_size]
+      %tr
+        %td Max Size
+        %td= group[:max_size]
+      %tr
+        %td Desired Capacity
+        %td= group[:desired_capacity]
+      %tr
+        %td Launch Configuration
+        %td= group[:launch_configuration_name]
+      %tr
+        %td Availability Zone(s)
+        %td= group[:availability_zones].join(', ')
+      %tr
+        %td Load Balancer(s)
+        %td= group[:load_balancer_names].join(', ')
+
+  %table.tablesorter
+    %thead
+      %tr
+        %th Instance ID
+        %th Lifecycle State
+        %th Availability Zone
+    %tbody
+      - group[:instances].each do |instance|
+        %tr
+          %td= instance[:instance_id]
+          %td= instance[:lifecycle_state]
+          %td= instance[:availability_zone]
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+
+    table.details {
+      width: 35%;
+    }
