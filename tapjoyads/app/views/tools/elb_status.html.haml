@@ -1,0 +1,45 @@
+- @page_title = 'ELB Status'
+
+%h1 ELB Status
+
+As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
+
+- @lb_names.each do |lb_name|
+  %h3= lb_name
+  - num_in_service = @lb_instances[lb_name].inject(0) { |sum, instance| sum += (instance[:state] == 'InService' ? 1 : 0) }
+  - num_total      = @lb_instances[lb_name].size
+  #{num_in_service} of #{num_total} in service.
+  %table.tablesorter
+    %thead
+      %tr
+        %th Instance ID
+        %th State
+        %th DNS Name
+        %th AWS State
+        %th Description
+        %th Reason Code
+    %tbody
+      - num_total.times do |i|
+        - lb_instance  = @lb_instances[lb_name][i]
+        - ec2_instance = @ec2_instances[lb_name][i]
+        %tr
+          %td{ :class => lb_instance[:state] != 'InService' ? 'bad_instance' : '' }= lb_instance[:instance_id]
+          %td= lb_instance[:state]
+          %td= ec2_instance[:dns_name]
+          %td= ec2_instance[:aws_state]
+          %td= lb_instance[:description]
+          %td= lb_instance[:reason_code]
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+
+    table.tablesorter thead tr .header {
+      background-position: right bottom;
+    }
+    
+    td.bad_instance {
+      border: 2px solid red;
+    }

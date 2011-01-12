@@ -41,3 +41,5 @@
     %li= link_to 'Premier Partners', tools_premier_partners_path
   - if permitted_to? :edit_android_app, :tools
     %li= link_to 'Manually edit Android app', :action => :edit_android_app
+  - if permitted_to? :elb_status, :tools
+    %li= link_to 'ELB Status', elb_status_tools_path
