@@ -176,7 +176,11 @@ class ToolsController < WebsiteController
   def update_device
     device = Device.new :key => params[:udid]
     log_activity(device)
-    device.internal_notes = params[:internal_notes]
+    if params[:internal_notes].blank?
+      device.delete('internal_notes') if device.internal_notes?
+    else
+      device.internal_notes = params[:internal_notes]
+    end
     device.save
     flash[:notice] = 'Internal notes successfully updated.'
     redirect_to :action => :device_info, :udid => params[:udid]
