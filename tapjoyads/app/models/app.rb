@@ -13,6 +13,7 @@ class App < ActiveRecord::Base
   has_one :rating_offer
   has_many :featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured = true"
   has_one :primary_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured = true", :order => "created_at"
+  has_many :action_offers
   
   belongs_to :partner
   

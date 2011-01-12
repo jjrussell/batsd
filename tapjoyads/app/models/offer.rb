@@ -36,7 +36,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_blank => false, :allow_nil => true, :greater_than => 0
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :featured, :multi_complete, :in => [ true, false ]
-  validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer )
+  validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer )
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
     begin
@@ -297,7 +297,7 @@ class Offer < ActiveRecord::Base
     payment_range_low.present? && payment_range_high.present?
   end
   
-  def get_destination_url(udid, publisher_app_id, click_key = nil, itunes_link_affiliate = 'linksynergy')
+  def get_destination_url(udid, publisher_app_id, click_key = nil, itunes_link_affiliate = 'linksynergy', currency_id = nil)
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
     if item_type == 'App' && final_url =~ /phobos\.apple\.com/
       if itunes_link_affiliate == 'tradedoubler'
@@ -309,6 +309,8 @@ class Offer < ActiveRecord::Base
       final_url += "&publisher_app_id=#{publisher_app_id}"
     elsif item_type == 'GenericOffer'
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
+    elsif item_type == 'ActionOffer'
+      final_url += "?currency_id=#{currency_id}"
     end
     
     final_url
@@ -324,6 +326,8 @@ class Offer < ActiveRecord::Base
       click_url += "rating?"
     elsif item_type == 'TestOffer'
       click_url += "test_offer?"
+    elsif item_type == 'ActionOffer'
+      click_url += "action?"
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end
@@ -346,31 +350,31 @@ class Offer < ActiveRecord::Base
   
   def get_icon_url(protocol = 'https://', base64 = false)
     if base64
-      url = "#{API_URL}/get_app_image/icon?app_id=#{item_id}"
+      url = "#{API_URL}/get_app_image/icon?app_id=#{icon_id}"
     else
-      url = "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/#{item_id}.png"
+      url = "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/#{icon_id}.png"
     end
     url
   end
   
   def get_large_icon_url(protocol = 'https://')
-    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/large/#{item_id}.png"
+    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/large/#{icon_id}.png"
   end
   
   def get_medium_icon_url(protocol = 'https://')
-    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/medium/#{item_id}.jpg"
+    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/medium/#{icon_id}.jpg"
   end
   
   def get_cloudfront_icon_url
-    "#{CLOUDFRONT_URL}/icons/#{item_id}.png"
+    "#{CLOUDFRONT_URL}/icons/#{icon_id}.png"
   end
   
   def get_large_cloudfront_icon_url
-    "#{CLOUDFRONT_URL}/icons/large/#{item_id}.png"
+    "#{CLOUDFRONT_URL}/icons/large/#{icon_id}.png"
   end
   
   def get_medium_cloudfront_icon_url
-    "#{CLOUDFRONT_URL}/icons/medium/#{item_id}.jpg"
+    "#{CLOUDFRONT_URL}/icons/medium/#{icon_id}.jpg"
   end
   
   def get_countries
@@ -456,12 +460,13 @@ class Offer < ActiveRecord::Base
         gamevil_reject?(publisher_app) ||
         minimum_featured_bid_reject?(currency) ||
         jailbroken_reject?(device) ||
-        direct_pay_reject?(direct_pay_providers)
+        direct_pay_reject?(direct_pay_providers) ||
+        action_app_reject?(device)
   end
 
   def update_payment(force_update = false)
-    if (force_update || bid_changed?)
-      if (item_type == 'App')
+    if (force_update || bid_changed? || new_record?)
+      if (item_type == 'App' || item_type == 'ActionOffer')
         self.payment = bid * (100 - partner.premier_discount) / 100
       else
         self.payment = bid
@@ -544,6 +549,10 @@ class Offer < ActiveRecord::Base
     self.payment = payment_was
     @estimated_percentile = recalculate_estimated_percentile
     recommended_bid
+  end
+  
+  def action_app_id
+    item_type == "ActionOffer" ? third_party_data : nil
   end
   
 private
@@ -657,6 +666,10 @@ private
     return direct_pay? && !direct_pay_providers.include?(direct_pay)
   end
   
+  def action_app_reject?(device)
+    item_type == "ActionOffer" && !device.has_app(third_party_data)
+  end
+  
   def normalize_device_type(device_type_param)
     if device_type_param =~ /iphone/i
       'iphone'
@@ -713,6 +726,10 @@ private
         errors.add :bid, "must be 0 for RatingOffers"
       end
     end
+  end
+  
+  def icon_id
+    item_type == 'ActionOffer' ? third_party_data : item_id
   end
   
 end
