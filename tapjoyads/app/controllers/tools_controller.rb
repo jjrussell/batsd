@@ -178,6 +178,7 @@ class ToolsController < WebsiteController
     log_activity(device)
     device.internal_notes = params[:internal_notes]
     device.save
+    flash[:notice] = 'Internal notes successfully updated.'
     redirect_to :action => :device_info, :udid => params[:udid]
   end
 
