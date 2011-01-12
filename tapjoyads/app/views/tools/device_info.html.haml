@@ -48,8 +48,8 @@
         - tr_class = i > 4 ? 'more-apps' : ''
         %tr{ :class => tr_class }
           %td
-            %strong= link_to app[1].name, app[1]
-          %td= Time.zone.at(app[0]).to_s(:mdy_ampm_utc)
+            %strong= link_to app[1].name, statz_path(app[1])
+          %td= app[0].to_s(:pub_ampm_sec)
   - if @apps.length > 5
     = link_to('(show all)', '#', {:id => 'show_more_apps'})
 
@@ -61,24 +61,24 @@
         %td Clicked at
         %td Installed at
         %td Currency reward
-        %td Adv. (amt)
-        %td Pub. (amt)
-        %td Disp. (amt)
+        %td Adv.
+        %td Pub.
+        %td Disp.
     %tbody
       - @clicks.each_with_index do |click, i|
         - adv = @click_apps[click.advertiser_app_id]
         - pub = @click_apps[click.publisher_app_id]
         - disp = @click_apps[click.displayer_app_id]
         - tr_class = i > 4 ? 'more-clicks' : ''
-        - tr_class += click.installed_at.nil? ? '' : ' rewarded'
+        - tr_class += ' rewarded' if click.installed_at?
         %tr{ :class => tr_class}
-          %td= click.viewed_at.blank? ? '-' : Time.at(click.viewed_at.to_f).to_s(:pub)
-          %td= click.clicked_at.blank? ? '-' : Time.at(click.clicked_at.to_f).to_s(:pub)
-          %td= click.installed_at.blank? ? '-' : Time.at(click.installed_at.to_f).to_s(:pub)
+          %td= click.viewed_at? ? click.viewed_at.to_s(:pub_abbr_ampm) : '-'
+          %td= click.clicked_at? ? click.clicked_at.to_s(:pub_abbr_ampm) : '-'
+          %td= click.installed_at? ? click.installed_at.to_s(:pub_abbr_ampm) : '-'
           %td= click.currency_reward
-          %td= adv.nil? ? '-'  : link_to(adv.name, adv)
-          %td= pub.nil? ? '-'  : link_to(pub.name, pub)
-          %td= disp.nil? ? '-' : link_to(disp.name, disp)
+          %td= adv.nil? ? '-'  : link_to(adv.name, statz_path(adv))
+          %td= pub.nil? ? '-'  : link_to(pub.name, statz_path(pub))
+          %td= disp.nil? ? '-' : link_to(disp.name, statz_path(disp))
   - if @clicks.length > 5
     = link_to('(show all)', '#', {:id => 'show_more_clicks'})
 

@@ -155,7 +155,7 @@ class ToolsController < WebsiteController
       NUM_CLICK_DOMAINS.times do |i|
         Click.select(:domain_name => "#{RUN_MODE_PREFIX}clicks_#{i}", :where => conditions) do |click|
           @clicks << click
-          @rewarded_clicks_count += 1 unless click.installed_at.nil?
+          @rewarded_clicks_count += 1 if click.installed_at?
           click_app_ids << [click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id]
         end
       end
@@ -166,10 +166,9 @@ class ToolsController < WebsiteController
         @click_apps[app.id] = app
       end
 
-
-      @last_run_times = @device.apps
+      last_run_times = @device.apps
       @apps = App.find_all_by_id(@device.apps.keys).map do |app|
-        [@last_run_times[app.id].to_f, app]
+        [Time.zone.at(last_run_times[app.id].to_f), app]
       end.sort.reverse
     end
   end
