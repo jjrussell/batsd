@@ -24,6 +24,8 @@
   %li= link_to 'SQS Lengths', sqs_lengths_tools_path
 - if permitted_to? :sdb_metadata, :tools
   %li= link_to 'SDB Metadata', sdb_metadata_tools_path
+- if permitted_to? :elb_status, :tools
+  %li= link_to 'ELB Status', elb_status_tools_path
 - if permitted_to? :index, :activities
   %li= link_to 'Activity Log', activities_path
 - if permitted_to? :index, :preview_experiments
