@@ -100,6 +100,7 @@ class StatzController < WebsiteController
       { :udid => '4b910938aceaa723e0c0313aa7fa9f9d838a595e', :last_run_time => 'Never', :device_label => 'Linda iPad'       },
       { :udid => '820a1b9df38f3024f9018464c05dfbad5708f81e', :last_run_time => 'Never', :device_label => 'Linda iPhone'     },
       { :udid => '354957031929568',                          :last_run_time => 'Never', :device_label => 'Linda Nexus One'  },
+      { :udid => '355031040294361',                          :last_run_time => 'Never', :device_label => 'Linda Nexus S'    },
       { :udid => 'b4c86b4530a0ee889765a166d80492b46f7f3636', :last_run_time => 'Never', :device_label => 'Ryan iPhone'      },
       { :udid => 'f0910f7ab2a27a5d079dc9ed50d774fcab55f91d', :last_run_time => 'Never', :device_label => 'Ryan iPad'        },
       { :udid => 'a100000d9833c5',                           :last_run_time => 'Never', :device_label => 'Stephen Evo'      },
