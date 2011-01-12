@@ -233,4 +233,47 @@ module RightAws
       end
     end
   end
+  
+  module RightAwsBaseInterface
+    # Format array of items into Amazons handy hash ('?' is a place holder):
+    #
+    #  amazonize_list('Item', ['a', 'b', 'c']) =>
+    #    { 'Item.1' => 'a', 'Item.2' => 'b', 'Item.3' => 'c' }
+    #
+    #  amazonize_list('Item.?.instance', ['a', 'c']) #=>
+    #    { 'Item.1.instance' => 'a', 'Item.2.instance' => 'c' }
+    #
+    #  amazonize_list(['Item.?.Name', 'Item.?.Value'], {'A' => 'a', 'B' => 'b'}) #=>
+    #    { 'Item.1.Name' => 'A', 'Item.1.Value' => 'a',
+    #      'Item.2.Name' => 'B', 'Item.2.Value' => 'b'  }
+    #
+    #  amazonize_list(['Item.?.Name', 'Item.?.Value'], [['A','a'], ['B','b']]) #=>
+    #    { 'Item.1.Name' => 'A', 'Item.1.Value' => 'a',
+    #      'Item.2.Name' => 'B', 'Item.2.Value' => 'b'  }
+    #
+    #  amazonize_list(['Filter.?.Key', 'Filter.?.Value.?'], {'A' => ['aa','ab'], 'B' => ['ba','bb']}) #=>
+    #  amazonize_list(['Filter.?.Key', 'Filter.?.Value.?'], [['A',['aa','ab']], ['B',['ba','bb']]])   #=>
+    #    {"Filter.1.Key"=>"A",
+    #     "Filter.1.Value.1"=>"aa",
+    #     "Filter.1.Value.2"=>"ab",
+    #     "Filter.2.Key"=>"B",
+    #     "Filter.2.Value.1"=>"ba",
+    #     "Filter.2.Value.2"=>"bb"}
+    def amazonize_list(masks, list) #:nodoc:
+      groups = {}
+      Array(list).each_with_index do |list_item, i|
+        Array(masks).each_with_index do |mask, mask_idx|
+          key = mask[/\?/] ? mask.dup : mask.dup + '.?'
+          key.sub!('?', (i+1).to_s)
+          value = Array(list_item)[mask_idx]
+          if value.is_a?(Array)
+            groups.merge!(amazonize_list(key, value))
+          else
+            groups[key] = value
+          end
+        end
+      end
+      groups
+    end
+  end
 end
