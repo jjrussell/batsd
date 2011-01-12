@@ -162,12 +162,12 @@ class ToolsController < WebsiteController
 
       # find all apps at once and store in look up table
       @click_apps = {}
-      App.find_all_by_id(click_app_ids.flatten.uniq).each do |app|
+      Offer.find_all_by_id(click_app_ids.flatten.uniq).each do |app|
         @click_apps[app.id] = app
       end
 
       last_run_times = @device.apps
-      @apps = App.find_all_by_id(@device.apps.keys).map do |app|
+      @apps = Offer.find_all_by_id(@device.apps.keys).map do |app|
         [Time.zone.at(last_run_times[app.id].to_f), app]
       end.sort.reverse
     end
