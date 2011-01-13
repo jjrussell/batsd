@@ -31,7 +31,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'master_calculate_show_rate', :interval => 20.minutes
     s.add_job 'master_reload_money', :interval => 10.minutes
     s.add_job 'master_reload_money/daily', :daily => 10.minutes
-    s.add_job 'master_reload_statz', :interval => 10.minutes
+    s.add_job 'master_reload_statz', :interval => 20.minutes
     s.add_job 'master_reload_statz/daily', :daily => 10.minutes
     
     # jobs with low impact on overall system performance
