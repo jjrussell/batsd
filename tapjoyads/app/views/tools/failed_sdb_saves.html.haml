@@ -13,14 +13,18 @@ Number of domains: #{@failed_sdb_saves.size}
       %th Domain Name
       %th This Hour (SDB)
       %th Last Hour (SDB)
+      %th This Hour Actual (SDB)
+      %th Last Hour Actual (SDB)
       %th This Hour (MC)
       %th Last Hour (MC)
   %tbody
     - @failed_sdb_saves.each do |domain_name, counts|
       %tr
         %td{ :class => @bad_web_requests[domain_name] ? 'bad_domain' : '' }= domain_name
-        %td= "#{number_with_delimiter(counts[:sdb_this_hour])} (#{number_with_delimiter(counts[:sdb_this_hour] * 6)})"
-        %td= "#{number_with_delimiter(counts[:sdb_last_hour])} (#{number_with_delimiter(counts[:sdb_last_hour] * 6)})"
+        %td= number_with_delimiter(counts[:sdb_this_hour])
+        %td= number_with_delimiter(counts[:sdb_last_hour])
+        %td= number_with_delimiter(counts[:sdb_this_hour] * 6)
+        %td= number_with_delimiter(counts[:sdb_last_hour] * 6)
         %td= number_with_delimiter(counts[:mc_this_hour])
         %td= number_with_delimiter(counts[:mc_last_hour])
 
