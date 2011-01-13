@@ -53,7 +53,7 @@ class MonthlyAccounting < ActiveRecord::Base
     Partner.using_slave_db do
       self.earnings = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", partner.app_ids ])
     end
-    self.ending_pending_earnings = beginning_pending_earnings + payment_payouts + transfer_payouts + earnings
+    self.ending_pending_earnings = beginning_pending_earnings - payment_payouts - transfer_payouts + earnings
     
     save!
   end
