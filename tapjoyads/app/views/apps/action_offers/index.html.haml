@@ -1,0 +1,74 @@
+- @page_title = 'Actions'
+
+= render('shared/dropdown_select', :objects => current_partner_apps, :selected => @app)
+= render('apps/actions', :app => @app)
+#apps_main
+  %h3 Actions
+  
+  = button_to "Create New Action", new_app_action_offer_path(@app), :method => :get
+  
+  %br
+  
+  %table.actions{ :width => '100%' }
+    %thead
+      %tr
+        %th Enabled?
+        %th Action
+        %th Bid
+        %th ActionID
+        %th Integrated?
+    %tbody
+      - @action_offers.each do |action_offer|
+        %tr
+          %td
+            - form_tag toggle_app_action_offer_url(@app, action_offer) do
+              = check_box_tag("", "1", action_offer.user_enabled?, :class => 'toggle_action_offer')
+            %img{ :src => '/images/load-circle.gif', :style => 'display: none;' }
+          %td= link_to(action_offer.name, edit_app_action_offer_path(@app, action_offer))
+          %td= number_to_currency 0.01 * action_offer.bid
+          %td= action_offer.id
+          %td= "nope"
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('.toggle_action_offer').click(function(){
+        var checkBox = $(this);
+        var form = checkBox.closest('form');
+        var spinner = form.next();
+        var postUrl = form.attr('action');
+        
+        $.ajax({
+          type: "POST",
+          url:  postUrl,
+          data: form.serialize(),
+          beforeSend: function() {
+            form.hide();
+            spinner.show();
+          },
+          success: function(result) {
+            if (result.success) {
+              checkBox.attr('checked', result.user_enabled);
+            }
+            else {
+              alert('Error toggling action');
+            }
+            spinner.hide();
+            form.show();
+          },
+          error: function() {
+            alert('Error toggling action');
+            spinner.hide();
+            form.show();
+          }
+        });
+
+        return false;
+      });
+    });
+    
+- content_for :page_styles do
+  :plain
+    table.actions td {
+      text-align: center;
+    }

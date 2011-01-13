@@ -1,0 +1,133 @@
+- @page_title = 'Edit Action'
+
+= render('shared/dropdown_select', :objects => current_partner_apps, :selected => @app)
+= render('apps/actions', :app => @app)
+#apps_main
+  %h3 Edit Action
+  - form_for [ @app, @action_offer ], :html => { :class => 'tjform' } do |f|
+    %table
+      %tbody
+        - f.fields_for :primary_offer do |primary_offer_form|
+          %tr
+            %th
+              = primary_offer_form.label :user_enabled, 'Enable Action'
+              #help_user_enabled.help ?
+            %td
+              = primary_offer_form.check_box :user_enabled
+              = error_message_on @action_offer, :primary_offer_user_enabled
+          %tr
+            %th
+              = primary_offer_form.label :bid, 'Bid'
+              #help_bid.help ?
+            %td
+              = primary_offer_form.currency_field :bid, {}, :class => 'togglable'
+              = error_message_on @action_offer, :primary_offer_bid
+        %tr
+          %th
+            = f.label :name, 'Action Name'
+            #help_name.help ?
+          %td
+            = f.text_field :name
+            = error_message_on @action_offer, :name
+        %tr
+          %th
+            = f.label :instructions, 'Instructions'
+            #help_instructions.help ?
+          %td
+            = f.text_area :instructions, :rows => 5
+            = error_message_on @action_offer, :instructions        
+        %tr
+          %th
+            = f.label :action_id, 'Action ID'
+            #help_action_id.help ?
+          %td
+            = @action_offer.id
+        %tr
+          %th
+            = f.label :integrated, 'Integrated?'
+            #help_integrated.help ?
+          %td
+            = "No"
+
+
+        - if permitted_to? :edit, :statz
+          %tr.admin
+            %td{ :colspan => 2 } Admin-only fields:
+          - f.fields_for :primary_offer do |primary_offer_form|
+            %tr.admin
+              %th
+                = primary_offer_form.label :tapjoy_enabled
+                #help_tapjoy_enabled.help ?
+              %td
+                = primary_offer_form.check_box :tapjoy_enabled
+                = error_message_on @action_offer, :primary_offer_tapjoy_enabled
+            %tr.admin
+              %th
+                = primary_offer_form.label :min_bid_override
+                #help_min_bid_override.help ?
+              %td
+                = primary_offer_form.currency_field :min_bid_override
+                = error_message_on @action_offer, :primary_offer_min_bid_override
+            %tr.admin
+              %th
+                = primary_offer_form.label :self_promote_only
+                #help_self_promote_only.help ?
+              %td
+                = primary_offer_form.check_box :self_promote_only
+                = error_message_on @action_offer, :primary_offer_self_promote_only
+            %tr.admin
+              %th
+                = primary_offer_form.label :allow_negative_balance
+                #help_allow_negative_balance.help ?
+              %td
+                = primary_offer_form.check_box :allow_negative_balance
+                = error_message_on @action_offer, :primary_offer_allow_negative_balance
+            %tr.admin
+              %th
+                = primary_offer_form.label :pay_per_click
+                #help_pay_per_click.help ?
+              %td
+                = primary_offer_form.check_box :pay_per_click
+                = error_message_on @action_offer, :primary_offer_pay_per_click
+            %tr.admin
+              %th
+                = primary_offer_form.label :min_conversion_rate, 'Min CVR'
+                #help_min_conversion_rate.help ?
+              %td
+                = primary_offer_form.text_field :min_conversion_rate
+                = error_message_on @action_offer, :primary_offer_min_conversion_rate
+            %tr.admin
+              %th
+                = primary_offer_form.label :publisher_app_whitelist
+                #help_publisher_app_whitelist.help ?
+              %td
+                = primary_offer_form.text_field :publisher_app_whitelist
+                = error_message_on @action_offer, :primary_offer_publisher_app_whitelist
+            %tr.admin
+              %th
+                = primary_offer_form.label :daily_budget
+                #help_daily_budget.help ?
+              %td
+                = primary_offer_form.text_field :daily_budget
+                = error_message_on @action_offer, :primary_offer_daily_budget
+            %tr.admin
+              %th
+                = primary_offer_form.label :overall_budget
+                #help_overall_budget.help ?
+              %td
+                = primary_offer_form.text_field :overall_budget
+                = error_message_on @action_offer, :primary_offer_overall_budget
+            %tr.admin
+              %th
+                = primary_offer_form.label :rank_score
+                #help_rank_score.help ?
+              %td
+                = @action_offer.primary_offer.rank_score || "N/A"
+              
+        %tr
+          %td{ :colspan => 2 }= f.submit 'Save Action'
+
+
+  .hidden
+
+
