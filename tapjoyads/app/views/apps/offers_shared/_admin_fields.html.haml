@@ -96,13 +96,6 @@
 - if [ 'App', 'EmailOffer', 'GenericOffer' ].include?(@offer.item_type)
   %tr.admin
     %th
-      = f.label(:daily_budget)
-      #help_daily_budget.help ?
-    %td
-      = f.text_field(:daily_budget)
-      = error_message_on @offer, :daily_budget
-  %tr.admin
-    %th
       = f.label(:overall_budget)
       #help_overall_budget.help ?
     %td
