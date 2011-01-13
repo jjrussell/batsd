@@ -39,10 +39,24 @@ Number of domains: #{@failed_sdb_saves.size}
           return s.replace(/-/g, '_');
         }
       });
+      $.tablesorter.addParser({
+        id: 'formatted-number-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/,/g, '');
+        }
+      });
       $("#fails").tablesorter({
         widgets: ['zebra'],
         headers: {
-          0: { sorter: 'name-column' }
+          0: { sorter: 'name-column' },
+          1: { sorter: 'formatted-number-column' },
+          2: { sorter: 'formatted-number-column' },
+          3: { sorter: 'formatted-number-column' },
+          4: { sorter: 'formatted-number-column' },
+          5: { sorter: 'formatted-number-column' },
+          6: { sorter: 'formatted-number-column' }
         },
         sortList: [ [1, 1], [2, 1] ]
       });
