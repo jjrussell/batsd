@@ -18,6 +18,20 @@ class ClickController < ApplicationController
     redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], nil, @itunes_link_affiliate))
   end
   
+  def action
+    @offer = Offer.find_in_cache(params[:offer_id])
+    return if offer_disabled?
+    
+    @device = Device.new(:key => params[:udid])
+    return if offer_completed?
+    
+    create_web_request
+    create_click('action')
+    handle_pay_per_click
+    
+    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], nil, nil, params[:currency_id]))
+  end
+  
   def generic
     @offer = Offer.find_in_cache(params[:offer_id])
     return if offer_disabled?
