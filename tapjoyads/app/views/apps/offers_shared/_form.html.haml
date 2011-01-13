@@ -136,9 +136,10 @@
       var setEstimatedBudget = function() {
         var bid = stringToNumber($('#offer_payment').val());
         var installLimit = stringToNumber($('#offer_daily_budget').val());
-        budget = 'Unlimited';
-        if (installLimit >= 0) {
+        var budget = 'Unlimited';
+        if (installLimit > 0) {
           budget = numberToCurrency(bid * installLimit);
+        } else {
         }
         $('#estimated_budget .value').html(budget);
       };
