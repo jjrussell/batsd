@@ -58,14 +58,21 @@
         %td= @offer.name
       %tr
         %th
-          = f.label :daily_budget, 'Daily Install Limit'
+          = f.label :daily_budget, 'Daily Budget'
           #help_daily.help ?
         %td
-          = f.text_field :daily_budget, :class => 'togglable'
-          = error_message_on @offer, :daily_budget
-          #estimated_budget
-            Estimated daily budget: 
-            .value
+          = check_box_tag('daily_budget_toggle', nil, @offer.daily_budget > 0)
+          - budget_fields_class = @offer.daily_budget > 0 ? '' : 'hidden'
+          #daily_budget_fields{ :class => budget_fields_class }
+            %table
+              %tbody
+                %tr
+                  %th= label_tag(:estimated_budget_field, 'Dollars:')
+                  %td= text_field_tag(:estimated_budget_field, '', :class => 'togglable narrower')
+                %tr
+                  %th= f.label(:daily_budget, 'Installs:')
+                  %td= f.text_field(:daily_budget, :class => 'togglable narrower')
+            = error_message_on @offer, :daily_budget
       %tr
         %th
           Balance
@@ -126,11 +133,19 @@
       var toggleUserEnabled = function() {
         if ($('#offer_user_enabled').attr('checked')) {
           $('.togglable').attr('disabled', false);
-          $('#estimated_budget').removeClass('disabled');
         } else {
           $('.togglable').attr('disabled', true);
-          $('#estimated_budget').addClass('disabled');
         }
+      };
+
+      var setDailyBudget = function() {
+        var budget = stringToNumber($('#estimated_budget_field').val());
+        var bid = stringToNumber($('#offer_payment').val());
+        var installLimit = 'Unlimited';
+        if (bid > 0) {
+          installLimit = Math.floor(budget / bid);
+        }
+        $('#offer_daily_budget').val(installLimit);
       };
 
       var setEstimatedBudget = function() {
@@ -139,9 +154,8 @@
         var budget = 'Unlimited';
         if (installLimit > 0) {
           budget = numberToCurrency(bid * installLimit);
-        } else {
         }
-        $('#estimated_budget .value').html(budget);
+        $('#estimated_budget_field').val(budget);
       };
 
       var checkMinimumPrice = function() {
@@ -172,24 +186,43 @@
         });
       };
 
+      var toggleDailyBudget = function() {
+        if ($('#daily_budget_toggle').is(':checked')) {
+          $('#daily_budget_fields').show();
+        } else {
+          $('#daily_budget_fields').hide();
+        }
+        if ($('#offer_daily_budget').val() == 0) {
+          $('#offer_daily_budget').val('Unlimited');
+        }
+      };
+
       toggleUserEnabled();
       $('#offer_user_enabled').change(toggleUserEnabled);
 
       setEstimatedBudget();
       $('#offer_bid').change(function() {
         checkMinimumPrice();
-        setEstimatedBudget();
+        setDailyBudget();
         updatePercentile();
       });
 
+      $('#estimated_budget_field').change(function() {
+        $(this).val(numberToCurrency(stringToNumber($(this).val())));
+        setDailyBudget();
+        toggleDailyBudget();
+      });
       $('#offer_daily_budget').change(function() {
         $(this).val(stringToNumber($(this).val()));
         setEstimatedBudget();
+        toggleDailyBudget();
       });
+      $('#daily_budget_toggle').click(toggleDailyBudget);
+      toggleDailyBudget();
 
       $('form').submit(function() {
         checkMinimumPrice();
-      })
+      });
     });
 
 - content_for :page_styles do
@@ -198,15 +231,7 @@
       padding-left: 15px;
     }
 
-    #estimated_budget.disabled {
-      color: #aaa;
-    }
-
-    #estimated_budget .value {
-      font-weight: bold;
-      display: inline;
-    }
-    .premier, .percentile-details, #estimated_budget {
+    .premier, .percentile-details, #daily_budget_fields {
       font-size: 12px;
     }
     textarea,
@@ -222,7 +247,10 @@
     #percentile {
       font-weight: bold;
     }
-    
+    label.narrower, input.narrower {
+      width: 140px;
+    }
+
     #offer_status {
     	padding: .8em;
     	margin-bottom: 1em;
