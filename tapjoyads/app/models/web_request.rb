@@ -20,7 +20,7 @@ class WebRequest < SimpledbResource
   self.sdb_attr :type
   self.sdb_attr :status_items
   self.sdb_attr :device_ip
-  self.sdb_attr :user_agent
+  self.sdb_attr :user_agent, :cgi_escape => true
   self.sdb_attr :time, :type => :time
   self.sdb_attr :viewed_at, :type => :time
   self.sdb_attr :path, :force_array => true, :replace => false
