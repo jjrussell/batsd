@@ -30,7 +30,7 @@
           %th
             = label_tag(:managed_by_tapjoy, 'Managed by Tapjoy')
             #help_managed_by_tapjoy.help ?
-          %td= check_box_tag(:managed_by_tapjoy, nil, @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL)
+          %td= check_box_tag(:managed_by_tapjoy, nil, @currency.tapjoy_managed?)
         %tr.managed
           %th
             = f.label :initial_balance, 'Initial balance'
