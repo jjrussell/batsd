@@ -1,8 +1,12 @@
 if (typeof(Tapjoy) == "undefined") Tapjoy = {};
 if (typeof(console) == "undefined") console={log:$.noop};
 
+function addCommaSeparators(number) {
+  return String(number).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+}
+
 function numberToCurrency(number) {
-  return '$' + Number(number).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+  return '$' + addCommaSeparators(Number(number).toFixed(2));
 }
 
 function stringToNumber(currency, allowNegative) {

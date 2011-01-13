@@ -58,14 +58,22 @@
         %td= @offer.name
       %tr
         %th
-          = f.label :daily_budget, 'Daily Install Limit'
+          = f.label :daily_budget, 'Daily Budget'
           #help_daily.help ?
         %td
-          = f.text_field :daily_budget, :class => 'togglable'
-          = error_message_on @offer, :daily_budget
-          #estimated_budget
-            Estimated daily budget: 
-            .value
+          = label_tag :daily_budget_off, 'Unlimited'
+          = radio_button_tag('daily_budget', 'off', @offer.daily_budget <= 0, :class => 'togglable')
+          &nbsp;
+          = label_tag :daily_budget_on, 'Limit'
+          = radio_button_tag('daily_budget', 'on', @offer.daily_budget > 0, :class => 'togglable')
+          - budget_fields_class = @offer.daily_budget > 0 ? '' : 'hidden'
+          #daily_budget_fields{ :class => budget_fields_class }
+            = f.label(:daily_budget, 'Installs:')
+            = f.text_field(:daily_budget, :class => 'togglable')
+            = error_message_on @offer, :daily_budget
+            #estimated_budget
+              Estimated daily budget:
+              .value
       %tr
         %th
           Balance
@@ -126,24 +134,29 @@
       var toggleUserEnabled = function() {
         if ($('#offer_user_enabled').attr('checked')) {
           $('.togglable').attr('disabled', false);
-          $('#estimated_budget').removeClass('disabled');
         } else {
           $('.togglable').attr('disabled', true);
-          $('#estimated_budget').addClass('disabled');
         }
       };
 
       var setEstimatedBudget = function() {
+        checkValidBudget();
         var bid = stringToNumber($('#offer_payment').val());
-        var installLimit = stringToNumber($('#offer_daily_budget').val());
-        var budget = 'Unlimited';
-        if (installLimit > 0) {
-          budget = numberToCurrency(bid * installLimit);
-        } else {
-        }
-        $('#estimated_budget .value').html(budget);
+        var installLimit = stringToNumber($('#offer_daily_budget').val(), true);
+        var budget = numberToCurrency(bid * installLimit);
+        $('#estimated_budget .value').text(budget);
       };
 
+      var checkValidBudget = function(){
+        var installLimit = stringToNumber($('#offer_daily_budget').val(), true);
+        if (! (installLimit > 0) ) {
+          installLimit = 1;
+          $('#offer_daily_budget').val('1');
+          alert('Daily install limit must be a number greater than 0.');
+          return false;
+        }
+        return true;
+      }
       var checkMinimumPrice = function() {
         var minimumPrice = #{([ @offer.bid, @offer.min_bid ].min) / 100.0};
         var currentPrice = stringToNumber($('#offer_bid').val());
@@ -172,24 +185,41 @@
         });
       };
 
+      var toggleDailyBudget = function() {
+        if ($('#offer_daily_budget').val() == 0) {
+          $('#offer_daily_budget').val('');
+        }
+      };
+
       toggleUserEnabled();
       $('#offer_user_enabled').change(toggleUserEnabled);
 
-      setEstimatedBudget();
+      if ( $('#daily_budget_on').is(':checked') ) {
+        setEstimatedBudget();
+      }
       $('#offer_bid').change(function() {
         checkMinimumPrice();
-        setEstimatedBudget();
         updatePercentile();
       });
 
       $('#offer_daily_budget').change(function() {
-        $(this).val(stringToNumber($(this).val()));
+        $(this).val(addCommaSeparators(stringToNumber($(this).val(), true)));
         setEstimatedBudget();
       });
+      $('#daily_budget_on').click(function(){
+        $('#daily_budget_fields').slideDown();
+        toggleDailyBudget();
+      });
+      $('#daily_budget_off').click(function(){
+        $('#daily_budget_fields').slideUp();
+        toggleDailyBudget();
+      });
+      toggleDailyBudget();
 
       $('form').submit(function() {
         checkMinimumPrice();
-      })
+        return checkValidBudget();
+      });
     });
 
 - content_for :page_styles do
@@ -197,11 +227,6 @@
     .addfunds {
       padding-left: 15px;
     }
-
-    #estimated_budget.disabled {
-      color: #aaa;
-    }
-
     #estimated_budget .value {
       font-weight: bold;
       display: inline;
@@ -222,7 +247,10 @@
     #percentile {
       font-weight: bold;
     }
-    
+    label.narrower, input.narrower {
+      width: 140px;
+    }
+
     #offer_status {
     	padding: .8em;
     	margin-bottom: 1em;

@@ -25,6 +25,7 @@ class Apps::OffersController < WebsiteController
 
   def update
     params[:offer].delete(:payment)
+    params[:offer][:daily_budget] = 0 if params[:daily_budget] == 'off'
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
 
     safe_attributes = [:daily_budget, :user_enabled, :bid]
@@ -37,11 +38,10 @@ class Apps::OffersController < WebsiteController
 
     if @offer.safe_update_attributes(offer_params, safe_attributes)
       flash[:notice] = 'Pay-per-install was successfully updated'
-      redirect_to(app_offer_path(:app_id => @app.id, :id => @offer.id))
     else
       flash[:error] = 'Update unsuccessful'
-      render :action => "show"
     end
+    redirect_to(app_offer_path(:app_id => @app.id, :id => @offer.id))
   end
 
   def toggle
