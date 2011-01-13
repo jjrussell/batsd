@@ -10,7 +10,7 @@
         = link_to('#', new_app_path, :class => "hidden")
       - else
         = image_tag(selected.get_icon_url(request.protocol), :size => '24x24', :alt => '')
-        = selected.name
+        = selected.is_a?(App) ? selected.name : selected.name_with_suffix
   #apps_dropdown.hidden
     #filter_box
       Filter:
@@ -33,7 +33,7 @@
         - class_name = o == selected ? "selected" : ""
         .app{ :class => class_name, :title => o.name }
           = image_tag(o.get_icon_url(request.protocol), :size => '24x24', :alt => '')
-          %span.app-name= o.name
+          %span.app-name= o.is_a?(App) ? o.name : o.name_with_suffix
           = link_to('#', url, :class => "hidden")
     #new_app_box
       .app{ :class => "new_app #{selected.nil? ? 'selected' : ''}", :title => 'Add a new App' }

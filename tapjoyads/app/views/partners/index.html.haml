@@ -28,6 +28,7 @@
         %br/
         Earnings
       %th{ :class => params[:q].blank? ? 'up_arrow' : '' } Created
+      %th Premier
       %th Offers
   %tbody
     - @partners.each do |partner|
@@ -53,6 +54,7 @@
         %td= number_to_currency(partner.balance / 100.0)
         %td= number_to_currency(partner.pending_earnings / 100.0)
         %td.nowrap= partner.created_at.to_s(:pub)
+        %td= partner.is_premier? ? "#{partner.premier_discount}%" : "false"
         %td
           - partner.offers.each do |o|
             .offer

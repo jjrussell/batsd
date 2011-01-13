@@ -14,7 +14,7 @@ class Currency < ActiveRecord::Base
   validates_numericality_of :conversion_rate, :initial_balance, :ordinal, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :spend_share, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :allow_nil => true, :only_integer => true
-  validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :in => [ true, false ]
+  validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :banner_advertiser, :in => [ true, false ]
   validates_each :callback_url do |record, attribute, value|
     unless SPECIAL_CALLBACK_URLS.include?(value) || value =~ /^https?:\/\//
       record.errors.add(attribute, 'is not a valid url')
@@ -27,9 +27,9 @@ class Currency < ActiveRecord::Base
   
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = true)
     if do_lookup
-      Mc.get_and_put("mysql.app_currencies.#{app_id}") { find_all_by_app_id(app_id, :order => 'ordinal ASC') }
+      Mc.distributed_get_and_put("mysql.app_currencies.#{app_id}") { find_all_by_app_id(app_id, :order => 'ordinal ASC') }
     else
-      Mc.get("mysql.app_currencies.#{app_id}")
+      Mc.distributed_get("mysql.app_currencies.#{app_id}")
     end
   end
   
@@ -68,7 +68,11 @@ class Currency < ActiveRecord::Base
     end
     
     if displayer_app.present?
-      publisher_amount *= 0.5
+      if displayer_app.id == app_id
+        publisher_amount = 0
+      else
+        publisher_amount *= 0.5
+      end
     end
     
     publisher_amount.to_i
@@ -89,7 +93,11 @@ class Currency < ActiveRecord::Base
   
   def get_displayer_amount(offer, displayer_app = nil)
     if displayer_app.present?
-      (offer.payment * displayer_app.display_money_share).to_i
+      if displayer_app.id == app_id
+        get_publisher_amount(offer)
+      else
+        (offer.payment * displayer_app.display_money_share).to_i
+      end
     else
       0
     end
@@ -124,19 +132,19 @@ class Currency < ActiveRecord::Base
 private
   
   def update_memcached_by_app_id
-    Mc.put("mysql.app_currencies.#{app_id}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'))
+    Mc.distributed_put("mysql.app_currencies.#{app_id}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'))
     
     if app_id_changed?
-      Mc.delete("mysql.app_currencies.#{app_id_was}")
+      Mc.distributed_delete("mysql.app_currencies.#{app_id_was}")
     end
   end
   
   def clear_memcached_by_app_id
-    Mc.delete("mysql.app_currencies.#{app_id}")
+    Mc.distributed_delete("mysql.app_currencies.#{app_id}")
   end
   
   def get_spend_share_ratio
-    Mc.get_and_put('currency.spend_share_ratio') do 
+    Mc.distributed_get_and_put('currency.spend_share_ratio') do 
       orders = Order.created_since(1.month.ago.to_date)
       
       sum_all_orders = orders.collect(&:amount).sum

@@ -35,6 +35,11 @@
               Estimating new offerwall placement...
             .percentile-details
               The bid is just one of many factors affecting your offerwall ranking.
+            - if !featured && !@offer.on_track_for_budget? && @offer.needs_higher_bid?
+              .percentile-details
+                To position your app in the top 15% of the offerwall, your bid should be at least 
+                %b>= " " + number_to_currency(0.01 * @offer.bid_for_percentile(85))
+                \.
       %tr
         %th
           = f.label :payment, 'Payment'
@@ -129,11 +134,12 @@
       };
 
       var setEstimatedBudget = function() {
-        var bid = stringToNumber($('#offer_bid').val());
+        var bid = stringToNumber($('#offer_payment').val());
         var installLimit = stringToNumber($('#offer_daily_budget').val());
-        budget = 'Unlimited';
-        if (installLimit >= 0) {
+        var budget = 'Unlimited';
+        if (installLimit > 0) {
           budget = numberToCurrency(bid * installLimit);
+        } else {
         }
         $('#estimated_budget .value').html(budget);
       };

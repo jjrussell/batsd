@@ -85,7 +85,7 @@ class App < ActiveRecord::Base
       data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
     end
     self.name = data[:title]
-    self.price = (data[:price] * 100).round
+    self.price = (data[:price].to_f * 100).round
     self.description = data[:description]
     self.age_rating = data[:age_rating]
     download_icon(data[:icon_url], data[:large_icon_url])
@@ -126,12 +126,12 @@ class App < ActiveRecord::Base
     end
   end
 
-  def get_icon_url(protocol='http://')
+  def get_icon_url(protocol='https://')
     "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/#{id}.png"
   end
 
-  def get_cloudfront_icon_url(protocol='http://')
-    "#{protocol}content.tapjoy.com/icons/#{id}.png"
+  def get_cloudfront_icon_url
+    "#{CLOUDFRONT_URL}/icons/#{id}.png"
   end
 
   def get_offer_list(udid, options = {})

@@ -55,6 +55,10 @@ $(function($){
         $.data(result[0], 'data', app);
         $('#search_results').append(result);
       });
+    } else {
+      var result = $('<div/>').addClass('search-result').text("No results found.");
+      $('#search_results').removeClass('searching');
+      $('#search_results').append(result);
     }
   };
 

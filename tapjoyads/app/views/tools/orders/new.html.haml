@@ -1,0 +1,35 @@
+- @page_title = 'Create Order'
+
+%h1 Create Order
+
+- form_for [ :tools, @order ], :html => { :class => 'tjform' } do |f|
+  %table
+    %tr
+      %th= f.label :partner_id, 'Partner ID'
+      %td
+        = f.text_field :partner_id, :size => 50
+        = error_message_on @order, :partner
+    %tr
+      %th= f.label :amount
+      %td
+        = f.currency_field :amount, {}, {:class => 'allow_negative'}
+        = error_message_on @order, :amount
+    %tr
+      %th= f.label :status
+      %td
+        = f.select :status, '<option>1</option>'
+        = error_message_on @order, :status
+    %tr
+      %th= f.label :payment_method
+      %td
+        = f.select :payment_method, '<option value="1">Billable</option><option value="2">Marketing Expense</option>'
+        = error_message_on @order, :payment_method
+    %tr
+      %th= f.label :note
+      %td
+        = f.text_field :note, :size => 50
+        = error_message_on @order, :note
+    %tr
+      %td{ :colspan => 2 }= f.submit 'Create Order'
+    %tr
+      %td{ :colspan => 2 }= link_to "Don't forget to create an invoice in freshbooks", "http://tapjoy.freshbooks.com/"

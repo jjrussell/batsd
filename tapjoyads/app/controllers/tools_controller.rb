@@ -2,45 +2,13 @@ class ToolsController < WebsiteController
   layout 'tabbed'
   
   filter_access_to :all
-  
-  after_filter :save_activity_logs, :only => [ :create_payout, :create_transfer, :create_order, :update_user, :create_generic_offer ]
-  
+
+  after_filter :save_activity_logs, :only => [ :update_user, :update_android_app, :update_device ]
+
   def index
   end
   
-  def payouts
-    @partners = Partner.to_payout
-  end
-  
-  def create_payout
-    partner = Partner.find(params[:id])
-    cutoff_date = partner.payout_cutoff_date - 1.day
-    amount = (params[:amount].to_f * 100).round
-    payout = partner.payouts.build(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
-    log_activity(payout)
-    render :json => { :success => payout.save }
-  end
-  
   def new_transfer
-  end
-  
-  def new_order
-    @order = Order.new
-  end
-  
-  def create_order
-    order_params = sanitize_currency_params(params[:order], [ :amount ])
-    @order = Order.new(order_params)
-    log_activity(@order)
-    if @order.save
-      dollars = @order.amount.to_s
-      dollars[-2..-3] = "." if dollars.length > 1
-      email = @order.partner.users.first.email rescue "(no email)"
-      flash[:notice] = "The order of <b>$#{dollars}</b> to <b>#{email}</b> was successfully created."
-      redirect_to new_order_tools_path
-    else
-      render :action => :new_order
-    end
   end
 
   def monthly_data
@@ -132,6 +100,27 @@ class ToolsController < WebsiteController
     @queues = Sqs.sqs.queues
   end
 
+  def elb_status
+    elb_interface = RightAws::ElbInterface.new
+    ec2_interface = RightAws::Ec2.new
+    @lb_names = Rails.env == 'production' ? %w( masterjob-lb job-lb website-lb web-lb test-lb ) : []
+    @lb_instances = {}
+    @ec2_instances = {}
+    @lb_names.each do |lb_name|
+      @lb_instances[lb_name]  = elb_interface.describe_instance_health(lb_name)
+      @ec2_instances[lb_name] = ec2_interface.describe_instances(@lb_instances[lb_name].map { |i| i[:instance_id] })
+      
+      @lb_instances[lb_name].sort! { |a, b| a[:instance_id] <=> b[:instance_id] }
+      @ec2_instances[lb_name].sort! { |a, b| a[:aws_instance_id] <=> b[:aws_instance_id] }
+    end
+  end
+
+  def as_groups
+    as_interface = RightAws::AsInterface.new
+    @as_groups = as_interface.describe_auto_scaling_groups
+    @as_groups.sort! { |a, b| a[:auto_scaling_group_name] <=> b[:auto_scaling_group_name] }
+  end
+
   def disabled_popular_offers
     @offers_count_hash = Mc.distributed_get('tools.disabled_popular_offers') { {} }
     @offers = Offer.find(@offers_count_hash.keys, :include => [:partner, :item])
@@ -153,6 +142,48 @@ class ToolsController < WebsiteController
       device.delete_all
       flash[:notice] = "Device successfully reset and #{clicks_deleted} clicks deleted"
     end
+  end
+
+  def device_info
+    if params[:udid]
+      udid = params[:udid].downcase
+      @device = Device.new(:key => udid)
+      conditions = "itemName() like '#{udid}.%'"
+      @clicks = []
+      @rewarded_clicks_count = 0
+      click_app_ids = []
+      NUM_CLICK_DOMAINS.times do |i|
+        Click.select(:domain_name => "#{RUN_MODE_PREFIX}clicks_#{i}", :where => conditions) do |click|
+          @clicks << click
+          @rewarded_clicks_count += 1 if click.installed_at?
+          click_app_ids << [click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id]
+        end
+      end
+
+      # find all apps at once and store in look up table
+      @click_apps = {}
+      Offer.find_all_by_id(click_app_ids.flatten.uniq).each do |app|
+        @click_apps[app.id] = app
+      end
+
+      last_run_times = @device.apps
+      @apps = Offer.find_all_by_id(@device.apps.keys).map do |app|
+        [Time.zone.at(last_run_times[app.id].to_f), app]
+      end.sort.reverse
+    end
+  end
+
+  def update_device
+    device = Device.new :key => params[:udid]
+    log_activity(device)
+    if params[:internal_notes].blank?
+      device.delete('internal_notes') if device.internal_notes?
+    else
+      device.internal_notes = params[:internal_notes]
+    end
+    device.save
+    flash[:notice] = 'Internal notes successfully updated.'
+    redirect_to :action => :device_info, :udid => params[:udid]
   end
 
   def managed_partner_ids
@@ -181,7 +212,7 @@ class ToolsController < WebsiteController
     click.save
 
     if Rails.env == 'production'
-      Downloader.get_with_retry "http://ws.tapjoyads.com/connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
+      Downloader.get_with_retry "#{API_URL}/connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
     end
 
     redirect_to :back
@@ -241,24 +272,31 @@ class ToolsController < WebsiteController
     end
   end
 
-  def new_generic_offer
-    @generic_offer = GenericOffer.new
-  end
-
-  def create_generic_offer
-    generic_offer_params = sanitize_currency_params(params[:generic_offer], [ :price ])
-    @generic_offer = GenericOffer.new(generic_offer_params)
-    log_activity(@generic_offer)
-    if @generic_offer.save
-      unless params[:icon].blank?
-        b = S3.bucket(BucketNames::TAPJOY)
-        b.put("icons/#{@generic_offer.id}.png", params[:icon], {}, "public-read")
+  def edit_android_app
+    unless params[:id].blank?
+      @app = App.find_by_id(params[:id])
+      if @app.nil?
+        flash[:error] = "Could not find Android app with ID #{params[:id]}."
+      elsif @app.platform != "android"
+        flash[:error] = "'#{@app.name}' is not an Android app."
+        @app = nil
       end
-      flash[:notice] = 'Successfully created Generic Offer'
-      redirect_to statz_path(@generic_offer.primary_offer)
-    else
-      render :action => :new_generic_offer
     end
   end
 
+  def update_android_app
+    @app = App.find_by_id_and_platform(params[:id], "android")
+    log_activity(@app)
+    @app.store_id = params[:store_id] unless params[:store_id].blank?
+    @app.price = params[:price].to_i
+
+    if @app.save
+      @app.download_icon(params[:url], nil) unless params[:url].blank?
+      flash[:notice] = 'App was successfully updated'
+      redirect_to statz_path(@app)
+    else
+      flash[:error] = 'Update unsuccessful'
+      render :action => "edit_android_app"
+    end
+  end
 end

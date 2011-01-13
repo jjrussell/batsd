@@ -22,7 +22,7 @@ class Order < ActiveRecord::Base
   
   named_scope :paid, :conditions => 'status = 1'
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at > ?", date ] } }
-  
+  named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
   named_scope :for_discount, lambda { paid.created_since(3.months.ago.to_date).scoped(:order => 'created_at DESC').scope(:find) }
   
   def <=> other

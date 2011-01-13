@@ -30,6 +30,8 @@ elsif server_type == 'test'
   `cp tapjoyads/config/newrelic-test.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'web'
   `cp tapjoyads/config/newrelic-web.yml tapjoyads/config/newrelic.yml`
+elsif server_type == 'website'
+  `cp tapjoyads/config/newrelic-website.yml tapjoyads/config/newrelic.yml`
 end
 
 if server_type == 'jobs' || server_type == 'masterjobs'

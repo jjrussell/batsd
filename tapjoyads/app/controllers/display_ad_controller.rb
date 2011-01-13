@@ -41,13 +41,14 @@ class DisplayAdController < ApplicationController
     return unless verify_params([ :publisher_app_id, :advertiser_app_id, :displayer_app_id, :size ])
     
     web_request = WebRequest.new
-    web_request.put_values('display_ad_image', params, get_ip_address, get_geoip_data)
+    web_request.put_values('display_ad_image', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     web_request.save
     
     publisher = App.find_in_cache(params[:publisher_app_id])
     offer = Offer.find_in_cache(params[:advertiser_app_id])
     
-    ad_image_base64 = get_ad_image(publisher, offer)
+    self_ad = (params[:publisher_app_id] == params[:displayer_app_id])
+    ad_image_base64 = get_ad_image(publisher, offer, self_ad)
     
     send_data Base64.decode64(ad_image_base64), :type => 'image/png', :disposition => 'inline'
   end
@@ -62,19 +63,26 @@ private
     params[:displayer_app_id] = params[:app_id]
     
     web_request = WebRequest.new(:time => now)
-    web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data)
+    web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
+    
+    displayer_currency = Currency.find_in_cache(params[:app_id]) rescue nil
+    self_ad = (displayer_currency.present? && displayer_currency.banner_advertiser?)
     
     # Randomly choose one publisher app that the user has run:
     device = Device.new(:key => params[:udid])
     publisher_app_ids = []
-    @@allowed_publisher_app_ids.each do |app_id|
-      last_run_time = device.last_run_time(app_id)
-      if last_run_time.present? && last_run_time > now - 1.week
-        publisher_app_ids << app_id
+    if self_ad
+      publisher_app_ids << params[:app_id]
+    else
+      @@allowed_publisher_app_ids.each do |app_id|
+        last_run_time = device.last_run_time(app_id)
+        if last_run_time.present? && last_run_time > now - 1.week
+          publisher_app_ids << app_id
+        end
       end
     end
     
-    unless publisher_app_ids.empty?
+    if publisher_app_ids.present?
       publisher_app_id = publisher_app_ids[rand(publisher_app_ids.size)]
       publisher_app = App.find_in_cache(publisher_app_id)
       currency = Currency.find_in_cache(publisher_app_id)
@@ -88,7 +96,6 @@ private
           :required_length => 25,
           :reject_rating_offer => true)
 
-      displayer_currency = Currency.find_in_cache(params[:app_id]) rescue nil
       disabled_offer_ids = displayer_currency.nil? ? Set.new : displayer_currency.get_disabled_offer_ids
       disabled_partner_ids = displayer_currency.nil? ? Set.new : displayer_currency.get_disabled_partner_ids
     
@@ -97,6 +104,7 @@ private
         offer.conversion_rate < 0.5 || 
         offer.item_id == params[:app_id] || 
         offer.name.size > 30 ||
+        offer.item_type != "App" ||
         disabled_offer_ids.include?(offer.id) ||
         disabled_partner_ids.include?(offer.partner_id)
       end
@@ -105,7 +113,7 @@ private
     
       if offer.present?
         @click_url = offer.get_click_url(publisher_app, get_user_id_from_udid(params[:udid], params[:app_id]), params[:udid], currency.id, 'display_ad', nil, now, params[:app_id])
-        @image = get_ad_image(publisher_app, offer)
+        @image = get_ad_image(publisher_app, offer, self_ad)
       
         params[:offer_id] = offer.id
         params[:publisher_app_id] = publisher_app.id
@@ -113,41 +121,52 @@ private
         web_request.add_path('display_ad_shown')
       end
     end
-      
+    
     web_request.save
   end
 
-  def get_ad_image(publisher, offer)
+  def get_ad_image(publisher, offer, self_ad)
     
     Mc.get_and_put("display_ad.#{publisher.id}.#{offer.id}", false, 1.hour) do
       width = 320
       height = 50
       border = 2
-      
-      publisher_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{publisher.id}.png")
-      offer_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{offer.id}.png")
-
       icon_height = height - border * 2 - 2
-      publisher_icon = Magick::Image.from_blob(publisher_icon_blob)[0].resize(icon_height, icon_height)
+      
+      text = "Earn #{publisher.primary_currency.get_reward_amount(offer)} #{publisher.primary_currency.name}"
+      text += " in #{publisher.name}" unless self_ad
+      text += " to buy Towers" if publisher.id == "2349536b-c810-47d7-836c-2cd47cd3a796" # TapDefense
+      text += "!\n Install #{offer.name}"
+      
+      offer_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{offer.id}.png")
       offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
-
-      publisher_icon = publisher_icon.vignette(-5, -5, 10, 2)
       offer_icon = offer_icon.vignette(-5, -5, 10, 2)
+
+      text_area_left_offset = 0
+      text_area_size = "260x40"
+
+      unless self_ad
+        publisher_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{publisher.id}.png")
+        publisher_icon = Magick::Image.from_blob(publisher_icon_blob)[0].resize(icon_height, icon_height)
+        publisher_icon = publisher_icon.vignette(-5, -5, 10, 2)
+        
+        text_area_left_offset = 40
+        text_area_size = "220x40"
+      end
 
       img = Magick::Image.new(width - border * 2, height - border * 2)
       img.format = 'png'
 
-      img.composite!(publisher_icon, 1, 1, Magick::AtopCompositeOp)
+      img.composite!(publisher_icon, 1, 1, Magick::AtopCompositeOp) unless self_ad
       img.composite!(offer_icon, width - icon_height - 5, 1, Magick::AtopCompositeOp)
 
-      text = "Earn #{publisher.primary_currency.get_reward_amount(offer)} #{publisher.primary_currency.name} in #{publisher.name}!\n Install #{offer.name}"
       image_label = Magick::Image.read("label:#{text}") do
-        self.size = "220x44"
+        self.size = text_area_size
         self.gravity = Magick::CenterGravity
         self.stroke = 'transparent'
         self.background_color = 'transparent'
       end
-      img.composite!(image_label[0], 40, 0, Magick::AtopCompositeOp)
+      img.composite!(image_label[0], text_area_left_offset, 2, Magick::AtopCompositeOp)
 
       free_label = Magick::Image.read("label:F\nR\nE\nE") do
         self.size = "8x44"
@@ -177,4 +196,5 @@ private
       udid
     end
   end
+  
 end

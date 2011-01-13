@@ -140,9 +140,9 @@ class OneOffs
     puts "App, Revenue, Spend"
     
     Offer.find_all_by_partner_id(partner_id).each do |offer|
-      s = Appstats.new(offer.id, {:type => :sum, :start_time => month_start, :end_time => month_start.end_of_month})
-      revenue = s.stats['rewards_revenue'].first + s.stats['display_revenue'].first
-      spend = -s.stats['installs_spend'].first
+      s = Appstats.new(offer.id, {:granularity => :daily, :start_time => month_start, :end_time => month_start.end_of_month})
+      revenue = s.stats['rewards_revenue'].sum + s.stats['display_revenue'].sum
+      spend = -s.stats['installs_spend'].sum
       total_revenue += revenue
       total_spend += spend
       puts "#{offer.name.gsub(',','_')}, $#{(revenue/100.0)}, $#{(spend/100.0)}" if revenue != 0 or spend != 0
@@ -162,8 +162,8 @@ class OneOffs
         month_start = Time.utc(2010,month,01)
         maus = 0
         begin
-          s = Appstats.new(c.app.id, {:type => :sum, :start_time => month_start, :end_time => month_start.end_of_month})
-          maus = s.stats['monthly_active_users'].first
+          s = Appstats.new(c.app.id, {:granularity => :daily, :start_time => month_start, :end_time => month_start.end_of_month})
+          maus = s.stats['monthly_active_users'].sum
         rescue 
           maus = 0
         end
@@ -223,6 +223,48 @@ class OneOffs
     puts "existing UDIDs (per app): #{app_existing_udids}"
   end
 
+  def self.grab_groupon_udids
+    date = Time.zone.parse('2010-10-04').to_date
+    end_date = Time.zone.now.to_date
+    
+    while date < end_date
+      puts "Running #{date}"
+      self.grab_groupon_udids_for_date(date)
+      
+      date += 1.day
+    end
+  end
+
+  def self.grab_groupon_udids_for_date(date)
+    bucket = S3.bucket(BucketNames::WEB_REQUESTS)
+    outfile = open("groupon_udids_#{date.to_s}.txt", 'w')
+    MAX_WEB_REQUEST_DOMAINS.times do |num|
+      s3_name = "web-request-#{date.to_s}-#{num}.sdb"
+      next unless bucket.key(s3_name).exists?
+      puts "Found #{s3_name}"
+      
+      gzip_file = open("#{s3_name}.gz", 'w')
+      S3.s3.interface.get(bucket.full_name, s3_name) do |chunk|
+        gzip_file.write(chunk)
+      end
+      gzip_file.close
+      `gunzip -f #{s3_name}.gz`
+      
+      domain = open(s3_name)
+      domain.each do |line|
+        wr = WebRequest.deserialize(line)
+        if wr.app_id == '192e6d0b-cc2f-44c2-957c-9481e3c223a0' && wr.path.include?('new_user')
+          outfile.write(wr.udid)
+          outfile.write("\n")
+        end
+      end
+      domain.close
+      `rm #{s3_name}`
+    end
+    
+    outfile.close
+  end
+
   def self.reset_memcached
     save_memcached_state
     restore_memcached_state
@@ -279,6 +321,19 @@ class OneOffs
     Offer.cache_featured_offers
     Offer.cache_enabled_offers
     true
+  end
+
+  def self.convert_stats_to_new_format
+    count = 0
+    Stats.select do |stat|
+      if stat.key =~ /^campaign/
+        stat.delete_all
+      else
+        stat.save!
+      end
+      puts "#{Time.zone.now.to_s(:db)}: #{count}" if count % 1000 == 0
+      count += 1
+    end
   end
 
 end

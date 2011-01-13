@@ -15,9 +15,14 @@ namespace :admin do
   # admin:sync_db
   desc "Copies the production database to the development database"
   task :sync_db do
+    database_yml = YAML::load_file("config/database.yml")
+    source       = database_yml['production_slave']
+    dest         = database_yml['development']
+    dump_file    = "tmp/#{source['database']}.sql"
+    
     print("Backing up the production database... ")
     time = Benchmark.realtime do
-      system("mysqldump -u tapjoy --password=andoverbusiness1 -h tapjoy-db-rds.cck8zbm50hdd.us-east-1.rds.amazonaws.com --single-transaction --ignore-table=tapjoy_db.conversions tapjoy_db > tmp/tapjoy_db.sql")
+      system("mysqldump -u #{source['username']} --password=#{source['password']} -h #{source['host']} --single-transaction --ignore-table=#{source['database']}.conversions #{source['database']} > #{dump_file}")
     end
     puts("finished in #{time} seconds.")
     
@@ -25,10 +30,10 @@ namespace :admin do
     
     print("Restoring backup to the development database... ")
     time = Benchmark.realtime do
-      system("mysql -u tapjoy --password=andoverbusiness1 -h dev-tapjoy-db-rds.cck8zbm50hdd.us-east-1.rds.amazonaws.com tapjoy_db < tmp/tapjoy_db.sql")
+      system("mysql -u #{dest['username']} --password=#{dest['password']} -h #{dest['host']} #{dest['database']} < #{dump_file}")
     end
     puts("finished in #{time} seconds.")
-    system("rm -f tmp/tapjoy_db.sql")
+    system("rm -f #{dump_file}")
   end
   
   desc "Prints the apache restarts logs"

@@ -118,7 +118,7 @@ private
   
   def create_web_request(path = 'offer_click')
     web_request = WebRequest.new
-    web_request.put_values(path, params, get_ip_address, get_geoip_data)
+    web_request.put_values(path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     web_request.viewed_at = Time.zone.at(params[:viewed_at].to_f) if params[:viewed_at].present?
     web_request.save
   end

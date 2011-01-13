@@ -19,7 +19,7 @@ class TapjoyMailer < ActionMailer::Base
     recipients to_email
     subject "Confirmation email - get #{amount} #{publisher_app_name} #{currency_name}"
     content_type 'text/html'
-    url = "http://ws.tapjoyads.com/list_signup/confirm?code=#{confirm_code}"
+    url = "#{API_URL}/list_signup/confirm?code=#{confirm_code}"
     body :url => url, :currency_name => currency_name, :publisher_app_name => publisher_app_name, :amount => amount
   end
   
@@ -28,8 +28,7 @@ class TapjoyMailer < ActionMailer::Base
     partner = Partner.find_by_id(params[:partner_id], :include => [ :users ])
     account_managers = partner.account_managers.map(&:email)
     account_managers.delete "oso@tapjoy.com"
-    account_managers << "adops@tapjoy.com" if account_managers.blank?
-    account_managers << "dev@tapjoy.com"
+    account_managers += [ 'adops@tapjoy.com', 'dev@tapjoy.com' ]
     account_managers = account_managers.join(', ')
     reply_to account_managers
     recipients account_managers

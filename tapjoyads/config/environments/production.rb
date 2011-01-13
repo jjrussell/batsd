@@ -26,13 +26,14 @@ config.action_controller.allow_forgery_protection    = false
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-MEMCACHE_SERVERS = [ '10.241.110.160', '10.241.57.219', '10.241.58.96',   '10.240.43.96',   '10.241.51.79',   # east-1b
-                     '10.196.55.240',  '10.202.69.124', '10.195.165.124', '10.202.221.219', '10.194.22.4'   ] # east-1d
+MEMCACHE_SERVERS = [ '10.127.89.9', '10.127.89.230' ]
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
 
 RUN_MODE_PREFIX = ''
+API_URL = 'https://ws.tapjoyads.com'
+CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 
 # Amazon services:
 amazon = YAML::load_file("#{ENV['HOME']}/.tapjoy_aws_credentials.yaml")
@@ -43,7 +44,7 @@ ENV['AWS_SECRET_ACCESS_KEY'] = amazon['production']['secret_access_key']
 # to the list of transient problems which will automatically get retried by RightAws.
 RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
 
-MAX_WEB_REQUEST_DOMAINS = 100
+MAX_WEB_REQUEST_DOMAINS = 140
 NUM_POINT_PURCHASES_DOMAINS = 10
 NUM_CLICK_DOMAINS = 50
 NUM_REWARD_DOMAINS = 50

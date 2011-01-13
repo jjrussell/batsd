@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101210101052) do
+ActiveRecord::Schema.define(:version => 20110111202649) do
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(:version => 20101210101052) do
     t.decimal  "spend_share",                        :precision => 8, :scale => 6, :default => 0.5,   :null => false
     t.integer  "minimum_featured_bid"
     t.decimal  "direct_pay_share",                   :precision => 8, :scale => 6, :default => 1.0,   :null => false
+    t.boolean  "banner_advertiser",                                                :default => false, :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -219,6 +220,7 @@ ActiveRecord::Schema.define(:version => 20101210101052) do
     t.boolean  "multi_complete",                                                                :default => false, :null => false
     t.string   "direct_pay"
     t.boolean  "low_balance",                                                                   :default => false, :null => false
+    t.integer  "min_bid_override"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

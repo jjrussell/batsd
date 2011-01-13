@@ -176,6 +176,10 @@ class SimpledbResource
       self.write_to_memcache if save_to_memcache
       self.write_to_sdb(expected_attr) if save_to_sdb
       @is_new = false
+      @attributes_to_add.clear
+      @attributes_to_replace.clear
+      @attributes_to_delete.clear
+      @attribute_names_to_delete.clear
     end
   rescue ExpectedAttributeError => e
     if save_to_memcache
@@ -183,6 +187,11 @@ class SimpledbResource
     end
     raise e
   rescue Exception => e
+    if e.is_a?(RightAws::AwsError)
+      Mc.increment_count("failed_sdb_saves.sdb.#{@this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}", false, 1.day)
+    else
+      Mc.increment_count("failed_sdb_saves.mc.#{@this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}", false, 1.day)
+    end
     unless catch_exceptions
       if save_to_memcache
         Mc.delete(get_memcache_key) rescue nil
@@ -196,11 +205,6 @@ class SimpledbResource
     message = { :uuid => uuid, :options => options_copy }.to_json
     Sqs.send_message(QueueNames::FAILED_SDB_SAVES, message)
     Rails.logger.info "Successfully added to sqs. Message: #{message}"
-    if e.is_a?(RightAws::AwsError)
-      Mc.increment_count("failed_sdb_saves.sdb.#{@this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}", false, 1.day)
-    else
-      Mc.increment_count("failed_sdb_saves.mc.#{@this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}", false, 1.day)
-    end
   ensure
     Rails.logger.flush
   end
@@ -320,6 +324,7 @@ class SimpledbResource
       
       row.put(version_attr, initial_version.to_i + 1)
       row.serial_save(:catch_exceptions => false, :expected_attr => {version_attr => initial_version}, :write_to_memcache => false)
+      return row
     rescue ExpectedAttributeError => e
       Rails.logger.info "ExpectedAttributeError: #{e.to_s}."
       if retries > 0
@@ -613,6 +618,7 @@ class SimpledbResource
 protected
   
   def write_to_sdb(expected_attr = {})
+    sdb_interface = RightAws::SdbInterface.new(nil, nil, {:multi_thread => true, :port => 80, :protocol => 'http'})
     attributes_to_put = @attributes_to_add.merge(@attributes_to_replace)
     attributes_to_delete = @attributes_to_delete.clone
     @attribute_names_to_delete.each do |attr_name_to_delete|
@@ -621,15 +627,15 @@ protected
     
     begin
       unless attributes_to_put.empty?
-        @@sdb.put_attributes(@this_domain_name, @key, attributes_to_put, @attributes_to_replace.keys, expected_attr)
+        sdb_interface.put_attributes(@this_domain_name, @key, attributes_to_put, @attributes_to_replace.keys, expected_attr)
       end
       unless attributes_to_delete.empty?
-        @@sdb.delete_attributes(@this_domain_name, @key, attributes_to_delete, expected_attr)
+        sdb_interface.delete_attributes(@this_domain_name, @key, attributes_to_delete, expected_attr)
       end
     rescue RightAws::AwsError => e
       if e.message.starts_with?("NoSuchDomain") && Rails.env != 'production'
         Rails.logger.info_with_time("Creating new domain: #{@this_domain_name}") do
-          @@sdb.create_domain(@this_domain_name)
+          sdb_interface.create_domain(@this_domain_name)
         end
         retry
       elsif e.message.starts_with?("ConditionalCheckFailed") || e.message.starts_with?("AttributeDoesNotExist")

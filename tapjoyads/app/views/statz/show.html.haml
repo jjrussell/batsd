@@ -11,15 +11,7 @@
 .clear
 
 %form#change_date{ :method => :get, :class => 'tjform' }
-  - if @end_time - @start_time > 24.hours
-    = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
-    \-
-    = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
-  - else
-    = text_field_tag(:date)
-    \-
-    = text_field_tag(:end_date)
-  = select_tag(:granularity, options_for_select({ 'Daily' => :daily, 'Hourly' => :hourly }, @granularity))
+  = render :partial => 'reporting/date_range_fields'
 
 %h4 Offer
 - if permitted_to? :edit, :statz
@@ -41,7 +33,10 @@
     - if @offer.item.use_raw_url?
       - property_row('Raw url', link_to('[url]', @offer.item.store_url), nil, @offer.item.store_url.blank? ? 'incomplete' : nil)
     - else
-      - property_row('Store id', link_to(@offer.item.store_id, @offer.item.final_store_url), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
+      - if @offer.item.store_id.blank? && @offer.item.is_android?
+        - property_row('Store id', link_to("Empty -- Update?", edit_android_app_tool_path(@offer.item.id)), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
+      - else
+        - property_row('Store id', link_to(@offer.item.store_id, @offer.item.final_store_url), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
   - else
     - property_row('Destination url', link_to(truncate(@offer.url, :length => 60), @offer.url))
   - property_row('Price', number_to_currency(@offer.price / 100.0))
@@ -89,10 +84,10 @@
 %table.properties
   - property_row('Name', @offer.partner.name)
   - if @offer.partner.users.first
-    - property_row('Contact(s)', @offer.partner.users.map(&:email).join(', '))
+    - property_row('Contact(s)', @offer.partner.non_managers.map(&:email).join(', '))
   - property_row('Balance', number_to_currency(@offer.partner.balance / 100.0))
   - property_row('Pending Earnings', number_to_currency(@offer.partner.pending_earnings / 100.0))
-  - property_row('Account managers', @offer.partner.account_managers.map{|u| u.username}.join(', '))
+  - property_row('Account managers', @offer.partner.account_managers.map(&:email).join(', '))
   - property_row('Internal notes', @offer.partner.account_manager_notes, '')
   - property_row('id', link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - ' + clippy(@offer.partner.id))
 = render 'partners/make_current_button', :partner => @offer.partner
@@ -102,7 +97,7 @@
     %h4 Currency - #{c.name}
     .currency
       %a.more{ :href => '#', :c_id => c.id } [Show more details]
-      = link_to('[View Offer Wall]', "http://ws.tapjoyads.com/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDIDS.first}&publisher_user_id=testuser&currency_id=#{c.id}&device_type=#{@offer.item.platform}")
+      = link_to('[View Offer Wall]', "#{API_URL}/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDIDS.first}&publisher_user_id=testuser&currency_id=#{c.id}&device_type=#{@offer.item.platform}")
       .details{ :id => "details_#{c.id}"}
         %table.properties
           - property_row('Conversion rate', c.conversion_rate)
@@ -111,6 +106,7 @@
           - property_row('Initial balance', c.initial_balance)
           - property_row('Only free offers', c.only_free_offers?)
           - property_row('Has virtual goods', c.has_virtual_goods?)
+          - property_row('Banner advertiser', c.banner_advertiser?)
           - property_row('Spend share', c.spend_share)
           - property_row('Direct-pay share', c.direct_pay_share)
           - property_row('Max age rating', c.max_age_rating)

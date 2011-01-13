@@ -36,23 +36,41 @@ var updateURL = function(oldURL) {
     }
 
     // overwrite
-    hash.date = $('#date').val();
-    hash.end_date = $('#end_date').val();
-    hash.granularity = $('#granularity').val();
+    if (rangeIsLast24Hours()) {
+      delete hash.date
+      delete hash.end_date
+      delete hash.granularity
+    } else {
+      hash.date = $('#date').val();
+      hash.end_date = $('#end_date').val();
+      hash.granularity = $('#granularity').val();
+    }
 
     // recreate query string
     var arr = [];
     for (var key in hash) {
       arr.push(key + '=' + hash[key]);
     }
-
-    return url + '?' + arr.join('&');
+    if (arr.length == 0) {
+      return url;
+    } else {
+      return url + '?' + arr.join('&');
+    }
   }
   return oldURL.split(/#/)[0] +
     '#date=' + $('#date').val() +
     '&end_date=' + $('#end_date').val() +
     '&granularity=' + $('#granularity').val();
-}
+};
+
+var rangeIsLast24Hours = function() {
+  var endDate = new Date($('#end_date').val());
+  var startDate = new Date($('#date').val());
+  var today = new Date();
+  var diff = endDate - startDate;
+  var granularity = $('#granularity').val();
+  return (granularity == 'hourly' && diff == 86400000 && endDate.toDateString() == today.toDateString());
+};
 
 $(function($) {
   try {
@@ -79,6 +97,10 @@ $(function($) {
       end_date: $('#end_date').val(),
       granularity: $('#granularity').val()
     };
+
+    if (rangeIsLast24Hours()) {
+      params.date = '';
+    }
 
     $.ajax({
       url: location.pathname.replace(/statz/,'reporting'),
@@ -115,3 +137,4 @@ $(function($) {
   ajaxCall();
 
 });
+

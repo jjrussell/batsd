@@ -23,9 +23,10 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :created,           :type => :time
   self.sdb_attr :sent_currency,     :type => :time
   self.sdb_attr :sent_money_txn,    :type => :time
+  self.sdb_attr :send_currency_status
   
   def initialize(options = {})
-    super
+    super({:load_from_memcache => false}.merge(options))
     put('created', Time.zone.now.to_f.to_s) unless get('created')
   end
   
@@ -59,6 +60,10 @@ class Reward < SimpledbShardedResource
     domain_number = @key.hash % NUM_REWARD_DOMAINS
     
     return "rewards_#{domain_number}"
+  end
+  
+  def serial_save(options = {})
+    super({ :write_to_memcache => false }.merge(options))
   end
   
 end

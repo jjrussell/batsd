@@ -18,11 +18,11 @@ class Job::QueuePartnerNotificationsController < Job::SqsReaderController
     
     offers.each do |offer|
       if offer.needs_more_funds?
-        offers_needing_more_funds << offer
+        offers_needing_more_funds << offer if offer.payment < partner.balance
       elsif offer.budget_may_not_be_met?
         offers_not_meeting_budget << offer
-      elsif offer.needs_higher_bid?
-        offers_needing_higher_bids << offer
+      elsif offer.is_free? && offer.needs_higher_bid?
+        offers_needing_higher_bids << offer unless offer.device_types == "[\"android\"]"
       end
     end
     

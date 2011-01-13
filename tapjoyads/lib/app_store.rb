@@ -3,8 +3,10 @@ class AppStore
   APP_URL = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup'
   SEARCH_URL = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
 
-  ANDROID_SEARCH_URL = 'http://www.cyrket.com/search'
-  ANDROID_APP_URL = 'http://www.cyrket.com/p/android/'
+  ANDROID_SEARCH_URL = 'http://tapandmar.appspot.com/search/'
+  ANDROID_APP_URL = 'http://tapandmar.appspot.com/search/'
+  ANDROID_ICON_URL = 'http://tapandmar.appspot.com/icon/'
+  CYRKET_ICON_URL = 'http://cache.cyrket.com/p/android/'
 
   # returns hash of app info
   def self.fetch_app_by_id(id, platform='iphone', country='')
@@ -18,7 +20,7 @@ class AppStore
   # returns an array of first 24 App instances matching "term"
   def self.search(term, platform='iphone', country='')
     if /android/i =~ platform
-      return self.search_android_marketplace(term)
+      return self.search_android_marketplace(term.gsub(/-/,' '))
     else
       return self.search_apple_app_store(term.gsub(/\s/, '+'), country)
     end
@@ -38,34 +40,7 @@ private
   end
 
   def self.fetch_app_by_id_for_android(id)
-    response = request(ANDROID_APP_URL + id)
-    if response.status == 200
-      doc = Hpricot.parse(response.body)
-      self.app_info_from_android(doc)
-    else
-      raise "Invalid response from Cyrket"
-    end
-  end
-
-  def self.app_info_from_android(doc)
-    div = (doc/".basic.item").first
-    
-    icon_url = (div/".image").first.attributes['src']
-    item_id = icon_url.match(/android\/(.*)\/icon/)[1]
-    title = (div/".title").text
-    publisher = (div/".owner").text
-    description = (doc/".description").first.html
-    
-    price = (doc/"label").find {|a| a.html == "Price"}.following_siblings[0].html.gsub(/\s|\$/, '').to_f
-    
-    {
-      :item_id => item_id,
-      :title => title,
-      :icon_url => icon_url,
-      :price => price,
-      :description => description,
-      :publisher => publisher,
-    }
+    self.search_android_marketplace(id, false).first
   end
 
   def self.search_apple_app_store(term, country)
@@ -80,30 +55,29 @@ private
     end
   end
 
-  def self.search_android_marketplace(term)
-    response = request(ANDROID_SEARCH_URL, {:market => 'android', :q => term})
+  def self.search_android_marketplace(term, cyrket_icon=true)
+    response = request(ANDROID_SEARCH_URL + CGI::escape(term.strip.gsub(/\s/, '+').downcase))
     if response.status == 200
-      doc = Hpricot.parse(response.body)
-      
-      if (doc/".autopagerize_page_element .basic").size > 0
-        (doc/".autopagerize_page_element .basic").map do |div|
-          icon_url = (div/".icon").first.attributes['src']
-          item_id = icon_url.match(/android\/(.*)\/icon/)[1]
-          price = "%.2f" % (div/".price").text.gsub(/\$/, '').to_f
-          {
-            :item_id => item_id,
-            :title => (div/".title").text,
-            :icon_url => icon_url,
-            :price => price,
-            :description => (div/".headline").text,
-            :publisher => (div/".owner").text,
-          }
+      items = JSON.load(response.body)
+      return [] if items["entriesCount"].to_i == 0
+      return items['app'].map do |hash|
+        if cyrket_icon
+          icon_url = CYRKET_ICON_URL + hash['packageName'] + '/icon'
+        else
+          icon_url = ANDROID_ICON_URL + hash['packageName']
         end
-      else
-        return [ self.app_info_from_android(doc) ]
+        price = hash['price'].nil? ? 0 : hash['price'].gsub(/[^\d\.\-]/,'').to_f
+        {
+          :item_id      => hash['packageName'],
+          :title        => hash['title'],
+          :icon_url     => icon_url,
+          :price        => "%.2f" % price,
+          :description  => hash['ExtendedInfo']['description'],
+          :publisher    => hash['creator']
+        }
       end
     else
-      raise "Invalid response from Cyrket"
+      raise "Invalid response."
     end
   end
 

@@ -32,7 +32,7 @@ private
     end
     
     @offer.stats_aggregation_interval = get_interval
-    @offer.next_stats_aggregation_time = @now + @offer.stats_aggregation_interval
+    @offer.next_stats_aggregation_time = @now + @offer.stats_aggregation_interval + rand(600)
     @offer.last_stats_aggregation_time = end_time
     verify_yesterday
     @offer.save!
@@ -59,9 +59,12 @@ private
       
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
-    paid_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["advertiser_offer_id = ? AND reward_type IN (0, 1, 2, 3)", @offer.id])
-    installs_spend = Conversion.created_between(start_time, end_time).sum(:advertiser_amount, :conditions => ["advertiser_offer_id = ? AND reward_type IN (0, 1, 2, 3)", @offer.id])
-    jailbroken_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["advertiser_offer_id = ? AND reward_type = 4", @offer.id])
+    paid_installs, installs_spend, jailbroken_installs = nil
+    Conversion.using_slave_db do
+      paid_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["advertiser_offer_id = ? AND reward_type IN (0, 1, 2, 3)", @offer.id])
+      installs_spend = Conversion.created_between(start_time, end_time).sum(:advertiser_amount, :conditions => ["advertiser_offer_id = ? AND reward_type IN (0, 1, 2, 3)", @offer.id])
+      jailbroken_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["advertiser_offer_id = ? AND reward_type = 4", @offer.id])
+    end
     stat_row.update_stat_for_hour('paid_installs', start_time.hour, paid_installs)
     stat_row.update_stat_for_hour('installs_spend', start_time.hour, installs_spend)
     stat_row.update_stat_for_hour('jailbroken_installs', start_time.hour, jailbroken_installs)
@@ -74,11 +77,13 @@ private
 
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
-    published_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["publisher_app_id = ? AND reward_type IN (1, 4)", @offer.id])
-    installs_revenue = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id = ? AND reward_type IN (1, 4)", @offer.id])
-    offers_completed = Conversion.created_between(start_time, end_time).count(:conditions => ["publisher_app_id = ? AND reward_type IN (0, 2, 3)", @offer.id])
-    offers_revenue = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id = ? AND reward_type IN (0, 2, 3)", @offer.id])
-    
+    published_installs, installs_revenue, offers_completed, offers_revenue = nil
+    Conversion.using_slave_db do
+      published_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["publisher_app_id = ? AND reward_type IN (1, 4)", @offer.id])
+      installs_revenue = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id = ? AND reward_type IN (1, 4)", @offer.id])
+      offers_completed = Conversion.created_between(start_time, end_time).count(:conditions => ["publisher_app_id = ? AND reward_type IN (0, 2, 3)", @offer.id])
+      offers_revenue = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id = ? AND reward_type IN (0, 2, 3)", @offer.id])
+    end
     stat_row.update_stat_for_hour('published_installs', start_time.hour, published_installs)
     stat_row.update_stat_for_hour('installs_revenue', start_time.hour, installs_revenue)
     stat_row.update_stat_for_hour('offers', start_time.hour, offers_completed)
@@ -95,15 +100,16 @@ private
       
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
-    display_conversions = Conversion.created_between(start_time, end_time).count(:conditions => ["publisher_app_id = ? AND reward_type IN (1000, 1001, 1002, 1003, 1004)", @offer.id])
-    display_revenue = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id = ? AND reward_type IN (1000, 1001, 1002, 1003, 1004)", @offer.id])
-    
+    display_conversions, display_revenue = nil
+    Conversion.using_slave_db do
+      display_conversions = Conversion.created_between(start_time, end_time).count(:conditions => ["publisher_app_id = ? AND reward_type IN (1000, 1001, 1002, 1003, 1004)", @offer.id])
+      display_revenue = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id = ? AND reward_type IN (1000, 1001, 1002, 1003, 1004)", @offer.id])
+    end
     stat_row.update_stat_for_hour('display_conversions', start_time.hour, display_conversions)
     stat_row.update_stat_for_hour('display_revenue', start_time.hour, display_revenue)
     
     if @offer.item_type == 'App' && @offer.get_platform == 'iOS'
       StoreRank.populate_overall_store_rank(@offer.third_party_data, stat_row, start_time.hour)
-      StoreRank.populate_ranks(@offer.third_party_data, stat_row, start_time.hour)
     end
   end
   
@@ -111,7 +117,7 @@ private
   #
   def verify_yesterday
     return unless @offer.last_daily_stats_aggregation_time.nil? || @offer.last_daily_stats_aggregation_time.day != @now.day
-    return if @now.hour == 0
+    return if @now.hour == 0 || @now.hour < rand(10)
     
     start_time = (@now - 1.day).beginning_of_day
     end_time = start_time + 1.day
@@ -131,7 +137,7 @@ private
       if path == 'offer_click'
         count += WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'store_click' and #{app_condition}")
       end
-      hour_counts = stat_row.get_hourly_count(stat_name, 0)
+      hour_counts = stat_row.get_hourly_count(stat_name)
       
       if count != hour_counts.sum
         raise AppStatsVerifyError.new("#{stat_name}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")
@@ -144,7 +150,7 @@ private
       app_condition = "publisher_app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
-      hour_counts = stat_row.get_hourly_count(stat_name, 0)
+      hour_counts = stat_row.get_hourly_count(stat_name)
       
       if count != hour_counts.sum
         raise AppStatsVerifyError.new("#{stat_name}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")
@@ -160,7 +166,7 @@ private
       if path == 'offer_click'
         count += WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'store_click' and #{app_condition}")
       end
-      hour_counts = stat_row.get_hourly_count(stat_name, 0)
+      hour_counts = stat_row.get_hourly_count(stat_name)
       
       if count != hour_counts.sum
         raise AppStatsVerifyError.new("#{stat_name}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")

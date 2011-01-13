@@ -18,11 +18,11 @@ class WebRequestTest < ActiveSupport::TestCase
     @basic_time = Time.now.utc
     
     m = WebRequest.new
-    m.put_values('connect', {:app_id => 'app1', :udid => 'udid1'}, nil, {})
+    m.put_values('connect', {:app_id => 'app1', :udid => 'udid1'}, nil, {}, 'UserAgent1')
     m.save
     
     m = WebRequest.new
-    m.put_values('connect', {:app_id => 'app1', :udid => 'udid2'}, nil, {})
+    m.put_values('connect', {:app_id => 'app1', :udid => 'udid2'}, nil, {}, 'UserAgent2')
     m.add_path('new_user')
     m.save
     @basic_key = m.key

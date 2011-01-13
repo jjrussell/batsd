@@ -10,20 +10,18 @@ class Appstats
     @start_time = options.delete(:start_time) { Time.utc(@now.year, @now.month, @now.day) }
     @end_time = options.delete(:end_time) { @now }
     @stat_types = options.delete(:stat_types) { Stats::STAT_TYPES }
-    @type = options.delete(:type) { :granular }
     @include_labels = options.delete(:include_labels) { false }
+    cache_hours = options.delete(:cache_hours) { 3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     @stat_rows = {}
     
     @stats = {}
     @stat_types.each do |stat_type|
-      if @type == :sum
-        @stats[stat_type] = Array(get_daily_stats_over_range(stat_type, @start_time.utc, @end_time.utc).sum)
-      elsif @granularity == :hourly
-        @stats[stat_type] = get_hourly_stats_over_range(stat_type, @start_time.utc, @end_time.utc)
+      if @granularity == :hourly
+        @stats[stat_type] = get_hourly_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
       elsif @granularity == :daily
-        @stats[stat_type] = get_daily_stats_over_range(stat_type, @start_time.utc, @end_time.utc)
+        @stats[stat_type] = get_daily_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
       else
         raise "Unsupported granularity"
       end
@@ -155,51 +153,75 @@ class Appstats
 private
 
   ##
-  # Returns an array of numbers, each representing a single hour's worth of stats.
-  def get_hourly_stats_over_range(stat_type, start_time, end_time)
+  # Returns the hourly stats for stat_name_or_path.
+  # If stat_name_or_path corresponds to a single stat, then the returned object will be an array with each
+  # value representing a single hour's worth of stats.
+  # If stat_name_or_path corresponds to a set of stats (e.g. 'ranks'), then the returned object will be a 
+  # hash, with the values of the hash being arrays of hourly stats.
+  def get_hourly_stats(stat_name_or_path, start_time, end_time, cache_hours)
     time = start_time
     date = nil
     hourly_stats_over_range = []
     hourly_stats = []
+    size = ((end_time - start_time) / 1.hour).ceil
+    index = 0
     while time < end_time
-      if date != time.iso8601[0,10]
-        date = time.iso8601[0,10]
+      if date != time.strftime('%Y-%m-%d')
+        date = time.strftime('%Y-%m-%d')
         stat = load_stat_row("app.#{date}.#{@app_key}")
-        hourly_stats = stat.get_hourly_count(stat_type)
+        populate_hourly_stats_from_memcached(stat, stat_name_or_path, cache_hours)
+        hourly_stats = stat.get_hourly_count(stat_name_or_path)
       end
-      hourly_stats_over_range.push(hourly_stats[time.hour])
+      
+      if hourly_stats.is_a?(Hash)
+        hourly_stats_over_range = {} if hourly_stats_over_range.blank?
+        hourly_stats.each do |key, value|
+          hourly_stats_over_range[key] = Array.new(size, nil) if hourly_stats_over_range[key].nil?
+          hourly_stats_over_range[key][index] = value[time.hour]
+        end
+      else
+        hourly_stats_over_range[index] = hourly_stats[time.hour]
+      end
+      
       time = time + 1.hour
+      index += 1
     end
     return hourly_stats_over_range
   end
 
   ##
-  # Returns an array of numbers, each representing a single day's worth of stats.
-  def get_daily_stats_over_range(stat_type, start_time, end_time)
+  # Returns the daily stats for stat_name_or_path, an array or a hash. See #get_hourly_stats.
+  def get_daily_stats(stat_name_or_path, start_time, end_time, cache_hours)
     time = start_time
     daily_stats_over_range = []
+    daily_stats = []
     date = nil
+    size = ((end_time - start_time) / 1.day).ceil
+    index = 0
     while time + 1.hour < end_time
-      if time + 28.hours > @now
-        date = time.iso8601[0,10]
+      if date != time.strftime('%Y-%m')
+        date = time.strftime('%Y-%m')
         stat = load_stat_row("app.#{date}.#{@app_key}")
-        hourly_stats = stat.get_hourly_count(stat_type)
-        
-        if stat_type == 'overall_store_rank'
-          daily_stats_over_range.push(stat.get_hourly_count(stat_type).reject{|r| r == '0' || r == '-'}.map{|i| i.to_i}.min || '-')
-        else
-          daily_stats_over_range.push(stat.get_hourly_count(stat_type).sum)
+        if time + 28.hours > @now
+          hourly_stat = load_stat_row("app.#{date}-#{time.day}.#{@app_key}")
+          populate_hourly_stats_from_memcached(hourly_stat, stat_name_or_path, cache_hours)
+          stat.populate_daily_from_hourly(hourly_stat, time.day - 1)
+        end
+        daily_stats = stat.get_daily_count(stat_name_or_path)
+      end
+
+      if daily_stats.is_a?(Hash)
+        daily_stats_over_range = {} if daily_stats_over_range.blank?
+        daily_stats.each do |key, value|
+          daily_stats_over_range[key] = Array.new(size, nil) if daily_stats_over_range[key].nil?
+          daily_stats_over_range[key][index] = value[time.day - 1]
         end
       else
-        if date != time.strftime('%Y-%m')
-          date = time.strftime('%Y-%m')
-          stat = load_stat_row("app.#{date}.#{@app_key}")
-          daily_stats = stat.get_daily_count(stat_type)
-        end
-        
-        daily_stats_over_range.push(daily_stats[time.day - 1])
+        daily_stats_over_range[index] = daily_stats[time.day - 1]
       end
+      
       time = time + 1.day
+      index += 1
     end
     return daily_stats_over_range
   end
@@ -209,6 +231,22 @@ private
       @stat_rows[key] = Stats.new(:key => key)
     end
     @stat_rows[key]
+  end
+  
+  def populate_hourly_stats_from_memcached(stat_row, stat_name_or_path, cache_hours)
+    counts = stat_row.get_hourly_count(stat_name_or_path)
+    
+    if cache_hours > 0 && counts.is_a?(Array)
+      date, app_id = stat_row.parse_key
+      24.times do |i|
+        time = date + i.hours
+        if counts[i] == 0 && time <= @now && time >= (@now - cache_hours.hours)
+          counts[i] = Mc.get_count(Stats.get_memcache_count_key(stat_name_or_path, app_id, time))
+        end
+      end
+    end
+    
+    stat_row.values = stat_row.parsed_values
   end
   
   def get_labels_and_intervals(start_time, end_time)

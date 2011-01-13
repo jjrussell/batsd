@@ -34,7 +34,7 @@ class SurveysController < ApplicationController
       device.save
     
       if Rails.env == 'production'
-        Downloader.get_with_retry "http://ws.tapjoyads.com/offer_completed?click_key=#{params[:click_key]}"
+        Downloader.get_with_retry "#{API_URL}/offer_completed?click_key=#{params[:click_key]}"
       end
     end
     

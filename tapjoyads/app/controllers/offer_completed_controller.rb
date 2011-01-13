@@ -26,10 +26,14 @@ class OfferCompletedController < ApplicationController
   end
   
   def paypal
+    # paypal_verifier_url = "https://www.paypal.com/cgi-bin/webscr"
+    # paypal_verifier_data = "cmd=_notify-validate&#{request.raw_post}"
+    # paypal_response = Downloader.post(paypal_verifier_url, paypal_verifier_data, :timeout => 30)
+    
     @source = 'paypal'
-    @adjusted_payment = (params[:transaction]['0']['.amount'].to_s.gsub('USD ', '').to_f * 100).to_i
-    params[:click_key] = params[:memo]
-    if params[:status] == 'COMPLETED' && params[:transaction]['0']['.receiver'] == 'support@tapjoy.com'
+    @adjusted_payment = ((params[:payment_gross].to_f - params[:payment_fee].to_f) * 100).to_i
+    params[:click_key] = params[:custom]
+    if params[:payment_status] == 'Completed' && params[:receiver_email] == 'paypal@tapjoy.com'
       complete_conversion
     else
       @error_message = "unexpected paypal callback"

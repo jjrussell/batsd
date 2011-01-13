@@ -7,17 +7,16 @@ class Job::QueueUpdateMonthlyAccountController < Job::SqsReaderController
 private
   
   def on_message(message)
-    
     json = JSON.parse(message.to_s)
-        
+    
     partner = Partner.find(json['partner_id'])
-    month = json['month'].to_i
-    year = json['year'].to_i
+    month = json['month']
+    year = json['year']
     
-    throw "Partner #{json['partner_id']} not found" unless partner
+    return if partner.monthly_accountings.find_by_month_and_year(month, year).present?
     
-    MonthlyAccounting.update_partner_record(partner.id, { :month => month, :year => year })
-    
+    monthly_accounting = MonthlyAccounting.new(:partner => partner, :month => month, :year => year)
+    monthly_accounting.calculate_totals!
   end
   
 end

@@ -4,8 +4,11 @@ class WebRequest < SimpledbResource
   
   self.sdb_attr :udid
   self.sdb_attr :app_id
+  self.sdb_attr :offer_id
   self.sdb_attr :advertiser_app_id
   self.sdb_attr :publisher_app_id
+  self.sdb_attr :displayer_app_id
+  self.sdb_attr :currency_id
   self.sdb_attr :campaign_id
   self.sdb_attr :publisher_user_id
   self.sdb_attr :virtual_good_id
@@ -16,10 +19,14 @@ class WebRequest < SimpledbResource
   self.sdb_attr :app_version
   self.sdb_attr :type
   self.sdb_attr :status_items
+  self.sdb_attr :device_ip
+  self.sdb_attr :user_agent, :cgi_escape => true
   self.sdb_attr :time, :type => :time
   self.sdb_attr :viewed_at, :type => :time
   self.sdb_attr :path, :force_array => true, :replace => false
+  self.sdb_attr :source
   self.sdb_attr :exp
+  self.sdb_attr :country
   
   PATH_TO_STAT_MAP = {
     'connect' => 'logins',
@@ -84,66 +91,68 @@ class WebRequest < SimpledbResource
   
   ##
   # Puts attributes that come from the params and request object.
-  def put_values(path, params, ip_address, geoip_data)
+  def put_values(path, params, ip_address, geoip_data, user_agent)
     add_path(path)
     
     if params
-      put('campaign_id', params[:campaign_id])
-      put('app_id', params[:app_id])
-      put('udid', params[:udid])
-      put('currency_id', params[:currency_id])
+      self.campaign_id       = params[:campaign_id]
+      self.app_id            = params[:app_id]
+      self.udid              = params[:udid]
+      self.currency_id       = params[:currency_id]
     
-      put('app_version', params[:app_version])
-      put('device_os_version', params[:device_os_version])
-      put('device_type', params[:device_type])
-      put('library_version', params[:library_version])
-      
-      put('offer_id', params[:offer_id])
-      put("publisher_app_id", params[:publisher_app_id])
-      put("advertiser_app_id", params[:advertiser_app_id])
-      put("displayer_app_id", params[:displayer_app_id])
+      self.app_version       = params[:app_version]
+      self.device_os_version = params[:device_os_version]
+      self.device_type       = params[:device_type]
+      self.library_version   = params[:library_version]
 
-      put('device_ip', params[:device_ip])
-      put('type', params[:type])
-      put('publisher_user_id', params[:publisher_user_id])
-      put('virtual_good_id', params[:virtual_good_id])
+      self.offer_id          = params[:offer_id]
+      self.publisher_app_id  = params[:publisher_app_id]
+      self.advertiser_app_id = params[:advertiser_app_id]
+      self.displayer_app_id  = params[:displayer_app_id]
 
-      put('source', params[:source])
-      put('exp', params[:exp])
+      self.device_ip         = params[:device_ip]
+      self.user_agent        = user_agent
+      self.type              = params[:type]
+      self.publisher_user_id = params[:publisher_user_id]
+      self.virtual_good_id   = params[:virtual_good_id]
+
+      self.source            = params[:source]
+      self.exp               = params[:exp]
     end
     
-    unless get('ip_address')
-      put('ip_address', ip_address)
+    unless self.ip_address?
+      self.ip_address = ip_address
     end
     
-    put('country', geoip_data[:country])
+    self.country = geoip_data[:country]
   end
   
   ##
-  # Calls super.save, with write_to_memcache option set to false.
+  # Calls super.serial_save, with write_to_memcache option set to false.
   # Also increments all stats associated with this webrequest.
-  def save
-    put('time', @now.to_f.to_s) unless get('time')
-    super({:write_to_memcache => false})
+  def serial_save(options = {})
+    self.time = @now unless self.time?
+    super({:write_to_memcache => false}.merge(options))
     
     get('path', {:force_array => true}).each do |path|
       stat_name = PATH_TO_STAT_MAP[path]
+      
       if stat_name.present?
-        app_id = get('app_id')
+        app_id = self.app_id
         if USE_OFFER_ID.include?(path)
-          app_id = get('offer_id')
+          app_id = self.offer_id
         end
         Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
       end
       
       stat_name = PUBLISHER_PATH_TO_STAT_MAP[path]
       if stat_name.present?
-        app_id = get('publisher_app_id')
+        app_id = self.publisher_app_id
         Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
       end
       
       stat_name = DISPLAYER_PATH_TO_STAT_MAP[path]
-      app_id = get('displayer_app_id')
+      app_id = self.displayer_app_id
       if stat_name.present? && app_id.present?
         Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
       end
@@ -159,18 +168,31 @@ class WebRequest < SimpledbResource
   def self.count(options = {})
     date_string = options.delete(:date) { Time.zone.now.to_date.to_s(:db) }
     where =       options.delete(:where)
+    retries =     options.delete(:retries) { 5 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
-    hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
-    count = 0
+    sleep_time = 0.1
+    begin
+      hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
+      count = 0
     
-    MAX_WEB_REQUEST_DOMAINS.times do |i|
-      SimpledbResource.count_async(:domain_name => "web-request-#{date_string}-#{i}", :where => where, :hydra => hydra) do |c|
-        count += c
+      MAX_WEB_REQUEST_DOMAINS.times do |i|
+        SimpledbResource.count_async(:domain_name => "web-request-#{date_string}-#{i}", :where => where, :hydra => hydra) do |c|
+          count += c
+        end
+      end
+    
+      hydra.run
+    rescue RightAws::AwsError => e
+      if retries > 0
+        retries -= 1
+        sleep_time *= 2
+        sleep(sleep_time)
+        retry
+      else
+        raise e
       end
     end
-    
-    hydra.run
     
     return count
   end

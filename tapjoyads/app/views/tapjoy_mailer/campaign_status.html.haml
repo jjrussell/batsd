@@ -4,11 +4,11 @@
   %p We noticed that your following campaign(s) are not receiving the maximum traffic available from our network:
   %p
     - @offers_not_meeting_budget.each do |o|
-      %b><= "#{o.name}"
+      %b><= "#{o.name_with_suffix}"
       = ": Daily budget of #{o.daily_budget} will not be met"
       %br
     - @offers_needing_higher_bids.each do |o|
-      %b><= "#{o.name}"
+      %b><= "#{o.name_with_suffix}"
       = ": Unlimited budget - Not showing on the first page of the Tapjoy wall"
       %br
   %p 
@@ -18,7 +18,7 @@
     %b Pay-Per-Install
     page on the 
     %b Apps
-    tab.
+    tab. 
     
 - if @low_balance
   %p Your account balance is running low and we are slowing traffic to your campaign(s). Your funds are expected to run out within the next 24 hours. Currently you have the following funds in your account:
@@ -29,17 +29,6 @@
     page on the
     %b Billing
     tab or contact us directly to be invoiced.
-  
-- if @account_manager_email
-  %p
-    If you have any questions, please reach out to
-    = mail_to @account_manager_email
-    or email us at
-    = "#{mail_to "support@tapjoy.com"}."
-- else
-  %p
-    If you have any questions, please email us at
-    = "#{mail_to "support@tapjoy.com"}."
     
 - if @premier
   %p
@@ -51,11 +40,21 @@
     To receive a discount of up to 15%, join the Tapjoy Premier Program. To learn more, login to the site and click on the
     %b Premier
     tab.
+    
+- if @account_manager_email
+  %p
+    If you have any questions, please reach out to
+    = mail_to @account_manager_email
+    or email us at
+    = "#{mail_to "support@tapjoy.com"}."
+- else
+  %p
+    If you have any questions, please email us at
+    = "#{mail_to "support@tapjoy.com"}."
 
 %p Cheers,
 %p --Team Tapjoy
 
 %p
-  To unsubscribe from these automated notifications, please access your account preferences in the
-  %b Account
-  tab and uncheck the "Receive Campaign Emails" box.
+  To unsubscribe from these automated notifications, please login to
+  = "#{link_to("https://www.tapjoy.com/account", "https://www.tapjoy.com/account")}, click \"Change your account details\", and uncheck the \"Receive Campaign Emails\" box."

@@ -15,15 +15,7 @@
 
 .left
   - form_tag(export_reporting_path(@offer.id), :id => 'download', :class => 'tjform') do
-    - if @end_time - @start_time > 24.hours
-      = text_field_tag(:date, @start_time.to_date.to_s(:mdy))
-      \-
-      = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
-    - else
-      = text_field_tag(:date)
-      \-
-      = text_field_tag(:end_date)
-    = select_tag(:granularity, options_for_select({ 'Daily' => :daily, 'Hourly' => :hourly }, @granularity))
+    = render :partial => 'date_range_fields'
     = submit_tag('Download as CSV')
 .clear
 
@@ -47,7 +39,7 @@
   %h3 UDIDs Reports
   %ul.udid-reports
     - @udids.each do |key|
-      .li= link_to(key, download_udids_app_offer_path(:app_id => @offer.item.id, :id => @offer.id, :date => key))
+      .li= link_to(key, download_udids_reporting_path(@offer.id, :date => key))
 
 - include_tapjoy_graph
 - content_for :included_javascripts, javascript_include_tag('tapjoy/reporting')
