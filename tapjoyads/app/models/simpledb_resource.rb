@@ -40,15 +40,15 @@ class SimpledbResource
   #   load: Whether the item attributes should be loaded at all.
   #   load_from_memcache: Whether attributes should be loaded from memcache.
   def initialize(options = {})
-    should_load =                options.delete(:load)                 { true }
-    load_from_memcache =         options.delete(:load_from_memcache)   { true }
-    consistent =                 options.delete(:consistent)           { false }
-    @key =                       get_key_from(options.delete(:key))
-    @this_domain_name =          options.delete(:domain_name)          { dynamic_domain_name() }
-    @attributes =                options.delete(:attributes)           { {} }
-    @attributes_to_add =         options.delete(:attrs_to_add)         { {} }
-    @attributes_to_replace =     options.delete(:attrs_to_replace)     { {} }
-    @attributes_to_delete =      options.delete(:attrs_to_delete)      { {} }
+    should_load                = options.delete(:load)                 { true }
+    load_from_memcache         = options.delete(:load_from_memcache)   { true }
+    consistent                 = options.delete(:consistent)           { false }
+    @key                       = get_key_from(options.delete(:key))    { nil }
+    @this_domain_name          = options.delete(:domain_name)          { dynamic_domain_name() }
+    @attributes                = options.delete(:attributes)           { {} }
+    @attributes_to_add         = options.delete(:attrs_to_add)         { {} }
+    @attributes_to_replace     = options.delete(:attrs_to_replace)     { {} }
+    @attributes_to_delete      = options.delete(:attrs_to_delete)      { {} }
     @attribute_names_to_delete = options.delete(:attr_names_to_delete) { [] }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
@@ -65,12 +65,12 @@ class SimpledbResource
   end
   
   def self.sdb_attr(name, options = {})
-    type = options.delete(:type) { :string }
+    type          = options.delete(:type)          { :string }
     default_value = options.delete(:default_value)
-    cgi_escape = options.delete(:cgi_escape) { false }
-    force_array = options.delete(:force_array) { false }
-    replace = options.delete(:replace) { true }
-    attr_name = options.delete(:attr_name) { name.to_s }
+    cgi_escape    = options.delete(:cgi_escape)    { false }
+    force_array   = options.delete(:force_array)   { false }
+    replace       = options.delete(:replace)       { true }
+    attr_name     = options.delete(:attr_name)     { name.to_s }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     get_options = {
@@ -160,12 +160,12 @@ class SimpledbResource
   #   catch_exceptions: Whether to catch exceptions. If true, then any failed attempts to save will
   #       result in the save getting written to sqs in order to be saved later.
   def serial_save(options = {})
-    options_copy = options.clone
+    options_copy     = options.clone
     save_to_memcache = options.delete(:write_to_memcache) { true }
-    updated_at = options.delete(:updated_at) { true }
-    save_to_sdb = options.delete(:write_to_sdb) { true }
-    catch_exceptions = options.delete(:catch_exceptions) { true }
-    expected_attr = options.delete(:expected_attr) { {} }
+    updated_at       = options.delete(:updated_at)        { true }
+    save_to_sdb      = options.delete(:write_to_sdb)      { true }
+    catch_exceptions = options.delete(:catch_exceptions)  { true }
+    expected_attr    = options.delete(:expected_attr)     { {} }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     Rails.logger.info "Saving to #{@this_domain_name}"
@@ -221,9 +221,9 @@ class SimpledbResource
   #   type: The type of value that is being stored. The value will be converted to the type before
   #       being returned. Acceptable values are listed in @@type_converters.
   def get(attr_name, options = {})
-    force_array = options.delete(:force_array) { false }
+    force_array   = options.delete(:force_array)   { false }
     default_value = options.delete(:default_value)
-    type = options.delete(:type) { :string }
+    type          = options.delete(:type)          { :string }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Unknown type conversion: #{type}" unless @@type_converters.include?(type)
     
@@ -256,9 +256,9 @@ class SimpledbResource
   ##
   # Puts a value to be associated with an attribute name.
   def put(attr_name, value, options = {})
-    replace = options.delete(:replace) { true }
+    replace    = options.delete(:replace)    { true }
     cgi_escape = options.delete(:cgi_escape) { false }
-    type = options.delete(:type) { :string }
+    type       = options.delete(:type)       { :string }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Unknown type conversion: #{type}" unless @@type_converters.include?(type)
     
@@ -311,7 +311,7 @@ class SimpledbResource
   # the amount of times s
   def self.transaction(load_options, options = {})
     version_attr = options.delete(:version_attr) { 'version' }
-    retries = options.delete(:retries) { 3 }
+    retries      = options.delete(:retries)      { 3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     load_options = {:consistent => true, :load_from_memcache => false}.merge(load_options)
@@ -339,10 +339,10 @@ class SimpledbResource
   ##
   # Performs a batch_put_attributes.
   def self.put_items(items, options = {})
-    replace = options.delete(:replace) { false }
+    replace           = options.delete(:replace)           { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
-    raise "Too many items to batch_put" if items.length >25
+    raise "Too many items to batch_put" if items.length > 25
     return {} if items.length == 0
 
     batch_put_domain_name = items[0].this_domain_name
@@ -358,11 +358,11 @@ class SimpledbResource
   # Runs a select count(*) for the specified domain, with the specified where clause,
   # and returns the number.
   def self.count(options = {})
-    where =       options.delete(:where)
-    next_token =  options.delete(:next_token)
+    where       = options.delete(:where)
+    next_token  = options.delete(:next_token)
     domain_name = options.delete(:domain_name) { self.domain_name }
-    retries =     options.delete(:retries) { 10 }
-    consistent =  options.delete(:consistent) { false }
+    retries     = options.delete(:retries)     { 10 }
+    consistent  = options.delete(:consistent)  { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Must provide a domain name" unless domain_name
 
@@ -394,12 +394,12 @@ class SimpledbResource
   end
   
   def self.count_async(options = {})
-    where =       options.delete(:where)
-    next_token =  options.delete(:next_token)
+    where       = options.delete(:where)
+    next_token  = options.delete(:next_token)
     domain_name = options.delete(:domain_name) { self.domain_name }
-    limit =       options.delete(:limit)
-    consistent =  options.delete(:consistent) { false }
-    hydra =       options.delete(:hydra) { Typhoeus::Hydra.new }
+    limit       = options.delete(:limit)
+    consistent  = options.delete(:consistent)  { false }
+    hydra       = options.delete(:hydra)       { Typhoeus::Hydra.new }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Must provide a domain name" unless domain_name
     
@@ -443,14 +443,14 @@ class SimpledbResource
   ##
   # Returns an array of items which match the specified select parameters.
   def self.select(options = {})
-    attrs =       options.delete(:attributes) { '*' }
-    order_by =    options.delete(:order_by)
-    where =       options.delete(:where)
-    limit =       options.delete(:limit)
-    next_token =  options.delete(:next_token)
+    attrs       = options.delete(:attributes)  { '*' }
+    order_by    = options.delete(:order_by)
+    where       = options.delete(:where)
+    limit       = options.delete(:limit)
+    next_token  = options.delete(:next_token)
     domain_name = options.delete(:domain_name) { self.domain_name }
-    retries =     options.delete(:retries) { 10 }
-    consistent =  options.delete(:consistent) { false }
+    retries     = options.delete(:retries)     { 10 }
+    consistent  = options.delete(:consistent)  { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Must provide a domain name" unless domain_name
     
