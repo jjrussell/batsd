@@ -11,10 +11,10 @@ class Job::MasterAppRanksController < Job::JobController
     tp = ThreadPool.new(25)
     
     Offer.find_each do |offer|
-      next unless @offer.item_type == 'App' && @offer.get_platform == 'iOS'
+      next unless offer.item_type == 'App' && offer.get_platform == 'iOS'
       
       tp.process do
-        stat_row = Stats.new(:key => "app.#{date_string}.#{@offer.id}")
+        stat_row = Stats.new(:key => "app.#{date_string}.#{offer.id}")
         StoreRanks.populate_ranks(offer.third_party_data, stat_row, @now)
         stat_row.serial_save
       end
