@@ -17,7 +17,7 @@ test:
 production:
   adapter: mysql
   database: tapjoy_db
-  host: tapjoy-db-rds.cck8zbm50hdd.us-east-1.rds.amazonaws.com
+  host: tapjoy-db-rds-replica0.cck8zbm50hdd.us-east-1.rds.amazonaws.com
   username: tapjoy
   password: andoverbusiness1
   reconnect: true
