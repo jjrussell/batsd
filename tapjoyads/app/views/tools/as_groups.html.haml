@@ -31,7 +31,9 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
         %td Load Balancer(s)
         %td= group[:load_balancer_names].join(', ')
 
-  %table.tablesorter
+  - table_id = "instances_#{group[:auto_scaling_group_name]}"
+  %a.instances_toggle{ :href => '#', :table_id => table_id } [Show Instances]
+  %table.tablesorter.hidden{ :id => table_id }
     %thead
       %tr
         %th Instance ID
@@ -44,6 +46,15 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
           %td= instance[:lifecycle_state]
           %td= instance[:availability_zone]
 
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('a.instances_toggle').click(function() {
+        $('#' + $(this).attr('table_id')).toggle();
+        return false;
+      });
+    });
+  
 - content_for :page_styles do
   :plain
     table.tablesorter {
