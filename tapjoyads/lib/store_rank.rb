@@ -4,7 +4,7 @@ class StoreRank
   ##
   # Populates the 'overall_store_rank' stat, which is the app's location in the US free app chart.
   def self.populate_overall_store_rank(store_id, stat_row, hour)
-    if stat_row.get_hourly_count(['ranks', 'overall.free.united_states'])[hour].nil?
+    if stat_row.get_hourly_count(['ranks', 'overall.free.united_states'])[hour] == 0
       rank_hash = get_ranks_hash(itunes_category_ids['overall'], itunes_pop_ids['free'], itunes_country_ids['united_states'])
       rank = rank_hash[store_id]
       stat_row.update_stat_for_hour(['ranks', 'overall.free.united_states'], hour, rank)
