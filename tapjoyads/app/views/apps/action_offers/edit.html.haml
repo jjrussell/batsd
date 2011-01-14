@@ -49,85 +49,23 @@
           %td
             = "No"
 
-
         - if permitted_to? :edit, :statz
-          %tr.admin
-            %td{ :colspan => 2 } Admin-only fields:
-          - f.fields_for :primary_offer do |primary_offer_form|
-            %tr.admin
-              %th
-                = primary_offer_form.label :tapjoy_enabled
-                #help_tapjoy_enabled.help ?
-              %td
-                = primary_offer_form.check_box :tapjoy_enabled
-                = error_message_on @action_offer, :primary_offer_tapjoy_enabled
-            %tr.admin
-              %th
-                = primary_offer_form.label :min_bid_override
-                #help_min_bid_override.help ?
-              %td
-                = primary_offer_form.currency_field :min_bid_override
-                = error_message_on @action_offer, :primary_offer_min_bid_override
-            %tr.admin
-              %th
-                = primary_offer_form.label :self_promote_only
-                #help_self_promote_only.help ?
-              %td
-                = primary_offer_form.check_box :self_promote_only
-                = error_message_on @action_offer, :primary_offer_self_promote_only
-            %tr.admin
-              %th
-                = primary_offer_form.label :allow_negative_balance
-                #help_allow_negative_balance.help ?
-              %td
-                = primary_offer_form.check_box :allow_negative_balance
-                = error_message_on @action_offer, :primary_offer_allow_negative_balance
-            %tr.admin
-              %th
-                = primary_offer_form.label :pay_per_click
-                #help_pay_per_click.help ?
-              %td
-                = primary_offer_form.check_box :pay_per_click
-                = error_message_on @action_offer, :primary_offer_pay_per_click
-            %tr.admin
-              %th
-                = primary_offer_form.label :min_conversion_rate, 'Min CVR'
-                #help_min_conversion_rate.help ?
-              %td
-                = primary_offer_form.text_field :min_conversion_rate
-                = error_message_on @action_offer, :primary_offer_min_conversion_rate
-            %tr.admin
-              %th
-                = primary_offer_form.label :publisher_app_whitelist
-                #help_publisher_app_whitelist.help ?
-              %td
-                = primary_offer_form.text_field :publisher_app_whitelist
-                = error_message_on @action_offer, :primary_offer_publisher_app_whitelist
-            %tr.admin
-              %th
-                = primary_offer_form.label :daily_budget
-                #help_daily_budget.help ?
-              %td
-                = primary_offer_form.text_field :daily_budget
-                = error_message_on @action_offer, :primary_offer_daily_budget
-            %tr.admin
-              %th
-                = primary_offer_form.label :overall_budget
-                #help_overall_budget.help ?
-              %td
-                = primary_offer_form.text_field :overall_budget
-                = error_message_on @action_offer, :primary_offer_overall_budget
-            %tr.admin
-              %th
-                = primary_offer_form.label :rank_score
-                #help_rank_score.help ?
-              %td
-                = @action_offer.primary_offer.rank_score || "N/A"
+          = render 'admin_fields', :f => f
               
         %tr
           %td{ :colspan => 2 }= f.submit 'Save Action'
 
-
   .hidden
-
+    #help_name_content{ :name => 'Action Name' }
+      The name of the action.
+    #help_instructions_content{ :name => 'Instructions' }
+      Instruction telling users how to complete the action.
+    #help_action_id_content{ :name => 'Action ID' }
+      The ID of the action. This ID will need to be used in your integration.
+    #help_integrated_content{ :name => 'Integrated?' }
+      Has this action been integrated?
+    #help_user_enabled_content{ :name => 'Enable Action' }
+      Enable the action to get your campaign started.
+    #help_bid_content{ :name => 'Bid' }
+      The amount you are willing to pay for a completed action. A higher bid will result in more completed actions.
 
