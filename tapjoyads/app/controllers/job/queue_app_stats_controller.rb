@@ -77,7 +77,7 @@ private
     published_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["publisher_app_id = ? AND reward_type IN (1, 4)", @offer.id])
     installs_revenue = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id = ? AND reward_type IN (1, 4)", @offer.id])
     offers_completed = Conversion.created_between(start_time, end_time).count(:conditions => ["publisher_app_id = ? AND reward_type IN (0, 2, 3)", @offer.id])
-    end
+    offers_revenue = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id = ? AND reward_type IN (0, 2, 3)", @offer.id])
     stat_row.update_stat_for_hour('published_installs', start_time.hour, published_installs)
     stat_row.update_stat_for_hour('installs_revenue', start_time.hour, installs_revenue)
     stat_row.update_stat_for_hour('offers', start_time.hour, offers_completed)
