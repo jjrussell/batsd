@@ -98,7 +98,7 @@ class Offer < ActiveRecord::Base
   def self.redistribute_stats_aggregation
     now = Time.zone.now + 15.minutes
     Offer.find_each do |o|
-      o.next_stats_aggregation_time = now + rand(1.hour)
+      o.next_stats_aggregation_time = now + rand(2.hours)
       o.save(false)
     end
     true
