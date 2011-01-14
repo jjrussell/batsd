@@ -28,7 +28,9 @@ $(function($){
   });
 
   $('input.currency_field').change(function() {
-    $(this).val(numberToCurrency(stringToNumber($(this).val(), $(this).hasClass('allow_negative'))));
+    if (!$(this).hasClass('allow_nil') || $(this).val().length > 0) {
+      $(this).val(numberToCurrency(stringToNumber($(this).val(), $(this).hasClass('allow_negative'))));
+    }
   });
 
   $(document).click(function(e){

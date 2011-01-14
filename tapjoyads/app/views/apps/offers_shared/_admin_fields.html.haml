@@ -112,7 +112,7 @@
     = f.label(:min_bid_override)
     #help_min_bid_override.help ?
   %td
-    = f.currency_field(:min_bid_override)
+    = f.currency_field(:min_bid_override, {}, :class => 'allow_nil')
     = error_message_on @offer, :min_bid_override
     
 .hidden

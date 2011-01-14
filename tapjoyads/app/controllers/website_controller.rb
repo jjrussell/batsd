@@ -45,7 +45,7 @@ class WebsiteController < ApplicationController
   end
   
   def sanitize_currency_param(field)
-    (field.gsub(/[\$,]/,'').to_f * 100).round.to_s
+    field.blank? ? field : (field.gsub(/[\$,]/,'').to_f * 100).round.to_s
   end
   
   def premier_enabled?
