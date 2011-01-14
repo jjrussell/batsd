@@ -95,6 +95,15 @@ class Offer < ActiveRecord::Base
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :to_aggregate_stats, lambda { { :conditions => ["next_stats_aggregation_time < ?", Time.zone.now], :order => "next_stats_aggregation_time ASC" } }
   
+  def self.redistribute_stats_aggregation
+    now = Time.zone.now + 15.minutes
+    Offer.find_each do |o|
+      o.next_stats_aggregation_time = now + rand(1.hour)
+      o.save(false)
+    end
+    true
+  end
+  
   def self.get_enabled_offers(exp = nil)
     offers = []
     group = 0
