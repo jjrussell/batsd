@@ -551,10 +551,6 @@ class Offer < ActiveRecord::Base
     recommended_bid
   end
   
-  def action_app_id
-    item_type == "ActionOffer" ? third_party_data : nil
-  end
-  
 private
   
   def is_disabled?(publisher_app, currency)
