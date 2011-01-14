@@ -35,7 +35,7 @@ class ToolsController < WebsiteController
       @payouts    = MonthlyAccounting.sum(:payment_payouts,   :conditions => conditions) /-100.0
     end
 
-    @linkshare_est = @spend.to_f * 0.035
+    @linkshare_est = @spend.to_f * 0.026
     @ads_est = 400.0 * 30
     @revenue = @spend + @linkshare_est + @ads_est - @marketing
     @net_revenue = @revenue - @earnings
