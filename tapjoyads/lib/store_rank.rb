@@ -1,5 +1,7 @@
 class StoreRank
-  cattr_accessor :itunes_category_ids, :itunes_pop_ids, :itunes_country_ids
+  cattr_accessor :itunes_category_ids, :itunes_pop_ids, :itunes_country_ids, :cached_store_rankings
+  
+  @@cached_store_rankings = {}
   
   ##
   # Populates the 'overall_store_rank' stat, which is the app's location in the US free app chart.
@@ -11,37 +13,83 @@ class StoreRank
     end
   end
   
-  def self.get_ranks_hash(category_id, pop_id, country_id)
-    url = "http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=#{category_id}&popId=#{pop_id}"
-    headers = {
-      'User-Agent' => 'iTunes/10.1 (Macintosh; Intel Mac OS X 10.6.5) AppleWebKit/533.18.1',
-      'X-Apple-Store-Front' => "#{country_id}-1,12"
-    }
+  def self.populate_store_rankings(time)
+    hydra = Typhoeus::Hydra.new
+    hydra.disable_memoization
     
-    Mc.get_and_put("rankings.itunes.#{category_id}.#{pop_id}.#{country_id}", false, 1.hour) do 
-      response = Downloader.get(url, :headers => headers, :timeout => 30)
-      list = response.scan(/adam-id="(\d*)"/m).uniq.flatten
-      hash = {}
-      list.each_with_index do |id, index|
-        hash[id] = index + 1
-      end
-      hash
-    end
-  end
-  
-  def self.populate_ranks(store_id, stat_row, hour)
+    error_count = 0
+    
+    store_rankings = []
+    
     itunes_category_ids.each do |category_key, category_id|
       itunes_pop_ids.each do |pop_key, pop_id|
         itunes_country_ids.each do |country_key, country_id|
-          stat_type = "#{category_key}.#{pop_key}.#{country_key}"
-          if stat_row.get_hourly_count(['ranks', stat_type])[hour].nil?
-            rank_hash = get_ranks_hash(category_id, pop_id, country_id)
-            rank = rank_hash[store_id]
-            stat_row.update_stat_for_hour(['ranks', stat_type], hour, rank)
+          store_ranking_key = "itunes.#{category_key}.#{pop_key}.#{country_key}.#{time.beginning_of_hour.to_s(:db)}"
+          store_ranking = StoreRanking.new(:key => store_ranking_key)
+          if store_ranking.ranks.blank?
+            url = "http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=#{category_id}&popId=#{pop_id}"
+            headers = { 'X-Apple-Store-Front' => "#{country_id}-1,12" }
+            user_agent = 'iTunes/10.1 (Macintosh; Intel Mac OS X 10.6.5) AppleWebKit/533.18.1'
+            
+            request = Typhoeus::Request.new(url, :headers => headers, :user_agent => user_agent)
+            request.on_complete do |response|
+              if response.code != 200
+                error_count += 1
+                if error_count > 50
+                  raise "Too many errors attempting to download itunes ranks, giving up. App store down?"
+                end
+                Rails.logger.info "Error downloading ranks from itunes for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Retrying."
+                hydra.queue(request)
+              end
+              
+              store_ranking.ranks = get_itunes_ranks_hash(response.body)
+              @@cached_store_rankings[store_ranking_key] = store_ranking
+              store_rankings << store_ranking
+            end
+            
+            hydra.queue(request)
           end
         end
       end
     end
+    
+    hydra.run
+    
+    while store_rankings.present?
+      StoreRanking.put_items(store_rankings.first(25))
+      store_rankings.shift(25)
+    end
+  end
+
+  def self.populate_ranks(store_id, stat_row, time)
+    hour = time.hour
+    itunes_category_ids.each do |category_key, category_id|
+      itunes_pop_ids.each do |pop_key, pop_id|
+        itunes_country_ids.each do |country_key, country_id|
+          stat_type = "#{category_key}.#{pop_key}.#{country_key}"
+          if stat_row.get_hourly_count(['ranks', stat_type])[hour] == 0
+            store_ranking_key = "itunes.#{category_key}.#{pop_key}.#{country_key}.#{time.beginning_of_hour.to_s(:db)}"
+            @@cached_store_rankings[store_ranking_key] ||= StoreRanking.new(:key => store_ranking_key)
+            rank = @@cached_store_rankings[store_ranking_key].ranks[store_id]
+            stat_row.update_stat_for_hour(['ranks', stat_type], hour, rank) if rank
+          end
+        end
+      end
+    end
+  end
+  
+private
+
+  ##
+  # Parses an itunes top 200 response, and returns a hash of store_id => rank.
+  def self.get_itunes_ranks_hash(response_body)
+    hash = {}
+    list = response_body.scan(/adam-id="(\d*)"/m).uniq.flatten
+    list.each_with_index do |id, index|
+      hash[id] = index + 1
+    end
+    
+    hash
   end
   
   @@itunes_category_ids = {

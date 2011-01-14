@@ -99,10 +99,10 @@ class Stats < SimpledbResource
     strip_defaults(@parsed_values)
     strip_defaults(@parsed_ranks)
     
-    self.values = @parsed_values
-    self.ranks = @parsed_ranks
+    self.values = @parsed_values if self.values != @parsed_values
+    self.ranks = @parsed_ranks if self.ranks != @parsed_ranks
     
-    super(options)
+    super(options) if changed?
   end
   
 private
