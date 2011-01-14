@@ -2,9 +2,10 @@ class Stats < SimpledbResource
   
   self.domain_name = 'stats'
 
-  self.sdb_attr :values, :type => :json, :default_value => { 'ranks' => {} }
+  self.sdb_attr :values, :type => :json, :default_value => {}
+  self.sdb_attr :ranks, :type => :json, :default_value => {}
   
-  attr_reader :parsed_values
+  attr_reader :parsed_values, :parsed_ranks
 
   STAT_TYPES = ['logins', 'hourly_impressions', 'paid_installs', 
       'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'offers',
@@ -15,10 +16,15 @@ class Stats < SimpledbResource
       'display_revenue', 'jailbroken_installs', 'ranks']
 
   def after_initialize
+    @parsed_values = values
+    @parsed_ranks = ranks
+    
     if get('values').blank?
       convert_to_new_format
     end
-    @parsed_values = values
+    if get('ranks').blank?
+      convert_to_new_format_2
+    end
   end
 
   ##
@@ -60,7 +66,6 @@ class Stats < SimpledbResource
   def update_stat(stat_name_or_path, ordinal, count, length)
     counts = get_counts_object(stat_name_or_path, length)
     counts[ordinal] = count
-    self.values = @parsed_values
   end
 
   ##
@@ -69,16 +74,14 @@ class Stats < SimpledbResource
   # day: The 0-based day of the month in which to populate.
   def populate_daily_from_hourly(hourly_stat_row, day)
     hourly_stat_row.parsed_values.each do |key, value|
-      if key == 'ranks'
-        value.each do |rank_key, rank_value|
-          stat_path = ['ranks', rank_key]
-          count = rank_value.reject{|r| r == 0 || r.nil?}.min
-          update_stat_for_day(stat_path, day, count)
-        end
-      else
-        count = value.sum
-        update_stat_for_day(key, day, count)
-      end
+      count = value.sum
+      update_stat_for_day(key, day, count)
+    end
+    
+    hourly_stat_row.parsed_ranks.each do |key, value|
+      stat_path = ['ranks', key]
+      rank = value.reject{ |r| r == 0 }.min
+      update_stat_for_day(stat_path, day, rank)
     end
   end
   
@@ -94,7 +97,11 @@ class Stats < SimpledbResource
   
   def serial_save(options = {})
     strip_defaults(@parsed_values)
+    strip_defaults(@parsed_ranks)
+    
     self.values = @parsed_values
+    self.ranks = @parsed_ranks
+    
     super(options)
   end
   
@@ -102,25 +109,22 @@ private
 
   def strip_defaults(hash)
     hash.each do |key, value|
-      if value.is_a?(Array)
-        hash.delete(key) if value.all? { |i| i.nil? || i == 0 }
-      else
-        strip_defaults(value)
-      end
+      hash.delete(key) if value.uniq == [0]
     end
   end
 
   def get_counts_object(stat_name_or_path, length)
-    obj = @parsed_values
-    Array(stat_name_or_path)[0..-2].each do |key|
-      obj[key] = {} if obj[key].nil?
-      obj = obj[key]
+    if stat_name_or_path == 'ranks'
+      return @parsed_ranks
+    elsif Array(stat_name_or_path).first == 'ranks'
+      obj = @parsed_ranks
+    else
+      obj = @parsed_values
     end
+    
     key = Array(stat_name_or_path).last
     
-    default_value = Array(stat_name_or_path).first == 'ranks' ? nil : 0
-    
-    obj[key] = Array.new(length, default_value) if obj[key].nil?
+    obj[key] = Array.new(length, 0) if obj[key].nil?
     obj[key]
   end
   
@@ -132,6 +136,7 @@ private
   # TO REMOVE: Temporary method. Remove after all stats are converted.
   def convert_to_new_format
     @parsed_values = values
+    @parsed_values['ranks'] = {}
     
     ["rewards_opened", "rewards", "rewards_revenue"].each do |stat_name|
       delete(stat_name) if get(stat_name).present?
@@ -167,9 +172,18 @@ private
     end
     
     @attributes.keys.each do |key|
-      delete(key) unless key == 'updated-at' || key == 'values'
+      delete(key) unless key == 'updated-at' || key == 'values' || key == 'ranks'
     end
-    
-    self.values = @parsed_values
+  end
+  
+  def convert_to_new_format_2
+    if @parsed_values['ranks'].present?
+      @parsed_values['ranks'].each do |key, value|
+        value.map! { |i| i.nil? ? 0 : i }
+      end
+      
+      @parsed_ranks = @parsed_values['ranks']
+    end
+    @parsed_values.delete('ranks')
   end
 end

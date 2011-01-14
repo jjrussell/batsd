@@ -27,6 +27,13 @@ class Appstats
       end
     end
     
+    # Convert 0 ranks to nil.
+    if @stats['ranks']
+      @stats['ranks'].each do |key, value|
+        value.map! { |i| i == 0 ? nil : i }
+      end
+    end
+    
     # cvr
     if @stats['paid_clicks'] and @stats['paid_installs']
       @stats['cvr'] = []
@@ -245,8 +252,6 @@ private
         end
       end
     end
-    
-    stat_row.values = stat_row.parsed_values
   end
   
   def get_labels_and_intervals(start_time, end_time)
