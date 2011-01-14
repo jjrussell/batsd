@@ -56,7 +56,17 @@ class StoreRank
     hydra.run
     
     while store_rankings.present?
-      StoreRanking.put_items(store_rankings.first(25))
+      retries = 3
+      begin
+        StoreRanking.put_items(store_rankings.first(25))
+      rescue Exception => e
+        if (retries -= 1) >= 0
+          sleep(1)
+          retry
+        else
+          raise e
+        end
+      end
       store_rankings.shift(25)
     end
   end
