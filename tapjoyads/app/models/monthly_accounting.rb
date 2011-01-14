@@ -48,12 +48,12 @@ class MonthlyAccounting < ActiveRecord::Base
     Payout.using_slave_db do
       payouts = Payout.created_between(start_time, end_time).sum(:amount, :conditions => [ "status = ? AND partner_id = ?", 1, partner.id ], :group => :payment_method)
     end
-    self.payment_payouts  = (payouts[1] || 0).abs
-    self.transfer_payouts = (payouts[3] || 0).abs
+    self.payment_payouts  = (payouts[1] || 0) * -1
+    self.transfer_payouts = (payouts[3] || 0) * -1
     Partner.using_slave_db do
       self.earnings = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", partner.app_ids ])
     end
-    self.ending_pending_earnings = beginning_pending_earnings - payment_payouts - transfer_payouts + earnings
+    self.ending_pending_earnings = beginning_pending_earnings + payment_payouts + transfer_payouts + earnings
     
     save!
   end
