@@ -19,9 +19,8 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
         %th Description
         %th Reason Code
     %tbody
-      - num_total.times do |i|
-        - lb_instance  = @lb_instances[lb_name][i]
-        - ec2_instance = @ec2_instances[lb_name][i]
+      - @lb_instances[lb_name].each do |lb_instance|
+        - ec2_instance = @ec2_instances[lb_instance[:instance_id]] || {}
         %tr
           %td{ :class => lb_instance[:state] != 'InService' ? 'bad_instance' : '' }= lb_instance[:instance_id]
           %td= lb_instance[:state]

@@ -108,10 +108,11 @@ class ToolsController < WebsiteController
     @ec2_instances = {}
     @lb_names.each do |lb_name|
       @lb_instances[lb_name]  = elb_interface.describe_instance_health(lb_name)
-      @ec2_instances[lb_name] = ec2_interface.describe_instances(@lb_instances[lb_name].map { |i| i[:instance_id] })
+      ec2_interface.describe_instances(@lb_instances[lb_name].map { |i| i[:instance_id] }).each do |instance|
+        @ec2_instances[instance[:aws_instance_id]] = instance
+      end
       
       @lb_instances[lb_name].sort! { |a, b| a[:instance_id] <=> b[:instance_id] }
-      @ec2_instances[lb_name].sort! { |a, b| a[:aws_instance_id] <=> b[:aws_instance_id] }
     end
   end
 
