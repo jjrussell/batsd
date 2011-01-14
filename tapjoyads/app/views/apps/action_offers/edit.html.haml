@@ -47,7 +47,7 @@
             = f.label :integrated, 'Integrated?'
             #help_integrated.help ?
           %td
-            = "No"
+            = @action_offer.integrated? ? "Yes" : "No"
 
         - if permitted_to? :edit, :statz
           = render 'admin_fields', :f => f

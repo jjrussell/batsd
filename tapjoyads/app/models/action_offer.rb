@@ -17,7 +17,15 @@ class ActionOffer < ActiveRecord::Base
   after_create :create_primary_offer
   after_update :update_offers
   
-  delegate :user_enabled?, :bid, :description, :to => :primary_offer
+  delegate :user_enabled?, :tapjoy_enabled?, :bid, :description, :to => :primary_offer
+
+  def integrated?
+    if defined? @integrated
+      @integrated
+    else
+      @integrated = tapjoy_enabled? || Appstats.new(id, { :start_time => Time.zone.now.beginning_of_hour - 23.hours, :end_time => Time.zone.now, :granularity => :hourly, :stat_types => [ 'logins' ] }).stats['logins'].sum > 0
+    end
+  end
   
 private
 
