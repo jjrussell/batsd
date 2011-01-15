@@ -15,7 +15,7 @@ class Job::MasterAppRanksController < Job::JobController
       
       tp.process do
         stat_row = Stats.new(:key => "app.#{date_string}.#{offer.id}")
-        StoreRanks.populate_ranks(offer.third_party_data, stat_row, @now)
+        StoreRank.populate_ranks(offer.third_party_data, stat_row, @now)
         stat_row.serial_save
       end
     end
