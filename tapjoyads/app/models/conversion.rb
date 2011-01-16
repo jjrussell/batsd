@@ -29,6 +29,10 @@ class Conversion < ActiveRecord::Base
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at >= ?", date ] } }
   named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
   
+  def self.archive_cutoff_time
+    Time.zone.now.beginning_of_month.last_month
+  end
+  
   def reward_type_string=(string)
     write_attribute(:reward_type, REWARD_TYPES[string])
   end
