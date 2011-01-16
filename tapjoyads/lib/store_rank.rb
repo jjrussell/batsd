@@ -1,7 +1,5 @@
 class StoreRank
-  cattr_accessor :itunes_category_ids, :itunes_pop_ids, :itunes_country_ids, :cached_store_rankings
-  
-  @@cached_store_rankings = {}
+  cattr_accessor :itunes_category_ids, :itunes_pop_ids, :itunes_country_ids
   
   ##
   # Populates the 'overall_store_rank' stat, which is the app's location in the US free app chart.
@@ -16,15 +14,27 @@ class StoreRank
   def self.populate_store_rankings(time)
     hydra = Typhoeus::Hydra.new
     hydra.disable_memoization
-    
+    date_string = time.to_date.to_s(:db)
     error_count = 0
-    
     store_rankings = []
+    stat_rows = {}
+    
+    Rails.logger.info "#{Time.now.to_i}: Populate store rankings. Task starting."
+    
+    Offer.find_each do |offer|
+      next unless offer.item_type == 'App' && offer.get_platform == 'iOS'
+      
+      stat_row = Stats.new(:key => "app.#{date_string}.#{offer.id}")
+      stat_rows[offer.third_party_data] ||= []
+      stat_rows[offer.third_party_data] << stat_row
+    end
+    Rails.logger.info "#{Time.now.to_i}: Finished loading stat_rows."
     
     itunes_category_ids.each do |category_key, category_id|
       itunes_pop_ids.each do |pop_key, pop_id|
         itunes_country_ids.each do |country_key, country_id|
-          store_ranking_key = "itunes.#{category_key}.#{pop_key}.#{country_key}.#{time.beginning_of_hour.to_s(:db)}"
+          stat_type = "#{category_key}.#{pop_key}.#{country_key}"
+          store_ranking_key = "itunes.#{stat_type}.#{time.beginning_of_hour.to_s(:db)}"
           store_ranking = StoreRanking.new(:key => store_ranking_key)
           if store_ranking.ranks.blank?
             url = "http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=#{category_id}&popId=#{pop_id}"
@@ -43,7 +53,14 @@ class StoreRank
               end
               
               store_ranking.ranks = get_itunes_ranks_hash(response.body)
-              @@cached_store_rankings[store_ranking_key] = store_ranking
+              store_ranking.ranks.each do |store_id, rank|
+                if stat_rows[store_id].present?
+                  stat_rows[store_id].each do |stat_row|
+                    stat_row.update_stat_for_hour(['ranks', stat_type], time.hour, rank)
+                  end
+                end
+              end
+              
               store_rankings << store_ranking
             end
             
@@ -52,8 +69,17 @@ class StoreRank
         end
       end
     end
+    Rails.logger.info "#{Time.now.to_i}: Finished queuing requests."
     
     hydra.run
+    Rails.logger.info "#{Time.now.to_i}: Finished making requests."
+    
+    stat_rows.each do |key, value|
+      value.each do |stat_row|
+        stat_row.serial_save
+      end
+    end
+    Rails.logger.info "#{Time.now.to_i}: Finished saving stat_rows."
     
     while store_rankings.present?
       retries = 3
@@ -69,25 +95,9 @@ class StoreRank
       end
       store_rankings.shift(25)
     end
+    Rails.logger.info "#{Time.now.to_i}: Finished saving store_rankings."
   end
 
-  def self.populate_ranks(store_id, stat_row, time)
-    hour = time.hour
-    itunes_category_ids.each do |category_key, category_id|
-      itunes_pop_ids.each do |pop_key, pop_id|
-        itunes_country_ids.each do |country_key, country_id|
-          stat_type = "#{category_key}.#{pop_key}.#{country_key}"
-          if stat_row.get_hourly_count(['ranks', stat_type])[hour] == 0
-            store_ranking_key = "itunes.#{category_key}.#{pop_key}.#{country_key}.#{time.beginning_of_hour.to_s(:db)}"
-            @@cached_store_rankings[store_ranking_key] ||= StoreRanking.new(:key => store_ranking_key)
-            rank = @@cached_store_rankings[store_ranking_key].ranks[store_id]
-            stat_row.update_stat_for_hour(['ranks', stat_type], hour, rank) if rank
-          end
-        end
-      end
-    end
-  end
-  
 private
 
   ##

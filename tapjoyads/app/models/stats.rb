@@ -25,6 +25,7 @@ class Stats < SimpledbResource
     if get('ranks').blank?
       convert_to_new_format_2
     end
+    @parsed_values.delete('ranks')
   end
 
   ##
@@ -172,7 +173,7 @@ private
     end
     
     @attributes.keys.each do |key|
-      delete(key) unless key == 'updated-at' || key == 'values' || key == 'ranks'
+      delete(key) unless key == 'updated-at' || key =~ /^values/ || key =~ /^ranks/
     end
   end
   
@@ -184,6 +185,5 @@ private
       
       @parsed_ranks = @parsed_values['ranks']
     end
-    @parsed_values.delete('ranks')
   end
 end
