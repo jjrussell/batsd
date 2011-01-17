@@ -107,10 +107,6 @@ private
     end
     stat_row.update_stat_for_hour('display_conversions', start_time.hour, display_conversions)
     stat_row.update_stat_for_hour('display_revenue', start_time.hour, display_revenue)
-    
-    if @offer.item_type == 'App' && @offer.get_platform == 'iOS'
-      StoreRank.populate_overall_store_rank(@offer.third_party_data, stat_row, start_time.hour)
-    end
   end
   
   ##
