@@ -77,7 +77,7 @@ private
         stats[key]['ads_est']           = ((end_time - start_time) / 3600).to_i / 24.0 * 400.0
         stats[key]['revenue']           = stats[key]['advertiser_spend'] - stats[key]['marketing_credits'] + stats[key]['linkshare_est'] + stats[key]['ads_est']
         stats[key]['net_revenue']       = stats[key]['revenue'] - (stats[key]['publisher_earnings'] - stats[key]['marketing_credits'] * 0.7)
-        stats[key]['margin']            = stats[key]['net_revenue'] / stats[is]['revenue'] * 100
+        stats[key]['margin']            = stats[key]['net_revenue'] / stats[key]['revenue'] * 100
 
         stats[key]['conversions']        = number_with_delimiter(stats[key]['conversions'])
         stats[key]['advertiser_spend']   = number_to_currency(stats[key]['advertiser_spend'])
