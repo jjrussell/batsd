@@ -64,8 +64,8 @@ private
           stats[key]['publisher_earnings'] += Conversion.created_between(archive_cutoff, end_time).sum(:advertiser_amount, :conditions => ["publisher_app_id NOT IN (?)", tj_partner.app_ids])
         else
           stats[key]['conversions']        = Conversion.created_between(start_time, end_time).count
-          stats[key]['advertiser_spend']   = Conversion.created_between(start_time, end_time).sum(:advertiser_spend)
-          stats[key]['publisher_earnings'] = Conversion.created_between(start_time, end_time).sum(:advertiser_spend, :conditions => ["publisher_app_id NOT IN (?)", tj_partner.app_ids])
+          stats[key]['advertiser_spend']   = Conversion.created_between(start_time, end_time).sum(:advertiser_amount)
+          stats[key]['publisher_earnings'] = Conversion.created_between(start_time, end_time).sum(:advertiser_amount, :conditions => ["publisher_app_id NOT IN (?)", tj_partner.app_ids])
         end
         stats[key]['advertiser_spend']   /= -100.0
         stats[key]['publisher_earnings'] /=  100.0
