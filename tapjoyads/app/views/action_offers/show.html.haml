@@ -14,7 +14,7 @@
     .instructions= simple_paragraphs @action_offer.instructions
     
   #footer
-    %div= "If you no longer have this app, click #{link_to("here", @app.store_url)} to download it."
+    %div= "If you no longer have this app, click #{link_to("here", @app.direct_store_url)} to download it."
   
 #privacy
   = link_to('Privacy', 'https://www.tapjoy.com/privacy')
