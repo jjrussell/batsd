@@ -53,7 +53,7 @@
           %th Store ID
           %td
             - if @app.store_id.present?
-              = link_to(@app.store_id, @app.final_store_url, :target => '_blank', :id => 'app_store_link')
+              = link_to(@app.store_id, @app.info_url, :target => '_blank', :id => 'app_store_link')
             - else
               %a#app_store_link{ :target => '_blank' }
         %tr.app_data.hidden

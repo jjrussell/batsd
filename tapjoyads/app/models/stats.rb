@@ -18,13 +18,6 @@ class Stats < SimpledbResource
   def after_initialize
     @parsed_values = values
     @parsed_ranks = ranks
-    
-    if get('values').blank?
-      convert_to_new_format
-    end
-    if get('ranks').blank?
-      convert_to_new_format_2
-    end
   end
 
   ##
@@ -99,10 +92,10 @@ class Stats < SimpledbResource
     strip_defaults(@parsed_values)
     strip_defaults(@parsed_ranks)
     
-    self.values = @parsed_values
-    self.ranks = @parsed_ranks
+    self.values = @parsed_values if self.values != @parsed_values
+    self.ranks = @parsed_ranks if self.ranks != @parsed_ranks
     
-    super(options)
+    super(options) if changed?
   end
   
 private
@@ -126,64 +119,5 @@ private
     
     obj[key] = Array.new(length, 0) if obj[key].nil?
     obj[key]
-  end
-  
-  ##
-  # Converts this to new format. The old format stores each stat as a separate attribute, the new format
-  # stores all stats in single 'values' json attribute. The new format allows for more than 255 stats
-  # to be stored per row. It also allows for a hierarchy, which is used for ranks.
-  #
-  # TO REMOVE: Temporary method. Remove after all stats are converted.
-  def convert_to_new_format
-    @parsed_values = values
-    @parsed_values['ranks'] = {}
-    
-    ["rewards_opened", "rewards", "rewards_revenue"].each do |stat_name|
-      delete(stat_name) if get(stat_name).present?
-    end
-    
-    Stats::STAT_TYPES.each do |stat_name|
-      stat_name = 'overall_store_rank' if stat_name == 'ranks'
-      
-      counts = get(stat_name) || ''
-      delete(stat_name) if get(stat_name).present?
-      
-      counts = counts.split(',').map do |count|
-        if stat_name == 'overall_store_rank'
-          (count == '0' || count == '-') ? nil : count.to_i
-        else
-          count == '-' ? nil : count.to_i
-        end
-      end
-      
-      skip = true
-      counts.each do |count|
-        if count.present? && count != 0
-          skip = false
-        end
-      end
-      next if skip
-      
-      if stat_name == 'overall_store_rank'
-        @parsed_values['ranks']['overall.free.united_states'] = counts
-      else
-        @parsed_values[stat_name] = counts        
-      end
-    end
-    
-    @attributes.keys.each do |key|
-      delete(key) unless key == 'updated-at' || key == 'values' || key == 'ranks'
-    end
-  end
-  
-  def convert_to_new_format_2
-    if @parsed_values['ranks'].present?
-      @parsed_values['ranks'].each do |key, value|
-        value.map! { |i| i.nil? ? 0 : i }
-      end
-      
-      @parsed_ranks = @parsed_values['ranks']
-    end
-    @parsed_values.delete('ranks')
   end
 end

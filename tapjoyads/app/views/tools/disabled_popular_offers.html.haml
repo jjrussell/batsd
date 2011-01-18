@@ -23,7 +23,7 @@
         %td= offer.partner.name
         %td
           - if offer.item_type == 'App' && !offer.item.store_id.blank?
-            = link_to(offer.item.store_id, offer.item.final_store_url)
+            = link_to(offer.item.store_id, offer.item.info_url)
           - else
             None
         %td= number_to_currency(offer.price / 100.0)

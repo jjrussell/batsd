@@ -13,6 +13,7 @@ class App < ActiveRecord::Base
   has_one :rating_offer
   has_many :featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured = true"
   has_one :primary_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured = true", :order => "created_at"
+  has_many :action_offers
   
   belongs_to :partner
   
@@ -45,11 +46,7 @@ class App < ActiveRecord::Base
     if use_raw_url?
       read_attribute(:store_url)
     else
-      if is_android?
-        "market://search?q=#{store_id}"
-      else
-        "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
-      end
+      direct_store_url
     end
   end
   
@@ -59,9 +56,17 @@ class App < ActiveRecord::Base
     end
   end
   
-  def final_store_url
+  def info_url
     if is_android?
       "http://www.appbrain.com/app/#{store_id}"
+    else
+      "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
+    end
+  end
+  
+  def direct_store_url
+    if is_android?
+      "market://search?q=#{store_id}"
     else
       "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
     end

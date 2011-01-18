@@ -1,47 +1,105 @@
 class StoreRank
   cattr_accessor :itunes_category_ids, :itunes_pop_ids, :itunes_country_ids
   
-  ##
-  # Populates the 'overall_store_rank' stat, which is the app's location in the US free app chart.
-  def self.populate_overall_store_rank(store_id, stat_row, hour)
-    if stat_row.get_hourly_count(['ranks', 'overall.free.united_states'])[hour] == 0
-      rank_hash = get_ranks_hash(itunes_category_ids['overall'], itunes_pop_ids['free'], itunes_country_ids['united_states'])
-      rank = rank_hash[store_id]
-      stat_row.update_stat_for_hour(['ranks', 'overall.free.united_states'], hour, rank) unless rank.nil?
-    end
-  end
-  
-  def self.get_ranks_hash(category_id, pop_id, country_id)
-    url = "http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=#{category_id}&popId=#{pop_id}"
-    headers = {
-      'User-Agent' => 'iTunes/10.1 (Macintosh; Intel Mac OS X 10.6.5) AppleWebKit/533.18.1',
-      'X-Apple-Store-Front' => "#{country_id}-1,12"
-    }
+  def self.populate_store_rankings(time)
+    hydra = Typhoeus::Hydra.new
+    hydra.disable_memoization
+    date_string = time.to_date.to_s(:db)
+    error_count = 0
+    store_rankings = []
+    stat_rows = {}
     
-    Mc.get_and_put("rankings.itunes.#{category_id}.#{pop_id}.#{country_id}", false, 1.hour) do 
-      response = Downloader.get(url, :headers => headers, :timeout => 30)
-      list = response.scan(/adam-id="(\d*)"/m).uniq.flatten
-      hash = {}
-      list.each_with_index do |id, index|
-        hash[id] = index + 1
-      end
-      hash
+    Rails.logger.info "#{Time.now.to_i}: Populate store rankings. Task starting."
+    
+    Offer.find_each do |offer|
+      next unless offer.item_type == 'App' && offer.get_platform == 'iOS'
+      
+      stat_row = Stats.new(:key => "app.#{date_string}.#{offer.id}")
+      stat_rows[offer.third_party_data] ||= []
+      stat_rows[offer.third_party_data] << stat_row
     end
-  end
-  
-  def self.populate_ranks(store_id, stat_row, hour)
+    Rails.logger.info "#{Time.now.to_i}: Finished loading stat_rows."
+    
     itunes_category_ids.each do |category_key, category_id|
       itunes_pop_ids.each do |pop_key, pop_id|
         itunes_country_ids.each do |country_key, country_id|
           stat_type = "#{category_key}.#{pop_key}.#{country_key}"
-          if stat_row.get_hourly_count(['ranks', stat_type])[hour].nil?
-            rank_hash = get_ranks_hash(category_id, pop_id, country_id)
-            rank = rank_hash[store_id]
-            stat_row.update_stat_for_hour(['ranks', stat_type], hour, rank)
+          store_ranking_key = "itunes.#{stat_type}.#{time.beginning_of_hour.to_s(:db)}"
+          store_ranking = StoreRanking.new(:key => store_ranking_key)
+          if store_ranking.ranks.blank?
+            url = "http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=#{category_id}&popId=#{pop_id}"
+            headers = { 'X-Apple-Store-Front' => "#{country_id}-1,12" }
+            user_agent = 'iTunes/10.1 (Macintosh; Intel Mac OS X 10.6.5) AppleWebKit/533.18.1'
+            
+            request = Typhoeus::Request.new(url, :headers => headers, :user_agent => user_agent)
+            request.on_complete do |response|
+              if response.code != 200
+                error_count += 1
+                if error_count > 50
+                  raise "Too many errors attempting to download itunes ranks, giving up. App store down?"
+                end
+                Rails.logger.info "Error downloading ranks from itunes for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Retrying."
+                hydra.queue(request)
+              end
+              
+              store_ranking.ranks = get_itunes_ranks_hash(response.body)
+              store_ranking.ranks.each do |store_id, rank|
+                if stat_rows[store_id].present?
+                  stat_rows[store_id].each do |stat_row|
+                    stat_row.update_stat_for_hour(['ranks', stat_type], time.hour, rank)
+                  end
+                end
+              end
+              
+              store_rankings << store_ranking
+            end
+            
+            hydra.queue(request)
           end
         end
       end
     end
+    Rails.logger.info "#{Time.now.to_i}: Finished queuing requests."
+    
+    hydra.run
+    Rails.logger.info "#{Time.now.to_i}: Finished making requests."
+    
+    stat_rows.each do |key, value|
+      value.each do |stat_row|
+        stat_row.serial_save
+      end
+    end
+    Rails.logger.info "#{Time.now.to_i}: Finished saving stat_rows."
+    
+    while store_rankings.present?
+      retries = 3
+      begin
+        StoreRanking.put_items(store_rankings.first(25))
+      rescue Exception => e
+        if (retries -= 1) >= 0
+          sleep(1)
+          retry
+        else
+          raise e
+        end
+      end
+      store_rankings.shift(25)
+    end
+    Rails.logger.info "#{Time.now.to_i}: Finished saving store_rankings."
+  end
+
+private
+
+  ##
+  # Parses an itunes top 200 response, and returns a hash of store_id => rank.
+  def self.get_itunes_ranks_hash(response_body)
+    hash = {}
+    list = response_body.scan(/adam-id="(\d*)"/m).uniq.flatten
+    list.each_with_index do |id, index|
+      hash[id] = index + 1
+    end
+    
+    hash
   end
   
   @@itunes_category_ids = {
@@ -71,8 +129,8 @@ class StoreRank
     "games_arcade"            => 26361,
     "games_board"             => 26371,
     "games_card"              => 26381,
-    "games_casino"            => 26341,
-    "games_dice"              => 26341,
+    "games_casino"            => 26391,
+    "games_dice"              => 26401,
     "games_educational"       => 26411,
     "games_family"            => 26421,
     "games_kids"              => 26431,

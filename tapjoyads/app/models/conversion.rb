@@ -7,12 +7,14 @@ class Conversion < ActiveRecord::Base
     'rating' => 2,
     'generic' => 3,
     'install_jailbroken' => 4,
+    'action' => 5,
     'imported' => 999,
     'display_offer' => 1000,
     'display_install' => 1001,
     'display_rating' => 1002,
     'display_generic' => 1003,
     'display_install_jailbroken' => 1004,
+    'display_action' => 1005
   }
   
   belongs_to :publisher_app, :class_name => 'App'

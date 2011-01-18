@@ -1,0 +1,71 @@
+- @page_title = 'Edit Action'
+
+= render('shared/dropdown_select', :objects => current_partner_apps, :selected => @app)
+= render('apps/actions', :app => @app)
+#apps_main
+  %h3 Edit Action
+  - form_for [ @app, @action_offer ], :html => { :class => 'tjform' } do |f|
+    %table
+      %tbody
+        - f.fields_for :primary_offer do |primary_offer_form|
+          %tr
+            %th
+              = primary_offer_form.label :user_enabled, 'Enable Action'
+              #help_user_enabled.help ?
+            %td
+              = primary_offer_form.check_box :user_enabled
+              = error_message_on @action_offer, :primary_offer_user_enabled
+          %tr
+            %th
+              = primary_offer_form.label :bid, 'Bid'
+              #help_bid.help ?
+            %td
+              = primary_offer_form.currency_field :bid, {}, :class => 'togglable'
+              = error_message_on @action_offer, :primary_offer_bid
+        %tr
+          %th
+            = f.label :name, 'Action Name'
+            #help_name.help ?
+          %td
+            = f.text_field :name
+            = error_message_on @action_offer, :name
+        %tr
+          %th
+            = f.label :instructions, 'Instructions'
+            #help_instructions.help ?
+          %td
+            = f.text_area :instructions, :rows => 5
+            = error_message_on @action_offer, :instructions        
+        %tr
+          %th
+            = f.label :action_id, 'Action ID'
+            #help_action_id.help ?
+          %td
+            = @action_offer.id
+        %tr
+          %th
+            = f.label :integrated, 'Integrated?'
+            #help_integrated.help ?
+          %td
+            = @action_offer.integrated? ? "Yes" : "No"
+
+        - if permitted_to? :edit, :statz
+          = render 'admin_fields', :f => f
+              
+        %tr
+          %td{ :colspan => 2 }= f.submit 'Save Action'
+
+  .hidden
+    #help_name_content{ :name => 'Action Name' }
+      The name of the action.
+    #help_instructions_content{ :name => 'Instructions' }
+      Instruction telling users how to complete the action.
+    #help_action_id_content{ :name => 'Action ID' }
+      The ID of the action. This ID will need to be used in your integration.
+    #help_integrated_content{ :name => 'Integrated?' }
+      Has this action been integrated?
+    #help_user_enabled_content{ :name => 'Enable Action' }
+      Enable the action to get your campaign started.
+    #help_bid_content{ :name => 'Bid' }
+      The amount you are willing to pay for a completed action. A higher bid will result in more completed actions.
+

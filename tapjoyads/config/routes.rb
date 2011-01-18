@@ -53,6 +53,7 @@ ActionController::Routing::Routes.draw do |map|
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
       :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
     app.resources :featured_offers, :only => [ :new, :create, :edit, :update ], :controller => 'apps/featured_offers'
+    app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post }, :controller => 'apps/action_offers'
   end
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }
   map.resources :billing, :only => [ :index, ], :collection => { :create_order => :post }
@@ -87,6 +88,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :orders, :only => [ :new, :create ]
     tools.resources :payouts, :only => [ :index, :create ]
   end
+  map.resources :action_offers, :only => [ :show ]
 
   # Special paths:
   map.connect 'log_device_app/:action/:id', :controller => 'connect'
