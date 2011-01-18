@@ -25,6 +25,8 @@ class ReportingController < WebsiteController
     else
       intervals = @appstats.intervals.map { |time| time.to_s(:pub_ampm) }
     end
+    
+    conversion_name = @offer.item_type == 'App' ? 'installs' : 'conversions'
 
     respond_to do |format|
       format.html do
@@ -48,11 +50,11 @@ class ReportingController < WebsiteController
           },
 
           :rewarded_installs_plus_spend_data => {
-            :name => 'Paid installs + Advertising spend',
+            :name => "Paid #{conversion_name} + Advertising spend",
             :intervals => intervals,
             :xLabels => @appstats.x_labels,
             :main => {
-              :names => [ 'Paid installs', 'Paid clicks' ],
+              :names => [ "Paid #{conversion_name}", 'Paid clicks' ],
               :data => [ @appstats.stats['paid_installs'], @appstats.stats['paid_clicks'] ],
               :totals => [ @appstats.stats['paid_installs'].sum, @appstats.stats['paid_clicks'].sum ]
             },
@@ -71,11 +73,11 @@ class ReportingController < WebsiteController
           },
 
           :rewarded_installs_plus_rank_data => {
-            :name => 'Paid installs + Rank',
+            :name => "Paid #{conversion_name} + Rank",
             :intervals => intervals,
             :xLabels => @appstats.x_labels,
             :main => {
-              :names => [ 'Paid installs', 'Paid clicks' ],
+              :names => [ "Paid #{conversion_name}", 'Paid clicks' ],
               :data => [ @appstats.stats['paid_installs'], @appstats.stats['paid_clicks'] ],
               :totals => [ @appstats.stats['paid_installs'].sum, @appstats.stats['paid_clicks'].sum ]
             },
