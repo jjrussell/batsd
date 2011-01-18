@@ -59,7 +59,7 @@ private
         stats[key]['linkshare_est']     = stats[key]['advertiser_spend'] * 0.026
         stats[key]['ads_est']           = ((end_time - start_time) / 3600).to_i / 24.0 * 400.0
         stats[key]['revenue']           = stats[key]['advertiser_spend'] - stats[key]['marketing_credits'] + stats[key]['linkshare_est'] + stats[key]['ads_est']
-        stats[key]['net_revenue']       = stats[key]['revenue'] - stats[key]['payouts']
+        stats[key]['net_revenue']       = stats[key]['revenue'] - stats[key]['publisher_earnings']
         stats[key]['margin']            = stats[key]['net_revenue'] / stats[key]['revenue'] * 100
 
         stats[key]['conversions']        = stats[key]['conversions'].nil? ? '-' : number_with_delimiter(stats[key]['conversions'])
