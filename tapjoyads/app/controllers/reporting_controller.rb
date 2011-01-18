@@ -322,7 +322,7 @@ private
       
       @rank_partitions[country][:names] << "#{key_parts[0].titleize}"
       @rank_partitions[country][:data] << ranks
-      @rank_partitions[country][:totals] << ranks.reject { |r| r.nil? }.last.ordinalize
+      @rank_partitions[country][:totals] << (ranks.compact.last.ordinalize rescue '-')
     end
     
     @rank_partitions
