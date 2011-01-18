@@ -27,7 +27,7 @@
           %td= link_to(action_offer.name, edit_app_action_offer_path(@app, action_offer))
           %td= number_to_currency 0.01 * action_offer.bid
           %td= action_offer.id
-          %td= action_offer.integrated? ? "Yes" : "No"
+          %td{ :class => action_offer.integrated? ? "integrated" : "not_integrated" }= action_offer.integrated? ? "Yes" : "No"
 
 - content_for :page_javascript do
   :plain

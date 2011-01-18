@@ -46,7 +46,7 @@
           %th
             = f.label :integrated, 'Integrated?'
             #help_integrated.help ?
-          %td
+          %td{ :class => @action_offer.integrated? ? "integrated" : "not_integrated" }
             = @action_offer.integrated? ? "Yes" : "No"
 
         - if permitted_to? :edit, :statz
