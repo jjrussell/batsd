@@ -298,3 +298,9 @@ a.soft-link.inactive {
   border-bottom: none;
   cursor: text;
 }
+.integrated {
+  color: #0f0;
+}
+.not_integrated {
+  color: #f00;
+}
