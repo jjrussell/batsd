@@ -49,6 +49,10 @@ Tapjoy.Graph = {
   drawLargeGraph: function(obj, id, partition_index) {
     if ($('#' + id).length == 0) return;
 
+    if (partition_index == undefined) {
+      $('#' + id + '>.dropdown').html('');
+    }
+
     $('#' + id + '>h3').html(obj['name']);
     if (obj['partition_names']) {
       if ($('#' + id + '>.dropdown').html() == '') {
