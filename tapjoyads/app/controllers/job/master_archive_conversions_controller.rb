@@ -20,33 +20,33 @@ private
   def archive_conversions(start_time, end_time)
     return if Conversion.created_between(start_time, end_time).count == 0
     
-    base_filename = "conversions_#{start_time.year}-#{start_time.month}"
-    local_filename = "tmp/#{base_filename}.sdb"
+    base_filename = "conversions_#{start_time.strftime('%Y-%m')}"
+    local_filename = "tmp/#{base_filename}.sql"
     gzip_filename = "#{local_filename}.gz"
     
-    # write each conversion's attributes to a file
-    backup_file = File.open(local_filename, 'w')
-    Conversion.created_between(start_time, end_time).find_each do |c|
-      backup_file.puts(c.attributes.to_json)
-    end
-    backup_file.close
+    # backup the conversions
+    db_config = ActiveRecord::Base.configurations[Rails.env == 'production' ? 'production_slave_for_tapjoy_db' : Rails.env]
+    mysql_cmd = "mysql -u #{db_config['username']} --password=#{db_config['password']} -h #{db_config['host']} #{db_config['database']}"
+    mysql_cmd += " -e \"SELECT * FROM conversions WHERE created_at >= '#{start_time.to_s(:db)}' AND created_at < '#{end_time.to_s(:db)}'\""
+    `#{mysql_cmd} > #{local_filename}`
     
     # compress the backup
     `gzip -f #{local_filename}`
     
     # pick a filename for s3, making sure not to overwrite anything
     bucket = S3.bucket(BucketNames::CONVERSION_ARCHIVES)
-    while bucket.key("#{base_filename}.sdb").exists? do
+    while bucket.key("#{base_filename}.sql.gz").exists? do
       base_filename += '_2'
     end
     
     # upload to s3
     retries = 3
     begin
-      bucket.put("#{base_filename}.sdb", open(gzip_filename))
+      bucket.put("#{base_filename}.sql.gz", open(gzip_filename))
     rescue RightAws::AwsError => e
       if retries > 0
         retries -= 1
+        sleep 5
         retry
       else
         raise e
