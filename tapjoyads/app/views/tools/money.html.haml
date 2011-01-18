@@ -6,7 +6,7 @@ As of: #{@last_updated.to_s(:pub_ampm_sec)}
 
 - if @money_stats.present?
   - time_ranges = @money_stats.keys
-  %table
+  %table.tablesorter
     %thead
       %tr
         %th
@@ -24,13 +24,12 @@ As of: #{@last_updated.to_s(:pub_ampm_sec)}
 %h3 Total Balance: #{number_to_currency(@total_balance)}
 %h3 Total Pending Earnings: #{number_to_currency(@total_pending_earnings)}
 
--content_for :page_styles do
+- content_for :page_styles do
   :plain
-    table {
-      border-collapse: collapse;
+    table.tablesorter {
+      border-collapse: separate;
     }
     
-    th, td {
-      border: 1px solid gray;
-      padding: 5px;
+    table.tablesorter thead tr .header {
+      background-position: right bottom;
     }
