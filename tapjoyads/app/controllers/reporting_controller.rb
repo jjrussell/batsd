@@ -200,7 +200,7 @@ class ReportingController < WebsiteController
 
         if permitted_to?(:index, :statz)
           # jailbroken data
-          @data[:rewarded_installs_plus_spend_data][:main][:names]  << 'Jailbroken installs'
+          @data[:rewarded_installs_plus_spend_data][:main][:names]  << "Jailbroken #{conversion_name}"
           @data[:rewarded_installs_plus_spend_data][:main][:data]   << @appstats.stats['jailbroken_installs']
           @data[:rewarded_installs_plus_spend_data][:main][:totals] << @appstats.stats['jailbroken_installs'].sum
         end
