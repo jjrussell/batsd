@@ -6,7 +6,8 @@
       %li= link_to 'Pay-Per-Install', app_offer_path(:id => app.primary_offer.id, :app_id => app.id), :class => (controller.controller_name == 'offers' ? 'selected' : '')
       - if @app.price == 0
         %li= link_to 'Featured Installs', @app.primary_featured_offer ? edit_app_featured_offer_path(@app, @app.primary_featured_offer) : new_app_featured_offer_path(@app), :class => (controller.controller_name == 'featured_offers') ? 'selected' : ''
-      -# %li= link_to 'Pay-Per-Action', @app.action_offers.present? ? app_action_offers_path(@app) : new_app_action_offer_path(@app), :class => (controller.controller_name == 'action_offers') ? 'selected' : ''
+      - if request.host == 'test.tapjoy.com' || Rails.env == 'development'
+        %li= link_to 'Pay-Per-Action', @app.action_offers.present? ? app_action_offers_path(@app) : new_app_action_offer_path(@app), :class => (controller.controller_name == 'action_offers') ? 'selected' : ''
       - currency_selected = controller.controller_name == 'currencies'
       - if app.currencies.empty?
         %li= link_to 'Virtual Currency', new_app_currency_path({:app_id => app.id}), :class => (currency_selected && controller.action_name == 'new' ? 'selected' : '')
