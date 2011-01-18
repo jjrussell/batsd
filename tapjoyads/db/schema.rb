@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110111311102) do
+ActiveRecord::Schema.define(:version => 20110118230140) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",           :limit => 36,                    :null => false
@@ -48,6 +48,7 @@ ActiveRecord::Schema.define(:version => 20110111311102) do
     t.integer  "rotation_direction",                  :default => 0,     :null => false
     t.integer  "rotation_time",                       :default => 0,     :null => false
     t.boolean  "hidden",                              :default => false, :null => false
+    t.integer  "file_size_bytes"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
