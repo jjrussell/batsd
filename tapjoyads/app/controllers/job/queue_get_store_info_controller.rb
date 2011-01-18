@@ -16,6 +16,7 @@ private
 
     app.age_rating = app_data[:age_rating]
     app.file_size_bytes = app_data[:file_size_bytes]
+    app.supported_devices = app_data[:supported_devices].to_json
     app.save!
   end
 

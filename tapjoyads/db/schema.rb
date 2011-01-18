@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(:version => 20110118230140) do
     t.integer  "rotation_time",                       :default => 0,     :null => false
     t.boolean  "hidden",                              :default => false, :null => false
     t.integer  "file_size_bytes"
+    t.string   "supported_devices"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
