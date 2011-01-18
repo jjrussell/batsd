@@ -11,6 +11,7 @@ Tapjoy.Graph = {
         append( $('<div class="tooltip">') );
       $(this).
         append( $('<h3>') ).
+        append( $('<div class="dropdown">')).
         append( $('<div class="totals">') ).
         append( holder );
     });
@@ -45,10 +46,37 @@ Tapjoy.Graph = {
     }
   },
 
-  drawLargeGraph: function(obj, id) {
+  drawLargeGraph: function(obj, id, partition_index) {
     if ($('#' + id).length == 0) return;
 
     $('#' + id + '>h3').html(obj['name']);
+    if (obj['partition_names']) {
+      if ($('#' + id + '>.dropdown').html() == '') {
+        if (obj['partition_names'].length == 0) {
+          $('#' + id + '>.dropdown').html(obj['partition_fallback'])
+        } else {
+          html = obj['partition_title'] + ": <select>";
+          index = 0;
+          for(var i = 0, name; name = obj['partition_names'][i]; i++) {
+            html += '<option value="' + i + '"';
+            if (name.search(obj['partition_default']) == 0 && index == 0) {
+              index = i;
+              html += ' selected="selected"';
+            }
+            html += '>' + name + '</option>';
+          }
+          html += '</select>';
+          $('#' + id + '>.dropdown').html(html);
+          partition_index = index;
+          
+          $('#' + id + '>.dropdown>select').change(function(event) {
+            new_index = Number(event.target.value);
+            Tapjoy.Graph.drawLargeGraph(obj, id, new_index);
+          })
+        }
+      }
+      obj['right'] = obj['partition_values'][partition_index];
+    }
     if ($('#' + id + '>.totals').length == 1) {
       $('#' + id + '>.totals').html(Tapjoy.Graph.getTotalsHtml(obj));
     }
@@ -64,6 +92,7 @@ Tapjoy.Graph = {
 
     var g = new RGraph.Line(id + '_graph');
     g.original_data = obj['main']['data'];
+    RGraph.Clear(g.canvas);
 
     g.Set('chart.key', legendKeys);
     g.Set('chart.key.background', 'rgba(255,255,255,0.5)');

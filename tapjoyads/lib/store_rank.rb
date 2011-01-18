@@ -2,7 +2,7 @@ class StoreRank
   cattr_accessor :itunes_category_ids, :itunes_pop_ids, :itunes_country_ids
   
   def self.populate_store_rankings(time)
-    hydra = Typhoeus::Hydra.new
+    hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
     hydra.disable_memoization
     date_string = time.to_date.to_s(:db)
     error_count = 0
