@@ -182,9 +182,12 @@ private
       
       if hourly_stats.is_a?(Hash)
         hourly_stats_over_range = {} if hourly_stats_over_range.blank?
-        hourly_stats.each do |key, value|
-          hourly_stats_over_range[key] = Array.new(size, nil) if hourly_stats_over_range[key].nil?
-          hourly_stats_over_range[key][index] = value[time.hour]
+        hourly_stats.each do |key, values|
+          value = values[time.hour]
+          unless value == 0
+            hourly_stats_over_range[key] ||= Array.new(size, 0)
+            hourly_stats_over_range[key][index] = value
+          end
         end
       else
         hourly_stats_over_range[index] = hourly_stats[time.hour]
@@ -219,9 +222,12 @@ private
 
       if daily_stats.is_a?(Hash)
         daily_stats_over_range = {} if daily_stats_over_range.blank?
-        daily_stats.each do |key, value|
-          daily_stats_over_range[key] = Array.new(size, nil) if daily_stats_over_range[key].nil?
-          daily_stats_over_range[key][index] = value[time.day - 1]
+        daily_stats.each do |key, values|
+          value = values[time.day - 1]
+          unless value[time.day - 1] == 0
+            daily_stats_over_range[key] ||= Array.new(size, 0)
+            daily_stats_over_range[key][index] = value
+          end
         end
       else
         daily_stats_over_range[index] = daily_stats[time.day - 1]

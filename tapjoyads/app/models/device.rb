@@ -31,6 +31,12 @@ class Device < SimpledbShardedResource
     if old_time.nil?
       path_list.push('new_user')
       old_time = Time.zone.at(0)
+
+      # mark papaya new users as jailbroken
+      if app_id == 'e96062c5-45f0-43ba-ae8f-32bc71b72c99' || app_id == 'cf6b4573-0efb-44a8-813d-26e248b81713'
+        self.is_jailbroken = true
+      end
+
     end
     if now.year != old_time.year || now.yday != old_time.yday
       path_list.push('daily_user')

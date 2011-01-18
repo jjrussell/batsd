@@ -2,37 +2,34 @@
 
 %h1 Money Stats
 
-- unless @money_stats.empty? && @daily_money_stats.empty?
-  - time_ranges = @money_stats.keys + @daily_money_stats.keys
-  %table
+As of: #{@last_updated.to_s(:pub_ampm_sec)}
+
+- if @money_stats.present?
+  - time_ranges = @money_stats.keys
+  %table.tablesorter
     %thead
-      %tr
-        %th Last Updated
-        %th{ :colspan => @money_stats.size }= @last_updated.to_s(:pub_ampm_sec)
-        %th{ :colspan => @daily_money_stats.size }= @daily_last_updated.to_s(:pub_ampm_sec)
       %tr
         %th
         - time_ranges.each do |time_range|
           %th= time_range
     %tbody
-      - @combined_money_stats[time_ranges.first].keys.each do |stat_type|
+      - @money_stats[time_ranges.first].keys.each do |stat_type|
         %tr
           %td= stat_type
           - time_ranges.each do |time_range|
-            %td= @combined_money_stats[time_range][stat_type]
+            %td= @money_stats[time_range][stat_type]
 - else
   %h3 Not Available
 
 %h3 Total Balance: #{number_to_currency(@total_balance)}
 %h3 Total Pending Earnings: #{number_to_currency(@total_pending_earnings)}
 
--content_for :page_styles do
+- content_for :page_styles do
   :plain
-    table {
-      border-collapse: collapse;
+    table.tablesorter {
+      border-collapse: separate;
     }
     
-    th, td {
-      border: 1px solid gray;
-      padding: 5px;
+    table.tablesorter thead tr .header {
+      background-position: right bottom;
     }

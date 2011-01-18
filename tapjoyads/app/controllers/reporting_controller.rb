@@ -73,20 +73,19 @@ class ReportingController < WebsiteController
           },
 
           :rewarded_installs_plus_rank_data => {
-            :name => "Paid #{conversion_name} + Rank",
+            :name => "Paid #{conversion_name} + Ranks",
             :intervals => intervals,
             :xLabels => @appstats.x_labels,
             :main => {
-              :names => [ "Paid #{conversion_name}", 'Paid clicks' ],
-              :data => [ @appstats.stats['paid_installs'], @appstats.stats['paid_clicks'] ],
-              :totals => [ @appstats.stats['paid_installs'].sum, @appstats.stats['paid_clicks'].sum ]
+              :names => [ "Paid #{conversion_name}" ],
+              :data => [ @appstats.stats['paid_installs'] ],
+              :totals => [ @appstats.stats['paid_installs'].sum ]
             },
-            :right => {
-              :yMax => 200,
-              :names => [ 'Rank' ],
-              :data => [ Array(@appstats.stats['ranks']['overall.free.united_states']) ],
-              :totals => [ (Array(@appstats.stats['ranks']['overall.free.united_states']).reject { |r| r.nil? }.last || '-') ]
-            }
+            :partition_names => get_rank_partition_names,
+            :partition_values => get_rank_partition_values,
+            :partition_title => 'Country',
+            :partition_fallback => 'This app is not in the top charts in any categories for the selected date range.',
+            :partition_default => 'United States'
           },
 
           :published_offers_data => {
@@ -214,7 +213,7 @@ class ReportingController < WebsiteController
   end
 
   def export
-    data =  "start_time,end_time,paid_clicks,paid_installs,new_users,paid_cvr,spend,store_rank,"
+    data =  "start_time,end_time,paid_clicks,paid_installs,new_users,paid_cvr,spend,itunes_rank_overall_free_united_states,"
     data += "offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,revenue,offerwall_ecpm,ads_revenue,ads_ecpm"
     data += ",daily_active_users,arpdau" if @granularity == :daily
     data = [data]
@@ -300,6 +299,45 @@ private
 
     # lookup the stats
     @appstats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true })
+  end
+  
+  def get_rank_partitions
+    return @rank_partitions if defined?(@rank_partitions)
+    @rank_partitions = {}
+    
+    keys = @appstats.stats['ranks'].keys.sort do |key1, key2|
+      key1.gsub(/^overall/, '1') <=> key2.gsub(/^overall/, '1')
+    end
+    
+    keys.each do |key|
+      key_parts = key.split('.')
+      country = "#{key_parts[2].titleize} (#{key_parts[1].titleize})"
+      ranks = @appstats.stats['ranks'][key]
+      
+      @rank_partitions[country] ||= {}
+      @rank_partitions[country][:yMax] = 200
+      @rank_partitions[country][:names] ||= []
+      @rank_partitions[country][:data] ||= []
+      @rank_partitions[country][:totals] ||= []
+      
+      @rank_partitions[country][:names] << "#{key_parts[0].titleize}"
+      @rank_partitions[country][:data] << ranks
+      @rank_partitions[country][:totals] << (ranks.compact.last.ordinalize rescue '-')
+    end
+    
+    @rank_partitions
+  end
+  
+  def get_rank_partition_names
+    get_rank_partitions.keys.sort
+  end
+  
+  def get_rank_partition_values
+    values = []
+    get_rank_partition_names.each do |name|
+      values << get_rank_partitions[name]
+    end
+    values
   end
   
 end

@@ -277,9 +277,7 @@ class OneOffs
              'money.cached_stats',
              'money.total_balance',
              'money.total_pending_earnings',
-             'money.last_updated',
-             'money.daily_cached_stats',
-             'money.daily_last_updated' ]
+             'money.last_updated' ]
     distributed_keys = [ 'statz.cached_stats.24_hours',
                          'statz.cached_stats.7_days',
                          'statz.cached_stats.1_month',
@@ -300,9 +298,7 @@ class OneOffs
              'money.cached_stats',
              'money.total_balance',
              'money.total_pending_earnings',
-             'money.last_updated',
-             'money.daily_cached_stats',
-             'money.daily_last_updated' ]
+             'money.last_updated' ]
     distributed_keys = [ 'statz.cached_stats.24_hours',
                          'statz.cached_stats.7_days',
                          'statz.cached_stats.1_month',

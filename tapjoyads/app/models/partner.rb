@@ -145,10 +145,17 @@ class Partner < ActiveRecord::Base
   # called from within some sort of transaction. See reset_balances
   # and Partner.verify_balances for examples.
   def recalculate_balance_and_pending_earnings
+    archive_cutoff = Conversion.archive_cutoff_time
+    
+    publisher_conversions_sum = monthly_accountings.prior_to(archive_cutoff).sum(:earnings)
+    publisher_conversions_sum += Conversion.created_since(archive_cutoff).sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", app_ids ])
+    
+    advertiser_conversions_sum = monthly_accountings.prior_to(archive_cutoff).sum(:spend)
+    advertiser_conversions_sum += Conversion.created_since(archive_cutoff).sum(:advertiser_amount, :conditions => [ "advertiser_offer_id IN (?)", offer_ids ])
+    
     orders_sum = orders.sum(:amount, :conditions => 'status = 1')
     payouts_sum = payouts.sum(:amount, :conditions => 'status = 1')
-    publisher_conversions_sum = Conversion.sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", app_ids ])
-    advertiser_conversions_sum = Conversion.sum(:advertiser_amount, :conditions => [ "advertiser_offer_id IN (?)", offer_ids ])
+    
     self.balance = orders_sum + advertiser_conversions_sum
     self.pending_earnings = publisher_conversions_sum - payouts_sum
   end
