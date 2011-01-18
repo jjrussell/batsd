@@ -16,6 +16,7 @@ class Job::MasterReloadMoneyController < Job::JobController
     start_times['1_month']    = now - 1.month
     start_times['today']      = now.beginning_of_day
     start_times['this_month'] = now.beginning_of_month
+    start_times['this_year']  = now.beginning_of_year
 
     money_stats = get_money_stats(start_times, now)
 
@@ -23,21 +24,6 @@ class Job::MasterReloadMoneyController < Job::JobController
     Mc.put('money.total_balance', total_balance)
     Mc.put('money.total_pending_earnings', total_pending_earnings)
     Mc.put('money.last_updated', now.to_f)
-
-    render :text => 'ok'
-  end
-
-  def daily
-    now = Time.zone.now
-
-    start_times                 = {}
-    start_times['since_mar_23'] = Time.zone.parse("2010-03-23")
-    start_times['this_year']    = now.beginning_of_year
-
-    daily_money_stats = get_money_stats(start_times, now)
-
-    Mc.put('money.daily_cached_stats', daily_money_stats)
-    Mc.put('money.daily_last_updated', now.to_f)
 
     render :text => 'ok'
   end
@@ -54,9 +40,6 @@ private
         stats[key] = {}
 
         if start_time < archive_cutoff
-          stats[key]['conversions'] = MonthlyAccounting.since(start_time).prior_to(archive_cutoff).count
-          stats[key]['conversions'] += Conversion.created_between(archive_cutoff, end_time).count
-
           stats[key]['advertiser_spend'] = MonthlyAccounting.since(start_time).prior_to(archive_cutoff).sum(:spend)
           stats[key]['advertiser_spend'] += Conversion.created_between(archive_cutoff, end_time).sum(:advertiser_amount)
 
@@ -73,13 +56,13 @@ private
         stats[key]['marketing_credits'] = Order.created_between(start_time, end_time).sum(:amount, :conditions => "payment_method = 2") / 100.0
         stats[key]['orders']            = Order.created_between(start_time, end_time).sum(:amount, :conditions => "payment_method != 2") / 100.0
         stats[key]['payouts']           = Payout.created_between(start_time, end_time).sum(:amount) / 100.0
-        stats[key]['linkshare_est']     = stats[key]['conversions'] * 0.0104
+        stats[key]['linkshare_est']     = stats[key]['advertiser_spend'] * 0.026
         stats[key]['ads_est']           = ((end_time - start_time) / 3600).to_i / 24.0 * 400.0
         stats[key]['revenue']           = stats[key]['advertiser_spend'] - stats[key]['marketing_credits'] + stats[key]['linkshare_est'] + stats[key]['ads_est']
-        stats[key]['net_revenue']       = stats[key]['revenue'] - (stats[key]['publisher_earnings'] - stats[key]['marketing_credits'] * 0.7)
+        stats[key]['net_revenue']       = stats[key]['revenue'] - stats[key]['payouts']
         stats[key]['margin']            = stats[key]['net_revenue'] / stats[key]['revenue'] * 100
 
-        stats[key]['conversions']        = number_with_delimiter(stats[key]['conversions'])
+        stats[key]['conversions']        = stats[key]['conversions'].nil? ? '-' : number_with_delimiter(stats[key]['conversions'])
         stats[key]['advertiser_spend']   = number_to_currency(stats[key]['advertiser_spend'])
         stats[key]['publisher_earnings'] = number_to_currency(stats[key]['publisher_earnings'])
         stats[key]['marketing_credits']  = number_to_currency(stats[key]['marketing_credits'])
