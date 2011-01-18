@@ -89,5 +89,26 @@ class DeviceTest < ActiveSupport::TestCase
       assert @jb_device.is_jailbroken?
       assert !@non_jb_device.is_jailbroken?
     end
+
+    should "mark as jb when it's a new papaya user" do
+      @non_jb_device.set_app_ran('e96062c5-45f0-43ba-ae8f-32bc71b72c99', {})
+      assert @non_jb_device.is_jailbroken?
+    end
+
+    should "not change jb status when it's an existing papaya user" do
+      @non_jb_device.set_app_ran('e96062c5-45f0-43ba-ae8f-32bc71b72c99', {})
+
+      # should still be jb
+      @non_jb_device.set_app_ran('e96062c5-45f0-43ba-ae8f-32bc71b72c99', {})
+      assert @non_jb_device.is_jailbroken?
+
+      # now marked as not jb
+      @non_jb_device.set_app_ran(@app.id, { :lad => '0' })
+      assert !@non_jb_device.is_jailbroken?
+
+      # second time around, should not mark as jb again
+      @non_jb_device.set_app_ran('e96062c5-45f0-43ba-ae8f-32bc71b72c99', {})
+      assert !@non_jb_device.is_jailbroken?
+    end
   end
 end
