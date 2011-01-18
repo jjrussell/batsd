@@ -7,7 +7,7 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
 - @as_groups.each do |group|
   %h3= group[:auto_scaling_group_name]
 
-  %table.tablesorter.details
+  %table.tablesorter.details.left
     %thead
       %tr
         %th{ :colspan => 2 } Details
@@ -30,6 +30,33 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
       %tr
         %td Load Balancer(s)
         %td= group[:load_balancer_names].join(', ')
+
+  - group[:triggers].each do |trigger|
+    %table.tablesorter.details.left
+      %thead
+        %tr
+          %th{ :colspan => 2 } Trigger
+      %tbody
+        %tr
+          %td Name
+          %td= trigger[:trigger_name]
+        %tr
+          %td Status
+          %td= trigger[:status]
+        %tr
+          %td Breach Measure
+          %td= "#{trigger[:statistic]} #{trigger[:measure_name]} / #{trigger[:period]} sec."
+        %tr
+          %td Breach Duration
+          %td= "#{trigger[:breach_duration]} seconds"
+        %tr
+          %td Lower Threshold / Scale
+          %td= "#{trigger[:lower_threshold]} #{trigger[:unit]} / #{trigger[:lower_breach_scale_increment]}"
+        %tr
+          %td Upper Threshold / Scale
+          %td= "#{trigger[:upper_threshold]} #{trigger[:unit]} / #{trigger[:upper_breach_scale_increment]}"
+
+  .clear
 
   - table_id = "instances_#{group[:auto_scaling_group_name]}"
   %a.instances_toggle{ :href => '#', :table_id => table_id } [Show Instances]
@@ -63,4 +90,5 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
 
     table.details {
       width: 35%;
+      margin-right: 10px;
     }

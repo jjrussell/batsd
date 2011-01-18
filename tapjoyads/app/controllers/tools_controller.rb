@@ -116,6 +116,9 @@ class ToolsController < WebsiteController
   def as_groups
     as_interface = RightAws::AsInterface.new
     @as_groups = as_interface.describe_auto_scaling_groups
+    @as_groups.each do |group|
+      group[:triggers] = as_interface.describe_triggers(group[:auto_scaling_group_name])
+    end
     @as_groups.sort! { |a, b| a[:auto_scaling_group_name] <=> b[:auto_scaling_group_name] }
   end
 
