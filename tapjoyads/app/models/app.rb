@@ -19,7 +19,6 @@ class App < ActiveRecord::Base
   
   validates_presence_of :partner, :name
   validates_inclusion_of :platform, :in => PLATFORMS.keys
-  validates_numericality_of :file_size_bytes, :only_integer => true, :greater_than_or_equal_to => 0
 
   after_create :create_primary_offer
   after_update :update_offers
