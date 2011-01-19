@@ -48,7 +48,7 @@ class DisplayAdController < ApplicationController
     offer = Offer.find_in_cache(params[:advertiser_app_id])
     
     self_ad = (params[:publisher_app_id] == params[:displayer_app_id])
-    ad_image_base64 = get_ad_image(publisher, offer, self_ad)
+    ad_image_base64 = get_ad_image(publisher, offer, self_ad, params[:size])
     
     send_data Base64.decode64(ad_image_base64), :type => 'image/png', :disposition => 'inline'
   end
@@ -113,7 +113,7 @@ private
     
       if offer.present?
         @click_url = offer.get_click_url(publisher_app, get_user_id_from_udid(params[:udid], params[:app_id]), params[:udid], currency.id, 'display_ad', nil, now, params[:app_id])
-        @image = get_ad_image(publisher_app, offer, self_ad)
+        @image = get_ad_image(publisher_app, offer, self_ad, params[:size])
       
         params[:offer_id] = offer.id
         params[:publisher_app_id] = publisher_app.id
@@ -125,13 +125,13 @@ private
     web_request.save
   end
 
-  def get_ad_image(publisher, offer, self_ad)
+  def get_ad_image(publisher, offer, self_ad, size)
+    width, height = parse_size(size)
     
-    Mc.get_and_put("display_ad.#{publisher.id}.#{offer.id}", false, 1.hour) do
-      width = 320
-      height = 50
+    Mc.get_and_put("display_ad.#{publisher.id}.#{offer.id}.#{width}x#{height}", false, 1.hour) do
       border = 2
       icon_height = height - border * 2 - 2
+      vignette_amount = icon_height < 50 ? -5 : -15
       
       text = "Earn #{publisher.primary_currency.get_reward_amount(offer)} #{publisher.primary_currency.name}"
       text += " in #{publisher.name}" unless self_ad
@@ -140,18 +140,18 @@ private
       
       offer_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{offer.id}.png")
       offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
-      offer_icon = offer_icon.vignette(-5, -5, 10, 2)
+      offer_icon = offer_icon.vignette(vignette_amount, vignette_amount, 10, 2)
 
-      text_area_left_offset = 0
-      text_area_size = "260x40"
-
-      unless self_ad
+      if self_ad
+        text_area_left_offset = 1
+        text_area_size = "#{width - icon_height - border * 2 - 12}x#{icon_height}"
+      else self_ad
         publisher_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{publisher.id}.png")
         publisher_icon = Magick::Image.from_blob(publisher_icon_blob)[0].resize(icon_height, icon_height)
-        publisher_icon = publisher_icon.vignette(-5, -5, 10, 2)
+        publisher_icon = publisher_icon.vignette(vignette_amount, vignette_amount, 10, 2)
         
-        text_area_left_offset = 40
-        text_area_size = "220x40"
+        text_area_left_offset = 2 + icon_height
+        text_area_size = "#{width - icon_height * 2 - border * 2 - 13}x#{icon_height}"
       end
 
       img = Magick::Image.new(width - border * 2, height - border * 2)
@@ -166,17 +166,17 @@ private
         self.stroke = 'transparent'
         self.background_color = 'transparent'
       end
-      img.composite!(image_label[0], text_area_left_offset, 2, Magick::AtopCompositeOp)
+      img.composite!(image_label[0], text_area_left_offset, 1, Magick::AtopCompositeOp)
 
       free_label = Magick::Image.read("label:F\nR\nE\nE") do
-        self.size = "8x44"
+        self.size = "8x#{icon_height}"
         self.gravity = Magick::CenterGravity
         self.stroke = 'transparent'
         self.fill = 'white'
         self.undercolor = 'red'
         self.background_color = 'red'
       end
-      img.composite!(free_label[0], 262, 1, Magick::AtopCompositeOp)
+      img.composite!(free_label[0], width - icon_height - border - 12, 1, Magick::AtopCompositeOp)
 
       img.border!(border, border, 'black')
       
@@ -194,6 +194,20 @@ private
       "TR:#{udid}"
     else
       udid
+    end
+  end
+  
+  ##
+  # Parses the size param and returns a width, height couplet. Ensures that the values returned are
+  # supported by the get_ad_image method.
+  def parse_size(size)
+    case size
+    when /320x50/i
+      [320, 50]
+    when /728x90/i
+      [728, 90]
+    else
+      [320, 50]
     end
   end
   
