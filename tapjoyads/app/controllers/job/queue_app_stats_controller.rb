@@ -28,7 +28,7 @@ private
     end
     
     @stat_rows.each_value do |row|
-      row.save
+      row.serial_save
     end
     
     @offer.stats_aggregation_interval = get_interval
@@ -41,7 +41,7 @@ private
   def count_stats_for_hour(start_time)
     end_time = start_time + 1.hour
     date_string = start_time.to_date.to_s(:db)
-    stat_row = @stat_rows[date_string] || Stats.new(:key => "app.#{date_string}.#{@offer.id}")
+    stat_row = @stat_rows[date_string] || Stats.new(:key => "app.#{date_string}.#{@offer.id}", :load_from_memcache => false)
     @stat_rows[date_string] = stat_row
     
     Rails.logger.info "Counting hour from #{start_time} to #{end_time}"
@@ -118,7 +118,7 @@ private
     start_time = (@now - 1.day).beginning_of_day
     end_time = start_time + 1.day
     date_string = start_time.to_date.to_s(:db)
-    stat_row = @stat_rows[date_string] || Stats.new(:key => "app.#{date_string}.#{@offer.id}")
+    stat_row = @stat_rows[date_string] || Stats.new(:key => "app.#{date_string}.#{@offer.id}", :load_from_memcache => false)
     @stat_rows[date_string] = stat_row
     
     Rails.logger.info "Verifying stats for offer #{@offer.name} (#{@offer.id}) for #{date_string}"

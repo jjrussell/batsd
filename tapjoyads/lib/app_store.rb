@@ -91,18 +91,18 @@ private
 
   def self.app_info_from_apple(hash)
     app_info = {
-      :item_id          => hash["trackId"],
-      :title            => hash["trackName"],
-      :url              => hash["trackViewUrl"],
-      :icon_url         => hash["artworkUrl60"],
-      :large_icon_url   => hash["artworkUrl100"],
-      :price            => hash["price"],
-      :description      => hash["description"],
-      :release_date     => hash["releaseDate"],
-      :publisher        => hash["artistName"],
-      :file_size_bytes  => hash["fileSizeBytes"]
+      :item_id            => hash["trackId"],
+      :title              => hash["trackName"],
+      :url                => hash["trackViewUrl"],
+      :icon_url           => hash["artworkUrl60"],
+      :large_icon_url     => hash["artworkUrl100"],
+      :price              => hash["price"],
+      :description        => hash["description"],
+      :release_date       => hash["releaseDate"],
+      :publisher          => hash["artistName"],
+      :file_size_bytes    => hash["fileSizeBytes"],
+      :supported_devices  => hash["supportedDevices"]
       # other possibly useful values:
-      #   hash["supportedDevices"]
       #   hash["version"]
       #   hash["genreIds"]
     }

@@ -14,7 +14,7 @@ class StoreRank
     Offer.find_each do |offer|
       next unless offer.item_type == 'App' && offer.get_platform == 'iOS'
       
-      stat_row = Stats.new(:key => "app.#{date_string}.#{offer.id}")
+      stat_row = Stats.new(:key => "app.#{date_string}.#{offer.id}", :load_from_memcache => false)
       stat_rows[offer.third_party_data] ||= []
       stat_rows[offer.third_party_data] << stat_row
     end
