@@ -16,7 +16,8 @@ module AppHelper
       :mx => "MX - Mexico",
       :de => "DE - Germany",
       :es => "ES - Spain",
-      :ru => "RU - Russian Federation"
+      :ru => "RU - Russian Federation",
+      :au => "AU - Australia"
     }
   end
 end
