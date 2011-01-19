@@ -213,7 +213,7 @@ private
         date = time.strftime('%Y-%m')
         stat = load_stat_row("app.#{date}.#{@app_key}")
         if time + 28.hours > @now
-          hourly_stat = load_stat_row("app.#{date}-#{time.day}.#{@app_key}")
+          hourly_stat = load_stat_row("app.#{date}-#{time.strftime("%d")}.#{@app_key}")
           populate_hourly_stats_from_memcached(hourly_stat, stat_name_or_path, cache_hours)
           stat.populate_daily_from_hourly(hourly_stat, time.day - 1)
         end
