@@ -2,6 +2,17 @@ class OneOffs
   
   def self.check_syntax
     Rails::Initializer.run(:load_application_classes)
+
+    # haml
+    last_deploy = `git log -n 1 --format=oneline --grep=Incrementing\\ version\\ number`.split(/ /).first
+    what_changed = `git whatchanged --format=%n #{last_deploy}..head app/views/`
+    files = what_changed.split(/\n/).map do |line|
+      line[/\/app\/views\/.*\.haml/]
+    end.compact.uniq
+    files.each do |file|
+      Haml::Engine.new( File.read(RAILS_ROOT + file) )
+    end
+
     true
   end
   
