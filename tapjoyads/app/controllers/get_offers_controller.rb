@@ -115,7 +115,7 @@ private
     ##
     # Gameview hardcodes 'iphone' as their device type. This screws up real iphone-only targeting.
     # Set the device type to 'ipod touch' for gameview until they fix their issue.
-    if @publisher_app.partner_id == "e9a6d51c-cef9-4ee4-a2c9-51eef1989c4e"
+    if @publisher_app.partner_id == "e9a6d51c-cef9-4ee4-a2c9-51eef1989c4e" && !@publisher_app.is_android?
       params[:device_type] = 'ipod touch'
     end
     
