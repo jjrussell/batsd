@@ -33,6 +33,15 @@ class Currency < ActiveRecord::Base
     end
   end
   
+  def self.cache_all
+    find_each do |c|
+      c.send(:update_memcached)
+      if c.id == c.app_id
+        Mc.distributed_put("mysql.app_currencies.#{c.app_id}", Currency.find_all_by_app_id(c.app_id, :order => 'ordinal ASC'))
+      end
+    end
+  end
+  
   def get_visual_reward_amount(offer)
     if offer.has_variable_payment?
       orig_payment = offer.payment

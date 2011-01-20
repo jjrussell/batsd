@@ -14,6 +14,12 @@ module MemcachedRecord
           Mc.distributed_get("mysql.#{class_name.underscore}.#{id}")
         end
       end
+
+      def model.cache_all
+        find_each do |obj|
+          obj.send(:update_memcached)
+        end
+      end
     end
   end
 
