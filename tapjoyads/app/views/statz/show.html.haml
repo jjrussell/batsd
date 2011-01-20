@@ -37,6 +37,8 @@
         - property_row('Store id', link_to("Empty -- Update?", edit_android_app_tool_path(@offer.item.id)), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
       - else
         - property_row('Store id', link_to(@offer.item.store_id, @offer.item.info_url), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
+    - if !@offer.item.is_android?
+      - property_row('File size', number_to_human_size(@offer.item.file_size_bytes), nil, @offer.item.file_size_bytes >= 20971520 ? 'incomplete' : nil)
   - else
     - property_row('Destination url', link_to(truncate(@offer.url, :length => 60), @offer.url))
   - property_row('Price', number_to_currency(@offer.price / 100.0))
@@ -49,6 +51,9 @@
   - property_row('Postal codes', @offer.postal_codes, '')
   - property_row('Pay-per-click', @offer.pay_per_click?, false)
   - property_row('Device types', @offer.device_types, Offer::APPLE_DEVICES.to_json)
+  - if @offer.item_type == 'App' && !@offer.item.is_android?
+    - row_class = (@offer.item.supported_devices == '["all"]') ? nil : 'incomplete'
+    - property_row('Devices listed on iTunes', @offer.item.supported_devices, nil, @offer.item.supported_devices)
   - property_row('Allow negative balance', @offer.allow_negative_balance?, false)
   - property_row('Self promote only', @offer.self_promote_only?, false)
   - property_row('Featured', @offer.featured?, false)
