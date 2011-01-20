@@ -132,6 +132,7 @@ private
       border = 2
       icon_height = height - border * 2 - 2
       vignette_amount = icon_height < 50 ? -5 : -15
+      free_width = icon_height < 50 ? 8 : 11
       
       text = "Earn #{publisher.primary_currency.get_reward_amount(offer)} #{publisher.primary_currency.name}"
       text += " in #{publisher.name}" unless self_ad
@@ -144,14 +145,14 @@ private
 
       if self_ad
         text_area_left_offset = 1
-        text_area_size = "#{width - icon_height - border * 2 - 12}x#{icon_height}"
+        text_area_size = "#{width - icon_height - border * 2 - free_width - 4}x#{icon_height}"
       else self_ad
         publisher_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{publisher.id}.png")
         publisher_icon = Magick::Image.from_blob(publisher_icon_blob)[0].resize(icon_height, icon_height)
         publisher_icon = publisher_icon.vignette(vignette_amount, vignette_amount, 10, 2)
         
         text_area_left_offset = 2 + icon_height
-        text_area_size = "#{width - icon_height * 2 - border * 2 - 13}x#{icon_height}"
+        text_area_size = "#{width - icon_height * 2 - border * 2 - free_width - 5}x#{icon_height}"
       end
 
       img = Magick::Image.new(width - border * 2, height - border * 2)
@@ -169,15 +170,15 @@ private
       img.composite!(image_label[0], text_area_left_offset, 1, Magick::AtopCompositeOp)
 
       free_label = Magick::Image.read("label:F\nR\nE\nE") do
-        self.size = "8x#{icon_height}"
-        self.gravity = Magick::CenterGravity
+        self.size = "#{free_width}x#{icon_height}"
+        self.gravity = Magick::WestGravity
         self.stroke = 'transparent'
         self.fill = 'white'
         self.undercolor = 'red'
         self.background_color = 'red'
       end
-      img.composite!(free_label[0], width - icon_height - border - 12, 1, Magick::AtopCompositeOp)
-
+      img.composite!(free_label[0], width - icon_height - border - free_width - 4, 1, Magick::AtopCompositeOp)
+      
       img.border!(border, border, 'black')
       
       Base64.encode64(img.to_blob).gsub("\n", '')
