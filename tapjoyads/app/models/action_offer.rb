@@ -17,7 +17,7 @@ class ActionOffer < ActiveRecord::Base
   after_create :create_primary_offer
   after_update :update_offers
   
-  delegate :user_enabled?, :tapjoy_enabled?, :bid, :description, :to => :primary_offer
+  delegate :user_enabled?, :tapjoy_enabled?, :bid, :description, :min_bid, :to => :primary_offer
 
   def integrated?
     if defined? @integrated

@@ -28,21 +28,21 @@ class Apps::ActionOffersController < WebsiteController
   end
   
   def update
+    params[:action_offer][:primary_offer_attributes].delete(:payment)
     params[:action_offer][:primary_offer_attributes] = sanitize_currency_params(params[:action_offer][:primary_offer_attributes], [ :bid, :min_bid_override ])
     
-    safe_attributes = [ :name, :instructions, :primary_offer_attributes_id, :primary_offer_attributes_bid, :primary_offer_attributes_user_enabled ]
+    safe_attributes = [ :name, :instructions, :primary_offer_attributes_id, :primary_offer_attributes_bid, :primary_offer_attributes_user_enabled, :primary_offer_attributes_daily_budget ]
     
     if permitted_to? :edit, :statz
       safe_attributes += [
         :primary_offer_attributes_tapjoy_enabled,
-        :primary_offer_attributes_min_bid_override,
         :primary_offer_attributes_self_promote_only,
         :primary_offer_attributes_allow_negative_balance,
         :primary_offer_attributes_pay_per_click,
         :primary_offer_attributes_min_conversion_rate,
         :primary_offer_attributes_publisher_app_whitelist,
-        :primary_offer_attributes_daily_budget,
-        :primary_offer_attributes_overall_budget
+        :primary_offer_attributes_overall_budget,
+        :primary_offer_attributes_min_bid_override
       ]
     end
     
