@@ -2,6 +2,12 @@ class OneOffs
   
   def self.check_syntax
     Rails::Initializer.run(:load_application_classes)
+
+    # haml
+    Dir.glob("app/views/**/*.haml").each do |f|
+      Haml::Engine.new(File.read(f))
+    end
+
     true
   end
   

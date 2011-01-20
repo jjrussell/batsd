@@ -5,7 +5,7 @@ module MemcachedRecord
   def self.included(model)
     model.class_eval do
       after_save :update_memcached
-      before_destroy :clear_memcached
+      after_destroy :clear_memcached
 
       def model.find_in_cache(id, do_lookup = true)
         if do_lookup
