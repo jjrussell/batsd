@@ -23,13 +23,13 @@ class Currency < ActiveRecord::Base
   
   before_create :set_values_from_partner
   after_save :update_memcached_by_app_id
-  before_destroy :clear_memcached_by_app_id
+  after_destroy :clear_memcached_by_app_id
   
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = true)
     if do_lookup
       Mc.distributed_get_and_put("mysql.app_currencies.#{app_id}") { find_all_by_app_id(app_id, :order => 'ordinal ASC') }
     else
-      Mc.distributed_get("mysql.app_currencies.#{app_id}")
+      Mc.distributed_get("mysql.app_currencies.#{app_id}") { [] }
     end
   end
   
@@ -135,12 +135,12 @@ private
     Mc.distributed_put("mysql.app_currencies.#{app_id}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'))
     
     if app_id_changed?
-      Mc.distributed_delete("mysql.app_currencies.#{app_id_was}")
+      Mc.distributed_put("mysql.app_currencies.#{app_id_was}", Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC'))
     end
   end
   
   def clear_memcached_by_app_id
-    Mc.distributed_delete("mysql.app_currencies.#{app_id}")
+    Mc.distributed_put("mysql.app_currencies.#{app_id}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'))
   end
   
   def get_spend_share_ratio
