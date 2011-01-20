@@ -52,8 +52,7 @@
   - property_row('Pay-per-click', @offer.pay_per_click?, false)
   - property_row('Device types', @offer.device_types, Offer::APPLE_DEVICES.to_json)
   - if @offer.item_type == 'App' && !@offer.item.is_android?
-    - row_class = (@offer.item.supported_devices == '["all"]') ? nil : 'incomplete'
-    - property_row('Devices listed on iTunes', @offer.item.supported_devices, nil, row_class)
+    - property_row('Devices listed on iTunes', @offer.item.supported_devices, ["all"].to_json, 'incomplete')
   - property_row('Allow negative balance', @offer.allow_negative_balance?, false)
   - property_row('Self promote only', @offer.self_promote_only?, false)
   - property_row('Featured', @offer.featured?, false)
