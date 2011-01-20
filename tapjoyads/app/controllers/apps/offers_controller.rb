@@ -25,6 +25,7 @@ class Apps::OffersController < WebsiteController
 
   def update
     params[:offer].delete(:payment)
+    params[:offer][:daily_budget].gsub!(',', '')
     params[:offer][:daily_budget] = 0 if params[:daily_budget] == 'off'
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
 

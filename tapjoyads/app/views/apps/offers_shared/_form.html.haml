@@ -196,10 +196,14 @@
 
       if ( $('#daily_budget_on').is(':checked') ) {
         setEstimatedBudget();
+        $('#offer_daily_budget').val(addCommaSeparators(stringToNumber($('#offer_daily_budget').val(), true)));
       }
       $('#offer_bid').change(function() {
         checkMinimumPrice();
         updatePercentile();
+        if ( $('#daily_budget_on').is(':checked') ) {
+          setEstimatedBudget();
+        }
       });
 
       $('#offer_daily_budget').change(function() {
