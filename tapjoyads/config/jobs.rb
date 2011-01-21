@@ -36,6 +36,7 @@ JobRunner::Gateway.define do |s|
     
     # jobs with low impact on overall system performance
     s.add_job 'master_cache_offers', :interval => 1.minute
+    s.add_job 'master_refresh_memcached', :interval => 10.minutes
     s.add_job 'master_cleanup_web_requests', :daily => 5.hours
     s.add_job 'master_failed_sqs_writes', :interval => 3.minutes
     s.add_job 'master_get_store_info', :daily => 7.hours
