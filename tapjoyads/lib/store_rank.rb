@@ -6,7 +6,7 @@ class StoreRank
     hydra.disable_memoization
     date_string = time.to_date.to_s(:db)
     error_count = 0
-    store_rankings = []
+    store_rankings = {}
     stat_rows = {}
     
     Rails.logger.info "#{Time.now.to_i}: Populate store rankings. Task starting."
@@ -24,38 +24,33 @@ class StoreRank
       itunes_pop_ids.each do |pop_key, pop_id|
         itunes_country_ids.each do |country_key, country_id|
           stat_type = "#{category_key}.#{pop_key}.#{country_key}"
-          store_ranking_key = "itunes.#{stat_type}.#{time.beginning_of_hour.to_s(:db)}"
-          store_ranking = StoreRanking.new(:key => store_ranking_key)
-          if store_ranking.ranks.blank?
-            url = "http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=#{category_id}&popId=#{pop_id}"
-            headers = { 'X-Apple-Store-Front' => "#{country_id}-1,12" }
-            user_agent = 'iTunes/10.1 (Macintosh; Intel Mac OS X 10.6.5) AppleWebKit/533.18.1'
-            
-            request = Typhoeus::Request.new(url, :headers => headers, :user_agent => user_agent)
-            request.on_complete do |response|
-              if response.code != 200
-                error_count += 1
-                if error_count > 50
-                  raise "Too many errors attempting to download itunes ranks, giving up. App store down?"
-                end
-                Rails.logger.info "Error downloading ranks from itunes for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Retrying."
-                hydra.queue(request)
+          url = "http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=#{category_id}&popId=#{pop_id}"
+          headers = { 'X-Apple-Store-Front' => "#{country_id}-1,12" }
+          user_agent = 'iTunes/10.1 (Macintosh; Intel Mac OS X 10.6.5) AppleWebKit/533.18.1'
+          
+          request = Typhoeus::Request.new(url, :headers => headers, :user_agent => user_agent)
+          request.on_complete do |response|
+            if response.code != 200
+              error_count += 1
+              if error_count > 50
+                raise "Too many errors attempting to download itunes ranks, giving up. App store down?"
               end
-              
-              store_ranking.ranks = get_itunes_ranks_hash(response.body)
-              store_ranking.ranks.each do |store_id, rank|
-                if stat_rows[store_id].present?
-                  stat_rows[store_id].each do |stat_row|
-                    stat_row.update_stat_for_hour(['ranks', stat_type], time.hour, rank)
-                  end
-                end
-              end
-              
-              store_rankings << store_ranking
+              Rails.logger.info "Error downloading ranks from itunes for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Retrying."
+              hydra.queue(request)
             end
             
-            hydra.queue(request)
+            ranks_hash = get_itunes_ranks_hash(response.body)
+            ranks_hash.each do |store_id, rank|
+              if stat_rows[store_id].present?
+                stat_rows[store_id].each do |stat_row|
+                  stat_row.update_stat_for_hour(['ranks', stat_type], time.hour, rank)
+                end
+              end
+            end
+            
+            store_rankings["itunes.#{stat_type}"] = ranks_hash
           end
+          hydra.queue(request)
         end
       end
     end
@@ -71,20 +66,8 @@ class StoreRank
     end
     Rails.logger.info "#{Time.now.to_i}: Finished saving stat_rows."
     
-    while store_rankings.present?
-      retries = 3
-      begin
-        StoreRanking.put_items(store_rankings.first(25))
-      rescue Exception => e
-        if (retries -= 1) >= 0
-          sleep(1)
-          retry
-        else
-          raise e
-        end
-      end
-      store_rankings.shift(25)
-    end
+    bucket = S3.bucket(BucketNames::STORE_RANKS)
+    bucket.put("ranks.#{time.beginning_of_hour.to_s(:db)}.json", store_rankings.to_json)
     Rails.logger.info "#{Time.now.to_i}: Finished saving store_rankings."
   end
 
@@ -145,10 +128,13 @@ private
     "games_word"              => 26521,
   }
   
-  @@itunes_pop_ids = {
-    "free" => 27,
-    "paid" => 30,
-    "top_grossing" => 38,
+  @@itunes_pop_ids      = {
+    "free"              => 27,
+    "paid"              => 30,
+    "top_grossing"      => 38,
+    "ipad_free"         => 44,
+    "ipad_paid"         => 47,
+    "ipad_top_grossing" => 46,
   }
   
   @@itunes_country_ids = {

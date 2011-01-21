@@ -8,6 +8,7 @@ class BucketNames
   PUBLISHER_ADS         = RUN_MODE_PREFIX + 'publisher-ads'
   SDB_BACKUPS           = RUN_MODE_PREFIX + 'sdb-backups'
   STORE_CLICKS          = RUN_MODE_PREFIX + 'store-clicks'
+  STORE_RANKS           = RUN_MODE_PREFIX + 'store-ranks'
   TAPJOY                = RUN_MODE_PREFIX + 'tapjoy'
   VIRTUAL_GOODS         = RUN_MODE_PREFIX + 'virtual_goods'
   WEB_REQUESTS          = RUN_MODE_PREFIX + 'web-requests'

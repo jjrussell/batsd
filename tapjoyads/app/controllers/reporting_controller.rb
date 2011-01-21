@@ -311,7 +311,7 @@ private
     
     keys.each do |key|
       key_parts = key.split('.')
-      country = "#{key_parts[2].titleize} (#{key_parts[1].titleize})"
+      country = "#{key_parts[2].titleize} (#{key_parts[1].titleize.gsub('Ipad', 'iPad')})"
       ranks = @appstats.stats['ranks'][key]
       
       @rank_partitions[country] ||= {}
