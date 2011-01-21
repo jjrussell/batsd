@@ -322,6 +322,7 @@ class OneOffs
     end
     Offer.cache_featured_offers
     Offer.cache_enabled_offers
+    Mc.cache_all
     true
   end
 
