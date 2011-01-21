@@ -66,8 +66,21 @@ class StoreRank
     end
     Rails.logger.info "#{Time.now.to_i}: Finished saving stat_rows."
     
-    bucket = S3.bucket(BucketNames::STORE_RANKS)
-    bucket.put("ranks.#{time.beginning_of_hour.to_s(:db)}.json", store_rankings.to_json)
+    retries = 3
+    begin
+      bucket = S3.bucket(BucketNames::STORE_RANKS)
+      bucket.put("ranks.#{time.beginning_of_hour.to_s(:db)}.json", store_rankings.to_json)
+    rescue RightAws::AwsError => e
+      Rails.logger.info "Failed attempt to write to s3. Error: #{e}"
+      if (retries -= 1) > 0
+        sleep(1)
+        Rails.logger.info "Retrying to write to s3."
+        retry
+      else
+        raise e
+      end
+    end
+    
     Rails.logger.info "#{Time.now.to_i}: Finished saving store_rankings."
   end
 
