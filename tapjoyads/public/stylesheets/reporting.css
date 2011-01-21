@@ -68,7 +68,7 @@ h4 {
   background: -moz-linear-gradient(left,  #ccc,  #fff);
 }
 .incomplete {
-  background: -webkit-gradient(linear, left top, right bottom, from(#ccc), to(#fff));
+  background: -webkit-gradient(linear, left top, right bottom, from(#f40), to(#fff));
   background: -moz-linear-gradient(left,  #f40,  #fff);
 }
 .tjform input[type=submit] {

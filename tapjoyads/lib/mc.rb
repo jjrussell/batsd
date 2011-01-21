@@ -18,6 +18,14 @@ class Mc
   # Memcache counts can't go below 0. Set the offset to 2^32/2 for all counts.
   COUNT_OFFSET = 2147483648
   
+  MEMCACHED_ACTIVE_RECORD_MODELS = %w( ActionOffer App Currency Offer )
+  
+  def self.cache_all
+    MEMCACHED_ACTIVE_RECORD_MODELS.each do |klass|
+      klass.constantize.cache_all
+    end
+  end
+  
   ##
   # Gets object from cache which matches key.
   # If no object is found, then control is yielded, and the object
