@@ -207,7 +207,8 @@
       });
 
       $('#offer_daily_budget').change(function() {
-        $(this).val(Math.floor(addCommaSeparators(stringToNumber($(this).val(), true))));
+        var installsLimit = Math.floor(stringToNumber($(this).val(), true));
+        $(this).val(addCommaSeparators(installsLimit));
         setEstimatedBudget();
       });
       $('#daily_budget_on').click(function(){
