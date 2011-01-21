@@ -310,7 +310,7 @@ class Offer < ActiveRecord::Base
     elsif item_type == 'GenericOffer'
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
     elsif item_type == 'ActionOffer'
-      final_url += "?currency_id=#{currency_id}"
+      final_url += "?currency_id=#{currency_id}&advertiser_app_id=#{third_party_data}"
     end
     
     final_url
