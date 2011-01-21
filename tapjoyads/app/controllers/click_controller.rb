@@ -92,7 +92,7 @@ private
     return if offer_disabled?
     
     @device = Device.new(:key => params[:udid])
-    unless params[:action] == 'generic' && @offer.multi_complete?
+    unless @offer.multi_complete?
       return if offer_completed?
     end
     

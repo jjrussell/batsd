@@ -15,6 +15,11 @@ class ListSignupController < ApplicationController
     if params[:email_address] =~ /.+@.+/
       geoip_data = get_geoip_data
       
+      @currency = Currency.find_in_cache(params[:publisher_app_id])
+      @offer = Offer.find_in_cache(params[:advertiser_app_id])
+      @publisher_app = App.find_in_cache(params[:publisher_app_id])
+      return unless verify_records([ @currency, @offer, @publisher_app ])
+      
       signup = EmailSignup.new
       signup.udid = params[:udid]
       signup.publisher_app_id = params[:publisher_app_id]
@@ -24,10 +29,6 @@ class ListSignupController < ApplicationController
       signup.sent_date = Time.now
       
       signup.save
-      
-      @currency = Currency.find_in_cache(params[:publisher_app_id])
-      @offer = Offer.find_in_cache(params[:advertiser_app_id])
-      @publisher_app = App.find_in_cache(params[:publisher_app_id])
       
       # Send the emails via 4info.
       key = Digest::MD5.hexdigest("#{params[:email_address]}xFBysLNwaCRhGYKGXkpHjzWbVehBhE")
@@ -53,8 +54,12 @@ class ListSignupController < ApplicationController
   
   def confirm
     unless do_confirmation
-      render :text => 'Unknown confirmation code'
+      render :text => 'Unknown confirmation code' and return
     end
+    
+    @currency = Currency.find_in_cache(@signup.publisher_app_id)
+    @publisher_app = App.find_in_cache(@signup.publisher_app_id)
+    return unless verify_records([ @currency, @publisher_app ])
   end
   
   def confirm_api
@@ -71,9 +76,6 @@ class ListSignupController < ApplicationController
     if @signup.is_new
       return false
     else
-      @currency = Currency.find_in_cache(@signup.publisher_app_id)
-      @publisher_app = App.find_in_cache(@signup.publisher_app_id)
-
       @signup.confirmed = Time.now
       @signup.save
       

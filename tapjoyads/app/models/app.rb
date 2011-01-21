@@ -152,6 +152,8 @@ class App < ActiveRecord::Base
     exp = options.delete(:exp)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
+    raise "cannot generate offer list without currency" if currency.nil?
+    
     if type == Offer::CLASSIC_OFFER_TYPE
       offer_list = []
     elsif type == Offer::FEATURED_OFFER_TYPE

@@ -27,10 +27,7 @@ class Currency < ActiveRecord::Base
   
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = false)
     if do_lookup
-      Mc.distributed_get_and_put("mysql.app_currencies.#{app_id}") do
-        Notifier.alert_new_relic(RecordNotInMemcached, "could not find currencies for app_id: #{app_id}")
-        find_all_by_app_id(app_id, :order => 'ordinal ASC')
-      end
+      Mc.distributed_get_and_put("mysql.app_currencies.#{app_id}") { find_all_by_app_id(app_id, :order => 'ordinal ASC') }
     else
       Mc.distributed_get("mysql.app_currencies.#{app_id}") { [] }
     end

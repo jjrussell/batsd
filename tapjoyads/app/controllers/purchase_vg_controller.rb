@@ -11,8 +11,10 @@ class PurchaseVgController < ApplicationController
     publisher_user_id = params[:udid]
     publisher_user_id = params[:publisher_user_id] unless params[:publisher_user_id].blank?
     
-    @success, @message, @point_purchases = PointPurchases.purchase_virtual_good("#{publisher_user_id}.#{params[:app_id]}", params[:virtual_good_id])
     @currency = Currency.find_in_cache(params[:app_id])
+    return unless verify_records([ @currency ])
+    
+    @success, @message, @point_purchases = PointPurchases.purchase_virtual_good("#{publisher_user_id}.#{params[:app_id]}", params[:virtual_good_id])
     
     if @success
       web_request = WebRequest.new
@@ -34,8 +36,10 @@ class PurchaseVgController < ApplicationController
     publisher_user_id = params[:udid]
     publisher_user_id = params[:publisher_user_id] unless params[:publisher_user_id].blank?
     
-    @success, @message, @point_purchases = PointPurchases.spend_points("#{publisher_user_id}.#{params[:app_id]}", params[:tap_points].to_i)
     @currency = Currency.find_in_cache(params[:app_id])
+    return unless verify_records([ @currency ])
+    
+    @success, @message, @point_purchases = PointPurchases.spend_points("#{publisher_user_id}.#{params[:app_id]}", params[:tap_points].to_i)
     
     if @success
       web_request = WebRequest.new
