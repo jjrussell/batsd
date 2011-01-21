@@ -67,6 +67,10 @@ private
     end
     
     offer = Offer.find_in_cache(click.offer_id)
+    unless verify_records([ offer ], { :render_missing_text => false })
+      @error_message = "record not found (#{click.key})"
+      notify_and_render_error and return
+    end
     
     if offer.has_variable_payment?
       if params[:payment].blank?
@@ -84,6 +88,10 @@ private
     if @adjusted_payment.present?
       if @adjusted_payment > 0
         currency = Currency.find_in_cache(click.currency_id)
+        unless verify_records([ currency ], { :render_missing_text => false })
+          @error_message = "record not found (#{click.key})"
+          notify_and_render_error and return
+        end
         offer.payment = @adjusted_payment
         
         click.advertiser_amount = currency.get_advertiser_amount(offer)

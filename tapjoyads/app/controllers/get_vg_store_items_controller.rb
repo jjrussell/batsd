@@ -39,7 +39,7 @@ private
     publisher_user_id = params[:udid]
     publisher_user_id = params[:publisher_user_id] unless params[:publisher_user_id].blank?
     
-    @currency = Currency.find_in_cache(params[:app_id], false)
+    @currency = Currency.find_in_cache(params[:app_id])
     if @currency.nil?
       @error_message = "There is no currency for this app. Please create one to use the virtual goods API."
       render :template => 'layouts/error' and return

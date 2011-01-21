@@ -91,11 +91,11 @@ private
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 25).to_i
     
-    @publisher_app = App.find_in_cache(params[:app_id])
-    
     params[:currency_id] = params[:app_id] if params[:currency_id].blank?
     @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])
     @currency = @currencies.select { |c| c.id == params[:currency_id] }.first
+    @publisher_app = App.find_in_cache(params[:app_id])
+    return unless verify_records([ @currency, @publisher_app ])
     
     @device = Device.new(:key => params[:udid])
     if @device.opted_out?

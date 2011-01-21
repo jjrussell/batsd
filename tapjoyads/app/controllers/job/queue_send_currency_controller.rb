@@ -10,7 +10,7 @@ private
     reward = Reward.deserialize(message.to_s)
     return if reward.sent_currency?
     
-    currency = Currency.find_in_cache(reward.currency_id)
+    currency = Currency.find_in_cache(reward.currency_id, true)
     publisher_user_id = reward.publisher_user_id
     callback_url = currency.callback_url
     
@@ -32,7 +32,7 @@ private
     mark = '&' if callback_url =~ /\?/
     callback_url += "#{mark}snuid=#{CGI::escape(publisher_user_id)}&currency=#{reward.currency_reward}"
     if currency.send_offer_data?
-      offer = Offer.find_in_cache(reward.offer_id)
+      offer = Offer.find_in_cache(reward.offer_id, true)
       callback_url += "&storeId=#{CGI::escape(offer.third_party_data)}" if offer.item_type == 'App' && offer.third_party_data?
       callback_url += "&application=#{CGI::escape(offer.name)}"
       publisher_revenue = reward.publisher_amount / 100.0

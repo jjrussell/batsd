@@ -1,7 +1,10 @@
 class GetAdOrderController < ApplicationController
     
   def index
-    return unless verify_params([:app_id, :udid])
+    return unless verify_params([ :app_id, :udid ])
+
+    app = App.find_in_cache(params[:app_id])
+    return unless verify_records([ app ])
 
     mc_key = "raw_ad_order.#{params[:app_id]}"
     
@@ -9,8 +12,6 @@ class GetAdOrderController < ApplicationController
       c = Campaign.select(:where => "status='1' and app_id='#{params[:app_id]}' and ecpm != ''", :order_by => "ecpm desc")
       c[:items]
     end
-    
-    app = App.find_in_cache(params[:app_id])
   
     @ad_order = AdOrder.new
     

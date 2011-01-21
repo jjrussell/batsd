@@ -15,7 +15,7 @@ private
       return
     end
     
-    currency = Currency.find_in_cache(click.currency_id)
+    currency = Currency.find_in_cache(click.currency_id, true)
     
     # Try to stop Playdom users from click-frauding (specifically from Mobsters: Big Apple)
     if currency.callback_url == Currency::PLAYDOM_CALLBACK_URL && click.publisher_user_id !~ /^(F|M|P)[0-9]+$/
@@ -34,7 +34,7 @@ private
     end
     
     wr_path = 'conversion'
-    offer = Offer.find_in_cache(click.offer_id)
+    offer = Offer.find_in_cache(click.offer_id, true)
     device = Device.new(:key => click.udid)
     if device.is_jailbroken && offer.is_paid? && offer.item_type == 'App' && click.type == 'install'
       click.tapjoy_amount += click.advertiser_amount

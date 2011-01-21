@@ -15,7 +15,7 @@ class PointPurchases < SimpledbShardedResource
       Rails.logger.info "getting initial_balance from currency"
       app_key = @key.split('.').last
       currency = Currency.find_in_cache(app_key)
-      self.points = currency.initial_balance
+      self.points = currency.present? ? currency.initial_balance : 0
     end
   end
   

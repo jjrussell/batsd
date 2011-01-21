@@ -40,13 +40,14 @@ class DisplayAdController < ApplicationController
   def image
     return unless verify_params([ :publisher_app_id, :advertiser_app_id, :displayer_app_id, :size ])
     
+    publisher = App.find_in_cache(params[:publisher_app_id])
+    currency = Currency.find_in_cache(params[:publisher_app_id])
+    offer = Offer.find_in_cache(params[:advertiser_app_id])
+    return unless verify_records([ publisher, currency, offer ])
+    
     web_request = WebRequest.new
     web_request.put_values('display_ad_image', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     web_request.save
-    
-    publisher = App.find_in_cache(params[:publisher_app_id])
-    currency = Currency.find_in_cache(publisher.id)
-    offer = Offer.find_in_cache(params[:advertiser_app_id])
     
     self_ad = (params[:publisher_app_id] == params[:displayer_app_id])
     ad_image_base64 = get_ad_image(publisher, offer, self_ad, params[:size], currency)
@@ -66,7 +67,7 @@ private
     web_request = WebRequest.new(:time => now)
     web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
     
-    displayer_currency = Currency.find_in_cache(params[:app_id], false)
+    displayer_currency = Currency.find_in_cache(params[:app_id])
     self_ad = (displayer_currency.present? && displayer_currency.banner_advertiser?)
     
     # Randomly choose one publisher app that the user has run:
@@ -87,6 +88,7 @@ private
       publisher_app_id = publisher_app_ids[rand(publisher_app_ids.size)]
       publisher_app = App.find_in_cache(publisher_app_id)
       currency = Currency.find_in_cache(publisher_app_id)
+      return unless verify_records([ publisher_app, currency ])
 
       # Randomly choose a free offer that is converting at greater than 50%
       offer_list, more_data_available = publisher_app.get_offer_list(params[:udid],

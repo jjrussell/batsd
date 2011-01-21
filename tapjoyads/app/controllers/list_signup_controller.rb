@@ -3,11 +3,12 @@ class ListSignupController < ApplicationController
   layout 'iphone'
   
   def index
-    return unless verify_params([:udid, :publisher_app_id, :advertiser_app_id])
+    return unless verify_params([ :udid, :publisher_app_id, :advertiser_app_id ])
     
     @currency = Currency.find_in_cache(params[:publisher_app_id])
     @offer = Offer.find_in_cache(params[:advertiser_app_id])
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
+    return unless verify_records([ @currency, @offer, @publisher_app ])
   end
   
   def signup

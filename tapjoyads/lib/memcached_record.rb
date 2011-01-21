@@ -7,7 +7,7 @@ module MemcachedRecord
       after_save :update_memcached
       after_destroy :clear_memcached
 
-      def model.find_in_cache(id, do_lookup = true)
+      def model.find_in_cache(id, do_lookup = false)
         if do_lookup
           Mc.distributed_get_and_put("mysql.#{class_name.underscore}.#{id}") do
             Notifier.alert_new_relic(RecordNotInMemcached, "could not find #{class_name} with id: #{id}")
