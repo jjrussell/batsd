@@ -65,7 +65,7 @@ private
     web_request = WebRequest.new(:time => now)
     web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
     
-    displayer_currency = Currency.find_in_cache(params[:app_id]) rescue nil
+    displayer_currency = Currency.find_in_cache(params[:app_id], false)
     self_ad = (displayer_currency.present? && displayer_currency.banner_advertiser?)
     
     # Randomly choose one publisher app that the user has run:
