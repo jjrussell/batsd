@@ -45,10 +45,11 @@ class DisplayAdController < ApplicationController
     web_request.save
     
     publisher = App.find_in_cache(params[:publisher_app_id])
+    currency = Currency.find_in_cache(publisher.id)
     offer = Offer.find_in_cache(params[:advertiser_app_id])
     
     self_ad = (params[:publisher_app_id] == params[:displayer_app_id])
-    ad_image_base64 = get_ad_image(publisher, offer, self_ad, params[:size])
+    ad_image_base64 = get_ad_image(publisher, offer, self_ad, params[:size], currency)
     
     send_data Base64.decode64(ad_image_base64), :type => 'image/png', :disposition => 'inline'
   end
@@ -113,7 +114,7 @@ private
     
       if offer.present?
         @click_url = offer.get_click_url(publisher_app, get_user_id_from_udid(params[:udid], params[:app_id]), params[:udid], currency.id, 'display_ad', nil, now, params[:app_id])
-        @image = get_ad_image(publisher_app, offer, self_ad, params[:size])
+        @image = get_ad_image(publisher_app, offer, self_ad, params[:size], currency)
       
         params[:offer_id] = offer.id
         params[:publisher_app_id] = publisher_app.id
@@ -125,7 +126,7 @@ private
     web_request.save
   end
 
-  def get_ad_image(publisher, offer, self_ad, size)
+  def get_ad_image(publisher, offer, self_ad, size, currency)
     width, height = parse_size(size)
     
     Mc.get_and_put("display_ad.#{publisher.id}.#{offer.id}.#{width}x#{height}", false, 1.hour) do
@@ -134,7 +135,7 @@ private
       vignette_amount = icon_height < 50 ? -5 : -15
       free_width = icon_height < 50 ? 8 : 11
       
-      text = "Earn #{publisher.primary_currency.get_reward_amount(offer)} #{publisher.primary_currency.name}"
+      text = "Earn #{currency.get_reward_amount(offer)} #{currency.name}"
       text += " in #{publisher.name}" unless self_ad
       text += " to buy Towers" if publisher.id == "2349536b-c810-47d7-836c-2cd47cd3a796" # TapDefense
       text += "!\n Install #{offer.name}"
