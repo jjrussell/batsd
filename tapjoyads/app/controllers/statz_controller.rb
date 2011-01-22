@@ -85,17 +85,15 @@ class StatzController < WebsiteController
   end
   
   def last_run_times
-    if @offer.item.is_android?
-      @udids_to_check = [
+    android_devices = [
         { :udid => '359116032048366',                          :device_label => 'Hwan-Joon HTC G2' },
         { :udid => 'a00000155c5106',                           :device_label => 'Linda Droid'      },
         { :udid => '354957031929568',                          :device_label => 'Linda Nexus One'  },
         { :udid => '355031040294361',                          :device_label => 'Linda Nexus S'    },
         { :udid => 'a100000d9833c5',                           :device_label => 'Stephen Evo'      },
         { :udid => 'a000002256c234',                           :device_label => 'Steve Droid X'    },
-      ]
-    else
-      @udids_to_check = [
+    ]
+    ios_devices = [
         { :udid => 'ade749ccc744336ad81cbcdbf36a5720778c6f13', :device_label => 'Amir iPhone'      },
         { :udid => 'c73e730913822be833766efffc7bb1cf239d855a', :device_label => 'Ben iPhone'       },
         { :udid => '9ac478517b48da604bdb9fc15a3e48139d59660d', :device_label => 'Christine iPhone' },
@@ -117,18 +115,20 @@ class StatzController < WebsiteController
         { :udid => 'cb662f568a4016a5b2e0bd617e53f70480133290', :device_label => 'Stephen iPad'     },
         { :udid => '21e3f395b9bbaf56667782ea3fe1241656684e21', :device_label => 'Stephen iTouch'   },
         { :udid => '2e75bbe138c85e6dc8bd8677220ef8898f40a1c7', :device_label => 'Sunny iPhone'     },
-      ]
-    end
-
+    ]
+    @udids_to_check = []
+    targeted_devices = @offer.get_device_types
+    @udids_to_check += android_devices if Offer::ANDROID_DEVICES.any? { |device_type| targeted_devices.include?(device_type) }
+    @udids_to_check += ios_devices     if Offer::APPLE_DEVICES.any?   { |device_type| targeted_devices.include?(device_type) }
+    @udids_to_check.sort! { |a, b| a[:device_label] <=> b[:device_label] }
+    
     unless params[:other_udid].blank?
       @udids_to_check.unshift({ :udid => params[:other_udid], :device_label => 'Other UDID' })
     end
     
-    app_id = @offer.is_primary? ? @offer.id : @offer.item.primary_offer.id
-    
     @udids_to_check.each do |hash|
       device = Device.new(:key => hash[:udid])
-      hash[:last_run_time] = device.has_app(app_id) ? device.last_run_time(app_id).to_s(:pub_ampm_sec) : 'Never'
+      hash[:last_run_time] = device.has_app(@offer.item_id) ? device.last_run_time(@offer.item_id).to_s(:pub_ampm_sec) : 'Never'
     end
   end
   
