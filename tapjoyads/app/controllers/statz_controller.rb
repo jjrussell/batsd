@@ -87,6 +87,15 @@ class StatzController < WebsiteController
   def last_run_times
     if @offer.item.is_android?
       @udids_to_check = [
+        { :udid => '359116032048366',                          :device_label => 'Hwan-Joon HTC G2' },
+        { :udid => 'a00000155c5106',                           :device_label => 'Linda Droid'      },
+        { :udid => '354957031929568',                          :device_label => 'Linda Nexus One'  },
+        { :udid => '355031040294361',                          :device_label => 'Linda Nexus S'    },
+        { :udid => 'a100000d9833c5',                           :device_label => 'Stephen Evo'      },
+        { :udid => 'a000002256c234',                           :device_label => 'Steve Droid X'    },
+      ]
+    else
+      @udids_to_check = [
         { :udid => 'ade749ccc744336ad81cbcdbf36a5720778c6f13', :device_label => 'Amir iPhone'      },
         { :udid => 'c73e730913822be833766efffc7bb1cf239d855a', :device_label => 'Ben iPhone'       },
         { :udid => '9ac478517b48da604bdb9fc15a3e48139d59660d', :device_label => 'Christine iPhone' },
@@ -108,15 +117,6 @@ class StatzController < WebsiteController
         { :udid => 'cb662f568a4016a5b2e0bd617e53f70480133290', :device_label => 'Stephen iPad'     },
         { :udid => '21e3f395b9bbaf56667782ea3fe1241656684e21', :device_label => 'Stephen iTouch'   },
         { :udid => '2e75bbe138c85e6dc8bd8677220ef8898f40a1c7', :device_label => 'Sunny iPhone'     },
-      ]
-    else
-      @udids_to_check = [
-        { :udid => '359116032048366',                          :device_label => 'Hwan-Joon HTC G2' },
-        { :udid => 'a00000155c5106',                           :device_label => 'Linda Droid'      },
-        { :udid => '354957031929568',                          :device_label => 'Linda Nexus One'  },
-        { :udid => '355031040294361',                          :device_label => 'Linda Nexus S'    },
-        { :udid => 'a100000d9833c5',                           :device_label => 'Stephen Evo'      },
-        { :udid => 'a000002256c234',                           :device_label => 'Steve Droid X'    },
       ]
     end
 
