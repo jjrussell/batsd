@@ -86,46 +86,44 @@ class StatzController < WebsiteController
   
   def last_run_times
     @udids_to_check = [
-      { :udid => 'ade749ccc744336ad81cbcdbf36a5720778c6f13', :last_run_time => 'Never', :device_label => 'Amir iPhone'      },
-      { :udid => 'c73e730913822be833766efffc7bb1cf239d855a', :last_run_time => 'Never', :device_label => 'Ben iPhone'       },
-      { :udid => '9ac478517b48da604bdb9fc15a3e48139d59660d', :last_run_time => 'Never', :device_label => 'Christine iPhone' },
-      { :udid => 'f3de44744a306beb47407b9a23cd97d9fe03339a', :last_run_time => 'Never', :device_label => 'Christine iPad'   },
-      { :udid => '12910a92ab2917da99b8e3c785136af56b08c271', :last_run_time => 'Never', :device_label => 'Chris iPhone'     },
-      { :udid => '20c56f0606cc34f56525bb9ca03dcd0a43d70c60', :last_run_time => 'Never', :device_label => 'Dan iPhone'       },
-      { :udid => '5c46e034cd005e5f2b08501820ecb235b0f13f33', :last_run_time => 'Never', :device_label => 'Hwan-Joon iPhone' },
-      { :udid => 'cb76136c7362206edad3d485a1dbd51bee52cd1f', :last_run_time => 'Never', :device_label => 'Hwan-Joon iPad'   },
-      { :udid => 'c163a3b343fbe6d04f9a8cda62e807c0b407f533', :last_run_time => 'Never', :device_label => 'Hwan-Joon iTouch' },
-      { :udid => '359116032048366',                          :last_run_time => 'Never', :device_label => 'Hwan-Joon HTC G2' },
-      { :udid => 'cb7907c2a762ea979a3ec38827a165e834a2f7f9', :last_run_time => 'Never', :device_label => 'Johnny iPhone'    },
-      { :udid => '05f900a2b588c4ed140689145ddb4684a1681f20', :last_run_time => 'Never', :device_label => 'Kai iPad'         },
-      { :udid => 'c720dd0a5f937735c1a76bce72fcd90ada73ad7d', :last_run_time => 'Never', :device_label => 'Kai iTouch'       },
-      { :udid => '5eab794d002ab9b25ee54b4c792bbcde68406b57', :last_run_time => 'Never', :device_label => 'Katherine iPhone' },
-      { :udid => 'a00000155c5106',                           :last_run_time => 'Never', :device_label => 'Linda Droid'      },
-      { :udid => '4b910938aceaa723e0c0313aa7fa9f9d838a595e', :last_run_time => 'Never', :device_label => 'Linda iPad'       },
-      { :udid => '820a1b9df38f3024f9018464c05dfbad5708f81e', :last_run_time => 'Never', :device_label => 'Linda iPhone'     },
-      { :udid => '354957031929568',                          :last_run_time => 'Never', :device_label => 'Linda Nexus One'  },
-      { :udid => '355031040294361',                          :last_run_time => 'Never', :device_label => 'Linda Nexus S'    },
-      { :udid => '5941f307a0f88912b0c84e075c833a24557a7602', :last_run_time => 'Never', :device_label => 'Mark iPad'        },
-      { :udid => 'b4c86b4530a0ee889765a166d80492b46f7f3636', :last_run_time => 'Never', :device_label => 'Ryan iPhone'      },
-      { :udid => 'f0910f7ab2a27a5d079dc9ed50d774fcab55f91d', :last_run_time => 'Never', :device_label => 'Ryan iPad'        },
-      { :udid => 'a100000d9833c5',                           :last_run_time => 'Never', :device_label => 'Stephen Evo'      },
-      { :udid => 'cb662f568a4016a5b2e0bd617e53f70480133290', :last_run_time => 'Never', :device_label => 'Stephen iPad'     },
-      { :udid => '21e3f395b9bbaf56667782ea3fe1241656684e21', :last_run_time => 'Never', :device_label => 'Stephen iTouch'   },
-      { :udid => 'a000002256c234',                           :last_run_time => 'Never', :device_label => 'Steve Droid X'    },
-      { :udid => '2e75bbe138c85e6dc8bd8677220ef8898f40a1c7', :last_run_time => 'Never', :device_label => 'Sunny iPhone'     },
+      { :udid => 'ade749ccc744336ad81cbcdbf36a5720778c6f13', :device_label => 'Amir iPhone'      },
+      { :udid => 'c73e730913822be833766efffc7bb1cf239d855a', :device_label => 'Ben iPhone'       },
+      { :udid => '9ac478517b48da604bdb9fc15a3e48139d59660d', :device_label => 'Christine iPhone' },
+      { :udid => 'f3de44744a306beb47407b9a23cd97d9fe03339a', :device_label => 'Christine iPad'   },
+      { :udid => '12910a92ab2917da99b8e3c785136af56b08c271', :device_label => 'Chris iPhone'     },
+      { :udid => '20c56f0606cc34f56525bb9ca03dcd0a43d70c60', :device_label => 'Dan iPhone'       },
+      { :udid => '5c46e034cd005e5f2b08501820ecb235b0f13f33', :device_label => 'Hwan-Joon iPhone' },
+      { :udid => 'cb76136c7362206edad3d485a1dbd51bee52cd1f', :device_label => 'Hwan-Joon iPad'   },
+      { :udid => 'c163a3b343fbe6d04f9a8cda62e807c0b407f533', :device_label => 'Hwan-Joon iTouch' },
+      { :udid => '359116032048366',                          :device_label => 'Hwan-Joon HTC G2' },
+      { :udid => 'cb7907c2a762ea979a3ec38827a165e834a2f7f9', :device_label => 'Johnny iPhone'    },
+      { :udid => '05f900a2b588c4ed140689145ddb4684a1681f20', :device_label => 'Kai iPad'         },
+      { :udid => 'c720dd0a5f937735c1a76bce72fcd90ada73ad7d', :device_label => 'Kai iTouch'       },
+      { :udid => '5eab794d002ab9b25ee54b4c792bbcde68406b57', :device_label => 'Katherine iPhone' },
+      { :udid => 'a00000155c5106',                           :device_label => 'Linda Droid'      },
+      { :udid => '4b910938aceaa723e0c0313aa7fa9f9d838a595e', :device_label => 'Linda iPad'       },
+      { :udid => '820a1b9df38f3024f9018464c05dfbad5708f81e', :device_label => 'Linda iPhone'     },
+      { :udid => '354957031929568',                          :device_label => 'Linda Nexus One'  },
+      { :udid => '355031040294361',                          :device_label => 'Linda Nexus S'    },
+      { :udid => '5941f307a0f88912b0c84e075c833a24557a7602', :device_label => 'Mark iPad'        },
+      { :udid => 'b4c86b4530a0ee889765a166d80492b46f7f3636', :device_label => 'Ryan iPhone'      },
+      { :udid => 'f0910f7ab2a27a5d079dc9ed50d774fcab55f91d', :device_label => 'Ryan iPad'        },
+      { :udid => 'a100000d9833c5',                           :device_label => 'Stephen Evo'      },
+      { :udid => 'cb662f568a4016a5b2e0bd617e53f70480133290', :device_label => 'Stephen iPad'     },
+      { :udid => '21e3f395b9bbaf56667782ea3fe1241656684e21', :device_label => 'Stephen iTouch'   },
+      { :udid => 'a000002256c234',                           :device_label => 'Steve Droid X'    },
+      { :udid => '2e75bbe138c85e6dc8bd8677220ef8898f40a1c7', :device_label => 'Sunny iPhone'     },
     ]
     
     unless params[:other_udid].blank?
-      @udids_to_check.unshift({ :udid => params[:other_udid], :last_run_time => 'Never', :device_label => 'Other UDID' })
+      @udids_to_check.unshift({ :udid => params[:other_udid], :device_label => 'Other UDID' })
     end
     
     app_id = @offer.is_primary? ? @offer.id : @offer.item.primary_offer.id
     
     @udids_to_check.each do |hash|
       device = Device.new(:key => hash[:udid])
-      if device.has_app(app_id)
-        hash[:last_run_time] = device.last_run_time(app_id).to_s(:pub_ampm_sec)
-      end
+      hash[:last_run_time] = device.has_app(app_id) ? device.last_run_time(app_id).to_s(:pub_ampm_sec) : 'Never'
     end
   end
   
