@@ -37,3 +37,7 @@ production_slave:
   username: tapjoy
   password: andoverbusiness1
   reconnect: true
+
+sqlite:
+  adapter: sqlite3
+  database: db/production.sqlite

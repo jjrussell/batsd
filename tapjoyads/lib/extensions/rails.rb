@@ -67,7 +67,7 @@ module ActiveRecord
     # where the primary key column is called 'id' and is NOT an integer.
     #
     class MysqlAdapter
-      alias_method :orig_pk_and_sequence_for, :pk_and_sequence_for
+      alias_method :orig_pk_and_sequence_for, :pk_and_sequence_for if self.respond_to?(:pk_and_sequence_for)
       
       def pk_and_sequence_for(table)
         keys = []
@@ -86,6 +86,12 @@ module ActiveRecord
   # This prevents a savvy user from setting hidden fields by manipulating the DOM.
   #
   class Base
+    alias_method :orig_readonly?, :readonly?
+    
+    def readonly?
+      connection.adapter_name == 'SQLite' || orig_readonly?
+    end
+    
     def safe_update_attributes(attributes, allowed_attr_names)
       allowed_attr_names = Set.new(allowed_attr_names.map { |v| v.to_s })
       attributes.keys.each do |k|

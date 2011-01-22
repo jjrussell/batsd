@@ -11,6 +11,13 @@ class OneOffs
     true
   end
   
+  def self.update_sqlite_schema
+    ActiveRecord::Base.establish_connection('sqlite')
+    load('db/schema.rb')
+    ActiveRecord::Base.establish_connection(Rails.env)
+    true
+  end
+  
   # returns a hash of yesterday's store_click counts by country for the given advertiser_app_id
   def self.installs_by_country_for_advertiser_app_id(advertiser_app_id, start_date, end_date)
     st = Time.zone.parse(start_date).to_f.to_s
