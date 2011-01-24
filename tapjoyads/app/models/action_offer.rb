@@ -8,7 +8,7 @@ class ActionOffer < ActiveRecord::Base
   belongs_to :partner
   belongs_to :app
   
-  validates_presence_of :partner, :app, :name
+  validates_presence_of :partner, :app, :name, :instructions
   
   named_scope :visible, :conditions => { :hidden => false }
   
@@ -17,7 +17,7 @@ class ActionOffer < ActiveRecord::Base
   after_create :create_primary_offer
   after_update :update_offers
   
-  delegate :user_enabled?, :tapjoy_enabled?, :bid, :description, :min_bid, :to => :primary_offer
+  delegate :user_enabled?, :tapjoy_enabled?, :bid, :description, :min_bid, :daily_budget, :to => :primary_offer
 
   def integrated?
     if defined? @integrated
