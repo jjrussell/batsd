@@ -7,18 +7,16 @@ class StoreRank
     date_string = time.to_date.to_s(:db)
     error_count = 0
     store_rankings = {}
+    known_store_ids = {}
     stat_rows = {}
     
-    Rails.logger.info "#{Time.now.to_i}: Populate store rankings. Task starting."
+    log_progress "Populate store rankings. Task starting."
     
-    Offer.find_each do |offer|
-      next unless offer.item_type == 'App' && offer.get_platform == 'iOS'
-      
-      stat_row = Stats.new(:key => "app.#{date_string}.#{offer.id}", :load_from_memcache => false)
-      stat_rows[offer.third_party_data] ||= []
-      stat_rows[offer.third_party_data] << stat_row
+    App.find_each(:conditions => "platform = 'iphone' AND store_id IS NOT NULL") do |app|
+      known_store_ids[app.store_id] ||= []
+      known_store_ids[app.store_id] += app.offer_ids
     end
-    Rails.logger.info "#{Time.now.to_i}: Finished loading stat_rows."
+    log_progress "Finished loading known_store_ids."
     
     itunes_category_ids.each do |category_key, category_id|
       itunes_pop_ids.each do |pop_key, pop_id|
@@ -35,16 +33,17 @@ class StoreRank
               if error_count > 50
                 raise "Too many errors attempting to download itunes ranks, giving up. App store down?"
               end
-              Rails.logger.info "Error downloading ranks from itunes for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Retrying."
+              log_progress "Error downloading ranks from itunes for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Retrying."
               hydra.queue(request)
             end
             
             ranks_hash = get_itunes_ranks_hash(response.body)
             ranks_hash.each do |store_id, rank|
-              if stat_rows[store_id].present?
-                stat_rows[store_id].each do |stat_row|
-                  stat_row.update_stat_for_hour(['ranks', stat_type], time.hour, rank)
-                end
+              next if known_store_ids[store_id].nil?
+              
+              known_store_ids[store_id].each do |offer_id|
+                stat_rows[offer_id] ||= Stats.new(:key => "app.#{date_string}.#{offer_id}", :load_from_memcache => false)
+                stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour, rank)
               end
             end
             
@@ -54,34 +53,37 @@ class StoreRank
         end
       end
     end
-    Rails.logger.info "#{Time.now.to_i}: Finished queuing requests."
+    log_progress "Finished queuing requests."
     
     hydra.run
-    Rails.logger.info "#{Time.now.to_i}: Finished making requests."
+    log_progress "Finished making requests."
     
-    stat_rows.each do |key, value|
-      value.each do |stat_row|
-        stat_row.serial_save
-      end
+    stat_rows.each do |offer_id, stat_row|
+      stat_row.serial_save
     end
-    Rails.logger.info "#{Time.now.to_i}: Finished saving stat_rows."
+    log_progress "Finished saving stat_rows."
     
     retries = 3
     begin
       bucket = S3.bucket(BucketNames::STORE_RANKS)
       bucket.put("ranks.#{time.beginning_of_hour.to_s(:db)}.json", store_rankings.to_json)
     rescue RightAws::AwsError => e
-      Rails.logger.info "Failed attempt to write to s3. Error: #{e}"
+      log_progress "Failed attempt to write to s3. Error: #{e}"
       if (retries -= 1) > 0
         sleep(1)
-        Rails.logger.info "Retrying to write to s3."
+        log_progress "Retrying to write to s3."
         retry
       else
         raise e
       end
     end
     
-    Rails.logger.info "#{Time.now.to_i}: Finished saving store_rankings."
+    log_progress "Finished saving store_rankings."
+    
+    hydra = nil
+    store_rankings = nil
+    stat_rows = nil
+    known_store_ids = nil
   end
 
 private
@@ -96,6 +98,12 @@ private
     end
     
     hash
+  end
+  
+  def self.log_progress(message)
+    now = Time.zone.now
+    Rails.logger.info "#{now} (#{now.to_i}): #{message}"
+    Rails.logger.flush
   end
   
   @@itunes_category_ids = {
