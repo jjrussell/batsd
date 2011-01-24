@@ -41,7 +41,7 @@
       - property_row('File size', number_to_human_size(@offer.item.file_size_bytes), nil, @offer.item.file_size_bytes.to_i >= 20971520 ? 'incomplete' : nil)
   - else
     - property_row('Destination url', link_to(truncate(@offer.url, :length => 60), @offer.url))
-  - property_row('Price', number_to_currency(@offer.price / 100.0))
+  - property_row('Price', number_to_currency(@offer.price / 100.0), nil, @offer.price.to_i >= 300 ? 'warning' : nil)
   - property_row('Daily budget', @offer.daily_budget, 0)
   - property_row('Overall budget', @offer.overall_budget, 0)
   - property_row('Show rate', "%.1f%" % ((@offer.show_rate || 0) * 100.0), "100.0%")
