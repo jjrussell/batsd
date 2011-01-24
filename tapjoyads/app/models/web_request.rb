@@ -46,7 +46,6 @@ class WebRequest < SimpledbResource
   USE_OFFER_ID = [ 'store_click', 'offer_click', 'conversion', 'conversion_jailbroken' ]
   
   PUBLISHER_PATH_TO_STAT_MAP = {
-    'store_click' => 'installs_opened',
     'offer_click' => 'offers_opened',
     'conversion' => 'published_installs',
     'conversion_jailbroken' => 'published_installs'

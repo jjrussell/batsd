@@ -4,7 +4,7 @@ class Job::QueueAppStatsController < Job::SqsReaderController
     super QueueNames::APP_STATS
     @num_reads = 10
     @paths_to_aggregate = %w(connect new_user adshown offer_click daily_user monthly_user purchased_vg offers)
-    @publisher_paths_to_aggregate = %w(store_click offer_click)
+    @publisher_paths_to_aggregate = %w(offer_click)
     @displayer_paths_to_aggregate = %w(display_ad_requested display_ad_shown offer_click)
   end
   
@@ -53,9 +53,6 @@ private
       app_condition = WebRequest::USE_OFFER_ID.include?(path) ? "offer_id = '#{@offer.id}'" : "app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
-      if path == 'offer_click'
-        count += WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'store_click' and #{app_condition}")
-      end
       
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
@@ -94,9 +91,6 @@ private
       app_condition = "displayer_app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
-      if path == 'offer_click'
-        count += WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'store_click' and #{app_condition}")
-      end
       
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
@@ -130,9 +124,6 @@ private
       app_condition = WebRequest::USE_OFFER_ID.include?(path) ? "offer_id = '#{@offer.id}'" : "app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
-      if path == 'offer_click'
-        count += WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'store_click' and #{app_condition}")
-      end
       hour_counts = stat_row.get_hourly_count(stat_name)
       
       if count != hour_counts.sum
@@ -159,9 +150,6 @@ private
       app_condition = "displayer_app_id = '#{@offer.id}'"
       
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
-      if path == 'offer_click'
-        count += WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'store_click' and #{app_condition}")
-      end
       hour_counts = stat_row.get_hourly_count(stat_name)
       
       if count != hour_counts.sum

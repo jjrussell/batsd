@@ -55,11 +55,8 @@ class Appstats
     end
     
     # rewards_opened
-    if @stats['installs_opened'] and @stats['offers_opened']
-      @stats['rewards_opened'] = []
-      @stats['installs_opened'].length.times do |i|
-        @stats['rewards_opened'][i] = @stats['installs_opened'][i] + @stats['offers_opened'][i]
-      end
+    if @stats['offers_opened']
+      @stats['rewards_opened'] = @stats['offers_opened']
     end
     
     # rewards_revenue
