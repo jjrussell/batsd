@@ -6,7 +6,6 @@ class StoreRank
     hydra.disable_memoization
     date_string = time.to_date.to_s(:db)
     error_count = 0
-    store_rankings = {}
     known_store_ids = {}
     stat_rows = {}
     
@@ -85,11 +84,6 @@ class StoreRank
     end
     
     log_progress "Finished saving store_rankings."
-    
-    hydra = nil
-    store_rankings = nil
-    stat_rows = nil
-    known_store_ids = nil
   ensure
     `rm 'tmp/#{ranks_file_name}'`
     `rm 'tmp/#{ranks_file_name}.gz'`
