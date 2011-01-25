@@ -145,4 +145,13 @@ module AuthenticationHelper
     end
   end
   
+  def ea_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'ea'
+        password = 'SPE6uq9n6KaF'
+      end
+      password
+    end
+  end
+  
 end
