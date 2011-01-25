@@ -67,7 +67,7 @@ private
     # TO REMOVE: once AdMarvel starts sending device_ip
     # Don't do any geoip targeting on the webview.
     if params[:action] == 'webview'
-      get_geoip_data = {}
+      geoip_data = {}
     end
     
     web_request = WebRequest.new(:time => now)
