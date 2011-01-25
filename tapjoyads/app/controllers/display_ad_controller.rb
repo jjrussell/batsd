@@ -64,6 +64,12 @@ private
     geoip_data = get_geoip_data
     params[:displayer_app_id] = params[:app_id]
     
+    # TO REMOVE: once AdMarvel starts sending device_ip
+    # Don't do any geoip targeting on the webview.
+    if params[:action] == 'webview'
+      get_geoip_data = {}
+    end
+    
     web_request = WebRequest.new(:time => now)
     web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
     
