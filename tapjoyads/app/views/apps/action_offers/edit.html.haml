@@ -121,9 +121,7 @@
       };
       
       var setEstimatedBudget = function() {
-        if ($('#daily_budget_on').is(':checked')) {
-          checkValidBudget();
-        }
+        checkValidBudget();
         var payment = stringToNumber($('#action_offer_primary_offer_attributes_payment').val());
         var installLimit = stringToNumber($('#action_offer_primary_offer_attributes_daily_budget').val(), true);
         var budget = numberToCurrency(payment * installLimit);
@@ -131,12 +129,14 @@
       };
       
       var checkValidBudget = function(){
-        var installLimit = stringToNumber($('#action_offer_primary_offer_attributes_daily_budget').val(), true);
-        if (! (installLimit > 0) ) {
-          installLimit = 1;
-          $('#action_offer_primary_offer_attributes_daily_budget').val('1');
-          alert('Daily install limit must be at least 1. To disable the campaign, please uncheck the box labeled "Enable Installs".');
-          return false;
+        if ($('#daily_budget_on').is(':checked')) {
+          var installLimit = stringToNumber($('#action_offer_primary_offer_attributes_daily_budget').val(), true);
+          if (! (installLimit > 0) ) {
+            installLimit = 1;
+            $('#action_offer_primary_offer_attributes_daily_budget').val('1');
+            alert('Daily install limit must be at least 1. To disable the campaign, please uncheck the box labeled "Enable Installs".');
+            return false;
+          }
         }
         return true;
       }
