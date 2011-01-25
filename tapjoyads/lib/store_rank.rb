@@ -10,6 +10,9 @@ class StoreRank
     known_store_ids = {}
     stat_rows = {}
     
+    ranks_file_name = "ranks.#{time.beginning_of_hour.to_s(:db)}.json"
+    ranks_file = open("tmp/#{ranks_file_name}", 'w')
+    
     log_progress "Populate store rankings. Task starting."
     
     App.find_each(:conditions => "platform = 'iphone' AND store_id IS NOT NULL") do |app|
@@ -47,7 +50,7 @@ class StoreRank
               end
             end
             
-            store_rankings["itunes.#{stat_type}"] = ranks_hash
+            ranks_file.puts( {"itunes.#{stat_type}" => ranks_hash}.to_json )
           end
           hydra.queue(request)
         end
@@ -63,10 +66,13 @@ class StoreRank
     end
     log_progress "Finished saving stat_rows."
     
+    ranks_file.close
+    `gzip -f 'tmp/#{ranks_file_name}'`
+    
     retries = 3
     begin
       bucket = S3.bucket(BucketNames::STORE_RANKS)
-      bucket.put("ranks.#{time.beginning_of_hour.to_s(:db)}.json", store_rankings.to_json)
+      bucket.put("#{ranks_file_name}.gz", open("tmp/#{ranks_file_name}.gz"))
     rescue RightAws::AwsError => e
       log_progress "Failed attempt to write to s3. Error: #{e}"
       if (retries -= 1) > 0
@@ -84,6 +90,9 @@ class StoreRank
     store_rankings = nil
     stat_rows = nil
     known_store_ids = nil
+  ensure
+    `rm 'tmp/#{ranks_file_name}'`
+    `rm 'tmp/#{ranks_file_name}.gz'`
   end
 
 private
