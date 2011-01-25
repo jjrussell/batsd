@@ -112,3 +112,10 @@ Factory.define :rank_boost do |rank_boost|
   rank_boost.start_time { Time.zone.now }
   rank_boost.end_time { Time.zone.now + 1.hour }
 end
+
+Factory.define :action_offer do |action_offer|
+  action_offer.name 'do something'
+  action_offer.association :partner
+  action_offer.association :app
+  action_offer.instructions '1. do some stuff'
+end
