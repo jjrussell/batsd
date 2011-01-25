@@ -9,6 +9,7 @@ class ActionOffer < ActiveRecord::Base
   belongs_to :app
   
   validates_presence_of :partner, :app, :name, :instructions
+  validates_uniqueness_of :name, :scope => :app_id, :case_sensitive => false
   
   named_scope :visible, :conditions => { :hidden => false }
   
