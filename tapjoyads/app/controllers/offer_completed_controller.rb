@@ -15,7 +15,7 @@ class OfferCompletedController < ApplicationController
       complete_conversion
     else
       @error_message = "unexpected boku callback"
-      notify_and_render_error
+      notify_and_render_error(false)
     end
   end
   
@@ -37,8 +37,13 @@ class OfferCompletedController < ApplicationController
       complete_conversion
     else
       @error_message = "unexpected paypal callback"
-      notify_and_render_error
+      notify_and_render_error(false)
     end
+  end
+  
+  def socialvibe
+    @source = 'socialvibe'
+    complete_conversion
   end
   
 private
@@ -50,38 +55,38 @@ private
   def complete_conversion
     if params[:click_key].blank?
       @error_message = "click_key required"
-      notify_and_render_error and return
+      notify_and_render_error(false) and return
     end
     
     click = Click.new(:key => params[:click_key])
     
     if click.is_new
       @error_message = "click not found (#{click.key})"
-      notify_and_render_error and return
+      notify_and_render_error(true) and return
     elsif click.installed_at.present?
       @error_message = "click has already converted (#{click.key})"
-      notify_and_render_error and return
+      notify_and_render_error(false) and return
     elsif click.clicked_at < (@now - 2.days)
       @error_message = "click too old (#{click.key})"
-      notify_and_render_error and return
+      notify_and_render_error(false) and return
     end
     
     offer = Offer.find_in_cache(click.offer_id)
     unless verify_records([ offer ], { :render_missing_text => false })
       @error_message = "record not found (#{click.key})"
-      notify_and_render_error and return
+      notify_and_render_error(true) and return
     end
     
     if offer.has_variable_payment?
       if params[:payment].blank?
         @error_message = "payment required (#{click.key})"
-        notify_and_render_error and return
+        notify_and_render_error(false) and return
       end
       
       @adjusted_payment = params[:payment].to_i
       if @adjusted_payment < offer.payment_range_low || @adjusted_payment > offer.payment_range_high
         @error_message = "payment (#{@adjusted_payment}) out of range (#{offer.payment_range_low}-#{offer.payment_range_high}) for click (#{click.key})"
-        notify_and_render_error and return
+        notify_and_render_error(false) and return
       end
     end
     
@@ -90,7 +95,7 @@ private
         currency = Currency.find_in_cache(click.currency_id)
         unless verify_records([ currency ], { :render_missing_text => false })
           @error_message = "record not found (#{click.key})"
-          notify_and_render_error and return
+          notify_and_render_error(true) and return
         end
         offer.payment = @adjusted_payment
         
@@ -101,7 +106,7 @@ private
         click.save
       else
         @error_message = "invalid adjusted payment (#{@adjusted_payment}) for click (#{click.key})"
-        notify_and_render_error and return
+        notify_and_render_error(false) and return
       end
     end
     
@@ -116,25 +121,31 @@ private
   end
   
   def render_success
-    if @source == 'gambit'
+    case @source
+    when 'gambit'
       render :text => 'OK'
-    elsif @source == 'boku'
-      render(:template => 'layouts/boku')
+    when 'boku'
+      render :template => 'layouts/boku'
+    when 'socialvibe'
+      render :text => '1'
     else
-      render(:template => 'layouts/success')
+      render :template => 'layouts/success'
     end
   end
   
-  def notify_and_render_error
+  def notify_and_render_error(retry_if_supported)
     Notifier.alert_new_relic(GenericOfferCallbackError, @error_message, request, params)
-    if @source == 'gambit'
+    case @source
+    when 'gambit'
       render :text => 'ERROR:FATAL'
-    elsif @source == 'boku'
-      render(:template => 'layouts/boku')
-    elsif @source == 'paypal'
-      render(:template => 'layouts/error')
+    when 'boku'
+      render :template => 'layouts/boku'
+    when 'paypal'
+      render :template => 'layouts/error'
+    when 'socialvibe'
+      render :text => (retry_if_supported ? '0' : '3')
     else
-      render(:template => 'layouts/error', :status => 403)
+      render :template => 'layouts/error', :status => 403
     end
   end
   
