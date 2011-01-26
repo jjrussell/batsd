@@ -25,7 +25,7 @@ class Currency < ActiveRecord::Base
   after_save :update_memcached_by_app_id
   after_destroy :clear_memcached_by_app_id
   
-  def self.find_all_in_cache_by_app_id(app_id, do_lookup = false)
+  def self.find_all_in_cache_by_app_id(app_id, do_lookup = (Rails.env != 'production'))
     if do_lookup
       Mc.distributed_get_and_put("mysql.app_currencies.#{app_id}") { find_all_by_app_id(app_id, :order => 'ordinal ASC') }
     else

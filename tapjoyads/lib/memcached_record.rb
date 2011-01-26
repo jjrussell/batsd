@@ -7,7 +7,7 @@ module MemcachedRecord
       after_save :update_memcached
       after_destroy :clear_memcached
 
-      def model.find_in_cache(id, do_lookup = false)
+      def model.find_in_cache(id, do_lookup = (Rails.env != 'production'))
         if do_lookup
           Mc.distributed_get_and_put("mysql.#{class_name.underscore}.#{id}") { find(id) }
         else
