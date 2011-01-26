@@ -8,7 +8,7 @@ class ActionOffer < ActiveRecord::Base
   belongs_to :partner
   belongs_to :app
   
-  validates_presence_of :partner, :app, :name, :instructions
+  validates_presence_of :partner, :app, :name
   validates_uniqueness_of :name, :scope => :app_id, :case_sensitive => false
   
   named_scope :visible, :conditions => { :hidden => false }
@@ -26,6 +26,10 @@ class ActionOffer < ActiveRecord::Base
     else
       @integrated = tapjoy_enabled? || Appstats.new(id, { :start_time => Time.zone.now.beginning_of_hour - 23.hours, :end_time => Time.zone.now, :granularity => :hourly, :stat_types => [ 'logins' ] }).stats['logins'].sum > 0
     end
+  end
+  
+  def variable_name
+    "TJC_" + name.gsub(" ", "_").upcase
   end
   
 private
