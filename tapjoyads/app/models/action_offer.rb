@@ -10,6 +10,7 @@ class ActionOffer < ActiveRecord::Base
   
   validates_presence_of :partner, :app, :name
   validates_uniqueness_of :name, :scope => :app_id, :case_sensitive => false
+  validates_presence_of :instructions, :unless => :new_record?
   
   named_scope :visible, :conditions => { :hidden => false }
   
