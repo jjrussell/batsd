@@ -40,6 +40,9 @@
       if (document.documentElement.clientHeight < 480) {
         icon.setAttribute('style', 'width: 96px; height: 96px;');
         main.setAttribute('style', 'height: 294px; margin-top: -147px');
+      } else if (document.documentElement.clientHeight > 800) {
+        icon.setAttribute('style', 'width: 512px; height: 512px;');
+        main.setAttribute('style', 'height: 710px; margin-top: -355px;');
       } else {
         icon.setAttribute('style', 'width: 256px; height: 256px;');
         main.setAttribute('style', 'height: 454px; margin-top: -227px;');
