@@ -18,7 +18,7 @@
         - if app.can_have_new_currency?
           %li.inception= link_to 'Create Currency', new_app_currency_path({:app_id => app.id}), :class => (currency_selected && controller.action_name == 'new' ? 'selected' : '')
 
-      - virtual_goods_path = app.virtual_goods.blank? ? new_app_virtual_good_path({:app_id => app.id}) : app_virtual_goods_path({:app_id => app.id})
+      - virtual_goods_path = app.has_virtual_goods? ?  app_virtual_goods_path({:app_id => app.id}) : new_app_virtual_good_path({:app_id => app.id})
       %li= link_to 'Virtual Goods', virtual_goods_path, :class => (controller.controller_name == 'virtual_goods' ? 'selected' : '')
 
       %li= link_to 'Integrate', integrate_app_path(@app)

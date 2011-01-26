@@ -41,6 +41,10 @@ class App < ActiveRecord::Base
   def virtual_goods
     VirtualGood.select(:where => "app_id = '#{self.id}'")[:items]
   end
+  
+  def has_virtual_goods?
+    VirtualGood.count(:where => "app_id = '#{self.id}'") > 0
+  end
 
   def store_url
     if use_raw_url?

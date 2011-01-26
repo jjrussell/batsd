@@ -297,6 +297,14 @@ class Offer < ActiveRecord::Base
     payment_range_low.present? && payment_range_high.present?
   end
   
+  def virtual_goods
+    VirtualGood.select(:where => "app_id = '#{self.item_id}'")[:items]
+  end
+  
+  def has_virtual_goods?
+    VirtualGood.count(:where => "app_id = '#{self.item_id}'") > 0
+  end
+  
   def get_destination_url(udid, publisher_app_id, click_key = nil, itunes_link_affiliate = 'linksynergy', currency_id = nil)
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
     if item_type == 'App' && final_url =~ /phobos\.apple\.com/
