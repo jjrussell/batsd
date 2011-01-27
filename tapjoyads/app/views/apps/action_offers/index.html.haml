@@ -5,8 +5,22 @@
 #apps_main
   %h3 Actions
   
-  = button_to "Create New Action", new_app_action_offer_path(@app), :method => :get
+  %div
+    Put some instructions up in here.
+  %br
   
+  .code
+    .code-header
+      = @app.default_actions_file_name
+      = " · "
+      = link_to("Show file contents", '', :class => 'show_file_contents')
+      = " · "
+      = link_to_generated_actions_header(@app, "Download this file")
+    .code-content.hidden
+      %pre><= @app.generate_actions_file
+  %br
+  
+  %div= button_to "Create New Action", new_app_action_offer_path(@app), :method => :get
   %br
   
   %table.actions{ :width => '100%' }
@@ -19,7 +33,7 @@
         %th Integrated?
     %tbody
       - @action_offers.each do |action_offer|
-        %tr
+        %tr{ :class => cycle('even', 'odd') }
           %td
             - form_tag toggle_app_action_offer_url(@app, action_offer) do
               = check_box_tag("", "1", action_offer.user_enabled?, :class => 'toggle_action_offer')
@@ -65,10 +79,42 @@
 
         return false;
       });
+      
+      $('.show_file_contents').click(function(){
+        var link = $(this);
+        var code = $('.code-content');
+        
+        if (code.is(':visible')){
+          code.hide();
+          link.text('Show file contents');
+        }
+        else{
+          code.show();
+          link.text('Hide file contents');
+        }
+        
+        return false;
+      });
     });
     
 - content_for :page_styles do
   :plain
-    table.actions td {
+    table.actions tbody td {
       text-align: center;
+      height: 22px;
+    }
+    
+    table.actions tbody {
+      font-size: 13px;
+    }
+    
+    table.actions tbody tr.even {
+      background-color: #f0f0f6;
+    }
+    
+    .code-content {
+      padding: 0 16px;
+      border: 1px solid #ccc;
+      background-color: #f0f0f6;
+      overflow: auto;
     }
