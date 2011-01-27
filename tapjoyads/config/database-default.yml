@@ -40,4 +40,4 @@ production_slave:
 
 sqlite:
   adapter: sqlite3
-  database: db/production.sqlite
+  database: db/webserver.sqlite

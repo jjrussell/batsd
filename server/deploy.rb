@@ -35,6 +35,8 @@ elsif server_type == 'website'
 end
 
 if server_type == 'web'
+  `cp tapjoyads/db/webserver.sqlite tapjoyads/db/production.sqlite`
+  `chmod 444 tapjoyads/db/production.sqlite`
   `cp tapjoyads/config/database-webserver.yml tapjoyads/config/database.yml`
 else
   `cp tapjoyads/config/database-default.yml tapjoyads/config/database.yml`

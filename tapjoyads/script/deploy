@@ -98,12 +98,12 @@ private
     print "No deploy tag specified. Create new deploy tag #{@options[:version]}? [y/N] "
     prompt_and_exit_if_not_yes
     
-    puts "Updating production.sqlite file."
+    puts "Updating webserver.sqlite file."
     unless system("script/runner 'OneOffs.update_sqlite_schema' > /dev/null")
-      puts "Failed to update production.sqlite!"
+      puts "Failed to update webserver.sqlite!"
       exit
     end
-    system("git add db/production.sqlite")
+    system("git add db/webserver.sqlite")
     
     puts "Incrementing version file."
     yaml_version['current'] = @options[:version]
