@@ -3,7 +3,7 @@ class BillingController < WebsiteController
 
   filter_access_to :all
   before_filter :get_statements, :only => [:index, :export_statements, :export_orders, :export_payouts]
-  after_filter :save_activity_logs, :only => [ :create_order ]
+  after_filter :save_activity_logs, :only => [ :create_order, :create_transfer ]
 
   def index
     @current_balance = current_partner.balance
@@ -42,7 +42,32 @@ class BillingController < WebsiteController
   def add_funds
     @credit_card = ActiveMerchant::Billing::CreditCardWithAmount.new
   end
-  
+
+  def create_transfer
+    amount = sanitize_currency_param(params[ :transfer_amount ]).to_i
+    if amount > 0
+      Partner.transaction do
+        payout, order, marketing_order = current_partner.build_transfer(amount)
+
+        log_activity(payout)
+        payout.save!
+
+        log_activity(order)
+        order.save!
+
+        flash[:notice] = "Successfully transferred #{params[:transfer_amount]}"
+        if marketing_order.present?
+          log_activity(marketing_order)
+          marketing_order.save!
+          flash[:notice] += " and $#{"%.2f" % (marketing_order.amount / 100.0)}</b> transfer bonus."
+        end
+      end
+    else
+      flash[:error] = "Transfer amount must be more than $0."
+    end
+    redirect_to :action => 'transfer_funds'
+  end
+
   def create_order
     cc_params = sanitize_currency_params(params[:credit_card], [ :amount ])
     @credit_card = ActiveMerchant::Billing::CreditCardWithAmount.new(cc_params)
