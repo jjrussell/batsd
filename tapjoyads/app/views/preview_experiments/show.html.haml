@@ -27,6 +27,9 @@
         %br
         = check_box_tag "GenericOffer", "", true
         = label_tag "GenericOffer", "GenericOffers"
+        %br
+        = check_box_tag "ActionOffer", "", true
+        = label_tag "ActionOffer", "ActionOffers"
 
 
 %table#offers.tablesorter
@@ -106,6 +109,10 @@
       
       $('#App').click(function() {
         toggleOffers('App')
+      })
+      
+      $('#ActionOffer').click(function() {
+        toggleOffers('ActionOffer')
       })
       
       resetTable();
