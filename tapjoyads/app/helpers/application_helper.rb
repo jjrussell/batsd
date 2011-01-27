@@ -10,4 +10,13 @@ module ApplicationHelper
     text.insert 0, start_tag
     text + "</p>"
   end
+  
+  def link_to_generated_actions_header(app, name = nil)
+    name ||= app.default_actions_file_name
+    if app.is_android?
+      link_to(name, TapjoyPPA_app_action_offers_path(app, :format => "java"))
+    else
+      link_to(name, TJCPPA_app_action_offers_path(app, :format => "h"))
+    end
+  end
 end

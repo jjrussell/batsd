@@ -214,6 +214,33 @@ class App < ActiveRecord::Base
   def can_have_new_currency?
     currencies.empty? || !currencies.any? { |c| Currency::SPECIAL_CALLBACK_URLS.include?(c.callback_url) }
   end
+  
+  def default_actions_file_name
+    if is_android?
+      "TapjoyPPA.java"
+    else
+      "TJCPPA.h"
+    end
+  end
+  
+  def generate_actions_file
+    if is_android?
+      file_output =  "package com.tapjoy;\n"
+      file_output += "\n"
+      file_output += "public class TapjoyPPA\n"
+      file_output += "{\n"
+      action_offers.each do |action_offer|
+        file_output += "  public static final #{action_offer.variable_name} = \"#{action_offer.id}\"; // #{action_offer.name}\n"
+      end
+      file_output += "}"
+    else
+      file_output =  ""
+      action_offers.each do |action_offer|
+        file_output += "#define #{action_offer.variable_name} @\"#{action_offer.id}\" // #{action_offer.name}\n"
+      end
+    end
+    file_output
+  end
 
 private
   

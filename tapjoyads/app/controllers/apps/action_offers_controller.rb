@@ -65,6 +65,22 @@ class Apps::ActionOffersController < WebsiteController
       render :json => { :success => false }
     end
   end
+  
+  def TJCPPA
+    respond_to do |format|
+      format.h do
+        render :text => @app.generate_actions_file, :format => Mime::TEXT
+      end
+    end
+  end
+  
+  def TapjoyPPA
+    respond_to do |format|
+      format.java do
+        render :text => @app.generate_actions_file, :format => Mime::TEXT
+      end
+    end
+  end
 
 private
 

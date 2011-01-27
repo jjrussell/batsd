@@ -11,6 +11,7 @@ class ActionOffer < ActiveRecord::Base
   validates_presence_of :partner, :app, :name
   validates_uniqueness_of :name, :scope => :app_id, :case_sensitive => false
   validates_presence_of :instructions, :unless => :new_record?
+  validates_format_of :name, :with => /^[\d\w\s]+$/i, :message => "can only contain letters, numbers, and spaces"
   
   named_scope :visible, :conditions => { :hidden => false }
   
