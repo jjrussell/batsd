@@ -137,7 +137,7 @@ private
     Notifier.alert_new_relic(GenericOfferCallbackError, @error_message, request, params)
     case @source
     when 'gambit'
-      render :text => 'ERROR:FATAL'
+      render :text => (retry_if_supported ? 'ERROR:RESEND' : 'ERROR:FATAL')
     when 'boku'
       render :template => 'layouts/boku'
     when 'paypal'
@@ -145,7 +145,7 @@ private
     when 'socialvibe'
       render :text => (retry_if_supported ? '0' : '3')
     else
-      render :template => 'layouts/error', :status => 403
+      render :template => 'layouts/error', :status => (retry_if_supported ? 404 : 403)
     end
   end
   
