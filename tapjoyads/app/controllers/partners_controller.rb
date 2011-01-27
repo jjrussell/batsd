@@ -110,7 +110,7 @@ class PartnersController < WebsiteController
 
   def new_transfer
   end
-  
+
   def create_transfer
     sanitized_params = sanitize_currency_params(params, [ :transfer_amount ])
     Partner.transaction do
@@ -123,8 +123,7 @@ class PartnersController < WebsiteController
       log_activity(order)
       order.save!
 
-      dollars = amount.to_s
-      dollars[-2..-3] = "." if dollars.length > 1
+      dollars = "%.2f" % (amount / 100.0)
       email = order.partner.users.first.email rescue "(no email)"
       flash[:notice] = "The transfer of <b>$#{dollars}</b> to <b>#{email}</b> was successfully created."
 
@@ -134,8 +133,7 @@ class PartnersController < WebsiteController
         log_activity(marketing_order)
         marketing_order.save!
       end
-      dollars = marketing_amount.to_s
-      dollars[-2..-3] = "." if dollars.length > 1
+      dollars = "%.2f" % (marketing_amount / 100.0)
       flash[:notice] += "<br/>The marketing credit of <b>$#{dollars}</b> to <b>#{email}</b> was successfully created."
     end
     redirect_to partner_path(@partner)
