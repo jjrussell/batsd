@@ -45,7 +45,12 @@ class BillingController < WebsiteController
 
   def create_transfer
     amount = sanitize_currency_param(params[ :transfer_amount ]).to_i
-    if amount > 0
+    puts "<><> #{amount} #{current_partner.pending_earnings}"
+    if amount <= 0
+      flash[:error] = "Transfer amount must be more than $0."
+    elsif amount > current_partner.pending_earnings * 100
+      flash[:error] = "Transfer amount must be less than your Pending Earnings."
+    else
       Partner.transaction do
         payout, order, marketing_order = current_partner.build_transfer(amount)
 
@@ -62,8 +67,6 @@ class BillingController < WebsiteController
           flash[:notice] += " and $#{"%.2f" % (marketing_order.amount / 100.0)}</b> transfer bonus."
         end
       end
-    else
-      flash[:error] = "Transfer amount must be more than $0."
     end
     redirect_to :action => 'transfer_funds'
   end

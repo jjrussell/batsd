@@ -29,5 +29,36 @@ class BillingControllerTest < ActionController::TestCase
       assert_equal 3, assigns['activity_logs'].length
     end
 
+    should "not allow negative transfer" do
+      amount = rand(100) + 100
+      negative_amount = -amount
+
+      get :create_transfer, { :transfer_amount => negative_amount }
+
+      @partner.reload
+
+      #assert flash['error'].present?
+      assert_equal 0, @partner.orders.length
+      assert_equal 0, @partner.payouts.length
+      assert_equal 10000, @partner.pending_earnings
+      assert_equal 10000, @partner.balance
+      assert assigns['activity_logs'].nil?
+    end
+
+    should "not allow transfer greater than payout amount" do
+      amount = rand(100) + 1000000
+
+      get :create_transfer, { :transfer_amount => amount }
+
+      @partner.reload
+
+      #assert flash['error'].present?
+      assert_equal 0, @partner.orders.length
+      assert_equal 0, @partner.payouts.length
+      assert_equal 10000, @partner.pending_earnings
+      assert_equal 10000, @partner.balance
+      assert assigns['activity_logs'].nil?
+    end
+
   end
 end
