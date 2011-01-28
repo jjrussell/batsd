@@ -157,7 +157,7 @@ private
         text_area_left_offset = 1
         text_area_size = "#{width - icon_height - border * 2 - free_width - 4}x#{icon_height}"
       else self_ad
-        publisher_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{publisher.id}.png")
+        publisher_icon_blob = bucket.get("icons/#{publisher.id}.png")
         publisher_icon = Magick::Image.from_blob(publisher_icon_blob)[0].resize(icon_height, icon_height)
         publisher_icon = publisher_icon.vignette(vignette_amount, vignette_amount, 10, 2)
         
