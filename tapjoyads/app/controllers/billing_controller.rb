@@ -45,10 +45,9 @@ class BillingController < WebsiteController
 
   def create_transfer
     amount = sanitize_currency_param(params[ :transfer_amount ]).to_i
-    puts "<><> #{amount} #{current_partner.pending_earnings}"
     if amount <= 0
       flash[:error] = "Transfer amount must be more than $0."
-    elsif amount > current_partner.pending_earnings * 100
+    elsif amount > current_partner.pending_earnings
       flash[:error] = "Transfer amount must be less than your Pending Earnings."
     else
       Partner.transaction do
@@ -68,7 +67,7 @@ class BillingController < WebsiteController
         end
       end
     end
-    redirect_to :action => 'transfer_funds'
+    redirect_to transfer_funds_billing_path
   end
 
   def create_order

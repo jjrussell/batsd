@@ -12,32 +12,21 @@ class BillingControllerTest < ActionController::TestCase
     end
 
     should "log transfer and math should work out" do
-      @partner.transfer_bonus = 0.1
-      @partner.save
-
-      amount = rand(100) + 100
-      bonus = (amount * @partner.transfer_bonus)
-
-      get :create_transfer, { :transfer_amount => amount }
+      get :create_transfer, { :transfer_amount => '$1.00' }
       @partner.reload
 
       assert_equal 2, @partner.orders.length
       assert_equal 1, @partner.payouts.length
-      assert_equal 10000 - amount*100, @partner.pending_earnings
-      assert_equal 10000 + amount*100 + bonus*100, @partner.balance
+      assert_equal 9900, @partner.pending_earnings
+      assert_equal 10110, @partner.balance
 
       assert_equal 3, assigns['activity_logs'].length
     end
 
     should "not allow negative transfer" do
-      amount = rand(100) + 100
-      negative_amount = -amount
-
-      get :create_transfer, { :transfer_amount => negative_amount }
-
+      get :create_transfer, { :transfer_amount => '$-1.00' }
       @partner.reload
 
-      #assert flash['error'].present?
       assert_equal 0, @partner.orders.length
       assert_equal 0, @partner.payouts.length
       assert_equal 10000, @partner.pending_earnings
@@ -45,14 +34,10 @@ class BillingControllerTest < ActionController::TestCase
       assert assigns['activity_logs'].nil?
     end
 
-    should "not allow transfer greater than payout amount" do
-      amount = rand(100) + 1000000
-
-      get :create_transfer, { :transfer_amount => amount }
-
+    should "not allow transfer greater than pending_earnings amount" do
+      get :create_transfer, { :transfer_amount => '$100.01' }
       @partner.reload
 
-      #assert flash['error'].present?
       assert_equal 0, @partner.orders.length
       assert_equal 0, @partner.payouts.length
       assert_equal 10000, @partner.pending_earnings

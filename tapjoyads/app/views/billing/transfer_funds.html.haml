@@ -2,7 +2,7 @@
 
 %h1 Transfer Funds
 
-%p Please enter the amount that you would like to transfer from your Pending Earnings over to your Advertising Balance for use in pay-per-install campaigns.
+%p Please enter the amount that you would like to transfer from your Pending Earnings over to your Advertising Balance for use in advertising campaigns.
 
 %p If you have any questions, please contact your account manager or #{mail_to 'support@tapjoy.com'}.
 
@@ -23,9 +23,6 @@
         %tr
           %th Transfer bonus:
           %td #{ current_partner.transfer_bonus * 100 }%
-  .hidden
-    #help_pending_earnings_content{ :name => 'Pending Earnings' } Earnings available to be transfered to the advertising balance
-    #help_balance_content{ :name => 'Balance' } Amount available for use in pay-per-install campaigns
   %table
     %tbody
       %tr
@@ -34,11 +31,15 @@
       %tr
         %td{ :colspan => 2 }= submit_tag 'Create Transfer'
 
-  - content_for :page_javascript do
-    :plain
-      var maximumAmount = #{current_partner.pending_earnings/100.0};
-      $('#transfer_amount').change(function() {
-        if ( stringToNumber($('#transfer_amount').val()) > maximumAmount) {
-          $('#transfer_amount').val( numberToCurrency(maximumAmount) );
-        }
-      });
+.hidden
+  #help_pending_earnings_content{ :name => 'Pending Earnings' } Earnings available to be transferred to advertising balance.
+  #help_balance_content{ :name => 'Balance' } Amount available for use in advertising campaigns.
+
+- content_for :page_javascript do
+  :plain
+    var maximumAmount = #{current_partner.pending_earnings/100.0};
+    $('#transfer_amount').change(function() {
+      if ( stringToNumber($('#transfer_amount').val()) > maximumAmount) {
+        $('#transfer_amount').val( numberToCurrency(maximumAmount) );
+      }
+    });
