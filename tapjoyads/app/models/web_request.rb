@@ -39,6 +39,7 @@ class WebRequest < SimpledbResource
     'daily_user' => 'daily_active_users',
     'monthly_user' => 'monthly_active_users',
     'purchased_vg' => 'vg_purchases',
+    'get_vg_items' => 'vg_store_views',
     'offers' => 'offerwall_views'
   }
   

@@ -42,6 +42,7 @@ private
     offer.partner          = partner
     offer.name             = name
     offer.instructions     = "Follow the instructions to receive credit."
+    offer.description      = offer.instructions
     offer.url              = "#{API_URL}/action_offers/#{self.id}"
     offer.device_types     = app.primary_offer.device_types
     offer.bid              = 0

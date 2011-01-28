@@ -559,6 +559,10 @@ class Offer < ActiveRecord::Base
     recommended_bid
   end
   
+  def icon_id
+    item_type == 'ActionOffer' ? third_party_data : item_id
+  end
+  
 private
   
   def is_disabled?(publisher_app, currency)
@@ -730,10 +734,6 @@ private
         errors.add :bid, "must be 0 for RatingOffers"
       end
     end
-  end
-  
-  def icon_id
-    item_type == 'ActionOffer' ? third_party_data : item_id
   end
   
 end
