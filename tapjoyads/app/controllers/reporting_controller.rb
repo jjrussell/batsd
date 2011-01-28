@@ -161,9 +161,9 @@ class ReportingController < WebsiteController
             :intervals => intervals,
             :xLabels => @appstats.x_labels,
             :main => {
-              :names => [ 'Virtual good purchases' ],
-              :data => [ @appstats.stats['vg_purchases'] ],
-              :totals => [ @appstats.stats['vg_purchases'].sum ]
+              :names => [ 'Store views', 'Purchases' ],
+              :data => [ @appstats.stats['vg_store_views'], @appstats.stats['vg_purchases'] ],
+              :totals => [ @appstats.stats['vg_store_views'].sum, @appstats.stats['vg_purchases'].sum ]
             }
           },
 
