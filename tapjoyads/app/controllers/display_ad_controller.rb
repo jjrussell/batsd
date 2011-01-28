@@ -64,6 +64,10 @@ private
     geoip_data = get_geoip_data
     params[:displayer_app_id] = params[:app_id]
     
+    if params[:publisher_user_id].blank?
+      params[:publisher_user_id] = params[:udid]
+    end
+    
     # TO REMOVE: once AdMarvel starts sending device_ip
     # Don't do any geoip targeting on the webview.
     if params[:action] == 'webview'
@@ -81,7 +85,9 @@ private
     publisher_app_ids = []
     if self_ad
       publisher_app_ids << params[:app_id]
+      user_id = params[:publisher_user_id]
     else
+      user_id = get_user_id_from_udid(params[:udid], params[:app_id])
       @@allowed_publisher_app_ids.each do |app_id|
         last_run_time = device.last_run_time(app_id)
         if last_run_time.present? && last_run_time > now - 1.week
@@ -121,7 +127,7 @@ private
       offer = offer_list[rand(offer_list.size)]
     
       if offer.present?
-        @click_url = offer.get_click_url(publisher_app, get_user_id_from_udid(params[:udid], params[:app_id]), params[:udid], currency.id, 'display_ad', nil, now, params[:app_id])
+        @click_url = offer.get_click_url(publisher_app, user_id, params[:udid], currency.id, 'display_ad', nil, now, params[:app_id])
         @image = get_ad_image(publisher_app, offer, self_ad, params[:size], currency)
       
         params[:offer_id] = offer.id
