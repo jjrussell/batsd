@@ -140,7 +140,20 @@ class Partner < ActiveRecord::Base
       save!
     end
   end
-  
+
+  def build_transfer(amount)
+    payout = self.payouts.build(:amount => amount, :month => Time.zone.now.month, :year => Time.zone.now.year, :payment_method => 3)
+    order = self.orders.build(:amount => amount, :status => 1, :payment_method => 3)
+    marketing_amount = (amount * self.transfer_bonus).to_i
+    marketing_order =
+      if marketing_amount > 0
+        self.orders.build(:amount => marketing_amount, :status => 1, :payment_method => 2)
+      else
+        nil
+      end
+    [ payout, order, marketing_order ]
+  end
+
   # This method will most likely not produce accurate sums unless
   # called from within some sort of transaction. See reset_balances
   # and Partner.verify_balances for examples.

@@ -113,28 +113,24 @@ class PartnersController < WebsiteController
 
   def create_transfer
     sanitized_params = sanitize_currency_params(params, [ :transfer_amount ])
+    amount = sanitized_params[:transfer_amount].to_i
     Partner.transaction do
-      amount = sanitized_params[:transfer_amount].to_i
-      payout = @partner.payouts.build(:amount => amount, :month => Time.zone.now.month, :year => Time.zone.now.year, :payment_method => 3)
+      payout, order, marketing_order = @partner.build_transfer(amount)
+
       log_activity(payout)
       payout.save!
 
-      order = @partner.orders.build(:amount => amount, :status => 1, :payment_method => 3)
       log_activity(order)
       order.save!
 
-      dollars = "%.2f" % (amount / 100.0)
       email = order.partner.users.first.email rescue "(no email)"
-      flash[:notice] = "The transfer of <b>$#{dollars}</b> to <b>#{email}</b> was successfully created."
+      flash[:notice] = "The transfer of <b>$#{"%.2f" % (amount / 100.0)}</b> to <b>#{email}</b> was successfully created."
 
-      marketing_amount = (amount * @partner.transfer_bonus).to_i
-      if marketing_amount > 0
-        marketing_order = @partner.orders.build(:amount => marketing_amount, :status => 1, :payment_method => 2)
+      if marketing_order.present?
         log_activity(marketing_order)
         marketing_order.save!
+        flash[:notice] += "<br/>The marketing credit of <b>$#{"%.2f" % (marketing_order.amount / 100.0)}</b> to <b>#{email}</b> was successfully created."
       end
-      dollars = "%.2f" % (marketing_amount / 100.0)
-      flash[:notice] += "<br/>The marketing credit of <b>$#{dollars}</b> to <b>#{email}</b> was successfully created."
     end
     redirect_to partner_path(@partner)
   end
