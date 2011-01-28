@@ -148,7 +148,8 @@ private
       text += " to buy Towers" if publisher.id == "2349536b-c810-47d7-836c-2cd47cd3a796" # TapDefense
       text += "!\n Install #{offer.name}"
       
-      offer_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{offer.id}.png")
+      bucket = S3.bucket(BucketNames::TAPJOY)
+      offer_icon_blob = bucket.get("icons/#{offer.id}.png")
       offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
       offer_icon = offer_icon.vignette(vignette_amount, vignette_amount, 10, 2)
 
