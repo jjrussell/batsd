@@ -20,6 +20,8 @@ private
     start_time = last_run_time.beginning_of_hour
     end_time = (@now - 30.minutes).beginning_of_hour
     
+    @skip_hour_counts = start_time > (@now - 4.hours)
+    
     Rails.logger.info "Aggregating stats for #{@offer.name} (#{@offer.id}) from #{start_time} to #{end_time}"
     
     while start_time < end_time do
@@ -50,10 +52,11 @@ private
     
     @paths_to_aggregate.each do |path|
       stat_name = WebRequest::PATH_TO_STAT_MAP[path]
+      count = Mc.get_count(Stats.get_memcache_count_key(stat_name, @offer.id, start_time))
+      next if count == 0 && @skip_hour_counts
+      
       app_condition = WebRequest::USE_OFFER_ID.include?(path) ? "offer_id = '#{@offer.id}'" : "app_id = '#{@offer.id}'"
-      
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
-      
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
     paid_installs, installs_spend, jailbroken_installs = nil
@@ -68,10 +71,11 @@ private
     
     @publisher_paths_to_aggregate.each do |path|
       stat_name = WebRequest::PUBLISHER_PATH_TO_STAT_MAP[path]
-      app_condition = "publisher_app_id = '#{@offer.id}'"
+      count = Mc.get_count(Stats.get_memcache_count_key(stat_name, @offer.id, start_time))
+      next if count == 0 && @skip_hour_counts
       
+      app_condition = "publisher_app_id = '#{@offer.id}'"
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
-
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
     published_installs, installs_revenue, offers_completed, offers_revenue = nil
@@ -88,10 +92,11 @@ private
     
     @displayer_paths_to_aggregate.each do |path|
       stat_name = WebRequest::DISPLAYER_PATH_TO_STAT_MAP[path]
+      count = Mc.get_count(Stats.get_memcache_count_key(stat_name, @offer.id, start_time))
+      next if count == 0 && @skip_hour_counts
+      
       app_condition = "displayer_app_id = '#{@offer.id}'"
-      
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
-      
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
     display_conversions, display_revenue = nil
