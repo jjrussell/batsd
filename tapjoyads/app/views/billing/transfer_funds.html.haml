@@ -1,6 +1,6 @@
 - @page_title = 'Transfer Funds'
 
-%h1 Transfer Funds
+%h2 Transfer Funds
 
 %p Please enter the amount that you would like to transfer from your Pending Earnings over to your Advertising Balance for use in advertising campaigns.
 
@@ -19,10 +19,11 @@
           Balance:
           #help_balance.help ?
         %td= number_to_currency(current_partner.balance / 100.0)
-      - if current_partner.transfer_bonus > 0
-        %tr
-          %th Transfer bonus:
-          %td #{ current_partner.transfer_bonus * 100 }%
+      %tr
+        %th
+          Transfer bonus:
+          #help_bonus.help ?
+        %td #{ current_partner.transfer_bonus * 100 }%
   %table
     %tbody
       %tr
@@ -34,6 +35,11 @@
 .hidden
   #help_pending_earnings_content{ :name => 'Pending Earnings' } Earnings available to be transferred to advertising balance.
   #help_balance_content{ :name => 'Balance' } Amount available for use in advertising campaigns.
+  #help_bonus_content{ :name => 'Transfer Bonus' }
+    - if current_partner.transfer_bonus > 0
+      Percentage of bonus added to balance transfers.
+    - else
+      Interested in getting a higher transfer bonus? Please contact your account manager or #{mail_to 'support@tapjoy.com'}.
 
 - content_for :page_javascript do
   :plain
