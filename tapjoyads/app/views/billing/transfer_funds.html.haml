@@ -21,7 +21,7 @@
         %td= number_to_currency(current_partner.balance / 100.0)
       %tr
         %th
-          Transfer bonus:
+          Transfer Bonus:
           #help_bonus.help ?
         %td #{ current_partner.transfer_bonus * 100 }%
   %table
@@ -37,7 +37,7 @@
   #help_balance_content{ :name => 'Balance' } Amount available for use in advertising campaigns.
   #help_bonus_content{ :name => 'Transfer Bonus' }
     - if current_partner.transfer_bonus > 0
-      Percentage of bonus added to balance transfers.
+      Percentage of transfer added to balance as a bonus.
     - else
       Interested in getting a higher transfer bonus? Please contact your account manager or #{mail_to 'support@tapjoy.com'}.
 
