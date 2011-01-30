@@ -6,6 +6,7 @@ class StoreRank
     hydra.disable_memoization
     date_string = time.to_date.to_s(:db)
     error_count = 0
+    success_count = 0
     known_store_ids = {}
     stat_rows = {}
     
@@ -20,12 +21,14 @@ class StoreRank
     end
     log_progress "Finished loading known_store_ids."
     
+    itunes_ip_address = Socket::getaddrinfo('ax.itunes.apple.com', 'http')[0][3]
+    
     itunes_category_ids.each do |category_key, category_id|
       itunes_pop_ids.each do |pop_key, pop_id|
         itunes_country_ids.each do |country_key, country_id|
           stat_type = "#{category_key}.#{pop_key}.#{country_key}"
-          url = "http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=#{category_id}&popId=#{pop_id}"
-          headers = { 'X-Apple-Store-Front' => "#{country_id}-1,12" }
+          url = "http://#{itunes_ip_address}/WebObjects/MZStore.woa/wa/viewTop?id=#{category_id}&popId=#{pop_id}"
+          headers = { 'X-Apple-Store-Front' => "#{country_id}-1,12", 'Host' => 'ax.itunes.apple.com' }
           user_agent = 'iTunes/10.1 (Macintosh; Intel Mac OS X 10.6.5) AppleWebKit/533.18.1'
           
           request = Typhoeus::Request.new(url, :headers => headers, :user_agent => user_agent)
@@ -35,21 +38,22 @@ class StoreRank
               if error_count > 50
                 raise "Too many errors attempting to download itunes ranks, giving up. App store down?"
               end
-              log_progress "Error downloading ranks from itunes for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Retrying."
+              log_progress "Error downloading ranks from itunes for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Error code: #{response.code}. Retrying."
               hydra.queue(request)
-            end
-            
-            ranks_hash = get_itunes_ranks_hash(response.body)
-            ranks_hash.each do |store_id, rank|
-              next if known_store_ids[store_id].nil?
-              
-              known_store_ids[store_id].each do |offer_id|
-                stat_rows[offer_id] ||= Stats.new(:key => "app.#{date_string}.#{offer_id}", :load_from_memcache => false)
-                stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour, rank)
+            else
+              success_count += 1
+              ranks_hash = get_itunes_ranks_hash(response.body)
+              ranks_hash.each do |store_id, rank|
+                next if known_store_ids[store_id].nil?
+
+                known_store_ids[store_id].each do |offer_id|
+                  stat_rows[offer_id] ||= Stats.new(:key => "app.#{date_string}.#{offer_id}", :load_from_memcache => false)
+                  stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour, rank)
+                end
               end
+
+              ranks_file.puts( {"itunes.#{stat_type}" => ranks_hash}.to_json )
             end
-            
-            ranks_file.puts( {"itunes.#{stat_type}" => ranks_hash}.to_json )
           end
           hydra.queue(request)
         end
