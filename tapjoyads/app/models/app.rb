@@ -230,7 +230,7 @@ class App < ActiveRecord::Base
       file_output += "public class TapjoyPPA\n"
       file_output += "{\n"
       action_offers.each do |action_offer|
-        file_output += "  public static final #{action_offer.variable_name} = \"#{action_offer.id}\"; // #{action_offer.name}\n"
+        file_output += "  public static final String #{action_offer.variable_name} = \"#{action_offer.id}\"; // #{action_offer.name}\n"
       end
       file_output += "}"
     else
