@@ -67,7 +67,7 @@ class Job::SqsReaderController < Job::JobController
           add_custom_new_relic_params(message)
           raise e
         else
-          NewRelic::Agent.agent.error_collector.notice_error(e, request, params[:action], params)
+          NewRelic::Agent.agent.error_collector.notice_error(e, request, "#{params[:controller]}/#{params[:action]}", params)
           next
         end
       end

@@ -125,7 +125,7 @@ class App < ActiveRecord::Base
             acf = RightAws::AcfInterface.new
             acf.invalidate('E1MG6JDV6GH0F2', ["/icons/#{id}.png", "/icons/large/#{id}.png", "/icons/medium/#{id}.jpg"], "#{id}.#{Time.now.to_i}")
           rescue Exception => e
-            Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message, request, params)
+            Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
           end
         end
       end
