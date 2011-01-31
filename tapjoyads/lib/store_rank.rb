@@ -49,6 +49,11 @@ class StoreRank
                 known_store_ids[store_id].each do |offer_id|
                   stat_rows[offer_id] ||= Stats.new(:key => "app.#{date_string}.#{offer_id}", :load_from_memcache => false)
                   stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour, rank)
+                  
+                  # TO REMOVE - once this job consistently runs every hour.
+                  if time.hour > 0 && stat_rows[offer_id].get_hourly_count(['ranks', stat_type])[time.hour - 1] == 0
+                    stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour - 1, rank)
+                  end
                 end
               end
 
