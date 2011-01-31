@@ -9,6 +9,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
 private
   
   def on_message(message)
+    params[:callback_url] = nil
     reward = Reward.deserialize(message.to_s)
     return if reward.sent_currency?
     
@@ -72,7 +73,6 @@ private
           response = Downloader.get_strict(callback_url, { :timeout => 30 })
           reward.send_currency_status = response.status
         end
-        params[:callback_url] = nil
       rescue Exception => e
         reward.delete('sent_currency')
         reward.serial_save
