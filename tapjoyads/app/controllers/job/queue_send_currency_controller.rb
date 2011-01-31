@@ -2,6 +2,8 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
   
   def initialize
     super QueueNames::SEND_CURRENCY
+    @raise_on_error = false
+    @num_reads = 100
   end
   
 private

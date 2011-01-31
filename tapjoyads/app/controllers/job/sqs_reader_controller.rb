@@ -3,6 +3,7 @@ class Job::SqsReaderController < Job::JobController
   def initialize(queue_name)
     @queue_name = queue_name
     @num_reads = 40
+    @raise_on_error = true
   end
 
   def index
@@ -62,8 +63,13 @@ class Job::SqsReaderController < Job::JobController
         on_message(message)
       rescue Exception => e
         Rails.logger.warn "Error processing message. Error: #{e}"
-        add_custom_new_relic_params(message)
-        raise e
+        if @raise_on_error
+          add_custom_new_relic_params(message)
+          raise e
+        else
+          NewRelic::Agent.agent.error_collector.notice_error(e, request, params[:action], params)
+          next
+        end
       end
       
       # delete the message
