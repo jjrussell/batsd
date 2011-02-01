@@ -39,7 +39,7 @@ class Reward < SimpledbShardedResource
       Mc.increment_count(
         Stats.get_memcache_count_key('installs_spend', offer_id, created), 
         false, 1.day, advertiser_amount)
-    elsif type == 'offer' || type == 'generic'
+    elsif type == 'offer' || type == 'generic' || type == 'action'
       Mc.increment_count(
         Stats.get_memcache_count_key('offers_revenue', publisher_app_id, created), 
         false, 1.day, publisher_amount)
