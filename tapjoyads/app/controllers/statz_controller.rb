@@ -123,7 +123,7 @@ class StatzController < WebsiteController
     @udids_to_check.sort! { |a, b| a[:device_label] <=> b[:device_label] }
     
     unless params[:other_udid].blank?
-      @udids_to_check.unshift({ :udid => params[:other_udid], :device_label => 'Other UDID' })
+      @udids_to_check.unshift({ :udid => params[:other_udid].downcase, :device_label => 'Other UDID' })
     end
     
     @udids_to_check.each do |hash|
