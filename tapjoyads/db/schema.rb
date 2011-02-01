@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110118230140) do
+ActiveRecord::Schema.define(:version => 20110131193936) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",           :limit => 36,                    :null => false
@@ -69,11 +69,10 @@ ActiveRecord::Schema.define(:version => 20110118230140) do
     t.datetime "updated_at"
   end
 
-  add_index "conversions", ["advertiser_offer_id"], :name => "index_conversions_on_advertiser_app_id"
+  add_index "conversions", ["advertiser_offer_id", "created_at", "reward_type"], :name => "index_on_advertiser_offer_id_created_at_and_reward_type"
   add_index "conversions", ["created_at"], :name => "index_conversions_on_created_at"
-  add_index "conversions", ["id"], :name => "index_conversions_on_id", :unique => true
-  add_index "conversions", ["publisher_app_id"], :name => "index_conversions_on_publisher_app_id"
-  add_index "conversions", ["reward_id"], :name => "index_conversions_on_reward_id"
+  add_index "conversions", ["id", "created_at"], :name => "index_conversions_on_id_and_created_at", :unique => true
+  add_index "conversions", ["publisher_app_id", "created_at", "reward_type"], :name => "index_on_publisher_app_id_created_at_and_reward_type"
 
   create_table "currencies", :id => false, :force => true do |t|
     t.string   "id",                   :limit => 36,                                                  :null => false
