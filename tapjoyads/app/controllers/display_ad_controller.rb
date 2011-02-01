@@ -64,6 +64,10 @@ private
     geoip_data = get_geoip_data
     params[:displayer_app_id] = params[:app_id]
     
+    if params[:publisher_user_id].blank?
+      params[:publisher_user_id] = params[:udid]
+    end
+    
     # TO REMOVE: once AdMarvel starts sending device_ip
     # Don't do any geoip targeting on the webview.
     if params[:action] == 'webview'
@@ -121,7 +125,8 @@ private
       offer = offer_list[rand(offer_list.size)]
     
       if offer.present?
-        @click_url = offer.get_click_url(publisher_app, get_user_id_from_udid(params[:udid], params[:app_id]), params[:udid], currency.id, 'display_ad', nil, now, params[:app_id])
+        user_id = self_ad ? params[:publisher_user_id] : get_user_id_from_udid(params[:udid], publisher_app_id)
+        @click_url = offer.get_click_url(publisher_app, user_id, params[:udid], currency.id, 'display_ad', nil, now, params[:app_id])
         @image = get_ad_image(publisher_app, offer, self_ad, params[:size], currency)
       
         params[:offer_id] = offer.id
@@ -148,7 +153,8 @@ private
       text += " to buy Towers" if publisher.id == "2349536b-c810-47d7-836c-2cd47cd3a796" # TapDefense
       text += "!\n Install #{offer.name}"
       
-      offer_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{offer.id}.png")
+      bucket = S3.bucket(BucketNames::TAPJOY)
+      offer_icon_blob = bucket.get("icons/#{offer.id}.png")
       offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
       offer_icon = offer_icon.vignette(vignette_amount, vignette_amount, 10, 2)
 
@@ -156,7 +162,7 @@ private
         text_area_left_offset = 1
         text_area_size = "#{width - icon_height - border * 2 - free_width - 4}x#{icon_height}"
       else self_ad
-        publisher_icon_blob = Downloader.get("http://s3.amazonaws.com/tapjoy/icons/#{publisher.id}.png")
+        publisher_icon_blob = bucket.get("icons/#{publisher.id}.png")
         publisher_icon = Magick::Image.from_blob(publisher_icon_blob)[0].resize(icon_height, icon_height)
         publisher_icon = publisher_icon.vignette(vignette_amount, vignette_amount, 10, 2)
         

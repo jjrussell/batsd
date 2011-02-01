@@ -1,5 +1,6 @@
 class Job::MasterVerificationsController < Job::JobController
   def index
+    check_conversion_partitions
     check_grab_advertiser_udids_logs
     check_partner_balances
     
@@ -7,6 +8,13 @@ class Job::MasterVerificationsController < Job::JobController
   end
   
 private
+  
+  def check_conversion_partitions
+    target_cutoff_time = Time.zone.now.beginning_of_month.next_month.next_month
+    unless Conversion.get_partitions.any? { |partition| partition['CUTOFF_TIME'] == target_cutoff_time }
+      Conversion.add_partition(target_cutoff_time)
+    end
+  end
   
   def check_grab_advertiser_udids_logs
     GrabAdvertiserUdidsLog.select(:where => "job_started_at > '#{(Time.zone.now - 14.days).to_i}' and job_started_at < '#{(Time.zone.now - 16.hours).to_i}' and job_finished_at is null") do |log|

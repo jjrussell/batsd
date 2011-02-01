@@ -1,14 +1,19 @@
-- @page_title = 'Actions'
+- @page_title = 'Pay-Per-Action'
 
 = render('shared/dropdown_select', :objects => current_partner_apps, :selected => @app)
 = render('apps/actions', :app => @app)
 #apps_main
   %h3 Actions
   
-  %div
-    Put some instructions up in here.
-  %br
-  
+  %p
+    Integrate your Actions into your App using the ActionIDs listed below. You can edit any Action by selecting the Action, or create new Actions by clicking on the Create New Action button. 
+  %p
+    Once you've integrated the code, contact
+    = mail_to "support@tapjoy.com"
+    to test the integration and enable your Action for Pay-Per-Action. Each Action needs to be individually tested and enabled by Tapjoy.
+  %p
+    To help you integrate these Actions, you can include the following file in your project and use the constants defined within instead of the ActionIds.
+    
   .code
     .code-header
       = @app.default_actions_file_name

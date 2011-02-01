@@ -4,6 +4,10 @@
 = render('apps/actions', :app => @app)
 #apps_main
   %h3 New Action
+  
+  %p
+    Use Pay-Per-Action to encourage your users to engage with your application. Pay-Per-Action allows you to set up Actions such as "Register for XYZ", "Complete the Tutorial", or "Beat Level One" that allow you to pay for a user to engage with your app. These Actions must be well-defined tasks a user can complete relatively easily within a few minutes. Name your Action below. 
+  
   - form_for [ @app, @action_offer ], :html => { :class => 'tjform' } do |f|
     %table
       %tbody

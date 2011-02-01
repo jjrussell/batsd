@@ -125,7 +125,7 @@ class App < ActiveRecord::Base
             acf = RightAws::AcfInterface.new
             acf.invalidate('E1MG6JDV6GH0F2', ["/icons/#{id}.png", "/icons/large/#{id}.png", "/icons/medium/#{id}.jpg"], "#{id}.#{Time.now.to_i}")
           rescue Exception => e
-            Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message, request, params)
+            Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
           end
         end
       end
@@ -230,7 +230,7 @@ class App < ActiveRecord::Base
       file_output += "public class TapjoyPPA\n"
       file_output += "{\n"
       action_offers.each do |action_offer|
-        file_output += "  public static final #{action_offer.variable_name} = \"#{action_offer.id}\"; // #{action_offer.name}\n"
+        file_output += "  public static final String #{action_offer.variable_name} = \"#{action_offer.id}\"; // #{action_offer.name}\n"
       end
       file_output += "}"
     else

@@ -37,9 +37,9 @@ class Notifier
     begin
       raise exception.new(message)
     rescue Exception => e
-      action = params ? params[:action] : nil
+      action_path = params.present? ? "#{params[:controller]}/#{params[:action]}" : nil
       
-      NewRelic::Agent.agent.error_collector.notice_error(e, request, action, params)
+      NewRelic::Agent.agent.error_collector.notice_error(e, request, action_path, params)
       
       if e.kind_of?(EmailWorthyError)
         e.deliver_email(params)

@@ -149,6 +149,11 @@ class ToolsController < WebsiteController
     if params[:udid]
       udid = params[:udid].downcase
       @device = Device.new(:key => udid)
+      if @device.is_new
+        flash[:error] = "Device with ID #{udid} not found"
+        @device = nil
+        return
+      end
       conditions = "itemName() like '#{udid}.%'"
       @clicks = []
       @rewarded_clicks_count = 0

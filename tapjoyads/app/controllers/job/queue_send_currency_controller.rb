@@ -2,11 +2,13 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
   
   def initialize
     super QueueNames::SEND_CURRENCY
+    @raise_on_error = false
   end
   
 private
   
   def on_message(message)
+    params.delete(:callback_url)
     reward = Reward.deserialize(message.to_s)
     return if reward.sent_currency?
     
@@ -23,7 +25,7 @@ private
       elsif first_char == 'M' || first_char == 'P'
         callback_url = 'http://offer-dynamic-lb.playdom.com/tapjoy/mob/myspace/fp/main' # myspace/iphone url
       else
-        Notifier.alert_new_relic(InvalidPlaydomUserId, "Playdom User id: '#{first_char}#{publisher_user_id}' is invalid")
+        Notifier.alert_new_relic(InvalidPlaydomUserId, "Playdom User id: '#{first_char}#{publisher_user_id}' is invalid, for reward: #{reward.key}", request, params)
         return
       end
     end
@@ -70,7 +72,7 @@ private
           response = Downloader.get_strict(callback_url, { :timeout => 30 })
           reward.send_currency_status = response.status
         end
-        params[:callback_url] = nil
+        params.delete(:callback_url)
       rescue Exception => e
         reward.delete('sent_currency')
         reward.serial_save

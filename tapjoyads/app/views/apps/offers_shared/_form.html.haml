@@ -68,8 +68,8 @@
           = radio_button_tag('daily_budget', 'on', @offer.daily_budget > 0, :class => 'togglable')
           - budget_fields_class = @offer.daily_budget > 0 ? '' : 'hidden'
           #daily_budget_fields{ :class => budget_fields_class }
-            = f.label(:daily_budget, 'Installs:')
-            = f.text_field(:daily_budget, :class => 'togglable')
+            = f.label(:daily_budget, 'Installs:', :class => 'installs')
+            = f.text_field(:daily_budget, :class => 'togglable installs')
             = error_message_on @offer, :daily_budget
             #estimated_budget
               Estimated daily budget:
@@ -254,6 +254,13 @@
     }
     label.narrower, input.narrower {
       width: 140px;
+    }
+    label.installs {
+      width: 60px;
+      display: inline-block;
+    }
+    input[type=text].installs {
+      width: 336px;
     }
 
     #offer_status {

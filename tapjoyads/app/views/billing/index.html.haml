@@ -1,7 +1,12 @@
 - @page_title = 'Billing'
 
 .box-full
-  .right= link_to 'Add funds', add_funds_billing_path
+  .right
+    = link_to 'Add funds', add_funds_billing_path
+    - if @pending_earnings > 0
+      %br/
+      = link_to 'Transfer funds', transfer_funds_billing_path
+      %br/
   %h2 Billing Summary
   .clear
   .box-summary
@@ -103,7 +108,7 @@
 
 - content_for :page_styles do
   :plain
-    #balance-info {
+    #balance-info, .box-full .right {
       text-align: right;
     }
     #billing-summary {

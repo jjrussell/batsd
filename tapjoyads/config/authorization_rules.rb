@@ -8,7 +8,7 @@ authorization do
     has_permission_on :apps_virtual_goods, :to => [ :show, :update, :new, :create, :index, :reorder ]
     has_permission_on :reporting, :to => [ :index, :show, :export, :download_udids ]
     has_permission_on :apps_action_offers, :to => [ :index, :new, :create, :edit, :update, :toggle, :TJCPPA, :TapjoyPPA ]
-    has_permission_on :billing, :to => [ :index, :add_funds, :create_order, :export_statements, :export_orders, :export_payouts ]
+    has_permission_on :billing, :to => [ :index, :add_funds, :transfer_funds, :create_transfer, :create_order, :export_statements, :export_orders, :export_payouts ]
     has_permission_on :users, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :support, :to => [ :index ]
     has_permission_on :premier, :to => [ :edit, :update ]

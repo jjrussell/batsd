@@ -1,5 +1,5 @@
 %h1 Device info
-- if params[:udid].blank?
+- if @device.nil?
   - form_tag({}, {:method => :get, :class => 'tjform'}) do
     = label_tag 'udid', 'UDID:'
     = text_field_tag 'udid', '', :style => "width:300px;"

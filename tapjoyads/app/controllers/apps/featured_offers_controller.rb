@@ -19,7 +19,10 @@ class Apps::FeaturedOffersController < WebsiteController
   
   def update
     params[:offer].delete(:payment)
+    params[:offer][:daily_budget].gsub!(',', '') if params[:offer][:daily_budget].present?
+    params[:offer][:daily_budget] = 0 if params[:daily_budget] == 'off'
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
+    
     safe_attributes = [:daily_budget, :user_enabled, :bid]
     if permitted_to? :edit, :statz
       offer_params[:device_types] = offer_params[:device_types].blank? ? '[]' : offer_params[:device_types].to_json

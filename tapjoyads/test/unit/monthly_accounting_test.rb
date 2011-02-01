@@ -9,7 +9,7 @@ class MonthlyAccountingTest < ActiveSupport::TestCase
 
   context "MonthlyAccounting" do
     setup do
-      @today = Date.today
+      @today = Time.zone.today
       @now = Time.zone.now
       @monthly_accounting = Factory(:monthly_accounting)
     end

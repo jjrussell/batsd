@@ -43,6 +43,7 @@ class SimpledbResource
     should_load                = options.delete(:load)                 { true }
     load_from_memcache         = options.delete(:load_from_memcache)   { true }
     consistent                 = options.delete(:consistent)           { false }
+    run_after_initialize       = options.delete(:after_initialize)     { true }
     @key                       = get_key_from(options.delete(:key))    { nil }
     @this_domain_name          = options.delete(:domain_name)          { dynamic_domain_name() }
     @attributes                = options.delete(:attributes)           { {} }
@@ -58,7 +59,7 @@ class SimpledbResource
     load(load_from_memcache, consistent) if should_load
     @is_new = @attributes.empty?
     
-    after_initialize
+    after_initialize if run_after_initialize
   end
   
   def after_initialize

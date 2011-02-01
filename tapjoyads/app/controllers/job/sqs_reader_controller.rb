@@ -3,6 +3,7 @@ class Job::SqsReaderController < Job::JobController
   def initialize(queue_name)
     @queue_name = queue_name
     @num_reads = 40
+    @raise_on_error = true
   end
 
   def index
@@ -46,8 +47,7 @@ class Job::SqsReaderController < Job::JobController
       # the queue must be empty so stop looping
       break if message.nil?
       
-      Rails.logger.info "#{@queue_name} message recieved: #{message.to_s}"
-      params[:message] = message.to_s
+      Rails.logger.info "#{@queue_name} message received: #{message.to_s}"
       
       # try to lock the message to prevent multiple machines from operating on the same message
       begin
@@ -62,8 +62,14 @@ class Job::SqsReaderController < Job::JobController
         on_message(message)
       rescue Exception => e
         Rails.logger.warn "Error processing message. Error: #{e}"
-        add_custom_new_relic_params(message)
-        raise e
+        message_params = split_message_into_params(message.to_s)
+        if @raise_on_error
+          params.merge!(message_params)
+          raise e
+        else
+          NewRelic::Agent.agent.error_collector.notice_error(e, request, "#{params[:controller]}/#{params[:action]}", params.merge(message_params))
+          next
+        end
       end
       
       # delete the message
@@ -76,7 +82,8 @@ class Job::SqsReaderController < Job::JobController
           sleep(0.1)
           retry
         else
-          add_custom_new_relic_params(message)
+          message_params = split_message_into_params(message.to_s)
+          params.merge!(message_params)
           raise e
         end
       end
@@ -105,14 +112,12 @@ private
   end
   
   # NewRelic truncates parameter length to ~250 chars so split the message up
-  def add_custom_new_relic_params(message)
-    if message.to_s.length > 250
-      custom_params = {}
-      message.to_s.scan(/.{1,250}/).each_with_index do |val, i|
-        custom_params["message#{i}"] = val
-      end
-      NewRelic::Agent.add_custom_parameters(custom_params)
+  def split_message_into_params(message)
+    message_params = {}
+    message.scan(/.{1,250}/).each_with_index do |val, i|
+      message_params["message_#{i}"] = val
     end
+    message_params
   end
   
 end
