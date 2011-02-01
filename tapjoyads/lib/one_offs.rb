@@ -333,23 +333,4 @@ class OneOffs
     true
   end
 
-  def self.convert_stats_to_new_format
-    count = 0
-    Stats.select do |stat|
-      if stat.key =~ /^campaign/
-        stat.delete_all
-      else
-        begin
-          stat.save!
-        rescue
-          puts "Save failed, retrying. #{stat.key}"
-          sleep(1)
-          retry
-        end
-      end
-      puts "#{Time.zone.now.to_s(:db)}: #{count}" if count % 1000 == 0
-      count += 1
-    end
-  end
-
 end
