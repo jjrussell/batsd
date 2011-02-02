@@ -47,7 +47,7 @@ private
       this_apps_stats['platform'] = offer.get_platform
       this_apps_stats['featured'] = offer.featured?
       
-      if this_apps_stats['conversions'] > 0 || this_apps_stats['published_installs'] > 0
+      if this_apps_stats['conversions'] > 0 || this_apps_stats['published_offers'] > 0
         cached_stats[offer.id] = this_apps_stats
       end
       
