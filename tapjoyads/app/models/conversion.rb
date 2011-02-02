@@ -85,7 +85,7 @@ class Conversion < ActiveRecord::Base
   end
   
   def reward_type_string_for_displayer=(string)
-    reward_type_string = "display_#{string}"
+    self.reward_type_string = "display_#{string}"
   end
   
 private
