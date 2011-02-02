@@ -93,10 +93,13 @@ class App < ActiveRecord::Base
     if (data.nil?) # might not be available in the US market
       data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
     end
+    raise "Fetching app store data failed for app: #{app.name} (#{app.id})." if data.nil?
     self.name = data[:title]
     self.price = (data[:price].to_f * 100).round
     self.description = data[:description]
     self.age_rating = data[:age_rating]
+    self.file_size_bytes = data[:file_size_bytes]
+    self.supported_devices = data[:supported_devices].to_json
     download_icon(data[:icon_url], data[:large_icon_url])
   end
 

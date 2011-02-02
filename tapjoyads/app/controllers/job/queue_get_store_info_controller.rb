@@ -11,14 +11,12 @@ private
     log_activity(app)
 
     return if app.store_id.nil?
-    app_data = AppStore.fetch_app_by_id(app.store_id)
 
-    return if app_data.nil?
-
-    app.age_rating = app_data[:age_rating]
-    app.file_size_bytes = app_data[:file_size_bytes]
-    app.supported_devices = app_data[:supported_devices].to_json
-    app.price = app_data[:price]
+    begin
+      app.fill_app_store_data
+    rescue Exception => e
+      Rails.logger.info "Exception when fetching app store info: #{e}"
+    end
     app.save!
     
     save_activity_logs
