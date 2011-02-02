@@ -45,6 +45,7 @@ private
   def read_click
     @click = Click.find(params[:click_key], :consistent => true)
     @currency = Currency.find_in_cache(@click.currency_id)
+    return unless verify_records([ @currency ])
   end
   
 end

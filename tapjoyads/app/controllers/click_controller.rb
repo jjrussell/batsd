@@ -3,31 +3,23 @@ class ClickController < ApplicationController
   
   before_filter :determine_link_affiliates, :only => :app
   before_filter :setup
+  before_filter :validate_click, :except => :test_offer
   
   def app
-    @offer = Offer.find_in_cache(params[:offer_id])
-    return if offer_disabled?
-    
-    @device = Device.new(:key => params[:udid])
-    return if offer_completed?
-    
-    create_web_request
     create_click('install')
     handle_pay_per_click
     
     redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], nil, @itunes_link_affiliate))
   end
   
+  def action
+    create_click('action')
+    handle_pay_per_click
+    
+    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], nil, nil, params[:currency_id]))
+  end
+  
   def generic
-    @offer = Offer.find_in_cache(params[:offer_id])
-    return if offer_disabled?
-    
-    @device = Device.new(:key => params[:udid])
-    unless @offer.multi_complete?
-      return if offer_completed?
-    end
-    
-    create_web_request
     create_click('generic')
     handle_pay_per_click
     
@@ -35,13 +27,6 @@ class ClickController < ApplicationController
   end
   
   def rating
-    @offer = Offer.find_in_cache(params[:offer_id])
-    return if offer_disabled?
-    
-    @device = Device.new(:key => params[:udid])
-    return if offer_completed?
-    
-    create_web_request
     create_click('rating')
     handle_pay_per_click
     
@@ -50,11 +35,13 @@ class ClickController < ApplicationController
   
   def test_offer
     @currency = Currency.find_in_cache(params[:currency_id])
+    publisher_app = App.find_in_cache(params[:publisher_app_id])
+    return unless verify_records([ @currency, publisher_app ])
+    
     unless @currency.get_test_device_ids.include?(params[:udid])
       raise "not a test device"
     end
     
-    publisher_app = App.find_in_cache(params[:publisher_app_id])
     @test_offer = build_test_offer(publisher_app, @currency)
     
     test_reward = Reward.new
@@ -92,6 +79,27 @@ private
     verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id, :currency_id ])
   end
   
+  def validate_click
+    @offer = Offer.find_in_cache(params[:offer_id])
+    @currency = Currency.find_in_cache(params[:currency_id])
+    required_records = [ @offer, @currency ]
+    if params[:displayer_app_id].present?
+      @displayer_app = App.find_in_cache(params[:displayer_app_id])
+      required_records << @displayer_app
+    end
+    return unless verify_records(required_records)
+    
+    return if offer_disabled?
+    
+    @device = Device.new(:key => params[:udid])
+    unless @offer.multi_complete?
+      return if offer_completed?
+    end
+    
+    wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
+    create_web_request(wr_path)
+  end
+  
   def offer_disabled?
     disabled = !@offer.accepting_clicks?
     if disabled
@@ -116,22 +124,14 @@ private
     return completed
   end
   
-  def create_web_request(path = 'offer_click')
-    web_request = WebRequest.new
-    web_request.put_values(path, params, get_ip_address, get_geoip_data)
+  def create_web_request(path)
+    web_request = WebRequest.new(:time => @now)
+    web_request.put_values(path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     web_request.viewed_at = Time.zone.at(params[:viewed_at].to_f) if params[:viewed_at].present?
     web_request.save
   end
   
   def create_click(type)
-    currency = Currency.find_in_cache(params[:currency_id])
-    displayer_app = nil
-    reward_key_2 = nil
-    if params[:displayer_app_id].present?
-      displayer_app = App.find_in_cache(params[:displayer_app_id])
-      reward_key_2 = UUIDTools::UUID.random_create.to_s
-    end
-    
     @click = Click.new(:key => (type == 'generic' ? UUIDTools::UUID.random_create.to_s : "#{params[:udid]}.#{params[:advertiser_app_id]}"))
     @click.clicked_at        = @now
     @click.viewed_at         = Time.zone.at(params[:viewed_at].to_f)
@@ -139,19 +139,19 @@ private
     @click.publisher_app_id  = params[:publisher_app_id]
     @click.publisher_user_id = params[:publisher_user_id]
     @click.advertiser_app_id = params[:advertiser_app_id]
-    @click.displayer_app_id  = params[:displayer_app_id]
+    @click.displayer_app_id  = params[:displayer_app_id] || ''
     @click.offer_id          = params[:offer_id]
     @click.currency_id       = params[:currency_id]
     @click.reward_key        = UUIDTools::UUID.random_create.to_s
-    @click.reward_key_2      = reward_key_2
-    @click.source            = params[:source]
+    @click.reward_key_2      = @displayer_app.present? ? UUIDTools::UUID.random_create.to_s : ''
+    @click.source            = params[:source] || ''
     @click.country           = get_geoip_data[:country]
     @click.type              = type
-    @click.advertiser_amount = currency.get_advertiser_amount(@offer)
-    @click.publisher_amount  = currency.get_publisher_amount(@offer, displayer_app)
-    @click.currency_reward   = currency.get_reward_amount(@offer)
-    @click.displayer_amount  = currency.get_displayer_amount(@offer, displayer_app)
-    @click.tapjoy_amount     = currency.get_tapjoy_amount(@offer, displayer_app)
+    @click.advertiser_amount = @currency.get_advertiser_amount(@offer)
+    @click.publisher_amount  = @currency.get_publisher_amount(@offer, @displayer_app)
+    @click.currency_reward   = @currency.get_reward_amount(@offer)
+    @click.displayer_amount  = @currency.get_displayer_amount(@offer, @displayer_app)
+    @click.tapjoy_amount     = @currency.get_tapjoy_amount(@offer, @displayer_app)
     @click.exp               = params[:exp]
     @click.save
   end

@@ -5,3 +5,5 @@ coverage/
 *.swo
 coverage.data
 config/newrelic.yml
+config/database.yml
+db/production.sqlite

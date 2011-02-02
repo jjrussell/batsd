@@ -8,6 +8,9 @@ class MonthlyAccounting < ActiveRecord::Base
   validates_numericality_of :year, :only_integer => true, :allow_nil => false, :greater_than => 2007
   validates_uniqueness_of :partner_id, :scope => [ :month, :year ]
 
+  named_scope :since, lambda { |time| { :conditions => ["(year = ? AND month >= ?) OR (year > ?)", time.year, time.month, time.year] } }
+  named_scope :prior_to, lambda { |time| { :conditions => ["(year = ? AND month < ?) OR (year < ?)", time.year, time.month, time.year] } }
+
   def self.expected_count
     now = Time.zone.now
     start = Time.zone.parse('2009-01-01')
@@ -48,8 +51,8 @@ class MonthlyAccounting < ActiveRecord::Base
     Payout.using_slave_db do
       payouts = Payout.created_between(start_time, end_time).sum(:amount, :conditions => [ "status = ? AND partner_id = ?", 1, partner.id ], :group => :payment_method)
     end
-    self.payment_payouts  = (payouts[1] || 0).abs
-    self.transfer_payouts = (payouts[3] || 0).abs
+    self.payment_payouts  = (payouts[1] || 0) * -1
+    self.transfer_payouts = (payouts[3] || 0) * -1
     Partner.using_slave_db do
       self.earnings = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", partner.app_ids ])
     end

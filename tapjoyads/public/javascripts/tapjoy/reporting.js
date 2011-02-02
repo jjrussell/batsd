@@ -7,8 +7,9 @@ var loadData = function(data) {
     Tapjoy.Graph.drawLargeGraph(data.connect_data, 'connects');
     Tapjoy.Graph.drawLargeGraph(data.rewarded_installs_plus_spend_data, 'installs_spend');
     Tapjoy.Graph.drawLargeGraph(data.rewarded_installs_plus_rank_data, 'installs_rank');
-    Tapjoy.Graph.drawLargeGraph(data.published_offers_data, 'published_offers');
-    Tapjoy.Graph.drawLargeGraph(data.offerwall_views_data, 'offerwall_views');
+    Tapjoy.Graph.drawLargeGraph(data.revenue_data, 'revenue');
+    Tapjoy.Graph.drawLargeGraph(data.offerwall_data, 'offerwall');
+    Tapjoy.Graph.drawLargeGraph(data.featured_offers_data, 'featured_offers');
     Tapjoy.Graph.drawLargeGraph(data.display_ads_data, 'display_ads');
     Tapjoy.Graph.drawLargeGraph(data.virtual_goods_data, 'virtual_goods');
     Tapjoy.Graph.drawLargeGraph(data.ads_data, 'ads');
@@ -107,7 +108,6 @@ $(function($) {
       data: params,
       success: function(response, status, request) {
         loadData(response.data);
-        $('#tables').html(response.stats_table);
         $('#date, #end_date, #granularity').attr('disabled', false);
         $('#tables, #charts').css('opacity', 1.0);
         if (window.history && window.history.replaceState) {

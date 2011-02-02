@@ -49,6 +49,26 @@ private
     Notifier.alert_new_relic(MissingRequiredParamsError, request.url, request, params)
   end
   
+  def verify_records(required_records, options = {})
+    render_missing_text = options.delete(:render_missing_text) { true }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
+    required_records.each do |record|
+      next unless record.nil?
+      
+      log_record_not_found
+      render :text => "record not found" if render_missing_text
+      return false
+    end
+    true
+  end
+  
+  def log_record_not_found
+    Rails.logger.info "record not found"
+    NewRelic::Agent.add_custom_parameters({ :user_agent => request.headers['User-Agent'] })
+    Notifier.alert_new_relic(RecordNotFoundError, request.url, request, params)
+  end
+  
   def set_time_zone
     Time.zone = 'UTC'
   end

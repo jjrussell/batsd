@@ -1,0 +1,18 @@
+xml.instruct!
+xml.MarketingData do
+  xml.Date @date
+  @appstats_list.each do |offer_with_stats|
+    offer = offer_with_stats[0]
+    appstats = offer_with_stats[1]
+    xml.App do
+      xml.Name offer.name_with_suffix
+      xml.AppKey offer.id
+      xml.PaidInstalls appstats.stats['paid_installs'].sum
+      xml.PaidInstallsHourly appstats.stats['paid_installs'].join(',')
+      xml.PaidClicks appstats.stats['paid_clicks'].sum
+      xml.PaidClicksHourly appstats.stats['paid_clicks'].join(',')
+      xml.Spend appstats.stats['installs_spend'].sum
+      xml.SpendHourly appstats.stats['installs_spend'].join(',')
+    end
+  end
+end

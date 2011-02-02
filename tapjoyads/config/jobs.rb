@@ -29,13 +29,14 @@ JobRunner::Gateway.define do |s|
     # jobs with moderate impact on overall system performance
     s.add_job 'master_app_stats', :interval => 2.minutes
     s.add_job 'master_calculate_show_rate', :interval => 20.minutes
-    s.add_job 'master_reload_money', :interval => 10.minutes
-    s.add_job 'master_reload_money/daily', :daily => 10.minutes
-    s.add_job 'master_reload_statz', :interval => 10.minutes
+    s.add_job 'master_reload_money', :interval => 20.minutes
+    s.add_job 'master_reload_statz', :interval => 20.minutes
     s.add_job 'master_reload_statz/daily', :daily => 10.minutes
+    s.add_job 'master_app_ranks', :hourly => 1.minutes
     
     # jobs with low impact on overall system performance
     s.add_job 'master_cache_offers', :interval => 1.minute
+    s.add_job 'master_refresh_memcached', :interval => 10.minutes
     s.add_job 'master_cleanup_web_requests', :daily => 5.hours
     s.add_job 'master_failed_sqs_writes', :interval => 3.minutes
     s.add_job 'master_get_store_info', :daily => 7.hours
@@ -46,6 +47,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'master_update_rev_share', :daily => 1.hour
     s.add_job 'master_set_exclusivity_and_premier_discounts', :daily => 2.hours
     s.add_job 'master_partner_notifications', :daily => 17.hours
+    s.add_job 'master_archive_conversions', :daily => 6.hours
   else
     Rails.logger.info "JobRunner: Not running any jobs. Not a job server."
   end

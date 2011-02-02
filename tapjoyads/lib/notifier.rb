@@ -14,6 +14,7 @@ class DeviceCountryChanged < RuntimeError; end
 class DeviceNoLongerJailbroken < RuntimeError; end
 class JailbrokenInstall < RuntimeError; end
 class FailedToInvalidateCloudfront < RuntimeError; end
+class RecordNotFoundError < RuntimeError; end
 
 # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
 class EmailWorthyError < RuntimeError
@@ -36,9 +37,9 @@ class Notifier
     begin
       raise exception.new(message)
     rescue Exception => e
-      action = params ? params[:action] : nil
+      action_path = params.present? ? "#{params[:controller]}/#{params[:action]}" : nil
       
-      NewRelic::Agent.agent.error_collector.notice_error(e, request, action, params)
+      NewRelic::Agent.agent.error_collector.notice_error(e, request, action_path, params)
       
       if e.kind_of?(EmailWorthyError)
         e.deliver_email(params)

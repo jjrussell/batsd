@@ -11,6 +11,39 @@ module RightAws
     alias_method :orig_delete_attributes, :delete_attributes
     alias_method :orig_request_info,      :request_info
     alias_method :orig_get_attributes,    :get_attributes
+    alias_method :orig_generate_request,  :generate_request
+    
+    def generate_request(action, params={}) #:nodoc:
+      # remove empty params from request
+      params.delete_if {|key,value| value.nil? }
+      #params_string  = params.to_a.collect{|key,val| key + "=#{CGI::escape(val.to_s)}" }.join("&")
+      # prepare service data
+      service = '/'
+      service_hash = {"Action"         => action,
+                      "AWSAccessKeyId" => @aws_access_key_id,
+                      "Version"        => API_VERSION }
+      service_hash.update(params)
+      service_params = signed_service_params(@aws_secret_access_key, service_hash, :get, @params[:server], service)
+      #
+      # use POST method if the length of the query string is too large
+      # see http://docs.amazonwebservices.com/AmazonSimpleDB/2007-11-07/DeveloperGuide/MakingRESTRequests.html
+      if service_params.size > 2000
+        if signature_version == '2'
+          # resign the request because HTTP verb is included into signature
+          service_params = signed_service_params(@aws_secret_access_key, service_hash, :post, @params[:server], service)
+        end
+        request      = Net::HTTP::Post.new(service)
+        request.body = service_params
+        request['Content-Type'] = 'application/x-www-form-urlencoded; charset=utf-8'
+      else
+        request = Net::HTTP::Get.new("#{service}?#{service_params}")
+      end
+      # prepare output hash
+      { :request  => request, 
+        :server   => @params[:server],
+        :port     => @params[:port],
+        :protocol => @params[:protocol] }
+    end
     
     # Prepare attributes for putting or deleting.
     # (used by put_attributes, delete_attributes and batch_put_attributes)
@@ -207,6 +240,30 @@ module RightAws
   end
   
   class SqsGen2Interface
+    alias_method :orig_generate_post_request, :generate_post_request
+    
+    def generate_post_request(action, param={})  # :nodoc:
+      service = param[:queue_url] ? URI(param[:queue_url]).path : '/'
+      message   = param[:message]                # extract message body if nesessary
+      param.each{ |key, value| param.delete(key) if (value.nil? || key.is_a?(Symbol)) }
+      service_hash = { "Action"           => action,
+                       "Expires"          => (Time.now + REQUEST_TTL).utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                       "AWSAccessKeyId"   => @aws_access_key_id,
+                       "MessageBody"      => message,
+                       "Version"          => API_VERSION }
+      service_hash.update(param)
+      #
+      service_params = signed_service_params(@aws_secret_access_key, service_hash, :post, @params[:server], service)
+      request        = Net::HTTP::Post.new(AwsUtils::URLencode(service))
+      request['Content-Type'] = 'application/x-www-form-urlencoded; charset=utf-8' 
+      request.body = service_params
+        # prepare output hash
+      { :request  => request, 
+        :server   => @params[:server],
+        :port     => @params[:port],
+        :protocol => @params[:protocol] }
+    end
+    
     def get_extra_queue_attributes(queue_url, attribute='All')
       req_hash = generate_request('GetQueueAttributes', 'AttributeName' => attribute, 'Version' => '2009-02-01', :queue_url  => queue_url)
       request_info(req_hash, SqsGetQueueAttributesParser.new(:logger => @logger))

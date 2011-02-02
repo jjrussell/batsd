@@ -13,16 +13,20 @@ Number of domains: #{@failed_sdb_saves.size}
       %th Domain Name
       %th This Hour (SDB)
       %th Last Hour (SDB)
+      %th This Hour Actual (SDB)
+      %th Last Hour Actual (SDB)
       %th This Hour (MC)
       %th Last Hour (MC)
   %tbody
     - @failed_sdb_saves.each do |domain_name, counts|
       %tr
         %td{ :class => @bad_web_requests[domain_name] ? 'bad_domain' : '' }= domain_name
-        %td= counts[:sdb_this_hour]
-        %td= counts[:sdb_last_hour]
-        %td= counts[:mc_this_hour]
-        %td= counts[:mc_last_hour]
+        %td= number_with_delimiter(counts[:sdb_this_hour])
+        %td= number_with_delimiter(counts[:sdb_last_hour])
+        %td= number_with_delimiter(counts[:sdb_this_hour] * 6)
+        %td= number_with_delimiter(counts[:sdb_last_hour] * 6)
+        %td= number_with_delimiter(counts[:mc_this_hour])
+        %td= number_with_delimiter(counts[:mc_last_hour])
 
 - content_for :page_javascript do
   :plain
@@ -35,10 +39,24 @@ Number of domains: #{@failed_sdb_saves.size}
           return s.replace(/-/g, '_');
         }
       });
+      $.tablesorter.addParser({
+        id: 'formatted-number-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/,/g, '');
+        }
+      });
       $("#fails").tablesorter({
         widgets: ['zebra'],
         headers: {
-          0: { sorter: 'name-column' }
+          0: { sorter: 'name-column' },
+          1: { sorter: 'formatted-number-column' },
+          2: { sorter: 'formatted-number-column' },
+          3: { sorter: 'formatted-number-column' },
+          4: { sorter: 'formatted-number-column' },
+          5: { sorter: 'formatted-number-column' },
+          6: { sorter: 'formatted-number-column' }
         },
         sortList: [ [1, 1], [2, 1] ]
       });

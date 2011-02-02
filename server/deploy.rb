@@ -34,6 +34,14 @@ elsif server_type == 'website'
   `cp tapjoyads/config/newrelic-website.yml tapjoyads/config/newrelic.yml`
 end
 
+if server_type == 'web'
+  `cp -f tapjoyads/db/webserver.sqlite tapjoyads/db/production.sqlite`
+  `chmod 444 tapjoyads/db/production.sqlite`
+  `cp tapjoyads/config/database-webserver.yml tapjoyads/config/database.yml`
+else
+  `cp tapjoyads/config/database-default.yml tapjoyads/config/database.yml`
+end
+
 if server_type == 'jobs' || server_type == 'masterjobs'
   puts "Stopping jobs"
   `tapjoyads/script/jobs stop`

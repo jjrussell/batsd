@@ -35,14 +35,14 @@
       %th Balance
       %th Platform
       %th CVR
-      %th Published installs
-      %th Installs revenue
+      %th Published offers
+      %th Offers revenue
       %th Featured
   %tbody#apps_tbody
     - @cached_stats.each do |offer_id, stats|
       %tr
         %td
-          %img.icon.hidden{ :s => "#{request.protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/#{stats['item_id']}.png" }
+          %img.icon.hidden{ :s => stats['icon_url'] }
         %td= link_to(stats['offer_name'], statz_path(offer_id))
         %td= stats['conversions']
         %td= stats['connects']
@@ -52,8 +52,8 @@
         %td= stats['balance']
         %td= stats['platform']
         %td= stats['conversion_rate']
-        %td= stats['published_installs']
-        %td= stats['installs_revenue']
+        %td= stats['published_offers']
+        %td= stats['offers_revenue']
         %td= stats['featured']
       
 - content_for :page_javascript do

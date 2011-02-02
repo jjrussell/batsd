@@ -58,20 +58,28 @@ class PartnerTest < ActiveSupport::TestCase
       assert_equal 10100, Partner.calculate_next_payout_amount(@partner.id)
     end
     
-    should "verify balances" do
-      assert_equal 10300, @partner.pending_earnings
-      assert_equal 10000, @partner.balance
-      p = Partner.verify_balances(@partner.id)
-      assert_equal 300, p.pending_earnings
-      assert_equal 0, p.balance
-    end
+    context "with MonthlyAccoutings" do
+      setup do
+        reference_time = Conversion.archive_cutoff_time - 1
+        monthly_accounting = MonthlyAccounting.new(:partner => @partner, :month => reference_time.month, :year => reference_time.year)
+        monthly_accounting.calculate_totals!
+      end
+      
+      should "verify balances" do
+        assert_equal 10300, @partner.pending_earnings
+        assert_equal 10000, @partner.balance
+        p = Partner.verify_balances(@partner.id)
+        assert_equal 300, p.pending_earnings
+        assert_equal 0, p.balance
+      end
     
-    should "reset balances" do
-      assert_equal 10300, @partner.pending_earnings
-      assert_equal 10000, @partner.balance
-      @partner.reset_balances
-      assert_equal 300, @partner.pending_earnings
-      assert_equal 0, @partner.balance
+      should "reset balances" do
+        assert_equal 10300, @partner.pending_earnings
+        assert_equal 10000, @partner.balance
+        @partner.reset_balances
+        assert_equal 300, @partner.pending_earnings
+        assert_equal 0, @partner.balance
+      end
     end
     
     context "with monthly payouts" do

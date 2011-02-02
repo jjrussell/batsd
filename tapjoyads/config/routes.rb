@@ -47,23 +47,26 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post } do |app|
-    app.resources :offers, :only => [ :show, :update ] , :member => { :download_udids => :get, :percentile => :post, :toggle => :post }, :controller => 'apps/offers'
+    app.resources :offers, :only => [ :show, :update ] , :member => { :percentile => :post, :toggle => :post }, :controller => 'apps/offers'
     app.resources :currencies, :only => [ :show, :update, :new, :create ],
       :member => { :reset_test_device => :post }, :controller => 'apps/currencies'
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
       :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
     app.resources :featured_offers, :only => [ :new, :create, :edit, :update ], :controller => 'apps/featured_offers'
+    app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
   end
-  map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post }
-  map.resources :billing, :only => [ :index, ], :collection => { :create_order => :post }
+  map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }
+  map.resources :billing, :only => [ :index ], :collection => { :create_order => :post, :create_transfer => :post }
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
+  map.transfer_funds_billing 'billing/transfer-funds', :controller => :billing, :action => :transfer_funds
   map.resources :support, :only => [ :index ],
     :collection => { :contact => :post }
   map.resources :tools, :only => :index,
     :collection => { :monthly_data => :get, :new_transfer => :get,
-                     :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get,
+                     :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :as_groups => :get,
                      :sdb_metadata => :get, :reset_device => :get, :failed_downloads => :get, :sanitize_users => :get,
-                     :unresolved_clicks => :post, :resolve_clicks => :post, :sqs_lengths => :get }
+                     :unresolved_clicks => :post, :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get },
+    :member => {  :edit_android_app => :get, :update_android_app => :post, :device_info => :get }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get }
   map.resources :raffle_manager, :only => [ :index, :edit, :update, :new, :create ]
@@ -86,6 +89,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :orders, :only => [ :new, :create ]
     tools.resources :payouts, :only => [ :index, :create ]
   end
+  map.resources :action_offers, :only => [ :show ]
 
   # Special paths:
   map.connect 'log_device_app/:action/:id', :controller => 'connect'

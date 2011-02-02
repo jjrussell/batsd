@@ -37,6 +37,7 @@ Rails::Initializer.run do |config|
   config.gem 'patron', :version => '0.4.4'
   config.gem 'right_aws', :version => '1.10.0'
   config.gem 'rmagick', :version => '2.12.2', :lib => 'RMagick'
+  config.gem 'sqlite3', :version => '1.3.3'
   config.gem 'typhoeus', :version => '0.2.0'
 
   # These gems should be vendored
@@ -44,7 +45,7 @@ Rails::Initializer.run do |config|
   config.gem 'declarative_authorization', :version => '0.4.1'
   config.gem 'geoip', :version => '0.8.6'
   config.gem 'haml', :version => '2.2.23'
-  config.gem 'hoptoad_notifier', :version => '2.3.2'
+  config.gem 'hoptoad_notifier', :version => '2.4.2'
   config.gem 'plist', :version => '3.1.0'
   config.gem 'read_from_slave', :version => '0.4.0'
   config.gem 'uuidtools', :version => '2.0.0'
@@ -113,5 +114,9 @@ Rails::Initializer.run do |config|
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = true
-
+  
 end
+
+# Register custom Mime types to generate ActionOffer header files
+Mime::Type.register "text/objective-c-header", :h
+Mime::Type.register "text/java", :java

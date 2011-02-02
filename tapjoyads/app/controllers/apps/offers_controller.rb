@@ -25,23 +25,24 @@ class Apps::OffersController < WebsiteController
 
   def update
     params[:offer].delete(:payment)
-    offer_params = sanitize_currency_params(params[:offer], [ :bid ])
+    params[:offer][:daily_budget].gsub!(',', '') if params[:offer][:daily_budget].present?
+    params[:offer][:daily_budget] = 0 if params[:daily_budget] == 'off'
+    offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
 
     safe_attributes = [:daily_budget, :user_enabled, :bid]
     if permitted_to?(:edit, :statz)
       offer_params[:device_types] = offer_params[:device_types].blank? ? '[]' : offer_params[:device_types].to_json
       safe_attributes += [:tapjoy_enabled, :self_promote_only, :allow_negative_balance, :pay_per_click,
           :featured, :name, :name_suffix, :show_rate, :min_conversion_rate, :countries,
-          :cities, :postal_codes, :device_types, :publisher_app_whitelist, :overall_budget]
+          :cities, :postal_codes, :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override]
     end
 
     if @offer.safe_update_attributes(offer_params, safe_attributes)
       flash[:notice] = 'Pay-per-install was successfully updated'
-      redirect_to(app_offer_path(:app_id => @app.id, :id => @offer.id))
     else
       flash[:error] = 'Update unsuccessful'
-      render :action => "show"
     end
+    redirect_to(app_offer_path(:app_id => @app.id, :id => @offer.id))
   end
 
   def toggle
@@ -51,12 +52,6 @@ class Apps::OffersController < WebsiteController
     else
       render :json => {:error => true}
     end
-  end
-
-  def download_udids
-    bucket = S3.bucket(BucketNames::AD_UDIDS)
-    data = bucket.get(Offer.s3_udids_path(@offer.id) + params[:date])
-    send_data(data, :type => 'text/csv', :filename => "#{@offer.id}_#{params[:date]}.csv")
   end
 
   def percentile
@@ -78,7 +73,7 @@ private
     
     if params[:id]
       @offer = @app.offers.find(params[:id])
-      if @offer.featured? && params[:action] != 'percentile'
+      if @offer.featured? && params[:action] == 'edit'
         redirect_to edit_app_featured_offer_path(@app, @offer) and return
       end
     else

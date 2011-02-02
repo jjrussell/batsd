@@ -11,6 +11,7 @@ class Partner < ActiveRecord::Base
   has_many :rating_offers
   has_many :offerpal_offers
   has_many :generic_offers
+  has_many :action_offers
   has_many :offers
   has_many :publisher_conversions, :through => :apps
   has_many :advertiser_conversions, :through => :offers
@@ -139,15 +140,31 @@ class Partner < ActiveRecord::Base
       save!
     end
   end
-  
+
+  def build_transfer(amount)
+    records = []
+    records << payouts.build(:amount => amount, :month => Time.zone.now.month, :year => Time.zone.now.year, :payment_method => 3)
+    records << orders.build(:amount => amount, :status => 1, :payment_method => 3)
+    marketing_amount = (amount * transfer_bonus).to_i
+    records << orders.build(:amount => marketing_amount, :status => 1, :payment_method => 2) if marketing_amount > 0
+    records
+  end
+
   # This method will most likely not produce accurate sums unless
   # called from within some sort of transaction. See reset_balances
   # and Partner.verify_balances for examples.
   def recalculate_balance_and_pending_earnings
+    archive_cutoff = Conversion.archive_cutoff_time
+    
+    publisher_conversions_sum = monthly_accountings.prior_to(archive_cutoff).sum(:earnings)
+    publisher_conversions_sum += Conversion.created_since(archive_cutoff).sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", app_ids ])
+    
+    advertiser_conversions_sum = monthly_accountings.prior_to(archive_cutoff).sum(:spend)
+    advertiser_conversions_sum += Conversion.created_since(archive_cutoff).sum(:advertiser_amount, :conditions => [ "advertiser_offer_id IN (?)", offer_ids ])
+    
     orders_sum = orders.sum(:amount, :conditions => 'status = 1')
     payouts_sum = payouts.sum(:amount, :conditions => 'status = 1')
-    publisher_conversions_sum = Conversion.sum(:publisher_amount, :conditions => [ "publisher_app_id IN (?)", app_ids ])
-    advertiser_conversions_sum = Conversion.sum(:advertiser_amount, :conditions => [ "advertiser_offer_id IN (?)", offer_ids ])
+    
     self.balance = orders_sum + advertiser_conversions_sum
     self.pending_earnings = publisher_conversions_sum - payouts_sum
   end
@@ -207,6 +224,7 @@ class Partner < ActiveRecord::Base
 private
 
   def create_mail_chimp_entry
+    return if Rails.env == 'test'
     message = { :type => "create", :partner_id => self.id }.to_json
     Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)
   end

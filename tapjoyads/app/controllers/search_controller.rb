@@ -6,8 +6,7 @@ class SearchController < WebsiteController
     results = Offer.find(:all,
       :conditions => [ "name LIKE ?", "%#{params[:term]}%" ],
       :order => 'hidden ASC, name ASC',
-      :limit => 10,
-      :include => :partner
+      :limit => 10
     ).collect do |o|
       { :label => o.search_result_name, :url => statz_path(o), :id => o.id }
     end

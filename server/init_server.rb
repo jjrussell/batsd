@@ -30,6 +30,7 @@ else
   # start apache
   `cp /home/webuser/tapjoyserver/server/apache2.conf /etc/apache2/`
   `cp /home/webuser/tapjoyserver/server/passenger.conf /etc/apache2/mods-available/`
+  `cp /home/webuser/tapjoyserver/server/passenger.load /etc/apache2/mods-available/`
   `/etc/init.d/apache2 start`
 
   # boot the app
@@ -42,7 +43,6 @@ else
 
   # start memcached and mysql on testservers
   if server_type == 'test'
-    `cp /home/webuser/tapjoyserver/server/memcached.conf /etc/`
     `/etc/init.d/memcached start`
     `start mysql`
   end

@@ -25,18 +25,19 @@
             = error_message_on(@currency, :conversion_rate)
             #currency_name_text.right_label
               = @currency.name
-      %tr
-        %th
-          = label_tag(:managed_by_tapjoy, 'Managed by Tapjoy')
-          #help_managed_by_tapjoy.help ?
-        %td= check_box_tag(:managed_by_tapjoy, nil, @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL)
-      %tr.managed
-        %th
-          = f.label :initial_balance, 'Initial balance'
-          #help_initial_balance.help ?
-        %td
-          = f.text_field :initial_balance
-          = error_message_on(@currency, :initial_balance)
+      - if @app.currencies.size <= 1
+        %tr
+          %th
+            = label_tag(:managed_by_tapjoy, 'Managed by Tapjoy')
+            #help_managed_by_tapjoy.help ?
+          %td= check_box_tag(:managed_by_tapjoy, nil, @currency.tapjoy_managed?)
+        %tr.managed
+          %th
+            = f.label :initial_balance, 'Initial balance'
+            #help_initial_balance.help ?
+          %td
+            = f.text_field :initial_balance
+            = error_message_on(@currency, :initial_balance)
       %tr.unmanaged
         %th
           = f.label :callback_url, 'Callback URL'
@@ -86,7 +87,7 @@
           %td= arr[0]
           %td= arr[1]
 
-    - if @currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL
+    - if @currency.tapjoy_managed?
       %h3
         Reset Test Device Virtual Goods
         #help_reset_test_devices.help ?

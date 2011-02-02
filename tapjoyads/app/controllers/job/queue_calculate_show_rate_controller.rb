@@ -34,7 +34,8 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     
     min_conversion_rate = offer.min_conversion_rate || (offer.is_paid? ? 0.005 : 0.12)
     if recent_clicks > 200 && conversion_rate < min_conversion_rate
-      Notifier.alert_new_relic(ConversionRateTooLowError, "#{offer.name} (https://www.tapjoy.com/statz/#{offer.id}) has #{conversion_rate} cvr on #{recent_clicks} clicks.", nil, { :partner_id => offer.partner.id })
+      error_message = "#{offer.name_with_suffix} (https://www.tapjoy.com/statz/#{offer.id}) has #{conversion_rate} cvr on #{recent_clicks} clicks."
+      Notifier.alert_new_relic(ConversionRateTooLowError, error_message, request, params.merge({ :partner_id => offer.partner_id }))
     end
     
     Rails.logger.info "Recent clicks: #{recent_clicks}"
@@ -51,7 +52,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     Rails.logger.info "Possible clicks per second: #{possible_clicks_per_second}"
     
     possible_installs_per_second = possible_clicks_per_second * conversion_rate * old_show_rate
-    potential_spend = (possible_installs_per_second * 12.hours) * offer.payment
+    potential_spend = (possible_installs_per_second * 48.hours) * offer.payment
     offer.low_balance = (potential_spend > offer.partner.balance)
     
     # Assume all apps are CST for now.

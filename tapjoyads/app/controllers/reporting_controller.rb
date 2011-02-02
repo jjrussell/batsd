@@ -4,6 +4,7 @@ class ReportingController < WebsiteController
   layout 'tabbed'
   
   filter_access_to :all
+  before_filter :find_offer, :only => [ :show, :export, :download_udids ]
   before_filter :setup, :only => [ :show, :export ]
   
   def index
@@ -24,6 +25,8 @@ class ReportingController < WebsiteController
     else
       intervals = @appstats.intervals.map { |time| time.to_s(:pub_ampm) }
     end
+    
+    conversion_name = @offer.item_type == 'App' ? 'installs' : 'conversions'
 
     respond_to do |format|
       format.html do
@@ -47,11 +50,11 @@ class ReportingController < WebsiteController
           },
 
           :rewarded_installs_plus_spend_data => {
-            :name => 'Paid installs + Advertising spend',
+            :name => "Paid #{conversion_name} + Advertising spend",
             :intervals => intervals,
             :xLabels => @appstats.x_labels,
             :main => {
-              :names => [ 'Paid installs', 'Paid clicks' ],
+              :names => [ "Paid #{conversion_name}", 'Paid clicks' ],
               :data => [ @appstats.stats['paid_installs'], @appstats.stats['paid_clicks'] ],
               :totals => [ @appstats.stats['paid_installs'].sum, @appstats.stats['paid_clicks'].sum ]
             },
@@ -70,60 +73,104 @@ class ReportingController < WebsiteController
           },
 
           :rewarded_installs_plus_rank_data => {
-            :name => 'Paid installs + Rank',
+            :name => "Paid #{conversion_name} + Ranks",
             :intervals => intervals,
             :xLabels => @appstats.x_labels,
             :main => {
-              :names => [ 'Paid installs', 'Paid clicks' ],
-              :data => [ @appstats.stats['paid_installs'], @appstats.stats['paid_clicks'] ],
-              :totals => [ @appstats.stats['paid_installs'].sum, @appstats.stats['paid_clicks'].sum ]
+              :names => [ "Paid #{conversion_name}" ],
+              :data => [ @appstats.stats['paid_installs'] ],
+              :totals => [ @appstats.stats['paid_installs'].sum ]
             },
-            :right => {
-              :yMax => 200,
-              :names => [ 'Rank' ],
-              :data => [ @appstats.stats['overall_store_rank'].map { |r| r == '-' || r == '0' ? nil : r } ],
-              :totals => [ (@appstats.stats['overall_store_rank'].select { |r| r != '0' }.last || '-') ]
-            }
+            :partition_names => get_rank_partition_names,
+            :partition_values => get_rank_partition_values,
+            :partition_title => 'Country',
+            :partition_fallback => 'This app is not in the top charts in any categories for the selected date range.',
+            :partition_default => 'United States'
           },
 
-          :published_offers_data => {
+          :revenue_data => {
             :name => 'Revenue',
             :intervals => intervals,
             :xLabels => @appstats.x_labels,
             :main => {
-              :names => [ 'Offers completed', 'Offer clicks' ],
-              :data => [ @appstats.stats['rewards'], @appstats.stats['rewards_opened'] ],
-              :totals => [ @appstats.stats['rewards'].sum, @appstats.stats['rewards_opened'].sum ]
-            },
-            :right => {
               :unitPrefix => '$',
-              :names => [ 'Revenue' ],
-              :data => [ @appstats.stats['rewards_revenue'].map { |i| i / 100.0 } ],
-              :stringData => [ @appstats.stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) } ],
-              :totals => [ number_to_currency(@appstats.stats['rewards_revenue'].sum / 100.0) ]
-            },
-            :extra => {
-              :names => [ 'Conversion rate' ],
-              :data => [ @appstats.stats['rewards_cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) } ],
-              :totals => [ @appstats.stats['rewards_opened'].sum > 0 ? ("%.1f%" % (@appstats.stats['rewards'].sum.to_f / @appstats.stats['rewards_opened'].sum * 100.0)) : '-' ]
+              :names => [ 'Total revenue', 'Offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ],
+              :data => [ @appstats.stats['total_revenue'].map { |i| i / 100.0 },
+                         @appstats.stats['rewards_revenue'].map { |i| i / 100.0 },
+                         @appstats.stats['featured_revenue'].map { |i| i / 100.0 },
+                         @appstats.stats['display_revenue'].map { |i| i / 100.0 } ],
+              :stringData => [ @appstats.stats['total_revenue'].map { |i| number_to_currency(i / 100.0) },
+                               @appstats.stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) },
+                               @appstats.stats['featured_revenue'].map { |i| number_to_currency(i / 100.0) },
+                               @appstats.stats['display_revenue'].map { |i| number_to_currency(i / 100.0) } ],
+              :totals => [ number_to_currency(@appstats.stats['total_revenue'].sum / 100.0),
+                           number_to_currency(@appstats.stats['rewards_revenue'].sum / 100.0),
+                           number_to_currency(@appstats.stats['featured_revenue'].sum / 100.0),
+                           number_to_currency(@appstats.stats['display_revenue'].sum / 100.0) ]
             }
           },
 
-          :offerwall_views_data => {
-            :name => 'Offerwall views',
+          :offerwall_data => {
+            :name => 'Offerwall',
             :intervals => intervals,
             :xLabels => @appstats.x_labels,
             :main => {
-              :names => [ 'Offerwall views' ],
-              :data => [ @appstats.stats['offerwall_views'] ],
-              :totals => [ @appstats.stats['offerwall_views'].sum ]
+              :names => [ 'Offerwall views', 'Clicks', 'Conversions' ],
+              :data => [ @appstats.stats['offerwall_views'], @appstats.stats['rewards_opened'], @appstats.stats['rewards'] ],
+              :totals => [ @appstats.stats['offerwall_views'].sum, @appstats.stats['rewards_opened'].sum, @appstats.stats['rewards'].sum ]
             },
             :right => {
               :unitPrefix => '$',
-              :names => [ 'Offerwall eCPM' ],
-              :data => [ @appstats.stats['offerwall_ecpm'].map { |i| i / 100.0 } ],
-              :stringData => [ @appstats.stats['offerwall_ecpm'].map { |i| number_to_currency(i / 100.0) } ],
-              :totals => [ @appstats.stats['offerwall_views'].sum > 0 ? number_to_currency(@appstats.stats['rewards_revenue'].sum.to_f / (@appstats.stats['offerwall_views'].sum / 1000.0) / 100.0) : '$0.00' ]
+              :names => [ 'Revenue', 'eCPM' ],
+              :data => [ @appstats.stats['rewards_revenue'].map { |i| i / 100.0 },
+                         @appstats.stats['offerwall_ecpm'].map { |i| i / 100.0 } ],
+              :stringData => [ @appstats.stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) },
+                               @appstats.stats['offerwall_ecpm'].map { |i| number_to_currency(i / 100.0) } ],
+              :totals => [ number_to_currency(@appstats.stats['rewards_revenue'].sum / 100.0), 
+                           @appstats.stats['offerwall_views'].sum > 0 ? number_to_currency(@appstats.stats['rewards_revenue'].sum.to_f / (@appstats.stats['offerwall_views'].sum / 1000.0) / 100.0) : '$0.00' ]
+            },
+            :extra => {
+              :names => [ 'CTR', 'CVR' ],
+              :data => [ @appstats.stats['rewards_ctr'].map { |r| "%.0f%" % (r.to_f * 100.0) },
+                         @appstats.stats['rewards_cvr'].map { |r| "%.0f%" % (r.to_f * 100.0) } ],
+              :totals => [ @appstats.stats['offerwall_views'].sum > 0 ? ("%.1f%" % (@appstats.stats['rewards_opened'].sum.to_f / @appstats.stats['offerwall_views'].sum * 100.0)) : '-',
+                           @appstats.stats['rewards_opened'].sum > 0 ? ("%.1f%" % (@appstats.stats['rewards'].sum.to_f / @appstats.stats['rewards_opened'].sum * 100.0)) : '-' ]
+            }
+          },
+
+          :featured_offers_data => {
+            :name => 'Featured offers',
+            :intervals => intervals,
+            :xLabels => @appstats.x_labels,
+            :main => {
+              :names => [ 'Offers requested', 'Offers shown', 'Clicks', 'Conversions' ],
+              :data => [ @appstats.stats['featured_offers_requested'],
+                         @appstats.stats['featured_offers_shown'],
+                         @appstats.stats['featured_offers_opened'],
+                         @appstats.stats['featured_published_offers'] ],
+              :totals => [ @appstats.stats['featured_offers_requested'].sum,
+                           @appstats.stats['featured_offers_shown'].sum,
+                           @appstats.stats['featured_offers_opened'].sum,
+                           @appstats.stats['featured_published_offers'].sum ]
+            },
+            :right => {
+              :unitPrefix => '$',
+              :names => [ 'Revenue', 'eCPM' ],
+              :data => [ @appstats.stats['featured_revenue'].map { |i| i / 100.0 },
+                         @appstats.stats['featured_ecpm'].map { |i| i / 100.0 } ],
+              :stringData => [ @appstats.stats['featured_revenue'].map { |i| number_to_currency(i / 100.0) },
+                               @appstats.stats['featured_ecpm'].map { |i| number_to_currency(i / 100.0) } ],
+              :totals => [ number_to_currency(@appstats.stats['featured_revenue'].sum / 100.0),
+                           @appstats.stats['featured_offers_shown'].sum > 0 ? number_to_currency(@appstats.stats['featured_revenue'].sum.to_f / (@appstats.stats['featured_offers_shown'].sum / 1000.0) / 100.0) : '$0.00' ]
+            },
+            :extra => {
+              :names => [ 'Fill rate', 'CTR', 'CVR' ],
+              :data => [ @appstats.stats['featured_fill_rate'].map { |r| "%.0f%" % (r.to_f * 100.0) },
+                         @appstats.stats['featured_ctr'].map { |r| "%.0f%" % (r.to_f * 100.0) },
+                         @appstats.stats['featured_cvr'].map { |r| "%.0f%" % (r.to_f * 100.0) } ],
+              :totals => [ @appstats.stats['featured_offers_requested'].sum > 0 ? ("%.1f%" % (@appstats.stats['featured_offers_shown'].sum.to_f / @appstats.stats['featured_offers_requested'].sum * 100.0)) : '-',
+                           @appstats.stats['featured_offers_shown'].sum > 0 ? ("%.1f%" % (@appstats.stats['featured_offers_opened'].sum.to_f / @appstats.stats['featured_offers_shown'].sum * 100.0)) : '-',
+                           @appstats.stats['featured_offers_opened'].sum > 0 ? ("%.1f%" % (@appstats.stats['featured_published_offers'].sum.to_f / @appstats.stats['featured_offers_opened'].sum * 100.0)) : '-' ]
             }
           },
 
@@ -133,15 +180,24 @@ class ReportingController < WebsiteController
             :xLabels => @appstats.x_labels,
             :main => {
               :names => [ 'Ads requested', 'Ads shown', 'Clicks', 'Conversions' ],
-              :data => [ @appstats.stats['display_ads_requested'], @appstats.stats['display_ads_shown'], @appstats.stats['display_clicks'], @appstats.stats['display_conversions'] ],
-              :totals => [ @appstats.stats['display_ads_requested'].sum, @appstats.stats['display_ads_shown'].sum, @appstats.stats['display_clicks'].sum, @appstats.stats['display_conversions'].sum ]
+              :data => [ @appstats.stats['display_ads_requested'], 
+                         @appstats.stats['display_ads_shown'],
+                         @appstats.stats['display_clicks'],
+                         @appstats.stats['display_conversions'] ],
+              :totals => [ @appstats.stats['display_ads_requested'].sum,
+                           @appstats.stats['display_ads_shown'].sum,
+                           @appstats.stats['display_clicks'].sum,
+                           @appstats.stats['display_conversions'].sum ]
             },
             :right => {
               :unitPrefix => '$',
               :names => [ 'Revenue', 'eCPM' ],
-              :data => [ @appstats.stats['display_revenue'].map { |i| i / 100.0 }, @appstats.stats['display_ecpm'].map { |i| i / 100.0 } ],
-              :stringData => [ @appstats.stats['display_revenue'].map { |i| number_to_currency(i / 100.0) }, @appstats.stats['display_ecpm'].map { |i| number_to_currency(i / 100.0) } ],
-              :totals => [ number_to_currency(@appstats.stats['display_revenue'].sum / 100.0), @appstats.stats['display_ads_shown'].sum > 0 ? number_to_currency(@appstats.stats['display_revenue'].sum.to_f / (@appstats.stats['display_ads_shown'].sum / 1000.0) / 100.0) : '$0.00' ]
+              :data => [ @appstats.stats['display_revenue'].map { |i| i / 100.0 },
+                         @appstats.stats['display_ecpm'].map { |i| i / 100.0 } ],
+              :stringData => [ @appstats.stats['display_revenue'].map { |i| number_to_currency(i / 100.0) },
+                               @appstats.stats['display_ecpm'].map { |i| number_to_currency(i / 100.0) } ],
+              :totals => [ number_to_currency(@appstats.stats['display_revenue'].sum / 100.0),
+                           @appstats.stats['display_ads_shown'].sum > 0 ? number_to_currency(@appstats.stats['display_revenue'].sum.to_f / (@appstats.stats['display_ads_shown'].sum / 1000.0) / 100.0) : '$0.00' ]
             },
             :extra => {
               :names => [ 'Fill rate', 'CTR', 'CVR' ],
@@ -159,9 +215,9 @@ class ReportingController < WebsiteController
             :intervals => intervals,
             :xLabels => @appstats.x_labels,
             :main => {
-              :names => [ 'Virtual good purchases' ],
-              :data => [ @appstats.stats['vg_purchases'] ],
-              :totals => [ @appstats.stats['vg_purchases'].sum ]
+              :names => [ 'Store views', 'Purchases' ],
+              :data => [ @appstats.stats['vg_store_views'], @appstats.stats['vg_purchases'] ],
+              :totals => [ @appstats.stats['vg_store_views'].sum, @appstats.stats['vg_purchases'].sum ]
             }
           },
 
@@ -197,22 +253,19 @@ class ReportingController < WebsiteController
 
         if permitted_to?(:index, :statz)
           # jailbroken data
-          @data[:rewarded_installs_plus_spend_data][:main][:names]  << 'Jailbroken installs'
+          @data[:rewarded_installs_plus_spend_data][:main][:names]  << "Jailbroken #{conversion_name}"
           @data[:rewarded_installs_plus_spend_data][:main][:data]   << @appstats.stats['jailbroken_installs']
           @data[:rewarded_installs_plus_spend_data][:main][:totals] << @appstats.stats['jailbroken_installs'].sum
         end
 
-        render :json => {
-          :data => @data,
-          :stats_table => render_to_string(:action => '_stats_table.html.haml')
-        }.to_json
+        render :json => { :data => @data }.to_json
       end
     end
   end
 
   def export
-    data =  "start_time,end_time,paid_clicks,paid_installs,new_users,paid_cvr,spend,store_rank,"
-    data += "offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,revenue,offerwall_ecpm"
+    data =  "start_time,end_time,paid_clicks,paid_installs,new_users,paid_cvr,spend,itunes_rank_overall_free_united_states,"
+    data += "offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,offerwall_revenue,offerwall_ecpm,display_ads_revenue,display_ads_ecpm,featured_revenue,featured_ecpm"
     data += ",daily_active_users,arpdau" if @granularity == :daily
     data = [data]
 
@@ -227,13 +280,17 @@ class ReportingController < WebsiteController
         @appstats.stats['new_users'][i],
         @appstats.stats['cvr'][i],
         number_to_currency(@appstats.stats['installs_spend'][i] / -100.0, :delimiter => ''),
-        @appstats.stats['overall_store_rank'][i],
+        (Array(@appstats.stats['ranks']['overall.free.united_states'])[i] || '-'),
         @appstats.stats['offerwall_views'][i],
         @appstats.stats['rewards_opened'][i],
         @appstats.stats['rewards'][i],
         @appstats.stats['rewards_cvr'][i],
         number_to_currency(@appstats.stats['rewards_revenue'][i] / 100.0, :delimiter => ''),
-        number_to_currency(@appstats.stats['offerwall_ecpm'][i] / 100.0, :delimiter => '')
+        number_to_currency(@appstats.stats['offerwall_ecpm'][i] / 100.0, :delimiter => ''),
+        number_to_currency(@appstats.stats['display_revenue'][i] / 100.0, :delimiter => ''),
+        number_to_currency(@appstats.stats['display_ecpm'][i] / 100.0, :delimiter => ''),
+        number_to_currency(@appstats.stats['featured_revenue'][i] /100.0, :delimiter => ''),
+        number_to_currency(@appstats.stats['featured_ecpm'][i] /100.0, :delimiter => ''),
       ]
 
       if @granularity == :daily
@@ -246,10 +303,15 @@ class ReportingController < WebsiteController
     send_data(data.join("\n"), :type => 'text/csv', :filename => "#{@offer.id}_#{@start_time.to_date.to_s(:db_date)}_#{@end_time.to_date.to_s(:db_date)}.csv")
   end
   
+  def download_udids
+    bucket = S3.bucket(BucketNames::AD_UDIDS)
+    data = bucket.get(Offer.s3_udids_path(@offer.id) + params[:date])
+    send_data(data, :type => 'text/csv', :filename => "#{@offer.id}_#{params[:date]}.csv")
+  end
+  
 private
   
-  def setup
-    # find the offer
+  def find_offer
     if permitted_to?(:index, :statz)
       @offer = Offer.find_by_id(params[:id], :include => 'item')
     else
@@ -259,7 +321,9 @@ private
       flash[:notice] = 'Unknown offer id'
       redirect_to reporting_index_path and return
     end
-    
+  end
+  
+  def setup
     # setup the start/end times
     now = Time.zone.now
     @start_time = now.beginning_of_hour - 23.hours
@@ -288,6 +352,45 @@ private
 
     # lookup the stats
     @appstats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true })
+  end
+  
+  def get_rank_partitions
+    return @rank_partitions if defined?(@rank_partitions)
+    @rank_partitions = {}
+    
+    keys = @appstats.stats['ranks'].keys.sort do |key1, key2|
+      key1.gsub(/^overall/, '1') <=> key2.gsub(/^overall/, '1')
+    end
+    
+    keys.each do |key|
+      key_parts = key.split('.')
+      country = "#{key_parts[2].titleize} (#{key_parts[1].titleize.gsub('Ipad', 'iPad')})"
+      ranks = @appstats.stats['ranks'][key]
+      
+      @rank_partitions[country] ||= {}
+      @rank_partitions[country][:yMax] = 200
+      @rank_partitions[country][:names] ||= []
+      @rank_partitions[country][:data] ||= []
+      @rank_partitions[country][:totals] ||= []
+      
+      @rank_partitions[country][:names] << "#{key_parts[0].titleize}"
+      @rank_partitions[country][:data] << ranks
+      @rank_partitions[country][:totals] << (ranks.compact.last.ordinalize rescue '-')
+    end
+    
+    @rank_partitions
+  end
+  
+  def get_rank_partition_names
+    get_rank_partitions.keys.sort
+  end
+  
+  def get_rank_partition_values
+    values = []
+    get_rank_partition_names.each do |name|
+      values << get_rank_partitions[name]
+    end
+    values
   end
   
 end

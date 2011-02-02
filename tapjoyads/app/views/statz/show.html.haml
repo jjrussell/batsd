@@ -33,10 +33,15 @@
     - if @offer.item.use_raw_url?
       - property_row('Raw url', link_to('[url]', @offer.item.store_url), nil, @offer.item.store_url.blank? ? 'incomplete' : nil)
     - else
-      - property_row('Store id', link_to(@offer.item.store_id, @offer.item.final_store_url), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
+      - if @offer.item.store_id.blank? && @offer.item.is_android?
+        - property_row('Store id', link_to("Empty -- Update?", edit_android_app_tool_path(@offer.item.id)), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
+      - else
+        - property_row('Store id', link_to(@offer.item.store_id, @offer.item.info_url), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
+    - if !@offer.item.is_android?
+      - property_row('File size', number_to_human_size(@offer.item.file_size_bytes), nil, @offer.item.file_size_bytes.to_i >= 20971520 ? 'warning' : nil)
   - else
     - property_row('Destination url', link_to(truncate(@offer.url, :length => 60), @offer.url))
-  - property_row('Price', number_to_currency(@offer.price / 100.0))
+  - property_row('Price', number_to_currency(@offer.price / 100.0), nil, @offer.price.to_i >= 300 ? 'warning' : nil)
   - property_row('Daily budget', @offer.daily_budget, 0)
   - property_row('Overall budget', @offer.overall_budget, 0)
   - property_row('Show rate', "%.1f%" % ((@offer.show_rate || 0) * 100.0), "100.0%")
@@ -46,6 +51,8 @@
   - property_row('Postal codes', @offer.postal_codes, '')
   - property_row('Pay-per-click', @offer.pay_per_click?, false)
   - property_row('Device types', @offer.device_types, Offer::APPLE_DEVICES.to_json)
+  - if @offer.item_type == 'App' && !@offer.item.is_android? && @offer.item.supported_devices.present?
+    - property_row('Devices listed on iTunes', @offer.item.supported_devices, ["all"].to_json, 'warning')
   - property_row('Allow negative balance', @offer.allow_negative_balance?, false)
   - property_row('Self promote only', @offer.self_promote_only?, false)
   - property_row('Featured', @offer.featured?, false)
@@ -81,35 +88,37 @@
 %table.properties
   - property_row('Name', @offer.partner.name)
   - if @offer.partner.users.first
-    - property_row('Contact(s)', @offer.partner.users.map(&:email).join(', '))
+    - property_row('Contact(s)', @offer.partner.non_managers.map(&:email).join(', '))
   - property_row('Balance', number_to_currency(@offer.partner.balance / 100.0))
   - property_row('Pending Earnings', number_to_currency(@offer.partner.pending_earnings / 100.0))
-  - property_row('Account managers', @offer.partner.account_managers.map{|u| u.username}.join(', '))
+  - property_row('Account managers', @offer.partner.account_managers.map(&:email).join(', '))
   - property_row('Internal notes', @offer.partner.account_manager_notes, '')
   - property_row('id', link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - ' + clippy(@offer.partner.id))
 = render 'partners/make_current_button', :partner => @offer.partner
 
 - if @offer.is_publisher_offer?
-  - c = @offer.item.primary_currency
-  %h4 Currency - #{c.name}
-  #currency
-    %a.more{ :href => '#' } [Show more details]
-    = link_to('[View Offer Wall]', "#{API_URL}/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDIDS.first}&publisher_user_id=testuser&device_type=#{@offer.item.platform}")
-    .details
-      %table.properties
-        - property_row('Conversion rate', c.conversion_rate)
-        - property_row('Callback url', c.callback_url)
-        - property_row('Secret key', c.secret_key)
-        - property_row('Initial balance', c.initial_balance)
-        - property_row('Only free offers', c.only_free_offers?)
-        - property_row('Has virtual goods', c.has_virtual_goods?)
-        - property_row('Spend share', c.spend_share)
-        - property_row('Direct-pay share', c.direct_pay_share)
-        - property_row('Max age rating', c.max_age_rating)
-        - property_row('Disabled offers', c.disabled_offers)
-        - property_row('Disabled partners', c.disabled_partners)
-        - property_row('Test devices', c.test_devices)
-        - property_row('id', c.id + ' - ' + clippy(c.id))
+  - @offer.item.currencies.each do |c|
+    %h4 Currency - #{c.name}
+    .currency
+      %a.more{ :href => '#', :c_id => c.id } [Show more details]
+      = link_to('[View Offer Wall]', "#{API_URL}/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDIDS.first}&publisher_user_id=testuser&currency_id=#{c.id}&device_type=#{@offer.item.platform}")
+      .details{ :id => "details_#{c.id}"}
+        %table.properties
+          - property_row('Conversion rate', c.conversion_rate)
+          - property_row('Callback url', c.callback_url)
+          - property_row('Secret key', c.secret_key)
+          - property_row('Initial balance', c.initial_balance)
+          - property_row('Ordinal', c.ordinal)
+          - property_row('Only free offers', c.only_free_offers?)
+          - property_row('Has virtual goods', c.has_virtual_goods?)
+          - property_row('Banner advertiser', c.banner_advertiser?)
+          - property_row('Spend share', c.spend_share)
+          - property_row('Direct-pay share', c.direct_pay_share)
+          - property_row('Max age rating', c.max_age_rating)
+          - property_row('Disabled offers', c.disabled_offers)
+          - property_row('Disabled partners', c.disabled_partners)
+          - property_row('Test devices', c.test_devices)
+          - property_row('id', c.id + ' - ' + clippy(c.id))
 
 .load-circle= image_tag('load-circle.gif')
 
@@ -118,8 +127,9 @@
   #installs_spend.graph
   #installs_rank.graph
   - if @offer.is_publisher_offer?
-    #published_offers.graph
-    #offerwall_views.graph
+    #revenue.graph
+    #offerwall.graph
+    #featured_offers.graph
     #display_ads.graph
     #virtual_goods.graph
     #ads.graph
@@ -132,8 +142,8 @@
   :plain
     $('#search_box').autocomplete({ source: '#{search_offers_path}', delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });
 
-    $('#currency .more').click(function() {
-      $('#currency .details').toggle();
+    $('.currency .more').click(function() {
+      $('#details_' + $(this).attr('c_id')).toggle();
       return false;
     });
 
@@ -146,4 +156,3 @@
       $('#boosts_list').toggle();
       return false;
     });
-

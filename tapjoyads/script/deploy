@@ -70,8 +70,7 @@ private
   end
   
   def check_syntax
-    system("script/runner 'OneOffs.check_syntax'")
-    if $?.exitstatus != 0
+    unless system("script/runner 'OneOffs.check_syntax'")
       puts "Syntax Check: FAILED"
       exit
     end
@@ -98,6 +97,13 @@ private
     
     print "No deploy tag specified. Create new deploy tag #{@options[:version]}? [y/N] "
     prompt_and_exit_if_not_yes
+    
+    puts "Updating webserver.sqlite file."
+    unless system("script/runner 'OneOffs.update_sqlite_schema' > /dev/null")
+      puts "Failed to update webserver.sqlite!"
+      exit
+    end
+    system("git add db/webserver.sqlite")
     
     puts "Incrementing version file."
     yaml_version['current'] = @options[:version]

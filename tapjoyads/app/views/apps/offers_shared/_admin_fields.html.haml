@@ -96,13 +96,6 @@
 - if [ 'App', 'EmailOffer', 'GenericOffer' ].include?(@offer.item_type)
   %tr.admin
     %th
-      = f.label(:daily_budget)
-      #help_daily_budget.help ?
-    %td
-      = f.text_field(:daily_budget)
-      = error_message_on @offer, :daily_budget
-  %tr.admin
-    %th
       = f.label(:overall_budget)
       #help_overall_budget.help ?
     %td
@@ -114,6 +107,13 @@
     #help_rank_score.help ?
   %td
     = @offer.rank_score || "N/A"
+%tr.admin
+  %th
+    = f.label(:min_bid_override)
+    #help_min_bid_override.help ?
+  %td
+    = f.currency_field(:min_bid_override, {}, :class => 'allow_nil')
+    = error_message_on @offer, :min_bid_override
     
 .hidden
   #help_admin_offer_name_content{:name => 'Offer Name'} Name that will be displayed on offer walls.
@@ -133,6 +133,7 @@
   #help_daily_budget_content{ :name => 'Daily Budget' } The maximum number of conversions to complete in one day.
   #help_overall_budget_content{ :name => 'Overall Budget' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
   #help_rank_score_content{ :name => 'Rank Score' } The last computed rank score for this offer.
+  #help_min_bid_override_content{ :name => 'Min Bid Override' } Manually set the minimum allowed bid for this offer.
 
 - content_for :page_javascript do
   :plain

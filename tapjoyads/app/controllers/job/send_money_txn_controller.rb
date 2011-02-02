@@ -30,7 +30,7 @@ private
     end
     save_conversion(conversion)
     
-    if reward.displayer_app_id.present?
+    if reward.displayer_app_id.present? && reward.displayer_amount > 0 # TO REMOVE: second part of 'if' condition after 2011-02-03
       conversion = Conversion.new do |c|
         c.id = reward.reward_key_2
         c.reward_id = reward.key
@@ -46,7 +46,12 @@ private
     end
     
     reward.sent_money_txn = Time.zone.now
-    reward.save
+    begin
+      reward.serial_save(:catch_exceptions => false, :expected_attr => {'sent_money_txn' => nil})
+      reward.update_counters
+    rescue Simpledb::ExpectedAttributeError => e
+      # Do nothing
+    end
   end
   
   def save_conversion(conversion)

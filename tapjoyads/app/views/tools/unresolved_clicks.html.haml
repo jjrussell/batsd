@@ -22,11 +22,11 @@
           - run_at = arr[1]
           - click = arr[2]
           - pub = App.find_by_id(click.publisher_app_id)
-          - adv = App.find_by_id(click.advertiser_app_id)
+          - adv = Offer.find_by_id(click.advertiser_app_id)
           %td= clicked_at.to_s(:pub_ampm)
           %td= run_at.nil? ? '<b>never</b>' : run_at.to_s(:pub_ampm)
-          %td= link_to(pub.name, pub)
-          %td= link_to(adv.name, adv)
+          %td= link_to(pub.name, statz_path(pub))
+          %td= link_to(adv.name, statz_path(adv)) rescue ''
           %td= click.currency_reward
           %td
             - form_tag resolve_clicks_tools_path(:click_id => click.id) do

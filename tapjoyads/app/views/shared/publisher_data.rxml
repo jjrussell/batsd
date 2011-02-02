@@ -1,0 +1,27 @@
+xml.instruct!
+xml.MarketingData do
+  xml.Date @date
+  @appstats_list.each do |offer_with_stats|
+    offer = offer_with_stats[0]
+    appstats = offer_with_stats[1]
+    xml.App do
+      xml.Name offer.name_with_suffix
+      xml.AppKey offer.id
+      xml.Platform offer.get_platform
+      xml.PaidInstalls appstats.stats['paid_installs'].sum
+      xml.PaidInstallsHourly appstats.stats['paid_installs'].join(',')
+      xml.Spend appstats.stats['installs_spend'].sum
+      xml.SpendHourly appstats.stats['installs_spend'].join(',')
+      xml.PublishedInstalls appstats.stats['published_installs'].sum
+      xml.PublishedInstallsHourly appstats.stats['published_installs'].join(',')
+      xml.Revenue appstats.stats['non_display_revenue'].sum
+      xml.RevenueHourly appstats.stats['non_display_revenue'].join(',')
+      xml.OfferwallRevenue appstats.stats['rewards_revenue'].sum
+      xml.OfferwallRevenueHourly appstats.stats['rewards_revenue'].join(',')
+      xml.FeaturedOfferRevenue appstats.stats['featured_revenue'].sum
+      xml.FeaturedOfferRevenueHourly appstats.stats['featured_revenue'].join(',')
+      xml.DisplayRevenue appstats.stats['display_revenue'].sum
+      xml.DisplayRevenueHourly appstats.stats['display_revenue'].join(',')
+    end
+  end
+end

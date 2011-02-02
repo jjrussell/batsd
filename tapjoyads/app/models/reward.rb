@@ -23,35 +23,36 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :created,           :type => :time
   self.sdb_attr :sent_currency,     :type => :time
   self.sdb_attr :sent_money_txn,    :type => :time
+  self.sdb_attr :send_currency_status
   
   def initialize(options = {})
-    super
+    super({:load_from_memcache => false}.merge(options))
     put('created', Time.zone.now.to_f.to_s) unless get('created')
   end
   
   def update_counters
-    if type == 'install'
-      Mc.increment_count(
-        Stats.get_memcache_count_key('installs_revenue', publisher_app_id, created), 
-        false, 1.day, publisher_amount)
-        
-      Mc.increment_count(
-        Stats.get_memcache_count_key('installs_spend', offer_id, created), 
-        false, 1.day, advertiser_amount)
-    elsif type == 'offer' || type == 'generic'
-      Mc.increment_count(
-        Stats.get_memcache_count_key('offers_revenue', publisher_app_id, created), 
-        false, 1.day, publisher_amount)
-      
-      Mc.increment_count(
-        Stats.get_memcache_count_key('installs_spend', offer_id, created), 
-        false, 1.day, advertiser_amount)
+    publisher_revenue_stat = case type
+    when 'install'
+      'installs_revenue'
+    when 'offer', 'generic', 'action'
+      'offers_revenue'
+    when 'featured_install', 'featured_offer', 'featured_generic', 'featured_action'
+      'featured_revenue'
+    else
+      nil
     end
     
+    if publisher_revenue_stat.present?
+      mc_key = Stats.get_memcache_count_key(publisher_revenue_stat, publisher_app_id, created)
+      Mc.increment_count(mc_key, false, 1.day, publisher_amount)
+    end
+    
+    mc_key = Stats.get_memcache_count_key('installs_spend', offer_id, created)
+    Mc.increment_count(mc_key, false, 1.day, advertiser_amount)
+    
     if displayer_app_id.present?
-      Mc.increment_count(
-        Stats.get_memcache_count_key('display_revenue', displayer_app_id, created),
-        false, 1.day, displayer_amount)
+      mc_key = Stats.get_memcache_count_key('display_revenue', displayer_app_id, created)
+      Mc.increment_count(mc_key, false, 1.day, displayer_amount)
     end
   end
   
@@ -59,6 +60,10 @@ class Reward < SimpledbShardedResource
     domain_number = @key.hash % NUM_REWARD_DOMAINS
     
     return "rewards_#{domain_number}"
+  end
+  
+  def serial_save(options = {})
+    super({ :write_to_memcache => false }.merge(options))
   end
   
 end

@@ -54,4 +54,61 @@ class DeviceTest < ActiveSupport::TestCase
     end
   end
   
+
+  context "Jailbreak detection" do
+    setup do
+      @non_jb_device = Factory(:device)
+
+      @jb_device = Factory(:device)
+      @jb_device.is_jailbroken = true
+      @jb_device.save
+
+      @app = Factory(:app)
+    end
+
+    should "mark as not jb when lad is 0" do
+      @jb_device.set_app_ran(@app.id, { :lad => '0' })
+      @non_jb_device.set_app_ran(@app.id, { :lad => '0' })
+
+      assert !@jb_device.is_jailbroken?
+      assert !@non_jb_device.is_jailbroken?
+    end
+
+    should "mark as jb when lad is non-zero" do
+      @jb_device.set_app_ran(@app.id, { :lad => '42' })
+      @non_jb_device.set_app_ran(@app.id, { :lad => '42' })
+
+      assert @jb_device.is_jailbroken?
+      assert @non_jb_device.is_jailbroken?
+    end
+
+    should "not change jb when lad is not present" do
+      @jb_device.set_app_ran(@app.id, { })
+      @non_jb_device.set_app_ran(@app.id, { })
+
+      assert @jb_device.is_jailbroken?
+      assert !@non_jb_device.is_jailbroken?
+    end
+
+    should "mark as jb when it's a new papaya user" do
+      @non_jb_device.set_app_ran('e96062c5-45f0-43ba-ae8f-32bc71b72c99', {})
+      assert @non_jb_device.is_jailbroken?
+    end
+
+    should "not change jb status when it's an existing papaya user" do
+      @non_jb_device.set_app_ran('e96062c5-45f0-43ba-ae8f-32bc71b72c99', {})
+
+      # should still be jb
+      @non_jb_device.set_app_ran('e96062c5-45f0-43ba-ae8f-32bc71b72c99', {})
+      assert @non_jb_device.is_jailbroken?
+
+      # now marked as not jb
+      @non_jb_device.set_app_ran(@app.id, { :lad => '0' })
+      assert !@non_jb_device.is_jailbroken?
+
+      # second time around, should not mark as jb again
+      @non_jb_device.set_app_ran('e96062c5-45f0-43ba-ae8f-32bc71b72c99', {})
+      assert !@non_jb_device.is_jailbroken?
+    end
+  end
 end

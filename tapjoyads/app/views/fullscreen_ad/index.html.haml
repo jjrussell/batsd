@@ -35,12 +35,17 @@
         icon.src = icon.getAttribute('s');
       }
       
+      document.body.setAttribute('style', 'height: ' + (document.documentElement.clientHeight  - 30) + 'px;');
+      
       if (document.documentElement.clientHeight < 480) {
         icon.setAttribute('style', 'width: 96px; height: 96px;');
-        main.setAttribute('style', 'min-height: 294px;');
+        main.setAttribute('style', 'height: 294px; margin-top: -147px');
+      } else if (document.documentElement.clientHeight > 800) {
+        icon.setAttribute('style', 'width: 512px; height: 512px;');
+        main.setAttribute('style', 'height: 710px; margin-top: -355px;');
       } else {
         icon.setAttribute('style', 'width: 256px; height: 256px;');
-        main.setAttribute('style', 'min-height: 454px;');
+        main.setAttribute('style', 'height: 454px; margin-top: -227px;');
       }
     }
   
@@ -50,10 +55,11 @@
     h1 {
       color: #004E09;
       font-size: 22px;
+      margin: 8px 0;
     }
     
     p {
-      margin: 10px 0;
+      margin: 4px 0;
     }
   
     body {
@@ -63,10 +69,9 @@
     #main {
       font-size: 20px;
       text-align: center;
-      height: 100%;
-      min-height: 454px;
       position: relative;
       margin: 8px;
+      top: 50%;
     }
     
     .amount {

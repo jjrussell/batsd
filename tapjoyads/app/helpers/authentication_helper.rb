@@ -64,6 +64,15 @@ module AuthenticationHelper
     end
   end
 
+  def epic_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'epic'
+        password = 'hbfdu723zv'
+      end
+      password
+    end
+  end
+  
   def zynga_authenticate
     authenticate_or_request_with_http_digest do |username|
       if username == 'zynga'
@@ -140,6 +149,15 @@ module AuthenticationHelper
     authenticate_or_request_with_http_digest do |username|
       if username == 'brooklyn_packet'
         password = 'hU2AzeTayUsu'
+      end
+      password
+    end
+  end
+  
+  def ea_authenticate
+    authenticate_or_request_with_http_digest do |username|
+      if username == 'ea'
+        password = 'SPE6uq9n6KaF'
       end
       password
     end

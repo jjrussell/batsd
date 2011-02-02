@@ -4,6 +4,8 @@ class FreeAppCountController < ApplicationController
     
     currency = Currency.find_in_cache(params[:app_id])
     publisher_app = App.find_in_cache(params[:app_id])
+    return unless verify_records([ currency, publisher_app ])
+    
     offer_list, more_data_available = publisher_app.get_offer_list(params[:udid], 
         :currency => currency,
         :device_type => params[:device_type])

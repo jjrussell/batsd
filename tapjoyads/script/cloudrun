@@ -11,17 +11,16 @@ unless ARGV[0] && ARGV[1]
 end
 
 server_list = []
-ARGV[0].split.each do |server_group|
+server_groups = ARGV[0].split
+server_groups.each do |server_group|
   server_list += Ec2Tasks.get_dns_names_with_instance_ids(server_group)
 end
 command = ARGV[1]
 user = ARGV[2] || 'webuser'
-remove_from_lb = ARGV[3] || false
-has_elb_api_tools = File.executable?(`which elb-register-instances-with-lb`.gsub("\n", '')) &&
-                    File.executable?(`which elb-deregister-instances-from-lb`.gsub("\n", ''))
-if remove_from_lb && !has_elb_api_tools
-  puts "You must have the Amazon ELB tools in your PATH!"
-  exit
+remove_from_lb = (ARGV[3] || false) && server_groups.include?('webserver')
+if remove_from_lb
+  elb_interface = Ec2Tasks.get_elb_interface
+  registered_webservers = elb_interface.describe_instance_health('web-lb').collect { |instance| instance[:instance_id] }
 end
 
 # add servers to ~/.ssh/known_hosts to prevent prompts
@@ -43,9 +42,12 @@ server_list.each do |server|
 end
 f.close
 
-puts "Servers to run on:"
+puts "Servers to run on (#{server_list.length} total):"
+count = 0
 server_list.each do |server|
-  server[:remove_from_lb] = remove_from_lb && server[:aws_groups].include?('webserver')
+  count += 1
+  server[:server_num] = count
+  server[:remove_from_lb] = remove_from_lb && server[:aws_groups].include?('webserver') && registered_webservers.include?(server[:aws_instance_id])
   server[:boot_app] = server[:remove_from_lb] || server[:aws_groups].include?('website')
   puts server[:remove_from_lb] ? "#{server[:dns_name]} (will be removed from load balancer)" : "#{server[:dns_name]}"
 end
@@ -59,20 +61,17 @@ if answer !~ /^(y|yes)$/i
 end
 
 thread_list = []
-count = 0
 server_list.each do |server|
-  count += 1
   thread = Thread.new do
     if server[:remove_from_lb]
-      `elb-deregister-instances-from-lb web-lb --instances #{server[:aws_instance_id]}`
+      elb_interface.deregister_instances_with_load_balancer('web-lb', server[:aws_instance_id])
     end
-    puts "Running on #{server[:aws_groups].to_s.gsub('tapbase', '')} #{server[:dns_name]} (#{count} / #{server_list.length})", `ssh #{user}@#{server[:dns_name]} '#{command}'`, "\n"
+    puts "Running on #{server[:aws_groups].to_s.gsub('tapbase', '')} #{server[:dns_name]} (#{server[:server_num]} / #{server_list.length})", `ssh #{user}@#{server[:dns_name]} '#{command}'`, "\n"
     if server[:boot_app]
       `curl -s http://#{server[:dns_name]}:9898/healthz`
     end
     if server[:remove_from_lb]
-      `elb-register-instances-with-lb web-lb --instances #{server[:aws_instance_id]}`
-      sleep 1
+      elb_interface.register_instances_with_load_balancer('web-lb', server[:aws_instance_id])
     end
   end
   server[:remove_from_lb] ? thread.join : thread_list.push(thread)

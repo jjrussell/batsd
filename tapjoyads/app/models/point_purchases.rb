@@ -13,8 +13,9 @@ class PointPurchases < SimpledbShardedResource
     
     if self.points.nil?
       Rails.logger.info "getting initial_balance from currency"
-      app_key = @key.split('.')[1]
+      app_key = @key.split('.').last
       currency = Currency.find_in_cache(app_key)
+      raise "unable to determine initial balance" if currency.nil?
       self.points = currency.initial_balance
     end
   end
@@ -42,7 +43,7 @@ class PointPurchases < SimpledbShardedResource
   end
   
   def get_udid
-    @key.split('.')[0]
+    @key.split('.')[0..-2].join('.')
   end
   
   def self.purchase_virtual_good(key, virtual_good_key, quantity = 1)

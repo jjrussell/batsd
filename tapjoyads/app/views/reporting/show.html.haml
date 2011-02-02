@@ -20,17 +20,17 @@
 .clear
 
 .load-circle= image_tag('load-circle.gif')
-#tables
-.clear
-- #Add 'App Data' table with Connects, DAUs, last rank
 #charts{ :style => "text-align: center;" }
   #connects.graph
   #installs_spend.graph
   #installs_rank.graph
   - if @offer.is_publisher_offer?
-    #published_offers.graph
-    #offerwall_views.graph
+    #revenue.graph
+    #offerwall.graph
+    #featured_offers.graph
     #display_ads.graph
+  - if @offer.has_virtual_goods?
+    #virtual_goods.graph
 
 .clear
 
@@ -39,7 +39,7 @@
   %h3 UDIDs Reports
   %ul.udid-reports
     - @udids.each do |key|
-      .li= link_to(key, download_udids_app_offer_path(:app_id => @offer.item.id, :id => @offer.id, :date => key))
+      .li= link_to(key, download_udids_reporting_path(@offer.id, :date => key))
 
 - include_tapjoy_graph
 - content_for :included_javascripts, javascript_include_tag('tapjoy/reporting')

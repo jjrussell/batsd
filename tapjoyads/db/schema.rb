@@ -9,7 +9,23 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101210101052) do
+ActiveRecord::Schema.define(:version => 20110201232320) do
+
+  create_table "action_offers", :id => false, :force => true do |t|
+    t.string   "id",            :limit => 36,                    :null => false
+    t.string   "partner_id",    :limit => 36,                    :null => false
+    t.string   "app_id",        :limit => 36,                    :null => false
+    t.string   "name",                                           :null => false
+    t.text     "instructions"
+    t.boolean  "hidden",                      :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "variable_name",                                  :null => false
+  end
+
+  add_index "action_offers", ["app_id"], :name => "index_action_offers_on_app_id"
+  add_index "action_offers", ["id"], :name => "index_action_offers_on_id", :unique => true
+  add_index "action_offers", ["partner_id"], :name => "index_action_offers_on_partner_id"
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -33,6 +49,8 @@ ActiveRecord::Schema.define(:version => 20101210101052) do
     t.integer  "rotation_direction",                  :default => 0,     :null => false
     t.integer  "rotation_time",                       :default => 0,     :null => false
     t.boolean  "hidden",                              :default => false, :null => false
+    t.integer  "file_size_bytes"
+    t.string   "supported_devices"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -52,11 +70,10 @@ ActiveRecord::Schema.define(:version => 20101210101052) do
     t.datetime "updated_at"
   end
 
-  add_index "conversions", ["advertiser_offer_id"], :name => "index_conversions_on_advertiser_app_id"
+  add_index "conversions", ["advertiser_offer_id", "created_at", "reward_type"], :name => "index_on_advertiser_offer_id_created_at_and_reward_type"
   add_index "conversions", ["created_at"], :name => "index_conversions_on_created_at"
-  add_index "conversions", ["id"], :name => "index_conversions_on_id", :unique => true
-  add_index "conversions", ["publisher_app_id"], :name => "index_conversions_on_publisher_app_id"
-  add_index "conversions", ["reward_id"], :name => "index_conversions_on_reward_id"
+  add_index "conversions", ["id", "created_at"], :name => "index_conversions_on_id_and_created_at", :unique => true
+  add_index "conversions", ["publisher_app_id", "created_at", "reward_type"], :name => "index_on_publisher_app_id_created_at_and_reward_type"
 
   create_table "currencies", :id => false, :force => true do |t|
     t.string   "id",                   :limit => 36,                                                  :null => false
@@ -80,6 +97,7 @@ ActiveRecord::Schema.define(:version => 20101210101052) do
     t.decimal  "spend_share",                        :precision => 8, :scale => 6, :default => 0.5,   :null => false
     t.integer  "minimum_featured_bid"
     t.decimal  "direct_pay_share",                   :precision => 8, :scale => 6, :default => 1.0,   :null => false
+    t.boolean  "banner_advertiser",                                                :default => false, :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -219,6 +237,7 @@ ActiveRecord::Schema.define(:version => 20101210101052) do
     t.boolean  "multi_complete",                                                                :default => false, :null => false
     t.string   "direct_pay"
     t.boolean  "low_balance",                                                                   :default => false, :null => false
+    t.integer  "min_bid_override"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

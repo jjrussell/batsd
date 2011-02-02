@@ -3,7 +3,7 @@ class BillingController < WebsiteController
 
   filter_access_to :all
   before_filter :get_statements, :only => [:index, :export_statements, :export_orders, :export_payouts]
-  after_filter :save_activity_logs, :only => [ :create_order ]
+  after_filter :save_activity_logs, :only => [ :create_order, :create_transfer ]
 
   def index
     @current_balance = current_partner.balance
@@ -42,14 +42,41 @@ class BillingController < WebsiteController
   def add_funds
     @credit_card = ActiveMerchant::Billing::CreditCardWithAmount.new
   end
-  
+
+  def create_transfer
+    amount = sanitize_currency_param(params[ :transfer_amount ]).to_i
+    if amount <= 0
+      flash[:error] = "Transfer amount must be more than $0."
+    elsif amount > current_partner.pending_earnings
+      flash[:error] = "Transfer amount must be less than your Pending Earnings."
+    else
+      Partner.transaction do
+        payout, order, marketing_order = current_partner.build_transfer(amount)
+
+        log_activity(payout)
+        payout.save!
+
+        log_activity(order)
+        order.save!
+
+        flash[:notice] = "Successfully transferred #{params[:transfer_amount]}"
+        if marketing_order.present?
+          log_activity(marketing_order)
+          marketing_order.save!
+          flash[:notice] += " and $#{"%.2f" % (marketing_order.amount / 100.0)}</b> transfer bonus."
+        end
+      end
+    end
+    redirect_to transfer_funds_billing_path
+  end
+
   def create_order
     cc_params = sanitize_currency_params(params[:credit_card], [ :amount ])
     @credit_card = ActiveMerchant::Billing::CreditCardWithAmount.new(cc_params)
     @order = Order.new(:partner => current_partner, :amount => @credit_card.amount, :status => 1, :payment_method => 0)
     if @credit_card.valid? && @order.valid?
       gateway = ActiveMerchant::Billing::AuthorizeNetGateway.new(:login => '6d68x2KxXVM', :password => '6fz7YyU9424pZDc6', :test => Rails.env != 'production')
-      response = gateway.purchase(@credit_card.amount, @credit_card)
+      response = gateway.purchase(@credit_card.amount, @credit_card, { :description => current_partner.id })
       if response.success?
         log_activity(@order)
         @order.payment_txn_id = response.authorization

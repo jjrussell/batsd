@@ -10,6 +10,8 @@ class GetOffersController < ApplicationController
   before_filter :set_featured_params, :only => :featured
   before_filter :setup
   
+  after_filter :save_web_request
+  
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
       @test_offer = build_test_offer(@publisher_app, @currency)
@@ -45,6 +47,8 @@ class GetOffersController < ApplicationController
       end
     end
     @more_data_available = 0
+    
+    @web_request.add_path('featured_offer_shown') unless @offer_list.empty?
     
     if params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
@@ -91,11 +95,11 @@ private
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 25).to_i
     
-    @publisher_app = App.find_in_cache(params[:app_id])
-    
     params[:currency_id] = params[:app_id] if params[:currency_id].blank?
     @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])
     @currency = @currencies.select { |c| c.id == params[:currency_id] }.first
+    @publisher_app = App.find_in_cache(params[:app_id])
+    return unless verify_records([ @currency, @publisher_app ])
     
     @device = Device.new(:key => params[:udid])
     if @device.opted_out?
@@ -115,7 +119,7 @@ private
     ##
     # Gameview hardcodes 'iphone' as their device type. This screws up real iphone-only targeting.
     # Set the device type to 'ipod touch' for gameview until they fix their issue.
-    if @publisher_app.partner_id == "e9a6d51c-cef9-4ee4-a2c9-51eef1989c4e"
+    if @publisher_app.partner_id == "e9a6d51c-cef9-4ee4-a2c9-51eef1989c4e" && !@publisher_app.is_android?
       params[:device_type] = 'ipod touch'
     end
     
@@ -124,18 +128,16 @@ private
     doodle_buddy_regular_id = '3cb9aacb-f0e6-4894-90fe-789ea6b8361d'
     params[:app_id] = doodle_buddy_regular_id if params[:app_id] == doodle_buddy_holiday_id
     
-    #TO REMOVE: hackey fix for mini tycoon
-    params[:publisher_user_id] = params[:udid] if params[:app_id] == 'f90a1f37-d669-4c98-b0ee-af5290d32509'
-    
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
     # TO REMOVE - when gameview integrates properly
     params[:exp] = nil if params[:featured_offer].present?
     # END TO REMOVE
-    web_request = WebRequest.new(:time => @now)
-    web_request.put_values('offers', params, get_ip_address, get_geoip_data)
-    web_request.put('viewed_at', @now.to_f.to_s)
-    web_request.save
+    
+    wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
+    @web_request = WebRequest.new(:time => @now)
+    @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+    @web_request.put('viewed_at', @now.to_f.to_s)
   end
   
   def set_offer_list(options = {})
@@ -171,6 +173,10 @@ private
     @offer_list = @offer_list[@start_index, @max_items] || []
   end
   
+  def save_web_request
+    @web_request.save
+  end
+  
   # TO REMOVE - once the tap defense connect bug has been fixed and is sufficiently adopted
   def fake_connect_call
     if params[:app_id] == '2349536b-c810-47d7-836c-2cd47cd3a796' && (params[:app_version] == '3.2.2' || params[:app_version] == '3.2.1') && params[:library_version] == '5.0.1'
@@ -185,7 +191,7 @@ private
       end
       
       web_request = WebRequest.new
-      web_request.put_values('connect', params, get_ip_address, get_geoip_data)
+      web_request.put_values('connect', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     
       device = Device.new(:key => params[:udid])
       path_list = device.set_app_ran(params[:app_id], params)

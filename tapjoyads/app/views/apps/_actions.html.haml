@@ -1,18 +1,31 @@
 #apps_tools
   %ul
     - unless app.nil?
-      - currency_path = app.primary_currency.nil? ? new_app_currency_path({:app_id => app.id}) : app_currency_path({:app_id => app.id, :id => app.primary_currency.id})
-      - virtual_goods_path = app.virtual_goods.blank? ? new_app_virtual_good_path({:app_id => app.id}) : app_virtual_goods_path({:app_id => app.id})
       %li= link_to 'Details', app_path(app), :class => (request.path_parameters['controller'] == 'apps' && !request.path_parameters['action'][/integrate/] ? 'selected' : '')
+
       %li= link_to 'Pay-Per-Install', app_offer_path(:id => app.primary_offer.id, :app_id => app.id), :class => (controller.controller_name == 'offers' ? 'selected' : '')
       - if @app.price == 0
         %li= link_to 'Featured Installs', @app.primary_featured_offer ? edit_app_featured_offer_path(@app, @app.primary_featured_offer) : new_app_featured_offer_path(@app), :class => (controller.controller_name == 'featured_offers') ? 'selected' : ''
-      %li= link_to 'Virtual Currency', currency_path, :class => (controller.controller_name == 'currencies' ? 'selected' : '')
+      - if request.host == 'test.tapjoy.com' || Rails.env == 'development'
+        %li= link_to 'Pay-Per-Action', @app.action_offers.present? ? app_action_offers_path(@app) : new_app_action_offer_path(@app), :class => (controller.controller_name == 'action_offers') ? 'selected' : ''
+      - currency_selected = controller.controller_name == 'currencies'
+      - if app.currencies.empty?
+        %li= link_to 'Virtual Currency', new_app_currency_path({:app_id => app.id}), :class => (currency_selected && controller.action_name == 'new' ? 'selected' : '')
+      - else
+        %li.with_padding Virtual Currency
+        - app.currencies.each do |c|
+          %li.inception= link_to c.name, app_currency_path({:app_id => app.id, :id => c.id}), :class => (currency_selected && params[:id] == c.id ? 'selected' : '')
+        - if app.can_have_new_currency?
+          %li.inception= link_to 'Create Currency', new_app_currency_path({:app_id => app.id}), :class => (currency_selected && controller.action_name == 'new' ? 'selected' : '')
+
+      - virtual_goods_path = app.has_virtual_goods? ?  app_virtual_goods_path({:app_id => app.id}) : new_app_virtual_good_path({:app_id => app.id})
       %li= link_to 'Virtual Goods', virtual_goods_path, :class => (controller.controller_name == 'virtual_goods' ? 'selected' : '')
+
       %li= link_to 'Integrate', integrate_app_path(@app)
       -if request.path_parameters['controller'] == 'apps' && request.path_parameters['action'][/integrate/]
         %li.inception= link_to 'Advertiser', integrate_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action']=='integrate' ? 'selected' : '')
         %li.inception= link_to 'Publisher', publisher_integrate_app_path(@app), :class => (request.path_parameters['controller'] == 'apps' && request.path_parameters['action']=='publisher_integrate' ? 'selected' : '')
+
     - else
       %li.disabled Details
       %li.disabled Pay-Per-Install
@@ -31,6 +44,9 @@
     }
     #apps_tools li {
       list-style: none;
+    }
+    #apps_tools li.with_padding {
+      padding: 5px;
     }
     #apps_tools li.disabled,
     #apps_tools a {

@@ -14,7 +14,7 @@ class Currency < ActiveRecord::Base
   validates_numericality_of :conversion_rate, :initial_balance, :ordinal, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :spend_share, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :allow_nil => true, :only_integer => true
-  validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :in => [ true, false ]
+  validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :banner_advertiser, :in => [ true, false ]
   validates_each :callback_url do |record, attribute, value|
     unless SPECIAL_CALLBACK_URLS.include?(value) || value =~ /^https?:\/\//
       record.errors.add(attribute, 'is not a valid url')
@@ -23,13 +23,22 @@ class Currency < ActiveRecord::Base
   
   before_create :set_values_from_partner
   after_save :update_memcached_by_app_id
-  before_destroy :clear_memcached_by_app_id
+  after_destroy :clear_memcached_by_app_id
   
-  def self.find_all_in_cache_by_app_id(app_id, do_lookup = true)
+  def self.find_all_in_cache_by_app_id(app_id, do_lookup = (Rails.env != 'production'))
     if do_lookup
       Mc.distributed_get_and_put("mysql.app_currencies.#{app_id}") { find_all_by_app_id(app_id, :order => 'ordinal ASC') }
     else
-      Mc.distributed_get("mysql.app_currencies.#{app_id}")
+      Mc.distributed_get("mysql.app_currencies.#{app_id}") { [] }
+    end
+  end
+  
+  def self.cache_all
+    find_each do |c|
+      c.send(:update_memcached)
+      if c.id == c.app_id
+        Mc.distributed_put("mysql.app_currencies.#{c.app_id}", Currency.find_all_by_app_id(c.app_id, :order => 'ordinal ASC'))
+      end
     end
   end
   
@@ -135,12 +144,12 @@ private
     Mc.distributed_put("mysql.app_currencies.#{app_id}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'))
     
     if app_id_changed?
-      Mc.distributed_delete("mysql.app_currencies.#{app_id_was}")
+      Mc.distributed_put("mysql.app_currencies.#{app_id_was}", Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC'))
     end
   end
   
   def clear_memcached_by_app_id
-    Mc.distributed_delete("mysql.app_currencies.#{app_id}")
+    Mc.distributed_put("mysql.app_currencies.#{app_id}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'))
   end
   
   def get_spend_share_ratio

@@ -8,11 +8,12 @@ class App < ActiveRecord::Base
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
-  has_many :currencies
+  has_many :currencies, :order => 'ordinal ASC'
   has_one :primary_currency, :class_name => 'Currency', :conditions => 'id = app_id'
   has_one :rating_offer
   has_many :featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured = true"
   has_one :primary_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured = true", :order => "created_at"
+  has_many :action_offers
   
   belongs_to :partner
   
@@ -40,16 +41,16 @@ class App < ActiveRecord::Base
   def virtual_goods
     VirtualGood.select(:where => "app_id = '#{self.id}'")[:items]
   end
+  
+  def has_virtual_goods?
+    VirtualGood.count(:where => "app_id = '#{self.id}'") > 0
+  end
 
   def store_url
     if use_raw_url?
       read_attribute(:store_url)
     else
-      if is_android?
-        "market://search?q=#{store_id}"
-      else
-        "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
-      end
+      direct_store_url
     end
   end
   
@@ -59,9 +60,17 @@ class App < ActiveRecord::Base
     end
   end
   
-  def final_store_url
+  def info_url
     if is_android?
       "http://www.appbrain.com/app/#{store_id}"
+    else
+      "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
+    end
+  end
+  
+  def direct_store_url
+    if is_android?
+      "market://search?q=#{store_id}"
     else
       "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
     end
@@ -84,10 +93,13 @@ class App < ActiveRecord::Base
     if (data.nil?) # might not be available in the US market
       data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
     end
+    raise "Fetching app store data failed for app: #{app.name} (#{app.id})." if data.nil?
     self.name = data[:title]
     self.price = (data[:price].to_f * 100).round
     self.description = data[:description]
     self.age_rating = data[:age_rating]
+    self.file_size_bytes = data[:file_size_bytes]
+    self.supported_devices = data[:supported_devices].to_json
     download_icon(data[:icon_url], data[:large_icon_url])
   end
 
@@ -116,7 +128,7 @@ class App < ActiveRecord::Base
             acf = RightAws::AcfInterface.new
             acf.invalidate('E1MG6JDV6GH0F2', ["/icons/#{id}.png", "/icons/large/#{id}.png", "/icons/medium/#{id}.jpg"], "#{id}.#{Time.now.to_i}")
           rescue Exception => e
-            Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message, request, params)
+            Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
           end
         end
       end
@@ -146,6 +158,8 @@ class App < ActiveRecord::Base
     direct_pay_providers = options.delete(:direct_pay_providers) { [] }
     exp = options.delete(:exp)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
+    raise "cannot generate offer list without currency" if currency.nil?
     
     if type == Offer::CLASSIC_OFFER_TYPE
       offer_list = []
@@ -198,6 +212,37 @@ class App < ActiveRecord::Base
 
   def display_money_share
     0.6
+  end
+
+  def can_have_new_currency?
+    currencies.empty? || !currencies.any? { |c| Currency::SPECIAL_CALLBACK_URLS.include?(c.callback_url) }
+  end
+  
+  def default_actions_file_name
+    if is_android?
+      "TapjoyPPA.java"
+    else
+      "TJCPPA.h"
+    end
+  end
+  
+  def generate_actions_file
+    if is_android?
+      file_output =  "package com.tapjoy;\n"
+      file_output += "\n"
+      file_output += "public class TapjoyPPA\n"
+      file_output += "{\n"
+      action_offers.each do |action_offer|
+        file_output += "  public static final String #{action_offer.variable_name} = \"#{action_offer.id}\"; // #{action_offer.name}\n"
+      end
+      file_output += "}"
+    else
+      file_output =  ""
+      action_offers.each do |action_offer|
+        file_output += "#define #{action_offer.variable_name} @\"#{action_offer.id}\" // #{action_offer.name}\n"
+      end
+    end
+    file_output
   end
 
 private

@@ -8,13 +8,18 @@ private
 
   def on_message(message)
     app = App.find(message.to_s)
+    log_activity(app)
 
-    app_data = AppStore.fetch_app_by_id(app.store_id)
+    return if app.store_id.nil?
 
-    return if app_data.nil?
-
-    app.age_rating = app_data[:age_rating]
-    app.save!
+    begin
+      app.fill_app_store_data
+    rescue Exception => e
+      Rails.logger.info "Exception when fetching app store info: #{e}"
+    else
+      app.save!
+      save_activity_logs
+    end
   end
 
 end

@@ -1,8 +1,12 @@
 if (typeof(Tapjoy) == "undefined") Tapjoy = {};
 if (typeof(console) == "undefined") console={log:$.noop};
 
+function addCommaSeparators(number) {
+  return String(number).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+}
+
 function numberToCurrency(number) {
-  return '$' + Number(number).toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+  return '$' + addCommaSeparators(Number(number).toFixed(2));
 }
 
 function stringToNumber(currency, allowNegative) {
@@ -28,7 +32,9 @@ $(function($){
   });
 
   $('input.currency_field').change(function() {
-    $(this).val(numberToCurrency(stringToNumber($(this).val(), $(this).hasClass('allow_negative'))));
+    if (!$(this).hasClass('allow_nil') || $(this).val().length > 0) {
+      $(this).val(numberToCurrency(stringToNumber($(this).val(), $(this).hasClass('allow_negative'))));
+    }
   });
 
   $(document).click(function(e){

@@ -2,9 +2,9 @@ class ToolsController < WebsiteController
   layout 'tabbed'
   
   filter_access_to :all
-  
-  after_filter :save_activity_logs, :only => [ :update_user ]
-  
+
+  after_filter :save_activity_logs, :only => [ :update_user, :update_android_app, :update_device ]
+
   def index
   end
   
@@ -35,7 +35,7 @@ class ToolsController < WebsiteController
       @payouts    = MonthlyAccounting.sum(:payment_payouts,   :conditions => conditions) /-100.0
     end
 
-    @linkshare_est = @spend.to_f * 0.035
+    @linkshare_est = @spend.to_f * 0.026
     @ads_est = 400.0 * 30
     @revenue = @spend + @linkshare_est + @ads_est - @marketing
     @net_revenue = @revenue - @earnings
@@ -44,10 +44,7 @@ class ToolsController < WebsiteController
 
   def money
     @money_stats = Mc.get('money.cached_stats') || {}
-    @daily_money_stats = Mc.get('money.daily_cached_stats') || {}
-    @combined_money_stats = @money_stats.merge(@daily_money_stats)
     @last_updated = Time.zone.at(Mc.get('money.last_updated') || 0)
-    @daily_last_updated = Time.zone.at(Mc.get('money.daily_last_updated') || 0)
     @total_balance = Mc.get('money.total_balance') || 0
     @total_pending_earnings = Mc.get('money.total_pending_earnings') || 0
   end
@@ -100,6 +97,31 @@ class ToolsController < WebsiteController
     @queues = Sqs.sqs.queues
   end
 
+  def elb_status
+    elb_interface = RightAws::ElbInterface.new
+    ec2_interface = RightAws::Ec2.new
+    @lb_names = Rails.env == 'production' ? %w( masterjob-lb job-lb website-lb web-lb test-lb ) : []
+    @lb_instances = {}
+    @ec2_instances = {}
+    @lb_names.each do |lb_name|
+      @lb_instances[lb_name]  = elb_interface.describe_instance_health(lb_name)
+      ec2_interface.describe_instances(@lb_instances[lb_name].map { |i| i[:instance_id] }).each do |instance|
+        @ec2_instances[instance[:aws_instance_id]] = instance
+      end
+      
+      @lb_instances[lb_name].sort! { |a, b| a[:instance_id] <=> b[:instance_id] }
+    end
+  end
+
+  def as_groups
+    as_interface = RightAws::AsInterface.new
+    @as_groups = as_interface.describe_auto_scaling_groups
+    @as_groups.each do |group|
+      group[:triggers] = as_interface.describe_triggers(group[:auto_scaling_group_name])
+    end
+    @as_groups.sort! { |a, b| a[:auto_scaling_group_name] <=> b[:auto_scaling_group_name] }
+  end
+
   def disabled_popular_offers
     @offers_count_hash = Mc.distributed_get('tools.disabled_popular_offers') { {} }
     @offers = Offer.find(@offers_count_hash.keys, :include => [:partner, :item])
@@ -121,6 +143,53 @@ class ToolsController < WebsiteController
       device.delete_all
       flash[:notice] = "Device successfully reset and #{clicks_deleted} clicks deleted"
     end
+  end
+
+  def device_info
+    if params[:udid]
+      udid = params[:udid].downcase
+      @device = Device.new(:key => udid)
+      if @device.is_new
+        flash[:error] = "Device with ID #{udid} not found"
+        @device = nil
+        return
+      end
+      conditions = "itemName() like '#{udid}.%'"
+      @clicks = []
+      @rewarded_clicks_count = 0
+      click_app_ids = []
+      NUM_CLICK_DOMAINS.times do |i|
+        Click.select(:domain_name => "#{RUN_MODE_PREFIX}clicks_#{i}", :where => conditions) do |click|
+          @clicks << click
+          @rewarded_clicks_count += 1 if click.installed_at?
+          click_app_ids << [click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id]
+        end
+      end
+
+      # find all apps at once and store in look up table
+      @click_apps = {}
+      Offer.find_all_by_id(click_app_ids.flatten.uniq).each do |app|
+        @click_apps[app.id] = app
+      end
+
+      last_run_times = @device.apps
+      @apps = Offer.find_all_by_id(@device.apps.keys).map do |app|
+        [Time.zone.at(last_run_times[app.id].to_f), app]
+      end.sort.reverse
+    end
+  end
+
+  def update_device
+    device = Device.new :key => params[:udid]
+    log_activity(device)
+    if params[:internal_notes].blank?
+      device.delete('internal_notes') if device.internal_notes?
+    else
+      device.internal_notes = params[:internal_notes]
+    end
+    device.save
+    flash[:notice] = 'Internal notes successfully updated.'
+    redirect_to :action => :device_info, :udid => params[:udid]
   end
 
   def managed_partner_ids
@@ -209,4 +278,31 @@ class ToolsController < WebsiteController
     end
   end
 
+  def edit_android_app
+    unless params[:id].blank?
+      @app = App.find_by_id(params[:id])
+      if @app.nil?
+        flash[:error] = "Could not find Android app with ID #{params[:id]}."
+      elsif @app.platform != "android"
+        flash[:error] = "'#{@app.name}' is not an Android app."
+        @app = nil
+      end
+    end
+  end
+
+  def update_android_app
+    @app = App.find_by_id_and_platform(params[:id], "android")
+    log_activity(@app)
+    @app.store_id = params[:store_id] unless params[:store_id].blank?
+    @app.price = params[:price].to_i
+
+    if @app.save
+      @app.download_icon(params[:url], nil) unless params[:url].blank?
+      flash[:notice] = 'App was successfully updated'
+      redirect_to statz_path(@app)
+    else
+      flash[:error] = 'Update unsuccessful'
+      render :action => "edit_android_app"
+    end
+  end
 end

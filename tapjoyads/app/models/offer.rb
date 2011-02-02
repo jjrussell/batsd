@@ -19,7 +19,7 @@ class Offer < ActiveRecord::Base
   CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :allow_any_bid
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -30,12 +30,13 @@ class Offer < ActiveRecord::Base
   validates_presence_of :partner, :item, :name, :url, :instructions, :time_delay
   validates_numericality_of :price, :only_integer => true
   validates_numericality_of :bid, :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_blank => false, :allow_nil => false
+  validates_numericality_of :min_bid_override, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => true
   validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :allow_blank => false, :greater_than_or_equal_to => 0
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_blank => false, :allow_nil => true, :greater_than => 0
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :featured, :multi_complete, :in => [ true, false ]
-  validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer )
+  validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer )
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
     begin
@@ -82,7 +83,7 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
     end
   end
-  validate :bid_higher_than_min_bid, :unless => :allow_any_bid
+  validate :bid_higher_than_min_bid
   
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
@@ -93,6 +94,15 @@ class Offer < ActiveRecord::Base
   named_scope :nonfeatured, :conditions => { :featured => false }
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :to_aggregate_stats, lambda { { :conditions => ["next_stats_aggregation_time < ?", Time.zone.now], :order => "next_stats_aggregation_time ASC" } }
+  
+  def self.redistribute_stats_aggregation
+    now = Time.zone.now + 15.minutes
+    Offer.find_each do |o|
+      o.next_stats_aggregation_time = now + rand(2.hours)
+      o.save(false)
+    end
+    true
+  end
   
   def self.get_enabled_offers(exp = nil)
     offers = []
@@ -276,18 +286,26 @@ class Offer < ActiveRecord::Base
   end
   
   def is_enabled?
-    tapjoy_enabled? && user_enabled? && ((payment > 0 && partner.balance > 0) || (payment == 0 && reward_value > 0))
+    tapjoy_enabled? && user_enabled? && ((payment > 0 && partner.balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
   end
   
   def accepting_clicks?
-    tapjoy_enabled? && user_enabled? && (payment > 0 || (payment == 0 && reward_value > 0))
+    tapjoy_enabled? && user_enabled? && (payment > 0 || (payment == 0 && reward_value.present? && reward_value > 0))
   end
   
   def has_variable_payment?
     payment_range_low.present? && payment_range_high.present?
   end
   
-  def get_destination_url(udid, publisher_app_id, click_key = nil, itunes_link_affiliate = 'linksynergy')
+  def virtual_goods
+    VirtualGood.select(:where => "app_id = '#{self.item_id}'")[:items]
+  end
+  
+  def has_virtual_goods?
+    VirtualGood.count(:where => "app_id = '#{self.item_id}'") > 0
+  end
+  
+  def get_destination_url(udid, publisher_app_id, click_key = nil, itunes_link_affiliate = 'linksynergy', currency_id = nil)
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
     if item_type == 'App' && final_url =~ /phobos\.apple\.com/
       if itunes_link_affiliate == 'tradedoubler'
@@ -299,6 +317,8 @@ class Offer < ActiveRecord::Base
       final_url += "&publisher_app_id=#{publisher_app_id}"
     elsif item_type == 'GenericOffer'
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
+    elsif item_type == 'ActionOffer'
+      final_url += "?currency_id=#{currency_id}&advertiser_app_id=#{third_party_data}"
     end
     
     final_url
@@ -314,6 +334,8 @@ class Offer < ActiveRecord::Base
       click_url += "rating?"
     elsif item_type == 'TestOffer'
       click_url += "test_offer?"
+    elsif item_type == 'ActionOffer'
+      click_url += "action?"
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end
@@ -336,31 +358,31 @@ class Offer < ActiveRecord::Base
   
   def get_icon_url(protocol = 'https://', base64 = false)
     if base64
-      url = "#{API_URL}/get_app_image/icon?app_id=#{item_id}"
+      url = "#{API_URL}/get_app_image/icon?app_id=#{icon_id}"
     else
-      url = "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/#{item_id}.png"
+      url = "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/#{icon_id}.png"
     end
     url
   end
   
   def get_large_icon_url(protocol = 'https://')
-    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/large/#{item_id}.png"
+    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/large/#{icon_id}.png"
   end
   
   def get_medium_icon_url(protocol = 'https://')
-    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/medium/#{item_id}.jpg"
+    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/medium/#{icon_id}.jpg"
   end
   
   def get_cloudfront_icon_url
-    "#{CLOUDFRONT_URL}/icons/#{item_id}.png"
+    "#{CLOUDFRONT_URL}/icons/#{icon_id}.png"
   end
   
   def get_large_cloudfront_icon_url
-    "#{CLOUDFRONT_URL}/icons/large/#{item_id}.png"
+    "#{CLOUDFRONT_URL}/icons/large/#{icon_id}.png"
   end
   
   def get_medium_cloudfront_icon_url
-    "#{CLOUDFRONT_URL}/icons/medium/#{item_id}.jpg"
+    "#{CLOUDFRONT_URL}/icons/medium/#{icon_id}.jpg"
   end
   
   def get_countries
@@ -413,6 +435,7 @@ class Offer < ActiveRecord::Base
     self.rank_score += rank_boost * boost_weight
     self.rank_score += over_threshold_weight if bid >= 40
     self.rank_score += 999999 if item_type == 'RatingOffer'
+    self.rank_score += 5 if item_type == "ActionOffer"
   end
   
   def estimated_percentile
@@ -428,7 +451,7 @@ class Offer < ActiveRecord::Base
   
   def search_result_name
     search_name = name_with_suffix
-    search_name += " (active)" if is_enabled?
+    search_name += " (active)" if accepting_clicks?
     search_name += " (hidden)" if hidden?
     search_name
   end
@@ -446,12 +469,13 @@ class Offer < ActiveRecord::Base
         gamevil_reject?(publisher_app) ||
         minimum_featured_bid_reject?(currency) ||
         jailbroken_reject?(device) ||
-        direct_pay_reject?(direct_pay_providers)
+        direct_pay_reject?(direct_pay_providers) ||
+        action_app_reject?(device)
   end
 
   def update_payment(force_update = false)
-    if (force_update || bid_changed?)
-      if (item_type == 'App')
+    if (force_update || bid_changed? || new_record?)
+      if (item_type == 'App' || item_type == 'ActionOffer')
         self.payment = bid * (100 - partner.premier_discount) / 100
       else
         self.payment = bid
@@ -465,6 +489,8 @@ class Offer < ActiveRecord::Base
   end
   
   def min_bid
+    return min_bid_override if min_bid_override
+    
     if item_type == 'App'
       if featured?
         is_paid? ? price : 65
@@ -532,6 +558,10 @@ class Offer < ActiveRecord::Base
     self.payment = payment_was
     @estimated_percentile = recalculate_estimated_percentile
     recommended_bid
+  end
+  
+  def icon_id
+    item_type == 'ActionOffer' ? third_party_data : item_id
   end
   
 private
@@ -643,6 +673,10 @@ private
   
   def direct_pay_reject?(direct_pay_providers)
     return direct_pay? && !direct_pay_providers.include?(direct_pay)
+  end
+  
+  def action_app_reject?(device)
+    item_type == "ActionOffer" && !device.has_app(third_party_data)
   end
   
   def normalize_device_type(device_type_param)

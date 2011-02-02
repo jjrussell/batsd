@@ -18,7 +18,7 @@ class ConnectController < ApplicationController
     end
     
     web_request = WebRequest.new
-    web_request.put_values('connect', params, get_ip_address, get_geoip_data)
+    web_request.put_values('connect', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     
     device = Device.new(:key => params[:udid])
     path_list = device.set_app_ran(params[:app_id], params)
@@ -27,9 +27,6 @@ class ConnectController < ApplicationController
     end
     
     device.save
-    
-    # TODO: Add this line back, once we figure out memcahced issues.
-    #@app = App.find_in_cache(params[:app_id], false)
     
     web_request.save
   

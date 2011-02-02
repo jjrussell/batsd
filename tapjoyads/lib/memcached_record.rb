@@ -5,13 +5,19 @@ module MemcachedRecord
   def self.included(model)
     model.class_eval do
       after_save :update_memcached
-      before_destroy :clear_memcached
+      after_destroy :clear_memcached
 
-      def model.find_in_cache(id, do_lookup = true)
+      def model.find_in_cache(id, do_lookup = (Rails.env != 'production'))
         if do_lookup
           Mc.distributed_get_and_put("mysql.#{class_name.underscore}.#{id}") { find(id) }
         else
           Mc.distributed_get("mysql.#{class_name.underscore}.#{id}")
+        end
+      end
+
+      def model.cache_all
+        find_each do |obj|
+          obj.send(:update_memcached)
         end
       end
     end
