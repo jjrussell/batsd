@@ -451,7 +451,7 @@ class Offer < ActiveRecord::Base
   
   def search_result_name
     search_name = name_with_suffix
-    search_name += " (active)" if is_enabled?
+    search_name += " (active)" if accepting_clicks?
     search_name += " (hidden)" if hidden?
     search_name
   end
