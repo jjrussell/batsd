@@ -224,6 +224,7 @@ class Partner < ActiveRecord::Base
 private
 
   def create_mail_chimp_entry
+    return if Rails.env == 'test'
     message = { :type => "create", :partner_id => self.id }.to_json
     Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)
   end
