@@ -42,8 +42,8 @@ private
       this_apps_stats['payment'] = number_to_currency(offer.payment / 100.0)
       this_apps_stats['balance'] = number_to_currency(offer.partner.balance / 100.0)
       this_apps_stats['conversion_rate'] = "%.1f%" % ((offer.conversion_rate || 0) * 100.0)
-      this_apps_stats['published_installs'] = appstats['published_installs'].sum
-      this_apps_stats['installs_revenue'] = number_to_currency(appstats['installs_revenue'].sum / 100.0)
+      this_apps_stats['published_offers'] = appstats['rewards'].sum
+      this_apps_stats['offers_revenue'] = number_to_currency(appstats['rewards_revenue'].sum / 100.0)
       this_apps_stats['platform'] = offer.get_platform
       this_apps_stats['featured'] = offer.featured?
       
