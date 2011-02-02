@@ -21,13 +21,14 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
     %tbody
       - @lb_instances[lb_name].each do |lb_instance|
         - ec2_instance = @ec2_instances[lb_instance[:instance_id]] || {}
-        %tr{ :class => cycle('', 'odd') }
+        %tr{ :class => cycle('', 'odd', :name => 'instances') }
           %td{ :class => lb_instance[:state] != 'InService' ? 'bad_instance' : '' }= lb_instance[:instance_id]
           %td= lb_instance[:state]
           %td= ec2_instance[:dns_name]
           %td= ec2_instance[:aws_state]
           %td= lb_instance[:description]
           %td= lb_instance[:reason_code]
+      - reset_cycle('instances')
 
 - content_for :page_styles do
   :plain
