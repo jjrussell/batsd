@@ -139,12 +139,12 @@ private
     @click.publisher_app_id  = params[:publisher_app_id]
     @click.publisher_user_id = params[:publisher_user_id]
     @click.advertiser_app_id = params[:advertiser_app_id]
-    @click.displayer_app_id  = params[:displayer_app_id]
+    @click.displayer_app_id  = params[:displayer_app_id] || ''
     @click.offer_id          = params[:offer_id]
     @click.currency_id       = params[:currency_id]
     @click.reward_key        = UUIDTools::UUID.random_create.to_s
-    @click.reward_key_2      = @displayer_app.present? ? UUIDTools::UUID.random_create.to_s : nil
-    @click.source            = params[:source]
+    @click.reward_key_2      = @displayer_app.present? ? UUIDTools::UUID.random_create.to_s : ''
+    @click.source            = params[:source] || ''
     @click.country           = get_geoip_data[:country]
     @click.type              = type
     @click.advertiser_amount = @currency.get_advertiser_amount(@offer)

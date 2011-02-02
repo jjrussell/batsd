@@ -263,7 +263,7 @@ class SimpledbResource
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Unknown type conversion: #{type}" unless @@type_converters.include?(type)
     
-    if value.nil? or value == ''
+    if value.nil?
       return
     end
     value = @@type_converters[type].to_string(value)

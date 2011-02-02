@@ -30,7 +30,7 @@ private
     end
     save_conversion(conversion)
     
-    if reward.displayer_app_id.present?
+    if reward.displayer_app_id.present? && reward.displayer_amount > 0 # TO REMOVE: second part of 'if' condition after 2011-02-03
       conversion = Conversion.new do |c|
         c.id = reward.reward_key_2
         c.reward_id = reward.key
