@@ -33,7 +33,7 @@ private
       appstats = Appstats.new(offer.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity }).stats
       
       this_apps_stats = {}
-      this_apps_stats['icon_url'] = offer.get_cloudfront_icon_url
+      this_apps_stats['icon_url'] = offer.get_icon_url
       this_apps_stats['offer_name'] = offer.name_with_suffix
       this_apps_stats['conversions'] = appstats['paid_installs'].sum
       this_apps_stats['connects'] = appstats['logins'].sum
@@ -46,7 +46,6 @@ private
       this_apps_stats['installs_revenue'] = number_to_currency(appstats['installs_revenue'].sum / 100.0)
       this_apps_stats['platform'] = offer.get_platform
       this_apps_stats['featured'] = offer.featured?
-      this_apps_stats['item_id'] = offer.item_id
       
       if this_apps_stats['conversions'] > 0 || this_apps_stats['published_installs'] > 0
         cached_stats[offer.id] = this_apps_stats
