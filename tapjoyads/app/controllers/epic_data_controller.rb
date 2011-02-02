@@ -6,7 +6,7 @@ class EpicDataController < ApplicationController
   def index
     return unless verify_params([:date])
     
-    u = User.find('65b41712-4a5c-4eb9-8e54-db472a56ad58')
+    u = User.find('776fe500-b1ac-4e3b-9367-3e4bd8a4034e')
     
     start_time = Time.zone.parse(params[:date])
     
