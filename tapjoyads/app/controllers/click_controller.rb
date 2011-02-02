@@ -132,8 +132,6 @@ private
   end
   
   def create_click(type)
-    reward_key_2 = @displayer_app.present? ? UUIDTools::UUID.random_create.to_s : nil
-    
     @click = Click.new(:key => (type == 'generic' ? UUIDTools::UUID.random_create.to_s : "#{params[:udid]}.#{params[:advertiser_app_id]}"))
     @click.clicked_at        = @now
     @click.viewed_at         = Time.zone.at(params[:viewed_at].to_f)
@@ -145,7 +143,7 @@ private
     @click.offer_id          = params[:offer_id]
     @click.currency_id       = params[:currency_id]
     @click.reward_key        = UUIDTools::UUID.random_create.to_s
-    @click.reward_key_2      = reward_key_2
+    @click.reward_key_2      = @displayer_app.present? ? UUIDTools::UUID.random_create.to_s : nil
     @click.source            = params[:source]
     @click.country           = get_geoip_data[:country]
     @click.type              = type
