@@ -15,19 +15,19 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
       %tr
         %td Min Size
         %td= group[:min_size]
-      %tr
+      %tr{ :class => 'odd' }
         %td Max Size
         %td= group[:max_size]
       %tr
         %td Desired Capacity
         %td= group[:desired_capacity]
-      %tr
+      %tr{ :class => 'odd' }
         %td Launch Configuration
         %td= group[:launch_configuration_name]
       %tr
         %td Availability Zone(s)
         %td= group[:availability_zones].join(', ')
-      %tr
+      %tr{ :class => 'odd' }
         %td Load Balancer(s)
         %td= group[:load_balancer_names].join(', ')
 
@@ -40,19 +40,19 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
         %tr
           %td Name
           %td= trigger[:trigger_name]
-        %tr
+        %tr{ :class => 'odd' }
           %td Status
           %td= trigger[:status]
         %tr
           %td Breach Measure
           %td= "#{trigger[:statistic]} #{trigger[:measure_name]} / #{trigger[:period]} sec."
-        %tr
+        %tr{ :class => 'odd' }
           %td Breach Duration
           %td= "#{trigger[:breach_duration]} seconds"
         %tr
           %td Lower Threshold / Scale
           %td= "#{trigger[:lower_threshold]} #{trigger[:unit]} / #{trigger[:lower_breach_scale_increment]}"
-        %tr
+        %tr{ :class => 'odd' }
           %td Upper Threshold / Scale
           %td= "#{trigger[:upper_threshold]} #{trigger[:unit]} / #{trigger[:upper_breach_scale_increment]}"
 
@@ -68,10 +68,11 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
         %th Availability Zone
     %tbody
       - group[:instances].each do |instance|
-        %tr
+        %tr{ :class => cycle('', 'odd', :name => 'instances') }
           %td= instance[:instance_id]
           %td= instance[:lifecycle_state]
           %td= instance[:availability_zone]
+      - reset_cycle('instances')
 
 - content_for :page_javascript do
   :plain

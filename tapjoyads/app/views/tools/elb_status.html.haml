@@ -21,7 +21,7 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
     %tbody
       - @lb_instances[lb_name].each do |lb_instance|
         - ec2_instance = @ec2_instances[lb_instance[:instance_id]] || {}
-        %tr
+        %tr{ :class => cycle('', 'odd') }
           %td{ :class => lb_instance[:state] != 'InService' ? 'bad_instance' : '' }= lb_instance[:instance_id]
           %td= lb_instance[:state]
           %td= ec2_instance[:dns_name]

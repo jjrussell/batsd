@@ -13,16 +13,18 @@
   = text_field_tag(:other_udid, '', :size => 50)
   = submit_tag('Search')
 
-%table
-  %tr
-    %th Device
-    %th UDID
-    %th Last run time
-  - @udids_to_check.each do |hash|
+%table.tablesorter
+  %thead
     %tr
-      %td= hash[:device_label]
-      %td= hash[:udid]
-      %td= hash[:last_run_time]
+      %th Device
+      %th UDID
+      %th Last run time
+  %tbody
+    - @udids_to_check.each do |hash|
+      %tr{ :class => cycle('', 'odd') }
+        %td= hash[:device_label]
+        %td= hash[:udid]
+        %td= hash[:last_run_time]
 
 - content_for :page_styles do
   :plain
@@ -32,12 +34,7 @@
     }
     
     table {
-      border-collapse: collapse;
-    }
-    
-    th, td {
-      border: 1px solid gray;
-      padding: 5px;
+      border-collapse: separate;
     }
     
     form {
