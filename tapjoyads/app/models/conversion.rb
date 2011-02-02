@@ -78,6 +78,26 @@ class Conversion < ActiveRecord::Base
     end
   end
   
+  def self.restore_from_file(filename, concurrency = 50)
+    Benchmark.realtime do
+      f = File.open(filename, 'r')
+      count = 0
+      columns = "(#{f.readline.gsub("\n", '').gsub("\t", ', ')})"
+      values = []
+      f.each_line do |line|
+        values << "('#{line.gsub("\n", '').gsub("\t", "', '")}')"
+        if values.size == concurrency || f.eof?
+          Conversion.connection.execute("INSERT INTO conversions #{columns} VALUES #{values.join(', ')}")
+          count += values.size
+          sleep(0.05)
+          values = []
+          puts "#{Time.zone.now.to_s(:db)} - restored: #{count}" if count % 10000 == 0 || f.eof?
+        end
+      end
+      f.close
+    end
+  end
+  
   def reward_type_string=(string)
     type = REWARD_TYPES[string]
     raise "Unkown reward type: #{string}" if type.nil?
