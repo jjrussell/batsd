@@ -91,7 +91,7 @@ private
     stat_row.update_stat_for_hour('installs_revenue', start_time.hour, installs_revenue)
     stat_row.update_stat_for_hour('offers', start_time.hour, offers_completed)
     stat_row.update_stat_for_hour('offers_revenue', start_time.hour, offers_revenue)
-    stat_row.update_stat_for_hour('featured_published_offers', start_time.hour, featured_published_installs)
+    stat_row.update_stat_for_hour('featured_published_offers', start_time.hour, featured_published_offers)
     stat_row.update_stat_for_hour('featured_revenue', start_time.hour, featured_revenue)
     
     @displayer_paths_to_aggregate.each do |path|
