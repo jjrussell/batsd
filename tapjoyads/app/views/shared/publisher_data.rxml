@@ -16,8 +16,8 @@ xml.MarketingData do
       xml.PublishedInstallsHourly appstats.stats['published_installs'].join(',')
       xml.Revenue appstats.stats['non_display_revenue'].sum
       xml.RevenueHourly appstats.stats['non_display_revenue'].join(',')
-      xml.OfferwallRevenue appstats.stats['reward_revenue'].sum
-      xml.OfferwallRevenueHourly appstats.stats['reward_revenue'].join(',')
+      xml.OfferwallRevenue appstats.stats['rewards_revenue'].sum
+      xml.OfferwallRevenueHourly appstats.stats['rewards_revenue'].join(',')
       xml.FeaturedOfferRevenue appstats.stats['featured_revenue'].sum
       xml.FeaturedOfferRevenueHourly appstats.stats['featured_revenue'].join(',')
       xml.DisplayRevenue appstats.stats['display_revenue'].sum
