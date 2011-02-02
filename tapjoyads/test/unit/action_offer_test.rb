@@ -10,7 +10,6 @@ class ActionOfferTest < ActiveSupport::TestCase
   
   should validate_presence_of :partner
   should validate_presence_of :app
-  should validate_presence_of :name
   should validate_presence_of :instructions
   
   should "accept nested attributes for primary_offer" do
@@ -21,28 +20,6 @@ class ActionOfferTest < ActiveSupport::TestCase
     delegated_methods = [ :user_enabled?, :tapjoy_enabled?, :bid, :description, :min_bid, :daily_budget ]
     delegated_methods.each do |dm|
       assert_respond_to subject, dm
-    end
-  end
-  
-  context "ActionOffer with tapjoy_enabled" do
-    setup do
-      subject { Factory :action_offer }
-      subject.primary_offer.tapjoy_enabled = true
-    end
-    
-    should "be integrated" do
-      assert subject.integrated?
-    end
-  end
-  
-  context "ActionOffer without tapjoy_enabled" do
-    setup do
-      subject { Factory :action_offer }
-      subject.primary_offer.tapjoy_enabled = false
-    end
-    
-    should "not be integrated" do
-      assert !subject.integrated?
     end
   end
   
