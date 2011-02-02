@@ -10,6 +10,8 @@ class GetOffersController < ApplicationController
   before_filter :set_featured_params, :only => :featured
   before_filter :setup
   
+  after_filter :save_web_request
+  
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
       @test_offer = build_test_offer(@publisher_app, @currency)
@@ -45,6 +47,8 @@ class GetOffersController < ApplicationController
       end
     end
     @more_data_available = 0
+    
+    @web_request.add_path('featured_offer_shown') unless @offer_list.empty?
     
     if params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
@@ -129,10 +133,11 @@ private
     # TO REMOVE - when gameview integrates properly
     params[:exp] = nil if params[:featured_offer].present?
     # END TO REMOVE
-    web_request = WebRequest.new(:time => @now)
-    web_request.put_values('offers', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
-    web_request.put('viewed_at', @now.to_f.to_s)
-    web_request.save
+    
+    wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
+    @web_request = WebRequest.new(:time => @now)
+    @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+    @web_request.put('viewed_at', @now.to_f.to_s)
   end
   
   def set_offer_list(options = {})
@@ -166,6 +171,10 @@ private
         :direct_pay_providers => params[:direct_pay_providers].to_s.split(','),
         :exp => params[:exp])
     @offer_list = @offer_list[@start_index, @max_items] || []
+  end
+  
+  def save_web_request
+    @web_request.save
   end
   
   # TO REMOVE - once the tap defense connect bug has been fixed and is sufficiently adopted

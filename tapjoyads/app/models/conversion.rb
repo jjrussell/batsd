@@ -2,19 +2,32 @@ class Conversion < ActiveRecord::Base
   include UuidPrimaryKey
   
   REWARD_TYPES = {
-    'offer' => 0,
-    'install' => 1,
-    'rating' => 2,
-    'generic' => 3,
-    'install_jailbroken' => 4,
-    'action' => 5,
-    'imported' => 999,
-    'display_offer' => 1000,
-    'display_install' => 1001,
-    'display_rating' => 1002,
-    'display_generic' => 1003,
-    'display_install_jailbroken' => 1004,
-    'display_action' => 1005
+    # Base types
+    'offer'                       => 0,
+    'install'                     => 1,
+    'rating'                      => 2,
+    'generic'                     => 3,
+    'install_jailbroken'          => 4,
+    'action'                      => 5,
+    
+    # Special
+    'imported'                    => 999,
+    
+    # Display types, (all base types +1000)
+    'display_offer'               => 1000,
+    'display_install'             => 1001,
+    'display_rating'              => 1002,
+    'display_generic'             => 1003,
+    'display_install_jailbroken'  => 1004,
+    'display_action'              => 1005,
+    
+    # Featured types (all base types +2000)
+    'featured_offer'              => 2000,
+    'featured_install'            => 2001,
+    'featured_rating'             => 2002,
+    'featured_generic'            => 2003,
+    'featured_install_jailbroken' => 2004,
+    'featured_action'             => 2005,
   }
   
   belongs_to :publisher_app, :class_name => 'App'
@@ -66,11 +79,13 @@ class Conversion < ActiveRecord::Base
   end
   
   def reward_type_string=(string)
-    write_attribute(:reward_type, REWARD_TYPES[string])
+    type = REWARD_TYPES[string]
+    raise "Unkown reward type: #{string}" if type.nil?
+    write_attribute(:reward_type, type)
   end
   
   def reward_type_string_for_displayer=(string)
-    write_attribute(:reward_type, REWARD_TYPES[string] + 1000)
+    reward_type_string = "display_#{string}"
   end
   
 private

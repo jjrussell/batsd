@@ -10,6 +10,8 @@ class Stats < SimpledbResource
   STAT_TYPES = ['logins', 'hourly_impressions', 'paid_installs', 
       'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'offers',
       'offers_revenue', 'installs_revenue', 'published_installs',
+      'featured_offers_requested', 'featured_offers_shown', 'featured_offers_opened', 
+      'featured_revenue', 'featured_published_offers',
       'offers_opened', 'daily_active_users', 'monthly_active_users', 
       'vg_purchases', 'vg_store_views', 'offerwall_views',
       'display_ads_requested', 'display_ads_shown', 'display_clicks', 'display_conversions',

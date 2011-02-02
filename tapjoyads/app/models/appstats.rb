@@ -67,6 +67,18 @@ class Appstats
       end
     end
     
+    # rewards_ctr
+    if @stats['offerwall_views'] and @stats['rewards_opened']
+      @stats['rewards_ctr'] = []
+      @stats['offerwall_views'].length.times do |i|
+        if @stats['offerwall_views'][i] == 0
+          @stats['rewards_ctr'][i] = 0
+        else
+          @stats['rewards_ctr'][i] = @stats['rewards_opened'][i].to_f / @stats['offerwall_views'][i].to_f
+        end
+      end
+    end
+    
     # rewards_cvr
     if @stats['rewards_opened'] and @stats['rewards']
       @stats['rewards_cvr'] = []
@@ -91,14 +103,50 @@ class Appstats
       end
     end
     
-    # arpdau
-    if @granularity == :daily and @stats['daily_active_users'] and @stats['rewards_revenue']
-      @stats['arpdau'] = []
-      @stats['daily_active_users'].length.times do |i|
-        if @stats['daily_active_users'][i] == 0
-          @stats['arpdau'][i] = 0
+    # featured_ctr
+    if @stats['featured_offers_shown'] and @stats['featured_offers_opened']
+      @stats['featured_ctr'] = []
+      @stats['featured_offers_shown'].length.times do |i|
+        if @stats['featured_offers_shown'][i] == 0
+          @stats['featured_ctr'][i] = 0
         else
-          @stats['arpdau'][i] = @stats['rewards_revenue'][i].to_f / @stats['daily_active_users'][i]
+          @stats['featured_ctr'][i] = @stats['featured_offers_opened'][i].to_f / @stats['featured_offers_shown'][i].to_f
+        end
+      end
+    end
+    
+    # featured_cvr
+    if @stats['featured_offers_opened'] and @stats['featured_published_offers']
+      @stats['featured_cvr'] = []
+      @stats['featured_offers_opened'].length.times do |i|
+        if @stats['featured_offers_opened'][i] == 0
+          @stats['featured_cvr'][i] = 0
+        else
+          @stats['featured_cvr'][i] = @stats['featured_published_offers'][i].to_f / @stats['featured_offers_opened'][i].to_f
+        end
+      end
+    end
+    
+    # featured_fill_rate
+    if @stats['featured_offers_requested'] and @stats['featured_offers_shown']
+      @stats['featured_fill_rate'] = []
+      @stats['featured_offers_requested'].length.times do |i|
+        if @stats['featured_offers_requested'][i] == 0
+          @stats['featured_fill_rate'][i] = 0
+        else
+          @stats['featured_fill_rate'][i] = @stats['featured_offers_shown'][i].to_f / @stats['featured_offers_requested'][i].to_f
+        end
+      end
+    end
+    
+    # featured_ecpm
+    if @stats['featured_offers_shown'] and @stats['featured_revenue']
+      @stats['featured_ecpm'] = []
+      @stats['featured_offers_shown'].length.times do |i|
+        if @stats['featured_offers_shown'][i] == 0
+          @stats['featured_ecpm'][i] = 0
+        else
+          @stats['featured_ecpm'][i] = @stats['featured_revenue'][i].to_f / (@stats['featured_offers_shown'][i] / 1000.0)
         end
       end
     end
@@ -115,7 +163,7 @@ class Appstats
       end
     end
     
-    #display_ctr
+    # display_ctr
     if @stats['display_ads_shown'] and @stats['display_clicks']
       @stats['display_ctr'] = []
       @stats['display_ads_shown'].length.times do |i|
@@ -127,7 +175,7 @@ class Appstats
       end
     end
     
-    #display_cvr
+    # display_cvr
     if @stats['display_clicks'] and @stats['display_conversions']
       @stats['display_cvr'] = []
       @stats['display_clicks'].length.times do |i|
@@ -139,7 +187,7 @@ class Appstats
       end
     end
     
-    #display_ecpm
+    # display_ecpm
     if @stats['display_ads_shown'] and @stats['display_revenue']
       @stats['display_ecpm'] = []
       @stats['display_ads_shown'].length.times do |i|
@@ -147,6 +195,34 @@ class Appstats
           @stats['display_ecpm'][i] = 0
         else
           @stats['display_ecpm'][i] = @stats['display_revenue'][i].to_f / (@stats['display_ads_shown'][i] / 1000.0)
+        end
+      end
+    end
+    
+    # non_display_revenue
+    if @stats['rewards_revenue'] and @stats['featured_revenue']
+      @stats['non_display_revenue'] = []
+      @stats['rewards_revenue'].length.times do |i|
+        @stats['non_display_revenue'][i] = @stats['rewards_revenue'][i] + @stats['featured_revenue'][i]
+      end
+    end
+
+    # total_revenue
+    if @stats['rewards_revenue'] and @stats['featured_revenue'] and @stats['display_revenue']
+      @stats['total_revenue'] = []
+      @stats['rewards_revenue'].length.times do |i|
+        @stats['total_revenue'][i] = @stats['rewards_revenue'][i] + @stats['featured_revenue'][i] + @stats['display_revenue'][i]
+      end
+    end
+
+    # arpdau
+    if @granularity == :daily and @stats['daily_active_users'] and @stats['total_revenue']
+      @stats['arpdau'] = []
+      @stats['daily_active_users'].length.times do |i|
+        if @stats['daily_active_users'][i] == 0
+          @stats['arpdau'][i] = 0
+        else
+          @stats['arpdau'][i] = @stats['total_revenue'][i].to_f / @stats['daily_active_users'][i]
         end
       end
     end

@@ -14,15 +14,16 @@ class EpicDataController < ApplicationController
     @appstats_list = []
     
     u.partners.each do |partner|
-      partner.offers.each do |app|
-        appstats = Appstats.new(app.id, {
+      partner.offers.each do |offer|
+        appstats = Appstats.new(offer.id, {
           :start_time => start_time,
           :end_time => start_time + 24.hours})
         
-        @appstats_list << [ app, appstats ]        
+        @appstats_list << [ offer, appstats ]        
       end
     end
-      
+    
+    render 'shared/advertiser_data'
   end
   
 end

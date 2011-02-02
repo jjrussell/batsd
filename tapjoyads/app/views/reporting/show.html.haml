@@ -20,16 +20,14 @@
 .clear
 
 .load-circle= image_tag('load-circle.gif')
-#tables
-.clear
-- #Add 'App Data' table with Connects, DAUs, last rank
 #charts{ :style => "text-align: center;" }
   #connects.graph
   #installs_spend.graph
   #installs_rank.graph
   - if @offer.is_publisher_offer?
-    #published_offers.graph
-    #offerwall_views.graph
+    #revenue.graph
+    #offerwall.graph
+    #featured_offers.graph
     #display_ads.graph
   - if @offer.has_virtual_goods?
     #virtual_goods.graph

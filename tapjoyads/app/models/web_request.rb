@@ -29,36 +29,41 @@ class WebRequest < SimpledbResource
   self.sdb_attr :country
   
   PATH_TO_STAT_MAP = {
-    'connect' => 'logins',
-    'new_user' => 'new_users',
-    'adshown' => 'hourly_impressions',
-    'store_click' => 'paid_clicks',
-    'offer_click' => 'paid_clicks',
-    'conversion' => 'paid_installs',
-    'conversion_jailbroken' => 'jailbroken_installs',
-    'daily_user' => 'daily_active_users',
-    'monthly_user' => 'monthly_active_users',
-    'purchased_vg' => 'vg_purchases',
-    'get_vg_items' => 'vg_store_views',
-    'offers' => 'offerwall_views'
+    'connect'                        => 'logins',
+    'new_user'                       => 'new_users',
+    'adshown'                        => 'hourly_impressions',
+    'offer_click'                    => 'paid_clicks',
+    'conversion'                     => 'paid_installs',
+    'conversion_jailbroken'          => 'jailbroken_installs',
+    'featured_conversion'            => 'paid_installs',
+    'featured_conversion_jailbroken' => 'jailbroken_installs',
+    'daily_user'                     => 'daily_active_users',
+    'monthly_user'                   => 'monthly_active_users',
+    'purchased_vg'                   => 'vg_purchases',
+    'get_vg_items'                   => 'vg_store_views',
+    'offers'                         => 'offerwall_views',
+    'featured_offer_requested'       => 'featured_offers_requested',
+    'featured_offer_shown'           => 'featured_offers_shown',
   }
   
   # Params that should use the offer_id, rather than the app_id for stat tracking.
-  USE_OFFER_ID = [ 'store_click', 'offer_click', 'conversion', 'conversion_jailbroken' ]
+  USE_OFFER_ID = Set.new([ 'offer_click', 'conversion', 'conversion_jailbroken', 'featured_conversion', 'featured_conversion_jailbroken' ])
   
   PUBLISHER_PATH_TO_STAT_MAP = {
-    'offer_click' => 'offers_opened',
-    'conversion' => 'published_installs',
-    'conversion_jailbroken' => 'published_installs'
+    'offer_click'                    => 'offers_opened',
+    'featured_offer_click'           => 'featured_offers_opened',
+    'conversion'                     => 'published_installs',
+    'conversion_jailbroken'          => 'published_installs',
+    'featured_conversion'            => 'featured_published_offers',
+    'featured_conversion_jailbroken' => 'featured_published_offers',
   }
   
   DISPLAYER_PATH_TO_STAT_MAP = {
-    'display_ad_requested' => 'display_ads_requested',
-    'display_ad_shown' => 'display_ads_shown',
-    'store_click' => 'display_clicks',
-    'offer_click' => 'display_clicks',
-    'conversion' => 'display_conversions',
-    'conversion_jailbroken' => 'display_conversions'
+    'display_ad_requested'   => 'display_ads_requested',
+    'display_ad_shown'       => 'display_ads_shown',
+    'offer_click'            => 'display_clicks',
+    'conversion'             => 'display_conversions',
+    'conversion_jailbroken'  => 'display_conversions'
   }
   
   @@bad_domains = {}

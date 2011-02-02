@@ -39,9 +39,14 @@ private
     if device.is_jailbroken && offer.is_paid? && offer.item_type == 'App' && click.type == 'install'
       click.tapjoy_amount += click.advertiser_amount
       click.advertiser_amount = 0
-      click.type = 'install_jailbroken'
+      click.type += '_jailbroken'
       wr_path += '_jailbroken'
       Notifier.alert_new_relic(JailbrokenInstall, "Device: #{click.udid} is jailbroken and installed a paid app: #{click.advertiser_app_id}, for click: #{click.key}", request, params)
+    end
+    
+    if click.source == 'featured'
+      click.type = 'featured_' + click.type
+      wr_path = 'featured_' + wr_path
     end
     
     reward = Reward.new(:key => click.reward_key)

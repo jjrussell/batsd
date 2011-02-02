@@ -96,7 +96,8 @@ private
       return if offer_completed?
     end
     
-    create_web_request
+    wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
+    create_web_request(wr_path)
   end
   
   def offer_disabled?
@@ -123,7 +124,7 @@ private
     return completed
   end
   
-  def create_web_request(path = 'offer_click')
+  def create_web_request(path)
     web_request = WebRequest.new(:time => @now)
     web_request.put_values(path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     web_request.viewed_at = Time.zone.at(params[:viewed_at].to_f) if params[:viewed_at].present?

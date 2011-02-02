@@ -3,8 +3,8 @@ class Job::QueueAppStatsController < Job::SqsReaderController
   def initialize
     super QueueNames::APP_STATS
     @num_reads = 10
-    @paths_to_aggregate = %w(connect new_user adshown offer_click daily_user monthly_user purchased_vg get_vg_items offers)
-    @publisher_paths_to_aggregate = %w(offer_click)
+    @paths_to_aggregate = %w(connect new_user adshown offer_click daily_user monthly_user purchased_vg get_vg_items offers featured_offer_requested featured_offer_shown)
+    @publisher_paths_to_aggregate = %w(offer_click featured_offer_click)
     @displayer_paths_to_aggregate = %w(display_ad_requested display_ad_shown offer_click)
   end
   
@@ -61,9 +61,9 @@ private
     end
     paid_installs, installs_spend, jailbroken_installs = nil
     Conversion.using_slave_db do
-      paid_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["advertiser_offer_id = ? AND reward_type IN (0, 1, 2, 3, 5)", @offer.id])
-      installs_spend = Conversion.created_between(start_time, end_time).sum(:advertiser_amount, :conditions => ["advertiser_offer_id = ? AND reward_type IN (0, 1, 2, 3, 5)", @offer.id])
-      jailbroken_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["advertiser_offer_id = ? AND reward_type = 4", @offer.id])
+      paid_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["advertiser_offer_id = ? AND reward_type IN (0, 1, 2, 3, 5, 2000, 2001, 2002, 2003, 2005)", @offer.id])
+      installs_spend = Conversion.created_between(start_time, end_time).sum(:advertiser_amount, :conditions => ["advertiser_offer_id = ? AND reward_type IN (0, 1, 2, 3, 5, 2000, 2001, 2002, 2003, 2005)", @offer.id])
+      jailbroken_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["advertiser_offer_id = ? AND reward_type IN (4, 2004)", @offer.id])
     end
     stat_row.update_stat_for_hour('paid_installs', start_time.hour, paid_installs)
     stat_row.update_stat_for_hour('installs_spend', start_time.hour, installs_spend)
@@ -78,17 +78,21 @@ private
       count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
-    published_installs, installs_revenue, offers_completed, offers_revenue = nil
+    published_installs, installs_revenue, offers_completed, offers_revenue, featured_published_offers, featured_revenue = nil
     Conversion.using_slave_db do
       published_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["publisher_app_id = ? AND reward_type IN (1, 4)", @offer.id])
       installs_revenue = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id = ? AND reward_type IN (1, 4)", @offer.id])
       offers_completed = Conversion.created_between(start_time, end_time).count(:conditions => ["publisher_app_id = ? AND reward_type IN (0, 2, 3, 5)", @offer.id])
       offers_revenue = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id = ? AND reward_type IN (0, 2, 3, 5)", @offer.id])
+      featured_published_offers = Conversion.created_between(start_time, end_time).count(:conditions => ["publisher_app_id = ? AND reward_type IN (2000, 2001, 2002, 2003, 2004, 2005)", @offer.id])
+      featured_revenue = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id = ? AND reward_type IN (2000, 2001, 2002, 2003, 2004, 2005)", @offer.id])
     end
     stat_row.update_stat_for_hour('published_installs', start_time.hour, published_installs)
     stat_row.update_stat_for_hour('installs_revenue', start_time.hour, installs_revenue)
     stat_row.update_stat_for_hour('offers', start_time.hour, offers_completed)
     stat_row.update_stat_for_hour('offers_revenue', start_time.hour, offers_revenue)
+    stat_row.update_stat_for_hour('featured_published_offers', start_time.hour, featured_published_installs)
+    stat_row.update_stat_for_hour('featured_revenue', start_time.hour, featured_revenue)
     
     @displayer_paths_to_aggregate.each do |path|
       stat_name = WebRequest::DISPLAYER_PATH_TO_STAT_MAP[path]

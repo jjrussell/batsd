@@ -20,5 +20,7 @@ class LooptDataController < ApplicationController
         
       @appstats_list << [ offer, appstats ]
     end
+    
+    render 'shared/publisher_data'
   end
 end
