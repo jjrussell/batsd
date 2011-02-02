@@ -16,10 +16,10 @@ private
       app.fill_app_store_data
     rescue Exception => e
       Rails.logger.info "Exception when fetching app store info: #{e}"
+    else
+      app.save!
+      save_activity_logs
     end
-    app.save!
-    
-    save_activity_logs
   end
 
 end
