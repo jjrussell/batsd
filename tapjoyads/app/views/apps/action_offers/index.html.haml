@@ -6,13 +6,13 @@
   %h3 Actions
   
   %p
-    Integrate your Actions into your App using the ActionIDs listed below. You can edit any Action by selecting the Action, or create new Actions by clicking on the Create New Action button. 
+    Integrate your actions into your app using the ActionIDs listed below. You can edit any action by selecting the action, or create new actions by clicking on the Create New Action button. 
   %p
     Once you've integrated the code, contact
     = mail_to "support@tapjoy.com"
-    to test the integration and enable your Action for Pay-Per-Action. Each Action needs to be individually tested and enabled by Tapjoy.
+    to test the integration and enable your action for Pay-Per-Action. Each action needs to be individually tested and enabled by Tapjoy.
   %p
-    To help you integrate these Actions, you can include the following file in your project and use the constants defined within instead of the ActionIds.
+    To help you integrate these actions, you can include the following file in your project and use the constants defined within instead of the ActionIDs.
     
   .code
     .code-header
@@ -36,6 +36,7 @@
         %th Bid
         %th ActionID
         %th Integrated?
+        %th Approved?
     %tbody
       - @action_offers.each do |action_offer|
         %tr{ :class => cycle('even', 'odd') }
@@ -47,6 +48,7 @@
           %td= number_to_currency 0.01 * action_offer.bid
           %td= action_offer.id
           %td{ :class => action_offer.integrated? ? "integrated" : "not_integrated" }= action_offer.integrated? ? "Yes" : "No"
+          %td{ :class => action_offer.tapjoy_enabled? ? "integrated" : "not_integrated" }= action_offer.tapjoy_enabled? ? "Yes" : "No"
 
 - content_for :page_javascript do
   :plain
@@ -106,7 +108,8 @@
   :plain
     table.actions tbody td {
       text-align: center;
-      height: 22px;
+      padding-top: 6px;
+      padding-bottom: 6px;
     }
     
     table.actions tbody {

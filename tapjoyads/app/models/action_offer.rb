@@ -8,15 +8,15 @@ class ActionOffer < ActiveRecord::Base
   belongs_to :partner
   belongs_to :app
   
-  validates_presence_of :partner, :app, :name
-  validates_uniqueness_of :name, :scope => :app_id, :case_sensitive => false
+  validates_presence_of :partner, :app, :name, :variable_name
+  validates_uniqueness_of :variable_name, :scope => :app_id, :case_sensitive => false
   validates_presence_of :instructions, :unless => :new_record?
-  validates_format_of :name, :with => /^[\d\w\s]+$/i, :message => "can only contain letters, numbers, and spaces"
   
   named_scope :visible, :conditions => { :hidden => false }
   
   accepts_nested_attributes_for :primary_offer
   
+  before_validation :set_variable_name
   after_create :create_primary_offer
   after_update :update_offers
   
@@ -26,12 +26,8 @@ class ActionOffer < ActiveRecord::Base
     if defined? @integrated
       @integrated
     else
-      @integrated = tapjoy_enabled? || Appstats.new(id, { :start_time => Time.zone.now.beginning_of_hour - 23.hours, :end_time => Time.zone.now, :granularity => :hourly, :stat_types => [ 'logins' ] }).stats['logins'].sum > 0
+      @integrated = Appstats.new(id, { :start_time => Time.zone.now.beginning_of_hour - 23.hours, :end_time => Time.zone.now, :granularity => :hourly, :stat_types => [ 'logins' ] }).stats['logins'].sum > 0
     end
-  end
-  
-  def variable_name
-    "TJC_" + name.gsub(" ", "_").upcase
   end
   
 private
@@ -62,5 +58,9 @@ private
       offer.third_party_data = app_id if app_id_changed?
       offer.save! if offer.changed?
     end
+  end
+  
+  def set_variable_name
+    self.variable_name = 'TJC_' + name.gsub(/[^[:alnum:]]/, '_').upcase
   end
 end

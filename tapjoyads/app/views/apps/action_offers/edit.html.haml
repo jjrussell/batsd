@@ -4,6 +4,9 @@
 = render('apps/actions', :app => @app)
 #apps_main
   %h3 Edit Action
+  
+  = render 'instructions'
+  
   - form_for [ @app, @action_offer ], :html => { :class => 'tjform' } do |f|
     %table
       %tbody
@@ -40,6 +43,7 @@
           %td
             = f.text_field :name
             = error_message_on @action_offer, :name
+            = error_message_on @action_offer, :variable_name
         %tr
           %th
             = f.label :instructions, 'Instructions'

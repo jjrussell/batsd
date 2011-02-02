@@ -9,17 +9,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110131193936) do
+ActiveRecord::Schema.define(:version => 20110201232320) do
 
   create_table "action_offers", :id => false, :force => true do |t|
-    t.string   "id",           :limit => 36,                    :null => false
-    t.string   "partner_id",   :limit => 36,                    :null => false
-    t.string   "app_id",       :limit => 36,                    :null => false
-    t.string   "name",                                          :null => false
+    t.string   "id",            :limit => 36,                    :null => false
+    t.string   "partner_id",    :limit => 36,                    :null => false
+    t.string   "app_id",        :limit => 36,                    :null => false
+    t.string   "name",                                           :null => false
     t.text     "instructions"
-    t.boolean  "hidden",                     :default => false, :null => false
+    t.boolean  "hidden",                      :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "variable_name",                                  :null => false
   end
 
   add_index "action_offers", ["app_id"], :name => "index_action_offers_on_app_id"

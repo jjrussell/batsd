@@ -24,7 +24,9 @@ class Apps::ActionOffersController < WebsiteController
   end
   
   def edit
-    
+    if !@action_offer.tapjoy_enabled? && !@action_offer.integrated?
+      flash[:notice] = "When you are ready to go live with this action, please email <a href='mailto:support+enable@tapjoy.com'>support+enable@tapjoy.com</a>."
+    end
   end
   
   def update
