@@ -33,6 +33,7 @@ class WebRequest < SimpledbResource
     'new_user'                       => 'new_users',
     'adshown'                        => 'hourly_impressions',
     'offer_click'                    => 'paid_clicks',
+    'featured_offer_click'           => 'paid_clicks',
     'conversion'                     => 'paid_installs',
     'conversion_jailbroken'          => 'jailbroken_installs',
     'featured_conversion'            => 'paid_installs',
@@ -47,7 +48,7 @@ class WebRequest < SimpledbResource
   }
   
   # Params that should use the offer_id, rather than the app_id for stat tracking.
-  USE_OFFER_ID = Set.new([ 'offer_click', 'conversion', 'conversion_jailbroken', 'featured_conversion', 'featured_conversion_jailbroken' ])
+  USE_OFFER_ID = Set.new([ 'offer_click', 'featured_offer_click', 'conversion', 'conversion_jailbroken', 'featured_conversion', 'featured_conversion_jailbroken' ])
   
   PUBLISHER_PATH_TO_STAT_MAP = {
     'offer_click'                    => 'offers_opened',
