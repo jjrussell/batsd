@@ -7,14 +7,15 @@
       #{@currency.get_visual_reward_amount(@offer)} 
     #{@currency.name}!
   %p.offertext
-    Just download and run
+    - if @offer.item_type == 'App'
+      Just download and run
   - link_to(click_url, :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => @offer.get_medium_cloudfront_icon_url, :class => 'icon', :id => 'icon' }
     .offername
       #{@offer.name}
   .clear
   = link_to('Skip', 'dismiss', :class => 'skip')
-  = link_to('Download', click_url, :class => 'download')
+  = link_to("#{@offer.item_type == 'App' ? 'Download' : 'Earn now'}", click_url, :class => 'download')
   .showOffers
     = link_to('Show more apps', 'showOffers')
   .adsby
@@ -39,13 +40,13 @@
       
       if (document.documentElement.clientHeight < 480) {
         icon.setAttribute('style', 'width: 96px; height: 96px;');
-        main.setAttribute('style', 'height: 294px; margin-top: -147px');
+        main.setAttribute('style', 'height: 294px; margin-top: -147px; top: 50%');
       } else if (document.documentElement.clientHeight > 800) {
         icon.setAttribute('style', 'width: 512px; height: 512px;');
-        main.setAttribute('style', 'height: 710px; margin-top: -355px;');
+        main.setAttribute('style', 'height: 710px; margin-top: -355px; top: 50%');
       } else {
         icon.setAttribute('style', 'width: 256px; height: 256px;');
-        main.setAttribute('style', 'height: 454px; margin-top: -227px;');
+        main.setAttribute('style', 'height: 454px; margin-top: -227px; top: 50%');
       }
     }
   
@@ -64,6 +65,7 @@
   
     body {
       margin: 0;
+      height: 480px;
     }
     
     #main {
@@ -71,7 +73,6 @@
       text-align: center;
       position: relative;
       margin: 8px;
-      top: 50%;
     }
     
     .amount {
@@ -90,7 +91,8 @@
     .offername {
       font-weight: bold;
       color: #008810;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
+      margin-top: 4px;
     }
     
     img.icon {
