@@ -15,6 +15,7 @@ class DeviceNoLongerJailbroken < RuntimeError; end
 class JailbrokenInstall < RuntimeError; end
 class FailedToInvalidateCloudfront < RuntimeError; end
 class RecordNotFoundError < RuntimeError; end
+class AppStoreSearchFailed < RuntimeError; end
 
 # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
 class EmailWorthyError < RuntimeError
