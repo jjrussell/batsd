@@ -4,6 +4,7 @@ class ClickController < ApplicationController
   before_filter :determine_link_affiliates, :only => :app
   before_filter :setup
   before_filter :validate_click, :except => :test_offer
+  after_filter :save_web_request, :except => :test_offer
   
   def app
     create_click('install')
@@ -97,13 +98,14 @@ private
     end
     
     wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
-    create_web_request(wr_path)
+    build_web_request(wr_path)
   end
   
   def offer_disabled?
     disabled = !@offer.accepting_clicks?
     if disabled
-      create_web_request('disabled_offer')
+      build_web_request('disabled_offer')
+      save_web_request
       render(:template => 'click/unavailable_offer')
     end
     
@@ -117,18 +119,23 @@ private
     end
     completed = @device.has_app(app_id_for_device)
     if completed
-      create_web_request('completed_offer')
+      build_web_request('completed_offer')
+      save_web_request
       render(:template => 'click/unavailable_offer')
     end
     
     return completed
   end
   
-  def create_web_request(path)
-    web_request = WebRequest.new(:time => @now)
-    web_request.put_values(path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
-    web_request.viewed_at = Time.zone.at(params[:viewed_at].to_f) if params[:viewed_at].present?
-    web_request.save
+  def build_web_request(path)
+    @web_request = WebRequest.new(:time => @now)
+    @web_request.put_values(path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+    @web_request.viewed_at = Time.zone.at(params[:viewed_at].to_f) if params[:viewed_at].present?
+  end
+  
+  def save_web_request
+    @web_request.click_key = @click.key if @click.present?
+    @web_request.save
   end
   
   def create_click(type)

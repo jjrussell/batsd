@@ -27,6 +27,7 @@ class WebRequest < SimpledbResource
   self.sdb_attr :source
   self.sdb_attr :exp
   self.sdb_attr :country
+  self.sdb_attr :click_key
   
   PATH_TO_STAT_MAP = {
     'connect'                        => 'logins',
