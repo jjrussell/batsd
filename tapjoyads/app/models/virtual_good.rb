@@ -15,6 +15,7 @@ class VirtualGood < SimpledbResource
   self.sdb_attr :app_id
   self.sdb_attr :apple_id
   self.sdb_attr :extra_attributes, :cgi_escape => true, :type => :json, :default_value => {}
+  self.sdb_attr :data_hash
 
   def icon_url(protocol='http://')
     "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}virtual_goods/icons/#{@key}.png"

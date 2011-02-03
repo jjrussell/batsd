@@ -21,4 +21,5 @@ xml.VGStoreItemReturnClass do
   xml.ThumbImageURL virtual_good.icon_url
   xml.DatafileURL virtual_good.data_url if virtual_good.has_data
   xml.FileSize virtual_good.file_size
+  xml.DataHash virtual_good.data_hash || "0"
 end
