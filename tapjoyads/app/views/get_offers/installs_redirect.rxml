@@ -9,7 +9,7 @@ xml.TapjoyConnectReturnObject do
         xml.IconURL offer.get_cloudfront_icon_url
         xml.Name offer.name
         xml.RedirectURL offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], @currency.id, params[:source], params[:app_version], @now, nil, params[:exp])
-        xml.StoreID offer.third_party_data
+        xml.StoreID offer.third_party_data || offer.id
         if params[:source] == 'featured'
           xml.FullScreenAdURL offer.get_fullscreen_ad_url(@publisher_app, params[:publisher_user_id], params[:udid], @currency.id, params[:source], params[:app_version], @now, nil, params[:exp])
           xml.MediumIconURL offer.get_medium_cloudfront_icon_url
