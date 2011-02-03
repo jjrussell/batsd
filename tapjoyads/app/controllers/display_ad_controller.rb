@@ -24,7 +24,7 @@ class DisplayAdController < ApplicationController
       "e26bd54e-a9ec-4f60-b84d-82b4f678343a", # Zombie Farm
       ])
   
-  before_filter :setup, :except => :image
+  before_filter :set_device_type, :setup, :except => :image
   
   def index
   end
@@ -66,12 +66,6 @@ private
     
     if params[:publisher_user_id].blank?
       params[:publisher_user_id] = params[:udid]
-    end
-    
-    # TO REMOVE: once AdMarvel starts sending device_ip
-    # Don't do any geoip targeting on the webview.
-    if params[:action] == 'webview'
-      geoip_data = {}
     end
     
     web_request = WebRequest.new(:time => now)
@@ -226,6 +220,25 @@ private
       [768, 90]
     else
       [320, 50]
+    end
+  end
+  
+  ##
+  # Sets the device_type parameter from the device_ua param, which AdMarvel sends.
+  def set_device_type
+    if params[:device_type].blank? && params[:device_ua].present?
+      params[:device_type] = case params[:device_ua]
+      when /iphone;/i
+        'iphone'
+      when /ipod;/i
+        'ipod'
+      when /ipad;/i
+        'ipad'
+      when /android/i
+        'android'
+      else
+        nil
+      end
     end
   end
   
