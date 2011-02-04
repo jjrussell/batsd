@@ -36,6 +36,7 @@ private
       json = JSON.load(response.body)
       return json['resultCount'] > 0 ? app_info_from_apple(json['results'].first) : nil
     else
+      Notifier.alert_new_relic(AppStoreSearchFailed, "fetch_app_by_id_for_apple failed for id: #{id}, country: #{country}")
       raise "Invalid response from app store."
     end
   end
@@ -52,12 +53,13 @@ private
       results_ipad = JSON.load(response_ipad.body)['results']
       return results_iphone.concat(results_ipad).map { |result| app_info_from_apple(result) }
     else
+      Notifier.alert_new_relic(AppStoreSearchFailed, "search_apple_app_store failed for term: #{term}, country: #{country}")
       raise "Invalid response from app store."
     end
   end
 
   def self.search_android_marketplace(term, cyrket_icon=true)
-    response = request(ANDROID_SEARCH_URL + CGI::escape(term.strip.gsub(/\s/, '+').downcase))
+    response = request(ANDROID_SEARCH_URL + CGI::escape(term.strip.gsub(/\s/, '+')))
     if response.status == 200
       items = JSON.load(response.body)
       return [] if items["entriesCount"].to_i == 0
@@ -78,6 +80,7 @@ private
         }
       end
     else
+      Notifier.alert_new_relic(AppStoreSearchFailed, "search_android_marketplace failed for term: #{term}")
       raise "Invalid response."
     end
   end

@@ -93,7 +93,7 @@ class App < ActiveRecord::Base
     if (data.nil?) # might not be available in the US market
       data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
     end
-    raise "Fetching app store data failed for app: #{app.name} (#{app.id})." if data.nil?
+    raise "Fetching app store data failed for app: #{name} (#{id})." if data.nil?
     self.name = data[:title]
     self.price = (data[:price].to_f * 100).round
     self.description = data[:description]
