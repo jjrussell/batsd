@@ -77,14 +77,25 @@
           return s.replace(/-/g, '999999');
         }
       });
+      $.tablesorter.addParser({
+        id: 'formatted-number-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/,/g, '');
+        }
+      });
       $("#apps_table").tablesorter({
         widgets: ['zebra'],
         headers: {
           0:  { sorter: false },
+          2:  { sorter: 'formatted-number-column' },
+          3:  { sorter: 'formatted-number-column' },
           4:  { sorter: 'rank-column' },
           5:  { sorter: 'currency-column' },
           6:  { sorter: 'currency-column' },
           7:  { sorter: 'currency-column' },
+          10: { sorter: 'formatted-number-column' },
           11: { sorter: 'currency-column' }
         }
       });
