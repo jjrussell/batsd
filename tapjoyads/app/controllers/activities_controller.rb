@@ -14,15 +14,5 @@ class ActivitiesController < WebsiteController
     response = ActivityLog.select(:where => where_clause, :order_by => '`updated-at` desc', :next_token => params[:next_token])
     @activities = response[:items]
     @next_token = response[:next_token]
-    
-    @activities.reject! do |activity|
-      begin
-        activity.after_state
-        false
-      rescue JSON::ParserError => e
-        true
-      end
-    end
-    
   end
 end
