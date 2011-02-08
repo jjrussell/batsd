@@ -3,7 +3,7 @@ class ToolsController < WebsiteController
   
   filter_access_to :all
 
-  after_filter :save_activity_logs, :only => [ :update_user, :update_android_app, :update_device ]
+  after_filter :save_activity_logs, :only => [ :update_user, :update_android_app, :update_device, :resolve_clicks ]
 
   def index
   end
@@ -200,11 +200,11 @@ class ToolsController < WebsiteController
 
   def resolve_clicks
     click = Click.new(:key => params[:click_id])
-
-    if click.clicked_at < Time.zone.now - 47.hours
-      click.clicked_at = Time.zone.now - 1.minute
-      flash[:error] = "Because the click was from 48+ hours ago this might fail. If it doens't go through, try again in a few minutes."
+    if click.new_record?
+      flash[:error] = "Unknown click id."
+      redirect_to unresolved_clicks_tools_path and return
     end
+    log_activity(click)
 
     if click.currency_id.nil? # old clicks don't have currency_id
       currencies = Currency.find_all_by_app_id(click.publisher_app_id)
@@ -212,16 +212,23 @@ class ToolsController < WebsiteController
         click.currency_id = currencies.first.id
       else
         flash[:error] = "Ambiguity -- the publisher app has more than one currency and currency_id was not specified."
+        redirect_to unresolved_clicks_tools_path(:udid => click.udid) and return
       end
     end
 
-    click.save
+    if click.clicked_at < Time.zone.now - 47.hours
+      click.clicked_at = Time.zone.now - 1.minute
+      flash[:error] = "Because the click was from 48+ hours ago this might fail. If it doesn't go through, try again in a few minutes."
+    end
+
+    click.put('manually_resolved_at', Time.zone.now.to_f.to_s)
+    click.serial_save
 
     if Rails.env == 'production'
       Downloader.get_with_retry "#{API_URL}/connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
     end
 
-    redirect_to :back
+    redirect_to unresolved_clicks_tools_path(:udid => click.udid)
   end
 
   def unresolved_clicks
@@ -233,7 +240,7 @@ class ToolsController < WebsiteController
 
     if @udid
       NUM_CLICK_DOMAINS.times do |i|
-        Click.select(:domain_name => "clicks_#{i}", :where => "itemName() like '#{@udid}.%'") do |click|
+        Click.select(:domain_name => "clicks_#{i}", :where => "itemName() like '#{@udid}.%'", :consistent => true) do |click|
           if click.installed_at.nil? && click.clicked_at.to_f > cut_off
             @clicks << [
               click.clicked_at,

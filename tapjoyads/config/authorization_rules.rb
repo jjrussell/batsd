@@ -22,6 +22,11 @@ authorization do
     has_permission_on :tools, :to => [ :index ]
   end
   
+  role :customer_service do
+    includes :tools
+    has_permission_on :tools, :to => [ :unresolved_clicks, :resolve_clicks ]
+  end
+  
   role :payops do
     includes :tools
     has_permission_on :tools, :to => [ :money, :monthly_data ]

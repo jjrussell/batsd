@@ -1,4 +1,4 @@
-- @title = "Unresolved clicks tool"
+- @page_title = "Unresolved clicks tool"
 - form_tag unresolved_clicks_tools_path do
   Connects from
   = text_field_tag :udid, @udid, :style => 'width: 300px;'
@@ -22,11 +22,15 @@
           - run_at = arr[1]
           - click = arr[2]
           - pub = App.find_by_id(click.publisher_app_id)
-          - adv = Offer.find_by_id(click.advertiser_app_id)
+          - adv = Offer.find_by_id(click.offer_id)
           %td= clicked_at.to_s(:pub_ampm)
           %td= run_at.nil? ? '<b>never</b>' : run_at.to_s(:pub_ampm)
-          %td= link_to(pub.name, statz_path(pub))
-          %td= link_to(adv.name, statz_path(adv)) rescue ''
+          - if permitted_to? :show, :statz
+            %td= link_to(pub.name, statz_path(pub))
+            %td= link_to(adv.name_with_suffix, statz_path(adv))
+          - else
+            %td= pub.name
+            %td= adv.name_with_suffix
           %td= click.currency_reward
           %td
             - form_tag resolve_clicks_tools_path(:click_id => click.id) do
