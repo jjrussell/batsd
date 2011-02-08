@@ -113,7 +113,7 @@ class StatzController < WebsiteController
         { :udid => 'b4c86b4530a0ee889765a166d80492b46f7f3636', :device_label => 'Ryan iPhone'      },
         { :udid => 'f0910f7ab2a27a5d079dc9ed50d774fcab55f91d', :device_label => 'Ryan iPad'        },
         { :udid => 'cb662f568a4016a5b2e0bd617e53f70480133290', :device_label => 'Stephen iPad'     },
-        { :udid => '21e3f395b9bbaf56667782ea3fe1241656684e21', :device_label => 'Stephen iTouch'   },
+        { :udid => 'c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1', :device_label => 'Stephen iTouch'   },
         { :udid => '2e75bbe138c85e6dc8bd8677220ef8898f40a1c7', :device_label => 'Sunny iPhone'     },
     ]
     @udids_to_check = []
