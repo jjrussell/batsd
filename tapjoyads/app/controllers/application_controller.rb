@@ -149,8 +149,8 @@ private
   end
   
   def log_activity(object)
-    @request_id = UUIDTools::UUID.random_create.to_s unless defined?(@request_id)
-    @activity_logs = [] unless defined?(@activity_logs)
+    @request_id ||= UUIDTools::UUID.random_create.to_s
+    @activity_logs ||= []
     
     activity_log = ActivityLog.new({ :load => false })
     activity_log.request_id = @request_id
@@ -162,12 +162,13 @@ private
     @activity_logs << activity_log
   end
   
-  def save_activity_logs
-    if defined?(@activity_logs)
+  def save_activity_logs(serial_save = false)
+    if @activity_logs.present?
       @activity_logs.each do |activity_log|
         activity_log.finalize_states
-        activity_log.save
+        serial_save ? activity_log.serial_save : activity_log.save
       end
+      @activity_logs = []
     end
   end
   

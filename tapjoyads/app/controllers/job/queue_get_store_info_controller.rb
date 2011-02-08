@@ -18,7 +18,7 @@ private
       Rails.logger.info "Exception when fetching app store info: #{e}"
     else
       app.save!
-      save_activity_logs
+      save_activity_logs(true)
     end
   end
 
