@@ -2,8 +2,9 @@
 log
 tmp
 coverage/
-*.swo
+*.swp
 coverage.data
 config/newrelic.yml
 config/database.yml
 db/production.sqlite
+db/test.sqlite3
