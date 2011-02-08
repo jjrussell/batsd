@@ -159,7 +159,7 @@ class ToolsController < WebsiteController
       @rewarded_clicks_count = 0
       click_app_ids = []
       NUM_CLICK_DOMAINS.times do |i|
-        Click.select(:domain_name => "#{RUN_MODE_PREFIX}clicks_#{i}", :where => conditions) do |click|
+        Click.select(:domain_name => "clicks_#{i}", :where => conditions) do |click|
           @clicks << click
           @rewarded_clicks_count += 1 if click.installed_at?
           click_app_ids << [click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id]
