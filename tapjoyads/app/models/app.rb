@@ -99,7 +99,7 @@ class App < ActiveRecord::Base
     self.description = data[:description]
     self.age_rating = data[:age_rating]
     self.file_size_bytes = data[:file_size_bytes]
-    self.supported_devices = data[:supported_devices].to_json
+    self.supported_devices = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
     download_icon(data[:icon_url], data[:large_icon_url])
   end
 
