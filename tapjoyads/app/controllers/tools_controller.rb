@@ -177,7 +177,7 @@ class ToolsController < WebsiteController
         [Time.zone.at(last_run_times[app.id].to_f), app]
       end.sort.reverse
       @clicks = @clicks.sort_by do |click|
-        -click.clicked_at.to_f rescue 0
+        -click.clicked_at.to_f
       end
     end
   end
