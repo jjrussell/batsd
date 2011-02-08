@@ -58,7 +58,7 @@ private
     end
     
     cached_stats = cached_stats.sort do |s1, s2|
-      s2[1]['conversions'] <=> s1[1]['conversions']
+      s2[1]['conversions'].gsub(',', '') <=> s1[1]['conversions'].gsub(',', '')
     end
     
     Mc.distributed_put("statz.cached_stats.#{timeframe}", cached_stats)
