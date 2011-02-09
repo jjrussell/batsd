@@ -22,8 +22,6 @@ class PartnersControllerTest < ActionController::TestCase
       assert_equal 1, @partner.payouts.length
       assert_equal 10000 - amount*100, @partner.pending_earnings
       assert_equal 10000 + amount*100, @partner.balance
-
-      assert_equal 2, assigns['activity_logs'].length
     end
 
     should "create bonus if necessary" do
@@ -39,8 +37,6 @@ class PartnersControllerTest < ActionController::TestCase
       assert_equal 1, @partner.payouts.length
       assert_equal 10000 - amount*100, @partner.pending_earnings
       assert_equal 10000 + amount*100 + bonus*100, @partner.balance
-
-      assert_equal 3, assigns['activity_logs'].length
     end
 
   end

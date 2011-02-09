@@ -19,8 +19,6 @@ class BillingControllerTest < ActionController::TestCase
       assert_equal 1, @partner.payouts.length
       assert_equal 9900, @partner.pending_earnings
       assert_equal 10110, @partner.balance
-
-      assert_equal 3, assigns['activity_logs'].length
     end
 
     should "not allow negative transfer" do
@@ -31,7 +29,6 @@ class BillingControllerTest < ActionController::TestCase
       assert_equal 0, @partner.payouts.length
       assert_equal 10000, @partner.pending_earnings
       assert_equal 10000, @partner.balance
-      assert assigns['activity_logs'].nil?
     end
 
     should "not allow transfer greater than pending_earnings amount" do
@@ -42,7 +39,6 @@ class BillingControllerTest < ActionController::TestCase
       assert_equal 0, @partner.payouts.length
       assert_equal 10000, @partner.pending_earnings
       assert_equal 10000, @partner.balance
-      assert assigns['activity_logs'].nil?
     end
 
   end
