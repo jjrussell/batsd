@@ -4,9 +4,6 @@ class GetOffersController < ApplicationController
   
   before_filter :fix_tapulous
   before_filter :choose_experiment, :except => :featured
-  # TO REMOVE - once the tap defense connect bug has been fixed and is sufficiently adopted
-  before_filter :fake_connect_call, :only => :featured
-  # END TO REMOVE
   before_filter :set_featured_params, :only => :featured
   before_filter :setup
   
@@ -176,33 +173,5 @@ private
   def save_web_request
     @web_request.save
   end
-  
-  # TO REMOVE - once the tap defense connect bug has been fixed and is sufficiently adopted
-  def fake_connect_call
-    if params[:app_id] == '2349536b-c810-47d7-836c-2cd47cd3a796' && (params[:app_version] == '3.2.2' || params[:app_version] == '3.2.1') && params[:library_version] == '5.0.1'
-      
-      Rails.logger.info_with_time("Check conversions and maybe add to sqs") do
-        click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}")
-        unless (click.attributes.empty? || click.installed_at)
-          logger.info "Added conversion to sqs queue"
-          message = { :click => click.serialize(:attributes_only => true), :install_timestamp => Time.zone.now.to_f.to_s }.to_json
-          Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
-        end
-      end
-      
-      web_request = WebRequest.new
-      web_request.put_values('connect', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
-    
-      device = Device.new(:key => params[:udid])
-      path_list = device.set_app_ran(params[:app_id], params)
-      path_list.each do |path|
-        web_request.add_path(path)
-      end
-      
-      device.save
-      web_request.save
-    end
-  end
-  # END TO REMOVE
   
 end
