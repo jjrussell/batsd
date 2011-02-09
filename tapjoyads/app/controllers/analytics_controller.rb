@@ -44,7 +44,7 @@ class AnalyticsController < WebsiteController
         redirect_to current_partner.apsalar_url + '&url=/app/sdk/'
       else
         # maybe send newrelic msg here?
-        flash[:error] = json["reason"] + ". Please contact <a href='support@tapjoy.com'>support@tapjoy.com</a>"
+        flash[:error] = "#{json["reason"] || "There was an error"}. Please contact <a href='support@tapjoy.com'>support@tapjoy.com</a>"
         redirect_to analytics_path
       end
     end
