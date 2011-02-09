@@ -450,7 +450,7 @@ class Offer < ActiveRecord::Base
   end
   
   def name_with_suffix_and_platform
-    name_with_suffix + " (#{get_device_types.to_a.join(", ")})"
+    "#{name_with_suffix} (#{get_platform})"
   end
   
   def search_result_name
