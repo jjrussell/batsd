@@ -29,12 +29,9 @@ class AnalyticsController < WebsiteController
 
       hash['h'] = Digest::MD5.hexdigest(hash['f'] + hash['l'] + hash['u'] + hash['e'] +
                             hash['s'] + hash['p'] + APSALAR_SECRET)
-      array = hash.map do |k,v|
-        k + '=' + CGI::escape(v)
-      end
 
-      json = JSON.load(Downloader.get(APSALAR_URL + '/api/v1/tapjoy?' + array.join('&'))) rescue {}
-      if json["status"] == "ok" && ! (json["url"].blank?)
+      json = JSON.load(Downloader.get(APSALAR_URL + '/api/v1/tapjoy?' + hash.to_query)) rescue {}
+      if json["status"] == "ok" && json["url"].present?
         current_partner.apsalar_url = json["url"]
         current_partner.save
         redirect_to json["url"] + '&url=/app/sdk/'
