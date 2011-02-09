@@ -1,6 +1,5 @@
 class AnalyticsController < WebsiteController
   layout 'tabbed'
-  require 'digest/md5'
   filter_access_to :all
 
   def index
@@ -16,7 +15,7 @@ class AnalyticsController < WebsiteController
     else
       email = get_apsalar_email
       current_partner.apsalar_username = email.gsub(/[^a-zA-Z0-9]/, '_')[0..59]
-      current_partner.apsalar_api_secret ||= UUIDTools::UUID.random_create.to_s.gsub(/[^a-zA-Z0-9]/,'')[0..31]
+      current_partner.apsalar_api_secret ||= UUIDTools::UUID.random_create.to_s.gsub('-','')[0..31]
       current_partner.save
 
       hash = {
