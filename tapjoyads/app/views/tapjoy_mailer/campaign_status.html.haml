@@ -8,7 +8,7 @@
       = ": Daily budget of #{o.daily_budget} will not be met"
       %br
     - @offers_needing_higher_bids.each do |o|
-      %b><= "#{o.name_with_suffix}"
+      %b><= "#{o.name_with_suffix_and_platform}"
       = ": Unlimited budget - Not showing on the first page of the Tapjoy wall"
       %br
   %p 

@@ -449,6 +449,10 @@ class Offer < ActiveRecord::Base
     name_suffix.blank? ? name : "#{name} -- #{name_suffix}"
   end
   
+  def name_with_suffix_and_platform
+    name_with_suffix + " (#{get_device_types.to_a.join(", ")})"
+  end
+  
   def search_result_name
     search_name = name_with_suffix
     search_name += " (active)" if accepting_clicks?
