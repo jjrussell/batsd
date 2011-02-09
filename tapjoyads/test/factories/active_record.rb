@@ -10,6 +10,11 @@ Factory.define :admin, :parent => :user do |admin|
   admin.after_create { |a| RoleAssignment.find_or_create_by_user_id_and_user_role_id(a.id, UserRole.find_or_create_by_name('admin').id) }
 end
 
+Factory.define :account_mgr_user, :parent => :user do |account_mgr|
+  account_mgr.after_build { |a| a.user_roles << UserRole.find_or_create_by_name('account_mgr') }
+  account_mgr.after_create { |a| RoleAssignment.find_or_create_by_user_id_and_user_role_id(a.id, UserRole.find_or_create_by_name('account_mgr').id) }
+end
+
 Factory.define :agency_user, :parent => :user do |agency|
   agency.after_build { |a| a.user_roles << UserRole.find_or_create_by_name('agency') }
   agency.after_create { |a| RoleAssignment.find_or_create_by_user_id_and_user_role_id(a.id, UserRole.find_or_create_by_name('agency').id) }
@@ -34,6 +39,11 @@ Factory.define :app do |app|
   app.association :partner
   app.name { Factory.next(:name) }
   app.platform 'iphone'
+end
+
+Factory.define :enable_offer_request do |req|
+  req.offer { Factory(:app).primary_offer }
+  req.requested_by { Factory(:user) }
 end
 
 Factory.define :email_offer do |email_offer|

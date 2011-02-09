@@ -29,7 +29,11 @@ class App < ActiveRecord::Base
   def is_android?
     platform == 'android'
   end
-  
+
+  def is_ipad_only?
+    !is_android? && supported_devices && supported_devices.all?{ |i| i.match(/ipad/i) }
+  end
+
   def platform_name
     PLATFORMS[platform]
   end

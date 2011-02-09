@@ -1,6 +1,6 @@
 - featured ||= false
 
-- form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform' }) do |f|
+- form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform', :id => 'update' }) do |f|
   %table
     %tbody
       %tr
@@ -101,7 +101,12 @@
         = render('apps/offers_shared/admin_fields', :f => f)
       %tr
         %td{ :colspan => 2 }= f.submit 'Update'
-  
+
+- unless @offer.tapjoy_enabled?
+  - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
+    = f.hidden_field(:offer_id)
+    = f.submit 'Request App Enable'
+
 .hidden
   #help_offer_name_content{:name => 'Offer Name'}
     Name that will be displayed on offer walls.
@@ -222,7 +227,7 @@
       });
       toggleDailyBudget();
 
-      $('form').submit(function() {
+      $('form#update').submit(function() {
         checkMinimumPrice();
         return checkValidBudget();
       });

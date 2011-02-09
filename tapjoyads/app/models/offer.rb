@@ -32,6 +32,7 @@ class Offer < ActiveRecord::Base
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
+  has_many :enable_offer_requests
   
   belongs_to :partner
   belongs_to :item, :polymorphic => true
@@ -580,7 +581,7 @@ class Offer < ActiveRecord::Base
   def icon_id
     item_type == 'ActionOffer' ? third_party_data : item_id
   end
-  
+
 private
   
   def is_disabled?(publisher_app, currency)

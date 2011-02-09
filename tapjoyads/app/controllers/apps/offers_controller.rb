@@ -19,6 +19,8 @@ class Apps::OffersController < WebsiteController
         url = @offer.item.is_android? ? ANDROID_CONNECT_SDK : IPHONE_CONNECT_SDK
         flash[:warning] = "Please note that you must integrate the <a href='#{url}'>Tapjoy advertiser library</a> before we can enable your campaign"
       end
+
+      @enable_request = @offer.enable_offer_requests.build
     end
 
   end
