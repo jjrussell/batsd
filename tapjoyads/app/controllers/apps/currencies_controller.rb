@@ -82,6 +82,7 @@ class Apps::CurrenciesController < WebsiteController
     if @currency.get_test_device_ids.include?(params[:udid])
       PointPurchases.transaction(:key => "#{params[:udid]}.#{params[:app_id]}") do |point_purchases|
         point_purchases.virtual_goods = {}
+        point_purchases.points = @currency.initial_balance if params[:reset_balance] == '1'
       end
       flash[:notice] = "You have successfully removed all virtual goods for #{params[:udid]}."
     else

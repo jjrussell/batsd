@@ -98,6 +98,11 @@
               %th= label_tag :udid, "Device ID"
               %td= select_tag 'udid', options_for_select(@currency.get_test_device_ids)
             %tr
+              %th
+                = label_tag :reset_balance, "Reset Balance"
+                #help_reset_test_device_balance.help ?
+              %td= check_box_tag :reset_balance
+            %tr
               %td{ :colspan => 2 }= submit_tag('Reset this device')
 
   .hidden
@@ -147,11 +152,13 @@
     #help_test_devices_content{:name => 'Test devices'}
       A semicolon (;) separated list of test UDIDs. These devices will see beta virtual goods and a special test offer at the top of the available offers list.
     #help_reset_test_devices_content{:name => 'Reset Virtual Goods'}
-      Remove all virtual good purchases from a test device.
+      Remove all virtual good purchases from a test device and optionally reset the balance.
     #help_test_device_last_run_time_content{:name => 'Test device last run time'}
       Displays the last time a test device ran this app.
     #help_minimum_featured_bid_content{:name => 'Minimum featured bid'}
       If you are displaying featured offers, only featured offers with a bid higher than this will be shown.
+    #help_reset_test_device_balance_content{:name => 'Reset Balance'}
+      Sets the device's balance back to the currency's initial value.
 
 - content_for :page_javascript do
   :plain
