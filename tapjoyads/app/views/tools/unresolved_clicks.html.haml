@@ -1,6 +1,9 @@
 - @page_title = "Unresolved clicks tool"
-- form_tag unresolved_clicks_tools_path do
-  Connects from
+
+%h3 Unresolved Clicks
+
+- form_tag unresolved_clicks_tools_path, :method => :get do
+  Clicks from
   = text_field_tag :udid, @udid, :style => 'width: 300px;'
   for the last
   = text_field_tag :num_hours, @num_hours, :style => 'width: 30px;'
@@ -40,6 +43,9 @@
   :plain
     .right-align {
       text-align: right;
+    }
+    table {
+      padding-top: 20px;
     }
     td {
       padding: 3px 10px;
