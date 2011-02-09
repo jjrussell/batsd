@@ -13,6 +13,11 @@ xml.MarketingData do
       xml.PaidClicksHourly appstats.stats['paid_clicks'].join(',')
       xml.Spend appstats.stats['installs_spend'].sum
       xml.SpendHourly appstats.stats['installs_spend'].join(',')
+      xml.Sessions appstats.stats['logins'].sum
+      xml.SessionsHourly appstats.stats['logins'].join(',')
+      xml.NewUsers appstats.stats['new_users'].sum
+      xml.NewUsersHourly appstats.stast['new_users'].join(',')
+      xml.DailyActiveUsers appstats.stats['daily_active_users'].sum
     end
   end
 end
