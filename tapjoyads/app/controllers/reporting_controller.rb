@@ -1,5 +1,6 @@
 class ReportingController < WebsiteController
   include ActionView::Helpers::NumberHelper
+  include ActionView::Helpers::TextHelper
   
   layout 'tabbed'
   
@@ -210,17 +211,6 @@ class ReportingController < WebsiteController
             }
           },
 
-          :virtual_goods_data => {
-            :name => 'Virtual Goods',
-            :intervals => intervals,
-            :xLabels => @appstats.x_labels,
-            :main => {
-              :names => [ 'Store views', 'Purchases' ],
-              :data => [ @appstats.stats['vg_store_views'], @appstats.stats['vg_purchases'] ],
-              :totals => [ @appstats.stats['vg_store_views'].sum, @appstats.stats['vg_purchases'].sum ]
-            }
-          },
-
           :ads_data => {
             :name => 'Ad impressions',
             :intervals => intervals,
@@ -236,6 +226,23 @@ class ReportingController < WebsiteController
           :date => @start_time.to_date.to_s(:mdy),
           :end_date => @end_time.to_date.to_s(:mdy)
         }
+
+        if get_virtual_good_partitions.size > 0
+          @data[:virtual_goods_data] = {
+            :name => 'Virtual good purchases',
+            :intervals => intervals,
+            :xLabels => @appstats.x_labels,
+            :main => {
+              :names => [ 'Store views', 'Total purchases' ],
+              :data => [ @appstats.stats['vg_store_views'], @appstats.stats['vg_purchases'] ],
+              :totals => [ @appstats.stats['vg_store_views'].sum, @appstats.stats['vg_purchases'].sum ]
+            },
+            :partition_names => get_virtual_good_partition_names,
+            :partition_values => get_virtual_good_partition_values,
+            :partition_title => 'Virtual goods',
+            :partition_fallback => '',
+          }
+        end
 
         if @granularity == :daily
           @data[:connect_data][:main][:names] << 'DAUs'
@@ -391,6 +398,46 @@ private
       values << get_rank_partitions[name]
     end
     values
+  end
+
+  def get_virtual_good_partitions
+    return @virtual_good_paritions if @virtual_good_paritions.present?
+    @virtual_good_paritions = {}
+    
+    virtual_goods = @offer.virtual_goods.sort
+    
+    virtual_goods.each_with_index do |vg, i|
+      mod = i % 5 
+      upper = [i - mod + 5, virtual_goods.size].min
+      group = "#{i - mod + 1} - #{upper}"
+      
+      @virtual_good_paritions[group] ||= {}
+      @virtual_good_paritions[group][:names] ||= []
+      @virtual_good_paritions[group][:longNames] ||= []
+      @virtual_good_paritions[group][:data] ||= []
+      @virtual_good_paritions[group][:totals] ||= []
+      
+      vg_name = truncate(vg.name, :length => 13)
+      
+      @virtual_good_paritions[group][:names] << vg_name
+      @virtual_good_paritions[group][:longNames] << vg.name
+      @virtual_good_paritions[group][:data] << (@appstats.stats['virtual_goods'][vg.key] || Array.new(@appstats.stats['vg_purchases'].size, 0))
+      @virtual_good_paritions[group][:totals] << (@appstats.stats['virtual_goods'][vg.key].sum rescue 0)
+    end
+    
+    @virtual_good_paritions
+  end
+  
+  def get_virtual_good_partition_names
+    get_virtual_good_partitions.keys.sort do |k1, k2|
+      k1.split[0].to_i <=> k2.split[0].to_i
+    end
+  end
+  
+  def get_virtual_good_partition_values
+    get_virtual_good_partition_names.map do |name|
+      get_virtual_good_partitions[name]
+    end
   end
   
 end

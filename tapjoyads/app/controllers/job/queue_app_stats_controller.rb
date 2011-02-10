@@ -53,13 +53,14 @@ private
     @paths_to_aggregate.each do |path|
       stat_name = WebRequest::PATH_TO_STAT_MAP[path]
       count = Mc.get_count(Stats.get_memcache_count_key(stat_name, @offer.id, start_time))
-      next if count == 0 && @skip_hour_counts
       
-      app_condition = WebRequest::USE_OFFER_ID.include?(path) ? "offer_id = '#{@offer.id}'" : "app_id = '#{@offer.id}'"
-      if path == 'offer_click'
-        count = WebRequest.count(:date => date_string, :where => "#{time_condition} and (path = 'offer_click' or path = 'featured_offer_click') and #{app_condition}")
-      else 
-        count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
+      unless @skip_hour_counts
+        app_condition = WebRequest::USE_OFFER_ID.include?(path) ? "offer_id = '#{@offer.id}'" : "app_id = '#{@offer.id}'"
+        if path == 'offer_click'
+          count = WebRequest.count(:date => date_string, :where => "#{time_condition} and (path = 'offer_click' or path = 'featured_offer_click') and #{app_condition}")
+        else
+          count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
+        end
       end
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
@@ -76,10 +77,11 @@ private
     @publisher_paths_to_aggregate.each do |path|
       stat_name = WebRequest::PUBLISHER_PATH_TO_STAT_MAP[path]
       count = Mc.get_count(Stats.get_memcache_count_key(stat_name, @offer.id, start_time))
-      next if count == 0 && @skip_hour_counts
       
-      app_condition = "publisher_app_id = '#{@offer.id}'"
-      count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
+      unless @skip_hour_counts
+        app_condition = "publisher_app_id = '#{@offer.id}'"
+        count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
+      end
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
     published_installs, installs_revenue, offers_completed, offers_revenue, featured_published_offers, featured_revenue = nil
@@ -101,10 +103,11 @@ private
     @displayer_paths_to_aggregate.each do |path|
       stat_name = WebRequest::DISPLAYER_PATH_TO_STAT_MAP[path]
       count = Mc.get_count(Stats.get_memcache_count_key(stat_name, @offer.id, start_time))
-      next if count == 0 && @skip_hour_counts
       
-      app_condition = "displayer_app_id = '#{@offer.id}'"
-      count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
+      unless @skip_hour_counts
+        app_condition = "displayer_app_id = '#{@offer.id}'"
+        count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
+      end
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
     display_conversions, display_revenue = nil
@@ -114,10 +117,21 @@ private
     end
     stat_row.update_stat_for_hour('display_conversions', start_time.hour, display_conversions)
     stat_row.update_stat_for_hour('display_revenue', start_time.hour, display_revenue)
+    
+    if stat_row.get_hourly_count('vg_purchases')[start_time.hour] > 0
+      app_condition = "app_id = '#{@offer.id}'"
+      @offer.virtual_goods.each do |vg|
+        stat_name = ['virtual_goods', vg.key]
+        count = Mc.get_count(Stats.get_memcache_count_key(stat_name, @offer.id, start_time))
+        
+        unless @skip_hour_counts
+          count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'purchased_vg' and #{app_condition} and virtual_good_id = '#{vg.key}'")
+        end
+        stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
+      end
+    end
   end
   
-  ##
-  #
   def verify_yesterday
     return unless @offer.last_daily_stats_aggregation_time.nil? || @offer.last_daily_stats_aggregation_time.day != @now.day
     return if @now.hour == 0 || @now.hour < rand(10)
@@ -138,7 +152,7 @@ private
       
       if path == 'offer_click'
         count = WebRequest.count(:date => date_string, :where => "#{time_condition} and (path = 'offer_click' or path = 'featured_offer_click') and #{app_condition}")
-      else 
+      else
         count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = '#{path}' and #{app_condition}")
       end
       hour_counts = stat_row.get_hourly_count(stat_name)
@@ -173,6 +187,19 @@ private
         raise AppStatsVerifyError.new("#{stat_name}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")
       end
       Rails.logger.info "#{stat_name} verified, both counts are: #{count}."
+    end
+    
+    if stat_row.get_hourly_count('vg_purchases').sum > 0
+      app_condition = "app_id = '#{@offer.id}'"
+      @offer.virtual_goods.each do |vg|
+        stat_name = ['virtual_goods', vg.key]
+        count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'purchased_vg' and #{app_condition} and virtual_good_id = '#{vg.key}'")
+        hour_counts = stat_row.get_hourly_count(stat_name)
+        if count != hour_counts.sum
+          raise AppStatsVerifyError.new("#{stat_name.inspect}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")
+        end
+        Rails.logger.info "#{stat_name.inspect} verified, both counts are: #{count}."
+      end
     end
     
     daily_date_string = start_time.strftime('%Y-%m')

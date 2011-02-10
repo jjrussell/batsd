@@ -131,7 +131,8 @@
     #offerwall.graph
     #featured_offers.graph
     #display_ads.graph
-    #virtual_goods.graph
+    - if @offer.has_virtual_goods?
+      #virtual_goods.graph
     #ads.graph
 
 - include_tapjoy_graph

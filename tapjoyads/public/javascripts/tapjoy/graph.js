@@ -44,10 +44,15 @@ Tapjoy.Graph = {
     if (options.decimals) {
       g.Set('chart.scale.decimals', options.decimals)
     }
+    
+    if (options.drawGrid != null) {
+      g.Set('chart.background.grid', options.drawGrid)
+    }
+    
   },
 
   drawLargeGraph: function(obj, id, partition_index) {
-    if ($('#' + id).length == 0) return;
+    if ($('#' + id).length == 0 || obj == null) return;
 
     if (partition_index == undefined) {
       $('#' + id + '>.dropdown').html('');
@@ -101,7 +106,7 @@ Tapjoy.Graph = {
     g.Set('chart.key', legendKeys);
     g.Set('chart.key.background', 'rgba(255,255,255,0.5)');
     g.Set('chart.key.position', 'gutter');
-
+    
     g.Set('chart.labels', obj['xLabels']);
     g.Set('chart.text.angle', 90);
 
@@ -109,6 +114,7 @@ Tapjoy.Graph = {
       hMarginPx: hMarginPx,
       gutterPx: gutterPx,
       unitPrefix: obj['main']['unitPrefix'],
+      colors: ['#f00', '#0f0', '#00f', '#f0f', '#ff0', '#0ff', '#000'],
       yMax: obj['main']['yMax'],
       decimals: obj['main']['decimals']
     });
@@ -122,10 +128,11 @@ Tapjoy.Graph = {
         hMarginPx: hMarginPx,
         gutterPx: gutterPx,
         unitPrefix: obj['right']['unitPrefix'],
-        colors: g2.properties['chart.colors'].slice(obj['main']['data'].length),
+        colors: g.properties['chart.colors'].slice(obj['main']['data'].length),
         yAxisPos: 'right',
         yMax: obj['right']['yMax'],
-        decimals: obj['right']['decimals']
+        decimals: obj['right']['decimals'],
+        drawGrid: false
       })
 
       g2.Draw();
@@ -173,6 +180,9 @@ Tapjoy.Graph = {
     for (var i = 0, group; group = groups[i]; i++) {
       if (obj[group]) {
         for (var j = 0, name; name = obj[group]['names'][j]; j++) {
+          if (obj[group]['longNames']) {
+            name = obj[group]['longNames'][j]
+          }
           data = obj[group]['stringData'] ? obj[group]['stringData'] : obj[group]['data']
           var value = data[j][idx];
           if (value == null) {
