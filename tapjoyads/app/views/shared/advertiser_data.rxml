@@ -16,7 +16,7 @@ xml.MarketingData do
       xml.Sessions appstats.stats['logins'].sum
       xml.SessionsHourly appstats.stats['logins'].join(',')
       xml.NewUsers appstats.stats['new_users'].sum
-      xml.NewUsersHourly appstats.stast['new_users'].join(',')
+      xml.NewUsersHourly appstats.stats['new_users'].join(',')
       xml.DailyActiveUsers appstats.stats['daily_active_users'].sum
     end
   end
