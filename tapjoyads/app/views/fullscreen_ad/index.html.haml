@@ -1,5 +1,3 @@
-- click_url = @offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], @currency.id, params[:source], params[:app_version], @viewed_at, nil, params[:exp])
-
 #main
   %h1
     Earn 
@@ -9,13 +7,13 @@
   %p.offertext
     - if @offer.item_type == 'App'
       Just download and run
-  - link_to(click_url, :class => 'image-link') do
+  - link_to(get_click_url(@offer), :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => @offer.get_medium_cloudfront_icon_url, :class => 'icon', :id => 'icon' }
     .offername
       #{@offer.name}
   .clear
   = link_to('Skip', 'dismiss', :class => 'skip')
-  = link_to("#{@offer.item_type == 'App' ? 'Download' : 'Earn now'}", click_url, :class => 'download')
+  = link_to("#{@offer.item_type == 'App' ? 'Download' : 'Earn now'}", get_click_url(@offer), :class => 'download')
   .showOffers
     = link_to('Show more apps', 'showOffers')
   .adsby

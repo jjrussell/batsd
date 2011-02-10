@@ -23,7 +23,15 @@ class GetOffersController < ApplicationController
       primary_offer = Offer.find_in_cache(featured_offer.item_id)
       
       if featured_offer.featured? && @offer_list.include?(primary_offer)
-        redirect_to featured_offer.get_click_url(@publisher_app, params[:publisher_user_id], params[:udid], @currency.id, 'featured', params[:app_version], @now, nil, params[:exp])
+        redirect_to featured_offer.get_click_url(
+            :publisher_app     => @publisher_app,
+            :publisher_user_id => params[:publisher_user_id],
+            :udid              => params[:udid],
+            :currency_id       => @currency.id,
+            :source            => 'featured',
+            :app_version       => params[:app_version],
+            :viewed_at         => @now,
+            :exp               => params[:exp])
         return
       end
       @message = "You have already installed #{featured_offer.name}. You can still complete " +

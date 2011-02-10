@@ -324,7 +324,18 @@ class Offer < ActiveRecord::Base
     final_url
   end
   
-  def get_click_url(publisher_app, publisher_user_id, udid, currency_id, source, app_version, viewed_at, displayer_app_id = nil, exp = nil)
+  def get_click_url(options)
+    publisher_app     = options.delete(:publisher_app)     { |k| raise "#{k} is a required argument" }
+    publisher_user_id = options.delete(:publisher_user_id) { |k| raise "#{k} is a required argument" }
+    udid              = options.delete(:udid)              { |k| raise "#{k} is a required argument" }
+    currency_id       = options.delete(:currency_id)       { |k| raise "#{k} is a required argument" }
+    source            = options.delete(:source)            { |k| raise "#{k} is a required argument" }
+    app_version       = options.delete(:app_version)       { nil }
+    viewed_at         = options.delete(:viewed_at)         { |k| raise "#{k} is a required argument" }
+    displayer_app_id  = options.delete(:displayer_app_id)  { nil }
+    exp               = options.delete(:exp)               { nil }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
     click_url = "#{API_URL}/click/"
     if item_type == 'App' || item_type == 'EmailOffer'
       click_url += "app?"
@@ -345,7 +356,18 @@ class Offer < ActiveRecord::Base
     click_url
   end
   
-  def get_fullscreen_ad_url(publisher_app, publisher_user_id, udid, currency_id, source, app_version, viewed_at, displayer_app_id = nil, exp = nil)
+  def get_fullscreen_ad_url(options)
+    publisher_app     = options.delete(:publisher_app)     { |k| raise "#{k} is a required argument" }
+    publisher_user_id = options.delete(:publisher_user_id) { |k| raise "#{k} is a required argument" }
+    udid              = options.delete(:udid)              { |k| raise "#{k} is a required argument" }
+    currency_id       = options.delete(:currency_id)       { |k| raise "#{k} is a required argument" }
+    source            = options.delete(:source)            { |k| raise "#{k} is a required argument" }
+    app_version       = options.delete(:app_version)       { nil }
+    viewed_at         = options.delete(:viewed_at)         { |k| raise "#{k} is a required argument" }
+    displayer_app_id  = options.delete(:displayer_app_id)  { nil }
+    exp               = options.delete(:exp)               { nil }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
     ad_url = "#{API_URL}/fullscreen_ad"
     if item_type == 'TestOffer'
       ad_url += "/test_offer"
