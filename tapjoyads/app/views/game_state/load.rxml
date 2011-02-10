@@ -7,9 +7,5 @@ xml.TapjoyConnectReturnObject do
     xml.Version @game_state.version
   end
   
-  xml.UserAccountObject do
-    xml.TapPoints @point_purchases.points
-    xml.CurrencyName @currency.name
-    xml.PointsID @point_purchases.get_udid
-  end
+  xml << render("get_vg_store_items/user_account_object")
 end
