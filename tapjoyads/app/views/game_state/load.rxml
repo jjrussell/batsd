@@ -1,0 +1,9 @@
+xml.instruct!
+xml.TapjoyConnectReturnObject do
+  xml.GameState do
+    xml.Data @game_state.data
+    xml.TapjoySpend @game_state.tapjoy_spend
+    xml.SecondsElapsed @game_state.seconds_elapsed
+    xml.Version @game_state.version
+  end
+end
