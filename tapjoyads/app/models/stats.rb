@@ -4,8 +4,9 @@ class Stats < SimpledbResource
 
   self.sdb_attr :values, :type => :json, :default_value => {}
   self.sdb_attr :ranks, :type => :json, :default_value => {}
+  self.sdb_attr :virtual_goods, :type => :json, :default_value => {}
   
-  attr_reader :parsed_values, :parsed_ranks
+  attr_reader :parsed_values, :parsed_ranks, :parsed_virtual_goods
 
   STAT_TYPES = ['logins', 'hourly_impressions', 'paid_installs', 
       'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'offers',
@@ -15,11 +16,12 @@ class Stats < SimpledbResource
       'offers_opened', 'daily_active_users', 'monthly_active_users', 
       'vg_purchases', 'vg_store_views', 'offerwall_views',
       'display_ads_requested', 'display_ads_shown', 'display_clicks', 'display_conversions',
-      'display_revenue', 'jailbroken_installs', 'ranks']
+      'display_revenue', 'jailbroken_installs', 'ranks', 'virtual_goods']
 
   def after_initialize
     @parsed_values = values
     @parsed_ranks = ranks
+    @parsed_virtual_goods = virtual_goods
   end
 
   ##
@@ -78,6 +80,12 @@ class Stats < SimpledbResource
       rank = value.reject{ |r| r == 0 }.min
       update_stat_for_day(stat_path, day, rank)
     end
+    
+    hourly_stat_row.parsed_virtual_goods.each do |key, value|
+      stat_path = ['virtual_goods', key]
+      count = value.sum
+      update_stat_for_day(stat_path, day, count)
+    end
   end
   
   ##
@@ -96,6 +104,7 @@ class Stats < SimpledbResource
     
     self.values = @parsed_values if self.values != @parsed_values
     self.ranks = @parsed_ranks if self.ranks != @parsed_ranks
+    self.virtual_goods = @parsed_virtual_goods if self.virtual_goods != @parsed_virtual_goods
     
     super(options) if changed?
   end
@@ -113,6 +122,10 @@ private
       return @parsed_ranks
     elsif Array(stat_name_or_path).first == 'ranks'
       obj = @parsed_ranks
+    elsif stat_name_or_path == 'virtual_goods'
+      return @parsed_virtual_goods
+    elsif Array(stat_name_or_path).first == 'virtual_goods'
+      obj = @parsed_virtual_goods
     else
       obj = @parsed_values
     end

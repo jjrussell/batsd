@@ -31,5 +31,12 @@ class Job::QueueSelectVgItemsController < Job::SqsReaderController
       list.push(item)
     end
     Mc.put(mc_key, list, false, 10.minutes)
+    
+    mc_key = "virtual_good_list.keys.#{app_key}"
+    keys = []
+    VirtualGood.select(:where => "app_id='#{app_key}'") do |item|
+      keys << item.key
+    end
+    Mc.put(mc_key, keys, false)
   end
 end

@@ -233,12 +233,12 @@ class Appstats
 private
 
   ##
-  # Returns the hourly stats for stat_name_or_path.
-  # If stat_name_or_path corresponds to a single stat, then the returned object will be an array with each
+  # Returns the hourly stats for stat_name.
+  # If stat_name corresponds to a single stat, then the returned object will be an array with each
   # value representing a single hour's worth of stats.
-  # If stat_name_or_path corresponds to a set of stats (e.g. 'ranks'), then the returned object will be a 
+  # If stat_name corresponds to a set of stats (e.g. 'ranks'), then the returned object will be a 
   # hash, with the values of the hash being arrays of hourly stats.
-  def get_hourly_stats(stat_name_or_path, start_time, end_time, cache_hours)
+  def get_hourly_stats(stat_name, start_time, end_time, cache_hours)
     time = start_time
     date = nil
     hourly_stats_over_range = []
@@ -249,8 +249,8 @@ private
       if date != time.strftime('%Y-%m-%d')
         date = time.strftime('%Y-%m-%d')
         stat = load_stat_row("app.#{date}.#{@app_key}")
-        populate_hourly_stats_from_memcached(stat, stat_name_or_path, cache_hours)
-        hourly_stats = stat.get_hourly_count(stat_name_or_path)
+        populate_hourly_stats_from_memcached(stat, stat_name, cache_hours)
+        hourly_stats = stat.get_hourly_count(stat_name)
       end
       
       if hourly_stats.is_a?(Hash)
@@ -273,8 +273,8 @@ private
   end
 
   ##
-  # Returns the daily stats for stat_name_or_path, an array or a hash. See #get_hourly_stats.
-  def get_daily_stats(stat_name_or_path, start_time, end_time, cache_hours)
+  # Returns the daily stats for stat_name, an array or a hash. See #get_hourly_stats.
+  def get_daily_stats(stat_name, start_time, end_time, cache_hours)
     time = start_time
     daily_stats_over_range = []
     daily_stats = []
@@ -285,14 +285,14 @@ private
       if date != time.strftime('%Y-%m')
         date = time.strftime('%Y-%m')
         stat = load_stat_row("app.#{date}.#{@app_key}")
-        daily_stats = stat.get_daily_count(stat_name_or_path)
+        daily_stats = stat.get_daily_count(stat_name)
       end
       
       if time + 28.hours > @now
         hourly_stat = load_stat_row("app.#{date}-#{time.strftime("%d")}.#{@app_key}")
-        populate_hourly_stats_from_memcached(hourly_stat, stat_name_or_path, cache_hours)
+        populate_hourly_stats_from_memcached(hourly_stat, stat_name, cache_hours)
         stat.populate_daily_from_hourly(hourly_stat, time.day - 1)
-        daily_stats = stat.get_daily_count(stat_name_or_path)
+        daily_stats = stat.get_daily_count(stat_name)
       end
 
       if daily_stats.is_a?(Hash)
@@ -321,15 +321,27 @@ private
     @stat_rows[key]
   end
   
-  def populate_hourly_stats_from_memcached(stat_row, stat_name_or_path, cache_hours)
-    counts = stat_row.get_hourly_count(stat_name_or_path)
+  def populate_hourly_stats_from_memcached(stat_row, stat_name, cache_hours)
+    return if cache_hours == 0
     
-    if cache_hours > 0 && counts.is_a?(Array)
-      date, app_id = stat_row.parse_key
+    counts = stat_row.get_hourly_count(stat_name)
+    date, app_id = stat_row.parse_key
+    if counts.is_a?(Array)
       24.times do |i|
         time = date + i.hours
         if counts[i] == 0 && time <= @now && time >= (@now - cache_hours.hours)
-          counts[i] = Mc.get_count(Stats.get_memcache_count_key(stat_name_or_path, app_id, time))
+          counts[i] = Mc.get_count(Stats.get_memcache_count_key(stat_name, app_id, time))
+        end
+      end
+    elsif stat_name == 'virtual_goods'
+      vg_keys = Mc.get("virtual_good_list.keys.#{app_id}") || []
+      vg_keys.each do |vg_key|
+        counts = stat_row.get_hourly_count(['virtual_goods', vg_key])
+        24.times do |i|
+          time = date + i.hours
+          if counts[i] == 0 && time <= @now && time >= (@now - cache_hours.hours)
+            counts[i] = Mc.get_count(Stats.get_memcache_count_key(['virtual_goods', vg_key], app_id, time))
+          end
         end
       end
     end
