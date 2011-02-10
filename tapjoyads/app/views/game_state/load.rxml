@@ -6,4 +6,10 @@ xml.TapjoyConnectReturnObject do
     xml.SecondsElapsed @game_state.seconds_elapsed
     xml.Version @game_state.version
   end
+  
+  xml.UserAccountObject do
+    xml.TapPoints @point_purchases.points
+    xml.CurrencyName @currency.name
+    xml.PointsID @point_purchases.get_udid
+  end
 end
