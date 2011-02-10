@@ -1,0 +1,51 @@
+.titleHeader
+  %h3 COMPANY OVERVIEW
+  %h3.separator &nbsp;/&nbsp;
+  %h3.sub PRESS
+
+.splitLayout
+  = render :partial => 'about_left_nav'
+  .team.plain_template
+    .management.innercontents
+      .links#press-list
+        %strong Press Releases
+        %ul
+          - @press_list.each do |press|
+            %li
+              = press[0]
+              |
+              = link_to press[1], press[2]
+          %li= link_to 'READ MORE &gt;&gt;', "/press/morePressRelease.html"
+
+      .links#news-list
+        %strong News Coverage
+        %ul
+          - @news_list.each do |news|
+            %li
+              = news[0]
+              |
+              %b= news[1]
+              |
+              = link_to news[2], news[3]
+          %li= link_to 'READ MORE &gt;&gt;', "/press/moreNews.html"
+
+      .clear &nbsp;
+
+- content_for :page_styles do
+  :plain
+    #news-list {
+      margin-left: 40px;
+    }
+    .links {
+      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+      float: left;
+      width: 300px;
+    }
+    .links ul li {
+      background-image: none !important;
+      padding-left: 0px !important;
+      padding-bottom: 20px !important;
+    }
+    .links ul li a {
+      color: #244B99;
+    }
