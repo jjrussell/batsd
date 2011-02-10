@@ -120,7 +120,15 @@ private
     
       if offer.present?
         user_id = self_ad ? params[:publisher_user_id] : get_user_id_from_udid(params[:udid], publisher_app_id)
-        @click_url = offer.get_click_url(publisher_app, user_id, params[:udid], currency.id, 'display_ad', nil, now, params[:app_id])
+        @click_url = offer.get_click_url(
+            :publisher_app     => publisher_app,
+            :publisher_user_id => user_id,
+            :udid              => params[:udid],
+            :currency_id       => currency.id,
+            :source            => 'display_ad',
+            :viewed_at         => now,
+            :displayer_app_id  => params[:app_id]
+        )
         @image = get_ad_image(publisher_app, offer, self_ad, params[:size], currency)
       
         params[:offer_id] = offer.id

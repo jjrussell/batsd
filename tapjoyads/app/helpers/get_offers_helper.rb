@@ -22,4 +22,28 @@ module GetOffersHelper
     link_to(currency.name, "/get_offers/webpage?#{tmp_params.to_query}", :class => currency.id == @currency.id ? 'current' : '')
   end
   
+  def get_click_url(offer)
+    offer.get_click_url(
+        :publisher_app     => @publisher_app,
+        :publisher_user_id => params[:publisher_user_id],
+        :udid              => params[:udid],
+        :currency_id       => @currency.id,
+        :source            => params[:source],
+        :app_version       => params[:app_version],
+        :viewed_at         => @now,
+        :exp               => params[:exp])
+  end
+  
+  def get_fullscreen_ad_url(offer)
+    offer.get_fullscreen_ad_url(
+        :publisher_app     => @publisher_app, 
+        :publisher_user_id => params[:publisher_user_id], 
+        :udid              => params[:udid], 
+        :currency_id       => @currency.id, 
+        :source            => params[:source], 
+        :app_version       => params[:app_version], 
+        :viewed_at         => @now, 
+        :exp               => params[:exp])
+  end
+  
 end
