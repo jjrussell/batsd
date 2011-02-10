@@ -3,8 +3,8 @@ class GameState < SimpledbShardedResource
   
   self.num_domains = NUM_GAME_STATE_DOMAINS
   self.sdb_attr :data
-  self.sdb_attr :tapjoy_spend, :type => :int
-  self.sdb_attr :version, :type => :int
+  self.sdb_attr :tapjoy_spend, :type => :int, :default_value => 0
+  self.sdb_attr :version, :type => :int, :default_value => 0
   
   def dynamic_domain_name
     domain_number = @key.hash % GameState.num_domains
@@ -13,8 +13,6 @@ class GameState < SimpledbShardedResource
 
   def initialize(options = {})
     super({:load_from_memcache => false}.merge(options))
-    self.version ||= 0
-    self.tapjoy_spend ||= 0
   end
   
   def seconds_elapsed
@@ -31,6 +29,14 @@ class GameState < SimpledbShardedResource
   
   def publisher_user_id
     key.split(".").last
+  end
+  
+  def udids
+    get('udids', :force_array => true)
+  end
+  
+  def add_device(udid)
+    put('udids', udid, :replace => false) unless udids.include? udid
   end
   
 end
