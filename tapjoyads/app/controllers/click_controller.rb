@@ -152,7 +152,7 @@ private
     @click.reward_key        = UUIDTools::UUID.random_create.to_s
     @click.reward_key_2      = @displayer_app.present? ? UUIDTools::UUID.random_create.to_s : ''
     @click.source            = params[:source] || ''
-    @click.country           = get_geoip_data[:country]
+    @click.country           = params[:country_code] || get_geoip_data[:country] # TO REMOVE: Don't get_geoip_data once all click links contain contry code
     @click.type              = type
     @click.advertiser_amount = @currency.get_advertiser_amount(@offer)
     @click.publisher_amount  = @currency.get_publisher_amount(@offer, @displayer_app)

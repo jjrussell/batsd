@@ -14,6 +14,7 @@ class FullscreenAdController < ApplicationController
     return unless verify_records(required_records)
     
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
+    @geoip_data = { :country => params[:country_code] }
   end
   
   def test_offer
@@ -28,6 +29,7 @@ class FullscreenAdController < ApplicationController
     
     @offer = build_test_offer(@publisher_app, @currency)
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
+    @geoip_data = { :country => params[:country_code] }
     render :action => :index
   end
   

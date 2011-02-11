@@ -151,10 +151,11 @@ private
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     if is_server_to_server && params[:device_ip].blank?
-      geoip_data = {}
+      @geoip_data = {}
     else
-      geoip_data = get_geoip_data
+      @geoip_data = get_geoip_data
     end
+    @geoip_data[:country] = params[:country_code] if params[:country_code].present?
     
     type = case params[:type]
     when Offer::FEATURED_OFFER_TYPE
@@ -169,7 +170,7 @@ private
         :device => @device,
         :currency => @currency,
         :device_type => params[:device_type],
-        :geoip_data => geoip_data,
+        :geoip_data => @geoip_data,
         :type => type,
         :required_length => (@start_index + @max_items),
         :app_version => params[:app_version],
