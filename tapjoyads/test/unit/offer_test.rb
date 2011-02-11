@@ -11,8 +11,6 @@ class OfferTest < ActiveSupport::TestCase
   should validate_presence_of :item
   should validate_presence_of :name
   should validate_presence_of :url
-  should validate_presence_of :instructions
-  should validate_presence_of :time_delay
 
   should validate_numericality_of :price
   should validate_numericality_of :bid

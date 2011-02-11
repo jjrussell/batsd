@@ -14,7 +14,15 @@ class Offer < ActiveRecord::Base
   CLASSIC_OFFER_TYPE  = '0'
   DEFAULT_OFFER_TYPE  = '1'
   FEATURED_OFFER_TYPE = '2'
-  GROUP_SIZE = 300
+  GROUP_SIZE = 1000
+  OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
+                                  'name', 'url', 'price', 'bid', 'payment',
+                                  'conversion_rate', 'show_rate', 'self_promote_only',
+                                  'device_types', 'countries', 'postal_codes', 'cities',
+                                  'age_rating', 'multi_complete', 'featured',
+                                  'publisher_app_whitelist', 'direct_pay', 'reward_value',
+                                  'third_party_data', 'has_variable_payment',
+                                  'payment_range_low', 'payment_range_high' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
@@ -27,7 +35,7 @@ class Offer < ActiveRecord::Base
   belongs_to :partner
   belongs_to :item, :polymorphic => true
   
-  validates_presence_of :partner, :item, :name, :url, :instructions, :time_delay
+  validates_presence_of :partner, :item, :name, :url
   validates_numericality_of :price, :only_integer => true
   validates_numericality_of :bid, :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_blank => false, :allow_nil => false
   validates_numericality_of :min_bid_override, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => true
@@ -90,6 +98,7 @@ class Offer < ActiveRecord::Base
   before_save :update_payment
   
   named_scope :enabled_offers, :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND partners.balance > 0) OR (payment = 0 AND reward_value > 0))"
+  named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
   named_scope :featured, :conditions => { :featured => true }
   named_scope :nonfeatured, :conditions => { :featured => false }
   named_scope :visible, :conditions => { :hidden => false }
@@ -156,7 +165,7 @@ class Offer < ActiveRecord::Base
   end
   
   def self.cache_enabled_offers
-    offer_list          = Offer.enabled_offers.nonfeatured
+    offer_list          = Offer.enabled_offers.nonfeatured.for_offer_list
     conversion_rates    = offer_list.collect(&:conversion_rate)
     prices              = offer_list.collect(&:price)
     avg_revenues        = offer_list.collect(&:avg_revenue)
@@ -173,13 +182,13 @@ class Offer < ActiveRecord::Base
     stats = { :cvr_mean => cvr_mean, :cvr_std_dev => cvr_std_dev, :price_mean => price_mean, :price_std_dev => price_std_dev,
       :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
     
-    offer_list.each do |offer|
-      offer.normalize_stats(stats)
-    end
-    
     bucket = S3.bucket(BucketNames::OFFER_DATA)
     bucket.put("offer_rank_statistics", Marshal.dump(stats))
     Mc.put("s3.offer_rank_statistics", stats)
+    
+    offer_list.each do |offer|
+      offer.normalize_stats(stats)
+    end
     
     cache_enabled_offers_for_experiment('control', CONTROL_WEIGHTS, offer_list)
   end
@@ -192,6 +201,7 @@ class Offer < ActiveRecord::Base
     offers_to_cache.sort! do |o1, o2|
       o2.rank_score <=> o1.rank_score
     end
+    
     offers_for_mc = []
     group = 0
     bucket = S3.bucket(BucketNames::OFFER_DATA)
@@ -208,8 +218,7 @@ class Offer < ActiveRecord::Base
   end
   
   def self.cache_featured_offers
-    offer_list = Offer.enabled_offers.featured
-    
+    offer_list          = Offer.enabled_offers.featured.for_offer_list
     conversion_rates    = offer_list.collect(&:conversion_rate)
     prices              = offer_list.collect(&:price)
     avg_revenues        = offer_list.collect(&:avg_revenue)
@@ -225,7 +234,7 @@ class Offer < ActiveRecord::Base
     
     stats = { :cvr_mean => cvr_mean, :cvr_std_dev => cvr_std_dev, :price_mean => price_mean, :price_std_dev => price_std_dev,
       :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
-      
+    
     bucket = S3.bucket(BucketNames::OFFER_DATA)
     bucket.put("featured_offer_rank_statistics", Marshal.dump(stats))
     Mc.put("s3.featured_offer_rank_statistics", stats)
