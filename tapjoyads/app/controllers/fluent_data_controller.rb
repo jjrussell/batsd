@@ -17,7 +17,8 @@ class FluentDataController < ApplicationController
         '33ad7add-739b-4f19-a60c-2f4a4a06012d', 'd5d4a705-c67e-4413-b219-1b3ab9692781', '1d844074-dec8-4cbb-b94f-ddbf00f7335b',
         '71a1d3d2-20e9-4c13-a03d-ee855552271e', '144462cd-09a0-4795-b5dd-3c969bedfe46', '17deab3f-8d1e-4c25-a66e-41a69113c10c',
         '3c0bae06-54d3-45bb-8c85-ad7bd9bb6210', '3368863b-0c69-4a54-8a14-2ec809140d8f', 'f09a565b-34cb-4c51-85b3-748941076d5b',
-        '8535015c-1e9d-4a95-846b-d2eab56e03e1', 'e2c026ba-90db-45cc-b8a4-cdec02ea4162', 'f5313891-3ef8-4703-a2f8-1c030db21e4a'        
+        '8535015c-1e9d-4a95-846b-d2eab56e03e1', 'e2c026ba-90db-45cc-b8a4-cdec02ea4162', 'f5313891-3ef8-4703-a2f8-1c030db21e4a',
+        '9133c3cc-7d70-40c5-aee2-df638b8e1949'
     ]
     
     start_time = Time.zone.parse(params[:date])
