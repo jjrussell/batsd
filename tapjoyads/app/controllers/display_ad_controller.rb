@@ -155,7 +155,7 @@ private
       text += "!\n Install #{offer.name}"
       
       bucket = S3.bucket(BucketNames::TAPJOY)
-      offer_icon_blob = bucket.get("icons/#{offer.id}.png")
+      offer_icon_blob = bucket.get("icons/#{offer.icon_id}.png")
       offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
       offer_icon = offer_icon.vignette(vignette_amount, vignette_amount, 10, 2)
 
