@@ -31,6 +31,11 @@ class HomepageController < WebsiteController
   def press
     @press_list = [
       [
+        "2.9.2011",
+        "Tapjoy Launches Pay-Per-Action&trade; Distribution Model for Android, iOS Applications; Analytics Partnership with Apsalar",
+        "/press/201102090-tapjoy-launches-pay-per-action-analytics-partnership-with-apsalar",
+      ],
+      [
         "1.6.2011",
         "Tapjoy Closes $21 Million Funding to Accelerate Growth as the Clear Leader in Monetization and Distribution for Application Developers",
         "/press/tapjoy-closes-21-million-funding.html",
