@@ -15,6 +15,7 @@ class GameStateController < ApplicationController
     @game_state.add_device params[:udid]
     @game_state.tapjoy_spend += params[:spend].to_i
     @game_state.save
+    render :status => :ok, :text => "OK"
   end
   
 end
