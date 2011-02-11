@@ -2,7 +2,7 @@ class Job::MasterCacheOffersController < Job::JobController
   
   def index
     Offer.enabled_offers.each do |offer|
-      if offer.partner.balance <= 10000 && offer.is_free? && offer.item_type != 'RatingOffer'
+      if offer.partner.balance <= 10000 && offer.is_free?
         new_show_rate = [ 0.10, offer.show_rate ].min
         next if offer.show_rate == new_show_rate
         
@@ -15,8 +15,7 @@ class Job::MasterCacheOffersController < Job::JobController
     
     S3.reset_connection
     
-    Offer.cache_enabled_offers
-    Offer.cache_featured_offers
+    Offer.cache_offers
     
     render :text => 'ok'
   end

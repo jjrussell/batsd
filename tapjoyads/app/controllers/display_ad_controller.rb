@@ -100,8 +100,7 @@ private
           :currency => currency,
           :device_type => params[:device_type],
           :geoip_data => geoip_data,
-          :required_length => 25,
-          :reject_rating_offer => true)
+          :required_length => 25)
 
       disabled_offer_ids = displayer_currency.nil? ? Set.new : displayer_currency.get_disabled_offer_ids
       disabled_partner_ids = displayer_currency.nil? ? Set.new : displayer_currency.get_disabled_partner_ids
