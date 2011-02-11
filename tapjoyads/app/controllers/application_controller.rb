@@ -24,7 +24,7 @@ private
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     if params[:udid] == 'null' || params[:app_id] == 'todo todo todo todo'
-      render :text => "missing required params" if render_missing_text
+      render :text => "missing required params", :status => 400 if render_missing_text
       return false
     end
     
@@ -38,7 +38,7 @@ private
     
     unless all_params
       log_missing_required_params
-      render :text => "missing required params" if render_missing_text
+      render :text => "missing required params", :status => 400 if render_missing_text
     end
     return all_params
   end

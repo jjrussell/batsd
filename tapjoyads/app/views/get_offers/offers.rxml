@@ -6,11 +6,11 @@ xml.TapjoyConnectReturnObject do
         xml.Cost "Free"
         xml.Amount @currency.get_reward_amount(offer)
         xml.Currency @currency.name
-        xml.Description offer.description.gsub('TAPJOY_BUCKS', @currency.name)
-        xml.Instructions offer.instructions.gsub('TAPJOY_BUCKS', @currency.name)
+        xml.Description 'An offer.'
+        xml.Instructions 'Complete the offer.'
         xml.Name offer.name.gsub('TAPJOY_BUCKS', @currency.name)
         xml.ActionURL offer.get_destination_url(params[:udid], params[:app_id])
-        xml.TimeDelay offer.time_delay
+        xml.TimeDelay 'in seconds'
         xml.CachedOfferID offer.id
         xml.PublisherUserRecordID params[:publisher_user_id]
         xml.Type '0'

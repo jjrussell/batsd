@@ -185,6 +185,7 @@ class App < ActiveRecord::Base
       break if required_length == final_offer_list.length
     end
     
+    Rails.logger.info "REJECTION_STATS: #{final_offer_list.length} offers returned + #{num_rejected} rejected = #{final_offer_list.length + num_rejected} total"
     [ final_offer_list, offer_list.length - final_offer_list.length - num_rejected ]
   end
   

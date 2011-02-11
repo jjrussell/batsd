@@ -5,11 +5,11 @@ xml.TapjoyConnectReturnObject do
       xml.OfferReturnClass do
         xml.Cost offer.cost
         xml.Amount @currency.get_reward_amount(offer)
-        xml.CreditCardRequired offer.credit_card_required?
-        xml.Description offer.description || 'An app.'
-        xml.Instructions offer.instructions
+        xml.CreditCardRequired false
+        xml.Description 'An offer.'
+        xml.Instructions 'Complete the offer.'
         xml.Name offer.name
-        xml.TimeDelay offer.time_delay
+        xml.TimeDelay 'in seconds'
         xml.AdvertiserAppID offer.id
         xml.ActionURL get_click_url(offer)
         xml.PublisherUserRecordID params[:publisher_user_id]

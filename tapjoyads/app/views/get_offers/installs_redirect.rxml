@@ -5,7 +5,7 @@ xml.TapjoyConnectReturnObject do
       xml.TapjoyApp do
         xml.Cost offer.visual_cost
         xml.Amount @currency.get_visual_reward_amount(offer)
-        xml.Description offer.description || 'An app.'
+        xml.Description 'An offer.'
         xml.IconURL offer.get_cloudfront_icon_url
         xml.Name offer.name
         xml.RedirectURL get_click_url(offer)
