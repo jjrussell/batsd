@@ -97,7 +97,7 @@ class Offer < ActiveRecord::Base
   before_save :cleanup_url
   before_save :update_payment
   
-  named_scope :enabled_offers, :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND partners.balance > 0) OR (payment = 0 AND reward_value > 0))"
+  named_scope :enabled_offers, :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > 0) OR (payment = 0 AND reward_value > 0))"
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
   named_scope :featured, :conditions => { :featured => true }
   named_scope :nonfeatured, :conditions => { :featured => false }
