@@ -67,7 +67,7 @@ class Conversion < ActiveRecord::Base
   def self.add_partition(cutoff_time)
     if is_partitioned?
       num_days = Conversion.connection.select_value("SELECT TO_DAYS('#{cutoff_time.to_s(:db)}')")
-      Conversion.connection.execute("ALTER TABLE conversions ADD PARTITION (PARTITION p#{num_days} VALUES LESS THAN (#{num_days}) COMMENT 'created_at < #{cutoff_time.to_s(:db)}')")
+      Conversion.connection.execute("ALTER TABLE #{quoted_table_name} ADD PARTITION (PARTITION p#{num_days} VALUES LESS THAN (#{num_days}) COMMENT 'created_at < #{cutoff_time.to_s(:db)}')")
     end
   end
   
