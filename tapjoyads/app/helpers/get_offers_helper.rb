@@ -31,7 +31,8 @@ module GetOffersHelper
         :source            => params[:source],
         :app_version       => params[:app_version],
         :viewed_at         => @now,
-        :exp               => params[:exp])
+        :exp               => params[:exp],
+        :country_code      => @geoip_data[:country])
   end
   
   def get_fullscreen_ad_url(offer)
@@ -43,7 +44,8 @@ module GetOffersHelper
         :source            => params[:source], 
         :app_version       => params[:app_version], 
         :viewed_at         => @now, 
-        :exp               => params[:exp])
+        :exp               => params[:exp],
+        :country_code      => @geoip_data[:country])
   end
   
 end

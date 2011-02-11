@@ -62,6 +62,7 @@ private
 
     now = Time.zone.now
     geoip_data = get_geoip_data
+    geoip_data[:country] = params[:country_code] if params[:country_code].present?
     params[:displayer_app_id] = params[:app_id]
     
     if params[:publisher_user_id].blank?
@@ -100,8 +101,7 @@ private
           :currency => currency,
           :device_type => params[:device_type],
           :geoip_data => geoip_data,
-          :required_length => 25,
-          :reject_rating_offer => true)
+          :required_length => 25)
 
       disabled_offer_ids = displayer_currency.nil? ? Set.new : displayer_currency.get_disabled_offer_ids
       disabled_partner_ids = displayer_currency.nil? ? Set.new : displayer_currency.get_disabled_partner_ids
@@ -127,7 +127,8 @@ private
             :currency_id       => currency.id,
             :source            => 'display_ad',
             :viewed_at         => now,
-            :displayer_app_id  => params[:app_id]
+            :displayer_app_id  => params[:app_id],
+            :country_code      => geoip_data[:country]
         )
         @image = get_ad_image(publisher_app, offer, self_ad, params[:size], currency)
       
@@ -156,7 +157,7 @@ private
       text += "!\n Install #{offer.name}"
       
       bucket = S3.bucket(BucketNames::TAPJOY)
-      offer_icon_blob = bucket.get("icons/#{offer.id}.png")
+      offer_icon_blob = bucket.get("icons/#{offer.icon_id}.png")
       offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
       offer_icon = offer_icon.vignette(vignette_amount, vignette_amount, 10, 2)
 

@@ -147,32 +147,37 @@ class App < ActiveRecord::Base
   end
 
   def get_offer_list(udid, options = {})
-    device = options.delete(:device) { Device.new(:key => udid) }
-    currency = options.delete(:currency) { Currency.find_in_cache(id) }
-    device_type = options.delete(:device_type)
-    geoip_data = options.delete(:geoip_data) { {} }
-    type = options.delete(:type) { Offer::DEFAULT_OFFER_TYPE }
-    required_length = options.delete(:required_length) { 999 }
-    app_version = options.delete(:app_version)
-    reject_rating_offer = options.delete(:reject_rating_offer) { false }
+    device               = options.delete(:device)               { Device.new(:key => udid) }
+    currency             = options.delete(:currency)             { Currency.find_in_cache(id) }
+    geoip_data           = options.delete(:geoip_data)           { {} }
+    type                 = options.delete(:type)                 { Offer::DEFAULT_OFFER_TYPE }
+    required_length      = options.delete(:required_length)      { 999 }
+    include_rating_offer = options.delete(:include_rating_offer) { false }
     direct_pay_providers = options.delete(:direct_pay_providers) { [] }
-    exp = options.delete(:exp)
+    app_version          = options.delete(:app_version)
+    device_type          = options.delete(:device_type)
+    exp                  = options.delete(:exp)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     raise "cannot generate offer list without currency" if currency.nil?
     
     if type == Offer::CLASSIC_OFFER_TYPE
-      offer_list = []
+      return [ [], 0 ]
     elsif type == Offer::FEATURED_OFFER_TYPE
       offer_list = Offer.get_featured_offers
     else
       offer_list = Offer.get_enabled_offers(exp)
     end
     
+    if include_rating_offer
+      rate_app_offer = Offer.find_rating_offer_in_cache(id)
+      offer_list.unshift(rate_app_offer) if rate_app_offer.present? && rate_app_offer.accepting_clicks?
+    end
+    
     final_offer_list = []
     num_rejected = 0
     offer_list.each do |o|
-      if o.should_reject?(self, device, currency, device_type, geoip_data, app_version, reject_rating_offer, direct_pay_providers)
+      if o.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers)
         num_rejected += 1
       else
         final_offer_list << o

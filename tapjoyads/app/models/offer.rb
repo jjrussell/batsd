@@ -89,11 +89,19 @@ class Offer < ActiveRecord::Base
   before_save :cleanup_url
   before_save :update_payment
   
-  named_scope :enabled_offers, :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND ((payment > 0 AND partners.balance > 0) OR (payment = 0 AND reward_value > 0))"
+  named_scope :enabled_offers, :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND partners.balance > 0) OR (payment = 0 AND reward_value > 0))"
   named_scope :featured, :conditions => { :featured => true }
   named_scope :nonfeatured, :conditions => { :featured => false }
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :to_aggregate_stats, lambda { { :conditions => ["next_stats_aggregation_time < ?", Time.zone.now], :order => "next_stats_aggregation_time ASC" } }
+  
+  def self.find_rating_offer_in_cache(app_id, do_lookup = (Rails.env != 'production'))
+    if do_lookup
+      Mc.distributed_get_and_put("mysql.offer.rating_offer.#{app_id}") { find_by_third_party_data(app_id) }
+    else
+      Mc.distributed_get("mysql.offer.rating_offer.#{app_id}")
+    end
+  end
   
   def self.redistribute_stats_aggregation
     now = Time.zone.now + 15.minutes
@@ -140,6 +148,11 @@ class Offer < ActiveRecord::Base
       bucket = S3.bucket(BucketNames::OFFER_DATA)
       Marshal.restore(bucket.get('featured_offers'))
     end
+  end
+  
+  def self.cache_offers
+    cache_enabled_offers
+    cache_featured_offers
   end
   
   def self.cache_enabled_offers
@@ -334,6 +347,7 @@ class Offer < ActiveRecord::Base
     viewed_at         = options.delete(:viewed_at)         { |k| raise "#{k} is a required argument" }
     displayer_app_id  = options.delete(:displayer_app_id)  { nil }
     exp               = options.delete(:exp)               { nil }
+    country_code      = options.delete(:country_code)      { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     click_url = "#{API_URL}/click/"
@@ -350,7 +364,7 @@ class Offer < ActiveRecord::Base
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end
-    click_url += "advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}"
+    click_url += "advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}&country_code=#{country_code}"
     click_url += "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
     click_url += "&exp=#{exp}" if exp.present?
     click_url
@@ -366,13 +380,14 @@ class Offer < ActiveRecord::Base
     viewed_at         = options.delete(:viewed_at)         { |k| raise "#{k} is a required argument" }
     displayer_app_id  = options.delete(:displayer_app_id)  { nil }
     exp               = options.delete(:exp)               { nil }
+    country_code      = options.delete(:country_code)      { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     ad_url = "#{API_URL}/fullscreen_ad"
     if item_type == 'TestOffer'
       ad_url += "/test_offer"
     end
-    ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}"
+    ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}&country_code=#{country_code}"
     ad_url += "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
     ad_url += "&exp=#{exp}" if exp.present?
     ad_url
@@ -456,7 +471,6 @@ class Offer < ActiveRecord::Base
     self.rank_score += rand * random_weight
     self.rank_score += rank_boost * boost_weight
     self.rank_score += over_threshold_weight if bid >= 40
-    self.rank_score += 999999 if item_type == 'RatingOffer'
     self.rank_score += 5 if item_type == "ActionOffer"
   end
   
@@ -482,12 +496,11 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
-  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, reject_rating_offer, direct_pay_providers)
+  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers)
     return is_disabled?(publisher_app, currency) ||
         platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device) ||
         age_rating_reject?(currency) ||
-        rating_offer_reject?(publisher_app, reject_rating_offer) ||
         already_complete?(publisher_app, device, app_version) ||
         show_rate_reject?(device) ||
         flixter_reject?(publisher_app, device) ||
@@ -680,10 +693,6 @@ private
     return false
   end
   
-  def rating_offer_reject?(publisher_app, reject_rating_offer)
-    return item_type == 'RatingOffer' && (reject_rating_offer || third_party_data != publisher_app.id)
-  end
-  
   def whitelist_reject?(publisher_app)
     return !publisher_app_whitelist.blank? && !get_publisher_app_whitelist.include?(publisher_app.id)
   end
@@ -738,7 +747,7 @@ private
       @stats ||= Offer.get_stats_for_featured_ranks
       normalize_stats(@stats)
       calculate_rank_score(weights.merge({ :random => 0 }))
-      @ranked_offers ||= ranked_offers = Offer.get_featured_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
+      @ranked_offers ||= Offer.get_featured_offers.reject { |offer| offer.id == self.id }
       worse_offers = @ranked_offers.select { |offer| offer.rank_score < rank_score }
       100 * worse_offers.size / @ranked_offers.size
     else
@@ -746,7 +755,7 @@ private
       normalize_stats(@stats)
       calculate_rank_score(weights.merge({ :random => 0 }))
       self.rank_score += weights[:random] * 0.5
-      @ranked_offers ||= ranked_offers = Offer.get_enabled_offers.reject { |offer| offer.item_type == 'RatingOffer' || offer.id == self.id }
+      @ranked_offers ||= Offer.get_enabled_offers.reject { |offer| offer.id == self.id }
       worse_offers = @ranked_offers.select { |offer| offer.rank_score < rank_score }
       100 * worse_offers.size / @ranked_offers.size
     end
@@ -761,6 +770,16 @@ private
         errors.add :bid, "must be 0 for RatingOffers"
       end
     end
+  end
+  
+  def update_memcached
+    super
+    Mc.distributed_put("mysql.offer.rating_offer.#{third_party_data}", self) if item_type == 'RatingOffer'
+  end
+  
+  def clear_memcached
+    super
+    Mc.distributed_delete("mysql.offer.rating_offer.#{third_party_data}") if item_type == 'RatingOffer'
   end
   
 end

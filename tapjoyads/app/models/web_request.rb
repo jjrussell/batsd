@@ -27,6 +27,7 @@ class WebRequest < SimpledbResource
   self.sdb_attr :source
   self.sdb_attr :exp
   self.sdb_attr :country
+  self.sdb_attr :geoip_country
   self.sdb_attr :click_key
   
   PATH_TO_STAT_MAP = {
@@ -125,13 +126,15 @@ class WebRequest < SimpledbResource
 
       self.source            = params[:source]
       self.exp               = params[:exp]
+      self.country           = params[:country_code]
     end
     
     unless self.ip_address?
       self.ip_address = ip_address
     end
     
-    self.country = geoip_data[:country]
+    self.country = geoip_data[:country] if self.country.blank?
+    self.geoip_country = geoip_data[:country]
   end
   
   ##

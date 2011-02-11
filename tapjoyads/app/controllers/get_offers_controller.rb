@@ -42,6 +42,8 @@ class GetOffersController < ApplicationController
   
   def featured
     if @currency.get_test_device_ids.include?(params[:udid])
+      @geoip_data = get_geoip_data
+      @geoip_data[:country] = params[:country_code] if params[:country_code].present?
       @offer_list = [ build_test_offer(@publisher_app, @currency) ]
     else
       set_offer_list(:is_server_to_server => false)
@@ -91,6 +93,7 @@ private
     params[:start] = '0'
     params[:max] = '999'
     params[:source] = 'featured'
+    params[:rate_app_offer] = '0'
   end
   
   def setup
@@ -150,10 +153,11 @@ private
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     if is_server_to_server && params[:device_ip].blank?
-      geoip_data = {}
+      @geoip_data = {}
     else
-      geoip_data = get_geoip_data
+      @geoip_data = get_geoip_data
     end
+    @geoip_data[:country] = params[:country_code] if params[:country_code].present?
     
     type = case params[:type]
     when Offer::FEATURED_OFFER_TYPE
@@ -168,11 +172,11 @@ private
         :device => @device,
         :currency => @currency,
         :device_type => params[:device_type],
-        :geoip_data => geoip_data,
+        :geoip_data => @geoip_data,
         :type => type,
         :required_length => (@start_index + @max_items),
         :app_version => params[:app_version],
-        :reject_rating_offer => params[:rate_app_offer] == '0',
+        :include_rating_offer => params[:rate_app_offer] != '0' && @start_index == 0,
         :direct_pay_providers => params[:direct_pay_providers].to_s.split(','),
         :exp => params[:exp])
     @offer_list = @offer_list[@start_index, @max_items] || []

@@ -101,6 +101,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'confirm_email_validation', :controller => 'list_signup', :action => 'confirm_api'
   map.connect 'privacy', :controller => 'homepage', :action => 'privacy'
   map.connect 'privacy.html', :controller => 'homepage', :action => 'privacy'
+  map.connect 'press', :controller => 'homepage', :action => 'press'
+  map.connect 'press/:id', :controller => 'homepage', :action => 'press_entry'
   map.resources :opt_outs, :only => :create
   
   # Route old login page to new login page.

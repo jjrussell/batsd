@@ -22,9 +22,6 @@
         = check_box_tag "App", "", true
         = label_tag "App", "Apps"
         %br
-        = check_box_tag "RatingOffer", "", false
-        = label_tag "RatingOffer", "RatingOffers"
-        %br
         = check_box_tag "GenericOffer", "", true
         = label_tag "GenericOffer", "GenericOffers"
         %br
@@ -98,10 +95,6 @@
           return s;
         }
       });
-      
-      $('#RatingOffer').click(function() {
-        toggleOffers('RatingOffer')
-      })
       
       $('#GenericOffer').click(function() {
         toggleOffers('GenericOffer')

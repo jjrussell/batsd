@@ -327,8 +327,7 @@ class OneOffs
         Mc.put(key, data)
       end
     end
-    Offer.cache_featured_offers
-    Offer.cache_enabled_offers
+    Offer.cache_offers
     Mc.cache_all
     true
   end

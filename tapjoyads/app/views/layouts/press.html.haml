@@ -24,15 +24,37 @@
             = link_to 'CLIENT LOGIN', login_path
           .mainmenu
             %ul#nav
-              %li= link_to 'APP DEVELOPERS', {:action => 'app_developers'}, :class => params[:action]=='app_developers' ? 'selec' : ''
-              %li= link_to 'ADVERTISERS', {:action => 'advertisers'}, :class => params[:action]=='advertisers' ? 'selec' : ''
-              %li= link_to 'GAMING PLATFORMS', {:action => 'gaming_platforms'}, :class => params[:action]=='gaming_platforms' ? 'selec' : ''
-              %li= link_to 'ABOUT', {:action => 'about_us'}, :class => @about_us ? 'selec' : ''
+              %li= link_to 'APP DEVELOPERS', {:action => 'app_developers'}
+              %li= link_to 'ADVERTISERS', {:action => 'advertisers'}
+              %li= link_to 'GAMING PLATFORMS', {:action => 'gaming_platforms'}
+              %li= link_to 'ABOUT', {:action => 'about_us'}, :class => 'selec'
           .clear{:style => 'clear:both;'}
         .contentArea
-          = yield
+          .titleHeader
+            %h3 COMPANY OVERVIEW
+            %h3.separator &nbsp;/&nbsp;
+            %h3.sub PRESS
+          .splitLayout
+            = render :partial => 'about_left_nav'
+            .team.plain_template
+              .management.innercontents
+                %h1
+                  %strong= @press_title
+                %p
+                  %br/
+                - if @press_subtitle
+                  %em= @press_subtitle
+                  %br/
+                  %br/
+                %strong= @press_location_and_date
+                &ndash;
+                = yield
+                %br/
+                %br/
+                = link_to '&lt;&lt; Back to top', '#top'
+          .clear
       .footer
-        = link_to 'PRESS', :controller => 'homepage', :action => 'press'
+        = link_to 'PRESS', '/press'
         |
         = link_to 'CAREERS', :controller => 'homepage', :action => 'careers'
         |
