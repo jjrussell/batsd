@@ -42,6 +42,8 @@ class GetOffersController < ApplicationController
   
   def featured
     if @currency.get_test_device_ids.include?(params[:udid])
+      @geoip_data = get_geoip_data
+      @geoip_data[:country] = params[:country_code] if params[:country_code].present?
       @offer_list = [ build_test_offer(@publisher_app, @currency) ]
     else
       set_offer_list(:is_server_to_server => false)
