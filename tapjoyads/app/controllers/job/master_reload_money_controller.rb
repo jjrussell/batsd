@@ -61,11 +61,16 @@ private
         stats[key]['revenue']           = stats[key]['advertiser_spend'] - stats[key]['marketing_credits'] + stats[key]['linkshare_est'] + stats[key]['ads_est']
         stats[key]['net_revenue']       = stats[key]['revenue'] - stats[key]['publisher_earnings']
         stats[key]['margin']            = stats[key]['net_revenue'] / stats[key]['revenue'] * 100
+        stats[key]['deduct_pct']        = (
+                                            stats[key]['marketing_credits'] + 
+                                             (Order.created_between(start_time, end_time).sum(:amount, :conditions => "payment_method = 0") / 100.0 * 0.025) 
+                                          ) / stats[key]['orders'] * 100
 
         stats[key]['conversions']        = stats[key]['conversions'].nil? ? '-' : number_with_delimiter(stats[key]['conversions'])
         stats[key]['advertiser_spend']   = number_to_currency(stats[key]['advertiser_spend'])
         stats[key]['publisher_earnings'] = number_to_currency(stats[key]['publisher_earnings'])
         stats[key]['marketing_credits']  = number_to_currency(stats[key]['marketing_credits'])
+        stats[key]['deduct_pct']         = number_with_precision(stats[key]['deduct_pct'], :precision => 2) + '%'
         stats[key]['orders']             = number_to_currency(stats[key]['orders'])
         stats[key]['payouts']            = number_to_currency(stats[key]['payouts'])
         stats[key]['linkshare_est']      = number_to_currency(stats[key]['linkshare_est'])
