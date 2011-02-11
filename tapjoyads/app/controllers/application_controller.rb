@@ -57,7 +57,7 @@ private
       next unless record.nil?
       
       log_record_not_found
-      render :text => "record not found" if render_missing_text
+      render :text => "record not found", :status => 500 if render_missing_text
       return false
     end
     true
