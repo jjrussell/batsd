@@ -21,8 +21,8 @@ class Offer < ActiveRecord::Base
                                   'device_types', 'countries', 'postal_codes', 'cities',
                                   'age_rating', 'multi_complete', 'featured',
                                   'publisher_app_whitelist', 'direct_pay', 'reward_value',
-                                  'third_party_data', 'has_variable_payment',
-                                  'payment_range_low', 'payment_range_high' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'third_party_data', 'payment_range_low',
+                                  'payment_range_high' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
