@@ -8,7 +8,8 @@ Tapjoy.Graph = {
       var holder = $('<div class="holder">').
         append( $('<canvas id="' + id + '_graph" width="800px" height="440px">') ).
         append( $('<div class="bar">') ).
-        append( $('<div class="tooltip">') );
+        append( $('<div class="tooltip">') ).
+        append( $('<div class="error">') );
       $(this).
         append( $('<h3>') ).
         append( $('<div class="dropdown">')).
@@ -99,76 +100,81 @@ Tapjoy.Graph = {
       legendKeys = legendKeys.concat(obj['right']['names']);
     }
 
-    var g = new RGraph.Line(id + '_graph');
-    g.original_data = obj['main']['data'];
-    RGraph.Clear(g.canvas);
-
-    g.Set('chart.key', legendKeys);
-    g.Set('chart.key.background', 'rgba(255,255,255,0.5)');
-    g.Set('chart.key.position', 'gutter');
+    try {
+      var g = new RGraph.Line(id + '_graph');
+      g.original_data = obj['main']['data'];
+      RGraph.Clear(g.canvas); 
     
-    g.Set('chart.labels', obj['xLabels']);
-    g.Set('chart.text.angle', 90);
+      g.Set('chart.key', legendKeys);
+      g.Set('chart.key.background', 'rgba(255,255,255,0.5)');
+      g.Set('chart.key.position', 'gutter');
+    
+      g.Set('chart.labels', obj['xLabels']);
+      g.Set('chart.text.angle', 90);
 
-    Tapjoy.Graph.setGraphProperties(g, {
-      hMarginPx: hMarginPx,
-      gutterPx: gutterPx,
-      unitPrefix: obj['main']['unitPrefix'],
-      colors: ['#f00', '#0f0', '#00f', '#f0f', '#ff0', '#0ff', '#000'],
-      yMax: obj['main']['yMax'],
-      decimals: obj['main']['decimals']
-    });
-    g.Draw();
-
-    if (obj['right']) {
-      var g2 = new RGraph.Line(id + '_graph');
-      g2.original_data = obj['right']['data'];
-
-      Tapjoy.Graph.setGraphProperties(g2, {
+      Tapjoy.Graph.setGraphProperties(g, {
         hMarginPx: hMarginPx,
         gutterPx: gutterPx,
-        unitPrefix: obj['right']['unitPrefix'],
-        colors: g.properties['chart.colors'].slice(obj['main']['data'].length),
-        yAxisPos: 'right',
-        yMax: obj['right']['yMax'],
-        decimals: obj['right']['decimals'],
-        drawGrid: false
-      })
+        unitPrefix: obj['main']['unitPrefix'],
+        colors: ['#f00', '#0f0', '#00f', '#f0f', '#ff0', '#0ff', '#000'],
+        yMax: obj['main']['yMax'],
+        decimals: obj['main']['decimals']
+      });
+      g.Draw();
+    
 
-      g2.Draw();
+      if (obj['right']) {
+        var g2 = new RGraph.Line(id + '_graph');
+        g2.original_data = obj['right']['data'];
+
+        Tapjoy.Graph.setGraphProperties(g2, {
+          hMarginPx: hMarginPx,
+          gutterPx: gutterPx,
+          unitPrefix: obj['right']['unitPrefix'],
+          colors: g.properties['chart.colors'].slice(obj['main']['data'].length),
+          yAxisPos: 'right',
+          yMax: obj['right']['yMax'],
+          decimals: obj['right']['decimals'],
+          drawGrid: false
+        })
+
+        g2.Draw();
+      }
+
+      var graphNode = $('#' + id + '_graph');
+      var barNode = $('#' + id + ' .bar')
+      var tooltipNode = $('#' + id + ' .tooltip')
+
+      $('#' + id + '>.holder').hover(function() {
+        barNode.show();
+        tooltipNode.show();
+      },function() {
+        barNode.hide();
+        tooltipNode.hide();
+      }).mousemove(function(e) {
+        var graphInternalHeight = graphNode.height() - gutterPx * 2;
+        var graphInternalWidth = graphNode.width() - gutterPx * 2 - hMarginPx * 2;
+        var graphInternalTop = graphNode.offset().top + gutterPx;
+        var graphInternalLeft = graphNode.offset().left + gutterPx;
+
+        var mouseX = e.pageX - graphInternalLeft;
+        var newX = mouseX - mouseX % (graphInternalWidth / (numPoints - 1));
+        newX = Math.max(newX, 0);
+        newX = Math.min(newX, graphInternalWidth);
+        newX = Math.floor(newX);
+
+        barNode.css('height', graphInternalHeight).css('top', graphInternalTop);
+        barNode.css('left', newX + graphInternalLeft + 4);
+        tooltipNode.css('left', newX + graphInternalLeft + 4).css('top', e.pageY);
+
+        var activeId = Math.ceil(newX / graphInternalWidth * (numPoints - 1));
+
+        tooltipNode.html(Tapjoy.Graph.getTooltipHtml(obj, activeId));
+      });
+    } catch(e) {
+      $('#' + id + ' .error').html('Error drawing chart');
+      $('#' + id + '_graph').hide();
     }
-
-    var graphNode = $('#' + id + '_graph');
-    var barNode = $('#' + id + ' .bar')
-    var tooltipNode = $('#' + id + ' .tooltip')
-
-    $('#' + id + '>.holder').hover(function() {
-      barNode.show();
-      tooltipNode.show();
-    },function() {
-      barNode.hide();
-      tooltipNode.hide();
-    }).mousemove(function(e) {
-      var graphInternalHeight = graphNode.height() - gutterPx * 2;
-      var graphInternalWidth = graphNode.width() - gutterPx * 2 - hMarginPx * 2;
-      var graphInternalTop = graphNode.offset().top + gutterPx;
-      var graphInternalLeft = graphNode.offset().left + gutterPx;
-
-      var mouseX = e.pageX - graphInternalLeft;
-      var newX = mouseX - mouseX % (graphInternalWidth / (numPoints - 1));
-      newX = Math.max(newX, 0);
-      newX = Math.min(newX, graphInternalWidth);
-      newX = Math.floor(newX);
-
-      barNode.css('height', graphInternalHeight).css('top', graphInternalTop);
-      barNode.css('left', newX + graphInternalLeft + 4);
-      tooltipNode.css('left', newX + graphInternalLeft + 4).css('top', e.pageY);
-
-      var activeId = Math.ceil(newX / graphInternalWidth * (numPoints - 1));
-
-      tooltipNode.html(Tapjoy.Graph.getTooltipHtml(obj, activeId));
-    });
-    return [g, g2];
   },
 
   getTooltipHtml: function(obj, idx) {
