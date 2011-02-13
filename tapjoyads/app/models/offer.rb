@@ -14,7 +14,8 @@ class Offer < ActiveRecord::Base
   CLASSIC_OFFER_TYPE  = '0'
   DEFAULT_OFFER_TYPE  = '1'
   FEATURED_OFFER_TYPE = '2'
-  GROUP_SIZE = 1000
+  DISPLAY_OFFER_TYPE  = '3'
+  GROUP_SIZE = 200
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
                                   'conversion_rate', 'show_rate', 'self_promote_only',
@@ -24,10 +25,10 @@ class Offer < ActiveRecord::Base
                                   'third_party_data', 'payment_range_low',
                                   'payment_range_high' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
-  CONTROL_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
+  DEFAULT_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :offer_list_length
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -96,76 +97,40 @@ class Offer < ActiveRecord::Base
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
   before_save :update_payment
+  after_save :update_enabled_rating_offer_id
   
   named_scope :enabled_offers, :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > 0) OR (payment = 0 AND reward_value > 0))"
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
+  named_scope :for_display_ads, :conditions => "item_type = 'App' AND price = 0 AND conversion_rate >= 0.5"
   named_scope :featured, :conditions => { :featured => true }
   named_scope :nonfeatured, :conditions => { :featured => false }
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :to_aggregate_stats, lambda { { :conditions => ["next_stats_aggregation_time < ?", Time.zone.now], :order => "next_stats_aggregation_time ASC" } }
   
-  def self.find_rating_offer_in_cache(app_id, do_lookup = (Rails.env != 'production'))
-    if do_lookup
-      Mc.distributed_get_and_put("mysql.offer.rating_offer.#{app_id}") { find_by_third_party_data(app_id) }
-    else
-      Mc.distributed_get("mysql.offer.rating_offer.#{app_id}")
-    end
-  end
-  
-  def self.redistribute_stats_aggregation
-    now = Time.zone.now + 15.minutes
-    Offer.find_each do |o|
-      o.next_stats_aggregation_time = now + rand(2.hours)
-      o.save(false)
-    end
-    true
-  end
-  
-  def self.get_enabled_offers(exp = nil)
-    offers = []
-    group = 0
-    bucket = S3.bucket(BucketNames::OFFER_DATA)
-    
-    loop do
-      additional_offers = Mc.distributed_get_and_put("s3.enabled_offers.control.#{group}") do
-        Marshal.restore(bucket.get("enabled_offers.control.#{group}")) rescue []
+  def self.redistribute_stats_aggregation(range = 1.hour)
+    Benchmark.realtime do
+      now = Time.zone.now + 15.minutes
+      Offer.find_each do |o|
+        o.next_stats_aggregation_time = now + rand(range)
+        o.save(false)
       end
-    
-      offers += additional_offers
-      group += 1
-      break unless additional_offers.length == GROUP_SIZE
-    end
-    offers
-  end
-  
-  def self.get_stats_for_ranks
-    Mc.get_and_put('s3.offer_rank_statistics') do
-      bucket = S3.bucket(BucketNames::OFFER_DATA)
-      Marshal.restore(bucket.get('offer_rank_statistics'))
-    end
-  end
-  
-  def self.get_stats_for_featured_ranks
-    Mc.get_and_put('s3.featured_offer_rank_statistics') do
-      bucket = S3.bucket(BucketNames::OFFER_DATA)
-      Marshal.restore(bucket.get('featured_offer_rank_statistics'))
-    end
-  end
-  
-  def self.get_featured_offers
-    Mc.distributed_get_and_put('s3.featured_offers') do
-      bucket = S3.bucket(BucketNames::OFFER_DATA)
-      Marshal.restore(bucket.get('featured_offers'))
     end
   end
   
   def self.cache_offers
-    cache_enabled_offers
-    cache_featured_offers
+    Benchmark.realtime do
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list
+      cache_offer_list(offer_list, DEFAULT_WEIGHTS, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+    
+      offer_list = Offer.enabled_offers.featured.for_offer_list
+      cache_offer_list(offer_list, DEFAULT_WEIGHTS.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+    
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads
+      cache_offer_list(offer_list, DEFAULT_WEIGHTS, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+    end
   end
   
-  def self.cache_enabled_offers
-    offer_list          = Offer.enabled_offers.nonfeatured.for_offer_list
+  def self.cache_offer_list(offer_list, weights, type, exp)
     conversion_rates    = offer_list.collect(&:conversion_rate)
     prices              = offer_list.collect(&:price)
     avg_revenues        = offer_list.collect(&:avg_revenue)
@@ -183,78 +148,75 @@ class Offer < ActiveRecord::Base
       :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
     
     bucket = S3.bucket(BucketNames::OFFER_DATA)
-    bucket.put("offer_rank_statistics", Marshal.dump(stats))
-    Mc.put("s3.offer_rank_statistics", stats)
+    bucket.put("offer_rank_statistics.type_#{type}.exp_#{exp}", Marshal.dump(stats))
+    Mc.put("s3.offer_rank_statistics.type_#{type}.exp_#{exp}", stats)
     
+    list_length = offer_list.length
     offer_list.each do |offer|
       offer.normalize_stats(stats)
+      offer.offer_list_length = list_length
     end
     
-    cache_enabled_offers_for_experiment('control', CONTROL_WEIGHTS, offer_list)
-  end
-  
-  def self.cache_enabled_offers_for_experiment(cache_key_suffix, weights, offers_to_cache)
-    offers_to_cache.each do |offer|
+    offer_list.each do |offer|
       offer.calculate_rank_score(weights)
-    end
-    
-    offers_to_cache.sort! do |o1, o2|
-      o2.rank_score <=> o1.rank_score
-    end
-    
-    offers_for_mc = []
-    group = 0
-    bucket = S3.bucket(BucketNames::OFFER_DATA)
-    offers_to_cache.in_groups_of(GROUP_SIZE) do |offers|
-      offers.compact!
-      marshalled_offer_list = Marshal.dump(offers)
-      bucket.put("enabled_offers.#{cache_key_suffix}.#{group}", marshalled_offer_list)
-      offers_for_mc << offers
-      group += 1
-    end
-    offers_for_mc.each_with_index do |current_offers, i|
-      Mc.distributed_put("s3.enabled_offers.#{cache_key_suffix}.#{i}", current_offers)
-    end
-  end
-  
-  def self.cache_featured_offers
-    offer_list          = Offer.enabled_offers.featured.for_offer_list
-    conversion_rates    = offer_list.collect(&:conversion_rate)
-    prices              = offer_list.collect(&:price)
-    avg_revenues        = offer_list.collect(&:avg_revenue)
-    bids                = offer_list.collect(&:bid)
-    cvr_mean            = conversion_rates.mean
-    cvr_std_dev         = conversion_rates.standard_deviation
-    price_mean          = prices.mean
-    price_std_dev       = prices.standard_deviation
-    avg_revenue_mean    = avg_revenues.mean
-    avg_revenue_std_dev = avg_revenues.standard_deviation
-    bid_mean            = bids.mean
-    bid_std_dev         = bids.standard_deviation
-    
-    stats = { :cvr_mean => cvr_mean, :cvr_std_dev => cvr_std_dev, :price_mean => price_mean, :price_std_dev => price_std_dev,
-      :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
-    
-    bucket = S3.bucket(BucketNames::OFFER_DATA)
-    bucket.put("featured_offer_rank_statistics", Marshal.dump(stats))
-    Mc.put("s3.featured_offer_rank_statistics", stats)
-    
-    offer_list.each do |offer|
-      offer.normalize_stats(stats)
-    end
-    
-    offer_list.each do |offer|
-      offer.calculate_rank_score(CONTROL_WEIGHTS.merge({:random => 0}))
     end
     
     offer_list.sort! do |o1, o2|
       o2.rank_score <=> o1.rank_score
     end
     
-    bucket = S3.bucket(BucketNames::OFFER_DATA)
-    marshalled_offer_list = Marshal.dump(offer_list)
-    bucket.put('featured_offers', marshalled_offer_list)
-    Mc.distributed_put('s3.featured_offers', offer_list)
+    offer_groups = []
+    group        = 0
+    bucket       = S3.bucket(BucketNames::OFFER_DATA)
+    offer_list.in_groups_of(GROUP_SIZE) do |offers|
+      offers.compact!
+      marshalled_offers = Marshal.dump(offers)
+      bucket.put("enabled_offers.type_#{type}.exp_#{exp}.#{group}", marshalled_offers)
+      offer_groups << offers
+      group += 1
+    end
+    offer_groups.each_with_index do |offers, group|
+      Mc.distributed_put("s3.enabled_offers.type_#{type}.exp_#{exp}.#{group}", offers)
+    end
+  end
+  
+  def self.get_cached_offers(options = {})
+    type = options.delete(:type)
+    exp  = options.delete(:exp)
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
+    type ||= DEFAULT_OFFER_TYPE
+    exp  ||= Experiments::EXPERIMENTS[:default]
+    
+    offer_list        = []
+    offer_list_length = nil
+    group             = 0
+    loop do
+      offers = Mc.distributed_get_and_put("s3.enabled_offers.type_#{type}.exp_#{exp}.#{group}") do
+        bucket = S3.bucket(BucketNames::OFFER_DATA)
+        Marshal.restore(bucket.get("enabled_offers.type_#{type}.exp_#{exp}.#{group}")) rescue []
+      end
+      
+      if block_given?
+        offer_list_length ||= offers.first.offer_list_length if offers.present?
+        break if yield(offers) == 'break'
+      else
+        offer_list += offers
+      end
+      
+      break unless offers.length == GROUP_SIZE
+      group += 1
+    end
+    
+    block_given? ? offer_list_length.to_i : offer_list
+  end
+  
+  def self.get_offer_rank_statistics(type, exp = nil)
+    exp ||= Experiments::EXPERIMENTS[:default]
+    Mc.get_and_put("s3.offer_rank_statistics.type_#{type}.exp_#{exp}") do
+      bucket = S3.bucket(BucketNames::OFFER_DATA)
+      Marshal.restore(bucket.get("offer_rank_statistics.type_#{type}.exp_#{exp}"))
+    end
   end
   
   def self.s3_udids_path(offer_id, date = nil)
@@ -747,20 +709,20 @@ private
   end
   
   def recalculate_estimated_percentile
-    weights = CONTROL_WEIGHTS
+    weights = DEFAULT_WEIGHTS
     if conversion_rate == 0
       self.conversion_rate = is_paid? ? (0.05 / price) : 0.50
     end
     
     if featured?
-      @stats ||= Offer.get_stats_for_featured_ranks
+      @stats ||= Offer.get_offer_rank_statistics(FEATURED_OFFER_TYPE)
       normalize_stats(@stats)
       calculate_rank_score(weights.merge({ :random => 0 }))
       @ranked_offers ||= Offer.get_featured_offers.reject { |offer| offer.id == self.id }
       worse_offers = @ranked_offers.select { |offer| offer.rank_score < rank_score }
       100 * worse_offers.size / @ranked_offers.size
     else
-      @stats ||= Offer.get_stats_for_ranks
+      @stats ||= Offer.get_offer_rank_statistics(DEFAULT_OFFER_TYPE)
       normalize_stats(@stats)
       calculate_rank_score(weights.merge({ :random => 0 }))
       self.rank_score += weights[:random] * 0.5
@@ -781,14 +743,11 @@ private
     end
   end
   
-  def update_memcached
-    super
-    Mc.distributed_put("mysql.offer.rating_offer.#{third_party_data}", self) if item_type == 'RatingOffer'
-  end
-  
-  def clear_memcached
-    super
-    Mc.distributed_delete("mysql.offer.rating_offer.#{third_party_data}") if item_type == 'RatingOffer'
+  def update_enabled_rating_offer_id
+    if item_type == 'RatingOffer' && (tapjoy_enabled_changed? || user_enabled_changed? || reward_value_changed? || payment_changed?)
+      item.app.enabled_rating_offer_id = accepting_clicks? ? id : nil
+      item.app.save! if item.app.changed?
+    end
   end
   
 end

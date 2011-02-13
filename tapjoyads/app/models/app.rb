@@ -150,43 +150,49 @@ class App < ActiveRecord::Base
     device               = options.delete(:device)               { Device.new(:key => udid) }
     currency             = options.delete(:currency)             { Currency.find_in_cache(id) }
     geoip_data           = options.delete(:geoip_data)           { {} }
-    type                 = options.delete(:type)                 { Offer::DEFAULT_OFFER_TYPE }
     required_length      = options.delete(:required_length)      { 999 }
     include_rating_offer = options.delete(:include_rating_offer) { false }
     direct_pay_providers = options.delete(:direct_pay_providers) { [] }
     app_version          = options.delete(:app_version)
     device_type          = options.delete(:device_type)
+    type                 = options.delete(:type)
     exp                  = options.delete(:exp)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     raise "cannot generate offer list without currency" if currency.nil?
     
-    if type == Offer::CLASSIC_OFFER_TYPE
-      return [ [], 0 ]
-    elsif type == Offer::FEATURED_OFFER_TYPE
-      offer_list = Offer.get_featured_offers
-    else
-      offer_list = Offer.get_enabled_offers(exp)
-    end
+    return [ [], 0 ] if type == Offer::CLASSIC_OFFER_TYPE
     
-    if include_rating_offer
-      rate_app_offer = Offer.find_rating_offer_in_cache(id)
-      offer_list.unshift(rate_app_offer) if rate_app_offer.present? && rate_app_offer.accepting_clicks?
-    end
+    final_offer_list   = []
+    num_rejected       = 0
+    offer_list_length  = 0
     
-    final_offer_list = []
-    num_rejected = 0
-    offer_list.each do |o|
-      if o.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers)
-        num_rejected += 1
-      else
-        final_offer_list << o
+    if include_rating_offer && enabled_rating_offer_id.present?
+      rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)
+      if rate_app_offer.present? && rate_app_offer.accepting_clicks?
+        offer_list_length += 1
+        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers)
+          num_rejected += 1
+        else
+          final_offer_list << rate_app_offer
+        end
       end
-      break if required_length == final_offer_list.length
     end
     
-    Rails.logger.info "REJECTION_STATS: #{final_offer_list.length} offers returned + #{num_rejected} rejected = #{final_offer_list.length + num_rejected} total" if type == Offer::DEFAULT_OFFER_TYPE
-    [ final_offer_list, offer_list.length - final_offer_list.length - num_rejected ]
+    offer_list_length += Offer.get_cached_offers({ :type => type, :exp => exp }) do |offers|
+      offers.each do |offer|
+        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers)
+          num_rejected += 1
+        else
+          final_offer_list << offer
+        end
+        break if required_length == final_offer_list.length
+      end
+      
+      'break' if required_length == final_offer_list.length
+    end
+    
+    [ final_offer_list, offer_list_length - final_offer_list.length - num_rejected ]
   end
   
   def parse_store_id_from_url(url, alert_on_parse_fail = true)
@@ -290,11 +296,8 @@ private
   end
   
   def update_rating_offer
-    if store_id_changed? && rating_offer.present?
-      rating_offer.offers.each do |offer|
-        offer.url = store_url
-        offer.save!
-      end
+    if (name_changed? || store_id_changed?) && rating_offer.present?
+      rating_offer.save!
     end
   end
   

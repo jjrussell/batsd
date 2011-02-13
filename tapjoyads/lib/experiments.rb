@@ -1,13 +1,13 @@
 class Experiments
   EXPERIMENTS = {
-    :control => '40'
+    :default => '0'
   }
   
   def self.choose(udid)
     if udid.present?
-      udid_hash = udid.hash % 100
+      # udid_hash = udid.hash % 100
       
-      EXPERIMENTS[:control]
+      EXPERIMENTS[:default]
     end
   end
   

@@ -95,23 +95,21 @@ private
       currency = Currency.find_in_cache(publisher_app_id)
       return unless verify_records([ publisher_app, currency ])
 
-      # Randomly choose a free offer that is converting at greater than 50%
+      # Randomly choose a free App offer that is converting at greater than 50%
       offer_list, more_data_available = publisher_app.get_offer_list(params[:udid],
           :device => device,
           :currency => currency,
           :device_type => params[:device_type],
           :geoip_data => geoip_data,
-          :required_length => 25)
+          :required_length => 25,
+          :type => Offer::DISPLAY_OFFER_TYPE)
 
       disabled_offer_ids = displayer_currency.nil? ? Set.new : displayer_currency.get_disabled_offer_ids
       disabled_partner_ids = displayer_currency.nil? ? Set.new : displayer_currency.get_disabled_partner_ids
     
       offer_list.reject! do |offer|
-        offer.is_paid? || 
-        offer.conversion_rate < 0.5 || 
-        offer.item_id == params[:app_id] || 
+        offer.item_id == params[:app_id] ||
         offer.name.size > 30 ||
-        offer.item_type != "App" ||
         disabled_offer_ids.include?(offer.id) ||
         disabled_partner_ids.include?(offer.partner_id)
       end

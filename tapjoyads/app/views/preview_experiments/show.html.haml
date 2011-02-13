@@ -64,7 +64,7 @@
         %td= offer.rank_boost
         %td= offer.get_device_types.to_a.join(",")
         %td= offer.item_type
-      - rank += offer.show_rate unless offer.item_type == 'RatingOffer'
+      - rank += offer.show_rate
         
 - content_for :page_javascript do
   :plain

@@ -10,13 +10,13 @@ class PreviewExperimentsController < WebsiteController
 
   def show
     if params[:id] == 'featured'
-      @offers = Offer.get_featured_offers.reject { |offer| offer.show_rate == 0 }
+      @offers = Offer.get_cached_offers({ :type => Offer::FEATURED_OFFER_TYPE }).reject { |offer| offer.show_rate == 0 }
     else
-      @offers = Offer.get_enabled_offers(params[:id]).reject { |offer| offer.show_rate == 0 }
+      @offers = Offer.get_cached_offers({ :type => Offer::DEFAULT_OFFER_TYPE, :exp => params[:id] }).reject { |offer| offer.show_rate == 0 }
     end
     
     if params[:device] && params[:device] != 'all'
-      @offers.reject! { |o| !o.device_types.include?(params[:device]) }
+      @offers.reject! { |o| !o.get_device_types.include?(params[:device]) }
     end
   end
 
