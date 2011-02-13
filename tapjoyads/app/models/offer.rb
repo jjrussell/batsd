@@ -175,8 +175,14 @@ class Offer < ActiveRecord::Base
       offer_groups << offers
       group += 1
     end
-    offer_groups.each_with_index do |offers, group|
-      Mc.distributed_put("s3.enabled_offers.type_#{type}.exp_#{exp}.#{group}", offers)
+    offer_groups.each_with_index do |offers, i|
+      Mc.distributed_put("s3.enabled_offers.type_#{type}.exp_#{exp}.#{i}", offers)
+    end
+    
+    while bucket.key("enabled_offers.type_#{type}.exp_#{exp}.#{group}").exists?
+      bucket.key("enabled_offers.type_#{type}.exp_#{exp}.#{group}").delete
+      Mc.distributed_delete("s3.enabled_offers.type_#{type}.exp_#{exp}.#{group}")
+      group += 1
     end
   end
   
