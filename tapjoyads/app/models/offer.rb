@@ -151,10 +151,8 @@ class Offer < ActiveRecord::Base
     bucket.put("offer_rank_statistics.type_#{type}.exp_#{exp}", Marshal.dump(stats))
     Mc.put("s3.offer_rank_statistics.type_#{type}.exp_#{exp}", stats)
     
-    list_length = offer_list.length
     offer_list.each do |offer|
       offer.normalize_stats(stats)
-      offer.offer_list_length = list_length
     end
     
     offer_list.each do |offer|
@@ -164,6 +162,8 @@ class Offer < ActiveRecord::Base
     offer_list.sort! do |o1, o2|
       o2.rank_score <=> o1.rank_score
     end
+    
+    offer_list.first.offer_list_length = offer_list.length
     
     offer_groups = []
     group        = 0
