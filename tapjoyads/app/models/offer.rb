@@ -718,7 +718,7 @@ private
       @stats ||= Offer.get_offer_rank_statistics(FEATURED_OFFER_TYPE)
       normalize_stats(@stats)
       calculate_rank_score(weights.merge({ :random => 0 }))
-      @ranked_offers ||= Offer.get_featured_offers.reject { |offer| offer.id == self.id }
+      @ranked_offers ||= Offer.get_cached_offers({ :type => FEATURED_OFFER_TYPE }).reject { |offer| offer.id == self.id }
       worse_offers = @ranked_offers.select { |offer| offer.rank_score < rank_score }
       100 * worse_offers.size / @ranked_offers.size
     else
@@ -726,7 +726,7 @@ private
       normalize_stats(@stats)
       calculate_rank_score(weights.merge({ :random => 0 }))
       self.rank_score += weights[:random] * 0.5
-      @ranked_offers ||= Offer.get_enabled_offers.reject { |offer| offer.id == self.id }
+      @ranked_offers ||= Offer.get_cached_offers({ :type => DEFAULT_OFFER_TYPE }).reject { |offer| offer.id == self.id }
       worse_offers = @ranked_offers.select { |offer| offer.rank_score < rank_score }
       100 * worse_offers.size / @ranked_offers.size
     end
