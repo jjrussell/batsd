@@ -57,6 +57,7 @@ private
       offer.name = name if name_changed?
       offer.description = description if description_changed?
       offer.hidden = hidden if hidden_changed?
+      offer.url = app.store_url
       offer.save! if offer.changed?
     end
   end

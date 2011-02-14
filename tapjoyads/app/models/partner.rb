@@ -51,9 +51,9 @@ class Partner < ActiveRecord::Base
   named_scope :to_calculate_next_payout_amount, :conditions => 'pending_earnings >= 10000'
   named_scope :to_payout, :conditions => 'pending_earnings != 0', :order => 'name ASC, contact_name ASC'
   named_scope :search, lambda { |name_or_email| { :joins => :users,
-      :conditions => [ "partners.name LIKE ? OR users.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
+      :conditions => [ "#{Partner.quoted_table_name}.name LIKE ? OR #{User.quoted_table_name}.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
     }
-  named_scope :premier, lambda { { :joins => :offer_discounts, :conditions => [ "offer_discounts.expires_on > ? ", Time.zone.today ], :group => "partners.id" } }
+  named_scope :premier, lambda { { :joins => :offer_discounts, :conditions => [ "#{OfferDiscount.quoted_table_name}.expires_on > ? ", Time.zone.today ], :group => "#{Partner.quoted_table_name}.id" } }
     
   def applied_offer_discounts
     offer_discounts.select { |discount| discount.active? && discount.amount == premier_discount }

@@ -49,14 +49,14 @@ class Conversion < ActiveRecord::Base
   end
   
   def self.is_partitioned?
-    Conversion.connection.select_one("SHOW TABLE STATUS WHERE Name = 'conversions'")['Create_options'] == 'partitioned'
+    Conversion.connection.select_one("SHOW TABLE STATUS WHERE Name = '#{table_name}'")['Create_options'] == 'partitioned'
   end
   
   def self.get_partitions
     partitions = []
     if is_partitioned?
       db_name = ActiveRecord::Base.configurations[Rails.env]['database']
-      partitions = Conversion.connection.select_all("SELECT * FROM information_schema.PARTITIONS WHERE TABLE_SCHEMA = '#{db_name}' AND TABLE_NAME = 'conversions' ORDER BY PARTITION_ORDINAL_POSITION ASC")
+      partitions = Conversion.connection.select_all("SELECT * FROM information_schema.PARTITIONS WHERE TABLE_SCHEMA = '#{db_name}' AND TABLE_NAME = '#{table_name}' ORDER BY PARTITION_ORDINAL_POSITION ASC")
       partitions.each do |partition|
         partition['CUTOFF_TIME'] = Time.zone.parse(Conversion.connection.select_value("SELECT FROM_DAYS(#{partition['PARTITION_DESCRIPTION']})"))
       end
@@ -67,14 +67,14 @@ class Conversion < ActiveRecord::Base
   def self.add_partition(cutoff_time)
     if is_partitioned?
       num_days = Conversion.connection.select_value("SELECT TO_DAYS('#{cutoff_time.to_s(:db)}')")
-      Conversion.connection.execute("ALTER TABLE conversions ADD PARTITION (PARTITION p#{num_days} VALUES LESS THAN (#{num_days}) COMMENT 'created_at < #{cutoff_time.to_s(:db)}')")
+      Conversion.connection.execute("ALTER TABLE #{quoted_table_name} ADD PARTITION (PARTITION p#{num_days} VALUES LESS THAN (#{num_days}) COMMENT 'created_at < #{cutoff_time.to_s(:db)}')")
     end
   end
   
   def self.drop_archived_partitions
     get_partitions.each do |partition|
       next unless partition['CUTOFF_TIME'] <= archive_cutoff_time
-      Conversion.connection.execute("ALTER TABLE conversions DROP PARTITION #{partition['PARTITION_NAME']}")
+      Conversion.connection.execute("ALTER TABLE #{quoted_table_name} DROP PARTITION #{partition['PARTITION_NAME']}")
     end
   end
   
@@ -87,7 +87,7 @@ class Conversion < ActiveRecord::Base
       f.each_line do |line|
         values << "('#{line.gsub("\n", '').gsub("\t", "', '")}')"
         if values.size == concurrency || f.eof?
-          Conversion.connection.execute("INSERT INTO conversions #{columns} VALUES #{values.join(', ')}")
+          Conversion.connection.execute("INSERT INTO #{quoted_table_name} #{columns} VALUES #{values.join(', ')}")
           count += values.size
           sleep(0.05)
           values = []
@@ -113,13 +113,13 @@ private
   def update_publisher_amount
     return true if publisher_amount == 0
     p_id = publisher_app.partner_id
-    Partner.connection.execute("UPDATE partners SET pending_earnings = (pending_earnings + #{publisher_amount}) WHERE id = '#{p_id}'")
+    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET pending_earnings = (pending_earnings + #{publisher_amount}) WHERE id = '#{p_id}'")
   end
   
   def update_advertiser_amount
     return true if advertiser_amount == 0 || advertiser_offer.nil?
     p_id = advertiser_offer.partner_id
-    Partner.connection.execute("UPDATE partners SET balance = (balance + #{advertiser_amount}) WHERE id = '#{p_id}'")
+    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET balance = (balance + #{advertiser_amount}) WHERE id = '#{p_id}'")
   end
   
   def sanitize_reward_id

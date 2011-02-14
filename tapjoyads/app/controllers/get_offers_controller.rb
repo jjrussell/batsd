@@ -176,7 +176,7 @@ private
         :type => type,
         :required_length => (@start_index + @max_items),
         :app_version => params[:app_version],
-        :include_rating_offer => params[:rate_app_offer] != '0' && @start_index == 0,
+        :include_rating_offer => params[:rate_app_offer] != '0',
         :direct_pay_providers => params[:direct_pay_providers].to_s.split(','),
         :exp => params[:exp])
     @offer_list = @offer_list[@start_index, @max_items] || []

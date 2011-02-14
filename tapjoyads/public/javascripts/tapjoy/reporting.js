@@ -1,21 +1,13 @@
 var loadData = function(data) {
-  try {
-    $('div#charts canvas').each(function(){
-      RGraph.Clear(this);
-    });
-
-    Tapjoy.Graph.drawLargeGraph(data.connect_data, 'connects');
-    Tapjoy.Graph.drawLargeGraph(data.rewarded_installs_plus_spend_data, 'installs_spend');
-    Tapjoy.Graph.drawLargeGraph(data.rewarded_installs_plus_rank_data, 'installs_rank');
-    Tapjoy.Graph.drawLargeGraph(data.revenue_data, 'revenue');
-    Tapjoy.Graph.drawLargeGraph(data.offerwall_data, 'offerwall');
-    Tapjoy.Graph.drawLargeGraph(data.featured_offers_data, 'featured_offers');
-    Tapjoy.Graph.drawLargeGraph(data.display_ads_data, 'display_ads');
-    Tapjoy.Graph.drawLargeGraph(data.virtual_goods_data, 'virtual_goods');
-    Tapjoy.Graph.drawLargeGraph(data.ads_data, 'ads');
-  } catch(e) {
-    $('div#charts').hide();
-  }
+  Tapjoy.Graph.drawLargeGraph(data.connect_data, 'connects');
+  Tapjoy.Graph.drawLargeGraph(data.rewarded_installs_plus_spend_data, 'installs_spend');
+  Tapjoy.Graph.drawLargeGraph(data.rewarded_installs_plus_rank_data, 'installs_rank');
+  Tapjoy.Graph.drawLargeGraph(data.revenue_data, 'revenue');
+  Tapjoy.Graph.drawLargeGraph(data.offerwall_data, 'offerwall');
+  Tapjoy.Graph.drawLargeGraph(data.featured_offers_data, 'featured_offers');
+  Tapjoy.Graph.drawLargeGraph(data.display_ads_data, 'display_ads');
+  Tapjoy.Graph.drawLargeGraph(data.virtual_goods_data, 'virtual_goods');
+  Tapjoy.Graph.drawLargeGraph(data.ads_data, 'ads');
 
   $('#date').val(data.date);
   $('#end_date').val(data.end_date);
