@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110212141934) do
+ActiveRecord::Schema.define(:version => 20110214221324) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",            :limit => 36,                    :null => false
@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(:version => 20110212141934) do
     t.integer  "reward_type",                       :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "country",             :limit => 2
   end
 
   add_index "conversions", ["advertiser_offer_id", "created_at", "reward_type"], :name => "index_on_advertiser_offer_id_created_at_and_reward_type"
