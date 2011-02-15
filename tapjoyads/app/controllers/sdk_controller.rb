@@ -10,15 +10,15 @@ class SdkController < WebsiteController
   def show
     target =
       case params[:id]
-      when 'android-connect'
+      when 'android-adv'
         ANDROID_CONNECT_SDK
-      when 'android-offers'
+      when 'android-pub'
         ANDROID_OFFERS_SDK
       when 'android-vg'
         ANDROID_VG_SDK
-      when 'iphone-connect'
+      when 'iphone-adv'
         IPHONE_CONNECT_SDK
-      when 'iphone-offers'
+      when 'iphone-pub'
         IPHONE_OFFERS_SDK
       when 'iphone-vg'
         IPHONE_VG_SDK
