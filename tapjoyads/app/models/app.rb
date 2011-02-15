@@ -62,7 +62,7 @@ class App < ActiveRecord::Base
   
   def info_url
     if is_android?
-      "http://www.appbrain.com/app/#{store_id}"
+      "https://market.android.com/details?id=#{store_id}"
     else
       "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
     end

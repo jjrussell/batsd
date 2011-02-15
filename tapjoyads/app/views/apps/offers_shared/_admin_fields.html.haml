@@ -139,7 +139,7 @@
   :plain
     $(function($) {
       $('#use_app_name').click(function() {
-        $('input#offer_name').val('#{@offer.item.name}');
+        $('input#offer_name').val(#{@offer.item.name.to_json});
         return false;
       });
     });

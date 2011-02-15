@@ -3,10 +3,7 @@ class AppStore
   APP_URL = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup'
   SEARCH_URL = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
 
-  ANDROID_SEARCH_URL = 'http://tapandmar.appspot.com/search/'
-  ANDROID_APP_URL = 'http://tapandmar.appspot.com/search/'
-  ANDROID_ICON_URL = 'http://tapandmar.appspot.com/icon/'
-  CYRKET_ICON_URL = 'http://cache.cyrket.com/p/android/'
+  ANDROID_SEARCH_URL = 'https://market.android.com/search?num=40&q='
 
   # returns hash of app info
   def self.fetch_app_by_id(id, platform='iphone', country='')
@@ -42,7 +39,7 @@ private
   end
 
   def self.fetch_app_by_id_for_android(id)
-    self.search_android_marketplace(id, false).first
+    self.search_android_marketplace(id).first
   end
 
   def self.search_apple_app_store(term, country)
@@ -58,25 +55,27 @@ private
     end
   end
 
-  def self.search_android_marketplace(term, cyrket_icon=true)
+  def self.search_android_marketplace(term)
     response = request(ANDROID_SEARCH_URL + CGI::escape(term.strip.gsub(/\s/, '+')))
     if response.status == 200
-      items = JSON.load(response.body)
-      return [] if items["entriesCount"].to_i == 0
-      return items['app'].map do |hash|
-        if cyrket_icon
-          icon_url = CYRKET_ICON_URL + hash['packageName'] + '/icon'
-        else
-          icon_url = ANDROID_ICON_URL + hash['packageName']
-        end
-        price = hash['price'].nil? ? 0 : hash['price'].gsub(/[^\d\.\-]/,'').to_f
+      items = Hpricot(response.body)/"ul.search-results-list"/"li.search-results-item"
+      return items.map do |item|
+        icon_link   = (item/"div"/"div.thumbnail-wrapper"/"a")
+        icon_url    = (icon_link/"img").attr('src')
+        item_id     = icon_link.attr('href').split('id=')[1]
+        details     = item/"div"/"div.details"
+        price_span  = details/"div.buy-wrapper"/"div"/"a"/"span"
+        price       = price_span.inner_html.gsub(/[^\d\.\-]/,'').to_f
+        title       = (details/"a.title").inner_html
+        publisher   = (details/"p"/"span.attribution"/"a").inner_html
+        description = (details/"p.snippet-content").inner_html
         {
-          :item_id      => hash['packageName'],
-          :title        => hash['title'],
+          :item_id      => item_id,
+          :title        => title,
           :icon_url     => icon_url,
           :price        => "%.2f" % price,
-          :description  => hash['ExtendedInfo']['description'],
-          :publisher    => hash['creator']
+          :description  => description,
+          :publisher    => publisher,
         }
       end
     else

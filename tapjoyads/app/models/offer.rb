@@ -153,6 +153,7 @@ class Offer < ActiveRecord::Base
     
     offer_list.each do |offer|
       offer.normalize_stats(stats)
+      offer.name = "#{offer.name[0, 40].strip}..." if offer.name.length > 40
     end
     
     offer_list.each do |offer|

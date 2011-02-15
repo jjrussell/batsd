@@ -28,11 +28,10 @@
         %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => offer.get_cloudfront_icon_url }
         .offertext
           .cell
-            %span.offername #{offer.name}
+            %span.offername #{offer.name} (#{offer.visual_cost})
             %br
             = offer.direct_pay? ? 'Buy' : 'Earn'
             %span.amount #{@currency.get_visual_reward_amount(offer)} #{@currency.name}
-            \- #{offer.visual_cost}
 
 - if @start_index > 0 || @more_data_available > 0
   .pagination
