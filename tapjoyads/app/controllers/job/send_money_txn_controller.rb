@@ -27,6 +27,7 @@ private
       c.tapjoy_amount = reward.tapjoy_amount
       c.reward_type_string = reward.type
       c.created_at = reward.created
+      c.country = reward.country
     end
     save_conversion(conversion)
     
@@ -41,6 +42,7 @@ private
         c.tapjoy_amount = 0
         c.reward_type_string_for_displayer = reward.type
         c.created_at = reward.created
+        c.country = reward.country
       end
       save_conversion(conversion)
     end
