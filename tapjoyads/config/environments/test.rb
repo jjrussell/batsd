@@ -27,6 +27,8 @@ config.gem 'shoulda-addons', :version => '0.2.2', :lib => 'shoulda_addons'
 
 MEMCACHE_SERVERS = ['127.0.0.1']
 
+config.cache_store = :mem_cache_store, MEMCACHE_SERVERS
+
 EXCEPTIONS_NOT_LOGGED = []
 
 RUN_MODE_PREFIX = 'test_'

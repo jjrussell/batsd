@@ -1,4 +1,6 @@
 class GameStateController < ApplicationController
+  include Curbit::Controller
+  
   def load
     return unless verify_params([:app_id, :publisher_user_id])
     @game_state = GameState.new :key => "#{params[:app_id]}.#{params[:publisher_user_id]}"
@@ -17,5 +19,7 @@ class GameStateController < ApplicationController
     @game_state.save!
     render :status => :ok, :text => "Success"
   end
-  
+
+  rate_limit :save, :key => proc { |c| c.params[:udid] }, :max_calls => 5, :time_limit => 1.hour, :wait_time => 12.minutes,
+             :message => 'Too many save requests. You may only call save 5 times an hour.', :status => 403
 end
