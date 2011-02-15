@@ -47,7 +47,7 @@ $(function($){
     } else if (data.length > 0) {
       $(data).each(function(i,app){
         var img = $('<img/>').attr('src', app.icon_url);
-        if (($('#app_platform').val() || $('td#app_platform').text()) == 'Android') {
+        if (/a|Android/.test($('#app_platform').val() || $('td#app_platform').text())) {
           img.attr('width', 78).attr('height', 78);
         }
         var result = $('<div/>').attr('id', 'app_' + app.item_id).
