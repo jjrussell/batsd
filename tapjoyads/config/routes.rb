@@ -99,6 +99,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'privacy.html', :controller => 'homepage', :action => 'privacy'
   map.connect 'press', :controller => 'homepage', :action => 'press'
   map.connect 'press/:id', :controller => 'homepage', :action => 'press_entry'
+  map.resources :sdk, :only => [ :index, :show ]
   map.resources :opt_outs, :only => :create
   
   # Route old login page to new login page.
