@@ -28,8 +28,6 @@ config.action_controller.allow_forgery_protection    = false
 
 MEMCACHE_SERVERS = [ '10.125.53.102', '10.125.50.72', '10.120.34.227', '10.127.134.190' ]
 
-config.cache_store = :mem_cache_store, MEMCACHE_SERVERS
-
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
 
