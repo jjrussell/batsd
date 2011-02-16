@@ -35,21 +35,17 @@
             %h3.separator &nbsp;/&nbsp;
             %h3.sub PRESS
           .splitLayout
-            = render :partial => 'about_left_nav'
+            = render :partial => 'homepage/about_left_nav'
             .team.plain_template
               .management.innercontents
                 %h1
                   %strong= @press_title
                 %p
-                  %br/
                 - if @press_subtitle
                   %em= @press_subtitle
                   %br/
                   %br/
-                %strong= @press_location_and_date
-                &ndash;
                 = yield
-                %br/
                 %br/
                 = link_to '&lt;&lt; Back to top', '#top'
           .clear

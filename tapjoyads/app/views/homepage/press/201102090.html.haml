@@ -1,11 +1,11 @@
 - @press_title = "Tapjoy Launches Pay-Per-Action&trade; Distribution Model for Android, iOS Applications; Analytics Partnership with Apsalar"
-- @press_location_and_date = "San Francisco, CA &ndash; February 9, 2011"
 
-Tapjoy, Inc. (#{ link_to 'https://www.tapjoy.com', root_path }) today announced
-the mobile industry's first Pay-Per-Action&trade; app distribution service to
-significantly improve advertising effectiveness, engagement and reach for brand
-advertisers, mobile game developers and others looking to grow their mobile
-social app footprint.
+%p
+  - press_date('February 9, 2011')
+  Tapjoy, Inc. (#{link_to_tapjoy}) today announced the mobile industry's first
+  Pay-Per-Action&trade; app distribution service to significantly improve
+  advertising effectiveness, engagement and reach for brand advertisers, mobile
+  game developers and others looking to grow their mobile social app footprint.
 
 %p
   The new service allows iOS and Android app developers to reward users for not
@@ -39,7 +39,7 @@ social app footprint.
   &quot;Tapjoy is a highly trusted partner for our mobile advertising
   efforts,&quot; said Steve Hartman, VP of Marketing at GameFly. &quot;They have
   been very effective in driving installs of our GameCenter app, and with the
-  launch of their new PPA model, we expect our ROI to get even better.  We expect
+  launch of their new PPA model, we expect our ROI to get even better. We expect
   to significantly increase conversions that will lead to acquiring GameFly users
   who are more loyal and engaged than ever.&quot;
 
@@ -76,22 +76,11 @@ analytics and conversion optimization. Investors include 500 Startups and Morado
 Ventures. For more information, visit
 #{ link_to 'apsalar.com', 'http://apsalar.com' }.
 
-%h2 About Tapjoy, Inc.
-Tapjoy is the leader in monetization, distribution and publishing services for
-social games, mobile applications, virtual worlds, MMOs and other social
-publishers. The company's turnkey alternative payment platform enables developers
-to significantly increase their monetization rates when selling virtual goods or
-premium digital assets, while its cross-platform distribution services provide
-massive reach and cost-effective user acquisition on the leading social, mobile
-and gaming platforms. The company is headquartered in San Francisco, California.
-Investors include Rho Ventures, Interwest Capital, North Bridge Venture Partners,
-and D. E. Shaw Ventures. For more information, visit
-#{ link_to 'www.tapjoy.com', root_path }.
-%p &nbsp;
+- about_blurb
 
 %h2 Tapjoy Contact:
-- press_contact({ :name => 'Shannon Jessup', :company => 'Tapjoy', :phone => '(805) 698-3851', :email => 'shannon.jessup@tapjoy.com' })
+- press_contact(:tapjoy)
 %h2 Apsalar Contact:
 - press_contact({ :name => 'Michael Oiknine', :company => 'Apsalar', :phone => '(415) 335-6459', :email => 'moiknine@apsalar.com' })
 %h2 Media Contact:
-- press_contact({ :name => 'Matt McAllister', :company => 'Fluid PR', :phone => '(510) 229-9707', :email => 'matt.mcallister@tapjoy.com' })
+- press_contact(:media)
