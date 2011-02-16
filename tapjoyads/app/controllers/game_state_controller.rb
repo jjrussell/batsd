@@ -4,6 +4,9 @@ class GameStateController < ApplicationController
   def load
     return unless verify_params([:app_id, :publisher_user_id])
     @game_state = GameState.new :key => "#{params[:app_id]}.#{params[:publisher_user_id]}"
+    if params[:version] && params[:version].to_i == @game_state.version
+      render :up_to_date and return
+    end
     @point_purchases = PointPurchases.new :key => "#{params[:publisher_user_id]}.#{params[:app_id]}"
     @currency = Currency.find_in_cache params[:app_id]
   end
@@ -17,7 +20,6 @@ class GameStateController < ApplicationController
     @game_state.add_device params[:udid]
     @game_state.tapjoy_spend = params[:spend].to_i
     @game_state.save
-    render :status => :ok, :text => "Success"
   end
 
   rate_limit :save, :key => proc { |c| c.params[:udid] }, :max_calls => 5, :time_limit => 1.hour, :wait_time => 12.minutes,

@@ -1,6 +1,7 @@
 xml.instruct!
 xml.TapjoyConnectReturnObject do
   xml.GameState do
+    xml.UpToDate false
     xml.Data do
       @game_state.data.each do |k, v|
         xml.tag! k, v

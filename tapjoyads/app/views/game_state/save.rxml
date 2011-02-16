@@ -1,0 +1,7 @@
+xml.instruct!
+xml.TapjoyConnectReturnObject do
+  xml.GameState do
+    xml.Success true
+    xml.Version @game_state.version
+  end
+end

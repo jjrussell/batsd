@@ -1,0 +1,6 @@
+xml.instruct!
+xml.TapjoyConnectReturnObject do
+  xml.GameState do
+    xml.UpToDate true
+  end
+end
