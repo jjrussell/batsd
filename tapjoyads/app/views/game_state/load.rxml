@@ -1,15 +1,19 @@
 xml.instruct!
 xml.TapjoyConnectReturnObject do
   xml.GameState do
-    xml.UpToDate false
-    xml.Data do
-      @game_state.data.each do |k, v|
-        xml.tag! k, v
-      end
-    end
+    xml.UpToDate @up_to_date
     xml.TapjoySpend @game_state.tapjoy_spend
     xml.SecondsElapsed @game_state.seconds_elapsed
     xml.Version @game_state.version
+    
+    unless @up_to_date
+      xml.Data do
+        @game_state.data.each do |k, v|
+          xml.tag! k, v
+        end
+      end
+    end
+    
   end
   
   xml << render("get_vg_store_items/user_account_object")
