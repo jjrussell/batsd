@@ -24,7 +24,7 @@ class ToolsController < WebsiteController
       date += 1.month
     end
 
-    conditions = "month = #{month} and year = #{year} and id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'"
+    conditions = [ "month = ? and year = ? and id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'", month, year ]
     MonthlyAccounting.using_slave_db do
       @spend      = MonthlyAccounting.sum(:spend,             :conditions => conditions) /-100.0
       @marketing  = MonthlyAccounting.sum(:marketing_orders,  :conditions => conditions) / 100.0
@@ -56,7 +56,7 @@ class ToolsController < WebsiteController
     @last_hour_total = last_hour_counts.values.sum
     @combined_counts = {}
     (this_hour_counts.keys + last_hour_counts.keys).uniq.each do |url|
-      app_ids = Currency.find(:all, :conditions => "callback_url LIKE '#{url}%'").map(&:app_id)
+      app_ids = Currency.find(:all, :conditions => ["callback_url LIKE ?", "#{url}%"]).map(&:app_id)
       offers = Offer.find(app_ids)
       @combined_counts[url] = [ (this_hour_counts[url] || 0), (last_hour_counts[url] || 0), offers ]
     end
