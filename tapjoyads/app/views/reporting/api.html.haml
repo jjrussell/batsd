@@ -1,0 +1,111 @@
+- @page_title = 'Reporting API'
+
+%h2 Reporting API
+
+Your API Key: 
+
+%span.code
+  #{current_user.api_key}
+
+- form_tag(regenerate_api_key_reporting_path) do
+  = submit_tag('Regenerate', :id => 'regenerate')
+
+%hr
+
+%p
+  Tapjoy now offers a realtime XML feed for reporting data. To access the feed, make an HTTP GET request to the following url with a valid date parameter:
+
+%pre
+  https://www.tapjoy.com/reporting_data?username=#{current_user.username}&api_key=#{current_user.api_key}&date=YYYY-MM-DD
+  
+%p
+  This feed will respond with XML in the following format:
+
+%pre
+  :preserve
+    &lt;?xml version="1.0" encoding="UTF-8"?>
+    &lt;MarketingData>
+      &lt;Date>YYYY-MM-DD&lt;/Date>
+      &lt;App>
+        &lt;Name>App Name&lt;/Name>
+        &lt;AppKey>00000000-0000-0000-0000-000000000000&lt;/AppKey>
+        &lt;Platform>App Platform&lt;/Platform>
+        &lt;PaidInstalls>0&lt;/PaidInstalls>
+        &lt;PaidInstallsHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/PaidInstallsHourly>
+        &lt;Spend>0&lt;/Spend>
+        &lt;SpendHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/SpendHourly>
+        &lt;Sessions>0&lt;/Sessions>
+        &lt;SessionsHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/SessionsHourly>
+        &lt;NewUsers>0&lt;/NewUsers>
+        &lt;NewUsersHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/NewUsersHourly>
+        &lt;DailyActiveUsers>0&lt;/DailyActiveUsers>
+        &lt;OfferwallRevenue>0&lt;/OfferwallRevenue>
+        &lt;OfferwallRevenueHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/OfferwallRevenueHourly>
+        &lt;FeaturedOfferRevenue>0&lt;/FeaturedOfferRevenue>
+        &lt;FeaturedOfferRevenueHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/FeaturedOfferRevenueHourly>
+        &lt;DisplayRevenue>0&lt;/DisplayRevenue>
+        &lt;DisplayRevenueHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayRevenueHourly>
+      &lt;/App>
+    
+      ...
+    
+    &lt;/MarketingData>
+
+
+%p
+  The root element of the XML document will be titled MarketingData. It will contain one child Date element, as well as multiple child App elements.
+  Each App element will contain the following elements:
+%ul
+  %li Name: The app's name.
+  %li AppKey: The app's Tapjoy key. 
+  %li Platform: The app's platform, either 'iOS' or 'Android'.
+  %li PaidInstalls: The total number of paid installs for the specified date.
+  %li PaidInstallsHourly: The hourly breakdown of paid installs. A comma-separated list of paid installs, each number representing one hour.
+  %li Spend: The total spent on installs for the specified date. This number is in cents, so a value of 100 represents $1.00.
+  %li SpendHourly: The hourly breakdown of spend.
+  %li Sessions: The total number of sessions for the specified date. 
+  %li SessionsHourly: The hourly breakdown of sessions.
+  %li NewUsers: The number of new users for the specified date.
+  %li NewUsersHourly: The hourly breakdown of new users.
+  %li DailyActiveUsers: The number of unique users for the specified date.
+  %li OfferwallRevenue: The total revenue, in cents, earned through the offerwall for the specified date.
+  %li OfferwallRevenueHourly: The hourly breakdown for OfferwallRevenue.
+  %li FeaturedOfferRevenue: The total revenue, in cents, earned through featured offers.
+  %li FeaturedOfferRevenueHourly: The hourly breakdown for FeaturedOfferRevenue.
+  %li DisplayRevenue: The total revenue, in cents, earned through display ads for the specified date.
+  %li DisplayRevenueHourly: The hourly breakdown for DisplayRevenue.
+
+%h4 Rate limiting
+
+%p
+  You must limit your requests to this API to at most one request per minute.
+
+%h4 Time zone
+
+%p
+  The data returned will be in the time zone specified for your account, configurable on the 
+  =link_to("change account details page", edit_user_path(current_user)) + '.'
+
+- content_for :page_javascript do
+  :plain
+    $('#regenerate').click(function(){
+      return confirm('Regenerate your API key? This will invalidate the current key.');
+    });
+
+- content_for :page_styles do
+  :plain
+    pre {
+      padding: 5px;
+      border: 1px solid black;
+      background-color: #eee;
+      overflow: auto;
+    }
+    
+    form {
+      display: inline-block;
+      margin-left: 10px;
+    }
+    
+    .code {
+      font-family: courier;
+    }

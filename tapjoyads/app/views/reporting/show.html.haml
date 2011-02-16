@@ -13,6 +13,9 @@
 = render :partial => 'shared/dropdown_select', :locals => {:objects => current_partner_offers, :selected => @offer, :options => {:extra_url_params => params, :title_prefix => 'Reporting for'} }
 %br/
 
+.right
+  =link_to('New! Reporting API', api_reporting_path)
+
 .left
   - form_tag(export_reporting_path(@offer.id), :id => 'download', :class => 'tjform') do
     = render :partial => 'date_range_fields'
