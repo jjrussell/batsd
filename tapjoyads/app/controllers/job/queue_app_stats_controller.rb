@@ -15,12 +15,12 @@ private
     @now = Time.zone.now
     @stat_rows = {}
     
-    last_run_time = @offer.last_stats_aggregation_time || Time.zone.now.beginning_of_day
+    last_run_time = @offer.last_stats_aggregation_time || @now.beginning_of_day
     
     start_time = last_run_time.beginning_of_hour
     end_time = (@now - 30.minutes).beginning_of_hour
     
-    @skip_hour_counts = start_time > (@now - 4.hours)
+    @skip_hour_counts = start_time > (@now - 1.day).beginning_of_day
     
     Rails.logger.info "Aggregating stats for #{@offer.name} (#{@offer.id}) from #{start_time} to #{end_time}"
     
