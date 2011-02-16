@@ -15,11 +15,11 @@ class GameStateController < ApplicationController
     @game_state.data = params[:data]
     @game_state.version += 1
     @game_state.add_device params[:udid]
-    @game_state.tapjoy_spend += params[:spend].to_i
-    @game_state.save!
+    @game_state.tapjoy_spend = params[:spend].to_i
+    @game_state.save
     render :status => :ok, :text => "Success"
   end
 
   rate_limit :save, :key => proc { |c| c.params[:udid] }, :max_calls => 5, :time_limit => 1.hour, :wait_time => 12.minutes,
-             :message => 'Too many save requests. You may only call save 5 times an hour.', :status => 403
+             :message => 'Too many save requests. You may only call save 5 times an hour.', :status => 420
 end

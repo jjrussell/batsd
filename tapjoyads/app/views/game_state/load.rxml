@@ -1,7 +1,11 @@
 xml.instruct!
 xml.TapjoyConnectReturnObject do
   xml.GameState do
-    xml.Data @game_state.data
+    xml.Data do
+      @game_state.data.each do |k, v|
+        xml.tag! k, v
+      end
+    end
     xml.TapjoySpend @game_state.tapjoy_spend
     xml.SecondsElapsed @game_state.seconds_elapsed
     xml.Version @game_state.version
