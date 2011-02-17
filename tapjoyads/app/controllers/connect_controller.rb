@@ -1,12 +1,10 @@
 class ConnectController < ApplicationController
 
   def index
-    params[:app_id] = '7e81549a-7fc5-4940-9435-11371ee47fa9' if request.headers['User-Agent'] =~ /DeerHunting/
     return unless verify_params([:app_id, :udid])
     
     @country = nil
     
-    #add this app to the device list
     Rails.logger.info_with_time("Check conversions and maybe add to sqs") do
       click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}")
       unless (click.attributes.empty? || click.installed_at)
@@ -34,6 +32,5 @@ class ConnectController < ApplicationController
     device.save
     
     web_request.save
-  
   end
 end
