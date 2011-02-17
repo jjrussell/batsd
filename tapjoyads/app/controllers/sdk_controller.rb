@@ -1,6 +1,4 @@
 class SdkController < WebsiteController
-  layout 'tabbed'
-  filter_access_to :all
 
   def index
     @iphone_version  =  IPHONE_CONNECT_SDK[/v\d+\.\d+\.\d+\.zip/][0..-5]

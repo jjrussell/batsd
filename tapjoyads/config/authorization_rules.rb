@@ -13,7 +13,6 @@ authorization do
     has_permission_on :users, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :support, :to => [ :index ]
     has_permission_on :premier, :to => [ :edit, :update ]
-    has_permission_on :sdk, :to => [ :index, :show ]
   end
 
   role :agency do
