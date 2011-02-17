@@ -26,7 +26,7 @@ private
   end
 
   def lookup_stats
-    start_time = Time.zone.parse(params[:date])
+    start_time = Time.zone.parse(params[:date]) rescue nil
     if start_time.nil?
       render :text => "Invalid date", :status => 400
       return
