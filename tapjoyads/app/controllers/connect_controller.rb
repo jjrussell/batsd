@@ -17,6 +17,11 @@ class ConnectController < ApplicationController
       end
     end
     
+    if params[:transaction_id].present? && Rails.env == 'production'
+      message = { :url => "http://mc1.myofferpal.com/confirm/confirm.pl?adnet=tj&subid=#{params[:transaction_id]}", :download_options => { :timeout => 30 } }.to_json
+      Sqs.send_message(QueueNames::FAILED_DOWNLOADS, message)
+    end
+    
     web_request = WebRequest.new
     web_request.put_values('connect', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     
