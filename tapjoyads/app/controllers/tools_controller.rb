@@ -49,16 +49,31 @@ class ToolsController < WebsiteController
     @total_pending_earnings = Mc.get('money.total_pending_earnings') || 0
   end
   
-  def failed_downloads
-    this_hour_counts = Mc.get("failed_downloads.#{(Time.zone.now.to_f / 1.hour).to_i}") { {} }
-    last_hour_counts = Mc.get("failed_downloads.#{((Time.zone.now.to_f - 1.hour) / 1.hour).to_i}") { {} }
-    @this_hour_total = this_hour_counts.values.sum
-    @last_hour_total = last_hour_counts.values.sum
-    @combined_counts = {}
-    (this_hour_counts.keys + last_hour_counts.keys).uniq.each do |url|
-      app_ids = Currency.find(:all, :conditions => ["callback_url LIKE ?", "#{url}%"]).map(&:app_id)
-      offers = Offer.find(app_ids)
-      @combined_counts[url] = [ (this_hour_counts[url] || 0), (last_hour_counts[url] || 0), offers ]
+  def send_currency_failures
+    @now               = Time.zone.now
+    this_hour_mc_time  = @now.to_i / 1.hour
+    last_hour_mc_time  = this_hour_mc_time - 1
+    this_hour_failures = Mc.get("send_currency_failures.#{this_hour_mc_time}") { {} }
+    last_hour_failures = Mc.get("send_currency_failures.#{last_hour_mc_time}") { {} }
+    
+    @failures         = []
+    @this_hour_total  = 0
+    @last_hour_total  = 0
+    @this_hour_unique = 0
+    @last_hour_unique = 0
+    Currency.find((this_hour_failures.keys + last_hour_failures.keys).uniq, :include => :app).each do |currency|
+      hash                    = {}
+      hash[:currency]         = currency
+      hash[:this_hour_total]  = Mc.get_count("send_currency_failure.#{currency.id}.#{this_hour_mc_time}")
+      hash[:last_hour_total]  = Mc.get_count("send_currency_failure.#{currency.id}.#{last_hour_mc_time}")
+      hash[:this_hour_unique] = (this_hour_failures[currency.id] || []).length
+      hash[:last_hour_unique] = (last_hour_failures[currency.id] || []).length
+      
+      @failures << hash
+      @this_hour_total  += hash[:this_hour_total]
+      @last_hour_total  += hash[:last_hour_total]
+      @this_hour_unique += hash[:this_hour_unique]
+      @last_hour_unique += hash[:last_hour_unique]
     end
   end
   
