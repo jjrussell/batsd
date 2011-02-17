@@ -37,17 +37,17 @@ class Deploy
       print_usage_and_exit
     end
     
-    if @options[:environment] == 'production' && @options[:version].present? && @options[:version] !~ /^[0-9]+$/
+    if @options[:environment] == 'production' && !@options[:version].nil? && @options[:version] !~ /^[0-9]+$/
       puts "invalid version for production deploy, must be a version number"
       print_usage_and_exit
     end
-    @options[:version] = 'master' if @options[:environment] == 'test' && @options[:version].blank?
+    @options[:version] = 'master' if @options[:environment] == 'test' && @options[:version].nil?
   end
   
   def deploy
     puts "#{@options[:environment].upcase} deploy"
     update_working_copy
-    if @options[:version].blank?
+    if @options[:version].nil?
       check_syntax
       create_deploy_tag
     end
