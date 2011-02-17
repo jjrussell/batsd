@@ -37,18 +37,20 @@ class Deploy
       print_usage_and_exit
     end
     
-    if @options[:environment] == 'production' && !@options[:version].nil? && @options[:version] !~ /^[0-9]+$/
+    if @options[:environment] == 'production' && @options[:version].present? && @options[:version] !~ /^[0-9]+$/
       puts "invalid version for production deploy, must be a version number"
       print_usage_and_exit
     end
-    @options[:version] = 'master' if @options[:environment] == 'test' && @options[:version].nil?
+    @options[:version] = 'master' if @options[:environment] == 'test' && @options[:version].blank?
   end
   
   def deploy
     puts "#{@options[:environment].upcase} deploy"
     update_working_copy
-    check_syntax
-    create_deploy_tag unless @options[:version]
+    if @options[:version].blank?
+      check_syntax
+      create_deploy_tag
+    end
     execute_cloudrun
     puts "Done deploying: #{Time.now}"
   end
