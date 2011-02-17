@@ -47,8 +47,10 @@ class Deploy
   def deploy
     puts "#{@options[:environment].upcase} deploy"
     update_working_copy
-    check_syntax
-    create_deploy_tag unless @options[:version]
+    if @options[:version].nil?
+      check_syntax
+      create_deploy_tag
+    end
     execute_cloudrun
     puts "Done deploying: #{Time.now}"
   end

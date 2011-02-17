@@ -68,6 +68,6 @@ authorization do
     includes :raffle_manager
     includes :account_mgr
 
-    has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :failed_downloads, :sqs_lengths, :elb_status, :as_groups ]
+    has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :send_currency_failures, :sqs_lengths, :elb_status, :as_groups ]
   end
 end

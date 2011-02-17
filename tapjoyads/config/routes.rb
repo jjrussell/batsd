@@ -65,7 +65,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :tools, :only => :index,
     :collection => { :monthly_data => :get, :new_transfer => :get,
                      :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :as_groups => :get,
-                     :sdb_metadata => :get, :reset_device => :get, :failed_downloads => :get, :sanitize_users => :get,
+                     :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
                      :unresolved_clicks => :post, :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get },
     :member => {  :edit_android_app => :get, :update_android_app => :post, :device_info => :get }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],

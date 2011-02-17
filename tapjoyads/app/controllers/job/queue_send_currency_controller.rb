@@ -76,6 +76,16 @@ private
       rescue Exception => e
         reward.delete('sent_currency')
         reward.serial_save
+        
+        mc_time = Time.zone.now.to_i / 1.hour
+        Mc.increment_count("send_currency_failure.#{currency.id}.#{mc_time}")
+        Mc.compare_and_swap("send_currency_failures.#{mc_time}") do |failures|
+          failures ||= {}
+          failures[currency.id] ||= Set.new
+          failures[currency.id] << reward.key
+          failures
+        end
+        
         raise e
       end
     end
