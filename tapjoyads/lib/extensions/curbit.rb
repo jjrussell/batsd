@@ -1,6 +1,3 @@
-include Curbit::Controller
-
-
 module Curbit
   module Controller
     
