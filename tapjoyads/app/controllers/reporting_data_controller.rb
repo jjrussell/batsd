@@ -26,14 +26,13 @@ private
   end
 
   def lookup_stats
-    begin
-      start_time = Time.zone.parse(params[:date])
-    rescue
+    start_time = Time.zone.parse(params[:date])
+    if start_time.nil?
       render :text => "Invalid date", :status => 400
       return
     end
 
-    @date = start_time.iso8601[0,10]
+    @date = start_time.strftime("%Y-%m-%d")
     @appstats_list = []
     
     @user.partners.each do |partner|
