@@ -1,5 +1,5 @@
 class GameStateController < ApplicationController
-  include TapjoyCurbit::Curbit::Controller
+  include Curbit::Controller
   
   def load
     return unless verify_params([:app_id, :publisher_user_id])

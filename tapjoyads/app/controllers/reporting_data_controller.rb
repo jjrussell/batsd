@@ -1,5 +1,5 @@
 class ReportingDataController < WebsiteController
-  include TapjoyCurbit::Curbit::Controller
+  include Curbit::Controller
   
   layout false
   
