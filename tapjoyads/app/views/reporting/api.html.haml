@@ -16,7 +16,7 @@ Your API Key:
   Tapjoy now offers a realtime XML feed for reporting data. To access the feed, make an HTTP GET request to the following url with a valid date parameter:
 
 %pre
-  https://www.tapjoy.com/reporting_data?username=#{current_user.username}&api_key=#{current_user.api_key}&date=YYYY-MM-DD
+  https://www.tapjoy.com/reporting_data?username=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD
   
 %p
   This feed will respond with XML in the following format:
