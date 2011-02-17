@@ -26,7 +26,12 @@ private
   end
 
   def lookup_stats
-    start_time = Time.zone.parse(params[:date])
+    begin
+      start_time = Time.zone.parse(params[:date])
+    rescue
+      render :text => "Invalid date", :status => 400
+      return
+    end
 
     @date = start_time.iso8601[0,10]
     @appstats_list = []
