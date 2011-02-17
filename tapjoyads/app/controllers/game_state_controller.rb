@@ -4,7 +4,7 @@ class GameStateController < ApplicationController
   def load
     return unless verify_params([:app_id, :publisher_user_id])
     @game_state = GameState.new :key => "#{params[:app_id]}.#{params[:publisher_user_id]}"
-    @up_to_date = params[:version] && params[:version].to_i == @game_state.version
+    @up_to_date = params[:version].present? && (params[:version].to_i == @game_state.version)
     @point_purchases = PointPurchases.new :key => "#{params[:publisher_user_id]}.#{params[:app_id]}"
     @currency = Currency.find_in_cache params[:app_id]
   end
