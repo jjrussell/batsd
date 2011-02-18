@@ -7,7 +7,7 @@ class Stats < SimpledbResource
   self.sdb_attr :virtual_goods, :type => :json, :default_value => {}
   self.sdb_attr :countries, :type => :json, :default_value => {}
   
-  attr_reader :parsed_values, :parsed_ranks, :parsed_virtual_goods
+  attr_reader :parsed_values, :parsed_ranks, :parsed_virtual_goods, :parsed_countries
 
   STAT_TYPES = ['logins', 'hourly_impressions', 'paid_installs', 
       'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'offers',
