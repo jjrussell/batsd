@@ -5,7 +5,7 @@ class Stats < SimpledbResource
   self.sdb_attr :values, :type => :json, :default_value => {}
   self.sdb_attr :ranks, :type => :json, :default_value => {}
   self.sdb_attr :virtual_goods, :type => :json, :default_value => {}
-  self.sdb_attr :country_conversions, :type => :json, :default_value => {}
+  self.sdb_attr :countries, :type => :json, :default_value => {}
   
   attr_reader :parsed_values, :parsed_ranks, :parsed_virtual_goods
 
@@ -17,7 +17,7 @@ class Stats < SimpledbResource
       'offers_opened', 'daily_active_users', 'monthly_active_users', 
       'vg_purchases', 'vg_store_views', 'offerwall_views',
       'display_ads_requested', 'display_ads_shown', 'display_clicks', 'display_conversions',
-      'display_revenue', 'jailbroken_installs', 'ranks', 'virtual_goods']
+      'display_revenue', 'jailbroken_installs', 'ranks', 'virtual_goods', 'countries']
 
   TOP_COUNTRIES = ['US', 'AR', 'AU', 'BE', 'BR', 'CA', 'CL', 'CN', 'CO', 'CR', 'HR', 'CZ', 'DK',
       'DE', 'SV', 'ES', 'FI', 'FR', 'GR', 'GT', 'HK', 'HU', 'IN', 'ID', 'IE', 'IL', 'IT', 'JP',
@@ -29,7 +29,7 @@ class Stats < SimpledbResource
     @parsed_values = values
     @parsed_ranks = ranks
     @parsed_virtual_goods = virtual_goods
-    @parsed_country_conversions = country_conversions
+    @parsed_countries = countries
   end
 
   ##
@@ -96,8 +96,8 @@ class Stats < SimpledbResource
       update_stat_for_day(stat_path, day, count)
     end
 
-    hourly_stat_row.parsed_country_conversions.each do |key, value|
-      stat_path = ['country_conversions', key]
+    hourly_stat_row.parsed_countries.each do |key, value|
+      stat_path = ['countries', key]
       count = value.sum
       update_stat_for_day(stat_path, day, count)
     end
@@ -141,6 +141,10 @@ private
       return @parsed_virtual_goods
     elsif Array(stat_name_or_path).first == 'virtual_goods'
       obj = @parsed_virtual_goods
+    elsif stat_name_or_path == 'countries'
+      return @parsed_countries
+    elsif Array(stat_name_or_path).first == 'countries'
+      obj = @parsed_countries
     else
       obj = @parsed_values
     end

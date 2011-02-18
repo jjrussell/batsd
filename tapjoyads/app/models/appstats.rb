@@ -336,19 +336,6 @@ private
           end
         end
       end
-    elsif stat_name == 'country_conversions'
-      Stats::TOP_COUNTRIES.each do |country|
-        ['paid_installs', 'installs_spend', 'paid_clicks'].each do |stat|
-          att = "#{stat}.#{country}"
-          counts = stat_row.get_hourly_count([stat_name, att])
-          24.times do |i|
-            time = date + i.hours
-            if counts[i] == 0 && time <= @now && time >= (@now - cache_hours.hours)
-              counts[i] = Mc.get_count(Stats.get_memcache_count_key(stat, app_id, time, country))
-            end
-          end
-        end
-      end
     else
       counts = stat_row.get_hourly_count(stat_name)
       if counts.is_a?(Array)

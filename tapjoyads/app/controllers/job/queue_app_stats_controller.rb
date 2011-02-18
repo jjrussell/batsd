@@ -66,10 +66,10 @@ private
     end
     paid_installs, installs_spend, jailbroken_installs = nil
     Conversion.using_slave_db do
-      paid_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["advertiser_offer_id = ? AND reward_type IN (0, 1, 2, 3, 5, 2000, 2001, 2002, 2003, 2005)", @offer.id])
       paid_installs_by_country = Conversion.created_between(start_time, end_time).count(:conditions => ["advertiser_offer_id = ? AND reward_type IN (0, 1, 2, 3, 5, 2000, 2001, 2002, 2003, 2005)", @offer.id], :group => :country)
-      installs_spend = Conversion.created_between(start_time, end_time).sum(:advertiser_amount, :conditions => ["advertiser_offer_id = ? AND reward_type IN (0, 1, 2, 3, 5, 2000, 2001, 2002, 2003, 2005)", @offer.id])
+      paid_installs = paid_installs_by_country.values.sum
       installs_spend_by_country = Conversion.created_between(start_time, end_time).sum(:advertiser_amount, :conditions => ["advertiser_offer_id = ? AND reward_type IN (0, 1, 2, 3, 5, 2000, 2001, 2002, 2003, 2005)", @offer.id], :group => :country)
+      installs_spend = installs_spend_by_country.values.sum
       jailbroken_installs = Conversion.created_between(start_time, end_time).count(:conditions => ["advertiser_offer_id = ? AND reward_type IN (4, 2004)", @offer.id])
     end
     stat_row.update_stat_for_hour('paid_installs', start_time.hour, paid_installs)
@@ -79,39 +79,40 @@ private
     # update hourly paid install counts by country
     Stats::TOP_COUNTRIES.each do |country|
       count = paid_installs_by_country.delete(country)
-      stat_name = ['paid_install', country]
+      stat_name = ['countries', "paid_installs.#{country}"]
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
     # any countries not served by iTunes are lumped under 'other'
     count = paid_installs_by_country.values.sum
-    stat_name = ['paid_install', 'other']
+    stat_name = ['countries', 'paid_installs.other']
     stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
       
     # update installs spend counts by country
     Stats::TOP_COUNTRIES.each do |country|
       count = installs_spend_by_country.delete(country)
-      stat_name = ['installs_spend', country]
+      stat_name = ['countries', "installs_spend.#{country}"]
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
     # any countries not served by iTunes are lumped under 'other'
     count = installs_spend_by_country.values.sum
-    stat_name = ['paid_install', 'other']
+    stat_name = ['countries', "installs_spend.#{other}"]
     stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
 
     total_country_clicks = 0
     # update paid clicks by country
     Stats::TOP_COUNTRIES.each do |country|
       app_condition = "app_id = '#{@offer.id}'"
-      stat_name = ['paid_clicks', country]
+      stat_name = ['countries', "paid_clicks.#{country}"]
       count = Mc.get_count(Stats.get_memcached_count_key(stat_name, @offer.id, start_time))
       total_country_clicks += count
-      next if count == 0 && @skip_hour_counts
-      count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'offer_clicks' or path = 'featured_offer_clicks' and #{app_condition} and country = '#{value}'")
+      unless @skip_hour_counts
+        count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'offer_clicks' or path = 'featured_offer_clicks' and #{app_condition} and country = '#{value}'")
+      end
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
     total_paid_clicks = stat_row.get_hourly_count('paid_clicks')[start_time.hour]
     app_condition = "app_id = '#{@offer.id}'"
-    stat_name = ['paid_clicks', 'other']
+    stat_name = ['countries', "paid_clicks.other"]
     stat_row.update_stat_for_hour(stat_name, start_time.hour, total_paid_clicks - total_country_clicks)
     
     @publisher_paths_to_aggregate.each do |path|
@@ -232,7 +233,7 @@ private
     if stat_row.get_hourly_count('paid_clicks').sum > 0
       app_condition = "app_id = '#{@offer.id}'"
       Stats::TOP_COUNTRIES.each do |country|
-        stat_name = ['country_conversions', "paid_clicks.#{country}"]
+        stat_name = ['countries', "paid_clicks.#{country}"]
         count = WebRequest.count(:date => date_string, :where => "#{time_condition} and path = 'paid_clicks' and #{app_condition} and country = '#{country}'")
         hour_counts = stat_row.get_hourly_count(stat_name)
         if count != hour_counts.sum
