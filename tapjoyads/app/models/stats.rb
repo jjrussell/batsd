@@ -5,6 +5,7 @@ class Stats < SimpledbResource
   self.sdb_attr :values, :type => :json, :default_value => {}
   self.sdb_attr :ranks, :type => :json, :default_value => {}
   self.sdb_attr :virtual_goods, :type => :json, :default_value => {}
+  self.sdb_attr :country_conversions, :type => :json, :default_value => {}
   
   attr_reader :parsed_values, :parsed_ranks, :parsed_virtual_goods
 
@@ -18,10 +19,17 @@ class Stats < SimpledbResource
       'display_ads_requested', 'display_ads_shown', 'display_clicks', 'display_conversions',
       'display_revenue', 'jailbroken_installs', 'ranks', 'virtual_goods']
 
+  TOP_COUNTRIES = ['US', 'AR', 'AU', 'BE', 'BR', 'CA', 'CL', 'CN', 'CO', 'CR', 'HR', 'CZ', 'DK',
+      'DE', 'SV', 'ES', 'FI', 'FR', 'GR', 'GT', 'HK', 'HU', 'IN', 'ID', 'IE', 'IL', 'IT', 'JP',
+      'KR', 'KW', 'LB', 'LU', 'MY', 'MX', 'NL', 'NZ', 'NO', 'AT', 'PK', 'PA', 'PE', 'PH', 'PL',
+      'PT', 'QA', 'RO', 'RU', 'SA', 'CH', 'SG', 'SK', 'SI', 'ZA', 'LK', 'SE', 'TW', 'TH', 'TR',
+      'AE', 'UK', 'VE', 'VN']
+
   def after_initialize
     @parsed_values = values
     @parsed_ranks = ranks
     @parsed_virtual_goods = virtual_goods
+    @parsed_country_conversions = country_conversions
   end
 
   ##
@@ -37,8 +45,9 @@ class Stats < SimpledbResource
   
   ##
   # Gets the memcache key for a specific stat_name_or_path and app_id. The key will be unique for the hour.
-  def self.get_memcache_count_key(stat_name_or_path, app_id, time)
+  def self.get_memcache_count_key(stat_name_or_path, app_id, time, country=nil)
     stat_name_string = Array(stat_name_or_path).join(',')
+    stat_name_string += ".#{country}" if country
     "stats.#{stat_name_string}.#{app_id}.#{(time.to_i / 1.hour).to_i}"
   end
   
@@ -83,6 +92,12 @@ class Stats < SimpledbResource
     
     hourly_stat_row.parsed_virtual_goods.each do |key, value|
       stat_path = ['virtual_goods', key]
+      count = value.sum
+      update_stat_for_day(stat_path, day, count)
+    end
+
+    hourly_stat_row.parsed_country_conversions.each do |key, value|
+      stat_path = ['country_conversions', key]
       count = value.sum
       update_stat_for_day(stat_path, day, count)
     end

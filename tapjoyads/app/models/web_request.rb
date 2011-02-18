@@ -166,6 +166,11 @@ class WebRequest < SimpledbResource
       if stat_name.present? && app_id.present?
         Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
       end
+
+      if stat_name == 'paid_installs' || 'paid_clicks'
+        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time, self.country), false, 1.day)
+      end
+
       
       if path == 'purchased_vg'
         stat_name = ['virtual_goods', self.virtual_good_id]
