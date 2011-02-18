@@ -68,7 +68,7 @@ private
     total_country_clicks = 0
     Stats::TOP_COUNTRIES.each do |country|
       stat_name = ['countries', "paid_clicks.#{country}"]
-      count = Mc.get_count(Stats.get_memcached_count_key(stat_name, @offer.id, start_time))
+      count = Mc.get_count(Stats.get_memcache_count_key(stat_name, @offer.id, start_time))
       
       unless @skip_hour_counts
         app_condition = "offer_id = '#{@offer.id}'"
