@@ -1,0 +1,7 @@
+xml.instruct!
+xml.TapjoyConnectReturnObject do
+  xml.GameState do
+    xml.Success false
+    xml.Error 'Too many save requests. You may only call save 5 times an hour.'
+  end
+end
