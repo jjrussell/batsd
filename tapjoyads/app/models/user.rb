@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
   validates_acceptance_of :terms_of_service, :on => :create
 
   before_create :regenerate_api_key
+  after_save :update_auth_net_cim_profile
 
   def role_symbols
     user_roles.map do |role|
@@ -45,4 +46,13 @@ class User < ActiveRecord::Base
       RoleAssignment.find_all_by_user_role_id(UserRole.find_by_name("account_mgr")).map(&:user).sort_by(&:email)
     end
   end
+
+private
+
+  def update_auth_net_cim_profile
+    if auth_net_cim_id.present? && (email_changed? || id_changed?)
+      Billing.update_customer_profile(self)
+    end
+  end
+
 end
