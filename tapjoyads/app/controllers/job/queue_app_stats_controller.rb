@@ -64,7 +64,7 @@ private
       end
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
-    paid_installs, installs_spend, jailbroken_installs = nil
+    paid_installs, installs_spend, jailbroken_installs, paid_installs_by_country, installs_spend_by_country = nil
     Conversion.using_slave_db do
       paid_installs_by_country = Conversion.created_between(start_time, end_time).count(:conditions => ["advertiser_offer_id = ? AND reward_type IN (0, 1, 2, 3, 5, 2000, 2001, 2002, 2003, 2005)", @offer.id], :group => :country)
       paid_installs = paid_installs_by_country.values.sum
@@ -78,7 +78,7 @@ private
 
     # update hourly paid install counts by country
     Stats::TOP_COUNTRIES.each do |country|
-      count = paid_installs_by_country.delete(country)
+      count = paid_installs_by_country.delete(country) || 0
       stat_name = ['countries', "paid_installs.#{country}"]
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
@@ -89,7 +89,7 @@ private
       
     # update installs spend counts by country
     Stats::TOP_COUNTRIES.each do |country|
-      count = installs_spend_by_country.delete(country)
+      count = installs_spend_by_country.delete(country) || 0
       stat_name = ['countries', "installs_spend.#{country}"]
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
