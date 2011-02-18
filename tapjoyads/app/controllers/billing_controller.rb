@@ -40,7 +40,47 @@ class BillingController < WebsiteController
   end
 
   def add_funds
-    @credit_card = ActiveMerchant::Billing::CreditCardWithAmount.new
+    @credit_card        = ActiveMerchant::Billing::CreditCardWithAmount.new
+    @payment_profiles   = Billing.get_payment_profiles_for_select(current_user)
+    @selected_profile   = @payment_profiles.first[1]
+    @hideable_row_class = @selected_profile == 'new_card' ? 'hideable' : 'hideable hidden'
+  end
+
+  def create_order
+    cc_params           = sanitize_currency_params(params[:credit_card], [ :amount ])
+    @credit_card        = ActiveMerchant::Billing::CreditCardWithAmount.new(cc_params)
+    @payment_profiles   = Billing.get_payment_profiles_for_select(current_user)
+    @selected_profile   = params[:payment_profile]
+    @hideable_row_class = @selected_profile == 'new_card' ? 'hideable' : 'hideable hidden'
+    @order              = Order.new(:partner => current_partner, :amount => @credit_card.amount, :status => 1, :payment_method => 0)
+    
+    if @order.valid? && ((params[:payment_profile] == 'new_card' && @credit_card.valid?) || (params[:payment_profile] != 'new_card' && @credit_card.valid_amount?))
+      if params[:payment_profile] == 'new_card'
+        response = Billing.charge_credit_card(@credit_card, @credit_card.amount, current_partner.id)
+        @receipt_card_number = @credit_card.display_number
+      else
+        response = Billing.charge_payment_profile(current_user, params[:payment_profile], @credit_card.amount, current_partner.id)
+        @receipt_card_number = @payment_profiles.find { |pp| pp[1] == params[:payment_profile] }[0]
+      end
+      
+      if response.success?
+        log_activity(@order)
+        @order.payment_txn_id = response.authorization
+        @order.save!
+        flash[:notice] = 'Successfully added funds.'
+        
+        if params[:save_card] == '1' && params[:payment_profile] == 'new_card'
+          Billing.create_customer_profile(current_user)
+          Billing.create_payment_profile(current_user, @credit_card)
+        end
+        
+        render :action => :receipt and return
+      else
+        flash[:error] = response.message
+      end
+    end
+    
+    render :action => :add_funds
   end
 
   def create_transfer
@@ -68,26 +108,6 @@ class BillingController < WebsiteController
       end
     end
     redirect_to transfer_funds_billing_path
-  end
-
-  def create_order
-    cc_params = sanitize_currency_params(params[:credit_card], [ :amount ])
-    @credit_card = ActiveMerchant::Billing::CreditCardWithAmount.new(cc_params)
-    @order = Order.new(:partner => current_partner, :amount => @credit_card.amount, :status => 1, :payment_method => 0)
-    if @credit_card.valid? && @order.valid?
-      gateway = ActiveMerchant::Billing::AuthorizeNetGateway.new(:login => '6d68x2KxXVM', :password => '6fz7YyU9424pZDc6', :test => Rails.env != 'production')
-      response = gateway.purchase(@credit_card.amount, @credit_card, { :description => current_partner.id })
-      if response.success?
-        log_activity(@order)
-        @order.payment_txn_id = response.authorization
-        @order.save!
-        flash[:notice] = 'Successfully added funds.'
-        render :action => :receipt and return
-      else
-        flash[:error] = response.message
-      end
-    end
-    render :action => :add_funds
   end
 
 private

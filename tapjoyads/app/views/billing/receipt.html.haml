@@ -6,23 +6,24 @@
 
 %table
   %tr
-    %td.right Date
-    %td= @order.created_at.to_s(:mday)
+    %th.right Date
+    %td= @order.created_at.to_s(:pub_ampm)
   %tr
-    %td.right Amount
+    %th.right Amount
     %td= number_to_currency(@order.amount / 100.0)
   %tr
-    %td.right Name
-    %td= @credit_card.name
-  %tr
-    %td.right Card Type
-    %td= @credit_card.type.humanize
-  %tr
-    %td.right Card Number
-    %td= @credit_card.display_number
-  %tr
-    %td.right Card Expiration
-    %td= @credit_card.expiry_date.expiration.to_date.to_s(:my)
+    %th.right Card Number
+    %td= @receipt_card_number
+  - if @credit_card.valid?
+    %tr
+      %th.right Name
+      %td= @credit_card.name
+    %tr
+      %th.right Card Type
+      %td= @credit_card.type.humanize
+    %tr
+      %th.right Card Expiration
+      %td= @credit_card.expiry_date.expiration.to_date.to_s(:my)
 
 - content_for :page_styles do
   :plain
