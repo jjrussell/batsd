@@ -119,6 +119,7 @@ class Stats < SimpledbResource
     self.values = @parsed_values if self.values != @parsed_values
     self.ranks = @parsed_ranks if self.ranks != @parsed_ranks
     self.virtual_goods = @parsed_virtual_goods if self.virtual_goods != @parsed_virtual_goods
+    self.countries = @parsed_countries if self.countries != @parsed_countries
     
     super(options) if changed?
   end
@@ -134,15 +135,15 @@ private
   def get_counts_object(stat_name_or_path, length)
     if stat_name_or_path == 'ranks'
       return @parsed_ranks
-    elsif Array(stat_name_or_path).first == 'ranks'
+    elsif stat_name_or_path.is_a?(Array) && stat_name_or_path.first == 'ranks'
       obj = @parsed_ranks
     elsif stat_name_or_path == 'virtual_goods'
       return @parsed_virtual_goods
-    elsif Array(stat_name_or_path).first == 'virtual_goods'
+    elsif stat_name_or_path.is_a?(Array) && stat_name_or_path.first == 'virtual_goods'
       obj = @parsed_virtual_goods
     elsif stat_name_or_path == 'countries'
       return @parsed_countries
-    elsif Array(stat_name_or_path).first == 'countries'
+    elsif stat_name_or_path.is_a?(Array) && stat_name_or_path.first == 'countries'
       obj = @parsed_countries
     else
       obj = @parsed_values
