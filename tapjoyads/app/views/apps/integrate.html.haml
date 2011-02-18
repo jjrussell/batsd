@@ -8,13 +8,13 @@
 = render :partial => 'shared/dropdown_select', :locals => { :objects => current_partner_apps, :selected => @app, :options => {:with_new_app_button => true} }
 = render :partial => 'actions', :locals => { :app => @app }
 
-- sdk_url = @app.is_android? ? ANDROID_CONNECT_SDK : IPHONE_CONNECT_SDK
+- url = @app.is_android? ? ANDROID_CONNECT_SDK : IPHONE_CONNECT_SDK
 
 #apps_main
   %h3
     Integrate your application
   %ol
-    %li Download the lightweight, open source #{link_to('Tapjoy library', sdk_url)}.
+    %li Download the lightweight, open source #{link_to('Tapjoy library', url)}.
     %li Add it to your project directory.
     %li Compile and run your project.
     %li Add the Tapjoy credentials (provided below) to your app.
@@ -36,7 +36,7 @@
     = clippy(@app.id)
 
   %p
-    .left.download_link= link_to 'Advertiser Library Download', sdk_url
+    .left.download_link= link_to 'Advertiser Library Download', url
     .clear
 
 - content_for :page_styles do

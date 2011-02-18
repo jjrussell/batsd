@@ -55,7 +55,7 @@ ActionController::Routing::Routes.draw do |map|
     app.resources :featured_offers, :only => [ :new, :create, :edit, :update ], :controller => 'apps/featured_offers'
     app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
   end
-  map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }
+  map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }, :collection => { :api => :get, :regenerate_api_key => :post }
   map.resources :analytics, :only => [ :index ], :collection => { :create_apsalar_account => :get }
   map.resources :billing, :only => [ :index ], :collection => { :create_order => :post, :create_transfer => :post }
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
@@ -65,7 +65,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :tools, :only => :index,
     :collection => { :monthly_data => :get, :new_transfer => :get,
                      :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :as_groups => :get,
-                     :sdb_metadata => :get, :reset_device => :get, :failed_downloads => :get, :sanitize_users => :get,
+                     :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
                      :unresolved_clicks => :post, :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get },
     :member => {  :edit_android_app => :get, :update_android_app => :post, :device_info => :get }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
@@ -91,7 +91,11 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :payouts, :only => [ :index, :create ]
   end
   map.resources :action_offers, :only => [ :show ]
-
+  map.with_options :controller => :game_state do |m|
+    m.load_game_state 'game_state/load', :action => :load
+    m.save_game_state 'game_state/save', :action => :save
+  end
+  
   # Special paths:
   map.connect 'log_device_app/:action/:id', :controller => 'connect'
   map.connect 'confirm_email_validation', :controller => 'list_signup', :action => 'confirm_api'
@@ -99,6 +103,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'privacy.html', :controller => 'homepage', :action => 'privacy'
   map.connect 'press', :controller => 'homepage', :action => 'press'
   map.connect 'press/:id', :controller => 'homepage', :action => 'press_entry'
+  map.resources :sdk, :only => [ :index, :show ]
   map.resources :opt_outs, :only => :create
   
   # Route old login page to new login page.

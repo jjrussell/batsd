@@ -195,33 +195,6 @@ class App < ActiveRecord::Base
     [ final_offer_list, offer_list_length - final_offer_list.length - num_rejected ]
   end
   
-  def parse_store_id_from_url(url, alert_on_parse_fail = true)
-    if use_raw_url?
-      return store_id
-    end
-    
-    if url.blank? || url == 'None'
-      Notifier.alert_new_relic(ParseStoreIdError, "Could not parse store id from nil url for app #{name} (#{id})") if alert_on_parse_fail
-      return nil
-    end
-    
-    if is_android?
-      return url
-    end
-    
-    match = url.match(/\/id(\d*)\?/)
-    unless match
-      match = url.match(/[&|?]id=(\d*)/)
-    end
-    
-    unless match && match[1]
-      Notifier.alert_new_relic(ParseStoreIdError, "Could not parse store id from #{url} for app #{name} (#{id})") if alert_on_parse_fail
-      return nil
-    end
-    
-    return match[1]
-  end
-
   def display_money_share
     0.6
   end

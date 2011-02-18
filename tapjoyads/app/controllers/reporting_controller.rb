@@ -316,6 +316,19 @@ class ReportingController < WebsiteController
     send_data(data, :type => 'text/csv', :filename => "#{@offer.id}_#{params[:date]}.csv")
   end
   
+  def api
+  end
+  
+  def regenerate_api_key
+    current_user.regenerate_api_key
+    if current_user.save
+      flash[:notice] = "You have successfully regenerated your API key."
+    else
+      flash[:error] = "Error regenerating the API key. Please try again."
+    end
+    redirect_to api_reporting_path
+  end
+  
 private
   
   def find_offer

@@ -11,7 +11,7 @@ class Appstats
     @end_time = options.delete(:end_time) { @now }
     @stat_types = options.delete(:stat_types) { Stats::STAT_TYPES }
     @include_labels = options.delete(:include_labels) { false }
-    cache_hours = options.delete(:cache_hours) { 5 }
+    cache_hours = options.delete(:cache_hours) { 3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     @stat_rows = {}

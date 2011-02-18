@@ -63,15 +63,6 @@ module AuthenticationHelper
       password
     end
   end
-
-  def epic_authenticate
-    authenticate_or_request_with_http_digest do |username|
-      if username == 'epic'
-        password = 'hbfdu723zv'
-      end
-      password
-    end
-  end
   
   def zynga_authenticate
     authenticate_or_request_with_http_digest do |username|

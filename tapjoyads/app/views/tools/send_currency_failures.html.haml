@@ -1,0 +1,70 @@
+- @page_title = 'Send Currency Failures'
+
+%h1 Send Currency Failures
+
+As of: #{@now.to_s(:pub_ampm_sec)}
+%br
+%br
+Total failures this hour: #{@this_hour_total}
+%br
+Total failures last hour: #{@last_hour_total}
+%br
+Unique failures this hour: #{@this_hour_unique}
+%br
+Unique failures last hour: #{@last_hour_unique}
+
+%table#fails.tablesorter
+  %thead
+    %tr
+      %th Callback URL
+      %th This Hour Total
+      %th Last Hour Total
+      %th Currency App
+      %th This Hour Unique
+      %th Last Hour Unique
+  %tbody
+    - @failures.each do |hash|
+      %tr
+        %td= hash[:currency].callback_url
+        %td= number_with_delimiter(hash[:this_hour_total])
+        %td= number_with_delimiter(hash[:last_hour_total])
+        %td
+          = image_tag(hash[:currency].app.get_icon_url, :size => '20x20')
+          = link_to(hash[:currency].app.name, statz_path(hash[:currency].app.id))
+        %td= number_with_delimiter(hash[:this_hour_unique])
+        %td= number_with_delimiter(hash[:last_hour_unique])
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $.tablesorter.addParser({
+        id: 'formatted-number-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/,/g, '');
+        }
+      });
+      $("#fails").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0: { sorter: false },
+          1: { sorter: 'formatted-number-column' },
+          2: { sorter: 'formatted-number-column' },
+          3: { sorter: false },
+          4: { sorter: 'formatted-number-column' },
+          5: { sorter: 'formatted-number-column' },
+        },
+        sortList: [ [1, 1], [2, 1] ]
+      });
+    });
+  
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+
+    table.tablesorter thead tr .header {
+      background-position: right bottom;
+    }

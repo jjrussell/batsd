@@ -16,6 +16,8 @@ class User < ActiveRecord::Base
   attr_accessor :terms_of_service
   validates_acceptance_of :terms_of_service, :on => :create
 
+  before_create :regenerate_api_key
+
   def role_symbols
     user_roles.map do |role|
       role.name.underscore.to_sym
@@ -32,6 +34,10 @@ class User < ActiveRecord::Base
 
   def managing?(partner)
     self.can_manage_account? && partner.users.include?(self)
+  end
+
+  def regenerate_api_key
+    self.api_key = UUIDTools::UUID.random_create.hexdigest
   end
 
   def self.account_managers

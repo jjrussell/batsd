@@ -1,5 +1,4 @@
 class MissingRequiredParamsError < RuntimeError; end
-class ParseStoreIdError < RuntimeError; end
 class FailedToWriteToSqsError < RuntimeError; end
 class FailedToDownloadError < RuntimeError; end
 class AppStatsVerifyError < RuntimeError; end

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110214221324) do
+ActiveRecord::Schema.define(:version => 20110216001216) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",            :limit => 36,                    :null => false
@@ -385,6 +385,7 @@ ActiveRecord::Schema.define(:version => 20110214221324) do
     t.string   "time_zone",                             :default => "UTC", :null => false
     t.boolean  "can_email",                             :default => true
     t.boolean  "receive_campaign_emails",               :default => true,  :null => false
+    t.string   "api_key",                                                  :null => false
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
