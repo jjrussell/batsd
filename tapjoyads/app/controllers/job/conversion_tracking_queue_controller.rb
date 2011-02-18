@@ -92,6 +92,7 @@ private
     web_request.source            = click.source
     web_request.exp               = click.exp
     web_request.viewed_at         = click.viewed_at
+    web_request.country           = click.country
     web_request.serial_save
     
     message = reward.serialize(:attributes_only => true)

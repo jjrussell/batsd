@@ -45,9 +45,8 @@ class Stats < SimpledbResource
   
   ##
   # Gets the memcache key for a specific stat_name_or_path and app_id. The key will be unique for the hour.
-  def self.get_memcache_count_key(stat_name_or_path, app_id, time, country=nil)
+  def self.get_memcache_count_key(stat_name_or_path, app_id, time)
     stat_name_string = Array(stat_name_or_path).join(',')
-    stat_name_string += ".#{country}" if country
     "stats.#{stat_name_string}.#{app_id}.#{(time.to_i / 1.hour).to_i}"
   end
   

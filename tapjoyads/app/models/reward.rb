@@ -50,7 +50,7 @@ class Reward < SimpledbShardedResource
     mc_key = Stats.get_memcache_count_key('installs_spend', offer_id, created)
     Mc.increment_count(mc_key, false, 1.day, advertiser_amount)
 
-    mc_key = Stats.get_memcache_count_key('installs_spend', offer_id, created, self.country)
+    mc_key = Stats.get_memcache_count_key(['countries', "installs_spend.#{self.country}"], offer_id, created)
     Mc.increment_count(mc_key, false, 1.day, advertiser_amount)
 
     if displayer_app_id.present?

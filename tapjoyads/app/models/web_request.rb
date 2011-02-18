@@ -157,6 +157,11 @@ class WebRequest < SimpledbResource
         Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
       end
       
+      if stat_name == 'paid_installs' || stat_name == 'paid_clicks'
+        stat_name = [ 'countries', "#{stat_name}.#{self.country || 'other'}" ]
+        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
+      end
+      
       stat_name = PUBLISHER_PATH_TO_STAT_MAP[path]
       if stat_name.present?
         app_id = self.publisher_app_id
@@ -169,11 +174,6 @@ class WebRequest < SimpledbResource
         Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
       end
 
-      if stat_name == 'paid_installs' || 'paid_clicks'
-        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time, self.country), false, 1.day)
-      end
-
-      
       if path == 'purchased_vg'
         stat_name = ['virtual_goods', self.virtual_good_id]
         Mc.increment_count(Stats.get_memcache_count_key(stat_name, self.app_id, self.time), false, 1.day)
