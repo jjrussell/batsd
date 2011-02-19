@@ -65,18 +65,18 @@ private
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
     end
     
-    if @skip_hour_counts
-      total_country_clicks = 0
-      Stats::TOP_COUNTRIES.each do |country|
-        stat_name = ['countries', "paid_clicks.#{country}"]
-        count = Mc.get_count(Stats.get_memcache_count_key(stat_name, @offer.id, start_time))
-        total_country_clicks += count
-        stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
-      end
-      total_paid_clicks = stat_row.get_hourly_count('paid_clicks')[start_time.hour]
-      stat_name = ['countries', "paid_clicks.other"]
-      stat_row.update_stat_for_hour(stat_name, start_time.hour, total_paid_clicks - total_country_clicks)
-    end
+    # if @skip_hour_counts
+    #   total_country_clicks = 0
+    #   Stats::TOP_COUNTRIES.each do |country|
+    #     stat_name = ['countries', "paid_clicks.#{country}"]
+    #     count = Mc.get_count(Stats.get_memcache_count_key(stat_name, @offer.id, start_time))
+    #     total_country_clicks += count
+    #     stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
+    #   end
+    #   total_paid_clicks = stat_row.get_hourly_count('paid_clicks')[start_time.hour]
+    #   stat_name = ['countries', "paid_clicks.other"]
+    #   stat_row.update_stat_for_hour(stat_name, start_time.hour, total_paid_clicks - total_country_clicks)
+    # end
     
     paid_installs, installs_spend, jailbroken_installs, paid_installs_by_country, installs_spend_by_country = nil
     Conversion.using_slave_db do
