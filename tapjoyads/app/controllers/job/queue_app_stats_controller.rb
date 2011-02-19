@@ -226,32 +226,32 @@ private
       Rails.logger.info "#{stat_name} verified, both counts are: #{count}."
     end
 
-    total_paid_clicks = stat_row.get_hourly_count('paid_clicks').sum
-    if total_paid_clicks > 0
-      total_country_clicks = 0
-      app_condition = "offer_id = '#{@offer.id}'"
-      Stats::TOP_COUNTRIES.each do |country|
-        stat_name = ['countries', "paid_clicks.#{country}"]
-        count = WebRequest.count(:date => date_string, :where => "#{time_condition} and (path = 'offer_click' or path = 'featured_offer_click') and #{app_condition} and country = '#{country}'")
-        total_country_clicks += count
-        hour_counts = stat_row.get_hourly_count(stat_name)
-        if count != hour_counts.sum
-          Rails.logger.error "paid_clicks count is off: #{count} != the sum #{hour_counts.sum}"
-          #raise AppStatsVerifyError.new("#{stat_name.inspect}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")
-        end
-        Rails.logger.info "#{stat_name.inspect} verified, both counts are: #{count}."
-      end
-      
-      stat_name = ['countries', 'paid_clicks.other']
-      hour_counts = stat_row.get_hourly_count(stat_name)
-      count = total_paid_clicks - total_country_clicks
-      
-      if count != hour_counts.sum
-        Rails.logger.error "other paid_clicks count is off: #{count} != the sum #{hour_counts.sum}"
-        #raise AppStatsVerifyError.new("#{stat_name.inspect}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")
-      end
-      Rails.logger.info "#{stat_name.inspect} verified, both counts are: #{count}."
-    end
+    # total_paid_clicks = stat_row.get_hourly_count('paid_clicks').sum
+    # if total_paid_clicks > 0
+    #   total_country_clicks = 0
+    #   app_condition = "offer_id = '#{@offer.id}'"
+    #   Stats::TOP_COUNTRIES.each do |country|
+    #     stat_name = ['countries', "paid_clicks.#{country}"]
+    #     count = WebRequest.count(:date => date_string, :where => "#{time_condition} and (path = 'offer_click' or path = 'featured_offer_click') and #{app_condition} and country = '#{country}'")
+    #     total_country_clicks += count
+    #     hour_counts = stat_row.get_hourly_count(stat_name)
+    #     if count != hour_counts.sum
+    #       Rails.logger.error "paid_clicks count is off: #{count} != the sum #{hour_counts.sum}"
+    #       #raise AppStatsVerifyError.new("#{stat_name.inspect}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")
+    #     end
+    #     Rails.logger.info "#{stat_name.inspect} verified, both counts are: #{count}."
+    #   end
+    #   
+    #   stat_name = ['countries', 'paid_clicks.other']
+    #   hour_counts = stat_row.get_hourly_count(stat_name)
+    #   count = total_paid_clicks - total_country_clicks
+    #   
+    #   if count != hour_counts.sum
+    #     Rails.logger.error "other paid_clicks count is off: #{count} != the sum #{hour_counts.sum}"
+    #     #raise AppStatsVerifyError.new("#{stat_name.inspect}: 24 hour count was: #{count}, hourly counts were: #{hour_counts.join(', ')}.")
+    #   end
+    #   Rails.logger.info "#{stat_name.inspect} verified, both counts are: #{count}."
+    # end
     
     if stat_row.get_hourly_count('vg_purchases').sum > 0
       app_condition = "app_id = '#{@offer.id}'"
