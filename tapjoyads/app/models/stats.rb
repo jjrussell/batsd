@@ -115,6 +115,8 @@ class Stats < SimpledbResource
   def serial_save(options = {})
     strip_defaults(@parsed_values)
     strip_defaults(@parsed_ranks)
+    strip_defaults(@parsed_virtual_goods)
+    strip_defaults(@parsed_countries)
     
     self.values = @parsed_values if self.values != @parsed_values
     self.ranks = @parsed_ranks if self.ranks != @parsed_ranks
