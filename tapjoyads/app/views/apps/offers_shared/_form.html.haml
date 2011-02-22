@@ -149,7 +149,8 @@
 
       var checkValidBudget = function(){
         var installLimit = stringToNumber($('#offer_daily_budget').val(), true);
-        if (! (installLimit > 0) ) {
+        var budgetOn = $('#daily_budget_on').is(':checked');
+        if (budgetOn && installLimit < 1 ) {
           installLimit = 1;
           $('#offer_daily_budget').val('1');
           alert('Daily install limit must be at least 1. To disable the campaign, please uncheck the box labeled "Enable Installs".');
