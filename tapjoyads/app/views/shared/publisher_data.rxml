@@ -26,8 +26,8 @@ xml.MarketingData do
       xml.DisplayRequestsHourly appstats.stats['display_ads_requested'].join(',')
       xml.DisplayImpressions appstats.stats['display_ads_shown'].sum
       xml.DisplayImpressionsHourly appstats.stats['display_ads_shown'].join(',')
-      xml.DisplayClicks appstats['display_clicks'].sum
-      xml.DisplayClicksHourly appstats['display_clicks'].join(',')
+      xml.DisplayClicks appstats.stats['display_clicks'].sum
+      xml.DisplayClicksHourly appstats.stats['display_clicks'].join(',')
     end
   end
 end
