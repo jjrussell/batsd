@@ -157,8 +157,8 @@ class WebRequest < SimpledbResource
         Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
       end
       
-      if stat_name == 'paid_installs' || stat_name == 'paid_clicks'
-        stat_name = [ 'countries', "#{stat_name}.#{self.country || 'other'}" ]
+      if stat_name == 'paid_installs'
+        stat_name = [ 'countries', "paid_installs.#{self.country || 'other'}" ]
         Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
       end
       
