@@ -27,7 +27,11 @@ class Billing
         :order                       => { :description => partner_id }
       }
     }
-    get_cim_gateway.create_customer_profile_transaction(request_hash)
+    response = get_cim_gateway.create_customer_profile_transaction(request_hash)
+    if response.success? && response.params['direct_response'].present?
+      response.params['transaction_id'] = response.params['direct_response']['transaction_id']
+    end
+    response
   end
   
   def self.create_customer_profile(user)

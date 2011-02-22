@@ -65,7 +65,7 @@ class BillingController < WebsiteController
       
       if response.success?
         log_activity(@order)
-        @order.payment_txn_id = response.authorization
+        @order.payment_txn_id = response.params['transaction_id']
         @order.save!
         flash[:notice] = 'Successfully added funds.'
         
