@@ -57,6 +57,15 @@ class Homepage::PressController < WebsiteController
       [ "6.6.2008", "Offerpal Media CEO to speak at Graphing Social Patterns Conference", "http://en.oreilly.com/gspeast2008/public/schedule/detail/3265", ],
     ]
     @news_list = [
+
+      [ "2.16.2011", "Gamezebo", "Interview with Shannon Jessup, Tapjoy", "http://www.gamezebo.com/news/2011/02/16/interview-shannon-jessup-tapjoy", ],
+      [ "2.10.2011", "ReadWriteWeb", "A New Distribution Model for Apps: Tapjoy's Pay-Per-Action Service  ", "http://www.readwriteweb.com/mobile/2011/02/new-distribution-model-for-apps-tapjoy-pay-per-action-service.php", ],
+      [ "2.10.2011", "Inside Social Games", "Tapjoy Launches Pay-Per-Action Mobile Advertising as Installs Get Crowded", "http://www.insidesocialgames.com/2011/02/09/tapjoy-pay-per-action/", ],
+      [ "2.10.2011", "Adotas", "Tapjoy Plants Pay-Per-Action Into Mobile Apps", "http://www.adotas.com/2011/02/tapjoy-plants-pay-per-action-into-mobile-apps/", ],
+      [ "2.10.2011", "IntoMobile", "Tapjoy launches Pay-Per-Action app distribution service with powerful analytics from Apsalar", "http://www.intomobile.com/2011/02/10/tapjoy-pay-per-action-distribution/", ],
+      [ "1.10.2011", "GigaOm", "Alternative Payment Services Ride the Freemium App Boom", "http://gigaom.com/2011/01/10/alternative-payment-services-ride-the-freemium-app-boom/", ],
+      [ "1.6.2011", "All Things Digital", "Tapjoy Raises $21 Million to Complete Extreme Makeover", "http://emoney.allthingsd.com/20110106/tapjoy-raises-21-million-to-complete-extreme-makeover/?mod=ATD_skybox", ],
+      [ "1.6.2011", "Inside Mobile Apps", "Tapjoy Raises $21 Million to Fuel Growth on Mobile Platforms", "http://www.insidemobileapps.com/2011/01/06/tapjoy-21-million/", ],
       [ "1.6.2011", "SocialTimes", "TapJoy Taps $21M In Funding", "http://www.socialtimes.com/2011/01/tapjoy-taps-21m-in-funding/", ],
       [ "11.10.2010", "Gamasutra", "Tapjoy Buys AppStrip for Social Game Cross-Promotion", "http://www.gamasutra.com/view/news/31468/Tapjoy_Buys_AppStrip_For_Social_Game_CrossPromotion.php", ],
       [ "7.20.2010", "TechCrunch", "Offerpal Moves On, Gives Game Developers New Ways To Distribute Notifications", "http://techcrunch.com/2010/07/20/offerpal-socialkast/", ],
