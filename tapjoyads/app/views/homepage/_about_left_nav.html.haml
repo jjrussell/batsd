@@ -1,8 +1,8 @@
 .leftNav
   %h4 About Us
   %ul
-    %li= link_to 'Team',    { :controller => 'homepage', :action => 'team' }, :class => params[:action] == 'team' ? 'selec' : ''
-    %li= link_to 'Press',   { :controller => 'homepage', :action => 'press' }, :class => params[:controller] == 'homepage/press' ? 'selec' : ''
+    %li= link_to 'Team',    '/site/team', :class => params[:action] == 'team' ? 'selec' : ''
+    %li= link_to 'Press',   '/press', :class => params[:controller] == 'homepage/press' ? 'selec' : ''
     %li= link_to 'Blog',    'http://blog.tapjoy.com/'
-    %li= link_to 'Careers', { :controller => 'homepage', :action => 'careers' }, :class => params[:action] == 'careers' ? 'selec' : ''
-    %li= link_to 'Contact', { :controller => 'homepage', :action => 'contact' }, :class => params[:action] == 'contact' ? 'selec' : ''
+    %li= link_to 'Careers', '/site/careers', :class => params[:action] == 'careers' ? 'selec' : ''
+    %li= link_to 'Contact', '/site/contact', :class => params[:action] == 'contact' ? 'selec' : ''
