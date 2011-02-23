@@ -24,21 +24,21 @@
             = link_to 'CLIENT LOGIN', login_path
           .mainmenu
             %ul#nav
-              %li= link_to 'APP DEVELOPERS', {:action => 'app_developers'}, :class => params[:action]=='app_developers' ? 'selec' : ''
-              %li= link_to 'ADVERTISERS', {:action => 'advertisers'}, :class => params[:action]=='advertisers' ? 'selec' : ''
-              %li= link_to 'GAMING PLATFORMS', {:action => 'gaming_platforms'}, :class => params[:action]=='gaming_platforms' ? 'selec' : ''
-              %li= link_to 'ABOUT', {:action => 'about_us'}, :class => @about_us ? 'selec' : ''
+              %li= link_to 'APP DEVELOPERS', '/site/app_developers', :class => params[:action]=='app_developers' ? 'selec' : ''
+              %li= link_to 'ADVERTISERS', '/site/advertisers', :class => params[:action]=='advertisers' ? 'selec' : ''
+              %li= link_to 'GAMING PLATFORMS', '/site/gaming_platforms', :class => params[:action]=='gaming_platforms' ? 'selec' : ''
+              %li= link_to 'ABOUT', '/site/about_us', :class => @about_us ? 'selec' : ''
           .clear{:style => 'clear:both;'}
         .contentArea
           = yield
       .footer
-        = link_to 'PRESS', :controller => 'homepage', :action => 'press'
+        = link_to 'PRESS', '/site/press'
         |
-        = link_to 'CAREERS', :controller => 'homepage', :action => 'careers'
+        = link_to 'CAREERS', '/site/careers'
         |
-        = link_to 'TEAM', :controller => 'homepage', :action => 'team'
+        = link_to 'TEAM', '/site/team'
         |
-        = link_to 'CONTACT', :controller => 'homepage', :action => 'contact'
+        = link_to 'CONTACT', '/site/contact'
         %p
           &copy; #{Time.now.year} Tapjoy, Inc.
           = link_to 'Privacy Policy', '/privacy.html'
