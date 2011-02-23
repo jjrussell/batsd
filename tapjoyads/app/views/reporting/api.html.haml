@@ -32,6 +32,8 @@ Your API Key:
         &lt;Platform>App Platform&lt;/Platform>
         &lt;PaidInstalls>0&lt;/PaidInstalls>
         &lt;PaidInstallsHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/PaidInstallsHourly>
+        &lt;PaidClicks>0&lt;/PaidClicks>
+        &lt;PaidClicksHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/PaidClicksHourly>
         &lt;Spend>0&lt;/Spend>
         &lt;SpendHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/SpendHourly>
         &lt;Sessions>0&lt;/Sessions>
@@ -45,6 +47,12 @@ Your API Key:
         &lt;FeaturedOfferRevenueHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/FeaturedOfferRevenueHourly>
         &lt;DisplayRevenue>0&lt;/DisplayRevenue>
         &lt;DisplayRevenueHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayRevenueHourly>
+        &lt;DisplayRequests>0&lt;/DisplayRequests>
+        &lt;DisplayRequestsHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayRequestsHourly>
+        &lt;DisplayImpressions>0&lt;/DisplayImpressions>
+        &lt;DisplayImpressionsHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayImpressionsHourly>
+        &lt;DisplayClicks>0&lt;/DisplayClicks>
+        &lt;DisplayClicksHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayClicksHourly>
       &lt;/App>
     
       ...
@@ -61,6 +69,8 @@ Your API Key:
   %li Platform: The app's platform, either 'iOS' or 'Android'.
   %li PaidInstalls: The total number of paid installs for the specified date.
   %li PaidInstallsHourly: The hourly breakdown of paid installs. A comma-separated list of paid installs, each number representing one hour.
+  %li PaidClicks: The total number of clicks for the specified date.
+  %li PaidClicksHourly: The hourly breakdown of PaidClicks.
   %li Spend: The total spent on installs for the specified date. This number is in cents, so a value of 100 represents $1.00.
   %li SpendHourly: The hourly breakdown of spend.
   %li Sessions: The total number of sessions for the specified date. 
@@ -74,6 +84,12 @@ Your API Key:
   %li FeaturedOfferRevenueHourly: The hourly breakdown for FeaturedOfferRevenue.
   %li DisplayRevenue: The total revenue, in cents, earned through display ads for the specified date.
   %li DisplayRevenueHourly: The hourly breakdown for DisplayRevenue.
+  %li DisplayRequests: The total number of requests the app made for display ads for the specified date.
+  %li DisplayRequestsHourly: The hourly breakdown of DisplayRequests.
+  %li DisplayImpressions: The total number of display ads served for the specified date.
+  %li DisplayImpressionsHourly: The hourly breakdown of DisplayImpressions.
+  %li DisplayClicks: The total number of clicks to display ads for the specified date.
+  %li DisplayClicksHourly: The hourly breakdown of DisplayClicks.
 
 %h4 Rate limiting
 

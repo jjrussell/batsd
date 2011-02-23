@@ -22,12 +22,6 @@ xml.MarketingData do
       xml.FeaturedOfferRevenueHourly appstats.stats['featured_revenue'].join(',')
       xml.DisplayRevenue appstats.stats['display_revenue'].sum
       xml.DisplayRevenueHourly appstats.stats['display_revenue'].join(',')
-      xml.DisplayRequests appstats.stats['display_ads_requested'].sum
-      xml.DisplayRequestsHourly appstats.stats['display_ads_requested'].join(',')
-      xml.DisplayImpressions appstats.stats['display_ads_shown'].sum
-      xml.DisplayImpressionsHourly appstats.stats['display_ads_shown'].join(',')
-      xml.DisplayClicks appstats.stats['display_clicks'].sum
-      xml.DisplayClicksHourly appstats.stats['display_clicks'].join(',')
     end
   end
 end
