@@ -62,7 +62,8 @@ private
       return items.map do |item|
         icon_link   = (item/"div"/"div.thumbnail-wrapper"/"a")
         icon_url    = (icon_link/"img").attr('src')
-        item_id     = icon_link.attr('href').split('id=')[1]
+        query_str   = URI::split(icon_link.attr('href'))[7]
+        item_id     = query_str.split('&').select { |param| param =~ /id=/ }.first.split('=')[1]
         details     = item/"div"/"div.details"
         price_span  = details/"div.buy-wrapper"/"div"/"a"/"span"
         price       = price_span.inner_html.gsub(/[^\d\.\-]/,'').to_f
