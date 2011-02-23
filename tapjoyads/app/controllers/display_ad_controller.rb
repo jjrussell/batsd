@@ -72,6 +72,14 @@ private
     web_request = WebRequest.new(:time => now)
     web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
     
+    if params[:size].blank? || params[:size] == '320x50'
+      # Don't show high-res ads to AdMarvel, except a few test devices.
+      # TO REMOVE: Once done testing high-res ads on AdMarvel
+      if params[:action] != 'webview' || (params[:udid] == '8c1a93d64ed3b6c65717a5d56786cae58a500f9e' || params[:udid] == 'c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1')
+        # params[:size] = '640x100'
+      end
+    end
+    
     displayer_currency = Currency.find_in_cache(params[:app_id])
     self_ad = (displayer_currency.present? && displayer_currency.banner_advertiser?)
     
@@ -143,6 +151,10 @@ private
   def get_ad_image(publisher, offer, self_ad, size, currency)
     width, height = parse_size(size)
     
+    if self_ad && ((width == 320 && height == 50) || (width == 640 && height == 100))
+      return get_self_ad_image(publisher, offer, size, currency)
+    end
+    
     Mc.get_and_put("display_ad.#{publisher.id}.#{offer.id}.#{width}x#{height}", false, 1.hour) do
       border = 2
       icon_height = height - border * 2 - 2
@@ -201,6 +213,72 @@ private
     end
   end
   
+  def get_self_ad_image(publisher, offer, size, currency)
+    width, height = parse_size(size)
+    
+    Mc.get_and_put("display_ad.#{publisher.id}.#{offer.id}.#{width}x#{height}", false, 1.hour) do
+      if width > 600 
+        border = 4
+        icon_padding = 7
+        font_size = 24
+        text_area_size = '380x92'
+      else
+        border = 2
+        icon_padding = 3
+        font_size = 12
+        text_area_size = '190x46'
+      end
+      icon_height = height - border * 2 - icon_padding * 2
+    
+      bucket = S3.bucket(BucketNames::TAPJOY)
+      background_blob = bucket.get("display/self_ad_bg_#{width}x#{height}.png")
+      background = Magick::Image.from_blob(background_blob)[0]
+      
+      offer_icon_blob = bucket.get("icons/medium/#{offer.icon_id}.jpg")
+      offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
+      
+      corner_mask_blob = bucket.get("display/round_mask.png")
+      corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(icon_height, icon_height)
+      offer_icon.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
+      
+      icon_shadow_blob = bucket.get("display/icon_shadow.png")
+      icon_shadow = Magick::Image.from_blob(icon_shadow_blob)[0].resize(icon_height + icon_padding, icon_height)
+      
+      img = Magick::Image.new(width, height)
+      img.format = 'png'
+      
+      img.composite!(background, 0, 0, Magick::AtopCompositeOp)
+      img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
+      img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
+      
+      text = "Earn #{currency.get_reward_amount(offer)} #{currency.name} download \\n#{offer.name}"
+      font = Rails.env == 'production' ? 'Helvetica' : ''
+      image_label = Magick::Image.read("caption:#{text}") do
+        self.size = text_area_size
+        self.gravity = Magick::WestGravity
+        self.fill = '#363636'
+        self.pointsize = font_size
+        self.font = font
+        self.stroke = 'transparent'
+        self.background_color = 'transparent'
+      end
+      img.composite!(image_label[0], icon_height + icon_padding * 4 + 1, border + 2, Magick::AtopCompositeOp)
+      
+      image_label = Magick::Image.read("caption:#{text}") do
+        self.size = text_area_size
+        self.gravity = Magick::WestGravity
+        self.fill = 'white'
+        self.pointsize = font_size
+        self.font = font
+        self.stroke = 'transparent'
+        self.background_color = 'transparent'
+      end
+      img.composite!(image_label[0], icon_height + icon_padding * 4, border + 1, Magick::AtopCompositeOp)
+      
+      Base64.encode64(img.to_blob).gsub("\n", '')
+    end
+  end
+  
   def get_user_id_from_udid(udid, app_id)
     case app_id
     when "9dfa6164-9449-463f-acc4-7a7c6d7b5c81" # TapFish
@@ -221,8 +299,8 @@ private
     case size
     when /320x50/i
       [320, 50]
-    when /728x90/i
-      [728, 90]
+    when /640x100/i
+      [640, 100]
     when /768x90/i
       [768, 90]
     else
