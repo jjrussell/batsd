@@ -30,7 +30,7 @@ class DisplayAdController < ApplicationController
   end
   
   def webview
-    if @click_url.present? && @image.present?
+    if @click_url.present? && @image_url.present?
       render :layout => false
     else
       render :text => ''
@@ -40,19 +40,21 @@ class DisplayAdController < ApplicationController
   def image
     return unless verify_params([ :publisher_app_id, :advertiser_app_id, :displayer_app_id, :size ])
     
-    publisher = App.find_in_cache(params[:publisher_app_id])
-    currency = Currency.find_in_cache(params[:publisher_app_id])
-    offer = Offer.find_in_cache(params[:advertiser_app_id])
-    return unless verify_records([ publisher, currency, offer ])
+    width, height = parse_size(params[:size])
     
-    web_request = WebRequest.new
-    web_request.put_values('display_ad_image', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
-    web_request.save
+    image_data = Mc.get_and_put("display_ad.decoded.#{params[:publisher_app_id]}.#{params[:advertiser_app_id]}.#{width}x#{height}", false, 5.minutes) do
+      publisher = App.find_in_cache(params[:publisher_app_id])
+      currency = Currency.find_in_cache(params[:publisher_app_id])
+      offer = Offer.find_in_cache(params[:advertiser_app_id])
+      return unless verify_records([ publisher, currency, offer ])
+
+      self_ad = (params[:publisher_app_id] == params[:displayer_app_id])
+      ad_image_base64 = get_ad_image(publisher, offer, self_ad, params[:size], currency)
+      
+      Base64.decode64(ad_image_base64)
+    end
     
-    self_ad = (params[:publisher_app_id] == params[:displayer_app_id])
-    ad_image_base64 = get_ad_image(publisher, offer, self_ad, params[:size], currency)
-    
-    send_data Base64.decode64(ad_image_base64), :type => 'image/png', :disposition => 'inline'
+    send_data image_data, :type => 'image/png', :disposition => 'inline'
   end
   
 private
@@ -136,7 +138,11 @@ private
             :displayer_app_id  => params[:app_id],
             :country_code      => geoip_data[:country]
         )
-        @image = get_ad_image(publisher_app, offer, self_ad, params[:size], currency)
+        if params[:action] == 'webview'
+          @image_url = get_ad_image_url(publisher_app, offer, params[:app_id], params[:size])
+        else
+          @image = get_ad_image(publisher_app, offer, self_ad, params[:size], currency)
+        end
       
         params[:offer_id] = offer.id
         params[:publisher_app_id] = publisher_app.id
@@ -148,6 +154,11 @@ private
     web_request.save
   end
 
+  def get_ad_image_url(publisher_app, offer, displayer_app_id, size)
+    width, height = parse_size(params[:size])
+    "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app.id}&advertiser_app_id=#{offer.id}&displayer_app_id=#{displayer_app_id}&size=#{width}x#{height}"
+  end
+  
   def get_ad_image(publisher, offer, self_ad, size, currency)
     width, height = parse_size(size)
     
@@ -174,7 +185,7 @@ private
       if self_ad
         text_area_left_offset = 1
         text_area_size = "#{width - icon_height - border * 2 - free_width - 4}x#{icon_height}"
-      else self_ad
+      else
         publisher_icon_blob = bucket.get("icons/#{publisher.id}.png")
         publisher_icon = Magick::Image.from_blob(publisher_icon_blob)[0].resize(icon_height, icon_height)
         publisher_icon = publisher_icon.vignette(vignette_amount, vignette_amount, 10, 2)
