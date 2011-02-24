@@ -126,11 +126,11 @@ ActiveRecord::Schema.define(:version => 20110219235514) do
     t.string   "requested_by_id", :limit => 36,                :null => false
     t.string   "assigned_to_id",  :limit => 36
     t.integer  "status",                        :default => 0
-    t.text     "internal_notes"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "enable_offer_requests", ["id"], :name => "index_enable_offer_requests_on_id", :unique => true
   add_index "enable_offer_requests", ["offer_id"], :name => "index_enable_offer_requests_on_offer_id"
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
 

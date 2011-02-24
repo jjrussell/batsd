@@ -31,7 +31,7 @@ class App < ActiveRecord::Base
   end
 
   def is_ipad_only?
-    !is_android? && supported_devices && supported_devices.all?{ |i| i.match(/ipad/i) }
+    supported_devices && supported_devices.all?{ |i| i.match(/^ipad/i) }
   end
 
   def large_download?

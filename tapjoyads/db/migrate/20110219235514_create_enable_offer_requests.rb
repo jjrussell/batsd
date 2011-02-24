@@ -9,6 +9,7 @@ class CreateEnableOfferRequests < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :enable_offer_requests, :id, :unique => true
     add_index :enable_offer_requests, :status
     add_index :enable_offer_requests, :offer_id
   end

@@ -6,10 +6,8 @@ class EnableOfferRequestsController < WebsiteController
   after_filter :save_activity_logs, :only => [ :create, :update ]
 
   def index
-    EnableOfferRequest.using_slave_db do
-      @assigned_to_me  = EnableOfferRequest.assigned_to(current_user)
-      @unassigned = EnableOfferRequest.unassigned.paginate(:page => params[:page])
-    end
+    @assigned_to_me  = EnableOfferRequest.assigned_to(current_user)
+    @unassigned = EnableOfferRequest.unassigned.paginate(:page => params[:page])
 
     @issues = {}
     options = {
@@ -39,8 +37,9 @@ class EnableOfferRequestsController < WebsiteController
 
   def create
     offer = Offer.find_by_id(params[:enable_offer_request][:offer_id])
-    enable_request = offer.enable_offer_requests.build
+    enable_request = EnableOfferRequest.new
     log_activity(enable_request)
+    enable_request.offer = offer
     enable_request.requested_by = current_user
     if enable_request.save
       flash[:notice] = "Your request has been submitted."
