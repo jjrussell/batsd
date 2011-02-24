@@ -234,7 +234,17 @@ class Offer < ActiveRecord::Base
   def find_associated_offers
     Offer.find(:all, :conditions => ["item_id = ? and id != ?", item_id, id])
   end
-  
+
+  def integrated?
+    options = {
+      :end_time => Time.zone.now,
+      :start_time => Time.zone.now.beginning_of_hour - 23.hours,
+      :granularity => :hourly,
+      :stat_types => [ 'logins' ]
+    }
+    Appstats.new(item.id, options).stats['logins'].sum > 0
+  end
+
   def visual_cost
     if price <= 0
       'Free'

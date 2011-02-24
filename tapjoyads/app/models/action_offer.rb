@@ -26,7 +26,7 @@ class ActionOffer < ActiveRecord::Base
     if defined? @integrated
       @integrated
     else
-      @integrated = Appstats.new(id, { :start_time => Time.zone.now.beginning_of_hour - 23.hours, :end_time => Time.zone.now, :granularity => :hourly, :stat_types => [ 'logins' ] }).stats['logins'].sum > 0
+      @integrated = offer.integrated?
     end
   end
   

@@ -10,15 +10,8 @@ class EnableOfferRequestsController < WebsiteController
     @unassigned = EnableOfferRequest.unassigned.paginate(:page => params[:page])
 
     @issues = {}
-    options = {
-      :end_time => Time.zone.now,
-      :start_time => Time.zone.now.beginning_of_hour - 23.hours,
-      :granularity => :daily,
-      :stat_types => [ 'logins' ]
-    }
     (@unassigned + @assigned_to_me).each do |req|
       app = req.offer.item
-      logins = Appstats.new(app.id, options).stats['logins'].sum
       @issues[app.id] ||= []
       @issues[app.id] << {:type => 'error', :message => 'No store ID'}          if app.store_id.nil?
       @issues[app.id] << {:type => 'error', :message => 'Not integrated'}       if logins <= 0
