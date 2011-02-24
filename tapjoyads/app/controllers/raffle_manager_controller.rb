@@ -88,9 +88,9 @@ private
     end
     
     if params[:raffle_ticket][:name].blank?
-      flash[:error] = 'Name cannot be blank'
+      flash.now[:error] = 'Name cannot be blank'
     elsif starts_at.nil? || ends_at.nil?
-      flash[:error] = 'Invalid date'
+      flash.now[:error] = 'Invalid date'
     else
       @raffle_ticket.save!
       return true

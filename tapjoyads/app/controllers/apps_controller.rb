@@ -34,7 +34,7 @@ class AppsController < WebsiteController
     granularity = :hourly
     stats = Appstats.new(@app.id, { :start_time => start_time, :end_time => end_time, :granularity => granularity, :stat_types => [ 'logins' ] }).stats
     @integrated = stats['logins'].sum > 0
-    flash[:error] = "You are looking at a deleted app." if @app.hidden?
+    flash.now[:error] = "You are looking at a deleted app." if @app.hidden?
   end
 
   def create
@@ -49,7 +49,7 @@ class AppsController < WebsiteController
     begin
       @app.fill_app_store_data(country) if params[:state] == 'live'
     rescue
-      flash[:error] = 'Grabbing app data from app store failed. Please try again.'
+      flash.now[:error] = 'Grabbing app data from app store failed. Please try again.'
       render :action => "new"
       return
     end
@@ -58,7 +58,7 @@ class AppsController < WebsiteController
       flash[:notice] = 'App was successfully created.'
       redirect_to(@app)
     else
-      flash[:error] = 'Your app was not created.'
+      flash.now[:error] = 'Your app was not created.'
       render :action => "new"
     end
   end
@@ -72,7 +72,7 @@ class AppsController < WebsiteController
     begin
       @app.fill_app_store_data(country) if params[:state] == 'live'
     rescue
-      flash[:error] = 'Grabbing app data from app store failed. Please try again.'
+      flash.now[:error] = 'Grabbing app data from app store failed. Please try again.'
       render :action => "show"
       return
     end
@@ -81,7 +81,7 @@ class AppsController < WebsiteController
       flash[:notice] = 'App was successfully updated.'
       redirect_to(@app)
     else
-      flash[:error] = 'Update unsuccessful.'
+      flash.now[:error] = 'Update unsuccessful.'
       render :action => "show"
     end
   end

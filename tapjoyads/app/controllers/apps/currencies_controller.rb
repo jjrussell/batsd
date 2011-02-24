@@ -37,7 +37,7 @@ class Apps::CurrenciesController < WebsiteController
       flash[:notice] = 'Currency was successfully updated.'
       redirect_to app_currency_path(:app_id => @app.id, :id => @currency.id)
     else
-      flash[:error] = 'Update unsuccessful'
+      flash.now[:error] = 'Update unsuccessful'
       render :action => :show
     end
   end
@@ -73,7 +73,7 @@ class Apps::CurrenciesController < WebsiteController
       flash[:notice] = 'Currency was successfully created.'
       redirect_to app_currency_path(:app_id => params[:app_id], :id => @currency.id)
     else
-      flash[:error] = 'Failed to create currency.'
+      flash.now[:error] = 'Failed to create currency.'
       render :action => :new
     end
   end

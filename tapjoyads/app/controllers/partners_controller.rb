@@ -73,9 +73,9 @@ class PartnersController < WebsiteController
 
     safe_attributes = [ :account_managers, :account_manager_notes, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share ]
     if @partner.safe_update_attributes(params[:partner], safe_attributes)
-      flash[:notice] = 'Partner was successfully updated.'
+      flash.now[:notice] = 'Partner was successfully updated.'
     else
-      flash[:error] = 'Partner update unsuccessful.'
+      flash.now[:error] = 'Partner update unsuccessful.'
     end
 
     render :action => :edit

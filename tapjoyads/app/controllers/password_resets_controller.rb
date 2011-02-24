@@ -11,9 +11,9 @@ class PasswordResetsController < WebsiteController
     if @user
       @user.reset_perishable_token!
       TapjoyMailer.deliver_password_reset(@user.email, edit_password_reset_url(@user.perishable_token))
-      flash[:notice] = "A password reset link has just been emailed to you. Please check your email."
+      flash.now[:notice] = "A password reset link has just been emailed to you. Please check your email."
     else
-      flash[:error] = "No user found with that email address."
+      flash.now[:error] = "No user found with that email address."
     end
     render :action => :new
   end

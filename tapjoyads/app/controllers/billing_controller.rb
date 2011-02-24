@@ -86,7 +86,7 @@ class BillingController < WebsiteController
         log_activity(@order)
         @order.payment_txn_id = response.params['transaction_id']
         @order.save!
-        flash[:notice] = 'Successfully added funds.'
+        flash.now[:notice] = 'Successfully added funds.'
         
         if params[:save_card] == '1' && params[:payment_profile] == 'new_card'
           begin
@@ -99,7 +99,7 @@ class BillingController < WebsiteController
         
         render :action => :receipt and return
       else
-        flash[:error] = response.message
+        flash.now[:error] = response.message
       end
     end
     

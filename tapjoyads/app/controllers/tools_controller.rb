@@ -156,7 +156,7 @@ class ToolsController < WebsiteController
       end
         
       device.delete_all
-      flash[:notice] = "Device successfully reset and #{clicks_deleted} clicks deleted"
+      flash.now[:notice] = "Device successfully reset and #{clicks_deleted} clicks deleted"
     end
   end
 
@@ -165,7 +165,7 @@ class ToolsController < WebsiteController
       udid = params[:udid].downcase
       @device = Device.new(:key => udid)
       if @device.is_new
-        flash[:error] = "Device with ID #{udid} not found"
+        flash.now[:error] = "Device with ID #{udid} not found"
         @device = nil
         return
       end
@@ -307,9 +307,9 @@ class ToolsController < WebsiteController
     unless params[:id].blank?
       @app = App.find_by_id(params[:id])
       if @app.nil?
-        flash[:error] = "Could not find Android app with ID #{params[:id]}."
+        flash.now[:error] = "Could not find Android app with ID #{params[:id]}."
       elsif @app.platform != "android"
-        flash[:error] = "'#{@app.name}' is not an Android app."
+        flash.now[:error] = "'#{@app.name}' is not an Android app."
         @app = nil
       end
     end
@@ -326,7 +326,7 @@ class ToolsController < WebsiteController
       flash[:notice] = 'App was successfully updated'
       redirect_to statz_path(@app)
     else
-      flash[:error] = 'Update unsuccessful'
+      flash.now[:error] = 'Update unsuccessful'
       render :action => "edit_android_app"
     end
   end

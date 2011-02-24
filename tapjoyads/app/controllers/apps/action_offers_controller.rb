@@ -25,7 +25,7 @@ class Apps::ActionOffersController < WebsiteController
   
   def edit
     if !@action_offer.tapjoy_enabled? && !@action_offer.integrated?
-      flash[:notice] = "When you are ready to go live with this action, please email <a href='mailto:support+enable@tapjoy.com'>support+enable@tapjoy.com</a>."
+      flash.now[:notice] = "When you are ready to go live with this action, please email <a href='mailto:support+enable@tapjoy.com'>support+enable@tapjoy.com</a>."
     end
   end
   
@@ -54,7 +54,7 @@ class Apps::ActionOffersController < WebsiteController
       flash[:notice] = "Updated the '#{@action_offer.name}' action."
       redirect_to app_action_offers_path(@app)
     else
-      flash[:error] = "Could not save '#{@action_offer.name}' action."
+      flash.now[:error] = "Could not save '#{@action_offer.name}' action."
       render :edit
     end
   end
