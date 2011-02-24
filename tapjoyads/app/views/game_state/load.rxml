@@ -2,7 +2,7 @@ xml.instruct!
 xml.TapjoyConnectReturnObject do
   xml.GameState do
     xml.UpToDate @up_to_date
-    xml.TapjoySpend @game_state.tapjoy_spend
+    xml.TapjoyPoints @game_state.tapjoy_points
     xml.SecondsElapsed @game_state.seconds_elapsed
     xml.Version @game_state.version
     xml.PublisherUserID params[:publisher_user_id]

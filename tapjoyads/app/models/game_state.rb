@@ -2,7 +2,7 @@ class GameState < SimpledbShardedResource
   # key format: app_id.publisher_user_id
   
   self.num_domains = NUM_GAME_STATE_DOMAINS
-  self.sdb_attr :tapjoy_spend, :type => :int, :default_value => 0
+  self.sdb_attr :tapjoy_points, :type => :int, :default_value => 0
   self.sdb_attr :version, :type => :int, :default_value => 0
   self.sdb_attr :udids, :force_array => true, :replace => false
   
