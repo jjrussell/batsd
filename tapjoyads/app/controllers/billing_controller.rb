@@ -40,27 +40,46 @@ class BillingController < WebsiteController
   end
 
   def add_funds
-    @credit_card        = ActiveMerchant::Billing::CreditCardWithAmount.new
-    @payment_profiles   = Billing.get_payment_profiles_for_select(current_user)
+    @credit_card = ActiveMerchant::Billing::CreditCardWithAmount.new
+    begin
+      @payment_profiles = Billing.get_payment_profiles_for_select(current_user)
+    rescue ActiveMerchant::ConnectionError => e
+      flash.now[:error] = 'An error occurred retrieving your saved credit card information. Please reload the page to try again.'
+      @payment_profiles = [ [ 'New Card', 'new_card' ] ]
+    end
     @selected_profile   = @payment_profiles.first[1]
     @hideable_row_class = @selected_profile == 'new_card' ? 'hideable' : 'hideable hidden'
   end
 
   def create_order
-    cc_params           = sanitize_currency_params(params[:credit_card], [ :amount ])
-    @credit_card        = ActiveMerchant::Billing::CreditCardWithAmount.new(cc_params)
-    @payment_profiles   = Billing.get_payment_profiles_for_select(current_user)
+    cc_params    = sanitize_currency_params(params[:credit_card], [ :amount ])
+    @credit_card = ActiveMerchant::Billing::CreditCardWithAmount.new(cc_params)
+    begin
+      @payment_profiles = Billing.get_payment_profiles_for_select(current_user)
+    rescue ActiveMerchant::ConnectionError => e
+      if params[:payment_profile] == 'new_card'
+        @payment_profiles = [ [ 'New Card', 'new_card' ] ]
+      else
+        flash[:error] = 'An error occurred retrieving your saved credit card information. Please try your transaction again.'
+        redirect_to add_funds_billing_path and return
+      end
+    end
     @selected_profile   = params[:payment_profile]
     @hideable_row_class = @selected_profile == 'new_card' ? 'hideable' : 'hideable hidden'
     @order              = Order.new(:partner => current_partner, :amount => @credit_card.amount, :status => 1, :payment_method => 0)
     
     if @order.valid? && ((params[:payment_profile] == 'new_card' && @credit_card.valid?) || (params[:payment_profile] != 'new_card' && @credit_card.valid_amount?))
-      if params[:payment_profile] == 'new_card'
-        response = Billing.charge_credit_card(@credit_card, @credit_card.amount, current_partner.id)
-        @receipt_card_number = @credit_card.display_number
-      else
-        response = Billing.charge_payment_profile(current_user, params[:payment_profile], @credit_card.amount, current_partner.id)
-        @receipt_card_number = @payment_profiles.find { |pp| pp[1] == params[:payment_profile] }[0]
+      begin
+        if params[:payment_profile] == 'new_card'
+          response = Billing.charge_credit_card(@credit_card, @credit_card.amount, current_partner.id)
+          @receipt_card_number = @credit_card.display_number
+        else
+          response = Billing.charge_payment_profile(current_user, params[:payment_profile], @credit_card.amount, current_partner.id)
+          @receipt_card_number = @payment_profiles.find { |pp| pp[1] == params[:payment_profile] }[0]
+        end
+      rescue ActiveMerchant::ConnectionError => e
+        flash.now[:error] = 'Unable to charge card. Please try your transaction again.'
+        render :action => :add_funds and return
       end
       
       if response.success?
@@ -70,8 +89,12 @@ class BillingController < WebsiteController
         flash[:notice] = 'Successfully added funds.'
         
         if params[:save_card] == '1' && params[:payment_profile] == 'new_card'
-          Billing.create_customer_profile(current_user)
-          Billing.create_payment_profile(current_user, @credit_card)
+          begin
+            Billing.create_customer_profile(current_user)
+            Billing.create_payment_profile(current_user, @credit_card)
+          rescue ActiveMerchant::ConnectionError => e
+            # do nothing, the card just wont be saved
+          end
         end
         
         render :action => :receipt and return
