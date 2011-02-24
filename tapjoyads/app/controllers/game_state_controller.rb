@@ -4,7 +4,8 @@ class GameStateController < ApplicationController
   rate_limit :save, :key => proc { |c| c.params[:udid] }, :max_calls => 5, :time_limit => 1.hour, :wait_time => 12.minutes, :message => :rate_limited
   
   def load
-    return unless verify_params([:app_id, :publisher_user_id])
+    return unless verify_params([:app_id, :udid])
+    get_mapping if params[:publisher_user_id].blank?
     @game_state = GameState.new :key => "#{params[:app_id]}.#{params[:publisher_user_id]}"
     @up_to_date = params[:version].present? && (params[:version].to_i == @game_state.version)
     @point_purchases = PointPurchases.new :key => "#{params[:publisher_user_id]}.#{params[:app_id]}"
@@ -25,6 +26,12 @@ private
   
   def rate_limited(wait_time)
     render :rate_limited, :status => 420
+  end
+  
+  def get_mapping
+    @mapping = GameStateMapping.new :key => "#{params[:app_id]}.#{params[:udid]}"
+    @mapping.generate_publisher_user_id! if @mapping.is_new
+    params[:publisher_user_id] = @mapping.publisher_user_id
   end
   
 end
