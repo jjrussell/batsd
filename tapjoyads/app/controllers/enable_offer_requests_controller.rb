@@ -25,7 +25,15 @@ class EnableOfferRequestsController < WebsiteController
       @issues[app.id] << {:type => 'error', :message => 'No store ID'}          if app.store_id.nil?
       @issues[app.id] << {:type => 'error', :message => 'Not integrated'}       if logins <= 0
       @issues[app.id] << {:type => 'error', :message => 'Partner Balance low'}  if app.partner.balance < 1000
-      @issues[app.id] << {:type => 'error', :message => 'iPad only'}            if app.is_ipad_only?
+      @issues[app.id] << {:type => 'warning', :message => 'Possibly iPad only'} if app.is_ipad_only?
+      if app.large_download?
+        message = "Large download: #{app.file_size_bytes>>20}MB"
+        @issues[app.id] << {:type => 'warning', :message => message }
+      end
+      if app.expensive?
+        message = "Expensive: $#{'%.2f' % (app.price/100.0)}"
+        @issues[app.id] << {:type => 'warning', :message => message }
+      end
     end
   end
 
