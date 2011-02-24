@@ -30,11 +30,14 @@ class EnableOfferRequest < ActiveRecord::Base
 
   named_scope :unassigned, :conditions => { :status => STATUS_UNASSIGNED },
     :order => 'created_at'
-  named_scope :assigned_to, lambda { |user| {
+  named_scope :for, lambda { |user| {
     :conditions => { :status => STATUS_ASSIGNED, :assigned_to_id => user.id },
     :order => 'created_at'
   } }
-  named_scope :assigned, :conditions => { :status => STATUS_ASSIGNED }
+  named_scope :not_for, lambda { |user| {
+    :conditions => "status = '#{STATUS_ASSIGNED}' and assigned_to_id != '#{user.id}'",
+    :order => 'created_at'
+  } }
 
   def assign_to(user)
     self.assigned_to = user

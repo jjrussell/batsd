@@ -28,7 +28,7 @@ class AppsController < WebsiteController
   end
 
   def show
-    @integrated = @app.offer.integrated?
+    @integrated = @app.primary_offer.integrated?
     flash[:error] = "You are looking at a deleted app." if @app.hidden?
   end
 

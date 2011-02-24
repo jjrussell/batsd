@@ -4,16 +4,19 @@
   %h2 No requests in queue!
 - else
   %h2 Enable Requests
-- unless @assigned_to_me.blank?
-  %h3 Assigned to me (#{@assigned_to_me.length})
-  %table.requests_table.tablesorter
-    = render :partial => 'enable_requests', :locals => {:enable_requests => @assigned_to_me}
+%h3 Assigned to me (#{@assigned_to_me.length})
+%table.requests_table.tablesorter
+  = render :partial => 'enable_requests', :locals => {:enable_requests => @assigned_to_me}
 
-- unless @unassigned.blank?
-  %h3 Unassigned (#{@unassigned.length})
-  %table.requests_table.tablesorter
-    = render :partial => 'enable_requests', :locals => {:enable_requests => @unassigned}
-  = will_paginate(@unassigned)
+%h3 Unassigned (#{@unassigned.length})
+%table.requests_table.tablesorter
+  = render :partial => 'enable_requests', :locals => {:enable_requests => @unassigned}
+= will_paginate(@unassigned)
+
+%h3 Assigned to others (#{@assigned.length})
+%table.requests_table.tablesorter
+  = render :partial => 'enable_requests', :locals => {:enable_requests => @assigned}
+= will_paginate(@assigned)
 
 - content_for :page_styles do
   :plain

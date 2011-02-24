@@ -6,15 +6,16 @@ class EnableOfferRequestsController < WebsiteController
   after_filter :save_activity_logs, :only => [ :create, :update ]
 
   def index
-    @assigned_to_me  = EnableOfferRequest.assigned_to(current_user)
+    @assigned_to_me = EnableOfferRequest.for(current_user)
+    @assigned = EnableOfferRequest.not_for(current_user).paginate(:page => params[:page])
     @unassigned = EnableOfferRequest.unassigned.paginate(:page => params[:page])
 
     @issues = {}
-    (@unassigned + @assigned_to_me).each do |req|
+    (@unassigned + @assigned_to_me + @assigned).uniq.each do |req|
       app = req.offer.item
       @issues[app.id] ||= []
       @issues[app.id] << {:type => 'error', :message => 'No store ID'}          if app.store_id.nil?
-      @issues[app.id] << {:type => 'error', :message => 'Not integrated'}       if logins <= 0
+      @issues[app.id] << {:type => 'error', :message => 'Not integrated'}       unless req.offer.integrated?
       @issues[app.id] << {:type => 'error', :message => 'Partner Balance low'}  if app.partner.balance < 1000
       @issues[app.id] << {:type => 'warning', :message => 'Possibly iPad only'} if app.is_ipad_only?
       if app.large_download?
