@@ -19,7 +19,11 @@ class Apps::OffersController < WebsiteController
         flash[:warning] = "Please note that you must integrate the <a href='#{url}'>Tapjoy advertiser library</a> before we can enable your campaign"
       end
 
-      @enable_request = @offer.enable_offer_requests.build
+      if @offer.enable_offer_requests.unassigned.present?
+        @enable_request = @offer.enable_offer_requests.unassigned.first
+      else
+        @enable_request = @offer.enable_offer_requests.build
+      end
     end
 
   end
