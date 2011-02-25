@@ -25,7 +25,13 @@ class Apps::ActionOffersController < WebsiteController
   
   def edit
     if !@action_offer.tapjoy_enabled? && !@action_offer.integrated?
-      flash.now[:notice] = "When you are ready to go live with this action, please email <a href='mailto:support+enable@tapjoy.com'>support+enable@tapjoy.com</a>."
+      flash.now[:notice] = "When you are ready to go live with this action, please click the button below to submit an enable offer request."
+    end
+    
+    if @offer.enable_offer_requests.pending.present?
+      @enable_request = @offer.enable_offer_requests.pending.first
+    else
+      @enable_request = @offer.enable_offer_requests.build
     end
   end
   
@@ -95,6 +101,7 @@ private
     
     if params[:id]
       @action_offer = @app.action_offers.find(params[:id])
+      @offer = @action_offer.primary_offer
       log_activity(@action_offer)
     end
   end

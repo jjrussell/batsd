@@ -38,6 +38,8 @@ class EnableOfferRequest < ActiveRecord::Base
     :conditions => "status = '#{STATUS_ASSIGNED}' and assigned_to_id != '#{user.id}'",
     :order => 'created_at'
   } }
+  named_scope :pending, :conditions => [ "status = ? OR status = ?", STATUS_UNASSIGNED, STATUS_ASSIGNED ],
+    :order => 'created_at'
 
   def assign_to(user)
     self.assigned_to = user

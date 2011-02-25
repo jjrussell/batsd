@@ -20,15 +20,9 @@ class ActionOffer < ActiveRecord::Base
   after_create :create_primary_offer
   after_update :update_offers
   
-  delegate :user_enabled?, :tapjoy_enabled?, :bid, :description, :min_bid, :daily_budget, :to => :primary_offer
-
-  def integrated?
-    if defined? @integrated
-      @integrated
-    else
-      @integrated = offer.integrated?
-    end
-  end
+  delegate :user_enabled?, :tapjoy_enabled?, :bid, :description, :min_bid, :daily_budget, :integrated?, :to => :primary_offer
+  
+  delegate :is_android?, :store_id, :store_url, :expensive?, :large_download?, :supported_devices, :to => :app
   
 private
 

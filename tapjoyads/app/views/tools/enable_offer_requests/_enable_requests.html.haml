@@ -7,9 +7,9 @@
 %tbody
   - enable_requests.each do |req|
     - offer = req.offer
-    - app = offer.item
+    - item = offer.item
     - partner = offer.partner
-    - issues = @issues[offer.id]
+    - issues = @issues[item.id]
     %tr
       %td
         .app-icon= image_tag(offer.get_icon_url, :size => '57x57')
@@ -19,18 +19,18 @@
             %br/
             #{link_to("last run times", last_run_times_statz_path(offer))}
           %span
-            = image_tag(app.is_android? ? 'icon_android.png' : 'icon_apple.png')
-            = link_to(truncate(offer.name_with_suffix, :length => 30), app_offer_path(:id => offer.id, :app_id => app.id))
+            = image_tag(item.is_android? ? 'icon_android.png' : 'icon_apple.png')
+            = link_to(truncate(offer.name_with_suffix, :length => 30), url_to_offer_item(offer))
 
         %strong App Price:
         - if offer.is_paid?
           = number_to_currency(offer.price/100.0)
         - else
           Free
-        - if app.store_id.nil?
+        - if item.store_id.nil?
           (NO STORE ID)
         - else
-          (#{link_to(app.store_id, app.store_url)})
+          (#{link_to(item.store_id, item.store_url)})
         %br/
         %strong Pay / Bid:
         = number_to_currency(offer.payment/100.0)
@@ -53,9 +53,9 @@
           = number_to_currency(partner.balance / 100.0)
       %td
         %strong Who:
-        - body = "#{app_offer_path(:id => offer.id, :app_id => app.id, :only_path => false)}"
+        - body = "#{url_to_offer_item(offer)}"
         = mail_to(req.requested_by.email, nil, :subject => "#{offer.name}", :body => body)
-        .info{:class => (7.days.since(req.created_at) < Time.now) ? 'bad' : ''}
+        .info{:class => (7.days.since(req.created_at) < Time.zone.now) ? 'bad' : ''}
           %strong When:
           = req.created_at.to_s(:mdy_ampm)
         .numeric

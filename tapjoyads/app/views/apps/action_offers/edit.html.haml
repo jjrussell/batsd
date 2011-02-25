@@ -82,6 +82,21 @@
             #help_integrated.help ?
           %td{ :class => @action_offer.integrated? ? "integrated" : "not_integrated" }
             = @action_offer.integrated? ? "Yes" : "No"
+        
+        %tr
+          %th
+            = f.label :tapjoy_enabled, "Tapjoy Enabled?"
+            #help_enabled.help ?
+          %td
+            - if @offer.tapjoy_enabled
+              .tapjoy-enabled Enabled
+            - else
+              - if @enable_request.new_record?
+                .tapjoy-disabled Disabled
+                = button_to_function 'Submit Enable Offer Request', 'requestAppEnable()', :id => 'request_app_enable', :disabled => true
+              - else
+                .tapjoy-disabled Pending
+                (your request was submitted #{@enable_request.created_at.to_s(:pub_ampm_sec)})
 
         - if permitted_to? :edit, :statz
           = render 'admin_fields', :f => f
@@ -117,10 +132,24 @@
       unless you participate in the Tapjoy Premier program, or reach monthly spend figures
     #help_daily_content{ :name => 'Daily Budget' }
       The maximum number of paid conversions per day.
+    #help_enabled_content{ :name => 'Tapjoy Enabled' }
+      Tapjoy approval status.
+      - unless @offer.tapjoy_enabled?
+        Click the button to submit an enable offer request. Please contact #{mail_to "support@tapjoy.com"} if you have any questions.
+      
+- if !@offer.tapjoy_enabled? && @enable_request.new_record?
+  - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
+    = f.hidden_field(:offer_id)
 
 - content_for :page_javascript do
   :plain
+  
+    var requestAppEnable = $.noop;
     $(function($){
+      $('#request_app_enable').attr('disabled', '');
+      requestAppEnable = function() {
+        $('#new_enable_offer_request').submit();
+      };
 
       var toggleUserEnabled = function() {
         $('.togglable').attr('disabled', !$('#action_offer_primary_offer_attributes_user_enabled').attr('checked'));
@@ -223,5 +252,11 @@
     }
     input[type=text].installs {
       width: 336px;
+    }
+    .tapjoy-enabled {
+      color: #328F0D;
+    }
+    .tapjoy-disabled {
+      color: #AF1515;
     }
     

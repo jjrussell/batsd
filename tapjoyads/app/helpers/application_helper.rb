@@ -19,4 +19,14 @@ module ApplicationHelper
       link_to(name, TJCPPA_app_action_offers_path(app, :format => "h"))
     end
   end
+  
+  def url_to_offer_item(offer)
+    if offer.item.is_a? ActionOffer
+      edit_app_action_offer_url(offer.item.app, offer.item)
+    elsif offer.featured?
+      edit_app_featured_offer_url(offer.item, offer)
+    else
+      app_offer_url(offer.item, offer)
+    end
+  end
 end

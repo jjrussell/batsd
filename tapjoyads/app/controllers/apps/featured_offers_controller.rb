@@ -15,6 +15,11 @@ class Apps::FeaturedOffersController < WebsiteController
   end
   
   def edit
+    if @offer.enable_offer_requests.pending.present?
+      @enable_request = @offer.enable_offer_requests.pending.first
+    else
+      @enable_request = @offer.enable_offer_requests.build
+    end
   end
   
   def update

@@ -1,5 +1,6 @@
 class EnableOfferRequestsController < WebsiteController
-
+  include ApplicationHelper
+  
   filter_access_to :all
   after_filter :save_activity_logs, :only => [ :create ]
 
@@ -14,7 +15,7 @@ class EnableOfferRequestsController < WebsiteController
     else
       flash[:error] = "This app #{enable_request.errors.first[1]}."
     end
-    redirect_to app_offer_path(:id => offer.id, :app_id => offer.item.id)
+    redirect_to url_to_offer_item(offer)
   end
 
 end
