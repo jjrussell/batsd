@@ -75,9 +75,8 @@ private
     web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
     
     if params[:size].blank? || params[:size] == '320x50'
-      # Don't show high-res ads to AdMarvel, except a few test devices.
-      # TO REMOVE: Once done testing high-res ads on AdMarvel
-      if params[:action] != 'webview' || (params[:udid] == '8c1a93d64ed3b6c65717a5d56786cae58a500f9e' || params[:udid] == 'c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1')
+      # Don't show high-res ads to AdMarvel or TextFree, unless they explicitly send a size param.
+      unless params[:action] == 'webview' || params[:app_id] == '6b69461a-949a-49ba-b612-94c8e7589642'
         params[:size] = '640x100'
       end
     end
