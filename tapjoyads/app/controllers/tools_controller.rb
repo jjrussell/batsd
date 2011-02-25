@@ -1,13 +1,10 @@
 class ToolsController < WebsiteController
   layout 'tabbed'
-  
+
   filter_access_to :all
 
   after_filter :save_activity_logs, :only => [ :update_user, :update_android_app, :update_device, :resolve_clicks ]
 
-  def index
-  end
-  
   def new_transfer
   end
 

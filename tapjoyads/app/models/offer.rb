@@ -32,6 +32,7 @@ class Offer < ActiveRecord::Base
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
+  has_many :enable_offer_requests
   
   belongs_to :partner
   belongs_to :item, :polymorphic => true
@@ -233,7 +234,17 @@ class Offer < ActiveRecord::Base
   def find_associated_offers
     Offer.find(:all, :conditions => ["item_id = ? and id != ?", item_id, id])
   end
-  
+
+  def integrated?
+    options = {
+      :end_time => Time.zone.now,
+      :start_time => Time.zone.now.beginning_of_hour - 23.hours,
+      :granularity => :hourly,
+      :stat_types => [ 'logins' ]
+    }
+    Appstats.new(item.id, options).stats['logins'].sum > 0
+  end
+
   def visual_cost
     if price <= 0
       'Free'
@@ -580,7 +591,7 @@ class Offer < ActiveRecord::Base
   def icon_id
     item_type == 'ActionOffer' ? third_party_data : item_id
   end
-  
+
 private
   
   def is_disabled?(publisher_app, currency)

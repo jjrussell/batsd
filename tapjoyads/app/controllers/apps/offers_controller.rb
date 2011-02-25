@@ -12,12 +12,17 @@ class Apps::OffersController < WebsiteController
       start_time = now.beginning_of_hour - 23.hours
       end_time = now
       granularity = :hourly
-      stats = Appstats.new(@offer.item.id, { :start_time => start_time, :end_time => end_time, :granularity => granularity, :stat_types => [ 'logins' ] }).stats
-      if stats['logins'].sum > 0
+      if @offer.integrated?
         flash.now[:notice] = "When you are ready to go live with this campaign, please email <a href='mailto:support+enable@tapjoy.com'>support+enable@tapjoy.com</a>."
       else
         url = @offer.item.is_android? ? ANDROID_CONNECT_SDK : IPHONE_CONNECT_SDK
         flash.now[:warning] = "Please note that you must integrate the <a href='#{url}'>Tapjoy advertiser library</a> before we can enable your campaign"
+      end
+
+      if @offer.enable_offer_requests.unassigned.present?
+        @enable_request = @offer.enable_offer_requests.unassigned.first
+      else
+        @enable_request = @offer.enable_offer_requests.build
       end
     end
 

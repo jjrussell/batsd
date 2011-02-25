@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110218001550) do
+ActiveRecord::Schema.define(:version => 20110219235514) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",            :limit => 36,                    :null => false
@@ -119,6 +119,20 @@ ActiveRecord::Schema.define(:version => 20110218001550) do
   add_index "email_offers", ["id"], :name => "index_email_offers_on_id", :unique => true
   add_index "email_offers", ["name"], :name => "index_email_offers_on_name"
   add_index "email_offers", ["partner_id"], :name => "index_email_offers_on_partner_id"
+
+  create_table "enable_offer_requests", :id => false, :force => true do |t|
+    t.string   "id",              :limit => 36,                :null => false
+    t.string   "offer_id",        :limit => 36,                :null => false
+    t.string   "requested_by_id", :limit => 36,                :null => false
+    t.string   "assigned_to_id",  :limit => 36
+    t.integer  "status",                        :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "enable_offer_requests", ["id"], :name => "index_enable_offer_requests_on_id", :unique => true
+  add_index "enable_offer_requests", ["offer_id"], :name => "index_enable_offer_requests_on_offer_id"
+  add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
 
   create_table "generic_offers", :id => false, :force => true do |t|
     t.string   "id",               :limit => 36,                    :null => false

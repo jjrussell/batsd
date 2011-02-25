@@ -1,0 +1,102 @@
+- @page_title = "Enable Requests Tool"
+
+- if @assigned_to_me.length + @unassigned.length == 0
+  %h2 No requests in queue!
+- else
+  %h2 Enable Requests
+%h3 Assigned to me (#{@assigned_to_me.length})
+%table.requests_table.tablesorter
+  = render :partial => 'enable_requests', :locals => {:enable_requests => @assigned_to_me}
+
+%h3 Unassigned (#{@unassigned.length})
+%table.requests_table.tablesorter
+  = render :partial => 'enable_requests', :locals => {:enable_requests => @unassigned}
+= will_paginate(@unassigned)
+
+%h3 Assigned to others (#{@assigned.length})
+%table.requests_table.tablesorter
+  = render :partial => 'enable_requests', :locals => {:enable_requests => @assigned}
+= will_paginate(@assigned)
+
+- content_for :page_styles do
+  :plain
+    table.with-border {
+      border-collapse: collapse;
+    }
+    table.with-border td {
+      border: 1px solid #888;
+      padding: 2px;
+    }
+    .app-icon {
+      float: left;
+      padding-right: 5px;
+    }
+    .app-name {
+      padding-bottom: 5px;
+    }
+    .app-name span {
+      font-size: 14px;
+      font-weight: bold;
+    }
+    tr:hover td {
+      background-color: #ffe !important;
+    }
+    tr .links {
+      opacity: 0;
+    }
+    tr:hover .links {
+      opacity: 1.0;
+    }
+    .numeric {
+      display: none;
+    }
+    .good {
+      color: #080 !important;
+    }
+    .bad {
+      color: #f00 !important;
+    }
+    .warning {
+      color: #888 !important;
+    }
+    .right {
+      text-align: right;
+    }
+    .issues {
+      background-color: #fff;
+      border: 2px solid #f00;
+      border-radius: 4px;
+      -moz-border-radius: 4px;
+      -webkit-border-radius: 4px;
+      margin-top: 3px;
+      padding: 2px;
+      color: red;
+    }
+    .issues ul{
+      margin: 0;
+    }
+
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      $.tablesorter.addParser({
+        id: 'complex-date-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return Number(s.split('epoch_time')[1].replace(/\D/g, ''));
+        }
+      });
+      $(".requests_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          2:  { sorter: 'complex-date-column'},
+          3:  { sorter: false },
+        }
+      });
+      $('.reject-request').parents('form').submit(function(){
+        if (!confirm("Did you email the user about the app?")) {
+          return false;
+        }
+      });
+    });

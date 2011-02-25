@@ -1,6 +1,6 @@
 - featured ||= false
 
-- form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform' }) do |f|
+- form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform', :id => 'update' }) do |f|
   %table
     %tbody
       %tr
@@ -89,7 +89,12 @@
           - if @offer.tapjoy_enabled
             .tapjoy-enabled Enabled
           - else
-            .tapjoy-disabled Disabled
+            - if @enable_request.new_record?
+              .tapjoy-disabled Disabled
+              = button_to_function 'Request App Enable', 'requestAppEnable()', :id => 'request_app_enable', :disabled => true
+            - else
+              .tapjoy-disabled Pending
+              (your request was submitted #{@enable_request.created_at.to_s(:mdy_ampm_utc)})
       - if @offer.partner.exclusivity_level
         %tr
           %th
@@ -101,7 +106,11 @@
         = render('apps/offers_shared/admin_fields', :f => f)
       %tr
         %td{ :colspan => 2 }= f.submit 'Update'
-  
+
+- if !@offer.tapjoy_enabled? && @enable_request.new_record?
+  - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
+    = f.hidden_field(:offer_id)
+
 .hidden
   #help_offer_name_content{:name => 'Offer Name'}
     Name that will be displayed on offer walls.
@@ -126,7 +135,12 @@
         
 - content_for :page_javascript do
   :plain
+    var requestAppEnable = $.noop;
     $(function($){
+      $('#request_app_enable').attr('disabled', '');
+      requestAppEnable = function() {
+        $('form#new_enable_offer_request').submit();
+      };
       if (#{!current_partner.is_premier?} && $('#flash_notice').is(':hidden')) {
         $('#flash_notice').html('<b>Notice:</b> #{link_to 'Learn more about the Tapjoy Premier Program', premier_path}').show();
       }
@@ -222,7 +236,7 @@
       });
       toggleDailyBudget();
 
-      $('form').submit(function() {
+      $('form#update').submit(function() {
         checkMinimumPrice();
         return checkValidBudget();
       });

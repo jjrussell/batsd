@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
   has_many :partner_assignments, :dependent => :destroy
   has_many :user_roles, :through => :role_assignments
   has_many :partners, :through => :partner_assignments
+  has_many :enable_offer_requests
   belongs_to :current_partner, :class_name => 'Partner'
 
   attr_accessor :terms_of_service

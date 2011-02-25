@@ -29,7 +29,19 @@ class App < ActiveRecord::Base
   def is_android?
     platform == 'android'
   end
-  
+
+  def is_ipad_only?
+    supported_devices && supported_devices.all?{ |i| i.match(/^ipad/i) }
+  end
+
+  def large_download?
+    file_size_bytes.to_i > 20971520
+  end
+
+  def expensive?
+    price > 299
+  end
+
   def platform_name
     PLATFORMS[platform]
   end
