@@ -5,6 +5,9 @@ class ToolsController < WebsiteController
 
   after_filter :save_activity_logs, :only => [ :update_user, :update_android_app, :update_device, :resolve_clicks ]
 
+  def index
+  end
+
   def new_transfer
   end
 
