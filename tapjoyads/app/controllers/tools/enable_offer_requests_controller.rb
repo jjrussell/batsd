@@ -60,6 +60,6 @@ class Tools::EnableOfferRequestsController < WebsiteController
         flash[:error] = "App #{req.offer.item.name} #{req.errors.first[1]}"
       end
     end
-    redirect_to enable_offer_requests_path
+    redirect_to tools_enable_offer_requests_path
   end
 end

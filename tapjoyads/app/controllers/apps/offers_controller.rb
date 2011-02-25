@@ -13,7 +13,7 @@ class Apps::OffersController < WebsiteController
       end_time = now
       granularity = :hourly
       if @offer.integrated?
-        flash.now[:notice] = "When you are ready to go live with this campaign, please email <a href='mailto:support+enable@tapjoy.com'>support+enable@tapjoy.com</a>."
+        flash.now[:notice] = "When you are ready to go live with this campaign, please click the button below to submit an enable app request."
       else
         url = @offer.item.is_android? ? ANDROID_CONNECT_SDK : IPHONE_CONNECT_SDK
         flash.now[:warning] = "Please note that you must integrate the <a href='#{url}'>Tapjoy advertiser library</a> before we can enable your campaign"

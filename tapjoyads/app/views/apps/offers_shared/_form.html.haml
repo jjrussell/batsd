@@ -91,10 +91,10 @@
           - else
             - if @enable_request.new_record?
               .tapjoy-disabled Disabled
-              = button_to_function 'Request App Enable', 'requestAppEnable()', :id => 'request_app_enable', :disabled => true
+              = button_to_function 'Submit Enable App Request', 'requestAppEnable()', :id => 'request_app_enable', :disabled => true
             - else
               .tapjoy-disabled Pending
-              (your request was submitted #{@enable_request.created_at.to_s(:mdy_ampm_utc)})
+              (your request was submitted #{@enable_request.created_at.to_s(:pub_ampm_sec)})
       - if @offer.partner.exclusivity_level
         %tr
           %th
@@ -128,8 +128,8 @@
     Enable installs to get your campaign started.
   #help_enabled_content{:name => 'Tapjoy Enabled'}
     Tapjoy approval status.
-    - unless @offer.tapjoy_enabled
-      Please contact #{link_to "support@tapjoy.com", "mailto:support@tapjoy.com"} to enable this offer.
+    - unless @offer.tapjoy_enabled?
+      Click the button to submit an enable app request. Please contact #{link_to "support@tapjoy.com", "mailto:support@tapjoy.com"} if you have any questions.
   #help_premier_content{:name => 'Tapjoy Premier'}
     When your Tapjoy Premier exclusivity expires.
         
