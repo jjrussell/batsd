@@ -110,15 +110,19 @@ class ToolsController < WebsiteController
   end
 
   def elb_status
-    elb_interface = RightAws::ElbInterface.new
-    ec2_interface = RightAws::Ec2.new
-    @lb_names = Rails.env == 'production' ? %w( masterjob-lb job-lb website-lb web-lb test-lb ) : []
-    @lb_instances = {}
+    elb_interface  = RightAws::ElbInterface.new
+    ec2_interface  = RightAws::Ec2.new
+    @lb_names      = Rails.env == 'production' ? %w( masterjob-lb job-lb website-lb web-lb test-lb ) : []
+    @lb_instances  = {}
     @ec2_instances = {}
     @lb_names.each do |lb_name|
-      @lb_instances[lb_name]  = elb_interface.describe_instance_health(lb_name)
-      ec2_interface.describe_instances(@lb_instances[lb_name].map { |i| i[:instance_id] }).each do |instance|
-        @ec2_instances[instance[:aws_instance_id]] = instance
+      @lb_instances[lb_name] = elb_interface.describe_instance_health(lb_name)
+      instance_ids = @lb_instances[lb_name].map { |i| i[:instance_id] }
+      instance_ids.in_groups_of(70) do |instances|
+        instances.compact!
+        ec2_interface.describe_instances(instances).each do |instance|
+          @ec2_instances[instance[:aws_instance_id]] = instance
+        end
       end
       
       @lb_instances[lb_name].sort! { |a, b| a[:instance_id] <=> b[:instance_id] }
