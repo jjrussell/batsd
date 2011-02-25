@@ -18,6 +18,7 @@ class User < ActiveRecord::Base
   validates_acceptance_of :terms_of_service, :on => :create
 
   before_create :regenerate_api_key
+  after_create :create_mail_chimp_entry
   after_save :update_auth_net_cim_profile
 
   def role_symbols
@@ -48,11 +49,23 @@ class User < ActiveRecord::Base
     end
   end
 
+  def has_valid_email?
+    email.present? && !(/mailinator\.com$|example\.com$|test\.com$/ =~ email)
+  end
+
 private
 
   def update_auth_net_cim_profile
     if auth_net_cim_id.present? && (email_changed? || id_changed?)
       Billing.update_customer_profile(self)
+    end
+  end
+
+  def create_mail_chimp_entry
+    return if Rails.env == 'test'
+    if has_valid_email?
+      message = { :type => "add_user", :user_id => id }.to_json
+      Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)
     end
   end
 

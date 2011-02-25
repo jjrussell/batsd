@@ -40,7 +40,6 @@ class Partner < ActiveRecord::Base
     end
   end
   
-  after_create :create_mail_chimp_entry
   after_save :update_currencies, :update_app_offers
   
   cattr_reader :per_page
@@ -224,12 +223,6 @@ class Partner < ActiveRecord::Base
   
 private
 
-  def create_mail_chimp_entry
-    return if Rails.env == 'test'
-    message = { :type => "create", :partner_id => self.id }.to_json
-    Sqs.send_message(QueueNames::MAIL_CHIMP_UPDATES, message)
-  end
-  
   def update_currencies
     if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed?
       currencies.each do |c|

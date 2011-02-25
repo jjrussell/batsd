@@ -15,6 +15,7 @@ class MailChimp
     chimp.update_member(MAIL_CHIMP_PARTNERS_LIST_ID, email, merge_tags)
   end
 
+  # todo: remove "add_partner" and "add_partners"
   def self.add_partner(partner)
     add_partners([partner])
   end
@@ -43,5 +44,19 @@ class MailChimp
       errors << results["errors"]
     end
     errors.flatten
+  end
+
+  def self.add_user(user)
+    partner = user.partners.first
+    name = partner.contact_name
+    name = email if name.blank?
+    hash = {
+      'EMAIL' => user.email,
+      'NAME' => name,
+      'ID' => partner.id,
+      'IS_PUB' => partner.has_publisher_offer? ? 'true' : 'false',
+      'CAN_EMAIL' => 'true'
+    }
+    chimp.subscribe(MAIL_CHIMP_PARTNERS_LIST_ID, user.email, hash)
   end
 end
