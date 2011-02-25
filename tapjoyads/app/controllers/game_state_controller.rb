@@ -3,7 +3,7 @@ class GameStateController < ApplicationController
   
   before_filter :get_mapping, :only => :load
   
-  rate_limit :save, :key => proc { |c| c.params[:udid] }, :max_calls => 5, :time_limit => 1.hour, :wait_time => 12.minutes, :message => :rate_limited
+  # rate_limit :save, :key => proc { |c| c.params[:udid] }, :max_calls => 5, :time_limit => 1.hour, :wait_time => 12.minutes, :message => :rate_limited
   
   def load
     return unless verify_params([:app_id, :udid, :publisher_user_id])
