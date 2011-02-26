@@ -49,7 +49,7 @@ class MailChimp
   def self.add_user(user)
     partner = user.partners.first
     name = partner.contact_name
-    name = email if name.blank?
+    name = user.email if name.blank?
     hash = {
       'EMAIL' => user.email,
       'NAME' => name,
