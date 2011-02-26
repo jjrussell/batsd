@@ -77,7 +77,7 @@ private
     stat_row.update_stat_for_hour('installs_spend', start_time.hour, installs_spend)
     stat_row.update_stat_for_hour('jailbroken_installs', start_time.hour, jailbroken_installs)
 
-    Stats::TOP_COUNTRIES.each do |country|
+    Stats::COUNTRY_CODES.keys.each do |country|
       count = paid_installs_by_country.delete(country) || 0
       stat_name = ['countries', "paid_installs.#{country}"]
       stat_row.update_stat_for_hour(stat_name, start_time.hour, count)
