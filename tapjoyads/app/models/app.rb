@@ -38,10 +38,6 @@ class App < ActiveRecord::Base
     file_size_bytes.to_i > 20971520
   end
 
-  def expensive?
-    price > 299
-  end
-
   def platform_name
     PLATFORMS[platform]
   end

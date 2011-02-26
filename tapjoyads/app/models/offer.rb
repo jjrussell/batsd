@@ -591,6 +591,10 @@ class Offer < ActiveRecord::Base
   def icon_id
     item_type == 'ActionOffer' ? third_party_data : item_id
   end
+  
+  def expensive?
+    price > 299
+  end
 
 private
   

@@ -22,7 +22,7 @@ class ActionOffer < ActiveRecord::Base
   
   delegate :user_enabled?, :tapjoy_enabled?, :bid, :description, :min_bid, :daily_budget, :integrated?, :to => :primary_offer
   
-  delegate :is_android?, :store_id, :store_url, :expensive?, :large_download?, :supported_devices, :to => :app
+  delegate :is_android?, :store_id, :store_url, :large_download?, :supported_devices, :to => :app
   
 private
 

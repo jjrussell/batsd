@@ -22,7 +22,7 @@ class Tools::EnableOfferRequestsController < WebsiteController
           message = "Large download: #{item.file_size_bytes>>20}MB"
           @issues[item.id] << {:type => 'warning', :message => message }
         end
-        if item.expensive?
+        if req.offer.expensive?
           message = "Expensive: $#{'%.2f' % (app.price/100.0)}"
           @issues[item.id] << {:type => 'warning', :message => message }
         end
