@@ -52,6 +52,31 @@ Tapjoy.Graph = {
     
   },
 
+  clone: function clone(obj) {
+    if(obj == null || typeof(obj) != 'object') {
+      return obj;
+    }
+
+    var temp = new obj.constructor();
+    for(var key in obj) {
+      temp[key] = clone(obj[key]);
+    }
+
+    return temp;
+  },
+
+  mergePartitions: function(end_part, part1, part2) {
+    end_part.names = part1.names.concat(part2.names);
+    end_part.data = part1.data.concat(part2.data);
+    if (part1.stringData && part2.stringData) {
+      end_part.stringData = part1.stringData.concat(part2.stringData);
+    } else if (part1.stringData || part2.stringData) {
+      console.log('problem, partition and main/right need to both/neither have stringData');
+    }
+    end_part.totals = part1.totals.concat(part2.totals);
+    return end_part;
+  },
+
   drawLargeGraph: function(obj, id, partition_index) {
     if ($('#' + id).length == 0 || obj == null) { return; }
 
@@ -78,15 +103,33 @@ Tapjoy.Graph = {
           html += '</select>';
           $('#' + id + '>.dropdown').html(html);
           partition_index = index;
-          
+
           $('#' + id + '>.dropdown>select').change(function(event) {
             new_index = Number(event.target.value);
             Tapjoy.Graph.drawLargeGraph(obj, id, new_index);
           });
         }
       }
-      obj['right'] = obj['partition_values'][partition_index];
+
+      if (obj.partition_right && obj.right) {
+        if (!obj.original_right) {
+          obj.original_right = Tapjoy.Graph.clone(obj.right);
+        }
+        obj.right = Tapjoy.Graph.mergePartitions(obj.right, obj.original_right, obj.partition_right[partition_index]);
+      } else if (obj.partition_right) {
+        obj.right = obj.partition_right[partition_index];
+      }
+
+      if (obj.partition_left && obj.main) {
+        if (!obj.original_left) {
+          obj.original_left = Tapjoy.Graph.clone(obj.main);
+        }
+        obj.main = Tapjoy.Graph.mergePartitions(obj.main, obj.original_left, obj.partition_left[partition_index]);
+      } else if (obj.partition_left) {
+        obj.main = obj.partition_left[partition_index];
+      }
     }
+
     if ($('#' + id + '>.totals').length == 1) {
       $('#' + id + '>.totals').html(Tapjoy.Graph.getTotalsHtml(obj));
     }
@@ -100,7 +143,7 @@ Tapjoy.Graph = {
       legendKeys = legendKeys.concat(obj['right']['names']);
     }
 
-    try {
+    //try {
       var g = new RGraph.Line(id + '_graph');
       g.original_data = obj['main']['data'];
       RGraph.Clear(g.canvas); 
@@ -171,10 +214,10 @@ Tapjoy.Graph = {
 
         tooltipNode.html(Tapjoy.Graph.getTooltipHtml(obj, activeId));
       });
-    } catch(e) {
-      $('#' + id + ' .error').html('Error drawing chart');
-      $('#' + id + '_graph').hide();
-    }
+    //} catch(e) {
+      //$('#' + id + ' .error').html('Error drawing chart');
+      //$('#' + id + '_graph').hide();
+    //}
   },
 
   getTooltipHtml: function(obj, idx) {
