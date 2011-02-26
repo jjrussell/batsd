@@ -1,4 +1,4 @@
-if (typeof(Tapjoy) == "undefined") Tapjoy = {};
+if (typeof(Tapjoy) == "undefined") { Tapjoy = {}; }
 
 Tapjoy.Graph = {
 
@@ -35,25 +35,25 @@ Tapjoy.Graph = {
     }
 
     if (options.unitPrefix) {
-      g.Set('chart.units.pre', options.unitPrefix)
+      g.Set('chart.units.pre', options.unitPrefix);
     }
 
     if (options.yMax) {
-      g.Set('chart.ymax', options.yMax)
+      g.Set('chart.ymax', options.yMax);
     }
 
     if (options.decimals) {
-      g.Set('chart.scale.decimals', options.decimals)
+      g.Set('chart.scale.decimals', options.decimals);
     }
     
     if (options.drawGrid != null) {
-      g.Set('chart.background.grid', options.drawGrid)
+      g.Set('chart.background.grid', options.drawGrid);
     }
     
   },
 
   drawLargeGraph: function(obj, id, partition_index) {
-    if ($('#' + id).length == 0 || obj == null) return;
+    if ($('#' + id).length == 0 || obj == null) { return; }
 
     if (partition_index == undefined) {
       $('#' + id + '>.dropdown').html('');
@@ -63,7 +63,7 @@ Tapjoy.Graph = {
     if (obj['partition_names']) {
       if ($('#' + id + '>.dropdown').html() == '') {
         if (obj['partition_names'].length == 0) {
-          $('#' + id + '>.dropdown').html(obj['partition_fallback'])
+          $('#' + id + '>.dropdown').html(obj['partition_fallback']);
         } else {
           html = obj['partition_title'] + ": <select>";
           index = 0;
@@ -82,7 +82,7 @@ Tapjoy.Graph = {
           $('#' + id + '>.dropdown>select').change(function(event) {
             new_index = Number(event.target.value);
             Tapjoy.Graph.drawLargeGraph(obj, id, new_index);
-          })
+          });
         }
       }
       obj['right'] = obj['partition_values'][partition_index];
@@ -136,14 +136,14 @@ Tapjoy.Graph = {
           yMax: obj['right']['yMax'],
           decimals: obj['right']['decimals'],
           drawGrid: false
-        })
+        });
 
         g2.Draw();
       }
 
       var graphNode = $('#' + id + '_graph');
-      var barNode = $('#' + id + ' .bar')
-      var tooltipNode = $('#' + id + ' .tooltip')
+      var barNode = $('#' + id + ' .bar');
+      var tooltipNode = $('#' + id + ' .tooltip');
 
       $('#' + id + '>.holder').hover(function() {
         barNode.show();
@@ -187,9 +187,9 @@ Tapjoy.Graph = {
       if (obj[group]) {
         for (var j = 0, name; name = obj[group]['names'][j]; j++) {
           if (obj[group]['longNames']) {
-            name = obj[group]['longNames'][j]
+            name = obj[group]['longNames'][j];
           }
-          data = obj[group]['stringData'] ? obj[group]['stringData'] : obj[group]['data']
+          data = obj[group]['stringData'] ? obj[group]['stringData'] : obj[group]['data'];
           var value = data[j][idx];
           if (value == null) {
             value = '-';
@@ -200,7 +200,7 @@ Tapjoy.Graph = {
       }
     }
 
-    return html.join('<br />')
+    return html.join('<br />');
   },
 
   getTotalsHtml: function(obj) {
@@ -219,6 +219,6 @@ Tapjoy.Graph = {
       }
     }
 
-    return html.join(',&nbsp; ')
+    return html.join(',&nbsp; ');
   }
 };
