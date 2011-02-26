@@ -14,9 +14,13 @@ class Tools::EnableOfferRequestsController < WebsiteController
     (@unassigned + @assigned_to_me + @assigned).uniq.each do |req|
       item = req.offer.item
       @issues[item.id] ||= []
-      
+
+      @issues[item.id] << {:type => 'error', :message => 'Not integrated'}       unless req.offer.integrated?
+      @issues[item.id] << {:type => 'error', :message => 'Partner Balance low'}  if item.partner.balance < 1000
+
       if item.is_a? App
         @issues[item.id] << {:type => 'error', :message => 'No store ID'}          if item.store_id.nil?
+        @issues[item.id] << {:type => 'warning', :message => 'Not user-enabled'}   unless item.user_enabled?
         @issues[item.id] << {:type => 'warning', :message => 'Possibly iPad only'} if item.is_ipad_only?
         if item.large_download?
           message = "Large download: #{item.file_size_bytes>>20}MB"
@@ -27,9 +31,7 @@ class Tools::EnableOfferRequestsController < WebsiteController
           @issues[item.id] << {:type => 'warning', :message => message }
         end
       end
-        
-      @issues[item.id] << {:type => 'error', :message => 'Not integrated'}       unless req.offer.integrated?
-      @issues[item.id] << {:type => 'error', :message => 'Partner Balance low'}  if item.partner.balance < 1000
+
     end
   end
 
