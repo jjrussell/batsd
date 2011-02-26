@@ -40,6 +40,11 @@ class Apps::FeaturedOffersController < WebsiteController
       flash[:notice] = 'Featured Offer was successfully updated.'
       redirect_to(edit_app_featured_offer_path(@app, @offer))
     else
+      if @offer.enable_offer_requests.pending.present?
+        @enable_request = @offer.enable_offer_requests.pending.first
+      else
+        @enable_request = @offer.enable_offer_requests.build
+      end
       flash.now[:error] = 'Could not update Featured Offer.'
       render :action => :edit
     end
