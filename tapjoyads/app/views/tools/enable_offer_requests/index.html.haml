@@ -94,7 +94,7 @@
           3:  { sorter: false },
         }
       });
-      $('.reject-request').parents('form').submit(function(){
+      $('.reject-request, .accept-request').parents('form').submit(function(){
         if (!confirm("Did you email the user about the app?")) {
           return false;
         }

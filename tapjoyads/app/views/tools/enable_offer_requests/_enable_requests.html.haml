@@ -78,7 +78,7 @@
         - elsif req.assigned_to == current_user
           - form_for([ :tools, req ]) do |f|
             = hidden_field_tag(:do, 'approve')
-            = f.submit('Approve')
+            = f.submit('Approve', :class => 'accept-request')
           - form_for([ :tools, req ]) do |f|
             = hidden_field_tag(:do, 'reject')
             = f.submit('Reject', :class => 'reject-request')
