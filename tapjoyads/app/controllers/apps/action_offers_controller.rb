@@ -60,6 +60,11 @@ class Apps::ActionOffersController < WebsiteController
       flash[:notice] = "Updated the '#{@action_offer.name}' action."
       redirect_to app_action_offers_path(@app)
     else
+      if @offer.enable_offer_requests.pending.present?
+        @enable_request = @offer.enable_offer_requests.pending.first
+      else
+        @enable_request = @offer.enable_offer_requests.build
+      end
       flash.now[:error] = "Could not save '#{@action_offer.name}' action."
       render :edit
     end
