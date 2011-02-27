@@ -15,12 +15,12 @@
         .app-icon= image_tag(offer.get_icon_url, :size => '57x57')
         .app-name
           .links.right
-            #{link_to("statz", statz_path(offer))}
+            #{link_to("offer", url_to_offer_item(offer))}
             %br/
             #{link_to("last run times", last_run_times_statz_path(offer))}
           %span
             = image_tag(item.is_android? ? 'icon_android.png' : 'icon_apple.png')
-            = link_to(truncate(offer.name_with_suffix, :length => 30), url_to_offer_item(offer))
+            = link_to(truncate(offer.name_with_suffix, :length => 30), statz_path(offer))
 
         %strong App Price:
         - if offer.is_paid?
