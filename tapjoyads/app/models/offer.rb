@@ -99,6 +99,7 @@ class Offer < ActiveRecord::Base
   before_save :cleanup_url
   before_save :update_payment
   after_save :update_enabled_rating_offer_id
+  after_save :check_enable_request
   
   named_scope :enabled_offers, :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > 0) OR (payment = 0 AND reward_value > 0))"
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
@@ -771,5 +772,15 @@ private
       item.app.save! if item.app.changed?
     end
   end
-  
+
+  def check_enable_request
+    if tapjoy_enabled?
+      enable_offer_requests.each do |request|
+        if request.status != STATUS_REJECTED && request.status != STATUS_APPROVED
+          request.assigned_to = current_user
+          request.approve!
+        end
+      end
+    end
+  end
 end
