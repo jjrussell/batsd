@@ -43,33 +43,32 @@ class Tools::EnableOfferRequestsController < WebsiteController
     case params[:do]
     when 'assign'
       if req.assign_to(current_user)
-        flash[:notice] = "Assigned #{req.offer.item.name} to #{current_user.email}"
+        flash[:notice] = "Assigned #{req.offer.name} to #{current_user.email}"
       else
-        flash[:error] = "App #{req.offer.item.name} #{req.errors.first[1]}"
+        flash[:error] = "App #{req.offer.name} #{req.errors.first[1]}"
       end
     when 'approve'
-      unless offer.hidden?
-        log_activity(req.offer)
+      unless req.offer.hidden?
         req.offer.tapjoy_enabled = true
         if req.offer.save
           req.approve!(true)
-          flash[:notice] = "App #{req.offer.item.name} approved."
+          flash[:notice] = "App #{req.offer.name} approved."
         end
       else
         req.approve!(false)
-        flash[:error] = "App #{req.offer.item.name} is an archived app. Archived apps cannot be approved."
+        flash[:error] = "App #{req.offer.name} is an archived app. Archived apps cannot be approved."
       end
     when 'reject'
       req.offer.tapjoy_enabled = false
       if req.offer.save
         req.approve!(false)
-        flash[:notice] = "App #{req.offer.item.name} rejected!"
+        flash[:notice] = "App #{req.offer.name} rejected!"
       end
     when 'unassign'
       if req.unassign
-        flash[:notice] = "Unassigned from approving #{req.offer.item.name}"
+        flash[:notice] = "Unassigned from approving #{req.offer.name}"
       else
-        flash[:error] = "App #{req.offer.item.name} #{req.errors.first[1]}"
+        flash[:error] = "App #{req.offer.name} #{req.errors.first[1]}"
       end
     end
     redirect_to tools_enable_offer_requests_path
