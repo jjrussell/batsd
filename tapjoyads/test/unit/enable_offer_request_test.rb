@@ -31,5 +31,15 @@ class EnableOfferRequestTest < ActiveSupport::TestCase
       @enable_offer_request.status = 4
       assert !@enable_offer_request.valid?
     end
+
+    should "not be approved with archived apps" do
+      app = @enable_offer_request.offer.item
+      app.hidden = true
+      app.save
+
+      @enable_offer_request.reload
+      @enable_offer_request.status = EnableOfferRequest::STATUS_APPROVED
+      assert !@enable_offer_request.valid?
+    end
   end
 end
