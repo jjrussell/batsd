@@ -32,7 +32,7 @@ class Offer < ActiveRecord::Base
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
-  has_many :update_pending_enable_request
+  has_many :enable_offer_requests
   
   belongs_to :partner
   belongs_to :item, :polymorphic => true
@@ -99,7 +99,7 @@ class Offer < ActiveRecord::Base
   before_save :cleanup_url
   before_save :update_payment
   after_save :update_enabled_rating_offer_id
-  after_save :check_enable_request
+  after_save :update_pending_enable_requests
   
   named_scope :enabled_offers, :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > 0) OR (payment = 0 AND reward_value > 0))"
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
@@ -773,9 +773,9 @@ private
     end
   end
 
-  def update_pending_enable_request
-    if tapjoy_enabled?
-      enable_offer_requests.pending.each{|request| request.approve!}
+  def update_pending_enable_requests
+    if tapjoy_enabled_changed? && tapjoy_enabled?
+      enable_offer_requests.pending.each { |request| request.approve! }
     end
   end
 end
