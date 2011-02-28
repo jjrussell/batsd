@@ -597,6 +597,10 @@ class Offer < ActiveRecord::Base
     price > 299
   end
 
+  def can_request_enable?
+    item_type == 'App' ? item.store_id.present? : true
+  end
+
 private
   
   def is_disabled?(publisher_app, currency)
