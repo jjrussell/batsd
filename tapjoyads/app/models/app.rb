@@ -272,9 +272,6 @@ private
       offer.age_rating = age_rating if age_rating_changed?
       offer.hidden = hidden if hidden_changed?
       offer.tapjoy_enabled = false if hidden? && hidden_changed?
-      offer.enable_offer_requests.pending.each do |req|
-        req.approve!(false)
-      end
       offer.save! if offer.changed?
     end
   end

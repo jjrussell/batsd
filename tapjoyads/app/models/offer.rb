@@ -780,6 +780,8 @@ private
   def update_pending_enable_requests
     if tapjoy_enabled_changed? && tapjoy_enabled?
       enable_offer_requests.pending.each { |request| request.approve! }
+    elsif hidden_changed? && hidden?
+      enable_offer_requests.pending.each { |request| request.approve!(false) }
     end
   end
 end

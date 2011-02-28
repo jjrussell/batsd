@@ -21,11 +21,12 @@ class EnableOfferRequest < ActiveRecord::Base
         record.errors.add attr, 'already has a previous request in queue'
       end
     end
-    if offer.hidden? && record.status == STATUS_APPROVED
+  end
+  validates_each :status do |record, attr, status|
+    if record.offer.hidden? && status == STATUS_APPROVED
       record.errors.add attr, 'cannot be approved when associated app has been archived'
     end
   end
-
 
   STATUS_UNASSIGNED = 0
   STATUS_ASSIGNED = 1
