@@ -32,7 +32,7 @@ class Offer < ActiveRecord::Base
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
-  has_many :enable_offer_requests
+  has_many :update_pending_enable_request
   
   belongs_to :partner
   belongs_to :item, :polymorphic => true
@@ -773,14 +773,9 @@ private
     end
   end
 
-  def check_enable_request
+  def update_pending_enable_request
     if tapjoy_enabled?
-      enable_offer_requests.each do |request|
-        if request.status != STATUS_REJECTED && request.status != STATUS_APPROVED
-          request.assigned_to = current_user
-          request.approve!
-        end
-      end
+      enable_offer_requests.pending.each{|request| request.approve!}
     end
   end
 end
