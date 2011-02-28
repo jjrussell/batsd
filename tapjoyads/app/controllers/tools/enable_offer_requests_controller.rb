@@ -48,10 +48,16 @@ class Tools::EnableOfferRequestsController < WebsiteController
         flash[:error] = "App #{req.offer.item.name} #{req.errors.first[1]}"
       end
     when 'approve'
-      req.offer.tapjoy_enabled = true
-      if req.offer.save
-        req.approve!(true)
-        flash[:notice] = "App #{req.offer.item.name} approved."
+      unless offer.hidden?
+        log_activity(req.offer)
+        req.offer.tapjoy_enabled = true
+        if req.offer.save
+          req.approve!(true)
+          flash[:notice] = "App #{req.offer.item.name} approved."
+        end
+      else
+        req.approve!(false)
+        flash[:error] = "App #{req.offer.item.name} is an archived app. Archived apps cannot be approved."
       end
     when 'reject'
       req.offer.tapjoy_enabled = false
