@@ -15,22 +15,22 @@ class Tools::EnableOfferRequestsController < WebsiteController
       item = req.offer.item
       @issues[item.id] ||= []
 
-      @issues[item.id] << {:type => 'error', :message => 'Not integrated'}       unless req.offer.integrated?
-      @issues[item.id] << {:type => 'error', :message => 'Partner Balance low'}  if item.partner.balance < 1000
+      @issues[item.id] << {:type => 'error', :message => 'Not integrated'}      unless req.offer.integrated?
+      @issues[item.id] << {:type => 'error', :message => 'Partner Balance low'} unless req.offer.partner.balance >= 1000
+      @issues[item.id] << {:type => 'warning', :message => 'Not user-enabled'}  unless req.offer.user_enabled?
+      if req.offer.expensive?
+        message = "Expensive: $#{'%.2f' % (req.offer.price / 100.0)}"
+        @issues[item.id] << {:type => 'warning', :message => message}
+      end
 
       if item.is_a? App
         @issues[item.id] << {:type => 'error', :message => 'No store ID'}          if item.store_id.nil?
         @issues[item.id] << {:type => 'warning', :message => 'Possibly iPad only'} if item.is_ipad_only?
         if item.large_download?
           message = "Large download: #{item.file_size_bytes>>20}MB"
-          @issues[item.id] << {:type => 'warning', :message => message }
-        end
-        if req.offer.expensive?
-          message = "Expensive: $#{'%.2f' % (app.price/100.0)}"
-          @issues[item.id] << {:type => 'warning', :message => message }
+          @issues[item.id] << {:type => 'warning', :message => message}
         end
       end
-      @issues[item.id] << {:type => 'warning', :message => 'Not user-enabled'}   unless req.offer.user_enabled?
 
     end
   end
