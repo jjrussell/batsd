@@ -21,13 +21,11 @@ class StoreRank
     end
     log_progress "Finished loading known_store_ids."
     
-    itunes_ip_address = Socket::getaddrinfo('ax.itunes.apple.com', 'http')[0][3]
-    
     itunes_category_ids.each do |category_key, category_id|
       itunes_pop_ids.each do |pop_key, pop_id|
         itunes_country_ids.each do |country_key, country_id|
           stat_type = "#{category_key}.#{pop_key}.#{country_key}"
-          url = "http://#{itunes_ip_address}/WebObjects/MZStore.woa/wa/viewTop?id=#{category_id}&popId=#{pop_id}"
+          url = "http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=#{category_id}&popId=#{pop_id}"
           headers = { 'X-Apple-Store-Front' => "#{country_id}-1,12", 'Host' => 'ax.itunes.apple.com' }
           user_agent = 'iTunes/10.1 (Macintosh; Intel Mac OS X 10.6.5) AppleWebKit/533.18.1'
           
