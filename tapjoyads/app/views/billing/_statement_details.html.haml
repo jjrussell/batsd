@@ -5,7 +5,7 @@
 %div.details.hidden{:id => "details_#{statement[0]}"}
   %h3= statement[1][:text_month]
   - unless orders.blank?
-    %table
+    %table.financial
       %thead
         %tr
           %th{:colspan => 4, :style => 'text-align: center;'} Payments
@@ -46,3 +46,9 @@
         = render :partial => 'transfer', :collection => transfers, :locals => {:format => :table}
   - else
     .none No transfers made during this time
+- content_for :page_styles do
+  :plain
+    .none {
+      color: #999;
+      font-size: 14px;
+    }

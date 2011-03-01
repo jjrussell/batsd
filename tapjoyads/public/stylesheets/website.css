@@ -25,6 +25,47 @@ a img {
 .hidden {
   display: none;
 }
+.left-indented {
+  margin-left: 160px;
+}
+.vertical-menu {
+  float: left;
+  width: 150px;
+}
+.vertical-menu ul {
+  padding-left: 0;
+}
+.vertical-menu li {
+  list-style: none;
+}
+.vertical-menu li.with_padding {
+  padding: 5px;
+}
+.vertical-menu li.disabled,
+.vertical-menu a {
+  text-decoration: none;
+  display: block;
+  color: black;
+  padding: 5px;
+}
+.vertical-menu li.inception a {
+  padding-left: 20px;
+  font-size: 12px;
+}
+.vertical-menu a:hover {
+  background: #ccc;
+  background: -webkit-gradient(linear, left top, right bottom, from(#ccc), to(#fff));
+  background: -moz-linear-gradient(left,  #ccc,  #fff);
+}
+.vertical-menu a.selected {
+  background: #337BC8;
+  background: -webkit-gradient(linear, left top, right bottom, from(#337BC8), to(#fff));
+  background: -moz-linear-gradient(left,  #337BC8,  #fff);
+}
+.vertical-menu li.disabled {
+  color: #aaa;
+}
+
 
 h1 span.small, h2 span.small, h3 span.small {
   font-size: 12px;

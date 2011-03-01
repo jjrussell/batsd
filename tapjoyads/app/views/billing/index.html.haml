@@ -1,60 +1,54 @@
 - @page_title = 'Billing'
+= render :partial => 'actions'
 
-.box-full
-  .right
-    = link_to 'Add funds', add_funds_billing_path
-    - if @pending_earnings > 0
-      %br/
-      = link_to 'Transfer funds', transfer_funds_billing_path
-      %br/
-  %h2 Billing Summary
-  .clear
-  .box-summary
-    Current Balance
-    #help_current_balance.help ?
-    .money
-      %span#current_balance= number_to_currency(@current_balance/100.0)
-  .box-summary
-    Pending Earnings
-    #help_pending_earnings.help ?
-    .money
-      %span#pending_earnings= number_to_currency(@pending_earnings/100.0)
-  .box-summary
-    Last Payment
-    #help_last_payment.help ?
-    .money
-      %span= number_to_currency(@last_payment/100.0)
-  .box-summary
-    Last Payout
-    #help_last_payout.help ?
-    .money
-      %span= number_to_currency(@last_payout/100.0)
-  .clear
-  %hr/
+.left-indented
+  .box-full
+    %h2 Billing Summary
+    .box-summary
+      Current Balance
+      #help_current_balance.help ?
+      .money
+        %span#current_balance= number_to_currency(@current_balance/100.0)
+    .box-summary
+      Pending Earnings
+      #help_pending_earnings.help ?
+      .money
+        %span#pending_earnings= number_to_currency(@pending_earnings/100.0)
+    .box-summary
+      Last Payment
+      #help_last_payment.help ?
+      .money
+        %span= number_to_currency(@last_payment/100.0)
+    .box-summary
+      Last Payout
+      #help_last_payout.help ?
+      .money
+        %span= number_to_currency(@last_payout/100.0)
+    %hr/
 
-.box-full
-  - unless @statements.blank?
-    #billing-summary
-      %table
-        %thead
-          %tr
-            %th &nbsp;
-            %th Payment
-            %th Payouts
-            %th Transfers
-        %tbody
-          = render :partial => 'statement', :collection => @statements, :locals => {:format => :table}
-    #details
-      #details_explanation.details
-        Click one of the months on the left to see more details
-      = render :partial => 'statement_details', :collection => @statements, :as => :statement
-  - else
-    .none No statements available
+  .box-full
+    - unless @statements.blank?
+      #billing-summary
+        %table.financial
+          %thead
+            %tr
+              %th &nbsp;
+              %th Payment
+              %th Payouts
+              %th Transfers
+          %tbody
+            = render :partial => 'statement', :collection => @statements, :locals => {:format => :table}
+      #details
+        #details_explanation.details
+          Click one of the months on the left to see more details
+        = render :partial => 'statement_details', :collection => @statements, :as => :statement
+    - else
+      .none No statements available
 
-#buttons
-  = button_to 'Export Monthly Statements', {:method => 'GET', :action => 'export_statements' }
-  = button_to 'Export Payments Statements', {:method => 'GET', :action => 'export_orders' }
-  = button_to 'Export Payouts Statements', {:method => 'GET', :action => 'export_payouts' }
+  #buttons
+    = button_to 'Export Monthly Statements', {:method => 'GET', :action => 'export_statements' }
+    = button_to 'Export Payments Statements', {:method => 'GET', :action => 'export_orders' }
+    = button_to 'Export Payouts Statements', {:method => 'GET', :action => 'export_payouts' }
 
 .hidden
   #help_current_balance_content{:name => 'Current Balance'}
@@ -115,6 +109,9 @@
       float: left;
       padding: 10px 30px 10px 10px;
     }
+    table.financial {
+      font-size: 14px;
+    }
     #billing-summary table {
       border-collapse: collapse;
       margin-bottom: 20px;
@@ -143,7 +140,7 @@
     }
     #details_explanation {
       color: #999;
-      font-size: 20px;
+      font-size: 14px;
       padding-top: 50px;
       text-align: center;
     }

@@ -1,4 +1,4 @@
-#apps_tools
+#apps_tools.vertical-menu
   %ul
     - unless app.nil?
       %li= link_to 'Details', app_path(app), :class => (request.path_parameters['controller'] == 'apps' && !request.path_parameters['action'][/integrate/] ? 'selected' : '')
@@ -34,44 +34,6 @@
 
 - content_for :page_styles do
   :plain
-    #apps_tools {
-      float: left;
-      width: 150px;
-    }
-    #apps_tools ul {
-      padding-left: 0;
-    }
-    #apps_tools li {
-      list-style: none;
-    }
-    #apps_tools li.with_padding {
-      padding: 5px;
-    }
-    #apps_tools li.disabled,
-    #apps_tools a {
-      text-decoration: none;
-      display: block;
-      color: black;
-      padding: 5px;
-    }
-    #apps_tools li.inception a {
-      padding-left: 20px;
-      font-size: 12px;
-    }
-    #apps_tools a:hover {
-      background: #ccc;
-      background: -webkit-gradient(linear, left top, right bottom, from(#ccc), to(#fff));
-      background: -moz-linear-gradient(left,  #ccc,  #fff);
-    }
-    #apps_tools a.selected {
-      background: #337BC8;
-      background: -webkit-gradient(linear, left top, right bottom, from(#337BC8), to(#fff));
-      background: -moz-linear-gradient(left,  #337BC8,  #fff);
-    }
-    #apps_tools li.disabled {
-      color: #aaa;
-    }
     #apps_main {
       margin-left: 160px;
     }
-

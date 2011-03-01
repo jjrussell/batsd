@@ -1,29 +1,31 @@
 - @page_title = 'Order Confirmation'
+= render :partial => 'actions'
 
-%h1 Thank you for your order
+.left-indented
+  %h1 Thank you for your order
 
-%h3 Order Details
+  %h3 Order Details
 
-%table
-  %tr
-    %th.right Date
-    %td= @order.created_at.to_s(:pub_ampm)
-  %tr
-    %th.right Amount
-    %td= number_to_currency(@order.amount / 100.0)
-  %tr
-    %th.right Card Number
-    %td= @receipt_card_number
-  - if @credit_card.valid?
+  %table
     %tr
-      %th.right Name
-      %td= @credit_card.name
+      %th.right Date
+      %td= @order.created_at.to_s(:pub_ampm)
     %tr
-      %th.right Card Type
-      %td= @credit_card.type.humanize
+      %th.right Amount
+      %td= number_to_currency(@order.amount / 100.0)
     %tr
-      %th.right Card Expiration
-      %td= @credit_card.expiry_date.expiration.to_date.to_s(:my)
+      %th.right Card Number
+      %td= @receipt_card_number
+    - if @credit_card.valid?
+      %tr
+        %th.right Name
+        %td= @credit_card.name
+      %tr
+        %th.right Card Type
+        %td= @credit_card.type.humanize
+      %tr
+        %th.right Card Expiration
+        %td= @credit_card.expiry_date.expiration.to_date.to_s(:my)
 
 - content_for :page_styles do
   :plain

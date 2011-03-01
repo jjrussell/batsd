@@ -2,6 +2,7 @@ class BillingController < WebsiteController
   layout 'tabbed'
 
   filter_access_to :all
+  before_filter :get_selected_option
   before_filter :get_statements, :only => [:index, :export_statements, :export_orders, :export_payouts]
   after_filter :save_activity_logs, :only => [ :create_order, :create_transfer ]
 
@@ -170,10 +171,23 @@ private
 
     @statements = @statements.sort { |a, b| a[0] <=> b[0] }
   end
-  
+
   def setup_export_headers(filename)
     response.headers['Content-Type'] = "text/csv"
     response.headers['Content-Disposition'] = "attachment; filename=#{filename}.csv"
   end
 
+  def get_selected_option
+    @selected_state = {}
+    case action_name
+    when 'index'
+      @selected_state[:index] = 'selected'
+    when /add_funds|create_order/
+      @selected_state[:add_funds] = 'selected'
+    when 'transfer_funds'
+      @selected_state[:transfer_funds] = 'selected'
+    when 'payment_info'
+      @selected_state[:payment_info] = 'selected'
+    end
+  end
 end
