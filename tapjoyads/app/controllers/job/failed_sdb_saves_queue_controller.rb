@@ -3,7 +3,6 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
   def initialize
     super QueueNames::FAILED_SDB_SAVES
     @bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
-    @raise_on_error = false
   end
   
 private
