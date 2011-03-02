@@ -21,7 +21,7 @@ class SdkController < WebsiteController
       when 'iphone-vg'
         IPHONE_VG_SDK
       else
-        :index
+        sdk_index_path
       end
       redirect_to target
   end

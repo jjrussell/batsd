@@ -14,7 +14,7 @@ class StatuszController < ApplicationController
     send_money_txn_queue = Sqs.queue(QueueNames::SEND_MONEY_TXN)
     
     result = "success"
-    if app_stats_queue.size > 1000 || conversion_tracking_queue.size > 1000 || failed_sdb_saves_queue.size > 50000 || send_money_txn_queue.size > 1000
+    if app_stats_queue.size > 1000 || conversion_tracking_queue.size > 1000 || failed_sdb_saves_queue.size > 5000 || send_money_txn_queue.size > 1000
       result = "too long"
     end
     

@@ -15,14 +15,11 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     
     now = Time.zone.now
     start_time = offer.is_free? ? (now.beginning_of_hour - 1.hour) : (now.beginning_of_hour - 1.day)
-    appstats = Appstats.new(offer.id, { :start_time => start_time, :end_time => now, :stat_types => %w(paid_clicks paid_installs) })
+    appstats = Appstats.new(offer.id, { :start_time => start_time, :end_time => now, :stat_types => %w(paid_clicks paid_installs jailbroken_installs) })
     cvr_timeframe = appstats.end_time - appstats.start_time
     
     recent_clicks = appstats.stats['paid_clicks'].sum.to_f
-    recent_installs = appstats.stats['paid_installs'].sum.to_f
-    if appstats.stats['jailbroken_installs'].present?
-      recent_installs += appstats.stats['jailbroken_installs'].sum.to_f
-    end
+    recent_installs = appstats.stats['paid_installs'].sum.to_f + appstats.stats['jailbroken_installs'].sum.to_f
     
     if recent_clicks == 0
       conversion_rate = offer.is_paid? ? 0.3 : 0.75

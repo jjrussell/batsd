@@ -31,7 +31,8 @@ class GetOffersController < ApplicationController
             :source            => 'featured',
             :app_version       => params[:app_version],
             :viewed_at         => @now,
-            :exp               => params[:exp])
+            :exp               => params[:exp],
+            :country_code      => @geoip_data[:country])
         return
       end
       @message = "You have already installed #{featured_offer.name}. You can still complete " +
