@@ -32,42 +32,41 @@ class WebRequest < SimpledbResource
   self.sdb_attr :transaction_id
   
   PATH_TO_STAT_MAP = {
-    'connect'                        => 'logins',
-    'new_user'                       => 'new_users',
-    'adshown'                        => 'hourly_impressions',
-    'offer_click'                    => 'paid_clicks',
-    'featured_offer_click'           => 'paid_clicks',
-    'conversion'                     => 'paid_installs',
-    'conversion_jailbroken'          => 'jailbroken_installs',
-    'featured_conversion'            => 'paid_installs',
-    'featured_conversion_jailbroken' => 'jailbroken_installs',
-    'daily_user'                     => 'daily_active_users',
-    'monthly_user'                   => 'monthly_active_users',
-    'purchased_vg'                   => 'vg_purchases',
-    'get_vg_items'                   => 'vg_store_views',
-    'offers'                         => 'offerwall_views',
-    'featured_offer_requested'       => 'featured_offers_requested',
-    'featured_offer_shown'           => 'featured_offers_shown',
+    'connect'                  => [ { :stat => 'logins',                    :attr => :app_id } ],
+    'new_user'                 => [ { :stat => 'new_users',                 :attr => :app_id } ],
+    'daily_user'               => [ { :stat => 'daily_active_users',        :attr => :app_id } ],
+    'monthly_user'             => [ { :stat => 'monthly_active_users',      :attr => :app_id } ],
+    'adshown'                  => [ { :stat => 'hourly_impressions',        :attr => :app_id } ],
+    'purchased_vg'             => [ { :stat => 'vg_purchases',              :attr => :app_id } ],
+    'get_vg_items'             => [ { :stat => 'vg_store_views',            :attr => :app_id } ],
+    'offers'                   => [ { :stat => 'offerwall_views',           :attr => :app_id } ],
+    'featured_offer_requested' => [ { :stat => 'featured_offers_requested', :attr => :app_id } ],
+    'featured_offer_shown'     => [ { :stat => 'featured_offers_shown',     :attr => :app_id } ],
+    'display_ad_requested'     => [ { :stat => 'display_ads_requested',     :attr => :displayer_app_id } ],
+    'display_ad_shown'         => [ { :stat => 'display_ads_shown',         :attr => :displayer_app_id } ],
+    'offer_click'              => [ { :stat => 'display_clicks',            :attr => :displayer_app_id },
+                                    { :stat => 'offers_opened',             :attr => :publisher_app_id },
+                                    { :stat => 'paid_clicks',               :attr => :offer_id } ],
+    'featured_offer_click'     => [ { :stat => 'featured_offers_opened',    :attr => :publisher_app_id },
+                                    { :stat => 'paid_clicks',               :attr => :offer_id } ],
   }
-  
-  # Params that should use the offer_id, rather than the app_id for stat tracking.
-  USE_OFFER_ID = Set.new([ 'offer_click', 'featured_offer_click', 'conversion', 'conversion_jailbroken', 'featured_conversion', 'featured_conversion_jailbroken' ])
-  
-  PUBLISHER_PATH_TO_STAT_MAP = {
-    'offer_click'                    => 'offers_opened',
-    'featured_offer_click'           => 'featured_offers_opened',
-    'conversion'                     => 'published_installs',
-    'conversion_jailbroken'          => 'published_installs',
-    'featured_conversion'            => 'featured_published_offers',
-    'featured_conversion_jailbroken' => 'featured_published_offers',
-  }
-  
-  DISPLAYER_PATH_TO_STAT_MAP = {
-    'display_ad_requested'   => 'display_ads_requested',
-    'display_ad_shown'       => 'display_ads_shown',
-    'offer_click'            => 'display_clicks',
-    'conversion'             => 'display_conversions',
-    'conversion_jailbroken'  => 'display_conversions'
+  STAT_TO_PATH_MAP = {
+    'logins'                    => { :paths => [ 'connect' ],                             :attr_name => 'app_id' },
+    'new_users'                 => { :paths => [ 'new_user' ],                            :attr_name => 'app_id' },
+    'daily_active_users'        => { :paths => [ 'daily_user' ],                          :attr_name => 'app_id' },
+    'monthly_active_users'      => { :paths => [ 'monthly_user' ],                        :attr_name => 'app_id' },
+    'hourly_impressions'        => { :paths => [ 'adshown' ],                             :attr_name => 'app_id' },
+    'vg_purchases'              => { :paths => [ 'purchased_vg' ],                        :attr_name => 'app_id' },
+    'vg_store_views'            => { :paths => [ 'get_vg_items' ],                        :attr_name => 'app_id' },
+    'offerwall_views'           => { :paths => [ 'offers' ],                              :attr_name => 'app_id' },
+    'featured_offers_requested' => { :paths => [ 'featured_offer_requested' ],            :attr_name => 'app_id' },
+    'featured_offers_shown'     => { :paths => [ 'featured_offer_shown' ],                :attr_name => 'app_id' },
+    'display_ads_requested'     => { :paths => [ 'display_ad_requested' ],                :attr_name => 'displayer_app_id' },
+    'display_ads_shown'         => { :paths => [ 'display_ad_shown' ],                    :attr_name => 'displayer_app_id' },
+    'display_clicks'            => { :paths => [ 'offer_click' ],                         :attr_name => 'displayer_app_id' },
+    'offers_opened'             => { :paths => [ 'offer_click' ],                         :attr_name => 'publisher_app_id' },
+    'featured_offers_opened'    => { :paths => [ 'featured_offer_click' ],                :attr_name => 'publisher_app_id' },
+    'paid_clicks'               => { :paths => [ 'offer_click', 'featured_offer_click' ], :attr_name => 'offer_id' },
   }
   
   @@bad_domains = {}
@@ -146,39 +145,7 @@ class WebRequest < SimpledbResource
     self.time = @now unless self.time?
     super({:write_to_memcache => false}.merge(options))
     
-    get('path', {:force_array => true}).each do |path|
-      stat_name = PATH_TO_STAT_MAP[path]
-      
-      if stat_name.present?
-        app_id = self.app_id
-        if USE_OFFER_ID.include?(path)
-          app_id = self.offer_id
-        end
-        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
-      end
-      
-      if stat_name == 'paid_installs'
-        stat_name = [ 'countries', "paid_installs.#{self.country || 'other'}" ]
-        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
-      end
-      
-      stat_name = PUBLISHER_PATH_TO_STAT_MAP[path]
-      if stat_name.present?
-        app_id = self.publisher_app_id
-        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
-      end
-      
-      stat_name = DISPLAYER_PATH_TO_STAT_MAP[path]
-      app_id = self.displayer_app_id
-      if stat_name.present? && app_id.present?
-        Mc.increment_count(Stats.get_memcache_count_key(stat_name, app_id, self.time), false, 1.day)
-      end
-
-      if path == 'purchased_vg'
-        stat_name = ['virtual_goods', self.virtual_good_id]
-        Mc.increment_count(Stats.get_memcache_count_key(stat_name, self.app_id, self.time), false, 1.day)
-      end
-    end
+    update_realtime_stats
   end
   
   ##
@@ -218,4 +185,26 @@ class WebRequest < SimpledbResource
     
     return count
   end
+  
+private
+  
+  def update_realtime_stats
+    path.each do |p|
+      stat_definitions = PATH_TO_STAT_MAP[p] || []
+      
+      stat_definitions.each do |stat_definition|
+        attr_value = send(stat_definition[:attr])
+        if attr_value.present?
+          mc_key = Stats.get_memcache_count_key(stat_definition[:stat], attr_value, time)
+          Mc.increment_count(mc_key, false, 1.day)
+        end
+      end
+      
+      if p == 'purchased_vg'
+        mc_key = Stats.get_memcache_count_key([ 'virtual_goods', virtual_good_id ], app_id, time)
+        Mc.increment_count(mc_key, false, 1.day)
+      end
+    end
+  end
+  
 end

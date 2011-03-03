@@ -29,7 +29,7 @@ private
       start_time = now - 30.days
     end
     
-    Offer.find_each(:conditions => "stats_aggregation_interval = 3600") do |offer|
+    Offer.find_each(:conditions => "active = true") do |offer|
       appstats = Appstats.new(offer.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity }).stats
       conversions = appstats['paid_installs'].sum
       published_offers = appstats['rewards'].sum

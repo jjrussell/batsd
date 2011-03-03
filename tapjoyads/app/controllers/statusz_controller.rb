@@ -8,13 +8,18 @@ class StatuszController < ApplicationController
   end
   
   def queue_check
-    app_stats_queue = Sqs.queue(QueueNames::APP_STATS)
+    hourly_app_stats_queue = Sqs.queue(QueueNames::APP_STATS_HOURLY)
+    daily_app_stats_queue = Sqs.queue(QueueNames::APP_STATS_DAILY)
     conversion_tracking_queue = Sqs.queue(QueueNames::CONVERSION_TRACKING)
     failed_sdb_saves_queue = Sqs.queue(QueueNames::FAILED_SDB_SAVES)
     send_money_txn_queue = Sqs.queue(QueueNames::SEND_MONEY_TXN)
     
     result = "success"
-    if app_stats_queue.size > 1000 || conversion_tracking_queue.size > 1000 || failed_sdb_saves_queue.size > 5000 || send_money_txn_queue.size > 1000
+    if hourly_app_stats_queue.size > 1000 ||
+       daily_app_stats_queue.size > 1000 ||
+       conversion_tracking_queue.size > 1000 ||
+       failed_sdb_saves_queue.size > 5000 ||
+       send_money_txn_queue.size > 1000
       result = "too long"
     end
     

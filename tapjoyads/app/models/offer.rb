@@ -28,6 +28,9 @@ class Offer < ActiveRecord::Base
   DEFAULT_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
+  DAILY_STATS_START_HOUR = 6
+  DAILY_STATS_RANGE = 6
+  
   attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :offer_list_length
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
@@ -107,13 +110,28 @@ class Offer < ActiveRecord::Base
   named_scope :featured, :conditions => { :featured => true }
   named_scope :nonfeatured, :conditions => { :featured => false }
   named_scope :visible, :conditions => { :hidden => false }
-  named_scope :to_aggregate_stats, lambda { { :conditions => ["next_stats_aggregation_time < ?", Time.zone.now], :order => "next_stats_aggregation_time ASC" } }
+  named_scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ] } }
+  named_scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ] } }
   
-  def self.redistribute_stats_aggregation(range = 1.hour)
+  def self.redistribute_hourly_stats_aggregation
     Benchmark.realtime do
       now = Time.zone.now + 15.minutes
       Offer.find_each do |o|
-        o.next_stats_aggregation_time = now + rand(range)
+        o.next_stats_aggregation_time = now + rand(1.hour)
+        o.save(false)
+      end
+    end
+  end
+  
+  def self.redistribute_daily_stats_aggregation
+    Benchmark.realtime do
+      now = Time.zone.now + 15.minutes
+      Offer.find_each do |o|
+        if now.hour >= DAILY_STATS_START_HOUR && now.hour < (DAILY_STATS_START_HOUR + DAILY_STATS_RANGE)
+          o.next_daily_stats_aggregation_time = now + rand(DAILY_STATS_RANGE.hours)
+        else
+          o.next_daily_stats_aggregation_time = (now - DAILY_STATS_START_HOUR.hours + 1.day).beginning_of_day + DAILY_STATS_START_HOUR.hours + rand(DAILY_STATS_RANGE.hours)
+        end
         o.save(false)
       end
     end
@@ -731,8 +749,9 @@ private
   end
   
   def set_stats_aggregation_times
-    self.next_stats_aggregation_time = Time.zone.now if next_stats_aggregation_time.blank?
-    self.stats_aggregation_interval = 3600 if stats_aggregation_interval.blank?
+    now = Time.zone.now
+    self.next_stats_aggregation_time = now if next_stats_aggregation_time.blank?
+    self.next_daily_stats_aggregation_time = (now + 1.day).beginning_of_day + DAILY_STATS_START_HOUR.hours + rand(DAILY_STATS_RANGE.hours) if next_daily_stats_aggregation_time.blank?
   end
   
   def recalculate_estimated_percentile
