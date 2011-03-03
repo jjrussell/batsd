@@ -43,7 +43,7 @@ class BillingController < WebsiteController
     @credit_card = ActiveMerchant::Billing::CreditCardWithAmount.new
     begin
       @payment_profiles = Billing.get_payment_profiles_for_select(current_user)
-    rescue ActiveMerchant::ConnectionError => e
+    rescue Exception => e
       flash.now[:error] = 'An error occurred retrieving your saved credit card information. Please reload the page to try again.'
       @payment_profiles = [ [ 'New Card', 'new_card' ] ]
     end
@@ -56,7 +56,7 @@ class BillingController < WebsiteController
     @credit_card = ActiveMerchant::Billing::CreditCardWithAmount.new(cc_params)
     begin
       @payment_profiles = Billing.get_payment_profiles_for_select(current_user)
-    rescue ActiveMerchant::ConnectionError => e
+    rescue Exception => e
       if params[:payment_profile] == 'new_card'
         @payment_profiles = [ [ 'New Card', 'new_card' ] ]
       else
@@ -77,7 +77,7 @@ class BillingController < WebsiteController
           response = Billing.charge_payment_profile(current_user, params[:payment_profile], @credit_card.amount, current_partner.id)
           @receipt_card_number = @payment_profiles.find { |pp| pp[1] == params[:payment_profile] }[0]
         end
-      rescue ActiveMerchant::ConnectionError => e
+      rescue Exception => e
         flash.now[:error] = 'Unable to charge card. Please try your transaction again.'
         render :action => :add_funds and return
       end
