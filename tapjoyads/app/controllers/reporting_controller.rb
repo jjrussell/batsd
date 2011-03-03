@@ -382,8 +382,9 @@ private
 
   def spend_partitions
     return @spend_partitions if defined?(@spend_partitions)
-    is_partitions = {}
-    pi_partitions = {}
+    @spend_partitions = {}
+    @spend_partitions[:installs_spend] = {}
+    @spend_partitions[:paid_installs] = {}
 
     keys = @appstats.stats['countries'].keys.sort
 
@@ -391,58 +392,50 @@ private
 
       key_parts = key.split('.')
       key_parts[1] == 'other' ? country = 'Other' : country = Stats::COUNTRY_CODES[key_parts[1]]
+      partitions_key = key_parts[0].to_sym
+      raise "Unknown attribute #{partitions_key}" unless [:installs_spend, :paid_installs].include? partitions_key
       parts = @appstats.stats['countries'][key]
+      @spend_partitions[partitions_key]
 
-      if key_parts[0] == 'installs_spend'
-        is_partitions[country] ||= {}
-        is_partitions[country][:yMax] = 200
-        is_partitions[country][:names] ||= []
-        is_partitions[country][:data] ||= []
-        is_partitions[country][:stringData] ||= []
-        is_partitions[country][:totals] ||= []
+      @spend_partitions[partitions_key][country] ||= {}
+      @spend_partitions[partitions_key][country][:yMax] = 200
+      @spend_partitions[partitions_key][country][:names] ||= []
+      @spend_partitions[partitions_key][country][:data] ||= []
+      @spend_partitions[partitions_key][country][:totals] ||= []
 
-        is_partitions[country][:names] << "#{key_parts[0].titleize}"
-        is_partitions[country][:data] << parts.map { |i| i / -100.0 }
-        is_partitions[country][:stringData] << parts.map { |i| number_to_currency(i / -100.0) }
-        is_partitions[country][:totals] << (parts.compact.last.ordinalize rescue '-')
+      @spend_partitions[partitions_key][country][:names] << "#{key_parts[0].titleize}"
+      @spend_partitions[partitions_key][country][:totals] << (parts.compact.last.ordinalize rescue '-')
 
-      elsif key_parts[0] == 'paid_installs'
-        pi_partitions[country] ||= {}
-        pi_partitions[country][:yMax] = 200
-        pi_partitions[country][:names] ||= []
-        pi_partitions[country][:data] ||= []
-        pi_partitions[country][:totals] ||= []
+      if partitions_key == :installs_spend
+        @spend_partitions[partitions_key][country][:stringData] ||= []
 
-        pi_partitions[country][:names] << "#{key_parts[0].titleize}"
-        pi_partitions[country][:data] << parts
-        pi_partitions[country][:totals] << (parts.compact.last.ordinalize rescue '-')
-
-      else
-        raise "Unkown attribute #{key_parts[0]}"
-
+        @spend_partitions[partitions_key][country][:data] << parts.map { |i| i / -100.0 }
+        @spend_partitions[partitions_key][country][:stringData] << parts.map { |i| number_to_currency(i / -100.0) }
+      elsif partitions_key == :paid_installs
+        @spend_partitions[partitions_key][country][:data] << parts
       end
-
     end
 
-    @spend_partitions = {:installs_spend => is_partitions, :paid_installs => pi_partitions}
+    @spend_partitions
   end
 
   def installs_spend_partitions
     return @installs_spend_partitions if defined?(@installs_spend_partitions)
-    @installs_spend_partitions = []
-    spend_partition_names.each do |name|
-      @installs_spend_partitions << spend_partitions[:installs_spend][name]
-    end
-    @installs_spend_partitions
+    @installs_spend_partitions = get_spend_partition(:installs_spend)
   end
 
   def paid_installs_partitions
     return @paid_installs_partitions if defined?(@paid_installs_partitions)
-    @paid_installs_partitions = []
+    @paid_installs_partitions = get_spend_partition(:paid_installs)
+  end
+
+  def get_spend_partition(key)
+    return nil if spend_partition_names.empty?
+    partitions = []
     spend_partition_names.each do |name|
-      @paid_installs_partitions << spend_partitions[:paid_installs][name]
+      partitions << spend_partitions[key][name] unless spend_partitions[key][name].nil?
     end
-    @paid_installs_partitions
+    partitions.empty? ? nil : partitions
   end
 
   def spend_partition_names

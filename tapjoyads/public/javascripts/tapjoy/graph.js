@@ -110,7 +110,6 @@ Tapjoy.Graph = {
           });
         }
       }
-
       if (obj.partition_right && obj.right) {
         if (!obj.original_right) {
           obj.original_right = Tapjoy.Graph.clone(obj.right);
@@ -143,7 +142,7 @@ Tapjoy.Graph = {
       legendKeys = legendKeys.concat(obj['right']['names']);
     }
 
-    //try {
+    try {
       var g = new RGraph.Line(id + '_graph');
       g.original_data = obj['main']['data'];
       RGraph.Clear(g.canvas); 
@@ -214,10 +213,10 @@ Tapjoy.Graph = {
 
         tooltipNode.html(Tapjoy.Graph.getTooltipHtml(obj, activeId));
       });
-    //} catch(e) {
-      //$('#' + id + ' .error').html('Error drawing chart');
-      //$('#' + id + '_graph').hide();
-    //}
+    } catch(e) {
+      $('#' + id + ' .error').html('Error drawing chart');
+      $('#' + id + '_graph').hide();
+    }
   },
 
   getTooltipHtml: function(obj, idx) {
