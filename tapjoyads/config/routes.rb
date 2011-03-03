@@ -105,9 +105,10 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'privacy.html', :controller => 'homepage', :action => 'privacy'
   map.connect 'press', :controller => 'homepage/press', :action => 'index'
   map.connect 'press/:id', :controller => 'homepage/press', :action => 'show'
+  map.connect 'glu', :controller => 'homepage/press', :action => 'glu'
   map.resources :sdk, :only => [ :index, :show ]
   map.resources :opt_outs, :only => :create
-  
+
   # Route old login page to new login page.
   map.connect 'Connect/Publish/Default.aspx', :controller => :user_sessions, :action => :new
   
