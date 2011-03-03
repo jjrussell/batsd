@@ -33,21 +33,16 @@ private
       raise "Click #{click.key} missing reward key!"
     end
     
-    wr_path = 'conversion'
     offer = Offer.find_in_cache(click.offer_id, true)
     device = Device.new(:key => click.udid)
     if device.is_jailbroken && offer.is_paid? && offer.item_type == 'App' && click.type == 'install'
       click.tapjoy_amount += click.advertiser_amount
       click.advertiser_amount = 0
       click.type += '_jailbroken'
-      wr_path += '_jailbroken'
       Notifier.alert_new_relic(JailbrokenInstall, "Device: #{click.udid} is jailbroken and installed a paid app: #{click.advertiser_app_id}, for click: #{click.key}", request, params)
     end
     
-    if click.source == 'featured'
-      click.type = 'featured_' + click.type
-      wr_path = 'featured_' + wr_path
-    end
+    click.type = "featured_#{click.type}" if click.source == 'featured'
     
     reward = Reward.new(:key => click.reward_key)
     reward.put('created', installed_at_epoch)
@@ -78,22 +73,6 @@ private
     
     click.put('installed_at', installed_at_epoch)
     click.serial_save
-    
-    web_request = WebRequest.new
-    web_request.add_path(wr_path)
-    web_request.put('time', installed_at_epoch)
-    web_request.udid              = click.udid
-    web_request.advertiser_app_id = click.advertiser_app_id
-    web_request.publisher_app_id  = click.publisher_app_id
-    web_request.displayer_app_id  = click.displayer_app_id
-    web_request.offer_id          = click.offer_id
-    web_request.currency_id       = currency.id
-    web_request.publisher_user_id = click.publisher_user_id
-    web_request.source            = click.source
-    web_request.exp               = click.exp
-    web_request.viewed_at         = click.viewed_at
-    web_request.country           = click.country
-    web_request.serial_save
     
     message = reward.serialize(:attributes_only => true)
     

@@ -9,21 +9,16 @@ class Stats < SimpledbResource
   
   attr_reader :parsed_values, :parsed_ranks, :parsed_virtual_goods, :parsed_countries
 
-  STAT_TYPES = ['logins', 'hourly_impressions', 'paid_installs', 
-      'installs_spend', 'paid_clicks', 'new_users', 'ratings', 'offers',
-      'offers_revenue', 'installs_revenue', 'published_installs',
-      'featured_offers_requested', 'featured_offers_shown', 'featured_offers_opened', 
-      'featured_revenue', 'featured_published_offers',
-      'offers_opened', 'daily_active_users', 'monthly_active_users', 
-      'vg_purchases', 'vg_store_views', 'offerwall_views',
-      'display_ads_requested', 'display_ads_shown', 'display_clicks', 'display_conversions',
-      'display_revenue', 'jailbroken_installs', 'ranks', 'virtual_goods', 'countries']
+  CONVERSION_STATS  = Conversion::STAT_TO_REWARD_TYPE_MAP.keys
+  WEB_REQUEST_STATS = WebRequest::STAT_TO_PATH_MAP.keys
+  SPECIAL_STATS     = [ 'ranks', 'virtual_goods', 'countries' ]
+  STAT_TYPES        = CONVERSION_STATS + WEB_REQUEST_STATS + SPECIAL_STATS
 
-  TOP_COUNTRIES = ['US', 'AR', 'AU', 'BE', 'BR', 'CA', 'CL', 'CN', 'CO', 'CR', 'HR', 'CZ', 'DK',
-      'DE', 'SV', 'ES', 'FI', 'FR', 'GR', 'GT', 'HK', 'HU', 'IN', 'ID', 'IE', 'IL', 'IT', 'JP',
-      'KR', 'KW', 'LB', 'LU', 'MY', 'MX', 'NL', 'NZ', 'NO', 'AT', 'PK', 'PA', 'PE', 'PH', 'PL',
-      'PT', 'QA', 'RO', 'RU', 'SA', 'CH', 'SG', 'SK', 'SI', 'ZA', 'LK', 'SE', 'TW', 'TH', 'TR',
-      'AE', 'UK', 'VE', 'VN']
+  TOP_COUNTRIES = Set.new([ 'US', 'AR', 'AU', 'BE', 'BR', 'CA', 'CL', 'CN', 'CO', 'CR', 'HR',
+          'CZ', 'DK', 'DE', 'SV', 'ES', 'FI', 'FR', 'GR', 'GT', 'HK', 'HU', 'IN', 'ID', 'IE',
+          'IL', 'IT', 'JP', 'KR', 'KW', 'LB', 'LU', 'MY', 'MX', 'NL', 'NZ', 'NO', 'AT', 'PK',
+          'PA', 'PE', 'PH', 'PL', 'PT', 'QA', 'RO', 'RU', 'SA', 'CH', 'SG', 'SK', 'SI', 'ZA',
+          'LK', 'SE', 'TW', 'TH', 'TR', 'AE', 'UK', 'VE', 'VN' ])
 
   def after_initialize
     @parsed_values = values

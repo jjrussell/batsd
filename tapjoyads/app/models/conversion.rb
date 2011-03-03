@@ -30,6 +30,20 @@ class Conversion < ActiveRecord::Base
     'featured_action'             => 2005,
   }
   
+  STAT_TO_REWARD_TYPE_MAP = {
+    'offers'                    => { :reward_ids => [ 0, 2, 3, 5 ],                                  :attr_name => 'publisher_app_id' },
+    'published_installs'        => { :reward_ids => [ 1, 4 ],                                        :attr_name => 'publisher_app_id' },
+    'display_conversions'       => { :reward_ids => [ 1000, 1001, 1002, 1003, 1004, 1005 ],          :attr_name => 'publisher_app_id' },
+    'featured_published_offers' => { :reward_ids => [ 2000, 2001, 2002, 2003, 2004, 2005 ],          :attr_name => 'publisher_app_id' },
+    'paid_installs'             => { :reward_ids => [ 0, 1, 2, 3, 5, 2000, 2001, 2002, 2003, 2005 ], :attr_name => 'advertiser_offer_id' },
+    'jailbroken_installs'       => { :reward_ids => [ 4, 2004 ],                                     :attr_name => 'advertiser_offer_id' },
+    'offers_revenue'            => { :reward_ids => [ 0, 2, 3, 5 ],                                  :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
+    'installs_revenue'          => { :reward_ids => [ 1, 4 ],                                        :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
+    'display_revenue'           => { :reward_ids => [ 1000, 1001, 1002, 1003, 1004, 1005 ],          :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
+    'featured_revenue'          => { :reward_ids => [ 2000, 2001, 2002, 2003, 2004, 2005 ],          :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
+    'installs_spend'            => { :reward_ids => [ 0, 1, 2, 3, 5, 2000, 2001, 2002, 2003, 2005 ], :attr_name => 'advertiser_offer_id', :sum_attr => :advertiser_amount },
+  }
+  
   belongs_to :publisher_app, :class_name => 'App'
   belongs_to :advertiser_offer, :class_name => 'Offer'
   
@@ -39,10 +53,43 @@ class Conversion < ActiveRecord::Base
   validates_inclusion_of :reward_type, :in => REWARD_TYPES.values
   
   before_save :sanitize_reward_id
-  after_create :update_publisher_amount, :update_advertiser_amount
+  after_create :update_publisher_amount, :update_advertiser_amount, :update_realtime_stats
   
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at >= ?", date ] } }
   named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
+  
+  def self.get_stat_definitions(reward_type)
+    case reward_type
+    when 0, 2, 3, 5
+      [ { :stat => 'offers',         :attr => :publisher_app_id },
+        { :stat => 'paid_installs',  :attr => :advertiser_offer_id },
+        { :stat => 'offers_revenue', :attr => :publisher_app_id,    :increment => :publisher_amount },
+        { :stat => 'installs_spend', :attr => :advertiser_offer_id, :increment => :advertiser_amount } ]
+    when 1
+      [ { :stat => 'published_installs', :attr => :publisher_app_id },
+        { :stat => 'paid_installs',      :attr => :advertiser_offer_id },
+        { :stat => 'installs_revenue',   :attr => :publisher_app_id,    :increment => :publisher_amount },
+        { :stat => 'installs_spend',     :attr => :advertiser_offer_id, :increment => :advertiser_amount } ]
+    when 4
+      [ { :stat => 'jailbroken_installs', :attr => :advertiser_offer_id },
+        { :stat => 'published_installs',  :attr => :publisher_app_id },
+        { :stat => 'installs_revenue',    :attr => :publisher_app_id, :increment => :publisher_amount } ]
+    when 1000, 1001, 1002, 1003, 1004, 1005
+      [ { :stat => 'display_conversions', :attr => :publisher_app_id },
+        { :stat => 'display_revenue',     :attr => :publisher_app_id, :increment => :publisher_amount } ]
+    when 2000, 2001, 2002, 2003, 2005
+      [ { :stat => 'featured_published_offers', :attr => :publisher_app_id },
+        { :stat => 'paid_installs',             :attr => :advertiser_offer_id },
+        { :stat => 'featured_revenue',          :attr => :publisher_app_id,    :increment => :publisher_amount },
+        { :stat => 'installs_spend',            :attr => :advertiser_offer_id, :increment => :advertiser_amount } ]
+    when 2004
+      [ { :stat => 'jailbroken_installs',       :attr => :advertiser_offer_id },
+        { :stat => 'featured_published_offers', :attr => :publisher_app_id },
+        { :stat => 'featured_revenue',          :attr => :publisher_app_id, :increment => :publisher_amount } ]
+    else
+      []
+    end
+  end
   
   def self.archive_cutoff_time
     Time.zone.now.beginning_of_month.last_month
@@ -101,7 +148,7 @@ class Conversion < ActiveRecord::Base
   def reward_type_string=(string)
     type = REWARD_TYPES[string]
     raise "Unkown reward type: #{string}" if type.nil?
-    write_attribute(:reward_type, type)
+    self.reward_type = type
   end
   
   def reward_type_string_for_displayer=(string)
@@ -120,6 +167,25 @@ private
     return true if advertiser_amount == 0 || advertiser_offer.nil?
     p_id = advertiser_offer.partner_id
     Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET balance = (balance + #{advertiser_amount}) WHERE id = '#{p_id}'")
+  end
+  
+  def update_realtime_stats
+    Conversion.get_stat_definitions(reward_type).each do |stat_definition|
+      stat_name  = stat_definition[:stat]
+      attr_value = send(stat_definition[:attr])
+      count_inc  = stat_definition[:increment].present? ? send(stat_definition[:increment]) : 1
+      
+      if attr_value.present?
+        mc_key = Stats.get_memcache_count_key(stat_name, attr_value, created_at)
+        Mc.increment_count(mc_key, false, 1.day, count_inc)
+        
+        if stat_name == 'paid_installs' || stat_name == 'installs_spend'
+          stat_path = [ 'countries', (Stats::TOP_COUNTRIES.include?(country) ? "#{stat_name}.#{country}" : "#{stat_name}.other") ]
+          mc_key = Stats.get_memcache_count_key(stat_path, attr_value, created_at)
+          Mc.increment_count(mc_key, false, 1.day, count_inc)
+        end
+      end
+    end
   end
   
   def sanitize_reward_id

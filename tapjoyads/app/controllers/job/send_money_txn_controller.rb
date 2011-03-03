@@ -18,39 +18,38 @@ private
     end
     
     conversion = Conversion.new do |c|
-      c.id = reward.key
-      c.reward_id = reward.key
+      c.id                  = reward.key
+      c.reward_id           = reward.key
       c.advertiser_offer_id = reward.offer_id
-      c.publisher_app_id = reward.publisher_app_id
-      c.advertiser_amount = reward.advertiser_amount
-      c.publisher_amount = reward.publisher_amount
-      c.tapjoy_amount = reward.tapjoy_amount
-      c.reward_type_string = reward.type
-      c.created_at = reward.created
-      c.country = reward.country
+      c.publisher_app_id    = reward.publisher_app_id
+      c.advertiser_amount   = reward.advertiser_amount
+      c.publisher_amount    = reward.publisher_amount
+      c.tapjoy_amount       = reward.tapjoy_amount
+      c.reward_type_string  = reward.type
+      c.created_at          = reward.created
+      c.country             = reward.country
     end
     save_conversion(conversion)
     
-    if reward.displayer_app_id.present? && reward.displayer_amount > 0 # TO REMOVE: second part of 'if' condition after 2011-02-03
+    if reward.displayer_app_id.present?
       conversion = Conversion.new do |c|
-        c.id = reward.reward_key_2
-        c.reward_id = reward.key
-        c.advertiser_offer_id = reward.offer_id
-        c.publisher_app_id = reward.displayer_app_id
-        c.advertiser_amount = 0
-        c.publisher_amount = reward.displayer_amount
-        c.tapjoy_amount = 0
+        c.id                               = reward.reward_key_2
+        c.reward_id                        = reward.key
+        c.advertiser_offer_id              = reward.offer_id
+        c.publisher_app_id                 = reward.displayer_app_id
+        c.advertiser_amount                = 0
+        c.publisher_amount                 = reward.displayer_amount
+        c.tapjoy_amount                    = 0
         c.reward_type_string_for_displayer = reward.type
-        c.created_at = reward.created
-        c.country = reward.country
+        c.created_at                       = reward.created
+        c.country                          = reward.country
       end
       save_conversion(conversion)
     end
     
     reward.sent_money_txn = Time.zone.now
     begin
-      reward.serial_save(:catch_exceptions => false, :expected_attr => {'sent_money_txn' => nil})
-      reward.update_counters
+      reward.serial_save(:catch_exceptions => false, :expected_attr => { 'sent_money_txn' => nil })
     rescue Simpledb::ExpectedAttributeError => e
       # Do nothing
     end
