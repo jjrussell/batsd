@@ -110,7 +110,6 @@ Tapjoy.Graph = {
           });
         }
       }
-
       if (obj.partition_right && obj.right) {
         if (!obj.original_right) {
           obj.original_right = Tapjoy.Graph.clone(obj.right);
