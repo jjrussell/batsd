@@ -254,7 +254,7 @@ ActiveRecord::Schema.define(:version => 20110228222237) do
     t.string   "direct_pay"
     t.boolean  "low_balance",                                                                   :default => false, :null => false
     t.integer  "min_bid_override"
-    t.time     "next_daily_stats_aggregation_time"
+    t.datetime "next_daily_stats_aggregation_time"
     t.boolean  "active",                                                                        :default => false
   end
 

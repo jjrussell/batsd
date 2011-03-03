@@ -1,6 +1,6 @@
 class AddStatsAggregationFieldsToOffers < ActiveRecord::Migration
   def self.up
-    add_column :offers, :next_daily_stats_aggregation_time, :time
+    add_column :offers, :next_daily_stats_aggregation_time, :datetime
     add_column :offers, :active, :boolean, :default => false
   end
 
