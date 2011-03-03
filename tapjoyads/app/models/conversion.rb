@@ -180,7 +180,7 @@ private
         Mc.increment_count(mc_key, false, 1.day, count_inc)
         
         if stat_name == 'paid_installs' || stat_name == 'installs_spend'
-          stat_path = [ 'countries', (Stats::COUNTRY_CODES.present?(country) ? "#{stat_name}.#{country}" : "#{stat_name}.other") ]
+          stat_path = [ 'countries', (Stats::COUNTRY_CODES[country].present? ? "#{stat_name}.#{country}" : "#{stat_name}.other") ]
           mc_key = Stats.get_memcache_count_key(stat_path, attr_value, created_at)
           Mc.increment_count(mc_key, false, 1.day, count_inc)
         end
