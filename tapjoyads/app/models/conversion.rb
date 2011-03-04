@@ -31,17 +31,17 @@ class Conversion < ActiveRecord::Base
   }
   
   STAT_TO_REWARD_TYPE_MAP = {
-    'offers'                    => { :reward_ids => [ 0, 2, 3, 5 ],                                  :attr_name => 'publisher_app_id' },
-    'published_installs'        => { :reward_ids => [ 1, 4 ],                                        :attr_name => 'publisher_app_id' },
-    'display_conversions'       => { :reward_ids => [ 1000, 1001, 1002, 1003, 1004, 1005 ],          :attr_name => 'publisher_app_id' },
-    'featured_published_offers' => { :reward_ids => [ 2000, 2001, 2002, 2003, 2004, 2005 ],          :attr_name => 'publisher_app_id' },
-    'paid_installs'             => { :reward_ids => [ 0, 1, 2, 3, 5, 2000, 2001, 2002, 2003, 2005 ], :attr_name => 'advertiser_offer_id' },
-    'jailbroken_installs'       => { :reward_ids => [ 4, 2004 ],                                     :attr_name => 'advertiser_offer_id' },
-    'offers_revenue'            => { :reward_ids => [ 0, 2, 3, 5 ],                                  :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
-    'installs_revenue'          => { :reward_ids => [ 1, 4 ],                                        :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
-    'display_revenue'           => { :reward_ids => [ 1000, 1001, 1002, 1003, 1004, 1005 ],          :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
-    'featured_revenue'          => { :reward_ids => [ 2000, 2001, 2002, 2003, 2004, 2005 ],          :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
-    'installs_spend'            => { :reward_ids => [ 0, 1, 2, 3, 5, 2000, 2001, 2002, 2003, 2005 ], :attr_name => 'advertiser_offer_id', :sum_attr => :advertiser_amount },
+    'offers'                    => { :reward_types => [ 0, 2, 3, 5 ],                                  :attr_name => 'publisher_app_id' },
+    'published_installs'        => { :reward_types => [ 1, 4 ],                                        :attr_name => 'publisher_app_id' },
+    'display_conversions'       => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005 ],          :attr_name => 'publisher_app_id' },
+    'featured_published_offers' => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005 ],          :attr_name => 'publisher_app_id' },
+    'paid_installs'             => { :reward_types => [ 0, 1, 2, 3, 5, 2000, 2001, 2002, 2003, 2005 ], :attr_name => 'advertiser_offer_id' },
+    'jailbroken_installs'       => { :reward_types => [ 4, 2004 ],                                     :attr_name => 'advertiser_offer_id' },
+    'offers_revenue'            => { :reward_types => [ 0, 2, 3, 5 ],                                  :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
+    'installs_revenue'          => { :reward_types => [ 1, 4 ],                                        :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
+    'display_revenue'           => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005 ],          :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
+    'featured_revenue'          => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005 ],          :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
+    'installs_spend'            => { :reward_types => [ 0, 1, 2, 3, 5, 2000, 2001, 2002, 2003, 2005 ], :attr_name => 'advertiser_offer_id', :sum_attr => :advertiser_amount },
   }
   
   belongs_to :publisher_app, :class_name => 'App'

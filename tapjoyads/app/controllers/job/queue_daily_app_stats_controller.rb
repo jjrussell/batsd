@@ -52,7 +52,7 @@ private
   
   def verify_conversion_stats
     Conversion::STAT_TO_REWARD_TYPE_MAP.each do |stat, rtd|
-      conditions = [ "#{rtd[:attr_name]} = ? AND reward_id IN (?)", @offer.id, rtd[:reward_ids] ]
+      conditions = [ "#{rtd[:attr_name]} = ? AND reward_type IN (?)", @offer.id, rtd[:reward_types] ]
       verify_stat(stat) do |start_time, end_time|
         Conversion.using_slave_db do
           if rtd[:sum_attr].present?
