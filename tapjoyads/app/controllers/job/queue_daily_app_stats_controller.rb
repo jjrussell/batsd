@@ -66,7 +66,7 @@ private
       next unless stat == 'paid_installs' || stat == 'installs_spend'
       
       values_by_country = {}
-      (Stats::COUNTRY_CODES.keys + 'other').each do |country|
+      (Stats::COUNTRY_CODES.keys + ['other']).each do |country|
         stat_path = [ 'countries', "#{stat}.#{country}" ]
         verify_stat(stat_path) do |start_time, end_time|
           key = "#{start_time.to_i}-#{end_time.to_i}"
