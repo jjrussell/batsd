@@ -336,6 +336,16 @@ private
           end
         end
       end
+    elsif stat_name == 'countries'
+      counts_hash = stat_row.get_hourly_count('countries')
+      counts_hash.each do |key, counts|
+        24.times do |i|
+          time = date + i.hours
+          if counts[i] == 0 && time <= @now && time >= (@now - cache_hours.hours)
+            counts[i] = nil
+          end
+        end
+      end
     else
       counts = stat_row.get_hourly_count(stat_name)
       if counts.is_a?(Array)

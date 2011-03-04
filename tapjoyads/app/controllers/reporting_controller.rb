@@ -61,7 +61,7 @@ class ReportingController < WebsiteController
             },
             :right => {
               :unitPrefix => '$',
-              :names => [ 'Total Adv. Spend' ],
+              :names => [ 'Total Spend' ],
               :data => [ @appstats.stats['installs_spend'].map { |i| i / -100.0 } ],
               :stringData => [ @appstats.stats['installs_spend'].map { |i| number_to_currency(i / -100.0) } ],
               :totals => [ number_to_currency(@appstats.stats['installs_spend'].sum / -100.0) ]
@@ -401,18 +401,18 @@ private
       @spend_partitions[partitions_key][country][:names] ||= []
       @spend_partitions[partitions_key][country][:data] ||= []
       @spend_partitions[partitions_key][country][:totals] ||= []
-
-      @spend_partitions[partitions_key][country][:names] << "#{key_parts[1]} - #{key_parts[0].titleize}"
+      title = (key_parts[0] == "installs_spend" ? "Spend" : "Paid Installs")
+      @spend_partitions[partitions_key][country][:names] << "#{title} (#{key_parts[1]})"
 
       if partitions_key == :installs_spend
         @spend_partitions[partitions_key][country][:stringData] ||= []
 
-        @spend_partitions[partitions_key][country][:data] << parts.map { |i| i / -100.0 }
-        @spend_partitions[partitions_key][country][:totals] << number_to_currency(parts.sum / -100.0)
-        @spend_partitions[partitions_key][country][:stringData] << parts.map { |i| number_to_currency(i / -100.0) }
+        @spend_partitions[partitions_key][country][:data] << parts.map { |i| i == nil ? nil : i / -100.0 }
+        @spend_partitions[partitions_key][country][:totals] << number_to_currency(parts.compact.sum / -100.0)
+        @spend_partitions[partitions_key][country][:stringData] << parts.map { |i| i == nil ? '-' : number_to_currency(i / -100.0) }
       elsif partitions_key == :paid_installs
         @spend_partitions[partitions_key][country][:data] << parts
-        @spend_partitions[partitions_key][country][:totals] << parts.sum
+        @spend_partitions[partitions_key][country][:totals] << parts.compact.sum
       end
     end
 
