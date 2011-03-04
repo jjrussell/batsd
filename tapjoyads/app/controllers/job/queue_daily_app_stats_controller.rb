@@ -66,7 +66,7 @@ private
       next unless stat == 'paid_installs' || stat == 'installs_spend'
       
       values_by_country = {}
-      (Stats::TOP_COUNTRIES + 'other').each do |country|
+      (Stats::COUNTRY_CODES.keys + 'other').each do |country|
         stat_path = [ 'countries', "#{stat}.#{country}" ]
         verify_stat(stat_path) do |start_time, end_time|
           key = "#{start_time.to_i}-#{end_time.to_i}"
@@ -78,7 +78,7 @@ private
             end
           end
           if country == 'other'
-            values_by_country[key].reject { |c, value| Stats::COUNTRY_CODES.keys.include?(c) }.values.sum
+            values_by_country[key].reject { |c, value| Stats::COUNTRY_CODES[c].present? }.values.sum
           else
             values_by_country[key][country] || 0
           end
