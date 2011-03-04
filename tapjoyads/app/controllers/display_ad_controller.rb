@@ -230,12 +230,12 @@ private
       if width > 600 
         border = 4
         icon_padding = 7
-        font_size = 24
+        font_size = 26
         text_area_size = '380x92'
       else
         border = 2
         icon_padding = 3
-        font_size = 12
+        font_size = 13
         text_area_size = '190x46'
       end
       icon_height = height - border * 2 - icon_padding * 2
