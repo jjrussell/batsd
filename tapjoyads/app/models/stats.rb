@@ -151,7 +151,7 @@ class Stats < SimpledbResource
 
     hourly_stat_row.parsed_countries.each do |key, value|
       stat_path = ['countries', key]
-      count = value.sum
+      count = value.compact.sum
       update_stat_for_day(stat_path, day, count)
     end
   end
