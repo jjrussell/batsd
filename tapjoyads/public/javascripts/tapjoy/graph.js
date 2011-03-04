@@ -66,17 +66,22 @@ Tapjoy.Graph = {
   },
 
   mergePartitions: function(end_part, part1, part2) {
-    if (part1 && !part2) {
-      return part1; 
-    } else if (part2 && !part1) {
-      return part2;
+    if (part1 && part2) {
+      end_part.names = part1.names.concat(part2.names);
+      end_part.data = part1.data.concat(part2.data);
+      if (part1.stringData && part2.stringData) {
+        end_part.stringData = part1.stringData.concat(part2.stringData);
+      }
+      end_part.totals = part1.totals.concat(part2.totals);
+    } else if (part1) {
+      end_part.names = part1.names;
+      end_part.data = part1.data;
+      if (part1.stringData) { end_part.stringData = part1.stringData; }
+    } else if (part2) {
+      end_part.names = part2.names;
+      end_part.data = part2.data;
+      if (part2.stringData) { end_part.stringData = part2.stringData; }
     }
-    end_part.names = part1.names.concat(part2.names);
-    end_part.data = part1.data.concat(part2.data);
-    if (part1.stringData && part2.stringData) {
-      end_part.stringData = part1.stringData.concat(part2.stringData);
-    }
-    end_part.totals = part1.totals.concat(part2.totals);
     return end_part;
   },
 
