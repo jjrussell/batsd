@@ -69,7 +69,7 @@ Tapjoy.Graph = {
     if (part1 && !part2) {
       return part1; 
     } else if (part2 && !part1) {
-      return par2;
+      return part2;
     }
     end_part.names = part1.names.concat(part2.names);
     end_part.data = part1.data.concat(part2.data);
