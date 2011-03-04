@@ -27,7 +27,7 @@ class ReportingController < WebsiteController
       intervals = @appstats.intervals.map { |time| time.to_s(:pub_ampm) }
     end
     
-    conversion_name = @offer.item_type == 'App' ? 'installs' : 'conversions'
+    conversion_name = @offer.item_type == 'App' ? 'Installs' : 'Conversions'
 
     respond_to do |format|
       format.html do
@@ -55,13 +55,13 @@ class ReportingController < WebsiteController
             :intervals => intervals,
             :xLabels => @appstats.x_labels,
             :main => {
-              :names => [ "Total Paid #{conversion_name}", 'Total Paid clicks' ],
+              :names => [ "Total Paid #{conversion_name}", 'Total Clicks' ],
               :data => [ @appstats.stats['paid_installs'], @appstats.stats['paid_clicks'] ],
               :totals => [ @appstats.stats['paid_installs'].sum, @appstats.stats['paid_clicks'].sum ]
             },
             :right => {
               :unitPrefix => '$',
-              :names => [ 'Total Advertising Spend' ],
+              :names => [ 'Total Adv. Spend' ],
               :data => [ @appstats.stats['installs_spend'].map { |i| i / -100.0 } ],
               :stringData => [ @appstats.stats['installs_spend'].map { |i| number_to_currency(i / -100.0) } ],
               :totals => [ number_to_currency(@appstats.stats['installs_spend'].sum / -100.0) ]
@@ -266,7 +266,7 @@ class ReportingController < WebsiteController
 
         if permitted_to?(:index, :statz)
           # jailbroken data
-          @data[:rewarded_installs_plus_spend_data][:main][:names]  << "Jailbroken #{conversion_name}"
+          @data[:rewarded_installs_plus_spend_data][:main][:names]  << "Jb #{conversion_name}"
           @data[:rewarded_installs_plus_spend_data][:main][:data]   << @appstats.stats['jailbroken_installs']
           @data[:rewarded_installs_plus_spend_data][:main][:totals] << @appstats.stats['jailbroken_installs'].sum
         end
@@ -398,21 +398,21 @@ private
       @spend_partitions[partitions_key]
 
       @spend_partitions[partitions_key][country] ||= {}
-      @spend_partitions[partitions_key][country][:yMax] = 200
       @spend_partitions[partitions_key][country][:names] ||= []
       @spend_partitions[partitions_key][country][:data] ||= []
       @spend_partitions[partitions_key][country][:totals] ||= []
 
-      @spend_partitions[partitions_key][country][:names] << "#{key_parts[0].titleize}"
-      @spend_partitions[partitions_key][country][:totals] << (parts.compact.last.ordinalize rescue '-')
+      @spend_partitions[partitions_key][country][:names] << "#{key_parts[1]} - #{key_parts[0].titleize}"
 
       if partitions_key == :installs_spend
         @spend_partitions[partitions_key][country][:stringData] ||= []
 
         @spend_partitions[partitions_key][country][:data] << parts.map { |i| i / -100.0 }
+        @spend_partitions[partitions_key][country][:totals] << number_to_currency(parts.sum / -100.0)
         @spend_partitions[partitions_key][country][:stringData] << parts.map { |i| number_to_currency(i / -100.0) }
       elsif partitions_key == :paid_installs
         @spend_partitions[partitions_key][country][:data] << parts
+        @spend_partitions[partitions_key][country][:totals] << parts.sum
       end
     end
 
@@ -439,7 +439,9 @@ private
   end
 
   def spend_partition_names
-    @spend_partition_names ||= spend_partitions[:installs_spend].keys.sort
+    @spend_partition_names ||= spend_partitions[:installs_spend].keys.sort do |k1, k2|
+      k1.gsub('Other', 'zzzz') <=> k2.gsub('Other', 'zzzz')
+    end
   end
 
   def get_rank_partitions

@@ -70,8 +70,6 @@ Tapjoy.Graph = {
     end_part.data = part1.data.concat(part2.data);
     if (part1.stringData && part2.stringData) {
       end_part.stringData = part1.stringData.concat(part2.stringData);
-    } else if (part1.stringData || part2.stringData) {
-      console.log('problem, partition and main/right need to both/neither have stringData');
     }
     end_part.totals = part1.totals.concat(part2.totals);
     return end_part;
