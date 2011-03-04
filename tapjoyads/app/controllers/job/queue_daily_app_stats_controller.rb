@@ -78,7 +78,7 @@ private
             end
           end
           if country == 'other'
-            values_by_country[key].reject { |c, value| Stats::TOP_COUNTRIES.include?(c) }.values.sum
+            values_by_country[key].reject { |c, value| Stats::COUNTRY_CODES.keys.include?(c) }.values.sum
           else
             values_by_country[key][country] || 0
           end
