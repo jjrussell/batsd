@@ -5,7 +5,7 @@ class Job::MasterGrabAdvertiserUdidsController < Job::JobController
 
     Offer.find_each do |offer|
       # don't generate UDID reports for the Groupon offers that are whitelisted to TTR4
-      next if offer.id == '853874a4-de66-4c00-b2bd-d51f456736f1' || offer.id == 'ba3e4880-8903-4703-ba1d-790a86060058'
+      next if offer.id == '853874a4-de66-4c00-b2bd-d51f456736f1' || offer.id == '17694838-2caa-4869-8808-0baf126daef9'
 
       stats = Appstats.new(offer.id, { :start_time => yesterday, :end_time => today, :granularity => :hourly, :stat_types => [ 'paid_installs' ] }).stats
       next unless stats['paid_installs'].sum > 0
