@@ -6,6 +6,7 @@ xml.TapjoyConnectReturnObject do
     xml.SecondsElapsed @game_state.seconds_elapsed
     xml.Version @game_state.version
     xml.PublisherUserID params[:publisher_user_id]
+    xml.RateLimitTime 60
     
     unless @up_to_date
       xml.Data do
