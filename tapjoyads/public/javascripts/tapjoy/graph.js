@@ -65,8 +65,10 @@ Tapjoy.Graph = {
     return temp;
   },
 
-  mergePartitions: function(end_part, part1, part2) {
+  mergePartitions: function(part1, part2) {
+    var end_part;
     if (part1 && part2) {
+      end_part = Tapjoy.Graph.clone(part1);
       end_part.names = part1.names.concat(part2.names);
       end_part.data = part1.data.concat(part2.data);
       if (part1.stringData && part2.stringData) {
@@ -74,13 +76,9 @@ Tapjoy.Graph = {
       }
       end_part.totals = part1.totals.concat(part2.totals);
     } else if (part1) {
-      end_part.names = part1.names;
-      end_part.data = part1.data;
-      if (part1.stringData) { end_part.stringData = part1.stringData; }
+      end_part = Tapjoy.Graph.clone(part1);
     } else if (part2) {
-      end_part.names = part2.names;
-      end_part.data = part2.data;
-      if (part2.stringData) { end_part.stringData = part2.stringData; }
+      end_part = Tapjoy.Graph.clone(part2);
     }
     return end_part;
   },
@@ -118,23 +116,22 @@ Tapjoy.Graph = {
           });
         }
       }
-      if (obj.partition_right && obj.right) {
-        if (!obj.original_right) {
-          obj.original_right = Tapjoy.Graph.clone(obj.right);
-        }
-        obj.right = Tapjoy.Graph.mergePartitions(obj.right, obj.original_right, obj.partition_right[partition_index]);
-      } else if (obj.partition_right) {
-        obj.right = obj.partition_right[partition_index];
-      }
+    }
 
-      if (obj.partition_left && obj.main) {
-        if (!obj.original_left) {
-          obj.original_left = Tapjoy.Graph.clone(obj.main);
-        }
-        obj.main = Tapjoy.Graph.mergePartitions(obj.main, obj.original_left, obj.partition_left[partition_index]);
-      } else if (obj.partition_left) {
-        obj.main = obj.partition_left[partition_index];
-      }
+    if (obj.partition_right && obj.right) {
+      obj.graph_right = Tapjoy.Graph.mergePartitions(obj.right, obj.partition_right[partition_index]);
+    } else if (obj.partition_right) {
+      obj.graph_right = obj.partition_right[partition_index];
+    } else if (obj.right) {
+      obj.graph_right = obj.right;
+    }
+
+    if (obj.partition_left && obj.main) {
+      obj.graph_left = Tapjoy.Graph.mergePartitions(obj.main, obj.partition_left[partition_index]);
+    } else if (obj.partition_left) {
+      obj.graph_left = obj.partition_left[partition_index];
+    } else if (obj.main) {
+      obj.graph_left = obj.main;
     }
 
     if ($('#' + id + '>.totals').length == 1) {
@@ -145,14 +142,14 @@ Tapjoy.Graph = {
     var hMarginPx = 5;
     var numPoints = obj['intervals'].length - 1;
 
-    var legendKeys = obj['main']['names'];
-    if (obj['right']) {
-      legendKeys = legendKeys.concat(obj['right']['names']);
+    var legendKeys = obj['graph_left']['names'];
+    if (obj['graph_right']) {
+      legendKeys = legendKeys.concat(obj['graph_right']['names']);
     }
 
     try {
       var g = new RGraph.Line(id + '_graph');
-      g.original_data = obj['main']['data'];
+      g.original_data = obj['graph_left']['data'];
       RGraph.Clear(g.canvas); 
     
       g.Set('chart.key', legendKeys);
@@ -165,26 +162,26 @@ Tapjoy.Graph = {
       Tapjoy.Graph.setGraphProperties(g, {
         hMarginPx: hMarginPx,
         gutterPx: gutterPx,
-        unitPrefix: obj['main']['unitPrefix'],
+        unitPrefix: obj['graph_left']['unitPrefix'],
         colors: ['#f00', '#0f0', '#00f', '#f0f', '#ff0', '#0ff', '#000'],
-        yMax: obj['main']['yMax'],
-        decimals: obj['main']['decimals']
+        yMax: obj['graph_left']['yMax'],
+        decimals: obj['graph_left']['decimals']
       });
       g.Draw();
     
 
-      if (obj['right']) {
+      if (obj['graph_right']) {
         var g2 = new RGraph.Line(id + '_graph');
-        g2.original_data = obj['right']['data'];
+        g2.original_data = obj['graph_right']['data'];
 
         Tapjoy.Graph.setGraphProperties(g2, {
           hMarginPx: hMarginPx,
           gutterPx: gutterPx,
-          unitPrefix: obj['right']['unitPrefix'],
-          colors: g.properties['chart.colors'].slice(obj['main']['data'].length),
+          unitPrefix: obj['graph_right']['unitPrefix'],
+          colors: g.properties['chart.colors'].slice(obj['graph_left']['data'].length),
           yAxisPos: 'right',
-          yMax: obj['right']['yMax'],
-          decimals: obj['right']['decimals'],
+          yMax: obj['graph_right']['yMax'],
+          decimals: obj['graph_right']['decimals'],
           drawGrid: false
         });
 
@@ -232,7 +229,7 @@ Tapjoy.Graph = {
     var html = [];
     html.push(obj['intervals'][idx] + ' - ' + obj['intervals'][idx + 1]);
 
-    groups = ['main', 'right', 'extra'];
+    groups = ['graph_left', 'graph_right', 'extra'];
     for (var i = 0, group; group = groups[i]; i++) {
       if (obj[group]) {
         for (var j = 0, name; name = obj[group]['names'][j]; j++) {
@@ -256,7 +253,7 @@ Tapjoy.Graph = {
   getTotalsHtml: function(obj) {
     var html = [];
 
-    groups = ['main', 'right', 'extra'];
+    groups = ['graph_left', 'graph_right', 'extra'];
     for (var i = 0, group; group = groups[i]; i++) {
       if (obj[group] && obj[group]['totals']) {
         for (var j = 0, name; name = obj[group]['names'][j]; j++) {
