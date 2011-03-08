@@ -7,10 +7,12 @@ class ActionOffer < ActiveRecord::Base
   
   belongs_to :partner
   belongs_to :app
+  belongs_to :prerequisite_offer, :class_name => 'Offer'
   
   validates_presence_of :partner, :app, :name, :variable_name
   validates_uniqueness_of :variable_name, :scope => :app_id, :case_sensitive => false
   validates_presence_of :instructions, :unless => :new_record?
+  validates_presence_of :prerequisite_offer, :if => Proc.new { |action_offer| action_offer.prerequisite_offer_id? }
   
   named_scope :visible, :conditions => { :hidden => false }
   
@@ -39,7 +41,7 @@ private
     offer.price            = 0
     offer.time_delay       = 'in seconds'
     offer.name_suffix      = 'action'
-    offer.third_party_data = app_id
+    offer.third_party_data = prerequisite_offer_id
     offer.save!
   end
   
@@ -49,7 +51,7 @@ private
       offer.app_id           = app_id if app_id_changed?
       offer.name             = name if name_changed?
       offer.hidden           = hidden if hidden_changed?
-      offer.third_party_data = app_id if app_id_changed?
+      offer.third_party_data = prerequisite_offer_id if prerequisite_offer_id_changed?
       offer.save! if offer.changed?
     end
   end

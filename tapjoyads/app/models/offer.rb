@@ -36,6 +36,7 @@ class Offer < ActiveRecord::Base
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
   has_many :enable_offer_requests
+  has_many :dependent_action_offers, :class_name => 'ActionOffer', :foreign_key => :prerequisite_offer_id
   
   belongs_to :partner
   belongs_to :item, :polymorphic => true
@@ -727,7 +728,7 @@ private
   end
   
   def action_app_reject?(device)
-    item_type == "ActionOffer" && !device.has_app(third_party_data)
+    item_type == "ActionOffer" && third_party_data.present? && !device.has_app(third_party_data)
   end
   
   def normalize_device_type(device_type_param)

@@ -14,7 +14,7 @@ class Apps::ActionOffersController < WebsiteController
   end
   
   def create
-    action_offer_params = params[:action_offer].merge(:partner => current_partner)
+    action_offer_params = params[:action_offer].merge(:partner => current_partner, :prerequisite_offer => @app.primary_offer)
     @action_offer = @app.action_offers.build action_offer_params
     if @action_offer.save
       redirect_to edit_app_action_offer_path(@app, @action_offer)
@@ -41,7 +41,7 @@ class Apps::ActionOffersController < WebsiteController
     params[:action_offer][:primary_offer_attributes][:daily_budget] = 0 if params[:daily_budget] == 'off'
     params[:action_offer][:primary_offer_attributes] = sanitize_currency_params(params[:action_offer][:primary_offer_attributes], [ :bid, :min_bid_override ])
     
-    safe_attributes = [ :name, :instructions, :primary_offer_attributes_id, :primary_offer_attributes_bid, :primary_offer_attributes_user_enabled, :primary_offer_attributes_daily_budget ]
+    safe_attributes = [ :name, :prerequisite_offer_id, :instructions, :primary_offer_attributes_id, :primary_offer_attributes_bid, :primary_offer_attributes_user_enabled, :primary_offer_attributes_daily_budget ]
     
     if permitted_to? :edit, :statz
       safe_attributes += [
