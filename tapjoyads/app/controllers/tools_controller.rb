@@ -254,7 +254,7 @@ class ToolsController < WebsiteController
   end
 
   def unresolved_clicks
-    @udid = params[:udid]
+    @udid = params[:udid].downcase
     @num_hours = params[:num_hours].nil? ? 48 : params[:num_hours].to_i
     @clicks = []
     cut_off = (Time.zone.now - @num_hours.hours).to_f
