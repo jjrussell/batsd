@@ -46,6 +46,13 @@
             = error_message_on @action_offer, :variable_name
         %tr
           %th
+            = f.label :name, 'Prerequisite'
+            #help_prerequisite.help ?
+          %td
+            = f.select :prerequisite_offer_id, @app.offers_with_last_run_time.reject { |offer| offer.id == @action_offer.primary_offer.id }.collect { |offer| [ offer.name, offer.id ] } + [ [ "None", "" ] ]
+            = error_message_on @action_offer, :prerequisite_offer_id
+        %tr
+          %th
             = f.label :instructions, 'Instructions'
             #help_instructions.help ?
           %td
@@ -136,6 +143,8 @@
       Tapjoy approval status.
       - unless @offer.tapjoy_enabled?
         Click the button to submit an enable offer request. Please contact #{mail_to "support@tapjoy.com"} if you have any questions.
+    #help_prerequisite_content{ :name => 'Prerequisite' }
+      This action will only be shown to users who have already completed the prerequisite offer.
       
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
   - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|

@@ -237,6 +237,10 @@ class App < ActiveRecord::Base
     end
     file_output
   end
+  
+  def offers_with_last_run_time
+    [ primary_offer ] + action_offers.collect(&:primary_offer).sort { |a, b| a.name <=> b.name }
+  end
 
 private
   
