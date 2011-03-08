@@ -749,7 +749,7 @@ private
   end
   
   def set_stats_aggregation_times
-    now = Time.zone.now
+    now = Time.now.utc
     self.next_stats_aggregation_time = now if next_stats_aggregation_time.blank?
     self.next_daily_stats_aggregation_time = (now + 1.day).beginning_of_day + DAILY_STATS_START_HOUR.hours + rand(DAILY_STATS_RANGE.hours) if next_daily_stats_aggregation_time.blank?
   end

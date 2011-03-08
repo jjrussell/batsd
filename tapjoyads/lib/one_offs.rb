@@ -331,5 +331,41 @@ class OneOffs
     Mc.cache_all
     true
   end
+  
+  ##
+  # Finds users that have run TapZoo on a given date that also have run TextFree at some point.
+  def self.find_textfree_tapzoo_overlap_udids(date)
+    tapzoo_app_id = 'c3fc6075-57a9-41d1-b0ee-e1c0cbbe4ef3'
+    textfree_app_id = '6b69461a-949a-49ba-b612-94c8e7589642'
+    bucket = S3.bucket(BucketNames::WEB_REQUESTS)
+    outfile = open("tmp/tapzoo_textfree_udids_#{date.to_s}.txt", 'w')
+    MAX_WEB_REQUEST_DOMAINS.times do |num|
+      s3_name = "web-request-#{date.to_s}-#{num}.sdb"
+      next unless bucket.key(s3_name).exists?
+      puts "Found #{s3_name}"
+      
+      gzip_file = open("tmp/#{s3_name}.gz", 'w')
+      S3.s3.interface.get(bucket.full_name, s3_name) do |chunk|
+        gzip_file.write(chunk)
+      end
+      gzip_file.close
+      `gunzip -f 'tmp/#{s3_name}.gz'`
+      
+      domain = open("tmp/#{s3_name}")
+      domain.each do |line|
+        wr = WebRequest.deserialize(line)
+        if wr.app_id == tapzoo_app_id && wr.path.include?('new_user')
+          d = Device.find(wr.udid)
+          if d.has_app(textfree_app_id)
+            outfile.puts(wr.udid)
+          end
+        end
+      end
+      domain.close
+      `rm 'tmp/#{s3_name}'`
+    end
+    
+    outfile.close
+  end
 
 end
