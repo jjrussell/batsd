@@ -84,7 +84,7 @@ class ReportingController < WebsiteController
             :intervals => intervals,
             :xLabels => @appstats.x_labels,
             :main => {
-              :names => [ "Paid #{conversion_name}" ],
+              :names => [ "Total Paid #{conversion_name}" ],
               :data => [ @appstats.stats['paid_installs'] ],
               :totals => [ @appstats.stats['paid_installs'].sum ]
             },
