@@ -74,7 +74,7 @@ class Stats < SimpledbResource
       'TH' => 'Thailand',
       'TR' => 'Turkey',
       'AE' => 'United Arab Emirates',
-      'UK' => 'United Kingdom',
+      'GB' => 'United Kingdom',
       'VE' => 'Venezuela',
       'VN' => 'Vietnam',
   }
