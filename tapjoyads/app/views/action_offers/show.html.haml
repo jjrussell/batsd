@@ -17,7 +17,7 @@
       %span.amount= "#{@currency.get_visual_reward_amount(@offer)} #{@currency.name}."
     
   #footer
-    %div= "If you no longer have this app, click #{link_to("here", @app.direct_store_url)} to download it."
+    %div= "If you don't have this app, click #{link_to("here", @app.direct_store_url)} to download it."
   
 #privacy
   = link_to('Privacy', 'https://www.tapjoy.com/privacy')
