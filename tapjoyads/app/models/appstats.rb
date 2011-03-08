@@ -299,7 +299,7 @@ private
         daily_stats_over_range = {} if daily_stats_over_range.blank?
         daily_stats.each do |key, values|
           value = values[time.day - 1]
-          unless value[time.day - 1] == 0
+          unless value == 0
             daily_stats_over_range[key] ||= Array.new(size, 0)
             daily_stats_over_range[key][index] = value
           end
@@ -315,10 +315,7 @@ private
   end
   
   def load_stat_row(key)
-    unless @stat_rows[key]
-      @stat_rows[key] = Stats.new(:key => key)
-    end
-    @stat_rows[key]
+    @stat_rows[key] ||= Stats.new(:key => key)
   end
   
   def populate_hourly_stats_from_memcached(stat_row, stat_name, cache_hours)
