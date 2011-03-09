@@ -335,4 +335,8 @@ class ToolsController < WebsiteController
       render :action => "edit_android_app"
     end
   end
+
+  def partners_with_balance
+    @partners = Partner.to_payout_by_earnings.reject(&:completed_payout_info?).paginate(:page => params[:page])
+  end
 end

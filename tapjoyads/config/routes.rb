@@ -58,16 +58,19 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :enable_offer_requests, :only => [ :create ]
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }, :collection => { :api => :get, :regenerate_api_key => :post }
   map.resources :analytics, :only => [ :index ], :collection => { :create_apsalar_account => :get }
-  map.resources :billing, :only => [ :index ], :collection => { :create_order => :post, :create_transfer => :post }
+  map.resources :billing, :only => [ :index ],
+    :collection => { :create_order => :post, :create_transfer => :post, :update_payout_info => :post }
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
   map.transfer_funds_billing 'billing/transfer-funds', :controller => :billing, :action => :transfer_funds
+  map.payout_info_billing 'billing/payment-info', :controller => :billing, :action => :payout_info
   map.resources :support, :only => [ :index ],
     :collection => { :contact => :post }
   map.resources :tools, :only => :index,
     :collection => { :monthly_data => :get, :new_transfer => :get,
                      :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :as_groups => :get,
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
-                     :unresolved_clicks => :post, :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get },
+                     :unresolved_clicks => :post, :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get,
+                     :partners_with_balance => :get },
     :member => {  :edit_android_app => :get, :update_android_app => :post, :device_info => :get }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get }
@@ -76,7 +79,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
     :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post },
     :collection => { :managed_by => :get } do |partner|
-      partner.resources :offer_discounts, :only => [ :index, :new, :create ], :member => { :deactivate => :post }, :controller => 'partners/offer_discounts'
+    partner.resources :offer_discounts, :only => [ :index, :new, :create ], :member => { :deactivate => :post }, :controller => 'partners/offer_discounts'
+    partner.resources :payout_infos, :only => [ :index, :update ]
   end
   map.resources :password_resets, :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
   map.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }

@@ -18,7 +18,8 @@ class Partner < ActiveRecord::Base
   has_many :monthly_accountings
   has_many :offer_discounts, :order => 'expires_on DESC'
   has_many :app_offers, :class_name => 'Offer', :conditions => "item_type = 'App'"
-  
+  has_one :payout_info
+
   validates_numericality_of :balance, :pending_earnings, :next_payout_amount, :only_integer => true, :allow_nil => false
   validates_numericality_of :premier_discount, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => false
   validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
@@ -49,6 +50,7 @@ class Partner < ActiveRecord::Base
   
   named_scope :to_calculate_next_payout_amount, :conditions => 'pending_earnings >= 10000'
   named_scope :to_payout, :conditions => 'pending_earnings != 0', :order => 'name ASC, contact_name ASC'
+  named_scope :to_payout_by_earnings, :conditions => 'pending_earnings != 0', :order => 'pending_earnings DESC'
   named_scope :search, lambda { |name_or_email| { :joins => :users,
       :conditions => [ "#{Partner.quoted_table_name}.name LIKE ? OR #{User.quoted_table_name}.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
     }
@@ -220,7 +222,10 @@ class Partner < ActiveRecord::Base
   def needs_exclusivity_expired?
     exclusivity_expires_on && exclusivity_expires_on <= Date.today
   end
-  
+
+  def completed_payout_info?
+    payout_info.present? && payout_info.filled?
+  end
 private
 
   def update_currencies

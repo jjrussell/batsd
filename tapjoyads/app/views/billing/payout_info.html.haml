@@ -1,0 +1,171 @@
+- @page_title = 'Payment Information'
+= render :partial => 'actions'
+
+.left-indented
+  - if permitted_to?(:index, :activities)
+    .right= link_to('Activity Log', activities_path(:object_id => @payout_info.id))
+  %h2 Payment Information
+  %p Please enter in your payment and tax information. We require this information for payouts as well as compliance with tax authorities. We use industry standard technology to store your tax and payment information.
+
+  - form_for [current_partner, @payout_info], :url => update_payout_info_billing_path, :class => 'tjform' do |f|
+    %table.payout_info
+      %tbody
+        %tr
+          %td{:colspan => 2}
+            %h3 Tax Information:
+        %tr
+          %th
+            = f.label :tax_country, 'Country'
+            .help.no-help ?
+          %td= f.select(:tax_country, options_for_select(list_of_countries))
+        %tr
+          %th
+            = f.label :account_type, 'Account Type'
+            .help.no-help ?
+          %td= f.select(:account_type, options_for_select(list_of_account_types))
+        %tr
+          %th
+            = f.label :billing_name, 'Billing Name'
+            .help.no-help ?
+          %td= f.text_field(:billing_name)
+        %tr
+          %th
+            = f.label :tax_id, 'Tax ID'
+            #help_tin.help ?
+          %td= f.text_field(:tax_id, :value => @payout_info.tax_id)
+        %tr
+          %td{:colspan => 2}
+            %h3 Payment Details*
+        %tr
+          %th
+            = f.label :beneficiary_name, 'Beneficiary Name'
+            .help.no-help ?
+          %td= f.text_field(:beneficiary_name)
+        %tr
+          %th
+            = f.label :company_name, 'Company Name'
+            .help.no-help ?
+          %td= f.text_field(:company_name)
+        %tr
+          %th
+            = f.label :country, 'Country'
+            .help.no-help ?
+          %td= f.select(:address_country, options_for_select(list_of_countries))
+        %tr.country_us
+          %th
+            = f.label :address, 'Address'
+            .help.no-help ?
+          %td= f.text_field(:address_1)
+        %tr.country_us
+          %th &nbsp;
+          %td= f.text_field(:address_2)
+        %tr.country_us
+          %th
+            = f.label :city, 'City'
+            .help.no-help ?
+          %td= f.text_field(:address_city)
+        %tr.country_us
+          %th
+            = f.label :state, 'State'
+            .help.no-help ?
+          %td= f.select(:address_state, options_for_select(list_of_states, @payout_info.address_state || 'CA'))
+        %tr.country_us
+          %th
+            = f.label :postal_codes, 'ZIP code'
+            .help.no-help ?
+          %td= f.text_field(:address_postal_code)
+        - if permitted_to?(:index, :statz)
+          %tr.country_us
+            %td{:colspan => 2}
+              %h3.admin Additional Details
+        %tr.country_other
+          %th
+            = f.label :bank_name, 'Bank Name'
+            .help.no-help ?
+          %td= f.text_field(:bank_name, :value => @payout_info.bank_name)
+        %tr.country_other
+          %th
+            = f.label :bank_address, 'Bank Address'
+            .help.no-help ?
+          %td= f.text_field(:bank_address, :value => @payout_info.bank_address)
+        %tr.country_other
+          %th
+            %span.country_us= f.label :bank_account_number, 'Bank Account Number'
+            %span.country_other= f.label :bank_account_number, 'Bank IBAN Code'
+            #help_bank_account_number.help ?
+          %td= f.text_field(:bank_account_number, :value => @payout_info.bank_account_number)
+        %tr.country_other
+          %th
+            %span.country_us= f.label :bank_routing_number, 'Bank Routing Number'
+            %span.country_other= f.label :bank_routing_number, 'Bank SWIFT Code'
+            #help_bank_swift_code.help ?
+          %td= f.text_field(:bank_routing_number, :value => @payout_info.bank_routing_number)
+        %tr.country_other
+          %th
+            = label_tag('')
+          %td= select_tag('', '')
+    = submit_tag
+
+  %p *There is a minimum payment threshold of US$250.
+
+.hidden
+  #help_billing_name_content{:name => 'Billing Name'}
+    Must match name on tax return.
+  #help_tin_content{:name => 'Tax ID'}
+    %strong U.S.:
+    Your Taxpayer Information Number (TIN) is either your Social Security Number (SSN) if you are an individual or your Employer ID Number (EIN) if you are a corporation or partnership.
+    %br/
+    %br/
+    %strong International:
+    Please enter in whatever ID number is used by your country's tax authority
+  #help_bank_account_number_content{:name => 'Account # / IBAN'}
+    %strong U.S. (Account number):
+    Account number to your bank account.
+    %br/
+    %br/
+    %strong International (IBAN):
+    International Bank Account Number.
+  #help_bank_swift_code_content{:name => 'Routing # / SWIFT'}
+    %strong U.S. (Routing number):
+    Routing number to your bank account.
+    %br/
+    %br/
+    %strong International (SWIFT):
+    The 8 to 11 character alphanumeric code associated with your financial institution.
+
+- content_for :page_styles do
+  :plain
+    table.payout_info th {
+      text-align: right;
+      width: 200px;
+    }
+    table.payout_info input, table.payout_info select {
+      width: 200px;
+    }
+    .country_us, .country_other {
+      display: none;
+    }
+    .country_other select {
+      visibility: hidden;
+    }
+
+- content_for :page_javascript do
+  :plain
+    var toggleByCountry = function() {
+      if ($('#payout_info_address_country').val().match(/united states of america/i)) {
+        $('.country_us').show();
+        if (#{ !!permitted_to?(:index, :statz) }) {
+          $('.country_other').show();
+          $('span.country_other').hide();
+        } else {
+          $('.country_other').hide();
+        }
+      } else {
+        $('.country_us').hide();
+        $('.country_other').show();
+      }
+    };
+    $('#payout_info_address_country').change(function(){
+      toggleByCountry();
+    });
+    toggleByCountry();

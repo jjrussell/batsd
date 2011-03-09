@@ -282,6 +282,9 @@ form.tjform {
   background-color: #fff;
   color: #444;
 }
+.help.no-help {
+  visibility: hidden;
+}
 
 .help-dialog .ui-dialog-titlebar {
   height: 5px;

@@ -81,4 +81,13 @@ class TapjoyMailer < ActionMailer::Base
     body(:low_balance => low_balance, :account_balance => account_balance, :account_manager_email => account_manager_email, 
       :offers_not_meeting_budget => offers_not_meeting_budget, :offers_needing_higher_bids => offers_needing_higher_bids, :premier => premier, :premier_discount => premier_discount)
   end
+
+  def payout_info_reminder(email_recipients, earnings)
+    from 'support@tapjoy.com'
+    cc 'hwanjoon@tapjoy.com'#'accountspayable@tapjoy.com'
+    recipients email_recipients
+    subject 'Payment Information Needed'
+    content_type 'text/html'
+    body(:earnings => earnings)
+  end
 end

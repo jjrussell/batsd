@@ -4,4 +4,4 @@
     %li= link_to 'Add Funds', add_funds_billing_path, :class => @selected_state[:add_funds]
     - if current_partner.pending_earnings > 0
       %li= link_to 'Transfer Funds', transfer_funds_billing_path, :class => @selected_state[:transfer_funds]
-      %li= link_to 'Payment Info', payment_info_billing_path, :class => @selected_state[:payment_info]
+      %li= link_to 'Payment Info', payout_info_billing_path, :class => @selected_state[:payout_info]

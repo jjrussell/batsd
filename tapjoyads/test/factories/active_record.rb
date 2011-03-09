@@ -24,6 +24,10 @@ Factory.define :partner do |partner|
   partner.name { Factory.next(:name) }
 end
 
+Factory.define :payout_info do |info|
+  info.association :partner
+end
+
 Factory.define :order do |order|
   order.association :partner
   order.payment_method 1

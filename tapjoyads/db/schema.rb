@@ -316,6 +316,32 @@ ActiveRecord::Schema.define(:version => 20110310193557) do
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
 
+  create_table "payout_infos", :id => false, :force => true do |t|
+    t.string   "id",                  :limit => 36, :null => false
+    t.string   "partner_id",          :limit => 36, :null => false
+    t.string   "tax_country"
+    t.string   "account_type"
+    t.string   "billing_name"
+    t.text     "tax_id"
+    t.string   "beneficiary_name"
+    t.string   "company_name"
+    t.string   "address_1"
+    t.string   "address_2"
+    t.string   "address_city"
+    t.string   "address_state"
+    t.string   "address_postal_code"
+    t.string   "address_country"
+    t.text     "bank_name"
+    t.text     "bank_address"
+    t.text     "bank_account_number"
+    t.text     "bank_routing_number"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "payout_infos", ["id"], :name => "index_payout_infos_on_id", :unique => true
+  add_index "payout_infos", ["partner_id"], :name => "index_payout_infos_on_partner_id"
+
   create_table "payouts", :id => false, :force => true do |t|
     t.string   "id",             :limit => 36,                :null => false
     t.integer  "amount",                       :default => 0, :null => false

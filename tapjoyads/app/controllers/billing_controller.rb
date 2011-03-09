@@ -4,7 +4,7 @@ class BillingController < WebsiteController
   filter_access_to :all
   before_filter :get_selected_option
   before_filter :get_statements, :only => [:index, :export_statements, :export_orders, :export_payouts]
-  after_filter :save_activity_logs, :only => [ :create_order, :create_transfer ]
+  after_filter :save_activity_logs, :only => [ :create_order, :create_transfer, :update_payout_info ]
 
   def index
     @current_balance = current_partner.balance
@@ -134,6 +134,26 @@ class BillingController < WebsiteController
     redirect_to transfer_funds_billing_path
   end
 
+  def payout_info
+    if current_partner.payout_info
+      @payout_info = current_partner.payout_info
+    else
+      @payout_info = current_partner.build_payout_info
+    end
+  end
+
+  def update_payout_info
+    @payout_info = current_partner.payout_info || current_partner.build_payout_info
+    log_activity(@payout_info)
+    if @payout_info.update_attributes(params[:payout_info])
+      flash[:notice] = "Your information has been saved."
+      redirect_to :action => :payout_info
+    else
+      flash.now[:error] = "Unable to save. Please contact <a href='support@tapjoy.com'>support@tapjoy.com</a>."
+      render :action => :payout_info
+    end
+  end
+
 private
 
   def get_statements
@@ -186,8 +206,8 @@ private
       @selected_state[:add_funds] = 'selected'
     when 'transfer_funds'
       @selected_state[:transfer_funds] = 'selected'
-    when 'payment_info'
-      @selected_state[:payment_info] = 'selected'
+    when 'payout_info'
+      @selected_state[:payout_info] = 'selected'
     end
   end
 end
