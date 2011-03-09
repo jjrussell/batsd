@@ -23,6 +23,7 @@ class EmailWorthyError < RuntimeError
   end
 end
 class BalancesMismatch < EmailWorthyError; end
+class UnverifiedStatsError < EmailWorthyError; end
 class ConversionRateTooLowError < EmailWorthyError
   def deliver_email(params={})
     TapjoyMailer.deliver_low_conversion_rate_warning(self, params)
