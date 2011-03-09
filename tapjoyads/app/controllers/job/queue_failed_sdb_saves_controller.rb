@@ -1,4 +1,4 @@
-class Job::FailedSdbSavesQueueController < Job::SqsReaderController
+class Job::QueueFailedSdbSavesController < Job::SqsReaderController
   
   def initialize
     super QueueNames::FAILED_SDB_SAVES
@@ -8,11 +8,11 @@ class Job::FailedSdbSavesQueueController < Job::SqsReaderController
 private
   
   def on_message(message)
-    json = JSON.parse(message.to_s)
-    uuid = json['uuid']
-    @options = json['options'].symbolize_keys
+    json             = JSON.parse(message.to_s)
+    uuid             = json['uuid']
+    @options         = json['options'].symbolize_keys
     @incomplete_path = "incomplete/#{uuid}"
-    @complete_path = "complete/#{uuid}"
+    @complete_path   = "complete/#{uuid}"
     
     if @bucket.key(@incomplete_path).exists?
       save_to_sdb
