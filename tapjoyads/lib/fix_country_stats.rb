@@ -3,7 +3,8 @@ class FixCountryStats
   def run
     time = Time.zone.parse('2011-02-17')
     end_time = Time.zone.parse('2011-03-08')
-    while time < end_time
+    while time <= end_time
+      puts "Verifying offers for #{time.to_s}"
       Offer.find_each do |offer|
         fix_offer(offer, time)
       end
