@@ -45,7 +45,7 @@ class Device < SimpledbShardedResource
       path_list.push('monthly_user')
     end
     
-    @parsed_apps[app_id] = now.to_f.to_s
+    @parsed_apps[app_id] = "%.5f" % now.to_f
     self.apps = @parsed_apps
     
     if params[:lad].present?
