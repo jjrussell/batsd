@@ -147,7 +147,7 @@ class Conversion < ActiveRecord::Base
   
   def reward_type_string=(string)
     type = REWARD_TYPES[string]
-    raise "Unkown reward type: #{string}" if type.nil?
+    raise "Unknown reward type: #{string}" if type.nil?
     self.reward_type = type
   end
   
