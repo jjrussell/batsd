@@ -254,13 +254,14 @@ class ToolsController < WebsiteController
   end
 
   def unresolved_clicks
-    @udid = params[:udid].downcase
+    @udid = params[:udid]
     @num_hours = params[:num_hours].nil? ? 48 : params[:num_hours].to_i
     @clicks = []
     cut_off = (Time.zone.now - @num_hours.hours).to_f
     device = Device.new(:key => @udid)
 
     if @udid
+      @udid.downcase!
       NUM_CLICK_DOMAINS.times do |i|
         Click.select(:domain_name => "clicks_#{i}", :where => "itemName() like '#{@udid}.%'", :consistent => true) do |click|
           if click.installed_at.nil? && click.clicked_at.to_f > cut_off

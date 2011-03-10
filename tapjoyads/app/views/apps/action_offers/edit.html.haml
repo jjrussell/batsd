@@ -49,7 +49,9 @@
             = f.label :name, 'Prerequisite'
             #help_prerequisite.help ?
           %td
-            = f.select :prerequisite_offer_id, @app.offers_with_last_run_time.reject { |offer| offer.id == @action_offer.primary_offer.id }.collect { |offer| [ offer.name, offer.id ] } + [ [ "None", "" ] ]
+            - offer_options = @app.offers_with_last_run_time.reject { |offer| offer.id == @action_offer.primary_offer.id }.collect { |offer| [ offer.name, offer.id ] }
+            - offer_options += [ [ "None", "" ] ] if ((permitted_to?(:edit, :statz) || @action_offer.prerequisite_offer_id.blank?))
+            = f.select :prerequisite_offer_id, offer_options
             = error_message_on @action_offer, :prerequisite_offer_id
         %tr
           %th

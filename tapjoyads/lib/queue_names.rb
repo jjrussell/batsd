@@ -1,6 +1,8 @@
 class QueueNames
   CONVERSION_TRACKING      = RUN_MODE_PREFIX + 'ConversionTracking'
   FAILED_SDB_SAVES         = RUN_MODE_PREFIX + 'FailedSdbSaves'
+  FAILED_DEVICE_SAVES      = RUN_MODE_PREFIX + 'FailedDeviceSaves'
+  FAILED_WEB_REQUEST_SAVES = RUN_MODE_PREFIX + 'FailedWebRequestSaves'
   FAILED_DOWNLOADS         = RUN_MODE_PREFIX + 'FailedDownloads'
   SEND_MONEY_TXN           = RUN_MODE_PREFIX + 'SendMoneyTxn'
   SEND_CURRENCY            = RUN_MODE_PREFIX + 'SendCurrency'
