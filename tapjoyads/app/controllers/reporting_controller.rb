@@ -74,7 +74,7 @@ class ReportingController < WebsiteController
             :partition_names => spend_partition_names,
             :partition_left => paid_installs_partitions,
             :partition_right => installs_spend_partitions,
-            :partition_title => 'Country',
+            :partition_title => 'Country (Country data is not real-time)',
             :partition_fallback => 'Country data does not exist for this app during this time frame',
             :partition_default => 'United States'
           },
