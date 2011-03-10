@@ -71,12 +71,12 @@ class ReportingController < WebsiteController
               :data => [ @appstats.stats['cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) } ],
               :totals => [ @appstats.stats['paid_clicks'].sum > 0 ? ("%.1f%" % (@appstats.stats['paid_installs'].sum.to_f / @appstats.stats['paid_clicks'].sum * 100.0)) : '-' ]
             },
-            :partition_names => spend_partition_names,
-            :partition_left => paid_installs_partitions,
-            :partition_right => installs_spend_partitions,
-            :partition_title => 'Country (Country data is not real-time)',
-            :partition_fallback => 'Country data does not exist for this app during this time frame',
-            :partition_default => 'United States'
+            #:partition_names => spend_partition_names,
+            #:partition_left => paid_installs_partitions,
+            #:partition_right => installs_spend_partitions,
+            #:partition_title => 'Country (Country data is not real-time)',
+            #:partition_fallback => 'Country data does not exist for this app during this time frame',
+            #:partition_default => 'United States'
           },
 
           :rewarded_installs_plus_rank_data => {
@@ -265,6 +265,13 @@ class ReportingController < WebsiteController
         end
 
         if permitted_to?(:index, :statz)
+          # country breakdowns
+          @data[:rewarded_installs_plus_spend_data][:partition_names] = spend_partition_names
+          @data[:rewarded_installs_plus_spend_data][:partition_left] = paid_installs_partitions
+          @data[:rewarded_installs_plus_spend_data][:partition_right] = installs_spend_partitions
+          @data[:rewarded_installs_plus_spend_data][:partition_title] = 'Country (Country data is not real-time)'
+          @data[:rewarded_installs_plus_spend_data][:partition_fallback] = 'Country data does not exist for this app during this time frame'
+          @data[:rewarded_installs_plus_spend_data][:partition_default] = 'United States'
           # jailbroken data
           @data[:rewarded_installs_plus_spend_data][:main][:names]  << "Jb #{conversion_name}"
           @data[:rewarded_installs_plus_spend_data][:main][:data]   << @appstats.stats['jailbroken_installs']
