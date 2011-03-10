@@ -10,6 +10,7 @@ class Job::MasterCleanupWebRequestsController < Job::JobController
       error_message = "cannot backup web-requests for #{day}, there are #{num_unverified} offers with unverified stats"
       Notifier.alert_new_relic(UnverifiedStatsError, error_message, request, params)
       render :text => error_message
+      return
     end
 
     3.times do
