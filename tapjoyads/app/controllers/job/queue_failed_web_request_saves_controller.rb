@@ -1,4 +1,4 @@
-class Job::QueueFailedWebRequestSavesController
+class Job::QueueFailedWebRequestSavesController < Job::JobController
   
   def initialize
     @queue     = Sqs.queue(QueueNames::FAILED_WEB_REQUEST_SAVES)
@@ -60,6 +60,8 @@ class Job::QueueFailedWebRequestSavesController
         domain_name = "web-request-#{date}-#{rand(MAX_WEB_REQUEST_DOMAINS)}"
         sdb_items.each { |item| item.this_domain_name = domain_name }
         
+        Rails.logger.info "Saving #{sdb_items.size} items to #{domain_name}, keys: #{sdb_items.map(&:key).inspect}"
+        
         begin
           SimpledbResource.put_items(sdb_items)
         rescue RightAws::AwsError => e
@@ -75,6 +77,8 @@ class Job::QueueFailedWebRequestSavesController
         end
       end
     end
+    
+    render :text => 'ok'
   end
   
 private
@@ -91,6 +95,7 @@ private
         sleep(0.1)
         retry
       else
+        Rails.logger.info "Failed to move S3 key: from #{incomplete_path} to #{complete_path}"
         Notifier.alert_new_relic(e.class, e.message, request, params)
       end
     end
@@ -106,6 +111,7 @@ private
         sleep(0.1)
         retry
       else
+        Rails.logger.info "Failed to delete SQS message: #{message.to_s}"
         Notifier.alert_new_relic(e.class, e.message, request, params)
       end
     end
