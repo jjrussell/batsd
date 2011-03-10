@@ -19,7 +19,7 @@ private
     elsif @bucket.key(@complete_path).exists?
       Rails.logger.info("Already operated on #{uuid}")
     else
-      raise "Serialized SDB object not found in S3. Need to retry saving #{uuid}."
+      raise SdbObjectNotInS3.new("Serialized SDB object not found in S3. Need to retry saving #{uuid}.")
     end
   end
   
@@ -30,13 +30,6 @@ private
     sdb_item.put('from_queue', Time.zone.now.to_f.to_s)
     
     params[:domain_name] = sdb_item.this_domain_name
-    
-    # Randomly choose a new web-request domain, if the failed write is a web-request.
-    if (sdb_item.this_domain_name =~ /^web-request/)
-      date = sdb_item.this_domain_name.scan(/^web-request-(\d{4}-\d{2}-\d{2})/)[0][0]
-      num = rand(MAX_WEB_REQUEST_DOMAINS)
-      sdb_item.this_domain_name = "web-request-#{date}-#{num}"
-    end
     
     sdb_item.serial_save(@options.merge({ :catch_exceptions => false }))
     

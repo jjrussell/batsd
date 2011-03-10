@@ -341,7 +341,7 @@ class SimpledbResource
   ##
   # Performs a batch_put_attributes.
   def self.put_items(items, options = {})
-    replace           = options.delete(:replace)           { false }
+    replace = options.delete(:replace) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     raise "Too many items to batch_put" if items.length > 25
