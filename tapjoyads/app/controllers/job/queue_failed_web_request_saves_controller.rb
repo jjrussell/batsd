@@ -1,4 +1,4 @@
-class Job::QueueFailedWebRequestSavesController
+class Job::QueueFailedWebRequestSavesController < Job::JobController
   
   def initialize
     @queue     = Sqs.queue(QueueNames::FAILED_WEB_REQUEST_SAVES)
