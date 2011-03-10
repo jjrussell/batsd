@@ -75,6 +75,8 @@ class Job::QueueFailedWebRequestSavesController < Job::JobController
         end
       end
     end
+    
+    render :text => 'ok'
   end
   
 private
