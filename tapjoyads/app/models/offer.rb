@@ -514,7 +514,6 @@ class Offer < ActiveRecord::Base
         show_rate_reject?(device) ||
         flixter_reject?(publisher_app, device) ||
         whitelist_reject?(publisher_app) ||
-        gamevil_reject?(publisher_app) ||
         minimum_featured_bid_reject?(currency) ||
         jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers) ||
@@ -687,12 +686,6 @@ private
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     return rand > show_rate
   end
-  
-  # TO REMOVE
-  def gamevil_reject?(publisher_app)
-    return publisher_app.partner_id == 'cea789f9-7741-4197-9cc0-c6ac40a0801a' && partner_id != 'cea789f9-7741-4197-9cc0-c6ac40a0801a'
-  end
-  # END TO REMOVE
   
   def flixter_reject?(publisher_app, device)
     clash_of_titans_offer_id = '4445a5be-9244-4ce7-b65d-646ee6050208'

@@ -42,12 +42,9 @@
 #privacy
   = link_to('Privacy', 'https://www.tapjoy.com/privacy')
 
-- # Don't show 'Ads by Tapjoy' for Gamevil.
-- # TODO: Don't hard-code id. Add a bit to the record or find some other solution.
-- if @currency.partner_id != 'cea789f9-7741-4197-9cc0-c6ac40a0801a'
-  #adsby 
-    Ads by
-    %img{ :src => "#{CLOUDFRONT_URL}/images/tapjoylogo-small.png", :alt => "Tapjoy"}
+#adsby 
+  Ads by
+  %img{ :src => "#{CLOUDFRONT_URL}/images/tapjoylogo-small.png", :alt => "Tapjoy"}
 
 .clear
 
