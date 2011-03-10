@@ -42,13 +42,14 @@ private
     offer.time_delay       = 'in seconds'
     offer.name_suffix      = 'action'
     offer.third_party_data = prerequisite_offer_id
+    offer.icon_id_override = app_id
     offer.save!
   end
   
   def update_offers
     offers.each do |offer|
       offer.partner_id       = partner_id if partner_id_changed?
-      offer.app_id           = app_id if app_id_changed?
+      offer.icon_id_override = app_id if app_id_changed? && app_id_was == offer.icon_id_override
       offer.name             = name if name_changed?
       offer.hidden           = hidden if hidden_changed?
       offer.third_party_data = prerequisite_offer_id if prerequisite_offer_id_changed?

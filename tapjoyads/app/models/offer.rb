@@ -23,7 +23,7 @@ class Offer < ActiveRecord::Base
                                   'age_rating', 'multi_complete', 'featured',
                                   'publisher_app_whitelist', 'direct_pay', 'reward_value',
                                   'third_party_data', 'payment_range_low',
-                                  'payment_range_high' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'payment_range_high', 'icon_id_override' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   DEFAULT_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
@@ -609,7 +609,7 @@ class Offer < ActiveRecord::Base
   end
   
   def icon_id
-    item_type == 'ActionOffer' ? third_party_data : item_id
+    icon_id_override || item_id
   end
   
   def expensive?
