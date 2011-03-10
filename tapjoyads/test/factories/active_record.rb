@@ -56,9 +56,6 @@ Factory.define :offerpal_offer do |offerpal_offer|
   offerpal_offer.name { Factory.next(:name) }
   offerpal_offer.offerpal_id UUIDTools::UUID.random_create.to_s
   offerpal_offer.url 'http://ws.tapjoyads.com/healthz'
-  offerpal_offer.instructions 'complete the offer'
-  offerpal_offer.time_delay 'in seconds'
-  offerpal_offer.credit_card_required false
   offerpal_offer.payment 100
 end
 

@@ -35,13 +35,9 @@ private
     offer.id = id
     offer.partner = partner
     offer.name = name
-    offer.description = description
     offer.price = 0
     offer.url = app.store_url
     offer.device_types = Offer::ALL_DEVICES.to_json
-    offer.instructions = "Go to the App Store where you can rate this app."
-    offer.credit_card_required = false
-    offer.time_delay = 'in seconds'
     offer.bid = 0
     offer.reward_value = 15
     offer.third_party_data = app_id
@@ -55,7 +51,6 @@ private
     offers.each do |offer|
       offer.partner_id = partner_id if partner_id_changed?
       offer.name = name if name_changed?
-      offer.description = description if description_changed?
       offer.hidden = hidden if hidden_changed?
       offer.url = app.store_url
       offer.save! if offer.changed?

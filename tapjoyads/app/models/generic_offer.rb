@@ -20,13 +20,10 @@ private
     offer.id = id
     offer.partner = partner
     offer.name = name
-    offer.description = description
     offer.price = price
     offer.device_types = Offer::ALL_DEVICES.to_json
     offer.url = url
     offer.third_party_data = third_party_data
-    offer.instructions = 'Complete the offer.'
-    offer.time_delay = 'some time'
     offer.save!
   end
   
@@ -34,7 +31,6 @@ private
     offers.each do |offer|
       offer.partner_id = partner_id if partner_id_changed?
       offer.name = name if name_changed?
-      offer.description = description if description_changed?
       offer.price = price if price_changed?
       offer.url = url if url_changed?
       offer.third_party_data = third_party_data if third_party_data_changed?

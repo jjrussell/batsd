@@ -23,13 +23,9 @@ private
     offer.id = id
     offer.partner = partner
     offer.name = name
-    offer.description = description
     offer.price = 0
     offer.device_types = Offer::ALL_DEVICES.to_json
     offer.url = @url
-    offer.instructions = @instructions
-    offer.time_delay = @time_delay
-    offer.credit_card_required = @credit_card_required
     offer.bid = @payment
     offer.tapjoy_enabled = true
     offer.show_rate = 1.0
@@ -40,11 +36,7 @@ private
     offers.each do |offer|
       offer.partner_id = partner_id if partner_id_changed?
       offer.name = name if name_changed?
-      offer.description = description if description_changed?
       offer.url = @url unless @url.nil?
-      offer.instructions = @instructions unless @instructions.nil?
-      offer.time_delay = @time_delay unless @time_delay.nil?
-      offer.credit_card_required = @credit_card_required unless @credit_card_required.nil?
       offer.bid = @payment unless @payment.nil?
       offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?

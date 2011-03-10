@@ -22,7 +22,7 @@ class ActionOffer < ActiveRecord::Base
   after_create :create_primary_offer
   after_update :update_offers
   
-  delegate :user_enabled?, :tapjoy_enabled?, :bid, :description, :min_bid, :daily_budget, :integrated?, :to => :primary_offer
+  delegate :user_enabled?, :tapjoy_enabled?, :bid, :min_bid, :daily_budget, :integrated?, :to => :primary_offer
   
   delegate :is_android?, :store_id, :store_url, :large_download?, :supported_devices, :to => :app
   
@@ -33,13 +33,10 @@ private
     offer.id               = id
     offer.partner          = partner
     offer.name             = name
-    offer.instructions     = "Follow the instructions to receive credit."
-    offer.description      = offer.instructions
     offer.url              = "#{API_URL}/action_offers/#{self.id}"
     offer.device_types     = app.primary_offer.device_types
     offer.bid              = 0
     offer.price            = 0
-    offer.time_delay       = 'in seconds'
     offer.name_suffix      = 'action'
     offer.third_party_data = prerequisite_offer_id
     offer.icon_id_override = app_id
