@@ -19,6 +19,7 @@ class GlobalStats
     end
 
     global_stat.serial_save
+    global_stat
   end
 
   def self.aggregate_daily_global_stats(date = nil)
@@ -32,8 +33,7 @@ class GlobalStats
     daily_stat = Stats.new(:key => "app.#{yesterday.strftime('%Y-%m')}.global", :load_from_memcache => false)
     # logins won't be empty if stats have already been aggregated for yesterday
     if daily_stat.get_daily_count('logins')[yesterday.day - 1] == 0
-      aggregate_hourly_global_stats(yesterday)
-      hourly_stat = Stats.new(:key => "app.#{yesterday.strftime('%Y-%m-%d')}.global", :load_from_memcache => false)
+      hourly_stat = aggregate_hourly_global_stats(yesterday)
       daily_stat.populate_daily_from_hourly(hourly_stat, yesterday.day - 1)
       daily_stat.serial_save
     else
