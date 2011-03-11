@@ -249,14 +249,10 @@ private
     offer.id = id
     offer.partner = partner
     offer.name = name
-    offer.description = description
     offer.price = price
     offer.bid = offer.min_bid
     offer.url = store_url
     offer.device_types = is_android? ? Offer::ANDROID_DEVICES.to_json : Offer::APPLE_DEVICES.to_json
-    offer.instructions = 'Install and then run the app while online to receive credit.'
-    offer.time_delay = 'in seconds'
-    offer.credit_card_required = false
     offer.third_party_data = store_id
     offer.age_rating = age_rating
     offer.save!
@@ -266,7 +262,6 @@ private
     offers.each do |offer|
       offer.partner_id = partner_id if partner_id_changed?
       offer.name = name if name_changed? && name_was == offer.name
-      offer.description = description if description_changed?
       if price_changed?
         offer.price = price
         offer.bid = offer.min_bid if offer.bid < offer.min_bid

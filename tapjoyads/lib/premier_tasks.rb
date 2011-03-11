@@ -6,7 +6,7 @@ class PremierTasks
       
       # expire exclusivity levels
       if partner.needs_exclusivity_expired?
-        partner.expire_exclusivity
+        partner.expire_exclusivity_level
         save_partner = true
       elsif partner.exclusivity_expires_on && partner.exclusivity_expires_on == Date.today + 7
         # spam partner with emails

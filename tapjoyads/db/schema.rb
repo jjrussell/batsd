@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110308195000) do
+ActiveRecord::Schema.define(:version => 20110310193557) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -40,11 +40,6 @@ ActiveRecord::Schema.define(:version => 20110308195000) do
     t.text     "store_url"
     t.integer  "color"
     t.boolean  "use_raw_url",                           :default => false, :null => false
-    t.datetime "first_pinged_at"
-    t.datetime "submitted_to_store_at"
-    t.datetime "approved_by_store_at"
-    t.datetime "approved_by_tapjoy_at"
-    t.datetime "enabled_at"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "age_rating"
@@ -214,7 +209,6 @@ ActiveRecord::Schema.define(:version => 20110308195000) do
     t.string   "item_id",                           :limit => 36,                                                  :null => false
     t.string   "item_type",                                                                                        :null => false
     t.string   "name",                                                                                             :null => false
-    t.text     "description"
     t.text     "url"
     t.integer  "price"
     t.integer  "payment",                                                                       :default => 0,     :null => false
@@ -230,9 +224,6 @@ ActiveRecord::Schema.define(:version => 20110308195000) do
     t.boolean  "tapjoy_enabled",                                                                :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "instructions"
-    t.string   "time_delay"
-    t.boolean  "credit_card_required",                                                          :default => false, :null => false
     t.string   "third_party_data"
     t.decimal  "conversion_rate",                                 :precision => 8, :scale => 6, :default => 0.0,   :null => false
     t.decimal  "show_rate",                                       :precision => 8, :scale => 6, :default => 1.0,   :null => false
@@ -244,7 +235,6 @@ ActiveRecord::Schema.define(:version => 20110308195000) do
     t.datetime "last_stats_aggregation_time"
     t.datetime "last_daily_stats_aggregation_time"
     t.integer  "stats_aggregation_interval"
-    t.datetime "last_balance_alert_time"
     t.text     "publisher_app_whitelist",                                                                          :null => false
     t.string   "name_suffix",                                                                   :default => ""
     t.boolean  "hidden",                                                                        :default => false, :null => false
@@ -258,6 +248,7 @@ ActiveRecord::Schema.define(:version => 20110308195000) do
     t.integer  "min_bid_override"
     t.datetime "next_daily_stats_aggregation_time"
     t.boolean  "active",                                                                        :default => false
+    t.string   "icon_id_override",                  :limit => 36
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

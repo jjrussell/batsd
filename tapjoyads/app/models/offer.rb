@@ -23,7 +23,7 @@ class Offer < ActiveRecord::Base
                                   'age_rating', 'multi_complete', 'featured',
                                   'publisher_app_whitelist', 'direct_pay', 'reward_value',
                                   'third_party_data', 'payment_range_low',
-                                  'payment_range_high' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'payment_range_high', 'icon_id_override' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   DEFAULT_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
@@ -49,7 +49,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :allow_blank => false, :greater_than_or_equal_to => 0
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_blank => false, :allow_nil => true, :greater_than => 0
-  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :credit_card_required, :self_promote_only, :featured, :multi_complete, :in => [ true, false ]
+  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer )
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
@@ -514,7 +514,6 @@ class Offer < ActiveRecord::Base
         show_rate_reject?(device) ||
         flixter_reject?(publisher_app, device) ||
         whitelist_reject?(publisher_app) ||
-        gamevil_reject?(publisher_app) ||
         minimum_featured_bid_reject?(currency) ||
         jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers) ||
@@ -609,7 +608,7 @@ class Offer < ActiveRecord::Base
   end
   
   def icon_id
-    item_type == 'ActionOffer' ? third_party_data : item_id
+    icon_id_override || item_id
   end
   
   def expensive?
@@ -687,12 +686,6 @@ private
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     return rand > show_rate
   end
-  
-  # TO REMOVE
-  def gamevil_reject?(publisher_app)
-    return publisher_app.partner_id == 'cea789f9-7741-4197-9cc0-c6ac40a0801a' && partner_id != 'cea789f9-7741-4197-9cc0-c6ac40a0801a'
-  end
-  # END TO REMOVE
   
   def flixter_reject?(publisher_app, device)
     clash_of_titans_offer_id = '4445a5be-9244-4ce7-b65d-646ee6050208'
