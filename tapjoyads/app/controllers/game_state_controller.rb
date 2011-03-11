@@ -14,12 +14,12 @@ class GameStateController < ApplicationController
   end
   
   def save
-    return unless verify_params([:app_id, :publisher_user_id, :data, :udid, :tapjoy_points])
+    return unless verify_params([:app_id, :publisher_user_id, :data, :udid, :game_state_points])
     @game_state = GameState.new :key => "#{params[:app_id]}.#{params[:publisher_user_id]}"
     @game_state.data = params[:data]
     @game_state.version += 1
     @game_state.add_device params[:udid]
-    @game_state.tapjoy_points = params[:tapjoy_points].to_i
+    @game_state.tapjoy_points = params[:game_state_points].to_i
     @game_state.save
   end
   
