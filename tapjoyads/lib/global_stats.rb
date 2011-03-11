@@ -2,14 +2,11 @@ class GlobalStats
 
   def self.aggregate_hourly_global_stats(date = nil)
     date ||= Time.zone.now - 10.minutes
-    global_stat = Stats.new(:key => "app.#{date.strftime('%Y-%m-%d')}.global", :load_from_memcache => false)
+    global_stat = Stats.new(:key => "global.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
     global_stat.parsed_values.clear
     global_stat.parsed_countries.clear
 
     Stats.select(:where => "itemName() like 'app.#{date.strftime('%Y-%m-%d')}%'") do |this_stat|
-    #Offer.find_each do |offer|
-      #this_stat = Stats.new(:key => "app.#{date.strftime('%Y-%m-%d')}.#{offer.id}", :load_from_memcache => false)
-
       this_stat.parsed_values.each do |stat, values|
         global_stat.parsed_values[stat] = sum_arrays(global_stat.get_hourly_count(stat), values)
       end
@@ -31,7 +28,7 @@ class GlobalStats
       return
     end
     yesterday = date.yesterday
-    daily_stat = Stats.new(:key => "app.#{yesterday.strftime('%Y-%m')}.global", :load_from_memcache => false)
+    daily_stat = Stats.new(:key => "global.#{yesterday.strftime('%Y-%m')}", :load_from_memcache => false)
     # logins won't be empty if stats have already been aggregated for yesterday
     if daily_stat.get_daily_count('logins')[yesterday.day - 1] == 0
       hourly_stat = aggregate_hourly_global_stats(yesterday)
