@@ -137,6 +137,9 @@ class BillingController < WebsiteController
   def payout_info
     if current_partner.payout_info
       @payout_info = current_partner.payout_info
+      unless @payout_info.filled?
+        flash.now[:warning] = "You have some missing information. Please contact <a href='support@tapjoy.com'>support@tapjoy.com</a> if you need further assistance."
+      end
     else
       @payout_info = current_partner.build_payout_info
     end
@@ -145,7 +148,14 @@ class BillingController < WebsiteController
   def update_payout_info
     @payout_info = current_partner.payout_info || current_partner.build_payout_info
     log_activity(@payout_info)
-    if @payout_info.update_attributes(params[:payout_info])
+
+    safe_attributes = [
+      :beneficiary_name, :company_name,
+      :tax_country, :account_type, :billing_name, :tax_id,
+      :address_country, :address_1, :address_2, :address_city, :address_state, :address_postal_code,
+      :bank_name, :bank_address, :bank_account_number, :bank_routing_number
+    ]
+    if @payout_info.safe_update_attributes(params[:payout_info], safe_attributes)
       flash[:notice] = "Your information has been saved."
       redirect_to :action => :payout_info
     else

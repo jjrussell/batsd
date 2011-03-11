@@ -336,7 +336,7 @@ class ToolsController < WebsiteController
     end
   end
 
-  def partners_with_balance
+  def publishers_without_payout_info
     @partners = Partner.to_payout_by_earnings.reject(&:completed_payout_info?).paginate(:page => params[:page])
   end
 end
