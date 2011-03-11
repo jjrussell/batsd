@@ -1,4 +1,15 @@
 class OneOffs
+
+  def self.aggregate_all_global_stats_for_all_time_ever
+    date = Time.zone.parse('November 10, 2009')
+    while date < Time.zone.now
+      puts "#{Time.zone.now}: starting aggregation for #{date}"
+      GlobalStats.aggregate_daily_global_stats(date)
+      puts "#{Time.zone.now}: done aggregating for #{date}"
+    end
+    puts 'all finished!'
+    puts "*" * 80
+  end
   
   def self.check_syntax
     Rails::Initializer.run(:load_application_classes)
