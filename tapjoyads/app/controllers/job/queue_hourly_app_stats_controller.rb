@@ -10,7 +10,7 @@ private
     offer      = Offer.find(message.to_s)
     now        = Time.zone.now
     start_time = offer.last_stats_aggregation_time || now.beginning_of_day
-    end_time   = (now - 30.minutes).beginning_of_hour
+    end_time   = now.beginning_of_hour
     stat_rows  = {}
     
     while start_time < end_time
@@ -52,7 +52,7 @@ private
     end
     
     offer.active = is_active
-    offer.next_stats_aggregation_time = now + 55.minutes + rand(10.minutes)
+    offer.next_stats_aggregation_time = end_time + 65.minutes + rand(55.minutes)
     offer.last_stats_aggregation_time = end_time
     offer.save!
   end
