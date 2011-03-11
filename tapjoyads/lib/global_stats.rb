@@ -6,8 +6,9 @@ class GlobalStats
     global_stat.parsed_values.clear
     global_stat.parsed_countries.clear
 
-    Offer.find_each do |offer|
-      this_stat = Stats.new(:key => "app.#{date.strftime('%Y-%m-%d')}.#{offer.id}", :load_from_memcache => false)
+    Stats.select(:where => "itemName() like 'app.#{date.strftime('%Y-%m-%d')}%'") do |this_stat|
+    #Offer.find_each do |offer|
+      #this_stat = Stats.new(:key => "app.#{date.strftime('%Y-%m-%d')}.#{offer.id}", :load_from_memcache => false)
 
       this_stat.parsed_values.each do |stat, values|
         global_stat.parsed_values[stat] = sum_arrays(global_stat.get_hourly_count(stat), values)
