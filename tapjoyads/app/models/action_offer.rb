@@ -36,7 +36,7 @@ private
     offer.url              = "#{API_URL}/action_offers/#{self.id}"
     offer.device_types     = app.primary_offer.device_types
     offer.bid              = 0
-    offer.price            = 0
+    offer.price            = prerequisite_offer_id? ? 0 : app.price
     offer.name_suffix      = 'action'
     offer.third_party_data = prerequisite_offer_id
     offer.icon_id_override = app_id
@@ -49,6 +49,7 @@ private
       offer.icon_id_override = app_id if app_id_changed? && app_id_was == offer.icon_id_override
       offer.name             = name if name_changed?
       offer.hidden           = hidden if hidden_changed?
+      offer.price            = prerequisite_offer_id? ? 0 : app.price
       offer.third_party_data = prerequisite_offer_id if prerequisite_offer_id_changed?
       offer.save! if offer.changed?
     end
