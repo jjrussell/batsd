@@ -187,7 +187,7 @@ private
   def build_test_offer(publisher_app, currency)
     test_offer = Offer.new(:item_id => publisher_app.id, :item_type => 'TestOffer')
     test_offer.id = publisher_app.id
-    test_offer.name = 'Test Offer (Only Visible to Test Devices)'
+    test_offer.name = 'Test Offer (Visible to Test Devices)'
     test_offer.third_party_data = publisher_app.id
     test_offer.price = 0
     test_offer.reward_value = currency.conversion_rate

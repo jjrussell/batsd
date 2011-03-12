@@ -174,7 +174,7 @@ class Offer < ActiveRecord::Base
     
     offer_list.each do |offer|
       offer.normalize_stats(stats)
-      offer.name = "#{offer.name[0, 40].strip}..." if offer.name.length > 40
+      offer.name = "#{offer.truncated_name}..." if offer.name.length > 40
     end
     
     offer_list.each do |offer|
@@ -496,6 +496,10 @@ class Offer < ActiveRecord::Base
   
   def name_with_suffix_and_platform
     "#{name_with_suffix} (#{get_platform})"
+  end
+  
+  def truncated_name
+    name[0, 40].strip
   end
   
   def search_result_name
