@@ -6,6 +6,7 @@ class OneOffs
       puts "#{Time.zone.now}: starting aggregation for #{date}"
       GlobalStats.aggregate_daily_global_stats(date)
       puts "#{Time.zone.now}: done aggregating for #{date}"
+      date += 1.day
     end
     puts 'all finished!'
     puts "*" * 80
