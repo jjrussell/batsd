@@ -69,14 +69,14 @@ private
         stats[key]['advertiser_spend']   = number_to_currency(stats[key]['advertiser_spend'])
         stats[key]['publisher_earnings'] = number_to_currency(stats[key]['publisher_earnings'])
         stats[key]['marketing_credits']  = number_to_currency(stats[key]['marketing_credits'])
-        stats[key]['deduct_pct']         = number_with_precision(stats[key]['deduct_pct'], :precision => 2) + '%'
+        stats[key]['deduct_pct']         = number_to_percentage(stats[key]['deduct_pct'], :precision => 2)
         stats[key]['orders']             = number_to_currency(stats[key]['orders'])
         stats[key]['payouts']            = number_to_currency(stats[key]['payouts'])
         stats[key]['linkshare_est']      = number_to_currency(stats[key]['linkshare_est'])
         stats[key]['ads_est']            = number_to_currency(stats[key]['ads_est'])
         stats[key]['revenue']            = number_to_currency(stats[key]['revenue'])
         stats[key]['net_revenue']        = number_to_currency(stats[key]['net_revenue'])
-        stats[key]['margin']             = number_with_precision(stats[key]['margin'], :precision => 2) + '%'
+        stats[key]['margin']             = number_to_percentage(stats[key]['margin'], :precision => 2)
       end
     end
 
