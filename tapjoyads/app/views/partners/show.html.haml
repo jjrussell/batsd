@@ -42,7 +42,7 @@
 
 .clear
 
-- if permitted_to?(:partners_with_balance, :tools)
+- if permitted_to?(:publishers_without_payout_info, :tools)
   - @payout_info = @partner.payout_info
   - if @payout_info
     - if @payout_info.filled?
