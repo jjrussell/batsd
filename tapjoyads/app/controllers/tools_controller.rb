@@ -337,6 +337,8 @@ class ToolsController < WebsiteController
   end
 
   def publishers_without_payout_info
-    @partners = Partner.to_payout_by_earnings.reject(&:completed_payout_info?).paginate(:page => params[:page])
+    partners_without_payout_info = Partner.to_payout_by_earnings.reject(&:completed_payout_info?)
+    @count = partners_without_payout_info.length
+    @partners = partners_without_payout_info.paginate(:page => params[:page])
   end
 end
