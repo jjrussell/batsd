@@ -1,0 +1,9 @@
+{
+  "Statement" : [
+    {
+      "Effect"   : "Allow",
+      "Action"   : [ "iam:*AccessKey*", "iam:*LoginProfile" ],
+      "Resource" : "arn:aws:iam::266171351246:user/USERNAME"
+    }
+  ]
+}
