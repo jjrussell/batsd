@@ -19,15 +19,19 @@ class ReportingController < WebsiteController
   end
 
   def show
-    session[:last_shown_app] = @offer.item_id if @offer.item_type == 'App'
+    session[:last_shown_app] = @offer.item_id if @offer && @offer.item_type == 'App'
 
     if @granularity == :daily
       intervals = @appstats.intervals.map { |time| time.to_s(:pub) + " UTC"  }
     else
       intervals = @appstats.intervals.map { |time| time.to_s(:pub_ampm) }
     end
-    
-    conversion_name = @offer.item_type == 'App' ? 'Installs' : 'Conversions'
+
+    if @offer
+      conversion_name = @offer.item_type == 'App' ? 'Installs' : 'Conversions'
+    else
+      conversion_name = 'Conversions'
+    end
 
     respond_to do |format|
       format.html do
@@ -346,6 +350,7 @@ private
   
   def find_offer
     if permitted_to?(:index, :statz)
+      return if params[:id] == 'global'
       @offer = Offer.find_by_id(params[:id], :include => 'item')
     else
       @offer = current_partner.offers.find_by_id(params[:id], :include => 'item')
@@ -384,7 +389,8 @@ private
     end
 
     # lookup the stats
-    @appstats = Appstats.new(@offer.id, { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true })
+    @offer ? key = @offer.id : key = 'global'
+    @appstats = Appstats.new(key, { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true })
   end
 
   def spend_partitions
@@ -491,6 +497,7 @@ private
   end
 
   def get_virtual_good_partitions
+    return {} if params[:id] == 'global'
     return @virtual_good_paritions if @virtual_good_paritions.present?
     @virtual_good_paritions = {}
     

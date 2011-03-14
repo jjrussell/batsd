@@ -1,0 +1,34 @@
+- @page_title = "Global Stats"
+
+.tjform{:style => 'margin-top: 5px;'}
+  = label_tag('search_box', 'Offer Name:')
+  = text_field_tag('search_box', '', :size => '40')
+
+%h1= "Global Stats"
+
+.clear
+
+%form#change_date{ :method => :get, :class => 'tjform' }
+  = render :partial => 'reporting/date_range_fields'
+
+.clear
+
+.load-circle= image_tag('load-circle.gif')
+
+#charts{ :style => "text-align: center;" }
+  #connects.graph
+  #installs_spend.graph
+  #installs_rank.graph
+  #revenue.graph
+  #offerwall.graph
+  #featured_offers.graph
+  #display_ads.graph
+  #ads.graph
+
+- include_tapjoy_graph
+- content_for :included_javascripts, javascript_include_tag('tapjoy/reporting')
+- content_for :include_labels
+- content_for :page_head, stylesheet_link_tag('reporting')
+- content_for :page_javascript do
+  :plain
+    $('#search_box').autocomplete({ source: '#{search_offers_path}', delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });

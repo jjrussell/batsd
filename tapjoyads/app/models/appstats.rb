@@ -248,7 +248,7 @@ private
     while time < end_time
       if date != time.strftime('%Y-%m-%d')
         date = time.strftime('%Y-%m-%d')
-        stat = load_stat_row("app.#{date}.#{@app_key}")
+        stat = load_stat_row(date)
         populate_hourly_stats_from_memcached(stat, stat_name, cache_hours)
         hourly_stats = stat.get_hourly_count(stat_name)
       end
@@ -284,12 +284,12 @@ private
     while time + 1.hour < end_time
       if date != time.strftime('%Y-%m')
         date = time.strftime('%Y-%m')
-        stat = load_stat_row("app.#{date}.#{@app_key}")
+        stat = load_stat_row(date)
         daily_stats = stat.get_daily_count(stat_name)
       end
       
       if time + 28.hours > @now
-        hourly_stat = load_stat_row("app.#{date}-#{time.strftime("%d")}.#{@app_key}")
+        hourly_stat = load_stat_row("#{date}-#{time.strftime("%d")}")
         populate_hourly_stats_from_memcached(hourly_stat, stat_name, cache_hours)
         stat.populate_daily_from_hourly(hourly_stat, time.day - 1)
         daily_stats = stat.get_daily_count(stat_name)
@@ -314,7 +314,13 @@ private
     return daily_stats_over_range
   end
   
-  def load_stat_row(key)
+  def load_stat_row(date_string)
+    if @app_key == 'global'
+      key = "global.#{date_string}"
+    else
+      key = "app.#{date_string}.#{@app_key}"
+    end
+
     @stat_rows[key] ||= Stats.new(:key => key)
   end
   
@@ -383,5 +389,6 @@ private
     
     @intervals << start_time
   end
+
   
 end

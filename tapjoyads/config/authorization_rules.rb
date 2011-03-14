@@ -44,7 +44,7 @@ authorization do
   role :executive do
     includes :tools
     has_permission_on :tools, :to => [ :money, :monthly_data ]
-    has_permission_on :statz, :to => [ :index, :show ]
+    has_permission_on :statz, :to => [ :index, :show, :global ]
     has_permission_on :search, :to => [ :offers ]
   end
   

@@ -184,7 +184,7 @@ private
 
   def strip_defaults(hash)
     hash.each do |key, value|
-      hash.delete(key) if value.uniq == [0]
+      hash.delete(key) if !value.is_a?(Array) || value.uniq == [0]
     end
   end
 

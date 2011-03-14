@@ -132,6 +132,12 @@ class StatzController < WebsiteController
       hash[:last_run_time] = device.has_app(@offer.item_id) ? device.last_run_time(@offer.item_id).to_s(:pub_ampm_sec) : 'Never'
     end
   end
+
+  def global
+    now = Time.zone.now
+    @start_time = now.beginning_of_hour - 23.hours
+    @end_time = now
+  end
   
 private
   
