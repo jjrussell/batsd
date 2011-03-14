@@ -46,7 +46,8 @@ class ReportingController < WebsiteController
             :main => {
               :names => [ 'Sessions', 'New Users' ],
               :data => [ @appstats.stats['logins'], @appstats.stats['new_users'] ],
-              :totals => [ @appstats.stats['logins'].sum, @appstats.stats['new_users'].sum ]
+              :stringSata => [ @appstats.stats['logins'].map { |i| number_with_delimiter(i) }, @appstats.stats['new_users'].map { |i| number_with_delimiter(i) } ],
+              :totals => [ number_with_delimiter(@appstats.stats['logins'].sum), number_with_delimiter(@appstats.stats['new_users'].sum) ]
             }
           },
 
@@ -57,7 +58,8 @@ class ReportingController < WebsiteController
             :main => {
               :names => [ "Total Paid #{conversion_name}", 'Total Clicks' ],
               :data => [ @appstats.stats['paid_installs'], @appstats.stats['paid_clicks'] ],
-              :totals => [ @appstats.stats['paid_installs'].sum, @appstats.stats['paid_clicks'].sum ]
+              :stringData => [ @appstats.stats['paid_installs'].map { |i| number_with_delimiter(i) }, @appstats.stats['paid_clicks'].map { |i| number_with_delimiter(i) } ],
+              :totals => [ number_with_delimiter(@appstats.stats['paid_installs'].sum), number_with_delimiter(@appstats.stats['paid_clicks'].sum) ]
             },
             :right => {
               :unitPrefix => '$',
@@ -86,7 +88,8 @@ class ReportingController < WebsiteController
             :main => {
               :names => [ "Total Paid #{conversion_name}" ],
               :data => [ @appstats.stats['paid_installs'] ],
-              :totals => [ @appstats.stats['paid_installs'].sum ]
+              :stringData => [ @appstats.stats['paid_installs'].map { |i| number_with_delimiter(i) } ],
+              :totals => [ number_with_delimiter(@appstats.stats['paid_installs'].sum) ]
             },
             :partition_names => get_rank_partition_names,
             :partition_right => get_rank_partition_values,
@@ -124,7 +127,12 @@ class ReportingController < WebsiteController
             :main => {
               :names => [ 'Offerwall views', 'Clicks', 'Conversions' ],
               :data => [ @appstats.stats['offerwall_views'], @appstats.stats['rewards_opened'], @appstats.stats['rewards'] ],
-              :totals => [ @appstats.stats['offerwall_views'].sum, @appstats.stats['rewards_opened'].sum, @appstats.stats['rewards'].sum ]
+              :stringData => [ @appstats.stats['offerwall_views'].map { |i| number_with_delimiter(i) },
+                         @appstats.stats['rewards_opened'].map { |i| number_with_delimiter(i) },
+                         @appstats.stats['rewards'].map { |i| number_with_delimiter(i) } ],
+              :totals => [ number_with_delimiter(@appstats.stats['offerwall_views'].sum),
+                           number_with_delimiter(@appstats.stats['rewards_opened'].sum),
+                           number_with_delimiter(@appstats.stats['rewards'].sum) ]
             },
             :right => {
               :unitPrefix => '$',
@@ -155,10 +163,14 @@ class ReportingController < WebsiteController
                          @appstats.stats['featured_offers_shown'],
                          @appstats.stats['featured_offers_opened'],
                          @appstats.stats['featured_published_offers'] ],
-              :totals => [ @appstats.stats['featured_offers_requested'].sum,
-                           @appstats.stats['featured_offers_shown'].sum,
-                           @appstats.stats['featured_offers_opened'].sum,
-                           @appstats.stats['featured_published_offers'].sum ]
+              :stringData => [ @appstats.stats['featured_offers_requested'].map { |i| number_with_delimiter(i) },
+                               @appstats.stats['featured_offers_shown'].map { |i| number_with_delimiter(i) },
+                               @appstats.stats['featured_offers_opened'].map { |i| number_with_delimiter(i) },
+                               @appstats.stats['featured_published_offers'].map { |i| number_with_delimiter(i) } ],
+              :totals => [ number_to_currency(@appstats.stats['featured_offers_requested'].sum),
+                           number_to_currency(@appstats.stats['featured_offers_shown'].sum),
+                           number_to_currency(@appstats.stats['featured_offers_opened'].sum),
+                           number_to_currency(@appstats.stats['featured_published_offers'].sum) ]
             },
             :right => {
               :unitPrefix => '$',
@@ -191,10 +203,14 @@ class ReportingController < WebsiteController
                          @appstats.stats['display_ads_shown'],
                          @appstats.stats['display_clicks'],
                          @appstats.stats['display_conversions'] ],
-              :totals => [ @appstats.stats['display_ads_requested'].sum,
-                           @appstats.stats['display_ads_shown'].sum,
-                           @appstats.stats['display_clicks'].sum,
-                           @appstats.stats['display_conversions'].sum ]
+              :stringData => [ @appstats.stats['display_ads_requested'].map { |i| number_with_delimiter(i) }, 
+                               @appstats.stats['display_ads_shown'].map { |i| number_with_delimiter(i) },
+                               @appstats.stats['display_clicks'].map { |i| number_with_delimiter(i) },
+                               @appstats.stats['display_conversions'].map { |i| number_with_delimiter(i) } ],
+              :totals => [ number_with_delimiter(@appstats.stats['display_ads_requested'].sum),
+                           number_with_delimiter(@appstats.stats['display_ads_shown'].sum),
+                           number_with_delimiter(@appstats.stats['display_clicks'].sum),
+                           number_with_delimiter(@appstats.stats['display_conversions'].sum) ]
             },
             :right => {
               :unitPrefix => '$',
@@ -224,7 +240,8 @@ class ReportingController < WebsiteController
             :main => {
               :names => [ 'Ad impressions' ],
               :data => [ @appstats.stats['hourly_impressions'] ],
-              :totals => [ @appstats.stats['hourly_impressions'].sum ]
+              :stringData => [ @appstats.stats['hourly_impressions'].map { |i| number_with_delimiter(i) } ],
+              :totals => [ number_with_delimiter(@appstats.stats['hourly_impressions'].sum) ]
             }
           },
 
@@ -241,7 +258,10 @@ class ReportingController < WebsiteController
             :main => {
               :names => [ 'Store views', 'Total purchases' ],
               :data => [ @appstats.stats['vg_store_views'], @appstats.stats['vg_purchases'] ],
-              :totals => [ @appstats.stats['vg_store_views'].sum, @appstats.stats['vg_purchases'].sum ]
+              :stringData => [ @appstats.stats['vg_store_views'].map { |i| number_with_delimiter(i) }, 
+                               @appstats.stats['vg_purchases'].map { |i| number_with_delimiter(i) } ],
+              :totals => [ number_with_delimiter(@appstats.stats['vg_store_views'].sum), 
+                           number_with_delimiter(@appstats.stats['vg_purchases'].sum) ]
             },
             :partition_names => get_virtual_good_partition_names,
             :partition_right => get_virtual_good_partition_values,
@@ -273,9 +293,10 @@ class ReportingController < WebsiteController
           @data[:rewarded_installs_plus_spend_data][:partition_fallback] = 'Country data does not exist for this app during this time frame'
           @data[:rewarded_installs_plus_spend_data][:partition_default] = 'United States'
           # jailbroken data
-          @data[:rewarded_installs_plus_spend_data][:main][:names]  << "Jb #{conversion_name}"
-          @data[:rewarded_installs_plus_spend_data][:main][:data]   << @appstats.stats['jailbroken_installs']
-          @data[:rewarded_installs_plus_spend_data][:main][:totals] << @appstats.stats['jailbroken_installs'].sum
+          @data[:rewarded_installs_plus_spend_data][:main][:names]      << "Jb #{conversion_name}"
+          @data[:rewarded_installs_plus_spend_data][:main][:data]       << @appstats.stats['jailbroken_installs']
+          @data[:rewarded_installs_plus_spend_data][:main][:stringData] << @appstats.stats['jailbroken_installs'].map { |i| number_with_delimiter(i) }
+          @data[:rewarded_installs_plus_spend_data][:main][:totals]     << number_with_delimiter(@appstats.stats['jailbroken_installs'].sum)
         end
 
         render :json => { :data => @data }.to_json
@@ -407,19 +428,19 @@ private
       @spend_partitions[partitions_key][country] ||= {}
       @spend_partitions[partitions_key][country][:names] ||= []
       @spend_partitions[partitions_key][country][:data] ||= []
+      @spend_partitions[partitions_key][country][:stringData] ||= []
       @spend_partitions[partitions_key][country][:totals] ||= []
       title = (key_parts[0] == "installs_spend" ? "Spend" : "Paid Installs")
       @spend_partitions[partitions_key][country][:names] << "#{title} (#{key_parts[1]})"
 
       if partitions_key == :installs_spend
-        @spend_partitions[partitions_key][country][:stringData] ||= []
-
         @spend_partitions[partitions_key][country][:data] << parts.map { |i| i == nil ? nil : i / -100.0 }
         @spend_partitions[partitions_key][country][:totals] << number_to_currency(parts.compact.sum / -100.0)
         @spend_partitions[partitions_key][country][:stringData] << parts.map { |i| i == nil ? '-' : number_to_currency(i / -100.0) }
       elsif partitions_key == :paid_installs
         @spend_partitions[partitions_key][country][:data] << parts
-        @spend_partitions[partitions_key][country][:totals] << parts.compact.sum
+        @spend_partitions[partitions_key][country][:stringData] << parts.map { |i| number_with_delimiter(i) }
+        @spend_partitions[partitions_key][country][:totals] << number_with_delimiter(parts.compact.sum)
       end
     end
 
@@ -505,14 +526,17 @@ private
       @virtual_good_paritions[group][:names] ||= []
       @virtual_good_paritions[group][:longNames] ||= []
       @virtual_good_paritions[group][:data] ||= []
+      @virtual_good_paritions[group][:stringData] ||= []
       @virtual_good_paritions[group][:totals] ||= []
       
       vg_name = truncate(vg.name, :length => 13)
+      vg_data = @appstats.stats['virtual_goods'][vg.key] || Array.new(@appstats.stats['vg_purchases'].size, 0)
       
       @virtual_good_paritions[group][:names] << vg_name
       @virtual_good_paritions[group][:longNames] << vg.name
-      @virtual_good_paritions[group][:data] << (@appstats.stats['virtual_goods'][vg.key] || Array.new(@appstats.stats['vg_purchases'].size, 0))
-      @virtual_good_paritions[group][:totals] << (@appstats.stats['virtual_goods'][vg.key].sum rescue 0)
+      @virtual_good_paritions[group][:data] << vg_data
+      @virtual_good_paritions[group][:stringData] << vg_data.map { |i| number_with_delimiter(i) }
+      @virtual_good_paritions[group][:totals] << (number_with_delimiter(@appstats.stats['virtual_goods'][vg.key].sum) rescue 0)
     end
     
     @virtual_good_paritions
