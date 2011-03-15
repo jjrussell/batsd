@@ -3,7 +3,7 @@ class Job::QueueFailedWebRequestSavesController < Job::JobController
   def initialize
     @queue     = Sqs.queue(QueueNames::FAILED_WEB_REQUEST_SAVES)
     @bucket    = S3.bucket(BucketNames::FAILED_WEB_REQUEST_SAVES)
-    @num_reads = 10
+    @num_reads = 5
   end
   
   def index
