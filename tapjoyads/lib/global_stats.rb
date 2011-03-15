@@ -31,7 +31,6 @@ class GlobalStats
     daily_stat = Stats.new(:key => "global.#{yesterday.strftime('%Y-%m')}", :load_from_memcache => false)
     # logins won't be empty if stats have already been aggregated for yesterday
     if daily_stat.get_daily_count('logins')[yesterday.day - 1] == 0
-      puts "*" * 80
       hourly_stat = aggregate_hourly_global_stats(yesterday)
       daily_stat.populate_daily_from_hourly(hourly_stat, yesterday.day - 1)
       daily_stat.serial_save
