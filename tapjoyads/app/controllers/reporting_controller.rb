@@ -389,8 +389,14 @@ private
     end
 
     # lookup the stats
-    @offer ? key = @offer.id : key = 'global'
-    @appstats = Appstats.new(key, { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true })
+    options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true }
+    if @offer
+      key = @offer.id
+    else
+      key = 'global'
+      options[:cache_hours] = 0
+    end
+    @appstats = Appstats.new(key, options) 
   end
 
   def spend_partitions
