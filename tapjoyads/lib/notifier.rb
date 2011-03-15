@@ -5,6 +5,7 @@ class AppStatsVerifyError < RuntimeError; end
 class GetStoreInfoError < RuntimeError; end
 class InvalidPlaydomUserId < RuntimeError; end
 class TooManyUdidsForPublisherUserId < RuntimeError; end
+class AlreadyRewardedForPublisherUserId < RuntimeError; end
 class BadWebRequestDomain < RuntimeError; end
 class AppDataFetchError < RuntimeError; end
 class GenericOfferCallbackError < RuntimeError; end

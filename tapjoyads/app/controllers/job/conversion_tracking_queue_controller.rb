@@ -11,7 +11,7 @@ private
     click = Click.deserialize(json['click'])
     installed_at_epoch = json['install_timestamp']
     
-    if click.installed_at || click.clicked_at < (Time.zone.now - 2.days)
+    if click.installed_at? || click.clicked_at < (Time.zone.now - 2.days) || click.block_reason?
       return
     end
     
@@ -19,16 +19,32 @@ private
     
     # Try to stop Playdom users from click-frauding (specifically from Mobsters: Big Apple)
     if currency.callback_url == Currency::PLAYDOM_CALLBACK_URL && click.publisher_user_id !~ /^(F|M|P)[0-9]+$/
+      click.block_reason = "InvalidPlaydomUserId"
+      click.serial_save
       Notifier.alert_new_relic(InvalidPlaydomUserId, "Playdom User id: '#{click.publisher_user_id}' is invalid, for click: #{click.key}", request, params)
       return
     end
     
     publisher_user_record = PublisherUserRecord.new(:key => "#{click.publisher_app_id}.#{click.publisher_user_id}")
     unless publisher_user_record.update(click.udid)
+      click.block_reason = "TooManyUdidsForPublisherUserId (ID=#{publisher_user_record.key})"
+      click.serial_save
       Notifier.alert_new_relic(TooManyUdidsForPublisherUserId, "Too many UDIDs associated with publisher_user_record: #{publisher_user_record.key}, for click: #{click.key}", request, params)
       return
     end
-    
+
+    # Do not reward if user has installed this app for the same publisher user id on another device
+    other_udids = publisher_user_record.get('udid', :force_array => true) - [ click.udid ]
+    other_udids.each do |udid|
+      device = Device.new(:key => udid)
+      if device.has_app(click.advertiser_app_id)
+        click.block_reason = "AlreadyRewardedForPublisherUserId (UDID=#{udid})"
+        click.serial_save
+        Notifier.alert_new_relic(AlreadyRewardedForPublisherUserId, "Offer already rewarded for publisher_user_record: #{publisher_user_record.key}, for click: #{click.key}", request, params)
+        return
+      end
+    end
+
     unless click.reward_key
       raise "Click #{click.key} missing reward key!"
     end

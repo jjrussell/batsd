@@ -23,6 +23,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :country
   self.sdb_attr :type
   self.sdb_attr :exp
+  self.sdb_attr :block_reason
   
   def dynamic_domain_name
     domain_number = @key.hash % NUM_CLICK_DOMAINS
