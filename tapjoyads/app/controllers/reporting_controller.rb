@@ -46,7 +46,7 @@ class ReportingController < WebsiteController
             :main => {
               :names => [ 'Sessions', 'New Users' ],
               :data => [ @appstats.stats['logins'], @appstats.stats['new_users'] ],
-              :stringSata => [ @appstats.stats['logins'].map { |i| number_with_delimiter(i) }, @appstats.stats['new_users'].map { |i| number_with_delimiter(i) } ],
+              :stringData => [ @appstats.stats['logins'].map { |i| number_with_delimiter(i) }, @appstats.stats['new_users'].map { |i| number_with_delimiter(i) } ],
               :totals => [ number_with_delimiter(@appstats.stats['logins'].sum), number_with_delimiter(@appstats.stats['new_users'].sum) ]
             }
           },
