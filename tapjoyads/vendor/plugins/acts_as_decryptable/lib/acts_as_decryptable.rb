@@ -12,7 +12,7 @@ module ActiveRecord
       # some_model_object.name = "name"
       # some_model_object.save
       # some_model_object.name                        # => "encrypted name" or "********"
-      # some_model_object.decrypted_name              # => "name"
+      # some_model_object.decrypt_name                # => "name"
       module ClassMethods
         def acts_as_decryptable(options)
           cattr_accessor :encrypted_columns
@@ -50,25 +50,6 @@ module ActiveRecord
               EOV
             end
           end
-        end
-      end
-
-      class SymmetricCrypto
-        def self.encrypt(text, key)
-          aes(:encrypt, text, key)
-        end
-
-        def self.decrypt(crypted, key)
-          aes(:decrypt, crypted, key)
-        end
-
-      private
-        def self.aes(direction, message, key)
-          cipher = OpenSSL::Cipher.new('AES256')
-          direction == :encrypt ? cipher.encrypt : cipher.decrypt
-          cipher.key = key
-          cipher.update message
-          cipher.final
         end
       end
 
