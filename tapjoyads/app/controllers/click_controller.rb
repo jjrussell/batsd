@@ -1,9 +1,10 @@
 class ClickController < ApplicationController
   layout 'iphone'
   
-  before_filter :determine_link_affiliates, :only => :app
   before_filter :setup
   before_filter :validate_click, :except => :test_offer
+  before_filter :determine_link_affiliates, :only => :app
+  
   after_filter :save_web_request, :except => :test_offer
   
   def app
@@ -67,6 +68,22 @@ private
   def setup
     @now = Time.zone.now
     
+    if params[:data].present? # TO REMOVE: this if condition after a couple of hours
+      return unless verify_params([ :data ])
+      
+      data_str = SymmetricCrypto.decrypt([ params[:data] ].pack("H*"), SYMMETRIC_CRYPTO_SECRET)
+      data = JSON.parse(data_str)
+      params.merge!(data)
+      
+      if Time.zone.at(params[:viewed_at]) < (@now - 1.hour)
+        build_web_request('expired_click')
+        save_web_request
+        @offer = Offer.find_in_cache(params[:offer_id])
+        render 'unavailable_offer'
+        return
+      end
+    end
+    
     # Hottest App sends the same publisher_user_id for every click
     if params[:publisher_app_id] == '469f7523-3b99-4b42-bcfb-e18d9c3c4576'
       params[:publisher_user_id] = params[:udid]
@@ -77,6 +94,7 @@ private
     doodle_buddy_regular_id = '3cb9aacb-f0e6-4894-90fe-789ea6b8361d'
     params[:publisher_app_id] = doodle_buddy_regular_id if params[:publisher_app_id] == doodle_buddy_holiday_id
     
+    # TO REMOVE: no need to do this once we are verifying that params[:data] exists
     verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id, :currency_id ])
   end
   
@@ -106,7 +124,7 @@ private
     if disabled
       build_web_request('disabled_offer')
       save_web_request
-      render(:template => 'click/unavailable_offer')
+      render 'unavailable_offer'
     end
     
     return disabled
@@ -121,7 +139,7 @@ private
     if completed
       build_web_request('completed_offer')
       save_web_request
-      render(:template => 'click/unavailable_offer')
+      render 'unavailable_offer'
     end
     
     return completed

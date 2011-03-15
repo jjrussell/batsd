@@ -25,7 +25,7 @@ module ActiveRecord
               def #{field_name}=(value)
                 if value.present?
                   if value != #{configuration[:show].to_json}
-                    self[:#{field_name}] = CGI::escape(SymmetricCrypto.encrypt(value, #{configuration[:key].to_json}))
+                    self[:#{field_name}] = SymmetricCrypto.encrypt(value, #{configuration[:key].to_json}).unpack("H*").first
                   end
                 else
                   self[:#{field_name}] = nil
@@ -35,7 +35,7 @@ module ActiveRecord
               def decrypt_#{field_name}
                 value = self[:#{field_name}]
                 if value.present?
-                  SymmetricCrypto.decrypt(CGI::unescape(value), #{configuration[:key].to_json})
+                  SymmetricCrypto.decrypt([ value ].pack("H*"), #{configuration[:key].to_json})
                 else
                   nil
                 end
