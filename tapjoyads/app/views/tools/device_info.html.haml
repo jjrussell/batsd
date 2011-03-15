@@ -55,7 +55,11 @@
   - if @apps.length > 5
     = link_to('(show all)', '#', {:id => 'show_more_apps'})
 
-  %h3 Clicks (#{@clicks.length}) &amp; Rewards (#{@rewarded_clicks_count})
+  %h3
+    Clicks (#{@clicks.length}) &amp;
+    %span.rewarded Rewards (#{@rewarded_clicks_count})
+    &amp;
+    %span.jailbroken Jailbroken in red
   %table.with-border
     %thead
       %tr
@@ -73,6 +77,7 @@
         - disp = @click_apps[click.displayer_app_id]
         - tr_class = i > 4 ? 'more-clicks' : ''
         - tr_class += ' rewarded' if click.installed_at?
+        - tr_class += ' jailbroken' if click.type =~ /install_jailbroken/
         %tr{ :class => tr_class}
           %td= click.viewed_at? ? click.viewed_at.to_s(:pub_abbr_ampm) : '-'
           %td= click.clicked_at? ? click.clicked_at.to_s(:pub_abbr_ampm) : '-'
@@ -93,11 +98,15 @@
       border: 1px solid #888;
       padding: 2px;
     }
-    tr.rewarded {
+    .rewarded {
       background-color: green;
     }
     .jailbroken {
-      background-color: red;
+      background-color: #d00;
+      color: #eee;
+    }
+    .jailbroken a {
+      color: lightgray;
     }
     .more-apps, .more-clicks {
       display: none;
