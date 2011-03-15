@@ -266,6 +266,6 @@ Tapjoy.Graph = {
       }
     }
 
-    return html.join(',&nbsp; ');
+    return html.join('&nbsp; ');
   }
 };

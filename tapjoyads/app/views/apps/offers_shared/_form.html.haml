@@ -91,7 +91,7 @@
           - else
             - if @enable_request.new_record?
               .tapjoy-disabled Disabled
-              - unless @offer.can_request_enable?
+              - if @offer.can_request_enable?
                 = button_to_function 'Submit Enable App Request', 'requestAppEnable()', :id => 'request_app_enable', :disabled => true
             - else
               .tapjoy-disabled Pending
