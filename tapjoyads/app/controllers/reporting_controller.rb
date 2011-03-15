@@ -167,10 +167,10 @@ class ReportingController < WebsiteController
                                @appstats.stats['featured_offers_shown'].map { |i| number_with_delimiter(i) },
                                @appstats.stats['featured_offers_opened'].map { |i| number_with_delimiter(i) },
                                @appstats.stats['featured_published_offers'].map { |i| number_with_delimiter(i) } ],
-              :totals => [ number_to_currency(@appstats.stats['featured_offers_requested'].sum),
-                           number_to_currency(@appstats.stats['featured_offers_shown'].sum),
-                           number_to_currency(@appstats.stats['featured_offers_opened'].sum),
-                           number_to_currency(@appstats.stats['featured_published_offers'].sum) ]
+              :totals => [ @appstats.stats['featured_offers_requested'].sum,
+                           @appstats.stats['featured_offers_shown'].sum,
+                           @appstats.stats['featured_offers_opened'].sum,
+                           @appstats.stats['featured_published_offers'].sum ]
             },
             :right => {
               :unitPrefix => '$',
