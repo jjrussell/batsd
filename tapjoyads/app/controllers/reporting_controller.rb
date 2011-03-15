@@ -273,6 +273,7 @@ class ReportingController < WebsiteController
         if @granularity == :daily
           @data[:connect_data][:main][:names] << 'DAUs'
           @data[:connect_data][:main][:data] << @appstats.stats['daily_active_users']
+          @data[:connect_data][:main][:stringData] << @appstats.stats['daily_active_users'].map { |i| number_with_delimiter(i) }
           @data[:connect_data][:main][:totals] << '-'
           @data[:connect_data][:right] = {
             :unitPrefix => '$',
