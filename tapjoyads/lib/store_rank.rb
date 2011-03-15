@@ -1,13 +1,13 @@
 class StoreRank
   cattr_accessor :itunes_category_ids, :itunes_pop_ids, :itunes_country_ids
-  cattr_accessor :android_category_ids
+  
   def self.populate_store_rankings(time)
     hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
     hydra.disable_memoization
     date_string = time.to_date.to_s(:db)
     error_count = 0
-    known_ios_ids = {}
-    known_android_ids = {}
+    success_count = 0
+    known_store_ids = {}
     stat_rows = {}
     
     ranks_file_name = "ranks.#{time.beginning_of_hour.to_s(:db)}.json"
@@ -15,49 +15,13 @@ class StoreRank
     
     log_progress "Populate store rankings. Task starting."
     
-    App.find_each(:conditions => "store_id IS NOT NULL") do |app|
-      if app.is_android?
-        known_android_ids[app.store_id] ||= []
-        known_android_ids[app.store_id] += app.offer_ids
-      else
-        known_ios_ids[app.store_id] ||= []
-        known_ios_ids[app.store_id] += app.offer_ids
-      end
+    App.find_each(:conditions => "platform = 'iphone' AND store_id IS NOT NULL") do |app|
+      known_store_ids[app.store_id] ||= []
+      known_store_ids[app.store_id] += app.offer_ids
     end
-    log_progress "Finished loading known_ios_ids and known_android_ids."
-
-    android_category_ids.ecah do |category_key, category_id|
-      stat_type = "#{category_key}.#{pop_key}.#{country_key}"
-      url = "https://market.android.com/apps/#{category_id}/"
-
-      request = Typhoeus::Request.new(url, :headers => headers, :user_agent => user_agent)
-      request.on_complete do |response|
-        if response.code != 200
-          error_count += 1
-          if error_count > 50
-            raise "Too many errors attempting to download itunes ranks, giving up. App store down?"
-          end
-          log_progress "Error downloading ranks from itunes for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Error code: #{response.code}. Retrying."
-          hydra.queue(request)
-        else
-          ranks_hash = get_android_ranks_hash(response.body)
-          ranks_hash.each do |store_id, rank|
-            next if known_android_ids[store_id].nil?
-
-            known_android_ids[store_id].each do |offer_id|
-              stat_rows[offer_id] ||= Stats.new(:key => "app.#{date_string}.#{offer_id}", :load_from_memcache => false)
-              stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour, rank)
-            end
-          end
-
-          ranks_file.puts( {"itunes.#{stat_type}" => ranks_hash}.to_json )
-        end
-      end
-      hydra.queue(request)
-    end
-
-    #itunes_category_ids
-    [].each do |category_key, category_id|
+    log_progress "Finished loading known_store_ids."
+    
+    itunes_category_ids.each do |category_key, category_id|
       itunes_pop_ids.each do |pop_key, pop_id|
         itunes_country_ids.each do |country_key, country_id|
           stat_type = "#{category_key}.#{pop_key}.#{country_key}"
@@ -75,11 +39,12 @@ class StoreRank
               log_progress "Error downloading ranks from itunes for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Error code: #{response.code}. Retrying."
               hydra.queue(request)
             else
+              success_count += 1
               ranks_hash = get_itunes_ranks_hash(response.body)
               ranks_hash.each do |store_id, rank|
-                next if known_ios_ids[store_id].nil?
+                next if known_store_ids[store_id].nil?
 
-                known_ios_ids[store_id].each do |offer_id|
+                known_store_ids[store_id].each do |offer_id|
                   stat_rows[offer_id] ||= Stats.new(:key => "app.#{date_string}.#{offer_id}", :load_from_memcache => false)
                   stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour, rank)
                   
@@ -150,11 +115,7 @@ private
     Rails.logger.info "#{now} (#{now.to_i}): #{message}"
     Rails.logger.flush
   end
-
-  @@android_category_ids = {
-    "games"                   => "GAME"
-  }
-
+  
   @@itunes_category_ids = {
     "overall"                 => 25204,
     "books"                   => 25470,
