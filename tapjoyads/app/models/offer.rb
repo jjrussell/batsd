@@ -361,22 +361,35 @@ class Offer < ActiveRecord::Base
     
     click_url = "#{API_URL}/click/"
     if item_type == 'App' || item_type == 'EmailOffer'
-      click_url += "app?"
+      click_url += "app"
     elsif item_type == 'GenericOffer'
-      click_url += "generic?"
+      click_url += "generic"
     elsif item_type == 'RatingOffer'
-      click_url += "rating?"
+      click_url += "rating"
     elsif item_type == 'TestOffer'
-      click_url += "test_offer?"
+      click_url += "test_offer"
     elsif item_type == 'ActionOffer'
-      click_url += "action?"
+      click_url += "action"
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end
-    click_url += "advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}&country_code=#{country_code}"
-    click_url += "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
-    click_url += "&exp=#{exp}" if exp.present?
-    click_url
+    
+    data = {
+      :advertiser_app_id => item_id,
+      :publisher_app_id  => publisher_app.id,
+      :publisher_user_id => publisher_user_id,
+      :udid              => udid,
+      :source            => source,
+      :offer_id          => id,
+      :app_version       => app_version,
+      :viewed_at         => viewed_at.to_f,
+      :currency_id       => currency_id,
+      :country_code      => country_code,
+      :displayer_app_id  => displayer_app_id,
+      :exp               => exp,
+    }
+    
+    "#{click_url}?data=#{SymmetricCrypto.encrypt(data.to_json, SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
   end
   
   def get_fullscreen_ad_url(options)
