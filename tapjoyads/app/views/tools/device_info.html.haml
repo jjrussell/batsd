@@ -12,7 +12,9 @@
     %tbody
       %tr
         %th Device ID
-        %td= params[:udid]
+        %td
+          = params[:udid]
+          = clippy(params[:udid])
       %tr
         %th Jailbroken?
         %td{:class => @device.is_jailbroken? ? "jailbroken" : ""}= @device.is_jailbroken?
@@ -58,8 +60,12 @@
   %h3
     Clicks (#{@clicks.length}) &amp;
     %span.rewarded Rewards (#{@rewarded_clicks_count})
-    &amp;
-    %span.jailbroken Jailbroken in red
+    +
+    %span.jailbroken Jailbroken
+    +
+    %span.blocked Blocked
+  - if permitted_to?(:unresolved_clicks, :tools)
+    = link_to('Unresolved clicks tool', unresolved_clicks_tools_path(:udid => params[:udid]))
   %table.with-border
     %thead
       %tr
@@ -70,6 +76,7 @@
         %td Adv.
         %td Pub.
         %td Disp.
+        %td Details
     %tbody
       - @clicks.each_with_index do |click, i|
         - adv = @click_apps[click.advertiser_app_id]
@@ -78,39 +85,43 @@
         - tr_class = i > 4 ? 'more-clicks' : ''
         - tr_class += ' rewarded' if click.installed_at?
         - tr_class += ' jailbroken' if click.type =~ /install_jailbroken/
+        - tr_class += ' blocked' if click.block_reason?
         %tr{ :class => tr_class}
-          %td= click.viewed_at? ? click.viewed_at.to_s(:pub_abbr_ampm) : '-'
-          %td= click.clicked_at? ? click.clicked_at.to_s(:pub_abbr_ampm) : '-'
-          %td= click.installed_at? ? click.installed_at.to_s(:pub_abbr_ampm) : '-'
+          %td.small= click.viewed_at? ? click.viewed_at.to_s(:pub_abbr_ampm) : '-'
+          %td.small= click.clicked_at? ? click.clicked_at.to_s(:pub_abbr_ampm) : '-'
+          %td.small
+            - if click.block_reason?
+              = click.block_reason
+            - else
+              = click.installed_at? ? click.installed_at.to_s(:pub_abbr_ampm) : '-'
           %td= click.currency_reward
           %td= adv.nil? ? '-'  : link_to(adv.name, statz_path(adv))
           %td= pub.nil? ? '-'  : link_to(pub.name, statz_path(pub))
           %td= disp.nil? ? '-' : link_to(disp.name, statz_path(disp))
+          %td
+            = link_to('show', '#', :class => 'show-click-detail')
+            .hidden
+              %ul.nobr
+                %li
+                  Click ID:
+                  = clippy(click.key)
+                %li
+                  Adv:
+                  = number_to_currency(click.advertiser_amount/100.0)
+                %li
+                  Pub:
+                  = number_to_currency(click.publisher_amount/100.0)
+                - if click.displayer_app_id?
+                  %li
+                    Disp:
+                    = number_to_currency(click.displayer_amount/100.0)
+                %li
+                  Tj:
+                  = number_to_currency(click.tapjoy_amount/100.0)
   - if @clicks.length > 5
     = link_to('(show all)', '#', {:id => 'show_more_clicks'})
 
-- content_for :page_styles do
-  :plain
-    table.with-border {
-      border-collapse: collapse;
-    }
-    table.with-border td {
-      border: 1px solid #888;
-      padding: 2px;
-    }
-    .rewarded {
-      background-color: green;
-    }
-    .jailbroken {
-      background-color: #d00;
-      color: #eee;
-    }
-    .jailbroken a {
-      color: lightgray;
-    }
-    .more-apps, .more-clicks {
-      display: none;
-    }
+- content_for :page_head, stylesheet_link_tag('tools')
 
 - content_for :page_javascript do
   :plain
@@ -123,6 +134,11 @@
       $('#show_more_clicks').click(function(){
         $('.more-clicks').show();
         $('#show_more_clicks').hide();
+        return false;
+      });
+      $('.show-click-detail').click(function(){
+        $(this).hide();
+        $(this).siblings('.hidden').show();
         return false;
       });
     });

@@ -1,0 +1,30 @@
+table.with-border {
+  border-collapse: collapse;
+}
+table.with-border td {
+  border: 1px solid #888;
+  padding: 2px;
+}
+table.with-border td.small {
+  font-size: 12px;
+}
+.rewarded {
+  background-color: #0d0;
+}
+.blocked {
+  background-color: #222;
+  color: #eee;
+}
+.jailbroken {
+  background-color: #d00;
+  color: #eee;
+}
+.jailbroken a, .blocked a {
+  color: lightgray;
+}
+.more-apps, .more-clicks {
+  display: none;
+}
+table.with-border ul.nobr li {
+  white-space:nowrap;
+}

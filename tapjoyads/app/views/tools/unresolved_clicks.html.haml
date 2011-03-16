@@ -10,24 +10,31 @@
   hours
   = submit_tag 'Refresh'
 - unless @clicks.blank?
-  %table{:cellspacing => 0, :cellspan => 0}
+  %table.with-border
     %thead
       %tr
         %th Clicked
         %th Last run
+        %th Blocked?
         %th Pub app
         %th Adv app
         %th Reward
+        %th &nbsp;
     %tbody
       - @clicks.each do |arr|
-        %tr.click
-          - clicked_at = arr[0]
-          - run_at = arr[1]
-          - click = arr[2]
-          - pub = App.find_by_id(click.publisher_app_id)
-          - adv = Offer.find_by_id(click.offer_id)
-          %td= clicked_at.to_s(:pub_ampm)
-          %td= run_at.nil? ? '<b>never</b>' : run_at.to_s(:pub_ampm)
+        - clicked_at = arr[0]
+        - run_at = arr[1]
+        - click = arr[2]
+        - pub = App.find_by_id(click.publisher_app_id)
+        - adv = Offer.find_by_id(click.offer_id)
+        %tr.click{:class => click.block_reason? ? 'blocked' : ''}
+          %td.small= clicked_at.to_s(:pub_ampm)
+          %td.small= run_at.nil? ? '<b>never</b>' : run_at.to_s(:pub_ampm)
+          %td.small
+            - if click.block_reason?
+              = click.block_reason
+            - else
+              \-
           - if permitted_to? :show, :statz
             %td= link_to(pub.name, statz_path(pub))
             %td= link_to(adv.name_with_suffix, statz_path(adv))
@@ -37,20 +44,17 @@
           %td= click.currency_reward
           %td
             - form_tag resolve_clicks_tools_path(:click_id => click.id) do
-              = submit_tag 'Award'
+              - if click.block_reason?
+                = submit_tag 'Blocked', :disabled => 'disabled'
+              - else
+                = submit_tag 'Award'
 
+- content_for :page_head, stylesheet_link_tag('tools')
 - content_for :page_styles do
   :plain
     .right-align {
       text-align: right;
     }
-    table {
-      padding-top: 20px;
-    }
-    td {
-      padding: 3px 10px;
-    }
     .click:hover {
       background-color: #ddd;
     }
-
