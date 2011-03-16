@@ -79,7 +79,8 @@
         %td Currency reward
         %td Adv.
         %td Pub.
-        %td Disp.
+        - if @has_displayer
+          %td Disp.
         %td Details
     %tbody
       - @clicks.each_with_index do |click, i|
@@ -102,11 +103,13 @@
           - if permitted_to?(:show, :statz)
             %td= adv.nil? ? '-'  : link_to(adv.name, statz_path(adv))
             %td= pub.nil? ? '-'  : link_to(pub.name, statz_path(pub))
-            %td= disp.nil? ? '-' : link_to(disp.name, statz_path(disp))
+            - if @has_displayer
+              %td= disp.nil? ? '-' : link_to(disp.name, statz_path(disp))
           - else
             %td= adv.nil? ? '-'  : adv.name
             %td= pub.nil? ? '-'  : pub.name
-            %td= disp.nil? ? '-' : disp.name
+            - if @has_displayer
+              %td= disp.nil? ? '-' : disp.name
           %td
             = link_to('show', '#', :class => 'show-click-detail')
             .hidden
@@ -127,6 +130,10 @@
                 %li
                   Tj:
                   = number_to_currency(click.tapjoy_amount/100.0)
+                - if click.publisher_user_id != click.udid
+                  %li
+                    Pub user ID:
+                    = click.publisher_user_id
   - if @clicks.length > 5
     = link_to('(show all)', '#', {:id => 'show_more_clicks'})
 

@@ -202,6 +202,10 @@ class ToolsController < WebsiteController
       @clicks = @clicks.sort_by do |click|
         -click.clicked_at.to_f
       end
+
+      @has_displayer = @clicks.any? do |click|
+        click.displayer_app_id?
+      end
     end
   end
 
