@@ -434,18 +434,18 @@ class SimpledbResource
         else
           raise RightAws::AwsError.new("Async count encountered an error. Code: #{response.code}, Response: #{response.body}")
         end
-      end
-      
-      parser = RightAws::SdbInterface::QSdbSelectParser.new
-      parser.parse(response.body)
-      count = parser.result[:items][0]['Domain']['Count'][0].to_i
-      next_token = parser.result[:next_token]
-      if next_token.present?
-        self.send_count_async_request(query, next_token, consistent, hydra) do |c|
-          yield count + c
-        end
       else
-        yield count
+        parser = RightAws::SdbInterface::QSdbSelectParser.new
+        parser.parse(response.body)
+        count = parser.result[:items][0]['Domain']['Count'][0].to_i
+        next_token = parser.result[:next_token]
+        if next_token.present?
+          self.send_count_async_request(query, next_token, consistent, hydra) do |c|
+            yield count + c
+          end
+        else
+          yield count
+        end
       end
     end
     hydra.queue(request)
