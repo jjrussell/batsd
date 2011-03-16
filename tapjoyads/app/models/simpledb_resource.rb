@@ -405,6 +405,8 @@ class SimpledbResource
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Must provide a domain name" unless domain_name
     
+    hydra.disable_memoization
+    
     domain_name = get_real_domain_name(domain_name)
     
     query = "SELECT count(*) FROM `#{domain_name}`"
@@ -419,14 +421,21 @@ class SimpledbResource
   end
   
   def self.send_count_async_request(query, next_token, consistent, hydra)
+    retries = 20
     sdb_request = @@sdb.generate_request('Select', { 'SelectExpression' => query, 'NextToken' => next_token, 'ConsistentRead' => consistent })
     url = "#{sdb_request[:protocol]}://#{sdb_request[:server]}:#{sdb_request[:port]}#{sdb_request[:request].path}"
     request = Typhoeus::Request.new(url)
     request.on_complete do |response|
       if response.code != 200
-        raise RightAws::AwsError.new("Async count encountered an error. Code: #{response.code}, Response: #{response.body}", response.code)
+        retries -= 1
+        if retries > 0
+          hydra.queue(request)
+          Rails.logger.info "Async count encountered an error and is being re-queued. Code: #{response.code}, Response: #{response.body}"
+        else
+          raise RightAws::AwsError.new("Async count encountered an error. Code: #{response.code}, Response: #{response.body}")
+        end
       end
-        
+      
       parser = RightAws::SdbInterface::QSdbSelectParser.new
       parser.parse(response.body)
       count = parser.result[:items][0]['Domain']['Count'][0].to_i
