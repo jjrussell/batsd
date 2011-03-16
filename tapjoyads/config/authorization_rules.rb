@@ -26,7 +26,7 @@ authorization do
   
   role :customer_service do
     includes :tools
-    has_permission_on :tools, :to => [ :unresolved_clicks, :resolve_clicks ]
+    has_permission_on :tools, :to => [ :unresolved_clicks, :resolve_clicks, :device_info, :update_device ]
   end
   
   role :payops do

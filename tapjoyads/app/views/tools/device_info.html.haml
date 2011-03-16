@@ -52,7 +52,11 @@
         - tr_class = i > 4 ? 'more-apps' : ''
         %tr{ :class => tr_class }
           %td
-            %strong= link_to app[1].name, statz_path(app[1])
+            %strong
+              - if permitted_to?(:show, :statz)
+                = link_to app[1].name, statz_path(app[1])
+              - else
+                = app[1].name
           %td= app[0].to_s(:pub_ampm_sec)
   - if @apps.length > 5
     = link_to('(show all)', '#', {:id => 'show_more_apps'})
@@ -95,9 +99,14 @@
             - else
               = click.installed_at? ? click.installed_at.to_s(:pub_abbr_ampm) : '-'
           %td= click.currency_reward
-          %td= adv.nil? ? '-'  : link_to(adv.name, statz_path(adv))
-          %td= pub.nil? ? '-'  : link_to(pub.name, statz_path(pub))
-          %td= disp.nil? ? '-' : link_to(disp.name, statz_path(disp))
+          - if permitted_to?(:show, :statz)
+            %td= adv.nil? ? '-'  : link_to(adv.name, statz_path(adv))
+            %td= pub.nil? ? '-'  : link_to(pub.name, statz_path(pub))
+            %td= disp.nil? ? '-' : link_to(disp.name, statz_path(disp))
+          - else
+            %td= adv.nil? ? '-'  : adv.name
+            %td= pub.nil? ? '-'  : pub.name
+            %td= disp.nil? ? '-' : disp.name
           %td
             = link_to('show', '#', :class => 'show-click-detail')
             .hidden
