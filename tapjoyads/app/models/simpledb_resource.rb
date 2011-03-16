@@ -405,6 +405,8 @@ class SimpledbResource
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     raise "Must provide a domain name" unless domain_name
     
+    hydra.disable_memoization
+    
     domain_name = get_real_domain_name(domain_name)
     
     query = "SELECT count(*) FROM `#{domain_name}`"
@@ -419,14 +421,21 @@ class SimpledbResource
   end
   
   def self.send_count_async_request(query, next_token, consistent, hydra)
+    retries = 20
     sdb_request = @@sdb.generate_request('Select', { 'SelectExpression' => query, 'NextToken' => next_token, 'ConsistentRead' => consistent })
     url = "#{sdb_request[:protocol]}://#{sdb_request[:server]}:#{sdb_request[:port]}#{sdb_request[:request].path}"
     request = Typhoeus::Request.new(url)
     request.on_complete do |response|
       if response.code != 200
-        raise RightAws::AwsError.new("Async count encountered an error. Code: #{response.code}, Response: #{response.body}", response.code)
+        retries -= 1
+        if retries > 0
+          hydra.queue(request)
+          Rails.logger.info "Async count encountered an error and is being re-queued. Code: #{response.code}, Response: #{response.body}"
+        else
+          raise RightAws::AwsError.new("Async count encountered an error. Code: #{response.code}, Response: #{response.body}")
+        end
       end
-        
+      
       parser = RightAws::SdbInterface::QSdbSelectParser.new
       parser.parse(response.body)
       count = parser.result[:items][0]['Domain']['Count'][0].to_i
@@ -615,6 +624,29 @@ class SimpledbResource
   
   def ==(other)
     other.is_a?(SimpledbResource) && (self.attributes == other.attributes) && (self.id == other.id) && (self.domain_name == other.domain_name)
+  end
+  
+  def needs_to_be_saved_from_queue?
+    if this_domain_name =~ /devices/
+      return true if @attributes_to_delete.present? || @attributes_to_add.present?
+      
+      old_device = Device.new(:key => id)
+    
+      (@attributes_to_replace.keys - [ 'updated-at' ]).each do |attribute_name|
+        if attribute_name == 'apps'
+          return true if apps.length != old_device.apps.length
+          apps.each do |app_id, last_run_time|
+            return true if (last_run_time.to_f - (old_device.apps[app_id] || 0).to_f > 1.hour)
+          end
+        else
+          return true if self.get(attribute_name) != old_device.get(attribute_name)
+        end
+      end
+    
+      false
+    else
+      true
+    end
   end
   
 protected

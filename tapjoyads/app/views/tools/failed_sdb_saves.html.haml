@@ -17,6 +17,8 @@ Number of domains: #{@failed_sdb_saves.size}
       %th Last Hour Actual (SDB)
       %th This Hour (MC)
       %th Last Hour (MC)
+      %th Skipped This Hour (SDB)
+      %th Skipped Last Hour (SDB)
   %tbody
     - @failed_sdb_saves.each do |domain_name, counts|
       %tr
@@ -27,6 +29,8 @@ Number of domains: #{@failed_sdb_saves.size}
         %td= number_with_delimiter(counts[:sdb_last_hour] * 6)
         %td= number_with_delimiter(counts[:mc_this_hour])
         %td= number_with_delimiter(counts[:mc_last_hour])
+        %td= number_with_delimiter(counts[:sdb_skipped_this_hour])
+        %td= number_with_delimiter(counts[:sdb_skipped_last_hour])
 
 - content_for :page_javascript do
   :plain
@@ -56,7 +60,9 @@ Number of domains: #{@failed_sdb_saves.size}
           3: { sorter: 'formatted-number-column' },
           4: { sorter: 'formatted-number-column' },
           5: { sorter: 'formatted-number-column' },
-          6: { sorter: 'formatted-number-column' }
+          6: { sorter: 'formatted-number-column' },
+          7: { sorter: 'formatted-number-column' },
+          8: { sorter: 'formatted-number-column' }
         },
         sortList: [ [1, 1], [2, 1] ]
       });
