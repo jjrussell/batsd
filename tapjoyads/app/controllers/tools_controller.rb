@@ -85,15 +85,19 @@ class ToolsController < WebsiteController
     last_hour_key = ((Time.zone.now.to_f - 1.hour) / 1.hour).to_i
 
     SimpledbResource.get_domain_names.each do |domain_name|
-      sdb_this_hour_count = Mc.get_count("failed_sdb_saves.sdb.#{domain_name}.#{this_hour_key}")
-      sdb_last_hour_count = Mc.get_count("failed_sdb_saves.sdb.#{domain_name}.#{last_hour_key}")
-      mc_this_hour_count  = Mc.get_count("failed_sdb_saves.mc.#{domain_name}.#{this_hour_key}")
-      mc_last_hour_count  = Mc.get_count("failed_sdb_saves.mc.#{domain_name}.#{last_hour_key}")
+      sdb_this_hour_count         = Mc.get_count("failed_sdb_saves.sdb.#{domain_name}.#{this_hour_key}")
+      sdb_last_hour_count         = Mc.get_count("failed_sdb_saves.sdb.#{domain_name}.#{last_hour_key}")
+      mc_this_hour_count          = Mc.get_count("failed_sdb_saves.mc.#{domain_name}.#{this_hour_key}")
+      mc_last_hour_count          = Mc.get_count("failed_sdb_saves.mc.#{domain_name}.#{last_hour_key}")
+      sdb_skipped_this_hour_count = Mc.get_count("failed_sdb_saves_skipped.sdb.#{domain_name}.#{this_hour_key}")
+      sdb_skipped_last_hour_count = Mc.get_count("failed_sdb_saves_skipped.sdb.#{domain_name}.#{last_hour_key}")
 
       @failed_sdb_saves[domain_name] = { :sdb_this_hour => sdb_this_hour_count,
-                                         :sdb_last_hour => sdb_last_hour_count,
-                                         :mc_this_hour => mc_this_hour_count,
-                                         :mc_last_hour => mc_last_hour_count }
+                                         :sdb_last_hour         => sdb_last_hour_count,
+                                         :mc_this_hour          => mc_this_hour_count,
+                                         :mc_last_hour          => mc_last_hour_count,
+                                         :sdb_skipped_this_hour => sdb_skipped_this_hour_count,
+                                         :sdb_skipped_last_hour => sdb_skipped_last_hour_count }
     end
   end
 

@@ -617,6 +617,29 @@ class SimpledbResource
     other.is_a?(SimpledbResource) && (self.attributes == other.attributes) && (self.id == other.id) && (self.domain_name == other.domain_name)
   end
   
+  def needs_to_be_saved_from_queue?
+    if this_domain_name =~ /devices/
+      return true if @attributes_to_delete.present? || @attributes_to_add.present?
+      
+      old_device = Device.new(:key => id)
+    
+      (@attributes_to_replace.keys - [ 'updated-at' ]).each do |attribute_name|
+        if attribute_name == 'apps'
+          return true if apps.length != old_device.apps.length
+          apps.each do |app_id, last_run_time|
+            return true if (last_run_time.to_f - (old_device.apps[app_id] || 0).to_f > 1.hour)
+          end
+        else
+          return true if self.get(attribute_name) != old_device.get(attribute_name)
+        end
+      end
+    
+      false
+    else
+      true
+    end
+  end
+  
 protected
   
   def write_to_sdb(expected_attr = {})
