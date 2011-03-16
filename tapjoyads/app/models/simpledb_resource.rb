@@ -631,15 +631,16 @@ class SimpledbResource
       return true if @attributes_to_delete.present? || @attributes_to_add.present?
       
       old_device = Device.new(:key => id)
-    
+      
       (@attributes_to_replace.keys - [ 'updated-at' ]).each do |attribute_name|
-        if attribute_name == 'apps'
-          return true if apps.length != old_device.apps.length
-          apps.each do |app_id, last_run_time|
-            return true if (last_run_time.to_f - (old_device.apps[app_id] || 0).to_f > 1.hour)
+        if attribute_name == 'apps' 
+          new_device_apps = get('apps', :type => :json)
+          return true if new_device_apps.length != old_device.parsed_apps.length
+          new_device_apps.each do |app_id, last_run_time|
+            return true if (last_run_time.to_f - (old_device.parsed_apps[app_id] || 0).to_f > 1.hour)
           end
-        else
-          return true if self.get(attribute_name) != old_device.get(attribute_name)
+        elsif attribute_name.last != "_" 
+          return true if get(attribute_name) != old_device.get(attribute_name)
         end
       end
     

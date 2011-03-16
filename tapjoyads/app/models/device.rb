@@ -1,6 +1,8 @@
 class Device < SimpledbShardedResource
   self.num_domains = NUM_DEVICES_DOMAINS
   
+  attr_reader :parsed_apps
+  
   self.sdb_attr :apps, :type => :json, :default_value => {}
   self.sdb_attr :is_jailbroken, :type => :bool, :default_value => false
   self.sdb_attr :country
