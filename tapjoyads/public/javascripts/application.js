@@ -55,6 +55,7 @@ $(function($){
     } else {
       box.hide();
     }
+    return false;
   });
 
   $('input.toggle_offer').change(function() {

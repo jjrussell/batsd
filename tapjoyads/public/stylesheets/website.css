@@ -320,7 +320,6 @@ div.help-dialog .ui-dialog-title {
   -webkit-box-shadow: 1px 1px 4px #888;
   -moz-box-shadow: 1px 1px 4px #888;
   z-index: 100;
-  opacity: 0.8;
   padding: 0px;
 }
 
@@ -335,7 +334,10 @@ div.help-dialog .ui-dialog-title {
 #active_campaigns_box td {
   padding: 3px;
 }
-
+#active_campaigns_box td.offer-type {
+  font-size: 10px;
+  color: #444;
+}
 a.soft-link.inactive {
   color: #888;
   text-decoration: none;
