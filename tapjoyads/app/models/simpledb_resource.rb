@@ -127,7 +127,7 @@ class SimpledbResource
   def load(load_from_memcache = true, consistent = false)
     if load_from_memcache
       @attributes = Mc.get(get_memcache_key) do
-        attrs = load_from_sdb
+        attrs = load_from_sdb(consistent)
         unless attrs.empty?
           Mc.put(get_memcache_key, attrs) rescue nil
         end
