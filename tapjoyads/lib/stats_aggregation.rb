@@ -35,8 +35,6 @@ class StatsAggregation
     offer.save!
   end
   
-private
-  
   def self.verify_web_request_stats_over_range(stat_row, offer, start_time, end_time)
     raise "can't wrap over multiple days" if start_time.day != (end_time - 1.second).day
     
