@@ -67,6 +67,8 @@
     +
     %span.jailbroken Jailbroken
     +
+    %span.not-rewarded Won't reward
+    +
     %span.blocked Blocked
   - if permitted_to?(:unresolved_clicks, :tools)
     = link_to('Unresolved clicks tool', unresolved_clicks_tools_path(:udid => params[:udid]))
@@ -90,7 +92,8 @@
         - tr_class = i > 4 ? 'more-clicks' : ''
         - tr_class += ' rewarded' if click.installed_at?
         - tr_class += ' jailbroken' if click.type =~ /install_jailbroken/
-        - tr_class += ' blocked' if click.block_reason?
+        - if click.block_reason?
+          - tr_class += click.block_reason =~ /TooManyUdidsForPublisherUserId/ ? ' blocked' : ' not-rewarded'
         %tr{ :class => tr_class}
           %td.small= click.viewed_at? ? click.viewed_at.to_s(:pub_abbr_ampm) : '-'
           %td.small= click.clicked_at? ? click.clicked_at.to_s(:pub_abbr_ampm) : '-'

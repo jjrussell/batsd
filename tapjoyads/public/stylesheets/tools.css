@@ -11,6 +11,10 @@ table.with-border td.small {
 .rewarded {
   background-color: #0d0;
 }
+.not-rewarded {
+  background-color: #644;
+  color: #eee;
+}
 .blocked {
   background-color: #222;
   color: #eee;
@@ -19,7 +23,7 @@ table.with-border td.small {
   background-color: #d00;
   color: #eee;
 }
-.jailbroken a, .blocked a {
+.jailbroken a, .blocked a, .not-rewarded a {
   color: lightgray;
 }
 .more-apps, .more-clicks {
