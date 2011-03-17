@@ -53,23 +53,28 @@
           %td= f.select(:address_country, options_for_select(list_of_countries))
         %tr.country_us
           %th
+            = f.label :payout_method, 'Payment Method'
+            .help.no-help ?
+          %td= f.select(:payout_method, options_for_select(list_of_payout_methods, @payout_info.payout_method))
+        %tr.country_us.address
+          %th
             = f.label :address, 'Address'
             .help.no-help ?
           %td= f.text_field(:address_1)
-        %tr.country_us
+        %tr.country_us.address
           %th &nbsp;
           %td= f.text_field(:address_2)
-        %tr.country_us
+        %tr.country_us.address
           %th
             = f.label :city, 'City'
             .help.no-help ?
           %td= f.text_field(:address_city)
-        %tr.country_us
+        %tr.country_us.address
           %th
             = f.label :state, 'State'
             .help.no-help ?
           %td= f.select(:address_state, options_for_select(list_of_states, @payout_info.address_state || 'CA'))
-        %tr.country_us
+        %tr.country_us.address
           %th
             = f.label :postal_codes, 'ZIP code'
             .help.no-help ?
@@ -100,10 +105,7 @@
             %span.country_other= f.label :bank_routing_number, 'Bank SWIFT Code'
             #help_bank_swift_code.help ?
           %td= f.text_field(:bank_routing_number, :value => @payout_info.bank_routing_number)
-        %tr.country_other
-          %th
-            = label_tag('')
-          %td= select_tag('', '')
+    %br/
     = submit_tag
 
   %p *There is a minimum payment threshold of US$250.
@@ -152,20 +154,39 @@
 - content_for :page_javascript do
   :plain
     var toggleByCountry = function() {
-      if ($('#payout_info_address_country').val().match(/united states of america/i)) {
+      if (isUS()) {
         $('.country_us').show();
-        if (#{ !!permitted_to?(:index, :statz) }) {
-          $('.country_other').show();
-          $('span.country_other').hide();
-        } else {
-          $('.country_other').hide();
-        }
+        toggleByPayoutMethod();
       } else {
         $('.country_us').hide();
         $('.country_other').show();
       }
+      toggleAdmin();
     };
-    $('#payout_info_address_country').change(function(){
-      toggleByCountry();
-    });
+    var toggleByPayoutMethod = function() {
+      if (isUS()) {
+        if ($('#payout_info_payout_method').val() == 'ach') {
+          $('.country_other').show();
+          $('.address').hide();
+        } else {
+          $('.country_other').hide();
+          $('.address').show();
+        }
+        $('span.country_other').hide();
+      } else {
+        $('.country_other').show();
+      }
+      toggleAdmin();
+    };
+    var toggleAdmin = function() {
+      if (#{ !!permitted_to?(:index, :statz) }) {
+        $('.country_other').show();
+      }
+    };
+    var isUS = function() {
+      return $('#payout_info_address_country').val().match(/united states of america/i);
+    };
+
+    $('#payout_info_address_country').change(toggleByCountry);
+    $('#payout_info_payout_method').change(toggleByPayoutMethod);
     toggleByCountry();
