@@ -9,6 +9,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :internal_notes
   self.sdb_attr :survey_answers, :type => :json, :default_value => {}, :cgi_escape => true
   self.sdb_attr :opted_out, :type => :bool, :default_value => false
+  self.sdb_attr :last_run_time_tester, :type => :bool, :default_value => false
   
   def dynamic_domain_name
     domain_number = @key.hash % NUM_DEVICES_DOMAINS
@@ -68,7 +69,7 @@ class Device < SimpledbShardedResource
       self.country = params[:country]
     end
     
-    if (is_jailbroken_was == is_jailbroken && country_was == country && !path_list.include?('daily_user'))
+    if (!last_run_time_tester? && is_jailbroken_was == is_jailbroken && country_was == country && !path_list.include?('daily_user'))
       Mc.increment_count("failed_sdb_saves_skipped.sdb.#{this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}", false, 1.day)
     else
       save
