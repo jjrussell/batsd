@@ -68,20 +68,18 @@ private
   def setup
     @now = Time.zone.now
     
-    if params[:data].present? # TO REMOVE: this if condition after a couple of hours
-      return unless verify_params([ :data ])
-      
-      data_str = SymmetricCrypto.decrypt([ params[:data] ].pack("H*"), SYMMETRIC_CRYPTO_SECRET)
-      data = JSON.parse(data_str)
-      params.merge!(data)
-      
-      if Time.zone.at(params[:viewed_at]) < (@now - 1.hour)
-        build_web_request('expired_click')
-        save_web_request
-        @offer = Offer.find_in_cache(params[:offer_id])
-        render 'unavailable_offer'
-        return
-      end
+    return unless verify_params([ :data ])
+    
+    data_str = SymmetricCrypto.decrypt([ params[:data] ].pack("H*"), SYMMETRIC_CRYPTO_SECRET)
+    data = JSON.parse(data_str)
+    params.merge!(data)
+    
+    if Time.zone.at(params[:viewed_at]) < (@now - 1.hour)
+      build_web_request('expired_click')
+      save_web_request
+      @offer = Offer.find_in_cache(params[:offer_id])
+      render 'unavailable_offer'
+      return
     end
     
     # Hottest App sends the same publisher_user_id for every click
@@ -93,9 +91,6 @@ private
     doodle_buddy_holiday_id = '0f791872-31ec-4b8e-a519-779983a3ea1a'
     doodle_buddy_regular_id = '3cb9aacb-f0e6-4894-90fe-789ea6b8361d'
     params[:publisher_app_id] = doodle_buddy_regular_id if params[:publisher_app_id] == doodle_buddy_holiday_id
-    
-    # TO REMOVE: no need to do this once we are verifying that params[:data] exists
-    verify_params([ :advertiser_app_id, :udid, :publisher_app_id, :publisher_user_id, :offer_id, :currency_id ])
   end
   
   def validate_click
