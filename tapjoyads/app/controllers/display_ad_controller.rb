@@ -161,7 +161,7 @@ private
   def get_ad_image(publisher, offer, self_ad, size, currency)
     width, height = parse_size(size)
     
-    if self_ad && ((width == 320 && height == 50) || (width == 640 && height == 100))
+    if self_ad
       return get_self_ad_image(publisher, offer, size, currency)
     end
     
@@ -227,11 +227,16 @@ private
     width, height = parse_size(size)
     
     Mc.get_and_put("display_ad.#{publisher.id}.#{offer.id}.#{width}x#{height}", false, 1.hour) do
-      if width > 600 
+      if width == 640 && height == 100
         border = 4
         icon_padding = 7
         font_size = 26
         text_area_size = '380x92'
+      elsif width == 768 && height == 90
+        border = 4
+        icon_padding = 7
+        font_size = 26
+        text_area_size = '518x82'
       else
         border = 2
         icon_padding = 3
