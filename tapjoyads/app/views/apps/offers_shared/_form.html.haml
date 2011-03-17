@@ -103,6 +103,14 @@
             #help_premier.help ?
           %td
             = "Member until #{@offer.partner.exclusivity_expires_on.to_s :mdy}"
+      - if @offer.is_publisher_offer?
+        %tr
+          %th
+            = f.label(:self_promote_only)
+            #help_self_promote_only.help ?
+          %td
+            = f.check_box(:self_promote_only)
+            = error_message_on @offer, :self_promote_only
       - if permitted_to?(:edit, :statz)
         = render('apps/offers_shared/admin_fields', :f => f)
       %tr
@@ -136,7 +144,9 @@
         Click the button to submit an enable app request. Please contact #{link_to "support@tapjoy.com", "mailto:support@tapjoy.com"} if you have any questions.
   #help_premier_content{:name => 'Tapjoy Premier'}
     When your Tapjoy Premier exclusivity expires.
-        
+  #help_self_promote_only_content{:name => 'Self Promote Only'}
+    Promote the app only on your own offerwalls. You will not be charged for these installs.
+
 - content_for :page_javascript do
   :plain
     var requestAppEnable = $.noop;
