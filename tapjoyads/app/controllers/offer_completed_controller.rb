@@ -111,8 +111,7 @@ private
     end
     
     device = Device.new(:key => click.udid)
-    device.set_app_ran(click.advertiser_app_id, params)
-    device.save
+    device.set_app_ran!(click.advertiser_app_id, params)
     
     message = { :click => click.serialize(:attributes_only => true), :install_timestamp => @now.to_f.to_s }.to_json
     Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)

@@ -19,31 +19,33 @@ class Device < SimpledbShardedResource
     @parsed_apps = apps
   end
   
-  def set_app_ran(app_id, params)
+  def set_app_ran!(app_id, params)
     now = Time.zone.now
-    
     path_list = []
+    
+    is_jailbroken_was = is_jailbroken
+    country_was = country
+    last_run_time_was = last_run_time(app_id)
     
     unless app_id =~ /^(\w|\.|-)*$/
       Notifier.alert_new_relic(InvalidAppIdForDevices, "udid: #{@key}, app_id: #{app_id}", nil, params)
       return path_list
     end
     
-    old_time = last_run_time(app_id)
-    if old_time.nil?
+    if last_run_time_was.nil?
       path_list.push('new_user')
-      old_time = Time.zone.at(0)
+      last_run_time_was = Time.zone.at(0)
 
       # mark papaya new users as jailbroken
       if app_id == 'e96062c5-45f0-43ba-ae8f-32bc71b72c99' || app_id == 'cf6b4573-0efb-44a8-813d-26e248b81713'
         self.is_jailbroken = true
       end
-
     end
-    if now.year != old_time.year || now.yday != old_time.yday
+    
+    if now.year != last_run_time_was.year || now.yday != last_run_time_was.yday
       path_list.push('daily_user')
     end
-    if now.year != old_time.year || now.month != old_time.month
+    if now.year != last_run_time_was.year || now.month != last_run_time_was.month
       path_list.push('monthly_user')
     end
     
@@ -64,6 +66,12 @@ class Device < SimpledbShardedResource
         Notifier.alert_new_relic(DeviceCountryChanged, "Country for udid: #{@key} changed from #{self.country} to #{params[:country]}", nil, params)
       end
       self.country = params[:country]
+    end
+    
+    if (is_jailbroken_was == is_jailbroken && country_was == country && !path_list.include?('daily_user'))
+      Mc.increment_count("failed_sdb_saves_skipped.sdb.#{this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}", false, 1.day)
+    else
+      save
     end
     
     path_list
