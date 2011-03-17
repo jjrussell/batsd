@@ -1,7 +1,7 @@
 class StatuszController < ApplicationController
   include AuthenticationHelper
   
-  before_filter 'basic_authenticate', :only => [ :queue_check, :slave_db_check ]
+  before_filter 'basic_authenticate', :only => [ :queue_check, :slave_db_check, :memcached_check ]
   
   def index
     render :text => "ok"
@@ -38,6 +38,17 @@ class StatuszController < ApplicationController
       if hash['Slave_IO_Running'] != 'Yes' || hash['Slave_SQL_Running'] != 'Yes' || hash['Seconds_Behind_Master'].to_i > 300
         result = 'fail'
       end
+    end
+    
+    render :text => result
+  end
+  
+  def memcached_check
+    result = 'success'
+    
+    mc_stats = Mc.cache.stats
+    if mc_stats[:pid].size != MEMCACHE_SERVERS.size
+      result = 'fail'
     end
     
     render :text => result
