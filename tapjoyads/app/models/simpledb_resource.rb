@@ -625,10 +625,6 @@ class SimpledbResource
     other.is_a?(SimpledbResource) && (self.attributes == other.attributes) && (self.id == other.id) && (self.domain_name == other.domain_name)
   end
   
-  def needs_to_be_saved_from_queue?
-    true
-  end
-  
 protected
   
   def write_to_sdb(expected_attr = {})

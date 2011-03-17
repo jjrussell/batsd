@@ -69,9 +69,7 @@ class Device < SimpledbShardedResource
       self.country = params[:country]
     end
     
-    if (!last_run_time_tester? && is_jailbroken_was == is_jailbroken && country_was == country && !path_list.include?('daily_user'))
-      Mc.increment_count("failed_sdb_saves_skipped.sdb.#{this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}", false, 1.day)
-    else
+    if (last_run_time_tester? || is_jailbroken_was != is_jailbroken || country_was != country || path_list.include?('daily_user'))
       save
     end
     

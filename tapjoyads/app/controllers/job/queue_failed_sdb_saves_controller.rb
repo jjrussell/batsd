@@ -28,13 +28,9 @@ private
     
     sdb_item = SimpledbResource.deserialize(sdb_string)
     
-    if sdb_item.needs_to_be_saved_from_queue?
-      sdb_item.put('from_queue', Time.zone.now.to_f.to_s)
-      params[:domain_name] = sdb_item.this_domain_name    
-      sdb_item.serial_save(@options.merge({ :catch_exceptions => false }))
-    else  
-      Mc.increment_count("failed_sdb_saves_skipped.sdb.#{sdb_item.this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}", false, 1.day)
-    end
+    sdb_item.put('from_queue', Time.zone.now.to_f.to_s)
+    params[:domain_name] = sdb_item.this_domain_name    
+    sdb_item.serial_save(@options.merge({ :catch_exceptions => false }))
     
     @bucket.move_key(@incomplete_path, @complete_path)
   end
