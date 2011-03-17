@@ -163,7 +163,6 @@ class SimpledbResource
   def serial_save(options = {})
     options_copy     = options.clone
     save_to_memcache = options.delete(:write_to_memcache) { true }
-    updated_at       = options.delete(:updated_at)        { true }
     save_to_sdb      = options.delete(:write_to_sdb)      { true }
     catch_exceptions = options.delete(:catch_exceptions)  { true }
     expected_attr    = options.delete(:expected_attr)     { {} }
@@ -171,7 +170,7 @@ class SimpledbResource
 
     Rails.logger.info "Saving to #{@this_domain_name}"
 
-    put('updated-at', Time.zone.now.to_f.to_s) if updated_at
+    put('updated-at', Time.zone.now.to_f.to_s)
     
     Rails.logger.info_with_time("Saving to sdb, domain: #{this_domain_name}") do
       self.write_to_memcache if save_to_memcache
@@ -627,27 +626,7 @@ class SimpledbResource
   end
   
   def needs_to_be_saved_from_queue?
-    if this_domain_name =~ /devices/
-      return true if @attributes_to_delete.present? || @attributes_to_add.present?
-      
-      old_device = Device.new(:key => id)
-      
-      (@attributes_to_replace.keys - [ 'updated-at' ]).each do |attribute_name|
-        if attribute_name == 'apps' 
-          new_device_apps = get('apps', :type => :json)
-          return true if new_device_apps.length != old_device.parsed_apps.length
-          new_device_apps.each do |app_id, last_run_time|
-            return true if (last_run_time.to_f - (old_device.parsed_apps[app_id] || 0).to_f > 1.hour)
-          end
-        elsif attribute_name.last != "_" 
-          return true if get(attribute_name) != old_device.get(attribute_name)
-        end
-      end
-    
-      false
-    else
-      true
-    end
+    true
   end
   
 protected

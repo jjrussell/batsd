@@ -84,7 +84,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
         m = Testing.new(:key => @model.key)
         m.put("#{i}", 'value', {:replace => false})
         m.put("#{i}", 'value2', {:replace => false})
-        thread_list.push(m.save({:updated_at => false}))
+        thread_list.push(m.save)
         attrs["#{i}"] = ['value', 'value2']
       end
     
@@ -92,12 +92,14 @@ class SimpledbResourceTest < ActiveSupport::TestCase
     
       @model.put("9", 'value3', {:replace => false})
       attrs['9'].push('value3')
-      @model.save!(:updated_at => false)
+      @model.save!
     
       load_model
+      @model.attributes.delete('updated-at')
       assert_attributes_equal(attrs, @model.attributes)
       
       load_model(:load_from_memcache => false, :consistent => true)
+      @model.attributes.delete('updated-at')
       assert_attributes_equal(attrs, @model.attributes)
     end
     
@@ -109,26 +111,28 @@ class SimpledbResourceTest < ActiveSupport::TestCase
         @model.put("#{i}", 'value2', {:replace => false})
         attrs["#{i}"] = ['value', 'value2']
       end
-      @model.save!(:updated_at => false)
+      @model.save!
       
       load_model
       thread_list = []
 
       @model.delete('9')
-      thread_list.push(@model.save({:updated_at => false}))
+      thread_list.push(@model.save)
       attrs.delete('9')
       3.times do |i|
         m = Testing.new(:key => @model.key)
         m.delete("#{i}", "value2")
-        thread_list.push(m.save({:updated_at => false}))
+        thread_list.push(m.save)
         attrs["#{i}"] = ['value']
       end
       thread_list.each(&:join)
 
       load_model
+      @model.attributes.delete('updated-at')
       assert_attributes_equal(attrs, @model.attributes)
       
       load_model(:load_from_memcache => false, :consistent => true)
+      @model.attributes.delete('updated-at')
       assert_attributes_equal(attrs, @model.attributes)
     end
     
@@ -140,7 +144,7 @@ class SimpledbResourceTest < ActiveSupport::TestCase
         attrs["#{i}"] = ['value']
       end
     
-      @model.save!(:updated_at => false)
+      @model.save!
     
       load_model
       
@@ -148,12 +152,14 @@ class SimpledbResourceTest < ActiveSupport::TestCase
       @model.put('2', 'value2', {:replace => false})
       attrs['1'] = ['replaced_value']
       attrs['2'].push('value2')
-      @model.save!(:updated_at => false)
+      @model.save!
     
       load_model
+      @model.attributes.delete('updated-at')
       assert_attributes_equal(attrs, @model.attributes)
     
       load_model(:load_from_memcache => false, :consistent => true)
+      @model.attributes.delete('updated-at')
       assert_attributes_equal(attrs, @model.attributes)
     end
     
