@@ -44,7 +44,7 @@ private
 
   def self.search_apple_app_store(term, country)
     response = request(SEARCH_URL, {:media => 'software', :term => term, :country => country})
-    response_ipad = request(SEARCH_URL, {:media => 'software', :entity => 'iPadSoftware', :term => term})
+    response_ipad = request(SEARCH_URL, {:media => 'software', :entity => 'iPadSoftware', :term => term, :country => country})
     if (response.status == 200) && (response.headers['Content-Type'] =~ /javascript/)
       results_iphone = JSON.load(response.body)['results']
       results_ipad = JSON.load(response_ipad.body)['results']
