@@ -1,0 +1,43 @@
+:ruby
+  data = {
+    'Date' => @date,
+    'Apps' => @appstats_list.map do |offer_with_stats|
+      offer = offer_with_stats[0]
+      appstats = offer_with_stats[1]
+      {
+        "Name"                       => offer.name_with_suffix,
+        "AppKey"                     => offer.id,
+        "Platform"                   => offer.get_platform,
+        
+        "PaidInstalls"               => appstats.stats['paid_installs'].sum,
+        "PaidInstallsHourly"         => appstats.stats['paid_installs'],
+        "PaidClicks"                 => appstats.stats['paid_clicks'].sum,
+        "PaidClicksHourly"           => appstats.stats['paid_clicks'],
+        "Spend"                      => appstats.stats['installs_spend'].sum,
+        "SpendHourly"                => appstats.stats['installs_spend'],
+        
+        "Sessions"                   => appstats.stats['logins'].sum,
+        "SessionsHourly"             => appstats.stats['logins'],
+        "NewUsers"                   => appstats.stats['new_users'].sum,
+        "NewUsersHourly"             => appstats.stats['new_users'],
+        "DailyActiveUsers"           => appstats.stats['daily_active_users'].sum,
+        
+        "OfferwallRevenue"           => appstats.stats['rewards_revenue'].sum,
+        "OfferwallRevenueHourly"     => appstats.stats['rewards_revenue'],
+        
+        "FeaturedOfferRevenue"       => appstats.stats['featured_revenue'].sum,
+        "FeaturedOfferRevenueHourly" => appstats.stats['featured_revenue'],
+        
+        "DisplayRevenue"             => appstats.stats['display_revenue'].sum,
+        "DisplayRevenueHourly"       => appstats.stats['display_revenue'],
+        "DisplayRequests"            => appstats.stats['display_ads_requested'].sum,
+        "DisplayRequestsHourly"      => appstats.stats['display_ads_requested'],
+        "DisplayImpressions"         => appstats.stats['display_ads_shown'].sum,
+        "DisplayImpressionsHourly"   => appstats.stats['display_ads_shown'],
+        "DisplayClicks"              => appstats.stats['display_clicks'].sum,
+        "DisplayClicksHourly"        => appstats.stats['display_clicks'],
+      }
+    end
+  }
+
+= data.to_json

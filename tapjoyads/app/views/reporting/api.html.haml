@@ -13,14 +13,15 @@ Your API Key:
 %hr
 
 %p
-  Tapjoy now offers a realtime XML feed for reporting data. To access the feed, make an HTTP GET request to the following url with a valid date parameter:
+  Tapjoy offers a realtime XML/JSON feed for reporting data. To access the feed, make an HTTP GET request to one of the following URLs with a valid date parameter:
 
+%h4 XML
+
+%p URL
 %pre
-  https://www.tapjoy.com/reporting_data?username=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD
-  
-%p
-  This feed will respond with XML in the following format:
+  https://www.tapjoy.com/reporting_data.xml?username=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD
 
+%p Response
 %pre
   :preserve
     &lt;?xml version="1.0" encoding="UTF-8"?>
@@ -59,10 +60,53 @@ Your API Key:
     
     &lt;/MarketingData>
 
+%h4 JSON
 
-%p
-  The root element of the XML document will be titled MarketingData. It will contain one child Date element, as well as multiple child App elements.
-  Each App element will contain the following elements:
+%p URL
+%pre
+  https://www.tapjoy.com/reporting_data.json?username=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD
+
+%p Response
+%pre
+  :preserve
+    {
+      "Date" : "YYYY-MM-DD",
+      "Apps" : [
+        {
+          "Name"                       : "App Name",
+          "AppKey"                     : "00000000-0000-0000-0000-000000000000",
+          "Platform"                   : "App Platform",
+          "PaidInstalls"               : 0,
+          "PaidInstallsHourly"         : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "PaidClicks"                 : 0,
+          "PaidClicksHourly"           : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "Spend"                      : 0,
+          "SpendHourly"                : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "Sessions"                   : 0,
+          "SessionsHourly"             : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "NewUsers"                   : 0,
+          "NewUsersHourly"             : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DailyActiveUsers"           : 0,
+          "OfferwallRevenue"           : 0,
+          "OfferwallRevenueHourly"     : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "FeaturedOfferRevenue"       : 0,
+          "FeaturedOfferRevenueHourly" : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DisplayRevenue"             : 0,
+          "DisplayRevenueHourly"       : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DisplayRequests"            : 0,
+          "DisplayRequestsHourly"      : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DisplayImpressions"         : 0,
+          "DisplayImpressionsHourly"   : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DisplayClicks"              : 0,
+          "DisplayClicksHourly"        : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        },
+        
+        ...
+        
+      ]
+    }
+
+%h4 Field Descriptions
 %ul
   %li Name: The app's name.
   %li AppKey: The app's Tapjoy key. 

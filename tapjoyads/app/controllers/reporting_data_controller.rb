@@ -8,6 +8,10 @@ class ReportingDataController < WebsiteController
   rate_limit :index, :key => proc { |c| c.params[:username] }, :max_calls => 5, :time_limit => 5.minutes, :wait_time => 1.minute, :status => 420
   
   def index
+    respond_to do |format|
+      format.xml
+      format.json
+    end
   end
   
 private
