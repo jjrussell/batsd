@@ -1,6 +1,15 @@
 module Curbit
   module Controller
-    
+    module ClassMethods
+      alias_method :orig_rate_limit, :rate_limit
+      
+      def rate_limit(method, opts)
+        if Rails.env == 'production'
+          orig_rate_limit(method, opts)
+        end
+      end
+      
+    end
     private
     
     def write_to_curbit_cache(cache_key, value, options = {})
