@@ -16,7 +16,7 @@ class AgencyApi::PartnersController < AgencyApiController
     
     partner = Partner.new
     log_activity(partner)
-    partner.name = partner[:name]
+    partner.name = params[:name]
     partner.contact_name = params[:email]
     unless partner.valid?
       render_error(partner.errors, 400)

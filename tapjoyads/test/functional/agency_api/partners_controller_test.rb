@@ -57,7 +57,9 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
         assert_equal user.id, result['user_id']
         assert_equal user.api_key, result['api_key']
         assert_equal 1, user.partners.count
-        assert_equal user.partners.first.id, result['partner_id']
+        partner = user.partners.first
+        assert_equal partner.id, result['partner_id']
+        assert_equal 'partner', partner.name
       end
     end
   end
