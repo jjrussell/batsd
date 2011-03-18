@@ -103,7 +103,7 @@
             #help_premier.help ?
           %td
             = "Member until #{@offer.partner.exclusivity_expires_on.to_s :mdy}"
-      - if @offer.is_publisher_offer?
+      - if @offer.partner.currencies.count > 0
         %tr
           %th
             = f.label(:self_promote_only)
