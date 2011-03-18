@@ -1,15 +1,13 @@
 class StatsAggregation
   
-  def self.recount_stats_over_range(start_time, end_time)
-    Offer.find_each do |offer|
-      puts "#{Time.zone.now.to_s(:db)} - #{offer.id}"
-      hourly_stat_row = Stats.new(:key => "app.#{start_time.strftime('%Y-%m-%d')}.#{offer.id}", :load_from_memcache => false)
-      
-      verify_web_request_stats_over_range(hourly_stat_row, offer, start_time, end_time)
-      verify_conversion_stats_over_range(hourly_stat_row, offer, start_time, end_time)
-      
-      hourly_stat_row.serial_save
-    end
+  def self.recount_stats_over_range(offer_id, start_time, end_time)
+    offer = Offer.find(offer_id)
+    hourly_stat_row = Stats.new(:key => "app.#{start_time.strftime('%Y-%m-%d')}.#{offer.id}", :load_from_memcache => false)
+    
+    verify_web_request_stats_over_range(hourly_stat_row, offer, start_time, end_time)
+    verify_conversion_stats_over_range(hourly_stat_row, offer, start_time, end_time)
+    
+    hourly_stat_row.serial_save
   end
   
   def self.verify_and_populate_daily_stats(offer_id)
