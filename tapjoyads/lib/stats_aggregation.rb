@@ -96,6 +96,11 @@ class StatsAggregation
     value_over_range = yield(start_time, end_time)
     hourly_values = stat_row.get_hourly_count(stat_name_or_path)
     
+    if end_time - start_time == 1.hour
+      hourly_values[start_time.hour] = value_over_range
+      return
+    end
+    
     if value_over_range != hourly_values[start_time.hour..(end_time - 1.second).hour].sum
       message = "Verification of #{stat_name_or_path.inspect} failed for offer: #{offer.name} (#{offer.id}), for range: #{start_time.to_s(:db)} - #{end_time.to_s(:db)}. Value is: #{value_over_range}, hourly values are: #{hourly_values[start_time.hour..(end_time - 1.second).hour].inspect}"
       Notifier.alert_new_relic(AppStatsVerifyError, message)
