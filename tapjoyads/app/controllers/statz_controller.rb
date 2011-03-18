@@ -116,6 +116,7 @@ class StatzController < WebsiteController
         { :udid => 'cb662f568a4016a5b2e0bd617e53f70480133290', :device_label => 'Stephen iPad'     },
         { :udid => 'c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1', :device_label => 'Stephen iTouch'   },
         { :udid => '2e75bbe138c85e6dc8bd8677220ef8898f40a1c7', :device_label => 'Sunny iPhone'     },
+        { :udid => '21569fd0d308bfc576380903e8ba5a5f2fb9a01c', :device_label => 'Tammy iPad'       },
     ]
     @udids_to_check = []
     targeted_devices = @offer.get_device_types
