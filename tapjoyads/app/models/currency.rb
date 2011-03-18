@@ -22,6 +22,7 @@ class Currency < ActiveRecord::Base
   end
   
   before_create :set_values_from_partner
+  before_save :remove_whitespace_from_attributes
   after_save :update_memcached_by_app_id
   after_destroy :clear_memcached_by_app_id
   
@@ -162,6 +163,12 @@ private
       
       sum_all_orders == 0 ? 1 : (sum_all_orders - sum_marketing_orders - 0.025 * sum_website_orders) / sum_all_orders
     end
+  end
+  
+  def remove_whitespace_from_attributes
+    self.test_devices      = test_devices.gsub(/\s/, '')
+    self.disabled_partners = disabled_partners.gsub(/\s/, '')
+    self.disabled_offers   = disabled_offers.gsub(/\s/, '')
   end
   
 end
