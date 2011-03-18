@@ -133,4 +133,77 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
     end
   end
   
+  context "on PUT to :update" do
+    setup do
+      @agency_user = Factory(:agency_user)
+      @partner = Factory(:partner)
+      PartnerAssignment.create!(:user => @agency_user, :partner => @partner)
+      @app = Factory(:app, :partner => @partner)
+    end
+    
+    context "with missing params" do
+      setup do
+        @response = put(:update)
+      end
+      should respond_with(400)
+      should respond_with_content_type(:json)
+      should "respond with error" do
+        result = JSON.parse(@response.body)
+        assert !result['success']
+        assert result['error'].present?
+      end
+    end
+    context "with bad credentials" do
+      setup do
+        @response = put(:update, :id => @app.id, :agency_id => @agency_user.id, :api_key => 'foo')
+      end
+      should respond_with(403)
+      should respond_with_content_type(:json)
+      should "respond with error" do
+        result = JSON.parse(@response.body)
+        assert !result['success']
+        assert result['error'].present?
+      end
+    end
+    context "with an invalid id" do
+      setup do
+        @response = put(:update, :id => 'foo', :agency_id => @agency_user.id, :api_key => @agency_user.api_key)
+      end
+      should respond_with(400)
+      should respond_with_content_type(:json)
+      should "respond with error" do
+        result = JSON.parse(@response.body)
+        assert !result['success']
+        assert result['error'].present?
+      end
+    end
+    context "with an id belonging to an invalid partner" do
+      setup do
+        @app2 = Factory(:app)
+        @response = put(:update, :id => @app2.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key)
+      end
+      should respond_with(403)
+      should respond_with_content_type(:json)
+      should "respond with error" do
+        result = JSON.parse(@response.body)
+        assert !result['success']
+        assert result['error'].present?
+      end
+    end
+    context "with valid params" do
+      setup do
+        @response = put(:update, :id => @app.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'foo')
+      end
+      should respond_with(200)
+      should respond_with_content_type(:json)
+      should "respond with success" do
+        result = JSON.parse(@response.body)
+        assert result['success']
+        assert_equal 1, @partner.apps.count
+        app = @partner.apps.first
+        assert_equal 'foo', app.name
+      end
+    end
+  end
+  
 end

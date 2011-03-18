@@ -31,4 +31,28 @@ class AgencyApi::AppsController < AgencyApiController
     render_success({ :app_id => app.id })
   end
   
+  def update
+    return unless verify_request([ :id ])
+    
+    app = App.find_by_id(params[:id])
+    unless app.present?
+      render_error('app not found', 400)
+      return
+    end
+    
+    return unless verify_partner(app.partner_id)
+    
+    log_activity(app)
+    app.name = params[:name] if params[:name].present?
+    app.store_id = params[:store_id] if params[:store_id].present?
+    unless app.valid?
+      render_error(app.errors, 400)
+      return
+    end
+    app.save!
+    
+    save_activity_logs
+    render_success
+  end
+  
 end
