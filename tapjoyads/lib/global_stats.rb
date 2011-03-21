@@ -1,7 +1,7 @@
 class GlobalStats
 
   def self.aggregate_hourly_global_stats(date = nil)
-    date ||= Time.zone.now - 10.minutes
+    date ||= Time.zone.now - 70.minutes
     global_stat = Stats.new(:key => "global.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
     global_stat.parsed_values.clear
     global_stat.parsed_countries.clear
