@@ -1,18 +1,48 @@
 class Appstats
+  include ActionView::Helpers::NumberHelper
   
   attr_accessor :app_key, :stats, :granularity, :start_time, :end_time, :x_labels, :intervals
   
   def initialize(app_key, options = {})
-    @app_key = app_key
-    
-    @now = Time.zone.now
-    @granularity = options.delete(:granularity) { :hourly }
-    @start_time = options.delete(:start_time) { Time.utc(@now.year, @now.month, @now.day) }
-    @end_time = options.delete(:end_time) { @now }
+    start_time_string = options.delete(:start_time)
+    end_time_string = options.delete(:end_time)
+    granularity_string = options.delete(:granularity)
     @stat_types = options.delete(:stat_types) { Stats::STAT_TYPES }
     @include_labels = options.delete(:include_labels) { false }
     cache_hours = options.delete(:cache_hours) { 3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
+    @app_key = app_key
+    @now = Time.zone.now
+
+    if start_time_string.blank?
+      @start_time = @now.beginning_of_hour - 23.hours
+    elsif start_time_string.is_a?(Time)
+      @start_time = start_time_string
+    else
+      @start_time = Time.zone.parse(start_time_string).beginning_of_day
+    end
+    @start_time = @now.beginning_of_hour - 23.hours if @start_time > @now
+
+    if end_time_string.blank?
+      @end_time = @start_time + 24.hours
+    elsif end_time_string.is_a?(Time)
+      @end_time = end_time_string
+    else
+      @end_time = Time.zone.parse(end_time_string).end_of_day
+    end
+    @end_time = @now if @end_time <= @start_time || @end_time > @now
+
+    if granularity_string == 'daily' || granularity_string == :daily || @end_time - @start_time >= 7.days
+      @granularity = :daily
+    else
+      @granularity = :hourly
+    end
+
+    if (@end_time - @start_time < 1.day) && @granularity == :daily
+      @start_time = @start_time.beginning_of_day
+      @end_time = @end_time.end_of_day
+    end
     
     @stat_rows = {}
     
@@ -20,10 +50,8 @@ class Appstats
     @stat_types.each do |stat_type|
       if @granularity == :hourly
         @stats[stat_type] = get_hourly_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
-      elsif @granularity == :daily
-        @stats[stat_type] = get_daily_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
       else
-        raise "Unsupported granularity"
+        @stats[stat_type] = get_daily_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
       end
     end
     
@@ -229,6 +257,67 @@ class Appstats
     
     get_labels_and_intervals(@start_time, @end_time) if @include_labels
   end
+
+  def graph_data(options)
+    @offer = options.delete(:offer)
+    @admin = options.delete(:admin)
+
+    if @offer && @offer.item_type == 'App'
+      @conversion_name = 'Installs'
+    else
+      @conversion_name = 'Conversions'
+    end
+    data = {
+      :connect_data => connect_data,
+      :rewarded_installs_plus_spend_data => rewarded_installs_plus_spend_data,
+      :rewarded_installs_plus_rank_data => rewarded_installs_plus_rank_data,
+      :revenue_data => revenue_data,
+      :offerwall_data => offerwall_data,
+      :featured_offers_data => featured_offers_data,
+      :display_ads_data => display_ads_data,
+      :ads_data => ads_data,
+
+      :granularity => @granularity,
+      :date => @start_time.to_date.to_s(:mdy),
+      :end_date => @end_time.to_date.to_s(:mdy)
+    }
+
+    if get_virtual_good_partitions.size > 0
+      data[:virtual_goods_data] = virtual_goods_data
+    end
+
+    if @granularity == :daily
+      data[:connect_data][:main][:names] << 'DAUs'
+      data[:connect_data][:main][:data] << @stats['daily_active_users']
+      data[:connect_data][:main][:stringData] << @stats['daily_active_users'].map { |i| number_with_delimiter(i) }
+      data[:connect_data][:main][:totals] << '-'
+      data[:connect_data][:right] = {
+        :unitPrefix => '$',
+        :decimals => 2,
+        :names => [ 'ARPDAU' ],
+        :data => [ @stats['arpdau'].map { |i| i / 100.0 } ],
+        :stringData => [ @stats['arpdau'].map { |i| number_to_currency(i / 100.0, :precision => 4) } ],
+        :totals => [ '-' ],
+      }
+    end
+
+    if @admin
+      # country breakdowns
+      data[:rewarded_installs_plus_spend_data][:partition_names]    = spend_partition_names
+      data[:rewarded_installs_plus_spend_data][:partition_left]     = paid_installs_partitions
+      data[:rewarded_installs_plus_spend_data][:partition_right]    = installs_spend_partitions
+      data[:rewarded_installs_plus_spend_data][:partition_title]    = 'Country (Country data is not real-time)'
+      data[:rewarded_installs_plus_spend_data][:partition_fallback] = 'Country data does not exist for this app during this time frame'
+      data[:rewarded_installs_plus_spend_data][:partition_default]  = 'United States'
+      # jailbroken data
+      data[:rewarded_installs_plus_spend_data][:main][:names]      << "Jb #{@conversion_name}"
+      data[:rewarded_installs_plus_spend_data][:main][:data]       << @stats['jailbroken_installs']
+      data[:rewarded_installs_plus_spend_data][:main][:stringData] << @stats['jailbroken_installs'].map { |i| number_with_delimiter(i) }
+      data[:rewarded_installs_plus_spend_data][:main][:totals]     << number_with_delimiter(@stats['jailbroken_installs'].sum)
+    end
+
+    data
+  end
   
 private
 
@@ -390,5 +479,451 @@ private
     @intervals << start_time
   end
 
-  
+  def formatted_intervals
+    return @formatted_intervals if defined?(@formatted_intervals)
+    if @granularity == :daily
+      @formatted_intervals = @intervals.map { |time| time.to_s(:pub) + " UTC" }
+    else
+      @formatted_intervals = @intervals.map { |time| time.to_s(:pub_ampm) }
+    end
+  end
+
+  def spend_partitions
+    return @spend_partitions if defined?(@spend_partitions)
+    @spend_partitions = {}
+    @spend_partitions[:installs_spend] = {}
+    @spend_partitions[:paid_installs] = {}
+
+    keys = @stats['countries'].keys.sort
+
+    keys.each do |key|
+
+      key_parts = key.split('.')
+      key_parts[1] == 'other' ? country = 'Other' : country = Stats::COUNTRY_CODES[key_parts[1]]
+      partitions_key = key_parts[0].to_sym
+      raise "Unknown attribute #{partitions_key}" unless [:installs_spend, :paid_installs].include? partitions_key
+      parts = @stats['countries'][key]
+      @spend_partitions[partitions_key]
+
+      @spend_partitions[partitions_key][country] ||= {}
+      @spend_partitions[partitions_key][country][:names] ||= []
+      @spend_partitions[partitions_key][country][:data] ||= []
+      @spend_partitions[partitions_key][country][:stringData] ||= []
+      @spend_partitions[partitions_key][country][:totals] ||= []
+      title = (key_parts[0] == "installs_spend" ? "Spend" : "Paid Installs")
+      @spend_partitions[partitions_key][country][:names] << "#{title} (#{key_parts[1]})"
+
+      if partitions_key == :installs_spend
+        @spend_partitions[partitions_key][country][:data] << parts.map { |i| i == nil ? nil : i / -100.0 }
+        @spend_partitions[partitions_key][country][:totals] << number_to_currency(parts.compact.sum / -100.0)
+        @spend_partitions[partitions_key][country][:stringData] << parts.map { |i| i == nil ? '-' : number_to_currency(i / -100.0) }
+      elsif partitions_key == :paid_installs
+        @spend_partitions[partitions_key][country][:data] << parts
+        @spend_partitions[partitions_key][country][:stringData] << parts.map { |i| number_with_delimiter(i) }
+        @spend_partitions[partitions_key][country][:totals] << number_with_delimiter(parts.compact.sum)
+      end
+    end
+
+    @spend_partitions
+  end
+
+  def installs_spend_partitions
+    return @installs_spend_partitions if defined?(@installs_spend_partitions)
+    @installs_spend_partitions = get_spend_partition(:installs_spend)
+  end
+
+  def paid_installs_partitions
+    return @paid_installs_partitions if defined?(@paid_installs_partitions)
+    @paid_installs_partitions = get_spend_partition(:paid_installs)
+  end
+
+  def get_spend_partition(key)
+    return nil if spend_partition_names.empty?
+    partitions = []
+    spend_partition_names.each do |name|
+      partitions << spend_partitions[key][name] unless spend_partitions[key][name].nil?
+    end
+    partitions.empty? ? nil : partitions
+  end
+
+  def spend_partition_names
+    @spend_partition_names ||= spend_partitions[:installs_spend].keys.sort do |k1, k2|
+      k1.gsub('Other', 'zzzz') <=> k2.gsub('Other', 'zzzz')
+    end
+  end
+
+  def get_rank_partitions
+    return @rank_partitions if defined?(@rank_partitions)
+    @rank_partitions = {}
+
+    keys = @stats['ranks'].keys.sort do |key1, key2|
+      key1.gsub(/^overall/, '1') <=> key2.gsub(/^overall/, '1')
+    end
+
+    keys.each do |key|
+      key_parts = key.split('.')
+      country = "#{key_parts[2].titleize} (#{key_parts[1].titleize.gsub('Ipad', 'iPad')})"
+      ranks = @stats['ranks'][key]
+
+      @rank_partitions[country] ||= {}
+      @rank_partitions[country][:yMax] = 200
+      @rank_partitions[country][:names] ||= []
+      @rank_partitions[country][:data] ||= []
+      @rank_partitions[country][:totals] ||= []
+
+      @rank_partitions[country][:names] << "#{key_parts[0].titleize}"
+      @rank_partitions[country][:data] << ranks
+      @rank_partitions[country][:totals] << (ranks.compact.last.ordinalize rescue '-')
+    end
+
+    @rank_partitions
+  end
+
+  def get_rank_partition_names
+    get_rank_partitions.keys.sort
+  end
+
+  def get_rank_partition_values
+    values = []
+    get_rank_partition_names.each do |name|
+      values << get_rank_partitions[name]
+    end
+    values
+  end
+
+  def get_virtual_good_partitions
+    return {} if @app_key == 'global'
+    return @virtual_good_paritions if @virtual_good_paritions.present?
+    @virtual_good_paritions = {}
+
+    virtual_goods = @offer.virtual_goods.sort
+
+    virtual_goods.each_with_index do |vg, i|
+      mod = i % 5
+      upper = [i - mod + 5, virtual_goods.size].min
+      group = "#{i - mod + 1} - #{upper}"
+
+      @virtual_good_paritions[group] ||= {}
+      @virtual_good_paritions[group][:names] ||= []
+      @virtual_good_paritions[group][:longNames] ||= []
+      @virtual_good_paritions[group][:data] ||= []
+      @virtual_good_paritions[group][:stringData] ||= []
+      @virtual_good_paritions[group][:totals] ||= []
+
+      vg_name = truncate(vg.name, :length => 13)
+      vg_data = @stats['virtual_goods'][vg.key] || Array.new(@stats['vg_purchases'].size, 0)
+
+      @virtual_good_paritions[group][:names] << vg_name
+      @virtual_good_paritions[group][:longNames] << vg.name
+      @virtual_good_paritions[group][:data] << vg_data
+      @virtual_good_paritions[group][:stringData] << vg_data.map { |i| number_with_delimiter(i) }
+      @virtual_good_paritions[group][:totals] << (number_with_delimiter(@stats['virtual_goods'][vg.key].sum) rescue 0)
+    end
+
+    @virtual_good_paritions
+  end
+
+  def get_virtual_good_partition_names
+    get_virtual_good_partitions.keys.sort do |k1, k2|
+      k1.split[0].to_i <=> k2.split[0].to_i
+    end
+  end
+
+  def get_virtual_good_partition_values
+    get_virtual_good_partition_names.map do |name|
+      get_virtual_good_partitions[name]
+    end
+  end
+
+  def connect_data
+    {
+      :name => 'Sessions',
+      :intervals => formatted_intervals,
+      :xLabels => @x_labels,
+      :main => {
+        :names => [ 'Sessions', 'New Users' ],
+        :data => [ @stats['logins'], @stats['new_users'] ],
+        :stringData => [ @stats['logins'].map { |i| number_with_delimiter(i) }, @stats['new_users'].map { |i| number_with_delimiter(i) } ],
+        :totals => [ number_with_delimiter(@stats['logins'].sum), number_with_delimiter(@stats['new_users'].sum) ],
+      },
+    }
+  end
+
+  def rewarded_installs_plus_spend_data
+    {
+      :name => "Paid #{@conversion_name} + Advertising spend",
+      :intervals => formatted_intervals,
+      :xLabels => @x_labels,
+      :main => {
+        :names => [ "Total Paid #{@conversion_name}", 'Total Clicks' ],
+        :data => [ @stats['paid_installs'], @stats['paid_clicks'] ],
+        :stringData => [ @stats['paid_installs'].map { |i| number_with_delimiter(i) }, @stats['paid_clicks'].map { |i| number_with_delimiter(i) } ],
+        :totals => [ number_with_delimiter(@stats['paid_installs'].sum), number_with_delimiter(@stats['paid_clicks'].sum) ],
+      },
+      :right => {
+        :unitPrefix => '$',
+        :names => [ 'Total Spend' ],
+        :data => [ @stats['installs_spend'].map { |i| i / -100.0 } ],
+        :stringData => [ @stats['installs_spend'].map { |i| number_to_currency(i / -100.0) } ],
+        :totals => [ number_to_currency(@stats['installs_spend'].sum / -100.0) ],
+      },
+      :extra => {
+        :names => [ 'Conversion rate' ],
+        :data => [ @stats['cvr'].map { |cvr| "%.0f%" % (cvr.to_f * 100.0) } ],
+        :totals => [ @stats['paid_clicks'].sum > 0 ? ("%.1f%" % (@stats['paid_installs'].sum.to_f / @stats['paid_clicks'].sum * 100.0)) : '-' ],
+      },
+    }
+  end
+
+  def rewarded_installs_plus_rank_data
+    {
+      :name => "Paid #{@conversion_name} + Ranks",
+      :intervals => formatted_intervals,
+      :xLabels => @x_labels,
+      :main => {
+        :names => [ "Total Paid #{@conversion_name}" ],
+        :data => [ @stats['paid_installs'] ],
+        :stringData => [ @stats['paid_installs'].map { |i| number_with_delimiter(i) } ],
+        :totals => [ number_with_delimiter(@stats['paid_installs'].sum) ],
+      },
+      :partition_names => get_rank_partition_names,
+      :partition_right => get_rank_partition_values,
+      :partition_title => 'Country',
+      :partition_fallback => 'This app is not in the top charts in any categories for the selected date range.',
+      :partition_default => 'United States',
+    }
+  end
+
+  def revenue_data
+    {
+      :name => 'Revenue',
+      :intervals => formatted_intervals,
+      :xLabels => @x_labels,
+      :main => {
+        :unitPrefix => '$',
+        :names => [ 'Total revenue', 'Offerwall revenue', 'Featured offer revenue', 'Display ad revenue' ],
+        :data => [
+          @stats['total_revenue'].map { |i| i / 100.0 },
+          @stats['rewards_revenue'].map { |i| i / 100.0 },
+          @stats['featured_revenue'].map { |i| i / 100.0 },
+          @stats['display_revenue'].map { |i| i / 100.0 },
+        ],
+        :stringData => [
+          @stats['total_revenue'].map { |i| number_to_currency(i / 100.0) },
+          @stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) },
+          @stats['featured_revenue'].map { |i| number_to_currency(i / 100.0) },
+          @stats['display_revenue'].map { |i| number_to_currency(i / 100.0) },
+        ],
+        :totals => [
+          number_to_currency(@stats['total_revenue'].sum / 100.0),
+          number_to_currency(@stats['rewards_revenue'].sum / 100.0),
+          number_to_currency(@stats['featured_revenue'].sum / 100.0),
+          number_to_currency(@stats['display_revenue'].sum / 100.0),
+        ],
+      },
+    }
+  end
+
+  def offerwall_data
+    {
+      :name => 'Offerwall',
+      :intervals => formatted_intervals,
+      :xLabels => @x_labels,
+      :main => {
+        :names => [ 'Offerwall views', 'Clicks', 'Conversions' ],
+        :data => [
+          @stats['offerwall_views'], @stats['rewards_opened'], @stats['rewards'],
+        ],
+        :stringData => [
+          @stats['offerwall_views'].map { |i| number_with_delimiter(i) },
+          @stats['rewards_opened'].map { |i| number_with_delimiter(i) },
+          @stats['rewards'].map { |i| number_with_delimiter(i) },
+        ],
+        :totals => [
+          number_with_delimiter(@stats['offerwall_views'].sum),
+          number_with_delimiter(@stats['rewards_opened'].sum),
+          number_with_delimiter(@stats['rewards'].sum),
+        ],
+      },
+      :right => {
+        :unitPrefix => '$',
+        :names => [ 'Revenue', 'eCPM' ],
+        :data => [
+          @stats['rewards_revenue'].map { |i| i / 100.0 },
+          @stats['offerwall_ecpm'].map { |i| i / 100.0 },
+        ],
+        :stringData => [
+          @stats['rewards_revenue'].map { |i| number_to_currency(i / 100.0) },
+          @stats['offerwall_ecpm'].map { |i| number_to_currency(i / 100.0) },
+        ],
+        :totals => [
+          number_to_currency(@stats['rewards_revenue'].sum / 100.0),
+          @stats['offerwall_views'].sum > 0 ? number_to_currency(@stats['rewards_revenue'].sum.to_f / (@stats['offerwall_views'].sum / 1000.0) / 100.0) : '$0.00',
+        ],
+      },
+      :extra => {
+        :names => [ 'CTR', 'CVR' ],
+        :data => [
+          @stats['rewards_ctr'].map { |r| "%.0f%" % (r.to_f * 100.0) },
+          @stats['rewards_cvr'].map { |r| "%.0f%" % (r.to_f * 100.0) },
+        ],
+        :totals => [
+          @stats['offerwall_views'].sum > 0 ? ("%.1f%" % (@stats['rewards_opened'].sum.to_f / @stats['offerwall_views'].sum * 100.0)) : '-',
+          @stats['rewards_opened'].sum > 0 ? ("%.1f%" % (@stats['rewards'].sum.to_f / @stats['rewards_opened'].sum * 100.0)) : '-',
+        ],
+      },
+    }
+  end
+
+  def featured_offers_data
+    {
+      :name => 'Featured offers',
+      :intervals => formatted_intervals,
+      :xLabels => @x_labels,
+      :main => {
+        :names => [ 'Offers requested', 'Offers shown', 'Clicks', 'Conversions' ],
+        :data => [
+          @stats['featured_offers_requested'],
+          @stats['featured_offers_shown'],
+          @stats['featured_offers_opened'],
+          @stats['featured_published_offers'],
+        ],
+        :stringData => [
+          @stats['featured_offers_requested'].map { |i| number_with_delimiter(i) },
+          @stats['featured_offers_shown'].map { |i| number_with_delimiter(i) },
+          @stats['featured_offers_opened'].map { |i| number_with_delimiter(i) },
+          @stats['featured_published_offers'].map { |i| number_with_delimiter(i) },
+        ],
+        :totals => [
+          number_with_delimiter(@stats['featured_offers_requested'].sum),
+          number_with_delimiter(@stats['featured_offers_shown'].sum),
+          number_with_delimiter(@stats['featured_offers_opened'].sum),
+          number_with_delimiter(@stats['featured_published_offers'].sum),
+        ],
+      },
+      :right => {
+        :unitPrefix => '$',
+        :names => [ 'Revenue', 'eCPM' ],
+        :data => [
+          @stats['featured_revenue'].map { |i| i / 100.0 },
+          @stats['featured_ecpm'].map { |i| i / 100.0 },
+        ],
+        :stringData => [
+          @stats['featured_revenue'].map { |i| number_to_currency(i / 100.0) },
+          @stats['featured_ecpm'].map { |i| number_to_currency(i / 100.0) },
+        ],
+        :totals => [
+          number_to_currency(@stats['featured_revenue'].sum / 100.0),
+          @stats['featured_offers_shown'].sum > 0 ? number_to_currency(@stats['featured_revenue'].sum.to_f / (@stats['featured_offers_shown'].sum / 1000.0) / 100.0) : '$0.00',
+        ],
+      },
+      :extra => {
+        :names => [ 'Fill rate', 'CTR', 'CVR' ],
+        :data => [
+          @stats['featured_fill_rate'].map { |r| "%.0f%" % (r.to_f * 100.0) },
+          @stats['featured_ctr'].map { |r| "%.0f%" % (r.to_f * 100.0) },
+          @stats['featured_cvr'].map { |r| "%.0f%" % (r.to_f * 100.0) },
+        ],
+        :totals => [
+          @stats['featured_offers_requested'].sum > 0 ? ("%.1f%" % (@stats['featured_offers_shown'].sum.to_f / @stats['featured_offers_requested'].sum * 100.0)) : '-',
+          @stats['featured_offers_shown'].sum > 0 ? ("%.1f%" % (@stats['featured_offers_opened'].sum.to_f / @stats['featured_offers_shown'].sum * 100.0)) : '-',
+          @stats['featured_offers_opened'].sum > 0 ? ("%.1f%" % (@stats['featured_published_offers'].sum.to_f / @stats['featured_offers_opened'].sum * 100.0)) : '-',
+        ],
+      },
+    }
+  end
+
+  def display_ads_data
+    {
+      :name => 'Display ads',
+      :intervals => formatted_intervals,
+      :xLabels => @x_labels,
+      :main => {
+        :names => [ 'Ads requested', 'Ads shown', 'Clicks', 'Conversions' ],
+        :data => [
+          @stats['display_ads_requested'],
+          @stats['display_ads_shown'],
+          @stats['display_clicks'],
+          @stats['display_conversions'],
+        ],
+        :stringData => [
+          @stats['display_ads_requested'].map { |i| number_with_delimiter(i) },
+          @stats['display_ads_shown'].map { |i| number_with_delimiter(i) },
+          @stats['display_clicks'].map { |i| number_with_delimiter(i) },
+          @stats['display_conversions'].map { |i| number_with_delimiter(i) },
+        ],
+        :totals => [
+          number_with_delimiter(@stats['display_ads_requested'].sum),
+          number_with_delimiter(@stats['display_ads_shown'].sum),
+          number_with_delimiter(@stats['display_clicks'].sum),
+          number_with_delimiter(@stats['display_conversions'].sum),
+        ],
+      },
+      :right => {
+        :unitPrefix => '$',
+        :names => [ 'Revenue', 'eCPM' ],
+        :data => [
+          @stats['display_revenue'].map { |i| i / 100.0 },
+          @stats['display_ecpm'].map { |i| i / 100.0 } ],
+        :stringData => [
+          @stats['display_revenue'].map { |i| number_to_currency(i / 100.0) },
+          @stats['display_ecpm'].map { |i| number_to_currency(i / 100.0) } ],
+        :totals => [
+          number_to_currency(@stats['display_revenue'].sum / 100.0),
+          @stats['display_ads_shown'].sum > 0 ? number_to_currency(@stats['display_revenue'].sum.to_f / (@stats['display_ads_shown'].sum / 1000.0) / 100.0) : '$0.00',
+        ],
+      },
+      :extra => {
+        :names => [ 'Fill rate', 'CTR', 'CVR' ],
+        :data => [
+          @stats['display_fill_rate'].map { |r| "%.0f%" % (r.to_f * 100.0) },
+          @stats['display_ctr'].map { |r| "%.0f%" % (r.to_f * 100.0) },
+          @stats['display_cvr'].map { |r| "%.0f%" % (r.to_f * 100.0) },
+        ],
+        :totals => [
+          @stats['display_ads_requested'].sum > 0 ? ("%.1f%" % (@stats['display_ads_shown'].sum.to_f / @stats['display_ads_requested'].sum * 100.0)) : '-',
+          @stats['display_ads_shown'].sum > 0 ? ("%.1f%" % (@stats['display_clicks'].sum.to_f / @stats['display_ads_shown'].sum * 100.0)) : '-',
+          @stats['display_clicks'].sum > 0 ? ("%.1f%" % (@stats['display_conversions'].sum.to_f / @stats['display_clicks'].sum * 100.0)) : '-' ],
+      },
+    }
+  end
+
+  def ads_data
+    {
+      :name => 'Ad impressions',
+      :intervals => formatted_intervals,
+      :xLabels => @x_labels,
+      :main => {
+        :names => [ 'Ad impressions' ],
+        :data => [ @stats['hourly_impressions'] ],
+        :stringData => [
+          @stats['hourly_impressions'].map { |i| number_with_delimiter(i) },
+        ],
+        :totals => [ number_with_delimiter(@stats['hourly_impressions'].sum) ],
+      },
+    }
+  end
+
+  def virtual_goods_data
+    {
+      :name => 'Virtual good purchases',
+      :intervals => formatted_intervals,
+      :xLabels => @x_labels,
+      :main => {
+        :names => [ 'Store views', 'Total purchases' ],
+        :data => [ @stats['vg_store_views'], @stats['vg_purchases'] ],
+        :stringData => [
+          @stats['vg_store_views'].map { |i| number_with_delimiter(i) },
+          @stats['vg_purchases'].map { |i| number_with_delimiter(i) } ],
+        :totals => [
+          number_with_delimiter(@stats['vg_store_views'].sum),
+          number_with_delimiter(@stats['vg_purchases'].sum),
+        ],
+      },
+      :partition_names => get_virtual_good_partition_names,
+      :partition_right => get_virtual_good_partition_values,
+      :partition_title => 'Virtual goods',
+      :partition_fallback => '',
+    }
+  end
 end

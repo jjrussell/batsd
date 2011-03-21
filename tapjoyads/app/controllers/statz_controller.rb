@@ -6,6 +6,7 @@ class StatzController < WebsiteController
   filter_access_to :all
   
   before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids ]
+  before_filter :setup, :only => [ :show, :global ]
   after_filter :save_activity_logs, :only => [ :update ]
   
   def index
@@ -27,30 +28,18 @@ class StatzController < WebsiteController
   end
 
   def show
-    # setup the start/end times
-    now = Time.zone.now
-    @start_time = now.beginning_of_hour - 23.hours
-    @end_time = now
-    unless params[:date].blank?
-      @start_time = Time.zone.parse(params[:date]).beginning_of_day
-      @start_time = now.beginning_of_hour - 23.hours if @start_time > now
-      @end_time = @start_time + 24.hours
-    end
-    unless params[:end_date].blank?
-      @end_time = Time.zone.parse(params[:end_date]).end_of_day
-      @end_time = now if @end_time <= @start_time || @end_time > now
-    end
+    respond_to do |format|
+      format.html do
+        @associated_offers = @offer.find_associated_offers
+        @active_boosts = @offer.rank_boosts.active
+        @total_boost = @active_boosts.map(&:amount).sum
+      end
 
-    # setup granularity
-    if params[:granularity] == 'daily' || @end_time - @start_time >= 7.days
-      @granularity = :daily
-    else
-      @granularity = :hourly
+      format.json do
+        load_appstats
+        render :json => { :data => @appstats.graph_data(:offer => @offer, :admin => true) }.to_json
+      end
     end
-
-    @associated_offers = @offer.find_associated_offers
-    @active_boosts = @offer.rank_boosts.active
-    @total_boost = @active_boosts.map(&:amount).sum
   end
 
   def update
@@ -135,9 +124,14 @@ class StatzController < WebsiteController
   end
 
   def global
-    now = Time.zone.now
-    @start_time = now.beginning_of_hour - 23.hours
-    @end_time = now
+    respond_to do |format|
+      format.html do
+      end
+      format.json do
+        load_appstats
+        render :json => { :data => @appstats.graph_data(:admin => true) }.to_json
+      end
+    end
   end
   
 private
@@ -149,5 +143,22 @@ private
       redirect_to statz_index_path
     end
   end
-  
+
+  def load_appstats
+    return @appstats if defined? @appstats
+    options = { :start_time => params[:date], :end_time => params[:end_date], :granularity => params[:granularity], :include_labels => true }
+    if params[:action] == 'global'
+      key = 'global'
+      options[:cache_hours] = 0
+    else
+      key = @offer.id
+    end
+    @appstats = Appstats.new(key, options)
+  end
+
+  def setup
+    @start_time = Time.zone.parse(params[:date]) rescue Time.zone.now.beginning_of_hour - 23.hours
+    @end_time = Time.zone.parse(params[:end_date]) rescue Time.zone.now
+    params[:granularity].blank? ? @granularity = :hourly : @granularity = params[:granularity]
+  end
 end

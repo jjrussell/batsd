@@ -96,7 +96,7 @@ $(function($) {
     }
 
     $.ajax({
-      url: location.pathname.replace(/statz/,'reporting'),
+      url: location.pathname,
       data: params,
       success: function(response, status, request) {
         loadData(response.data);
