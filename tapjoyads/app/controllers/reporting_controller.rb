@@ -108,13 +108,11 @@ private
   
   def load_appstats
     return @appstats if defined? @appstats
-    options = { :start_time => params[:date], :end_time => params[:end_date], :granularity => params[:granularity], :include_labels => true }
+    options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true }
     @appstats = Appstats.new(@offer.id, options)
   end
 
   def setup
-    @start_time = Time.zone.parse(params[:date]) rescue Time.zone.now.beginning_of_hour - 23.hours
-    @end_time = Time.zone.parse(params[:end_date]) rescue Time.zone.now
-    params[:granularity].blank? ? @granularity = :hourly : @granularity = params[:granularity]
+    @start_time, @end_time, @granularity = Appstats.parse_date(params[:date], params[:end_date], params[:granularity])
   end
 end

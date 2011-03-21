@@ -4,9 +4,9 @@ class Appstats
   attr_accessor :app_key, :stats, :granularity, :start_time, :end_time, :x_labels, :intervals
   
   def initialize(app_key, options = {})
-    start_time_string = options.delete(:start_time)
-    end_time_string = options.delete(:end_time)
-    granularity_string = options.delete(:granularity)
+    @start_time = options.delete(:start_time)
+    @end_time = options.delete(:end_time)
+    @granularity = options.delete(:granularity)
     @stat_types = options.delete(:stat_types) { Stats::STAT_TYPES }
     @include_labels = options.delete(:include_labels) { false }
     cache_hours = options.delete(:cache_hours) { 3 }
@@ -15,35 +15,6 @@ class Appstats
     @app_key = app_key
     @now = Time.zone.now
 
-    if start_time_string.blank?
-      @start_time = @now.beginning_of_hour - 23.hours
-    elsif start_time_string.is_a?(Time)
-      @start_time = start_time_string
-    else
-      @start_time = Time.zone.parse(start_time_string).beginning_of_day
-    end
-    @start_time = @now.beginning_of_hour - 23.hours if @start_time > @now
-
-    if end_time_string.blank?
-      @end_time = @start_time + 24.hours
-    elsif end_time_string.is_a?(Time)
-      @end_time = end_time_string
-    else
-      @end_time = Time.zone.parse(end_time_string).end_of_day
-    end
-    @end_time = @now if @end_time <= @start_time || @end_time > @now
-
-    if granularity_string == 'daily' || granularity_string == :daily || @end_time - @start_time >= 7.days
-      @granularity = :daily
-    else
-      @granularity = :hourly
-    end
-
-    if (@end_time - @start_time < 1.day) && @granularity == :daily
-      @start_time = @start_time.beginning_of_day
-      @end_time = @end_time.end_of_day
-    end
-    
     @stat_rows = {}
     
     @stats = {}
@@ -317,6 +288,36 @@ class Appstats
     end
 
     data
+  end
+
+  def self.parse_dates(start_time_string, end_time_string, granularity_string)
+    now = Time.zone.now
+    if start_time_string.blank?
+      start_time = now.beginning_of_hour - 23.hours
+    else
+      start_time = Time.zone.parse(start_time_string).beginning_of_day
+      start_time = now.beginning_of_hour - 23.hours if start_time > now
+    end
+
+    if end_time_string.blank?
+      end_time = start_time + 24.hours
+    else
+      end_time = Time.zone.parse(end_time_string).end_of_day
+      end_time = now if end_time <= start_time || end_time > now
+    end
+
+    if granularity_string == 'daily' || end_time - start_time >= 7.days
+      granularity = :daily
+    else
+      granularity = :hourly
+    end
+
+    if (end_time - start_time < 1.day) && granularity == :daily
+      start_time = start_time.beginning_of_day
+      end_time = end_time.end_of_day
+    end
+
+    return start_time, end_time, granularity
   end
   
 private
