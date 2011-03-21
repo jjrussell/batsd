@@ -3,6 +3,12 @@ class AgencyApiController < ApplicationController
   
   skip_before_filter :fix_params, :reject_banned_ips
   
+protected
+  
+  def ssl_required?
+    Rails.env == 'production'
+  end
+  
 private
   
   def render_error(error, status)
