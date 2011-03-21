@@ -9,7 +9,7 @@ class PayoutInfo < ActiveRecord::Base
   validates_uniqueness_of :partner_id
 
   def filled?
-    billing_name.present? && tax_info_filled? && (bank_info_filled? || us_address_filled?)
+    billing_name.present? && tax_info_filled? && payout_info_filled?
   end
 
 private
@@ -19,20 +19,27 @@ private
       tax_id.present?
   end
 
+  def payout_info_filled?
+    country = address_country && address_country.downcase
+    if ['united states', 'united states of america'].include?(country) && payout_method == 'check'
+      address_filled?
+    else
+      bank_info_filled?
+    end
+  end
+
   def bank_info_filled?
     bank_name.present? &&
       bank_account_number.present? &&
       bank_routing_number.present?
   end
 
-  def us_address_filled?
-    country = address_country && address_country.downcase
-    ['united states', 'united states of america'].include?(country) &&
-      company_name.present? &&
-      address_1.present? &&
-      address_city.present? &&
-      address_state.present? &&
-      address_postal_code.present?
+  def address_filled?
+    company_name.present? &&
+    address_1.present? &&
+    address_city.present? &&
+    address_state.present? &&
+    address_postal_code.present?
   end
 
 end
