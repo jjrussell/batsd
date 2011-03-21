@@ -79,10 +79,6 @@
             = f.label :postal_codes, 'ZIP code'
             .help.no-help ?
           %td= f.text_field(:address_postal_code)
-        - if permitted_to?(:index, :statz)
-          %tr.country_us
-            %td{:colspan => 2}
-              %h3.admin Admin-only fields (for U.S. customers)
         %tr.country_other
           %th
             = f.label :bank_name, 'Bank Name'
@@ -161,7 +157,6 @@
         $('.country_us').hide();
         $('.country_other').show();
       }
-      toggleAdmin();
     };
     var toggleByPayoutMethod = function() {
       if (isUS()) {
@@ -174,12 +169,6 @@
         }
         $('span.country_other').hide();
       } else {
-        $('.country_other').show();
-      }
-      toggleAdmin();
-    };
-    var toggleAdmin = function() {
-      if (#{ !!permitted_to?(:index, :statz) }) {
         $('.country_other').show();
       }
     };
