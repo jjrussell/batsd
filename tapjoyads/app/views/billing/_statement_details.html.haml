@@ -19,7 +19,7 @@
   - else
     .none No payments made during this time
   - unless payouts.blank?
-    %table
+    %table.financial
       %thead
         %tr
           %th{:colspan => 4, :style => 'text-align: center;'} Payouts
@@ -33,7 +33,7 @@
   - else
     .none No payouts made during this time
   - unless transfers.blank?
-    %table
+    %table.financial
       %thead
         %tr
           %th{:colspan => 4, :style => 'text-align: center;'} Transfers

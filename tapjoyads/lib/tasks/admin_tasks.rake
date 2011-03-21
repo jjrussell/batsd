@@ -22,7 +22,7 @@ namespace :admin do
     
     print("Backing up the production database... ")
     time = Benchmark.realtime do
-      system("mysqldump -u #{source['username']} --password=#{source['password']} -h #{source['host']} --single-transaction --ignore-table=#{source['database']}.conversions #{source['database']} > #{dump_file}")
+      system("mysqldump -u #{source['username']} --password=#{source['password']} -h #{source['host']} --single-transaction --ignore-table=#{source['database']}.conversions --ignore-table=#{source['database']}.payout_infos #{source['database']} > #{dump_file}")
     end
     puts("finished in #{time} seconds.")
     
