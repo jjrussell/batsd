@@ -166,11 +166,18 @@ class SimpledbResource
     save_to_sdb      = options.delete(:write_to_sdb)      { true }
     catch_exceptions = options.delete(:catch_exceptions)  { true }
     expected_attr    = options.delete(:expected_attr)     { {} }
+    from_queue       = options.delete(:from_queue)        { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     Rails.logger.info "Saving to #{@this_domain_name}"
 
-    put('updated-at', Time.zone.now.to_f.to_s)
+    now = Time.zone.now
+
+    if from_queue
+      put('from_queue', now.to_f.to_s)
+    else
+      put('updated-at', now.to_f.to_s)
+    end
     
     Rails.logger.info_with_time("Saving to sdb, domain: #{this_domain_name}") do
       self.write_to_memcache if save_to_memcache
@@ -188,9 +195,9 @@ class SimpledbResource
     raise e
   rescue Exception => e
     if e.is_a?(RightAws::AwsError)
-      Mc.increment_count("failed_sdb_saves.sdb.#{@this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}", false, 1.day)
+      Mc.increment_count("failed_sdb_saves.sdb.#{@this_domain_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
     else
-      Mc.increment_count("failed_sdb_saves.mc.#{@this_domain_name}.#{(Time.zone.now.to_f / 1.hour).to_i}", false, 1.day)
+      Mc.increment_count("failed_sdb_saves.mc.#{@this_domain_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
     end
     unless catch_exceptions
       if save_to_memcache
