@@ -38,7 +38,7 @@ class Device < SimpledbShardedResource
       last_run_time_was = Time.zone.at(0)
 
       # mark papaya new users as jailbroken
-      if app_id == 'e96062c5-45f0-43ba-ae8f-32bc71b72c99' || app_id == 'cf6b4573-0efb-44a8-813d-26e248b81713'
+      if app_id == 'e96062c5-45f0-43ba-ae8f-32bc71b72c99'
         self.is_jailbroken = true
       end
     end
