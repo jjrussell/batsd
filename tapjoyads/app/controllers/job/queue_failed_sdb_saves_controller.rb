@@ -42,6 +42,8 @@ private
   end
   
   def should_save_sdb_item?(queued_sdb_item)
+    return true
+    
     sdb_item = SimpledbResource.new(:key => queued_sdb_item.key, :domain_name => queued_sdb_item.this_domain_name, :load_from_memcache => false, :consistent => true)
     sdb_item.new_record? || queued_sdb_item.updated_at > sdb_item.updated_at
   end
