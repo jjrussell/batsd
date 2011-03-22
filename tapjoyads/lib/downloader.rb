@@ -9,6 +9,7 @@ class Downloader
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     start_time = Time.zone.now
+    headers.merge!({ 'User-Agent' => 'Tapjoy Downloader' })
     Rails.logger.info "Downloading (GET) #{url}"
     
     sess = Patron::Session.new
@@ -34,6 +35,7 @@ class Downloader
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     start_time = Time.zone.now
+    headers.merge!({ 'User-Agent' => 'Tapjoy Downloader' })
     Rails.logger.info "Downloading (POST) #{url}"
     
     sess = Patron::Session.new
