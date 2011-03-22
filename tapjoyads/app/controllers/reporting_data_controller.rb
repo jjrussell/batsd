@@ -3,15 +3,36 @@ class ReportingDataController < WebsiteController
   
   layout false
   
-  before_filter :lookup_user_and_authenticate, :lookup_stats
+  before_filter :lookup_user_and_authenticate
+  before_filter :lookup_stats, :only => :index
   
   rate_limit :index, :key => proc { |c| c.params[:username] }, :max_calls => 5, :time_limit => 5.minutes, :wait_time => 1.minute, :status => 420
+  rate_limit :udids, :key => proc { |c| "#{c.params[:username]}.#{c.params[:offer_id]}" }, :max_calls => 2, :time_limit => 1.hour, :wait_time => 1.hour, :status => 420
   
   def index
     respond_to do |format|
       format.xml
       format.json
     end
+  end
+  
+  def udids
+    bucket = S3.bucket(BucketNames::AD_UDIDS)
+    
+    offer = Offer.find(:first, :conditions => ["id = ? AND partner_id IN (?)", params[:offer_id], @user.partners])
+    unless offer.present?
+      render :text => "Unknown offer id", :status => 404
+      return
+    end
+    
+    path = Offer.s3_udids_path(offer.id) + params[:date]
+    unless bucket.key(path).exists?
+      render :text => "No UDID report exists for this date", :status => 404
+      return
+    end
+    
+    data = bucket.get(path)
+    send_data(data, :type => 'text/csv', :filename => "#{offer.id}_#{params[:date]}.csv")
   end
   
 private
