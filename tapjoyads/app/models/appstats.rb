@@ -612,7 +612,7 @@ private
       @virtual_good_partitions[group][:stringData] ||= []
       @virtual_good_partitions[group][:totals] ||= []
 
-      vg_name = truncate(vg.name, :length => 13)
+      vg_name = vg.name[0, 13].strip
       vg_data = @stats['virtual_goods'][vg.key] || Array.new(@stats['vg_purchases'].size, 0)
 
       @virtual_good_partitions[group][:names] << vg_name
