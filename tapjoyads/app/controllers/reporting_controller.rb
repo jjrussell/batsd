@@ -113,6 +113,6 @@ private
   end
 
   def setup
-    @start_time, @end_time, @granularity = Appstats.parse_date(params[:date], params[:end_date], params[:granularity])
+    @start_time, @end_time, @granularity = Appstats.parse_dates(params[:date], params[:end_date], params[:granularity])
   end
 end
