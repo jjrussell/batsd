@@ -13,8 +13,12 @@ class HomepageController < WebsiteController
   end
 
   def contact
-    if (params[:info])
-      TapjoyMailer.deliver_contact_us(params[:info])
+    if params[:info]
+      if params[:info][:source] == 'publishers_contact'
+        TapjoyMailer.deliver_publisher_application(params[:info])
+      else
+        TapjoyMailer.deliver_contact_us(params[:info])
+      end
       redirect_to :action => 'contact-thanks'
     end
   end

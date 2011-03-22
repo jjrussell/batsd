@@ -1,0 +1,121 @@
+.banner#publisher_banner
+  .large-header
+    Self-Publishing:
+  .medium-header
+    Turn Your Game Into a Top Hit
+  %br/
+  %br/
+  .small-medium-header
+    Tapjoy is democratizing app distribution by
+    %br/
+    giving independent game developers the
+    %br/
+    same advantages as the biggest studios.
+    %br/
+    %br/
+    Got a great game, or about to launch one?
+    %br/
+    We can help!
+  %br/
+  %br/
+  = button_to 'Apply Now >', '/site/publishers_contact', :title => "Apply now", :class => 'blue', :method => 'get'
+.banner.with-margin
+  %br/
+  %br/
+  %h2 Self-publish your game with the leader in app distribution &amp; monetization
+
+  %p
+    .small-header
+      Since 2007, Tapjoy has been helping fuel growth and innovation for thousands of application
+      %br/
+      developers with its industry-leading distribution and monetization platform. Now, you can tap
+      %br/
+      into our renowned expertise, unparalleled promotion capabilities and cutting-edge technology
+      %br/
+      to help turn your social or mobile game into a major hit.
+
+.types
+  .block1
+    %h2 Reach 300 Million Users
+    = image_tag 'site/pub_platforms.png'
+    %p
+      When you publish your game through Tapjoy, you'll get access to more than
+      300 million users looking for great games to play. We'll drive tons of
+      highly qualified gamers to your title daily.
+  .block2
+    %h2 Drive More Revenue
+    = image_tag 'site/pub_coins.png'
+    %p
+      Our monetization platform delivers the industry's highest revenue per user
+      by providing a frictionless way for your users to pay for virtual currency.
+      We'll turn your game into a money-making machine.
+
+.with-margin#publisher_customer
+  = image_tag('site/pub_winkler.jpg')
+  .left-shifted
+    %h1
+      %span.big> &ldquo;T
+      apjoy helped us reinvigorate Dawn of the Dragons
+    %p
+      much faster than we ever could have done ourselves or through anyone else,
+      %br/
+      driving a 40% increase in our MAUs in about a month. And since we've started
+      %br/
+      working with Tapjoy as a publisher, we've had our best revenue month ever.&rdquo;
+    .name
+      \- Robert Winkler, 5th Planet Games
+
+.clear &nbsp;
+
+- content_for :page_styles do
+  :plain
+    span.big {
+      font-size: 2em;
+    }
+    #publisher_banner {
+      background:url(/images/site/pub_chart.png) no-repeat right top !important;
+      height: 310px;
+      display: block;
+      width: auto;
+      padding: 25px 20px 0px 80px !important;
+      margin-top: 10px;
+      margin-bottom: 40px;
+    }
+    #publisher_customer img {
+      float: right;
+      margin-top: 20px;
+    }
+    #publisher_customer p {
+      font-size: 1.5em;
+    }
+    #publisher_customer .left-shifted {
+      margin-right: 120px;
+      padding-right: 30px;
+    }
+    #publisher_customer .name {
+      float: right;
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .block1, .block2 {
+      border: #aaa 2px solid !important;
+      margin: 20px;
+      width: 400px !important;
+    }
+    .with-margin {
+      margin: 15px 50px !important;
+      display: block !important;
+      width: auto !important;
+    }
+    .large-header {
+      font-size: 3em;
+      text-transform: none !important;
+    }
+    .medium-header {
+      font-size: 2.3em;
+      text-transform: none !important;
+    }
+    .small-medium-header {
+      font-size: 1.5em;
+    }
