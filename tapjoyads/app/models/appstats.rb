@@ -631,8 +631,8 @@ private
     end
   end
 
-  def get_virtual_good_partition_values
-    get_virtual_good_partition_names.map do |name|
+  def get_virtual_good_partition_values(offer)
+    get_virtual_good_partition_names(offer).map do |name|
       get_virtual_good_partitions(offer)[name]
     end
   end
