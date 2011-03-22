@@ -230,18 +230,19 @@ class Appstats
   end
 
   def graph_data(options)
-    @offer = options.delete(:offer)
-    @admin = options.delete(:admin)
+    offer = options.delete(:offer)
+    admin = options.delete(:admin)
 
-    if @offer && @offer.item_type == 'App'
-      @conversion_name = 'Installs'
+    if offer && offer.item_type == 'App'
+      conversion_name = 'Installs'
     else
-      @conversion_name = 'Conversions'
+      conversion_name = 'Conversions'
     end
+
     data = {
       :connect_data => connect_data,
-      :rewarded_installs_plus_spend_data => rewarded_installs_plus_spend_data,
-      :rewarded_installs_plus_rank_data => rewarded_installs_plus_rank_data,
+      :rewarded_installs_plus_spend_data => rewarded_installs_plus_spend_data(conversion_name),
+      :rewarded_installs_plus_rank_data => rewarded_installs_plus_rank_data(conversion_name),
       :revenue_data => revenue_data,
       :offerwall_data => offerwall_data,
       :featured_offers_data => featured_offers_data,
@@ -253,8 +254,8 @@ class Appstats
       :end_date => @end_time.to_date.to_s(:mdy)
     }
 
-    if get_virtual_good_partitions.size > 0
-      data[:virtual_goods_data] = virtual_goods_data
+    if get_virtual_good_partitions(offer).size > 0
+      data[:virtual_goods_data] = virtual_goods_data(offer)
     end
 
     if @granularity == :daily
@@ -272,7 +273,7 @@ class Appstats
       }
     end
 
-    if @admin
+    if admin
       # country breakdowns
       data[:rewarded_installs_plus_spend_data][:partition_names]    = spend_partition_names
       data[:rewarded_installs_plus_spend_data][:partition_left]     = paid_installs_partitions
@@ -281,7 +282,7 @@ class Appstats
       data[:rewarded_installs_plus_spend_data][:partition_fallback] = 'Country data does not exist for this app during this time frame'
       data[:rewarded_installs_plus_spend_data][:partition_default]  = 'United States'
       # jailbroken data
-      data[:rewarded_installs_plus_spend_data][:main][:names]      << "Jb #{@conversion_name}"
+      data[:rewarded_installs_plus_spend_data][:main][:names]      << "Jb #{conversion_name}"
       data[:rewarded_installs_plus_spend_data][:main][:data]       << @stats['jailbroken_installs']
       data[:rewarded_installs_plus_spend_data][:main][:stringData] << @stats['jailbroken_installs'].map { |i| number_with_delimiter(i) }
       data[:rewarded_installs_plus_spend_data][:main][:totals]     << number_with_delimiter(@stats['jailbroken_installs'].sum)
@@ -592,47 +593,47 @@ private
     values
   end
 
-  def get_virtual_good_partitions
+  def get_virtual_good_partitions(offer)
     return {} if @app_key == 'global'
-    return @virtual_good_paritions if @virtual_good_paritions.present?
-    @virtual_good_paritions = {}
+    return @virtual_good_partitions if @virtual_good_partitions.present?
+    @virtual_good_partitions = {}
 
-    virtual_goods = @offer.virtual_goods.sort
+    virtual_goods = offer.virtual_goods.sort
 
     virtual_goods.each_with_index do |vg, i|
       mod = i % 5
       upper = [i - mod + 5, virtual_goods.size].min
       group = "#{i - mod + 1} - #{upper}"
 
-      @virtual_good_paritions[group] ||= {}
-      @virtual_good_paritions[group][:names] ||= []
-      @virtual_good_paritions[group][:longNames] ||= []
-      @virtual_good_paritions[group][:data] ||= []
-      @virtual_good_paritions[group][:stringData] ||= []
-      @virtual_good_paritions[group][:totals] ||= []
+      @virtual_good_partitions[group] ||= {}
+      @virtual_good_partitions[group][:names] ||= []
+      @virtual_good_partitions[group][:longNames] ||= []
+      @virtual_good_partitions[group][:data] ||= []
+      @virtual_good_partitions[group][:stringData] ||= []
+      @virtual_good_partitions[group][:totals] ||= []
 
       vg_name = truncate(vg.name, :length => 13)
       vg_data = @stats['virtual_goods'][vg.key] || Array.new(@stats['vg_purchases'].size, 0)
 
-      @virtual_good_paritions[group][:names] << vg_name
-      @virtual_good_paritions[group][:longNames] << vg.name
-      @virtual_good_paritions[group][:data] << vg_data
-      @virtual_good_paritions[group][:stringData] << vg_data.map { |i| number_with_delimiter(i) }
-      @virtual_good_paritions[group][:totals] << (number_with_delimiter(@stats['virtual_goods'][vg.key].sum) rescue 0)
+      @virtual_good_partitions[group][:names] << vg_name
+      @virtual_good_partitions[group][:longNames] << vg.name
+      @virtual_good_partitions[group][:data] << vg_data
+      @virtual_good_partitions[group][:stringData] << vg_data.map { |i| number_with_delimiter(i) }
+      @virtual_good_partitions[group][:totals] << (number_with_delimiter(@stats['virtual_goods'][vg.key].sum) rescue 0)
     end
 
-    @virtual_good_paritions
+    @virtual_good_partitions
   end
 
-  def get_virtual_good_partition_names
-    get_virtual_good_partitions.keys.sort do |k1, k2|
+  def get_virtual_good_partition_names(offer)
+    get_virtual_good_partitions(offer).keys.sort do |k1, k2|
       k1.split[0].to_i <=> k2.split[0].to_i
     end
   end
 
   def get_virtual_good_partition_values
     get_virtual_good_partition_names.map do |name|
-      get_virtual_good_partitions[name]
+      get_virtual_good_partitions(offer)[name]
     end
   end
 
@@ -650,13 +651,13 @@ private
     }
   end
 
-  def rewarded_installs_plus_spend_data
+  def rewarded_installs_plus_spend_data(conversion_name)
     {
-      :name => "Paid #{@conversion_name} + Advertising spend",
+      :name => "Paid #{conversion_name} + Advertising spend",
       :intervals => formatted_intervals,
       :xLabels => @x_labels,
       :main => {
-        :names => [ "Total Paid #{@conversion_name}", 'Total Clicks' ],
+        :names => [ "Total Paid #{conversion_name}", 'Total Clicks' ],
         :data => [ @stats['paid_installs'], @stats['paid_clicks'] ],
         :stringData => [ @stats['paid_installs'].map { |i| number_with_delimiter(i) }, @stats['paid_clicks'].map { |i| number_with_delimiter(i) } ],
         :totals => [ number_with_delimiter(@stats['paid_installs'].sum), number_with_delimiter(@stats['paid_clicks'].sum) ],
@@ -676,13 +677,13 @@ private
     }
   end
 
-  def rewarded_installs_plus_rank_data
+  def rewarded_installs_plus_rank_data(conversion_name)
     {
-      :name => "Paid #{@conversion_name} + Ranks",
+      :name => "Paid #{conversion_name} + Ranks",
       :intervals => formatted_intervals,
       :xLabels => @x_labels,
       :main => {
-        :names => [ "Total Paid #{@conversion_name}" ],
+        :names => [ "Total Paid #{conversion_name}" ],
         :data => [ @stats['paid_installs'] ],
         :stringData => [ @stats['paid_installs'].map { |i| number_with_delimiter(i) } ],
         :totals => [ number_with_delimiter(@stats['paid_installs'].sum) ],
@@ -905,7 +906,7 @@ private
     }
   end
 
-  def virtual_goods_data
+  def virtual_goods_data(offer)
     {
       :name => 'Virtual good purchases',
       :intervals => formatted_intervals,
@@ -921,8 +922,8 @@ private
           number_with_delimiter(@stats['vg_purchases'].sum),
         ],
       },
-      :partition_names => get_virtual_good_partition_names,
-      :partition_right => get_virtual_good_partition_values,
+      :partition_names => get_virtual_good_partition_names(offer),
+      :partition_right => get_virtual_good_partition_values(offer),
       :partition_title => 'Virtual goods',
       :partition_fallback => '',
     }
