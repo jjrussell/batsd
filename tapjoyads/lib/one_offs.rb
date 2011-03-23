@@ -216,8 +216,10 @@ class OneOffs
     app_new_udids = 0
     app_existing_udids = 0
     invalid_udids = 0
+    parse_errors = 0
     now = Time.zone.now.to_f.to_s
     file = File.open(filename, 'r')
+    outfile = File.open("#{filename}.parse_errors", 'w')
     time = Benchmark.realtime do
       file.each_line do |line|
         counter += 1
@@ -226,7 +228,13 @@ class OneOffs
           invalid_udids += 1
           next
         end
-        device = Device.new :key => udid
+        begin
+          device = Device.new :key => udid
+        rescue JSON::ParserError
+          parse_errors += 1
+          outfile.puts(udid)
+          next
+        end
         device.is_new ? new_udids += 1 : existing_udids += 1
         if device.has_app app_id
           app_existing_udids += 1
@@ -243,7 +251,7 @@ class OneOffs
             retry
           end
         end
-        puts "#{Time.zone.now.to_s(:db)} - finished #{counter} UDIDs, #{new_udids} new (global), #{existing_udids} existing (global), #{app_new_udids} new (per app), #{app_existing_udids} existing (per app), #{invalid_udids} invalid" if counter % 1000 == 0
+        puts "#{Time.zone.now.to_s(:db)} - finished #{counter} UDIDs, #{new_udids} new (global), #{existing_udids} existing (global), #{app_new_udids} new (per app), #{app_existing_udids} existing (per app), #{invalid_udids} invalid, #{parse_errors} parse errors" if counter % 1000 == 0
       end
     end
     puts "finished importing #{counter} UDIDs in #{time.ceil} seconds"
@@ -252,6 +260,10 @@ class OneOffs
     puts "new UDIDs (per app): #{app_new_udids}"
     puts "existing UDIDs (per app): #{app_existing_udids}"
     puts "invalid UDIDs: #{invalid_udids}"
+    puts "parse errors: #{parse_errors}"
+  ensure
+    file.close
+    outfile.close
   end
 
   def self.grab_groupon_udids
