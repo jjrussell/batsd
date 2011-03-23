@@ -45,8 +45,10 @@ private
   
   def log_missing_required_params
     Rails.logger.info "missing required params"
-    NewRelic::Agent.add_custom_parameters({ :user_agent => request.headers['User-Agent'] })
-    Notifier.alert_new_relic(MissingRequiredParamsError, request.url, request, params)
+    unless Rails.env == 'test'
+      NewRelic::Agent.add_custom_parameters({ :user_agent => request.headers['User-Agent'] })
+      Notifier.alert_new_relic(MissingRequiredParamsError, request.url, request, params)
+    end
   end
   
   def verify_records(required_records, options = {})
@@ -65,8 +67,10 @@ private
   
   def log_record_not_found
     Rails.logger.info "record not found"
-    NewRelic::Agent.add_custom_parameters({ :user_agent => request.headers['User-Agent'] })
-    Notifier.alert_new_relic(RecordNotFoundError, request.url, request, params)
+    unless Rails.env == 'test'
+      NewRelic::Agent.add_custom_parameters({ :user_agent => request.headers['User-Agent'] })
+      Notifier.alert_new_relic(RecordNotFoundError, request.url, request, params)
+    end
   end
   
   def set_time_zone
