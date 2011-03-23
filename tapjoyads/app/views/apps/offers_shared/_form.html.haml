@@ -255,7 +255,7 @@
       $('#offer_submit').click(function() {
         var currentBid = $('#offer_bid').val();
         var currentBidValue = stringToNumber(currentBid);
-        if (currentBidValue >= 2 * originalBidValue) {
+        if (currentBidValue >= 5 * originalBidValue) {
           return confirm('Are you sure you want to change your bid to ' + currentBid + '?');
         }
       });

@@ -239,7 +239,7 @@
       $('#action_offer_submit').click(function() {
         var currentBid = $('#action_offer_primary_offer_attributes_bid').val();
         var currentBidValue = stringToNumber(currentBid);
-        if (originalBidValue != 0 && currentBidValue >= 2 * originalBidValue) {
+        if (originalBidValue != 0 && currentBidValue >= 5 * originalBidValue) {
           return confirm('Are you sure you want to change your bid to ' + currentBid + '?');
         }
       });
