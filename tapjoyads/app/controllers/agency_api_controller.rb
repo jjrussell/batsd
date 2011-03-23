@@ -2,6 +2,7 @@ class AgencyApiController < ApplicationController
   include SslRequirement
   
   skip_before_filter :fix_params, :reject_banned_ips
+  skip_before_filter :verify_authenticity_token, :only => [ :update ]
   
 protected
   
