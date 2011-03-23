@@ -12,6 +12,8 @@ class Homepage::PressController < WebsiteController
 
   def index
     @press_list = [
+
+      [ "3.23.2011", "Tapjoy Fuels Self-Publishing for Mobile and Social Application Developers", "/press/201103230-tapjoy-fuels-self-publishing-for-developers", ],
       [ "3.3.2011", "Tapjoy Helps Fuel the Growth of Glu's Gun Bros App on Mobile Platforms", "/press/201103030-tapjoy-helps-fuel-growth-of-glus-gun-bros", ],
       [ "2.9.2011", "Tapjoy Launches Pay-Per-Action&trade; Distribution Model for Android, iOS Applications; Analytics Partnership with Apsalar", "/press/201102090-tapjoy-launches-pay-per-action-analytics-partnership-with-apsalar", ],
       [ "1.6.2011", "Tapjoy Closes $21 Million Funding to Accelerate Growth as the Clear Leader in Monetization and Distribution for Application Developers", "/press/201101060-tapjoy-closes-21-million-funding", ],
