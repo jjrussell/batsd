@@ -209,18 +209,23 @@ class OneOffs
     file.close
   end
   
-  def self.import_udids(filename, app_id)
+  def self.import_udids(filename, app_id, udid_regex = //)
     counter = 0
     new_udids = 0
     existing_udids = 0
     app_new_udids = 0
     app_existing_udids = 0
+    invalid_udids = 0
     now = Time.zone.now.to_f.to_s
     file = File.open(filename, 'r')
     time = Benchmark.realtime do
       file.each_line do |line|
         counter += 1
         udid = line.gsub("\n", "").gsub('"', '').downcase
+        if udid !~ udid_regex
+          invalid_udids += 1
+          next
+        end
         device = Device.new :key => udid
         device.is_new ? new_udids += 1 : existing_udids += 1
         if device.has_app app_id
@@ -238,7 +243,7 @@ class OneOffs
             retry
           end
         end
-        puts "#{Time.zone.now.to_s(:db)} - finished #{counter} UDIDs, #{new_udids} new (global), #{existing_udids} existing (global), #{app_new_udids} new (per app), #{app_existing_udids} existing (per app)" if counter % 1000 == 0
+        puts "#{Time.zone.now.to_s(:db)} - finished #{counter} UDIDs, #{new_udids} new (global), #{existing_udids} existing (global), #{app_new_udids} new (per app), #{app_existing_udids} existing (per app), #{invalid_udids} invalid" if counter % 1000 == 0
       end
     end
     puts "finished importing #{counter} UDIDs in #{time.ceil} seconds"
@@ -246,6 +251,7 @@ class OneOffs
     puts "existing UDIDs (global): #{existing_udids}"
     puts "new UDIDs (per app): #{app_new_udids}"
     puts "existing UDIDs (per app): #{app_existing_udids}"
+    puts "invalid UDIDs: #{invalid_udids}"
   end
 
   def self.grab_groupon_udids
