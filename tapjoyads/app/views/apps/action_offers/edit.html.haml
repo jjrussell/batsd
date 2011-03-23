@@ -157,6 +157,8 @@
   
     var requestAppEnable = $.noop;
     $(function($){
+      var originalBidValue = stringToNumber($('#action_offer_primary_offer_attributes_bid').val());
+      
       $('#request_app_enable').attr('disabled', '');
       requestAppEnable = function() {
         $('#new_enable_offer_request').submit();
@@ -232,6 +234,14 @@
       $('#action_offer_primary_offer_attributes_bid').change(function(){
         updateBidAndPayment();
         setEstimatedBudget();
+      });
+      
+      $('#action_offer_submit').click(function() {
+        var currentBid = $('#action_offer_primary_offer_attributes_bid').val();
+        var currentBidValue = stringToNumber(currentBid);
+        if (originalBidValue != 0 && currentBidValue >= 2 * originalBidValue) {
+          return confirm('Are you sure you want to change your bid to ' + currentBid + '?');
+        }
       });
       
       $('form').submit(function() {

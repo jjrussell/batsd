@@ -151,6 +151,8 @@
   :plain
     var requestAppEnable = $.noop;
     $(function($){
+      var originalBidValue = stringToNumber($('#offer_bid').val());
+    
       $('#request_app_enable').attr('disabled', '');
       requestAppEnable = function() {
         $('form#new_enable_offer_request').submit();
@@ -249,6 +251,14 @@
         toggleDailyBudget();
       });
       toggleDailyBudget();
+      
+      $('#offer_submit').click(function() {
+        var currentBid = $('#offer_bid').val();
+        var currentBidValue = stringToNumber(currentBid);
+        if (currentBidValue >= 2 * originalBidValue) {
+          return confirm('Are you sure you want to change your bid to ' + currentBid + '?');
+        }
+      });
 
       $('form#update').submit(function() {
         checkMinimumPrice();
