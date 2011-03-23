@@ -100,9 +100,10 @@ class Offer < ActiveRecord::Base
   end
   validate :bid_higher_than_min_bid
   
+  before_validation :update_payment
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
-  before_validation :update_payment
+  before_save :update_payment
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
   

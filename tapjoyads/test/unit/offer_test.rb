@@ -14,7 +14,6 @@ class OfferTest < ActiveSupport::TestCase
 
   should validate_numericality_of :price
   should validate_numericality_of :bid
-  should validate_numericality_of :payment
   should validate_numericality_of :daily_budget
   should validate_numericality_of :overall_budget
   should validate_numericality_of :conversion_rate
@@ -23,8 +22,6 @@ class OfferTest < ActiveSupport::TestCase
   should validate_numericality_of :payment_range_low
   should validate_numericality_of :payment_range_high
   
-  # should validate_inclusion_of :direct_pay, :in => Offer::DIRECT_PAY_PROVIDERS
-
   context "An App Offer for a free app" do
     setup do
       @offer = Factory(:app).primary_offer
