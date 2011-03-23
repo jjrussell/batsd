@@ -111,6 +111,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'press', :controller => 'homepage/press', :action => 'index'
   map.connect 'press/:id', :controller => 'homepage/press', :action => 'show'
   map.connect 'glu', :controller => 'homepage/press', :action => 'glu'
+  map.connect 'publishing', :controller => 'homepage', :action => 'publishers'
   map.resources :sdk, :only => [ :index, :show ]
   map.resources :opt_outs, :only => :create
   map.namespace :agency_api do |agency|
