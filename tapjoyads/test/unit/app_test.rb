@@ -22,7 +22,7 @@ class AppTest < ActiveSupport::TestCase
     should "update its offers' bids when its price changes" do
       @offer = @app.primary_offer
       @current_offer_bid = @offer.bid
-      @app.update_attribute(:price, 400)
+      @app.update_attributes({:price => 400})
       @offer.reload
       assert_equal 200, @offer.bid
     end

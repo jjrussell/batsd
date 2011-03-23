@@ -51,7 +51,7 @@ class StatzController < WebsiteController
       unless params[:app_store_id].blank?
         app = @offer.item
         log_activity(app)
-        app.update_attribute(:store_id, params[:app_store_id])
+        app.update_attributes({ :store_id => params[:app_store_id] })
       end
       
       flash[:notice] = "Successfully updated #{@offer.name}"

@@ -100,7 +100,7 @@ class PartnersController < WebsiteController
   end
 
   def make_current
-    if current_user.update_attribute(:current_partner_id, @partner.id)
+    if current_user.update_attributes({ :current_partner_id => @partner.id })
       flash[:notice] = "You are now acting as #{@partner.name}."
     else
       flash[:error] = 'Could not switch partners.'

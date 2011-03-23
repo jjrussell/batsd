@@ -84,7 +84,7 @@ class PartnerTest < ActiveSupport::TestCase
     
     context "with monthly payouts" do
       setup do
-        @partner.update_attribute(:payout_frequency, 'monthly')
+        @partner.update_attributes({:payout_frequency => 'monthly'})
       end
       
       should "determine payout cutoff dates from a reference date" do
@@ -97,7 +97,7 @@ class PartnerTest < ActiveSupport::TestCase
     
     context "with semimonthly payouts" do
       setup do
-        @partner.update_attribute(:payout_frequency, 'semimonthly')
+        @partner.update_attributes({:payout_frequency => 'semimonthly'})
       end
       
       should "determine payout cutoff dates from a reference date" do

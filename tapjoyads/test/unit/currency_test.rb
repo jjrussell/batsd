@@ -45,7 +45,7 @@ class CurrencyTest < ActiveSupport::TestCase
     context "when dealing with an offer from the same partner" do
       setup do
         @offer = Factory(:app, :partner => @currency.partner).primary_offer
-        @offer.update_attribute(:payment, 25)
+        @offer.update_attributes({:payment => 25})
       end
       
       should "calculate publisher amounts" do
@@ -68,7 +68,7 @@ class CurrencyTest < ActiveSupport::TestCase
     context "when dealing with any other offer" do
       setup do
         @offer = Factory(:app).primary_offer
-        @offer.update_attribute(:payment, 25)
+        @offer.update_attributes({:payment => 25})
       end
       
       should "calculate publisher amounts" do
@@ -91,7 +91,7 @@ class CurrencyTest < ActiveSupport::TestCase
     context "when dealing with a 3-party displayer offer" do
       setup do
         @offer = Factory(:app).primary_offer
-        @offer.update_attribute(:payment, 25)
+        @offer.update_attributes({:payment => 25})
         @displayer_app = Factory(:app)
       end
       
@@ -119,7 +119,7 @@ class CurrencyTest < ActiveSupport::TestCase
     context "when dealing with a 2-party displayer offer" do
       setup do
         @offer = Factory(:app).primary_offer
-        @offer.update_attribute(:payment, 25)
+        @offer.update_attributes({:payment => 25})
         @displayer_app = @currency.app
       end
       

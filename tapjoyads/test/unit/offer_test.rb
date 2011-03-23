@@ -28,13 +28,13 @@ class OfferTest < ActiveSupport::TestCase
     end
 
     should "update its payment when the bid is changed" do
-      @offer.update_attribute(:bid, 500)
+      @offer.update_attributes({:bid => 500})
       assert_equal 500, @offer.payment
     end
 
     should "update its payment correctly with respect to premier discounts" do
       @offer.partner.premier_discount = 10
-      @offer.update_attribute(:bid, 500)
+      @offer.update_attributes({:bid => 500})
       assert_equal 450, @offer.payment
     end
 
