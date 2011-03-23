@@ -5,8 +5,8 @@ class Appstats
   
   def initialize(app_key, options = {})
     @now = Time.zone.now
-    @start_time = options.delete(:start_time) { Time.utc(@now.year, @now.month, @now.day) }
-    @end_time = options.delete(:end_time) { @now }
+    @start_time = options.delete(:start_time) { @now.beginning_of_hour - 23.hours }
+    @end_time = options.delete(:end_time) { @start_time + 24.hours }
     @granularity = options.delete(:granularity) { :hourly }
     @stat_types = options.delete(:stat_types) { Stats::STAT_TYPES }
     @include_labels = options.delete(:include_labels) { false }
