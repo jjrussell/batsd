@@ -1,5 +1,29 @@
 class AgencyApi::CurrenciesController < AgencyApiController
   
+  def index
+    return unless verify_request([ :app_id ])
+    
+    app = App.find_by_id(params[:app_id])
+    unless app.present?
+      render_error('app not found', 400)
+      return
+    end
+    
+    return unless verify_partner(app.partner_id)
+    
+    currencies = app.currencies.map do |currency|
+      {
+        :currency_id     => currency.id,
+        :name            => currency.name,
+        :conversion_rate => currency.conversion_rate,
+        :initial_balance => currency.initial_balance,
+        :test_devices    => currency.test_devices,
+      }
+    end
+    
+    render_success({ :currencies => currencies })
+  end
+  
   def create
     return unless verify_request([ :app_id, :name, :conversion_rate ])
     
@@ -25,7 +49,6 @@ class AgencyApi::CurrenciesController < AgencyApiController
     currency.conversion_rate = params[:conversion_rate]
     currency.initial_balance = params[:initial_balance] if params[:initial_balance].present?
     currency.test_devices = params[:test_devices] if params[:test_devices].present?
-    currency.minimum_featured_bid = params[:minimum_featured_bid] if params[:minimum_featured_bid].present?
     currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
     currency.ordinal = 1
     unless currency.valid?
@@ -54,7 +77,6 @@ class AgencyApi::CurrenciesController < AgencyApiController
     currency.conversion_rate = params[:conversion_rate] if params[:conversion_rate].present?
     currency.initial_balance = params[:initial_balance] if params[:initial_balance].present?
     currency.test_devices = params[:test_devices] if params[:test_devices].present?
-    currency.minimum_featured_bid = params[:minimum_featured_bid] if params[:minimum_featured_bid].present?
     unless currency.valid?
       render_error(currency.errors, 400)
       return

@@ -6,7 +6,6 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
     setup do
       @agency_user = Factory(:agency_user)
       @partner = Factory(:partner)
-      @partner2 = Factory(:partner)
       PartnerAssignment.create!(:user => @agency_user, :partner => @partner)
       @app = Factory(:app, :partner => @partner)
     end
@@ -37,6 +36,7 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
     end
     context "with an invalid partner_id" do
       setup do
+        @partner2 = Factory(:partner)
         @response = get(:index, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :partner_id => @partner2.id)
       end
       should respond_with(403)
@@ -65,7 +65,6 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
     setup do
       @agency_user = Factory(:agency_user)
       @partner = Factory(:partner)
-      @partner2 = Factory(:partner)
       PartnerAssignment.create!(:user => @agency_user, :partner => @partner)
     end
     
@@ -95,6 +94,7 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
     end
     context "with an invalid partner_id" do
       setup do
+        @partner2 = Factory(:partner)
         @response = post(:create, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :partner_id => @partner2.id, :name => 'app', :platform => 'iphone')
       end
       should respond_with(403)
