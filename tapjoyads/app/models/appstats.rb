@@ -4,17 +4,16 @@ class Appstats
   attr_accessor :app_key, :stats, :granularity, :start_time, :end_time, :x_labels, :intervals
   
   def initialize(app_key, options = {})
-    @start_time = options.delete(:start_time)
-    @end_time = options.delete(:end_time)
-    @granularity = options.delete(:granularity)
+    @now = Time.zone.now
+    @start_time = options.delete(:start_time) { Time.utc(@now.year, @now.month, @now.day) }
+    @end_time = options.delete(:end_time) { @now }
+    @granularity = options.delete(:granularity) { :hourly }
     @stat_types = options.delete(:stat_types) { Stats::STAT_TYPES }
     @include_labels = options.delete(:include_labels) { false }
     cache_hours = options.delete(:cache_hours) { 3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     @app_key = app_key
-    @now = Time.zone.now
-
     @stat_rows = {}
     
     @stats = {}
