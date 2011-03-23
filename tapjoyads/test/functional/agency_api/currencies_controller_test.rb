@@ -2,6 +2,85 @@ require 'test_helper'
 
 class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
   
+  context "on GET to :index" do
+    setup do
+      @agency_user = Factory(:agency_user)
+      @partner = Factory(:partner)
+      PartnerAssignment.create!(:user => @agency_user, :partner => @partner)
+      @app = Factory(:app, :partner => @partner)
+    end
+    
+    context "with missing params" do
+      setup do
+        @response = get(:index)
+      end
+      should respond_with(400)
+      should respond_with_content_type(:json)
+      should "respond with error" do
+        result = JSON.parse(@response.body)
+        assert !result['success']
+        assert result['error'].present?
+      end
+    end
+    context "with bad credentials" do
+      setup do
+        @response = get(:index, :agency_id => @agency_user.id, :api_key => 'foo', :app_id => @app.id)
+      end
+      should respond_with(403)
+      should respond_with_content_type(:json)
+      should "respond with error" do
+        result = JSON.parse(@response.body)
+        assert !result['success']
+        assert result['error'].present?
+      end
+    end
+    context "with an invalid app_id" do
+      setup do
+        @response = get(:index, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :app_id => 'foo')
+      end
+      should respond_with(400)
+      should respond_with_content_type(:json)
+      should "respond with error" do
+        result = JSON.parse(@response.body)
+        assert !result['success']
+        assert result['error'].present?
+      end
+    end
+    context "with an app_id belonging to an invalid partner" do
+      setup do
+        @app2 = Factory(:app)
+        @response = get(:index, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :app_id => @app2.id)
+      end
+      should respond_with(403)
+      should respond_with_content_type(:json)
+      should "respond with error" do
+        result = JSON.parse(@response.body)
+        assert !result['success']
+        assert result['error'].present?
+      end
+    end
+    context "with valid params" do
+      setup do
+        @currency = Factory(:currency, :app => @app, :partner => @partner, :name => 'foo', :conversion_rate => 50, :initial_balance => 50, :test_devices => 'asdf')
+        @response = get(:index, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :app_id => @app.id)
+      end
+      should respond_with(200)
+      should respond_with_content_type(:json)
+      should "respond with success" do
+        result = JSON.parse(@response.body)
+        assert result['success']
+        expected_response = {
+          'currency_id'     => @currency.id,
+          'name'            => @currency.name,
+          'conversion_rate' => @currency.conversion_rate,
+          'initial_balance' => @currency.initial_balance,
+          'test_devices'    => @currency.test_devices,
+        }
+        assert_equal [expected_response], result['currencies']
+      end
+    end
+  end
+  
   context "on POST to :create" do
     setup do
       @agency_user = Factory(:agency_user)

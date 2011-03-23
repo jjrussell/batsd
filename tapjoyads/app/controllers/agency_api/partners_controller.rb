@@ -1,14 +1,15 @@
 class AgencyApi::PartnersController < AgencyApiController
   
   def create
-    return unless verify_request([ :name, :email, :password ])
+    return unless verify_request([ :name, :email ])
     
     user = User.new
     log_activity(user)
     user.username = params[:email]
     user.email = params[:email]
-    user.password = params[:password]
-    user.password_confirmation = params[:password]
+    tmp_password = UUIDTools::UUID.random_create.to_s
+    user.password = tmp_password
+    user.password_confirmation = tmp_password
     unless user.valid?
       render_error(user.errors, 400)
       return

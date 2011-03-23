@@ -21,7 +21,7 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
     end
     context "with bad credentials" do
       setup do
-        @response = post(:create, :agency_id => @agency_user.id, :api_key => 'foo', :name => 'partner', :email => 'email@example.com', :password => 'lkjasdflkj')
+        @response = post(:create, :agency_id => @agency_user.id, :api_key => 'foo', :name => 'partner', :email => 'email@example.com')
       end
       should respond_with(403)
       should respond_with_content_type(:json)
@@ -34,7 +34,7 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
     context "with invalid params" do
       setup do
         Factory(:user, :email => 'email@example.com')
-        @response = post(:create, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'partner', :email => 'email@example.com', :password => 'lkjasdflkj')
+        @response = post(:create, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'partner', :email => 'email@example.com')
       end
       should respond_with(400)
       should respond_with_content_type(:json)
@@ -46,7 +46,7 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
     end
     context "with valid params" do
       setup do
-        @response = post(:create, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'partner', :email => 'email@example.com', :password => 'lkjasdflkj')
+        @response = post(:create, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'partner', :email => 'email@example.com')
       end
       should respond_with(200)
       should respond_with_content_type(:json)
