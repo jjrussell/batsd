@@ -4,8 +4,8 @@ JobRunner::Gateway.define do |s|
   
   if machine_type == 'jobs' || machine_type == 'test'
     # SQS Queues:
-    s.add_job 'conversion_tracking_queue', :interval => 2.seconds
-    s.add_job 'send_money_txn', :interval => 2.seconds
+    s.add_job 'queue_conversion_tracking', :interval => 2.seconds
+    s.add_job 'queue_create_conversions', :interval => 2.seconds
     s.add_job 'queue_failed_sdb_saves', :interval => 5.seconds
     s.add_job 'queue_failed_device_saves', :interval => 5.seconds
     s.add_job 'queue_failed_web_request_saves', :interval => 5.seconds

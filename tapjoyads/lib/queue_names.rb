@@ -4,7 +4,7 @@ class QueueNames
   FAILED_DEVICE_SAVES      = RUN_MODE_PREFIX + 'FailedDeviceSaves'
   FAILED_WEB_REQUEST_SAVES = RUN_MODE_PREFIX + 'FailedWebRequestSaves'
   FAILED_DOWNLOADS         = RUN_MODE_PREFIX + 'FailedDownloads'
-  SEND_MONEY_TXN           = RUN_MODE_PREFIX + 'SendMoneyTxn'
+  CREATE_CONVERSIONS       = RUN_MODE_PREFIX + 'CreateConversions'
   SEND_CURRENCY            = RUN_MODE_PREFIX + 'SendCurrency'
   APP_STATS_HOURLY         = RUN_MODE_PREFIX + 'AppStatsHourly'
   APP_STATS_DAILY          = RUN_MODE_PREFIX + 'AppStatsDaily'

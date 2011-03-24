@@ -11,7 +11,7 @@ class StatuszController < ApplicationController
     hourly_app_stats_queue         = Sqs.queue(QueueNames::APP_STATS_HOURLY)
     daily_app_stats_queue          = Sqs.queue(QueueNames::APP_STATS_DAILY)
     conversion_tracking_queue      = Sqs.queue(QueueNames::CONVERSION_TRACKING)
-    send_money_txn_queue           = Sqs.queue(QueueNames::SEND_MONEY_TXN)
+    create_conversions_queue       = Sqs.queue(QueueNames::CREATE_CONVERSIONS)
     failed_sdb_saves_queue         = Sqs.queue(QueueNames::FAILED_SDB_SAVES)
     failed_device_saves_queue      = Sqs.queue(QueueNames::FAILED_DEVICE_SAVES)
     failed_web_request_saves_queue = Sqs.queue(QueueNames::FAILED_WEB_REQUEST_SAVES)
@@ -20,7 +20,7 @@ class StatuszController < ApplicationController
     if hourly_app_stats_queue.size > 1000 ||
        daily_app_stats_queue.size > 1000 ||
        conversion_tracking_queue.size > 1000 ||
-       send_money_txn_queue.size > 1000 ||
+       create_conversions_queue.size > 1000 ||
        failed_sdb_saves_queue.size > 5000 ||
        failed_device_saves_queue.size > 5000 ||
        failed_web_request_saves_queue.size > 5000

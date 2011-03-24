@@ -1,7 +1,7 @@
-class Job::SendMoneyTxnController < Job::SqsReaderController
+class Job::QueueCreateConversionsController < Job::SqsReaderController
   
   def initialize
-    super QueueNames::SEND_MONEY_TXN
+    super QueueNames::CREATE_CONVERSIONS
   end
   
 private
