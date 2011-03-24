@@ -1,7 +1,9 @@
 module WebsiteHelper
   def include_tapjoy_graph
-    content_for :page_head, stylesheet_link_tag('tapjoy_graph')
+    content_for :page_head, stylesheet_link_tag('tapjoy_graph', 'reporting')
+    # TODO: try putting the following javascripts in included_javascripts instead of page_head
     content_for :page_head, javascript_include_tag('rgraph/RGraph.common.core', 'rgraph/RGraph.common.tooltips', 'rgraph/RGraph.line', 'tapjoy/graph')
+    content_for :included_javascripts, javascript_include_tag('tapjoy/reporting')
   end
 
   def is_mobile?
@@ -47,3 +49,4 @@ module WebsiteHelper
     end
   end
 end
+

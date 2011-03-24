@@ -10,6 +10,7 @@ class Appstats
     @granularity = options.delete(:granularity) { :hourly }
     @stat_types = options.delete(:stat_types) { Stats::STAT_TYPES }
     @include_labels = options.delete(:include_labels) { false }
+    @stat_prefix = options.delete(:stat_prefix) { 'app' }
     cache_hours = options.delete(:cache_hours) { 3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
@@ -405,11 +406,8 @@ private
   end
   
   def load_stat_row(date_string)
-    if @app_key == 'global'
-      key = "global.#{date_string}"
-    else
-      key = "app.#{date_string}.#{@app_key}"
-    end
+    key = "#{@stat_prefix}.#{date_string}"
+    key << ".#{@app_key}" if @app_key
 
     @stat_rows[key] ||= Stats.new(:key => key)
   end
@@ -593,7 +591,7 @@ private
   end
 
   def get_virtual_good_partitions(offer)
-    return {} if @app_key == 'global'
+    return {} if @stat_prefix != 'app'
     return @virtual_good_partitions if @virtual_good_partitions.present?
     @virtual_good_partitions = {}
 

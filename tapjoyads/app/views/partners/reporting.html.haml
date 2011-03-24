@@ -1,0 +1,23 @@
+- @page_title = "Partner Stats"
+
+%h1 Partner Stats
+
+.clear
+
+%form#change_date{ :method => :get, :class => 'tjform' }
+  = render :partial => 'reporting/date_range_fields'
+
+.clear
+
+.load-circle= image_tag('load-circle.gif')
+
+#charts{ :style => "text-align: center;" }
+  #connects.graph
+  #installs_spend.graph
+  #revenue.graph
+  #offerwall.graph
+  #featured_offers.graph
+  #display_ads.graph
+  #ads.graph
+
+- include_tapjoy_graph

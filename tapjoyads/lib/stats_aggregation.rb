@@ -179,4 +179,63 @@ class StatsAggregation
     "(#{path_condition})"
   end
   
+  def self.aggregate_hourly_group_stats(date = nil, aggregate_daily = false)
+    date ||= Time.zone.now - 70.minutes
+    global_stat = Stats.new(:key => "global.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
+    global_stat.parsed_values.clear
+    global_stat.parsed_countries.clear
+
+    Partner.find_each do |partner|
+      partner_stat = Stats.new(:key => "partner.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
+      partner_stat.parsed_values.clear
+      partner_stat.parsed_countries.clear
+      partner.offers.find_each(:conditions => "created_at <= '#{date}'") do |offer|
+        this_stat = Stats.new(:key => "app.#{date.strftime('%Y-%m-%d')}.#{offer.id}")
+
+        this_stat.parsed_values.each do |stat, values|
+          global_stat.parsed_values[stat] = sum_arrays(global_stat.get_hourly_count(stat), values)
+          partner_stat.parsed_values[stat] = sum_arrays(partner_stat.get_hourly_count(stat), values)
+        end
+
+        this_stat.parsed_countries.each do |stat, values|
+          global_stat.parsed_countries[stat] = sum_arrays(global_stat.get_hourly_count(['countries', stat]), values)
+          partner_stat.parsed_countries[stat] = sum_arrays(partner_stat.get_hourly_count(['countries', stat]), values)
+        end
+      end
+      partner_stat.serial_save
+      aggregate_daily_partner_stats(date, partner_stat, partner) if aggregate_daily
+    end
+
+    global_stat.serial_save
+    aggregate_daily_global_stats(date, global_stat) if aggregate_daily
+  end
+
+  def self.aggregate_daily_group_stats(date = nil)
+    date ||= Time.zone.now
+    num_unverified = Offer.count(:conditions => [ "last_daily_stats_aggregation_time < ?",  date.beginning_of_day ])
+    daily_stat = Stats.new(:key => "global.#{date.strftime('%Y-%m')}", :load_from_memcache => false, :consistent => true)
+    if num_unverified > 0
+      Rails.logger.info "there are #{num_unverified} offers with unverified stats, not aggregating global stats yet"
+    elsif daily_stat.get_daily_count('logins')[date.day - 1] > 0
+      Rails.logger.info "stats have already been aggregated for date: #{date}"
+    else
+      aggregate_hourly_group_stats(date.yesterday, true)
+    end
+  end
+
+  def self.aggregate_daily_global_stats(date, hourly_stat)
+    daily_stat = Stats.new(:key => "global.#{date.strftime('%Y-%m')}", :load_from_memcache => false, :consistent => true)
+    daily_stat.populate_daily_from_hourly(hourly_stat, date.day - 1)
+    daily_stat.serial_save
+  end
+
+  def self.aggregate_daily_partner_stats(date, hourly_stat, partner)
+    daily_stat = Stats.new(:key => "partner.#{date.strftime('%Y-%m')}.#{partner.id}", :load_from_memcache => false, :consistent => true)
+    daily_stat.populate_daily_from_hourly(hourly_stat, date.day - 1)
+    daily_stat.serial_save
+  end
+
+  def self.sum_arrays(array1, array2)
+    array1.zip(array2).map { |pair| pair[0] + pair[1] }
+  end
 end

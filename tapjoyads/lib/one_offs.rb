@@ -1,10 +1,10 @@
 class OneOffs
 
-  def self.aggregate_all_global_stats_for_all_time_ever
-    date = Time.zone.parse('November 10, 2009')
+  def self.aggregate_all_global_stats(date = nil)
+    date ||= Time.zone.parse('November 10, 2009')
     while date < Time.zone.now
       puts "#{Time.zone.now}: starting aggregation for #{date}"
-      GlobalStats.aggregate_daily_global_stats(date)
+      StatsAggregation.aggregate_daily_group_stats(date)
       puts "#{Time.zone.now}: done aggregating for #{date}"
       date += 1.day
     end
@@ -397,5 +397,4 @@ class OneOffs
     
     outfile.close
   end
-
 end

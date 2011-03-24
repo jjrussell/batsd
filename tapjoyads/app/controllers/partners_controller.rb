@@ -5,7 +5,7 @@ class PartnersController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer ]
+  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting ]
   before_filter :get_account_managers, :only => [ :index, :managed_by ]
   after_filter :save_activity_logs, :only => [ :update, :create_transfer ]
 
@@ -133,6 +133,19 @@ class PartnersController < WebsiteController
       end
     end
     redirect_to partner_path(@partner)
+  end
+
+  def reporting
+    @start_time, @end_time, @granularity = Appstats.parse_dates(params[:date], params[:end_date], params[:granularity])
+    respond_to do |format|
+      format.html do
+      end
+      format.json do
+        options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :stat_prefix => 'partner' }
+        @appstats = Appstats.new(@partner.id, options)
+        render :json => { :data => @appstats.graph_data(:admin => true) }
+      end
+    end
   end
 
 private

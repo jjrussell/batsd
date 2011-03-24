@@ -150,8 +150,9 @@ private
     return @appstats if defined? @appstats
     options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true }
     if params[:action] == 'global'
-      key = 'global'
+      key = nil
       options[:cache_hours] = 0
+      options[:stat_prefix] = 'global'
     else
       key = @offer.id
     end
