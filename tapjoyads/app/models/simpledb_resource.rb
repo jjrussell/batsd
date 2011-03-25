@@ -200,7 +200,7 @@ class SimpledbResource
       Mc.increment_count("failed_sdb_saves.mc.#{@this_domain_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
     end
     unless catch_exceptions
-      if save_to_memcache
+      if save_to_memcache && !from_queue
         Mc.delete(get_memcache_key) rescue nil
       end
       raise e
