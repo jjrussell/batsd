@@ -1,7 +1,7 @@
 class StatuszController < ApplicationController
   include AuthenticationHelper
   
-  before_filter 'basic_authenticate', :only => [ :queue_check, :slave_db_check, :memcached_check ]
+  before_filter 'basic_authenticate', :only => [ :queue_check, :slave_db_check, :memcached_check, :master_healthz ]
   
   def index
     render :text => "ok"
@@ -50,6 +50,13 @@ class StatuszController < ApplicationController
     end
     
     render :text => result
+  end
+  
+  def master_healthz
+    epoch = File.read(MASTER_HEALTHZ_FILE)
+    last_updated_at = Time.zone.at(epoch.to_i)
+    
+    render :text => last_updated_at < Time.zone.now - 2.minutes ? 'fail' : 'success'
   end
   
 end
