@@ -379,7 +379,7 @@ private
         daily_stats = stat.get_daily_count(stat_name)
       end
       
-      if time + 28.hours > @now
+      if time + 38.hours > @now
         hourly_stat = load_stat_row("#{date}-#{time.strftime("%d")}")
         populate_hourly_stats_from_memcached(hourly_stat, stat_name, cache_hours)
         stat.populate_daily_from_hourly(hourly_stat, time.day - 1)
