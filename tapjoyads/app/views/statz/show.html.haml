@@ -85,7 +85,7 @@
 
 %h4 Partner
 = link_to('[Activity Log]', activities_path(:partner_id => @offer.partner_id))
-- if permitted_to?(:edit, :partners)
+- if permitted_to?(:reporting, :partner)
   = link_to('[Partner Stats]', reporting_partner_path(@offer.partner_id))
 %table.properties
   - property_row('Name', @offer.partner.name)
