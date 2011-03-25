@@ -1,7 +1,7 @@
 class Job::QueueFailedSdbSavesController < Job::SqsReaderController
   
-  def initialize(queue_name = QueueNames::FAILED_SDB_SAVES)
-    super queue_name
+  def initialize
+    super QueueNames::FAILED_SDB_SAVES
     @bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
   end
   
