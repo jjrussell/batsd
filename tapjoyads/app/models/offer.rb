@@ -111,6 +111,7 @@ class Offer < ActiveRecord::Base
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
   named_scope :for_display_ads, :conditions => "item_type = 'App' AND price = 0 AND conversion_rate >= 0.5"
   named_scope :featured, :conditions => { :featured => true }
+  named_scope :free_apps, :conditions => { :item_type => 'App', :price => 0 }
   named_scope :nonfeatured, :conditions => { :featured => false }
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ] } }
@@ -145,7 +146,7 @@ class Offer < ActiveRecord::Base
       offer_list = Offer.enabled_offers.nonfeatured.for_offer_list
       cache_offer_list(offer_list, DEFAULT_WEIGHTS, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
     
-      offer_list = Offer.enabled_offers.featured.for_offer_list
+      offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
       cache_offer_list(offer_list, DEFAULT_WEIGHTS.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
     
       offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads
@@ -184,7 +185,13 @@ class Offer < ActiveRecord::Base
     end
     
     offer_list.sort! do |o1, o2|
-      o2.rank_score <=> o1.rank_score
+      if o1.featured? && !o2.featured?
+        -1
+      elsif o2.featured? && !o1.featured?
+        1
+      else
+        o2.rank_score <=> o1.rank_score
+      end
     end
     
     offer_list.first.offer_list_length = offer_list.length
@@ -703,7 +710,10 @@ private
     return false if EXEMPT_UDIDS.include?(device.key)
     
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
-    return rand > show_rate
+    should_reject = rand > show_rate
+    srand
+    
+    return should_reject
   end
   
   def flixter_reject?(publisher_app, device)

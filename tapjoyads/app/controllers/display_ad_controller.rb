@@ -122,7 +122,6 @@ private
         disabled_offer_ids.include?(offer.id) ||
         disabled_partner_ids.include?(offer.partner_id)
       end
-      srand
       offer = offer_list[rand(offer_list.size)]
     
       if offer.present?
