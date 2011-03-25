@@ -10,18 +10,17 @@ class SimpledbResource
   def self.reset_connection
     #sdb_ip_address = Socket::getaddrinfo('sdb.amazonaws.com', 'http')[0][3]
     #Rails.logger.info "Resetting sdb connection. Sdb ip address: #{sdb_ip_address}"
-    @@sdb = RightAws::SdbInterface.new(nil, nil,
-        {:multi_thread => true, :port => 80, :protocol => 'http'})
+    @@sdb = RightAws::SdbInterface.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
   end
   self.reset_connection
   
   @@type_converters = {
     :string => StringConverter.new,
-    :int => IntConverter.new,
-    :float => FloatConverter.new,
-    :time => TimeConverter.new,
-    :bool => BoolConverter.new,
-    :json => JsonConverter.new
+    :int    => IntConverter.new,
+    :float  => FloatConverter.new,
+    :time   => TimeConverter.new,
+    :bool   => BoolConverter.new,
+    :json   => JsonConverter.new
   }
   
   @@special_values = {
