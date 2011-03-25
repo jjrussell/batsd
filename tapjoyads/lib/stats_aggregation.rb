@@ -189,7 +189,7 @@ class StatsAggregation
       partner_stat = Stats.new(:key => "partner.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
       partner_stat.parsed_values.clear
       partner_stat.parsed_countries.clear
-      partner.offers.find_each(:conditions => "created_at <= '#{date}'") do |offer|
+      partner.offers.find_each do |offer|
         this_stat = Stats.new(:key => "app.#{date.strftime('%Y-%m-%d')}.#{offer.id}")
 
         this_stat.parsed_values.each do |stat, values|
