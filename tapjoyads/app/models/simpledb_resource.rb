@@ -335,6 +335,7 @@ class SimpledbResource
       Rails.logger.info "ExpectedAttributeError: #{e.to_s}."
       if retries > 0
         retries -= 1
+        sleep(0.1)
         retry
       else
         raise e
