@@ -6,5 +6,4 @@
       %li= link_to 'Transfer Funds', transfer_funds_billing_path, :class => @selected_state[:transfer_funds]
     - else
       %li.disabled Transfer Funds
-    - if false # hide it until Mary is done with currently existing W9 forms
-      %li= link_to 'Payment Info', payout_info_billing_path, :class => @selected_state[:payout_info]
+    %li= link_to 'Payment Info', payout_info_billing_path, :class => @selected_state[:payout_info]
