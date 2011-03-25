@@ -76,6 +76,7 @@ class StatzController < WebsiteController
   def last_run_times
     android_devices = [
         { :udid => '359116032048366',                          :device_label => 'Hwan-Joon HTC G2' },
+        { :udid => '355031040123271',                          :device_label => 'Kai Nexus S'      },
         { :udid => 'a00000155c5106',                           :device_label => 'Linda Droid'      },
         { :udid => '354957031929568',                          :device_label => 'Linda Nexus One'  },
         { :udid => '355031040294361',                          :device_label => 'Linda Nexus S'    },
@@ -96,7 +97,6 @@ class StatzController < WebsiteController
         { :udid => 'c163a3b343fbe6d04f9a8cda62e807c0b407f533', :device_label => 'Hwan-Joon iTouch' },
         { :udid => 'cb7907c2a762ea979a3ec38827a165e834a2f7f9', :device_label => 'Johnny iPhone'    },
         { :udid => '36fa4959f5e1513ba1abd95e68ad40b75b237f15', :device_label => 'Kai iPad'         },
-        { :udid => '7b788103c5f5f65334856dea726b810e628f0a6a', :device_label => 'Kai iTouch'       },
         { :udid => '5eab794d002ab9b25ee54b4c792bbcde68406b57', :device_label => 'Katherine iPhone' },
         { :udid => '4b910938aceaa723e0c0313aa7fa9f9d838a595e', :device_label => 'Linda iPad'       },
         { :udid => '820a1b9df38f3024f9018464c05dfbad5708f81e', :device_label => 'Linda iPhone'     },

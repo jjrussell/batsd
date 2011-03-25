@@ -96,10 +96,4 @@ class Device < SimpledbShardedResource
     save!
   end
   
-private
-  
-  def get_failed_save_bucket_and_queue
-    [ BucketNames::FAILED_DEVICE_SAVES, QueueNames::FAILED_DEVICE_SAVES ]
-  end
-  
 end

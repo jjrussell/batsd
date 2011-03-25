@@ -5,6 +5,8 @@ GEOIP = GeoIP.new("#{RAILS_ROOT}/data/GeoLiteCity.dat")
 
 UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 
+MASTER_HEALTHZ_FILE = "#{Rails.root}/tmp/master_healthz_status.txt"
+
 # SDK URLs
 ANDROID_CONNECT_SDK = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectSDK_Android_v7.1.1.zip'
 ANDROID_OFFERS_SDK  = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyOffersSDK_Android_v7.1.1.zip'

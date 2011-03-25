@@ -1,7 +1,7 @@
 class StatuszController < ApplicationController
   include AuthenticationHelper
   
-  before_filter 'basic_authenticate', :only => [ :queue_check, :slave_db_check, :memcached_check ]
+  before_filter 'basic_authenticate', :only => [ :queue_check, :slave_db_check, :memcached_check, :master_healthz ]
   
   def index
     render :text => "ok"
@@ -13,7 +13,6 @@ class StatuszController < ApplicationController
     conversion_tracking_queue      = Sqs.queue(QueueNames::CONVERSION_TRACKING)
     create_conversions_queue       = Sqs.queue(QueueNames::CREATE_CONVERSIONS)
     failed_sdb_saves_queue         = Sqs.queue(QueueNames::FAILED_SDB_SAVES)
-    failed_device_saves_queue      = Sqs.queue(QueueNames::FAILED_DEVICE_SAVES)
     failed_web_request_saves_queue = Sqs.queue(QueueNames::FAILED_WEB_REQUEST_SAVES)
     
     result = "success"
@@ -22,7 +21,6 @@ class StatuszController < ApplicationController
        conversion_tracking_queue.size > 1000 ||
        create_conversions_queue.size > 1000 ||
        failed_sdb_saves_queue.size > 5000 ||
-       failed_device_saves_queue.size > 5000 ||
        failed_web_request_saves_queue.size > 5000
       result = "too long"
     end
@@ -52,6 +50,13 @@ class StatuszController < ApplicationController
     end
     
     render :text => result
+  end
+  
+  def master_healthz
+    epoch = File.read(MASTER_HEALTHZ_FILE)
+    last_updated_at = Time.zone.at(epoch.to_i)
+    
+    render :text => last_updated_at < Time.zone.now - 2.minutes ? 'fail' : 'success'
   end
   
 end

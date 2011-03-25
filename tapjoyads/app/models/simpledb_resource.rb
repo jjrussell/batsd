@@ -8,20 +8,17 @@ class SimpledbResource
   superclass_delegating_accessor :domain_name, :key_format
   
   def self.reset_connection
-    #sdb_ip_address = Socket::getaddrinfo('sdb.amazonaws.com', 'http')[0][3]
-    #Rails.logger.info "Resetting sdb connection. Sdb ip address: #{sdb_ip_address}"
-    @@sdb = RightAws::SdbInterface.new(nil, nil,
-        {:multi_thread => true, :port => 80, :protocol => 'http'})
+    @@sdb = RightAws::SdbInterface.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
   end
   self.reset_connection
   
   @@type_converters = {
     :string => StringConverter.new,
-    :int => IntConverter.new,
-    :float => FloatConverter.new,
-    :time => TimeConverter.new,
-    :bool => BoolConverter.new,
-    :json => JsonConverter.new
+    :int    => IntConverter.new,
+    :float  => FloatConverter.new,
+    :time   => TimeConverter.new,
+    :bool   => BoolConverter.new,
+    :json   => JsonConverter.new
   }
   
   @@special_values = {
@@ -200,11 +197,12 @@ class SimpledbResource
       Mc.increment_count("failed_sdb_saves.mc.#{@this_domain_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
     end
     unless catch_exceptions
-      if save_to_memcache
+      if save_to_memcache && !from_queue
         Mc.delete(get_memcache_key) rescue nil
       end
       raise e
     end
+    return if @this_domain_name =~ /^#{RUN_MODE_PREFIX}devices_/
     Rails.logger.info "Sdb save failed. Adding to sqs. Domain: #{@this_domain_name} Key: #{@key} Exception: #{e.class} - #{e}"
     bucket_name, queue_name = get_failed_save_bucket_and_queue
     uuid = UUIDTools::UUID.random_create.to_s

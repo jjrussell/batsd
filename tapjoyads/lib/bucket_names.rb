@@ -3,7 +3,6 @@ class BucketNames
   AD_UDIDS                 = RUN_MODE_PREFIX + 'ad-udids'
   CONVERSION_ARCHIVES      = RUN_MODE_PREFIX + 'conversion-archives'
   FAILED_SDB_SAVES         = RUN_MODE_PREFIX + 'failed-sdb-saves-generic'
-  FAILED_DEVICE_SAVES      = RUN_MODE_PREFIX + 'failed-sdb-saves-devices'
   FAILED_WEB_REQUEST_SAVES = RUN_MODE_PREFIX + 'failed-sdb-saves-web-requests'
   FAILED_SQS_WRITES        = RUN_MODE_PREFIX + 'failed-sqs-writes'
   OFFER_DATA               = RUN_MODE_PREFIX + 'offer-data'
