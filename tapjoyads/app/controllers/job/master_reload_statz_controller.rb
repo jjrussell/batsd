@@ -47,6 +47,7 @@ private
       this_apps_stats['conversion_rate'] = "%.1f%" % ((offer.conversion_rate || 0) * 100.0)
       this_apps_stats['published_offers'] = number_with_delimiter(published_offers)
       this_apps_stats['offers_revenue'] = number_to_currency(appstats['rewards_revenue'].sum / 100.0)
+      this_apps_stats['total_revenue'] = number_to_currency(appstats['total_revenue'].sum / 100.0)
       this_apps_stats['platform'] = offer.get_platform
       this_apps_stats['featured'] = offer.featured?
       
