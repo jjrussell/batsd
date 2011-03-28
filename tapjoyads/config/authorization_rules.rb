@@ -38,7 +38,7 @@ authorization do
 
   role :payout_manager do
     includes :payops
-    has_permission_on :tools, :to => [ :payout_info, :publishers_without_payout_info ]
+    has_permission_on :tools, :to => [ :payout_info, :publishers_without_payout_info, :publisher_payout_info_changes ]
   end
 
   role :executive do

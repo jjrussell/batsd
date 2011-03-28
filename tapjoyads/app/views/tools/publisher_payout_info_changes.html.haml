@@ -1,0 +1,19 @@
+- @page_title = "Payout Info Changes"
+
+%h1 Payout Info Changes for #{(Time.now - 1.month).strftime('%B %Y')}
+%table.tablesorter
+  %thead
+    %tr
+      %th Partner name
+      %th Activity log
+      %th Updated at
+      %th Pending earnings
+  %tbody
+    - @payout_infos .each do |info|
+      %tr
+        %td= link_to(info.partner.name, info.partner)
+        %td= link_to('Activity Log', activities_path(:object_id => info.id))
+        %td= info.updated_at.to_s(:pub)
+        %td= number_to_currency(info.partner.pending_earnings / 100.0)
+
+= will_paginate(@payout_infos)

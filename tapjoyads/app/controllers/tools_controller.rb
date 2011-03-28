@@ -345,4 +345,9 @@ class ToolsController < WebsiteController
     @count = partners_without_payout_info.length
     @partners = partners_without_payout_info.paginate(:page => params[:page])
   end
+
+  def publisher_payout_info_changes
+    @payout_infos = PayoutInfo.recently_updated(:include => :partner).paginate(:page => params[:page])
+  end
+
 end

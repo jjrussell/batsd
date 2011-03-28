@@ -16,6 +16,8 @@
   %li= link_to 'Transfer Funds', new_transfer_tools_path
 - if permitted_to? :publishers_without_payout_info, :tools
   %li= link_to 'Pubs Without W9', publishers_without_payout_info_tools_path
+- if permitted_to? :publisher_payout_info_changes, :tools
+  %li= link_to 'Payout Info Changes', publisher_payout_info_changes_tools_path
 
 - # Logs
 - if permitted_to? :send_currency_failures, :tools

@@ -8,6 +8,15 @@ class PayoutInfo < ActiveRecord::Base
   validates_presence_of :partner
   validates_uniqueness_of :partner_id
 
+  named_scope :recently_updated, {
+    :conditions => [
+      "updated_at < ? AND updated_at >= ?",
+      Time.now.beginning_of_month,
+      Time.now.beginning_of_month - 1.month
+    ],
+    :order => 'updated_at ASC'
+  }
+
   def filled?
     billing_name.present? && tax_info_filled? && payout_info_filled?
   end
