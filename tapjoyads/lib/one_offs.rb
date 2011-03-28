@@ -397,4 +397,27 @@ class OneOffs
     
     outfile.close
   end
+  
+  def self.analyze_clicks(udid_filename, advertiser_app_id)
+    file = File.open(udid_filename, 'r')
+    outfile = File.open("#{udid_filename}.output.csv", 'w')
+    not_found = 0
+    total = 0
+    file.each do |line|
+      line.strip!
+      udid = line.split(',')[0].gsub(/\W/, '')
+      click = Click.find("#{udid}.#{advertiser_app_id}")
+      outfile.write(line)
+      if click.present?
+        outfile.write(",#{click.publisher_app_id},#{click.source},#{click.country}")
+      else
+        not_found += 1
+      end
+      total += 1
+      puts "#{Time.zone.now}: Total: #{total}, not_found: #{not_found}" if total % 1000 == 0
+      outfile.write("\n")
+    end
+    outfile.close
+    puts "Done!: Total: #{total}, not_found: #{not_found}"
+  end
 end

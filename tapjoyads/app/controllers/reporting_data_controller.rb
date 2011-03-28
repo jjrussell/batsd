@@ -38,6 +38,7 @@ class ReportingDataController < WebsiteController
 private
 
   def lookup_user_and_authenticate
+    params[:username] = params[:email] if params[:username].blank?
     return unless verify_params([:date, :username, :api_key])
     
     @user = User.find_by_username(params[:username])
