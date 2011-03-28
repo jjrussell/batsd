@@ -19,7 +19,7 @@ Your API Key:
 
 %p URL
 %pre
-  https://www.tapjoy.com/reporting_data.xml?username=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD
+  https://www.tapjoy.com/reporting_data.xml?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD
 
 %p Response
 %pre
@@ -64,7 +64,7 @@ Your API Key:
 
 %p URL
 %pre
-  https://www.tapjoy.com/reporting_data.json?username=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD
+  https://www.tapjoy.com/reporting_data.json?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD
 
 %p Response
 %pre
