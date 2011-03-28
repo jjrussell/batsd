@@ -8,13 +8,16 @@ class PayoutInfo < ActiveRecord::Base
   validates_presence_of :partner
   validates_uniqueness_of :partner_id
 
-  named_scope :recently_updated, {
-    :conditions => [
-      "updated_at < ? AND updated_at >= ?",
-      Time.now.beginning_of_month,
-      Time.now.beginning_of_month - 1.month
-    ],
-    :order => 'updated_at ASC'
+  named_scope :recently_updated, lambda { |date_str|
+    date = Time.parse(date_str) rescue Time.now.end_of_month
+    {
+      :conditions => [
+        "updated_at >= ? AND updated_at < ?",
+        date, date + 1.month
+      ],
+      :include => :partner,
+      :order => 'updated_at ASC'
+    }
   }
 
   def filled?

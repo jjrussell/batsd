@@ -347,7 +347,14 @@ class ToolsController < WebsiteController
   end
 
   def publisher_payout_info_changes
-    @payout_infos = PayoutInfo.recently_updated(:include => :partner).paginate(:page => params[:page])
+    if params[:month] && params[:year]
+      @date_str = "#{params[:year]}-#{params[:month]}-01"
+      @date = Time.parse(@date_str)
+    else
+      @date = Time.zone.now.beginning_of_month
+      @date_str = @date.strftime('%Y-%m')
+    end
+    @payout_infos = PayoutInfo.recently_updated(@date_str).paginate(:page => params[:page])
   end
 
 end

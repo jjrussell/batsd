@@ -1,6 +1,9 @@
 - @page_title = "Payout Info Changes"
 
-%h1 Payout Info Changes for #{(Time.now - 1.month).strftime('%B %Y')}
+%h1 Payout Info Changes
+
+= select_date(@date, :discard_day => true, :start_year => 2011, :end_year => Time.zone.now.year)
+
 %table.tablesorter
   %thead
     %tr
@@ -17,3 +20,13 @@
         %td= number_to_currency(info.partner.pending_earnings / 100.0)
 
 = will_paginate(@payout_infos)
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('select#date_year, select#date_month').change(function(){
+        var year = $('select#date_year').val();
+        var month = $('select#date_month').val();
+        location.href = location.href.split('?')[0] + '?year=' + year + '&month=' + month;
+      });
+    });
