@@ -54,8 +54,6 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
         result = JSON.parse(@response.body)
         assert result['success']
         user = User.find_by_email('email@example.com')
-        assert_equal user.id, result['user_id']
-        assert_equal user.api_key, result['api_key']
         assert_equal 1, user.partners.count
         partner = user.partners.first
         assert_equal partner.id, result['partner_id']
@@ -143,9 +141,6 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
       should "respond with success" do
         result = JSON.parse(@response.body)
         assert result['success']
-        user = User.find_by_email('email@example.com')
-        assert_equal @user.id, result['user_id']
-        assert_equal @user.api_key, result['api_key']
         assert_equal @partner.id, result['partner_id']
       end
     end
