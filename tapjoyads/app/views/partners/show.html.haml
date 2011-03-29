@@ -21,6 +21,13 @@
   - @partner.users.each do |user|
     %li
       %span.email= user.email
+      .delink_action
+        - form_tag delink_user_partner_path do
+          = hidden_field_tag :user_id, user.id
+          - if @partner.users.length > 1
+            = submit_tag 'remove', :confirm => "Are you sure?"
+          - else
+            = submit_tag 'cannot remove last user', :disabled => 'disabled', :confirm => "Are you sure?"
       = image_tag('mailchimp.png', :class => "mail_chimp_button", :title => "Subscriber status")
       .mail_chimp_info.hidden
         = image_tag 'load-circle.gif'
@@ -193,4 +200,7 @@
       background-color: #efe;
       font-weight: bold;
       font-size: 24px;
+    }
+    .delink_action, .delink_action form {
+      display: inline;
     }

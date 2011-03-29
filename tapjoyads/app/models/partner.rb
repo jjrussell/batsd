@@ -116,6 +116,18 @@ class Partner < ActiveRecord::Base
     users.reject{|user| user.can_manage_account?}
   end
 
+  def remove_user(user)
+    if users.length > 1 && users.include?(user)
+      users.delete(user)
+      if user.partners.blank?
+        user.current_partner = Partner.new(:name => user.email, :contact_name => user.email)
+        user.partners << user.current_partner
+      else
+        user.current_partner = user.partners.first
+      end
+    end
+  end
+
   def get_disabled_partner_ids
     Set.new(disabled_partners.split(';'))
   end
