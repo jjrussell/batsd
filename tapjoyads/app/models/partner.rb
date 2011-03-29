@@ -122,8 +122,12 @@ class Partner < ActiveRecord::Base
       if user.partners.blank?
         user.current_partner = Partner.new(:name => user.email, :contact_name => user.email)
         user.partners << user.current_partner
-      else
+        user.save
+      elsif user.current_partner_id == id
         user.current_partner = user.partners.first
+        user.save
+      else
+        true
       end
     end
   end
