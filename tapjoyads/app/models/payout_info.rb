@@ -8,8 +8,7 @@ class PayoutInfo < ActiveRecord::Base
   validates_presence_of :partner
   validates_uniqueness_of :partner_id
 
-  named_scope :recently_updated, lambda { |date_str|
-    date = Time.parse(date_str) rescue Time.now.end_of_month
+  named_scope :recently_updated, lambda { |date|
     {
       :conditions => [
         "updated_at >= ? AND updated_at < ?",
