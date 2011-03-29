@@ -56,7 +56,7 @@ class AgencyApi::PartnersController < AgencyApiController
       return
     end
     
-    PartnerAssignment.create!(:user => @agency_user, :partner => user.partners.first)
+    PartnerAssignment.create(:user => @agency_user, :partner => user.partners.first)
     
     render_success({ :user_id => user.id, :api_key => user.api_key, :partner_id => user.partners.first.id })
   end
