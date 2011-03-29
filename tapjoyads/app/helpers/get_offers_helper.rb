@@ -5,7 +5,7 @@ module GetOffersHelper
     
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['start'] = [@start_index - @max_items, 0].max
-    link_to("Previous #{@max_items}", "/get_offers/webpage?#{tmp_params.to_query}", :onclick => "this.className = 'clicked';")
+    link_to("<div class=\"arrow\"></div>Previous #{@max_items}", "/get_offers/webpage?#{tmp_params.to_query}", :onclick => "this.className = 'clicked';")
   end
   
   def get_next_link
@@ -13,7 +13,7 @@ module GetOffersHelper
     
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['start'] = @start_index + @max_items
-    link_to("Next #{[@more_data_available, @max_items].min}", "/get_offers/webpage?#{tmp_params.to_query}", :onclick => "this.className = 'clicked';")
+    link_to("<div class=\"arrow\"></div>Next #{[@more_data_available, @max_items].min}", "/get_offers/webpage?#{tmp_params.to_query}", :onclick => "this.className = 'clicked';")
   end
   
   def get_currency_link(currency)

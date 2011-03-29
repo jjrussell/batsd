@@ -39,6 +39,10 @@ class GetOffersController < ApplicationController
           "one of the offers below to earn #{@currency.name}."
     end
     # END TO REMOVE
+    
+    if params[:udid] == 'c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1'
+      render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
+    end
   end
   
   def featured
