@@ -32,8 +32,7 @@ private
     Offer.find_each(:conditions => "active = true") do |offer|
       appstats = Appstats.new(offer.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity }).stats
       conversions = appstats['paid_installs'].sum
-      published_offers = appstats['rewards'].sum
-      featured_published_offers = appstats['featured_published_offers'].sum
+      published_offers = appstats['rewards'].sum + appstats['featured_published_offers'].sum
       next unless conversions > 0 || published_offers > 0
       
       this_apps_stats = {}
@@ -46,7 +45,7 @@ private
       this_apps_stats['payment'] = number_to_currency(offer.payment / 100.0)
       this_apps_stats['balance'] = number_to_currency(offer.partner.balance / 100.0)
       this_apps_stats['conversion_rate'] = "%.1f%" % ((offer.conversion_rate || 0) * 100.0)
-      this_apps_stats['published_offers'] = number_with_delimiter(published_offers + featured_published_offers)
+      this_apps_stats['published_offers'] = number_with_delimiter(published_offers)
       this_apps_stats['offers_revenue'] = number_to_currency(appstats['total_revenue'].sum / 100.0)
       this_apps_stats['platform'] = offer.get_platform
       this_apps_stats['featured'] = offer.featured?
