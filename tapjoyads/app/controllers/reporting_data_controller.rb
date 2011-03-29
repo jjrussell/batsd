@@ -61,7 +61,15 @@ private
     @date = start_time.strftime("%Y-%m-%d")
     @appstats_list = []
     
-    @user.partners.each do |partner|
+    if params[:partner_id].present?
+      partners = []
+      p = @user.partners.find_by_id(params[:partner_id])
+      partners << p unless p.nil?
+    else
+      partners = @user.partners
+    end
+    
+    partners.each do |partner|
       partner.offers.each do |offer|
         appstats = Appstats.new(offer.id, {
           :start_time => start_time,
