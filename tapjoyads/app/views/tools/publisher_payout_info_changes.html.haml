@@ -8,13 +8,17 @@
   %thead
     %tr
       %th Partner name
+      %th Billing name
       %th Activity log
       %th Updated at
       %th Pending earnings
   %tbody
     - @payout_infos .each do |info|
       %tr
-        %td= link_to(info.partner.name, info.partner)
+        - name = info.partner.name
+        - name = "No name given (#{info.partner.users.first.email})" if name.blank?
+        %td= link_to(name, info.partner)
+        %td= info.billing_name
         %td= link_to('Activity Log', activities_path(:object_id => info.id))
         %td= info.updated_at.to_s(:pub)
         %td= number_to_currency(info.partner.pending_earnings / 100.0)
