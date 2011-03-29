@@ -16,7 +16,7 @@
   .last_updated Totals Last Updated: #{@money_last_updated.to_s(:pub_ampm_sec)}
   %h3
     Total conversions: #{@money_stats[@timeframe]['conversions']} &nbsp;
-    Total revenue: #{@money_stats[@timeframe]['advertiser_spend']} &nbsp;
+    Total revenue: #{@money_stats[@timeframe]['revenue']} &nbsp;
     Total payouts: #{@money_stats[@timeframe]['publisher_earnings']}
 %p= link_to "Global Network Stats", global_statz_path
 
