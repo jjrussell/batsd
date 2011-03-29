@@ -31,7 +31,7 @@ private
     end
     save_conversion(conversion)
     
-    if reward.displayer_app_id.present?
+    if reward.displayer_app_id.present? && reward.source == 'display_ad' # TO REMOVE: the source check when we fix our data corruption issues
       conversion = Conversion.new do |c|
         c.id                               = reward.reward_key_2
         c.reward_id                        = reward.key
