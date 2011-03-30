@@ -7,7 +7,6 @@ JobRunner::Gateway.define do |s|
     s.add_job 'queue_conversion_tracking', :interval => 2.seconds
     s.add_job 'queue_create_conversions', :interval => 2.seconds
     s.add_job 'queue_failed_sdb_saves', :interval => 5.seconds
-    s.add_job 'queue_failed_device_saves', :interval => 5.seconds
     s.add_job 'queue_failed_web_request_saves', :interval => 5.seconds
     s.add_job 'queue_send_currency', :interval => 2.seconds
     s.add_job 'queue_failed_downloads', :interval => 20.seconds
