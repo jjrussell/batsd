@@ -54,17 +54,22 @@ class Job::QueueFailedWebRequestSavesController < Job::JobController
     end
     
     if items_by_date.present?
-      bad_domains = Mc.get('failed_sdb_saves.bad_domains') || {}
+      now          = Time.zone.now
+      earlier      = now - 5.minutes
+      hour_key     = ((now.day != earlier.day ? now : earlier).to_f / 1.hour).to_i
+      error_counts = {}
     end
     items_by_date.each do |date, items|
       items.in_groups_of(25) do |sdb_items|
         sdb_items.compact!
         
         domain_name = ''
-        10.times do
+        20.times do
           domain_name = "web-request-#{date}-#{rand(MAX_WEB_REQUEST_DOMAINS)}"
-          break unless bad_domains.include?(domain_name)
+          error_counts[domain_name] ||= Mc.get_count("failed_sdb_saves.sdb.#{domain_name}.#{hour_key}") { 0 }
+          break if error_counts[domain_name] == 0
         end
+        domain_name = error_counts.sort { |a, b| a[1] <=> b[1] }[0][0] if error_counts[domain_name] > 0
         sdb_items.each { |item| item.this_domain_name = domain_name }
         
         Rails.logger.info "Saving #{sdb_items.size} items to #{domain_name}, keys: #{sdb_items.map(&:key).inspect}"
