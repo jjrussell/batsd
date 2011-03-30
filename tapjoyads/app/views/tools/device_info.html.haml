@@ -104,7 +104,10 @@
             - elsif click.installed_at?
               Already awarded
             - elsif click.block_reason?
-              Blocked
+              - if click.block_reason =~ /TooManyUdidsForPublisherUserId/
+                Blocked
+              - else
+                Won't reward
             - else
               - form_tag resolve_clicks_tools_path(:click_id => click.id) do
                 = submit_tag 'Award'
