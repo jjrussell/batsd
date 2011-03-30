@@ -1,0 +1,28 @@
+- @page_title = "Admin Devices"
+
+%h1 Admin Devices
+
+%h4= link_to "[Add New Admin Device]", new_tools_admin_device_path
+
+%table#admin_devices_table.tablesorter
+  %thead
+    %tr
+      %th Platform
+      %th UDID
+      %th{ :class => 'headerSortUp header' }  Description
+  %tbody
+    - @admin_devices.each do |device|
+      %tr{ :class => cycle('', 'odd') }
+        %td= device.platform
+        %td= device.udid
+        %td= device.description
+        %td= link_to '[Delete Device]', tools_admin_device_path(device), :method => :delete, :confirm => "Are you sure you want to remove this device: #{device.description}"
+        %td= link_to '[Edit Device]', edit_tools_admin_device_path(device)
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $("#admin_devices_table").tablesorter({
+        widgets: ['zebra']
+      });
+    });

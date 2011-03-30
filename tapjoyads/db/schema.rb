@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110317214951) do
+ActiveRecord::Schema.define(:version => 20110329191756) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -28,6 +28,19 @@ ActiveRecord::Schema.define(:version => 20110317214951) do
   add_index "action_offers", ["id"], :name => "index_action_offers_on_id", :unique => true
   add_index "action_offers", ["partner_id"], :name => "index_action_offers_on_partner_id"
   add_index "action_offers", ["prerequisite_offer_id"], :name => "index_action_offers_on_prerequisite_offer_id"
+
+  create_table "admin_devices", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36, :null => false
+    t.string   "udid"
+    t.string   "description"
+    t.string   "platform"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "admin_devices", ["description"], :name => "index_admin_devices_on_description", :unique => true
+  add_index "admin_devices", ["id"], :name => "index_admin_devices_on_id", :unique => true
+  add_index "admin_devices", ["udid"], :name => "index_admin_devices_on_udid", :unique => true
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                      :limit => 36,                    :null => false

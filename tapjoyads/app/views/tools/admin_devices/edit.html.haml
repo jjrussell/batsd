@@ -1,0 +1,7 @@
+- @page_title = 'Edit Admin Device'
+
+%h1 Edit Admin Device
+
+= render 'form'
+
+%h4= link_to '[Delete Device]', tools_admin_device_path(@admin_device), :method => :delete, :confirm => "Are you sure you want to remove this device?"

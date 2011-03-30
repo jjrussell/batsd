@@ -1,5 +1,6 @@
 class OneOffs
 
+
   def self.aggregate_all_global_stats(date = nil)
     date ||= Time.zone.parse('November 10, 2009')
     while date < Time.zone.now
@@ -419,5 +420,50 @@ class OneOffs
     end
     outfile.close
     puts "Done!: Total: #{total}, not_found: #{not_found}"
+  end
+
+  def self.add_udids_to_admin_devices
+    android_devices = [
+        { :udid => '359116032048366',                          :device_label => 'Hwan-Joon HTC G2' },
+        { :udid => '355031040123271',                          :device_label => 'Kai Nexus S'      },
+        { :udid => 'a00000155c5106',                           :device_label => 'Linda Droid'      },
+        { :udid => '354957031929568',                          :device_label => 'Linda Nexus One'  },
+        { :udid => '355031040294361',                          :device_label => 'Linda Nexus S'    },
+        { :udid => 'a100000d982193',                           :device_label => 'Matt Evo'         },
+        { :udid => 'a100000d9833c5',                           :device_label => 'Stephen Evo'      },
+        { :udid => 'a000002256c234',                           :device_label => 'Steve Droid X'    },
+    ]
+    ios_devices = [
+        { :udid => 'ade749ccc744336ad81cbcdbf36a5720778c6f13', :device_label => 'Amir iPhone'      },
+        { :udid => 'c73e730913822be833766efffc7bb1cf239d855a', :device_label => 'Ben iPhone'       },
+        { :udid => '9ac478517b48da604bdb9fc15a3e48139d59660d', :device_label => 'Christine iPhone' },
+        { :udid => 'f3de44744a306beb47407b9a23cd97d9fe03339a', :device_label => 'Christine iPad'   },
+        { :udid => '12910a92ab2917da99b8e3c785136af56b08c271', :device_label => 'Chris iPhone'     },
+        { :udid => '20c56f0606cc34f56525bb9ca03dcd0a43d70c60', :device_label => 'Dan iPad'         },
+        { :udid => '473acbc76dd573784fc803dc0c694aec8fa35d49', :device_label => 'Dan iPhone'       },
+        { :udid => '5c46e034cd005e5f2b08501820ecb235b0f13f33', :device_label => 'Hwan-Joon iPhone' },
+        { :udid => 'cb76136c7362206edad3d485a1dbd51bee52cd1f', :device_label => 'Hwan-Joon iPad'   },
+        { :udid => 'c163a3b343fbe6d04f9a8cda62e807c0b407f533', :device_label => 'Hwan-Joon iTouch' },
+        { :udid => 'cb7907c2a762ea979a3ec38827a165e834a2f7f9', :device_label => 'Johnny iPhone'    },
+        { :udid => '36fa4959f5e1513ba1abd95e68ad40b75b237f15', :device_label => 'Kai iPad'         },
+        { :udid => '5eab794d002ab9b25ee54b4c792bbcde68406b57', :device_label => 'Katherine iPhone' },
+        { :udid => '4b910938aceaa723e0c0313aa7fa9f9d838a595e', :device_label => 'Linda iPad'       },
+        { :udid => '820a1b9df38f3024f9018464c05dfbad5708f81e', :device_label => 'Linda iPhone'     },
+        { :udid => '5941f307a0f88912b0c84e075c833a24557a7602', :device_label => 'Marc iPad'        },
+        { :udid => 'dda01be21b0937efeba5fcda67ce20e99899bb69', :device_label => 'Matt iPad2'       },
+        { :udid => 'b4c86b4530a0ee889765a166d80492b46f7f3636', :device_label => 'Ryan iPhone'      },
+        { :udid => 'f0910f7ab2a27a5d079dc9ed50d774fcab55f91d', :device_label => 'Ryan iPad'        },
+        { :udid => 'cb662f568a4016a5b2e0bd617e53f70480133290', :device_label => 'Stephen iPad'     },
+        { :udid => 'c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1', :device_label => 'Stephen iTouch'   },
+        { :udid => '2e75bbe138c85e6dc8bd8677220ef8898f40a1c7', :device_label => 'Sunny iPhone'     },
+        { :udid => '21569fd0d308bfc576380903e8ba5a5f2fb9a01c', :device_label => 'Tammy iPad'       },
+    ]
+    android_devices.each do |device|
+      AdminDevice.new(:udid => device[:udid], :description => device[:device_label], :platform => 'android').save
+    end
+
+    ios_devices.each do |device|
+      AdminDevice.new(:udid => device[:udid], :description => device[:device_label], :platform => 'iphone').save
+    end
   end
 end

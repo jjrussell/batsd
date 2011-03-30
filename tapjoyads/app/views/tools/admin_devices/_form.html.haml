@@ -1,0 +1,15 @@
+- form_for [ :tools, @admin_device ], :html => { :class => 'tjform', :multipart => true } do |f|
+  %table
+    %tr
+      %th Platform
+      %td= f.select 'platform', options_for_select(App::PLATFORMS.invert)
+    %tr
+      %th UDID
+      %td= f.text_field :udid
+      %td= error_message_on(@admin_device, :udid) if @admin_device.errors.on :udid
+    %tr
+      %th Description
+      %td= f.text_field :description
+      %td= error_message_on(@admin_device, :description) if @admin_device.errors.on :description
+    %tr
+      %td{ :colspan => 2 }= f.submit 'Done'

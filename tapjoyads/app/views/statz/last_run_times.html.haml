@@ -13,6 +13,8 @@
   = text_field_tag(:other_udid, '', :size => 50)
   = submit_tag('Search')
 
+%h4= link_to '[View All Admin Devices]', tools_admin_devices_path
+
 %table.tablesorter
   %thead
     %tr
@@ -20,11 +22,11 @@
       %th UDID
       %th Last run time
   %tbody
-    - @udids_to_check.each do |hash|
+    - @last_run_times.each do |admin_device, last_run_time|
       %tr{ :class => cycle('', 'odd') }
-        %td= hash[:device_label]
-        %td= hash[:udid]
-        %td= hash[:last_run_time]
+        %td= admin_device.description
+        %td= admin_device.udid
+        %td= last_run_time
 
 - content_for :page_styles do
   :plain

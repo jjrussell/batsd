@@ -62,6 +62,7 @@ authorization do
     has_permission_on :preview_experiments, :to => [ :index, :show ]
     has_permission_on :tools_premier_partners, :to => [ :index ]
     has_permission_on :tools_generic_offers, :to => [ :new, :create ]
+    has_permission_on :tools_admin_devices, :to => [ :index, :new, :create, :edit, :update, :destroy ]
   end
   
   role :raffle_manager do
