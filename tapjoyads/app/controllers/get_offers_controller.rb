@@ -40,8 +40,8 @@ class GetOffersController < ApplicationController
     end
     # END TO REMOVE
     
-    # Show redesign to Stephen iTouch, Eric iPhone, Ryan iPhone and Kai iPad.
-    if params[:udid] == 'c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1' || params[:udid] == 'a850ff9e654965299104754249ceaa5f7b61a69e' || params[:udid] == 'b4c86b4530a0ee889765a166d80492b46f7f3636' || params[:udid] == '36fa4959f5e1513ba1abd95e68ad40b75b237f15'
+    # Show redesign to Stephen iTouch, Eric iPhone, Ryan iPhone, Kai iPad, Linda Nexus S and Stephen Evo.
+    if params[:udid] == 'c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1' || params[:udid] == 'a850ff9e654965299104754249ceaa5f7b61a69e' || params[:udid] == 'b4c86b4530a0ee889765a166d80492b46f7f3636' || params[:udid] == '36fa4959f5e1513ba1abd95e68ad40b75b237f15' || params[:udid] == '355031040923092' || params[:udid] == 'a100000d9833c5'
       render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
     end
   end
