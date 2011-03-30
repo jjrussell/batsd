@@ -115,7 +115,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :sdk, :only => [ :index, :show ]
   map.resources :opt_outs, :only => :create
   map.namespace :agency_api do |agency|
-    agency.resources :apps, :only => [ :index, :create, :update ]
+    agency.resources :apps, :only => [ :index, :show, :create, :update ]
     agency.resources :partners, :only => :create, :collection => { :link => :post }
     agency.resources :currencies, :only => [ :index, :show, :create, :update ]
   end

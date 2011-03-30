@@ -11,6 +11,26 @@ class AgencyApi::AppsController < AgencyApiController
     render_success({ :apps => apps })
   end
   
+  def show
+    return unless verify_request([ :id ])
+    
+    app = App.find_by_id(params[:id])
+    unless app.present?
+      render_error('app not found', 400)
+      return
+    end
+    
+    return unless verify_partner(app.partner_id)
+    
+    result = {
+      :app_id   => app.id,
+      :name     => app.name,
+      :platform => app.platform,
+      :store_id => app.store_id,
+    }
+    render_success(result)
+  end
+  
   def create
     return unless verify_request([ :partner_id, :name, :platform ])
     return unless verify_partner(params[:partner_id])
