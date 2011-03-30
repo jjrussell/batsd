@@ -24,6 +24,27 @@ class AgencyApi::CurrenciesController < AgencyApiController
     render_success({ :currencies => currencies })
   end
   
+  def show
+    return unless verify_request([ :id ])
+    
+    currency = Currency.find_by_id(params[:id])
+    unless currency.present?
+      render_error('currency not found', 400)
+      return
+    end
+    
+    return unless verify_partner(currency.partner_id)
+    
+    result = {
+      :currency_id     => currency.id,
+      :name            => currency.name,
+      :conversion_rate => currency.conversion_rate,
+      :initial_balance => currency.initial_balance,
+      :test_devices    => currency.test_devices,
+    }
+    render_success(result)
+  end
+  
   def create
     return unless verify_request([ :app_id, :name, :conversion_rate ])
     
