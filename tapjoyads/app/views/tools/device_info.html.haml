@@ -51,10 +51,7 @@
         %tr{ :class => tr_class }
           %td
             %strong
-              - if permitted_to?(:show, :statz)
-                = link_to app[1].name, statz_path(app[1])
-              - else
-                = app[1].name
+              = link_to_statz(app[1].name, app[1])
           %td= app[0].to_s(:pub_ampm_sec)
   - if @apps.length > 5
     = link_to('(show all)', '#', {:id => 'show_more_apps'})
@@ -71,7 +68,6 @@
   %table.with-border
     %thead
       %tr
-        %td Viewed
         %td Clicked
         %td Installed
         %td Adv.
@@ -91,23 +87,17 @@
         - if click.block_reason?
           - tr_class += click.block_reason =~ /TooManyUdidsForPublisherUserId/ ? ' blocked' : ' not-rewarded'
         %tr{ :class => tr_class}
-          %td.small= click.viewed_at? ? click.viewed_at.to_s(:pub_abbr_ampm_sec) : '-'
-          %td.small= click.clicked_at? ? click.clicked_at.to_s(:pub_abbr_ampm_sec) : '-'
+          %td.small
+            %nobr= click.clicked_at? ? click.clicked_at.to_s(:pub_abbr_ampm_sec) : '-'
           %td.small
             - if click.block_reason?
               = click.block_reason
             - else
               = click.installed_at? ? click.installed_at.to_s(:pub_abbr_ampm_sec) : '-'
-          - if permitted_to?(:show, :statz)
-            %td= adv.nil? ? '-'  : link_to(adv.name, statz_path(adv))
-            %td= pub.nil? ? '-'  : link_to(pub.name, statz_path(pub))
-            - if @has_displayer
-              %td= disp.nil? ? '-' : link_to(disp.name, statz_path(disp))
-          - else
-            %td= adv.nil? ? '-'  : adv.name
-            %td= pub.nil? ? '-'  : pub.name
-            - if @has_displayer
-              %td= disp.nil? ? '-' : disp.name
+          %td= adv.nil? ? '-'  : link_to_statz(adv.name, adv)
+          %td= pub.nil? ? '-'  : link_to_statz(pub.name, pub)
+          - if @has_displayer
+            %td= disp.nil? ? '-' : link_to_statz(disp.name, disp)
           %td
             - if click.type =~ /install_jailbroken/
               Already awarded
@@ -118,13 +108,28 @@
             - else
               - form_tag resolve_clicks_tools_path(:click_id => click.id) do
                 = submit_tag 'Award'
-          %td
+          %td.small
             = link_to('show', '#', :class => 'show-click-detail')
             .hidden
               %ul.nobr
                 %li
                   Click ID:
                   = clippy(click.key)
+                - if click.viewed_at?
+                  %li
+                    Viewed at:
+                    %nobr= click.viewed_at.to_s(:pub_abbr_ampm_sec)
+                - if click.clicked_at?
+                  %li
+                    Clicked at:
+                    %nobr= click.clicked_at.to_s(:pub_abbr_ampm_sec)
+                - if click.installed_at?
+                  %li
+                    Installed at:
+                    %nobr= click.installed_at.to_s(:pub_abbr_ampm_sec)
+                %li
+                  Currency:
+                  = click.currency_reward
                 %li
                   Adv:
                   = number_to_currency(click.advertiser_amount/100.0)

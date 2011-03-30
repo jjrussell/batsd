@@ -29,4 +29,12 @@ module ApplicationHelper
       app_offer_url(offer.item, offer)
     end
   end
+
+  def link_to_statz(body, object, options={})
+    if permitted_to?(:show, :statz)
+      link_to(body, statz_path(object), options)
+    else
+      body
+    end
+  end
 end
