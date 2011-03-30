@@ -176,11 +176,22 @@ class ToolsController < WebsiteController
       conditions = "itemName() like '#{udid}.%'"
       @clicks = []
       @rewarded_clicks_count = 0
+      @jailbroken_count = 0
+      @not_rewarded_count = 0
+      @blocked_count = 0
       click_app_ids = []
       NUM_CLICK_DOMAINS.times do |i|
         Click.select(:domain_name => "clicks_#{i}", :where => conditions) do |click|
           @clicks << click
           @rewarded_clicks_count += 1 if click.installed_at?
+          @jailbroken_count += 1 if click.type =~ /install_jailbroken/
+          if click.block_reason?
+            if click.block_reason =~ /TooManyUdidsForPublisherUserId/
+              @blocked_count += 1
+            else
+              @not_rewarded_count += 1
+            end
+          end
           click_app_ids << [click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id]
         end
       end

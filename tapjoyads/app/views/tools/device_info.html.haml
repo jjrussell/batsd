@@ -60,11 +60,11 @@
     Clicks (#{@clicks.length}) &amp;
     %span.rewarded Rewards (#{@rewarded_clicks_count})
     +
-    %span.jailbroken Jailbroken
+    %span.jailbroken Jailbroken (#{@jailbroken_count})
     +
-    %span.not-rewarded Won't reward
+    %span.not-rewarded Won't reward (#{@not_rewarded_count})
     +
-    %span.blocked Blocked
+    %span.blocked Blocked (#{@blocked_count})
   %table.with-border
     %thead
       %tr
@@ -105,7 +105,7 @@
               Already awarded
             - elsif click.block_reason?
               - if click.block_reason =~ /TooManyUdidsForPublisherUserId/
-                Blocked
+                Blocked device
               - else
                 Won't reward
             - else
