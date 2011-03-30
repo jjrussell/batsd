@@ -228,7 +228,7 @@ class ToolsController < WebsiteController
     click = Click.new(:key => params[:click_id])
     if click.new_record?
       flash[:error] = "Unknown click id."
-      redirect_to unresolved_clicks_tools_path and return
+      redirect_to device_info_tools_path and return
     end
     log_activity(click)
 
@@ -238,7 +238,7 @@ class ToolsController < WebsiteController
         click.currency_id = currencies.first.id
       else
         flash[:error] = "Ambiguity -- the publisher app has more than one currency and currency_id was not specified."
-        redirect_to unresolved_clicks_tools_path(:udid => click.udid) and return
+        redirect_to device_info_tools_path(:udid => click.udid) and return
       end
     end
 
@@ -254,30 +254,7 @@ class ToolsController < WebsiteController
       Downloader.get_with_retry "#{API_URL}/connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
     end
 
-    redirect_to unresolved_clicks_tools_path(:udid => click.udid)
-  end
-
-  def unresolved_clicks
-    @udid = params[:udid]
-    @num_hours = params[:num_hours].nil? ? 48 : params[:num_hours].to_i
-    @clicks = []
-    cut_off = (Time.zone.now - @num_hours.hours).to_f
-    device = Device.new(:key => @udid)
-
-    if @udid
-      @udid.downcase!
-      NUM_CLICK_DOMAINS.times do |i|
-        Click.select(:domain_name => "clicks_#{i}", :where => "itemName() like '#{@udid}.%'", :consistent => true) do |click|
-          if click.installed_at.nil? && click.clicked_at.to_f > cut_off
-            @clicks << [
-              click.clicked_at,
-              device.last_run_time(click.advertiser_app_id),
-              click]
-          end
-        end
-      end
-    end
-    @clicks.sort!
+    redirect_to device_info_tools_path(:udid => click.udid)
   end
 
   def sanitize_users

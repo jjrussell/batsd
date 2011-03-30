@@ -26,7 +26,7 @@ authorization do
   
   role :customer_service do
     includes :tools
-    has_permission_on :tools, :to => [ :unresolved_clicks, :resolve_clicks, :device_info, :update_device ]
+    has_permission_on :tools, :to => [ :resolve_clicks, :device_info, :update_device ]
   end
   
   role :payops do
@@ -52,7 +52,7 @@ authorization do
     includes :payops
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :global ]
     has_permission_on :search, :to => [ :offers ]
-    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :unresolved_clicks, :resolve_clicks, :new_transfer, :edit_android_app, :update_android_app, :device_info, :update_device ]
+    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :edit_android_app, :update_android_app, :device_info, :update_device ]
     has_permission_on :tools_enable_offer_requests, :to => [ :index, :update ]
     has_permission_on :activities, :to => [ :index ]
     has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :new_transfer, :create_transfer, :reporting, :delink_user ]

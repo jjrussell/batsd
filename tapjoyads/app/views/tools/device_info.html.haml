@@ -34,8 +34,6 @@
       %tr
         %th
           Internal Notes
-          %br/
-          (e.g. "Ben's iphone")
         %td
           - form_tag :action => 'update_device', :udid => params[:udid] do
             = text_field_tag 'internal_notes', @device.internal_notes, :size => '50'
@@ -70,19 +68,17 @@
     %span.not-rewarded Won't reward
     +
     %span.blocked Blocked
-  - if permitted_to?(:unresolved_clicks, :tools)
-    = link_to('Unresolved clicks tool', unresolved_clicks_tools_path(:udid => params[:udid]))
   %table.with-border
     %thead
       %tr
-        %td Viewed at
-        %td Clicked at
-        %td Installed at
-        %td Currency reward
+        %td Viewed
+        %td Clicked
+        %td Installed
         %td Adv.
         %td Pub.
         - if @has_displayer
           %td Disp.
+        %td Resolve
         %td Details
     %tbody
       - @clicks.each_with_index do |click, i|
@@ -95,14 +91,13 @@
         - if click.block_reason?
           - tr_class += click.block_reason =~ /TooManyUdidsForPublisherUserId/ ? ' blocked' : ' not-rewarded'
         %tr{ :class => tr_class}
-          %td.small= click.viewed_at? ? click.viewed_at.to_s(:pub_abbr_ampm) : '-'
-          %td.small= click.clicked_at? ? click.clicked_at.to_s(:pub_abbr_ampm) : '-'
+          %td.small= click.viewed_at? ? click.viewed_at.to_s(:pub_abbr_ampm_sec) : '-'
+          %td.small= click.clicked_at? ? click.clicked_at.to_s(:pub_abbr_ampm_sec) : '-'
           %td.small
             - if click.block_reason?
               = click.block_reason
             - else
-              = click.installed_at? ? click.installed_at.to_s(:pub_abbr_ampm) : '-'
-          %td= click.currency_reward
+              = click.installed_at? ? click.installed_at.to_s(:pub_abbr_ampm_sec) : '-'
           - if permitted_to?(:show, :statz)
             %td= adv.nil? ? '-'  : link_to(adv.name, statz_path(adv))
             %td= pub.nil? ? '-'  : link_to(pub.name, statz_path(pub))
@@ -113,6 +108,16 @@
             %td= pub.nil? ? '-'  : pub.name
             - if @has_displayer
               %td= disp.nil? ? '-' : disp.name
+          %td
+            - if click.type =~ /install_jailbroken/
+              Already awarded
+            - elsif click.installed_at?
+              Already awarded
+            - elsif click.block_reason?
+              Blocked
+            - else
+              - form_tag resolve_clicks_tools_path(:click_id => click.id) do
+                = submit_tag 'Award'
           %td
             = link_to('show', '#', :class => 'show-click-detail')
             .hidden
