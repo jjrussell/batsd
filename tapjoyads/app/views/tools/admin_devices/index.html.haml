@@ -18,6 +18,8 @@
         %td= device.description
         %td= link_to '[Delete Device]', tools_admin_device_path(device), :method => :delete, :confirm => "Are you sure you want to remove this device: #{device.description}"
         %td= link_to '[Edit Device]', edit_tools_admin_device_path(device)
+        - if permitted_to?(:device_info, :tools)
+          %td= link_to '[View Device Info]', device_info_tools_path(:udid => device.udid)
 
 - content_for :page_javascript do
   :plain
