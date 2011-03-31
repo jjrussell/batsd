@@ -1,5 +1,5 @@
 class EnableOfferRequestsController < WebsiteController
-  include ApplicationHelper
+  include WebsiteHelper
   
   filter_access_to :all
   after_filter :save_activity_logs, :only => [ :create ]
