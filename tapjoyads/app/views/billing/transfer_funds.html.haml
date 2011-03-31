@@ -21,11 +21,12 @@
             Balance:
             #help_balance.help ?
           %td= number_to_currency(current_partner.balance / 100.0)
-        %tr
-          %th
-            Transfer Bonus:
-            #help_bonus.help ?
-          %td #{ current_partner.transfer_bonus * 100 }%
+        - if current_partner.transfer_bonus > 0
+          %tr
+            %th
+              Transfer Bonus:
+              #help_bonus.help ?
+            %td #{ current_partner.transfer_bonus * 100 }%
     %table
       %tbody
         %tr
