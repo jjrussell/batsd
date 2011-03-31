@@ -70,8 +70,8 @@ ActionController::Routing::Routes.draw do |map|
                      :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :as_groups => :get,
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
                      :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get,
-                     :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get },
-    :member => {  :edit_android_app => :get, :update_android_app => :post, :device_info => :get }
+                     :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get },
+    :member => {  :edit_android_app => :get, :update_android_app => :post }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get },
     :collection => { :global => :get }

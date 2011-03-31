@@ -239,7 +239,7 @@ class ToolsController < WebsiteController
     click = Click.new(:key => params[:click_id])
     if click.new_record?
       flash[:error] = "Unknown click id."
-      redirect_to :action => :device_info and return
+      redirect_to device_info_tools_path and return
     end
     log_activity(click)
 
@@ -249,7 +249,7 @@ class ToolsController < WebsiteController
         click.currency_id = currencies.first.id
       else
         flash[:error] = "Ambiguity -- the publisher app has more than one currency and currency_id was not specified."
-        redirect_to device_info_tool_path(:udid => click.udid) and return
+        redirect_to device_info_tools_path(:udid => click.udid) and return
       end
     end
 
@@ -265,7 +265,7 @@ class ToolsController < WebsiteController
       Downloader.get_with_retry "#{API_URL}/connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
     end
 
-    redirect_to device_info_tool_path(:udid => click.udid)
+    redirect_to device_info_tools_path(:udid => click.udid)
   end
 
   def sanitize_users
