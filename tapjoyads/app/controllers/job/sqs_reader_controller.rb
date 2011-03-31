@@ -4,6 +4,7 @@ class Job::SqsReaderController < Job::JobController
     @queue_name = queue_name
     @num_reads = 40
     @raise_on_error = true
+    @break_on_nil_message = true
   end
 
   def index
@@ -24,8 +25,9 @@ class Job::SqsReaderController < Job::JobController
         end
       end
       
-      # the queue must be empty so stop looping
-      break if message.nil?
+      if message.nil?
+        @break_on_nil_message ? break : next
+      end
       
       Rails.logger.info "#{@queue_name} message received: #{message.to_s}"
       
