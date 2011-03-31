@@ -14,6 +14,7 @@ class StatuszController < ApplicationController
     create_conversions_queue       = Sqs.queue(QueueNames::CREATE_CONVERSIONS)
     failed_sdb_saves_queue         = Sqs.queue(QueueNames::FAILED_SDB_SAVES)
     failed_web_request_saves_queue = Sqs.queue(QueueNames::FAILED_WEB_REQUEST_SAVES)
+    send_currency_queue            = Sqs.queue(QueueNames::SEND_CURRENCY)
     
     result = "success"
     if hourly_app_stats_queue.size > 1000 ||
@@ -21,7 +22,8 @@ class StatuszController < ApplicationController
        conversion_tracking_queue.size > 1000 ||
        create_conversions_queue.size > 1000 ||
        failed_sdb_saves_queue.size > 5000 ||
-       failed_web_request_saves_queue.size > 5000
+       failed_web_request_saves_queue.size > 5000 ||
+       send_currency_queue.size > 5000
       result = "too long"
     end
     
