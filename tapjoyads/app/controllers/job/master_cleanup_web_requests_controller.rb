@@ -2,7 +2,6 @@ class Job::MasterCleanupWebRequestsController < Job::JobController
 
   def index
     day = Date.today - 2.days
-    backup_options = { :delete_domain => true }
     domain_names = SimpledbResource.get_domain_names
 
     num_unverified = Offer.count(:conditions => [ "last_daily_stats_aggregation_time < ?",  day.tomorrow ])
@@ -19,6 +18,7 @@ class Job::MasterCleanupWebRequestsController < Job::JobController
 
         next unless domain_names.include?(domain_name)
 
+        backup_options = { :delete_domain => true, :prefix => "#{day.to_s}/" }
         message = { :domain_name => domain_name, :s3_bucket => BucketNames::WEB_REQUESTS, :backup_options => backup_options }.to_json
         Sqs.send_message(QueueNames::SDB_BACKUPS, message)
       end

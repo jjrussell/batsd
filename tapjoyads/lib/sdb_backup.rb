@@ -14,17 +14,18 @@ class SdbBackup
   #    suffix: The suffix of the filename when saving to s3.
   def self.backup_domain(domain_name, s3_bucket, options = {})
     job_start_time = Time.zone.now
-    where = options.delete(:where)
-    delete_rows = options.delete(:delete_rows) { false }
-    suffix = options.delete(:suffix) { '' }
-    delete_domain = options.delete(:delete_domain) { false }
+    where          = options.delete(:where)
+    delete_rows    = options.delete(:delete_rows)   { false }
+    delete_domain  = options.delete(:delete_domain) { false }
+    prefix         = options.delete(:prefix)        { '' }
+    suffix         = options.delete(:suffix)        { '' }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     Rails.logger.info "Backing up domain: #{domain_name}"
     
     file_name = "tmp/#{RUN_MODE_PREFIX}#{domain_name}#{suffix}.sdb"
     gzip_file_name = "#{file_name}.gz"
-    s3_name = "#{RUN_MODE_PREFIX}#{domain_name}#{suffix}.sdb"
+    s3_name = "#{prefix}#{RUN_MODE_PREFIX}#{domain_name}#{suffix}.sdb"
     
     file = open(file_name, 'w')
   
