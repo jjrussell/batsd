@@ -49,13 +49,16 @@ class Appstats
     if @stats['published_installs'] and @stats['offers']
       @stats['rewards'] = []
       @stats['published_installs'].length.times do |i|
-        @stats['rewards'][i] = @stats['published_installs'][i] + @stats['offers'][i]
+        @stats['rewards'][i] = @stats['published_installs'][i] + @stats['offers'][i] - @stats['display_conversions'][i]
       end
     end
     
     # rewards_opened
     if @stats['offers_opened']
-      @stats['rewards_opened'] = @stats['offers_opened']
+      @stats['rewards_opened'] = []
+      @stats['offers_opened'].length.times do |i|
+        @stats['rewards_opened'][i] = @stats['offers_opened'][i] - @stats['display_clicks'][i]
+      end
     end
     
     # rewards_revenue
