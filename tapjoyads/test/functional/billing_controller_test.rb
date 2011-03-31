@@ -42,4 +42,34 @@ class BillingControllerTest < ActionController::TestCase
     end
 
   end
+
+  context "when storing credit cards" do
+    setup do
+      @user = Factory(:user)
+      @partner = Factory(:partner, :users => [@user])
+      cc_params    = {
+        :first_name => 'bar',
+        :last_name => 'foo',
+        :number => '4111111111111111',
+        :verification_value => '999',
+        :month => '1',
+        :year => '2020',
+        :amount => '500',
+      }
+      @credit_card = ActiveMerchant::Billing::CreditCardWithAmount.new(cc_params)
+
+      Billing.create_customer_profile(@user)
+      Billing.create_payment_profile(@user, @credit_card)
+      @payment_profiles = Billing.get_payment_profiles_for_select(@user)
+
+      login_as(@user)
+    end
+
+    should "be able to forget credit cards" do
+      profile = @payment_profiles.reject{|profile| profile[1] == 'new_card'}.first
+      assert_equal 2, Billing.get_payment_profiles_for_select(@user).length
+      post :forget_credit_card, :payment_profile_id => profile[1]
+      assert_equal 1, Billing.get_payment_profiles_for_select(@user).length
+    end
+  end
 end

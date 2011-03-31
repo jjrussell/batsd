@@ -59,7 +59,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }, :collection => { :api => :get, :regenerate_api_key => :post }
   map.resources :analytics, :only => [ :index ], :collection => { :create_apsalar_account => :get }
   map.resources :billing, :only => [ :index ],
-    :collection => { :create_order => :post, :create_transfer => :post, :update_payout_info => :post }
+    :collection => { :create_order => :post, :create_transfer => :post, :update_payout_info => :post, :forget_credit_card => :post }
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
   map.transfer_funds_billing 'billing/transfer-funds', :controller => :billing, :action => :transfer_funds
   map.payout_info_billing 'billing/payment-info', :controller => :billing, :action => :payout_info

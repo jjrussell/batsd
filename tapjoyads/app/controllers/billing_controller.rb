@@ -107,6 +107,15 @@ class BillingController < WebsiteController
     render :action => :add_funds
   end
 
+  def forget_credit_card
+    begin
+      raise unless Billing.delete_payment_profile(current_user, params[:payment_profile_id]) == Billing::SUCCESS_MSG
+    rescue Exception => e
+      flash[:error] = 'An error occurred deleting your saved credit card information. Please contact <a href="mailto:support@tapjoy.com">support@tapjoy.com</a>.'
+    end
+    redirect_to add_funds_billing_path
+  end
+
   def create_transfer
     amount = sanitize_currency_param(params[ :transfer_amount ]).to_i
     if amount <= 0
