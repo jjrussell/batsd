@@ -22,7 +22,8 @@
           #help_credit_card.help ?
         %td
           = select_tag(:payment_profile, options_for_select(@payment_profiles, @selected_profile))
-          #forget= button_to 'Forget this card', '#'
+        %td#forget{ :class => @selected_profile == 'new_card' ? 'hidden' : '' }
+          = button_to_function 'Forget this card', 'forget_card()'
       %tr{ :class => @hideable_row_class }
         %th
           = f.label :first_name, 'First Name'
@@ -89,8 +90,8 @@
   #help_amount_content{ :name => 'Amount' } The amount you would like added to your balance. Your card will be charged this amount.
 
 .hidden
-  - form_tag forget_credit_card_billing_path, :id => 'forget' do
-    = hidden_field_tag('payment_profile_id', '')
+  - form_tag forget_credit_card_billing_path, :id => 'forget_form' do
+    = hidden_field_tag(:payment_profile_id)
 
 - content_for :page_javascript do
   :plain
@@ -98,33 +99,27 @@
       $('#payment_profile').change(function() {
         if ($('#payment_profile').val() == 'new_card') {
           $('.hideable').show();
-          $('#forget div input').hide();
+          $('#forget').hide();
         } else {
           $('.hideable').hide();
-          $('#forget div input').show();
-          var paymentProfileId = $('select#payment_profile').val();
-          $('form#forget input#payment_profile_id').val(paymentProfileId);
+          $('#forget').show();
         }
-      });
-
-      $('#forget div input').click(function(){
-        var confirmed = confirm('Are you sure you want to remove this credit card?');
-        if (confirmed) {
-          $('form#forget').submit();
-        }
-        return false;
       });
     });
-
+    
+    function forget_card() {
+      if (confirm('Are you sure you want to remove this credit card?')) {
+        var profile = $('#payment_profile').val();
+        if (profile != 'new_card') {
+          $('#payment_profile_id').val(profile);
+          $('#forget_form').submit();
+        }
+      }
+      return false;
+    }
+  
 - content_for :page_styles do
   :plain
     img.logos {
       padding-left: 3px;
-    }
-    #forget, #forget div {
-      display: inline;
-    }
-    #forget div input {
-      display: none;
-      float: none;
     }
