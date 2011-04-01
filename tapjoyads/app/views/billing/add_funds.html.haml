@@ -20,7 +20,9 @@
         %th
           = label_tag :payment_profile, 'Credit Card'
           #help_credit_card.help ?
-        %td= select_tag(:payment_profile, options_for_select(@payment_profiles, @selected_profile))
+        %td
+          = select_tag(:payment_profile, options_for_select(@payment_profiles, @selected_profile))
+          #forget= button_to 'Forget this card', '#'
       %tr{ :class => @hideable_row_class }
         %th
           = f.label :first_name, 'First Name'
@@ -86,20 +88,43 @@
   #help_save_card_content{ :name => 'Save Card' } Check this box if you would like to save your credit card information for future deposits.
   #help_amount_content{ :name => 'Amount' } The amount you would like added to your balance. Your card will be charged this amount.
 
+.hidden
+  - form_tag forget_credit_card_billing_path, :id => 'forget' do
+    = hidden_field_tag('payment_profile_id', '')
+
 - content_for :page_javascript do
   :plain
-    $(function() {
+    $(function($) {
       $('#payment_profile').change(function() {
         if ($('#payment_profile').val() == 'new_card') {
           $('.hideable').show();
+          $('#forget div input').hide();
         } else {
           $('.hideable').hide();
+          $('#forget div input').show();
+          var paymentProfileId = $('select#payment_profile').val();
+          $('form#forget input#payment_profile_id').val(paymentProfileId);
         }
       });
+
+      $('#forget div input').click(function(){
+        var confirmed = confirm('Are you sure you want to remove this credit card?');
+        if (confirmed) {
+          $('form#forget').submit();
+        }
+        return false;
+      });
     });
-  
+
 - content_for :page_styles do
   :plain
     img.logos {
       padding-left: 3px;
+    }
+    #forget, #forget div {
+      display: inline;
+    }
+    #forget div input {
+      display: none;
+      float: none;
     }
