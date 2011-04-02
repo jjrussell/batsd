@@ -165,7 +165,7 @@ class ToolsController < WebsiteController
   end
 
   def device_info
-    if params[:udid]
+    if params[:udid].present?
       udid = params[:udid].downcase
       @device = Device.new(:key => udid)
       if @device.is_new
