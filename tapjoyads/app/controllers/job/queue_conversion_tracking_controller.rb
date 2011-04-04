@@ -25,24 +25,24 @@ private
       return
     end
     
-    publisher_user_record = PublisherUserRecord.new(:key => "#{click.publisher_app_id}.#{click.publisher_user_id}")
-    unless publisher_user_record.update(click.udid)
-      click.block_reason = "TooManyUdidsForPublisherUserId (ID=#{publisher_user_record.key})"
+    publisher_user = PublisherUser.find_or_initialize("#{click.publisher_app_id}.#{click.publisher_user_id}")
+    unless publisher_user.update!(click.udid)
+      click.block_reason = "TooManyUdidsForPublisherUserId (ID=#{publisher_user.key})"
       click.serial_save
-      Notifier.alert_new_relic(TooManyUdidsForPublisherUserId, "Too many UDIDs associated with publisher_user_record: #{publisher_user_record.key}, for click: #{click.key}", request, params)
+      Notifier.alert_new_relic(TooManyUdidsForPublisherUserId, "Too many UDIDs associated with publisher_user: #{publisher_user.key}, for click: #{click.key}", request, params)
       return
     end
     
     # Do not reward if user has installed this app for the same publisher user id on another device
     offer = Offer.find_in_cache(click.offer_id, true)
     unless offer.multi_complete?
-      other_udids = publisher_user_record.get('udid', :force_array => true) - [ click.udid ]
+      other_udids = publisher_user.udids - [ click.udid ]
       other_udids.each do |udid|
         device = Device.new(:key => udid)
         if device.has_app(click.advertiser_app_id)
           click.block_reason = "AlreadyRewardedForPublisherUserId (UDID=#{udid})"
           click.serial_save
-          Notifier.alert_new_relic(AlreadyRewardedForPublisherUserId, "Offer already rewarded for publisher_user_record: #{publisher_user_record.key}, for click: #{click.key}", request, params)
+          Notifier.alert_new_relic(AlreadyRewardedForPublisherUserId, "Offer already rewarded for publisher_user: #{publisher_user.key}, for click: #{click.key}", request, params)
           return
         end
       end

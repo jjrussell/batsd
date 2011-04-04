@@ -44,6 +44,7 @@ NUM_REWARD_DOMAINS = 2
 NUM_DEVICES_DOMAINS = 2
 NUM_GAME_STATE_DOMAINS = 2
 NUM_GAME_STATE_MAPPING_DOMAINS = 2
+NUM_PUBLISHER_USER_DOMAINS = 2
 
 mail_chimp = YAML::load_file("#{RAILS_ROOT}/config/mail_chimp.yaml")['test']
 MAIL_CHIMP_API_KEY = mail_chimp['api_key']
