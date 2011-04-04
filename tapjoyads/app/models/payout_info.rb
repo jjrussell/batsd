@@ -8,6 +8,10 @@ class PayoutInfo < ActiveRecord::Base
   validates_presence_of :partner
   validates_uniqueness_of :partner_id
 
+  attr_accessor :terms
+  validates_acceptance_of :terms, :if => :taxed_in_us?
+  validates_presence_of :signature, :if => :taxed_in_us?
+
   named_scope :recently_updated, lambda { |date|
     {
       :conditions => [
@@ -32,7 +36,7 @@ private
 
   def payout_info_filled?
     country = address_country && address_country.downcase
-    if ['united states', 'united states of america'].include?(country) && payout_method == 'check'
+    if is_american?(country) && payout_method == 'check'
       address_filled?
     else
       bank_info_filled?
@@ -51,6 +55,15 @@ private
     address_city.present? &&
     address_state.present? &&
     address_postal_code.present?
+  end
+
+  def taxed_in_us?
+    country = tax_country && tax_country.downcase
+    is_american?(country)
+  end
+
+  def is_american?(country)
+    ['united states', 'united states of america'].include?(country)
   end
 
 end

@@ -11,5 +11,14 @@ class PayoutInfoTest < ActiveSupport::TestCase
     setup do
       @info = Factory(:payout_info)
     end
+
+    should "make sure signature is present for US users" do
+      @info.tax_country = "some other country"
+      assert @info.valid?
+      @info.tax_country = "united states"
+      assert !@info.valid?
+      @info.signature = "signature"
+      assert @info.valid?
+    end
   end
 end

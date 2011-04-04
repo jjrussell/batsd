@@ -102,6 +102,16 @@
             #help_bank_swift_code.help ?
           %td= f.text_field(:bank_routing_number, :value => @payout_info.bank_routing_number)
     %br/
+    .country_us#terms
+      = f.check_box(:terms)
+      By checking this box, I agree under penalties of perjury, I certify that:
+      %ol
+        %li The number shown on this form is my correct taxpayer identification number (or I am waiting for a number to be issued to me), and
+        %li I am not subject to backup withholding because: (a) I am exempt from backup withholding, or (b) I have not been notified by the Internal Revenue Service (IRS) that I am subject to backup withholding as a result of a failure to report all interest or dividends, or (c) the IRS has notified me that I am no longer subject to backup withholding, and
+        %li I am a U.S. citizen or other U.S. person
+      Please write your name here as digital signature of this agreement:
+      %br/
+      = f.text_field(:signature)
     = submit_tag
 
   %p *There is a minimum payment threshold of US$250.
@@ -145,6 +155,12 @@
     }
     .country_other select {
       visibility: hidden;
+    }
+    #terms {
+      font-size: 12px;
+    }
+    .fieldWithErrors {
+      display: inline;
     }
 
 - content_for :page_javascript do

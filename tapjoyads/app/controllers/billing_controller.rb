@@ -160,15 +160,21 @@ class BillingController < WebsiteController
 
     safe_attributes = [
       :beneficiary_name, :company_name,
-      :tax_country, :account_type, :billing_name, :tax_id,
+      :tax_country, :account_type, :billing_name, :tax_id, :signature, :terms,
       :address_country, :address_1, :address_2, :address_city, :address_state, :address_postal_code,
       :payout_method, :bank_name, :bank_address, :bank_account_number, :bank_routing_number
     ]
     if @payout_info.safe_update_attributes(params[:payout_info], safe_attributes)
       flash[:notice] = "Your information has been saved."
-      redirect_to :action => :payout_info
+      redirect_to payout_info_billing_path
     else
-      flash.now[:error] = "Unable to save. Please contact <a href='support@tapjoy.com'>support@tapjoy.com</a>."
+      if @payout_info.valid?
+        flash.now[:error] = "Unable to save. Please contact <a href='support@tapjoy.com'>support@tapjoy.com</a>."
+      else
+        flash.now[:error] = @payout_info.errors.map do |error|
+          [error[0].humanize, error[1]].join(' ')
+        end.join('. ')
+      end
       render :action => :payout_info
     end
   end
