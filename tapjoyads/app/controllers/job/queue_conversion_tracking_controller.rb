@@ -32,24 +32,26 @@ private
       Notifier.alert_new_relic(TooManyUdidsForPublisherUserId, "Too many UDIDs associated with publisher_user_record: #{publisher_user_record.key}, for click: #{click.key}", request, params)
       return
     end
-
+    
     # Do not reward if user has installed this app for the same publisher user id on another device
-    other_udids = publisher_user_record.get('udid', :force_array => true) - [ click.udid ]
-    other_udids.each do |udid|
-      device = Device.new(:key => udid)
-      if device.has_app(click.advertiser_app_id)
-        click.block_reason = "AlreadyRewardedForPublisherUserId (UDID=#{udid})"
-        click.serial_save
-        Notifier.alert_new_relic(AlreadyRewardedForPublisherUserId, "Offer already rewarded for publisher_user_record: #{publisher_user_record.key}, for click: #{click.key}", request, params)
-        return
+    offer = Offer.find_in_cache(click.offer_id, true)
+    unless offer.multi_complete?
+      other_udids = publisher_user_record.get('udid', :force_array => true) - [ click.udid ]
+      other_udids.each do |udid|
+        device = Device.new(:key => udid)
+        if device.has_app(click.advertiser_app_id)
+          click.block_reason = "AlreadyRewardedForPublisherUserId (UDID=#{udid})"
+          click.serial_save
+          Notifier.alert_new_relic(AlreadyRewardedForPublisherUserId, "Offer already rewarded for publisher_user_record: #{publisher_user_record.key}, for click: #{click.key}", request, params)
+          return
+        end
       end
     end
-
+    
     unless click.reward_key
       raise "Click #{click.key} missing reward key!"
     end
     
-    offer = Offer.find_in_cache(click.offer_id, true)
     device = Device.new(:key => click.udid)
     if device.is_jailbroken && offer.is_paid? && offer.item_type == 'App' && click.type == 'install'
       click.tapjoy_amount += click.advertiser_amount
