@@ -17,12 +17,12 @@
           %th
             = f.label :tax_country, 'Country'
             .help.no-help ?
-          %td= f.select(:tax_country, options_for_select(list_of_countries))
+          %td= f.select(:tax_country, options_for_select(list_of_countries, @payout_info.tax_country))
         %tr
           %th
             = f.label :account_type, 'Account Type'
             .help.no-help ?
-          %td= f.select(:account_type, options_for_select(list_of_account_types))
+          %td= f.select(:account_type, options_for_select(list_of_account_types, @payout_info.account_type))
         %tr
           %th
             = f.label :billing_name, 'Billing Name'
@@ -50,7 +50,7 @@
           %th
             = f.label :country, 'Country'
             .help.no-help ?
-          %td= f.select(:address_country, options_for_select(list_of_countries))
+          %td= f.select(:address_country, options_for_select(list_of_countries, @payout_info.address_country))
         %tr.country_us
           %th
             = f.label :payout_method, 'Payment Method'
