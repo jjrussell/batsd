@@ -1,12 +1,16 @@
 - @page_title = 'Device Info'
 
 %h1 Device info &amp; Unresolved clicks
-- if @device.nil?
-  - form_tag({}, {:method => :get, :class => 'tjform'}) do
-    = label_tag 'udid', 'UDID:'
-    = text_field_tag 'udid', '', :style => "width:300px;"
-    = submit_tag 'find'
-- else
+- form_tag({}, { :method => :get, :class => 'tjform' }) do
+  %table
+    %tbody
+      %tr
+        %th UDID:
+        %td= text_field_tag 'udid', params[:udid], :size => '55'
+      %tr
+        %td{ :colspan => 2 }= submit_tag 'Find'
+
+- if @device.present?
   %h3 Device
   - form_tag({ :action => 'update_device', :udid => params[:udid] }, { :class => 'tjform' }) do
     %table
@@ -15,7 +19,6 @@
           %th Device ID
           %td
             = params[:udid]
-            = clippy(params[:udid])
         %tr
           %th Jailbroken?
           %td{:class => @device.is_jailbroken? ? "jailbroken" : ""}= @device.is_jailbroken?
