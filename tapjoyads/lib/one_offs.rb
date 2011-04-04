@@ -468,11 +468,11 @@ class OneOffs
   end
   
   def self.migrate_publisher_users
+    count = 0
+    already_migrated = 0
+    num_migrated = 0
+    num_skipped = 0
     time = Benchmark.realtime do
-      count = 0
-      already_migrated = 0
-      num_migrated = 0
-      num_skipped = 0
       PublisherUserRecord.select do |pur|
         count += 1
         pub_user = PublisherUser.new(:key => pur.key)
