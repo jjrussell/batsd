@@ -8,35 +8,42 @@
     = submit_tag 'find'
 - else
   %h3 Device
-  %table
-    %tbody
-      %tr
-        %th Device ID
-        %td
-          = params[:udid]
-          = clippy(params[:udid])
-      %tr
-        %th Jailbroken?
-        %td{:class => @device.is_jailbroken? ? "jailbroken" : ""}= @device.is_jailbroken?
-      - if @device.country.present?
+  - form_tag({ :action => 'update_device', :udid => params[:udid] }, { :class => 'tjform' }) do
+    %table
+      %tbody
         %tr
-          %th Country
-          %td= @device.country
-      - if @device.survey_answers.present?
-        %tr
-          %th Survey Answers
+          %th Device ID
           %td
-            - @device.survey_answers.each do |k,v|
-              %b= k.humanize
-              \:
-              = v
-              %br/
-      %tr
-        %th
-          Internal Notes
-        %td
-          - form_tag :action => 'update_device', :udid => params[:udid] do
+            = params[:udid]
+            = clippy(params[:udid])
+        %tr
+          %th Jailbroken?
+          %td{:class => @device.is_jailbroken? ? "jailbroken" : ""}= @device.is_jailbroken?
+        - if @device.country.present?
+          %tr
+            %th Country
+            %td= @device.country
+        - if @device.survey_answers.present?
+          %tr
+            %th Survey Answers
+            %td
+              - @device.survey_answers.each do |k,v|
+                %b= k.humanize
+                \:
+                = v
+                %br/
+        %tr
+          %th
+            Opted Out?
+          %td
+            = check_box_tag 'opted_out', '1', @device.opted_out?
+        %tr
+          %th
+            Internal Notes
+          %td
             = text_field_tag 'internal_notes', @device.internal_notes, :size => '50'
+        %tr
+          %td{ :colspan => 2 }
             = submit_tag 'Update'
 
   %h3 Installed Apps (#{@apps.length})
