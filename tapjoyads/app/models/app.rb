@@ -274,7 +274,7 @@ private
     offer.price = price
     offer.bid = offer.min_bid
     offer.url = store_url
-    offer.device_types = is_android? ? Offer::ANDROID_DEVICES.to_json : Offer::APPLE_DEVICES.to_json
+    offer.set_device_types
     offer.third_party_data = store_id
     offer.age_rating = age_rating
     offer.save!
@@ -293,10 +293,11 @@ private
       offer.age_rating = age_rating if age_rating_changed?
       offer.hidden = hidden if hidden_changed?
       offer.tapjoy_enabled = false if hidden? && hidden_changed?
+      offer.set_device_types if store_id_changed?
       offer.save! if offer.changed?
     end
   end
-  
+
   def update_rating_offer
     if (name_changed? || store_id_changed?) && rating_offer.present?
       rating_offer.save!
