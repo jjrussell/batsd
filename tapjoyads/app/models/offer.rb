@@ -492,11 +492,6 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def set_device_types
-    self.device_types = item.is_android? ? ANDROID_DEVICES.to_json : APPLE_DEVICES.to_json
-    self.device_types = IPAD_DEVICES.to_json if item.is_ipad_only?
-  end
-
   def normalize_stats(stats)
     self.normal_conversion_rate = (stats[:cvr_std_dev] == 0) ? 0 : (conversion_rate - stats[:cvr_mean]) / stats[:cvr_std_dev]
     self.normal_price           = (stats[:price_std_dev] == 0) ? 0 : (price - stats[:price_mean]) / stats[:price_std_dev]

@@ -31,7 +31,7 @@ class App < ActiveRecord::Base
   end
 
   def is_ipad_only?
-    supported_devices? && JSON.load(supported_devices).all?{ |i| i.match(/^ipad/i) } rescue false
+    supported_devices? && JSON.load(supported_devices).all?{ |i| i.match(/^ipad/i) }
   end
 
   def large_download?
@@ -274,12 +274,12 @@ private
     offer.price = price
     offer.bid = offer.min_bid
     offer.url = store_url
-    offer.set_device_types
+    offer.device_types = get_offer_device_types.to_json
     offer.third_party_data = store_id
     offer.age_rating = age_rating
     offer.save!
   end
-  
+
   def update_offers
     offers.each do |offer|
       offer.partner_id = partner_id if partner_id_changed?
@@ -293,8 +293,18 @@ private
       offer.age_rating = age_rating if age_rating_changed?
       offer.hidden = hidden if hidden_changed?
       offer.tapjoy_enabled = false if hidden? && hidden_changed?
-      offer.set_device_types if store_id_changed?
+      offer.device_types = get_offer_device_types.to_json if store_id_changed?
       offer.save! if offer.changed?
+    end
+  end
+
+  def get_offer_device_types
+    if is_android?
+      Offer::ANDROID_DEVICES
+    elsif is_ipad_only?
+      Offer::IPAD_DEVICES
+    else
+      Offer::APPLE_DEVICES
     end
   end
 
