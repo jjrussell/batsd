@@ -433,10 +433,6 @@ class Offer < ActiveRecord::Base
     url
   end
   
-  def get_large_icon_url(protocol = 'https://')
-    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/large/#{icon_id}.png"
-  end
-  
   def get_medium_icon_url(protocol = 'https://')
     "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/medium/#{icon_id}.jpg"
   end
@@ -445,12 +441,23 @@ class Offer < ActiveRecord::Base
     "#{CLOUDFRONT_URL}/icons/#{icon_id}.png"
   end
   
-  def get_large_cloudfront_icon_url
-    "#{CLOUDFRONT_URL}/icons/large/#{icon_id}.png"
-  end
-  
   def get_medium_cloudfront_icon_url
     "#{CLOUDFRONT_URL}/icons/medium/#{icon_id}.jpg"
+  end
+  
+  def NEW_get_icon_url(options = {})
+    self.get_icon_url({:icon_id => icon_id}.merge(options))
+  end
+  
+  def self.get_icon_url(options = {})
+    source   = options.delete(:source)   { :s3 }
+    size     = options.delete(:size)     { '57' }
+    icon_id  = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
+    prefix = source == :s3 ? 'https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy' : CLOUDFRONT_URL
+    
+    "#{prefix}/icons/#{size}/#{icon_id}.jpg"
   end
   
   def get_countries
@@ -635,6 +642,10 @@ class Offer < ActiveRecord::Base
   
   def icon_id
     icon_id_override || item_id
+  end
+  
+  def self.icon_id(guid)
+    Digest::SHA2.hexdigest(ICON_HASH_SALT + guid)
   end
   
   def expensive?

@@ -62,3 +62,4 @@ MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 APSALAR_URL = 'https://apsalar.com'
 APSALAR_SECRET = 'xNGvOKWsAkiekxe2W9KAutGsZTvvaVyDoOMhjuRVzN'
 SYMMETRIC_CRYPTO_SECRET = 'YI,B&nZVZQtl*YRDYpEjVE&\U\#jL2!H#H&*2d'
+ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'

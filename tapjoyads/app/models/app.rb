@@ -108,33 +108,51 @@ class App < ActiveRecord::Base
     self.age_rating = data[:age_rating]
     self.file_size_bytes = data[:file_size_bytes]
     self.supported_devices = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
-    download_icon(data[:icon_url], data[:large_icon_url])
+    download_icon(data[:icon_url], data[:small_icon_url])
   end
 
-  def download_icon(url, large_url)
+  def download_icon(url, small_url)
     return if url.blank?
     set_primary_key if id.nil?
     begin
       bucket = S3.bucket(BucketNames::TAPJOY)
-      icon = Downloader.get(url, :timeout => 30)
-      old_icon = bucket.get("icons/#{id}.png") rescue ''
       
-      if Digest::MD5.hexdigest(icon) != Digest::MD5.hexdigest(old_icon)
-        large_url = url if large_url.nil?
-        large_icon = Downloader.get(large_url, :timeout => 30)
-        medium_icon = Magick::Image.from_blob(large_icon)[0].resize(256, 256).to_blob{|i| i.format = 'JPG'}
+      icon_id = Offer.icon_id(id)
+      icon_src_blob = Downloader.get(url, :timeout => 30)
+      existing_icon_blob = bucket.get("icons/src/#{icon_id}.jpg") rescue ''
+      
+      if Digest::MD5.hexdigest(icon_src_blob) != Digest::MD5.hexdigest(existing_icon_blob)
+        small_url = url if small_url.nil?
+        small_icon_blob = Downloader.get(small_url, :timeout => 30)
         
-        bucket.put("icons/#{id}.png", icon, {}, "public-read")
-        bucket.put("icons/large/#{id}.png", large_icon, {}, "public-read")
-        bucket.put("icons/medium/#{id}.jpg", medium_icon, {}, "public-read")
+        icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256)
+        medium_icon_blob = icon_256.to_blob{|i| i.format = 'JPG'}
+        
+        corner_mask_blob = bucket.get("display/round_mask.png")
+        corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(256, 256)
+        icon_256.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
+        icon_256 = icon_256.opaque('#ffffff00', 'white')
+        icon_256.alpha(Magick::OpaqueAlphaChannel)
+        
+        icon_256_blob = icon_256.to_blob{|i| i.format = 'JPG'}
+        icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
+        icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
+      
+        bucket.put("icons/#{id}.png", small_icon_blob, {}, "public-read")
+        bucket.put("icons/medium/#{id}.jpg", medium_icon_blob, {}, "public-read")
+        
+        bucket.put("icons/src/#{icon_id}.jpg", icon_src_blob, {}, "public-read")
+        bucket.put("icons/256/#{icon_id}.jpg", icon_256_blob, {}, "public-read")
+        bucket.put("icons/114/#{icon_id}.jpg", icon_114_blob, {}, "public-read")
+        bucket.put("icons/57/#{icon_id}.jpg", icon_57_blob, {}, "public-read")
       
         Mc.delete("icon.s3.#{id}")
         
         # Invalidate cloudfront
-        if old_icon.present?
+        if existing_icon_blob.present?
           begin
             acf = RightAws::AcfInterface.new
-            acf.invalidate('E1MG6JDV6GH0F2', ["/icons/#{id}.png", "/icons/large/#{id}.png", "/icons/medium/#{id}.jpg"], "#{id}.#{Time.now.to_i}")
+            acf.invalidate('E1MG6JDV6GH0F2', ["/icons/#{id}.png", "/icons/medium/#{id}.jpg", "icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg"], "#{id}.#{Time.now.to_i}")
           rescue Exception => e
             Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
           end
@@ -152,6 +170,10 @@ class App < ActiveRecord::Base
 
   def get_cloudfront_icon_url
     "#{CLOUDFRONT_URL}/icons/#{id}.png"
+  end
+  
+  def NEW_get_icon_url(options = {})
+    Offer.get_icon_url({:icon_id => Offer.icon_id(id)}.merge(options))
   end
 
   def get_offer_list(udid, options = {})

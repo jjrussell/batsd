@@ -55,3 +55,4 @@ MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 APSALAR_URL = 'https://livebeef42.apsalar.com'
 APSALAR_SECRET = 'Tn0oWhQ4k3rahJ45vy4RI3vzausCOoyo'
 SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
+ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
