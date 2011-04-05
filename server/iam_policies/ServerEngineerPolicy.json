@@ -1,0 +1,20 @@
+{
+  "Statement" : [
+    {
+      "Effect"   : "Allow",
+      "Action"   : [
+        "s3:*",
+        "sdb:*",
+        "sqs:*",
+        "ec2:*",
+        "autoscaling:*",
+        "cloudfront:*",
+        "elasticloadbalancing:*",
+        "rds:*",
+        "cloudwatch:*",
+        "elasticmapreduce:*"
+      ],
+      "Resource" : "*"
+    }
+  ]
+}
