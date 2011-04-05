@@ -511,13 +511,18 @@ class OneOffs
   def self.set_ipad_apps_to_ipad_only(dry_run=false)
     count = 0
     offers = []
-    Offer.find(:all, :conditions => ['tapjoy_enabled = ? and user_enabled = ?', true, true]).each do |offer|
-      if offer.item_type == "App" && offer.item.is_ipad_only? && offer.device_types != Offer::IPAD_DEVICES.to_json
-        puts "supports #{offer.item.supported_devices} offer = #{offer.name[0..35]}"
-        offer.set_device_types
-        offer.save unless dry_run
-        count += 1
-        offers << offer
+    conditions = ['platform = ? and store_id is not null', 'iphone']
+    App.find(:all, :conditions => conditions, :include => 'offers').each do |app|
+      if app.is_ipad_only?
+        app.offers.each do |offer|
+          if offer.device_types != Offer::IPAD_DEVICES.to_json
+            puts "supports #{offer.item.supported_devices} currently #{offer.device_types} offer = #{offer.name[0..35]}"
+            offer.device_types = Offer::IPAD_DEVICES.to_json
+            offer.save unless dry_run
+            count += 1
+            offers << offer
+          end
+        end
       end
     end
     puts "changed #{count} apps to ipad only"
