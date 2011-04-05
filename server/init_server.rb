@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+`/home/webuser/tapjoyserver/server/copy_authorized_keys.rb`
+
 server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
 if server_type == 'memcached'
   `cp /home/webuser/tapjoyserver/server/memcached.conf /etc/`
