@@ -54,6 +54,8 @@
   %li= link_to 'Enable Requests', tools_enable_offer_requests_path
 - if permitted_to? :index, :tools_offer_events
   %li= link_to 'Schedule Offer Events', tools_offer_events_path
+- if permitted_to? :manage_user_roles, :tools
+  %li= link_to 'Manage user roles', manage_user_roles_tool_path
 
 - # Support
 - if permitted_to? :device_info, :tools

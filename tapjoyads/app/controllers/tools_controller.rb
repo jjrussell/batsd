@@ -340,4 +340,27 @@ class ToolsController < WebsiteController
     @payout_infos = PayoutInfo.recently_updated(@date).paginate(:page => params[:page])
   end
 
+  def manage_user_roles
+    if params[:email]
+      email = params[:email]
+      email += "@tapjoy.com" unless email.match(/@/)
+      @user = User.find_by_email(email)
+      if @user.nil?
+        flash.now[:error] = "User #{params[:email]} not found"
+      else
+        do_not_add = UserRole.find_all_by_name('admin')
+        @unassigned_user_roles = (UserRole.all - @user.user_roles - do_not_add).map{|role|[role.name, role.id]}.sort
+      end
+    end
+  end
+
+  def update_user_roles
+    user = User.find_by_id(params[:id])
+    user_roles = UserRole.find_all_by_id(params[:user_roles])
+    user_roles.each do |user_role|
+      user.user_roles << user_role unless user.user_roles.include?(user_role)
+    end
+    flash[:notice] = "Added #{user_roles.map(&:name).sort.to_json} to #{user.email}"
+    redirect_to manage_user_roles_tool_path(:email => user.email)
+  end
 end

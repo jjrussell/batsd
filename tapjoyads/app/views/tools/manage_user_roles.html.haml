@@ -1,0 +1,49 @@
+%h1 Manage user roles
+- form_tag manage_user_roles_tool_path do
+  = text_field_tag(:email, @user && @user.email)
+  = submit_tag("Look up user")
+
+- if @user
+  - form_tag update_user_roles_tool_path(@user.id) do
+    %table
+      %thead
+        %tr
+          %th User
+          %th Current roles
+          %th Roles to add
+      %tbody
+        %tr
+          %td
+            = @user.email
+            .small
+              = @user.id
+          %td= select_tag('user_roles', options_for_select(@user.role_symbols.map(&:to_s).sort), :multiple => true, :disabled => 'disabled')
+          %td= select_tag('user_roles', options_for_select(@unassigned_user_roles), :multiple => true)
+          %td= submit_tag('Select a role to add', :id => 'add_role', :disabled => 'disabled')
+
+- content_for :page_styles do
+  :plain
+    select {
+      width: 150px;
+      height: 100px;
+    }
+    .small {
+      font-size: 10px;
+    }
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('select#user_roles').change(function(){
+        var value = $(this).val()
+        var text = 'Add role';
+        var disabled = '';
+        if (!value) {
+          text = 'Select a role to add';
+          disabled = 'disabled'
+        } else if (value.length > 1) {
+          text += 's';
+        }
+        $('#add_role').attr('disabled', disabled);
+        $('#add_role').val(text);
+      });
+    });

@@ -71,7 +71,8 @@ ActionController::Routing::Routes.draw do |map|
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
                      :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get },
-    :member => {  :edit_android_app => :get, :update_android_app => :post }
+    :member => {  :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post }
+  map.manage_user_roles_tool 'tools/manage_user_roles', :controller => :tools, :action => :manage_user_roles
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get },
     :collection => { :global => :get }
