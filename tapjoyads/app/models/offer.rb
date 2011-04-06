@@ -438,7 +438,7 @@ class Offer < ActiveRecord::Base
   end
   
   def get_icon_url(options = {})
-    Offer.get_icon_url({:icon_id => Offer.icon_id(icon_id)}.merge(options))
+    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id)}.merge(options))
   end
   
   def self.get_icon_url(options = {})
@@ -636,7 +636,7 @@ class Offer < ActiveRecord::Base
     icon_id_override || item_id
   end
   
-  def self.icon_id(guid)
+  def self.hashed_icon_id(guid)
     Digest::SHA2.hexdigest(ICON_HASH_SALT + guid)
   end
   

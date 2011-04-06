@@ -117,7 +117,7 @@ class App < ActiveRecord::Base
     begin
       bucket = S3.bucket(BucketNames::TAPJOY)
       
-      icon_id = Offer.icon_id(id)
+      icon_id = Offer.hashed_icon_id(id)
       icon_src_blob = Downloader.get(url, :timeout => 30)
       existing_icon_blob = bucket.get("icons/src/#{icon_id}.jpg") rescue ''
       
@@ -169,7 +169,7 @@ class App < ActiveRecord::Base
   end
   
   def get_icon_url(options = {})
-    Offer.get_icon_url({:icon_id => Offer.icon_id(id)}.merge(options))
+    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
   end
 
   def get_offer_list(udid, options = {})
