@@ -36,7 +36,7 @@ class ToolsController < WebsiteController
     end
 
     @linkshare_est = @spend.to_f * 0.026
-    @ads_est = 400.0 * 30
+    @ads_est = 400.0 * @period.end_of_month.day
     @revenue = @spend + @linkshare_est + @ads_est - @marketing
     @net_revenue = @revenue - @earnings
     @margin = @net_revenue.to_f * 100.0 / @revenue.to_f
