@@ -400,7 +400,7 @@ class Offer < ActiveRecord::Base
       :exp               => exp,
     }
     
-    "#{click_url}?data=#{SymmetricCrypto.encrypt(data.to_json, SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
+    "#{click_url}?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
   end
   
   def get_fullscreen_ad_url(options)

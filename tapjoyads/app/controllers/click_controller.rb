@@ -71,6 +71,7 @@ private
     return unless verify_params([ :data ])
     
     data_str = SymmetricCrypto.decrypt([ params[:data] ].pack("H*"), SYMMETRIC_CRYPTO_SECRET)
+    # TO REMOVE - just use Marshaling after 2011-04-07
     begin
       data = Marshal.load(data_str)
     rescue TypeError => e
