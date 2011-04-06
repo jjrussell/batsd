@@ -24,7 +24,7 @@ class ToolsController < WebsiteController
       date += 1.month
     end
 
-    conditions = [ "month = ? and year = ? and id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'", month, year ]
+    conditions = [ "month = ? and year = ? and partner_id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'", month, year ]
     MonthlyAccounting.using_slave_db do
       @spend      = MonthlyAccounting.sum(:spend,             :conditions => conditions) /-100.0
       @marketing  = MonthlyAccounting.sum(:marketing_orders,  :conditions => conditions) / 100.0
