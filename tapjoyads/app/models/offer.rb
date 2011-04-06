@@ -294,7 +294,7 @@ class Offer < ActiveRecord::Base
   end
 
   def avg_revenue
-    conversion_rate * payment
+    conversion_rate * bid
   end
 
   def cost
