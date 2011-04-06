@@ -200,6 +200,23 @@ ActiveRecord::Schema.define(:version => 20110404185032) do
   add_index "offer_discounts", ["id"], :name => "index_offer_discounts_on_id", :unique => true
   add_index "offer_discounts", ["partner_id"], :name => "index_offer_discounts_on_partner_id"
 
+  create_table "offer_events", :id => false, :force => true do |t|
+    t.string   "id",                  :limit => 36,                    :null => false
+    t.string   "offer_id",            :limit => 36,                    :null => false
+    t.integer  "daily_budget"
+    t.boolean  "user_enabled"
+    t.boolean  "change_daily_budget",               :default => false, :null => false
+    t.boolean  "change_user_enabled",               :default => false, :null => false
+    t.datetime "scheduled_for",                                        :null => false
+    t.datetime "ran_at"
+    t.datetime "disabled_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "offer_events", ["id"], :name => "index_offer_events_on_id", :unique => true
+  add_index "offer_events", ["offer_id"], :name => "index_offer_events_on_offer_id"
+
   create_table "offerpal_offers", :id => false, :force => true do |t|
     t.string   "id",          :limit => 36,                    :null => false
     t.string   "partner_id",  :limit => 36,                    :null => false

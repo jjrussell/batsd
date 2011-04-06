@@ -97,6 +97,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :payouts, :only => [ :index, :create ]
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]
+    tools.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ]
   end
   map.resources :action_offers, :only => [ :show ]
   map.with_options :controller => :game_state do |m|

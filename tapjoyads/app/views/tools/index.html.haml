@@ -52,6 +52,8 @@
   %li= link_to 'Manually edit Android app', :action => :edit_android_app
 - if permitted_to? :index, :tools_enable_offer_requests
   %li= link_to 'Enable Requests', tools_enable_offer_requests_path
+- if permitted_to? :index, :tools_offer_events
+  %li= link_to 'Schedule Offer Events', tools_offer_events_path
 
 - # Support
 - if permitted_to? :device_info, :tools
