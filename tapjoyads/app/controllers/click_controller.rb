@@ -71,10 +71,14 @@ private
     return unless verify_params([ :data ])
     
     data_str = SymmetricCrypto.decrypt([ params[:data] ].pack("H*"), SYMMETRIC_CRYPTO_SECRET)
-    data = JSON.parse(data_str)
+    begin
+      data = Marshal.load(data_str)
+    rescue TypeError => e
+      data = JSON.parse(data_str)
+    end
     params.merge!(data)
     
-    if Time.zone.at(params[:viewed_at]) < (@now - 1.hour)
+    if Time.zone.at(params[:viewed_at]) < (@now - 24.hours)
       build_web_request('expired_click')
       save_web_request
       @offer = Offer.find_in_cache(params[:offer_id])
