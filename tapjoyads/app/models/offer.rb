@@ -425,15 +425,6 @@ class Offer < ActiveRecord::Base
     ad_url
   end
   
-  def get_icon_url(protocol = 'https://', base64 = false)
-    if base64
-      url = "#{API_URL}/get_app_image/icon?app_id=#{icon_id}"
-    else
-      url = "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/#{icon_id}.png"
-    end
-    url
-  end
-  
   def get_medium_icon_url(protocol = 'https://')
     "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/medium/#{icon_id}.jpg"
   end
@@ -446,8 +437,8 @@ class Offer < ActiveRecord::Base
     "#{CLOUDFRONT_URL}/icons/medium/#{icon_id}.jpg"
   end
   
-  def NEW_get_icon_url(options = {})
-    self.get_icon_url({:icon_id => icon_id}.merge(options))
+  def get_icon_url(options = {})
+    Offer.get_icon_url({:icon_id => Offer.icon_id(icon_id)}.merge(options))
   end
   
   def self.get_icon_url(options = {})
@@ -456,7 +447,7 @@ class Offer < ActiveRecord::Base
     icon_id  = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
-    prefix = source == :s3 ? 'https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy' : CLOUDFRONT_URL
+    prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
     
     "#{prefix}/icons/#{size}/#{icon_id}.jpg"
   end

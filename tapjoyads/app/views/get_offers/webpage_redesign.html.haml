@@ -33,7 +33,7 @@
             .r
               .content
                 .icon
-                  %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => offer.get_cloudfront_icon_url }
+                  %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => offer.get_icon_url(:source => :cloudfront, :size => '57') }
                 .offer-text
                   %span
                     = offer.direct_pay? ? 'Buy' : 'Earn'

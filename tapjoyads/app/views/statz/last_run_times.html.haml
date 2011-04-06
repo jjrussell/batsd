@@ -1,6 +1,6 @@
 - @page_title = "Last run times for offer: #{@offer.name_with_suffix}"
 
-.icon= link_to image_tag(@offer.get_icon_url(request.protocol), :size => '57x57'), statz_path(@offer)
+.icon= link_to image_tag(@offer.get_icon_url, :size => '57x57'), statz_path(@offer)
 
 %h1= link_to @offer.name_with_suffix, statz_path(@offer)
 

@@ -164,15 +164,11 @@ class App < ActiveRecord::Base
     end
   end
 
-  def get_icon_url(protocol='https://')
-    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/#{id}.png"
-  end
-
   def get_cloudfront_icon_url
     "#{CLOUDFRONT_URL}/icons/#{id}.png"
   end
   
-  def NEW_get_icon_url(options = {})
+  def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.icon_id(id)}.merge(options))
   end
 

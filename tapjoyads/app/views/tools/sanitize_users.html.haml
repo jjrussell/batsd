@@ -28,7 +28,7 @@
           - partner.offers.first(10).each do |offer|
             %span.offer{:title => offer.name}
               - link = statz_path(offer.id)
-              = link_to image_tag(offer.get_icon_url(request.protocol), :size => '20x20'), link
+              = link_to image_tag(offer.get_icon_url, :size => '20x20'), link
               = link_to truncate(offer.name, :length => 10), link
           - if partner.offers.blank?
             &nbsp;

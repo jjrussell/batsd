@@ -58,7 +58,7 @@
               %a#app_store_link{ :target => '_blank' }
         %tr.app_data.hidden
           %th Icon
-          %td#app_icon= image_tag(@app.get_icon_url(request.protocol), :size => '57x57', :alt => 'icon')
+          %td#app_icon= image_tag(@app.get_icon_url, :size => '57x57', :alt => 'icon')
         %tr.app_data.hidden
           %th Price
           %td#app_price= number_to_currency(@app.price / 100.0)

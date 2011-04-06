@@ -17,7 +17,7 @@
           %td= @app.name
         %tr
           %th App Icon
-          %td#app_icon= image_tag(@app.get_icon_url(request.protocol), :size => '57x57', :alt => 'icon')
+          %td#app_icon= image_tag(@app.get_icon_url, :size => '57x57', :alt => 'icon')
         %tr
           %th App ID
           %td= @app.id
