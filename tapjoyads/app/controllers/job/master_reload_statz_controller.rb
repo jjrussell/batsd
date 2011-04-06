@@ -32,7 +32,7 @@ private
     Offer.find_each(:conditions => "active = true") do |offer|
       appstats = Appstats.new(offer.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity }).stats
       conversions = appstats['paid_installs'].sum
-      published_offers = appstats['rewards'].sum + appstats['featured_published_offers'].sum
+      published_offers = appstats['rewards'].sum + appstats['featured_published_offers'].sum + appstats['display_conversions'].sum
       next unless conversions > 0 || published_offers > 0
       
       this_apps_stats = {}
