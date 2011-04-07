@@ -75,7 +75,7 @@ ActionController::Routing::Routes.draw do |map|
   map.manage_user_roles_tool 'tools/manage_user_roles', :controller => :tools, :action => :manage_user_roles
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get },
-    :collection => { :global => :get }
+    :collection => { :global => :get, :publisher => :get, :advertiser => :get }
   map.resources :raffle_manager, :only => [ :index, :edit, :update, :new, :create ]
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],

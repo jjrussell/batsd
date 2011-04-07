@@ -103,6 +103,18 @@ class StatzController < WebsiteController
       end
     end
   end
+
+  def publisher
+    @timeframe = params[:timeframe] || '24_hours'
+    @last_updated = Time.zone.at(Mc.get("statz.partners.last_updated.#{@timeframe}") || 0)
+    @cached_stats = Mc.distributed_get("statz.partners.cached_stats.#{@timeframe}") || []
+  end
+
+  def advertiser
+    @timeframe = params[:timeframe] || '24_hours'
+    @last_updated = Time.zone.at(Mc.get("statz.partners.last_updated.#{@timeframe}") || 0)
+    @cached_stats = Mc.distributed_get("statz.partners.cached_stats.#{@timeframe}") || []
+  end
   
 private
   
