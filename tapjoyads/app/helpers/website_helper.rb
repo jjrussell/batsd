@@ -87,5 +87,10 @@ module WebsiteHelper
     end
   end
   
+  def has_permissions_for_one_of?(*roles)
+    roles.each { |role| return true if has_role_with_hierarchy?(role) }
+    false
+  end
+  
 end
 

@@ -2,8 +2,9 @@
 
 %h1 Tools
 
+- if has_permissions_for_one_of?(:payops, :payout_manager, :executive, :account_mgr)
+  %h3 Money
 %ul
-- # Money
 - if permitted_to? :new, :tools_orders
   %li= link_to 'New Order', new_tools_order_path
 - if permitted_to? :index, :tools_payouts
@@ -19,7 +20,9 @@
 - if permitted_to? :publisher_payout_info_changes, :tools
   %li= link_to 'Payout Info Changes', publisher_payout_info_changes_tools_path
 
-- # Logs
+- if has_permissions_for_one_of?(:admin)
+  %h3 Admin
+%ul
 - if permitted_to? :send_currency_failures, :tools
   %li= link_to 'Send Currency Failures', send_currency_failures_tools_path
 - if permitted_to? :failed_sdb_saves, :tools
@@ -32,12 +35,16 @@
   %li= link_to 'ELB Status', elb_status_tools_path
 - if permitted_to? :as_groups, :tools
   %li= link_to 'Auto-Scaling Groups', as_groups_tools_path
-- if permitted_to? :index, :activities
-  %li= link_to 'Activity Log', activities_path
+- if permitted_to? :manage_user_roles, :tools
+  %li= link_to 'Manage user roles', manage_user_roles_tool_path
+
+- if has_permissions_for_one_of?(:account_mgr)
+  %h3 Account Management
+%ul
 - if permitted_to? :index, :preview_experiments
   %li= link_to 'View Offer Ranks', preview_experiments_path
-
-- # Account Management
+- if permitted_to? :index, :activities
+  %li= link_to 'Activity Log', activities_path
 - if permitted_to? :disabled_popular_offers, :tools
   %li= link_to 'Disabled Popular Offers', disabled_popular_offers_tools_path
 - if permitted_to? :index, :rank_boosts
@@ -54,10 +61,10 @@
   %li= link_to 'Enable Requests', tools_enable_offer_requests_path
 - if permitted_to? :index, :tools_offer_events
   %li= link_to 'Schedule Offer Events', tools_offer_events_path
-- if permitted_to? :manage_user_roles, :tools
-  %li= link_to 'Manage user roles', manage_user_roles_tool_path
 
-- # Support
+- if has_permissions_for_one_of?(:account_mgr, :customer_service, :admin)
+  %h3 Customer Support
+%ul
 - if permitted_to? :device_info, :tools
   %li= link_to 'Device Info & Unresolved clicks', device_info_tools_path
 - if permitted_to? :reset_device, :tools
