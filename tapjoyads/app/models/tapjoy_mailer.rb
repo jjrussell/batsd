@@ -61,7 +61,7 @@ class TapjoyMailer < ActionMailer::Base
   end
 
   def contact_us(info)
-    from info[:email]
+    from 'support@tapjoy.com'
     if Rails.env == 'development'
       recipients "dev@tapjoy.com"
     else
@@ -73,7 +73,7 @@ class TapjoyMailer < ActionMailer::Base
   end
 
   def publisher_application(info)
-    from info[:email]
+    from 'support@tapjoy.com'
     if Rails.env == 'development'
       recipients "dev@tapjoy.com"
     else
