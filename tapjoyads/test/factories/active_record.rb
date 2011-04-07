@@ -130,3 +130,12 @@ Factory.define :action_offer do |action_offer|
   action_offer.association :app
   action_offer.instructions '1. do some stuff'
 end
+
+Factory.define :offer_event do |offer_event|
+  offer_event.offer { Factory(:app).primary_offer }
+  offer_event.scheduled_for 1.hour.from_now
+  offer_event.user_enabled true
+  offer_event.change_user_enabled true
+  offer_event.daily_budget nil
+  offer_event.change_daily_budget false
+end

@@ -46,7 +46,7 @@ private
   end
   
   def scheduled_for_the_future
-    errors.add :scheduled_for, 'must be in the future.' if scheduled_for < Time.zone.now && editable?
+    errors.add :scheduled_for, 'must be in the future.' if scheduled_for && (scheduled_for < Time.zone.now) && editable?
   end
   
 end
