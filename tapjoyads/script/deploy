@@ -90,7 +90,7 @@ private
       puts "You must have a clean working directory!"
       exit
     end
-    system("git pull")
+    system("git pull tapjoy master")
   end
   
   def create_deploy_tag
@@ -119,7 +119,7 @@ private
     system("git tag -a -m 'Creating deploy tag #{@options[:version]}' #{@options[:version]}")
     
     puts "Pushing new version."
-    system("git push --tags origin master")
+    system("git push --tags tapjoy master")
   end
   
   def execute_cloudrun
