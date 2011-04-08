@@ -1,0 +1,128 @@
+- editable_offer ||= false
+
+- form_for([ @app, @offer_event ], :html => { :class => 'tjform' }) do |f|
+  %table
+    %tbody
+      - if editable_offer
+        %tr
+          %th
+            = label_tag('search_box', 'Offer Name')
+            #help_offer.help ?
+          %td
+            = text_field_tag('search_box', @offer_event.offer.present? ? @offer_event.offer.search_result_name : '', :size => '40')
+            = error_message_on @offer_event, :offer
+            = f.hidden_field :offer_id
+            #current
+              - if @offer_event.offer
+                Current User Enabled: 
+                %span= @offer_event.offer.user_enabled? ? 'Enabled' : 'Disabled'
+                %br
+                Current Daily Budget:
+                %span= @offer_event.offer.daily_budget == 0 ? 'Unlimited' : @offer_event.offer.daily_budget
+              - else
+                &nbsp;
+                %br
+                &nbsp;
+      - else
+        %tr
+          %th
+            = f.label :offer_name
+            #help_offer.help ?
+          %td
+            = @offer_event.offer.name
+            #current
+              Current User Enabled: 
+              %span= @offer_event.offer.user_enabled? ? 'Enabled' : 'Disabled'
+              %br
+              Current Daily Budget:
+              %span= @offer_event.offer.daily_budget == 0 ? 'Unlimited' : @offer_event.offer.daily_budget
+      %tr
+        %th
+          = f.label :scheduled_for, 'Scheduled time'
+          #help_scheduled_for.help ?
+        %td
+          = f.text_field :scheduled_for, :value => @offer_event.scheduled_for? ? @offer_event.scheduled_for.to_s(:mdy_ampm) : '', :size => 40
+          = error_message_on @offer_event, :scheduled_for
+      %tr
+        %th
+          = f.label :user_enabled
+          #help_user_enabled.help ?
+        %td
+          = f.select :user_enabled, [ [ 'Unchanged', nil ], [ 'Enabled', true ], [ 'Disabled', false ] ]
+          = error_message_on @offer_event, :user_enabled
+      %tr
+        %th
+          = f.label :daily_budget
+          #help_daily_budget.help ?
+        %td
+          - selected_option = @offer_event.change_daily_budget? ? (@offer_event.daily_budget == 0 ? 'Unlimited' : 'Limited') : 'Unchanged'
+          = select_tag 'daily_budget_selector', options_for_select([ [ 'Unchanged', 'Unchanged' ], [ 'Unlimited', 'Unlimited' ], [ 'Limited', 'Limited' ] ], selected_option)
+          = f.text_field :daily_budget, { :class => selected_option == 'Limited' ? '' : 'hidden' }
+          = error_message_on @offer_event, :daily_budget
+    
+  = f.submit 'Save Event' if @offer_event.editable?
+  
+.hidden
+  #help_offer_content{:name => 'Offer Name'}
+    The name of the offer.
+  #help_scheduled_for_content{:name => 'Scheduled For'}
+    When these changes should be applied to the offer.
+  #help_daily_budget_content{:name => 'Daily Budget'}
+    The maximum number of installs per day.
+  #help_user_enabled_content{:name => 'Enable Installs'}
+    Whether this offer should be enabled or not.
+
+- content_for :included_javascripts, javascript_include_tag('jquery-ui-timepicker-addon.min')
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('#search_box').autocomplete({ 
+        source: '#{search_offers_path}', 
+        delay: 250, 
+        minLength: 2, 
+        select: function(event, ui) {
+          var currentUserEnabled = ui.item.user_enabled ? 'Enabled' : 'Disabled';
+          var currentDailyBudget = ui.item.daily_budget == 0 ? 'Unlimited' : ui.item.daily_budget;
+          $('#offer_event_offer_id').val(ui.item.id);
+          $('#current').html('Current User Enabled: <span>' + currentUserEnabled + '</span><br/>Current Daily Budget: <span>' + currentDailyBudget + '</span>');
+        } 
+      });
+      
+      $('#offer_event_scheduled_for').datetimepicker({
+      	ampm: true,
+      	timeFormat: 'h:mm TT'
+      });
+      
+      $('#daily_budget_selector').change(function() {
+        if ($(this).val() == 'Limited') {
+          if ($('#offer_event_daily_budget').val() == '0') {
+            $('#offer_event_daily_budget').val('')
+          }
+          $('#offer_event_daily_budget').show();
+        }
+        else {
+          $('#offer_event_daily_budget').hide();
+        }
+      });
+      
+      $('#offer_event_daily_budget').change(function() {
+        var installLimit = stringToNumber($('#offer_event_daily_budget').val(), true);
+        if (installLimit < 1 ) {
+          installLimit = 1;
+          $('#offer_event_daily_budget').val('1');
+          alert('Daily install limit must be at least 1. To disable the campaign, please select "Disabled" from the "User Enabled" dropdown.');
+          return false;
+        }
+        return true;
+      });
+    });
+    
+- content_for :page_styles do
+  :plain
+    #current {
+      font-size: 12px;
+    }
+    #current span {
+      font-weight: bold;
+    }
