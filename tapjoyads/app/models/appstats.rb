@@ -242,10 +242,11 @@ class Appstats
       conversion_name = 'Conversions'
     end
 
+    is_android = (/android/i =~ offer.get_platform)
     data = {
       :connect_data => connect_data,
       :rewarded_installs_plus_spend_data => rewarded_installs_plus_spend_data(conversion_name),
-      :rewarded_installs_plus_rank_data => rewarded_installs_plus_rank_data(conversion_name),
+      :rewarded_installs_plus_rank_data => rewarded_installs_plus_rank_data(conversion_name, is_android),
       :revenue_data => revenue_data,
       :offerwall_data => offerwall_data,
       :featured_offers_data => featured_offers_data,
@@ -562,13 +563,25 @@ private
       key1.gsub(/^overall/, '1') <=> key2.gsub(/^overall/, '1')
     end
 
+    max_rank = @stats['ranks'].values.flatten.compact.max || 0
+    if max_rank > 90 || max_rank == 0
+      max_rank = 200
+    elsif max_rank > 40
+      max_rank = 100
+    elsif max_rank > 20
+      max_rank = 50
+    elsif max_rank > 10
+      max_rank = 25
+    else
+      max_rank = 15
+    end
     keys.each do |key|
       key_parts = key.split('.')
       country = "#{key_parts[2].titleize} (#{key_parts[1].titleize.gsub('Ipad', 'iPad')})"
       ranks = @stats['ranks'][key]
 
       @rank_partitions[country] ||= {}
-      @rank_partitions[country][:yMax] = 200
+      @rank_partitions[country][:yMax] = max_rank
       @rank_partitions[country][:names] ||= []
       @rank_partitions[country][:data] ||= []
       @rank_partitions[country][:totals] ||= []
@@ -677,7 +690,7 @@ private
     }
   end
 
-  def rewarded_installs_plus_rank_data(conversion_name)
+  def rewarded_installs_plus_rank_data(conversion_name, is_android)
     {
       :name => "Paid #{conversion_name} + Ranks",
       :intervals => formatted_intervals,
@@ -690,9 +703,9 @@ private
       },
       :partition_names => get_rank_partition_names,
       :partition_right => get_rank_partition_values,
-      :partition_title => 'Country',
+      :partition_title => is_android ? "Market" : "Country",
       :partition_fallback => 'This app is not in the top charts in any categories for the selected date range.',
-      :partition_default => 'United States',
+      :partition_default => is_android ? "Google" : 'United States',
     }
   end
 

@@ -1,5 +1,5 @@
 class StoreRank
-  cattr_accessor :itunes_category_ids, :itunes_pop_ids, :itunes_country_ids
+  cattr_accessor :itunes_category_ids, :itunes_pop_ids, :itunes_country_ids, :google_category_ids, :google_pop_ids
   
   def self.populate_store_rankings(time)
     hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
@@ -8,16 +8,23 @@ class StoreRank
     error_count = 0
     success_count = 0
     known_store_ids = {}
+    known_android_store_ids = {}
     stat_rows = {}
     
     ranks_file_name = "ranks.#{time.beginning_of_hour.to_s(:db)}.json"
     ranks_file = open("tmp/#{ranks_file_name}", 'w')
+    android_ranks_file_name = "ranks.android.#{time.beginning_of_hour.to_s(:db)}.json"
+    android_ranks_file = open("tmp/#{android_ranks_file_name}", 'w')
     
     log_progress "Populate store rankings. Task starting."
     
     App.find_each(:conditions => "platform = 'iphone' AND store_id IS NOT NULL") do |app|
       known_store_ids[app.store_id] ||= []
       known_store_ids[app.store_id] += app.offer_ids
+    end
+    App.find_each(:conditions => "platform = 'android' AND store_id IS NOT NULL") do |app|
+      known_android_store_ids[app.store_id] ||= []
+      known_android_store_ids[app.store_id] += app.offer_ids
     end
     log_progress "Finished loading known_store_ids."
     
@@ -62,6 +69,43 @@ class StoreRank
         end
       end
     end
+
+    google_category_ids.each do |category_key, category_name|
+      google_pop_ids.each do |pop_key, pop_id|
+        stat_type = "#{category_key}.#{pop_key}.google"
+        offset = 0
+        while offset < 200
+          url = google_rank_url(pop_id, category_name, offset)
+          offset += 24
+
+          request = Typhoeus::Request.new(url)
+          request.on_complete do |response|
+            current_offset = response.effective_url.split('start=').last.split('&').first.to_i
+            if response.code != 200
+              error_count += 1
+              if error_count > 50
+                raise "Too many errors attempting to download android ranks, giving up. App store down?"
+              end
+              log_progress "Error downloading ranks from google for category: #{category_key}, pop: #{pop_key}. Error code: #{response.code}. Retrying."
+              hydra.queue(request)
+            else
+              success_count += 1
+              ranks_hash = get_google_ranks_hash(response.body, current_offset)
+              ranks_hash.each do |store_id, rank|
+                next if known_android_store_ids[store_id].nil?
+                known_android_store_ids[store_id].each do |offer_id|
+                  stat_rows[offer_id] ||= Stats.new(:key => "app.#{date_string}.#{offer_id}", :load_from_memcache => false)
+                  stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour, rank)
+                end
+              end
+              android_ranks_file.puts( {"android.#{stat_type}" => ranks_hash}.to_json )
+            end
+          end
+          hydra.queue(request)
+        end
+      end
+    end
+
     log_progress "Finished queuing requests."
     
     hydra.run
@@ -74,11 +118,14 @@ class StoreRank
     
     ranks_file.close
     `gzip -f 'tmp/#{ranks_file_name}'`
+    android_ranks_file.close
+    `gzip -f 'tmp/#{android_ranks_file_name}'`
     
     retries = 3
     begin
       bucket = S3.bucket(BucketNames::STORE_RANKS)
       bucket.put("#{ranks_file_name}.gz", open("tmp/#{ranks_file_name}.gz"))
+      bucket.put("#{android_ranks_file_name}.gz", open("tmp/#{android_ranks_file_name}.gz"))
     rescue RightAws::AwsError => e
       log_progress "Failed attempt to write to s3. Error: #{e}"
       if (retries -= 1) > 0
@@ -94,6 +141,8 @@ class StoreRank
   ensure
     `rm 'tmp/#{ranks_file_name}'`
     `rm 'tmp/#{ranks_file_name}.gz'`
+    `rm 'tmp/#{android_ranks_file_name}'`
+    `rm 'tmp/#{android_ranks_file_name}.gz'`
   end
 
 private
@@ -106,10 +155,22 @@ private
     list.each_with_index do |id, index|
       hash[id] = index + 1
     end
-    
+
     hash
   end
-  
+
+  def self.get_google_ranks_hash(response_body, offset)
+    hash = {}
+    items = Hpricot(response_body)/".snippet.snippet-medium"
+    items.each_with_index do |item, index|
+      anchor = item/".details"/"a.title"
+      store_id = anchor.attr('href').match("id=(.*)").to_a.second
+      hash[store_id] = index + offset + 1
+    end
+
+    hash
+  end
+
   def self.log_progress(message)
     now = Time.zone.now
     Rails.logger.info "#{now} (#{now.to_i}): #{message}"
@@ -232,4 +293,61 @@ private
     "venezuela"             => 143502,
     "vietnam"               => 143471,
   }
+
+  def android_market_url(type, position, category=nil)
+    case type
+    when :google
+      url = "https://market.android.com/details?id=apps_topselling_free&start=#{start}"
+      url += "&cat=#{category}" unless category.nil?
+    end
+  end
+
+  @@google_category_ids = {
+    "overall"             => "",
+    "all_games"           => "GAME",
+    "all_applications"    => "APPLICATION",
+    "arcade_and_action"   => "ARCADE",
+    "books_and_reference" => "BOOKS_AND_REFERENCE",
+    "brain_and_puzzle"    => "BRAIN",
+    "business"            => "BUSINESS",
+    "cards_and_casino"    => "CARDS",
+    "casual"              => "CASUAL",
+    "comics"              => "COMICS",
+    "communication"       => "COMMUNICATION",
+    "education"           => "EDUCATION",
+    "entertainment"       => "ENTERTAINMENT",
+    "finance"             => "FINANCE",
+    "health_and_fitness"  => "HEALTH_AND_FITNESS",
+    "libraries_and_demo"  => "LIBRARIES_AND_DEMO",
+    "lifestyle"           => "LIFESTYLE",
+    "live_wallpaper"      => "APP_WALLPAPER",
+    "media_and_video"     => "MEDIA_AND_VIDEO",
+    "medical"             => "MEDICAL",
+    "music_and_audio"     => "MUSIC_AND_AUDIO",
+    "news_and_magazines"  => "NEWS_AND_MAGAZINES",
+    "personalization"     => "PERSONALIZATION",
+    "photography"         => "PHOTOGRAPHY",
+    "productivity"        => "PRODUCTIVITY",
+    "racing"              => "RACING",
+    "shopping"            => "SHOPPING",
+    "social"              => "SOCIAL",
+    "sports"              => "SPORTS",
+    "sports_games"        => "SPORTS_GAMES",
+    "tools"               => "TOOLS",
+    "transportation"      => "TRANSPORTATION",
+    "travel_and_local"    => "TRAVEL_AND_LOCAL",
+    "weather"             => "WEATHER",
+    "widgets"             => "APP_WIDGETS",
+  }
+
+  @@google_pop_ids      = {
+    "free"              => "apps_topselling_free",
+    "paid"              => "apps_topselling_paid"
+  }
+
+  def self.google_rank_url(type, category, offset)
+    url = "https://market.android.com/details?id=#{type}&start=#{offset}"
+    url += "&cat=#{category}" unless category.nil?
+    url
+  end
 end
