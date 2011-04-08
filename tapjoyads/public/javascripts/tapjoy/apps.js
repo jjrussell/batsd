@@ -46,7 +46,7 @@ $(function($){
       error();
     } else if (data.length > 0) {
       $(data).each(function(i,app){
-        var img = $('<img/>').attr('src', app.icon_url);
+        var img = $('<img/>').attr('src', (app.small_icon_url || app.icon_url));
         if (/a|Android/.test($('#app_platform').val() || $('td#app_platform').text())) {
           img.attr('width', 78).attr('height', 78);
         }
@@ -82,7 +82,7 @@ $(function($){
     $('#app_store_link').text(app.item_id);
     $('#app_store_link').attr('href', app.url);
     $('#app_price').text('$' + app.price);
-    $('#app_icon').html($('<img/>').attr('src', app.icon_url));
+    $('#app_icon').html($('<img/>').attr('src', (app.small_icon_url || app.icon_url)));
     $('#app_description').html(app.description.replace(/\n/g, "<br>"));
     $('#search_results').hide();
   };
