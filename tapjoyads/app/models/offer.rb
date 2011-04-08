@@ -119,6 +119,8 @@ class Offer < ActiveRecord::Base
   named_scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ] } }
   named_scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ] } }
   
+  alias_method :events, :offer_events
+  
   def self.redistribute_hourly_stats_aggregation
     Benchmark.realtime do
       now = Time.zone.now + 15.minutes

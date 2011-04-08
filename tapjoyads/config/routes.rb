@@ -47,7 +47,9 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post } do |app|
-    app.resources :offers, :only => [ :show, :update ] , :member => { :percentile => :post, :toggle => :post }, :controller => 'apps/offers'
+    app.resources :offers, :only => [ :show, :update ] , :member => { :percentile => :post, :toggle => :post }, :controller => 'apps/offers' do |offer|
+      offer.resources :events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :as => 'offer_events', :controller => 'apps/offers/offer_events'
+    end
     app.resources :currencies, :only => [ :show, :update, :new, :create ],
       :member => { :reset_test_device => :post }, :controller => 'apps/currencies'
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
