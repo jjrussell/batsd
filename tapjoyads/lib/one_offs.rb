@@ -1,23 +1,5 @@
 class OneOffs
 
-  def self.check_syntax
-    Rails::Initializer.run(:load_application_classes)
-
-    # haml
-    Dir.glob("app/views/**/*.haml").each do |f|
-      Haml::Engine.new(File.read(f))
-    end
-
-    true
-  end
-  
-  def self.update_sqlite_schema
-    ActiveRecord::Base.establish_connection('sqlite')
-    load('db/schema.rb')
-    ActiveRecord::Base.establish_connection(Rails.env)
-    true
-  end
-
   def self.migrate_publisher_users(select_options = {})
     count = 0
     already_migrated = 0

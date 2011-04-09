@@ -1,5 +1,23 @@
 class Utils
   
+  def self.check_syntax
+    Rails::Initializer.run(:load_application_classes)
+
+    # haml
+    Dir.glob("app/views/**/*.haml").each do |f|
+      Haml::Engine.new(File.read(f))
+    end
+
+    true
+  end
+  
+  def self.update_sqlite_schema
+    ActiveRecord::Base.establish_connection('sqlite')
+    load('db/schema.rb')
+    ActiveRecord::Base.establish_connection(Rails.env)
+    true
+  end
+  
   def self.import_udids(filename, app_id, udid_regex = //)
     counter = 0
     new_udids = 0
