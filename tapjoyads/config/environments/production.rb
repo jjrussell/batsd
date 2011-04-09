@@ -26,7 +26,10 @@ config.action_controller.allow_forgery_protection    = false
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-MEMCACHE_SERVERS = [ '10.125.59.200', '10.127.85.131', '10.120.30.112', '10.127.141.138' ]
+MEMCACHE_SERVERS = [ 'acs-prod.fqfjqv.1xmj.use1.acsvc.amazonaws.com',
+                     'acs-prod.fqfjqv.1xmk.use1.acsvc.amazonaws.com',
+                     'acs-prod.fqfjqv.1xml.use1.acsvc.amazonaws.com',
+                     'acs-prod.fqfjqv.1xmm.use1.acsvc.amazonaws.com' ]
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
