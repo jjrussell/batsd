@@ -187,7 +187,7 @@ class App < ActiveRecord::Base
     
     raise "cannot generate offer list without currency" if currency.nil?
     
-    return [ [], 0 ] if type == Offer::CLASSIC_OFFER_TYPE
+    return [ [], 0 ] if type == Offer::CLASSIC_OFFER_TYPE || partner_id == 'e9a6d51c-cef9-4ee4-a2c9-51eef1989c4e'
     
     final_offer_list   = []
     num_rejected       = 0

@@ -72,7 +72,7 @@ private
   end
   
   def check_syntax
-    unless system("script/runner 'OneOffs.check_syntax'")
+    unless system("script/runner 'Utils.check_syntax'")
       puts "Syntax Check: FAILED"
       exit
     end
@@ -101,7 +101,7 @@ private
     prompt_and_exit_if_not_yes
     
     puts "Updating webserver.sqlite file."
-    unless system("script/runner 'OneOffs.update_sqlite_schema' > /dev/null")
+    unless system("script/runner 'Utils.update_sqlite_schema' > /dev/null")
       puts "Failed to update webserver.sqlite!"
       exit
     end
