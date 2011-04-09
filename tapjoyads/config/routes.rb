@@ -74,7 +74,6 @@ ActionController::Routing::Routes.draw do |map|
                      :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get },
     :member => {  :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post }
-  map.manage_user_roles_tool 'tools/manage_user_roles', :controller => :tools, :action => :manage_user_roles
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get },
     :collection => { :global => :get, :publisher => :get, :advertiser => :get }
@@ -90,6 +89,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
   map.with_options(:controller => 'search') do |m|
     m.search_offers 'search/offers', :action => 'offers'
+    m.search_users 'search/users', :action => 'users'
   end
   map.premier 'premier', :controller => :premier, :action => :edit
   map.resources :preview_experiments, :only => [ :index, :show ]
@@ -101,6 +101,10 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]
     tools.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :as => :scheduling
+    tools.resources :users, :only => [ :index, :show ]
+    tools.namespace :users do |user|
+      user.resources :role_assignments, :only => [ :create, :destroy ]
+    end
   end
   map.resources :action_offers, :only => [ :show ]
   map.with_options :controller => :game_state do |m|

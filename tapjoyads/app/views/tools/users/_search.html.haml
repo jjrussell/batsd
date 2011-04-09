@@ -1,0 +1,29 @@
+#user_search
+  = label_tag 'search_box', 'Search email:'
+  = text_field_tag 'search_box', ''
+  %br/
+  = check_box_tag 'search_only_tapjoy', '1', true
+  = label_tag 'search_only_tapjoy', 'limit to &hellip;@tapjoy.com emails'
+
+- content_for :page_styles do
+  :plain
+    #user_search {
+      float: right;
+      text-align: right;
+    }
+    #search_box {
+      width: 300px;
+    }
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('#search_box').focus().autocomplete({
+        source: '#{search_users_path}?tapjoy_only=' + $('#search_only_tapjoy').is(':checked'),
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          location.href = '/tools/users/' + ui.item.user_id;
+        }
+      });
+    });
