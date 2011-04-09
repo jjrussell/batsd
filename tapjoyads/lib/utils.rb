@@ -1,48 +1,5 @@
 class Utils
   
-  # returns a hash of yesterday's store_click counts by country for the given advertiser_app_id
-  def self.installs_by_country_for_advertiser_app_id(advertiser_app_id, start_date, end_date)
-    st = Time.zone.parse(start_date).to_f.to_s
-    et = Time.zone.parse(end_date).end_of_day.to_f.to_s
-    counts = {}
-    NUM_REWARD_DOMAINS.times do |i|
-      Reward.select(:where => "advertiser_app_id = '#{advertiser_app_id}' and created >= '#{st}' and created < '#{et}'", :domain_name => "rewards_#{i}") do |reward|
-       country = reward.country
-       counts[country] = ((counts[country] || 0) + 1)
-      end
-    end
-    counts
-  end
-
-  def self.get_click_udids(filename, app_id)
-    file = File.open(filename, 'w')
-    50.times do |i|
-      count = 0
-      items = {}
-      
-      begin
-        SimpledbResource.select(:domain_name => "clicks_#{i}", :where => "advertiser_app_id = '#{app_id}'") do |click|
-          udid = click.key.split('.')[0]
-          installed = click.get('installed_at') != nil
-          items[udid] = "#{click.get('clicked_at')}, #{installed}"
-        count += 1
-        end
-      rescue 
-        puts "Error in select after #{count} on clicks_#{i}"
-        count = 0
-        items = {}
-        retry
-      end
-      
-      items.keys.each do |item|
-        file.puts "#{item}, #{items[item]}"
-      end
-      
-      puts "Wrote #{count} lines from click_#{i}"
-    end
-    file.close  
-  end
-  
   def self.import_udids(filename, app_id, udid_regex = //)
     counter = 0
     new_udids = 0
