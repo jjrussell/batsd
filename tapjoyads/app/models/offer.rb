@@ -503,6 +503,7 @@ class Offer < ActiveRecord::Base
     self.rank_score += rank_boost * boost_weight
     self.rank_score += over_threshold_weight if bid >= 40
     self.rank_score += 5 if item_type == "ActionOffer"
+    self.rank_score += 10 if price == 0
   end
   
   def estimated_percentile
