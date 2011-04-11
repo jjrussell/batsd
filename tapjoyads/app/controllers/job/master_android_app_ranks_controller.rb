@@ -1,4 +1,4 @@
-class Job::MasterAppRanksController < Job::JobController
+class Job::MasterAndroidAppRanksController < Job::JobController
   def initialize
     @now = Time.zone.now
   end
