@@ -563,25 +563,13 @@ private
       key1.gsub(/^overall/, '1') <=> key2.gsub(/^overall/, '1')
     end
 
-    max_rank = @stats['ranks'].values.flatten.compact.max || 0
-    if max_rank > 90 || max_rank == 0
-      max_rank = 200
-    elsif max_rank > 40
-      max_rank = 100
-    elsif max_rank > 20
-      max_rank = 50
-    elsif max_rank > 10
-      max_rank = 25
-    else
-      max_rank = 15
-    end
     keys.each do |key|
       key_parts = key.split('.')
       country = "#{key_parts[2].titleize} (#{key_parts[1].titleize.gsub('Ipad', 'iPad')})"
       ranks = @stats['ranks'][key]
 
       @rank_partitions[country] ||= {}
-      @rank_partitions[country][:yMax] = max_rank
+      @rank_partitions[country][:yMax] = 200
       @rank_partitions[country][:names] ||= []
       @rank_partitions[country][:data] ||= []
       @rank_partitions[country][:totals] ||= []
