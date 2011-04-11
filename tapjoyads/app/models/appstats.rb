@@ -703,9 +703,9 @@ private
       },
       :partition_names => get_rank_partition_names,
       :partition_right => get_rank_partition_values,
-      :partition_title => is_android ? "Market" : "Country",
+      :partition_title => is_android ? "Language" : "Country",
       :partition_fallback => 'This app is not in the top charts in any categories for the selected date range.',
-      :partition_default => is_android ? "Google" : 'United States',
+      :partition_default => is_android ? "English" : 'United States',
     }
   end
 

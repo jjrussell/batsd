@@ -4,7 +4,7 @@ class Job::MasterAppRanksController < Job::JobController
   end
   
   def index
-    StoreRank.populate_store_rankings(@now)
+    StoreRank.populate_itunes_appstore_rankings(@now)
 
     render :text => 'ok'
   end
