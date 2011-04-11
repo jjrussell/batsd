@@ -12,20 +12,22 @@ class ToolsController < WebsiteController
   end
 
   def monthly_data
-    @period = Date.current - 1.month
-    @period = Date.parse(params[:period]) unless params[:period].blank?
+    most_recent_period = Date.current.beginning_of_month.last_month
+    @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
 
-    month = @period.month
-    year  = @period.year
     @months = []
     date = Date.parse('2009-06-01') #the first month of the platform
-    while (date < Date.current.beginning_of_month) do
+    while date <= most_recent_period
       @months << date.strftime('%b %Y')
       date += 1.month
     end
 
-    conditions = [ "month = ? and year = ? and partner_id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'", month, year ]
+    conditions = [ "month = ? AND year = ? AND partner_id != '70f54c6d-f078-426c-8113-d6e43ac06c6d'", @period.month, @period.year ]
     MonthlyAccounting.using_slave_db do
+      expected    = Partner.count(:conditions => [ "created_at < ?", @period.next_month ])
+      actual      = MonthlyAccounting.count(:conditions => [ "month = ? AND year = ?", @period.month, @period.year ])
+      @completed  = actual * 100.0 / expected
+
       @spend      = MonthlyAccounting.sum(:spend,             :conditions => conditions) /-100.0
       @marketing  = MonthlyAccounting.sum(:marketing_orders,  :conditions => conditions) / 100.0
       @new_orders = MonthlyAccounting.sum(:website_orders,    :conditions => conditions) / 100.0 +

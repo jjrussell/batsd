@@ -20,6 +20,8 @@ class SdkController < WebsiteController
         IPHONE_OFFERS_SDK
       when 'iphone-vg'
         IPHONE_VG_SDK
+      when 'iphone-unity'
+        IPHONE_UNITY_PLUGIN
       else
         sdk_index_path
       end
