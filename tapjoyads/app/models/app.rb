@@ -117,9 +117,7 @@ class App < ActiveRecord::Base
     
     begin
       icon_src_blob = Downloader.get(url, :timeout => 30)
-      
-      small_url = url if small_url.nil?
-      small_icon_src_blob = Downloader.get(small_url, :timeout => 30)
+      small_icon_src_blob = small_url.nil? ? icon_src_blob : Downloader.get(small_url, :timeout => 30)
     rescue Exception => e
       Rails.logger.info "Failed to download icon for url: #{url}. Error: #{e}"
       Notifier.alert_new_relic(AppDataFetchError, "icon url #{url} for app id #{id}. Error: #{e}")
