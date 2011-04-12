@@ -64,11 +64,8 @@ private
       image_data = bucket.get('icons/ratestar.png')
       bucket.put("icons/#{id}.png", image_data, {}, 'public-read')
       
-      image_data = bucket.get('icons/57/ratestar.jpg')
-      bucket.put("icons/57/#{Offer.hashed_icon_id(id)}.jpg", image_data, {}, 'public-read')
-      
       image_data = bucket.get('icons/114/ratestar.jpg')
-      bucket.put("icons/114/#{Offer.hashed_icon_id(id)}.jpg", image_data, {}, 'public-read')
+      primary_offer.save_icon!(image_data)
     rescue
       sleep 0.5
       retries -= 1

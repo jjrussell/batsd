@@ -14,8 +14,7 @@ class Tools::GenericOffersController < WebsiteController
     log_activity(@generic_offer)
     if @generic_offer.save
       unless params[:icon].blank?
-        b = S3.bucket(BucketNames::TAPJOY)
-        b.put("icons/#{@generic_offer.id}.png", params[:icon], {}, "public-read")
+        @generic_offer.primary_offer.save_icon!(params[:icon])
       end
       flash[:notice] = 'Successfully created Generic Offer'
       redirect_to statz_path(@generic_offer.primary_offer)
