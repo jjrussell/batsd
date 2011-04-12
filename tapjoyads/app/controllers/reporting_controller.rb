@@ -37,43 +37,8 @@ class ReportingController < WebsiteController
   end
 
   def export
-    data =  "start_time,end_time,paid_clicks,paid_installs,new_users,paid_cvr,spend,itunes_rank_overall_free_united_states,"
-    data += "offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,offerwall_revenue,offerwall_ecpm,display_ads_revenue,display_ads_ecpm,featured_revenue,featured_ecpm"
-    data += ",daily_active_users,arpdau" if @granularity == :daily
-    data = [data]
-
     load_appstats
-    @appstats.stats['paid_clicks'].length.times do |i|
-      time_format = (@granularity == :daily) ? :mdy_ampm_utc : :mdy_ampm
-
-      line = [
-        @appstats.intervals[i].to_s(time_format),
-        @appstats.intervals[i + 1].to_s(time_format),
-        @appstats.stats['paid_clicks'][i],
-        @appstats.stats['paid_installs'][i],
-        @appstats.stats['new_users'][i],
-        @appstats.stats['cvr'][i],
-        number_to_currency(@appstats.stats['installs_spend'][i] / -100.0, :delimiter => ''),
-        (Array(@appstats.stats['ranks']['overall.free.united_states'])[i] || '-'),
-        @appstats.stats['offerwall_views'][i],
-        @appstats.stats['rewards_opened'][i],
-        @appstats.stats['rewards'][i],
-        @appstats.stats['rewards_cvr'][i],
-        number_to_currency(@appstats.stats['rewards_revenue'][i] / 100.0, :delimiter => ''),
-        number_to_currency(@appstats.stats['offerwall_ecpm'][i] / 100.0, :delimiter => ''),
-        number_to_currency(@appstats.stats['display_revenue'][i] / 100.0, :delimiter => ''),
-        number_to_currency(@appstats.stats['display_ecpm'][i] / 100.0, :delimiter => ''),
-        number_to_currency(@appstats.stats['featured_revenue'][i] /100.0, :delimiter => ''),
-        number_to_currency(@appstats.stats['featured_ecpm'][i] /100.0, :delimiter => ''),
-      ]
-
-      if @granularity == :daily
-        line << @appstats.stats['daily_active_users'][i]
-        line << number_to_currency(@appstats.stats['arpdau'][i] / 100.0, :delimiter => '')
-      end
-      data << line.join(',')
-    end
-
+    data = @appstats.to_csv
     send_data(data.join("\n"), :type => 'text/csv', :filename => "#{@offer.id}_#{@start_time.to_date.to_s(:db_date)}_#{@end_time.to_date.to_s(:db_date)}.csv")
   end
   
