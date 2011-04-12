@@ -1,0 +1,11 @@
+Current User Enabled: 
+%span= @offer_event.offer.user_enabled? ? 'Enabled' : 'Disabled'
+%br
+Current Bid:
+%span= number_to_currency(@offer_event.offer.bid * 0.01)
+%br
+Current Payment:
+%span= number_to_currency(@offer_event.offer.payment * 0.01)
+%br
+Current Daily Budget:
+%span= @offer_event.offer.daily_budget == 0 ? 'Unlimited' : @offer_event.offer.daily_budget
