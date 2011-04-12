@@ -1,5 +1,1 @@
-- @page_title = 'Edit an Offer Event'
-
-%h1 Edit an Offer Event
-
-= render('form', :editable_offer => false)
+= render('shared/offer_events/edit', :editable_offer => false, :offer_event => [ @app, @offer, @offer_event ])
