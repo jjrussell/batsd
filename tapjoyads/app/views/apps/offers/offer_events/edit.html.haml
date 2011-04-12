@@ -1,1 +1,4 @@
-= render('shared/offer_events/edit', :editable_offer => false, :offer_event => [ @app, @offer, @offer_event ])
+= render('shared/dropdown_select', :objects => current_partner_apps, :selected => @app)
+= render('apps/actions', :app => @app)
+#apps_main
+  = render('shared/offer_events/edit', :editable_offer => false, :offer_event => [ @app, @offer, @offer_event ])

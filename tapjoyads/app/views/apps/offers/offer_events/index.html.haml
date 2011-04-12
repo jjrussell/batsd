@@ -1,1 +1,4 @@
-= render('shared/offer_events/index')
+= render('shared/dropdown_select', :objects => current_partner_apps, :selected => @app)
+= render('apps/actions', :app => @app)
+#apps_main
+  = render('shared/offer_events/index')
