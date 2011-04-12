@@ -14,18 +14,7 @@
             = f.hidden_field :offer_id
             #current
               - if @offer_event.offer
-                Current User Enabled: 
-                %span= @offer_event.offer.user_enabled? ? 'Enabled' : 'Disabled'
-                %br
-                Current Bid:
-                %span= number_to_currency(@offer_event.offer.bid * 0.01)
-                %br
-                Current Daily Budget:
-                %span= @offer_event.offer.daily_budget == 0 ? 'Unlimited' : @offer_event.offer.daily_budget
-              - else
-                &nbsp;
-                %br
-                &nbsp;
+                = render('offer_info')
       - else
         %tr
           %th
@@ -34,14 +23,7 @@
           %td
             = @offer_event.offer.name
             #current
-              Current User Enabled: 
-              %span= @offer_event.offer.user_enabled? ? 'Enabled' : 'Disabled'
-              %br
-              Current Bid:
-              %span= number_to_currency(@offer_event.offer.bid * 0.01)
-              %br
-              Current Daily Budget:
-              %span= @offer_event.offer.daily_budget == 0 ? 'Unlimited' : @offer_event.offer.daily_budget
+              = render('offer_info')
       %tr
         %th
           = f.label :scheduled_for, 'Scheduled time'
@@ -119,7 +101,7 @@
           currentPayment = ui.item.payment;
           $('#offer_event_offer_id').val(ui.item.id);
           setEstimatedBudget();
-          $('#current').html('Current User Enabled: <span>' + currentUserEnabled + '</span><br/>Current Bid: <span>' + currentBid + '</span><br/>Current Daily Budget: <span>' + currentDailyBudget + '</span>');
+          $('#current').html('Current User Enabled: <span>' + currentUserEnabled + '</span><br/>Current Bid: <span>' + currentBid + '</span><br/>Current Payment: <span>' + numberToCurrency(currentPayment * 0.01) + '</span><br/>Current Daily Budget: <span>' + currentDailyBudget + '</span>');
         } 
       });
       
