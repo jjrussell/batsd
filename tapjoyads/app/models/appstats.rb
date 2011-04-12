@@ -242,7 +242,7 @@ class Appstats
       conversion_name = 'Conversions'
     end
 
-    is_android = (/android/i =~ offer.get_platform)
+    is_android = offer.present? && (/android/i =~ offer.get_platform)
     data = {
       :connect_data => connect_data,
       :rewarded_installs_plus_spend_data => rewarded_installs_plus_spend_data(conversion_name),
