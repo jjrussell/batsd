@@ -30,10 +30,6 @@ class OfferEvent < ActiveRecord::Base
     self.disabled_at = Time.zone.now
     save!
   end
-
-  def changes 
-    CHANGEABLE_ATTRIBUTES.reject { |attribute| self.send(attribute).nil? }.collect { |attribute| "#{attribute}: #{self.send(attribute)}"}.join("<br/>")
-  end
   
   def editable?
     !(ran_at || disabled_at)
