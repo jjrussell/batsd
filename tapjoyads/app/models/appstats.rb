@@ -229,7 +229,7 @@ class Appstats
       end
     end
     
-    get_labels_and_intervals(@start_time, @end_time) if @include_labels
+    get_labels_and_intervals if @include_labels
   end
 
   def graph_data(options)
@@ -242,10 +242,11 @@ class Appstats
       conversion_name = 'Conversions'
     end
 
+    is_android = offer.present? && (/android/i =~ offer.get_platform)
     data = {
       :connect_data => connect_data,
       :rewarded_installs_plus_spend_data => rewarded_installs_plus_spend_data(conversion_name),
-      :rewarded_installs_plus_rank_data => rewarded_installs_plus_rank_data(conversion_name),
+      :rewarded_installs_plus_rank_data => rewarded_installs_plus_rank_data(conversion_name, is_android),
       :revenue_data => revenue_data,
       :offerwall_data => offerwall_data,
       :featured_offers_data => featured_offers_data,
@@ -289,6 +290,47 @@ class Appstats
       data[:rewarded_installs_plus_spend_data][:main][:data]       << @stats['jailbroken_installs']
       data[:rewarded_installs_plus_spend_data][:main][:stringData] << @stats['jailbroken_installs'].map { |i| number_with_delimiter(i) }
       data[:rewarded_installs_plus_spend_data][:main][:totals]     << number_with_delimiter(@stats['jailbroken_installs'].sum)
+    end
+
+    data
+  end
+
+  def to_csv
+    data =  "start_time,end_time,paid_clicks,paid_installs,new_users,paid_cvr,spend,itunes_rank_overall_free_united_states,"
+    data += "offerwall_views,published_offer_clicks,published_offers_completed,published_cvr,offerwall_revenue,offerwall_ecpm,display_ads_revenue,display_ads_ecpm,featured_revenue,featured_ecpm"
+    data += ",daily_active_users,arpdau" if @granularity == :daily
+    data = [data]
+    get_labels_and_intervals unless @intervals.present?
+
+    stats['paid_clicks'].length.times do |i|
+      time_format = (@granularity == :daily) ? :mdy_ampm_utc : :mdy_ampm
+
+      line = [
+        @intervals[i].to_s(time_format),
+        @intervals[i + 1].to_s(time_format),
+        stats['paid_clicks'][i],
+        stats['paid_installs'][i],
+        stats['new_users'][i],
+        stats['cvr'][i],
+        number_to_currency(stats['installs_spend'][i] / -100.0, :delimiter => ''),
+        (Array(stats['ranks']['overall.free.united_states'])[i] || '-'),
+        stats['offerwall_views'][i],
+        stats['rewards_opened'][i],
+        stats['rewards'][i],
+        stats['rewards_cvr'][i],
+        number_to_currency(stats['rewards_revenue'][i] / 100.0, :delimiter => ''),
+        number_to_currency(stats['offerwall_ecpm'][i] / 100.0, :delimiter => ''),
+        number_to_currency(stats['display_revenue'][i] / 100.0, :delimiter => ''),
+        number_to_currency(stats['display_ecpm'][i] / 100.0, :delimiter => ''),
+        number_to_currency(stats['featured_revenue'][i] /100.0, :delimiter => ''),
+        number_to_currency(stats['featured_ecpm'][i] /100.0, :delimiter => ''),
+      ]
+
+      if @granularity == :daily
+        line << stats['daily_active_users'][i]
+        line << number_to_currency(stats['arpdau'][i] / 100.0, :delimiter => '')
+      end
+      data << line.join(',')
     end
 
     data
@@ -453,20 +495,21 @@ private
     end
   end
   
-  def get_labels_and_intervals(start_time, end_time)
+  def get_labels_and_intervals
     @intervals = []
     @x_labels = []
+    this_time = @start_time
     
-    while start_time < end_time
-      @intervals << start_time
+    while this_time < @end_time
+      @intervals << this_time
       
       if @granularity == :daily
-        @x_labels << start_time.strftime('%m-%d')
+        @x_labels << this_time.strftime('%m-%d')
       else
-        @x_labels << start_time.to_s(:time)
+        @x_labels << this_time.to_s(:time)
       end
       
-      start_time += (@granularity == :daily ? 1.day : 1.hour)
+      this_time += (@granularity == :daily ? 1.day : 1.hour)
     end
     
     if @x_labels.size > 30
@@ -478,7 +521,7 @@ private
       end
     end
     
-    @intervals << start_time
+    @intervals << this_time
   end
 
   def formatted_intervals
@@ -677,7 +720,7 @@ private
     }
   end
 
-  def rewarded_installs_plus_rank_data(conversion_name)
+  def rewarded_installs_plus_rank_data(conversion_name, is_android)
     {
       :name => "Paid #{conversion_name} + Ranks",
       :intervals => formatted_intervals,
@@ -690,9 +733,9 @@ private
       },
       :partition_names => get_rank_partition_names,
       :partition_right => get_rank_partition_values,
-      :partition_title => 'Country',
+      :partition_title => is_android ? "Language" : "Country",
       :partition_fallback => 'This app is not in the top charts in any categories for the selected date range.',
-      :partition_default => 'United States',
+      :partition_default => is_android ? "English" : 'United States',
     }
   end
 

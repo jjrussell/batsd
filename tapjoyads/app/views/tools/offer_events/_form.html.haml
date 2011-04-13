@@ -14,15 +14,7 @@
             = f.hidden_field :offer_id
             #current
               - if @offer_event.offer
-                Current User Enabled: 
-                %span= @offer_event.offer.user_enabled? ? 'Enabled' : 'Disabled'
-                %br
-                Current Daily Budget:
-                %span= @offer_event.offer.daily_budget == 0 ? 'Unlimited' : @offer_event.offer.daily_budget
-              - else
-                &nbsp;
-                %br
-                &nbsp;
+                = render('offer_info')
       - else
         %tr
           %th
@@ -31,11 +23,7 @@
           %td
             = @offer_event.offer.name
             #current
-              Current User Enabled: 
-              %span= @offer_event.offer.user_enabled? ? 'Enabled' : 'Disabled'
-              %br
-              Current Daily Budget:
-              %span= @offer_event.offer.daily_budget == 0 ? 'Unlimited' : @offer_event.offer.daily_budget
+              = render('offer_info')
       %tr
         %th
           = f.label :scheduled_for, 'Scheduled time'
@@ -57,8 +45,11 @@
         %td
           - selected_option = @offer_event.change_daily_budget? ? (@offer_event.daily_budget == 0 ? 'Unlimited' : 'Limited') : 'Unchanged'
           = select_tag 'daily_budget_selector', options_for_select([ [ 'Unchanged', 'Unchanged' ], [ 'Unlimited', 'Unlimited' ], [ 'Limited', 'Limited' ] ], selected_option)
-          = f.text_field :daily_budget, { :class => selected_option == 'Limited' ? '' : 'hidden' }
+          = f.text_field :daily_budget, { :class => selected_option == 'Limited' ? 'daily_budget' : 'hidden daily_budget' }
           = error_message_on @offer_event, :daily_budget
+          #estimated_budget.daily_budget{ :class => selected_option == 'Limited' ? '' : 'hidden' }
+            Estimated daily budget:
+            %span.value
     
   = f.submit 'Save Event' if @offer_event.editable?
   
@@ -77,6 +68,28 @@
 - content_for :page_javascript do
   :plain
     $(function() {
+      var currentPayment = #{@offer_event.offer.present? ? @offer_event.offer.payment : 0};
+      
+      var checkValidBudget = function() {
+        var installLimit = stringToNumber($('#offer_event_daily_budget').val(), true);
+        if (installLimit < 1 ) {
+          installLimit = 1;
+          $('#offer_event_daily_budget').val('1');
+          alert('Daily install limit must be at least 1. To disable the campaign, please select "Disabled" from the "User Enabled" dropdown.');
+          return false;
+        }
+        return true;
+      }
+      
+      var setEstimatedBudget = function() {
+        if ($('#offer_event_daily_budget').is(':visible')) {
+          checkValidBudget();
+          var installLimit = stringToNumber($('#offer_event_daily_budget').val(), true);
+          var budget = numberToCurrency(currentPayment * installLimit / 100);
+          $('#estimated_budget .value').text(budget);
+        }
+      };
+    
       $('#search_box').autocomplete({ 
         source: '#{search_offers_path}', 
         delay: 250, 
@@ -84,8 +97,11 @@
         select: function(event, ui) {
           var currentUserEnabled = ui.item.user_enabled ? 'Enabled' : 'Disabled';
           var currentDailyBudget = ui.item.daily_budget == 0 ? 'Unlimited' : ui.item.daily_budget;
+          var currentBid = numberToCurrency(ui.item.bid * 0.01);
+          currentPayment = ui.item.payment;
           $('#offer_event_offer_id').val(ui.item.id);
-          $('#current').html('Current User Enabled: <span>' + currentUserEnabled + '</span><br/>Current Daily Budget: <span>' + currentDailyBudget + '</span>');
+          setEstimatedBudget();
+          $('#current').html('Current User Enabled: <span>' + currentUserEnabled + '</span><br/>Current Bid: <span>' + currentBid + '</span><br/>Current Payment: <span>' + numberToCurrency(currentPayment * 0.01) + '</span><br/>Current Daily Budget: <span>' + currentDailyBudget + '</span>');
         } 
       });
       
@@ -99,30 +115,25 @@
           if ($('#offer_event_daily_budget').val() == '0') {
             $('#offer_event_daily_budget').val('')
           }
-          $('#offer_event_daily_budget').show();
+          $('.daily_budget').show();
         }
         else {
-          $('#offer_event_daily_budget').hide();
+          $('.daily_budget').hide();
         }
       });
       
       $('#offer_event_daily_budget').change(function() {
-        var installLimit = stringToNumber($('#offer_event_daily_budget').val(), true);
-        if (installLimit < 1 ) {
-          installLimit = 1;
-          $('#offer_event_daily_budget').val('1');
-          alert('Daily install limit must be at least 1. To disable the campaign, please select "Disabled" from the "User Enabled" dropdown.');
-          return false;
-        }
-        return true;
+        setEstimatedBudget();
       });
+      
+      setEstimatedBudget();
     });
     
 - content_for :page_styles do
   :plain
-    #current {
+    #current, #estimated_budget {
       font-size: 12px;
     }
-    #current span {
+    #current span, #estimated_budget span {
       font-weight: bold;
     }

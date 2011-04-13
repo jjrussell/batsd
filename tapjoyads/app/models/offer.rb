@@ -453,6 +453,49 @@ class Offer < ActiveRecord::Base
     "#{prefix}/icons/#{size}/#{icon_id}.jpg"
   end
   
+  def save_icon!(icon_src_blob, small_icon_src_blob = nil)
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    
+    icon_id = Offer.hashed_icon_id(id)
+    existing_icon_blob = bucket.get("icons/src/#{icon_id}.jpg") rescue ''
+    
+    return if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
+      
+    icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256)
+    medium_icon_blob = icon_256.to_blob{|i| i.format = 'JPG'}
+    
+    corner_mask_blob = bucket.get("display/round_mask.png")
+    corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(256, 256)
+    icon_256.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
+    icon_256 = icon_256.opaque('#ffffff00', 'white')
+    icon_256.alpha(Magick::OpaqueAlphaChannel)
+    
+    icon_256_blob = icon_256.to_blob{|i| i.format = 'JPG'}
+    icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
+    icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
+  
+    small_icon_src_blob = icon_src_blob if small_icon_src_blob.blank?
+    bucket.put("icons/#{id}.png", small_icon_src_blob, {}, "public-read")
+    bucket.put("icons/medium/#{id}.jpg", medium_icon_blob, {}, "public-read")
+    
+    bucket.put("icons/src/#{icon_id}.jpg", icon_src_blob, {}, "public-read")
+    bucket.put("icons/256/#{icon_id}.jpg", icon_256_blob, {}, "public-read")
+    bucket.put("icons/114/#{icon_id}.jpg", icon_114_blob, {}, "public-read")
+    bucket.put("icons/57/#{icon_id}.jpg", icon_57_blob, {}, "public-read")
+  
+    Mc.delete("icon.s3.#{id}")
+    
+    # Invalidate cloudfront
+    if existing_icon_blob.present?
+      begin
+        acf = RightAws::AcfInterface.new
+        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/#{id}.png", "/icons/medium/#{id}.jpg", "icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg"], "#{id}.#{Time.now.to_i}")
+      rescue Exception => e
+        Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
+      end
+    end
+  end
+  
   def get_countries
     Set.new(countries.blank? ? nil : JSON.parse(countries))
   end
@@ -503,6 +546,7 @@ class Offer < ActiveRecord::Base
     self.rank_score += rank_boost * boost_weight
     self.rank_score += over_threshold_weight if bid >= 40
     self.rank_score += 5 if item_type == "ActionOffer"
+    self.rank_score += 10 if price == 0
   end
   
   def estimated_percentile
