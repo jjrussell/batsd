@@ -1,6 +1,8 @@
-- @page_title = 'Schedule an Offer Event'
+- @page_title = 'Schedule an Offer Change'
 - editable_offer ||= false
 
-%h1 Schedule an Offer Event
+%h3 Schedule an Offer Change
+
+= render('shared/offer_events/instructions')
 
 = render('shared/offer_events/form', :editable_offer => editable_offer, :offer_event => offer_event)

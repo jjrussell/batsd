@@ -33,7 +33,7 @@
           = error_message_on @offer_event, :scheduled_for
       %tr
         %th
-          = f.label :user_enabled
+          = f.label :user_enabled, 'Enable installs'
           #help_user_enabled.help ?
         %td
           = f.select :user_enabled, [ [ 'Unchanged', nil ], [ 'Enabled', true ], [ 'Disabled', false ] ]
@@ -101,7 +101,7 @@
           currentPayment = ui.item.payment;
           $('#offer_event_offer_id').val(ui.item.id);
           setEstimatedBudget();
-          $('#current').html('Current User Enabled: <span>' + currentUserEnabled + '</span><br/>Current Bid: <span>' + currentBid + '</span><br/>Current Payment: <span>' + numberToCurrency(currentPayment * 0.01) + '</span><br/>Current Daily Budget: <span>' + currentDailyBudget + '</span>');
+          $('#current').html('Current Enable Installs: <span>' + currentUserEnabled + '</span><br/>Current Bid: <span>' + currentBid + '</span><br/>Current Payment: <span>' + numberToCurrency(currentPayment * 0.01) + '</span><br/>Current Daily Budget: <span>' + currentDailyBudget + '</span>');
         } 
       });
       

@@ -92,5 +92,18 @@ module WebsiteHelper
     false
   end
   
+  def offer_event_changes(offer_event, join_with = "<br/>")
+    OfferEvent::CHANGEABLE_ATTRIBUTES.reject { |attribute| offer_event.send(attribute).nil? }.collect { |attribute|
+      if attribute == :daily_budget
+        daily_budget = offer_event.send(attribute)
+        "#{attribute.to_s.titleize}: " + (daily_budget == 0 ? 'Unlimited' : daily_budget.to_s)
+      elsif attribute == :user_enabled
+        "Enable Installs: #{offer_event.user_enabled}"
+      else
+        "#{attribute.to_s.titleize}: #{offer_event.send(attribute)}"
+      end
+    }.join(join_with)
+  end
+  
 end
 

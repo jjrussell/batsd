@@ -1,0 +1,12 @@
+%p.description Offer Changes allow you to schedule changes to certain settings of your offer for specified times in the future.
+%p.description For example, to enable installs for your app a week from now without changing the Daily Budget, you would use the following settings:
+%ul.description
+  %li
+    Scheduled time:
+    = 1.week.from_now.to_s(:mdy_ampm)
+  %li Enable installs: Enabled
+  %li Daily budget: Unchanged
+    
+%p.description
+  If you have any questions about scheduling Offer Changes, please email
+  = mail_to("support@tapjoy.com") + "."

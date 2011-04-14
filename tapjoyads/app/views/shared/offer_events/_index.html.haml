@@ -1,8 +1,10 @@
-- @page_title = 'Event Scheduler'
+- @page_title = 'Offer Changes'
 
-%h1 Event Scheduler
+%h3 Offer Change Scheduler
 
-= link_to('Schedule an Offer Event', :action => :new)
+= render('shared/offer_events/instructions')
+
+= link_to('Schedule an Offer Change', :action => :new)
 
 .filters
   - form_tag('', :class => 'tjform', :method => :get, :id => 'filter-form') do
