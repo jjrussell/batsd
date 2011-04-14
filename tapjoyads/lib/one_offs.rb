@@ -41,4 +41,41 @@ class OneOffs
     puts "num_skipped: #{num_skipped}"
   end
 
+  def self.tapulous_sucks
+    partners = Set.new(['32b4c167-dd33-40c6-9b3e-2020427b6f4c'])
+    pub_user_ids = {}
+    NUM_REWARD_DOMAINS.times do |i|
+      Reward.select(:domain_name => "rewards_#{i}", :where => "offer_id = 'a3980ac5-7d33-43bc-8ba1-e4598c7ed279' AND advertiser_amount = '-3400' AND created > '1302739200' AND displayer_amount = '0'") do |r|
+        puts r.id
+        r.advertiser_amount = -34
+        r.publisher_amount = r.publisher_amount / 100
+        r.tapjoy_amount = 34 - r.publisher_amount
+        r.put('tapulous_overspend', '1')
+        r.save!
+        Conversion.connection.execute("UPDATE conversions SET advertiser_amount = #{r.advertiser_amount}, publisher_amount = #{r.publisher_amount}, tapjoy_amount = #{r.tapjoy_amount} WHERE id = '#{r.id}'")
+        app = App.find_in_cache(r.publisher_app_id, true)
+        partners << app.partner
+        pub_user_ids[r.publisher_app_id] ||= []
+        pub_user_ids[r.publisher_app_id] << r.publisher_user_id
+      end
+    end
+    puts "done fixing rewards and conversions"
+    
+    partners.each do |p|
+      p.reset_balances
+    end
+    puts "done fixing partner balances"
+    
+    (pub_user_ids.keys + ['a3980ac5-7d33-43bc-8ba1-e4598c7ed279']).each do |offer_id|
+      message = { :offer_id => offer_id, :start_time => '1302746400', :end_time => '1302757200' }.to_json
+      Sqs.send_message(QueueNames::RECOUNT_STATS, message)
+    end
+    puts "done queuing recount stats jobs"
+    
+    b = S3.bucket(BucketNames::TAPJOY)
+    b.put('tapulous_sucks', pub_user_ids.to_json)
+    
+    pub_user_ids
+  end
+
 end
