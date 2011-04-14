@@ -27,6 +27,10 @@ config.action_controller.allow_forgery_protection    = false
 # config.action_mailer.raise_delivery_errors = false
 
 MEMCACHE_SERVERS = [ '10.125.59.200', '10.127.85.131', '10.120.30.112', '10.127.141.138' ]
+# MEMCACHE_SERVERS = [ 'tapjoy-acs-prod.fqfjqv.1xmb.use1.acsvc.amazonaws.com',
+#                      'tapjoy-acs-prod.fqfjqv.1xmc.use1.acsvc.amazonaws.com',
+#                      'tapjoy-acs-prod.fqfjqv.1xmd.use1.acsvc.amazonaws.com',
+#                      'tapjoy-acs-prod.fqfjqv.1xme.use1.acsvc.amazonaws.com' ]
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']

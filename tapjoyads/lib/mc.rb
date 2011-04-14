@@ -4,7 +4,8 @@ class Mc
     options = {
       :support_cas      => true,
       :prefix_key       => RUN_MODE_PREFIX,
-      :auto_eject_hosts => false
+      :auto_eject_hosts => false,
+      :cache_lookups    => false
     }
     @@cache = Memcached.new(MEMCACHE_SERVERS, options)
     @@individual_caches = MEMCACHE_SERVERS.map do |server|
