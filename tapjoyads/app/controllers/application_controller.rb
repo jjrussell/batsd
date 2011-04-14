@@ -152,7 +152,7 @@ private
     render :text => '' if banned_ips.include?(get_ip_address)
   end
   
-  def log_activity(object)
+  def log_activity(object, options={})
     @request_id ||= UUIDTools::UUID.random_create.to_s
     @activity_logs ||= []
     
@@ -163,6 +163,7 @@ private
     activity_log.controller = params[:controller]
     activity_log.action = params[:action]
     activity_log.object = object
+    activity_log.associated = options[:associated] unless options[:associated].nil?
     @activity_logs << activity_log
   end
   
