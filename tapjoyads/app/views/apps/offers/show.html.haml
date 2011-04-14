@@ -12,6 +12,6 @@
     Enter your bid per install below. The minimum bid is 50% of the purchase price for paid apps, or $0.35 for free apps. 
     Higher bids will result in more installs.
 
-  = render('apps/offers_shared/scheduling')
+  = render('apps/offers_shared/scheduling') if @offer.tapjoy_enabled?
   = render('apps/offers_shared/form')
   

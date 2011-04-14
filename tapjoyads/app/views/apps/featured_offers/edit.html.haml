@@ -10,5 +10,5 @@
   %p.description
     Enter your bid per featured install below. The minimum bid is 100% of the purchase price for paid apps, or $0.65 for free apps. Higher bids will fetch more installs.
   
-  = render('apps/offers_shared/scheduling')
+  = render('apps/offers_shared/scheduling') if @offer.tapjoy_enabled?
   = render('apps/offers_shared/form', :featured => true)
