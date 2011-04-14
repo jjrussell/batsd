@@ -98,7 +98,7 @@ module WebsiteHelper
         daily_budget = offer_event.send(attribute)
         "#{attribute.to_s.titleize}: " + (daily_budget == 0 ? 'Unlimited' : daily_budget.to_s)
       elsif attribute == :user_enabled
-        "Enable Installs: #{offer_event.user_enabled}"
+        "Enable Installs: #{offer_event.user_enabled? ? 'Enabled' : 'Disabled'}"
       else
         "#{attribute.to_s.titleize}: #{offer_event.send(attribute)}"
       end
