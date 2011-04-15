@@ -212,7 +212,7 @@
         $(divId + " .amount").text(numberToCurrency(amount));
         $.colorbox({
           transition: "elastic", speed: 250, overlayClose: false, escKey: false,
-          innerWidth: 450, innerHeight: 200, opacity: 0.5, inline: true, close: 'Ok',
+          innerWidth: 450, innerHeight: 200, opacity: 0.5, inline: true, close: 'Cancel',
           onClosed: function(submitForm) {
             bidWarningCleared = true;
             if (submitForm) { $('form#update').submit(); }
@@ -236,18 +236,18 @@
           if (currentBidValue > userBidMaxValue) {
             $('#offer_bid').val(userBidMax).trigger('change');
             openColorbox('#bid_high_reject', userBidMaxValue);
-            $('#cboxCancel').hide();
+            $('#cboxAccept').hide();
           } else if (currentBidValue > userBidWarningValue && !bidWarningCleared) {
             openColorbox('#bid_high_warn', currentBidValue, submitForm);
-            if ($('#cboxCancel').length == 0) {
-              $('<div id="cboxCancel">').
-                text('Cancel').
+            if ($('#cboxAccept').length == 0) {
+              $('<div id="cboxAccept">').
+                text('Ok').
                 click(cancelAction).
                 hover(function () { $(this).addClass('hover'); },
                   function () { $(this).removeClass('hover'); }).
                 insertAfter('#cboxClose')
             }
-            $('#cboxCancel').show();
+            $('#cboxAccept').show();
             return false;
           }
         }
@@ -287,7 +287,7 @@
       var onOfferBidChanged = function(options) {
         options = options || {};
         bidWarningCleared = false;
-        if (options.skipValidation) {
+        if (!options.skipValidation) {
           checkMinimumPrice();
           checkMaximumBid(false);
         }
@@ -364,10 +364,10 @@
       margin: 20px auto;
     }
     #cboxClose{
-      background-color: #dfd;
+      background-color: #fbb;
     }
     #cboxClose.hover{
-      background-color: #bfb;
+      background-color: #f88;
     }
 
     #offer_status {
