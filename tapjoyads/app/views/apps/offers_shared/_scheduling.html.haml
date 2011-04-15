@@ -1,6 +1,6 @@
 -if has_role_with_hierarchy?(:account_mgr)
   - next_event = @offer.events.upcoming.first
-  .scheduling
+  .scheduling.admin
     %h4 Scheduling
     %p.description
       - if next_event.present?
