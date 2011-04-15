@@ -18,7 +18,7 @@ module WebsiteHelper
     if permitted_to?(:payout_info, :tools)
       field_name = [:decrypt, field_name].join('_').to_sym
     end
-    @payout_info.send(field_name)
+    object.send(field_name)
   end
 
   def clippy(text, bgcolor = '#FFFFFF')
