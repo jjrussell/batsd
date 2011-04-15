@@ -222,6 +222,7 @@
       };
       var cancelAction = function() {
         $('#offer_bid').val(numberToCurrency(originalBidValue));
+        onOfferBidChanged({skipValidation: true});
         $.fn.colorbox.close();
       };
       var checkMaximumBid = function(submitForm) {
@@ -283,16 +284,19 @@
         setEstimatedBudget();
         $('#offer_daily_budget').val(addCommaSeparators(stringToNumber($('#offer_daily_budget').val(), true)));
       }
-      $('#offer_bid').change(function() {
+      var onOfferBidChanged = function(options) {
+        options = options || {};
         bidWarningCleared = false;
-        checkMinimumPrice();
-        checkMaximumBid(false);
+        if (options.skipValidation) {
+          checkMinimumPrice();
+          checkMaximumBid(false);
+        }
         updatePercentile();
         if ( $('#daily_budget_on').is(':checked') ) {
           setEstimatedBudget();
         }
-      });
-
+      };
+      $('#offer_bid').change(function() { onOfferBidChanged(); });
       $('#offer_daily_budget').change(function() {
         var installsLimit = Math.floor(stringToNumber($(this).val(), true));
         $(this).val(addCommaSeparators(installsLimit));
