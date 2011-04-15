@@ -585,7 +585,8 @@ class Offer < ActiveRecord::Base
         already_complete?(publisher_app, device, app_version) ||
         show_rate_reject?(device) ||
         flixter_reject?(publisher_app, device) ||
-        whitelist_reject?(publisher_app) ||
+        publisher_whitelist_reject?(publisher_app) ||
+        currency_whitelist_reject?(currency) ||
         minimum_featured_bid_reject?(currency, type) ||
         jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers) ||
@@ -782,8 +783,12 @@ private
     return false
   end
   
-  def whitelist_reject?(publisher_app)
-    return !publisher_app_whitelist.blank? && !get_publisher_app_whitelist.include?(publisher_app.id)
+  def publisher_whitelist_reject?(publisher_app)
+    return publisher_app_whitelist.present? && !get_publisher_app_whitelist.include?(publisher_app.id)
+  end
+  
+  def currency_whitelist_reject?(currency)
+    return currency.use_whitelist? && !currency.get_offer_whitelist.include?(id)
   end
   
   def minimum_featured_bid_reject?(currency, type)

@@ -175,22 +175,18 @@ class CurrencyTest < ActiveSupport::TestCase
         partner.rev_share = 0.42
         partner.direct_pay_share = 0.8
         partner.disabled_partners = "foo"
+        partner.offer_whitelist = "bar"
+        partner.use_whitelist = true
         @currency.partner = partner
       end
       
-      should "copy spend_share from its partner's rev_share" do
+      should "copy values from its partner" do
         @currency.save!
         assert_equal 0.42, @currency.spend_share
-      end
-      
-      should "have the same direct_pay_share as its partner" do
-        @currency.save!
         assert_equal 0.8, @currency.direct_pay_share
-      end
-      
-      should "have the same disabled_partners as its partner" do
-        @currency.save!
         assert_equal 'foo', @currency.disabled_partners
+        assert_equal 'bar', @currency.offer_whitelist
+        assert_equal true, @currency.use_whitelist
       end
     end
     

@@ -25,11 +25,21 @@ class Partner < ActiveRecord::Base
   validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_inclusion_of :exclusivity_level_type, :in => ExclusivityLevel::TYPES, :allow_nil => true, :allow_blank => false
   validates_length_of :apsalar_username, :maximum => 60, :allow_nil => true
+  validates_inclusion_of :use_whitelist, :in => [ true, false ]
   validate :exclusivity_level_legal
   validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
+    record.errors.add(attribute, "must be blank when using whitelisting") if record.use_whitelist? && value.present?
     if record.disabled_partners_changed?
       value.split(';').each do |partner_id|
         record.errors.add(attribute, "contains an unknown partner id: #{partner_id}") if Partner.find_by_id(partner_id).nil?
+      end
+    end
+  end
+  validates_each :offer_whitelist, :allow_blank => true do |record, attribute, value|
+    record.errors.add(attribute, "must be blank when using blacklisting") if !record.use_whitelist? && value.present?
+    if record.offer_whitelist_changed?
+      value.split(';').each do |offer_id|
+        record.errors.add(attribute, "contains an unknown offer id: #{offer_id}") if Offer.find_by_id(offer_id).nil?
       end
     end
   end
@@ -41,6 +51,7 @@ class Partner < ActiveRecord::Base
     end
   end
   
+  before_validation :remove_whitespace_from_attributes
   after_save :update_currencies, :update_app_offers
   
   cattr_reader :per_page
@@ -245,7 +256,7 @@ class Partner < ActiveRecord::Base
 private
 
   def update_currencies
-    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed?
+    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed?
       currencies.each do |c|
         c.set_values_from_partner
         c.save!
@@ -265,6 +276,11 @@ private
     if old_exclusivity_level && exclusivity_level && old_exclusivity_level.months > exclusivity_level.months
       errors.add :exclusivity_level_type, "is illegal for a Partner with a current exclusivity level of #{exclusivity_level_type}"
     end
+  end
+  
+  def remove_whitespace_from_attributes
+    self.disabled_partners = disabled_partners.gsub(/\s/, '')
+    self.offer_whitelist   = offer_whitelist.gsub(/\s/, '')
   end
   
 end
