@@ -147,19 +147,19 @@
   #help_self_promote_only_content{:name => 'Self Promote Only'}
     Promote the app only on your own offerwalls. You will not be charged for these installs.
   #bid_high_reject.colorbox-content
-    The maximum bid you can set for this app is:
+    The maximum bid you can set for this offer is:
     .amount &nbsp;
     To set a higher bid, please contact your account manager or #{mail_to 'support@tapjoy.com'}.
   #bid_high_warn.colorbox-content
-    Please note that your bid will be:
+    Please confirm that your new bid will be:
     .amount &nbsp;
-    once you click on the &quot;Update&quot; button.
 - content_for :page_javascript do
   :plain
     var requestAppEnable = $.noop;
     $(function($){
       var originalBidValue = stringToNumber($('#offer_bid').val());
       var bidWarningCleared = true;
+      var valueChangeAccepted = false;
       $('#offer_submit_button').attr('disabled', '');
       $('#request_app_enable').attr('disabled', '');
       $('#offer_bid').keypress(function(e){
@@ -208,22 +208,25 @@
         $('#offer_bid').val(numberToCurrency(currentPrice));
         $('#offer_payment').val(numberToCurrency(currentPrice * #{(100.0 - @offer.partner.premier_discount) / 100.0}));
       };
+      var acceptAction = function() {
+        valueChangeAccepted = true;
+        $('form#update').submit();
+        $.fn.colorbox.close();
+      };
+      var cancelAction = function() {
+        if (!valueChangeAccepted) {
+          $('#offer_bid').val(numberToCurrency(originalBidValue)).effect('highlght',500);
+          onOfferBidChanged({skipValidation: true});
+        }
+      };
       var openColorbox = function(divId, amount, submitForm) {
         $(divId + " .amount").text(numberToCurrency(amount));
         $.colorbox({
-          transition: "elastic", speed: 250, overlayClose: false, escKey: false,
-          innerWidth: 450, innerHeight: 200, opacity: 0.5, inline: true, close: 'Cancel',
-          onClosed: function(submitForm) {
-            bidWarningCleared = true;
-            if (submitForm) { $('form#update').submit(); }
-          },
+          transition: "elastic", speed: 250, overlayClose: false, escKey: true,
+          innerWidth: 450, opacity: 0.5, inline: true, close: 'Cancel',
+          onClosed: cancelAction,
           href: divId,
         });
-      };
-      var cancelAction = function() {
-        $('#offer_bid').val(numberToCurrency(originalBidValue));
-        onOfferBidChanged({skipValidation: true});
-        $.fn.colorbox.close();
       };
       var checkMaximumBid = function(submitForm) {
         if (!#{permitted_to?(:edit, :statz)}) {
@@ -233,19 +236,20 @@
           var userBidMax = numberToCurrency(userBidMaxValue);
           var userBidWarningValue = #{@offer.user_bid_warning};
 
-          if (currentBidValue > userBidMaxValue) {
+          if (valueChangeAccepted) {
+          } else if (currentBidValue > userBidMaxValue) {
             $('#offer_bid').val(userBidMax).trigger('change');
             openColorbox('#bid_high_reject', userBidMaxValue);
             $('#cboxAccept').hide();
-          } else if (currentBidValue > userBidWarningValue && !bidWarningCleared) {
+          } else if (currentBidValue > userBidWarningValue && !bidWarningCleared && submitForm) {
             openColorbox('#bid_high_warn', currentBidValue, submitForm);
             if ($('#cboxAccept').length == 0) {
               $('<div id="cboxAccept">').
                 text('Ok').
-                click(cancelAction).
+                click(acceptAction).
                 hover(function () { $(this).addClass('hover'); },
                   function () { $(this).removeClass('hover'); }).
-                insertAfter('#cboxClose')
+                insertAfter('#cboxClose');
             }
             $('#cboxAccept').show();
             return false;
@@ -363,11 +367,41 @@
       text-align: center;
       margin: 20px auto;
     }
-    #cboxClose{
-      background-color: #fbb;
+    #cboxClose,#cboxAccept{
+      display: inline-block;
+      color: #222;
+      font-size: 16px;
+      font-family: arial, helvetica;
+      text-decoration: none;
+      padding: 3px 10px;
+      border: 1px solid #888;
+      border-radius: 4px;
+      -moz-border-radius: 4px;
+      -webkit-border-radius: 4px;
     }
-    #cboxClose.hover{
+    #cboxAccept{
+      text-shadow: 0px 1px 1px #dfd;
+      background-color: #bfb;
+      background: -webkit-gradient(linear, left top, left bottom, from(#bfb), to(#9d9));
+      background: -moz-linear-gradient(top,  #bfb,  #9d9);
+    }
+    #cboxClose{
+      text-shadow: 0px 1px 1px #fdd;
+      background-color: #fbb;
+      background: -webkit-gradient(linear, left top, left bottom, from(#fbb), to(#d99));
+      background: -moz-linear-gradient(top,  #fbb,  #d99);
+    }
+    #cboxAccept.hover {
+      text-shadow: 0px 1px 1px #afa;
+      background-color: #8f8;
+      background: -webkit-gradient(linear, left top, left bottom, from(#8f8), to(#6b6));
+      background: -moz-linear-gradient(top, #8f8, #6b6);
+    }
+    #cboxClose.hover {
+      text-shadow: 0px 1px 1px #faa;
       background-color: #f88;
+      background: -webkit-gradient(linear, left top, left bottom, from(#f88), to(#b66));
+      background: -moz-linear-gradient(top, #f88, #b66);
     }
 
     #offer_status {
