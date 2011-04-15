@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110404185032) do
+ActiveRecord::Schema.define(:version => 20110415050441) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -110,6 +110,8 @@ ActiveRecord::Schema.define(:version => 20110404185032) do
     t.integer  "minimum_featured_bid"
     t.decimal  "direct_pay_share",                   :precision => 8, :scale => 6, :default => 1.0,   :null => false
     t.boolean  "banner_advertiser",                                                :default => false, :null => false
+    t.text     "offer_whitelist",                                                                     :null => false
+    t.boolean  "use_whitelist",                                                    :default => false, :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -342,6 +344,8 @@ ActiveRecord::Schema.define(:version => 20110404185032) do
     t.string   "apsalar_username"
     t.string   "apsalar_api_secret"
     t.text     "apsalar_url"
+    t.text     "offer_whitelist",                                                                               :null => false
+    t.boolean  "use_whitelist",                                                          :default => false,     :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

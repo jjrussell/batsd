@@ -20,9 +20,12 @@ class Currency < ActiveRecord::Base
       record.errors.add(attribute, 'is not a valid url')
     end
   end
+  validates_each :disabled_offers, :allow_blank => true do |record, attribute, value|
+    record.errors.add(attribute, "must be blank when using whitelisting") if record.use_whitelist? && value.present?
+  end
   
+  before_validation :remove_whitespace_from_attributes
   before_create :set_values_from_partner
-  before_save :remove_whitespace_from_attributes
   after_save :update_memcached_by_app_id
   after_destroy :clear_memcached_by_app_id
   
@@ -121,6 +124,10 @@ class Currency < ActiveRecord::Base
     Set.new(disabled_partners.split(';'))
   end
   
+  def get_offer_whitelist
+    Set.new(offer_whitelist.split(';'))
+  end
+  
   def get_disabled_partners
     Partner.find_all_by_id(disabled_partners.split(';'))
   end
@@ -135,8 +142,11 @@ class Currency < ActiveRecord::Base
   
   def set_values_from_partner
     self.disabled_partners = partner.disabled_partners
-    self.spend_share = partner.rev_share * get_spend_share_ratio
-    self.direct_pay_share = partner.direct_pay_share
+    self.spend_share       = partner.rev_share * get_spend_share_ratio
+    self.direct_pay_share  = partner.direct_pay_share
+    self.offer_whitelist   = partner.offer_whitelist
+    self.use_whitelist     = partner.use_whitelist
+    true
   end
   
 private
@@ -166,9 +176,8 @@ private
   end
   
   def remove_whitespace_from_attributes
-    self.test_devices      = test_devices.gsub(/\s/, '')
-    self.disabled_partners = disabled_partners.gsub(/\s/, '')
-    self.disabled_offers   = disabled_offers.gsub(/\s/, '')
+    self.test_devices    = test_devices.gsub(/\s/, '')
+    self.disabled_offers = disabled_offers.gsub(/\s/, '')
   end
   
 end
