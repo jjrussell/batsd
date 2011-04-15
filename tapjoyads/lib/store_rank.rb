@@ -34,7 +34,7 @@ class StoreRank
           request.on_complete do |response|
             if response.code != 200
               error_count += 1
-              if error_count > 50
+              if error_count > 100
                 raise "Too many errors attempting to download itunes ranks, giving up. App store down?"
               end
               log_progress "Error downloading ranks from itunes for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Error code: #{response.code}. Retrying."
