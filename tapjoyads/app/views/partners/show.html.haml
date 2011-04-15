@@ -52,8 +52,9 @@
 
 .clear
 
+
+- @payout_info = @partner.payout_info
 - if permitted_to?(:publishers_without_payout_info, :tools)
-  - @payout_info = @partner.payout_info
   - if @payout_info
     - if @payout_info.filled?
       %h2 Tax and Payment Information
@@ -74,7 +75,7 @@
           %td= @payout_info.billing_name
         %tr
           %th Tax ID:
-          %td= @payout_info.decrypt_tax_id
+          %td= decrypt_if_permitted(@payout_info, :tax_id)
         %tr
           %td.wide{:colspan=>2} Payment Information
         %tr
@@ -106,19 +107,19 @@
           %td= @payout_info.address_country
         %tr
           %th Bank Name:
-          %td= @payout_info.decrypt_bank_name
+          %td= decrypt_if_permitted(@payout_info, :bank_name)
         %tr
           %th Bank Address:
-          %td= @payout_info.decrypt_bank_address
+          %td= decrypt_if_permitted(@payout_info, :bank_address)
         %tr
           %th Bank Routing Number/SWIFT:
-          %td= @payout_info.decrypt_bank_routing_number
+          %td= decrypt_if_permitted(@payout_info, :bank_routing_number)
         %tr
           %th Bank Account Number/IBAN:
-          %td= @payout_info.decrypt_bank_account_number
+          %td= decrypt_if_permitted(@payout_info, :bank_account_number)
 
-  - else
-    %h2.not_integrated Partner has not submitted payment/tax information.
+- else
+  %h2.not_integrated Partner has not submitted payment/tax information.
 
 %table#apps_table.tablesorter
   %thead
