@@ -37,7 +37,7 @@
               The bid is just one of many factors affecting your offerwall ranking.
             - if !featured && !@offer.on_track_for_budget? && @offer.needs_higher_bid?
               .percentile-details
-                To position your app in the top 15% of the offerwall, your bid should be at least 
+                To position your app in the top 15% of the offerwall, your bid should be at least
                 %b>= " " + number_to_currency(0.01 * @offer.bid_for_percentile(85))
                 \.
       %tr
@@ -114,7 +114,7 @@
       - if permitted_to?(:edit, :statz)
         = render('apps/offers_shared/admin_fields', :f => f)
       %tr
-        %td{ :colspan => 2 }= f.submit 'Update'
+        %td{ :colspan => 2 }= f.submit 'Update', {:disabled => 'disabled', :id => 'offer_submit_button'}
 
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
   - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
@@ -146,14 +146,25 @@
     When your Tapjoy Premier exclusivity expires.
   #help_self_promote_only_content{:name => 'Self Promote Only'}
     Promote the app only on your own offerwalls. You will not be charged for these installs.
-
+  #bid_high_reject.colorbox-content
+    The maximum bid you can set for this app is:
+    .amount &nbsp;
+    To set a higher bid, please contact your account manager or #{mail_to 'support@tapjoy.com'}.
+  #bid_high_warn.colorbox-content
+    Please note that your bid will be:
+    .amount &nbsp;
+    once you click on the &quot;Update&quot; button.
 - content_for :page_javascript do
   :plain
     var requestAppEnable = $.noop;
     $(function($){
       var originalBidValue = stringToNumber($('#offer_bid').val());
-    
+      var bidWarningCleared = true;
+      $('#offer_submit_button').attr('disabled', '');
       $('#request_app_enable').attr('disabled', '');
+      $('#offer_bid').keypress(function(e){
+        if (e.keyCode == 13) { return false;}
+      });
       requestAppEnable = function() {
         $('form#new_enable_offer_request').submit();
       };
@@ -195,9 +206,52 @@
           currentPrice = minimumPrice;
         }
         $('#offer_bid').val(numberToCurrency(currentPrice));
-        $('#offer_payment').val(numberToCurrency(currentPrice * #{(100.0 - @offer.partner.premier_discount)/100.0}));
+        $('#offer_payment').val(numberToCurrency(currentPrice * #{(100.0 - @offer.partner.premier_discount) / 100.0}));
       };
+      var openColorbox = function(divId, amount, submitForm) {
+        $(divId + " .amount").text(numberToCurrency(amount));
+        $.colorbox({
+          transition: "elastic", speed: 250, overlayClose: false, escKey: false,
+          innerWidth: 450, innerHeight: 200, opacity: 0.5, inline: true, close: 'Ok',
+          onClosed: function(submitForm) {
+            bidWarningCleared = true;
+            if (submitForm) { $('form#update').submit(); }
+          },
+          href: divId,
+        });
+      };
+      var cancelAction = function() {
+        $('#offer_bid').val(numberToCurrency(originalBidValue));
+        $.fn.colorbox.close();
+      };
+      var checkMaximumBid = function(submitForm) {
+        if (!#{permitted_to?(:edit, :statz)}) {
+          var currentBid = $('#offer_bid').val();
+          var currentBidValue = stringToNumber(currentBid);
+          var userBidMaxValue = #{@offer.user_bid_max};
+          var userBidMax = numberToCurrency(userBidMaxValue);
+          var userBidWarningValue = #{@offer.user_bid_warning};
 
+          if (currentBidValue > userBidMaxValue) {
+            $('#offer_bid').val(userBidMax).trigger('change');
+            openColorbox('#bid_high_reject', userBidMaxValue);
+            $('#cboxCancel').hide();
+          } else if (currentBidValue > userBidWarningValue && !bidWarningCleared) {
+            openColorbox('#bid_high_warn', currentBidValue, submitForm);
+            if ($('#cboxCancel').length == 0) {
+              $('<div id="cboxCancel">').
+                text('Cancel').
+                click(cancelAction).
+                hover(function () { $(this).addClass('hover'); },
+                  function () { $(this).removeClass('hover'); }).
+                insertAfter('#cboxClose')
+            }
+            $('#cboxCancel').show();
+            return false;
+          }
+        }
+        return true
+      }
       var updatePercentile = function() {
         $.ajax({
           data: { "bid" : $('#offer_bid').val() },
@@ -230,7 +284,9 @@
         $('#offer_daily_budget').val(addCommaSeparators(stringToNumber($('#offer_daily_budget').val(), true)));
       }
       $('#offer_bid').change(function() {
+        bidWarningCleared = false;
         checkMinimumPrice();
+        checkMaximumBid(false);
         updatePercentile();
         if ( $('#daily_budget_on').is(':checked') ) {
           setEstimatedBudget();
@@ -251,18 +307,10 @@
         toggleDailyBudget();
       });
       toggleDailyBudget();
-      
-      $('#offer_submit').click(function() {
-        var currentBid = $('#offer_bid').val();
-        var currentBidValue = stringToNumber(currentBid);
-        if (currentBidValue >= 5 * originalBidValue) {
-          return confirm('Are you sure you want to change your bid to ' + currentBid + '?');
-        }
-      });
 
       $('form#update').submit(function() {
         checkMinimumPrice();
-        return checkValidBudget();
+        return checkValidBudget() && checkMaximumBid(true);
       });
     });
 
@@ -302,10 +350,26 @@
       width: 336px;
     }
 
+    .colorbox-content {
+      font-size: 20px;
+    }
+    .colorbox-content .amount {
+      font-size: 72px;
+      font-weight: bold;
+      text-align: center;
+      margin: 20px auto;
+    }
+    #cboxClose{
+      background-color: #dfd;
+    }
+    #cboxClose.hover{
+      background-color: #bfb;
+    }
+
     #offer_status {
-    	padding: .8em;
-    	margin-bottom: 1em;
-    	border: 2px solid #ddd;
+      padding: .8em;
+      margin-bottom: 1em;
+      border: 2px solid #ddd;
     }
 
     #offer_status.bad { background: #FBB3B4; color: #6a0f01; border-color: #FB8284; }
