@@ -12,6 +12,18 @@ var loadData = function(data) {
   $('#date').val(data.date);
   $('#end_date').val(data.end_date);
   $('#granularity').val(data.granularity);
+  $('#download_date').val(data.date);
+  $('#download_end_date').val(data.end_date);
+  $('#download_granularity').val(data.granularity);
+};
+
+var rangeIsLast24Hours = function() {
+  var endDate = new Date($('#end_date').val());
+  var startDate = new Date($('#date').val());
+  var today = new Date();
+  var diff = endDate - startDate;
+  var granularity = $('#granularity').val();
+  return (granularity == 'hourly' && diff == 86400000 && endDate.toDateString() == today.toDateString());
 };
 
 var updateURL = function(oldURL) {
@@ -30,9 +42,9 @@ var updateURL = function(oldURL) {
 
     // overwrite
     if (rangeIsLast24Hours()) {
-      delete hash.date
-      delete hash.end_date
-      delete hash.granularity
+      delete hash.date;
+      delete hash.end_date;
+      delete hash.granularity;
     } else {
       hash.date = $('#date').val();
       hash.end_date = $('#end_date').val();
@@ -56,15 +68,6 @@ var updateURL = function(oldURL) {
     '&granularity=' + $('#granularity').val();
 };
 
-var rangeIsLast24Hours = function() {
-  var endDate = new Date($('#end_date').val());
-  var startDate = new Date($('#date').val());
-  var today = new Date();
-  var diff = endDate - startDate;
-  var granularity = $('#granularity').val();
-  return (granularity == 'hourly' && diff == 86400000 && endDate.toDateString() == today.toDateString());
-};
-
 $(function($) {
   try {
     Tapjoy.Graph.initGraphs($('#charts .graph'));
@@ -75,6 +78,8 @@ $(function($) {
   $('#end_date').datepicker();
 
   var ajaxCall = function(){
+    $('#flash_warning span.message').text('');
+    $('#flash_warning').fadeOut();
     if ($('#granularity').val()=='hourly') {
       var diff = new Date($('#end_date').val()) - new Date($('#date').val());
       if (diff > 518400000) { // 7 days
@@ -119,9 +124,17 @@ $(function($) {
         $('.load-circle').hide();
       },
       dataType: 'json'
-    })
+    });
   };
-  $('#date, #end_date, #granularity').change(ajaxCall);
+  $('#date_submit').click(function(event) {
+      event.preventDefault();
+      ajaxCall();
+  });
+
+  $('#export_submit').click(function(event) {
+    event.preventDefault();
+  });
+
   // load appropriate data from anchor
   $.each(Tapjoy.anchorToParams(), function(key,val){
     $('#'+key).val(val);

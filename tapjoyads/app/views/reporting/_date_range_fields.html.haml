@@ -2,3 +2,4 @@
 \-
 = text_field_tag(:end_date, @end_time.to_date.to_s(:mdy))
 = select_tag(:granularity, options_for_select({ 'Daily' => :daily, 'Hourly' => :hourly }, @granularity))
+= submit_tag('Update', :id => :date_submit)
