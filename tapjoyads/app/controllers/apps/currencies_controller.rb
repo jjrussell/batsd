@@ -30,7 +30,7 @@ class Apps::CurrenciesController < WebsiteController
     
     safe_attributes = [:name, :conversion_rate, :initial_balance, :callback_url, :secret_key, :test_devices, :minimum_featured_bid]
     if permitted_to?(:edit, :statz)
-      safe_attributes += [:disabled_offers, :max_age_rating, :only_free_offers, :ordinal, :banner_advertiser]
+      safe_attributes += [:disabled_offers, :max_age_rating, :only_free_offers, :ordinal, :banner_advertiser, :tapjoy_enabled]
     end
     
     if @currency.safe_update_attributes(currency_params, safe_attributes)

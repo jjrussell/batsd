@@ -103,6 +103,8 @@ private
     end
     return unless verify_records(required_records)
     
+    return if currency_disabled?
+    
     return if offer_disabled?
     
     @device = Device.new(:key => params[:udid])
@@ -112,6 +114,17 @@ private
     
     wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
     build_web_request(wr_path)
+  end
+  
+  def currency_disabled?
+    disabled = !@currency.tapjoy_enabled?
+    if disabled
+      build_web_request('disabled_currency')
+      save_web_request
+      render 'unavailable_offer'
+    end
+    
+    return disabled
   end
   
   def offer_disabled?

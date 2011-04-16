@@ -69,6 +69,15 @@
         %td
           = f.currency_field :minimum_featured_bid
           = error_message_on(@currency, :minimum_featured_bid)
+      %tr
+        %th
+          Tapjoy Enabled
+          #help_enabled.help ?
+        %td
+          - if @currency.tapjoy_enabled?
+            .tapjoy-enabled Enabled
+          - else
+            .tapjoy-disabled Disabled
       - if permitted_to?(:edit, :statz)
         = render :partial => 'admin_fields', :locals => {:f => f}
       %tr
@@ -159,6 +168,9 @@
       If you are displaying featured offers, only featured offers with a bid higher than this will be shown.
     #help_reset_test_device_balance_content{:name => 'Reset Balance'}
       Sets the device's balance back to the currency's initial value.
+    #help_enabled_content{:name => 'Tapjoy Enabled'}
+      Tapjoy approval status. Users will NOT be able to earn currency until this is enabled.
+      Please email support@tapjoy.com to get approval.
 
 - content_for :page_javascript do
   :plain
@@ -238,3 +250,9 @@
       white-space: nowrap;
     }
     
+    .tapjoy-enabled {
+      color: #328F0D;
+    }
+    .tapjoy-disabled {
+      color: #AF1515;
+    }
