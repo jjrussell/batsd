@@ -163,7 +163,7 @@ private
     activity_log.controller = params[:controller]
     activity_log.action = params[:action]
     activity_log.object = object
-    activity_log.associated = options[:associated] unless options[:associated].nil?
+    activity_log.include = options[:include] unless options[:include].blank?
     @activity_logs << activity_log
   end
   

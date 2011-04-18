@@ -7,8 +7,7 @@ class ActivityLog < SimpledbResource
   self.sdb_attr :request_id
   self.sdb_attr :object_id
   self.sdb_attr :object_type
-  self.sdb_attr :associated_id
-  self.sdb_attr :associated_type
+  self.sdb_attr :included_methods
   self.sdb_attr :partner_id
   self.sdb_attr :before_state, :type => :json
   self.sdb_attr :after_state,  :type => :json
@@ -40,30 +39,17 @@ class ActivityLog < SimpledbResource
     self.before_state = fix_time_zones(obj.attributes)
   end
 
-  def associated
-    return @state_associated unless @state_associated.nil?
-
-    klass = self.associated_type.constantize
-    if klass.respond_to?(:sdb)
-      @state_associated = klass.new(:key => self.associated_id)
-    else
-      @state_associated = klass.find_by_id(self.associated_id)
-    end
-    @state_associated_new = false
-    @state_associated
-  end
-
-  def associated=(assoc)
-    @state_associated = assoc
-    @state_associated_new = assoc.new_record?
-    @associated_before_state = fix_time_zones(assoc.attributes)
+  def include=(methods)
+    @included_methods = methods
+    self.before_state = add_included_methods(self.before_state)
   end
 
   def finalize_states
     self.object_id = @state_object.id
     self.object_type = @state_object.class.to_s
     self.after_state = fix_time_zones(@state_object.attributes)
-    
+    self.after_state = add_included_methods(self.after_state)
+
     if @state_object.respond_to?(:partner_id)
       self.partner_id = @state_object.partner_id
     elsif self.object_type == 'Partner'
@@ -97,41 +83,6 @@ class ActivityLog < SimpledbResource
       after_hash = {}
     end
 
-    unless @state_associated.nil?
-      self.associated_id = @state_associated.id
-      self.associated_type = @state_associated.class.to_s
-      associated_key_name = "associated #{self.associated_type.underscore}"
-      if @state_associated_new
-        before_hash[associated_key_name] = {}
-        after_hash[associated_key_name] = @state_associated.attributes
-      else
-        before_hash[associated_key_name] = @associated_before_state
-        begin
-          after_hash[associated_key_name] = @state_associated.reload.attributes
-          after_hash[associated_key_name].reject! do |k, v|
-            if before_hash[associated_key_name][k] == v
-              before_hash[associated_key_name].delete(k)
-              true
-            else
-              false
-            end
-          end
-        rescue ActiveRecord::RecordNotFound
-          after_hash[associated_key_name] = {}
-        end
-
-        if before_hash[associated_key_name].length == 1 && (before_hash[associated_key_name]['updated_at'] || before_hash[associated_key_name]['updated-at'])
-          before_hash[associated_key_name] = {}
-        end
-      end
-
-      if after_hash[associated_key_name].length == 1 && (after_hash[associated_key_name]['updated_at'] || after_hash[associated_key_name]['updated-at'])
-        after_hash[associated_key_name] = {}
-      end
-      before_hash[associated_key_name] = before_hash[associated_key_name].to_json
-      after_hash[associated_key_name] = after_hash[associated_key_name].to_json
-    end
-
     self.before_state = before_hash
     self.after_state = after_hash
   end
@@ -153,5 +104,15 @@ private
     end
     attrs
   end
-  
+
+  def add_included_methods(attrs)
+    Rails.logger.warn @included_methods.to_json
+    unless @included_methods.blank?
+      @state_object.reload
+      @included_methods.each do |method|
+        attrs[method.to_s] = @state_object.send(method.to_sym).to_json
+      end
+    end
+    attrs
+  end
 end
