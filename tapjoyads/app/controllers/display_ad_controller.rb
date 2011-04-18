@@ -266,7 +266,6 @@ private
       img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
       
       text = "Earn #{currency.get_reward_amount(offer)} #{currency.name} download \\n#{offer.name}"
-      text = "Download #{offer.name}" if currency.partner_id == '28239536-44dd-417f-942d-8247b6da0e84'
       font = Rails.env == 'production' ? 'Helvetica' : ''
       image_label = Magick::Image.read("caption:#{text}") do
         self.size = text_area_size
