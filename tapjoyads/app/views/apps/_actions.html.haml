@@ -1,6 +1,6 @@
 #apps_tools.vertical-menu
   %ul
-    - unless app.nil?
+    - unless app.nil? || app.new_record?
       %li= link_to 'Details', app_path(app), :class => (request.path_parameters['controller'] == 'apps' && !request.path_parameters['action'][/integrate/] ? 'selected' : '')
       %li= link_to 'Pay-Per-Install', app_offer_path(:id => app.primary_offer.id, :app_id => app.id), :class => (controller.controller_name == 'offers' ? 'selected' : '')
       - if @app.primary_offer.present? && @app.primary_offer.tapjoy_enabled?

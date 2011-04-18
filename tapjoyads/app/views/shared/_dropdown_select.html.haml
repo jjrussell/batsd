@@ -4,7 +4,7 @@
     #selected_app_arrow{ :title => "Select your app" }
       = image_tag('dropdown_arrow.png')
     #selected_app_text
-      - if selected.nil?
+      - if selected.nil? || selected.new_record?
         = image_tag('add_app.png', :size => '24x24', :alt => '')
         Add a new App
         = link_to('#', new_app_path, :class => "hidden")

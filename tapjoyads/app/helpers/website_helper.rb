@@ -92,6 +92,10 @@ module WebsiteHelper
     false
   end
   
+  def content_for_exists?(content_name)
+    instance_variable_get("@content_for_#{content_name}").present?
+  end
+
   def offer_event_changes(offer_event, join_with = "<br/>")
     OfferEvent::CHANGEABLE_ATTRIBUTES.reject { |attribute| offer_event.send(attribute).nil? }.collect { |attribute|
       if attribute == :daily_budget

@@ -1,30 +1,27 @@
 - @page_title = 'New Action'
 
-= render('shared/dropdown_select', :objects => current_partner_apps, :selected => @app)
-= render('apps/actions', :app => @app)
-#apps_main
-  %h3 New Action
-  
-  = render 'instructions'
-  
-  - form_for [ @app, @action_offer ], :html => { :class => 'tjform' } do |f|
-    %table
-      %tbody
-        %tr
-          %th
-            = f.label :name, 'Action Name'
-            #help_name.help ?
-          %td
-            = f.text_field :name
-            = error_message_on @action_offer, :name
-            = error_message_on @action_offer, :variable_name
-        %tr
-          %td{ :colspan => 2 }= f.submit 'Save Action'
+%h3 New Action
 
-  .hidden
-    #help_name_content{ :name => 'Action Name' }
-      The name of the action.
-  
+= render 'instructions'
+
+- form_for [ @app, @action_offer ], :html => { :class => 'tjform' } do |f|
+  %table
+    %tbody
+      %tr
+        %th
+          = f.label :name, 'Action Name'
+          #help_name.help ?
+        %td
+          = f.text_field :name
+          = error_message_on @action_offer, :name
+          = error_message_on @action_offer, :variable_name
+      %tr
+        %td{ :colspan => 2 }= f.submit 'Save Action'
+
+.hidden
+  #help_name_content{ :name => 'Action Name' }
+    The name of the action.
+
 - content_for :page_styles do
   :plain
     textarea, input[type=text] {

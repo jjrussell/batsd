@@ -1,17 +1,12 @@
 - @page_title = 'App offer'
 
-= render :partial => 'shared/dropdown_select', :locals => {:objects => current_partner_apps, :selected => @app}
-= render :partial => 'apps/actions', :locals => {:app => @app}
+%h3 Pay-Per-Install
 
-#apps_main
-  %h3 Pay-Per-Install
+%p.description
+  Pay-Per-Install lets you buy a set number of incentivized installations for your app. Only pay when a user installs and runs your application.
+%p.description
+  Enter your bid per install below. The minimum bid is 50% of the purchase price for paid apps, or $0.35 for free apps. 
+  Higher bids will result in more installs.
 
-  %p.description
-    Pay-Per-Install lets you buy a set number of incentivized installations for your app. Only pay when a user installs and runs your application.
-  %p.description
-    Enter your bid per install below. The minimum bid is 50% of the purchase price for paid apps, or $0.35 for free apps. 
-    Higher bids will result in more installs.
-
-  = render('apps/offers_shared/scheduling') if @offer.tapjoy_enabled?
-  = render('apps/offers_shared/form')
-  
+= render('apps/offers_shared/scheduling') if @offer.tapjoy_enabled?
+= render('apps/offers_shared/form')

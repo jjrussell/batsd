@@ -1,72 +1,70 @@
 - @page_title = @app.name
+- @dropdown_select = { :with_new_app_button => true }
 
-= render :partial => 'shared/dropdown_select', :locals => { :objects => current_partner_apps, :selected => @app, :options => {:with_new_app_button => true} }
 - if @app.hidden?
   %h3
     Please contact
     = mail_to 'support@tapjoy.com'
     to undelete this app.
-= render :partial => 'actions', :locals => { :app => @app }
 
-#apps_main.left-indented
-  %h3 App Details
+%h3 App Details
 
-  - form_for(@app, :html => { :class => 'tjform' }) do |f|
-    = f.hidden_field :store_id
-    %table
-      %tbody
-        %tr
-          %th
-            Application State
-            #help_application_state.help ?
-          %td= select_tag 'state', options_for_select({ 'Not Live' => 'not_live', 'Live' => 'live' }, @app.store_id? ? 'live' : 'not_live'), :id => 'app_state'
-        %tr
-          %th
-            Platform
-            #help_platform.help ?
-          %td#app_platform= @app.platform_name
-        - if permitted_to?(:edit, :statz)
-          = render :partial => 'select_country'
-        %tr
-          %th
-            Name
-            #help_name.help ?
-          %td
-            = f.text_field :name
-            = error_message_on @app, :name
-            #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
-          %td= button_to_function "Search #{@app.store_name}", 'search()', :class => 'search hidden', :id => 'search_button'
-        %tr
-          %th
-            App ID
-            #help_app_id.help ?
-          %td= @app.id
-        %tr
-          %th
-            Integrated?
-            #help_integrated.help ?
-          - if @integrated
-            %td.integrated YES
+- form_for(@app, :html => { :class => 'tjform' }) do |f|
+  = f.hidden_field :store_id
+  %table
+    %tbody
+      %tr
+        %th
+          Application State
+          #help_application_state.help ?
+        %td= select_tag 'state', options_for_select({ 'Not Live' => 'not_live', 'Live' => 'live' }, @app.store_id? ? 'live' : 'not_live'), :id => 'app_state'
+      %tr
+        %th
+          Platform
+          #help_platform.help ?
+        %td#app_platform= @app.platform_name
+      - if permitted_to?(:edit, :statz)
+        = render :partial => 'select_country'
+      %tr
+        %th
+          Name
+          #help_name.help ?
+        %td
+          = f.text_field :name
+          = error_message_on @app, :name
+          #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
+        %td= button_to_function "Search #{@app.store_name}", 'search()', :class => 'search hidden', :id => 'search_button'
+      %tr
+        %th
+          App ID
+          #help_app_id.help ?
+        %td= @app.id
+      %tr
+        %th
+          Integrated?
+          #help_integrated.help ?
+        - if @integrated
+          %td.integrated YES
+        - else
+          %td.not_integrated NO
+      %tr.app_data.hidden
+        %th Store ID
+        %td
+          - if @app.store_id.present?
+            = link_to(@app.store_id, @app.info_url, :target => '_blank', :id => 'app_store_link')
           - else
-            %td.not_integrated NO
-        %tr.app_data.hidden
-          %th Store ID
-          %td
-            - if @app.store_id.present?
-              = link_to(@app.store_id, @app.info_url, :target => '_blank', :id => 'app_store_link')
-            - else
-              %a#app_store_link{ :target => '_blank' }
-        %tr.app_data.hidden
-          %th Icon
-          %td#app_icon= image_tag(@app.get_icon_url, :size => '57x57', :alt => 'icon')
-        %tr.app_data.hidden
-          %th Price
-          %td#app_price= number_to_currency(@app.price / 100.0)
-        %tr.app_data.hidden
-          %th Description
-          %td#app_description= (@app.description || '').gsub("\n", '<br>')
-        %tr
-          %td{ :colspan => 2 }= f.submit @app.store_id.present? ? "Update from #{@app.store_name}" : 'Save', :id => 'submit_button'
+            %a#app_store_link{ :target => '_blank' }
+      %tr.app_data.hidden
+        %th Icon
+        %td#app_icon= image_tag(@app.get_icon_url, :size => '57x57', :alt => 'icon')
+      %tr.app_data.hidden
+        %th Price
+        %td#app_price= number_to_currency(@app.price / 100.0)
+      %tr.app_data.hidden
+        %th Description
+        %td#app_description= (@app.description || '').gsub("\n", '<br>')
+      %tr
+        %td{ :colspan => 2 }= f.submit @app.store_id.present? ? "Update from #{@app.store_name}" : 'Save', :id => 'submit_button'
 
 .hidden
   #help_application_state_content{:name => 'Application State'}

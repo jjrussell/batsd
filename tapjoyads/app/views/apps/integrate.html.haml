@@ -1,38 +1,35 @@
 - @page_title = 'App Integration'
-
-= render :partial => 'shared/dropdown_select', :locals => { :objects => current_partner_apps, :selected => @app, :options => {:with_new_app_button => true} }
-= render :partial => 'actions', :locals => { :app => @app }
+- @dropdown_options = { :with_new_app_button => true }
 
 - url = @app.is_android? ? ANDROID_CONNECT_SDK : IPHONE_CONNECT_SDK
 
-#apps_main
-  %h3
-    Integrate your application
-  %ol
-    %li Download the lightweight, open source #{link_to('Tapjoy library', url)}.
-    %li Add it to your project directory.
-    %li Compile and run your project.
-    %li Add the Tapjoy credentials (provided below) to your app.
-    %li
-      Email
-      = link_to 'support+enableapp@tapjoy.com', 'mailto:support+enableapp@tapjoy.com'
-      for confirmation and to make your campaign live.
+%h3
+  Integrate your application
+%ol
+  %li Download the lightweight, open source #{link_to('Tapjoy library', url)}.
+  %li Add it to your project directory.
+  %li Compile and run your project.
+  %li Add the Tapjoy credentials (provided below) to your app.
+  %li
+    Email
+    = link_to 'support+enableapp@tapjoy.com', 'mailto:support+enableapp@tapjoy.com'
+    for confirmation and to make your campaign live.
 
-  %p
-    For more detailed documentation, please read the documentation included in the library.
+%p
+  For more detailed documentation, please read the documentation included in the library.
 
-  %p
-    Need help? Please contact our
-    = link_to('support team', 'mailto:support@tapjoy.com') + '.'
+%p
+  Need help? Please contact our
+  = link_to('support team', 'mailto:support@tapjoy.com') + '.'
 
-  %div
-    %strong Tapjoy App ID:
-    .app_id= @app.id
-    = clippy(@app.id)
+%div
+  %strong Tapjoy App ID:
+  .app_id= @app.id
+  = clippy(@app.id)
 
-  %p
-    .left.download_link= link_to 'Advertiser Library Download', url
-    .clear
+%p
+  .left.download_link= link_to 'Advertiser Library Download', url
+  .clear
 
 - content_for :page_styles do
   :plain
@@ -40,7 +37,7 @@
       font-weight: bold;
       font-size: 120%;
     }
-    
+  
     .app_id {
       display: inline;
       font-family: courier;

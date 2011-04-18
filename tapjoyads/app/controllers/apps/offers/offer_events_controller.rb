@@ -1,4 +1,5 @@
 class Apps::Offers::OfferEventsController < OfferEventsController
+  layout 'apps'
   current_tab :apps
   
 private
