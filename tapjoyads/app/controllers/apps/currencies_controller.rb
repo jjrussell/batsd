@@ -17,6 +17,9 @@ class Apps::CurrenciesController < WebsiteController
       end
       [id, last_run_time]
     end
+    unless @currency.tapjoy_enabled?
+      flash.now[:warning] = 'Please note that you must get approval before users will be able to earn currency.'
+    end
   end
 
   def update
