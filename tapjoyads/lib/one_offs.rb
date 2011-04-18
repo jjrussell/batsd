@@ -43,7 +43,7 @@ class OneOffs
 
   def self.set_tapjoy_currency_enabled
     Partner.find_each do |p|
-      if p.currencies.count > 0
+      if p.id != 'e9a6d51c-cef9-4ee4-a2c9-51eef1989c4e' && p.currencies.count > 0
         p.update_attribute(:tapjoy_currency_enabled, true)
       end
     end
