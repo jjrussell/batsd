@@ -140,4 +140,33 @@ class Utils
     file.close
   end
   
+  def self.copy_web_requests_to_tmp(date)
+    bucket = S3.bucket(BucketNames::WEB_REQUESTS)
+
+    MAX_WEB_REQUEST_DOMAINS.times do |num|
+      s3_name = "#{date}/web-request-#{date}-#{num}.sdb"
+      next unless bucket.key(s3_name).exists?
+      puts "Found #{s3_name}"
+
+      gzip_file = open("tmp/web-request-#{date}-#{num}.sdb", 'w')
+      S3.s3.interface.get(bucket.full_name, s3_name) do |chunk|
+        gzip_file.write(chunk)
+      end
+
+      gzip_file.close
+    end
+  end
+  
+  def self.write_web_requests_from_tmp(date)
+    raise "Cannot write to web-requests bucket from a production env" if Rails.env == 'production'
+    
+    bucket = S3.bucket(BucketNames::WEB_REQUESTS)
+    
+    MAX_WEB_REQUEST_DOMAINS.times do |num|
+      s3_name = "#{date}/web-request-#{date}-#{num}.sdb"
+      puts "Writing #{s3_name}"
+      bucket.put(s3_name, open("tmp/web-request-#{date}-#{num}.sdb"))
+    end
+  end
+  
 end
