@@ -14,7 +14,7 @@ class Tools::GenericOffersController < WebsiteController
     log_activity(@generic_offer)
     if @generic_offer.save
       unless params[:icon].blank?
-        @generic_offer.primary_offer.save_icon!(params[:icon])
+        @generic_offer.primary_offer.save_icon!(params[:icon].read)
       end
       flash[:notice] = 'Successfully created Generic Offer'
       redirect_to statz_path(@generic_offer.primary_offer)
