@@ -37,6 +37,7 @@
 .metadata Payout Frequency: #{@partner.payout_frequency}
 .metadata Created: #{@partner.created_at.to_s(:db)}
 - if permitted_to?(:edit, :partners)
+  .metadata Approved publisher: #{@partner.tapjoy_currency_enabled?}
   .metadata Account managers: #{@partner.account_managers.map{|u| u.username}.join(', ')}
   .metadata Internal notes: #{@partner.account_manager_notes}
   .metadata
