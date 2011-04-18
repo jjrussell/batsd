@@ -77,7 +77,7 @@
             .flash.hidden{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
               %strong #{name.to_s.humanize}:
               %span.message &nbsp;
-        = yield
+        = content_for_exists?(:apps_layout) ? yield(:apps_layout) : yield
         .clear
 
       #footer

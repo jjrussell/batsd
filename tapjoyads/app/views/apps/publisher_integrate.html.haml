@@ -1,42 +1,39 @@
 - @page_title = 'Publisher Integration'
-
-= render :partial => 'shared/dropdown_select', :locals => { :objects => current_partner_apps, :selected => @app, :options => {:with_new_app_button => true} }
-= render :partial => 'actions', :locals => { :app => @app }
+- @dropdown_options = { :with_new_app_button => true }
 
 - offers_sdk_url = @app.is_android? ? ANDROID_OFFERS_SDK : IPHONE_OFFERS_SDK
 - vg_sdk_url = @app.is_android? ? ANDROID_VG_SDK : IPHONE_VG_SDK
 
-#apps_main
-  %h3 Publisher Integration
-  %ol
-    %li
-      Select our #{ link_to('Offers Library', offers_sdk_url)}
-      or #{ link_to('Virtual Goods Library', vg_sdk_url)}.
-    %li Add the Tapjoy library to your project directory.
-    %li Compile and run your project.
-    %li Add the Tapjoy credentials (provided below) to your app.
-    %li
-      Email
-      = link_to 'support+enableapp@tapjoy.com', 'mailto:support+enableapp@tapjoy.com'
-      for confirmation and to make your campaign live.
+%h3 Publisher Integration
+%ol
+  %li
+    Select our #{ link_to('Offers Library', offers_sdk_url)}
+    or #{ link_to('Virtual Goods Library', vg_sdk_url)}.
+  %li Add the Tapjoy library to your project directory.
+  %li Compile and run your project.
+  %li Add the Tapjoy credentials (provided below) to your app.
+  %li
+    Email
+    = link_to 'support+enableapp@tapjoy.com', 'mailto:support+enableapp@tapjoy.com'
+    for confirmation and to make your campaign live.
 
-  %p
-    For more detailed documentation, please read the documentation included in the library.
+%p
+  For more detailed documentation, please read the documentation included in the library.
 
-  %p
-    Need help? Please contact our
-    = link_to('support team', 'mailto:support@tapjoy.com') + '.'
+%p
+  Need help? Please contact our
+  = link_to('support team', 'mailto:support@tapjoy.com') + '.'
 
-  %div
-    %strong Tapjoy App ID:
-    .app_id= @app.id
-    = clippy(@app.id)
+%div
+  %strong Tapjoy App ID:
+  .app_id= @app.id
+  = clippy(@app.id)
 
-  %p
-    .left.download_link= link_to('Offers Library Download', offers_sdk_url)
-    .clear
-    .left.download_link= link_to('Virtual Goods Library Download', vg_sdk_url)
-    .clear
+%p
+  .left.download_link= link_to('Offers Library Download', offers_sdk_url)
+  .clear
+  .left.download_link= link_to('Virtual Goods Library Download', vg_sdk_url)
+  .clear
 
 - content_for :page_styles do
   :plain

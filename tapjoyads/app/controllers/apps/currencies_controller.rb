@@ -1,5 +1,5 @@
 class Apps::CurrenciesController < WebsiteController
-  layout 'tabbed'
+  layout 'apps'
   current_tab :apps
 
   filter_access_to :all

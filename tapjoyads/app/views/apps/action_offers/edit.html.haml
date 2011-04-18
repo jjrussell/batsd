@@ -1,164 +1,160 @@
 - @page_title = 'Edit Action'
 
-= render('shared/dropdown_select', :objects => current_partner_apps, :selected => @app)
-= render('apps/actions', :app => @app)
-#apps_main
-  %h3 Edit Action
-  
-  = render 'instructions'
-  
-  - form_for [ @app, @action_offer ], :html => { :class => 'tjform' } do |f|
-    %table
-      %tbody
-        - f.fields_for :primary_offer do |primary_offer_form|
-          %tr
-            %th
-              = primary_offer_form.label :user_enabled, 'Enable Action'
-              #help_user_enabled.help ?
-            %td
-              = primary_offer_form.check_box :user_enabled
-              = error_message_on @action_offer, :primary_offer_user_enabled
-          %tr
-            %th
-              = primary_offer_form.label :bid, 'Bid'
-              #help_bid.help ?
-            %td
-              = primary_offer_form.currency_field :bid, {}, :class => 'togglable'
-              = error_message_on @action_offer, :primary_offer_bid
-          %tr
-            %th
-              = primary_offer_form.label :payment, 'Payment'
-              #help_payment.help ?
-            %td
-              = primary_offer_form.currency_field :payment, {}, :disabled => 'disabled'
-              = error_message_on @action_offer, :primary_offer_payment
-              - if @action_offer.partner.offer_discounts.active.blank?
-                .premier
-                  Want to reduce your payment?
-                  = link_to 'Learn more about the Tapjoy Premier Program', premier_path
-        %tr
-          %th
-            = f.label :name, 'Action Name'
-            #help_name.help ?
-          %td
-            = f.text_field :name
-            = error_message_on @action_offer, :name
-            = error_message_on @action_offer, :variable_name
-        %tr
-          %th
-            = f.label :name, 'Prerequisite'
-            #help_prerequisite.help ?
-          %td
-            - offer_options = @app.offers_with_last_run_time.reject { |offer| offer.id == @action_offer.primary_offer.id }.collect { |offer| [ offer.name, offer.id ] }
-            - offer_options += [ [ "None", "" ] ] if ((permitted_to?(:edit, :statz) || @action_offer.prerequisite_offer_id.blank?))
-            = f.select :prerequisite_offer_id, offer_options
-            = error_message_on @action_offer, :prerequisite_offer_id
-        %tr
-          %th
-            = f.label :instructions, 'Instructions'
-            #help_instructions.help ?
-          %td
-            = f.text_area :instructions, :rows => 5
-            = error_message_on @action_offer, :instructions
-        - f.fields_for :primary_offer do |primary_offer_form|
-          %tr
-            %th
-              = primary_offer_form.label :daily_budget, 'Daily Budget'
-              #help_daily.help ?
-            %td
-              = label_tag :daily_budget_off, 'Unlimited'
-              = radio_button_tag('daily_budget', 'off', @action_offer.daily_budget <= 0, :class => 'togglable')
-              &nbsp;
-              = label_tag :daily_budget_on, 'Limit'
-              = radio_button_tag('daily_budget', 'on', @action_offer.daily_budget > 0, :class => 'togglable')
-              - budget_fields_class = @action_offer.daily_budget > 0 ? '' : 'hidden'
-              #daily_budget_fields{ :class => @action_offer.daily_budget > 0 ? '' : 'hidden' }
-                = primary_offer_form.label(:daily_budget, 'Installs:', :class => 'installs')
-                = primary_offer_form.text_field(:daily_budget, :class => 'togglable installs')
-                = error_message_on @action_offer, :daily_budget
-                #estimated_budget
-                  Estimated daily budget:
-                  .value
-        %tr
-          %th
-            = f.label :action_id, 'Action ID'
-            #help_action_id.help ?
-          %td
-            = @action_offer.id
-        %tr
-          %th
-            = f.label :integrated, 'Integrated?'
-            #help_integrated.help ?
-          %td{ :class => @action_offer.integrated? ? "integrated" : "not_integrated" }
-            = @action_offer.integrated? ? "Yes" : "No"
-        
-        %tr
-          %th
-            = f.label :tapjoy_enabled, "Tapjoy Enabled?"
-            #help_enabled.help ?
-          %td
-            - if @offer.tapjoy_enabled
-              .tapjoy-enabled Enabled
-            - else
-              - if @enable_request.new_record?
-                .tapjoy-disabled Disabled
-                = button_to_function 'Submit Enable Offer Request', 'requestAppEnable()', :id => 'request_app_enable', :disabled => true
-              - else
-                .tapjoy-disabled Pending
-                (your request was submitted #{@enable_request.created_at.to_s(:pub_ampm_sec)})
+%h3 Edit Action
 
-        - if permitted_to? :edit, :statz
-          = render 'admin_fields', :f => f
-              
-        %tr
-          %td{ :colspan => 2 }= f.submit 'Save Action'
+= render 'instructions'
 
-  .hidden
-    #help_name_content{ :name => 'Action Name' }
-      The name of the action.
-    #help_instructions_content{ :name => 'Instructions' }
-      Instructions telling users how to complete the action. For example:
-      %br
-      %br
-      1. Open XX App
-      %br
-      2. Beat Level 1
-      %br
-      3. You'll receive your currency within a few minutes
-      %br
-      %br
-      Keep your text simple and easy for a user to understand.
-    #help_action_id_content{ :name => 'Action ID' }
-      The ID of the action. This ID will need to be used in your integration.
-    #help_integrated_content{ :name => 'Integrated?' }
-      Has this action been integrated?
-    #help_user_enabled_content{ :name => 'Enable Action' }
-      Enable the action to get your campaign started.
-    #help_bid_content{ :name => 'Bid' }
-      The amount you are willing to pay for a completed action. A higher bid will result in more completed actions.
-    #help_payment_content{ :name => 'Payment' }
-      The amount that you pay for install. This value is equal to the Bid
-      unless you participate in the Tapjoy Premier program, or reach monthly spend figures
-    #help_daily_content{ :name => 'Daily Budget' }
-      The maximum number of paid conversions per day.
-    #help_enabled_content{ :name => 'Tapjoy Enabled' }
-      Tapjoy approval status.
-      - unless @offer.tapjoy_enabled?
-        Click the button to submit an enable offer request. Please contact #{mail_to "support@tapjoy.com"} if you have any questions.
-    #help_prerequisite_content{ :name => 'Prerequisite' }
-      This action will only be shown to users who have already completed the prerequisite offer.
+- form_for [ @app, @action_offer ], :html => { :class => 'tjform' } do |f|
+  %table
+    %tbody
+      - f.fields_for :primary_offer do |primary_offer_form|
+        %tr
+          %th
+            = primary_offer_form.label :user_enabled, 'Enable Action'
+            #help_user_enabled.help ?
+          %td
+            = primary_offer_form.check_box :user_enabled
+            = error_message_on @action_offer, :primary_offer_user_enabled
+        %tr
+          %th
+            = primary_offer_form.label :bid, 'Bid'
+            #help_bid.help ?
+          %td
+            = primary_offer_form.currency_field :bid, {}, :class => 'togglable'
+            = error_message_on @action_offer, :primary_offer_bid
+        %tr
+          %th
+            = primary_offer_form.label :payment, 'Payment'
+            #help_payment.help ?
+          %td
+            = primary_offer_form.currency_field :payment, {}, :disabled => 'disabled'
+            = error_message_on @action_offer, :primary_offer_payment
+            - if @action_offer.partner.offer_discounts.active.blank?
+              .premier
+                Want to reduce your payment?
+                = link_to 'Learn more about the Tapjoy Premier Program', premier_path
+      %tr
+        %th
+          = f.label :name, 'Action Name'
+          #help_name.help ?
+        %td
+          = f.text_field :name
+          = error_message_on @action_offer, :name
+          = error_message_on @action_offer, :variable_name
+      %tr
+        %th
+          = f.label :name, 'Prerequisite'
+          #help_prerequisite.help ?
+        %td
+          - offer_options = @app.offers_with_last_run_time.reject { |offer| offer.id == @action_offer.primary_offer.id }.collect { |offer| [ offer.name, offer.id ] }
+          - offer_options += [ [ "None", "" ] ] if ((permitted_to?(:edit, :statz) || @action_offer.prerequisite_offer_id.blank?))
+          = f.select :prerequisite_offer_id, offer_options
+          = error_message_on @action_offer, :prerequisite_offer_id
+      %tr
+        %th
+          = f.label :instructions, 'Instructions'
+          #help_instructions.help ?
+        %td
+          = f.text_area :instructions, :rows => 5
+          = error_message_on @action_offer, :instructions
+      - f.fields_for :primary_offer do |primary_offer_form|
+        %tr
+          %th
+            = primary_offer_form.label :daily_budget, 'Daily Budget'
+            #help_daily.help ?
+          %td
+            = label_tag :daily_budget_off, 'Unlimited'
+            = radio_button_tag('daily_budget', 'off', @action_offer.daily_budget <= 0, :class => 'togglable')
+            &nbsp;
+            = label_tag :daily_budget_on, 'Limit'
+            = radio_button_tag('daily_budget', 'on', @action_offer.daily_budget > 0, :class => 'togglable')
+            - budget_fields_class = @action_offer.daily_budget > 0 ? '' : 'hidden'
+            #daily_budget_fields{ :class => @action_offer.daily_budget > 0 ? '' : 'hidden' }
+              = primary_offer_form.label(:daily_budget, 'Installs:', :class => 'installs')
+              = primary_offer_form.text_field(:daily_budget, :class => 'togglable installs')
+              = error_message_on @action_offer, :daily_budget
+              #estimated_budget
+                Estimated daily budget:
+                .value
+      %tr
+        %th
+          = f.label :action_id, 'Action ID'
+          #help_action_id.help ?
+        %td
+          = @action_offer.id
+      %tr
+        %th
+          = f.label :integrated, 'Integrated?'
+          #help_integrated.help ?
+        %td{ :class => @action_offer.integrated? ? "integrated" : "not_integrated" }
+          = @action_offer.integrated? ? "Yes" : "No"
       
+      %tr
+        %th
+          = f.label :tapjoy_enabled, "Tapjoy Enabled?"
+          #help_enabled.help ?
+        %td
+          - if @offer.tapjoy_enabled
+            .tapjoy-enabled Enabled
+          - else
+            - if @enable_request.new_record?
+              .tapjoy-disabled Disabled
+              = button_to_function 'Submit Enable Offer Request', 'requestAppEnable()', :id => 'request_app_enable', :disabled => true
+            - else
+              .tapjoy-disabled Pending
+              (your request was submitted #{@enable_request.created_at.to_s(:pub_ampm_sec)})
+
+      - if permitted_to? :edit, :statz
+        = render 'admin_fields', :f => f
+            
+      %tr
+        %td{ :colspan => 2 }= f.submit 'Save Action'
+
+.hidden
+  #help_name_content{ :name => 'Action Name' }
+    The name of the action.
+  #help_instructions_content{ :name => 'Instructions' }
+    Instructions telling users how to complete the action. For example:
+    %br
+    %br
+    1. Open XX App
+    %br
+    2. Beat Level 1
+    %br
+    3. You'll receive your currency within a few minutes
+    %br
+    %br
+    Keep your text simple and easy for a user to understand.
+  #help_action_id_content{ :name => 'Action ID' }
+    The ID of the action. This ID will need to be used in your integration.
+  #help_integrated_content{ :name => 'Integrated?' }
+    Has this action been integrated?
+  #help_user_enabled_content{ :name => 'Enable Action' }
+    Enable the action to get your campaign started.
+  #help_bid_content{ :name => 'Bid' }
+    The amount you are willing to pay for a completed action. A higher bid will result in more completed actions.
+  #help_payment_content{ :name => 'Payment' }
+    The amount that you pay for install. This value is equal to the Bid
+    unless you participate in the Tapjoy Premier program, or reach monthly spend figures
+  #help_daily_content{ :name => 'Daily Budget' }
+    The maximum number of paid conversions per day.
+  #help_enabled_content{ :name => 'Tapjoy Enabled' }
+    Tapjoy approval status.
+    - unless @offer.tapjoy_enabled?
+      Click the button to submit an enable offer request. Please contact #{mail_to "support@tapjoy.com"} if you have any questions.
+  #help_prerequisite_content{ :name => 'Prerequisite' }
+    This action will only be shown to users who have already completed the prerequisite offer.
+    
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
   - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
     = f.hidden_field(:offer_id)
 
 - content_for :page_javascript do
   :plain
-  
     var requestAppEnable = $.noop;
     $(function($){
       var originalBidValue = stringToNumber($('#action_offer_primary_offer_attributes_bid').val());
-      
+    
       $('#request_app_enable').attr('disabled', '');
       requestAppEnable = function() {
         $('#new_enable_offer_request').submit();
@@ -177,7 +173,7 @@
         $('#action_offer_primary_offer_attributes_bid').val(numberToCurrency(currentBid));
         $('#action_offer_primary_offer_attributes_payment').val(numberToCurrency(currentBid * #{(100.0 - @action_offer.partner.premier_discount) / 100.0}));
       };
-      
+    
       var setEstimatedBudget = function() {
         checkValidBudget();
         var payment = stringToNumber($('#action_offer_primary_offer_attributes_payment').val());
@@ -185,7 +181,7 @@
         var budget = numberToCurrency(payment * installLimit);
         $('#estimated_budget .value').text(budget);
       };
-      
+    
       var checkValidBudget = function(){
         if ($('#daily_budget_on').is(':checked')) {
           var installLimit = stringToNumber($('#action_offer_primary_offer_attributes_daily_budget').val(), true);
@@ -198,44 +194,44 @@
         }
         return true;
       }
-      
+    
       var toggleDailyBudget = function() {
         if ($('#primary_offer_attributes_daily_budget').val() == 0) {
           $('#primary_offer_attributes_daily_budget').val('');
         }
       };
-      
+    
       $('#action_offer_primary_offer_attributes_daily_budget').change(function() {
         var installsLimit = Math.floor(stringToNumber($(this).val(), true));
         $('#action_offer_primary_offer_attributes_daily_budget').val(addCommaSeparators(installsLimit));
         setEstimatedBudget();
       });
-      
+    
       if ($('#daily_budget_on').is(':checked')) {
         $('#action_offer_primary_offer_attributes_daily_budget').val(addCommaSeparators(stringToNumber($('#action_offer_primary_offer_attributes_daily_budget').val(), true)));
       }
-      
+    
       $('#daily_budget_on').click(function(){
         $('#daily_budget_fields').slideDown();
         toggleDailyBudget();
       });
-      
+    
       $('#daily_budget_off').click(function(){
         $('#daily_budget_fields').slideUp();
         toggleDailyBudget();
       });
-      
+    
       toggleDailyBudget();
       toggleUserEnabled();
       setEstimatedBudget();
-      
+    
       $('#action_offer_primary_offer_attributes_user_enabled').change(toggleUserEnabled);
-      
+    
       $('#action_offer_primary_offer_attributes_bid').change(function(){
         updateBidAndPayment();
         setEstimatedBudget();
       });
-      
+    
       $('#action_offer_submit').click(function() {
         var currentBid = $('#action_offer_primary_offer_attributes_bid').val();
         var currentBidValue = stringToNumber(currentBid);
@@ -243,12 +239,12 @@
           return confirm('Are you sure you want to change your bid to ' + currentBid + '?');
         }
       });
-      
+    
       $('form').submit(function() {
         updateBidAndPayment();
         return checkValidBudget();
       });
-      
+    
     });
 
 - content_for :page_styles do
@@ -280,4 +276,3 @@
     .tapjoy-disabled {
       color: #AF1515;
     }
-    
