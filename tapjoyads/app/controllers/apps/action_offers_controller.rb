@@ -1,5 +1,5 @@
 class Apps::ActionOffersController < WebsiteController
-  layout 'tabbed'
+  layout 'apps'
   current_tab :apps
   before_filter :setup
   filter_access_to :all

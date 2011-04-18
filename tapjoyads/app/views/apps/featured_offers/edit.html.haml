@@ -1,14 +1,11 @@
 - @page_title = 'Featured Offer'
 
-= render('shared/dropdown_select', :objects => current_partner_apps, :selected => @app)
-= render('apps/actions', :app => @app)
-#apps_main
-  %h3 Featured Installs
-  
-  %p.description
-    Featured Installs let you buy premium views for your app offer, such as being displayed full-screen when an app is launched. Like Pay-Per-Install, you only pay when a user installs your app.
-  %p.description
-    Enter your bid per featured install below. The minimum bid is 100% of the purchase price for paid apps, or $0.65 for free apps. Higher bids will fetch more installs.
-  
-  = render('apps/offers_shared/scheduling') if @offer.tapjoy_enabled?
-  = render('apps/offers_shared/form', :featured => true)
+%h3 Featured Installs
+
+%p.description
+  Featured Installs let you buy premium views for your app offer, such as being displayed full-screen when an app is launched. Like Pay-Per-Install, you only pay when a user installs your app.
+%p.description
+  Enter your bid per featured install below. The minimum bid is 100% of the purchase price for paid apps, or $0.65 for free apps. Higher bids will fetch more installs.
+
+= render('apps/offers_shared/scheduling') if @offer.tapjoy_enabled?
+= render('apps/offers_shared/form', :featured => true)

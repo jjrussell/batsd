@@ -1,5 +1,5 @@
 class AppsController < WebsiteController
-  layout 'tabbed'
+  layout 'apps'
 
   filter_access_to :all
   before_filter :grab_partner_apps

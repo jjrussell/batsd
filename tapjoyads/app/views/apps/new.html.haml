@@ -1,51 +1,47 @@
 - @page_title = 'Add App'
 
-= render :partial => 'shared/dropdown_select', :locals => {:objects => current_partner_apps, :selected => nil}
-= render :partial => 'actions', :locals => {:app => nil}
+%h3 Add App
 
-#apps_main
-  %h3 Add App
-
-  - form_for(@app, :html => { :class => 'tjform' }) do |f|
-    = f.hidden_field :store_id
-    %table
-      %tbody
-        %tr
-          %th
-            Application State
-            #help_application_state.help ?
-          %td= select_tag 'state', options_for_select({ 'Not Live' => 'not_live', 'Live' => 'live' }, 'not_live'), :id => 'app_state'
-        %tr
-          %th
-            Platform
-            #help_platform.help ?
-          %td= f.select :platform, App::PLATFORMS.invert, { :selected => @app.platform }, { :id => 'app_platform' }
-        - if permitted_to?(:edit, :statz)
-          = render :partial => 'select_country'
-        %tr
-          %th
-            Name
-            #help_name.help ?
-          %td
-            = f.text_field :name
-            = error_message_on @app, :name
-            #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
-          %td= button_to_function "Search #{@app.store_name}", 'search()', :class => 'search hidden', :id => 'search_button'
-        %tr.app_data.hidden
-          %th Store ID
-          %td
-            %a#app_store_link{ :target => '_blank' }
-        %tr.app_data.hidden
-          %th Icon
-          %td#app_icon &nbsp;
-        %tr.app_data.hidden
-          %th Price
-          %td#app_price
-        %tr.app_data.hidden
-          %th Description
-          %td#app_description
-        %tr
-          %td{ :colspan => 2 }= f.submit 'Add App'
+- form_for(@app, :html => { :class => 'tjform' }) do |f|
+  = f.hidden_field :store_id
+  %table
+    %tbody
+      %tr
+        %th
+          Application State
+          #help_application_state.help ?
+        %td= select_tag 'state', options_for_select({ 'Not Live' => 'not_live', 'Live' => 'live' }, 'not_live'), :id => 'app_state'
+      %tr
+        %th
+          Platform
+          #help_platform.help ?
+        %td= f.select :platform, App::PLATFORMS.invert, { :selected => @app.platform }, { :id => 'app_platform' }
+      - if permitted_to?(:edit, :statz)
+        = render :partial => 'select_country'
+      %tr
+        %th
+          Name
+          #help_name.help ?
+        %td
+          = f.text_field :name
+          = error_message_on @app, :name
+          #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
+        %td= button_to_function "Search #{@app.store_name}", 'search()', :class => 'search hidden', :id => 'search_button'
+      %tr.app_data.hidden
+        %th Store ID
+        %td
+          %a#app_store_link{ :target => '_blank' }
+      %tr.app_data.hidden
+        %th Icon
+        %td#app_icon &nbsp;
+      %tr.app_data.hidden
+        %th Price
+        %td#app_price
+      %tr.app_data.hidden
+        %th Description
+        %td#app_description
+      %tr
+        %td{ :colspan => 2 }= f.submit 'Add App'
 
 .hidden
   #help_application_state_content{:name => 'Application State'}

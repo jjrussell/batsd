@@ -1,7 +1,7 @@
 class Apps::VirtualGoodsController < WebsiteController
   include ActionView::Helpers::NumberHelper
 
-  layout 'tabbed'
+  layout 'apps'
   current_tab :apps
 
   filter_access_to :all
