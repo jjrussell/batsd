@@ -428,9 +428,9 @@
         this.halfTextHeight = this.Get('chart.text.size') / 2;
 
         // Check the combination of the X axis position and if there any negative values
-        if (this.Get('chart.xaxispos') == 'bottom' && this.hasnegativevalues) {
-            alert('[LINE] You have negative values and the X axis is at the bottom. This is not good...');
-        }
+        // if (this.Get('chart.xaxispos') == 'bottom' && this.hasnegativevalues) {
+        //     alert('[LINE] You have negative values and the X axis is at the bottom. This is not good...');
+        // }
         
         if (this.Get('chart.variant') == '3d') {
             RGraph.Draw3DAxes(this);
