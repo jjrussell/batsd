@@ -7,8 +7,9 @@ class FreeAppCountController < ApplicationController
     return unless verify_records([ currency, publisher_app ])
     
     currency.only_free_offers = true
-    offer_list, more_data_available = publisher_app.get_offer_list(params[:udid], 
-        :currency => currency,
+    offer_list, more_data_available = publisher_app.get_offer_list(
+        :device      => Device.new(:key => params[:udid]),
+        :currency    => currency,
         :device_type => params[:device_type])
     
     @free_app_count = offer_list.size

@@ -41,10 +41,11 @@ class OneOffs
     puts "num_skipped: #{num_skipped}"
   end
 
-  def self.set_tapjoy_enabled_on_currencies
-    Currency.find_each do |c|
-      # TODO - probably should have some logic here to determine whether it should actually be enabled
-      c.update_attribute(:tapjoy_enabled, true)
+  def self.set_tapjoy_currency_enabled
+    Partner.find_each do |p|
+      if p.currencies.count > 0
+        p.update_attribute(:tapjoy_currency_enabled, true)
+      end
     end
   end
 

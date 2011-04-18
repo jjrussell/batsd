@@ -134,9 +134,9 @@ class App < ActiveRecord::Base
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
   end
 
-  def get_offer_list(udid, options = {})
-    device               = options.delete(:device)               { Device.new(:key => udid) }
-    currency             = options.delete(:currency)             { Currency.find_in_cache(id) }
+  def get_offer_list(options = {})
+    device               = options.delete(:device)               { |k| raise "#{k} is a required argument" }
+    currency             = options.delete(:currency)             { |k| raise "#{k} is a required argument" }
     geoip_data           = options.delete(:geoip_data)           { {} }
     required_length      = options.delete(:required_length)      { 999 }
     include_rating_offer = options.delete(:include_rating_offer) { false }
@@ -147,9 +147,7 @@ class App < ActiveRecord::Base
     exp                  = options.delete(:exp)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
-    raise "cannot generate offer list without currency" if currency.nil?
-    
-    return [ [], 0 ] if type == Offer::CLASSIC_OFFER_TYPE || partner_id == 'e9a6d51c-cef9-4ee4-a2c9-51eef1989c4e'
+    return [ [], 0 ] if type == Offer::CLASSIC_OFFER_TYPE || !currency.tapjoy_enabled?
     
     final_offer_list   = []
     num_rejected       = 0

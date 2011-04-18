@@ -146,6 +146,7 @@ class Currency < ActiveRecord::Base
     self.direct_pay_share  = partner.direct_pay_share
     self.offer_whitelist   = partner.offer_whitelist
     self.use_whitelist     = partner.use_whitelist
+    self.tapjoy_enabled    = partner.tapjoy_currency_enabled
     true
   end
   

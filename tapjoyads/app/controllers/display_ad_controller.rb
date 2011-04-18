@@ -105,7 +105,7 @@ private
       return unless verify_records([ publisher_app, currency ])
 
       # Randomly choose a free App offer that is converting at greater than 50%
-      offer_list, more_data_available = publisher_app.get_offer_list(params[:udid],
+      offer_list, more_data_available = publisher_app.get_offer_list(
           :device => device,
           :currency => currency,
           :device_type => params[:device_type],

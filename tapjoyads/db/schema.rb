@@ -347,6 +347,7 @@ ActiveRecord::Schema.define(:version => 20110416200308) do
     t.text     "apsalar_url"
     t.text     "offer_whitelist",                                                                               :null => false
     t.boolean  "use_whitelist",                                                          :default => false,     :null => false
+    t.boolean  "tapjoy_currency_enabled",                                                :default => false,     :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
