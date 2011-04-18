@@ -18,7 +18,7 @@ class Apps::CurrenciesController < WebsiteController
       [id, last_run_time]
     end
     unless @currency.tapjoy_enabled?
-      flash.now[:warning] = 'Please note that you must get approval before users will be able to earn currency.'
+      flash.now[:warning] = "This virtual currency is currently disabled. Please email <a href='mailto:publishersupport@tapjoy.com'>publishersupport@tapjoy.com</a> to have it enabled."
     end
   end
 
