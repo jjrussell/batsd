@@ -126,10 +126,6 @@ class App < ActiveRecord::Base
     end
   end
 
-  def get_cloudfront_icon_url
-    "#{CLOUDFRONT_URL}/icons/#{id}.png"
-  end
-  
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
   end

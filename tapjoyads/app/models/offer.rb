@@ -428,18 +428,6 @@ class Offer < ActiveRecord::Base
     ad_url
   end
   
-  def get_medium_icon_url(protocol = 'https://')
-    "#{protocol}s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/icons/medium/#{icon_id}.jpg"
-  end
-  
-  def get_cloudfront_icon_url
-    "#{CLOUDFRONT_URL}/icons/#{icon_id}.png"
-  end
-  
-  def get_medium_cloudfront_icon_url
-    "#{CLOUDFRONT_URL}/icons/medium/#{icon_id}.jpg"
-  end
-  
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id)}.merge(options))
   end

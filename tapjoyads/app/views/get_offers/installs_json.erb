@@ -8,7 +8,7 @@
     {
       "Cost":<%= offer.visual_cost.to_json -%>,
       "Amount":<%= @currency.get_visual_reward_amount(offer).to_json -%>,
-      "IconURL":<%= offer.get_cloudfront_icon_url.to_json -%>,
+      "IconURL":<%= offer.get_icon_url(:source => :cloudfront, :size => '57').to_json -%>,
       "Name":<%= offer.name.to_json -%>,
       "RedirectURL":<%= get_click_url(offer).to_json -%>
       <% if params[:source] == 'featured' %>

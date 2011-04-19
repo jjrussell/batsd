@@ -2,7 +2,7 @@
 
 #offers
   #header
-    %img.app_icon{ :src => @offer.get_cloudfront_icon_url }
+    %img.app_icon{ :src => @offer.get_icon_url(:source => :cloudfront, :size => '57') }
     #action_name
       = @action_offer.name
       %br

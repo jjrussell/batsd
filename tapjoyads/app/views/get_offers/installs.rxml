@@ -10,7 +10,7 @@ xml.TapjoyConnectReturnObject do
         xml.Instructions 'Complete the offer.'
         xml.Name offer.name
         xml.TimeDelay 'in seconds'
-        xml.AdvertiserAppID offer.id
+        xml.AdvertiserAppID Offer.hashed_icon_id(offer.icon_id)
         xml.ActionURL get_click_url(offer)
         xml.PublisherUserRecordID params[:publisher_user_id]
         xml.Type '1'
