@@ -4,6 +4,8 @@ class GetAppImageController < ApplicationController
     # For this legacy action, the app_id paramater will actually be the app's hashed_icon_id.
     return unless verify_params([:app_id])
     
+    Rails.logger.info "UserAgent: #{request.headers['User-Agent']}"
+    
     icon_id = params[:app_id].downcase
     params[:img] = '1' if icon_id.gsub!('img=1', '') # Tap Fish sometimes sends malformated params like: app_id=guidimg=1
     
