@@ -247,7 +247,7 @@ class Appstats
       :connect_data => connect_data,
       :rewarded_installs_plus_spend_data => rewarded_installs_plus_spend_data(conversion_name),
       :rewarded_installs_plus_rank_data => rewarded_installs_plus_rank_data(conversion_name, is_android),
-      :revenue_data => revenue_data,
+      :revenue_data => revenue_data(admin),
       :offerwall_data => offerwall_data,
       :featured_offers_data => featured_offers_data,
       :display_ads_data => display_ads_data,
@@ -739,9 +739,9 @@ private
     }
   end
 
-  def revenue_data
+  def revenue_data(admin)
     {
-      :name => 'Revenue',
+      :name => admin ? "Publisher Revenue" : "Revenue",
       :intervals => formatted_intervals,
       :xLabels => @x_labels,
       :main => {

@@ -89,6 +89,7 @@ private
 
       # for publishers page
       partner_stats['total_revenue'] = number_to_currency(stats['total_revenue'].sum / 100.0)
+      partner_stats['rev_share'] = "%.2f%" % partner.rev_share
 
       partner_stats['offerwall_views'] = number_with_delimiter(stats['offerwall_views'].sum)
       partner_stats['featured_views']  = number_with_delimiter(stats['featured_offers_shown'].sum)
@@ -113,19 +114,19 @@ private
       if featured_offers_opened == 0
         partner_stats['featured_cvr'] = 0
       else
-        partner_stats['featured_cvr']  = "%.1f%" % (stats['featured_published_offers'].sum.to_f / featured_offers_opened.to_f * 100.0)
+        partner_stats['featured_cvr'] = "%.1f%" % (stats['featured_published_offers'].sum.to_f / featured_offers_opened.to_f * 100.0)
       end
 
       display_clicks = stats['display_clicks'].sum
       if display_clicks == 0
         partner_stats['display_cvr'] = 0
       else
-        partner_stats['display_cvr']   = "%.1f%" % (stats['display_conversions'].sum.to_f / display_clicks.to_f * 100.0)
+        partner_stats['display_cvr'] = "%.1f%" % (stats['display_conversions'].sum.to_f / display_clicks.to_f * 100.0)
       end
 
-      partner_stats['offerwall_ecpm'] = number_to_currency(stats['offerwall_ecpm'].sum / 100.0)
-      partner_stats['featured_ecpm']  = number_to_currency(stats['featured_ecpm'].sum / 100.0)
-      partner_stats['display_ecpm']   = number_to_currency(stats['display_ecpm'].sum / 100.0)
+      partner_stats['offerwall_ecpm'] = number_to_currency((stats['rewards_revenue'].sum / 100.0) / (stats['offerwall_views'].sum / 1000.0))
+      partner_stats['featured_ecpm']  = number_to_currency((stats['featured_revenue'].sum / 100.0) / (stats['featured_offers_shown'].sum / 1000.0))
+      partner_stats['display_ecpm']   = number_to_currency((stats['display_revenue'].sum / 100.0) / (stats['display_ads_shown'].sum / 1000.0))
 
       # for advertisers page
       partner_stats['spend']   = number_to_currency(stats['installs_spend'].sum / 100.0)
