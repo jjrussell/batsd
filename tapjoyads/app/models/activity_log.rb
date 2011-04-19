@@ -106,7 +106,6 @@ private
   end
 
   def add_included_methods(attrs)
-    Rails.logger.warn @included_methods.to_json
     unless @included_methods.blank?
       @state_object.reload
       @included_methods.each do |method|
