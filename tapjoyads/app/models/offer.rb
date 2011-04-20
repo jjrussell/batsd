@@ -823,7 +823,7 @@ private
   def recalculate_estimated_percentile
     weights = DEFAULT_WEIGHTS
     if conversion_rate == 0
-      self.conversion_rate = is_paid? ? (0.05 / price) : 0.50
+      self.conversion_rate = is_paid? ? (0.05 / (0.01 * price)) : 0.50
     end
     
     if featured?
