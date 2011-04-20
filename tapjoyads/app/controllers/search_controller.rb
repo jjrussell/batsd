@@ -15,21 +15,16 @@ class SearchController < WebsiteController
   end
 
   def users
+    conditions = [ "email LIKE ?", "#{params[:term]}%" ]
     if params[:tapjoy_only] == 'true'
-      email = "#{params[:term].split('@').first}%@tapjoy.com"
-      results = User.find(:all,
-        :conditions => [ "email LIKE ? AND email NOT LIKE ?", email, "%+%" ],
-        :order => 'email ASC',
-        :limit => 20
-      )
-    else
-      results = User.find(:all,
-        :conditions => [ "email LIKE ?", "#{params[:term]}%" ],
-        :order => 'email ASC',
-        :limit => 40
-      )
+      tapjoy_email = "#{params[:term].split('@').first}%@tapjoy.com"
+      conditions = [ "email LIKE ? AND email NOT LIKE ?", tapjoy_email, "%+%" ]
     end
-    results = results.map do |user|
+    results = User.find(:all,
+      :conditions => conditions,
+      :order => 'email ASC',
+      :limit => 30
+    ).collect do |user|
       { :label => user.email, :user_id => user.id }
     end
 
