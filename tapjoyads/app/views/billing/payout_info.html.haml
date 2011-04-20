@@ -102,16 +102,23 @@
             #help_bank_swift_code.help ?
           %td= f.text_field(:bank_routing_number, :value => @payout_info.bank_routing_number)
     %br/
+    = f.check_box(:terms)
+    By checking this box, I agree under penalties of perjury, I certify that:
+    .country_other#terms
+      %ol
+        %li I am the beneficial owner (or am authorized to sign fot the beneficial owner) of all the income to which this form relates,
+        %li The beneficial owner is not a US person,
+        %li The income to which this form relates is not effectively connected with the conduct of a trade or business in the United States or is effectively connected but is not subject to tax under an income tax treaty, and
+        %li For broker transactions or barter exchanges, the beneficial owner is an exempt foreign person as defined in the instructions.
+        %li Furthermore, I authorize this form to be provided to any withholding agent that has control, receipt, or custody of the income of which I am the beneficial owner or any withholding agent that can disburse or make payments of the income of which I am the beneficial owner. 
     .country_us#terms
-      = f.check_box(:terms)
-      By checking this box, I agree under penalties of perjury, I certify that:
       %ol
         %li The number shown on this form is my correct taxpayer identification number (or I am waiting for a number to be issued to me), and
         %li I am not subject to backup withholding because: (a) I am exempt from backup withholding, or (b) I have not been notified by the Internal Revenue Service (IRS) that I am subject to backup withholding as a result of a failure to report all interest or dividends, or (c) the IRS has notified me that I am no longer subject to backup withholding, and
         %li I am a U.S. citizen or other U.S. person
-      Please write your name here as digital signature of this agreement:
-      %br/
-      = f.text_field(:signature)
+    Please write your name here as digital signature of this agreement:
+    %br/
+    = f.text_field(:signature)
     = submit_tag
 
   %p *There is a minimum payment threshold of US$250.
