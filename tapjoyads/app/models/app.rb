@@ -17,10 +17,10 @@ class App < ActiveRecord::Base
   
   belongs_to :partner
   
-  validates_presence_of :partner, :name
+  validates_presence_of :partner, :name, :secret_key
   validates_inclusion_of :platform, :in => PLATFORMS.keys
 
-  before_create :generate_secret_key
+  before_validation_on_create :generate_secret_key
   after_create :create_primary_offer
   after_update :update_offers
   after_update :update_rating_offer
