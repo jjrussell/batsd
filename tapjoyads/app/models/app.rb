@@ -222,7 +222,7 @@ private
   def generate_secret_key
     raise "Secret key already set" unless secret_key.blank?
     
-    alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'.split('')
+    alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'
     self.secret_key = ''
     20.times do
       self.secret_key << alphabet[rand(alphabet.size)]
