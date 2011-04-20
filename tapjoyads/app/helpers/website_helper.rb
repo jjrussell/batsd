@@ -14,13 +14,6 @@ module WebsiteHelper
     request.env["HTTP_USER_AGENT"][/msie/i]
   end
 
-  def decrypt_if_permitted(object, field_name)
-    if permitted_to?(:payout_info, :tools)
-      field_name = [:decrypt, field_name].join('_').to_sym
-    end
-    object.send(field_name)
-  end
-
   def clippy(text, bgcolor = '#FFFFFF')
     @clippy_id = 0 unless defined?(@clippy_id)
     @clippy_id += 1
