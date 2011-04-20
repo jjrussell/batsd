@@ -56,21 +56,19 @@ class OneOffs
     end
   end
 
-  def self.apple_data(domain_num)
-    count = 0
-    domain_name = "rewards_#{domain_num}"
-    counts = {}
-    start = Time.zone.now.beginning_of_year
-    finish = start + 3.months
-    Reward.select(:domain_name => domain_name, :where => "created >= '#{start.to_i}' AND created < '#{finish.to_i}'") do |r|
-      count += 1
-      puts "#{Time.zone.now.to_s(:db)} - looked at #{count} rewards" if count % 1000 == 0
-      next unless r.udid =~ /^[a-f0-9]{40}$/
-      counts[r.udid] ||= 0
-      counts[r.udid] += 1
-    end
+  def self.combine_apple_data
     b = S3.bucket(BucketNames::TAPJOY)
-    b.put("apple_data/#{domain_name}.json", counts.to_json)
+    counts = {}
+    NUM_REWARD_DOMAINS.times do |i|
+      json = b.get("apple_data/rewards_#{i}.json")
+      data = JSON.parse(json)
+      data.each do |udid, count|
+        counts[udid] ||= 0
+        counts[udid] += count
+      end
+      puts "#{Time.zone.now.to_s(:db)} - done combining rewards_#{i}"
+    end
+    b.put("apple_data/combined.json", counts.to_json)
     counts
   end
 
