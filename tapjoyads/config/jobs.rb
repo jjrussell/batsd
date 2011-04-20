@@ -36,7 +36,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'master_reload_money', :interval => 20.minutes
     s.add_job 'master_reload_statz', :interval => 20.minutes
     s.add_job 'master_reload_statz/daily', :daily => 10.minutes
-    s.add_job 'master_reload_statz/partner_index', :interval => 20.minutes
+    s.add_job 'master_reload_statz/partner_index', :hourly => 7.minutes
     s.add_job 'master_reload_statz/partner_daily', :daily => 10.minutes
     s.add_job 'master_ios_app_ranks', :hourly => 1.minutes
     s.add_job 'master_android_app_ranks', :hourly => 30.minutes
