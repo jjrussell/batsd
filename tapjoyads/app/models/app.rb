@@ -223,10 +223,11 @@ private
     raise "Secret key already set" unless secret_key.blank?
     
     alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'
-    self.secret_key = ''
+    new_secret_key = ''
     20.times do
-      self.secret_key << alphabet[rand(alphabet.size)]
+      new_secret_key << alphabet[rand(alphabet.size)]
     end
+    self.secret_key = new_secret_key
   end
   
   def create_primary_offer
