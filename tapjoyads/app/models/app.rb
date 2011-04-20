@@ -20,6 +20,7 @@ class App < ActiveRecord::Base
   validates_presence_of :partner, :name
   validates_inclusion_of :platform, :in => PLATFORMS.keys
 
+  before_create :generate_secret_key
   after_create :create_primary_offer
   after_update :update_offers
   after_update :update_rating_offer
@@ -217,6 +218,16 @@ class App < ActiveRecord::Base
   end
 
 private
+  
+  def generate_secret_key
+    raise "Secret key already set" unless secret_key.blank?
+    
+    alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'.split('')
+    self.secret_key = ''
+    20.times do
+      self.secret_key << alphabet[rand(alphabet.size)]
+    end
+  end
   
   def create_primary_offer
     offer = Offer.new(:item => self)

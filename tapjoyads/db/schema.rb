@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110416200308) do
+ActiveRecord::Schema.define(:version => 20110419222619) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(:version => 20110416200308) do
     t.integer  "file_size_bytes"
     t.string   "supported_devices"
     t.string   "enabled_rating_offer_id", :limit => 36
+    t.string   "secret_key",                                               :null => false
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true

@@ -49,4 +49,11 @@ class OneOffs
     end
   end
 
+  def self.generate_secret_keys_for_apps
+    App.find_each do |app|
+      app.send(:generate_secret_key)
+      app.save!
+    end
+  end
+
 end
