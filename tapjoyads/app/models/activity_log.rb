@@ -7,11 +7,11 @@ class ActivityLog < SimpledbResource
   self.sdb_attr :request_id
   self.sdb_attr :object_id
   self.sdb_attr :object_type
-  self.sdb_attr :included_methods
+  self.sdb_attr :included_methods,  :force_array => true
   self.sdb_attr :partner_id
-  self.sdb_attr :before_state, :type => :json
-  self.sdb_attr :after_state,  :type => :json
-  self.sdb_attr :created_at,   :type => :time, :attr_name => 'updated-at'
+  self.sdb_attr :before_state,      :type => :json
+  self.sdb_attr :after_state,       :type => :json
+  self.sdb_attr :created_at,        :type => :time, :attr_name => 'updated-at'
   
   def initialize(options = {})
     @state_object = nil
@@ -39,16 +39,10 @@ class ActivityLog < SimpledbResource
     self.before_state = fix_time_zones(obj.attributes)
   end
 
-  def include=(methods)
-    @included_methods = methods
-    self.before_state = add_included_methods(self.before_state)
-  end
-
   def finalize_states
     self.object_id = @state_object.id
     self.object_type = @state_object.class.to_s
     self.after_state = fix_time_zones(@state_object.attributes)
-    self.after_state = add_included_methods(self.after_state)
 
     if @state_object.respond_to?(:partner_id)
       self.partner_id = @state_object.partner_id
@@ -99,19 +93,13 @@ class ActivityLog < SimpledbResource
 private
   
   def fix_time_zones(attrs)
+    self.included_methods.each do |method|
+      attrs[method.to_s] = @state_object.send(method.to_sym).inspect
+    end
     attrs.each do |k, v|
       attrs[k] = v.utc if v.respond_to?(:utc)
     end
-    attrs
-  end
 
-  def add_included_methods(attrs)
-    unless @included_methods.blank?
-      @state_object.reload
-      @included_methods.each do |method|
-        attrs[method.to_s] = @state_object.send(method.to_sym).to_json
-      end
-    end
     attrs
   end
 end
