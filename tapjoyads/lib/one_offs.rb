@@ -56,7 +56,7 @@ class OneOffs
     end
   end
 
-  def apple_data(domain_num)
+  def self.apple_data(domain_num)
     count = 0
     domain_name = "rewards_#{domain_num}"
     counts = {}
