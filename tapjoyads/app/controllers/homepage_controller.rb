@@ -26,4 +26,12 @@ class HomepageController < WebsiteController
   def privacy
     render :layout => false
   end
+  
+  def advertisers
+    render :layout => false
+  end
+  
+  def app_developers
+    render :layout => false
+  end
 end
