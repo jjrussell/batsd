@@ -153,17 +153,21 @@ private
   end
   
   def log_activity(object, options={})
+    included_methods = options.delete(:included_methods) { [] }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
     @request_id ||= UUIDTools::UUID.random_create.to_s
     @activity_logs ||= []
-    
-    activity_log = ActivityLog.new({ :load => false })
-    activity_log.request_id = @request_id
-    activity_log.user = 'system'
-    activity_log.user = current_user.username if self.respond_to?(:current_user)
-    activity_log.controller = params[:controller]
-    activity_log.action = params[:action]
-    activity_log.object = object
-    activity_log.include = options[:include] unless options[:include].blank?
+
+    activity_log                  = ActivityLog.new({ :load => false })
+    activity_log.request_id       = @request_id
+    activity_log.user             = 'system'
+    activity_log.user             = current_user.username if self.respond_to?(:current_user)
+    activity_log.controller       = params[:controller]
+    activity_log.action           = params[:action]
+    activity_log.included_methods = included_methods
+    activity_log.object           = object
+
     @activity_logs << activity_log
   end
   
