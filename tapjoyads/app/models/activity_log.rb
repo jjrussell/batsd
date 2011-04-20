@@ -36,13 +36,19 @@ class ActivityLog < SimpledbResource
   def object=(obj)
     @state_object = obj
     @state_object_new = obj.new_record?
-    self.before_state = fix_time_zones(obj.attributes)
+    self.before_state = get_attributes
+  end
+
+  def included_methods=(methods)
+    methods.each do |method|
+      self.put('included_methods', method, :replace => false)
+    end
   end
 
   def finalize_states
     self.object_id = @state_object.id
     self.object_type = @state_object.class.to_s
-    self.after_state = fix_time_zones(@state_object.attributes)
+    self.after_state = get_attributes
 
     if @state_object.respond_to?(:partner_id)
       self.partner_id = @state_object.partner_id
@@ -91,8 +97,9 @@ class ActivityLog < SimpledbResource
   end
   
 private
-  
-  def fix_time_zones(attrs)
+
+  def get_attributes
+    attrs = @state_object.attributes
     self.included_methods.each do |method|
       attrs[method.to_s] = @state_object.send(method.to_sym).inspect
     end
