@@ -1,4 +1,3 @@
-body { background: #616161; }
 #content { background: url('../images/home_content_bg.jpg') no-repeat; min-height: 461px; }
 
 .appname { color: #fff; letter-spacing: .4px; text-shadow: 1px 1px 1px #212121; }
@@ -42,13 +41,3 @@ body { background: #616161; }
 #byline .appname { float: left; margin-top: 13px; }
 
 #footer_divider { background: url('../images/footer_divider.jpg') repeat-x; clear: both; float: left; height: 2px; margin-top: 43px; width: 980px; }
-
-#footer_content { color: #fff; float: left; font-size: 15px; margin: 43px 0 35px ; }
-#about_tapjoy { float: left; }
-#about_tapjoy ul { border-left: 2px solid #44a7d0; float: left; margin: 10px 22px 0 0; padding-left: 10px; }
-#about_tapjoy ul li { margin-bottom: 10px; }
-#about_tapjoy ul li.last { margin-bottom: 0px; }
-#about_tapjoy a { color: #fff; text-decoration: none; }
-#about_tapjoy a:hover { text-decoration: underline; }
-#legal_stuff { float: left; margin-left: 50px; }
-#legal_stuff p { margin-top: 12px;  }

@@ -1,4 +1,4 @@
-body { font-family: helvetica, arial; }
+body { background: #616161; font-family: helvetica, arial; }
 
 .clear { clear: both; }
 
@@ -22,3 +22,13 @@ body { font-family: helvetica, arial; }
 
 #footer_wrapper { background: url('../images/footer_bg.jpg') repeat-x; width: 100%; }
 #footer { margin: 0px auto; width: 980px; }
+
+#footer_content { color: #fff; float: left; font-size: 15px; margin: 43px 0 35px; min-height: 250px; }
+#about_tapjoy { float: left; }
+#about_tapjoy ul { border-left: 2px solid #44a7d0; float: left; margin: 10px 22px 0 0; padding-left: 10px; }
+#about_tapjoy ul li { margin-bottom: 10px; }
+#about_tapjoy ul li.last { margin-bottom: 0px; }
+#about_tapjoy a { color: #fff; text-decoration: none; }
+#about_tapjoy a:hover { text-decoration: underline; }
+#legal_stuff { float: left; margin-left: 50px; }
+#legal_stuff p { margin-top: 12px;  }
