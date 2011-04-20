@@ -7,10 +7,11 @@ class ActivityLog < SimpledbResource
   self.sdb_attr :request_id
   self.sdb_attr :object_id
   self.sdb_attr :object_type
+  self.sdb_attr :included_methods,  :force_array => true
   self.sdb_attr :partner_id
-  self.sdb_attr :before_state, :type => :json
-  self.sdb_attr :after_state,  :type => :json
-  self.sdb_attr :created_at,   :type => :time, :attr_name => 'updated-at'
+  self.sdb_attr :before_state,      :type => :json
+  self.sdb_attr :after_state,       :type => :json
+  self.sdb_attr :created_at,        :type => :time, :attr_name => 'updated-at'
   
   def initialize(options = {})
     @state_object = nil
@@ -35,14 +36,20 @@ class ActivityLog < SimpledbResource
   def object=(obj)
     @state_object = obj
     @state_object_new = obj.new_record?
-    self.before_state = fix_time_zones(obj.attributes)
+    self.before_state = get_attributes
   end
-  
+
+  def included_methods=(methods)
+    methods.each do |method|
+      self.put('included_methods', method, :replace => false)
+    end
+  end
+
   def finalize_states
     self.object_id = @state_object.id
     self.object_type = @state_object.class.to_s
-    self.after_state = fix_time_zones(@state_object.attributes)
-    
+    self.after_state = get_attributes
+
     if @state_object.respond_to?(:partner_id)
       self.partner_id = @state_object.partner_id
     elsif self.object_type == 'Partner'
@@ -75,7 +82,7 @@ class ActivityLog < SimpledbResource
     if after_hash.length == 1 && (after_hash['updated_at'] || after_hash['updated-at'])
       after_hash = {}
     end
-    
+
     self.before_state = before_hash
     self.after_state = after_hash
   end
@@ -90,12 +97,16 @@ class ActivityLog < SimpledbResource
   end
   
 private
-  
-  def fix_time_zones(attrs)
+
+  def get_attributes
+    attrs = @state_object.attributes
+    self.included_methods.each do |method|
+      attrs[method.to_s] = @state_object.send(method.to_sym).inspect
+    end
     attrs.each do |k, v|
       attrs[k] = v.utc if v.respond_to?(:utc)
     end
+
     attrs
   end
-  
 end

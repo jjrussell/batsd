@@ -86,9 +86,9 @@ private
       partner_stats['partner'] = partner.name
       partner_stats['account_mgr'] = partner.account_managers.collect { |mgr| mgr.email }.compact.join(',')
 
-
       # for publishers page
       partner_stats['total_revenue'] = number_to_currency(stats['total_revenue'].sum / 100.0)
+      partner_stats['rev_share'] = number_to_percentage(partner.rev_share * 100.0, :precision => 1)
 
       partner_stats['offerwall_views'] = number_with_delimiter(stats['offerwall_views'].sum)
       partner_stats['featured_views']  = number_with_delimiter(stats['featured_offers_shown'].sum)
@@ -106,26 +106,26 @@ private
       if rewards_opened == 0
         partner_stats['offerwall_cvr'] = 0
       else
-        partner_stats['offerwall_cvr'] = "%.1f%" % (stats['rewards'].sum.to_f / rewards_opened.to_f * 100.0)
+        partner_stats['offerwall_cvr'] = number_to_percentage(stats['rewards'].sum.to_f / rewards_opened.to_f * 100.0, :precision => 1)
       end
 
       featured_offers_opened = stats['featured_offers_opened'].sum
       if featured_offers_opened == 0
         partner_stats['featured_cvr'] = 0
       else
-        partner_stats['featured_cvr']  = "%.1f%" % (stats['featured_published_offers'].sum.to_f / featured_offers_opened.to_f * 100.0)
+        partner_stats['featured_cvr'] = number_to_percentage(stats['featured_published_offers'].sum.to_f / featured_offers_opened.to_f * 100.0, :precision => 1)
       end
 
       display_clicks = stats['display_clicks'].sum
       if display_clicks == 0
         partner_stats['display_cvr'] = 0
       else
-        partner_stats['display_cvr']   = "%.1f%" % (stats['display_conversions'].sum.to_f / display_clicks.to_f * 100.0)
+        partner_stats['display_cvr'] = number_to_percentage(stats['display_conversions'].sum.to_f / display_clicks.to_f * 100.0, :precision => 1)
       end
 
-      partner_stats['offerwall_ecpm'] = number_to_currency(stats['offerwall_ecpm'].sum / 100.0)
-      partner_stats['featured_ecpm']  = number_to_currency(stats['featured_ecpm'].sum / 100.0)
-      partner_stats['display_ecpm']   = number_to_currency(stats['display_ecpm'].sum / 100.0)
+      partner_stats['offerwall_ecpm'] = number_to_currency((stats['rewards_revenue'].sum / 100.0) / (stats['offerwall_views'].sum / 1000.0))
+      partner_stats['featured_ecpm']  = number_to_currency((stats['featured_revenue'].sum / 100.0) / (stats['featured_offers_shown'].sum / 1000.0))
+      partner_stats['display_ecpm']   = number_to_currency((stats['display_revenue'].sum / 100.0) / (stats['display_ads_shown'].sum / 1000.0))
 
       # for advertisers page
       partner_stats['spend']   = number_to_currency(stats['installs_spend'].sum / 100.0)
@@ -138,7 +138,7 @@ private
       if paid_clicks == 0
         partner_stats['cvr'] = 0
       else
-        partner_stats['cvr'] = "%.1f%" % ((stats['paid_installs'].sum.to_f / paid_clicks.to_f) * 100.0)
+        partner_stats['cvr'] = number_to_percentage((stats['paid_installs'].sum.to_f / paid_clicks.to_f) * 100.0, :precision => 1)
       end
 
       partner_stats['sessions']  = number_with_delimiter(stats['logins'].sum)
