@@ -1,164 +1,117 @@
-.banner.nobannerbg
-  .anythingSlider
-    .slidewrapper
-      %ul
-        %li
-          .slide#slide1
-            .title
-              .small{:style => 'top:40px;'} App developers...
-              .large{:style => 'top:70px;'} Distribute your app
-              .orange.largest{:style => 'top:115px;'} Everywhere.
-            .body
-              .list
-                = image_tag "/images/site/arrow-orange.png"
-                Get new users for your application
-              .list
-                = image_tag "/images/site/arrow-orange.png"
-                Distribute on Mobile and Web platforms
-              .list
-                = image_tag "/images/site/arrow-orange.png"
-                Pay per install acquisition and re-engagement
-            .button
-              = button_to 'Sign up today', {:action => 'contact_us'}, :method => 'get', :title => "Sign up today", :class => 'blue'
-        %li
-          .slide#slide2
-            .title
-              .small{:style => 'top:40px;'} App developers...
-              .medium{:style => 'top:70px;'} Boost your revenue by
-              .orange.larger{:style => 'top:115px;'} 100% or more.
-            .body
-              .list
-                = image_tag "/images/site/arrow-orange.png"
-                The proven leader in monetizing web and mobile apps
-              .list
-                = image_tag "/images/site/arrow-orange.png"
-                Turn-key virtual goods &amp; microtransactions platform
-              .list
-                = image_tag "/images/site/arrow-orange.png"
-                Direct and indirect payments in nearly 200 countries
-            .button
-              = button_to 'Start earning now', {:action => 'contact_us'}, :method => 'get', :title => "Sign up today", :class => 'blue'
-        %li
-          .slide#slide3
-            .title
-              .small{:style => 'top:40px;'} Advertisers...
-              .orange.large{:style => 'top:75px;'} Reach 100+ million
-              .medium{:style => 'top:130px;'} Social &amp; mobile consumers
-            .body
-              .list
-                = image_tag "/images/site/arrow-orange.png"
-                Includes users other networks can't reach
-              .list
-                = image_tag "/images/site/arrow-orange.png"
-                Deepest relationships with top app developers
-              .list
-                = image_tag "/images/site/arrow-orange.png"
-                Ideal for both performance and brand advertising
-            .button
-              = button_to 'Contact us to learn more', {:action => 'advertisers_contact'}, :method => 'get', :title => "Sign up today", :class => 'blue'
-
-.services
-  %a{ :href => '/site/app_developers' }
-    .section1
-      %h2 APP DEVELOPERS
-      = image_tag('site/appdev_img.gif', :alt => "APP DEVELOPERS")
-      %p Fuel your application's growth with industry-leading monetization and distribution services.
-  %a{ :href => '/site/advertisers' }
-    .section2
-      %h2 ADVERTISERS
-      = image_tag('site/ads_img.gif', :alt => 'ADVERTISERS')
-      %p Reach more than 100 million consumers on leading social networks and mobile platforms.
-  %a{ :href => '/site/gaming_platforms' }
-    .section3
-      %h2 GAMING PLATFORMS
-      = image_tag('site/gamedev_img.gif', :alt => "GAME DEVELOPERS")
-      %p Integrate virtual currency payments and popular gaming content into your platform.
-.partnerList= image_tag 'site/partlist_img.gif'
-- content_for :page_styles do
-  :plain
-    .slide {
-      width:875px;
-      height:357px;
-    }
-    .title, .body, .button {
-      padding-left: 60px;
-    }
-    .title {
-      text-transform: uppercase;
-      padding-top: 40px;
-    }
-    .title div {
-      padding: 0px auto;
-      position: absolute;
-    }
-    .small {
-      font-size: 1.6em;
-      padding-bottom: 10px;
-    }
-    .medium {
-      font-size: 2.8em;
-    }
-    .large {
-      font-size: 3.6em;
-    }
-    .larger {
-      font-size: 4.8em;
-    }
-    .largest {
-      font-size: 6em;
-    }
-    .orange {
-      color: #fa5c03
-    }
-    .body {
-      color: #444;
-      font-size: 1.2em;
-      font-style: oblique;
-      padding-top: 0px;
-      padding-bottom: 5px;
-      position: absolute;
-      top: 210px;
-    }
-    #slide1 {
-      background: url(/images/site/01.jpg) no-repeat right top;
-    }
-    #slide2 {
-      background: url(/images/site/02.jpg) no-repeat right top;
-    }
-    #slide3 {
-      background: url(/images/site/03.jpg) no-repeat right top;
-    }
-    div.list {
-      padding-bottom: 5px;
-    }
-    div.list img {
-      float: none;
-      padding-right: 10px;
-    }
-    .button {
-      position: absolute;
-      top: 285px;
-    }
-- content_for :page_javascript do
-  :plain
-    function formatText(index, panel) {
-      return index + "";
-    };
-    $(function ($) {
-      $('.anythingSlider').anythingSlider({
-        easing: "easeInOutExpo",        // Anything other than "linear" or "swing" requires the easing plugin
-        autoPlay: true,                 // This turns off the entire FUNCTIONALY, not just if it starts running or not.
-        delay: 7000,                    // How long between slide transitions in AutoPlay mode
-        startStopped: false,            // If autoPlay is on, this can force it to start stopped
-        animationTime: 500,             // How long the slide transition takes
-        hashTags: true,                 // Should links change the hashtag in the URL?
-        buildNavigation: true,          // If true, builds and list of anchor links to link to each slide
-        pauseOnHover: true,             // If true, and autoPlay is enabled, the show will pause on hover
-        startText: "Go",                // Start text
-        stopText: "Stop",               // Stop text
-        navigationFormatter: formatText // Details at the top of the file on this use (advanced use)
-      });
-      $("#slide-jump").click(function(){
-        $('.anythingSlider').anythingSlider(3);
-      });
-    });
+!!! Strict
+%html
+  %head
+    %title Tapjoy :: Fueling Great Apps
+    = stylesheet_link_tag 'reset', 'common', 'home'
+  %body
+    #header_wrapper
+      #header
+        %a#logo{:href => ""}
+        #nav
+          %a#nav_home.nav_link{:href => ""}
+          %a#nav_developers.nav_link{:href => ""}
+          %a#nav_advertisers.nav_link{:href => ""}
+          %a#nav_about.nav_link{:href => ""}
+    #content_wrapper
+      #content
+        #left
+          %img{:src => "images/app_developers_header.png"}/
+          %p
+            Increase your app's revenue with our cross-promotion platform and app network
+          %a.learn_more{:href => "..."}
+        #right
+          %img{:src => "images/advertisers_header.png"}/
+          %p
+            Increase your app's revenue with our cross-promotion platform and app network
+          %a.learn_more{:href => "..."}
+        .clear
+      .clear
+    #press_wrapper
+      #press
+        %img{:src => "images/maybe_youve_heard_of_us.png"}/
+        %a{:href => "http://venturebeat.com/2011/01/06/tapjoy-funding-seriesc/"}
+          %img{:src => "images/mobilebeat.jpg"}/
+        %a{:href => "http://techcrunch.com/2011/03/23/app-distributor-tapjoy-launches-publishing-platform-for-game-developers/"}
+          %img{:src => "images/techcrunch.jpg"}/
+        %a{:href => "http://www.insidemobileapps.com/2011/01/03/tapjoy-rebound/"}
+          %img{:src => "images/insidemobileapps.jpg"}/
+    #footer_wrapper
+      #footer
+        #clients
+          %img.header{:src => "images/checkout_a_few_of_our_clients.png"}/
+          .clear
+          %a.client{:href => "#"}
+            %img{:src => "images/gunbros.png"}/
+            %span.appname Gun Bros
+            %span.company Glu
+          %a.client{:href => "#"}
+            %img{:src => "images/tapzoo.png"}/
+            %span.appname Tap Zoo
+            %span.company Pocket Gems, Inc.
+          %a.client{:href => "#", :title => "ngmoco"}
+            %img{:src => "images/werule.png"}/
+            %span.appname We Rule
+            %span.company ngmoco, Inc.
+          .clear
+          %a.client{:href => "#", :title => "pinger"}
+            %img{:src => "images/pinger.png"}/
+            %span.appname Pinger
+            %span.company Textfree
+          %a.client{:href => "#"}
+            %img{:src => "images/google.png"}/
+            %span.appname Google Search
+            %span.company Google
+          %a.client.on{:href => "#", :title => "kayak"}
+            %img{:src => "images/kayak.png"}/
+            %span.appname Kayak Mobile
+            %span.company Kayak
+        #quote
+          %img.header{:src => "images/heres_what_they_are_saying_about_us.png"}/
+          #kayak.show
+            .quote_content
+              %p Tapjoy produced great results, giving us effective engagement with their network as well as with..
+            %a.view_case_study{:href => ""}
+            #byline
+              %img{:src => "images/edward_hoa.jpg"}/
+              %span.appname Edward Hoa
+              %span.company Kayak
+          #pinger
+            .quote_content
+              %p We are both a publisher and an advertiser with Tapjoy, and they've provided tremendous value..
+            %a.view_case_study{:href => ""}
+            #byline
+              %img{:src => "images/edward_hoa.jpg"}/
+              %span.appname Joe Sipher
+              %span.company Pinger
+          #ngmoco
+            .quote_content
+              %p Tapjoy is a key monetization partner for ngmoco:).  The team is knowledgeable, honest..
+            %a.view_case_study{:href => ""}
+            #byline
+              %img{:src => "images/edward_hoa.jpg"}/
+              %span.appname Nate Morgan
+              %span.company ngmoco :)
+        #footer_divider
+        #footer_content
+          #about_tapjoy
+            %img.header{:src => "images/about_tapjoy.png"}/
+            .clear
+            %ul
+              %li
+                %a{:href => "/site/team"} Meet the team
+              %li
+                %a{:href => "/press"} Tapjoy in the press
+              %li.last
+                %a{:href => "http://blog.tapjoy.com"} Read our blog
+            %ul
+              %li
+                %a{:href => "/site/careers"} Work at Tapjoy
+              %li.last
+                %a{:href => "/site/contact"} Contact us
+          #legal_stuff
+            %img.header{:src => "images/legal_stuff.png"}/
+            %p
+              All content © 2011 Tapjoy. Website created with love in downtown San Francisco, CA
+            .clear
+      .clear
+    = javascript_include_tag 'jquery-1.4.2.min', 'tapjoy'
