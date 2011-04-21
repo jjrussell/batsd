@@ -32,7 +32,7 @@
 #quote > div { display: none; }
 #quote > div.show { display: block; }
 #quote .header { margin-bottom: 25px;  }
-.quote_content { background: url('../images/quote_bubble.png'); color: #fff; font: italic 16px Georgia, times; height: 69px; line-height: 22px; text-shadow: 1px 1px 1px #1E1E1E; width: 383px; }
+.quote_content { background: url('../images/quote_bubble.png'); color: #fff; float: left; font: italic 16px Georgia, times; height: 69px; line-height: 22px; text-shadow: 1px 1px 1px #1E1E1E; width: 383px; }
 .quote_content p { float: left; margin: 8px 0 0 15px; }
 .view_case_study { background: url('../images/view_case_study.png'); float: left; height: 34px; margin-top: 14px; width: 152px; }
 .view_case_study:hover { background-position: -152px 0; }
