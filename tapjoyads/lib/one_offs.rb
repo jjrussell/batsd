@@ -41,19 +41,4 @@ class OneOffs
     puts "num_skipped: #{num_skipped}"
   end
 
-  def self.set_tapjoy_currency_enabled
-    Partner.find_each do |p|
-      if p.id != 'e9a6d51c-cef9-4ee4-a2c9-51eef1989c4e' && p.currencies.count > 0
-        p.update_attribute(:tapjoy_currency_enabled, true)
-      end
-    end
-  end
-
-  def self.generate_secret_keys_for_apps
-    App.find_each do |app|
-      app.send(:generate_secret_key)
-      app.save!
-    end
-  end
-
 end
