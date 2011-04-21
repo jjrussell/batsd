@@ -10,9 +10,9 @@
       #header
         %a#logo{:href => "/"}
         #nav
-          %a#nav_home.nav_link{:href => ""}
-          %a#nav_developers.nav_link{:href => ""}
-          %a#nav_advertisers.nav_link{:href => ""}
+          %a#nav_home.nav_link{:href => "/"}
+          %a#nav_developers.nav_link{:href => "/site/app_developers"}
+          %a#nav_advertisers.nav_link{:href => "/site/advertisers"}
           %a#nav_about.nav_link{:href => "/site/about_us"}
     #content_wrapper
       #content
@@ -31,11 +31,11 @@
         #clients
           %img.header{:src => "images/checkout_a_few_of_our_clients.png"}/
           .clear
-          %a.client{:href => "#"}
+          %a.client{:href => "", :title => "gunbros"}
             %img{:src => "images/gunbros.png"}/
             %span.appname Gun Bros
             %span.company Glu
-          %a.client{:href => "#"}
+          %a.client{:href => "", :title => "tapzoo"}
             %img{:src => "images/tapzoo.png"}/
             %span.appname Tap Zoo
             %span.company Pocket Gems, Inc.
@@ -48,7 +48,7 @@
             %img{:src => "images/pinger.png"}/
             %span.appname Pinger
             %span.company Textfree
-          %a.client{:href => "#"}
+          %a.client{:href => "", :title => "google"}
             %img{:src => "images/google.png"}/
             %span.appname Google Search
             %span.company Google
@@ -61,7 +61,7 @@
           #kayak.show
             .quote_content
               %p Tapjoy produced great results, giving us effective engagement with their network as well as with..
-            %a.view_case_study{:href => ""}
+            %a.view_case_study{:href => "#", :title => 'Coming Very Soon'}
             #byline
               %img{:src => "images/edward_hoa.jpg"}/
               %span.appname Edward Hoa
@@ -69,19 +69,28 @@
           #pinger
             .quote_content
               %p We are both a publisher and an advertiser with Tapjoy, and they've provided tremendous value..
-            %a.view_case_study{:href => ""}
+            %a.view_case_study{:href => "#", :title => 'Coming Very Soon'}
             #byline
-              %img{:src => "images/edward_hoa.jpg"}/
+              %img{:src => "images/joe_sipher.jpg"}/
               %span.appname Joe Sipher
               %span.company Pinger
           #ngmoco
             .quote_content
               %p Tapjoy is a key monetization partner for ngmoco:).  The team is knowledgeable, honest..
-            %a.view_case_study{:href => ""}
+            %a.view_case_study{:href => "#", :title => 'Coming Very Soon'}
             #byline
-              %img{:src => "images/edward_hoa.jpg"}/
+              %img{:src => "images/nate_morgan.jpg"}/
               %span.appname Nate Morgan
               %span.company ngmoco :)
+          #gunbros
+            .quote_content
+              %p Coming soon..
+          #tapzoo
+            .quote_content
+              %p Coming soon..
+          #google
+            .quote_content
+              %p Coming soon..
         #footer_divider
         #footer_content
           #about_tapjoy
@@ -102,7 +111,7 @@
           #legal_stuff
             %img.header{:src => "/images/legal_stuff.png"}/
             %p
-              All content © 2011 Tapjoy. Website created with love in downtown San Francisco, CA
+              All content &copy; 2011 Tapjoy. Website created with love in downtown San Francisco, CA
             .clear
       .clear
     = javascript_include_tag 'jquery-1.4.2.min', 'tapjoy'

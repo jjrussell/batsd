@@ -6,6 +6,8 @@ p { line-height: 22px; }
 a { color: #1486b8; text-decoration: none; }
 a:hover { text-decoration: underline; }
 
+.header { float: left; }
+
 #header_wrapper { background: url('../images/header_repeat.jpg') repeat-x; height: 99px; width: 100%; }
 #header { background: url('../images/header_bg.jpg') no-repeat; height: 99px; margin: 0px auto; width: 980px; }
 #logo { background: url('../images/logo.png') no-repeat; float: left; height: 61px; margin-top: 21px; width: 138px; }
@@ -35,4 +37,4 @@ a:hover { text-decoration: underline; }
 #about_tapjoy a { color: #fff; text-decoration: none; }
 #about_tapjoy a:hover { text-decoration: underline; }
 #legal_stuff { float: left; margin-left: 50px; }
-#legal_stuff p { float: left; margin-top: 12px;  }
+#legal_stuff p { clear: left; float: left; margin-top: 12px;  }
