@@ -1,6 +1,8 @@
 html { overflow: -moz-scrollbars-vertical; overflow: scrollbars-vertical; }
 body { background: #616161; color: #787878; font-family: helvetica, arial; }
 
+h2 { color: #5c5c5c; float: left; font-size: 20px; font-weight: bold; }
+
 .clear { clear: both; }
 p { line-height: 22px; }
 a { color: #1486b8; text-decoration: none; }
