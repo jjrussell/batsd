@@ -39,4 +39,4 @@ a:hover { text-decoration: underline; }
 #legal_stuff { float: left; margin-left: 50px; }
 #legal_stuff p { clear: left; float: left; margin-top: 12px;  }
 
-#client_login { float: right; margin-top: 15px; }
+#client_login { margin: 15px 0 0 890px; position: absolute; }
