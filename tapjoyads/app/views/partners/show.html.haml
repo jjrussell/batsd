@@ -53,73 +53,71 @@
 
 .clear
 
-- if permitted_to?(:publishers_without_payout_info, :tools)
-  - @payout_info = @partner.payout_info
-  - if @payout_info
-    - if @payout_info.filled?
-      %h2 Tax and Payment Information
-    - else
-      %h2.not_integrated Incomplete payment/tax information.
-    %table.payout_info
-      %tbody
-        %tr
-          %td.wide{:colspan=>2} Tax Information
-        %tr
-          %th Country
-          %td= @payout_info.tax_country
-        %tr
-          %th Account Type:
-          %td= @payout_info.account_type
-        %tr
-          %th Billing Name:
-          %td= @payout_info.billing_name
-        %tr
-          %th Tax ID:
-          %td= @payout_info.decrypt_tax_id
-        %tr
-          %td.wide{:colspan=>2} Payment Information
-        %tr
-          %th Beneficiary Name:
-          %td= @payout_info.beneficiary_name
-        %tr
-          %th Company Name:
-          %td= @payout_info.company_name
-        %tr
-          %th Payout method
-          %td= @payout_info.payout_method
-        %tr
-          %th Address:
-          %td= @payout_info.address_1
-        %tr
-          %th Address:
-          %td= @payout_info.address_2
-        %tr
-          %th City:
-          %td= @payout_info.address_city
-        %tr
-          %th State:
-          %td= @payout_info.address_state
-        %tr
-          %th ZIP/Postal code:
-          %td= @payout_info.address_postal_code
-        %tr
-          %th Country:
-          %td= @payout_info.address_country
-        %tr
-          %th Bank Name:
-          %td= @payout_info.decrypt_bank_name
-        %tr
-          %th Bank Address:
-          %td= @payout_info.decrypt_bank_address
-        %tr
-          %th Bank Routing Number/SWIFT:
-          %td= @payout_info.decrypt_bank_routing_number
-        %tr
-          %th Bank Account Number/IBAN:
-          %td= @payout_info.decrypt_bank_account_number
-
+- payout_info = @partner.payout_info
+- if payout_info
+  - if payout_info.filled?
+    %h2 Tax and Payment Information
   - else
-    %h2.not_integrated Partner has not submitted payment/tax information.
+    %h2.not_integrated Incomplete payment/tax information.
+  %table.payout_info
+    %tbody
+      %tr
+        %td.wide{:colspan=>2} Tax Information
+      %tr
+        %th Country
+        %td= payout_info.tax_country
+      %tr
+        %th Account Type:
+        %td= payout_info.account_type
+      %tr
+        %th Billing Name:
+        %td= payout_info.billing_name
+      %tr
+        %th Tax ID:
+        %td= decrypt_if_permitted(payout_info, :tax_id)
+      %tr
+        %td.wide{:colspan=>2} Payment Information
+      %tr
+        %th Beneficiary Name:
+        %td= payout_info.beneficiary_name
+      %tr
+        %th Company Name:
+        %td= payout_info.company_name
+      %tr
+        %th Payout method
+        %td= payout_info.payout_method
+      %tr
+        %th Address:
+        %td= payout_info.address_1
+      %tr
+        %th Address:
+        %td= payout_info.address_2
+      %tr
+        %th City:
+        %td= payout_info.address_city
+      %tr
+        %th State:
+        %td= payout_info.address_state
+      %tr
+        %th ZIP/Postal code:
+        %td= payout_info.address_postal_code
+      %tr
+        %th Country:
+        %td= payout_info.address_country
+      %tr
+        %th Bank Name:
+        %td= decrypt_if_permitted(payout_info, :bank_name)
+      %tr
+        %th Bank Address:
+        %td= decrypt_if_permitted(payout_info, :bank_address)
+      %tr
+        %th Bank Routing Number/SWIFT:
+        %td= decrypt_if_permitted(payout_info, :bank_routing_number)
+      %tr
+        %th Bank Account Number/IBAN:
+        %td= decrypt_if_permitted(payout_info, :bank_account_number)
+- else
+  %h2.not_integrated Partner has not submitted payment/tax information.
 
 %table#apps_table.tablesorter
   %thead
