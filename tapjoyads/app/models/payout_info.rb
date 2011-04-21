@@ -9,8 +9,8 @@ class PayoutInfo < ActiveRecord::Base
   validates_uniqueness_of :partner_id
 
   attr_accessor :terms
-  validates_acceptance_of :terms, :if => :taxed_in_us?
-  validates_presence_of :signature, :if => :taxed_in_us?
+  validates_acceptance_of :terms
+  validates_presence_of :signature
 
   named_scope :recently_updated, lambda { |date|
     {
@@ -55,11 +55,6 @@ private
     address_city.present? &&
     address_state.present? &&
     address_postal_code.present?
-  end
-
-  def taxed_in_us?
-    country = tax_country && tax_country.downcase
-    is_american?(country)
   end
 
   def is_american?(country)
