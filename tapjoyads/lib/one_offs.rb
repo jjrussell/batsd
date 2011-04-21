@@ -41,35 +41,4 @@ class OneOffs
     puts "num_skipped: #{num_skipped}"
   end
 
-  def self.set_tapjoy_currency_enabled
-    Partner.find_each do |p|
-      if p.id != 'e9a6d51c-cef9-4ee4-a2c9-51eef1989c4e' && p.currencies.count > 0
-        p.update_attribute(:tapjoy_currency_enabled, true)
-      end
-    end
-  end
-
-  def self.generate_secret_keys_for_apps
-    App.find_each do |app|
-      app.send(:generate_secret_key)
-      app.save!
-    end
-  end
-
-  def self.combine_apple_data
-    b = S3.bucket(BucketNames::TAPJOY)
-    counts = {}
-    NUM_REWARD_DOMAINS.times do |i|
-      json = b.get("apple_data/rewards_#{i}.json")
-      data = JSON.parse(json)
-      data.each do |udid, count|
-        counts[udid] ||= 0
-        counts[udid] += count
-      end
-      puts "#{Time.zone.now.to_s(:db)} - done combining rewards_#{i}"
-    end
-    b.put("apple_data/combined.json", counts.to_json)
-    counts
-  end
-
 end
