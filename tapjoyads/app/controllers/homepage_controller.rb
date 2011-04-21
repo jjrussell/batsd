@@ -28,7 +28,7 @@ class HomepageController < WebsiteController
   end
   
   def advertisers
-    render :layout => 'newcontent.html.haml'
+    render :layout => 'homepage.html.haml';
   end
   
   def app_developers

@@ -1,6 +1,10 @@
-body { background: #616161; font-family: helvetica, arial; }
+html { overflow: -moz-scrollbars-vertical; overflow: scrollbars-vertical; }
+body { background: #616161; color: #787878; font-family: helvetica, arial; }
 
 .clear { clear: both; }
+p { line-height: 22px; }
+a { color: #1486b8; text-decoration: none; }
+a:hover { text-decoration: underline; }
 
 #header_wrapper { background: url('../images/header_repeat.jpg') repeat-x; height: 99px; width: 100%; }
 #header { background: url('../images/header_bg.jpg') no-repeat; height: 99px; margin: 0px auto; width: 980px; }
@@ -31,4 +35,4 @@ body { background: #616161; font-family: helvetica, arial; }
 #about_tapjoy a { color: #fff; text-decoration: none; }
 #about_tapjoy a:hover { text-decoration: underline; }
 #legal_stuff { float: left; margin-left: 50px; }
-#legal_stuff p { margin-top: 12px;  }
+#legal_stuff p { float: left; margin-top: 12px;  }
