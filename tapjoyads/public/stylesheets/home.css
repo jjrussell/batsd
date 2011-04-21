@@ -4,7 +4,7 @@
 .company { color: #9c9c9c; font-size: 10px; }
 
 #left, #right { margin-top: 104px; width: 284px; }
-#left p, #right p { color: #606060; font: bold 19px 'myriad pro'; margin-top: 36px; width: 100%; }
+#left p, #right p { color: #606060; font: bold 19px 'myriad pro', 'Helvetica Neue', 'Helvetica', 'Arial'; margin-top: 36px; width: 100%; }
 
 #left { float: left; text-align: right; }
 #left .learn_more { float: right;  }
@@ -25,10 +25,11 @@
 #clients .on { background: url('../images/client_selected.png'); }
 .client { float: left; font: bold 14px 'Helvetica Neue', 'Helvetica', 'Arial'; height: 52px; margin: 0 4px 15px 0; width: 192px; }
 .client img { float: left; margin: 4px; }
-.client .appname { float: left; margin-top: 10px; width: 139px; }
+.client .appname { float: left; margin-top: 10px; width: 138px; }
 .client .company { float: left; }
+.client, .client:hover { text-decoration: none; }
 
-#quote { float: right; margin-top: 35px; width: 383px; }
+#quote { float: right; margin-top: 35px; width: 383px; height: 190px; }
 #quote > div { display: none; }
 #quote > div.show { display: block; }
 #quote .header { margin-bottom: 25px;  }
@@ -36,8 +37,9 @@
 .quote_content p { float: left; margin: 8px 0 0 15px; }
 .view_case_study { background: url('../images/view_case_study.png'); float: left; height: 34px; margin-top: 14px; width: 152px; }
 .view_case_study:hover { background-position: -152px 0; }
-#byline { float: right; margin-top: 5px; width: 165px; }
+#byline { float: right; margin-top: 5px; width: 205px; }
 #byline img { float: left; margin-right: 10px; }
-#byline .appname { float: left; margin-top: 13px; }
+#byline .appname { float: left; margin-top: 13px; width: 130px; }
+#byline .company { float: left; margin-top: 5px; width: 130px; }
 
 #footer_divider { background: url('../images/footer_divider.jpg') repeat-x; clear: both; float: left; height: 2px; margin-top: 43px; width: 980px; }
