@@ -8,7 +8,6 @@ class Job::QueueLimitAppInstallsController < Job::SqsReaderController
     publisher_app_id = message.to_s
     publisher_app = App.find(publisher_app_id)
     advertiser_app_ids = App.enabled_free_ios_apps
-    today = Time.zone.now.to_date.to_s
     capped_advertiser_app_ids = publisher_app.capped_advertiser_app_ids
     
     advertiser_app_ids.each do |advertiser_app_id|
