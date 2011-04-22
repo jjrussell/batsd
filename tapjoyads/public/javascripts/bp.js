@@ -1,69 +1,9 @@
 /**
- * Quotes and testimonials
- */
-
-$(document).ready(function() {
-    $("#clients .client").click(function() {
-        var title = $(this).attr('title');
-        if (title) {
-            $("#quote > div").removeClass('show');
-            $(".client").removeClass('on');
-            $("#"+title).addClass('show');
-            $(this).addClass('on');
-        }
-        return false;
-    })
-});
-
-/**
- * Developer product section
- */
-
-$(document).ready(function() {
-    $("#products a").click(function() {
-        var title = $(this).attr('title');
-        if (title) {
-            $(".product_details").removeClass('show');
-            $(".screenshot").removeClass('show');
-            $("."+title).addClass('show');
-            $("#products a").removeClass('selected');
-            $("#products a."+title+"_link").addClass('selected');
-        }
-        return false;
-    })
-});
-
-/**
- * Developer products slider
- */
-
-$(document).ready(function() {
-    $(".product").hover(function() {
-        // Get child position
-        var productIndex = $(this).parent().children().index(this);
-        
-        // Get div position
-        var productPosition = productIndex*139;
-        
-        // Grab the title of this product
-        var title = $(this).attr('title');
-        
-        // Animate in the product bg slider
-        $("#products").animate({
-            backgroundPosition: '0 ' + productPosition
-        }, 250, function() {
-            // Remove & add show classes to screenshots
-            $("#advertiser_phone img").removeClass('show');
-            $("#advertiser_phone ."+title).addClass('show');
-        });
-    });
-});
-
-/**
  * @author Alexander Farkas
  * v. 1.21
- * Add backgroundPosition functionality to jquery
+ * Add backgroundposition functionality to jquery
  */
+
 
 (function($) {
 	if(!document.defaultView || !document.defaultView.getComputedStyle){ // IE6-IE8
