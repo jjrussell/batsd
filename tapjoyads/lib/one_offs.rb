@@ -50,4 +50,9 @@ class OneOffs
     partner.reset_balances
   end
 
+  def self.cleanup_orphaned_orders_and_payouts
+    Order.delete_all("partner_id = ''")
+    Payout.delete_all("partner_id = ''")
+  end
+
 end
