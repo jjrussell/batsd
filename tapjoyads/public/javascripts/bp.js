@@ -1,56 +1,9 @@
 /**
- * Quotes and testimonials
- */
-
-$(document).ready(function() {
-    $("#clients .client").click(function() {
-        var title = $(this).attr('title');
-        if (title) {
-            $("#quote > div").removeClass('show');
-            $(".client").removeClass('on');
-            $("#"+title).addClass('show');
-            $(this).addClass('on');
-        }
-        return false;
-    })
-});
-
-/**
- * Developer product section
- */
-
-$(document).ready(function() {
-    $("#products a").click(function() {
-        var title = $(this).attr('title');
-        if (title) {
-            $(".product_details").removeClass('show');
-            $(".screenshot").removeClass('show');
-            $("."+title).addClass('show');
-            $("#products a").removeClass('selected');
-            $("#products a."+title+"_link").addClass('selected');
-        }
-        return false;
-    })
-});
-
-/**
- * Developer products slider
- */
-
-$(document).ready(function() {
-    $(".product").hover(function() {
-        var myPosition = $(this).position().top-502;
-        $("#products").animate({
-            backgroundPosition: '0 ' + myPosition
-        }, 250);
-    });
-});
-
-/**
  * @author Alexander Farkas
  * v. 1.21
- * Add backgroundPosition functionality to jquery
+ * Add backgroundposition functionality to jquery
  */
+
 
 (function($) {
 	if(!document.defaultView || !document.defaultView.getComputedStyle){ // IE6-IE8
