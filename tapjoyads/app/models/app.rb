@@ -244,7 +244,7 @@ class App < ActiveRecord::Base
   end
   
   def self.enabled_free_ios_apps
-    Mc.get(enabled_free_apps_mc_key) || Set.new
+    Mc.get(enabled_free_apps_mc_key) || []
   end
 
 private
