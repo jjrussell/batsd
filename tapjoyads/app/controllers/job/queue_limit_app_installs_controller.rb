@@ -10,7 +10,7 @@ class Job::QueueLimitAppInstallsController < Job::SqsReaderController
     advertiser_app_ids = Mc.get('ios_install_limits.enabled_free_ios_apps')
     today = Time.zone.now.to_date.to_s
     capped_mc_key = "ios_install_limits.capped_apps_for_publisher.#{today}.#{publisher_app_id}"
-    capped_advertiser_app_ids = Mc.get(capped_mc_key) || Set.new
+    capped_advertiser_app_ids = publisher_app.capped_advertiser_app_ids
     
     advertiser_app_ids.each do |advertiser_app_id|
       next if capped_advertiser_app_ids.include?(advertiser_app_id)
