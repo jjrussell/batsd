@@ -239,7 +239,7 @@ class App < ActiveRecord::Base
   end
   
   def self.set_enabled_free_ios_apps
-    advertiser_app_ids = Offer.enabled_offers.free_apps.for_ios_only.scoped(:select => :item_id).collect(&:item_id).uniq
+    advertiser_app_ids = Offer.enabled_offers.free_apps.for_ios_only.scoped(:select => :item_id, :group => :item_id).collect(&:item_id)
     Mc.put(enabled_free_apps_mc_key, advertiser_app_ids)
   end
   

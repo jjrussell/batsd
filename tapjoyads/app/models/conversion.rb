@@ -170,7 +170,7 @@ private
   end
   
   def update_realtime_stats
-    publisher_app.increment_daily_installs_for_advertiser(advertiser_offer.item_id) if (advertiser_offer.free_app? && advertiser_offer.get_platform == 'iOS')
+    publisher_app.increment_daily_installs_for_advertiser(advertiser_offer.item_id) if (advertiser_offer.free_app? && advertiser_offer.get_platform == 'iOS' && reward_type < 1000)
     
     Conversion.get_stat_definitions(reward_type).each do |stat_definition|
       stat_name  = stat_definition[:stat]
