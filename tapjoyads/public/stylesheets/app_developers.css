@@ -12,7 +12,7 @@
 #product_info { float: left; margin: 34px 0 0 24px; width: 390px; }
 #products { float: left; font-size: 14px; width: 100%; }
 #products a { color: #787878; float: left; font-weight: bold; margin-right: 7px; }
-#products .selected { color: #008ac8; float: left; font-weight: normal; margin-right: 7px; }
+#products .selected { color: #008ac8; float: left; margin-right: 7px; }
 #products .divider { color: #787878; float: left; margin-right: 7px; }
 
 #product_title { background: url('/images/developer_ribbon.png'); height: 45px; margin: 36px 0 0 -24px; width: 213px; }
