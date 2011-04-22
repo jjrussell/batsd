@@ -1,0 +1,27 @@
+#advertisers { float: left; margin-top: 42px; width: 980px; }
+#about { clear: left; float: left; font-size: 14px; margin-top: 32px; width: 449px; }
+#about p { line-height: 27px; margin-bottom: 15px; }
+#about a { color: #6c6c6c; font-weight: bold; }
+#about a label { color: #0077b1; }
+
+#become_an_advertiser { float: left; margin-top: 60px; }
+#become_an_advertiser span { float: left; font-weight: bold; margin-bottom: 16px; }
+#become_an_advertiser a { background: url('/images/become_an_advertiser_sprite.png'); clear: left; float: left; height: 41px; width: 233px; }
+#become_an_advertiser a:hover { background-position: -233px 0; }
+
+#divider { background: #d4d4d4; float: left; margin: 30px 40px 0 35px; width: 1px; height: 160px; }
+
+h2 { clear: both; margin: 25px 0 25px 0; }
+
+/** screenshots **/
+#advertiser_phone { background: url('/images/advertiser_phone.jpg'); clear: left; float: left; height: 588px; width: 258px; }
+.screenshot { display: none; float: left; margin: 90px 0 0 22px; }
+
+/** product info **/
+#products { background: url('/images/advertiser_product_bg.png') no-repeat; float: left; margin: 45px 0 0 12px; width: 710px; }
+.product { float: left; height: 124px; margin-bottom: 15px; width: 100%; }
+.product img { float: left; margin: 19px 0 0 41px; }
+.product span { color: #0077b1; float: left; font-size: 20px; font-weight: bold; margin: 20px 0 0 25px; }
+.product p { color: #4f4f4f; float: left; font-size: 12px; margin: 5px 0 0 25px; width: 545px; }
+
+.show { display: block; }

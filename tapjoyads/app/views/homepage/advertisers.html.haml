@@ -1,98 +1,44 @@
-.banner#advertiser-banner
-  .large-header
-    We reach more than 100 million consumers
-    %br/
-    every month, including many that
-    %br/
-    no one else can.
-  .small-header
-    Our platform is deeply integrated into more than 2,000
-    %br/
-    of the most popular social and mobile gaming
-    %br/
-    applications across every leading platform, helping you
-    %br/
-    reach highly engaged consumers that no other ad
-    %br/
-    network has access to.
-  = button_to 'Contact us today to learn more', '/site/advertisers_contact', :title => "Contact Us Today to Learn More", :class => 'blue', :method => 'get'
-
-.types
-  .block1
-    %h2 APP DEVELOPERS
-    %span Pay for performance, not just clicks.
+- content_for :page_head, stylesheet_link_tag('advertisers')
+#advertisers
+  %img.header{:src => "/images/tapjoy_for_advertisers.png"}/
+  #about
     %p
-      We are one of the largest performance advertising networks in the world,
-      offering low cost incentivized customer acquisition campaigns with the scalability and flexibility
-      to meet any needs.
-    %ul
-      %li Buy on a CPA, CPL, CPC basis and more
-      %li Drive 100,000+ new users per day
-      %li Prices as low as $0.05 per action
-    = image_tag 'site/netflix_img.gif', :title => 'Ads'
-  .block2{ :style => "border:none;"}
-    %h2 BRAND ADVERTISERS
-    %span Inject your brand into the gaming experience
-    %p
-      Get your message in front of the right audience at the right time—during in-game play,
-      when users are relaxed, having fun and receptive to what you have to say.
-    %ul
-      %li Reach millions of users other networks can't
-      %li Target based on location, behavior &amp; profile
-      %li In-game integrations for better engagement
-    = image_tag 'site/bookEli_img.gif', :title => 'Ads'
-.partnerList
-  %h2 AD PRODUCTS
-  %table{ :width => "100%", :border => "0", :cellspacing => "0", :cellpadding => "0" }
-    %tbody
-      %tr
-        %td= image_tag 'site/ads_1.gif', :size => '119x68'
-        %td= image_tag 'site/ads_2.gif', :size => '119x68'
-        %td= image_tag 'site/ads_3.gif', :size => '119x68'
-        %td= image_tag 'site/ads_4.gif', :size => '119x68'
-        %td= image_tag 'site/ads_5.gif', :size => '119x68'
-        %td= image_tag 'site/ads_6.gif', :size => '119x68'
-        %td= image_tag 'site/ads_7.gif', :size => '119x68'
-      %tr
-        %td
-          %span Offers
-        %td
-          %span Local
-        %td
-          %span Shopping
-        %td
-          %span Surveys
-        %td
-          %span Mobile
-        %td
-          %span Video
-        %td
-          %span In Game Promos
-
-- content_for :page_styles do
-  :plain
-    #advertiser-banner {
-      background:url(/images/site/logoburst.gif) no-repeat right top!important;
-      height: 310px;
-      display: block;
-      width: auto;
-      padding: 25px 20px 0px 80px !important;
-    }
-    .large-header {
-      font-size: 2em;
-    }
-    .types {
-      border-top: 2px solid #ccc!important;
-    }
-    .block2_bg {
-      overflor-y: hidden!important;
-    }
-    div.types {
-      padding-bottom: 0px!important;
-    }
-    div.block2 img.spray {
-      position:relative;
-      left:35px;
-      bottom:20px;
-      z-index:100;
-    }
+      Whether you're looking to find new users for your paid app or drive users to complete defined actions within your apps, Tapjoy is the solution for your distribution needs. We reach 200M+ unique users and drive millions of marketing actions per day through our network. You only pay when users complete your defined marketing action, compared to other distribution channels where you pay per click of impression. 
+    -#%p
+      Not sold?
+      %a{:href => "..."}
+        Checkout how we made
+        %label
+          Kayak Mobile
+        the #1 travel app
+  #divider
+  #become_an_advertiser
+    %span
+      Are you ready to start driving users to your mobile apps?
+    %a{:href => "/register"}
+  %h2
+    Advertiser Products
+  #advertiser_phone
+    %img.screenshot.offerwall.show{:src => "/images/offerwall.png"}/
+    %img.screenshot.featured{:src => "/images/featured.jpg"}/
+    %img.screenshot.ppa{:src => "/images/ppa.png"}/
+  #products
+    .product{:title => "offerwall"}
+      %img{:src => "/images/offerwall_icon.png"}/
+      %span
+        Offerwall
+      %p
+        The Tapjoy Offerwall is a subset of the app store where users can browse and discover exciting new applications. By listing your app in our offerwall, Tapjoy helps you break through the clutter and show your app to millions of users. By allowing you to buy on a CPA basis, you only pay when someone downloads and tries your application.
+    .product{:title => "featured"}
+      %img{:src => "/images/featured_icon.png"}/
+      %span
+        Featured App
+      %p
+        Looking for premium placement within our marketplace? The Tapjoy Featured App ad unit is a full page interstitial that is displayed when the app is first run. You gain maximum exposure for your app or marketing action with this full screen, rich ad unit. 
+    .product{:title => "ppa"}
+      %img{:src => "/images/ppa_icon.png"}/
+      %span
+        Pay Per Action
+      %p
+        The Tapjoy Pay-Per-Action ad platform is the best way to drive deep user engagement with your application. This product allows you to define the specific action that you're looking for, whether it's completing a tutorial, signing up, beating level three, or performing a product search. This flexible platform enables you to buy on a CPA basis and direct users to perform actions that you value. 
+.clear
