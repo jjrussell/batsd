@@ -170,10 +170,7 @@ private
   end
   
   def update_realtime_stats
-    if (advertiser_offer.free_app? && advertiser_offer.get_platform == 'iOS')
-      mc_key = "ios_install_limits.installs_by_publisher_and_advertiser.#{Time.zone.now.to_date}.#{publisher_app_id}.#{advertiser_offer.item_id}"
-      Mc.increment_count(mc_key)
-    end
+    publisher_app.increment_daily_installs_for_advertiser(advertiser_offer.item_id) if (advertiser_offer.free_app? && advertiser_offer.get_platform == 'iOS')
     
     Conversion.get_stat_definitions(reward_type).each do |stat_definition|
       stat_name  = stat_definition[:stat]
