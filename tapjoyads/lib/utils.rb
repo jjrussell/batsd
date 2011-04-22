@@ -169,4 +169,17 @@ class Utils
     end
   end
   
+  def self.get_publisher_breakdown_for_campaign(advertiser_app_id, start_time, end_time)
+    counts = {}
+    NUM_REWARD_DOMAINS.times do |i|
+      domain_name = "rewards_#{i}"
+      puts "#{Time.zone.now.to_s(:db)} - selecting over #{domain_name}..."
+      Reward.select(:domain_name => domain_name, :where => "advertiser_app_id = '#{advertiser_app_id}' AND created >= '#{start_time.to_i}' AND created < '#{end_time.to_i}'") do |r|
+        counts[r.publisher_app_id] ||= 0
+        counts[r.publisher_app_id] += 1
+      end
+    end
+    counts
+  end
+  
 end

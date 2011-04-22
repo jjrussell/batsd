@@ -41,4 +41,18 @@ class OneOffs
     puts "num_skipped: #{num_skipped}"
   end
 
+  def self.cleanup_tapulous_accounting
+    partner = Partner.find('32b4c167-dd33-40c6-9b3e-2020427b6f4c')
+    start_time = Time.zone.parse('2011-04-19')
+    end_time = Time.zone.parse('2011-04-20 23:59:59')
+    partner.orders.created_between(start_time, end_time).delete_all
+    partner.payouts.created_between(start_time, end_time).delete_all
+    partner.reset_balances
+  end
+
+  def self.cleanup_orphaned_orders_and_payouts
+    Order.delete_all("partner_id = ''")
+    Payout.delete_all("partner_id = ''")
+  end
+
 end
