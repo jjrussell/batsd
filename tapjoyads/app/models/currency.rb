@@ -24,6 +24,8 @@ class Currency < ActiveRecord::Base
     record.errors.add(attribute, "must be blank when using whitelisting") if record.use_whitelist? && value.present?
   end
   
+  named_scope :for_ios, :joins => :app, :conditions => "#{App.quoted_table_name}.platform = 'iphone'"
+  
   before_validation :remove_whitespace_from_attributes
   before_create :set_values_from_partner
   after_save :update_memcached_by_app_id

@@ -219,7 +219,7 @@ class App < ActiveRecord::Base
   end
   
   def capped_advertiser_app_ids
-    Mc.get("capped_app_installs.#{Date.today}.#{id}") || Set.new
+    Mc.get("capped_app_installs.#{Time.zone.now.to_date}.#{id}") || Set.new
   end
   
   def capped_advertiser_apps 

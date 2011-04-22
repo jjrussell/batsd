@@ -8,7 +8,7 @@ class Job::QueueLimitAppInstallsController < Job::SqsReaderController
     publisher_app_id = message.to_s
     publisher_app = App.find(publisher_app_id)
     advertiser_app_ids = Mc.get('enabled_free_app_ids')
-    today = Date.today.to_s
+    today = Time.zone.now.to_date.to_s
     capped_mc_key = "capped_app_installs.#{today}.#{publisher_app_id}"
     capped_advertiser_app_ids = Mc.get(capped_mc_key) || Set.new
     

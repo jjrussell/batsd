@@ -1,6 +1,6 @@
 class Job::MasterLimitAppInstallsController < Job::JobController
   def index
-    publisher_app_ids = Currency.scoped(:select => :app_id).collect(&:app_id).uniq
+    publisher_app_ids = Currency.for_ios.scoped(:select => :app_id).collect(&:app_id).uniq
     advertiser_app_ids = Offer.enabled_offers.free_apps.for_ios_only.scoped(:select => :item_id).collect(&:item_id).uniq
     Mc.put('enabled_free_app_ids', advertiser_app_ids)
     
