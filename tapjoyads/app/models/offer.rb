@@ -118,6 +118,7 @@ class Offer < ActiveRecord::Base
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ] } }
   named_scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ] } }
+  named_scope :for_ios_only, :conditions => 'device_types not like "%android%"'
   
   alias_method :events, :offer_events
   
@@ -578,7 +579,8 @@ class Offer < ActiveRecord::Base
         minimum_featured_bid_reject?(currency, type) ||
         jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers) ||
-        action_app_reject?(device)
+        action_app_reject?(device) ||
+        capped_installs_reject?(publisher_app)
   end
 
   def update_payment(force_update = false)
@@ -682,6 +684,10 @@ class Offer < ActiveRecord::Base
 
   def can_request_enable?
     item_type == 'App' ? item.store_id.present? : true
+  end
+  
+  def free_app?
+    item_type == 'App' && price == 0
   end
 
 private
@@ -794,6 +800,10 @@ private
   
   def action_app_reject?(device)
     item_type == "ActionOffer" && third_party_data.present? && !device.has_app(third_party_data)
+  end
+  
+  def capped_installs_reject?(publisher_app)
+    free_app? && publisher_app.capped_advertiser_app_ids.include?(item_id)
   end
   
   def normalize_device_type(device_type_param)

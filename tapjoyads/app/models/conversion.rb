@@ -170,6 +170,12 @@ private
   end
   
   def update_realtime_stats
+    advertiser_app_id = (advertiser_offer.free_app? && advertiser_offer.get_platform == 'iOS') ? advertiser_offer.item_id : nil
+    if advertiser_app_id.present?
+      mc_key = "app_installs_by_publisher.#{Date.today}.#{publisher_app_id}.#{advertiser_app_id}"
+      Mc.increment_count(mc_key)
+    end
+    
     Conversion.get_stat_definitions(reward_type).each do |stat_definition|
       stat_name  = stat_definition[:stat]
       attr_value = send(stat_definition[:attr])

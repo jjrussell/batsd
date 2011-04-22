@@ -4,6 +4,7 @@ class App < ActiveRecord::Base
   
   PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS' }
   TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
+  MAXIMUM_INSTALLS_PER_PUBLISHER = 4000
   
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
@@ -215,6 +216,14 @@ class App < ActiveRecord::Base
   
   def offers_with_last_run_time
     [ primary_offer ] + action_offers.collect(&:primary_offer).sort { |a, b| a.name <=> b.name }
+  end
+  
+  def capped_advertiser_app_ids
+    Mc.get("capped_app_installs.#{Date.today}.#{id}") || Set.new
+  end
+  
+  def capped_advertiser_apps 
+    capped_advertiser_app_ids.collect { |app_id| App.find(app_id) }
   end
 
 private
