@@ -39,10 +39,23 @@ $(document).ready(function() {
 
 $(document).ready(function() {
     $(".product").hover(function() {
-        var myPosition = $(this).position().top-502;
+        // Get child position
+        var productIndex = $(this).parent().children().index(this);
+        
+        // Get div position
+        var productPosition = productIndex*139;
+        
+        // Grab the title of this product
+        var title = $(this).attr('title');
+        
+        // Animate in the product bg slider
         $("#products").animate({
-            backgroundPosition: '0 ' + myPosition
-        }, 250);
+            backgroundPosition: '0 ' + productPosition
+        }, 250, function() {
+            // Remove & add show classes to screenshots
+            $("#advertiser_phone img").removeClass('show');
+            $("#advertiser_phone ."+title).addClass('show');
+        });
     });
 });
 
