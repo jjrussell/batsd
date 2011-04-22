@@ -171,7 +171,7 @@ private
   
   def update_realtime_stats
     if (advertiser_offer.free_app? && advertiser_offer.get_platform == 'iOS')
-      mc_key = "app_installs_by_publisher.#{Time.zone.now.to_date}.#{publisher_app_id}.#{advertiser_offer.item_id}"
+      mc_key = "ios_install_limits.installs_by_publisher_and_advertiser.#{Time.zone.now.to_date}.#{publisher_app_id}.#{advertiser_offer.item_id}"
       Mc.increment_count(mc_key)
     end
     
