@@ -690,6 +690,34 @@ class Offer < ActiveRecord::Base
     item_type == 'App' && price == 0
   end
 
+  def has_contacts?
+    !partner.users.empty?
+  end
+
+  def partner_name
+    partner.name
+  end
+
+  def contacts
+    partner.non_managers
+  end
+
+  def partner_balance
+    partner.balance
+  end
+
+  def partner_pending_earnings
+    partner.pending_earnings
+  end
+
+  def account_managers
+    partner.account_managers
+  end
+
+  def internal_notes
+    partner.account_manager_notes
+  end
+
 private
   
   def is_disabled?(publisher_app, currency)
