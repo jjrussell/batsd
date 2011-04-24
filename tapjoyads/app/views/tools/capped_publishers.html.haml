@@ -9,7 +9,7 @@
     %ul
       - advertisers.each do |adv|
         %li
-          = adv[:count]
+          = number_with_delimiter(adv[:count])
           \-
           = link_to(adv[:app].name, statz_path(adv[:app].id))
     %br
