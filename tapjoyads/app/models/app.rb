@@ -226,7 +226,7 @@ class App < ActiveRecord::Base
     Mc.get(capped_advertisers_mc_key) || Set.new
   end
   
-  def capped_advertiser_apps 
+  def capped_advertiser_apps
     capped_advertiser_app_ids.collect { |app_id| App.find(app_id) }
   end
   
@@ -250,11 +250,11 @@ class App < ActiveRecord::Base
 private
 
   def capped_advertisers_mc_key
-    "ios_install_limits.capped_apps_for_publisher.#{Time.zone.now.to_date}.#{id}"
+    "ios_install_limits.capped_apps_for_publisher.#{Time.now.utc.to_date}.#{id}"
   end
 
   def daily_installs_mc_key_for_advertiser(advertiser_app_id)
-    "ios_install_limits.installs_by_publisher_and_advertiser.#{Time.zone.now.to_date}.#{id}.#{advertiser_app_id}"
+    "ios_install_limits.installs_by_publisher_and_advertiser.#{Time.now.utc.to_date}.#{id}.#{advertiser_app_id}"
   end
   
   def self.enabled_free_apps_mc_key
