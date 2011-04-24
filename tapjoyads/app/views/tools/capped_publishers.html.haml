@@ -1,0 +1,15 @@
+- @page_title = 'Capped Publishers'
+
+%h1 Capped Publishers
+
+%ul
+  - @capped_publishers.each do |publisher, advertisers|
+    %li
+      = link_to(publisher.name, statz_path(publisher.id))
+    %ul
+      - advertisers.each do |adv|
+        %li
+          = adv[:count]
+          \-
+          = link_to(adv[:app].name, statz_path(adv[:app].id))
+    %br

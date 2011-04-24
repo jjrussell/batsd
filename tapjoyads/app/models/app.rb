@@ -227,7 +227,7 @@ class App < ActiveRecord::Base
   end
   
   def capped_advertiser_apps 
-    capped_advertiser_app_ids.collect { |app_id| App.find(app_id) }
+    App.find(capped_advertiser_app_ids.to_a)
   end
   
   def increment_daily_installs_for_advertiser(advertiser_app_id)

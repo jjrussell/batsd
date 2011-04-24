@@ -61,6 +61,8 @@
   %li= link_to 'Enable Requests', tools_enable_offer_requests_path
 - if permitted_to? :index, :tools_offer_events
   %li= link_to 'Schedule Offer Events', tools_offer_events_path
+- if permitted_to? :capped_publishers, :tools
+  %li= link_to 'Capped Publishers', capped_publishers_tools_path
 
 - if has_permissions_for_one_of?(:account_mgr, :customer_service, :admin)
   %h3 Customer Support
