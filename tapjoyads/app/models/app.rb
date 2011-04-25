@@ -247,6 +247,14 @@ class App < ActiveRecord::Base
     Mc.get(enabled_free_apps_mc_key) || []
   end
 
+  def self.get_ios_publisher_app_ids
+    Currency.for_ios.scoped(:select => :app_id, :group => :app_id).collect(&:app_id)
+  end
+
+  def self.get_ios_publisher_apps
+    App.find(get_ios_publisher_app_ids)
+  end
+
 private
 
   def capped_advertisers_mc_key

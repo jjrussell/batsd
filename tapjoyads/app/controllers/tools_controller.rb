@@ -367,10 +367,8 @@ class ToolsController < WebsiteController
   end
   
   def capped_publishers
-    publisher_app_ids = Currency.for_ios.scoped(:select => :app_id, :group => :app_id).collect(&:app_id)
-    publishers = App.find(publisher_app_ids)
     @capped_publishers = {}
-    publishers.each do |pub|
+    App.get_ios_publisher_apps.each do |pub|
       capped_advertisers = pub.capped_advertiser_apps.map { |app| { :count => pub.daily_installs_for_advertiser(app.id), :app => app } }
       @capped_publishers[pub] = capped_advertisers unless capped_advertisers.empty?
     end
