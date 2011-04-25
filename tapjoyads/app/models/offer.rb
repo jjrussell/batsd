@@ -32,7 +32,7 @@ class Offer < ActiveRecord::Base
   DAILY_STATS_START_HOUR = 6
   DAILY_STATS_RANGE = 6
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :offer_list_length
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :offer_list_length
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -718,7 +718,7 @@ class Offer < ActiveRecord::Base
   end
   
   def rank_boost
-    @rank_boost || (self.rank_boost = calculate_rank_boost)
+    @rank_boost ||= calculate_rank_boost
   end
 
 private
