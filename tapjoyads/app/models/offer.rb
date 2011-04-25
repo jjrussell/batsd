@@ -531,7 +531,6 @@ class Offer < ActiveRecord::Base
     boost_weight = weights.delete(:boost) { 1 }
     over_threshold_weight = weights.delete(:over_threshold) { 0 }
     weights = { :conversion_rate => 0, :price => 0, :avg_revenue => 0, :bid => 0 }.merge(weights)
-    self.rank_boost ||= rank_boosts.active.sum(:amount)
     self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send("normal_#{key}")) }
     self.rank_score += rand * random_weight
     self.rank_score += rank_boost * boost_weight
@@ -629,7 +628,7 @@ class Offer < ActiveRecord::Base
   end
   
   def needs_higher_bid?
-    !self_promote_only? && (bid_is_bad? || bid_is_passable?)
+    !self_promote_only? && rank_boost == 0 && (bid_is_bad? || bid_is_passable?)
   end
   
   def needs_more_funds?
@@ -716,6 +715,10 @@ class Offer < ActiveRecord::Base
 
   def internal_notes
     partner.account_manager_notes
+  end
+  
+  def rank_boost
+    @rank_boost || (self.rank_boost = calculate_rank_boost)
   end
 
 private
@@ -905,5 +908,9 @@ private
     elsif hidden_changed? && hidden?
       enable_offer_requests.pending.each { |request| request.approve!(false) }
     end
+  end
+  
+  def calculate_rank_boost
+    rank_boosts.active.sum(:amount)
   end
 end
