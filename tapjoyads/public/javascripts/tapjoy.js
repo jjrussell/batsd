@@ -34,19 +34,19 @@ $(document).ready(function() {
 });
 
 /**
- * Developer products slider
+ * Advertiser products slider
  */
 
 $(document).ready(function() {
     $(".product").hover(function() {
-        // Get child position
+        // Get child index
         var productIndex = $(this).parent().children().index(this);
         
         // Get div position
         var productPosition = productIndex*139;
         
-        // Grab the title of this product
-        var title = $(this).attr('title');
+        // Grab the rel of this product
+        var rel = $(this).attr('rel');
         
         // Animate in the product bg slider
         $("#products").animate({
@@ -54,7 +54,7 @@ $(document).ready(function() {
         }, 250, function() {
             // Remove & add show classes to screenshots
             $("#advertiser_phone img").removeClass('show');
-            $("#advertiser_phone ."+title).addClass('show');
+            $("#advertiser_phone ."+rel).addClass('show');
         });
     });
 });
