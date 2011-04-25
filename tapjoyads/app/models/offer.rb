@@ -452,7 +452,7 @@ class Offer < ActiveRecord::Base
     
     return if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
       
-    icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
+    icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256)
     medium_icon_blob = icon_256.to_blob{|i| i.format = 'JPG'}
     
     corner_mask_blob = bucket.get("display/round_mask.png")
