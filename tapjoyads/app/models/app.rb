@@ -262,7 +262,7 @@ private
   end
   
   def generate_secret_key
-    raise "Secret key already set" unless secret_key.blank?
+    return if secret_key.present?
     
     alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'
     new_secret_key = ''
