@@ -78,12 +78,14 @@ private
         reward.serial_save
         
         mc_time = Time.zone.now.to_i / 1.hour
-        Mc.increment_count("send_currency_failure.#{currency.id}.#{mc_time}")
-        Mc.compare_and_swap("send_currency_failures.#{mc_time}") do |failures|
-          failures ||= {}
-          failures[currency.id] ||= Set.new
-          failures[currency.id] << reward.key
-          failures
+        num_failures = Mc.increment_count("send_currency_failure.#{currency.id}.#{mc_time}")
+        if num_failures < 5000
+          Mc.compare_and_swap("send_currency_failures.#{mc_time}") do |failures|
+            failures ||= {}
+            failures[currency.id] ||= Set.new
+            failures[currency.id] << reward.key
+            failures
+          end
         end
         
         raise e

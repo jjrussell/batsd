@@ -4,6 +4,7 @@ class App < ActiveRecord::Base
   
   PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS' }
   TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
+  MAXIMUM_INSTALLS_PER_PUBLISHER = 4000
   
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
@@ -216,11 +217,52 @@ class App < ActiveRecord::Base
   def offers_with_last_run_time
     [ primary_offer ] + action_offers.collect(&:primary_offer).sort { |a, b| a.name <=> b.name }
   end
+  
+  def set_capped_advertiser_app_ids(advertiser_app_ids)
+    Mc.put(capped_advertisers_mc_key, advertiser_app_ids)
+  end
+  
+  def capped_advertiser_app_ids
+    Mc.get(capped_advertisers_mc_key) || Set.new
+  end
+  
+  def capped_advertiser_apps
+    capped_advertiser_app_ids.collect { |app_id| App.find(app_id) }
+  end
+  
+  def increment_daily_installs_for_advertiser(advertiser_app_id)
+    Mc.increment_count(daily_installs_mc_key_for_advertiser(advertiser_app_id))
+  end
+  
+  def daily_installs_for_advertiser(advertiser_app_id)
+    Mc.get_count(daily_installs_mc_key_for_advertiser(advertiser_app_id))
+  end
+  
+  def self.set_enabled_free_ios_apps
+    advertiser_app_ids = Offer.enabled_offers.free_apps.for_ios_only.scoped(:select => :item_id, :group => :item_id).collect(&:item_id)
+    Mc.put(enabled_free_apps_mc_key, advertiser_app_ids)
+  end
+  
+  def self.enabled_free_ios_apps
+    Mc.get(enabled_free_apps_mc_key) || []
+  end
 
 private
+
+  def capped_advertisers_mc_key
+    "ios_install_limits.capped_apps_for_publisher.#{Time.now.utc.to_date}.#{id}"
+  end
+
+  def daily_installs_mc_key_for_advertiser(advertiser_app_id)
+    "ios_install_limits.installs_by_publisher_and_advertiser.#{Time.now.utc.to_date}.#{id}.#{advertiser_app_id}"
+  end
+  
+  def self.enabled_free_apps_mc_key
+    'ios_install_limits.enabled_free_ios_apps'
+  end
   
   def generate_secret_key
-    raise "Secret key already set" unless secret_key.blank?
+    return if secret_key.present?
     
     alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'
     new_secret_key = ''

@@ -8,7 +8,7 @@ class HomepageController < WebsiteController
     elsif permitted_to?(:index, :apps)
       redirect_to apps_path
     elsif current_partner.nil?
-      render :action => 'index'
+      render :action => 'index', :layout => 'newhome'
     end
   end
 
@@ -25,5 +25,17 @@ class HomepageController < WebsiteController
 
   def privacy
     render :layout => false
+  end
+  
+  def advertisers
+    render :layout => 'newcontent'
+  end
+  
+  def app_developers
+    render :layout => 'newcontent'
+  end
+  
+  def index
+    render :layout => 'newhome'
   end
 end

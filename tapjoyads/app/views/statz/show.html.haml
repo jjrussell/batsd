@@ -60,6 +60,7 @@
   - unless @offer.publisher_app_whitelist.blank?
     - property_row('Publisher app whitelist', @offer.get_publisher_app_whitelist.map { |id| link_to(App.find(id).name, statz_path(id)) }.join(', '))
   - property_row('id', @offer.id + ' - ' + clippy(@offer.id))
+  - property_row('Capped Advertisers', @offer.item.capped_advertiser_apps.collect { |app| link_to(app.name, statz_path(app.id)) }.join(', ')) if @offer.is_publisher_offer?
 
 %a#show_boosts{:href => '#'} [#{@active_boosts.size} active rank boosts]
 = link_to('[Create rank boost]', new_rank_boost_path(:offer_id => @offer.id))
@@ -88,14 +89,14 @@
 - if permitted_to?(:reporting, :partners)
   = link_to('[Partner Stats]', reporting_partner_path(@offer.partner_id))
 %table.properties
-  - property_row('Name', @offer.partner.name)
-  - if @offer.partner.users.first
-    - property_row('Contact(s)', @offer.partner.non_managers.map(&:email).join(', '))
-  - property_row('Balance', number_to_currency(@offer.partner.balance / 100.0))
-  - property_row('Pending Earnings', number_to_currency(@offer.partner.pending_earnings / 100.0))
-  - property_row('Account managers', @offer.partner.account_managers.map(&:email).join(', '))
-  - property_row('Internal notes', @offer.partner.account_manager_notes, '')
-  - property_row('id', link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - ' + clippy(@offer.partner.id))
+  - property_row('Name', @offer.partner_name)
+  - if @offer.has_contacts?
+    - property_row('Contact(s)', @offer.contacts.map(&:email).join(', '))
+  - property_row('Balance', number_to_currency(@offer.partner_balance / 100.0))
+  - property_row('Pending Earnings', number_to_currency(@offer.partner_pending_earnings / 100.0))
+  - property_row('Account managers', @offer.account_managers.map(&:email).join(', '))
+  - property_row('Internal notes', @offer.internal_notes, '')
+  - property_row('id', link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - ' + clippy(@offer.partner_id))
 = render 'partners/make_current_button', :partner => @offer.partner
 
 - if @offer.is_publisher_offer?
