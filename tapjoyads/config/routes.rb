@@ -156,8 +156,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'Service1.asmx/GetPurchasedVGStoreItems', :controller => 'get_vg_store_items', :action => 'purchased'
   map.connect 'service1.asmx/GetUserAccountObject', :controller => 'get_vg_store_items', :action => 'user_account'
   map.connect 'Service1.asmx/GetUserAccountObject', :controller => 'get_vg_store_items', :action => 'user_account'
-  map.connect 'service1.asmx/PurchaseVGWithCurrency', :controller => 'purchase_vg'
-  map.connect 'Service1.asmx/PurchaseVGWithCurrency', :controller => 'purchase_vg'
+  map.connect 'service1.asmx/PurchaseVGWithCurrency', :controller => 'points', :action => 'purchase_vg'
+  map.connect 'Service1.asmx/PurchaseVGWithCurrency', :controller => 'points', :action => 'purchase_vg'
   
   map.connect 'service1.asmx/:action', :controller => 'service1'
   map.connect 'Service1.asmx/:action', :controller => 'service1'
@@ -172,6 +172,10 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'RateApp.aspx/:action', :controller => 'win_redirector'
   
   map.connect 'Offers.aspx/:action', :controller => 'win_redirector'
+
+  # redirects from old vg controller
+  map.connect 'purchase_vg', :controller => 'points', :action => 'purchase_vg'
+  map.connect 'purchase_vg/spend', :controller => 'points', :action => 'spend'
   
   # Authenticated windows redirectors. These too will be removed/moved to standard 
   # ruby controllers in time.
