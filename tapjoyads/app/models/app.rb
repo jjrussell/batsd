@@ -226,8 +226,8 @@ class App < ActiveRecord::Base
     Mc.get(capped_advertisers_mc_key) || Set.new
   end
   
-  def capped_advertiser_apps
-    capped_advertiser_app_ids.collect { |app_id| App.find(app_id) }
+  def capped_advertiser_apps 
+    App.find(capped_advertiser_app_ids.to_a)
   end
   
   def increment_daily_installs_for_advertiser(advertiser_app_id)
@@ -245,6 +245,14 @@ class App < ActiveRecord::Base
   
   def self.enabled_free_ios_apps
     Mc.get(enabled_free_apps_mc_key) || []
+  end
+
+  def self.get_ios_publisher_app_ids
+    Currency.for_ios.scoped(:select => :app_id, :group => :app_id).collect(&:app_id)
+  end
+
+  def self.get_ios_publisher_apps
+    App.find(get_ios_publisher_app_ids)
   end
 
 private
