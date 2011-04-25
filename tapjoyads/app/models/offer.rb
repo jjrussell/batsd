@@ -32,7 +32,7 @@ class Offer < ActiveRecord::Base
   DAILY_STATS_START_HOUR = 6
   DAILY_STATS_RANGE = 6
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :offer_list_length
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :offer_list_length
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -531,7 +531,6 @@ class Offer < ActiveRecord::Base
     boost_weight = weights.delete(:boost) { 1 }
     over_threshold_weight = weights.delete(:over_threshold) { 0 }
     weights = { :conversion_rate => 0, :price => 0, :avg_revenue => 0, :bid => 0 }.merge(weights)
-    self.rank_boost ||= rank_boosts.active.sum(:amount)
     self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send("normal_#{key}")) }
     self.rank_score += rand * random_weight
     self.rank_score += rank_boost * boost_weight
@@ -629,7 +628,7 @@ class Offer < ActiveRecord::Base
   end
   
   def needs_higher_bid?
-    !self_promote_only? && (bid_is_bad? || bid_is_passable?)
+    !self_promote_only? && rank_boost == 0 && (bid_is_bad? || bid_is_passable?)
   end
   
   def needs_more_funds?
@@ -716,6 +715,10 @@ class Offer < ActiveRecord::Base
 
   def internal_notes
     partner.account_manager_notes
+  end
+  
+  def rank_boost
+    @rank_boost ||= calculate_rank_boost
   end
 
 private
@@ -905,5 +908,9 @@ private
     elsif hidden_changed? && hidden?
       enable_offer_requests.pending.each { |request| request.approve!(false) }
     end
+  end
+  
+  def calculate_rank_boost
+    rank_boosts.active.sum(:amount)
   end
 end
