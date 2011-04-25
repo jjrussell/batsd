@@ -8,7 +8,7 @@ class Tools::Users::RoleAssignmentsController < WebsiteController
   def create
     if @user_role.name == 'admin'
       flash[:error] = "Admin roles cannot be added with this tool"
-    elsif @role_assignment.save
+    elsif @user.user_roles << @user_role
       flash[:notice] = "<b>#{@user.email}</b> now has <b>#{@user_role.name}</b> privilege."
     else
       flash[:error] = "could not add <b>#{@user_role.name}</b> privilege from <b>#{@user.email}</b>."
@@ -19,7 +19,7 @@ class Tools::Users::RoleAssignmentsController < WebsiteController
   def destroy
     if @user_role.name == 'admin'
       flash[:error] = "Admin roles cannot be revoked with this tool"
-    elsif @role_assignment.destroy
+    elsif @user.user_roles.delete(@user_role)
       flash[:notice] = "<b>#{@user.email}</b> no longer has <b>#{@user_role.name}</b> privilege."
     else
       flash[:error] = "could not revoke <b>#{@user_role.name}</b> privilege from <b>#{@user.email}</b>."
@@ -40,7 +40,6 @@ class Tools::Users::RoleAssignmentsController < WebsiteController
   end
 
   def reload_user_and_save_activity_logs
-    @user.reload
     save_activity_logs
   end
 end
