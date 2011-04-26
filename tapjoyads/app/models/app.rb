@@ -147,10 +147,10 @@ class App < ActiveRecord::Base
     
     return [ [], 0 ] if type == Offer::CLASSIC_OFFER_TYPE || !currency.tapjoy_enabled?
     
-    final_offer_list   = []
-    num_rejected       = 0
-    offer_list_length  = 0
-    hide_app_offers = currency.hide_app_installs_for_version?(app_version)
+    final_offer_list  = []
+    num_rejected      = 0
+    offer_list_length = 0
+    hide_app_offers   = currency.hide_app_installs_for_version?(app_version)
     
     if include_rating_offer && enabled_rating_offer_id.present?
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)
