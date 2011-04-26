@@ -42,4 +42,8 @@ class HomepageController < WebsiteController
   def index
     render :layout => 'newhome'
   end
+  
+  def careers
+    render :layout => 'newcontent'
+  end
 end

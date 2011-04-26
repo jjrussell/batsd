@@ -3,6 +3,7 @@ body { background: #616161; color: #787878; font-family: helvetica, arial; }
 
 h1 { color: #636363; font-weight: bold; font-size: 24px; width: 100%; line-height: 30px; }
 h2 { color: #5c5c5c; float: left; font-size: 20px; font-weight: bold; }
+h3 { color: #1486b8; float: left; font-size: 16px; font-weight: bold; }
 
 .clear { clear: both; }
 p { line-height: 22px; }
