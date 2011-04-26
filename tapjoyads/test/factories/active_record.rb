@@ -25,6 +25,7 @@ Factory.define :partner do |partner|
 end
 
 Factory.define :payout_info do |info|
+  info.signature { Factory.next(:name) }
   info.association :partner
 end
 
