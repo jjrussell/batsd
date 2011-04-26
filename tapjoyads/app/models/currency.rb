@@ -152,6 +152,10 @@ class Currency < ActiveRecord::Base
     true
   end
   
+  def hide_app_installs_for_version?(app_version)
+    app_version.present? && hide_app_installs? && app_version.version_greater_than_or_equal_to?(minimum_hide_app_installs_version)
+  end
+  
 private
   
   def update_memcached_by_app_id

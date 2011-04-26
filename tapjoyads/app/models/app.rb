@@ -150,12 +150,13 @@ class App < ActiveRecord::Base
     final_offer_list   = []
     num_rejected       = 0
     offer_list_length  = 0
+    hide_app_offers = currency.hide_app_installs_for_version?(app_version)
     
     if include_rating_offer && enabled_rating_offer_id.present?
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)
       if rate_app_offer.present? && rate_app_offer.accepting_clicks?
         offer_list_length += 1
-        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type)
+        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers)
           num_rejected += 1
         else
           final_offer_list << rate_app_offer
@@ -165,7 +166,7 @@ class App < ActiveRecord::Base
     
     offer_list_length += Offer.get_cached_offers({ :type => type, :exp => exp }) do |offers|
       offers.each do |offer|
-        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type)
+        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers)
           num_rejected += 1
         else
           final_offer_list << offer
