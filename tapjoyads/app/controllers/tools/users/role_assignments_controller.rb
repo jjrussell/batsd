@@ -3,7 +3,7 @@ class Tools::Users::RoleAssignmentsController < WebsiteController
   current_tab :tools
   filter_access_to :all
   before_filter :find_role_assignment
-  after_filter :reload_user_and_save_activity_logs, :only => [ :create, :destroy ]
+  after_filter :save_activity_logs, :only => [ :create, :destroy ]
 
   def create
     if @user_role.name == 'admin'
@@ -37,9 +37,5 @@ class Tools::Users::RoleAssignmentsController < WebsiteController
     @user = @role_assignment.user
     @user_role = @role_assignment.user_role
     log_activity(@user, :included_methods => [ :role_symbols ])
-  end
-
-  def reload_user_and_save_activity_logs
-    save_activity_logs
   end
 end
