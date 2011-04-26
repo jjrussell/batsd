@@ -1,5 +1,5 @@
-= render :partial => 'search'
 %h1 User management
+= render :partial => 'search'
 %h3= @user.email
 = link_to 'Activities Log', activities_path(:object_id => @user.id)
 %table.tablesorter
