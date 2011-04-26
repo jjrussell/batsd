@@ -1,16 +1,10 @@
+## Press Controller
+## @description Controls press section of the website
+## @help News entries are loaded via constructor. Press/index.html.haml contains the main press view but viewing articles uses press.html.haml as the layout
+
 class Homepage::PressController < WebsiteController
   layout 'press'
-
-  def show
-    sanitized_id = params[:id].split('-').first
-    render "homepage/press/#{sanitized_id}"
-  end
-
-  def glu
-    redirect_to :action => 'show', :id => '201103030'
-  end
-
-  def index
+  def initialize
     @press_list = [
 
       [ "3.23.2011", "Tapjoy Fuels Self-Publishing for Mobile and Social Application Developers", "/press/201103230-tapjoy-fuels-self-publishing-for-developers", ],
@@ -187,6 +181,18 @@ class Homepage::PressController < WebsiteController
       [ "8.8.2008", "Silicon Alley Insider", "MySpace Apps Catching Up To Facebook's?", "http://www.alleyinsider.com/2008/8/myspace-apps-catching-up-to-facebook-s-", ],
       [ "6.5.2008", "InsideFacebook", "Offerpal Media Monetizing Virtual Currency Apps on Facebook", "http://www.insidefacebook.com/2008/06/05/offerpal-media-monetizing-virtual-currency-apps-on-facebook/", ],
     ]
-    render :layout => 'homepage'
+  end
+
+  def show
+    sanitized_id = params[:id].split('-').first
+    render "homepage/press/#{sanitized_id}"
+  end
+
+  def glu
+    redirect_to :action => 'show', :id => '201103030'
+  end
+
+  def index
+    render :layout => 'newcontent'
   end
 end

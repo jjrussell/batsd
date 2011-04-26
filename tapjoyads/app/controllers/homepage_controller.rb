@@ -26,9 +26,13 @@ class HomepageController < WebsiteController
   def privacy
     render :layout => false
   end
-  
+
+  def about_us
+    render :layout => 'newcontent';
+  end
+
   def advertisers
-    render :layout => 'newcontent.html.haml';
+    render :layout => 'newcontent';
   end
   
   def app_developers

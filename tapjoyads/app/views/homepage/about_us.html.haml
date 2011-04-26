@@ -1,13 +1,53 @@
-- @about_us = true
-.titleHeader
-  %h3 COMPANY OVERVIEW
-
-.splitLayout
-  = render :partial => 'about_left_nav'
-  .team.plain_template
-    .management.innercontents
-      %h5 Fueling the growth of the largest social and mobile games since 2007.
-      %p Tapjoy is the leader in monetization and distribution services for social and mobile gaming applications, MMOs, virtual worlds, social platforms and other publishers selling virtual goods or premium digital assets.
-      %p Our alternative payment solutions enable developers to increase payment conversions and generate incremental revenue, while our cross-platform distribution channel delivers cost-effective user acquisition and re-engagement services across Yahoo, Google, Windows Live and other leading web sites and containers.
-      %p The Tapjoy management team is led by seasoned Internet, gaming and advertising industry executives, and the company is backed by top-tier venture capital firms InterWest Partners, North Bridge Venture Partners, and D. E. Shaw Ventures.
-      %p Tapjoy is headquartered in San Francisco, with offices in London, Tokyo and Silicon Valley.
+- content_for :page_head, stylesheet_link_tag('about_us')
+#about_us
+  #left
+    #sub_nav
+      .thick_line
+      %a{:href => "..."}
+        Meet the Team
+      .dotted_line
+      %a{:href => "...", :class => "selected"}
+        Tapjoy in the Press
+      .dotted_line
+      %a{:href => "..."}
+        Read our Blog
+      .dotted_line
+      %a{:href => "..."}
+        Work at Tapjoy
+      .dotted_line
+      %a{:href => "..."}
+        Contact us
+      .thick_line
+  #right
+    %img.header{:src => "/images/tapjoy_in_the_press.png"}/
+    %h1
+      Tapjoy Fuels Self-Publishing for Mobile and Social Application Developers
+    %p
+      %i
+        Leverages the company's product and distribution leadership to further democratize the app distribution model
+    %p
+      <b>San Francisco - March 23, 2011</b> - Tapjoy, Inc (
+      %a{:href => "..."}
+        www.tapjoy.com
+      ) the leading distribution and monetization platform for application developers, today announced a new way for independent developers to turn their social, mobile and tablet games into popular, profitable titles.
+    %p
+      Tapjoy will help fund the growth of promising early-stage and pre-launch games by leveraging the company's distribution and monetization platform and by investing its capital and resources to support the game's development. Selected games will receive dedicated monthly marketing credits for new user acquisition through Tapjoy's network of more than 200 million mobile consumers and 100 million social gamers.
+    %p
+      "We're in the unique position of being able to turn great but undiscovered apps into major hits by leveraging our mobile social distribution platform," said Mihir Shah, president and CEO of Tapjoy, Inc. "We are proud to support the growing category of global application developers and entrepreneurs who need help getting their apps out there but want to maintain ownership and creative control of their properties."
+    %p
+      Tapjoy's proprietary ad targeting technology provides personalized app recommendations for individual end-users, resulting in more than 1.5 million total application installs per day across iPhone, Android and iPad devices. In aggregate, mobile applications using Tapjoy's service generate over $35 million per month.
+    %p
+      One of Tapjoy's partners is 5th Planet Games. "Tapjoy helped us reinvigorate Dawn of the Dragons much faster than we ever could have done ourselves or through anyone else, driving a 40% increase in our MAUs in about a month," said Robert Winkler, founder of 5th Planet Games. "And since we've started working with Tapjoy, we've had our best revenue month ever."
+    %p
+      Tapjoy has also served as the primary distribution partner for hundreds of apps from top iOS and Android developers.
+    %p
+      "Our users love Tapjoy because it lets them earn Textfree with Voice calling minutes completely free," said Joe Sipher, chief product and marketing officer at Pinger. "Tapjoy is a powerful tool for both monetization of virtual goods as well as a highly effective customer acquisition tool."
+    %p
+      Games will be accepted into the Tapjoy Publishing program based on the quality of the gaming experience and the talent of its developers. Those interested in applying for the program should visit
+      %a{:href => "..."}
+        www.tapjoy.com/publishing
+      or email
+      %a{:href => "..."}
+        publishing@tapjoy.com
+      to learn more. 
+.clear
