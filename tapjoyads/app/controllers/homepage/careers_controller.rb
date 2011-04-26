@@ -7,14 +7,18 @@ class Homepage::CareersController < WebsiteController
   def initialize
     @careers_list = [
       [ "Product",
-        ["Name", "URL"],
-        ["Name2", "URL2"],
-        ["Name3", "URL3"],
+        [
+          ["Name", "URL"],
+          ["Name2", "URL2"],
+          ["Name3", "URL3"],
+    ]
       ],
       [ "Engineering",
-        ["Name", "URL"],
-        ["Name2", "URL2"],
-        ["Name3", "URL3"],
+        [
+          ["Name", "URL"],
+          ["Name2", "URL2"],
+          ["Name3", "URL3"],
+      ]
       ]
     ]
   end
