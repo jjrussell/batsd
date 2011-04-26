@@ -50,8 +50,8 @@ class GetOffersController < ApplicationController
     end
     # END TO REMOVE
     
-    # Show redesign to Stephen iTouch, Eric iPhone, Ryan iPhone, Kai iPad, Linda Nexus S and Stephen Evo.
-    if DEVICES_FOR_REDESIGN.include?(params[:udid])
+    # Show redesign to pubs hiding PPI offers and Stephen iTouch, Eric iPhone, Ryan iPhone, Kai iPad, Linda Nexus S and Stephen Evo.
+    if @currency.hide_app_installs? || DEVICES_FOR_REDESIGN.include?(params[:udid])
       render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
     end
   end

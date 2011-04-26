@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110419222619) do
+ActiveRecord::Schema.define(:version => 20110426184102) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -114,6 +114,7 @@ ActiveRecord::Schema.define(:version => 20110419222619) do
     t.text     "offer_whitelist",                                                                     :null => false
     t.boolean  "use_whitelist",                                                    :default => false, :null => false
     t.boolean  "tapjoy_enabled",                                                   :default => false, :null => false
+    t.boolean  "hide_app_installs",                                                :default => false, :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"

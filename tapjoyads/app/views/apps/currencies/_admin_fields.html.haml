@@ -2,6 +2,12 @@
   %td{:colspan => 2} Admin-only fields:
 %tr.admin
   %th
+    = f.label :hide_app_installs, 'Hide app installs'
+    #help_hide_app_installs.help ?
+  %td
+    = f.check_box :hide_app_installs
+%tr.admin
+  %th
     = f.label :disabled_offers, 'Disabled offers'
     #help_disabled_offers.help ?
   %td
@@ -79,6 +85,8 @@
     The percent share of offer spending that this publisher gets. Computed as: (this partner's rev share) * (spend share ratio).
   #help_direct_pay_share_content{:name => 'Direct-pay share'}
     The percent share of direct-pay revenue that this publisher gets.
+  #help_hide_app_installs_content{:name => 'Hide app installs'}
+    Do not display pay-per-install offers on this publisher's offer wall.
 
 - content_for :page_styles do
   :plain
