@@ -1,0 +1,9 @@
+#jobs
+  - @careers_list.each do |career|
+    %span
+      = career[0]
+    %ul
+      - @career[1].each do |position|
+        %li
+          %a{:href => "..."}
+            = position[0]

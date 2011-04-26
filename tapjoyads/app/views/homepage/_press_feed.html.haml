@@ -1,0 +1,23 @@
+#articles
+  #press
+    %strong Press Releases
+    -#%a{:href => "...", :class => "view_all"} View All &rarr;
+    %ul
+      - @press_list[0..3].each do |press|
+        .article_divider
+        %li
+          = link_to press[1], press[2]
+          .date
+            = press[0]
+  #news
+    %strong News Coverage
+    -#%a{:href => "...", :class => "view_all"} View All &rarr;
+    %ul
+      - @news_list[0..3].each do |news|
+        .article_divider
+        %li
+          %b= news[1]
+          |
+          = link_to news[2], news[3]
+          .date
+            = news[0]
