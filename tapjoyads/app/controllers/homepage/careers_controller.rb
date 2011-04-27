@@ -6,20 +6,23 @@ class Homepage::CareersController < WebsiteController
   layout 'careers'
   def initialize
     @careers_list = [
-      [ "Product",
-        [
-          ["Name", "URL"],
-          ["Name2", "URL2"],
-          ["Name3", "URL3"],
-    ]
-      ],
-      [ "Engineering",
-        [
-          ["Name", "URL"],
-          ["Name2", "URL2"],
-          ["Name3", "URL3"],
-      ]
-      ]
+      {
+        :name => "Product",
+        :list => [
+          { :title => "Sr. Product Marketing Mgr.",
+            :href => "/careers/senior_product_marketing_manager" },
+          { :title => "Name2", :href => "URL2"},
+          { :title => "Name3", :href => "URL3"},
+        ]
+      },
+      {
+        :name => "Engineering",
+        :list => [
+          { :title => "Name", :href => "URL"},
+          { :title => "Name2", :href => "URL2"},
+          { :title => "Name3", :href => "URL3"},
+        ]
+      }
     ]
   end
 
