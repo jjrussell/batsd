@@ -30,6 +30,7 @@ class WebRequest < SimpledbResource
   self.sdb_attr :geoip_country
   self.sdb_attr :click_key
   self.sdb_attr :transaction_id
+  self.sdb_attr :tap_points
   
   PATH_TO_STAT_MAP = {
     'connect'                  => [ { :stat => 'logins',                    :attr => :app_id } ],
@@ -128,6 +129,8 @@ class WebRequest < SimpledbResource
       self.exp               = params[:exp]
       self.country           = params[:country_code]
       self.transaction_id    = params[:transaction_id]
+
+      self.tap_points        = params[:tap_points]
     end
     
     unless self.ip_address?
