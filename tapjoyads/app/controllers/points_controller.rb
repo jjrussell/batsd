@@ -1,6 +1,6 @@
 class PointsController < ApplicationController
   def award
-    return unless verify_params([ :app_id, :udid, :publisher_user_id, :tap_points, :guid, :timestamp, :verifier, :currency_id ])
+    return unless verify_params([ :app_id, :udid, :publisher_user_id, :tap_points, :guid, :timestamp, :verifier ])
     hash_bits = [
       params[:app_id],
       params[:udid],
@@ -16,13 +16,13 @@ class PointsController < ApplicationController
       render :template => 'layouts/error' and return
     end
 
-    currency = Currency.find_in_cache(params[:currency_id])
-    return unless verify_records([ currency ])
+    @currency = Currency.find_in_cache(params[:app_id])
+    return unless verify_records([ @currency ])
 
     reward = Reward.new(:key => params[:guid])
     reward.type              = 'award_currency'
     reward.publisher_app_id  = params[:app_id]
-    reward.currency_id       = currency.id
+    reward.currency_id       = @currency.id
     reward.publisher_user_id = params[:publisher_user_id]
     reward.currency_reward   = params[:tap_points]
     reward.udid              = params[:udid]
@@ -37,9 +37,18 @@ class PointsController < ApplicationController
 
     message = reward.serialize(:attributes_only => true)
 
+    @success = true
+    @message = "#{params[:tap_points]} points awarded"
+    @point_purchases = PointPurchases.new(:key => "#{params[:publisher_user_id]}.#{params[:app_id]}")
+    @point_purchases.points += params[:tap_points].to_i
+
+    web_request = WebRequest.new
+    web_request.put_values('award_points', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+    web_request.save
+
     Sqs.send_message(QueueNames::SEND_CURRENCY, message)
-    @message = "Points awarded"
-    render :template => 'layouts/success'
+
+    render :template => 'get_vg_store_items/user_account'
   end
 
   def spend

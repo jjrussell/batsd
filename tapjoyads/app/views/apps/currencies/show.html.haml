@@ -3,7 +3,7 @@
 %h3 Virtual Currency
 
 - form_for [@app, @currency], :html => {:class => 'tjform'} do |f|
-  %table
+  %table.currency_form
     %tr
       %th
         = f.label :name, 'Name'
@@ -250,4 +250,8 @@
     }
     .tapjoy-disabled {
       color: #AF1515;
+    }
+    
+    .currency_form {
+      width: 680px;
     }

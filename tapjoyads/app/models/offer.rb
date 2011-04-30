@@ -565,7 +565,7 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
-  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type)
+  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_installs)
     return is_disabled?(publisher_app, currency) ||
         platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device) ||
@@ -579,7 +579,8 @@ class Offer < ActiveRecord::Base
         jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
-        capped_installs_reject?(publisher_app)
+        capped_installs_reject?(publisher_app) ||
+        hide_app_installs_reject?(currency, hide_app_installs)
   end
 
   def update_payment(force_update = false)
@@ -835,6 +836,10 @@ private
   
   def capped_installs_reject?(publisher_app)
     free_app? && publisher_app.capped_advertiser_app_ids.include?(item_id)
+  end
+  
+  def hide_app_installs_reject?(currency, hide_app_installs)
+    hide_app_installs && item_type == 'App'
   end
   
   def normalize_device_type(device_type_param)
