@@ -7,7 +7,7 @@ xml.TapjoyConnectReturnObject do
         xml.Amount @currency.get_visual_reward_amount(offer)
         xml.Description 'An offer.'
         if params[:source] == 'featured' && params[:app_id] == '0da90aad-b122-41b9-a0f9-fa849b6fbfbd'
-          xml.IconURL "#{CLOUDFRONT_URL}/icons/#{offer.id}.png"
+          xml.IconURL "#{CLOUDFRONT_URL}/icons/#{offer.item_id}.png"
         else
           xml.IconURL offer.get_icon_url(:source => :cloudfront, :size => '57')
         end
