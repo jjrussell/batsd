@@ -98,7 +98,7 @@ class App < ActiveRecord::Base
   ##
   # Grab data from the app store and mutate self with data.
   def fill_app_store_data(country=nil)
-    return if store_id.blank?
+    return {} if store_id.blank?
     data = AppStore.fetch_app_by_id(store_id, platform, country)
     if (data.nil?) # might not be available in the US market
       data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
@@ -110,12 +110,12 @@ class App < ActiveRecord::Base
     self.age_rating = data[:age_rating]
     self.file_size_bytes = data[:file_size_bytes]
     self.supported_devices = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
-    download_icon(data[:icon_url], data[:small_icon_url])
+    download_icon(data[:icon_url], data[:small_icon_url]) unless new_record?
+    data
   end
 
   def download_icon(url, small_url)
     return if url.blank?
-    set_primary_key if id.nil?
     
     begin
       icon_src_blob = Downloader.get(url, :timeout => 30)

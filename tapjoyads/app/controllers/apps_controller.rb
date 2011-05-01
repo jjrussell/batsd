@@ -41,8 +41,9 @@ class AppsController < WebsiteController
     @app.store_id = params[:app][:store_id] if params[:state] == 'live'
     @app.name = params[:app][:name]
     country = params[:app_country]
+    app_store_data = {}
     begin
-      @app.fill_app_store_data(country) if params[:state] == 'live'
+      app_store_data = @app.fill_app_store_data(country) if params[:state] == 'live'
     rescue
       flash.now[:error] = 'Grabbing app data from app store failed. Please try again.'
       render :action => "new"
@@ -50,6 +51,7 @@ class AppsController < WebsiteController
     end
     
     if @app.save
+      @app.download_icon(app_store_data[:icon_url], app_store_data[:small_icon_url])
       flash[:notice] = 'App was successfully created.'
       redirect_to(@app)
     else
