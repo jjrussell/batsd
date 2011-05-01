@@ -1,3 +1,44 @@
-This is the readme, yo.
+Environment Setup:
 
-It's really good.
+
+-Setup PATH and MANPATH
+  -edit /etc/paths to look like...
+    /usr/local/bin
+    /usr/bin
+    /bin
+    /usr/sbin
+    /sbin
+  -edit /etc/manpaths to look like...
+    /usr/local/man
+    /usr/local/share/man
+    /usr/share/man
+  -restart your terminal to pull in the new paths
+
+
+-Install xcode
+  -use the dvd that came with your mac or download from apple
+
+
+-Install MySQL
+  -download http://s3.amazonaws.com/dev_tapjoy/rails_env/mysql-5.1.56-osx10.6-x86_64.dmg
+  -download http://s3.amazonaws.com/dev_tapjoy/rails_env/my.cnf
+  -copy my.cnf to /etc/my.cnf
+  -run the main installer in the mysql dmg
+  -run the startup item installer in the mysql dmg
+  -run the pref pane in the mysql dmg
+  -start MySQL via the pref pane in System Preferences
+
+
+-Install memcached and ImageMagick
+  -download http://s3.amazonaws.com/dev_tapjoy/rails_env/magick-installer.sh
+  -run magick-installer.sh (this will install memcached and ImageMagick and all dependencies)
+
+
+-Setup memcached to start on boot
+  -download http://s3.amazonaws.com/dev_tapjoy/rails_env/Memcached.applescript
+  -open the applescript and save the script as an Application in your /Applications directory
+  -open the System Preferences and navigate to the Account section
+  -add the Memcached app as a Login Item for your user account
+
+
+-Install required gems
