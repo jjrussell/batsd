@@ -116,7 +116,6 @@ class App < ActiveRecord::Base
 
   def download_icon(url, small_url)
     return if url.blank?
-    set_primary_key if id.nil?
     
     begin
       icon_src_blob = Downloader.get(url, :timeout => 30)
