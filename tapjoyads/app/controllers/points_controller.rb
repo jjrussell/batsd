@@ -69,7 +69,13 @@ class PointsController < ApplicationController
     @currency = Currency.find_in_cache(params[:app_id])
     return unless verify_records([ @currency ])
 
-    @success, @message, @point_purchases = PointPurchases.spend_points("#{publisher_user_id}.#{params[:app_id]}", params[:tap_points].to_i)
+    pp_key = "#{publisher_user_id}.#{params[:app_id]}"
+    tap_points = params[:tap_points].to_i
+    if tap_points == 0
+      @point_purchases = PointPurchases.new(:key => pp_key)
+    else
+      @success, @message, @point_purchases = PointPurchases.spend_points(pp_key, tap_points)
+    end
 
     if @success
       web_request = WebRequest.new
