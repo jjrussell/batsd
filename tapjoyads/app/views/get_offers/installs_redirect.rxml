@@ -6,13 +6,15 @@ xml.TapjoyConnectReturnObject do
         xml.Cost offer.visual_cost
         xml.Amount @currency.get_visual_reward_amount(offer)
         xml.Description 'An offer.'
-        xml.IconURL offer.get_icon_url(:source => :cloudfront, :size => '57')
         xml.Name offer.name
         xml.RedirectURL get_click_url(offer)
         xml.StoreID offer.third_party_data || offer.id
         if params[:source] == 'featured'
+          xml.IconURL "#{CLOUDFRONT_URL}/icons/#{offer.id}.png"
           xml.FullScreenAdURL get_fullscreen_ad_url(offer)
           xml.MediumIconURL offer.get_icon_url(:source => :cloudfront, :size => '256')
+        else
+          xml.IconURL offer.get_icon_url(:source => :cloudfront, :size => '57')
         end
       end
       
