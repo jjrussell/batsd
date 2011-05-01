@@ -16,6 +16,12 @@ class PointsController < ApplicationController
       render :template => 'layouts/error' and return
     end
 
+    tap_points = params[:tap_points].to_i
+    unless tap_points > 0
+      @error_message = "tap_points must be greater than zero"
+      render :template => 'layouts/error' and return
+    end
+
     @currency = Currency.find_in_cache(params[:app_id])
     return unless verify_records([ @currency ])
 
@@ -24,7 +30,7 @@ class PointsController < ApplicationController
     reward.publisher_app_id  = params[:app_id]
     reward.currency_id       = @currency.id
     reward.publisher_user_id = params[:publisher_user_id]
-    reward.currency_reward   = params[:tap_points]
+    reward.currency_reward   = tap_points
     reward.udid              = params[:udid]
     reward.country           = params[:country]
 
@@ -38,9 +44,9 @@ class PointsController < ApplicationController
     message = reward.serialize(:attributes_only => true)
 
     @success = true
-    @message = "#{params[:tap_points]} points awarded"
+    @message = "#{tap_points} points awarded"
     @point_purchases = PointPurchases.new(:key => "#{params[:publisher_user_id]}.#{params[:app_id]}")
-    @point_purchases.points += params[:tap_points].to_i
+    @point_purchases.points += tap_points
 
     web_request = WebRequest.new
     web_request.put_values('award_points', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
