@@ -55,3 +55,7 @@ Environment Setup:
 
 
 -Install required gems
+  -sudo env ARCHFLAGS="-arch x86_64" gem install memcached -v 0.19.5
+  -sudo env ARCHFLAGS="-arch x86_64" gem install mysql -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
+  -sudo rake gems:install
+
