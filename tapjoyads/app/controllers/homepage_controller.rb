@@ -45,20 +45,20 @@ class HomepageController < WebsiteController
   
   def careers
     @careers_list = [
-      [ "Product",
-        [
-          ["Engineering", "..."],
-          ["Name2", "URL2"],
-          ["Name3", "URL3"],
-    ]
-      ],
-      [ "Engineering",
-        [
-          ["Name", "URL"],
-          ["Name2", "URL2"],
-          ["Name3", "URL3"],
-      ]
-      ]
+      { :name => "Product",
+        :list => [
+          { :title => "Product", :link => "..."},
+          { :title => "Two", :link => "..."},
+          { :title => "Three", :link => "..."},
+        ]
+      },
+      { :name => "Engineering",
+        :list => [
+          { :title => "Back-end dev (rails)", :link => "..."},
+          { :title => "Two", :link => "..."},
+          { :title => "Three", :link => "..."},
+        ]
+      }
     ]
     render :layout => 'newcontent'
   end
