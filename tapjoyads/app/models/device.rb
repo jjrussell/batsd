@@ -71,7 +71,6 @@ class Device < SimpledbShardedResource
     
     if (last_run_time_tester? || is_jailbroken_was != is_jailbroken || country_was != country || path_list.include?('daily_user'))
       save
-      Mc.increment_count("sdb_saves.devices_0.#{(now.to_f / 1.hour).to_i}") if this_domain_name == 'devices_0'
     end
     
     path_list
