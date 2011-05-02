@@ -8,7 +8,7 @@ class Homepage::CareersController < WebsiteController
     @careers_list = [
       [ "Product",
         [
-          ["Name", "URL"],
+          ["Engineering", "..."],
           ["Name2", "URL2"],
           ["Name3", "URL3"],
     ]
