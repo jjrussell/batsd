@@ -25,10 +25,18 @@ class Click < SimpledbShardedResource
   self.sdb_attr :exp
   self.sdb_attr :block_reason
   
+  def initialize(options = {})
+    super({ :load_from_memcache => false }.merge(options))
+  end
+  
   def dynamic_domain_name
     domain_number = @key.hash % NUM_CLICK_DOMAINS
     
     return "clicks_#{domain_number}"
+  end
+  
+  def serial_save(options = {})
+    super({ :write_to_memcache => false }.merge(options))
   end
   
 end
