@@ -40,5 +40,11 @@ class OneOffs
     puts "already_migrated: #{already_migrated}"
     puts "num_skipped: #{num_skipped}"
   end
+  
+  def self.create_default_app_group
+    raise "Default AppGroup already exists" if AppGroup.count > 0
+    app_group = AppGroup.create(:name => 'default')
+    App.connection.execute("UPDATE apps SET app_group_id = '#{app_group.id}'")
+  end
 
 end

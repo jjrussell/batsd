@@ -19,10 +19,11 @@ class App < ActiveRecord::Base
   belongs_to :partner
   belongs_to :app_group
   
-  validates_presence_of :partner, :name, :secret_key
+  validates_presence_of :partner, :name, :secret_key, :app_group
   validates_inclusion_of :platform, :in => PLATFORMS.keys
 
   before_validation_on_create :generate_secret_key
+  before_validation_on_create :assign_default_app_group
   after_create :create_primary_offer
   after_update :update_offers
   after_update :update_rating_offer
@@ -328,6 +329,10 @@ private
     if (name_changed? || store_id_changed?) && rating_offer.present?
       rating_offer.save!
     end
+  end
+  
+  def assign_default_app_group
+    self.app_group = AppGroup.find_by_name('default')
   end
   
 end
