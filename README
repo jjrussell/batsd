@@ -19,6 +19,12 @@ Environment Setup:
   -use the dvd that came with your mac or download from apple
 
 
+-Downgrade rubygems
+  -sudo gem uninstall rubygems-update -v 1.7.2
+  -sudo gem install rubygems-update -v 1.3.5
+  -sudo update_rubygems _1.3.5_
+
+
 -Install MySQL
   -download http://s3.amazonaws.com/dev_tapjoy/rails_env/mysql-5.1.56-osx10.6-x86_64.dmg
   -download http://s3.amazonaws.com/dev_tapjoy/rails_env/my.cnf
@@ -39,6 +45,13 @@ Environment Setup:
   -open the applescript and save the script as an Application in your /Applications directory
   -open the System Preferences and navigate to the Account section
   -add the Memcached app as a Login Item for your user account
+
+
+-Copy config files into place
+  -copy tapjoyserver/tapjoyads/config/newrelic-test.yml tapjoyserver/tapjoyads/config/newrelic.yml
+  -copy tapjoyserver/tapjoyads/config/database-default.yml tapjoyserver/tapjoyads/config/database.yml
+  -mkdir tapjoyserver/tapjoyads/tmp
+  -mkdir tapjoyserver/tapjoyads/log
 
 
 -Install required gems
