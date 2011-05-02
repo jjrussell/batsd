@@ -32,6 +32,11 @@ Environment Setup:
   -run the main installer in the mysql dmg
   -run the startup item installer in the mysql dmg
   -run the pref pane in the mysql dmg
+  -add mysql to the PATH and MANPATH
+    -create the file /etc/paths.d/mysql with the following line...
+      /usr/local/mysql/bin
+    -create the file /etc/manpaths.d/mysql with the following line...
+      /usr/local/mysql/man
   -start MySQL via the pref pane in System Preferences
 
 
