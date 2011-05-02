@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110426184102) do
+ActiveRecord::Schema.define(:version => 20110502221634) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -42,6 +42,15 @@ ActiveRecord::Schema.define(:version => 20110426184102) do
   add_index "admin_devices", ["id"], :name => "index_admin_devices_on_id", :unique => true
   add_index "admin_devices", ["udid"], :name => "index_admin_devices_on_udid", :unique => true
 
+  create_table "app_groups", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36, :null => false
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "app_groups", ["id"], :name => "index_app_groups_on_id", :unique => true
+
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                      :limit => 36,                    :null => false
     t.string   "partner_id",              :limit => 36,                    :null => false
@@ -63,8 +72,10 @@ ActiveRecord::Schema.define(:version => 20110426184102) do
     t.string   "supported_devices"
     t.string   "enabled_rating_offer_id", :limit => 36
     t.string   "secret_key",                                               :null => false
+    t.string   "app_group_id",            :limit => 36,                    :null => false
   end
 
+  add_index "apps", ["app_group_id"], :name => "index_apps_on_app_group_id"
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
   add_index "apps", ["name"], :name => "index_apps_on_name"
   add_index "apps", ["partner_id"], :name => "index_apps_on_partner_id"

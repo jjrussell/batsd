@@ -17,6 +17,7 @@ class App < ActiveRecord::Base
   has_many :action_offers
   
   belongs_to :partner
+  belongs_to :app_group
   
   validates_presence_of :partner, :name, :secret_key
   validates_inclusion_of :platform, :in => PLATFORMS.keys
