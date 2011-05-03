@@ -28,6 +28,8 @@ class App < ActiveRecord::Base
   
   named_scope :visible, :conditions => { :hidden => false }
 
+  delegate :conversion_rate, :to => :primary_currency, :prefix => true
+
   def is_android?
     platform == 'android'
   end

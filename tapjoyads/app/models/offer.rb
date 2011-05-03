@@ -722,6 +722,10 @@ class Offer < ActiveRecord::Base
     @rank_boost ||= calculate_rank_boost
   end
 
+  def toggle_user_enabled
+    self.user_enabled = !user_enabled
+  end
+
 private
   
   def is_disabled?(publisher_app, currency)
