@@ -193,6 +193,6 @@ class Homepage::PressController < WebsiteController
   end
 
   def index
-    render :layout => 'newcontent'
+   redirect_to @press_list.first[2]
   end
 end
