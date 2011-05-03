@@ -43,7 +43,13 @@ ActiveRecord::Schema.define(:version => 20110502221634) do
   add_index "admin_devices", ["udid"], :name => "index_admin_devices_on_udid", :unique => true
 
   create_table "app_groups", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36, :null => false
+    t.string   "id",              :limit => 36,                :null => false
+    t.integer  "conversion_rate",               :default => 0, :null => false
+    t.integer  "bid",                           :default => 0, :null => false
+    t.integer  "price",                         :default => 0, :null => false
+    t.integer  "avg_revenue",                   :default => 0, :null => false
+    t.integer  "random",                        :default => 0, :null => false
+    t.integer  "over_threshold",                :default => 0, :null => false
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
