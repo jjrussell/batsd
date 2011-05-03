@@ -81,14 +81,14 @@ class PartnersController < WebsiteController
     
     params[:partner][:account_managers] = User.find_all_by_id(params[:partner][:account_managers])
 
-    safe_attributes = [ :account_managers, :account_manager_notes, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :tapjoy_currency_enabled ]
+    safe_attributes = [ :account_managers, :account_manager_notes, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher ]
     if @partner.safe_update_attributes(params[:partner], safe_attributes)
       flash.now[:notice] = 'Partner was successfully updated.'
+      render :action => :show
     else
       flash.now[:error] = 'Partner update unsuccessful.'
+      render :action => :edit
     end
-
-    render :action => :edit
   end
 
   def manage
