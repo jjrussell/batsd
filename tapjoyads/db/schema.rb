@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110419222619) do
+ActiveRecord::Schema.define(:version => 20110503182210) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -89,31 +89,33 @@ ActiveRecord::Schema.define(:version => 20110419222619) do
   add_index "conversions", ["publisher_app_id", "created_at", "reward_type"], :name => "index_on_publisher_app_id_created_at_and_reward_type"
 
   create_table "currencies", :id => false, :force => true do |t|
-    t.string   "id",                   :limit => 36,                                                  :null => false
-    t.string   "app_id",               :limit => 36,                                                  :null => false
+    t.string   "id",                                :limit => 36,                                                  :null => false
+    t.string   "app_id",                            :limit => 36,                                                  :null => false
     t.string   "name"
-    t.integer  "conversion_rate",                                                  :default => 100,   :null => false
-    t.integer  "initial_balance",                                                  :default => 0,     :null => false
-    t.boolean  "has_virtual_goods",                                                :default => false, :null => false
-    t.boolean  "only_free_offers",                                                 :default => false, :null => false
-    t.boolean  "send_offer_data",                                                  :default => false, :null => false
+    t.integer  "conversion_rate",                                                               :default => 100,   :null => false
+    t.integer  "initial_balance",                                                               :default => 0,     :null => false
+    t.boolean  "has_virtual_goods",                                                             :default => false, :null => false
+    t.boolean  "only_free_offers",                                                              :default => false, :null => false
+    t.boolean  "send_offer_data",                                                               :default => false, :null => false
     t.string   "secret_key"
     t.string   "callback_url"
-    t.text     "disabled_offers",                                                                     :null => false
-    t.text     "test_devices",                                                                        :null => false
+    t.text     "disabled_offers",                                                                                  :null => false
+    t.text     "test_devices",                                                                                     :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "max_age_rating"
-    t.text     "disabled_partners",                                                                   :null => false
-    t.string   "partner_id",           :limit => 36,                                                  :null => false
-    t.integer  "ordinal",                                                          :default => 500,   :null => false
-    t.decimal  "spend_share",                        :precision => 8, :scale => 6, :default => 0.5,   :null => false
+    t.text     "disabled_partners",                                                                                :null => false
+    t.string   "partner_id",                        :limit => 36,                                                  :null => false
+    t.integer  "ordinal",                                                                       :default => 500,   :null => false
+    t.decimal  "spend_share",                                     :precision => 8, :scale => 6, :default => 0.5,   :null => false
     t.integer  "minimum_featured_bid"
-    t.decimal  "direct_pay_share",                   :precision => 8, :scale => 6, :default => 1.0,   :null => false
-    t.boolean  "banner_advertiser",                                                :default => false, :null => false
-    t.text     "offer_whitelist",                                                                     :null => false
-    t.boolean  "use_whitelist",                                                    :default => false, :null => false
-    t.boolean  "tapjoy_enabled",                                                   :default => false, :null => false
+    t.decimal  "direct_pay_share",                                :precision => 8, :scale => 6, :default => 1.0,   :null => false
+    t.boolean  "banner_advertiser",                                                             :default => false, :null => false
+    t.text     "offer_whitelist",                                                                                  :null => false
+    t.boolean  "use_whitelist",                                                                 :default => false, :null => false
+    t.boolean  "tapjoy_enabled",                                                                :default => false, :null => false
+    t.boolean  "hide_app_installs",                                                             :default => false, :null => false
+    t.string   "minimum_hide_app_installs_version",                                             :default => "",    :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -190,6 +192,17 @@ ActiveRecord::Schema.define(:version => 20110419222619) do
   add_index "monthly_accountings", ["month", "year"], :name => "index_monthly_accountings_on_month_and_year"
   add_index "monthly_accountings", ["partner_id", "month", "year"], :name => "index_monthly_accountings_on_partner_id_and_month_and_year", :unique => true
   add_index "monthly_accountings", ["partner_id"], :name => "index_monthly_accountings_on_partner_id"
+
+  create_table "news_coverages", :force => true do |t|
+    t.datetime "published_at"
+    t.string   "link_source"
+    t.text     "link_text"
+    t.text     "link_href"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "news_coverages", ["published_at"], :name => "index_news_coverages_on_published_at"
 
   create_table "offer_discounts", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
@@ -395,6 +408,20 @@ ActiveRecord::Schema.define(:version => 20110419222619) do
 
   add_index "payouts", ["id"], :name => "index_payouts_on_id", :unique => true
   add_index "payouts", ["partner_id"], :name => "index_payouts_on_partner_id"
+
+  create_table "press_releases", :force => true do |t|
+    t.datetime "published_at"
+    t.text     "link_text"
+    t.text     "link_href"
+    t.string   "link_id"
+    t.text     "content_title"
+    t.text     "content_subtitle"
+    t.text     "content_body"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "press_releases", ["published_at"], :name => "index_press_releases_on_published_at"
 
   create_table "rank_boosts", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
