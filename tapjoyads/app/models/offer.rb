@@ -120,6 +120,8 @@ class Offer < ActiveRecord::Base
   named_scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ] } }
   named_scope :for_ios_only, :conditions => 'device_types not like "%android%"'
   
+  delegate :balance, :pending_earnings, :name, :tapjoy_currency_enabled, :to => :partner, :prefix => true
+  
   alias_method :events, :offer_events
   
   def self.redistribute_hourly_stats_aggregation
@@ -694,20 +696,8 @@ class Offer < ActiveRecord::Base
     !partner.users.empty?
   end
 
-  def partner_name
-    partner.name
-  end
-
   def contacts
     partner.non_managers
-  end
-
-  def partner_balance
-    partner.balance
-  end
-
-  def partner_pending_earnings
-    partner.pending_earnings
   end
 
   def account_managers
