@@ -95,6 +95,7 @@
   - property_row('Balance', number_to_currency(@offer.partner_balance / 100.0))
   - property_row('Pending Earnings', number_to_currency(@offer.partner_pending_earnings / 100.0))
   - property_row('Account managers', @offer.account_managers.map(&:email).join(', '))
+  - property_row('Approved publisher', @offer.partner_tapjoy_currency_enabled)
   - property_row('Internal notes', @offer.internal_notes, '')
   - property_row('id', link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - ' + clippy(@offer.partner_id))
 = render 'partners/make_current_button', :partner => @offer.partner
@@ -107,6 +108,7 @@
       = link_to('[View Offer Wall]', "/get_offers/webpage?app_id=#{@offer.id}&udid=#{Offer::EXEMPT_UDIDS.first}&publisher_user_id=testuser&currency_id=#{c.id}&device_type=#{@offer.item.platform}")
       .details{ :id => "details_#{c.id}"}
         %table.properties
+          - property_row('Tapjoy enabled', c.tapjoy_enabled?, nil, c.tapjoy_enabled? ? 'true' : 'warning')
           - property_row('Conversion rate', c.conversion_rate)
           - property_row('Callback url', c.callback_url)
           - property_row('Secret key', c.secret_key)
