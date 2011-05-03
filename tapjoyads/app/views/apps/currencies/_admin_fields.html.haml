@@ -2,6 +2,13 @@
   %td{:colspan => 2} Admin-only fields:
 %tr.admin
   %th
+    = f.label :tapjoy_enabled, 'Tapjoy enabled'
+    #help_tapjoy_enabled.help ?
+  %td
+    = f.check_box :tapjoy_enabled
+    = error_message_on(@currency, :tapjoy_enabled)
+%tr.admin
+  %th
     = f.label :hide_app_installs, 'Hide app installs'
     #help_hide_app_installs.help ?
   %td
@@ -69,6 +76,8 @@
     = @currency.get_disabled_partners.map { |p| link_to(p.name, partner_path(p)) }.join(', ')
     
 .hidden
+  #help_tapjoy_enabled_content{:name => 'Tapjoy Enabled'}
+    Tapjoy approval status. If this is unchecked, the offerwall will be blank and no featured/display ads will be shown.
   #help_disabled_offers_content{:name => 'Disabled offers'}
     A semi-colon (;) separated list of offer id's. Offers that match these id's will not be shown in
     this app's offerwall.
