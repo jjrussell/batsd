@@ -1,23 +1,8 @@
 - content_for :page_head, stylesheet_link_tag('about_us')
+
 #about_us
   #left
-    #sub_nav
-      .thick_line
-      %a{:href => "..."}
-        Meet the Team
-      .dotted_line
-      %a{:href => "...", :class => "selected"}
-        Tapjoy in the Press
-      .dotted_line
-      %a{:href => "..."}
-        Read our Blog
-      .dotted_line
-      %a{:href => "..."}
-        Work at Tapjoy
-      .dotted_line
-      %a{:href => "..."}
-        Contact us
-      .thick_line
+    = render :partial => 'homepage/sub_nav'
   #right
     %img.header{:src => "/images/tapjoy_in_the_press.png"}/
     %h1

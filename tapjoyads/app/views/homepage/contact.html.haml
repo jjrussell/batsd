@@ -1,54 +1,48 @@
-- @about_us = true
-.titleHeader
-  %h3 COMPANY OVERVIEW
-  %h3.separator &nbsp;/&nbsp;
-  %h3.sub CONTACT US
-
-.splitLayout
-  = render :partial => 'about_left_nav'
-  .team.plain_template
-    .management.innercontents
-      %h5 Contact Us
-      .info
-        %p How can we help you?
-
-      .info
-        %strong Headquarters
+- content_for :page_head, stylesheet_link_tag('about_us')
+- content_for :page_head, stylesheet_link_tag('contact')
+#notice
+  %span
+    <b>Thanks!</b> Someone from our team will be in touch shortly
+#about_us
+  #left
+    = render :partial => 'homepage/sub_nav'
+  #right
+    %img.header{:src => "/images/contact_tapjoy.png"}/
+    %img#map{:src => "/images/map.jpg"}/
+    #contact_info
+      .info_box
+        %h2
+          Mailing Address
         %p
-          111 Sutter St
-          %br/
-          13th Floor
-          %br/
-          San Francisco, CA 94104
-          %br/
-          Telephone: 415-766-6900
-          %br/
-          Fax: 415-296-9007
-
-      .info
-        %strong Email
+          111 Sutter St<br />13th Floor<br />San Francisco, CA 94104
+      .info_box
+        %h2
+          Call/Fax Us
         %p
-          Customer Service:
-          = mail_to 'help@tapjoy.com'
-          %br/
-          Company Information:
-          = mail_to 'info@tapjoy.com'
-          %br/
-          Publisher Support:
-          = mail_to 'publishersupport@tapjoy.com'
-          %br/
-          Advertisers:
-          = mail_to 'info@tapjoy.com'
-          %br/
-          Mobile Support:
-          = mail_to 'mobilesupport@tapjoy.com'
-
-- content_for :page_styles do
-  :plain
-    p.info {
-      padding: 1px;
-    }
-    ol.instructions {
-      list-style-position: inside;
-      padding-left: 0px;
-    }
+          Telephone: 415 766 6900<br />Fax: 415 296 9007
+      .info_box
+        %h2
+          Email Us
+        %p
+          info [at] tapjoy.com<br />support [at] tapjoy.com
+    %h2
+      Support / Info Form
+    %form#contact_form
+      %div
+        %label{:for => "name"}
+          Your name
+        %input{:name => "name"}
+        %label{:for => "email"}
+          Your email address
+        %input{:name => "email"}
+        %label{:for => "reason"}
+          Reason for inquiry
+        %select{:name => "reason"}
+          %option
+            Select One
+      #details
+        %label{:for => "details"}
+          Details
+        %textarea{:name => "details"}
+    %a#send_it{:href => "..."}
+.clear

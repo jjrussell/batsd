@@ -21,6 +21,7 @@ class HomepageController < WebsiteController
       end
       redirect_to :action => 'contact-thanks'
     end
+    render :layout => 'newcontent'
   end
 
   def privacy
