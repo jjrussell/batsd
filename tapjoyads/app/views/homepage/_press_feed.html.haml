@@ -3,21 +3,21 @@
     %strong Press Releases
     -#%a{:href => "...", :class => "view_all"} View All &rarr;
     %ul
-      - @press_list[0..3].each do |press|
+      - @recent_press.each do |press|
         .article_divider
         %li
-          = link_to press[1], press[2]
+          = link_to press.link_text, press.link_href
           .date
-            = press[0]
+            = press.published_at.to_s(:pr)
   #news
     %strong News Coverage
     -#%a{:href => "...", :class => "view_all"} View All &rarr;
     %ul
-      - @news_list[0..3].each do |news|
+      - @recent_news.each do |news|
         .article_divider
         %li
-          %b= news[1]
+          %b= news.link_source
           |
-          = link_to news[2], news[3]
+          = link_to news.link_text, news.link_href
           .date
-            = news[0]
+            = news.published_at.to_s(:pr)
