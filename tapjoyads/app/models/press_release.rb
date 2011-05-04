@@ -1,7 +1,7 @@
 class PressRelease < ActiveRecord::Base
   named_scope :recent, lambda { |num| { :order => "published_at DESC", :limit => num } }
   def self.most_recent
-    recent(1)[0]
+    PressRelease.first( :order => "published_at DESC", :conditions => "content_body is not null")
   end
 
   def content

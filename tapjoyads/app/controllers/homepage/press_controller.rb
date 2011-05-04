@@ -10,8 +10,8 @@ class Homepage::PressController < WebsiteController
     @press_release = PressRelease.find_by_link_id(sanitized_id)
     redirect_to '/press' and return unless @press_release && @press_release.content_body.present?
 
-    @press_list = PressRelease.recent(10)
-    @news_list = NewsCoverage.recent(10)
+    @recent_press = PressRelease.recent(4)
+    @recent_news = NewsCoverage.recent(4)
   end
 
   def glu
@@ -19,6 +19,6 @@ class Homepage::PressController < WebsiteController
   end
 
   def index
-   redirect_to PressRelease.most_recent.link
+   redirect_to "/press/" + PressRelease.most_recent.link_href
   end
 end
