@@ -19,6 +19,8 @@ class App < ActiveRecord::Base
   belongs_to :partner
   belongs_to :app_group
   
+  alias_method :group, :app_group
+  
   validates_presence_of :partner, :name, :secret_key, :app_group
   validates_inclusion_of :platform, :in => PLATFORMS.keys
 
@@ -166,7 +168,7 @@ class App < ActiveRecord::Base
       end
     end
     
-    offer_list_length += Offer.get_cached_offers({ :type => type, :exp => exp }) do |offers|
+    offer_list_length += Offer.get_cached_offers({ :app => self, :type => type, :exp => exp }) do |offers|
       offers.each do |offer|
         if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers)
           num_rejected += 1
@@ -251,7 +253,7 @@ class App < ActiveRecord::Base
   end
 
   def self.get_ios_publisher_app_ids
-    Currency.for_ios.scoped(:select => :app_id, :group => :app_id).collect(&:app_id)
+    Currency.for_ios.just_app_ids.collect(&:app_id)
   end
 
   def self.get_ios_publisher_apps

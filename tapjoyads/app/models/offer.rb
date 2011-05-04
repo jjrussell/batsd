@@ -147,19 +147,43 @@ class Offer < ActiveRecord::Base
   end
   
   def self.cache_offers
+    offer_list = Offer.enabled_offers.nonfeatured.for_offer_list
+    cache_offer_list(offer_list, DEFAULT_WEIGHTS, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+  
+    offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
+    cache_offer_list(offer_list, DEFAULT_WEIGHTS.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+  
+    offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads
+    cache_offer_list(offer_list, DEFAULT_WEIGHTS, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+  end
+  
+  def self.cache_offers_for_app(app)
     Benchmark.realtime do
+      weights = app.group.weights
+
       offer_list = Offer.enabled_offers.nonfeatured.for_offer_list
-      cache_offer_list(offer_list, DEFAULT_WEIGHTS, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
-    
+      cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default], app)
+
       offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
-      cache_offer_list(offer_list, DEFAULT_WEIGHTS.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+      cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default], app)
     
       offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads
-      cache_offer_list(offer_list, DEFAULT_WEIGHTS, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+      cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default], app)
     end
   end
   
-  def self.cache_offer_list(offer_list, weights, type, exp)
+  def self.cache_offer_stats
+    offer_list = Offer.enabled_offers.nonfeatured.for_offer_list
+    cache_offer_stats_for_offer_list(offer_list, DEFAULT_OFFER_TYPE)
+    
+    offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
+    cache_offer_stats_for_offer_list(offer_list, FEATURED_OFFER_TYPE)
+    
+    offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads
+    cache_offer_stats_for_offer_list(offer_list, DISPLAY_OFFER_TYPE)
+  end
+  
+  def self.cache_offer_stats_for_offer_list(offer_list, type)
     conversion_rates    = offer_list.collect(&:conversion_rate)
     prices              = offer_list.collect(&:price)
     avg_revenues        = offer_list.collect(&:avg_revenue)
@@ -177,8 +201,12 @@ class Offer < ActiveRecord::Base
       :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
     
     bucket = S3.bucket(BucketNames::OFFER_DATA)
-    bucket.put("offer_rank_statistics.type_#{type}.exp_#{exp}", Marshal.dump(stats))
-    Mc.put("s3.offer_rank_statistics.type_#{type}.exp_#{exp}", stats)
+    bucket.put("offer_rank_statistics.#{type}", Marshal.dump(stats))
+    Mc.put("s3.offer_rank_statistics.#{type}", stats)
+  end
+  
+  def self.cache_offer_list(offer_list, weights, type, exp, app)
+    stats = get_offer_rank_statistics(type)
     
     offer_list.each do |offer|
       offer.normalize_stats(stats)
@@ -200,24 +228,23 @@ class Offer < ActiveRecord::Base
     end
     
     offer_list.first.offer_list_length = offer_list.length
-    
+  
     offer_groups = []
     group        = 0
     bucket       = S3.bucket(BucketNames::OFFER_DATA)
     offer_list.in_groups_of(GROUP_SIZE) do |offers|
       offers.compact!
-      marshalled_offers = Marshal.dump(offers)
-      bucket.put("enabled_offers.type_#{type}.exp_#{exp}.#{group}", marshalled_offers)
+      # marshalled_offers = Marshal.dump(offers)
+      # bucket.put("enabled_offers.#{app.id}.type_#{type}.exp_#{exp}.#{group}", marshalled_offers)
       offer_groups << offers
       group += 1
     end
     offer_groups.each_with_index do |offers, i|
-      Mc.distributed_put("s3.enabled_offers.type_#{type}.exp_#{exp}.#{i}", offers)
+      Mc.distributed_put("s3.enabled_offers.#{app.id}.type_#{type}.exp_#{exp}.#{i}", offers)
     end
-    
-    while bucket.key("enabled_offers.type_#{type}.exp_#{exp}.#{group}").exists?
-      bucket.key("enabled_offers.type_#{type}.exp_#{exp}.#{group}").delete
-      Mc.distributed_delete("s3.enabled_offers.type_#{type}.exp_#{exp}.#{group}")
+  
+    while Mc.distributed_get("s3.enabled_offers.#{app.id}.type_#{type}.exp_#{exp}.#{group}")
+      Mc.distributed_delete("s3.enabled_offers.#{app.id}.type_#{type}.exp_#{exp}.#{group}")
       group += 1
     end
   end
@@ -225,6 +252,7 @@ class Offer < ActiveRecord::Base
   def self.get_cached_offers(options = {})
     type = options.delete(:type)
     exp  = options.delete(:exp)
+    app  = options.delete(:app)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     type ||= DEFAULT_OFFER_TYPE
@@ -234,9 +262,9 @@ class Offer < ActiveRecord::Base
     offer_list_length = nil
     group             = 0
     loop do
-      offers = Mc.distributed_get_and_put("s3.enabled_offers.type_#{type}.exp_#{exp}.#{group}") do
+      offers = Mc.distributed_get_and_put("s3.enabled_offers.#{app.id}.type_#{type}.exp_#{exp}.#{group}") do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
-        Marshal.restore(bucket.get("enabled_offers.type_#{type}.exp_#{exp}.#{group}")) rescue []
+        Marshal.restore(bucket.get("enabled_offers.#{app.id}.type_#{type}.exp_#{exp}.#{group}")) rescue []
       end
       
       if block_given?
@@ -253,11 +281,10 @@ class Offer < ActiveRecord::Base
     block_given? ? offer_list_length.to_i : offer_list
   end
   
-  def self.get_offer_rank_statistics(type, exp = nil)
-    exp ||= Experiments::EXPERIMENTS[:default]
-    Mc.get_and_put("s3.offer_rank_statistics.type_#{type}.exp_#{exp}") do
+  def self.get_offer_rank_statistics(type)
+    Mc.get_and_put("s3.offer_rank_statistics.#{type}") do
       bucket = S3.bucket(BucketNames::OFFER_DATA)
-      Marshal.restore(bucket.get("offer_rank_statistics.type_#{type}.exp_#{exp}"))
+      Marshal.restore(bucket.get("offer_rank_statistics.#{type}"))
     end
   end
   
@@ -719,6 +746,7 @@ class Offer < ActiveRecord::Base
   end
   
   def rank_boost
+    # return 0
     @rank_boost ||= calculate_rank_boost
   end
 

@@ -25,6 +25,7 @@ class Currency < ActiveRecord::Base
   end
   
   named_scope :for_ios, :joins => :app, :conditions => "#{App.quoted_table_name}.platform = 'iphone'"
+  named_scope :just_app_ids, :select => :app_id, :group => :app_id
   
   before_validation :remove_whitespace_from_attributes
   before_create :set_values_from_partner

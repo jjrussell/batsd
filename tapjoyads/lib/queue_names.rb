@@ -18,4 +18,5 @@ class QueueNames
   PARTNER_NOTIFICATIONS    = RUN_MODE_PREFIX + 'PartnerNotifications'
   RECOUNT_STATS            = RUN_MODE_PREFIX + 'RecountStats'
   LIMIT_APP_INSTALLS       = RUN_MODE_PREFIX + 'LimitAppInstalls'
+  CACHE_OFFERS             = RUN_MODE_PREFIX + 'CacheOffers'
 end
