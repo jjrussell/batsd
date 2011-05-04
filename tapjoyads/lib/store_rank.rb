@@ -410,7 +410,7 @@ private
 
   def self.google_rank_url(type, category, language, offset)
     url = "https://market.android.com/details?id=#{type}&start=#{offset}"
-    url += "&cat=#{category}" unless category.nil?
+    url += "&cat=#{category}" unless category.blank?
     url += "&hl=#{language}" unless language == 'en'
     url
   end
