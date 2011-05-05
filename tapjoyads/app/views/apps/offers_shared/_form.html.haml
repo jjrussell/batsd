@@ -293,8 +293,8 @@
         if (!options.skipValidation) {
           checkMinimumPrice();
           checkMaximumBid(false);
+          updatePercentile();
         }
-        updatePercentile();
         if ( $('#daily_budget_on').is(':checked') ) {
           setEstimatedBudget();
         }
