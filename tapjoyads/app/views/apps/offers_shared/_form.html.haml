@@ -215,7 +215,6 @@
       };
       var cancelAction = function() {
         if (!valueChangeAccepted) {
-          $('#offer_bid').val(numberToCurrency(originalBidValue)).effect('highlght',500);
           onOfferBidChanged({skipValidation: true});
         }
       };
@@ -238,9 +237,9 @@
 
           if (valueChangeAccepted) {
           } else if (currentBidValue > userBidMaxValue) {
-            $('#offer_bid').val(userBidMax).trigger('change');
             openColorbox('#bid_high_reject', userBidMaxValue);
             $('#cboxAccept').hide();
+            return false;
           } else if (currentBidValue > userBidWarningValue && !bidWarningCleared && submitForm) {
             openColorbox('#bid_high_warn', currentBidValue, submitForm);
             if ($('#cboxAccept').length == 0) {
