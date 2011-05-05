@@ -315,7 +315,7 @@ class Offer < ActiveRecord::Base
   end
 
   def user_bid_max
-    is_paid? ? 5 * (price / 100.0).ceil : 3
+    [is_paid? ? 5 * price / 100.0 : 3, bid / 100.0].max
   end
 
   def is_primary?
