@@ -178,6 +178,7 @@ private
     @click.reward_key        = UUIDTools::UUID.random_create.to_s
     @click.reward_key_2      = @displayer_app.present? ? UUIDTools::UUID.random_create.to_s : ''
     @click.source            = params[:source] || ''
+    @click.ip_address        = get_ip_address
     @click.country           = params[:country_code] || ''
     @click.type              = type
     @click.advertiser_amount = @currency.get_advertiser_amount(@offer)
