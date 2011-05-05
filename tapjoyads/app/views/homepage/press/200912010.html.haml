@@ -33,13 +33,13 @@
 %p
   A small sampling of the retailers currently in the system includes:
 
-%table.stats{:width => '100%', :border => 0, :cellspacing => 0, :cellpadding => 5}
+%table.stats{:width => '100%', :border => 0, :cellspacing => 0, :cellpadding => 5, :style => 'border:1px solid #cccccc;'}
   %tr
-    %th{:width => "29%"} Category
-    %th{:width => "30%"} Partner
-    %th{:width => "41%"} Virtual Currency Awarded
+    %th{:width => "29%", :style => 'height: 28px;font-size: 1.2em;border-bottom:1px solid #cccccc;border-right:1px solid #cccccc;'} Category
+    %th{:width => "30%", :style => 'height: 28px;font-size: 1.2em;border-bottom:1px solid #cccccc;border-right:1px solid #cccccc;'} Partner
+    %th{:width => "41%", :style => 'height: 28px;font-size: 1.2em;border-bottom:1px solid #cccccc;border-right:1px solid #cccccc;'} Virtual Currency Awarded
   %tr
-    %td
+    %td{:style => 'border-right: 1px solid #cccccc;padding-left: 4px;'}
       Health &amp; Beauty
       %br/
       Gifts
@@ -59,7 +59,7 @@
       Art/Music/Photo
       %br/
       Department Store
-    %td
+    %td{:style => 'border-right: 1px solid #cccccc;padding-left: 4px;'}
       24 Hour Fitness
       %br/
       Proflowers
@@ -79,7 +79,7 @@
       Snapfish
       %br/
       Macy&quot;s&nbsp;
-    %td
+    %td{:style => 'border-right: 1px solid #cccccc;padding-left: 4px;'}
       5 &ndash; 10%
       %br/
       10%
@@ -118,19 +118,3 @@
 = press_contact(:tapjoy)
 %h2 Media Contact:
 = press_contact(:media)
-
-- content_for :page_styles do
-  :plain
-    table.stats {
-      border:1px solid #cccccc;
-    }
-    table.stats th {
-      height: 28px;
-      font-size: 1.2em;
-      border-bottom:1px solid #cccccc;
-      border-right:1px solid #cccccc;
-    }
-    table.stats td {
-      border-right: 1px solid #cccccc;
-      padding-left: 4px;
-    }
