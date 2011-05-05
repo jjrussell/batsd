@@ -4,10 +4,13 @@ class CreatePressAndNews < ActiveRecord::Migration
       t.timestamp   :published_at,    :nil => false
       t.text        :link_text,       :nil => false
       t.text        :link_href,       :nil => false
-      t.string      :link_id          # internal only
-      t.text        :content_title    # internal only
-      t.text        :content_subtitle # internal only
-      t.text        :content_body     # internal only
+      # internal only
+      t.string      :link_id
+      t.text        :content_title
+      t.text        :content_subtitle
+      t.text        :content_body
+      t.text        :content_about
+      t.text        :content_contact
 
       t.timestamps
     end
@@ -23,7 +26,7 @@ class CreatePressAndNews < ActiveRecord::Migration
 
     add_index :press_releases, :published_at
     add_index :news_coverages, :published_at
-
+    press_haml = PressHaml.new
     press_releases.each do |press|
       press_release = {
         :published_at => Date.strptime(press[0], '%m.%d.%Y'),
@@ -44,7 +47,22 @@ class CreatePressAndNews < ActiveRecord::Migration
           unless subtitle.blank?
             press_release[:content_subtitle] = subtitle.split('"', 2).last.reverse.split('"', 2).last.reverse
           end
-          press_release[:content_body] = file.read
+
+          body = file.read.
+                  gsub('- press_date(:fremont)', '- press_date("Fremont, CA")').
+                  gsub('- press_date', '\- press_date').
+                  gsub(/%h2 Tapjoy.*$/, '').
+                  gsub(/%h2 Company.*$/, '').
+                  gsub(/%h2 Media.*$/, '').
+                  gsub(/%h2 CONTACT.*$/, '').
+                  gsub(/%h2 Contact.*$/, '').
+                  gsub(/- about_blurb.*$/, '')
+
+          contacts = body.match(/%h2 [^\n]* Contact:\n= *press_contact[^\n]*\n/).to_a
+          press_release[:content_contact] = Haml::Engine.new(contacts.join("\n")).render(press_haml) unless contacts.blank?
+          body.gsub!(/%h2 [^\n]* Contact:\n= *press_contact[^\n]*\n/, "")
+
+          press_release[:content_body] = Haml::Engine.new(body).render(press_haml)
         end
       end
 
@@ -244,5 +262,23 @@ class CreatePressAndNews < ActiveRecord::Migration
       [ "8.8.2008", "Silicon Alley Insider", "MySpace Apps Catching Up To Facebook's?", "http://www.alleyinsider.com/2008/8/myspace-apps-catching-up-to-facebook-s-", ],
       [ "6.5.2008", "InsideFacebook", "Offerpal Media Monetizing Virtual Currency Apps on Facebook", "http://www.insidefacebook.com/2008/06/05/offerpal-media-monetizing-virtual-currency-apps-on-facebook/", ],
     ]
+  end
+end
+
+class PressHaml
+  include ActionView::Helpers::UrlHelper
+  include ActionView::Helpers::TagHelper
+  def press_contact(person)
+    unless person == :tapjoy || person == :media
+      "<p class='contact'>#{person[:name]}<br/>#{person[:company]}<br/>#{person[:phone]}<br/>#{mail_to(person[:email])}<br/><br/></p>"
+    end
+  end
+
+  def link_to_tapjoy
+    '<a href="https://www.tapjoy.com/">www.tapjoy.com</a>'
+  end
+
+  def link_to_offerpal(text='www.offerpalmedia.com')
+    "<a href=\"http://www.offerpalmedia.com\">#{text}</a>"
   end
 end

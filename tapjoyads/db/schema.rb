@@ -417,6 +417,8 @@ ActiveRecord::Schema.define(:version => 20110503182210) do
     t.text     "content_title"
     t.text     "content_subtitle"
     t.text     "content_body"
+    t.text     "content_about"
+    t.text     "content_contact"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

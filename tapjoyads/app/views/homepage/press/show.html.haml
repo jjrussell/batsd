@@ -1,3 +1,25 @@
 - @press_title = @press_release.content_title
 - @press_subtitle = @press_release.content_subtitle
 = @press_release.content
+
+- content_for :additional_info do
+  %h2 About Tapjoy, Inc.
+  %p
+    Tapjoy is the leading platform company for social and mobile applications,
+    helping app developers acquire new users, maximize revenue and deepen user
+    engagement. The company's distribution network spans more than 9,000
+    applications and 300 million total end-users on iOS, Android and social
+    platforms, delivering over 1 million high-value customers each day to brand
+    advertisers, direct marketers and app developers. The Tapjoy monetization
+    engine maximizes revenue for publishers by providing a frictionless payment
+    system for virtual goods and premium digital assets. Tapjoy is venture-backed
+    and headquartered in San Francisco, with offices in Silicon Valley, New York,
+    London and Japan. For more, visit
+    = link_to 'www.tapjoy.com', root_path
+
+  %h2 Tapjoy Contact
+  = press_contact(:tapjoy)
+  %h2 Media Contact
+  = press_contact(:media)
+  - unless @press_release.content_contact.blank?
+    = @press_release.content_contact

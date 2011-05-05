@@ -30,6 +30,8 @@
               - if @press_subtitle
                 %i= @press_subtitle
             = yield
+            = yield :additional_info
+
       .clear
     #footer_wrapper
       #footer
