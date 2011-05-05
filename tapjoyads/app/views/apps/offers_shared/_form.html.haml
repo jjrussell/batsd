@@ -37,7 +37,7 @@
               The bid is just one of many factors affecting your offerwall ranking.
             - if !featured && !@offer.on_track_for_budget? && @offer.needs_higher_bid?
               .percentile-details
-                To position your app in the top 15% of the offerwall, your bid should be at least 
+                To position your app in the top 15% of the offerwall, your bid should be at least
                 %b>= " " + number_to_currency(0.01 * @offer.bid_for_percentile(85))
                 \.
       %tr
@@ -114,7 +114,7 @@
       - if permitted_to?(:edit, :statz)
         = render('apps/offers_shared/admin_fields', :f => f)
       %tr
-        %td{ :colspan => 2 }= f.submit 'Update'
+        %td{ :colspan => 2 }= f.submit 'Update', {:disabled => 'disabled', :id => 'offer_submit_button'}
 
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
   - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
@@ -146,14 +146,25 @@
     When your Tapjoy Premier exclusivity expires.
   #help_self_promote_only_content{:name => 'Self Promote Only'}
     Promote the app only on your own offerwalls. You will not be charged for these installs.
-
+  #bid_high_reject.colorbox-content
+    The maximum bid you can set for this offer is:
+    .amount &nbsp;
+    To set a higher bid, please contact your account manager or #{mail_to 'support@tapjoy.com'}.
+  #bid_high_warn.colorbox-content
+    Please confirm that your new bid will be:
+    .amount &nbsp;
 - content_for :page_javascript do
   :plain
     var requestAppEnable = $.noop;
     $(function($){
       var originalBidValue = stringToNumber($('#offer_bid').val());
-    
+      var bidWarningCleared = true;
+      var valueChangeAccepted = false;
+      $('#offer_submit_button').attr('disabled', '');
       $('#request_app_enable').attr('disabled', '');
+      $('#offer_bid').keypress(function(e){
+        if (e.keyCode == 13) { return false;}
+      });
       requestAppEnable = function() {
         $('form#new_enable_offer_request').submit();
       };
@@ -195,9 +206,56 @@
           currentPrice = minimumPrice;
         }
         $('#offer_bid').val(numberToCurrency(currentPrice));
-        $('#offer_payment').val(numberToCurrency(currentPrice * #{(100.0 - @offer.partner.premier_discount)/100.0}));
+        $('#offer_payment').val(numberToCurrency(currentPrice * #{(100.0 - @offer.partner.premier_discount) / 100.0}));
       };
+      var acceptAction = function() {
+        valueChangeAccepted = true;
+        $('form#update').submit();
+        $.fn.colorbox.close();
+      };
+      var cancelAction = function() {
+        if (!valueChangeAccepted) {
+          onOfferBidChanged({skipValidation: true});
+        }
+      };
+      var openColorbox = function(divId, amount, submitForm) {
+        $(divId + " .amount").text(numberToCurrency(amount));
+        $.colorbox({
+          transition: "elastic", speed: 250, overlayClose: false, escKey: true,
+          innerWidth: 450, opacity: 0.5, inline: true, close: 'Cancel',
+          onClosed: cancelAction,
+          href: divId,
+        });
+      };
+      var checkMaximumBid = function(submitForm) {
+        if (!#{permitted_to?(:edit, :statz)}) {
+          var currentBid = $('#offer_bid').val();
+          var currentBidValue = stringToNumber(currentBid);
+          var userBidMaxValue = #{@offer.user_bid_max};
+          var userBidMax = numberToCurrency(userBidMaxValue);
+          var userBidWarningValue = #{@offer.user_bid_warning};
 
+          if (valueChangeAccepted) {
+          } else if (currentBidValue > userBidMaxValue) {
+            openColorbox('#bid_high_reject', userBidMaxValue);
+            $('#cboxAccept').hide();
+            return false;
+          } else if (currentBidValue > userBidWarningValue && !bidWarningCleared && submitForm) {
+            openColorbox('#bid_high_warn', currentBidValue, submitForm);
+            if ($('#cboxAccept').length == 0) {
+              $('<div id="cboxAccept">').
+                text('Ok').
+                click(acceptAction).
+                hover(function () { $(this).addClass('hover'); },
+                  function () { $(this).removeClass('hover'); }).
+                insertAfter('#cboxClose');
+            }
+            $('#cboxAccept').show();
+            return false;
+          }
+        }
+        return true
+      }
       var updatePercentile = function() {
         $.ajax({
           data: { "bid" : $('#offer_bid').val() },
@@ -229,14 +287,19 @@
         setEstimatedBudget();
         $('#offer_daily_budget').val(addCommaSeparators(stringToNumber($('#offer_daily_budget').val(), true)));
       }
-      $('#offer_bid').change(function() {
-        checkMinimumPrice();
-        updatePercentile();
+      var onOfferBidChanged = function(options) {
+        options = options || {};
+        bidWarningCleared = false;
+        if (!options.skipValidation) {
+          checkMinimumPrice();
+          checkMaximumBid(false);
+          updatePercentile();
+        }
         if ( $('#daily_budget_on').is(':checked') ) {
           setEstimatedBudget();
         }
-      });
-
+      };
+      $('#offer_bid').change(function() { onOfferBidChanged(); });
       $('#offer_daily_budget').change(function() {
         var installsLimit = Math.floor(stringToNumber($(this).val(), true));
         $(this).val(addCommaSeparators(installsLimit));
@@ -251,18 +314,10 @@
         toggleDailyBudget();
       });
       toggleDailyBudget();
-      
-      $('#offer_submit').click(function() {
-        var currentBid = $('#offer_bid').val();
-        var currentBidValue = stringToNumber(currentBid);
-        if (currentBidValue >= 5 * originalBidValue) {
-          return confirm('Are you sure you want to change your bid to ' + currentBid + '?');
-        }
-      });
 
       $('form#update').submit(function() {
         checkMinimumPrice();
-        return checkValidBudget();
+        return checkValidBudget() && checkMaximumBid(true);
       });
     });
 
@@ -302,10 +357,56 @@
       width: 336px;
     }
 
+    .colorbox-content {
+      font-size: 20px;
+    }
+    .colorbox-content .amount {
+      font-size: 72px;
+      font-weight: bold;
+      text-align: center;
+      margin: 20px auto;
+    }
+    #cboxClose,#cboxAccept{
+      display: inline-block;
+      color: #222;
+      font-size: 16px;
+      font-family: arial, helvetica;
+      text-decoration: none;
+      padding: 3px 10px;
+      border: 1px solid #888;
+      border-radius: 4px;
+      -moz-border-radius: 4px;
+      -webkit-border-radius: 4px;
+    }
+    #cboxAccept{
+      text-shadow: 0px 1px 1px #dfd;
+      background-color: #bfb;
+      background: -webkit-gradient(linear, left top, left bottom, from(#bfb), to(#9d9));
+      background: -moz-linear-gradient(top,  #bfb,  #9d9);
+    }
+    #cboxClose{
+      text-shadow: 0px 1px 1px #fdd;
+      background-color: #fbb;
+      background: -webkit-gradient(linear, left top, left bottom, from(#fbb), to(#d99));
+      background: -moz-linear-gradient(top,  #fbb,  #d99);
+    }
+    #cboxAccept.hover {
+      text-shadow: 0px 1px 1px #afa;
+      background-color: #8f8;
+      background: -webkit-gradient(linear, left top, left bottom, from(#8f8), to(#6b6));
+      background: -moz-linear-gradient(top, #8f8, #6b6);
+    }
+    #cboxClose.hover {
+      text-shadow: 0px 1px 1px #faa;
+      background-color: #f88;
+      background: -webkit-gradient(linear, left top, left bottom, from(#f88), to(#b66));
+      background: -moz-linear-gradient(top, #f88, #b66);
+    }
+
     #offer_status {
-    	padding: .8em;
-    	margin-bottom: 1em;
-    	border: 2px solid #ddd;
+      padding: .8em;
+      margin-bottom: 1em;
+      border: 2px solid #ddd;
     }
 
     #offer_status.bad { background: #FBB3B4; color: #6a0f01; border-color: #FB8284; }

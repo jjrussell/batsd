@@ -314,7 +314,15 @@ class Offer < ActiveRecord::Base
   def is_free?
     !is_paid?
   end
-  
+
+  def user_bid_warning
+    is_paid? ? price / 100.0 : 1
+  end
+
+  def user_bid_max
+    [is_paid? ? 5 * price / 100.0 : 3, bid / 100.0].max
+  end
+
   def is_primary?
     item_id == id
   end
