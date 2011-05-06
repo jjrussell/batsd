@@ -10,7 +10,7 @@ class Apsalar
         'p' => advertiser_app.is_android? ? 'Android' : 'iOS',
         'a' => advertiser_app.store_id,
         'u' => click.udid,
-        'i' => click.ip_address,
+        'i' => click.ip_address || "0.0.0.0",
       }
 
       hash['h'] = Digest::MD5.hexdigest(hash['tp'] + hash['taid'] + hash['e'] + hash['p'] +
@@ -29,7 +29,7 @@ class Apsalar
         'p' => publisher_app.is_android? ? 'Android' : 'iOS',
         'a' => publisher_app.store_id,
         'u' => click.udid,
-        'i' => click.ip_address,
+        'i' => click.ip_address || "0.0.0.0",
       }
 
       hash['h'] = Digest::MD5.hexdigest(hash['tp'] + hash['taid'] + hash['e'] + hash['v'] +
