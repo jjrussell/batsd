@@ -2,7 +2,7 @@ class Apsalar
 
   def self.ping_rewarded_install(click)
     advertiser_app = App.find_by_id(click.advertiser_app_id, :include => [:partner])
-    if advertiser_app.present?
+    if advertiser_app.present? && advertiser_app.partner.apsalar_sharing?
       hash = {
         'tp' => advertiser_app.partner.id,
         'taid' => advertiser_app.id,
@@ -15,11 +15,12 @@ class Apsalar
 
       hash['h'] = Digest::MD5.hexdigest(hash['tp'] + hash['taid'] + hash['e'] + hash['p'] +
                             hash['a'] + hash['u'] + hash['i'] + APSALAR_SECRET)
-      Downloader.get_with_retry(APSALAR_EVENT_URL + '?' + hash.to_query)
+      url = APSALAR_EVENT_URL + '?' + hash.to_query
+      Downloader.get_with_retry(url)
     end
 
     publisher_app = App.find_by_id(click.publisher_app_id, :include => [:partner])
-    if publisher_app.present?
+    if publisher_app.present? && publisher_app.partner.apsalar_sharing?
       hash = {
         'tp' => publisher_app.partner.id,
         'taid' => publisher_app.id,
@@ -33,7 +34,8 @@ class Apsalar
 
       hash['h'] = Digest::MD5.hexdigest(hash['tp'] + hash['taid'] + hash['e'] + hash['v'] +
                             hash['p'] + hash['a'] + hash['u'] + hash['i'] + APSALAR_SECRET)
-      Downloader.get_with_retry(APSALAR_EVENT_URL + '?' + hash.to_query)
+      url = APSALAR_EVENT_URL + '?' + hash.to_query
+      Downloader.get_with_retry(url)
     end
   end
 
