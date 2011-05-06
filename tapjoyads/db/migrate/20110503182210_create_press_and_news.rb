@@ -27,7 +27,7 @@ class CreatePressAndNews < ActiveRecord::Migration
     add_index :press_releases, :published_at
     add_index :news_coverages, :published_at
     press_haml = PressHaml.new
-    press_releases.each do |press|
+    press_releases.reverse.each do |press|
       press_release = {
         :published_at => Date.strptime(press[0], '%m.%d.%Y'),
         :link_text    => press[1]
@@ -69,7 +69,7 @@ class CreatePressAndNews < ActiveRecord::Migration
       PressRelease.create(press_release)
     end
 
-    news_coverages.each do |news|
+    news_coverages.reverse.each do |news|
       NewsCoverage.create({
         :published_at => Date.strptime(news[0], '%m.%d.%Y'),
         :link_source  => news[1],
