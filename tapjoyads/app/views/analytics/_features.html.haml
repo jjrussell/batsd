@@ -1,0 +1,97 @@
+%h1
+  = image_tag('apsalar.png', :id => 'apsalar-logo')
+%p Tapjoy has partnered with #{ link_to 'Apsalar', 'https://apsalar.com', :target => 'new' }, the most comprehensive mobile behavioral analytics platform on the market. Apsalar provides transparency into each app, along with actionable insights to improve them.
+
+= yield :apsalar_body
+.clear
+
+%p &nbsp;
+
+%h3 Apsalar Features
+.apsalar_image
+  = apsalar_image_tag('apscience-feature-basic_analytics.jpg', 'apscience-feature-basic_analytics_cropped.jpeg')
+  %h4 Customizable Dashboard
+  %p View customizable dashboards complete with start/stop metrics within the Apsalar SDK. View the breakdown of your app users by carrier, device and geography, as well as event tracking and reporting for the most complete mobile analytics platform available.
+.apsalar_image
+  = apsalar_image_tag('apfeedback/file_temporary.png')
+  %h4 Real Time Reporting
+  %p Most analytic providers report data several hours after it has occurred - not ApScience. With ApScience, real time data allows you to instantly identify areas requiring action or simply see the flow of conversion through your app as it happens.
+.clear
+%p &nbsp;
+
+.apsalar_image
+  = apsalar_image_tag('apscience-feature-user_segmentation.jpg', 'apscience-feature-user_segmentation_large.jpeg')
+  %h4 User Segmentation
+  %p Create custom user segments for deeper in-app and cross-app analysis. With ApScience, get user segmentation analyses however you want to view them: by funnel, engagement, path, trending, etc.
+.apsalar_image
+  = apsalar_image_tag('apscience/reload_all_tabs.png')
+  %h4 Cross App Analytics
+  %p Compare metrics across multiple apps with easy to digest analytics, as well as create funnel and view paths across each of your apps much more than just the viewing of common users across your apps.
+.clear
+%p &nbsp;
+
+.apsalar_image
+  = apsalar_image_tag('apscience/apscience-screen1.jpg', 'apscience/apscience-screen1-large.png')
+  %h4 Funnel Reports
+  %p Customize and build funnel reports as you need them, including across multiple apps. Increase conversions within your apps or optimize your cross sell and up sell strategies between any set of apps. Layer your funnels on top of users' paths to better understand how and where users enter and exit them.
+.apsalar_image
+  = apsalar_image_tag('apscience/apscience-screen2.png', 'apscience/apscience-screen2-large.jpg')
+  %h4 Path Exploration &amp; Analysis
+  %p Ever wonder how many clicks it takes to convert within and across your apps? Or how many options the customer hits before they decide to take the action you want? With Apsalar's Path Analysis Tool, you can see that and more.
+.clear
+%p &nbsp;
+
+.apsalar_image
+  = apsalar_image_tag('apscience/apscience-screen3.png', 'apscience/apscience-screen3-large.jpg')
+  %h4 Trending Reports
+  %p Apsalar's trending reports give you the ability to map user interaction over time and across your apps, an essential element of understanding the usage patterns within your applications.
+.apsalar_image
+  = apsalar_image_tag('apscience/apscience-screen4.png', 'apscience/apscience-screen4-large.jpg')
+  %h4 Engagement Reports
+  %p Need a flexible and easy way to measure engagement and retention beyond session length and frequency of use? Apsalar's engagement reports allow you to see the effect of new feature integration in real time.
+.clear
+
+- content_for :included_javascripts, javascript_include_tag('jquery.fancybox-1.3.4.pack', 'jquery.easing-1.3.pack')
+- content_for :page_head, stylesheet_link_tag('fancybox/jquery.fancybox-1.3.4')
+
+- content_for :page_styles do
+  :plain
+    #apsalar-logo {
+      vertical-align: middle;
+    }
+    .inline {
+      float: left;
+    }
+    .apsalar_thumbnail {
+      width: 128px;
+      margin-right: 15p;
+    }
+    .apsalar_image {
+      float: left;
+      width: 460px;
+    }
+    .apsalar_image p {
+      width: 280px;
+      font-size: 14px;
+      line-height: 18px;
+    }
+    .apsalar_image img, .apsalar_image h4, .apsalar_image p {
+      float: left;
+    }
+    .apsalar_image img {
+      margin-right: 15px;
+    }
+    .apsalar_image h4, .apsalar_image p {
+      margin: 5px 0 0;
+    }
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      $("a.single_image").fancybox({
+        transitionIn : 'elastic',
+        transitionOut : 'elastic',
+        speedIn: 200,
+        speedOut: 200,
+        overlayShow: false
+      });
+    });

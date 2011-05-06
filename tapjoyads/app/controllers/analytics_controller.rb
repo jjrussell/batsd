@@ -14,6 +14,7 @@ class AnalyticsController < WebsiteController
       redirect_to analytics_path
     else
       email = get_apsalar_email
+      current_partner.apsalar_sharing = params[:enable_apsalar_sharing]
       current_partner.apsalar_username = email.gsub(/[^a-zA-Z0-9]/, '_')[0..59]
       current_partner.apsalar_api_secret ||= UUIDTools::UUID.random_create.to_s.gsub('-','')[0..31]
       current_partner.save
@@ -47,6 +48,19 @@ class AnalyticsController < WebsiteController
     end
   end
 
+  def agree_to_share_data
+    if params[:enable_apsalar_sharing]
+      if enable_apsalar_sharing
+        flash[:notice] = "You are now sharing app data with Apsalar."
+      else
+        flash[:error] = "You must agree to the terms of use."
+      end
+    else
+      flash[:error] = "There was an error, please try again later."
+    end
+    redirect_to analytics_path
+  end
+
   private
 
   def get_apsalar_email
@@ -58,4 +72,9 @@ class AnalyticsController < WebsiteController
       current_user.email
     end
   end
+
+ def enable_apsalar_sharing
+   current_partner.update_attributes({:apsalar_sharing => true})
+ end
+
 end

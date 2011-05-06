@@ -1,0 +1,12 @@
+- content_for :apsalar_body do
+  Share data text
+  %ul
+    %li List item 1
+    %li List item 2
+  - form_tag agree_to_share_data_analytics_path do
+    %p
+      = check_box_tag 'enable_apsalar_sharing'
+      = label_tag  :terms_share, "I agree to the #{link_to('terms', "#{APSALAR_URL}/terms-of-use/", :target => 'new')} and I want Tapjoy to share my app data with Apsalar."
+    %p
+      = submit_tag 'Enable Data Sharing with Apsalar'
+= render :partial => 'features'
