@@ -32,30 +32,11 @@ class HomepageController < WebsiteController
 
   def advertisers
   end
-  
+
   def app_developers
   end
-  
+
   def index
     render :layout => 'newhome'
-  end
-  
-  def careers
-    @careers_list = [
-      { :name => "Product",
-        :list => [
-          { :title => "Product", :link => "..."},
-          { :title => "Two", :link => "..."},
-          { :title => "Three", :link => "..."},
-        ]
-      },
-      { :name => "Engineering",
-        :list => [
-          { :title => "Back-end dev (rails)", :link => "..."},
-          { :title => "Two", :link => "..."},
-          { :title => "Three", :link => "..."},
-        ]
-      }
-    ]
   end
 end
