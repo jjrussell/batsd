@@ -36,6 +36,10 @@ class HomepageController < WebsiteController
   def app_developers
   end
 
+  def team
+    render :layout => 'homepage'
+  end
+
   def index
     render :layout => 'newhome'
   end

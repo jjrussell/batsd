@@ -1,4 +1,4 @@
-## Press Controller
+## Careers Controller
 ## @description Controls press section of the website
 ## @help News entries are loaded via constructor. Press/index.html.haml contains the main press view but viewing articles uses press.html.haml as the layout
 

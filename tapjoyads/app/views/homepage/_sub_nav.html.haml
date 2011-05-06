@@ -1,17 +1,19 @@
+:ruby
+  selected = {
+    :press => controller.controller_name == 'press' ? 'selected' : '',
+    :careers => controller.controller_name == 'careers' ? 'selected' : '',
+  }
 #sub_nav
   .thick_line
   %a{:href => "/site/team"}
     Meet the Team
   .dotted_line
-  %a{:href => "/press", :class => "selected"}
-    Tapjoy in the Press
+  = link_to "Tapjoy in the Press", '/press', :class => selected[:press]
   .dotted_line
   %a{:href => "http://blog.tapjoy.com"}
     Read our Blog
   .dotted_line
-  %a{:href => "/site/careers"}
-    Work at Tapjoy
+  = link_to "Work at Tapjoy", '/careers', :class => selected[:careers]
   .dotted_line
-  %a{:href => "/site/contact"}
-    Contact us
+  = link_to "Contact us", '/site/contact', :class => selected[:contact]
   .thick_line
