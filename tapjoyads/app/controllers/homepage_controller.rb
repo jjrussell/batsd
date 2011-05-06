@@ -1,5 +1,5 @@
 class HomepageController < WebsiteController
-  layout 'homepage'
+  layout 'newcontent'
   protect_from_forgery :except => [:contact]
 
   def start
@@ -21,7 +21,6 @@ class HomepageController < WebsiteController
       end
       redirect_to :action => 'contact-thanks'
     end
-    render :layout => 'newcontent'
   end
 
   def privacy
@@ -29,15 +28,12 @@ class HomepageController < WebsiteController
   end
 
   def about_us
-    render :layout => 'newcontent';
   end
 
   def advertisers
-    render :layout => 'newcontent';
   end
   
   def app_developers
-    render :layout => 'newcontent'
   end
   
   def index
@@ -61,6 +57,5 @@ class HomepageController < WebsiteController
         ]
       }
     ]
-    render :layout => 'newcontent'
   end
 end
