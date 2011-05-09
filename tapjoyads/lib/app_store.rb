@@ -3,6 +3,7 @@ class AppStore
   APP_URL = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup'
   SEARCH_URL = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
 
+  ANDROID_APP_URL = 'https://market.android.com/details?id='
   ANDROID_SEARCH_URL = 'https://market.android.com/search?num=40&q='
 
   # returns hash of app info
@@ -39,7 +40,44 @@ private
   end
 
   def self.fetch_app_by_id_for_android(id)
-    self.search_android_marketplace(id).first
+    response = request(ANDROID_APP_URL + CGI::escape(id))
+    if response.status == 200
+      doc         = Hpricot(response.body)
+      title       = (doc/".doc-banner-title-container"/".doc-banner-title").inner_html
+      description = (doc/".doc-description"/"#doc-original-text").inner_html
+      icon_url    = (doc/".doc-banner-icon"/"img").attr("src")
+      publisher   = (doc/".doc-banner-title-container"/"a.doc-header-link").inner_html
+
+      metadata = doc/".doc-metadata"/".doc-metadata-list"
+      keys = (metadata/:dt).map do |dt|
+        dt.inner_html.underscore.gsub(':', '').gsub(' ', '_')
+      end
+      values = (metadata/:dd).map(&:inner_html)
+      data_hash = Hash[keys.zip(values)]
+
+      price       = (data_hash['price'][/\$\d\.\d\d/] || '$0').gsub('$', '').to_f
+      rating      = data_hash['rating'][/[^ ]* stars/].gsub(' stars','').to_f
+      released_at = Date.parse(data_hash['updated']).strftime('%FT00:00:00Z')
+
+      file_size   = data_hash['size'].to_f
+      file_size   *= (1 << 10) if data_hash['size'][/k/i]
+      file_size   *= (1 << 20) if data_hash['size'][/m/i]
+      file_size   *= (1 << 30) if data_hash['size'][/g/i]
+
+      {
+        :item_id          => id,
+        :title            => title,
+        :description      => description,
+        :icon_url         => icon_url,
+        :publisher        => publisher,
+        :price            => price,
+        :file_size_bytes  => file_size.to_i,
+        :released_at      => released_at,
+      }
+    else
+      Notifier.alert_new_relic(AppStoreSearchFailed, "fetch_app_by_id_for_android failed for id: #{id}")
+      raise "Invalid response."
+    end
   end
 
   def self.search_apple_app_store(term, country)
@@ -101,10 +139,9 @@ private
       :small_icon_url     => hash["artworkUrl60"],
       :price              => hash["price"],
       :description        => hash["description"],
-      :release_date       => hash["releaseDate"],
+      :released_at        => hash["releaseDate"],
       :publisher          => hash["artistName"],
       :file_size_bytes    => hash["fileSizeBytes"],
-      :updated_at         => hash["releaseDate"],
       :supported_devices  => hash["supportedDevices"].sort
       # other possibly useful values:
       #   hash["version"]
