@@ -147,14 +147,16 @@ class Offer < ActiveRecord::Base
   end
   
   def self.cache_offers
-    offer_list = Offer.enabled_offers.nonfeatured.for_offer_list
-    cache_offer_list(offer_list, DEFAULT_WEIGHTS, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+    Benchmark.realtime do
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list
+      cache_offer_list(offer_list, DEFAULT_WEIGHTS, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
-    offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
-    cache_offer_list(offer_list, DEFAULT_WEIGHTS.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+      offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
+      cache_offer_list(offer_list, DEFAULT_WEIGHTS.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
-    offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads
-    cache_offer_list(offer_list, DEFAULT_WEIGHTS, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads
+      cache_offer_list(offer_list, DEFAULT_WEIGHTS, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+    end
   end
   
   def self.cache_offers_for_app(app)
@@ -205,7 +207,7 @@ class Offer < ActiveRecord::Base
     Mc.put("s3.offer_rank_statistics.#{type}", stats)
   end
   
-  def self.cache_offer_list(offer_list, weights, type, exp, app)
+  def self.cache_offer_list(offer_list, weights, type, exp, app = nil)
     stats = get_offer_rank_statistics(type)
     
     offer_list.each do |offer|
@@ -231,22 +233,36 @@ class Offer < ActiveRecord::Base
   
     offer_groups = []
     group        = 0
+    key          = app.present? ? "enabled_offers.#{app.id}.type_#{type}.exp_#{exp}" : "enabled_offers.type_#{type}.exp_#{exp}"
     bucket       = S3.bucket(BucketNames::OFFER_DATA)
+    
     offer_list.in_groups_of(GROUP_SIZE) do |offers|
       offers.compact!
-      # marshalled_offers = Marshal.dump(offers)
-      # bucket.put("enabled_offers.#{app.id}.type_#{type}.exp_#{exp}.#{group}", marshalled_offers)
+      if app.nil?
+        marshalled_offers = Marshal.dump(offers)
+        bucket.put("#{key}.#{group}", marshalled_offers)
+      end
       offer_groups << offers
       group += 1
     end
+    
     offer_groups.each_with_index do |offers, i|
-      Mc.distributed_put("s3.enabled_offers.#{app.id}.type_#{type}.exp_#{exp}.#{i}", offers)
+      Mc.distributed_put("#{key}.#{i}", offers)
     end
   
-    while Mc.distributed_get("s3.enabled_offers.#{app.id}.type_#{type}.exp_#{exp}.#{group}")
-      Mc.distributed_delete("s3.enabled_offers.#{app.id}.type_#{type}.exp_#{exp}.#{group}")
-      group += 1
+    if app.present?
+      while Mc.distributed_get("#{key}.#{group}")
+        Mc.distributed_delete("#{key}.#{group}")
+        group += 1
+      end
+    else
+      while bucket.key("#{key}.#{group}").exists?
+        bucket.key("#{key}.#{group}").delete
+        Mc.distributed_delete("#{key}.#{group}")
+        group += 1
+      end
     end
+
   end
   
   def self.get_cached_offers(options = {})
@@ -261,10 +277,17 @@ class Offer < ActiveRecord::Base
     offer_list        = []
     offer_list_length = nil
     group             = 0
+    s3_key            = "enabled_offers.type_#{type}.exp_#{exp}"
+    key               = app.present? ? "enabled_offers.#{app.id}.type_#{type}.exp_#{exp}" : s3_key
+    
     loop do
-      offers = Mc.distributed_get_and_put("s3.enabled_offers.#{app.id}.type_#{type}.exp_#{exp}.#{group}") do
+      offers = Mc.distributed_get_and_put("#{key}.#{group}") do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
-        Marshal.restore(bucket.get("enabled_offers.#{app.id}.type_#{type}.exp_#{exp}.#{group}")) rescue []
+        if group == 0
+          Marshal.restore(bucket.get("#{s3_key}.#{group}")) rescue []
+        else
+          []
+        end
       end
       
       if block_given?
@@ -746,7 +769,6 @@ class Offer < ActiveRecord::Base
   end
   
   def rank_boost
-    # return 0
     @rank_boost ||= calculate_rank_boost
   end
 

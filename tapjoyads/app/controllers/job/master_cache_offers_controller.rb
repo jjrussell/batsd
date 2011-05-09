@@ -16,6 +16,7 @@ class Job::MasterCacheOffersController < Job::JobController
     S3.reset_connection
     
     Offer.cache_offer_stats
+    Offer.cache_offers
     
     Currency.just_app_ids.collect(&:app_id).each do |app_id|
       Sqs.send_message(QueueNames::CACHE_OFFERS, app_id)
