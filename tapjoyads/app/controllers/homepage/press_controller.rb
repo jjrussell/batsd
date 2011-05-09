@@ -6,8 +6,8 @@ class Homepage::PressController < WebsiteController
   layout 'press'
 
   def show
-    sanitized_id = params[:id].split('-').first
-    @press_release = PressRelease.find_by_link_id(sanitized_id)
+    @sanitized_id = params[:id].split('-').first
+    @press_release = PressRelease.find_by_link_id(@sanitized_id)
     redirect_to '/press' and return unless @press_release && @press_release.content_body.present?
 
     @recent_press = PressRelease.ordered
