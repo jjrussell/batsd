@@ -57,6 +57,7 @@ private
 
       price       = (data_hash['price'][/\$\d\.\d\d/] || '$0').gsub('$', '').to_f
       user_rating = data_hash['rating'][/[^ ]* stars/].gsub(' stars','').to_f
+      category    = (Hpricot(data_hash['category'])/:a).attr('href').split('/').last
       released_at = Date.parse(data_hash['updated']).strftime('%FT00:00:00Z')
 
       file_size   = data_hash['size'].to_f
@@ -74,6 +75,7 @@ private
         :file_size_bytes  => file_size.to_i,
         :released_at      => released_at,
         :user_rating      => user_rating,
+        :categories       => [category],
       }
     else
       Notifier.alert_new_relic(AppStoreSearchFailed, "fetch_app_by_id_for_android failed for id: #{id}")
@@ -145,6 +147,7 @@ private
       :file_size_bytes    => hash["fileSizeBytes"],
       :supported_devices  => hash["supportedDevices"].sort,
       :user_rating        => hash["averageUserRatingForCurrentVersion"] || hash["averageUserRating"],
+      :categories         => hash["genres"],
       # other possibly useful values:
       #   hash["version"]
       #   hash["genreIds"]
