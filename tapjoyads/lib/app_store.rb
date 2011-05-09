@@ -139,7 +139,7 @@ private
       :small_icon_url     => hash["artworkUrl60"],
       :price              => hash["price"],
       :description        => hash["description"],
-      :released_at        => hash["releaseDate"],
+      #:released_at        => hash["releaseDate"],
       :publisher          => hash["artistName"],
       :file_size_bytes    => hash["fileSizeBytes"],
       :supported_devices  => hash["supportedDevices"].sort
