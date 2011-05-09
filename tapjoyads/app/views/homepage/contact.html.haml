@@ -1,8 +1,14 @@
 - content_for :page_head, stylesheet_link_tag('about_us')
 - content_for :page_head, stylesheet_link_tag('contact')
-#notice
-  %span
-    <b>Thanks!</b> Someone from our team will be in touch shortly
+- if @error_msg
+  #error
+    %span
+      <b>Error!</b>
+      = @error_msg
+- elsif params[:info].present?
+  #notice
+    %span
+      <b>Thanks!</b> Someone from our team will be in touch shortly
 #about_us
   #left
     = render :partial => 'homepage/sub_nav'
@@ -27,22 +33,16 @@
           info [at] tapjoy.com<br />support [at] tapjoy.com
     %h2
       Support / Info Form
-    %form#contact_form
-      %div
-        %label{:for => "name"}
-          Your name
-        %input{:name => "name"}
-        %label{:for => "email"}
-          Your email address
-        %input{:name => "email"}
-        %label{:for => "reason"}
-          Reason for inquiry
-        %select{:name => "reason"}
-          %option
-            Select One
-      #details
-        %label{:for => "details"}
-          Details
-        %textarea{:name => "details"}
-    %a#send_it{:href => "..."}
+      - form_for('info', :url => {:action => 'contact'}, :html => {:id => 'contact_form'}) do |f|
+        %div
+          = f.label :name, 'Your name'
+          = f.text_field :name
+          = f.label :email, 'Your email address'
+          = f.text_field :email
+          = f.label :reason, 'Reason for inquiry'
+          = f.select :reason, options_for_select(['Comment', 'Complaint']), :include_blank => 'Select one'
+        #details
+          = f.label :details
+          = f.text_area :details, :rows => 5
+        = image_submit_tag 'site/submit_btn.gif', :class => 'submit'
 .clear
