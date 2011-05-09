@@ -56,7 +56,7 @@ private
       data_hash = Hash[keys.zip(values)]
 
       price       = (data_hash['price'][/\$\d\.\d\d/] || '$0').gsub('$', '').to_f
-      rating      = data_hash['rating'][/[^ ]* stars/].gsub(' stars','').to_f
+      user_rating = data_hash['rating'][/[^ ]* stars/].gsub(' stars','').to_f
       released_at = Date.parse(data_hash['updated']).strftime('%FT00:00:00Z')
 
       file_size   = data_hash['size'].to_f
@@ -73,6 +73,7 @@ private
         :price            => price,
         :file_size_bytes  => file_size.to_i,
         :released_at      => released_at,
+        :user_rating      => user_rating,
       }
     else
       Notifier.alert_new_relic(AppStoreSearchFailed, "fetch_app_by_id_for_android failed for id: #{id}")
@@ -142,7 +143,8 @@ private
       #:released_at        => hash["releaseDate"],
       :publisher          => hash["artistName"],
       :file_size_bytes    => hash["fileSizeBytes"],
-      :supported_devices  => hash["supportedDevices"].sort
+      :supported_devices  => hash["supportedDevices"].sort,
+      :user_rating        => hash["averageUserRatingForCurrentVersion"] || hash["averageUserRating"],
       # other possibly useful values:
       #   hash["version"]
       #   hash["genreIds"]

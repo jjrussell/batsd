@@ -116,6 +116,7 @@ class App < ActiveRecord::Base
     self.age_rating         = data[:age_rating]
     self.file_size_bytes    = data[:file_size_bytes]
     self.released_at        = data[:released_at]
+    self.user_rating        = data[:user_rating]
     self.supported_devices  = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
     download_icon(data[:icon_url], data[:small_icon_url]) unless new_record?
     data
