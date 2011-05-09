@@ -104,6 +104,7 @@ private
       :release_date       => hash["releaseDate"],
       :publisher          => hash["artistName"],
       :file_size_bytes    => hash["fileSizeBytes"],
+      :updated_at         => hash["releaseDate"],
       :supported_devices  => hash["supportedDevices"].sort
       # other possibly useful values:
       #   hash["version"]
