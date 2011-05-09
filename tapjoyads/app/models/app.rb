@@ -81,11 +81,11 @@ class App < ActiveRecord::Base
   end
 
   def categories=(arr)
-    self[:categories] = arr.join(';')
+    write_attribute(:categories, arr.join(';'))
   end
 
   def categories
-    (self[:categories]||'').split(';')
+    (read_attribute(:categories)||'').split(';')
   end
 
   def primary_category

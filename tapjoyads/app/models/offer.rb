@@ -190,6 +190,7 @@ class Offer < ActiveRecord::Base
     offer_list.each do |offer|
       offer.calculate_rank_score(weights)
       if offer.item_type == 'App'
+      if (offer.item_type == 'App' || offer.item_type == 'ActionOffer')
         offer.primary_category  = offer.item.primary_category
         offer.user_rating       = offer.item.user_rating
       end
