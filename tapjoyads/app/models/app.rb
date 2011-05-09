@@ -42,6 +42,10 @@ class App < ActiveRecord::Base
     file_size_bytes.to_i > 20971520
   end
 
+  def recently_released?
+    released_at? && (Time.zone.now - released_at) < 7.day
+  end
+
   def platform_name
     PLATFORMS[platform]
   end
@@ -106,12 +110,13 @@ class App < ActiveRecord::Base
       data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
     end
     raise "Fetching app store data failed for app: #{name} (#{id})." if data.nil?
-    self.name = data[:title]
-    self.price = (data[:price].to_f * 100).round
-    self.description = data[:description]
-    self.age_rating = data[:age_rating]
-    self.file_size_bytes = data[:file_size_bytes]
-    self.supported_devices = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
+    self.name               = data[:title]
+    self.price              = (data[:price].to_f * 100).round
+    self.description        = data[:description]
+    self.age_rating         = data[:age_rating]
+    self.file_size_bytes    = data[:file_size_bytes]
+    self.released_at        = data[:released_at]
+    self.supported_devices  = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
     download_icon(data[:icon_url], data[:small_icon_url]) unless new_record?
     data
   end
