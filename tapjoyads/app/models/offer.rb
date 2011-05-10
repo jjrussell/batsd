@@ -32,7 +32,7 @@ class Offer < ActiveRecord::Base
   DAILY_STATS_START_HOUR = 6
   DAILY_STATS_RANGE = 6
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :offer_list_length
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :offer_list_length, :user_rating, :primary_category
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -189,6 +189,10 @@ class Offer < ActiveRecord::Base
     
     offer_list.each do |offer|
       offer.calculate_rank_score(weights)
+      if (offer.item_type == 'App' || offer.item_type == 'ActionOffer')
+        offer.primary_category  = offer.item.primary_category
+        offer.user_rating       = offer.item.user_rating
+      end
     end
     
     offer_list.sort! do |o1, o2|
