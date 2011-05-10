@@ -608,6 +608,8 @@ class Offer < ActiveRecord::Base
         # uncomment for tapjoy premier & change show.html line 92-ish
         # is_paid? ? (price * 0.65).round : 50
       end
+    elsif item_type == 'ActionOffer'
+      get_platform == 'Android' ? 25 : 35
     else
       0
     end

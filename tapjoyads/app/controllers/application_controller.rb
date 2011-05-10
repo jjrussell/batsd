@@ -118,8 +118,7 @@ private
   end
   
   def get_ip_address
-    return @request_ip_address if defined?(@request_ip_address)
-    @request_ip_address = (request.headers['X-Forwarded-For'] || request.remote_ip).gsub(/,.*$/, '')
+    @request_ip_address ||= (request.headers['X-Forwarded-For'] || request.remote_ip).gsub(/,.*$/, '')
   end
   
   def get_geoip_data

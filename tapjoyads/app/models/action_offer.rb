@@ -41,7 +41,7 @@ private
     offer.url              = app.direct_store_url
     offer.instructions     = instructions
     offer.device_types     = app.primary_offer.device_types
-    offer.bid              = 0
+    offer.bid              = offer.min_bid
     offer.price            = prerequisite_offer_id? ? 0 : app.price
     offer.name_suffix      = 'action'
     offer.third_party_data = prerequisite_offer_id
