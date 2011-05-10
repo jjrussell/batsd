@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110503044851) do
+ActiveRecord::Schema.define(:version => 20110509222934) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -161,6 +161,7 @@ ActiveRecord::Schema.define(:version => 20110503044851) do
     t.boolean  "hidden",                         :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "instructions"
   end
 
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true
@@ -285,6 +286,7 @@ ActiveRecord::Schema.define(:version => 20110503044851) do
     t.datetime "next_daily_stats_aggregation_time"
     t.boolean  "active",                                                                        :default => false
     t.string   "icon_id_override",                  :limit => 36
+    t.text     "instructions"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
