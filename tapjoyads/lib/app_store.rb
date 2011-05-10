@@ -147,7 +147,7 @@ private
       :supported_devices  => hash["supportedDevices"].sort,
       :user_rating        => hash["averageUserRatingForCurrentVersion"] || hash["averageUserRating"],
       :categories         => hash["genres"],
-        :released_at      => hash["releaseDate"],
+      :released_at        => hash["releaseDate"],
       # other possibly useful values:
       #   hash["version"]
       #   hash["genreIds"]
