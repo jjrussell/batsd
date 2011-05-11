@@ -63,7 +63,7 @@ class GetOffersController < ApplicationController
         ]
         @offer_list = Offer.find_all_by_id(action_offers)
       end
-      render :template => 'get_offers/gallery', :layout => 'iphone_gallery'
+      render :template => 'get_offers/gallery', :layout => nil
     end
   end
   
