@@ -52,13 +52,14 @@ class AnalyticsController < WebsiteController
     if params[:enable_apsalar_sharing]
       if enable_apsalar_sharing
         flash[:notice] = "You are now sharing app data with Apsalar."
+        redirect_to analytics_path and return
       else
-        flash[:error] = "You must agree to the terms of use."
+        flash[:error] = "There was an error, please try again later."
       end
     else
-      flash[:error] = "There was an error, please try again later."
+      flash[:error] = "You must agree to the terms of use."
     end
-    redirect_to analytics_path
+    redirect_to share_data_analytics_path
   end
 
   private
