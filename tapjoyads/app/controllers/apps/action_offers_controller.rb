@@ -71,9 +71,8 @@ class Apps::ActionOffersController < WebsiteController
   end
   
   def toggle
-    @action_offer.primary_offer.user_enabled = !@action_offer.primary_offer.user_enabled
-    if @action_offer.primary_offer.save
-      render :json => { :success => true, :user_enabled => @action_offer.primary_offer.user_enabled }
+    if @action_offer.toggle_user_enabled
+      render :json => { :success => true, :user_enabled => @action_offer.user_enabled? }
     else
       render :json => { :success => false }
     end

@@ -25,7 +25,14 @@ class ActionOffer < ActiveRecord::Base
   delegate :user_enabled?, :tapjoy_enabled?, :bid, :min_bid, :daily_budget, :integrated?, :to => :primary_offer
   
   delegate :is_android?, :store_id, :store_url, :large_download?, :supported_devices, :to => :app
-  
+
+  delegate :primary_category, :user_rating, :to => :app
+
+  def toggle_user_enabled
+    primary_offer.toggle_user_enabled
+    primary_offer.save
+  end
+
 private
 
   def create_primary_offer
@@ -35,7 +42,7 @@ private
     offer.name             = name
     offer.url              = "#{API_URL}/action_offers/#{self.id}"
     offer.device_types     = app.primary_offer.device_types
-    offer.bid              = 0
+    offer.bid              = offer.min_bid
     offer.price            = prerequisite_offer_id? ? 0 : app.price
     offer.name_suffix      = 'action'
     offer.third_party_data = prerequisite_offer_id

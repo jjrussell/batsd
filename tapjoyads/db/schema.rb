@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110502221634) do
+ActiveRecord::Schema.define(:version => 20110509222934) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -79,6 +79,9 @@ ActiveRecord::Schema.define(:version => 20110502221634) do
     t.string   "enabled_rating_offer_id", :limit => 36
     t.string   "secret_key",                                               :null => false
     t.string   "app_group_id",            :limit => 36,                    :null => false
+    t.datetime "released_at"
+    t.float    "user_rating"
+    t.string   "categories"
   end
 
   add_index "apps", ["app_group_id"], :name => "index_apps_on_app_group_id"
@@ -367,7 +370,7 @@ ActiveRecord::Schema.define(:version => 20110502221634) do
     t.text     "apsalar_url"
     t.text     "offer_whitelist",                                                                               :null => false
     t.boolean  "use_whitelist",                                                          :default => false,     :null => false
-    t.boolean  "tapjoy_currency_enabled",                                                :default => false,     :null => false
+    t.boolean  "approved_publisher",                                                     :default => false,     :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

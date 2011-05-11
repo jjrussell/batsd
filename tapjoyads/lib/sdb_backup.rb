@@ -25,7 +25,7 @@ class SdbBackup
     
     file_name = "tmp/#{RUN_MODE_PREFIX}#{domain_name}#{suffix}.sdb"
     gzip_file_name = "#{file_name}.gz"
-    s3_name = "#{prefix}#{RUN_MODE_PREFIX}#{domain_name}#{suffix}.sdb"
+    s3_name = "#{prefix}#{RUN_MODE_PREFIX}#{domain_name}#{suffix}.sdb.gz"
     
     file = open(file_name, 'w')
   

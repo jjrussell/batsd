@@ -53,6 +53,7 @@ private
       this_apps_stats['offers_revenue'] = number_to_currency(appstats['total_revenue'].sum / 100.0)
       this_apps_stats['platform'] = offer.get_platform
       this_apps_stats['featured'] = offer.featured?
+      this_apps_stats['offer_type'] = offer.item_type
       
       cached_stats[offer.id] = this_apps_stats
       

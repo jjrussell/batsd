@@ -32,7 +32,7 @@ class Offer < ActiveRecord::Base
   DAILY_STATS_START_HOUR = 6
   DAILY_STATS_RANGE = 6
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :offer_list_length
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :offer_list_length, :user_rating, :primary_category
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -119,6 +119,8 @@ class Offer < ActiveRecord::Base
   named_scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ] } }
   named_scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ] } }
   named_scope :for_ios_only, :conditions => 'device_types not like "%android%"'
+  
+  delegate :balance, :pending_earnings, :name, :approved_publisher?, :to => :partner, :prefix => true
   
   alias_method :events, :offer_events
   
@@ -217,6 +219,10 @@ class Offer < ActiveRecord::Base
     
     offer_list.each do |offer|
       offer.calculate_rank_score(weights)
+      if (offer.item_type == 'App' || offer.item_type == 'ActionOffer')
+        offer.primary_category  = offer.item.primary_category
+        offer.user_rating       = offer.item.user_rating
+      end
     end
     
     offer_list.sort! do |o1, o2|
@@ -362,7 +368,15 @@ class Offer < ActiveRecord::Base
   def is_free?
     !is_paid?
   end
-  
+
+  def user_bid_warning
+    is_paid? ? price / 100.0 : 1
+  end
+
+  def user_bid_max
+    [is_paid? ? 5 * price / 100.0 : 3, bid / 100.0].max
+  end
+
   def is_primary?
     item_id == id
   end
@@ -659,6 +673,8 @@ class Offer < ActiveRecord::Base
         # uncomment for tapjoy premier & change show.html line 92-ish
         # is_paid? ? (price * 0.65).round : 50
       end
+    elsif item_type == 'ActionOffer'
+      get_platform == 'Android' ? 25 : 35
     else
       0
     end
@@ -744,20 +760,8 @@ class Offer < ActiveRecord::Base
     !partner.users.empty?
   end
 
-  def partner_name
-    partner.name
-  end
-
   def contacts
     partner.non_managers
-  end
-
-  def partner_balance
-    partner.balance
-  end
-
-  def partner_pending_earnings
-    partner.pending_earnings
   end
 
   def account_managers
@@ -770,6 +774,10 @@ class Offer < ActiveRecord::Base
   
   def rank_boost
     @rank_boost ||= calculate_rank_boost
+  end
+
+  def toggle_user_enabled
+    self.user_enabled = !user_enabled
   end
 
 private

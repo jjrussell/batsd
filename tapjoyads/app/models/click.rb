@@ -20,6 +20,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :tapjoy_amount,     :type => :int
   self.sdb_attr :currency_reward,   :type => :int
   self.sdb_attr :source
+  self.sdb_attr :ip_address
   self.sdb_attr :country
   self.sdb_attr :type
   self.sdb_attr :exp

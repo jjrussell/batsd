@@ -32,6 +32,8 @@ class App < ActiveRecord::Base
   
   named_scope :visible, :conditions => { :hidden => false }
 
+  delegate :conversion_rate, :to => :primary_currency, :prefix => true
+
   def is_android?
     platform == 'android'
   end
@@ -42,6 +44,14 @@ class App < ActiveRecord::Base
 
   def large_download?
     file_size_bytes.to_i > 20971520
+  end
+
+  def recently_released?
+    released_at? && (Time.zone.now - released_at) < 7.day
+  end
+
+  def bad_rating?
+    !user_rating.nil? && user_rating < 3.0
   end
 
   def platform_name
@@ -73,7 +83,19 @@ class App < ActiveRecord::Base
       write_attribute(:store_url, url)
     end
   end
-  
+
+  def categories=(arr)
+    write_attribute(:categories, arr.join(';'))
+  end
+
+  def categories
+    (read_attribute(:categories)||'').split(';')
+  end
+
+  def primary_category
+    categories.first
+  end
+
   def info_url
     if is_android?
       "https://market.android.com/details?id=#{store_id}"
@@ -108,12 +130,15 @@ class App < ActiveRecord::Base
       data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
     end
     raise "Fetching app store data failed for app: #{name} (#{id})." if data.nil?
-    self.name = data[:title]
-    self.price = (data[:price].to_f * 100).round
-    self.description = data[:description]
-    self.age_rating = data[:age_rating]
-    self.file_size_bytes = data[:file_size_bytes]
-    self.supported_devices = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
+    self.name               = data[:title]
+    self.price              = (data[:price].to_f * 100).round
+    self.description        = data[:description]
+    self.age_rating         = data[:age_rating]
+    self.file_size_bytes    = data[:file_size_bytes]
+    self.released_at        = data[:released_at]
+    self.user_rating        = data[:user_rating]
+    self.categories         = data[:categories]
+    self.supported_devices  = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
     download_icon(data[:icon_url], data[:small_icon_url]) unless new_record?
     data
   end
