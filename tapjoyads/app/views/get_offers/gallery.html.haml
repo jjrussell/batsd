@@ -1,0 +1,186 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Tapjoy</title>
+
+<meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1 user-scalable=no, width = 320" />
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+
+<script src="http://www.tapjoy.com/javascripts/jquery-1.4.2.min.js?1302736906"></script>
+<script>
+	(function(A){A.jQTouch=function(W){var c,T=A("head"),k="",h=[],g=0,M={},J="",V="portrait",s=true,r=0,E=0,I=[],X={},K=351,m=A.jQTouch.prototype.extensions,q=[],S="",d={addGlossToIcon:true,backSelector:".back, .cancel, .goback",cacheGetRequests:true,debug:false,fallback2dAnimation:"fade",fixedViewport:true,formSelector:"form",fullScreen:true,fullScreenClass:"fullscreen",hoverDelay:50,icon:null,icon4:null,moveThreshold:10,preloadImages:false,pressDelay:1000,startupScreen:null,statusBar:"default",submitSelector:".submit",touchSelector:"a, .touch",useAnimations:true,useFastTouch:true,animations:[{selector:".cube",name:"cubeleft",is3d:true},{selector:".cubeleft",name:"cubeleft",is3d:true},{selector:".cuberight",name:"cuberight",is3d:true},{selector:".dissolve",name:"dissolve",is3d:false},{selector:".fade",name:"fade",is3d:false},{selector:".flip",name:"flipleft",is3d:true},{selector:".flipleft",name:"flipleft",is3d:true},{selector:".flipright",name:"flipright",is3d:true},{selector:".pop",name:"pop",is3d:true},{selector:".slide",name:"slideleft",is3d:false},{selector:".slidedown",name:"slidedown",is3d:false},{selector:".slideleft",name:"slideleft",is3d:false},{selector:".slideright",name:"slideright",is3d:false},{selector:".slideup",name:"slideup",is3d:false},{selector:".swap",name:"swapleft",is3d:true},{selector:"#jqt > * > ul li a",name:"slideleft",is3d:false}]};function Y(t){now=(new Date).getTime();delta=now-r;r=now;if(M.debug){if(t){F(delta+": "+t)}else{F(delta+": Called "+arguments.callee.caller.name)}}}function F(t){if(window.console!==undefined){console.log(t)}}function B(t){if(typeof (t.selector)==="string"&&typeof (t.name)==="string"){q.push(t)}}function L(u,t){Y();h.unshift({page:u,animation:t,hash:"#"+u.attr("id"),id:u.attr("id")})}function O(u){Y();if(!s){Y("ClickHandler handler aborted because tap is not ready");u.preventDefault();return false}var t=A(u.target);if(!t.is(I.join(", "))){var t=A(u.target).closest(I.join(", "))}if(t&&t.attr("href")&&!t.isExternalLink()){Y("Need to prevent default click behavior");u.preventDefault()}else{Y("No need to prevent default click behavior")}if(A.support.touch){Y("Not converting click to a tap event because touch handler is on the job")}else{Y("Converting click event to a tap event because touch handlers are not present or off");A(u.target).trigger("tap",u)}}function C(y,v,x,u){Y();if(v.length===0){A.fn.unselect();Y("Target element is missing.");return false}if(v.hasClass("current")){A.fn.unselect();Y("You are already on the page you are trying to navigate to.");return false}A(":focus").blur();y.trigger("pageAnimationStart",{direction:"out"});v.trigger("pageAnimationStart",{direction:"in"});if(A.support.animationEvents&&x&&M.useAnimations){s=false;if(!A.support.transform3d&&x.is3d){x.name=M.fallback2dAnimation}var t;if(u){if(x.name.indexOf("left")>0){t=x.name.replace(/left/,"right")}else{if(x.name.indexOf("right")>0){t=x.name.replace(/right/,"left")}else{if(x.name.indexOf("up")>0){t=x.name.replace(/up/,"down")}else{if(x.name.indexOf("down")>0){t=x.name.replace(/down/,"up")}else{t=x.name}}}}}else{t=x.name}y.bind("webkitAnimationEnd",w);y.bind("webkitTransitionEnd",w);scrollTo(0,0);v.addClass(t+" in current");y.addClass(t+" out")}else{v.addClass("current");w()}function w(z){Y();if(A.support.animationEvents&&x&&M.useAnimations){y.unbind("webkitAnimationEnd",w);y.unbind("webkitTransitionEnd",w);y.removeClass(t+" out current");v.removeClass(t+" in")}else{y.removeClass(t+" out current")}J=v;if(u){h.shift()}else{L(J,x)}y.unselect();E=(new Date()).getTime();N(J.attr("id"));s=true;v.trigger("pageAnimationEnd",{direction:"in",animation:x});y.trigger("pageAnimationEnd",{direction:"out",animation:x})}return true}function p(){Y();return V}function H(){Y();if(h.length<1){Y("History is empty.")}if(h.length===1){Y("You are on the first panel.")}var u=h[0],t=h[1];if(C(u.page,t.page,u.animation,true)){return X}else{Y("Could not go back.");return false}}function l(x,y,v){Y();if(v){F("The reverse parameter of the goTo() function has been deprecated.")}var z=h[0].page;if(typeof y==="string"){for(var w=0,t=q.length;w<t;w++){if(q[w].name===y){y=q[w];break}}}if(typeof (x)==="string"){var u=A(x);if(u.length<1){D(x,{animation:y});return }else{x=u}}if(C(z,x,y)){return X}else{Y("Could not animate pages.");return false}}function o(t){Y();if(location.hash===h[0].hash){Y("We are on the right panel")}else{Y("We are not on the right panel");if(location.hash===h[1].hash){H()}else{Y(location.hash+" !== "+h[1].hash)}}}function n(t){Y();M=A.extend({},d,t);if(M.preloadImages){for(var u=M.preloadImages.length-1;u>=0;u--){(new Image()).src=M.preloadImages[u]}}if(M.icon||M.icon4){var v,w;if(M.icon4&&window.devicePixelRatio&&window.devicePixelRatio===2){w=M.icon4}else{if(M.icon){w=M.icon}else{w=false}}if(w){v=(M.addGlossToIcon)?"":"-precomposed";S+='<link rel="apple-touch-icon'+v+'" href="'+w+'" />'}}if(M.startupScreen){S+='<link rel="apple-touch-startup-image" href="'+M.startupScreen+'" />'}if(M.fixedViewport){S+='<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;"/>'}if(M.fullScreen){S+='<meta name="apple-mobile-web-app-capable" content="yes" />';if(M.statusBar){S+='<meta name="apple-mobile-web-app-status-bar-style" content="'+M.statusBar+'" />'}}if(S){T.prepend(S)}}function a(t,u){Y();var v=null;A(t).each(function(x,y){var w=A(this);if(!w.attr("id")){w.attr("id","page-"+(++g))}A("#"+w.attr("id")).remove();c.trigger("pageInserted",{page:w.appendTo(c)});if(w.hasClass("current")||!v){v=w}});if(v!==null){l(v,u);return v}else{return false}}function Z(t){var u=(new Date()).getTime()-E;if(u<K){return false}}function G(){Y();V=Math.abs(window.orientation)==90?"landscape":"portrait";c.removeClass("portrait landscape").addClass(V).trigger("turn",{orientation:V})}function N(t){Y();t=t.replace(/^#/,""),location.hash="#"+t}function D(t,u){Y();var w={data:null,method:"GET",animation:null,callback:null,$referrer:null};var v=A.extend({},w,u);if(t!="#"){A.ajax({url:t,data:v.data,type:v.method,success:function(x,z){var y=a(x,v.animation);if(y){if(v.method=="GET"&&M.cacheGetRequests===true&&v.$referrer){v.$referrer.attr("href","#"+y.attr("id"))}if(v.callback){v.callback(true)}}},error:function(x){if(v.$referrer){v.$referrer.unselect()}if(v.callback){v.callback(false)}}})}else{if(v.$referrer){v.$referrer.unselect()}}}function Q(u,v){Y();A(":focus").blur();u.preventDefault();var t=(typeof (u)==="string")?A(u).eq(0):(u.target?A(u.target):A(u));Y(t.attr("action"));if(t.length&&t.is(M.formSelector)&&t.attr("action")){D(t.attr("action"),{data:t.serialize(),method:t.attr("method")||"POST",animation:q[0]||null,callback:v});return false}return false}function j(v){Y();var u=v.closest("form");if(u.length===0){Y("No parent form found")}else{Y("About to submit parent form");var t=A.Event("submit");t.preventDefault();u.trigger(t);return false}return true}function P(){Y();return(typeof WebKitAnimationEvent!="undefined")}function e(){Y();return(typeof WebKitCSSMatrix!="undefined")}function i(){Y();if(typeof TouchEvent!="undefined"){if(window.navigator.userAgent.indexOf("Mobile")>-1){return true}else{return false}}else{return false}}function b(){Y();var v,u,w,x,t;v=document.getElementsByTagName("head")[0];u=document.body;w=document.createElement("style");w.textContent="@media (transform-3d),(-o-transform-3d),(-moz-transform-3d),(-ms-transform-3d),(-webkit-transform-3d),(modernizr){#jqtTestFor3dSupport{height:3px}}";x=document.createElement("div");x.id="jqtTestFor3dSupport";v.appendChild(w);u.appendChild(x);t=x.offsetHeight===3;w.parentNode.removeChild(w);x.parentNode.removeChild(x);return t}function f(z){Y();if(!s){Y("Tap is not ready");return false}var v=A(z.target);if(!v.is(I.join(", "))){var v=A(z.target).closest(I.join(", "))}if(!v.length||!v.attr("href")){Y("Could not find a link related to tapped element");return false}var y=v.attr("target"),x=v.attr("hash"),w=null;if(v.isExternalLink()){v.unselect();return true}else{if(v.is(M.backSelector)){H(x)}else{if(v.is(M.submitSelector)){j(v)}else{if(y==="_webapp"){window.location=v.attr("href");return false}else{if(v.attr("href")==="#"){v.unselect();return true}else{for(var u=0,t=q.length;u<t;u++){if(v.is(q[u].selector)){w=q[u];break}}if(!w){F("Animation could not be found. Using slideleft.");w="slideleft"}if(x&&x!=="#"){v.addClass("active");l(A(x).data("referrer",v),w,v.hasClass("reverse"));return false}else{v.addClass("loading active");D(v.attr("href"),{animation:w,callback:function(){v.removeClass("loading");setTimeout(A.fn.unselect,250,v)},$referrer:v});return false}}}}}}}function U(AD){Y();if(!s){Y("TouchStart handler aborted because tap is not ready");AD.preventDefault();return false}var AH=A(AD.target);if(!AH.length){Y("Could not find target of touchstart event.");return }var v=(new Date).getTime(),t=null,w=null,z,AB,AA,y=0,x=0,AC=0;if(event.changedTouches&&event.changedTouches.length){z=event.changedTouches[0];AB=z.pageX;AA=z.pageY}AH.bind("touchmove",AE).bind("touchend",u).bind("touchcancel",AF);t=setTimeout(function(){AH.makeActive()},M.hoverDelay);w=setTimeout(function(){AH.unbind("touchmove",AE).unbind("touchend",u).unbind("touchcancel",AF);AH.unselect();clearTimeout(t);AH.trigger("press")},M.pressDelay);function AF(AI){Y();clearTimeout(t);AH.unselect();AH.unbind("touchmove",AE).unbind("touchend",u).unbind("touchcancel",AF)}function u(AI){Y();AH.unbind("touchend",u).unbind("touchcancel",AF);clearTimeout(t);clearTimeout(w);if(Math.abs(y)<M.moveThreshold&&Math.abs(x)<M.moveThreshold&&AC<M.pressDelay){AH.trigger("tap",AI)}else{AH.unselect()}}function AE(AL){AG();var AK=Math.abs(y);var AI=Math.abs(x);var AJ;if(AK>AI&&(AK>35)&&AC<1000){if(y<0){AJ="left"}else{AJ="right"}AH.unbind("touchmove",AE).unbind("touchend",u).unbind("touchcancel",AF);AH.trigger("swipe",{direction:AJ,deltaX:y,deltaY:x})}AH.unselect();clearTimeout(t);if(AK>M.moveThreshold||AI>M.moveThreshold){clearTimeout(w)}}function AG(){var AI=event.changedTouches[0]||null;y=AI.pageX-AB;x=AI.pageY-AA;AC=(new Date).getTime()-v}}function R(t){Y();if(t!==undefined){if(t===true){if(i()){A.support.touch=true}else{F("This device does not support touch events")}}else{A.support.touch=false}}return A.support.touch}n(W);A(document).ready(function(){A.support.animationEvents=P();A.support.cssMatrix=e();A.support.touch=i()&&M.useFastTouch;A.support.transform3d=b();if(!A.support.touch){F("This device does not support touch interaction, or it has been deactivated by the developer. Some features might be unavailable.")}if(!A.support.transform3d){F("This device does not support 3d animation. 2d animations will be used instead.")}A.fn.isExternalLink=function(){var x=A(this);return(x.attr("target")=="_blank"||x.attr("rel")=="external"||x.is('a[href^="http://maps.google.com"], a[href^="mailto:"], a[href^="tel:"], a[href^="javascript:"], a[href*="youtube.com/v"], a[href*="youtube.com/watch"]'))};A.fn.makeActive=function(){return A(this).addClass("active")};A.fn.press=function(x){if(A.isFunction(x)){return A(this).live("press",x)}else{return A(this).trigger("press")}};A.fn.swipe=function(x){if(A.isFunction(x)){return A(this).live("swipe",x)}else{return A(this).trigger("swipe")}};A.fn.tap=function(x){if(A.isFunction(x)){return A(this).live("tap",x)}else{return A(this).trigger("tap")}};A.fn.unselect=function(x){if(x){x.removeClass("active")}else{A(".active").removeClass("active")}};for(var u=0,t=m.length;u<t;u++){var v=m[u];if(A.isFunction(v)){A.extend(X,v(X))}}if(M.cubeSelector){F("NOTE: cubeSelector has been deprecated. Please use cubeleftSelector instead.");M.cubeleftSelector=M.cubeSelector}if(M.flipSelector){F("NOTE: flipSelector has been deprecated. Please use flipleftSelector instead.");M.flipleftSelector=M.flipSelector}if(M.slideSelector){F("NOTE: slideSelector has been deprecated. Please use slideleftSelector instead.");M.slideleftSelector=M.slideSelector}for(var u=0,t=d.animations.length;u<t;u++){var w=d.animations[u];if(M[w.name+"Selector"]!==undefined){w.selector=M[w.name+"Selector"]}B(w)}I.push("input");I.push(M.touchSelector);I.push(M.backSelector);I.push(M.submitSelector);A(I.join(", ")).css("-webkit-touch-callout","none");c=A("#jqt");if(c.length===0){F('Could not find an element with the id "jqt", so the body id has been set to "jqt". If you are having any problems, wrapping your panels in a div with the id "jqt" might help.');c=A("body").attr("id","jqt")}if(A.support.transform3d){c.addClass("supports3d")}if(M.fullScreenClass&&window.navigator.standalone==true){c.addClass(M.fullScreenClass+" "+M.statusBar)}if(window.navigator.userAgent.match(/Android/ig)){c.addClass("android")}A(window).bind("hashchange",o);c.bind("touchstart",U).bind("click",O).bind("mousedown",Z).bind("orientationchange",G).bind("submit",Q).bind("tap",f).trigger("orientationchange");if(A("#jqt > .current").length==0){J=A("#jqt > *:first")}else{J=A("#jqt > .current:first");A("#jqt > .current").removeClass("current")}A(J).addClass("current");k=A(J).attr("id");N(k);L(J);scrollTo(0,0);A("#jqt > *").css("minHeight",window.innerHeight)});X={addAnimation:B,animations:q,getOrientation:p,goBack:H,goTo:l,hist:h,settings:M,submitForm:Q,support:A.support,useFastTouch:R};return X};A.jQTouch.prototype.extensions=[];A.jQTouch.addExtension=function(B){A.jQTouch.prototype.extensions.push(B)}})(jQuery);
+	
+</script>
+<style>
+body {
+	background:#525252 url('assets/bg.png');
+	color:#000;
+}
+a, a:visited, a:hover {
+	color:#000;
+	text-decoration:none;
+}
+.widget {
+	padding:10px;
+}
+.item, .item-detail {
+	background-color:#FFF;
+	min-height:320px;
+	width:100%;
+}
+.item-detail {
+	background-color:#e6e6e6;
+	height:100%;
+	min-height:420px;
+}
+.box-border {
+}
+.box-shadow {
+	-webkit-box-shadow:0px 0px 6px #111111;
+}
+.box-rounded {
+	-webkit-border-radius: 10px;
+}
+.item-icon {
+	text-align: center;
+}
+.item-icon img {
+	border: 2px solid #999;
+	-webkit-background-clip: padding-box;
+	-webkit-border-radius: 12px;
+	-webkit-box-shadow: 1px 1px 3px rgba(61, 61, 61, 0.3);
+	margin:12px 0;
+	padding: 10px;
+	width:120px;
+}
+
+*{margin:0;padding:0;}a{-webkit-tap-highlight-color:rgba(0,0,0,0);}body{-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-touch-callout:none;}#jqt{-webkit-text-size-adjust:none;-webkit-user-select:none;bottom:0;font-family:"Helvetica Neue",Helvetica;left:0;position:absolute;right:0;top:0;}#jqt .selectable,#jqt input,#jqt textarea{-webkit-user-select:auto;}#jqt.notransform{-webkit-transform:none!important;}#jqt>*{-webkit-box-sizing:border-box;display:none;left:0;min-height:100%;overflow-x:hidden;position:absolute;width:100%;z-index:0;}#jqt>.current{display:block!important;z-index:10;}#jqt .in,#jqt .out{-webkit-animation-duration:250ms;-webkit-animation-fill-mode:both;-webkit-animation-timing-function:ease-in-out;}#jqt .in{z-index:10;}#jqt .out{z-index:0!important;}#jqt.supports3d{-webkit-perspective:800;-webkit-transform-style:preserve-3d;}#jqt.supports3d>*{-webkit-transform:translate3d(0,0,0) rotate(0) scale(1);}#jqt .fade.in{-webkit-animation-name:fadeIn;}#jqt .fade.out{-webkit-animation-name:fadeOut;}@-webkit-keyframes fadeIn{0%{opacity:0;}100%{opacity:1;}}@-webkit-keyframes fadeOut{0%{opacity:1;}100%{opacity:0;}}#jqt .dissolve.in{-webkit-animation-name:dissolveIn;}#jqt .dissolve.out{-webkit-animation-name:dissolveOut;}@-webkit-keyframes dissolveIn{0%{opacity:0;}100%{opacity:1;}}@-webkit-keyframes dissolveOut{0%{opacity:1;}100%{opacity:0;}}#jqt .pop.in{-webkit-animation-name:popIn;}#jqt .pop.out{-webkit-animation-name:popOut;}@-webkit-keyframes popIn{0%{-webkit-transform:scale(.2);opacity:0;}100%{-webkit-transform:scale(1);opacity:1;}}@-webkit-keyframes popOut{0%{-webkit-transform:scale(1);opacity:1;}100%{-webkit-transform:scale(.2);opacity:0;}}#jqt .slideleft.in{-webkit-animation-name:slideLeftIn;}#jqt .slideleft.out{-webkit-animation-name:slideLeftOut;}@-webkit-keyframes slideLeftIn{0%{-webkit-transform:translateX(100%);}100%{-webkit-transform:translateX(0);}}@-webkit-keyframes slideLeftOut{0%{-webkit-transform:translateX(0px);}100%{-webkit-transform:translateX(-100%);}}#jqt .slideright.in{-webkit-animation-name:slideRightIn;}#jqt .slideright.out{-webkit-animation-name:slideRightOut;}@-webkit-keyframes slideRightIn{0%{-webkit-transform:translateX(-100%);}100%{-webkit-transform:translateX(0);}}@-webkit-keyframes slideRightOut{0%{-webkit-transform:translateX(0);}100%{-webkit-transform:translateX(100%);}}#jqt .slideup.in{z-index:10;-webkit-animation-name:slideUpIn;}#jqt .slideup.out{z-index:0;-webkit-animation-name:slideUpOut;}@-webkit-keyframes slideUpIn{0%{-webkit-transform:translateY(100%);}100%{-webkit-transform:translateY(0);}}@-webkit-keyframes slideUpOut{0%{-webkit-transform:translateY(0);}100%{-webkit-transform:translateY(0);}}#jqt .slidedown.in{z-index:0;-webkit-animation-name:slideDownIn;}#jqt .slidedown.out{z-index:10;-webkit-animation-name:slideDownOut;}@-webkit-keyframes slideDownIn{0%{-webkit-transform:translateY(0);}100%{-webkit-transform:translateY(0);}}@-webkit-keyframes slideDownOut{0%{-webkit-transform:translateY(0);}100%{-webkit-transform:translateY(100%);}}#jqt .flipleft{-webkit-backface-visibility:hidden;}#jqt .flipleft.in{-webkit-animation-name:flipLeftIn;}#jqt .flipleft.out{-webkit-animation-name:flipLeftOut;}@-webkit-keyframes flipLeftIn{0%{-webkit-transform:rotateY(180deg) scale(.8);}100%{-webkit-transform:rotateY(0deg) scale(1);}}@-webkit-keyframes flipLeftOut{0%{-webkit-transform:rotateY(0deg) scale(1);}100%{-webkit-transform:rotateY(-180deg) scale(.8);}}#jqt .flipright{-webkit-backface-visibility:hidden;}#jqt .flipright.in{-webkit-animation-name:flipRightIn;}#jqt .flipright.out{-webkit-animation-name:flipRightOut;}@-webkit-keyframes flipRightIn{0%{-webkit-transform:rotateY(-180deg) scale(.8);}100%{-webkit-transform:rotateY(0deg) scale(1);}}@-webkit-keyframes flipRightOut{0%{-webkit-transform:rotateY(0deg) scale(1);}100%{-webkit-transform:rotateY(180deg) scale(.8);}}#jqt .swapright{-webkit-animation-duration:.7s;-webkit-transform:perspective(800);-webkit-animation-timing-function:ease-out;}#jqt .swapright.in{-webkit-animation-name:swapRightIn;}#jqt .swapright.out{-webkit-animation-name:swapRightOut;}@-webkit-keyframes swapRightIn{0%{-webkit-transform:translate3d(0px,0px,-800px) rotateY(70deg);opacity:0;}35%{-webkit-transform:translate3d(-180px,0px,-400px) rotateY(20deg);opacity:1;}100%{-webkit-transform:translate3d(0px,0px,0px) rotateY(0deg);opacity:1;}}@-webkit-keyframes swapRightOut{0%{-webkit-transform:translate3d(0px,0px,0px) rotateY(0deg);opacity:1;}35%{-webkit-transform:translate3d(180px,0px,-400px) rotateY(-20deg);opacity:.5;}100%{-webkit-transform:translate3d(0px,0px,-800px) rotateY(-70deg);opacity:0;}}#jqt .swapleft{-webkit-animation-duration:.7s;-webkit-transform:perspective(800);-webkit-animation-timing-function:ease-out;}#jqt .swapleft.in{-webkit-animation-name:swapLeftIn;}#jqt .swapleft.out{-webkit-animation-name:swapLeftOut;}@-webkit-keyframes swapLeftIn{0%{-webkit-transform:translate3d(0px,0px,-800px) rotateY(-70deg);opacity:0;}35%{-webkit-transform:translate3d(180px,0px,-400px) rotateY(-20deg);opacity:1;}100%{opacity:1;-webkit-transform:translate3d(0px,0px,0px) rotateY(0deg);}}@-webkit-keyframes swapLeftOut{0%{-webkit-transform:translate3d(0px,0px,0px) rotateY(0deg);opacity:1;}35%{-webkit-transform:translate3d(-180px,0px,-400px) rotateY(20deg);opacity:.5;}100%{-webkit-transform:translate3d(0px,0px,-800px) rotateY(70deg);opacity:0;}}#jqt .cubeleft{-webkit-animation-duration:.55s;}#jqt .cubeleft.in{-webkit-transform-origin:100% 50%;-webkit-animation-name:cubeLeftIn;}#jqt .cubeleft.out{-webkit-transform-origin:0 50%;-webkit-animation-name:cubeLeftOut;}@-webkit-keyframes cubeLeftIn{0%{-webkit-transform:rotateY(90deg) translateZ(100%) scale(.5);opacity:.5;}100%{-webkit-transform:rotateY(00deg) translateZ(0) scale(1);opacity:1;}}@-webkit-keyframes cubeLeftOut{0%{-webkit-transform:rotateY(0deg) translateX(0) scale(1);opacity:1;}100%{-webkit-transform:rotateY(-90deg) translateZ(100%) scale(.5);opacity:.5;}}#jqt .cuberight{-webkit-animation-duration:.55s;}#jqt .cuberight.in{-webkit-transform-origin:0 50%;-webkit-animation-name:cubeRightIn;}#jqt .cuberight.out{-webkit-transform-origin:100% 50%;-webkit-animation-name:cubeRightOut;}@-webkit-keyframes cubeRightIn{0%{-webkit-transform:rotateY(-90deg) translateZ(100%) scale(.5);opacity:.5;}100%{-webkit-transform:rotateY(0deg) translateZ(0) scale(1);opacity:1;}}@-webkit-keyframes cubeRightOut{0%{-webkit-transform:rotateY(0deg) translateX(0) scale(1);opacity:1;}100%{-webkit-transform:rotateY(90deg) translateZ(100%) scale(.5);opacity:.5;}}
+</style>
+
+<script>
+
+	function hideURLbar(){
+		window.scrollTo(0,1);
+	}
+
+	var TJTouch = new $.jQTouch({});
+	
+	var offers = [
+	{"price":0,"name":"test","direct_pay":null,"countries":"","conversion_rate":0.0,"cities":"","age_rating":null,"overall_budget":0,"created_at":"2011-04-12T08:03:07Z","allow_negative_balance":false,"next_stats_aggregation_time":"2011-05-06T21:07:13Z","daily_budget":0,"updated_at":"2011-05-06T20:16:21Z","reward_value":null,"icon_id_override":null,"featured":false,"get_icon_url":"https://s3.amazonaws.com/tapjoy/icons/57/1ed5144551edae0cbcab7a75b0de09671be8b9c018966998ca411aecf8b45521.jpg","user_enabled":false,"url":"http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=&mt=8","show_rate":1.0,"pay_per_click":false,"last_daily_stats_aggregation_time":"2011-05-06T00:00:00Z","id":"0004adb4-0d99-4eac-8a76-66c840ae9f0a","stats_aggregation_interval":null,"payment":35,"third_party_data":null,"payment_range_low":null,"name_suffix":"","min_bid_override":null,"device_types":"[\"iphone\",\"itouch\",\"ipad\"]","bid":35,"next_daily_stats_aggregation_time":"2011-05-07T09:52:05Z","low_balance":false,"postal_codes":"","payment_range_high":null,"partner_id":"78cd2f7d-54d4-4f72-9a5b-5cfc3ab3323f","multi_complete":false,"item_id":"0004adb4-0d99-4eac-8a76-66c840ae9f0a","tapjoy_enabled":false,"self_promote_only":false,"publisher_app_whitelist":"","min_conversion_rate":null,"last_stats_aggregation_time":"2011-05-06T20:00:00Z","item_type":"App","hidden":false,"active":false},
+	{"price":0,"name":"test","direct_pay":null,"countries":"","conversion_rate":0.0,"cities":"","age_rating":null,"overall_budget":0,"created_at":"2011-04-12T08:03:07Z","allow_negative_balance":false,"next_stats_aggregation_time":"2011-05-06T21:07:13Z","daily_budget":0,"updated_at":"2011-05-06T20:16:21Z","reward_value":null,"icon_id_override":null,"featured":false,"get_icon_url":"https://s3.amazonaws.com/tapjoy/icons/57/1ed5144551edae0cbcab7a75b0de09671be8b9c018966998ca411aecf8b45521.jpg","user_enabled":false,"url":"http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=&mt=8","show_rate":1.0,"pay_per_click":false,"last_daily_stats_aggregation_time":"2011-05-06T00:00:00Z","id":"0004adb4-0d99-4eac-8a76-66c840ae9f0a","stats_aggregation_interval":null,"payment":35,"third_party_data":null,"payment_range_low":null,"name_suffix":"","min_bid_override":null,"device_types":"[\"iphone\",\"itouch\",\"ipad\"]","bid":35,"next_daily_stats_aggregation_time":"2011-05-07T09:52:05Z","low_balance":false,"postal_codes":"","payment_range_high":null,"partner_id":"78cd2f7d-54d4-4f72-9a5b-5cfc3ab3323f","multi_complete":false,"item_id":"0004adb4-0d99-4eac-8a76-66c840ae9f0a","tapjoy_enabled":false,"self_promote_only":false,"publisher_app_whitelist":"","min_conversion_rate":null,"last_stats_aggregation_time":"2011-05-06T20:00:00Z","item_type":"App","hidden":false,"active":false},
+	{"price":0,"name":"test","direct_pay":null,"countries":"","conversion_rate":0.0,"cities":"","age_rating":null,"overall_budget":0,"created_at":"2011-04-12T08:03:07Z","allow_negative_balance":false,"next_stats_aggregation_time":"2011-05-06T21:07:13Z","daily_budget":0,"updated_at":"2011-05-06T20:16:21Z","reward_value":null,"icon_id_override":null,"featured":false,"get_icon_url":"https://s3.amazonaws.com/tapjoy/icons/57/1ed5144551edae0cbcab7a75b0de09671be8b9c018966998ca411aecf8b45521.jpg","user_enabled":false,"url":"http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=&mt=8","show_rate":1.0,"pay_per_click":false,"last_daily_stats_aggregation_time":"2011-05-06T00:00:00Z","id":"0004adb4-0d99-4eac-8a76-66c840ae9f0a","stats_aggregation_interval":null,"payment":35,"third_party_data":null,"payment_range_low":null,"name_suffix":"","min_bid_override":null,"device_types":"[\"iphone\",\"itouch\",\"ipad\"]","bid":35,"next_daily_stats_aggregation_time":"2011-05-07T09:52:05Z","low_balance":false,"postal_codes":"","payment_range_high":null,"partner_id":"78cd2f7d-54d4-4f72-9a5b-5cfc3ab3323f","multi_complete":false,"item_id":"0004adb4-0d99-4eac-8a76-66c840ae9f0a","tapjoy_enabled":false,"self_promote_only":false,"publisher_app_whitelist":"","min_conversion_rate":null,"last_stats_aggregation_time":"2011-05-06T20:00:00Z","item_type":"App","hidden":false,"active":false},
+	{"price":0,"name":"test","direct_pay":null,"countries":"","conversion_rate":0.0,"cities":"","age_rating":null,"overall_budget":0,"created_at":"2011-04-12T08:03:07Z","allow_negative_balance":false,"next_stats_aggregation_time":"2011-05-06T21:07:13Z","daily_budget":0,"updated_at":"2011-05-06T20:16:21Z","reward_value":null,"icon_id_override":null,"featured":false,"get_icon_url":"https://s3.amazonaws.com/tapjoy/icons/57/1ed5144551edae0cbcab7a75b0de09671be8b9c018966998ca411aecf8b45521.jpg","user_enabled":false,"url":"http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=&mt=8","show_rate":1.0,"pay_per_click":false,"last_daily_stats_aggregation_time":"2011-05-06T00:00:00Z","id":"0004adb4-0d99-4eac-8a76-66c840ae9f0a","stats_aggregation_interval":null,"payment":35,"third_party_data":null,"payment_range_low":null,"name_suffix":"","min_bid_override":null,"device_types":"[\"iphone\",\"itouch\",\"ipad\"]","bid":35,"next_daily_stats_aggregation_time":"2011-05-07T09:52:05Z","low_balance":false,"postal_codes":"","payment_range_high":null,"partner_id":"78cd2f7d-54d4-4f72-9a5b-5cfc3ab3323f","multi_complete":false,"item_id":"0004adb4-0d99-4eac-8a76-66c840ae9f0a","tapjoy_enabled":false,"self_promote_only":false,"publisher_app_whitelist":"","min_conversion_rate":null,"last_stats_aggregation_time":"2011-05-06T20:00:00Z","item_type":"App","hidden":false,"active":false},
+	{"price":0,"name":"test","direct_pay":null,"countries":"","conversion_rate":0.0,"cities":"","age_rating":null,"overall_budget":0,"created_at":"2011-04-12T08:03:07Z","allow_negative_balance":false,"next_stats_aggregation_time":"2011-05-06T21:07:13Z","daily_budget":0,"updated_at":"2011-05-06T20:16:21Z","reward_value":null,"icon_id_override":null,"featured":false,"get_icon_url":"https://s3.amazonaws.com/tapjoy/icons/57/1ed5144551edae0cbcab7a75b0de09671be8b9c018966998ca411aecf8b45521.jpg","user_enabled":false,"url":"http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=&mt=8","show_rate":1.0,"pay_per_click":false,"last_daily_stats_aggregation_time":"2011-05-06T00:00:00Z","id":"0004adb4-0d99-4eac-8a76-66c840ae9f0a","stats_aggregation_interval":null,"payment":35,"third_party_data":null,"payment_range_low":null,"name_suffix":"","min_bid_override":null,"device_types":"[\"iphone\",\"itouch\",\"ipad\"]","bid":35,"next_daily_stats_aggregation_time":"2011-05-07T09:52:05Z","low_balance":false,"postal_codes":"","payment_range_high":null,"partner_id":"78cd2f7d-54d4-4f72-9a5b-5cfc3ab3323f","multi_complete":false,"item_id":"0004adb4-0d99-4eac-8a76-66c840ae9f0a","tapjoy_enabled":false,"self_promote_only":false,"publisher_app_whitelist":"","min_conversion_rate":null,"last_stats_aggregation_time":"2011-05-06T20:00:00Z","item_type":"App","hidden":false,"active":false}
+	];
+	
+	$(document).ready(function(e){
+		setTimeout(hideURLbar, 0)
+		if (offers) {
+			var last = offers.length;
+			$.each(offers, function(index, value) {
+				var cur  = index + 1;
+				var next = cur + 1;
+				var prev = cur - 1;
+				var curEl = '#offer-' + cur;
+				var nextEl = '#offer-' + next;
+				var prevEl = '#offer-' + prev;
+				if (cur == 1) {
+					prevEl = '#offer-' + last;
+				}
+				if (cur == last) {
+					nextEl = '#offer-1';
+				}
+				
+				var item = [
+					'<div id="offer-', cur ,'" class="widget">',
+						'<a class="flip" href="#offer-detail-', cur ,'">',
+							'<div class="item box-border box-rounded box-shadow">',
+								'Offer One',
+							'</div>',
+						'</a>',
+					'</div>',
+					'<div id="offer-detail-', cur ,'">',
+						'<a class="flip" href="#offer-', cur ,'">',	
+							'<div class="item-detail">',
+								'Offer One',
+							'</div>',
+						'</a>',
+					'</div>'
+				].join('');
+				
+				$('document.body').append(item);
+				
+				
+				
+				$(curEl).swipe(function(event, info) {
+					if (info.direction === 'left') {
+						TJTouch.goTo($(nextEl), 'slideleft');
+					}
+					if (info.direction === 'right') {
+						TJTouch.goTo($(prevEl), 'slideright');
+					}
+				});
+			});
+		}
+	});
+
+</script>
+
+</head>
+<body id="jqt">
+
+	<div id="offer-1" class="widget">
+		<a class="flip" href="#offer-detail-1">
+			<div class="item box-border box-rounded box-shadow">
+				<div class="item-icon"><img src="groupon.jpg" /></div>
+				Groupon 1
+			</div>
+		</a>
+	</div>
+	<div id="offer-detail-1">
+		<a class="flip" href="#offer-1">	
+			<div class="item-detail">
+				<div class="item-icon"><img src="groupon.jpg" /></div>
+				Groupon 1 Detail
+			</div>		
+		</a>
+	</div>
+	<div id="offer-2" class="widget">
+		<a class="flip" href="#offer-detail-2">
+			<div class="item box-border box-rounded box-shadow">
+				<div class="item-icon"><img src="groupon.jpg" /></div>
+				Groupon 2
+			</div>
+		</a>
+	</div>
+	<div id="offer-detail-2">
+		<a class="flip" href="#offer-2">	
+			<div class="item-detail">
+				<div class="item-icon"><img src="groupon.jpg" /></div>
+				Groupon 2 Deail
+			</div>		
+		</a>
+	</div>
+
+	<div id="offer-3" class="widget">
+		<a class="flip" href="#offer-detail-3">
+			<div class="item box-border box-rounded box-shadow">
+				<div class="item-icon"><img src="groupon.jpg" /></div>
+				Groupon 3
+			</div>
+		</a>
+	</div>
+	<div id="offer-detail-3">
+		<a class="flip" href="#offer-3">	
+			<div class="item-detail">
+				<div class="item-icon"><img src="groupon.jpg" /></div>
+				Groupon 3 Deail
+			</div>		
+		</a>
+	</div>
+	
+</body>
+</html>

@@ -51,8 +51,19 @@ class GetOffersController < ApplicationController
     # END TO REMOVE
     
     if @currency.hide_app_installs_for_version?(params[:app_version]) || DEVICES_FOR_REDESIGN.include?(params[:udid])
-      @offer_list = Offer.find_all_by_id(['0da90aad-b122-41b9-a0f9-fa849b6fbfbd', '192e6d0b-cc2f-44c2-957c-9481e3c223a0']) if Rails.env == 'development'
-      render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
+      if Rails.env == 'development'
+        action_offers = [
+          '398c96f1-8aca-4615-bcdf-52acc42c3bc7',
+          'da3da5da-6261-4bf4-8ca4-90ec69fbf0e7',
+          '24903418-338f-46c0-81d1-a5bbece21d2c',
+          '8ea6a16c-4332-4ab3-a397-7509697ef8af',
+          'ebb040bb-ca2b-4e7e-835c-ab773d7fbccf',
+          '6853de68-e6b9-429f-a0f1-ac21885c1d9b',
+          '5fdcbf18-7149-41c5-90be-07fdcc3fb2d8'
+        ]
+        @offer_list = Offer.find_all_by_id(action_offers)
+      end
+      render :template => 'get_offers/gallery', :layout => 'iphone_gallery'
     end
   end
   
