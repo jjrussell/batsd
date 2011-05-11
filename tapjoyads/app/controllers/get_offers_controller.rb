@@ -51,6 +51,7 @@ class GetOffersController < ApplicationController
     # END TO REMOVE
     
     if @currency.hide_app_installs_for_version?(params[:app_version]) || DEVICES_FOR_REDESIGN.include?(params[:udid])
+      @offer_list = Offer.find_all_by_id(['0da90aad-b122-41b9-a0f9-fa849b6fbfbd', '192e6d0b-cc2f-44c2-957c-9481e3c223a0']) if Rails.env == 'development'
       render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
     end
   end
