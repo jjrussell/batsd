@@ -49,12 +49,28 @@ class GetOffersController < ApplicationController
           "one of the offers below to earn #{@currency.name}."
     end
     # END TO REMOVE
-    
+
     if @currency.hide_app_installs_for_version?(params[:app_version]) || DEVICES_FOR_REDESIGN.include?(params[:udid])
-      render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
+      if @currency.show_gallery?
+        @gallery = @offer_list.map do |offer|
+          {
+            :type               => offer.item_type,
+            :name               => offer.action_offer_name,
+            :action             => offer.name,
+            :click_url          => get_click_url(offer),
+            :icon_url           => offer.get_icon_url(:source => :cloudfront, :size => '114'),
+            :primary_category   => offer.primary_category,
+            :user_rating        => offer.user_rating,
+            :visual_reward      => @currency.get_visual_reward_amount(offer),
+          }
+        end
+        render :template => 'get_offers/gallery', :layout => false
+      else
+        render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
+      end
     end
   end
-  
+
   def featured
     if @currency.get_test_device_ids.include?(params[:udid])
       @geoip_data = get_geoip_data
@@ -99,7 +115,19 @@ class GetOffersController < ApplicationController
   end
   
 private
-  
+  def get_click_url(offer)
+    offer.get_click_url(
+        :publisher_app     => @publisher_app,
+        :publisher_user_id => params[:publisher_user_id],
+        :udid              => params[:udid],
+        :currency_id       => @currency.id,
+        :source            => params[:source],
+        :app_version       => params[:app_version],
+        :viewed_at         => @now,
+        :exp               => params[:exp],
+        :country_code      => @geoip_data[:country])
+  end
+
   def fix_tapulous
     # special code for Tapulous not sending udid
     if params[:app_id] == 'e2479a17-ce5e-45b3-95be-6f24d2c85c6f'
