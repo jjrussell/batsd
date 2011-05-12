@@ -198,7 +198,7 @@ private
     test_offer.name = 'Test Offer (Visible to Test Devices)'
     test_offer.third_party_data = publisher_app.id
     test_offer.price = 0
-    test_offer.reward_value = currency.conversion_rate
+    test_offer.reward_value = 100
     test_offer
   end
   
