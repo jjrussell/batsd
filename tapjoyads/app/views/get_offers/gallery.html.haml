@@ -59,7 +59,9 @@
             '<div class="offer_details_title">',
               'The details:',
             '</div>',
+            '<div class="offer_action">',
               obj.action,
+            '</div>',
             '</div>',
             '<div class="button">',
               '<button class="blue">',
@@ -77,7 +79,7 @@
             var carousel = new Ext.Carousel({
               defaults: {
                 cls: 'main'
-           	  },
+               },
               items: offerItems
             });
             new Ext.Panel({
@@ -138,11 +140,11 @@
         }
         .category {
           background-color: #FFF;
-          border:1px solid #EAEAEA;     
+          border:1px solid #EAEAEA;
           font-size: 14px;
           height: 32px;
           overflow: hidden;
-          -webkit-border-radius: 12px;    
+          -webkit-border-radius: 12px;
           -webkit-border-radius: 5px;
         }
         .category-title {
@@ -151,12 +153,12 @@
           float: left;
           position: relative;
           border-right-style: none;
-          background-color: #F7F7F7; 
+          background-color: #F7F7F7;
           height: 32px;
           padding: 6px 6px 10px;
-          width: 80px;      
+          width: 80px;
           z-index: 2;
-          -webkit-border-radius: 12px;    
+          -webkit-border-radius: 12px;
           -webkit-border-radius: 5px;
         }
         .category-corner {
@@ -170,7 +172,7 @@
           right: 50px;
           top: -25px;
           height: 60px;
-          width: 60px;  
+          width: 60px;
           z-index: 1;
           -webkit-transform: rotate(45deg) scale(1, 0.5);
         }
@@ -225,6 +227,10 @@
           position: relative;
           top: 2px;
           right: 4px;
+        }
+        .offer_action, button.blue {
+          white-space: nowrap;
+          overflow-x: none;
         }
         .button {
           margin-top: 10px;
