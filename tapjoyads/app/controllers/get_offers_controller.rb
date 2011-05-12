@@ -53,6 +53,7 @@ class GetOffersController < ApplicationController
     if @currency.hide_app_installs_for_version?(params[:app_version]) || DEVICES_FOR_REDESIGN.include?(params[:udid])
       @gallery = @offer_list.map do |offer|
         {
+          :type               => offer.item_type,
           :name               => offer.action_offer_name,
           :action             => offer.name,
           :click_url          => get_click_url(offer),
