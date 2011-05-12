@@ -22,7 +22,7 @@ class Offer < ActiveRecord::Base
                                   'age_rating', 'multi_complete', 'featured',
                                   'publisher_app_whitelist', 'direct_pay', 'reward_value',
                                   'third_party_data', 'payment_range_low',
-                                  'payment_range_high', 'icon_id_override' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'payment_range_high', 'icon_id_override', 'instructions' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   DEFAULT_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
@@ -359,22 +359,11 @@ class Offer < ActiveRecord::Base
   end
   
   def get_destination_url(udid, publisher_app_id, click_key = nil, itunes_link_affiliate = 'linksynergy', currency_id = nil)
-    final_url = url.gsub('TAPJOY_UDID', udid.to_s)
-    if item_type == 'App' && final_url =~ /^http:\/\/phobos\.apple\.com/
-      if itunes_link_affiliate == 'tradedoubler'
-        final_url += '&partnerId=2003&tduid=UK1800811'
-      else
-        final_url = "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&type=10&tmpid=3909&RD_PARM1=#{CGI::escape(final_url)}"
-      end
-    elsif item_type == 'EmailOffer'
-      final_url += "&publisher_app_id=#{publisher_app_id}"
-    elsif item_type == 'GenericOffer'
-      final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
-    elsif item_type == 'ActionOffer'
-      final_url += "?currency_id=#{currency_id}"
+    if instructions.present?
+      instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
+    else
+      complete_action_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
     end
-    
-    final_url
   end
   
   def get_click_url(options)
@@ -731,6 +720,38 @@ class Offer < ActiveRecord::Base
 
   def toggle_user_enabled
     self.user_enabled = !user_enabled
+  end
+  
+  def instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
+    data = {
+      :id                    => id,
+      :udid                  => udid,
+      :publisher_app_id      => publisher_app_id,
+      :click_key             => click_key,
+      :itunes_link_affiliate => itunes_link_affiliate,
+      :currency_id           => currency_id
+    }
+    
+    "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
+  end
+  
+  def complete_action_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
+    final_url = url.gsub('TAPJOY_UDID', udid.to_s)
+    if item_type == 'App' && final_url =~ /^http:\/\/phobos\.apple\.com/
+      if itunes_link_affiliate == 'tradedoubler'
+        final_url += '&partnerId=2003&tduid=UK1800811'
+      else
+        final_url = "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&type=10&tmpid=3909&RD_PARM1=#{CGI::escape(final_url)}"
+      end
+    elsif item_type == 'EmailOffer'
+      final_url += "&publisher_app_id=#{publisher_app_id}"
+    elsif item_type == 'GenericOffer'
+      final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
+    elsif item_type == 'ActionOffer'
+      final_url = url
+    end
+    
+    final_url
   end
 
 private

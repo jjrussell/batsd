@@ -165,6 +165,7 @@ ActiveRecord::Schema.define(:version => 20110512204621) do
     t.boolean  "hidden",                         :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "instructions"
   end
 
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true
@@ -289,6 +290,7 @@ ActiveRecord::Schema.define(:version => 20110512204621) do
     t.datetime "next_daily_stats_aggregation_time"
     t.boolean  "active",                                                                        :default => false
     t.string   "icon_id_override",                  :limit => 36
+    t.text     "instructions"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
