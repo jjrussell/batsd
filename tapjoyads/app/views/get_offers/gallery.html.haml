@@ -52,7 +52,9 @@
                    '</span>',
                    '<span class="category-title">Category</span>',
                    '<span class="category-corner"></span>',
-                     obj.primary_category,
+                    '<span class="category-name">',
+                      obj.primary_category,
+                    '</span>',
                 '</div>',
               '</div>',
             '<div class="offer_details">',
@@ -180,9 +182,12 @@
           color: #929292;
           float: left;
           position: relative;
-          right: 46px;
+          left: -10px;
           height: 30px;
           padding: 7px 6px 10px;
+          overflow-x: hidden;
+          max-width: 82px;
+          white-space: nowrap;
         }
         .instructions {
           color: #626262;
@@ -231,7 +236,7 @@
         }
         .offer_action, button.blue {
           white-space: nowrap;
-          overflow-x: none;
+          overflow-x: hidden;
         }
         .button {
           margin-top: 10px;
