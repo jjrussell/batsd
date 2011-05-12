@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110508205557) do
+ActiveRecord::Schema.define(:version => 20110512204621) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -119,6 +119,7 @@ ActiveRecord::Schema.define(:version => 20110508205557) do
     t.boolean  "tapjoy_enabled",                                                                :default => false, :null => false
     t.boolean  "hide_app_installs",                                                             :default => false, :null => false
     t.string   "minimum_hide_app_installs_version",                                             :default => "",    :null => false
+    t.boolean  "show_gallery",                                                                  :default => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -195,6 +196,17 @@ ActiveRecord::Schema.define(:version => 20110508205557) do
   add_index "monthly_accountings", ["month", "year"], :name => "index_monthly_accountings_on_month_and_year"
   add_index "monthly_accountings", ["partner_id", "month", "year"], :name => "index_monthly_accountings_on_partner_id_and_month_and_year", :unique => true
   add_index "monthly_accountings", ["partner_id"], :name => "index_monthly_accountings_on_partner_id"
+
+  create_table "news_coverages", :force => true do |t|
+    t.datetime "published_at"
+    t.string   "link_source"
+    t.text     "link_text"
+    t.text     "link_href"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "news_coverages", ["published_at"], :name => "index_news_coverages_on_published_at"
 
   create_table "offer_discounts", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
@@ -354,6 +366,7 @@ ActiveRecord::Schema.define(:version => 20110508205557) do
     t.text     "offer_whitelist",                                                                               :null => false
     t.boolean  "use_whitelist",                                                          :default => false,     :null => false
     t.boolean  "approved_publisher",                                                     :default => false,     :null => false
+    t.boolean  "apsalar_sharing"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
@@ -400,6 +413,22 @@ ActiveRecord::Schema.define(:version => 20110508205557) do
 
   add_index "payouts", ["id"], :name => "index_payouts_on_id", :unique => true
   add_index "payouts", ["partner_id"], :name => "index_payouts_on_partner_id"
+
+  create_table "press_releases", :force => true do |t|
+    t.datetime "published_at"
+    t.text     "link_text"
+    t.text     "link_href"
+    t.string   "link_id"
+    t.text     "content_title"
+    t.text     "content_subtitle"
+    t.text     "content_body"
+    t.text     "content_about"
+    t.text     "content_contact"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "press_releases", ["published_at"], :name => "index_press_releases_on_published_at"
 
   create_table "rank_boosts", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
