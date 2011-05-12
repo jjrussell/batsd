@@ -1,7 +1,7 @@
 !!! 5
 %html
   %head
-    %title Tapjoy Gallery
+    %title The Gallery
     %meta{'name' => "viewport", 'content' => "initial-scale=1, maximum-scale=1, minimum-scale=1 user-scalable=no, width = 320"}
     %meta{'name' => "viewport", 'content' => "width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"}
     %meta{'name' => "apple-mobile-web-app-capable", 'content' => "yes"}
@@ -13,6 +13,7 @@
     %script
       :plain
         var offers = #{@gallery.to_json};
+        var currencyName = #{@currency.name.to_json};
         var offerItems = new Array();
         var maxImages = 10;
         var length = offers.length;
@@ -24,36 +25,49 @@
           var name = obj.name;
           var instructions = obj.instructions;
           var iconSRC = '';
-          iconSRC = '<div class="item-icon"><img src="' + iconURL + '"></div>';
+          var iconSRC = '<div class="item-icon"><img src="' + obj.icon_url + '" width="160" height="160"></div>';
+          var starSpan = [];
+          var stars = Math.floor(obj.user_rating);
+          for (var j = 0; j < stars; j++) {
+            starSpan.push('<img src="/images/star_on.png"/>');
+          }
+          if (stars < 5) {
+            var middle = obj.user_rating - stars;
+            if (middle < 0.3) {
+              starSpan.push('<img src="/images/star_off.png"/>');
+            } else if (middle < 0.8) {
+              starSpan.push('<img src="/images/star_half.png"/>');
+            } else {
+              starSpan.push('<img src="/images/star_on.png"/>');
+            }
+            for (var j = stars+1; j < 5; j++) {
+              starSpan.push('<img src="/images/star_off.png"/>');
+            }
+          }
           var itemHTML = [
+            '<a href="', obj.click_url, '">',
             '<div class="widget"><div class="item box-border box-rounded box-shadow">',
               iconSRC,
-              '<div class="name">',
-                name,
-              '</div>', 
-              '<div class="category-wrapper"><div class="category">',
-                '<span class="category-title">Category</span>',
-                '<span class="category-corner"></span>',
-                '<span class="category-name">Game</span>',      // SET CATEGORY AMOUNT HERE                          
-              '</div></div>',
-              '<div class="instructions">',
-                obj.instructions,
-              '</div>',
-              '<div class="button">',
-                '<button class="blue">',
-                  '<a href="', clickURL ,'" target="_blank">',
-                  '<span class="amount">',
-                    '12',  // SET CURRENCY AMOUNT HERE
-                  '</span>',         
-                  ' ',
-                  'War Bucks',  // SET CURRENCY NAME HERE
-                  '</a>',
-                '</button>',
-              '</div>',
-           '</div></div>',
-          ].join('');
-          newObj.html = itemHTML;
-          offerItems.push(newObj);
+            '<span class="offer_name">',
+            obj.name,
+            '</span>',
+            '<div class="offer_category">',
+            '<span class="offer_category_stars">',
+            starSpan.join(''),
+            '</span>',
+            '<span class="offer_category_title">Category</span>',
+            obj.primary_category,
+            '</div>',
+            '<div class="x-button x-button-action" style="width: 129px; ">',
+              '<span class="x-button-label" id="ext-gen1134">',
+                '<span class="currency_value">', obj.visual_reward, '</span> ',
+                currencyName,
+              '</span>',
+            '</div>',
+            '</div></div>',
+            '</a>'
+          ];
+          offerItems.push({html: itemHTML.join('')});
         }
         Ext.setup({
           glossOnIcon: false,
@@ -66,20 +80,19 @@
             });
             new Ext.Panel({
               fullscreen: true,
-                 layout: {
-                   type: 'vbox',
-                   align: 'stretch'
-                 },
-                 defaults: {
-                   flex: 1
-                 },
-                 items: [carousel]
+                layout: {
+                  type: 'vbox',
+                  align: 'stretch'
+                },
+                defaults: {
+                  flex: 1
+                },
+                items: [carousel]
             });
          }
       });
     %style
       :plain
-        
         body {
           background: #525252 url('/images/bg.png');
           color: #333;
@@ -87,6 +100,9 @@
         a, a:visited, a:hover {
           color: #000;
           text-decoration: none;
+        }
+        .currency_value {
+          color: #cfc;
         }
         .main {
           background: #525252 url('/images/bg.png');
@@ -184,7 +200,18 @@
           border: 2px solid #999;
           margin:12px 0;
           padding: 10px;
-          width:120px;
+        }
+        .offer_name {
+          font-weight: bold;
+        }
+        .offer_category {
+          font-size: 14px;
+        }
+        .offer_category_title {
+          font-weight: bold;
+        }
+        .offer_category_stars {
+          float: right;
         }
         .button {
           margin:10px 0;

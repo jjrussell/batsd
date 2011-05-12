@@ -89,7 +89,11 @@ class App < ActiveRecord::Base
   end
 
   def primary_category
-    categories.first
+    if is_android?
+      categories.first.humanize
+    else
+      categories.first
+    end
   end
 
   def info_url

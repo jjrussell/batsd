@@ -15,6 +15,7 @@ class GetOffersController < ApplicationController
     'b4c86b4530a0ee889765a166d80492b46f7f3636', # Ryan iPhone
     '36fa4959f5e1513ba1abd95e68ad40b75b237f15', # Kai iPad
     '5c46e034cd005e5f2b08501820ecb235b0f13f33', # HJ iPhone
+    '5e173b0d-a826-5e44-ac19-2eba8dde07b9'    , # HJ iPhone simulator
     '355031040923092',                          # Linda Nexus S
     'a100000d9833c5'                            # Stephen Evo
   ])
@@ -57,19 +58,27 @@ class GetOffersController < ApplicationController
           'da3da5da-6261-4bf4-8ca4-90ec69fbf0e7',
           '24903418-338f-46c0-81d1-a5bbece21d2c',
           '8ea6a16c-4332-4ab3-a397-7509697ef8af',
-          'ebb040bb-ca2b-4e7e-835c-ab773d7fbccf',
           '6853de68-e6b9-429f-a0f1-ac21885c1d9b',
-          '5fdcbf18-7149-41c5-90be-07fdcc3fb2d8'
+          '5fdcbf18-7149-41c5-90be-07fdcc3fb2d8',
         ]
         @offer_list = Offer.find_all_by_id(action_offers)
+        @offer_list.each do |offer|
+          offer.primary_category  = offer.item.primary_category
+          offer.user_rating       = offer.item.user_rating
+          offer.action_offer_name = offer.item.app.name
+        end
       end
       @gallery = @offer_list.map do |offer|
         {
-          :name => offer.name,
-          :click_url => get_click_url(offer),
-          :icon_url => offer.get_icon_url(:source => :cloudfront, :size => '114'),
-          :instructions => offer.item.instructions,
+          :name               => offer.action_offer_name,
+          :action             => offer.name,
+          :click_url          => get_click_url(offer),
+          :icon_url           => offer.get_icon_url(:source => :cloudfront, :size => '114'),
+          :primary_category   => offer.primary_category,
+          :user_rating        => offer.user_rating,
+          :visual_reward      => @currency.get_visual_reward_amount(offer),
         }
+
       end
       render :template => 'get_offers/gallery', :layout => false
     end
