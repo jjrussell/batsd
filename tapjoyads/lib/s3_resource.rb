@@ -121,7 +121,10 @@ class S3Resource
   end
   
   def save(options = {})
-    catch_exceptions = options.delete(:catch_exceptions) { true }
+    save!(options) rescue false
+  end
+  
+  def save!(options = {})
     save_to_memcache = options.delete(:save_to_memcache) { true }
     raise "Unknown options #{options.keys.join(', ')}"    unless options.empty?
     raise "Can't save #{self.class} without a BucketName" unless bucket_name.present?
@@ -131,45 +134,14 @@ class S3Resource
     self.created_at = now if new_record?
     self.updated_at = now
     
-    raw_attributes = convert_to_raw_attributes(@attributes)
-    begin
-      Mc.put(get_memcache_key, @attributes) if save_to_memcache
-      
-      s3 = RightAws::S3.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
-      bucket = RightAws::S3::Bucket.new(s3, bucket_name)
-      bucket.put(id, raw_attributes)
-      
-      @saved_attributes = @attributes.dup
-      @unsaved_attributes.clear
-      return true
-    rescue Exception => e
-      if e.is_a?(RightAws::AwsError)
-        Mc.increment_count("failed_s3_saves.s3.#{bucket_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
-      else
-        Mc.increment_count("failed_s3_saves.mc.#{bucket_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
-      end
-      
-      if catch_exceptions
-        # uuid = UUIDTools::UUID.random_create.to_s
-        # bucket = S3.bucket(BucketNames::SOME_BUCKET)
-        # bucket.put("incomplete/#{uuid}", raw_attributes)
-        # message = { :id => id, :class => self.class.to_s, :uuid => uuid }.to_json
-        # Sqs.send_message(QueueNames::SOME_QUEUE, message)
-        return false
-      else
-        raise e
-      end
-    end
-  end
-  
-  def save!(options = {})
-    save(options.merge({ :catch_exceptions => false }))
-  end
-  
-  def save_in_background(options = {})
-    Thread.new(options) do |opts|
-      save(opts)
-    end
+    Mc.put(get_memcache_key, @attributes) if save_to_memcache
+    
+    bucket = S3.bucket(bucket_name)
+    bucket.put(id, convert_to_raw_attributes)
+    
+    @saved_attributes = @attributes.dup
+    @unsaved_attributes.clear
+    true
   end
   
   def destroy
@@ -199,9 +171,9 @@ private
     @attributes[attribute]
   end
   
-  def convert_to_raw_attributes(attributes)
+  def convert_to_raw_attributes
     string_attributes = {}
-    attributes.each do |k, v|
+    @attributes.each do |k, v|
       type = @@attribute_types[k] || :string
       string_attributes[k] = TypeConverters::TYPES[type].to_string(v)
     end

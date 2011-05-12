@@ -63,6 +63,9 @@ ActiveRecord::Schema.define(:version => 20110509222934) do
     t.string   "supported_devices"
     t.string   "enabled_rating_offer_id", :limit => 36
     t.string   "secret_key",                                               :null => false
+    t.datetime "released_at"
+    t.float    "user_rating"
+    t.string   "categories"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true

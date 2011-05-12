@@ -26,6 +26,8 @@ class ActionOffer < ActiveRecord::Base
   
   delegate :is_android?, :store_id, :store_url, :large_download?, :supported_devices, :to => :app
 
+  delegate :primary_category, :user_rating, :to => :app
+
   def toggle_user_enabled
     primary_offer.toggle_user_enabled
     primary_offer.save
