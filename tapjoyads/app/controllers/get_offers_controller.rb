@@ -21,7 +21,7 @@ class GetOffersController < ApplicationController
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
-      @test_offer = build_test_offer(@publisher_app, @currency)
+      @test_offer = build_test_offer(@publisher_app)
     end
     
     set_offer_list(:is_server_to_server => false)
@@ -71,7 +71,7 @@ class GetOffersController < ApplicationController
     if @currency.get_test_device_ids.include?(params[:udid])
       @geoip_data = get_geoip_data
       @geoip_data[:country] = params[:country_code] if params[:country_code].present?
-      @offer_list = [ build_test_offer(@publisher_app, @currency) ]
+      @offer_list = [ build_test_offer(@publisher_app) ]
     else
       set_offer_list(:is_server_to_server => false)
       if @offer_list.present? && @offer_list.first.featured?
