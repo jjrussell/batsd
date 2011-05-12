@@ -8,7 +8,7 @@ class BucketNames
   OFFER_DATA               = RUN_MODE_PREFIX + 'offer-data'
   PUBLISHER_ADS            = RUN_MODE_PREFIX + 'publisher-ads'
   SDB_BACKUPS              = RUN_MODE_PREFIX + 'sdb-backups'
-  STATS_RANKS              = RUN_MODE_PREFIX + 'tapstats'
+  STATS                    = RUN_MODE_PREFIX + 'tj_stats'
   STORE_CLICKS             = RUN_MODE_PREFIX + 'store-clicks'
   STORE_RANKS              = RUN_MODE_PREFIX + 'store-ranks'
   TAPJOY                   = RUN_MODE_PREFIX + 'tapjoy'

@@ -1,10 +1,10 @@
 class Stats::Ranks < S3Resource
-  @bucket_name = BucketNames::STATS_RANKS
+  self.bucket_name = BucketNames::STATS_RANKS
   attribute :all_ranks, :type => :json
   # id like "ranks/2011-02-19/0da90aad-b122-41b9-a0f9-fa849b6fbfbd"
 
   def save
-    all_ranks.strip_zero_arrays! if all_ranks
+    strip_zero_arrays!(all_ranks) if all_ranks
     super
   end
 
@@ -12,14 +12,14 @@ class Stats::Ranks < S3Resource
     self.all_ranks[rank_key][hour] = rank
   end
 
-  def update_stat_for_hour(rank_key, day, rank)
+  def update_stat_for_day(rank_key, day, rank)
     self.all_ranks[rank_key][day] = rank
   end
 
   def populate_daily_from_hourly(hourly_ranks, day)
     hourly_ranks.all_ranks.each do |key, value|
       rank = value.reject{ |r| r == 0 }.min
-      self.update_stat_for_hour(key, day, rank)
+      update_stat_for_day(key, day, rank)
     end
   end
 
@@ -85,4 +85,9 @@ class Stats::Ranks < S3Resource
     daily_ranks_over_range
   end
 
+  def strip_zero_arrays!(hash)
+    hash.each do |key, value|
+      hash.delete(key) if value.uniq == [0]
+    end
+  end
 end
