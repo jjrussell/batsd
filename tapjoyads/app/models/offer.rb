@@ -191,9 +191,10 @@ class Offer < ActiveRecord::Base
         offer_item             = offer.item_type.constantize.find(offer.item_id)
         offer.primary_category = offer_item.primary_category
         offer.user_rating      = offer_item.user_rating
-      end
-      if offer.item_type == 'ActionOffer'
-        offer.action_offer_name = offer.item.app.name
+        if offer.item_type == 'ActionOffer'
+          app = App.find(offer_item.app_id)
+          offer.action_offer_name = app.name
+        end
       end
     end
     
