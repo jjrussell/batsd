@@ -21,7 +21,7 @@
           var obj = offers[i];
           var iconSRC = '<div class="item-icon"><img src="' + obj.icon_url + '" width="160" height="160"></div>';
           var starSpan = [];
-          var stars = Math.floor(obj.user_rating);
+          var stars = Math.max(0,Math.min(5, Math.floor(obj.user_rating)));
           for (var j = 0; j < stars; j++) {
             starSpan.push('<img src="/images/star_on.png"/>');
           }
