@@ -19,9 +19,6 @@ class GetOffersController < ApplicationController
     'a100000d9833c5'                            # Stephen Evo
   ])
 
-  APPS_FOR_GALLERY = Set.new([
-    '2349536b-c810-47d7-836c-2cd47cd3a796',     # Tap Defense
-  ])
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
       @test_offer = build_test_offer(@publisher_app)
@@ -54,7 +51,7 @@ class GetOffersController < ApplicationController
     # END TO REMOVE
 
     if @currency.hide_app_installs_for_version?(params[:app_version]) || DEVICES_FOR_REDESIGN.include?(params[:udid])
-      if APPS_FOR_GALLERY.include?(params[:app_id])
+      if @currency.show_gallery?
         @gallery = @offer_list.map do |offer|
           {
             :type               => offer.item_type,
