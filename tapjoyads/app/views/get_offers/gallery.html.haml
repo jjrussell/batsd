@@ -52,7 +52,13 @@
             '<span class="offer_category_title">Category</span>',
             obj.primary_category,
             '</div>',
-            '<div class="x-button x-button-action" style="width: 129px; ">',
+            '<div class="offer_details">',
+            '<div class="offer_details_title">',
+            'The details:',
+            '</div>',
+            obj.action,
+            '</div>',
+            '<div class="x-button x-button-action">',
               '<span class="x-button-label" id="ext-gen1134">',
                 '<span class="currency_value">', obj.visual_reward, '</span> ',
                 currencyName,
@@ -109,9 +115,9 @@
         }
         .item, .item-detail {
           background-color:#FFF;
-          min-height:360px;
+          min-height:380px;
           width:100%;
-          padding:10px;
+          padding:15px;
         }
         .item-detail {
           background-color:#e6e6e6;
@@ -146,8 +152,19 @@
         .offer_category_title {
           font-weight: bold;
         }
+        .offer_details {
+          font-size: 14px;
+          height: 70px;
+        }
+        .offer_details_title {
+          font-weight: bold;
+        }
         .offer_category_stars {
           float: right;
+        }
+        .x-button {
+          width: 136px;
+          font-size: 14px;
         }
 
   %body
