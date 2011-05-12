@@ -75,7 +75,9 @@ class GetOffersController < ApplicationController
           :icon_url           => offer.get_icon_url(:source => :cloudfront, :size => '114'),
           :primary_category   => offer.primary_category,
           :user_rating        => offer.user_rating,
+          :visual_reward      => @currency.get_visual_reward_amount(offer),
         }
+
       end
       render :template => 'get_offers/gallery', :layout => false
     end

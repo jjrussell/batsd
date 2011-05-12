@@ -1,7 +1,7 @@
 !!! 5
 %html
   %head
-    %title Tapjoy Gallery
+    %title The Gallery
     %meta{'name' => "viewport", 'content' => "initial-scale=1, maximum-scale=1, minimum-scale=1 user-scalable=no, width = 320"}
     %meta{'name' => "viewport", 'content' => "width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"}
     %meta{'name' => "apple-mobile-web-app-capable", 'content' => "yes"}
@@ -13,6 +13,7 @@
     %script
       :plain
         var offers = #{@gallery.to_json};
+        var currencyName = #{@currency.name.to_json};
         var offerItems = new Array();
         var maxImages = 10;
         var length = offers.length;
@@ -51,6 +52,12 @@
             '<span class="offer_category_title">Category</span>',
             obj.primary_category,
             '</div>',
+            '<div class="x-button x-button-action" style="width: 129px; ">',
+              '<span class="x-button-label" id="ext-gen1134">',
+                '<span class="currency_value">', obj.visual_reward, '</span> ',
+                currencyName,
+              '</span>',
+            '</div>',
             '</div></div>',
             '</a>'
           ];
@@ -88,6 +95,9 @@
         a, a:visited, a:hover {
           color:#000;
           text-decoration:none;
+        }
+        .currency_value {
+          color: #cfc;
         }
         .main {
           background:#525252 url('/images/bg.png');
