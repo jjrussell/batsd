@@ -78,7 +78,6 @@ class GetOffersController < ApplicationController
           :user_rating        => offer.user_rating,
           :visual_reward      => @currency.get_visual_reward_amount(offer),
         }
-
       end
       render :template => 'get_offers/gallery', :layout => false
     end
