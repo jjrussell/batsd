@@ -50,24 +50,8 @@ class GetOffersController < ApplicationController
           "one of the offers below to earn #{@currency.name}."
     end
     # END TO REMOVE
-    
+
     if @currency.hide_app_installs_for_version?(params[:app_version]) || DEVICES_FOR_REDESIGN.include?(params[:udid])
-      if Rails.env == 'development'
-        action_offers = [
-          '398c96f1-8aca-4615-bcdf-52acc42c3bc7',
-          'da3da5da-6261-4bf4-8ca4-90ec69fbf0e7',
-          '24903418-338f-46c0-81d1-a5bbece21d2c',
-          '8ea6a16c-4332-4ab3-a397-7509697ef8af',
-          '6853de68-e6b9-429f-a0f1-ac21885c1d9b',
-          '5fdcbf18-7149-41c5-90be-07fdcc3fb2d8',
-        ]
-        @offer_list = Offer.find_all_by_id(action_offers)
-        @offer_list.each do |offer|
-          offer.primary_category  = offer.item.primary_category
-          offer.user_rating       = offer.item.user_rating
-          offer.action_offer_name = offer.item.app.name
-        end
-      end
       @gallery = @offer_list.map do |offer|
         {
           :name               => offer.action_offer_name,
