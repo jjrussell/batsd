@@ -192,7 +192,7 @@ private
     params[:exp] = Experiments.choose(params[:udid]) unless params[:exp].present?
   end
   
-  def build_test_offer(publisher_app, currency)
+  def build_test_offer(publisher_app)
     test_offer = Offer.new(:item_id => publisher_app.id, :item_type => 'TestOffer')
     test_offer.id = publisher_app.id
     test_offer.name = 'Test Offer (Visible to Test Devices)'
