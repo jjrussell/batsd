@@ -1,5 +1,3 @@
-require 'rank_boost'
-
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
   include MemcachedRecord
@@ -190,8 +188,9 @@ class Offer < ActiveRecord::Base
     offer_list.each do |offer|
       offer.calculate_rank_score(weights)
       if (offer.item_type == 'App' || offer.item_type == 'ActionOffer')
-        offer.primary_category  = offer.item.primary_category
-        offer.user_rating       = offer.item.user_rating
+        offer_item             = offer.item_type.constantize.find(offer.item_id)
+        offer.primary_category = offer_item.primary_category
+        offer.user_rating      = offer_item.user_rating
       end
     end
     
@@ -242,7 +241,7 @@ class Offer < ActiveRecord::Base
     loop do
       offers = Mc.distributed_get_and_put("s3.enabled_offers.type_#{type}.exp_#{exp}.#{group}") do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
-        Marshal.restore(bucket.get("enabled_offers.type_#{type}.exp_#{exp}.#{group}")) rescue []
+        Marshal.restore(bucket.get("enabled_offers.type_#{type}.exp_#{exp}.#{group}"))
       end
       
       if block_given?
@@ -924,6 +923,6 @@ private
   end
   
   def calculate_rank_boost
-    rank_boosts.active.sum(:amount)
+    RankBoost.for_offer(id).active.sum(:amount)
   end
 end
