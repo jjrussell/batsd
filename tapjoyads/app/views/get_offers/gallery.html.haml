@@ -59,7 +59,9 @@
             '<div class="offer_details_title">',
               'The details:',
             '</div>',
+            '<div class="offer_action">',
               obj.action,
+            '</div>',
             '</div>',
             '<div class="button">',
               '<button class="blue">',
@@ -222,6 +224,10 @@
           position: relative;
           top:2px;
           right:4px;
+        }
+        .offer_action, button.blue {
+          white-space: nowrap;
+          overflow-x: none;
         }
         .button {
           margin:10px 0;
