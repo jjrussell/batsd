@@ -19,7 +19,7 @@
         var length = offers.length;
         for (var i = 0; i < length; i++) {
           var obj = offers[i];
-          var iconSRC = '<div class="item-icon"><img src="' + obj.icon_url + '" width="160" height="160"></div>';
+          var iconSRC = '<div class="item-icon"><img src="' + obj.icon_url + '"></div>';
           var starSpan = [];
           var stars = Math.max(0,Math.min(5, Math.floor(obj.user_rating)));
           for (var j = 0; j < stars; j++) {
@@ -108,23 +108,23 @@
           color: #cfc;
         }
         .main {
-          background:#525252 url('/images/bg.png');
-          color:#333;
+          background: #525252 url('/images/bg.png');
+          color: #333;
          }
         .widget {
-          margin-top:12px;
-          padding:0px 10px;
+          margin-top: 12px;
+          padding:0px 8px;
         }
         .item, .item-detail {
           background-color:#FFF;
           min-height:380px;
           width:100%;
-          padding:15px;
+          padding:12px;
         }
         .item-detail {
-          background-color:#e6e6e6;
-          height:100%;
-          min-height:420px;
+          background-color: #E6E6E6;
+          height: 100%;
+          min-height: 420px;
         }
         .offer_name {
           color: #3E3E3E;
@@ -134,7 +134,7 @@
         }
         .category-wrapper {
           margin-bottom: 8px;
-          padding:0 6px;
+          padding:0 2px;
         }
         .category {
           background-color: #FFF;
@@ -204,6 +204,7 @@
           -webkit-box-shadow: 1px 1px 3px rgba(61, 61, 61, 0.3);
           margin:12px 0;
           padding: 10px;
+          width: 160px;
         }
         .offer_category {
           font-size: 14px;
@@ -213,6 +214,8 @@
         }
         .offer_details {
           font-size: 14px;
+          color: #7A7A7A;
+          margin-bottom: 8px;
         }
         .offer_details_title {
           font-weight: bold;
@@ -220,11 +223,11 @@
         .offer_category_stars {
           float: right;
           position: relative;
-          top:2px;
-          right:4px;
+          top: 2px;
+          right: 4px;
         }
         .button {
-          margin:10px 0;
+          margin-top: 10px;
         }
         button.blue {
           background: #486A9A;
@@ -244,23 +247,19 @@
           width: 160px;
         }
         button.blue a {
-          color:#FFF;
+          color: #FFF;
         }
         button.blue span.amount {
-           color:#CDEDA7;
+           color: #CDEDA7;
         }
         button.blue:hover {
-          background: #2f477d;
+          background: #2F477D;
           background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #7F8DAD), color-stop(0.5, #4A5E8C), color-stop(0.5, #2F477D), color-stop(1, #364C80));
           cursor: pointer;
         }
         button.blue:active {
           -webkit-box-shadow: inset 0 0 20px 0 #1d2845, 0 1px 0 #fff;
           cursor: pointer;
-        }
-        .x-button {
-          width: 136px;
-          font-size: 14px;
         }
 
   %body
