@@ -19,7 +19,7 @@
         var length = offers.length;
         for (var i = 0; i < length; i++) {
           var obj = offers[i];
-          var iconSRC = '<div class="item-icon"><img src="' + obj.icon_url + '" width="114" height="114"></div>';
+          var iconSRC = '<div class="item-icon"><img src="' + obj.icon_url + '" width="160" height="160"></div>';
           var starSpan = [];
           var stars = Math.floor(obj.user_rating);
           for (var j = 0; j < stars; j++) {
@@ -74,14 +74,14 @@
             });
             new Ext.Panel({
               fullscreen: true,
-                 layout: {
-                   type: 'vbox',
-                   align: 'stretch'
-                 },
-                 defaults: {
-                   flex: 1
-                 },
-                 items: [carousel]
+                layout: {
+                  type: 'vbox',
+                  align: 'stretch'
+                },
+                defaults: {
+                  flex: 1
+                },
+                items: [carousel]
             });
          }
       });
@@ -109,7 +109,7 @@
         }
         .item, .item-detail {
           background-color:#FFF;
-          min-height:320px;
+          min-height:360px;
           width:100%;
           padding:10px;
         }
@@ -136,7 +136,6 @@
           -webkit-box-shadow: 1px 1px 3px rgba(61, 61, 61, 0.3);
           margin:12px 0;
           padding: 10px;
-          width:120px;
         }
         .offer_name {
           font-weight: bold;

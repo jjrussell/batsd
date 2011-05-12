@@ -15,6 +15,7 @@ class GetOffersController < ApplicationController
     'b4c86b4530a0ee889765a166d80492b46f7f3636', # Ryan iPhone
     '36fa4959f5e1513ba1abd95e68ad40b75b237f15', # Kai iPad
     '5c46e034cd005e5f2b08501820ecb235b0f13f33', # HJ iPhone
+    '5e173b0d-a826-5e44-ac19-2eba8dde07b9'    , # HJ iPhone simulator
     '355031040923092',                          # Linda Nexus S
     'a100000d9833c5'                            # Stephen Evo
   ])
