@@ -19,6 +19,9 @@ class GetOffersController < ApplicationController
     'a100000d9833c5'                            # Stephen Evo
   ])
 
+  APPS_FOR_GALLERY = Set.new([
+    '2349536b-c810-47d7-836c-2cd47cd3a796',     # Tap Defense
+  ])
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
       @test_offer = build_test_offer(@publisher_app)
@@ -51,19 +54,23 @@ class GetOffersController < ApplicationController
     # END TO REMOVE
 
     if @currency.hide_app_installs_for_version?(params[:app_version]) || DEVICES_FOR_REDESIGN.include?(params[:udid])
-      @gallery = @offer_list.map do |offer|
-        {
-          :type               => offer.item_type,
-          :name               => offer.action_offer_name,
-          :action             => offer.name,
-          :click_url          => get_click_url(offer),
-          :icon_url           => offer.get_icon_url(:source => :cloudfront, :size => '114'),
-          :primary_category   => offer.primary_category,
-          :user_rating        => offer.user_rating,
-          :visual_reward      => @currency.get_visual_reward_amount(offer),
-        }
+      if APPS_FOR_GALLERY.include?(params[:app_id])
+        @gallery = @offer_list.map do |offer|
+          {
+            :type               => offer.item_type,
+            :name               => offer.action_offer_name,
+            :action             => offer.name,
+            :click_url          => get_click_url(offer),
+            :icon_url           => offer.get_icon_url(:source => :cloudfront, :size => '114'),
+            :primary_category   => offer.primary_category,
+            :user_rating        => offer.user_rating,
+            :visual_reward      => @currency.get_visual_reward_amount(offer),
+          }
+        end
+        render :template => 'get_offers/gallery', :layout => false
+      else
+        render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
       end
-      render :template => 'get_offers/gallery', :layout => false
     end
   end
 
