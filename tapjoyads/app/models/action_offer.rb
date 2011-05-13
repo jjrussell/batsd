@@ -40,7 +40,8 @@ private
     offer.id               = id
     offer.partner          = partner
     offer.name             = name
-    offer.url              = "#{API_URL}/action_offers/#{self.id}"
+    offer.url              = app.direct_store_url
+    offer.instructions     = instructions
     offer.device_types     = app.primary_offer.device_types
     offer.bid              = offer.min_bid
     offer.price            = prerequisite_offer_id? ? 0 : app.price
@@ -54,7 +55,9 @@ private
     offers.each do |offer|
       offer.partner_id       = partner_id if partner_id_changed?
       offer.icon_id_override = app_id if app_id_changed? && app_id_was == offer.icon_id_override
+      offer.url              = app.direct_store_url
       offer.name             = name if name_changed?
+      offer.instructions     = instructions if instructions_changed?
       offer.hidden           = hidden if hidden_changed?
       offer.price            = prerequisite_offer_id? ? 0 : app.price
       offer.third_party_data = prerequisite_offer_id if prerequisite_offer_id_changed?

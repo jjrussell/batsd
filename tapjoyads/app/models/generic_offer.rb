@@ -23,6 +23,7 @@ private
     offer.price = price
     offer.device_types = Offer::ALL_DEVICES.to_json
     offer.url = url
+    offer.instructions = instructions
     offer.third_party_data = third_party_data
     offer.save!
   end
@@ -33,6 +34,7 @@ private
       offer.name = name if name_changed?
       offer.price = price if price_changed?
       offer.url = url if url_changed?
+      offer.instructions = instructions if instructions_changed?
       offer.third_party_data = third_party_data if third_party_data_changed?
       offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?
