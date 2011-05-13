@@ -1,4 +1,5 @@
-- @page_title = @app.name[0..20]
+- @page_title = @app.name[0..19].strip
+- @page_title += "..." if @app.name.length > 20
 
 #offers
   #header
