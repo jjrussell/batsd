@@ -10,7 +10,7 @@ private
     app = App.find(message.to_s)
     log_activity(app)
 
-    return if app.store_id.nil?
+    return unless app.store_id.present?
 
     begin
       app.fill_app_store_data

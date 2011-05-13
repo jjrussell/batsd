@@ -67,10 +67,10 @@ private
 
       {
         :item_id          => id,
-        :title            => title,
-        :description      => description,
+        :title            => CGI::unescapeHTML(title),
+        :description      => CGI::unescapeHTML(description),
         :icon_url         => icon_url,
-        :publisher        => publisher,
+        :publisher        => CGI::unescapeHTML(publisher),
         :price            => price,
         :file_size_bytes  => file_size.to_i,
         :released_at      => released_at,

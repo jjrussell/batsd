@@ -35,7 +35,7 @@ production_slave:
   database: tapjoy_db
   host: tapjoy-db-rds-replica2.cck8zbm50hdd.us-east-1.rds.amazonaws.com
   username: tapjoy
-  password: andoverbusiness1
+  password: xatrugAxu6
   reconnect: true
 
 sqlite:
