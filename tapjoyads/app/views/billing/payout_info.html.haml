@@ -102,7 +102,7 @@
             #help_bank_swift_code.help ?
           %td= f.text_field(:bank_routing_number, :value => @payout_info.bank_routing_number)
     %br/
-    = f.check_box(:terms)
+    = f.check_box(:terms, :checked => @checkbox_should_be_checked)
     By checking this box, I agree under penalties of perjury, I certify that:
     .country_other#terms
       %ol

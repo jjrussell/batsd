@@ -144,8 +144,10 @@ class BillingController < WebsiteController
   end
 
   def payout_info
+    @checkbox_should_be_checked = false
     if current_partner.payout_info
       @payout_info = current_partner.payout_info
+      @checkbox_should_be_checked = @payout_info.valid?
       unless @payout_info.filled?
         flash.now[:warning] = "You have some missing information. Please contact <a href='support@tapjoy.com'>support@tapjoy.com</a> if you need further assistance."
       end
