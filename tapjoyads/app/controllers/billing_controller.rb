@@ -144,7 +144,6 @@ class BillingController < WebsiteController
   end
 
   def payout_info
-    @checkbox_should_be_checked = false
     if current_partner.payout_info
       @payout_info = current_partner.payout_info
       unless @payout_info.filled?
