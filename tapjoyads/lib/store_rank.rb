@@ -1,4 +1,4 @@
-# TODO: move this logic to Stats::Ranks?
+# TODO: move this logic to S3Stats::Ranks?
 class StoreRank
   cattr_accessor :itunes_category_ids, :itunes_pop_ids, :itunes_country_ids
   cattr_accessor :google_category_ids, :google_pop_ids, :google_language_ids
@@ -11,6 +11,8 @@ class StoreRank
     success_count = 0
     known_store_ids = {}
     stat_rows = {}
+    # remove this someday
+    temp_rows = {}
     
     ranks_file_name = "ranks.#{time.beginning_of_hour.to_s(:db)}.json"
     ranks_file = open("tmp/#{ranks_file_name}", 'w')
@@ -26,6 +28,8 @@ class StoreRank
     itunes_category_ids.each do |category_key, category_id|
       itunes_pop_ids.each do |pop_key, pop_id|
         itunes_country_ids.each do |country_key, country_id|
+          # TODO: remove this after ranks are moved to s3
+          stat_type = "#{category_key}.#{pop_key}.#{country_key}"
           ranks_key = "#{category_key}.#{pop_key}.#{country_key}"
           url = "http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=#{category_id}&popId=#{pop_id}"
           headers = { 'X-Apple-Store-Front' => "#{country_id}-1,12", 'Host' => 'ax.itunes.apple.com' }
@@ -47,12 +51,20 @@ class StoreRank
                 next if known_store_ids[store_id].nil?
 
                 known_store_ids[store_id].each do |offer_id|
-                  stat_rows[offer_id] ||= Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
-                  stat_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
+                  # TODO: remove next 2 lines after ranks to s3
+                  stat_rows[offer_id] ||= Stats.new(:key => "app.#{date_string}.#{offer_id}", :load_from_memcache => false)
+                  stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour, rank)
+                  #stat_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
+                  #stat_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
+                  temp_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
+                  temp_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
                   
                   # TO REMOVE - once this job consistently runs every hour.
-                  if time.hour > 0 && stat_rows[offer_id].hourly_values(ranks_key)[time.hour - 1] == 0
-                    stat_rows[offer_id].update_stat_for_hour(ranks_key, time.hour - 1, rank)
+                  if time.hour > 0 && stat_rows[offer_id].get_hourly_count(['ranks', stat_type])[time.hour - 1] == 0
+                    stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour - 1, rank)
+
+                  # if time.hour > 0 && stat_rows[offer_id].hourly_values(ranks_key)[time.hour - 1] == 0
+                    temp_rows[offer_id].update_stat_for_hour(ranks_key, time.hour - 1, rank)
                   end
                 end
               end
@@ -70,8 +82,18 @@ class StoreRank
     log_progress "Finished making requests."
     
     stat_rows.each do |offer_id, stat_row|
-      stat_row.serial_save
+      if stat_row.class == Stats
+        stat_row.serial_save
+      else
+        stat_row.save
+      end
     end
+
+    # TODO: remove this later
+    temp_rows.each do |offer_id, ranks_row|
+      ranks_row.save
+    end
+
     log_progress "Finished saving stat_rows."
     
     ranks_file.close
@@ -107,6 +129,8 @@ class StoreRank
     known_store_ids = {}
     known_android_store_ids = {}
     stat_rows = {}
+    # remove this someday
+    temp_rows = {}
 
     android_ranks_file_name = "ranks.android.#{time.beginning_of_hour.to_s(:db)}.json"
     android_ranks_file = open("tmp/#{android_ranks_file_name}", 'w')
@@ -123,6 +147,8 @@ class StoreRank
     google_category_ids.each do |category_key, category_name|
       google_pop_ids.each do |pop_key, pop_id|
         google_language_ids.each do |language_key, language_id|
+          # TODO: remove this line:
+          stat_type = "#{category_key}.#{pop_key}.#{language_key}"
           ranks_key = "#{category_key}.#{pop_key}.#{language_key}"
           offset = 0
           while offset < 200
@@ -145,8 +171,13 @@ class StoreRank
                 ranks_hash.each do |store_id, rank|
                   next if known_android_store_ids[store_id].nil?
                   known_android_store_ids[store_id].each do |offer_id|
-                    stat_rows[offer_id] ||= Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
-                    stat_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
+                    stat_rows[offer_id] ||= Stats.new(:key => "app.#{date_string}.#{offer_id}", :load_from_memcache => false)
+                    stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour, rank)
+
+                    #stat_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
+                    #stat_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
+                    temp_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
+                    temp_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
                   end
                 end
                 android_ranks_file.puts( {"android.#{ranks_key}" => ranks_hash}.to_json )
