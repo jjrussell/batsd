@@ -1,0 +1,203 @@
+{
+    "projectName": "Sencha Touch",
+    "licenseText": "Copyright(c) 2010 Sencha Inc.\nlicensing@sencha.com\nhttp://www.sencha.com/touchlicense",
+    "packages": [
+        {
+            "name"  : "Platform Util",
+            "target": "pkgs/platform/util.js",
+            "id"    : "platform-util",
+            "files" : [
+                {"path": "src/platform/src/",      "name": "Ext.js"},
+                {"path": "src/platform/src/util/", "name": "Observable.js"},
+                {"path": "src/platform/src/util/", "name": "Stateful.js"},
+                {"path": "src/platform/src/util/", "name": "HashMap.js"},
+                {"path": "src/platform/src/util/", "name": "MixedCollection.js"},
+                {"path": "src/platform/src/util/", "name": "AbstractManager.js"},
+                {"path": "src/platform/src/util/", "name": "DelayedTask.js"},
+                {"path": "src/platform/src/util/", "name": "Point.js"},
+                {"path": "src/platform/src/util/", "name": "Offset.js"},
+                {"path": "src/platform/src/util/", "name": "Template.js"},
+                {"path": "src/platform/src/util/", "name": "XTemplate.js"},
+                {"path": "src/platform/src/util/", "name": "Filter.js"},
+                {"path": "src/platform/src/util/", "name": "Function.js"},
+                {"path": "src/platform/src/util/", "name": "Date.js"},
+                {"path": "src/platform/src/util/", "name": "Number.js"},
+                {"path": "src/platform/src/util/", "name": "Format.js"},
+                {"path": "src/platform/src/util/", "name": "LoadMask.js"}
+            ]
+        },
+        {
+            "name"  : "Platform Native",
+            "target": "pkgs/platform/native.js",
+            "id"    : "platform-native",
+            "files" : [
+                {"path": "src/platform/src/native/", "name": "Array.js"}
+            ]
+        },
+        {
+            "name"  : "Platform Core",
+            "target": "pkgs/platform/core.js",
+            "id"    : "platform-core",
+            "files" : [
+                {"path": "src/platform/src/", "name": "ComponentMgr.js"},
+                {"path": "src/platform/src/", "name": "ComponentQuery.js"},
+                {"path": "src/platform/src/", "name": "PluginMgr.js"},
+                {"path": "src/platform/src/", "name": "EventManager.js"},
+                {"path": "src/platform/src/", "name": "Support.js"}
+            ]
+        },
+        {
+            "name"  : "Platform MVC",
+            "target": "pkgs/platform/mvc.js",
+            "id"    : "platform-mvc",
+            "files" : [
+            ]
+        },
+
+        {
+            "name": "Data Foundation",
+            "id": "data-foundation",
+            "target": "pkgs/platform/data-foundation.js",
+            "files": [
+            ]
+        },
+        {
+            "name": "Data - Json",
+            "id": "data-json",
+            "target": "pkgs/platform/data-json.js",
+            "files": [
+            ]
+        },
+        {
+            "name": "Data - XML",
+            "id": "data-xml",
+            "target": "pkgs/platform/data-xml.js",
+            "files": [
+            ]
+        },
+
+        {
+            "name"  : "Touch Core",
+            "target": "pkgs/core.js",
+            "id"    : "core",
+            "files" : [
+                {"path": "src/core/", "name": "Ext.js"},
+				{"path": "src/core/", "name": "Viewport.js"},
+                {"path": "src/util/", "name": "TapRepeater.js"},
+                {"path": "src/util/", "name": "Draggable.js"},
+                {"path": "src/util/", "name": "Droppable.js"},
+				{"path": "src/util/", "name": "EventSimulator.js"},
+            ]
+        },
+
+        {
+            "name"  : "Touch Gestures",
+            "target": "pkgs/gestures.js",
+            "id"    : "gestures",
+            "files" : [
+                {"path": "src/gestures/", "name": "Manager.js"},
+                {"path": "src/gestures/", "name": "Event.js"},
+                {"path": "src/gestures/", "name": "Gesture.js"},
+                {"path": "src/gestures/", "name": "Touch.js"},
+                {"path": "src/gestures/", "name": "Tap.js"},
+                {"path": "src/gestures/", "name": "Swipe.js"},
+                {"path": "src/gestures/", "name": "Drag.js"},
+            ]
+        },
+
+        {
+            "name"  : "Touch DOM",
+            "target": "pkgs/dom.js",
+            "id"    : "dom",
+            "files" : [
+                {"path": "src/core/", "name": "Element.js"},
+                {"path": "src/platform/src/core/", "name": "Element.static.js"},
+                {"path": "src/core/", "name": "Element.static-more.js"},
+                {"path": "src/core/", "name": "Element.position.js"},
+                {"path": "src/core/", "name": "Element.style.js"},
+                {"path": "src/platform/src/core/", "name": "Element.traversal.js"},
+                {"path": "src/platform/src/core/", "name": "Element.insertion.js"},
+                {"path": "src/core/", "name": "DomHelper.js"},
+                {"path": "src/core/", "name": "DomQuery.js"},
+            ]
+        },
+        {
+            "name"  : "Touch Layouts",
+            "target": "pkgs/layouts.js",
+            "id"    : "layouts",
+            "files" : [
+                {"path": "src/platform/src/layout/",           "name": "LayoutManager.js"},
+                {"path": "src/platform/src/layout/",           "name": "Layout.js"},
+                {"path": "src/platform/src/layout/component/", "name": "ComponentLayout.js"},
+                {"path": "src/platform/src/layout/component/", "name": "AutoComponentLayout.js"},
+                {"path": "src/platform/src/layout/component/", "name": "DockLayout.js"},
+                {"path": "src/platform/src/layout/container/", "name": "ContainerLayout.js"},
+                {"path": "src/platform/src/layout/container/", "name": "AutoContainerLayout.js"},
+                {"path": "src/platform/src/layout/container/", "name": "FitLayout.js"},
+                {"path": "src/platform/src/layout/container/", "name": "CardLayout.js"},
+                {"path": "src/layout/container/",              "name": "BoxLayout.js"}
+            ]
+        },
+        {
+            "name": "Widgets",
+            "target": "pkgs/widgets.js",
+            "id": "widgets",
+            "files": [
+                {"path": "src/platform/src/", "name": "Component.js"},
+                {"path": "src/widgets/",      "name": "Component.js"},
+                {"path": "src/platform/src/", "name": "Container.js"},
+                {"path": "src/widgets/",      "name": "Container.js"},
+                {"path": "src/platform/src/", "name": "Panel.js"},
+                {"path": "src/widgets/",      "name": "Panel.js"},
+
+                {"path": "src/widgets/", "name": "Carousel.js"},
+            ]
+        },
+        {
+            "name"  : "Plugins",
+            "target": "pkgs/plugins.js",
+            "id"    : "plugins",
+            "files" : [
+                {"path": "src/plugins/list/", "name": "ListPaging.js"},
+            ]
+        }
+    ],
+    "builds": [
+        {
+            "name": "Sencha Touch",
+            "target": "sencha-touch.js",
+            "debug": true,
+		   "options": {
+		      "minVersion": 1.1
+		   },
+            "packages": [
+                "platform-util",
+                "platform-native",
+                "platform-core",
+                "data-foundation",
+                "data-json",
+                "data-xml",
+                "platform-mvc",
+                "dom",
+                "core",
+                "gestures",
+                "widgets",
+                "layouts",
+                "plugins"
+            ]
+        }
+    ],
+    "resources": [
+        {"src": "resources/"},
+        {"src": "src/"},
+        {"src": "jsbuilder/"},
+        {"src": "examples/"},
+        {"src": "test/"},
+        {"src": "sencha-touch.jsb3"},
+        {"src": "license.txt"},
+        {"src": "license.inc"},
+        {"src": "release-notes.html"},
+        {"src": "getting-started.html"},
+        {"src": "index.html"}
+    ]
+}
