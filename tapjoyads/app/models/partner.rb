@@ -150,7 +150,11 @@ class Partner < ActiveRecord::Base
   def get_disabled_partners
     Partner.find_all_by_id(disabled_partners.split(';'))
   end
-
+  
+  def get_offer_whitelist
+    Set.new(offer_whitelist.split(';'))
+  end
+  
   def payout_cutoff_date(reference_date = nil)
     reference_date ||= Time.zone.now
     reference_date -= 3.days
@@ -253,6 +257,7 @@ class Partner < ActiveRecord::Base
   def completed_payout_info?
     payout_info.present? && payout_info.filled?
   end
+
 private
 
   def update_currencies
