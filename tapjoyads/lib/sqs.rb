@@ -4,7 +4,7 @@
 class Sqs
   
   def self.reset_connection
-    @@sqs = RightAws::SqsGen2.new(nil, nil, { :multi_thread => true })
+    @@sqs = RightAws::SqsGen2.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
     @@queues = {}
   end
   

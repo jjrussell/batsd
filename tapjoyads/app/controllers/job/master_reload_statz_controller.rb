@@ -37,7 +37,8 @@ private
       appstats = Appstats.new(offer.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity }).stats
       conversions = appstats['paid_installs'].sum
       published_offers = appstats['rewards'].sum + appstats['featured_published_offers'].sum + appstats['display_conversions'].sum
-      next unless conversions > 0 || published_offers > 0
+      connects = appstats['logins'].sum
+      next unless conversions > 0 || published_offers > 0 || (offer.item_type == 'ActionOffer' && connects > 0)
       
       this_apps_stats = {}
       this_apps_stats['icon_url'] = offer.get_icon_url
@@ -53,6 +54,7 @@ private
       this_apps_stats['offers_revenue'] = number_to_currency(appstats['total_revenue'].sum / 100.0)
       this_apps_stats['platform'] = offer.get_platform
       this_apps_stats['featured'] = offer.featured?
+      this_apps_stats['offer_type'] = offer.item_type
       
       cached_stats[offer.id] = this_apps_stats
       

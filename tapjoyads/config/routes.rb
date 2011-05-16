@@ -106,6 +106,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :as => :scheduling
   end
   map.resources :action_offers, :only => [ :show ]
+  map.resources :offer_instructions, :only => [ :index ]
   map.with_options :controller => :game_state do |m|
     m.load_game_state 'game_state/load', :action => :load
     m.save_game_state 'game_state/save', :action => :save

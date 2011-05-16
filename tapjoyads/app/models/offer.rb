@@ -1,5 +1,3 @@
-require 'rank_boost'
-
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
   include MemcachedRecord
@@ -32,7 +30,7 @@ class Offer < ActiveRecord::Base
   DAILY_STATS_START_HOUR = 6
   DAILY_STATS_RANGE = 6
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :offer_list_length
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :offer_list_length, :user_rating, :primary_category, :action_offer_name
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -189,6 +187,15 @@ class Offer < ActiveRecord::Base
     
     offer_list.each do |offer|
       offer.calculate_rank_score(weights)
+      if (offer.item_type == 'App' || offer.item_type == 'ActionOffer')
+        offer_item             = offer.item_type.constantize.find(offer.item_id)
+        offer.primary_category = offer_item.primary_category
+        offer.user_rating      = offer_item.user_rating
+        if offer.item_type == 'ActionOffer'
+          app = App.find(offer_item.app_id)
+          offer.action_offer_name = app.name
+        end
+      end
     end
     
     offer_list.sort! do |o1, o2|
@@ -238,7 +245,7 @@ class Offer < ActiveRecord::Base
     loop do
       offers = Mc.distributed_get_and_put("s3.enabled_offers.type_#{type}.exp_#{exp}.#{group}") do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
-        Marshal.restore(bucket.get("enabled_offers.type_#{type}.exp_#{exp}.#{group}")) rescue []
+        Marshal.restore(bucket.get("enabled_offers.type_#{type}.exp_#{exp}.#{group}"))
       end
       
       if block_given?
@@ -352,22 +359,11 @@ class Offer < ActiveRecord::Base
   end
   
   def get_destination_url(udid, publisher_app_id, click_key = nil, itunes_link_affiliate = 'linksynergy', currency_id = nil)
-    final_url = url.gsub('TAPJOY_UDID', udid.to_s)
-    if item_type == 'App' && final_url =~ /^http:\/\/phobos\.apple\.com/
-      if itunes_link_affiliate == 'tradedoubler'
-        final_url += '&partnerId=2003&tduid=UK1800811'
-      else
-        final_url = "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&type=10&tmpid=3909&RD_PARM1=#{CGI::escape(final_url)}"
-      end
-    elsif item_type == 'EmailOffer'
-      final_url += "&publisher_app_id=#{publisher_app_id}"
-    elsif item_type == 'GenericOffer'
-      final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
-    elsif item_type == 'ActionOffer'
-      final_url += "?currency_id=#{currency_id}"
+    if instructions.present?
+      instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
+    else
+      complete_action_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
     end
-    
-    final_url
   end
   
   def get_click_url(options)
@@ -619,6 +615,8 @@ class Offer < ActiveRecord::Base
         # uncomment for tapjoy premier & change show.html line 92-ish
         # is_paid? ? (price * 0.65).round : 50
       end
+    elsif item_type == 'ActionOffer'
+      get_platform == 'Android' ? 25 : 35
     else
       0
     end
@@ -722,6 +720,38 @@ class Offer < ActiveRecord::Base
 
   def toggle_user_enabled
     self.user_enabled = !user_enabled
+  end
+  
+  def instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
+    data = {
+      :id                    => id,
+      :udid                  => udid,
+      :publisher_app_id      => publisher_app_id,
+      :click_key             => click_key,
+      :itunes_link_affiliate => itunes_link_affiliate,
+      :currency_id           => currency_id
+    }
+    
+    "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
+  end
+  
+  def complete_action_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
+    final_url = url.gsub('TAPJOY_UDID', udid.to_s)
+    if item_type == 'App' && final_url =~ /^http:\/\/phobos\.apple\.com/
+      if itunes_link_affiliate == 'tradedoubler'
+        final_url += '&partnerId=2003&tduid=UK1800811'
+      else
+        final_url = "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&type=10&tmpid=3909&RD_PARM1=#{CGI::escape(final_url)}"
+      end
+    elsif item_type == 'EmailOffer'
+      final_url += "&publisher_app_id=#{publisher_app_id}"
+    elsif item_type == 'GenericOffer'
+      final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
+    elsif item_type == 'ActionOffer'
+      final_url = url
+    end
+    
+    final_url
   end
 
 private
@@ -918,6 +948,6 @@ private
   end
   
   def calculate_rank_boost
-    rank_boosts.active.sum(:amount)
+    RankBoost.for_offer(id).active.sum(:amount)
   end
 end

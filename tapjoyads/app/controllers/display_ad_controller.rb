@@ -45,9 +45,6 @@ private
       params[:publisher_user_id] = params[:udid]
     end
     
-    web_request = WebRequest.new(:time => now)
-    web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
-    
     if params[:size].blank? || params[:size] == '320x50'
       # Don't show high-res ads to AdMarvel or TextFree, unless they explicitly send a size param.
       unless params[:action] == 'webview' || params[:app_id] == '6b69461a-949a-49ba-b612-94c8e7589642'
@@ -59,6 +56,12 @@ private
     publisher_app = App.find_in_cache(params[:app_id])
     currency = Currency.find_in_cache(params[:app_id])
     return unless verify_records([ publisher_app, currency ], :render_missing_text => false)
+    
+    params[:publisher_app_id] = publisher_app.id
+    params[:displayer_app_id] = publisher_app.id
+    
+    web_request = WebRequest.new(:time => now)
+    web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
 
     offer_list, more_data_available = publisher_app.get_offer_list(
         :device => device,
@@ -87,10 +90,7 @@ private
         @image = get_ad_image(publisher_app, offer, params[:size], currency)
       end
     
-      params[:offer_id] = offer.id
-      params[:publisher_app_id] = publisher_app.id
-      params[:displayer_app_id] = publisher_app.id
-      
+      web_request.offer_id = offer.id
       web_request.add_path('display_ad_shown')
     end
     
