@@ -41,7 +41,7 @@
     - unless @offer.item.user_rating.nil?
       - property_row('User rating', "#{@offer.item.user_rating} stars", nil, @offer.item.bad_rating? ? 'warning' : '')
     - unless @offer.item.categories.blank?
-      - property_row('Store categories', @offer.item.categories.inspect, nil, '')
+      - property_row('Store categories', "[ #{@offer.item.categories.map(&:humanize).join(', ')} ]", nil, '')
     - if @offer.item.is_android? && @offer.item.released_at?
       - updated = @offer.item.recently_released? ? time_ago_in_words(@offer.item.released_at) + " ago" : @offer.item.released_at.to_s(:pub)
       - property_row('App Update', updated, nil, @offer.item.recently_released? ? 'warning' : nil)
