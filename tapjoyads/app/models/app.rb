@@ -93,7 +93,7 @@ class App < ActiveRecord::Base
   end
 
   def primary_category
-    categories.first
+    categories.first.humanize if categories.present?
   end
 
   def info_url

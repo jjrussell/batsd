@@ -1,24 +1,27 @@
-- @page_title = @app.name[0..19].strip
-- @page_title += "..." if @app.name.length > 20
+- @page_title = "Instructions"
 
 #offers
   #header
     %img.app_icon{ :src => @offer.get_icon_url(:source => :cloudfront, :size => '57') }
     #action_name
-      = @action_offer.name
+      = @offer.name
       %br
       = "Earn "
       %span.amount= @currency.get_visual_reward_amount(@offer) + " " + @currency.name
   
   #action_instructions  
     .important= "Follow these steps to earn #{@currency.name}:"
-    .instructions= simple_paragraphs @action_offer.instructions
+    .instructions= simple_paragraphs @offer.instructions
     .important
       = "After completing these steps, you will earn "
       %span.amount= "#{@currency.get_visual_reward_amount(@offer)} #{@currency.name}."
     
   #footer
-    %div= "If you don't have this app, click #{link_to("here", @app.direct_store_url)} to download it."
+    %div
+      - if @offer.item_type == 'ActionOffer'
+        = "If you don't have this app, click #{link_to("here", @complete_action_url)} to download it."
+      - else
+        = link_to("Click here to continue.", @complete_action_url, :class => 'continue')
   
 #privacy
   = link_to('Privacy', 'https://www.tapjoy.com/privacy')
@@ -135,4 +138,8 @@
     
     #footer {
       margin: 10px 0 0;
+    }
+    
+    .continue {
+      font-size: 24px;
     }
