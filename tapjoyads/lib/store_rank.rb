@@ -12,7 +12,7 @@ class StoreRank
     known_store_ids = {}
     stat_rows = {}
     # remove this someday
-    temp_rows = {}
+    s3_rows = {}
     
     ranks_file_name = "ranks.#{time.beginning_of_hour.to_s(:db)}.json"
     ranks_file = open("tmp/#{ranks_file_name}", 'w')
@@ -56,15 +56,15 @@ class StoreRank
                   stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour, rank)
                   #stat_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
                   #stat_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
-                  temp_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
-                  temp_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
+                  s3_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
+                  s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
                   
                   # TO REMOVE - once this job consistently runs every hour.
                   if time.hour > 0 && stat_rows[offer_id].get_hourly_count(['ranks', stat_type])[time.hour - 1] == 0
                     stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour - 1, rank)
 
                   # if time.hour > 0 && stat_rows[offer_id].hourly_values(ranks_key)[time.hour - 1] == 0
-                    temp_rows[offer_id].update_stat_for_hour(ranks_key, time.hour - 1, rank)
+                    s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour - 1, rank)
                   end
                 end
               end
@@ -90,7 +90,7 @@ class StoreRank
     end
 
     # TODO: remove this later
-    temp_rows.each do |offer_id, ranks_row|
+    s3_rows.each do |offer_id, ranks_row|
       ranks_row.save
     end
 
@@ -130,7 +130,7 @@ class StoreRank
     known_android_store_ids = {}
     stat_rows = {}
     # remove this someday
-    temp_rows = {}
+    s3_rows = {}
 
     android_ranks_file_name = "ranks.android.#{time.beginning_of_hour.to_s(:db)}.json"
     android_ranks_file = open("tmp/#{android_ranks_file_name}", 'w')
@@ -176,8 +176,8 @@ class StoreRank
 
                     #stat_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
                     #stat_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
-                    temp_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
-                    temp_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
+                    s3_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
+                    s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
                   end
                 end
                 android_ranks_file.puts( {"android.#{ranks_key}" => ranks_hash}.to_json )
