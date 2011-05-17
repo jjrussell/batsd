@@ -1,13 +1,4 @@
 class OneOffs
-  
-  def self.copy_instructions_into_offers
-    ActionOffer.find_each do |action_offer|
-      offer = action_offer.primary_offer
-      offer.instructions = action_offer.instructions
-      offer.url = action_offer.app.direct_store_url
-      offer.save!
-    end
-  end
 
   def self.copy_ranks_to_s3(start_time_string=nil, end_time_string=nil, granularity_string='hourly')
     start_time, end_time, granularity = Appstats.parse_dates(start_time_string, end_time_string, granularity_string)
