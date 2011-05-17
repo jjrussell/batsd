@@ -33,7 +33,21 @@
         - class_name = o == selected ? "selected" : ""
         .app{ :class => class_name, :title => o.name }
           = image_tag(o.get_icon_url, :size => '24x24', :alt => '')
-          %span.app-name= o.is_a?(App) ? o.name : o.name_with_suffix
+          %span.app-name
+            = o.is_a?(App) ? o.name : o.name_with_suffix
+            - if o.is_a?(App)
+              - icon_url = o.is_android? ? 'android_flat.png' : 'ios_flat.png'
+            - elsif o.get_platform == 'Android'
+              - icon_url = 'android_flat.png'
+            - elsif o.get_platform == 'iOS'
+              - icon_url = 'ios_flat.png'
+            - else
+              - icon_url = nil
+            - if icon_url.nil?
+              = image_tag('android_flat.png', :class => 'platform_icon')
+              = image_tag('ios_flat.png', :class => 'platform_icon')
+            - else
+              = image_tag(icon_url, :class => 'platform_icon')
           = link_to('#', url, :class => "hidden")
     #new_app_box
       .app{ :class => "new_app #{selected.nil? ? 'selected' : ''}", :title => 'Add a new App' }
@@ -164,6 +178,10 @@
       }
       .app:hover img, .app.selected img {
         opacity: 1.0;
+      }
+      img.platform_icon {
+        opacity: 0.25;
+        margin: 0;
       }
   - content_for :page_javascript do
     :plain
