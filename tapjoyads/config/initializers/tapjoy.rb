@@ -18,5 +18,5 @@ IPHONE_UNITY_PLUGIN = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectUnityPl
 
 
 unless Rails.env == 'production'
-  # Mc.cache.flush
+  Mc.cache.flush
 end

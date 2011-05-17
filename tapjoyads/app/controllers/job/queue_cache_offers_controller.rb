@@ -7,7 +7,7 @@ class Job::QueueCacheOffersController < Job::SqsReaderController
 private
   
   def on_message(message)
-    app = App.find(message.to_s)
-    Offer.cache_offers_for_app(app)
+    currency = Currency.find(message.to_s)
+    currency.cache_offers
   end
 end

@@ -157,6 +157,77 @@ class Currency < ActiveRecord::Base
     hide_app_installs? && minimum_hide_app_installs_version.blank? || app_version.present? && hide_app_installs? && app_version.version_greater_than_or_equal_to?(minimum_hide_app_installs_version)
   end
   
+  def cache_offers
+    Benchmark.realtime do
+      weights = app.group.weights
+
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list
+      cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default], app)
+
+      offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
+      cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default], app)
+    
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads
+      cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default], app)
+    end
+  end
+  
+  def cache_offer_list(offer_list, weights, type, exp)
+    stats = Offer.get_offer_rank_statistics(type)
+    
+    offer_list.each do |offer|
+      offer.normalize_stats(stats)
+      offer.name = "#{offer.truncated_name}..." if offer.name.length > 40
+    end
+    
+    offer_list.each do |offer|
+      offer.calculate_rank_score(weights)
+      if (offer.item_type == 'App' || offer.item_type == 'ActionOffer')
+        offer_item             = offer.item_type.constantize.find(offer.item_id)
+        offer.primary_category = offer_item.primary_category
+        offer.user_rating      = offer_item.user_rating
+        if offer.item_type == 'ActionOffer'
+          action_app = App.find(offer_item.app_id)
+          offer.action_offer_name = action_app.name
+        end
+      end
+    end
+    
+    offer_list.sort! do |o1, o2|
+      if o1.featured? && !o2.featured?
+        -1
+      elsif o2.featured? && !o1.featured?
+        1
+      else
+        o2.rank_score <=> o1.rank_score
+      end
+    end
+    
+    offer_list.first.offer_list_length = offer_list.length
+  
+    offer_groups = []
+    group        = 0
+    key          = app.present? ? "enabled_offers.#{app.id}.type_#{type}.exp_#{exp}" : "enabled_offers.type_#{type}.exp_#{exp}"
+    bucket       = S3.bucket(BucketNames::OFFER_DATA)
+    
+    offer_list.in_groups_of(GROUP_SIZE) do |offers|
+      offers.compact!
+      offer_groups << offers
+      group += 1
+    end
+    
+    offer_groups.each_with_index do |offers, i|
+      Mc.distributed_put("#{key}.#{i}", offers)
+    end
+  
+    if app.present?
+      while Mc.distributed_get("#{key}.#{group}")
+        Mc.distributed_delete("#{key}.#{group}")
+        group += 1
+      end
+    end
+  end
+  
 private
   
   def update_memcached_by_app_id
