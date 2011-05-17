@@ -1,0 +1,8 @@
+- @page_title = 'Give us your email address'
+
+- form_tag(:url => { :action => :create }) do
+  = hidden_field_tag(:udid, params[:udid])
+  = hidden_field_tag(:click_key, params[:click_key])
+  = label_tag(:email_address, 'Email Address')
+  = text_field_tag(:email_address, '')
+  = submit_tag
