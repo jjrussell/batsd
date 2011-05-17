@@ -197,6 +197,11 @@ class StoreRank
     stat_rows.each do |offer_id, stat_row|
       stat_row.serial_save
     end
+    # TODO: remove this later
+    s3_rows.each do |offer_id, ranks_row|
+      ranks_row.save
+    end
+
     log_progress "Finished saving stat_rows."
 
     android_ranks_file.close
