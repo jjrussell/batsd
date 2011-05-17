@@ -43,7 +43,17 @@ ActionController::Routing::Routes.draw do |map|
 
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
+  
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
+  
+  map.pubwhitelist_enable 'pubwhitelist_enable', :controller => :pub_offer_whitelist, :action => :enable
+  
+  map.pubwhitelist_disable 'pubwhitelist_disable', :controller => :pub_offer_whitelist, :action => :disable
+  
+  map.pubwhitelist 'pubwhitelist', :controller => :pub_offer_whitelist, :action => :index
+  
+  map.resources :pub_offer_whitelist,  :only => [:index, :enable, :disable]
+  
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post } do |app|
@@ -117,6 +127,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'press/:id', :controller => 'homepage/press', :action => 'show'
   map.connect 'glu', :controller => 'homepage/press', :action => 'glu'
   map.connect 'publishing', :controller => 'homepage', :action => 'publishers'
+  map.connect 'pubwhitelist', :controller => 'pub_offer_whitelist', :action => 'index'
   map.resources :sdk, :only => [ :index, :show ]
   map.resources :opt_outs, :only => :create
   map.namespace :agency_api do |agency|

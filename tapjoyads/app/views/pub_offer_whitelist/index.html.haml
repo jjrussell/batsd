@@ -24,7 +24,7 @@
   %tbody
     - @offers.each do |offer| 
 
-      %tr{ :valign => "bottom", :bgcolor => 'green' }
+      %tr
         %td
           %img.app_icon{ :src => offer.get_icon_url(:source => :cloudfront, :size => '57') }
         %td
@@ -33,12 +33,12 @@
           - offer.get_device_types.each do |d|
             .offer-text  #{d} #{image_tag(d == "android" ? 'icon_android.png' : 'icon_apple.png')} 
         %td 
-          - if @whitelistedapps.include?(offer.id)
+          - if @whitelisted_apps.include?(offer.id)
             .approved-text Approved
           - else 
             .blocked-text Blocked
         %td
-          - if @whitelistedapps.include?(offer.id)
+          - if @whitelisted_apps.include?(offer.id)
             = link_to '[Block]', pubwhitelist_disable_path(:offerid => offer.id), :method => :disable, :confirm => "Are you sure you want to Block this Offer: #{offer.name}"
           - else 
             = link_to '[Approve]', pubwhitelist_enable_path(:offerid => offer.id), :method => :enable, :confirm => "Are you sure you want to Approve this Offer: #{offer.name}"

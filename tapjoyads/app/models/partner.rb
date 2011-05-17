@@ -155,6 +155,21 @@ class Partner < ActiveRecord::Base
     Set.new(offer_whitelist.split(';'))
   end
   
+  def add_to_whitelist(offer_id)
+    # should we check for the duplicate?
+    Rails.logger.info "*" * 100
+    Rails.logger.info offer_whitelist.inspect
+    self.offer_whitelist = offer_whitelist.split(';').push(offer_id).join(';')
+    Rails.logger.info "*" * 100
+    Rails.logger.info offer_whitelist.inspect
+  end
+  
+  def remove_from_whitelist(offer_id)
+    if offer_whitelist != nil
+      self.offer_whitelist = offer_whitelist.split(';').reject { |offer| offer == offer_id}.join(';')
+    end
+  end
+  
   def payout_cutoff_date(reference_date = nil)
     reference_date ||= Time.zone.now
     reference_date -= 3.days

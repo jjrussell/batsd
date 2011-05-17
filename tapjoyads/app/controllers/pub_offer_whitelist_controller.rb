@@ -5,29 +5,22 @@ class PubOfferWhitelistController < WebsiteController
   filter_access_to :all
 
   def index
-    
-    @whitelistedapps = current_partner.get_offer_whitelist
-
-    
+    @whitelisted_apps = current_partner.get_offer_whitelist
     @offers = Offer.enabled_offers
-    
   end
   
   def enable
-    partner = current_partner
-    currentApprovedList = partner.get_offer_whitelist
-    currentApprovedList.add(params[:offerid])
-    partner.offer_whitelist = currentApprovedList.to_a.join(';')
-    partner.save!
+    current_partner.add_to_whitelist(params[:offerid])
+    current_partner.save!
+    Rails.logger.info "*" * 100
+    Rails.logger.info current_partner.offer_whitelist.inspect
+
     redirect_to pubwhitelist_path
   end
   
   def disable
-    partner = current_partner
-    currentApprovedList = partner.get_offer_whitelist
-    currentApprovedList.delete(params[:offerid])
-    partner.offer_whitelist = currentApprovedList.to_a.join(';')
-    partner.save!
+    current_partner.remove_from_whitelist(params[:offerid])
+    current_partner.save!
     redirect_to pubwhitelist_path
     
   end
