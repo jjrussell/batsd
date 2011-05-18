@@ -175,7 +175,7 @@ class ToolsController < WebsiteController
         @device = nil
         return
       end
-      conditions = "itemName() like '#{udid}.%'"
+      conditions = "udid = '#{udid}'"
       @clicks = []
       @rewarded_clicks_count = 0
       @jailbroken_count = 0
