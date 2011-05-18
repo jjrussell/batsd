@@ -11,7 +11,7 @@ class OneOffs
     end
 
     time = start_time
-    while time <= end_time
+    while time < end_time
       copy_ranks(time.strftime(date_format))
       time += incrementer
     end
@@ -41,7 +41,7 @@ class OneOffs
     end
 
     time = start_time
-    while time <= end_time
+    while time < end_time
       delete_ranks(time.strftime(date_format))
       time += incrementer
     end
