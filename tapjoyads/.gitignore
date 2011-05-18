@@ -10,3 +10,4 @@ config/database.yml
 db/production.sqlite
 tapjoy.komodoproject
 .project
+config/local.yml
