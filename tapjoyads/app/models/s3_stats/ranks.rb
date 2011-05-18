@@ -2,9 +2,13 @@ class S3Stats::Ranks < S3Resource
   self.bucket_name = BucketNames::STATS
   attribute :all_ranks, :type => :json, :default => {}
 
-  def save
+  def save(options = {})
+    save!(options) rescue false
+  end
+
+  def save!(options = {})
     strip_zero_arrays!(all_ranks) if all_ranks
-    super
+    super(options)
   end
 
   def update_stat_for_hour(rank_key, hour, rank)
