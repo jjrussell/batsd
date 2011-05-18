@@ -4,11 +4,11 @@ class EmailOfferController < ApplicationController
   
   def index
     return unless verify_params([ :udid, :click_key ])
-    @click = Click.find(params[:click_key])
-    @currency = Currency.find_in_cache(@click.currency_id)
+    read_click
   end
   
   def create
+    return unless verify_params([ :udid, :click_key ])
     if params[:email_address].blank? || params[:email_address] !~ Authlogic::Regex.email
       render_index_with_message('Please enter a real email address.')
     elsif params[:agreed_to_privacy].blank?
@@ -36,9 +36,14 @@ class EmailOfferController < ApplicationController
   
 private
 
-  def render_index_with_error(message)
-    @click = Click.find(params[:click_key])
+  def read_click
+    @click = Click.find(params[:click_key], :consistent => true)
     @currency = Currency.find_in_cache(@click.currency_id)
+    return unless verify_records([ @currency ])
+  end
+
+  def render_index_with_error(message)
+    read_click
     flash.now[:error] = message
     render(:action => :index) and return
   end
