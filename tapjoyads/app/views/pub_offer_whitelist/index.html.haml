@@ -2,16 +2,16 @@
 
 %h1 Offer Whitelist
 
--# - form_tag(activities_path, :method => :get, :id => 'form', :class => 'tjform') do
-  -# = label_tag(:user)
-  -# = text_field_tag(:user, params[:user], :size => 15)
-  -# = label_tag(:object_id)
-  -# = text_field_tag(:object_id, params[:object_id], :size => 15)
-  -# = label_tag(:request_id)
-  -# = text_field_tag(:request_id, params[:request_id], :size => 15)
-  -# = label_tag(:partner_id)
-  -# = text_field_tag(:partner_id, params[:partner_id], :size => 15)
-  -# = submit_tag("Change")
+
+- form_tag(pubwhitelist_path, :method => :get, :id => 'form', :class => 'tjform') do
+  = label_tag(:name)
+  = text_field_tag(:name, params[:name], :size => 20)
+  = label_tag(:platform)
+  = text_field_tag(:platform, params[:platform], :size => 15)
+  = label_tag(:status)
+  = select_tag(:status, options_for_select ([["All", "*"], ["Approved","a"], ["Blocked","b"]], :selected => params[:status])  )
+  = submit_tag("Filter")
+
 
 %table#whitelist_table.tablesorter
   %thead
@@ -23,7 +23,10 @@
       %th Action
   %tbody
     - @offers.each do |offer| 
-
+      - if @status_to_show == "a" &&  !@whitelisted_offers.include?(offer.id) then
+        - next        
+      - if @status_to_show == "b" &&  @whitelisted_offers.include?(offer.id) then
+        - next        
       %tr
         %td
           %img.app_icon{ :src => offer.get_icon_url(:source => :cloudfront, :size => '57') }
@@ -33,18 +36,49 @@
           - offer.get_device_types.each do |d|
             .offer-text  #{d} #{image_tag(d == "android" ? 'icon_android.png' : 'icon_apple.png')} 
         %td 
-          - if @whitelisted_apps.include?(offer.id)
+          - if @whitelisted_offers.include?(offer.id)
             .approved-text Approved
           - else 
             .blocked-text Blocked
         %td
-          - if @whitelisted_apps.include?(offer.id)
-            = link_to '[Block]', pubwhitelist_disable_path(:offerid => offer.id), :method => :disable, :confirm => "Are you sure you want to Block this Offer: #{offer.name}"
+          - if @whitelisted_offers.include?(offer.id)
+            = link_to '[Block]', pubwhitelist_disable_path(:offerid => offer.id), :method => :disable, :class => "action-text"
           - else 
-            = link_to '[Approve]', pubwhitelist_enable_path(:offerid => offer.id), :method => :enable, :confirm => "Are you sure you want to Approve this Offer: #{offer.name}"
+            = link_to '[Approve]', pubwhitelist_enable_path(:offerid => offer.id), :method => :enable, :class => "action-text"
                 
-
-
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $("#whitelist_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0: { sorter: false },
+          2: { sorter: false },
+          4: { sorter: false },
+        },
+        sortList: [ [3, 0], [1,0] ]
+      });
+      
+      var formY = $('#form').position()['top'];
+      $(window).scroll(function(event) {
+        if ($(window).scrollTop() > formY) {
+          $('#form').css({position: 'fixed', top: 0});
+        } else {
+          $('#form').css({position: 'absolute', top: 'auto'});
+        }
+      });
+      
+      $('a.show_more').click(function() {
+        var b_tag = $(this).parent();
+        b_tag.html(b_tag.attr('full_value'));
+        return false;
+      });
+    });
+    
+    function setValue(id, value) {
+      $('#' + id).val(value);
+    }
+  
 - content_for :page_styles do
   :plain
     table.tablesorter {
@@ -81,4 +115,5 @@
     
     .approved-text { color: green; display: table-cell; font-size: 14px; height: 57px; margin: 0; padding-right: 7px; position: relative; top: 10px; vertical-align: middle; }
 
+    .action-text { display: table-cell; font-size: 14px; height: 57px; margin: 0; padding-right: 7px; position: relative; top: 10px; vertical-align: middle; }
 

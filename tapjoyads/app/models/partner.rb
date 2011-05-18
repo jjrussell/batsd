@@ -157,11 +157,7 @@ class Partner < ActiveRecord::Base
   
   def add_to_whitelist(offer_id)
     # should we check for the duplicate?
-    Rails.logger.info "*" * 100
-    Rails.logger.info offer_whitelist.inspect
     self.offer_whitelist = offer_whitelist.split(';').push(offer_id).join(';')
-    Rails.logger.info "*" * 100
-    Rails.logger.info offer_whitelist.inspect
   end
   
   def remove_from_whitelist(offer_id)
