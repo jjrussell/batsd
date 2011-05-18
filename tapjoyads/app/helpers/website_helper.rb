@@ -14,6 +14,18 @@ module WebsiteHelper
     request.env["HTTP_USER_AGENT"][/msie/i]
   end
 
+  def platform_icon_url(object)
+    if object.is_a?(App)
+      object.is_android? ? 'android_flat.png' : 'ios_flat.png'
+    else
+      if object.get_platform == 'Android'
+        'android_flat.png'
+      elsif object.get_platform == 'iOS'
+        'ios_flat.png'
+      end
+    end
+  end
+
   def clippy(text, bgcolor = '#FFFFFF')
     @clippy_id = 0 unless defined?(@clippy_id)
     @clippy_id += 1

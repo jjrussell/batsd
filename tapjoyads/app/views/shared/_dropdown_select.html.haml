@@ -11,6 +11,12 @@
       - else
         = image_tag(selected.get_icon_url, :size => '24x24', :alt => '')
         = selected.is_a?(App) ? selected.name : selected.name_with_suffix
+        - icon_url = platform_icon_url(selected)
+        - if icon_url.nil?
+          = image_tag('android_flat.png', :class => 'platform_icon')
+          = image_tag('ios_flat.png', :class => 'platform_icon')
+        - else
+          = image_tag(icon_url, :class => 'platform_icon')
   #apps_dropdown.hidden
     #filter_box
       Filter:
@@ -35,14 +41,7 @@
           = image_tag(o.get_icon_url, :size => '24x24', :alt => '')
           %span.app-name
             = o.is_a?(App) ? o.name : o.name_with_suffix
-            - if o.is_a?(App)
-              - icon_url = o.is_android? ? 'android_flat.png' : 'ios_flat.png'
-            - elsif o.get_platform == 'Android'
-              - icon_url = 'android_flat.png'
-            - elsif o.get_platform == 'iOS'
-              - icon_url = 'ios_flat.png'
-            - else
-              - icon_url = nil
+            - icon_url = platform_icon_url(o)
             - if icon_url.nil?
               = image_tag('android_flat.png', :class => 'platform_icon')
               = image_tag('ios_flat.png', :class => 'platform_icon')
