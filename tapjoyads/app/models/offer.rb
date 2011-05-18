@@ -586,7 +586,8 @@ class Offer < ActiveRecord::Base
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
         capped_installs_reject?(publisher_app) ||
-        hide_app_installs_reject?(currency, hide_app_installs)
+        hide_app_installs_reject?(currency, hide_app_installs) ||
+        glu_reject?(currency)
   end
 
   def update_payment(force_update = false)
@@ -839,6 +840,13 @@ private
       return true if !device.has_app(flixter_id) || device.last_run_time(flixter_id) < (Time.zone.now - 1.days)
     end
     return false
+  end
+  
+  def glu_reject?(currency)
+    wsop_currency_ids = %w( 228be94e-490a-46d3-8f10-7f224d9bf284 0520aa45-a60e-4aa2-94df-ef2ea88b5624 2cc8b4e6-e800-408d-9dd9-bd5fe969a9ce )
+    like_glu_id = 'e5f605e6-23f6-44fb-a699-2bef75ecf981'
+    follow_glu_id = 'aa4cb9b2-a169-45be-b90b-a5c84703bbeb'
+    wsop_currency_ids.include?(currency.id) && ![ like_glu_id, follow_glu_id ].include?(id)
   end
   
   def publisher_whitelist_reject?(publisher_app)
