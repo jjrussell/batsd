@@ -82,11 +82,8 @@ class StoreRank
     log_progress "Finished making requests."
     
     stat_rows.each do |offer_id, stat_row|
-      if stat_row.class == Stats
-        stat_row.serial_save
-      else
-        stat_row.save
-      end
+      # TODO: switch this save once migration is finished
+      stat_row.serial_save
     end
 
     # TODO: remove this later
@@ -195,8 +192,10 @@ class StoreRank
     log_progress "Finished making requests."
 
     stat_rows.each do |offer_id, stat_row|
+      # TODO: switch this save once migration is finished
       stat_row.serial_save
     end
+
     # TODO: remove this later
     s3_rows.each do |offer_id, ranks_row|
       ranks_row.save
