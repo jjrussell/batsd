@@ -130,17 +130,19 @@ class S3Resource
     raise "Can't save #{self.class} without a BucketName" unless bucket_name.present?
     raise "Can't save #{self.class} without an ID"        unless id.present?
     
-    now = Time.zone.now
-    self.created_at = now if new_record?
-    self.updated_at = now
-    
-    Mc.put(get_memcache_key, @attributes) if save_to_memcache
-    
-    bucket = S3.bucket(bucket_name)
-    bucket.put(id, convert_to_raw_attributes)
-    
-    @saved_attributes = @attributes.dup
-    @unsaved_attributes.clear
+    unless @unsaved_attributes.empty?
+      now = Time.zone.now
+      self.created_at = now if new_record?
+      self.updated_at = now
+
+      Mc.put(get_memcache_key, @attributes) if save_to_memcache
+
+      bucket = S3.bucket(bucket_name)
+      bucket.put(id, convert_to_raw_attributes)
+
+      @saved_attributes = @attributes.dup
+      @unsaved_attributes.clear
+    end
     true
   end
   
