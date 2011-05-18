@@ -524,6 +524,19 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def wrong_platform?
+    if ['App', 'ActionOffer'].include?(item_type)
+      case get_platform
+      when 'Android'
+        item.platform == 'iphone'
+      when 'iOS'
+        item.platform == 'android'
+      else
+        true # should never be "All" for apps
+      end
+    end
+  end
+
   def normalize_stats(stats)
     self.normal_conversion_rate = (stats[:cvr_std_dev] == 0) ? 0 : (conversion_rate - stats[:cvr_mean]) / stats[:cvr_std_dev]
     self.normal_price           = (stats[:price_std_dev] == 0) ? 0 : (price - stats[:price_mean]) / stats[:price_std_dev]
