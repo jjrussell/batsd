@@ -22,6 +22,8 @@ module WebsiteHelper
         'android_flat.png'
       elsif object.get_platform == 'iOS'
         'ios_flat.png'
+      else
+        'multi_platform_flat.png'
       end
     end
   end
