@@ -21,7 +21,7 @@
       - if @offer.item_type == 'ActionOffer'
         = "If you don't have this app, click #{link_to("here", @complete_action_url)} to download it."
       - else
-        = link_to("Click here to continue.", @complete_action_url)
+        = link_to("Click here to continue.", @complete_action_url, :class => 'continue')
   
 #privacy
   = link_to('Privacy', 'https://www.tapjoy.com/privacy')
@@ -138,4 +138,8 @@
     
     #footer {
       margin: 10px 0 0;
+    }
+    
+    .continue {
+      font-size: 24px;
     }
