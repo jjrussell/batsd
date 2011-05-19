@@ -10,15 +10,16 @@ class EmailOfferController < ApplicationController
   def create
     return unless verify_params([ :udid, :click_key ])
     if params[:email_address].blank? || params[:email_address] !~ Authlogic::Regex.email
-      render_index_with_message('Please enter a real email address.')
+      render_index_with_error('Please enter a real email address.')
     elsif params[:agreed_to_privacy].blank?
-      render_index_with_message('Please indicate that you have accepted the privacy policy.')
+      render_index_with_error('Please indicate that you have accepted the privacy policy.')
+    else
+      email_address = EmailAddress.new(:key => params[:click_key])
+      email_address.email_address = params[:email_address]
+      email_address.udid = params[:udid]
+      email_address.save
+      TapjoyMailer.deliver_email_offer_confirmation(params[:email_address], params[:click_key])
     end
-    email_address = EmailAddress.new(:key => params[:click_key])
-    email_address.email_address = params[:email_address]
-    email_address.udid = params[:udid]
-    email_address.save
-    TapjoyMailer.deliver_email_offer_confirmation(params[:email_address], params[:click_key])
   end
   
   def confirm
