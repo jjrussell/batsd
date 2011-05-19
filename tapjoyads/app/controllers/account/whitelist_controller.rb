@@ -10,10 +10,13 @@ class Account::WhitelistController < WebsiteController
     all_offers = Offer.enabled_offers.by_name(params[:name]).by_device(params[:device] == "all" ? "" : params[:device]).sort_by {|offer| offer.name}
     approved_offers = all_offers.reject { |offer| !@whitelisted_offers.include?(offer.id) }
     blocked_offers = all_offers.reject { |offer| @whitelisted_offers.include?(offer.id) }
-    case params[:status]
-    when "a": @offers = approved_offers
-    when "b": @offers = blocked_offers
-    else @offers = approved_offers + blocked_offers
+    @offers  = case params[:status]
+    when "a"
+      approved_offers
+    when "b"
+      blocked_offers
+    else
+      approved_offers + blocked_offers
     end
   end
   
