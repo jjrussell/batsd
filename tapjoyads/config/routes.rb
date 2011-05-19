@@ -103,7 +103,6 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]
     tools.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :as => :scheduling
   end
-  map.resources :action_offers, :only => [ :show ]
   map.resources :offer_instructions, :only => [ :index ]
   map.resources :employees, :only => [ :index, :new, :create, :edit, :update ]
   map.with_options :controller => :game_state do |m|
