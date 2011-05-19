@@ -64,6 +64,7 @@ class S3Stats::Ranks < S3Resource
   end
 
   def self.daily_over_time_range(app_id, start_time, end_time)
+    now = Time.zone.now
     time = start_time
     date = nil
     daily_ranks_over_range = {}
@@ -76,7 +77,7 @@ class S3Stats::Ranks < S3Resource
         ranks = S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date}/#{app_id}")
       end
 
-      if time + 38.hours > @now
+      if time + 38.hours > now
         hourly_ranks = S3Stats::Ranks.find_or_initialize_by_id("ranks/#{time.strftime("%Y-%m-%d")}/#{app_id}")
         ranks.populate_daily_from_hourly(hourly_ranks, time.day - 1)
       end
