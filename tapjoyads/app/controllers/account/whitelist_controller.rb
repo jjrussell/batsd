@@ -1,8 +1,8 @@
 class Account::WhitelistController < WebsiteController
   layout 'tabbed'
   current_tab :account
-
   filter_access_to :all
+  after_filter :save_activity_logs, :only => [ :enable, :disable ]  
 
   def index
     redirect_to apps_path unless current_partner.use_whitelist?
@@ -19,6 +19,7 @@ class Account::WhitelistController < WebsiteController
   
   def enable
     redirect_to apps_path unless current_partner.use_whitelist?
+    log_activity(current_partner)
     current_partner.add_to_whitelist(params[:id])
     current_partner.save!
     redirect_to account_whitelist_index_path
@@ -26,6 +27,7 @@ class Account::WhitelistController < WebsiteController
   
   def disable
     redirect_to apps_path unless current_partner.use_whitelist?
+    log_activity(current_partner)
     current_partner.remove_from_whitelist(params[:id])
     current_partner.save!
     redirect_to account_whitelist_index_path
