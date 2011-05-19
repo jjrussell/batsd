@@ -66,7 +66,7 @@ class AnalyticsController < WebsiteController
     if current_partner.non_managers.length == 1
       current_partner.non_managers.first.email
     elsif current_user.is_one_of?([:account_mgr, :admin])
-      (current_partner.non_managers.first || current_user).email
+      (current_partner.non_managers.sort_by(&:created_at).first || current_user).email
     else
       current_user.email
     end
