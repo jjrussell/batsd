@@ -33,15 +33,4 @@ class Account::WhitelistController < WebsiteController
     redirect_to account_whitelist_index_path
   end
   
-class ItemForWhitelistSort
-  def initialize( item )
-    @item = item
-  end
-  def item
-    @item
-  end
-  def <=>( target )
-    ( self.item <=> target.item ) * (-1)
-  end
-end  
 end
