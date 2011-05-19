@@ -14,7 +14,7 @@
     = hidden_field_tag(:udid, params[:udid])
     = hidden_field_tag(:click_key, params[:click_key])
     = label_tag(:email_address, 'Email:')
-    = text_field_tag(:email_address, '')
+    = text_field_tag(:email_address, params[:email_address])
   
     %p
       Check your email for a link to verify your email address in order to receive your
