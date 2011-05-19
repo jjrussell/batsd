@@ -44,3 +44,4 @@ a:hover { text-decoration: underline; }
 #legal_stuff p { clear: left; float: left; margin-top: 12px;  }
 
 #client_login { background: url('/images/login_collapsed.png'); margin: 15px 0 0 850px; position: absolute; height: 33px; width: 128px; }
+.hidden { display: none; }

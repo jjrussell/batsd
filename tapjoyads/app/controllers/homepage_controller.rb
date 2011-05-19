@@ -15,11 +15,17 @@ class HomepageController < WebsiteController
   def contact
     if params[:info]
       if params[:info][:source] == 'publishers_contact'
+        # TODO: this is submitted from /publishing. consolidate with regular contact page
         TapjoyMailer.deliver_publisher_application(params[:info])
+        redirect_to :action => 'contact-thanks'
       else
-        TapjoyMailer.deliver_contact_us(params[:info])
+        info = params[:info]
+        if info[:name].blank? || info[:email].blank? || info[:details].blank? || info[:reason].blank?
+          @error_msg = "All fields must be filled out."
+        else
+          TapjoyMailer.deliver_contact_us(params[:info])
+        end
       end
-      redirect_to :action => 'contact-thanks'
     end
   end
 

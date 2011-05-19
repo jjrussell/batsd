@@ -14,3 +14,4 @@ h1, h2 { clear: left; float:left; margin-bottom: 14px; }
 #right ol li { list-style:decimal; }
 #right ul, #right ol { margin-bottom: 25px; }
 .contact { clear: left; }
+a.bold { font-weight: bold; }

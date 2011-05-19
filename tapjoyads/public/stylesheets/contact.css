@@ -1,5 +1,7 @@
-#notice { background: #1b9bd3; border-radius: 4px; color: #fff; display: none; float: left; margin-top: 60px; width: 100%; }
+#notice { background: #1b9bd3; border-radius: 4px; color: #fff; float: left; margin-top: 60px; width: 100%; }
 #notice span { float: left; margin: 10px 0 10px 0; text-align: center; width: 100%; }
+#error { background: #1b9bd3; border-radius: 4px; color: #fff; float: left; margin-top: 60px; width: 100%; }
+#error span { float: left; margin: 10px 0 10px 0; text-align: center; width: 100%; }
 
 #map { float: left; margin-top: 20px; }
 #contact_info { float: left; margin-top: 15px; width: 180px; }
