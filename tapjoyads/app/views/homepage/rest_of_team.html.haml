@@ -1,0 +1,17 @@
+- @about_us = true
+.titleHeader
+  %h3 COMPANY OVERVIEW
+  %h3.separator &nbsp;/&nbsp;
+  %h3.sub FULL TEAM
+
+.splitLayout
+  = render :partial => 'about_left_nav'
+  .team
+    - @employees.each do |employee|
+      .management
+        =image_tag url_for(:controller => "site", :action => "emp_photo", :id => employee.id), :alt => employee.full_name
+        .content
+          %h3=h employee.full_name
+          %br
+          =h employee.comments
+	

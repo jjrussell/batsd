@@ -22,6 +22,19 @@ class HomepageController < WebsiteController
       redirect_to :action => 'contact-thanks'
     end
   end
+  
+  def rest_of_team
+    @employees = Employee.active_only
+  end
+  
+  def show_photo
+    @employee = Employee.find(params[:id])
+    if @employee.photo
+      send_data(@employee.photo, :filename => 'mihir_shah.gif', :type => 'image/gif', :disposition => 'inline')
+    else
+      send_file('public/images/site/blank_image.jpg', :type => 'image/jpg', :disposition => 'inline')
+    end
+  end
 
   def privacy
     render :layout => false

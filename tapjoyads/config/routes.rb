@@ -39,6 +39,7 @@ ActionController::Routing::Routes.draw do |map|
   # website-specific routes
   map.root :controller => :homepage, :action => 'start'
   map.connect 'site/:action', :controller => 'homepage'
+  map.connect 'site/emp_photo/:id', :controller => 'homepage', :action => 'show_photo'
   map.connect 'index.html', :controller => 'homepage', :action => 'index'
 
   map.register 'register', :controller => :sign_up, :action => :new
@@ -104,6 +105,7 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.resources :action_offers, :only => [ :show ]
   map.resources :offer_instructions, :only => [ :index ]
+  map.resources :employees, :only => [ :index, :new, :create, :edit, :update ]
   map.with_options :controller => :game_state do |m|
     m.load_game_state 'game_state/load', :action => :load
     m.save_game_state 'game_state/save', :action => :save

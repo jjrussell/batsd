@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110512204621) do
+ActiveRecord::Schema.define(:version => 20110513224246) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -139,6 +139,20 @@ ActiveRecord::Schema.define(:version => 20110512204621) do
   add_index "email_offers", ["id"], :name => "index_email_offers_on_id", :unique => true
   add_index "email_offers", ["name"], :name => "index_email_offers_on_name"
   add_index "email_offers", ["partner_id"], :name => "index_email_offers_on_partner_id"
+
+  create_table "employees", :force => true do |t|
+    t.boolean  "active",                          :default => true, :null => false
+    t.string   "first_name",                                        :null => false
+    t.string   "middle_name"
+    t.string   "last_name",                                         :null => false
+    t.string   "title",                                             :null => false
+    t.string   "department"
+    t.string   "email",                                             :null => false
+    t.text     "comments"
+    t.binary   "photo",       :limit => 16777215
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "enable_offer_requests", :id => false, :force => true do |t|
     t.string   "id",              :limit => 36,                :null => false

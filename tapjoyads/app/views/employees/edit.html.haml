@@ -1,0 +1,62 @@
+- @page_title = 'Edit Employee'
+
+%h1= @employee.email
+
+- form_for(@employee, nil, :html => { :class => 'tjform' }) do |f|
+  = f.error_messages 
+  .field
+    = f.label(:active, "Active?")
+    = f.check_box(:active)
+  .field
+    = f.label(:first_name)
+    = f.text_field(:first_name)
+  .field
+    = f.label(:middle_name)
+    = f.text_field(:middle_name)
+  .field
+    = f.label(:last_name)
+    = f.text_field(:last_name)
+  .field
+    = f.label(:title)
+    = f.text_field(:title)
+  .field
+    = f.label(:department)
+    = f.text_field(:department)
+  .field
+    = f.label(:comments)
+    = f.text_area(:comments)
+  .field
+    = f.label(:uploaded_photo)
+    = f.file_field(:uploaded_photo)
+  = submit_tag "Update"
+
+- content_for :page_styles do
+  :plain
+
+    label {
+      vertical-align: top;
+      font-weight: bold;
+      text-align: right;
+      display: inline-block;
+      width: 200px;
+      margin-left: -200px;
+    }
+
+    textarea {
+      width: 500px;
+      height: 75px;
+    }
+
+    input[type=submit] {
+      float: right;
+    }
+
+    .field {
+      margin-bottom: 5px;
+      margin-left: 200px;
+    }
+
+    .disabled_partner_names {
+      width: 400px;
+      margin-left: 20px;
+    }
