@@ -24,12 +24,13 @@ class EmailOfferController < ApplicationController
   
   def confirm
     return unless verify_params([ :click_key ])
+    read_click
     response = Downloader.get("#{API_URL}/offer_completed?click_key=#{params[:click_key]}", { :return_response => true, :timeout => 30 })
     if response.status == 200
       email_address = EmailAddress.new(:key => params[:click_key])
       email_address.confirmed_at = Time.zone.now
       email_address.save
-      @confirm_text = 'Your email address has been verified!'
+      @confirm_text = "Your email address has been verified! You will receive your #{@currency.name} in a few moments."
     else
       @confirm_text = 'Your email address could not be verified. Please trying clicking the link in your email again.'
     end
