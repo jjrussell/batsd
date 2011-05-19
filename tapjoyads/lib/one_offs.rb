@@ -21,12 +21,15 @@ class OneOffs
     Stats.select(:where => "itemName() like 'app.#{date_string}.%'") do |stats|
       puts stats.key
       ranks_key = stats.key.gsub('app', 'ranks').gsub('.', '/')
-      ranks = S3Stats::Ranks.find_or_initialize_by_id(ranks_key)
+      ranks = {}
       stats.parsed_ranks.each do |key, value|
-        ranks.all_ranks ||= {}
-        ranks.all_ranks[key] = value
+        ranks[key] = value
       end
-      ranks.save!
+      unless ranks.empty?
+        s3_ranks = S3Stats::Ranks.find_or_initialize_by_id(ranks_key)
+        s3_ranks.all_ranks = ranks
+        s3_ranks.save!
+      end
     end
   end
 
