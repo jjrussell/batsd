@@ -156,12 +156,13 @@ class Partner < ActiveRecord::Base
   end
   
   def add_to_whitelist(offer_id)
-    # should we check for the duplicate?
-    self.offer_whitelist = offer_whitelist.split(';').push(offer_id).join(';')
+    unless offer_id.blank?
+      self.offer_whitelist = offer_whitelist.split(';').push(offer_id).uniq.join(';')
+    end
   end
   
   def remove_from_whitelist(offer_id)
-    if offer_whitelist != nil
+    unless offer_whitelist.blank? && offer_id.blank?
       self.offer_whitelist = offer_whitelist.split(';').reject { |offer| offer == offer_id}.join(';')
     end
   end

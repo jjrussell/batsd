@@ -15,7 +15,7 @@ authorization do
     has_permission_on :support, :to => [ :index ]
     has_permission_on :premier, :to => [ :edit, :update ]
     has_permission_on :apps_offers_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
-    has_permission_on :pub_offer_whitelist, :to => [ :index, :enable, :disable ]
+    has_permission_on :account_whitelist, :to => [ :index, :enable, :disable ]
   end
 
   role :agency do

@@ -107,9 +107,9 @@ class Offer < ActiveRecord::Base
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
   
-  named_scope :enabled_offers,  :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > 0) OR (payment = 0 AND reward_value > 0))"
-  named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", offer_name ] } }
-  named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", platform ] } }
+  named_scope :enabled_offers, :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > 0) OR (payment = 0 AND reward_value > 0))"
+  named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
+  named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
   named_scope :for_display_ads, :conditions => "item_type = 'App' AND price = 0 AND conversion_rate >= 0.3 AND LENGTH(offers.name) <= 30"
   named_scope :featured, :conditions => { :featured => true }
