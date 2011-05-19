@@ -22,11 +22,7 @@
       %th Offer status
       %th Action
   %tbody
-    - @offers.each do |offer| 
-      - if @status_to_show == "a" &&  !@whitelisted_offers.include?(offer.id) then
-        - next        
-      - if @status_to_show == "b" &&  @whitelisted_offers.include?(offer.id) then
-        - next        
+    - @offers.each do |offer|      
       %tr
         %td
           %img.app_icon{ :src => offer.get_icon_url(:source => :cloudfront, :size => '57') }
@@ -56,7 +52,6 @@
           2: { sorter: false },
           4: { sorter: false },
         },
-        sortList: [ [3, 0], [1,0] ]
       });
       
       var formY = $('#form').position()['top'];
