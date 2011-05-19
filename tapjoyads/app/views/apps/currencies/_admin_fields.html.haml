@@ -2,6 +2,34 @@
   %td{:colspan => 2} Admin-only fields:
 %tr.admin
   %th
+    = f.label :tapjoy_enabled, 'Tapjoy enabled'
+    #help_tapjoy_enabled.help ?
+  %td
+    = f.check_box :tapjoy_enabled
+    = error_message_on(@currency, :tapjoy_enabled)
+%tr.admin
+  %th
+    = f.label :hide_app_installs, 'Hide app installs'
+    #help_hide_app_installs.help ?
+  %td
+    = f.check_box :hide_app_installs
+    = error_message_on(@currency, :hide_app_installs)
+%tr.admin
+  %th
+    = f.label :show_gallery, 'Enable PPA Gallery'
+    #help_show_gallery.help ?
+  %td
+    = f.check_box :show_gallery
+    = error_message_on(@currency, :show_gallery)
+%tr.admin.hide_app_installs{:class => @currency.hide_app_installs? ? '' : 'hidden' }
+  %th
+    = f.label :minimum_hide_app_installs_version, 'Min hide app installs version'
+    #help_minimum_hide_app_installs_version.help ?
+  %td
+    = f.text_field :minimum_hide_app_installs_version
+    = error_message_on(@currency, :minimum_hide_app_installs_version)
+%tr.admin
+  %th
     = f.label :disabled_offers, 'Disabled offers'
     #help_disabled_offers.help ?
   %td
@@ -55,6 +83,8 @@
     = @currency.get_disabled_partners.map { |p| link_to(p.name, partner_path(p)) }.join(', ')
     
 .hidden
+  #help_tapjoy_enabled_content{:name => 'Tapjoy Enabled'}
+    Tapjoy approval status. If this is unchecked, the offerwall will be blank and no featured/display ads will be shown.
   #help_disabled_offers_content{:name => 'Disabled offers'}
     A semi-colon (;) separated list of offer id's. Offers that match these id's will not be shown in
     this app's offerwall.
@@ -79,6 +109,31 @@
     The percent share of offer spending that this publisher gets. Computed as: (this partner's rev share) * (spend share ratio).
   #help_direct_pay_share_content{:name => 'Direct-pay share'}
     The percent share of direct-pay revenue that this publisher gets.
+  #help_hide_app_installs_content{:name => 'Hide app installs'}
+    Do not display pay-per-install offers on this publisher's offer wall.
+  #help_show_gallery_content{:name => 'Enable PPA Gallery'}
+    Enable PPA Gallery - must also enable "Hide app installs".
+  #help_minimum_hide_app_installs_version_content{:name => 'Min hide installs version'}
+    Pay-per-install offers will only be hidden for versions of this publisher app higher than this value.
+    Leaving this field blank will disable pay-per-install offers for all versions of this publisher app.
+
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+     $('#currency_hide_app_installs').click(function() {
+        $('.hide_app_installs').toggle($(this).attr('checked'));
+        if(!$(this).attr('checked')) {
+          $('#currency_show_gallery').attr('checked', false);
+        }
+      });
+      $('#currency_show_gallery').change(function() {
+        if($('#currency_show_gallery').is(':checked')) {
+          $('#currency_hide_app_installs').attr('checked', true);
+          $('.hide_app_installs').toggle(true);
+        }
+      });
+    });
+
 
 - content_for :page_styles do
   :plain

@@ -37,14 +37,16 @@ private
       appstats = Appstats.new(offer.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity }).stats
       conversions = appstats['paid_installs'].sum
       published_offers = appstats['rewards'].sum + appstats['featured_published_offers'].sum + appstats['display_conversions'].sum
-      next unless conversions > 0 || published_offers > 0
+      connects = appstats['logins'].sum
+      next unless conversions > 0 || published_offers > 0 || (offer.item_type == 'ActionOffer' && connects > 0)
       
       this_apps_stats = {}
       this_apps_stats['icon_url'] = offer.get_icon_url
       this_apps_stats['offer_name'] = offer.name_with_suffix
       this_apps_stats['conversions'] = number_with_delimiter(conversions)
       this_apps_stats['connects'] = number_with_delimiter(appstats['logins'].sum)
-      this_apps_stats['overall_store_rank'] = (Array(appstats['ranks']['overall.free.united_states']).find_all{|r| r != nil}.last || '-')
+      region = offer.get_device_types.include?('android') ? 'english' : 'united_states'
+      this_apps_stats['overall_store_rank'] = (Array(appstats['ranks']["overall.free.#{region}"]).find_all{|r| r != nil}.last || '-')
       this_apps_stats['price'] = number_to_currency(offer.price / 100.0)
       this_apps_stats['payment'] = number_to_currency(offer.payment / 100.0)
       this_apps_stats['balance'] = number_to_currency(offer.partner.balance / 100.0)
@@ -53,6 +55,7 @@ private
       this_apps_stats['offers_revenue'] = number_to_currency(appstats['total_revenue'].sum / 100.0)
       this_apps_stats['platform'] = offer.get_platform
       this_apps_stats['featured'] = offer.featured?
+      this_apps_stats['offer_type'] = offer.item_type
       
       cached_stats[offer.id] = this_apps_stats
       

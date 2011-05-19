@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110419222619) do
+ActiveRecord::Schema.define(:version => 20110512204621) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -63,6 +63,9 @@ ActiveRecord::Schema.define(:version => 20110419222619) do
     t.string   "supported_devices"
     t.string   "enabled_rating_offer_id", :limit => 36
     t.string   "secret_key",                                               :null => false
+    t.datetime "released_at"
+    t.float    "user_rating"
+    t.string   "categories"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -89,31 +92,34 @@ ActiveRecord::Schema.define(:version => 20110419222619) do
   add_index "conversions", ["publisher_app_id", "created_at", "reward_type"], :name => "index_on_publisher_app_id_created_at_and_reward_type"
 
   create_table "currencies", :id => false, :force => true do |t|
-    t.string   "id",                   :limit => 36,                                                  :null => false
-    t.string   "app_id",               :limit => 36,                                                  :null => false
+    t.string   "id",                                :limit => 36,                                                  :null => false
+    t.string   "app_id",                            :limit => 36,                                                  :null => false
     t.string   "name"
-    t.integer  "conversion_rate",                                                  :default => 100,   :null => false
-    t.integer  "initial_balance",                                                  :default => 0,     :null => false
-    t.boolean  "has_virtual_goods",                                                :default => false, :null => false
-    t.boolean  "only_free_offers",                                                 :default => false, :null => false
-    t.boolean  "send_offer_data",                                                  :default => false, :null => false
+    t.integer  "conversion_rate",                                                               :default => 100,   :null => false
+    t.integer  "initial_balance",                                                               :default => 0,     :null => false
+    t.boolean  "has_virtual_goods",                                                             :default => false, :null => false
+    t.boolean  "only_free_offers",                                                              :default => false, :null => false
+    t.boolean  "send_offer_data",                                                               :default => false, :null => false
     t.string   "secret_key"
     t.string   "callback_url"
-    t.text     "disabled_offers",                                                                     :null => false
-    t.text     "test_devices",                                                                        :null => false
+    t.text     "disabled_offers",                                                                                  :null => false
+    t.text     "test_devices",                                                                                     :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "max_age_rating"
-    t.text     "disabled_partners",                                                                   :null => false
-    t.string   "partner_id",           :limit => 36,                                                  :null => false
-    t.integer  "ordinal",                                                          :default => 500,   :null => false
-    t.decimal  "spend_share",                        :precision => 8, :scale => 6, :default => 0.5,   :null => false
+    t.text     "disabled_partners",                                                                                :null => false
+    t.string   "partner_id",                        :limit => 36,                                                  :null => false
+    t.integer  "ordinal",                                                                       :default => 500,   :null => false
+    t.decimal  "spend_share",                                     :precision => 8, :scale => 6, :default => 0.5,   :null => false
     t.integer  "minimum_featured_bid"
-    t.decimal  "direct_pay_share",                   :precision => 8, :scale => 6, :default => 1.0,   :null => false
-    t.boolean  "banner_advertiser",                                                :default => false, :null => false
-    t.text     "offer_whitelist",                                                                     :null => false
-    t.boolean  "use_whitelist",                                                    :default => false, :null => false
-    t.boolean  "tapjoy_enabled",                                                   :default => false, :null => false
+    t.decimal  "direct_pay_share",                                :precision => 8, :scale => 6, :default => 1.0,   :null => false
+    t.boolean  "banner_advertiser",                                                             :default => false, :null => false
+    t.text     "offer_whitelist",                                                                                  :null => false
+    t.boolean  "use_whitelist",                                                                 :default => false, :null => false
+    t.boolean  "tapjoy_enabled",                                                                :default => false, :null => false
+    t.boolean  "hide_app_installs",                                                             :default => false, :null => false
+    t.string   "minimum_hide_app_installs_version",                                             :default => "",    :null => false
+    t.boolean  "show_gallery",                                                                  :default => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -159,6 +165,7 @@ ActiveRecord::Schema.define(:version => 20110419222619) do
     t.boolean  "hidden",                         :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "instructions"
   end
 
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true
@@ -283,6 +290,7 @@ ActiveRecord::Schema.define(:version => 20110419222619) do
     t.datetime "next_daily_stats_aggregation_time"
     t.boolean  "active",                                                                        :default => false
     t.string   "icon_id_override",                  :limit => 36
+    t.text     "instructions"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -348,7 +356,7 @@ ActiveRecord::Schema.define(:version => 20110419222619) do
     t.text     "apsalar_url"
     t.text     "offer_whitelist",                                                                               :null => false
     t.boolean  "use_whitelist",                                                          :default => false,     :null => false
-    t.boolean  "tapjoy_currency_enabled",                                                :default => false,     :null => false
+    t.boolean  "approved_publisher",                                                     :default => false,     :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

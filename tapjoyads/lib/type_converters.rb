@@ -1,4 +1,5 @@
-module Simpledb
+module TypeConverters
+  
   class StringConverter
     def from_string(s)
       s
@@ -7,7 +8,7 @@ module Simpledb
       s.to_s
     end
   end
-
+  
   class IntConverter
     def from_string(s)
       s.to_i
@@ -16,7 +17,7 @@ module Simpledb
       i.to_s
     end
   end
-
+  
   class FloatConverter
     def from_string(s)
       s.to_f
@@ -25,7 +26,7 @@ module Simpledb
       f.to_s
     end
   end
-
+  
   class TimeConverter
     def from_string(s)
       Time.zone.at(s.to_f)
@@ -34,7 +35,7 @@ module Simpledb
       t.to_f.to_s
     end
   end
-
+  
   class BoolConverter
     def from_string(s)
       s == '1' || s == 'True'
@@ -43,9 +44,8 @@ module Simpledb
       b ? '1' : '0'
     end
   end
-
+  
   class JsonConverter
-    # TODO: Cache json once it's been parsed once.
     def from_string(s)
       JSON.parse(s)
     end
@@ -53,4 +53,14 @@ module Simpledb
       j.to_json
     end
   end
+  
+  TYPES = {
+    :string => StringConverter.new,
+    :int    => IntConverter.new,
+    :float  => FloatConverter.new,
+    :time   => TimeConverter.new,
+    :bool   => BoolConverter.new,
+    :json   => JsonConverter.new,
+  }
+  
 end

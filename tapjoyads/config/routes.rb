@@ -71,7 +71,7 @@ ActionController::Routing::Routes.draw do |map|
     :collection => { :monthly_data => :get, :new_transfer => :get,
                      :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :as_groups => :get,
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
-                     :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get,
+                     :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get, :capped_publishers => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get },
     :member => {  :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
@@ -106,7 +106,7 @@ ActionController::Routing::Routes.draw do |map|
       user.resources :role_assignments, :only => [ :create, :destroy ]
     end
   end
-  map.resources :action_offers, :only => [ :show ]
+  map.resources :offer_instructions, :only => [ :index ]
   map.with_options :controller => :game_state do |m|
     m.load_game_state 'game_state/load', :action => :load
     m.save_game_state 'game_state/save', :action => :save
@@ -160,8 +160,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'Service1.asmx/GetPurchasedVGStoreItems', :controller => 'get_vg_store_items', :action => 'purchased'
   map.connect 'service1.asmx/GetUserAccountObject', :controller => 'get_vg_store_items', :action => 'user_account'
   map.connect 'Service1.asmx/GetUserAccountObject', :controller => 'get_vg_store_items', :action => 'user_account'
-  map.connect 'service1.asmx/PurchaseVGWithCurrency', :controller => 'purchase_vg'
-  map.connect 'Service1.asmx/PurchaseVGWithCurrency', :controller => 'purchase_vg'
+  map.connect 'service1.asmx/PurchaseVGWithCurrency', :controller => 'points', :action => 'purchase_vg'
+  map.connect 'Service1.asmx/PurchaseVGWithCurrency', :controller => 'points', :action => 'purchase_vg'
   
   map.connect 'service1.asmx/:action', :controller => 'service1'
   map.connect 'Service1.asmx/:action', :controller => 'service1'
@@ -176,6 +176,10 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'RateApp.aspx/:action', :controller => 'win_redirector'
   
   map.connect 'Offers.aspx/:action', :controller => 'win_redirector'
+
+  # redirects from old vg controller
+  map.connect 'purchase_vg', :controller => 'points', :action => 'purchase_vg'
+  map.connect 'purchase_vg/spend', :controller => 'points', :action => 'spend'
   
   # Authenticated windows redirectors. These too will be removed/moved to standard 
   # ruby controllers in time.

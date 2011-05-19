@@ -1,5 +1,3 @@
-require 'rank_boost'
-
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
   include MemcachedRecord
@@ -32,7 +30,7 @@ class Offer < ActiveRecord::Base
   DAILY_STATS_START_HOUR = 6
   DAILY_STATS_RANGE = 6
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :rank_boost, :offer_list_length
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :offer_list_length, :user_rating, :primary_category, :action_offer_name
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -111,7 +109,7 @@ class Offer < ActiveRecord::Base
   
   named_scope :enabled_offers, :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > 0) OR (payment = 0 AND reward_value > 0))"
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
-  named_scope :for_display_ads, :conditions => "item_type = 'App' AND price = 0 AND conversion_rate >= 0.3"
+  named_scope :for_display_ads, :conditions => "item_type = 'App' AND price = 0 AND conversion_rate >= 0.3 AND LENGTH(offers.name) <= 30"
   named_scope :featured, :conditions => { :featured => true }
   named_scope :free_apps, :conditions => { :item_type => 'App', :price => 0 }
   named_scope :nonfeatured, :conditions => { :featured => false }
@@ -119,6 +117,8 @@ class Offer < ActiveRecord::Base
   named_scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ] } }
   named_scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ] } }
   named_scope :for_ios_only, :conditions => 'device_types not like "%android%"'
+  
+  delegate :balance, :pending_earnings, :name, :approved_publisher?, :to => :partner, :prefix => true
   
   alias_method :events, :offer_events
   
@@ -187,6 +187,15 @@ class Offer < ActiveRecord::Base
     
     offer_list.each do |offer|
       offer.calculate_rank_score(weights)
+      if (offer.item_type == 'App' || offer.item_type == 'ActionOffer')
+        offer_item             = offer.item_type.constantize.find(offer.item_id)
+        offer.primary_category = offer_item.primary_category
+        offer.user_rating      = offer_item.user_rating
+        if offer.item_type == 'ActionOffer'
+          app = App.find(offer_item.app_id)
+          offer.action_offer_name = app.name
+        end
+      end
     end
     
     offer_list.sort! do |o1, o2|
@@ -236,7 +245,7 @@ class Offer < ActiveRecord::Base
     loop do
       offers = Mc.distributed_get_and_put("s3.enabled_offers.type_#{type}.exp_#{exp}.#{group}") do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
-        Marshal.restore(bucket.get("enabled_offers.type_#{type}.exp_#{exp}.#{group}")) rescue []
+        Marshal.restore(bucket.get("enabled_offers.type_#{type}.exp_#{exp}.#{group}"))
       end
       
       if block_given?
@@ -312,7 +321,15 @@ class Offer < ActiveRecord::Base
   def is_free?
     !is_paid?
   end
-  
+
+  def user_bid_warning
+    is_paid? ? price / 100.0 : 1
+  end
+
+  def user_bid_max
+    [is_paid? ? 5 * price / 100.0 : 3, bid / 100.0].max
+  end
+
   def is_primary?
     item_id == id
   end
@@ -342,22 +359,11 @@ class Offer < ActiveRecord::Base
   end
   
   def get_destination_url(udid, publisher_app_id, click_key = nil, itunes_link_affiliate = 'linksynergy', currency_id = nil)
-    final_url = url.gsub('TAPJOY_UDID', udid.to_s)
-    if item_type == 'App' && final_url =~ /phobos\.apple\.com/
-      if itunes_link_affiliate == 'tradedoubler'
-        final_url += '&partnerId=2003&tduid=UK1800811'
-      else
-        final_url = "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&type=10&tmpid=3909&RD_PARM1=#{CGI::escape(final_url)}"
-      end
-    elsif item_type == 'EmailOffer'
-      final_url += "&publisher_app_id=#{publisher_app_id}"
-    elsif item_type == 'GenericOffer'
-      final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
-    elsif item_type == 'ActionOffer'
-      final_url += "?currency_id=#{currency_id}"
+    if instructions.present?
+      instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
+    else
+      complete_action_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
     end
-    
-    final_url
   end
   
   def get_click_url(options)
@@ -452,7 +458,7 @@ class Offer < ActiveRecord::Base
     
     return if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
       
-    icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256)
+    icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
     medium_icon_blob = icon_256.to_blob{|i| i.format = 'JPG'}
     
     corner_mask_blob = bucket.get("display/round_mask.png")
@@ -480,7 +486,7 @@ class Offer < ActiveRecord::Base
     if existing_icon_blob.present?
       begin
         acf = RightAws::AcfInterface.new
-        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/#{id}.png", "/icons/medium/#{id}.jpg", "icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg"], "#{id}.#{Time.now.to_i}")
+        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/#{id}.png", "/icons/medium/#{id}.jpg", "/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg"], "#{id}.#{Time.now.to_i}")
       rescue Exception => e
         Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
       end
@@ -518,6 +524,19 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def wrong_platform?
+    if ['App', 'ActionOffer'].include?(item_type)
+      case get_platform
+      when 'Android'
+        item.platform == 'iphone'
+      when 'iOS'
+        item.platform == 'android'
+      else
+        true # should never be "All" for apps
+      end
+    end
+  end
+
   def normalize_stats(stats)
     self.normal_conversion_rate = (stats[:cvr_std_dev] == 0) ? 0 : (conversion_rate - stats[:cvr_mean]) / stats[:cvr_std_dev]
     self.normal_price           = (stats[:price_std_dev] == 0) ? 0 : (price - stats[:price_mean]) / stats[:price_std_dev]
@@ -531,7 +550,6 @@ class Offer < ActiveRecord::Base
     boost_weight = weights.delete(:boost) { 1 }
     over_threshold_weight = weights.delete(:over_threshold) { 0 }
     weights = { :conversion_rate => 0, :price => 0, :avg_revenue => 0, :bid => 0 }.merge(weights)
-    self.rank_boost ||= rank_boosts.active.sum(:amount)
     self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send("normal_#{key}")) }
     self.rank_score += rand * random_weight
     self.rank_score += rank_boost * boost_weight
@@ -566,7 +584,7 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
-  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type)
+  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_installs)
     return is_disabled?(publisher_app, currency) ||
         platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device) ||
@@ -580,7 +598,9 @@ class Offer < ActiveRecord::Base
         jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
-        capped_installs_reject?(publisher_app)
+        capped_installs_reject?(publisher_app) ||
+        hide_app_installs_reject?(currency, hide_app_installs) ||
+        glu_reject?(currency)
   end
 
   def update_payment(force_update = false)
@@ -609,6 +629,8 @@ class Offer < ActiveRecord::Base
         # uncomment for tapjoy premier & change show.html line 92-ish
         # is_paid? ? (price * 0.65).round : 50
       end
+    elsif item_type == 'ActionOffer'
+      get_platform == 'Android' ? 25 : 35
     else
       0
     end
@@ -629,7 +651,7 @@ class Offer < ActiveRecord::Base
   end
   
   def needs_higher_bid?
-    !self_promote_only? && (bid_is_bad? || bid_is_passable?)
+    !self_promote_only? && rank_boost == 0 && (bid_is_bad? || bid_is_passable?)
   end
   
   def needs_more_funds?
@@ -694,20 +716,8 @@ class Offer < ActiveRecord::Base
     !partner.users.empty?
   end
 
-  def partner_name
-    partner.name
-  end
-
   def contacts
     partner.non_managers
-  end
-
-  def partner_balance
-    partner.balance
-  end
-
-  def partner_pending_earnings
-    partner.pending_earnings
   end
 
   def account_managers
@@ -716,6 +726,46 @@ class Offer < ActiveRecord::Base
 
   def internal_notes
     partner.account_manager_notes
+  end
+  
+  def rank_boost
+    @rank_boost ||= calculate_rank_boost
+  end
+
+  def toggle_user_enabled
+    self.user_enabled = !user_enabled
+  end
+  
+  def instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
+    data = {
+      :id                    => id,
+      :udid                  => udid,
+      :publisher_app_id      => publisher_app_id,
+      :click_key             => click_key,
+      :itunes_link_affiliate => itunes_link_affiliate,
+      :currency_id           => currency_id
+    }
+    
+    "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
+  end
+  
+  def complete_action_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
+    final_url = url.gsub('TAPJOY_UDID', udid.to_s)
+    if item_type == 'App' && final_url =~ /^http:\/\/phobos\.apple\.com/
+      if itunes_link_affiliate == 'tradedoubler'
+        final_url += '&partnerId=2003&tduid=UK1800811'
+      else
+        final_url = "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&type=10&tmpid=3909&RD_PARM1=#{CGI::escape(final_url)}"
+      end
+    elsif item_type == 'EmailOffer'
+      final_url += "&publisher_app_id=#{publisher_app_id}"
+    elsif item_type == 'GenericOffer'
+      final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
+    elsif item_type == 'ActionOffer'
+      final_url = url
+    end
+    
+    final_url
   end
 
 private
@@ -805,6 +855,13 @@ private
     return false
   end
   
+  def glu_reject?(currency)
+    wsop_currency_ids = %w( 228be94e-490a-46d3-8f10-7f224d9bf284 0520aa45-a60e-4aa2-94df-ef2ea88b5624 2cc8b4e6-e800-408d-9dd9-bd5fe969a9ce )
+    like_glu_id = 'e5f605e6-23f6-44fb-a699-2bef75ecf981'
+    follow_glu_id = 'aa4cb9b2-a169-45be-b90b-a5c84703bbeb'
+    wsop_currency_ids.include?(currency.id) && ![ like_glu_id, follow_glu_id ].include?(id)
+  end
+  
   def publisher_whitelist_reject?(publisher_app)
     return publisher_app_whitelist.present? && !get_publisher_app_whitelist.include?(publisher_app.id)
   end
@@ -832,6 +889,10 @@ private
   
   def capped_installs_reject?(publisher_app)
     free_app? && publisher_app.capped_advertiser_app_ids.include?(item_id)
+  end
+  
+  def hide_app_installs_reject?(currency, hide_app_installs)
+    hide_app_installs && item_type == 'App'
   end
   
   def normalize_device_type(device_type_param)
@@ -905,5 +966,9 @@ private
     elsif hidden_changed? && hidden?
       enable_offer_requests.pending.each { |request| request.approve!(false) }
     end
+  end
+  
+  def calculate_rank_boost
+    RankBoost.for_offer(id).active.sum(:amount)
   end
 end

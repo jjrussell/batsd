@@ -125,7 +125,7 @@ class Conversion < ActiveRecord::Base
     end
   end
   
-  def self.restore_from_file(filename, concurrency = 50)
+  def self.restore_from_file(filename, concurrency = 4000)
     Benchmark.realtime do
       f = File.open(filename, 'r')
       count = 0

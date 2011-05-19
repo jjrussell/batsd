@@ -20,18 +20,4 @@ class PublisherUser < SimpledbShardedResource
     udids.length < MAX_UDIDS
   end
   
-  # TO REMOVE - once the one-off finishes
-  def self.find_or_initialize(key)
-    pub_user = self.new(:key => key)
-    return pub_user unless pub_user.new_record?
-    
-    pub_user_record = PublisherUserRecord.new(:key => key)
-    return pub_user if pub_user_record.new_record?
-    
-    pub_user_record.get('udid', :force_array => true).each do |udid|
-      pub_user.udids = udid
-    end
-    pub_user
-  end
-  
 end

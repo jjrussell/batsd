@@ -44,7 +44,7 @@ class ClickController < ApplicationController
       raise "not a test device"
     end
     
-    @test_offer = build_test_offer(publisher_app, @currency)
+    @test_offer = build_test_offer(publisher_app)
     
     test_reward = Reward.new
     test_reward.type              = 'test_offer'
@@ -178,6 +178,7 @@ private
     @click.reward_key        = UUIDTools::UUID.random_create.to_s
     @click.reward_key_2      = @displayer_app.present? ? UUIDTools::UUID.random_create.to_s : ''
     @click.source            = params[:source] || ''
+    @click.ip_address        = get_ip_address
     @click.country           = params[:country_code] || ''
     @click.type              = type
     @click.advertiser_amount = @currency.get_advertiser_amount(@offer)

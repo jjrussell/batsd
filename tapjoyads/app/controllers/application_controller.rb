@@ -118,8 +118,7 @@ private
   end
   
   def get_ip_address
-    return @request_ip_address if defined?(@request_ip_address)
-    @request_ip_address = (request.headers['X-Forwarded-For'] || request.remote_ip).gsub(/,.*$/, '')
+    @request_ip_address ||= (request.headers['X-Forwarded-For'] || request.remote_ip).gsub(/,.*$/, '')
   end
   
   def get_geoip_data
@@ -193,13 +192,13 @@ private
     params[:exp] = Experiments.choose(params[:udid]) unless params[:exp].present?
   end
   
-  def build_test_offer(publisher_app, currency)
+  def build_test_offer(publisher_app)
     test_offer = Offer.new(:item_id => publisher_app.id, :item_type => 'TestOffer')
     test_offer.id = publisher_app.id
     test_offer.name = 'Test Offer (Visible to Test Devices)'
     test_offer.third_party_data = publisher_app.id
     test_offer.price = 0
-    test_offer.reward_value = currency.conversion_rate
+    test_offer.reward_value = 100
     test_offer
   end
   
