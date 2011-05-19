@@ -2,7 +2,7 @@ class OneOffs
 
   def self.copy_ranks_to_s3(start_time_string=nil, end_time_string=nil, granularity_string='hourly')
     start_time, end_time, granularity = Appstats.parse_dates(start_time_string, end_time_string, granularity_string)
-    if granularity == :daily
+    if granularity_string == 'daily'
       date_format = ('%Y-%m')
       incrementer = 1.month
     else
