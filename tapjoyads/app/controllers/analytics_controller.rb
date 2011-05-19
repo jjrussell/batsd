@@ -3,9 +3,7 @@ class AnalyticsController < WebsiteController
   filter_access_to :all
 
   def index
-    if current_partner.apsalar_url.nil?
-      @apsalar_email = get_apsalar_email
-    end
+    render 'register' if current_partner.apsalar_url.nil?
   end
 
   def create_apsalar_account
