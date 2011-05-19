@@ -6,8 +6,8 @@
 - form_tag(account_whitelist_index_path, :method => :get, :id => 'form', :class => 'tjform') do
   = label_tag(:name)
   = text_field_tag(:name, params[:name], :size => 20)
-  = label_tag(:platform)
-  = text_field_tag(:platform, params[:platform], :size => 15)
+  = label_tag(:platform)  # currently labelled as 'platform' for device type, we can change it as required later
+  = select_tag 'device', options_for_select(["all"] + Offer::ALL_DEVICES, params[:device])
   = label_tag(:status)
   = select_tag(:status, options_for_select ([["All", "*"], ["Approved","a"], ["Blocked","b"]], :selected => params[:status])  )
   = submit_tag("Filter")

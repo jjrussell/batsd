@@ -47,7 +47,7 @@ ActionController::Routing::Routes.draw do |map|
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
   
   map.namespace :account do |account|
-    account.resources :whitelist, :controller => 'whitelist', :only => [ :index] ,  :member => [:enable, :disable ]
+    account.resources :whitelist, :controller => 'whitelist', :only => [ :index ], :member => [ :enable, :disable ]
   end  
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
@@ -122,7 +122,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'press/:id', :controller => 'homepage/press', :action => 'show'
   map.connect 'glu', :controller => 'homepage/press', :action => 'glu'
   map.connect 'publishing', :controller => 'homepage', :action => 'publishers'
-  map.connect 'account/whitelist', :controller => 'account/whitelist'
   map.resources :sdk, :only => [ :index, :show ]
   map.resources :opt_outs, :only => :create
   map.namespace :agency_api do |agency|

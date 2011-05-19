@@ -7,9 +7,7 @@ class Account::WhitelistController < WebsiteController
   def index
     if current_partner.use_whitelist  
       @whitelisted_offers = current_partner.get_offer_whitelist
-      offer_name = params[:name].nil? ? "": params[:name]
-      platform_to_show = params[:platform].nil? ? "": params[:platform]
-      @offers = Offer.enabled_offers.by_name(offer_name).by_device(platform_to_show)
+      @offers = Offer.enabled_offers.by_name(params[:name]).by_device(params[:device])
       @status_to_show = params[:status]
     else
       redirect_to apps_path
