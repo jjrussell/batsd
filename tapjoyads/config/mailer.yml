@@ -1,7 +1,8 @@
 --- 
-  :address: smtp.gmail.com
+  :address: relay.jangosmtp.net
   :port: 587
-  :user_name: noreply@tapjoy.com
-  :password: tapmail
+  :domain: tapjoy.com
+  :user_name: tapjoy
+  :password: 959505OG
   :authentication: :plain
   :enable_starttls_auto: true
