@@ -53,10 +53,12 @@ Environment Setup:
 
 
 -Copy config files into place
-  -copy tapjoyserver/tapjoyads/config/newrelic-test.yml tapjoyserver/tapjoyads/config/newrelic.yml
-  -copy tapjoyserver/tapjoyads/config/database-default.yml tapjoyserver/tapjoyads/config/database.yml
+  -cp tapjoyserver/tapjoyads/config/newrelic-test.yml tapjoyserver/tapjoyads/config/newrelic.yml
+  -cp tapjoyserver/tapjoyads/config/database-default.yml tapjoyserver/tapjoyads/config/database.yml
   -mkdir tapjoyserver/tapjoyads/tmp
   -mkdir tapjoyserver/tapjoyads/log
+  -cp tapjoysersver/tapjoyads/config/local-default.yml tapjoyserver/tapjoyads/config/local.yml
+  - open local.yml and change api_url to point to the local address of the app (ex: http://tapjoy.local or http://localhost:3000)
 
 
 -Install required gems

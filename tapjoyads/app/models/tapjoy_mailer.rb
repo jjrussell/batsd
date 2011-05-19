@@ -102,4 +102,13 @@ class TapjoyMailer < ActionMailer::Base
     content_type 'text/html'
     body(:earnings => earnings)
   end
+  
+  def email_offer_confirmation(email_address, click_key)
+    from 'noreply@tapjoy.com'
+    recipients email_address
+    subject 'Welcome to Tapjoy Games'
+    content_type 'text/html'
+    body(:click_key => click_key)
+  end
+  
 end
