@@ -37,7 +37,7 @@ class HomepageController < WebsiteController
   end
 
   def team
-    render :layout => 'homepage'
+    render :layout => 'newcontent'
   end
 
   def index
