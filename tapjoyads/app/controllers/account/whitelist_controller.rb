@@ -5,17 +5,16 @@ class Account::WhitelistController < WebsiteController
   filter_access_to :all
 
   def index
-    if current_partner.use_whitelist  
-      @whitelisted_offers = current_partner.get_offer_whitelist
-      @offers = Offer.enabled_offers.by_name(params[:name]).by_device(params[:device])
-      @status_to_show = params[:status]
-    else
+    unless current_partner.use_whitelist?
       redirect_to apps_path
-    end
+    end  
+    @whitelisted_offers = current_partner.get_offer_whitelist
+    @offers = Offer.enabled_offers.by_name(params[:name]).by_device(params[:device])
+    @status_to_show = params[:status]
   end
   
   def enable
-    unless current_partner.use_whitelist
+    unless current_partner.use_whitelist?
       redirect_to apps_path
     end
     current_partner.add_to_whitelist(params[:id])
@@ -24,7 +23,7 @@ class Account::WhitelistController < WebsiteController
   end
   
   def disable
-    unless current_partner.use_whitelist
+    unless current_partner.use_whitelist?
       redirect_to apps_path
     end
     current_partner.remove_from_whitelist(params[:id])
