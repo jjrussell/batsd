@@ -601,8 +601,7 @@ class Offer < ActiveRecord::Base
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
         capped_installs_reject?(publisher_app) ||
-        hide_app_installs_reject?(currency, hide_app_installs) ||
-        glu_reject?(currency)
+        hide_app_installs_reject?(currency, hide_app_installs)
   end
 
   def update_payment(force_update = false)
@@ -857,15 +856,6 @@ private
     return false
   end
   
-  def glu_reject?(currency)
-    return false if item_type == 'GenericOffer'
-    
-    wsop_currency_ids = %w( 228be94e-490a-46d3-8f10-7f224d9bf284 0520aa45-a60e-4aa2-94df-ef2ea88b5624 2cc8b4e6-e800-408d-9dd9-bd5fe969a9ce )
-    like_glu_id = 'e5f605e6-23f6-44fb-a699-2bef75ecf981'
-    follow_glu_id = 'aa4cb9b2-a169-45be-b90b-a5c84703bbeb'
-    wsop_currency_ids.include?(currency.id) && ![ like_glu_id, follow_glu_id ].include?(id)
-  end
-  
   def publisher_whitelist_reject?(publisher_app)
     return publisher_app_whitelist.present? && !get_publisher_app_whitelist.include?(publisher_app.id)
   end
@@ -896,7 +886,7 @@ private
   end
   
   def hide_app_installs_reject?(currency, hide_app_installs)
-    hide_app_installs && item_type == 'App'
+    hide_app_installs && item_type != 'GenericOffer'
   end
   
   def normalize_device_type(device_type_param)
