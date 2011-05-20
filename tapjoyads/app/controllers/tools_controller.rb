@@ -365,12 +365,20 @@ class ToolsController < WebsiteController
     flash[:notice] = "Added #{user_roles.map(&:name).sort.to_json} to #{user.email}"
     redirect_to manage_user_roles_tool_path(:email => user.email)
   end
-  
+
   def capped_publishers
     @capped_publishers = {}
     App.get_ios_publisher_apps.each do |pub|
       capped_advertisers = pub.capped_advertiser_apps.map { |app| { :count => pub.daily_installs_for_advertiser(app.id), :app => app } }
       @capped_publishers[pub] = capped_advertisers unless capped_advertisers.empty?
+    end
+  end
+
+  def freemium_android
+    @apps = StoreRank.top_freemium_android_apps
+    @tapjoy_apps = {}
+    Offer.find_all_by_id(@apps.map{|app|app['tapjoy_apps']}.flatten).each do |app|
+      @tapjoy_apps[app.id] = app
     end
   end
 end
