@@ -227,9 +227,10 @@ class StoreRank
     `rm 'tmp/#{android_ranks_file_name}.gz'`
   end
 
-  def self.top_freemium_android_apps
+  def self.top_freemium_android_apps(time=nil)
+    time ||= Time.zone.now - 5.minutes
     bucket = S3.bucket(BucketNames::STORE_RANKS)
-    key = bucket.key("android/freemium/#{Time.zone.now.strftime('%Y-%m-%d')}")
+    key = bucket.key("android/freemium/#{time.strftime('%Y-%m-%d')}")
     unless key.exists?
       hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
       hydra.disable_memoization
