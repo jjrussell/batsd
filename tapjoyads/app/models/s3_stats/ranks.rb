@@ -57,7 +57,7 @@ class S3Stats::Ranks < S3Resource
           hourly_ranks_over_range[key][index] = value
         end
       end
-      time = time + 1.hour
+      time += 1.hour
       index += 1
     end
     hourly_ranks_over_range
@@ -89,7 +89,7 @@ class S3Stats::Ranks < S3Resource
           daily_ranks_over_range[key][index] = value
         end
       end
-      time = time + 1.day
+      time += 1.day
       index += 1
     end
     daily_ranks_over_range

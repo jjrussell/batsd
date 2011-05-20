@@ -15,6 +15,7 @@ authorization do
     has_permission_on :support, :to => [ :index ]
     has_permission_on :premier, :to => [ :edit, :update ]
     has_permission_on :apps_offers_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :account_whitelist, :to => [ :index, :enable, :disable ]
   end
 
   role :agency do
@@ -77,7 +78,9 @@ authorization do
     includes :executive
     includes :raffle_manager
     includes :account_mgr
-
+    
+    has_permission_on :pub_offer_whitelist, :to => [ :index, :enable, :disable ]
+    
     has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :send_currency_failures, :sqs_lengths, :elb_status, :as_groups, :manage_user_roles, :update_user_roles ]
     has_permission_on :employees, :to => [ :index, :new, :create, :edit, :update, :destroy, :show ]
   end

@@ -162,7 +162,7 @@ private
   end
   
   def write_attribute(attribute, value)
-    return value if @attributes[attribute] == value
+    #return value if @attributes[attribute] == value
     
     if value.nil?
       @attributes.delete(attribute)
