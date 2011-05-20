@@ -280,7 +280,7 @@ class StoreRank
       hydra.run
       log_progress "Finished making requests."
       results = freemium_android_app.sort_by{|app| app[:rank]}.map do |hash|
-        hash[:tapjoy_apps] = known_android_store_ids[hash[:store_id]]
+        hash['tapjoy_apps'] = known_android_store_ids[hash[:store_id]]
         hash
       end
       bucket.put(key, results.to_json, {}, 'public-read')
