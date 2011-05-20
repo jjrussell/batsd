@@ -43,7 +43,12 @@ ActionController::Routing::Routes.draw do |map|
 
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
+  
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
+  
+  map.namespace :account do |account|
+    account.resources :whitelist, :controller => 'whitelist', :only => [ :index ], :member => [ :enable, :disable ]
+  end  
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post } do |app|
