@@ -2,7 +2,7 @@
 
 %h1= @employee.email
 
-- form_for(@employee, nil, :html => { :class => 'tjform' }) do |f|
+- form_for(@employee, nil, :html => { :class => 'tjform', :multipart => true }) do |f|
   = f.error_messages 
   .field
     = f.label(:active, "Active?")

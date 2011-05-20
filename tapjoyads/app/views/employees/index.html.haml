@@ -8,16 +8,18 @@
 %table#employees_table.tablesorter
   %thead
     %tr
+      %th Image
       %th Active?
       %th First Name
       %th Last Name
-      %th Email
+      %th Email/Edit
       %th Title
       %th Department
       %th Comments
   %tbody
     - @employees.each do |employee|
-      %tr
+      %tr{ :class => cycle('', 'odd') }
+        %td= image_tag url_for(:controller => "site", :action => "emp_photo", :id => employee.id), :alt => employee.full_name
         %td= employee.active ? "Yes" : "No"
         %td= employee.first_name
         %td= employee.last_name
@@ -38,3 +40,15 @@
       background-image: url(/stylesheets/themes/blue/asc.gif);
       background-color: #8DBDD8;
     }
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $("#employees_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0: { sorter: false },
+          7: { sorter: false }
+        }
+      });
+    });
