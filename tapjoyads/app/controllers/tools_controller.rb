@@ -345,7 +345,7 @@ class ToolsController < WebsiteController
     else
       @date = Time.zone.now.beginning_of_month
     end
-    @payout_infos = PayoutInfo.recently_updated(@date).paginate(:page => params[:page])
+    @payout_infos = PayoutInfo.recently_updated(@date)
   end
 
   def manage_user_roles
