@@ -261,7 +261,13 @@ class ToolsController < WebsiteController
     click.serial_save
 
     if Rails.env == 'production'
-      Downloader.get_with_retry "#{API_URL}/connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
+      url = "#{API_URL}/"
+      if click.type == 'generic'
+        url += "offer_completed?click_key=#{click.key}"
+      else
+        url += "connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
+      end
+      Downloader.get_with_retry url
     end
 
     redirect_to device_info_tools_path(:udid => click.udid)
