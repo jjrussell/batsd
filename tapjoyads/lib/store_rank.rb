@@ -230,9 +230,7 @@ class StoreRank
   def self.top_freemium_android_apps
     bucket = S3.bucket(BucketNames::STORE_RANKS)
     key = bucket.key("android/freemium/#{Time.zone.now.strftime('%Y-%m-%d')}")
-    if key.exists?
-      results = JSON.load(bucket.get(key))
-    else
+    unless key.exists?
       hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
       hydra.disable_memoization
       error_count = 0
@@ -280,12 +278,12 @@ class StoreRank
       hydra.run
       log_progress "Finished making requests."
       results = freemium_android_app.sort_by{|app| app[:rank]}.map do |hash|
-        hash['tapjoy_apps'] = known_android_store_ids[hash[:store_id]]
+        hash[:tapjoy_apps] = known_android_store_ids[hash[:store_id]]
         hash
       end
       bucket.put(key, results.to_json, {}, 'public-read')
     end
-    results
+    JSON.load(bucket.get(key))
   end
 
 private
