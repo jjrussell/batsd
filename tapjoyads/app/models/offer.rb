@@ -858,6 +858,8 @@ private
   end
   
   def glu_reject?(currency)
+    return false if item_type == 'GenericOffer'
+    
     wsop_currency_ids = %w( 228be94e-490a-46d3-8f10-7f224d9bf284 0520aa45-a60e-4aa2-94df-ef2ea88b5624 2cc8b4e6-e800-408d-9dd9-bd5fe969a9ce )
     like_glu_id = 'e5f605e6-23f6-44fb-a699-2bef75ecf981'
     follow_glu_id = 'aa4cb9b2-a169-45be-b90b-a5c84703bbeb'
