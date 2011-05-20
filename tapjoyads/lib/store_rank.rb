@@ -88,7 +88,7 @@ class StoreRank
 
     # TODO: remove this later
     s3_rows.each do |offer_id, ranks_row|
-      ranks_row.save || Rails.logger.info "S3 save failed for #{ranks_row.id}"
+      ranks_row.save || Rails.logger.info("S3 save failed for #{ranks_row.id}")
     end
 
     log_progress "Finished saving stat_rows."
@@ -198,7 +198,7 @@ class StoreRank
 
     # TODO: remove this later
     s3_rows.each do |offer_id, ranks_row|
-      ranks_row.save || Rails.logger.info "S3 save failed for #{ranks_row.id}"
+      ranks_row.save || Rails.logger.info("S3 save failed for #{ranks_row.id}")
     end
 
     log_progress "Finished saving stat_rows."
