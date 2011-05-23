@@ -23,8 +23,6 @@
         %td= info.updated_at.to_s(:pub)
         %td= number_to_currency(info.partner.pending_earnings / 100.0)
 
-= will_paginate(@payout_infos)
-
 - content_for :page_javascript do
   :plain
     $(function($){

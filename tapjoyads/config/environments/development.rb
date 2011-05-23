@@ -26,8 +26,14 @@ MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []
 
+begin
+  local_config = YAML::load_file("#{RAILS_ROOT}/config/local.yml")
+rescue Errno::ENOENT
+  local_config = {}
+end
+
 RUN_MODE_PREFIX = 'dev_'
-API_URL = ''
+API_URL = local_config['api_url'] || ''
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 
 MAX_WEB_REQUEST_DOMAINS = 2

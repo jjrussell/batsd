@@ -43,7 +43,12 @@ ActionController::Routing::Routes.draw do |map|
 
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
+  
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
+  
+  map.namespace :account do |account|
+    account.resources :whitelist, :controller => 'whitelist', :only => [ :index ], :member => [ :enable, :disable ]
+  end  
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post } do |app|
@@ -75,7 +80,8 @@ ActionController::Routing::Routes.draw do |map|
                      :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :as_groups => :get,
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
                      :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get, :capped_publishers => :get,
-                     :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get },
+                     :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
+                     :freemium_android => :get },
     :member => {  :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post }
   map.manage_user_roles_tool 'tools/manage_user_roles', :controller => :tools, :action => :manage_user_roles
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
@@ -105,7 +111,6 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]
     tools.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :as => :scheduling
   end
-  map.resources :action_offers, :only => [ :show ]
   map.resources :offer_instructions, :only => [ :index ]
   map.with_options :controller => :game_state do |m|
     m.load_game_state 'game_state/load', :action => :load

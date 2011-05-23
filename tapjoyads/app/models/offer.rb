@@ -103,11 +103,14 @@ class Offer < ActiveRecord::Base
   before_validation :update_payment
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
+  before_save :fix_country_targeting
   before_save :update_payment
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
   
   named_scope :enabled_offers, :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > 0) OR (payment = 0 AND reward_value > 0))"
+  named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
+  named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
   named_scope :for_display_ads, :conditions => "item_type = 'App' AND price = 0 AND conversion_rate >= 0.3 AND LENGTH(offers.name) <= 30"
   named_scope :featured, :conditions => { :featured => true }
@@ -524,6 +527,19 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def wrong_platform?
+    if ['App', 'ActionOffer'].include?(item_type)
+      case get_platform
+      when 'Android'
+        item.platform == 'iphone'
+      when 'iOS'
+        item.platform == 'android'
+      else
+        true # should never be "All" for apps
+      end
+    end
+  end
+
   def normalize_stats(stats)
     self.normal_conversion_rate = (stats[:cvr_std_dev] == 0) ? 0 : (conversion_rate - stats[:cvr_mean]) / stats[:cvr_std_dev]
     self.normal_price           = (stats[:price_std_dev] == 0) ? 0 : (price - stats[:price_mean]) / stats[:price_std_dev]
@@ -871,7 +887,7 @@ private
   end
   
   def hide_app_installs_reject?(currency, hide_app_installs)
-    hide_app_installs && item_type == 'App'
+    hide_app_installs && item_type != 'GenericOffer'
   end
   
   def normalize_device_type(device_type_param)
@@ -949,5 +965,11 @@ private
   
   def calculate_rank_boost
     RankBoost.for_offer(id).active.sum(:amount)
+  end
+
+  def fix_country_targeting
+    unless countries.blank?
+      countries.gsub!(/uk/i, 'GB')
+    end
   end
 end

@@ -3,6 +3,7 @@ class Stats < SimpledbResource
   self.domain_name = 'stats'
 
   self.sdb_attr :values, :type => :json, :default_value => {}
+  # TODO: remove ranks from Stats once all records have been migrated to S3
   self.sdb_attr :ranks, :type => :json, :default_value => {}
   self.sdb_attr :virtual_goods, :type => :json, :default_value => {}
   self.sdb_attr :countries, :type => :json, :default_value => {}
@@ -11,7 +12,7 @@ class Stats < SimpledbResource
 
   CONVERSION_STATS  = Conversion::STAT_TO_REWARD_TYPE_MAP.keys
   WEB_REQUEST_STATS = WebRequest::STAT_TO_PATH_MAP.keys
-  SPECIAL_STATS     = [ 'ranks', 'virtual_goods', 'countries' ]
+  SPECIAL_STATS     = [ 'virtual_goods', 'countries' ]
   STAT_TYPES        = CONVERSION_STATS + WEB_REQUEST_STATS + SPECIAL_STATS
 
   COUNTRY_CODES = {

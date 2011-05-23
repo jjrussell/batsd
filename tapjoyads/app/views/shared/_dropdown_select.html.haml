@@ -11,6 +11,7 @@
       - else
         = image_tag(selected.get_icon_url, :size => '24x24', :alt => '')
         = selected.is_a?(App) ? selected.name : selected.name_with_suffix
+        = image_tag(platform_icon_url(selected), :class => 'platform_icon')
   #apps_dropdown.hidden
     #filter_box
       Filter:
@@ -33,7 +34,9 @@
         - class_name = o == selected ? "selected" : ""
         .app{ :class => class_name, :title => o.name }
           = image_tag(o.get_icon_url, :size => '24x24', :alt => '')
-          %span.app-name= o.is_a?(App) ? o.name : o.name_with_suffix
+          %span.app-name
+            = o.is_a?(App) ? o.name : o.name_with_suffix
+            = image_tag(platform_icon_url(o), :class => 'platform_icon')
           = link_to('#', url, :class => "hidden")
     #new_app_box
       .app{ :class => "new_app #{selected.nil? ? 'selected' : ''}", :title => 'Add a new App' }
@@ -164,6 +167,10 @@
       }
       .app:hover img, .app.selected img {
         opacity: 1.0;
+      }
+      img.platform_icon {
+        opacity: 0.25;
+        margin: 0;
       }
   - content_for :page_javascript do
     :plain
