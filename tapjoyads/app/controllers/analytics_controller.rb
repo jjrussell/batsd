@@ -56,7 +56,8 @@ class AnalyticsController < WebsiteController
         flash[:error] = "There was an error, please try again later."
       end
     else
-      flash[:error] = "You must agree to the terms of use."
+      flash[:notice] = "You are no longer sharing app data with Apsalar"
+      redirect_to analytics_path and return
     end
     redirect_to share_data_analytics_path
   end
