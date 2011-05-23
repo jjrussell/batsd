@@ -2,7 +2,7 @@ class Apsalar
 
   def self.ping_rewarded_install(click)
     advertiser_app = App.find_by_id(click.advertiser_app_id, :include => [:partner])
-    if advertiser_app.present? && advertiser_app.partner.apsalar_sharing?
+    if advertiser_app.present? && advertiser_app.partner.apsalar_sharing_adv?
       hash = {
         'tp' => advertiser_app.partner.id,
         'taid' => advertiser_app.id,
@@ -20,7 +20,7 @@ class Apsalar
     end
 
     publisher_app = App.find_by_id(click.publisher_app_id, :include => [:partner])
-    if publisher_app.present? && publisher_app.partner.apsalar_sharing?
+    if publisher_app.present? && publisher_app.partner.apsalar_sharing_pub?
       hash = {
         'tp' => publisher_app.partner.id,
         'taid' => publisher_app.id,

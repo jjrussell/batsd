@@ -14,8 +14,11 @@
       = label_tag  :terms, "I agree to the #{link_to('Apsalar terms of use', "#{APSALAR_URL}/terms-of-use/", :target => 'new')}."
     - if false
       %p
-        = check_box_tag 'enable_apsalar_sharing'
-        = label_tag  :terms_share, "<b>(Optional)</b> I want Tapjoy to #{link_to('share my app data', "#{APSALAR_URL}/terms-of-use/", :target => 'new')} with Apsalar."
+        = check_box_tag 'enable_apsalar_sharing_adv'
+        = label_tag  :terms_share_adv, "<b>(Optional)</b>Please share my user acquisition data from Tapjoy with Apsalar"
+
+        = check_box_tag 'enable_apsalar_sharing_pub'
+        = label_tag  :terms_share_pub, "<b>(Optional)</b>Please share my monetization data from Tapjoy's offer-wall with Apsalar"
     %p
       = submit_tag 'Enable Apsalar Analytics For Your Apps'
 
