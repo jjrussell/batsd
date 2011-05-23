@@ -375,7 +375,9 @@ class ToolsController < WebsiteController
   end
 
   def freemium_android
-    @apps = StoreRank.top_freemium_android_apps
+    results = StoreRank.top_freemium_android_apps
+    @apps = results['apps']
+    @created_at = Time.zone.parse(results['created_at'])
     @tapjoy_apps = {}
     Offer.find_all_by_id(@apps.map{|app|app['tapjoy_apps']}.flatten).each do |app|
       @tapjoy_apps[app.id] = app

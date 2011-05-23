@@ -3,7 +3,7 @@ class Job::MasterFetchTopFreemiumAndroidAppsController < Job::JobController
   end
 
   def index
-    StoreRank.top_freemium_android_apps(Time.zone.now)
+    StoreRank.populate_top_freemium_android_apps
 
     render :text => 'ok'
   end
