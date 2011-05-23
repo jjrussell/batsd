@@ -25,14 +25,13 @@ class Appstats
         @stats[stat_type] = get_daily_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
       end
     end
-    
-    # Convert 0 ranks to nil.
-    if @stats['ranks']
-      @stats['ranks'].each do |key, value|
-        value.map! { |i| i == 0 ? nil : i }
-      end
+
+    if @granularity == :hourly && @app_key
+      @stats['ranks'] = S3Stats::Ranks.hourly_over_time_range(@app_key, @start_time.utc, @end_time.utc)
+    elsif @app_key
+      @stats['ranks'] = S3Stats::Ranks.daily_over_time_range(@app_key, @start_time.utc, @end_time.utc)
     end
-    
+
     # cvr
     if @stats['paid_clicks'] and @stats['paid_installs']
       @stats['cvr'] = []

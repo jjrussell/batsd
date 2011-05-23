@@ -41,6 +41,11 @@
         %td= @app.id
       %tr
         %th
+          App Secret Key
+          #help_app_secret_key.help ?
+        %td= @app.secret_key
+      %tr
+        %th
           Integrated?
           #help_integrated.help ?
         - if @integrated
@@ -78,6 +83,8 @@
     The name of your app.
   #help_app_id_content{:name => 'App ID'}
     App ID. Use this when integrating.
+  #help_app_secret_key_content{:name => 'App Secret Key'}
+    A shared secret used to verify requests from your app. Use this when integrating.
   #help_integrated_content{:name => 'Integrated'}
     Integration status - shows if the app has connected with our servers within the last 24-hours.
 .clear
