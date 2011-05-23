@@ -151,14 +151,16 @@ class Offer < ActiveRecord::Base
   
   def self.cache_offers
     Benchmark.realtime do
+      weights = AppGroup.find_by_name('default').weights
+      
       offer_list = Offer.enabled_offers.nonfeatured.for_offer_list
-      cache_offer_list(offer_list, DEFAULT_WEIGHTS, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+      cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
       offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
-      cache_offer_list(offer_list, DEFAULT_WEIGHTS.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+      cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
       offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads
-      cache_offer_list(offer_list, DEFAULT_WEIGHTS, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+      cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
     end
   end
     
@@ -210,8 +212,8 @@ class Offer < ActiveRecord::Base
         offer.primary_category = offer_item.primary_category
         offer.user_rating      = offer_item.user_rating
         if offer.item_type == 'ActionOffer'
-          app = App.find(offer_item.app_id)
-          offer.action_offer_name = app.name
+          action_app = App.find(offer_item.app_id)
+          offer.action_offer_name = action_app.name
         end
       end
     end
