@@ -4,15 +4,21 @@
   .inline= button_to 'Download Apsalar SDK', current_partner.apsalar_url + "&url=/app/sdk/"
   .inline= button_to 'Access your Apsalar Analytics', current_partner.apsalar_url + "&url=/app/dashboard/"
 
-  - unless true #current_partner.apsalar_sharing_adv? && current_partner.apsalar_sharing_pub?
+  - if false
     .clear &nbsp;
     %h3 App Data Sharing
-    - if current_partner.apsalar_sharing_adv?
-      Currently, you are not sharing publisher app data with Apsalar.
-    - elsif current_partner.apsalar_sharing_pub?
-      Currently, you are not sharing advertiser data with Apsalar.
-    - else
-      Currently, you are not sharing your app data with Apsalar.
+    %ul
+      - if current_partner.apsalar_sharing_adv? && current_partner.apsalar_sharing_pub?
+        %li Currently, you are sharing <strong>advertiser data</strong> and <strong>publisher data</strong> with Apsalar.
+      - else
+        - if current_partner.apsalar_sharing_adv?
+          %li Currently, you are sharing <strong>advertiser data</strong> with Apsalar.
+        - else
+          %li Currently, you are <strong>not</strong> sharing your advertiser data with Apsalar.
+        - if current_partner.apsalar_sharing_pub?
+          %li Currently, you are sharing <strong>publisher data</strong> with Apsalar.
+        - else
+          %li Currently, you are <strong>not</strong> sharing your publisher data with Apsalar.
     = link_to 'Find out more about this feature today.', share_data_analytics_path
 
 = render :partial => 'features'

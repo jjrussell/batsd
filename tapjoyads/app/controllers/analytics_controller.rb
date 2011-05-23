@@ -48,16 +48,15 @@ class AnalyticsController < WebsiteController
   end
 
   def agree_to_share_data
-    if params[:enable_apsalar_sharing_adv] || params[:enable_apsalar_sharing_pub]
-      if enable_apsalar_sharing
+    if enable_apsalar_sharing
+      if params[:enable_apsalar_sharing_adv] || params[:enable_apsalar_sharing_pub]
         flash[:notice] = "You are now sharing app data with Apsalar."
-        redirect_to analytics_path and return
       else
-        flash[:error] = "There was an error, please try again later."
+        flash[:notice] = "You are no longer sharing app data with Apsalar"
       end
+        redirect_to analytics_path and return
     else
-      flash[:notice] = "You are no longer sharing app data with Apsalar"
-      redirect_to analytics_path and return
+      flash[:error] = "There was an error, please try again later."
     end
     redirect_to share_data_analytics_path
   end
@@ -75,6 +74,7 @@ class AnalyticsController < WebsiteController
   end
 
  def enable_apsalar_sharing
+   Rails.logger.warn "::> #{params[:enable_apsalar_sharing_adv]} #{params[:enable_apsalar_sharing_pub]}"
    current_partner.update_attributes({
      :apsalar_sharing_adv => params[:enable_apsalar_sharing_adv],
      :apsalar_sharing_pub => params[:enable_apsalar_sharing_pub]
