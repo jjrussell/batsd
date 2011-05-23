@@ -103,6 +103,7 @@ class Offer < ActiveRecord::Base
   before_validation :update_payment
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
+  before_save :fix_country_targeting
   before_save :update_payment
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
@@ -964,5 +965,11 @@ private
   
   def calculate_rank_boost
     RankBoost.for_offer(id).active.sum(:amount)
+  end
+
+  def fix_country_targeting
+    unless countries.blank?
+      countries.gsub!(/uk/i, 'GB')
+    end
   end
 end
