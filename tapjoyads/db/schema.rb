@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110512204621) do
+ActiveRecord::Schema.define(:version => 20110523095954) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -357,6 +357,8 @@ ActiveRecord::Schema.define(:version => 20110512204621) do
     t.text     "offer_whitelist",                                                                               :null => false
     t.boolean  "use_whitelist",                                                          :default => false,     :null => false
     t.boolean  "approved_publisher",                                                     :default => false,     :null => false
+    t.boolean  "apsalar_sharing_adv",                                                    :default => false,     :null => false
+    t.boolean  "apsalar_sharing_pub",                                                    :default => false,     :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
