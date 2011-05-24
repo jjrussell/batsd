@@ -161,78 +161,27 @@ class Currency < ActiveRecord::Base
     Benchmark.realtime do
       weights = app.group.weights
 
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.reject { |offer| should_reject?(offer) }
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
       cache_offer_list(offer_list, weights, Offer::DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
 
-      offer_list = (Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list).reject { |offer| should_reject?(offer) }
+      offer_list = (Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list).reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
       cache_offer_list(offer_list, weights.merge({ :random => 0 }), Offer::FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
     
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads.reject { |offer| should_reject?(offer) }
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads.reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
       cache_offer_list(offer_list, weights, Offer::DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
     end
   end
   
   def cache_offer_list(offer_list, weights, type, exp)
-    stats = Offer.get_offer_rank_statistics(type)
-    
-    offer_list.each do |offer|
-      offer.normalize_stats(stats)
-      offer.name = "#{offer.truncated_name}..." if offer.name.length > 40
-      offer.calculate_rank_score(weights)
-      if (offer.item_type == 'App' || offer.item_type == 'ActionOffer')
-        offer_item             = offer.item_type.constantize.find(offer.item_id)
-        offer.primary_category = offer_item.primary_category
-        offer.user_rating      = offer_item.user_rating
-        if offer.item_type == 'ActionOffer'
-          action_app = App.find(offer_item.app_id)
-          offer.action_offer_name = action_app.name
-        end
-      end
-    end
-    
-    offer_list.sort! do |o1, o2|
-      if o1.featured? && !o2.featured?
-        -1
-      elsif o2.featured? && !o1.featured?
-        1
-      else
-        o2.rank_score <=> o1.rank_score
-      end
-    end
-    
-    offer_list.first.offer_list_length = offer_list.length
-  
-    offer_groups = []
-    group        = 0
-    key          = "enabled_offers.#{id}.type_#{type}.exp_#{exp}"
-    bucket       = S3.bucket(BucketNames::OFFER_DATA)
-    
-    offer_list.in_groups_of(Offer::GROUP_SIZE) do |offers|
-      offers.compact!
-      offer_groups << offers
-      group += 1
-    end
-    
-    offer_groups.each_with_index do |offers, i|
-      Mc.distributed_put("#{key}.#{i}", offers)
-    end
-  
-    while Mc.distributed_get("#{key}.#{group}")
-      Mc.distributed_delete("#{key}.#{group}")
-      group += 1
-    end
+    Offer.cache_offer_list(offer_list, weights, type, exp, self)
   end
   
   def get_cached_offers(options = {}, &block)
     if block_given?
-      Offer.get_cached_offers(options.merge(:currency => self), block)
+      Offer.get_cached_offers(options.merge(:currency => self), &block)
     else
       Offer.get_cached_offers(options.merge(:currency => self))
     end
-  end
-  
-  def should_reject?(offer)
-    offer.should_reject_from_app_or_currency?(app, self)
   end
   
 private
