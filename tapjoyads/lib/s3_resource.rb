@@ -143,8 +143,8 @@ class S3Resource
         bucket.put(id, convert_to_raw_attributes)
       rescue Exception => e
         if retries > 0
-          retries -= 1
           Rails.logger.info("S3 save failed, will retry #{retries} more times")
+          retries -= 1
           retry
         else
           raise e
