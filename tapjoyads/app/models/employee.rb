@@ -1,8 +1,10 @@
 class Employee < ActiveRecord::Base
   validates_presence_of :first_name, :last_name, :title, :email
-#  validates_format_of :content_type,
-#                      :with => /^image/,
-#                      :message => "--- you can onlly upload pictures"
+  validates_uniqueness_of :email
+  validates_format_of :photo_content_type,
+                      :with => /^image/,
+                      :if => Proc.new { |emp| !emp.photo_content_type.nil? },
+                      :message => "--- you can only upload pictures"
   
   named_scope :active_only, :conditions => 'active = true', :order => 'last_name, first_name'
   
@@ -10,14 +12,18 @@ class Employee < ActiveRecord::Base
     first_name + " " + last_name + ", " + title
   end
   
+  def photo_file_name
+    first_name + "_" + last_name
+  end
+  
   def uploaded_photo=(picture_field)
-#    self.name = base_part_of(picture_field.original_filename)
-#    content_type = picture_field.content_type.chomp
+    self.photo_content_type = picture_field.content_type.chomp
     self.photo = picture_field.read
   end
   
-  def base_part_of(file_name)
-    File.basename(file_name).gsub(/[^\w._-]/, '')
+  def delete_photo
+    if self.photo != nil
+      self.photo = nil
+    end
   end
-  
 end

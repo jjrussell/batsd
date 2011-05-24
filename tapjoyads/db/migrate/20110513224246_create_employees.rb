@@ -10,6 +10,7 @@ class CreateEmployees < ActiveRecord::Migration
       t.string :email, :null => false
       t.text   :comments
       t.binary :photo, :limit => 1.megabyte
+      t.string :photo_content_type
 
       t.timestamps
     end

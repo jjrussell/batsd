@@ -88,4 +88,20 @@ class EmployeesController < WebsiteController
       format.xml  { head :ok }
     end
   end
+  
+  def delete_photo
+    @employee = Employee.find(params[:id])
+    @employee.delete_photo
+
+    respond_to do |format|
+      if @employee.save
+          flash[:notice] = 'Employee photo was successfully removed.'
+          format.html { redirect_to(employees_url) }
+          format.xml  { head :ok }
+        else
+          format.html { render :action => "edit" }
+          format.xml  { render :xml => @employee.errors, :status => :unprocessable_entity }
+      end
+    end
+  end
 end

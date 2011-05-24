@@ -26,6 +26,10 @@
     = f.label(:comments)
     = f.text_area(:comments)
   .field
+    = f.label("Current Photo", "Current Photo")
+    = image_tag url_for(:controller => "site", :action => "emp_photo", :id => @employee.id), :alt => @employee.full_name
+    = link_to "Remove Photo", :controller => 'employees', :action => 'delete_photo', :id => @employee.id if !@employee.photo.nil?
+  .field
     = f.label(:uploaded_photo, "Upload Photo")
     = f.file_field(:uploaded_photo)
   = submit_tag "Update"

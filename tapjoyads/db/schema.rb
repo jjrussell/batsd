@@ -141,15 +141,16 @@ ActiveRecord::Schema.define(:version => 20110513224246) do
   add_index "email_offers", ["partner_id"], :name => "index_email_offers_on_partner_id"
 
   create_table "employees", :force => true do |t|
-    t.boolean  "active",                          :default => true, :null => false
-    t.string   "first_name",                                        :null => false
+    t.boolean  "active",                                 :default => true, :null => false
+    t.string   "first_name",                                               :null => false
     t.string   "middle_name"
-    t.string   "last_name",                                         :null => false
-    t.string   "title",                                             :null => false
+    t.string   "last_name",                                                :null => false
+    t.string   "title",                                                    :null => false
     t.string   "department"
-    t.string   "email",                                             :null => false
+    t.string   "email",                                                    :null => false
     t.text     "comments"
-    t.binary   "photo",       :limit => 16777215
+    t.binary   "photo",              :limit => 16777215
+    t.string   "photo_content_type"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
