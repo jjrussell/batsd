@@ -8,7 +8,6 @@ class StoreRank
     hydra.disable_memoization
     date_string = time.to_date.to_s(:db)
     error_count = 0
-    success_count = 0
     known_store_ids = {}
     stat_rows = {}
     # remove this someday
@@ -45,7 +44,6 @@ class StoreRank
               log_progress "Error downloading ranks from itunes for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Error code: #{response.code}. Retrying."
               hydra.queue(request)
             else
-              success_count += 1
               ranks_hash = get_itunes_ranks_hash(response.body)
               ranks_hash.each do |store_id, rank|
                 next if known_store_ids[store_id].nil?
@@ -122,7 +120,6 @@ class StoreRank
     hydra.disable_memoization
     date_string = time.to_date.to_s(:db)
     error_count = 0
-    success_count = 0
     known_store_ids = {}
     known_android_store_ids = {}
     stat_rows = {}
@@ -163,7 +160,6 @@ class StoreRank
                 log_progress "Error downloading ranks from google for category: #{category_key}, pop: #{pop_key}. Error code: #{response.code}. Retrying."
                 hydra.queue(request)
               else
-                success_count += 1
                 ranks_hash = get_google_ranks_hash(response.body, current_offset)
                 ranks_hash.each do |store_id, rank|
                   next if known_android_store_ids[store_id].nil?
