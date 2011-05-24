@@ -103,11 +103,14 @@ class Offer < ActiveRecord::Base
   before_validation :update_payment
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
+  before_save :fix_country_targeting
   before_save :update_payment
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
   
   named_scope :enabled_offers, :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > 0) OR (payment = 0 AND reward_value > 0))"
+  named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
+  named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
   named_scope :for_display_ads, :conditions => "item_type = 'App' AND price = 0 AND conversion_rate >= 0.3 AND LENGTH(offers.name) <= 30"
   named_scope :featured, :conditions => { :featured => true }
@@ -599,8 +602,7 @@ class Offer < ActiveRecord::Base
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
         capped_installs_reject?(publisher_app) ||
-        hide_app_installs_reject?(currency, hide_app_installs) ||
-        glu_reject?(currency)
+        hide_app_installs_reject?(currency, hide_app_installs)
   end
 
   def update_payment(force_update = false)
@@ -855,13 +857,6 @@ private
     return false
   end
   
-  def glu_reject?(currency)
-    wsop_currency_ids = %w( 228be94e-490a-46d3-8f10-7f224d9bf284 0520aa45-a60e-4aa2-94df-ef2ea88b5624 2cc8b4e6-e800-408d-9dd9-bd5fe969a9ce )
-    like_glu_id = 'e5f605e6-23f6-44fb-a699-2bef75ecf981'
-    follow_glu_id = 'aa4cb9b2-a169-45be-b90b-a5c84703bbeb'
-    wsop_currency_ids.include?(currency.id) && ![ like_glu_id, follow_glu_id ].include?(id)
-  end
-  
   def publisher_whitelist_reject?(publisher_app)
     return publisher_app_whitelist.present? && !get_publisher_app_whitelist.include?(publisher_app.id)
   end
@@ -892,7 +887,7 @@ private
   end
   
   def hide_app_installs_reject?(currency, hide_app_installs)
-    hide_app_installs && item_type == 'App'
+    hide_app_installs && item_type != 'GenericOffer'
   end
   
   def normalize_device_type(device_type_param)
@@ -970,5 +965,11 @@ private
   
   def calculate_rank_boost
     RankBoost.for_offer(id).active.sum(:amount)
+  end
+
+  def fix_country_targeting
+    unless countries.blank?
+      countries.gsub!(/uk/i, 'GB')
+    end
   end
 end

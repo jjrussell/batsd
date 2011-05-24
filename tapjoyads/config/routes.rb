@@ -43,7 +43,12 @@ ActionController::Routing::Routes.draw do |map|
 
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
+  
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
+  
+  map.namespace :account do |account|
+    account.resources :whitelist, :controller => 'whitelist', :only => [ :index ], :member => [ :enable, :disable ]
+  end  
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post } do |app|
@@ -59,7 +64,10 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.resources :enable_offer_requests, :only => [ :create ]
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }, :collection => { :api => :get, :regenerate_api_key => :post }
-  map.resources :analytics, :only => [ :index ], :collection => { :create_apsalar_account => :get }
+  map.resources :analytics, :only => [ :index ]
+  map.create_apsalar_account_analytics 'analytics/create-apsalar-account', :controller => :analytics, :action => :create_apsalar_account
+  map.share_data_analytics 'analytics/share-data', :controller => :analytics, :action => :share_data
+  map.agree_to_share_data_analytics 'analytics/agree-to-share-data', :controller => :analytics, :action => :agree_to_share_data
   map.resources :billing, :only => [ :index ],
     :collection => { :create_order => :post, :create_transfer => :post, :update_payout_info => :post, :forget_credit_card => :post }
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
@@ -72,7 +80,8 @@ ActionController::Routing::Routes.draw do |map|
                      :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :as_groups => :get,
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
                      :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get, :capped_publishers => :get,
-                     :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get },
+                     :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
+                     :freemium_android => :get },
     :member => {  :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get },

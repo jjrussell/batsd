@@ -261,7 +261,13 @@ class ToolsController < WebsiteController
     click.serial_save
 
     if Rails.env == 'production'
-      Downloader.get_with_retry "#{API_URL}/connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
+      url = "#{API_URL}/"
+      if click.type == 'generic'
+        url += "offer_completed?click_key=#{click.key}"
+      else
+        url += "connect?app_id=#{click.advertiser_app_id}&udid=#{click.udid}"
+      end
+      Downloader.get_with_retry url
     end
 
     redirect_to device_info_tools_path(:udid => click.udid)
@@ -339,7 +345,7 @@ class ToolsController < WebsiteController
     else
       @date = Time.zone.now.beginning_of_month
     end
-    @payout_infos = PayoutInfo.recently_updated(@date).paginate(:page => params[:page])
+    @payout_infos = PayoutInfo.recently_updated(@date)
   end
 
   def manage_user_roles
@@ -365,12 +371,22 @@ class ToolsController < WebsiteController
     flash[:notice] = "Added #{user_roles.map(&:name).sort.to_json} to #{user.email}"
     redirect_to manage_user_roles_tool_path(:email => user.email)
   end
-  
+
   def capped_publishers
     @capped_publishers = {}
     App.get_ios_publisher_apps.each do |pub|
       capped_advertisers = pub.capped_advertiser_apps.map { |app| { :count => pub.daily_installs_for_advertiser(app.id), :app => app } }
       @capped_publishers[pub] = capped_advertisers unless capped_advertisers.empty?
+    end
+  end
+
+  def freemium_android
+    results = StoreRank.top_freemium_android_apps
+    @apps = results['apps']
+    @created_at = Time.zone.parse(results['created_at'])
+    @tapjoy_apps = {}
+    Offer.find_all_by_id(@apps.map{|app|app['tapjoy_apps']}.flatten).each do |app|
+      @tapjoy_apps[app.id] = app
     end
   end
 end

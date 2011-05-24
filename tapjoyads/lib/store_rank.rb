@@ -1,7 +1,7 @@
 # TODO: move this logic to S3Stats::Ranks?
 class StoreRank
   cattr_accessor :itunes_category_ids, :itunes_pop_ids, :itunes_country_ids
-  cattr_accessor :google_category_ids, :google_pop_ids, :google_language_ids
+  cattr_accessor :google_category_ids, :google_pop_options, :google_language_ids
 
   def self.populate_itunes_appstore_rankings(time)
     hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
@@ -88,7 +88,7 @@ class StoreRank
 
     # TODO: remove this later
     s3_rows.each do |offer_id, ranks_row|
-      ranks_row.save
+      ranks_row.save || log_progress("S3 save failed for #{ranks_row.id}")
     end
 
     log_progress "Finished saving stat_rows."
@@ -141,18 +141,25 @@ class StoreRank
 
     log_progress "Finished loading known_store_ids."
 
-    google_category_ids.each do |category_key, category_name|
-      google_pop_ids.each do |pop_key, pop_id|
+    google_pop_options.each do |pop_key, pop_options|
+      google_category_ids.each do |category_key, category_name|
+        next if pop_options[:skip_cat] && category_key != "overall"
         google_language_ids.each do |language_key, language_id|
+          next if pop_options[:skip_lang] && language_key != "english"
           # TODO: remove this line:
           stat_type = "#{category_key}.#{pop_key}.#{language_key}"
           ranks_key = "#{category_key}.#{pop_key}.#{language_key}"
           offset = 0
-          while offset < 200
-            url = google_rank_url(pop_id, category_name, language_id, offset)
+          max_offset = 200
+          max_offset = 24 * (pop_options[:pages]-1)     if pop_options[:pages]
+          max_offset = 24 * (pop_options[:cat_pages]-1) if pop_options[:cat_pages] && category_key != "overall"
+
+          while offset <= max_offset
+            url = google_rank_url(pop_options[:id], category_name, language_id, offset)
             offset += 24
 
             request = Typhoeus::Request.new(url)
+
             request.on_complete do |response|
               current_offset = response.effective_url.split('start=').last.split('&').first.to_i
               if response.code != 200
@@ -198,7 +205,7 @@ class StoreRank
 
     # TODO: remove this later
     s3_rows.each do |offer_id, ranks_row|
-      ranks_row.save
+      ranks_row.save || Rails.logger.info("S3 save failed for #{ranks_row.id}")
     end
 
     log_progress "Finished saving stat_rows."
@@ -225,6 +232,76 @@ class StoreRank
   ensure
     `rm 'tmp/#{android_ranks_file_name}'`
     `rm 'tmp/#{android_ranks_file_name}.gz'`
+  end
+
+  def self.populate_top_freemium_android_apps
+    hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
+    hydra.disable_memoization
+    error_count = 0
+    offset = 0
+    freemium_android_app = []
+    known_android_store_ids = {}
+    App.find_each(:conditions => "platform = 'android' AND store_id IS NOT NULL") do |app|
+      known_android_store_ids[app.store_id] ||= []
+      known_android_store_ids[app.store_id] += app.offer_ids
+    end
+
+    while offset < 456
+      url = google_rank_url("apps_topgrossing", "", "en", offset)
+      offset += 24
+
+      request = Typhoeus::Request.new(url)
+      request.on_complete do |response|
+        current_offset = response.effective_url.split('start=').last.split('&').first.to_i
+        if response.code != 200
+          error_count += 1
+          if error_count > 50
+            raise "Too many errors attempting to download android ranks, giving up. App store down?"
+          end
+          log_progress "Error downloading topgrossing data from google for Error code: #{response.code}. Retrying."
+          hydra.queue(request)
+        else
+          items = Hpricot(response.body)/".snippet.snippet-medium"
+          items.each_with_index do |item, index|
+            anchor = item/".details"
+            price = (anchor/"span.buy-button-price").inner_html[/\d+\.\d+/]
+            next unless price.nil?
+
+            rank      = index + current_offset + 1
+            store_id  = (anchor/"a.title").attr('href').match("id=(.*)").to_a.second
+            name      = (anchor/"a.title").inner_html
+
+            freemium_android_app << {:rank => rank, :name => name, :store_id => store_id}
+          end
+        end
+      end
+      hydra.queue(request)
+    end
+
+    log_progress "Finished queuing requests."
+    hydra.run
+    log_progress "Finished making requests."
+    apps = freemium_android_app.sort_by{|app| app[:rank]}.map do |hash|
+      hash[:tapjoy_apps] = known_android_store_ids[hash[:store_id]]
+      hash
+    end
+
+    time = Time.zone.now
+    results = { :apps => apps, :created_at => time }
+    bucket = S3.bucket(BucketNames::STORE_RANKS)
+    key = bucket.key("android/freemium/#{time.strftime('%Y-%m-%d')}")
+    bucket.put(key, results.to_json, {}, 'public-read')
+  end
+
+  def self.top_freemium_android_apps(time=nil)
+    time ||= Time.zone.now - 5.minutes
+    bucket = S3.bucket(BucketNames::STORE_RANKS)
+    key = bucket.key("android/freemium/#{time.strftime('%Y-%m-%d')}")
+    unless key.exists?
+      time -= 1.day
+      key = bucket.key("android/freemium/#{time.strftime('%Y-%m-%d')}")
+    end
+    JSON.load(bucket.get(key))
   end
 
 private
@@ -258,7 +335,7 @@ private
     Rails.logger.info "#{now} (#{now.to_i}): #{message}"
     Rails.logger.flush
   end
-  
+
   @@itunes_category_ids = {
     "overall"                 => 25204,
     "books"                   => 25470,
@@ -414,9 +491,36 @@ private
     "widgets"             => "APP_WIDGETS",
   }
 
-  @@google_pop_ids      = {
-    "free"              => "apps_topselling_free",
-    "paid"              => "apps_topselling_paid"
+  @@google_pop_options = {
+    "free" => { :id => "apps_topselling_free" },
+    "paid" => { :id => "apps_topselling_paid" },
+    "top_grossing" => {
+      :id => "apps_topgrossing",
+      :skip_lang => true,
+      :skip_cat => true,
+    },
+    "top_new_paid" => {
+      :id => "apps_topselling_new_paid",
+      :skip_lang => true,
+      :cat_pages => 1,
+    },
+    "top_new_free" => {
+      :id => "apps_topselling_new_free",
+      :skip_lang => true,
+      :cat_pages => 1,
+    },
+    "trending" => {
+      :id => "apps_movers_shakers",
+      :skip_lang => true,
+      :cat_pages => 1,
+      :pages => 2,
+    },
+    "featured" => {
+      :id => "apps_featured",
+      :skip_lang => true,
+      :cat_pages => 2,
+      :pages => 2,
+    },
   }
 
   @@google_language_ids = {

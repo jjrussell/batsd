@@ -3,9 +3,7 @@ class AnalyticsController < WebsiteController
   filter_access_to :all
 
   def index
-    if current_partner.apsalar_url.nil?
-      @apsalar_email = get_apsalar_email
-    end
+    render 'register' if current_partner.apsalar_url.nil?
   end
 
   def create_apsalar_account
@@ -14,6 +12,8 @@ class AnalyticsController < WebsiteController
       redirect_to analytics_path
     else
       email = get_apsalar_email
+      current_partner.apsalar_sharing_pub = params[:enable_apsalar_sharing_pub]
+      current_partner.apsalar_sharing_adv = params[:enable_apsalar_sharing_adv]
       current_partner.apsalar_username = email.gsub(/[^a-zA-Z0-9]/, '_')[0..59]
       current_partner.apsalar_api_secret ||= UUIDTools::UUID.random_create.to_s.gsub('-','')[0..31]
       current_partner.save
@@ -47,15 +47,38 @@ class AnalyticsController < WebsiteController
     end
   end
 
+  def agree_to_share_data
+    if enable_apsalar_sharing
+      if params[:enable_apsalar_sharing_adv] || params[:enable_apsalar_sharing_pub]
+        flash[:notice] = "You are now sharing app data with Apsalar."
+      else
+        flash[:notice] = "You are no longer sharing app data with Apsalar"
+      end
+        redirect_to analytics_path and return
+    else
+      flash[:error] = "There was an error, please try again later."
+    end
+    redirect_to share_data_analytics_path
+  end
+
   private
 
   def get_apsalar_email
     if current_partner.non_managers.length == 1
       current_partner.non_managers.first.email
     elsif current_user.is_one_of?([:account_mgr, :admin])
-      (current_partner.non_managers.first || current_user).email
+      (current_partner.non_managers.sort_by(&:created_at).first || current_user).email
     else
       current_user.email
     end
   end
+
+ def enable_apsalar_sharing
+   Rails.logger.warn "::> #{params[:enable_apsalar_sharing_adv]} #{params[:enable_apsalar_sharing_pub]}"
+   current_partner.update_attributes({
+     :apsalar_sharing_adv => params[:enable_apsalar_sharing_adv],
+     :apsalar_sharing_pub => params[:enable_apsalar_sharing_pub]
+   })
+ end
+
 end
