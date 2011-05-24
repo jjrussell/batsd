@@ -264,10 +264,10 @@ class Offer < ActiveRecord::Base
 
   end
   
-  def self.get_cached_offers(options = {})
+  def self.get_cached_offers(options = {}, &block)
     type = options.delete(:type)
     exp  = options.delete(:exp)
-    app  = options.delete(:app)
+    currency  = options.delete(:currency)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     type ||= DEFAULT_OFFER_TYPE
@@ -277,7 +277,7 @@ class Offer < ActiveRecord::Base
     offer_list_length = nil
     group             = 0
     s3_key            = "enabled_offers.type_#{type}.exp_#{exp}"
-    key               = app.present? ? "enabled_offers.#{app.id}.type_#{type}.exp_#{exp}" : s3_key
+    key               = currency.present? ? "enabled_offers.#{currency.id}.type_#{type}.exp_#{exp}" : s3_key
     
     loop do
       offers = Mc.distributed_get_and_put("#{key}.#{group}") do
@@ -625,21 +625,21 @@ class Offer < ActiveRecord::Base
   end
   
   def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_installs)
-    return is_disabled?(publisher_app, currency) ||
-        platform_mismatch?(publisher_app, device_type) ||
+    return should_reject_from_app_or_currency?(publisher_app, currency, device_type) ||
         geoip_reject?(geoip_data, device) ||
-        age_rating_reject?(currency) ||
         already_complete?(publisher_app, device, app_version) ||
         show_rate_reject?(device) ||
         flixter_reject?(publisher_app, device) ||
-        publisher_whitelist_reject?(publisher_app) ||
-        currency_whitelist_reject?(currency) ||
         minimum_featured_bid_reject?(currency, type) ||
         jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
         capped_installs_reject?(publisher_app) ||
         hide_app_installs_reject?(currency, hide_app_installs)
+  end
+  
+  def should_reject_from_app_or_currency?(publisher_app, currency, device_type = nil)
+    is_disabled?(publisher_app, currency) || platform_mismatch?(publisher_app, device_type || publisher_app.platform) || age_rating_reject?(currency) || publisher_whitelist_reject?(publisher_app) || currency_whitelist_reject?(currency)
   end
 
   def update_payment(force_update = false)
