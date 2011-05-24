@@ -85,7 +85,7 @@
                },
               items: offerItems
             });
-            new Ext.Panel({
+            var gallery = new Ext.Panel({
               fullscreen: true,
                 layout: {
                   type: 'vbox',
@@ -96,8 +96,24 @@
                 },
                 items: [carousel]
             });
-         }
-      });
+            gallery.addCls(Ext.getOrientation()); 
+            
+            Ext.EventManager.onWindowResize(
+              function(){
+                var orient = Ext.getOrientation();
+                if (orient == "portrait") {
+                  gallery.removeCls("landscape");
+                  gallery.addCls("portrait");  
+                }
+                else {
+                  gallery.removeCls("portrait");
+                  gallery.addCls("landscape");
+                }
+                gallery.setOrientation( orient , window.innerWidth -1, window.innerHeight -1);
+              }
+            );
+          }
+        });
     %style
       :plain
         body {
@@ -120,16 +136,15 @@
           margin-top: 12px;
           padding:0px 8px;
         }
-        .item, .item-detail {
-          background-color:#FFF;
-          min-height:380px;
-          width:100%;
-          padding:12px;
+        .portrait .item { 
+          background-color: #FFF;
+          min-height: 360px;
+          padding: 8px;
         }
-        .item-detail {
-          background-color: #E6E6E6;
-          height: 100%;
-          min-height: 420px;
+        .landscape .item {
+          background-color: #FFF;
+          min-height: 220px;
+          padding: 8px;
         }
         .offer_name {
           color: #3E3E3E;
@@ -204,6 +219,10 @@
         }
         .item-icon {
           text-align: center;
+        }
+        .landscape .item-icon {
+          float: left;
+          margin-right: 10px;
         }
         .item-icon img {
           border: 2px solid #999;
