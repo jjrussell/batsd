@@ -1,0 +1,36 @@
+- content_for :apsalar_body do
+  We have some exciting news to share with you! We've added additional analytics
+  capabilities that leverage Tapjoy's integration with Apsalar. Should you choose
+  to opt-in to this program, you will receive the following benefits:
+
+  - form_tag agree_to_share_data_analytics_path do
+    %dl
+      %dt
+        %h2 As an advertiser:
+      %dd
+        %p An event labeled "Tapjoy Users" will be automatically created in your list of events within your Apsalar account. You can use this event to create a "Tapjoy User" segment that can be leveraged in all of your Apsalar's analyses. This will be useful, for example, to see how users acquired through Tapjoy are performing versus non-Tapjoy customers.
+
+        = check_box_tag 'enable_apsalar_sharing_adv', "1", current_partner.apsalar_sharing_adv
+        = label_tag  :terms_share_adv, "Please share my user acquisition data from Tapjoy with Apsalar"
+
+        %p Please note that none of YOUR user data will be shared with third party advertisers or applications WITHOUT YOUR CONSENT. Ever.
+    %dl
+      %dt
+        %h2 As a publisher:
+      %dd
+
+        %p You will be able to create cohot-based lifecycle monetization analyses of Tapjoy's offer wall users in your Apsalar's account.
+
+        = check_box_tag 'enable_apsalar_sharing_pub', "1", current_partner.apsalar_sharing_pub
+        = label_tag  :terms_share_pub, "Please share my monetization data from Tapjoy's offer-wall with Apsalar"
+
+        %p Please note that none of YOUR user data will be shared with third party advertisers or applications WITHOUT YOUR CONSENT. Ever.
+    %p
+      = submit_tag 'Enable Data Sharing with Apsalar'
+
+  IF YOU OPT-IN TO THIS PROGRAM, AN APSALAR ACCOUNT WILL AUTOMATICALLY BE CREATED FOR YOU, AND
+  YOUR USE OF APSALAR'S SERVICES (INCLUDING APSALAR'S USE OF YOUR USAGE DATA) SHALL BE SUBJECT
+  TO THE TERMS AND CONDITIONS OF YOUR RELATIONSHIP WITH APSALAR. For more information, or if you
+  have any questions, please do not hesitate to contact us at #{mail_to('support@tapjoy.com')}.
+
+= render :partial => 'features'
