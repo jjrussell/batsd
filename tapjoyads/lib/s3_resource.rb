@@ -139,7 +139,8 @@ class S3Resource
       Mc.put(get_memcache_key, @attributes) if save_to_memcache
 
       begin
-        bucket = S3.bucket(bucket_name)
+        s3 = RightAws::S3.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
+        bucket = RightAws::S3::Bucket.new(s3, bucket_name)
         bucket.put(id, convert_to_raw_attributes)
       rescue Exception => e
         if retries > 0
