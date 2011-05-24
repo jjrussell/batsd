@@ -161,14 +161,14 @@ class Currency < ActiveRecord::Base
     Benchmark.realtime do
       weights = app.group.weights
 
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list
-      cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default], app)
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.reject { |offer| should_reject?(offer) }
+      cache_offer_list(offer_list, weights, Offer::DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
 
-      offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
-      cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default], app)
+      offer_list = (Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list).reject { |offer| should_reject?(offer) }
+      cache_offer_list(offer_list, weights.merge({ :random => 0 }), Offer::FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
     
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads
-      cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default], app)
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads.reject { |offer| should_reject?(offer) }
+      cache_offer_list(offer_list, weights, Offer::DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
     end
   end
   
@@ -178,9 +178,6 @@ class Currency < ActiveRecord::Base
     offer_list.each do |offer|
       offer.normalize_stats(stats)
       offer.name = "#{offer.truncated_name}..." if offer.name.length > 40
-    end
-    
-    offer_list.each do |offer|
       offer.calculate_rank_score(weights)
       if (offer.item_type == 'App' || offer.item_type == 'ActionOffer')
         offer_item             = offer.item_type.constantize.find(offer.item_id)
@@ -207,10 +204,10 @@ class Currency < ActiveRecord::Base
   
     offer_groups = []
     group        = 0
-    key          = app.present? ? "enabled_offers.#{app.id}.type_#{type}.exp_#{exp}" : "enabled_offers.type_#{type}.exp_#{exp}"
+    key          = "enabled_offers.#{id}.type_#{type}.exp_#{exp}"
     bucket       = S3.bucket(BucketNames::OFFER_DATA)
     
-    offer_list.in_groups_of(GROUP_SIZE) do |offers|
+    offer_list.in_groups_of(Offer::GROUP_SIZE) do |offers|
       offers.compact!
       offer_groups << offers
       group += 1
@@ -220,12 +217,52 @@ class Currency < ActiveRecord::Base
       Mc.distributed_put("#{key}.#{i}", offers)
     end
   
-    if app.present?
-      while Mc.distributed_get("#{key}.#{group}")
-        Mc.distributed_delete("#{key}.#{group}")
-        group += 1
-      end
+    while Mc.distributed_get("#{key}.#{group}")
+      Mc.distributed_delete("#{key}.#{group}")
+      group += 1
     end
+  end
+  
+  def get_cached_offers(options = {})
+    type = options.delete(:type)
+    exp  = options.delete(:exp)
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
+    type ||= DEFAULT_OFFER_TYPE
+    exp  ||= Experiments::EXPERIMENTS[:default]
+    
+    offer_list        = []
+    offer_list_length = nil
+    group             = 0
+    s3_key            = "enabled_offers.type_#{type}.exp_#{exp}"
+    key               = app.present? ? "enabled_offers.#{id}.type_#{type}.exp_#{exp}" : s3_key
+    
+    loop do
+      offers = Mc.distributed_get_and_put("#{key}.#{group}") do
+        bucket = S3.bucket(BucketNames::OFFER_DATA)
+        if group == 0
+          Marshal.restore(bucket.get("#{s3_key}.#{group}"))
+        else
+          []
+        end
+      end
+      
+      if block_given?
+        offer_list_length ||= offers.first.offer_list_length if offers.present?
+        break if yield(offers) == 'break'
+      else
+        offer_list += offers
+      end
+      
+      break unless offers.length == Offer::GROUP_SIZE
+      group += 1
+    end
+    
+    block_given? ? offer_list_length.to_i : offer_list
+  end
+  
+  def should_reject?(offer)
+    is_disabled?(offer) || platform_mismatch?(offer) || age_rating_reject?(offer) || publisher_whitelist_reject?(offer) || currency_whitelist_reject?(offer)
   end
   
 private
@@ -257,6 +294,32 @@ private
   def remove_whitespace_from_attributes
     self.test_devices    = test_devices.gsub(/\s/, '')
     self.disabled_offers = disabled_offers.gsub(/\s/, '')
+  end
+  
+  def is_disabled?(offer)
+    offer.item_id == app_id || 
+      get_disabled_offer_ids.include?(offer.item_id) || 
+      get_disabled_partner_ids.include?(offer.partner_id) ||
+      (only_free_offers? && offer.is_paid?) ||
+      (offer.self_promote_only? && offer.partner_id != partner_id)
+  end
+  
+  def platform_mismatch?(offer)
+    !offer.get_device_types.include?(app.platform)
+  end
+  
+  def age_rating_reject?(offer)
+    return false if max_age_rating.nil?
+    return false if offer.age_rating.nil?
+    max_age_rating < offer.age_rating
+  end
+  
+  def publisher_whitelist_reject?(offer)
+    offer.publisher_app_whitelist.present? && !offer.get_publisher_app_whitelist.include?(app_id)
+  end
+  
+  def currency_whitelist_reject?(offer)
+    use_whitelist? && !get_offer_whitelist.include?(offer.id)
   end
   
 end
