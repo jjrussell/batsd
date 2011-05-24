@@ -197,15 +197,12 @@ class Offer < ActiveRecord::Base
     Mc.put("s3.offer_rank_statistics.#{type}", stats)
   end
   
-  def self.cache_offer_list(offer_list, weights, type, exp, app = nil)
+  def self.cache_offer_list(offer_list, weights, type, exp, currency = nil)
     stats = get_offer_rank_statistics(type)
     
     offer_list.each do |offer|
       offer.normalize_stats(stats)
       offer.name = "#{offer.truncated_name}..." if offer.name.length > 40
-    end
-    
-    offer_list.each do |offer|
       offer.calculate_rank_score(weights)
       if (offer.item_type == 'App' || offer.item_type == 'ActionOffer')
         offer_item             = offer.item_type.constantize.find(offer.item_id)
@@ -232,12 +229,12 @@ class Offer < ActiveRecord::Base
   
     offer_groups = []
     group        = 0
-    key          = app.present? ? "enabled_offers.#{app.id}.type_#{type}.exp_#{exp}" : "enabled_offers.type_#{type}.exp_#{exp}"
+    key          = currency.present? ? "enabled_offers.#{currency.id}.type_#{type}.exp_#{exp}" : "enabled_offers.type_#{type}.exp_#{exp}"
     bucket       = S3.bucket(BucketNames::OFFER_DATA)
     
     offer_list.in_groups_of(GROUP_SIZE) do |offers|
       offers.compact!
-      if app.nil?
+      if currency.nil?
         marshalled_offers = Marshal.dump(offers)
         bucket.put("#{key}.#{group}", marshalled_offers)
       end
@@ -249,7 +246,7 @@ class Offer < ActiveRecord::Base
       Mc.distributed_put("#{key}.#{i}", offers)
     end
   
-    if app.present?
+    if currency.present?
       while Mc.distributed_get("#{key}.#{group}")
         Mc.distributed_delete("#{key}.#{group}")
         group += 1
@@ -625,7 +622,8 @@ class Offer < ActiveRecord::Base
   end
   
   def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_installs)
-    return should_reject_from_app_or_currency?(publisher_app, currency, device_type) ||
+    return should_reject_from_app_or_currency?(publisher_app, currency) ||
+        device_platform_mismatch?(publisher_app, device_type)
         geoip_reject?(geoip_data, device) ||
         already_complete?(publisher_app, device, app_version) ||
         show_rate_reject?(device) ||
@@ -638,8 +636,8 @@ class Offer < ActiveRecord::Base
         hide_app_installs_reject?(currency, hide_app_installs)
   end
   
-  def should_reject_from_app_or_currency?(publisher_app, currency, device_type = nil)
-    is_disabled?(publisher_app, currency) || platform_mismatch?(publisher_app, device_type || publisher_app.platform) || age_rating_reject?(currency) || publisher_whitelist_reject?(publisher_app) || currency_whitelist_reject?(currency)
+  def should_reject_from_app_or_currency?(publisher_app, currency)
+    is_disabled?(publisher_app, currency) || app_platform_mismatch?(publisher_app) || age_rating_reject?(currency) || publisher_whitelist_reject?(publisher_app) || currency_whitelist_reject?(currency)
   end
 
   def update_payment(force_update = false)
@@ -817,8 +815,8 @@ private
         (self_promote_only? && partner_id != publisher_app.partner_id)
   end
   
-  def platform_mismatch?(publisher_app, device_type_param)
-    device_type = normalize_device_type(device_type_param)
+  def device_platform_mismatch?(publisher_app, device_type_param)
+    device_type = device_type_param.normalize_device_type
     
     if device_type.nil?
       if publisher_app.platform == 'android'
@@ -829,6 +827,11 @@ private
     end
     
     return !get_device_types.include?(device_type)
+  end
+  
+  def app_platform_mismatch?(publisher_app)
+    platform_name = get_platform
+    platform_name != 'All' && platform_name != publisher_app.platform_name
   end
   
   def age_rating_reject?(currency)
@@ -925,20 +928,6 @@ private
   
   def hide_app_installs_reject?(currency, hide_app_installs)
     hide_app_installs && item_type != 'GenericOffer'
-  end
-  
-  def normalize_device_type(device_type_param)
-    if device_type_param =~ /iphone/i
-      'iphone'
-    elsif device_type_param =~ /ipod/i
-      'itouch'
-    elsif device_type_param =~ /ipad/i
-      'ipad'
-    elsif device_type_param =~ /android/i
-      'android'
-    else
-      nil
-    end
   end
   
   def cleanup_url
