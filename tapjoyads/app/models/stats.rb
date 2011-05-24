@@ -12,7 +12,7 @@ class Stats < SimpledbResource
 
   CONVERSION_STATS  = Conversion::STAT_TO_REWARD_TYPE_MAP.keys
   WEB_REQUEST_STATS = WebRequest::STAT_TO_PATH_MAP.keys
-  SPECIAL_STATS     = [ 'virtual_goods', 'countries' ]
+  SPECIAL_STATS     = [ 'ranks', 'virtual_goods', 'countries' ]
   STAT_TYPES        = CONVERSION_STATS + WEB_REQUEST_STATS + SPECIAL_STATS
 
   COUNTRY_CODES = {
