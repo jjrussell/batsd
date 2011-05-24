@@ -138,14 +138,19 @@ class S3Resource
 
       Mc.put(get_memcache_key, @attributes) if save_to_memcache
 
+      s3 = RightAws::S3.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
+      bucket = RightAws::S3::Bucket.new(s3, bucket_name)
+      raw_attributes = convert_to_raw_attributes
+
       begin
-        s3 = RightAws::S3.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
-        bucket = RightAws::S3::Bucket.new(s3, bucket_name)
-        bucket.put(id, convert_to_raw_attributes)
+        bucket.put(id, raw_attributes)
       rescue Exception => e
         if retries > 0
+          delay ||= 0.1
           Rails.logger.info("#{e.class}: S3 save failed, will retry #{retries} more times")
           retries -= 1
+          sleep(delay)
+          delay *= 2
           retry
         else
           raise e
