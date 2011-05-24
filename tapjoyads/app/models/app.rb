@@ -137,7 +137,7 @@ class App < ActiveRecord::Base
     self.supported_devices  = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
     
     # TODO: Real multi-currency handling. For now simply set the price to a positive value if it's not USD.
-    if data[:currency].present? && data[:currency] != 'USD' && self.price > 0
+    if data[:currency].present? && data[:currency] != 'USD' && price > 0
       self.price = 99
     end
     
