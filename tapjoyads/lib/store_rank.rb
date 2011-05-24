@@ -137,17 +137,24 @@ class StoreRank
     log_progress "Finished loading known_store_ids."
 
     GOOGLE_CATEGORY_IDS.each do |category_key, category_name|
-      GOOGLE_POP_IDS.each do |pop_key, pop_id|
+      GOOGLE_POP_OPTIONS.each do |pop_key, pop_options|
+        next if pop_options[:skip_cat] && category_key != "overall"
         GOOGLE_LANGUAGE_IDS.each do |language_key, language_id|
+          next if pop_options[:skip_lang] && language_key != "english"
           # TODO: remove this line:
           stat_type = "#{category_key}.#{pop_key}.#{language_key}"
           ranks_key = "#{category_key}.#{pop_key}.#{language_key}"
           offset = 0
-          while offset < 200
-            url = google_rank_url(pop_id, category_name, language_id, offset)
+          max_offset = 200
+          max_offset = 24 * (pop_options[:pages]-1)     if pop_options[:pages]
+          max_offset = 24 * (pop_options[:cat_pages]-1) if pop_options[:cat_pages] && category_key != "overall"
+
+          while offset <= max_offset
+            url = google_rank_url(pop_options[:id], category_name, language_id, offset)
             offset += 24
 
             request = Typhoeus::Request.new(url)
+
             request.on_complete do |response|
               current_offset = response.effective_url.split('start=').last.split('&').first.to_i
               if response.code != 200
@@ -485,9 +492,36 @@ private
     "widgets"             => "APP_WIDGETS",
   }
 
-  GOOGLE_POP_IDS      = {
-    "free"              => "apps_topselling_free",
-    "paid"              => "apps_topselling_paid"
+  GOOGLE_POP_OPTIONS = {
+    "free" => { :id => "apps_topselling_free" },
+    "paid" => { :id => "apps_topselling_paid" },
+    "top_grossing" => {
+      :id => "apps_topgrossing",
+      :skip_lang => true,
+      :skip_cat => true,
+    },
+    "top_new_paid" => {
+      :id => "apps_topselling_new_paid",
+      :skip_lang => true,
+      :cat_pages => 1,
+    },
+    "top_new_free" => {
+      :id => "apps_topselling_new_free",
+      :skip_lang => true,
+      :cat_pages => 1,
+    },
+    "trending" => {
+      :id => "apps_movers_shakers",
+      :skip_lang => true,
+      :cat_pages => 1,
+      :pages => 2,
+    },
+    "featured" => {
+      :id => "apps_featured",
+      :skip_lang => true,
+      :cat_pages => 2,
+      :pages => 2,
+    },
   }
 
   GOOGLE_LANGUAGE_IDS = {
