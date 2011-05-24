@@ -12,17 +12,17 @@ class S3Stats::Ranks < S3Resource
   end
 
   def update_stat_for_hour(rank_key, hour, rank)
-    update_stat(rank_key, hour, rank)
+    update_stat(rank_key, hour, rank, 24)
   end
 
   def update_stat_for_day(rank_key, day, rank)
-    update_stat(rank_key, day, rank)
+    update_stat(rank_key, day, rank, 31)
   end
 
-  def update_stat(rank_key, position, rank)
+  def update_stat(rank_key, position, rank, length)
     # funkiness here dealing with all_ranks being a method
     temp_ranks = all_ranks
-    temp_ranks[rank_key] ||= []
+    temp_ranks[rank_key] ||= Array.new(length, 0)
     temp_ranks[rank_key][position] = rank
     self.all_ranks = temp_ranks
   end
