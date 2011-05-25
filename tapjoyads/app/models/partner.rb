@@ -283,7 +283,7 @@ private
   
   def update_app_offers
     if premier_discount_changed?
-      app_offers.each(&:update_payment!)
+      offers.each(&:update_payment!)
     end
   end
   

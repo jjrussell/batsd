@@ -126,6 +126,7 @@ class S3Resource
   
   def save!(options = {})
     save_to_memcache = options.delete(:save_to_memcache) { true }
+    retries = options.delete(:retries) { 5 }
     raise "Unknown options #{options.keys.join(', ')}"    unless options.empty?
     raise "Can't save #{self.class} without a BucketName" unless bucket_name.present?
     raise "Can't save #{self.class} without an ID"        unless id.present?
@@ -137,8 +138,24 @@ class S3Resource
 
       Mc.put(get_memcache_key, @attributes) if save_to_memcache
 
-      bucket = S3.bucket(bucket_name)
-      bucket.put(id, convert_to_raw_attributes)
+      s3 = RightAws::S3.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
+      bucket = RightAws::S3::Bucket.new(s3, bucket_name)
+      raw_attributes = convert_to_raw_attributes
+
+      begin
+        bucket.put(id, raw_attributes)
+      rescue Exception => e
+        if retries > 0
+          delay ||= 0.1
+          Rails.logger.info("#{e.class}: S3 save failed, will retry #{retries} more times")
+          retries -= 1
+          sleep(delay)
+          delay *= 2
+          retry
+        else
+          raise e
+        end
+      end
 
       @saved_attributes = @attributes.dup
       @unsaved_attributes.clear
@@ -162,8 +179,6 @@ private
   end
   
   def write_attribute(attribute, value)
-    #return value if @attributes[attribute] == value
-    
     if value.nil?
       @attributes.delete(attribute)
     else
