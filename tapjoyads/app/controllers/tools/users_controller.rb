@@ -12,16 +12,11 @@ class Tools::UsersController < WebsiteController
 
   def show
     @user = User.find(params[:id], :include => {
-      #:partner_assignments => [ :partner ],
       :role_assignments => [ :user_role ]
     })
     @new_assignments = (UserRole.all - @user.user_roles).map do |user_role|
       RoleAssignment.new(:user => @user, :user_role => user_role)
     end.sort_by{|ra| ra.user_role.name}
     @current_assignments = @user.role_assignments.sort_by{|ra| ra.user_role.name}
-
-    @username_class = "error" if @user.email != @user.username
-    @partner_name = @user.current_partner.name
-    @partner_name = "#{@user.current_partner.id} (no name)" if @partner_name.blank?
   end
 end

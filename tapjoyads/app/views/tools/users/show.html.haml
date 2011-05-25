@@ -1,3 +1,7 @@
+- username_class = "error" if @user.email != @user.username
+- partner_name = @user.current_partner.name
+- partner_name = "#{@user.current_partner.id} (no name)" if partner_name.blank?
+
 %h1 User management
 = render :partial => 'search'
 %h3= @user.email
@@ -8,8 +12,8 @@
       %th Email
       %td= @user.email
     %tr
-      %th{:class => @username_class} Username
-      %td{:class => @username_class}= @user.username
+      %th{:class => username_class} Username
+      %td{:class => username_class}= @user.username
     %tr
       %th Created
       %td= @user.created_at.to_s(:db)
@@ -18,7 +22,7 @@
       %td= @user.last_login_at? ? @user.last_login_at.to_s(:db) : 'never'
     %tr
       %th Current partner
-      %td= link_to(@partner_name, @user.current_partner)
+      %td= link_to(partner_name, @user.current_partner)
     %tr
       %th All partners
       %td
@@ -36,7 +40,6 @@
     %tbody
       - @new_assignments.sort_by{|ra| ra.user_role.name}.each do |assignment|
         - options = {}
-        - button_label = 'add'
         - classes = 'text'
         - if assignment.user_role.name == 'admin'
           - options[:disabled] = 'disabled'
