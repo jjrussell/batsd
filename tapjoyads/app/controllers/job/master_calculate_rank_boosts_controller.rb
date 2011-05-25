@@ -1,7 +1,7 @@
 class Job::MasterCalculateRankBoostsController < Job::JobController
   
   def index
-    Offer.with_rank_boosts.each do |offer|
+    Offer.with_rank_boosts.find_each do |offer|
       offer.calculate_rank_boost!
     end
     
