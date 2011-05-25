@@ -298,6 +298,19 @@ class StoreRank
     JSON.load(bucket.get(key))
   end
 
+  def self.populate_daily_ranks(offer_id)
+    offer      = Offer.find(offer_id)
+    now        = Time.zone.now
+    start_time = offer.last_daily_stats_aggregation_time || (now - 1.day).beginning_of_day
+
+    return if start_time + 1.day > now
+
+    hourly_ranks = S3Stats::Ranks.find_or_initialize_by_id("ranks/#{start_time.strftime('%Y-%m-%d')}/#{offer.id}", :load_from_memcache => false)
+    daily_ranks = S3Stats::Ranks.find_or_initialize_by_id("ranks/#{start_time.strftime('%Y-%m')}/#{offer.id}", :load_from_memcache => false)
+    daily_ranks.populate_daily_from_hourly(hourly_ranks, start_time.day - 1)
+    daily_ranks.save
+  end
+
 private
 
   ##
