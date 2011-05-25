@@ -25,39 +25,9 @@ class PayoutInfo < ActiveRecord::Base
     }
   }
 
-  def filled?
-    billing_name.present? && tax_info_filled? && payout_info_filled?
-  end
-
 private
-  def tax_info_filled?
-    tax_country.present? &&
-      account_type.present? &&
-      tax_id.present?
+  def pay_by_ach?
+    payout_method == 'ach' ||
+      (address_country && address_country.downcase) == 'united states of america'
   end
-
-  def payout_info_filled?
-    address_filled? && (pay_by_check? || bank_info_filled?)
-  end
-
-  def bank_info_filled?
-    bank_name.present? &&
-      bank_account_number.present? &&
-      bank_routing_number.present?
-  end
-
-  def address_filled?
-    company_name.present? &&
-    address_1.present? &&
-    address_city.present? &&
-    address_state.present? &&
-    address_postal_code.present?
-  end
-
-  def pay_by_check?
-    country = address_country && address_country.downcase
-    country == 'united states of america' && payout_method == 'check'
-  end
-  def pay_by_ach?; !pay_by_check?; end
-
 end

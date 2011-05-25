@@ -146,7 +146,7 @@ class BillingController < WebsiteController
   def payout_info
     if current_partner.payout_info
       @payout_info = current_partner.payout_info
-      unless @payout_info.filled?
+      unless @payout_info.valid?
         flash.now[:warning] = "You have some missing information. Please contact <a href='support@tapjoy.com'>support@tapjoy.com</a> if you need further assistance."
       end
     else
@@ -168,10 +168,8 @@ class BillingController < WebsiteController
       flash[:notice] = "Your information has been saved."
       redirect_to payout_info_billing_path
     else
-      if !@payout_info.filled?
+      if !@payout_info.valid?
         flash.now[:error] = "Please complete all fields to save."
-      elsif !@payout_info.valid?
-        flash.now[:error] = "Unable to save. Please contact <a href='support@tapjoy.com'>support@tapjoy.com</a>."
       else
         flash.now[:error] = @payout_info.errors.map do |error|
           [error[0].humanize, error[1]].join(' ')
