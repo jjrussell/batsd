@@ -2,7 +2,7 @@
 
 %h1= @employee.email
 
-- form_for(@employee, nil, :html => { :class => 'tjform', :multipart => true }) do |f|
+- form_for([ :tools, @employee ], nil, :html => { :class => 'tjform', :multipart => true }) do |f|
   = f.error_messages 
   .field
     = f.label(:active, "Active?")
@@ -27,8 +27,8 @@
     = f.text_area(:comments)
   .field
     = f.label("Current Photo", "Current Photo")
-    = image_tag url_for(:controller => "site", :action => "emp_photo", :id => @employee.id), :alt => @employee.full_name
-    = link_to "Remove Photo", :controller => 'employees', :action => 'delete_photo', :id => @employee.id if !@employee.photo.nil?
+    = image_tag url_for(:action => "show_photo", :id => @employee.id), :alt => @employee.full_name
+    = link_to "Remove Photo", :action => 'delete_photo', :id => @employee.id if !@employee.photo.nil?
   .field
     = f.label(:uploaded_photo, "Upload Photo")
     = f.file_field(:uploaded_photo)
