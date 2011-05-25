@@ -34,7 +34,7 @@ private
   end
   
   def calculate_rank_boost_for_offer
-    offer.caclulate_rank_boost!
+    offer.calculate_rank_boost!
   end
 
 end
