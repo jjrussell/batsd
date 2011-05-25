@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110523095954) do
+ActiveRecord::Schema.define(:version => 20110525002332) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -291,6 +291,7 @@ ActiveRecord::Schema.define(:version => 20110523095954) do
     t.boolean  "active",                                                                        :default => false
     t.string   "icon_id_override",                  :limit => 36
     t.text     "instructions"
+    t.integer  "rank_boost",                                                                    :default => 0,     :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
