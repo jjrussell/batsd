@@ -11,6 +11,7 @@ class PayoutInfo < ActiveRecord::Base
   attr_accessor :terms
   validates_acceptance_of :terms
   validates_presence_of :signature
+  before_save :filled?
 
   named_scope :recently_updated, lambda { |date|
     {
