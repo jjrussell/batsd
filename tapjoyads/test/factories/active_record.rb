@@ -39,8 +39,6 @@ Factory.define :payout_info do |info|
   info.association :partner
 end
 
-  # validates_presence_of :bank_name, :bank_account_number, :bank_routing_number, :if => :pay_by_ach?
-
 Factory.define :order do |order|
   order.association :partner
   order.payment_method 1
