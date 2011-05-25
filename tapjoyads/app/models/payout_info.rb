@@ -10,8 +10,9 @@ class PayoutInfo < ActiveRecord::Base
 
   attr_accessor :terms
   validates_acceptance_of :terms
-  validates_presence_of :signature
-  before_save :filled?
+  validates_presence_of :signature, :billing_name, :tax_country, :account_type,
+    :tax_id, :company_name, :address_1, :address_city, :address_state, :address_postal_code
+  validates_presence_of :bank_name, :bank_account_number, :bank_routing_number, :if => :pay_by_ach?
 
   named_scope :recently_updated, lambda { |date|
     {
@@ -36,12 +37,7 @@ private
   end
 
   def payout_info_filled?
-    country = address_country && address_country.downcase
-    if is_american?(country) && payout_method == 'check'
-      address_filled?
-    else
-      bank_info_filled?
-    end
+    address_filled? && (pay_by_check? || bank_info_filled?)
   end
 
   def bank_info_filled?
@@ -58,8 +54,10 @@ private
     address_postal_code.present?
   end
 
-  def is_american?(country)
-    ['united states', 'united states of america'].include?(country)
+  def pay_by_check?
+    country = address_country && address_country.downcase
+    country == 'united states of america' && payout_method == 'check'
   end
+  def pay_by_ach?; !pay_by_check?; end
 
 end
