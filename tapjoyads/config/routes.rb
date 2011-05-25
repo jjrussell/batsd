@@ -110,10 +110,10 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]
     tools.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :as => :scheduling
-    tools.resources :users, :only => [ :index, :show ]
-    tools.namespace :users do |user|
-      user.resources :role_assignments, :only => [ :create, :destroy ]
+    tools.resources :users, :only  => [ :index, :show] do |user|
+      user.resources :role_assignments, :only => [ :create, :destroy ], :controller => 'users/role_assignments'
     end
+
   end
   map.resources :offer_instructions, :only => [ :index ]
   map.with_options :controller => :game_state do |m|
