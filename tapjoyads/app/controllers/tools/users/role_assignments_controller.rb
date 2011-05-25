@@ -29,12 +29,12 @@ class Tools::Users::RoleAssignmentsController < WebsiteController
 
   private
   def find_role_assignment
+    @user = User.find(params[:user_id])
     if params[:id].present?
-      @role_assignment = RoleAssignment.find_by_id(params[:id])
+      @role_assignment = @user.role_assignments.find_by_id(params[:id])
     else
-      @role_assignment = RoleAssignment.new(:user_id => params[:user_id], :user_role_id => params[:user_role_id])
+      @role_assignment = @user.role_assignments.build(:user_role_id => params[:user_role_id])
     end
-    @user = @role_assignment.user
     @user_role = @role_assignment.user_role
     log_activity(@user, :included_methods => [ :role_symbols ])
   end

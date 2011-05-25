@@ -3,7 +3,7 @@
 - partner_name = "#{@user.current_partner.id} (no name)" if partner_name.blank?
 
 %h1 User management
-= render :partial => 'search'
+= render('search')
 %h3= @user.email
 = link_to 'Activities Log', activities_path(:object_id => @user.id)
 %table.tablesorter
@@ -61,7 +61,7 @@
             - if assignment.user_role.name == 'admin'
               &nbsp;
             - else
-              = button_to('remove', tools_user_role_assignment_path(assignment.id), :method => 'delete', :confirm => 'Are you sure?')
+              = button_to('remove', tools_user_role_assignment_path(:user_id => @user.id, :id => assignment.id), :method => 'delete', :confirm => 'Are you sure?')
           %td{:class => (assignment.user_role.name == 'admin') ? 'disabled text' : 'text'}
             = assignment.user_role.name
             - if assignment.user_role.name == 'admin'
