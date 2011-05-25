@@ -26,9 +26,9 @@ class Appstats
       end
     end
 
-    if @granularity == :hourly && @app_key
+    if @granularity == :hourly
       @stats['ranks'] = S3Stats::Ranks.hourly_over_time_range(@app_key, @start_time.utc, @end_time.utc)
-    elsif @app_key
+    else
       @stats['ranks'] = S3Stats::Ranks.daily_over_time_range(@app_key, @start_time.utc, @end_time.utc)
     end
 
