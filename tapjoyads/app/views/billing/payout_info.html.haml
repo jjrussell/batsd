@@ -56,15 +56,15 @@
             = f.label :payout_method, 'Payment Method'
             .help.no-help ?
           %td= f.select(:payout_method, options_for_select(list_of_payout_methods, @payout_info.payout_method))
-        %tr.country_us.address
+        %tr.address
           %th
             = f.label :address, 'Address'
             .help.no-help ?
           %td= f.text_field(:address_1)
-        %tr.country_us.address
+        %tr.address
           %th &nbsp;
           %td= f.text_field(:address_2)
-        %tr.country_us.address
+        %tr.address
           %th
             = f.label :city, 'City'
             .help.no-help ?
@@ -74,9 +74,10 @@
             = f.label :state, 'State'
             .help.no-help ?
           %td= f.select(:address_state, options_for_select(list_of_states, @payout_info.address_state || 'CA'))
-        %tr.country_us.address
+        %tr.address
           %th
-            = f.label :postal_codes, 'ZIP code'
+            %span.country_us= f.label :postal_codes, 'ZIP code'
+            %span.country_other= f.label :postal_codes, 'Postal code'
             .help.no-help ?
           %td= f.text_field(:address_postal_code)
         %tr.country_other
@@ -179,6 +180,7 @@
       } else {
         $('.country_us').hide();
         $('.country_other').show();
+        $('#payout_info_payout_method').val('ach');
       }
     };
     var toggleByPayoutMethod = function() {
