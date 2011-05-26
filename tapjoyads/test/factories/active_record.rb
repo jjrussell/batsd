@@ -26,6 +26,16 @@ end
 
 Factory.define :payout_info do |info|
   info.signature { Factory.next(:name) }
+  info.billing_name { Factory.next(:name) }
+  info.tax_country { 'United States of America' }
+  info.account_type { Factory.next(:name) }
+  info.tax_id { Factory.next(:name) }
+  info.company_name { Factory.next(:name) }
+  info.address_1 { Factory.next(:name) }
+  info.address_city { Factory.next(:name) }
+  info.address_state { Factory.next(:name) }
+  info.address_postal_code { Factory.next(:name) }
+  info.payout_method { 'check' }
   info.association :partner
 end
 

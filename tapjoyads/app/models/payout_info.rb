@@ -10,7 +10,9 @@ class PayoutInfo < ActiveRecord::Base
 
   attr_accessor :terms
   validates_acceptance_of :terms
-  validates_presence_of :signature
+  validates_presence_of :signature, :billing_name, :tax_country, :account_type,
+    :tax_id, :company_name, :address_1, :address_city, :address_state, :address_postal_code
+  validates_presence_of :bank_name, :bank_account_number, :bank_routing_number, :if => :pay_by_ach?
 
   named_scope :recently_updated, lambda { |date|
     {
@@ -23,42 +25,9 @@ class PayoutInfo < ActiveRecord::Base
     }
   }
 
-  def filled?
-    billing_name.present? && tax_info_filled? && payout_info_filled?
-  end
-
 private
-  def tax_info_filled?
-    tax_country.present? &&
-      account_type.present? &&
-      tax_id.present?
+  def pay_by_ach?
+    payout_method == 'ach' ||
+      (address_country && address_country.downcase) == 'united states of america'
   end
-
-  def payout_info_filled?
-    country = address_country && address_country.downcase
-    if is_american?(country) && payout_method == 'check'
-      address_filled?
-    else
-      bank_info_filled?
-    end
-  end
-
-  def bank_info_filled?
-    bank_name.present? &&
-      bank_account_number.present? &&
-      bank_routing_number.present?
-  end
-
-  def address_filled?
-    company_name.present? &&
-    address_1.present? &&
-    address_city.present? &&
-    address_state.present? &&
-    address_postal_code.present?
-  end
-
-  def is_american?(country)
-    ['united states', 'united states of america'].include?(country)
-  end
-
 end
