@@ -7,7 +7,7 @@
   = render :partial => 'currency_selector'
 
 #instructions
-  Install and OPEN one of the apps below to receive #{@currency.name}
+  = t 'text.offerwall.instructions', :currency_name => @currency.name
 
 - if @start_index > 0
   .pagination
