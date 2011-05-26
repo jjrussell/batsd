@@ -333,6 +333,7 @@ div.help-dialog .ui-dialog-title {
 
 #active_campaigns_box td {
   padding: 3px;
+  max-width: 450px;
 }
 #active_campaigns_box td.offer-type {
   font-size: 10px;

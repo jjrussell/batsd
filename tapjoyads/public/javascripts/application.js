@@ -50,8 +50,12 @@ $(function($){
     if (box.is(':hidden')) {
       var top = link.attr('offsetTop') + link.height();
       var left = link.attr('offsetLeft');
-      box.css({left: left, top: top});
       box.show();
+      var width = box.width();
+      if (width > 280) {
+        left -= (width - 270);
+      }
+      box.css({left: left, top: top});
     } else {
       box.hide();
     }
