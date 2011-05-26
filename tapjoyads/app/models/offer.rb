@@ -517,12 +517,12 @@ class Offer < ActiveRecord::Base
     if item_type == 'App' || item_type == 'ActionOffer' || item_type == 'RatingOffer'
       app = item_type == 'App' ? item : item.app
       if app.is_android?
-        Offer::ANDROID_DEVICES
+        ANDROID_DEVICES
       else
-        Offer::APPLE_DEVICES
+        APPLE_DEVICES
       end
     else
-      Offer::ALL_DEVICES
+      ALL_DEVICES
     end
   end
 
