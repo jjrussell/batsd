@@ -817,7 +817,7 @@ private
   end
   
   def device_platform_mismatch?(publisher_app, device_type_param)
-    device_type = device_type_param.normalize_device_type
+    device_type = normalize_device_type(device_type_param)
     
     if device_type.nil?
       if publisher_app.platform == 'android'
@@ -929,6 +929,20 @@ private
   
   def hide_app_installs_reject?(currency, hide_app_installs)
     hide_app_installs && item_type != 'GenericOffer'
+  end
+  
+  def normalize_device_type(device_type_param)
+    if device_type_param =~ /iphone/i
+      'iphone'
+    elsif device_type_param =~ /ipod/i
+      'itouch'
+    elsif device_type_param =~ /ipad/i
+      'ipad'
+    elsif device_type_param =~ /android/i
+      'android'
+    else
+      nil
+    end
   end
   
   def cleanup_url
