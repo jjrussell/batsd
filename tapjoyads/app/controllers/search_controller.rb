@@ -13,5 +13,21 @@ class SearchController < WebsiteController
 
     render(:json => results.to_json)
   end
-  
+
+  def users
+    conditions = [ "email LIKE ?", "#{params[:term]}%" ]
+    if params[:tapjoy_only] == 'true'
+      tapjoy_email = "#{params[:term].split('@').first}%@tapjoy.com"
+      conditions = [ "email LIKE ? AND email NOT LIKE ?", tapjoy_email, "%+%" ]
+    end
+    results = User.find(:all,
+      :conditions => conditions,
+      :order => 'email ASC',
+      :limit => 30
+    ).collect do |user|
+      { :label => user.email, :user_id => user.id }
+    end
+
+    render(:json => results.to_json)
+  end
 end
