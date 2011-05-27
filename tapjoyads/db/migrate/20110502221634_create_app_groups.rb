@@ -15,9 +15,6 @@ class CreateAppGroups < ActiveRecord::Migration
     add_index :app_groups, :id, :unique => true
     add_column :apps, :app_group_id, 'char(36) binary', :null => false
     add_index :apps, :app_group_id
-    
-    app_group = AppGroup.create(:name => 'default', :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6)
-    App.connection.execute("UPDATE apps SET app_group_id = '#{app_group.id}'")
   end
 
   def self.down
