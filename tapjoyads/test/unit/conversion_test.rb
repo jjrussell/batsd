@@ -30,8 +30,6 @@ class ConversionTest < ActiveSupport::TestCase
       @conversion.save!
       assert_equal [], Conversion.pub_platform('android')
       assert_equal [@conversion], Conversion.pub_platform('iphone')
-      assert_equal [], Conversion.adv_platform('android')
-      assert_equal [@conversion], Conversion.adv_platform('iphone')
       assert_equal [@conversion], Conversion.non_display
     end
     

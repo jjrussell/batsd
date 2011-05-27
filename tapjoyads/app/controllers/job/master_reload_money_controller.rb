@@ -51,21 +51,16 @@ private
           stats[key]['publisher_earnings'] = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id NOT IN (?)", tj_partner.app_ids])
 
           stats[key]['android_conversions']  = Conversion.created_between(start_time, end_time).non_display.adv_platform('android')
-          stats[key]['android_adv_spend']    = Conversion.created_between(start_time, end_time).adv_platform('android').sum(:advertiser_amount)
+          stats[key]['android_adv_spend']    = Conversion.created_between(start_time, end_time).pub_platform('android').sum(:advertiser_amount)
           stats[key]['android_pub_earnings'] = Conversion.created_between(start_time, end_time).non_tapjoy.pub_platform('android').sum(:publisher_amount)
           stats[key]['ios_conversions']      = Conversion.created_between(start_time, end_time).non_display.adv_platform('android')
-          stats[key]['ios_adv_spend']        = Conversion.created_between(start_time, end_time).adv_platform('iphone').sum(:advertiser_amount)
+          stats[key]['ios_adv_spend']        = Conversion.created_between(start_time, end_time).pub_platform('iphone').sum(:advertiser_amount)
           stats[key]['ios_pub_earnings']     = Conversion.created_between(start_time, end_time).non_tapjoy.pub_platform('iphone').sum(:publisher_amount)
 
           stats[key]['android_adv_spend']    /= -100.0
           stats[key]['android_pub_earnings'] /=  100.0
           stats[key]['ios_adv_spend']        /= -100.0
           stats[key]['ios_pub_earnings']     /=  100.0
-
-          # level out stats to take in account cross platform advertisers
-          ratio = stats[key]['advertiser_spend'].to_f / (stats[key]['android_adv_spend'].to_f + stats[key]['ios_adv_spend'].to_f)
-          stats[key]['android_adv_spend'] = (stats[key]['android_adv_spend'] * ratio)
-          stats[key]['ios_adv_spend']     = (stats[key]['ios_adv_spend'] * ratio)
 
           stats[key]['android_conversions'] = stats[key]['android_conversions'].nil? ? '-' : number_with_delimiter(stats[key]['android_conversions'])
           stats[key]['ios_conversions']    = stats[key]['ios_conversions'].nil? ? '-' : number_with_delimiter(stats[key]['ios_conversions'])
