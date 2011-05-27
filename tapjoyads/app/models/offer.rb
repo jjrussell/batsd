@@ -837,6 +837,11 @@ private
       return device.has_app(app_id_for_device) || device.has_app('a994587c-390c-4295-a6b6-dd27713030cb') || device.has_app('6703401f-1cb2-42ec-a6a4-4c191f8adc27')
     end
     
+    if app_id_for_device == '3885c044-9c8e-41d4-b136-c877915dda91'
+      # don't show the beat level 2 in clubworld action to users that already have clubworld
+      return device.has_app(app_id_for_device) || device.has_app('a3980ac5-7d33-43bc-8ba1-e4598c7ed279')
+    end
+    
     return device.has_app(app_id_for_device)
   end
   
