@@ -15,9 +15,19 @@
 #money_totals
   .last_updated Totals Last Updated: #{@money_last_updated.to_s(:pub_ampm_sec)}
   %h3
-    Total conversions: #{@money_stats[@timeframe]['conversions']} &nbsp;
-    Total revenue: #{@money_stats[@timeframe]['revenue']} &nbsp;
-    Total payouts: #{@money_stats[@timeframe]['publisher_earnings']}
+    %table
+      %tr
+        %td Total conversions: #{@money_stats[@timeframe]['conversions']} &nbsp;
+        %td Total revenue: #{@money_stats[@timeframe]['revenue']} &nbsp;
+        %td Total payouts: #{@money_stats[@timeframe]['publisher_earnings']}
+      %tr
+        %td Android conversions: #{@money_stats[@timeframe]['android_conversions']} &nbsp;
+        %td Spend: #{@money_stats[@timeframe]['android_adv_spend']} &nbsp;
+        %td Payouts: #{@money_stats[@timeframe]['android_pub_earnings']}
+      %tr
+        %td iOS conversions: #{@money_stats[@timeframe]['ios_conversions']} &nbsp;
+        %td Spend: #{@money_stats[@timeframe]['ios_adv_spend']} &nbsp;
+        %td Payouts: #{@money_stats[@timeframe]['ios_pub_earnings']}
 %p
   = link_to "Global Network Stats", global_statz_path
   - if permitted_to? :publisher, :statz
