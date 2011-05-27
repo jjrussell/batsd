@@ -63,7 +63,7 @@ private
           stats[key]['android_conversions']  = Conversion.created_between(start_time, end_time).non_display.include_pub_apps(android_ids).count
           stats[key]['android_adv_spend']    = Conversion.created_between(start_time, end_time).include_pub_apps(android_ids).sum(:advertiser_amount) / -100.0
           stats[key]['android_pub_earnings'] = Conversion.created_between(start_time, end_time).exclude_pub_apps(tj_apps).include_pub_apps(android_ids).sum(:publisher_amount) / 100.0
-          stats[key]['ios_conversions']      = Conversion.created_between(start_time, end_time).non_display.include_pub_apps(android_ids).count
+          stats[key]['ios_conversions']      = Conversion.created_between(start_time, end_time).non_display.include_pub_apps(ios_ids).count
           stats[key]['ios_adv_spend']        = Conversion.created_between(start_time, end_time).include_pub_apps(ios_ids).sum(:advertiser_amount) / -100.0
           stats[key]['ios_pub_earnings']     = Conversion.created_between(start_time, end_time).exclude_pub_apps(tj_apps).include_pub_apps(ios_ids).sum(:publisher_amount) / 100.0
 
