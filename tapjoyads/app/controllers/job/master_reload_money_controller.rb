@@ -49,9 +49,24 @@ private
           stats[key]['conversions']        = Conversion.created_between(start_time, end_time).count(:conditions => ["reward_type < 1000 OR reward_type >= 2000"])
           stats[key]['advertiser_spend']   = Conversion.created_between(start_time, end_time).sum(:advertiser_amount)
           stats[key]['publisher_earnings'] = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id NOT IN (?)", tj_partner.app_ids])
+          stats[key]['android_conversions']  = Conversion.created_between(start_time, end_time).non_display.adv_platform('android')
+          stats[key]['android_adv_spend']    = Conversion.created_between(start_time, end_time).adv_platform('android').sum(:advertiser_amount)
+          stats[key]['android_pub_earnings'] = Conversion.created_between(start_time, end_time).non_tapjoy.pub_platform('android').sum(:publisher_amount)
+          stats[key]['ios_conversions']      = Conversion.created_between(start_time, end_time).non_display.adv_platform('android')
+          stats[key]['ios_adv_spend']        = Conversion.created_between(start_time, end_time).adv_platform('iphone').sum(:advertiser_amount)
+          stats[key]['ios_pub_earnings']     = Conversion.created_between(start_time, end_time).non_tapjoy.pub_platform('iphone').sum(:publisher_amount)
         end
         stats[key]['advertiser_spend']   /= -100.0
         stats[key]['publisher_earnings'] /=  100.0
+        stats[key]['android_adv_spend']    /= -100.0
+        stats[key]['android_pub_earnings'] /=  100.0
+        stats[key]['ios_adv_spend']        /= -100.0
+        stats[key]['ios_pub_earnings']     /=  100.0
+
+        # level out stats to take in account cross platform advertisers
+        ratio = stats[key]['advertiser_spend'].to_f / (stats[key]['android_adv_spend'].to_f + stats[key]['ios_adv_spend'].to_f)
+        stats[key]['android_adv_spend'] = (stats[key]['android_adv_spend'] * ratio).round if stats[key]['android_adv_spend']
+        stats[key]['ios_adv_spend']     = (stats[key]['ios_adv_spend'] * ratio).round if stats[key]['ios_adv_spend']
 
         stats[key]['marketing_credits'] = Order.created_between(start_time, end_time).sum(:amount, :conditions => "payment_method = 2") / 100.0
         stats[key]['orders']            = Order.created_between(start_time, end_time).sum(:amount, :conditions => "payment_method != 2") / 100.0
@@ -66,8 +81,14 @@ private
         stats[key]['deduct_pct']        = ( stats[key]['marketing_credits'] + website_orders_deduction ) / stats[key]['orders'] * 100
 
         stats[key]['conversions']        = stats[key]['conversions'].nil? ? '-' : number_with_delimiter(stats[key]['conversions'])
+        stats[key]['android_conversions'] = stats[key]['android_conversions'].nil? ? '-' : number_with_delimiter(stats[key]['android_conversions'])
+        stats[key]['ios_conversions']    = stats[key]['ios_conversions'].nil? ? '-' : number_with_delimiter(stats[key]['ios_conversions'])
         stats[key]['advertiser_spend']   = number_to_currency(stats[key]['advertiser_spend'])
+        stats[key]['android_adv_spend']  = number_to_currency(stats[key]['android_adv_spend'])
+        stats[key]['ios_adv_spend']      = number_to_currency(stats[key]['ios_adv_spend'])
         stats[key]['publisher_earnings'] = number_to_currency(stats[key]['publisher_earnings'])
+        stats[key]['android_pub_earnings'] = number_to_currency(stats[key]['android_pub_earnings'])
+        stats[key]['ios_pub_earnings']   = number_to_currency(stats[key]['ios_pub_earnings'])
         stats[key]['marketing_credits']  = number_to_currency(stats[key]['marketing_credits'])
         stats[key]['deduct_pct']         = number_to_percentage(stats[key]['deduct_pct'], :precision => 2)
         stats[key]['orders']             = number_to_currency(stats[key]['orders'])

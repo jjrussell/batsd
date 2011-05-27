@@ -57,6 +57,13 @@ class Conversion < ActiveRecord::Base
   
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at >= ?", date ] } }
   named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
+  named_scope :pub_platform, lambda { |platform| { :joins => :publisher_app, :conditions => [ "apps.platform = ?", platform ] } }
+  named_scope :adv_platform, lambda { |platform| { :joins => :advertiser_offer, :conditions => ["offers.device_types like '%?%'", platform] } }
+  named_scope :non_display, :conditions => ["reward_type < 1000 OR reward_type >= 2000"]
+  named_scope :non_tapjoy, (lambda do
+    tj_partner = Partner.find('70f54c6d-f078-426c-8113-d6e43ac06c6d')
+    { :conditions => [ "publisher_app_id NOT IN (?)", tj_partner.app_ids ] }
+  end)
   
   def self.get_stat_definitions(reward_type)
     case reward_type
