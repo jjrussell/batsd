@@ -56,13 +56,11 @@ class Conversion < ActiveRecord::Base
   after_create :update_publisher_amount, :update_advertiser_amount, :update_realtime_stats
   
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at >= ?", date ] } }
-  named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "conversions.created_at >= ? AND conversions.created_at < ?", start_time, end_time ] } }
-  named_scope :pub_platform, lambda { |platform| { :joins => :publisher_app, :conditions => [ "apps.platform = ?", platform ] } }
+  named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
+
   named_scope :non_display, :conditions => ["reward_type < 1000 OR reward_type >= 2000"]
-  named_scope :non_tapjoy, (lambda do
-    tj_partner = Partner.find('70f54c6d-f078-426c-8113-d6e43ac06c6d')
-    { :conditions => [ "publisher_app_id NOT IN (?)", tj_partner.app_ids ] }
-  end)
+  named_scope :exclude_pub_apps, lambda { |apps| { :conditions => ["publisher_app_id NOT IN (?)", apps] } }
+  named_scope :include_pub_apps, lambda { |apps| { :conditions => ["publisher_app_id IN (?)", apps] } }
   
   def self.get_stat_definitions(reward_type)
     case reward_type

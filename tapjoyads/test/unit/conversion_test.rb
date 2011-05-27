@@ -25,13 +25,6 @@ class ConversionTest < ActiveSupport::TestCase
         assert_equal v, @conversion.reward_type
       end
     end
-
-    should "handle named scopes" do
-      @conversion.save!
-      assert_equal [], Conversion.pub_platform('android')
-      assert_equal [@conversion], Conversion.pub_platform('iphone')
-      assert_equal [@conversion], Conversion.non_display
-    end
     
     context "when saved" do
       should "update the publisher's pending earnings" do
