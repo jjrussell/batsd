@@ -1,0 +1,40 @@
+#articles
+  #press
+    %strong Press Releases
+    -#%a{:href => "...", :class => "view_all"} View All &rarr;
+    %ul
+      - @recent_press[0..2].each do |press|
+        - class_name = "bold" if press.link_id == @sanitized_id
+        .article_divider
+        %li
+          = link_to press.link_text, press.link_href, :class => class_name
+          .date
+            = press.published_at.to_s(:pr)
+    %ul.hidden
+      - @recent_press[3..-1].each do |press|
+        .article_divider
+        %li
+          = link_to press.link_text, press.link_href
+          .date
+            = press.published_at.to_s(:pr)
+  #news
+    %strong News Coverage
+    -#%a{:href => "...", :class => "view_all"} View All &rarr;
+    %ul
+      - @recent_news[0..2].each do |news|
+        .article_divider
+        %li
+          %b= news.link_source
+          |
+          = link_to news.link_text, news.link_href
+          .date
+            = news.published_at.to_s(:pr)
+    %ul.hidden
+      - @recent_news[3..-1].each do |news|
+        .article_divider
+        %li
+          %b= news.link_source
+          |
+          = link_to news.link_text, news.link_href
+          .date
+            = news.published_at.to_s(:pr)

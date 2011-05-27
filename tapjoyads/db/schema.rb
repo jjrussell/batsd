@@ -198,6 +198,17 @@ ActiveRecord::Schema.define(:version => 20110525002332) do
   add_index "monthly_accountings", ["partner_id", "month", "year"], :name => "index_monthly_accountings_on_partner_id_and_month_and_year", :unique => true
   add_index "monthly_accountings", ["partner_id"], :name => "index_monthly_accountings_on_partner_id"
 
+  create_table "news_coverages", :force => true do |t|
+    t.datetime "published_at"
+    t.string   "link_source"
+    t.text     "link_text"
+    t.text     "link_href"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "news_coverages", ["published_at"], :name => "index_news_coverages_on_published_at"
+
   create_table "offer_discounts", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
     t.string   "partner_id", :limit => 36, :null => false
@@ -406,6 +417,22 @@ ActiveRecord::Schema.define(:version => 20110525002332) do
 
   add_index "payouts", ["id"], :name => "index_payouts_on_id", :unique => true
   add_index "payouts", ["partner_id"], :name => "index_payouts_on_partner_id"
+
+  create_table "press_releases", :force => true do |t|
+    t.datetime "published_at"
+    t.text     "link_text"
+    t.text     "link_href"
+    t.string   "link_id"
+    t.text     "content_title"
+    t.text     "content_subtitle"
+    t.text     "content_body"
+    t.text     "content_about"
+    t.text     "content_contact"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "press_releases", ["published_at"], :name => "index_press_releases_on_published_at"
 
   create_table "rank_boosts", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false

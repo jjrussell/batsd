@@ -1,75 +1,12 @@
-.titleHeader
-  %h3 COMPANY OVERVIEW
-  %h3.separator &nbsp;/&nbsp;
-  %h3.sub PRESS
+- content_for :page_head, stylesheet_link_tag('about_us')
+- content_for :page_head, stylesheet_link_tag('press')
 
-.splitLayout
-  = render :partial => 'homepage/about_left_nav'
-  .team.plain_template
-    .management.innercontents
-      .links#press-list
-        %strong Press Releases
-        %ul
-          - @press_list[0..30].each do |press|
-            %li
-              = press[0]
-              |
-              = link_to press[1], press[2]
-        = link_to 'READ MORE', '#more-press', :class => 'more'
-        %ul.hidden#more-press
-          - @press_list[31..-1].each do |press|
-            %li
-              = press[0]
-              |
-              = link_to press[1], press[2]
-
-      .links#news-list
-        %strong News Coverage
-        %ul
-          - @news_list[0..30].each do |news|
-            %li
-              = news[0]
-              |
-              %b= news[1]
-              |
-              = link_to news[2], news[3]
-        = link_to 'READ MORE', '#more-news', :class => 'more'
-        %ul.hidden#more-news
-          - @news_list[31..-1].each do |news|
-            %li
-              = news[0]
-              |
-              %b= news[1]
-              |
-              = link_to news[2], news[3]
-
-      .clear &nbsp;
-
-- content_for :page_styles do
-  :plain
-    #news-list {
-      margin-left: 40px;
-    }
-    .links {
-      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-      float: left;
-      width: 300px;
-    }
-    .links ul li {
-      background-image: none !important;
-      padding-left: 0px !important;
-      padding-bottom: 20px !important;
-    }
-    .links ul li a {
-      color: #244B99;
-    }
-    .hidden {
-      display: none;
-    }
-- content_for :page_javascript do
-  :plain
-    $('a.more').click(function(){
-      $(this).siblings('.hidden').show();
-      $(this).hide();
-      return false;
-    });
+#about_us
+  #left
+    = render :partial => 'homepage/sub_nav'
+    = render :partial => 'homepage/press_feed'
+  #right
+    %img.header{:src => "/images/tapjoy_in_the_press.png"}/
+    .clear
+    Empty Press Area
+.clear
