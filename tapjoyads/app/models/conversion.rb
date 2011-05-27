@@ -56,7 +56,7 @@ class Conversion < ActiveRecord::Base
   after_create :update_publisher_amount, :update_advertiser_amount, :update_realtime_stats
   
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at >= ?", date ] } }
-  named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
+  named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "conversions.created_at >= ? AND conversions.created_at < ?", start_time, end_time ] } }
   named_scope :pub_platform, lambda { |platform| { :joins => :publisher_app, :conditions => [ "apps.platform = ?", platform ] } }
   named_scope :non_display, :conditions => ["reward_type < 1000 OR reward_type >= 2000"]
   named_scope :non_tapjoy, (lambda do
