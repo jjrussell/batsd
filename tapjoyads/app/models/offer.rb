@@ -512,7 +512,15 @@ class Offer < ActiveRecord::Base
   def get_device_types
     Set.new(device_types.blank? ? nil : JSON.parse(device_types))
   end
-  
+
+  def expected_device_types
+    if item_type == 'App' || item_type == 'ActionOffer' || item_type == 'RatingOffer'
+      item.is_android? ? ANDROID_DEVICES : APPLE_DEVICES
+    else
+      ALL_DEVICES
+    end
+  end
+
   def get_publisher_app_whitelist
     Set.new(publisher_app_whitelist.split(';'))
   end

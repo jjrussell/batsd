@@ -12,7 +12,9 @@ class RatingOffer < ActiveRecord::Base
   before_validation :set_name_and_description
   after_create :create_primary_offer, :create_icon
   after_update :update_offers
-  
+
+  delegate :is_android?, :to => :app
+
   named_scope :visible, :conditions => { :hidden => false }
   
   def get_id_with_app_version(app_version)
