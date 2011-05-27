@@ -50,10 +50,10 @@ private
           stats[key]['advertiser_spend']   = Conversion.created_between(start_time, end_time).sum(:advertiser_amount)
           stats[key]['publisher_earnings'] = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id NOT IN (?)", tj_partner.app_ids])
 
-          stats[key]['android_conversions']  = Conversion.created_between(start_time, end_time).non_display.pub_platform('android')
+          stats[key]['android_conversions']  = Conversion.created_between(start_time, end_time).non_display.pub_platform('android').count
           stats[key]['android_adv_spend']    = Conversion.created_between(start_time, end_time).pub_platform('android').sum(:advertiser_amount)
           stats[key]['android_pub_earnings'] = Conversion.created_between(start_time, end_time).non_tapjoy.pub_platform('android').sum(:publisher_amount)
-          stats[key]['ios_conversions']      = Conversion.created_between(start_time, end_time).non_display.pub_platform('android')
+          stats[key]['ios_conversions']      = Conversion.created_between(start_time, end_time).non_display.pub_platform('android').count
           stats[key]['ios_adv_spend']        = Conversion.created_between(start_time, end_time).pub_platform('iphone').sum(:advertiser_amount)
           stats[key]['ios_pub_earnings']     = Conversion.created_between(start_time, end_time).non_tapjoy.pub_platform('iphone').sum(:publisher_amount)
 
