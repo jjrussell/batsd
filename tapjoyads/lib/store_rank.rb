@@ -77,14 +77,14 @@ class StoreRank
     hydra.run
     log_progress "Finished making requests."
     
-    stat_rows.each do |offer_id, stat_row|
-      # TODO: switch this save once migration is finished
-      stat_row.serial_save
-    end
-
     # TODO: remove this later
     s3_rows.each do |offer_id, ranks_row|
       ranks_row.save || log_progress("S3 save failed for #{ranks_row.id}")
+    end
+
+    stat_rows.each do |offer_id, stat_row|
+      # TODO: switch this save once migration is finished
+      stat_row.serial_save
     end
 
     log_progress "Finished saving stat_rows."
@@ -192,14 +192,14 @@ class StoreRank
     hydra.run
     log_progress "Finished making requests."
 
-    stat_rows.each do |offer_id, stat_row|
-      # TODO: switch this save once migration is finished
-      stat_row.serial_save
-    end
-
     # TODO: remove this later
     s3_rows.each do |offer_id, ranks_row|
       ranks_row.save || Rails.logger.info("S3 save failed for #{ranks_row.id}")
+    end
+
+    stat_rows.each do |offer_id, stat_row|
+      # TODO: switch this save once migration is finished
+      stat_row.serial_save
     end
 
     log_progress "Finished saving stat_rows."
