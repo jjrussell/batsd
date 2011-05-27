@@ -45,29 +45,31 @@ private
 
           stats[key]['publisher_earnings'] = MonthlyAccounting.since(start_time).prior_to(archive_cutoff).sum(:earnings, :conditions => ["partner_id != ?", tj_partner.id])
           stats[key]['publisher_earnings'] += Conversion.created_between(archive_cutoff, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id NOT IN (?)", tj_partner.app_ids])
+
+          stats[key]['android_conversions']  = '-'
+          stats[key]['android_adv_spend']    = '-'
+          stats[key]['android_pub_earnings'] = '-'
+          stats[key]['ios_conversions']      = '-'
+          stats[key]['ios_adv_spend']        = '-'
+          stats[key]['ios_pub_earnings']     = '-'
         else
           stats[key]['conversions']        = Conversion.created_between(start_time, end_time).count(:conditions => ["reward_type < 1000 OR reward_type >= 2000"])
           stats[key]['advertiser_spend']   = Conversion.created_between(start_time, end_time).sum(:advertiser_amount)
           stats[key]['publisher_earnings'] = Conversion.created_between(start_time, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id NOT IN (?)", tj_partner.app_ids])
 
           stats[key]['android_conversions']  = Conversion.created_between(start_time, end_time).non_display.pub_platform('android').count
-          stats[key]['android_adv_spend']    = Conversion.created_between(start_time, end_time).pub_platform('android').sum(:advertiser_amount)
-          stats[key]['android_pub_earnings'] = Conversion.created_between(start_time, end_time).non_tapjoy.pub_platform('android').sum(:publisher_amount)
+          stats[key]['android_adv_spend']    = Conversion.created_between(start_time, end_time).pub_platform('android').sum(:advertiser_amount) / -100.0
+          stats[key]['android_pub_earnings'] = Conversion.created_between(start_time, end_time).non_tapjoy.pub_platform('android').sum(:publisher_amount) / 100.0
           stats[key]['ios_conversions']      = Conversion.created_between(start_time, end_time).non_display.pub_platform('android').count
-          stats[key]['ios_adv_spend']        = Conversion.created_between(start_time, end_time).pub_platform('iphone').sum(:advertiser_amount)
-          stats[key]['ios_pub_earnings']     = Conversion.created_between(start_time, end_time).non_tapjoy.pub_platform('iphone').sum(:publisher_amount)
+          stats[key]['ios_adv_spend']        = Conversion.created_between(start_time, end_time).pub_platform('iphone').sum(:advertiser_amount) / -100.0
+          stats[key]['ios_pub_earnings']     = Conversion.created_between(start_time, end_time).non_tapjoy.pub_platform('iphone').sum(:publisher_amount) / 100.0
 
-          stats[key]['android_adv_spend']    /= -100.0
-          stats[key]['android_pub_earnings'] /=  100.0
-          stats[key]['ios_adv_spend']        /= -100.0
-          stats[key]['ios_pub_earnings']     /=  100.0
-
-          stats[key]['android_conversions'] = stats[key]['android_conversions'].nil? ? '-' : number_with_delimiter(stats[key]['android_conversions'])
-          stats[key]['ios_conversions']    = stats[key]['ios_conversions'].nil? ? '-' : number_with_delimiter(stats[key]['ios_conversions'])
-          stats[key]['android_adv_spend']  = number_to_currency(stats[key]['android_adv_spend'])
-          stats[key]['ios_adv_spend']      = number_to_currency(stats[key]['ios_adv_spend'])
+          stats[key]['android_conversions']  = number_with_delimiter(stats[key]['android_conversions'])
+          stats[key]['android_adv_spend']    = number_to_currency(stats[key]['android_adv_spend'])
           stats[key]['android_pub_earnings'] = number_to_currency(stats[key]['android_pub_earnings'])
-          stats[key]['ios_pub_earnings']   = number_to_currency(stats[key]['ios_pub_earnings'])
+          stats[key]['ios_conversions']      = number_with_delimiter(stats[key]['ios_conversions'])
+          stats[key]['ios_adv_spend']        = number_to_currency(stats[key]['ios_adv_spend'])
+          stats[key]['ios_pub_earnings']     = number_to_currency(stats[key]['ios_pub_earnings'])
         end
 
         stats[key]['advertiser_spend']   /= -100.0
