@@ -18,6 +18,14 @@
     Total conversions: #{@money_stats[@timeframe]['conversions']} &nbsp;
     Total revenue: #{@money_stats[@timeframe]['revenue']} &nbsp;
     Total payouts: #{@money_stats[@timeframe]['publisher_earnings']}
+    %br
+    Android conversions: #{@money_stats[@timeframe]['android_conversions']} &nbsp;
+    Spend: #{@money_stats[@timeframe]['android_adv_spend']} &nbsp;
+    Payouts: #{@money_stats[@timeframe]['android_pub_earnings']}
+    %br
+    iOS conversions: #{@money_stats[@timeframe]['ios_conversions']} &nbsp;
+    Spend: #{@money_stats[@timeframe]['ios_adv_spend']} &nbsp;
+    Payouts: #{@money_stats[@timeframe]['ios_pub_earnings']}
 %p
   = link_to "Global Network Stats", global_statz_path
   - if permitted_to? :publisher, :statz
