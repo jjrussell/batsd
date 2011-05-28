@@ -292,20 +292,6 @@ class Offer < ActiveRecord::Base
     Appstats.new(item.id, options).stats['logins'].sum > 0
   end
 
-  def visual_cost
-    if price <= 0
-      'Free'
-    elsif price <= 100
-      '$'
-    elsif price <= 200
-      '$$'
-    elsif price <= 300
-      '$$$'
-    else
-      '$$$$'
-    end
-  end
-
   def is_publisher_offer?
     item_type == 'App' && item.primary_currency.present?
   end
