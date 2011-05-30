@@ -121,7 +121,11 @@ class S3Resource
   end
   
   def save(options = {})
-    save!(options) rescue false
+    begin
+      save!(options)
+    rescue RightAws::AwsError => e
+      false
+    end
   end
   
   def save!(options = {})

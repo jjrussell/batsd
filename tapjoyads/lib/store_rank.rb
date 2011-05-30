@@ -14,7 +14,7 @@ class StoreRank
     ranks_file_name = "ranks.#{time.beginning_of_hour.to_s(:db)}.json"
     ranks_file = open("tmp/#{ranks_file_name}", 'w')
     
-    log_progress "Populate store rankings. Task starting."
+    log_progress "Populate store rankings for iTunes. Task starting."
     
     App.find_each(:conditions => "platform = 'iphone' AND store_id IS NOT NULL") do |app|
       known_store_ids[app.store_id] ||= []
@@ -56,10 +56,10 @@ class StoreRank
                   s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
                   
                   # TO REMOVE - once this job consistently runs every hour.
-                  if time.hour > 0 && stat_rows[offer_id].get_hourly_count(['ranks', stat_type])[time.hour - 1] == 0
-                    stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour - 1, rank)
+                  # if time.hour > 0 && stat_rows[offer_id].get_hourly_count(['ranks', stat_type])[time.hour - 1] == 0
 
-                  # if time.hour > 0 && stat_rows[offer_id].hourly_values(ranks_key)[time.hour - 1] == 0
+                  if time.hour > 0 && s3_rows[offer_id].hourly_values(ranks_key)[time.hour - 1] == 0
+                    stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour - 1, rank)
                     s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour - 1, rank)
                   end
                 end
@@ -127,7 +127,7 @@ class StoreRank
     android_ranks_file_name = "ranks.android.#{time.beginning_of_hour.to_s(:db)}.json"
     android_ranks_file = open("tmp/#{android_ranks_file_name}", 'w')
 
-    log_progress "Populate store rankings. Task starting."
+    log_progress "Populate store rankings for Android. Task starting."
 
     App.find_each(:conditions => "platform = 'android' AND store_id IS NOT NULL") do |app|
       known_android_store_ids[app.store_id] ||= []
