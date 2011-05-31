@@ -10,7 +10,7 @@
 
   %p
     If you would like to use alternate forms of payment,
-    please email #{ link_to 'support@tapjoy.com', 'mailto:support@tapjoy.com' }.
+    please email #{ mail_to 'support@tapjoy.com' }.
 
   %h3 Current Balance: #{number_to_currency(current_partner.balance / 100.0)}
 
