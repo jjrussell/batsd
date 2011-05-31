@@ -54,9 +54,6 @@ class StoreRank
                   #stat_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
                   s3_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
                   s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
-                  
-                  # TO REMOVE - once this job consistently runs every hour.
-                  # if time.hour > 0 && stat_rows[offer_id].get_hourly_count(['ranks', stat_type])[time.hour - 1] == 0
 
                   if time.hour > 0 && s3_rows[offer_id].hourly_values(ranks_key)[time.hour - 1] == 0
                     stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour - 1, rank)
@@ -79,7 +76,7 @@ class StoreRank
     
     # TODO: remove this later
     s3_rows.each do |offer_id, ranks_row|
-      ranks_row.save || log_progress("S3 save failed for #{ranks_row.id}")
+      ranks_row.save || log_progress("S3 save failed for iTunes: #{ranks_row.id}")
     end
 
     stat_rows.each do |offer_id, stat_row|
@@ -194,7 +191,7 @@ class StoreRank
 
     # TODO: remove this later
     s3_rows.each do |offer_id, ranks_row|
-      ranks_row.save || Rails.logger.info("S3 save failed for #{ranks_row.id}")
+      ranks_row.save || log_progress("S3 save failed for Android: #{ranks_row.id}")
     end
 
     stat_rows.each do |offer_id, stat_row|
