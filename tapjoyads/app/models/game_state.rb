@@ -38,7 +38,7 @@ class GameState < SimpledbShardedResource
   def data
     data_hash = {}
     attributes.each do |k, v|
-      next if !k.starts_with? 'd_' || !k.ends_with('_')
+      next if !k.starts_with?('d_') || k.ends_with?('_')
       data_hash[k[2..-1]] = get(k)
     end
     data_hash
