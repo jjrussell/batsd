@@ -30,7 +30,10 @@
           .cell
             %span.offername #{offer.name} (#{visual_cost(offer)})
             %br
-            = offer.direct_pay? ? t('text.offerwall.buy_currency', :currency_name => @currency.name, :currency_amount => @currency.get_visual_reward_amount(offer)) : t('text.offerwall.earn_currency', :currency_name => @currency.name, :currency_amount => @currency.get_visual_reward_amount(offer))
+            - amount_and_currency = capture_haml do
+              %span.amount= t('text.offerwall.amount_and_currency', :currency => @currency.name, :amount => @currency.get_visual_reward_amount(offer))
+              
+            = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount_and_currency => amount_and_currency) : t('text.offerwall.earn_currency', :amount_and_currency => amount_and_currency)
 
 - if @start_index > 0 || @more_data_available > 0
   .pagination

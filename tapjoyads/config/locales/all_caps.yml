@@ -5,8 +5,9 @@ all_caps:
     offerwall:
       instructions: "INSTALL AND OPEN ONE OF THE APPS BELOW TO RECEIVE {{currency_name}}"
       earn_currency_name: "EARN {{currency_name}}"
-      earn_currency: "EARN <span class='amount'>{{currency_amount}} {{currency_name}}</span>"
-      buy_currency: "BUY <span class='amount'>{{currency_amount}} {{currency_name}}</span>"
+      amount_and_currency: "{{amount}} {{currency}}"
+      earn_currency: "EARN {{amount_and_currency}}"
+      buy_currency: "BUY {{amount_and_currency}}"
       free: "FREE"
       privacy: "PRIVACY"
       ads_by: "ADS BY"
