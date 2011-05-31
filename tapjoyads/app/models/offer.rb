@@ -22,7 +22,7 @@ class Offer < ActiveRecord::Base
                                   'age_rating', 'multi_complete', 'featured',
                                   'publisher_app_whitelist', 'direct_pay', 'reward_value',
                                   'third_party_data', 'payment_range_low',
-                                  'payment_range_high', 'icon_id_override' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'payment_range_high', 'icon_id_override', 'rank_boost' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   DEFAULT_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
@@ -41,12 +41,12 @@ class Offer < ActiveRecord::Base
   belongs_to :partner
   belongs_to :item, :polymorphic => true
   
-  validates_presence_of :partner, :item, :name, :url
+  validates_presence_of :partner, :item, :name, :url, :rank_boost
   validates_numericality_of :price, :only_integer => true
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_blank => false, :allow_nil => false
   validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 10000, :allow_blank => false, :allow_nil => false
   validates_numericality_of :min_bid_override, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => true
-  validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
+  validates_numericality_of :conversion_rate, :rank_boost, :greater_than_or_equal_to => 0
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :allow_blank => false, :greater_than_or_equal_to => 0
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_blank => false, :allow_nil => true, :greater_than => 0
@@ -120,6 +120,7 @@ class Offer < ActiveRecord::Base
   named_scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ] } }
   named_scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ] } }
   named_scope :for_ios_only, :conditions => 'device_types not like "%android%"'
+  named_scope :with_rank_boosts, :joins => :rank_boosts, :readonly => false
   
   delegate :balance, :pending_earnings, :name, :approved_publisher?, :to => :partner, :prefix => true
   
@@ -289,20 +290,6 @@ class Offer < ActiveRecord::Base
       :stat_types => [ 'logins' ]
     }
     Appstats.new(item.id, options).stats['logins'].sum > 0
-  end
-
-  def visual_cost
-    if price <= 0
-      'Free'
-    elsif price <= 100
-      '$'
-    elsif price <= 200
-      '$$'
-    elsif price <= 300
-      '$$$'
-    else
-      '$$$$'
-    end
   end
 
   def is_publisher_offer?
@@ -511,7 +498,15 @@ class Offer < ActiveRecord::Base
   def get_device_types
     Set.new(device_types.blank? ? nil : JSON.parse(device_types))
   end
-  
+
+  def expected_device_types
+    if item_type == 'App' || item_type == 'ActionOffer' || item_type == 'RatingOffer'
+      item.is_android? ? ANDROID_DEVICES : APPLE_DEVICES
+    else
+      ALL_DEVICES
+    end
+  end
+
   def get_publisher_app_whitelist
     Set.new(publisher_app_whitelist.split(';'))
   end
@@ -729,10 +724,6 @@ class Offer < ActiveRecord::Base
   def internal_notes
     partner.account_manager_notes
   end
-  
-  def rank_boost
-    @rank_boost ||= calculate_rank_boost
-  end
 
   def toggle_user_enabled
     self.user_enabled = !user_enabled
@@ -768,6 +759,10 @@ class Offer < ActiveRecord::Base
     end
     
     final_url
+  end
+  
+  def calculate_rank_boost!
+    update_attribute(:rank_boost, rank_boosts.active.sum(:amount))
   end
 
 private
@@ -826,6 +821,11 @@ private
     if app_id_for_device == 'b23efaf0-b82b-4525-ad8c-4cd11b0aca91'
       # Don't show 'Tap Store' offer to users that already have 'Tap Store', 'Tap Store Boost', or 'Tap Store Plus'
       return device.has_app(app_id_for_device) || device.has_app('a994587c-390c-4295-a6b6-dd27713030cb') || device.has_app('6703401f-1cb2-42ec-a6a4-4c191f8adc27')
+    end
+    
+    if app_id_for_device == '3885c044-9c8e-41d4-b136-c877915dda91'
+      # don't show the beat level 2 in clubworld action to users that already have clubworld
+      return device.has_app(app_id_for_device) || device.has_app('a3980ac5-7d33-43bc-8ba1-e4598c7ed279')
     end
     
     return device.has_app(app_id_for_device)
@@ -961,10 +961,6 @@ private
     elsif hidden_changed? && hidden?
       enable_offer_requests.pending.each { |request| request.approve!(false) }
     end
-  end
-  
-  def calculate_rank_boost
-    RankBoost.for_offer(id).active.sum(:amount)
   end
 
   def fix_country_targeting

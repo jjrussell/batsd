@@ -23,6 +23,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'queue_partner_notifications', :interval => 5.minutes
     s.add_job 'queue_recount_stats', :interval => 5.minutes
     s.add_job 'queue_limit_app_installs', :interval => 30.seconds
+    s.add_job 'queue_udid_reports', :interval => 5.minutes
   elsif machine_type == 'masterjobs'
     # jobs with high impact on overall system performance
     s.add_job 'master_calculate_next_payout', :daily => 4.hours
@@ -62,6 +63,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'master_run_offer_events', :interval => 1.minute
     s.add_job 'master_limit_app_installs', :interval => 30.minutes
     s.add_job 'master_fetch_top_freemium_android_apps', :daily => 1.minute
+    s.add_job 'master_calculate_rank_boosts', :interval => 5.minutes
   else
     Rails.logger.info "JobRunner: Not running any jobs. Not a job server."
   end
