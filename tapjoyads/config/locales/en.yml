@@ -4,3 +4,13 @@ en:
   text:
     offerwall:
       instructions: "Install and OPEN one of the apps below to receive {{currency_name}}"
+      earn_currency_name: "Earn {{currency_name}}"
+      amount_and_currency: "{{amount}} {{currency}}"
+      earn_currency: "Earn {{amount_and_currency}}"
+      buy_currency: "Buy {{amount_and_currency}}"
+      free: "Free"
+      privacy: "Privacy"
+      ads_by: "Ads by"
+      next: "Next {{items}}"
+      previous: "Previous {{items}}"
+      

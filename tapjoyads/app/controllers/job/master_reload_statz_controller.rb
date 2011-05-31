@@ -58,10 +58,6 @@ private
       this_apps_stats['offer_type'] = offer.item_type
       
       cached_stats[offer.id] = this_apps_stats
-      
-      if timeframe != '24_hours'
-        sleep(1)
-      end
     end
     
     cached_stats = cached_stats.sort do |s1, s2|

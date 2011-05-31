@@ -1,4 +1,3 @@
-# TODO: move this logic to S3Stats::Ranks?
 class StoreRank
 
   def self.populate_itunes_appstore_rankings(time)
@@ -7,14 +6,12 @@ class StoreRank
     date_string = time.to_date.to_s(:db)
     error_count = 0
     known_store_ids = {}
-    stat_rows = {}
-    # remove this someday
     s3_rows = {}
     
     ranks_file_name = "ranks.#{time.beginning_of_hour.to_s(:db)}.json"
     ranks_file = open("tmp/#{ranks_file_name}", 'w')
     
-    log_progress "Populate store rankings. Task starting."
+    log_progress "Populate store rankings for iTunes. Task starting."
     
     App.find_each(:conditions => "platform = 'iphone' AND store_id IS NOT NULL") do |app|
       known_store_ids[app.store_id] ||= []
@@ -25,8 +22,6 @@ class StoreRank
     ITUNES_CATEGORY_IDS.each do |category_key, category_id|
       ITUNES_POP_IDS.each do |pop_key, pop_id|
         ITUNES_COUNTRY_IDS.each do |country_key, country_id|
-          # TODO: remove this after ranks are moved to s3
-          stat_type = "#{category_key}.#{pop_key}.#{country_key}"
           ranks_key = "#{category_key}.#{pop_key}.#{country_key}"
           url = "http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=#{category_id}&popId=#{pop_id}"
           headers = { 'X-Apple-Store-Front' => "#{country_id}-1,12", 'Host' => 'ax.itunes.apple.com' }
@@ -47,19 +42,10 @@ class StoreRank
                 next if known_store_ids[store_id].nil?
 
                 known_store_ids[store_id].each do |offer_id|
-                  # TODO: remove next 2 lines after ranks to s3
-                  stat_rows[offer_id] ||= Stats.new(:key => "app.#{date_string}.#{offer_id}", :load_from_memcache => false)
-                  stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour, rank)
-                  #stat_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
-                  #stat_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
                   s3_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
                   s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
-                  
-                  # TO REMOVE - once this job consistently runs every hour.
-                  if time.hour > 0 && stat_rows[offer_id].get_hourly_count(['ranks', stat_type])[time.hour - 1] == 0
-                    stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour - 1, rank)
 
-                  # if time.hour > 0 && stat_rows[offer_id].hourly_values(ranks_key)[time.hour - 1] == 0
+                  if time.hour > 0 && s3_rows[offer_id].hourly_values(ranks_key)[time.hour - 1] == 0
                     s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour - 1, rank)
                   end
                 end
@@ -77,37 +63,18 @@ class StoreRank
     hydra.run
     log_progress "Finished making requests."
     
-    stat_rows.each do |offer_id, stat_row|
-      # TODO: switch this save once migration is finished
-      stat_row.serial_save
-    end
-
-    # TODO: remove this later
-    s3_rows.each do |offer_id, ranks_row|
-      ranks_row.save || log_progress("S3 save failed for #{ranks_row.id}")
-    end
-
-    log_progress "Finished saving stat_rows."
-    
     ranks_file.close
     `gzip -f 'tmp/#{ranks_file_name}'`
-    
-    retries = 3
-    begin
-      bucket = S3.bucket(BucketNames::STORE_RANKS)
-      bucket.put("#{ranks_file_name}.gz", open("tmp/#{ranks_file_name}.gz"))
-    rescue RightAws::AwsError => e
-      log_progress "Failed attempt to write to s3. Error: #{e}"
-      if (retries -= 1) > 0
-        sleep(1)
-        log_progress "Retrying to write to s3."
-        retry
-      else
-        raise e
-      end
-    end
-    
+
+    save_to_bucket(ranks_file_name)
     log_progress "Finished saving iTunes AppStore rankings."
+
+    s3_rows.each do |offer_id, ranks_row|
+      ranks_row.save || log_progress("S3 save failed for iTunes: #{ranks_row.id}")
+    end
+
+    log_progress "Finished saving ranks_rows."
+    
   ensure
     `rm 'tmp/#{ranks_file_name}'`
     `rm 'tmp/#{ranks_file_name}.gz'`
@@ -120,14 +87,12 @@ class StoreRank
     error_count = 0
     known_store_ids = {}
     known_android_store_ids = {}
-    stat_rows = {}
-    # remove this someday
     s3_rows = {}
 
     android_ranks_file_name = "ranks.android.#{time.beginning_of_hour.to_s(:db)}.json"
     android_ranks_file = open("tmp/#{android_ranks_file_name}", 'w')
 
-    log_progress "Populate store rankings. Task starting."
+    log_progress "Populate store rankings for Android. Task starting."
 
     App.find_each(:conditions => "platform = 'android' AND store_id IS NOT NULL") do |app|
       known_android_store_ids[app.store_id] ||= []
@@ -141,8 +106,6 @@ class StoreRank
         next if pop_options[:skip_cat] && category_key != "overall"
         GOOGLE_LANGUAGE_IDS.each do |language_key, language_id|
           next if pop_options[:skip_lang] && language_key != "english"
-          # TODO: remove this line:
-          stat_type = "#{category_key}.#{pop_key}.#{language_key}"
           ranks_key = "#{category_key}.#{pop_key}.#{language_key}"
           offset = 0
           max_offset = 200
@@ -169,11 +132,6 @@ class StoreRank
                 ranks_hash.each do |store_id, rank|
                   next if known_android_store_ids[store_id].nil?
                   known_android_store_ids[store_id].each do |offer_id|
-                    stat_rows[offer_id] ||= Stats.new(:key => "app.#{date_string}.#{offer_id}", :load_from_memcache => false)
-                    stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour, rank)
-
-                    #stat_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
-                    #stat_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
                     s3_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
                     s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
                   end
@@ -192,37 +150,18 @@ class StoreRank
     hydra.run
     log_progress "Finished making requests."
 
-    stat_rows.each do |offer_id, stat_row|
-      # TODO: switch this save once migration is finished
-      stat_row.serial_save
-    end
-
-    # TODO: remove this later
-    s3_rows.each do |offer_id, ranks_row|
-      ranks_row.save || Rails.logger.info("S3 save failed for #{ranks_row.id}")
-    end
-
-    log_progress "Finished saving stat_rows."
-
     android_ranks_file.close
     `gzip -f 'tmp/#{android_ranks_file_name}'`
 
-    retries = 3
-    begin
-      bucket = S3.bucket(BucketNames::STORE_RANKS)
-      bucket.put("#{android_ranks_file_name}.gz", open("tmp/#{android_ranks_file_name}.gz"))
-    rescue RightAws::AwsError => e
-      log_progress "Failed attempt to write to s3. Error: #{e}"
-      if (retries -= 1) > 0
-        sleep(1)
-        log_progress "Retrying to write to s3."
-        retry
-      else
-        raise e
-      end
+    save_to_bucket(android_ranks_file_name)
+    log_progress "Finished saving Android Marketplace rankings."
+
+    s3_rows.each do |offer_id, ranks_row|
+      ranks_row.save || log_progress("S3 save failed for Android: #{ranks_row.id}")
     end
 
-    log_progress "Finished saving Android Marketplace rankings."
+    log_progress "Finished saving ranks_rows."
+
   ensure
     `rm 'tmp/#{android_ranks_file_name}'`
     `rm 'tmp/#{android_ranks_file_name}.gz'`
@@ -335,6 +274,23 @@ private
     url += "&cat=#{category}" unless category.blank?
     url += "&hl=#{language}" unless language == 'en'
     url
+  end
+
+  def self.save_to_bucket(ranks_file_name)
+    retries = 3
+    begin
+      bucket = S3.bucket(BucketNames::STORE_RANKS)
+      bucket.put("#{ranks_file_name}.gz", open("tmp/#{ranks_file_name}.gz"))
+    rescue RightAws::AwsError => e
+      log_progress "Failed attempt to write to s3. Error: #{e}"
+      if (retries -= 1) > 0
+        sleep(1)
+        log_progress "Retrying to write to s3."
+        retry
+      else
+        raise e
+      end
+    end
   end
 
   ITUNES_CATEGORY_IDS = {

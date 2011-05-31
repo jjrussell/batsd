@@ -3,7 +3,8 @@ class S3Stats::Ranks < S3Resource
   attribute :all_ranks, :type => :json, :default => {}
 
   def save(options = {})
-    save!(options) rescue false
+    strip_zero_arrays!(all_ranks) if all_ranks
+    super(options)
   end
 
   def save!(options = {})

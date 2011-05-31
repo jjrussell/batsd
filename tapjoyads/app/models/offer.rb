@@ -292,20 +292,6 @@ class Offer < ActiveRecord::Base
     Appstats.new(item.id, options).stats['logins'].sum > 0
   end
 
-  def visual_cost
-    if price <= 0
-      'Free'
-    elsif price <= 100
-      '$'
-    elsif price <= 200
-      '$$'
-    elsif price <= 300
-      '$$$'
-    else
-      '$$$$'
-    end
-  end
-
   def is_publisher_offer?
     item_type == 'App' && item.primary_currency.present?
   end
@@ -835,6 +821,11 @@ private
     if app_id_for_device == 'b23efaf0-b82b-4525-ad8c-4cd11b0aca91'
       # Don't show 'Tap Store' offer to users that already have 'Tap Store', 'Tap Store Boost', or 'Tap Store Plus'
       return device.has_app(app_id_for_device) || device.has_app('a994587c-390c-4295-a6b6-dd27713030cb') || device.has_app('6703401f-1cb2-42ec-a6a4-4c191f8adc27')
+    end
+    
+    if app_id_for_device == '3885c044-9c8e-41d4-b136-c877915dda91'
+      # don't show the beat level 2 in clubworld action to users that already have clubworld
+      return device.has_app(app_id_for_device) || device.has_app('a3980ac5-7d33-43bc-8ba1-e4598c7ed279')
     end
     
     return device.has_app(app_id_for_device)
