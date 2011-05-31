@@ -50,7 +50,7 @@
   - property_row('Price', number_to_currency(@offer.price / 100.0), nil, @offer.expensive? ? 'warning' : nil)
   - property_row('Daily budget', @offer.daily_budget, 0)
   - property_row('Overall budget', @offer.overall_budget, 0)
-  - property_row('Show rate', "%.1f%" % ((@offer.show_rate || 0) * 100.0), "100.0%")
+  - property_row('Show rate', "%.1f%" % ((@offer.show_rate || 0) * 100.0), "100.0%", @offer.show_rate < 0.001 ? 'warning' : '')
   - property_row('Min CVR', @offer.min_conversion_rate, nil)
   - property_row('Countries', @offer.countries, '')
   - property_row('Cities', @offer.cities, '')
