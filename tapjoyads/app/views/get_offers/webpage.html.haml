@@ -32,7 +32,6 @@
             %br
             - amount_and_currency = capture_haml do
               %span.amount= t('text.offerwall.amount_and_currency', :currency => @currency.name, :amount => @currency.get_visual_reward_amount(offer))
-              
             = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount_and_currency => amount_and_currency) : t('text.offerwall.earn_currency', :amount_and_currency => amount_and_currency)
 
 - if @start_index > 0 || @more_data_available > 0
