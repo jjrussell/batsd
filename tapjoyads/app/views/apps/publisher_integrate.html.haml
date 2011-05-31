@@ -14,15 +14,14 @@
   %li Add the Tapjoy credentials (provided below) to your app.
   %li
     Email
-    = link_to 'support+enableapp@tapjoy.com', 'mailto:support+enableapp@tapjoy.com'
+    = mail_to('support+enableapp@tapjoy.com')
     for confirmation and to make your campaign live.
 
 %p
   For more detailed documentation, please read the documentation included in the library.
 
 %p
-  Need help? Please contact our
-  = link_to('support team', 'mailto:support@tapjoy.com') + '.'
+  Need help? Please contact our #{mail_to('support@tapjoy.com', 'support team')}.
 
 %div
   %strong Tapjoy App ID:
