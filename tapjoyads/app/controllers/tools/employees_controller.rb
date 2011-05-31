@@ -16,17 +16,6 @@ class Tools::EmployeesController < WebsiteController
     end
   end
 
-  # GET /employees/1
-  # GET /employees/1.xml
-  def show
-    @employee = Employee.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @employee }
-    end
-  end
-
   # GET /employees/new
   # GET /employees/new.xml
   def new
@@ -50,8 +39,13 @@ class Tools::EmployeesController < WebsiteController
 
     respond_to do |format|
       if @employee.save
+        if params[:upload_photo].blank?
+          clear_photo(@employee)
+        else
+          @employee.save_photo!(params[:upload_photo].read)
+        end
         flash[:notice] = 'Employee was successfully created.'
-        format.html { redirect_to(tools_employees_url) }
+        format.html { redirect_to(edit_tools_employee_url(@employee)) }
         format.xml  { render :xml => @employee, :status => :created, :location => @employee }
       else
         format.html { render :action => "new" }
@@ -67,8 +61,11 @@ class Tools::EmployeesController < WebsiteController
 
     respond_to do |format|
       if @employee.update_attributes(params[:employee])
+        unless params[:upload_photo].blank?
+          @employee.save_photo!(params[:upload_photo].read)
+        end
         flash[:notice] = 'Employee was successfully updated.'
-        format.html { redirect_to(tools_employees_url) }
+        format.html { redirect_to(edit_tools_employee_url(@employee)) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -89,28 +86,22 @@ class Tools::EmployeesController < WebsiteController
     end
   end
 
-  def show_photo
+  def delete_photo
     @employee = Employee.find(params[:id])
-    if @employee.photo
-      send_data(@employee.photo, :filename => @employee.photo_file_name, :type => @employee.photo_content_type, :disposition => 'inline')
-    else
-      send_file('public/images/site/blank_image.jpg', :type => 'image/jpg', :disposition => 'inline')
+    clear_photo(@employee)
+
+    respond_to do |format|
+      flash[:notice] = 'Employee photo was successfully removed.'
+      format.html { redirect_to(edit_tools_employee_url(@employee)) }
+      format.xml  { head :ok }
     end
   end
   
-  def delete_photo
-    @employee = Employee.find(params[:id])
-    @employee.delete_photo
+private
 
-    respond_to do |format|
-      if @employee.save
-          flash[:notice] = 'Employee photo was successfully removed.'
-          format.html { redirect_to(tools_employees_url) }
-          format.xml  { head :ok }
-        else
-          format.html { render :action => "edit" }
-          format.xml  { render :xml => @employee.errors, :status => :unprocessable_entity }
-      end
+  def clear_photo(employee)
+    File.open("public/images/site/blank_image.jpg", 'rb') do |file|
+      employee.save_photo!(file.read)
     end
   end
 end

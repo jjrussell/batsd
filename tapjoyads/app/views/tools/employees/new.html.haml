@@ -11,23 +11,29 @@
     = f.label(:first_name)
     = f.text_field(:first_name)
   .field
-    = f.label(:middle_name)
-    = f.text_field(:middle_name)
-  .field
     = f.label(:last_name)
     = f.text_field(:last_name)
   .field
     = f.label(:title)
     = f.text_field(:title)
   .field
-    = f.label(:department)
-    = f.text_field(:department)
+    = f.label(:biography, "Short Bio")
+    = f.text_area(:biography)
+    %br No more than three (3) sentences
   .field
-    = f.label(:comments)
-    = f.text_area(:comments)
+    = f.label(:superpower, "What is your secret superpower?")
+    = f.text_field(:superpower, :size => 70)
   .field
-    = f.label(:uploaded_photo, "Upload Photo")
-    = f.file_field(:uploaded_photo)
+    = f.label(:current_games, "What are you currently playing?")
+    = f.text_field(:current_games, :size => 70)
+    %br Doesn't have to be mobile
+  .field
+    = f.label(:weapon, "What is your weapon of choice?")
+    = f.text_field(:weapon, :size => 70)
+    %br E.g. iPhone, ninja stars, Red Bull
+  .field
+    = label_tag :upload_photo
+    = file_field_tag :upload_photo
   = submit_tag "Create"
 
 - content_for :page_styles do

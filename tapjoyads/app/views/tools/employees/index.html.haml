@@ -10,23 +10,23 @@
     %tr
       %th Image
       %th Active?
-      %th First Name
-      %th Last Name
+      %th Name
       %th Email/Edit
-      %th Title
-      %th Department
-      %th Comments
+      %th Bio
+      %th Secret Superpower
+      %th Current Game(s)
+      %th Weapon of Choice
   %tbody
     - @employees.each do |employee|
       %tr{ :class => cycle('', 'odd') }
-        %td= image_tag url_for(:action => "show_photo", :id => employee.id), :alt => employee.full_name
+        %td= image_tag employee.get_photo_url, :alt => employee.photo_alt_name
         %td= employee.active ? "Yes" : "No"
-        %td= employee.first_name
-        %td= employee.last_name
+        %td= employee.full_name
         %td= link_to employee.email, edit_tools_employee_path(employee)
-        %td= employee.title
-        %td= employee.department
-        %td= employee.comments
+        %td= employee.biography
+        %td= employee.superpower
+        %td= employee.current_games
+        %td= employee.weapon
 
 
 - content_for :page_styles do

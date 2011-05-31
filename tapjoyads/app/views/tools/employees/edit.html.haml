@@ -1,5 +1,8 @@
 - @page_title = 'Edit Employee'
 
+%br
+= link_to '[Return to List]', tools_employees_path
+
 %h1= @employee.email
 
 - form_for([ :tools, @employee ], nil, :html => { :class => 'tjform', :multipart => true }) do |f|
@@ -11,27 +14,33 @@
     = f.label(:first_name)
     = f.text_field(:first_name)
   .field
-    = f.label(:middle_name)
-    = f.text_field(:middle_name)
-  .field
     = f.label(:last_name)
     = f.text_field(:last_name)
   .field
     = f.label(:title)
     = f.text_field(:title)
   .field
-    = f.label(:department)
-    = f.text_field(:department)
+    = f.label(:biography, "Short Bio")
+    = f.text_area(:biography)
+    %br No more than three (3) sentences
   .field
-    = f.label(:comments)
-    = f.text_area(:comments)
+    = f.label(:superpower, "What is your secret superpower?")
+    = f.text_field(:superpower, :size => 70)
   .field
-    = f.label("Current Photo", "Current Photo")
-    = image_tag url_for(:action => "show_photo", :id => @employee.id), :alt => @employee.full_name
-    = link_to "Remove Photo", :action => 'delete_photo', :id => @employee.id if !@employee.photo.nil?
+    = f.label(:current_games, "What are you currently playing?")
+    = f.text_field(:current_games, :size => 70)
+    %br Doesn't have to be mobile
   .field
-    = f.label(:uploaded_photo, "Upload Photo")
-    = f.file_field(:uploaded_photo)
+    = f.label(:weapon, "What is your weapon of choice?")
+    = f.text_field(:weapon, :size => 70)
+    %br E.g. iPhone, ninja stars, Red Bull
+  .field
+    = label_tag("Current Photo", "Current Photo")
+    = image_tag @employee.get_photo_url, :alt => @employee.photo_alt_name
+    %br= link_to "Remove Photo", :action => 'delete_photo', :id => @employee.id
+  .field
+    = label_tag :upload_photo
+    = file_field_tag :upload_photo
   = submit_tag "Update"
 
 - content_for :page_styles do

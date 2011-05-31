@@ -27,15 +27,6 @@ class HomepageController < WebsiteController
     @employees = Employee.active_only
   end
   
-  def show_photo
-    @employee = Employee.find(params[:id])
-    if @employee.photo
-      send_data(@employee.photo, :filename => @employee.photo_file_name, :type => @employee.photo_content_type, :disposition => 'inline')
-    else
-      send_file('public/images/site/blank_image.jpg', :type => 'image/jpg', :disposition => 'inline')
-    end
-  end
-
   def privacy
     render :layout => false
   end

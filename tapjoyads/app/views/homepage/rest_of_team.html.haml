@@ -9,9 +9,9 @@
   .team
     - @employees.each do |employee|
       .management
-        =image_tag url_for(:controller => "site", :action => "emp_photo", :id => employee.id), :alt => employee.full_name
+        =image_tag employee.get_photo_url, :alt => employee.full_name
         .content
           %h3=h employee.full_name
           %br
-          =h employee.comments
+          =h employee.biography
 	
