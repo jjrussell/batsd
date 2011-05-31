@@ -2,7 +2,7 @@ class App < ActiveRecord::Base
   include UuidPrimaryKey
   include MemcachedRecord
   
-  PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS' }
+  PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows Phone 7' }
   TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
   MAXIMUM_INSTALLS_PER_PUBLISHER = 4000
   
@@ -32,10 +32,6 @@ class App < ActiveRecord::Base
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
 
-  def is_android?
-    platform == 'android'
-  end
-
   def is_ipad_only?
     supported_devices? && JSON.load(supported_devices).all?{ |i| i.match(/^ipad/i) }
   end
@@ -57,7 +53,14 @@ class App < ActiveRecord::Base
   end
   
   def store_name
-    is_android? ? 'Marketplace' : 'App Store'
+    case platform
+    when 'android'
+      'Marketplace'
+    when 'iphone'
+      'App Store'
+    when 'windows'
+      'Marketplace'
+    end
   end
 
   def virtual_goods
@@ -95,18 +98,24 @@ class App < ActiveRecord::Base
   end
 
   def info_url
-    if is_android?
+    case platform
+    when 'android'
       "https://market.android.com/details?id=#{store_id}"
-    else
+    when 'iphone'
       "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
+    when 'windows'
+      "http://social.zune.net/redirect?type=phoneapp&id=#{store_id}"
     end
   end
-  
+
   def direct_store_url
-    if is_android?
+    case platform
+    when 'android'
       "market://search?q=#{store_id}"
-    else
+    when 'iphone'
       "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
+    when 'windows'
+      "http://social.zune.net/redirect?type=phoneapp&id=#{store_id}"
     end
   end
 
@@ -220,17 +229,21 @@ class App < ActiveRecord::Base
   def can_have_new_currency?
     currencies.empty? || !currencies.any? { |c| Currency::SPECIAL_CALLBACK_URLS.include?(c.callback_url) }
   end
-  
+
   def default_actions_file_name
-    if is_android?
+    case platform
+    when 'android'
       "TapjoyPPA.java"
-    else
+    when 'iphone'
       "TJCPPA.h"
+    when 'windows'
+      ''
     end
   end
-  
+
   def generate_actions_file
-    if is_android?
+    case platform
+    when 'android'
       file_output =  "package com.tapjoy;\n"
       file_output += "\n"
       file_output += "public class TapjoyPPA\n"
@@ -239,11 +252,13 @@ class App < ActiveRecord::Base
         file_output += "  public static final String #{action_offer.variable_name} = \"#{action_offer.id}\"; // #{action_offer.name}\n"
       end
       file_output += "}"
-    else
+    when 'iphone'
       file_output =  ""
       action_offers.each do |action_offer|
         file_output += "#define #{action_offer.variable_name} @\"#{action_offer.id}\" // #{action_offer.name}\n"
       end
+    when 'windows'
+      file_output = ''
     end
     file_output
   end
@@ -287,6 +302,41 @@ class App < ActiveRecord::Base
 
   def self.get_ios_publisher_apps
     App.find(get_ios_publisher_app_ids)
+  end
+
+  def get_offer_device_types
+    case platform
+    when 'android'
+      Offer::ANDROID_DEVICES
+    when 'iphone'
+      is_ipad_only? ? Offer::IPAD_DEVICES : Offer::APPLE_DEVICES
+    when 'windows'
+      Offer::WINDOWS_DEVICES
+    end
+  end
+
+  def connect_sdk_url
+    case platform
+    when 'android'  then ANDROID_CONNECT_SDK
+    when 'iphone'   then IPHONE_CONNECT_SDK
+    when 'windows'  then WINDOWS_CONNECT_SDK
+    end
+  end
+
+  def offers_sdk_url
+    case platform
+    when 'android'  then ANDROID_OFFERS_SDK
+    when 'iphone'   then IPHONE_OFFERS_SDK
+    when 'windows'  then WINDOWS_OFFERS_SDK
+    end
+  end
+
+  def vg_sdk_url
+    case platform
+    when 'android'  then ANDROID_VG_SDK
+    when 'iphone'   then IPHONE_VG_SDK
+    when 'windows'  then WINDOWS_VG_SDK
+    end
   end
 
 private
@@ -346,20 +396,9 @@ private
     end
   end
 
-  def get_offer_device_types
-    if is_android?
-      Offer::ANDROID_DEVICES
-    elsif is_ipad_only?
-      Offer::IPAD_DEVICES
-    else
-      Offer::APPLE_DEVICES
-    end
-  end
-
   def update_rating_offer
     if (name_changed? || store_id_changed?) && rating_offer.present?
       rating_offer.save!
     end
   end
-  
 end

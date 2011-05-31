@@ -33,16 +33,13 @@
     - if @offer.item.use_raw_url?
       - property_row('Raw url', link_to('[url]', @offer.item.store_url), nil, @offer.item.store_url.blank? ? 'incomplete' : nil)
     - else
-      - if @offer.item.store_id.blank? && @offer.item.is_android?
-        - property_row('Store id', link_to("Empty -- Update?", edit_android_app_tool_path(@offer.item.id)), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
-      - else
-        - property_row('Store id', link_to(@offer.item.store_id, @offer.item.info_url), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
+      - property_row('Store id', link_to(@offer.item.store_id, @offer.item.info_url), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
     - property_row('File size', number_to_human_size(@offer.item.file_size_bytes), nil, @offer.item.large_download? ? 'warning' : nil)
     - unless @offer.item.user_rating.nil?
       - property_row('User rating', "#{@offer.item.user_rating} stars", nil, @offer.item.bad_rating? ? 'warning' : '')
     - unless @offer.item.categories.blank?
       - property_row('Store categories', "[ #{@offer.item.categories.map(&:humanize).join(', ')} ]", nil, '')
-    - if @offer.item.is_android? && @offer.item.released_at?
+    - if @offer.item.platform == 'android' && @offer.item.released_at?
       - updated = @offer.item.recently_released? ? time_ago_in_words(@offer.item.released_at) + " ago" : @offer.item.released_at.to_s(:pub)
       - property_row('App Update', updated, nil, @offer.item.recently_released? ? 'warning' : nil)
   - else
@@ -57,7 +54,7 @@
   - property_row('Postal codes', @offer.postal_codes, '')
   - property_row('Pay-per-click', @offer.pay_per_click?, false)
   - property_row('Device types', @offer.device_types, @offer.expected_device_types.to_json, @offer.wrong_platform? ? 'incomplete' : '')
-  - if @offer.item_type == 'App' && !@offer.item.is_android? && @offer.item.supported_devices.present?
+  - if @offer.item_type == 'App' && @offer.item.platform == 'iphone' && @offer.item.supported_devices.present?
     - property_row('Devices listed on iTunes', @offer.item.supported_devices, ["all"].to_json, 'warning')
   - property_row('Allow negative balance', @offer.allow_negative_balance?, false)
   - property_row('Self promote only', @offer.self_promote_only?, false)

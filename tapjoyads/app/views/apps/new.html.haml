@@ -15,7 +15,7 @@
         %th
           Platform
           #help_platform.help ?
-        %td= f.select :platform, App::PLATFORMS.invert, { :selected => @app.platform }, { :id => 'app_platform' }
+        %td= f.select :platform, @allowed_platforms, { :selected => @app.platform }, { :id => 'app_platform' }
       - if permitted_to?(:edit, :statz)
         = render :partial => 'select_country'
       %tr

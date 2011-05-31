@@ -1,0 +1,44 @@
+{ "d":
+  { "__type":"ListOfAppSummary:Microsoft.WindowsMobile.Service.Marketplace",
+    "ResponseCode":"0x00000000",
+    "ResponseMessage":null,
+    "Latency":0,
+    "ItemList":
+    { "__type":"CountedListOfAppSummarysk_PMA66X:Microsoft.WindowsMobile.Service.Marketplace",
+      "NumItems":2,
+      "List":
+      [
+        { "__type":"AppSummary:Microsoft.WindowsMobile.Service.Marketplace",
+          "Id":"acda634c-204f-4bdd-b97b-6f86e826dd36",
+          "Name":"ChessGenius",
+          "SmallImageUrl":"http:\/\/files.marketplace.windowsmobile.com\/acda634c-204f-4bdd-b97b-6f86e826dd36\/LargeWebIcon.png",
+          "NumOfReviews":7,
+          "Rating":433,
+          "Price":"$9.99",
+          "CompanyName":"Lang Software Limited",
+          "ParentCategoryName":"Games",
+          "IsFeatured":null,
+          "CategoryName":"",
+          "PlatformTypeId":null,
+          "ApplicationId":"e4d2da5b-9933-490e-a207-31f7b89dec98",
+          "PriceWithTax":"$9.99 (Plus taxes, if applicable)"
+        },
+        { "__type":"AppSummary:Microsoft.WindowsMobile.Service.Marketplace",
+          "Id":"be8dd8a8-29cd-4050-93b1-33e9d4739353",
+          "Name":"PocketGrandmaster",
+          "SmallImageUrl":"http:\/\/files.marketplace.windowsmobile.com\/be8dd8a8-29cd-4050-93b1-33e9d4739353\/LargeWebIcon.png",
+          "NumOfReviews":11,
+          "Rating":421,
+          "Price":null,
+          "CompanyName":"Frank Schneider, Kai Skibbe GbR",
+          "ParentCategoryName":"Games",
+          "IsFeatured":null,
+          "CategoryName":"",
+          "PlatformTypeId":null,
+          "ApplicationId":"448c80cd-9c7e-4be6-899a-6b3b97e7990f",
+          "PriceWithTax":"$9.99 (Plus taxes, if applicable)"
+        }
+      ]
+    }
+  }
+}

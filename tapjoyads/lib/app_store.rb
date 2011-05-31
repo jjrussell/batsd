@@ -1,26 +1,34 @@
 class AppStore
 
-  APP_URL = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup'
-  SEARCH_URL = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
-
-  ANDROID_APP_URL = 'https://market.android.com/details?id='
-  ANDROID_SEARCH_URL = 'https://market.android.com/search?num=40&q='
+  ITUNES_APP_URL      = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup'
+  ITUNES_SEARCH_URL   = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
+  ANDROID_APP_URL     = 'https://market.android.com/details?id='
+  ANDROID_SEARCH_URL  = 'https://market.android.com/search?num=40&q='
+  WINDOWS_APP_URL     = 'http://marketplace.windowsphone.com/services/catalog/catalog.svc/getappdetails?deviceDescId=e6f423f3-1f27-4e70-97ba-84b88f9c5cd3&appSKU='
+  WINDOWS_SEARCH_URL  = 'http://marketplace.windowsphone.com/services/catalog/catalog.svc/searchapps?deviceDescId=e6f423f3-1f27-4e70-97ba-84b88f9c5cd3&keywords='
 
   # returns hash of app info
   def self.fetch_app_by_id(id, platform='iphone', country='')
-    if platform == 'android'
-      return self.fetch_app_by_id_for_android(id)
-    else
-      return self.fetch_app_by_id_for_apple(id, country)
+    case platform
+    when /android/i
+      self.fetch_app_by_id_for_android(id)
+    when /iphone/i
+      self.fetch_app_by_id_for_apple(id, country)
+    when /windows/i
+      self.fetch_app_by_id_for_windows(id)
     end
   end
 
   # returns an array of first 24 App instances matching "term"
   def self.search(term, platform='iphone', country='')
-    if /android/i =~ platform
-      return self.search_android_marketplace(term.gsub(/-/,' '))
-    else
-      return self.search_apple_app_store(term.gsub(/\s/, '+'), country)
+    term = term.strip.gsub(/\s/, '+')
+    case platform
+    when /android/i
+      self.search_android_marketplace(term.gsub(/-/,' '))
+    when /iphone/i
+      self.search_apple_app_store(term, country)
+    when /windows/i
+      self.search_windows_marketplace(term)
     end
   end
 
@@ -29,7 +37,7 @@ private
   def self.fetch_app_by_id_for_apple(id, country)
     return nil if id.blank?
     country = 'us' if country.blank?
-    response = request(APP_URL, {:id => id, :country => country.to_s[0..1]})
+    response = request(ITUNES_APP_URL, {:id => id, :country => country.to_s[0..1]})
     if (response.status == 200) && (response.headers['Content-Type'] =~ /javascript/)
       json = JSON.load(response.body)
       return json['resultCount'] > 0 ? app_info_from_apple(json['results'].first) : nil
@@ -83,9 +91,35 @@ private
     end
   end
 
+  def self.fetch_app_by_id_for_windows(id)
+    response = request(WINDOWS_APP_URL + id)
+    if response.status == 200
+      item = JSON.load(response.body)['d']['Entity']
+      price = item["Price"].nil? ? 0 : item["Price"].gsub(/[^\d\.]/, '').to_f
+      rating = item["Rating"].to_i / 100.0
+      {
+        :item_id          => item['ApplicationId'],
+        :title            => item['Name'],
+        :icon_url         => item['LargeImageUrl'],
+        :small_icon_url   => item['SmallImageUrl'],
+        :price            => "%.2f" % price,
+        :description      => item['LongDescription'],
+        :publisher        => item["CompanyName"],
+        :file_size_bytes  => item["Size"],
+        :user_rating      => "%.2f" % rating,
+        :released_at      => Time.at(item["DateAdded"][/\(\d+/][1..-1].to_i / 1000).to_date,
+        :version          => item["Version"],
+        :categories       => [],
+      }
+    else
+      Notifier.alert_new_relic(AppStoreSearchFailed, "fetch_app_by_id_for_windows failed for term: #{term}")
+      raise "Invalid response."
+    end
+  end
+
   def self.search_apple_app_store(term, country)
-    response = request(SEARCH_URL, {:media => 'software', :term => term, :country => country})
-    response_ipad = request(SEARCH_URL, {:media => 'software', :entity => 'iPadSoftware', :term => term, :country => country})
+    response = request(ITUNES_SEARCH_URL, {:media => 'software', :term => term, :country => country})
+    response_ipad = request(ITUNES_SEARCH_URL, {:media => 'software', :entity => 'iPadSoftware', :term => term, :country => country})
     if (response.status == 200) && (response.headers['Content-Type'] =~ /javascript/)
       results_iphone = JSON.load(response.body)['results']
       results_ipad = JSON.load(response_ipad.body)['results']
@@ -97,7 +131,7 @@ private
   end
 
   def self.search_android_marketplace(term)
-    response = request(ANDROID_SEARCH_URL + CGI::escape(term.strip.gsub(/\s/, '+')))
+    response = request(ANDROID_SEARCH_URL + CGI::escape(term))
     if response.status == 200
       items = Hpricot(response.body)/"ul.search-results-list"/"li.search-results-item"
       return items.map do |item|
@@ -122,6 +156,28 @@ private
       end
     else
       Notifier.alert_new_relic(AppStoreSearchFailed, "search_android_marketplace failed for term: #{term}")
+      raise "Invalid response."
+    end
+  end
+
+  def self.search_windows_marketplace(term)
+    response = request(WINDOWS_SEARCH_URL + CGI::escape(term))
+    if response.status == 200
+      items = JSON.load(response.body)['d']['ItemList']['List'].map do |item|
+        price = item["Price"].nil? ? 0 : item["Price"].gsub(/[^\d\.]/, '').to_f
+        rating = item["Rating"].to_i / 100.0
+        {
+          :item_id => item['ApplicationId'],
+          :title => item['Name'],
+          :icon_url => item['SmallImageUrl'],
+          :price => "%.2f" % price,
+          :publisher => item["CompanyName"],
+          :user_rating => "%.2f" % rating,
+          :categories => item["ParentCategoryName"],
+        }
+      end
+    else
+      Notifier.alert_new_relic(AppStoreSearchFailed, "search_windows_marketplace failed for term: #{term}")
       raise "Invalid response."
     end
   end

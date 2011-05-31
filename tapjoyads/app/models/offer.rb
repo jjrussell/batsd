@@ -5,7 +5,8 @@ class Offer < ActiveRecord::Base
   APPLE_DEVICES = %w( iphone itouch ipad )
   IPAD_DEVICES = %w( ipad )
   ANDROID_DEVICES = %w( android )
-  ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES
+  WINDOWS_DEVICES = %w( windows )
+  ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
   EXEMPT_UDIDS = Set.new(['c73e730913822be833766efffc7bb1cf239d855a',
                           '7bed2150f941bad724c42413c5efa7f202c502e0',
                           'a000002256c234'])
@@ -599,7 +600,7 @@ class Offer < ActiveRecord::Base
 
   def expected_device_types
     if item_type == 'App' || item_type == 'ActionOffer' || item_type == 'RatingOffer'
-      item.is_android? ? ANDROID_DEVICES : APPLE_DEVICES
+      item.get_offer_device_types
     else
       ALL_DEVICES
     end
