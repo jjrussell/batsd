@@ -25,7 +25,7 @@ class Partner < ActiveRecord::Base
   validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_inclusion_of :exclusivity_level_type, :in => ExclusivityLevel::TYPES, :allow_nil => true, :allow_blank => false
   validates_length_of :apsalar_username, :maximum => 60, :allow_nil => true
-  validates_inclusion_of :use_whitelist, :tapjoy_currency_enabled, :in => [ true, false ]
+  validates_inclusion_of :use_whitelist, :approved_publisher, :in => [ true, false ]
   validate :exclusivity_level_legal
   validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
     record.errors.add(attribute, "must be blank when using whitelisting") if record.use_whitelist? && value.present?
@@ -150,7 +150,23 @@ class Partner < ActiveRecord::Base
   def get_disabled_partners
     Partner.find_all_by_id(disabled_partners.split(';'))
   end
-
+  
+  def get_offer_whitelist
+    Set.new(offer_whitelist.split(';'))
+  end
+  
+  def add_to_whitelist(offer_id)
+    unless offer_id.blank?
+      self.offer_whitelist = offer_whitelist.split(';').push(offer_id).uniq.join(';')
+    end
+  end
+  
+  def remove_from_whitelist(offer_id)
+    unless offer_whitelist.blank? && offer_id.blank?
+      self.offer_whitelist = offer_whitelist.split(';').reject { |offer| offer == offer_id}.join(';')
+    end
+  end
+  
   def payout_cutoff_date(reference_date = nil)
     reference_date ||= Time.zone.now
     reference_date -= 3.days
@@ -251,12 +267,13 @@ class Partner < ActiveRecord::Base
   end
 
   def completed_payout_info?
-    payout_info.present? && payout_info.filled?
+    payout_info.present? && payout_info.valid?
   end
+
 private
 
   def update_currencies
-    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || tapjoy_currency_enabled_changed?
+    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed?
       currencies.each do |c|
         c.set_values_from_partner
         c.save!
@@ -266,7 +283,7 @@ private
   
   def update_app_offers
     if premier_discount_changed?
-      app_offers.each(&:update_payment!)
+      offers.each(&:update_payment!)
     end
   end
   

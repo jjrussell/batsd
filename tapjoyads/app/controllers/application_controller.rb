@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   
   before_filter :set_time_zone
+  before_filter :set_locale
   before_filter :fix_params
   before_filter :reject_banned_ips
 
@@ -77,6 +78,10 @@ private
     Time.zone = 'UTC'
   end
   
+  def set_locale
+    I18n.locale = AVAILABLE_LOCALES.include?(params[:language_code]) ? params[:language_code] : nil
+  end
+  
   def fix_params
     downcase_param(:udid)
     downcase_param(:app_id)
@@ -118,8 +123,7 @@ private
   end
   
   def get_ip_address
-    return @request_ip_address if defined?(@request_ip_address)
-    @request_ip_address = (request.headers['X-Forwarded-For'] || request.remote_ip).gsub(/,.*$/, '')
+    @request_ip_address ||= (request.headers['X-Forwarded-For'] || request.remote_ip).gsub(/,.*$/, '')
   end
   
   def get_geoip_data
@@ -193,13 +197,13 @@ private
     params[:exp] = Experiments.choose(params[:udid]) unless params[:exp].present?
   end
   
-  def build_test_offer(publisher_app, currency)
+  def build_test_offer(publisher_app)
     test_offer = Offer.new(:item_id => publisher_app.id, :item_type => 'TestOffer')
     test_offer.id = publisher_app.id
     test_offer.name = 'Test Offer (Visible to Test Devices)'
     test_offer.third_party_data = publisher_app.id
     test_offer.price = 0
-    test_offer.reward_value = currency.conversion_rate
+    test_offer.reward_value = 100
     test_offer
   end
   

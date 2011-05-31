@@ -26,8 +26,14 @@ MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []
 
+begin
+  local_config = YAML::load_file("#{RAILS_ROOT}/config/local.yml")
+rescue Errno::ENOENT
+  local_config = {}
+end
+
 RUN_MODE_PREFIX = 'dev_'
-API_URL = ''
+API_URL = local_config['api_url'] || ''
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 
 MAX_WEB_REQUEST_DOMAINS = 2
@@ -45,7 +51,8 @@ MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 
-APSALAR_URL = 'https://livebeef42.apsalar.com'
+APSALAR_URL = 'http://holycow42.apsalar.com'
+APSALAR_EVENT_URL = "http://holycow42.apsalar.com/api/v1/tapjoy_event"
 APSALAR_SECRET = 'Tn0oWhQ4k3rahJ45vy4RI3vzausCOoyo'
 SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'

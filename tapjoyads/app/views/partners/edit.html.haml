@@ -1,10 +1,12 @@
+- @page_title = 'Edit Partner'
+
 %h1= @partner.name
 
 - form_for(@partner, nil, :html => { :class => 'tjform' }) do |f|
   .field
-    = f.label(:tapjoy_currency_enabled, 'Approved publisher')
+    = f.label(:approved_publisher, 'Approved publisher')
     #help_approved_publisher.help ?
-    = f.check_box(:tapjoy_currency_enabled)
+    = f.check_box(:approved_publisher)
   .field
     = f.label(:account_manager_notes, 'Internal notes')
     #help_account_manager_notes.help ?
@@ -42,7 +44,7 @@
 .hidden
   #help_approved_publisher_content{:name => 'Approved publisher'}
     Approval status for publishing offers.
-    The partner will not be able to monetize their virtual currencies unless this is checked.
+    Checking this box will make all future currencies created by this partner "tapjoy enabled" by default.
   #help_account_manager_notes_content{:name => 'Internal notes'}
     Internal notes, only viewable by tapjoyers.
   #help_account_managers_content{:name => 'Account manager(s)'}

@@ -43,7 +43,12 @@ ActionController::Routing::Routes.draw do |map|
 
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
+  
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
+  
+  map.namespace :account do |account|
+    account.resources :whitelist, :controller => 'whitelist', :only => [ :index ], :member => [ :enable, :disable ]
+  end  
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post } do |app|
@@ -59,7 +64,10 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.resources :enable_offer_requests, :only => [ :create ]
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }, :collection => { :api => :get, :regenerate_api_key => :post }
-  map.resources :analytics, :only => [ :index ], :collection => { :create_apsalar_account => :get }
+  map.resources :analytics, :only => [ :index ]
+  map.create_apsalar_account_analytics 'analytics/create-apsalar-account', :controller => :analytics, :action => :create_apsalar_account
+  map.share_data_analytics 'analytics/share-data', :controller => :analytics, :action => :share_data
+  map.agree_to_share_data_analytics 'analytics/agree-to-share-data', :controller => :analytics, :action => :agree_to_share_data
   map.resources :billing, :only => [ :index ],
     :collection => { :create_order => :post, :create_transfer => :post, :update_payout_info => :post, :forget_credit_card => :post }
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
@@ -71,10 +79,10 @@ ActionController::Routing::Routes.draw do |map|
     :collection => { :monthly_data => :get, :new_transfer => :get,
                      :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :as_groups => :get,
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
-                     :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get,
-                     :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get },
+                     :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get, :capped_publishers => :get,
+                     :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
+                     :freemium_android => :get },
     :member => {  :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post }
-  map.manage_user_roles_tool 'tools/manage_user_roles', :controller => :tools, :action => :manage_user_roles
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get },
     :collection => { :global => :get, :publisher => :get, :advertiser => :get }
@@ -90,6 +98,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
   map.with_options(:controller => 'search') do |m|
     m.search_offers 'search/offers', :action => 'offers'
+    m.search_users 'search/users', :action => 'users'
   end
   map.premier 'premier', :controller => :premier, :action => :edit
   map.resources :preview_experiments, :only => [ :index, :show ]
@@ -101,8 +110,12 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]
     tools.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :as => :scheduling
+    tools.resources :users, :only  => [ :index, :show] do |user|
+      user.resources :role_assignments, :only => [ :create, :destroy ], :controller => 'users/role_assignments'
+    end
+
   end
-  map.resources :action_offers, :only => [ :show ]
+  map.resources :offer_instructions, :only => [ :index ]
   map.with_options :controller => :game_state do |m|
     m.load_game_state 'game_state/load', :action => :load
     m.save_game_state 'game_state/save', :action => :save
@@ -158,8 +171,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'Service1.asmx/GetPurchasedVGStoreItems', :controller => 'get_vg_store_items', :action => 'purchased'
   map.connect 'service1.asmx/GetUserAccountObject', :controller => 'get_vg_store_items', :action => 'user_account'
   map.connect 'Service1.asmx/GetUserAccountObject', :controller => 'get_vg_store_items', :action => 'user_account'
-  map.connect 'service1.asmx/PurchaseVGWithCurrency', :controller => 'purchase_vg'
-  map.connect 'Service1.asmx/PurchaseVGWithCurrency', :controller => 'purchase_vg'
+  map.connect 'service1.asmx/PurchaseVGWithCurrency', :controller => 'points', :action => 'purchase_vg'
+  map.connect 'Service1.asmx/PurchaseVGWithCurrency', :controller => 'points', :action => 'purchase_vg'
   
   map.connect 'service1.asmx/:action', :controller => 'service1'
   map.connect 'Service1.asmx/:action', :controller => 'service1'
@@ -174,6 +187,10 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'RateApp.aspx/:action', :controller => 'win_redirector'
   
   map.connect 'Offers.aspx/:action', :controller => 'win_redirector'
+
+  # redirects from old vg controller
+  map.connect 'purchase_vg', :controller => 'points', :action => 'purchase_vg'
+  map.connect 'purchase_vg/spend', :controller => 'points', :action => 'spend'
   
   # Authenticated windows redirectors. These too will be removed/moved to standard 
   # ruby controllers in time.

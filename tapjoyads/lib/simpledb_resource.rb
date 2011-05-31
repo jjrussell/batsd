@@ -12,15 +12,6 @@ class SimpledbResource
   end
   self.reset_connection
   
-  @@type_converters = {
-    :string => StringConverter.new,
-    :int    => IntConverter.new,
-    :float  => FloatConverter.new,
-    :time   => TimeConverter.new,
-    :bool   => BoolConverter.new,
-    :json   => JsonConverter.new
-  }
-  
   @@special_values = {
     :newline => "^^TAPJOY_NEWLINE^^",
     :escaped => "^^TAPJOY_ESCAPED^^"
@@ -225,13 +216,13 @@ class SimpledbResource
   #   default_value: The value to return if no values are associated with attr_name. Not used
   #       if force_array is set to true (an empty array will be returned instead).
   #   type: The type of value that is being stored. The value will be converted to the type before
-  #       being returned. Acceptable values are listed in @@type_converters.
+  #       being returned. Acceptable values are listed in TypeConverters::TYPES.
   def get(attr_name, options = {})
     force_array   = options.delete(:force_array)   { false }
     default_value = options.delete(:default_value)
     type          = options.delete(:type)          { :string }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    raise "Unknown type conversion: #{type}" unless @@type_converters.include?(type)
+    raise "Unknown type conversion: #{type}" unless TypeConverters::TYPES.include?(type)
     
     attr_array = @attributes[attr_name]
     
@@ -252,7 +243,7 @@ class SimpledbResource
     end
     
     attr_array = attr_array.map do |value|
-      @@type_converters[type].from_string(unescape_specials(value))
+      TypeConverters::TYPES[type].from_string(unescape_specials(value))
     end
     
     return attr_array.first if not force_array and attr_array.length == 1
@@ -266,12 +257,12 @@ class SimpledbResource
     cgi_escape = options.delete(:cgi_escape) { false }
     type       = options.delete(:type)       { :string }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    raise "Unknown type conversion: #{type}" unless @@type_converters.include?(type)
+    raise "Unknown type conversion: #{type}" unless TypeConverters::TYPES.include?(type)
     
     if value.nil?
       return
     end
-    value = @@type_converters[type].to_string(value)
+    value = TypeConverters::TYPES[type].to_string(value)
     
     value = escape_specials(value, {:cgi_escape => cgi_escape})
     

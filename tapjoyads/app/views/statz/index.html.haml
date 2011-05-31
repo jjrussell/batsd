@@ -46,6 +46,7 @@
       %th Published offers
       %th Offers revenue
       %th Featured
+      %th Offer type
   %tbody#apps_tbody
     - @cached_stats.each do |offer_id, stats|
       %tr
@@ -63,6 +64,7 @@
         %td= stats['published_offers']
         %td= stats['offers_revenue']
         %td= stats['featured']
+        %td= stats['offer_type']
       
 - content_for :page_javascript do
   :plain

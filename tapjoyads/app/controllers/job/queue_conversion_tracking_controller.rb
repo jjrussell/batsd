@@ -25,7 +25,7 @@ private
       return
     end
     
-    publisher_user = PublisherUser.find_or_initialize("#{click.publisher_app_id}.#{click.publisher_user_id}")
+    publisher_user = PublisherUser.new(:key => "#{click.publisher_app_id}.#{click.publisher_user_id}")
     unless publisher_user.update!(click.udid)
       click.block_reason = "TooManyUdidsForPublisherUserId (ID=#{publisher_user.key})"
       click.serial_save
@@ -96,5 +96,6 @@ private
     
     Sqs.send_message(QueueNames::SEND_CURRENCY, message) unless currency.callback_url == Currency::NO_CALLBACK_URL
     Sqs.send_message(QueueNames::CREATE_CONVERSIONS, message)
+    Apsalar.ping_rewarded_install(click)
   end
 end

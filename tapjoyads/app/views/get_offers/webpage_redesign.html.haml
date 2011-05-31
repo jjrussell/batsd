@@ -9,7 +9,7 @@
 
 - render(:layout => 'box') do
   %p.explanation
-    Install and OPEN one of the apps below to receive #{@currency.name}
+    Engage in any of the following actions to receive #{@currency.name}
 
 - if @start_index > 0
   = render :partial => 'pagination_links'
@@ -40,7 +40,6 @@
                     %label= @currency.get_visual_reward_amount(offer)
                     = @currency.name
                   %p
-                    Install
                     %b= offer.name
                 .ribbon
                   %span= offer.visual_cost

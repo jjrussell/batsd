@@ -14,7 +14,7 @@ class Currency < ActiveRecord::Base
   validates_numericality_of :conversion_rate, :initial_balance, :ordinal, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :spend_share, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :allow_nil => true, :only_integer => true
-  validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :banner_advertiser, :in => [ true, false ]
+  validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :banner_advertiser, :hide_app_installs, :tapjoy_enabled, :in => [ true, false ]
   validates_each :callback_url do |record, attribute, value|
     unless SPECIAL_CALLBACK_URLS.include?(value) || value =~ /^https?:\/\//
       record.errors.add(attribute, 'is not a valid url')
@@ -23,6 +23,8 @@ class Currency < ActiveRecord::Base
   validates_each :disabled_offers, :allow_blank => true do |record, attribute, value|
     record.errors.add(attribute, "must be blank when using whitelisting") if record.use_whitelist? && value.present?
   end
+  
+  named_scope :for_ios, :joins => :app, :conditions => "#{App.quoted_table_name}.platform = 'iphone'"
   
   before_validation :remove_whitespace_from_attributes
   before_create :set_values_from_partner
@@ -146,8 +148,12 @@ class Currency < ActiveRecord::Base
     self.direct_pay_share  = partner.direct_pay_share
     self.offer_whitelist   = partner.offer_whitelist
     self.use_whitelist     = partner.use_whitelist
-    self.tapjoy_enabled    = partner.tapjoy_currency_enabled
+    self.tapjoy_enabled    = partner.approved_publisher if new_record?
     true
+  end
+  
+  def hide_app_installs_for_version?(app_version)
+    hide_app_installs? && minimum_hide_app_installs_version.blank? || app_version.present? && hide_app_installs? && app_version.version_greater_than_or_equal_to?(minimum_hide_app_installs_version)
   end
   
 private

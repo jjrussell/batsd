@@ -1,58 +1,59 @@
 class OneOffs
 
-  def self.migrate_publisher_users(select_options = {})
-    count = 0
-    already_migrated = 0
-    num_migrated = 0
-    num_skipped = 0
-    time = Benchmark.realtime do
-      PublisherUserRecord.select(select_options) do |pur|
-        count += 1
-        pub_user = PublisherUser.new(:key => pur.key)
-        unless pub_user.new_record?
-          already_migrated += 1
-          next
-        end
-        
-        pur.get('udid', :force_array => true).each do |udid|
-          pub_user.udids = udid
-        end
-        unless pub_user.changed?
-          num_skipped += 1
-          next
-        end
-        
-        begin
-          pub_user.save!
-          num_migrated += 1
-        rescue Exception => e
-          puts "failed to save #{pub_user.key}, retrying..."
-          sleep(0.2)
-          retry
-        end
-        
-        puts "#{Time.zone.now.to_s(:db)} - count: #{count}, num_migrated: #{num_migrated}, already_migrated: #{already_migrated}, num_skipped: #{num_skipped}" if count % 1000 == 0
+  def self.copy_ranks_to_s3(start_time_string=nil, end_time_string=nil, granularity_string='hourly')
+    start_time, end_time, granularity = Appstats.parse_dates(start_time_string, end_time_string, granularity_string)
+    if granularity_string == 'daily'
+      date_format = ('%Y-%m')
+      incrementer = 1.month
+    else
+      date_format = ('%Y-%m-%d')
+      incrementer = 1.day
+    end
+
+    time = start_time
+    while time < end_time
+      copy_ranks(time.strftime(date_format))
+      time += incrementer
+    end
+  end
+
+  def self.copy_ranks(date_string)
+    Stats.select(:where => "itemName() like 'app.#{date_string}.%'") do |stats|
+      puts stats.key
+      ranks_key = stats.key.gsub('app', 'ranks').gsub('.', '/')
+      ranks = {}
+      stats.parsed_ranks.each do |key, value|
+        ranks[key] = value
+      end
+      unless ranks.empty?
+        s3_ranks = S3Stats::Ranks.find_or_initialize_by_id(ranks_key)
+        s3_ranks.all_ranks = ranks
+        s3_ranks.save!
       end
     end
-    
-    puts "finished #{count} PublisherUserRecords in #{time / 3600} hours"
-    puts "num_migrated: #{num_migrated}"
-    puts "already_migrated: #{already_migrated}"
-    puts "num_skipped: #{num_skipped}"
   end
 
-  def self.cleanup_tapulous_accounting
-    partner = Partner.find('32b4c167-dd33-40c6-9b3e-2020427b6f4c')
-    start_time = Time.zone.parse('2011-04-19')
-    end_time = Time.zone.parse('2011-04-20 23:59:59')
-    partner.orders.created_between(start_time, end_time).delete_all
-    partner.payouts.created_between(start_time, end_time).delete_all
-    partner.reset_balances
+  def self.delete_ranks_from_sdb(start_time_string=nil, end_time_string=nil, granularity_string='hourly')
+    start_time, end_time, granularity = Appstats.parse_dates(start_time_string, end_time_string, granularity_string)
+    if granularity == :daily
+      date_format = ('%Y-%m')
+      incrementer = 1.month
+    else
+      date_format = ('%Y-%m-%d')
+      incrementer = 1.day
+    end
+
+    time = start_time
+    while time < end_time
+      delete_ranks(time.strftime(date_format))
+      time += incrementer
+    end
   end
 
-  def self.cleanup_orphaned_orders_and_payouts
-    Order.delete_all("partner_id = ''")
-    Payout.delete_all("partner_id = ''")
+  def self.delete_ranks(date_string)
+    Stats.select(:where => "itemName() like 'app.#{date_string}.%'") do |stats|
+      stats.delete('ranks')
+      stats.serial_save
+    end
   end
-
 end

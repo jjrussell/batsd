@@ -125,7 +125,7 @@ class Conversion < ActiveRecord::Base
     end
   end
   
-  def self.restore_from_file(filename, concurrency = 50)
+  def self.restore_from_file(filename, concurrency = 4000)
     Benchmark.realtime do
       f = File.open(filename, 'r')
       count = 0
@@ -170,6 +170,10 @@ private
   end
   
   def update_realtime_stats
+    if (advertiser_offer.free_app? && advertiser_offer.get_platform == 'iOS' && (reward_type < 1000 || reward_type >= 2000))
+      publisher_app.increment_daily_installs_for_advertiser(advertiser_offer.item_id)
+    end
+    
     Conversion.get_stat_definitions(reward_type).each do |stat_definition|
       stat_name  = stat_definition[:stat]
       attr_value = send(stat_definition[:attr])

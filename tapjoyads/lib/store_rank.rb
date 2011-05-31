@@ -1,15 +1,15 @@
+# TODO: move this logic to S3Stats::Ranks?
 class StoreRank
-  cattr_accessor :itunes_category_ids, :itunes_pop_ids, :itunes_country_ids
-  cattr_accessor :google_category_ids, :google_pop_ids, :google_language_ids
 
   def self.populate_itunes_appstore_rankings(time)
     hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
     hydra.disable_memoization
     date_string = time.to_date.to_s(:db)
     error_count = 0
-    success_count = 0
     known_store_ids = {}
     stat_rows = {}
+    # remove this someday
+    s3_rows = {}
     
     ranks_file_name = "ranks.#{time.beginning_of_hour.to_s(:db)}.json"
     ranks_file = open("tmp/#{ranks_file_name}", 'w')
@@ -22,10 +22,12 @@ class StoreRank
     end
     log_progress "Finished loading known_store_ids."
     
-    itunes_category_ids.each do |category_key, category_id|
-      itunes_pop_ids.each do |pop_key, pop_id|
-        itunes_country_ids.each do |country_key, country_id|
+    ITUNES_CATEGORY_IDS.each do |category_key, category_id|
+      ITUNES_POP_IDS.each do |pop_key, pop_id|
+        ITUNES_COUNTRY_IDS.each do |country_key, country_id|
+          # TODO: remove this after ranks are moved to s3
           stat_type = "#{category_key}.#{pop_key}.#{country_key}"
+          ranks_key = "#{category_key}.#{pop_key}.#{country_key}"
           url = "http://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewTop?id=#{category_id}&popId=#{pop_id}"
           headers = { 'X-Apple-Store-Front' => "#{country_id}-1,12", 'Host' => 'ax.itunes.apple.com' }
           user_agent = 'iTunes/10.1 (Macintosh; Intel Mac OS X 10.6.5) AppleWebKit/533.18.1'
@@ -40,23 +42,30 @@ class StoreRank
               log_progress "Error downloading ranks from itunes for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Error code: #{response.code}. Retrying."
               hydra.queue(request)
             else
-              success_count += 1
               ranks_hash = get_itunes_ranks_hash(response.body)
               ranks_hash.each do |store_id, rank|
                 next if known_store_ids[store_id].nil?
 
                 known_store_ids[store_id].each do |offer_id|
+                  # TODO: remove next 2 lines after ranks to s3
                   stat_rows[offer_id] ||= Stats.new(:key => "app.#{date_string}.#{offer_id}", :load_from_memcache => false)
                   stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour, rank)
+                  #stat_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
+                  #stat_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
+                  s3_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
+                  s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
                   
                   # TO REMOVE - once this job consistently runs every hour.
                   if time.hour > 0 && stat_rows[offer_id].get_hourly_count(['ranks', stat_type])[time.hour - 1] == 0
                     stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour - 1, rank)
+
+                  # if time.hour > 0 && stat_rows[offer_id].hourly_values(ranks_key)[time.hour - 1] == 0
+                    s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour - 1, rank)
                   end
                 end
               end
 
-              ranks_file.puts( {"itunes.#{stat_type}" => ranks_hash}.to_json )
+              ranks_file.puts( {"itunes.#{ranks_key}" => ranks_hash}.to_json )
             end
           end
           hydra.queue(request)
@@ -69,8 +78,15 @@ class StoreRank
     log_progress "Finished making requests."
     
     stat_rows.each do |offer_id, stat_row|
+      # TODO: switch this save once migration is finished
       stat_row.serial_save
     end
+
+    # TODO: remove this later
+    s3_rows.each do |offer_id, ranks_row|
+      ranks_row.save || log_progress("S3 save failed for #{ranks_row.id}")
+    end
+
     log_progress "Finished saving stat_rows."
     
     ranks_file.close
@@ -102,10 +118,11 @@ class StoreRank
     hydra.disable_memoization
     date_string = time.to_date.to_s(:db)
     error_count = 0
-    success_count = 0
     known_store_ids = {}
     known_android_store_ids = {}
     stat_rows = {}
+    # remove this someday
+    s3_rows = {}
 
     android_ranks_file_name = "ranks.android.#{time.beginning_of_hour.to_s(:db)}.json"
     android_ranks_file = open("tmp/#{android_ranks_file_name}", 'w')
@@ -119,16 +136,25 @@ class StoreRank
 
     log_progress "Finished loading known_store_ids."
 
-    google_category_ids.each do |category_key, category_name|
-      google_pop_ids.each do |pop_key, pop_id|
-        google_language_ids.each do |language_key, language_id|
+    GOOGLE_CATEGORY_IDS.each do |category_key, category_name|
+      GOOGLE_POP_OPTIONS.each do |pop_key, pop_options|
+        next if pop_options[:skip_cat] && category_key != "overall"
+        GOOGLE_LANGUAGE_IDS.each do |language_key, language_id|
+          next if pop_options[:skip_lang] && language_key != "english"
+          # TODO: remove this line:
           stat_type = "#{category_key}.#{pop_key}.#{language_key}"
+          ranks_key = "#{category_key}.#{pop_key}.#{language_key}"
           offset = 0
-          while offset < 200
-            url = google_rank_url(pop_id, category_name, language_id, offset)
+          max_offset = 200
+          max_offset = 24 * (pop_options[:pages]-1)     if pop_options[:pages]
+          max_offset = 24 * (pop_options[:cat_pages]-1) if pop_options[:cat_pages] && category_key != "overall"
+
+          while offset <= max_offset
+            url = google_rank_url(pop_options[:id], category_name, language_id, offset)
             offset += 24
 
             request = Typhoeus::Request.new(url)
+
             request.on_complete do |response|
               current_offset = response.effective_url.split('start=').last.split('&').first.to_i
               if response.code != 200
@@ -139,16 +165,20 @@ class StoreRank
                 log_progress "Error downloading ranks from google for category: #{category_key}, pop: #{pop_key}. Error code: #{response.code}. Retrying."
                 hydra.queue(request)
               else
-                success_count += 1
                 ranks_hash = get_google_ranks_hash(response.body, current_offset)
                 ranks_hash.each do |store_id, rank|
                   next if known_android_store_ids[store_id].nil?
                   known_android_store_ids[store_id].each do |offer_id|
                     stat_rows[offer_id] ||= Stats.new(:key => "app.#{date_string}.#{offer_id}", :load_from_memcache => false)
                     stat_rows[offer_id].update_stat_for_hour(['ranks', stat_type], time.hour, rank)
+
+                    #stat_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
+                    #stat_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
+                    s3_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
+                    s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
                   end
                 end
-                android_ranks_file.puts( {"android.#{stat_type}" => ranks_hash}.to_json )
+                android_ranks_file.puts( {"android.#{ranks_key}" => ranks_hash}.to_json )
               end
             end
             hydra.queue(request)
@@ -163,8 +193,15 @@ class StoreRank
     log_progress "Finished making requests."
 
     stat_rows.each do |offer_id, stat_row|
+      # TODO: switch this save once migration is finished
       stat_row.serial_save
     end
+
+    # TODO: remove this later
+    s3_rows.each do |offer_id, ranks_row|
+      ranks_row.save || Rails.logger.info("S3 save failed for #{ranks_row.id}")
+    end
+
     log_progress "Finished saving stat_rows."
 
     android_ranks_file.close
@@ -189,6 +226,76 @@ class StoreRank
   ensure
     `rm 'tmp/#{android_ranks_file_name}'`
     `rm 'tmp/#{android_ranks_file_name}.gz'`
+  end
+
+  def self.populate_top_freemium_android_apps
+    hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
+    hydra.disable_memoization
+    error_count = 0
+    offset = 0
+    freemium_android_app = []
+    known_android_store_ids = {}
+    App.find_each(:conditions => "platform = 'android' AND store_id IS NOT NULL") do |app|
+      known_android_store_ids[app.store_id] ||= []
+      known_android_store_ids[app.store_id] += app.offer_ids
+    end
+
+    while offset < 456
+      url = google_rank_url("apps_topgrossing", "", "en", offset)
+      offset += 24
+
+      request = Typhoeus::Request.new(url)
+      request.on_complete do |response|
+        current_offset = response.effective_url.split('start=').last.split('&').first.to_i
+        if response.code != 200
+          error_count += 1
+          if error_count > 50
+            raise "Too many errors attempting to download android ranks, giving up. App store down?"
+          end
+          log_progress "Error downloading topgrossing data from google for Error code: #{response.code}. Retrying."
+          hydra.queue(request)
+        else
+          items = Hpricot(response.body)/".snippet.snippet-medium"
+          items.each_with_index do |item, index|
+            anchor = item/".details"
+            price = (anchor/"span.buy-button-price").inner_html[/\d+\.\d+/]
+            next unless price.nil?
+
+            rank      = index + current_offset + 1
+            store_id  = (anchor/"a.title").attr('href').match("id=(.*)").to_a.second
+            name      = (anchor/"a.title").inner_html
+
+            freemium_android_app << {:rank => rank, :name => name, :store_id => store_id}
+          end
+        end
+      end
+      hydra.queue(request)
+    end
+
+    log_progress "Finished queuing requests."
+    hydra.run
+    log_progress "Finished making requests."
+    apps = freemium_android_app.sort_by{|app| app[:rank]}.map do |hash|
+      hash[:tapjoy_apps] = known_android_store_ids[hash[:store_id]]
+      hash
+    end
+
+    time = Time.zone.now
+    results = { :apps => apps, :created_at => time }
+    bucket = S3.bucket(BucketNames::STORE_RANKS)
+    key = bucket.key("android/freemium/#{time.strftime('%Y-%m-%d')}")
+    bucket.put(key, results.to_json, {}, 'public-read')
+  end
+
+  def self.top_freemium_android_apps(time=nil)
+    time ||= Time.zone.now - 5.minutes
+    bucket = S3.bucket(BucketNames::STORE_RANKS)
+    key = bucket.key("android/freemium/#{time.strftime('%Y-%m-%d')}")
+    unless key.exists?
+      time -= 1.day
+      key = bucket.key("android/freemium/#{time.strftime('%Y-%m-%d')}")
+    end
+    JSON.load(bucket.get(key))
   end
 
 private
@@ -222,8 +329,15 @@ private
     Rails.logger.info "#{now} (#{now.to_i}): #{message}"
     Rails.logger.flush
   end
-  
-  @@itunes_category_ids = {
+
+  def self.google_rank_url(type, category, language, offset)
+    url = "https://market.android.com/details?id=#{type}&start=#{offset}"
+    url += "&cat=#{category}" unless category.blank?
+    url += "&hl=#{language}" unless language == 'en'
+    url
+  end
+
+  ITUNES_CATEGORY_IDS = {
     "overall"                 => 25204,
     "books"                   => 25470,
     "business"                => 25148,
@@ -265,8 +379,8 @@ private
     "games_trivia"            => 26511,
     "games_word"              => 26521,
   }
-  
-  @@itunes_pop_ids      = {
+
+  ITUNES_POP_IDS      = {
     "free"              => 27,
     "paid"              => 30,
     "top_grossing"      => 38,
@@ -274,8 +388,8 @@ private
     "ipad_paid"         => 47,
     "ipad_top_grossing" => 46,
   }
-  
-  @@itunes_country_ids = {
+
+  ITUNES_COUNTRY_IDS = {
     "united_states"         => 143441,
     "argentina"             => 143505,
     "australia"             => 143460,
@@ -340,7 +454,7 @@ private
     "vietnam"               => 143471,
   }
 
-  @@google_category_ids = {
+  GOOGLE_CATEGORY_IDS = {
     "overall"             => "",
     "all_games"           => "GAME",
     "all_applications"    => "APPLICATION",
@@ -378,12 +492,39 @@ private
     "widgets"             => "APP_WIDGETS",
   }
 
-  @@google_pop_ids      = {
-    "free"              => "apps_topselling_free",
-    "paid"              => "apps_topselling_paid"
+  GOOGLE_POP_OPTIONS = {
+    "free" => { :id => "apps_topselling_free" },
+    "paid" => { :id => "apps_topselling_paid" },
+    "top_grossing" => {
+      :id => "apps_topgrossing",
+      :skip_lang => true,
+      :skip_cat => true,
+    },
+    "top_new_paid" => {
+      :id => "apps_topselling_new_paid",
+      :skip_lang => true,
+      :cat_pages => 1,
+    },
+    "top_new_free" => {
+      :id => "apps_topselling_new_free",
+      :skip_lang => true,
+      :cat_pages => 1,
+    },
+    "trending" => {
+      :id => "apps_movers_shakers",
+      :skip_lang => true,
+      :cat_pages => 1,
+      :pages => 2,
+    },
+    "featured" => {
+      :id => "apps_featured",
+      :skip_lang => true,
+      :cat_pages => 2,
+      :pages => 2,
+    },
   }
 
-  @@google_language_ids = {
+  GOOGLE_LANGUAGE_IDS = {
     "czech"                   => "cs",
     "danish"                  => "da",
     "german"                  => "de",
@@ -408,10 +549,4 @@ private
     "japanese"                => "ja",
   }
 
-  def self.google_rank_url(type, category, language, offset)
-    url = "https://market.android.com/details?id=#{type}&start=#{offset}"
-    url += "&cat=#{category}" unless category.nil?
-    url += "&hl=#{language}" unless language == 'en'
-    url
-  end
 end

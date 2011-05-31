@@ -4,6 +4,7 @@ class App < ActiveRecord::Base
   
   PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS' }
   TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
+  MAXIMUM_INSTALLS_PER_PUBLISHER = 4000
   
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
@@ -27,6 +28,8 @@ class App < ActiveRecord::Base
   
   named_scope :visible, :conditions => { :hidden => false }
 
+  delegate :conversion_rate, :to => :primary_currency, :prefix => true
+
   def is_android?
     platform == 'android'
   end
@@ -37,6 +40,14 @@ class App < ActiveRecord::Base
 
   def large_download?
     file_size_bytes.to_i > 20971520
+  end
+
+  def recently_released?
+    released_at? && (Time.zone.now - released_at) < 7.day
+  end
+
+  def bad_rating?
+    !user_rating.nil? && user_rating < 3.0
   end
 
   def platform_name
@@ -68,7 +79,19 @@ class App < ActiveRecord::Base
       write_attribute(:store_url, url)
     end
   end
-  
+
+  def categories=(arr)
+    write_attribute(:categories, arr.join(';'))
+  end
+
+  def categories
+    (read_attribute(:categories)||'').split(';')
+  end
+
+  def primary_category
+    categories.first.humanize if categories.present?
+  end
+
   def info_url
     if is_android?
       "https://market.android.com/details?id=#{store_id}"
@@ -97,24 +120,33 @@ class App < ActiveRecord::Base
   ##
   # Grab data from the app store and mutate self with data.
   def fill_app_store_data(country=nil)
-    return if store_id.blank?
+    return {} if store_id.blank?
     data = AppStore.fetch_app_by_id(store_id, platform, country)
     if (data.nil?) # might not be available in the US market
       data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
     end
     raise "Fetching app store data failed for app: #{name} (#{id})." if data.nil?
-    self.name = data[:title]
-    self.price = (data[:price].to_f * 100).round
-    self.description = data[:description]
-    self.age_rating = data[:age_rating]
-    self.file_size_bytes = data[:file_size_bytes]
-    self.supported_devices = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
-    download_icon(data[:icon_url], data[:small_icon_url])
+    self.name               = data[:title]
+    self.price              = (data[:price].to_f * 100).round
+    self.description        = data[:description]
+    self.age_rating         = data[:age_rating]
+    self.file_size_bytes    = data[:file_size_bytes]
+    self.released_at        = data[:released_at]
+    self.user_rating        = data[:user_rating]
+    self.categories         = data[:categories]
+    self.supported_devices  = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
+    
+    # TODO: Real multi-currency handling. For now simply set the price to a positive value if it's not USD.
+    if data[:currency].present? && data[:currency] != 'USD' && price > 0
+      self.price = 99
+    end
+    
+    download_icon(data[:icon_url], data[:small_icon_url]) unless new_record?
+    data
   end
 
   def download_icon(url, small_url)
     return if url.blank?
-    set_primary_key if id.nil?
     
     begin
       icon_src_blob = Downloader.get(url, :timeout => 30)
@@ -146,15 +178,16 @@ class App < ActiveRecord::Base
     
     return [ [], 0 ] if type == Offer::CLASSIC_OFFER_TYPE || !currency.tapjoy_enabled?
     
-    final_offer_list   = []
-    num_rejected       = 0
-    offer_list_length  = 0
+    final_offer_list  = []
+    num_rejected      = 0
+    offer_list_length = 0
+    hide_app_offers   = currency.hide_app_installs_for_version?(app_version)
     
     if include_rating_offer && enabled_rating_offer_id.present?
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)
       if rate_app_offer.present? && rate_app_offer.accepting_clicks?
         offer_list_length += 1
-        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type)
+        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers)
           num_rejected += 1
         else
           final_offer_list << rate_app_offer
@@ -164,7 +197,7 @@ class App < ActiveRecord::Base
     
     offer_list_length += Offer.get_cached_offers({ :type => type, :exp => exp }) do |offers|
       offers.each do |offer|
-        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type)
+        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers)
           num_rejected += 1
         else
           final_offer_list << offer
@@ -216,11 +249,60 @@ class App < ActiveRecord::Base
   def offers_with_last_run_time
     [ primary_offer ] + action_offers.collect(&:primary_offer).sort { |a, b| a.name <=> b.name }
   end
+  
+  def set_capped_advertiser_app_ids(advertiser_app_ids)
+    Mc.put(capped_advertisers_mc_key, advertiser_app_ids)
+  end
+  
+  def capped_advertiser_app_ids
+    Mc.get(capped_advertisers_mc_key) || Set.new
+  end
+  
+  def capped_advertiser_apps 
+    App.find(capped_advertiser_app_ids.to_a)
+  end
+  
+  def increment_daily_installs_for_advertiser(advertiser_app_id)
+    Mc.increment_count(daily_installs_mc_key_for_advertiser(advertiser_app_id))
+  end
+  
+  def daily_installs_for_advertiser(advertiser_app_id)
+    Mc.get_count(daily_installs_mc_key_for_advertiser(advertiser_app_id))
+  end
+  
+  def self.set_enabled_free_ios_apps
+    advertiser_app_ids = Offer.enabled_offers.free_apps.for_ios_only.scoped(:select => :item_id, :group => :item_id).collect(&:item_id)
+    Mc.put(enabled_free_apps_mc_key, advertiser_app_ids)
+  end
+  
+  def self.enabled_free_ios_apps
+    Mc.get(enabled_free_apps_mc_key) || []
+  end
+
+  def self.get_ios_publisher_app_ids
+    Currency.for_ios.scoped(:select => :app_id, :group => :app_id).collect(&:app_id)
+  end
+
+  def self.get_ios_publisher_apps
+    App.find(get_ios_publisher_app_ids)
+  end
 
 private
+
+  def capped_advertisers_mc_key
+    "ios_install_limits.capped_apps_for_publisher.#{Time.now.utc.to_date}.#{id}"
+  end
+
+  def daily_installs_mc_key_for_advertiser(advertiser_app_id)
+    "ios_install_limits.installs_by_publisher_and_advertiser.#{Time.now.utc.to_date}.#{id}.#{advertiser_app_id}"
+  end
+  
+  def self.enabled_free_apps_mc_key
+    'ios_install_limits.enabled_free_ios_apps'
+  end
   
   def generate_secret_key
-    raise "Secret key already set" unless secret_key.blank?
+    return if secret_key.present?
     
     alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890'
     new_secret_key = ''

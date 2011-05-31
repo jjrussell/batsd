@@ -43,7 +43,6 @@ class HomepageController < WebsiteController
   end
 
   def team
-    render :layout => 'newcontent'
   end
 
   def index

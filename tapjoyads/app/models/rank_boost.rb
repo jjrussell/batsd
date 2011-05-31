@@ -6,7 +6,10 @@ class RankBoost < ActiveRecord::Base
   validates_presence_of :start_time, :end_time, :offer, :amount
   validate :check_times
   
-  named_scope :active, lambda { { :conditions => [ "start_time <= ? AND end_time > ?", Time.zone.now, Time.zone.now ]} }
+  after_save :calculate_rank_boost_for_offer
+  
+  named_scope :active, lambda { { :conditions => [ "start_time <= ? AND end_time > ?", Time.zone.now, Time.zone.now ] } }
+  named_scope :for_offer, lambda { |offer_id| { :conditions => [ "offer_id = ?", offer_id] } }
   
   def partner_id
     offer.partner_id
@@ -28,6 +31,10 @@ private
     if (start_time.present? && end_time.present? && start_time >= end_time)
       errors.add :end_time, "must be after Start Time"
     end
+  end
+  
+  def calculate_rank_boost_for_offer
+    offer.calculate_rank_boost!
   end
 
 end

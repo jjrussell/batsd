@@ -28,4 +28,7 @@
       %th= label_tag :icon, 'Icon'
       %td= file_field_tag :icon
     %tr
+      %th= label_tag :instructions
+      %td= f.text_area :instructions
+    %tr
       %td{ :colspan => 2 }= f.submit 'Create Generic Offer'

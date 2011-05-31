@@ -20,15 +20,24 @@ class Click < SimpledbShardedResource
   self.sdb_attr :tapjoy_amount,     :type => :int
   self.sdb_attr :currency_reward,   :type => :int
   self.sdb_attr :source
+  self.sdb_attr :ip_address
   self.sdb_attr :country
   self.sdb_attr :type
   self.sdb_attr :exp
   self.sdb_attr :block_reason
   
+  def initialize(options = {})
+    super({ :load_from_memcache => false }.merge(options))
+  end
+  
   def dynamic_domain_name
     domain_number = @key.hash % NUM_CLICK_DOMAINS
     
     return "clicks_#{domain_number}"
+  end
+  
+  def serial_save(options = {})
+    super({ :write_to_memcache => false }.merge(options))
   end
   
 end

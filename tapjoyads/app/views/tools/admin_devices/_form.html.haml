@@ -2,9 +2,9 @@
   %table
     %tr
       %th Platform
-      %td= f.select 'platform', options_for_select(App::PLATFORMS.invert)
+      %td= f.select 'platform', options_for_select(App::PLATFORMS.invert, @admin_device.platform)
     %tr
-      %th UDID
+      %th= @admin_device.platform == 'android' ? "IMEI" : "UDID"
       %td= f.text_field :udid
       %td= error_message_on(@admin_device, :udid) if @admin_device.errors.on :udid
     %tr

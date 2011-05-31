@@ -25,14 +25,13 @@ class Appstats
         @stats[stat_type] = get_daily_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
       end
     end
-    
-    # Convert 0 ranks to nil.
-    if @stats['ranks']
-      @stats['ranks'].each do |key, value|
-        value.map! { |i| i == 0 ? nil : i }
-      end
+
+    if @granularity == :hourly
+      @stats['ranks'] = S3Stats::Ranks.hourly_over_time_range(@app_key, @start_time.utc, @end_time.utc)
+    else
+      @stats['ranks'] = S3Stats::Ranks.daily_over_time_range(@app_key, @start_time.utc, @end_time.utc)
     end
-    
+
     # cvr
     if @stats['paid_clicks'] and @stats['paid_installs']
       @stats['cvr'] = []
@@ -302,33 +301,33 @@ class Appstats
     data = [data]
     get_labels_and_intervals unless @intervals.present?
 
-    stats['paid_clicks'].length.times do |i|
+    @stats['paid_clicks'].length.times do |i|
       time_format = (@granularity == :daily) ? :mdy_ampm_utc : :mdy_ampm
 
       line = [
         @intervals[i].to_s(time_format),
         @intervals[i + 1].to_s(time_format),
-        stats['paid_clicks'][i],
-        stats['paid_installs'][i],
-        stats['new_users'][i],
-        stats['cvr'][i],
-        number_to_currency(stats['installs_spend'][i] / -100.0, :delimiter => ''),
-        (Array(stats['ranks']['overall.free.united_states'])[i] || '-'),
-        stats['offerwall_views'][i],
-        stats['rewards_opened'][i],
-        stats['rewards'][i],
-        stats['rewards_cvr'][i],
-        number_to_currency(stats['rewards_revenue'][i] / 100.0, :delimiter => ''),
-        number_to_currency(stats['offerwall_ecpm'][i] / 100.0, :delimiter => ''),
-        number_to_currency(stats['display_revenue'][i] / 100.0, :delimiter => ''),
-        number_to_currency(stats['display_ecpm'][i] / 100.0, :delimiter => ''),
-        number_to_currency(stats['featured_revenue'][i] /100.0, :delimiter => ''),
-        number_to_currency(stats['featured_ecpm'][i] /100.0, :delimiter => ''),
+        @stats['paid_clicks'][i],
+        @stats['paid_installs'][i],
+        @stats['new_users'][i],
+        @stats['cvr'][i],
+        number_to_currency(@stats['installs_spend'][i] / -100.0, :delimiter => ''),
+        (Array(@stats['ranks']['overall.free.united_states'])[i] || '-'),
+        @stats['offerwall_views'][i],
+        @stats['rewards_opened'][i],
+        @stats['rewards'][i],
+        @stats['rewards_cvr'][i],
+        number_to_currency(@stats['rewards_revenue'][i] / 100.0, :delimiter => ''),
+        number_to_currency(@stats['offerwall_ecpm'][i] / 100.0, :delimiter => ''),
+        number_to_currency(@stats['display_revenue'][i] / 100.0, :delimiter => ''),
+        number_to_currency(@stats['display_ecpm'][i] / 100.0, :delimiter => ''),
+        number_to_currency(@stats['featured_revenue'][i] /100.0, :delimiter => ''),
+        number_to_currency(@stats['featured_ecpm'][i] /100.0, :delimiter => ''),
       ]
 
       if @granularity == :daily
-        line << stats['daily_active_users'][i]
-        line << number_to_currency(stats['arpdau'][i] / 100.0, :delimiter => '')
+        line << @stats['daily_active_users'][i]
+        line << number_to_currency(@stats['arpdau'][i] / 100.0, :delimiter => '')
       end
       data << line.join(',')
     end

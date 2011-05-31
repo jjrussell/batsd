@@ -49,7 +49,8 @@ class StatsAggregation
     
     is_active = false
     stat_rows.each_value do |stat_row|
-      if stat_row.get_hourly_count('offerwall_views').sum > 0 || stat_row.get_hourly_count('paid_clicks').sum > 0
+      if stat_row.get_hourly_count('offerwall_views').sum > 0 || stat_row.get_hourly_count('paid_clicks').sum > 0 ||
+          (offer.item_type == 'ActionOffer' && stat_row.get_hourly_count('logins').sum > 0)
         is_active = true
       end
       stat_row.serial_save
@@ -78,6 +79,11 @@ class StatsAggregation
     daily_stat_row.populate_daily_from_hourly(hourly_stat_row, start_time.day - 1)
     daily_stat_row.serial_save
     hourly_stat_row.serial_save
+
+    hourly_ranks = S3Stats::Ranks.find_or_initialize_by_id("ranks/#{start_time.strftime('%Y-%m-%d')}/#{offer.id}", :load_from_memcache => false)
+    daily_ranks = S3Stats::Ranks.find_or_initialize_by_id("ranks/#{start_time.strftime('%Y-%m')}/#{offer.id}", :load_from_memcache => false)
+    daily_ranks.populate_daily_from_hourly(hourly_ranks, start_time.day - 1)
+    daily_ranks.save
     
     offer.last_daily_stats_aggregation_time = end_time
     offer.next_daily_stats_aggregation_time = end_time + 1.day + Offer::DAILY_STATS_START_HOUR.hours + rand(Offer::DAILY_STATS_RANGE.hours)

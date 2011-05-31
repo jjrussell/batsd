@@ -26,11 +26,10 @@ config.action_controller.allow_forgery_protection    = false
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-MEMCACHE_SERVERS = [ '10.125.59.200', '10.127.85.131', '10.120.30.112', '10.127.141.138' ]
-# MEMCACHE_SERVERS = [ 'tapjoy-acs-prod.fqfjqv.1xmb.use1.acsvc.amazonaws.com',
-#                      'tapjoy-acs-prod.fqfjqv.1xmc.use1.acsvc.amazonaws.com',
-#                      'tapjoy-acs-prod.fqfjqv.1xmd.use1.acsvc.amazonaws.com',
-#                      'tapjoy-acs-prod.fqfjqv.1xme.use1.acsvc.amazonaws.com' ]
+MEMCACHE_SERVERS = [ 'tapjoy-acs-prod.fqfjqv.1xmb.use1.acsvc.amazonaws.com',
+                     'tapjoy-acs-prod.fqfjqv.1xmc.use1.acsvc.amazonaws.com',
+                     'tapjoy-acs-prod.fqfjqv.1xmd.use1.acsvc.amazonaws.com',
+                     'tapjoy-acs-prod.fqfjqv.1xme.use1.acsvc.amazonaws.com' ]
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
@@ -64,6 +63,7 @@ MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 
 APSALAR_URL = 'https://apsalar.com'
+APSALAR_EVENT_URL = "http://e.apsalar.com/api/v1/tapjoy_event"
 APSALAR_SECRET = 'xNGvOKWsAkiekxe2W9KAutGsZTvvaVyDoOMhjuRVzN'
 SYMMETRIC_CRYPTO_SECRET = 'YI,B&nZVZQtl*YRDYpEjVE&\U\#jL2!H#H&*2d'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'

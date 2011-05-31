@@ -1,0 +1,6 @@
+# All Caps translation file
+
+all_caps:
+  text:
+    offerwall:
+      instructions: "INSTALL AND OPEN ONE OF THE APPS BELOW TO RECEIVE {{currency_name}}"

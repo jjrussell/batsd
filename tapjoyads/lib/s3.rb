@@ -1,7 +1,7 @@
 class S3
   
   def self.reset_connection
-    @@s3 = RightAws::S3.new(nil, nil, { :multi_thread => true })
+    @@s3 = RightAws::S3.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
     @@buckets = {}
   end
   

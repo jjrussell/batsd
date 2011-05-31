@@ -26,6 +26,10 @@
   %strong Tapjoy App ID:
   .app_id= @app.id
   = clippy(@app.id)
+%div
+  %strong App Secret Key:
+  .app_id= @app.secret_key
+  = clippy(@app.secret_key)
 
 %p
   .left.download_link= link_to 'Advertiser Library Download', url

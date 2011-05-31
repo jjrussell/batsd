@@ -21,46 +21,37 @@ class GetOffersController < ApplicationController
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
-      @test_offer = build_test_offer(@publisher_app, @currency)
+      @test_offer = build_test_offer(@publisher_app)
     end
     
     set_offer_list(:is_server_to_server => false)
-    
-    # TO REMOVE - when gameview integrates properly
-    @message = nil
-    if params[:featured_offer].present?
-      featured_offer = Offer.find_in_cache(params[:featured_offer])
-      primary_offer = Offer.find_in_cache(featured_offer.item_id)
-      
-      if featured_offer.featured? && @offer_list.include?(primary_offer)
-        redirect_to featured_offer.get_click_url(
-            :publisher_app     => @publisher_app,
-            :publisher_user_id => params[:publisher_user_id],
-            :udid              => params[:udid],
-            :currency_id       => @currency.id,
-            :source            => 'featured',
-            :app_version       => params[:app_version],
-            :viewed_at         => @now,
-            :exp               => params[:exp],
-            :country_code      => @geoip_data[:country])
-        return
+
+    if @currency.hide_app_installs_for_version?(params[:app_version]) || DEVICES_FOR_REDESIGN.include?(params[:udid])
+      if @currency.show_gallery?
+        @gallery = @offer_list.map do |offer|
+          {
+            :type               => offer.item_type,
+            :name               => offer.action_offer_name,
+            :action             => offer.name,
+            :click_url          => get_click_url(offer),
+            :icon_url           => offer.get_icon_url(:source => :cloudfront, :size => '114'),
+            :primary_category   => offer.primary_category,
+            :user_rating        => offer.user_rating,
+            :visual_reward      => @currency.get_visual_reward_amount(offer),
+          }
+        end
+        render :template => 'get_offers/gallery', :layout => false
+      else
+        render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
       end
-      @message = "You have already installed #{featured_offer.name}. You can still complete " +
-          "one of the offers below to earn #{@currency.name}."
-    end
-    # END TO REMOVE
-    
-    # Show redesign to Stephen iTouch, Eric iPhone, Ryan iPhone, Kai iPad, Linda Nexus S and Stephen Evo.
-    if DEVICES_FOR_REDESIGN.include?(params[:udid])
-      render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
     end
   end
-  
+
   def featured
     if @currency.get_test_device_ids.include?(params[:udid])
       @geoip_data = get_geoip_data
       @geoip_data[:country] = params[:country_code] if params[:country_code].present?
-      @offer_list = [ build_test_offer(@publisher_app, @currency) ]
+      @offer_list = [ build_test_offer(@publisher_app) ]
     else
       set_offer_list(:is_server_to_server => false)
       if @offer_list.present? && @offer_list.first.featured?
@@ -100,7 +91,19 @@ class GetOffersController < ApplicationController
   end
   
 private
-  
+  def get_click_url(offer)
+    offer.get_click_url(
+        :publisher_app     => @publisher_app,
+        :publisher_user_id => params[:publisher_user_id],
+        :udid              => params[:udid],
+        :currency_id       => @currency.id,
+        :source            => params[:source],
+        :app_version       => params[:app_version],
+        :viewed_at         => @now,
+        :exp               => params[:exp],
+        :country_code      => @geoip_data[:country])
+  end
+
   def fix_tapulous
     # special code for Tapulous not sending udid
     if params[:app_id] == 'e2479a17-ce5e-45b3-95be-6f24d2c85c6f'
@@ -144,13 +147,6 @@ private
       return
     end
     
-    ##
-    # Gameview hardcodes 'iphone' as their device type. This screws up real iphone-only targeting.
-    # Set the device type to 'ipod touch' for gameview until they fix their issue.
-    if @publisher_app.partner_id == "e9a6d51c-cef9-4ee4-a2c9-51eef1989c4e" && !@publisher_app.is_android?
-      params[:device_type] = 'ipod touch'
-    end
-    
     #TO REMOVE: hackey stuff for doodle buddy, remove on Jan 1, 2011
     doodle_buddy_holiday_id = '0f791872-31ec-4b8e-a519-779983a3ea1a'
     doodle_buddy_regular_id = '3cb9aacb-f0e6-4894-90fe-789ea6b8361d'
@@ -158,9 +154,6 @@ private
     
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
-    # TO REMOVE - when gameview integrates properly
-    params[:exp] = nil if params[:featured_offer].present?
-    # END TO REMOVE
     
     wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
     @web_request = WebRequest.new(:time => @now)

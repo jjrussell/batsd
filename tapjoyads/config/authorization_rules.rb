@@ -10,11 +10,12 @@ authorization do
     has_permission_on :reporting, :to => [ :index, :show, :export, :download_udids, :api, :regenerate_api_key ]
     has_permission_on :apps_action_offers, :to => [ :index, :new, :create, :edit, :update, :toggle, :TJCPPA, :TapjoyPPA ]
     has_permission_on :billing, :to => [ :index, :add_funds, :transfer_funds, :payout_info, :update_payout_info, :create_transfer, :create_order, :export_statements, :export_orders, :export_payouts, :forget_credit_card ]
-    has_permission_on :analytics, :to => [ :index, :create_apsalar_account ]
+    has_permission_on :analytics, :to => [ :index, :create_apsalar_account, :share_data, :agree_to_share_data ]
     has_permission_on :users, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :support, :to => [ :index ]
     has_permission_on :premier, :to => [ :edit, :update ]
     has_permission_on :apps_offers_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :account_whitelist, :to => [ :index, :enable, :disable ]
   end
 
   role :agency do
@@ -53,7 +54,7 @@ authorization do
     includes :payops
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :global, :publisher, :advertiser ]
     has_permission_on :search, :to => [ :offers ]
-    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :edit_android_app, :update_android_app, :device_info, :update_device ]
+    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :edit_android_app, :update_android_app, :device_info, :update_device, :capped_publishers, :freemium_android ]
     has_permission_on :tools_enable_offer_requests, :to => [ :index, :update ]
     has_permission_on :activities, :to => [ :index ]
     has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :new_transfer, :create_transfer, :reporting, :delink_user ]
@@ -77,7 +78,10 @@ authorization do
     includes :executive
     includes :raffle_manager
     includes :account_mgr
-
+    has_permission_on :pub_offer_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :send_currency_failures, :sqs_lengths, :elb_status, :as_groups, :manage_user_roles, :update_user_roles ]
+    has_permission_on :tools_users, :to => [ :index, :show ]
+    has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
+    has_permission_on :search, :to => [ :users ]
   end
 end
