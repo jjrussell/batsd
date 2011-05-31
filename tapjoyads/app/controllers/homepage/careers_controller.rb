@@ -11,16 +11,33 @@ class Homepage::CareersController < WebsiteController
         :list => [
           { :title => "Sr. Product Marketing Mgr.",
             :href => "/careers/senior_product_marketing_manager" },
-          { :title => "Name2", :href => "URL2"},
-          { :title => "Name3", :href => "URL3"},
         ]
       },
       {
         :name => "Engineering",
         :list => [
-          { :title => "Name", :href => "URL"},
-          { :title => "Name2", :href => "URL2"},
-          { :title => "Name3", :href => "URL3"},
+          { :title => "Software Engineers", :href => "software_engineers"},
+          { :title => "Sales Technical Support Engineer", :href => "sales_technical_support_engineer"},
+        ]
+      },
+      {
+        :name => "Finance",
+        :list => [
+          { :title => "Senior Manager/Director, Financial Planning & Analysis (FP&A)", :href => "URL"},
+          { :title => "Senior Accountant", :href => "URL2"},
+        ]
+      },
+      {
+        :name => "Sales",
+        :list => [
+          { :title => "Director, Advertising Sales (San Francisco and New York)", :href => "URL"},
+          { :title => "Sales Development Rep", :href => "URL2"},
+        ]
+      },
+      {
+        :name => "HR",
+        :list => [
+          { :title => "Lead Recruiter (Contract)", :href => "URL"},
         ]
       }
     ]

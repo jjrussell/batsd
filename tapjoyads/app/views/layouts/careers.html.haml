@@ -24,9 +24,18 @@
             = render :partial => 'homepage/sub_nav'
             = render :partial => 'homepage/jobs'
           #right
+            %img.header{:src => "/images/work_at_tapjoy.png"}/
+            .clear
             %h1
               %strong= @job_title
             = yield
+            %h2
+              Interested?
+            %p
+              Email your resume to
+              %b
+                jobs[at]tapjoy[dot]com
+              !
       .clear
     #footer_wrapper
       #footer
