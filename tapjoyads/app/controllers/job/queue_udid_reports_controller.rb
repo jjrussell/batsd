@@ -57,7 +57,7 @@ private
   end
   
   def limit_concurrent_jobs
-    if Dir.glob("#{RAILS_ROOT}/tmp/*.s3").length > 5
+    if Dir.glob("#{RAILS_ROOT}/tmp/*.s3").length > 3
       render :text => 'ok'
     end
   end
