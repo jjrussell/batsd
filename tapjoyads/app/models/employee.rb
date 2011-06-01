@@ -7,7 +7,7 @@ class Employee < ActiveRecord::Base
   named_scope :active_only, :conditions => 'active = true', :order => 'last_name, first_name'
   
   def full_name
-    first_name + " " + last_name + ", " + title
+    first_name + " " + last_name
   end
   
   def photo_alt_name
