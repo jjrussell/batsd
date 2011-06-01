@@ -34,7 +34,7 @@ private
       # TO REMOVE - after confirming that this job takes less than 7200 seconds
       if bucket.key(path).exists?
         path += "_2"
-        Notifer.alert_new_relic(DuplicateUdidReport, "udid report for #{offer_id} on #{date.strftime('%Y-%m-%d')} already exists", request, params)
+        Notifier.alert_new_relic(DuplicateUdidReport, "udid report for #{offer_id} on #{date.strftime('%Y-%m-%d')} already exists", request, params)
       end
       # END TO REMOVE
       begin
