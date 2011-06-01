@@ -1,5 +1,5 @@
 class OfferInstructionsController < ApplicationController
-  before_filter :setup
+  prepend_before_filter :setup
   
   layout 'iphone', :only => :index
   

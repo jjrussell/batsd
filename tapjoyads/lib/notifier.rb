@@ -17,6 +17,7 @@ class FailedToInvalidateCloudfront < RuntimeError; end
 class RecordNotFoundError < RuntimeError; end
 class AppStoreSearchFailed < RuntimeError; end
 class SdbObjectNotInS3 < RuntimeError; end
+class DuplicateUdidReport < RuntimeError; end
 
 # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
 class EmailWorthyError < RuntimeError

@@ -56,4 +56,21 @@ class OneOffs
       stats.serial_save
     end
   end
+  
+  def self.queue_udid_reports
+    start_time = Time.zone.parse('2010-10-01')
+    end_time = Time.zone.parse('2011-06-01')
+    Offer.find_each do |offer|
+      next if offer.id == '2349536b-c810-47d7-836c-2cd47cd3a796' # tested with this offer so they are already complete
+      puts offer.id
+      s = Appstats.new(offer.id, {:start_time => start_time, :end_time => end_time, :granularity => :daily, :stat_types => ['paid_installs']})
+      s.stats['paid_installs'].each_with_index do |num_installs, idx|
+        if num_installs > 0
+          message = {:offer_id => offer.id, :date => (start_time + idx.days).strftime('%Y-%m-%d')}.to_json
+          Sqs.send_message(QueueNames::UDID_REPORTS, message)
+        end
+      end
+    end
+  end
+  
 end

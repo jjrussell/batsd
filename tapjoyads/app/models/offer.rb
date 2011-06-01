@@ -348,9 +348,9 @@ class Offer < ActiveRecord::Base
     VirtualGood.count(:where => "app_id = '#{self.item_id}'") > 0
   end
   
-  def get_destination_url(udid, publisher_app_id, click_key = nil, itunes_link_affiliate = 'linksynergy', currency_id = nil)
+  def get_destination_url(udid, publisher_app_id, click_key = nil, itunes_link_affiliate = 'linksynergy', currency_id = nil, language_code = nil)
     if instructions.present?
-      instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
+      instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id, language_code)
     else
       complete_action_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
     end
@@ -367,6 +367,7 @@ class Offer < ActiveRecord::Base
     displayer_app_id  = options.delete(:displayer_app_id)  { nil }
     exp               = options.delete(:exp)               { nil }
     country_code      = options.delete(:country_code)      { nil }
+    language_code     = options.delete(:language_code)     { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     click_url = "#{API_URL}/click/"
@@ -397,6 +398,7 @@ class Offer < ActiveRecord::Base
       :country_code      => country_code,
       :displayer_app_id  => displayer_app_id,
       :exp               => exp,
+      :language_code     => language_code
     }
     
     "#{click_url}?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
@@ -729,14 +731,15 @@ class Offer < ActiveRecord::Base
     self.user_enabled = !user_enabled
   end
   
-  def instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
+  def instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id, language_code)
     data = {
       :id                    => id,
       :udid                  => udid,
       :publisher_app_id      => publisher_app_id,
       :click_key             => click_key,
       :itunes_link_affiliate => itunes_link_affiliate,
-      :currency_id           => currency_id
+      :currency_id           => currency_id,
+      :language_code         => language_code
     }
     
     "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
