@@ -30,7 +30,7 @@ class Employee < ActiveRecord::Base
     
     return if Digest::MD5.hexdigest(photo_src_blob) == Digest::MD5.hexdigest(existing_photo_blob)
     
-    photo = Magick::Image.from_blob(photo_src_blob)[0].resize(136, 199)
+    photo = Magick::Image.from_blob(photo_src_blob)[0].resize(78, 78)
     photo_blob = photo.to_blob{|i| i.format = 'PNG'}
   
     bucket.put("employee_photos/#{id}.png", photo_blob, {}, "public-read")
