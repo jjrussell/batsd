@@ -19,7 +19,7 @@
       %th Weapon of Choice
   %tbody
     - @employees.each do |employee|
-      %tr{ :class => cycle('', 'odd') }
+      %tr
         %td= image_tag employee.get_photo_url, :alt => employee.photo_alt_name
         %td= employee.active ? "Yes" : "No"
         %td= employee.full_name

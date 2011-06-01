@@ -4,10 +4,8 @@ class CreateEmployees < ActiveRecord::Migration
       t.column :id, 'char(36) binary', :null => false
       t.boolean :active, :null => false, :default => true
       t.string :first_name, :null => false
-      t.string :middle_name
       t.string :last_name, :null => false
       t.string :title, :null => false
-      t.string :department
       t.string :email, :null => false
       t.string :superpower
       t.string :current_games
@@ -16,6 +14,8 @@ class CreateEmployees < ActiveRecord::Migration
 
       t.timestamps
     end
+
+    add_index :employees, :id, :unique => true
   end
 
   def self.down

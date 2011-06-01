@@ -7,11 +7,11 @@ class Employee < ActiveRecord::Base
   named_scope :active_only, :conditions => 'active = true', :order => 'last_name, first_name'
   
   def full_name
-    first_name + " " + last_name
+    "#{first_name} #{last_name}"
   end
   
   def photo_alt_name
-    first_name + "_" + last_name
+    "#{first_name.downcase}_#{last_name.downcase}"
   end
   
   def get_photo_url(options = {})
