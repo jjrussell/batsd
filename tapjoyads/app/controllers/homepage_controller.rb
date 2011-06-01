@@ -22,11 +22,7 @@ class HomepageController < WebsiteController
       redirect_to :action => 'contact-thanks'
     end
   end
-  
-  def rest_of_team
-    @employees = Employee.active_only
-  end
-  
+
   def privacy
     render :layout => false
   end
