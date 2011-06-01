@@ -1,33 +1,34 @@
-- @page_title = "Instructions"
-
+- @page_title = t('text.instructions.title')
+- amount_and_currency = capture_haml do
+  %span.amount= t('text.instructions.amount_and_currency', :amount => @currency.get_visual_reward_amount(@offer), :currency => @currency.name)
+  
 #offers
   #header
     %img.app_icon{ :src => @offer.get_icon_url(:source => :cloudfront, :size => '57') }
     #action_name
       = @offer.name
       %br
-      = "Earn "
-      %span.amount= @currency.get_visual_reward_amount(@offer) + " " + @currency.name
+      = t('text.instructions.earn_currency', :amount_and_currency => amount_and_currency)
   
   #action_instructions  
-    .important= "Follow these steps to earn #{@currency.name}:"
+    .important= t('text.instructions.header', :currency => @currency.name)
     .instructions= simple_paragraphs @offer.instructions
-    .important
-      = "After completing these steps, you will earn "
-      %span.amount= "#{@currency.get_visual_reward_amount(@offer)} #{@currency.name}."
+    .important= t('text.instructions.footer', :amount_and_currency => amount_and_currency)
     
   #footer
     %div
       - if @offer.item_type == 'ActionOffer'
-        = "If you don't have this app, click #{link_to("here", @complete_action_url)} to download it."
+        - download_action = capture_haml do
+          = link_to(t('text.instructions.download_action'), @complete_action_url)
+        = t('text.instructions.download_link', :downlaod_action => download_action)
       - else
-        = link_to("Click here to continue.", @complete_action_url, :class => 'continue')
+        = link_to(t('text.instructions.continue_link'), @complete_action_url, :class => 'continue')
   
 #privacy
-  = link_to('Privacy', 'https://www.tapjoy.com/privacy')
+  = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/privacy')
 
 #adsby 
-  Ads by
+  = t('text.shared.ads_by')
   %img{ :src => "#{CLOUDFRONT_URL}/images/tapjoylogo-small.png", :alt => "Tapjoy"}
 
 .clear

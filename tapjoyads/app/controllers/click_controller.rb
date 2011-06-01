@@ -25,7 +25,7 @@ class ClickController < ApplicationController
     create_click('generic')
     handle_pay_per_click
     
-    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], @click.key))
+    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], @click.key, nil, nil, params[:language_code]))
   end
   
   def rating
