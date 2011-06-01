@@ -1,23 +1,33 @@
-# All Caps translation file
-
 all_caps:
   text:
+    shared:
+      privacy: "PRIVACY"
+      ads_by: "ADS BY"
+
     offerwall:
       # shared between the original wall and the redesigned wall
       title: "EARN {{currency}}"
       free: "FREE"
       next: "NEXT {{items}}"
       previous: "PREVIOUS {{items}}"
-      privacy: "PRIVACY"
-      ads_by: "ADS BY"
-      
+
       # original wall only
       instructions: "INSTALL AND OPEN ONE OF THE APPS BELOW TO RECEIVE {{currency}}"
       amount_and_currency: "{{amount}} {{currency}}"
       earn_currency: "EARN {{amount_and_currency}}"
       buy_currency: "BUY {{amount_and_currency}}"
-      
+
       # redesigned wall only
       redesign_instructions: "ENGAGE IN ANY OF THE FOLLOWING ACTIONS TO RECEIVE {{currency}}"
       redesign_earn_currency: "EARN {{amount}} {{currency}}"
       redesign_buy_currency: "BUY {{amount}} {{currency}}"
+
+    instructions:
+      title: "INSTRUCTIONS"
+      amount_and_currency: "{{amount}} {{currency}}"
+      earn_currency: "EARN {{amount_and_currency}}"
+      header: "FOLLOW THESE STEPS TO EARN {{currency}}:"
+      footer: "AFTER COMPLETING THESE STEPS, YOU WILL EARN {{amount_and_currency}}."
+      download_action: "HERE"
+      download_link: "IF YOU DON'T HAVE THIS APP, CLICK {{download_action}} TO DOWNLOAD IT."
+      continue_link: "CLICK HERE TO CONTINUE."
