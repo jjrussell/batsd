@@ -43,11 +43,15 @@ authorization do
     has_permission_on :tools, :to => [ :payout_info, :publishers_without_payout_info, :publisher_payout_info_changes ]
   end
 
+  role :reporting do
+    has_permission_on :statz, :to => [ :index, :show, :global, :publisher, :advertiser ]
+    has_permission_on :search, :to => [ :offers ]
+  end
+
   role :executive do
     includes :tools
+    includes :reporting
     has_permission_on :tools, :to => [ :money, :monthly_data ]
-    has_permission_on :statz, :to => [ :index, :show, :global ]
-    has_permission_on :search, :to => [ :offers ]
   end
   
   role :account_mgr do
