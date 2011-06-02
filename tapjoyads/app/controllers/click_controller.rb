@@ -36,7 +36,6 @@ class ClickController < ApplicationController
   end
   
   def test_offer
-    @currency = Currency.find_in_cache(params[:currency_id])
     publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @currency, publisher_app ])
     
