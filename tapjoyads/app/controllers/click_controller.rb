@@ -124,8 +124,7 @@ private
       @destination_url = get_destination_url
       render 'unavailable_offer'
     end
-    
-    return disabled
+    disabled
   end
   
   def offer_disabled?
@@ -136,8 +135,7 @@ private
       @destination_url = get_destination_url
       render 'unavailable_offer'
     end
-    
-    return disabled
+    disabled
   end
   
   def offer_completed?
@@ -152,8 +150,7 @@ private
       @destination_url = get_destination_url
       render 'unavailable_offer'
     end
-    
-    return completed
+    completed
   end
   
   def build_web_request(path)
