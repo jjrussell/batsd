@@ -1,10 +1,10 @@
 - form_for([ :tools, @employee ], nil, :html => { :class => 'tjform', :multipart => true }) do |f|
-  - if params[:action] == 'new'
+  - if @employee.new_record?
     .field
       = f.label(:email)
       = f.text_field(:email)
       = error_message_on @employee, :email
-  - if params[:action] == 'edit'
+  - else
     .field
       = f.label(:active, "Active?")
       = f.check_box(:active)
@@ -39,7 +39,7 @@
     = f.text_field(:weapon, :size => 70)
     %br E.g. iPhone, ninja stars, Red Bull
     = error_message_on @employee, :weapon
-  - if params[:action] == 'edit'
+  - if !@employee.new_record?
     .field
       = label_tag("Current Photo", "Current Photo")
       = image_tag @employee.get_photo_url, :alt => @employee.photo_alt_name
@@ -47,7 +47,7 @@
   .field
     = label_tag :upload_photo
     = file_field_tag :upload_photo
-  = submit_tag params[:action] == 'new' ? "Create" : "Update"
+  = submit_tag @employee.new_record? ? "Create" : "Update"
 
 - content_for :page_styles do
   :plain

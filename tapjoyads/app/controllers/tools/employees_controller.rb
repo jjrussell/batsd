@@ -28,7 +28,6 @@ class Tools::EmployeesController < WebsiteController
       flash[:notice] = 'Employee was successfully created.'
       redirect_to(edit_tools_employee_url(@employee))
     else
-      params[:action] = "new"
       render :action => "new"
     end
   end
@@ -42,7 +41,6 @@ class Tools::EmployeesController < WebsiteController
       flash[:notice] = 'Employee was successfully updated.'
       redirect_to(edit_tools_employee_url(@employee))
     else
-      params[:action] = "edit"
       render :action => "edit"
     end
   end
