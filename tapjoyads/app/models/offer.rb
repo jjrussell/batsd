@@ -658,7 +658,7 @@ class Offer < ActiveRecord::Base
   end
 
   def unlimited_budget?
-    daily_budget == 0 && overall_budget == 0
+    daily_budget.zero? && overall_budget.zero?
   end
 
   def on_track_for_budget?
