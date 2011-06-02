@@ -140,6 +140,24 @@ ActiveRecord::Schema.define(:version => 20110525002332) do
   add_index "email_offers", ["name"], :name => "index_email_offers_on_name"
   add_index "email_offers", ["partner_id"], :name => "index_email_offers_on_partner_id"
 
+  create_table "employees", :id => false, :force => true do |t|
+    t.string   "id",            :limit => 36,                   :null => false
+    t.boolean  "active",                      :default => true, :null => false
+    t.string   "first_name",                                    :null => false
+    t.string   "last_name",                                     :null => false
+    t.string   "title",                                         :null => false
+    t.string   "email",                                         :null => false
+    t.string   "superpower"
+    t.string   "current_games"
+    t.string   "weapon"
+    t.text     "biography"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "employees", ["email"], :name => "index_employees_on_email", :unique => true
+  add_index "employees", ["id"], :name => "index_employees_on_id", :unique => true
+
   create_table "enable_offer_requests", :id => false, :force => true do |t|
     t.string   "id",              :limit => 36,                :null => false
     t.string   "offer_id",        :limit => 36,                :null => false
