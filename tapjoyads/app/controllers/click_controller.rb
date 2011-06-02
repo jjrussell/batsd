@@ -11,28 +11,28 @@ class ClickController < ApplicationController
     create_click('install')
     handle_pay_per_click
     
-    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], nil, @itunes_link_affiliate))
+    redirect_to(get_destination_url)
   end
   
   def action
     create_click('action')
     handle_pay_per_click
     
-    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], nil, nil, params[:currency_id]))
+    redirect_to(get_destination_url)
   end
   
   def generic
     create_click('generic')
     handle_pay_per_click
     
-    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id], @click.key, nil, nil, params[:language_code]))
+    redirect_to(get_destination_url)
   end
   
   def rating
     create_click('rating')
     handle_pay_per_click
     
-    redirect_to(@offer.get_destination_url(params[:udid], params[:publisher_app_id]))
+    redirect_to(get_destination_url)
   end
   
   def test_offer
@@ -74,10 +74,19 @@ private
     data = Marshal.load(data_str)
     params.merge!(data)
     
+    @offer = Offer.find_in_cache(params[:offer_id])
+    @currency = Currency.find_in_cache(params[:currency_id])
+    required_records = [ @offer, @currency ]
+    if params[:displayer_app_id].present?
+      @displayer_app = App.find_in_cache(params[:displayer_app_id])
+      required_records << @displayer_app
+    end
+    return unless verify_records(required_records)
+    
     if Time.zone.at(params[:viewed_at]) < (@now - 24.hours)
       build_web_request('expired_click')
       save_web_request
-      @offer = Offer.find_in_cache(params[:offer_id])
+      @destination_url = get_destination_url
       render 'unavailable_offer'
       return
     end
@@ -94,15 +103,6 @@ private
   end
   
   def validate_click
-    @offer = Offer.find_in_cache(params[:offer_id])
-    @currency = Currency.find_in_cache(params[:currency_id])
-    required_records = [ @offer, @currency ]
-    if params[:displayer_app_id].present?
-      @displayer_app = App.find_in_cache(params[:displayer_app_id])
-      required_records << @displayer_app
-    end
-    return unless verify_records(required_records)
-    
     return if currency_disabled?
     
     return if offer_disabled?
@@ -121,10 +121,10 @@ private
     if disabled
       build_web_request('disabled_currency')
       save_web_request
+      @destination_url = get_destination_url
       render 'unavailable_offer'
     end
-    
-    return disabled
+    disabled
   end
   
   def offer_disabled?
@@ -132,10 +132,10 @@ private
     if disabled
       build_web_request('disabled_offer')
       save_web_request
+      @destination_url = get_destination_url
       render 'unavailable_offer'
     end
-    
-    return disabled
+    disabled
   end
   
   def offer_completed?
@@ -147,10 +147,10 @@ private
     if completed
       build_web_request('completed_offer')
       save_web_request
+      @destination_url = get_destination_url
       render 'unavailable_offer'
     end
-    
-    return completed
+    completed
   end
   
   def build_web_request(path)
@@ -201,6 +201,17 @@ private
       message = { :click => @click.serialize(:attributes_only => true), :install_timestamp => @now.to_f.to_s }.to_json
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
     end
+  end
+  
+  def get_destination_url
+    @offer.destination_url({
+      :udid                  => params[:udid],
+      :publisher_app_id      => params[:publisher_app_id],
+      :currency              => @currency,
+      :click_key             => (@click && @click.key),
+      :language_code         => params[:language_code],
+      :itunes_link_affiliate => @itunes_link_affiliate,
+    })
   end
   
 end
