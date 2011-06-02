@@ -26,7 +26,7 @@
             = f.label :account_type, 'Account Type'
             .help.no-help ?
           %td
-            = f.select(:account_type, options_for_select(list_of_account_types, @payout_info.account_type))
+            = f.select(:account_type, options_for_select(PayoutInfo::ACCOUNT_TYPES, @payout_info.account_type))
             = f.error_message_on(:account_type)
         %tr
           %th

@@ -9,10 +9,6 @@ module BillingHelper
     ]
   end
 
-  def list_of_account_types
-    %w(Individual Partnership LLC Corporation Other)
-  end
-
   def list_of_countries
     [
       'United States of America',
