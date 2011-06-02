@@ -654,9 +654,13 @@ class Offer < ActiveRecord::Base
   end
   
   def needs_more_funds?
-    show_rate != 1 && (daily_budget == 0 || (daily_budget > 0 && low_balance?))
+    show_rate != 1 && (unlimited_budget? || low_balance?)
   end
-  
+
+  def unlimited_budget?
+    daily_budget.zero? && overall_budget.zero?
+  end
+
   def on_track_for_budget?
     show_rate != 1 && !needs_more_funds?
   end
