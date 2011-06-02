@@ -66,9 +66,6 @@ private
     elsif click.installed_at.present?
       @error_message = "click has already converted (#{click.key})"
       notify_and_render_error(false) and return
-    elsif click.clicked_at < (@now - 2.days)
-      @error_message = "click too old (#{click.key})"
-      notify_and_render_error(false) and return
     end
     
     offer = Offer.find_in_cache(click.offer_id)
