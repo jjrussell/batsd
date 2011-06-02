@@ -362,7 +362,7 @@ class Offer < ActiveRecord::Base
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
     click_key             = options.delete(:click_key)             { nil }
     language_code         = options.delete(:language_code)         { nil }
-    itunes_link_affiliate = options.delete(:itunes_link_affiliate) { 'linksynergy' }
+    itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     data = {
@@ -384,7 +384,7 @@ class Offer < ActiveRecord::Base
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
     click_key             = options.delete(:click_key)             { nil }
     language_code         = options.delete(:language_code)         { nil }
-    itunes_link_affiliate = options.delete(:itunes_link_affiliate) { 'linksynergy' }
+    itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
