@@ -18,7 +18,7 @@ class Employee < ActiveRecord::Base
     source   = options.delete(:source)   { :s3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
-    prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
+    prefix = source == :s3 ? "https://s3.amazonaws.com/#{BucketNames::TAPJOY}" : CLOUDFRONT_URL
     
     "#{prefix}/employee_photos/#{id}.png"
   end

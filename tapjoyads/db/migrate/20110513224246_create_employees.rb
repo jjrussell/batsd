@@ -16,6 +16,7 @@ class CreateEmployees < ActiveRecord::Migration
     end
 
     add_index :employees, :id, :unique => true
+    add_index :employees, :email, :unique => true
   end
 
   def self.down

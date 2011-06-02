@@ -155,6 +155,7 @@ ActiveRecord::Schema.define(:version => 20110525002332) do
     t.datetime "updated_at"
   end
 
+  add_index "employees", ["email"], :name => "index_employees_on_email", :unique => true
   add_index "employees", ["id"], :name => "index_employees_on_id", :unique => true
 
   create_table "enable_offer_requests", :id => false, :force => true do |t|
