@@ -3,16 +3,10 @@ class ConnectController < ApplicationController
   def index
     return unless verify_params([:app_id, :udid])
     
-    @country = nil
-    
-    Rails.logger.info_with_time("Check conversions and maybe add to sqs") do
-      click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}")
-      unless (click.attributes.empty? || click.installed_at)
-        @country = click.country if click.clicked_at > (Time.zone.now - 2.days)
-        logger.info "Added conversion to sqs queue"
-        message = { :click => click.serialize(:attributes_only => true), :install_timestamp => Time.zone.now.to_f.to_s }.to_json
-        Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
-      end
+    click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}")
+    unless click.new_record? || click.installed_at? || click.clicked_at < (Time.zone.now - 2.days)
+      message = { :click => click.serialize(:attributes_only => true), :install_timestamp => Time.zone.now.to_f.to_s }.to_json
+      Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
     end
     
     if params[:transaction_id].present? && Rails.env == 'production'
