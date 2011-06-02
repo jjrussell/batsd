@@ -3,15 +3,14 @@ module BillingHelper
 
   def list_of_payout_methods
     [
-      [ 'Check', 'check' ],
-      [ 'ACH', 'ach' ]
+      [ 'Check',  'check' ],
+      [ 'ACH',    'ach'   ],
+      [ 'Wire',   'wire'  ],
     ]
   end
 
   def list_of_account_types
-    [
-      'Individual', 'Partnership', 'Corporation', 'Other'
-    ]
+    %w(Individual Partnership LLC Corporation Other)
   end
 
   def list_of_countries

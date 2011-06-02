@@ -122,6 +122,18 @@ module WebsiteHelper
       end
     }.join(join_with)
   end
-  
+
+  def decrypt_if_permitted(object, field_name, decrypt=false)
+    if decrypt || permitted_to?(:payout_info, :tools)
+      field_name = "decrypt_#{field_name}"
+    end
+    object.send(field_name)
+  end
+
+  def encrypted_field(form, object, field)
+    changed = object.send("#{field}_changed?")
+    value = decrypt_if_permitted(object, field, changed)
+    form.text_field(field, :value => value)
+  end
 end
 
