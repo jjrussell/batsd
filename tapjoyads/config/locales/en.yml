@@ -1,5 +1,35 @@
-# Sample localization file for English. Add more files in this directory for other locales.
-# See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+# English translation file
 
 en:
-  hello: "Hello world"
+  text:
+    shared:
+      privacy: "Privacy"
+      ads_by: "Ads by"
+
+    offerwall:
+      # shared between the original wall and the redesigned wall
+      title: "Earn {{currency}}"
+      free: "Free"
+      next: "Next {{items}}"
+      previous: "Previous {{items}}"
+
+      # original wall only
+      instructions: "Install and OPEN one of the apps below to receive {{currency}}"
+      amount_and_currency: "{{amount}} {{currency}}"
+      earn_currency: "Earn {{amount_and_currency}}"
+      buy_currency: "Buy {{amount_and_currency}}"
+
+      # redesigned wall only
+      redesign_instructions: "Engage in any of the following actions to receive {{currency}}"
+      redesign_earn_currency: "Earn {{amount}} {{currency}}"
+      redesign_buy_currency: "Buy {{amount}} {{currency}}"
+
+    instructions:
+      title: "Instructions"
+      amount_and_currency: "{{amount}} {{currency}}"
+      earn_currency: "Earn {{amount_and_currency}}"
+      header: "Follow these steps to earn {{currency}}:"
+      footer: "After completing these steps, you will earn {{amount_and_currency}}."
+      download_action: "here"
+      download_link: "If you don't have this app, click {{download_action}} to download it."
+      continue_link: "Click here to continue."

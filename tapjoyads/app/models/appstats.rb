@@ -16,20 +16,22 @@ class Appstats
 
     @app_key = app_key
     @stat_rows = {}
-    
+
     @stats = {}
     @stat_types.each do |stat_type|
-      if @granularity == :hourly
-        @stats[stat_type] = get_hourly_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
+      @stats[stat_type] = if @granularity == :hourly
+        if stat_type == 'ranks'
+          S3Stats::Ranks.hourly_over_time_range(@app_key, @start_time.utc, @end_time.utc)
+        else
+          get_hourly_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
+        end
       else
-        @stats[stat_type] = get_daily_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
+        if stat_type == 'ranks'
+          S3Stats::Ranks.daily_over_time_range(@app_key, @start_time.utc, @end_time.utc)
+        else
+          get_daily_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
+        end
       end
-    end
-
-    if @granularity == :hourly && @app_key
-      @stats['ranks'] = S3Stats::Ranks.hourly_over_time_range(@app_key, @start_time.utc, @end_time.utc)
-    elsif @app_key
-      @stats['ranks'] = S3Stats::Ranks.daily_over_time_range(@app_key, @start_time.utc, @end_time.utc)
     end
 
     # cvr

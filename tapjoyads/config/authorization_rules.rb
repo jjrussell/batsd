@@ -43,11 +43,15 @@ authorization do
     has_permission_on :tools, :to => [ :payout_info, :publishers_without_payout_info, :publisher_payout_info_changes ]
   end
 
+  role :reporting do
+    has_permission_on :statz, :to => [ :index, :show, :global, :publisher, :advertiser ]
+    has_permission_on :search, :to => [ :offers ]
+  end
+
   role :executive do
     includes :tools
+    includes :reporting
     has_permission_on :tools, :to => [ :money, :monthly_data ]
-    has_permission_on :statz, :to => [ :index, :show, :global ]
-    has_permission_on :search, :to => [ :offers ]
   end
   
   role :account_mgr do
@@ -78,9 +82,10 @@ authorization do
     includes :executive
     includes :raffle_manager
     includes :account_mgr
-    
     has_permission_on :pub_offer_whitelist, :to => [ :index, :enable, :disable ]
-    
     has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :send_currency_failures, :sqs_lengths, :elb_status, :as_groups, :manage_user_roles, :update_user_roles ]
+    has_permission_on :tools_users, :to => [ :index, :show ]
+    has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
+    has_permission_on :search, :to => [ :users ]
   end
 end

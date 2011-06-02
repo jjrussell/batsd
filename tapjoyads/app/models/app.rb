@@ -31,6 +31,7 @@ class App < ActiveRecord::Base
   after_update :update_rating_offer
   
   named_scope :visible, :conditions => { :hidden => false }
+  named_scope :by_platform, lambda { |platform| { :conditions => ["platform = ?", platform] } }
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
 

@@ -1,0 +1,89 @@
+- username_class = "error" if @user.email != @user.username
+- partner_name = @user.current_partner.name
+- partner_name = "#{@user.current_partner.id} (no name)" if partner_name.blank?
+
+%h1 User management
+= render('search')
+%h3= @user.email
+= link_to 'Activities Log', activities_path(:object_id => @user.id)
+%table.tablesorter
+  %tbody
+    %tr
+      %th Email
+      %td= @user.email
+    %tr
+      %th{:class => username_class} Username
+      %td{:class => username_class}= @user.username
+    %tr
+      %th Created
+      %td= @user.created_at.to_s(:db)
+    %tr
+      %th Last login
+      %td= @user.last_login_at? ? @user.last_login_at.to_s(:db) : 'never'
+    %tr
+      %th Current partner
+      %td= link_to(partner_name, @user.current_partner)
+    %tr
+      %th All partners
+      %td
+        %ul
+          - @user.partners.sort_by{|partner|partner.name||''}.each do |partner|
+            %li= link_to(partner.name||'(no name)', partner)
+
+.half
+  %h4 Add new role:
+  %table.tablesorter
+    %thead
+      %tr
+        %th.action &nbsp;
+        %th Type
+    %tbody
+      - @new_assignments.sort_by{|ra| ra.user_role.name}.each do |assignment|
+        %tr
+          %td
+            - if assignment.user_role.name == 'admin'
+              &nbsp;
+            - else
+              = button_to('add', tools_user_role_assignments_path(:user_id => @user.id, :user_role_id => assignment.user_role.id))
+
+          %td{:class => (assignment.user_role.name == 'admin') ? 'disabled text' : 'text'}= assignment.user_role.name
+.half
+  %h4 Remove current roles:
+  %table.tablesorter
+    %thead
+      %tr
+        %th.action &nbsp;
+        %th Type
+    %tbody
+      - @current_assignments.each do |assignment|
+        %tr
+          %td
+            - if assignment.user_role.name == 'admin'
+              &nbsp;
+            - else
+              = button_to('remove', tools_user_role_assignment_path(:user_id => @user.id, :id => assignment.id), :method => 'delete', :confirm => 'Are you sure?')
+          %td{:class => (assignment.user_role.name == 'admin') ? 'disabled text' : 'text'}
+            = assignment.user_role.name
+            - if assignment.user_role.name == 'admin'
+              (not modifiable)
+.clear
+
+- content_for :page_styles do
+  :plain
+    th.action {
+      width: 100px;
+    }
+    td.text {
+      font-size: 16px;
+    }
+    .error {
+      color: red !important;
+    }
+    .disabled {
+      color: #aaa !important;
+    }
+    .half {
+      float: left;
+      width: 400px;
+      padding-right: 15px;
+    }

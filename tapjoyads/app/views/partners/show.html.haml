@@ -55,7 +55,7 @@
 
 - payout_info = @partner.payout_info
 - if payout_info
-  - if payout_info.filled?
+  - if payout_info.valid?
     %h2 Tax and Payment Information
   - else
     %h2.not_integrated Incomplete payment/tax information.

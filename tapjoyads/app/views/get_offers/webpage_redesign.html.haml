@@ -1,4 +1,4 @@
-- @page_title = "Earn #{@currency.name}"
+- @page_title = t('text.offerwall.title', :currency => @currency.name)
 
 - unless @message.blank?
   - render(:layout => 'box') do
@@ -9,7 +9,7 @@
 
 - render(:layout => 'box') do
   %p.explanation
-    Engage in any of the following actions to receive #{@currency.name}
+    = t('text.offerwall.redesign_instructions', :currency => @currency.name)
 
 - if @start_index > 0
   = render :partial => 'pagination_links'
@@ -36,13 +36,13 @@
                   %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => offer.get_icon_url(:source => :cloudfront, :size => '57') }
                 .offer-text
                   %span
-                    = offer.direct_pay? ? 'Buy' : 'Earn'
-                    %label= @currency.get_visual_reward_amount(offer)
-                    = @currency.name
+                    - amount = capture_haml do
+                      %label= @currency.get_visual_reward_amount(offer)
+                    = offer.direct_pay? ? t('text.offerwall.redesign_buy_currency', :amount => amount, :currency => @currency.name) : t('text.offerwall.redesign_earn_currency', :amount => amount, :currency => @currency.name)
                   %p
                     %b= offer.name
                 .ribbon
-                  %span= offer.visual_cost
+                  %span= visual_cost(offer)
                 .load
     
   = render :partial => 'bottom_corners'
@@ -52,10 +52,10 @@
 
 #footerMargin
   #footer
-    = link_to('Privacy Policy', 'https://www.tapjoy.com/privacy')
+    = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/privacy')
     %span &nbsp;&nbsp;|&nbsp;&nbsp;
     %span
-      Ads by
+      = t('text.shared.ads_by')
     %span#logo
 
 %img.hidden{ :src => '/images/load-circle.gif' }

@@ -3,7 +3,8 @@ class S3Stats::Ranks < S3Resource
   attribute :all_ranks, :type => :json, :default => {}
 
   def save(options = {})
-    save!(options) rescue false
+    strip_zero_arrays!(all_ranks) if all_ranks
+    super(options)
   end
 
   def save!(options = {})
@@ -39,6 +40,7 @@ class S3Stats::Ranks < S3Resource
   end
 
   def self.hourly_over_time_range(app_id, start_time, end_time)
+    return {} unless app_id
     time = start_time
     date = nil
     hourly_ranks_over_range = {}
@@ -64,6 +66,7 @@ class S3Stats::Ranks < S3Resource
   end
 
   def self.daily_over_time_range(app_id, start_time, end_time)
+    return {} unless app_id
     now = Time.zone.now
     time = start_time
     date = nil

@@ -267,7 +267,7 @@ class Partner < ActiveRecord::Base
   end
 
   def completed_payout_info?
-    payout_info.present? && payout_info.filled?
+    payout_info.present? && payout_info.valid?
   end
 
 private

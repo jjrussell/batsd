@@ -326,20 +326,6 @@ class Offer < ActiveRecord::Base
     Appstats.new(item.id, options).stats['logins'].sum > 0
   end
 
-  def visual_cost
-    if price <= 0
-      'Free'
-    elsif price <= 100
-      '$'
-    elsif price <= 200
-      '$$'
-    elsif price <= 300
-      '$$$'
-    else
-      '$$$$'
-    end
-  end
-
   def is_publisher_offer?
     item_type == 'App' && item.primary_currency.present?
   end
@@ -396,9 +382,9 @@ class Offer < ActiveRecord::Base
     VirtualGood.count(:where => "app_id = '#{self.item_id}'") > 0
   end
   
-  def get_destination_url(udid, publisher_app_id, click_key = nil, itunes_link_affiliate = 'linksynergy', currency_id = nil)
+  def get_destination_url(udid, publisher_app_id, click_key = nil, itunes_link_affiliate = 'linksynergy', currency_id = nil, language_code = nil)
     if instructions.present?
-      instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
+      instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id, language_code)
     else
       complete_action_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
     end
@@ -415,6 +401,7 @@ class Offer < ActiveRecord::Base
     displayer_app_id  = options.delete(:displayer_app_id)  { nil }
     exp               = options.delete(:exp)               { nil }
     country_code      = options.delete(:country_code)      { nil }
+    language_code     = options.delete(:language_code)     { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     click_url = "#{API_URL}/click/"
@@ -445,6 +432,7 @@ class Offer < ActiveRecord::Base
       :country_code      => country_code,
       :displayer_app_id  => displayer_app_id,
       :exp               => exp,
+      :language_code     => language_code
     }
     
     "#{click_url}?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
@@ -546,7 +534,15 @@ class Offer < ActiveRecord::Base
   def get_device_types
     Set.new(device_types.blank? ? nil : JSON.parse(device_types))
   end
-  
+
+  def expected_device_types
+    if item_type == 'App' || item_type == 'ActionOffer' || item_type == 'RatingOffer'
+      item.is_android? ? ANDROID_DEVICES : APPLE_DEVICES
+    else
+      ALL_DEVICES
+    end
+  end
+
   def get_publisher_app_whitelist
     Set.new(publisher_app_whitelist.split(';'))
   end
@@ -770,14 +766,15 @@ class Offer < ActiveRecord::Base
     self.user_enabled = !user_enabled
   end
   
-  def instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
+  def instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id, language_code)
     data = {
       :id                    => id,
       :udid                  => udid,
       :publisher_app_id      => publisher_app_id,
       :click_key             => click_key,
       :itunes_link_affiliate => itunes_link_affiliate,
-      :currency_id           => currency_id
+      :currency_id           => currency_id,
+      :language_code         => language_code
     }
     
     "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
@@ -867,6 +864,11 @@ private
     if app_id_for_device == 'b23efaf0-b82b-4525-ad8c-4cd11b0aca91'
       # Don't show 'Tap Store' offer to users that already have 'Tap Store', 'Tap Store Boost', or 'Tap Store Plus'
       return device.has_app(app_id_for_device) || device.has_app('a994587c-390c-4295-a6b6-dd27713030cb') || device.has_app('6703401f-1cb2-42ec-a6a4-4c191f8adc27')
+    end
+    
+    if app_id_for_device == '3885c044-9c8e-41d4-b136-c877915dda91'
+      # don't show the beat level 2 in clubworld action to users that already have clubworld
+      return device.has_app(app_id_for_device) || device.has_app('a3980ac5-7d33-43bc-8ba1-e4598c7ed279')
     end
     
     return device.has_app(app_id_for_device)

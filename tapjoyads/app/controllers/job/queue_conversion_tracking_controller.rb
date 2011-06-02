@@ -11,11 +11,12 @@ private
     click = Click.deserialize(json['click'])
     installed_at_epoch = json['install_timestamp']
     
-    if click.installed_at? || click.clicked_at < (Time.zone.now - 2.days) || click.block_reason?
+    offer = Offer.find_in_cache(click.offer_id, true)
+    currency = Currency.find_in_cache(click.currency_id, true)
+    
+    if click.installed_at? || (offer.item_type != 'GenericOffer' && click.clicked_at < (Time.zone.now - 2.days)) || click.block_reason?
       return
     end
-    
-    currency = Currency.find_in_cache(click.currency_id, true)
     
     # Try to stop Playdom users from click-frauding (specifically from Mobsters: Big Apple)
     if currency.callback_url == Currency::PLAYDOM_CALLBACK_URL && click.publisher_user_id !~ /^(F|M|P)[0-9]+$/
@@ -34,7 +35,6 @@ private
     end
     
     # Do not reward if user has installed this app for the same publisher user id on another device
-    offer = Offer.find_in_cache(click.offer_id, true)
     unless offer.multi_complete?
       other_udids = publisher_user.udids - [ click.udid ]
       other_udids.each do |udid|
