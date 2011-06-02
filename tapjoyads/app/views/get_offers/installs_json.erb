@@ -12,7 +12,7 @@
       "Name":<%= offer.name.to_json -%>,
       "RedirectURL":<%= get_click_url(offer).to_json -%>,
       "StoreID":<%= offer.third_party_data.to_json -%>,
-      "Payout":<%= @currency.get_publisher_amount(offer).to_json %>
+      "Payout":<%= @currency.get_publisher_amount(offer).to_json -%>
       <% if params[:source] == 'featured' %>
         , "FullScreenAdURL":<%= get_fullscreen_ad_url(offer).to_json -%>
       <% end %>
