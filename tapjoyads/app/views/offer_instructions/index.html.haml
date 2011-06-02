@@ -20,7 +20,7 @@
       - if @offer.item_type == 'ActionOffer'
         - download_action = capture_haml do
           = link_to(t('text.instructions.download_action'), @complete_action_url)
-        = t('text.instructions.download_link', :downlaod_action => download_action)
+        = t('text.instructions.download_link', :download_action => download_action)
       - else
         = link_to(t('text.instructions.continue_link'), @complete_action_url, :class => 'continue')
   
