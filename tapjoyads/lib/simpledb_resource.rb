@@ -2,10 +2,11 @@ class SimpledbResource
   
   include Simpledb
   
-  cattr_reader :sdb, :attribute_names
+  cattr_reader :sdb
   attr_accessor :key, :attributes, :this_domain_name, :is_new, :key_hash
   cattr_accessor :domain_name, :key_format
   superclass_delegating_accessor :domain_name, :key_format
+  class_inheritable_accessor :attribute_names
   
   def self.reset_connection
     @@sdb = RightAws::SdbInterface.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
@@ -17,7 +18,7 @@ class SimpledbResource
     :escaped => "^^TAPJOY_ESCAPED^^"
   }
   
-  @@attribute_names = [ 'id', 'key' ]
+  self.attribute_names = [ 'id', 'key' ]
   
   ##
   # Initializes a new SimpledbResource, which represents a single row in a domain.
@@ -92,7 +93,7 @@ class SimpledbResource
       end
     }
     
-    @@attribute_names << attr_name.to_s
+    self.attribute_names << attr_name.to_s
   end
   self.sdb_attr :updated_at, {:type => :time, :attr_name => 'updated-at'}
   
