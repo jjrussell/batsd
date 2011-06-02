@@ -113,7 +113,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :users, :only  => [ :index, :show] do |user|
       user.resources :role_assignments, :only => [ :create, :destroy ], :controller => 'users/role_assignments'
     end
-    tools.resources :employees, :only => [ :index, :new, :create, :edit, :update, :show_photo, :delete_photo ]
+    tools.resources :employees, :only => [ :index, :new, :create, :edit, :update ], :member => [ :delete_photo ]
 
   end
   map.resources :offer_instructions, :only => [ :index ]
