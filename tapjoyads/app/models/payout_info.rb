@@ -3,6 +3,8 @@ class PayoutInfo < ActiveRecord::Base
 
   ENCRYPTED_FIELDS = [ :tax_id, :bank_name, :bank_address, :bank_account_number, :bank_routing_number ]
   ACCOUNT_TYPES = %w(Individual Partnership LLC Corporation Other)
+  PAYOUT_METHODS = { 'Check' => 'check', 'ACH' => 'ach', 'Wire' => 'wire' }
+
   acts_as_decryptable :encrypt => ENCRYPTED_FIELDS, :key => SYMMETRIC_CRYPTO_SECRET, :show => '*' * 8
   belongs_to :partner
 
@@ -15,6 +17,7 @@ class PayoutInfo < ActiveRecord::Base
     :tax_id, :company_name, :address_1, :address_city, :address_state, :address_postal_code
   validates_presence_of :bank_name, :bank_account_number, :bank_routing_number, :if => :require_bank_info?
   validates_inclusion_of :account_type, :in => ACCOUNT_TYPES
+  validates_inclusion_of :payout_method, :in => PAYOUT_METHODS.values
   validates_inclusion_of :payout_method, :in => ['wire'], :if => :international?,
     :message => 'International accounts must use wire transfer'
   validates_each :tax_id do |record, attribute, value|

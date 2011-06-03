@@ -71,7 +71,7 @@
             = f.label :payout_method, 'Payment Method'
             .help.no-help ?
           %td
-            = f.select(:payout_method, options_for_select(list_of_payout_methods, @payout_info.payout_method))
+            = f.select(:payout_method, options_for_select(PayoutInfo::PAYOUT_METHODS, @payout_info.payout_method))
             = f.error_message_on(:payout_method)
         %tr
           %td{:colspan => 2}

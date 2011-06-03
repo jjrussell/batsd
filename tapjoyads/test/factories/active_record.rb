@@ -28,7 +28,7 @@ Factory.define :payout_info do |info|
   info.signature { Factory.next(:name) }
   info.billing_name { Factory.next(:name) }
   info.tax_country { 'United States of America' }
-  info.account_type { Factory.next(:name) }
+  info.account_type { 'LLC' }
   info.tax_id { Factory.next(:name) }
   info.company_name { Factory.next(:name) }
   info.address_1 { Factory.next(:name) }
