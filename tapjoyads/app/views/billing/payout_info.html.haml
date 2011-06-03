@@ -72,7 +72,7 @@
           %td
             = f.select(:address_country, options_for_select(list_of_countries, @payout_info.address_country))
             = f.error_message_on(:address_country)
-        %tr.country_us
+        %tr
           %th
             = f.label :payout_method, 'Payment Method'
             .help.no-help ?
@@ -234,10 +234,12 @@
       if (isUS()) {
         $('.country_us').show();
         toggleByPayoutMethod();
+        $('#payout_info_payout_method option').attr('disabled', '');
       } else {
         $('.country_us').hide();
         $('.country_other').show();
         $('#payout_info_payout_method').val('wire');
+        $('#payout_info_payout_method option:not(:last)').attr('disabled', 'disabled')
       }
     };
     var toggleByPayoutMethod = function() {
