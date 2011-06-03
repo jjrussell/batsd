@@ -30,7 +30,7 @@
             = f.error_message_on(:account_type)
         %tr
           %th
-            = f.label :billing_name, 'Billing Name'
+            = f.label :billing_name, 'Legal Name'
             .help.no-help ?
           %td
             = f.text_field(:billing_name)
@@ -169,7 +169,7 @@
   %p *There is a minimum payment threshold of US$250.
 
 .hidden
-  #help_billing_name_content{:name => 'Billing Name'}
+  #help_billing_name_content{:name => 'Legal Name'}
     Must match name on tax return.
   #help_tin_content{:name => 'Tax ID'}
     %strong U.S.:
