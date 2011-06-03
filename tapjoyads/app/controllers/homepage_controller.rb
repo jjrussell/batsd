@@ -43,6 +43,7 @@ class HomepageController < WebsiteController
   end
 
   def team
+    @employees = Employee.active_only
   end
 
   def index
