@@ -1,0 +1,25 @@
+- content_for :page_head, stylesheet_link_tag('about_us')
+- content_for :page_head, stylesheet_link_tag('careers')
+
+#about_us
+  #left
+    = render :partial => 'homepage/sub_nav'
+    = render :partial => 'homepage/jobs'
+  #right
+    = image_tag('work_at_tapjoy.png')
+    .clear
+    %h2
+      So.. why would you want to work for Tapjoy?
+    %h3
+      Our team is da bomb
+    %p
+      Seriously. Our team is seriously awesome. For serious.
+    %h3
+      We have a keg!
+    %p
+      Seriously. We have a keg.
+    %h3
+      We r 1337
+    %p
+      We get crazy.
+.clear

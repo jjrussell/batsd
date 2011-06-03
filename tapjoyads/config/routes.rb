@@ -129,6 +129,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'privacy.html', :controller => 'homepage', :action => 'privacy'
   map.connect 'press', :controller => 'homepage/press', :action => 'index'
   map.connect 'press/:id', :controller => 'homepage/press', :action => 'show'
+  map.connect 'careers', :controller => 'homepage/careers', :action => 'index'
+  map.connect 'careers/:id', :controller => 'homepage/careers', :action => 'show'
   map.connect 'glu', :controller => 'homepage/press', :action => 'glu'
   map.connect 'publishing', :controller => 'homepage', :action => 'publishers'
   map.resources :sdk, :only => [ :index, :show ]
