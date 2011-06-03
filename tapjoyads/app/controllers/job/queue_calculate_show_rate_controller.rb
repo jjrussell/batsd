@@ -2,7 +2,6 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
 
   def initialize
     super QueueNames::CALCULATE_SHOW_RATE
-    @num_reads = 100
   end
 
   def on_message(message)

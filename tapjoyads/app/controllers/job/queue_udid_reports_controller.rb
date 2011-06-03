@@ -4,7 +4,7 @@ class Job::QueueUdidReportsController < Job::SqsReaderController
   
   def initialize
     super QueueNames::UDID_REPORTS
-    @num_reads = 5
+    @num_reads = 10
   end
   
 private
