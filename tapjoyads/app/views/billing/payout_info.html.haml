@@ -37,6 +37,13 @@
             = f.error_message_on(:billing_name)
         %tr
           %th
+            = f.label :doing_business_as, 'd/b/a'
+            #help_doing_business_as.help ?
+          %td
+            = f.text_field(:doing_business_as)
+            = f.error_message_on(:doing_business_as)
+        %tr
+          %th
             = f.label :tax_id, 'Tax ID'
             #help_tin.help ?
           %td
@@ -171,6 +178,9 @@
 .hidden
   #help_billing_name_content{:name => 'Legal Name'}
     Must match name on tax return.
+  #help_doing_business_as_content{:name => 'Doing Business As'}
+    (Optional) Trade name under which your business is being conducted,
+    if applicable.
   #help_tin_content{:name => 'Tax ID'}
     %strong U.S.:
     Your Taxpayer Information Number (TIN) is either your Social Security Number (SSN) if you are an individual or your Employer ID Number (EIN) if you are a corporation or partnership.

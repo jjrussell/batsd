@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110525002332) do
+ActiveRecord::Schema.define(:version => 20110603044505) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -387,6 +387,7 @@ ActiveRecord::Schema.define(:version => 20110525002332) do
     t.datetime "updated_at"
     t.string   "payout_method"
     t.string   "signature"
+    t.string   "doing_business_as"
   end
 
   add_index "payout_infos", ["id"], :name => "index_payout_infos_on_id", :unique => true
