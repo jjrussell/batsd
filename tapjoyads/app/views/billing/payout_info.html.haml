@@ -150,7 +150,7 @@
             = encrypted_field(f, @payout_info, :bank_routing_number)
             = f.error_message_on(:bank_routing_number)
     %br/
-    = f.check_box(:terms, :checked => @payout_info.valid?)
+    = f.check_box(:terms, :checked => @terms_checked)
     By checking this box, I agree under penalties of perjury, I certify that:
     %br/
     = f.error_message_on(:terms)
