@@ -2,6 +2,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
   
   def initialize
     super QueueNames::CONVERSION_TRACKING
+    @num_reads = 100
   end
   
 private

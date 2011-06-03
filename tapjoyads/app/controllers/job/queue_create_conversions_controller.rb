@@ -2,6 +2,7 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
   
   def initialize
     super QueueNames::CREATE_CONVERSIONS
+    @num_reads = 100
   end
   
 private
