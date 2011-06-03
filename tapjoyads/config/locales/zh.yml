@@ -12,7 +12,7 @@ zh:
       previous: "上一页 {{items}}"
 
       # original wall only
-      instructions: "INSTALL AND OPEN ONE OF THE APPS BELOW TO RECEIVE {{currency}}"
+      instructions: "安装并运行以下的一个应用以得到 {{currency}}"
       amount_and_currency: "{{amount}} {{currency}}"
       earn_currency: "赚 {{amount_and_currency}}"
       buy_currency: "买 {{amount_and_currency}}"
@@ -29,5 +29,5 @@ zh:
       header: "按照这些步骤来赚 {{currency}}:"
       footer: "在完成这些步骤后, 您将获得 {{amount_and_currency}}."
       download_action: "这里"
-      download_link: "如果您没有这个程序, 点击 {{download_action}} 下载."
-      continue_link: "点击这里继续."
+      download_link: "如果您没有这个程序, 点击 {{download_action}} 下载"
+      continue_link: "点击这里继续"
