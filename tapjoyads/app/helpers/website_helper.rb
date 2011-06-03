@@ -130,9 +130,9 @@ module WebsiteHelper
     object.send(field_name)
   end
 
-  def encrypted_field(form, object, field)
-    value = decrypt_if_permitted(object, field, object.changed.include?(field.to_s))
-    form.text_field(field, :value => value)
+  def encrypted_field(form, object, field_name)
+    value = decrypt_if_permitted(object, field_name, object.changed.include?(field_name.to_s))
+    form.text_field(field_name, :value => value)
   end
 end
 
