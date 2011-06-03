@@ -12,6 +12,7 @@ var loadData = function(data) {
   $('#date').val(data.date);
   $('#end_date').val(data.end_date);
   $('#granularity').val(data.granularity);
+  $('#platform').val(data.platform);
   $('#download_date').val(data.date);
   $('#download_end_date').val(data.end_date);
   $('#download_granularity').val(data.granularity);
@@ -62,10 +63,16 @@ var updateURL = function(oldURL) {
       return url + '?' + arr.join('&');
     }
   }
-  return oldURL.split(/#/)[0] +
-    '#date=' + $('#date').val() +
-    '&end_date=' + $('#end_date').val() +
-    '&granularity=' + $('#granularity').val();
+
+  var kids = $('#change_date').children();
+  var j = 0;
+  var params_arr = [];
+  for (j = 0; j < kids.length; j++) {
+    if (kids[j].id != 'date_submit') {
+      params_arr.push(kids[j].id + "=" + kids[j].value);
+    }
+  }
+  return oldURL.split(/#/)[0] + "#" + params_arr.join('&');
 };
 
 $(function($) {
@@ -88,12 +95,13 @@ $(function($) {
       }
     }
     $('.load-circle').show();
-    $('#date, #end_date, #granularity').attr('disabled', true);
+    $('#change_date').children().attr('disabled', true);
     $('#tables, #charts').css('opacity', 0.3);
     var params = {
       date: $('#date').val(),
       end_date: $('#end_date').val(),
-      granularity: $('#granularity').val()
+      granularity: $('#granularity').val(),
+      platform: $('#platform').val()
     };
 
     if (rangeIsLast24Hours()) {
@@ -105,7 +113,7 @@ $(function($) {
       data: params,
       success: function(response, status, request) {
         loadData(response.data);
-        $('#date, #end_date, #granularity').attr('disabled', false);
+        $('#change_date').children().attr('disabled', false);
         $('#tables, #charts').css('opacity', 1.0);
         if (window.history && window.history.replaceState) {
           window.history.replaceState({},'', updateURL(location.href));
@@ -118,7 +126,7 @@ $(function($) {
       },
       error: function() {
         alert('Could not generate reports. Check the date range and try again.');
-        $('#date, #end_date, #granularity').attr('disabled', false);
+        $('#change_date').children().attr('disabled', false);
       },
       complete: function() {
         $('.load-circle').hide();

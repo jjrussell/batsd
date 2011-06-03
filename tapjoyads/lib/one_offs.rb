@@ -72,5 +72,19 @@ class OneOffs
       end
     end
   end
-  
+
+  def self.aggregate_global_platform_stats(date = nil)
+    date ||= Time.zone.now.beginning_of_day
+    puts "starting aggregation for #{date}"
+    StatsAggregation.aggregate_daily_group_stats(date)
+    puts "done aggregating for #{date}"
+  end
+
+  def self.aggregate_all_global_platform_stats(date = nil)
+    date ||= Time.zone.parse('2009-09-01')
+    while date < Time.zone.now
+      aggregate_global_platform_stats(date)
+      date += 1.day
+    end
+  end
 end
