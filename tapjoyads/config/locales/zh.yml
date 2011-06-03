@@ -18,7 +18,7 @@ zh:
       buy_currency: "买 {{amount_and_currency}}"
 
       # redesigned wall only
-      redesign_instructions: "E完成以下的要求其中之一可以得到 {{currency}}"
+      redesign_instructions: "完成以下的要求其中之一可以得到 {{currency}}"
       redesign_earn_currency: "赚 {{amount}} {{currency}}"
       redesign_buy_currency: "买 {{amount}} {{currency}}"
 
