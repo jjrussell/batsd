@@ -262,3 +262,10 @@
     $('#payout_info_address_country').change(toggleByCountry);
     $('#payout_info_payout_method').change(toggleByPayoutMethod);
     toggleByCountry();
+    $('#payout_info_account_type').change(function(){
+      $('#payout_info_tax_id').val('');
+      $('#payout_info_bank_name').val('');
+      $('#payout_info_bank_address').val('');
+      $('#payout_info_bank_account_number').val('');
+      $('#payout_info_bank_routing_number').val('');
+    });
