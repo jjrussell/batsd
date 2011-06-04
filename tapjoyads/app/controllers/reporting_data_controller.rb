@@ -17,21 +17,26 @@ class ReportingDataController < WebsiteController
   end
   
   def udids
-    bucket = S3.bucket(BucketNames::AD_UDIDS)
-    
     offer = Offer.find(:first, :conditions => ["id = ? AND partner_id IN (?)", params[:offer_id], @user.partners])
     unless offer.present?
       render :text => "Unknown offer id", :status => 404
       return
     end
     
-    path = Offer.s3_udids_path(offer.id) + params[:date]
-    unless bucket.key(path).exists?
+    if params[:date] =~ /^[0-9]{4}-[0-9]{2}$/
+      data = UdidReports.get_monthly_report(offer.id, params[:date])
+    elsif params[:date] =~ /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/
+      data = UdidReports.get_daily_report(offer.id, params[:date])
+    else
+      render :text => "Invalid date", :status => 404
+      return
+    end
+    
+    if data.blank?
       render :text => "No UDID report exists for this date", :status => 404
       return
     end
     
-    data = bucket.get(path)
     send_data(data, :type => 'text/csv', :filename => "#{offer.id}_#{params[:date]}.csv")
   end
   
