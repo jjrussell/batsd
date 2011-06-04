@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110525002332) do
+ActiveRecord::Schema.define(:version => 20110604231506) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(:version => 20110525002332) do
     t.string   "platform"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "user_id",     :limit => 36
   end
 
   add_index "admin_devices", ["description"], :name => "index_admin_devices_on_description", :unique => true
