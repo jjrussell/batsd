@@ -12,9 +12,9 @@
     %tr
       %th= f.label :belongs_to
       %td
-        = text_field_tag :admin_device_belongs_to, @admin_device.user_id? ? @admin_device.user.email : '', :size => 42
-        = f.hidden_field:user_id
-      %td= error_message_on(@admin_device, :description) if @admin_device.errors.on :description
+        = text_field_tag :admin_device_belongs_to, @admin_device.user.present? ? @admin_device.user.email : '', :size => 42
+        = f.hidden_field :user_id
+      %td &nbsp;
     %tr
       %th= f.label :description
       %td= f.text_field :description, :size => 42
@@ -26,7 +26,7 @@
   :plain
     $(function($) {
       $('#admin_device_belongs_to').autocomplete({
-        source: '#{search_users_path(:tapjoy_only => true, :with_roles => true)}',
+        source: '#{search_users_path(:tapjoy_only => true)}',
         delay: 250,
         minLength: 2,
         select: function(event, ui) {
