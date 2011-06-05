@@ -351,3 +351,6 @@ a.soft-link.inactive {
 .not_integrated {
   color: #f00;
 }
+.udid {
+  font-family: Andale Mono, Courier New, courier;
+}

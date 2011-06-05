@@ -14,7 +14,7 @@
     - @admin_devices.each do |device|
       %tr{ :class => cycle('', 'odd') }
         %td= device.platform
-        %td= device.udid
+        %td.udid= device.udid
         %td= device.description
         %td= link_to '[Delete Device]', tools_admin_device_path(device), :method => :delete, :confirm => "Are you sure you want to remove this device: #{device.description}"
         %td= link_to '[Edit Device]', edit_tools_admin_device_path(device)
