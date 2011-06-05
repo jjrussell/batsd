@@ -183,13 +183,13 @@ class Offer < ActiveRecord::Base
     avg_revenues        = offer_list.collect(&:avg_revenue)
     bids                = offer_list.collect(&:bid)
     cvr_mean            = conversion_rates.mean
-    cvr_std_dev         = conversion_rates.standard_deviation
+    cvr_std_dev         = conversion_rates.standard_deviation rescue 0
     price_mean          = prices.mean
-    price_std_dev       = prices.standard_deviation
+    price_std_dev       = prices.standard_deviation rescue 0
     avg_revenue_mean    = avg_revenues.mean
-    avg_revenue_std_dev = avg_revenues.standard_deviation
+    avg_revenue_std_dev = avg_revenues.standard_deviation rescue 0
     bid_mean            = bids.mean
-    bid_std_dev         = bids.standard_deviation
+    bid_std_dev         = bids.standard_deviation rescue 0
     
     stats = { :cvr_mean => cvr_mean, :cvr_std_dev => cvr_std_dev, :price_mean => price_mean, :price_std_dev => price_std_dev,
       :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
@@ -609,15 +609,20 @@ class Offer < ActiveRecord::Base
   def get_publisher_app_whitelist
     Set.new(publisher_app_whitelist.split(';'))
   end
-  
+
   def get_platform
-    d_types = get_device_types
-    if d_types.length > 1 && d_types.include?('android')
-      'All'
-    elsif d_types.include?('android')
-      'Android'
+    device_types = get_device_types
+    if device_types.length == 1
+      case device_types.first
+      when 'android'
+        'Android'
+      when 'windows'
+        'Windows Phone'
+      else
+        'iOS'
+      end
     else
-      'iOS'
+      device_types.any?{|type| type.match(/android|windows/)} ? 'All' : 'iOS'
     end
   end
 
@@ -628,6 +633,8 @@ class Offer < ActiveRecord::Base
         item.platform == 'iphone'
       when 'iOS'
         item.platform == 'android'
+      when 'Windows Phone'
+        item.platform == 'windows'
       else
         true # should never be "All" for apps
       end
@@ -727,7 +734,11 @@ class Offer < ActiveRecord::Base
         # is_paid? ? (price * 0.65).round : 50
       end
     elsif item_type == 'ActionOffer'
-      get_platform == 'Android' ? 25 : 35
+      case get_platform
+      when 'Android' then 25
+      when 'Windows Phone' then 25
+      else 35
+      end
     else
       0
     end
@@ -851,8 +862,8 @@ private
     device_type = normalize_device_type(device_type_param)
     
     if device_type.nil?
-      if publisher_app.platform == 'android'
-        device_type = 'android'
+      if publisher_app.platform.match(/android|windows/)
+        device_type = publisher_app.platform
       else
         device_type = 'itouch'
       end

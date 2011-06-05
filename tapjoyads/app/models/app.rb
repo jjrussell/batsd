@@ -2,7 +2,9 @@ class App < ActiveRecord::Base
   include UuidPrimaryKey
   include MemcachedRecord
   
-  PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows Phone 7' }
+  ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS' }
+  BETA_PLATFORMS    = { 'windows' => 'Windows Phone' }
+  PLATFORMS         = ALLOWED_PLATFORMS.merge(BETA_PLATFORMS)
   TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
   MAXIMUM_INSTALLS_PER_PUBLISHER = 4000
   
@@ -55,7 +57,7 @@ class App < ActiveRecord::Base
   def store_name
     case platform
     when 'android'
-      'Marketplace'
+      'Market'
     when 'iphone'
       'App Store'
     when 'windows'
@@ -237,6 +239,7 @@ class App < ActiveRecord::Base
     when 'iphone'
       "TJCPPA.h"
     when 'windows'
+      #TODO fill this out
       ''
     end
   end
@@ -258,6 +261,7 @@ class App < ActiveRecord::Base
         file_output += "#define #{action_offer.variable_name} @\"#{action_offer.id}\" // #{action_offer.name}\n"
       end
     when 'windows'
+      #TODO fill this out
       file_output = ''
     end
     file_output

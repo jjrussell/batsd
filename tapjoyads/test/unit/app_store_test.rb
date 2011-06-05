@@ -2,46 +2,25 @@ require 'test_helper'
 
 class AppStoreTest < ActiveSupport::TestCase
 
-  context "Searching for Windows Phone 7 App" do
-    setup do
-      AppStore.stubs(:request).returns(stubbed_response('app_store_windows_search.json'))
-    end
-
-    should "parse app details" do
-      apps = AppStore.search_windows_marketplace('pro chess')
-      assert_equal 2, apps.length
-      app = apps.first
-      assert_equal "e4d2da5b-9933-490e-a207-31f7b89dec98", app[:item_id]
-      assert_equal "ChessGenius", app[:title]
-      assert_equal "http:\/\/files.marketplace.windowsmobile.com\/acda634c-204f-4bdd-b97b-6f86e826dd36\/LargeWebIcon.png", app[:icon_url]
-      assert_equal "9.99", app[:price]
-      assert_equal "Lang Software Limited", app[:publisher]
-      assert_equal "4.33", app[:user_rating]
-      assert_equal "Games", app[:categories]
-
-      assert_equal "0.00", apps.last[:price]
-    end
-  end
-
   context "Fetching Windows Phone 7 App Details" do
     setup do
-      AppStore.stubs(:request).returns(stubbed_response('app_store_windows_fetch.json'))
+      AppStore.stubs(:request).returns(stubbed_response('app_store_windows_fetch.xml'))
     end
 
     should "parse app details" do
-      app = AppStore.fetch_app_by_id_for_windows('ee66d141-c4bd-4107-b8ff-0652bf27f02f')
-      expected_icon_url = "http:\/\/files.marketplace.windowsmobile.com\/ee66d141-c4bd-4107-b8ff-0652bf27f02f\/LargeWebIcon.png"
-      assert_equal "f7d62d88-df8d-4c17-819e-a06d43d233f9", app[:item_id]
-      assert_equal "Trines Appointment & Task Mover", app[:title]
+      id = 'ea9a24ad-d2d1-df11-9eae-00237de2db9e'
+      expected_icon_url = 'http://catalog.zune.net/v3.2/image/6654ae46-2024-4093-88b0-6ed3ef83507f?width=160&height=120'
+      app = AppStore.fetch_app_by_id_for_windows(id)
+      assert_equal id, app[:item_id]
+      assert_equal "Bejeweled\342\204\242 LIVE", app[:title]
+      assert app[:description].length > 10
       assert_equal expected_icon_url, app[:icon_url]
-      assert_equal expected_icon_url, app[:small_icon_url]
-      assert_equal "2.99", app[:price]
-      assert app[:description].length > 20
-      assert_equal "Gydar Industries", app[:publisher]
-      assert_equal 458169, app[:file_size_bytes]
-      assert_equal "5.00", app[:user_rating]
-      assert_equal Date.parse('Sep 22 06:06:23 -0700 2010'), app[:released_at]
-      assert_equal "1.3", app[:version]
+      assert_equal 'PopCap Games', app[:publisher]
+      assert_equal '4.99', app[:price]
+      assert_equal 64688128, app[:file_size_bytes]
+      assert_equal '4.26', app[:user_rating].to_s
+      assert_equal '2010-10-08T00:00:00Z', app[:released_at]
+      assert_equal ['Games', 'Board & Classic'], app[:categories]
     end
   end
 

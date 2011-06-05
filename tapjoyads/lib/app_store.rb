@@ -1,33 +1,33 @@
 class AppStore
 
-  ITUNES_APP_URL      = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup'
-  ITUNES_SEARCH_URL   = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
   ANDROID_APP_URL     = 'https://market.android.com/details?id='
   ANDROID_SEARCH_URL  = 'https://market.android.com/search?num=40&q='
-  WINDOWS_APP_URL     = 'http://marketplace.windowsphone.com/services/catalog/catalog.svc/getappdetails?deviceDescId=e6f423f3-1f27-4e70-97ba-84b88f9c5cd3&appSKU='
-  WINDOWS_SEARCH_URL  = 'http://marketplace.windowsphone.com/services/catalog/catalog.svc/searchapps?deviceDescId=e6f423f3-1f27-4e70-97ba-84b88f9c5cd3&keywords='
+  ITUNES_APP_URL      = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup'
+  ITUNES_SEARCH_URL   = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
+  WINDOWS_APP_URL     = 'http://catalog.zune.net/v3.2/en-US/apps/_APPID_?store=Zest&clientType=WinMobile+7.0'
+  WINDOWS_SEARCH_URL  = 'http://catalog.zune.net/v3.2/en-US/?includeApplications=true&prefix='
 
   # returns hash of app info
-  def self.fetch_app_by_id(id, platform='iphone', country='')
-    case platform
-    when /android/i
+  def self.fetch_app_by_id(id, platform, country='')
+    case platform.downcase
+    when 'android'
       self.fetch_app_by_id_for_android(id)
-    when /iphone/i
+    when 'iphone'
       self.fetch_app_by_id_for_apple(id, country)
-    when /windows/i
+    when 'windows'
       self.fetch_app_by_id_for_windows(id)
     end
   end
 
   # returns an array of first 24 App instances matching "term"
-  def self.search(term, platform='iphone', country='')
+  def self.search(term, platform, country='')
     term = term.strip.gsub(/\s/, '+')
-    case platform
-    when /android/i
-      self.search_android_marketplace(term.gsub(/-/,' '))
-    when /iphone/i
+    case platform.downcase
+    when 'android'
+      self.search_android_market(term.gsub(/-/,' '))
+    when 'iphone'
       self.search_apple_app_store(term, country)
-    when /windows/i
+    when 'windows'
       self.search_windows_marketplace(term)
     end
   end
@@ -92,27 +92,48 @@ private
   end
 
   def self.fetch_app_by_id_for_windows(id)
-    response = request(WINDOWS_APP_URL + id)
+    response = request(WINDOWS_APP_URL.sub('_APPID_', CGI::escape(id)))
     if response.status == 200
-      item = JSON.load(response.body)['d']['Entity']
-      price = item["Price"].nil? ? 0 : item["Price"].gsub(/[^\d\.]/, '').to_f
-      rating = item["Rating"].to_i / 100.0
+      doc         = Hpricot(response.body)
+      title       = (doc/:sorttitle).inner_text.strip
+      description = (doc/'a:feed'/'a:content').inner_text.strip
+      icon_id     = (doc/'image'/'id').inner_text.split(':').last
+      icon_url    = "http://catalog.zune.net/v3.2/image/#{icon_id}?width=160&height=120"
+      publisher   = (doc/'a:feed'/:publisher).inner_text.strip
+
+      offers      = (doc/'a:feed'/:offers/:offer)
+      if offers.length == 0
+        price = 0
+      elsif offers.length == 1
+        price = (offers/:price).inner_text
+      else
+        offers.each do |offer|
+          license = (offer/:licenseright).inner_text
+          if license == 'Purchase'
+            price = (offer/:price).inner_text
+          end
+        end
+      end
+
+      user_rating = (doc/:averageuserrating).inner_text.to_f / 2
+      categories  = (doc/:categories/:category/:title).map(&:inner_text)
+      released_at = Date.parse((doc/'a:feed'/:releasedate).inner_text).strftime('%FT00:00:00Z')
+      file_size   = (doc/'a:entry'/:installsize).inner_text
+
       {
-        :item_id          => item['ApplicationId'],
-        :title            => item['Name'],
-        :icon_url         => item['LargeImageUrl'],
-        :small_icon_url   => item['SmallImageUrl'],
-        :price            => "%.2f" % price,
-        :description      => item['LongDescription'],
-        :publisher        => item["CompanyName"],
-        :file_size_bytes  => item["Size"],
-        :user_rating      => "%.2f" % rating,
-        :released_at      => Time.at(item["DateAdded"][/\(\d+/][1..-1].to_i / 1000).to_date,
-        :version          => item["Version"],
-        :categories       => [],
+        :item_id          => id,
+        :title            => CGI::unescapeHTML(title),
+        :description      => CGI::unescapeHTML(description),
+        :icon_url         => icon_url,
+        :publisher        => CGI::unescapeHTML(publisher),
+        :price            => price,
+        :file_size_bytes  => file_size.to_i,
+        :released_at      => released_at,
+        :user_rating      => '%.2f' % user_rating,
+        :categories       => categories,
       }
     else
-      Notifier.alert_new_relic(AppStoreSearchFailed, "fetch_app_by_id_for_windows failed for term: #{term}")
+      Notifier.alert_new_relic(AppStoreSearchFailed, "fetch_app_by_id_for_android failed for id: #{id}")
       raise "Invalid response."
     end
   end
@@ -130,7 +151,7 @@ private
     end
   end
 
-  def self.search_android_marketplace(term)
+  def self.search_android_market(term)
     response = request(ANDROID_SEARCH_URL + CGI::escape(term))
     if response.status == 200
       items = Hpricot(response.body)/"ul.search-results-list"/"li.search-results-item"
@@ -155,29 +176,19 @@ private
         }
       end
     else
-      Notifier.alert_new_relic(AppStoreSearchFailed, "search_android_marketplace failed for term: #{term}")
+      Notifier.alert_new_relic(AppStoreSearchFailed, "search_android_market failed for term: #{term}")
       raise "Invalid response."
     end
   end
 
   def self.search_windows_marketplace(term)
-    response = request(WINDOWS_SEARCH_URL + CGI::escape(term))
+    response = request(WINDOWS_SEARCH_URL + CGI::escape(term.strip.gsub(/\s/, '+')))
     if response.status == 200
-      items = JSON.load(response.body)['d']['ItemList']['List'].map do |item|
-        price = item["Price"].nil? ? 0 : item["Price"].gsub(/[^\d\.]/, '').to_f
-        rating = item["Rating"].to_i / 100.0
-        {
-          :item_id => item['ApplicationId'],
-          :title => item['Name'],
-          :icon_url => item['SmallImageUrl'],
-          :price => "%.2f" % price,
-          :publisher => item["CompanyName"],
-          :user_rating => "%.2f" % rating,
-          :categories => item["ParentCategoryName"],
-        }
+      items = (Hpricot(response.body)/'a:entry'/'a:id').first(10).map do |id|
+        fetch_app_by_id_for_windows(id.inner_text.split(':').last)
       end
     else
-      Notifier.alert_new_relic(AppStoreSearchFailed, "search_windows_marketplace failed for term: #{term}")
+      Notifier.alert_new_relic(AppStoreSearchFailed, "search_android_market failed for term: #{term}")
       raise "Invalid response."
     end
   end

@@ -86,6 +86,7 @@ module WebsiteHelper
       when 'iphone'
         TJCPPA_app_action_offers_path(app, :format => "h")
       when 'windows'
+        #TODO fill this out
         ''
       end
 

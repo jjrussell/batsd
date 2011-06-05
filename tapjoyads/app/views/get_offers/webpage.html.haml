@@ -54,6 +54,9 @@
 %img.hidden{ :src => '/images/load-circle.gif' }
 
 - content_for :page_javascript do
+  - if params[:platform] == 'windows'
+    :plain
+      window.onfocus = reload;
   :plain
     window.onload = init;
     window.onscroll = scroll;
@@ -77,7 +80,9 @@
         image.src = image.getAttribute('s');
       }
     }
-  
+    function reload(){
+      // refresh here;
+    }
 - content_for :page_styles do
   :plain
     * {

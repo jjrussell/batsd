@@ -14,8 +14,6 @@ class AppsController < WebsiteController
   def new
     @app = App.new
     @app.platform = 'iphone'
-    @allowed_platforms = App::PLATFORMS.invert
-    @allowed_platforms.delete(App::PLATFORMS['windows']) unless permitted_to?(:edit, :statz)
   end
 
   def search
