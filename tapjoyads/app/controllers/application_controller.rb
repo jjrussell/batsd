@@ -208,7 +208,7 @@ private
   end
   
   def decrypt_data_param
-    return unless verify_params([ :data ])
+    return false unless verify_params([ :data ])
     
     begin
       data_str = SymmetricCrypto.decrypt([ params[:data] ].pack("H*"), SYMMETRIC_CRYPTO_SECRET)
