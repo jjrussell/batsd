@@ -18,7 +18,9 @@ class SearchController < WebsiteController
     conditions = [ "email LIKE ?", "#{params[:term]}%" ]
     if params[:tapjoy_only] == 'true'
       tapjoy_email = "#{params[:term].split('@').first}%@tapjoy.com"
-      conditions = [ "email LIKE ? AND email NOT LIKE ?", tapjoy_email, "%+%" ]
+      offerpal_email = "#{params[:term].split('@').first}%@offerpal.com"
+      conditions = [ "(email LIKE ? OR email like ?) AND email NOT LIKE ?",
+        tapjoy_email, offerpal_email, "%+%" ]
     end
     results = User.find(:all,
       :conditions => conditions,
