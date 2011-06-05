@@ -4,7 +4,7 @@ class Job::QueueUdidReportsController < Job::SqsReaderController
   
   def initialize
     super QueueNames::UDID_REPORTS
-    @num_reads = 5
+    @num_reads = 10
   end
   
 private
@@ -57,7 +57,7 @@ private
   end
   
   def limit_concurrent_jobs
-    if Dir.glob("#{RAILS_ROOT}/tmp/*.s3").length > 2
+    if Dir.glob("#{RAILS_ROOT}/tmp/*.s3").length > 9
       render :text => 'ok'
     end
   end

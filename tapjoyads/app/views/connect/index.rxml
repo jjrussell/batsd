@@ -1,12 +1,7 @@
 xml.instruct!
 xml.TapjoyConnectReturnObject do
   xml.Success true
-  xml.PaidInstallCountry @country if @country
   xml.ConnectReturnObject do
-    if @app && @app.color
-      xml.PrimaryColor @app.color 
-    else
-      xml.PrimaryColor 928844
-    end
+    xml.PrimaryColor 928844
   end
 end
