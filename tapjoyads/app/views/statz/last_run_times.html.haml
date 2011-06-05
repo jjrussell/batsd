@@ -23,7 +23,9 @@
       %th Last run time
   %tbody
     - @last_run_times.each do |admin_device, last_run_time|
-      %tr{ :class => cycle('', 'odd') }
+      - class_names = cycle('', 'odd')
+      - class_names += " mine" if admin_device.user == current_user
+      %tr{ :class => class_names }
         %td= admin_device.description
         %td= admin_device.udid
         %td= last_run_time
@@ -46,4 +48,7 @@
     .tjform input[type=submit] {
       margin: 0;
       float: none;
+    }
+    tr.mine td {
+      background-color: #D0F9D0 !important;
     }
