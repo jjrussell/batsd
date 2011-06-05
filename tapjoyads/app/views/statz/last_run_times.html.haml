@@ -24,7 +24,7 @@
   %tbody
     - @last_run_times.each do |admin_device, last_run_time|
       - class_names = cycle('', 'odd')
-      - class_names += " mine" if admin_device.user == current_user
+      - class_names += " mine" if admin_device.user_id == current_user.id
       %tr{ :class => class_names }
         %td= admin_device.description
         %td.udid= admin_device.udid

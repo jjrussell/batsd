@@ -13,7 +13,7 @@
   %tbody
     - @admin_devices.each do |device|
       - class_names = cycle('', 'odd')
-      - class_names += " mine" if device.user == current_user
+      - class_names += " mine" if device.user_id == current_user.id
       %tr{ :class => class_names }
         %td= device.platform
         %td.udid= device.udid
