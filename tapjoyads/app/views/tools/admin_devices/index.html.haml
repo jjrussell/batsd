@@ -9,7 +9,7 @@
     %tr
       %th Platform
       %th UDID
-      %th{ :class => 'headerSortUp header' }  Description
+      %th{ :class => 'headerSortDown header' }  Description
       - action_colspan = 2
       - action_colspan += 1 if permitted_to?(:device_info, :tools)
       %th{ :colspan => action_colspan } Actions
