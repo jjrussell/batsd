@@ -10,6 +10,10 @@
       %th Platform
       %th UDID
       %th{ :class => 'headerSortUp header' }  Description
+      - action_colspan = 1
+      - action_colspan += 1 if permitted_to?(:device_info, :tools)
+      - action_colspan += 1 if permitted_to?(:show, :tools_users)
+      %th{ :colspan => action_colspan } Actions
   %tbody
     - @admin_devices.each do |device|
       - class_names = cycle('', 'odd')
@@ -18,15 +22,17 @@
         %td= device.platform
         %td.udid= device.udid
         %td= device.description
-        %td= link_to '[Delete Device]', tools_admin_device_path(device), :method => :delete, :confirm => "Are you sure you want to remove this device: #{device.description}"
-        %td= link_to '[Edit Device]', edit_tools_admin_device_path(device)
+        %td= link_to '[Edit]', edit_tools_admin_device_path(device)
         - if permitted_to?(:device_info, :tools)
-          %td= link_to '[View Device Info]', device_info_tools_path(:udid => device.udid)
+          %td= link_to '[Delete]', tools_admin_device_path(device), :method => :delete, :confirm => "Are you sure you want to remove this device: #{device.description}"
+        - if permitted_to?(:device_info, :tools)
+          %td= link_to '[More Info]', device_info_tools_path(:udid => device.udid)
 
 - content_for :page_javascript do
   :plain
     $(function() {
       $("#admin_devices_table").tablesorter({
-        widgets: ['zebra']
+        widgets: ['zebra'],
+        headers: { 3: {sorter: false} }
       });
     });
