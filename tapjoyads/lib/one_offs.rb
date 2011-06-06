@@ -76,7 +76,12 @@ class OneOffs
   def self.aggregate_global_platform_stats(date = nil)
     date ||= Time.zone.now.beginning_of_day
     puts "starting aggregation for #{date}"
-    StatsAggregation.aggregate_daily_group_stats(date)
+    num_unverified = Offer.count(:conditions => [ "last_daily_stats_aggregation_time < ?",  date.beginning_of_day ])
+    if num_unverified > 0
+      puts "there are #{num_unverified} offers with unverified stats, not aggregating global stats yet for #{date}"
+    else
+      StatsAggregation.aggregate_hourly_group_stats(date, true)
+    end
     puts "done aggregating for #{date}"
   end
 
