@@ -46,10 +46,14 @@ var updateURL = function(oldURL) {
       delete hash.date;
       delete hash.end_date;
       delete hash.granularity;
+      delete hash.platform;
     } else {
       hash.date = $('#date').val();
       hash.end_date = $('#end_date').val();
       hash.granularity = $('#granularity').val();
+      if ($('#platform').val()) {
+        hash.platform = $('#platform').val();
+      }
     }
 
     // recreate query string
