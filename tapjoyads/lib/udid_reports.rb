@@ -48,6 +48,7 @@ class UdidReports
           raise e
         end
       end
+      cache_available_months(offer_id)
     end
     
   ensure
@@ -55,14 +56,23 @@ class UdidReports
     File.delete(fs_path) rescue nil
   end
   
-  def self.get_available_months(offer_id)
+  def self.cache_available_months(offer_id)
     bucket = S3.bucket(BucketNames::UDID_REPORTS)
     months = Set.new
     bucket.keys(:prefix => "#{offer_id}/").each do |key|
+      next unless key.name.ends_with?('.csv')
       month = key.name.gsub("#{offer_id}/", '')[0...7]
       months << month
     end
-    months.sort
+    available_months = months.sort
+    Mc.put("s3.udid_reports.#{offer_id}", available_months)
+    available_months
+  end
+  
+  def self.get_available_months(offer_id)
+    Mc.get("s3.udid_reports.#{offer_id}") do
+      cache_available_months(offer_id)
+    end
   end
   
   def self.get_monthly_report(offer_id, month)
