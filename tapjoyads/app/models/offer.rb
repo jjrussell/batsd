@@ -398,6 +398,10 @@ class Offer < ActiveRecord::Base
       final_url += "&publisher_app_id=#{publisher_app_id}"
     elsif item_type == 'GenericOffer'
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
+      if has_variable_payment?
+        cvr = currency.spend_share * currency.conversion_rate / 100
+        final_url += "&cvr=#{cvr}&currency=#{CGI::escape(currency.name)}"
+      end
     elsif item_type == 'ActionOffer'
       final_url = url
     end
