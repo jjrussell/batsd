@@ -37,6 +37,8 @@
   %li= link_to 'Auto-Scaling Groups', as_groups_tools_path
 - if permitted_to? :index, :tools_users
   %li= link_to 'Manage user roles', tools_users_path
+- if permitted_to? :index, :tools_employees
+  %li= link_to 'Manage employee list', tools_employees_path
 
 - if has_permissions_for_one_of?(:account_mgr)
   %h3 Account Management

@@ -45,7 +45,7 @@ Rails::Initializer.run do |config|
   config.gem 'declarative_authorization', :version => '0.4.1'
   config.gem 'geoip', :version => '0.8.6'
   config.gem 'haml', :version => '2.2.23'
-  config.gem 'hoptoad_notifier', :version => '2.4.2'
+  config.gem 'hoptoad_notifier', :version => '2.4.11'
   config.gem 'plist', :version => '3.1.0'
   config.gem 'read_from_slave', :version => '0.4.0'
   config.gem 'uuidtools', :version => '2.0.0'
@@ -83,6 +83,10 @@ Rails::Initializer.run do |config|
     :session_key => '_tapjoyads_session',
     :secret      => 'd3d936761e9ec0ff1aa0ce15efa6c5c6a6d0d529cfebf302de850328d321978b4d3017e36811a7bdee90ea38120346bccde1316f41849a8022a275c8390a69f1'
   }
+
+  # Disable the IP spoofing check because a lot of cell phone proxies don't set up HTTP headers correctly.
+  # http://guides.rubyonrails.org/2_3_release_notes.html#other-action-controller-changes
+  config.action_controller.ip_spoofing_check = false
 
   # Use the database for sessions instead of the cookie-based default,
   # which shouldn't be used to store highly confidential information

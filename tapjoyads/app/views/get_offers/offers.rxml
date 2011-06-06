@@ -1,23 +1,5 @@
 xml.instruct!
 xml.TapjoyConnectReturnObject do
-  xml.OfferArray do
-    @offer_list.each do |offer|
-      xml.OfferReturnClass do
-        xml.Cost "Free"
-        xml.Amount @currency.get_reward_amount(offer)
-        xml.Currency @currency.name
-        xml.Description 'An offer.'
-        xml.Instructions 'Complete the offer.'
-        xml.Name offer.name.gsub('TAPJOY_BUCKS', @currency.name)
-        xml.ActionURL offer.get_destination_url(params[:udid], params[:app_id])
-        xml.TimeDelay 'in seconds'
-        xml.CachedOfferID offer.id
-        xml.PublisherUserRecordID params[:publisher_user_id]
-        xml.Type '0'
-        xml.EmailURL 'https://www.tapjoy.com'
-      end
-    end
-    
-  end
-  xml.Message "Complete one of the offers below to earn #{@currency.name}"
+  xml.OfferArray {}
+  xml.Message {}
 end
