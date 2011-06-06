@@ -13,25 +13,30 @@
           = employee.full_name
         %span.title
           = employee.title
-        %p.about
-          = employee.biography
-          %a.href{:href => "http://www.google.com"}
-            [Full Bio]
+        .about
+          %p.biosmall
+            = truncate(employee.biography, :length => 140)
+            %a.showbio{:href => "#"}
+              [Full Bio]
+          %p.biolarge
+            = employee.biography
+            %a.showbio{:href => "#"}
+              [Short Bio]
           #questions
             .question
-              %span
+              %span.header
                 Secret superpower
-              %p
+              %span.answer
                 = employee.superpower
             .question
-              %span
+              %span.header
                 Currently playing
-              %p
+              %span.answer
                 = employee.current_games
             .question
-              %span
+              %span.header
                 Weapon of choice
-              %p
+              %span.answer
                 = employee.weapon
       .divider
 .clear

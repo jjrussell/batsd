@@ -129,3 +129,21 @@ $(document).ready(function() {
 
 	};
 })(jQuery);
+
+/**
+ * show / hide full bio in about section
+ */
+
+$(document).ready(function() {
+    $(".showbio").click(function() {
+        biolarge = $(".biolarge");
+        biosmall = $(".biosmall");
+        if (biolarge.css('display') == 'none') {
+            biolarge.css('display', 'block');
+            biosmall.css('display', 'none');
+        } else {
+            biolarge.css('display', 'none');
+            biosmall.css('display', 'block');
+        }
+    })
+})
