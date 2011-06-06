@@ -23,9 +23,9 @@ class ReportingDataController < WebsiteController
       return
     end
     
-    if params[:date] =~ /^[0-9]{4}-[0-9]{2}$/
+    if params[:date] =~ /^\d{4}-\d{2}$/
       data = UdidReports.get_monthly_report(offer.id, params[:date])
-    elsif params[:date] =~ /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/
+    elsif params[:date] =~ /^\d{4}-\d{2}-\d{2}$/
       data = UdidReports.get_daily_report(offer.id, params[:date])
     else
       render :text => "Invalid date", :status => 404
