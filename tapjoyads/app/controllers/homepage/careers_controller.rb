@@ -23,21 +23,21 @@ class Homepage::CareersController < WebsiteController
       {
         :name => "Finance",
         :list => [
-          { :title => "Senior Manager/Director, Financial Planning & Analysis (FP&A)", :href => "URL"},
-          { :title => "Senior Accountant", :href => "URL2"},
+          { :title => "Senior Manager/Director, Financial Planning & Analysis (FP&A)", :href => "senior_managerdirector_financial_planning_analysis"},
+          { :title => "Senior Accountant", :href => "senior_accountant"},
         ]
       },
       {
         :name => "Sales",
         :list => [
-          { :title => "Director, Advertising Sales (San Francisco and New York)", :href => "URL"},
-          { :title => "Sales Development Rep", :href => "URL2"},
+          { :title => "Director, Advertising Sales (San Francisco and New York)", :href => "director_advertising_sales"},
+          { :title => "Sales Development Rep", :href => "sales_development_rep"},
         ]
       },
       {
         :name => "HR",
         :list => [
-          { :title => "Lead Recruiter (Contract)", :href => "URL"},
+          { :title => "Lead Recruiter (Contract)", :href => "lead_recruiter_contract"},
         ]
       }
     ]
