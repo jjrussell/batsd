@@ -5,7 +5,8 @@ class Tools::UsersController < WebsiteController
 
   def index
     @tapjoy_users = User.find(:all,
-      :conditions => [ "email LIKE ? AND email NOT LIKE ?", "%@tapjoy.com", "%+%" ],
+      :conditions => [ "( email LIKE ? OR email LIKE ? ) AND email NOT LIKE ?",
+        "%@tapjoy.com", "%offerpal.com", "%+%" ],
       :include => { :role_assignments => [ :user_role ] },
       :order => 'email ASC').paginate(:page => params[:page], :per_page => 100)
   end

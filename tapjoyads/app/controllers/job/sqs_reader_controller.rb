@@ -2,7 +2,7 @@ class Job::SqsReaderController < Job::JobController
 
   def initialize(queue_name)
     @queue_name = queue_name
-    @num_reads = 40
+    @num_reads = 100
     @raise_on_error = true
     @break_on_nil_message = true
   end
