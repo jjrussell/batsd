@@ -4,27 +4,27 @@ JobRunner::Gateway.define do |s|
   
   if machine_type == 'jobs' || machine_type == 'test'
     # SQS Queues:
-    s.add_job 'queue_conversion_tracking', :interval => 2.seconds
-    s.add_job 'queue_create_conversions', :interval => 2.seconds
-    s.add_job 'queue_failed_sdb_saves', :interval => 5.seconds
-    s.add_job 'queue_failed_web_request_saves', :interval => 5.seconds
-    s.add_job 'queue_send_currency', :interval => 2.seconds
-    s.add_job 'queue_failed_downloads', :interval => 20.seconds
-    s.add_job 'queue_hourly_app_stats', :interval => 30.seconds
-    s.add_job 'queue_daily_app_stats', :interval => 2.minutes
-    s.add_job 'queue_pre_create_domains', :interval => 1.minutes
-    s.add_job 'queue_calculate_show_rate', :interval => 20.seconds
-    s.add_job 'queue_select_vg_items', :interval => 5.seconds
-    s.add_job 'queue_get_store_info', :interval => 5.minutes
+    s.add_job 'queue_conversion_tracking', :interval => 1.second
+    s.add_job 'queue_create_conversions', :interval => 1.second
+    s.add_job 'queue_failed_sdb_saves', :interval => 2.seconds
+    s.add_job 'queue_failed_web_request_saves', :interval => 2.seconds
+    s.add_job 'queue_send_currency', :interval => 1.second
+    s.add_job 'queue_failed_downloads', :interval => 5.seconds
+    s.add_job 'queue_hourly_app_stats', :interval => 10.seconds
+    s.add_job 'queue_daily_app_stats', :interval => 15.seconds
+    s.add_job 'queue_pre_create_domains', :interval => 2.minutes
+    s.add_job 'queue_calculate_show_rate', :interval => 10.seconds
+    s.add_job 'queue_select_vg_items', :interval => 30.seconds
+    s.add_job 'queue_get_store_info', :interval => 1.minute
     s.add_job 'queue_update_monthly_account', :interval => 1.minute
-    s.add_job 'queue_grab_advertiser_udids', :interval => 5.minutes
+    s.add_job 'queue_grab_advertiser_udids', :interval => 1.minute
     s.add_job 'queue_sdb_backups', :interval => 1.minute
     s.add_job 'queue_mail_chimp_updates', :interval => 1.minute
-    s.add_job 'queue_partner_notifications', :interval => 5.minutes
-    s.add_job 'queue_recount_stats', :interval => 5.minutes
-    s.add_job 'queue_limit_app_installs', :interval => 30.seconds
+    s.add_job 'queue_partner_notifications', :interval => 1.minute
+    s.add_job 'queue_recount_stats', :interval => 1.minute
+    s.add_job 'queue_limit_app_installs', :interval => 5.seconds
+    s.add_job 'queue_udid_reports', :interval => 15.seconds
     s.add_job 'queue_cache_offers', :interval => 10.seconds
-    s.add_job 'queue_udid_reports', :interval => 1.minute
   elsif machine_type == 'masterjobs'
     # jobs with high impact on overall system performance
     s.add_job 'master_calculate_next_payout', :daily => 4.hours

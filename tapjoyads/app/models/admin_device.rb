@@ -1,5 +1,7 @@
 class AdminDevice < ActiveRecord::Base
   include UuidPrimaryKey
+  belongs_to :user
+
   validates_presence_of :udid
   validates_presence_of :description
   validates_inclusion_of :platform, :in => App::PLATFORMS.keys
