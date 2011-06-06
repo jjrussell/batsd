@@ -15,7 +15,7 @@
 
 %h4= link_to '[View All Admin Devices]', tools_admin_devices_path
 
-%table.tablesorter
+%table#admin_devices_table.tablesorter
   %thead
     %tr
       %th Device
@@ -23,9 +23,11 @@
       %th Last run time
   %tbody
     - @last_run_times.each do |admin_device, last_run_time|
-      %tr{ :class => cycle('', 'odd') }
+      - class_names = cycle('', 'odd')
+      - class_names += " mine" if admin_device.user_id == current_user.id
+      %tr{ :class => class_names }
         %td= admin_device.description
-        %td= admin_device.udid
+        %td.udid= admin_device.udid
         %td= last_run_time
 
 - content_for :page_styles do

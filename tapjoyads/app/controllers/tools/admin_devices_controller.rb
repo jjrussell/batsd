@@ -30,7 +30,7 @@ class Tools::AdminDevicesController < WebsiteController
 
   def update
     @admin_device = AdminDevice.find(params[:id])
-    if @admin_device.safe_update_attributes( params[:admin_device], [ :udid, :description, :platform ] )
+    if @admin_device.safe_update_attributes( params[:admin_device], [ :udid, :description, :platform, :user_id ] )
       flash[:notice] = "Device saved"
       redirect_to tools_admin_devices_path
     else
