@@ -8,6 +8,9 @@
         %th UDID:
         %td= text_field_tag 'udid', params[:udid], :size => '55'
       %tr
+        %th Click key:
+        %td= text_field_tag 'click_key', params[:click_key], :size => '55'
+      %tr
         %td{ :colspan => 2 }= submit_tag 'Find'
 
 - if @device.present?
@@ -91,9 +94,10 @@
         - adv = @click_apps[click.advertiser_app_id]
         - pub = @click_apps[click.publisher_app_id]
         - disp = @click_apps[click.displayer_app_id]
-        - tr_class = i > 4 ? 'more-clicks' : ''
+        - tr_class = (i > 4 && click.key != params[:click_key]) ? 'more-clicks' : ''
         - tr_class += ' rewarded' if click.installed_at?
         - tr_class += ' jailbroken' if click.type =~ /install_jailbroken/
+        - tr_class += ' click-key-match' if click.key == params[:click_key]
         - if click.block_reason?
           - tr_class += click.block_reason =~ /TooManyUdidsForPublisherUserId/ ? ' blocked' : ' not-rewarded'
         %tr{ :class => tr_class}

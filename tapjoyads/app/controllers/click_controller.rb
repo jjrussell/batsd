@@ -1,6 +1,7 @@
 class ClickController < ApplicationController
   layout 'iphone'
   
+  before_filter :decrypt_data_param
   before_filter :setup
   before_filter :validate_click, :except => :test_offer
   before_filter :determine_link_affiliates, :only => :app
@@ -66,13 +67,6 @@ private
   
   def setup
     @now = Time.zone.now
-    
-    return unless verify_params([ :data ])
-    
-    data_str = SymmetricCrypto.decrypt([ params[:data] ].pack("H*"), SYMMETRIC_CRYPTO_SECRET)
-    data = Marshal.load(data_str)
-    params.merge!(data)
-    
     @offer = Offer.find_in_cache(params[:offer_id])
     @currency = Currency.find_in_cache(params[:currency_id])
     required_records = [ @offer, @currency ]

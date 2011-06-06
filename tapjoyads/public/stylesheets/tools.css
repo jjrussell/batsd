@@ -19,6 +19,9 @@ table.with-border td.small {
   background-color: #222;
   color: #eee;
 }
+.click-key-match {
+  background-color: #8dbdd8;
+}
 .jailbroken {
   background-color: #d00;
   color: #eee;

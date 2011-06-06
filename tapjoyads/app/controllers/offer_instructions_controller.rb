@@ -1,5 +1,5 @@
 class OfferInstructionsController < ApplicationController
-  prepend_before_filter :setup
+  prepend_before_filter :decrypt_data_param
   
   layout 'iphone', :only => :index
   
@@ -17,16 +17,6 @@ class OfferInstructionsController < ApplicationController
       :click_key             => params[:click_key],
       :itunes_link_affiliate => params[:itunes_link_affiliate],
     })
-  end
-
-private
-
-  def setup
-    return unless verify_params([ :data ])
-
-    data_str = SymmetricCrypto.decrypt([ params[:data] ].pack("H*"), SYMMETRIC_CRYPTO_SECRET)
-    data = Marshal.load(data_str)
-    params.merge!(data)
   end
   
 end

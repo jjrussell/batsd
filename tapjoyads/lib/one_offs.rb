@@ -56,5 +56,5 @@ class OneOffs
       stats.serial_save
     end
   end
-  
+
 end
