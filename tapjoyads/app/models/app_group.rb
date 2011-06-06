@@ -7,11 +7,7 @@ class AppGroup < ActiveRecord::Base
   
   WEIGHT_COLUMNS = [ :conversion_rate, :bid, :price, :avg_revenue, :random, :over_threshold ]
   
-  def weights    
-    weights = {}
-    WEIGHT_COLUMNS.each do |weight|
-      weights[weight] = eval(weight.to_s)
-    end
-    weights
+  def weights
+    WEIGHT_COLUMNS.inject({}) { |weights_hash, column| weights_hash[column] = eval(column.to_s); weights_hash }
   end
 end
