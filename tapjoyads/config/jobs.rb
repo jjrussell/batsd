@@ -17,10 +17,10 @@ JobRunner::Gateway.define do |s|
     s.add_job 'queue_update_monthly_account', :interval => 1.minute
     s.add_job 'queue_sdb_backups', :interval => 1.minute
     s.add_job 'queue_mail_chimp_updates', :interval => 1.minute
-    s.add_job 'queue_partner_notifications', :interval => 5.minutes
-    s.add_job 'queue_recount_stats', :interval => 5.minutes
-    s.add_job 'queue_limit_app_installs', :interval => 30.seconds
-    s.add_job 'queue_udid_reports', :interval => 1.minute
+    s.add_job 'queue_partner_notifications', :interval => 1.minute
+    s.add_job 'queue_recount_stats', :interval => 1.minute
+    s.add_job 'queue_limit_app_installs', :interval => 5.seconds
+    s.add_job 'queue_udid_reports', :interval => 15.seconds
   elsif MACHINE_TYPE == 'masterjobs'
     # jobs with high impact on overall system performance
     s.add_job 'master_calculate_next_payout', :daily => 4.hours

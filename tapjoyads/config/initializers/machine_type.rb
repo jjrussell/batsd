@@ -1,1 +1,1 @@
-MACHINE_TYPE = `"#{Rails.root.to_s}/../server/server_type.rb"`
+MACHINE_TYPE = `"#{Rails.root}/../server/server_type.rb"`
