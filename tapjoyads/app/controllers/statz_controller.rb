@@ -5,7 +5,7 @@ class StatzController < WebsiteController
   
   filter_access_to :all
   
-  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids ]
+  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids ]
   before_filter :setup, :only => [ :show, :global ]
   after_filter :save_activity_logs, :only => [ :update ]
   
@@ -20,11 +20,12 @@ class StatzController < WebsiteController
   end
 
   def udids
-    bucket = S3.bucket(BucketNames::AD_UDIDS)
-    base_path = Offer.s3_udids_path(@offer.id)
-    @keys = bucket.keys('prefix' => base_path).map do |key|
-      key.name.gsub(base_path, '')
-    end
+    @keys = UdidReports.get_available_months(@offer.id)
+  end
+
+  def download_udids
+    data = UdidReports.get_monthly_report(@offer.id, params[:date])
+    send_data(data, :type => 'text/csv', :filename => "#{@offer.id}_#{params[:date]}.csv")
   end
 
   def show
