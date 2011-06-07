@@ -21,17 +21,14 @@ class Device < SimpledbShardedResource
   end
   
   def set_app_ran!(app_id, params)
+    return [] unless app_id =~ APP_ID_FOR_DEVICES_REGEX
+    
     now = Time.zone.now
     path_list = []
     
     is_jailbroken_was = is_jailbroken
     country_was = country
     last_run_time_was = last_run_time(app_id)
-    
-    unless app_id =~ /^(\w|\.|-)*$/
-      Notifier.alert_new_relic(InvalidAppIdForDevices, "udid: #{@key}, app_id: #{app_id}", nil, params)
-      return path_list
-    end
     
     if last_run_time_was.nil?
       path_list.push('new_user')
