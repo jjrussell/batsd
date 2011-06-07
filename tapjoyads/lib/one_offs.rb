@@ -56,5 +56,40 @@ class OneOffs
       stats.serial_save
     end
   end
+  
+  def self.queue_udid_reports
+    start_time = Time.zone.parse('2010-10-01')
+    end_time = Time.zone.parse('2011-06-01')
+    Offer.find_each do |offer|
+      next if offer.id == '2349536b-c810-47d7-836c-2cd47cd3a796' # tested with this offer so they are already complete
+      puts offer.id
+      s = Appstats.new(offer.id, {:start_time => start_time, :end_time => end_time, :granularity => :daily, :stat_types => ['paid_installs']})
+      s.stats['paid_installs'].each_with_index do |num_installs, idx|
+        if num_installs > 0
+          message = {:offer_id => offer.id, :date => (start_time + idx.days).strftime('%Y-%m-%d')}.to_json
+          Sqs.send_message(QueueNames::UDID_REPORTS, message)
+        end
+      end
+    end
+  end
 
+  def self.aggregate_global_platform_stats(date = nil)
+    date ||= Time.zone.now.beginning_of_day
+    puts "starting aggregation for #{date}"
+    num_unverified = Offer.count(:conditions => [ "last_daily_stats_aggregation_time < ?",  date.beginning_of_day ])
+    if num_unverified > 0
+      puts "there are #{num_unverified} offers with unverified stats, not aggregating global stats yet for #{date}"
+    else
+      StatsAggregation.aggregate_hourly_group_stats(date, true)
+    end
+    puts "done aggregating for #{date}"
+  end
+
+  def self.aggregate_all_global_platform_stats(date = nil)
+    date ||= Time.zone.parse('2009-09-01')
+    while date < Time.zone.now
+      aggregate_global_platform_stats(date)
+      date += 1.day
+    end
+  end
 end

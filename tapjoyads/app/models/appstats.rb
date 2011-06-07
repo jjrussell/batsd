@@ -461,7 +461,7 @@ private
   def populate_hourly_stats_from_memcached(stat_row, stat_name, cache_hours)
     return if cache_hours == 0
     
-    date, app_id = stat_row.parse_key
+    prefix, date, app_id = stat_row.parse_key
     if stat_name == 'virtual_goods'
       vg_keys = Mc.get("virtual_good_list.keys.#{app_id}") || []
       vg_keys.each do |vg_key|

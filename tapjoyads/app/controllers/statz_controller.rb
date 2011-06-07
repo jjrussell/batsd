@@ -106,19 +106,15 @@ class StatzController < WebsiteController
   end
 
   def publisher
-    @timeframe = params[:timeframe] || '24_hours'
-    @last_updated = Time.zone.at(Mc.get("statz.partners.last_updated.#{@timeframe}") || 0)
-    @cached_stats = Mc.distributed_get("statz.partners.cached_stats.#{@timeframe}") || []
+    load_partner_stats
   end
 
   def advertiser
-    @timeframe = params[:timeframe] || '24_hours'
-    @last_updated = Time.zone.at(Mc.get("statz.partners.last_updated.#{@timeframe}") || 0)
-    @cached_stats = Mc.distributed_get("statz.partners.cached_stats.#{@timeframe}") || []
+    load_partner_stats
   end
   
 private
-  
+
   def find_offer
     @offer = Offer.find_by_id(params[:id])
     if @offer.nil?
@@ -133,7 +129,7 @@ private
     if params[:action] == 'global'
       key = nil
       options[:cache_hours] = 0
-      options[:stat_prefix] = 'global'
+      options[:stat_prefix] = get_prefix('global')
     else
       key = @offer.id
     end
@@ -143,4 +139,25 @@ private
   def setup
     @start_time, @end_time, @granularity = Appstats.parse_dates(params[:date], params[:end_date], params[:granularity])
   end
+
+  def load_partner_stats
+    @timeframe = params[:timeframe] || '24_hours'
+    @last_updated = Time.zone.at(Mc.get("statz.partner.last_updated.#{@timeframe}") || 0)
+    @cached_stats = Mc.distributed_get("statz.partner.cached_stats.#{@timeframe}") || []
+  end
+
+  def get_prefix(group)
+    case params[:platform]
+    when 'android'
+      @platform = 'Android'
+      "#{group}-android"
+    when 'ios'
+      @platform = 'iOS'
+      "#{group}-ios"
+    else
+      @platform = ''
+      group
+    end
+  end
+
 end
