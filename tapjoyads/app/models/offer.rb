@@ -274,10 +274,6 @@ class Offer < ActiveRecord::Base
     end
   end
   
-  def self.s3_udids_path(offer_id, date = nil)
-    "udids/#{offer_id}/#{date && date.strftime("%Y-%m")}"
-  end
-  
   def find_associated_offers
     Offer.find(:all, :conditions => ["item_id = ? and id != ?", item_id, id])
   end
