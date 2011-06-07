@@ -22,15 +22,13 @@ private
     if currency.callback_url == Currency::PLAYDOM_CALLBACK_URL && click.publisher_user_id !~ /^(F|M|P)[0-9]+$/
       click.block_reason = "InvalidPlaydomUserId"
       click.serial_save
-      Notifier.alert_new_relic(InvalidPlaydomUserId, "Playdom User id: '#{click.publisher_user_id}' is invalid, for click: #{click.key}", request, params)
       return
     end
     
     publisher_user = PublisherUser.new(:key => "#{click.publisher_app_id}.#{click.publisher_user_id}")
     unless publisher_user.update!(click.udid)
-      click.block_reason = "TooManyUdidsForPublisherUserId (ID=#{publisher_user.key})"
+      click.block_reason = "TooManyUdidsForPublisherUserId"
       click.serial_save
-      Notifier.alert_new_relic(TooManyUdidsForPublisherUserId, "Too many UDIDs associated with publisher_user: #{publisher_user.key}, for click: #{click.key}", request, params)
       return
     end
     
@@ -40,9 +38,8 @@ private
       other_udids.each do |udid|
         device = Device.new(:key => udid)
         if device.has_app(click.advertiser_app_id)
-          click.block_reason = "AlreadyRewardedForPublisherUserId (UDID=#{udid})"
+          click.block_reason = "AlreadyRewardedForPublisherUserId"
           click.serial_save
-          Notifier.alert_new_relic(AlreadyRewardedForPublisherUserId, "Offer already rewarded for publisher_user: #{publisher_user.key}, for click: #{click.key}", request, params)
           return
         end
       end
