@@ -78,9 +78,7 @@ class StatsAggregation
     verify_web_request_stats_over_range(hourly_stat_row, offer, start_time, end_time)
     verify_conversion_stats_over_range(hourly_stat_row, offer, start_time, end_time)
     
-    daily_stat_row = Stats.new(:key => "app.#{start_time.strftime('%Y-%m')}.#{offer.id}", :load_from_memcache => false)
-    daily_stat_row.populate_daily_from_hourly(hourly_stat_row, start_time.day - 1)
-    daily_stat_row.serial_save
+    hourly_stat_row.update_daily_stat
     hourly_stat_row.serial_save
 
     hourly_ranks = S3Stats::Ranks.find_or_initialize_by_id("ranks/#{start_time.strftime('%Y-%m-%d')}/#{offer.id}", :load_from_memcache => false)
