@@ -1,4 +1,3 @@
-class MissingRequiredParamsError < RuntimeError; end
 class FailedToWriteToSqsError < RuntimeError; end
 class FailedToDownloadError < RuntimeError; end
 class AppStatsVerifyError < RuntimeError; end
@@ -11,10 +10,8 @@ class AppDataFetchError < RuntimeError; end
 class GenericOfferCallbackError < RuntimeError; end
 class InvalidAppIdForDevices < RuntimeError; end
 class DeviceCountryChanged < RuntimeError; end
-class DeviceNoLongerJailbroken < RuntimeError; end
 class JailbrokenInstall < RuntimeError; end
 class FailedToInvalidateCloudfront < RuntimeError; end
-class RecordNotFoundError < RuntimeError; end
 class AppStoreSearchFailed < RuntimeError; end
 class SdbObjectNotInS3 < RuntimeError; end
 
