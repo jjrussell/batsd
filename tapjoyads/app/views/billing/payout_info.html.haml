@@ -17,22 +17,37 @@
           %th
             = f.label :tax_country, 'Country'
             .help.no-help ?
-          %td= f.select(:tax_country, options_for_select(list_of_countries, @payout_info.tax_country))
+          %td
+            = f.select(:tax_country, options_for_select(list_of_countries, @payout_info.tax_country))
+            = f.error_message_on(:tax_country)
         %tr
           %th
             = f.label :account_type, 'Account Type'
             .help.no-help ?
-          %td= f.select(:account_type, options_for_select(list_of_account_types, @payout_info.account_type))
+          %td
+            = f.select(:account_type, options_for_select(PayoutInfo::ACCOUNT_TYPES, @payout_info.account_type))
+            = f.error_message_on(:account_type)
         %tr
           %th
-            = f.label :billing_name, 'Billing Name'
+            = f.label :billing_name, 'Legal Name'
             .help.no-help ?
-          %td= f.text_field(:billing_name)
+          %td
+            = f.text_field(:billing_name)
+            = f.error_message_on(:billing_name)
+        %tr
+          %th
+            = f.label :doing_business_as, 'd/b/a'
+            #help_doing_business_as.help ?
+          %td
+            = f.text_field(:doing_business_as)
+            = f.error_message_on(:doing_business_as)
         %tr
           %th
             = f.label :tax_id, 'Tax ID'
             #help_tin.help ?
-          %td= f.text_field(:tax_id, :value => @payout_info.tax_id)
+          %td
+            = encrypted_field(f, @payout_info, :tax_id)
+            = f.error_message_on(:tax_id)
         %tr
           %td{:colspan => 2}
             %h3 Payment Details*
@@ -40,71 +55,105 @@
           %th
             = f.label :beneficiary_name, 'Beneficiary Name'
             .help.no-help ?
-          %td= f.text_field(:beneficiary_name)
+          %td
+            = f.text_field(:beneficiary_name)
+            = f.error_message_on(:beneficiary_name)
         %tr
           %th
             = f.label :company_name, 'Company Name'
             .help.no-help ?
-          %td= f.text_field(:company_name)
+          %td
+            = f.text_field(:company_name)
+            = f.error_message_on(:company_name)
         %tr
           %th
             = f.label :country, 'Country'
             .help.no-help ?
-          %td= f.select(:address_country, options_for_select(list_of_countries, @payout_info.address_country))
-        %tr.country_us
+          %td
+            = f.select(:address_country, options_for_select(list_of_countries, @payout_info.address_country))
+            = f.error_message_on(:address_country)
+        %tr
           %th
             = f.label :payout_method, 'Payment Method'
             .help.no-help ?
-          %td= f.select(:payout_method, options_for_select(list_of_payout_methods, @payout_info.payout_method))
+          %td
+            = f.select(:payout_method, options_for_select(PayoutInfo::PAYOUT_METHODS, @payout_info.payout_method))
+            = f.error_message_on(:payout_method)
+        %tr
+          %td{:colspan => 2}
+            %h3 Beneficiary Address
         %tr.address
           %th
             = f.label :address, 'Address'
             .help.no-help ?
-          %td= f.text_field(:address_1)
+          %td
+            = f.text_field(:address_1)
+            = f.error_message_on(:address_1)
         %tr.address
           %th &nbsp;
-          %td= f.text_field(:address_2)
+          %td
+            = f.text_field(:address_2)
+            = f.error_message_on(:address_2)
         %tr.address
           %th
             = f.label :city, 'City'
             .help.no-help ?
-          %td= f.text_field(:address_city)
+          %td
+            = f.text_field(:address_city)
+            = f.error_message_on(:address_city)
         %tr.country_us.address
           %th
             = f.label :state, 'State'
             .help.no-help ?
-          %td= f.select(:address_state, options_for_select(list_of_states, @payout_info.address_state || 'CA'))
+          %td
+            = f.select(:address_state, options_for_select(list_of_states, @payout_info.address_state || 'CA'))
+            = f.error_message_on(:address_state)
         %tr.address
           %th
             %span.country_us= f.label :postal_codes, 'ZIP code'
             %span.country_other= f.label :postal_codes, 'Postal code'
             .help.no-help ?
-          %td= f.text_field(:address_postal_code)
+          %td
+            = f.text_field(:address_postal_code)
+            = f.error_message_on(:address_postal_code)
+        %tr.country_other
+          %td{:colspan => 2}
+            %h3 Bank Information
         %tr.country_other
           %th
             = f.label :bank_name, 'Bank Name'
             .help.no-help ?
-          %td= f.text_field(:bank_name, :value => @payout_info.bank_name)
+          %td
+            = encrypted_field(f, @payout_info, :bank_name)
+            = f.error_message_on(:bank_name)
         %tr.country_other
           %th
             = f.label :bank_address, 'Bank Address'
             .help.no-help ?
-          %td= f.text_field(:bank_address, :value => @payout_info.bank_address)
+          %td
+            = encrypted_field(f, @payout_info, :bank_address)
+            = f.error_message_on(:bank_address)
         %tr.country_other
           %th
             %span.country_us= f.label :bank_account_number, 'Bank Account Number'
             %span.country_other= f.label :bank_account_number, 'Bank IBAN Code'
             #help_bank_account_number.help ?
-          %td= f.text_field(:bank_account_number, :value => @payout_info.bank_account_number)
+          %td
+            = encrypted_field(f, @payout_info, :bank_account_number)
+            = f.error_message_on(:bank_account_number)
         %tr.country_other
           %th
             %span.country_us= f.label :bank_routing_number, 'Bank Routing Number'
             %span.country_other= f.label :bank_routing_number, 'Bank SWIFT Code'
             #help_bank_swift_code.help ?
-          %td= f.text_field(:bank_routing_number, :value => @payout_info.bank_routing_number)
+          %td
+            = encrypted_field(f, @payout_info, :bank_routing_number)
+            = f.error_message_on(:bank_routing_number)
     %br/
-    = f.check_box(:terms, :checked => @payout_info.valid?)
+    = f.check_box(:terms, :checked => @terms_checked)
     By checking this box, I agree under penalties of perjury, I certify that:
+    %br/
+    = f.error_message_on(:terms)
     .country_other#terms
       %ol
         %li I am the beneficial owner (or am authorized to sign fot the beneficial owner) of all the income to which this form relates,
@@ -120,13 +169,17 @@
     Please write your name here as digital signature of this agreement:
     %br/
     = f.text_field(:signature)
+    = f.error_message_on(:signature)
     = submit_tag
 
   %p *There is a minimum payment threshold of US$250.
 
 .hidden
-  #help_billing_name_content{:name => 'Billing Name'}
+  #help_billing_name_content{:name => 'Legal Name'}
     Must match name on tax return.
+  #help_doing_business_as_content{:name => 'Doing Business As'}
+    (Optional) Trade name under which your business is being conducted,
+    if applicable.
   #help_tin_content{:name => 'Tax ID'}
     %strong U.S.:
     Your Taxpayer Information Number (TIN) is either your Social Security Number (SSN) if you are an individual or your Employer ID Number (EIN) if you are a corporation or partnership.
@@ -170,6 +223,10 @@
     .fieldWithErrors {
       display: inline;
     }
+    .formError {
+      color: red;
+      font-size: 10px;
+    }
 
 - content_for :page_javascript do
   :plain
@@ -177,15 +234,18 @@
       if (isUS()) {
         $('.country_us').show();
         toggleByPayoutMethod();
+        $('#payout_info_payout_method option').attr('disabled', '');
       } else {
         $('.country_us').hide();
         $('.country_other').show();
-        $('#payout_info_payout_method').val('ach');
+        $('#payout_info_payout_method').val('wire');
+        $('#payout_info_payout_method option:not(:last)').attr('disabled', 'disabled')
       }
     };
     var toggleByPayoutMethod = function() {
       if (isUS()) {
-        if ($('#payout_info_payout_method').val() == 'ach') {
+        var method = $('#payout_info_payout_method').val();
+        if (method == 'ach' || method == 'wire') {
           $('.country_other').show();
         } else {
           $('.country_other').hide();
@@ -202,3 +262,10 @@
     $('#payout_info_address_country').change(toggleByCountry);
     $('#payout_info_payout_method').change(toggleByPayoutMethod);
     toggleByCountry();
+    $('#payout_info_account_type').change(function(){
+      $('#payout_info_tax_id').val('');
+      $('#payout_info_bank_name').val('');
+      $('#payout_info_bank_address').val('');
+      $('#payout_info_bank_account_number').val('');
+      $('#payout_info_bank_routing_number').val('');
+    });
