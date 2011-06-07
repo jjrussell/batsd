@@ -15,9 +15,12 @@
           = employee.title
         .about
           %p.biosmall
-            = truncate(employee.biography, :length => 140)
-            %a.showbio{:href => "#"}
-              [Full Bio]
+            - if (employee.biography.length > 140)
+              = truncate(employee.biography, :length => 140)
+              %a.showbio{:href => "#"}
+                [Full Bio]
+            - else
+              = employee.biography
           %p.biolarge
             = employee.biography
             %a.showbio{:href => "#"}

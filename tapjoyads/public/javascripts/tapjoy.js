@@ -136,8 +136,8 @@ $(document).ready(function() {
 
 $(document).ready(function() {
     $(".showbio").click(function() {
-        biolarge = $(".biolarge");
-        biosmall = $(".biosmall");
+        biolarge = $(this).parent().parent().children(".biolarge");
+        biosmall = $(this).parent().parent().children(".biosmall");
         if (biolarge.css('display') == 'none') {
             biolarge.css('display', 'block');
             biosmall.css('display', 'none');
