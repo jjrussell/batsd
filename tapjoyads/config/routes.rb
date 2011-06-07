@@ -149,11 +149,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :raffles, :only => [ :index, :edit, :update ], :collection => { :status => :get }, :member => { :purchase => :post }
   map.resources :surveys, :only => [ :edit, :create ]
   
-  # Install the default routes as the lowest priority.
-  # Note: These default routes make all actions in every controller accessible via GET requests. You should
-  # consider removing the them or commenting them out if you're using named routes and resources.
-  map.connect ':controller/:action/:id'
-  map.connect ':controller/:action/:id.:format'
-  map.connect ':controller.:format'
-  
+  ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/legacy.rb'))
+  ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/default.rb'))
 end
