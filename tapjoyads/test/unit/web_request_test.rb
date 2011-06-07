@@ -4,11 +4,11 @@ class WebRequestTest < ActiveSupport::TestCase
   should "write and read WebRequests consistently" do
     @basic_time = Time.now.utc
     
-    m = WebRequest.new(:consistent => true)
+    m = WebRequest.new
     m.put_values('connect', {:app_id => 'app1', :udid => 'udid1'}, nil, {}, 'UserAgent1')
     m.serial_save
     
-    m = WebRequest.new(:consistent => true)
+    m = WebRequest.new
     m.put_values('connect', {:app_id => 'app1', :udid => 'udid2'}, nil, {}, 'UserAgent2')
     m.add_path('new_user')
     m.serial_save
