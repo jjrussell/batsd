@@ -54,9 +54,11 @@
   #footer
     = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/privacy')
     %span &nbsp;&nbsp;|&nbsp;&nbsp;
+    = link_to("Missing #{@currency.name}?", new_support_request_path(request.query_parameters))
+    %span &nbsp;&nbsp;|&nbsp;&nbsp;
     %span
       = t('text.shared.ads_by')
-    %span#logo
+    %img{ :src => '/images/logo.jpg' }
 
 %img.hidden{ :src => '/images/load-circle.gif' }
 
@@ -125,7 +127,7 @@
     .hd .pagination .clicked .arrow { background: transparent url(/images/load-circle.gif) no-repeat; width: 16px; height: 16px; background-size: 16px 16px; }
 
     #footerMargin { float: left; width: 100%; padding: 10px 0 23px 0; }
-    #footer { margin: 0px auto; padding-top: 10px; text-align: center; width: 205px; }
-    #footer a, #footer span { color: #fff; float: left; font-size: 13px; text-decoration: none; }
-    #logo { background: url('/images/logo.jpg'); float: left; margin: 2px 0 0 5px; width: 37px; height: 13px; }
+    #footer { margin: 0px auto; padding-top: 10px; text-align: center;  }
+    #footer a, #footer span { color: #fff; font-size: 13px; text-decoration: none; }
+    #footer img { width: 37px; height: 13px; vertical-align: middle; }
     .hd #logo { background: url('/images/logo-2x.jpg'); background-size: 37px 13px; }

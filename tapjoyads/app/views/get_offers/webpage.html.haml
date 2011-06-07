@@ -42,6 +42,8 @@
 
 #privacy
   = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/privacy')
+  ·
+  = link_to("Missing #{@currency.name}?", new_support_request_path(request.query_parameters))
 
 #adsby 
   = t('text.shared.ads_by')
@@ -197,6 +199,9 @@
     #privacy {
       float: left;
       margin-left: 5%;
+    }
+    
+    #privacy a {
       text-decoration: underline;
     }
     

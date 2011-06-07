@@ -1,0 +1,107 @@
+- @page_title = "Missing #{@currency.name}?"
+#main
+  %h1= @page_title
+  
+  - if flash[:error].present?
+    %p.error= flash[:error]
+
+  - form_tag(:action => :create) do
+    - [ :udid, :publisher_user_id, :currency_id, :app_id, :device_type ].each do |field|
+      = hidden_field_tag field, params[field]
+    .instructions
+      %p Please provide the name of the offer you completed without receiving #{@currency.name}, a brief description of the steps you took to complete the offer, and your email address.
+      %p After we verify that you have completed the offer, you will receive your #{@currency.name}.
+    .field
+      = label_tag :description, "Offer and description:"
+      = text_area_tag :description, params[:description]
+    .field
+      = label_tag :email_address, 'Email address:'
+      = text_field_tag :email_address, params[:email_address]
+    = submit_tag('Submit Support Request')
+
+#privacy
+  = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/privacy')
+
+#adsby 
+  = t('text.shared.ads_by')
+  %img{ :src => "#{CLOUDFRONT_URL}/images/tapjoylogo-small.png", :alt => "Tapjoy"}
+
+- content_for :page_styles do
+  :plain
+    * {
+      margin: 0;
+      padding: 0;
+      outline: 0;
+      font-weight: inherit;
+      font-style: inherit;
+      font-size: inherit;
+      font-family: inherit;
+      vertical-align: baseline;
+      text-decoration: none;
+    }
+
+    body {
+      margin-bottom: 10px;
+      color: #004E09;
+    }
+    
+    h1 {
+      font-size: 24pt;
+      margin-bottom: 10px;
+    }
+    
+    label {
+      display: block;
+      font-size: 10pt;
+    }
+
+    img {
+      border: 0;
+    }
+
+    #main {
+      margin: 10px 3%;
+      background: white;
+      border: 1px solid #d5d5d5;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      padding: 10px;
+    }
+    
+    form div, p {
+      margin-bottom: 10px;
+    }
+    
+    textarea, input[type=text] {
+      width: 62%;
+    }
+
+    #adsby, 
+    #privacy a {
+      font-size: 75%;
+      color: #004E09;
+    }
+
+    #adsby {
+      margin-top: 2px;
+      float: right;
+      margin-right: 5%;
+    }
+
+    #adsby img {
+      vertical-align: bottom;
+    }
+
+    #privacy {
+      float: left;
+      margin-left: 5%;
+      text-decoration: underline;
+    }
+
+    .clear {
+      clear: both;
+    }
+
+    .error {
+      color: #dd0000;
+    }
