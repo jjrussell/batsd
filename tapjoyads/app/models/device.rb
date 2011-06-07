@@ -55,7 +55,6 @@ class Device < SimpledbShardedResource
     
     if params[:lad].present?
       if params[:lad] == '0'
-        Notifier.alert_new_relic(DeviceNoLongerJailbroken, "device_id: #{@key}", nil, params) if self.is_jailbroken
         self.is_jailbroken = false
       else
         self.is_jailbroken = true unless app_id == 'f4398199-6316-4680-9acf-d6dbf7f8104a' # Feed Al has inaccurate jailbroken detection
