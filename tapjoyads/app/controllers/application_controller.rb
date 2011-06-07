@@ -37,19 +37,10 @@ private
       end
     end
     
-    unless all_params
-      log_missing_required_params
-      render :text => "missing required params", :status => 400 if render_missing_text
+    if render_missing_text && !all_params
+      render :text => "missing required params", :status => 400
     end
     return all_params
-  end
-  
-  def log_missing_required_params
-    Rails.logger.info "missing required params"
-    unless Rails.env == 'test'
-      NewRelic::Agent.add_custom_parameters({ :user_agent => request.headers['User-Agent'] })
-      Notifier.alert_new_relic(MissingRequiredParamsError, request.url, request, params)
-    end
   end
   
   def verify_records(required_records, options = {})
@@ -59,19 +50,10 @@ private
     required_records.each do |record|
       next unless record.nil?
       
-      log_record_not_found
       render :text => "record not found", :status => 500 if render_missing_text
       return false
     end
     true
-  end
-  
-  def log_record_not_found
-    Rails.logger.info "record not found"
-    unless Rails.env == 'test'
-      NewRelic::Agent.add_custom_parameters({ :user_agent => request.headers['User-Agent'] })
-      Notifier.alert_new_relic(RecordNotFoundError, request.url, request, params)
-    end
   end
   
   def set_time_zone

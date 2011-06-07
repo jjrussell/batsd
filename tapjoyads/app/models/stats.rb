@@ -158,13 +158,13 @@ class Stats < SimpledbResource
   end
   
   ##
-  # Returns a couplet, the date and the app_id (or campaign_id), as parsed from the row key.
+  # Returns a triplet, the prefix, the date, and the app_id or campaign_id (if any), as parsed from the row key.
   def parse_key
     parts = @key.split('.')
     date_parts = parts[1].split('-')
     date = Time.utc(date_parts[0], date_parts[1], date_parts[2])
     
-    return date, parts[2]
+    return parts[0], date, parts[2]
   end
   
   def serial_save(options = {})
@@ -179,6 +179,20 @@ class Stats < SimpledbResource
     self.countries = @parsed_countries if self.countries != @parsed_countries
     
     super(options) if changed?
+  end
+
+  def hourly?
+    @key.split('.')[1].length == 10
+  end
+
+  def update_daily_stat
+    raise "This method should be used only on hourly stats" unless hourly?
+    prefix, date, offer_id = parse_key
+    daily_key = "#{prefix}.#{date.strftime('%Y-%m')}"
+    daily_key << ".#{offer_id}" unless offer_id.blank?
+    daily_stat = Stats.new(:key => daily_key, :load_from_memcache => false, :consistent => true)
+    daily_stat.populate_daily_from_hourly(self, date.day - 1)
+    daily_stat.serial_save
   end
   
 private

@@ -1,7 +1,6 @@
 class Job::MasterVerificationsController < Job::JobController
   def index
     check_conversion_partitions
-    check_grab_advertiser_udids_logs
     check_partner_balances
     
     render :text => 'ok'
@@ -13,18 +12,6 @@ private
     target_cutoff_time = Time.zone.now.beginning_of_month.next_month.next_month
     unless Conversion.get_partitions.any? { |partition| partition['CUTOFF_TIME'] == target_cutoff_time }
       Conversion.add_partition(target_cutoff_time)
-    end
-  end
-  
-  def check_grab_advertiser_udids_logs
-    GrabAdvertiserUdidsLog.select(:where => "job_started_at > '#{(Time.zone.now - 14.days).to_i}' and job_started_at < '#{(Time.zone.now - 16.hours).to_i}' and job_finished_at is null") do |log|
-      next if log.job_requeued_at && log.job_requeued_at < log.job_started_at
-      
-      log.job_requeued_at = Time.zone.now
-      log.save
-      
-      message = { :offer_id => log.offer_id, :start_time => log.start_time, :finish_time => log.finish_time }.to_json
-      Sqs.send_message(QueueNames::GRAB_ADVERTISER_UDIDS, message)
     end
   end
   

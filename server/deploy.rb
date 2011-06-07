@@ -32,6 +32,8 @@ elsif server_type == 'web'
   `cp tapjoyads/config/newrelic-web.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'website'
   `cp tapjoyads/config/newrelic-website.yml tapjoyads/config/newrelic.yml`
+elsif server_type == 'games'
+  `cp tapjoyads/config/newrelic-games.yml tapjoyads/config/newrelic.yml`
 end
 
 if server_type == 'web'

@@ -25,7 +25,8 @@ private
       elsif first_char == 'M' || first_char == 'P'
         callback_url = 'http://offer-dynamic-lb.playdom.com/tapjoy/mob/myspace/fp/main' # myspace/iphone url
       else
-        Notifier.alert_new_relic(InvalidPlaydomUserId, "Playdom User id: '#{first_char}#{publisher_user_id}' is invalid, for reward: #{reward.key}", request, params)
+        reward.send_currency_status = 'InvalidPlaydomUserId'
+        reward.serial_save
         return
       end
     end

@@ -423,6 +423,7 @@ ActiveRecord::Schema.define(:version => 20110604231506) do
     t.datetime "updated_at"
     t.string   "payout_method"
     t.string   "signature"
+    t.string   "doing_business_as"
   end
 
   add_index "payout_infos", ["id"], :name => "index_payout_infos_on_id", :unique => true

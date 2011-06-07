@@ -16,7 +16,7 @@ class ActionOfferTest < ActiveSupport::TestCase
     assert_respond_to subject, :primary_offer_attributes=
   end
   
-  should "delgate user_enabled?, tapjoy_enabled?, bid, min_bid, and daily_budget to primary_offer" do
+  should "delegate user_enabled?, tapjoy_enabled?, bid, min_bid, and daily_budget to primary_offer" do
     delegated_methods = [ :user_enabled?, :tapjoy_enabled?, :bid, :min_bid, :daily_budget ]
     delegated_methods.each do |dm|
       assert_respond_to subject, dm

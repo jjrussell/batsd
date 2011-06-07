@@ -308,10 +308,6 @@ class Offer < ActiveRecord::Base
     end
   end
   
-  def self.s3_udids_path(offer_id, date = nil)
-    "udids/#{offer_id}/#{date && date.strftime("%Y-%m")}"
-  end
-  
   def find_associated_offers
     Offer.find(:all, :conditions => ["item_id = ? and id != ?", item_id, id])
   end
@@ -432,6 +428,16 @@ class Offer < ActiveRecord::Base
       final_url += "&publisher_app_id=#{publisher_app_id}"
     elsif item_type == 'GenericOffer'
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
+      if has_variable_payment?
+        extra_params = {
+          :uid      => Digest::SHA256.hexdigest(udid + UDID_SALT),
+          :cvr      => currency.spend_share * currency.conversion_rate / 100,
+          :currency => CGI::escape(currency.name),
+        }
+        mark = '?'
+        mark = '&' if final_url =~ /\?/
+        final_url += "#{mark}#{extra_params.to_query}"
+      end
     elsif item_type == 'ActionOffer'
       final_url = url
     end

@@ -1,8 +1,6 @@
 JobRunner::Gateway.define do |s|
   
-  machine_type = `#{ENV['APP_ROOT']}/../server/server_type.rb`
-  
-  if machine_type == 'jobs' || machine_type == 'test'
+  if MACHINE_TYPE == 'jobs' || MACHINE_TYPE == 'test'
     # SQS Queues:
     s.add_job 'queue_conversion_tracking', :interval => 1.second
     s.add_job 'queue_create_conversions', :interval => 1.second
@@ -17,7 +15,6 @@ JobRunner::Gateway.define do |s|
     s.add_job 'queue_select_vg_items', :interval => 30.seconds
     s.add_job 'queue_get_store_info', :interval => 1.minute
     s.add_job 'queue_update_monthly_account', :interval => 1.minute
-    s.add_job 'queue_grab_advertiser_udids', :interval => 1.minute
     s.add_job 'queue_sdb_backups', :interval => 1.minute
     s.add_job 'queue_mail_chimp_updates', :interval => 1.minute
     s.add_job 'queue_partner_notifications', :interval => 1.minute
@@ -25,10 +22,10 @@ JobRunner::Gateway.define do |s|
     s.add_job 'queue_limit_app_installs', :interval => 5.seconds
     s.add_job 'queue_udid_reports', :interval => 15.seconds
     s.add_job 'queue_cache_offers', :interval => 10.seconds
-  elsif machine_type == 'masterjobs'
+  elsif MACHINE_TYPE == 'masterjobs'
     # jobs with high impact on overall system performance
     s.add_job 'master_calculate_next_payout', :daily => 4.hours
-    s.add_job 'master_grab_advertiser_udids', :daily => 7.hours
+    s.add_job 'master_udid_reports', :daily => 7.hours
     s.add_job 'master_update_monthly_account', :daily => 8.hours
     s.add_job 'master_verifications', :daily => 5.hours
     
