@@ -1,5 +1,5 @@
 class OfferInstructionsController < ApplicationController
-  before_filter :setup
+  prepend_before_filter :decrypt_data_param
   
   layout 'iphone', :only => :index
   
@@ -10,17 +10,13 @@ class OfferInstructionsController < ApplicationController
     @currency = Currency.find_in_cache(params[:currency_id] || params[:publisher_app_id])
     return unless verify_records([ @currency, @offer ])
     
-    @complete_action_url = @offer.complete_action_url(params[:udid], params[:publisher_app_id], params[:click_key], params[:itunes_link_affiliate], params[:currency_id])
-  end
-
-private
-
-  def setup
-    return unless verify_params([ :data ])
-
-    data_str = SymmetricCrypto.decrypt([ params[:data] ].pack("H*"), SYMMETRIC_CRYPTO_SECRET)
-    data = Marshal.load(data_str)
-    params.merge!(data)
+    @complete_action_url = @offer.complete_action_url({
+      :udid                  => params[:udid],
+      :publisher_app_id      => params[:publisher_app_id],
+      :currency              => @currency,
+      :click_key             => params[:click_key],
+      :itunes_link_affiliate => params[:itunes_link_affiliate],
+    })
   end
   
 end

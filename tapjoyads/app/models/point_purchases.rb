@@ -15,7 +15,7 @@ class PointPurchases < SimpledbShardedResource
       Rails.logger.info "getting initial_balance from currency"
       app_key = @key.split('.').last
       currency = Currency.find_in_cache(app_key)
-      raise "unable to determine initial balance" if currency.nil?
+      raise "unable to determine initial balance for #{app_key}" if currency.nil?
       self.points = currency.initial_balance
     end
   end

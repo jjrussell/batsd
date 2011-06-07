@@ -74,61 +74,7 @@ class Utils
     file.close
     outfile.close
   end
-  
-  def self.reset_memcached
-    save_memcached_state
-    restore_memcached_state
-  end
 
-  def self.save_memcached_state
-    keys = [ 'statz.last_updated.24_hours',
-             'statz.last_updated.7_days',
-             'statz.last_updated.1_month',
-             'money.cached_stats',
-             'money.total_balance',
-             'money.total_pending_earnings',
-             'money.last_updated' ]
-    distributed_keys = [ 'statz.cached_stats.24_hours',
-                         'statz.cached_stats.7_days',
-                         'statz.cached_stats.1_month',
-                         'tools.disabled_popular_offers' ]
-    (keys + distributed_keys).each do |key|
-      data = Mc.get(key)
-      f = File.open("tmp/mc_#{key}", 'w')
-      f.write(Marshal.dump(data))
-      f.close
-    end
-    true
-  end
-
-  def self.restore_memcached_state
-    keys = [ 'statz.last_updated.24_hours',
-             'statz.last_updated.7_days',
-             'statz.last_updated.1_month',
-             'money.cached_stats',
-             'money.total_balance',
-             'money.total_pending_earnings',
-             'money.last_updated' ]
-    distributed_keys = [ 'statz.cached_stats.24_hours',
-                         'statz.cached_stats.7_days',
-                         'statz.cached_stats.1_month',
-                         'tools.disabled_popular_offers' ]
-    Mc.cache.flush
-    (keys + distributed_keys).each do |key|
-      f = File.open("tmp/mc_#{key}", 'r')
-      data = Marshal.restore(f.read)
-      f.close
-      if distributed_keys.include?(key)
-        Mc.distributed_put(key, data)
-      else
-        Mc.put(key, data)
-      end
-    end
-    Offer.cache_offers
-    Mc.cache_all
-    true
-  end
-  
   def self.rewards_to_csv(where_clause, outfile)
     file = File.open(outfile, 'w')
     file.puts("reward_id,publisher_app_id,udid,publisher_amount,created_at,sent_currency_at")
@@ -180,6 +126,111 @@ class Utils
       end
     end
     counts
+  end
+  
+  
+  
+  class Memcache
+    # Use these functions to facilitate switching memcache servers.
+    #
+    # 'XX' is the current UTC hour
+    #
+    # shortly after XX:05
+    # -stop master hourly app stats job
+    # -run Utils::Memcache.aggregate_all_stats
+    # -wait until Utils::Memcache.all_stats_aggregated? returns true
+    # -run Utils::Memcache.advance_last_stats_aggregation_times
+    # 
+    # shortly after XX:30 (all steps must be completed by XX:59)
+    # -run Utils::Memcache.save_state
+    # -deploy new config to test server
+    # -verify new memcache servers are functioning (Mc.cache.stats)
+    # -run Utils::Memcache.restore_state
+    # -deploy new config to production servers
+    # 
+    # shortly after XX+1:05
+    # -run Utils::Memcache.queue_recount_stats_jobs
+    # 
+    # after recount jobs have completed
+    # -enable master hourly app stats job
+
+    def self.save_state
+      keys = [ 'statz.last_updated.24_hours',
+               'statz.last_updated.7_days',
+               'statz.last_updated.1_month',
+               'money.cached_stats',
+               'money.total_balance',
+               'money.total_pending_earnings',
+               'money.last_updated' ]
+      distributed_keys = [ 'statz.cached_stats.24_hours',
+                           'statz.cached_stats.7_days',
+                           'statz.cached_stats.1_month',
+                           'tools.disabled_popular_offers' ]
+      (keys + distributed_keys).each do |key|
+        data = Mc.get(key)
+        f = File.open("tmp/mc_#{key}", 'w')
+        f.write(Marshal.dump(data))
+        f.close
+      end
+      true
+    end
+    
+    def self.restore_state
+      keys = [ 'statz.last_updated.24_hours',
+               'statz.last_updated.7_days',
+               'statz.last_updated.1_month',
+               'money.cached_stats',
+               'money.total_balance',
+               'money.total_pending_earnings',
+               'money.last_updated' ]
+      distributed_keys = [ 'statz.cached_stats.24_hours',
+                           'statz.cached_stats.7_days',
+                           'statz.cached_stats.1_month',
+                           'tools.disabled_popular_offers' ]
+      Mc.cache.flush
+      (keys + distributed_keys).each do |key|
+        f = File.open("tmp/mc_#{key}", 'r')
+        data = Marshal.restore(f.read)
+        f.close
+        if distributed_keys.include?(key)
+          Mc.distributed_put(key, data)
+        else
+          Mc.put(key, data)
+        end
+      end
+      Offer.cache_offers
+      Mc.cache_all
+      true
+    end
+    
+    def self.aggregate_all_stats
+      cutoff = Time.now.utc.beginning_of_hour
+      Offer.find_each(:conditions => ["last_stats_aggregation_time < ?", cutoff]) do |offer|
+        Sqs.send_message(QueueNames::APP_STATS_HOURLY, offer.id)
+      end
+    end
+    
+    def self.all_stats_aggregated?
+      cutoff = Time.now.utc.beginning_of_hour
+      Offer.count(:conditions => ["last_stats_aggregation_time < ?", cutoff]) == 0
+    end
+    
+    def self.advance_last_stats_aggregation_times
+      last_aggregation_time = Time.now.utc.beginning_of_hour + 1.hour
+      Offer.find_each(:conditions => ["last_stats_aggregation_time < ?", last_aggregation_time]) do |offer|
+        offer.last_stats_aggregation_time = last_aggregation_time
+        offer.save(false)
+      end
+    end
+    
+    def self.queue_recount_stats_jobs
+      end_time = Time.now.utc.beginning_of_hour.to_i
+      start_time = end_time - 1.hour
+      Offer.find_each do |offer|
+        message = { :offer_id => offer.id, :start_time => start_time, :end_time => end_time }.to_json
+        Sqs.send_message(QueueNames::RECOUNT_STATS, message)
+      end
+    end
   end
   
 end

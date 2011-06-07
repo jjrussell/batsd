@@ -22,7 +22,7 @@ private
   end
   
   def limit_concurrent_jobs
-    if Dir.glob("#{RAILS_ROOT}/tmp/*.sdb").length > 1
+    if Dir.glob("#{RAILS_ROOT}/tmp/*.sdb").length > 9
       render :text => 'ok'
     end
   end

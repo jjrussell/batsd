@@ -167,6 +167,10 @@ class ToolsController < WebsiteController
   end
 
   def device_info
+    if params[:udid].blank? && params[:click_key].present?
+      click = Click.find(params[:click_key])
+      params[:udid] = click.udid if click.present?
+    end
     if params[:udid].present?
       udid = params[:udid].downcase
       @device = Device.new(:key => udid)

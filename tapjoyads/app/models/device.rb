@@ -21,17 +21,14 @@ class Device < SimpledbShardedResource
   end
   
   def set_app_ran!(app_id, params)
+    return [] unless app_id =~ APP_ID_FOR_DEVICES_REGEX
+    
     now = Time.zone.now
     path_list = []
     
     is_jailbroken_was = is_jailbroken
     country_was = country
     last_run_time_was = last_run_time(app_id)
-    
-    unless app_id =~ /^(\w|\.|-)*$/
-      Notifier.alert_new_relic(InvalidAppIdForDevices, "udid: #{@key}, app_id: #{app_id}", nil, params)
-      return path_list
-    end
     
     if last_run_time_was.nil?
       path_list.push('new_user')
@@ -55,7 +52,6 @@ class Device < SimpledbShardedResource
     
     if params[:lad].present?
       if params[:lad] == '0'
-        Notifier.alert_new_relic(DeviceNoLongerJailbroken, "device_id: #{@key}", nil, params) if self.is_jailbroken
         self.is_jailbroken = false
       else
         self.is_jailbroken = true unless app_id == 'f4398199-6316-4680-9acf-d6dbf7f8104a' # Feed Al has inaccurate jailbroken detection

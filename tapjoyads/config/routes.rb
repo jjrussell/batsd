@@ -84,7 +84,7 @@ ActionController::Routing::Routes.draw do |map|
                      :freemium_android => :get },
     :member => {  :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
-    :member => { :last_run_times => :get, :udids => :get },
+    :member => { :last_run_times => :get, :udids => :get, :download_udids => :get },
     :collection => { :global => :get, :publisher => :get, :advertiser => :get }
   map.resources :raffle_manager, :only => [ :index, :edit, :update, :new, :create ]
   map.resources :activities, :only => [ :index ]
@@ -113,6 +113,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :users, :only  => [ :index, :show] do |user|
       user.resources :role_assignments, :only => [ :create, :destroy ], :controller => 'users/role_assignments'
     end
+    tools.resources :employees, :only => [ :index, :new, :create, :edit, :update ], :member => [ :delete_photo ]
 
   end
   map.resources :offer_instructions, :only => [ :index ]

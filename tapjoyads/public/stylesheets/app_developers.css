@@ -3,6 +3,8 @@
 #about { clear: left; float: left; margin: 32px 0 32px 0; }
 #about a { font-weight: bold; }
 
+#knowledgebase { float: left; margin-bottom: 25px; width: 100%; }
+
 /** screenshots **/
 #developer_phone { background: url('/images/developer_phone.gif'); float: left; height: 596px; margin-left: -42px; width: 309px; }
 #dots { float: left; margin: 175px 0 0 25px; width: 14px; }

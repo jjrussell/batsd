@@ -16,20 +16,27 @@ class Appstats
 
     @app_key = app_key
     @stat_rows = {}
-    
+
     @stats = {}
+
     @stat_types.each do |stat_type|
-      if @granularity == :hourly
-        @stats[stat_type] = get_hourly_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
+      next if stat_type == 'ranks'
+      @stats[stat_type] = if @granularity == :hourly
+        get_hourly_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
       else
-        @stats[stat_type] = get_daily_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
+        get_daily_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
       end
     end
-
-    if @granularity == :hourly
-      @stats['ranks'] = S3Stats::Ranks.hourly_over_time_range(@app_key, @start_time.utc, @end_time.utc)
-    else
-      @stats['ranks'] = S3Stats::Ranks.daily_over_time_range(@app_key, @start_time.utc, @end_time.utc)
+    if @stat_types.include?('ranks')
+      if @stat_prefix == 'app'
+        @stats['ranks'] = if @granularity == :hourly
+          S3Stats::Ranks.hourly_over_time_range(@app_key, @start_time.utc, @end_time.utc)
+        else
+          S3Stats::Ranks.daily_over_time_range(@app_key, @start_time.utc, @end_time.utc)
+        end
+      else
+        @stats['ranks'] = {}
+      end
     end
 
     # cvr
@@ -459,7 +466,7 @@ private
   def populate_hourly_stats_from_memcached(stat_row, stat_name, cache_hours)
     return if cache_hours == 0
     
-    date, app_id = stat_row.parse_key
+    prefix, date, app_id = stat_row.parse_key
     if stat_name == 'virtual_goods'
       vg_keys = Mc.get("virtual_good_list.keys.#{app_id}") || []
       vg_keys.each do |vg_key|

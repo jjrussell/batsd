@@ -351,3 +351,9 @@ a.soft-link.inactive {
 .not_integrated {
   color: #f00;
 }
+.udid {
+  font-family: Andale Mono, Courier New, courier;
+}
+table#admin_devices_table tr.mine td {
+  background-color: #D0F9D0 !important;
+}

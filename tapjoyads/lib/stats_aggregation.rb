@@ -49,7 +49,10 @@ class StatsAggregation
     
     is_active = false
     stat_rows.each_value do |stat_row|
-      if stat_row.get_hourly_count('offerwall_views').sum > 0 || stat_row.get_hourly_count('paid_clicks').sum > 0 ||
+      if stat_row.get_hourly_count('offerwall_views').sum > 0 || 
+          stat_row.get_hourly_count('paid_clicks').sum > 0 || 
+          stat_row.get_hourly_count('display_ads_requested').sum > 0 ||
+          stat_row.get_hourly_count('featured_offers_requested').sum > 0 ||
           (offer.item_type == 'ActionOffer' && stat_row.get_hourly_count('logins').sum > 0)
         is_active = true
       end
@@ -75,9 +78,7 @@ class StatsAggregation
     verify_web_request_stats_over_range(hourly_stat_row, offer, start_time, end_time)
     verify_conversion_stats_over_range(hourly_stat_row, offer, start_time, end_time)
     
-    daily_stat_row = Stats.new(:key => "app.#{start_time.strftime('%Y-%m')}.#{offer.id}", :load_from_memcache => false)
-    daily_stat_row.populate_daily_from_hourly(hourly_stat_row, start_time.day - 1)
-    daily_stat_row.serial_save
+    hourly_stat_row.update_daily_stat
     hourly_stat_row.serial_save
 
     hourly_ranks = S3Stats::Ranks.find_or_initialize_by_id("ranks/#{start_time.strftime('%Y-%m-%d')}/#{offer.id}", :load_from_memcache => false)
@@ -188,32 +189,53 @@ class StatsAggregation
   def self.aggregate_hourly_group_stats(date = nil, aggregate_daily = false)
     date ||= Time.zone.now - 70.minutes
     global_stat = Stats.new(:key => "global.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
-    global_stat.parsed_values.clear
-    global_stat.parsed_countries.clear
+    global_ios_stat = Stats.new(:key => "global-ios.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
+    global_android_stat = Stats.new(:key => "global-android.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
+    global_joint_stat = Stats.new(:key => "global-joint.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
+
+    global_stats = [global_stat, global_ios_stat, global_android_stat, global_joint_stat]
+
+    global_stats.each do |stat|
+      stat.parsed_values.clear
+      stat.parsed_countries.clear
+    end
 
     Partner.find_each do |partner|
       partner_stat = Stats.new(:key => "partner.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
+
       partner_stat.parsed_values.clear
       partner_stat.parsed_countries.clear
+
       partner.offers.find_each do |offer|
+        case offer.get_platform
+        when 'Android'
+          global_platform_stat = global_android_stat
+        when 'iOS'
+          global_platform_stat = global_ios_stat
+        else
+          global_platform_stat = global_joint_stat
+        end
+
         this_stat = Stats.new(:key => "app.#{date.strftime('%Y-%m-%d')}.#{offer.id}")
 
         this_stat.parsed_values.each do |stat, values|
           global_stat.parsed_values[stat] = sum_arrays(global_stat.get_hourly_count(stat), values)
           partner_stat.parsed_values[stat] = sum_arrays(partner_stat.get_hourly_count(stat), values)
+          global_platform_stat.parsed_values[stat] = sum_arrays(global_platform_stat.get_hourly_count(stat), values)
         end
 
         this_stat.parsed_countries.each do |stat, values|
           global_stat.parsed_countries[stat] = sum_arrays(global_stat.get_hourly_count(['countries', stat]), values)
           partner_stat.parsed_countries[stat] = sum_arrays(partner_stat.get_hourly_count(['countries', stat]), values)
+          global_platform_stat.parsed_countries[stat] = sum_arrays(global_stat.get_hourly_count(['countries', stat]), values)
         end
       end
       partner_stat.serial_save
-      aggregate_daily_partner_stats(date, partner_stat, partner) if aggregate_daily
+      partner_stat.update_daily_stat if aggregate_daily
     end
 
-    global_stat.serial_save
-    aggregate_daily_global_stats(date, global_stat) if aggregate_daily
+    global_stats.each { |stat| stat.serial_save }
+    global_stats.each { |stat| stat.update_daily_stat } if aggregate_daily
   end
 
   def self.aggregate_daily_group_stats(date = nil)
@@ -227,18 +249,6 @@ class StatsAggregation
     else
       aggregate_hourly_group_stats(date.yesterday, true)
     end
-  end
-
-  def self.aggregate_daily_global_stats(date, hourly_stat)
-    daily_stat = Stats.new(:key => "global.#{date.strftime('%Y-%m')}", :load_from_memcache => false, :consistent => true)
-    daily_stat.populate_daily_from_hourly(hourly_stat, date.day - 1)
-    daily_stat.serial_save
-  end
-
-  def self.aggregate_daily_partner_stats(date, hourly_stat, partner)
-    daily_stat = Stats.new(:key => "partner.#{date.strftime('%Y-%m')}.#{partner.id}", :load_from_memcache => false, :consistent => true)
-    daily_stat.populate_daily_from_hourly(hourly_stat, date.day - 1)
-    daily_stat.serial_save
   end
 
   def self.sum_arrays(array1, array2)

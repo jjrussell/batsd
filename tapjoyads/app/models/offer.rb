@@ -274,10 +274,6 @@ class Offer < ActiveRecord::Base
     end
   end
   
-  def self.s3_udids_path(offer_id, date = nil)
-    "udids/#{offer_id}/#{date && date.strftime("%Y-%m")}"
-  end
-  
   def find_associated_offers
     Offer.find(:all, :conditions => ["item_id = ? and id != ?", item_id, id])
   end
@@ -348,12 +344,71 @@ class Offer < ActiveRecord::Base
     VirtualGood.count(:where => "app_id = '#{self.item_id}'") > 0
   end
   
-  def get_destination_url(udid, publisher_app_id, click_key = nil, itunes_link_affiliate = 'linksynergy', currency_id = nil)
+  def destination_url(options)
     if instructions.present?
-      instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
+      instructions_url(options)
     else
-      complete_action_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
+      complete_action_url(options)
     end
+  end
+  
+  def instructions_url(options)
+    udid                  = options.delete(:udid)                  { |k| raise "#{k} is a required argument" }
+    publisher_app_id      = options.delete(:publisher_app_id)      { |k| raise "#{k} is a required argument" }
+    currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
+    click_key             = options.delete(:click_key)             { nil }
+    language_code         = options.delete(:language_code)         { nil }
+    itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
+    data = {
+      :id                    => id,
+      :udid                  => udid,
+      :publisher_app_id      => publisher_app_id,
+      :click_key             => click_key,
+      :itunes_link_affiliate => itunes_link_affiliate,
+      :currency_id           => currency.id,
+      :language_code         => language_code
+    }
+    
+    "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
+  end
+  
+  def complete_action_url(options)
+    udid                  = options.delete(:udid)                  { |k| raise "#{k} is a required argument" }
+    publisher_app_id      = options.delete(:publisher_app_id)      { |k| raise "#{k} is a required argument" }
+    currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
+    click_key             = options.delete(:click_key)             { nil }
+    language_code         = options.delete(:language_code)         { nil }
+    itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
+    final_url = url.gsub('TAPJOY_UDID', udid.to_s)
+    if item_type == 'App' && final_url =~ /^http:\/\/phobos\.apple\.com/
+      if itunes_link_affiliate == 'tradedoubler'
+        final_url += '&partnerId=2003&tduid=UK1800811'
+      else
+        final_url = "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&type=10&tmpid=3909&RD_PARM1=#{CGI::escape(final_url)}"
+      end
+    elsif item_type == 'EmailOffer'
+      final_url += "&publisher_app_id=#{publisher_app_id}"
+    elsif item_type == 'GenericOffer'
+      final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
+      if has_variable_payment?
+        extra_params = {
+          :uid      => Digest::SHA256.hexdigest(udid + UDID_SALT),
+          :cvr      => currency.spend_share * currency.conversion_rate / 100,
+          :currency => CGI::escape(currency.name),
+        }
+        mark = '?'
+        mark = '&' if final_url =~ /\?/
+        final_url += "#{mark}#{extra_params.to_query}"
+      end
+    elsif item_type == 'ActionOffer'
+      final_url = url
+    end
+    
+    final_url
   end
   
   def get_click_url(options)
@@ -367,6 +422,7 @@ class Offer < ActiveRecord::Base
     displayer_app_id  = options.delete(:displayer_app_id)  { nil }
     exp               = options.delete(:exp)               { nil }
     country_code      = options.delete(:country_code)      { nil }
+    language_code     = options.delete(:language_code)     { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     click_url = "#{API_URL}/click/"
@@ -397,6 +453,7 @@ class Offer < ActiveRecord::Base
       :country_code      => country_code,
       :displayer_app_id  => displayer_app_id,
       :exp               => exp,
+      :language_code     => language_code
     }
     
     "#{click_url}?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
@@ -652,9 +709,13 @@ class Offer < ActiveRecord::Base
   end
   
   def needs_more_funds?
-    show_rate != 1 && (daily_budget == 0 || (daily_budget > 0 && low_balance?))
+    show_rate != 1 && (unlimited_budget? || low_balance?)
   end
-  
+
+  def unlimited_budget?
+    daily_budget.zero? && overall_budget.zero?
+  end
+
   def on_track_for_budget?
     show_rate != 1 && !needs_more_funds?
   end
@@ -728,39 +789,7 @@ class Offer < ActiveRecord::Base
   def toggle_user_enabled
     self.user_enabled = !user_enabled
   end
-  
-  def instructions_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
-    data = {
-      :id                    => id,
-      :udid                  => udid,
-      :publisher_app_id      => publisher_app_id,
-      :click_key             => click_key,
-      :itunes_link_affiliate => itunes_link_affiliate,
-      :currency_id           => currency_id
-    }
-    
-    "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
-  end
-  
-  def complete_action_url(udid, publisher_app_id, click_key, itunes_link_affiliate, currency_id)
-    final_url = url.gsub('TAPJOY_UDID', udid.to_s)
-    if item_type == 'App' && final_url =~ /^http:\/\/phobos\.apple\.com/
-      if itunes_link_affiliate == 'tradedoubler'
-        final_url += '&partnerId=2003&tduid=UK1800811'
-      else
-        final_url = "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&type=10&tmpid=3909&RD_PARM1=#{CGI::escape(final_url)}"
-      end
-    elsif item_type == 'EmailOffer'
-      final_url += "&publisher_app_id=#{publisher_app_id}"
-    elsif item_type == 'GenericOffer'
-      final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
-    elsif item_type == 'ActionOffer'
-      final_url = url
-    end
-    
-    final_url
-  end
-  
+
   def calculate_rank_boost!
     update_attribute(:rank_boost, rank_boosts.active.sum(:amount))
   end

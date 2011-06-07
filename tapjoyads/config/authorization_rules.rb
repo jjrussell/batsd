@@ -43,16 +43,20 @@ authorization do
     has_permission_on :tools, :to => [ :payout_info, :publishers_without_payout_info, :publisher_payout_info_changes ]
   end
 
+  role :reporting do
+    has_permission_on :statz, :to => [ :index, :show, :global, :publisher, :advertiser ]
+    has_permission_on :search, :to => [ :offers ]
+  end
+
   role :executive do
     includes :tools
+    includes :reporting
     has_permission_on :tools, :to => [ :money, :monthly_data ]
-    has_permission_on :statz, :to => [ :index, :show, :global ]
-    has_permission_on :search, :to => [ :offers ]
   end
   
   role :account_mgr do
     includes :payops
-    has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :global, :publisher, :advertiser ]
+    has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser ]
     has_permission_on :search, :to => [ :offers ]
     has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :edit_android_app, :update_android_app, :device_info, :update_device, :capped_publishers, :freemium_android ]
     has_permission_on :tools_enable_offer_requests, :to => [ :index, :update ]
@@ -83,5 +87,6 @@ authorization do
     has_permission_on :tools_users, :to => [ :index, :show ]
     has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
     has_permission_on :search, :to => [ :users ]
+    has_permission_on :tools_employees, :to => [ :index, :new, :create, :edit, :update, :delete_photo ]
   end
 end
