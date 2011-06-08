@@ -114,7 +114,7 @@ class TapjoyMailer < ActionMailer::Base
   def support_request(description, email_address, app, currency, udid, publisher_user_id, device_type, language_code)
     from 'Online Support Request <noreply@tapjoy.com>'
     reply_to email_address
-    recipients 'amir@tapjoy.com'
+    recipients 'mobilesupport@tapjoy.com'
     content_type 'text/html'
     subject 'Missing Currency'
     body(:description => description, :app => app, :currency => currency, :udid => udid, 
