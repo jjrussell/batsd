@@ -1,8 +1,8 @@
-- @page_title = "Support Request Submitted"
+- @page_title = t('text.support.support_request_submitted')
 #main
   %h1= @page_title
   .thanks
-    %p Thanks for submitting your support request! You will receive your #{@currency.name} after we have verified that you completed the offer.
+    %p= t('text.support.thanks', :currency => @currency.name)
 
 #privacy
   = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/privacy')

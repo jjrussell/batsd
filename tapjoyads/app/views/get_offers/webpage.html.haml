@@ -43,7 +43,7 @@
 #privacy
   = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/privacy')
   ·
-  = link_to("Missing #{@currency.name}?", new_support_request_path(request.query_parameters))
+  = link_to(t('text.offerwall.missing_currency', :currency => @currency.name), new_support_request_path(request.query_parameters))
 
 #adsby 
   = t('text.shared.ads_by')

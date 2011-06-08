@@ -5,3 +5,4 @@
 = support_request_field :app_id, "#{link_to(@app.name, statz_url(@app.id, :host => 'www.tapjoy.com', :protocol => 'https'))} (#{@app.id})"
 = support_request_field :device_type, @device_type
 = support_request_field :email_address, mail_to(@email_address)
+= support_request_field :language_code, @language_code

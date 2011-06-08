@@ -1,23 +1,23 @@
-- @page_title = "Missing #{@currency.name}?"
+- @page_title = t('text.support.title', :currency => @currency.name)
 #main
   %h1= @page_title
   
   - if flash[:error].present?
     %p.error= flash[:error]
 
-  - form_tag(:action => :create) do
-    - [ :udid, :publisher_user_id, :currency_id, :app_id, :device_type ].each do |field|
+  - form_tag({ :action => :create }) do
+    - [ :udid, :publisher_user_id, :currency_id, :app_id, :device_type, :language_code ].each do |field|
       = hidden_field_tag field, params[field]
     .instructions
-      %p Please provide the name of the offer you completed without receiving #{@currency.name}, a brief description of the steps you took to complete the offer, and your email address.
-      %p After we verify that you have completed the offer, you will receive your #{@currency.name}.
+      %p= t('text.support.instructions_1', :currency => @currency.name)
+      %p= t('text.support.instructions_2', :currency => @currency.name)
     .field
-      = label_tag :description, "Offer and description:"
+      = label_tag :description, t('text.support.description_label')
       = text_area_tag :description, params[:description]
     .field
-      = label_tag :email_address, 'Email address:'
+      = label_tag :email_address, t('text.support.email_address_label')
       = text_field_tag :email_address, params[:email_address]
-    = submit_tag('Submit Support Request')
+    = submit_tag(t('text.support.submit_support_request'))
 
 #privacy
   = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/privacy')

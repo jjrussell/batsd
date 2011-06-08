@@ -8,12 +8,12 @@ class SupportRequestsController < ApplicationController
   
   def create
     if params[:description].blank?
-      render_new_with_error('Please describe the offer you completed.')
+      render_new_with_error(I18n.t('text.support.missing_description'))
     elsif params[:email_address].blank? || params[:email_address] !~ Authlogic::Regex.email
-      render_new_with_error('Please enter a real email address.')
+      render_new_with_error(I18n.t('text.support.invalid_email'))
     else
       TapjoyMailer.deliver_support_request(params[:description], params[:email_address], @app, @currency, params[:udid],
-        params[:publisher_user_id], params[:device_type])
+        params[:publisher_user_id], params[:device_type], params[:language_code])
     end
   end
 
