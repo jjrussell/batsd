@@ -77,7 +77,7 @@
   %li= link_to 'Admin Devices', tools_admin_devices_path
 
 - if has_permissions_for_one_of?(:hr)
-  %h3 HR
+  %h3 Human Resources
 %ul
 - if permitted_to? :index, :tools_employees
   %li= link_to 'Manage employee list', tools_employees_path
