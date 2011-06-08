@@ -3,7 +3,6 @@ class Stats < SimpledbResource
   self.domain_name = 'stats'
 
   self.sdb_attr :values, :type => :json, :default_value => {}
-  # TODO: remove ranks from Stats once all records have been migrated to S3
   self.sdb_attr :ranks, :type => :json, :default_value => {}
   self.sdb_attr :virtual_goods, :type => :json, :default_value => {}
   self.sdb_attr :countries, :type => :json, :default_value => {}

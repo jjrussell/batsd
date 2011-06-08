@@ -142,17 +142,18 @@ private
 
   def load_partner_stats
     @timeframe = params[:timeframe] || '24_hours'
-    @last_updated = Time.zone.at(Mc.get("statz.partners.last_updated.#{@timeframe}") || 0)
-    @cached_stats = Mc.distributed_get("statz.partners.cached_stats.#{@timeframe}") || []
+    prefix = get_prefix('partner')
+    @last_updated = Time.zone.at(Mc.get("statz.#{prefix}.last_updated.#{@timeframe}") || 0)
+    @cached_stats = Mc.distributed_get("statz.#{prefix}.cached_stats.#{@timeframe}") || []
   end
 
   def get_prefix(group)
     case params[:platform]
     when 'android'
-      @platform = 'Android'
+      @platform = 'android'
       "#{group}-android"
     when 'ios'
-      @platform = 'iOS'
+      @platform = 'ios'
       "#{group}-ios"
     else
       @platform = ''

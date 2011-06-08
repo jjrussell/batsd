@@ -73,86 +73,95 @@ private
     now, granularity, start_time = get_times(timeframe)
 
     cached_partners = {}
+
     find_options = timeframe == '24_hours' ? { :joins => :offers, :conditions => 'active = true' } : {}
     Partner.find_each(find_options) do |partner|
-      stats = Appstats.new(partner.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity, :stat_prefix => 'partner' }).stats
-      conversions = stats['paid_installs'].sum
-      published_offers = stats['rewards'].sum + stats['featured_published_offers'].sum + stats['display_conversions'].sum
-      next unless conversions > 0 || published_offers > 0
-
-      partner_stats = {}
-
-      # for advertisers and publishers pages
-      partner_stats['partner'] = partner.name
-      partner_stats['account_mgr'] = partner.account_managers.collect { |mgr| mgr.email }.compact.join(',')
-
-      # for publishers page
-      partner_stats['total_revenue'] = number_to_currency(stats['total_revenue'].sum / 100.0)
-      partner_stats['rev_share'] = number_to_percentage(partner.rev_share * 100.0, :precision => 1)
-
-      partner_stats['offerwall_views'] = number_with_delimiter(stats['offerwall_views'].sum)
-      partner_stats['featured_views']  = number_with_delimiter(stats['featured_offers_shown'].sum)
-      partner_stats['display_views']   = number_with_delimiter(stats['display_ads_shown'].sum)
-
-      partner_stats['offerwall_conversions'] = number_with_delimiter(stats['rewards'].sum)
-      partner_stats['featured_conversions']  = number_with_delimiter(stats['featured_published_offers'].sum)
-      partner_stats['display_conversions']   = number_with_delimiter(stats['display_conversions'].sum)
-
-      partner_stats['offerwall_revenue'] = number_to_currency(stats['rewards_revenue'].sum / 100.0)
-      partner_stats['featured_revenue']  = number_to_currency(stats['featured_revenue'].sum / 100.0)
-      partner_stats['display_revenue']   = number_to_currency(stats['display_revenue'].sum / 100.0)
-
-      rewards_opened = stats['rewards_opened'].sum
-      if rewards_opened == 0
-        partner_stats['offerwall_cvr'] = 0
-      else
-        partner_stats['offerwall_cvr'] = number_to_percentage(stats['rewards'].sum.to_f / rewards_opened.to_f * 100.0, :precision => 1)
+      ['partner', 'partner-ios', 'partner-android'].each do |prefix|
+        stats = Appstats.new(partner.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity, :stat_prefix => prefix }).stats
+        conversions = stats['paid_installs'].sum
+        published_offers = stats['rewards'].sum + stats['featured_published_offers'].sum + stats['display_conversions'].sum
+        next unless conversions > 0 || published_offers > 0
+        cached_partners[prefix] ||= {}
+        cached_partners[prefix][partner.id] = partner_breakdowns(stats)
       end
-
-      featured_offers_opened = stats['featured_offers_opened'].sum
-      if featured_offers_opened == 0
-        partner_stats['featured_cvr'] = 0
-      else
-        partner_stats['featured_cvr'] = number_to_percentage(stats['featured_published_offers'].sum.to_f / featured_offers_opened.to_f * 100.0, :precision => 1)
-      end
-
-      display_clicks = stats['display_clicks'].sum
-      if display_clicks == 0
-        partner_stats['display_cvr'] = 0
-      else
-        partner_stats['display_cvr'] = number_to_percentage(stats['display_conversions'].sum.to_f / display_clicks.to_f * 100.0, :precision => 1)
-      end
-
-      partner_stats['offerwall_ecpm'] = number_to_currency((stats['rewards_revenue'].sum / 100.0) / (stats['offerwall_views'].sum / 1000.0))
-      partner_stats['featured_ecpm']  = number_to_currency((stats['featured_revenue'].sum / 100.0) / (stats['featured_offers_shown'].sum / 1000.0))
-      partner_stats['display_ecpm']   = number_to_currency((stats['display_revenue'].sum / 100.0) / (stats['display_ads_shown'].sum / 1000.0))
-
-      # for advertisers page
-      partner_stats['spend']   = number_to_currency(stats['installs_spend'].sum / 100.0)
-      partner_stats['balance'] = number_to_currency(partner.balance / 100.0)
-
-      partner_stats['clicks']        = number_with_delimiter(stats['paid_clicks'].sum)
-      partner_stats['paid_installs'] = number_with_delimiter(stats['paid_installs'].sum)
-  
-      paid_clicks = stats['paid_clicks'].sum
-      if paid_clicks == 0
-        partner_stats['cvr'] = 0
-      else
-        partner_stats['cvr'] = number_to_percentage((stats['paid_installs'].sum.to_f / paid_clicks.to_f) * 100.0, :precision => 1)
-      end
-
-      partner_stats['sessions']  = number_with_delimiter(stats['logins'].sum)
-      partner_stats['new_users'] = number_with_delimiter(stats['new_users'].sum)
-
-      cached_partners[partner.id]  = partner_stats
     end
 
-    cached_partners = cached_partners.sort do |s1, s2|
-      s2[1]['total_revenue'].gsub(',', '').gsub('$', '').to_i <=> s1[1]['total_revenue'].gsub(',', '').gsub('$', '').to_i
+    cached_partners.each do |key, breakdown|
+      breakdown.sort! do |s1, s2|
+        s2[1]['total_revenue'].gsub(',', '').gsub('$', '').to_i <=> s1[1]['total_revenue'].gsub(',', '').gsub('$', '').to_i
+      end
+      Mc.distributed_put("statz.#{key}.cached_stats.#{timeframe}", breakdown)
+      Mc.put("statz.#{key}.last_updated.#{timeframe}", now.to_f)
+    end
+  end
+
+  def partner_breakdowns(stats)
+
+    partner_stats = {}
+
+    # for advertisers and publishers pages
+    partner_stats['partner'] = partner.name
+    partner_stats['account_mgr'] = partner.account_managers.collect { |mgr| mgr.email }.compact.join(',')
+
+    # for publishers page
+    partner_stats['total_revenue'] = number_to_currency(stats['total_revenue'].sum / 100.0)
+    partner_stats['rev_share'] = number_to_percentage(partner.rev_share * 100.0, :precision => 1)
+
+    partner_stats['offerwall_views'] = number_with_delimiter(stats['offerwall_views'].sum)
+    partner_stats['featured_views']  = number_with_delimiter(stats['featured_offers_shown'].sum)
+    partner_stats['display_views']   = number_with_delimiter(stats['display_ads_shown'].sum)
+
+    partner_stats['offerwall_conversions'] = number_with_delimiter(stats['rewards'].sum)
+    partner_stats['featured_conversions']  = number_with_delimiter(stats['featured_published_offers'].sum)
+    partner_stats['display_conversions']   = number_with_delimiter(stats['display_conversions'].sum)
+
+    partner_stats['offerwall_revenue'] = number_to_currency(stats['rewards_revenue'].sum / 100.0)
+    partner_stats['featured_revenue']  = number_to_currency(stats['featured_revenue'].sum / 100.0)
+    partner_stats['display_revenue']   = number_to_currency(stats['display_revenue'].sum / 100.0)
+
+    rewards_opened = stats['rewards_opened'].sum
+    if rewards_opened == 0
+      partner_stats['offerwall_cvr'] = 0
+    else
+      partner_stats['offerwall_cvr'] = number_to_percentage(stats['rewards'].sum.to_f / rewards_opened.to_f * 100.0, :precision => 1)
     end
 
-    Mc.distributed_put("statz.partners.cached_stats.#{timeframe}", cached_partners)
-    Mc.put("statz.partners.last_updated.#{timeframe}", now.to_f)
+    featured_offers_opened = stats['featured_offers_opened'].sum
+    if featured_offers_opened == 0
+      partner_stats['featured_cvr'] = 0
+    else
+      partner_stats['featured_cvr'] = number_to_percentage(stats['featured_published_offers'].sum.to_f / featured_offers_opened.to_f * 100.0, :precision => 1)
+    end
+
+    display_clicks = stats['display_clicks'].sum
+    if display_clicks == 0
+      partner_stats['display_cvr'] = 0
+    else
+      partner_stats['display_cvr'] = number_to_percentage(stats['display_conversions'].sum.to_f / display_clicks.to_f * 100.0, :precision => 1)
+    end
+
+    partner_stats['offerwall_ecpm'] = number_to_currency((stats['rewards_revenue'].sum / 100.0) / (stats['offerwall_views'].sum / 1000.0))
+    partner_stats['featured_ecpm']  = number_to_currency((stats['featured_revenue'].sum / 100.0) / (stats['featured_offers_shown'].sum / 1000.0))
+    partner_stats['display_ecpm']   = number_to_currency((stats['display_revenue'].sum / 100.0) / (stats['display_ads_shown'].sum / 1000.0))
+
+    # for advertisers page
+    partner_stats['spend']   = number_to_currency(stats['installs_spend'].sum / 100.0)
+    partner_stats['balance'] = number_to_currency(partner.balance / 100.0)
+
+    partner_stats['clicks']        = number_with_delimiter(stats['paid_clicks'].sum)
+    partner_stats['paid_installs'] = number_with_delimiter(stats['paid_installs'].sum)
+
+    paid_clicks = stats['paid_clicks'].sum
+    if paid_clicks == 0
+      partner_stats['cvr'] = 0
+    else
+      partner_stats['cvr'] = number_to_percentage((stats['paid_installs'].sum.to_f / paid_clicks.to_f) * 100.0, :precision => 1)
+    end
+
+    partner_stats['sessions']  = number_with_delimiter(stats['logins'].sum)
+    partner_stats['new_users'] = number_with_delimiter(stats['new_users'].sum)
+
+    partner_stats
   end
 
   def get_times(timeframe)
