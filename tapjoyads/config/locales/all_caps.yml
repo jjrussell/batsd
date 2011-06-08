@@ -1,3 +1,5 @@
+# ALL CAPS translation file
+
 all_caps:
   text:
     shared:
@@ -10,6 +12,7 @@ all_caps:
       free: "FREE"
       next: "NEXT {{items}}"
       previous: "PREVIOUS {{items}}"
+      missing_currency: "MISSING {{currency}}?"
 
       # original wall only
       instructions: "INSTALL AND OPEN ONE OF THE APPS BELOW TO RECEIVE {{currency}}"
@@ -31,3 +34,15 @@ all_caps:
       download_action: "HERE"
       download_link: "IF YOU DON'T HAVE THIS APP, CLICK {{download_action}} TO DOWNLOAD IT."
       continue_link: "CLICK HERE TO CONTINUE."
+      
+    support:
+      title: "MISSING {{currency}}?"
+      instructions_1: "PLEASE PROVIDE THE NAME OF THE OFFER YOU COMPLETED WITHOUT RECEIVING {{currency}}, A BRIEF DESCRIPTION OF THE STEPS YOU TOOK TO COMPLETE THE OFFER, AND YOUR EMAIL ADDRESS."
+      instructions_2: "AFTER WE VERIFY THAT YOU HAVE COMPLETED THE OFFER, YOU WILL RECEIVE YOUR {{currency}}."
+      description_label: "OFFER AND DESCRIPTION:"
+      email_address_label: "EMAIL ADDRESS:"
+      submit_support_request: "SUBMIT SUPPORT REQUEST"
+      support_request_submitted: "SUPPORT REQUEST SUBMITTED"
+      thanks: "THANKS FOR SUBMITTING YOUR SUPPORT REQUEST! YOU WILL RECEIVE YOUR {{currency}} AFTER WE HAVE VERIFIED THAT YOU COMPLETED THE OFFER."
+      missing_description: "PLEASE DESCRIBE THE OFFER YOU COMPLETED."
+      invalid_email: "PLEASE ENTER A REAL EMAIL ADDRESS."

@@ -1,3 +1,5 @@
+# Chinese (Simplified) translation file
+
 zh:
   text:
     shared:
@@ -10,6 +12,7 @@ zh:
       free: "免费"
       next: "下一个 {{items}}"
       previous: "上一页 {{items}}"
+      missing_currency: "Missing {{currency}}?"
 
       # original wall only
       instructions: "安装并运行以下的一个应用以得到 {{currency}}"
@@ -31,3 +34,15 @@ zh:
       download_action: "这里"
       download_link: "如果您没有这个程序, 点击 {{download_action}} 下载"
       continue_link: "点击这里继续"
+      
+    support:
+      title: "Missing {{currency}}?"
+      instructions_1: "Please provide the name of the offer you completed without receiving {{currency}}, a brief description of the steps you took to complete the offer, and your email address."
+      instructions_2: "After we verify that you have completed the offer, you will receive your {{currency}}."
+      description_label: "Offer and description:"
+      email_address_label: "Email address:"
+      submit_support_request: "Submit Support Request"
+      support_request_submitted: "Support Request Submitted"
+      thanks: "Thanks for submitting your support request! You will receive your {{currency}} after we have verified that you completed the offer."
+      missing_description: "Please describe the offer you completed."
+      invalid_email: "Please enter a real email address."
