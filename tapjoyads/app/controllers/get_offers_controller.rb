@@ -27,23 +27,7 @@ class GetOffersController < ApplicationController
     set_offer_list(:is_server_to_server => false)
 
     if @currency.hide_app_installs_for_version?(params[:app_version]) || DEVICES_FOR_REDESIGN.include?(params[:udid])
-      if @currency.show_gallery?
-        @gallery = @offer_list.map do |offer|
-          {
-            :type               => offer.item_type,
-            :name               => offer.action_offer_name,
-            :action             => offer.name,
-            :click_url          => get_click_url(offer),
-            :icon_url           => offer.get_icon_url(:source => :cloudfront, :size => '114'),
-            :primary_category   => offer.primary_category,
-            :user_rating        => offer.user_rating,
-            :visual_reward      => @currency.get_visual_reward_amount(offer),
-          }
-        end
-        render :template => 'get_offers/gallery', :layout => false
-      else
-        render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
-      end
+      render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
     end
   end
 
