@@ -21,8 +21,29 @@ class PayoutInfoTest < ActiveSupport::TestCase
       @info = Factory(:payout_info)
     end
 
-    should "validate bank info if payout_method is ACH" do
+    should "validate bank info if payout_method is ACH or wire" do
       @info.payout_method = 'ach'
+      assert !@info.valid?
+      @info.bank_name = @info.bank_account_number = @info.bank_routing_number = "foo"
+      assert @info.valid?
+
+      @info.bank_name = @info.bank_account_number = @info.bank_routing_number = nil
+
+      @info.payout_method = 'wire'
+      assert !@info.valid?
+      @info.bank_name = @info.bank_account_number = @info.bank_routing_number = "foo"
+      assert @info.valid?
+    end
+
+    should "validate payout_method is wire for international users" do
+      @info.payout_method = 'ach'
+      assert !@info.valid?
+      @info.bank_name = @info.bank_account_number = @info.bank_routing_number = "foo"
+      assert @info.valid?
+
+      @info.bank_name = @info.bank_account_number = @info.bank_routing_number = nil
+
+      @info.payout_method = 'wire'
       assert !@info.valid?
       @info.bank_name = @info.bank_account_number = @info.bank_routing_number = "foo"
       assert @info.valid?

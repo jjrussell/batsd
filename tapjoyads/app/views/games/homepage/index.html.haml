@@ -1,0 +1,13 @@
+#main
+  %img{ :src => '/images/coming-soon.jpg' }
+  
+- content_for :page_styles do
+  :plain
+    #main {
+      margin: 100px auto 0;
+      width: 500px;
+      height: 500px;
+    }
+    
+- content_for :page_head do
+  %meta{ :name => 'description', :content => 'Tapjoy Games: The destination for Mobile Apps, Mobile Games, Android, Apple, iPhone, iPad, iOS' }
