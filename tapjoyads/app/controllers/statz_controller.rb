@@ -142,8 +142,8 @@ private
 
   def load_partner_stats
     @timeframe = params[:timeframe] || '24_hours'
-    @last_updated = Time.zone.at(Mc.get("statz.partner.last_updated.#{@timeframe}") || 0)
-    @cached_stats = Mc.distributed_get("statz.partner.cached_stats.#{@timeframe}") || []
+    @last_updated = Time.zone.at(Mc.get("statz.partners.last_updated.#{@timeframe}") || 0)
+    @cached_stats = Mc.distributed_get("statz.partners.cached_stats.#{@timeframe}") || []
   end
 
   def get_prefix(group)

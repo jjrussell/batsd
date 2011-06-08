@@ -33,7 +33,8 @@ private
     now, granularity, start_time = get_times(timeframe)
 
     cached_stats = {}
-    Offer.find_each(:conditions => "active = true") do |offer|
+    find_options = timeframe == '24_hours' ? { :conditions => 'active = true' } : {}
+    Offer.find_each(find_options) do |offer|
       appstats = Appstats.new(offer.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity }).stats
       conversions = appstats['paid_installs'].sum
       published_offers = appstats['rewards'].sum + appstats['featured_published_offers'].sum + appstats['display_conversions'].sum
@@ -72,8 +73,8 @@ private
     now, granularity, start_time = get_times(timeframe)
 
     cached_partners = {}
-
-    Partner.find_each do |partner|
+    find_options = timeframe == '24_hours' ? { :joins => :offers, :conditions => 'active = true' } : {}
+    Partner.find_each(find_options) do |partner|
       stats = Appstats.new(partner.id, { :start_time => start_time, :end_time => now + 1.hour, :granularity => granularity, :stat_prefix => 'partner' }).stats
       conversions = stats['paid_installs'].sum
       published_offers = stats['rewards'].sum + stats['featured_published_offers'].sum + stats['display_conversions'].sum
