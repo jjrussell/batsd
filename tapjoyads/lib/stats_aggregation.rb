@@ -204,18 +204,28 @@ class StatsAggregation
 
     Partner.find_each do |partner|
       partner_stat = Stats.new(:key => "partner.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
+      partner_ios_stat = Stats.new(:key => "partner-ios.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
+      partner_android_stat = Stats.new(:key => "partner-android.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
+      partner_joint_stat = Stats.new(:key => "partner-joint.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
 
-      partner_stat.parsed_values.clear
-      partner_stat.parsed_countries.clear
+      partner_stats = [partner_stat, partner_ios_stat, partner_android_stat, partner_joint_stat]
+
+      partner_stats.each do |stat|
+        stat.parsed_values.clear
+        stat.parsed_countries.clear
+      end
 
       partner.offers.find_each do |offer|
         case offer.get_platform
         when 'Android'
           global_platform_stat = global_android_stat
+          partner_platform_stat = partner_android_stat
         when 'iOS'
           global_platform_stat = global_ios_stat
+          partner_platform_stat = partner_ios_stat
         else
           global_platform_stat = global_joint_stat
+          partner_platform_stat = partner_joint_stat
         end
 
         this_stat = Stats.new(:key => "app.#{date.strftime('%Y-%m-%d')}.#{offer.id}")
@@ -224,16 +234,19 @@ class StatsAggregation
           global_stat.parsed_values[stat] = sum_arrays(global_stat.get_hourly_count(stat), values)
           partner_stat.parsed_values[stat] = sum_arrays(partner_stat.get_hourly_count(stat), values)
           global_platform_stat.parsed_values[stat] = sum_arrays(global_platform_stat.get_hourly_count(stat), values)
+          partner_platform_stat.parsed_values[stat] = sum_arrays(partner_platform_stat.get_hourly_count(stat), values)
         end
 
         this_stat.parsed_countries.each do |stat, values|
           global_stat.parsed_countries[stat] = sum_arrays(global_stat.get_hourly_count(['countries', stat]), values)
           partner_stat.parsed_countries[stat] = sum_arrays(partner_stat.get_hourly_count(['countries', stat]), values)
           global_platform_stat.parsed_countries[stat] = sum_arrays(global_stat.get_hourly_count(['countries', stat]), values)
+          partner_platform_stat.parsed_countries[stat] = sum_arrays(partner_platform_stat.get_hourly_count(['countries', stat]), values)
         end
       end
-      partner_stat.serial_save
-      partner_stat.update_daily_stat if aggregate_daily
+
+      partner_stats.each { |stat| stat.serial_save }
+      partner_stats.each { |stat| stat.update_daily_stat } if aggregate_daily
     end
 
     global_stats.each { |stat| stat.serial_save }
