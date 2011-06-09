@@ -156,6 +156,11 @@ class Currency < ActiveRecord::Base
     hide_app_installs? && minimum_hide_app_installs_version.blank? || app_version.present? && hide_app_installs? && app_version.version_greater_than_or_equal_to?(minimum_hide_app_installs_version)
   end
   
+  # TO REMOVE - after deploying
+  def show_gallery?
+    false
+  end
+  
 private
   
   def update_memcached_by_app_id
