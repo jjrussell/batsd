@@ -274,16 +274,22 @@ class Offer < ActiveRecord::Base
     offer_list_length = nil
     group             = 0
     s3_key            = "enabled_offers.type_#{type}.exp_#{exp}"
-    key               = currency.present? ? "enabled_offers.#{currency.id}.type_#{type}.exp_#{exp}" : s3_key
+    key               = s3_key
+    
+    # TODO: Set key to the currency-specific key
+    # key               = currency.present? ? "enabled_offers.#{currency.id}.type_#{type}.exp_#{exp}" : s3_key
     
     loop do
       offers = Mc.distributed_get_and_put("#{key}.#{group}") do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
-        if group == 0
-          Marshal.restore(bucket.get("#{s3_key}.#{group}"))
-        else
-          []
-        end
+        Marshal.restore(bucket.get("#{s3_key}.#{group}"))
+        
+        # TODO: Only restore the first offer group to currency-specific offer lists
+        # if group == 0
+        #   Marshal.restore(bucket.get("#{s3_key}.#{group}"))
+        # else
+        #   []
+        # end
       end
       
       if block_given?
