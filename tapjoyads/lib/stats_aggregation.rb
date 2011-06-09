@@ -238,7 +238,7 @@ class StatsAggregation
         this_stat.parsed_countries.each do |stat, values|
           global_stat.parsed_countries[stat] = sum_arrays(global_stat.get_hourly_count(['countries', stat]), values)
           partner_stat.parsed_countries[stat] = sum_arrays(partner_stat.get_hourly_count(['countries', stat]), values)
-          global_platform_stat.parsed_countries[stat] = sum_arrays(global_stat.get_hourly_count(['countries', stat]), values)
+          global_platform_stat.parsed_countries[stat] = sum_arrays(global_platform_stat.get_hourly_count(['countries', stat]), values)
           partner_platform_stat.parsed_countries[stat] = sum_arrays(partner_platform_stat.get_hourly_count(['countries', stat]), values)
         end
       end
