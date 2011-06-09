@@ -30,7 +30,7 @@ class Offer < ActiveRecord::Base
   DAILY_STATS_START_HOUR = 6
   DAILY_STATS_RANGE = 6
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :offer_list_length, :user_rating, :primary_category, :action_offer_name
+  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :offer_list_length
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -205,15 +205,6 @@ class Offer < ActiveRecord::Base
       offer.normalize_stats(stats)
       offer.name = "#{offer.truncated_name}..." if offer.name.length > 40
       offer.calculate_rank_score(weights)
-      if (offer.item_type == 'App' || offer.item_type == 'ActionOffer')
-        offer_item             = offer.item_type.constantize.find(offer.item_id)
-        offer.primary_category = offer_item.primary_category
-        offer.user_rating      = offer_item.user_rating
-        if offer.item_type == 'ActionOffer'
-          action_app = App.find(offer_item.app_id)
-          offer.action_offer_name = action_app.name
-        end
-      end
     end
     
     offer_list.sort! do |o1, o2|

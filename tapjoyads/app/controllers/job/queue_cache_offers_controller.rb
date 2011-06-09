@@ -7,7 +7,7 @@ class Job::QueueCacheOffersController < Job::SqsReaderController
 private
   
   def on_message(message)
-    currency = Currency.find(message.to_s, :include => :currency_group)
+    currency = Currency.find(message.to_s, :include => [ :currency_group, :app ])
     currency.cache_offers
   end
 end
