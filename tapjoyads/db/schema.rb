@@ -161,10 +161,8 @@ ActiveRecord::Schema.define(:version => 20110609221634) do
     t.string   "id",            :limit => 36,                   :null => false
     t.boolean  "active",                      :default => true, :null => false
     t.string   "first_name",                                    :null => false
-    t.string   "middle_name"
     t.string   "last_name",                                     :null => false
     t.string   "title",                                         :null => false
-    t.string   "department"
     t.string   "email",                                         :null => false
     t.string   "superpower"
     t.string   "current_games"
@@ -173,6 +171,9 @@ ActiveRecord::Schema.define(:version => 20110609221634) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "employees", ["email"], :name => "index_employees_on_email", :unique => true
+  add_index "employees", ["id"], :name => "index_employees_on_id", :unique => true
 
   create_table "enable_offer_requests", :id => false, :force => true do |t|
     t.string   "id",              :limit => 36,                :null => false
