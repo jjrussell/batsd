@@ -82,7 +82,7 @@ private
         published_offers = stats['rewards'].sum + stats['featured_published_offers'].sum + stats['display_conversions'].sum
         next unless conversions > 0 || published_offers > 0
         cached_partners[prefix] ||= {}
-        cached_partners[prefix][partner.id] = partner_breakdowns(stats)
+        cached_partners[prefix][partner.id] = partner_breakdowns(stats, partner)
       end
     end
 
@@ -95,7 +95,7 @@ private
     end
   end
 
-  def partner_breakdowns(stats)
+  def partner_breakdowns(stats, partner)
 
     partner_stats = {}
 
