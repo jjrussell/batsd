@@ -18,8 +18,8 @@ class Job::MasterCacheOffersController < Job::JobController
     Offer.cache_offer_stats
     Offer.cache_offers
     
-    Currency.tapjoy_enabled.collect(&:id).each do |currency_id|
-      Sqs.send_message(QueueNames::CACHE_OFFERS, currency_id)
+    Currency.tapjoy_enabled.find_each do |currency|
+      Sqs.send_message(QueueNames::CACHE_OFFERS, currency.id)
     end
     
     render :text => 'ok'

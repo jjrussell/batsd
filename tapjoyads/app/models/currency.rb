@@ -9,8 +9,9 @@ class Currency < ActiveRecord::Base
   
   belongs_to :app
   belongs_to :partner
+  belongs_to :currency_group
   
-  validates_presence_of :app, :partner, :name
+  validates_presence_of :app, :partner, :name, :currency_group
   validates_numericality_of :conversion_rate, :initial_balance, :ordinal, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :spend_share, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :allow_nil => true, :only_integer => true
@@ -29,6 +30,7 @@ class Currency < ActiveRecord::Base
   named_scope :tapjoy_enabled, :conditions => 'tapjoy_enabled'
   
   before_validation :remove_whitespace_from_attributes
+  before_validation_on_create :assign_default_currency_group
   before_create :set_values_from_partner
   after_save :update_memcached_by_app_id
   after_destroy :clear_memcached_by_app_id
@@ -160,7 +162,7 @@ class Currency < ActiveRecord::Base
   
   def cache_offers
     Benchmark.realtime do
-      weights = app.group.weights
+      weights = currency_group.weights
 
       offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
       cache_offer_list(offer_list, weights, Offer::DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
@@ -214,6 +216,10 @@ private
   def remove_whitespace_from_attributes
     self.test_devices    = test_devices.gsub(/\s/, '')
     self.disabled_offers = disabled_offers.gsub(/\s/, '')
+  end
+  
+  def assign_default_currency_group
+    self.currency_group = CurrencyGroup.find_by_name('default')
   end
   
 end

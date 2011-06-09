@@ -152,7 +152,7 @@ class Offer < ActiveRecord::Base
   
   def self.cache_offers
     Benchmark.realtime do
-      weights = AppGroup.find_by_name('default').weights
+      weights = CurrencyGroup.find_by_name('default').weights
       
       offer_list = Offer.enabled_offers.nonfeatured.for_offer_list
       cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
@@ -682,8 +682,7 @@ class Offer < ActiveRecord::Base
   end
   
   def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_installs)
-    return should_reject_from_app_or_currency?(publisher_app, currency) ||
-        device_platform_mismatch?(publisher_app, device_type) ||
+    return device_platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device) ||
         already_complete?(publisher_app, device, app_version) ||
         show_rate_reject?(device) ||
@@ -693,7 +692,8 @@ class Offer < ActiveRecord::Base
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
         capped_installs_reject?(publisher_app) ||
-        hide_app_installs_reject?(currency, hide_app_installs)
+        hide_app_installs_reject?(currency, hide_app_installs) ||
+        should_reject_from_app_or_currency?(publisher_app, currency)
   end
   
   def should_reject_from_app_or_currency?(publisher_app, currency)

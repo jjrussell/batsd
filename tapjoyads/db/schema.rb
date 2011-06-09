@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110608230036) do
+ActiveRecord::Schema.define(:version => 20110609221634) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -43,21 +43,6 @@ ActiveRecord::Schema.define(:version => 20110608230036) do
   add_index "admin_devices", ["id"], :name => "index_admin_devices_on_id", :unique => true
   add_index "admin_devices", ["udid"], :name => "index_admin_devices_on_udid", :unique => true
 
-  create_table "app_groups", :id => false, :force => true do |t|
-    t.string   "id",              :limit => 36,                :null => false
-    t.integer  "conversion_rate",               :default => 0, :null => false
-    t.integer  "bid",                           :default => 0, :null => false
-    t.integer  "price",                         :default => 0, :null => false
-    t.integer  "avg_revenue",                   :default => 0, :null => false
-    t.integer  "random",                        :default => 0, :null => false
-    t.integer  "over_threshold",                :default => 0, :null => false
-    t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "app_groups", ["id"], :name => "index_app_groups_on_id", :unique => true
-
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                      :limit => 36,                    :null => false
     t.string   "partner_id",              :limit => 36,                    :null => false
@@ -82,10 +67,8 @@ ActiveRecord::Schema.define(:version => 20110608230036) do
     t.datetime "released_at"
     t.float    "user_rating"
     t.string   "categories"
-    t.string   "app_group_id",            :limit => 36,                    :null => false
   end
 
-  add_index "apps", ["app_group_id"], :name => "index_apps_on_app_group_id"
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
   add_index "apps", ["name"], :name => "index_apps_on_name"
   add_index "apps", ["partner_id"], :name => "index_apps_on_partner_id"
@@ -137,10 +120,27 @@ ActiveRecord::Schema.define(:version => 20110608230036) do
     t.boolean  "tapjoy_enabled",                                                                :default => false, :null => false
     t.boolean  "hide_app_installs",                                                             :default => false, :null => false
     t.string   "minimum_hide_app_installs_version",                                             :default => "",    :null => false
+    t.string   "currency_group_id",                 :limit => 36,                                                  :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
+  add_index "currencies", ["currency_group_id"], :name => "index_currencies_on_currency_group_id"
   add_index "currencies", ["id"], :name => "index_currencies_on_id", :unique => true
+
+  create_table "currency_groups", :id => false, :force => true do |t|
+    t.string   "id",              :limit => 36,                :null => false
+    t.integer  "conversion_rate",               :default => 0, :null => false
+    t.integer  "bid",                           :default => 0, :null => false
+    t.integer  "price",                         :default => 0, :null => false
+    t.integer  "avg_revenue",                   :default => 0, :null => false
+    t.integer  "random",                        :default => 0, :null => false
+    t.integer  "over_threshold",                :default => 0, :null => false
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "currency_groups", ["id"], :name => "index_currency_groups_on_id", :unique => true
 
   create_table "email_offers", :id => false, :force => true do |t|
     t.string   "id",             :limit => 36,                    :null => false
@@ -161,8 +161,10 @@ ActiveRecord::Schema.define(:version => 20110608230036) do
     t.string   "id",            :limit => 36,                   :null => false
     t.boolean  "active",                      :default => true, :null => false
     t.string   "first_name",                                    :null => false
+    t.string   "middle_name"
     t.string   "last_name",                                     :null => false
     t.string   "title",                                         :null => false
+    t.string   "department"
     t.string   "email",                                         :null => false
     t.string   "superpower"
     t.string   "current_games"
@@ -171,9 +173,6 @@ ActiveRecord::Schema.define(:version => 20110608230036) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  add_index "employees", ["email"], :name => "index_employees_on_email", :unique => true
-  add_index "employees", ["id"], :name => "index_employees_on_id", :unique => true
 
   create_table "enable_offer_requests", :id => false, :force => true do |t|
     t.string   "id",              :limit => 36,                :null => false
