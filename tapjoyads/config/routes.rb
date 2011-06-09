@@ -124,6 +124,7 @@ ActionController::Routing::Routes.draw do |map|
   end
   
   map.resources :offer_instructions, :only => [ :index ]
+  map.resources :support_requests, :only => [ :new, :create ]
   map.with_options :controller => :game_state do |m|
     m.load_game_state 'game_state/load', :action => :load
     m.save_game_state 'game_state/save', :action => :save

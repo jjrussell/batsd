@@ -243,6 +243,14 @@ class Offer < ActiveRecord::Base
       group += 1
     end
     
+    if offer_groups.last.length == GROUP_SIZE    
+      last_offers = []
+      marshalled_offers = Marshal.dump(last_offers)
+      bucket.put("#{key}.#{group}", marshalled_offers)
+      offer_groups << last_offers
+      group += 1
+    end
+    
     offer_groups.each_with_index do |offers, i|
       Mc.distributed_put("#{key}.#{i}", offers)
     end
