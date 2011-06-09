@@ -683,7 +683,7 @@ class Offer < ActiveRecord::Base
   
   def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_installs)
     return should_reject_from_app_or_currency?(publisher_app, currency) ||
-        device_platform_mismatch?(publisher_app, device_type)
+        device_platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device) ||
         already_complete?(publisher_app, device, app_version) ||
         show_rate_reject?(device) ||
