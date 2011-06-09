@@ -135,9 +135,14 @@
 .load-circle= image_tag('load-circle.gif')
 
 #charts{ :style => "text-align: center;" }
-  #connects.graph
-  #installs_spend.graph
-  #installs_rank.graph
+  - if @offer.item_type == 'App'
+    #connects.graph
+    #installs_spend.graph
+    #installs_rank.graph
+  - else
+    - if @offer.item_type == 'ActionOffer'
+      #connects.graph
+    #installs_spend.graph
   - if @offer.is_publisher_offer?
     #revenue.graph
     #offerwall.graph
