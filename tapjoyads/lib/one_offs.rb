@@ -17,6 +17,12 @@ class OneOffs
     end
   end
 
+  def self.create_default_currency_group
+    raise "Default CurrencyGroup already exists" if CurrencyGroup.count > 0
+    currency_group = CurrencyGroup.create(:name => 'default', :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6)
+    Currency.connection.execute("UPDATE currencies SET currency_group_id = '#{currency_group.id}'")
+  end
+
   def self.copy_ranks(date_string)
     Stats.select(:where => "itemName() like 'app.#{date_string}.%'") do |stats|
       puts stats.key
