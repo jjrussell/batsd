@@ -224,6 +224,15 @@ class Offer < ActiveRecord::Base
       offer_groups << offers
       group += 1
     end
+    
+    if offer_groups.last.length == GROUP_SIZE    
+      last_offers = []
+      marshalled_offers = Marshal.dump(last_offers)
+      bucket.put("enabled_offers.type_#{type}.exp_#{exp}.#{group}", marshalled_offers)
+      offer_groups << last_offers
+      group += 1
+    end
+    
     offer_groups.each_with_index do |offers, i|
       Mc.distributed_put("s3.enabled_offers.type_#{type}.exp_#{exp}.#{i}", offers)
     end
