@@ -104,7 +104,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :preview_experiments, :only => [ :index, :show ]
   map.namespace :tools do |tools|
     tools.resources :premier_partners, :only => [ :index ]
-    tools.resources :generic_offers, :only => [ :new, :create ]
+    tools.resources :generic_offers, :only => [ :new, :create, :edit, :update ]
     tools.resources :orders, :only => [ :new, :create ]
     tools.resources :payouts, :only => [ :index, :create ]
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
