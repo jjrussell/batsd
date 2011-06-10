@@ -202,7 +202,9 @@ class Offer < ActiveRecord::Base
     stats = get_offer_rank_statistics(type)
     
     offer_list.each do |offer|
+      offer.bid = [ offer.bid, 500 ].min
       offer.normalize_stats(stats)
+      offer.bid = offer.bid_was
       offer.name = "#{offer.truncated_name}..." if offer.name.length > 40
       offer.calculate_rank_score(weights)
     end
