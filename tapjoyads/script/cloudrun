@@ -19,6 +19,7 @@ command = ARGV[1]
 user = ARGV[2] || 'webuser'
 serial = (ARGV[3] || false) && server_groups.include?('webserver')
 if serial
+  elb_interface = Ec2Tasks.get_elb_interface
   registered_webservers = elb_interface.describe_instance_health('web-lb').collect { |instance| instance[:instance_id] }
 end
 
