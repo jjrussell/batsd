@@ -87,7 +87,7 @@ private
     end
 
     cached_partners.each do |key, breakdown|
-      breakdown.sort! do |s1, s2|
+      breakdown = breakdown.sort do |s1, s2|
         s2[1]['total_revenue'].gsub(',', '').gsub('$', '').to_i <=> s1[1]['total_revenue'].gsub(',', '').gsub('$', '').to_i
       end
       Mc.distributed_put("statz.#{key}.cached_stats.#{timeframe}", breakdown)
