@@ -46,3 +46,4 @@ en:
       thanks: "Thanks for submitting your support request! You will receive your {{currency}} after we have verified that you completed the offer."
       missing_description: "Please describe the offer you completed."
       invalid_email: "Please enter a real email address."
+      abuse_warning: "This form is strictly for users who have not been rewarded for a completed offer. Abuse of this page may lead to your account being banned from engaging in offers in the future."

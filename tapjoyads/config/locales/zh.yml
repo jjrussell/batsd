@@ -46,3 +46,4 @@ zh:
       thanks: "感谢您提交了支持请求! 我们完成了确认流程后，你将会获取应得的 {{currency}}."
       missing_description: "请描述您下载了APP的流程."
       invalid_email: "请输入您真实的电子邮箱."
+      abuse_warning: "This form is strictly for users who have not been rewarded for a completed offer. Abuse of this page may lead to your account being banned from engaging in offers in the future."

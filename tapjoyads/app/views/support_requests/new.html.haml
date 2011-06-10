@@ -17,6 +17,8 @@
     .field
       = label_tag :email_address, t('text.support.email_address_label')
       = text_field_tag :email_address, params[:email_address]
+    .field
+      = t('text.support.abuse_warning')
     = submit_tag(t('text.support.submit_support_request'))
 
 #privacy
