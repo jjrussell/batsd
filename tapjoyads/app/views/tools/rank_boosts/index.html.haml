@@ -13,9 +13,9 @@
         %td
           = text_field_tag('search_box', @offer.present? ? @offer.search_result_name : '', :size => '40')
           = hidden_field_tag('offer_id', @offer.present? ? @offer.id : '')
-          = link_to('[Reset]', rank_boosts_path)
+          = link_to('[Reset]', tools_rank_boosts_path)
 
-= link_to('New Rank Boost', new_rank_boost_path)
+= link_to('New Rank Boost', new_tools_rank_boost_path)
 
 %table#rank_boosts.tablesorter
   %thead
@@ -36,9 +36,9 @@
         %td= rb.end_time.to_s :mdy_ampm
         %td= rb.amount
         %td
-          = link_to "Edit", edit_rank_boost_path(rb)
+          = link_to "Edit", edit_tools_rank_boost_path(rb)
           - if rb.active?
-            = link_to "Deactivate", deactivate_rank_boost_path(rb), :method => :post, :confirm => 'Are you sure?'
+            = link_to "Deactivate", deactivate_tools_rank_boost_path(rb), :method => :post, :confirm => 'Are you sure?'
           
 - content_for :page_javascript do
   :plain

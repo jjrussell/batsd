@@ -7,10 +7,10 @@
   - if permitted_to? :advertiser, :statz
     = link_to("Advertiser Stats", advertiser_statz_path)
 
-%ul.timeframes
-  %li= @timeframe == '24_hours' ? '24 hours' : link_to('24 hours', publisher_statz_path)
-  %li= @timeframe == '7_days' ? '7 days' : link_to('7 days', publisher_statz_path(:timeframe => '7_days'))
-  %li= @timeframe == '1_month' ? '30 days' : link_to('30 days', publisher_statz_path(:timeframe => '1_month'))
+%form
+  = render :partial => 'shared/timeframe_and_platform'
+
+%br
 
 .last_updated Last Updated: #{@last_updated.to_s(:pub_ampm_sec)}
 

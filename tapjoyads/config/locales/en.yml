@@ -12,6 +12,7 @@ en:
       free: "Free"
       next: "Next {{items}}"
       previous: "Previous {{items}}"
+      missing_currency: "Missing {{currency}}?"
 
       # original wall only
       instructions: "Install and OPEN one of the apps below to receive {{currency}}"
@@ -33,3 +34,16 @@ en:
       download_action: "here"
       download_link: "If you don't have this app, click {{download_action}} to download it."
       continue_link: "Click here to continue."
+      
+    support:
+      title: "Missing {{currency}}?"
+      instructions_1: "Please provide the name of the offer you completed without receiving {{currency}}, a brief description of the steps you took to complete the offer, and your email address."
+      instructions_2: "After we verify that you have completed the offer, you will receive your {{currency}}."
+      description_label: "Offer and description:"
+      email_address_label: "Email address:"
+      submit_support_request: "Submit Support Request"
+      support_request_submitted: "Support Request Submitted"
+      thanks: "Thanks for submitting your support request! You will receive your {{currency}} after we have verified that you completed the offer."
+      missing_description: "Please describe the offer you completed."
+      invalid_email: "Please enter a real email address."
+      abuse_warning: "This form is strictly for users who have not been rewarded for a completed offer. Abuse of this page may lead to your account being banned from engaging in offers in the future."

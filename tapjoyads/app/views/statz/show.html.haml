@@ -71,16 +71,16 @@
   - property_row('Capped Advertisers', @offer.item.capped_advertiser_apps.collect { |app| link_to(app.name, statz_path(app.id)) }.join(', ')) if @offer.is_publisher_offer?
 
 %a#show_boosts{:href => '#'} [#{@active_boosts.size} active rank boosts]
-= link_to('[Create rank boost]', new_rank_boost_path(:offer_id => @offer.id))
-= link_to('[View all boosts]', rank_boosts_path(:offer_id => @offer.id))
+= link_to('[Create rank boost]', new_tools_rank_boost_path(:offer_id => @offer.id))
+= link_to('[View all boosts]', tools_rank_boosts_path(:offer_id => @offer.id))
 #boosts_list
   %h5 Total Active Boost: #{@total_boost}x
   %ul
     - @active_boosts.each do |boost|
       %li
         #{boost.amount}x: #{boost.start_time.to_s(:mdy_ampm)} - #{boost.end_time.to_s(:mdy_ampm)} --
-        = link_to('[Edit]', edit_rank_boost_path(boost))
-        = link_to('[Deactivate]', deactivate_rank_boost_path(boost), :method => :post, :confirm => 'Are you sure?')
+        = link_to('[Edit]', edit_tools_rank_boost_path(boost))
+        = link_to('[Deactivate]', deactivate_tools_rank_boost_path(boost), :method => :post, :confirm => 'Are you sure?')
 
 .clear
 
@@ -137,9 +137,14 @@
 .load-circle= image_tag('load-circle.gif')
 
 #charts{ :style => "text-align: center;" }
-  #connects.graph
-  #installs_spend.graph
-  #installs_rank.graph
+  - if @offer.item_type == 'App'
+    #connects.graph
+    #installs_spend.graph
+    #installs_rank.graph
+  - else
+    - if @offer.item_type == 'ActionOffer'
+      #connects.graph
+    #installs_spend.graph
   - if @offer.is_publisher_offer?
     #revenue.graph
     #offerwall.graph

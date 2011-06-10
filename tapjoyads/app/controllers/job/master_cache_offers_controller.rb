@@ -15,7 +15,12 @@ class Job::MasterCacheOffersController < Job::JobController
     
     S3.reset_connection
     
+    Offer.cache_offer_stats
     Offer.cache_offers
+    
+    # Currency.tapjoy_enabled.find_each do |currency|
+    #   Sqs.send_message(QueueNames::CACHE_OFFERS, currency.id)
+    # end
     
     render :text => 'ok'
   end

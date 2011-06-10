@@ -9,8 +9,9 @@ class Currency < ActiveRecord::Base
   
   belongs_to :app
   belongs_to :partner
+  belongs_to :currency_group
   
-  validates_presence_of :app, :partner, :name
+  validates_presence_of :app, :partner, :name, :currency_group
   validates_numericality_of :conversion_rate, :initial_balance, :ordinal, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :spend_share, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :allow_nil => true, :only_integer => true
@@ -25,8 +26,11 @@ class Currency < ActiveRecord::Base
   end
   
   named_scope :for_ios, :joins => :app, :conditions => "#{App.quoted_table_name}.platform = 'iphone'"
+  named_scope :just_app_ids, :select => :app_id, :group => :app_id
+  named_scope :tapjoy_enabled, :conditions => 'tapjoy_enabled'
   
   before_validation :remove_whitespace_from_attributes
+  before_validation_on_create :assign_default_currency_group
   before_create :set_values_from_partner
   after_save :update_memcached_by_app_id
   after_destroy :clear_memcached_by_app_id
@@ -156,6 +160,33 @@ class Currency < ActiveRecord::Base
     hide_app_installs? && minimum_hide_app_installs_version.blank? || app_version.present? && hide_app_installs? && app_version.version_greater_than_or_equal_to?(minimum_hide_app_installs_version)
   end
   
+  def cache_offers
+    Benchmark.realtime do
+      weights = currency_group.weights
+
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
+      cache_offer_list(offer_list, weights, Offer::DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+
+      offer_list = (Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list).reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
+      cache_offer_list(offer_list, weights.merge({ :random => 0 }), Offer::FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+    
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads.reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
+      cache_offer_list(offer_list, weights, Offer::DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+    end
+  end
+  
+  def cache_offer_list(offer_list, weights, type, exp)
+    Offer.cache_offer_list(offer_list, weights, type, exp, self)
+  end
+  
+  def get_cached_offers(options = {}, &block)
+    if block_given?
+      Offer.get_cached_offers(options.merge(:currency => self), &block)
+    else
+      Offer.get_cached_offers(options.merge(:currency => self))
+    end
+  end
+  
 private
   
   def update_memcached_by_app_id
@@ -185,6 +216,10 @@ private
   def remove_whitespace_from_attributes
     self.test_devices    = test_devices.gsub(/\s/, '')
     self.disabled_offers = disabled_offers.gsub(/\s/, '')
+  end
+  
+  def assign_default_currency_group
+    self.currency_group = CurrencyGroup.find_by_name('default')
   end
   
 end

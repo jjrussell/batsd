@@ -37,20 +37,18 @@
   %li= link_to 'Auto-Scaling Groups', as_groups_tools_path
 - if permitted_to? :index, :tools_users
   %li= link_to 'Manage user roles', tools_users_path
-- if permitted_to? :index, :tools_employees
-  %li= link_to 'Manage employee list', tools_employees_path
 
 - if has_permissions_for_one_of?(:account_mgr)
   %h3 Account Management
 %ul
-- if permitted_to? :index, :preview_experiments
-  %li= link_to 'View Offer Ranks', preview_experiments_path
+- if permitted_to? :index, :tools_preview_experiments
+  %li= link_to 'View Offer Ranks', tools_preview_experiments_path
 - if permitted_to? :index, :activities
   %li= link_to 'Activity Log', activities_path
 - if permitted_to? :disabled_popular_offers, :tools
   %li= link_to 'Disabled Popular Offers', disabled_popular_offers_tools_path
-- if permitted_to? :index, :rank_boosts
-  %li= link_to 'Manage Rank Boosts', rank_boosts_path
+- if permitted_to? :index, :tools_rank_boosts
+  %li= link_to 'Manage Rank Boosts', tools_rank_boosts_path
 - if permitted_to? :sanitize_users, :tools
   %li= link_to 'Sanitize Users Table', sanitize_users_tools_path
 - if permitted_to? :index, :tools_premier_partners
@@ -75,3 +73,9 @@
   %li= link_to 'Reset Device', reset_device_tools_path
 - if permitted_to? :index, :tools_admin_devices
   %li= link_to 'Admin Devices', tools_admin_devices_path
+
+- if has_permissions_for_one_of?(:hr)
+  %h3 Human Resources
+%ul
+- if permitted_to? :index, :tools_employees
+  %li= link_to 'Manage employee list', tools_employees_path
