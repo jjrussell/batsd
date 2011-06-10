@@ -1,4 +1,4 @@
-class PreviewExperimentsController < WebsiteController
+class Tools::PreviewExperimentsController < WebsiteController
   layout 'tabbed'
   current_tab :tools
   filter_access_to :all
