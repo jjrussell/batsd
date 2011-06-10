@@ -25,7 +25,7 @@ JobRunner::Gateway.define do |s|
   elsif MACHINE_TYPE == 'masterjobs'
     # jobs with high impact on overall system performance
     s.add_job 'master_calculate_next_payout', :daily => 4.hours
-    s.add_job 'master_udid_reports', :daily => 7.hours
+    s.add_job 'master_udid_reports', :daily => 3.hours
     s.add_job 'master_update_monthly_account', :daily => 8.hours
     s.add_job 'master_verifications', :daily => 5.hours
     
