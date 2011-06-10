@@ -16,28 +16,28 @@ class Homepage::CareersController < WebsiteController
       {
         :name => "Engineering",
         :list => [
-          { :title => "Software Engineers", :href => "software_engineers"},
-          { :title => "Sales Technical Support Engineer", :href => "sales_technical_support_engineer"},
+          { :title => "Software Engineers", :href => "/careers/software_engineers"},
+          { :title => "Sales Technical Support Engineer", :href => "/careers/sales_technical_support_engineer"},
         ]
       },
       {
         :name => "Finance",
         :list => [
-          { :title => "Senior Manager/Director, Financial Planning & Analysis (FP&A)", :href => "senior_managerdirector_financial_planning_analysis"},
-          { :title => "Senior Accountant", :href => "senior_accountant"},
+          { :title => "Senior Manager/Director, Financial Planning & Analysis (FP&A)", :href => "/careers/senior_managerdirector_financial_planning_analysis"},
+          { :title => "Senior Accountant", :href => "/careers/senior_accountant"},
         ]
       },
       {
         :name => "Sales",
         :list => [
-          { :title => "Director, Advertising Sales (San Francisco and New York)", :href => "director_advertising_sales"},
-          { :title => "Sales Development Rep", :href => "sales_development_rep"},
+          { :title => "Director, Advertising Sales (San Francisco and New York)", :href => "/careers/director_advertising_sales"},
+          { :title => "Sales Development Rep", :href => "/careers/sales_development_rep"},
         ]
       },
       {
         :name => "HR",
         :list => [
-          { :title => "Lead Recruiter (Contract)", :href => "lead_recruiter_contract"},
+          { :title => "Lead Recruiter (Contract)", :href => "/careers/lead_recruiter_contract"},
         ]
       }
     ]
