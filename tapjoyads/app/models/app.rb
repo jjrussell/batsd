@@ -1,10 +1,49 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   include MemcachedRecord
-  
+
   ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS' }
   BETA_PLATFORMS    = { 'windows' => 'Windows Phone' }
   PLATFORMS         = ALLOWED_PLATFORMS.merge(BETA_PLATFORMS)
+  PLATFORM_DETAILS = {
+    'android' => {
+      :expected_device_types => Offer::ANDROID_DEVICES,
+      :sdk => {
+        :connect  => ANDROID_CONNECT_SDK,
+        :offers   => ANDROID_OFFERS_SDK,
+        :vg       => ANDROID_VG_SDK,
+      },
+      :store_name => 'Market',
+      :info_url => 'https://market.android.com/details?id=',
+      :direct_store_url => 'market://search?q=',
+      :default_actions_file_name => "TapjoyPPA.java",
+    },
+    'iphone' => {
+      :expected_device_types => Offer::APPLE_DEVICES,
+      :sdk => {
+        :connect  => IPHONE_CONNECT_SDK,
+        :offers   => IPHONE_OFFERS_SDK,
+        :vg       => IPHONE_VG_SDK,
+      },
+      :store_name => 'App Store',
+      :info_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?mt=8&id=',
+      :direct_store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?mt=8&id=',
+      :default_actions_file_name => "TJCPPA.h",
+    },
+    'windows' => {
+      :expected_device_types => Offer::WINDOWS_DEVICES,
+      :sdk => {
+        :connect  => WINDOWS_CONNECT_SDK,
+        :offers   => WINDOWS_OFFERS_SDK,
+        :vg       => WINDOWS_VG_SDK,
+      },
+      :store_name => 'Marketplace',
+      :info_url => 'http://social.zune.net/redirect?type=phoneapp&id=',
+      :direct_store_url => 'http://social.zune.net/redirect?type=phoneapp&id=',
+      :default_actions_file_name => '', #TODO fill this out
+    },
+  }
+
   TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
   MAXIMUM_INSTALLS_PER_PUBLISHER = 4000
   
@@ -55,14 +94,7 @@ class App < ActiveRecord::Base
   end
   
   def store_name
-    case platform
-    when 'android'
-      'Market'
-    when 'iphone'
-      'App Store'
-    when 'windows'
-      'Marketplace'
-    end
+    PLATFORM_DETAILS[platform][:store_name]
   end
 
   def virtual_goods
@@ -100,25 +132,11 @@ class App < ActiveRecord::Base
   end
 
   def info_url
-    case platform
-    when 'android'
-      "https://market.android.com/details?id=#{store_id}"
-    when 'iphone'
-      "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
-    when 'windows'
-      "http://social.zune.net/redirect?type=phoneapp&id=#{store_id}"
-    end
+    "#{PLATFORM_DETAILS[platform][:info_url]}#{store_id}"
   end
 
   def direct_store_url
-    case platform
-    when 'android'
-      "market://search?q=#{store_id}"
-    when 'iphone'
-      "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
-    when 'windows'
-      "http://social.zune.net/redirect?type=phoneapp&id=#{store_id}"
-    end
+    "#{PLATFORM_DETAILS[platform][:direct_store_url]}#{store_id}"
   end
 
   def primary_country
@@ -233,15 +251,7 @@ class App < ActiveRecord::Base
   end
 
   def default_actions_file_name
-    case platform
-    when 'android'
-      "TapjoyPPA.java"
-    when 'iphone'
-      "TJCPPA.h"
-    when 'windows'
-      #TODO fill this out
-      ''
-    end
+    PLATFORM_DETAILS[platform][:default_actions_file_name]
   end
 
   def generate_actions_file
@@ -262,7 +272,7 @@ class App < ActiveRecord::Base
       end
     when 'windows'
       #TODO fill this out
-      file_output = ''
+      file_output = "// Not available yet\n"
     end
     file_output
   end
@@ -309,38 +319,11 @@ class App < ActiveRecord::Base
   end
 
   def get_offer_device_types
-    case platform
-    when 'android'
-      Offer::ANDROID_DEVICES
-    when 'iphone'
-      is_ipad_only? ? Offer::IPAD_DEVICES : Offer::APPLE_DEVICES
-    when 'windows'
-      Offer::WINDOWS_DEVICES
-    end
+    is_ipad_only? ? Offer::IPAD_DEVICES : PLATFORM_DETAILS[platform][:expected_device_types]
   end
 
-  def connect_sdk_url
-    case platform
-    when 'android'  then ANDROID_CONNECT_SDK
-    when 'iphone'   then IPHONE_CONNECT_SDK
-    when 'windows'  then WINDOWS_CONNECT_SDK
-    end
-  end
-
-  def offers_sdk_url
-    case platform
-    when 'android'  then ANDROID_OFFERS_SDK
-    when 'iphone'   then IPHONE_OFFERS_SDK
-    when 'windows'  then WINDOWS_OFFERS_SDK
-    end
-  end
-
-  def vg_sdk_url
-    case platform
-    when 'android'  then ANDROID_VG_SDK
-    when 'iphone'   then IPHONE_VG_SDK
-    when 'windows'  then WINDOWS_VG_SDK
-    end
+  def sdk_url(type)
+    PLATFORM_DETAILS[platform][:sdk][type]
   end
 
 private

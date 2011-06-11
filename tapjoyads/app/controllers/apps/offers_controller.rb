@@ -15,8 +15,7 @@ class Apps::OffersController < WebsiteController
       if @offer.integrated?
         flash.now[:notice] = "When you are ready to go live with this campaign, please click the button below to submit an enable app request."
       else
-        url = @offer.item.connect_sdk_url
-        flash.now[:warning] = "Please note that you must integrate the <a href='#{url}'>Tapjoy advertiser library</a> before we can enable your campaign"
+        flash.now[:warning] = "Please note that you must integrate the <a href='#{@offer.item.sdk_url(:connect)}'>Tapjoy advertiser library</a> before we can enable your campaign"
       end
 
       if @offer.enable_offer_requests.pending.present?

@@ -628,16 +628,7 @@ class Offer < ActiveRecord::Base
 
   def wrong_platform?
     if ['App', 'ActionOffer'].include?(item_type)
-      case get_platform
-      when App::PLATFORMS['iphone']
-        item.platform != 'iphone'
-      when App::PLATFORMS['android']
-        item.platform != 'android'
-      when App::PLATFORMS['windows']
-        item.platform != 'windows'
-      else
-        true # should never be "All" for apps
-      end
+      App::PLATFORMS.invert[get_platform] != item.platform
     end
   end
 

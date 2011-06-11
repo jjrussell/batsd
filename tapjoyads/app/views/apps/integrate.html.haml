@@ -4,7 +4,7 @@
 %h3
   Integrate your application
 %ol
-  %li Download the lightweight, open source #{link_to('Tapjoy library', @app.connect_sdk_url)}.
+  %li Download the lightweight, open source #{link_to('Tapjoy library', @app.sdk_url(:connect))}.
   %li Add it to your project directory.
   %li Compile and run your project.
   %li Add the Tapjoy credentials (provided below) to your app.
@@ -29,7 +29,7 @@
   = clippy(@app.secret_key)
 
 %p
-  .left.download_link= link_to 'Advertiser Library Download', @app.connect_sdk_url
+  .left.download_link= link_to 'Advertiser Library Download', @app.sdk_url(:connect)
   .clear
 
 - content_for :page_styles do

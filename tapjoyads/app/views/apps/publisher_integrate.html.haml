@@ -4,8 +4,8 @@
 %h3 Publisher Integration
 %ol
   %li
-    Select our #{ link_to('Offers Library', @app.offers_sdk_url)}
-    or #{ link_to('Virtual Goods Library', @app.vg_sdk_url)}.
+    Select our #{ link_to('Offers Library', @app.sdk_url(:offers))}
+    or #{ link_to('Virtual Goods Library', @app.sdk_url(:vg))}.
   %li Add the Tapjoy library to your project directory.
   %li Compile and run your project.
   %li Add the Tapjoy credentials (provided below) to your app.
@@ -30,9 +30,9 @@
   = clippy(@app.secret_key)
 
 %p
-  .left.download_link= link_to('Offers Library Download', @app.offers_sdk_url)
+  .left.download_link= link_to('Offers Library Download', @app.sdk_url(:offers))
   .clear
-  .left.download_link= link_to('Virtual Goods Library Download', @app.vg_sdk_url)
+  .left.download_link= link_to('Virtual Goods Library Download', @app.sdk_url(:vg))
   .clear
 
 - content_for :page_styles do
