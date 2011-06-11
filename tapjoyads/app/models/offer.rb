@@ -615,26 +615,26 @@ class Offer < ActiveRecord::Base
     if device_types.length == 1
       case device_types.first
       when 'android'
-        'Android'
+        App::PLATFORMS['android']
       when 'windows'
-        'Windows Phone'
+        App::PLATFORMS['windows']
       else
-        'iOS'
+        App::PLATFORMS['iphone']
       end
     else
-      device_types.any?{|type| type.match(/android|windows/)} ? 'All' : 'iOS'
+      device_types.any?{|type| type == 'android' || type == 'windows'} ? 'All' : 'iOS'
     end
   end
 
   def wrong_platform?
     if ['App', 'ActionOffer'].include?(item_type)
       case get_platform
-      when 'Android'
-        item.platform == 'iphone'
-      when 'iOS'
-        item.platform == 'android'
-      when 'Windows Phone'
-        item.platform == 'windows'
+      when App::PLATFORMS['iphone']
+        item.platform != 'iphone'
+      when App::PLATFORMS['android']
+        item.platform != 'android'
+      when App::PLATFORMS['windows']
+        item.platform != 'windows'
       else
         true # should never be "All" for apps
       end
@@ -735,8 +735,8 @@ class Offer < ActiveRecord::Base
       end
     elsif item_type == 'ActionOffer'
       case get_platform
-      when 'Android' then 25
-      when 'Windows Phone' then 25
+      when App::PLATFORMS['android'] then 25
+      when App::PLATFORMS['windows'] then 25
       else 35
       end
     else
@@ -857,18 +857,17 @@ private
         (currency.only_free_offers? && is_paid?) ||
         (self_promote_only? && partner_id != publisher_app.partner_id)
   end
-  
+
   def device_platform_mismatch?(publisher_app, device_type_param)
     device_type = normalize_device_type(device_type_param)
-    
-    if device_type.nil?
-      if publisher_app.platform.match(/android|windows/)
-        device_type = publisher_app.platform
+    device_type ||=
+      case publisher_app.platform
+      when 'android', 'windows'
+        publisher_app.platform
       else
-        device_type = 'itouch'
+        'itouch'
       end
-    end
-    
+
     return !get_device_types.include?(device_type)
   end
   
@@ -987,6 +986,8 @@ private
       'ipad'
     elsif device_type_param =~ /android/i
       'android'
+    elsif device_type_param =~ /windows/i
+      'windows'
     else
       nil
     end

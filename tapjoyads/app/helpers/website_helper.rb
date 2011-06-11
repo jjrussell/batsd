@@ -16,9 +16,7 @@ module WebsiteHelper
 
   def platform_icon_url(object)
     platform =
-      if object.is_a?(App)
-        object.platform
-      else
+      if object.is_a?(Offer)
         if object.item_type == 'App'
           object.item.platform
         elsif object.item_type == 'RatingOffer' || object.item_type == 'ActionOffer'
@@ -26,6 +24,8 @@ module WebsiteHelper
         else
           'multi'
         end
+      else
+        object.platform
       end
 
     "#{platform}_flat.png"

@@ -54,20 +54,34 @@
 %img.hidden{ :src => '/images/load-circle.gif' }
 
 - content_for :page_javascript do
-  - if params[:platform] == 'windows'
-    :plain
-      window.onfocus = reload;
   :plain
+    if (#{params[:platform].to_s.match(/windows/i).present?}) {
+      window.onfocus = reload;
+      var images = document.getElementsByTagName('img');
+      for (var i = 0, image; image = images[i]; i++) {
+        loadImage(image);
+      }
+    }
+    function reload(){
+      // TODO: refresh page here
+    }
+
     window.onload = init;
     window.onscroll = scroll;
     document.body.ontouchmove = scroll;
 
     function init() {
       window.setTimeout(scroll, 0);
+      var images = document.getElementsByTagName('img');
+      for (var i = 0, image; image = images[i]; i++) {
+        if (window.scrollY + window.innerHeight + 480 > image.offsetTop) {
+          loadImage(image);
+        }
+      }
     }
 
     function scroll() {
-      images = document.getElementsByTagName('img');
+      var images = document.getElementsByTagName('img');
       for (var i = 0, image; image = images[i]; i++) {
         if (window.scrollY + window.innerHeight + 480 > image.offsetTop) {
           loadImage(image);
@@ -79,9 +93,6 @@
       if (image.getAttribute('s') && image.src != image.getAttribute('s')) {
         image.src = image.getAttribute('s');
       }
-    }
-    function reload(){
-      // refresh here;
     }
 - content_for :page_styles do
   :plain
