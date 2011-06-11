@@ -17,12 +17,10 @@ module WebsiteHelper
   def platform_icon_url(object)
     platform =
       if object.is_a?(Offer)
-        if object.item_type == 'App'
+        if %w(App RatingOffer ActionOffer).include?(object.item_type)
           object.item.platform
-        elsif object.item_type == 'RatingOffer' || object.item_type == 'ActionOffer'
-          object.item.app.platform
         else
-          'multi'
+          'multi_platform'
         end
       else
         object.platform
