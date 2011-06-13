@@ -7,6 +7,7 @@ class PartnersController < WebsiteController
 
   before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :delink_user ]
   before_filter :get_account_managers, :only => [ :index, :managed_by ]
+  before_filter :set_platform, :only => [ :reporting ]
   after_filter :save_activity_logs, :only => [ :update, :create_transfer ]
 
   def index
@@ -146,7 +147,6 @@ class PartnersController < WebsiteController
   end
 
   def reporting
-    set_platform
     @start_time, @end_time, @granularity = Appstats.parse_dates(params[:date], params[:end_date], params[:granularity])
     respond_to do |format|
       format.html do
