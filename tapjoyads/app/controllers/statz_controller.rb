@@ -7,6 +7,7 @@ class StatzController < WebsiteController
   
   before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids ]
   before_filter :setup, :only => [ :show, :global ]
+  before_filter :set_platform, :only => [ :global, :publisher, :advertiser ]
   after_filter :save_activity_logs, :only => [ :update ]
   
   def index
@@ -148,17 +149,11 @@ private
   end
 
   def get_prefix(group)
-    case params[:platform]
-    when 'android'
-      @platform = 'android'
-      "#{group}-android"
-    when 'ios'
-      @platform = 'ios'
-      "#{group}-ios"
-    else
-      @platform = ''
-      group
-    end
+    @platform == 'all' ? group : "#{group}-#{@platform}"
+  end
+
+  def set_platform
+    @platform = params[:platform] || 'all'
   end
 
 end
