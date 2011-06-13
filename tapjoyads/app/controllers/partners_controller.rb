@@ -146,12 +146,13 @@ class PartnersController < WebsiteController
   end
 
   def reporting
+    set_platform
     @start_time, @end_time, @granularity = Appstats.parse_dates(params[:date], params[:end_date], params[:granularity])
     respond_to do |format|
       format.html do
       end
       format.json do
-        options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :stat_prefix => 'partner' }
+        options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :stat_prefix => get_stat_prefix('partner') }
         @appstats = Appstats.new(@partner.id, options)
         render :json => { :data => @appstats.graph_data(:admin => true) }
       end
