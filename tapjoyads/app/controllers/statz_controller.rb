@@ -130,7 +130,7 @@ private
     if params[:action] == 'global'
       key = nil
       options[:cache_hours] = 0
-      options[:stat_prefix] = get_prefix('global')
+      options[:stat_prefix] = get_stat_prefix('global')
     else
       key = @offer.id
     end
@@ -143,17 +143,8 @@ private
 
   def load_partner_stats
     @timeframe = params[:timeframe] || '24_hours'
-    prefix = get_prefix('partner')
+    prefix = get_stat_prefix('partner')
     @last_updated = Time.zone.at(Mc.get("statz.#{prefix}.last_updated.#{@timeframe}") || 0)
     @cached_stats = Mc.distributed_get("statz.#{prefix}.cached_stats.#{@timeframe}") || []
   end
-
-  def get_prefix(group)
-    @platform == 'all' ? group : "#{group}-#{@platform}"
-  end
-
-  def set_platform
-    @platform = params[:platform] || 'all'
-  end
-
 end
