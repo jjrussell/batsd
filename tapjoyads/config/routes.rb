@@ -1,41 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  # The priority is based upon order of creation: first created -> highest priority.
-
-  # Sample of regular route:
-  #   map.connect 'products/:id', :controller => 'catalog', :action => 'view'
-  # Keep in mind you can assign values other than :controller and :action
-
-  # Sample of named route:
-  #   map.purchase 'products/:id/purchase', :controller => 'catalog', :action => 'purchase'
-  # This route can be invoked with purchase_url(:id => product.id)
-
-  # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   map.resources :products
-
-  # Sample resource route with options:
-  #   map.resources :products, :member => { :short => :get, :toggle => :post }, :collection => { :sold => :get }
-
-  # Sample resource route with sub-resources:
-  #   map.resources :products, :has_many => [ :comments, :sales ], :has_one => :seller
-
-  # Sample resource route with more complex sub-resources
-  #   map.resources :products do |products|
-  #     products.resources :comments
-  #     products.resources :sales, :collection => { :recent => :get }
-  #   end
-
-  # Sample resource route within a namespace:
-  #   map.namespace :admin do |admin|
-  #     # Directs /admin/products/* to Admin::ProductsController (app/controllers/admin/products_controller.rb)
-  #     admin.resources :products
-  #   end
-
-  # You can have the root of your site routed with map.root -- just remember to delete public/index.html.
-  # map.root :controller => "welcome"
-
-  # See how all your routes lay out with "rake routes"
-  
-  # website-specific routes
+  map.connect 'healthz', :controller => :healthz, :action => :index
   
   map.with_options({:path_prefix => MACHINE_TYPE == 'games' ? '' : 'games', :name_prefix => 'games_'}) do |m|
     m.root :controller => 'games/homepage', :action => :index
@@ -43,15 +7,18 @@ ActionController::Routing::Routes.draw do |map|
   
   break if MACHINE_TYPE == 'games'
   
+  # Homepage routes
   map.root :controller => :homepage, :action => 'start'
   map.connect 'site/:action', :controller => 'homepage'
   map.connect 'index.html', :controller => 'homepage', :action => 'index'
 
+  # Login and registration routes
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
-  
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
+  map.resources :password_resets, :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
   
+  # Dashboard routes
   map.namespace :account do |account|
     account.resources :whitelist, :controller => 'whitelist', :only => [ :index ], :member => [ :enable, :disable ]
   end  
@@ -81,14 +48,6 @@ ActionController::Routing::Routes.draw do |map|
   map.payout_info_billing 'billing/payment-info', :controller => :billing, :action => :payout_info
   map.resources :support, :only => [ :index ],
     :collection => { :contact => :post }
-  map.resources :tools, :only => :index,
-    :collection => { :monthly_data => :get, :new_transfer => :get,
-                     :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :as_groups => :get,
-                     :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
-                     :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get, :capped_publishers => :get,
-                     :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
-                     :freemium_android => :get },
-    :member => {  :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get, :download_udids => :get },
     :collection => { :global => :get, :publisher => :get, :advertiser => :get }
@@ -100,14 +59,21 @@ ActionController::Routing::Routes.draw do |map|
     partner.resources :offer_discounts, :only => [ :index, :new, :create ], :member => { :deactivate => :post }, :controller => 'partners/offer_discounts'
     partner.resources :payout_infos, :only => [ :index, :update ]
   end
-  map.resources :password_resets, :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
-  map.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
   map.with_options(:controller => 'search') do |m|
     m.search_offers 'search/offers', :action => 'offers'
     m.search_users 'search/users', :action => 'users'
   end
   map.premier 'premier', :controller => :premier, :action => :edit
-  map.resources :preview_experiments, :only => [ :index, :show ]
+  
+  # Admin tools routes
+  map.resources :tools, :only => :index,
+    :collection => { :monthly_data => :get, :new_transfer => :get,
+                     :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :as_groups => :get,
+                     :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
+                     :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get, :capped_publishers => :get,
+                     :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
+                     :freemium_android => :get },
+    :member => {  :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post }
   map.namespace :tools do |tools|
     tools.resources :premier_partners, :only => [ :index ]
     tools.resources :generic_offers, :only => [ :new, :create ]
@@ -120,11 +86,19 @@ ActionController::Routing::Routes.draw do |map|
       user.resources :role_assignments, :only => [ :create, :destroy ], :controller => 'users/role_assignments'
     end
     tools.resources :employees, :only => [ :index, :new, :create, :edit, :update ], :member => [ :delete_photo ]
-
+    tools.resources :preview_experiments, :only => [ :index, :show ]
+    tools.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
   end
   
+  # Additional webserver routes
   map.resources :offer_instructions, :only => [ :index ]
   map.resources :support_requests, :only => [ :new, :create ]
+  map.resources :surveys, :only => [ :edit, :create ]
+  map.resources :opt_outs, :only => :create
+  map.connect 'privacy', :controller => 'homepage', :action => 'privacy'
+  map.connect 'privacy.html', :controller => 'homepage', :action => 'privacy'
+  
+  # Game State routes
   map.with_options :controller => :game_state do |m|
     m.load_game_state 'game_state/load', :action => :load
     m.save_game_state 'game_state/save', :action => :save
@@ -133,14 +107,11 @@ ActionController::Routing::Routes.draw do |map|
   # Special paths:
   map.connect 'log_device_app/:action/:id', :controller => 'connect'
   map.connect 'confirm_email_validation', :controller => 'list_signup', :action => 'confirm_api'
-  map.connect 'privacy', :controller => 'homepage', :action => 'privacy'
-  map.connect 'privacy.html', :controller => 'homepage', :action => 'privacy'
   map.connect 'press', :controller => 'homepage/press', :action => 'index'
   map.connect 'press/:id', :controller => 'homepage/press', :action => 'show'
   map.connect 'glu', :controller => 'homepage/press', :action => 'glu'
   map.connect 'publishing', :controller => 'homepage', :action => 'publishers'
   map.resources :sdk, :only => [ :index, :show ]
-  map.resources :opt_outs, :only => :create
   map.namespace :agency_api do |agency|
     agency.resources :apps, :only => [ :index, :show, :create, :update ]
     agency.resources :partners, :only => :create, :collection => { :link => :post }
@@ -148,7 +119,6 @@ ActionController::Routing::Routes.draw do |map|
   end
   
   map.resources :raffles, :only => [ :index, :edit, :update ], :collection => { :status => :get }, :member => { :purchase => :post }
-  map.resources :surveys, :only => [ :edit, :create ]
   
   ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/legacy.rb'))
   ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/default.rb'))
