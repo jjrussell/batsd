@@ -28,20 +28,12 @@ class TapjoyMailer < ActionMailer::Base
     partner = Partner.find_by_id(params[:partner_id], :include => [ :users ])
     account_managers = partner.account_managers.map(&:email)
     account_managers.delete "oso@tapjoy.com"
-    account_managers += [ 'marketing@tapjoy.com', 'dev@tapjoy.com' ]
+    account_managers += [ 'accountmanagers@tapjoy.com', 'dev@tapjoy.com' ]
     account_managers = account_managers.join(', ')
     reply_to account_managers
     recipients account_managers
     subject "Low Conversion Rate Warning!"
     body(:error => error)
-  end
-  
-  def balance_alert(offer, potential_spend)
-    from "support@tapjoy.com"
-    reply_to "marketing@tapjoy.com, dev@tapjoy.com"
-    recipients "marketing@tapjoy.com, dev@tapjoy.com"
-    subject "Balance is getting low for #{offer.name}"
-    body(:offer => offer, :potential_spend => potential_spend)
   end
   
   def password_reset(user_email, reset_link)
