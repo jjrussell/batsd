@@ -139,89 +139,138 @@ Your API Key:
     }
 
 %h4 Field Descriptions
-%table
+%table.tablesorter
   %thead
-    %th Field
-    %th Description
+    %tr
+      %th Field
+      %th Description
   %tbody
     %tr
-      %td Name   
+      %td Name
       %td The app's name.
     %tr
-      %td AppKey   
+      %td AppKey
       %td The app's Tapjoy key. 
     %tr
-      %td Platform   
+      %td Platform
       %td The app's platform, either 'iOS' or 'Android'.
     %tr
-      %td PaidInstalls   
+      %td PaidInstalls
       %td The total number of paid installs for the specified date.
     %tr
-      %td PaidInstallsHourly   
-      %td The hourly breakdown of paid installs. A comma-separated list of paid installs, each number representing one hour.
+      %td PaidInstallsHourly
+      %td The hourly breakdown of PaidInstalls. A comma-separated list of paid installs, each number representing one hour.
     %tr
-      %td PaidClicks   
-      %td The total number of clicks for the specified date.
+      %td PaidClicks
+      %td The total number of paid clicks for the specified date.
     %tr
-      %td PaidClicksHourly   
+      %td PaidClicksHourly
       %td The hourly breakdown of PaidClicks.
     %tr
-      %td Spend   
+      %td Spend
       %td The total spent on installs for the specified date. This number is in cents, so a value of 100 represents $1.00.
     %tr
-      %td SpendHourly   
-      %td The hourly breakdown of spend.
+      %td SpendHourly
+      %td The hourly breakdown of Spend.
     %tr
-      %td Sessions   
+      %td Sessions
       %td The total number of sessions for the specified date. 
     %tr
-      %td SessionsHourly   
-      %td The hourly breakdown of sessions.
+      %td SessionsHourly
+      %td The hourly breakdown of Sessions.
     %tr
-      %td NewUsers   
+      %td NewUsers
       %td The number of new users for the specified date.
     %tr
-      %td NewUsersHourly   
-      %td The hourly breakdown of new users.
+      %td NewUsersHourly
+      %td The hourly breakdown of NewUsers.
     %tr
-      %td DailyActiveUsers   
+      %td DailyActiveUsers
       %td The number of unique users for the specified date.
     %tr
-      %td OfferwallRevenue   
+      %td OfferwallRevenue
       %td The total revenue, in cents, earned through the offerwall for the specified date.
     %tr
-      %td OfferwallRevenueHourly   
+      %td OfferwallRevenueHourly
       %td The hourly breakdown for OfferwallRevenue.
     %tr
-      %td FeaturedOfferRevenue   
+      %td OfferwallImpressions
+      %td The total number of offerwall views served for the specified date.
+    %tr
+      %td OfferwallImpressionsHourly 
+      %td The hourly breakdown for OfferwallImpressions.
+    %tr
+      %td OfferwallClicks
+      %td The total number of clicks from the offerwall for the specified date.
+    %tr
+      %td OfferwallClicksHourly
+      %td The hourly breakdown for OfferwallClicks.
+    %tr
+      %td OfferwallConversions
+      %td The number of conversions generated from the offerwall for the specified date.
+    %tr
+      %td OfferwallConversionsHourly
+      %td The hourly breakdown for OfferwallConversions.
+    %tr
+      %td FeaturedOfferRevenue
       %td The total revenue, in cents, earned through featured offers.
     %tr
-      %td FeaturedOfferRevenueHourly   
+      %td FeaturedOfferRevenueHourly
       %td The hourly breakdown for FeaturedOfferRevenue.
     %tr
-      %td DisplayRevenue   
+      %td FeaturedOfferRequests
+      %td The total number of requests the app made for featured offers for the specified date.
+    %tr
+      %td FeaturedOfferRequestsHourly
+      %td The hourly breakdown for FeaturedOfferRequests.
+    %tr
+      %td FeaturedOfferImpressions
+      %td The total number of featured offers served for the specified date.
+    %tr
+      %td FeaturedOfferImpressionsHourly
+      %td The hourly breakdown of FeaturedOfferImpressions.
+    %tr
+      %td FeaturedOfferClicks
+      %td The total number of clicks from featured offers for the specified date.
+    %tr
+      %td FeaturedOfferClicksHourly
+      %td The hourly breakdown of FeaturedOfferClicks.
+    %tr
+      %td FeaturedOfferConversions
+      %td The total number of conversions generated from featured offers for the specified date.
+    %tr
+      %td FeaturedOfferConversionsHourly
+      %td The hourly breakdown of FeaturedOfferConversions.
+    %tr
+      %td DisplayRevenue
       %td The total revenue, in cents, earned through display ads for the specified date.
     %tr
-      %td DisplayRevenueHourly   
+      %td DisplayRevenueHourly
       %td The hourly breakdown for DisplayRevenue.
     %tr
-      %td DisplayRequests   
+      %td DisplayRequests
       %td The total number of requests the app made for display ads for the specified date.
     %tr
-      %td DisplayRequestsHourly   
+      %td DisplayRequestsHourly
       %td The hourly breakdown of DisplayRequests.
     %tr
-      %td DisplayImpressions   
+      %td DisplayImpressions
       %td The total number of display ads served for the specified date.
     %tr
-      %td DisplayImpressionsHourly   
+      %td DisplayImpressionsHourly
       %td The hourly breakdown of DisplayImpressions.
     %tr
-      %td DisplayClicks   
-      %td The total number of clicks to display ads for the specified date.
+      %td DisplayClicks
+      %td The total number of clicks from display ads for the specified date.
     %tr
-      %td DisplayClicksHourly   
+      %td DisplayClicksHourly
       %td The hourly breakdown of DisplayClicks.
+    %tr
+      %td DisplayConversions
+      %td The total number of conversions generated from display ads for the specified date.
+    %tr
+      %td DisplayConversionsHourly
+      %td The hourly breakdown of DisplayConversions.
 
 %h4 Rate limiting
 
@@ -254,17 +303,15 @@ Your API Key:
       margin-left: 10px;
     }
     
+    .tablesorter td {
+      font-size: 120%;
+    }
+    
+    .tablesorter tr td:first-child,
     .code {
       font-family: courier;
     }
     
-    table {
-      border-collapse: collapse;
+    .tablesorter tr:nth-child(2n) td {
+      background-color: #f0f0f6;
     }
-    
-    td, th {
-      border: 1px solid #E6E6E6;
-      padding: 2px;
-    }
-    
-    
