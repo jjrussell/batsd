@@ -690,7 +690,6 @@ class Offer < ActiveRecord::Base
         jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
-        capped_installs_reject?(publisher_app) ||
         hide_app_installs_reject?(currency, hide_app_installs) ||
         should_reject_from_app_or_currency?(publisher_app, currency)
   end
@@ -956,10 +955,6 @@ private
   
   def action_app_reject?(device)
     item_type == "ActionOffer" && third_party_data.present? && !device.has_app(third_party_data)
-  end
-  
-  def capped_installs_reject?(publisher_app)
-    free_app? && publisher_app.capped_advertiser_app_ids.include?(item_id)
   end
   
   def hide_app_installs_reject?(currency, hide_app_installs)
