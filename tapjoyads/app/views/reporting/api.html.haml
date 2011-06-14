@@ -44,8 +44,22 @@ Your API Key:
         &lt;DailyActiveUsers>0&lt;/DailyActiveUsers>
         &lt;OfferwallRevenue>0&lt;/OfferwallRevenue>
         &lt;OfferwallRevenueHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/OfferwallRevenueHourly>
+        &lt;OfferwallImpressions>0&lt;/OfferwallImpressions>
+        &lt;OfferwallImpressionsHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/OfferwallImpressionsHourly>
+        &lt;OfferwallClicks>0&lt;/OfferwallClicks>
+        &lt;OfferwallClicksHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/OfferwallClicksHourly>
+        &lt;OfferwallConversions>0&lt;/OfferwallConversions>
+        &lt;OfferwallConversionsHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/OfferwallConversionsHourly>
         &lt;FeaturedOfferRevenue>0&lt;/FeaturedOfferRevenue>
         &lt;FeaturedOfferRevenueHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/FeaturedOfferRevenueHourly>
+        &lt;FeaturedOfferRequests>0&lt;/FeaturedOfferRequests>
+        &lt;FeaturedOfferRequestsHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/FeaturedOfferRequestsHourly>
+        &lt;FeaturedOfferImpressions>0&lt;/FeaturedOfferImpressions>
+        &lt;FeaturedOfferImpressionsHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/FeaturedOfferImpressionsHourly>
+        &lt;FeaturedOfferClicks>0&lt;/FeaturedOfferClicks>
+        &lt;FeaturedOfferClicksHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/FeaturedOfferClicksHourly>
+        &lt;FeaturedOfferConversions>0&lt;/FeaturedOfferConversions>
+        &lt;FeaturedOfferConversionsHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/FeaturedOfferConversionsHourly>
         &lt;DisplayRevenue>0&lt;/DisplayRevenue>
         &lt;DisplayRevenueHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayRevenueHourly>
         &lt;DisplayRequests>0&lt;/DisplayRequests>
@@ -54,6 +68,8 @@ Your API Key:
         &lt;DisplayImpressionsHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayImpressionsHourly>
         &lt;DisplayClicks>0&lt;/DisplayClicks>
         &lt;DisplayClicksHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayClicksHourly>
+        &lt;DisplayConversions>0&lt;/DisplayConversions>
+        &lt;DisplayConversionsHourly>0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0&lt;/DisplayConversionsHourly>
       &lt;/App>
     
       ...
@@ -73,32 +89,48 @@ Your API Key:
       "Date" : "YYYY-MM-DD",
       "Apps" : [
         {
-          "Name"                       : "App Name",
-          "AppKey"                     : "00000000-0000-0000-0000-000000000000",
-          "Platform"                   : "App Platform",
-          "PaidInstalls"               : 0,
-          "PaidInstallsHourly"         : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-          "PaidClicks"                 : 0,
-          "PaidClicksHourly"           : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-          "Spend"                      : 0,
-          "SpendHourly"                : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-          "Sessions"                   : 0,
-          "SessionsHourly"             : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-          "NewUsers"                   : 0,
-          "NewUsersHourly"             : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-          "DailyActiveUsers"           : 0,
-          "OfferwallRevenue"           : 0,
-          "OfferwallRevenueHourly"     : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-          "FeaturedOfferRevenue"       : 0,
-          "FeaturedOfferRevenueHourly" : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-          "DisplayRevenue"             : 0,
-          "DisplayRevenueHourly"       : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-          "DisplayRequests"            : 0,
-          "DisplayRequestsHourly"      : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-          "DisplayImpressions"         : 0,
-          "DisplayImpressionsHourly"   : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-          "DisplayClicks"              : 0,
-          "DisplayClicksHourly"        : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+          "Name"                           : "App Name",
+          "AppKey"                         : "00000000-0000-0000-0000-000000000000",
+          "Platform"                       : "App Platform",
+          "PaidInstalls"                   : 0,
+          "PaidInstallsHourly"             : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "PaidClicks"                     : 0,
+          "PaidClicksHourly"               : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "Spend"                          : 0,
+          "SpendHourly"                    : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "Sessions"                       : 0,
+          "SessionsHourly"                 : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "NewUsers"                       : 0,
+          "NewUsersHourly"                 : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DailyActiveUsers"               : 0,
+          "OfferwallRevenue"               : 0,
+          "OfferwallRevenueHourly"         : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "OfferwallImpressions"           : 0,
+          "OfferwallImpressionsHourly"     : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "OfferwallClicks"                : 0,
+          "OfferwallClicksHourly"          : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "OfferwallConversions"           : 0,
+          "OfferwallConversionsHourly"     : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "FeaturedOfferRevenue"           : 0,
+          "FeaturedOfferRevenueHourly"     : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "FeaturedOfferRequests"          : 0,
+          "FeaturedOfferRequestsHourly"    : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "FeaturedOfferImpressions"       : 0,
+          "FeaturedOfferImpressionsHourly" : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "FeaturedOfferClicks"            : 0,
+          "FeaturedOfferClicksHourly"      : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "FeaturedOfferConversions"       : 0,
+          "FeaturedOfferConversionsHourly" : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DisplayRevenue"                 : 0,
+          "DisplayRevenueHourly"           : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DisplayRequests"                : 0,
+          "DisplayRequestsHourly"          : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DisplayImpressions"             : 0,
+          "DisplayImpressionsHourly"       : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DisplayClicks"                  : 0,
+          "DisplayClicksHourly"            : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+          "DisplayConversions"             : 0,
+          "DisplayConversionsHourly"       : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         },
         
         ...
@@ -107,33 +139,89 @@ Your API Key:
     }
 
 %h4 Field Descriptions
-%ul
-  %li Name: The app's name.
-  %li AppKey: The app's Tapjoy key. 
-  %li Platform: The app's platform, either 'iOS' or 'Android'.
-  %li PaidInstalls: The total number of paid installs for the specified date.
-  %li PaidInstallsHourly: The hourly breakdown of paid installs. A comma-separated list of paid installs, each number representing one hour.
-  %li PaidClicks: The total number of clicks for the specified date.
-  %li PaidClicksHourly: The hourly breakdown of PaidClicks.
-  %li Spend: The total spent on installs for the specified date. This number is in cents, so a value of 100 represents $1.00.
-  %li SpendHourly: The hourly breakdown of spend.
-  %li Sessions: The total number of sessions for the specified date. 
-  %li SessionsHourly: The hourly breakdown of sessions.
-  %li NewUsers: The number of new users for the specified date.
-  %li NewUsersHourly: The hourly breakdown of new users.
-  %li DailyActiveUsers: The number of unique users for the specified date.
-  %li OfferwallRevenue: The total revenue, in cents, earned through the offerwall for the specified date.
-  %li OfferwallRevenueHourly: The hourly breakdown for OfferwallRevenue.
-  %li FeaturedOfferRevenue: The total revenue, in cents, earned through featured offers.
-  %li FeaturedOfferRevenueHourly: The hourly breakdown for FeaturedOfferRevenue.
-  %li DisplayRevenue: The total revenue, in cents, earned through display ads for the specified date.
-  %li DisplayRevenueHourly: The hourly breakdown for DisplayRevenue.
-  %li DisplayRequests: The total number of requests the app made for display ads for the specified date.
-  %li DisplayRequestsHourly: The hourly breakdown of DisplayRequests.
-  %li DisplayImpressions: The total number of display ads served for the specified date.
-  %li DisplayImpressionsHourly: The hourly breakdown of DisplayImpressions.
-  %li DisplayClicks: The total number of clicks to display ads for the specified date.
-  %li DisplayClicksHourly: The hourly breakdown of DisplayClicks.
+%table
+  %thead
+    %th Field
+    %th Description
+  %tbody
+    %tr
+      %td Name   
+      %td The app's name.
+    %tr
+      %td AppKey   
+      %td The app's Tapjoy key. 
+    %tr
+      %td Platform   
+      %td The app's platform, either 'iOS' or 'Android'.
+    %tr
+      %td PaidInstalls   
+      %td The total number of paid installs for the specified date.
+    %tr
+      %td PaidInstallsHourly   
+      %td The hourly breakdown of paid installs. A comma-separated list of paid installs, each number representing one hour.
+    %tr
+      %td PaidClicks   
+      %td The total number of clicks for the specified date.
+    %tr
+      %td PaidClicksHourly   
+      %td The hourly breakdown of PaidClicks.
+    %tr
+      %td Spend   
+      %td The total spent on installs for the specified date. This number is in cents, so a value of 100 represents $1.00.
+    %tr
+      %td SpendHourly   
+      %td The hourly breakdown of spend.
+    %tr
+      %td Sessions   
+      %td The total number of sessions for the specified date. 
+    %tr
+      %td SessionsHourly   
+      %td The hourly breakdown of sessions.
+    %tr
+      %td NewUsers   
+      %td The number of new users for the specified date.
+    %tr
+      %td NewUsersHourly   
+      %td The hourly breakdown of new users.
+    %tr
+      %td DailyActiveUsers   
+      %td The number of unique users for the specified date.
+    %tr
+      %td OfferwallRevenue   
+      %td The total revenue, in cents, earned through the offerwall for the specified date.
+    %tr
+      %td OfferwallRevenueHourly   
+      %td The hourly breakdown for OfferwallRevenue.
+    %tr
+      %td FeaturedOfferRevenue   
+      %td The total revenue, in cents, earned through featured offers.
+    %tr
+      %td FeaturedOfferRevenueHourly   
+      %td The hourly breakdown for FeaturedOfferRevenue.
+    %tr
+      %td DisplayRevenue   
+      %td The total revenue, in cents, earned through display ads for the specified date.
+    %tr
+      %td DisplayRevenueHourly   
+      %td The hourly breakdown for DisplayRevenue.
+    %tr
+      %td DisplayRequests   
+      %td The total number of requests the app made for display ads for the specified date.
+    %tr
+      %td DisplayRequestsHourly   
+      %td The hourly breakdown of DisplayRequests.
+    %tr
+      %td DisplayImpressions   
+      %td The total number of display ads served for the specified date.
+    %tr
+      %td DisplayImpressionsHourly   
+      %td The hourly breakdown of DisplayImpressions.
+    %tr
+      %td DisplayClicks   
+      %td The total number of clicks to display ads for the specified date.
+    %tr
+      %td DisplayClicksHourly   
+      %td The hourly breakdown of DisplayClicks.
 
 %h4 Rate limiting
 
@@ -169,3 +257,14 @@ Your API Key:
     .code {
       font-family: courier;
     }
+    
+    table {
+      border-collapse: collapse;
+    }
+    
+    td, th {
+      border: 1px solid #E6E6E6;
+      padding: 2px;
+    }
+    
+    
