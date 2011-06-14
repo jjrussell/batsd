@@ -4,7 +4,6 @@
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   
-  before_filter :we_are_down
   before_filter :set_time_zone
   before_filter :set_locale
   before_filter :fix_params
@@ -20,10 +19,6 @@ class ApplicationController < ActionController::Base
   filter_parameter_logging :password, :password_confirmation
   
 private
-  
-  def we_are_down
-    render :file => "#{Rails.root}/public/500.html", :status => 500
-  end
   
   def verify_params(required_params, options = {})
     render_missing_text = options.delete(:render_missing_text) { true }
