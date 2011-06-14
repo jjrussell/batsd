@@ -66,7 +66,6 @@
   - unless @offer.publisher_app_whitelist.blank?
     - property_row('Publisher app whitelist', @offer.get_publisher_app_whitelist.map { |id| link_to(App.find(id).name, statz_path(id)) }.join(', '))
   - property_row('id', @offer.id + ' - ' + clippy(@offer.id))
-  - property_row('Capped Advertisers', @offer.item.capped_advertiser_apps.collect { |app| link_to(app.name, statz_path(app.id)) }.join(', ')) if @offer.is_publisher_offer?
 
 %a#show_boosts{:href => '#'} [#{@active_boosts.size} active rank boosts]
 = link_to('[Create rank boost]', new_tools_rank_boost_path(:offer_id => @offer.id))
