@@ -14,6 +14,7 @@ class Currency < ActiveRecord::Base
   validates_presence_of :app, :partner, :name, :currency_group
   validates_numericality_of :conversion_rate, :initial_balance, :ordinal, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :spend_share, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
+  validates_numericality_of :rev_share_override, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1, :allow_nil => true
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :allow_nil => true, :only_integer => true
   validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :banner_advertiser, :hide_app_installs, :tapjoy_enabled, :in => [ true, false ]
   validates_each :callback_url do |record, attribute, value|
@@ -32,6 +33,7 @@ class Currency < ActiveRecord::Base
   before_validation :remove_whitespace_from_attributes
   before_validation_on_create :assign_default_currency_group
   before_create :set_values_from_partner
+  before_update :update_spend_share
   after_save :update_memcached_by_app_id
   after_destroy :clear_memcached_by_app_id
   
@@ -148,7 +150,7 @@ class Currency < ActiveRecord::Base
   
   def set_values_from_partner
     self.disabled_partners = partner.disabled_partners
-    self.spend_share       = partner.rev_share * get_spend_share_ratio
+    self.spend_share       = calculate_spend_share
     self.direct_pay_share  = partner.direct_pay_share
     self.offer_whitelist   = partner.offer_whitelist
     self.use_whitelist     = partner.use_whitelist
@@ -213,13 +215,22 @@ private
     end
   end
   
+  def calculate_spend_share
+    (rev_share_override || partner.rev_share) * get_spend_share_ratio
+  end
+  
   def remove_whitespace_from_attributes
     self.test_devices    = test_devices.gsub(/\s/, '')
     self.disabled_offers = disabled_offers.gsub(/\s/, '')
   end
   
   def assign_default_currency_group
-    self.currency_group = CurrencyGroup.find_by_name('default')
+    self.currency_group = CurrencyGroup.find_or_create_by_name('default')
   end
   
+  def update_spend_share
+    if rev_share_override_changed?
+      self.spend_share = calculate_spend_share
+    end
+  end
 end

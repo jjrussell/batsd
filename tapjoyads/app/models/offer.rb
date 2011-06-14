@@ -122,7 +122,7 @@ class Offer < ActiveRecord::Base
   named_scope :for_ios_only, :conditions => 'device_types not like "%android%"'
   named_scope :with_rank_boosts, :joins => :rank_boosts, :readonly => false
   
-  delegate :balance, :pending_earnings, :name, :approved_publisher?, :to => :partner, :prefix => true
+  delegate :balance, :pending_earnings, :name, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   
   alias_method :events, :offer_events
   

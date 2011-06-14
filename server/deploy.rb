@@ -36,7 +36,7 @@ elsif server_type == 'games'
   `cp tapjoyads/config/newrelic-games.yml tapjoyads/config/newrelic.yml`
 end
 
-if server_type == 'web' || server_type == 'games'
+if server_type == 'web'
   `cp -f tapjoyads/db/webserver.sqlite tapjoyads/db/production.sqlite`
   `chmod 444 tapjoyads/db/production.sqlite`
   `cp tapjoyads/config/database-webserver.yml tapjoyads/config/database.yml`

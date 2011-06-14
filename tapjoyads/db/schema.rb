@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110609221634) do
+ActiveRecord::Schema.define(:version => 20110614092546) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -121,6 +121,7 @@ ActiveRecord::Schema.define(:version => 20110609221634) do
     t.boolean  "hide_app_installs",                                                             :default => false, :null => false
     t.string   "minimum_hide_app_installs_version",                                             :default => "",    :null => false
     t.string   "currency_group_id",                 :limit => 36,                                                  :null => false
+    t.decimal  "rev_share_override",                              :precision => 8, :scale => 6
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
