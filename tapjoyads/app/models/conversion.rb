@@ -173,7 +173,7 @@ private
     Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET balance = (balance + #{advertiser_amount}) WHERE id = '#{p_id}'")
   end
   
-  def update_realtime_stats    
+  def update_realtime_stats
     Conversion.get_stat_definitions(reward_type).each do |stat_definition|
       stat_name  = stat_definition[:stat]
       attr_value = send(stat_definition[:attr])
