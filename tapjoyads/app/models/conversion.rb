@@ -173,11 +173,7 @@ private
     Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET balance = (balance + #{advertiser_amount}) WHERE id = '#{p_id}'")
   end
   
-  def update_realtime_stats
-    if (advertiser_offer.free_app? && advertiser_offer.get_platform == 'iOS' && (reward_type < 1000 || reward_type >= 2000))
-      publisher_app.increment_daily_installs_for_advertiser(advertiser_offer.item_id)
-    end
-    
+  def update_realtime_stats    
     Conversion.get_stat_definitions(reward_type).each do |stat_definition|
       stat_name  = stat_definition[:stat]
       attr_value = send(stat_definition[:attr])
