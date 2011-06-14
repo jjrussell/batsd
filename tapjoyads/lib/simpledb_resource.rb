@@ -168,6 +168,8 @@ class SimpledbResource
       put('updated-at', now.to_f.to_s)
     end
     
+    raise "Simpledb is down"
+    
     Rails.logger.info_with_time("Saving to sdb, domain: #{this_domain_name}") do
       self.write_to_memcache if save_to_memcache
       self.write_to_sdb(expected_attr) if save_to_sdb
