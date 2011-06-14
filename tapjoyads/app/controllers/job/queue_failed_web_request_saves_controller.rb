@@ -40,7 +40,14 @@ class Job::QueueFailedWebRequestSavesController < Job::JobController
       
       if @bucket.key(incomplete_path).exists?
         sdb_string = @bucket.get(incomplete_path)
-        sdb_item = SimpledbResource.deserialize(sdb_string)
+        sdb_item = nil
+        begin
+          sdb_item = SimpledbResource.deserialize(sdb_string)
+        rescue JSON::ParserError => e
+          move_s3_key(uuid, 'parser_errors')
+          delete_message(message)
+          next
+        end
         sdb_item.put('from_queue', Time.zone.now.to_f.to_s)
         date = sdb_item.this_domain_name.scan(/^web-request-(\d{4}-\d{2}-\d{2})/)[0][0]
         items_by_date[date] ||= []
@@ -85,7 +92,7 @@ class Job::QueueFailedWebRequestSavesController < Job::JobController
         sdb_items.each do |item|
           json = JSON.parse(message_by_item_key[item.key].to_s)
           uuid = json['uuid']
-          move_s3_key(uuid)
+          move_s3_key(uuid, 'complete')
           delete_message(message_by_item_key[item.key])
         end
       end
@@ -96,19 +103,19 @@ class Job::QueueFailedWebRequestSavesController < Job::JobController
   
 private
   
-  def move_s3_key(uuid)
-    incomplete_path = "incomplete/#{uuid}"
-    complete_path   = "complete/#{uuid}"
-    retries         = 3
+  def move_s3_key(uuid, destination)
+    incomplete_path  = "incomplete/#{uuid}"
+    destination_path = "#{destination}/#{uuid}"
+    retries          = 3
     begin
-      @bucket.move_key(incomplete_path, complete_path)
+      @bucket.move_key(incomplete_path, destination_path)
     rescue RightAws::AwsError => e
       if retries > 0
         retries -= 1
         sleep(0.1)
         retry
       else
-        Rails.logger.info "Failed to move S3 key: from #{incomplete_path} to #{complete_path}"
+        Rails.logger.info "Failed to move S3 key: from #{incomplete_path} to #{destination_path}"
         Notifier.alert_new_relic(e.class, e.message, request, params)
       end
     end
