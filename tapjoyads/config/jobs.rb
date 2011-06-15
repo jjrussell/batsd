@@ -58,7 +58,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'master_healthz', :interval => 1.minute
     s.add_job 'master_run_offer_events', :interval => 1.minute
     s.add_job 'master_fetch_top_freemium_android_apps', :daily => 1.minute
-    s.add_job 'master_calculate_rank_boosts', :interval => 5.minutes
+    s.add_job 'master_calculate_ranking_fields', :interval => 5.minutes
     s.add_job 'master_cache_offers', :interval => 1.minute
   else
     Rails.logger.info "JobRunner: Not running any jobs. Not a job server."

@@ -5,9 +5,10 @@ class CurrencyGroup < ActiveRecord::Base
   
   validates_presence_of :name
   
-  WEIGHT_COLUMNS = [ :conversion_rate, :bid, :price, :avg_revenue, :random, :over_threshold ]
+  WEIGHT_COLUMNS = [ :normal_conversion_rate, :normal_bid, :normal_price, :normal_avg_revenue, :random, :over_threshold, :rank_boost ]
   
   def weights
-    WEIGHT_COLUMNS.inject({}) { |weights_hash, column| weights_hash[column] = eval(column.to_s); weights_hash }
+    WEIGHT_COLUMNS.inject({}) { |weights_hash, column| weights_hash[column] = send(column); weights_hash }
   end
+  
 end
