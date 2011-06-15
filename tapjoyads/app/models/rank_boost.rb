@@ -3,7 +3,8 @@ class RankBoost < ActiveRecord::Base
   
   belongs_to :offer
   
-  validates_presence_of :start_time, :end_time, :offer, :amount
+  validates_presence_of :start_time, :end_time, :offer
+  validates_numericality_of :amount, :allow_nil => false
   validate :check_times
   
   after_save :calculate_rank_boost_for_offer
