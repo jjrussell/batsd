@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110614092546) do
+ActiveRecord::Schema.define(:version => 20110615074100) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -189,6 +189,24 @@ ActiveRecord::Schema.define(:version => 20110614092546) do
   add_index "enable_offer_requests", ["id"], :name => "index_enable_offer_requests_on_id", :unique => true
   add_index "enable_offer_requests", ["offer_id"], :name => "index_enable_offer_requests_on_offer_id"
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
+
+  create_table "gamers", :id => false, :force => true do |t|
+    t.string   "id",                :limit => 36, :null => false
+    t.string   "email",                           :null => false
+    t.string   "crypted_password"
+    t.string   "password_salt"
+    t.string   "persistence_token"
+    t.string   "perishable_token"
+    t.datetime "current_login_at"
+    t.datetime "last_login_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "gamers", ["email"], :name => "index_gamers_on_email", :unique => true
+  add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
+  add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
+  add_index "gamers", ["persistence_token"], :name => "index_gamers_on_persistence_token"
 
   create_table "generic_offers", :id => false, :force => true do |t|
     t.string   "id",               :limit => 36,                    :null => false

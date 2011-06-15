@@ -151,3 +151,7 @@ Factory.define :offer_event do |offer_event|
   offer_event.daily_budget nil
   offer_event.change_daily_budget false
 end
+
+Factory.define :gamer do |gamer|
+  gamer.email { Factory.next(:email) }
+end
