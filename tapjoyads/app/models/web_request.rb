@@ -31,6 +31,11 @@ class WebRequest < SimpledbResource
   self.sdb_attr :click_key
   self.sdb_attr :transaction_id
   self.sdb_attr :tap_points
+  self.sdb_attr :publisher_amount, :type => :int
+  self.sdb_attr :advertiser_amount, :type => :int
+  self.sdb_attr :displayer_amount, :type => :int
+  self.sdb_attr :tapjoy_amount, :type => :int
+  self.sdb_attr :currency_reward, :type => :int
   
   PATH_TO_STAT_MAP = {
     'connect'                  => [ { :stat => 'logins',                    :attr => :app_id } ],
