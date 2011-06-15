@@ -14,13 +14,6 @@
   %td
     = f.check_box :hide_app_installs
     = error_message_on(@currency, :hide_app_installs)
-%tr.admin
-  %th
-    = f.label :show_gallery, 'Enable PPA Gallery'
-    #help_show_gallery.help ?
-  %td
-    = f.check_box :show_gallery
-    = error_message_on(@currency, :show_gallery)
 %tr.admin.hide_app_installs{:class => @currency.hide_app_installs? ? '' : 'hidden' }
   %th
     = f.label :minimum_hide_app_installs_version, 'Min hide app installs version'
@@ -59,6 +52,12 @@
     #help_ordinal.help ?
   %td
     = f.text_field :ordinal
+%tr.admin
+  %th 
+    = f.label :rev_share_override, 'Rev share override'
+    #help_rev_share_override.help ?
+  %td
+    = f.text_field :rev_share_override
 %tr.admin
   %th
     Spend share
@@ -103,16 +102,16 @@
   #help_banner_advertiser_content{:name => 'Banner advertiser'}
     If true, this app's display ads will be "AB" ads, which advertise its own currency. 
     If false, this app's display ads will be "ABC" ads which advertise third-party currencies.
-  #help_ordinal{:name => 'Ordinal'}
+  #help_ordinal_content{:name => 'Ordinal'}
     Determines the order of the currency selector buttons on the offer wall webpage.
+  #help_rev_share_override_content{:name => 'Rev share override'}
+    Override the partner's rev share for this currency only. Should be a decimal between 0 and 1 or blank.
   #help_spend_share_content{:name => 'Spend share'}
     The percent share of offer spending that this publisher gets. Computed as: (this partner's rev share) * (spend share ratio).
   #help_direct_pay_share_content{:name => 'Direct-pay share'}
     The percent share of direct-pay revenue that this publisher gets.
   #help_hide_app_installs_content{:name => 'Hide app installs'}
     Do not display pay-per-install offers on this publisher's offer wall.
-  #help_show_gallery_content{:name => 'Enable PPA Gallery'}
-    Enable PPA Gallery - must also enable "Hide app installs".
   #help_minimum_hide_app_installs_version_content{:name => 'Min hide installs version'}
     Pay-per-install offers will only be hidden for versions of this publisher app higher than this value.
     Leaving this field blank will disable pay-per-install offers for all versions of this publisher app.
@@ -122,19 +121,9 @@
     $(function($) {
      $('#currency_hide_app_installs').click(function() {
         $('.hide_app_installs').toggle($(this).attr('checked'));
-        if(!$(this).attr('checked')) {
-          $('#currency_show_gallery').attr('checked', false);
-        }
-      });
-      $('#currency_show_gallery').change(function() {
-        if($('#currency_show_gallery').is(':checked')) {
-          $('#currency_hide_app_installs').attr('checked', true);
-          $('.hide_app_installs').toggle(true);
-        }
       });
     });
-
-
+  
 - content_for :page_styles do
   :plain
     .admin th {

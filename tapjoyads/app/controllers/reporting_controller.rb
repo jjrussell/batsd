@@ -23,11 +23,7 @@ class ReportingController < WebsiteController
 
     respond_to do |format|
       format.html do
-        bucket = S3.bucket(BucketNames::AD_UDIDS)
-        base_path = Offer.s3_udids_path(@offer.id)
-        @udids = bucket.keys('prefix' => base_path).map do |key|
-          key.name.gsub(base_path, '')
-        end
+        @udids = UdidReports.get_available_months(@offer.id)
       end
       format.json do
         load_appstats
@@ -43,8 +39,7 @@ class ReportingController < WebsiteController
   end
   
   def download_udids
-    bucket = S3.bucket(BucketNames::AD_UDIDS)
-    data = bucket.get(Offer.s3_udids_path(@offer.id) + params[:date])
+    data = UdidReports.get_monthly_report(@offer.id, params[:date])
     send_data(data, :type => 'text/csv', :filename => "#{@offer.id}_#{params[:date]}.csv")
   end
   

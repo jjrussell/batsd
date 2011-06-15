@@ -22,15 +22,13 @@ private
     if currency.callback_url == Currency::PLAYDOM_CALLBACK_URL && click.publisher_user_id !~ /^(F|M|P)[0-9]+$/
       click.block_reason = "InvalidPlaydomUserId"
       click.serial_save
-      Notifier.alert_new_relic(InvalidPlaydomUserId, "Playdom User id: '#{click.publisher_user_id}' is invalid, for click: #{click.key}", request, params)
       return
     end
     
     publisher_user = PublisherUser.new(:key => "#{click.publisher_app_id}.#{click.publisher_user_id}")
     unless publisher_user.update!(click.udid)
-      click.block_reason = "TooManyUdidsForPublisherUserId (ID=#{publisher_user.key})"
+      click.block_reason = "TooManyUdidsForPublisherUserId"
       click.serial_save
-      Notifier.alert_new_relic(TooManyUdidsForPublisherUserId, "Too many UDIDs associated with publisher_user: #{publisher_user.key}, for click: #{click.key}", request, params)
       return
     end
     
@@ -42,7 +40,6 @@ private
         if device.has_app(click.advertiser_app_id)
           click.block_reason = "AlreadyRewardedForPublisherUserId (UDID=#{udid})"
           click.serial_save
-          Notifier.alert_new_relic(AlreadyRewardedForPublisherUserId, "Offer already rewarded for publisher_user: #{publisher_user.key}, for click: #{click.key}", request, params)
           return
         end
       end
@@ -91,6 +88,28 @@ private
     
     click.put('installed_at', installed_at_epoch)
     click.serial_save
+    
+    web_request = WebRequest.new
+    web_request.add_path('reward')
+    web_request.put('time', installed_at_epoch)
+    web_request.type              = reward.type
+    web_request.publisher_app_id  = reward.publisher_app_id
+    web_request.advertiser_app_id = reward.advertiser_app_id
+    web_request.displayer_app_id  = reward.displayer_app_id
+    web_request.offer_id          = reward.offer_id
+    web_request.currency_id       = reward.currency_id
+    web_request.publisher_user_id = reward.publisher_user_id
+    web_request.advertiser_amount = reward.advertiser_amount
+    web_request.publisher_amount  = reward.publisher_amount
+    web_request.displayer_amount  = reward.displayer_amount
+    web_request.tapjoy_amount     = reward.tapjoy_amount
+    web_request.currency_reward   = reward.currency_reward
+    web_request.source            = reward.source
+    web_request.udid              = reward.udid
+    web_request.country           = reward.country
+    web_request.exp               = reward.exp
+    web_request.viewed_at         = reward.viewed_at
+    web_request.serial_save
     
     message = reward.serialize(:attributes_only => true)
     

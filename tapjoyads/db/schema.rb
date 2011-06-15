@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110604231506) do
+ActiveRecord::Schema.define(:version => 20110614092546) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -120,11 +120,28 @@ ActiveRecord::Schema.define(:version => 20110604231506) do
     t.boolean  "tapjoy_enabled",                                                                :default => false, :null => false
     t.boolean  "hide_app_installs",                                                             :default => false, :null => false
     t.string   "minimum_hide_app_installs_version",                                             :default => "",    :null => false
-    t.boolean  "show_gallery",                                                                  :default => false
+    t.string   "currency_group_id",                 :limit => 36,                                                  :null => false
+    t.decimal  "rev_share_override",                              :precision => 8, :scale => 6
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
+  add_index "currencies", ["currency_group_id"], :name => "index_currencies_on_currency_group_id"
   add_index "currencies", ["id"], :name => "index_currencies_on_id", :unique => true
+
+  create_table "currency_groups", :id => false, :force => true do |t|
+    t.string   "id",              :limit => 36,                :null => false
+    t.integer  "conversion_rate",               :default => 0, :null => false
+    t.integer  "bid",                           :default => 0, :null => false
+    t.integer  "price",                         :default => 0, :null => false
+    t.integer  "avg_revenue",                   :default => 0, :null => false
+    t.integer  "random",                        :default => 0, :null => false
+    t.integer  "over_threshold",                :default => 0, :null => false
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "currency_groups", ["id"], :name => "index_currency_groups_on_id", :unique => true
 
   create_table "email_offers", :id => false, :force => true do |t|
     t.string   "id",             :limit => 36,                    :null => false
@@ -417,6 +434,7 @@ ActiveRecord::Schema.define(:version => 20110604231506) do
     t.datetime "updated_at"
     t.string   "payout_method"
     t.string   "signature"
+    t.string   "doing_business_as"
   end
 
   add_index "payout_infos", ["id"], :name => "index_payout_infos_on_id", :unique => true

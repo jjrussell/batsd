@@ -1,3 +1,5 @@
+# Chinese (Simplified) translation file
+
 zh:
   text:
     shared:
@@ -8,8 +10,9 @@ zh:
       # shared between the original wall and the redesigned wall
       title: "赚 {{currency}}"
       free: "免费"
-      next: "下一个 {{items}}"
-      previous: "上一页 {{items}}"
+      next: "下页 {{items}}"
+      previous: "上页 {{items}}"
+      missing_currency: "Missing {{currency}}?"
 
       # original wall only
       instructions: "安装并运行以下的一个应用以得到 {{currency}}"
@@ -31,3 +34,16 @@ zh:
       download_action: "这里"
       download_link: "如果您没有这个程序, 点击 {{download_action}} 下载"
       continue_link: "点击这里继续"
+      
+    support:
+      title: "没得到 {{currency}}?"
+      instructions_1: "如果您没得到 {{currency}}, 请您让我们知道你下载了哪款APP, 并且留下您的电子邮箱."
+      instructions_2: "我们完成了确认流程后，你将会获取应得的 {{currency}}."
+      description_label: "说明:"
+      email_address_label: "电子邮箱:"
+      submit_support_request: "支持请求"
+      support_request_submitted: "支持请求已提交"
+      thanks: "感谢您提交了支持请求! 我们完成了确认流程后，你将会获取应得的 {{currency}}."
+      missing_description: "请描述您下载了APP的流程."
+      invalid_email: "请输入您真实的电子邮箱."
+      abuse_warning: "本页表格是针对完成了流程但未获得虚拟币奖励的用. 滥用者可导致将来受禁止参与此类活动."

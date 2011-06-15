@@ -5,7 +5,7 @@ module GetOffersHelper
     
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['start'] = [@start_index - @max_items, 0].max
-    link_to("<div class='arrow'></div>#{I18n.t('text.offerwall.previous', :items => @max_items)}", "/get_offers/webpage?#{tmp_params.to_query}", :onclick => "this.className = 'clicked';")
+    link_to("<div class='arrow'></div>#{t('text.offerwall.previous', :items => @max_items)}", "/get_offers/webpage?#{tmp_params.to_query}", :onclick => "this.className = 'clicked';")
   end
   
   def get_next_link
@@ -13,7 +13,7 @@ module GetOffersHelper
     
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['start'] = @start_index + @max_items
-    link_to("<div class='arrow'></div>#{I18n.t('text.offerwall.next', :items => [@more_data_available, @max_items].min)}", "/get_offers/webpage?#{tmp_params.to_query}", :onclick => "this.className = 'clicked';")
+    link_to("<div class='arrow'></div>#{t('text.offerwall.next', :items => [@more_data_available, @max_items].min)}", "/get_offers/webpage?#{tmp_params.to_query}", :onclick => "this.className = 'clicked';")
   end
   
   def get_currency_link(currency)
@@ -51,7 +51,7 @@ module GetOffersHelper
   
   def visual_cost(offer)
     if offer.price <= 0
-      I18n.t 'text.offerwall.free'
+      t 'text.offerwall.free'
     elsif offer.price <= 100
       '$'
     elsif offer.price <= 200
@@ -61,6 +61,12 @@ module GetOffersHelper
     else
       '$$$$'
     end
+  end
+  
+  def link_to_missing_currency
+    support_params = [ 'app_id', 'currency_id', 'udid', 'device_type', 'publisher_user_id', 'language_code' ].inject({}) { |h,k| h[k] = params[k]; h }
+    link_to(t('text.offerwall.missing_currency', :currency => @currency.name), 
+      new_support_request_path(support_params))
   end
   
 end

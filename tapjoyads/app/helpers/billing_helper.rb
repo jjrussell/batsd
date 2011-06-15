@@ -1,19 +1,6 @@
 module BillingHelper
   include ActionView::Helpers::NumberHelper
 
-  def list_of_payout_methods
-    [
-      [ 'Check', 'check' ],
-      [ 'ACH', 'ach' ]
-    ]
-  end
-
-  def list_of_account_types
-    [
-      'Individual', 'Partnership', 'Corporation', 'Other'
-    ]
-  end
-
   def list_of_countries
     [
       'United States of America',

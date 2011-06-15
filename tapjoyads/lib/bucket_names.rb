@@ -1,6 +1,5 @@
 class BucketNames
   ADIMAGES                 = RUN_MODE_PREFIX + 'adimages'
-  AD_UDIDS                 = RUN_MODE_PREFIX + 'ad-udids'
   CONVERSION_ARCHIVES      = RUN_MODE_PREFIX + 'conversion-archives'
   FAILED_SDB_SAVES         = RUN_MODE_PREFIX + 'failed-sdb-saves-generic'
   FAILED_WEB_REQUEST_SAVES = RUN_MODE_PREFIX + 'failed-sdb-saves-web-requests'

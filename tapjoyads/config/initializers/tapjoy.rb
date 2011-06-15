@@ -4,6 +4,7 @@ require 'notifier'
 GEOIP = GeoIP.new("#{RAILS_ROOT}/data/GeoLiteCity.dat")
 
 UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+APP_ID_FOR_DEVICES_REGEX = /^(\w|\.|-)*$/
 
 MASTER_HEALTHZ_FILE = "#{Rails.root}/tmp/master_healthz_status.txt"
 

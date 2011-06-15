@@ -54,18 +54,23 @@ authorization do
     has_permission_on :tools, :to => [ :money, :monthly_data ]
   end
   
+  role :hr do
+    includes :tools
+    has_permission_on :tools_employees, :to => [ :index, :new, :create, :edit, :update, :delete_photo ]
+  end
+  
   role :account_mgr do
     includes :payops
-    has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :global, :publisher, :advertiser ]
+    has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser ]
     has_permission_on :search, :to => [ :offers ]
-    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :edit_android_app, :update_android_app, :device_info, :update_device, :capped_publishers, :freemium_android ]
+    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :edit_android_app, :update_android_app, :device_info, :update_device, :freemium_android ]
     has_permission_on :tools_enable_offer_requests, :to => [ :index, :update ]
     has_permission_on :activities, :to => [ :index ]
     has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :new_transfer, :create_transfer, :reporting, :delink_user ]
-    has_permission_on :rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
+    has_permission_on :tools_rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
     has_permission_on :apps, :to => [ :unarchive ]
     has_permission_on :partners_offer_discounts, :to => [ :index, :new, :create, :deactivate ]
-    has_permission_on :preview_experiments, :to => [ :index, :show ]
+    has_permission_on :tools_preview_experiments, :to => [ :index, :show ]
     has_permission_on :tools_premier_partners, :to => [ :index ]
     has_permission_on :tools_generic_offers, :to => [ :new, :create ]
     has_permission_on :tools_admin_devices, :to => [ :index, :new, :create, :edit, :update, :destroy ]
@@ -82,11 +87,11 @@ authorization do
     includes :executive
     includes :raffle_manager
     includes :account_mgr
+    includes :hr
     has_permission_on :pub_offer_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :send_currency_failures, :sqs_lengths, :elb_status, :as_groups, :manage_user_roles, :update_user_roles ]
     has_permission_on :tools_users, :to => [ :index, :show ]
     has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
     has_permission_on :search, :to => [ :users ]
-    has_permission_on :tools_employees, :to => [ :index, :new, :create, :edit, :update, :delete_photo ]
   end
 end

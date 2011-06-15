@@ -146,11 +146,13 @@ class BillingController < WebsiteController
   def payout_info
     if current_partner.payout_info
       @payout_info = current_partner.payout_info
-      unless @payout_info.valid?
+      if @payout_info.valid?
+        @terms_checked = true
+      else
         flash.now[:warning] = "You have some missing information. Please contact <a href='support@tapjoy.com'>support@tapjoy.com</a> if you need further assistance."
       end
     else
-      @payout_info = current_partner.build_payout_info
+      @payout_info = PayoutInfo.new
     end
   end
 
@@ -159,7 +161,7 @@ class BillingController < WebsiteController
     log_activity(@payout_info)
 
     safe_attributes = [
-      :beneficiary_name, :company_name,
+      :beneficiary_name, :company_name, :doing_business_as,
       :tax_country, :account_type, :billing_name, :tax_id, :signature, :terms,
       :address_country, :address_1, :address_2, :address_city, :address_state, :address_postal_code,
       :payout_method, :bank_name, :bank_address, :bank_account_number, :bank_routing_number

@@ -12,11 +12,10 @@ class QueueNames
   SELECT_VG_ITEMS          = RUN_MODE_PREFIX + 'SelectVgItems'
   GET_STORE_INFO           = RUN_MODE_PREFIX + 'GetStoreInfo'
   UPDATE_MONTHLY_ACCOUNT   = RUN_MODE_PREFIX + 'UpdateMonthlyAccount'
-  GRAB_ADVERTISER_UDIDS    = RUN_MODE_PREFIX + 'GrabAdvertiserUdids'
   SDB_BACKUPS              = RUN_MODE_PREFIX + 'SdbBackups'
   MAIL_CHIMP_UPDATES       = RUN_MODE_PREFIX + 'MailChimpUpdates'
   PARTNER_NOTIFICATIONS    = RUN_MODE_PREFIX + 'PartnerNotifications'
   RECOUNT_STATS            = RUN_MODE_PREFIX + 'RecountStats'
-  LIMIT_APP_INSTALLS       = RUN_MODE_PREFIX + 'LimitAppInstalls'
+  CACHE_OFFERS             = RUN_MODE_PREFIX + 'CacheOffers'
   UDID_REPORTS             = RUN_MODE_PREFIX + 'UdidReports'
 end
