@@ -25,22 +25,22 @@
         "OfferwallRevenue"           => appstats.stats['rewards_revenue'].sum,
         "OfferwallRevenueHourly"     => appstats.stats['rewards_revenue'],
         "OfferwallImpressions"       => appstats.stats['offerwall_views'].sum,
-        "OfferwallImpressionsHourly" => appstats.stats['offerwall_views'].join(','),
+        "OfferwallImpressionsHourly" => appstats.stats['offerwall_views'],
         "OfferwallClicks"            => appstats.stats['rewards_opened'].sum,
-        "OfferwallClicksHourly"      => appstats.stats['rewards_opened'].join(','),
+        "OfferwallClicksHourly"      => appstats.stats['rewards_opened'],
         "OfferwallConversions"       => appstats.stats['rewards'].sum,
-        "OfferwallConversionsHourly" => appstats.stats['rewards'].join(','),
+        "OfferwallConversionsHourly" => appstats.stats['rewards'],
         
         "FeaturedOfferRevenue"           => appstats.stats['featured_revenue'].sum,
         "FeaturedOfferRevenueHourly"     => appstats.stats['featured_revenue'],
         "FeaturedOfferRequests"          => appstats.stats['featured_offers_requested'].sum,
-        "FeaturedOfferRequestsHourly"    => appstats.stats['featured_offers_requested'].join(','),
+        "FeaturedOfferRequestsHourly"    => appstats.stats['featured_offers_requested'],
         "FeaturedOfferImpressions"       => appstats.stats['featured_offers_shown'].sum,
-        "FeaturedOfferImpressionsHourly" => appstats.stats['featured_offers_shown'].join(','),
+        "FeaturedOfferImpressionsHourly" => appstats.stats['featured_offers_shown'],
         "FeaturedOfferClicks"            => appstats.stats['featured_offers_opened'].sum,
-        "FeaturedOfferClicksHourly"      => appstats.stats['featured_offers_opened'].join(','),
+        "FeaturedOfferClicksHourly"      => appstats.stats['featured_offers_opened'],
         "FeaturedOfferConversions"       => appstats.stats['featured_published_offers'].sum,
-        "FeaturedOfferConversionsHourly" => appstats.stats['featured_published_offers'].join(','),
+        "FeaturedOfferConversionsHourly" => appstats.stats['featured_published_offers'],
         
         "DisplayRevenue"             => appstats.stats['display_revenue'].sum,
         "DisplayRevenueHourly"       => appstats.stats['display_revenue'],
@@ -51,7 +51,7 @@
         "DisplayClicks"              => appstats.stats['display_clicks'].sum,
         "DisplayClicksHourly"        => appstats.stats['display_clicks'],
         "DisplayConversions"         => appstats.stats['display_conversions'].sum,
-        "DisplayConversionsHourly"   => appstats.stats['display_conversions'].join(','),
+        "DisplayConversionsHourly"   => appstats.stats['display_conversions'],
       }
     end
   }
