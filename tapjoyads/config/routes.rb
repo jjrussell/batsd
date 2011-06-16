@@ -86,7 +86,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :premier_partners, :only => [ :index ]
     tools.resources :generic_offers, :only => [ :new, :create, :edit, :update ]
     tools.resources :orders, :only => [ :new, :create ]
-    tools.resources :payouts, :only => [ :index, :create ]
+    tools.resources :payouts, :only => [ :index, :create ], :member => { :info => :get }
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]
     tools.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :as => :scheduling

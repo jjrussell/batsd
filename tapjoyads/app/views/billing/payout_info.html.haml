@@ -41,7 +41,7 @@
           %td
             = f.text_field(:doing_business_as)
             = f.error_message_on(:doing_business_as)
-        %tr
+        %tr.do-not-print
           %th
             = f.label :tax_id, 'Tax ID'
             #help_tin.help ?
@@ -126,21 +126,21 @@
         %tr.country_other
           %td{:colspan => 2}
             %h3 Bank Information
-        %tr.country_other
+        %tr.country_other.do-not-print
           %th
             = f.label :bank_name, 'Bank Name'
             .help.no-help ?
           %td
             = encrypted_field(f, @payout_info, :bank_name)
             = f.error_message_on(:bank_name)
-        %tr.country_other
+        %tr.country_other.do-not-print
           %th
             = f.label :bank_address, 'Bank Address'
             .help.no-help ?
           %td
             = encrypted_field(f, @payout_info, :bank_address)
             = f.error_message_on(:bank_address)
-        %tr.country_other
+        %tr.country_other.do-not-print
           %th
             %span.country_us= f.label :bank_account_number, 'Bank Account Number'
             %span.country_other= f.label :bank_account_number, 'Bank IBAN Code'
@@ -148,7 +148,7 @@
           %td
             = encrypted_field(f, @payout_info, :bank_account_number)
             = f.error_message_on(:bank_account_number)
-        %tr.country_other
+        %tr.country_other.do-not-print
           %th
             %span.country_us= f.label :bank_routing_number, 'Bank Routing Number'
             %span.country_other= f.label :bank_routing_number, 'Bank SWIFT Code'

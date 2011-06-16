@@ -6,6 +6,7 @@
     %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
     %title= @page_title.blank? ? 'Tapjoy' : "#{@page_title} - Tapjoy"
     = stylesheet_link_tag 'website', 'jquery-ui-1.8.5', 'colorbox', 'themes/blue/style'
+    = stylesheet_link_tag 'print', :media => 'print'
     %style{ :type => 'text/css' }
       = yield :page_styles
       :plain
