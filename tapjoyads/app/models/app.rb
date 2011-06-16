@@ -280,43 +280,6 @@ class App < ActiveRecord::Base
   def offers_with_last_run_time
     [ primary_offer ] + action_offers.collect(&:primary_offer).sort { |a, b| a.name <=> b.name }
   end
-  
-  def set_capped_advertiser_app_ids(advertiser_app_ids)
-    Mc.put(capped_advertisers_mc_key, advertiser_app_ids)
-  end
-  
-  def capped_advertiser_app_ids
-    Mc.get(capped_advertisers_mc_key) || Set.new
-  end
-  
-  def capped_advertiser_apps 
-    App.find(capped_advertiser_app_ids.to_a)
-  end
-  
-  def increment_daily_installs_for_advertiser(advertiser_app_id)
-    Mc.increment_count(daily_installs_mc_key_for_advertiser(advertiser_app_id))
-  end
-  
-  def daily_installs_for_advertiser(advertiser_app_id)
-    Mc.get_count(daily_installs_mc_key_for_advertiser(advertiser_app_id))
-  end
-  
-  def self.set_enabled_free_ios_apps
-    advertiser_app_ids = Offer.enabled_offers.free_apps.for_ios_only.scoped(:select => :item_id, :group => :item_id).collect(&:item_id)
-    Mc.put(enabled_free_apps_mc_key, advertiser_app_ids)
-  end
-  
-  def self.enabled_free_ios_apps
-    Mc.get(enabled_free_apps_mc_key) || []
-  end
-
-  def self.get_ios_publisher_app_ids
-    Currency.for_ios.just_app_ids.collect(&:app_id)
-  end
-
-  def self.get_ios_publisher_apps
-    App.find(get_ios_publisher_app_ids)
-  end
 
   def get_offer_device_types
     is_ipad_only? ? Offer::IPAD_DEVICES : PLATFORM_DETAILS[platform][:expected_device_types]
@@ -327,18 +290,6 @@ class App < ActiveRecord::Base
   end
 
 private
-
-  def capped_advertisers_mc_key
-    "ios_install_limits.capped_apps_for_publisher.#{Time.now.utc.to_date}.#{id}"
-  end
-
-  def daily_installs_mc_key_for_advertiser(advertiser_app_id)
-    "ios_install_limits.installs_by_publisher_and_advertiser.#{Time.now.utc.to_date}.#{id}.#{advertiser_app_id}"
-  end
-  
-  def self.enabled_free_apps_mc_key
-    'ios_install_limits.enabled_free_ios_apps'
-  end
   
   def generate_secret_key
     return if secret_key.present?

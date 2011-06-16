@@ -53,6 +53,12 @@
   %td
     = f.text_field :ordinal
 %tr.admin
+  %th 
+    = f.label :rev_share_override, 'Rev share override'
+    #help_rev_share_override.help ?
+  %td
+    = f.text_field :rev_share_override
+%tr.admin
   %th
     Spend share
     #help_spend_share.help ?
@@ -96,8 +102,10 @@
   #help_banner_advertiser_content{:name => 'Banner advertiser'}
     If true, this app's display ads will be "AB" ads, which advertise its own currency. 
     If false, this app's display ads will be "ABC" ads which advertise third-party currencies.
-  #help_ordinal{:name => 'Ordinal'}
+  #help_ordinal_content{:name => 'Ordinal'}
     Determines the order of the currency selector buttons on the offer wall webpage.
+  #help_rev_share_override_content{:name => 'Rev share override'}
+    Override the partner's rev share for this currency only. Should be a decimal between 0 and 1 or blank.
   #help_spend_share_content{:name => 'Spend share'}
     The percent share of offer spending that this publisher gets. Computed as: (this partner's rev share) * (spend share ratio).
   #help_direct_pay_share_content{:name => 'Direct-pay share'}

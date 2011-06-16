@@ -17,8 +17,8 @@ server_groups.each do |server_group|
 end
 command = ARGV[1]
 user = ARGV[2] || 'webuser'
-remove_from_lb = (ARGV[3] || false) && server_groups.include?('webserver')
-if remove_from_lb
+serial = (ARGV[3] || false) && server_groups.include?('webserver')
+if serial
   elb_interface = Ec2Tasks.get_elb_interface
   registered_webservers = elb_interface.describe_instance_health('web-lb').collect { |instance| instance[:instance_id] }
 end
@@ -47,9 +47,9 @@ count = 0
 server_list.each do |server|
   count += 1
   server[:server_num] = count
-  server[:remove_from_lb] = remove_from_lb && server[:aws_groups].include?('webserver') && registered_webservers.include?(server[:aws_instance_id])
-  server[:boot_app] = server[:remove_from_lb] || server[:aws_groups].include?('website')
-  puts server[:remove_from_lb] ? "#{server[:dns_name]} (will be removed from load balancer)" : "#{server[:dns_name]}"
+  server[:serial] = serial && server[:aws_groups].include?('webserver') && registered_webservers.include?(server[:aws_instance_id])
+  server[:boot_app] = server[:aws_groups].include?('website') || server[:aws_groups].include?('games')
+  puts server[:serial] ? "#{server[:dns_name]} (serial)" : "#{server[:dns_name]}"
 end
 puts "User: #{user}"
 puts "Command: #{command}"
@@ -63,18 +63,12 @@ end
 thread_list = []
 server_list.each do |server|
   thread = Thread.new do
-    if server[:remove_from_lb]
-      elb_interface.deregister_instances_with_load_balancer('web-lb', server[:aws_instance_id])
-    end
     puts "Running on #{server[:aws_groups].to_s.gsub('tapbase', '')} #{server[:dns_name]} (#{server[:server_num]} / #{server_list.length})", `ssh #{user}@#{server[:dns_name]} '#{command}'`, "\n"
     if server[:boot_app]
       `curl -s http://#{server[:dns_name]}:9898/healthz`
     end
-    if server[:remove_from_lb]
-      elb_interface.register_instances_with_load_balancer('web-lb', server[:aws_instance_id])
-    end
   end
-  server[:remove_from_lb] ? thread.join : thread_list.push(thread)
+  server[:serial] ? thread.join : thread_list.push(thread)
 end
 thread_list.each do |thread|
   thread.join

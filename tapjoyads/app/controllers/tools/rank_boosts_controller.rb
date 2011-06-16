@@ -1,4 +1,4 @@
-class RankBoostsController < WebsiteController
+class Tools::RankBoostsController < WebsiteController
   layout 'tabbed'
   current_tab :tools
   filter_access_to :all

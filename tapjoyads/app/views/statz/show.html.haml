@@ -63,19 +63,18 @@
   - unless @offer.publisher_app_whitelist.blank?
     - property_row('Publisher app whitelist', @offer.get_publisher_app_whitelist.map { |id| link_to(App.find(id).name, statz_path(id)) }.join(', '))
   - property_row('id', @offer.id + ' - ' + clippy(@offer.id))
-  - property_row('Capped Advertisers', @offer.item.capped_advertiser_apps.collect { |app| link_to(app.name, statz_path(app.id)) }.join(', ')) if @offer.is_publisher_offer?
 
 %a#show_boosts{:href => '#'} [#{@active_boosts.size} active rank boosts]
-= link_to('[Create rank boost]', new_rank_boost_path(:offer_id => @offer.id))
-= link_to('[View all boosts]', rank_boosts_path(:offer_id => @offer.id))
+= link_to('[Create rank boost]', new_tools_rank_boost_path(:offer_id => @offer.id))
+= link_to('[View all boosts]', tools_rank_boosts_path(:offer_id => @offer.id))
 #boosts_list
   %h5 Total Active Boost: #{@total_boost}x
   %ul
     - @active_boosts.each do |boost|
       %li
         #{boost.amount}x: #{boost.start_time.to_s(:mdy_ampm)} - #{boost.end_time.to_s(:mdy_ampm)} --
-        = link_to('[Edit]', edit_rank_boost_path(boost))
-        = link_to('[Deactivate]', deactivate_rank_boost_path(boost), :method => :post, :confirm => 'Are you sure?')
+        = link_to('[Edit]', edit_tools_rank_boost_path(boost))
+        = link_to('[Deactivate]', deactivate_tools_rank_boost_path(boost), :method => :post, :confirm => 'Are you sure?')
 
 .clear
 
@@ -99,6 +98,7 @@
   - property_row('Pending Earnings', number_to_currency(@offer.partner_pending_earnings / 100.0))
   - property_row('Account managers', @offer.account_managers.map(&:email).join(', '))
   - property_row('Approved publisher', @offer.partner_approved_publisher?)
+  - property_row('Rev share', number_to_percentage(@offer.partner_rev_share * 100, :precision => 1))
   - property_row('Internal notes', @offer.internal_notes, '')
   - property_row('id', link_to(@offer.partner_id, partner_path(@offer.partner_id)) + ' - ' + clippy(@offer.partner_id))
 = render 'partners/make_current_button', :partner => @offer.partner
@@ -121,7 +121,8 @@
           - property_row('Min featured bid', number_to_currency((c.minimum_featured_bid || 0) / 100.0))
           - property_row('Has virtual goods', c.has_virtual_goods?)
           - property_row('Banner advertiser', c.banner_advertiser?)
-          - property_row('Spend share', c.spend_share)
+          - property_row('Rev share override', number_to_percentage(c.rev_share_override * 100, :precision => 1)) if c.rev_share_override?
+          - property_row('Spend share', number_to_percentage(c.spend_share * 100))
           - property_row('Direct-pay share', c.direct_pay_share)
           - property_row('Max age rating', c.max_age_rating)
           - property_row('Disabled offers', c.disabled_offers)

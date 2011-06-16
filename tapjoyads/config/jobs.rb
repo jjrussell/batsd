@@ -19,13 +19,12 @@ JobRunner::Gateway.define do |s|
     s.add_job 'queue_mail_chimp_updates', :interval => 1.minute
     s.add_job 'queue_partner_notifications', :interval => 1.minute
     s.add_job 'queue_recount_stats', :interval => 1.minute
-    s.add_job 'queue_limit_app_installs', :interval => 5.seconds
     s.add_job 'queue_udid_reports', :interval => 15.seconds
     s.add_job 'queue_cache_offers', :interval => 2.seconds
   elsif MACHINE_TYPE == 'masterjobs'
     # jobs with high impact on overall system performance
     s.add_job 'master_calculate_next_payout', :daily => 4.hours
-    s.add_job 'master_udid_reports', :daily => 7.hours
+    s.add_job 'master_udid_reports', :daily => 2.hours
     s.add_job 'master_update_monthly_account', :daily => 8.hours
     s.add_job 'master_verifications', :daily => 5.hours
     
@@ -40,6 +39,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'master_reload_statz/partner_daily', :daily => 10.minutes
     s.add_job 'master_ios_app_ranks', :hourly => 1.minutes
     s.add_job 'master_android_app_ranks', :hourly => 30.minutes
+    s.add_job 'master_windows_app_ranks', :hourly => 50.minutes
     s.add_job 'master_group_daily_stats', :hourly => 5.minutes
     s.add_job 'master_group_hourly_stats', :hourly => 6.minutes
     
@@ -58,7 +58,6 @@ JobRunner::Gateway.define do |s|
     s.add_job 'master_archive_conversions', :daily => 6.hours
     s.add_job 'master_healthz', :interval => 1.minute
     s.add_job 'master_run_offer_events', :interval => 1.minute
-    s.add_job 'master_limit_app_installs', :interval => 30.minutes
     s.add_job 'master_fetch_top_freemium_android_apps', :daily => 1.minute
     s.add_job 'master_calculate_rank_boosts', :interval => 5.minutes
     s.add_job 'master_cache_offers', :interval => 1.minute
