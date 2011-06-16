@@ -126,6 +126,7 @@ class Offer < ActiveRecord::Base
   named_scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ] } }
   named_scope :for_ios_only, :conditions => 'device_types not like "%android%"'
   named_scope :with_rank_boosts, :joins => :rank_boosts, :readonly => false
+  named_scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
   
   delegate :balance, :pending_earnings, :name, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   
