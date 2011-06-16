@@ -75,6 +75,18 @@ class TapjoyMailer < ActionMailer::Base
     subject "Publisher form inquiry from #{info[:first]} #{info[:last]} at #{info[:company]}"
     body(:info => info)
   end
+  
+  def androidfund_application(info)
+    from 'admin@tapjoy.com'
+    if Rails.env == 'development'
+      recipients "eric.bieller@tapjoy.com"
+    else
+      recipients "ericbieller@gmail.com"
+    end
+    content_type 'text/html'
+    subject "Publisher form inquiry from #{info[:first]} #{info[:last]} at #{info[:company]}"
+    body(:info => info)
+  end
 
   def campaign_status(email_recipients, low_balance, account_balance, account_manager_email, offers_not_meeting_budget, offers_needing_higher_bids, premier, premier_discount)
     from 'support@tapjoy.com'
