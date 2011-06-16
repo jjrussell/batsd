@@ -113,7 +113,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'careers/:id', :controller => 'homepage/careers', :action => 'show'
   map.connect 'glu', :controller => 'homepage/press', :action => 'glu'
   map.connect 'publishing', :controller => 'homepage', :action => 'publishers'
-  map.connect 'androidfund', :controller => 'androidfund', :action => 'index'
+  map.connect 'androidfund', :controller => 'androidfund'
   map.resources :sdk, :only => [ :index, :show ]
   map.namespace :agency_api do |agency|
     agency.resources :apps, :only => [ :index, :show, :create, :update ]
