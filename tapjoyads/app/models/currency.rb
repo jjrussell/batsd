@@ -11,15 +11,24 @@ class Currency < ActiveRecord::Base
   belongs_to :partner
   belongs_to :currency_group
   
-  validates_presence_of :app, :partner, :name, :currency_group
+  validates_presence_of :app, :partner, :name, :currency_group, :callback_url
   validates_numericality_of :conversion_rate, :initial_balance, :ordinal, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :spend_share, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :rev_share_override, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1, :allow_nil => true
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :allow_nil => true, :only_integer => true
   validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :banner_advertiser, :hide_app_installs, :tapjoy_enabled, :in => [ true, false ]
-  validates_each :callback_url do |record, attribute, value|
-    unless SPECIAL_CALLBACK_URLS.include?(value) || value =~ /^https?:\/\//
-      record.errors.add(attribute, 'is not a valid url')
+  validates_each :callback_url, :if => :callback_url_changed? do |record, attribute, value|
+    unless SPECIAL_CALLBACK_URLS.include?(value)
+      if value !~ /^https?:\/\//
+        record.errors.add(attribute, 'is not a valid url')
+      else
+        begin
+          uri = URI.parse(value)
+          Resolv.getaddress(uri.host || '')
+        rescue URI::InvalidURIError, Resolv::ResolvError => e
+          record.errors.add(attribute, 'is not a valid url')
+        end
+      end
     end
   end
   validates_each :disabled_offers, :allow_blank => true do |record, attribute, value|
