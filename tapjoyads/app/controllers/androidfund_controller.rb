@@ -15,6 +15,8 @@ class AndroidfundController < WebsiteController
         @success_msg = "Your application has been received."
         TapjoyMailer.deliver_androidfund_application(params[:info])
       end
+    else
+      params[:info] = {}
     end
   end
 end
