@@ -167,6 +167,88 @@ class StoreRank
     `rm 'tmp/#{android_ranks_file_name}.gz'`
   end
 
+  def self.populate_windows_phone_marketplace_rankings(time)
+    hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
+    hydra.disable_memoization
+    date_string = time.to_date.to_s(:db)
+    error_count = 0
+    known_store_ids = {}
+    s3_rows = {}
+
+    ranks_file_name = "ranks.windows.#{time.beginning_of_hour.to_s(:db)}.json"
+    ranks_file = open("tmp/#{ranks_file_name}", 'w')
+
+    log_progress "Populate store rankings for Windows Phone 7. Task starting."
+
+    App.find_each(:conditions => "platform = 'windows' AND store_id IS NOT NULL") do |app|
+      known_store_ids[app.store_id] ||= []
+      known_store_ids[app.store_id] += app.offer_ids
+    end
+    log_progress "Finished loading known_store_ids."
+
+    WINDOWS_CATEGORY_IDS.each do |category_key, category_id|
+      WINDOWS_POP_IDS.each do |pop_key, pop_id|
+        WINDOWS_COUNTRY_IDS.each do |country_key, country_id|
+          WINDOWS_OFFSET_MARKERS.each do |offset_marker|
+            ranks_key = "#{category_key}.#{pop_key}.#{country_key}"
+            url = "http://catalog.zune.net/v3.2/#{country_id}#{category_id}/apps?cost=#{pop_id}#{offset_marker}&chunkSize=100&orderBy=downloadRank&clientType=WinMobile+7.0&store=Zest"
+            headers = { 'Host' => 'catalog.zune.net' }
+            user_agent = 'ZDM/4.0; Windows Mobile 7.0;'
+
+            request = Typhoeus::Request.new(url, :headers => headers, :user_agent => user_agent)
+            request.on_complete do |response|
+              if response.code != 200
+                error_count += 1
+                if error_count > 100
+                  raise "Too many errors attempting to download windows ranks, giving up. Marketplace down?"
+                end
+                log_progress "Error downloading ranks from itunes for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Error code: #{response.code}. Retrying."
+                hydra.queue(request)
+              else
+                ranks_hash = get_windows_ranks_hash(response.body)
+                ranks_hash.each do |store_id, rank|
+                  next if known_store_ids[store_id].nil?
+
+                  known_store_ids[store_id].each do |offer_id|
+                    s3_rows[offer_id] ||= S3Stats::Ranks.find_or_initialize_by_id("ranks/#{date_string}/#{offer_id}", :load_from_memcache => false)
+                    s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour, rank)
+
+                    if time.hour > 0 && s3_rows[offer_id].hourly_values(ranks_key)[time.hour - 1] == 0
+                      s3_rows[offer_id].update_stat_for_hour(ranks_key, time.hour - 1, rank)
+                    end
+                  end
+                end
+
+                ranks_file.puts( {"windows.#{ranks_key}" => ranks_hash}.to_json )
+              end
+            end
+            hydra.queue(request)
+          end
+        end
+      end
+    end
+    log_progress "Finished queuing requests."
+
+    hydra.run
+    log_progress "Finished making requests."
+
+    ranks_file.close
+    `gzip -f 'tmp/#{ranks_file_name}'`
+
+    save_to_bucket(ranks_file_name)
+    log_progress "Finished saving Windows Phone 7 Marketplace rankings."
+
+    s3_rows.each do |offer_id, ranks_row|
+      ranks_row.save || log_progress("S3 save failed for Windows Phone 7 Marketplace: #{ranks_row.id}")
+    end
+
+    log_progress "Finished saving ranks_rows."
+
+  ensure
+    `rm 'tmp/#{ranks_file_name}'`
+    `rm 'tmp/#{ranks_file_name}.gz'`
+  end
+
   def self.populate_top_freemium_android_apps
     hydra = Typhoeus::Hydra.new(:max_concurrency => 20)
     hydra.disable_memoization
@@ -257,6 +339,21 @@ private
     items.each_with_index do |item, index|
       anchor = item/".details"/"a.title"
       store_id = anchor.attr('href').match("id=(.*)").to_a.second
+      hash[store_id] = index + offset + 1
+    end
+
+    hash
+  end
+
+  def self.get_windows_ranks_hash(response_body)
+    hash = {}
+    doc = Hpricot(response_body)
+    marker = (doc/"a:link[@rel='self']").attr('href')[/&afterMarker=.*%3d/]
+    offset = marker.nil? ? 0 : WINDOWS_OFFSET_MARKERS.index(marker) * 100
+
+    items = doc/"a:entry"
+    items.each_with_index do |item, index|
+      store_id = (item/"a:id").inner_text.split(':').last
       hash[store_id] = index + offset + 1
     end
 
@@ -505,4 +602,65 @@ private
     "japanese"                => "ja",
   }
 
+  WINDOWS_CATEGORY_IDS = {
+    "overall"                                 => "",
+    "all_games"                               => "/appCategories/windowsphone.games",
+    "games:_puzzle_and_trivia"                => "/appCategories/windowsphone.puzzleandtrivia",
+    "games:_action_and_adventure"             => "/appCategories/windowsphone.actionandadventure",
+    "games:_card_and_casino"                  => "/appCategories/windowsphone.cardandcasino",
+    "games:_board_and_classic"                => "/appCategories/windowsphone.boardandclassic",
+    "games:_sports_and_racing"                => "/appCategories/windowsphone.sportsandracing",
+    "games:_strategy"                         => "/appCategories/windowsphone.strategy",
+    "games:_family"                           => "/appCategories/windowsphone.family",
+    "games:_music"                            => "/appCategories/windowsphone.music",
+    "games:_shooter"                          => "/appCategories/windowsphone.shooter",
+    "games:_xbox_companion"                   => "/appCategories/windowsphone.xboxcompanion",
+    "all_books_and_reference"                 => "/appCategories/windowsphone.booksandreference",
+    "books_and_reference:_ereader"            => "/appCategories/windowsphone.ereader",
+    "books_and_reference:_fiction"            => "/appCategories/windowsphone.fiction",
+    "books_and_reference:_non_fiction"        => "/appCategories/windowsphone.nonfiction",
+    "books_and_reference:_reference"          => "/appCategories/windowsphone.reference",
+    "business"                                => "/appCategories/windowsphone.business",
+    "entertainment"                           => "/appCategories/windowsphone.entertainment",
+    "finance"                                 => "/appCategories/windowsphone.finance",
+    "all_health_and_fitness"                  => "/appCategories/windowsphone.healthandfitness",
+    "health_and_fitness:_health"              => "/appCategories/windowsphone.health",
+    "health_and_fitness:_fitness"             => "/appCategories/windowsphone.fitness",
+    "health_and_fitness:_diet_and_nutrition"  => "/appCategories/windowsphone.dietandnutrition",
+    "all_lifestyle"                           => "/appCategories/windowsphone.lifestyle",
+    "lifestyle:_shopping"                     => "/appCategories/windowsphone.shopping",
+    "lifestyle:_out_and_about"                => "/appCategories/windowsphone.outandabout",
+    "lifestyle:_food_and_dining"              => "/appCategories/windowsphone.foodanddining",
+    "lifestyle:_community"                    => "/appCategories/windowsphone.community",
+    "music_and_video"                         => "/appCategories/windowsphone.musicandvideo",
+    "navigation"                              => "/appCategories/windowsphone.navigation",
+    "news_and_weather"                        => "/appCategories/windowsphone.newsandweather",
+    "photo"                                   => "/appCategories/windowsphone.photo",
+    "productivity"                            => "/appCategories/windowsphone.productivity",
+    "social"                                  => "/appCategories/windowsphone.social",
+    "sports"                                  => "/appCategories/windowsphone.sports",
+    "tools"                                   => "/appCategories/windowsphone.tools",
+    "all_travel"                              => "/appCategories/windowsphone.travel",
+    "travel:_planning"                        => "/appCategories/windowsphone.planning",
+    "travel:_city_guides"                     => "/appCategories/windowsphone.cityguides",
+    "travel:_language"                        => "/appCategories/windowsphone.language",
+    "travel:_travel_tools"                    => "/appCategories/windowsphone.traveltools",
+  }
+  WINDOWS_POP_IDS = {
+    "free" => "free",
+    "paid" => "paid",
+  }
+  WINDOWS_COUNTRY_IDS = {
+    "united_states"   => "en-US",
+    "united_kingdom"  => "en-GB",
+    "france"          => "fr-FR",
+    "germany"         => "de-DE",
+    "spain"           => "es-ES",
+    "italy"           => "it-IT",
+  }
+  WINDOWS_OFFSET_MARKERS = [
+    '',
+    '&afterMarker=YwAAAAE%3d',
+    '&afterMarker=xwAAAAE%3d',
+  ]
 end
