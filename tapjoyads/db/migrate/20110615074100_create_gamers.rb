@@ -2,6 +2,7 @@ class CreateGamers < ActiveRecord::Migration
   def self.up
     create_table :gamers, :id => false do |t|
       t.column :id, 'char(36) binary', :null => false
+      t.string :username, :null => false
       t.string :email, :null => false
       t.string :crypted_password
       t.string :password_salt
@@ -13,6 +14,7 @@ class CreateGamers < ActiveRecord::Migration
     end
     
     add_index :gamers, :id, :unique => true
+    add_index :gamers, :username, :unique => true
     add_index :gamers, :email, :unique => true
     add_index :gamers, :persistence_token
     add_index :gamers, :perishable_token

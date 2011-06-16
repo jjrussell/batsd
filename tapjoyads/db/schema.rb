@@ -192,6 +192,7 @@ ActiveRecord::Schema.define(:version => 20110615074100) do
 
   create_table "gamers", :id => false, :force => true do |t|
     t.string   "id",                :limit => 36, :null => false
+    t.string   "username",                        :null => false
     t.string   "email",                           :null => false
     t.string   "crypted_password"
     t.string   "password_salt"
@@ -207,6 +208,7 @@ ActiveRecord::Schema.define(:version => 20110615074100) do
   add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
   add_index "gamers", ["persistence_token"], :name => "index_gamers_on_persistence_token"
+  add_index "gamers", ["username"], :name => "index_gamers_on_username", :unique => true
 
   create_table "generic_offers", :id => false, :force => true do |t|
     t.string   "id",               :limit => 36,                    :null => false
