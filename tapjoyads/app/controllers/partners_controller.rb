@@ -7,6 +7,7 @@ class PartnersController < WebsiteController
 
   before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :delink_user ]
   before_filter :get_account_managers, :only => [ :index, :managed_by ]
+  before_filter :set_platform, :only => [ :reporting ]
   after_filter :save_activity_logs, :only => [ :update, :create_transfer ]
 
   def index
@@ -151,7 +152,7 @@ class PartnersController < WebsiteController
       format.html do
       end
       format.json do
-        options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :stat_prefix => 'partner' }
+        options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :stat_prefix => get_stat_prefix('partner') }
         @appstats = Appstats.new(@partner.id, options)
         render :json => { :data => @appstats.graph_data(:admin => true) }
       end

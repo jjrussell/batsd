@@ -43,13 +43,14 @@ class Offer < ActiveRecord::Base
   
   validates_presence_of :partner, :item, :name, :url, :rank_boost
   validates_numericality_of :price, :only_integer => true
-  validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_blank => false, :allow_nil => false
-  validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 10000, :allow_blank => false, :allow_nil => false
+  validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
+  validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 10000, :allow_nil => false
   validates_numericality_of :min_bid_override, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => true
-  validates_numericality_of :conversion_rate, :rank_boost, :greater_than_or_equal_to => 0
-  validates_numericality_of :min_conversion_rate, :allow_nil => true, :allow_blank => false, :greater_than_or_equal_to => 0
+  validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
+  validates_numericality_of :rank_boost, :allow_nil => false, :only_integer => true
+  validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
-  validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_blank => false, :allow_nil => true, :greater_than => 0
+  validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer )
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
@@ -122,7 +123,7 @@ class Offer < ActiveRecord::Base
   named_scope :for_ios_only, :conditions => 'device_types not like "%android%"'
   named_scope :with_rank_boosts, :joins => :rank_boosts, :readonly => false
   
-  delegate :balance, :pending_earnings, :name, :approved_publisher?, :to => :partner, :prefix => true
+  delegate :balance, :pending_earnings, :name, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   
   alias_method :events, :offer_events
   
@@ -154,14 +155,34 @@ class Offer < ActiveRecord::Base
     Benchmark.realtime do
       weights = CurrencyGroup.find_by_name('default').weights
       
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.to_a
+      cache_unsorted_offers(offer_list, 'offerwall')
       cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
       offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
+      cache_unsorted_offers(offer_list, 'featured')
       cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads.to_a
+      cache_unsorted_offers(offer_list, 'display')
       cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+    end
+  end
+  
+  def self.cache_unsorted_offers(offers, name)
+    s3_key = "unsorted_offers.#{name}"
+    mc_key = "s3.#{s3_key}"
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
+    bucket.put(s3_key, Marshal.dump(offers))
+    Mc.distributed_put(mc_key, offers)
+  end
+  
+  def self.get_unsorted_offers(name)
+    s3_key = "unsorted_offers.#{name}"
+    mc_key = "s3.#{s3_key}"
+    offers = Mc.distributed_get_and_put(mc_key) do
+      bucket = S3.bucket(BucketNames::OFFER_DATA)
+      Marshal.restore(bucket.get(s3_key))
     end
   end
     
@@ -690,7 +711,6 @@ class Offer < ActiveRecord::Base
         jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
-        capped_installs_reject?(publisher_app) ||
         hide_app_installs_reject?(currency, hide_app_installs) ||
         should_reject_from_app_or_currency?(publisher_app, currency)
   end
@@ -956,10 +976,6 @@ private
   
   def action_app_reject?(device)
     item_type == "ActionOffer" && third_party_data.present? && !device.has_app(third_party_data)
-  end
-  
-  def capped_installs_reject?(publisher_app)
-    free_app? && publisher_app.capped_advertiser_app_ids.include?(item_id)
   end
   
   def hide_app_installs_reject?(currency, hide_app_installs)

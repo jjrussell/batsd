@@ -1,0 +1,35 @@
+!!! Strict
+%html
+  %head
+    %title Android Fund by Tapjoy
+    %link{:href => "/stylesheets/android.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}/
+    %link{:href => "https://fonts.googleapis.com/css?family=The+Girl+Next+Door&v1", :rel => "stylesheet", :type => "text/css"}/
+  %body
+    #wrapper
+      #header
+        %a#logo{:href => "/androidfund"}
+          %img{:src => "/images/android/logo.jpg"}/
+        #navigation
+          %a.selected{:href => "/androidfund"} Home
+          .nav_divider
+          %a{:href => "/androidfund/apply"} Apply
+          .nav_divider
+          %a{:href => "/"} Tapjoy.com
+        .clear
+      #content
+        = yield
+    #footer
+      #footer_links
+        %a{:href => '/androidfund'}
+          Home
+        .divider
+          |
+        %a{:href => '/androidfund/apply'}
+          Apply
+        .divider
+          |
+        %a{:href => '/'}
+          Tapjoy.com
+      #copyright
+        All content &copy; Tapjoy - All Rights Reserved
+    = javascript_include_tag 'jquery-1.4.2.min', 'android'

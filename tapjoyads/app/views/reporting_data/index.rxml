@@ -24,9 +24,23 @@ xml.MarketingData do
       
       xml.OfferwallRevenue appstats.stats['rewards_revenue'].sum
       xml.OfferwallRevenueHourly appstats.stats['rewards_revenue'].join(',')
+      xml.OfferwallImpressions appstats.stats['offerwall_views'].sum
+      xml.OfferwallImpressionsHourly appstats.stats['offerwall_views'].join(',')
+      xml.OfferwallClicks appstats.stats['rewards_opened'].sum
+      xml.OfferwallClicksHourly appstats.stats['rewards_opened'].join(',')
+      xml.OfferwallConversions appstats.stats['rewards'].sum
+      xml.OfferwallConversionsHourly appstats.stats['rewards'].join(',')
       
       xml.FeaturedOfferRevenue appstats.stats['featured_revenue'].sum
       xml.FeaturedOfferRevenueHourly appstats.stats['featured_revenue'].join(',')
+      xml.FeaturedOfferRequests appstats.stats['featured_offers_requested'].sum
+      xml.FeaturedOfferRequestsHourly appstats.stats['featured_offers_requested'].join(',')
+      xml.FeaturedOfferImpressions appstats.stats['featured_offers_shown'].sum
+      xml.FeaturedOfferImpressionsHourly appstats.stats['featured_offers_shown'].join(',')
+      xml.FeaturedOfferClicks appstats.stats['featured_offers_opened'].sum
+      xml.FeaturedOfferClicksHourly appstats.stats['featured_offers_opened'].join(',')
+      xml.FeaturedOfferConversions appstats.stats['featured_published_offers'].sum
+      xml.FeaturedOfferConversionsHourly appstats.stats['featured_published_offers'].join(',')
       
       xml.DisplayRevenue appstats.stats['display_revenue'].sum
       xml.DisplayRevenueHourly appstats.stats['display_revenue'].join(',')
@@ -36,6 +50,8 @@ xml.MarketingData do
       xml.DisplayImpressionsHourly appstats.stats['display_ads_shown'].join(',')
       xml.DisplayClicks appstats.stats['display_clicks'].sum
       xml.DisplayClicksHourly appstats.stats['display_clicks'].join(',')
+      xml.DisplayConversions appstats.stats['display_conversions'].sum
+      xml.DisplayConversionsHourly appstats.stats['display_conversions'].join(',')
     end
   end
 end

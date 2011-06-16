@@ -70,7 +70,7 @@ ActionController::Routing::Routes.draw do |map|
     :collection => { :monthly_data => :get, :new_transfer => :get,
                      :money => :get, :failed_sdb_saves => :get, :disabled_popular_offers => :get, :as_groups => :get,
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
-                     :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get, :capped_publishers => :get,
+                     :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
                      :freemium_android => :get },
     :member => {  :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post }
@@ -111,6 +111,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'press/:id', :controller => 'homepage/press', :action => 'show'
   map.connect 'glu', :controller => 'homepage/press', :action => 'glu'
   map.connect 'publishing', :controller => 'homepage', :action => 'publishers'
+  map.connect 'androidfund', :controller => 'androidfund'
   map.resources :sdk, :only => [ :index, :show ]
   map.namespace :agency_api do |agency|
     agency.resources :apps, :only => [ :index, :show, :create, :update ]
