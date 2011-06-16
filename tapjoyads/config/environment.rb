@@ -32,7 +32,7 @@ Rails::Initializer.run do |config|
   config.gem 'hpricot', :version => '0.8.1'
   config.gem 'json', :version => '1.1.9'
   config.gem 'libxml-ruby', :version => '1.1.3', :lib => 'xml'
-  config.gem 'memcached'
+  config.gem 'memcached', :version => '1.2.7'
   config.gem 'mysql', :version => '2.8.1'
   config.gem 'patron', :version => '0.4.4'
   config.gem 'right_aws', :version => '1.10.0'
