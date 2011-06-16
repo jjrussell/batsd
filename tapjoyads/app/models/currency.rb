@@ -172,22 +172,16 @@ class Currency < ActiveRecord::Base
   end
   
   def cache_offers
-    Benchmark.realtime do
-      weights = currency_group.weights
-
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
-      cache_offer_list(offer_list, weights, Offer::DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
-
-      offer_list = (Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list).reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
-      cache_offer_list(offer_list, weights.merge({ :random => 0 }), Offer::FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+    weights = currency_group.weights
     
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads.reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
-      cache_offer_list(offer_list, weights, Offer::DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
-    end
-  end
-  
-  def cache_offer_list(offer_list, weights, type, exp)
-    Offer.cache_offer_list(offer_list, weights, type, exp, self)
+    offer_list = Offer.get_unsorted_offers('offerwall').reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
+    Offer.cache_offer_list(offer_list, weights, Offer::DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default], self)
+
+    offer_list = Offer.get_unsorted_offers('featured').reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
+    Offer.cache_offer_list(offer_list, weights.merge({ :random => 0 }), Offer::FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default], self)
+      
+    offer_list = Offer.get_unsorted_offers('display').reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
+    Offer.cache_offer_list(offer_list, weights, Offer::DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default], self)
   end
   
   def get_cached_offers(options = {}, &block)
