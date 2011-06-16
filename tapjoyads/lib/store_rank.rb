@@ -202,7 +202,7 @@ class StoreRank
                 if error_count > 100
                   raise "Too many errors attempting to download windows ranks, giving up. Marketplace down?"
                 end
-                log_progress "Error downloading ranks from itunes for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Error code: #{response.code}. Retrying."
+                log_progress "Error downloading ranks from windows phone 7 for category: #{category_key}, pop: #{pop_key}, country: #{country_key}. Error code: #{response.code}. Retrying."
                 hydra.queue(request)
               else
                 ranks_hash = get_windows_ranks_hash(response.body)
