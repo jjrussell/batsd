@@ -11,6 +11,8 @@ class PayoutInfo < ActiveRecord::Base
   validates_presence_of :partner
   validates_uniqueness_of :partner_id
 
+  validates_format_of :billing_name, :company_name, :with => /^[[:print:]]+$/
+
   attr_accessor :terms
   validates_acceptance_of :terms
   validates_presence_of :signature, :billing_name, :tax_country, :account_type,
