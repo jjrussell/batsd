@@ -12,7 +12,7 @@ class AndroidfundController < WebsiteController
       elsif info[:email_address] !~ Authlogic::Regex.email
         @error_msg = "You must enter a valid email address."
       else
-        @success_msg = "You're application has been received."
+        @success_msg = "Your application has been received."
         TapjoyMailer.deliver_androidfund_application(params[:info])
       end
     end
