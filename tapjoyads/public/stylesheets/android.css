@@ -71,6 +71,9 @@ h3 span { color: #94c147; }
 #fund_details h2 { margin: 15px 0 10px 0; }
 #fund_details p { font-family: 'Lucida Grande';font-size: 14px; }
 
+#apply_btn { background: url('../images/android/apply_now_btn.jpg'); float: left; margin-top: 25px; height: 38px; width: 176px; }
+#apply_btn:hover { background-position: -176px; }
+
 #phone { background: url('../images/android/phone.jpg'); float: right; height: 197px; margin-top: 25px; width: 388px; }
 .screenshot { display: none; margin: 16px 0 0 56px; }
 .show { display: block; }
