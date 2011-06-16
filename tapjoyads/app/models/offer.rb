@@ -155,14 +155,34 @@ class Offer < ActiveRecord::Base
     Benchmark.realtime do
       weights = CurrencyGroup.find_by_name('default').weights
       
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.to_a
+      cache_unsorted_offers(offer_list, 'offerwall')
       cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
       offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
+      cache_unsorted_offers(offer_list, 'featured')
       cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads.to_a
+      cache_unsorted_offers(offer_list, 'display')
       cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+    end
+  end
+  
+  def self.cache_unsorted_offers(offers, name)
+    s3_key = "unsorted_offers.#{name}"
+    mc_key = "s3.#{s3_key}"
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
+    bucket.put(s3_key, Marshal.dump(offers))
+    Mc.distributed_put(mc_key, offers)
+  end
+  
+  def self.get_unsorted_offers(name)
+    s3_key = "unsorted_offers.#{name}"
+    mc_key = "s3.#{s3_key}"
+    offers = Mc.distributed_get_and_put(mc_key) do
+      bucket = S3.bucket(BucketNames::OFFER_DATA)
+      Marshal.restore(bucket.get(s3_key))
     end
   end
     
