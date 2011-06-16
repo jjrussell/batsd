@@ -2,7 +2,7 @@ class Tools::GenericOffersController < WebsiteController
   layout 'tabbed'
   current_tab :tools
   filter_access_to :all
-  after_filter :save_activity_logs, :only => [ :create ]
+  after_filter :save_activity_logs, :only => [ :create, :update ]
   
   def new
     @generic_offer = GenericOffer.new
