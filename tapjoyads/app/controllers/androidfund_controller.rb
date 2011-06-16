@@ -1,6 +1,5 @@
 class AndroidfundController < WebsiteController
   layout 'androidfund'
-  protect_from_forgery :except => [:contact]
 
   def index
   end
