@@ -33,6 +33,7 @@ class UdidReports
     end
     
     if outfile.pos > 0
+      S3.reset_connection
       bucket = S3.bucket(BucketNames::UDID_REPORTS)
       path = "#{offer_id}/#{date.strftime('%Y-%m')}/#{date.strftime('%Y-%m-%d')}.csv"
       retries = 3
