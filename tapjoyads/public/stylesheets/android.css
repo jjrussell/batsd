@@ -117,3 +117,4 @@ form textarea { width: 400px; height: 150px; }
 #send_it:hover { background-position: -140px; }
 
 #error { font-weight: bold; color: red; float: left; margin-bottom: 20px; width: 100%; }
+#success { font-weight: bold; color: green; float: left; margin-bottom: 20px; width: 100%; }

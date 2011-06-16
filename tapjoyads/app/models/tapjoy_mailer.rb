@@ -79,7 +79,7 @@ class TapjoyMailer < ActionMailer::Base
   def androidfund_application(info)
     from 'admin@tapjoy.com'
     if Rails.env == 'development'
-      recipients "dev@tapjoy.com"
+      recipients "dev+androidfund@tapjoy.com"
     else
       recipients "marketing@tapjoy.com"
     end
