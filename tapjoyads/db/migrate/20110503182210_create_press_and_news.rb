@@ -86,6 +86,7 @@ class CreatePressAndNews < ActiveRecord::Migration
 
   def self.press_releases
     [
+      [ "6.16.2011", "Tapjoy Announces Program to Port Apps to Android, Backed by $5 Million Fund", "/press/201106160-tapjoy-announces-android-fund", ],
       [ "3.23.2011", "Tapjoy Fuels Self-Publishing for Mobile and Social Application Developers", "/press/201103230-tapjoy-fuels-self-publishing-for-developers", ],
       [ "3.3.2011", "Tapjoy Helps Fuel the Growth of Glu's Gun Bros App on Mobile Platforms", "/press/201103030-tapjoy-helps-fuel-growth-of-glus-gun-bros", ],
       [ "2.9.2011", "Tapjoy Launches Pay-Per-Action&trade; Distribution Model for Android, iOS Applications; Analytics Partnership with Apsalar", "/press/201102090-tapjoy-launches-pay-per-action-analytics-partnership-with-apsalar", ],
@@ -140,6 +141,11 @@ class CreatePressAndNews < ActiveRecord::Migration
 
   def self.news_coverages
     [
+      [ "6.16.2011", "Inside Mobile Apps", "Tapjoy Launches $5 Million Fund to Port Games to Android", "http://www.insidemobileapps.com/2011/06/16/tapjoy-launches-5-million-fund-to-port-games-to-android/", ],
+      [ "6.16.2011", "AllThingsD", "Tapjoy Puts up $5M to Help App Developers Port to Android", "http://allthingsd.com/20110616/tapjoy-puts-up-5m-to-help-app-developers-port-to-android/", ],
+      [ "6.16.2011", "VentureBeat", "Tapjoy launches $5M fund to port apps to Android", "http://venturebeat.com/2011/06/16/tapjoy-launches-5m-fund-to-port-apps-to-android/", ],
+      [ "6.16.2011", "Gamasutra", "Tapjoy Announces Android Fund, Backed By $5M Funding", "http://www.gamasutra.com/view/news/35267/Tapjoy_Announces_Android_Fund_Backed_By_5M_Funding.php", ],
+      [ "6.16.2011", "PocketGamer", "Tapjoy encourages developers to support Android with new $5 million fund", "http://www.pocketgamer.biz/r/PG.Biz/Tapjoy+news/news.asp?c=30709", ],
       [ "2.16.2011", "Gamezebo", "Interview with Shannon Jessup, Tapjoy", "http://www.gamezebo.com/news/2011/02/16/interview-shannon-jessup-tapjoy", ],
       [ "2.10.2011", "ReadWriteWeb", "A New Distribution Model for Apps: Tapjoy's Pay-Per-Action Service  ", "http://www.readwriteweb.com/mobile/2011/02/new-distribution-model-for-apps-tapjoy-pay-per-action-service.php", ],
       [ "2.10.2011", "Inside Social Games", "Tapjoy Launches Pay-Per-Action Mobile Advertising as Installs Get Crowded", "http://www.insidesocialgames.com/2011/02/09/tapjoy-pay-per-action/", ],

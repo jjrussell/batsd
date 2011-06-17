@@ -5,7 +5,7 @@
     %span
       <b>Error!</b>
       = @error_msg
-- elsif params[:info].present?
+- elsif @success
   #notice
     %span
       <b>Thanks!</b> Someone from our team will be in touch shortly
@@ -36,13 +36,13 @@
       - form_for('info', :url => {:action => 'contact'}, :html => {:id => 'contact_form'}) do |f|
         %div
           = f.label :name, 'Your name'
-          = f.text_field :name
+          = f.text_field :name, :value => params[:info] && params[:info][:name]
           = f.label :email, 'Your email address'
-          = f.text_field :email
+          = f.text_field :email, :value => params[:info] && params[:info][:email]
           = f.label :reason, 'Reason for inquiry'
-          = f.select :reason, options_for_select(['Comment', 'Complaint']), :include_blank => 'Select one'
+          = f.select :reason, options_for_select(['Comment', 'Complaint'], params[:info] && params[:info][:reason]), :include_blank => 'Select one'
         #details
           = f.label :details
-          = f.text_area :details, :rows => 5
+          = f.text_area :details, :rows => 5, :value => params[:info] && params[:info][:details]
         = submit_tag('', :id => 'send_it')
 .clear

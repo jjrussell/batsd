@@ -17,10 +17,11 @@
       %th Secret Superpower
       %th Current Game(s)
       %th Weapon of Choice
+      %th Display Order
   %tbody
     - @employees.each do |employee|
       %tr
-        %td= image_tag employee.get_photo_url, :alt => employee.photo_alt_name
+        %td= link_to(image_tag(employee.get_photo_url, :alt => employee.photo_alt_name), edit_tools_employee_path(employee))
         %td= employee.active ? "Yes" : "No"
         %td= employee.full_name
         %td= employee.title
@@ -29,6 +30,7 @@
         %td= employee.superpower
         %td= employee.current_games
         %td= employee.weapon
+        %td= employee.display_order 
 
 
 - content_for :page_styles do

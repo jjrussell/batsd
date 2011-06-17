@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110614092546) do
+ActiveRecord::Schema.define(:version => 20110617212359) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -172,6 +172,7 @@ ActiveRecord::Schema.define(:version => 20110614092546) do
     t.text     "biography"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "display_order"
   end
 
   add_index "employees", ["email"], :name => "index_employees_on_email", :unique => true
