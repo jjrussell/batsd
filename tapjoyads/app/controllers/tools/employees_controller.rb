@@ -6,7 +6,7 @@ class Tools::EmployeesController < WebsiteController
 
   def index
     @employees = Employee.find(:all,
-                               :order => 'last_name, first_name')
+                               :order => 'display_order desc, last_name, first_name')
   end
 
   def new
