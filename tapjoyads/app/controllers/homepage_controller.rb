@@ -24,6 +24,8 @@ class HomepageController < WebsiteController
           @error_msg = "All fields must be filled out."
         else
           TapjoyMailer.deliver_contact_us(params[:info])
+          params[:info] = nil
+          @success = true
         end
       end
     end

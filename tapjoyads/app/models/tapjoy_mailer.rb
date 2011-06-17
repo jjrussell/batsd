@@ -60,7 +60,7 @@ class TapjoyMailer < ActionMailer::Base
       recipients "support+contactus@tapjoy.com"
     end
     content_type 'text/html'
-    subject "Website form inquiry from #{info[:first]} #{info[:last]} at #{info[:company]}"
+    subject "Contact us from #{info[:name]}"
     body(:info => info)
   end
 
