@@ -35,7 +35,8 @@
               Estimating new offerwall placement...
             .percentile-details
               The bid is just one of many factors affecting your offerwall ranking.
-            - if !featured && !@offer.on_track_for_budget? && @offer.needs_higher_bid?
+            - # TODO: make this work
+            - if false && !featured && !@offer.on_track_for_budget? && @offer.needs_higher_bid?
               .percentile-details
                 To position your app in the top 15% of the offerwall, your bid should be at least
                 %b>= " " + number_to_currency(0.01 * @offer.bid_for_percentile(85))
