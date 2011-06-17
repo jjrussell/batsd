@@ -1,75 +1,60 @@
-!!!
-
+!!! Strict
 %html
   %head
+    %title Tapjoy :: Fueling Great Apps
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
-    %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
-    %title= @title || 'Tapjoy'
-    = stylesheet_link_tag 'base', 'slider', '/fonts.css'
-    %style{ :type => 'text/css' }
-      = yield :page_styles
-    :plain
-      <!--[if IE]>
-       <link href="/stylesheets/ie.css" rel="stylesheet" type="text/css" />
-      <![endif]-->
-      <!--[if IE 6]>
-       <link href="/stylesheets/ie6.css" rel="stylesheet" type="text/css" />
-      <![endif]-->
+    %link{ :rel => 'shortcut icon', :href => '/favicon.ico' }
+    = stylesheet_link_tag 'reset', 'common', 'about_us', 'press'
+    = yield :page_head
   %body
-    #sub1.wrapper
-      .shadow
-        .header
-          %h1= link_to image_tag('site/logo.gif'), root_path
-          .quickLinks
-            = link_to 'CLIENT LOGIN', login_path
-          .mainmenu
-            %ul#nav
-              %li= link_to 'APP DEVELOPERS', '/site/app_developers'
-              %li= link_to 'ADVERTISERS', '/site/advertisers'
-              %li= link_to 'GAMING PLATFORMS', '/site/gaming_platforms'
-              %li= link_to 'ABOUT', '/site/about_us', :class => 'selec'
-          .clear{:style => 'clear:both;'}
-        .contentArea
-          .titleHeader
-            %h3 COMPANY OVERVIEW
-            %h3.separator &nbsp;/&nbsp;
-            %h3.sub PRESS
-          .splitLayout
-            = render :partial => 'homepage/about_left_nav'
-            .team.plain_template
-              .management.innercontents
-                %h1
-                  %strong= @press_title
-                %p
-                - if @press_subtitle
-                  %em= @press_subtitle
-                  %br/
-                  %br/
-                = yield
-                %br/
-                = link_to '&lt;&lt; Back to top', '#top'
-          .clear
-      .footer
-        = link_to 'PRESS', '/press'
-        |
-        = link_to 'CAREERS', '/site/careers'
-        |
-        = link_to 'TEAM', '/site/team'
-        |
-        = link_to 'CONTACT', '/site/contact'
-        %p
-          &copy; #{Time.now.year} Tapjoy, Inc.
-          = link_to 'Privacy Policy', '/privacy.html'
-    = javascript_include_tag 'jquery-1.4.2.min', 'jquery.easing.1.2.js', 'jquery.anythingslider.js', 'pluginpage.js', 'jquery.pngFix.pack.js'
-    %script{ :type => 'text/javascript', :charset => 'utf-8' }
-      = yield :page_javascript
-      - unless Rails.env == 'development'
-        :plain
-          var _gaq = _gaq || [];
-          _gaq.push(['_setAccount', 'UA-5323442-1']);
-          _gaq.push(['_trackPageview']);
-          (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();
+    #header_wrapper
+      #header
+        %a#logo{:href => "/"}
+        #nav
+          %a#nav_home.nav_link{:href => "/"}
+          %a#nav_developers.nav_link{:href => "/site/app_developers"}
+          %a#nav_advertisers.nav_link{:href => "/site/advertisers"}
+          %a#nav_about.nav_link{:href => "/site/about_us"}
+    #content_wrapper
+      #content
+        %a#client_login{:href => "/login"}
+        .clear
+        #about_us
+          #left
+            = render :partial => 'homepage/sub_nav'
+            = render :partial => 'homepage/press_feed'
+          #right
+            %h1
+              %strong= @press_title
+            %p
+              - if @press_subtitle
+                %i= @press_subtitle
+            = yield
+            = yield :additional_info
+
+      .clear
+    #footer_wrapper
+      #footer
+        #footer_content
+          #about_tapjoy
+            %img.header{:src => "/images/about_tapjoy.png"}/
+            .clear
+            %ul
+              %li
+                %a{:href => "/site/team"} Meet the team
+              %li
+                %a{:href => "/press"} Tapjoy in the press
+              %li.last
+                %a{:href => "http://blog.tapjoy.com"} Read our blog
+            %ul
+              %li
+                %a{:href => "/careers"} Work at Tapjoy
+              %li.last
+                %a{:href => "/site/contact"} Contact us
+          #legal_stuff
+            %img.header{:src => "/images/legal_stuff.png"}/
+            %p
+              All content &copy; 2011 Tapjoy. Website created with love in downtown San Francisco, CA
+        .clear
+      .clear
+    = javascript_include_tag 'jquery-1.4.2.min', 'tapjoy'
