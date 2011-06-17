@@ -26,7 +26,6 @@ class Offer < ActiveRecord::Base
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue', 
                                   'normal_price', 'over_threshold' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
-  DEFAULT_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
   DAILY_STATS_START_HOUR = 6
@@ -993,7 +992,7 @@ private
   end
   
   def recalculate_estimated_percentile
-    weights = DEFAULT_WEIGHTS
+    weights = CurrencyGroup.find_by_name('default').weights
     if conversion_rate == 0
       self.conversion_rate = is_paid? ? (0.05 / (0.01 * price)) : 0.50
     end
