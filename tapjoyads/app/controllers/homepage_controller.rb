@@ -24,6 +24,8 @@ class HomepageController < WebsiteController
           @error_msg = "All fields must be filled out."
         else
           TapjoyMailer.deliver_contact_us(params[:info])
+          params[:info] = nil
+          @success = true
         end
       end
     end
@@ -48,5 +50,9 @@ class HomepageController < WebsiteController
 
   def index
     render :layout => 'newhome'
+  end
+  
+  def careers
+    redirect_to '/careers' and return
   end
 end
