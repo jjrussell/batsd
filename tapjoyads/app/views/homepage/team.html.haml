@@ -17,13 +17,13 @@
           %p.biosmall
             - if (employee.biography.length > 140)
               = truncate(employee.biography, :length => 140)
-              %a.showbio{:href => "#"}
+              %a.showbio{:href => "javascript:;"}
                 [Full Bio]
             - else
               = employee.biography
           %p.biolarge
             = employee.biography
-            %a.showbio{:href => "#"}
+            %a.showbio{:href => "javascript:;"}
               [Short Bio]
           #questions
             .question
