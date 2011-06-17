@@ -78,4 +78,11 @@ private
     end
   end
   
+  def get_stat_prefix(group)
+    @platform == 'all' ? group : "#{group}-#{@platform}"
+  end
+
+  def set_platform
+    @platform = params[:platform] || 'all'
+  end
 end

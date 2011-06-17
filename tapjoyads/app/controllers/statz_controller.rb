@@ -7,6 +7,7 @@ class StatzController < WebsiteController
   
   before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids ]
   before_filter :setup, :only => [ :show, :global ]
+  before_filter :set_platform, :only => [ :global, :publisher, :advertiser ]
   after_filter :save_activity_logs, :only => [ :update ]
   
   def index
@@ -129,7 +130,7 @@ private
     if params[:action] == 'global'
       key = nil
       options[:cache_hours] = 0
-      options[:stat_prefix] = get_prefix('global')
+      options[:stat_prefix] = get_stat_prefix('global')
     else
       key = @offer.id
     end
@@ -142,23 +143,8 @@ private
 
   def load_partner_stats
     @timeframe = params[:timeframe] || '24_hours'
-    prefix = get_prefix('partner')
+    prefix = get_stat_prefix('partner')
     @last_updated = Time.zone.at(Mc.get("statz.#{prefix}.last_updated.#{@timeframe}") || 0)
     @cached_stats = Mc.distributed_get("statz.#{prefix}.cached_stats.#{@timeframe}") || []
   end
-
-  def get_prefix(group)
-    case params[:platform]
-    when 'android'
-      @platform = 'android'
-      "#{group}-android"
-    when 'ios'
-      @platform = 'ios'
-      "#{group}-ios"
-    else
-      @platform = ''
-      group
-    end
-  end
-
 end

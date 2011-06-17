@@ -117,7 +117,7 @@ class ToolsController < WebsiteController
   def elb_status
     elb_interface  = RightAws::ElbInterface.new
     ec2_interface  = RightAws::Ec2.new
-    @lb_names      = Rails.env == 'production' ? %w( masterjob-lb job-lb website-lb web-lb test-lb ) : []
+    @lb_names      = Rails.env == 'production' ? %w( masterjob-lb job-lb website-lb games-lb web-lb test-lb ) : []
     @lb_instances  = {}
     @ec2_instances = {}
     @lb_names.each do |lb_name|
@@ -374,14 +374,6 @@ class ToolsController < WebsiteController
     end
     flash[:notice] = "Added #{user_roles.map(&:name).sort.to_json} to #{user.email}"
     redirect_to manage_user_roles_tool_path(:email => user.email)
-  end
-
-  def capped_publishers
-    @capped_publishers = {}
-    App.get_ios_publisher_apps.each do |pub|
-      capped_advertisers = pub.capped_advertiser_apps.map { |app| { :count => pub.daily_installs_for_advertiser(app.id), :app => app } }
-      @capped_publishers[pub] = capped_advertisers unless capped_advertisers.empty?
-    end
   end
 
   def freemium_android

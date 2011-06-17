@@ -35,17 +35,12 @@ else
   `cp /home/webuser/tapjoyserver/server/passenger.load /etc/apache2/mods-available/`
   `/etc/init.d/apache2 start`
 
-  # boot the app
-  `su webuser -c 'curl -s http://localhost:9898/healthz'`
-
-  # install cronjob on webservers
-  if server_type == 'web'
-    `echo "* * * * * /home/webuser/tapjoyserver/server/ensure_apache_running.rb" | crontab -u ubuntu -`
-  end
-
   # start memcached and mysql on testservers
   if server_type == 'test'
     `/etc/init.d/memcached start`
     `start mysql`
   end
+
+  # boot the app
+  `su webuser -c 'curl -s http://localhost:9898/healthz'`
 end

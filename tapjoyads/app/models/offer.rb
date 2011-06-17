@@ -22,7 +22,9 @@ class Offer < ActiveRecord::Base
                                   'age_rating', 'multi_complete', 'featured',
                                   'publisher_app_whitelist', 'direct_pay', 'reward_value',
                                   'third_party_data', 'payment_range_low',
-                                  'payment_range_high', 'icon_id_override', 'rank_boost' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'payment_range_high', 'icon_id_override', 'rank_boost',
+                                  'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue', 
+                                  'normal_price', 'over_threshold' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   DEFAULT_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
@@ -30,7 +32,7 @@ class Offer < ActiveRecord::Base
   DAILY_STATS_START_HOUR = 6
   DAILY_STATS_RANGE = 6
   
-  attr_accessor :rank_score, :normal_conversion_rate, :normal_price, :normal_avg_revenue, :normal_bid, :offer_list_length
+  attr_accessor :offer_list_length, :rank_score
   
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -43,13 +45,14 @@ class Offer < ActiveRecord::Base
   
   validates_presence_of :partner, :item, :name, :url, :rank_boost
   validates_numericality_of :price, :only_integer => true
-  validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_blank => false, :allow_nil => false
-  validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 10000, :allow_blank => false, :allow_nil => false
+  validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
+  validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 10000, :allow_nil => false
   validates_numericality_of :min_bid_override, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => true
-  validates_numericality_of :conversion_rate, :rank_boost, :greater_than_or_equal_to => 0
-  validates_numericality_of :min_conversion_rate, :allow_nil => true, :allow_blank => false, :greater_than_or_equal_to => 0
+  validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
+  validates_numericality_of :rank_boost, :allow_nil => false, :only_integer => true
+  validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
-  validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_blank => false, :allow_nil => true, :greater_than => 0
+  validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer )
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
@@ -105,10 +108,12 @@ class Offer < ActiveRecord::Base
   before_save :cleanup_url
   before_save :fix_country_targeting
   before_save :update_payment
+  before_save :calculate_ranking_fields
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
   
-  named_scope :enabled_offers, :joins => :partner, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > 0) OR (payment = 0 AND reward_value > 0))"
+  named_scope :enabled_offers, :joins => :partner, 
+    :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > 0) OR (payment = 0 AND reward_value > 0))"
   named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
   named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
@@ -121,10 +126,12 @@ class Offer < ActiveRecord::Base
   named_scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ] } }
   named_scope :for_ios_only, :conditions => 'device_types not like "%android%"'
   named_scope :with_rank_boosts, :joins => :rank_boosts, :readonly => false
+  named_scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
   
-  delegate :balance, :pending_earnings, :name, :approved_publisher?, :to => :partner, :prefix => true
+  delegate :balance, :pending_earnings, :name, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   
   alias_method :events, :offer_events
+  alias_method :random, :rand
   
   def self.redistribute_hourly_stats_aggregation
     Benchmark.realtime do
@@ -154,29 +161,39 @@ class Offer < ActiveRecord::Base
     Benchmark.realtime do
       weights = CurrencyGroup.find_by_name('default').weights
       
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.to_a
+      cache_unsorted_offers(offer_list, 'offerwall')
       cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
       offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
+      cache_unsorted_offers(offer_list, 'featured')
       cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads
+      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads.to_a
+      cache_unsorted_offers(offer_list, 'display')
       cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+    end
+  end
+  
+  def self.cache_unsorted_offers(offers, name)
+    s3_key = "unsorted_offers.#{name}"
+    mc_key = "s3.#{s3_key}"
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
+    bucket.put(s3_key, Marshal.dump(offers))
+    Mc.distributed_put(mc_key, offers)
+  end
+  
+  def self.get_unsorted_offers(name)
+    s3_key = "unsorted_offers.#{name}"
+    mc_key = "s3.#{s3_key}"
+    offers = Mc.distributed_get_and_put(mc_key) do
+      bucket = S3.bucket(BucketNames::OFFER_DATA)
+      Marshal.restore(bucket.get(s3_key))
     end
   end
     
   def self.cache_offer_stats
-    offer_list = Offer.enabled_offers.nonfeatured.for_offer_list
-    cache_offer_stats_for_offer_list(offer_list, DEFAULT_OFFER_TYPE)
-    
-    offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
-    cache_offer_stats_for_offer_list(offer_list, FEATURED_OFFER_TYPE)
-    
-    offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads
-    cache_offer_stats_for_offer_list(offer_list, DISPLAY_OFFER_TYPE)
-  end
-  
-  def self.cache_offer_stats_for_offer_list(offer_list, type)
+    offer_list = Offer.enabled_offers
     conversion_rates    = offer_list.collect(&:conversion_rate)
     prices              = offer_list.collect(&:price)
     avg_revenues        = offer_list.collect(&:avg_revenue)
@@ -194,38 +211,27 @@ class Offer < ActiveRecord::Base
       :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
     
     bucket = S3.bucket(BucketNames::OFFER_DATA)
-    bucket.put("offer_rank_statistics.#{type}", Marshal.dump(stats))
-    Mc.put("s3.offer_rank_statistics.#{type}", stats)
+    bucket.put("offer_rank_statistics", Marshal.dump(stats))
+    Mc.put("s3.offer_rank_statistics", stats)
   end
   
   def self.cache_offer_list(offer_list, weights, type, exp, currency = nil)
-    stats = get_offer_rank_statistics(type)
-    
     offer_list.each do |offer|
-      offer.bid = [ offer.bid, 500 ].min
-      offer.normalize_stats(stats)
-      offer.bid = offer.bid_was
       offer.name = "#{offer.truncated_name}..." if offer.name.length > 40
       offer.calculate_rank_score(weights)
     end
-    
-    offer_list.sort! do |o1, o2|
-      if o1.featured? && !o2.featured?
-        -1
-      elsif o2.featured? && !o1.featured?
-        1
-      else
-        o2.rank_score <=> o1.rank_score
-      end
-    end
-    
-    offer_list.first.offer_list_length = offer_list.length
   
+    offer_list = offer_list.sort_by do |offer|
+      [ offer.featured? ? 0 : 1, -offer.rank_score ]
+    end
+      
+    offer_list.first.offer_list_length = offer_list.length
+    
     offer_groups = []
     group        = 0
     key          = currency.present? ? "enabled_offers.#{currency.id}.type_#{type}.exp_#{exp}" : "enabled_offers.type_#{type}.exp_#{exp}"
     bucket       = S3.bucket(BucketNames::OFFER_DATA)
-    
+  
     offer_list.in_groups_of(GROUP_SIZE) do |offers|
       offers.compact!
       if currency.nil?
@@ -235,15 +241,15 @@ class Offer < ActiveRecord::Base
       offer_groups << offers
       group += 1
     end
-    
-    if offer_groups.last.length == GROUP_SIZE    
+  
+    if offer_groups.last.length == GROUP_SIZE
       last_offers = []
       marshalled_offers = Marshal.dump(last_offers)
       bucket.put("#{key}.#{group}", marshalled_offers)
       offer_groups << last_offers
       group += 1
     end
-    
+  
     offer_groups.each_with_index do |offers, i|
       Mc.distributed_put("#{key}.#{i}", offers)
     end
@@ -308,10 +314,10 @@ class Offer < ActiveRecord::Base
     block_given? ? offer_list_length.to_i : offer_list
   end
   
-  def self.get_offer_rank_statistics(type)
-    Mc.get_and_put("s3.offer_rank_statistics.#{type}") do
+  def self.get_offer_rank_statistics
+    Mc.get_and_put("s3.offer_rank_statistics") do
       bucket = S3.bucket(BucketNames::OFFER_DATA)
-      Marshal.restore(bucket.get("offer_rank_statistics.#{type}"))
+      Marshal.restore(bucket.get("offer_rank_statistics"))
     end
   end
   
@@ -334,7 +340,7 @@ class Offer < ActiveRecord::Base
   end
 
   def avg_revenue
-    conversion_rate * bid
+    conversion_rate * bid_for_ranks
   end
 
   def cost
@@ -633,23 +639,24 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def normalize_stats(stats)
+  def calculate_ranking_fields
+    return if Rails.env == 'test' # We need to be seeding the test environment with enabled offers for these calculations to work
+    stats                       = Offer.get_offer_rank_statistics
     self.normal_conversion_rate = (stats[:cvr_std_dev] == 0) ? 0 : (conversion_rate - stats[:cvr_mean]) / stats[:cvr_std_dev]
     self.normal_price           = (stats[:price_std_dev] == 0) ? 0 : (price - stats[:price_mean]) / stats[:price_std_dev]
     self.normal_avg_revenue     = (stats[:avg_revenue_std_dev] == 0) ? 0 : (avg_revenue - stats[:avg_revenue_mean]) / stats[:avg_revenue_std_dev]
-    self.normal_bid             = (stats[:bid_std_dev] == 0) ? 0 : (bid - stats[:bid_mean]) / stats[:bid_std_dev]
+    self.normal_bid             = (stats[:bid_std_dev] == 0) ? 0 : (bid_for_ranks - stats[:bid_mean]) / stats[:bid_std_dev]
+    self.over_threshold         = bid >= 40 ? 1 : 0
+    self.rank_boost             = rank_boosts.active.sum(:amount)
   end
   
-  def calculate_rank_score(rank_weights = {})
-    weights = rank_weights.clone
-    random_weight = weights.delete(:random) { 0 }
-    boost_weight = weights.delete(:boost) { 1 }
-    over_threshold_weight = weights.delete(:over_threshold) { 0 }
-    weights = { :conversion_rate => 0, :price => 0, :avg_revenue => 0, :bid => 0 }.merge(weights)
-    self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send("normal_#{key}")) }
-    self.rank_score += rand * random_weight
-    self.rank_score += rank_boost * boost_weight
-    self.rank_score += over_threshold_weight if bid >= 40
+  def calculate_ranking_fields!
+    calculate_ranking_fields
+    save!
+  end
+  
+  def calculate_rank_score(weights)
+    self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send(key)) }  
     self.rank_score += 5 if item_type == "ActionOffer"
     self.rank_score += 10 if price == 0
   end
@@ -690,7 +697,6 @@ class Offer < ActiveRecord::Base
         jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
-        capped_installs_reject?(publisher_app) ||
         hide_app_installs_reject?(currency, hide_app_installs) ||
         should_reject_from_app_or_currency?(publisher_app, currency)
   end
@@ -831,11 +837,11 @@ class Offer < ActiveRecord::Base
   def toggle_user_enabled
     self.user_enabled = !user_enabled
   end
-
+  
   def calculate_rank_boost!
     update_attribute(:rank_boost, rank_boosts.active.sum(:amount))
   end
-
+  
 private
   
   def is_disabled?(publisher_app, currency)
@@ -958,10 +964,6 @@ private
     item_type == "ActionOffer" && third_party_data.present? && !device.has_app(third_party_data)
   end
   
-  def capped_installs_reject?(publisher_app)
-    free_app? && publisher_app.capped_advertiser_app_ids.include?(item_id)
-  end
-  
   def hide_app_installs_reject?(currency, hide_app_installs)
     hide_app_installs && item_type != 'GenericOffer'
   end
@@ -995,16 +997,12 @@ private
     if conversion_rate == 0
       self.conversion_rate = is_paid? ? (0.05 / (0.01 * price)) : 0.50
     end
+
+    calculate_rank_score(weights.merge({ :random => 0 }))
     
     if featured?
-      @stats ||= Offer.get_offer_rank_statistics(FEATURED_OFFER_TYPE)
-      normalize_stats(@stats)
-      calculate_rank_score(weights.merge({ :random => 0 }))
       @ranked_offers ||= Offer.get_cached_offers({ :type => FEATURED_OFFER_TYPE }).reject { |offer| offer.rank_boost > 0 || offer.id == self.id }
     else
-      @stats ||= Offer.get_offer_rank_statistics(DEFAULT_OFFER_TYPE)
-      normalize_stats(@stats)
-      calculate_rank_score(weights.merge({ :random => 0 }))
       self.rank_score += weights[:random] * 0.5
       @ranked_offers ||= Offer.get_cached_offers({ :type => DEFAULT_OFFER_TYPE }).reject { |offer| offer.rank_boost > 0 || offer.id == self.id }
     end
@@ -1044,4 +1042,9 @@ private
       countries.gsub!(/uk/i, 'GB')
     end
   end
+  
+  def bid_for_ranks
+    [ bid, 500 ].min
+  end
+  
 end

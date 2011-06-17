@@ -43,4 +43,8 @@ a:hover { text-decoration: underline; }
 #legal_stuff { float: left; margin-left: 50px; }
 #legal_stuff p { clear: left; float: left; margin-top: 12px;  }
 
-#client_login { background: url('../images/customer_login.jpg'); width: 128px; height: 33px; margin: 15px 0 0 850px; position: absolute; }
+#client_login { background: url('/images/customer_login.jpg'); width: 128px; height: 33px; margin: 15px 0 0 860px; position: absolute; }
+
+#android_wrapper { background: #94c147; height: 36px; border-top: 1px solid #A3D64E; }
+#android_wrapper a { display: block; width: 860px; margin: 0px auto; margin-top: 2px; text-align: center; }
+#android_wrapper a img { }
