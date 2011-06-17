@@ -6,8 +6,7 @@ class Offer < ActiveRecord::Base
   IPAD_DEVICES = %w( ipad )
   ANDROID_DEVICES = %w( android )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES
-  EXEMPT_UDIDS = Set.new(['c73e730913822be833766efffc7bb1cf239d855a',
-                          '7bed2150f941bad724c42413c5efa7f202c502e0',
+  EXEMPT_UDIDS = Set.new(['7bed2150f941bad724c42413c5efa7f202c502e0',
                           'a000002256c234'])
   
   CLASSIC_OFFER_TYPE  = '0'

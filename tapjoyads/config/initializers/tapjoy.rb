@@ -2,6 +2,7 @@ require 'extensions'
 require 'notifier'
 
 GEOIP = GeoIP.new("#{RAILS_ROOT}/data/GeoLiteCity.dat")
+BANNED_IPS = Set.new(['174.120.96.162', '151.197.180.227', '74.63.224.218', '65.19.143.2'])
 
 UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 APP_ID_FOR_DEVICES_REGEX = /^(\w|\.|-)*$/

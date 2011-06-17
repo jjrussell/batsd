@@ -113,29 +113,27 @@ private
     ip_address = params[:device_ip] || get_ip_address
     
     begin
-      array = GEOIP.city(ip_address)
+      geo_struct = GEOIP.city(ip_address)
     rescue Exception => e
-      Rails.logger.info "Error getting GeoIP data: #{e}"
-      array = nil
+      geo_struct = nil
     end
     
-    unless array.nil?
-      data[:country] = array[2]
-      data[:continent] = array[5]
-      data[:region] = array[6]
-      data[:city] = array[7]
-      data[:postal_code] = array[8]
-      data[:lat] = array[9]
-      data[:long] = array[10]
-      data[:area_code] = array[12]
+    if geo_struct.present?
+      data[:country]     = geo_struct[:country_code2]
+      data[:continent]   = geo_struct[:continent_code]
+      data[:region]      = geo_struct[:region_name]
+      data[:city]        = geo_struct[:city_name]
+      data[:postal_code] = geo_struct[:postal_code]
+      data[:lat]         = geo_struct[:latitude]
+      data[:long]        = geo_struct[:longitude]
+      data[:area_code]   = geo_struct[:area_code]
     end
     
     data
   end
   
   def reject_banned_ips
-    banned_ips = Set.new(['174.120.96.162', '151.197.180.227', '74.63.224.218', '65.19.143.2'])
-    render :text => '' if banned_ips.include?(get_ip_address)
+    render :text => '' if BANNED_IPS.include?(get_ip_address)
   end
   
   def log_activity(object, options={})
