@@ -49,4 +49,8 @@ class HomepageController < WebsiteController
   def index
     render :layout => 'newhome'
   end
+  
+  def careers
+    redirect_to '/careers' and return
+  end
 end
