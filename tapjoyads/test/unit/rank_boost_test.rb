@@ -6,7 +6,7 @@ class RankBoostTest < ActiveSupport::TestCase
   should validate_presence_of :start_time
   should validate_presence_of :end_time
   should validate_presence_of :offer
-  should validate_presence_of :amount
+  should validate_numericality_of :amount
   
   context "A RankBoost" do  
     setup do

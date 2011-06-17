@@ -129,16 +129,17 @@ ActiveRecord::Schema.define(:version => 20110614092546) do
   add_index "currencies", ["id"], :name => "index_currencies_on_id", :unique => true
 
   create_table "currency_groups", :id => false, :force => true do |t|
-    t.string   "id",              :limit => 36,                :null => false
-    t.integer  "conversion_rate",               :default => 0, :null => false
-    t.integer  "bid",                           :default => 0, :null => false
-    t.integer  "price",                         :default => 0, :null => false
-    t.integer  "avg_revenue",                   :default => 0, :null => false
-    t.integer  "random",                        :default => 0, :null => false
-    t.integer  "over_threshold",                :default => 0, :null => false
+    t.string   "id",                     :limit => 36,                :null => false
+    t.integer  "normal_conversion_rate",               :default => 0, :null => false
+    t.integer  "normal_bid",                           :default => 0, :null => false
+    t.integer  "normal_price",                         :default => 0, :null => false
+    t.integer  "normal_avg_revenue",                   :default => 0, :null => false
+    t.integer  "random",                               :default => 0, :null => false
+    t.integer  "over_threshold",                       :default => 0, :null => false
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "rank_boost",                           :default => 0, :null => false
   end
 
   add_index "currency_groups", ["id"], :name => "index_currency_groups_on_id", :unique => true
@@ -328,6 +329,11 @@ ActiveRecord::Schema.define(:version => 20110614092546) do
     t.string   "icon_id_override",                  :limit => 36
     t.text     "instructions"
     t.integer  "rank_boost",                                                                    :default => 0,     :null => false
+    t.float    "normal_conversion_rate",                                                        :default => 0.0,   :null => false
+    t.float    "normal_price",                                                                  :default => 0.0,   :null => false
+    t.float    "normal_avg_revenue",                                                            :default => 0.0,   :null => false
+    t.float    "normal_bid",                                                                    :default => 0.0,   :null => false
+    t.integer  "over_threshold",                                                                :default => 0,     :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

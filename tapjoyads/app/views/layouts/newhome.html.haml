@@ -12,6 +12,9 @@
           %a#nav_developers.nav_link{:href => "/site/app_developers"}
           %a#nav_advertisers.nav_link{:href => "/site/advertisers"}
           %a#nav_about.nav_link{:href => "/site/about_us"}
+    #android_wrapper
+      %a{:href => "/androidfund"}
+        %img{:src => "/images/android/android_banner_copy.jpg"}
     #content_wrapper
       #content
         %a#client_login{:href => "/login"}
@@ -19,73 +22,73 @@
         = yield
     #press_wrapper
       #press
-        %img{:src => "images/maybe_youve_heard_of_us.png"}/
+        %img{:src => "/images/maybe_youve_heard_of_us.png"}/
         %a{:href => "http://venturebeat.com/2011/01/06/tapjoy-funding-seriesc/"}
-          %img{:src => "images/mobilebeat.jpg"}/
+          %img{:src => "/images/mobilebeat.jpg"}/
         %a{:href => "http://techcrunch.com/2011/03/23/app-distributor-tapjoy-launches-publishing-platform-for-game-developers/"}
-          %img{:src => "images/techcrunch.jpg"}/
+          %img{:src => "/images/techcrunch.jpg"}/
         %a{:href => "http://www.insidemobileapps.com/2011/01/03/tapjoy-rebound/"}
-          %img{:src => "images/insidemobileapps.jpg"}/
+          %img{:src => "/images/insidemobileapps.jpg"}/
     #footer_wrapper
       #footer
         #clients
-          %img.header{:src => "images/checkout_a_few_of_our_clients.png"}/
+          %img.header{:src => "/images/checkout_a_few_of_our_clients.png"}/
           .clear
           %table
             %tr
               %td
                 %a.client.on{:href => "#", :title => "glu"}
-                  %img{:src => "images/gunbros.png"}/
+                  %img{:src => "/images/gunbros.png"}/
                   %span.appname Gun Bros
                   %span.company Glu
               %td
                 %a.client{:href => "#", :title => "getset"}
-                  %img{:src => "images/megajump.png"}/
+                  %img{:src => "/images/megajump.png"}/
                   %span.appname Mega Jump
                   %span.company Get Set Games
               %td
                 %a.client{:href => "#", :title => "ngmoco"}
-                  %img{:src => "images/werule.png"}/
+                  %img{:src => "/images/werule.png"}/
                   %span.appname We Rule
                   %span.company ngmoco, Inc.
             %tr
               %td
                 %a.client{:href => "#", :title => "pinger"}
-                  %img{:src => "images/textfree.png"}/
+                  %img{:src => "/images/textfree.png"}/
                   %span.appname Textfree with Voice
                   %span.company Pinger
               %td
                 %a.client{:href => "#", :title => "gamefly"}
-                  %img{:src => "images/gamecenter.png"}/
+                  %img{:src => "/images/gamecenter.png"}/
                   %span.appname GameCenter
                   %span.company GameFly
               %td
                 %a.client{:href => "#", :title => "kayak"}
-                  %img{:src => "images/kayak.png"}/
+                  %img{:src => "/images/kayak.png"}/
                   %span.appname Kayak Mobile
                   %span.company Kayak
           
         #quote
-          %img.header{:src => "images/heres_what_they_are_saying_about_us.png"}/
+          %img.header{:src => "/images/heres_what_they_are_saying_about_us.png"}/
           #kayak
             .quote_content{:title => "Tapjoy produced great results, giving us effective engagement with their network as well as with the larger iPhone population. I was especially impressed with their thoughtful insights and timely management."}
               %p Tapjoy produced great results, giving us effective engagement with their network.
             #byline
-              %img{:src => "images/edward_hoa.jpg"}/
+              %img{:src => "/images/edward_hoa.jpg"}/
               %span.appname Edward Hoa
               %span.company Kayak
           #pinger
             .quote_content{:title => "We are both a publisher and an advertiser with Tapjoy, and they've provided tremendous value to our business. Tapjoy's turnkey virtual goods platform enables us to significantly increase our RPU, while the distribution push they've given us is unmatched in both its effectiveness and cost."}
               %p We are both a publisher and an advertiser with Tapjoy, and they've provided tremendous value.
             #byline
-              %img{:src => "images/joe_sipher.jpg"}/
+              %img{:src => "/images/joe_sipher.jpg"}/
               %span.appname Joe Sipher
               %span.company Pinger
           #ngmoco
             .quote_content{:title => "Tapjoy is a key monetization partner for ngmoco:).  The team is knowledgeable, honest, and always up for a challenge. We ask a lot of our partners, and Tapjoy has demonstrated the ability to hit aggressive revenue targets while also finding new and innovative ways to delight our users."}
               %p Tapjoy is a key monetization partner for ngmoco:).  The team is knowledgeable and honest.
             #byline
-              %img{:src => "images/nate_morgan.jpg"}/
+              %img{:src => "/images/nate_morgan.jpg"}/
               %span.appname Nate Morgan
               %span.company ngmoco :)
           #glu.show
@@ -93,27 +96,27 @@
               %p Tapjoy is a leader in mobile advertising solutions and will continue to be a key strategic partner.
             %a.view_case_study{:href => "/glu.pdf"}
             #byline
-              %img{:src => "images/niccolo_de_masi.jpg"}/
+              %img{:src => "/images/niccolo_de_masi.jpg"}/
               %span.appname Niccolo de Masi
               %span.company Glu
           #getset
             .quote_content{:title => "Working with Tapjoy has been a great experience. We added Tapjoy's virtual currency support over the course of a weekend - it was that easy. When the update was released, our ARPDAU immediately tripled. If you have a game on the iPhone then you must consider integrating Tapjoy."}
               %p If you have a game on the iPhone then you must consider integrating Tapjoy.
             #byline
-              %img{:src => "images/derekvanvliet.jpg"}/
+              %img{:src => "/images/derekvanvliet.jpg"}/
               %span.appname Derek van Vilet
               %span.company Get Set Games
           #gamefly
             .quote_content{:title => "Tapjoy is a highly trusted partner for our mobile advertising efforts. They have been very effective in driving installs of our GameCenter app, and with the launch of their new PPA model, we expect our ROI to get even better.  We expect to significantly increase conversions that will lead to acquiring GameFly users who are more loyal and engaged than ever."}
               %p Tapjoy is a highly trusted partner for our mobile advertising efforts.
             #byline
-              %img{:src => "images/steve_hartmann.jpg"}/
+              %img{:src => "/images/steve_hartmann.jpg"}/
               %span.appname Steve Hartmann
               %span.company GameFly
         #footer_divider
         #footer_content
           #about_tapjoy
-            %img.header{:src => "images/about_tapjoy.png"}/
+            %img.header{:src => "/images/about_tapjoy.png"}/
             .clear
             %ul
               %li
@@ -130,7 +133,7 @@
               %li.last
                 %a{:href => "http://knowledge.tapjoy.com"} Tapjoy Knowledge Center
           #legal_stuff
-            %img.header{:src => "images/legal_stuff.png"}/
+            %img.header{:src => "/images/legal_stuff.png"}/
             %p
               All content © 2011 Tapjoy. Website created with love in downtown San Francisco, CA
             .clear

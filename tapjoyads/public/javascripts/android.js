@@ -5,5 +5,6 @@ $(document).ready(function() {
     $("."+iconId).addClass('show');
     $(".icon").removeClass('selected');
     $(this).addClass('selected');
+    return false;
   })
 })
