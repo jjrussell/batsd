@@ -996,6 +996,7 @@ private
       self.conversion_rate = is_paid? ? (0.05 / (0.01 * price)) : 0.50
     end
 
+    calculate_ranking_fields
     calculate_rank_score(weights.merge({ :random => 0 }))
     
     if featured?
