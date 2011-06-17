@@ -784,18 +784,6 @@ class Offer < ActiveRecord::Base
     false
   end
   
-  def bid_for_percentile(percentile_goal)
-    while estimated_percentile < percentile_goal do
-      self.bid += 1
-      update_payment(true)
-    end
-    recommended_bid = bid
-    self.bid = bid_was
-    self.payment = payment_was
-    @estimated_percentile = recalculate_estimated_percentile
-    recommended_bid
-  end
-  
   def icon_id
     icon_id_override || item_id
   end
