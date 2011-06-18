@@ -6,19 +6,17 @@ class Tools::GenericOffersController < WebsiteController
   
   def new
     @generic_offer = GenericOffer.new
-    @partner = Partner.find(params[:partner_id])
+    @generic_offer.partner = Partner.find(params[:partner_id])
   end
 
   def edit
-    @generic_offer = GenericOffer.find(params[:id])
-    @partner = Partner.find(@generic_offer.partner_id)
+    @generic_offer = GenericOffer.find(params[:id], :include => :partner)
   end
 
   def create
     generic_offer_params = sanitize_currency_params(params[:generic_offer], [ :price ])
     @generic_offer = GenericOffer.new(generic_offer_params)
-    @partner = Partner.find(params[:partner_id])
-    @generic_offer.partner = @partner
+    @generic_offer.partner = Partner.find(params[:generic_offer][:partner_id])
     log_activity(@generic_offer)
     if @generic_offer.save
       unless params[:icon].blank?
@@ -32,7 +30,7 @@ class Tools::GenericOffersController < WebsiteController
   end
 
   def update
-    @generic_offer = GenericOffer.find(params[:id])
+    @generic_offer = GenericOffer.find(params[:id], :include => :partner)
     generic_offer_params = sanitize_currency_params(params[:generic_offer], [ :price ])
     log_activity(@generic_offer)
     if @generic_offer.update_attributes(generic_offer_params)
@@ -42,7 +40,6 @@ class Tools::GenericOffersController < WebsiteController
       flash[:notice] = 'Successfully updated Generic Offer'
       redirect_to statz_path(@generic_offer.primary_offer)
     else
-      @partner = Partner.find(params[:partner_id])
       render :action => :edit
     end
   end

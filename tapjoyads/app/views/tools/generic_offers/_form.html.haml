@@ -3,8 +3,8 @@
     %tr
       %th= label_tag 'Partner'
       %td
-        = @partner.name
-        = hidden_field_tag :partner_id, @partner.id
+        = @generic_offer.partner.name
+        = f.hidden_field :partner_id
     %tr
       %th= f.label :name
       %td
@@ -18,7 +18,7 @@
     %tr
       %th= f.label :url
       %td
-        = f.text_field :url, :size => 100
+        = f.text_field :url, :size => 50
         = error_message_on @generic_offer, :url
     - if !@generic_offer.new_record?
       %tr
