@@ -76,7 +76,7 @@ ActionController::Routing::Routes.draw do |map|
     :member => {  :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post }
   map.namespace :tools do |tools|
     tools.resources :premier_partners, :only => [ :index ]
-    tools.resources :generic_offers, :only => [ :new, :create ]
+    tools.resources :generic_offers, :only => [ :new, :create, :edit, :update ]
     tools.resources :orders, :only => [ :new, :create ]
     tools.resources :payouts, :only => [ :index, :create ]
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
