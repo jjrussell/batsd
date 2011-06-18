@@ -5,8 +5,7 @@ class Tools::GenericOffersController < WebsiteController
   after_filter :save_activity_logs, :only => [ :create, :update ]
   
   def new
-    @generic_offer = GenericOffer.new
-    @generic_offer.partner = Partner.find(params[:partner_id])
+    @generic_offer = GenericOffer.new(:partner_id => params[:partner_id])
   end
 
   def edit
@@ -16,7 +15,6 @@ class Tools::GenericOffersController < WebsiteController
   def create
     generic_offer_params = sanitize_currency_params(params[:generic_offer], [ :price ])
     @generic_offer = GenericOffer.new(generic_offer_params)
-    @generic_offer.partner = Partner.find(params[:generic_offer][:partner_id])
     log_activity(@generic_offer)
     if @generic_offer.save
       unless params[:icon].blank?
