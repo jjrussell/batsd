@@ -691,7 +691,7 @@ class Offer < ActiveRecord::Base
         already_complete?(publisher_app, device, app_version) ||
         show_rate_reject?(device) ||
         flixter_reject?(publisher_app, device) ||
-        minimum_featured_bid_reject?(currency, type) ||
+        minimum_bid_reject?(currency, type) ||
         jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
@@ -933,9 +933,16 @@ private
     return currency.use_whitelist? && !currency.get_offer_whitelist.include?(id)
   end
   
-  def minimum_featured_bid_reject?(currency, type)
-    return false unless (type == FEATURED_OFFER_TYPE && currency.minimum_featured_bid)
-    bid < currency.minimum_featured_bid
+  def minimum_bid_reject?(currency, type)
+    min_bid = case type
+    when DEFAULT_OFFER_TYPE
+      currency.minimum_offerwall_bid
+    when FEATURED_OFFER_TYPE
+      currency.minimum_featured_bid
+    when DISPLAY_OFFER_TYPE
+      currency.minimum_display_bid
+    end
+    min_bid.present? && bid < min_bid
   end
   
   def jailbroken_reject?(device)
