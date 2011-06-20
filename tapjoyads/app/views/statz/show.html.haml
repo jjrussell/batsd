@@ -16,6 +16,8 @@
 %h4 Offer
 - if permitted_to? :edit, :statz
   = link_to('[Edit Offer]', edit_statz_path(@offer.id))
+- if permitted_to?(:edit, :tools_generic_offers) && @offer.item_type == 'GenericOffer'
+  = link_to('[Edit Generic Offer]', edit_tools_generic_offer_path(@offer.id))
 - if permitted_to? :last_run_times, :statz
   = link_to('[View Last Run Times]', last_run_times_statz_path(@offer.id))
 - if permitted_to? :udids, :statz
@@ -121,7 +123,9 @@
           - property_row('Initial balance', c.initial_balance)
           - property_row('Ordinal', c.ordinal)
           - property_row('Only free offers', c.only_free_offers?)
+          - property_row('Min offerwall bid', number_to_currency((c.minimum_offerwall_bid || 0) / 100.0))
           - property_row('Min featured bid', number_to_currency((c.minimum_featured_bid || 0) / 100.0))
+          - property_row('Min display ad bid', number_to_currency((c.minimum_display_bid || 0) / 100.0))
           - property_row('Has virtual goods', c.has_virtual_goods?)
           - property_row('Banner advertiser', c.banner_advertiser?)
           - property_row('Rev share override', number_to_percentage(c.rev_share_override * 100, :precision => 1)) if c.rev_share_override?
