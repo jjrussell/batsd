@@ -2,6 +2,7 @@
   #press
     %strong Press Releases
     = link_to('View All &rarr;', '#', :class => "view_all")
+    = link_to('Hide &larr;', '#', :class => "hide_all hidden")
     %ul
       - @recent_press[0..2].each do |press|
         - class_name = "bold" if press.link_id == @sanitized_id
@@ -20,6 +21,7 @@
   #news
     %strong News Coverage
     = link_to('View All &rarr;', '#', :class => "view_all")
+    = link_to('Hide &larr;', '#', :class => "hide_all hidden")
     %ul
       - @recent_news[0..2].each do |news|
         .article_divider
@@ -39,14 +41,15 @@
           .date
             = news.published_at.to_s(:pr)
 
-- content_for :page_styles do
-  :plain
-    ul.hidden {
-      display: hidden;
-    }
 - content_for :page_javascript do
   :plain
     $('.view_all').click(function(){
       $($(this).parent().children('%ul.hidden')).show();
+      $(this).hide().siblings('.hide_all').show();
+      return false;
+    });
+    $('.hide_all').click(function(){
+      $($(this).parent().children('%ul.hidden')).hide();
+      $(this).hide().siblings('.view_all').show();
       return false;
     });
