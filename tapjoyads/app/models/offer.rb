@@ -6,8 +6,7 @@ class Offer < ActiveRecord::Base
   IPAD_DEVICES = %w( ipad )
   ANDROID_DEVICES = %w( android )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES
-  EXEMPT_UDIDS = Set.new(['c73e730913822be833766efffc7bb1cf239d855a',
-                          '7bed2150f941bad724c42413c5efa7f202c502e0',
+  EXEMPT_UDIDS = Set.new(['7bed2150f941bad724c42413c5efa7f202c502e0',
                           'a000002256c234'])
   
   CLASSIC_OFFER_TYPE  = '0'
@@ -26,7 +25,6 @@ class Offer < ActiveRecord::Base
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue', 
                                   'normal_price', 'over_threshold' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
-  DEFAULT_WEIGHTS = { :conversion_rate => 1, :bid => 1, :price => -1, :avg_revenue => 5, :random => 1, :over_threshold => 6 }
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
   DAILY_STATS_START_HOUR = 6
@@ -693,7 +691,7 @@ class Offer < ActiveRecord::Base
         already_complete?(publisher_app, device, app_version) ||
         show_rate_reject?(device) ||
         flixter_reject?(publisher_app, device) ||
-        minimum_featured_bid_reject?(currency, type) ||
+        minimum_bid_reject?(currency, type) ||
         jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
@@ -784,18 +782,6 @@ class Offer < ActiveRecord::Base
     show_rate == 1 && estimated_percentile < 50
   rescue
     false
-  end
-  
-  def bid_for_percentile(percentile_goal)
-    while estimated_percentile < percentile_goal do
-      self.bid += 1
-      update_payment(true)
-    end
-    recommended_bid = bid
-    self.bid = bid_was
-    self.payment = payment_was
-    @estimated_percentile = recalculate_estimated_percentile
-    recommended_bid
   end
   
   def icon_id
@@ -947,9 +933,16 @@ private
     return currency.use_whitelist? && !currency.get_offer_whitelist.include?(id)
   end
   
-  def minimum_featured_bid_reject?(currency, type)
-    return false unless (type == FEATURED_OFFER_TYPE && currency.minimum_featured_bid)
-    bid < currency.minimum_featured_bid
+  def minimum_bid_reject?(currency, type)
+    min_bid = case type
+    when DEFAULT_OFFER_TYPE
+      currency.minimum_offerwall_bid
+    when FEATURED_OFFER_TYPE
+      currency.minimum_featured_bid
+    when DISPLAY_OFFER_TYPE
+      currency.minimum_display_bid
+    end
+    min_bid.present? && bid < min_bid
   end
   
   def jailbroken_reject?(device)
@@ -993,11 +986,12 @@ private
   end
   
   def recalculate_estimated_percentile
-    weights = DEFAULT_WEIGHTS
+    weights = CurrencyGroup.find_by_name('default').weights
     if conversion_rate == 0
       self.conversion_rate = is_paid? ? (0.05 / (0.01 * price)) : 0.50
     end
 
+    calculate_ranking_fields
     calculate_rank_score(weights.merge({ :random => 0 }))
     
     if featured?
