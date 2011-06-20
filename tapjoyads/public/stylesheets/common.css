@@ -6,7 +6,6 @@ h2 { color: #5c5c5c; float: left; font-size: 20px; font-weight: bold; }
 h3 { color: #1486b8; float: left; font-size: 16px; font-weight: bold; }
 
 .clear { clear: both; }
-p { line-height: 22px; }
 a { color: #1486b8; text-decoration: none; }
 a:hover { text-decoration: underline; }
 
