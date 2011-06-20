@@ -1,13 +1,13 @@
 :ruby
   selected = {
+    :team => controller.action_name == 'team' ? 'selected' : '',
     :press => controller.controller_name == 'press' ? 'selected' : '',
     :careers => controller.controller_name == 'careers' ? 'selected' : '',
     :contact => controller.action_name == 'contact' ? 'selected' : '',
   }
 #sub_nav
   .thick_line
-  %a{:href => "/site/team"}
-    Meet the Team
+  = link_to "Meet the Team", '/site/team', :class => selected[:team]
   .dotted_line
   = link_to "Tapjoy in the Press", '/press', :class => selected[:press]
   .dotted_line
