@@ -196,6 +196,27 @@ ActiveRecord::Schema.define(:version => 20110620003513) do
   add_index "enable_offer_requests", ["offer_id"], :name => "index_enable_offer_requests_on_offer_id"
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
 
+  create_table "gamers", :id => false, :force => true do |t|
+    t.string   "id",                :limit => 36, :null => false
+    t.string   "username",                        :null => false
+    t.string   "email"
+    t.string   "crypted_password"
+    t.string   "password_salt"
+    t.string   "persistence_token"
+    t.string   "perishable_token"
+    t.string   "referrer"
+    t.datetime "current_login_at"
+    t.datetime "last_login_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "gamers", ["email"], :name => "index_gamers_on_email", :unique => true
+  add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
+  add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
+  add_index "gamers", ["persistence_token"], :name => "index_gamers_on_persistence_token"
+  add_index "gamers", ["username"], :name => "index_gamers_on_username", :unique => true
+
   create_table "generic_offers", :id => false, :force => true do |t|
     t.string   "id",               :limit => 36,                    :null => false
     t.string   "partner_id",       :limit => 36,                    :null => false

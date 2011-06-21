@@ -3,6 +3,13 @@ ActionController::Routing::Routes.draw do |map|
   
   map.with_options({:path_prefix => MACHINE_TYPE == 'games' ? '' : 'games', :name_prefix => 'games_'}) do |m|
     m.root :controller => 'games/homepage', :action => :index
+    
+    m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy ]
+    m.login 'login', :controller => 'games/gamer_sessions', :action => :new
+    m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
+    
+    m.resources :registrations, :controller => 'games/registrations', :only => [ :new, :create ]
+    m.register 'register', :controller => 'games/registrations', :action => :new
   end
   
   break if MACHINE_TYPE == 'games'

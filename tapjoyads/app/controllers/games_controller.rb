@@ -5,10 +5,22 @@ class GamesController < ApplicationController
   
   skip_before_filter :fix_params
   
+  helper_method :current_gamer
+  
+  def current_gamer
+    @current_gamer ||= current_gamer_session && current_gamer_session.record
+  end
+  
 protected
   
   def ssl_required?
     Rails.env == 'production'
+  end
+  
+private
+  
+  def current_gamer_session
+    @current_gamer_session ||= GamerSession.find
   end
   
 end
