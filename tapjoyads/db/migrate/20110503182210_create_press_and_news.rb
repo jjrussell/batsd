@@ -1,9 +1,10 @@
 class CreatePressAndNews < ActiveRecord::Migration
   def self.up
-    create_table :press_releases do |t|
-      t.timestamp   :published_at,    :nil => false
-      t.text        :link_text,       :nil => false
-      t.text        :link_href,       :nil => false
+    create_table :press_releases, :id => false do |t|
+      t.column      :id, 'char(36) binary', :null => false
+      t.timestamp   :published_at,    :null => false
+      t.text        :link_text,       :null => false
+      t.text        :link_href,       :null => false
       # internal only
       t.string      :link_id
       t.text        :content_title
@@ -15,15 +16,18 @@ class CreatePressAndNews < ActiveRecord::Migration
       t.timestamps
     end
 
-    create_table :news_coverages do |t|
-      t.timestamp   :published_at,  :nil => false
-      t.string      :link_source,   :nil => false
-      t.text        :link_text,     :nil => false
-      t.text        :link_href,     :nil => false
+    create_table :news_coverages, :id => false do |t|
+      t.column      :id, 'char(36) binary', :null => false
+      t.timestamp   :published_at,  :null => false
+      t.string      :link_source,   :null => false
+      t.text        :link_text,     :null => false
+      t.text        :link_href,     :null => false
 
       t.timestamps
     end
 
+    add_index :press_releases, :id, :unique => true
+    add_index :news_coverages, :id, :unique => true
     add_index :press_releases, :published_at
     add_index :news_coverages, :published_at
   end
