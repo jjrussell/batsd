@@ -38,8 +38,7 @@ class Homepage::CareersController < WebsiteController
   end
 
   def show
-    sanitized_id = params[:id]
-    render "homepage/careers/#{sanitized_id}"
+    render "homepage/careers/#{params[:id]}"
   end
 
   def index
