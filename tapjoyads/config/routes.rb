@@ -95,6 +95,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :employees, :only => [ :index, :new, :create, :edit, :update ], :member => [ :delete_photo ]
     tools.resources :preview_experiments, :only => [ :index, :show ]
     tools.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
+    tools.resources :external_publishers, :only => [ :index, :update ]
   end
   
   # Additional webserver routes

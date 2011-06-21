@@ -41,6 +41,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'master_android_app_ranks', :hourly => 30.minutes
     s.add_job 'master_group_daily_stats', :hourly => 5.minutes
     s.add_job 'master_group_hourly_stats', :hourly => 6.minutes
+    s.add_job 'master_external_publishers/populate_potential', :daily => 1.hour
     
     # jobs with low impact on overall system performance
     s.add_job 'master_refresh_memcached', :interval => 10.minutes
@@ -60,6 +61,7 @@ JobRunner::Gateway.define do |s|
     s.add_job 'master_fetch_top_freemium_android_apps', :daily => 1.minute
     s.add_job 'master_calculate_ranking_fields', :interval => 30.minutes
     s.add_job 'master_cache_offers', :interval => 1.minute
+    s.add_job 'master_external_publishers/cache', :hourly => 6.minutes
   else
     Rails.logger.info "JobRunner: Not running any jobs. Not a job server."
   end
