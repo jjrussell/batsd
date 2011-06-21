@@ -1,5 +1,5 @@
 class HomepageController < WebsiteController
-  layout 'homepage'
+  layout 'newcontent'
   protect_from_forgery :except => [:contact]
 
   def start
@@ -15,27 +15,44 @@ class HomepageController < WebsiteController
   def contact
     if params[:info]
       if params[:info][:source] == 'publishers_contact'
+        # TODO: this is submitted from /publishing. consolidate with regular contact page
         TapjoyMailer.deliver_publisher_application(params[:info])
+        redirect_to :action => 'contact-thanks'
       else
-        TapjoyMailer.deliver_contact_us(params[:info])
+        info = params[:info]
+        if info[:name].blank? || info[:email].blank? || info[:details].blank? || info[:reason].blank?
+          @error_msg = "All fields must be filled out."
+        else
+          TapjoyMailer.deliver_contact_us(params[:info])
+          params[:info] = nil
+          @success = true
+        end
       end
-      redirect_to :action => 'contact-thanks'
     end
   end
 
   def privacy
     render :layout => false
   end
-  
+
+  def about_us
+  end
+
   def advertisers
-    render :layout => 'newcontent'
   end
-  
+
   def app_developers
-    render :layout => 'newcontent'
   end
-  
+
+  def team
+    @employees = Employee.active_only
+  end
+
   def index
     render :layout => 'newhome'
+  end
+  
+  def careers
+    redirect_to '/careers' and return
   end
 end

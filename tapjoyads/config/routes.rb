@@ -109,6 +109,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'confirm_email_validation', :controller => 'list_signup', :action => 'confirm_api'
   map.connect 'press', :controller => 'homepage/press', :action => 'index'
   map.connect 'press/:id', :controller => 'homepage/press', :action => 'show'
+  map.connect 'careers', :controller => 'homepage/careers', :action => 'index'
+  map.connect 'careers/:id', :controller => 'homepage/careers', :action => 'show'
   map.connect 'glu', :controller => 'homepage/press', :action => 'glu'
   map.connect 'publishing', :controller => 'homepage', :action => 'publishers'
   map.connect 'androidfund', :controller => 'androidfund'

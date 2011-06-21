@@ -54,15 +54,15 @@
   math, engineering and business, as well as two U.S. Patents.
 
 %h2 Supporting Resources:
-%p
-  = link_to('George Garrick bio', 'http://www.offerpalmedia.com/management-team.php')
-  = link_to('George Garrick executive photo', 'http://www.flickr.com/search/?q=Offerpal+Media&amp;s=rec')
-  = link_to('Offerpal Media', 'http://www.offerpalmedia.com/index.php')
-  = link_to('Offerpal Media blog', 'http://myofferpal.wordpress.com/')
-  = link_to('Offerpal Media Twitter page', 'http://twitter.com/Offerpal')
+%ul
+  %li= link_to('George Garrick bio', 'http://www.offerpalmedia.com/management-team.php')
+  %li= link_to('George Garrick executive photo', 'http://www.flickr.com/search/?q=Offerpal+Media&amp;s=rec')
+  %li= link_to('Offerpal Media', 'http://www.offerpalmedia.com/index.php')
+  %li= link_to('Offerpal Media blog', 'http://myofferpal.wordpress.com/')
+  %li= link_to('Offerpal Media Twitter page', 'http://twitter.com/Offerpal')
 
 - about_blurb(:offerpal)
 %h2 Company Contact:
-- press_contact(:tapjoy)
+= press_contact(:tapjoy)
 %h2 Media Contact:
-- press_contact(:media)
+= press_contact(:media)

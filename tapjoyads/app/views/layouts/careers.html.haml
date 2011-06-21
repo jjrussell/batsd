@@ -1,0 +1,63 @@
+!!! Strict
+%html
+  %head
+    %title Tapjoy :: Fueling Great Apps
+    %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
+    %link{ :rel => 'shortcut icon', :href => '/favicon.ico' }
+    = stylesheet_link_tag 'reset', 'common', 'about_us', 'careers'
+    = yield :page_head
+  %body
+    #header_wrapper
+      #header
+        %a#logo{:href => "/"}
+        #nav
+          %a#nav_home.nav_link{:href => "/"}
+          %a#nav_developers.nav_link{:href => "/site/app_developers"}
+          %a#nav_advertisers.nav_link{:href => "/site/advertisers"}
+          %a#nav_about.nav_link{:href => "/site/about_us"}
+    #content_wrapper
+      #content
+        %a#client_login{:href => "/login"}
+        .clear
+        #about_us
+          #left
+            = render :partial => 'homepage/sub_nav'
+            = render :partial => 'homepage/jobs'
+          #right
+            %img.header{:src => "/images/work_at_tapjoy.png"}/
+            .clear
+            %h1
+              %strong= @job_title
+            = yield
+            %h2
+              Interested?
+            %p
+              Email your resume to
+              %b
+                jobs[at]tapjoy[dot]com!
+      .clear
+    #footer_wrapper
+      #footer
+        #footer_content
+          #about_tapjoy
+            %img.header{:src => "/images/about_tapjoy.png"}/
+            .clear
+            %ul
+              %li
+                %a{:href => "/site/team"} Meet the team
+              %li
+                %a{:href => "/press"} Tapjoy in the press
+              %li.last
+                %a{:href => "http://blog.tapjoy.com"} Read our blog
+            %ul
+              %li
+                %a{:href => "/careers"} Work at Tapjoy
+              %li.last
+                %a{:href => "/site/contact"} Contact us
+          #legal_stuff
+            %img.header{:src => "/images/legal_stuff.png"}/
+            %p
+              All content &copy; 2011 Tapjoy. Website created with love in downtown San Francisco, CA
+        .clear
+      .clear
+    = javascript_include_tag 'jquery-1.4.2.min', 'tapjoy'
