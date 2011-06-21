@@ -1,6 +1,7 @@
 class Tools::ExternalPublishersController < WebsiteController
   layout 'tabbed'
   current_tab :tools
+  filter_access_to :all
   
   after_filter :save_activity_logs, :only => [ :update ]
   
@@ -11,7 +12,7 @@ class Tools::ExternalPublishersController < WebsiteController
   def update
     currency = Currency.find(params[:id])
     log_activity(currency)
-    currency.external_publisher = params[:approved]
+    currency.external_publisher = !currency.external_publisher
     if currency.save
       ExternalPublishers.cache
       flash[:notice] = "Currency updated"

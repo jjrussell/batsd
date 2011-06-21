@@ -75,6 +75,7 @@ authorization do
     has_permission_on :tools_generic_offers, :to => [ :new, :create, :edit, :update ]
     has_permission_on :tools_admin_devices, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :tools_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :tools_external_publishers, :to => [ :index, :update ]
   end
   
   role :raffle_manager do

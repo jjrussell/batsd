@@ -28,9 +28,8 @@
         %td= currency.partner.name
         %td.state= currency.external_publisher? ? 'enabled' : 'disabled'
         %td
-          - form_tag(tools_external_publisher_path(:id => currency.id), :method => 'PUT') do
-            = hidden_field_tag(:approved, !currency.external_publisher?)
-            = submit_tag(currency.external_publisher? ? 'Disable' : 'Enable', :class => 'submit')
+          - form_for([ :tools, :currency ], :url => tools_external_publisher_path(currency)) do |f|
+            = f.submit(currency.external_publisher? ? 'Disable' : 'Enable')
 
 - content_for :page_styles do
   :plain
