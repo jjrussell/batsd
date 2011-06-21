@@ -1,4 +1,6 @@
 class PressRelease < ActiveRecord::Base
+  include UuidPrimaryKey
+
   named_scope :ordered, :order => "published_at DESC"
   def self.most_recent
     PressRelease.first( :order => "published_at DESC", :conditions => "content_body is not null")
