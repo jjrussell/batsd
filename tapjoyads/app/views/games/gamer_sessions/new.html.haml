@@ -1,0 +1,19 @@
+- @page_title = 'Login'
+
+%h1 Login
+
+- form_for([ :games, @gamer_session ]) do |f|
+  .field
+    = f.label :username
+    = f.text_field :username
+  .field
+    = f.label :password
+    = f.password_field :password
+  .field
+    = f.submit 'Login'
+
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      $('#gamer_session_username').focus();
+    });

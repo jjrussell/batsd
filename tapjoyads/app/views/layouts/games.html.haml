@@ -9,6 +9,11 @@
     = yield :page_head
 
   %body
+    - if current_gamer.present?
+      = "Logged in as #{current_gamer.username}"
+      |
+      = link_to('Logout', games_logout_path)
+
     = yield
 
     = yield :included_javascripts
