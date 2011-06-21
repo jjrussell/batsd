@@ -12,3 +12,7 @@
 
 #right h1 { clear: left; float: left;  margin-top: 23px; }
 #about_us p { color: #636363; float: left; font-size: 12px; line-height: 18px; margin-bottom: 22px; }
+
+#about_us ul li { line-height: 18px; }
+
+.hidden { display: none; }
