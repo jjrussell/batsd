@@ -61,6 +61,8 @@
   %li= link_to 'Schedule Offer Events', tools_offer_events_path
 - if permitted_to? :freemium_android, :tools
   %li= link_to 'Freemium Android Apps', freemium_android_tools_path
+- if permitted_to? :index, :tools_external_publishers
+  %li= link_to 'External Publishers', tools_external_publishers_path
 
 - if has_permissions_for_one_of?(:account_mgr, :customer_service, :admin)
   %h3 Customer Support
