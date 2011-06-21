@@ -10,7 +10,7 @@
 #sub_nav a:hover { background-position: right -15px; color: #0476a8; text-decoration: none; }
 #sub_nav .selected { background-position: right -15px; color: #0476a8; font-weight: bold; }
 
-#right h1 { clear: left; float: left;  margin-top: 23px; }
+#right h1 { clear: left; float: left;  margin-bottom: 15px; margin-top: 23px; }
 #about_us p { color: #636363; float: left; font-size: 12px; line-height: 18px; margin-bottom: 22px; }
 
 #about_us ul li { line-height: 18px; }
