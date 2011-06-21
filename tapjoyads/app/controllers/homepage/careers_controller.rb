@@ -16,7 +16,7 @@ class Homepage::CareersController < WebsiteController
       {
         :name => "Engineering",
         :list => [
-          { :title => "Software Engineers", :href => "/careers/software_engineers"},
+          { :title => "Software Engineer", :href => "/careers/software_engineer"},
           { :title => "Sales Technical Support Engineer", :href => "/careers/sales_technical_support_engineer"},
         ]
       },
@@ -34,12 +34,6 @@ class Homepage::CareersController < WebsiteController
           { :title => "Sales Development Rep", :href => "/careers/sales_development_rep"},
         ]
       },
-      {
-        :name => "HR",
-        :list => [
-          { :title => "Lead Recruiter (Contract)", :href => "/careers/lead_recruiter_contract"},
-        ]
-      }
     ]
   end
 
