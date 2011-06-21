@@ -211,7 +211,6 @@ ActiveRecord::Schema.define(:version => 20110620003513) do
     t.datetime "updated_at"
   end
 
-  add_index "gamers", ["email"], :name => "index_gamers_on_email", :unique => true
   add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
   add_index "gamers", ["persistence_token"], :name => "index_gamers_on_persistence_token"
