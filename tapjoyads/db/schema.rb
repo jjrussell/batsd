@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110619075634) do
+ActiveRecord::Schema.define(:version => 20110620003513) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -124,6 +124,8 @@ ActiveRecord::Schema.define(:version => 20110619075634) do
     t.decimal  "rev_share_override",                              :precision => 8, :scale => 6
     t.integer  "minimum_offerwall_bid"
     t.integer  "minimum_display_bid"
+    t.boolean  "external_publisher",                                                            :default => false, :null => false
+    t.boolean  "potential_external_publisher",                                                  :default => false, :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
