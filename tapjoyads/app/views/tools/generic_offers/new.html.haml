@@ -2,33 +2,4 @@
 
 %h1 Create Generic Offer
 
-- form_for [ :tools, @generic_offer ], :html => { :class => 'tjform', :multipart => true } do |f|
-  %table
-    %tr
-      %th= f.label :partner_id, 'Partner ID'
-      %td
-        = f.text_field :partner_id, :size => 50
-        = error_message_on @generic_offer, :partner
-    %tr
-      %th= f.label :name
-      %td
-        = f.text_field :name, :size => 50
-        = error_message_on @generic_offer, :name
-    %tr
-      %th= f.label :price
-      %td
-        = f.currency_field :price
-        = error_message_on @generic_offer, :price
-    %tr
-      %th= f.label :url
-      %td
-        = f.text_field :url, :size => 100
-        = error_message_on @generic_offer, :url
-    %tr
-      %th= label_tag :icon, 'Icon'
-      %td= file_field_tag :icon
-    %tr
-      %th= label_tag :instructions
-      %td= f.text_area :instructions
-    %tr
-      %td{ :colspan => 2 }= f.submit 'Create Generic Offer'
+= render 'form'

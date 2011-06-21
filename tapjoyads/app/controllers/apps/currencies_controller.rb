@@ -25,13 +25,13 @@ class Apps::CurrenciesController < WebsiteController
   def update
     log_activity(@currency)
 
-    currency_params = sanitize_currency_params(params[:currency], [ :minimum_featured_bid ])
+    currency_params = sanitize_currency_params(params[:currency], [ :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid ])
     
     if params[:managed_by_tapjoy]
       params[:currency][:callback_url] = Currency::TAPJOY_MANAGED_CALLBACK_URL
     end
     
-    safe_attributes = [:name, :conversion_rate, :initial_balance, :callback_url, :secret_key, :test_devices, :minimum_featured_bid]
+    safe_attributes = [:name, :conversion_rate, :initial_balance, :callback_url, :secret_key, :test_devices, :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid]
     if permitted_to?(:edit, :statz)
       safe_attributes += [:disabled_offers, :max_age_rating, :only_free_offers, :ordinal, :banner_advertiser, :hide_app_installs, :minimum_hide_app_installs_version, :tapjoy_enabled, :rev_share_override]
     end

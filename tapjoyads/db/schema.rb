@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110615074100) do
+ActiveRecord::Schema.define(:version => 20110619075634) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -122,6 +122,8 @@ ActiveRecord::Schema.define(:version => 20110615074100) do
     t.string   "minimum_hide_app_installs_version",                                             :default => "",    :null => false
     t.string   "currency_group_id",                 :limit => 36,                                                  :null => false
     t.decimal  "rev_share_override",                              :precision => 8, :scale => 6
+    t.integer  "minimum_offerwall_bid"
+    t.integer  "minimum_display_bid"
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -129,16 +131,17 @@ ActiveRecord::Schema.define(:version => 20110615074100) do
   add_index "currencies", ["id"], :name => "index_currencies_on_id", :unique => true
 
   create_table "currency_groups", :id => false, :force => true do |t|
-    t.string   "id",              :limit => 36,                :null => false
-    t.integer  "conversion_rate",               :default => 0, :null => false
-    t.integer  "bid",                           :default => 0, :null => false
-    t.integer  "price",                         :default => 0, :null => false
-    t.integer  "avg_revenue",                   :default => 0, :null => false
-    t.integer  "random",                        :default => 0, :null => false
-    t.integer  "over_threshold",                :default => 0, :null => false
+    t.string   "id",                     :limit => 36,                :null => false
+    t.integer  "normal_conversion_rate",               :default => 0, :null => false
+    t.integer  "normal_bid",                           :default => 0, :null => false
+    t.integer  "normal_price",                         :default => 0, :null => false
+    t.integer  "normal_avg_revenue",                   :default => 0, :null => false
+    t.integer  "random",                               :default => 0, :null => false
+    t.integer  "over_threshold",                       :default => 0, :null => false
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "rank_boost",                           :default => 0, :null => false
   end
 
   add_index "currency_groups", ["id"], :name => "index_currency_groups_on_id", :unique => true
@@ -171,6 +174,7 @@ ActiveRecord::Schema.define(:version => 20110615074100) do
     t.text     "biography"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "display_order"
   end
 
   add_index "employees", ["email"], :name => "index_employees_on_email", :unique => true
@@ -253,6 +257,19 @@ ActiveRecord::Schema.define(:version => 20110615074100) do
   add_index "monthly_accountings", ["month", "year"], :name => "index_monthly_accountings_on_month_and_year"
   add_index "monthly_accountings", ["partner_id", "month", "year"], :name => "index_monthly_accountings_on_partner_id_and_month_and_year", :unique => true
   add_index "monthly_accountings", ["partner_id"], :name => "index_monthly_accountings_on_partner_id"
+
+  create_table "news_coverages", :id => false, :force => true do |t|
+    t.string   "id",           :limit => 36, :null => false
+    t.datetime "published_at",               :null => false
+    t.string   "link_source",                :null => false
+    t.text     "link_text",                  :null => false
+    t.text     "link_href",                  :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "news_coverages", ["id"], :name => "index_news_coverages_on_id", :unique => true
+  add_index "news_coverages", ["published_at"], :name => "index_news_coverages_on_published_at"
 
   create_table "offer_discounts", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
@@ -348,6 +365,11 @@ ActiveRecord::Schema.define(:version => 20110615074100) do
     t.string   "icon_id_override",                  :limit => 36
     t.text     "instructions"
     t.integer  "rank_boost",                                                                    :default => 0,     :null => false
+    t.float    "normal_conversion_rate",                                                        :default => 0.0,   :null => false
+    t.float    "normal_price",                                                                  :default => 0.0,   :null => false
+    t.float    "normal_avg_revenue",                                                            :default => 0.0,   :null => false
+    t.float    "normal_bid",                                                                    :default => 0.0,   :null => false
+    t.integer  "over_threshold",                                                                :default => 0,     :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -463,6 +485,24 @@ ActiveRecord::Schema.define(:version => 20110615074100) do
 
   add_index "payouts", ["id"], :name => "index_payouts_on_id", :unique => true
   add_index "payouts", ["partner_id"], :name => "index_payouts_on_partner_id"
+
+  create_table "press_releases", :id => false, :force => true do |t|
+    t.string   "id",               :limit => 36, :null => false
+    t.datetime "published_at",                   :null => false
+    t.text     "link_text",                      :null => false
+    t.text     "link_href",                      :null => false
+    t.string   "link_id"
+    t.text     "content_title"
+    t.text     "content_subtitle"
+    t.text     "content_body"
+    t.text     "content_about"
+    t.text     "content_contact"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "press_releases", ["id"], :name => "index_press_releases_on_id", :unique => true
+  add_index "press_releases", ["published_at"], :name => "index_press_releases_on_published_at"
 
   create_table "rank_boosts", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false

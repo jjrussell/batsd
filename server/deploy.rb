@@ -28,6 +28,7 @@ if server_type == 'jobs' || server_type == 'masterjobs'
   `cp tapjoyads/config/newrelic-jobs.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'test'
   `cp tapjoyads/config/newrelic-test.yml tapjoyads/config/newrelic.yml`
+  `cp tapjoyads/config/local-test.yml tapjoyads/config/local.yml`
 elsif server_type == 'web'
   `cp tapjoyads/config/newrelic-web.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'website'

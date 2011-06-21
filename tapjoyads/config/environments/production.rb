@@ -34,8 +34,14 @@ MEMCACHE_SERVERS = [ 'tapjoy-acs-prod.fqfjqv.1xmb.use1.acsvc.amazonaws.com',
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
 
+begin
+  local_config = YAML::load_file("#{RAILS_ROOT}/config/local.yml")
+rescue Errno::ENOENT
+  local_config = {}
+end
+
 RUN_MODE_PREFIX = ''
-API_URL = 'https://ws.tapjoyads.com'
+API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 
 # Amazon services:

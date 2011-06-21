@@ -15,6 +15,7 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
         %th Instance ID
         %th State
         %th DNS Name
+        %th Availability Zone
         %th AWS State
         %th Description
         %th Reason Code
@@ -25,6 +26,7 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
           %td{ :class => lb_instance[:state] != 'InService' ? 'bad_instance' : '' }= lb_instance[:instance_id]
           %td= lb_instance[:state]
           %td= ec2_instance[:dns_name]
+          %td= ec2_instance[:aws_availability_zone]
           %td= ec2_instance[:aws_state]
           %td= lb_instance[:description]
           %td= lb_instance[:reason_code]

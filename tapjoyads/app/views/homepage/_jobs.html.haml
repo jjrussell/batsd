@@ -1,0 +1,6 @@
+#jobs
+  - @careers_list.each do |department|
+    %span= department[:name]
+    %ul
+      - department[:list].each do |position|
+        %li= link_to(position[:title], position[:href])
