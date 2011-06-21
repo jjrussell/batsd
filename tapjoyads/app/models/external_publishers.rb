@@ -34,8 +34,6 @@ class ExternalPublishers < S3Resource
       end
       
       if valid_currency && count >= 100
-        Rails.logger.info "Adding currency: #{currency.id}"
-        puts "Adding currency: #{currency.id}"
         currency.potential_external_publisher = true
         currency.save!
       end
