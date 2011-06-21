@@ -204,6 +204,7 @@ ActiveRecord::Schema.define(:version => 20110620003513) do
     t.string   "password_salt"
     t.string   "persistence_token"
     t.string   "perishable_token"
+    t.string   "referrer"
     t.datetime "current_login_at"
     t.datetime "last_login_at"
     t.datetime "created_at"

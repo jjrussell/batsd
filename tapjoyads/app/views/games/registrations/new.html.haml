@@ -20,4 +20,5 @@
     = f.password_field :password_confirmation
     = error_message_on @gamer, :password_confirmation
   .field
+    = f.hidden_field :referrer, :value => params[:referrer]
     = f.submit 'Register'

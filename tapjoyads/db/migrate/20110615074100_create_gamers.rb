@@ -8,6 +8,7 @@ class CreateGamers < ActiveRecord::Migration
       t.string :password_salt
       t.string :persistence_token
       t.string :perishable_token
+      t.string :referrer
       t.datetime :current_login_at
       t.datetime :last_login_at
       t.timestamps
