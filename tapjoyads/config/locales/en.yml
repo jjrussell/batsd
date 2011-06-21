@@ -37,9 +37,9 @@ en:
       
     support:
       title: "Missing {{currency}}?"
-      instructions_1: "Please provide the name of the offer you completed without receiving {{currency}}, a brief description of the steps you took to complete the offer, and your email address."
-      instructions_2: "After we verify that you have completed the offer, you will receive your {{currency}}."
-      description_label: "Offer and description:"
+      instructions_1: "Please provide the name of the offer you completed without receiving {{currency}} and your email address."
+      instructions_2: "If you don't clearly indicate the offer you completed, your {{currency}} will be delayed."
+      description_label: "Offer name:"
       email_address_label: "Email address:"
       submit_support_request: "Submit Support Request"
       support_request_submitted: "Support Request Submitted"

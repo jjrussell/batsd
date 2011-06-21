@@ -1,4 +1,4 @@
-= support_request_field :description, simple_format(@description)
+= support_request_field :offer_name, @description
 = support_request_field :udid, link_to(@udid, device_info_tools_url(:host => 'www.tapjoy.com', :protocol => 'https', :udid => @udid))
 = support_request_field :publisher_user_id, @publisher_user_id
 = support_request_field :currency_id, "#{@currency.name} (#{@currency.id})"
