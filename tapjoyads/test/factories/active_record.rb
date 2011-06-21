@@ -153,5 +153,6 @@ Factory.define :offer_event do |offer_event|
 end
 
 Factory.define :gamer do |gamer|
+  gamer.username { Factory.next(:name) }
   gamer.email { Factory.next(:email) }
 end
