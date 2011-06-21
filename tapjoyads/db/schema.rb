@@ -199,7 +199,7 @@ ActiveRecord::Schema.define(:version => 20110620003513) do
   create_table "gamers", :id => false, :force => true do |t|
     t.string   "id",                :limit => 36, :null => false
     t.string   "username",                        :null => false
-    t.string   "email",                           :null => false
+    t.string   "email"
     t.string   "crypted_password"
     t.string   "password_salt"
     t.string   "persistence_token"

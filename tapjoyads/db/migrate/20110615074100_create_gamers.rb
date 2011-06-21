@@ -3,7 +3,7 @@ class CreateGamers < ActiveRecord::Migration
     create_table :gamers, :id => false do |t|
       t.column :id, 'char(36) binary', :null => false
       t.string :username, :null => false
-      t.string :email, :null => false
+      t.string :email
       t.string :crypted_password
       t.string :password_salt
       t.string :persistence_token
