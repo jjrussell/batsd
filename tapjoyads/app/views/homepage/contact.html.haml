@@ -30,7 +30,9 @@
         %h2
           Email Us
         %p
-          info [at] tapjoy.com<br />support [at] tapjoy.com
+          = mail_to('info@tapjoy.com')
+          %br
+          = mail_to('support@tapjoy.com')
     %h2
       Support / Info Form
       - form_for('info', :url => {:action => 'contact'}, :html => {:id => 'contact_form'}) do |f|
