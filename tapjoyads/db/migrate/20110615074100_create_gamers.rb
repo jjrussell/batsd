@@ -16,7 +16,6 @@ class CreateGamers < ActiveRecord::Migration
     
     add_index :gamers, :id, :unique => true
     add_index :gamers, :username, :unique => true
-    add_index :gamers, :email, :unique => true
     add_index :gamers, :persistence_token
     add_index :gamers, :perishable_token
   end
