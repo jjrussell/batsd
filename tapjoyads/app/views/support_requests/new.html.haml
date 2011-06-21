@@ -13,7 +13,7 @@
       %p= t('text.support.instructions_2', :currency => @currency.name)
     .field
       = label_tag :description, t('text.support.description_label')
-      = text_area_tag :description, params[:description]
+      = text_field_tag :description, params[:description]
     .field
       = label_tag :email_address, t('text.support.email_address_label')
       = text_field_tag :email_address, params[:email_address]
