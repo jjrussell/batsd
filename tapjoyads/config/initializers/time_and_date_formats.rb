@@ -14,7 +14,7 @@ Time::DATE_FORMATS[:pub_abbr_ampm] = "%b %d, '%y %l:%M %p"
 Time::DATE_FORMATS[:pub_abbr_ampm_sec] = "%b %d, '%y %l:%M:%S %p"
 Time::DATE_FORMATS[:day] = "%b %d"
 Time::DATE_FORMATS[:pr] = "%B %e, %Y"
-Date::DATE_FORMATS[:yyyy_mm_dd] = "%Y-%m-%d"
+Time::DATE_FORMATS[:yyyy_mm_dd] = "%Y-%m-%d"
 
 Date::DATE_FORMATS[:pub] = "%b %d, %Y"
 Date::DATE_FORMATS[:pub_abbr] = "%b %d, '%y"
