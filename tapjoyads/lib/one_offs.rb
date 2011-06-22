@@ -83,6 +83,71 @@ class OneOffs
     end
   end
 
+  def self.add_jobs
+    jobs = [
+      { :job_type => 'queue',  :controller => 'queue_conversion_tracking',                    :action => 'index',              :frequency => 'interval', :seconds => 1.second },
+      { :job_type => 'queue',  :controller => 'queue_create_conversions',                     :action => 'index',              :frequency => 'interval', :seconds => 1.second },
+      { :job_type => 'queue',  :controller => 'queue_failed_sdb_saves',                       :action => 'index',              :frequency => 'interval', :seconds => 2.seconds },
+      { :job_type => 'queue',  :controller => 'queue_failed_web_request_saves',               :action => 'index',              :frequency => 'interval', :seconds => 2.seconds },
+      { :job_type => 'queue',  :controller => 'queue_send_currency',                          :action => 'index',              :frequency => 'interval', :seconds => 1.second },
+      { :job_type => 'queue',  :controller => 'queue_failed_downloads',                       :action => 'index',              :frequency => 'interval', :seconds => 2.seconds },
+      { :job_type => 'queue',  :controller => 'queue_hourly_app_stats',                       :action => 'index',              :frequency => 'interval', :seconds => 10.seconds },
+      { :job_type => 'queue',  :controller => 'queue_daily_app_stats',                        :action => 'index',              :frequency => 'interval', :seconds => 15.seconds },
+      { :job_type => 'queue',  :controller => 'queue_pre_create_domains',                     :action => 'index',              :frequency => 'interval', :seconds => 2.minutes },
+      { :job_type => 'queue',  :controller => 'queue_calculate_show_rate',                    :action => 'index',              :frequency => 'interval', :seconds => 10.seconds },
+      { :job_type => 'queue',  :controller => 'queue_select_vg_items',                        :action => 'index',              :frequency => 'interval', :seconds => 30.seconds },
+      { :job_type => 'queue',  :controller => 'queue_get_store_info',                         :action => 'index',              :frequency => 'interval', :seconds => 1.minute },
+      { :job_type => 'queue',  :controller => 'queue_update_monthly_account',                 :action => 'index',              :frequency => 'interval', :seconds => 1.minute },
+      { :job_type => 'queue',  :controller => 'queue_sdb_backups',                            :action => 'index',              :frequency => 'interval', :seconds => 1.minute },
+      { :job_type => 'queue',  :controller => 'queue_mail_chimp_updates',                     :action => 'index',              :frequency => 'interval', :seconds => 1.minute },
+      { :job_type => 'queue',  :controller => 'queue_partner_notifications',                  :action => 'index',              :frequency => 'interval', :seconds => 1.minute },
+      { :job_type => 'queue',  :controller => 'queue_recount_stats',                          :action => 'index',              :frequency => 'interval', :seconds => 1.minute },
+      { :job_type => 'queue',  :controller => 'queue_udid_reports',                           :action => 'index',              :frequency => 'interval', :seconds => 15.seconds },
+      { :job_type => 'queue',  :controller => 'queue_cache_offers',                           :action => 'index',              :frequency => 'interval', :seconds => 2.seconds },
+      { :job_type => 'master', :controller => 'master_calculate_next_payout',                 :action => 'index',              :frequency => 'daily',    :seconds => 4.hours },
+      { :job_type => 'master', :controller => 'master_udid_reports',                          :action => 'index',              :frequency => 'daily',    :seconds => 2.hours },
+      { :job_type => 'master', :controller => 'master_update_monthly_account',                :action => 'index',              :frequency => 'daily',    :seconds => 8.hours },
+      { :job_type => 'master', :controller => 'master_verifications',                         :action => 'index',              :frequency => 'daily',    :seconds => 5.hours },
+      { :job_type => 'master', :controller => 'master_hourly_app_stats',                      :action => 'index',              :frequency => 'interval', :seconds => 2.minutes },
+      { :job_type => 'master', :controller => 'master_daily_app_stats',                       :action => 'index',              :frequency => 'interval', :seconds => 2.minutes },
+      { :job_type => 'master', :controller => 'master_calculate_show_rate',                   :action => 'index',              :frequency => 'interval', :seconds => 20.minutes },
+      { :job_type => 'master', :controller => 'master_reload_money',                          :action => 'index',              :frequency => 'interval', :seconds => 20.minutes },
+      { :job_type => 'master', :controller => 'master_reload_statz',                          :action => 'index',              :frequency => 'interval', :seconds => 20.minutes },
+      { :job_type => 'master', :controller => 'master_reload_statz',                          :action => 'daily',              :frequency => 'daily',    :seconds => 10.minutes },
+      { :job_type => 'master', :controller => 'master_reload_statz',                          :action => 'partner_index',      :frequency => 'hourly',   :seconds => 7.minutes },
+      { :job_type => 'master', :controller => 'master_reload_statz',                          :action => 'partner_daily',      :frequency => 'daily',    :seconds => 10.minutes },
+      { :job_type => 'master', :controller => 'master_ios_app_ranks',                         :action => 'index',              :frequency => 'hourly',   :seconds => 1.minute },
+      { :job_type => 'master', :controller => 'master_android_app_ranks',                     :action => 'index',              :frequency => 'hourly',   :seconds => 30.minutes },
+      { :job_type => 'master', :controller => 'master_group_daily_stats',                     :action => 'index',              :frequency => 'hourly',   :seconds => 5.minutes },
+      { :job_type => 'master', :controller => 'master_group_hourly_stats',                    :action => 'index',              :frequency => 'hourly',   :seconds => 6.minutes },
+      { :job_type => 'master', :controller => 'master_external_publishers',                   :action => 'populate_potential', :frequency => 'daily',    :seconds => 1.hour },
+      { :job_type => 'master', :controller => 'master_refresh_memcached',                     :action => 'index',              :frequency => 'interval', :seconds => 10.minutes },
+      { :job_type => 'master', :controller => 'master_cleanup_web_requests',                  :action => 'index',              :frequency => 'daily',    :seconds => 5.hours },
+      { :job_type => 'master', :controller => 'master_failed_sqs_writes',                     :action => 'index',              :frequency => 'interval', :seconds => 3.minutes },
+      { :job_type => 'master', :controller => 'master_get_store_info',                        :action => 'index',              :frequency => 'daily',    :seconds => 7.hours },
+      { :job_type => 'master', :controller => 'master_grab_disabled_popular_offers',          :action => 'index',              :frequency => 'daily',    :seconds => 8.hours },
+      { :job_type => 'master', :controller => 'master_pre_create_domains',                    :action => 'index',              :frequency => 'daily',    :seconds => 6.hours },
+      { :job_type => 'master', :controller => 'master_select_vg_items',                       :action => 'index',              :frequency => 'interval', :seconds => 5.minutes },
+      { :job_type => 'master', :controller => 'master_set_bad_domains',                       :action => 'index',              :frequency => 'interval', :seconds => 1.minute },
+      { :job_type => 'master', :controller => 'master_update_rev_share',                      :action => 'index',              :frequency => 'daily',    :seconds => 1.hour },
+      { :job_type => 'master', :controller => 'master_set_exclusivity_and_premier_discounts', :action => 'index',              :frequency => 'daily',    :seconds => 2.hours },
+      { :job_type => 'master', :controller => 'master_partner_notifications',                 :action => 'index',              :frequency => 'daily',    :seconds => 17.hours },
+      { :job_type => 'master', :controller => 'master_archive_conversions',                   :action => 'index',              :frequency => 'daily',    :seconds => 6.hours },
+      { :job_type => 'master', :controller => 'master_healthz',                               :action => 'index',              :frequency => 'interval', :seconds => 1.minute },
+      { :job_type => 'master', :controller => 'master_run_offer_events',                      :action => 'index',              :frequency => 'interval', :seconds => 1.minute },
+      { :job_type => 'master', :controller => 'master_fetch_top_freemium_android_apps',       :action => 'index',              :frequency => 'daily',    :seconds => 1.minute },
+      { :job_type => 'master', :controller => 'master_calculate_ranking_fields',              :action => 'index',              :frequency => 'interval', :seconds => 30.minutes },
+      { :job_type => 'master', :controller => 'master_cache_offers',                          :action => 'index',              :frequency => 'interval', :seconds => 1.minute },
+      { :job_type => 'master', :controller => 'master_external_publishers',                   :action => 'cache',              :frequency => 'hourly',   :seconds => 6.minutes },
+    ]
+    
+    jobs.each do |job|
+      j = Job.new(job)
+      j.active = true
+      j.save!
+    end
+  end
+
   def self.press_releases
     press_releases = [
       [ "6.16.2011", "Tapjoy Announces Program to Port Apps to Android, Backed by $5 Million Fund", "/press/201106160-tapjoy-announces-android-fund", ],

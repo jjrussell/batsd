@@ -5,7 +5,7 @@ class CreateJobs < ActiveRecord::Migration
       t.boolean :active, :null => false, :default => false
       t.string :job_type, :null => false
       t.string :controller, :null => false
-      t.string :action, :null => false
+      t.string :action, :null => false, :default => 'index'
       t.string :frequency, :null => false
       t.integer :seconds, :null => false
       t.timestamps
