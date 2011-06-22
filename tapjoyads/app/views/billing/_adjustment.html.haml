@@ -1,0 +1,10 @@
+- options = {:delimiter => format == :csv ? '' : ','}
+- amount = number_to_currency(adjustment.amount / 100.0, options)
+
+- if format == :csv
+  = "#{adjustment.created_at.to_s(:yyyy_mm_dd)},#{amount},#{adjustment.notes.gsub(',', '')}"
+- else
+  %tr.statement
+    %th= adjustment.created_at.to_s(:yyyy_mm_dd)
+    %td.currency= amount
+    %td= adjustment.notes

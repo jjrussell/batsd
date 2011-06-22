@@ -2,10 +2,10 @@
 - amount = number_to_currency(payout.amount / 100.0, options)
 
 - if format == :csv
-  = "#{payout.created_at.to_date.to_s(:db)},#{amount},#{payout.payment_method_string},#{payout.status_string}"
+  = "#{payout.created_at.to_s(:yyyy_mm_dd)},#{amount},#{payout.payment_method_string},#{payout.status_string}"
 - else
   %tr.statement
-    %th= payout.created_at.to_date.to_s(:db)
+    %th= payout.created_at.to_s(:yyyy_mm_dd)
     %td.currency= amount
     %td= payout.payment_method_string
     %td= payout.status_string

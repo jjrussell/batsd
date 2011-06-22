@@ -9,7 +9,7 @@ authorization do
     has_permission_on :enable_offer_requests, :to => [ :create ]
     has_permission_on :reporting, :to => [ :index, :show, :export, :download_udids, :api, :regenerate_api_key ]
     has_permission_on :apps_action_offers, :to => [ :index, :new, :create, :edit, :update, :toggle, :TJCPPA, :TapjoyPPA ]
-    has_permission_on :billing, :to => [ :index, :add_funds, :transfer_funds, :payout_info, :update_payout_info, :create_transfer, :create_order, :export_statements, :export_orders, :export_payouts, :forget_credit_card ]
+    has_permission_on :billing, :to => [ :index, :add_funds, :transfer_funds, :payout_info, :update_payout_info, :create_transfer, :create_order, :export_statements, :export_orders, :export_payouts, :export_adjustments, :forget_credit_card ]
     has_permission_on :analytics, :to => [ :index, :create_apsalar_account, :share_data, :agree_to_share_data ]
     has_permission_on :users, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :support, :to => [ :index ]
@@ -36,6 +36,7 @@ authorization do
     has_permission_on :tools, :to => [ :money, :monthly_data ]
     has_permission_on :tools_orders, :to => [ :new, :create ]
     has_permission_on :tools_payouts, :to => [ :index, :create ]
+    has_permission_on :tools_earnings_adjustments, :to => [ :new, :create ]
   end
 
   role :payout_manager do

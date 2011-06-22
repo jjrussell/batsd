@@ -2,13 +2,15 @@
 - payouts = number_to_currency(statement[1][:payouts].map(&:amount).sum / 100.0, options)
 - orders = number_to_currency(statement[1][:orders].map(&:amount).sum / 100.0, options)
 - others = number_to_currency(statement[1][:others].map(&:amount).sum / 100.0, options)
+- adjustments = number_to_currency(statement[1][:adjustments].map(&:amount).sum / 100.0, options)
 - month_with_year = statement[1][:text_month]
 
 - if format == :csv
-  = "#{month_with_year},#{orders},#{payouts},#{others}"
+  = "#{month_with_year},#{orders},#{payouts},#{others},#{adjustments}"
 - else
   %tr.statement.month-row{:id => statement[0]}
     %th= month_with_year
     %td.currency= orders
     %td.currency= payouts
     %td.currency= others
+    %td.currency= adjustments
