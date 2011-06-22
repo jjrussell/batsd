@@ -32,7 +32,7 @@ Rails::Initializer.run do |config|
   config.gem 'hpricot', :version => '0.8.1'
   config.gem 'json', :version => '1.1.9'
   config.gem 'libxml-ruby', :version => '1.1.3', :lib => 'xml'
-  config.gem 'memcached'
+  config.gem 'memcached', :version => '1.2.7'
   config.gem 'mysql', :version => '2.8.1'
   config.gem 'patron', :version => '0.4.4'
   config.gem 'right_aws', :version => '1.10.0'
@@ -43,7 +43,7 @@ Rails::Initializer.run do |config|
   # These gems should be vendored
   config.gem 'authlogic', :version => '2.1.3'
   config.gem 'declarative_authorization', :version => '0.4.1'
-  config.gem 'geoip', :version => '0.8.6'
+  config.gem 'geoip', :version => '1.1.1'
   config.gem 'haml', :version => '2.2.23'
   config.gem 'hoptoad_notifier', :version => '2.4.11'
   config.gem 'plist', :version => '3.1.0'
@@ -52,6 +52,7 @@ Rails::Initializer.run do |config|
   config.gem 'will_paginate', :version => '2.3.12'
   config.gem 'hominid', :version => '2.2.0'
   config.gem 'curbit', :version => '0.2.0'
+  config.gem 'newrelic_rpm', :version => '3.0.1'
   
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.

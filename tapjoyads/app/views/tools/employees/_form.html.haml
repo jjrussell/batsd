@@ -47,6 +47,10 @@
   .field
     = label_tag :upload_photo
     = file_field_tag :upload_photo
+  .field
+    = f.label(:display_order)
+    = f.text_field(:display_order)
+    = error_message_on @employee, :display_order
   = submit_tag @employee.new_record? ? "Create" : "Update"
 
 - content_for :page_styles do

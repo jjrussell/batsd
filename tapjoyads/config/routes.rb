@@ -3,6 +3,13 @@ ActionController::Routing::Routes.draw do |map|
   
   map.with_options({:path_prefix => MACHINE_TYPE == 'games' ? '' : 'games', :name_prefix => 'games_'}) do |m|
     m.root :controller => 'games/homepage', :action => :index
+    
+    m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy ]
+    m.login 'login', :controller => 'games/gamer_sessions', :action => :new
+    m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
+    
+    m.resources :registrations, :controller => 'games/registrations', :only => [ :new, :create ]
+    m.register 'register', :controller => 'games/registrations', :action => :new
   end
   
   break if MACHINE_TYPE == 'games'
@@ -76,7 +83,7 @@ ActionController::Routing::Routes.draw do |map|
     :member => {  :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post }
   map.namespace :tools do |tools|
     tools.resources :premier_partners, :only => [ :index ]
-    tools.resources :generic_offers, :only => [ :new, :create ]
+    tools.resources :generic_offers, :only => [ :new, :create, :edit, :update ]
     tools.resources :orders, :only => [ :new, :create ]
     tools.resources :payouts, :only => [ :index, :create ]
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
@@ -88,6 +95,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :employees, :only => [ :index, :new, :create, :edit, :update ], :member => [ :delete_photo ]
     tools.resources :preview_experiments, :only => [ :index, :show ]
     tools.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
+    tools.resources :external_publishers, :only => [ :index, :update ]
   end
   
   # Additional webserver routes
@@ -109,8 +117,11 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'confirm_email_validation', :controller => 'list_signup', :action => 'confirm_api'
   map.connect 'press', :controller => 'homepage/press', :action => 'index'
   map.connect 'press/:id', :controller => 'homepage/press', :action => 'show'
+  map.connect 'careers', :controller => 'homepage/careers', :action => 'index'
+  map.connect 'careers/:id', :controller => 'homepage/careers', :action => 'show'
   map.connect 'glu', :controller => 'homepage/press', :action => 'glu'
   map.connect 'publishing', :controller => 'homepage', :action => 'publishers'
+  map.connect 'androidfund', :controller => 'androidfund'
   map.resources :sdk, :only => [ :index, :show ]
   map.namespace :agency_api do |agency|
     agency.resources :apps, :only => [ :index, :show, :create, :update ]

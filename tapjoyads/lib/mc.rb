@@ -110,7 +110,7 @@ class Mc
       cache = cache.clone if clone
       
       Rails.logger.info_with_time("Wrote to memcache") do
-        cache.set(CGI::escape(key), value, time)
+        cache.set(CGI::escape(key), value, time.to_i)
       end
     end
   end
@@ -142,7 +142,7 @@ class Mc
       end
     rescue Memcached::NotFound
       count = offset + COUNT_OFFSET
-      cache.set(key, count, time, false)
+      cache.set(key, count.to_s, time.to_i, false)
     end
     
     return count - COUNT_OFFSET

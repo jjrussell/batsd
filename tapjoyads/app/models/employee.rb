@@ -4,7 +4,7 @@ class Employee < ActiveRecord::Base
   validates_presence_of :first_name, :last_name, :title, :email, :superpower, :current_games, :weapon, :biography
   validates_uniqueness_of :email
   
-  named_scope :active_only, :conditions => 'active = true', :order => 'last_name, first_name'
+  named_scope :active_only, :conditions => 'active = true', :order => 'display_order desc, last_name, first_name'
   
   def full_name
     "#{first_name} #{last_name}"

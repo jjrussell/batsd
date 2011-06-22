@@ -1,0 +1,36 @@
+- @page_title = "Work at Tapjoy"
+- content_for :page_head, stylesheet_link_tag('about_us')
+- content_for :page_head, stylesheet_link_tag('careers')
+
+#about_us
+  #left
+    = render :partial => 'homepage/sub_nav'
+    = render :partial => 'homepage/jobs'
+  #right
+    %img.header{:src => "/images/work_at_tapjoy.png"}/
+    .clear
+    %h2
+      So...why would you want to work for Tapjoy?
+    %h3
+      The real question is...why wouldn't you?
+    %ul
+      %li
+        We are a small company doing very big things (220M devices on our network and growing).
+      %li
+        We value innate intelligence, the curiosity to learn more, and the ability to solve problems - and we provide a ton of autonomy in which to do this.
+      %li
+        We try not to take ourselves too seriously and foster a culture of openness and collaboration.
+      %li
+        The mobile app space is a large opportunity and will continue to grow. We've done well so far and we clearly see where we need to go - and now we need your help to get there. 
+      %li
+        We offer a competitive compensation package including generous bonus and equity grants as well as full health/dental/vision benefits.
+      %li
+        Work on the latest MacBook Pros, Cinema Displays and iOS/Android phones/tablets.
+      %li
+        Free food. The kitchen is fully stocked and lunch is always on us. 
+      %li
+        Did we mention the office kegerator?
+    %p
+      So checkout some of our open positions to the left. If you think you could be a good fit then we'd love to meet you! Just send your resume to
+      = "#{mail_to('careers@tapjoy.com')}!"
+.clear

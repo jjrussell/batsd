@@ -3,16 +3,16 @@
  */
 
 $(document).ready(function() {
-    $("#clients .client").click(function() {
-        var title = $(this).attr('title');
-        if (title) {
-            $("#quote > div").removeClass('show');
-            $(".client").removeClass('on');
-            $("#"+title).addClass('show');
-            $(this).addClass('on');
-        }
-        return false;
-    })
+  $("#clients .client").click(function() {
+    var title = $(this).attr('title');
+    if (title) {
+      $("#quote > div").removeClass('show');
+      $(".client").removeClass('on');
+      $("#"+title).addClass('show');
+      $(this).addClass('on');
+    }
+    return false;
+  })
 });
 
 /**
@@ -20,43 +20,43 @@ $(document).ready(function() {
  */
 
 $(document).ready(function() {
-    $("#products a").click(function() {
-        var title = $(this).attr('title');
-        if (title) {
-            $(".product_details").removeClass('show');
-            $(".screenshot").removeClass('show');
-            $("."+title).addClass('show');
-            $("#products a").removeClass('selected');
-            $("#products a."+title+"_link").addClass('selected');
-        }
-        return false;
-    })
+  $("#products a").click(function() {
+    var title = $(this).attr('title');
+    if (title) {
+      $(".product_details").removeClass('show');
+      $(".screenshot").removeClass('show');
+      $("."+title).addClass('show');
+      $("#products a").removeClass('selected');
+      $("#products a."+title+"_link").addClass('selected');
+    }
+    return false;
+  })
 });
 
 /**
- * Developer products slider
+ * Advertiser products slider
  */
 
 $(document).ready(function() {
-    $(".product").hover(function() {
-        // Get child position
-        var productIndex = $(this).parent().children().index(this);
-        
-        // Get div position
-        var productPosition = productIndex*139;
-        
-        // Grab the title of this product
-        var title = $(this).attr('title');
-        
-        // Animate in the product bg slider
-        $("#products").animate({
-            backgroundPosition: '0 ' + productPosition
-        }, 250, function() {
-            // Remove & add show classes to screenshots
-            $("#advertiser_phone img").removeClass('show');
-            $("#advertiser_phone ."+title).addClass('show');
-        });
+  $(".product").hover(function() {
+    // Get child index
+    var productIndex = $(this).parent().children().index(this);
+
+    // Get div position
+    var productPosition = productIndex*139;
+
+    // Grab the rel of this product
+    var rel = $(this).attr('rel');
+
+    // Animate in the product bg slider
+    $("#products").animate({
+      backgroundPosition: '0 ' + productPosition
+    }, 250, function() {
+      // Remove & add show classes to screenshots
+      $("#advertiser_phone img").removeClass('show');
+      $("#advertiser_phone ."+rel).addClass('show');
     });
+  });
 });
 
 /**
@@ -124,8 +124,26 @@ $(document).ready(function() {
 		//return;
 		var nowPosX = [];
 		nowPosX[0] = ((fx.end[0] - fx.start[0]) * fx.pos) + fx.start[0] + fx.unit[0];
-		nowPosX[1] = ((fx.end[1] - fx.start[1]) * fx.pos) + fx.start[1] + fx.unit[1];           
+		nowPosX[1] = ((fx.end[1] - fx.start[1]) * fx.pos) + fx.start[1] + fx.unit[1];
 		fx.elem.style.backgroundPosition = nowPosX[0]+' '+nowPosX[1];
 
 	};
 })(jQuery);
+
+/**
+ * show / hide full bio in about section
+ */
+
+$(document).ready(function() {
+    $(".showbio").click(function() {
+        biolarge = $(this).parent().parent().children(".biolarge");
+        biosmall = $(this).parent().parent().children(".biosmall");
+        if (biolarge.css('display') == 'none') {
+            biolarge.css('display', 'block');
+            biosmall.css('display', 'none');
+        } else {
+            biolarge.css('display', 'none');
+            biosmall.css('display', 'block');
+        }
+    })
+})
