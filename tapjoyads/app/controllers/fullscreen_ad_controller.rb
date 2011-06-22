@@ -1,7 +1,9 @@
 class FullscreenAdController < ApplicationController
   
   layout 'iphone'
-  
+
+  before_filter :setup
+
   def index
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     @currency = Currency.find_in_cache(params[:currency_id] || params[:publisher_app_id])
@@ -32,5 +34,11 @@ class FullscreenAdController < ApplicationController
     @geoip_data = { :country => params[:country_code] }
     render :action => :index
   end
-  
+
+private
+
+  def setup
+    @display_multiplier = (params[:display_multiplier] || 1).to_f
+  end
+
 end

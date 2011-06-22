@@ -1,8 +1,7 @@
 #main
   %h1
-    Earn 
-    %span.amount
-      #{@currency.get_visual_reward_amount(@offer)} 
+    Earn
+    %span.amount= @currency.get_visual_reward_amount(@offer, @display_multiplier)
     #{@currency.name}!
   %p.offertext
     - if @offer.item_type == 'App'
