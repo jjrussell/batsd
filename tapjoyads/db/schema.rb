@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110620003513) do
+ActiveRecord::Schema.define(:version => 20110622084545) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -233,6 +233,20 @@ ActiveRecord::Schema.define(:version => 20110620003513) do
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true
   add_index "generic_offers", ["partner_id"], :name => "index_generic_offers_on_partner_id"
   add_index "generic_offers", ["third_party_data"], :name => "index_generic_offers_on_third_party_data"
+
+  create_table "jobs", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36,                    :null => false
+    t.boolean  "active",                   :default => false, :null => false
+    t.string   "job_type",                                    :null => false
+    t.string   "controller",                                  :null => false
+    t.string   "action",                                      :null => false
+    t.string   "frequency",                                   :null => false
+    t.integer  "seconds",                                     :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "jobs", ["id"], :name => "index_jobs_on_id", :unique => true
 
   create_table "monthly_accountings", :id => false, :force => true do |t|
     t.string   "id",                         :limit => 36, :null => false
