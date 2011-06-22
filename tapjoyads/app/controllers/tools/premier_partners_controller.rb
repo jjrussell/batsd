@@ -7,11 +7,11 @@ class Tools::PremierPartnersController < WebsiteController
   def index
     if params[:q].present?
       query = params[:q].gsub("'", '')
-      @partners = Partner.premier.search(query).scoped(:include => :offer_discounts)
+      @partners = Partner.premier.search(query)
     elsif params[:account_manager_id].present? && params[:account_manager_id] == "none" 
-      @partners = Partner.premier.scoped(:include => :offer_discounts).reject { |partner| partner.account_managers.present? }
+      @partners = Partner.premier.reject { |partner| partner.account_managers.present? }
     elsif params[:account_manager_id].present? && params[:account_manager_id] != "all"
-      @partners = User.find(params[:account_manager_id]).partners.premier.scoped(:include => :offer_discounts)
+      @partners = User.find(params[:account_manager_id]).partners.premier
     else
       @partners = Partner.premier.scoped(:include => :offer_discounts)
     end
