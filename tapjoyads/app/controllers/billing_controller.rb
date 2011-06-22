@@ -3,7 +3,7 @@ class BillingController < WebsiteController
 
   filter_access_to :all
   before_filter :get_selected_option
-  before_filter :get_statements, :only => [:index, :export_statements, :export_orders, :export_payouts]
+  before_filter :get_statements, :only => [:index, :export_statements, :export_orders, :export_payouts, :export_adjustments]
   after_filter :save_activity_logs, :only => [ :create_order, :create_transfer, :update_payout_info ]
 
   def index
@@ -34,9 +34,14 @@ class BillingController < WebsiteController
     setup_export_headers("tapjoy_payments")
     render :layout => false
   end
-  
+
   def export_payouts
     setup_export_headers("tapjoy_payouts")
+    render :layout => false
+  end
+
+  def export_adjustments
+    setup_export_headers("tapjoy_adjustments")
     render :layout => false
   end
 
@@ -186,8 +191,9 @@ private
   def get_statements
     @payouts = current_partner.payouts.sort
     @orders = current_partner.orders.sort
+    @adjustments = current_partner.earnings_adjustments.sort
 
-    start_date = [current_partner.created_at, (@payouts.first || current_partner).created_at, (@orders.first || current_partner).created_at].min
+    start_date = [current_partner.created_at, (@payouts.first || current_partner).created_at, (@orders.first || current_partner).created_at, (@adjustments.first || current_partner).created_at].min
     end_date = Time.zone.now
 
     @statements = {}
@@ -195,7 +201,7 @@ private
     while date < end_date.end_of_month
       month = date.strftime("%Y-%m")
       text_month = date.strftime("%B %Y")
-      @statements[month] = {:orders => [], :payouts => [], :others => [], :text_month => text_month, :start_time => date.beginning_of_month, :end_time => date.end_of_month}
+      @statements[month] = {:orders => [], :payouts => [], :others => [], :adjustments => [], :text_month => text_month, :start_time => date.beginning_of_month, :end_time => date.end_of_month}
       date = date.next_month
     end
 
@@ -214,6 +220,11 @@ private
         month = payout.created_at.strftime("%Y-%m")
         @statements[month][:payouts] << payout
       end
+    end
+
+    @adjustments.each do |adjustment|
+      month = adjustment.created_at.strftime("%Y-%m")
+      @statements[month][:adjustments] << adjustment
     end
 
     @statements = @statements.sort { |a, b| a[0] <=> b[0] }
