@@ -198,13 +198,13 @@ class Offer < ActiveRecord::Base
     avg_revenues        = offer_list.collect(&:avg_revenue)
     bids                = offer_list.collect(&:bid)
     cvr_mean            = conversion_rates.mean
-    cvr_std_dev         = conversion_rates.standard_deviation rescue 0
+    cvr_std_dev         = conversion_rates.standard_deviation
     price_mean          = prices.mean
-    price_std_dev       = prices.standard_deviation rescue 0
+    price_std_dev       = prices.standard_deviation
     avg_revenue_mean    = avg_revenues.mean
-    avg_revenue_std_dev = avg_revenues.standard_deviation rescue 0
+    avg_revenue_std_dev = avg_revenues.standard_deviation
     bid_mean            = bids.mean
-    bid_std_dev         = bids.standard_deviation rescue 0
+    bid_std_dev         = bids.standard_deviation
     
     stats = { :cvr_mean => cvr_mean, :cvr_std_dev => cvr_std_dev, :price_mean => price_mean, :price_std_dev => price_std_dev,
       :avg_revenue_mean => avg_revenue_mean, :avg_revenue_std_dev => avg_revenue_std_dev, :bid_mean => bid_mean, :bid_std_dev => bid_std_dev }
