@@ -15,7 +15,7 @@
       %th &nbsp;
   %tbody
     - @jobs.each do |job|
-      %tr
+      %tr{ :class => cycle('even', 'odd') }
         %td= job.active?
         %td= job.job_type
         %td= job.controller
