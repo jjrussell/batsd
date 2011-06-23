@@ -27,7 +27,7 @@
           = f.text_field :name
           = error_message_on @app, :name
           #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
-        %td= button_to_function "Search #{@app.store_name}", 'search()', :class => 'search hidden', :id => 'search_button'
+        %td= button_to "Search #{@app.store_name}", '#', :class => 'search hidden', :id => 'search_button'
       %tr.app_data.hidden
         %th Store ID
         %td
