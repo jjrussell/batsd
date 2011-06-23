@@ -70,29 +70,34 @@ class Currency < ActiveRecord::Base
     if offer.has_variable_payment?
       orig_payment  = offer.payment
       offer.payment = offer.payment_range_low
-      low           = get_reward_amount(offer, display_multiplier)
+      low           = get_reward_amount(offer)
       offer.payment = offer.payment_range_high
-      high          = get_reward_amount(offer, display_multiplier)
+      high          = get_reward_amount(offer)
       offer.payment = orig_payment
+      unless display_multiplier == 1
+        low = (low * display_multiplier).to_i
+        high = (high * display_multiplier).to_i
+      end
 
       visual_amount = "#{low} - #{high}"
     else
-      reward_amount = get_reward_amount(offer, display_multiplier)
+      reward_amount = get_reward_amount(offer)
+      unless display_multiplier == 1
+        reward_amount = (reward_amount * display_multiplier).to_i
+      end
+
       visual_amount = reward_amount.to_s
     end
     visual_amount
   end
   
-  def get_reward_amount(offer, display_multiplier=1)
+  def get_reward_amount(offer)
     if offer.reward_value.present?
       reward_value = offer.reward_value
     elsif offer.partner_id == partner_id
       reward_value = offer.payment
     else
       reward_value = get_publisher_amount(offer)
-    end
-    unless display_multiplier == 1
-      reward_value *= display_multiplier
     end
     [reward_value * conversion_rate / 100.0, 1.0].max.to_i
   end

@@ -404,6 +404,7 @@ class Offer < ActiveRecord::Base
     click_key             = options.delete(:click_key)             { nil }
     language_code         = options.delete(:language_code)         { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
+    display_multiplier    = options.delete(:display_multiplier)    { 1 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     data = {
@@ -413,7 +414,8 @@ class Offer < ActiveRecord::Base
       :click_key             => click_key,
       :itunes_link_affiliate => itunes_link_affiliate,
       :currency_id           => currency.id,
-      :language_code         => language_code
+      :language_code         => language_code,
+      :display_multiplier    => display_multiplier
     }
     
     "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
@@ -426,6 +428,7 @@ class Offer < ActiveRecord::Base
     click_key             = options.delete(:click_key)             { nil }
     language_code         = options.delete(:language_code)         { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
+    options.delete(:display_multiplier)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
@@ -468,6 +471,7 @@ class Offer < ActiveRecord::Base
     exp               = options.delete(:exp)               { nil }
     country_code      = options.delete(:country_code)      { nil }
     language_code     = options.delete(:language_code)     { nil }
+    display_multiplier= options.delete(:display_multiplier){ 1 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     click_url = "#{API_URL}/click/"
@@ -498,7 +502,8 @@ class Offer < ActiveRecord::Base
       :country_code      => country_code,
       :displayer_app_id  => displayer_app_id,
       :exp               => exp,
-      :language_code     => language_code
+      :language_code     => language_code,
+      :display_multiplier=> display_multiplier
     }
     
     "#{click_url}?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
