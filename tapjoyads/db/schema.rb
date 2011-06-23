@@ -148,6 +148,18 @@ ActiveRecord::Schema.define(:version => 20110622084545) do
 
   add_index "currency_groups", ["id"], :name => "index_currency_groups_on_id", :unique => true
 
+  create_table "earnings_adjustments", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36, :null => false
+    t.string   "partner_id", :limit => 36, :null => false
+    t.integer  "amount",                   :null => false
+    t.string   "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "earnings_adjustments", ["id"], :name => "index_earnings_adjustments_on_id", :unique => true
+  add_index "earnings_adjustments", ["partner_id"], :name => "index_earnings_adjustments_on_partner_id"
+
   create_table "email_offers", :id => false, :force => true do |t|
     t.string   "id",             :limit => 36,                    :null => false
     t.string   "partner_id",     :limit => 36,                    :null => false
@@ -267,6 +279,7 @@ ActiveRecord::Schema.define(:version => 20110622084545) do
     t.integer  "earnings",                                 :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "earnings_adjustments",                     :null => false
   end
 
   add_index "monthly_accountings", ["id"], :name => "index_monthly_accountings_on_id", :unique => true

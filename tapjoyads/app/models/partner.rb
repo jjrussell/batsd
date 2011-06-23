@@ -19,6 +19,7 @@ class Partner < ActiveRecord::Base
   has_many :offer_discounts, :order => 'expires_on DESC'
   has_many :app_offers, :class_name => 'Offer', :conditions => "item_type = 'App'"
   has_one :payout_info
+  has_many :earnings_adjustments
 
   validates_numericality_of :balance, :pending_earnings, :next_payout_amount, :only_integer => true, :allow_nil => false
   validates_numericality_of :premier_discount, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => false
@@ -209,9 +210,10 @@ class Partner < ActiveRecord::Base
     
     orders_sum = orders.sum(:amount, :conditions => 'status = 1')
     payouts_sum = payouts.sum(:amount, :conditions => 'status = 1')
+    earnings_adjustments_sum = earnings_adjustments.sum(:amount)
     
     self.balance = orders_sum + advertiser_conversions_sum
-    self.pending_earnings = publisher_conversions_sum - payouts_sum
+    self.pending_earnings = publisher_conversions_sum - payouts_sum + earnings_adjustments_sum
   end
   
   def name_or_contact_name

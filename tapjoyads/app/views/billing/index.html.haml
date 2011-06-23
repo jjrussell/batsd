@@ -33,22 +33,28 @@
           %thead
             %tr
               %th &nbsp;
-              %th Payment
+              %th Payments
               %th Payouts
               %th Transfers
+              %th Adjustments
           %tbody
             = render :partial => 'statement', :collection => @statements, :locals => {:format => :table}
-      #details
-        #details_explanation.details
+      #billing-summary-right
+        #details_explanation
           Click one of the months on the left to see more details
-        = render :partial => 'statement_details', :collection => @statements, :as => :statement
+        #buttons
+          = button_to 'Export Monthly Statements', {:method => 'GET', :action => 'export_statements' }
+          %br
+          = button_to 'Export Payments', {:method => 'GET', :action => 'export_orders' }
+          %br
+          = button_to 'Export Payouts', {:method => 'GET', :action => 'export_payouts' }
+          %br
+          = button_to 'Export Adjustments', {:method => 'GET', :action => 'export_adjustments' }
     - else
       .none No statements available
 
-  #buttons
-    = button_to 'Export Monthly Statements', {:method => 'GET', :action => 'export_statements' }
-    = button_to 'Export Payments Statements', {:method => 'GET', :action => 'export_orders' }
-    = button_to 'Export Payouts Statements', {:method => 'GET', :action => 'export_payouts' }
+  #details.clear
+    = render :partial => 'statement_details', :collection => @statements, :as => :statement
 
 .hidden
   #help_current_balance_content{:name => 'Current Balance'}
@@ -107,10 +113,16 @@
     }
     #billing-summary {
       float: left;
-      padding: 10px 30px 10px 10px;
+      padding: 10px 10px 10px 0;
+      width: 580px;
+    }
+    #billing-summary-right {
+      float: left;
+      width: 210px;
     }
     table.financial {
       font-size: 14px;
+      width: 100%;
     }
     #billing-summary table {
       border-collapse: collapse;
@@ -143,9 +155,6 @@
       font-size: 14px;
       padding-top: 50px;
       text-align: center;
-    }
-    #buttons {
-      clear: both;
     }
     #change_date {
       display: inline;
