@@ -515,6 +515,7 @@ class Offer < ActiveRecord::Base
     displayer_app_id  = options.delete(:displayer_app_id)  { nil }
     exp               = options.delete(:exp)               { nil }
     country_code      = options.delete(:country_code)      { nil }
+    display_multiplier= options.delete(:display_multiplier){ 1 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     ad_url = "#{API_URL}/fullscreen_ad"
@@ -524,6 +525,7 @@ class Offer < ActiveRecord::Base
     ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}&country_code=#{country_code}"
     ad_url += "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
     ad_url += "&exp=#{exp}" if exp.present?
+    ad_url += "&display_multiplier=#{display_multiplier}" unless display_multiplier == 1
     ad_url
   end
   
