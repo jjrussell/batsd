@@ -10,6 +10,11 @@ ActionController::Routing::Routes.draw do |map|
     
     m.resources :registrations, :controller => 'games/registrations', :only => [ :new, :create ]
     m.register 'register', :controller => 'games/registrations', :action => :new
+    
+    m.resources :confirmations, :controller => 'games/confirmations', :only => [ :create ]
+    m.confirm 'confirm', :controller => 'games/confirmations', :action => :create
+    
+    m.resources :password_resets, :controller => 'games/password_resets', :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
   end
   
   break if MACHINE_TYPE == 'games'

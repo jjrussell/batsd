@@ -6,13 +6,12 @@ class Games::RegistrationsController < GamesController
   
   def create
     @gamer = Gamer.new do |g|
-      g.username              = params[:gamer][:username]
-      g.email                 = params[:gamer][:email]
-      g.password              = params[:gamer][:password]
-      g.password_confirmation = params[:gamer][:password_confirmation]
-      g.referrer              = params[:gamer][:referrer]
+      g.email    = params[:gamer][:email]
+      g.password = params[:gamer][:password]
+      g.referrer = params[:gamer][:referrer]
     end
     if @gamer.save
+      GamesMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.perishable_token))
       redirect_to games_root_path
     else
       render :action => :new
