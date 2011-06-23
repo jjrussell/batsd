@@ -625,7 +625,7 @@ class Offer < ActiveRecord::Base
 
   def wrong_platform?
     if ['App', 'ActionOffer'].include?(item_type)
-      App::PLATFORMS.invert[get_platform] != item.platform
+      App::PLATFORMS.index(get_platform) != item.platform
     end
   end
 
@@ -722,11 +722,8 @@ class Offer < ActiveRecord::Base
         # is_paid? ? (price * 0.65).round : 50
       end
     elsif item_type == 'ActionOffer'
-      case get_platform
-      when App::PLATFORMS['android'] then 25
-      when App::PLATFORMS['windows'] then 25
-      else 35
-      end
+      platform = App::PLATFORMS.index(get_platform)
+      platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_bid]
     else
       0
     end
