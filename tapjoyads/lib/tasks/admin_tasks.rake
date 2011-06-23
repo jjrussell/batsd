@@ -26,7 +26,7 @@ namespace :admin do
     end
     puts("finished in #{time} seconds.")
     
-    system("rake db:schema:load")
+    system("rake db:reset")
     
     print("Restoring backup to the development database... ")
     time = Benchmark.realtime do
