@@ -37,7 +37,6 @@ module GetOffersHelper
   end
 
   def get_fullscreen_ad_url(offer)
-    display_multiplier = (params[:display_multiplier] || 1).to_f
     offer.get_fullscreen_ad_url(
         :publisher_app     => @publisher_app,
         :publisher_user_id => params[:publisher_user_id],
@@ -48,7 +47,7 @@ module GetOffersHelper
         :viewed_at         => @now,
         :exp               => params[:exp],
         :country_code      => @geoip_data[:country],
-        :display_multiplier=> display_multiplier)
+        :display_multiplier=> params[:display_multiplier])
   end
 
   def visual_cost(offer)

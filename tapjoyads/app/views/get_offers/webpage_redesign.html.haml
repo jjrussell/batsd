@@ -19,7 +19,7 @@
     .explanation
       = @test_offer.name
       %br
-      = link_to("Click to receive #{@currency.get_visual_reward_amount(@test_offer, @display_multiplier)} #{@currency.name}", get_click_url(@test_offer))
+      = link_to("Click to receive #{@currency.get_visual_reward_amount(@test_offer, params[:display_multiplier])} #{@currency.name}", get_click_url(@test_offer))
 
 #offers.box
   = render :partial => 'top_corners'
@@ -37,7 +37,7 @@
                 .offer-text
                   %span
                     - amount = capture_haml do
-                      %label= @currency.get_visual_reward_amount(offer, @display_multiplier)
+                      %label= @currency.get_visual_reward_amount(offer, params[:display_multiplier])
                     = offer.direct_pay? ? t('text.offerwall.redesign_buy_currency', :amount => amount, :currency => @currency.name) : t('text.offerwall.redesign_earn_currency', :amount => amount, :currency => @currency.name)
                   %p
                     %b= offer.name

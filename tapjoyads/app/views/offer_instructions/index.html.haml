@@ -1,6 +1,6 @@
 - @page_title = t('text.instructions.title')
 - amount_and_currency = capture_haml do
-  %span.amount= t('text.instructions.amount_and_currency', :amount => @currency.get_visual_reward_amount(@offer, @display_multiplier), :currency => @currency.name)
+  %span.amount= t('text.instructions.amount_and_currency', :amount => @currency.get_visual_reward_amount(@offer, params[:display_multiplier]), :currency => @currency.name)
   
 #offers
   #header

@@ -105,9 +105,7 @@ private
   
   def setup
     return unless verify_params([ :app_id, :udid, :publisher_user_id ])
-
-    @display_multiplier = (params[:display_multiplier] || 1).to_f
-
+    
     @now = Time.zone.now
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 25).to_i

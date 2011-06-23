@@ -7,7 +7,7 @@
   <% @offer_list.each_with_index do |offer, i| %>
     {
       "Cost":<%= visual_cost(offer).to_json -%>,
-      "Amount":<%= @currency.get_visual_reward_amount(offer, @display_multiplier).to_json -%>,
+      "Amount":<%= @currency.get_visual_reward_amount(offer, params[:display_multiplier]).to_json -%>,
       "IconURL":<%= offer.get_icon_url(:source => :cloudfront, :size => '57').to_json -%>,
       "Name":<%= offer.name.to_json -%>,
       "RedirectURL":<%= get_click_url(offer).to_json -%>,

@@ -36,9 +36,7 @@ private
 
   def setup
     return unless verify_params([ :app_id, :udid ])
-
-    @display_multiplier = (params[:display_multiplier] || 1).to_f
-
+    
     now = Time.zone.now
     geoip_data = get_geoip_data
     geoip_data[:country] = params[:country_code] if params[:country_code].present?
@@ -148,7 +146,7 @@ private
       img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
       img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
       
-      text = "Earn #{currency.get_visual_reward_amount(offer, @display_multiplier)} #{currency.name} download \\n#{offer.name}"
+      text = "Earn #{currency.get_visual_reward_amount(offer, params[:display_multiplier])} #{currency.name} download \\n#{offer.name}"
       font = Rails.env == 'production' ? 'Helvetica' : ''
       image_label = Magick::Image.read("caption:#{text}") do
         self.size = text_area_size
