@@ -37,3 +37,7 @@
 .tjform input#app_name {
   width: 400px;
 }
+
+input#search_button {
+  margin-top: 0px;
+}
