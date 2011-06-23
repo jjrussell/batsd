@@ -14,17 +14,23 @@ class Homepage::CareersController < WebsiteController
         ]
       },
       {
-        :name => "Finance",
+        :name => "Developer Relations",
         :list => [
-          { :title => "Senior Manager/Director, Financial Planning & Analysis (FP&A)", :href => "/careers/senior_managerdirector_financial_planning_analysis"},
-          { :title => "Senior Accountant", :href => "/careers/senior_accountant"},
-        ]
+          { :title => "Developer Outreach Associate", :href => "/careers/developer_outreach_associate"},
+          ]
       },
       {
         :name => "Sales",
         :list => [
-          { :title => "Director, Advertising Sales (San Francisco and New York)", :href => "/careers/director_advertising_sales"},
+          { :title => "Director, Advertising Sales", :href => "/careers/director_advertising_sales"},
           { :title => "Sales Development Rep", :href => "/careers/sales_development_rep"},
+        ]
+      },
+      {
+        :name => "Finance",
+        :list => [
+          { :title => "Senior Manager/Director, Financial Planning & Analysis (FP&A)", :href => "/careers/senior_managerdirector_financial_planning_analysis"},
+          { :title => "Senior Accountant", :href => "/careers/senior_accountant"},
         ]
       },
     ]
