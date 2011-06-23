@@ -1,5 +1,8 @@
 - @page_title = 'Add App'
-- platforms = permitted_to?(:edit, :statz) ? App::PLATFORMS : App::ALLOWED_PLATFORMS
+- platforms = App::ALLOWED_PLATFORMS
+- if permitted_to?(:edit, :statz)
+  - App::BETA_PLATFORMS.each do |key, value|
+    - platforms[key] = value + " (Admin only)"
 
 %h3 Add App
 
@@ -54,7 +57,6 @@
     Platform on which this app runs.
   #help_name_content{:name => 'Name'}
     App name
-
 
 - content_for :page_head, stylesheet_link_tag('apps')
 - content_for :included_javascripts, javascript_include_tag('tapjoy/apps')
