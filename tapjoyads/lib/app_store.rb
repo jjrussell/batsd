@@ -133,7 +133,7 @@ private
         :categories       => categories,
       }
     else
-      Notifier.alert_new_relic(AppStoreSearchFailed, "fetch_app_by_id_for_android failed for id: #{id}")
+      Notifier.alert_new_relic(AppStoreSearchFailed, "fetch_app_by_id_for_windows failed for id: #{id}")
       raise "Invalid response."
     end
   end
@@ -188,7 +188,7 @@ private
         fetch_app_by_id_for_windows(id.inner_text.split(':').last)
       end
     else
-      Notifier.alert_new_relic(AppStoreSearchFailed, "search_android_market failed for term: #{term}")
+      Notifier.alert_new_relic(AppStoreSearchFailed, "search_windows_marketplace failed for term: #{term}")
       raise "Invalid response."
     end
   end
