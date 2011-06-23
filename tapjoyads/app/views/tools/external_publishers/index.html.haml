@@ -22,7 +22,7 @@
   %tbody
     - @currencies.each do |currency|
       %tr
-        %td= image_tag(Offer.get_icon_url(:icon_id => Offer.hashed_icon_id(currency.id)), :size => '30x30')
+        %td.img= image_tag(Offer.get_icon_url(:icon_id => Offer.hashed_icon_id(currency.id)), :size => '30x30')
         %td= currency.app.name
         %td= currency.name
         %td= currency.partner.name
@@ -35,6 +35,11 @@
   :plain
     table.with-border {
       border-collapse: collapse;
+    }
+    
+    td.img {
+      max-width: 40px;
+      overflow: hidden;
     }
   
 - content_for :page_javascript do
