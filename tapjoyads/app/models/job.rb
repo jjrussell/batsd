@@ -16,6 +16,7 @@ class Job < ActiveRecord::Base
       record.errors.add(attribute, 'should be less than 1 hour') unless value < 1.hour.to_i
     end
   end
+  validate :check_job_path
   
   named_scope :active, :conditions => 'active = true'
   named_scope :by_job_type, lambda { |type| { :conditions => [ "job_type = ?", type ] } }
@@ -58,6 +59,19 @@ class Job < ActiveRecord::Base
   
   def job_path
     "#{controller}/#{action}"
+  end
+  
+private
+  
+  def check_job_path
+    if controller_changed? || action_changed?
+      begin
+        c = "Job::#{controller.camelize}Controller".constantize
+        errors.add(:action, 'does not exist.') unless c.public_method_defined?(action)
+      rescue NameError => e
+        errors.add(:controller, 'does not exist.')
+      end
+    end
   end
   
 end
