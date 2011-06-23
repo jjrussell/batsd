@@ -7,13 +7,6 @@ class Homepage::CareersController < WebsiteController
   def initialize
     @careers_list = [
       {
-        :name => "Product",
-        :list => [
-          { :title => "Sr. Product Marketing Mgr.",
-            :href => "/careers/senior_product_marketing_manager" },
-        ]
-      },
-      {
         :name => "Engineering",
         :list => [
           { :title => "Software Engineer", :href => "/careers/software_engineer"},
