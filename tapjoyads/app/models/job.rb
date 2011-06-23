@@ -46,14 +46,20 @@ class Job < ActiveRecord::Base
   end
   
   def frequency_in_words
-    time = Time.at(seconds).utc
+    time = (Time.now.utc.beginning_of_day + seconds).in_time_zone(Time.zone)
     case frequency
     when 'interval'
-      "every #{time.to_s(:mm_ss)}"
+      str = 'every'
+      str += " #{time.min} minutes" if time.min > 0
+      str += " #{time.sec} seconds" if time.sec > 0
+      str
     when 'hourly'
-      "each hour at #{time.to_s(:mm_ss)}"
+      str = 'hourly at'
+      str += " #{time.min} minutes" if time.min > 0
+      str += " #{time.sec} seconds" if time.sec > 0
+      str += ' past the hour'
     when 'daily'
-      "each day at #{time.to_s(:hh_mm_ss)}"
+      "daily at #{time.to_s(:ampm)}"
     end
   end
   
