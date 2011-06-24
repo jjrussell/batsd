@@ -290,7 +290,7 @@ private
     if premier_discount_changed?
       offers.each(&:update_payment)
     elsif reseller_id_changed?
-      offers.each(&:update_reseller)
+      offers.each(&:set_reseller_from_partner)
     else
       return
     end
