@@ -44,10 +44,10 @@ private
     if params[:publisher_user_id].blank?
       params[:publisher_user_id] = params[:udid]
     end
-    
+
     if params[:size].blank? || params[:size] == '320x50'
       # Don't show high-res ads to AdMarvel or TextFree, unless they explicitly send a size param.
-      unless params[:action] == 'webview' || params[:app_id] == '6b69461a-949a-49ba-b612-94c8e7589642'
+      unless params[:action] == 'webview' || request.format == :json || params[:app_id] == '6b69461a-949a-49ba-b612-94c8e7589642'
         params[:size] = '640x100'
       end
     end
