@@ -396,7 +396,6 @@ ActiveRecord::Schema.define(:version => 20110623220738) do
   add_index "offers", ["item_type", "item_id"], :name => "index_offers_on_item_type_and_item_id"
   add_index "offers", ["name"], :name => "index_offers_on_name"
   add_index "offers", ["partner_id"], :name => "index_offers_on_partner_id"
-  add_index "offers", ["reseller_id"], :name => "index_offers_on_reseller_id"
   add_index "offers", ["user_enabled", "tapjoy_enabled"], :name => "index_offers_on_user_enabled_and_tapjoy_enabled"
 
   create_table "orders", :id => false, :force => true do |t|
@@ -609,7 +608,6 @@ ActiveRecord::Schema.define(:version => 20110623220738) do
   add_index "users", ["id"], :name => "index_users_on_id", :unique => true
   add_index "users", ["perishable_token"], :name => "index_users_on_perishable_token"
   add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"
-  add_index "users", ["reseller_id"], :name => "index_users_on_reseller_id"
   add_index "users", ["username"], :name => "index_users_on_username", :unique => true
 
 end

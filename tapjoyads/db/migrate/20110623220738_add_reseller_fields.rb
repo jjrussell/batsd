@@ -11,7 +11,6 @@ class AddResellerFields < ActiveRecord::Migration
     add_index :resellers, :id, :unique => true
     
     add_guid_column :users, :reseller_id
-    add_index :users, :reseller_id
     
     add_guid_column :partners, :reseller_id
     add_index :partners, :reseller_id
@@ -21,7 +20,6 @@ class AddResellerFields < ActiveRecord::Migration
     add_index :currencies, :reseller_id
     
     add_guid_column :offers, :reseller_id
-    add_index :offers, :reseller_id
   end
 
   def self.down
