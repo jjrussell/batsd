@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110622084545) do
+ActiveRecord::Schema.define(:version => 20110622232150) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -210,8 +210,7 @@ ActiveRecord::Schema.define(:version => 20110622084545) do
 
   create_table "gamers", :id => false, :force => true do |t|
     t.string   "id",                :limit => 36, :null => false
-    t.string   "username",                        :null => false
-    t.string   "email"
+    t.string   "email",                           :null => false
     t.string   "crypted_password"
     t.string   "password_salt"
     t.string   "persistence_token"
@@ -219,14 +218,15 @@ ActiveRecord::Schema.define(:version => 20110622084545) do
     t.string   "referrer"
     t.datetime "current_login_at"
     t.datetime "last_login_at"
+    t.datetime "confirmed_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "gamers", ["email"], :name => "index_gamers_on_email", :unique => true
   add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
   add_index "gamers", ["persistence_token"], :name => "index_gamers_on_persistence_token"
-  add_index "gamers", ["username"], :name => "index_gamers_on_username", :unique => true
 
   create_table "generic_offers", :id => false, :force => true do |t|
     t.string   "id",               :limit => 36,                    :null => false

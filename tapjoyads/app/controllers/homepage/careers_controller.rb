@@ -29,7 +29,6 @@ class Homepage::CareersController < WebsiteController
       {
         :name => "Finance",
         :list => [
-          { :title => "Senior Manager/Director, Financial Planning & Analysis (FP&A)", :href => "/careers/senior_managerdirector_financial_planning_analysis"},
           { :title => "Senior Accountant", :href => "/careers/senior_accountant"},
         ]
       },
