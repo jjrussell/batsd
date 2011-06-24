@@ -1,0 +1,20 @@
+- @page_title = 'Password Reset'
+
+%h1 Password Reset
+
+- if @gamer
+  %p You should receive an email with instructions to reset your password in the next few minutes.
+  %p
+    If you are still having problems logging in, you can
+    = link_to("request another password reset email", new_games_password_reset_path)
+    or email
+    = mail_to("support@tapjoygames.com") + "."
+- else
+  %p Enter the email address associated with your account and we will send you a link to reset your password.
+
+  - form_tag(games_password_resets_path) do
+    .field
+      = label_tag(:email)
+      = text_field_tag(:email)
+    .field
+      = submit_tag('Submit')
