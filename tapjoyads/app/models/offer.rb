@@ -832,7 +832,7 @@ class Offer < ActiveRecord::Base
   end
   
   def set_reseller_from_partner
-    self.reseller_id = partner.reseller_id
+    self.reseller_id = partner.reseller_id if partner_id?
   end
   
 private
