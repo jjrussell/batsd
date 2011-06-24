@@ -20,7 +20,10 @@ class Partner < ActiveRecord::Base
   has_many :app_offers, :class_name => 'Offer', :conditions => "item_type = 'App'"
   has_one :payout_info
   has_many :earnings_adjustments
+  
+  belongs_to :reseller
 
+  validates_presence_of :reseller, :if => Proc.new { |partner| partner.reseller_id? }
   validates_numericality_of :balance, :pending_earnings, :next_payout_amount, :only_integer => true, :allow_nil => false
   validates_numericality_of :premier_discount, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => false
   validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
@@ -52,8 +55,8 @@ class Partner < ActiveRecord::Base
     end
   end
   
-  before_validation :remove_whitespace_from_attributes
-  after_save :update_currencies, :update_app_offers
+  before_validation :remove_whitespace_from_attributes, :update_rev_share
+  after_save :update_currencies, :update_offers
   
   cattr_reader :per_page
   attr_protected :exclusivity_level_type, :exclusivity_expires_on, :premier_discount
@@ -277,16 +280,25 @@ private
   def update_currencies
     if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed?
       currencies.each do |c|
-        c.set_values_from_partner
+        c.set_values_from_partner_and_reseller
         c.save!
       end
     end
   end
   
-  def update_app_offers
+  def update_offers
     if premier_discount_changed?
-      offers.each(&:update_payment!)
+      offers.each(&:update_payment)
+    elsif reseller_id_changed?
+      offers.each(&:update_reseller)
+    else
+      return
     end
+    offers.each(&:save!)
+  end
+  
+  def update_rev_share
+    self.rev_share = reseller.rev_share if reseller_id_changed? && reseller_id?
   end
   
   def exclusivity_level_legal

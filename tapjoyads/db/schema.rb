@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110621235845) do
+ActiveRecord::Schema.define(:version => 20110623220738) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -126,11 +126,14 @@ ActiveRecord::Schema.define(:version => 20110621235845) do
     t.integer  "minimum_display_bid"
     t.boolean  "external_publisher",                                                            :default => false, :null => false
     t.boolean  "potential_external_publisher",                                                  :default => false, :null => false
+    t.string   "reseller_id",                       :limit => 36
+    t.decimal  "reseller_spend_share",                            :precision => 8, :scale => 6
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
   add_index "currencies", ["currency_group_id"], :name => "index_currencies_on_currency_group_id"
   add_index "currencies", ["id"], :name => "index_currencies_on_id", :unique => true
+  add_index "currencies", ["reseller_id"], :name => "index_currencies_on_reseller_id"
 
   create_table "currency_groups", :id => false, :force => true do |t|
     t.string   "id",                     :limit => 36,                :null => false
@@ -385,6 +388,7 @@ ActiveRecord::Schema.define(:version => 20110621235845) do
     t.float    "normal_avg_revenue",                                                            :default => 0.0,   :null => false
     t.float    "normal_bid",                                                                    :default => 0.0,   :null => false
     t.integer  "over_threshold",                                                                :default => 0,     :null => false
+    t.string   "reseller_id",                       :limit => 36
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -392,6 +396,7 @@ ActiveRecord::Schema.define(:version => 20110621235845) do
   add_index "offers", ["item_type", "item_id"], :name => "index_offers_on_item_type_and_item_id"
   add_index "offers", ["name"], :name => "index_offers_on_name"
   add_index "offers", ["partner_id"], :name => "index_offers_on_partner_id"
+  add_index "offers", ["reseller_id"], :name => "index_offers_on_reseller_id"
   add_index "offers", ["user_enabled", "tapjoy_enabled"], :name => "index_offers_on_user_enabled_and_tapjoy_enabled"
 
   create_table "orders", :id => false, :force => true do |t|
@@ -453,9 +458,11 @@ ActiveRecord::Schema.define(:version => 20110621235845) do
     t.boolean  "approved_publisher",                                                     :default => false,     :null => false
     t.boolean  "apsalar_sharing_adv",                                                    :default => false,     :null => false
     t.boolean  "apsalar_sharing_pub",                                                    :default => false,     :null => false
+    t.string   "reseller_id",                :limit => 36
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
+  add_index "partners", ["reseller_id"], :name => "index_partners_on_reseller_id"
 
   create_table "payout_infos", :id => false, :force => true do |t|
     t.string   "id",                  :limit => 36, :null => false
@@ -547,6 +554,17 @@ ActiveRecord::Schema.define(:version => 20110621235845) do
   add_index "rating_offers", ["id"], :name => "index_rating_offers_on_id", :unique => true
   add_index "rating_offers", ["partner_id"], :name => "index_rating_offers_on_partner_id"
 
+  create_table "resellers", :id => false, :force => true do |t|
+    t.string   "id",                 :limit => 36,                               :null => false
+    t.string   "name"
+    t.decimal  "reseller_rev_share",               :precision => 8, :scale => 6, :null => false
+    t.decimal  "rev_share",                        :precision => 8, :scale => 6, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "resellers", ["id"], :name => "index_resellers_on_id", :unique => true
+
   create_table "role_assignments", :id => false, :force => true do |t|
     t.string "id",           :limit => 36, :null => false
     t.string "user_id",      :limit => 36, :null => false
@@ -584,12 +602,14 @@ ActiveRecord::Schema.define(:version => 20110621235845) do
     t.boolean  "receive_campaign_emails",               :default => true,  :null => false
     t.string   "api_key",                                                  :null => false
     t.string   "auth_net_cim_id"
+    t.string   "reseller_id",             :limit => 36
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
   add_index "users", ["id"], :name => "index_users_on_id", :unique => true
   add_index "users", ["perishable_token"], :name => "index_users_on_perishable_token"
   add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"
+  add_index "users", ["reseller_id"], :name => "index_users_on_reseller_id"
   add_index "users", ["username"], :name => "index_users_on_username", :unique => true
 
 end

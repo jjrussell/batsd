@@ -23,7 +23,7 @@ class Offer < ActiveRecord::Base
                                   'third_party_data', 'payment_range_low',
                                   'payment_range_high', 'icon_id_override', 'rank_boost',
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue', 
-                                  'normal_price', 'over_threshold' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'normal_price', 'over_threshold', 'reseller_id' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
@@ -40,7 +40,9 @@ class Offer < ActiveRecord::Base
   
   belongs_to :partner
   belongs_to :item, :polymorphic => true
+  belongs_to :reseller
   
+  validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
   validates_numericality_of :price, :only_integer => true
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
@@ -107,6 +109,7 @@ class Offer < ActiveRecord::Base
   before_save :fix_country_targeting
   before_save :update_payment
   before_save :calculate_ranking_fields
+  before_save :update_reseller
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
   
@@ -1039,6 +1042,10 @@ private
   
   def bid_for_ranks
     [ bid, 500 ].min
+  end
+  
+  def update_reseller
+    self.reseller_id = partner.reseller_id
   end
   
 end
