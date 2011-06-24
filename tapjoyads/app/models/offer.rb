@@ -104,12 +104,12 @@ class Offer < ActiveRecord::Base
   validate :bid_higher_than_min_bid
   
   before_validation :update_payment
+  before_validation_on_create :set_reseller_from_partner
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
   before_save :fix_country_targeting
   before_save :update_payment
   before_save :calculate_ranking_fields
-  before_save :update_reseller
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
   
@@ -831,6 +831,10 @@ class Offer < ActiveRecord::Base
     update_attribute(:rank_boost, rank_boosts.active.sum(:amount))
   end
   
+  def set_reseller_from_partner
+    self.reseller_id = partner.reseller_id
+  end
+  
 private
   
   def is_disabled?(publisher_app, currency)
@@ -1042,10 +1046,6 @@ private
   
   def bid_for_ranks
     [ bid, 500 ].min
-  end
-  
-  def update_reseller
-    self.reseller_id = partner.reseller_id
   end
   
 end
