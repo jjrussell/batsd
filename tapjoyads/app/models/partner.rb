@@ -287,12 +287,12 @@ private
   end
   
   def update_offers
+    return true if !(premier_discount_changed? || reseller_id_changed?)
     if premier_discount_changed?
       offers.each(&:update_payment)
-    elsif reseller_id_changed?
+    end
+    if reseller_id_changed?
       offers.each(&:set_reseller_from_partner)
-    else
-      return
     end
     offers.each(&:save!)
   end
