@@ -16,7 +16,8 @@ class Reseller < ActiveRecord::Base
       partners.each do |p|
         p.update_attribute :rev_share, rev_share
       end
-    elsif reseller_rev_share_changed?
+    end
+    if reseller_rev_share_changed?
       currencies.each do |c|
         c.calculate_spend_shares
         c.save!
