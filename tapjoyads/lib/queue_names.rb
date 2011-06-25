@@ -19,4 +19,5 @@ class QueueNames
   CACHE_OFFERS             = RUN_MODE_PREFIX + 'CacheOffers'
   UDID_REPORTS             = RUN_MODE_PREFIX + 'UdidReports'
   FAILED_ACTIVEMQ_WRITES   = RUN_MODE_PREFIX + 'FailedActivemqWrites'
+  CREATE_INVOICES          = RUN_MODE_PREFIX + 'CreateInvoices'
 end

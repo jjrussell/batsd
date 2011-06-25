@@ -1,5 +1,6 @@
 require 'extensions'
 require 'notifier'
+Dir["#{RAILS_ROOT}/lib/one_offs/*.rb"].each { |file| require(file) }
 
 GEOIP = GeoIP.new("#{RAILS_ROOT}/data/GeoLiteCity.dat")
 BANNED_IPS = Set.new(['174.120.96.162', '151.197.180.227', '74.63.224.218', '65.19.143.2'])

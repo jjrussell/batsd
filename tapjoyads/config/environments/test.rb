@@ -56,3 +56,6 @@ MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = 'yeJaf+ux5W!a_62eZacra9ep8w@Z&?'
+
+FRESHBOOKS_API_URL = 'tjdev.freshbooks.com'
+FRESHBOOKS_AUTH_TOKEN = '59548f1150fa38c3feb2a67d6b1a0f8b'

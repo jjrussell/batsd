@@ -93,6 +93,9 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :generic_offers, :only => [ :new, :create, :edit, :update ]
     tools.resources :orders, :only => [ :new, :create ]
     tools.resources :payouts, :only => [ :index, :create ], :member => { :info => :get }
+    tools.failed_invoices 'orders/failed_invoices', :controller => :orders, :action => :failed_invoices
+    tools.mark_invoiced 'orders/mark_invoiced', :controller => :orders, :action => :mark_invoiced
+    tools.retry_invoicing 'orders/retry_invoicing', :controller => :orders, :action => :retry_invoicing
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]
     tools.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :as => :scheduling

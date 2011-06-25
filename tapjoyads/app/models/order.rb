@@ -1,26 +1,35 @@
 class Order < ActiveRecord::Base
   include UuidPrimaryKey
-  
-  STATUS_CODES = [ 0, 1, 2 ]
-  # 0: invalid
-  # 1: normal/paid
-  # 2: refunds
-  PAYMENT_METHODS = [ 0, 1, 2, 3 ]
-  # 0: website
-  # 1: freshbooks/billable/invoice
-  # 2: marketing expense
-  # 3: transfer
-  
+
+  STATUS_CODES = {
+    0 => 'Invalid',
+    1 => 'Normal',
+    2 => 'Refund',
+    3 => 'Not Invoiced',
+  }
+
+  PAYMENT_METHODS = {
+    0 => 'Website',
+    1 => 'Invoice',
+    2 => 'Bonus',
+    3 => 'Transfer',
+  }
+
   belongs_to :partner
   
   validates_presence_of :partner
-  validates_inclusion_of :status, :in => STATUS_CODES
-  validates_inclusion_of :payment_method, :in => PAYMENT_METHODS
+  validates_presence_of :billing_email, :message => "Partner needs a billing email for invoicing"
+  validates_inclusion_of :status, :in => STATUS_CODES.keys
+  validates_inclusion_of :payment_method, :in => PAYMENT_METHODS.keys
+  validates_uniqueness_of :invoice_id, :allow_nil => true
   validates_numericality_of :amount, :only_integer => true, :allow_nil => false
   
   after_create :update_balance, :create_spend_discount
-  
+
+  delegate :billing_email, :freshbooks_client_id, :to => :partner
+
   named_scope :paid, :conditions => 'status = 1'
+  named_scope :not_invoiced, :conditions => 'status = 3'
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at > ?", date ] } }
   named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
   named_scope :for_discount, lambda { paid.created_since(3.months.ago.to_date).scoped(:order => 'created_at DESC').scope(:find) }
@@ -30,25 +39,64 @@ class Order < ActiveRecord::Base
   end
   
   def status_string
-    case status
-    when 0; "Invalid"
-    when 1; "Normal"
-    when 2; "Refund"
-    end
+    STATUS_CODES[status]
   end
 
   def payment_method_string
-    case payment_method
-    when 0; "Website"
-    when 1; "Invoice"
-    when 2; "Bonus"
-    when 3; "Transfer"
-    end
+    PAYMENT_METHODS[payment_method]
   end
+
   def is_order?;    payment_method==0;  end
   def is_invoiced?; payment_method==1;  end
   def is_bonus?;    payment_method==2;  end
   def is_transfer?; payment_method==3;  end
+
+  def billing_email=(email)
+    partner.billing_email = email
+    partner.save!
+  end
+
+  def freshbooks_client_id=(client_id)
+    partner.freshbooks_client_id = client_id
+    partner.save!
+  end
+
+  def create_freshbooks_invoice
+    return if invoice_id
+    if freshbooks_client_id
+      self.invoice_id = FreshBooks.create_invoice(invoice_details)
+      self.status = 1
+      Rails.logger.info "FreshBooks invoice created for order #{id}"
+    elsif client_id = FreshBooks.get_client_id(billing_email)
+      self.freshbooks_client_id = client_id
+      Rails.logger.info "Associated partner #{partner.id} with FreshBooks client"
+      self.invoice_id = FreshBooks.create_invoice(invoice_details)
+      self.status = 1
+      Rails.logger.info "FreshBooks invoice created for order #{id}"
+    else
+      Rails.logger.info "Unable to create invoice, check that client exists in FreshBooks"
+      self.status = 3
+    end
+  end
+
+  def invoice_details
+    {
+      :invoice => {
+        :client_id => freshbooks_client_id,
+        :invoice_id => invoice_id,
+        :notes => note_to_client,
+        :lines => [
+          {
+            :name => 'TapjoyAdsCredit',
+            :description => description,
+            :unit_cost => 1,
+            :quantity => amount,
+            :type => 'Item',
+          },
+        ],
+      }
+    }
+  end
 
 private
   

@@ -15,20 +15,34 @@
         = f.currency_field :amount, {}, {:class => 'allow_negative'}
         = error_message_on @order, :amount
     %tr
-      %th= f.label :status
-      %td
-        = f.select :status, '<option>1</option>'
-        = error_message_on @order, :status
-    %tr
       %th= f.label :payment_method
       %td
         = f.select :payment_method, '<option value="1">Billable</option><option value="2">Marketing Expense</option>'
         = error_message_on @order, :payment_method
     %tr
-      %th= f.label :note
+      %th= f.label :description
+      %td
+        = f.text_field :description, :size => 50
+        = error_message_on @order, :note
+    %tr
+      %th= f.label :internal_note
       %td
         = f.text_field :note, :size => 50
         = error_message_on @order, :note
+    %tr
+      %th= f.label :note_to_client
+      %td
+        = f.text_field :note_to_client, :size => 50
+        = error_message_on @order, :note
+    %tr
+      %th= label_tag :create_invoice
+      %td= check_box_tag :create_invoice, 'create invoice', true
+    - if @order.errors.on(:billing_email)
+      %tr
+        %th= f.label :billing_email
+        %td
+          = f.text_field :billing_email, :size => 50
+          = error_message_on @order, :billing_email
     %tr
       %td{ :colspan => 2 }= f.submit 'Create Order'
     %tr

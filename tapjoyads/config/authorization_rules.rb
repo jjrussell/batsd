@@ -32,7 +32,8 @@ authorization do
   role :money do
     includes :tools
     has_permission_on :tools, :to => [ :money, :monthly_data ]
-    has_permission_on :tools_orders, :to => [ :new, :create ]
+    has_permission_on :tools_orders, :to => [ :new, :create, :failed_invoices, :retry_invoicing, :mark_invoiced ]
+    has_permission_on :tools_payouts, :to => [ :index, :create ]
     has_permission_on :tools_earnings_adjustments, :to => [ :new, :create ]
   end
   
