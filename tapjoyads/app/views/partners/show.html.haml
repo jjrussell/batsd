@@ -27,14 +27,15 @@
   - @partner.users.each do |user|
     %li
       %span.email= user.email
-      - if permitted_to?(:delink_user, :partners)
+      - if permitted_to?(:destroy, :tools_users_partner_assignments)
         .delink_action
-          - form_tag delink_user_partner_path do
-            = hidden_field_tag :user_id, user.id
+          %span
+            - partner_assignment = user.partner_assignments.find_by_partner_id(@partner.id)
             - if @partner.users.length > 1
-              = submit_tag 'remove', :confirm => "Are you sure?"
+              - path = tools_user_partner_assignment_path(:user_id => user.id, :id => partner_assignment.id)
+              = button_to('Remove', path, :method => 'delete', :confirm => 'Are you sure?')
             - else
-              = submit_tag 'cannot remove last user', :disabled => 'disabled', :confirm => "Are you sure?"
+              = submit_tag 'Cannot remove last user', :disabled => 'disabled'
       = image_tag('mailchimp.png', :class => "mail_chimp_button", :title => "Subscriber status")
       .mail_chimp_info.hidden
         = image_tag 'load-circle.gif'
@@ -207,6 +208,6 @@
       font-weight: bold;
       font-size: 24px;
     }
-    .delink_action, .delink_action form {
+    .delink_action, .delink_action span {
       display: inline;
     }
