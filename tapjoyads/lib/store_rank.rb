@@ -201,7 +201,7 @@ class StoreRank
             next unless price.nil?
 
             rank      = index + current_offset + 1
-            store_id  = (anchor/"a.title").attr('href').match("id=(.*)").to_a.second
+            store_id  = (anchor/"a.title").attr('href').split("id=").second.split("&").first
             name      = (anchor/"a.title").inner_html
 
             freemium_android_app << {:rank => rank, :name => name, :store_id => store_id}
