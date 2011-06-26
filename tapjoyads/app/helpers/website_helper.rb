@@ -28,6 +28,11 @@ module WebsiteHelper
     end
   end
 
+  def set_tapjoy_timezone_skew
+    offset = Time.zone.now.utc_offset / 3600.0
+    "Tapjoy.timezoneSkew = #{offset} + new Date().getTimezoneOffset() / 60;"
+  end
+
   def clippy(text, bgcolor = '#FFFFFF')
     @clippy_id = 0 unless defined?(@clippy_id)
     @clippy_id += 1

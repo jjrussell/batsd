@@ -66,6 +66,7 @@
 - content_for :included_javascripts, javascript_include_tag('jquery-ui-timepicker-addon.min')
 
 - content_for :page_javascript do
+  = set_tapjoy_timezone_skew
   :plain
     $(function() {
       var currentPayment = #{@offer_event.offer.present? ? @offer_event.offer.payment : 0};

@@ -99,6 +99,39 @@ $(function($){
       url: url
     });
   });
+
+  $.datepicker._gotoToday = function(id) {
+    $.datepicker._base_gotoToday(id);
+    var target = $(id);
+    var dp_inst = this._getInst(target[0]);
+    var tp_inst = $.datepicker._get(dp_inst, 'timepicker');
+    if (tp_inst) {
+      var date = new Date();
+      var notToday = false;
+      if (typeof(Tapjoy) != "undefined" && Tapjoy.timezoneSkew) {
+        var day = date.getDay();
+        date = new Date((new Date()).getTime() + 3600000 * Tapjoy.timezoneSkew);
+        notToday = (date.getDay() != day);
+        if (dp_inst) {
+          dp_inst.selectedYear = date.getFullYear();
+          dp_inst.selectedMonth = date.getMonth();
+          dp_inst.selectedDay = date.getDate();
+        }
+      }
+      var hour = date.getHours();
+      var minute = date.getMinutes();
+      var second = date.getSeconds();
+      if ((hour < tp_inst.defaults.hourMin || hour > tp_inst.defaults.hourMax) || (minute < tp_inst.defaults.minuteMin || minute > tp_inst.defaults.minuteMax) || (second < tp_inst.defaults.secondMin || second > tp_inst.defaults.secondMax)) {
+        hour = tp_inst.defaults.hourMin;
+        minute = tp_inst.defaults.minuteMin;
+        second = tp_inst.defaults.secondMin;
+      }
+      tp_inst.hour_slider.slider('value', hour);
+      tp_inst.minute_slider.slider('value', minute);
+      tp_inst.second_slider.slider('value', second);
+      tp_inst.onTimeChange(dp_inst, tp_inst);
+    }
+  };
 });
 
 Tapjoy.anchorToParams = function(){
