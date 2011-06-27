@@ -17,7 +17,7 @@ class App < ActiveRecord::Base
       :info_url => 'https://market.android.com/details?id=',
       :direct_store_url => 'market://search?q=',
       :default_actions_file_name => "TapjoyPPA.java",
-      :min_bid => 25,
+      :min_action_offer_bid => 25,
     },
     'iphone' => {
       :expected_device_types => Offer::APPLE_DEVICES,
@@ -30,7 +30,7 @@ class App < ActiveRecord::Base
       :info_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?mt=8&id=',
       :direct_store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?mt=8&id=',
       :default_actions_file_name => "TJCPPA.h",
-      :min_bid => 35,
+      :min_action_offer_bid => 35,
     },
     'windows' => {
       :expected_device_types => Offer::WINDOWS_DEVICES,
@@ -43,7 +43,7 @@ class App < ActiveRecord::Base
       :info_url => 'http://social.zune.net/redirect?type=phoneapp&id=',
       :direct_store_url => 'http://social.zune.net/redirect?type=phoneapp&id=',
       :default_actions_file_name => '', #TODO fill this out
-      :min_bid => 25,
+      :min_action_offer_bid => 25,
     },
   }
 

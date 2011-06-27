@@ -723,7 +723,7 @@ class Offer < ActiveRecord::Base
       end
     elsif item_type == 'ActionOffer'
       platform = App::PLATFORMS.index(get_platform)
-      platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_bid]
+      platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
     else
       0
     end
