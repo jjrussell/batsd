@@ -615,9 +615,9 @@ class Offer < ActiveRecord::Base
   end
 
   def get_platform
-    device_types = get_device_types
-    if device_types.any?{|type| type == 'android' || type == 'windows'}
-      device_types.length == 1 ? App::PLATFORMS[device_types.first] :  'All'
+    types = get_device_types
+    if types.any?{|type| type == 'android' || type == 'windows'}
+      types.length == 1 ? App::PLATFORMS[types.first] :  'All'
     else
       'iOS'
     end
