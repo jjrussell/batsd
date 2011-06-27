@@ -19,16 +19,9 @@ class EmailWorthyError < RuntimeError
 end
 class BalancesMismatch < EmailWorthyError; end
 class UnverifiedStatsError < EmailWorthyError; end
-class ConversionRateTooLowError < EmailWorthyError
-  def deliver_email(params={})
-    TapjoyMailer.deliver_low_conversion_rate_warning(self, params)
-  end
-end
-
-
 
 class Notifier
-  
+
   def self.alert_new_relic(exception, message = nil, request = nil, params = nil)
     begin
       raise exception.new(message)
@@ -42,11 +35,11 @@ class Notifier
         options[:request_params] = params
       end
       NewRelic::Agent.agent.error_collector.notice_error(e, options)
-      
+
       if e.kind_of?(EmailWorthyError)
         e.deliver_email(params)
       end
     end
   end
-  
+
 end

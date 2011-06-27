@@ -22,20 +22,21 @@ class TapjoyMailer < ActionMailer::Base
     url = "#{API_URL}/list_signup/confirm?code=#{confirm_code}"
     body :url => url, :currency_name => currency_name, :publisher_app_name => publisher_app_name, :amount => amount
   end
-  
-  def low_conversion_rate_warning(error, params)
-    from "admin@tapjoy.com"
-    partner = Partner.find_by_id(params[:partner_id], :include => [ :users ])
+
+  def low_conversion_rate_warning(offer, stats)
+    partner = Partner.find_by_id(offer.partner_id, :include => [ :users ])
     account_managers = partner.account_managers.map(&:email)
     account_managers.delete "oso@tapjoy.com"
     account_managers += [ 'accountmanagers@tapjoy.com', 'dev@tapjoy.com' ]
     account_managers = account_managers.join(', ')
+
+    from "admin@tapjoy.com"
     reply_to account_managers
     recipients account_managers
-    subject "Low Conversion Rate Warning!"
-    body(:error => error)
+    subject "Low Conversion Rate Warning! - #{offer.name_with_suffix_and_platform}"
+    body(:offer => offer, :stats => stats)
   end
-  
+
   def password_reset(user_email, reset_link)
     from "support@tapjoy.com"
     recipients user_email
