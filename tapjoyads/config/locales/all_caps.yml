@@ -37,9 +37,9 @@ all_caps:
       
     support:
       title: "MISSING {{currency}}?"
-      instructions_1: "PLEASE PROVIDE THE NAME OF THE OFFER YOU COMPLETED WITHOUT RECEIVING {{currency}}, A BRIEF DESCRIPTION OF THE STEPS YOU TOOK TO COMPLETE THE OFFER, AND YOUR EMAIL ADDRESS."
-      instructions_2: "AFTER WE VERIFY THAT YOU HAVE COMPLETED THE OFFER, YOU WILL RECEIVE YOUR {{currency}}."
-      description_label: "OFFER AND DESCRIPTION:"
+      instructions_1: "PLEASE PROVIDE THE NAME OF THE OFFER YOU COMPLETED WITHOUT RECEIVING {{currency}} AND YOUR EMAIL ADDRESS."
+      instructions_2: "IF YOU DON'T CLEARLY INDICATE THE OFFER YOU COMPLETED, YOUR {{currency}} WILL BE DELAYED."
+      description_label: "OFFER NAME:"
       email_address_label: "EMAIL ADDRESS:"
       submit_support_request: "SUBMIT SUPPORT REQUEST"
       support_request_submitted: "SUPPORT REQUEST SUBMITTED"

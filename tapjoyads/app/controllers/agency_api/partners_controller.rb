@@ -37,6 +37,22 @@ class AgencyApi::PartnersController < AgencyApiController
     render_success({ :partner_id => partner.id })
   end
   
+  def update
+    return unless verify_request([ :id ])
+    return unless verify_partner(params[:id])
+
+    log_activity(@partner)
+    @partner.name = params[:name] if params[:name].present?
+    unless @partner.valid?
+      render_error(@partner.errors, 400)
+      return
+    end
+    @partner.save!
+    
+    save_activity_logs
+    render_success
+  end
+  
   def link
     return unless verify_request([ :email, :user_api_key ])
     

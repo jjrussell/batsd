@@ -22,20 +22,21 @@ class TapjoyMailer < ActionMailer::Base
     url = "#{API_URL}/list_signup/confirm?code=#{confirm_code}"
     body :url => url, :currency_name => currency_name, :publisher_app_name => publisher_app_name, :amount => amount
   end
-  
-  def low_conversion_rate_warning(error, params)
-    from "admin@tapjoy.com"
-    partner = Partner.find_by_id(params[:partner_id], :include => [ :users ])
+
+  def low_conversion_rate_warning(offer, stats)
+    partner = Partner.find_by_id(offer.partner_id, :include => [ :users ])
     account_managers = partner.account_managers.map(&:email)
     account_managers.delete "oso@tapjoy.com"
     account_managers += [ 'accountmanagers@tapjoy.com', 'dev@tapjoy.com' ]
     account_managers = account_managers.join(', ')
+
+    from "admin@tapjoy.com"
     reply_to account_managers
     recipients account_managers
-    subject "Low Conversion Rate Warning!"
-    body(:error => error)
+    subject "Low Conversion Rate Warning! - #{offer.name_with_suffix_and_platform}"
+    body(:offer => offer, :stats => stats)
   end
-  
+
   def password_reset(user_email, reset_link)
     from "support@tapjoy.com"
     recipients user_email
@@ -88,10 +89,10 @@ class TapjoyMailer < ActionMailer::Base
     body(:info => info)
   end
 
-  def campaign_status(email_recipients, low_balance, account_balance, account_manager_email, offers_not_meeting_budget, offers_needing_higher_bids, premier, premier_discount)
+  def campaign_status(email_recipients, partner, low_balance, account_balance, account_manager_email, offers_not_meeting_budget, offers_needing_higher_bids, premier, premier_discount)
     from 'support@tapjoy.com'
     recipients email_recipients
-    subject 'Tapjoy Campaign Status'
+    subject "Tapjoy Campaign Status for #{partner.name || partner.contact_name}"
     content_type 'text/html'
     account_manager_email = nil if account_manager_email == 'oso@tapjoy.com'
     body(:low_balance => low_balance, :account_balance => account_balance, :account_manager_email => account_manager_email, 
