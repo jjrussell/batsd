@@ -33,7 +33,7 @@ class TapjoyMailer < ActionMailer::Base
     from "admin@tapjoy.com"
     reply_to account_managers
     recipients account_managers
-    subject "Low Conversion Rate Warning!"
+    subject "Low Conversion Rate Warning! - #{offer.name_with_suffix_and_platform}"
     body(:offer => offer, :stats => stats)
   end
 
