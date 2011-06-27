@@ -1,5 +1,4 @@
 - price = @offer.price.zero? ? 'Free' : number_to_currency(@offer.price / 100.0)
-- download_size = "%.2f" % (@offer.item.file_size_bytes/1048576.0)
 #{@offer.name_with_suffix_and_platform} (https://www.tapjoy.com/statz/#{@offer.id}) has #{@stats[:conversion_rate]} cvr.
 \-----
 Recent installs: #{@stats[:recent_installs]}
@@ -13,4 +12,6 @@ Offer type: #{@offer.item_type}
 - if @offer.item_type == 'App'
   - if @offer.item.user_rating.present?
     Rating: #{@offer.item.user_rating} stars
-  App size: #{download_size}MB
+  - if @offer.item.file_size_bytes.present?
+    - download_size = "%.2f" % (@offer.item.file_size_bytes/1048576.0)
+    App size: #{download_size}MB
