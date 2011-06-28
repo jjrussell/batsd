@@ -17,14 +17,15 @@ class DisplayAdController < ApplicationController
     return unless verify_params([ :publisher_app_id, :advertiser_app_id, :size ])
     
     width, height = parse_size(params[:size])
-    
-    image_data = Mc.get_and_put("display_ad.decoded.#{params[:publisher_app_id]}.#{params[:advertiser_app_id]}.#{width}x#{height}", false, 5.minutes) do
+
+    key = "display_ad.decoded.#{params[:publisher_app_id]}.#{params[:advertiser_app_id]}.#{width}x#{height}.#{params[:display_multiplier]||1}"
+    image_data = Mc.get_and_put(key, false, 5.minutes) do
       publisher = App.find_in_cache(params[:publisher_app_id])
       currency = Currency.find_in_cache(params[:publisher_app_id])
       offer = Offer.find_in_cache(params[:advertiser_app_id])
       return unless verify_records([ publisher, currency, offer ])
 
-      ad_image_base64 = get_ad_image(publisher, offer, params[:size], currency)
+      ad_image_base64 = get_ad_image(publisher, offer, params[:size], currency, params[:display_multiplier])
       
       Base64.decode64(ad_image_base64)
     end
@@ -36,7 +37,7 @@ private
 
   def setup
     return unless verify_params([ :app_id, :udid ])
-
+    
     now = Time.zone.now
     geoip_data = get_geoip_data
     geoip_data[:country] = params[:country_code] if params[:country_code].present?
@@ -85,9 +86,9 @@ private
           :country_code      => geoip_data[:country]
       )
       if params[:action] == 'webview'
-        @image_url = get_ad_image_url(publisher_app, offer, params[:size])
+        @image_url = get_ad_image_url(publisher_app, offer, params[:size], params[:display_multiplier])
       else
-        @image = get_ad_image(publisher_app, offer, params[:size], currency)
+        @image = get_ad_image(publisher_app, offer, params[:size], currency, params[:display_multiplier])
       end
     
       web_request.offer_id = offer.id
@@ -97,16 +98,18 @@ private
     web_request.save
   end
 
-  def get_ad_image_url(publisher_app, offer, size)
+  def get_ad_image_url(publisher_app, offer, size, display_multiplier)
+    display_multiplier = (display_multiplier||1).to_f
     width, height = parse_size(params[:size])
     # TO REMOVE: displayer_app_id param after rollout.
-    "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app.id}&advertiser_app_id=#{offer.id}&displayer_app_id=#{publisher_app.id}&size=#{width}x#{height}"
+    "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app.id}&advertiser_app_id=#{offer.id}&displayer_app_id=#{publisher_app.id}&size=#{width}x#{height}&display_multiplier=#{display_multiplier}"
   end
-  
-  def get_ad_image(publisher, offer, size, currency)
+
+  def get_ad_image(publisher, offer, size, currency, display_multiplier)
+    display_multiplier = (display_multiplier||1).to_f
     width, height = parse_size(size)
-    
-    Mc.get_and_put("display_ad.#{publisher.id}.#{offer.id}.#{width}x#{height}", false, 1.hour) do
+    key = "display_ad.#{publisher.id}.#{offer.id}.#{width}x#{height}.#{display_multiplier}"
+    Mc.get_and_put(key, false, 1.hour) do
       if width == 640 && height == 100
         border = 4
         icon_padding = 7
@@ -146,7 +149,7 @@ private
       img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
       img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
       
-      text = "Earn #{currency.get_reward_amount(offer)} #{currency.name} download \\n#{offer.name}"
+      text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
       font = Rails.env == 'production' ? 'Helvetica' : ''
       image_label = Magick::Image.read("caption:#{text}") do
         self.size = text_area_size
