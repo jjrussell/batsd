@@ -527,10 +527,9 @@ class Offer < ActiveRecord::Base
     if item_type == 'TestOffer'
       ad_url += "/test_offer"
     end
-    ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}&country_code=#{country_code}"
+    ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}&country_code=#{country_code}&display_multiplier=#{display_multiplier}"
     ad_url += "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
     ad_url += "&exp=#{exp}" if exp.present?
-    ad_url += "&display_multiplier=#{display_multiplier}" unless display_multiplier == 1
     ad_url
   end
   
