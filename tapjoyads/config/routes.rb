@@ -101,6 +101,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :preview_experiments, :only => [ :index, :show ]
     tools.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
     tools.resources :external_publishers, :only => [ :index, :update ]
+    tools.resources :jobs, :except => [ :show ]
     tools.resources :earnings_adjustments, :only => [ :new, :create ]
   end
   

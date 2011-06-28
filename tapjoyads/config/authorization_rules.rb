@@ -95,5 +95,6 @@ authorization do
     has_permission_on :tools_users, :to => [ :index, :show ]
     has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
     has_permission_on :search, :to => [ :users ]
+    has_permission_on :tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
   end
 end
