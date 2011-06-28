@@ -65,8 +65,8 @@ class Currency < ActiveRecord::Base
     end
   end
   
-  def get_visual_reward_amount(offer, display_multiplier=1)
-    display_multiplier = (display_multiplier||1).to_f
+  def get_visual_reward_amount(offer, display_multiplier = 1)
+    display_multiplier = (display_multiplier || 1).to_f
     if offer.has_variable_payment?
       orig_payment  = offer.payment
       offer.payment = offer.payment_range_low

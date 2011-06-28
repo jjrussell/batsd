@@ -18,7 +18,7 @@ class DisplayAdController < ApplicationController
     
     width, height = parse_size(params[:size])
 
-    key = "display_ad.decoded.#{params[:publisher_app_id]}.#{params[:advertiser_app_id]}.#{width}x#{height}.#{params[:display_multiplier]||1}"
+    key = "display_ad.decoded.#{params[:publisher_app_id]}.#{params[:advertiser_app_id]}.#{width}x#{height}.#{params[:display_multiplier] || 1}"
     image_data = Mc.get_and_put(key, false, 5.minutes) do
       publisher = App.find_in_cache(params[:publisher_app_id])
       currency = Currency.find_in_cache(params[:publisher_app_id])
@@ -99,14 +99,14 @@ private
   end
 
   def get_ad_image_url(publisher_app, offer, size, display_multiplier)
-    display_multiplier = (display_multiplier||1).to_f
+    display_multiplier = (display_multiplier || 1).to_f
     width, height = parse_size(params[:size])
     # TO REMOVE: displayer_app_id param after rollout.
     "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app.id}&advertiser_app_id=#{offer.id}&displayer_app_id=#{publisher_app.id}&size=#{width}x#{height}&display_multiplier=#{display_multiplier}"
   end
 
   def get_ad_image(publisher, offer, size, currency, display_multiplier)
-    display_multiplier = (display_multiplier||1).to_f
+    display_multiplier = (display_multiplier || 1).to_f
     width, height = parse_size(size)
     key = "display_ad.#{publisher.id}.#{offer.id}.#{width}x#{height}.#{display_multiplier}"
     Mc.get_and_put(key, false, 1.hour) do
