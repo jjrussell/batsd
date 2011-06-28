@@ -101,6 +101,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :preview_experiments, :only => [ :index, :show ]
     tools.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
     tools.resources :external_publishers, :only => [ :index, :update ]
+    tools.resources :jobs, :except => [ :show ]
     tools.resources :earnings_adjustments, :only => [ :new, :create ]
   end
   
@@ -131,7 +132,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :sdk, :only => [ :index, :show ]
   map.namespace :agency_api do |agency|
     agency.resources :apps, :only => [ :index, :show, :create, :update ]
-    agency.resources :partners, :only => :create, :collection => { :link => :post }
+    agency.resources :partners, :only => [ :create, :update ], :collection => { :link => :post }
     agency.resources :currencies, :only => [ :index, :show, :create, :update ]
   end
   
