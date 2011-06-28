@@ -17,7 +17,7 @@ class Tools::JobsController < WebsiteController
     @job = Job.new(params[:job])
     if @job.save
       flash[:notice] = 'Successfully created job.'
-      redirect_to tools_jobs_path
+      redirect_to :action => :index
     else
       render :action => :new
     end
@@ -29,7 +29,7 @@ class Tools::JobsController < WebsiteController
   def update
     if @job.update_attributes(params[:job])
       flash[:notice] = 'Successfully updated job.'
-      redirect_to tools_jobs_path
+      redirect_to :action => :index
     else
       render :action => :new
     end
@@ -38,7 +38,7 @@ class Tools::JobsController < WebsiteController
   def destroy
     @job.destroy
     flash[:notice] = 'Successfully destroyed job.'
-    redirect_to tools_jobs_path
+    redirect_to :action => :index
   end
   
 private
