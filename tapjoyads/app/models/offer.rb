@@ -489,7 +489,7 @@ class Offer < ActiveRecord::Base
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end
     
-    data                  = {
+    data = {
       :advertiser_app_id  => item_id,
       :publisher_app_id   => publisher_app.id,
       :publisher_user_id  => publisher_user_id,
