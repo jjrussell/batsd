@@ -14,10 +14,10 @@ class SupportRequestsController < ApplicationController
   end
   
   def create
-    if params[:description].blank?
-      render_new_with_error(I18n.t('text.support.missing_description'))
-    elsif @offer.nil? && params[:offer_name].blank?
+    if @offer.nil? && params[:offer_name].blank?
       render_new_with_error(I18n.t('text.support.missing_offer'))
+    elsif params[:description].blank?
+      render_new_with_error(I18n.t('text.support.missing_description'))
     elsif params[:email_address].blank? || params[:email_address] !~ Authlogic::Regex.email
       render_new_with_error(I18n.t('text.support.invalid_email'))
     else

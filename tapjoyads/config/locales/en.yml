@@ -50,4 +50,5 @@ en:
       missing_offer: "You must specify the offer you completed."
       invalid_email: "Please enter a real email address."
       abuse_warning: "This form is strictly for users who have not been rewarded for a completed offer. Abuse of this page may lead to your account being banned from engaging in offers in the future."
-      another_offer: "Another offer (please specify)"
+      select_offer: "Select Offer"
+      another_offer: "Other (specify below)"
