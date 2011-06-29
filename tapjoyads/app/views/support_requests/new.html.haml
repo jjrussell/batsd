@@ -11,6 +11,10 @@
     .instructions
       %p= t('text.support.instructions_1', :currency => @currency.name)
       %p= t('text.support.instructions_2', :currency => @currency.name)
+    - if @incomplete_offers.nil?
+      = link_to('Show Incomplete Offers', request.url, :id => 'show_offers')
+    - elsif !@incomplete_offers.blank?
+      = render('select_offer')
     .field
       = label_tag :description, t('text.support.description_label')
       = text_field_tag :description, params[:description]
@@ -27,6 +31,41 @@
 #adsby 
   = t('text.shared.ads_by')
   %img{ :src => "#{CLOUDFRONT_URL}/images/tapjoylogo-small.png", :alt => "Tapjoy"}
+  
+- content_for :included_javascripts, javascript_include_tag('jquery-1.4.2.min')
+  
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      function initializeOfferChangeEvents() {
+        $('#offer_id').change(function() {
+          if ($(this).val() == "") {
+            $('#offer_name_field').show();
+          }
+          else {
+            $('#offer_name_field').hide();
+            $('#offer_name').val('');
+          }
+        });
+        $('#offer_id').change();
+      }
+    
+      $('#show_offers').click(function() {
+        var url = $(this).attr("href");
+        $.ajax({
+          type: "GET",
+          url: url,
+          success: function(html) {
+            $('#show_offers').after(html);
+            $('#show_offers').hide();
+            initializeOfferChangeEvents();
+          }
+        });
+        return false;
+      });
+      
+      initializeOfferChangeEvents();
+    });
 
 - content_for :page_styles do
   :plain
@@ -115,4 +154,8 @@
 
     .error {
       color: #dd0000;
+    }
+    
+    .hidden {
+      display: none;
     }
