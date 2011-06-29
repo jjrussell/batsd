@@ -34,11 +34,11 @@ class SearchController < WebsiteController
   end
 
   def partners
-    conditions = [ "id LIKE ?", "#{params[:term].to_s.strip}%" ]
+    conditions = [ "id = ?", "#{params[:term].to_s.strip}" ]
     results = Partner.find(:all,
       :conditions => conditions,
-      :include => ['offers'],
-      :limit => 5
+      :include => ['offers', 'users'],
+      :limit => 1
     )
 
     if results.blank?
@@ -52,9 +52,10 @@ class SearchController < WebsiteController
     end
 
     results = results.collect do |partner|
-      name  = partner.name || 'no name'
-      count = partner.offers.count
-      label = "#{name} (#{count} offers)"
+      name    = partner.name || 'no name'
+      offers  = partner.offers.count
+      users   = partner.users.count
+      label   = "#{name} (#{offers} offers, #{users} users)"
       { :label => label, :partner_id => partner.id, :partner_name => name }
     end
 
