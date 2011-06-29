@@ -1,21 +1,36 @@
 !!! 5
 
-%html
+%html{ :class => 'web no-os no-touch no-hd' }
   %head
-    %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
+    %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }  
+    %meta{ 'name' => 'viewport', 'content' => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
+    %meta{ 'name' => 'apple-mobile-web-app-capable', 'content' => 'yes' }
+    %meta{ 'name' => 'apple-mobile-web-app-status-bar-style', 'content' => 'black' }
+    
+    %link{ 'rel' => 'apple-touch-icon', 'href' => '' } 
+    %link{ 'rel' => 'apple-touch-icon-precomposed', 'media' => '(resolution: 326dpi)', 'href' => '' }
+    %link{ 'rel' => 'apple-touch-icon-precomposed', 'media' => '(resolution: 326dpi)', 'href' => '' }
+    %link{ 'rel' => 'apple-touch-icon-precomposed', 'media' => '(resolution: 163dpi)', 'href' => '' }
+    %link{ 'rel' => 'apple-touch-startup-image', 'href' => "" }          
+
     %title= @page_title.blank? ? 'Tapjoy Games' : "#{@page_title} - Tapjoy Games"
+    
+    //%link{ 'rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'http://fonts.googleapis.com/css?family=Paytone+One&v1' }
+    %style{ :type => "text/css", :media => "screen" }
+      @import "/stylesheets/games/tapjoygames.css";
+
     %style{ :type => 'text/css' }
       = yield :page_styles
     = yield :page_head
 
   %body
-    - if current_gamer.present?
-      = "Logged in as #{current_gamer.email}"
-      |
-      = link_to('Logout', games_logout_path)
-
     = yield
 
     = yield :included_javascripts
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
       = yield :page_javascript
+    = javascript_include_tag 'jquery-1.4.2.min'
+    = javascript_include_tag 'games/cufon-min'
+    = javascript_include_tag 'games/Cooper_Std_900.font'
+    = javascript_include_tag 'games/iscroll-lite'
+    = javascript_include_tag 'games/tapjoygames'

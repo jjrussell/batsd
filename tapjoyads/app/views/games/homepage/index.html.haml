@@ -1,13 +1,73 @@
-#main
-  %img{ :src => '/images/coming-soon.jpg' }
-  
-- content_for :page_styles do
+#wrapper{ :class => '' }
+  #nav_bar
+    .nav_content
+      .right
+        Not on iPhone?
+      .left
+        Currently using:
+  #container
+    #scroller
+      #main
+        #logo
+        #offers
+          %ul
+            %li{ :class => 'offer_item' }
+              .offer_button
+                %button{ :class => "blue" }
+                  %span{  :class => "amount" }
+                    Earn More!
+              .offer_image
+                %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/29254adb06418ac6ac31c3991a6b995f2eae54be8e5e07072c8e8e747b7bd09c.jpg' }
+              .offer_text
+                %div{ :class => 'offer_title title' }
+                  Pretty Pet Salon Extra Text
+                .offer_info
+            %li{ :class => 'offer_item' }
+              .offer_button
+                %button{ :class => "blue" }
+                  %span{  :class => "amount" }
+                    Earn More!
+              .offer_image
+                %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/29254adb06418ac6ac31c3991a6b995f2eae54be8e5e07072c8e8e747b7bd09c.jpg' }
+              .offer_text
+                %div{ :class => 'offer_title title' }
+                  Pretty Pet Salon Extra Text
+                .offer_info
+            %li{ :class => 'offer_item' }
+              .offer_button
+                %button{ :class => "blue" }
+                  %span{  :class => "amount" }
+                    Earn More!
+              .offer_image
+                %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/29254adb06418ac6ac31c3991a6b995f2eae54be8e5e07072c8e8e747b7bd09c.jpg' }
+              .offer_text
+                %div{ :class => 'offer_title title' }
+                  Pretty Pet Salon Extra Text
+                .offer_info
+            %li{ :class => 'offer_item' }
+              .offer_button
+                %button{ :class => "blue" }
+                  %span{  :class => "amount" }
+                    Earn More!
+              .offer_image
+                %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/29254adb06418ac6ac31c3991a6b995f2eae54be8e5e07072c8e8e747b7bd09c.jpg' }
+              .offer_text
+                %div{ :class => 'offer_title title' }
+                  Pretty Pet Salon Extra Text
+                .offer_info
+            %li{ :class => 'offer_item' }
+              .offer_button
+                %button{ :class => "blue" }
+                  %span{  :class => "amount" }
+                    Earn More!
+              .offer_image
+                %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/29254adb06418ac6ac31c3991a6b995f2eae54be8e5e07072c8e8e747b7bd09c.jpg' }
+              .offer_text
+                %div{ :class => 'offer_title title' }
+                  Pretty Pet Salon Extra Text
+                .offer_info                            
+
+  #debug 
+
+- content_for :page_javascript do
   :plain
-    #main {
-      margin: 100px auto 0;
-      width: 500px;
-      height: 500px;
-    }
-    
-- content_for :page_head do
-  %meta{ :name => 'description', :content => 'Tapjoy Games: The destination for Mobile Apps, Mobile Games, Android, Apple, iPhone, iPad, iOS' }

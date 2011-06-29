@@ -1,0 +1,255 @@
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed,  figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video { margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; vertical-align: baseline; }
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
+body { line-height: 1; }
+ol, ul { list-style: none; }
+blockquote, q { quotes: none; }
+blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; } 
+table { border-collapse: collapse; border-spacing: 0; }
+body {
+  background: #434343 url('../../images/games/bg.png');
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  min-height: 316px;
+}
+body .hd {
+  background-size: 100%;
+}
+#wrapper {
+  background: #434343 url('../../images/games/bg.png');
+  color: #FFFFFF;
+  width: 100%;
+}
+#wrapper.tan {
+  background: #434343 url('../../images/games/bg_tan.png');
+  color: #605846;
+}
+.web, .ipad, .android {
+  font-size: 16px;
+}
+.ipod, .iphone, .android-phone {
+  font-size: 14px;
+}
+/* Nav */
+.web #nav_bar, .ipad #nav_bar, .android #nav_bar, #nav_bar {
+  background: #333333 url('../../images/games/nav_bar_web.png') repeat-x;
+  color: #FFFFFF;
+  height: 44px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+.ipod #nav_bar, .iphone #nav_bar, .android-phone #nav_bar {
+  background: #333333 url('../../images/games/nav_bar_mobile.png') repeat-x;
+  height: 30px;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+.web #nav_bar .nav_content, .ipad #nav_bar .nav_content {
+  padding: 12px 16px;
+}
+.ipod #nav_bar .nav_content, .iphone #nav_bar .nav_content, .android-phone #nav_bar .nav_content {
+  padding: 8px 4px;
+}
+
+/* Main Container */
+.web #main, .ipad #main, .android #main, #main {
+  background: transparent url('../../images/games/header_bg_web.png') repeat-x;
+}
+.web #wrapper.tan #main, .ipad #wrapper.tan #main, .android #wrapper.tan #main, #main {
+  background: transparent url('../../images/games/header_bg_web_tan.png') repeat-x;  
+}
+
+.iphone #main, .ipod #main, .android-phone #main {
+  background: transparent url('../../images/games/header_bg_mobile.png') repeat-x;  
+}
+.ipod #wrapper.tan #main, .iphone #wrapper.tan #main, .android-phone #wrapper.tan #main {
+  background: transparent url('../../images/games/header_bg_mobile_tan.png') repeat-x;
+}
+.web #logo, .ipad #logo, .android #logo {
+  background: transparent url('../../images/games/logo_bg_web.png') no-repeat;
+  height: 280px;                         
+  margin: 0 auto;
+  width: 640px;
+}
+.ipod #logo, .iphone #logo, .ipod.portrait #logo, .iphone.portrait #logo {
+  background: transparent url('../../images/games/logo_bg_mobile.png') no-repeat;
+  height: 158px;                         
+  margin: 0 auto;
+  width: 320px;
+}
+.ipod.hd.portrait #logo, .iphone.hd.portrait #logo {
+  background: transparent url('../../images/games/logo_bg_mobile_hd_p.png') no-repeat;
+  background-size: 100%;
+  margin: 0 auto;
+  width: 100%;
+}
+.ipod.hd.landscape #logo, .iphone.hd.landscape #logo {
+  background: transparent url('../../images/games/logo_bg_mobile_hd_l.png') no-repeat;
+  background-size: 100%;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.iphone body {
+  -webkit-user-select: none;
+  -webkit-text-size-adjust: none;
+}
+
+.iphone #header {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+} 
+
+.iphone #container {
+  position: absolute;
+  z-index: 1;
+  top: 22px;
+  left: 0;
+  width: 100%;
+  overflow: auto;
+}
+
+.iphone #scroller {
+  position:absolute;
+  z-index:1;
+  -webkit-tap-highlight-color:rgba(0,0,0,0);
+  width: 100%;
+  padding: 0;
+}
+
+
+
+/* Offer */
+#offers {
+  margin: 0 auto;
+  max-width: 1000px;
+  padding: 10px;
+  position: relative;
+  top: 36px;
+}
+.ipod #offers, .iphone #offers, #android-phone #offers {
+  margin: 0 auto;
+  padding: 2px;
+  position: relative;
+  top: 18px;
+} 
+.ipod #offers, .iphone #offers, .android-phone #offers {
+  padding: 6px;
+}
+.offer_item {
+  border: 1px dotted #222222;  /* REMOVE */
+  /*min-height: 60px;*/
+  height: 80px;
+}
+.offer_image {
+  background: #FFFFFF;
+  border-radius: 5px;
+  float: left;
+  margin-right: 12px;
+  overflow: hidden;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 6px;
+ -moz-box-shadow: 0 0 4px #222222;
+  -webkit-box-shadow: 0px 2px 4px #222222; 
+}
+.ipod .offer_image, .iphone .offer_image {
+  margin-right: 6px;
+}
+.offer_image, .offer_image.small {
+  height: 57px;
+  width: 57px;
+}
+.offer_info {
+  float: left;
+  padding-top: 6px;
+  text-overflow: ellipsis;
+}
+.offer_title {
+  font-size: 18px;
+  padding-top: 6px;
+}
+.ipod .offer_title, .iphone .offer_title, .android-phone .offer_title {
+  font-size: 12px;
+}    
+.offer_button {
+  float: right;
+  padding-top: 6px;
+}
+.offer_button button.blue {
+  white-space: nowrap;
+  overflow-x: hidden;
+}
+.offer_button .button {}
+.offer_button button.blue {
+  background: #2F477D;
+  background: -moz-linear-gradient(top, #7f8dad 0%, #4a5e8c 50%, #2f477d 50%, #364c80 100%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #7f8dad), color-stop(0.5, #4a5e8c), color-stop(0.5, #2f477d), color-stop(1, #364c80));
+  border: 1px solid #172D6E;
+  border-bottom: 1px solid #0E1D45;
+  border-radius: 5px;
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 7px 0 8px 0;
+  text-decoration: none;
+  text-align: center;
+  text-shadow: 0 -1px 1px #000F4D;
+  width: 120px; 
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-box-shadow: 0 0 4px #Memcached::2222;
+  -webkit-box-shadow: 0px 0 4px #222222;    
+}
+.ipod .offer_button button.blue, .iphone .offer_button button.blue, .android-phone .offer_button button.blue {
+  font-size: 12px;
+  width: 80px;
+}
+.offer_button button.blue a {
+  color: #FFFFFF;
+}
+.offer_button button.blue span.amount {
+   color: #FFFFFF;
+}
+.offer_button button.blue:hover {
+  background: #486A9A;
+  background: -moz-linear-gradient(top, #8c9cbf 0%, #546a9e 50%, #36518f 50%, #3d5691 100%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #8c9cbf), color-stop(0.5, #546a9e), color-stop(0.5, #36518f), color-stop(1, #3d5691)); 
+  cursor: pointer;
+}
+.offer_button button.blue:active {
+  -moz-box-shadow: inset 0 0 20px 0 #3d5691, 0 1px 0 #444444;
+  -webkit-box-shadow: inset 0 0 20px 0 #3d5691, 0 1px 0 #444444;
+  box-shadow: inset 0 0 20px 0 #3d5691, 0 1px 0 #444444;
+  cursor: pointer;
+}
+.title {
+  font-family: 'Paytone One', 'Cooper Std';
+}                                  
+.right {
+  float: right;
+}              
+.left {
+  float: left;
+}
+.clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0;
+}
+.clearfix {
+  display: inline-block;
+}
+html[xmlns] .clearfix {
+  display: block;
+} 
+* html .clearfix {
+  height: 1%;
+}
