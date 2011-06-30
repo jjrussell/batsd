@@ -7,7 +7,6 @@
 
   .instructions
     %p= t('text.support.instructions_1', :currency => @currency.name)
-    %p= t('text.support.instructions_2', :currency => @currency.name)
   
   - if @incomplete_offers.nil?
     = button_to(t('text.support.select_offer'), request.url, :id => 'show_offers')
@@ -15,7 +14,7 @@
   - form_tag({ :action => :create }, :id => 'support_request') do
     - [ :udid, :publisher_user_id, :currency_id, :app_id, :device_type, :language_code ].each do |field|
       = hidden_field_tag field, params[field]
-    - if @incomplete_offers.present?
+    - if params[:action] == 'create'
       = render('select_offer')
     .field
       = label_tag :description, t('text.support.description_label')
@@ -23,8 +22,8 @@
     .field
       = label_tag :email_address, t('text.support.email_address_label')
       = text_field_tag :email_address, params[:email_address]
-    .field
-      = t('text.support.abuse_warning')
+    %p= t('text.support.instructions_2', :currency => @currency.name)
+    %p= t('text.support.abuse_warning')
     = submit_tag(t('text.support.submit_support_request'))
 
 #privacy
