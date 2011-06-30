@@ -36,7 +36,7 @@ class ActivityLog < SimpledbResource
     elsif object.respond_to?(:name)
       object.name
     else
-      "#{object_id[0..6]}..."
+      "#{object_id[0,6]}..."
     end
   end
 
