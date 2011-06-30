@@ -37,7 +37,7 @@ en:
       
     support:
       title: "Missing {{currency}}?"
-      instructions_1: "Please select the offer you completed without receiving {{currency}} and your email address."
+      instructions_1: "Please select the offer you completed without receiving {{currency}} and enter your email address."
       instructions_2: "If you submit a ticket with incomplete information, it will result in a delay in getting your issue resolved. Priority is given to tickets with complete information."
       specify_offer_label: "Specify offer:"
       offer_name_label: "Offer name:"
