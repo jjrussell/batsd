@@ -52,14 +52,18 @@
       }
     
       $('#show_offers').click(function() {
-        var url = $(this).attr("href");
+        $(this).attr("disabled", "disabled");
+      
         $.ajax({
           type: "GET",
-          url: url,
+          url: $(this).attr("href"),
           success: function(html) {
             $('#support_request').prepend(html);
             $('#show_offers').hide();
             initializeOfferChangeEvents();
+          },
+          error: function() {
+            $('#show_offers').removeAttr("disabled");
           }
         });
         return false;
