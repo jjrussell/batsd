@@ -12,14 +12,34 @@ class ActivityLog < SimpledbResource
   self.sdb_attr :before_state,      :type => :json
   self.sdb_attr :after_state,       :type => :json
   self.sdb_attr :created_at,        :type => :time, :attr_name => 'updated-at'
-  
+
+  SKIP_KEYS = %w(updated-at updated_at perishable_token)
+
   def initialize(options = {})
     @state_object = nil
     @state_object_new = false
-    
+
     super({ :load_from_memcache => false }.merge(options))
   end
-  
+
+  def diff_keys
+    (before_state.keys | after_state.keys) - SKIP_KEYS
+  end
+
+  def diff_value(key)
+    Differ.diff_by_word(after_state[key].to_s, before_state[key].to_s)
+  end
+
+  def object_name
+    if object.respond_to?(:name_with_suffix)
+      object.name_with_suffix
+    elsif object.respond_to?(:name)
+      object.name
+    else
+      "#{object_id[0..6]}..."
+    end
+  end
+
   def object
     return @state_object unless @state_object.nil?
     
