@@ -9,24 +9,6 @@ TJG.vars.isIos = false;
 TJG.vars.isTouch = false;
 TJG.utils = {
 
-  addClass : function(element, elClass) {
-    var curr = element.className;
-    if (!new RegExp(("(^|\\s)" + elClass + "(\\s|$)"), "i").test(curr)) {
-      element.className = curr + ((curr.length > 0) ? " " : "") + elClass;
-    }
-    return element;
-  },
-
-  removeClass : function(element, elClass) {
-    if (elClass) {
-      element.className = element.className.replace(elClass, "");
-    } else {
-      element.className = "";
-      element.removeAttribute("class");
-    }
-    return element;
-  },
-
   hideURLBar : function() {
     setTimeout(function() {
       window.scrollTo(0, 1);
@@ -41,36 +23,16 @@ TJG.utils = {
     var orientation = this.getOrientation();
     TJG.doc.setAttribute("orient", orientation); 
   },
-
-  getTranslateY : function(element) {
-    var transform = element.style.webkitTransform;
-    if (transform && transform !== "") {
-      var translateY = parseFloat((/translateY\((\-?.*)px\)/).exec(transform)[1]);
-    }
-    return translateY;
-  },
-
-  setTranslateY : function(element, value) {
-    element.style.webkitTransform = "translateY(" + value + "px)";
-  },
-
-  scrollToY : function(y) {
-    var ms = 150;
-    var content = document.querySelector(TJG.vars.scrollContainer);
-    var top = TJG.utils.getTranslateY(content);
-    var currentTop = (top < 0) ? -(top) : top;
-    var chunks = (currentTop / 100);
-    var totalTime = (ms * chunks);
-    totalTime = (totalTime > 750) ? 750 : totalTime;
-    content.style.webkitTransition = "-webkit-transform " + totalTime + "ms cubic-bezier(0.1, 0.25, 0.1, 1.0)";
-    TJG.utils.setTranslateY(content, y);
-    setTimeout(function() {
-      content.style.webkitTransition = "none";
-    }, totalTime);
-  }
+  
 };
   
 (function(window, document) {
+    /*!
+     * master-class v0.1
+     * http://johnboxall.github.com/master-class/
+     * Copyright 2010, Mobify
+     * Freely distributed under the MIT license.
+     */
     var classes = [''], classReplaces = {}, device = "", orientationCompute = "";
     var ua = navigator.userAgent;
     var m = /(ip(od|ad|hone)|android)/gi.exec(ua);
@@ -114,7 +76,6 @@ TJG.utils = {
           if (currentOrientationClass != orientationClass) {
             currentOrientationClass = orientationClass;
             var className = TJG.doc.className;
-            
             TJG.doc.className = className ? className.replace(orientationRe, currentOrientationClass) : currentOrientationClass;
             
          }
@@ -143,34 +104,28 @@ TJG.utils = {
         className = className.replace(replace, classReplaces[replace]);
     }
     TJG.doc.className = className + classes.join(' ');
+
+    var jQT = new $.jQTouch({
+        slideSelector: '#jqt li a, .slide',
+        icon: '',
+        addGlossToIcon: false,
+        startupScreen: '',
+        statusBar: '',
+        preloadImages: [
+          '',
+          ''
+         ]
+    });
     
     TJG.onload = {
-
+      /*
       disableScrollOnBody : function() {
         if (!TJG.vars.isTouch) return;
         document.body.addEventListener("touchmove", function(e) {
-          //e.preventDefault();
+          e.preventDefault();
         }, false);
       },
-
-      scrollToTop : function(element) {  // Scrolls to top 
-        if (!TJG.vars.isTouch) return;
-        var o = document.querySelector(element);
-        if (o) {
-          o.addEventListener("touchmove", function() {
-            this.cancel = true;
-          }, false);
-
-          o.addEventListener("touchend", function() {
-            if (!this.cancel) {
-              TJG.utils.scrollToY(0);
-            }
-
-            this.cancel = false;
-          }, false);
-        }
-      },
-      
+      */
       loadCufon : function () {  // Fonts
         if (Cufon) {
           Cufon.replace('.title');
@@ -180,20 +135,14 @@ TJG.utils = {
     };
 
     TJG.init = function() {  
-
+       
       for (var key in TJG.onload) {
         TJG.onload[key]();
       }
-
+       
       TJG.utils.hideURLBar();
-      var myScroll;
-      function loaded() {
-        myScroll = new iScroll('container');
-      }
 
-document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
 
-document.addEventListener('DOMContentLoaded', loaded, false);
     };
     window.addEventListener("load", TJG.init, false);
 

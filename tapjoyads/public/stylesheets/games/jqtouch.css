@@ -1,0 +1,327 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+a {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+body {
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+.iphone #jqt {
+    -webkit-user-select: none;
+    -webkit-text-size-adjust: none;
+    font-family: "Helvetica Neue", Helvetica;
+    -webkit-perspective: 800;
+    -webkit-transform-style: preserve-3d;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.iphone #jqt .selectable, .iphone #jqt input, .iphone #jqt textarea {
+    -webkit-user-select: auto;
+}
+.iphone #jqt.notransform {
+    -webkit-transform: none !important;
+}
+
+.iphone #jqt > * {
+    -webkit-backface-visibility: hidden;
+    -webkit-box-sizing: border-box;
+    display: none;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    -webkit-transform: translate3d(0,0,0) rotate(0) scale(1);
+    min-height: 100%;
+    overflow-x: hidden;
+}
+
+.iphone #jqt > .current {
+    display: block !important;
+}
+.iphone #jqt .in.start, .iphone #jqt .out.start {
+    -webkit-transition-duration: 350ms;
+    -webkit-transition-timing-function: ease-in-out;
+}
+
+/* Slide */
+
+.iphone #jqt .slide.start {
+    -webkit-transition-property: -webkit-transform;
+}
+
+.iphone #jqt .slide.in,  .iphone #jqt .slide.out.reverse.start {
+    -webkit-transform: translateX(100%);
+}
+
+.iphone #jqt .slide.out.start, .iphone #jqt .slide.in.reverse {
+    -webkit-transform: translateX(-100%);
+}
+
+.iphone #jqt .slide.out, .iphone #jqt .slide.out.reverse, .iphone #jqt .slide.in.start, .iphone #jqt .slide.in.reverse.start {
+    -webkit-transform: translateX(0);
+}
+
+/* Fade + Dissolve */
+
+.iphone #jqt .fade.start, .iphone #jqt .dissolve.start {
+    -webkit-transition-property: opacity;
+}
+
+.iphone #jqt .fade.in,  .iphone #jqt .fade.out.reverse.start {
+    opacity: 0;
+}
+
+.iphone #jqt .fade.out.start, .iphone #jqt .fade.in.reverse {
+    opacity: .99;
+}
+
+.iphone #jqt .fade.out, .iphone #jqt .fade.out.reverse, .iphone #jqt .fade.in.start, .iphone #jqt .fade.in.reverse.start {
+    opacity: 1;
+}
+
+.iphone #jqt .dissolve.in,  .iphone #jqt .dissolve.out.reverse.start {
+    opacity: 0;
+}
+
+.iphone #jqt .dissolve.out.start, .iphone #jqt .dissolve.in.reverse {
+    opacity: 0;
+}
+
+.iphone #jqt .dissolve.out, .iphone #jqt .dissolve.out.reverse, .iphone #jqt .dissolve.in.start, .iphone #jqt .dissolve.in.reverse.start {
+    opacity: 1;
+}
+
+/* Flip */
+
+.iphone #jqt .flip.start {
+    -webkit-transition-duration: .65s;
+    -webkit-transition-property: -webkit-transform;
+}
+
+.iphone #jqt .flip.in,  .iphone #jqt .flip.out.reverse.start {
+    -webkit-transform: rotateY(180deg) scale(.8);
+}
+
+.iphone #jqt .flip.out.start, .iphone #jqt .flip.in.reverse {
+    -webkit-transform: rotateY(-180deg) scale(.8);
+}
+
+.iphone #jqt .flip.out, .iphone #jqt .flip.out.reverse, .iphone #jqt .flip.in.start, .iphone #jqt .flip.in.reverse.start {
+    -webkit-transform: rotateY(0) scale(1);
+}
+
+/* Slideup */
+
+.iphone #jqt .slideup.start {
+    z-index: 10;
+    -webkit-transition-property: -webkit-transform, opacity;
+}
+
+/*.iphone #jqt .sideup.in.start, .slideup.out.reverse {
+    z-index: 30;
+}
+
+.iphone #jqt .slideup.out.start, .slideup.in.reverse {
+    z-index: 10;
+}*/
+
+.iphone #jqt .slideup.in,  .iphone #jqt .slideup.out.reverse.start {
+    -webkit-transform: translateY(100%); 
+    opacity: 1;
+    z-index: 30;
+}
+
+.iphone #jqt .slideup.out.start, .iphone #jqt .slideup.in.reverse {
+    -webkit-transform: translateY(0); 
+    opacity: .99;
+    z-index: 10;
+}
+
+.iphone #jqt .slideup.out, .iphone #jqt .slideup.out.reverse, .iphone #jqt .slideup.in.start, .iphone #jqt .slideup.in.reverse.start {
+    opacity: 1;
+    -webkit-transform: translateY(0); 
+    z-index: 30;
+}
+
+/* Swap */
+/* Still requires animation for steps */
+
+.iphone #jqt .swap {
+	-webkit-transform: perspective(800);
+	-webkit-animation-duration: .7s;
+}
+.iphone #jqt .swap.out {
+	-webkit-animation-name: swapouttoleft;
+}
+.iphone #jqt .swap.in {
+	-webkit-animation-name: swapinfromright;
+}
+.iphone #jqt .swap.out.reverse {
+	-webkit-animation-name: swapouttoright;
+}
+.iphone #jqt .swap.in.reverse {
+	-webkit-animation-name: swapinfromleft;
+}
+
+@-webkit-keyframes swapouttoright {
+    0% {
+        -webkit-transform: translate3d(0px, 0px, 0px) rotateY(0deg);
+        -webkit-animation-timing-function: ease-in-out;
+    }
+    50% {
+        -webkit-transform: translate3d(-180px, 0px, -400px) rotateY(20deg);
+        -webkit-animation-timing-function: ease-in;
+    }
+    100% {
+        -webkit-transform:  translate3d(0px, 0px, -800px) rotateY(70deg);
+    }
+}
+
+@-webkit-keyframes swapouttoleft {
+    0% {
+        -webkit-transform: translate3d(0px, 0px, 0px) rotateY(0deg);
+        -webkit-animation-timing-function: ease-in-out;
+    }
+    50% {
+        -webkit-transform:  translate3d(180px, 0px, -400px) rotateY(-20deg);
+        -webkit-animation-timing-function: ease-in;
+    }
+    100% {
+        -webkit-transform: translate3d(0px, 0px, -800px) rotateY(-70deg);
+    }
+}
+
+@-webkit-keyframes swapinfromright {
+    0% {
+        -webkit-transform: translate3d(0px, 0px, -800px) rotateY(70deg);
+        -webkit-animation-timing-function: ease-out;
+    }
+    50% {
+        -webkit-transform: translate3d(-180px, 0px, -400px) rotateY(20deg);
+        -webkit-animation-timing-function: ease-in-out;
+    }
+    100% {
+        -webkit-transform: translate3d(0px, 0px, 0px) rotateY(0deg);
+    }
+}
+
+@-webkit-keyframes swapinfromleft {
+    0% {
+        -webkit-transform: translate3d(0px, 0px, -800px) rotateY(-70deg);
+        -webkit-animation-timing-function: ease-out;
+    }
+    50% {
+        -webkit-transform: translate3d(180px, 0px, -400px) rotateY(-20deg);
+        -webkit-animation-timing-function: ease-in-out;
+    }
+    100% {
+        -webkit-transform: translate3d(0px, 0px, 0px) rotateY(0deg);
+    }
+}
+
+.iphone #jqt .cube.start {
+    -webkit-animation-duration: .55s;
+    -webkit-transition-property: .55s;
+    -webkit-transition-property: opacity;
+}
+
+.iphone #jqt .cube.in {
+    -webkit-transform-origin: 0% 50%;
+	-webkit-animation-name: cubeinfromright;	
+
+}
+.iphone #jqt .cube.out {
+    -webkit-transform-origin: 100% 50%;
+	-webkit-animation-name: cubeouttoleft;	
+}
+
+.iphone #jqt .cube.in,  .iphone #jqt .cube.out.reverse.start {
+    opacity: 1;
+}
+
+.iphone #jqt .cube.out.start, .iphone #jqt .cube.in.reverse {
+    opacity: .99;
+}
+
+.iphone #jqt .cube.out, .iphone #jqt .cube.out.reverse, .iphone #jqt .cube.in.start, .iphone #jqt .cube.in.reverse.start {
+    opacity: 1;
+}
+
+.iphone #jqt .cube.in.reverse {
+	-webkit-animation-name: cubeinfromleft;	
+    -webkit-transform-origin: 100% 50%;
+}
+.iphone #jqt .cube.out.reverse {
+	-webkit-animation-name: cubeouttoright;
+    -webkit-transform-origin: 0% 50%;
+}
+
+@-webkit-keyframes cubeinfromleft {
+	from {
+        -webkit-transform: rotateY(-90deg) translateZ(320px);
+        opacity: .5;
+	}
+    to {
+        -webkit-transform: rotateY(0deg) translateZ(0);
+        opacity: 1;
+    }
+}
+@-webkit-keyframes cubeouttoright {
+    from {
+        -webkit-transform: rotateY(0deg) translateX(0);
+        opacity: 1;
+    }
+    to {
+        -webkit-transform: rotateY(90deg) translateZ(320px);
+        opacity: .5;
+    }
+}
+@-webkit-keyframes cubeinfromright {
+    from {
+        -webkit-transform: rotateY(90deg) translateZ(320px);
+        opacity: .5;
+    }
+    to {
+        -webkit-transform: rotateY(0deg) translateZ(0);
+        opacity: 1;
+    }
+}
+@-webkit-keyframes cubeouttoleft {
+    from {
+        -webkit-transform: rotateY(0deg) translateZ(0);
+        opacity: 1;
+    }
+    to {
+        -webkit-transform: rotateY(-90deg) translateZ(320px);
+        opacity: .5;
+    }
+}
+
+/* Pop */
+
+.iphone #jqt .pop.start {
+	-webkit-transform-origin: 50% 50%;
+	-webkit-transition-property: -webkit-transform, opacity;
+}
+
+.iphone #jqt .pop.in,  .iphone #jqt .pop.out.reverse.start {
+    -webkit-transform: scale(.2);
+    opacity: 0;
+}
+
+.iphone #jqt .pop.out.start, .iphone #jqt .pop.in.reverse {
+    -webkit-transform: scale(1);
+    opacity: .99;
+}
+
+.iphone #jqt .pop.out, .iphone #jqt .pop.out.reverse, .iphone #jqt .pop.in.start, .iphone #jqt .pop.in.reverse.start {
+    -webkit-transform: scale(1);
+    opacity: 1;
+}
