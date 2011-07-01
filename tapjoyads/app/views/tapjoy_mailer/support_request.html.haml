@@ -5,5 +5,5 @@
 = support_request_field :currency_id, "#{@currency.name} (#{@currency.id})"
 = support_request_field :publisher_app, "#{@app.name} #{statz_url(@app.id, :host => 'www.tapjoy.com', :protocol => 'https')}"
 = support_request_field :device_type, @device_type
-= support_request_field :email_address, mail_to(@email_address)
+= support_request_field :email_address, @email_address
 = support_request_field :language_code, @language_code
