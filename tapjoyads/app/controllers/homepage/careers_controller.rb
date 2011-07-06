@@ -32,12 +32,6 @@ class Homepage::CareersController < WebsiteController
           { :title => "Senior Accountant", :href => "/careers/senior_accountant"},
         ]
       },
-      {
-        :name => "PeopleOps",
-        :list => [
-          { :title => "Senior Technical Recruiter", :href => "/careers/technical_recruiter"},
-        ]
-      },
     ]
   end
 
