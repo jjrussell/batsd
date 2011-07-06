@@ -902,6 +902,11 @@ private
       return device.has_app(app_id_for_device) || device.has_app('a3980ac5-7d33-43bc-8ba1-e4598c7ed279')
     end
     
+    if app_id_for_device == '7f44c068-6fa1-482c-b2d2-770edcf8f83d' || app_id_for_device == '192e6d0b-cc2f-44c2-957c-9481e3c223a0'
+      # there are 2 groupon apps
+      return device.has_app('7f44c068-6fa1-482c-b2d2-770edcf8f83d') || device.has_app('192e6d0b-cc2f-44c2-957c-9481e3c223a0')
+    end
+    
     return device.has_app(app_id_for_device)
   end
   
