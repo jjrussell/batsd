@@ -18,6 +18,8 @@ class AgencyApi::CurrenciesController < AgencyApiController
         :conversion_rate => currency.conversion_rate,
         :initial_balance => currency.initial_balance,
         :test_devices    => currency.test_devices,
+        :callback_url    => currency.callback_url,
+        :secret_key      => currency.secret_key,
       }
     end
     
