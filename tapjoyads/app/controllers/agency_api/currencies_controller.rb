@@ -42,7 +42,7 @@ class AgencyApi::CurrenciesController < AgencyApiController
       :initial_balance => currency.initial_balance,
       :test_devices    => currency.test_devices,
       :callback_url    => currency.callback_url,
-      :secret_key      => callback.secret_key,
+      :secret_key      => currency.secret_key,
     }
     render_success(result)
   end
