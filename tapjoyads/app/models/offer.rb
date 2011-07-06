@@ -9,10 +9,13 @@ class Offer < ActiveRecord::Base
   EXEMPT_UDIDS = Set.new(['7bed2150f941bad724c42413c5efa7f202c502e0',
                           'a000002256c234'])
   
-  CLASSIC_OFFER_TYPE  = '0'
-  DEFAULT_OFFER_TYPE  = '1'
-  FEATURED_OFFER_TYPE = '2'
-  DISPLAY_OFFER_TYPE  = '3'
+  CLASSIC_OFFER_TYPE                   = '0'
+  DEFAULT_OFFER_TYPE                   = '1'
+  FEATURED_OFFER_TYPE                  = '2'
+  DISPLAY_OFFER_TYPE                   = '3'
+  NON_INCENTIVIZED_DISPLAY_OFFER_TYPE  = '4'
+  NON_INCENTIVIZED_FEATURED_OFFER_TYPE = '5'
+  
   GROUP_SIZE = 200
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
@@ -23,7 +26,7 @@ class Offer < ActiveRecord::Base
                                   'third_party_data', 'payment_range_low',
                                   'payment_range_high', 'icon_id_override', 'rank_boost',
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue', 
-                                  'normal_price', 'over_threshold', 'non_incentivized' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'normal_price', 'over_threshold', 'incentivized' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
@@ -51,7 +54,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
-  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :non_incentivized :in => [ true, false ]
+  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :incentivized, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer )
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
@@ -116,6 +119,8 @@ class Offer < ActiveRecord::Base
   named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
   named_scope :for_display_ads, :conditions => "item_type = 'App' AND price = 0 AND conversion_rate >= 0.3 AND LENGTH(offers.name) <= 30"
+  named_scope :non_incentivized, :conditions => "NOT incentivized"
+  named_scope :incentivized, :conditions => "incentivized"
   named_scope :featured, :conditions => { :featured => true }
   named_scope :free_apps, :conditions => { :item_type => 'App', :price => 0 }
   named_scope :nonfeatured, :conditions => { :featured => false }
@@ -163,13 +168,21 @@ class Offer < ActiveRecord::Base
       cache_unsorted_offers(offer_list, 'offerwall')
       cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
-      offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
+      offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list + Offer.enabled_offers.non
       cache_unsorted_offers(offer_list, 'featured')
       cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
       offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads.to_a
       cache_unsorted_offers(offer_list, 'display')
       cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+      
+      offer_list = Offer.enabled_offers.nonfeatured.non_incentivized.for_offer_list.to_a
+      cache_unsorted_offers(offer_list, 'non_incentivized_display')
+      cache_offer_list(offer_list, weights, NON_INCENTIVIZED_DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+      
+      offer_list = Offer.enabled_offers.featured.non_incentivized.for_offer_list.to_a
+      cache_unsorted_offers(offer_list, 'non_incentivized_featured')
+      cache_offer_list(offer_list, weights, NON_INCENTIVIZED_FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
     end
   end
   
@@ -272,7 +285,17 @@ class Offer < ActiveRecord::Base
     exp  = options.delete(:exp)
     currency  = options.delete(:currency)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
+
+    if currency.present? && currency.hide_incentivized_app_installs?
+      type = case type
+        when FEATURED_OFFER_TYPE
+          NON_INCENTIVIZED_FEATURED_OFFER_TYPE
+        when DISPLAY_OFFER_TYPE
+          NON_INCENTIVIZED_DISPLAY_OFFER_TYPE
+        else
+          type
+        end
+    end
     type ||= DEFAULT_OFFER_TYPE
     exp  ||= Experiments::EXPERIMENTS[:default]
     
@@ -701,7 +724,7 @@ class Offer < ActiveRecord::Base
         jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
-        hide_incentivized_app_installs_reject?(currency, hide_incentivized_app_installs) ||
+        hide_incentivized_app_installs_reject?(currency, hide_incentivized_app_installs, type) ||
         should_reject_from_app_or_currency?(publisher_app, currency)
   end
   
@@ -963,8 +986,12 @@ private
     item_type == "ActionOffer" && third_party_data.present? && !device.has_app(third_party_data)
   end
   
-  def hide_incentivized_app_installs_reject?(currency, hide_incentivized_app_installs)
-    hide_incentivized_app_installs && item_type != 'GenericOffer'
+  def hide_incentivized_app_installs_reject?(currency, hide_incentivized_app_installs, type)
+    if type == DEFAULT_OFFER_TYPE
+      hide_incentivized_app_installs && item_type != 'GenericOffer'
+    else
+      hide_incentivized_app_installs && incentivized? && item_type != 'GenericOffer'
+    end
   end
   
   def normalize_device_type(device_type_param)

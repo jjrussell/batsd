@@ -187,6 +187,9 @@ class Currency < ActiveRecord::Base
       
     offer_list = Offer.get_unsorted_offers('display').reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
     Offer.cache_offer_list(offer_list, weights, Offer::DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default], self)
+    
+    # offer_list = Offer.get_unsorted_offers('non_incentivized').reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
+    # Offer.cache_offer_list(offer_list, weights, Offer::NON_INCENTIVIZED_OFFER_TYPE, Experiments::EXPERIMENTS[:default], self)
   end
   
   def get_cached_offers(options = {}, &block)

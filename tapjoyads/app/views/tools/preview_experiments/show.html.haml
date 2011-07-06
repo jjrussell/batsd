@@ -7,7 +7,7 @@
   - weights = @offers.collect { |offer| offer.rank_score + weight_scale }
   - total_weight = weights.sum
 
-- experiment_options = "<option value=\"featured\">Featured</option>" + options_for_select(@experiments.collect { |k, v| [ k.to_s.titleize + " (#{v})", v.to_s ] }, params[:id])
+- experiment_options = "<option value=\"featured\">Featured</option><option value=\"non_incentivized\">Non-Incentivized</option>" + options_for_select(@experiments.collect { |k, v| [ k.to_s.titleize + " (#{v})", v.to_s ] }, params[:id])
 - form_tag('', :id => 'experiments-form') do
   %table
     %tr

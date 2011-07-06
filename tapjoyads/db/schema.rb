@@ -403,7 +403,7 @@ ActiveRecord::Schema.define(:version => 20110630070905) do
     t.float    "normal_bid",                                                                    :default => 0.0,   :null => false
     t.integer  "over_threshold",                                                                :default => 0,     :null => false
     t.string   "reseller_id",                       :limit => 36
-    t.boolean  "non_incentivized",                                                              :default => false
+    t.boolean  "incentivized",                                                                  :default => true
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

@@ -183,7 +183,7 @@ class App < ActiveRecord::Base
     final_offer_list  = []
     num_rejected      = 0
     offer_list_length = 0
-    hide_app_offers   = currency.hide_app_installs_for_version?(app_version)
+    hide_app_offers   = currency.hide_incentivized_app_installs_for_version?(app_version)
     
     if include_rating_offer && enabled_rating_offer_id.present?
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)

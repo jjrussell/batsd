@@ -149,7 +149,12 @@ private
       img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
       img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
       
-      text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
+      if currency.hide_incentivized_app_installs?
+        text = "Install & run #{offer.name}"
+      else
+        text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
+      end
+      
       font = Rails.env == 'production' ? 'Helvetica' : ''
       image_label = Magick::Image.read("caption:#{text}") do
         self.size = text_area_size
