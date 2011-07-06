@@ -23,10 +23,12 @@ class AgencyApi::AppsController < AgencyApiController
     return unless verify_partner(app.partner_id)
     
     result = {
-      :app_id   => app.id,
-      :name     => app.name,
-      :platform => app.platform,
-      :store_id => app.store_id,
+      :app_id         => app.id,
+      :name           => app.name,
+      :platform       => app.platform,
+      :store_id       => app.store_id,
+      :app_secret_key => app.secret_key,
+      :integrated     => app.primary_offer.integrated?,
     }
     render_success(result)
   end
@@ -46,9 +48,10 @@ class AgencyApi::AppsController < AgencyApiController
       return
     end
     app.save!
+    Sqs.send_message(QueueNames::GET_STORE_INFO, app.id) if params[:store_id].present?
     
     save_activity_logs
-    render_success({ :app_id => app.id })
+    render_success({ :app_id => app.id, :app_secret_key => app.secret_key })
   end
   
   def update
@@ -69,6 +72,7 @@ class AgencyApi::AppsController < AgencyApiController
       render_error(app.errors, 400)
       return
     end
+    Sqs.send_message(QueueNames::GET_STORE_INFO, app.id) if app.store_id_changed?
     app.save!
     
     save_activity_logs

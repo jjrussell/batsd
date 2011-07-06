@@ -41,6 +41,8 @@ class AgencyApi::CurrenciesController < AgencyApiController
       :conversion_rate => currency.conversion_rate,
       :initial_balance => currency.initial_balance,
       :test_devices    => currency.test_devices,
+      :callback_url    => currency.callback_url,
+      :secret_key      => callback.secret_key,
     }
     render_success(result)
   end
@@ -70,7 +72,12 @@ class AgencyApi::CurrenciesController < AgencyApiController
     currency.conversion_rate = params[:conversion_rate]
     currency.initial_balance = params[:initial_balance] if params[:initial_balance].present?
     currency.test_devices = params[:test_devices] if params[:test_devices].present?
-    currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
+    if params[:callback_url].present?
+      currency.callback_url = params[:callback_url]
+    else
+      currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
+    end
+    currency.secret_key = params[:secret_key] if params[:secret_key].present?
     currency.ordinal = 1
     unless currency.valid?
       render_error(currency.errors, 400)
@@ -98,6 +105,8 @@ class AgencyApi::CurrenciesController < AgencyApiController
     currency.conversion_rate = params[:conversion_rate] if params[:conversion_rate].present?
     currency.initial_balance = params[:initial_balance] if params[:initial_balance].present?
     currency.test_devices = params[:test_devices] if params[:test_devices].present?
+    currency.callback_url = params[:callback_url] if params[:callback_url].present?
+    currency.secret_key = params[:secret_key] if params[:secret_key].present?
     unless currency.valid?
       render_error(currency.errors, 400)
       return
