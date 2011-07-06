@@ -1,0 +1,321 @@
+- @page_title = 'Agency APIs'
+
+%h1 APIs for Agency Integration
+
+%div
+  Your Agency ID:
+  %span.code= current_user.id
+%div
+  Your API Key: 
+  %span.code= current_user.api_key
+
+%h3 Base URL
+%p https://www.tapjoy.com
+
+%h3 
+  Global Required Parameters
+  %span (required by all API actions)
+%ul
+  %li agency_id: your agency user’s id
+  %li api_key: you agency user’s API key
+  
+%h3 JSON Responses
+%ul
+  %li Error: 400/403 - { “success” : false, “error” : whatever }
+  %li Success: 200 - { “success” : true [, “return_value” : whatever, ...] }
+
+  
+%h3 Common Errors
+%ul
+  %li not authorized: wrong agency_id or api_key doesn’t match
+  %li access denied: you are not permitted to access the requested resource
+  %li missing required parameters: you’re missing a required parameter
+  
+  
+%h2 Actions
+
+%h3 Create Partner Account
+%ul 
+  %li 
+    Path:
+    %p POST /agency_api/partners
+  %li   
+    Required Parameters:
+    %p name: company name
+    %p email: primary contact’s email address
+  %li
+    Action:
+    %p create new user and partner accounts and link the new partner to both the new user and the agency user, also send new user an email with a password reset link.
+  %li
+    Returns:
+    %p partner_id: the newly created partner’s id
+  %li
+    Errors:
+    %p duplicate email address
+  
+%h3 Update Partner Account
+%ul
+  %li
+    Path:
+    %p PUT /agency_api/partners/&lt;partner_id&gt;
+  %li
+    Required Parameters:
+    %p partner_id: the id of the partner to modify
+  %li
+    Optional Parameters:
+    %p name: company name
+  %li
+    Action:
+    %p update the partner as appropriate
+  %li
+    Returns:
+    %p nothing
+  %li
+    Errors:
+    %p partner not found
+
+%h3 Link Partner Account
+%ul
+  %li
+    Path:
+    %p POST /agency_api/partners/link
+  %li
+    Required Parameters:
+    %p email: user’s current tapjoy email address
+    %p user_api_key: user’s api key
+  %li
+    Action:
+    %p link existing tapjoy user’s partner account to the agency user
+
+  %li
+    Returns:
+    %p partner_id: the id of the linked partner account
+  %li
+    Errors:
+    %p user not found, invalid api_key for user, ambiguous partner
+      
+%h3 Create App
+%ul
+  %li
+    Path:
+    %p POST /agency_api/apps
+  %li
+    Required Parameters:
+    %p partner_id: the id for the partner who owns the app
+    %p name: the app name
+    %p platform: the app platform, must be either ‘iphone’ or ‘android’
+  %li
+    Optional Parameters:
+    %p store_id: app store or android market id, ‘297558390’ or ‘com.tapjoy.tapdefense’. If provided, the app will be considered Live.
+  %li
+    Action:
+    %p create app under the appropriate partner
+  %li
+    Returns:
+    %p app_id: the newly created app’s id
+    %p app_secret_key: the newly created app’s secret key
+  %li
+    Errors:
+    %p invalid platform
+      
+%h3 Update App
+%ul
+  %li
+    Path:
+    %p POST /agency_api/apps
+  %li
+    Required Parameters:
+    %p partner_id: the id for the partner who owns the app
+    %p name: the app name
+    %p platform: the app platform, must be either ‘iphone’ or ‘android’
+  %li
+    Optional Parameters:
+    %p store_id: app store or android market id, ‘297558390’ or ‘com.tapjoy.tapdefense’. If provided, the app will be considered Live.
+  %li
+    Action:
+    %p create app under the appropriate partner
+  %li
+    Returns:
+    %p app_id: the newly created app’s id
+    %p app_secret_key: the newly created app’s secret key
+  %li
+    Errors: 
+    %p invalid platform
+
+%h3 Create Currency
+%ul
+  %li
+    Path:
+    %p POST /agency_api/currencies
+  %li
+    Required Parameters:
+    %p app_id: the app id to associate with the new virtual currency
+    %p name: the currency name
+    %p conversion_rate: the amount of currency to award for $1 in earnings
+  %li
+    Optional Parameters:
+    %p initial_balance: the starting balance for new users
+    %p test_devices: a semi-colon “;” separated list of device id
+    %p callback_url: a callback url to call when the user earns currency, or the constant 'TAP_POINTS_CURRENCY' if the currency is to be managed by Tapjoy
+    %p secret_key: a secret key used to sign the callback url
+  %li
+    Action: 
+    %p create a new currency for the given app with the same id as the app_id
+  %li
+    Returns:
+    %p currency_id: the newly created currency’s id
+  %li
+    Errors:
+    %p app not found, currency exists, invalid conversion rate/initial balance
+      
+%h3 Update Currency
+%ul
+  %li
+    Path:
+    %p PUT /agency_api/currencies/&lt;currency_id&gt;
+  %li
+    Required Parameters:
+    %p currency_id: the id of the currency to modify
+  %li
+    Optional Parameters:
+    %p name: the currency name
+    %p conversion_rate: the amount of currency to award for $1 in earnings
+    %p initial_balance: the starting balance for new users
+    %p test_devices: a semi-colon “;” separated list of device id
+    %p callback_url: a callback url to call when the user earns currency, or the constant 'TAP_POINTS_CURRENCY' if the currency is to be managed by Tapjoy
+    %p secret_key: a secret key used to sign the callback url
+  %li
+    Action:
+    %P update the currency as appropriate
+  %li
+    Returns:
+    %P nothing
+  %li
+    Errors:
+    %p currency not found, invalid conversion rate/initial balance
+    
+%h3 Get Apps for Partner
+%ul
+  %li 
+    Path:
+    %p GET /agency_api/apps
+  %li
+    Required Parameters:
+    %p partner_id: the id of the partner whose apps you want
+  %li
+    Action:
+    %p find all apps for the given partner
+  %li
+    Returns:
+    %p apps: an array of hashes with app_id, name, platform, and store_id
+    
+%h3 Get Currencies for App
+%ul
+  %li
+    Path:
+    %p GET /agency_api/currencies
+  %li
+    Required Parameters:
+    %p app_id: the id of the app whose currencies you want
+  %li
+    Action:
+    %p find all currencies for the given app
+  %li
+    Returns:
+    %p currencies: an array of hashes with currency_id, name, conversion_rate, initial_balance, and test_devices
+  %li
+    Errors:
+    %p app not found
+
+%h3 Get App Details
+%ul
+  %li
+    Path:
+    %p GET /agency_api/apps/&lt;app_id&gt;
+  %li
+    Required Parameters:
+    %p app_id: the id of the app you want details for
+  %li
+    Action:
+    %p find app by id
+  %li
+    Returns:
+    %p app_id: the app’s id
+    %p name: the app name
+    %p platform: the app’s platform
+    %p store_id: the app’s store id
+    %p app_secret_key: the app’s secret key
+    %p integrated: whether we have seen activity from this app in the last 24 hours. ‘true’ or ‘false’
+  %li
+    Errors:
+    %p app not found
+    
+%h3 Get Currency Details
+%ul
+  %li
+    Path:
+    %p GET /agency_api/currencies/&lt;currency_id&gt;
+  %li
+    Required Parameters:
+    %p currency_id: the id of the currency you want details for
+  %li
+    Action:
+    %p find currency by id
+  %li
+    Returns:
+    %p currency_id: the currency’s id
+    %p name: the currency name
+    %p conversion_rate: the currency’s conversion rate
+    %p initial_balance: the starting balance for a new user
+    %p test_devices: a semi-colon “;” separated list of device ids
+    %p callback_url: the currency’s callback url, or the constant 'TAP_POINTS_CURRENCY' if the currency is managed by Tapjoy
+    %p secret_key: the currency’s secret key used to sign the callback
+  %li
+    Errors:
+    %p currency not found
+      
+- content_for :page_styles do
+  :plain
+    .title {
+      font-weight: bold;
+    }
+
+    h2, h3{
+      margin-bottom: 0;
+    }
+    h1 {
+      font-size: 28px;
+    }
+    h3 {
+      font-size: 16px;
+    }
+    
+    h3 span {
+      text-decoration: none;
+      font-weight: normal;
+      font-size: smaller;
+    }
+    
+    ul {
+      margin-top: 0;
+    }
+    
+    li {
+      margin-top: 5px;
+    }
+    
+    p {
+      padding-left: 40px;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    
+    .code {
+      font-family: courier;
+    }
+    
+    form {
+      display: inline-block;
+      margin-left: 10px;
+    }
+    
