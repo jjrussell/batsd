@@ -83,6 +83,8 @@ class Currency < ActiveRecord::Base
   end
   
   def get_reward_amount(offer)
+    return 0 if !offer.rewarded?
+    
     if offer.reward_value.present?
       reward_value = offer.reward_value
     elsif offer.partner_id == partner_id
