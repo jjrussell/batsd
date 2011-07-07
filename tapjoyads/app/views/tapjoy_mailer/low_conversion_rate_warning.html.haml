@@ -1,1 +1,17 @@
-= @error.message
+- price = @offer.price.zero? ? 'Free' : number_to_currency(@offer.price / 100.0)
+#{@offer.name_with_suffix_and_platform} (https://www.tapjoy.com/statz/#{@offer.id}) has #{@stats[:conversion_rate]} cvr.
+\-----
+Recent installs: #{@stats[:recent_installs]}
+Recent clicks: #{@stats[:recent_clicks]}
+Min. cvr: #{@stats[:min_conversion_rate]}
+Price: #{price}
+Bid: #{number_to_currency(@offer.bid / 100.0)}
+- if @offer.id != @offer.item_id
+  Primary offer: #{@offer.item.name} (https://www.tapjoy.com/statz/#{@offer.item_id})
+Offer type: #{@offer.item_type}
+- if @offer.item_type == 'App'
+  - if @offer.item.user_rating.present?
+    Rating: #{@offer.item.user_rating} stars
+  - if @offer.item.file_size_bytes.present?
+    - download_size = "%.2f" % (@offer.item.file_size_bytes/1048576.0)
+    App size: #{download_size}MB

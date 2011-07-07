@@ -404,6 +404,7 @@ class Offer < ActiveRecord::Base
     click_key             = options.delete(:click_key)             { nil }
     language_code         = options.delete(:language_code)         { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
+    display_multiplier    = options.delete(:display_multiplier)    { 1 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     data = {
@@ -413,7 +414,8 @@ class Offer < ActiveRecord::Base
       :click_key             => click_key,
       :itunes_link_affiliate => itunes_link_affiliate,
       :currency_id           => currency.id,
-      :language_code         => language_code
+      :language_code         => language_code,
+      :display_multiplier    => display_multiplier
     }
     
     "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
@@ -424,8 +426,9 @@ class Offer < ActiveRecord::Base
     publisher_app_id      = options.delete(:publisher_app_id)      { |k| raise "#{k} is a required argument" }
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
     click_key             = options.delete(:click_key)             { nil }
-    language_code         = options.delete(:language_code)         { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
+    options.delete(:language_code)
+    options.delete(:display_multiplier)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
@@ -457,17 +460,18 @@ class Offer < ActiveRecord::Base
   end
   
   def get_click_url(options)
-    publisher_app     = options.delete(:publisher_app)     { |k| raise "#{k} is a required argument" }
-    publisher_user_id = options.delete(:publisher_user_id) { |k| raise "#{k} is a required argument" }
-    udid              = options.delete(:udid)              { |k| raise "#{k} is a required argument" }
-    currency_id       = options.delete(:currency_id)       { |k| raise "#{k} is a required argument" }
-    source            = options.delete(:source)            { |k| raise "#{k} is a required argument" }
-    app_version       = options.delete(:app_version)       { nil }
-    viewed_at         = options.delete(:viewed_at)         { |k| raise "#{k} is a required argument" }
-    displayer_app_id  = options.delete(:displayer_app_id)  { nil }
-    exp               = options.delete(:exp)               { nil }
-    country_code      = options.delete(:country_code)      { nil }
-    language_code     = options.delete(:language_code)     { nil }
+    publisher_app      = options.delete(:publisher_app)      { |k| raise "#{k} is a required argument" }
+    publisher_user_id  = options.delete(:publisher_user_id)  { |k| raise "#{k} is a required argument" }
+    udid               = options.delete(:udid)               { |k| raise "#{k} is a required argument" }
+    currency_id        = options.delete(:currency_id)        { |k| raise "#{k} is a required argument" }
+    source             = options.delete(:source)             { |k| raise "#{k} is a required argument" }
+    app_version        = options.delete(:app_version)        { nil }
+    viewed_at          = options.delete(:viewed_at)          { |k| raise "#{k} is a required argument" }
+    displayer_app_id   = options.delete(:displayer_app_id)   { nil }
+    exp                = options.delete(:exp)                { nil }
+    country_code       = options.delete(:country_code)       { nil }
+    language_code      = options.delete(:language_code)      { nil }
+    display_multiplier = options.delete(:display_multiplier) { 1 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     click_url = "#{API_URL}/click/"
@@ -486,42 +490,44 @@ class Offer < ActiveRecord::Base
     end
     
     data = {
-      :advertiser_app_id => item_id,
-      :publisher_app_id  => publisher_app.id,
-      :publisher_user_id => publisher_user_id,
-      :udid              => udid,
-      :source            => source,
-      :offer_id          => id,
-      :app_version       => app_version,
-      :viewed_at         => viewed_at.to_f,
-      :currency_id       => currency_id,
-      :country_code      => country_code,
-      :displayer_app_id  => displayer_app_id,
-      :exp               => exp,
-      :language_code     => language_code
+      :advertiser_app_id  => item_id,
+      :publisher_app_id   => publisher_app.id,
+      :publisher_user_id  => publisher_user_id,
+      :udid               => udid,
+      :source             => source,
+      :offer_id           => id,
+      :app_version        => app_version,
+      :viewed_at          => viewed_at.to_f,
+      :currency_id        => currency_id,
+      :country_code       => country_code,
+      :displayer_app_id   => displayer_app_id,
+      :exp                => exp,
+      :language_code      => language_code,
+      :display_multiplier => display_multiplier
     }
     
     "#{click_url}?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
   end
   
   def get_fullscreen_ad_url(options)
-    publisher_app     = options.delete(:publisher_app)     { |k| raise "#{k} is a required argument" }
-    publisher_user_id = options.delete(:publisher_user_id) { |k| raise "#{k} is a required argument" }
-    udid              = options.delete(:udid)              { |k| raise "#{k} is a required argument" }
-    currency_id       = options.delete(:currency_id)       { |k| raise "#{k} is a required argument" }
-    source            = options.delete(:source)            { |k| raise "#{k} is a required argument" }
-    app_version       = options.delete(:app_version)       { nil }
-    viewed_at         = options.delete(:viewed_at)         { |k| raise "#{k} is a required argument" }
-    displayer_app_id  = options.delete(:displayer_app_id)  { nil }
-    exp               = options.delete(:exp)               { nil }
-    country_code      = options.delete(:country_code)      { nil }
+    publisher_app      = options.delete(:publisher_app)      { |k| raise "#{k} is a required argument" }
+    publisher_user_id  = options.delete(:publisher_user_id)  { |k| raise "#{k} is a required argument" }
+    udid               = options.delete(:udid)               { |k| raise "#{k} is a required argument" }
+    currency_id        = options.delete(:currency_id)        { |k| raise "#{k} is a required argument" }
+    source             = options.delete(:source)             { |k| raise "#{k} is a required argument" }
+    app_version        = options.delete(:app_version)        { nil }
+    viewed_at          = options.delete(:viewed_at)          { |k| raise "#{k} is a required argument" }
+    displayer_app_id   = options.delete(:displayer_app_id)   { nil }
+    exp                = options.delete(:exp)                { nil }
+    country_code       = options.delete(:country_code)       { nil }
+    display_multiplier = options.delete(:display_multiplier) { 1 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     ad_url = "#{API_URL}/fullscreen_ad"
     if item_type == 'TestOffer'
       ad_url += "/test_offer"
     end
-    ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}&country_code=#{country_code}"
+    ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}&country_code=#{country_code}&display_multiplier=#{display_multiplier}"
     ad_url += "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
     ad_url += "&exp=#{exp}" if exp.present?
     ad_url
@@ -894,6 +900,11 @@ private
     if app_id_for_device == '3885c044-9c8e-41d4-b136-c877915dda91'
       # don't show the beat level 2 in clubworld action to users that already have clubworld
       return device.has_app(app_id_for_device) || device.has_app('a3980ac5-7d33-43bc-8ba1-e4598c7ed279')
+    end
+    
+    if app_id_for_device == '7f44c068-6fa1-482c-b2d2-770edcf8f83d' || app_id_for_device == '192e6d0b-cc2f-44c2-957c-9481e3c223a0'
+      # there are 2 groupon apps
+      return device.has_app('7f44c068-6fa1-482c-b2d2-770edcf8f83d') || device.has_app('192e6d0b-cc2f-44c2-957c-9481e3c223a0')
     end
     
     return device.has_app(app_id_for_device)

@@ -246,6 +246,20 @@ ActiveRecord::Schema.define(:version => 20110622232150) do
   add_index "generic_offers", ["partner_id"], :name => "index_generic_offers_on_partner_id"
   add_index "generic_offers", ["third_party_data"], :name => "index_generic_offers_on_third_party_data"
 
+  create_table "jobs", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36,                      :null => false
+    t.boolean  "active",                   :default => false,   :null => false
+    t.string   "job_type",                                      :null => false
+    t.string   "controller",                                    :null => false
+    t.string   "action",                   :default => "index", :null => false
+    t.string   "frequency",                                     :null => false
+    t.integer  "seconds",                                       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "jobs", ["id"], :name => "index_jobs_on_id", :unique => true
+
   create_table "monthly_accountings", :id => false, :force => true do |t|
     t.string   "id",                         :limit => 36, :null => false
     t.string   "partner_id",                 :limit => 36, :null => false
