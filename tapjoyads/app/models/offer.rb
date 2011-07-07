@@ -991,6 +991,10 @@ private
       currency.minimum_featured_bid
     when DISPLAY_OFFER_TYPE
       currency.minimum_display_bid
+    when NON_REWARDED_FEATURED_OFFER_TYPE
+      currency.minimum_featured_bid
+    when NON_REWARDED_DISPLAY_OFFER_TYPE
+      currency.minimum_display_bid
     end
     min_bid.present? && bid < min_bid
   end
