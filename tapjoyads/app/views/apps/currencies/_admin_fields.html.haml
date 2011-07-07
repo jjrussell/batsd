@@ -9,14 +9,14 @@
     = error_message_on(@currency, :tapjoy_enabled)
 %tr.admin
   %th
-    = f.label :hide_rewarded_app_installs, 'Hide app installs'
+    = f.label :hide_rewarded_app_installs
     #help_hide_rewarded_app_installs.help ?
   %td
     = f.check_box :hide_rewarded_app_installs
     = error_message_on(@currency, :hide_rewarded_app_installs)
 %tr.admin.hide_rewarded_app_installs{:class => @currency.hide_rewarded_app_installs? ? '' : 'hidden' }
   %th
-    = f.label :minimum_hide_rewarded_app_installs_version, 'Min hide app installs version'
+    = f.label :minimum_hide_rewarded_app_installs_version, 'Min hide rewarded app installs version'
     #help_minimum_hide_rewarded_app_installs_version.help ?
   %td
     = f.text_field :minimum_hide_rewarded_app_installs_version
@@ -110,9 +110,9 @@
     The percent share of offer spending that this publisher gets. Computed as: (this partner's rev share) * (spend share ratio).
   #help_direct_pay_share_content{:name => 'Direct-pay share'}
     The percent share of direct-pay revenue that this publisher gets.
-  #help_hide_rewarded_app_installs_content{:name => 'Hide app installs'}
+  #help_hide_rewarded_app_installs_content{:name => 'Hide rewarded app installs'}
     Do not display pay-per-install offers on this publisher's offer wall.
-  #help_minimum_hide_rewarded_app_installs_version_content{:name => 'Min hide installs version'}
+  #help_minimum_hide_rewarded_app_installs_version_content{:name => 'Min hide rewarded installs version'}
     Pay-per-install offers will only be hidden for versions of this publisher app higher than this value.
     Leaving this field blank will disable pay-per-install offers for all versions of this publisher app.
 
