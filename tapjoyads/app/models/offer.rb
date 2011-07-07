@@ -1,14 +1,15 @@
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
   include MemcachedRecord
-  
+
   APPLE_DEVICES = %w( iphone itouch ipad )
   IPAD_DEVICES = %w( ipad )
   ANDROID_DEVICES = %w( android )
-  ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES
+  WINDOWS_DEVICES = %w( windows )
+  ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
   EXEMPT_UDIDS = Set.new(['7bed2150f941bad724c42413c5efa7f202c502e0',
                           'a000002256c234'])
-  
+
   CLASSIC_OFFER_TYPE  = '0'
   DEFAULT_OFFER_TYPE  = '1'
   FEATURED_OFFER_TYPE = '2'
@@ -609,7 +610,7 @@ class Offer < ActiveRecord::Base
 
   def expected_device_types
     if item_type == 'App' || item_type == 'ActionOffer' || item_type == 'RatingOffer'
-      item.is_android? ? ANDROID_DEVICES : APPLE_DEVICES
+      item.get_offer_device_types
     else
       ALL_DEVICES
     end
@@ -618,13 +619,11 @@ class Offer < ActiveRecord::Base
   def get_publisher_app_whitelist
     Set.new(publisher_app_whitelist.split(';'))
   end
-  
+
   def get_platform
-    d_types = get_device_types
-    if d_types.length > 1 && d_types.include?('android')
-      'All'
-    elsif d_types.include?('android')
-      'Android'
+    types = get_device_types
+    if types.any?{|type| type == 'android' || type == 'windows'}
+      types.length == 1 ? App::PLATFORMS[types.first] :  'All'
     else
       'iOS'
     end
@@ -632,14 +631,7 @@ class Offer < ActiveRecord::Base
 
   def wrong_platform?
     if ['App', 'ActionOffer'].include?(item_type)
-      case get_platform
-      when 'Android'
-        item.platform == 'iphone'
-      when 'iOS'
-        item.platform == 'android'
-      else
-        true # should never be "All" for apps
-      end
+      App::PLATFORMS.index(get_platform) != item.platform
     end
   end
 
@@ -736,7 +728,8 @@ class Offer < ActiveRecord::Base
         # is_paid? ? (price * 0.65).round : 50
       end
     elsif item_type == 'ActionOffer'
-      get_platform == 'Android' ? 25 : 35
+      platform = App::PLATFORMS.index(get_platform)
+      platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
     else
       0
     end
@@ -843,18 +836,17 @@ private
         (currency.only_free_offers? && is_paid?) ||
         (self_promote_only? && partner_id != publisher_app.partner_id)
   end
-  
+
   def device_platform_mismatch?(publisher_app, device_type_param)
     device_type = normalize_device_type(device_type_param)
-    
-    if device_type.nil?
-      if publisher_app.platform == 'android'
-        device_type = 'android'
+    device_type ||=
+      case publisher_app.platform
+      when 'android', 'windows'
+        publisher_app.platform
       else
-        device_type = 'itouch'
+        'itouch'
       end
-    end
-    
+
     return !get_device_types.include?(device_type)
   end
   
@@ -981,6 +973,8 @@ private
       'ipad'
     elsif device_type_param =~ /android/i
       'android'
+    elsif device_type_param =~ /windows/i
+      'windows'
     else
       nil
     end

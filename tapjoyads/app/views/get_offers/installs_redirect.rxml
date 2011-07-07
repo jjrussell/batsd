@@ -19,7 +19,6 @@ xml.TapjoyConnectReturnObject do
           xml.MediumIconURL offer.get_icon_url(:source => :cloudfront, :size => '256')
         end
       end
-      
     end
   end
   xml << render(:partial => "footer")
