@@ -84,7 +84,7 @@
         %td= stats['overall_store_rank']
         %td= stats['price']
         %td= stats['payment']
-        %td{ :value => stats['balance'].gsub(/\$,/,'')}= stats['balance']
+        %td{ :value => stats['balance'].gsub(/[\$,]/,'')}= stats['balance']
         %td= stats['platform']
         %td= stats['conversion_rate']
         %td= stats['published_offers']
@@ -218,11 +218,11 @@
           balance = Number(balance);
           $('td:nth-child(8):not(.filter)').each(function(i,td){
             if (keepNonPositive) {
-              if(Number($(td).attr('value')) >= 0) {
+              if(Number($(td).attr('value')) > 0) {
                 $(td).parent().hide();
               }
             } else {
-              if(balance > Number($(td).attr('value'))) {
+              if(balance >= Number($(td).attr('value'))) {
                 $(td).parent().hide();
               }
             }
