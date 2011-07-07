@@ -126,14 +126,11 @@ ActiveRecord::Schema.define(:version => 20110630070905) do
     t.integer  "minimum_display_bid"
     t.boolean  "external_publisher",                                                                     :default => false, :null => false
     t.boolean  "potential_external_publisher",                                                           :default => false, :null => false
-    t.string   "reseller_id",                                :limit => 36
-    t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
   add_index "currencies", ["currency_group_id"], :name => "index_currencies_on_currency_group_id"
   add_index "currencies", ["id"], :name => "index_currencies_on_id", :unique => true
-  add_index "currencies", ["reseller_id"], :name => "index_currencies_on_reseller_id"
 
   create_table "currency_groups", :id => false, :force => true do |t|
     t.string   "id",                     :limit => 36,                :null => false
@@ -402,7 +399,6 @@ ActiveRecord::Schema.define(:version => 20110630070905) do
     t.float    "normal_avg_revenue",                                                            :default => 0.0,   :null => false
     t.float    "normal_bid",                                                                    :default => 0.0,   :null => false
     t.integer  "over_threshold",                                                                :default => 0,     :null => false
-    t.string   "reseller_id",                       :limit => 36
     t.boolean  "rewarded",                                                                      :default => true
   end
 
@@ -472,11 +468,9 @@ ActiveRecord::Schema.define(:version => 20110630070905) do
     t.boolean  "approved_publisher",                                                     :default => false,     :null => false
     t.boolean  "apsalar_sharing_adv",                                                    :default => false,     :null => false
     t.boolean  "apsalar_sharing_pub",                                                    :default => false,     :null => false
-    t.string   "reseller_id",                :limit => 36
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
-  add_index "partners", ["reseller_id"], :name => "index_partners_on_reseller_id"
 
   create_table "payout_infos", :id => false, :force => true do |t|
     t.string   "id",                  :limit => 36, :null => false
@@ -568,17 +562,6 @@ ActiveRecord::Schema.define(:version => 20110630070905) do
   add_index "rating_offers", ["id"], :name => "index_rating_offers_on_id", :unique => true
   add_index "rating_offers", ["partner_id"], :name => "index_rating_offers_on_partner_id"
 
-  create_table "resellers", :id => false, :force => true do |t|
-    t.string   "id",                 :limit => 36,                               :null => false
-    t.string   "name"
-    t.decimal  "reseller_rev_share",               :precision => 8, :scale => 6, :null => false
-    t.decimal  "rev_share",                        :precision => 8, :scale => 6, :null => false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "resellers", ["id"], :name => "index_resellers_on_id", :unique => true
-
   create_table "role_assignments", :id => false, :force => true do |t|
     t.string "id",           :limit => 36, :null => false
     t.string "user_id",      :limit => 36, :null => false
@@ -616,7 +599,6 @@ ActiveRecord::Schema.define(:version => 20110630070905) do
     t.boolean  "receive_campaign_emails",               :default => true,  :null => false
     t.string   "api_key",                                                  :null => false
     t.string   "auth_net_cim_id"
-    t.string   "reseller_id",             :limit => 36
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
