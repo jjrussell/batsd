@@ -1048,11 +1048,16 @@ private
     calculate_ranking_fields
     calculate_rank_score(weights.merge({ :random => 0 }))
     
-    if featured?
+    if featured? && rewarded?
       @ranked_offers ||= Offer.get_cached_offers({ :type => FEATURED_OFFER_TYPE }).reject { |offer| offer.rank_boost > 0 || offer.id == self.id }
-    else
+    elsif featured && !rewarded?
+      @ranked_offers ||= Offer.get_cached_offers({ :type => NON_REWARDED_FEATURED_OFFER_TYPE }).reject { |offer| offer.rank_boost > 0 || offer.id == self.id }
+    elsif !featured && rewarded?
       self.rank_score += weights[:random] * 0.5
       @ranked_offers ||= Offer.get_cached_offers({ :type => DEFAULT_OFFER_TYPE }).reject { |offer| offer.rank_boost > 0 || offer.id == self.id }
+    else
+      self.rank_score += weights[:random] * 0.5
+      @ranked_offers ||= Offer.get_cached_offers({ :type => NON_REWARDED_DISPLAY_OFFER_TYPE }).reject { |offer| offer.rank_boost > 0 || offer.id == self.id }
     end
     
     worse_offers = @ranked_offers.select { |offer| offer.rank_score < rank_score }
