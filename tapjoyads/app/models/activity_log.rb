@@ -13,7 +13,7 @@ class ActivityLog < SimpledbResource
   self.sdb_attr :after_state,       :type => :json
   self.sdb_attr :created_at,        :type => :time, :attr_name => 'updated-at'
 
-  SKIP_KEYS = %w(updated-at updated_at perishable_token persistence_token password_salt crypted_password)
+  SKIP_KEYS = %w(updated-at updated_at perishable_token persistence_token password_salt)
 
   def initialize(options = {})
     @state_object = nil
