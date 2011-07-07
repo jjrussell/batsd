@@ -160,31 +160,31 @@ class Offer < ActiveRecord::Base
       weights = CurrencyGroup.find_by_name('default').weights
       
       offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.to_a
-      cache_unsorted_offers(offer_list, 'offerwall')
+      cache_unsorted_offers(offer_list, "offerwall")
       cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
       offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
-      cache_unsorted_offers(offer_list, 'featured')
+      cache_unsorted_offers(offer_list, "featured")
       cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
       offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads.to_a
-      cache_unsorted_offers(offer_list, 'display')
+      cache_unsorted_offers(offer_list, "display")
       cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
     end
   end
   
   def self.cache_unsorted_offers(offers, name)
     s3_key = "unsorted_offers.#{name}"
-    mc_key = "s3.#{s3_key}"
+    mc_key = "s3.#{s3_key}.#{SCHEMA_VERSION}"
     bucket = S3.bucket(BucketNames::OFFER_DATA)
     bucket.put(s3_key, Marshal.dump(offers))
-    Mc.distributed_put(mc_key, offers)
+    Mc.distributed_put(mc_key, offers, false, 1.hour)
   end
   
   def self.get_unsorted_offers(name)
     s3_key = "unsorted_offers.#{name}"
-    mc_key = "s3.#{s3_key}"
-    offers = Mc.distributed_get_and_put(mc_key) do
+    mc_key = "s3.#{s3_key}.#{SCHEMA_VERSION}"
+    offers = Mc.distributed_get_and_put(mc_key, false, 1.hour) do
       bucket = S3.bucket(BucketNames::OFFER_DATA)
       Marshal.restore(bucket.get(s3_key))
     end
@@ -249,18 +249,18 @@ class Offer < ActiveRecord::Base
     end
   
     offer_groups.each_with_index do |offers, i|
-      Mc.distributed_put("#{key}.#{i}", offers)
+      Mc.distributed_put("#{key}.#{i}.#{SCHEMA_VERSION}", offers)
     end
   
     if currency.present?
-      while Mc.distributed_get("#{key}.#{group}")
-        Mc.distributed_delete("#{key}.#{group}")
+      while Mc.distributed_get("#{key}.#{group}.#{SCHEMA_VERSION}")
+        Mc.distributed_delete("#{key}.#{group}.#{SCHEMA_VERSION}")
         group += 1
       end
     else
       while bucket.key("#{key}.#{group}").exists?
         bucket.key("#{key}.#{group}").delete
-        Mc.distributed_delete("#{key}.#{group}")
+        Mc.distributed_delete("#{key}.#{group}.#{SCHEMA_VERSION}")
         group += 1
       end
     end
@@ -286,7 +286,7 @@ class Offer < ActiveRecord::Base
     # key               = currency.present? ? "enabled_offers.#{currency.id}.type_#{type}.exp_#{exp}" : s3_key
     
     loop do
-      offers = Mc.distributed_get_and_put("#{key}.#{group}") do
+      offers = Mc.distributed_get_and_put("#{key}.#{group}.#{SCHEMA_VERSION}", false, 1.hour) do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
         Marshal.restore(bucket.get("#{s3_key}.#{group}"))
         
