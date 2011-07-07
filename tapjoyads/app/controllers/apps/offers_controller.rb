@@ -21,13 +21,11 @@ class Apps::OffersController < WebsiteController
   
   def edit
     if !@offer.tapjoy_enabled?
-      if @offer.rewarded? && !@offer.featured?
-        if @offer.integrated?
-          flash.now[:notice] = "When you are ready to go live with this campaign, please click the button below to submit an enable app request."
-        else
-          url = @offer.item.is_android? ? ANDROID_CONNECT_SDK : IPHONE_CONNECT_SDK
-          flash.now[:warning] = "Please note that you must integrate the <a href='#{url}'>Tapjoy advertiser library</a> before we can enable your campaign"
-        end
+      if @offer.integrated? && @offer.rewarded? && !@offer.featured?
+        flash.now[:notice] = "When you are ready to go live with this campaign, please click the button below to submit an enable app request."
+      else
+        url = @offer.item.is_android? ? ANDROID_CONNECT_SDK : IPHONE_CONNECT_SDK
+        flash.now[:warning] = "Please note that you must integrate the <a href='#{@offer.item.sdk_url(:connect)}'>Tapjoy advertiser library</a> before we can enable your campaign"
       end
       
       if @offer.enable_offer_requests.pending.present?

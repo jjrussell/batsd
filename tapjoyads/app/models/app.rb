@@ -1,8 +1,52 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   include MemcachedRecord
-  
-  PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS' }
+
+  ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS' }
+  BETA_PLATFORMS    = { 'windows' => 'Windows Phone' }
+  PLATFORMS         = ALLOWED_PLATFORMS.merge(BETA_PLATFORMS)
+  PLATFORM_DETAILS = {
+    'android' => {
+      :expected_device_types => Offer::ANDROID_DEVICES,
+      :sdk => {
+        :connect  => ANDROID_CONNECT_SDK,
+        :offers   => ANDROID_OFFERS_SDK,
+        :vg       => ANDROID_VG_SDK,
+      },
+      :store_name => 'Market',
+      :info_url => 'https://market.android.com/details?id=',
+      :direct_store_url => 'market://search?q=',
+      :default_actions_file_name => "TapjoyPPA.java",
+      :min_action_offer_bid => 25,
+    },
+    'iphone' => {
+      :expected_device_types => Offer::APPLE_DEVICES,
+      :sdk => {
+        :connect  => IPHONE_CONNECT_SDK,
+        :offers   => IPHONE_OFFERS_SDK,
+        :vg       => IPHONE_VG_SDK,
+      },
+      :store_name => 'App Store',
+      :info_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?mt=8&id=',
+      :direct_store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?mt=8&id=',
+      :default_actions_file_name => "TJCPPA.h",
+      :min_action_offer_bid => 35,
+    },
+    'windows' => {
+      :expected_device_types => Offer::WINDOWS_DEVICES,
+      :sdk => {
+        :connect  => WINDOWS_CONNECT_SDK,
+        :offers   => WINDOWS_OFFERS_SDK,
+        :vg       => WINDOWS_VG_SDK,
+      },
+      :store_name => 'Marketplace',
+      :info_url => 'http://social.zune.net/redirect?type=phoneapp&id=',
+      :direct_store_url => 'http://social.zune.net/redirect?type=phoneapp&id=',
+      :default_actions_file_name => '', #TODO fill this out
+      :min_action_offer_bid => 25,
+    },
+  }
+
   TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
   MAXIMUM_INSTALLS_PER_PUBLISHER = 4000
   
@@ -34,10 +78,6 @@ class App < ActiveRecord::Base
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
 
-  def is_android?
-    platform == 'android'
-  end
-
   def is_ipad_only?
     supported_devices? && JSON.load(supported_devices).all?{ |i| i.match(/^ipad/i) }
   end
@@ -59,7 +99,7 @@ class App < ActiveRecord::Base
   end
   
   def store_name
-    is_android? ? 'Marketplace' : 'App Store'
+    PLATFORM_DETAILS[platform][:store_name]
   end
 
   def virtual_goods
@@ -97,19 +137,11 @@ class App < ActiveRecord::Base
   end
 
   def info_url
-    if is_android?
-      "https://market.android.com/details?id=#{store_id}"
-    else
-      "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
-    end
+    "#{PLATFORM_DETAILS[platform][:info_url]}#{store_id}"
   end
-  
+
   def direct_store_url
-    if is_android?
-      "market://search?q=#{store_id}"
-    else
-      "http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=#{store_id}&mt=8"
-    end
+    "#{PLATFORM_DETAILS[platform][:direct_store_url]}#{store_id}"
   end
 
   def primary_country
@@ -222,17 +254,14 @@ class App < ActiveRecord::Base
   def can_have_new_currency?
     currencies.empty? || !currencies.any? { |c| Currency::SPECIAL_CALLBACK_URLS.include?(c.callback_url) }
   end
-  
+
   def default_actions_file_name
-    if is_android?
-      "TapjoyPPA.java"
-    else
-      "TJCPPA.h"
-    end
+    PLATFORM_DETAILS[platform][:default_actions_file_name]
   end
-  
+
   def generate_actions_file
-    if is_android?
+    case platform
+    when 'android'
       file_output =  "package com.tapjoy;\n"
       file_output += "\n"
       file_output += "public class TapjoyPPA\n"
@@ -241,17 +270,28 @@ class App < ActiveRecord::Base
         file_output += "  public static final String #{action_offer.variable_name} = \"#{action_offer.id}\"; // #{action_offer.name}\n"
       end
       file_output += "}"
-    else
+    when 'iphone'
       file_output =  ""
       action_offers.each do |action_offer|
         file_output += "#define #{action_offer.variable_name} @\"#{action_offer.id}\" // #{action_offer.name}\n"
       end
+    when 'windows'
+      #TODO fill this out
+      file_output = "// Not available yet\n"
     end
     file_output
   end
   
   def offers_with_last_run_time
     [ primary_offer ] + action_offers.collect(&:primary_offer).sort { |a, b| a.name <=> b.name }
+  end
+
+  def get_offer_device_types
+    is_ipad_only? ? Offer::IPAD_DEVICES : PLATFORM_DETAILS[platform][:expected_device_types]
+  end
+
+  def sdk_url(type)
+    PLATFORM_DETAILS[platform][:sdk][type]
   end
 
 private
@@ -299,20 +339,9 @@ private
     end
   end
 
-  def get_offer_device_types
-    if is_android?
-      Offer::ANDROID_DEVICES
-    elsif is_ipad_only?
-      Offer::IPAD_DEVICES
-    else
-      Offer::APPLE_DEVICES
-    end
-  end
-
   def update_rating_offer
     if (name_changed? || store_id_changed?) && rating_offer.present?
       rating_offer.save!
     end
   end
-  
 end
