@@ -249,7 +249,7 @@ class Offer < ActiveRecord::Base
     end
   
     offer_groups.each_with_index do |offers, i|
-      Mc.distributed_put("#{key}.#{i}.#{SCHEMA_VERSION}", offers)
+      Mc.distributed_put("#{key}.#{i}.#{SCHEMA_VERSION}", offers, false, 1.hour)
     end
   
     if currency.present?
