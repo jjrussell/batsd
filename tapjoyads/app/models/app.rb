@@ -15,6 +15,8 @@ class App < ActiveRecord::Base
   has_many :featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured = true"
   has_one :primary_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured = true", :order => "created_at"
   has_many :action_offers
+  has_many :non_rewarded_offers, :class_name => 'Offer', :as => :item, :conditions => "not incentivized"
+  has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "not incentivized", :order => "created_at"
   
   belongs_to :partner
 

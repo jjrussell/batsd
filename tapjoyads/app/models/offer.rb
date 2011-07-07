@@ -180,7 +180,7 @@ class Offer < ActiveRecord::Base
       cache_unsorted_offers(offer_list, 'non_incentivized_display')
       cache_offer_list(offer_list, weights, NON_INCENTIVIZED_DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
-      offer_list = Offer.enabled_offers.featured.non_incentivized.for_offer_list.to_a
+      offer_list = Offer.enabled_offers.featured.non_incentivized.for_offer_list + Offer.enabled_offers.nonfeatured.non_incentivized
       cache_unsorted_offers(offer_list, 'non_incentivized_featured')
       cache_offer_list(offer_list, weights, NON_INCENTIVIZED_FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
     end
@@ -751,8 +751,10 @@ class Offer < ActiveRecord::Base
     return min_bid_override if min_bid_override
     
     if item_type == 'App'
-      if featured?
+      if featured? && incentivized?
         is_paid? ? price : 65
+      elsif !incentivized?
+        50
       else
         is_paid? ? (price * 0.50).round : 35
         # uncomment for tapjoy premier & change show.html line 92-ish
@@ -773,6 +775,16 @@ class Offer < ActiveRecord::Base
     featured_offer.tapjoy_enabled = false
     featured_offer.save!
     featured_offer
+  end
+  
+  def create_non_rewarded_clone
+    non_rewarded_offer = self.clone
+    non_rewarded_offer.incentivized = false
+    non_rewarded_offer.name_suffix = "non-rewarded"
+    non_rewarded_offer.bid = non_rewarded_offer.min_bid
+    non_rewarded_offer.tapjoy_enabled = false
+    non_rewarded_offer.save!
+    non_rewarded_offer
   end
   
   def budget_may_not_be_met?
