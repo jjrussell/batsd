@@ -91,66 +91,6 @@
         %td= stats['offers_revenue']
         %td= stats['featured']
         %td= stats['offer_type']
-    %tr
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td{ :value => '10001'} $10,001
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td
-    %tr
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td{ :value => '1001'} $1,001
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td
-    %tr
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td{ :value => '101'} $101
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td
-    %tr
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td{ :value => '-100'} -$100
-      %td
-      %td
-      %td
-      %td
-      %td
-      %td
 
 - content_for :page_javascript do
   :plain
@@ -278,12 +218,10 @@
           balance = Number(balance);
           $('td:nth-child(8):not(.filter)').each(function(i,td){
             if (keepNonPositive) {
-              console.log('negative');
               if(Number($(td).attr('value')) >= 0) {
                 $(td).parent().hide();
               }
             } else {
-              console.log([balance, $(td).attr('value'), balance > Number($(td).attr('value'))])
               if(balance > Number($(td).attr('value'))) {
                 $(td).parent().hide();
               }
