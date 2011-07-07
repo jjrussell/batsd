@@ -64,6 +64,9 @@
   - property_row('Direct-pay', @offer.direct_pay, nil)
   - unless @offer.publisher_app_whitelist.blank?
     - property_row('Publisher app whitelist', @offer.get_publisher_app_whitelist.map { |id| link_to(App.find(id).name, statz_path(id)) }.join(', '))
+  - if @offer.item_type == 'ActionOffer' && @offer.third_party_data?
+    - prereq = @offer.item.prerequisite_offer
+    - property_row('Prerequisite', link_to(prereq.name, statz_path(prereq)))
   - property_row('id', @offer.id + ' - ' + clippy(@offer.id))
 
 %a#show_boosts{:href => '#'} [#{@active_boosts.size} active rank boosts]

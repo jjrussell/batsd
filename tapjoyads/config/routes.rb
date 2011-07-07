@@ -10,6 +10,11 @@ ActionController::Routing::Routes.draw do |map|
     
     m.resources :registrations, :controller => 'games/registrations', :only => [ :new, :create ]
     m.register 'register', :controller => 'games/registrations', :action => :new
+    
+    m.resources :confirmations, :controller => 'games/confirmations', :only => [ :create ]
+    m.confirm 'confirm', :controller => 'games/confirmations', :action => :create
+    
+    m.resources :password_resets, :controller => 'games/password_resets', :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
   end
   
   break if MACHINE_TYPE == 'games'
@@ -62,7 +67,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
     :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post, :reporting => :get, :delink_user => :post },
-    :collection => { :managed_by => :get } do |partner|
+    :collection => { :managed_by => :get, :agency_api => :get } do |partner|
     partner.resources :offer_discounts, :only => [ :index, :new, :create ], :member => { :deactivate => :post }, :controller => 'partners/offer_discounts'
     partner.resources :payout_infos, :only => [ :index, :update ]
   end
@@ -96,6 +101,8 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :preview_experiments, :only => [ :index, :show ]
     tools.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
     tools.resources :external_publishers, :only => [ :index, :update ]
+    tools.resources :jobs, :except => [ :show ]
+    tools.resources :earnings_adjustments, :only => [ :new, :create ]
   end
   
   # Additional webserver routes
@@ -125,7 +132,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :sdk, :only => [ :index, :show ]
   map.namespace :agency_api do |agency|
     agency.resources :apps, :only => [ :index, :show, :create, :update ]
-    agency.resources :partners, :only => :create, :collection => { :link => :post }
+    agency.resources :partners, :only => [ :create, :update ], :collection => { :link => :post }
     agency.resources :currencies, :only => [ :index, :show, :create, :update ]
   end
   

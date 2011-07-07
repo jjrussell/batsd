@@ -122,7 +122,7 @@ Factory.define :monthly_accounting do |monthly_accounting|
   monthly_accounting.payment_payouts            { 6 }
   monthly_accounting.transfer_payouts           { 7 }
   monthly_accounting.earnings                   { 9 }
-
+  monthly_accounting.earnings_adjustments       { 0 }
 end
 
 Factory.define :user_role do |user_role|

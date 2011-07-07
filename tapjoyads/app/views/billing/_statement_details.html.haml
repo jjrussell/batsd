@@ -1,6 +1,7 @@
 - orders = statement[1][:orders]
 - payouts = statement[1][:payouts]
 - transfers = statement[1][:others]
+- adjustments = statement[1][:adjustments]
 
 %div.details.hidden{:id => "details_#{statement[0]}"}
   %h3= statement[1][:text_month]
@@ -46,6 +47,19 @@
         = render :partial => 'transfer', :collection => transfers, :locals => {:format => :table}
   - else
     .none No transfers made during this time
+  - unless adjustments.blank?
+    %table.financial
+      %thead
+        %tr
+          %th{:colspan => 3, :style => 'text-align: center;'} Adjustments
+        %tr
+          %th &nbsp;
+          %th Amount
+          %th Notes
+      %tbody
+        = render :partial => 'adjustment', :collection => adjustments, :locals => {:format => :table}
+  - else
+    .none No adjustments made during this time
 - content_for :page_styles do
   :plain
     .none {

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110620003513) do
+ActiveRecord::Schema.define(:version => 20110622232150) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -148,6 +148,18 @@ ActiveRecord::Schema.define(:version => 20110620003513) do
 
   add_index "currency_groups", ["id"], :name => "index_currency_groups_on_id", :unique => true
 
+  create_table "earnings_adjustments", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36, :null => false
+    t.string   "partner_id", :limit => 36, :null => false
+    t.integer  "amount",                   :null => false
+    t.string   "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "earnings_adjustments", ["id"], :name => "index_earnings_adjustments_on_id", :unique => true
+  add_index "earnings_adjustments", ["partner_id"], :name => "index_earnings_adjustments_on_partner_id"
+
   create_table "email_offers", :id => false, :force => true do |t|
     t.string   "id",             :limit => 36,                    :null => false
     t.string   "partner_id",     :limit => 36,                    :null => false
@@ -198,8 +210,7 @@ ActiveRecord::Schema.define(:version => 20110620003513) do
 
   create_table "gamers", :id => false, :force => true do |t|
     t.string   "id",                :limit => 36, :null => false
-    t.string   "username",                        :null => false
-    t.string   "email"
+    t.string   "email",                           :null => false
     t.string   "crypted_password"
     t.string   "password_salt"
     t.string   "persistence_token"
@@ -207,14 +218,15 @@ ActiveRecord::Schema.define(:version => 20110620003513) do
     t.string   "referrer"
     t.datetime "current_login_at"
     t.datetime "last_login_at"
+    t.datetime "confirmed_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "gamers", ["email"], :name => "index_gamers_on_email", :unique => true
   add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
   add_index "gamers", ["persistence_token"], :name => "index_gamers_on_persistence_token"
-  add_index "gamers", ["username"], :name => "index_gamers_on_username", :unique => true
 
   create_table "generic_offers", :id => false, :force => true do |t|
     t.string   "id",               :limit => 36,                    :null => false
@@ -233,6 +245,20 @@ ActiveRecord::Schema.define(:version => 20110620003513) do
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true
   add_index "generic_offers", ["partner_id"], :name => "index_generic_offers_on_partner_id"
   add_index "generic_offers", ["third_party_data"], :name => "index_generic_offers_on_third_party_data"
+
+  create_table "jobs", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36,                      :null => false
+    t.boolean  "active",                   :default => false,   :null => false
+    t.string   "job_type",                                      :null => false
+    t.string   "controller",                                    :null => false
+    t.string   "action",                   :default => "index", :null => false
+    t.string   "frequency",                                     :null => false
+    t.integer  "seconds",                                       :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "jobs", ["id"], :name => "index_jobs_on_id", :unique => true
 
   create_table "monthly_accountings", :id => false, :force => true do |t|
     t.string   "id",                         :limit => 36, :null => false
@@ -253,6 +279,7 @@ ActiveRecord::Schema.define(:version => 20110620003513) do
     t.integer  "earnings",                                 :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "earnings_adjustments",                     :null => false
   end
 
   add_index "monthly_accountings", ["id"], :name => "index_monthly_accountings_on_id", :unique => true

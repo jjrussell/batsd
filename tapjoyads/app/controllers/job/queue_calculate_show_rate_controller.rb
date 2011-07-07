@@ -4,6 +4,8 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     super QueueNames::CALCULATE_SHOW_RATE
   end
 
+private
+
   def on_message(message)
     offer = Offer.find(message.to_s)
     
@@ -31,8 +33,13 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     
     min_conversion_rate = offer.min_conversion_rate || (offer.is_paid? ? 0.005 : 0.12)
     if recent_clicks > 200 && conversion_rate < min_conversion_rate
-      error_message = "#{offer.name_with_suffix} (https://www.tapjoy.com/statz/#{offer.id}) has #{conversion_rate} cvr on #{recent_clicks} clicks."
-      Notifier.alert_new_relic(ConversionRateTooLowError, error_message, request, params.merge({ :partner_id => offer.partner_id }))
+      stats = {
+        :recent_clicks => recent_clicks,
+        :recent_installs => recent_installs,
+        :conversion_rate => conversion_rate,
+        :min_conversion_rate => min_conversion_rate,
+      }
+      TapjoyMailer.deliver_low_conversion_rate_warning(offer, stats)
     end
     
     Rails.logger.info "Recent clicks: #{recent_clicks}"

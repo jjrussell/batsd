@@ -24,31 +24,33 @@ module GetOffersHelper
   
   def get_click_url(offer)
     offer.get_click_url(
-        :publisher_app     => @publisher_app,
-        :publisher_user_id => params[:publisher_user_id],
-        :udid              => params[:udid],
-        :currency_id       => @currency.id,
-        :source            => params[:source],
-        :app_version       => params[:app_version],
-        :viewed_at         => @now,
-        :exp               => params[:exp],
-        :country_code      => @geoip_data[:country],
-        :language_code     => params[:language_code])
+        :publisher_app      => @publisher_app,
+        :publisher_user_id  => params[:publisher_user_id],
+        :udid               => params[:udid],
+        :currency_id        => @currency.id,
+        :source             => params[:source],
+        :app_version        => params[:app_version],
+        :viewed_at          => @now,
+        :exp                => params[:exp],
+        :country_code       => @geoip_data[:country],
+        :language_code      => params[:language_code],
+        :display_multiplier => params[:display_multiplier])
   end
-  
+
   def get_fullscreen_ad_url(offer)
     offer.get_fullscreen_ad_url(
-        :publisher_app     => @publisher_app, 
-        :publisher_user_id => params[:publisher_user_id], 
-        :udid              => params[:udid], 
-        :currency_id       => @currency.id, 
-        :source            => params[:source], 
-        :app_version       => params[:app_version], 
-        :viewed_at         => @now, 
-        :exp               => params[:exp],
-        :country_code      => @geoip_data[:country])
+        :publisher_app      => @publisher_app,
+        :publisher_user_id  => params[:publisher_user_id],
+        :udid               => params[:udid],
+        :currency_id        => @currency.id,
+        :source             => params[:source],
+        :app_version        => params[:app_version],
+        :viewed_at          => @now,
+        :exp                => params[:exp],
+        :country_code       => @geoip_data[:country],
+        :display_multiplier => params[:display_multiplier])
   end
-  
+
   def visual_cost(offer)
     if offer.price <= 0
       t 'text.offerwall.free'
