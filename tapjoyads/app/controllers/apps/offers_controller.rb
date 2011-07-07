@@ -21,7 +21,7 @@ class Apps::OffersController < WebsiteController
   
   def edit
     if !@offer.tapjoy_enabled?
-      if @offer.incentivized? && !@offer.featured?
+      if @offer.rewarded? && !@offer.featured?
         if @offer.integrated?
           flash.now[:notice] = "When you are ready to go live with this campaign, please click the button below to submit an enable app request."
         else
@@ -49,7 +49,7 @@ class Apps::OffersController < WebsiteController
       offer_params[:device_types] = offer_params[:device_types].blank? ? '[]' : offer_params[:device_types].to_json
       safe_attributes += [:tapjoy_enabled, :allow_negative_balance, :pay_per_click,
           :name, :name_suffix, :show_rate, :min_conversion_rate, :countries, :cities,
-          :postal_codes, :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override, :incentivized]
+          :postal_codes, :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override]
     end
 
     if @offer.safe_update_attributes(offer_params, safe_attributes)

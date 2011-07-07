@@ -15,8 +15,8 @@ class App < ActiveRecord::Base
   has_many :featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured = true"
   has_one :primary_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured = true", :order => "created_at"
   has_many :action_offers
-  has_many :non_rewarded_offers, :class_name => 'Offer', :as => :item, :conditions => "not incentivized"
-  has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "not incentivized", :order => "created_at"
+  has_many :non_rewarded_offers, :class_name => 'Offer', :as => :item, :conditions => "not rewarded"
+  has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "not rewarded", :order => "created_at"
   
   belongs_to :partner
 
@@ -185,7 +185,7 @@ class App < ActiveRecord::Base
     final_offer_list  = []
     num_rejected      = 0
     offer_list_length = 0
-    hide_app_offers   = currency.hide_incentivized_app_installs_for_version?(app_version)
+    hide_app_offers   = currency.hide_rewarded_app_installs_for_version?(app_version)
     
     if include_rating_offer && enabled_rating_offer_id.present?
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)

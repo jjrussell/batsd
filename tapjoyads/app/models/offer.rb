@@ -9,12 +9,12 @@ class Offer < ActiveRecord::Base
   EXEMPT_UDIDS = Set.new(['7bed2150f941bad724c42413c5efa7f202c502e0',
                           'a000002256c234'])
   
-  CLASSIC_OFFER_TYPE                   = '0'
-  DEFAULT_OFFER_TYPE                   = '1'
-  FEATURED_OFFER_TYPE                  = '2'
-  DISPLAY_OFFER_TYPE                   = '3'
-  NON_INCENTIVIZED_DISPLAY_OFFER_TYPE  = '4'
-  NON_INCENTIVIZED_FEATURED_OFFER_TYPE = '5'
+  CLASSIC_OFFER_TYPE               = '0'
+  DEFAULT_OFFER_TYPE               = '1'
+  FEATURED_OFFER_TYPE              = '2'
+  DISPLAY_OFFER_TYPE               = '3'
+  NON_REWARDED_DISPLAY_OFFER_TYPE  = '4'
+  NON_REWARDED_FEATURED_OFFER_TYPE = '5'
   
   GROUP_SIZE = 200
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
@@ -26,7 +26,7 @@ class Offer < ActiveRecord::Base
                                   'third_party_data', 'payment_range_low',
                                   'payment_range_high', 'icon_id_override', 'rank_boost',
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue', 
-                                  'normal_price', 'over_threshold', 'incentivized' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'normal_price', 'over_threshold', 'rewarded' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
@@ -54,7 +54,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
-  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :incentivized, :in => [ true, false ]
+  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer )
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
@@ -119,8 +119,8 @@ class Offer < ActiveRecord::Base
   named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
   named_scope :for_display_ads, :conditions => "item_type = 'App' AND price = 0 AND conversion_rate >= 0.3 AND LENGTH(offers.name) <= 30"
-  named_scope :non_incentivized, :conditions => "NOT incentivized"
-  named_scope :incentivized, :conditions => "incentivized"
+  named_scope :non_rewarded, :conditions => "NOT rewarded"
+  named_scope :rewarded, :conditions => "rewarded"
   named_scope :featured, :conditions => { :featured => true }
   named_scope :free_apps, :conditions => { :item_type => 'App', :price => 0 }
   named_scope :nonfeatured, :conditions => { :featured => false }
@@ -168,7 +168,7 @@ class Offer < ActiveRecord::Base
       cache_unsorted_offers(offer_list, 'offerwall')
       cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
-      offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list + Offer.enabled_offers.non
+      offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
       cache_unsorted_offers(offer_list, 'featured')
       cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
@@ -176,13 +176,13 @@ class Offer < ActiveRecord::Base
       cache_unsorted_offers(offer_list, 'display')
       cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
-      offer_list = Offer.enabled_offers.nonfeatured.non_incentivized.for_offer_list.to_a
-      cache_unsorted_offers(offer_list, 'non_incentivized_display')
-      cache_offer_list(offer_list, weights, NON_INCENTIVIZED_DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+      offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.for_offer_list.to_a
+      cache_unsorted_offers(offer_list, 'non_rewarded_display')
+      cache_offer_list(offer_list, weights, NON_REWARDED_DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
-      offer_list = Offer.enabled_offers.featured.non_incentivized.for_offer_list + Offer.enabled_offers.nonfeatured.non_incentivized
-      cache_unsorted_offers(offer_list, 'non_incentivized_featured')
-      cache_offer_list(offer_list, weights, NON_INCENTIVIZED_FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+      offer_list = Offer.enabled_offers.featured.non_rewarded.for_offer_list + Offer.enabled_offers.nonfeatured.non_rewarded
+      cache_unsorted_offers(offer_list, 'non_rewarded_featured')
+      cache_offer_list(offer_list, weights, NON_REWARDED_FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
     end
   end
   
@@ -236,12 +236,21 @@ class Offer < ActiveRecord::Base
       [ offer.featured? ? 0 : 1, -offer.rank_score ]
     end
       
-    offer_list.first.offer_list_length = offer_list.length
+    offer_list.first.offer_list_length = offer_list.length unless offer_list.first.blank?
     
     offer_groups = []
     group        = 0
     key          = currency.present? ? "enabled_offers.#{currency.id}.type_#{type}.exp_#{exp}" : "enabled_offers.type_#{type}.exp_#{exp}"
     bucket       = S3.bucket(BucketNames::OFFER_DATA)
+    
+    if offer_list.empty?
+      if currency.nil?
+        marshalled_offers = Marshal.dump([])
+        bucket.put("#{key}.0", marshalled_offers)
+      end
+      Mc.distributed_put("#{key}.0", [])
+      return
+    end
   
     offer_list.in_groups_of(GROUP_SIZE) do |offers|
       offers.compact!
@@ -286,12 +295,12 @@ class Offer < ActiveRecord::Base
     currency  = options.delete(:currency)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
-    if currency.present? && currency.hide_incentivized_app_installs?
+    if currency.present? && currency.hide_rewarded_app_installs?
       type = case type
         when FEATURED_OFFER_TYPE
-          NON_INCENTIVIZED_FEATURED_OFFER_TYPE
+          NON_REWARDED_FEATURED_OFFER_TYPE
         when DISPLAY_OFFER_TYPE
-          NON_INCENTIVIZED_DISPLAY_OFFER_TYPE
+          NON_REWARDED_DISPLAY_OFFER_TYPE
         else
           type
         end
@@ -714,7 +723,7 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
-  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_incentivized_app_installs)
+  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs)
     return device_platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device) ||
         already_complete?(publisher_app, device, app_version) ||
@@ -724,7 +733,7 @@ class Offer < ActiveRecord::Base
         jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
-        hide_incentivized_app_installs_reject?(currency, hide_incentivized_app_installs, type) ||
+        hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs) ||
         should_reject_from_app_or_currency?(publisher_app, currency)
   end
   
@@ -751,9 +760,9 @@ class Offer < ActiveRecord::Base
     return min_bid_override if min_bid_override
     
     if item_type == 'App'
-      if featured? && incentivized?
+      if featured? && rewarded?
         is_paid? ? price : 65
-      elsif !incentivized?
+      elsif !rewarded?
         50
       else
         is_paid? ? (price * 0.50).round : 35
@@ -779,7 +788,7 @@ class Offer < ActiveRecord::Base
   
   def create_non_rewarded_clone
     non_rewarded_offer = self.clone
-    non_rewarded_offer.incentivized = false
+    non_rewarded_offer.rewarded = false
     non_rewarded_offer.name_suffix = "non-rewarded"
     non_rewarded_offer.bid = non_rewarded_offer.min_bid
     non_rewarded_offer.tapjoy_enabled = false
@@ -998,12 +1007,8 @@ private
     item_type == "ActionOffer" && third_party_data.present? && !device.has_app(third_party_data)
   end
   
-  def hide_incentivized_app_installs_reject?(currency, hide_incentivized_app_installs, type)
-    if type == DEFAULT_OFFER_TYPE
-      hide_incentivized_app_installs && item_type != 'GenericOffer'
-    else
-      hide_incentivized_app_installs && incentivized? && item_type != 'GenericOffer'
-    end
+  def hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs)
+    hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer'
   end
   
   def normalize_device_type(device_type_param)

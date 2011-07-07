@@ -11,8 +11,8 @@ class Tools::PreviewExperimentsController < WebsiteController
   def show
     if params[:id] == 'featured'
       @offers = Offer.get_cached_offers({ :type => Offer::FEATURED_OFFER_TYPE })
-    elsif params[:id] == 'non_incentivized'
-      @offers = Offer.get_cached_offers({ :type => Offer::NON_INCENTIVIZED_OFFER_TYPE })
+    elsif params[:id] == 'non_rewarded'
+      @offers = Offer.get_cached_offers({ :type => Offer::NON_REWARDED_DISPLAY_OFFER_TYPE })
     else
       @offers = Offer.get_cached_offers({ :type => Offer::DEFAULT_OFFER_TYPE, :exp => params[:id] })
     end
