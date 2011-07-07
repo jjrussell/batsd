@@ -21,17 +21,15 @@ class Apps::OffersController < WebsiteController
   
   def edit
     if !@offer.tapjoy_enabled?
-      now = Time.zone.now
-      start_time = now.beginning_of_hour - 23.hours
-      end_time = now
-      granularity = :hourly
-      if @offer.integrated?
-        flash.now[:notice] = "When you are ready to go live with this campaign, please click the button below to submit an enable app request."
-      else
-        url = @offer.item.is_android? ? ANDROID_CONNECT_SDK : IPHONE_CONNECT_SDK
-        flash.now[:warning] = "Please note that you must integrate the <a href='#{url}'>Tapjoy advertiser library</a> before we can enable your campaign"
+      if @offer.incentivized? && !@offer.featured?
+        if @offer.integrated?
+          flash.now[:notice] = "When you are ready to go live with this campaign, please click the button below to submit an enable app request."
+        else
+          url = @offer.item.is_android? ? ANDROID_CONNECT_SDK : IPHONE_CONNECT_SDK
+          flash.now[:warning] = "Please note that you must integrate the <a href='#{url}'>Tapjoy advertiser library</a> before we can enable your campaign"
+        end
       end
-
+      
       if @offer.enable_offer_requests.pending.present?
         @enable_request = @offer.enable_offer_requests.pending.first
       else
