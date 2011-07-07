@@ -150,7 +150,7 @@ private
       img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
       
       if currency.hide_rewarded_app_installs?
-        text = "Install & run #{offer.name}"
+        text = "Try #{offer.name} today"
       else
         text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
       end
