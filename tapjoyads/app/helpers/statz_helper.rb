@@ -18,8 +18,13 @@ module StatzHelper
         %w(Android iOS All)
       when :check_zero
         %w(0 >0)
-      when :cvr
-        %w(0.0% >0%)
+      when :balance
+        [
+          [">$10k","10000"],
+          [">$1k", "1000"],
+          [">$0", "0"],
+          ["\342\211\244$0","negative"],
+        ]
       when :money
         %w($0.00 >$0)
       when :featured

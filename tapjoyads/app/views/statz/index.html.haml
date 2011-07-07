@@ -65,10 +65,10 @@
       %td.filter= select_tag('connects_filter', options_for_select(filter_options(:check_zero)))
       %td.filter= select_tag('rank_filter', options_for_select(filter_options(:rank)))
       %td.filter= select_tag('price_filter', options_for_select(filter_options(:free)))
-      %td.filter= select_tag('payment_filter', options_for_select(filter_options(:money)))
-      %td.filter &nbsp;
+      %td.filter
+      %td.filter= select_tag('balance_filter', options_for_select(filter_options(:balance)))
       %td.filter= select_tag('platform_filter', options_for_select(filter_options(:platform)))
-      %td.filter= select_tag('cvr_filter', options_for_select(filter_options(:cvr)))
+      %td.filter &nbsp;
       %td.filter= select_tag('published_offers_filter', options_for_select(filter_options(:check_zero)))
       %td.filter= select_tag('revenue_filter', options_for_select(filter_options(:money)))
       %td.filter= select_tag('featured_filter', options_for_select(filter_options(:featured)))
@@ -84,13 +84,73 @@
         %td= stats['overall_store_rank']
         %td= stats['price']
         %td= stats['payment']
-        %td= stats['balance']
+        %td{ :value => stats['balance'].gsub(/\$,/,'')}= stats['balance']
         %td= stats['platform']
         %td= stats['conversion_rate']
         %td= stats['published_offers']
         %td= stats['offers_revenue']
         %td= stats['featured']
         %td= stats['offer_type']
+    %tr
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td{ :value => '10001'} $10,001
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td
+    %tr
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td{ :value => '1001'} $1,001
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td
+    %tr
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td{ :value => '101'} $101
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td
+    %tr
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td{ :value => '-100'} -$100
+      %td
+      %td
+      %td
+      %td
+      %td
+      %td
 
 - content_for :page_javascript do
   :plain
@@ -211,21 +271,29 @@
           checkEqual('$0.00', 6, (price == 'Paid'));
         }
 
-        // payment
-        var payment = $('select#payment_filter').val();
-        if (payment) {
-          checkEqual('$0.00', 7, (payment == '>$0'));
+        // balance
+        var balance = $('select#balance_filter').val();
+        if (balance) {
+          var keepNonPositive = isNaN(balance);
+          balance = Number(balance);
+          $('td:nth-child(8):not(.filter)').each(function(i,td){
+            if (keepNonPositive) {
+              console.log('negative');
+              if(Number($(td).attr('value')) >= 0) {
+                $(td).parent().hide();
+              }
+            } else {
+              console.log([balance, $(td).attr('value'), balance > Number($(td).attr('value'))])
+              if(balance > Number($(td).attr('value'))) {
+                $(td).parent().hide();
+              }
+            }
+          });
         }
 
         // platform
         var platform = $('select#platform_filter').val();
         checkEqual(platform, 9);
-
-        // cvr
-        var cvr = $('select#cvr_filter').val();
-        if (cvr) {
-          checkEqual('0.0%', 10, (cvr == '>0%'));
-        }
 
         // published offers
         var publishedOffers = $('select#published_offers_filter').val();
