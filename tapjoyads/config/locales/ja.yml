@@ -1,4 +1,4 @@
-jp:
+ja:
   text:
     shared:
       privacy: "プライバシー"
@@ -18,7 +18,7 @@ jp:
       buy_currency: "{{amount_and_currency}} を買う"
 
       # redesigned wall only
-      redesign_instructions: "ENGAGE IN ANY OF THE FOLLOWING ACTIONS TO RECEIVE {{currency}}"
+      redesign_instructions: "次のアクションで {{currency}} を獲得する"
       redesign_earn_currency: "{{amount}} {{currency}}  を獲得"
       redesign_buy_currency: "{{amount}} {{currency}} を買う"
 
@@ -26,8 +26,8 @@ jp:
       title: "指示"
       amount_and_currency: "{{amount}} {{currency}}"
       earn_currency: "{{amount_and_currency}} を獲得"
-      header: "FOLLOW THESE STEPS TO EARN {{currency}}:"
-      footer: "AFTER COMPLETING THESE STEPS, YOU WILL EARN {{amount_and_currency}}."
-      download_action: "HERE"
-      download_link: "IF YOU DON'T HAVE THIS APP, CLICK {{download_action}} TO DOWNLOAD IT."
-      continue_link: "CLICK HERE TO CONTINUE."
+      header: "次のステップによって {{currency}} を獲得する"
+      footer: "このステップを完了してから {{amount_and_currency}} を獲得する"
+      download_action: "こちら"
+      download_link: "このアプリがない場合には {{download_action}} をクッリク してダウンロードしてください"
+      continue_link: "続くにはクリックしてください"
