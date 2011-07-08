@@ -25,7 +25,6 @@ class Partner < ActiveRecord::Base
   validates_numericality_of :premier_discount, :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => false
   validates_numericality_of :rev_share, :transfer_bonus, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_inclusion_of :exclusivity_level_type, :in => ExclusivityLevel::TYPES, :allow_nil => true, :allow_blank => false
-  validates_length_of :apsalar_username, :maximum => 60, :allow_nil => true
   validates_inclusion_of :use_whitelist, :approved_publisher, :in => [ true, false ]
   validate :exclusivity_level_legal
   validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
