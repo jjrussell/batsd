@@ -23,8 +23,8 @@ class ActionOffer < ActiveRecord::Base
   after_update :update_offers
   
   delegate :user_enabled?, :tapjoy_enabled?, :bid, :min_bid, :daily_budget, :integrated?, :to => :primary_offer
-  
-  delegate :is_android?, :store_id, :store_url, :large_download?, :supported_devices, :platform, :to => :app
+
+  delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :to => :app
 
   delegate :primary_category, :user_rating, :to => :app
 

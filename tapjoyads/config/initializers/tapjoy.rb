@@ -21,6 +21,10 @@ IPHONE_UNITY_PLUGIN = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectUnityPl
 
 SCHEMA_VERSION = ActiveRecord::Migrator.current_version
 
+WINDOWS_CONNECT_SDK = 'https://s3.amazonaws.com/tapjoy/sdks/'
+WINDOWS_OFFERS_SDK  = 'https://s3.amazonaws.com/tapjoy/sdks/'
+WINDOWS_VG_SDK      = 'https://s3.amazonaws.com/tapjoy/sdks/'
+
 unless Rails.env == 'production'
   Mc.cache.flush
 end
