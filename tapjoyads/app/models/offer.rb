@@ -827,6 +827,10 @@ class Offer < ActiveRecord::Base
     update_attribute(:rank_boost, rank_boosts.active.sum(:amount))
   end
   
+  def unlogged_attributes
+    [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
+  end
+  
 private
   
   def is_disabled?(publisher_app, currency)
