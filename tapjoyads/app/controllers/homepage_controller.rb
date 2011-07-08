@@ -32,7 +32,6 @@ class HomepageController < WebsiteController
   end
 
   def privacy
-    render :layout => false
   end
 
   def about_us
