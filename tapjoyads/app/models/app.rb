@@ -135,11 +135,11 @@ class App < ActiveRecord::Base
   end
 
   def info_url
-    PLATFORM_DETAILS[platform][:info_url].sub('STORE_ID', store_id)
+    PLATFORM_DETAILS[platform][:info_url].sub('STORE_ID', store_id.to_s)
   end
 
   def direct_store_url
-    PLATFORM_DETAILS[platform][:direct_store_url].sub('STORE_ID', store_id)
+    PLATFORM_DETAILS[platform][:direct_store_url].sub('STORE_ID', store_id.to_s)
   end
 
   def primary_country
