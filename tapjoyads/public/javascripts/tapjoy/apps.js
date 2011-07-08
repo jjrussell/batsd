@@ -1,5 +1,4 @@
 // apps.js
-var search = $.noop;
 $(function($){
 
   // app state
@@ -42,7 +41,7 @@ $(function($){
   // on success
   var success = function(data){
     $('#search_results').removeClass('searching');
-    if (data['error']) {
+    if (!data || data['error']) {
       error();
     } else if (data.length > 0) {
       $(data).each(function(i,app){
@@ -88,7 +87,7 @@ $(function($){
   };
 
   // on search
-  search = function(){
+  var search = function(){
     $('.search-result').remove();
     $('#search_results').show().addClass('searching');
 
@@ -101,7 +100,7 @@ $(function($){
 
     var term = $('input#app_name').val();
     if (term != "") {
-      var platform = $('#app_platform').val() || $('#app_platform').text();
+      var platform = $('#app_platform').val();
       var country = $('#app_country').val() || "us";
       $.ajax({
         url: '/apps/search/;',
@@ -111,5 +110,9 @@ $(function($){
         error: error
       });
     }
+
+    return false;
   };
+
+  $('#search_button').click(search);
 });

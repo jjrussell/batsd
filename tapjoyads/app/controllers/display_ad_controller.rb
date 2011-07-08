@@ -206,6 +206,8 @@ private
         'ipad'
       when /android/i
         'android'
+      when /windows/i
+        'windows'
       else
         nil
       end

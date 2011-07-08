@@ -1,14 +1,11 @@
 - @page_title = 'Publisher Integration'
 - @dropdown_options = { :with_new_app_button => true }
 
-- offers_sdk_url = @app.is_android? ? ANDROID_OFFERS_SDK : IPHONE_OFFERS_SDK
-- vg_sdk_url = @app.is_android? ? ANDROID_VG_SDK : IPHONE_VG_SDK
-
 %h3 Publisher Integration
 %ol
   %li
-    Select our #{ link_to('Offers Library', offers_sdk_url)}
-    or #{ link_to('Virtual Goods Library', vg_sdk_url)}.
+    Select our #{ link_to('Offers Library', @app.sdk_url(:offers))}
+    or #{ link_to('Virtual Goods Library', @app.sdk_url(:vg))}.
   %li Add the Tapjoy library to your project directory.
   %li Compile and run your project.
   %li Add the Tapjoy credentials (provided below) to your app.
@@ -33,9 +30,9 @@
   = clippy(@app.secret_key)
 
 %p
-  .left.download_link= link_to('Offers Library Download', offers_sdk_url)
+  .left.download_link= link_to('Offers Library Download', @app.sdk_url(:offers))
   .clear
-  .left.download_link= link_to('Virtual Goods Library Download', vg_sdk_url)
+  .left.download_link= link_to('Virtual Goods Library Download', @app.sdk_url(:vg))
   .clear
 
 - content_for :page_styles do
@@ -45,7 +42,7 @@
       font-weight: bold;
       font-size: 120%;
     }
-    
+
     .app_id {
       display: inline;
       font-family: courier;

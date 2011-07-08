@@ -19,7 +19,7 @@ authorization do
   end
 
   role :agency do
-    has_permission_on :partners, :to => [ :index, :show, :make_current, :new, :create ]
+    has_permission_on :partners, :to => [ :index, :show, :make_current, :new, :create, :agency_api ]
   end
   
   role :tools do
@@ -67,7 +67,7 @@ authorization do
     has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :edit_android_app, :update_android_app, :device_info, :update_device, :freemium_android ]
     has_permission_on :tools_enable_offer_requests, :to => [ :index, :update ]
     has_permission_on :activities, :to => [ :index ]
-    has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :new_transfer, :create_transfer, :reporting, :delink_user ]
+    has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :new_transfer, :create_transfer, :reporting, :delink_user, :agency_api ]
     has_permission_on :tools_rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
     has_permission_on :apps, :to => [ :unarchive ]
     has_permission_on :partners_offer_discounts, :to => [ :index, :new, :create, :deactivate ]
