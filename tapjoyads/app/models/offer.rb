@@ -178,13 +178,13 @@ class Offer < ActiveRecord::Base
     mc_key = "s3.#{s3_key}.#{SCHEMA_VERSION}"
     bucket = S3.bucket(BucketNames::OFFER_DATA)
     bucket.put(s3_key, Marshal.dump(offers))
-    Mc.distributed_put(mc_key, offers, false, 1.hour)
+    Mc.distributed_put(mc_key, offers, false, 1.day)
   end
   
   def self.get_unsorted_offers(name)
     s3_key = "unsorted_offers.#{name}"
     mc_key = "s3.#{s3_key}.#{SCHEMA_VERSION}"
-    offers = Mc.distributed_get_and_put(mc_key, false, 1.hour) do
+    offers = Mc.distributed_get_and_put(mc_key, false, 1.day) do
       bucket = S3.bucket(BucketNames::OFFER_DATA)
       Marshal.restore(bucket.get(s3_key))
     end
@@ -249,7 +249,7 @@ class Offer < ActiveRecord::Base
     end
   
     offer_groups.each_with_index do |offers, i|
-      Mc.distributed_put("#{key}.#{i}.#{SCHEMA_VERSION}", offers, false, 1.hour)
+      Mc.distributed_put("#{key}.#{i}.#{SCHEMA_VERSION}", offers, false, 1.day)
     end
   
     if currency.present?
@@ -286,7 +286,7 @@ class Offer < ActiveRecord::Base
     # key               = currency.present? ? "enabled_offers.#{currency.id}.type_#{type}.exp_#{exp}" : s3_key
     
     loop do
-      offers = Mc.distributed_get_and_put("#{key}.#{group}.#{SCHEMA_VERSION}", false, 1.hour) do
+      offers = Mc.distributed_get_and_put("#{key}.#{group}.#{SCHEMA_VERSION}", false, 1.day) do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
         Marshal.restore(bucket.get("#{s3_key}.#{group}"))
         
