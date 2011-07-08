@@ -73,16 +73,8 @@ class ActivityLog < SimpledbResource
           false
         end
       end
-      
-      if before_hash.length == 1 && (before_hash['updated_at'] || before_hash['updated-at'])
-        before_hash = {}
-      end
     end
     
-    if after_hash.length == 1 && (after_hash['updated_at'] || after_hash['updated-at'])
-      after_hash = {}
-    end
-
     self.before_state = before_hash
     self.after_state = after_hash
   end
@@ -100,6 +92,11 @@ private
 
   def get_attributes
     attrs = @state_object.attributes
+    unlogged_attributes = [ 'updated_at', 'updated-at' ]
+    unlogged_attributes += @state_object.unlogged_attributes if @state_object.respond_to?(:unlogged_attributes)
+    unlogged_attributes.each do |attr_name|
+      attrs.delete(attr_name)
+    end
     self.included_methods.each do |method|
       attrs[method.to_s] = @state_object.send(method.to_sym).inspect
     end
