@@ -167,43 +167,24 @@
         return false;
       });
 
-      // helper functions
-      var showAll = function(){
-        $('tr').show();
-      };
-      var checkValue = function(filterId, className, trueValue){
-        var filterValue = String($('select#' + filterId + '_filter').val()).toLowerCase();
-        if (filterValue) {
-          if (trueValue) {
-            if (filterValue == trueValue) {
-              $('tbody tr:visible:not(.'+className+')').hide();
-            } else {
-              $('tbody tr:visible.'+className).hide();
-            }
-          } else {
-            $('tbody tr:visible:not(.'+filterValue+')').hide();
-          }
-        }
-      };
-
       $('#reset_filters').click(function(){
         $('.filter select').each(function(i,select){
           $(select).val('');
         });
-        showAll();
+        $('tr').show();
         return false;
       });
       $('.filter select').change(function(){
         var selectValues = [
-          String( $('select#conversions_filter').val() ).toLowerCase(),
-          String( $('select#connects_filter').val() ).toLowerCase(),
-          String( $('select#rank_filter').val() ).toLowerCase(),
-          String( $('select#price_filter').val() ).toLowerCase(),
-          String( $('select#published_offers_filter').val() ).toLowerCase(),
-          String( $('select#revenue_filter').val() ).toLowerCase(),
-          String( $('select#featured_filter').val() ).toLowerCase(),
-          String( $('select#platform_filter').val() ).toLowerCase(),
-          String( $('select#offer_type_filter').val() ).toLowerCase(),
+          String( $('#conversions_filter').val() ).toLowerCase(),
+          String( $('#connects_filter').val() ).toLowerCase(),
+          String( $('#rank_filter').val() ).toLowerCase(),
+          String( $('#price_filter').val() ).toLowerCase(),
+          String( $('#published_offers_filter').val() ).toLowerCase(),
+          String( $('#revenue_filter').val() ).toLowerCase(),
+          String( $('#featured_filter').val() ).toLowerCase(),
+          String( $('#platform_filter').val() ).toLowerCase(),
+          String( $('#offer_type_filter').val() ).toLowerCase(),
         ]
         var className = '';
         var length = selectValues.length;
@@ -216,7 +197,7 @@
         $('tbody tr'+className).show();
 
         // balance levels
-        var balance = $('select#balance_filter').val();
+        var balance = $('#balance_filter').val();
         if (balance) {
           var keepNonPositive = isNaN(balance);
           balance = Number(balance);
