@@ -53,7 +53,7 @@ class Conversion < ActiveRecord::Base
   validates_inclusion_of :reward_type, :in => REWARD_TYPES.values
   
   before_save :sanitize_reward_id
-  after_create :update_publisher_amount, :update_advertiser_amount, :update_realtime_stats
+  after_create :update_partner_amounts, :update_realtime_stats
   
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at >= ?", date ] } }
   named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
@@ -161,16 +161,16 @@ class Conversion < ActiveRecord::Base
   
 private
   
-  def update_publisher_amount
-    return true if publisher_amount == 0
-    p_id = publisher_app.partner_id
-    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET pending_earnings = (pending_earnings + #{publisher_amount}) WHERE id = '#{p_id}'")
-  end
-  
-  def update_advertiser_amount
-    return true if advertiser_amount == 0 || advertiser_offer.nil?
-    p_id = advertiser_offer.partner_id
-    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET balance = (balance + #{advertiser_amount}) WHERE id = '#{p_id}'")
+  def update_partner_amounts
+    partners = []
+    partners << publisher_app.partner_id unless publisher_amount == 0
+    partners << advertiser_offer.partner_id unless advertiser_amount == 0 || advertiser_offer.nil?
+    
+    return true if partners.empty?
+    
+    Partner.connection.execute("SELECT * FROM #{Partner.quoted_table_name} WHERE id IN ('#{partners.join(",")}') FOR UPDATE")
+    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET pending_earnings = (pending_earnings + #{publisher_amount}) WHERE id = '#{publisher_app.partner_id}'") unless publisher_amount == 0
+    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET balance = (balance + #{advertiser_amount}) WHERE id = '#{advertiser_offer.partner_id}'") unless  advertiser_amount == 0 || advertiser_offer.nil?
   end
   
   def update_realtime_stats
