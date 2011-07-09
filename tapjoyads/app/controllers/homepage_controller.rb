@@ -58,4 +58,8 @@ class HomepageController < WebsiteController
   def careers
     redirect_to '/careers' and return
   end
+  
+  def events
+    render :layout => false
+  end
 end

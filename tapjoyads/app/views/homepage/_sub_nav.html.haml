@@ -5,6 +5,7 @@
     :careers => controller.controller_name == 'careers' ? 'selected' : '',
     :contact => controller.action_name == 'contact' ? 'selected' : '',
   }
+- content_for :page_head, stylesheet_link_tag('facebox')
 #sub_nav
   .thick_line
   = link_to "Meet the Team", '/site/team', :class => selected[:team]
@@ -13,6 +14,9 @@
   .dotted_line
   %a{:href => "http://blog.tapjoy.com"}
     Read our Blog
+  .dotted_line
+  %a{:href => "/site/events", :rel => "facebox"}
+    Events
   .dotted_line
   = link_to "Work at Tapjoy", '/careers', :class => selected[:careers]
   .dotted_line
