@@ -86,7 +86,8 @@
         tr_classes << (stats['offers_revenue']=='$0.00'  ? 'zero_revenue'     : 'nonzero_revenue')
         tr_classes << (stats['featured']                 ? 'featured'         : 'nonfeatured')
         tr_classes << stats['offer_type'].to_s.downcase
-      %tr{:class => tr_classes.compact.join(' ')}
+        value = stats['balance'].gsub(/[\$,]/,'')
+      %tr{ :class => tr_classes.compact.join(' '), :value => value }
         %td
           %img.icon.hidden{ :s => stats['icon_url'] }
         %td= link_to(stats['offer_name'], statz_path(offer_id))
@@ -95,7 +96,7 @@
         %td= stats['overall_store_rank']
         %td= stats['price']
         %td= stats['payment']
-        %td{ :value => stats['balance'].gsub(/[\$,]/,'')}= stats['balance']
+        %td= stats['balance']
         %td= stats['platform']
         %td= stats['conversion_rate']
         %td= stats['published_offers']
@@ -219,14 +220,15 @@
         if (balance) {
           var keepNonPositive = isNaN(balance);
           balance = Number(balance);
-          $('tr:visible td:nth-child(8):not(.filter)').each(function(i,td){
+          $('tbody tr:visible').each(function(i,tr){
+            tr = $(tr);
             if (keepNonPositive) {
-              if(Number($(td).attr('value')) > 0) {
-                $(td).parent().hide();
+              if(Number(tr.attr('value')) > 0) {
+                tr.hide();
               }
             } else {
-              if(balance >= Number($(td).attr('value'))) {
-                $(td).parent().hide();
+              if(balance >= Number(tr.attr('value'))) {
+                tr.hide();
               }
             }
           });
@@ -238,7 +240,7 @@
 - content_for :page_styles do
   :plain
     #main {
-      width: 1024px;
+      width: 1200px;
     }
     td#filters_title {
       padding-left: 15px;
