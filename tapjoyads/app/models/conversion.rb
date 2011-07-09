@@ -170,7 +170,7 @@ private
     
     Partner.connection.execute("SELECT * FROM #{Partner.quoted_table_name} WHERE id IN ('#{partners.join(",")}') FOR UPDATE")
     Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET pending_earnings = (pending_earnings + #{publisher_amount}) WHERE id = '#{publisher_app.partner_id}'") unless publisher_amount == 0
-    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET balance = (balance + #{advertiser_amount}) WHERE id = '#{advertiser_offer.partner_id}'") unless  advertiser_amount == 0 || advertiser_offer.nil?
+    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET balance = (balance + #{advertiser_amount}) WHERE id = '#{advertiser_offer.partner_id}'") unless advertiser_amount == 0 || advertiser_offer.nil?
   end
   
   def update_realtime_stats
