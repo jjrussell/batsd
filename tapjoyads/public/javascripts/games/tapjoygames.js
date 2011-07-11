@@ -1,9 +1,6 @@
 var TJG = {}; TJG.vars = {};
 TJG.doc = document.documentElement;
 TJG.vars.orientationClasses = ['landscape', 'portrait'];
-TJG.vars.headerContainer = '#nav_bar';
-TJG.vars.contentContainer = '#container';
-TJG.vars.scrollContainer = '#scroller';
 TJG.vars.isSwapped = false;
 TJG.vars.isIos = false;
 TJG.vars.isTouch = false;
@@ -23,6 +20,24 @@ TJG.utils = {
     var orientation = this.getOrientation();
     TJG.doc.setAttribute("orient", orientation); 
   },
+  
+  hideLoader : function(delay,fn) {
+    if (delay == null) {
+      delay = 350;
+    } 
+    setTimeout(function() {
+      $('#loader').fadeOut(delay,fn);
+    });
+  },
+  
+  showLoader : function(delay,fn) {
+    if (delay == null) {
+      delay = 350;
+    } 
+    setTimeout(function() {
+      $('#loader').fadeIn(delay,fn);
+    });
+  }
   
 };
   
@@ -88,7 +103,7 @@ TJG.utils = {
     else if (TJG.vars.device == 'iphone' || TJG.vars.device == 'ipod' || TJG.vars.device == 'ipad') {
       TJG.vars.isIos = true;
     }
-    var test = document.createElement('div');  // Retina Test
+    var test = document.createElement('div');
     test.style.display = 'none';
     test.id = 'mc-test';
     test.innerHTML = '<style type="text/css">@media(-webkit-min-device-pixel-ratio:1.5){#mc-test{color:red}}@media(-webkit-min-device-pixel-ratio:2.0){#mc-test{color:blue}}</style>';
@@ -104,32 +119,31 @@ TJG.utils = {
         className = className.replace(replace, classReplaces[replace]);
     }
     TJG.doc.className = className + classes.join(' ');
-
+    TJG.utils.hideURLBar();
+ 
     var jQT = new $.jQTouch({
-        slideSelector: '#jqt li a, .slide',
-        icon: '',
-        addGlossToIcon: false,
-        startupScreen: '',
-        statusBar: '',
-        preloadImages: [
-          '',
-          ''
-         ]
+      slideSelector: '#jqt .slide_nav',
     });
-    
+        
     TJG.onload = {
-      /*
+      
       disableScrollOnBody : function() {
         if (!TJG.vars.isTouch) return;
         document.body.addEventListener("touchmove", function(e) {
-          e.preventDefault();
+          //e.preventDefault();
         }, false);
       },
-      */
-      loadCufon : function () {  // Fonts
+
+      loadCufon : function () {
         if (Cufon) {
           Cufon.replace('.title');
         }         
+      },
+
+      removeLoader : function () {
+        $('#jqt').fadeTo(1, 350, function() {
+          TJG.utils.hideLoader(200); 
+        });
       }
 
     };
@@ -140,8 +154,7 @@ TJG.utils = {
         TJG.onload[key]();
       }
        
-      TJG.utils.hideURLBar();
-
+      
 
     };
     window.addEventListener("load", TJG.init, false);

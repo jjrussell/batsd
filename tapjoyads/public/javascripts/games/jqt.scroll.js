@@ -723,10 +723,9 @@
      *    @return null
      */
     function inertiaScroll (element, options) {
-        var $element = $(element).data("jqt-scroll-options", options)
-                            .css("webkitTransform", format(options.tranform, options.defaultOffset)),
-            transform = $element.css("webkitTransform"),
-            matrix = transform ? new WebKitCSSMatrix(transform) : {m41:0};
+        var $element = $(element).data("jqt-scroll-options", options).css("webkitTransform", format(options.tranform, options.defaultOffset)), transform = $element.css("webkitTransform");
+        var tMatrix = {m41:0};
+        var matrix = transform ? new WebKitCSSMatrix(transform) : tMatrix;
         
         $.each(options.events, function (name, func) {
             //these events get attatch
@@ -1239,6 +1238,7 @@
     };
     
     //load stylesheet(s)
+    
     $(function() {
         window.scrollTo(0,0);
         var stringRules = "", 

@@ -13,13 +13,15 @@ body {
 body .hd {
   background-size: 100%;
 }
+a, a:visited {
+  text-decoration: none;
+}
 #jqt {
-  background: #434343 url('../../images/games/bg.png');
   color: #FFFFFF;
   width: 100%;
+  opacity:0.15;
 }
 #jqt.tan {
-  background: #434343 url('../../images/games/bg_tan.png');
   color: #605846;
 }
 .web, .ipad, .android {
@@ -28,103 +30,193 @@ body .hd {
 .ipod, .iphone, .android-phone {
   font-size: 14px;
 }
-/* Nav */
-.web #nav_bar, .ipad #nav_bar, .android #nav_bar, #nav_bar {
-  background: #333333 url('../../images/games/nav_bar_web.png') repeat-x;
+#loader {
+  background-color: #C1C1C1;
   color: #FFFFFF;
-  height: 44px;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1;
-}
-.ipod #nav_bar, .iphone #nav_bar, .android-phone #nav_bar {
-  background: #333333 url('../../images/games/nav_bar_mobile.png') repeat-x;
-  height: 30px;
-  left: 0;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1;
-}
-.web #nav_bar .nav_content, .ipad #nav_bar .nav_content {
-  padding: 12px 16px;
-}
-.ipod #nav_bar .nav_content, .iphone #nav_bar .nav_content, .android-phone #nav_bar .nav_content {
-  padding: 8px 4px;
-}
-/* Main Container */
-.web #main, .ipad #main, .android #main, #main {
-  background: transparent url('../../images/games/header_bg_web.png') repeat-x;
-}
-.web #jqt.tan #main, .ipad #jqt.tan #main, .android #jqt.tan #main, #main {
-  background: transparent url('../../images/games/header_bg_web_tan.png') repeat-x;  
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0px 20%;
+  opacity: 1;
+  padding: 4px;
+  position: absolute;
+  opacity: 0.8;
+  top: 45%;
+  width: 60%;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0) 0px 0px 6px;
 }
 
-.iphone #main, .ipod #main, .android-phone #main {
+#progress {
+  background-color: #222222;
+  height: 60px;
+  padding-top: 10px;
+  text-align: center;
+  z-index: 10;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+
+#circle {
+  margin: 12px auto 0;
+  width: 90px;
+}
+#circle div {
+  background-color: #FFFFFF;
+  float: left;
+  height: 12px;
+  margin-left: 8px;
+  opacity: 0.1;
+  width: 12px;
+  -webkit-animation-name: circle_load;
+  -webkit-border-radius: 4px;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-direction: linear;
+  -webkit-transform: scale(0.9);
+}
+#circle1 { 
+  -webkit-animation-delay: 0.3s;
+}
+#circle2 {
+ -webkit-animation-delay: 0.4s;
+}
+#circle3 {
+ -webkit-animation-delay: 0.5s;
+}
+#circle4 {
+ -webkit-animation-delay: 0.6s;
+}   
+@-webkit-keyframes circle_load {
+  0%{-webkit-transform: scale(1.1); opacity: 1;}
+  100%{-webkit-transform: scale(0.9); opacity: 0.1;}
+}
+/* Nav */
+.web .top_nav_bar, .ipad .top_nav_bar, .android .top_nav_bar {
+  background: #333333 url('../../images/games/nav_bar.png') repeat-x;
+  color: #FFFFFF;
+  height: 44px;
+  width: 100%;
+}
+.ipod .top_nav_bar, .iphone .top_nav_bar, .android-phone .top_nav_bar {
+  background: #333333 url('../../images/games/nav_bar.png') repeat-x;
+  color: #FFFFFF;
+  height: 44px;
+  width: 100%;
+}
+.web .top_nav_bar .nav_content, .ipad .top_nav_bar .nav_content {
+  padding: 12px 16px;
+}
+.ipod .top_nav_bar .nav_content, .iphone .top_nav_bar .nav_content, .android-phone .top_nav_bar .nav_content {
+  padding: 12px 4px;
+}
+.web .page, .ipad .page, .android .page {
+  background: transparent url('../../images/games/header_bg_web.png') repeat-x;
+}
+.web #jqt.tan .page, .ipad #jqt.tan .page, .android #jqt.tan .page, #jqt.tan .page {
+  background: transparent url('../../images/games/header_bg_web_tan.png') repeat-x; 
+}
+.iphone .page, .ipod .page, .android-phone .page {
   background: transparent url('../../images/games/header_bg_mobile.png') repeat-x;  
 }
-.ipod #jqt.tan #main, .iphone #jqt.tan #main, .android-phone #jqt.tan #main {
+.ipod #jqt.tan .page, .iphone #jqt.tan .page, .android-phone #jqt.tan .page {
   background: transparent url('../../images/games/header_bg_mobile_tan.png') repeat-x;
 }
-.web #logo, .ipad #logo, .android #logo {
+.web .logo, .ipad .logo, .android .logo {
   background: transparent url('../../images/games/logo_bg_web.png') no-repeat;
   height: 280px;                         
   margin: 0 auto;
   width: 640px;
 }
-.ipod #logo, .iphone #logo, .ipod.portrait #logo, .iphone.portrait #logo {
+.ipod .logo, .iphone .logo, .ipod.portrait .logo, .iphone.portrait .logo {
   background: transparent url('../../images/games/logo_bg_mobile.png') no-repeat;
-  height: 158px;                         
+  height: 120px;                         
   margin: 0 auto;
   width: 320px;
 }
-.ipod.hd.portrait #logo, .iphone.hd.portrait #logo {
+.ipod.hd.portrait .logo, .iphone.hd.portrait .logo {
   background: transparent url('../../images/games/logo_bg_mobile_hd_p.png') no-repeat;
   background-size: 100%;
   margin: 0 auto;
   width: 100%;
 }
-.ipod.hd.landscape #logo, .iphone.hd.landscape #logo {
+.ipod.hd.landscape .logo, .iphone.hd.landscape .logo {
   background: transparent url('../../images/games/logo_bg_mobile_hd_l.png') no-repeat;
   background-size: 100%;
   margin: 0 auto;
   width: 100%;
 }
-#container {
+
+.slide_nav {
+  position: relative;
+}
+.web .slide_nav, .ipad .slide_nav {
+  padding: 0 20px;
+  top: 180px;
+}
+.iphone .slide_nav, .ipod .slide_nav {
+  padding: 0 6px;
+  top: 70px;
+} 
+.slide_nav, .slide_nav a {
+  color: #605846;
+}
+.web .slide_nav div, .ipad .slide_nav div {
+  border: 1px solid #CEB896;
+  padding: 12px 10px 8px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius:5px;  
+}
+.iphone .slide_nav div, .ipod .slide_nav div {
+  border: 1px solid #CEB896;
+  padding: 6px 6px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius:5px;  
+}
+.slide_nav div.slider_active {
+  background: transparent url('../../images/games/button_bg_tan.png');
+}
+.iphone .slide_nav .title, .ipod .slide_nav .title,.iphone .slide_nav a.title, .ipod .slide_nav a.title {
+  font-size: 12px;
+}  
+.iphone .slide_nav .title.small, .ipod .slide_nav .title.small,.iphone .slide_nav a.title.small, .ipod .slide_nav a.title.small {
+  font-size: 11px;
+}
+
+.container {
   padding-bottom: 20px;
 }
-.ipod.landscape #container, .iphone.landscape #container {
-}
-    
-
-
-
-
-
-
-
 /* Offer */ 
-#offers {
+.content {
   margin: 0 auto;
   max-width: 1000px;
   padding: 10px;
   position: relative;
   top: 36px;
 }
-.ipod #offers, .iphone #offers, #android-phone #offers {
+.web .content {
+  margin: 0 auto;
+  max-width: 1000px;
+  padding: 10px 40px;
+  position: relative;
+  top: 36px;
+} 
+.ipod .content, .iphone .content, #android-phone .content {
   margin: 0 auto;
   padding: 2px;
   position: relative;
   top: 18px;
 } 
-.ipod #offers, .iphone #offers, .android-phone #offers {
+.ipod .content, .iphone .content, .android-phone .content {
   padding: 6px;
 }
-
 .offer_item {
-  border: 1px dotted #222222;  /* REMOVE */
+  border-bottom: 1px solid #5B5B5B;
   min-height: 60px;
+  padding: 6px 0 4px;
+  -moz-box-shadow: inset 0 -1px #333333;
+  -webkit-box-shadow: inset 0 -1px #333333;
+  box-shadow: inset 0 -1px #333333; 
 }
 .offer_image {
   background: #FFFFFF;
@@ -134,8 +226,9 @@ body .hd {
   overflow: hidden;
   -moz-border-radius: 5px;
   -webkit-border-radius: 6px;
- -moz-box-shadow: 0 0 4px #222222;
-  -webkit-box-shadow: 0px 2px 4px #222222; 
+  -moz-box-shadow: 0 0 4px #222222;
+  -webkit-box-shadow: 0px 2px 4px #222222;
+  box-shadow: 0px 2px 4px #222222;
 }
 .ipod .offer_image, .iphone .offer_image {
   margin-right: 6px;
@@ -161,8 +254,6 @@ body .hd {
   padding-top: 6px;
 }
 .offer_button button.blue {
-  white-space: nowrap;
-  overflow-x: hidden;
 }
 .offer_button .button {}
 .offer_button button.blue {
@@ -209,7 +300,7 @@ body .hd {
 }
 .title {
   font-family: 'Paytone One', 'Cooper Std';
-}                                  
+}
 .right {
   float: right;
 }              

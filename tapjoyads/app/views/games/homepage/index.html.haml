@@ -1,73 +1,128 @@
-#jqt{ :class => '' }
-  #nav_bar{ :class => '' }
-    .nav_content
-      .right
-        Not on iPhone?
-      .left
-        Currently using:
-  #container{ :class => '' }
-    #scroller{ :class => '' }
-      #main
-        #logo
-        #offers
-          %ul
-            %li{ :class => 'offer_item' }
-              .offer_button
-                %button{ :class => "blue" }
-                  %span{  :class => "amount" }
-                    Earn More!
-              .offer_image
-                %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/29254adb06418ac6ac31c3991a6b995f2eae54be8e5e07072c8e8e747b7bd09c.jpg' }
-              .offer_text
-                %div{ :class => 'offer_title title' }
-                  Pretty Pet Salon Extra Text
-                .offer_info
-            %li{ :class => 'offer_item' }
-              .offer_button
-                %button{ :class => "blue" }
-                  %span{  :class => "amount" }
-                    Earn More!
-              .offer_image
-                %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/29254adb06418ac6ac31c3991a6b995f2eae54be8e5e07072c8e8e747b7bd09c.jpg' }
-              .offer_text
-                %div{ :class => 'offer_title title' }
-                  Pretty Pet Salon Extra Text
-                .offer_info
-            %li{ :class => 'offer_item' }
-              .offer_button
-                %button{ :class => "blue" }
-                  %span{  :class => "amount" }
-                    Earn More!
-              .offer_image
-                %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/29254adb06418ac6ac31c3991a6b995f2eae54be8e5e07072c8e8e747b7bd09c.jpg' }
-              .offer_text
-                %div{ :class => 'offer_title title' }
-                  Pretty Pet Salon Extra Text
-                .offer_info
-            %li{ :class => 'offer_item' }
-              .offer_button
-                %button{ :class => "blue" }
-                  %span{  :class => "amount" }
-                    Earn More!
-              .offer_image
-                %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/29254adb06418ac6ac31c3991a6b995f2eae54be8e5e07072c8e8e747b7bd09c.jpg' }
-              .offer_text
-                %div{ :class => 'offer_title title' }
-                  Pretty Pet Salon Extra Text
-                .offer_info
-            %li{ :class => 'offer_item' }
-              .offer_button
-                %button{ :class => "blue" }
-                  %span{  :class => "amount" }
-                    Earn More!
-              .offer_image
-                %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/29254adb06418ac6ac31c3991a6b995f2eae54be8e5e07072c8e8e747b7bd09c.jpg' }
-              .offer_text
-                %div{ :class => 'offer_title title' }
-                  Pretty Pet Salon Extra Text
-                .offer_info                            
 
-  #debug 
+#jqt{ :class => '' }
+
+  #my_apps{ :class => 'current' }
+    %div{ :class => 'top_nav_bar' }
+      .nav_content
+        .right
+          Logout
+        .left
+          Welcome Van!
+    %div{ :class => 'container vertical-scroll' }
+      %div{ :class => 'scroller with-scrollbar' }
+        %div{ :class => 'page' }
+          %div{ :class => '' }
+            .logo
+              %div{ :class => 'slide_nav' }
+                %div{ :class => 'slider_right right' }
+                  <a href='#get_more'><span class='title small'>More Games!<span></a>
+                %div{ :class => 'slider_active slide_left left' }
+                  <span class='title'>My Apps</span>
+            .content
+              %ul 
+                %li{ :class => 'offer_item' }
+                  .offer_button
+                    %button{ :class => "blue" }
+                      %span{  :class => "amount" }
+                        <a href="#earn">Earn More!</a>
+                  .offer_image
+                    %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/8933109a43c79022166a26445926aec22afb0417ab7b268b666e9f47fb1983cf.jpg' }
+                  .offer_text
+                    %div{ :class => 'offer_title title' }
+                      Pretty Pet Salon Extra Text
+                    .offer_info
+                %li{ :class => 'offer_item' }
+                  .offer_button
+                    %button{ :class => "blue" }
+                      %span{  :class => "amount" }
+                        <a href="#earn">Earn More!</a>
+                  .offer_image
+                    %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/42949766b47bce00acbc7840e78bc9a28fa58ba229d93042bacfff840697d291.jpg' }
+                  .offer_text
+                    %div{ :class => 'offer_title title' }
+                      Pretty Pet Salon Extra Text
+                    .offer_info
+                %li{ :class => 'offer_item' }
+                  .offer_button
+                    %button{ :class => "blue" }
+                      %span{  :class => "amount" }
+                        <a href="#earn">Earn More!</a>
+                  .offer_image
+                    %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/76b9225070dbeafced8d2ee56d62c48009d37709988780a5905b58332545ed71.jpg' }
+                  .offer_text
+                    %div{ :class => 'offer_title title' }
+                      Pretty Pet Salon Extra Text
+                    .offer_info
+                %li{ :class => 'offer_item' }
+                  .offer_button
+                    %button{ :class => "blue" }
+                      %span{  :class => "amount" }
+                        <a href="#earn">Earn More!</a>
+                  .offer_image
+                    %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/37133ffd93aeb0cda87945a9572c86ce6c946b5bba3625b432eb60920b59f539.jpg' }
+                  .offer_text
+                    %div{ :class => 'offer_title title' }
+                      Pretty Pet Salon Extra Text
+                    .offer_info
+                %li{ :class => 'offer_item' }
+                  .offer_button
+                    %button{ :class => "blue" }
+                      %span{  :class => "amount" }
+                        <a href="#earn">Earn More!</a>
+                  .offer_image
+                    %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/1e741377cf735763965e3977a8175554db9223445232ad8bdda4128cee902ae6.jpg' }
+                  .offer_text
+                    %div{ :class => 'offer_title title' }
+                      Pretty Pet Salon Extra Text
+                    .offer_info
+
+
+  #earn{ :class => '' }
+    %div{ :class => 'top_nav_bar' }
+      .nav_content
+        .right
+          Logout
+        .left
+          Welcome Van!
+    %div{ :class => 'container vertical-scroll' }
+      %div{ :class => 'scroller with-scrollbar' }
+        %div{ :class => 'page' }
+          %div{ :class => '' }
+            .logo
+              %div{ :class => 'slide_nav' }
+                %div{ :class => 'slider_right right' }
+                  <a href='#get_more'><span class='title'>Get More!<span></a>
+                %div{ :class => 'active slide_left left' }
+                  <span class='title'>My Apps</span>
+            .content
+            
+  #get_more{ :class => '' }
+    %div{ :class => 'top_nav_bar' }
+      .nav_content
+        .right
+          Logout
+        .left
+          Welcome Van!
+    %div{ :class => 'container vertical-scroll' }
+      %div{ :class => 'scroller with-scrollbar' }
+        %div{ :class => 'page' }
+          %div{ :class => '' }
+            .logo
+              %div{ :class => 'slide_nav' }
+                %div{ :class => 'slider_active slider_right right' }
+                  <a href='#get_more'><span class='title small'>More Games!<span></a>
+                %div{ :class => 'slide_left left' }
+                  <a class='slideright' href='#my_apps'><span class='title'>My Apps</span></a>
+            .content 
+
+#loader
+  #progress
+    Loading
+    #circle
+      #circle1
+      #circle2
+      #circle3
+      #circle4
 
 - content_for :page_javascript do
-  :plain
+  :plain  
