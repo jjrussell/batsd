@@ -164,15 +164,15 @@ class Offer < ActiveRecord::Base
     Benchmark.realtime do
       weights = CurrencyGroup.find_by_name('default').weights
       
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.to_a
+      offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.to_a
       cache_unsorted_offers(offer_list, 'offerwall')
       cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
-      offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
+      offer_list = Offer.enabled_offers.featured.rewarded.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.rewarded.for_offer_list
       cache_unsorted_offers(offer_list, 'featured')
       cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads.to_a
+      offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.for_display_ads.to_a
       cache_unsorted_offers(offer_list, 'display')
       cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
