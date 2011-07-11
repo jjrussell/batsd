@@ -14,8 +14,8 @@ class App < ActiveRecord::Base
         :vg       => ANDROID_VG_SDK,
       },
       :store_name => 'Market',
-      :info_url => 'https://market.android.com/details?id=',
-      :direct_store_url => 'market://search?q=',
+      :info_url => 'https://market.android.com/details?id=STORE_ID',
+      :direct_store_url => 'market://search?q=STORE_ID',
       :default_actions_file_name => "TapjoyPPA.java",
       :min_action_offer_bid => 25,
     },
@@ -27,8 +27,8 @@ class App < ActiveRecord::Base
         :vg       => IPHONE_VG_SDK,
       },
       :store_name => 'App Store',
-      :info_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?mt=8&id=',
-      :direct_store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?mt=8&id=',
+      :info_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
+      :direct_store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
       :default_actions_file_name => "TJCPPA.h",
       :min_action_offer_bid => 35,
     },
@@ -40,8 +40,8 @@ class App < ActiveRecord::Base
         :vg       => WINDOWS_VG_SDK,
       },
       :store_name => 'Marketplace',
-      :info_url => 'http://social.zune.net/redirect?type=phoneapp&id=',
-      :direct_store_url => 'http://social.zune.net/redirect?type=phoneapp&id=',
+      :info_url => 'http://social.zune.net/redirect?type=phoneapp&id=STORE_ID',
+      :direct_store_url => 'http://social.zune.net/redirect?type=phoneapp&id=STORE_ID',
       :default_actions_file_name => '', #TODO fill this out
       :min_action_offer_bid => 25,
     },
@@ -135,11 +135,11 @@ class App < ActiveRecord::Base
   end
 
   def info_url
-    "#{PLATFORM_DETAILS[platform][:info_url]}#{store_id}"
+    PLATFORM_DETAILS[platform][:info_url].sub('STORE_ID', store_id.to_s)
   end
 
   def direct_store_url
-    "#{PLATFORM_DETAILS[platform][:direct_store_url]}#{store_id}"
+    PLATFORM_DETAILS[platform][:direct_store_url].sub('STORE_ID', store_id.to_s)
   end
 
   def primary_country
