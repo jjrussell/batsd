@@ -4,7 +4,7 @@
     %title Tapjoy :: Fueling Great Apps - Tapjoy in the Press
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
     %link{ :rel => 'shortcut icon', :href => '/favicon.ico' }
-    = stylesheet_link_tag 'reset', 'common', 'about_us', 'press'
+    = stylesheet_link_tag 'reset', 'common', 'about_us', 'press', 'facebox'
     %style{ :type => 'text/css' }
       = yield :page_styles
     = yield :page_head
@@ -60,6 +60,13 @@
         .clear
       .clear
     = javascript_include_tag 'jquery-1.4.2.min', 'tapjoy'
+    = javascript_include_tag 'facebox'
+    %script{:type => "text/javascript", :language => "Javascript"}
+      jQuery(document).ready(function($) {
+      $('a[rel*=facebox]').facebox({
+      closeImage   : '../images/closelabel.png'
+      }) 
+      })
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
       = yield :page_javascript
       - unless Rails.env == 'development'
