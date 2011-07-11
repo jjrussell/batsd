@@ -9,10 +9,6 @@ private
   def on_message(message)
     reward = Reward.deserialize(message.to_s)
     
-    if reward.sent_money_txn.present?
-      return
-    end
-    
     if reward.publisher_amount.blank?
       raise "No amounts set for reward: #{reward.key}"
     end
@@ -45,13 +41,6 @@ private
         c.country                          = reward.country
       end
       save_conversion(conversion)
-    end
-    
-    reward.sent_money_txn = Time.zone.now
-    begin
-      reward.serial_save(:catch_exceptions => false, :expected_attr => { 'sent_money_txn' => nil })
-    rescue Simpledb::ExpectedAttributeError => e
-      # Do nothing
     end
   end
   
