@@ -290,20 +290,20 @@ class Offer < ActiveRecord::Base
   end
   
   def self.get_cached_offers(options = {}, &block)
-    type = options.delete(:type)
-    exp  = options.delete(:exp)
-    currency  = options.delete(:currency)
+    type     = options.delete(:type)
+    exp      = options.delete(:exp)
+    currency = options.delete(:currency)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     if currency.present? && currency.hide_rewarded_app_installs?
       type = case type
-        when FEATURED_OFFER_TYPE
-          NON_REWARDED_FEATURED_OFFER_TYPE
-        when DISPLAY_OFFER_TYPE
-          NON_REWARDED_DISPLAY_OFFER_TYPE
-        else
-          type
-        end
+      when FEATURED_OFFER_TYPE
+        NON_REWARDED_FEATURED_OFFER_TYPE
+      when DISPLAY_OFFER_TYPE
+        NON_REWARDED_DISPLAY_OFFER_TYPE
+      else
+        type
+      end
     end
     type ||= DEFAULT_OFFER_TYPE
     exp  ||= Experiments::EXPERIMENTS[:default]
