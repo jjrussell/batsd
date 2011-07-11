@@ -176,11 +176,11 @@ class Offer < ActiveRecord::Base
       cache_unsorted_offers(offer_list, 'display')
       cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
-      offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.for_offer_list.to_a
+      offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.for_offer_list.to_a
       cache_unsorted_offers(offer_list, 'non_rewarded_display')
       cache_offer_list(offer_list, weights, NON_REWARDED_DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
-      offer_list = Offer.enabled_offers.featured.non_rewarded.for_offer_list + Offer.enabled_offers.nonfeatured.non_rewarded
+      offer_list = Offer.enabled_offers.featured.non_rewarded.free_apps.for_offer_list + Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.for_offer_list
       cache_unsorted_offers(offer_list, 'non_rewarded_featured')
       cache_offer_list(offer_list, weights, NON_REWARDED_FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
     end

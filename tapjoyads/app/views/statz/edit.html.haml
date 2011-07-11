@@ -50,13 +50,14 @@
       %td
         = f.check_box(:featured)
         = error_message_on @offer, :featured
-    %tr
-      %th
-        = f.label(:rewarded)
-        #help_rewarded.help ?
-      %td
-        = f.check_box(:rewarded)
-        = error_message_on @offer, :rewarded
+    - if @offer.item_type == 'App' && @offer.price == 0
+      %tr
+        %th
+          = f.label(:rewarded)
+          #help_rewarded.help ?
+        %td
+          = f.check_box(:rewarded)
+          = error_message_on @offer, :rewarded
         
     - if @offer.item_type == 'GenericOffer'
       %tr
