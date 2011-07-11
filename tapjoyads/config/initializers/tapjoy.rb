@@ -19,7 +19,8 @@ IPHONE_OFFERS_SDK   = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectOffersS
 IPHONE_VG_SDK       = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectVirtualGoodsSDK_iOS_v8.0.1.zip'
 IPHONE_UNITY_PLUGIN = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectUnityPluginSample.zip'
 
-#TODO fill this out
+SCHEMA_VERSION = ActiveRecord::Migrator.current_version
+
 WINDOWS_CONNECT_SDK = 'https://s3.amazonaws.com/tapjoy/sdks/'
 WINDOWS_OFFERS_SDK  = 'https://s3.amazonaws.com/tapjoy/sdks/'
 WINDOWS_VG_SDK      = 'https://s3.amazonaws.com/tapjoy/sdks/'

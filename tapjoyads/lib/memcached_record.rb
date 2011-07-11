@@ -9,9 +9,9 @@ module MemcachedRecord
 
       def model.find_in_cache(id, do_lookup = (Rails.env != 'production'))
         if do_lookup
-          Mc.distributed_get_and_put("mysql.#{class_name.underscore}.#{id}") { find(id) }
+          Mc.distributed_get_and_put("mysql.#{class_name.underscore}.#{id}.#{SCHEMA_VERSION}", false, 1.day) { find(id) }
         else
-          Mc.distributed_get("mysql.#{class_name.underscore}.#{id}")
+          Mc.distributed_get("mysql.#{class_name.underscore}.#{id}.#{SCHEMA_VERSION}")
         end
       end
 
@@ -26,11 +26,11 @@ module MemcachedRecord
 private
 
   def update_memcached
-    Mc.distributed_put("mysql.#{self.class.class_name.underscore}.#{id}", self)
+    Mc.distributed_put("mysql.#{self.class.class_name.underscore}.#{id}.#{SCHEMA_VERSION}", self, false, 1.day)
   end
 
   def clear_memcached
-    Mc.distributed_delete("mysql.#{self.class.class_name.underscore}.#{id}")
+    Mc.distributed_delete("mysql.#{self.class.class_name.underscore}.#{id}.#{SCHEMA_VERSION}")
   end
 
 end
