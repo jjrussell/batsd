@@ -12,14 +12,34 @@ class ActivityLog < SimpledbResource
   self.sdb_attr :before_state,      :type => :json
   self.sdb_attr :after_state,       :type => :json
   self.sdb_attr :created_at,        :type => :time, :attr_name => 'updated-at'
-  
+
+  SKIP_KEYS = %w(updated-at updated_at perishable_token persistence_token password_salt)
+
   def initialize(options = {})
     @state_object = nil
     @state_object_new = false
-    
+
     super({ :load_from_memcache => false }.merge(options))
   end
-  
+
+  def diff_keys
+    (before_state.keys | after_state.keys) - SKIP_KEYS
+  end
+
+  def diff_value(key)
+    Differ.diff_by_word(after_state[key].to_s, before_state[key].to_s)
+  end
+
+  def object_name
+    if object.respond_to?(:name_with_suffix)
+      object.name_with_suffix
+    elsif object.respond_to?(:name)
+      object.name
+    else
+      "#{object_id[0,6]}..."
+    end
+  end
+
   def object
     return @state_object unless @state_object.nil?
     
@@ -73,16 +93,8 @@ class ActivityLog < SimpledbResource
           false
         end
       end
-      
-      if before_hash.length == 1 && (before_hash['updated_at'] || before_hash['updated-at'])
-        before_hash = {}
-      end
     end
     
-    if after_hash.length == 1 && (after_hash['updated_at'] || after_hash['updated-at'])
-      after_hash = {}
-    end
-
     self.before_state = before_hash
     self.after_state = after_hash
   end
@@ -100,6 +112,11 @@ private
 
   def get_attributes
     attrs = @state_object.attributes
+    unlogged_attributes = [ 'updated_at', 'updated-at' ]
+    unlogged_attributes += @state_object.unlogged_attributes if @state_object.respond_to?(:unlogged_attributes)
+    unlogged_attributes.each do |attr_name|
+      attrs.delete(attr_name)
+    end
     self.included_methods.each do |method|
       attrs[method.to_s] = @state_object.send(method.to_sym).inspect
     end

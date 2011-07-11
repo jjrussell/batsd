@@ -188,16 +188,16 @@ class Offer < ActiveRecord::Base
   
   def self.cache_unsorted_offers(offers, name)
     s3_key = "unsorted_offers.#{name}"
-    mc_key = "s3.#{s3_key}"
+    mc_key = "s3.#{s3_key}.#{SCHEMA_VERSION}"
     bucket = S3.bucket(BucketNames::OFFER_DATA)
     bucket.put(s3_key, Marshal.dump(offers))
-    Mc.distributed_put(mc_key, offers)
+    Mc.distributed_put(mc_key, offers, false, 1.day)
   end
   
   def self.get_unsorted_offers(name)
     s3_key = "unsorted_offers.#{name}"
-    mc_key = "s3.#{s3_key}"
-    offers = Mc.distributed_get_and_put(mc_key) do
+    mc_key = "s3.#{s3_key}.#{SCHEMA_VERSION}"
+    offers = Mc.distributed_get_and_put(mc_key, false, 1.day) do
       bucket = S3.bucket(BucketNames::OFFER_DATA)
       Marshal.restore(bucket.get(s3_key))
     end
@@ -271,18 +271,18 @@ class Offer < ActiveRecord::Base
     end
   
     offer_groups.each_with_index do |offers, i|
-      Mc.distributed_put("#{key}.#{i}", offers)
+      Mc.distributed_put("#{key}.#{i}.#{SCHEMA_VERSION}", offers, false, 1.day)
     end
   
     if currency.present?
-      while Mc.distributed_get("#{key}.#{group}")
-        Mc.distributed_delete("#{key}.#{group}")
+      while Mc.distributed_get("#{key}.#{group}.#{SCHEMA_VERSION}")
+        Mc.distributed_delete("#{key}.#{group}.#{SCHEMA_VERSION}")
         group += 1
       end
     else
       while bucket.key("#{key}.#{group}").exists?
         bucket.key("#{key}.#{group}").delete
-        Mc.distributed_delete("#{key}.#{group}")
+        Mc.distributed_delete("#{key}.#{group}.#{SCHEMA_VERSION}")
         group += 1
       end
     end
@@ -318,7 +318,7 @@ class Offer < ActiveRecord::Base
     # key               = currency.present? ? "enabled_offers.#{currency.id}.type_#{type}.exp_#{exp}" : s3_key
     
     loop do
-      offers = Mc.distributed_get_and_put("#{key}.#{group}") do
+      offers = Mc.distributed_get_and_put("#{key}.#{group}.#{SCHEMA_VERSION}", false, 1.day) do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
         Marshal.restore(bucket.get("#{s3_key}.#{group}"))
         
@@ -868,6 +868,10 @@ class Offer < ActiveRecord::Base
   
   def calculate_rank_boost!
     update_attribute(:rank_boost, rank_boosts.active.sum(:amount))
+  end
+  
+  def unlogged_attributes
+    [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
   end
   
 private
