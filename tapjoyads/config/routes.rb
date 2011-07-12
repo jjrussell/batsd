@@ -48,7 +48,7 @@ ActionController::Routing::Routes.draw do |map|
     app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
   end
   map.resources :enable_offer_requests, :only => [ :create ]
-  map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }, :collection => { :api => :get, :regenerate_api_key => :post }
+  map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get, :aggregate => :get }, :collection => { :api => :get, :regenerate_api_key => :post }
   map.resources :billing, :only => [ :index ],
     :collection => { :create_order => :post, :create_transfer => :post, :update_payout_info => :post, :forget_credit_card => :post }
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds

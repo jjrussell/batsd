@@ -238,7 +238,7 @@ class Appstats
     get_labels_and_intervals if @include_labels
   end
 
-  def graph_data(options)
+  def graph_data(options = {})
     offer = options.delete(:offer)
     admin = options.delete(:admin)
 
