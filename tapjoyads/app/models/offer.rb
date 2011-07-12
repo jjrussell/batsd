@@ -1,18 +1,21 @@
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
   include MemcachedRecord
-  
+
   APPLE_DEVICES = %w( iphone itouch ipad )
   IPAD_DEVICES = %w( ipad )
   ANDROID_DEVICES = %w( android )
-  ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES
+  WINDOWS_DEVICES = %w( windows )
+  ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
   EXEMPT_UDIDS = Set.new(['7bed2150f941bad724c42413c5efa7f202c502e0',
                           'a000002256c234'])
-  
-  CLASSIC_OFFER_TYPE  = '0'
-  DEFAULT_OFFER_TYPE  = '1'
-  FEATURED_OFFER_TYPE = '2'
-  DISPLAY_OFFER_TYPE  = '3'
+
+  CLASSIC_OFFER_TYPE               = '0'
+  DEFAULT_OFFER_TYPE               = '1'
+  FEATURED_OFFER_TYPE              = '2'
+  DISPLAY_OFFER_TYPE               = '3'
+  NON_REWARDED_DISPLAY_OFFER_TYPE  = '4'
+  NON_REWARDED_FEATURED_OFFER_TYPE = '5'
   GROUP_SIZE = 200
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
@@ -22,8 +25,8 @@ class Offer < ActiveRecord::Base
                                   'publisher_app_whitelist', 'direct_pay', 'reward_value',
                                   'third_party_data', 'payment_range_low',
                                   'payment_range_high', 'icon_id_override', 'rank_boost',
-                                  'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue', 
-                                  'normal_price', 'over_threshold', 'reseller_id' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
+                                  'normal_price', 'over_threshold', 'rewarded', 'reseller_id' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
@@ -53,7 +56,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
-  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :in => [ true, false ]
+  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer )
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
@@ -119,6 +122,8 @@ class Offer < ActiveRecord::Base
   named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
   named_scope :for_display_ads, :conditions => "item_type = 'App' AND price = 0 AND conversion_rate >= 0.3 AND LENGTH(offers.name) <= 30"
+  named_scope :non_rewarded, :conditions => "NOT rewarded"
+  named_scope :rewarded, :conditions => "rewarded"
   named_scope :featured, :conditions => { :featured => true }
   named_scope :free_apps, :conditions => { :item_type => 'App', :price => 0 }
   named_scope :nonfeatured, :conditions => { :featured => false }
@@ -162,32 +167,40 @@ class Offer < ActiveRecord::Base
     Benchmark.realtime do
       weights = CurrencyGroup.find_by_name('default').weights
       
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.to_a
+      offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.to_a
       cache_unsorted_offers(offer_list, 'offerwall')
       cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
-      offer_list = Offer.enabled_offers.featured.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.for_offer_list
+      offer_list = Offer.enabled_offers.featured.rewarded.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.rewarded.for_offer_list
       cache_unsorted_offers(offer_list, 'featured')
       cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
-      offer_list = Offer.enabled_offers.nonfeatured.for_offer_list.for_display_ads.to_a
+      offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.for_display_ads.to_a
       cache_unsorted_offers(offer_list, 'display')
       cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+      
+      offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.for_offer_list.to_a
+      cache_unsorted_offers(offer_list, 'non_rewarded_display')
+      cache_offer_list(offer_list, weights, NON_REWARDED_DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+      
+      offer_list = Offer.enabled_offers.featured.non_rewarded.free_apps.for_offer_list + Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.for_offer_list
+      cache_unsorted_offers(offer_list, 'non_rewarded_featured')
+      cache_offer_list(offer_list, weights, NON_REWARDED_FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
     end
   end
   
   def self.cache_unsorted_offers(offers, name)
     s3_key = "unsorted_offers.#{name}"
-    mc_key = "s3.#{s3_key}"
+    mc_key = "s3.#{s3_key}.#{SCHEMA_VERSION}"
     bucket = S3.bucket(BucketNames::OFFER_DATA)
     bucket.put(s3_key, Marshal.dump(offers))
-    Mc.distributed_put(mc_key, offers)
+    Mc.distributed_put(mc_key, offers, false, 1.day)
   end
   
   def self.get_unsorted_offers(name)
     s3_key = "unsorted_offers.#{name}"
-    mc_key = "s3.#{s3_key}"
-    offers = Mc.distributed_get_and_put(mc_key) do
+    mc_key = "s3.#{s3_key}.#{SCHEMA_VERSION}"
+    offers = Mc.distributed_get_and_put(mc_key, false, 1.day) do
       bucket = S3.bucket(BucketNames::OFFER_DATA)
       Marshal.restore(bucket.get(s3_key))
     end
@@ -226,12 +239,21 @@ class Offer < ActiveRecord::Base
       [ offer.featured? ? 0 : 1, -offer.rank_score ]
     end
       
-    offer_list.first.offer_list_length = offer_list.length
+    offer_list.first.offer_list_length = offer_list.length unless offer_list.first.blank?
     
     offer_groups = []
     group        = 0
     key          = currency.present? ? "enabled_offers.#{currency.id}.type_#{type}.exp_#{exp}" : "enabled_offers.type_#{type}.exp_#{exp}"
     bucket       = S3.bucket(BucketNames::OFFER_DATA)
+    
+    if offer_list.empty?
+      if currency.nil?
+        marshalled_offers = Marshal.dump([])
+        bucket.put("#{key}.0", marshalled_offers)
+      end
+      Mc.distributed_put("#{key}.0", [])
+      return
+    end
   
     offer_list.in_groups_of(GROUP_SIZE) do |offers|
       offers.compact!
@@ -252,18 +274,18 @@ class Offer < ActiveRecord::Base
     end
   
     offer_groups.each_with_index do |offers, i|
-      Mc.distributed_put("#{key}.#{i}", offers)
+      Mc.distributed_put("#{key}.#{i}.#{SCHEMA_VERSION}", offers, false, 1.day)
     end
   
     if currency.present?
-      while Mc.distributed_get("#{key}.#{group}")
-        Mc.distributed_delete("#{key}.#{group}")
+      while Mc.distributed_get("#{key}.#{group}.#{SCHEMA_VERSION}")
+        Mc.distributed_delete("#{key}.#{group}.#{SCHEMA_VERSION}")
         group += 1
       end
     else
       while bucket.key("#{key}.#{group}").exists?
         bucket.key("#{key}.#{group}").delete
-        Mc.distributed_delete("#{key}.#{group}")
+        Mc.distributed_delete("#{key}.#{group}.#{SCHEMA_VERSION}")
         group += 1
       end
     end
@@ -271,11 +293,21 @@ class Offer < ActiveRecord::Base
   end
   
   def self.get_cached_offers(options = {}, &block)
-    type = options.delete(:type)
-    exp  = options.delete(:exp)
-    currency  = options.delete(:currency)
+    type     = options.delete(:type)
+    exp      = options.delete(:exp)
+    currency = options.delete(:currency)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
+
+    if currency.present? && currency.hide_rewarded_app_installs?
+      type = case type
+      when FEATURED_OFFER_TYPE
+        NON_REWARDED_FEATURED_OFFER_TYPE
+      when DISPLAY_OFFER_TYPE
+        NON_REWARDED_DISPLAY_OFFER_TYPE
+      else
+        type
+      end
+    end
     type ||= DEFAULT_OFFER_TYPE
     exp  ||= Experiments::EXPERIMENTS[:default]
     
@@ -289,7 +321,7 @@ class Offer < ActiveRecord::Base
     # key               = currency.present? ? "enabled_offers.#{currency.id}.type_#{type}.exp_#{exp}" : s3_key
     
     loop do
-      offers = Mc.distributed_get_and_put("#{key}.#{group}") do
+      offers = Mc.distributed_get_and_put("#{key}.#{group}.#{SCHEMA_VERSION}", false, 1.day) do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
         Marshal.restore(bucket.get("#{s3_key}.#{group}"))
         
@@ -407,6 +439,7 @@ class Offer < ActiveRecord::Base
     click_key             = options.delete(:click_key)             { nil }
     language_code         = options.delete(:language_code)         { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
+    display_multiplier    = options.delete(:display_multiplier)    { 1 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     data = {
@@ -416,7 +449,8 @@ class Offer < ActiveRecord::Base
       :click_key             => click_key,
       :itunes_link_affiliate => itunes_link_affiliate,
       :currency_id           => currency.id,
-      :language_code         => language_code
+      :language_code         => language_code,
+      :display_multiplier    => display_multiplier
     }
     
     "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
@@ -427,8 +461,9 @@ class Offer < ActiveRecord::Base
     publisher_app_id      = options.delete(:publisher_app_id)      { |k| raise "#{k} is a required argument" }
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
     click_key             = options.delete(:click_key)             { nil }
-    language_code         = options.delete(:language_code)         { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
+    options.delete(:language_code)
+    options.delete(:display_multiplier)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
@@ -460,17 +495,18 @@ class Offer < ActiveRecord::Base
   end
   
   def get_click_url(options)
-    publisher_app     = options.delete(:publisher_app)     { |k| raise "#{k} is a required argument" }
-    publisher_user_id = options.delete(:publisher_user_id) { |k| raise "#{k} is a required argument" }
-    udid              = options.delete(:udid)              { |k| raise "#{k} is a required argument" }
-    currency_id       = options.delete(:currency_id)       { |k| raise "#{k} is a required argument" }
-    source            = options.delete(:source)            { |k| raise "#{k} is a required argument" }
-    app_version       = options.delete(:app_version)       { nil }
-    viewed_at         = options.delete(:viewed_at)         { |k| raise "#{k} is a required argument" }
-    displayer_app_id  = options.delete(:displayer_app_id)  { nil }
-    exp               = options.delete(:exp)               { nil }
-    country_code      = options.delete(:country_code)      { nil }
-    language_code     = options.delete(:language_code)     { nil }
+    publisher_app      = options.delete(:publisher_app)      { |k| raise "#{k} is a required argument" }
+    publisher_user_id  = options.delete(:publisher_user_id)  { |k| raise "#{k} is a required argument" }
+    udid               = options.delete(:udid)               { |k| raise "#{k} is a required argument" }
+    currency_id        = options.delete(:currency_id)        { |k| raise "#{k} is a required argument" }
+    source             = options.delete(:source)             { |k| raise "#{k} is a required argument" }
+    app_version        = options.delete(:app_version)        { nil }
+    viewed_at          = options.delete(:viewed_at)          { |k| raise "#{k} is a required argument" }
+    displayer_app_id   = options.delete(:displayer_app_id)   { nil }
+    exp                = options.delete(:exp)                { nil }
+    country_code       = options.delete(:country_code)       { nil }
+    language_code      = options.delete(:language_code)      { nil }
+    display_multiplier = options.delete(:display_multiplier) { 1 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     click_url = "#{API_URL}/click/"
@@ -489,42 +525,44 @@ class Offer < ActiveRecord::Base
     end
     
     data = {
-      :advertiser_app_id => item_id,
-      :publisher_app_id  => publisher_app.id,
-      :publisher_user_id => publisher_user_id,
-      :udid              => udid,
-      :source            => source,
-      :offer_id          => id,
-      :app_version       => app_version,
-      :viewed_at         => viewed_at.to_f,
-      :currency_id       => currency_id,
-      :country_code      => country_code,
-      :displayer_app_id  => displayer_app_id,
-      :exp               => exp,
-      :language_code     => language_code
+      :advertiser_app_id  => item_id,
+      :publisher_app_id   => publisher_app.id,
+      :publisher_user_id  => publisher_user_id,
+      :udid               => udid,
+      :source             => source,
+      :offer_id           => id,
+      :app_version        => app_version,
+      :viewed_at          => viewed_at.to_f,
+      :currency_id        => currency_id,
+      :country_code       => country_code,
+      :displayer_app_id   => displayer_app_id,
+      :exp                => exp,
+      :language_code      => language_code,
+      :display_multiplier => display_multiplier
     }
     
     "#{click_url}?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
   end
   
   def get_fullscreen_ad_url(options)
-    publisher_app     = options.delete(:publisher_app)     { |k| raise "#{k} is a required argument" }
-    publisher_user_id = options.delete(:publisher_user_id) { |k| raise "#{k} is a required argument" }
-    udid              = options.delete(:udid)              { |k| raise "#{k} is a required argument" }
-    currency_id       = options.delete(:currency_id)       { |k| raise "#{k} is a required argument" }
-    source            = options.delete(:source)            { |k| raise "#{k} is a required argument" }
-    app_version       = options.delete(:app_version)       { nil }
-    viewed_at         = options.delete(:viewed_at)         { |k| raise "#{k} is a required argument" }
-    displayer_app_id  = options.delete(:displayer_app_id)  { nil }
-    exp               = options.delete(:exp)               { nil }
-    country_code      = options.delete(:country_code)      { nil }
+    publisher_app      = options.delete(:publisher_app)      { |k| raise "#{k} is a required argument" }
+    publisher_user_id  = options.delete(:publisher_user_id)  { |k| raise "#{k} is a required argument" }
+    udid               = options.delete(:udid)               { |k| raise "#{k} is a required argument" }
+    currency_id        = options.delete(:currency_id)        { |k| raise "#{k} is a required argument" }
+    source             = options.delete(:source)             { |k| raise "#{k} is a required argument" }
+    app_version        = options.delete(:app_version)        { nil }
+    viewed_at          = options.delete(:viewed_at)          { |k| raise "#{k} is a required argument" }
+    displayer_app_id   = options.delete(:displayer_app_id)   { nil }
+    exp                = options.delete(:exp)                { nil }
+    country_code       = options.delete(:country_code)       { nil }
+    display_multiplier = options.delete(:display_multiplier) { 1 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     ad_url = "#{API_URL}/fullscreen_ad"
     if item_type == 'TestOffer'
       ad_url += "/test_offer"
     end
-    ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}&country_code=#{country_code}"
+    ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}&country_code=#{country_code}&display_multiplier=#{display_multiplier}"
     ad_url += "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
     ad_url += "&exp=#{exp}" if exp.present?
     ad_url
@@ -606,7 +644,7 @@ class Offer < ActiveRecord::Base
 
   def expected_device_types
     if item_type == 'App' || item_type == 'ActionOffer' || item_type == 'RatingOffer'
-      item.is_android? ? ANDROID_DEVICES : APPLE_DEVICES
+      item.get_offer_device_types
     else
       ALL_DEVICES
     end
@@ -615,13 +653,11 @@ class Offer < ActiveRecord::Base
   def get_publisher_app_whitelist
     Set.new(publisher_app_whitelist.split(';'))
   end
-  
+
   def get_platform
-    d_types = get_device_types
-    if d_types.length > 1 && d_types.include?('android')
-      'All'
-    elsif d_types.include?('android')
-      'Android'
+    types = get_device_types
+    if types.any?{|type| type == 'android' || type == 'windows'}
+      types.length == 1 ? App::PLATFORMS[types.first] :  'All'
     else
       'iOS'
     end
@@ -629,14 +665,7 @@ class Offer < ActiveRecord::Base
 
   def wrong_platform?
     if ['App', 'ActionOffer'].include?(item_type)
-      case get_platform
-      when 'Android'
-        item.platform == 'iphone'
-      when 'iOS'
-        item.platform == 'android'
-      else
-        true # should never be "All" for apps
-      end
+      App::PLATFORMS.index(get_platform) != item.platform
     end
   end
 
@@ -688,7 +717,7 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
-  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_installs)
+  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs)
     return device_platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device) ||
         already_complete?(publisher_app, device, app_version) ||
@@ -698,7 +727,7 @@ class Offer < ActiveRecord::Base
         jailbroken_reject?(device) ||
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
-        hide_app_installs_reject?(currency, hide_app_installs) ||
+        hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs) ||
         should_reject_from_app_or_currency?(publisher_app, currency)
   end
   
@@ -725,15 +754,18 @@ class Offer < ActiveRecord::Base
     return min_bid_override if min_bid_override
     
     if item_type == 'App'
-      if featured?
+      if featured? && rewarded?
         is_paid? ? price : 65
+      elsif !rewarded?
+        50
       else
         is_paid? ? (price * 0.50).round : 35
         # uncomment for tapjoy premier & change show.html line 92-ish
         # is_paid? ? (price * 0.65).round : 50
       end
     elsif item_type == 'ActionOffer'
-      get_platform == 'Android' ? 25 : 35
+      platform = App::PLATFORMS.index(get_platform)
+      platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
     else
       0
     end
@@ -747,6 +779,16 @@ class Offer < ActiveRecord::Base
     featured_offer.tapjoy_enabled = false
     featured_offer.save!
     featured_offer
+  end
+  
+  def create_non_rewarded_clone
+    non_rewarded_offer = self.clone
+    non_rewarded_offer.rewarded = false
+    non_rewarded_offer.name_suffix = "non-rewarded"
+    non_rewarded_offer.bid = non_rewarded_offer.min_bid
+    non_rewarded_offer.tapjoy_enabled = false
+    non_rewarded_offer.save!
+    non_rewarded_offer
   end
   
   def budget_may_not_be_met?
@@ -834,6 +876,10 @@ class Offer < ActiveRecord::Base
   def set_reseller_from_partner
     self.reseller_id = partner.reseller_id if partner_id?
   end
+
+  def unlogged_attributes
+    [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
+  end
   
 private
   
@@ -844,18 +890,17 @@ private
         (currency.only_free_offers? && is_paid?) ||
         (self_promote_only? && partner_id != publisher_app.partner_id)
   end
-  
+
   def device_platform_mismatch?(publisher_app, device_type_param)
     device_type = normalize_device_type(device_type_param)
-    
-    if device_type.nil?
-      if publisher_app.platform == 'android'
-        device_type = 'android'
+    device_type ||=
+      case publisher_app.platform
+      when 'android', 'windows'
+        publisher_app.platform
       else
-        device_type = 'itouch'
+        'itouch'
       end
-    end
-    
+
     return !get_device_types.include?(device_type)
   end
   
@@ -903,6 +948,11 @@ private
       return device.has_app(app_id_for_device) || device.has_app('a3980ac5-7d33-43bc-8ba1-e4598c7ed279')
     end
     
+    if app_id_for_device == '7f44c068-6fa1-482c-b2d2-770edcf8f83d' || app_id_for_device == '192e6d0b-cc2f-44c2-957c-9481e3c223a0'
+      # there are 2 groupon apps
+      return device.has_app('7f44c068-6fa1-482c-b2d2-770edcf8f83d') || device.has_app('192e6d0b-cc2f-44c2-957c-9481e3c223a0')
+    end
+    
     return device.has_app(app_id_for_device)
   end
   
@@ -948,6 +998,10 @@ private
       currency.minimum_featured_bid
     when DISPLAY_OFFER_TYPE
       currency.minimum_display_bid
+    when NON_REWARDED_FEATURED_OFFER_TYPE
+      currency.minimum_featured_bid
+    when NON_REWARDED_DISPLAY_OFFER_TYPE
+      currency.minimum_display_bid
     end
     min_bid.present? && bid < min_bid
   end
@@ -964,8 +1018,8 @@ private
     item_type == "ActionOffer" && third_party_data.present? && !device.has_app(third_party_data)
   end
   
-  def hide_app_installs_reject?(currency, hide_app_installs)
-    hide_app_installs && item_type != 'GenericOffer'
+  def hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs)
+    hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer'
   end
   
   def normalize_device_type(device_type_param)
@@ -977,6 +1031,8 @@ private
       'ipad'
     elsif device_type_param =~ /android/i
       'android'
+    elsif device_type_param =~ /windows/i
+      'windows'
     else
       nil
     end
@@ -1001,11 +1057,16 @@ private
     calculate_ranking_fields
     calculate_rank_score(weights.merge({ :random => 0 }))
     
-    if featured?
+    if featured? && rewarded?
       @ranked_offers ||= Offer.get_cached_offers({ :type => FEATURED_OFFER_TYPE }).reject { |offer| offer.rank_boost > 0 || offer.id == self.id }
-    else
+    elsif featured && !rewarded?
+      @ranked_offers ||= Offer.get_cached_offers({ :type => NON_REWARDED_FEATURED_OFFER_TYPE }).reject { |offer| offer.rank_boost > 0 || offer.id == self.id }
+    elsif !featured && rewarded?
       self.rank_score += weights[:random] * 0.5
       @ranked_offers ||= Offer.get_cached_offers({ :type => DEFAULT_OFFER_TYPE }).reject { |offer| offer.rank_boost > 0 || offer.id == self.id }
+    else
+      self.rank_score += weights[:random] * 0.5
+      @ranked_offers ||= Offer.get_cached_offers({ :type => NON_REWARDED_DISPLAY_OFFER_TYPE }).reject { |offer| offer.rank_boost > 0 || offer.id == self.id }
     end
     
     worse_offers = @ranked_offers.select { |offer| offer.rank_score < rank_score }

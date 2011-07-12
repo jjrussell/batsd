@@ -35,7 +35,7 @@ class Job::QueuePartnerNotificationsController < Job::SqsReaderController
         account_manager_email = account_manager ? account_manager.email : nil
         premier = partner.is_premier?
         premier_discount = partner.premier_discount
-        TapjoyMailer.deliver_campaign_status(recipients, low_balance, account_balance, account_manager_email, offers_not_meeting_budget, offers_needing_higher_bids, premier, premier_discount)
+        TapjoyMailer.deliver_campaign_status(recipients, partner, low_balance, account_balance, account_manager_email, offers_not_meeting_budget, offers_needing_higher_bids, premier, premier_discount)
       end
     end
   end

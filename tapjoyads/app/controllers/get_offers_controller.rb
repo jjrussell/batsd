@@ -26,7 +26,7 @@ class GetOffersController < ApplicationController
     
     set_offer_list(:is_server_to_server => false)
 
-    if @currency.hide_app_installs_for_version?(params[:app_version]) || DEVICES_FOR_REDESIGN.include?(params[:udid])
+    if @currency.hide_rewarded_app_installs_for_version?(params[:app_version]) || DEVICES_FOR_REDESIGN.include?(params[:udid])
       render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
     end
   end
@@ -75,18 +75,6 @@ class GetOffersController < ApplicationController
   end
   
 private
-  def get_click_url(offer)
-    offer.get_click_url(
-        :publisher_app     => @publisher_app,
-        :publisher_user_id => params[:publisher_user_id],
-        :udid              => params[:udid],
-        :currency_id       => @currency.id,
-        :source            => params[:source],
-        :app_version       => params[:app_version],
-        :viewed_at         => @now,
-        :exp               => params[:exp],
-        :country_code      => @geoip_data[:country])
-  end
 
   def fix_tapulous
     # special code for Tapulous not sending udid

@@ -1,4 +1,7 @@
 module AuthenticationHelper
+
+  private
+  
   USERS = {
     'internal' => 'r3sU0oQav2Nl'
   }

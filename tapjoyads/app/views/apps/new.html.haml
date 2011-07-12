@@ -1,4 +1,8 @@
 - @page_title = 'Add App'
+- platforms = App::ALLOWED_PLATFORMS
+- if permitted_to?(:edit, :statz)
+  - App::BETA_PLATFORMS.each do |key, value|
+    - platforms[key] = value + " (Admin only)"
 
 %h3 Add App
 
@@ -15,7 +19,7 @@
         %th
           Platform
           #help_platform.help ?
-        %td= f.select :platform, App::PLATFORMS.invert, { :selected => @app.platform }, { :id => 'app_platform' }
+        %td= f.select :platform, platforms.invert.to_a.sort_by(&:last), { :selected => @app.platform }, { :id => 'app_platform' }
       - if permitted_to?(:edit, :statz)
         = render :partial => 'select_country'
       %tr
@@ -26,7 +30,7 @@
           = f.text_field :name
           = error_message_on @app, :name
           #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
-        %td= button_to_function "Search #{@app.store_name}", 'search()', :class => 'search hidden', :id => 'search_button'
+        %td= button_to "Search #{@app.store_name}", '#', :class => 'search hidden', :id => 'search_button'
       %tr.app_data.hidden
         %th Store ID
         %td
@@ -53,7 +57,6 @@
     Platform on which this app runs.
   #help_name_content{:name => 'Name'}
     App name
-
 
 - content_for :page_head, stylesheet_link_tag('apps')
 - content_for :included_javascripts, javascript_include_tag('tapjoy/apps')

@@ -78,6 +78,7 @@ class StatzController < WebsiteController
   def last_run_times
     targeted_devices = @offer.get_device_types
     targeted_platforms = []
+    targeted_platforms << 'windows' if Offer::WINDOWS_DEVICES.any? { |device_type| targeted_devices.include?(device_type) }
     targeted_platforms << 'android' if Offer::ANDROID_DEVICES.any? { |device_type| targeted_devices.include?(device_type) }
     targeted_platforms << 'iphone'  if Offer::APPLE_DEVICES.any?   { |device_type| targeted_devices.include?(device_type) }
 

@@ -10,6 +10,11 @@ ActionController::Routing::Routes.draw do |map|
     
     m.resources :registrations, :controller => 'games/registrations', :only => [ :new, :create ]
     m.register 'register', :controller => 'games/registrations', :action => :new
+    
+    m.resources :confirmations, :controller => 'games/confirmations', :only => [ :create ]
+    m.confirm 'confirm', :controller => 'games/confirmations', :action => :create
+    
+    m.resources :password_resets, :controller => 'games/password_resets', :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
   end
   
   break if MACHINE_TYPE == 'games'
@@ -32,22 +37,17 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post } do |app|
-    app.resources :offers, :only => [ :show, :update ] , :member => { :percentile => :post, :toggle => :post }, :controller => 'apps/offers' do |offer|
+    app.resources :offers, :only => [ :new, :create, :edit, :update ] , :member => { :percentile => :post, :toggle => :post }, :controller => 'apps/offers' do |offer|
       offer.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :controller => 'apps/offers/offer_events', :as => :scheduling
     end
     app.resources :currencies, :only => [ :show, :update, :new, :create ],
       :member => { :reset_test_device => :post }, :controller => 'apps/currencies'
     app.resources :virtual_goods, :as => 'virtual-goods', :only => [ :show, :update, :new, :create, :index ],
       :collection => { :reorder => :post }, :controller => 'apps/virtual_goods'
-    app.resources :featured_offers, :only => [ :new, :create, :edit, :update ], :controller => 'apps/featured_offers'
     app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
   end
   map.resources :enable_offer_requests, :only => [ :create ]
-  map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }, :collection => { :api => :get, :regenerate_api_key => :post }
-  map.resources :analytics, :only => [ :index ]
-  map.create_apsalar_account_analytics 'analytics/create-apsalar-account', :controller => :analytics, :action => :create_apsalar_account
-  map.share_data_analytics 'analytics/share-data', :controller => :analytics, :action => :share_data
-  map.agree_to_share_data_analytics 'analytics/agree-to-share-data', :controller => :analytics, :action => :agree_to_share_data
+  map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get, :aggregate => :get }, :collection => { :api => :get, :regenerate_api_key => :post }
   map.resources :billing, :only => [ :index ],
     :collection => { :create_order => :post, :create_transfer => :post, :update_payout_info => :post, :forget_credit_card => :post }
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
@@ -62,7 +62,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
     :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post, :reporting => :get, :delink_user => :post },
-    :collection => { :managed_by => :get } do |partner|
+    :collection => { :managed_by => :get, :agency_api => :get } do |partner|
     partner.resources :offer_discounts, :only => [ :index, :new, :create ], :member => { :deactivate => :post }, :controller => 'partners/offer_discounts'
     partner.resources :payout_infos, :only => [ :index, :update ]
   end
@@ -96,6 +96,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :preview_experiments, :only => [ :index, :show ]
     tools.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
     tools.resources :external_publishers, :only => [ :index, :update ]
+    tools.resources :jobs, :except => [ :show ]
     tools.resources :earnings_adjustments, :only => [ :new, :create ]
   end
   
@@ -126,7 +127,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :sdk, :only => [ :index, :show ]
   map.namespace :agency_api do |agency|
     agency.resources :apps, :only => [ :index, :show, :create, :update ]
-    agency.resources :partners, :only => :create, :collection => { :link => :post }
+    agency.resources :partners, :only => [ :create, :update ], :collection => { :link => :post }
     agency.resources :currencies, :only => [ :index, :show, :create, :update ]
   end
   

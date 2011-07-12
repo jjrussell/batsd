@@ -19,7 +19,7 @@
   .message
     = @test_offer.name
     %br
-    = link_to("Click to receive #{@currency.get_visual_reward_amount(@test_offer)} #{@currency.name}", get_click_url(@test_offer))
+    = link_to("Click to receive #{@currency.get_visual_reward_amount(@test_offer, params[:display_multiplier])} #{@currency.name}", get_click_url(@test_offer))
 
 #offers
   - @offer_list.each do |offer|
@@ -31,7 +31,7 @@
             %span.offername #{offer.name} (#{visual_cost(offer)})
             %br
             - amount_and_currency = capture_haml do
-              %span.amount= t('text.offerwall.amount_and_currency', :currency => @currency.name, :amount => @currency.get_visual_reward_amount(offer))
+              %span.amount= t('text.offerwall.amount_and_currency', :currency => @currency.name, :amount => @currency.get_visual_reward_amount(offer, params[:display_multiplier]))
             = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount_and_currency => amount_and_currency) : t('text.offerwall.earn_currency', :amount_and_currency => amount_and_currency)
 
 - if @start_index > 0 || @more_data_available > 0
@@ -41,7 +41,7 @@
     .clear
 
 #privacy
-  = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/privacy')
+  = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/site/privacy_mobile')
   ·
   = link_to_missing_currency
 
@@ -54,6 +54,15 @@
 %img.hidden{ :src => '/images/load-circle.gif' }
 
 - content_for :page_javascript do
+  - if params[:device_type].to_s.match(/windows/i)
+    :plain
+      window.onfocus = reload;
+      function reload(){}
+
+      var images = document.getElementsByTagName('img');
+      for (var i = 0, image; image = images[i]; i++) {
+        loadImage(image);
+      }
   :plain
     window.onload = init;
     window.onscroll = scroll;
@@ -64,7 +73,7 @@
     }
 
     function scroll() {
-      images = document.getElementsByTagName('img');
+      var images = document.getElementsByTagName('img');
       for (var i = 0, image; image = images[i]; i++) {
         if (window.scrollY + window.innerHeight + 480 > image.offsetTop) {
           loadImage(image);
@@ -77,7 +86,6 @@
         image.src = image.getAttribute('s');
       }
     }
-  
 - content_for :page_styles do
   :plain
     * {
@@ -113,6 +121,10 @@
       border: 1px solid #d5d5d5;
       -moz-border-radius: 7px;
       -webkit-border-radius: 7px;
+    }
+    
+    #instructions {
+      font-size: 110%;
     }
     
     #offers {
