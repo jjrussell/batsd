@@ -56,7 +56,7 @@ private
       icon_url    = (doc/".doc-banner-icon"/"img").attr("src")
       publisher   = (doc/".doc-banner-title-container"/"a.doc-header-link").inner_html
 
-      metadata = doc/".doc-metadata"/".doc-metadata-list"
+      metadata = doc/".doc-metadata"
       keys = (metadata/:dt).map do |dt|
         dt.inner_html.underscore.gsub(':', '').gsub(' ', '_')
       end
@@ -165,7 +165,7 @@ private
         price       = price_span.inner_html.gsub(/[^\d\.\-]/,'').to_f
         title       = (details/"a.title").inner_html
         publisher   = (details/"p"/"span.attribution"/"a").inner_html
-        description = (details/"p.snippet-content").inner_html
+        description = (item/:div/'.description').inner_html
         {
           :item_id      => item_id,
           :title        => title,
