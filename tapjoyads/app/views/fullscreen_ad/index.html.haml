@@ -15,7 +15,7 @@
   = link_to('Skip', 'dismiss', :class => 'skip')
   = link_to("#{@offer.item_type == 'App' ? 'Download' : 'Earn now'}", get_click_url(@offer), :class => 'download')
   .showOffers
-    = link_to('Show more apps', 'showOffers')
+    = link_to(@currency.hide_rewarded_app_installs? ? '' : 'Show more apps', 'showOffers')
   .adsby
     Ads by
     %img{ :src => "#{CLOUDFRONT_URL}/images/tapjoylogo-small.png", :alt => "Tapjoy"}
