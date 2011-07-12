@@ -48,6 +48,11 @@ module StatzHelper
           ["true", "featured"],
           ["false", "nonfeatured"],
         ]
+      when :rewarded
+        [
+          ["true", "rewarded"],
+          ["false", "nonrewarded"],
+        ]
       when :offer_type
         %w(App ActionOffer GenericOffer)
       end

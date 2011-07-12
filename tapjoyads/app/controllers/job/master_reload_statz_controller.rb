@@ -47,7 +47,8 @@ private
       this_apps_stats['conversions'] = number_with_delimiter(conversions)
       this_apps_stats['connects'] = number_with_delimiter(appstats['logins'].sum)
       region = offer.get_device_types.include?('android') ? 'english' : 'united_states'
-      this_apps_stats['overall_store_rank'] = (Array(appstats['ranks']["overall.free.#{region}"]).find_all{|r| r != nil}.last || '-')
+      price = offer.is_paid? ? 'paid' : 'free'
+      this_apps_stats['overall_store_rank'] = (Array(appstats['ranks']["overall.#{price}.#{region}"]).find_all{|r| r != nil}.last || '-')
       this_apps_stats['price'] = number_to_currency(offer.price / 100.0)
       this_apps_stats['payment'] = number_to_currency(offer.payment / 100.0)
       this_apps_stats['balance'] = number_to_currency(offer.partner.balance / 100.0)
