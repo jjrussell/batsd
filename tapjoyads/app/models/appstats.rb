@@ -240,7 +240,7 @@ class Appstats
 
   def graph_data(options = {})
     offer = options.delete(:offer)
-    admin = options.delete(:admin)
+    admin = options.delete(:admin) { false }
 
     if offer && offer.item_type == 'App'
       conversion_name = 'Installs'
