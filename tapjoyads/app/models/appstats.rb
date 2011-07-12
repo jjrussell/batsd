@@ -643,7 +643,7 @@ private
   end
 
   def get_virtual_good_partitions(offer)
-    return {} if @stat_prefix != 'app'
+    return {} unless offer
     return @virtual_good_partitions if @virtual_good_partitions.present?
     @virtual_good_partitions = {}
 
