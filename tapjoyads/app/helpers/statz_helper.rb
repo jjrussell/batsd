@@ -16,8 +16,21 @@ module StatzHelper
         %w(Free Paid)
       when :platform
         %w(Android iOS All)
-      when :check_zero
-        %w(0 >0)
+      when :conversions
+        [
+          [ "0", "zero_conversions"],
+          [ ">0", "nonzero_conversions"],
+        ]
+      when :connects
+        [
+          [ "0", "zero_connects"],
+          [ ">0", "nonzero_connects"],
+        ]
+      when :published_offers
+        [
+          [ "0", "zero_published"],
+          [ ">0", "nonzero_published"],
+        ]
       when :balance
         [
           [">$10k","10000"],
@@ -25,10 +38,16 @@ module StatzHelper
           [">$0", "0"],
           ["\342\211\244$0","negative"],
         ]
-      when :money
-        %w($0.00 >$0)
+      when :revenue
+        [
+          ["$0.00", "zero_revenue"],
+          [">$0", "nonzero_revenue"],
+        ]
       when :featured
-        %w(true false)
+        [
+          ["true", "featured"],
+          ["false", "nonfeatured"],
+        ]
       when :offer_type
         %w(App ActionOffer GenericOffer)
       end
