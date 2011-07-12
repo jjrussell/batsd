@@ -38,9 +38,6 @@ private
   def setup
     return unless verify_params([ :app_id, :udid ])
     
-    # TO REMOVE. Once Doodle Fit fixes their shit
-    return if params[:app_id] == '468a578a-b388-4cd0-8c83-acb8b4f05d86'
-    
     now = Time.zone.now
     geoip_data = get_geoip_data
     geoip_data[:country] = params[:country_code] if params[:country_code].present?
