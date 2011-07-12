@@ -21,7 +21,8 @@ a, a:visited {
   width: 100%;
   opacity:0.15;
 }
-#jqt.tan {
+#jqt .tan {
+  background: #434343 url('../../images/games/bg_tan.png');
   color: #605846;
 }
 .web, .ipad, .android {
@@ -113,14 +114,17 @@ a, a:visited {
 .web .page, .ipad .page, .android .page {
   background: transparent url('../../images/games/header_bg_web.png') repeat-x;
 }
-.web #jqt.tan .page, .ipad #jqt.tan .page, .android #jqt.tan .page, #jqt.tan .page {
+.web #jqt .tan .page, .ipad #jqt .tan .page, .android #jqt .tan .page, #jqt .tan .page {
   background: transparent url('../../images/games/header_bg_web_tan.png') repeat-x; 
 }
 .iphone .page, .ipod .page, .android-phone .page {
   background: transparent url('../../images/games/header_bg_mobile.png') repeat-x;  
 }
-.ipod #jqt.tan .page, .iphone #jqt.tan .page, .android-phone #jqt.tan .page {
+.ipod #jqt .tan .page, .iphone #jqt .tan .page, .android-phone #jqt .tan .page {
   background: transparent url('../../images/games/header_bg_mobile_tan.png') repeat-x;
+}       
+.ipod #jqt .tan .page.no_top_nav_bar, .iphone #jqt .tan .page.no_top_nav_bar, .android-phone #jqt .tan .page.no_top_nav_bar {
+  background: transparent url('../../images/games/header_bg_mobile_tan.png') 0 -28px repeat-x;
 }
 .web .logo, .ipad .logo, .android .logo {
   background: transparent url('../../images/games/logo_bg_web.png') no-repeat;
@@ -169,7 +173,7 @@ a, a:visited {
 }
 .iphone .slide_nav div, .ipod .slide_nav div {
   border: 1px solid #CEB896;
-  padding: 6px 6px;
+  padding: 4px 4px 6px;
   -moz-border-radius: 5px;
   -webkit-border-radius:5px;  
 }
@@ -184,32 +188,39 @@ a, a:visited {
 }
 
 .container {
-  padding-bottom: 20px;
 }
-/* Offer */ 
 .content {
-  margin: 0 auto;
-  max-width: 1000px;
-  padding: 10px;
-  position: relative;
-  top: 36px;
+  min-height: 400px;
 }
-.web .content {
+
+
+/* Offer */ 
+
+.web .content, .ipod .content {
   margin: 0 auto;
   max-width: 1000px;
   padding: 10px 40px;
   position: relative;
-  top: 36px;
+  top: 18px;
 } 
 .ipod .content, .iphone .content, #android-phone .content {
   margin: 0 auto;
   padding: 2px;
   position: relative;
-  top: 18px;
+  top: 9px;
 } 
 .ipod .content, .iphone .content, .android-phone .content {
   padding: 6px;
 }
+.ipod .tan .content, .iphone .tan .content, #android-phone .tan .content {
+  top: 0px;
+}
+.earn_paper {
+  background: transparent url('../../images/games/earn_paper_mobile.png') no-repeat;
+  height: 104px;
+  margin: 0 auto;
+  width: 308px;
+}    
 .offer_item {
   border-bottom: 1px solid #5B5B5B;
   min-height: 60px;

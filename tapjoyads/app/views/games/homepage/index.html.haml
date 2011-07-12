@@ -1,7 +1,17 @@
-
 #jqt{ :class => '' }
+ 
 
-  #my_apps{ :class => 'current' }
+  #login{ :class => 'current tan' }  
+    %div{ :class => 'container' }
+      %div{ :class => 'scroller' }
+        %div{ :class => 'page no_top_nav_bar' }
+          %div{ :class => '' }
+            .logo
+            .content
+              .earn_paper
+
+
+  #my_apps{ :class => '' }
     %div{ :class => 'top_nav_bar' }
       .nav_content
         .right
@@ -91,11 +101,12 @@
             .logo
               %div{ :class => 'slide_nav' }
                 %div{ :class => 'slider_right right' }
-                  <a href='#get_more'><span class='title'>Get More!<span></a>
-                %div{ :class => 'active slide_left left' }
-                  <span class='title'>My Apps</span>
-            .content
-            
+                  <a href='#get_more'><span class='title small'>More Games!<span></a>
+                %div{ :class => 'slide_left left' }
+                  <a class='slideright' href='#my_apps'><span class='title'>My Apps</span></a>
+            .content  
+
+
   #get_more{ :class => '' }
     %div{ :class => 'top_nav_bar' }
       .nav_content

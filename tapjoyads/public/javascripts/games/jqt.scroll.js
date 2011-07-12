@@ -437,7 +437,7 @@
              *    @var Object
              */
             variables : {
-                toolbarHeight: 46
+                toolbarHeight: 44
             },
             
             /**
@@ -464,7 +464,6 @@
                     "padding-bottom":"15px",
                     "-webkit-transition-property": "-webkit-transform",
                     "-webkit-transition-timing-function": "cubic-bezier(0,0,.25,1)",
-                    //overridden on element
                     "-webkit-transform": "translate3d(0,0,0)",
                     "-webkit-transition-duration": "0s",
                 },
@@ -486,8 +485,6 @@
                     "pointer-events": "none",
                     opacity: 0,
                     background:"rgba(0,0,0,.5)",
-                    //"-webkit-border-image": "-webkit-gradient(radial, 50% 50%, 2, 50% 50%, 4, from(rgba(0,0,0,.5)), to(rgba(0,0,0,.5))) 2",
-                    //"-webkit-box-shadow": "0 0 3px rgba(255,255,255,.5)",
                     "-webkit-box-shadow": "0 0 2px rgba(255,255,255,.5)",
                     position: "absolute",
                     "z-index": 10,
