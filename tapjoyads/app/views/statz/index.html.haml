@@ -66,13 +66,14 @@
       %td.filter= select_tag('connects_filter', options_for_select(filter_options(:connects)))
       %td.filter= select_tag('rank_filter', options_for_select(filter_options(:rank)))
       %td.filter= select_tag('price_filter', options_for_select(filter_options(:free)))
-      %td.filter
+      %td.filter &nbsp;
       %td.filter= select_tag('balance_filter', options_for_select(filter_options(:balance)))
       %td.filter= select_tag('platform_filter', options_for_select(filter_options(:platform)))
       %td.filter &nbsp;
       %td.filter= select_tag('published_offers_filter', options_for_select(filter_options(:published_offers)))
       %td.filter= select_tag('revenue_filter', options_for_select(filter_options(:revenue)))
       %td.filter= select_tag('featured_filter', options_for_select(filter_options(:featured)))
+      %td.filter= select_tag('featured_filter', options_for_select(filter_options(:rewarded)))
       %td.filter= select_tag('offer_type_filter', options_for_select(filter_options(:offer_type)))
   %tbody#apps_tbody
     - @cached_stats.each do |offer_id, stats|
@@ -86,6 +87,7 @@
         tr_classes << (stats['published_offers']=='0'    ? 'zero_published'   : 'nonzero_published')
         tr_classes << (stats['offers_revenue']=='$0.00'  ? 'zero_revenue'     : 'nonzero_revenue')
         tr_classes << (stats['featured']                 ? 'featured'         : 'nonfeatured')
+        tr_classes << (stats['rewarded']                 ? 'rewarded'         : 'nonrewarded')
         tr_classes << stats['offer_type'].to_s.downcase
         value = stats['balance'].gsub(/[\$,]/,'')
       %tr{ :class => tr_classes.compact.join(' '), :value => value }
@@ -185,6 +187,7 @@
           String( $('#published_offers_filter').val() ).toLowerCase(),
           String( $('#revenue_filter').val() ).toLowerCase(),
           String( $('#featured_filter').val() ).toLowerCase(),
+          String( $('#rewarded_filter').val() ).toLowerCase(),
           String( $('#platform_filter').val() ).toLowerCase(),
           String( $('#offer_type_filter').val() ).toLowerCase(),
         ]
