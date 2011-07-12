@@ -113,7 +113,7 @@ private
     
     message = reward.serialize(:attributes_only => true)
     
-    Sqs.send_message(QueueNames::SEND_CURRENCY, message) unless currency.callback_url == Currency::NO_CALLBACK_URL
+    Sqs.send_message(QueueNames::SEND_CURRENCY, message) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
     Sqs.send_message(QueueNames::CREATE_CONVERSIONS, message)
   end
 end

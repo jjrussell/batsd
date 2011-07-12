@@ -94,10 +94,8 @@ module WebsiteHelper
   def url_to_offer_item(offer)
     if offer.item.is_a? ActionOffer
       edit_app_action_offer_url(offer.item.app, offer.item)
-    elsif offer.featured?
-      edit_app_featured_offer_url(offer.item, offer)
     else
-      app_offer_url(offer.item, offer)
+      edit_app_offer_url(offer.item, offer)
     end
   end
 

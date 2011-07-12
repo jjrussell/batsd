@@ -56,6 +56,7 @@
       %th Published offers
       %th Offers revenue
       %th Featured
+      %th Rewarded
       %th Offer type
     %tr
       %td.filter#filters_title{:colspan => 2}
@@ -102,6 +103,7 @@
         %td= stats['published_offers']
         %td= stats['offers_revenue']
         %td= stats['featured']
+        %td= stats['rewarded']
         %td= stats['offer_type']
 
 - content_for :page_javascript do

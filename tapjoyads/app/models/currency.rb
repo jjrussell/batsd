@@ -16,7 +16,7 @@ class Currency < ActiveRecord::Base
   validates_numericality_of :spend_share, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :rev_share_override, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1, :allow_nil => true
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid, :allow_nil => true, :only_integer => true
-  validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :banner_advertiser, :hide_app_installs, :tapjoy_enabled, :in => [ true, false ]
+  validates_inclusion_of :has_virtual_goods, :only_free_offers, :send_offer_data, :banner_advertiser, :hide_rewarded_app_installs, :tapjoy_enabled, :in => [ true, false ]
   validates_each :callback_url, :if => :callback_url_changed? do |record, attribute, value|
     unless SPECIAL_CALLBACK_URLS.include?(value)
       if value !~ /^https?:\/\//
@@ -83,6 +83,8 @@ class Currency < ActiveRecord::Base
   end
   
   def get_reward_amount(offer)
+    return 0 unless offer.rewarded?
+    
     if offer.reward_value.present?
       reward_value = offer.reward_value
     elsif offer.partner_id == partner_id
@@ -172,8 +174,8 @@ class Currency < ActiveRecord::Base
     true
   end
   
-  def hide_app_installs_for_version?(app_version)
-    hide_app_installs? && minimum_hide_app_installs_version.blank? || app_version.present? && hide_app_installs? && app_version.version_greater_than_or_equal_to?(minimum_hide_app_installs_version)
+  def hide_rewarded_app_installs_for_version?(app_version)
+    hide_rewarded_app_installs? && minimum_hide_rewarded_app_installs_version.blank? || app_version.present? && hide_rewarded_app_installs? && app_version.version_greater_than_or_equal_to?(minimum_hide_rewarded_app_installs_version)
   end
   
   def cache_offers
@@ -187,6 +189,12 @@ class Currency < ActiveRecord::Base
       
     offer_list = Offer.get_unsorted_offers('display').reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
     Offer.cache_offer_list(offer_list, weights, Offer::DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default], self)
+    
+    offer_list = Offer.get_unsorted_offers('non_rewarded_display').reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
+    Offer.cache_offer_list(offer_list, weights, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default], self)
+    
+    offer_list = Offer.get_unsorted_offers('non_rewarded_featured').reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
+    Offer.cache_offer_list(offer_list, weights, Offer::NON_REWARDED_FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default], self)
   end
   
   def get_cached_offers(options = {}, &block)
