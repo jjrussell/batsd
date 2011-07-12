@@ -38,9 +38,6 @@ private
   def setup
     return unless verify_params([ :app_id, :udid ])
     
-    # TO REMOVE. Once Doodle Fit fixes their shit
-    return if params[:app_id] == '468a578a-b388-4cd0-8c83-acb8b4f05d86'
-    
     now = Time.zone.now
     geoip_data = get_geoip_data
     geoip_data[:country] = params[:country_code] if params[:country_code].present?
@@ -152,7 +149,12 @@ private
       img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
       img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
       
-      text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
+      if currency.hide_rewarded_app_installs?
+        text = "Try #{offer.name} today"
+      else
+        text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
+      end
+      
       font = Rails.env == 'production' ? 'Helvetica' : ''
       image_label = Magick::Image.read("caption:#{text}") do
         self.size = text_area_size

@@ -56,26 +56,41 @@
       %th Published offers
       %th Offers revenue
       %th Featured
+      %th Rewarded
       %th Offer type
     %tr
       %td.filter#filters_title{:colspan => 2}
         %b Filters
         (#{link_to('reset all', '#', :id => 'reset_filters')})
-      %td.filter= select_tag('conversions_filter', options_for_select(filter_options(:check_zero)))
-      %td.filter= select_tag('connects_filter', options_for_select(filter_options(:check_zero)))
+      %td.filter= select_tag('conversions_filter', options_for_select(filter_options(:conversions)))
+      %td.filter= select_tag('connects_filter', options_for_select(filter_options(:connects)))
       %td.filter= select_tag('rank_filter', options_for_select(filter_options(:rank)))
       %td.filter= select_tag('price_filter', options_for_select(filter_options(:free)))
-      %td.filter
+      %td.filter &nbsp;
       %td.filter= select_tag('balance_filter', options_for_select(filter_options(:balance)))
       %td.filter= select_tag('platform_filter', options_for_select(filter_options(:platform)))
       %td.filter &nbsp;
-      %td.filter= select_tag('published_offers_filter', options_for_select(filter_options(:check_zero)))
-      %td.filter= select_tag('revenue_filter', options_for_select(filter_options(:money)))
+      %td.filter= select_tag('published_offers_filter', options_for_select(filter_options(:published_offers)))
+      %td.filter= select_tag('revenue_filter', options_for_select(filter_options(:revenue)))
       %td.filter= select_tag('featured_filter', options_for_select(filter_options(:featured)))
+      %td.filter= select_tag('featured_filter', options_for_select(filter_options(:rewarded)))
       %td.filter= select_tag('offer_type_filter', options_for_select(filter_options(:offer_type)))
   %tbody#apps_tbody
     - @cached_stats.each do |offer_id, stats|
-      %tr
+      :ruby
+        tr_classes = []
+        tr_classes << (stats['conversions']=='0'         ? 'zero_conversions' : 'nonzero_conversions')
+        tr_classes << (stats['connects']=='0'            ? 'zero_connects'    : 'nonzero_connects')
+        tr_classes << (stats['overall_store_rank']=='-'  ? 'unranked'         : 'ranked')
+        tr_classes << (stats['price']=='$0.00'           ? 'free'             : 'paid')
+        tr_classes << stats['platform'].to_s.downcase
+        tr_classes << (stats['published_offers']=='0'    ? 'zero_published'   : 'nonzero_published')
+        tr_classes << (stats['offers_revenue']=='$0.00'  ? 'zero_revenue'     : 'nonzero_revenue')
+        tr_classes << (stats['featured']                 ? 'featured'         : 'nonfeatured')
+        tr_classes << (stats['rewarded']                 ? 'rewarded'         : 'nonrewarded')
+        tr_classes << stats['offer_type'].to_s.downcase
+        value = stats['balance'].gsub(/[\$,]/,'')
+      %tr{ :class => tr_classes.compact.join(' '), :value => value }
         %td
           %img.icon.hidden{ :s => stats['icon_url'] }
         %td= link_to(stats['offer_name'], statz_path(offer_id))
@@ -84,12 +99,13 @@
         %td= stats['overall_store_rank']
         %td= stats['price']
         %td= stats['payment']
-        %td{ :value => stats['balance'].gsub(/[\$,]/,'')}= stats['balance']
+        %td= stats['balance']
         %td= stats['platform']
         %td= stats['conversion_rate']
         %td= stats['published_offers']
         %td= stats['offers_revenue']
         %td= stats['featured']
+        %td= stats['rewarded']
         %td= stats['offer_type']
 
 - content_for :page_javascript do
@@ -155,108 +171,62 @@
         return false;
       });
 
-      // helper functions
-      var showAll = function(){
-        $('tr').show();
-      };
-      var checkEqual = function(val, col, checkInequality){
-        if (val) {
-          $('td:nth-child('+col+'):not(.filter)').each(function(i,td){
-            if (checkInequality) {
-              if($(td).text() == val){
-                $(td).parent().hide();
-              }
-            } else {
-              if($(td).text() != val){
-                $(td).parent().hide();
-              }
-            }
-          });
-        }
-      };
-      var checkZero = function(val, col) {
-        if ((val || val == 0) && val != '') {
-          checkEqual('0', col, (val == '>0'));
-        } else {
-        }
-      };
-
       $('#reset_filters').click(function(){
         $('.filter select').each(function(i,select){
           $(select).val('');
         });
-        showAll();
+        $('tr').show();
         return false;
       });
       $('.filter select').change(function(){
-        showAll();
-
-        // conversion
-        var conversions = $('select#conversions_filter').val();
-        checkZero(conversions, 3);
-
-        // connects
-        var connects = $('select#connects_filter').val();
-        checkZero(connects, 4);
-
-        // rank
-        var rank = $('select#rank_filter').val();
-        if (rank) {
-          checkEqual('-', 5, (rank == 'ranked'));
+        var selectValues = [
+          String( $('#conversions_filter').val() ).toLowerCase(),
+          String( $('#connects_filter').val() ).toLowerCase(),
+          String( $('#rank_filter').val() ).toLowerCase(),
+          String( $('#price_filter').val() ).toLowerCase(),
+          String( $('#published_offers_filter').val() ).toLowerCase(),
+          String( $('#revenue_filter').val() ).toLowerCase(),
+          String( $('#featured_filter').val() ).toLowerCase(),
+          String( $('#rewarded_filter').val() ).toLowerCase(),
+          String( $('#platform_filter').val() ).toLowerCase(),
+          String( $('#offer_type_filter').val() ).toLowerCase(),
+        ]
+        var className = '';
+        var length = selectValues.length;
+        for(var i = 0; i<length; i++) {
+          if (selectValues[i]) {
+            className += '.' + selectValues[i];
+          }
         }
+        $('tbody tr:visible').hide();
+        $('tbody tr'+className).show();
 
-        // price
-        var price = $('select#price_filter').val();
-        if (price) {
-          checkEqual('$0.00', 6, (price == 'Paid'));
-        }
-
-        // balance
-        var balance = $('select#balance_filter').val();
+        // balance levels
+        var balance = $('#balance_filter').val();
         if (balance) {
           var keepNonPositive = isNaN(balance);
           balance = Number(balance);
-          $('td:nth-child(8):not(.filter)').each(function(i,td){
+          $('tbody tr:visible').each(function(i,tr){
+            tr = $(tr);
             if (keepNonPositive) {
-              if(Number($(td).attr('value')) > 0) {
-                $(td).parent().hide();
+              if(Number(tr.attr('value')) > 0) {
+                tr.hide();
               }
             } else {
-              if(balance >= Number($(td).attr('value'))) {
-                $(td).parent().hide();
+              if(balance >= Number(tr.attr('value'))) {
+                tr.hide();
               }
             }
           });
         }
 
-        // platform
-        var platform = $('select#platform_filter').val();
-        checkEqual(platform, 9);
-
-        // published offers
-        var publishedOffers = $('select#published_offers_filter').val();
-        checkZero(publishedOffers, 11);
-
-        // offers revenue
-        var revenue = $('select#revenue_filter').val();
-        if (revenue) {
-          checkEqual('$0.00', 12, (revenue == '>$0'));
-        }
-
-        // featured
-        var val = $('select#featured_filter').val();
-        checkEqual(val, 13);
-
-        // offer type
-        var val = $('select#offer_type_filter').val();
-        checkEqual(val, 14);
       });
     });
 
 - content_for :page_styles do
   :plain
     #main {
-      width: 1024px;
+      width: 1150px;
     }
     td#filters_title {
       padding-left: 15px;
