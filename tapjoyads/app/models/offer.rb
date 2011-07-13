@@ -382,6 +382,7 @@ class Offer < ActiveRecord::Base
         min_cvr = item_type == 'GenericOffer' ? 0.002 : 0.005
       end
     end
+    min_cvr
   end
 
   def cost
