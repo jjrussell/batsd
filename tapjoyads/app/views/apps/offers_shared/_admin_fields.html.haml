@@ -22,14 +22,15 @@
   %td
     = f.check_box(:pay_per_click)
     = error_message_on @offer, :pay_per_click
-%tr.admin
-  %th
-    = f.label(:name, 'Offer Name')
-    #help_admin_offer_name.help ?
-  %td
-    = f.text_field(:name)
-    = error_message_on @offer, :name
-  %td= link_to('Use App Name', '#', :id => 'use_app_name', :tabindex => 99)
+- if @offer.item_type != 'ActionOffer'
+  %tr.admin
+    %th
+      = f.label(:name, 'Offer Name')
+      #help_admin_offer_name.help ?
+    %td
+      = f.text_field(:name)
+      = error_message_on @offer, :name
+    %td= link_to('Use App Name', '#', :id => 'use_app_name', :tabindex => 99)
 %tr.admin
   %th
     = f.label(:name_suffix, 'Internal Suffix')
