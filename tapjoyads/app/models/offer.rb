@@ -51,7 +51,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :min_bid_override, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => true
   validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
   validates_numericality_of :rank_boost, :allow_nil => false, :only_integer => true
-  validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0
+  validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :in => [ true, false ]
@@ -371,6 +371,18 @@ class Offer < ActiveRecord::Base
 
   def avg_revenue
     conversion_rate * bid_for_ranks
+  end
+
+  def calculate_min_conversion_rate
+    min_cvr = min_conversion_rate
+    if min_cvr.nil?
+      if is_free?
+        min_cvr = rewarded? ? 0.12 : 0.03
+      else
+        min_cvr = item_type == 'GenericOffer' ? 0.002 : 0.005
+      end
+    end
+    min_cvr
   end
 
   def cost
