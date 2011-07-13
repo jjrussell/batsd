@@ -42,7 +42,6 @@ private
       json = JSON.load(response.body)
       return json['resultCount'] > 0 ? app_info_from_apple(json['results'].first) : nil
     else
-      Notifier.alert_new_relic(AppStoreSearchFailed, "fetch_app_by_id_for_apple failed for id: #{id}, country: #{country}")
       raise "Invalid response from app store."
     end
   end
@@ -86,7 +85,6 @@ private
         :categories       => [category],
       }
     else
-      Notifier.alert_new_relic(AppStoreSearchFailed, "fetch_app_by_id_for_android failed for id: #{id}")
       raise "Invalid response."
     end
   end
@@ -133,7 +131,6 @@ private
         :categories       => categories,
       }
     else
-      Notifier.alert_new_relic(AppStoreSearchFailed, "fetch_app_by_id_for_windows failed for id: #{id}")
       raise "Invalid response."
     end
   end
