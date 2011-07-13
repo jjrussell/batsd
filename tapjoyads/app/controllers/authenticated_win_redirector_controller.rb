@@ -1,3 +1,4 @@
+# TO REMOVE: this controller when we shut down rackspace
 class AuthenticatedWinRedirectorController < ApplicationController
   include AuthenticationHelper
 
