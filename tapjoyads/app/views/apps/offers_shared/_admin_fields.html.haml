@@ -1,5 +1,6 @@
 %tr.admin
   %td{:colspan => 2} Admin-only fields:
+= render('apps/offers_shared/countries', :f => f)
 %tr.admin
   %th
     = f.label(:tapjoy_enabled)
@@ -50,14 +51,6 @@
   %td
     = f.text_field(:min_conversion_rate)
     = error_message_on @offer, :min_conversion_rate
-%tr.admin
-  %th
-    = f.label(:countries)
-    #help_countries.help ?
-  %td
-    = f.text_field(:countries)
-    = error_message_on @offer, :countries
-  %td= link_to('Country codes', 'http://www.iso.org/iso/english_country_names_and_code_elements', :tabindex => 100)
 %tr.admin
   %th
     = f.label(:cities)
@@ -117,7 +110,6 @@
   #help_internal_suffix_content{ :name => 'Internal Suffix' } Internal identifier for offers. i.e. 'featured' or 'us only'
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.
   #help_min_conversion_rate_content{ :name => 'Min CVR' } This is used to prevent low conversion rate warnings. A warning will only be issued if the conversion rate falls below this threshold. Allowed values are blank or 0.0 - 1.0
-  #help_countries_content{ :name => 'Countries' } Targets this offer to these countries. Must be an array of 2-character country codes or blank for no targeting. i.e. ["US", "GB"]
   #help_cities_content{ :name => 'Cities' } Targets this offer to these cities. Must be an array of city names or blank for no targeting. i.e. ["San Francisco"]
   #help_postal_codes_content{ :name => 'Postal Codes' } Targets this offer to these postal codes. Must be an array of postal codes or blank for no targeting. i.e. ["94105"]
   #help_device_types_content{ :name => 'Device Types' } Targets this offer to these device types. At least one device type must be selected.
