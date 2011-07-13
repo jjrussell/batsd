@@ -70,8 +70,8 @@
             = f.label :country, 'Country'
             .help.no-help ?
           %td
-            = f.select(:address_country, options_for_select(list_of_countries, @payout_info.address_country))
-            = f.error_message_on(:address_country)
+            = f.select(:payment_country, options_for_select(list_of_countries, @payout_info.payment_country))
+            = f.error_message_on(:payment_country)
         %tr
           %th
             = f.label :payout_method, 'Payment Method'
@@ -116,6 +116,13 @@
           %td
             = f.text_field(:address_postal_code)
             = f.error_message_on(:address_postal_code)
+        %tr
+          %th
+            = f.label :country, 'Country'
+            .help.no-help ?
+          %td
+            = f.select(:address_country, options_for_select(list_of_countries, @payout_info.address_country))
+            = f.error_message_on(:address_country)
         %tr.country_other
           %td{:colspan => 2}
             %h3 Bank Information
@@ -256,10 +263,10 @@
       }
     };
     var isUS = function() {
-      return $('#payout_info_address_country').val().match(/united states of america/i);
+      return $('#payout_info_payment_country').val().match(/united states of america/i);
     };
 
-    $('#payout_info_address_country').change(toggleByCountry);
+    $('#payout_info_payment_country').change(toggleByCountry);
     $('#payout_info_payout_method').change(toggleByPayoutMethod);
     toggleByCountry();
     $('#payout_info_account_type').change(function(){

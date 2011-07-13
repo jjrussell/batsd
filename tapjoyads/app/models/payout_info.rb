@@ -46,6 +46,6 @@ private
   end
 
   def international?
-    address_country.to_s.downcase != 'united states of america'
+    payment_country.to_s.downcase != 'united states of america'
   end
 end

@@ -287,17 +287,15 @@ ActiveRecord::Schema.define(:version => 20110630070905) do
   add_index "monthly_accountings", ["partner_id", "month", "year"], :name => "index_monthly_accountings_on_partner_id_and_month_and_year", :unique => true
   add_index "monthly_accountings", ["partner_id"], :name => "index_monthly_accountings_on_partner_id"
 
-  create_table "news_coverages", :id => false, :force => true do |t|
-    t.string   "id",           :limit => 36, :null => false
-    t.datetime "published_at",               :null => false
-    t.string   "link_source",                :null => false
-    t.text     "link_text",                  :null => false
-    t.text     "link_href",                  :null => false
+  create_table "news_coverages", :force => true do |t|
+    t.datetime "published_at"
+    t.string   "link_source"
+    t.text     "link_text"
+    t.text     "link_href"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "news_coverages", ["id"], :name => "index_news_coverages_on_id", :unique => true
   add_index "news_coverages", ["published_at"], :name => "index_news_coverages_on_published_at"
 
   create_table "offer_discounts", :id => false, :force => true do |t|
@@ -496,6 +494,7 @@ ActiveRecord::Schema.define(:version => 20110630070905) do
     t.string   "payout_method"
     t.string   "signature"
     t.string   "doing_business_as"
+    t.string   "payment_country"
   end
 
   add_index "payout_infos", ["id"], :name => "index_payout_infos_on_id", :unique => true
@@ -516,11 +515,10 @@ ActiveRecord::Schema.define(:version => 20110630070905) do
   add_index "payouts", ["id"], :name => "index_payouts_on_id", :unique => true
   add_index "payouts", ["partner_id"], :name => "index_payouts_on_partner_id"
 
-  create_table "press_releases", :id => false, :force => true do |t|
-    t.string   "id",               :limit => 36, :null => false
-    t.datetime "published_at",                   :null => false
-    t.text     "link_text",                      :null => false
-    t.text     "link_href",                      :null => false
+  create_table "press_releases", :force => true do |t|
+    t.datetime "published_at"
+    t.text     "link_text"
+    t.text     "link_href"
     t.string   "link_id"
     t.text     "content_title"
     t.text     "content_subtitle"
@@ -531,7 +529,6 @@ ActiveRecord::Schema.define(:version => 20110630070905) do
     t.datetime "updated_at"
   end
 
-  add_index "press_releases", ["id"], :name => "index_press_releases_on_id", :unique => true
   add_index "press_releases", ["published_at"], :name => "index_press_releases_on_published_at"
 
   create_table "rank_boosts", :id => false, :force => true do |t|
