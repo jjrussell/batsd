@@ -379,7 +379,7 @@ class Offer < ActiveRecord::Base
       if is_free?
         min_cvr = rewarded? ? 0.12 : 0.03
       else
-        min_cvr = item_type == 'GenericOffer' ? 0.001 : 0.005
+        min_cvr = item_type == 'GenericOffer' ? 0.002 : 0.005
       end
     end
   end
