@@ -33,25 +33,18 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'service1.asmx/PurchaseVGWithCurrency', :controller => 'points', :action => 'purchase_vg'
   map.connect 'Service1.asmx/PurchaseVGWithCurrency', :controller => 'points', :action => 'purchase_vg'
 
-  map.connect 'service1.asmx/:action', :controller => 'service1'
-  map.connect 'Service1.asmx/:action', :controller => 'service1'
-
-  # Generic windows redirectors. These will be transitions over to ruby controllers as
-  # functionality is moved off of windows.
-  map.connect 'TapDefenseCurrencyService.asmx/:action', :controller => 'win_redirector'
-  map.connect 'TapPointsCurrencyService.asmx/:action', :controller => 'win_redirector'
-  map.connect 'RingtoneService.asmx/:action', :controller => 'win_redirector'
-  map.connect 'AppRedir.aspx/:action', :controller => 'win_redirector'
-  map.connect 'Redir.aspx/:action', :controller => 'win_redirector'
-  map.connect 'RateApp.aspx/:action', :controller => 'win_redirector'
-
-  map.connect 'Offers.aspx/:action', :controller => 'win_redirector'
+  # bunch of old rackspace routes
+  map.connect 'service1.asmx/:action', :controller => 'rackspace'
+  map.connect 'Service1.asmx/:action', :controller => 'rackspace'
+  map.connect 'TapDefenseCurrencyService.asmx/:action', :controller => 'rackspace'
+  map.connect 'TapPointsCurrencyService.asmx/:action', :controller => 'rackspace'
+  map.connect 'RingtoneService.asmx/:action', :controller => 'rackspace'
+  map.connect 'AppRedir.aspx/:action', :controller => 'rackspace'
+  map.connect 'Redir.aspx/:action', :controller => 'rackspace'
+  map.connect 'RateApp.aspx/:action', :controller => 'rackspace'
+  map.connect 'Offers.aspx/:action', :controller => 'rackspace'
 
   # redirects from old vg controller
   map.connect 'purchase_vg', :controller => 'points', :action => 'purchase_vg'
   map.connect 'purchase_vg/spend', :controller => 'points', :action => 'spend'
-
-  # Authenticated windows redirectors. These too will be removed/moved to standard 
-  # ruby controllers in time.
-  map.connect 'CronService.asmx/:action', :controller => 'authenticated_win_redirector'
 end

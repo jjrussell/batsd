@@ -1,0 +1,23 @@
+- @page_title = "Aggregate Stats for #{@partner.name}"
+
+%h1= "Aggregate Stats for #{@partner.name}"
+
+.clear
+
+%form#change_date.tjform
+  = render :partial => 'shared/date_range_and_platform'
+
+.clear
+
+.load-circle= image_tag('load-circle.gif')
+
+#charts{ :style => "text-align: center;" }
+  #connects.graph
+  #installs_spend.graph
+  #revenue.graph
+  #offerwall.graph
+  #featured_offers.graph
+  #display_ads.graph
+  #ads.graph
+
+- include_tapjoy_graph

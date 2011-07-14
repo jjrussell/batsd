@@ -131,6 +131,8 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
         assert_equal @app.name, result['name']
         assert_equal @app.platform, result['platform']
         assert_equal @app.store_id, result['store_id']
+        assert_equal @app.secret_key, result['app_secret_key']
+        assert !result['integrated']
       end
     end
   end
@@ -203,6 +205,7 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
         assert_equal 1, @partner.apps.count
         app = @partner.apps.first
         assert_equal app.id, result['app_id']
+        assert_equal app.secret_key, result['app_secret_key']
       end
     end
   end

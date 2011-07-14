@@ -140,6 +140,7 @@ class PartnersController < WebsiteController
     @start_time, @end_time, @granularity = Appstats.parse_dates(params[:date], params[:end_date], params[:granularity])
     respond_to do |format|
       format.html do
+        render 'shared/aggregate'
       end
       format.json do
         options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :stat_prefix => get_stat_prefix('partner') }

@@ -22,7 +22,7 @@ class StatuszController < ApplicationController
        conversion_tracking_queue.size > 1000 ||
        create_conversions_queue.size > 1000 ||
        failed_sdb_saves_queue.size > 5000 ||
-       failed_web_request_saves_queue.size > 5000 ||
+       failed_web_request_saves_queue.size > 15000 ||
        send_currency_queue.size > 5000
       result = "too long"
     end

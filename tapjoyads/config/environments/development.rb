@@ -1,4 +1,3 @@
-# Settings specified here will take precedence over those in config/environment.rb
 
 # In the development environment your application's code is reloaded on
 # every request.  This slows down response time but is perfect for development
@@ -51,9 +50,6 @@ MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 
-APSALAR_URL = 'http://holycow42.apsalar.com'
-APSALAR_EVENT_URL = "http://holycow42.apsalar.com/api/v1/tapjoy_event"
-APSALAR_SECRET = 'Tn0oWhQ4k3rahJ45vy4RI3vzausCOoyo'
 SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = '2AdufehEmUpEdrEtamaspuxasU#=De'

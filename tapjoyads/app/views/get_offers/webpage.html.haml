@@ -41,7 +41,7 @@
     .clear
 
 #privacy
-  = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/privacy')
+  = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/site/privacy_mobile')
   ·
   = link_to_missing_currency
 
@@ -54,6 +54,15 @@
 %img.hidden{ :src => '/images/load-circle.gif' }
 
 - content_for :page_javascript do
+  - if params[:device_type].to_s.match(/windows/i)
+    :plain
+      window.onfocus = reload;
+      function reload(){}
+
+      var images = document.getElementsByTagName('img');
+      for (var i = 0, image; image = images[i]; i++) {
+        loadImage(image);
+      }
   :plain
     window.onload = init;
     window.onscroll = scroll;
@@ -64,7 +73,7 @@
     }
 
     function scroll() {
-      images = document.getElementsByTagName('img');
+      var images = document.getElementsByTagName('img');
       for (var i = 0, image; image = images[i]; i++) {
         if (window.scrollY + window.innerHeight + 480 > image.offsetTop) {
           loadImage(image);
@@ -77,7 +86,6 @@
         image.src = image.getAttribute('s');
       }
     }
-  
 - content_for :page_styles do
   :plain
     * {
@@ -113,6 +121,10 @@
       border: 1px solid #d5d5d5;
       -moz-border-radius: 7px;
       -webkit-border-radius: 7px;
+    }
+    
+    #instructions {
+      font-size: 110%;
     }
     
     #offers {

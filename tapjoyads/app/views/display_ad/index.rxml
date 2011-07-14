@@ -1,7 +1,14 @@
 xml.instruct!
 
 xml.TapjoyAd do
-  if @click_url.present? && @image.present?
+  # TO REMOVE: once jet fighter ace fixes their display ad crashing issue
+  if params[:app_id] == 'aebd36e0-4048-4c5c-91f2-efdc7829edd3'
+    xml.ClickURL do
+    end
+    xml.Image do
+    end
+  # END TO REMOVE
+  elsif @click_url.present? && @image.present?
     xml.ClickURL @click_url
     xml.Image @image
   end

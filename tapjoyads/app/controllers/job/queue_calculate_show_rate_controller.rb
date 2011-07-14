@@ -22,16 +22,16 @@ private
     
     recent_clicks = appstats.stats['paid_clicks'].sum.to_f
     recent_installs = appstats.stats['paid_installs'].sum.to_f + appstats.stats['jailbroken_installs'].sum.to_f
-    
+
     if recent_clicks == 0
       conversion_rate = offer.is_paid? ? 0.3 : 0.75
     else
       conversion_rate = recent_installs / recent_clicks
     end
-    
+
     conversion_rate = 1.0 if conversion_rate > 1.0
-    
-    min_conversion_rate = offer.min_conversion_rate || (offer.is_paid? ? 0.005 : 0.12)
+
+    min_conversion_rate = offer.calculate_min_conversion_rate
     if recent_clicks > 200 && conversion_rate < min_conversion_rate
       stats = {
         :recent_clicks => recent_clicks,
