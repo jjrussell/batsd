@@ -15,17 +15,18 @@ module WebsiteHelper
   end
 
   def platform_icon_url(object)
-    if object.is_a?(App)
-      object.is_android? ? 'android_flat.png' : 'ios_flat.png'
-    else
-      if object.get_platform == 'Android'
-        'android_flat.png'
-      elsif object.get_platform == 'iOS'
-        'ios_flat.png'
+    platform =
+      if object.is_a?(Offer)
+        if %w(App RatingOffer ActionOffer).include?(object.item_type)
+          object.item.platform
+        else
+          'multi_platform'
+        end
       else
-        'multi_platform_flat.png'
+        object.platform
       end
-    end
+
+    "#{platform}_flat.png"
   end
 
   def set_tapjoy_timezone_skew
@@ -78,23 +79,28 @@ module WebsiteHelper
     text.insert 0, start_tag
     text + "</p>"
   end
-  
+
   def link_to_generated_actions_header(app, name = nil)
     name ||= app.default_actions_file_name
-    if app.is_android?
-      link_to(name, TapjoyPPA_app_action_offers_path(app, :format => "java"))
-    else
-      link_to(name, TJCPPA_app_action_offers_path(app, :format => "h"))
-    end
+    link =
+      case app.platform
+      when 'android'
+        TapjoyPPA_app_action_offers_path(app, :format => "java")
+      when 'iphone'
+        TJCPPA_app_action_offers_path(app, :format => "h")
+      when 'windows'
+        #TODO fill this out
+        ''
+      end
+
+    link_to(name, link)
   end
-  
+
   def url_to_offer_item(offer)
     if offer.item.is_a? ActionOffer
       edit_app_action_offer_url(offer.item.app, offer.item)
-    elsif offer.featured?
-      edit_app_featured_offer_url(offer.item, offer)
     else
-      app_offer_url(offer.item, offer)
+      edit_app_offer_url(offer.item, offer)
     end
   end
 

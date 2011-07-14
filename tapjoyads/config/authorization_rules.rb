@@ -2,15 +2,13 @@ authorization do
 
   role :partner do
     has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :publisher_integrate, :search, :sdk_download, :archive ]
-    has_permission_on :apps_offers, :to => [ :show, :update, :percentile, :toggle ]
-    has_permission_on :apps_featured_offers, :to => [ :new, :create, :edit, :update ]
+    has_permission_on :apps_offers, :to => [ :new, :create, :edit, :update, :percentile, :toggle ]
     has_permission_on :apps_currencies, :to => [ :show, :update, :new, :create, :reset_test_device ]
     has_permission_on :apps_virtual_goods, :to => [ :show, :update, :new, :create, :index, :reorder ]
     has_permission_on :enable_offer_requests, :to => [ :create ]
-    has_permission_on :reporting, :to => [ :index, :show, :export, :download_udids, :api, :regenerate_api_key ]
+    has_permission_on :reporting, :to => [ :index, :show, :export, :download_udids, :api, :regenerate_api_key, :aggregate ]
     has_permission_on :apps_action_offers, :to => [ :index, :new, :create, :edit, :update, :toggle, :TJCPPA, :TapjoyPPA ]
     has_permission_on :billing, :to => [ :index, :add_funds, :transfer_funds, :payout_info, :update_payout_info, :create_transfer, :create_order, :export_statements, :export_orders, :export_payouts, :export_adjustments, :forget_credit_card ]
-    has_permission_on :analytics, :to => [ :index, :create_apsalar_account, :share_data, :agree_to_share_data ]
     has_permission_on :users, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :support, :to => [ :index ]
     has_permission_on :premier, :to => [ :edit, :update ]

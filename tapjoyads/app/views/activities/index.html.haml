@@ -19,8 +19,7 @@
       %th User
       %th Object
       %th Partner
-      %th Before state
-      %th After state
+      %th Diff
       %th Created
       %th Controller
       %th Action
@@ -29,48 +28,24 @@
     - @activities.each do |activity|
       - next if activity.object.nil?
       %tr
-        %td
-          %a{:href => "javascript:setValue('user', '#{activity.user}')"}= activity.user
+        %td= link_to_function(activity.user, "setValue('user', '#{activity.user}')")
         %td
           #{activity.object_type}:
-          %a{:href => "javascript:setValue('object_id', '#{activity.object_id}')"}
-            - if activity.object.respond_to?(:name_with_suffix)
-              = activity.object.name_with_suffix
-            - elsif activity.object.respond_to?(:name)
-              = activity.object.name
-            - else
-              = "#{activity.object_id[0,6]}..."
+          = link_to_function(activity.object_name, "setValue('object_id', '#{activity.object_id}')")
         %td
           - unless activity.partner_id.blank?
-            %a{:href => "javascript:setValue('partner_id', '#{activity.partner_id}')"}
-              = "#{activity.partner_id[0,6]}..."
-        %td
-          - activity.before_state.each do |key, value|
-            - next if key == 'updated-at' || key == 'updated_at'
+            = link_to_function(truncate(activity.partner_id, :length => 9), "setValue('partner_id', '#{activity.partner_id}')")
+        %td.diff
+          - keys = activity.diff_keys
+          - keys.each do |key|
             %p
-              #{key}:
-              %b{ :full_value => value.to_s }
-                - if value.to_s.length > 40
-                  = "#{value.to_s[0, 40]}..."
-                  = link_to('[more]', '#', :class => 'show_more')
-                - else
-                  = value.to_s
-        %td
-          - activity.after_state.each do |key, value|
-            - next if key == 'updated-at' || key == 'updated_at'
-            %p
-              #{key}:
-              %b{ :full_value => value.to_s }
-                - if value.to_s.length > 40
-                  = "#{value.to_s[0, 40]}..."
-                  = link_to('[more]', '#', :class => 'show_more')
-                - else
-                  = value.to_s
+              %span.diff_key #{key}:
+              %span.diff_value #{activity.diff_value(key)}
         %td= activity.created_at.to_s(:pub_ampm_sec)
         %td= activity.controller
         %td= activity.action
         %td
-          %a{:href => "javascript:setValue('request_id', '#{activity.request_id}')"}= "#{activity.request_id[0, 6]}..."
+          = link_to_function(truncate(activity.request_id, :length => 9), "setValue('request_id', '#{activity.request_id}')")
 
 = link_to('Next &rarr;', activities_path(:object_id => params[:object_id], :user => params[:user], :request_id => params[:request_id], :partner_id => params[:partner_id], :next_token => @next_token), :class => 'next') if @next_token
 
@@ -94,7 +69,7 @@
         },
         sortList: [ [5, 1] ]
       });
-      
+
       var formY = $('#form').position()['top'];
       $(window).scroll(function(event) {
         if ($(window).scrollTop() > formY) {
@@ -103,40 +78,55 @@
           $('#form').css({position: 'absolute', top: 'auto'});
         }
       });
-      
-      $('a.show_more').click(function() {
-        var b_tag = $(this).parent();
-        b_tag.html(b_tag.attr('full_value'));
-        return false;
-      });
+
     });
-    
+
     function setValue(id, value) {
       $('#' + id).val(value);
     }
-  
+
 - content_for :page_styles do
   :plain
     table.tablesorter {
       margin-top: 40px;
     }
-    
+
     h1 {
       margin-bottom: 0;
     }
-    
+
     form {
       background: white;
       border: 1px solid black;
       padding: 3px;
       position: absolute;
     }
-    
+
     .next {
       float: right;
     }
-    
+
     .tjform input[type=submit] {
       margin: 0;
       float: none;
+    }
+
+    td.diff {
+      max-width: 300px;
+      overflow-x: auto;
+    }
+    .diff .diff_value {
+      font-family: Andale Mono, Courier New, courier;
+    }
+    .diff .diff_key {
+      font-weight: bold;
+    }
+    .diff ins {
+      text-decoration: none;
+    }
+    .diff del {
+      background-color: #faa;
+    }
+    .diff ins {
+      background-color: #afa;
     }

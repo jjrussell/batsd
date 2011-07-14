@@ -6,7 +6,8 @@ class ReportingController < WebsiteController
   
   filter_access_to :all
   before_filter :find_offer, :only => [ :show, :export, :download_udids ]
-  before_filter :setup, :only => [ :show, :export ]
+  before_filter :setup, :only => [ :show, :export, :aggregate ]
+  before_filter :set_platform, :only => [ :aggregate ]
   
   def index
     unless current_partner_offers.empty?
@@ -54,6 +55,20 @@ class ReportingController < WebsiteController
       flash[:error] = "Error regenerating the API key. Please try again."
     end
     redirect_to api_reporting_path
+  end
+
+  def aggregate
+    @partner = current_partner
+    respond_to do |format|
+      format.html do
+        render 'shared/aggregate'
+      end
+      format.json do
+        options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :stat_prefix => get_stat_prefix('partner') }
+        @appstats = Appstats.new(@partner.id, options)
+        render :json => { :data => @appstats.graph_data }
+      end
+    end
   end
   
 private

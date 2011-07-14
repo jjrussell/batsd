@@ -1,0 +1,7 @@
+h1, h2, h3 { clear: left; float: left;  margin-bottom: 0px; margin-top: 15px; width: 100%; }
+#privacy { padding-top: 15px; }
+#privacy p { color: #636363; clear: left; float: left; font-size: 12px; line-height: 18px; margin: 10px 0 10px 0; width: 100%; }
+#privacy ul { font-size: 12px; line-height: 18px; clear: left; float: left; list-style: disc; margin: 10px 0 10px 15px;}
+#privacy ul li { margin-bottom: 12px; }
+#privacy form { font-size: 12px; clear: left; }
+#effective { padding: 20px 0 20px 0; font-style: italic; }

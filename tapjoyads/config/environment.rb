@@ -53,7 +53,8 @@ Rails::Initializer.run do |config|
   config.gem 'hominid', :version => '2.2.0'
   config.gem 'curbit', :version => '0.2.0'
   config.gem 'newrelic_rpm', :version => '3.0.1'
-  
+  config.gem 'differ', :version => '0.1.2'
+
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
   # :all can be used as a placeholder for all plugins not explicitly named
@@ -126,3 +127,4 @@ end
 # Register custom Mime types to generate ActionOffer header files
 Mime::Type.register "text/objective-c-header", :h
 Mime::Type.register "text/java", :java
+Differ.format = :html

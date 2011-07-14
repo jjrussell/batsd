@@ -53,7 +53,7 @@ ENV['AWS_SECRET_ACCESS_KEY'] = amazon['production']['secret_access_key']
 # to the list of transient problems which will automatically get retried by RightAws.
 RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
 
-MAX_WEB_REQUEST_DOMAINS = 240
+MAX_WEB_REQUEST_DOMAINS = 280
 NUM_POINT_PURCHASES_DOMAINS = 10
 NUM_CLICK_DOMAINS = 50
 NUM_REWARD_DOMAINS = 50
@@ -68,9 +68,6 @@ MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 
-APSALAR_URL = 'https://apsalar.com'
-APSALAR_EVENT_URL = "http://e.apsalar.com/api/v1/tapjoy_event"
-APSALAR_SECRET = 'xNGvOKWsAkiekxe2W9KAutGsZTvvaVyDoOMhjuRVzN'
 SYMMETRIC_CRYPTO_SECRET = 'YI,B&nZVZQtl*YRDYpEjVE&\U\#jL2!H#H&*2d'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = 'Z*Xac$dum8xeB9-Quv3St@RET6E6UT'

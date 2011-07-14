@@ -238,9 +238,9 @@ class Appstats
     get_labels_and_intervals if @include_labels
   end
 
-  def graph_data(options)
+  def graph_data(options = {})
     offer = options.delete(:offer)
-    admin = options.delete(:admin)
+    admin = options.delete(:admin) { false }
 
     if offer && offer.item_type == 'App'
       conversion_name = 'Installs'
@@ -643,7 +643,7 @@ private
   end
 
   def get_virtual_good_partitions(offer)
-    return {} if @stat_prefix != 'app'
+    return {} unless offer
     return @virtual_good_partitions if @virtual_good_partitions.present?
     @virtual_good_partitions = {}
 
