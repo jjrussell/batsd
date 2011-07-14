@@ -29,7 +29,7 @@
           = f.label :scheduled_for, 'Scheduled time'
           #help_scheduled_for.help ?
         %td
-          = f.text_field :scheduled_for, :value => @offer_event.scheduled_for? ? @offer_event.scheduled_for.to_s(:mdy_ampm) : '', :size => 40
+          = f.text_field :scheduled_for, :value => @offer_event.scheduled_for? ? @offer_event.scheduled_for.to_s(:mdy_ampm) : '', :size => 24
           = error_message_on @offer_event, :scheduled_for
           = current_user.time_zone
       %tr
