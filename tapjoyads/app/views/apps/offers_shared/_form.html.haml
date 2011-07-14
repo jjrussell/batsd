@@ -26,13 +26,13 @@
               The bid is just one of many factors affecting your featured offer ranking.
           - elsif !@offer.rewarded?
             #percentile-info.percentile-details
-              This bid places you above approximately
+              This bid will make your offer more prioritized than
               %span#percentile= "#{@offer.estimated_percentile}%" rescue 'N/A'
               of ads.
             #percentile-info-loading.percentile-details{ :style => 'display: none' }
               Estimating new ad placement...
             .percentile-details
-              The bid is just one of many factors affecting your  ranking.
+              The bid is just one of many factors affecting your ranking.
           - else
             #percentile-info.percentile-details
               This bid places you above approximately
