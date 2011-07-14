@@ -3,7 +3,7 @@
     = f.label(:countries, "Country Targeting")
     #help_country_targeting.help ?
   %td
-    = f.hidden_field(:countries)
+    = f.hidden_field(:countries, :id => 'offer_countries')
     = error_message_on @offer, :countries
     #change_countries
       = label_tag :country_targeting_off, 'All Countries'
