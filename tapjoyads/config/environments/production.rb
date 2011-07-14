@@ -26,10 +26,10 @@ config.action_controller.allow_forgery_protection    = false
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-MEMCACHE_SERVERS = [ 'tapjoy-acs-prod.fqfjqv.1xmb.use1.acsvc.amazonaws.com',
-                     'tapjoy-acs-prod.fqfjqv.1xmc.use1.acsvc.amazonaws.com',
-                     'tapjoy-acs-prod.fqfjqv.1xmd.use1.acsvc.amazonaws.com',
-                     'tapjoy-acs-prod.fqfjqv.1xme.use1.acsvc.amazonaws.com' ]
+MEMCACHE_SERVERS = [ 'tj-acs-prod.fqfjqv.1xm3.use1.acsvc.amazonaws.com',
+                     'tj-acs-prod.fqfjqv.1xm4.use1.acsvc.amazonaws.com',
+                     'tj-acs-prod.fqfjqv.1xm5.use1.acsvc.amazonaws.com',
+                     'tj-acs-prod.fqfjqv.1xm6.use1.acsvc.amazonaws.com' ]
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
