@@ -28,10 +28,6 @@ class User < ActiveRecord::Base
     end << :partner
   end
 
-  def partner_ids
-    partners.map(&:id)
-  end
-
   def is_one_of?(array)
     (role_symbols & array).present?
   end
