@@ -10,6 +10,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :survey_answers, :type => :json, :default_value => {}, :cgi_escape => true
   self.sdb_attr :opted_out, :type => :bool, :default_value => false
   self.sdb_attr :last_run_time_tester, :type => :bool, :default_value => false
+  self.sdb_attr :publisher_user_ids, :type => :json, :default_value => {}, :cgi_escape => true
   
   def dynamic_domain_name
     domain_number = @key.hash % NUM_DEVICES_DOMAINS
@@ -90,6 +91,15 @@ class Device < SimpledbShardedResource
     @parsed_apps.delete(app_id)
     self.apps = @parsed_apps
     save!
+  end
+  
+  def set_publisher_user_id!(app_id, publisher_user_id)
+    parsed_publisher_user_ids = publisher_user_ids
+    return if parsed_publisher_user_ids[app_id] == publisher_user_id
+    
+    parsed_publisher_user_ids[app_id] = publisher_user_id
+    self.publisher_user_ids = parsed_publisher_user_ids
+    save
   end
   
 end
