@@ -90,7 +90,7 @@ class Order < ActiveRecord::Base
             :name => 'TapjoyAdsCredit',
             :description => description,
             :unit_cost => 1,
-            :quantity => amount,
+            :quantity => amount / 100.0,
             :type => 'Item',
           },
         ],

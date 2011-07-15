@@ -27,7 +27,7 @@ class Tools::OrdersController < WebsiteController
       @order.create_freshbooks_invoice if create_invoice # REMOVE
       @order.save # REMOVE
       amount = sprintf("$%.2f", @order.amount / 100.0)
-      flash[:notice] = "The order of <b>#{@order.amount}</b> to <b>#{@order.billing_email}</b> was successfully created."
+      flash[:notice] = "The order of <b>#{amount}</b> to <b>#{@order.billing_email}</b> was successfully created."
       redirect_to new_tools_order_path
     else
       render :action => :new

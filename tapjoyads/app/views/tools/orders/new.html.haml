@@ -45,5 +45,17 @@
           = error_message_on @order, :billing_email
     %tr
       %td{ :colspan => 2 }= f.submit 'Create Order'
-    %tr
-      %td{ :colspan => 2 }= link_to "Don't forget to create an invoice in freshbooks", "http://tapjoy.freshbooks.com/"
+
+- content_for :page_javascript do
+  :plain
+    var toggleCreateInvoice = function() {
+      if ($('#order_payment_method').val() === '2') {
+        $('#create_invoice').attr('checked', false);
+        $('#create_invoice').attr('disabled', 'disabled');
+      } else {
+        $('#create_invoice').attr('checked', true);
+        $('#create_invoice').attr('disabled', '');
+      }
+    };
+
+    $('#order_payment_method').change(toggleCreateInvoice);
