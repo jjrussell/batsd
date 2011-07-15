@@ -70,7 +70,8 @@ private
         :device_type => params[:device_type],
         :geoip_data => geoip_data,
         :required_length => 25,
-        :type => Offer::DISPLAY_OFFER_TYPE)
+        :type => Offer::DISPLAY_OFFER_TYPE,
+        :os_version => params[:os_version])
 
     offer = offer_list[rand(offer_list.size)]
   

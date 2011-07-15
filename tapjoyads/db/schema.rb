@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110630070905) do
+ActiveRecord::Schema.define(:version => 20110715191940) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -400,6 +400,7 @@ ActiveRecord::Schema.define(:version => 20110630070905) do
     t.float    "normal_bid",                                                                    :default => 0.0,   :null => false
     t.integer  "over_threshold",                                                                :default => 0,     :null => false
     t.boolean  "rewarded",                                                                      :default => true
+    t.string   "min_os_version",                                                                :default => "",    :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
