@@ -18,7 +18,7 @@
       %td= @user.updated_at? ? @user.updated_at.to_s(:db) : 'never'
     %tr
       %th Current partner
-      %td= link_to(@user.current_partner.name, @user.current_partner)
+      %td= @user.current_partner.present? ? link_to(@user.current_partner.name, @user.current_partner) : 'None'
 
 %h4 Add to partner
 #search_query
