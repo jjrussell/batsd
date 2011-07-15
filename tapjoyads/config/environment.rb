@@ -113,6 +113,7 @@ Rails::Initializer.run do |config|
         SimpledbResource.reset_connection
         S3.reset_connection
         Sqs.reset_connection
+        Activemq.reset_connection
       end
     end
   end
