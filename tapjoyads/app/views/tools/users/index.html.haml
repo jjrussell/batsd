@@ -17,7 +17,6 @@
             - user.user_roles.sort_by(&:name).each do |role|
               %li{:class => role.name}= role.name
   %br/
-= will_paginate(@tapjoy_users)
 
 - content_for :page_styles do
   :plain

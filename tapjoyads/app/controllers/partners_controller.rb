@@ -5,7 +5,7 @@ class PartnersController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :delink_user ]
+  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting ]
   before_filter :get_account_managers, :only => [ :index, :managed_by ]
   before_filter :set_platform, :only => [ :reporting ]
   after_filter :save_activity_logs, :only => [ :update, :create_transfer ]
@@ -65,16 +65,6 @@ class PartnersController < WebsiteController
   end
   
   def edit
-  end
-
-  def delink_user
-    user = User.find_by_id(params[:user_id])
-    if @partner.remove_user(user)
-      flash[:notice] = "User #{user.email} successfully removed."
-    else
-      flash[:error] = "Something went wrong - user was not removed."
-    end
-    redirect_to partner_path
   end
 
   def update
