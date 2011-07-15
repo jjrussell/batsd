@@ -210,6 +210,7 @@ class App < ActiveRecord::Base
     device_type          = options.delete(:device_type)
     type                 = options.delete(:type)
     exp                  = options.delete(:exp)
+    library_version      = options.delete(:library_version) || ''
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     return [ [], 0 ] if type == Offer::CLASSIC_OFFER_TYPE || !currency.tapjoy_enabled?
@@ -223,7 +224,7 @@ class App < ActiveRecord::Base
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)
       if rate_app_offer.present? && rate_app_offer.accepting_clicks?
         offer_list_length += 1
-        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers)
+        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version)
           num_rejected += 1
         else
           final_offer_list << rate_app_offer
@@ -233,7 +234,7 @@ class App < ActiveRecord::Base
     
     offer_list_length += currency.get_cached_offers({ :type => type, :exp => exp }) do |offers|
       offers.each do |offer|
-        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers)
+        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version)
           num_rejected += 1
         else
           final_offer_list << offer

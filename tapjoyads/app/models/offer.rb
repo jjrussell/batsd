@@ -26,7 +26,7 @@ class Offer < ActiveRecord::Base
                                   'third_party_data', 'payment_range_low',
                                   'payment_range_high', 'icon_id_override', 'rank_boost',
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue', 
-                                  'normal_price', 'over_threshold', 'rewarded' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'normal_price', 'over_threshold', 'rewarded', 'cookie_tracking' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
@@ -54,7 +54,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
-  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :in => [ true, false ]
+  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer )
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
@@ -726,7 +726,7 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
-  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs)
+  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version)
     return device_platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device) ||
         already_complete?(publisher_app, device, app_version) ||
@@ -737,7 +737,8 @@ class Offer < ActiveRecord::Base
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
         hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs) ||
-        should_reject_from_app_or_currency?(publisher_app, currency)
+        should_reject_from_app_or_currency?(publisher_app, currency) ||
+        cookie_tracking_reject?(publisher_app, library_version)
   end
   
   def should_reject_from_app_or_currency?(publisher_app, currency)
@@ -1025,6 +1026,10 @@ private
   
   def hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs)
     hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer'
+  end
+  
+  def cookie_tracking_reject?(publisher_app, library_version)
+    cookie_tracking? && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
   end
   
   def normalize_device_type(device_type_param)

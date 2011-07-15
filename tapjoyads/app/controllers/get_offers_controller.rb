@@ -154,16 +154,17 @@ private
     end
     
     @offer_list, @more_data_available = @publisher_app.get_offer_list(
-        :device => @device,
-        :currency => @currency,
-        :device_type => params[:device_type],
-        :geoip_data => @geoip_data,
-        :type => type,
-        :required_length => (@start_index + @max_items),
-        :app_version => params[:app_version],
+        :device               => @device,
+        :currency             => @currency,
+        :device_type          => params[:device_type],
+        :geoip_data           => @geoip_data,
+        :type                 => type,
+        :required_length      => (@start_index + @max_items),
+        :app_version          => params[:app_version],
         :include_rating_offer => params[:rate_app_offer] != '0',
         :direct_pay_providers => params[:direct_pay_providers].to_s.split(','),
-        :exp => params[:exp])
+        :exp                  => params[:exp],
+        :library_version      => params[:library_version])
     @offer_list = @offer_list[@start_index, @max_items] || []
   end
   
