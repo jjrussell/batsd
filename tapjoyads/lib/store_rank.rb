@@ -256,7 +256,8 @@ private
     items = Hpricot(response_body)/".snippet.snippet-medium"
     items.each_with_index do |item, index|
       anchor = item/".details"/"a.title"
-      store_id = anchor.attr('href').match("id=(.*)").to_a.second
+      store_id = anchor.attr('href').split("id=").second.split("&").first
+
       hash[store_id] = index + offset + 1
     end
 
@@ -272,7 +273,6 @@ private
   def self.google_rank_url(type, category, language, offset)
     url = "https://market.android.com/details?id=#{type}&start=#{offset}"
     url += "&cat=#{category}" unless category.blank?
-    url += "&hl=#{language}" unless language == 'en'
     url
   end
 
@@ -481,28 +481,7 @@ private
   }
 
   GOOGLE_LANGUAGE_IDS = {
-    "czech"                   => "cs",
-    "danish"                  => "da",
-    "german"                  => "de",
     "english"                 => "en",
-    "spanish_(spain)"         => "es",
-    "spanish_(latin_america)" => "es_419",
-    "french"                  => "fr",
-    "italian"                 => "it",
-    "dutch"                   => "nl",
-    "norwegian"               => "no",
-    "polish"                  => "pl",
-    "portuguese_(brazil)"     => "pt_br",
-    "portuguese_(portugal)"   => "pt_pt",
-    "finnish"                 => "fi",
-    "swedish"                 => "sv",
-    "turkish"                 => "tr",
-    "greek"                   => "el",
-    "russian"                 => "ru",
-    "korean"                  => "ko",
-    "chinese_(taiwan)"        => "zh_tw",
-    "chinese_(china)"         => "zh_cn",
-    "japanese"                => "ja",
   }
 
 end
