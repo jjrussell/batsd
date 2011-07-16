@@ -1,11 +1,11 @@
 class Job::MasterExternalPublishersController < Job::JobController
   def cache
-    ExternalPublishers.cache
+    ExternalPublisher.cache
     render :text => "ok"
   end
   
   def populate_potential
-    ExternalPublishers.populate_potential
+    ExternalPublisher.populate_potential
     render :text => "ok"
   end
 end

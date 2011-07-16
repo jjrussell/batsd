@@ -462,7 +462,7 @@ class Offer < ActiveRecord::Base
       :display_multiplier    => display_multiplier
     }
     
-    "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
+    "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt_data_param(data)}"
   end
   
   def complete_action_url(options)

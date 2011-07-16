@@ -18,4 +18,8 @@ class Games::RegistrationsController < GamesController
     end
   end
   
+  def link_device
+    render :text => 'Link your gamer to a udid.'
+  end
+  
 end
