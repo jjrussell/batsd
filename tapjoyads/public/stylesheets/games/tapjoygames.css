@@ -349,6 +349,7 @@ a, a:visited {
 form#new_gamer_session input[type=text], form#new_gamer_session input[type=password]  {
   border: none;
   padding: 4px;
+  margin: 6px 0;
   outline: none; 
   -webkit-appearance: none;
 }
