@@ -1,13 +1,14 @@
 var TJG = {}; TJG.vars = {};
 TJG.doc = document.documentElement;
 TJG.vars.orientationClasses = ['landscape', 'portrait'];
+TJG.vars.isDev = true;
 TJG.vars.isSwapped = false;
 TJG.vars.isIos = false;
 TJG.vars.isTouch = false;
 TJG.utils = {
 
   hideURLBar : function() {
-    setTimeout(function() {
+    setTimeout(function() { 
       window.scrollTo(0, 1);
     }, 0);
   },
@@ -37,8 +38,79 @@ TJG.utils = {
     setTimeout(function() {
       $('#loader').fadeIn(delay,fn);
     });
-  }
+  },
   
+  removeDialogs : function () {
+    $('.dialog_wrapper').fadeOut();
+  },
+  
+  showRegister : function () {
+    var path = location.pathname.replace(/\/$/, '');
+    path = path + "/.."; 
+    alert(path);
+    $.ajax({
+      url: path + "/register",
+      cache: false,
+      success: function(t){
+        $("#sign_up_content").html(t);
+        $("#sign_up_dialog").fadeIn();
+        $('form#new_gamer').submit(function(e){
+          e.preventDefault();
+          var rurl, inputs, values = {}, data, hasError = false, emailReg;
+          rurl = $(this).attr('action');
+          inputs = $('form#new_gamer :input');
+          inputs.each(function() {
+            values[this.name] = $(this).val();
+          });
+          $(".valid_email_error").hide();
+          emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+          if(values['gamer[email]'] == '') {
+            $("form#new_gamer").after('<span class="valid_email_error">Please enter your email address.</span>');
+            hasError = true;
+          }
+          else if(!emailReg.test(values['gamer[email]'])) {
+            $("form#new_gamer").after('<span class="valid_email_error">Enter a valid email address.</span>');
+            hasError = true;
+          }
+          if(values['gamer[password]'] == '') {
+            $("form#new_gamer").after('<span class="valid_email_error">Please enter a password  .</span>');
+            hasError = true;
+          }
+          if(hasError != true) {
+            $.ajax({
+              type: 'POST',
+              url: rurl,
+              cache: false,
+              dataType: 'json', 
+              data: { 'authenticity_token': values['authenticity_token'], 'gamer[email]': values['gamer[email]'], 'gamer[password]': values['gamer[password]'], 'gamer[referrer]': values['gamer[referrer]'] },
+              success: function(d) {
+                var msg;
+                if (d.success) {
+                  msg = [
+                    '<div class="dialog_title">Success!</div>',
+                    '<div class="dialog_header">Your Tapjoy Games account was sucessfully created</div>',
+                   '<div class="dialog_content">A confirmation email has been sent to the address you entered.  Please follow the registration in the email to verify your address and complete the account registration. :)</div>'
+                  ].join('');
+                }
+                else {
+                  msg = [
+                    '<div class="dialog_title">Opps!</div>',
+                    '<div class="dialog_content">There was an issue with registering your account. <span id="sign_up">Please try again.</span></div>',
+                  ].join('');
+                }
+                $("#sign_up_content").html(msg);   
+              },
+              error: function() {
+              }
+            });
+          }
+        });
+      },
+      error: function() {
+      }
+    }); 
+  }
+   
 };
   
 (function(window, document) {
@@ -119,8 +191,7 @@ TJG.utils = {
         className = className.replace(replace, classReplaces[replace]);
     }
     TJG.doc.className = className + classes.join(' ');
-    TJG.utils.hideURLBar();
- 
+    
     var jQT = new $.jQTouch({
       slideSelector: '#jqt .slide_nav',
     });
@@ -141,11 +212,32 @@ TJG.utils = {
       },
 
       removeLoader : function () {
-        $('#jqt').fadeTo(1, 350, function() {
-          TJG.utils.hideLoader(200); 
+        $('#jqt').fadeTo(300, 1, function() {
+          TJG.utils.hideLoader(300); 
         });
-      }
+        //TJG.utils.hideURLBar();
+      },
+      
+      loadEvents : function () {
+        
+        $('#how_works').click(function(){
 
+        });
+        
+        $('.close_dialog').click(function(){
+          TJG.utils.removeDialogs();
+        });
+        
+        $('#how_works').bind('pageAnimationStart', function(event, info){
+          TJG.onload.removeDialog();
+        });
+        
+        $('#sign_up').click(function(){
+          TJG.utils.showRegister();
+        });
+        
+      }
+      
     };
 
     TJG.init = function() {  

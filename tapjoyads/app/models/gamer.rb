@@ -1,4 +1,4 @@
-class Gamer < ActiveRecord::Base
+  class Gamer < ActiveRecord::Base
   include UuidPrimaryKey
   
   acts_as_authentic do |c|

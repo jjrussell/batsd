@@ -17,11 +17,17 @@
  */
     
 (function($, window, document, Number, Math, undefined) {
-    //we need this in the algorithm
     if (!"WebKitCSSMatrix" in this) {
         return null;
     }
-    
+    try {
+      if (!this.WebKitCSSMatrix) {
+        return null;
+      }
+    }
+    catch(e) {
+      return null;
+    }
     	/**
          *    Determine 3d translate support
          *
@@ -1237,7 +1243,6 @@
     //load stylesheet(s)
     
     $(function() {
-        window.scrollTo(0,0);
         var stringRules = "", 
             rules = cssRules, 
             o = window.innerHeight > window.innerWidth ? "portrait" : "landscape",

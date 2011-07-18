@@ -1,5 +1,7 @@
 class Games::ConfirmationsController < GamesController
   
+  layout nil
+  
   def create
     @gamer = Gamer.find_using_perishable_token(params[:token], 1.year)
     if @gamer.present? && (@gamer.confirmed_at? || @gamer.confirm!)

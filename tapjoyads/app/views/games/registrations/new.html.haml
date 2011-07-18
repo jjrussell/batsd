@@ -1,7 +1,8 @@
-- @page_title = 'Register'
-
-
 - form_for([ :games, @gamer ], :url => { :action => :create }) do |f|
+  .dialog_title
+    Sign Up Now!
+  .dialog_header
+    Creating an account is too easy!
   .field
     = f.label :email
     = f.text_field :email
@@ -12,4 +13,4 @@
     = error_message_on @gamer, :password
   .field
     = f.hidden_field :referrer, :value => params[:referrer]
-    = f.submit 'Register'
+    = f.submit 'Do it!'

@@ -1,5 +1,7 @@
 class Games::PasswordResetsController < GamesController
   
+  layout nil
+  
   before_filter :require_no_gamer
   before_filter :find_gamer_using_perishable_token, :only => [ :edit, :update ]
   
