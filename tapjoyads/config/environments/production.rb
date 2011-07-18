@@ -26,10 +26,10 @@ config.action_controller.allow_forgery_protection    = false
 # Disable delivery errors, bad email addresses will be ignored
 # config.action_mailer.raise_delivery_errors = false
 
-MEMCACHE_SERVERS = [ 'tapjoy-acs-prod.fqfjqv.1xmb.use1.acsvc.amazonaws.com',
-                     'tapjoy-acs-prod.fqfjqv.1xmc.use1.acsvc.amazonaws.com',
-                     'tapjoy-acs-prod.fqfjqv.1xmd.use1.acsvc.amazonaws.com',
-                     'tapjoy-acs-prod.fqfjqv.1xme.use1.acsvc.amazonaws.com' ]
+MEMCACHE_SERVERS = [ 'tj-acs-prod.fqfjqv.1xm3.use1.acsvc.amazonaws.com',
+                     'tj-acs-prod.fqfjqv.1xm4.use1.acsvc.amazonaws.com',
+                     'tj-acs-prod.fqfjqv.1xm5.use1.acsvc.amazonaws.com',
+                     'tj-acs-prod.fqfjqv.1xm6.use1.acsvc.amazonaws.com' ]
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
@@ -53,7 +53,7 @@ ENV['AWS_SECRET_ACCESS_KEY'] = amazon['production']['secret_access_key']
 # to the list of transient problems which will automatically get retried by RightAws.
 RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
 
-MAX_WEB_REQUEST_DOMAINS = 240
+MAX_WEB_REQUEST_DOMAINS = 280
 NUM_POINT_PURCHASES_DOMAINS = 10
 NUM_CLICK_DOMAINS = 50
 NUM_REWARD_DOMAINS = 50

@@ -1,5 +1,34 @@
 class AgencyApi::PartnersController < AgencyApiController
   
+  def index
+    return unless verify_request
+    
+    partners = @agency_user.partners.map do |partner|
+      { 
+        :partner_id       => partner.id, 
+        :name             => partner.name, 
+        :balance          => partner.balance, 
+        :pending_earnings => partner.pending_earnings 
+      }
+    end
+    
+    render_success({ :partners => partners })  
+  end
+  
+  def show
+    return unless verify_request
+    return unless verify_partner(params[:id])
+    
+    result = { 
+      :partner_id       => @partner.id, 
+      :name             => @partner.name, 
+      :balance          => @partner.balance, 
+      :pending_earnings => @partner.pending_earnings 
+    }
+    
+    render_success(result)
+  end
+  
   def create
     return unless verify_request([ :name, :email ])
     

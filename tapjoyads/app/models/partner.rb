@@ -132,7 +132,7 @@ class Partner < ActiveRecord::Base
 
   def remove_user(user)
     if users.length > 1 && users.include?(user)
-      users.delete(user)
+      user.partners.delete(self)
       if user.partners.blank?
         user.current_partner = Partner.new(:name => user.email, :contact_name => user.email)
         user.partners << user.current_partner

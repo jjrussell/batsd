@@ -61,7 +61,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :raffle_manager, :only => [ :index, :edit, :update, :new, :create ]
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
-    :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post, :reporting => :get, :delink_user => :post },
+    :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post, :reporting => :get },
     :collection => { :managed_by => :get, :agency_api => :get } do |partner|
     partner.resources :offer_discounts, :only => [ :index, :new, :create ], :member => { :deactivate => :post }, :controller => 'partners/offer_discounts'
     partner.resources :payout_infos, :only => [ :index, :update ]
@@ -69,6 +69,7 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options(:controller => 'search') do |m|
     m.search_offers 'search/offers', :action => 'offers'
     m.search_users 'search/users', :action => 'users'
+    m.search_partners 'search/partners', :action => 'partners'
   end
   map.premier 'premier', :controller => :premier, :action => :edit
   
@@ -91,6 +92,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :as => :scheduling
     tools.resources :users, :only  => [ :index, :show] do |user|
       user.resources :role_assignments, :only => [ :create, :destroy ], :controller => 'users/role_assignments'
+      user.resources :partner_assignments, :only => [ :create, :destroy ], :controller => 'users/partner_assignments'
     end
     tools.resources :employees, :only => [ :index, :new, :create, :edit, :update ], :member => [ :delete_photo ]
     tools.resources :preview_experiments, :only => [ :index, :show ]
@@ -127,7 +129,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :sdk, :only => [ :index, :show ]
   map.namespace :agency_api do |agency|
     agency.resources :apps, :only => [ :index, :show, :create, :update ]
-    agency.resources :partners, :only => [ :create, :update ], :collection => { :link => :post }
+    agency.resources :partners, :only => [ :index, :show, :create, :update ], :collection => { :link => :post }
     agency.resources :currencies, :only => [ :index, :show, :create, :update ]
   end
   

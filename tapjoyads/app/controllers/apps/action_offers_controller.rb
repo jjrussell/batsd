@@ -44,18 +44,23 @@ class Apps::ActionOffersController < WebsiteController
     safe_attributes = [ :name, :prerequisite_offer_id, :instructions, :primary_offer_attributes_id, :primary_offer_attributes_bid, :primary_offer_attributes_user_enabled, :primary_offer_attributes_daily_budget ]
     
     if permitted_to? :edit, :statz
+      params[:action_offer][:primary_offer_attributes][:device_types] = params[:action_offer][:primary_offer_attributes][:device_types].blank? ? '[]' : params[:action_offer][:primary_offer_attributes][:device_types].to_json
       safe_attributes += [
         :primary_offer_attributes_tapjoy_enabled,
-        :primary_offer_attributes_self_promote_only,
         :primary_offer_attributes_allow_negative_balance,
         :primary_offer_attributes_pay_per_click,
+        :primary_offer_attributes_name_suffix,
+        :primary_offer_attributes_show_rate,
         :primary_offer_attributes_min_conversion_rate,
+        :primary_offer_attributes_countries,
+        :primary_offer_attributes_cities,
+        :primary_offer_attributes_postal_codes,
+        :primary_offer_attributes_device_types,
         :primary_offer_attributes_publisher_app_whitelist,
         :primary_offer_attributes_overall_budget,
-        :primary_offer_attributes_min_bid_override
+        :primary_offer_attributes_min_bid_override,
       ]
     end
-    
     if @action_offer.safe_update_attributes params[:action_offer], safe_attributes
       flash[:notice] = "Updated the '#{@action_offer.name}' action."
       redirect_to app_action_offers_path(@app)
@@ -98,15 +103,16 @@ private
 
   def setup
     if permitted_to? :edit, :statz
-      @app = App.find(params[:app_id], :include => [:action_offers])
+      @app = App.find(params[:app_id])
     else
-      @app = current_partner.apps.find(params[:app_id], :include => [:action_offers])
+      @app = current_partner.apps.find(params[:app_id])
     end
     
     if params[:id]
       @action_offer = @app.action_offers.find(params[:id])
       @offer = @action_offer.primary_offer
       log_activity(@action_offer)
+      log_activity(@offer)
     end
   end
 

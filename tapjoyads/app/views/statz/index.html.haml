@@ -73,7 +73,7 @@
       %td.filter= select_tag('published_offers_filter', options_for_select(filter_options(:published_offers)))
       %td.filter= select_tag('revenue_filter', options_for_select(filter_options(:revenue)))
       %td.filter= select_tag('featured_filter', options_for_select(filter_options(:featured)))
-      %td.filter= select_tag('featured_filter', options_for_select(filter_options(:rewarded)))
+      %td.filter= select_tag('rewarded_filter', options_for_select(filter_options(:rewarded)))
       %td.filter= select_tag('offer_type_filter', options_for_select(filter_options(:offer_type)))
   %tbody#apps_tbody
     - @cached_stats.each do |offer_id, stats|
