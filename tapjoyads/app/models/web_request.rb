@@ -177,7 +177,7 @@ class WebRequest < SimpledbResource
     
     update_realtime_stats
     
-    Activemq.publish_message('web_requests', self.serialize)
+    # Activemq.publish_message('web_requests', self.serialize)
   end
   
   ##
