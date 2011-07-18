@@ -32,6 +32,9 @@ class HomepageController < WebsiteController
   end
 
   def privacy
+  end
+  
+  def privacy_mobile
     render :layout => false
   end
 

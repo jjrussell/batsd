@@ -13,7 +13,7 @@ a:hover { text-decoration: underline; }
 
 #header_wrapper { background: url('/images/header_repeat.jpg') repeat-x; height: 99px; width: 100%; }
 #header { background: url('/images/header_bg.jpg') no-repeat; height: 99px; margin: 0px auto; width: 980px; }
-#logo { background: url('/images/logo.png') no-repeat; float: left; height: 61px; margin-top: 21px; width: 138px; }
+#logo { background: url('/images/logo.png') no-repeat; float: left; height: 61px; margin-top: 21px; width: 153px; }
 #nav { float: right; margin-top: 32px; }
 .nav_link { float: left; height: 30px; }
 

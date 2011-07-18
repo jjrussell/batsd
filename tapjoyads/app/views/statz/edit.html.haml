@@ -50,6 +50,15 @@
       %td
         = f.check_box(:featured)
         = error_message_on @offer, :featured
+    - if @offer.item_type == 'App' && @offer.price == 0
+      %tr
+        %th
+          = f.label(:rewarded)
+          #help_rewarded.help ?
+        %td
+          = f.check_box(:rewarded)
+          = error_message_on @offer, :rewarded
+        
     - if @offer.item_type == 'GenericOffer'
       %tr
         %th
@@ -86,14 +95,7 @@
       %td
         = f.text_field(:min_conversion_rate)
         = error_message_on @offer, :min_conversion_rate
-    %tr
-      %th
-        = f.label(:countries)
-        #help_countries.help ?
-      %td
-        = f.text_field(:countries)
-        = error_message_on @offer, :countries
-      %td= link_to('Country codes', 'http://www.iso.org/iso/english_country_names_and_code_elements', :tabindex => 100)
+    = render('apps/offers_shared/countries', :f => f)
     %tr
       %th
         = f.label(:cities)
@@ -169,10 +171,10 @@
   #help_multi_complete_content{ :name => 'Multi-complete' } Allow this offer to be completed multiple times per device.
   #help_direct_pay_content{ :name => 'Direct-pay' } Select a direct-pay provider from the list to designate this offer as a direct-pay offer. Revenue generated will be split up using the publisher's direct-pay share.
   #help_featured_content{ :name => 'Featured' } Enables this offer in our featured offers feed.
+  #help_rewarded_content{ :name => 'Rewarded' } Whether or not the offer rewards the user with currency.
   #help_internal_suffix_content{ :name => 'Internal Suffix' } Internal identifier for offers. i.e. 'featured' or 'us only'
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.
   #help_min_conversion_rate_content{ :name => 'Min CVR' } This is used to prevent low conversion rate warnings. A warning will only be issued if the conversion rate falls below this threshold. Allowed values are blank or 0.0 - 1.0
-  #help_countries_content{ :name => 'Countries' } Targets this offer to these countries. Must be an array of 2-character country codes or blank for no targeting. i.e. ["US", "GB"]
   #help_cities_content{ :name => 'Cities' } Targets this offer to these cities. Must be an array of city names or blank for no targeting. i.e. ["San Francisco"]
   #help_postal_codes_content{ :name => 'Postal Codes' } Targets this offer to these postal codes. Must be an array of postal codes or blank for no targeting. i.e. ["94105"]
   #help_device_types_content{ :name => 'Device Types' } Targets this offer to these device types. At least one device type must be selected.

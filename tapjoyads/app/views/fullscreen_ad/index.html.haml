@@ -1,12 +1,12 @@
 #main
-  %h1
-    Earn 
-    %span.amount
-      #{@currency.get_visual_reward_amount(@offer)} 
-    #{@currency.name}!
+  - if @offer.rewarded?
+    %h1
+      Earn
+      %span.amount= @currency.get_visual_reward_amount(@offer, params[:display_multiplier])
+      #{@currency.name}!
   %p.offertext
     - if @offer.item_type == 'App'
-      Just download and run
+      = @offer.rewarded? ? "Just download and run" : "Try out"
   - link_to(get_click_url(@offer), :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => @offer.get_icon_url(:source => :cloudfront, :size => '256'), :class => 'icon', :id => 'icon' }
     .offername
@@ -15,7 +15,7 @@
   = link_to('Skip', 'dismiss', :class => 'skip')
   = link_to("#{@offer.item_type == 'App' ? 'Download' : 'Earn now'}", get_click_url(@offer), :class => 'download')
   .showOffers
-    = link_to('Show more apps', 'showOffers')
+    = link_to(@currency.hide_rewarded_app_installs? ? '' : 'Show more apps', 'showOffers')
   .adsby
     Ads by
     %img{ :src => "#{CLOUDFRONT_URL}/images/tapjoylogo-small.png", :alt => "Tapjoy"}

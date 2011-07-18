@@ -4,7 +4,7 @@ xml.TapjoyConnectReturnObject do
     @offer_list.each do |offer|
       xml.OfferReturnClass do
         xml.Cost offer.cost
-        xml.Amount @currency.get_reward_amount(offer)
+        xml.Amount @currency.get_visual_reward_amount(offer, params[:display_multiplier])
         xml.CreditCardRequired false
         xml.Description 'An offer.'
         xml.Instructions 'Complete the offer.'

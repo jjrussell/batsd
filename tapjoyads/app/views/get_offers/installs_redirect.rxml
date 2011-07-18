@@ -4,7 +4,7 @@ xml.TapjoyConnectReturnObject do
     @offer_list.each do |offer|
       xml.TapjoyApp do
         xml.Cost visual_cost(offer)
-        xml.Amount @currency.get_visual_reward_amount(offer)
+        xml.Amount @currency.get_visual_reward_amount(offer, params[:display_multiplier])
         xml.Description 'An offer.'
         if params[:source] == 'featured' && @publisher_app.partner_id == '28239536-44dd-417f-942d-8247b6da0e84'
           xml.IconURL "#{CLOUDFRONT_URL}/icons/#{offer.item_id}.png"
@@ -19,7 +19,6 @@ xml.TapjoyConnectReturnObject do
           xml.MediumIconURL offer.get_icon_url(:source => :cloudfront, :size => '256')
         end
       end
-      
     end
   end
   xml << render(:partial => "footer")

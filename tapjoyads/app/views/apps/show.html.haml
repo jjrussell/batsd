@@ -22,7 +22,9 @@
         %th
           Platform
           #help_platform.help ?
-        %td#app_platform= @app.platform_name
+        %td
+          = @app.platform_name
+          = f.hidden_field :platform
       - if permitted_to?(:edit, :statz)
         = render :partial => 'select_country'
       %tr
@@ -33,7 +35,7 @@
           = f.text_field :name
           = error_message_on @app, :name
           #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
-        %td= button_to_function "Search #{@app.store_name}", 'search()', :class => 'search hidden', :id => 'search_button'
+        %td= button_to "Search #{@app.store_name}", '#', :class => 'search hidden', :id => 'search_button'
       %tr
         %th
           App ID
@@ -116,7 +118,7 @@
     input.trash:active {
       background-position: 1px 1px;
     }
-  
+
 - content_for :page_javascript do
   :plain
     $(function($){
@@ -130,7 +132,7 @@
       $('select#app_state').change(toggleSubmitButton);
       $('input#app_store_id').change(toggleSubmitButton);
     })
-  
+
   - if @app.hidden?
     :plain
       $(function($){

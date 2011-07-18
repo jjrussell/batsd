@@ -61,7 +61,7 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
     end
     context "with valid params" do
       setup do
-        @currency = Factory(:currency, :app => @app, :partner => @partner, :name => 'foo', :conversion_rate => 50, :initial_balance => 50, :test_devices => 'asdf')
+        @currency = Factory(:currency, :app => @app, :partner => @partner, :name => 'foo', :conversion_rate => 50, :initial_balance => 50, :test_devices => 'asdf', :callback_url => 'http://tapjoy.com', :secret_key => 'bar')
         @response = get(:index, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :app_id => @app.id)
       end
       should respond_with(200)
@@ -75,6 +75,8 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
           'conversion_rate' => @currency.conversion_rate,
           'initial_balance' => @currency.initial_balance,
           'test_devices'    => @currency.test_devices,
+          'callback_url'    => @currency.callback_url,
+          'secret_key'      => @currency.secret_key,
         }
         assert_equal [expected_response], result['currencies']
       end
@@ -153,6 +155,8 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
         assert_equal @currency.conversion_rate, result['conversion_rate']
         assert_equal @currency.initial_balance, result['initial_balance']
         assert_equal @currency.test_devices, result['test_devices']
+        assert_equal @currency.callback_url, result['callback_url']
+        assert_equal @currency.secret_key, result['secret_key']
       end
     end
   end
@@ -242,7 +246,7 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
     end
     context "with valid params" do
       setup do
-        @response = post(:create, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :app_id => @app.id, :name => 'currency', :conversion_rate => 100, :initial_balance => 100, :test_devices => 'asdf;fdsa')
+        @response = post(:create, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :app_id => @app.id, :name => 'currency', :conversion_rate => 100, :initial_balance => 100, :test_devices => 'asdf;fdsa', :callback_url => 'http://tapjoy.com', :secret_key => 'bar')
       end
       should respond_with(200)
       should respond_with_content_type(:json)
@@ -255,6 +259,8 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
         assert_equal 100, currency.conversion_rate
         assert_equal 100, currency.initial_balance
         assert_equal 'asdf;fdsa', currency.test_devices
+        assert_equal 'http://tapjoy.com', currency.callback_url
+        assert_equal 'bar', currency.secret_key
       end
     end
   end
@@ -331,7 +337,7 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
     end
     context "with valid params" do
       setup do
-        @response = put(:update, :id => @currency.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'foo', :conversion_rate => 200, :initial_balance => 200, :test_devices => 'asdf;fdsa')
+        @response = put(:update, :id => @currency.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'foo', :conversion_rate => 200, :initial_balance => 200, :test_devices => 'asdf;fdsa', :callback_url => 'http://tapjoy.com', :secret_key => 'bar')
       end
       should respond_with(200)
       should respond_with_content_type(:json)
@@ -343,6 +349,8 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
         assert_equal 200, @currency.conversion_rate
         assert_equal 200, @currency.initial_balance
         assert_equal 'asdf;fdsa', @currency.test_devices
+        assert_equal 'http://tapjoy.com', @currency.callback_url
+        assert_equal 'bar', @currency.secret_key
       end
     end
   end

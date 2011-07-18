@@ -23,21 +23,33 @@
 .metadata Contact name: #{@partner.contact_name}
 .metadata Contact phone: #{@partner.contact_phone}
 .metadata Contact email(s):
-%ul
+%table
+  %thead
+    %tr
+      %th Email
+      - if permitted_to?(:show, :tools_users)
+        %th Edit
+      - if permitted_to?(:destroy, :tools_users_partner_assignments)
+        %th Remove
+      %th Mailchimp
+  %tbody
   - @partner.users.each do |user|
-    %li
-      %span.email= user.email
-      - if permitted_to?(:delink_user, :partners)
-        .delink_action
-          - form_tag delink_user_partner_path do
-            = hidden_field_tag :user_id, user.id
-            - if @partner.users.length > 1
-              = submit_tag 'remove', :confirm => "Are you sure?"
-            - else
-              = submit_tag 'cannot remove last user', :disabled => 'disabled', :confirm => "Are you sure?"
-      = image_tag('mailchimp.png', :class => "mail_chimp_button", :title => "Subscriber status")
-      .mail_chimp_info.hidden
-        = image_tag 'load-circle.gif'
+    %tr
+      %td= user.email
+      - if permitted_to?(:show, :tools_users)
+        %td= link_to('edit user', tools_user_path(user))
+      - if permitted_to?(:destroy, :tools_users_partner_assignments)
+        %td
+          - partner_assignment = user.partner_assignments.find_by_partner_id(@partner.id)
+          - if @partner.users.length > 1
+            - path = tools_user_partner_assignment_path(:user_id => user.id, :id => partner_assignment.id)
+            = button_to('Remove', path, :method => 'delete', :confirm => 'Are you sure?')
+          - else
+            = submit_tag 'Cannot remove last user', :disabled => 'disabled'
+      %td
+        = image_tag('mailchimp.png', :class => "mail_chimp_button", :title => "Subscriber status")
+        .mail_chimp_info.hidden
+          = image_tag 'load-circle.gif'
 .metadata Balance: #{number_to_currency(@partner.balance / 100.0)}
 .metadata Pending Earnings: #{number_to_currency(@partner.pending_earnings / 100.0)}
 .metadata Payout Frequency: #{@partner.payout_frequency}
@@ -167,18 +179,17 @@
         sortList: [ [1, 0] ]
       });
       $('.mail_chimp_button').click(function(){
-        if ($(this).siblings('div').is(':hidden')) {
-          var div = $(this).siblings('div');
-          div.show();
-          var email = $(this).siblings('span.email').text();
-          console.log(email);
-          var url = '/partners/mail_chimp_info/;';
-          $.get(url, {email: email}, function(data){
-            div.children('img').hide();
-            div.append("Subscriber?: " + data.subscribed);
-            div.append("<br/>Can email?: " + data.can_email);
-          });
-        }
+        $(this).hide();
+        var div = $(this).siblings('div');
+        div.show();
+        var email = $(this).siblings('span.email').text();
+        console.log(email);
+        var url = '/partners/mail_chimp_info/;';
+        $.get(url, {email: email}, function(data){
+          div.children('img').hide();
+          div.append("Subscriber?: " + data.subscribed);
+          div.append("<br/>Can email?: " + data.can_email);
+        });
       });
     });
 
@@ -207,6 +218,6 @@
       font-weight: bold;
       font-size: 24px;
     }
-    .delink_action, .delink_action form {
+    .user_action, .user_action span {
       display: inline;
     }

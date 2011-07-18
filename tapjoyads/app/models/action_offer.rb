@@ -23,8 +23,8 @@ class ActionOffer < ActiveRecord::Base
   after_update :update_offers
   
   delegate :user_enabled?, :tapjoy_enabled?, :bid, :min_bid, :daily_budget, :integrated?, :to => :primary_offer
-  
-  delegate :is_android?, :store_id, :store_url, :large_download?, :supported_devices, :platform, :to => :app
+
+  delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :to => :app
 
   delegate :primary_category, :user_rating, :to => :app
 
@@ -55,7 +55,7 @@ private
     offers.each do |offer|
       offer.partner_id       = partner_id if partner_id_changed?
       offer.icon_id_override = app_id if app_id_changed? && app_id_was == offer.icon_id_override
-      offer.url              = app.direct_store_url
+      offer.url              = app.store_url
       offer.name             = name if name_changed?
       offer.instructions     = instructions if instructions_changed?
       offer.hidden           = hidden if hidden_changed?
