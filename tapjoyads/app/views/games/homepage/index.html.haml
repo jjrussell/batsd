@@ -3,9 +3,11 @@
     %div.top_nav_bar.toolbar
       .nav_content
         .right
-          Support
+          %a{ :href => '#support' }
+            Support
         .right
-          My Account
+          %a{ :href => '#my_account' } 
+            My Account
     %div.container.vertical-scroll
       %div.scroller.with-scrollbar
         %div.page
@@ -20,6 +22,7 @@
                   %span.title
                     My Apps
             .content
+           
               %ul 
                 %li.offer_item
                   .offer_button
@@ -87,9 +90,11 @@
     %div.top_nav_bar
       .nav_content
         .right
-          Support
+          %a{ :href => '#support' }
+            Support
         .right
-          My Account  
+          %a{ :href => '#my_account' } 
+            My Account  
     %div.container.vertical-scroll
       %div.scroller.with-scrollbar
         %div.page
@@ -111,9 +116,11 @@
     %div.top_nav_bar
       .nav_content
         .right
-          Support
+          %a{ :href => '#support' }
+            Support
         .right
-          My Account  
+          %a{ :href => '#my_account' }
+            My Account 
     %div.container.vertical-scroll
       %div.scroller.with-scrollbar
         %div.page
@@ -129,6 +136,56 @@
                     %span.title
                       My Apps
             .content    
+
+
+  #my_account
+    %div.top_nav_bar
+      .nav_content
+        .right
+          %a{ :href => '#support' }
+            Support
+        .right
+          My Account  
+    %div.container.vertical-scroll
+      %div.scroller.with-scrollbar
+        %div.page
+          %div
+            .logo
+              %div.slide_nav
+                %div.slider_right.right
+                  %a{ :href => '#get_more' }
+                    %span.title.small
+                      More Games!
+                %div.slide_left.left
+                  %a.slideright{ :href => '#my_apps' }
+                    %span.title
+                      My Apps
+            .content
+
+
+  #support
+    %div.top_nav_bar
+      .nav_content
+        .right
+          %a{ :href => '#support' }
+            Support
+        .right
+          My Account  
+    %div.container.vertical-scroll
+      %div.scroller.with-scrollbar
+        %div.page
+          %div
+            .logo
+              %div.slide_nav
+                %div.slider_right.right
+                  %a{ :href => '#get_more' }
+                    %span.title.small
+                      More Games!
+                %div.slide_left.left
+                  %a.slideright{ :href => '#my_apps' }
+                    %span.title
+                      My Apps
+            .content
 
 
 #sign_up_dialog.dialog_wrapper.hide
