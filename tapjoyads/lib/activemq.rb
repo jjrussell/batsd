@@ -2,7 +2,7 @@ class Activemq
   
   def self.reset_connection
     @@publishing_clients = ACTIVEMQ_SERVERS.map do |server|
-      Stomp::Client.new('activemq', 'somepassword', server, 61613, false)
+      Stomp::Client.new('', '', server, 61613, false)
     end
   end
   
@@ -28,8 +28,8 @@ class Activemq
   end
   
   def self.get_consumer(server, queue, &block)
-    consumer = Stomp::Client.new('activemq', 'somepassword', server, 61613, false)
-    consumer.subscribe("/queue/#{queue}", { :ack => :client }) do |message|
+    consumer = Stomp::Client.new('', '', server, 61613, false)
+    consumer.subscribe("/queue/#{queue}", { :ack => :client, 'activemq.prefetchSize' => 100000 }) do |message|
       yield(message)
     end
     consumer
