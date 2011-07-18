@@ -97,16 +97,13 @@ class Apps::CurrenciesController < WebsiteController
 private
 
   def find_currency
-    @app = current_partner.apps.find_by_id(params[:app_id], :include => [:primary_currency])
-    if @app.nil?
-      redirect_to apps_path
-      return
+    if permitted_to? :edit, :statz
+      @app = App.find(params[:app_id])
+    else
+      @app = current_partner.apps.find(params[:app_id])
     end
-    @currency = @app.currencies.find_by_id(params[:id])
-    if @currency.nil?
-      flash[:error] = "Could not find currency"
-      redirect_to apps_path
-    end
+
+    @currency = @app.currencies.find(params[:id])
   end
 
 end
