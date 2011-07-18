@@ -153,11 +153,10 @@
       $('form.json').submit(function() {
         if (!confirm('Are you sure?')) { return false; }
 
-        var form    = $(this);
-        var spinner = form.find('img.spinner');
-        var submit  = form.find('input.submit');
-        var amount  = form.find('input.amount');
-        var status  = form.find('span.status');
+        var spinner = $(this).find('img.spinner');
+        var submit = $(this).find('input.submit');
+        var amount = $(this).find('input.amount');
+        var status = $(this).find('span.status');
 
         $.ajax({
           dataType: 'json',
@@ -196,7 +195,4 @@
       border: 1px solid gray;
       padding: 5px;
       font-size: 12px;
-    }
-    td.small {
-      font-size: 10px;
     }
