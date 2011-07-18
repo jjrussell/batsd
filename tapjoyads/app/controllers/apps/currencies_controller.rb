@@ -23,6 +23,7 @@ class Apps::CurrenciesController < WebsiteController
   end
 
   def update
+    log_activity(@currency)
     currency_params = sanitize_currency_params(params[:currency], [ :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid ])
     
     if params[:managed_by_tapjoy]
@@ -101,7 +102,6 @@ private
     
     if params[:id]
       @currency = @app.currencies.find(params[:id])
-      log_activity(@currency)
     end
   end
 
