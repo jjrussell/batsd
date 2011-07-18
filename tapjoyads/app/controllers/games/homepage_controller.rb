@@ -19,13 +19,17 @@ class Games::HomepageController < GamesController
     end
   end
   
+  def index
+    redirect_to games_real_index_path if current_gamer.present?
+  end
+  
 private
   
   def require_complete_gamer
     if current_gamer.blank?
       redirect_to games_login_path 
     elsif current_gamer.udid.blank?
-      redirect_to link_device_games_registrations_path
+      redirect_to edit_games_registrations_path
     end
   end
   

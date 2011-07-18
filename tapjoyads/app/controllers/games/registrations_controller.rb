@@ -18,8 +18,19 @@ class Games::RegistrationsController < GamesController
     end
   end
   
-  def link_device
-    render :text => 'Link your gamer to a udid.'
+  def edit
+    @gamer = current_gamer
+  end
+  
+  def update
+    @gamer = current_gamer
+    @gamer.udid = params[:gamer][:udid]
+    if @gamer.save
+      redirect_to games_root_path
+    else
+      flash.now[:error] = 'Error updating'
+      render :action => :edit
+    end
   end
   
 end
