@@ -191,11 +191,7 @@ TJG.utils = {
         className = className.replace(replace, classReplaces[replace]);
     }
     TJG.doc.className = className + classes.join(' ');
-    
-    var jQT = new $.jQTouch({
-      slideSelector: '#jqt .slide_nav',
-    });
-        
+
     TJG.onload = {
       
       disableScrollOnBody : function() {
@@ -213,9 +209,8 @@ TJG.utils = {
 
       removeLoader : function () {
         $('#jqt').fadeTo(300, 1, function() {
-          TJG.utils.hideLoader(300); 
+          TJG.utils.hideLoader(300);
         });
-        //TJG.utils.hideURLBar();
       },
       
       loadEvents : function () {
@@ -241,7 +236,8 @@ TJG.utils = {
     };
 
     TJG.init = function() {  
-       
+      
+      TJG.utils.hideURLBar();
       for (var key in TJG.onload) {
         TJG.onload[key]();
       }

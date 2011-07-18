@@ -27,12 +27,13 @@
   %body
     = yield
 
-    = yield :included_javascripts
-    %script{ :type => 'text/javascript', :charset => 'utf-8' }
-      = yield :page_javascript
-    = javascript_include_tag 'games/jquery-1.6.2'
+    = javascript_include_tag 'games/jquery-1.4.2'
     = javascript_include_tag 'games/jqtouch.js'
-    = javascript_include_tag 'games/jqt.scroll'
     = javascript_include_tag 'games/cufon-min' 
     = javascript_include_tag 'games/Cooper_Std_900.font'
     = javascript_include_tag 'games/tapjoygames'
+    
+    = yield :included_javascripts
+    %script{ :type => 'text/javascript', :charset => 'utf-8' }
+      = yield :page_javascript
+

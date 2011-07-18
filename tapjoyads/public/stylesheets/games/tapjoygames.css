@@ -14,6 +14,7 @@ body .hd {
 }
 a, a:visited {
   text-decoration: none;
+  color: #333333;
 }
 #jqt {
   color: #FFFFFF;
@@ -31,6 +32,9 @@ a, a:visited {
 .ipod, .iphone, .android-phone {
   font-size: 14px;
 }
+ 
+
+/* Dialog */
 .dialog_wrapper {
   background-color: #FFFFFF;
   color: #FFFFFF;
@@ -58,9 +62,9 @@ a, a:visited {
   -webkit-border-radius: 5px;
 }
 #sign_up_dialog.dialog_wrapper {
-  margin: 0px 5%;
+  margin: 0px 10%;
   top: 30%;
-  width: 90%;
+  width: 80%;
   z-index: 10;
 }
 #sign_up_dialog .dialog {
@@ -77,20 +81,20 @@ a, a:visited {
   height: 240px;
   z-index: 12;
 }
-form input[type=text], form input[type=password] { 
+.dialog form#new_gamer input[type=text], form#new_gamer input[type=password] { 
   padding: 4px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
 }
-form#new_gamer {
+.dialog form#new_gamer {
   margin: 0 auto;
   text-align: left;
   width: 240px;
 }
-form#new_gamer label, #form#new_gamer input {
+.dialog form#new_gamer label, #form#new_gamer input {
   display: block;
   padding-top: 6px;
-}     
+}
 .dialog_title {
   font-size: 18px;
   text-align: center;
@@ -107,6 +111,9 @@ form#new_gamer label, #form#new_gamer input {
   top: -30px;
   left: 16px;
   width: 36px;
+}
+#login_form, #signup_form {
+  margin-top: 20px;
 }
 .circle {
   margin: 12px auto 0;
@@ -142,18 +149,16 @@ form#new_gamer label, #form#new_gamer input {
   0%{-webkit-transform: scale(1.1); opacity: 1;}
   100%{-webkit-transform: scale(0.9); opacity: 0.1;}
 }
+
 /* Nav */
-.web .top_nav_bar, .ipad .top_nav_bar, .android .top_nav_bar {
+.top_nav_bar {
   background: #333333 url('../../images/games/nav_bar.png') repeat-x;
   color: #FFFFFF;
   height: 26px;
   width: 100%;
 }
-.ipod .top_nav_bar, .iphone .top_nav_bar, .android-phone .top_nav_bar {
-  background: #333333 url('../../images/games/nav_bar.png') repeat-x;
+.top_nav_bar a {
   color: #FFFFFF;
-  height: 26px;
-  width: 100%;
 }
 .web .top_nav_bar .nav_content, .ipad .top_nav_bar .nav_content {
   padding: 4px 16px;
@@ -161,6 +166,12 @@ form#new_gamer label, #form#new_gamer input {
 .ipod .top_nav_bar .nav_content, .iphone .top_nav_bar .nav_content, .android-phone .top_nav_bar .nav_content {
   padding: 4px 4px;
 }
+.web .top_nav_bar .nav_content div, .ipad .top_nav_bar .nav_content div {
+  margin-left: 10px;
+}              
+.ipod .top_nav_bar .nav_content div, .iphone .top_nav_bar .nav_content div, .android-phone .top_nav_bar .nav_content div {
+ margin-left: 10px;   
+}  
 .web .page, .ipad .page, .android .page {
   background: transparent url('../../images/games/header_bg_web.png') repeat-x;
 }
@@ -235,15 +246,15 @@ form#new_gamer label, #form#new_gamer input {
 .iphone .slide_nav .title.small, .ipod .slide_nav .title.small,.iphone .slide_nav a.title.small, .ipod .slide_nav a.title.small {
   font-size: 11px;
 }
-
-/* Offer */
+                     
+/* Content */
 .web .content, .ipad .content {
   margin: 0 auto;
   max-width: 1000px;
   padding: 20px 40px; 
 }
 .web .content.narrow, .ipad .content.narrow {
-  max-width: 620px;
+  max-width: 600px;
 }
 .ipod .content, .iphone .content, #android-phone .content {
   margin: 0 auto;
@@ -254,13 +265,13 @@ form#new_gamer label, #form#new_gamer input {
 }
 .ipod .tan .content, .iphone .tan .content, #android-phone .tan .content {
 }
-.web .earn_paper, .ipad .earn_paper {
+.web #earn_paper, .ipad #earn_paper {
   background: transparent url('../../images/games/earn_paper_web.png') no-repeat;
   height: 208px;
   margin: 0 auto;
   width: 616px;
 }
-.iphone .earn_paper, .ipod .earn_paper {
+.iphone #earn_paper, .ipod #earn_paper {
   background: transparent url('../../images/games/earn_paper_mobile.png') no-repeat;
   height: 104px;
   margin: 0 auto;
@@ -279,12 +290,12 @@ form#new_gamer label, #form#new_gamer input {
 .web .earn_title {
   font-size: 20px;
 }
-.iphone .earn_content, .ipod .earn_content {
+.iphone #earn_content, .ipod #earn_content {
   padding: 0 16px 0 20px;
   position: relative;
   top: 70px;
 }
-.web .earn_content, .ipad .earn_content {
+.web #earn_content, .ipad #earn_content {
   padding: 0 32px 0 40px;
   position: relative;
   top: 140px;
@@ -315,6 +326,34 @@ form#new_gamer label, #form#new_gamer input {
   padding-bottom: 5px;
   width: 105%;
 }
+.content_box {
+  background-color: #FFFFFF;
+  border: 1px solid #CEC7B1;
+  padding: 16px 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-box-shadow: 0px 2px 2px #AEA693;
+  -webkit-box-shadow: 0px 2px 2px #AEA693; 
+}
+.content_box_top_arrow {
+  background: transparent url('../../images/games/content_box_top_arrow.png') repeat-x;
+  display: block;
+  height: 15px;
+  position: relative;
+  margin-top: 6px;
+  left: 30px;
+  top: 2px;
+  width: 31px;
+}
+
+form#new_gamer_session input[type=text], form#new_gamer_session input[type=password]  {
+  border: none;
+  padding: 4px;
+  outline: none; 
+  -webkit-appearance: none;
+}
+
+/* Offer */  
 .offer_item {
   border-bottom: 1px solid #5B5B5B;
   min-height: 60px;
@@ -358,10 +397,7 @@ form#new_gamer label, #form#new_gamer input {
   float: right;
   padding-top: 6px;
 }
-.offer_button button.blue {
-}
-.offer_button .button {}
-.offer_button button.blue {
+.offer_button .button.blue {
   background: #2F477D;
   background: -moz-linear-gradient(top, #7f8dad 0%, #4a5e8c 50%, #2f477d 50%, #364c80 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #7f8dad), color-stop(0.5, #4a5e8c), color-stop(0.5, #2f477d), color-stop(1, #364c80));
@@ -381,28 +417,30 @@ form#new_gamer label, #form#new_gamer input {
   -moz-box-shadow: 0 0 4px #222222;
   -webkit-box-shadow: 0px 0 4px #222222;    
 }
-.ipod .offer_button button.blue, .iphone .offer_button button.blue, .android-phone .offer_button button.blue {
+.ipod .offer_button .button.blue, .iphone .offer_button .button.blue, .android-phone .offer_button .button.blue {
   font-size: 12px;
   width: 80px;
 }
-.offer_button button.blue a {
+.offer_button .button.blue a {
   color: #FFFFFF;
 }
-.offer_button button.blue span.amount {
+.offer_button .button.blue span.amount {
    color: #FFFFFF;
 }
-.offer_button button.blue:hover {
+.offer_button .button.blue:hover {
   background: #486A9A;
   background: -moz-linear-gradient(top, #8c9cbf 0%, #546a9e 50%, #36518f 50%, #3d5691 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #8c9cbf), color-stop(0.5, #546a9e), color-stop(0.5, #36518f), color-stop(1, #3d5691)); 
   cursor: pointer;
 }
-.offer_button button.blue:active {
+.offer_button .button.blue:active {
   -moz-box-shadow: inset 0 0 20px 0 #3d5691, 0 1px 0 #444444;
   -webkit-box-shadow: inset 0 0 20px 0 #3d5691, 0 1px 0 #444444;
   box-shadow: inset 0 0 20px 0 #3d5691, 0 1px 0 #444444;
   cursor: pointer;
 }
+
+
 .title {
   font-family: 'Paytone One', 'Cooper Std';
 }
@@ -415,6 +453,7 @@ form#new_gamer label, #form#new_gamer input {
 .hide {
   display: none;
 }
+/*
 .clearfix:after {
   content: ".";
   display: block;
@@ -432,3 +471,4 @@ html[xmlns] .clearfix {
 * html .clearfix {
   height: 1%;
 }
+*/

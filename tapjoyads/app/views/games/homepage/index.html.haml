@@ -3,9 +3,9 @@
     %div.top_nav_bar.toolbar
       .nav_content
         .right
-          Logout
-        .left
-          Welcome Van!
+          Support
+        .right
+          My Account
     %div.container.vertical-scroll
       %div.scroller.with-scrollbar
         %div.page
@@ -23,10 +23,10 @@
               %ul 
                 %li.offer_item
                   .offer_button
-                    %button.blue
+                    .button.blue
                       %span.amount
                         %a{ :href=> '#earn' }
-                          Earn More!
+                          Earn More
                   .offer_image
                     %img{ :src => 'https://d21x2jbj16e06e.cloudfront.net/icons/57/8933109a43c79022166a26445926aec22afb0417ab7b268b666e9f47fb1983cf.jpg' }
                   .offer_text
@@ -35,7 +35,7 @@
                     .offer_info
                 %li.offer_item
                   .offer_button
-                    %button.blue
+                    .button.blue
                       %span.amount
                         %a{ :href=> '#earn' }
                           Earn More!
@@ -47,7 +47,7 @@
                     .offer_info
                 %li.offer_item
                   .offer_button
-                    %button.blue
+                    .button.blue
                       %span.amount
                         %a{ :href=> '#earn' }
                           Earn More!
@@ -59,7 +59,7 @@
                     .offer_info
                 %li.offer_item
                   .offer_button
-                    %button.blue
+                    .button.blue
                       %span.amount
                         %a{ :href=> '#earn' }
                           Earn More!
@@ -71,7 +71,7 @@
                     .offer_info
                 %li.offer_item
                   .offer_button
-                    %button.blue
+                    .button.blue
                       %span.amount
                         %a{ :href=> '#earn' }
                           Earn More!
@@ -87,9 +87,9 @@
     %div.top_nav_bar
       .nav_content
         .right
-          Logout
-        .left
-          Welcome Van!
+          Support
+        .right
+          My Account  
     %div.container.vertical-scroll
       %div.scroller.with-scrollbar
         %div.page
@@ -111,9 +111,9 @@
     %div.top_nav_bar
       .nav_content
         .right
-          Logout
-        .left
-          Welcome Van!
+          Support
+        .right
+          My Account  
     %div.container.vertical-scroll
       %div.scroller.with-scrollbar
         %div.page
@@ -129,6 +129,7 @@
                     %span.title
                       My Apps
             .content    
+
 
 #sign_up_dialog.dialog_wrapper.hide
   %div.dialog
@@ -148,4 +149,7 @@
       .circle4
 
 - content_for :page_javascript do
-  :plain  
+  :plain
+     var jQT = new $.jQTouch({
+      slideSelector: '#jqt .slide_nav',
+    });        
