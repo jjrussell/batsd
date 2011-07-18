@@ -23,6 +23,7 @@ class DisplayAdController < ApplicationController
     image_data = Mc.get_and_put(key, false, 5.minutes) do
       publisher = App.find_in_cache(params[:publisher_app_id])
       currency = Currency.find_in_cache(params[:currency_id])
+      currency = nil if currency.present? && currency.app_id != params[:publisher_app_id]
       offer = Offer.find_in_cache(params[:advertiser_app_id])
       return unless verify_records([ publisher, currency, offer ])
 
@@ -58,6 +59,7 @@ private
     device = Device.new(:key => params[:udid])
     publisher_app = App.find_in_cache(params[:app_id])
     currency = Currency.find_in_cache(params[:currency_id])
+    currency = nil if currency.present? && currency.app_id != params[:app_id]
     return unless verify_records([ publisher_app, currency ], :render_missing_text => false)
     
     params[:publisher_app_id] = publisher_app.id
