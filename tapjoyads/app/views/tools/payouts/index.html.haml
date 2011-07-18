@@ -1,13 +1,20 @@
 - @page_title = 'Payouts'
 
 %h1 Payouts
+- if @start_date.present?
+  %h3
+    For partners with payout info modified between
+    = @start_date.to_s(:pub)
+    and
+    = @end_date.to_s(:pub)
 
-%form#change_date.tjform
-  = text_field_tag(:date)
+#filtered.hidden
+  Information updated in:
+  = select_date(@start_date || Time.zone.now, :discard_day => true, :start_year => 2011, :end_year => Time.zone.now.year)
   = submit_tag('Update', :id => :date_submit)
-
-Information updated
-
+  = submit_tag('Reset', :id => :date_reset)
+#unfiltered.hidden
+  = link_to 'Filter by payout info modification', '#'
 %table
   %thead
     %tr
@@ -16,7 +23,7 @@ Information updated
       %th Cutoff Date
       %th Payout Amount
       %th Current Payout Created
-      %th Type of Payment
+      %th Payout Info
       %th.do-not-print W9/Bank
       %th Action
   %tbody
@@ -42,7 +49,12 @@ Information updated
         %td= number_to_currency(partner.pending_earnings / 100.0 - partner.next_payout_amount / 100.0)
         %td= number_to_currency(partner.next_payout_amount / 100.0)
         - if payout_info.present?
-          %td= payout_info.payout_method
+          %td
+            %strong Type:
+            = payout_info.payout_method
+            %br/
+            %strong Updated:
+            = payout_info.updated_at.to_s(:pub)
           %td.do-not-print
             .button= button_to('Show info', info_tools_payout_path(payout_info.id))
             %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
@@ -62,6 +74,30 @@ Information updated
 - content_for :page_javascript do
   :plain
     $(function($) {
+      if (#{@start_date.blank?}) {
+        $('#unfiltered').show();
+      } else {
+        $('#filtered').show();
+      }
+      $('#unfiltered a').click(function(){
+        $('#unfiltered').hide();
+        $('#filtered').show();
+        return false;
+      });
+      $('#date_submit').click(function(){
+        var year = $('select#date_year').val();
+        var month = $('select#date_month').val();
+        location.href = location.href.split('?')[0] + '?year=' + year + '&month=' + month;
+      });
+      $('#date_reset').click(function(){
+        $('#filtered').hide();
+        if (#{@start_date.present?}) {
+          location.href = location.href.split('?')[0];
+        } else {
+          $('#unfiltered').show();
+        }
+      });
+
       $('.button-to').submit(function(){
         var form = $(this);
         var button = form.parent();
