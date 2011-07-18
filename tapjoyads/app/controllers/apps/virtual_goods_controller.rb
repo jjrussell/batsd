@@ -134,11 +134,12 @@ private
   end
 
   def find_app
-    @app = current_partner.apps.find_by_id(params[:app_id])
-    if @app.nil?
-      redirect_to apps_path
-      return
+    if permitted_to? :edit, :statz
+      @app = App.find(params[:app_id])
+    else
+      @app = current_partner.apps.find(params[:app_id])
     end
+    
     @virtual_good_types = {}
     @app.virtual_goods.each do |vg|
       @virtual_good_types[vg.title] ||= vg.extra_attributes.keys
