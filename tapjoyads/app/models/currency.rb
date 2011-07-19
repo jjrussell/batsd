@@ -181,9 +181,7 @@ class Currency < ActiveRecord::Base
   
   def hide_rewarded_app_installs_for_version?(app_version, source)
     return false if source == 'tj_games'
-    return false unless hide_rewarded_app_installs?
-    return false if minimum_hide_rewarded_app_installs_version.blank?
-    app_version.present? && app_version.version_greater_than_or_equal_to?(minimum_hide_rewarded_app_installs_version)
+    hide_rewarded_app_installs? && (minimum_hide_rewarded_app_installs_version.blank? || app_version.present? && app_version.version_greater_than_or_equal_to?(minimum_hide_rewarded_app_installs_version))
   end
   
   def cache_offers
