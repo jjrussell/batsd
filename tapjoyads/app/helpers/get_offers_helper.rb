@@ -5,7 +5,8 @@ module GetOffersHelper
     
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['start'] = [@start_index - @max_items, 0].max
-    link_to("<div class='arrow'></div>#{t('text.offerwall.previous', :items => @max_items)}", "/get_offers/webpage?#{tmp_params.to_query}", :onclick => "this.className = 'clicked';")
+    url = "/get_offers/webpage?data=#{SymmetricCrypto.encrypt_object(tmp_params, SYMMETRIC_CRYPTO_SECRET)}"
+    link_to("<div class='arrow'></div>#{t('text.offerwall.previous', :items => @max_items)}", url, :onclick => "this.className = 'clicked';")
   end
   
   def get_next_link
@@ -13,13 +14,15 @@ module GetOffersHelper
     
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['start'] = @start_index + @max_items
-    link_to("<div class='arrow'></div>#{t('text.offerwall.next', :items => [@more_data_available, @max_items].min)}", "/get_offers/webpage?#{tmp_params.to_query}", :onclick => "this.className = 'clicked';")
+    url = "/get_offers/webpage?data=#{SymmetricCrypto.encrypt_object(tmp_params, SYMMETRIC_CRYPTO_SECRET)}"
+    link_to("<div class='arrow'></div>#{t('text.offerwall.next', :items => [@more_data_available, @max_items].min)}", url, :onclick => "this.className = 'clicked';")
   end
   
   def get_currency_link(currency)
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['currency_id'] = currency.id
-    link_to(currency.name, "/get_offers/webpage?#{tmp_params.to_query}", :class => currency.id == @currency.id ? 'current' : '')
+    url = "/get_offers/webpage?data=#{SymmetricCrypto.encrypt_object(tmp_params, SYMMETRIC_CRYPTO_SECRET)}"
+    link_to(currency.name, url, :class => currency.id == @currency.id ? 'current' : '')
   end
   
   def get_click_url(offer)

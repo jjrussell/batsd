@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110630070905) do
+ActiveRecord::Schema.define(:version => 20110716191105) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -224,6 +224,7 @@ ActiveRecord::Schema.define(:version => 20110630070905) do
     t.datetime "confirmed_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "udid"
   end
 
   add_index "gamers", ["email"], :name => "index_gamers_on_email", :unique => true

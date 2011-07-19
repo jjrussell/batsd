@@ -2,6 +2,7 @@ class GetOffersController < ApplicationController
   
   layout 'iphone', :only => :webpage
   
+  before_filter :decrypt_data_param
   before_filter :fix_tapulous
   before_filter :choose_experiment, :except => :featured
   before_filter :set_featured_params, :only => :featured
@@ -26,7 +27,7 @@ class GetOffersController < ApplicationController
     
     set_offer_list(:is_server_to_server => false)
 
-    if @currency.hide_rewarded_app_installs_for_version?(params[:app_version]) || DEVICES_FOR_REDESIGN.include?(params[:udid])
+    if @currency.hide_rewarded_app_installs_for_version?(params[:app_version], params[:source]) || DEVICES_FOR_REDESIGN.include?(params[:udid])
       render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
     end
   end
@@ -168,6 +169,7 @@ private
         :app_version => params[:app_version],
         :include_rating_offer => params[:rate_app_offer] != '0',
         :direct_pay_providers => params[:direct_pay_providers].to_s.split(','),
+        :source => params[:source],
         :exp => params[:exp])
     @offer_list = @offer_list[@start_index, @max_items] || []
   end
