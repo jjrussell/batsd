@@ -68,7 +68,7 @@ class Partner < ActiveRecord::Base
     }
   named_scope :premier, lambda { { :joins => :offer_discounts, :conditions => [ "#{OfferDiscount.quoted_table_name}.expires_on > ? ", Time.zone.today ], :group => "#{Partner.quoted_table_name}.id" } }
   named_scope :payout_info_changed, lambda { |start_date, end_date| { :joins => :payout_info,
-    :conditions => [ "#{PayoutInfo.quoted_table_name}.updated_at > ? and #{PayoutInfo.quoted_table_name}.updated_at < ? ", start_date, end_date ]
+    :conditions => [ "#{PayoutInfo.quoted_table_name}.updated_at >= ? and #{PayoutInfo.quoted_table_name}.updated_at < ? ", start_date, end_date ]
   } }
 
   def applied_offer_discounts
