@@ -48,6 +48,7 @@ class AgencyApi::PartnersController < AgencyApiController
     log_activity(partner)
     partner.name = params[:name]
     partner.contact_name = params[:email]
+    partner.reseller_id = @agency_user.reseller_id
     unless partner.valid?
       render_error(partner.errors, 400)
       return
