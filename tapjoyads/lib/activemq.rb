@@ -1,9 +1,10 @@
 class Activemq
   
   def self.reset_connection
-    @@publishing_clients = ACTIVEMQ_SERVERS.map do |server|
-      Stomp::Client.new('', '', server, 61613, false)
-    end
+    # @@publishing_clients = ACTIVEMQ_SERVERS.map do |server|
+    #   Stomp::Client.new('', '', server, 61613, false)
+    # end
+    @@publishing_clients = []
   end
   
   cattr_accessor :publishing_clients
