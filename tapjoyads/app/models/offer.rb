@@ -25,8 +25,8 @@ class Offer < ActiveRecord::Base
                                   'publisher_app_whitelist', 'direct_pay', 'reward_value',
                                   'third_party_data', 'payment_range_low',
                                   'payment_range_high', 'icon_id_override', 'rank_boost',
-                                  'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue', 
-                                  'normal_price', 'over_threshold', 'rewarded' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
+                                  'normal_price', 'over_threshold', 'rewarded', 'reseller_id' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
@@ -43,7 +43,9 @@ class Offer < ActiveRecord::Base
   
   belongs_to :partner
   belongs_to :item, :polymorphic => true
+  belongs_to :reseller
   
+  validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
   validates_numericality_of :price, :only_integer => true
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
@@ -105,6 +107,7 @@ class Offer < ActiveRecord::Base
   validate :bid_higher_than_min_bid
   
   before_validation :update_payment
+  before_validation_on_create :set_reseller_from_partner
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
   before_save :fix_country_targeting
@@ -462,7 +465,7 @@ class Offer < ActiveRecord::Base
       :display_multiplier    => display_multiplier
     }
     
-    "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
+    "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
   
   def complete_action_url(options)
@@ -550,7 +553,7 @@ class Offer < ActiveRecord::Base
       :display_multiplier => display_multiplier
     }
     
-    "#{click_url}?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
+    "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
   
   def get_fullscreen_ad_url(options)
@@ -882,6 +885,10 @@ class Offer < ActiveRecord::Base
     update_attribute(:rank_boost, rank_boosts.active.sum(:amount))
   end
   
+  def set_reseller_from_partner
+    self.reseller_id = partner.reseller_id if partner_id?
+  end
+
   def unlogged_attributes
     [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
   end

@@ -10,7 +10,9 @@ class Currency < ActiveRecord::Base
   belongs_to :app
   belongs_to :partner
   belongs_to :currency_group
+  belongs_to :reseller
   
+  validates_presence_of :reseller, :if => Proc.new { |currency| currency.reseller_id? }
   validates_presence_of :app, :partner, :name, :currency_group, :callback_url
   validates_numericality_of :conversion_rate, :initial_balance, :ordinal, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :spend_share, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
@@ -43,7 +45,7 @@ class Currency < ActiveRecord::Base
   
   before_validation :remove_whitespace_from_attributes
   before_validation_on_create :assign_default_currency_group
-  before_create :set_values_from_partner
+  before_create :set_values_from_partner_and_reseller
   before_update :update_spend_share
   after_save :update_memcached_by_app_id
   after_destroy :clear_memcached_by_app_id
@@ -100,6 +102,8 @@ class Currency < ActiveRecord::Base
       publisher_amount = 0
     elsif offer.direct_pay?
       publisher_amount = offer.payment * direct_pay_share
+    elsif reseller_id? && reseller_id == offer.reseller_id
+      publisher_amount = offer.payment * reseller_spend_share
     else
       publisher_amount = offer.payment * spend_share
     end
@@ -164,9 +168,10 @@ class Currency < ActiveRecord::Base
     callback_url == TAPJOY_MANAGED_CALLBACK_URL
   end
   
-  def set_values_from_partner
+  def set_values_from_partner_and_reseller
     self.disabled_partners = partner.disabled_partners
-    self.spend_share       = calculate_spend_share
+    self.reseller          = partner.reseller
+    calculate_spend_shares
     self.direct_pay_share  = partner.direct_pay_share
     self.offer_whitelist   = partner.offer_whitelist
     self.use_whitelist     = partner.use_whitelist
@@ -174,8 +179,9 @@ class Currency < ActiveRecord::Base
     true
   end
   
-  def hide_rewarded_app_installs_for_version?(app_version)
-    hide_rewarded_app_installs? && minimum_hide_rewarded_app_installs_version.blank? || app_version.present? && hide_rewarded_app_installs? && app_version.version_greater_than_or_equal_to?(minimum_hide_rewarded_app_installs_version)
+  def hide_rewarded_app_installs_for_version?(app_version, source)
+    return false if source == 'tj_games'
+    hide_rewarded_app_installs? && (minimum_hide_rewarded_app_installs_version.blank? || app_version.present? && app_version.version_greater_than_or_equal_to?(minimum_hide_rewarded_app_installs_version))
   end
   
   def cache_offers
@@ -205,6 +211,12 @@ class Currency < ActiveRecord::Base
     end
   end
   
+  def calculate_spend_shares
+    spend_share_ratio = get_spend_share_ratio
+    self.spend_share = (rev_share_override || partner.rev_share) * spend_share_ratio
+    self.reseller_spend_share = reseller_id? ? reseller.reseller_rev_share * spend_share_ratio : nil
+  end
+  
 private
   
   def update_memcached_by_app_id
@@ -231,10 +243,6 @@ private
     end
   end
   
-  def calculate_spend_share
-    (rev_share_override || partner.rev_share) * get_spend_share_ratio
-  end
-  
   def remove_whitespace_from_attributes
     self.test_devices    = test_devices.gsub(/\s/, '')
     self.disabled_offers = disabled_offers.gsub(/\s/, '')
@@ -246,7 +254,7 @@ private
   
   def update_spend_share
     if rev_share_override_changed?
-      self.spend_share = calculate_spend_share
+      calculate_spend_shares
     end
   end
 end

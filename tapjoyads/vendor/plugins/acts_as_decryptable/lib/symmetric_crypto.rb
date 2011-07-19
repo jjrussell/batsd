@@ -7,6 +7,15 @@ class SymmetricCrypto
     aes(:decrypt, crypted, key)
   end
 
+  def self.encrypt_object(object, key)
+    self.encrypt(Marshal.dump(object), key).unpack("H*").first
+  end
+
+  def self.decrypt_object(crypted, key)
+    data_str = SymmetricCrypto.decrypt([ crypted ].pack("H*"), key)
+    Marshal.load(data_str)
+  end
+
 private
   def self.aes(direction, message, key)
     cipher = OpenSSL::Cipher.new('AES256')

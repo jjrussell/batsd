@@ -4,7 +4,7 @@
   - render(:layout => 'box') do
     .explanation= @message
 
-- if @currencies.size > 1 && params[:currency_selector] == '1'
+- if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
   = render :partial => 'currency_selector'
 
 - render(:layout => 'box') do

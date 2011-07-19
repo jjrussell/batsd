@@ -188,11 +188,10 @@ private
   end
   
   def decrypt_data_param
-    return false unless verify_params([ :data ])
+    return unless params[:data].present?
     
     begin
-      data_str = SymmetricCrypto.decrypt([ params[:data] ].pack("H*"), SYMMETRIC_CRYPTO_SECRET)
-      data = Marshal.load(data_str)
+      data = SymmetricCrypto.decrypt_object(params[:data], SYMMETRIC_CRYPTO_SECRET)
       params.merge!(data)
     rescue OpenSSL::Cipher::CipherError, TypeError => e
       render :text => 'bad request', :status => 400

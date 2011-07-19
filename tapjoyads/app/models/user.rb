@@ -13,10 +13,13 @@ class User < ActiveRecord::Base
   has_many :partners, :through => :partner_assignments
   has_many :enable_offer_requests
   has_many :admin_devices
+  
   belongs_to :current_partner, :class_name => 'Partner'
+  belongs_to :reseller
 
   attr_accessor :terms_of_service
   validates_acceptance_of :terms_of_service, :on => :create
+  validates_presence_of :reseller, :if => Proc.new { |user| user.reseller_id? }
 
   before_create :regenerate_api_key
   after_create :create_mail_chimp_entry
