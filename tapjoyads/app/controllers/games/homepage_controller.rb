@@ -5,18 +5,7 @@ class Games::HomepageController < GamesController
   # TODO: switch this to index when we're ready to launch
   def real_index
     @device = Device.new(:key => current_gamer.udid)
-    device_apps = @device.apps
-    @external_publishers = []
-    ExternalPublisher.load_all.each do |app_id, external_publisher|
-      next if device_apps[app_id].blank?
-      
-      external_publisher.last_run_time = device_apps[app_id].to_i
-      @external_publishers << external_publisher
-    end
-    
-    @external_publishers.sort! do |e1, e2|
-      e2.last_run_time <=> e1.last_run_time
-    end
+    @external_publishers = ExternalPublisher.load_all_for_device(@device)
   end
   
   def index
