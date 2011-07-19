@@ -31,7 +31,7 @@ class ExternalPublisher
     }
     # TODO: add device_type and other device info, either here or at get_offers time
     
-    "https://ws.tapjoyads.com/get_offers/webpage?data=#{SymmetricCrypto.encrypt_marshaled_data_to_string(data)}"
+    "https://ws.tapjoyads.com/get_offers/webpage?data=#{SymmetricCrypto.encrypt_object(data)}"
   end
 
   def self.load_all
