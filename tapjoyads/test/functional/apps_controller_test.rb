@@ -29,7 +29,7 @@ class AppsControllerTest < ActionController::TestCase
         assert_equal last_app, assigns(:app)
       end
 
-      should "see someone else's app" do
+      should "ee someone else's app" do
         someone_else = Factory(:partner, :pending_earnings => 10000, :balance => 10000)
         not_my_app = Factory(:app, :partner => someone_else)
         get 'show', :id => not_my_app.id
@@ -65,7 +65,7 @@ class AppsControllerTest < ActionController::TestCase
         assert_equal last_app, assigns(:app)
       end
 
-      should "see someone else's app" do
+      should "not see someone else's app" do
         someone_else = Factory(:partner, :pending_earnings => 10000, :balance => 10000)
         not_my_app = Factory(:app, :partner => someone_else)
         assert_raise(ActiveRecord::RecordNotFound) do
