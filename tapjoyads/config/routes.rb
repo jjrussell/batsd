@@ -9,8 +9,8 @@ ActionController::Routing::Routes.draw do |map|
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
     m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
     
-    m.resource :registrations, :controller => 'games/registrations', :only => [ :new, :create, :edit, :update ]
-    m.register 'register', :controller => 'games/registrations', :action => :new
+    m.resource :gamer, :controller => 'games/gamers', :only => [ :new, :create, :edit, :update ]
+    m.register 'register', :controller => 'games/gamers', :action => :new
     
     m.resources :confirmations, :controller => 'games/confirmations', :only => [ :create ]
     m.confirm 'confirm', :controller => 'games/confirmations', :action => :create

@@ -1,0 +1,20 @@
+- @page_title = 'Register'
+
+%h1 Register
+
+- form_for([ :games, @gamer ], :url => { :action => :create }) do |f|
+  .field
+    = f.label :email
+    = f.text_field :email
+    = error_message_on @gamer, :email
+  .field
+    = f.label :password
+    = f.password_field :password
+    = error_message_on @gamer, :password
+  .field
+    = f.check_box :terms_of_service
+    = f.label :terms_of_service, "I Agree to the Tapjoy Games Terms of Service, and that I'm over 13 years old"
+    = error_message_on @gamer, :terms_of_service
+  .field
+    = f.hidden_field :referrer, :value => params[:referrer]
+    = f.submit 'Register'

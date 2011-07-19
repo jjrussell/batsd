@@ -29,7 +29,7 @@ private
     if current_gamer.blank?
       redirect_to games_login_path 
     elsif current_gamer.udid.blank?
-      redirect_to edit_games_registrations_path
+      redirect_to edit_games_gamer_path
     end
   end
   
