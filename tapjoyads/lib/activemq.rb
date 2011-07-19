@@ -2,8 +2,16 @@ class Activemq
   
   def self.reset_connection
     @@publishing_clients = ACTIVEMQ_SERVERS.map do |server|
-      Stomp::Client.new('', '', server, 61613, false)
+      begin
+        Timeout.timeout(5) do
+          Stomp::Client.new('', '', server, 61613, false)
+        end
+      rescue Exception => e
+        Notifier.alert_new_relic(e.class, e.message)
+        nil
+      end
     end
+    @@publishing_clients.compact!
   end
   
   cattr_accessor :publishing_clients
