@@ -30,6 +30,9 @@ MEMCACHE_SERVERS = [ 'tj-acs-prod.fqfjqv.1xm3.use1.acsvc.amazonaws.com',
                      'tj-acs-prod.fqfjqv.1xm4.use1.acsvc.amazonaws.com',
                      'tj-acs-prod.fqfjqv.1xm5.use1.acsvc.amazonaws.com',
                      'tj-acs-prod.fqfjqv.1xm6.use1.acsvc.amazonaws.com' ]
+ACTIVEMQ_SERVERS = [ 'ec2-184-73-86-77.compute-1.amazonaws.com',
+                     'ec2-72-44-63-195.compute-1.amazonaws.com',
+                     'ec2-50-19-30-61.compute-1.amazonaws.com' ]
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']

@@ -176,6 +176,8 @@ class WebRequest < SimpledbResource
     super({:write_to_memcache => false}.merge(options))
     
     update_realtime_stats
+    
+    # Activemq.publish_message('web_requests', self.serialize)
   end
   
   ##
