@@ -73,7 +73,7 @@ private
     if controller_changed? || action_changed?
       begin
         c = "Job::#{controller.camelize}Controller".constantize
-        errors.add(:action, 'does not exist.') unless c.action_methods.include?(action)
+        errors.add(:action, 'does not exist.') unless c.action_methods.include?(action.split('?').first)
       rescue NameError => e
         errors.add(:controller, 'does not exist.')
       end
