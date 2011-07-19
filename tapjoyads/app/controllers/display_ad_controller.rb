@@ -14,14 +14,16 @@ class DisplayAdController < ApplicationController
   end
   
   def image
-    return unless verify_params([ :publisher_app_id, :advertiser_app_id, :size ])
+    params[:currency_id] ||= params[:publisher_app_id]
+    return unless verify_params([ :publisher_app_id, :advertiser_app_id, :size, :currency_id ])
     
     width, height = parse_size(params[:size])
 
-    key = "display_ad.decoded.#{params[:publisher_app_id]}.#{params[:advertiser_app_id]}.#{width}x#{height}.#{params[:display_multiplier] || 1}"
+    key = "display_ad.decoded.#{params[:currency_id]}.#{params[:advertiser_app_id]}.#{width}x#{height}.#{params[:display_multiplier] || 1}"
     image_data = Mc.get_and_put(key, false, 5.minutes) do
       publisher = App.find_in_cache(params[:publisher_app_id])
-      currency = Currency.find_in_cache(params[:publisher_app_id])
+      currency = Currency.find_in_cache(params[:currency_id])
+      currency = nil if currency.present? && currency.app_id != params[:publisher_app_id]
       offer = Offer.find_in_cache(params[:advertiser_app_id])
       return unless verify_records([ publisher, currency, offer ])
 
@@ -36,7 +38,8 @@ class DisplayAdController < ApplicationController
 private
 
   def setup
-    return unless verify_params([ :app_id, :udid ])
+    params[:currency_id] ||= params[:app_id]
+    return unless verify_params([ :app_id, :udid, :currency_id ])
     
     now = Time.zone.now
     geoip_data = get_geoip_data
@@ -55,7 +58,8 @@ private
     
     device = Device.new(:key => params[:udid])
     publisher_app = App.find_in_cache(params[:app_id])
-    currency = Currency.find_in_cache(params[:app_id])
+    currency = Currency.find_in_cache(params[:currency_id])
+    currency = nil if currency.present? && currency.app_id != params[:app_id]
     return unless verify_records([ publisher_app, currency ], :render_missing_text => false)
     
     params[:publisher_app_id] = publisher_app.id
@@ -87,7 +91,7 @@ private
           :country_code      => geoip_data[:country]
       )
       if params[:action] == 'webview'
-        @image_url = get_ad_image_url(publisher_app, offer, params[:size], params[:display_multiplier])
+        @image_url = get_ad_image_url(publisher_app, offer, params[:size], currency, params[:display_multiplier])
       else
         @image = get_ad_image(publisher_app, offer, params[:size], currency, params[:display_multiplier])
       end
@@ -99,17 +103,17 @@ private
     web_request.save
   end
 
-  def get_ad_image_url(publisher_app, offer, size, display_multiplier)
+  def get_ad_image_url(publisher_app, offer, size, currency, display_multiplier)
     display_multiplier = (display_multiplier || 1).to_f
     width, height = parse_size(params[:size])
     # TO REMOVE: displayer_app_id param after rollout.
-    "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app.id}&advertiser_app_id=#{offer.id}&displayer_app_id=#{publisher_app.id}&size=#{width}x#{height}&display_multiplier=#{display_multiplier}"
+    "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app.id}&advertiser_app_id=#{offer.id}&displayer_app_id=#{publisher_app.id}&size=#{width}x#{height}&display_multiplier=#{display_multiplier}&currency_id=#{currency.id}"
   end
 
   def get_ad_image(publisher, offer, size, currency, display_multiplier)
     display_multiplier = (display_multiplier || 1).to_f
     width, height = parse_size(size)
-    key = "display_ad.#{publisher.id}.#{offer.id}.#{width}x#{height}.#{display_multiplier}"
+    key = "display_ad.#{currency.id}.#{offer.id}.#{width}x#{height}.#{display_multiplier}"
     Mc.get_and_put(key, false, 1.hour) do
       if width == 640 && height == 100
         border = 4

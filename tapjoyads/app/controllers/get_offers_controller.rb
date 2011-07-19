@@ -99,8 +99,13 @@ private
     @max_items = (params[:max] || 25).to_i
     
     params[:currency_id] = params[:app_id] if params[:currency_id].blank?
-    @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])
-    @currency = @currencies.select { |c| c.id == params[:currency_id] }.first
+    if params[:currency_selector] == '1'
+      @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])
+      @currency = @currencies.select { |c| c.id == params[:currency_id] }.first
+    else
+      @currency = Currency.find_in_cache(params[:currency_id])
+      @currency = nil if @currency.present? && @currency.app_id != params[:app_id]
+    end
     @publisher_app = App.find_in_cache(params[:app_id])
     return unless verify_records([ @currency, @publisher_app ])
     

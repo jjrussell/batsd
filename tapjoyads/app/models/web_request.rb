@@ -15,7 +15,7 @@ class WebRequest < SimpledbResource
   self.sdb_attr :virtual_good_id
   self.sdb_attr :ip_address
   self.sdb_attr :device_type
-  self.sdb_attr :device_name
+  self.sdb_attr :device_name, :cgi_escape => true
   self.sdb_attr :library_version
   self.sdb_attr :device_os_version
   self.sdb_attr :app_version
