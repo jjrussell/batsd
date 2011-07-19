@@ -47,12 +47,12 @@ TJG.utils = {
   showRegister : function () {
     var path = location.pathname.replace(/\/$/, '');
     path = path + "/.."; 
-    alert(path);
+    //alert(path);
     $.ajax({
       url: path + "/register",
       cache: false,
       success: function(t){
-        $("#sign_up_content").html(t);
+        $("#sign_up_dialog_content").html(t);
         $("#sign_up_dialog").fadeIn();
         $('form#new_gamer').submit(function(e){
           e.preventDefault();
@@ -192,6 +192,7 @@ TJG.utils = {
     }
     TJG.doc.className = className + classes.join(' ');
 
+
     TJG.onload = {
       
       disableScrollOnBody : function() {
@@ -203,8 +204,9 @@ TJG.utils = {
 
       loadCufon : function () {
         if (Cufon) {
-          Cufon.replace('.title');
-        }         
+          Cufon.replace('.title', { fontFamily: 'Cooper Std' });
+          Cufon.replace('.title_2', { fontFamily: 'AmerType Md BT' });
+        }
       },
 
       removeLoader : function () {
@@ -216,7 +218,6 @@ TJG.utils = {
       loadEvents : function () {
         
         $('#how_works').click(function(){
-
         });
         
         $('.close_dialog').click(function(){

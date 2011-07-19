@@ -115,6 +115,13 @@ a, a:visited {
 #login_form, #signup_form {
   margin-top: 20px;
 }
+.iphone #login_form, .ipod #signup_form {
+  margin-top: 20px;
+  padding: 10px;
+}
+.login_header {
+  font-size: 16px;
+}
 .circle {
   margin: 12px auto 0;
   width: 90px;
@@ -256,6 +263,9 @@ a, a:visited {
 .web .content.narrow, .ipad .content.narrow {
   max-width: 600px;
 }
+.iphone .content.narrow, .ipod .content.narrow {
+  padding: 0;
+}  
 .ipod .content, .iphone .content, #android-phone .content {
   margin: 0 auto;
   padding: 20px 2px;
@@ -329,9 +339,11 @@ a, a:visited {
 .content_box {
   background-color: #FFFFFF;
   border: 1px solid #CEC7B1;
-  padding: 16px 10px;
-  -moz-border-radius: 10px;
-  -webkit-border-radius: 10px;
+  color: #7E7E7E;
+  padding: 10px 0;
+  width: 100%;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
   -moz-box-shadow: 0px 2px 2px #AEA693;
   -webkit-box-shadow: 0px 2px 2px #AEA693; 
 }
@@ -345,15 +357,36 @@ a, a:visited {
   top: 2px;
   width: 31px;
 }
-
 form#new_gamer_session input[type=text], form#new_gamer_session input[type=password]  {
   border: none;
-  padding: 4px;
-  margin: 6px 0;
+  padding: 6px;
+  margin: 4px 0;
   outline: none; 
   -webkit-appearance: none;
 }
-
+form#new_gamer_session label {
+    padding: 0 10px;
+}
+form#new_gamer_session .login_pass label {
+  padding: 0 0 0 10px;
+}
+form#new_gamer_session .login_pass input[type=submit] {
+  position: relative;
+  top: 3px;
+  left: -4px;
+}  
+form#new_gamer_session .login_email {
+  border-bottom: 1px solid #DEDEDE;
+}
+.iphone form#new_gamer_session .login_btn, .ipod form#new_gamer_session .login_btn, .android-phone form#new_gamer_session .login_btn  {
+  margin-left: 180px;
+} 
+a.forgot_pass {
+  font-size: 12px;
+  position: relative;
+  top: 3px;
+}
+                                      
 /* Offer */  
 .offer_item {
   border-bottom: 1px solid #5B5B5B;
@@ -437,24 +470,64 @@ form#new_gamer_session input[type=text], form#new_gamer_session input[type=passw
 .offer_button .button.blue:active {
   -moz-box-shadow: inset 0 0 20px 0 #3d5691, 0 1px 0 #444444;
   -webkit-box-shadow: inset 0 0 20px 0 #3d5691, 0 1px 0 #444444;
-  box-shadow: inset 0 0 20px 0 #3d5691, 0 1px 0 #444444;
+  box-shadow: inset 0 0 20px 0 #3d5691, 0 1px 0 #88888;
+  cursor: pointer;
+}
+.button.lt_blue {
+  background: #2F477D;
+  background: -moz-linear-gradient(top, #40A7C0 0%, #218BAD 100%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #40a7c0), color-stop(1, #218BAD));
+  border: none;
+  border-radius: 5px;
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 5px 0 6px 0;
+  text-decoration: none;
+  text-align: center;
+  text-shadow: 0 -1px 1px #1F81A0;
+  width: 120px; 
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+.ipod .button.lt_blue, .iphone .button.lt_blue, .android-phone .button.lt_blue {
+  font-size: 12px;
+  width: 80px;
+}
+.button.lt_blue a {
+  color: #FFFFFF;
+}
+.button.lt_blue:hover {
+  background: #48a5bd;
+  background: -moz-linear-gradient(top, #52a9bf 0%, #3490ad 100%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #52a9bf), color-stop(1, #3490ad)); 
+  cursor: pointer;
+}
+.button.lt_blue:active {
+  -moz-box-shadow: inset 0 0 20px 0 #40A7C0;
+  -webkit-box-shadow: inset 0 0 20px 0 #40A7C0;
+  box-shadow: inset 0 0 20px 0 #40A7C0;
   cursor: pointer;
 }
 
-
 .title {
-  font-family: 'Paytone One', 'Cooper Std';
+  font-family: 'Cooper Std';
 }
+.title_2 {
+  font-family: 'AmerType Md BT';
+}  
 .right {
   float: right;
-}              
+}
 .left {
   float: left;
 }
 .hide {
   display: none;
 }
-/*
+.block {
+  display: block;
+}
 .clearfix:after {
   content: ".";
   display: block;
@@ -472,4 +545,3 @@ html[xmlns] .clearfix {
 * html .clearfix {
   height: 1%;
 }
-*/
