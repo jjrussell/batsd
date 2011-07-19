@@ -465,7 +465,7 @@ class Offer < ActiveRecord::Base
       :display_multiplier    => display_multiplier
     }
     
-    "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
+    "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
   
   def complete_action_url(options)
@@ -553,7 +553,7 @@ class Offer < ActiveRecord::Base
       :display_multiplier => display_multiplier
     }
     
-    "#{click_url}?data=#{SymmetricCrypto.encrypt(Marshal.dump(data), SYMMETRIC_CRYPTO_SECRET).unpack("H*").first}"
+    "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
   
   def get_fullscreen_ad_url(options)
