@@ -2,6 +2,10 @@ class SignUpController < WebsiteController
 
   def new
     redirect_to users_path if current_user
+    @zones = {}
+    ActiveSupport::TimeZone.us_zones.each do |zone|
+      @zones[- zone.utc_offset / 60] = zone.name
+    end
     @user = User.new
   end
 
