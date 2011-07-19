@@ -15,7 +15,9 @@
       %th
         = label_tag :partner_name, 'Company Name'
         #help_company_name.help ?
-      %td= text_field_tag :partner_name, params[:partner_name], :size => 30
+      %td
+        = text_field_tag :partner_name, params[:partner_name], :size => 30
+        = error_message_on @user.current_partner, :name
     %tr
       %th= f.label :password, 'Password'
       %td
