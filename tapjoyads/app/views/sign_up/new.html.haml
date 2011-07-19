@@ -49,11 +49,12 @@
   #help_company_name_content{ :name => 'Company Name' } The name of your company.
   #help_time_zone_content{ :name => 'Time Zone' } All times will be displayed in this time zone with the exception of daily stats, which are always in Universal Time (UTC).
 
-- content_for :page_javascript do
-  :plain
-    var zones = #{@zones.to_json};
-    var offset = new Date(Date.parse('2011-01-01')).getTimezoneOffset();
-    $('#user_time_zone').val(zones[offset])
+- if @user.new_record?
+  - content_for :page_javascript do
+    :plain
+      var zones = #{@zones.to_json};
+      var offset = new Date(Date.parse('2011-01-01')).getTimezoneOffset();
+      $('#user_time_zone').val(zones[offset])
 
 - content_for :page_styles do
   :plain
