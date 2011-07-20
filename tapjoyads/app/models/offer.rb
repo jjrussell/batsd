@@ -27,7 +27,7 @@ class Offer < ActiveRecord::Base
                                   'payment_range_high', 'icon_id_override', 'rank_boost',
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
                                   'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
-                                  'cookie_tracking' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'cookie_tracking', 'min_os_version' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
@@ -730,7 +730,7 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
-  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version)
+  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version)
     return device_platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device) ||
         already_complete?(publisher_app, device, app_version) ||
@@ -741,8 +741,9 @@ class Offer < ActiveRecord::Base
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
         hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs) ||
-        should_reject_from_app_or_currency?(publisher_app, currency) ||
-        cookie_tracking_reject?(publisher_app, library_version)
+        min_os_version_reject?(os_version) ||
+        cookie_tracking_reject?(publisher_app, library_version) ||
+        should_reject_from_app_or_currency?(publisher_app, currency)
   end
   
   def should_reject_from_app_or_currency?(publisher_app, currency)
@@ -1030,6 +1031,13 @@ private
   
   def action_app_reject?(device)
     item_type == "ActionOffer" && third_party_data.present? && !device.has_app(third_party_data)
+  end
+  
+  def min_os_version_reject?(os_version)
+    return false if min_os_version.blank?
+    return true if os_version.blank?
+    
+    !os_version.version_greater_than_or_equal_to?(min_os_version)
   end
   
   def hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs)
