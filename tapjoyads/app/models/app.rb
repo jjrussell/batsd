@@ -18,6 +18,7 @@ class App < ActiveRecord::Base
       :direct_store_url => 'market://search?q=STORE_ID',
       :default_actions_file_name => "TapjoyPPA.java",
       :min_action_offer_bid => 25,
+      :versions => [ '1.5', '1.6', '2.0', '2.1', '2.2', '2.3', '3.0' ],
     },
     'iphone' => {
       :expected_device_types => Offer::APPLE_DEVICES,
@@ -31,6 +32,7 @@ class App < ActiveRecord::Base
       :direct_store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
       :default_actions_file_name => "TJCPPA.h",
       :min_action_offer_bid => 35,
+      :versions => [ '2.0', '2.1', '2.2', '3.0', '3.1', '3.2', '4.0', '4.1', '4.2', '4.3' ],
     },
     'windows' => {
       :expected_device_types => Offer::WINDOWS_DEVICES,
@@ -44,6 +46,7 @@ class App < ActiveRecord::Base
       :direct_store_url => 'http://social.zune.net/redirect?type=phoneapp&id=STORE_ID',
       :default_actions_file_name => '', #TODO fill this out
       :min_action_offer_bid => 25,
+      :versions => [ '7.0' ],
     },
   }
 
@@ -211,6 +214,9 @@ class App < ActiveRecord::Base
     type                 = options.delete(:type)
     source               = options.delete(:source)
     exp                  = options.delete(:exp)
+    os_version           = options.delete(:os_version)
+    library_version      = options.delete(:library_version) || ''
+
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     return [ [], 0 ] if type == Offer::CLASSIC_OFFER_TYPE || !currency.tapjoy_enabled?
@@ -224,7 +230,7 @@ class App < ActiveRecord::Base
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)
       if rate_app_offer.present? && rate_app_offer.accepting_clicks?
         offer_list_length += 1
-        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers)
+        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version)
           num_rejected += 1
         else
           final_offer_list << rate_app_offer
@@ -234,7 +240,7 @@ class App < ActiveRecord::Base
     
     offer_list_length += currency.get_cached_offers({ :type => type, :exp => exp }) do |offers|
       offers.each do |offer|
-        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers)
+        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version)
           num_rejected += 1
         else
           final_offer_list << offer
@@ -293,6 +299,10 @@ class App < ActiveRecord::Base
 
   def sdk_url(type)
     PLATFORM_DETAILS[platform][:sdk][type]
+  end
+  
+  def os_versions
+    PLATFORM_DETAILS[platform][:versions]
   end
 
 private

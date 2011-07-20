@@ -43,12 +43,12 @@ class Apps::OffersController < WebsiteController
     params[:offer][:daily_budget] = 0 if params[:daily_budget] == 'off'
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
 
-    safe_attributes = [:daily_budget, :user_enabled, :bid, :self_promote_only]
+    safe_attributes = [:daily_budget, :user_enabled, :bid, :self_promote_only, :min_os_version]
     if permitted_to? :edit, :statz
       offer_params[:device_types] = offer_params[:device_types].blank? ? '[]' : offer_params[:device_types].to_json
-      safe_attributes += [:tapjoy_enabled, :allow_negative_balance, :pay_per_click,
+      safe_attributes += [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
           :name, :name_suffix, :show_rate, :min_conversion_rate, :countries, :cities,
-          :postal_codes, :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override]
+          :postal_codes, :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override ]
     end
 
     if @offer.safe_update_attributes(offer_params, safe_attributes)

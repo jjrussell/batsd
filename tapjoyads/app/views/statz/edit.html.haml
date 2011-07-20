@@ -29,6 +29,14 @@
       %td
         = f.check_box(:self_promote_only)
         = error_message_on @offer, :self_promote_only
+    - if @offer.item_type == 'App'
+      %tr
+        %th
+          = f.label(:min_os_version, "Minimum OS Version")
+          #help_min_os_version.help ?
+        %td
+          = f.select(:min_os_version, @offer.item.os_versions, :include_blank => 'No Minimum')
+          = error_message_on(@offer, :min_os_version)
     %tr
       %th
         = f.label(:allow_negative_balance)
@@ -50,6 +58,13 @@
       %td
         = f.check_box(:featured)
         = error_message_on @offer, :featured
+    %tr
+      %th
+        = f.label(:cookie_tracking)
+        #help_cookie_tracking.help ?
+      %td
+        = f.check_box(:cookie_tracking)
+        = error_message_on @offer, :cookie_tracking
     - if @offer.item_type == 'App' && @offer.price == 0
       %tr
         %th
@@ -171,6 +186,7 @@
   #help_multi_complete_content{ :name => 'Multi-complete' } Allow this offer to be completed multiple times per device.
   #help_direct_pay_content{ :name => 'Direct-pay' } Select a direct-pay provider from the list to designate this offer as a direct-pay offer. Revenue generated will be split up using the publisher's direct-pay share.
   #help_featured_content{ :name => 'Featured' } Enables this offer in our featured offers feed.
+  #help_cookie_tracking_content{ :name => 'Cookie Tracking' } Designates that this offer requires cookies to track a conversion.
   #help_rewarded_content{ :name => 'Rewarded' } Whether or not the offer rewards the user with currency.
   #help_internal_suffix_content{ :name => 'Internal Suffix' } Internal identifier for offers. i.e. 'featured' or 'us only'
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.
@@ -184,6 +200,7 @@
   #help_app_store_id_content{ :name => 'Store ID' } The App Store ID or Android Market name of this app. i.e. '297558390' for Apple, 'com.tapjoy.tapout' for Android
   #help_bid_content{ :name => 'Bid' } The bid affects your payment and your offerwall rank.
   #help_min_bid_override_content{ :name => 'Min Bid Override' } Manually set the minimum allowed bid for this offer.
+  #help_min_os_version_content{:name => 'Minimum OS Version'} Your offer will only be shown to devices with an OS at this version or higher.
 
 - content_for :page_styles do
   :plain

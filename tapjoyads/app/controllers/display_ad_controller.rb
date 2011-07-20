@@ -69,12 +69,14 @@ private
     web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
 
     offer_list, more_data_available = publisher_app.get_offer_list(
-        :device => device,
-        :currency => currency,
-        :device_type => params[:device_type],
-        :geoip_data => geoip_data,
+        :device          => device,
+        :currency        => currency,
+        :device_type     => params[:device_type],
+        :geoip_data      => geoip_data,
         :required_length => 25,
-        :type => Offer::DISPLAY_OFFER_TYPE)
+        :os_version      => params[:os_version],
+        :type            => Offer::DISPLAY_OFFER_TYPE,
+        :library_version => params[:library_version])
 
     offer = offer_list[rand(offer_list.size)]
   
