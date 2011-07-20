@@ -22,6 +22,7 @@ ENV['AWS_ACCESS_KEY_ID'] = amazon['dev']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['dev']['secret_access_key']
 
 MEMCACHE_SERVERS = ['127.0.0.1']
+ACTIVEMQ_SERVERS = []
 
 EXCEPTIONS_NOT_LOGGED = []
 

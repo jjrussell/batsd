@@ -66,6 +66,8 @@ class ClickController < ApplicationController
 private
   
   def setup
+    return false unless verify_params([ :data ])
+    
     @now = Time.zone.now
     @offer = Offer.find_in_cache(params[:offer_id])
     @currency = Currency.find_in_cache(params[:currency_id])

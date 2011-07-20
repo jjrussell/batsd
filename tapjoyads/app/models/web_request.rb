@@ -3,6 +3,7 @@
 class WebRequest < SimpledbResource
   
   self.sdb_attr :udid
+  self.sdb_attr :android_id
   self.sdb_attr :app_id
   self.sdb_attr :offer_id
   self.sdb_attr :advertiser_app_id
@@ -14,6 +15,7 @@ class WebRequest < SimpledbResource
   self.sdb_attr :virtual_good_id
   self.sdb_attr :ip_address
   self.sdb_attr :device_type
+  self.sdb_attr :device_name, :cgi_escape => true
   self.sdb_attr :library_version
   self.sdb_attr :device_os_version
   self.sdb_attr :app_version
@@ -28,6 +30,14 @@ class WebRequest < SimpledbResource
   self.sdb_attr :exp
   self.sdb_attr :country
   self.sdb_attr :geoip_country
+  self.sdb_attr :language
+  self.sdb_attr :screen_density
+  self.sdb_attr :screen_layout_size
+  self.sdb_attr :carrier_name        
+  self.sdb_attr :allows_voip         
+  self.sdb_attr :carrier_country_code
+  self.sdb_attr :mobile_country_code 
+  self.sdb_attr :mobile_network_code 
   self.sdb_attr :click_key
   self.sdb_attr :transaction_id
   self.sdb_attr :tap_points
@@ -109,33 +119,45 @@ class WebRequest < SimpledbResource
     add_path(path)
     
     if params
-      self.campaign_id       = params[:campaign_id]
-      self.app_id            = params[:app_id]
-      self.udid              = params[:udid]
-      self.currency_id       = params[:currency_id]
-    
-      self.app_version       = params[:app_version]
-      self.device_os_version = params[:device_os_version]
-      self.device_type       = params[:device_type]
-      self.library_version   = params[:library_version]
-
-      self.offer_id          = params[:offer_id]
-      self.publisher_app_id  = params[:publisher_app_id]
-      self.advertiser_app_id = params[:advertiser_app_id]
-      self.displayer_app_id  = params[:displayer_app_id]
-
-      self.device_ip         = params[:device_ip]
-      self.user_agent        = user_agent
-      self.type              = params[:type]
-      self.publisher_user_id = params[:publisher_user_id]
-      self.virtual_good_id   = params[:virtual_good_id]
-
-      self.source            = params[:source]
-      self.exp               = params[:exp]
-      self.country           = params[:country_code]
-      self.transaction_id    = params[:transaction_id]
-
-      self.tap_points        = params[:tap_points]
+      self.campaign_id          = params[:campaign_id]
+      self.app_id               = params[:app_id]
+      self.udid                 = params[:udid]
+      self.android_id           = params[:android_id]
+      self.currency_id          = params[:currency_id]
+                                
+      self.app_version          = params[:app_version]
+      self.device_os_version    = params[:device_os_version] || params[:os_version]
+      self.device_type          = params[:device_type]
+      self.device_name          = params[:device_name]
+      self.library_version      = params[:library_version]
+                                
+      self.offer_id             = params[:offer_id]
+      self.publisher_app_id     = params[:publisher_app_id]
+      self.advertiser_app_id    = params[:advertiser_app_id]
+      self.displayer_app_id     = params[:displayer_app_id]
+                                
+      self.device_ip            = params[:device_ip]
+      self.user_agent           = user_agent
+      self.type                 = params[:type]
+      self.publisher_user_id    = params[:publisher_user_id]
+      self.virtual_good_id      = params[:virtual_good_id]
+                                
+      self.source               = params[:source]
+      self.exp                  = params[:exp]
+      self.country              = params[:country_code]
+      self.language             = params[:language]
+      self.transaction_id       = params[:transaction_id]
+                                
+      self.tap_points           = params[:tap_points]
+                                
+      self.screen_density       = params[:screen_density]
+      self.screen_layout_size   = params[:screen_layout_size]
+                                
+      self.carrier_name         = params[:carrier_name]
+      self.allows_voip          = params[:allows_voip]
+      self.carrier_country_code = params[:carrier_country_code]
+      self.mobile_country_code  = params[:mobile_country_code]
+      self.mobile_network_code  = params[:mobile_network_code]
     end
     
     unless self.ip_address?
@@ -151,9 +173,12 @@ class WebRequest < SimpledbResource
   # Also increments all stats associated with this webrequest.
   def serial_save(options = {})
     self.time = @now unless self.time?
+    # self.put('activemq', '1')
     super({:write_to_memcache => false}.merge(options))
     
     update_realtime_stats
+    
+    # Activemq.publish_message('web_requests', self.serialize)
   end
   
   ##

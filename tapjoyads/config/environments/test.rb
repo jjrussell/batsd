@@ -26,6 +26,7 @@ config.gem 'shoulda', :version => '2.11.1'
 config.gem 'shoulda-addons', :version => '0.2.2', :lib => 'shoulda_addons'
 
 MEMCACHE_SERVERS = ['127.0.0.1']
+ACTIVEMQ_SERVERS = []
 
 EXCEPTIONS_NOT_LOGGED = []
 

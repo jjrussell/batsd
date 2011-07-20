@@ -273,6 +273,39 @@
   %li
     Errors:
     %p currency not found
+
+%h3 Get All Partners
+%ul
+  %li
+    Path:
+    %p GET /agency_api/partners
+  %li
+    Action:
+    %p find all partners that belong to the agency
+  %li
+    Returns:
+    %p partners: an array of hashes with partner_id, name, balance, and pending_earnings
+
+%h3 Get Partner Details
+%ul
+  %li
+    Path:
+    %p GET /agency_api/partners/&lt;partner_id&gt;
+  %li
+    Required Parameters:
+    %p partner_id: the id of the partner you want details for
+  %li
+    Action:
+    %p find partner by id
+  %li
+    Returns:
+    %p partner_id: the currency’s id
+    %p name: the partner name
+    %p balance: the partner’s balance, in USD cents (100 = $1.00)
+    %p pending_earnings: the partners pending earnings, in USD cents (100 = $1.00)
+  %li
+    Errors:
+    %p partner not found 
       
 - content_for :page_styles do
   :plain

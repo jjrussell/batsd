@@ -14,7 +14,7 @@ class Tools::ExternalPublishersController < WebsiteController
     log_activity(currency)
     currency.external_publisher = !currency.external_publisher
     if currency.save
-      ExternalPublishers.cache
+      ExternalPublisher.cache
       flash[:notice] = "Currency updated"
       redirect_to tools_external_publishers_path
     else

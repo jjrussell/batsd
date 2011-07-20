@@ -120,13 +120,13 @@ private
   end
 
   def find_app
-    @app = current_partner.apps.find_by_id(params[:id] || session[:last_shown_app])
-    if @app.nil?
-      session[:last_shown_app] = nil if params[:id].nil?
-      redirect_to apps_path
+    if permitted_to? :edit, :statz
+      @app = App.find(params[:id] || session[:last_shown_app])
     else
-      session[:last_shown_app] = @app.id
+      @app = current_partner.apps.find(params[:id] || session[:last_shown_app])
     end
+    
+    session[:last_shown_app] = @app.id
   end
 
   def has_apps
