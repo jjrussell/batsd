@@ -60,14 +60,6 @@ class Offer < ActiveRecord::Base
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer )
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
-  validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
-    begin
-      parsed = JSON.parse(value)
-      record.errors.add(attribute, 'is not an Array') unless parsed.is_a?(Array)
-    rescue
-      record.errors.add(attribute, 'is not valid JSON')
-    end
-  end
   validates_each :device_types, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     begin
       types = JSON.parse(value)
@@ -105,13 +97,6 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
     end
   end
-  validates_each :screen_layout_sizes do |record, attribute, value|
-    begin
-      record.get_screen_layout_sizes
-    rescue
-      record.errors.add(attribute, 'is not valid JSON')
-    end
-  end
   validate :bid_higher_than_min_bid
   
   before_validation :update_payment
@@ -147,7 +132,7 @@ class Offer < ActiveRecord::Base
   alias_method :events, :offer_events
   alias_method :random, :rand
   
-  json_multi_field :device_types, :screen_layout_sizes, :countries, :cities, :postal_codes
+  json_set_field :device_types, :screen_layout_sizes, :countries, :cities, :postal_codes
   
   def self.redistribute_hourly_stats_aggregation
     Benchmark.realtime do

@@ -407,7 +407,7 @@ ActiveRecord::Schema.define(:version => 20110719191747) do
     t.string   "reseller_id",                       :limit => 36
     t.boolean  "cookie_tracking",                                                               :default => false, :null => false
     t.string   "min_os_version",                                                                :default => "",    :null => false
-    t.text     "screen_layout_sizes"
+    t.text     "screen_layout_sizes",                                                                              :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

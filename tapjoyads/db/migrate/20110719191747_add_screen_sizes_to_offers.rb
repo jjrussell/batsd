@@ -1,6 +1,6 @@
 class AddScreenSizesToOffers < ActiveRecord::Migration
   def self.up
-    add_column :offers, :screen_layout_sizes, :text
+    add_column :offers, :screen_layout_sizes, :text, :null => false
   end
 
   def self.down

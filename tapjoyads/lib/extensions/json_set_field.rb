@@ -1,4 +1,4 @@
-module JsonMultiField
+module JsonSetField
   
   def self.included(base)
     base.extend ClassMethods
@@ -6,7 +6,7 @@ module JsonMultiField
   
   module ClassMethods
     
-    def json_multi_field(*fields)
+    def json_set_field(*fields)
       fields.each do |f|
         
         define_method "#{f}=" do |new_field_value|
@@ -20,14 +20,23 @@ module JsonMultiField
         end
         
         define_method "get_#{f}" do
-          Set.new(send(f).blank? ? nil : JSON.parse(send(f)))
+          Set.new((send(f).blank? || send(f) == '[]') ? nil : JSON.parse(send(f)))
         end
         
       end
+      
+      validates_each fields, :allow_blank => true do |record, attribute, value|
+        begin
+          record.send("get_#{attribute}")
+        rescue
+          record.errors.add(attribute, 'is not valid JSON')
+        end
+      end
+      
     end
     
   end
   
 end
 
-ActiveRecord::Base.send(:include, JsonMultiField)
+ActiveRecord::Base.send(:include, JsonSetField) 
