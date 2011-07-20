@@ -102,14 +102,14 @@
     = f.currency_field(:min_bid_override, {}, :class => 'allow_nil')
     = error_message_on @offer, :min_bid_override
     
-- if @app.screen_sizes.any?
+- if @app.screen_layout_sizes.any?
   %tr.admin
     %th
-      = f.label(:screen_sizes)
-      #help_screen_sizes.help ?
+      = f.label(:screen_layout_sizes)
+      #help_screen_layout_sizes.help ?
     %td
-      = f.select(:screen_sizes, options_for_select(@app.screen_sizes, @offer.get_screen_sizes), {}, :multiple => true)
-      = error_message_on @offer, :screen_sizes
+      = f.select(:screen_layout_sizes, options_for_select(@app.screen_layout_sizes, @offer.get_screen_layout_sizes), {}, :multiple => true)
+      = error_message_on @offer, :screen_layout_sizes
         
 .hidden
   #help_admin_offer_name_content{:name => 'Offer Name'} Name that will be displayed on offer walls.
@@ -128,7 +128,6 @@
   #help_overall_budget_content{ :name => 'Overall Budget' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
   #help_rank_score_content{ :name => 'Rank Score' } The last computed rank score for this offer.
   #help_min_bid_override_content{ :name => 'Min Bid Override' } Manually set the minimum allowed bid for this offer.
-  #help_screen_sizes_content{ :name => 'Screen Sizes' } Targets this offer to these screen sizes. If no specific screen sizes are selected, all screen sizes will be targeted.
 
 - content_for :page_javascript do
   :plain

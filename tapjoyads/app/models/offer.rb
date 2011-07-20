@@ -27,7 +27,7 @@ class Offer < ActiveRecord::Base
                                   'payment_range_high', 'icon_id_override', 'rank_boost',
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
                                   'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
-                                  'cookie_tracking', 'min_os_version' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'cookie_tracking', 'min_os_version', 'screen_layout_sizes' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
@@ -105,6 +105,13 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
     end
   end
+  validates_each :screen_layout_sizes do |record, attribute, value|
+    begin
+      record.get_screen_layout_sizes
+    rescue
+      record.errors.add(attribute, 'is not valid JSON')
+    end
+  end
   validate :bid_higher_than_min_bid
   
   before_validation :update_payment
@@ -140,7 +147,7 @@ class Offer < ActiveRecord::Base
   alias_method :events, :offer_events
   alias_method :random, :rand
   
-  json_multi_field :device_types, :screen_sizes, :countries, :cities, :postal_codes
+  json_multi_field :device_types, :screen_layout_sizes, :countries, :cities, :postal_codes
   
   def self.redistribute_hourly_stats_aggregation
     Benchmark.realtime do
@@ -729,7 +736,7 @@ class Offer < ActiveRecord::Base
         hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs) ||
         min_os_version_reject?(os_version) ||
         cookie_tracking_reject?(publisher_app, library_version) ||
-        screen_sizes_reject?(screen_layout_size) ||
+        screen_layout_sizes_reject?(screen_layout_size) ||
         should_reject_from_app_or_currency?(publisher_app, currency)
   end
   
@@ -1027,11 +1034,11 @@ private
     !os_version.version_greater_than_or_equal_to?(min_os_version)
   end
   
-  def screen_sizes_reject?(screen_layout_size)
-    return false if screen_layout_size.blank?
-    return false if screen_sizes.blank? || screen_sizes == '[]'
+  def screen_layout_sizes_reject?(screen_layout_size)
+    return false if screen_layout_sizes.blank? || screen_layout_sizes == '[]'
+    return true if screen_layout_size.blank?
     
-    !get_screen_sizes.include?(screen_layout_size)
+    !get_screen_layout_sizes.include?(screen_layout_size)
   end
   
   def hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs)

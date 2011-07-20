@@ -19,7 +19,7 @@ class App < ActiveRecord::Base
       :default_actions_file_name => "TapjoyPPA.java",
       :min_action_offer_bid => 25,
       :versions => [ '1.5', '1.6', '2.0', '2.1', '2.2', '2.3', '3.0' ],
-      :screen_sizes => { 'small (at least 320x426)' => '1', 'medium (at least 320x470)' => '2', 'large (at least 480x640)' => '3', 'extra_large (at least 720x960)' => '4' }
+      :screen_layout_sizes => { 'small (320x426)' => '1', 'medium (320x470)' => '2', 'large (480x640)' => '3', 'extra large (720x960)' => '4' }
     },
     'iphone' => {
       :expected_device_types => Offer::APPLE_DEVICES,
@@ -307,8 +307,8 @@ class App < ActiveRecord::Base
     PLATFORM_DETAILS[platform][:versions]
   end
   
-  def screen_sizes
-    PLATFORM_DETAILS[platform][:screen_sizes].nil? ? [] : PLATFORM_DETAILS[platform][:screen_sizes].sort{ |a,b| a[1] <=> b[1] }
+  def screen_layout_sizes
+    PLATFORM_DETAILS[platform][:screen_layout_sizes].nil? ? [] : PLATFORM_DETAILS[platform][:screen_layout_sizes].sort{ |a,b| a[1] <=> b[1] }
   end
 
 private

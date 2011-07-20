@@ -173,7 +173,15 @@
         %th
           = label_tag(:app_store_id, 'Store ID')
           #help_app_store_id.help ?
-        %td= text_field_tag(:app_store_id, @offer.item.store_id)        
+        %td= text_field_tag(:app_store_id, @offer.item.store_id)
+      - if @offer.item.screen_layout_sizes.any?
+        %tr
+          %th
+            = f.label(:screen_layout_sizes)
+            #help_screen_layout_sizes.help ?
+          %td
+            = f.select(:screen_layout_sizes, options_for_select(@offer.item.screen_layout_sizes, @offer.get_screen_layout_sizes), {}, :multiple => true)
+            = error_message_on @offer, :screen_layout_sizes
     %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
 
