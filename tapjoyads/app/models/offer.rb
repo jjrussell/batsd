@@ -639,7 +639,7 @@ class Offer < ActiveRecord::Base
   end
   
   def get_countries
-    @countries_set ||= Set.new(countries.blank? ? nil : JSON.parse(countries))
+    Set.new(countries.blank? ? nil : JSON.parse(countries))
   end
   
   def get_postal_codes
