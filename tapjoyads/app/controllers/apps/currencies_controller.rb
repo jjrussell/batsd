@@ -4,7 +4,7 @@ class Apps::CurrenciesController < WebsiteController
 
   filter_access_to :all
 
-  before_filter :find_currency, :only => [ :show, :update, :reset_test_device ]
+  before_filter :setup
   after_filter :save_activity_logs, :only => [ :update, :create ]
 
   def show
@@ -24,7 +24,6 @@ class Apps::CurrenciesController < WebsiteController
 
   def update
     log_activity(@currency)
-
     currency_params = sanitize_currency_params(params[:currency], [ :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid ])
     
     if params[:managed_by_tapjoy]
@@ -46,12 +45,10 @@ class Apps::CurrenciesController < WebsiteController
   end
   
   def new
-    @app = current_partner.apps.find(params[:app_id])
     @currency = Currency.new
   end
   
   def create
-    @app = current_partner.apps.find(params[:app_id], :include => :currencies)
     unless @app.can_have_new_currency?
       flash[:error] = 'Cannot create currency for this app.'
       redirect_to apps_path and return
@@ -96,16 +93,15 @@ class Apps::CurrenciesController < WebsiteController
 
 private
 
-  def find_currency
-    @app = current_partner.apps.find_by_id(params[:app_id], :include => [:primary_currency])
-    if @app.nil?
-      redirect_to apps_path
-      return
+  def setup
+    if permitted_to? :edit, :statz
+      @app = App.find(params[:app_id])
+    else
+      @app = current_partner.apps.find(params[:app_id])
     end
-    @currency = @app.currencies.find_by_id(params[:id])
-    if @currency.nil?
-      flash[:error] = "Could not find currency"
-      redirect_to apps_path
+    
+    if params[:id]
+      @currency = @app.currencies.find(params[:id])
     end
   end
 

@@ -209,6 +209,7 @@ class App < ActiveRecord::Base
     app_version          = options.delete(:app_version)
     device_type          = options.delete(:device_type)
     type                 = options.delete(:type)
+    source               = options.delete(:source)
     exp                  = options.delete(:exp)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
@@ -217,7 +218,7 @@ class App < ActiveRecord::Base
     final_offer_list  = []
     num_rejected      = 0
     offer_list_length = 0
-    hide_app_offers   = currency.hide_rewarded_app_installs_for_version?(app_version)
+    hide_app_offers   = currency.hide_rewarded_app_installs_for_version?(app_version, source)
     
     if include_rating_offer && enabled_rating_offer_id.present?
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)

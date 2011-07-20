@@ -173,9 +173,12 @@ class WebRequest < SimpledbResource
   # Also increments all stats associated with this webrequest.
   def serial_save(options = {})
     self.time = @now unless self.time?
+    # self.put('activemq', '1')
     super({:write_to_memcache => false}.merge(options))
     
     update_realtime_stats
+    
+    # Activemq.publish_message('web_requests', self.serialize)
   end
   
   ##

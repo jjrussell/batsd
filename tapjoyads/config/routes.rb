@@ -3,20 +3,21 @@ ActionController::Routing::Routes.draw do |map|
   
   map.with_options({:path_prefix => MACHINE_TYPE == 'games' ? '' : 'games', :name_prefix => 'games_'}) do |m|
     m.root :controller => 'games/homepage', :action => :index
+    m.real_index 'real_index', :controller => 'games/homepage', :action => :real_index
     
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy ]
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
     m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
     
-    m.resources :registrations, :controller => 'games/registrations', :only => [ :new, :create ]
-    m.register 'register', :controller => 'games/registrations', :action => :new
+    m.resource :gamer, :controller => 'games/gamers', :only => [ :new, :create, :edit, :update ]
+    m.register 'register', :controller => 'games/gamers', :action => :new
     
     m.resources :confirmations, :controller => 'games/confirmations', :only => [ :create ]
     m.confirm 'confirm', :controller => 'games/confirmations', :action => :create
     
     m.resources :password_resets, :controller => 'games/password_resets', :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
   end
-  
+
   break if MACHINE_TYPE == 'games'
   
   # Homepage routes
