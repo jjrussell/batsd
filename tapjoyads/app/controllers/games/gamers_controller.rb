@@ -34,4 +34,9 @@ class Games::GamersController < GamesController
     end
   end
   
+  def link_device
+    Rails.logger.info "linking"
+    Rails.logger.info request.raw_post
+  end
+  
 end

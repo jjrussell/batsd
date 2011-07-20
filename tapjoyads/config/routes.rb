@@ -5,13 +5,13 @@ ActionController::Routing::Routes.draw do |map|
     m.root :controller => 'games/homepage', :action => :index
     m.real_index 'real_index', :controller => 'games/homepage', :action => :real_index
     
-    m.tapjoy_mobileconfig 'tapjoy.mobileconfig', :controller => 'games/tapjoygames_mobileconfig', :action => :index
+    m.tapjoygames 'tapjoygames', :controller => 'games/tapjoygames', :action => :index
     
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy ]
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
     m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
     
-    m.resource :gamer, :controller => 'games/gamers', :only => [ :new, :create, :edit, :update ]
+    m.resource :gamer, :controller => 'games/gamers', :only => [ :new, :create, :edit, :update ], :member => { :link_device => :post }
     m.register 'register', :controller => 'games/gamers', :action => :new
     
     m.resources :confirmations, :controller => 'games/confirmations', :only => [ :create ]
