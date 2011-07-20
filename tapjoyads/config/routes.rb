@@ -5,6 +5,8 @@ ActionController::Routing::Routes.draw do |map|
     m.root :controller => 'games/homepage', :action => :index
     m.real_index 'real_index', :controller => 'games/homepage', :action => :real_index
     
+    m.tapjoy_mobileconfig 'tapjoy.mobileconfig', :controller => 'games/tapjoygames_mobileconfig', :action => :index
+    
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy ]
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
     m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
