@@ -5,8 +5,6 @@ class Job::MasterCacheOffersController < Job::JobController
       offer.update_attribute(:show_rate, 0.10) if offer.is_free? && offer.show_rate > 0.10 && offer.partner.balance <= 10000
     end
     
-    S3.reset_connection
-    
     Offer.cache_offer_stats
     Offer.cache_offers
     
