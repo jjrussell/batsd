@@ -27,7 +27,7 @@ module JsonSetField
       
       validates_each fields, :allow_blank => true do |record, attribute, value|
         begin
-          record.send("get_#{attribute}")
+          record.errors.add(attribute, 'is not an Array') unless JSON.parse(value).is_a?(Array)
         rescue
           record.errors.add(attribute, 'is not valid JSON')
         end
@@ -39,4 +39,4 @@ module JsonSetField
   
 end
 
-ActiveRecord::Base.send(:include, JsonSetField) 
+ActiveRecord::Base.send(:include, JsonSetField)
