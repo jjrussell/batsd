@@ -82,7 +82,6 @@ class SdbBackup
   end
   
   def self.write_to_s3(s3_name, local_name, bucket_name, num_retries)
-    S3.reset_connection
     bucket = S3.bucket(bucket_name)
     
     while bucket.key(s3_name).exists?
@@ -91,7 +90,6 @@ class SdbBackup
     
     1.upto(num_retries) do |attempt_num|
       begin
-        S3.reset_connection
         bucket = S3.bucket(bucket_name)
         bucket.put(s3_name, open(local_name))
         Rails.logger.info "Successfully stored #{local_name} to s3 as #{s3_name} after #{attempt_num} attempts."

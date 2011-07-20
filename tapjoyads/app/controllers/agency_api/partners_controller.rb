@@ -8,7 +8,8 @@ class AgencyApi::PartnersController < AgencyApiController
         :partner_id       => partner.id, 
         :name             => partner.name, 
         :balance          => partner.balance, 
-        :pending_earnings => partner.pending_earnings 
+        :pending_earnings => partner.pending_earnings,
+        :contact_email    => partner.contact_name,
       }
     end
     
@@ -23,7 +24,8 @@ class AgencyApi::PartnersController < AgencyApiController
       :partner_id       => @partner.id, 
       :name             => @partner.name, 
       :balance          => @partner.balance, 
-      :pending_earnings => @partner.pending_earnings 
+      :pending_earnings => @partner.pending_earnings,
+      :contact_email    => @partner.contact_name,
     }
     
     render_success(result)
