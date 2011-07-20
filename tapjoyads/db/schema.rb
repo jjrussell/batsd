@@ -405,6 +405,7 @@ ActiveRecord::Schema.define(:version => 20110716191105) do
     t.integer  "over_threshold",                                                                :default => 0,     :null => false
     t.boolean  "rewarded",                                                                      :default => true
     t.string   "reseller_id",                       :limit => 36
+    t.boolean  "cookie_tracking",                                                               :default => false, :null => false
     t.string   "min_os_version",                                                                :default => "",    :null => false
   end
 
