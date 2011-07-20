@@ -505,6 +505,7 @@ ActiveRecord::Schema.define(:version => 20110716191105) do
     t.string   "payout_method"
     t.string   "signature"
     t.string   "doing_business_as"
+    t.string   "payment_country"
   end
 
   add_index "payout_infos", ["id"], :name => "index_payout_infos_on_id", :unique => true

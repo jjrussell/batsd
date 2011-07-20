@@ -11,6 +11,8 @@ class PayoutInfo < ActiveRecord::Base
   validates_presence_of :partner
   validates_uniqueness_of :partner_id
 
+  validates_format_of :billing_name, :company_name, :with => /^[[:print:]]+$/
+
   attr_accessor :terms
   validates_acceptance_of :terms
   validates_presence_of :signature, :billing_name, :tax_country, :account_type,
@@ -38,12 +40,41 @@ class PayoutInfo < ActiveRecord::Base
     }
   }
 
+  def decrypted_payment_details
+    case payout_method
+    when 'check'
+      {
+        :address_1 => address_1,
+        :address_2 => address_2,
+        :address_city => address_city,
+        :address_state => address_state,
+        :address_postal_code => address_postal_code,
+        :address_country => address_country.titleize,
+      }
+    when 'wire', 'ach'
+      {
+        :bank_name => decrypt_bank_name,
+        :bank_address => decrypt_bank_address,
+        :bank_account_number => decrypt_bank_account_number,
+        :bank_routing_number => decrypt_bank_routing_number,
+      }
+    when 'paypal' # TODO: implement this
+      {
+        # :paypal_email => paypal_email
+      }
+    end.merge({
+      :payout_method => payout_method,
+      :account_type => account_type,
+      :payment_country => payment_country.titleize,
+    })
+  end
+
 private
   def require_bank_info?
     %w(ach wire).include?(payout_method) || international?
   end
 
   def international?
-    address_country.to_s.downcase != 'united states of america'
+    payment_country.to_s.downcase != 'united states of america'
   end
 end

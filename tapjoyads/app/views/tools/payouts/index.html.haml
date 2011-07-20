@@ -1,30 +1,67 @@
 - @page_title = 'Payouts'
 
 %h1 Payouts
+- if @start_date.present?
+  %h3
+    For partners with payout info modified between
+    = @start_date.to_s(:pub)
+    and
+    = @end_date.to_s(:pub)
 
+#filtered.hidden
+  Information updated in:
+  = select_date(@start_date || Time.zone.now, :discard_day => true, :start_year => 2011, :end_year => Time.zone.now.year)
+  = submit_tag('Update', :id => :date_submit)
+  = submit_tag('Reset', :id => :date_reset)
+#unfiltered.hidden
+  = link_to 'Filter by payout info modification', '#'
 %table
   %thead
     %tr
-      %th Partner Name
-      %th Contact Name
+      %th Partner
       %th Pending Earnings
       %th Cutoff Date
-      %th Earnings since Net Cutoff
       %th Payout Amount
-      %th Partner ID
-      %th Email
-      %th
+      %th Current Payout Created
+      %th Payout Info
+      %th.do-not-print W9/Bank
+      %th Action
   %tbody
     - @partners.each do |partner|
+      - payout_info = partner.payout_info
       %tr
-        %td= partner.name
-        %td= partner.contact_name
+        %td
+          %strong Name:
+          - if payout_info.present?
+            = payout_info.company_name
+          - else
+            = partner.name
+          - if payout_info.present? && payout_info.doing_business_as.present?
+            %br/
+            %strong d/b/a:
+            = payout_info.doing_business_as
+          %br/
+          %strong ID:
+          = partner.id
+
         %td= number_to_currency(partner.pending_earnings / 100.0)
         %td= (partner.payout_cutoff_date - 1.day).to_s(:pub)
         %td= number_to_currency(partner.pending_earnings / 100.0 - partner.next_payout_amount / 100.0)
         %td= number_to_currency(partner.next_payout_amount / 100.0)
-        %td{ :style => 'font-size: small;' }= partner.id
-        %td= partner.users.first != nil ? partner.users.first.email : ''
+        - if payout_info.present?
+          %td
+            %strong Type:
+            = payout_info.payout_method
+            %br/
+            %strong Updated:
+            = payout_info.updated_at.to_s(:pub)
+          %td.do-not-print
+            .button= button_to('Show info', info_tools_payout_path(payout_info.id))
+            %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
+            .text.hidden &nbsp;
+        - else
+          %td &nbsp;
+          %td.do-not-print &nbsp;
         %td
           - form_tag tools_payouts_path(:partner_id => partner.id), :method => :post, :class => 'json', :style => 'height:45px;' do
             = text_field_tag 'amount', (partner.next_payout_amount / 100.0), :class => 'amount'
@@ -32,18 +69,95 @@
             %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
             %span.status
 
+= will_paginate(@partners)
 
 - content_for :page_javascript do
   :plain
-    $(document).ready(function() {
+    $(function($) {
+      if (#{@start_date.blank?}) {
+        $('#unfiltered').show();
+      } else {
+        $('#filtered').show();
+      }
+      $('#unfiltered a').click(function(){
+        $('#unfiltered').hide();
+        $('#filtered').show();
+        return false;
+      });
+      $('#date_submit').click(function(){
+        var year = $('select#date_year').val();
+        var month = $('select#date_month').val();
+        location.href = location.href.split('?')[0] + '?year=' + year + '&month=' + month;
+      });
+      $('#date_reset').click(function(){
+        $('#filtered').hide();
+        if (#{@start_date.present?}) {
+          location.href = location.href.split('?')[0];
+        } else {
+          $('#unfiltered').show();
+        }
+      });
+
+      $('.button-to').submit(function(){
+        var form = $(this);
+        var button = form.parent();
+        var text = button.siblings('.text');
+        var spinner = button.siblings('img.spinner');
+        var url = form.attr('action');
+        $.ajax({
+          dataType: 'json',
+          type: 'GET',
+          url: url,
+          data: {},
+          beforeSend: function() {
+            $('.text').hide('');
+            $('.button').show();
+            button.hide();
+            spinner.show();
+          },
+          complete: function() {
+            spinner.hide();
+          },
+          success: function(data){
+            button.hide();
+            var fields = "";
+            if (data.payout_method == 'check') {
+              fields += "<b>Address</b>: " + data.address_1;
+              if (data.address_2) {
+                fields += "<br/><b>Address</b>: " + data.address_2;
+              }
+              fields += "<br/><b>City</b>: " + data.address_city;
+              fields += "<br/><b>State</b>: " + data.address_state;
+              fields += "<br/><b>Postal/ZIP</b>: " + data.address_postal_code;
+              if (data.address_country != "United States Of America") {
+                fields += "<br/><b>Country</b>: " + data.address_country;
+              }
+            } else if (data.payout_method == 'paypal') {
+            } else {
+              fields += "<br/><b>Bank</b>: " + data.bank_name;
+              fields += "<br/><b>Bank Address</b>: " + data.bank_address;
+              if (data.payment_country == 'United States Of America') {
+                fields += "<br/><b>Account #</b>: " + data.bank_account_number;
+                fields += "<br/><b>Routing #</b>: " + data.bank_routing_number;
+              } else {
+                fields += "<br/><b>IBAN</b>: " + data.bank_account_number;
+                fields += "<br/><b>SWIFT</b>: " + data.bank_routing_number;
+              }
+            }
+            text.show().html(fields);
+          }
+        });
+        return false;
+      });
+      $('#date').datepicker();
       $('form.json').submit(function() {
         if (!confirm('Are you sure?')) { return false; }
-        
+
         var spinner = $(this).find('img.spinner');
         var submit = $(this).find('input.submit');
         var amount = $(this).find('input.amount');
         var status = $(this).find('span.status');
-        
+
         $.ajax({
           dataType: 'json',
           type: $(this).attr('method'),
@@ -68,14 +182,17 @@
         return false;
       });
     });
-  
+
 - content_for :page_styles do
   :plain
+    #main {
+      width: 1200px;
+    }
     table {
       border-collapse: collapse;
     }
-    
     th, td {
       border: 1px solid gray;
       padding: 5px;
+      font-size: 12px;
     }

@@ -3,11 +3,26 @@ class Tools::PayoutsController < WebsiteController
   current_tab :tools
   filter_access_to :all
   after_filter :save_activity_logs, :only => [ :create ]
-  
+
   def index
-    @partners = Partner.to_payout
+    if params[:year] && params[:month]
+      @start_date = Time.zone.parse("#{params[:year]}-#{params[:month]}-01")
+      @end_date = @start_date + 1.month
+      @partners = Partner.to_payout(:include => 'payout_info').
+        payout_info_changed(@start_date, @end_date).
+        paginate(:page => params[:page])
+    else
+      @partners = Partner.to_payout(:include => 'payout_info').paginate(:page => params[:page])
+    end
   end
-  
+
+  def info
+    payout_info = PayoutInfo.find(params[:id])
+    respond_to do |format|
+      format.json { render :json => payout_info.decrypted_payment_details }
+    end
+  end
+
   def create
     partner = Partner.find(params[:partner_id])
     cutoff_date = partner.payout_cutoff_date - 1.day
