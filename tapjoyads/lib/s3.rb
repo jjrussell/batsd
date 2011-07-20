@@ -1,26 +1,14 @@
 class S3
   
-  def self.reset_connection
-    @@s3 = RightAws::S3.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
-    @@buckets = {}
-  end
-  
-  cattr_reader :s3
-  self.reset_connection
-  
   def self.bucket(bucket_name, create = false)
-    if @@buckets[bucket_name].nil? || @@buckets[bucket_name].full_name != bucket_name
-      @@buckets[bucket_name] = @@s3.bucket(bucket_name, false)
+    s3 = RightAws::S3.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
+    if create
+      bucket = s3.bucket(bucket_name, false)
+      bucket = s3.bucket(bucket_name, true) if bucket.nil?
+    else
+      bucket = RightAws::S3::Bucket.new(s3, bucket_name)
     end
-    
-    if create && @@buckets[bucket_name].nil?
-      # Create the bucket on S3 if it does not exist.
-      # This is done after the first initialization attempt because, according to the
-      # RightAws docs, passing create = true on an existing bucket could modify its ACL.
-      @@buckets[bucket_name] = @@s3.bucket(bucket_name, true)
-    end
-    
-    @@buckets[bucket_name]
+    bucket
   end
   
 end
