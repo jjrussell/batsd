@@ -19,6 +19,7 @@ class App < ActiveRecord::Base
       :default_actions_file_name => "TapjoyPPA.java",
       :min_action_offer_bid => 25,
       :versions => [ '1.5', '1.6', '2.0', '2.1', '2.2', '2.3', '3.0' ],
+      :screen_sizes => { 'small (at least 320x426)' => '1', 'medium (at least 320x470)' => '2', 'large (at least 480x640)' => '3', 'extra_large (at least 720x960)' => '4' }
     },
     'iphone' => {
       :expected_device_types => Offer::APPLE_DEVICES,
@@ -216,6 +217,7 @@ class App < ActiveRecord::Base
     exp                  = options.delete(:exp)
     os_version           = options.delete(:os_version)
     library_version      = options.delete(:library_version) || ''
+    screen_layout_size   = options.delete(:screen_layout_size)
 
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
@@ -230,7 +232,7 @@ class App < ActiveRecord::Base
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)
       if rate_app_offer.present? && rate_app_offer.accepting_clicks?
         offer_list_length += 1
-        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version)
+        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size)
           num_rejected += 1
         else
           final_offer_list << rate_app_offer
@@ -240,7 +242,7 @@ class App < ActiveRecord::Base
     
     offer_list_length += currency.get_cached_offers({ :type => type, :exp => exp }) do |offers|
       offers.each do |offer|
-        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version)
+        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size)
           num_rejected += 1
         else
           final_offer_list << offer
@@ -303,6 +305,10 @@ class App < ActiveRecord::Base
   
   def os_versions
     PLATFORM_DETAILS[platform][:versions]
+  end
+  
+  def screen_sizes
+    PLATFORM_DETAILS[platform][:screen_sizes].nil? ? [] : PLATFORM_DETAILS[platform][:screen_sizes].sort{ |a,b| a[1] <=> b[1] }
   end
 
 private

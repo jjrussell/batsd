@@ -140,6 +140,8 @@ class Offer < ActiveRecord::Base
   alias_method :events, :offer_events
   alias_method :random, :rand
   
+  json_multi_field :device_types, :screen_sizes, :countries, :cities, :postal_codes
+  
   def self.redistribute_hourly_stats_aggregation
     Benchmark.realtime do
       now = Time.zone.now + 15.minutes
@@ -638,22 +640,6 @@ class Offer < ActiveRecord::Base
       end
     end
   end
-  
-  def get_countries
-    @countries_set ||= Set.new(countries.blank? ? nil : JSON.parse(countries))
-  end
-  
-  def get_postal_codes
-    Set.new(postal_codes.blank? ? nil : JSON.parse(postal_codes))
-  end
-  
-  def get_cities
-    Set.new(cities.blank? ? nil : JSON.parse(cities))
-  end
-  
-  def get_device_types
-    Set.new(device_types.blank? ? nil : JSON.parse(device_types))
-  end
 
   def expected_device_types
     if item_type == 'App' || item_type == 'ActionOffer' || item_type == 'RatingOffer'
@@ -730,7 +716,7 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
-  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version)
+  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
     return device_platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device) ||
         already_complete?(publisher_app, device, app_version) ||
@@ -743,6 +729,7 @@ class Offer < ActiveRecord::Base
         hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs) ||
         min_os_version_reject?(os_version) ||
         cookie_tracking_reject?(publisher_app, library_version) ||
+        screen_sizes_reject?(screen_layout_size) ||
         should_reject_from_app_or_currency?(publisher_app, currency)
   end
   
@@ -1038,6 +1025,13 @@ private
     return true if os_version.blank?
     
     !os_version.version_greater_than_or_equal_to?(min_os_version)
+  end
+  
+  def screen_sizes_reject?(screen_layout_size)
+    return false if screen_layout_size.blank?
+    return false if screen_sizes.blank? || screen_sizes == '[]'
+    
+    !get_screen_sizes.include?(screen_layout_size)
   end
   
   def hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs)

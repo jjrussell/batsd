@@ -171,8 +171,9 @@ private
         :direct_pay_providers => params[:direct_pay_providers].to_s.split(','),
         :exp                  => params[:exp],
         :library_version      => params[:library_version],
-        :os_version           => params[:os_version]),
-        :source               => params[:source])
+        :os_version           => params[:os_version],
+        :source               => params[:source],
+        :screen_layout_size   => params[:screen_layout_size])
 
     @offer_list = @offer_list[@start_index, @max_items] || []
   end
