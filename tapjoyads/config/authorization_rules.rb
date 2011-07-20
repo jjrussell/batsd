@@ -29,12 +29,16 @@ authorization do
     has_permission_on :tools, :to => [ :resolve_clicks, :device_info, :update_device ]
   end
   
-  role :payops do
+  role :money do
     includes :tools
     has_permission_on :tools, :to => [ :money, :monthly_data ]
     has_permission_on :tools_orders, :to => [ :new, :create ]
-    has_permission_on :tools_payouts, :to => [ :index, :create ]
     has_permission_on :tools_earnings_adjustments, :to => [ :new, :create ]
+  end
+  
+  role :payops do
+    includes :money
+    has_permission_on :tools_payouts, :to => [ :index, :create ]
   end
 
   role :payout_manager do
@@ -59,7 +63,7 @@ authorization do
   end
   
   role :account_mgr do
-    includes :payops
+    includes :money
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser ]
     has_permission_on :search, :to => [ :offers, :partners, :users ]
     has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :edit_android_app, :update_android_app, :device_info, :update_device, :freemium_android ]
