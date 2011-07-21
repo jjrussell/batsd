@@ -36,4 +36,30 @@ class Games::GamersController < GamesController
     end
   end
   
+  def start_link
+    # if current_gamer.present?
+      respond_to do |format|
+        format.mobileconfig do
+          response.headers['Content-Disposition'] = "attachment; filename=TapjoyGamesProfile.mobileconfig"
+          
+          file = File.open('app/views/games/gamers/start_link.mobileconfig')
+          render :text => file.read
+        end
+      end
+    # else
+    #   flash[:error] = "Please log in and try again. You must have cookies enabled."
+    #   redirect_to games_root_path
+    # end
+  end
+  
+  def finish_link
+    Rails.logger.info request.raw_post
+    if current_gamer.present?
+      Rails.logger.info "linking"
+    else
+      flash[:error] = "Please log in and try again. You must have cookies enabled."
+    end
+    redirect_to games_root_path, :status => 301
+  end
+  
 end

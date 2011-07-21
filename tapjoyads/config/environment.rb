@@ -112,7 +112,6 @@ Rails::Initializer.run do |config|
       if forked
         Mc.reset_connection
         SimpledbResource.reset_connection
-        S3.reset_connection
         Sqs.reset_connection
         Activemq.reset_connection
       end
@@ -129,4 +128,5 @@ end
 # Register custom Mime types to generate ActionOffer header files
 Mime::Type.register "text/objective-c-header", :h
 Mime::Type.register "text/java", :java
+Mime::Type.register "application/x-apple-aspen-config", :mobileconfig
 Differ.format = :html
