@@ -154,7 +154,6 @@ class OneOffs
       if app_metadata == nil
         # only create this record if one doesn't already exist for this store and store_id
         app_metadata = AppMetadata.create!(
-          :app_id            => app.id,
           :price             => app.price,
           :store_name        => app.store_name,
           :store_id          => app.store_id,

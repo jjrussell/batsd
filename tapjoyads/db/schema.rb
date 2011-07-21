@@ -55,7 +55,6 @@ ActiveRecord::Schema.define(:version => 20110720000908) do
 
   create_table "app_metadatas", :id => false, :force => true do |t|
     t.string   "id",                :limit => 36,                :null => false
-    t.string   "app_id",            :limit => 36,                :null => false
     t.integer  "price",                           :default => 0
     t.string   "store_name",                                     :null => false
     t.string   "store_id",                                       :null => false
@@ -69,7 +68,6 @@ ActiveRecord::Schema.define(:version => 20110720000908) do
     t.datetime "updated_at"
   end
 
-  add_index "app_metadatas", ["app_id", "store_name"], :name => "index_app_metadatas_on_app_id_and_store_name", :unique => true
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
   add_index "app_metadatas", ["store_name", "store_id"], :name => "index_app_metadatas_on_store_name_and_store_id", :unique => true
 

@@ -3,7 +3,6 @@ class CreateAppMetadatas < ActiveRecord::Migration
     # app_metadatas
     create_table :app_metadatas, :id => false do |t|
       t.column :id, 'char(36) binary', :null => false
-      t.column :app_id, 'char(36) binary', :null => false
       t.integer :price, :default => 0
       t.string :store_name, :null => false
       t.string :store_id, :null => false
@@ -18,7 +17,6 @@ class CreateAppMetadatas < ActiveRecord::Migration
     end
 
     add_index :app_metadatas, :id, :unique => true
-    add_index :app_metadatas, [:app_id, :store_name], :unique => true
     add_index :app_metadatas, [:store_name, :store_id], :unique => true
 
     # app_metadata_mappings
