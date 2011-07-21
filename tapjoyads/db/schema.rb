@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110716191105) do
+ActiveRecord::Schema.define(:version => 20110720000908) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -42,6 +42,36 @@ ActiveRecord::Schema.define(:version => 20110716191105) do
   add_index "admin_devices", ["description"], :name => "index_admin_devices_on_description", :unique => true
   add_index "admin_devices", ["id"], :name => "index_admin_devices_on_id", :unique => true
   add_index "admin_devices", ["udid"], :name => "index_admin_devices_on_udid", :unique => true
+
+  create_table "app_metadata_mappings", :id => false, :force => true do |t|
+    t.string "id",              :limit => 36, :null => false
+    t.string "app_id",          :limit => 36, :null => false
+    t.string "app_metadata_id", :limit => 36, :null => false
+  end
+
+  add_index "app_metadata_mappings", ["app_id", "app_metadata_id"], :name => "index_app_metadata_mappings_on_app_id_and_app_metadata_id", :unique => true
+  add_index "app_metadata_mappings", ["app_id"], :name => "index_app_metadata_mappings_on_app_id"
+  add_index "app_metadata_mappings", ["id"], :name => "index_app_metadata_mappings_on_id", :unique => true
+
+  create_table "app_metadatas", :id => false, :force => true do |t|
+    t.string   "id",                :limit => 36,                :null => false
+    t.string   "app_id",            :limit => 36,                :null => false
+    t.integer  "price",                           :default => 0
+    t.string   "store_name",                                     :null => false
+    t.string   "store_id",                                       :null => false
+    t.integer  "age_rating"
+    t.integer  "file_size_bytes"
+    t.string   "supported_devices"
+    t.datetime "released_at"
+    t.float    "user_rating"
+    t.string   "categories"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "app_metadatas", ["app_id", "store_name"], :name => "index_app_metadatas_on_app_id_and_store_name", :unique => true
+  add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
+  add_index "app_metadatas", ["store_name", "store_id"], :name => "index_app_metadatas_on_store_name_and_store_id", :unique => true
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                      :limit => 36,                    :null => false
