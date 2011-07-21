@@ -35,7 +35,7 @@ class Games::GamersController < GamesController
   end
   
   def start_link
-    # if current_gamer.present?
+    if current_gamer.present?
       respond_to do |format|
         format.mobileconfig do
           response.headers['Content-Disposition'] = "attachment; filename=TapjoyGamesProfile.mobileconfig"
@@ -44,19 +44,42 @@ class Games::GamersController < GamesController
           render :text => file.read
         end
       end
-    # else
-    #   flash[:error] = "Please log in and try again. You must have cookies enabled."
-    #   redirect_to games_root_path
-    # end
+    else
+      flash[:error] = "Please log in and try again. You must have cookies enabled."
+      redirect_to games_root_path
+    end
   end
   
   def finish_link
-    Rails.logger.info request.raw_post
     if current_gamer.present?
-      Rails.logger.info "linking"
+      match = request.raw_post.match(/<plist.*<\/plist>/)
+      raise "Plist not present" unless match.present? && match[0].present?
+      
+      udid, product, version = nil
+      (Hpricot(data)/"key").each do |key|
+        value = key.next_sibling.inner_text
+        case key.inner_text
+        when 'UDID';    udid = value
+        when 'PRODUCT'; product = value
+        when 'VERSION'; version = value
+        end
+      end
+      raise "Error parsing plist" if udid.blank? || product.blank? || version.blank?
+      
+      current_gamer.udid = udid
+      device = Device.new(:key => udid)
+      device.product = product
+      device.version = version
+      
+      current_gamer.save!
+      device.save
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
     end
+    redirect_to games_root_path, :status => 301
+  rescue Exception => e
+    Notifier.alert_new_relic(e.class, e.message, request, params)
+    flash[:error] = "Error linking device. Please try again."
     redirect_to games_root_path, :status => 301
   end
   
