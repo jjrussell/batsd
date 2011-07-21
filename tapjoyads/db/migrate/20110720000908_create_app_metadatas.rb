@@ -31,30 +31,6 @@ class CreateAppMetadatas < ActiveRecord::Migration
     add_index :app_metadata_mappings, :id, :unique => true
     add_index :app_metadata_mappings, [:app_id, :app_metadata_id], :unique => true
     add_index :app_metadata_mappings, [:app_id]
-    
-    App.find(:all, :conditions => "store_id != ''").each do |app|
-      app_metadata = AppMetadata.find(:first, :conditions => ["store_name = ? and store_id = ?", app.store_name, app.store_id])
-      if app_metadata == nil
-        # only create this record if one doesn't already exist for this store and store_id
-        app_metadata = AppMetadata.create!(
-          :app_id            => app.id,
-          :price             => app.price,
-          :store_name        => app.store_name,
-          :store_id          => app.store_id,
-          :age_rating        => app.age_rating,
-          :file_size_bytes   => app.file_size_bytes,
-          :supported_devices => app.supported_devices,
-          :released_at       => app.released_at,
-          :user_rating       => app.user_rating,
-          :categories        => app.categories
-        )
-      end
-      
-      AppMetadataMapping.create!(
-        :app_id     => app.id,
-        :app_metadata_id => app_metadata.id
-      )
-    end
   end
 
   def self.down
