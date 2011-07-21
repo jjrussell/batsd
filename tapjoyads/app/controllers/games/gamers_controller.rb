@@ -57,7 +57,7 @@ class Games::GamersController < GamesController
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
     end
-    redirect_to games_root_path
+    redirect_to games_root_path, :status => 301
   end
   
 end
