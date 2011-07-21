@@ -12,15 +12,19 @@ class Job::QueueActivemqConsumerController < Job::JobController
     
     unless messages.empty?
       filename = "#{params[:server]}_#{UUIDTools::UUID.random_create.hexdigest}"
-      path = "#{params[:queue]}/#{now.to_s(:yyyy_mm_dd)}/#{now.hour}/#{filename}"
-      data = File.open("tmp/#{filename}", 'w+')
-      messages.each { |msg| data.puts(msg.body) }
+      tmp_path = "tmp/#{filename}.s3"
+      s3_path  = "#{params[:queue]}/#{now.to_s(:yyyy_mm_dd)}/#{now.hour}/#{filename}"
+      data     = File.open(tmp_path, 'w+')
+      
+      messages.each do |msg|
+        data.puts(msg.body)
+      end
       
       retries = 3
       begin
         data.rewind
         bucket = S3.bucket(BucketNames::ACTIVEMQ_MESSAGES)
-        bucket.put(path, data.read)
+        bucket.put(s3_path, data.read)
       rescue Exception => e
         if retries > 0
           retries -= 1
@@ -29,13 +33,13 @@ class Job::QueueActivemqConsumerController < Job::JobController
         else
           consumer.close
           data.close
-          File.delete("tmp/#{filename}")
+          File.delete(tmp_path)
           raise e
         end
       end
       
       data.close
-      File.delete("tmp/#{filename}")
+      File.delete(tmp_path)
       
       messages.each do |msg|
         consumer.acknowledge(msg)
