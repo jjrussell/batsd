@@ -1,0 +1,22 @@
+%h1 Tapjoy Recommends
+%table
+  %thead
+    %tr
+      %th
+      %th
+  %tbody
+    - @editors_picks.each do |pick|
+      %tr
+        %td= image_tag pick.offer.get_icon_url, :size => '57x57'
+        %td
+          = pick.offer.name
+          - if %w(App ActionOffer).include?(pick.offer.item_type)
+            %br/
+            = pick.offer.item.categories.first.to_s.titleize
+            = pick.offer.item.user_rating
+            %br/
+            = pick.description
+            %br/
+            = number_to_currency(pick.offer.price/100)
+          = link_to 'Get it!', pick.offer.url
+
