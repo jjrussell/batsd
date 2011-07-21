@@ -54,7 +54,7 @@
                 fullScreenClass: 'fullscreen',
                 hoverDelay: 50,
                 icon: null,
-                icon4: null, // experimental
+                icon4: null,
                 moveThreshold: 10,
                 preloadImages: false,
                 pressDelay: 1000,
@@ -83,24 +83,7 @@
                     {selector:'#jqt > * > ul li a', name:'slideleft', is3d:false}
                 ]
             };
-
-        function _debug(message) {
-            now = (new Date).getTime();
-            delta = now - lastTime;
-            lastTime = now;
-            if (jQTSettings.debug) {
-                if (message) {
-                    _log(delta + ': ' + message);
-                } else {
-                    _log(delta + ': ' + 'Called ' + arguments.callee.caller.name);
-                }
-            }
-        }
-        function _log(message) {
-            if (window.console !== undefined) {
-                console.log(message);
-            }
-        }
+            
         function addAnimation(animation) {
             if (typeof(animation.selector) === 'string' && typeof(animation.name) === 'string') {
                 animations.push(animation);
@@ -116,7 +99,6 @@
         }
         function clickHandler(e) {
             if (!tapReady) {
-                _debug('ClickHandler handler aborted because tap is not ready');
                 e.preventDefault();
                 return false;
             }
@@ -125,57 +107,35 @@
                 var $el = $(e.target).closest(touchSelectors.join(', '));
             }
             if ($el && $el.attr('href') && !$el.isExternalLink()) {
-                _debug('Need to prevent default click behavior');
                 e.preventDefault();
-            } else {
-                _debug('No need to prevent default click behavior');
             }
 
-            // Trigger a tap event if touchstart is not on the job
             if ($.support.touch) {
-                _debug('Not converting click to a tap event because touch handler is on the job');
             } else {
-                _debug('Converting click event to a tap event because touch handlers are not present or off');
                 $(e.target).trigger('tap', e);
             }
 
         }
         function doNavigation(fromPage, toPage, animation, goingBack) {
-            _debug();
-
-            // Error check for target page
             if (toPage.length === 0) {
                 $.fn.unselect();
-                _debug('Target element is missing.');
                 return false;
             }
 
-            // Error check for fromPage===toPage
             if (toPage.hasClass('current')) {
                 $.fn.unselect();
-                _debug('You are already on the page you are trying to navigate to.');
                 return false;
             }
 
-            // Collapse the keyboard
             $(':focus').blur();
-
-            // Position the incoming page so toolbar is at top of viewport regardless of scroll position on from page
-            // toPage.css('top', window.pageYOffset);
-            
             fromPage.trigger('pageAnimationStart', { direction: 'out' });
             toPage.trigger('pageAnimationStart', { direction: 'in' });
 
             if ($.support.animationEvents && animation && jQTSettings.useAnimations) {
-
                 tapReady = false;
-
-                // Fail over to 2d animation if need be
                 if (!$.support.transform3d && animation.is3d) {
                     animation.name = jQTSettings.fallback2dAnimation;
                 }
-
-                // Reverse animation if need be
                 var finalAnimationName;
                 if (goingBack) {
                     if (animation.name.indexOf('left') > 0) {
@@ -193,13 +153,9 @@
                     finalAnimationName = animation.name;
                 }
 
-                // _debug('finalAnimationName is ' + finalAnimationName);
-
-                // Bind internal "cleanup" callback
                 fromPage.bind('webkitAnimationEnd', navigationEndHandler);
                 fromPage.bind('webkitTransitionEnd', navigationEndHandler);
 
-                // Trigger animations
                 scrollTo(0, 0);
                 toPage.addClass(finalAnimationName + ' in current');
                 fromPage.addClass(finalAnimationName + ' out');
@@ -209,10 +165,7 @@
                 navigationEndHandler();
             }
 
-            // Define private navigationEnd callback
             function navigationEndHandler(event) {
-                _debug();
-                
                 if ($.support.animationEvents && animation && jQTSettings.useAnimations) {
                     fromPage.unbind('webkitAnimationEnd', navigationEndHandler);
                     fromPage.unbind('webkitTransitionEnd', navigationEndHandler);
@@ -224,7 +177,6 @@
                     fromPage.removeClass(finalAnimationName + ' out current');
                 }
 
-                // Housekeeping
                 currentPage = toPage;
                 if (goingBack) {
                     hist.shift();
@@ -236,51 +188,31 @@
                 lastAnimationTime = (new Date()).getTime();
                 setHash(currentPage.attr('id'));
                 tapReady = true;
-
-                // Trigger custom events
                 toPage.trigger('pageAnimationEnd', {direction:'in', animation:animation});
                 fromPage.trigger('pageAnimationEnd', {direction:'out', animation:animation});
-
             }
-
-            // We's out
             return true;
         }
         function getOrientation() {
-            _debug();
             return orientation;
         }
         function goBack() {
-            _debug();
-
-            // Error checking
             if (hist.length < 1 ) {
-                _debug('History is empty.');
             }
 
             if (hist.length === 1 ) {
-                _debug('You are on the first panel.');
             }
 
             var from = hist[0], to = hist[1];
-
             if (doNavigation(from.page, to.page, from.animation, true)) {
                 return publicObj;
             } else {
-                _debug('Could not go back.');
                 return false;
             }
 
         }
         function goTo(toPage, animation, reverse) {
-            _debug();
-
-            if (reverse) {
-                _log('The reverse parameter of the goTo() function has been deprecated.');
-            }
-
             var fromPage = hist[0].page;
-
             if (typeof animation === 'string') {
                 for (var i=0, max=animations.length; i < max; i++) {
                     if (animations[i].name === animation) {
@@ -289,7 +221,6 @@
                     }
                 }
             }
-
             if (typeof(toPage) === 'string') {
                 var nextPage = $(toPage);
                 if (nextPage.length < 1) {
@@ -305,12 +236,10 @@
             if (doNavigation(fromPage, toPage, animation)) {
                 return publicObj;
             } else {
-                _debug('Could not animate pages.');
                 return false;
             }
         }
         function hashChangeHandler(e) {
-            _debug();
             if (location.hash === hist[0].hash) {
             } else {
                 if(location.hash === hist[1].hash) {
@@ -320,48 +249,6 @@
         }
         function init(options) {
             jQTSettings = $.extend({}, defaults, options);
-            if (jQTSettings.preloadImages) {
-                for (var i = jQTSettings.preloadImages.length - 1; i >= 0; i--) {
-                    (new Image()).src = jQTSettings.preloadImages[i];
-                };
-            }
-
-            if (jQTSettings.icon || jQTSettings.icon4) {
-                var precomposed, appropriateIcon;
-                if (jQTSettings.icon4 && window.devicePixelRatio && window.devicePixelRatio === 2) {
-                    appropriateIcon = jQTSettings.icon4;
-                } else if (jQTSettings.icon) {
-                    appropriateIcon = jQTSettings.icon;
-                } else {
-                    appropriateIcon = false;
-                }
-                if (appropriateIcon) {
-                    precomposed = (jQTSettings.addGlossToIcon) ? '' : '-precomposed';
-                    hairExtensions += '<link rel="apple-touch-icon' + precomposed + '" href="' + appropriateIcon + '" />';
-                }
-            }
-
-            // Set startup screen
-            if (jQTSettings.startupScreen) {
-                hairExtensions += '<link rel="apple-touch-startup-image" href="' + jQTSettings.startupScreen + '" />';
-            }
-
-            // Set viewport
-            if (jQTSettings.fixedViewport) {
-                hairExtensions += '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;"/>';
-            }
-
-            // Set full-screen
-            if (jQTSettings.fullScreen) {
-                hairExtensions += '<meta name="apple-mobile-web-app-capable" content="yes" />';
-                if (jQTSettings.statusBar) {
-                    hairExtensions += '<meta name="apple-mobile-web-app-status-bar-style" content="' + jQTSettings.statusBar + '" />';
-                }
-            }
-            if (hairExtensions) {
-                $head.prepend(hairExtensions);
-            }
-
         }
         function insertPages(nodes, animation) {
             var targetPage = null;
@@ -536,7 +423,7 @@
                     $el.addClass('active');
                     goTo($(hash).data('referrer', $el), animation, $el.hasClass('reverse'));
                     return false;
-                } else {
+                } else if (target === 'ajax') {
                     $el.addClass('loading active');
                     showPageByHref($el.attr('href'), {
                         animation: animation,
@@ -547,6 +434,10 @@
                         $referrer: $el
                     });
                     return false;
+                }
+                else {
+                  window.location = $el.attr('href');
+                  return false;
                 }
             }
         }
@@ -637,9 +528,7 @@
                 if (setting === true) {
                     if (supportForTouchEvents()) {
                         $.support.touch = true;
-                    } else{
-                        _log('This device does not support touch events');
-                    };
+                    }
                 } else {
                     $.support.touch = false;
                 }
@@ -656,13 +545,6 @@
             $.support.cssMatrix = supportForCssMatrix();
             $.support.touch = supportForTouchEvents() && jQTSettings.useFastTouch;
             $.support.transform3d = supportForTransform3d();
-
-            if (!$.support.touch) {
-                _log('This device does not support touch interaction, or it has been deactivated by the developer. Some features might be unavailable.');
-            }
-            if (!$.support.transform3d) {
-                _log('This device does not support 3d animation. 2d animations will be used instead.');
-            }
 
             $.fn.isExternalLink = function() {
                 var $el = $(this);
@@ -706,8 +588,6 @@
                     $.extend(publicObj, fn(publicObj));
                 }
             }
-
-            // Set up animations array
             if (jQTSettings['cubeSelector']) {
                 jQTSettings['cubeleftSelector'] = jQTSettings['cubeSelector'];
             }
@@ -733,22 +613,19 @@
 
             $body = $('#jqt');
             if ($body.length === 0) {
-                _log('Could not find an element with the id "jqt", so the body id has been set to "jqt". If you are having any problems, wrapping your panels in a div with the id "jqt" might help.');
                 $body = $('body').attr('id', 'jqt');
             }
 
-            // Add some specific css if need be
             if ($.support.transform3d) {
                 $body.addClass('supports3d');
             }
             if (jQTSettings.fullScreenClass && window.navigator.standalone == true) {
                 $body.addClass(jQTSettings.fullScreenClass + ' ' + jQTSettings.statusBar);
             }
-            if (window.navigator.userAgent.match(/Android/ig)) { // Grr... added to postion checkbox labels. Lame. I know. - js
+            if (window.navigator.userAgent.match(/Android/ig)) {
                 $body.addClass('android');
             }
 
-            // Bind events
             $(window).bind('hashchange', hashChangeHandler);
             $body.bind('touchstart', touchStartHandler)
                 .bind('click', clickHandler)
@@ -759,7 +636,6 @@
                 .trigger('orientationchange');
             
             
-            // Determine what the "current" (initial) panel should be
             if ($('#jqt > .current').length == 0) {
                 currentPage = $('#jqt > *:first');
             } else {
@@ -773,7 +649,6 @@
             addPageToHistory(currentPage);
             scrollTo(0, 0);
             
-            // Make sure none of the panels yank the location bar into view
             $('#jqt > *').css('minHeight', window.innerHeight);
 
         });

@@ -1,5 +1,7 @@
 class Games::GamersController < GamesController
   
+  layout nil
+  
   def new
     @gamer = Gamer.new
   end
@@ -13,9 +15,9 @@ class Games::GamersController < GamesController
     end
     if @gamer.save
       GamesMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.perishable_token))
-      redirect_to games_root_path
+      render(:json => { :success => true, :confirm_url => games_my_apps_path }) and return
     else
-      render :action => :new
+      render(:json => { :success => false, :error => @gamer.errors }) and return
     end
   end
   

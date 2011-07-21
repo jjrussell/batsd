@@ -1,5 +1,6 @@
 class Games::GamerSessionsController < GamesController
-    
+  
+  
   def new
     @gamer_session = GamerSession.new
   end

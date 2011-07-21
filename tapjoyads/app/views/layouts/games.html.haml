@@ -15,7 +15,6 @@
 
     %title= @page_title.blank? ? 'Tapjoy Games' : "#{@page_title} - Tapjoy Games"
     
-    //%link{ 'rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'http://fonts.googleapis.com/css?family=Paytone+One&v1' }
     %style{ :type => "text/css", :media => "screen" }
       @import "/stylesheets/games/tapjoygames.css";
       @import "/stylesheets/games/jqtouch.css";
@@ -28,9 +27,10 @@
     = yield
 
     = javascript_include_tag 'games/jquery-1.4.2'
-    = javascript_include_tag 'games/jqtouch.js'
+    = javascript_include_tag 'games/jqtouch'
+    = javascript_include_tag 'games/jqt.scroll'
     = javascript_include_tag 'games/cufon-min' 
-    = javascript_include_tag 'games/Cooper_900.font'
+    = javascript_include_tag 'games/Cooper_Std_900.font'
     = javascript_include_tag 'games/AmerType_Md_BT_700.font'
     = javascript_include_tag 'games/tapjoygames'
     

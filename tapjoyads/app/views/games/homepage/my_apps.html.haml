@@ -1,0 +1,149 @@
+#jqt
+  #my_apps.current
+    %div.top_nav_bar.toolbar
+      .nav_content
+        .right
+          = link_to 'Support', "#support", :class => "flip"
+        .right
+          = link_to 'My Account', "#my_account", :class => "flip"    
+    %div.container.vertical-scroll
+      %div.scroller.with-scrollbar
+        %div.page
+          .logo
+            %div.slide_nav
+              %div.slider_right.right
+                %span.title.small
+                  = link_to 'More Games', games_more_games_path
+              %div.slider_active.slide_left.left
+                %span.title
+                  My Apps
+          .content
+            %ul
+              -@external_publishers.each do |external_publisher|
+                %li.offer_item
+                  - external_publisher.currencies.each_with_index do |currency, i|
+                    - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency), :currency => currency[:name]) do
+                      .offer_button
+                        .button.blue         
+                          %span.amount
+                            Earn
+                            = currency[:name]
+                    = " " if i != external_publisher.currencies.size - 1  
+                  .offer_image
+                    = image_tag(external_publisher.get_icon_url(:source => :cloudfront))
+                  .offer_text
+                    %div.offer_title.title
+                      = external_publisher.app_name
+                    .offer_info
+
+
+  #earn.hide
+    %div.top_nav_bar.toolbar
+      .nav_content
+        .right
+          = link_to 'Support', "#support", :class => "flip"
+        .right
+          = link_to 'My Account', "#my_account", :class => "flip"    
+    %div.container.vertical-scroll
+      %div.scroller.with-scrollbar
+        %div.page
+          .logo
+            %div.slide_nav
+              %div.slider_right.right
+                %span.title.small
+                  = link_to 'More Games', games_more_games_path
+              %div.slider_left.left
+                %span.title
+                  = link_to 'My Apps', "#", :class => "back"
+          #earn_content.content
+
+  #my_account.tan
+    %div.top_nav_bar.toolbar
+      .nav_content
+        .right
+          = link_to 'Support', "#support", :class => "flip"
+        .right
+          = link_to 'My Account', "#my_account", :class => "flip"
+    %div.container.vertical-scroll
+      %div.scroller.with-scrollbar
+        %div.page
+          .logo
+            %div.slide_nav
+              %div.slider_right.right
+                %span.title.small
+                  = link_to 'More Games', games_more_games_path
+              %div.slider_left.left
+                %span.title
+                  = link_to 'My Apps', games_my_apps_path
+          .content 
+                 
+  #support.tan
+    %div.top_nav_bar.toolbar
+      .nav_content
+        .right
+          = link_to 'Support', "#support", :class => "flip"
+        .right
+          = link_to 'My Account', "#my_account", :class => "flip"
+    %div.container.vertical-scroll
+      %div.scroller.with-scrollbar
+        %div.page
+          .logo
+            %div.slide_nav
+              %div.slider_right.right
+                %span.title.small
+                  = link_to 'More Games', games_more_games_path
+              %div.slider_left.left
+                %span.title
+                  = link_to 'My Apps', games_my_apps_path
+          .content 
+
+
+#loader.dialog_wrapper.hide
+  #progress.dialog
+    .dialog_title
+      Loading
+    .dialog_image
+
+- content_for :page_javascript do
+  :plain
+    $(window).load(function() {
+      var jQT = new $.jQTouch({
+        slideSelector: '#jqt .slide_nav',
+      });
+      $(".get_offerwall_jsonp").each(function() {
+        $(this).click(function(){
+          TJG.ui.showLoader();
+          $("#earn_content").fadeOut(350,function() {
+            $("#earn_content").empty();
+            jQT.goTo('#earn', 'slideleft');  
+          });
+          var url = $(this).attr("jsonp_url");
+          var id = $(this).attr("id");
+          var currency_name = $(this).attr("currency");
+          if (url) {
+            if (!TJG.appOfferWall[id]) {
+              jQT.goTo('#earn', 'slideleft');   
+              $.getJSON(url+"&callback=?", function(data) {
+                TJG.ui.hideLoader();
+                if (data.OfferArray) {
+                  var offers = data.OfferArray;
+                  TJG.appOfferWall[id] = offers; 
+                  var c = TJG.ui.getOffferRow(offers,currency_name);
+                  $("#earn_content").html(c);
+                  TJG.onload.loadCufon();
+                  $("#earn_content").fadeIn(400); 
+                }
+              
+              });
+            } 
+            else if (TJG.appOfferWall[id]) {
+              TJG.ui.hideLoader();
+              var c = TJG.ui.getOffferRow(TJG.appOfferWall[id],currency_name);
+              $("#earn_content").html(c);
+              TJG.onload.loadCufon();
+              $("#earn_content").fadeIn(400);
+            }
+          }
+        });
+      });   
+    });           
