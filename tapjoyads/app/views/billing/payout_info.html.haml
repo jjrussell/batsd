@@ -41,7 +41,7 @@
           %td
             = f.text_field(:doing_business_as)
             = f.error_message_on(:doing_business_as)
-        %tr
+        %tr.do-not-print
           %th
             = f.label :tax_id, 'Tax ID'
             #help_tin.help ?
@@ -70,8 +70,8 @@
             = f.label :country, 'Country'
             .help.no-help ?
           %td
-            = f.select(:address_country, options_for_select(list_of_countries, @payout_info.address_country))
-            = f.error_message_on(:address_country)
+            = f.select(:payment_country, options_for_select(list_of_countries, @payout_info.payment_country))
+            = f.error_message_on(:payment_country)
         %tr
           %th
             = f.label :payout_method, 'Payment Method'
@@ -116,24 +116,31 @@
           %td
             = f.text_field(:address_postal_code)
             = f.error_message_on(:address_postal_code)
+        %tr
+          %th
+            = f.label :country, 'Country'
+            .help.no-help ?
+          %td
+            = f.select(:address_country, options_for_select(list_of_countries, @payout_info.address_country))
+            = f.error_message_on(:address_country)
         %tr.country_other
           %td{:colspan => 2}
             %h3 Bank Information
-        %tr.country_other
+        %tr.country_other.do-not-print
           %th
             = f.label :bank_name, 'Bank Name'
             .help.no-help ?
           %td
             = encrypted_field(f, @payout_info, :bank_name)
             = f.error_message_on(:bank_name)
-        %tr.country_other
+        %tr.country_other.do-not-print
           %th
             = f.label :bank_address, 'Bank Address'
             .help.no-help ?
           %td
             = encrypted_field(f, @payout_info, :bank_address)
             = f.error_message_on(:bank_address)
-        %tr.country_other
+        %tr.country_other.do-not-print
           %th
             %span.country_us= f.label :bank_account_number, 'Bank Account Number'
             %span.country_other= f.label :bank_account_number, 'Bank IBAN Code'
@@ -141,7 +148,7 @@
           %td
             = encrypted_field(f, @payout_info, :bank_account_number)
             = f.error_message_on(:bank_account_number)
-        %tr.country_other
+        %tr.country_other.do-not-print
           %th
             %span.country_us= f.label :bank_routing_number, 'Bank Routing Number'
             %span.country_other= f.label :bank_routing_number, 'Bank SWIFT Code'
@@ -256,10 +263,10 @@
       }
     };
     var isUS = function() {
-      return $('#payout_info_address_country').val().match(/united states of america/i);
+      return $('#payout_info_payment_country').val().match(/united states of america/i);
     };
 
-    $('#payout_info_address_country').change(toggleByCountry);
+    $('#payout_info_payment_country').change(toggleByCountry);
     $('#payout_info_payout_method').change(toggleByPayoutMethod);
     toggleByCountry();
     $('#payout_info_account_type').change(function(){

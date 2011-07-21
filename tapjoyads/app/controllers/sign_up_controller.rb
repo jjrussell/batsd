@@ -2,6 +2,10 @@ class SignUpController < WebsiteController
 
   def new
     redirect_to users_path if current_user
+    @zones = {}
+    ActiveSupport::TimeZone.us_zones.each do |zone|
+      @zones[- zone.utc_offset / 60] = zone.name
+    end
     @user = User.new
   end
 
@@ -12,7 +16,7 @@ class SignUpController < WebsiteController
     @user.password_confirmation = params[:user][:password_confirmation]
     @user.terms_of_service = params[:user][:terms_of_service]
     @user.time_zone = params[:user][:time_zone]
-    @user.current_partner = Partner.new(:name => params[:partner_name], :contact_name => @user.email)
+    @user.current_partner = Partner.new(:name => params[:partner_name] || @user.email, :contact_name => @user.email)
     @user.partners << @user.current_partner
     if @user.save
       flash[:notice] = 'Account successfully created.'

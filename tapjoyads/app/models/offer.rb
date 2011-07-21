@@ -26,7 +26,8 @@ class Offer < ActiveRecord::Base
                                   'third_party_data', 'payment_range_low',
                                   'payment_range_high', 'icon_id_override', 'rank_boost',
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
-                                  'normal_price', 'over_threshold', 'rewarded', 'reseller_id' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
+                                  'cookie_tracking', 'min_os_version', 'screen_layout_sizes' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
   
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
   
@@ -56,17 +57,9 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
-  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :in => [ true, false ]
+  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer )
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
-  validates_each :countries, :cities, :postal_codes, :allow_blank => true do |record, attribute, value|
-    begin
-      parsed = JSON.parse(value)
-      record.errors.add(attribute, 'is not an Array') unless parsed.is_a?(Array)
-    rescue
-      record.errors.add(attribute, 'is not valid JSON')
-    end
-  end
   validates_each :device_types, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     begin
       types = JSON.parse(value)
@@ -138,6 +131,8 @@ class Offer < ActiveRecord::Base
   
   alias_method :events, :offer_events
   alias_method :random, :rand
+  
+  json_set_field :device_types, :screen_layout_sizes, :countries, :cities, :postal_codes
   
   def self.redistribute_hourly_stats_aggregation
     Benchmark.realtime do
@@ -637,22 +632,6 @@ class Offer < ActiveRecord::Base
       end
     end
   end
-  
-  def get_countries
-    @countries_set ||= Set.new(countries.blank? ? nil : JSON.parse(countries))
-  end
-  
-  def get_postal_codes
-    Set.new(postal_codes.blank? ? nil : JSON.parse(postal_codes))
-  end
-  
-  def get_cities
-    Set.new(cities.blank? ? nil : JSON.parse(cities))
-  end
-  
-  def get_device_types
-    Set.new(device_types.blank? ? nil : JSON.parse(device_types))
-  end
 
   def expected_device_types
     if item_type == 'App' || item_type == 'ActionOffer' || item_type == 'RatingOffer'
@@ -729,7 +708,7 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
-  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs)
+  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
     return device_platform_mismatch?(publisher_app, device_type) ||
         geoip_reject?(geoip_data, device) ||
         already_complete?(publisher_app, device, app_version) ||
@@ -740,6 +719,9 @@ class Offer < ActiveRecord::Base
         direct_pay_reject?(direct_pay_providers) ||
         action_app_reject?(device) ||
         hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs) ||
+        min_os_version_reject?(os_version) ||
+        cookie_tracking_reject?(publisher_app, library_version) ||
+        screen_layout_sizes_reject?(screen_layout_size) ||
         should_reject_from_app_or_currency?(publisher_app, currency)
   end
   
@@ -1030,8 +1012,26 @@ private
     item_type == "ActionOffer" && third_party_data.present? && !device.has_app(third_party_data)
   end
   
+  def min_os_version_reject?(os_version)
+    return false if min_os_version.blank?
+    return true if os_version.blank?
+    
+    !os_version.version_greater_than_or_equal_to?(min_os_version)
+  end
+  
+  def screen_layout_sizes_reject?(screen_layout_size)
+    return false if screen_layout_sizes.blank? || screen_layout_sizes == '[]'
+    return true if screen_layout_size.blank?
+    
+    !get_screen_layout_sizes.include?(screen_layout_size)
+  end
+  
   def hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs)
     hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer'
+  end
+  
+  def cookie_tracking_reject?(publisher_app, library_version)
+    cookie_tracking? && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
   end
   
   def normalize_device_type(device_type_param)

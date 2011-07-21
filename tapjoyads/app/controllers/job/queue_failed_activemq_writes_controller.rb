@@ -1,4 +1,4 @@
-class Job::QueueActivemqWritesController < Job::SqsReaderController
+class Job::QueueFailedActivemqWritesController < Job::SqsReaderController
   
   def initialize
     super QueueNames::FAILED_ACTIVEMQ_WRITES

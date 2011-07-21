@@ -5,7 +5,7 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
   context "on GET to :index" do
     setup do
       @agency_user = Factory(:agency_user)
-      @partner = Factory(:partner, :balance => 10, :pending_earnings => 11, :name => 'name')
+      @partner = Factory(:partner, :balance => 10, :pending_earnings => 11, :name => 'name', :contact_name => 'contact_name')
       PartnerAssignment.create!(:user => @agency_user, :partner => @partner)
     end
     
@@ -47,6 +47,7 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
           'name'             => @partner.name,
           'balance'          => @partner.balance,
           'pending_earnings' => @partner.pending_earnings,
+          'contact_email'    => @partner.contact_name,
         }
         assert_equal [expected_response], result['partners']
       end
@@ -56,7 +57,7 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
   context "on GET to :show" do
     setup do
       @agency_user = Factory(:agency_user)
-      @partner = Factory(:partner, :balance => 10, :pending_earnings => 11, :name => 'name')
+      @partner = Factory(:partner, :balance => 10, :pending_earnings => 11, :name => 'name', :contact_name => 'contact_name')
       PartnerAssignment.create!(:user => @agency_user, :partner => @partner)
       @partner2 = Factory(:partner)
     end
@@ -122,6 +123,7 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
         assert_equal @partner.name, result['name']
         assert_equal @partner.balance, result['balance']
         assert_equal @partner.pending_earnings, result['pending_earnings']
+        assert_equal @partner.contact_name, result['contact_email']
       end
     end
   end

@@ -76,6 +76,14 @@
               #estimated_budget
                 Estimated daily budget:
                 .value
+        %tr
+          %th
+            = primary_offer_form.label(:min_os_version, "Minimum OS Version")
+            #help_min_os_version.help ?
+          %td
+            = primary_offer_form.select(:min_os_version, @app.os_versions, :include_blank => 'No Minimum')
+            = error_message_on(@offer, :min_os_version)
+            
       %tr
         %th
           = f.label :action_id, 'Action ID'
@@ -145,7 +153,10 @@
       Click the button to submit an enable offer request. Please contact #{mail_to "support@tapjoy.com"} if you have any questions.
   #help_prerequisite_content{ :name => 'Prerequisite' }
     This action will only be shown to users who have already completed the prerequisite offer.
-    
+  #help_min_os_version_content{:name => 'Minimum OS Version'}
+    Your offer will only be shown to devices with an OS at this version or higher.
+  #help_screen_layout_sizes_content{ :name => 'Screen Layout Sizes' } Targets this offer to these screen sizes. If no specific screen sizes are selected, all screen sizes will be targeted.
+  
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
   - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
     = f.hidden_field(:offer_id)

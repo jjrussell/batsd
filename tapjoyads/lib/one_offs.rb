@@ -142,5 +142,10 @@ class OneOffs
     end
   end
 
+  def self.migrate_payout_info_countries
+    PayoutInfo.find_each do |info|
+      info.update_attribute(:payment_country => info.address_country)
+    end
+  end
 end
 
