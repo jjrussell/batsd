@@ -2,15 +2,13 @@ class Job::QueueActivemqConsumerController < Job::JobController
   
   def index
     now = Time.zone.now
-    unacked_messages = []
+    messages = []
     consumer = Activemq.get_consumer(params[:server], params[:queue]) do |message|
-      unacked_messages << message
+      messages << message
     end
     
-    consumer.join(20)
-    
-    messages = unacked_messages.dup
-    unacked_messages = []
+    consumer.join(params[:seconds].to_f)
+    consumer.listener_thread.exit
     
     unless messages.empty?
       data = messages.map { |msg| msg.body }.join("\n")
@@ -19,7 +17,7 @@ class Job::QueueActivemqConsumerController < Job::JobController
       retries = 3
       begin
         bucket = S3.bucket(BucketNames::ACTIVEMQ_MESSAGES)
-        bucket.put(path, data)
+        Timeout.timeout(60) { bucket.put(path, data) }
       rescue Exception => e
         if retries > 0
           retries -= 1
