@@ -35,7 +35,7 @@ Factory.define :payout_info do |info|
   info.address_city { Factory.next(:name) }
   info.address_state { Factory.next(:name) }
   info.address_postal_code { Factory.next(:name) }
-  info.address_country { 'United States of America' }
+  info.payment_country { 'United States of America' }
   info.payout_method { 'check' }
   info.association :partner
 end

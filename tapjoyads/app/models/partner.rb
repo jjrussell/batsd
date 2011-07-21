@@ -30,6 +30,7 @@ class Partner < ActiveRecord::Base
   validates_inclusion_of :exclusivity_level_type, :in => ExclusivityLevel::TYPES, :allow_nil => true, :allow_blank => false
   validates_inclusion_of :use_whitelist, :approved_publisher, :in => [ true, false ]
   validate :exclusivity_level_legal
+  # validates_format_of :name, :with => /^[[:print:]]*$/, :message => "Partner name must be alphanumeric."
   validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
     record.errors.add(attribute, "must be blank when using whitelisting") if record.use_whitelist? && value.present?
     if record.disabled_partners_changed?
@@ -69,7 +70,10 @@ class Partner < ActiveRecord::Base
       :conditions => [ "#{Partner.quoted_table_name}.name LIKE ? OR #{User.quoted_table_name}.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
     }
   named_scope :premier, lambda { { :joins => :offer_discounts, :conditions => [ "#{OfferDiscount.quoted_table_name}.expires_on > ? ", Time.zone.today ], :group => "#{Partner.quoted_table_name}.id" } }
-    
+  named_scope :payout_info_changed, lambda { |start_date, end_date| { :joins => :payout_info,
+    :conditions => [ "#{PayoutInfo.quoted_table_name}.updated_at >= ? and #{PayoutInfo.quoted_table_name}.updated_at < ? ", start_date, end_date ]
+  } }
+
   def applied_offer_discounts
     offer_discounts.select { |discount| discount.active? && discount.amount == premier_discount }
   end

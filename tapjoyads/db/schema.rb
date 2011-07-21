@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110716191105) do
+ActiveRecord::Schema.define(:version => 20110719191747) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -407,6 +407,7 @@ ActiveRecord::Schema.define(:version => 20110716191105) do
     t.string   "reseller_id",                       :limit => 36
     t.boolean  "cookie_tracking",                                                               :default => false, :null => false
     t.string   "min_os_version",                                                                :default => "",    :null => false
+    t.text     "screen_layout_sizes",                                                                              :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -505,6 +506,7 @@ ActiveRecord::Schema.define(:version => 20110716191105) do
     t.string   "payout_method"
     t.string   "signature"
     t.string   "doing_business_as"
+    t.string   "payment_country"
   end
 
   add_index "payout_infos", ["id"], :name => "index_payout_infos_on_id", :unique => true

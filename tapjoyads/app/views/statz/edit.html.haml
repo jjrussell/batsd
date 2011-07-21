@@ -173,7 +173,15 @@
         %th
           = label_tag(:app_store_id, 'Store ID')
           #help_app_store_id.help ?
-        %td= text_field_tag(:app_store_id, @offer.item.store_id)        
+        %td= text_field_tag(:app_store_id, @offer.item.store_id)
+      - if @offer.item.screen_layout_sizes.any?
+        %tr
+          %th
+            = f.label(:screen_layout_sizes)
+            #help_screen_layout_sizes.help ?
+          %td
+            = f.select(:screen_layout_sizes, options_for_select(@offer.item.screen_layout_sizes, @offer.get_screen_layout_sizes), {}, :multiple => true)
+            = error_message_on @offer, :screen_layout_sizes
     %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
 
@@ -201,6 +209,7 @@
   #help_bid_content{ :name => 'Bid' } The bid affects your payment and your offerwall rank.
   #help_min_bid_override_content{ :name => 'Min Bid Override' } Manually set the minimum allowed bid for this offer.
   #help_min_os_version_content{:name => 'Minimum OS Version'} Your offer will only be shown to devices with an OS at this version or higher.
+  #help_screen_layout_sizes_content{ :name => 'Screen Layout Sizes' } Targets this offer to these screen sizes. If no specific screen sizes are selected, all screen sizes will be targeted.
 
 - content_for :page_styles do
   :plain
