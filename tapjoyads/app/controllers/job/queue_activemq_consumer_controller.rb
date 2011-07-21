@@ -14,7 +14,7 @@ class Job::QueueActivemqConsumerController < Job::JobController
       filename = "#{params[:server]}_#{UUIDTools::UUID.random_create.hexdigest}"
       path = "#{params[:queue]}/#{now.to_s(:yyyy_mm_dd)}/#{now.hour}/#{filename}"
       data = File.open("tmp/#{filename}", 'w+')
-      data.write(messages.map { |msg| msg.body }.join("\n"))
+      messages.each { |msg| data.puts(msg.body) }
       
       retries = 3
       begin
