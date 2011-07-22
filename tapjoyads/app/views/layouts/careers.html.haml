@@ -4,7 +4,7 @@
     %title Tapjoy :: Fueling Great Apps - #{@job_title}
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
     %link{ :rel => 'shortcut icon', :href => '/favicon.ico' }
-    = stylesheet_link_tag 'reset', 'common', 'about_us', 'careers'
+    = stylesheet_link_tag 'reset', 'common', 'about_us', 'careers', 'facebox'
     = yield :page_head
   %body
     #header_wrapper
@@ -34,6 +34,6 @@
             %p
               Email your resume to #{mail_to('careers@tapjoy.com')}!
               
-      .clear
+        .clear
     = render :partial => '/homepage/footer'
   test
