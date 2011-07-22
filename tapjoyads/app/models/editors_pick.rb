@@ -26,6 +26,11 @@ class EditorsPick < ActiveRecord::Base
     self.activated_at && !self.expired_at
   end
 
+  def self.cached_active
+    Mc.get_and_put('active_editors_picks', false, 1.minute) do
+      self.active.first(10)
+    end
+  end
 private
 
   def scheduled_for_the_future
