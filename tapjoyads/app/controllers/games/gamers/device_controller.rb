@@ -24,7 +24,7 @@ class Games::Gamers::DeviceController < GamesController
     end
     raise "Error parsing plist" if udid.blank? || product.blank? || version.blank?
   
-    redirect_to link_games_gamer_path(:udid => udid, :product => product, :version => version), :status => 301
+    redirect_to finalize_games_gamer_device_path(:udid => udid, :product => product, :version => version), :status => 301
   rescue Exception => e
     Notifier.alert_new_relic(e.class, e.message, request, params)
     flash[:error] = "Error linking device. Please try again."
