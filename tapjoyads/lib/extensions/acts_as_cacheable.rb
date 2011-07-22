@@ -40,14 +40,16 @@ module ActsAsCacheable
   module InstanceMethods
     def cache
       run_callbacks(:before_cache)
-      Mc.distributed_put("mysql.#{self.class.class_name.underscore}.#{id}.#{SCHEMA_VERSION}", self, false, 1.day)
-      run_callbacks(:after_cache)
+      returning Mc.distributed_put("mysql.#{self.class.class_name.underscore}.#{id}.#{SCHEMA_VERSION}", self, false, 1.day) do
+        run_callbacks(:after_cache)
+      end
     end
 
     def clear_cache
       run_callbacks(:before_cache_clear)
-      Mc.distributed_delete("mysql.#{self.class.class_name.underscore}.#{id}.#{SCHEMA_VERSION}")
-      run_callbacks(:after_cache_clear)
+      returning Mc.distributed_delete("mysql.#{self.class.class_name.underscore}.#{id}.#{SCHEMA_VERSION}") do
+        run_callbacks(:after_cache_clear)
+      end
     end
   end
 
