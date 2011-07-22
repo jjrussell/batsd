@@ -1,6 +1,6 @@
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
-  include MemcachedRecord
+  acts_as_cacheable
 
   APPLE_DEVICES = %w( iphone itouch ipad )
   IPAD_DEVICES = %w( ipad )
