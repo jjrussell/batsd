@@ -214,9 +214,7 @@ class Currency < ActiveRecord::Base
 private
   
   def cache_by_app_id
-    if changed? || id == app_id
-      Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'), false, 1.day)
-    end
+    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'), false, 1.day)
     
     if app_id_changed?
       Mc.distributed_put("mysql.app_currencies.#{app_id_was}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC'), false, 1.day)
