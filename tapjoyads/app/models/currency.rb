@@ -1,6 +1,6 @@
 class Currency < ActiveRecord::Base
   include UuidPrimaryKey
-  include MemcachedRecord
+  acts_as_cacheable
   
   TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
   NO_CALLBACK_URL = 'NO_CALLBACK'
@@ -47,23 +47,18 @@ class Currency < ActiveRecord::Base
   before_validation_on_create :assign_default_currency_group
   before_create :set_values_from_partner_and_reseller
   before_update :update_spend_share
-  after_save :update_memcached_by_app_id
   after_destroy :clear_memcached_by_app_id
+  after_cache :update_memcached_by_app_id
+  after_cache_clear :clear_memcached_by_app_id
+  
+  delegate :weights, :to => :currency_group
+  memoize :weights
   
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = (Rails.env != 'production'))
     if do_lookup
       Mc.distributed_get_and_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", false, 1.day) { find_all_by_app_id(app_id, :order => 'ordinal ASC') }
     else
       Mc.distributed_get("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}") { [] }
-    end
-  end
-  
-  def self.cache_all
-    find_each do |c|
-      c.send(:update_memcached)
-      if c.id == c.app_id
-        Mc.distributed_put("mysql.app_currencies.#{c.app_id}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(c.app_id, :order => 'ordinal ASC'), false, 1.day)
-      end
     end
   end
   
