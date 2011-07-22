@@ -23,7 +23,7 @@ class Job::QueueActivemqConsumerController < Job::JobController
       retries = 3
       begin
         data.rewind
-        bucket = S3.bucket(BucketNames::ACTIVEMQ_MESSAGES)
+        bucket = S3.bucket(BucketNames::FAILED_WEB_REQUEST_SAVES)
         bucket.put(s3_path, data.read)
       rescue Exception => e
         if retries > 0
