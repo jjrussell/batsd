@@ -128,4 +128,5 @@ end
 # Register custom Mime types to generate ActionOffer header files
 Mime::Type.register "text/objective-c-header", :h
 Mime::Type.register "text/java", :java
+Mime::Type.register "application/x-apple-aspen-config", :mobileconfig
 Differ.format = :html
