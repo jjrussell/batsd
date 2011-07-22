@@ -60,40 +60,32 @@ TJG.ui = {
     var t = [];
     t.push('<ul>');
     $.each(o, function(i,v){
-      t.push('<li class="offer_item">');
-        t.push('<a href="' + v.RedirectURL + '" target="_blank">');
-          t.push('<div class="offer_button">');
-            t.push('<div class="button blue">');
-              t.push('<span class="amount">');
-                t.push(v.Amount + ' ' + c);
-              t.push('</span>');
-            t.push('</div>');
+      t.push('<li class="offer_item">'); 
+        t.push('<div class="offer_image">');
+          t.push('<img src="' + v.IconURL + '">');
+        t.push('</div>');
+        t.push('<div class="offer_text">');
+          t.push('<div class="offer_title title">');
+            t.push(v.Name);
           t.push('</div>');
-          t.push('<div class="offer_image">');
-            t.push('<img src="' + v.IconURL + '">');
+          t.push('<div class="offer_info">');
+            t.push('<a href="' + v.RedirectURL + '" target="_blank">');
+              t.push('<div class="offer_button">');
+                t.push('<div class="button blue">');
+                  t.push('<span class="amount">');
+                    t.push(v.Amount + ' ' + c);
+                  t.push('</span>');
+                t.push('</div>');
+              t.push('</div>'); 
+            t.push('</a>');             
           t.push('</div>');
-          t.push('<div class="offer_text">');
-            t.push('<div class="offer_title title">');
-              t.push(v.Name);
-            t.push('</div>');
-            t.push('<div class="offer_info">');
-            t.push('</div>');
-          t.push('</div>');
-        t.push('</a>');
+        t.push('</div>');
       t.push('</li>');
-       /*
-        Amount
-        Cost
-        IconURL
-        Name
-        Payout
-        RedirectURL
-        StoreID
-      */
     });
     t.push('<ul>');
     return t.join('');    
   },
+  
   
   showRegister : function () {
     var hasLinked = true;
@@ -278,7 +270,6 @@ TJG.ui = {
       },
       */
       loadCufon : function () {
-        console.log('cufon');
         if (Cufon) {
           Cufon.replace('.title', { fontFamily: 'Cooper Std' });
           Cufon.replace('.title_2', { fontFamily: 'AmerType Md BT' });

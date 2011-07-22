@@ -1,0 +1,17 @@
+%ul
+  -@external_publishers.each do |external_publisher|
+    %li.offer_item.clearfix
+      .offer_image
+        = image_tag(external_publisher.get_icon_url(:source => :cloudfront))
+      .offer_text
+        %div.offer_title.title
+          = external_publisher.app_name
+        .offer_info
+          - external_publisher.currencies.each_with_index do |currency, i|
+            - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency), :currency => currency[:name]) do
+              .offer_button
+                .button.blue         
+                  %span.amount
+                    Earn
+                    = currency[:name]
+            = " " if i != external_publisher.currencies.size - 1    

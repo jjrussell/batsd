@@ -1,6 +1,6 @@
-class Games::HomepageController < GamesController
+class Games::DeviceAppsController < GamesController
   
-  before_filter :require_complete_gamer 
+  before_filter :require_complete_gamer
   
   def index
     @device = Device.new(:key => current_gamer.udid)
@@ -13,14 +13,8 @@ class Games::HomepageController < GamesController
   def more_games
     @device = Device.new(:key => current_gamer.udid)
     @external_publishers = ExternalPublisher.load_all_for_device_filter_installed(@device)
-    if params[:ajax] == '1'
-      render :layout => false, :template => 'games/homepage/more_games_ajax'
-    else
-      render :template => 'games/homepage/more_games'
-    end
   end
-
-
+  
 private
 
   def require_complete_gamer
@@ -32,4 +26,4 @@ private
   end
 
 
-end
+end  
