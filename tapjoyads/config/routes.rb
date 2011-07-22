@@ -6,13 +6,13 @@ ActionController::Routing::Routes.draw do |map|
     m.my_apps 'my_apps', :controller => 'games/homepage', :action => :my_apps
     m.more_games 'more_games', :controller => 'games/homepage', :action => :more_games
     
-    m.tapjoygames 'tapjoygames.mobileconfig', :controller => 'games/tapjoygames', :action => :index
-    
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy ]
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
     m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
     
-    m.resource :gamer, :controller => 'games/gamers', :only => [ :new, :create, :edit, :update ], :member => { :start_link => :get, :finish_link => :post }
+    m.resource :gamer, :controller => 'games/gamers', :only => [ :new, :create, :edit, :update ] do |gamer|
+      gamer.resource :device, :controller => 'games/gamers/devices', :only => [ :new, :create ], :member => { :finalize => :get }
+    end
     m.register 'register', :controller => 'games/gamers', :action => :new
     
     m.resources :confirmations, :controller => 'games/confirmations', :only => [ :create ]

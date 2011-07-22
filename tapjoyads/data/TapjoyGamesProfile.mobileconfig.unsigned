@@ -4,7 +4,7 @@
  <key>PayloadContent</key>
  <dict>
   <key>URL</key>
-  <string>https://www.tapjoygames.com/gamers/link_device</string>
+  <string>https://www.tapjoygames.com/gamer/device</string>
   <key>DeviceAttributes</key>
   <array>
    <string>UDID</string>
@@ -25,7 +25,7 @@
  <key>PayloadIdentifier</key>
  <string>com.tapjoygames.profile-service</string>
  <key>PayloadDescription</key>
- <string>Tapjoy Games is the #1 destination for discovering mobile games and apps.</string>
+ <string>This temporary profile will be used to link your device to your Tapjoy Games profile.</string>
  <key>PayloadType</key>
  <string>Profile Service</string>
 </dict>

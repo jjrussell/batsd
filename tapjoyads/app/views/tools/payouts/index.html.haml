@@ -63,11 +63,15 @@
           %td &nbsp;
           %td.do-not-print &nbsp;
         %td
-          - form_tag tools_payouts_path(:partner_id => partner.id), :method => :post, :class => 'json', :style => 'height:45px;' do
-            = text_field_tag 'amount', (partner.next_payout_amount / 100.0), :class => 'amount'
-            = submit_tag 'Create Payout', :class => 'submit'
-            %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
-            %span.status
+          - if permitted_to?(:create, :tools_payouts)
+            - form_tag tools_payouts_path(:partner_id => partner.id), :method => :post, :class => 'json', :style => 'height:45px;' do
+              = text_field_tag 'amount', (partner.next_payout_amount / 100.0), :class => 'amount'
+              = submit_tag 'Create Payout', :class => 'submit'
+              %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
+              %span.status
+          - else
+            &nbsp;
+          
 
 = will_paginate(@partners)
 
