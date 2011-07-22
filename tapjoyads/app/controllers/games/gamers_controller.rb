@@ -51,11 +51,11 @@ class Games::GamersController < GamesController
   end
   
   def finish_link
-    match = request.raw_post.match(/<plist.*<\/plist>/)
+    match = request.raw_post.match(/<plist.*<\/plist>/m)
     raise "Plist not present" unless match.present? && match[0].present?
     
     udid, product, version = nil
-    (Hpricot(data)/"key").each do |key|
+    (Hpricot(match[0])/"key").each do |key|
       value = key.next_sibling.inner_text
       case key.inner_text
       when 'UDID';    udid = value
