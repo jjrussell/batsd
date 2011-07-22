@@ -292,7 +292,7 @@ private
   def update_offers
     return true if !(premier_discount_changed? || reseller_id_changed?)
     if premier_discount_changed?
-      offers.each(&:update_payment)
+      offers.each { |o| o.update_payment(true) }
     end
     if reseller_id_changed?
       offers.each(&:set_reseller_from_partner)
