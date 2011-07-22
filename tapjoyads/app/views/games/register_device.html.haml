@@ -14,16 +14,16 @@
               %div.slider_right.right
                 %span.title.small
                   = link_to 'More Games', games_more_games_path
-              %div.slider_left.left
+              %div.slider_active.slider_left.left
                 %span.title
                   = link_to 'My Apps', games_my_apps_path
           #no_device.content.hide
             %h1.title
-            Phone not linked!
+              Phone not linked!
             %div
               You must link your phone's UDID in order to access your apps!
             %div  
-              = link_to "Link UDID now!", games_tapjoy_mobileconfig_path
+              = link_to "Link UDID now!", new_games_gamer_device_path
 
 
   #support
@@ -68,41 +68,38 @@
           .content 
 
 #bad_news.dialog_wrapper.hide
-  %div.dialog
-    .close_dialog
-      .close_button
-    .dialog_title
-      Bad News
-    .dialog_header
-      Incompatible Device
-    .dialog_content
-      To complete account registration please visit http://tapjoygames.com on a supported mobile device.
+  .close_button
+  .dialog
+    .dialog_title Bad News
+    .dialog_header Incompatible Device
+    .dialog_content To complete account registration please visit http://tapjoygames.com on a supported mobile device.
       
     
-#loader.dialog_wrapper
+#loader.dialog_wrapper.hide
   #progress.dialog
-    Loading
-    .circle
-      .circle1
-      .circle2
-      .circle3
-      .circle4
+    .dialog_title
+      Loading
+    .dialog_image
 
 - content_for :page_javascript do
-  :plain
-    $(window).load(function() {
-      /*
-      if (TJG.vars.isIos == false) {
-        $("#bad_news").fadeIn();
-      }
-      else {
+  - if Rails.env.production?
+    :plain
+      $(window).load(function() {
+        if (TJG.vars.isIos == false) {
+          $("#no_device").html('');
+          TJG.utils.centerDialog("#bad_news");
+          $("#bad_news").fadeIn();
+        }
         $("#no_device").show();
-      }
-      */
-      $("#no_device").show();
-      
-      
-      var jQT = new $.jQTouch({
-        slideSelector: '#jqt .slide_nav',
+        var jQT = new $.jQTouch({
+          slideSelector: '#jqt .slide_nav',
+        });
       });
-    }); 
+  - else
+    :plain
+      $(window).load(function() {
+        $("#no_device").show();
+        var jQT = new $.jQTouch({
+          slideSelector: '#jqt .slide_nav',
+        });
+      });                                       

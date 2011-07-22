@@ -1,26 +1,22 @@
 #jqt
-  #home.current
+  #more_games.current
     %div.top_nav_bar.toolbar
-      .nav_content 
-        - if current_gamer.present?
-          .right
-            = link_to 'Support', "#support", :class => "flip"
-          .right
-            = link_to 'My Account', "#my_account", :class => "flip"
-        - else
-          .right
-            = link_to 'Login', games_login_path
-    %div.container.scroll.vertical-scroll
+      .nav_content
+        .right
+          = link_to 'Support', "#support", :class => "flip"
+        .right
+          = link_to 'My Account', "#my_account", :class => "flip"    
+    %div.container.vertical-scroll
       %div.scroller.with-scrollbar
         %div.page
           .logo
             %div.slide_nav
-              %div.slider_right.right
+              %div.slider_active.slider_right.right
                 %span.title.small
-                  = link_to( 'More Games', "#", :class => "more_games_url" )
-              %div.slider_active.slider_left.left
+                  More Games'
+              %div.slidee_left.left
                 %span.title
-                  My Apps
+                  = link_to 'My Apps', games_root_path
           .content
             %ul
               -@external_publishers.each do |external_publisher|
@@ -40,7 +36,8 @@
                                 = currency[:name]
                         = " " if i != external_publisher.currencies.size - 1
 
-  #earn
+
+  #earn.hide
     %div.top_nav_bar.toolbar
       .nav_content
         .right
@@ -54,13 +51,14 @@
             %div.slide_nav
               %div.slider_right.right
                 %span.title.small
-                  = link_to( 'More Games', "#", :class => "more_games_url" )
+                  = link_to 'More Games', games_more_games_path
               %div.slider_left.left
                 %span.title
-                  = link_to 'My Apps', "#home", :class => "slideright"
-          #earn_content.content.hide
-          
-  #more_games
+                  = link_to 'My Apps', games_my_apps_path
+          #earn_content.content   
+
+
+  #support
     %div.top_nav_bar.toolbar
       .nav_content
         .right
@@ -72,40 +70,34 @@
         %div.page
           .logo
             %div.slide_nav
-              %div.slider_active.slider_right.right
+              %div.slider_right.right
                 %span.title.small
-                  More Games
+                  = link_to 'More Games', games_more_games_path
               %div.slider_left.left
                 %span.title
-                  = link_to 'My Apps', "#home", :class => "slideright" 
-          #more_games_content.content.hide
+                  = link_to 'My Apps', games_my_apps_path
+          .content
 
-  #my_account.tan
+
+  #my_account
     %div.top_nav_bar.toolbar
       .nav_content
         .right
           = link_to 'Support', "#support", :class => "flip"
         .right
-          = link_to 'My Account', "#my_account", :class => "flip"
+          = link_to 'My Account', "#my_account", :class => "flip"    
     %div.container.vertical-scroll
       %div.scroller.with-scrollbar
         %div.page
           .logo
-          .content 
-                 
-  #support
-    %div.top_nav_bar.toolbar
-      .nav_content
-        .right
-          = link_to 'Support', "#support", :class => "flip"
-        .right
-          = link_to 'My Account', "#my_account", :class => "flip"
-    %div.container.vertical-scroll
-      %div.scroller.with-scrollbar
-        %div.page
-          .logo
-          .content  
-
+            %div.slide_nav
+              %div.slider_right.right
+                %span.title.small
+                  = link_to 'More Games', games_more_games_path
+              %div.slider_left.left
+                %span.title
+                  = link_to 'My Apps', games_my_apps_path
+          .content                                                     
 
 #sign_up_dialog.dialog_wrapper.hide
   %div.dialog
@@ -120,7 +112,6 @@
     .dialog_title
       Loading
     .dialog_image
-
 
 - content_for :page_javascript do
   :plain
@@ -170,35 +161,4 @@
         $(".get_offerwall_jsonp").unbind("click");
         getOfferWalls();
       }
-      function getMoreOfferWalls() {
-        $(".more_games_url").click(function() {
-          TJG.ui.showLoader();
-            $("#more_games_content").fadeOut(350,function() {
-              $("#earn_content").empty();
-              jQT.goTo('#more_games', 'slideleft');  
-          });
-          if (TJG.moreAppOfferWall) {
-            TJG.ui.hideLoader();
-            $("#more_games_content").html(c);
-            TJG.onload.loadCufon();
-            $("#more_games_content").fadeIn(400);
-          }
-          else {
-            $.ajax({
-              url: location.pathname.replace(/\/$/, '') + "/more_games?ajax=1",
-              success: function(c) {
-                TJG.moreAppOfferWall = c;
-                TJG.ui.hideLoader();
-                $("#more_games_content").html(c);
-                reloadOfferWalls();
-                TJG.onload.loadCufon();
-                $("#more_games_content").fadeIn(400); 
-              },
-              error: function() {
-              }
-            });
-          }
-        }); 
-      }
-      getMoreOfferWalls();
-    });
+    });             
