@@ -72,8 +72,11 @@ class Games::GamersController < GamesController
       device.product = params[:product]
       device.version = params[:version]
       
-      current_gamer.save!
-      device.save
+      if current_gamer.save
+        device.save
+      else
+        flash[:error] = "Error linking device. Please try again."
+      end
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
     end
