@@ -215,7 +215,7 @@ TJG.ui = {
           TJG.onload.removeDialog();
         });
         */
-        $('#sign_up').click(function(){
+        $('#sign_up, #sign_up_form').click(function(){
           TJG.utils.centerDialog("#sign_up_dialog");
           TJG.ui.showRegister();
         });
