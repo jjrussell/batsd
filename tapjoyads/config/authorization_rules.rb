@@ -38,12 +38,13 @@ authorization do
   
   role :payops do
     includes :money
-    has_permission_on :tools_payouts, :to => [ :index, :create ]
+    has_permission_on :tools_payouts, :to => [ :index ]
   end
 
   role :payout_manager do
     includes :payops
     has_permission_on :tools, :to => [ :payout_info, :publishers_without_payout_info, :publisher_payout_info_changes ]
+    has_permission_on :tools_payouts, :to => [ :create ]
   end
 
   role :reporting do
