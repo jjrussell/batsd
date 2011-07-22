@@ -36,14 +36,7 @@ class Games::GamersController < GamesController
   
   def start_link
     if current_gamer.present?
-      respond_to do |format|
-        format.mobileconfig do
-          response.headers['Content-Disposition'] = "attachment; filename=TapjoyGamesProfile.mobileconfig"
-          
-          file = File.open('app/views/games/gamers/start_link.mobileconfig')
-          render :text => file.read
-        end
-      end
+      send_file("#{RAILS_ROOT}/data/TapjoyGamesProfile.mobileconfig", :filename => 'TapjoyGamesProfile.mobileconfig', :disposition => 'inline', :type => :mobileconfig)
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
       redirect_to games_root_path
