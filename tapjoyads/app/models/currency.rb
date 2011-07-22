@@ -47,9 +47,8 @@ class Currency < ActiveRecord::Base
   before_validation_on_create :assign_default_currency_group
   before_create :set_values_from_partner_and_reseller
   before_update :update_spend_share
-  after_destroy :clear_memcached_by_app_id
-  after_cache :update_memcached_by_app_id
-  after_cache_clear :clear_memcached_by_app_id
+  after_cache :cache_by_app_id
+  after_cache_clear :clear_cache_by_app_id
   
   delegate :weights, :to => :currency_group
   memoize :weights
@@ -214,15 +213,17 @@ class Currency < ActiveRecord::Base
   
 private
   
-  def update_memcached_by_app_id
-    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'), false, 1.day)
+  def cache_by_app_id
+    if changed? || id == app_id
+      Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'), false, 1.day)
+    end
     
     if app_id_changed?
       Mc.distributed_put("mysql.app_currencies.#{app_id_was}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC'), false, 1.day)
     end
   end
   
-  def clear_memcached_by_app_id
+  def clear_cache_by_app_id
     Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'), false, 1.day)
   end
   

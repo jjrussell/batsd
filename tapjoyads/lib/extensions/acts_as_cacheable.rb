@@ -12,14 +12,12 @@ module ActsAsCacheable
       
       define_callbacks :before_cache, :after_cache, :before_cache_clear, :after_cache_clear
       
-      after_save :update_memcached
-      after_destroy :clear_memcached
+      after_save :cache
+      after_destroy :clear_cache
       
       class << self
         def cache_all
-          find_each do |obj|
-            obj.send(:update_memcached)
-          end
+          find_each(&:cache)
         end
 
         def find_in_cache(id, do_lookup = (Rails.env != 'production'))
@@ -31,8 +29,8 @@ module ActsAsCacheable
         end
 
         def memoize_with_cache(*methods)
-          before_cache(methods)
-          memoize_without_cache(methods)
+          before_cache(*methods)
+          memoize_without_cache(*methods)
         end
         alias_method_chain :memoize, :cache
       end
@@ -40,15 +38,13 @@ module ActsAsCacheable
   end
   
   module InstanceMethods
-    private
-    
-    def update_memcached
+    def cache
       run_callbacks(:before_cache)
       Mc.distributed_put("mysql.#{self.class.class_name.underscore}.#{id}.#{SCHEMA_VERSION}", self, false, 1.day)
       run_callbacks(:after_cache)
     end
 
-    def clear_memcached
+    def clear_cache
       run_callbacks(:before_cache_clear)
       Mc.distributed_delete("mysql.#{self.class.class_name.underscore}.#{id}.#{SCHEMA_VERSION}")
       run_callbacks(:after_cache_clear)
