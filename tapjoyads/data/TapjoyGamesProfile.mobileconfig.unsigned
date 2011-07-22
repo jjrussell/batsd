@@ -4,7 +4,7 @@
  <key>PayloadContent</key>
  <dict>
   <key>URL</key>
-  <string>https://www.tapjoygames.com/gamer/finish_link</string>
+  <string>https://www.tapjoygames.com/gamer/device</string>
   <key>DeviceAttributes</key>
   <array>
    <string>UDID</string>
