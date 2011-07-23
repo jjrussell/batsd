@@ -154,6 +154,8 @@ class OneOffs
       if app_metadata == nil
         # only create this record if one doesn't already exist for this store and store_id
         app_metadata = AppMetadata.create!(
+          :name              => app.name,
+          :description       => app.description,
           :price             => app.price,
           :store_name        => app.store_name,
           :store_id          => app.store_id,
@@ -167,7 +169,7 @@ class OneOffs
       end
       
       AppMetadataMapping.create!(
-        :app_id     => app.id,
+        :app_id          => app.id,
         :app_metadata_id => app_metadata.id
       )
     end

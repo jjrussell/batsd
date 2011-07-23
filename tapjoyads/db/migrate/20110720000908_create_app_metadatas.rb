@@ -3,6 +3,8 @@ class CreateAppMetadatas < ActiveRecord::Migration
     # app_metadatas
     create_table :app_metadatas, :id => false do |t|
       t.column :id, 'char(36) binary', :null => false
+      t.string :name
+      t.text :description
       t.integer :price, :default => 0
       t.string :store_name, :null => false
       t.string :store_id, :null => false

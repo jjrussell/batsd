@@ -55,6 +55,8 @@ ActiveRecord::Schema.define(:version => 20110720000908) do
 
   create_table "app_metadatas", :id => false, :force => true do |t|
     t.string   "id",                :limit => 36,                :null => false
+    t.string   "name"
+    t.text     "description"
     t.integer  "price",                           :default => 0
     t.string   "store_name",                                     :null => false
     t.string   "store_id",                                       :null => false
