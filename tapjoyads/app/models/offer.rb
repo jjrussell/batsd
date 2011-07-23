@@ -126,14 +126,18 @@ class Offer < ActiveRecord::Base
   named_scope :for_ios_only, :conditions => 'device_types not like "%android%"'
   named_scope :with_rank_boosts, :joins => :rank_boosts, :readonly => false
   named_scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
-  
+  named_scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
   delegate :balance, :pending_earnings, :name, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   
   alias_method :events, :offer_events
   alias_method :random, :rand
   
   json_set_field :device_types, :screen_layout_sizes, :countries, :cities, :postal_codes
-  
+
+  def app_offer?
+    item_type == 'App' || item_type == 'ActionOffer'
+  end
+
   def self.redistribute_hourly_stats_aggregation
     Benchmark.realtime do
       now = Time.zone.now + 15.minutes
