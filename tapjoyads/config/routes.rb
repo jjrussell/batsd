@@ -3,6 +3,7 @@ ActionController::Routing::Routes.draw do |map|
   
   map.with_options({:path_prefix => MACHINE_TYPE == 'games' ? '' : 'games', :name_prefix => 'games_'}) do |m|
     m.root :controller => 'games/homepage', :action => :index
+    m.real_index 'real_index', :controller => 'games/homepage', :action => :real_index 
     m.my_apps 'my_apps', :controller => 'games/homepage', :action => :my_apps
     m.more_games 'more_games', :controller => 'games/homepage', :action => :more_games
     
