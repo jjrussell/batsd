@@ -11,6 +11,8 @@ class Device < SimpledbShardedResource
   self.sdb_attr :opted_out, :type => :bool, :default_value => false
   self.sdb_attr :last_run_time_tester, :type => :bool, :default_value => false
   self.sdb_attr :publisher_user_ids, :type => :json, :default_value => {}, :cgi_escape => true
+  self.sdb_attr :product
+  self.sdb_attr :version
   
   def dynamic_domain_name
     domain_number = @key.hash % NUM_DEVICES_DOMAINS

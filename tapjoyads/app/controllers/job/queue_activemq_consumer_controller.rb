@@ -2,24 +2,29 @@ class Job::QueueActivemqConsumerController < Job::JobController
   
   def index
     now = Time.zone.now
-    unacked_messages = []
+    messages = []
     consumer = Activemq.get_consumer(params[:server], params[:queue]) do |message|
-      unacked_messages << message
+      messages << message
     end
     
-    consumer.join(20)
-    
-    messages = unacked_messages.dup
-    unacked_messages = []
+    consumer.join(params[:seconds].to_f)
+    consumer.listener_thread.exit
     
     unless messages.empty?
-      data = messages.map { |msg| msg.body }.join("\n")
-      path = "#{params[:queue]}/#{now.to_s(:yyyy_mm_dd)}/#{now.hour}/#{params[:server]}_#{UUIDTools::UUID.random_create.hexdigest}"
+      filename = "#{params[:server]}_#{UUIDTools::UUID.random_create.hexdigest}"
+      tmp_path = "tmp/#{filename}.s3"
+      s3_path  = "#{params[:queue]}/#{now.to_s(:yyyy_mm_dd)}/#{now.hour}/#{filename}"
+      data     = File.open(tmp_path, 'w+')
+      
+      messages.each do |msg|
+        data.puts(msg.body)
+      end
       
       retries = 3
       begin
-        bucket = S3.bucket(BucketNames::ACTIVEMQ_MESSAGES)
-        bucket.put(path, data)
+        data.rewind
+        bucket = S3.bucket(BucketNames::FAILED_WEB_REQUEST_SAVES)
+        bucket.put(s3_path, data.read)
       rescue Exception => e
         if retries > 0
           retries -= 1
@@ -27,9 +32,14 @@ class Job::QueueActivemqConsumerController < Job::JobController
           retry
         else
           consumer.close
+          data.close
+          File.delete(tmp_path)
           raise e
         end
       end
+      
+      data.close
+      File.delete(tmp_path)
       
       messages.each do |msg|
         consumer.acknowledge(msg)

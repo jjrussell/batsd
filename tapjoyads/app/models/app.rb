@@ -1,6 +1,6 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
-  include MemcachedRecord
+  acts_as_cacheable
 
   ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS' }
   BETA_PLATFORMS    = { 'windows' => 'Windows Phone' }

@@ -9,7 +9,9 @@ ActionController::Routing::Routes.draw do |map|
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
     m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
     
-    m.resource :gamer, :controller => 'games/gamers', :only => [ :new, :create, :edit, :update ]
+    m.resource :gamer, :controller => 'games/gamers', :only => [ :new, :create, :edit, :update ] do |gamer|
+      gamer.resource :device, :controller => 'games/gamers/devices', :only => [ :new, :create ], :member => { :finalize => :get }
+    end
     m.register 'register', :controller => 'games/gamers', :action => :new
     
     m.resources :confirmations, :controller => 'games/confirmations', :only => [ :create ]

@@ -3,7 +3,7 @@ class Apps::OffersController < WebsiteController
   current_tab :apps
 
   filter_access_to :all
-  before_filter :setup
+  before_filter :setup, :except => [ :toggle ]
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
   
   def new
@@ -65,6 +65,9 @@ class Apps::OffersController < WebsiteController
   end
   
   def toggle
+    @offer = current_partner.offers.find(params[:id])
+    log_activity(@offer)
+
     @offer.user_enabled = params[:user_enabled]
     if @offer.save
       render :nothing => true
