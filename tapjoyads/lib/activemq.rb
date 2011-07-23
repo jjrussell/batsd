@@ -33,9 +33,15 @@ class Activemq
     end
   end
   
-  def self.get_consumer(server, queue, &block)
+  def self.get_consumer(server, queue, options = {}, &block)
+    ack_type      = options.delete(:ack_type)      { 'client' }
+    prefetch_size = options.delete(:prefetch_size) { 1 }
+    transaction   = options.delete(:transaction)
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
     consumer = Stomp::Client.new('', '', server, 61613, false)
-    consumer.subscribe("/queue/#{queue}", { :ack => :client, 'activemq.prefetchSize' => 100000 }) do |message|
+    consumer.begin(transaction) if transaction.present?
+    consumer.subscribe("/queue/#{queue}", { :ack => ack_type, 'activemq.prefetchSize' => prefetch_size }) do |message|
       yield(message)
     end
     consumer
