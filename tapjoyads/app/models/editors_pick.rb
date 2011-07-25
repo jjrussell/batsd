@@ -27,7 +27,7 @@ class EditorsPick < ActiveRecord::Base
   end
 
   def self.cached_active
-    Mc.get_and_put('active_editors_picks', false, 1.minute) do
+    Mc.distributed_get_and_put('active_editors_picks', false, 1.minute) do
       self.active.first(10)
     end
   end
