@@ -3,6 +3,7 @@ class Games::GamerSessionsController < GamesController
   
   def new
     @gamer_session = GamerSession.new
+    @gamer = Gamer.new
   end
   
   def create

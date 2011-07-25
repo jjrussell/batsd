@@ -49,7 +49,33 @@
     .close_button
   .dialog
     #sign_up_dialog_content
-
+#sign_up_dialog_content_placeholder.hide
+  .dialog_header_wrapper
+    .dialog_header_right
+    .dialog_header_left
+    .dialog_title.title_2
+      Sign Up!
+  .dialog_header
+    Creating an account is too easy!
+  .dialog_content
+    - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
+      .field
+        = f.label :email
+        = f.email_field :email
+      .field
+        = f.label :password
+        = f.password_field :password
+      .field_row.clearfix
+        .field.field_tos
+          = f.check_box :terms_of_service
+          = f.label :terms_of_service, "I agree to the Terms of Service and that I am over the age of 13"
+        .field
+          = f.hidden_field :referrer, :value => params[:referrer]
+          = f.submit 'Do it!', :class => 'right button m_width lt_blue'
+      .email_error.center
+        = error_message_on @gamer, :email
+        = error_message_on @gamer, :password
+        = error_message_on @gamer, :terms_of_service
 
 #loader.dialog_wrapper.hide
   #progress.dialog

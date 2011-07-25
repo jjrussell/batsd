@@ -1,3 +1,4 @@
+- gamer = Gamer.new
 .dialog_header_wrapper
   .dialog_header_right
   .dialog_header_left
@@ -6,10 +7,10 @@
 .dialog_header
   Creating an account is too easy!
 .dialog_content
-  - form_for([ :games, @gamer ], :url => { :action => :create }) do |f|
+  - form_for([ :games, gamer ], :url => games_gamer_path ) do |f|
     .field
       = f.label :email
-      = f.text_field :email
+      = f.email_field :email
     .field
       = f.label :password
       = f.password_field :password
@@ -21,6 +22,6 @@
         = f.hidden_field :referrer, :value => params[:referrer]
         = f.submit 'Do it!', :class => 'right button m_width lt_blue'
     .email_error.center
-      = error_message_on @gamer, :email
-      = error_message_on @gamer, :password
-      = error_message_on @gamer, :terms_of_service
+      = error_message_on gamer, :email
+      = error_message_on gamer, :password
+      = error_message_on gamer, :terms_of_service
