@@ -29,6 +29,9 @@ TJG.appOfferWall = {};
       classReplaces['device'] = TJG.vars.device;
       classes.push('ratio-' + window.devicePixelRatio);
       classReplaces['no-os'] = m[2] ? 'ios' : m[1].toLowerCase();
+      if (TJG.vars.device == 'ipad') {
+        classReplaces['mobile'] = 'ipad';
+      }
     }
     else {
       classReplaces['mobile'] = 'web';

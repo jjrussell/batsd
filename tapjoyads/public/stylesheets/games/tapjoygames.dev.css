@@ -278,7 +278,7 @@ a, a:visited {
   top: 180px;
 }
 .mobile .slide_nav {
-  padding: 0 6px 0 12px;
+  padding: 0 8px 0 15px;
   top: 70px;
 } 
 .slide_nav, .slide_nav a {
@@ -347,7 +347,6 @@ a, a:visited {
 }
 .mobile .slide_arrow_wrapper.left_arrow .slide_arrow {
   top: 5px;
-  width: 20px;
 }  
 /* Content */
 .web .content, .ipad .content {
@@ -398,12 +397,12 @@ a, a:visited {
 .mobile #earn_content {
   padding: 0 6px 0 10px;
   position: relative;
-  top: 15px;
+  padding-top: 70px;
 }
 .web #earn_content, .ipad #earn_content {
   padding: 0 12px 0 20px;
   position: relative;
-  top: 30px;
+  padding-top: 140px;
 }
 .earn_title {
   cursor: pointer;
@@ -434,7 +433,7 @@ a, a:visited {
   background-image: url('../../images/games/underline_blue.png');
   background-repeat: no-repeat;
   background-position: bottom;
-  background-size: 100%;     
+  background-size: 100%;
   height: 100%;
   position: absolute;
   overflow: visible; 
@@ -499,6 +498,9 @@ form#new_gamer label[for=gamer_terms_of_service] {
 form#new_gamer_session {
   color: #7E7E7E;
   font-size: 12px;
+}
+.web form#new_gamer_session, .ipad form#new_gamer_session {
+  font-size: 14px;
 }
 form#new_gamer_session input[type=text], form#new_gamer_session input[type=password]  {
   border: none;
@@ -633,7 +635,7 @@ form#new_gamer_session .login_email {
   background: -moz-linear-gradient(top, #40A7C0 0%, #218BAD 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #40A7C0), color-stop(1, #218BAD));
   border: none;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   padding: 5px 12px 5px 12px;
   text-shadow: 0 -1px 1px #1F81A0;
