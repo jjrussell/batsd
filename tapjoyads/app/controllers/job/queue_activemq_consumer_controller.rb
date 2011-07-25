@@ -26,7 +26,7 @@ class Job::QueueActivemqConsumerController < Job::JobController
       begin
         data.rewind
         bucket = S3.bucket(BucketNames::ACTIVEMQ_MESSAGES)
-        bucket.put(s3_path, data.read)
+        Timeout.timeout(30) { bucket.put(s3_path, data) }
       rescue Exception => e
         if retries > 0
           retries -= 1
@@ -40,10 +40,9 @@ class Job::QueueActivemqConsumerController < Job::JobController
         end
       end
       
+      consumer.commit(transaction)
       data.close
       File.delete(tmp_path)
-      
-      consumer.commit(transaction)
     end
     
     consumer.close

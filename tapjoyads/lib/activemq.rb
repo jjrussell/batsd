@@ -20,6 +20,7 @@ class Activemq
     begin
       @@publishing_clients[attempt_order.pop].publish("/queue/#{queue}", message, { :persistent => true })
     rescue Exception => e
+      Notifier.alert_new_relic(e.class, e.message) if Rails.env == 'production'
       if attempt_order.empty?
         if fail_to_sqs
           sqs_message = { :queue => queue, :message => message }.to_json
