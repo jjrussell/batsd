@@ -90,7 +90,7 @@ private
   def set_featured_params
     params[:type] = Offer::FEATURED_OFFER_TYPE
     params[:start] = '0'
-    params[:max] = '50'
+    params[:max] = '100'
     params[:source] = 'featured'
     params[:rate_app_offer] = '0'
   end
