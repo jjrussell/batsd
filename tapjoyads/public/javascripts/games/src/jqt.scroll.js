@@ -28,6 +28,11 @@
     catch(e) {
       return null;
     }
+    if (TJG) {
+      if (TJG.vars.isTouch) {
+        return null;
+      } 
+    }
     window.scrollTo(0,0);
     var supports3d = ('m11' in new WebKitCSSMatrix()),
         base = {

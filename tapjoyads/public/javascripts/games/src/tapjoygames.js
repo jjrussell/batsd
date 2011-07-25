@@ -68,7 +68,7 @@ TJG.ui = {
     var t = [];
     t.push('<ul>');
     $.each(o, function(i,v){
-      t.push('<li class="offer_item">'); 
+      t.push('<li class="offer_item clearfix">'); 
         t.push('<div class="offer_image">');
           t.push('<img src="' + v.IconURL + '">');
         t.push('</div>');
