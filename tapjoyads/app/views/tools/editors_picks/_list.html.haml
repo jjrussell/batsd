@@ -1,0 +1,81 @@
+%h2= list_name.to_s.titleize
+
+%table.tablesorter
+  %thead
+    %tr
+      %th.icon &nbsp;
+      %th Offer
+      %th.thin Ordinal
+      %th.wide Description
+      %th.wide Internal Notes
+      %th.wide Schedule
+      %th.thin Action
+  %tbody
+    - list.each do |pick|
+      %tr
+        %td.icon
+          = image_tag(pick.offer.get_icon_url, :size => '57x57')
+        %td
+          %strong Name:
+          = link_to_offer(pick.offer)
+          %br/
+          - if %w(App ActionOffer).include?(pick.offer.item_type)
+            %strong Category:
+            = pick.offer.item.categories.first.to_s.titleize
+            %br/
+            %strong Rating:
+            = pick.offer.item.user_rating
+            %br/
+            %strong Price:
+            = number_to_currency(pick.offer.price/100)
+          %br/
+          %strong URL:
+          = link_to(truncate(pick.offer.url, :length => 30), pick.offer.url)
+        %td.thin= pick.display_order
+        %td.wide= pick.description
+        %td.wide= pick.internal_notes
+        %td.wide.hoverable
+          - if pick.expired_at?
+            %strong Expired at:
+            %br/
+            = pick.expired_at.to_s(:mdy_ampm)
+            %br/
+            (#{time_ago_or_from_now(pick.expired_at)})
+          - elsif pick.activated_at?
+            %strong Activated at:
+            %br/
+            = pick.activated_at.to_s(:mdy_ampm)
+            %br/
+            (#{time_ago_or_from_now(pick.activated_at)})
+          - else
+            %strong Scheduled for:
+            %br/
+            = pick.scheduled_for.to_s(:mdy_ampm)
+            %br/
+            (#{time_ago_or_from_now(pick.scheduled_for)})
+        %td.thin
+          = link_to '[ Edit ]', edit_tools_editors_pick_path(pick)
+          %br/
+          = link_to '[ Activities] ', activities_path(:object_id => pick.id)
+          - unless pick.expired_at?
+            - unless pick.active?
+              = button_to 'Activate Now', activate_tools_editors_pick_path(pick), :confirm => "Are you sure?"
+            = button_to 'Expire', expire_tools_editors_pick_path(pick), :confirm => "Are you sure?"
+
+= will_paginate(list, :param_name => "#{list_name}_page")
+
+- content_for :page_styles do
+  :plain
+    td.icon {
+      padding: 0;
+      width: 57px;
+    }
+    td.thin {
+      width: 60px;
+    }
+    td.wide {
+      width: 160px;
+    }
+    td form div input[type="submit"] {
+      font-size: 10px;
+    }

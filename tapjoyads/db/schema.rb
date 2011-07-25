@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110719191747) do
+ActiveRecord::Schema.define(:version => 20110721163803) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -162,6 +162,25 @@ ActiveRecord::Schema.define(:version => 20110719191747) do
 
   add_index "earnings_adjustments", ["id"], :name => "index_earnings_adjustments_on_id", :unique => true
   add_index "earnings_adjustments", ["partner_id"], :name => "index_earnings_adjustments_on_partner_id"
+
+  create_table "editors_picks", :id => false, :force => true do |t|
+    t.string   "id",             :limit => 36,                  :null => false
+    t.string   "offer_id",       :limit => 36,                  :null => false
+    t.integer  "display_order",                :default => 100, :null => false
+    t.string   "description",                  :default => "",  :null => false
+    t.string   "internal_notes",               :default => "",  :null => false
+    t.datetime "scheduled_for",                                 :null => false
+    t.datetime "activated_at"
+    t.datetime "expired_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "editors_picks", ["activated_at"], :name => "index_editors_picks_on_activated_at"
+  add_index "editors_picks", ["expired_at"], :name => "index_editors_picks_on_expired_at"
+  add_index "editors_picks", ["id"], :name => "index_editors_picks_on_id", :unique => true
+  add_index "editors_picks", ["offer_id"], :name => "index_editors_picks_on_offer_id"
+  add_index "editors_picks", ["scheduled_for"], :name => "index_editors_picks_on_scheduled_for"
 
   create_table "email_offers", :id => false, :force => true do |t|
     t.string   "id",             :limit => 36,                    :null => false
