@@ -51,7 +51,10 @@ class GetOffersController < ApplicationController
     end
     @more_data_available = 0
     
-    @web_request.add_path('featured_offer_shown') unless @offer_list.empty?
+    unless @offer_list.empty?
+      @web_request.offer_id = @offer_list.first.id
+      @web_request.add_path('featured_offer_shown')
+    end
     
     if params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
