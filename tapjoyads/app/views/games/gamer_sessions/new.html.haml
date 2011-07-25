@@ -29,7 +29,7 @@
                 - form_for([ :games, @gamer_session ]) do |f|
                   .field.login_email.clearfix
                     = f.label :email
-                    = f.text_field :email
+                    = f.email_field :email
                   .field.login_pass.clearfix
                     = f.label :password
                     = f.password_field :password, :size => '15'

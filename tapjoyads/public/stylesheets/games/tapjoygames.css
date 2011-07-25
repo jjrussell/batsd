@@ -6,13 +6,13 @@ blockquote, q { quotes: none; }
 blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; } 
 table { border-collapse: collapse; border-spacing: 0; }
 .web body, .ipad body {
-    background: #434343 url('../../images/games/bg.png');
+    background: #434343 url('/images/games/bg.png');
 }
 .mobile body {
-  background: #434343 url('../../images/games/bg_mobile.png');
+  background: #434343 url('/images/games/bg_mobile.png');
 }
 .mobile body .tan {
-  background: #434343 url('../../images/games/bg_tan.png');
+  background: #434343 url('/images/games/bg_tan.png');
   color: #605846;
 }
 body {
@@ -33,11 +33,11 @@ a, a:visited {
   height: 100%;
 }
 .web #jqt .tan, .ipad #jqt .tan {
-  background: #434343 url('../../images/games/bg_tan.png');
+  background: #434343 url('/images/games/bg_tan.png');
   color: #605846;
 }
 .mobile #jqt .tan {
-  background: #434343 url('../../images/games/bg_tan_mobile.png');
+  background: #434343 url('/images/games/bg_tan_mobile.png');
   color: #605846;
 } 
 .web, .ipad, .android {
@@ -71,7 +71,7 @@ a, a:visited {
   -webkit-border-radius: 10px;
 }
 .dialog_image {
-  background: transparent url('../../images/games/ajax_loader.png');
+  background: transparent url('/images/games/ajax_loader.png');
   height: 35px;
   margin: 10px auto;
   width: 35px;
@@ -131,7 +131,7 @@ a, a:visited {
   font-size: 20px;
 }
 .dialog_header_left, .dialog_header_right {
-  background:transparent url('../../images/games/dialog_decoration.png') no-repeat;
+  background:transparent url('/images/games/dialog_decoration.png') no-repeat;
   position: relative;
   height: 15px;
   top: 6px;
@@ -160,7 +160,7 @@ a, a:visited {
   
 }
 .close_button {
-  background:transparent url('../../images/games/close_btn.png') no-repeat;
+  background:transparent url('/images/games/close_btn.png') no-repeat;
   float: right;
   height: 36px;
   cursor: pointer;
@@ -222,7 +222,7 @@ a, a:visited {
 
 /* Nav */
 .top_nav_bar {
-  background: #333333 url('../../images/games/nav_bar.png') repeat-x;
+  background: #333333 url('/images/games/nav_bar.png') repeat-x;
   color: #FFF;
   height: 26px;
   width: 100%;
@@ -243,40 +243,40 @@ a, a:visited {
  margin-left: 10px;   
 }  
 .web .page, .ipad .page, .android .page {
-  background: transparent url('../../images/games/header_bg_web.png') repeat-x;
+  background: transparent url('/images/games/header_bg_web.png') repeat-x;
 }
 .web #jqt .tan .page, .ipad #jqt .tan .page {
-  background: transparent url('../../images/games/header_bg_web_tan.png') repeat-x; 
+  background: transparent url('/images/games/header_bg_web_tan.png') repeat-x; 
 }
 .mobile .page, .ipod .page {
-  background: transparent url('../../images/games/header_bg_mobile.png') repeat-x;  
+  background: transparent url('/images/games/header_bg_mobile.png') repeat-x;  
 }
 .mobile #jqt .tan .page {
-  background: transparent url('../../images/games/header_bg_mobile_tan.png') repeat-x;
+  background: transparent url('/images/games/header_bg_mobile_tan.png') repeat-x;
 }       
 .mobile #jqt .tan .page.no_top_nav_bar {
-  background: transparent url('../../images/games/header_bg_mobile_tan.png') 0 -28px repeat-x;
+  background: transparent url('/images/games/header_bg_mobile_tan.png') 0 -28px repeat-x;
 }
 .web .logo, .ipad .logo {
-  background: transparent url('../../images/games/logo_bg_web.png') no-repeat;
+  background: transparent url('/images/games/logo_bg_web.png') no-repeat;
   height: 280px;                         
   margin: 0 auto;
   width: 640px;
 }
 .mobile .logo, .mobile.portrait .logo {
-  background: transparent url('../../images/games/logo_bg_mobile.png') no-repeat;
+  background: transparent url('/images/games/logo_bg_mobile.png') no-repeat;
   height: 120px;                         
   margin: 0 auto;
   width: 320px;
 }
 .mobile.hd.portrait .logo {
-  background: transparent url('../../images/games/logo_bg_mobile_hd_p.png') no-repeat;
+  background: transparent url('/images/games/logo_bg_mobile_hd_p.png') no-repeat;
   background-size: 100%;
   margin: 0 auto;
   width: 100%;
 }
 .mobile.hd.landscape .logo {
-  background: transparent url('../../images/games/logo_bg_mobile_hd_l.png') no-repeat;
+  background: transparent url('/images/games/logo_bg_mobile_hd_l.png') no-repeat;
   background-size: 100%;
   margin: 0 auto;
   width: 100%;
@@ -308,7 +308,7 @@ a, a:visited {
   -webkit-border-radius: 5px;  
 }
 .slide_nav div.slider_active {
-  background: transparent url('../../images/games/bg_tan.png');
+  background: transparent url('/images/games/bg_tan.png');
 }
 .mobile .slide_nav .title, .mobile .slide_nav a.title {
   font-size: 12px;
@@ -345,13 +345,13 @@ a, a:visited {
   padding: 6px;
 }
 .web #earn_paper, .ipad #earn_paper {
-  background: transparent url('../../images/games/earn_paper_web.png') no-repeat;
+  background: transparent url('/images/games/earn_paper_web.png') no-repeat;
   height: 208px;
   margin: 0 auto;
   width: 616px;
 }
 .mobile #earn_paper {
-  background: transparent url('../../images/games/earn_paper_mobile.png') no-repeat;
+  background: transparent url('/images/games/earn_paper_mobile.png') no-repeat;
   height: 104px;
   margin: 0 auto;
   width: 308px;
@@ -392,7 +392,7 @@ a, a:visited {
   overflow: visible;
 }
 .underline_blue {
-  background-image: url('../../images/games/underline_blue.png');
+  background-image: url('/images/games/underline_blue.png');
   background-repeat: no-repeat;
   background-position: bottom;
   background-size: 100%;     
@@ -418,7 +418,7 @@ a, a:visited {
   -webkit-box-shadow: 0px 2px 2px #AEA693; 
 }
 .web .content_box_top_arrow {
-  background: transparent url('../../images/games/content_box_top_arrow.png') repeat-x;
+  background: transparent url('/images/games/content_box_top_arrow.png') repeat-x;
   display: block;
   height: 15px;
   position: relative;
@@ -472,7 +472,9 @@ form#new_gamer label[for=gamer_terms_of_service] {
   font-size: 14px;
   padding: 12px 0;
 }
-form#new_gamer_session input[type=text], form#new_gamer_session input[type=password]  {
+form#new_gamer_session input[type=text],
+form#new_gamer_session input[type=email],
+form#new_gamer_session input[type=password]  {
   border: none;
   font-size: 12px;
   padding: 6px;

@@ -551,7 +551,9 @@ form#new_gamer_session label {
   position: relative;
   top: 6px;
 }
-form#new_gamer_session input[type=text], form#new_gamer_session input[type=password]  {
+form#new_gamer_session input[type=text],
+form#new_gamer_session input[type=email],
+form#new_gamer_session input[type=password]  {
   border: none;
   float: left;
   font-size: 12px;
