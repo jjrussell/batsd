@@ -1,17 +1,12 @@
 !!! 5
 
-%html{ :class => 'device web no-os no-touch no-hd' }
+%html{ :class => 'device mobile no-os no-touch no-hd' }
   %head
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }  
     %meta{ 'name' => 'viewport', 'content' => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
     %meta{ 'name' => 'apple-mobile-web-app-capable', 'content' => 'yes' }
     %meta{ 'name' => 'apple-mobile-web-app-status-bar-style', 'content' => 'black' }
-    
-    %link{ 'rel' => 'apple-touch-icon', 'href' => '' } 
-    %link{ 'rel' => 'apple-touch-icon-precomposed', 'media' => '(resolution: 326dpi)', 'href' => '' }
-    %link{ 'rel' => 'apple-touch-icon-precomposed', 'media' => '(resolution: 326dpi)', 'href' => '' }
-    %link{ 'rel' => 'apple-touch-icon-precomposed', 'media' => '(resolution: 163dpi)', 'href' => '' }
-    %link{ 'rel' => 'apple-touch-startup-image', 'href' => "" }
+
     %link{ :rel => 'shortcut icon', :href => '/favicon-tjgames.ico', :content => 'image/vnd.microsoft.icon' }
     %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
  
@@ -19,7 +14,7 @@
     
     - if Rails.env.production?
       %style{ :type => "text/css", :media => "screen" }
-        @import "/stylesheets/games/tapjoygames.css";
+        @import "/stylesheets/games/tapjoygames.dev.css";
       %style{ :type => 'text/css' }
         = yield :page_styles
         :plain
@@ -28,7 +23,7 @@
           }
     - else
       %style{ :type => "text/css", :media => "screen" }
-        @import "/stylesheets/games/tapjoygames.css";
+        @import "/stylesheets/games/tapjoygames.dev.css";
     = yield :page_head
     
   %body
@@ -38,20 +33,20 @@
       //= javascript_include_tag 'games/tapjoygames.min-1.0'
       = javascript_include_tag 'games/src/jquery-1.4.2'
       = javascript_include_tag 'games/src/init'
-      = javascript_include_tag 'games/src/jqtouch'
-      = javascript_include_tag 'games/src/jqt.scroll'
       = javascript_include_tag 'games/src/cufon-min' 
       = javascript_include_tag 'games/src/Cooper_Std_900.font'
       = javascript_include_tag 'games/src/AmerType_Md_BT_700.font'
+      = javascript_include_tag 'games/src/jqtouch'
+      = javascript_include_tag 'games/src/jqt.scroll'
       = javascript_include_tag 'games/src/tapjoygames'
     - else
       = javascript_include_tag 'games/src/jquery-1.4.2'
       = javascript_include_tag 'games/src/init'
-      = javascript_include_tag 'games/src/jqtouch'
-      = javascript_include_tag 'games/src/jqt.scroll'
       = javascript_include_tag 'games/src/cufon-min' 
       = javascript_include_tag 'games/src/Cooper_Std_900.font'
       = javascript_include_tag 'games/src/AmerType_Md_BT_700.font'
+      = javascript_include_tag 'games/src/jqtouch'
+      = javascript_include_tag 'games/src/jqt.scroll'
       = javascript_include_tag 'games/src/tapjoygames'
     
     = yield :included_javascripts

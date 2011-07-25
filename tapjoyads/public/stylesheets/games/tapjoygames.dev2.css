@@ -11,8 +11,12 @@ table { border-collapse: collapse; border-spacing: 0; }
 .mobile body {
   background: #434343 url('../../images/games/bg_mobile.png');
 }
-.mobile body .tan {
+.web body .tan, .ipad body .tan {
   background: #434343 url('../../images/games/bg_tan.png');
+  color: #605846;
+}
+.mobile body .tan {
+  background: #434343 url('../../images/games/bg_tan_mobile.png');
   color: #605846;
 }
 body {
@@ -32,6 +36,7 @@ a, a:visited {
   width: 100%;
   height: 100%;
 }
+/*
 .web #jqt .tan, .ipad #jqt .tan {
   background: #434343 url('../../images/games/bg_tan.png');
   color: #605846;
@@ -39,11 +44,12 @@ a, a:visited {
 .mobile #jqt .tan {
   background: #434343 url('../../images/games/bg_tan_mobile.png');
   color: #605846;
-} 
+}
+*/
 .web, .ipad, .android {
   font-size: 16px;
 }
-.ipod, .iphone, .android-phone {
+.mobile {
   font-size: 14px;
 }
 
@@ -103,7 +109,7 @@ a, a:visited {
   height: 240px;
 }
 #sign_up_again a {
-  color:#C1C1C1;
+  color: #C1C1C1;
 }
 .dialog form#new_gamer {
   margin: 0 auto;
@@ -156,9 +162,7 @@ a, a:visited {
 .dialog_content {
   font-size: 14px;
 }
-.close_dialog {
-  
-}
+.close_dialog {}
 .close_button {
   background:transparent url('../../images/games/close_btn.png') no-repeat;
   float: right;
@@ -170,11 +174,13 @@ a, a:visited {
   width: 36px;
 }
 #login_form, #signup_form {
-  margin-top: 20px;
+  margin-top: 12px;
 }
 .mobile #login_form {
-  margin-top: 8px;
-  padding: 10px;
+  padding: 0px 10px;
+}
+.web #login_form .content_box {
+  padding: 12px 0;
 }
 .login_header_wrapper {
   color: #6B5F54;
@@ -182,38 +188,6 @@ a, a:visited {
 }
 .login_header_wrapper a {
   color: #6B5F54;
-}
-.login_header {
-  margin-bottom: 2px;
-}
-.circle {
-  width: 90px;
-}
-.circle div {
-  background-color: #FFF;
-  float: left;
-  height: 3px;
-  margin-left: 3px;
-  opacity: 0.1;
-  width: 3px;
-  -webkit-animation-name: circle_load;
-  -webkit-animation-duration: 1s;
-  -webkit-animation-iteration-count: infinite;
-  -webkit-animation-direction: linear;
-  -webkit-transform: scale(0.9);
-}
-.circle1 { 
-  -webkit-animation-delay: 0.3s;
-}
-.circle2 {
- -webkit-animation-delay: 0.5s;
-}
-.circle3 {
- -webkit-animation-delay: 0.7s;
-} 
-@-webkit-keyframes circle_load {
-  0%{opacity: 1;}
-  100%{opacity: 0.1;}
 }
 .dialog_loader .circle {
   position: relative;
@@ -241,34 +215,35 @@ a, a:visited {
 }              
 .mobile .top_nav_bar .nav_content div {
  margin-left: 10px;   
-}  
-.web .page, .ipad .page, .android .page {
+}
+
+/* Page */
+.web .page, .ipad .page, .web #jqt .tan .page, .ipad #jqt .tan .page {
   background: transparent url('../../images/games/header_bg_web.png') repeat-x;
 }
 .web #jqt .tan .page, .ipad #jqt .tan .page {
-  background: transparent url('../../images/games/header_bg_web_tan.png') repeat-x; 
+  height: 240px;
 }
-.mobile .page, .ipod .page {
+.mobile .page, .mobile #jqt .tan .page{
   background: transparent url('../../images/games/header_bg_mobile.png') repeat-x;  
 }
 .mobile #jqt .tan .page {
-  background: transparent url('../../images/games/header_bg_mobile_tan.png') repeat-x;
-}       
-.mobile #jqt .tan .page.no_top_nav_bar {
-  background: transparent url('../../images/games/header_bg_mobile_tan.png') 0 -28px repeat-x;
+  height: 120px;
 }
-.web .logo, .ipad .logo {
-  background: transparent url('../../images/games/logo_bg_web.png') no-repeat;
-  height: 280px;                         
+.web .logo, .ipad .logo, .android .logo {
+  background: transparent url('../../images/games/logo_web.png') no-repeat;
+  height: 240px;                         
   margin: 0 auto;
   width: 640px;
 }
-.mobile .logo, .mobile.portrait .logo {
-  background: transparent url('../../images/games/logo_bg_mobile.png') no-repeat;
+.mobile .logo {
+  background: transparent url('../../images/games/logo_mobile.png') no-repeat;
   height: 120px;                         
   margin: 0 auto;
   width: 320px;
 }
+
+
 .mobile.hd.portrait .logo {
   background: transparent url('../../images/games/logo_bg_mobile_hd_p.png') no-repeat;
   background-size: 100%;
@@ -281,6 +256,9 @@ a, a:visited {
   margin: 0 auto;
   width: 100%;
 }
+
+
+
 .slide_nav {
   position: relative;
 }
@@ -307,7 +285,7 @@ a, a:visited {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;  
 }
-.slide_nav div.slider_active {
+.slide_nav .slider_active {
   background: transparent url('../../images/games/bg_tan.png');
 }
 .mobile .slide_nav .title, .mobile .slide_nav a.title {
@@ -326,7 +304,7 @@ a, a:visited {
 .mobile .content {
   color: #FFF;
   margin: 0 auto; 
-  min-height: 320px;
+  min-height: 480px;
 } 
 .content a {
   color: #FFF;
@@ -448,7 +426,7 @@ a, a:visited {
 }
 a.forgot_pass {
   color: #6B5F54;
-  font-size: 11px;
+  font-size: 12px;
   position: relative;
   top: 1px;
 }
@@ -463,14 +441,9 @@ form#new_gamer label[for=gamer_terms_of_service] {
   font-size: 10px;
   width: 150px;
 }  
-.moble form#new_gamer_session {
+form#new_gamer_session {
   color: #7E7E7E;
   font-size: 12px;
-}
-.web form#new_gamer_session, .ipad form#new_gamer_session{
-  color: #7E7E7E;
-  font-size: 14px;
-  padding: 12px 0;
 }
 form#new_gamer_session input[type=text], form#new_gamer_session input[type=password]  {
   border: none;
@@ -493,7 +466,7 @@ form#new_gamer_session .login_pass input[type=submit] {
 form#new_gamer_session .login_email {
   border-bottom: 1px solid #DEDEDE;
 }
-.iphone form#new_gamer_session .login_btn, .ipod form#new_gamer_session .login_btn, .android-phone form#new_gamer_session .login_btn  {
+.moible form#new_gamer_session .login_btn {
   margin-left: 180px;
 }
 #sign_up_form {
@@ -607,7 +580,7 @@ form#new_gamer_session .login_email {
   border: none;
   font-size: 16px;
   font-weight: bold;
-  padding: 5px 12px 5px;
+  padding: 5px 12px 5px 12px;
   text-shadow: 0 -1px 1px #1F81A0;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -732,15 +705,12 @@ body {
 #jqt.supports3d > * {
   -webkit-transform: translate3d(0,0,0) rotate(0) scale(1);
 }
-/* Fade */
 #jqt .fade.in {
   -webkit-animation-name: fadeIn;
 }
-
 #jqt .fade.out {
   -webkit-animation-name: fadeOut;
 }
-
 @-webkit-keyframes fadeIn {
   0% {
     opacity: 0;

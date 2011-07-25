@@ -5,19 +5,18 @@
         .right
           = link_to 'Support', "#support", :class => "flip"
         .right
-          = link_to 'My Account', "#my_account", :class => "flip"    
-    %div.container.vertical-scroll
+          = link_to 'Support', "&#109;&#097;&#105;&#108;&#116;&#111;:&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#116;&#97;&#112;&#106;&#111;&#121;&#46;&#99;&#111;&#109;", :id => "support", :target => "_blank"    %div.container.vertical-scroll
       %div.scroller.with-scrollbar
         %div.page
           .logo
             %div.slide_nav
               %div.slider_right.right
                 %span.title.small
-                  = link_to 'More Games', games_more_games_path
+                  = link_to( 'More Games', "#", :class => "more_games_url" )
               %div.slider_active.slider_left.left
                 %span.title
-                  = link_to 'My Apps', games_my_apps_path
-          #no_device.content.hide
+                  = link_to 'My Apps', games_root_path
+          #no_device.content.message.hide
             %h1.title
               Phone not linked!
             %div
@@ -26,46 +25,19 @@
               = link_to "Link UDID now!", new_games_gamer_device_path
 
 
-  #support
+  #my_account.tan
     %div.top_nav_bar.toolbar
       .nav_content
         .right
           = link_to 'Support', "#support", :class => "flip"
         .right
-          = link_to 'My Account', "#my_account", :class => "flip"    
+          = link_to 'My Account', "#my_account", :class => "flip"
     %div.container.vertical-scroll
       %div.scroller.with-scrollbar
         %div.page
           .logo
-            %div.slide_nav
-              %div.slider_right.right
-                %span.title.small
-                  = link_to 'More Games', games_more_games_path
-              %div.slider_left.left
-                %span.title
-                  = link_to 'My Apps', games_my_apps_path
-          .content
-
-
-  #my_account
-    %div.top_nav_bar.toolbar
-      .nav_content
-        .right
-          = link_to 'Support', "#support", :class => "flip"
-        .right
-          = link_to 'My Account', "#my_account", :class => "flip"    
-    %div.container.vertical-scroll
-      %div.scroller.with-scrollbar
-        %div.page
-          .logo
-            %div.slide_nav
-              %div.slider_right.right
-                %span.title.small
-                  = link_to 'More Games', games_more_games_path
-              %div.slider_left.left
-                %span.title
-                  = link_to 'My Apps', games_my_apps_path
           .content 
+
 
 #bad_news.dialog_wrapper.hide
   .close_button
@@ -82,7 +54,7 @@
     .dialog_image
 
 - content_for :page_javascript do
-  - if Rails.env.production?
+  - if Rails.env.development?
     :plain
       $(window).load(function() {
         if (TJG.vars.isIos == false) {

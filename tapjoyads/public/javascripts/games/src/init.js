@@ -26,17 +26,14 @@ TJG.appOfferWall = {};
       var v = RegExp(/OS\s([\d+_?]*)\slike/i).exec(ua);
       TJG.vars.version = v != null ? v[1].replace(/_/g, '.') : 4;
       TJG.vars.device = m[2] ? m[1].toLowerCase() : m[1].toLowerCase();
-      if (TJG.vars.device == 'iphone' || TJG.vars.device == 'ipod' || TJG.vars.device == 'android') {
-        classReplaces['web'] = 'mobile';
-      }
       classReplaces['device'] = TJG.vars.device;
       classes.push('ratio-' + window.devicePixelRatio);
       classReplaces['no-os'] = m[2] ? 'ios' : m[1].toLowerCase();
     }
-    TJG.vars.width = window.innerWidth;
-    TJG.vars.height = window.innerHeight;
-    classes.push(window.innerWidth + 'x' + window.innerHeight);
-    
+    else {
+      classReplaces['mobile'] = 'web';
+    }
+    classes.push(winW + 'x' + winH);
     function getOrientationClass() {
       return TJG.vars.orientationClasses[window.orientation % 180 ? 0 : 1];
     }
@@ -56,7 +53,6 @@ TJG.appOfferWall = {};
         isSwapped = true;
         TJG.vars.isSwapped = isSwapped;
       }
- 
       if (TJG.vars.device == 'android') {
         if (TJG.vars.width <= 480 && getOrientationClass() == 'portrait' && TJG.vars.isSwapped) {
           classReplaces['web'] = 'android-phone';
@@ -71,7 +67,6 @@ TJG.appOfferWall = {};
             currentOrientationClass = orientationClass;
             var className = TJG.doc.className;
             TJG.doc.className = className ? className.replace(orientationRe, currentOrientationClass) : currentOrientationClass;
-            
          }
       }, false);
     }
