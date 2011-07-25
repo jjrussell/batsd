@@ -1,11 +1,7 @@
 class Games::GamersController < GamesController
-  
+
   layout nil
-  
-  def new
-    @gamer = Gamer.new
-  end
-  
+
   def create
     @gamer = Gamer.new do |g|
       g.email            = params[:gamer][:email]
