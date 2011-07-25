@@ -27,16 +27,16 @@
                 .content_box_top_arrow
               .content_box.clearfix
                 - form_for([ :games, @gamer_session ]) do |f|
-                  .field.login_email
+                  .field.login_email.clearfix
                     = f.label :email
                     = f.text_field :email
-                    = error_message_on @gamer_session, :email
-                  .field.login_pass
+                  .field.login_pass.clearfix
                     = f.label :password
                     = f.password_field :password, :size => '15'
-                    = error_message_on @gamer_session, :password
                     = f.submit 'Login!', :class => 'right button lt_blue'
-            
+                .login_error
+                  = error_message_on @gamer_session, :email
+                  = error_message_on @gamer_session, :password
             #sign_up_form
               .sign_first_timer
                 First Timer?

@@ -3,48 +3,57 @@
     %div.top_nav_bar.toolbar
       .nav_content
         .right
-          = link_to 'Support', "#support", :class => "flip"
+          = link_to 'Support', "&#109;&#097;&#105;&#108;&#116;&#111;:&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#116;&#97;&#112;&#106;&#111;&#121;&#46;&#99;&#111;&#109;", :id => "support", :target => "_blank"
         .right
-          = link_to 'Support', "&#109;&#097;&#105;&#108;&#116;&#111;:&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#116;&#97;&#112;&#106;&#111;&#121;&#46;&#99;&#111;&#109;", :id => "support", :target => "_blank"    %div.container.vertical-scroll
-      %div.scroller.with-scrollbar
-        %div.page
-          .logo
-            %div.slide_nav
-              %div.slider_right.right
-                %span.title.small
-                  = link_to( 'More Games', "#", :class => "more_games_url" )
-              %div.slider_active.slider_left.left
-                %span.title
-                  = link_to 'My Apps', games_root_path
-          #no_device.content.message.hide
-            %h1.title
-              Phone not linked!
-            %div
-              You must link your phone's UDID in order to access your apps!
-            %div  
-              = link_to "Link UDID now!", new_games_gamer_device_path
-
-
-  #my_account.tan
-    %div.top_nav_bar.toolbar
-      .nav_content
-        .right
-          = link_to 'Support', "#support", :class => "flip"
-        .right
-          = link_to 'My Account', "#my_account", :class => "flip"
+          = link_to 'My Account', "#my_account", :class => "flip"  
     %div.container.vertical-scroll
       %div.scroller.with-scrollbar
         %div.page
           .logo
-          .content 
+            .slide_nav
+              .slider.slider_right.right
+                %span.title.small
+                  More Games
+              .slider_btn.left
+                .slider.slider_active.slider_left
+                  %span.title
+                    My Apps
+                .slide_arrow_wrapper.bottom_arrow
+                  .slide_arrow
+          #no_device.content.message.hide
+            .message_title.title
+              Phone not linked!
+            .message_header
+              You must link your phone's UDID in order to access your apps!
+            .message_content
+              %span.button.grey  
+                = link_to "Link UDID now!", new_games_gamer_device_path
+
+
+  #my_account.tan
+    %div.container.vertical-scroll
+      %div.scroller.with-scrollbar
+        %div.page
+          .logo
+            .slide_nav.left
+              .left
+                .slide_arrow_wrapper.left_arrow
+                  .slide_arrow
+              .slider.slider_active.slider_left.left
+                .title
+                  = link_to 'Back', "#", :class => "back" 
+          .content.hide 
 
 
 #bad_news.dialog_wrapper.hide
-  .close_button
   .dialog
-    .dialog_title Bad News
+    .dialog_header_wrapper
+      .dialog_header_wrapper
+      .dialog_header_right
+      .dialog_header_left
+      .dialog_title.title_2 Bad News
     .dialog_header Incompatible Device
-    .dialog_content To complete account registration please visit http://tapjoygames.com on a supported mobile device.
+    .dialog_content To complete account registration please visit us on a supported mobile device.
       
     
 #loader.dialog_wrapper.hide
@@ -54,13 +63,14 @@
     .dialog_image
 
 - content_for :page_javascript do
-  - if Rails.env.development?
+  - if Rails.env.production?
     :plain
       $(window).load(function() {
         if (TJG.vars.isIos == false) {
           $("#no_device").html('');
           TJG.utils.centerDialog("#bad_news");
           $("#bad_news").fadeIn();
+          
         }
         $("#no_device").show();
         var jQT = new $.jQTouch({

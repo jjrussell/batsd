@@ -106,6 +106,19 @@
     #sign_up_content
 
 
+#register_device.dialog_wrapper.hide
+  .close_dialog
+    .close_button
+  .dialog
+    .dialog_header_wrapper
+      .dialog_header_wrapper
+      .dialog_header_right
+      .dialog_header_left
+      .dialog_title.title_2 Hooray!
+    .dialog_header Your device has been linked to your Tapjoy Games account
+    .dialog_content Now close this box and start earning currency in your favorite games!s  
+
+
 #loader.dialog_wrapper.hide
   #progress.dialog
     .dialog_title
@@ -119,6 +132,11 @@
       var jQT = new $.jQTouch({
         slideSelector: '#jqt .slide_nav',
       });
+      var install = TJG.utils.getParam("register_device");
+      if (install.indexOf("true") != -1) {
+        TJG.utils.centerDialog("#register_device");
+        $("#register_device").fadeIn(); 
+      }
       function getOfferWalls() {
         $(".get_offerwall_jsonp").each(function() {
           $(this).click(function(){
