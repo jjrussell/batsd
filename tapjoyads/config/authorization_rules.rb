@@ -83,7 +83,12 @@ authorization do
     has_permission_on :tools_users, :to => [ :index, :show ]
     has_permission_on :tools_users_partner_assignments, :to => [ :create, :destroy ]
   end
-  
+
+  role :games_editor do
+    has_permission_on :tools, :to => [ :index ]
+    has_permission_on :tools_editors_picks, :to => [ :index, :new, :create, :show, :edit, :update, :activate, :expire ]
+  end
+
   role :raffle_manager do
     has_permission_on :raffle_manager, :to => [ :index, :new, :create, :edit, :update ]
   end
@@ -95,6 +100,7 @@ authorization do
     includes :raffle_manager
     includes :account_mgr
     includes :hr
+    includes :games_editor
     has_permission_on :pub_offer_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :send_currency_failures, :sqs_lengths, :elb_status, :as_groups, :manage_user_roles, :update_user_roles ]
     has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]

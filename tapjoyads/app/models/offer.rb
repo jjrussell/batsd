@@ -41,6 +41,7 @@ class Offer < ActiveRecord::Base
   has_many :enable_offer_requests
   has_many :dependent_action_offers, :class_name => 'ActionOffer', :foreign_key => :prerequisite_offer_id
   has_many :offer_events
+  has_many :editors_picks
   
   belongs_to :partner
   belongs_to :item, :polymorphic => true

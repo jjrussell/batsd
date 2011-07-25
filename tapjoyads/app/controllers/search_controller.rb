@@ -3,8 +3,14 @@ class SearchController < WebsiteController
   filter_access_to :all
 
   def offers
+    if params[:app_offers_only]
+      conditions = [ "name LIKE ? AND item_type = ?", "%#{params[:term]}%", 'app' ]
+    else
+      conditions = [ "name LIKE ?", "%#{params[:term]}%" ]
+    end
+
     results = Offer.find(:all,
-      :conditions => [ "name LIKE ?", "%#{params[:term]}%" ],
+      :conditions => conditions,
       :order => 'hidden ASC, active DESC, name ASC',
       :limit => 10
     ).collect do |o|

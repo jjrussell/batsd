@@ -1,0 +1,20 @@
+- @page_title = "Editors' Picks"
+%h1= @page_title
+
+= link_to 'Schedule new editors\' pick', new_tools_editors_pick_path
+%br/
+= link_to 'View editors\' picks list', games_editors_picks_path
+= render :partial => 'list', :object => @active_editors_picks, :locals => { :list_name => :active }
+= render :partial => 'list', :object => @upcoming_editors_picks, :locals => { :list_name => :upcoming }
+#expired_picks.hidden
+  = render :partial => 'list', :object => @expired_editors_picks, :locals => { :list_name => :expired }
+
+= link_to 'Show expired', '#', :id => 'show_expired_picks'
+
+- content_for :page_javascript do
+  :plain
+    $('#show_expired_picks').click(function(){
+      $(this).hide();
+      $('#expired_picks').show();
+      return false;
+    });
