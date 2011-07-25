@@ -35,7 +35,7 @@
                       = external_publisher.app_name
                     .offer_info
                       - external_publisher.currencies.each_with_index do |currency, i|
-                        - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency), :currency => currency[:name]) do
+                        - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency), :currency => currency[:name], :app_name => external_publisher.app_name) do
                           .offer_button
                             .button.blue         
                               %span.amount
@@ -53,7 +53,7 @@
     %div.container.vertical-scroll
       %div.scroller.with-scrollbar
         %div.page
-          .logo
+          .logo.logo_title
             .slide_nav
               .slider.slider_right.right
                 %span.title.small
@@ -61,6 +61,7 @@
               .slider.slider_active.slider_left.left
                 %span.title
                   = link_to 'Back', "#home", :class => "slideright"
+          #app_title.hide
           #earn_content.content.hide
           
   #more_games
@@ -147,7 +148,11 @@
             });
             var url = $(this).attr("jsonp_url");
             var id = $(this).attr("id");
+            var app_name = $(this).attr("app_name");
             var currency_name = $(this).attr("currency");
+            var title = 'Viewing offers for <span class="bold">' + app_name + '</span>';
+            $("#app_title").html(title);
+            $("#app_title").fadeIn();
             if (url) {
               if (!TJG.appOfferWall[id]) {
                 jQT.goTo('#earn', 'slideleft');   
@@ -156,7 +161,7 @@
                   if (data.OfferArray) {
                     var offers = data.OfferArray;
                     TJG.appOfferWall[id] = offers; 
-                    var c = TJG.ui.getOffferRow(offers,currency_name);
+                    var c = TJG.ui.getOffferRow(offers, currency_name);
                     $("#earn_content").html(c);
                     TJG.onload.loadCufon();
                     $("#earn_content").fadeIn(400); 

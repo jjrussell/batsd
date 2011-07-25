@@ -262,7 +262,10 @@ a, a:visited {
   margin: 0 auto;
   width: 320px;
 }
-
+.web .logo.logo_title, .ipad .logo.logo_title {
+  background: transparent url('../../images/games/logo_title_web.png') no-repeat;
+  height: 293px;
+}
 
 .mobile.hd.portrait .logo {
   background: transparent url('../../images/games/logo_bg_mobile_hd_p.png') no-repeat;
@@ -283,9 +286,27 @@ a, a:visited {
   position: relative;
 }
 .web .slide_nav, .ipad .slide_nav {
-  padding: 0 20px;
   top: 180px;
 }
+.web #app_title, .ipad #app_title {
+  height: 36px;
+  margin: 0 auto;
+  padding: 6px 20px 0;
+  position: relative;
+  text-align: center;
+  top: -40px;
+  width: 572px;
+}
+.mobile #app_title {
+} 
+.web #earn_content {
+  position: relative;
+  top: -20px;
+}
+.mobile #earn_content {
+  position: relative;
+  top: -20px;
+}  
 .mobile .slide_nav {
   padding: 0 8px 0 15px;
   top: 70px;
@@ -416,17 +437,17 @@ a, a:visited {
   margin: 0 auto;
   width: 308px;
 }
-.mobile #earn_content {
+.mobile #earn_paper_content {
   padding: 0 6px 0 10px;
   position: relative;
   padding-top: 70px;
 }
-.web #earn_content, .ipad #earn_content {
+.web #earn_paper_content, .ipad #earn_paper_content {
   padding: 0 12px 0 20px;
   position: relative;
   padding-top: 140px;
 }
-.earn_title {
+.earn_paper_title {
   cursor: pointer;
   font-size: 14px;
   font-weight: bold; 
@@ -436,7 +457,7 @@ a, a:visited {
   -o-transform: rotate(-1deg);
   transform: rotate(-1deg);
 }
-.web .earn_title {
+.web .earn_paper_title {
   font-size: 20px;
 }
 .sign_up a {

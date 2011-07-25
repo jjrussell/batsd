@@ -4,22 +4,26 @@
       .nav_content 
         - if current_gamer.present?
           .right
-            = link_to 'Support', "#support", :class => "flip"
+            = link_to 'Support', "&#109;&#097;&#105;&#108;&#116;&#111;:&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#116;&#97;&#112;&#106;&#111;&#121;&#46;&#99;&#111;&#109;", :id => "support", :target => "_blank"        
           .right
-            = link_to 'Support', "&#109;&#097;&#105;&#108;&#116;&#111;:&#115;&#117;&#112;&#112;&#111;&#114;&#116;&#64;&#116;&#97;&#112;&#106;&#111;&#121;&#46;&#99;&#111;&#109;", :id => "support", :target => "_blank"        - else
+            = link_to 'My Account', "#my_account", :class => "flip"
+        - else
           .right
             = link_to 'Login', games_login_path
     %div.container.scroll.vertical-scroll
       %div.scroller.with-scrollbar
         %div.page
           .logo
-            %div.slide_nav
-              %div.slider_right.right
+            .slide_nav
+              .slider.slider_right.right
                 %span.title.small
-                  = link_to( 'More Games', "#", :class => "more_games_url" )
-              %div.slider_active.slider_left.left
-                %span.title
-                  My Apps
+                  More Games
+              .slider_btn.left
+                .slider.slider_active.slider_left
+                  %span.title
+                    My Apps
+                .slide_arrow_wrapper.bottom_arrow
+                  .slide_arrow
           .content
             %ul
               -@external_publishers.each do |external_publisher|
@@ -31,7 +35,7 @@
                       = external_publisher.app_name
                     .offer_info
                       - external_publisher.currencies.each_with_index do |currency, i|
-                        - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency), :currency => currency[:name]) do
+                        - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency), :currency => currency[:name], :app_name => external_publisher.app_name) do
                           .offer_button
                             .button.blue         
                               %span.amount
@@ -114,6 +118,11 @@
       var jQT = new $.jQTouch({
         slideSelector: '#jqt .slide_nav',
       });
+      var install = TJG.utils.getParam("register_device");
+      if (install.indexOf("true") != -1) {
+        TJG.utils.centerDialog("#register_device");
+        $("#register_device").fadeIn(); 
+      }
       function getOfferWalls() {
         $(".get_offerwall_jsonp").each(function() {
           $(this).click(function(){
@@ -151,14 +160,13 @@
           });
         }); 
       }
-      getOfferWalls();
       function reloadOfferWalls () {
         $(".get_offerwall_jsonp").unbind("click");
         getOfferWalls();
       }
       function getMoreOfferWalls() {
         $(".more_games_url").click(function() {
-          TJG.ui.showLoader();
+            TJG.ui.showLoader();
             $("#more_games_content").fadeOut(350,function() {
               $("#earn_content").empty();
               jQT.goTo('#more_games', 'slideleft');  
@@ -171,7 +179,7 @@
           }
           else {
             $.ajax({
-              url: location.pathname.replace(/\/$/, '') + "/more_games?ajax=1",
+              url: "#{games_root_path}" + "/more_games?ajax=1",
               success: function(c) {
                 TJG.moreAppOfferWall = c;
                 TJG.ui.hideLoader();
@@ -186,5 +194,8 @@
           }
         }); 
       }
+      getOfferWalls();
       getMoreOfferWalls();
-    });
+      TJG.path =  "#{games_root_path}";
+    });               
+});
