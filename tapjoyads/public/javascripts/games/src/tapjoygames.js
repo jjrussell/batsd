@@ -66,7 +66,6 @@ TJG.ui = {
   
   getOffferRow : function (o,c) {
     var t = [];
-    t.push('<ul>');
     $.each(o, function(i,v){
       t.push('<li class="offer_item clearfix">'); 
         t.push('<div class="offer_image">');
@@ -90,7 +89,6 @@ TJG.ui = {
         t.push('</div>');
       t.push('</li>');
     });
-    t.push('<ul>');
     return t.join('');    
   },
   

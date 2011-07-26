@@ -141,7 +141,7 @@
         TJG.utils.centerDialog("#register_device");
         $("#register_device").fadeIn(350); 
       }
-      var moreOffers;
+
       function getOfferWalls() {
         $(".get_offerwall_jsonp").each(function() {
           $(this).click(function(){
@@ -151,35 +151,80 @@
               jQT.goTo('#earn', 'slideleft');  
             });
             var url = $(this).attr("jsonp_url");
-            var id = $(this).attr("id");
-            var app_name = $(this).attr("app_name");
-            var currency_name = $(this).attr("currency");
-            var title = 'Viewing offers for <span class="bold">' + app_name + '</span>';
+            var appId = $(this).attr("id");
+            var appName = $(this).attr("app_name");
+            var currencyName = $(this).attr("currency");
+            if (!TJG.appOfferWall[appId]) {
+              TJG.appOfferWall[appId] = {};
+            }
+            TJG.appOfferWall[appId]['jsonp_url'] = url;
+            var title = 'Viewing offers for <span class="bold">' + appName + '</span>';
             $("#app_title").html(title);
             $("#app_title").fadeIn(350);
             if (url) {
-              if (!TJG.appOfferWall[id]) {
+              if (!TJG.appOfferWall[appId]['offers']) {
                 jQT.goTo('#earn', 'slideleft');   
                 $.getJSON(url+"&callback=?", function(data) {
                   TJG.ui.hideLoader();
                   if (data.OfferArray) {
                     var offers = data.OfferArray;
-                    var appsLeft = data.MoreDataAvailable;
-                    console.log(appsLeft);
-                    TJG.appOfferWall[id] = offers; 
-                    var c = TJG.ui.getOffferRow(offers, currency_name);
-                    $("#earn_content").html(c);
+                    offerOffset = offers.length;
+                    TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                    TJG.appOfferWall[appId]['offset'] = offerOffset;
+                    TJG.appOfferWall[appId]['offers'] = offers; 
+                    var offerRows = TJG.ui.getOffferRow(offers, currencyName, appId);
+                    var t = [
+                      '<ul id="offerwall_id-', appId ,'">',
+                        offerRows,
+                      '</ul>',
+                    ];
+                    if (TJG.appOfferWall[appId]['offers_left'] > 0) {
+                      t.push('<div class="get_more_apps left" app_id="' + appId + '">Load More</div><div class="load_more_loader dialog_image left hide"></div>');
+                    }
+                    t = t.join('');
+                    $("#earn_content").html(t);
                     TJG.onload.loadCufon();
-                    $("#earn_content").fadeIn(450); 
+                    $("#earn_content").fadeIn(450);
+                    $(".get_more_apps").click(function(){
+                      var appId = $(this).attr("app_id");
+                      $(".load_more_loader").show();
+                      if (TJG.appOfferWall[appId]['offers_left'] > 0) {
+                        var url = TJG.appOfferWall[appId]['jsonp_url'];
+                        url = url + "&start=" + TJG.appOfferWall[appId]['offset'] + "&max=25&callback=?";
+                        $.getJSON(url, function(data) {
+                           if (data.OfferArray) {
+                             var offers = data.OfferArray;
+                             TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                             TJG.appOfferWall[appId]['offset'] = TJG.appOfferWall[appId]['offset'] + 25;
+                             var moreOfferRows = TJG.ui.getOffferRow(offers, currencyName, appId);
+                             $("#offerwall_id-" + appId).append(moreOfferRows).fadeIn(350);
+                             $(".load_more_loader").hide();
+                             if (data.MoreDataAvailable == 0) {
+                               $("#get_more_apps").hide();
+                             }
+                             $.each(offers, function(i,o) {
+                               TJG.appOfferWall[appId]['offers'].push(o);
+                             });
+                           }
+                        });  
+                      }
+                    });
                   }
                 });
               } 
-              else if (TJG.appOfferWall[id]) {
+              else if (TJG.appOfferWall[appId]['offers']) {
                 TJG.ui.hideLoader();
-                var c = TJG.ui.getOffferRow(TJG.appOfferWall[id],currency_name);
+                var c = TJG.ui.getOffferRow(TJG.appOfferWall[appId]['offers'],currencyName);
                 $("#earn_content").html(c);
                 TJG.onload.loadCufon();
                 $("#earn_content").fadeIn(450);
+              }
+              else {
+                 var m = [
+                  '<div>There was an issue. Please try again</div>'
+                 ].join('');
+                 $("#earn_content").html(m); 
+                 $("#earn_content").fadeIn(450);
               }
             }
           });
@@ -189,6 +234,7 @@
         $(".get_offerwall_jsonp").unbind("click");
         getOfferWalls();
       }
+      /*
       function getMoreOfferWalls() {
         $(".more_games_url").click(function() {
             TJG.ui.showLoader();
@@ -219,7 +265,8 @@
           }
         }); 
       }
+      */
       getOfferWalls();
-      getMoreOfferWalls();
+      /*getMoreOfferWalls();*/
       TJG.path =  "#{games_root_path}";
     });

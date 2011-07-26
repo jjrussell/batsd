@@ -29,7 +29,7 @@
       return null;
     }
     if (TJG) {
-      if (TJG.vars.isTouch) {
+      if (!TJG.vars.isTouch) {
         return null;
       } 
     }
