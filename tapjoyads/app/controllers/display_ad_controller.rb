@@ -79,9 +79,13 @@ private
         :library_version    => params[:library_version],
         :screen_layout_size => params[:screen_layout_size])
         
-    weight_scale = 1 - offer_list.last.rank_score
-    weights = offer_list.collect { |offer| offer.rank_score + weight_scale }
-    offer = offer_list.weighted_rand(weights)
+    if offer_list.any?
+      weight_scale = 1 - offer_list.last.rank_score
+      weights = offer_list.collect { |offer| offer.rank_score + weight_scale }
+      offer = offer_list.weighted_rand(weights)
+    else
+      offer = nil
+    end
   
     if offer.present?
       @click_url = offer.get_click_url(
