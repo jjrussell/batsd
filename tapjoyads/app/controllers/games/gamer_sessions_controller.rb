@@ -10,6 +10,7 @@ class Games::GamerSessionsController < GamesController
     if @gamer_session.save
       redirect_to games_root_path
     else
+      @gamer = Gamer.new
       render :action => :new
     end
   end

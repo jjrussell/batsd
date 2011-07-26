@@ -119,7 +119,7 @@ TJG.ui = {
         }
       });
       $(".valid_email_error").hide();
-      emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+      emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
       if(values['gamer[email]'] == '') {
         $(".email_error").html('Please enter your email address');
         hasError = true;
@@ -141,7 +141,7 @@ TJG.ui = {
           '<div id="dialog_title title_2">Registering</div>',
           '<div class="dialog_image"></div>'
         ].join('');
-        $("#sign_up_dialog_content").html(loader);
+        $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
         TJG.onload.loadCufon();
         $.ajax({
           type: 'POST',
@@ -181,7 +181,7 @@ TJG.ui = {
             $("#sign_up_dialog_content").html(msg);
             TJG.onload.loadCufon();
             $('#sign_up_again').click(function(){
-              $("#sign_up_dialog_content").html(t);
+              $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
               TJG.onload.loadCufon();
             });
           },
@@ -194,7 +194,7 @@ TJG.ui = {
             $("#sign_up_dialog_content").html(msg);
             TJG.onload.loadCufon();
             $('#sign_up_again').click(function(){
-              $("#sign_up_dialog_content").html(t);
+              $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
               TJG.onload.loadCufon();
             });
           }
