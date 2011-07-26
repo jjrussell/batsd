@@ -341,7 +341,7 @@ private
     offer.age_rating = age_rating
     offer.save!
   end
-  
+
   def update_offers
     offers.each do |offer|
       offer.partner_id = partner_id if partner_id_changed?
@@ -365,12 +365,12 @@ private
       rating_offer.save!
     end
   end
-  
+
   def create_app_metadata
     return unless store_id.present?
-    
+
     app_metadata = AppMetadata.find(:first, :conditions => ["store_name = ? and store_id = ?", store_name, store_id])
-    if app_metadata == nil
+    if app_metadata.nil?
       # only create this record if one doesn't already exist for this store and store_id
       app_metadata = AppMetadata.new(
         :store_name => store_name,
@@ -378,19 +378,18 @@ private
       )
     end
     fill_app_metadata(app_metadata)
-    app_metadata.save!
-    
+
     AppMetadataMapping.create!(
       :app_id          => id,
       :app_metadata_id => app_metadata.id
     )
   end
-  
+
   def update_app_metadata
     return unless store_id.present?
-    
+
     mapping = AppMetadataMapping.find(:first, :joins => :app_metadata, :conditions => ["app_id = ? and #{AppMetadata.quoted_table_name}.store_name = ?", id, store_name])
-    
+
     if mapping.nil?
       # app changed from not live to live status, need to create metadata records
       create_app_metadata

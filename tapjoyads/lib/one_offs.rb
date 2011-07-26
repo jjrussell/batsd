@@ -147,7 +147,7 @@ class OneOffs
       info.update_attribute(:payment_country => info.address_country)
     end
   end
-  
+
   def self.migrate_app_metadata
     App.find_each(:conditions => "store_id != ''") do |app|
       app_metadata = AppMetadata.find(:first, :conditions => ["store_name = ? and store_id = ?", app.store_name, app.store_id])
@@ -167,7 +167,7 @@ class OneOffs
           :categories        => app.categories
         )
       end
-      
+
       AppMetadataMapping.create!(
         :app_id          => app.id,
         :app_metadata_id => app_metadata.id
