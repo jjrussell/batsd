@@ -10,6 +10,7 @@ ja:
       free: "無料"
       next: "次 {{items}}"
       previous: "前 {{items}}"
+      missing_currency: "Missing {{currency}}?"
 
       # original wall only
       instructions: "{{currency}} を獲得するために、次の中からアプリをインストールして開いてください"
