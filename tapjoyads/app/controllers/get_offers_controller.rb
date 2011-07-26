@@ -2,7 +2,7 @@ class GetOffersController < ApplicationController
   
   layout 'iphone', :only => :webpage
   
-  before_filter :decrypt_data_param
+  prepend_before_filter :decrypt_data_param
   before_filter :fix_tapulous
   before_filter :choose_experiment, :except => :featured
   before_filter :set_featured_params, :only => :featured
