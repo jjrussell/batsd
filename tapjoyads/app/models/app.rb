@@ -372,12 +372,13 @@ private
     app_metadata = AppMetadata.find(:first, :conditions => ["store_name = ? and store_id = ?", store_name, store_id])
     if app_metadata == nil
       # only create this record if one doesn't already exist for this store and store_id
-      app_metadata = AppMetadata.create!(
+      app_metadata = AppMetadata.new(
         :store_name => store_name,
         :store_id   => store_id
       )
     end
     fill_app_metadata(app_metadata)
+    app_metadata.save!
     
     AppMetadataMapping.create!(
       :app_id          => id,
@@ -388,32 +389,28 @@ private
   def update_app_metadata
     return unless store_id.present?
     
-    mappings = AppMetadataMapping.find(:all, :conditions => ["app_id = ?", id])
+    mapping = AppMetadataMapping.find(:first, :joins => :app_metadata, :conditions => ["app_id = ? and #{AppMetadata.quoted_table_name}.store_name = ?", id, store_name])
     
-    if (mappings.empty?)
+    if mapping.nil?
       # app changed from not live to live status, need to create metadata records
       create_app_metadata
     else
-      mappings.each do |mapping|
-        if mapping.app_metadata.store_id != store_id
-          # app_metadata record point to the wrong store_id -- update to correct record, created if necessary
-          new_metadata = AppMetadata.find(:first, :conditions => ["store_name = ? and store_id = ?", mapping.app_metadata.store_name, store_id])
-          if new_metadata == nil
-            new_metadata = AppMetadata.create!(
-              :store_name => mapping.app_metadata.store_name,
-              :store_id   => store_id
-            )
-          end
-          fill_app_metadata(new_metadata)
-
-          mapping.app_metadata_id = new_metadata.id
-          mapping.save!
-          # do we need to remove any app_metadatas records that are no longer associated to any apps?
-        else
-          # if store_ids match, just update metadata from app store
-          fill_app_metadata(mapping.app_metadata)
+      if mapping.app_metadata.store_id != store_id
+        # app_metadata record points to the wrong store_id -- update to correct record, creating if necessary
+        new_metadata = AppMetadata.find(:first, :conditions => ["store_name = ? and store_id = ?", store_name, store_id])
+        if new_metadata.nil?
+          new_metadata = AppMetadata.create!(
+            :store_name => store_name,
+            :store_id   => store_id
+          )
         end
+
+        mapping = AppMetadataMapping.find(mapping.id);
+        mapping.app_metadata_id = new_metadata.id
+        mapping.save!
+        # do we need to remove any app_metadatas records that are no longer associated to any apps?
       end
+      fill_app_metadata(mapping.app_metadata)
     end
   end
 
