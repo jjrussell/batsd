@@ -109,8 +109,10 @@ a, a:visited {
   margin: 0 auto;
   padding:0 12px;
   text-align: left;
-}     
-.dialog form#new_gamer input[type=text], form#new_gamer input[type=password] {
+}
+form#new_gamer input[type=text],
+form#new_gamer input[type=email],
+form#new_gamer input[type=password] {
   margin-top: 6px;
   padding: 4px;
   width: 244px;
