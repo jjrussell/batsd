@@ -110,7 +110,7 @@ a, a:visited {
   z-index: 10;
 }
 #bad_news.dialog_wrapper .dialog {
-  height: 130px;
+  height: 120px;
 }
 #register_device .dialog  {
   height: 150px;
@@ -197,10 +197,10 @@ form#new_gamer input[type=password] {
   padding: 0px 10px;
 }
 .web #login_form .content_box, .ipads #login_form .content_box {
-  padding: 12px 0;
+  padding: 12px 0 2px;
 }
 .mobile #login_form .content_box {
-  padding: 6px 0;
+  padding: 6px 0 4px;
 }
 .login_header_wrapper {
   color: #6B5F54;
@@ -618,10 +618,12 @@ form#new_gamer_session .fieldWithErrors input[type=text],  form#new_gamer_sessio
   margin: 6px auto;
   width: 140px;
 }
-.sign_up_button.button.lt_blue {
+.mobile .sign_up_button.button.lt_blue,
+.web .sign_up_button.button.lt_blue,
+.ipad .sign_up_button.button.lt_blue {
   font-size: 16px;
   padding: 10px 0 6px;
-} 
+}
 /* Offer */    
 .offer_item {
   border-bottom: 1px solid #5B5B5B;
@@ -636,7 +638,7 @@ form#new_gamer_session .fieldWithErrors input[type=text],  form#new_gamer_sessio
   float: left;
   margin-right: 12px;
   overflow: hidden;
-  -moz-border-radius: 5px;
+  -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
   -moz-box-shadow: 0 0 4px #222;
   -webkit-box-shadow: 0px 2px 4px #222;
@@ -652,6 +654,12 @@ form#new_gamer_session .fieldWithErrors input[type=text],  form#new_gamer_sessio
 .offer_text {
   float: left;
 }
+.mobile .portrait .offer_text {
+  width: 240px;
+}
+.mobile .landscape .offer_text {
+  width: 400px;
+}
 .offer_info {
   float: left;
   text-overflow: ellipsis;
@@ -662,7 +670,44 @@ form#new_gamer_session .fieldWithErrors input[type=text],  form#new_gamer_sessio
 }
 .mobile .offer_title {
   font-size: 12px;
-}    
+}
+#earn_content .button.grey {
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px
+}
+.mobile #earn_content .button.grey {
+  font-size: 13px;
+}
+#earn_content .offer_item .amount {
+  color: #23840C;
+}
+#earn_content .offer_item .currency {
+  color: #3F3F3F;
+  padding-right: 6px;
+}
+#earn_content .offer_item .cost {
+  border-left: 1px solid #BFBEBE;
+  color: #006C94;
+  padding-left: 8px;
+}
+.get_more_apps {
+  background: -moz-linear-gradient(top, #E6E6E6 0%, #C4C4C4 100%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #E6E6E6), color-stop(1, #C4C4C4));
+  border: 1px solid #5B5B5B;
+  cursor: pointer;
+  margin-top: 8px;
+  width: 100%;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px; 
+  -moz-box-shadow: inset 0 -1px #333333;
+  -webkit-box-shadow: inset 0 -1px #333333; 
+}
+.get_more_apps_content {
+  font-size: 16px;
+  color: #006C94;
+  padding: 12px 18px;
+  text-align: center;
+}
 .offer_button {
   float: left;
   margin-right: 6px;
@@ -683,8 +728,8 @@ form#new_gamer_session .fieldWithErrors input[type=text],  form#new_gamer_sessio
 }
 .button.blue {
   background: #2F477D;
-  background: -moz-linear-gradient(top, #1d81e9 0%, #0c62ba 100%);
-  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #1d81e9), color-stop(1, #0c62ba));
+  background: -moz-linear-gradient(top, #1D81E9 0%, #0C62BA 100%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #1D81E9), color-stop(1, #0C62BA));
   text-shadow: 0 -1px 1px #000F4D;
   -moz-box-shadow: 0 0 4px #222;
   -webkit-box-shadow: 0px 0 4px #222;
@@ -713,25 +758,28 @@ form#new_gamer_session .fieldWithErrors input[type=text],  form#new_gamer_sessio
   background: -moz-linear-gradient(top, #40A7C0 0%, #218BAD 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #40A7C0), color-stop(1, #218BAD));
   border: none;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: bold;
-  padding: 5px 12px 5px 12px;
+  padding: 6px 12px;
   text-shadow: 0 -1px 1px #1F81A0;
   -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
+  -webkit-border-radius: 4px  
+}
+.mobile .button.lt_blue {
+  font-size: 12px;
+  padding: 6px 10px;
 }
 .button.grey {
   background: -moz-linear-gradient(top, #E6E6E6 0%, #C4C4C4 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #E6E6E6), color-stop(1, #C4C4C4));
   text-shadow: none;
-  color: #2F8AA4;
+  color: #006C94;
 }
 .button.grey a {
+  background: transparent url('/images/games/button_right_arrow.png') no-repeat center right;
   color: #2F8AA4;
+  padding-right: 20px;
 }
-.mobile .button.lt_blue {
-  font-size: 12px;
-} 
 .button.m_width {
   padding: 6px 10px 7px 10px;
 } 

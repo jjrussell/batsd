@@ -14,20 +14,9 @@ class Games::HomepageController < GamesController
     @device = Device.new(:key => current_gamer.udid)
     @external_publishers = ExternalPublisher.load_all_for_device(@device)
     if @external_publishers.empty?
-      redirect_to games_more_games_path
+      redirect_to games_editors_picks_path
     end
   end
-
-  def more_games
-    @device = Device.new(:key => current_gamer.udid)
-    @external_publishers = ExternalPublisher.load_all_for_device_filter_installed(@device)
-    if params[:ajax] == '1'
-      render :layout => false, :template => 'games/homepage/more_games_ajax'
-    else
-      render :template => 'games/homepage/more_games'
-    end
-  end
-
 
 private
 

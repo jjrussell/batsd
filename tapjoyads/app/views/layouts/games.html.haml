@@ -14,7 +14,7 @@
     
     - if Rails.env.production?
       %style{ :type => "text/css", :media => "screen" }
-        @import "/stylesheets/games/tapjoygames.dev.css";
+        @import "/stylesheets/games/tapjoygames.css";
       %style{ :type => 'text/css' }
         = yield :page_styles
         :plain
@@ -23,7 +23,7 @@
           }
     - else
       %style{ :type => "text/css", :media => "screen" }
-        @import "/stylesheets/games/tapjoygames.dev.css";
+        @import "/stylesheets/games/tapjoygames.css";
     = yield :page_head
     
   %body

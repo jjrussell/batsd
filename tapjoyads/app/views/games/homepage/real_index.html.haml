@@ -31,7 +31,7 @@
                   .offer_image
                     = image_tag(external_publisher.get_icon_url(:source => :cloudfront))
                   .offer_text
-                    %div.offer_title.title
+                    .offer_title.title
                       = external_publisher.app_name
                     .offer_info
                       - external_publisher.currencies.each_with_index do |currency, i|
@@ -176,10 +176,10 @@
                     var t = [
                       '<ul id="offerwall_id-', appId ,'">',
                         offerRows,
-                      '</ul>',
+                      '</ul>'
                     ];
                     if (TJG.appOfferWall[appId]['offers_left'] > 0) {
-                      t.push('<div class="get_more_apps left" app_id="' + appId + '">Load More</div><div class="load_more_loader dialog_image left hide"></div>');
+                      t.push('<div class="get_more_apps" app_id="' + appId + '"><div class="get_more_apps_content title_2">Load More<div class="load_more_loader dialog_image hide"></div></div></div>');
                     }
                     t = t.join('');
                     $("#earn_content").html(t);
@@ -198,6 +198,7 @@
                              TJG.appOfferWall[appId]['offset'] = TJG.appOfferWall[appId]['offset'] + 25;
                              var moreOfferRows = TJG.ui.getOffferRow(offers, currencyName, appId);
                              $("#offerwall_id-" + appId).append(moreOfferRows).fadeIn(350);
+                             TJG.onload.loadCufon();
                              $(".load_more_loader").hide();
                              if (data.MoreDataAvailable == 0) {
                                $("#get_more_apps").hide();
@@ -217,14 +218,14 @@
                 var c = TJG.ui.getOffferRow(TJG.appOfferWall[appId]['offers'],currencyName);
                 $("#earn_content").html(c);
                 TJG.onload.loadCufon();
-                $("#earn_content").fadeIn(450);
+                $("#earn_content").fadeIn(350);
               }
               else {
                  var m = [
                   '<div>There was an issue. Please try again</div>'
                  ].join('');
                  $("#earn_content").html(m); 
-                 $("#earn_content").fadeIn(450);
+                 $("#earn_content").fadeIn(350);
               }
             }
           });

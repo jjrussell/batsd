@@ -1,5 +1,5 @@
 #jqt
-  #register_device.current
+  #recommended.current
     %div.top_nav_bar.toolbar
       .nav_content
         .right
@@ -20,14 +20,31 @@
                     My Apps
                 .slide_arrow_wrapper.bottom_arrow
                   .slide_arrow
-          #no_device.content.message.hide
-            .message_title.title
-              Phone not linked!
-            .message_header
-              You must link your device in order to access your apps!
-            .message_content
-              %span.button.grey  
-                = link_to "Link device now!", new_games_gamer_device_path 
+          .content.message
+            %ul
+              - @editors_picks.each do |pick|
+                %li.offer_item.clearfix
+                  .offer_image
+                    = image_tag pick.offer.get_icon_url, :size => '57x57'
+                  .offer_text
+                    .offer_title.title
+                      = pick.offer.name
+                    .offer_info
+                      - if %w(App ActionOffer).include?(pick.offer.item_type)
+                        .offer_meta
+                          %span.offer_category
+                            = pick.offer.item.categories.first.to_s.titleize
+                          %span.offer_rating
+                            = pick.offer.item.user_rating
+                        .offer_description
+                          = pick.description
+                        .offer_button
+                          %a{:href => pick.offer.url }
+                            .button.grey
+                              %span.amount
+                                = number_to_currency(pick.offer.price/100)
+                              %span.offer_url
+                                = link_to 'Get it!', pick.offer.url
 
 
   #my_account.tan
@@ -45,17 +62,6 @@
           .content.hide 
 
 
-#bad_news.dialog_wrapper.hide
-  .dialog
-    .dialog_header_wrapper
-      .dialog_header_wrapper
-      .dialog_header_right
-      .dialog_header_left
-      .dialog_title.title_2 Bad News
-    .dialog_header Incompatible Device
-    .dialog_content To complete account registration please visit us on a supported mobile device.
-      
-    
 #loader.dialog_wrapper.hide
   #progress.dialog
     .dialog_title
@@ -66,13 +72,6 @@
   - if Rails.env.production?
     :plain
       $(window).load(function() {
-        if (TJG.vars.isIos == false) {
-          $("#no_device").html('');
-          TJG.utils.centerDialog("#bad_news");
-          $("#bad_news").fadeIn();
-          
-        }
-        $("#no_device").show();
         var jQT = new $.jQTouch({
           slideSelector: '#jqt .slide_nav',
         });
@@ -80,8 +79,7 @@
   - else
     :plain
       $(window).load(function() {
-        $("#no_device").show();
         var jQT = new $.jQTouch({
           slideSelector: '#jqt .slide_nav',
         });
-      });                                       
+      });

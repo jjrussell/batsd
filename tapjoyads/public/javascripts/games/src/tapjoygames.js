@@ -78,10 +78,18 @@ TJG.ui = {
           t.push('<div class="offer_info">');
             t.push('<a href="' + v.RedirectURL + '">');
               t.push('<div class="offer_button">');
-                t.push('<div class="button blue">');
+                t.push('<div class="button grey">');
                   t.push('<span class="amount">');
-                    t.push(v.Amount + ' ' + c);
+                    t.push(v.Amount);
                   t.push('</span>');
+                  t.push(' ');
+                  t.push('<span class="currency">');
+                    t.push(c);
+                  t.push('</span>');
+                  t.push(' ');
+                  t.push('<span class="cost">');
+                    t.push(v.Cost);
+                  t.push('</span>'); 
                 t.push('</div>');
               t.push('</div>'); 
             t.push('</a>');             
@@ -116,7 +124,7 @@ TJG.ui = {
           values[this.name] = $(this).val();
         }
       });
-      $(".valid_email_error").hide();
+      $(".email_error").hide();
       emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
       if(values['gamer[email]'] == '') {
         $(".email_error").html('Please enter your email address');
@@ -134,12 +142,17 @@ TJG.ui = {
         $(".email_error").html('Please agree to the Terms of Service');
         hasError = true;
       }
-      if(hasError != true) {
+      if (hasError) {
+        $(".email_error").show();
+      }
+      else if (hasError != true) {
         var loader = [
           '<div id="dialog_title title_2">Registering</div>',
           '<div class="dialog_image"></div>'
         ].join('');
-        $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
+        $("#sign_up_dialog_content").html(loader);
+        $("#sign_up_dialog_content").parent().animate({ height: "120px", }, 250);
+        //$("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
         TJG.onload.loadCufon();
         $.ajax({
           type: 'POST',
@@ -149,6 +162,7 @@ TJG.ui = {
           dataType: 'json', 
           data: { 'authenticity_token': values['authenticity_token'], 'gamer[email]': values['gamer[email]'], 'gamer[password]': values['gamer[password]'], 'gamer[referrer]': values['gamer[referrer]'] },
           success: function(d) {
+            $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
             var msg;
             if (d.success) {
               hasLinked = false;
@@ -176,10 +190,12 @@ TJG.ui = {
                 '<div class="dialog_content">', error ,'. <span id="sign_up_again"><a href="#">Please click here to try again.</a></span></div>',
               ].join('');
             }
+            $("#sign_up_dialog_content").parent().animate({ height: "190px", }, 250);
             $("#sign_up_dialog_content").html(msg);
             TJG.onload.loadCufon();
             $('#sign_up_again').click(function(){
               $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
+              $("#sign_up_dialog_content").parent().animate({ height: "260px", }, 250);
               TJG.onload.loadCufon();
             });
           },
@@ -193,6 +209,7 @@ TJG.ui = {
             TJG.onload.loadCufon();
             $('#sign_up_again').click(function(){
               $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
+              $("#sign_up_dialog_content").parent().animate({ height: "260px", }, 250);
               TJG.onload.loadCufon();
             });
           }
