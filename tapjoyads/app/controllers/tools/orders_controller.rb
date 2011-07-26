@@ -24,7 +24,7 @@ class Tools::OrdersController < WebsiteController
     log_activity(@order)
     if @order.save
       Sqs.send_message(QueueNames::CREATE_INVOICES, @order.id) if create_invoice
-      amount = sprintf("$%.2f", @order.amount / 100.0)
+      amount = NumberHelper.new.number_to_currency(@order.amount / 100.0 )
       flash[:notice] = "The order of <b>#{amount}</b> to <b>#{@order.billing_email}</b> was successfully created."
       redirect_to new_tools_order_path
     else
