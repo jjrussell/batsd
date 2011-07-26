@@ -21,11 +21,12 @@ module ActsAsCacheable
         end
 
         def find_in_cache(id, do_lookup = (Rails.env != 'production'))
-          if do_lookup
-            Mc.distributed_get_and_put("mysql.#{class_name.underscore}.#{id}.#{SCHEMA_VERSION}", false, 1.day) { find(id) }
-          else
-            Mc.distributed_get("mysql.#{class_name.underscore}.#{id}.#{SCHEMA_VERSION}")
+          object = Mc.distributed_get("mysql.#{class_name.underscore}.#{id}.#{SCHEMA_VERSION}")
+          if object.nil? && do_lookup
+            object = find(id)
+            object.cache
           end
+          object
         end
 
         def memoize_with_cache(*methods)
