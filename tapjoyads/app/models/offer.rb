@@ -650,6 +650,7 @@ class Offer < ActiveRecord::Base
   def get_publisher_app_whitelist
     Set.new(publisher_app_whitelist.split(';'))
   end
+  memoize :get_publisher_app_whitelist
 
   def get_platform
     types = get_device_types

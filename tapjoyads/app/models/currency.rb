@@ -141,14 +141,17 @@ class Currency < ActiveRecord::Base
   def get_disabled_offer_ids
     Set.new(disabled_offers.split(';'))
   end
+  memoize :get_disabled_offer_ids
   
   def get_disabled_partner_ids
     Set.new(disabled_partners.split(';'))
   end
+  memoize :get_disabled_partner_ids
   
   def get_offer_whitelist
     Set.new(offer_whitelist.split(';'))
   end
+  memoize :get_offer_whitelist
   
   def get_disabled_partners
     Partner.find_all_by_id(disabled_partners.split(';'))
@@ -157,6 +160,7 @@ class Currency < ActiveRecord::Base
   def get_test_device_ids
     Set.new(test_devices.split(';'))
   end
+  memoize :get_test_device_ids
 
   def tapjoy_managed?
     callback_url == TAPJOY_MANAGED_CALLBACK_URL
