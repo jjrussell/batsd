@@ -2,7 +2,7 @@ class GetOffersController < ApplicationController
   
   layout 'iphone', :only => :webpage
   
-  before_filter :decrypt_data_param
+  prepend_before_filter :decrypt_data_param
   before_filter :fix_tapulous
   before_filter :choose_experiment, :except => :featured
   before_filter :set_featured_params, :only => :featured
@@ -90,7 +90,7 @@ private
   def set_featured_params
     params[:type] = Offer::FEATURED_OFFER_TYPE
     params[:start] = '0'
-    params[:max] = '50'
+    params[:max] = '100'
     params[:source] = 'featured'
     params[:rate_app_offer] = '0'
   end
