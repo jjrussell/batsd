@@ -134,6 +134,7 @@ class Offer < ActiveRecord::Base
   alias_method :random, :rand
   
   json_set_field :device_types, :screen_layout_sizes, :countries, :cities, :postal_codes
+  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_cities, :get_postal_codes
 
   def app_offer?
     item_type == 'App' || item_type == 'ActionOffer'
@@ -168,23 +169,23 @@ class Offer < ActiveRecord::Base
       weights = CurrencyGroup.find_by_name('default').weights
       
       offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.to_a
-      cache_unsorted_offers(offer_list, 'offerwall')
+      cache_unsorted_offers(offer_list, DEFAULT_OFFER_TYPE)
       cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
       offer_list = Offer.enabled_offers.featured.rewarded.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.rewarded.for_offer_list
-      cache_unsorted_offers(offer_list, 'featured')
+      cache_unsorted_offers(offer_list, FEATURED_OFFER_TYPE)
       cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
       offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.for_display_ads.to_a
-      cache_unsorted_offers(offer_list, 'display')
+      cache_unsorted_offers(offer_list, DISPLAY_OFFER_TYPE)
       cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
       offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.for_offer_list.to_a
-      cache_unsorted_offers(offer_list, 'non_rewarded_display')
+      cache_unsorted_offers(offer_list, NON_REWARDED_DISPLAY_OFFER_TYPE)
       cache_offer_list(offer_list, weights, NON_REWARDED_DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
       offer_list = Offer.enabled_offers.featured.non_rewarded.free_apps.for_offer_list + Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.for_offer_list
-      cache_unsorted_offers(offer_list, 'non_rewarded_featured')
+      cache_unsorted_offers(offer_list, NON_REWARDED_FEATURED_OFFER_TYPE)
       cache_offer_list(offer_list, weights, NON_REWARDED_FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
     end
   end
@@ -658,6 +659,7 @@ class Offer < ActiveRecord::Base
       'iOS'
     end
   end
+  memoize :get_platform
 
   def wrong_platform?
     if ['App', 'ActionOffer'].include?(item_type)
@@ -685,6 +687,7 @@ class Offer < ActiveRecord::Base
     self.rank_score = weights.keys.inject(0) { |sum, key| sum + (weights[key] * send(key)) }  
     self.rank_score += 5 if item_type == "ActionOffer"
     self.rank_score += 10 if price == 0
+    self.rank_score
   end
   
   def estimated_percentile
@@ -714,20 +717,20 @@ class Offer < ActiveRecord::Base
   end
   
   def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
-    return device_platform_mismatch?(publisher_app, device_type) ||
-        geoip_reject?(geoip_data, device) ||
-        already_complete?(publisher_app, device, app_version) ||
-        show_rate_reject?(device) ||
-        flixter_reject?(publisher_app, device) ||
-        minimum_bid_reject?(currency, type) ||
-        jailbroken_reject?(device) ||
-        direct_pay_reject?(direct_pay_providers) ||
-        action_app_reject?(device) ||
-        hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs) ||
-        min_os_version_reject?(os_version) ||
-        cookie_tracking_reject?(publisher_app, library_version) ||
-        screen_layout_sizes_reject?(screen_layout_size) ||
-        should_reject_from_app_or_currency?(publisher_app, currency)
+    device_platform_mismatch?(publisher_app, device_type) ||
+      geoip_reject?(geoip_data, device) ||
+      already_complete?(publisher_app, device, app_version) ||
+      show_rate_reject?(device) ||
+      flixter_reject?(publisher_app, device) ||
+      minimum_bid_reject?(currency, type) ||
+      jailbroken_reject?(device) ||
+      direct_pay_reject?(direct_pay_providers) ||
+      action_app_reject?(device) ||
+      hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs) ||
+      min_os_version_reject?(os_version) ||
+      cookie_tracking_reject?(publisher_app, library_version) ||
+      screen_layout_sizes_reject?(screen_layout_size) ||
+      should_reject_from_app_or_currency?(publisher_app, currency)
   end
   
   def should_reject_from_app_or_currency?(publisher_app, currency)
@@ -883,11 +886,11 @@ class Offer < ActiveRecord::Base
 private
   
   def is_disabled?(publisher_app, currency)
-    return item_id == currency.app_id || 
-        currency.get_disabled_offer_ids.include?(item_id) || 
-        currency.get_disabled_partner_ids.include?(partner_id) ||
-        (currency.only_free_offers? && is_paid?) ||
-        (self_promote_only? && partner_id != publisher_app.partner_id)
+    item_id == currency.app_id || 
+      currency.get_disabled_offer_ids.include?(item_id) || 
+      currency.get_disabled_partner_ids.include?(partner_id) ||
+      (currency.only_free_offers? && is_paid?) ||
+      (self_promote_only? && partner_id != publisher_app.partner_id)
   end
 
   def device_platform_mismatch?(publisher_app, device_type_param)
@@ -900,7 +903,7 @@ private
         'itouch'
       end
 
-    return !get_device_types.include?(device_type)
+    !get_device_types.include?(device_type)
   end
   
   def app_platform_mismatch?(publisher_app)
@@ -911,7 +914,7 @@ private
   def age_rating_reject?(currency)
     return false if currency.max_age_rating.nil?
     return false if age_rating.nil?
-    return currency.max_age_rating < age_rating
+    currency.max_age_rating < age_rating
   end
   
   def geoip_reject?(geoip_data, device)
@@ -921,7 +924,7 @@ private
     return true if !postal_codes.blank? && postal_codes != '[]' && !get_postal_codes.include?(geoip_data[:postal_code])
     return true if !cities.blank? && cities != '[]' && !get_cities.include?(geoip_data[:city])
         
-    return false
+    false
   end
   
   def already_complete?(publisher_app, device, app_version)
@@ -952,7 +955,7 @@ private
       return device.has_app('7f44c068-6fa1-482c-b2d2-770edcf8f83d') || device.has_app('192e6d0b-cc2f-44c2-957c-9481e3c223a0')
     end
     
-    return device.has_app(app_id_for_device)
+    device.has_app(app_id_for_device)
   end
   
   def show_rate_reject?(device)
@@ -962,7 +965,7 @@ private
     should_reject = rand > show_rate
     srand
     
-    return should_reject
+    should_reject
   end
   
   def flixter_reject?(publisher_app, device)
@@ -978,15 +981,15 @@ private
       # Only show offer if user has recently run flixter:
       return true if !device.has_app(flixter_id) || device.last_run_time(flixter_id) < (Time.zone.now - 1.days)
     end
-    return false
+    false
   end
   
   def publisher_whitelist_reject?(publisher_app)
-    return publisher_app_whitelist.present? && !get_publisher_app_whitelist.include?(publisher_app.id)
+    publisher_app_whitelist.present? && !get_publisher_app_whitelist.include?(publisher_app.id)
   end
   
   def currency_whitelist_reject?(currency)
-    return currency.use_whitelist? && !currency.get_offer_whitelist.include?(id)
+    currency.use_whitelist? && !currency.get_offer_whitelist.include?(id)
   end
   
   def minimum_bid_reject?(currency, type)
@@ -1010,7 +1013,7 @@ private
   end
   
   def direct_pay_reject?(direct_pay_providers)
-    return direct_pay? && !direct_pay_providers.include?(direct_pay)
+    direct_pay? && !direct_pay_providers.include?(direct_pay)
   end
   
   def action_app_reject?(device)
