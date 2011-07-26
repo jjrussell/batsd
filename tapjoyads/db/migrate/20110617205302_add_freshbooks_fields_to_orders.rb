@@ -1,4 +1,4 @@
-class AddFieldsToOrders < ActiveRecord::Migration
+class AddFreshbooksFieldsToOrders < ActiveRecord::Migration
   def self.up
     add_column :orders, :invoice_id, :integer
     add_column :orders, :description, :string

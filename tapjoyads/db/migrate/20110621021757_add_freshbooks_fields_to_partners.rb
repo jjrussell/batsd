@@ -1,4 +1,4 @@
-class AddFieldsToPartners < ActiveRecord::Migration
+class AddFreshbooksFieldsToPartners < ActiveRecord::Migration
   def self.up
     add_column :partners, :billing_email, :string
     add_column :partners, :freshbooks_client_id, :integer
