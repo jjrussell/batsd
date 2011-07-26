@@ -235,8 +235,7 @@
         $(".get_offerwall_jsonp").unbind("click");
         getOfferWalls();
       }
-      /*
-      function getMoreOfferWalls() {
+      function getMoreGames() {
         $(".more_games_url").click(function() {
             TJG.ui.showLoader();
             $("#more_games_content").fadeOut(350,function() {
@@ -266,8 +265,7 @@
           }
         }); 
       }
-      */
       getOfferWalls();
-      /*getMoreOfferWalls();*/
+      getMoreGames();
       TJG.path =  "#{games_root_path}";
     });
