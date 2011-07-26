@@ -14,7 +14,7 @@ class Games::HomepageController < GamesController
     @device = Device.new(:key => current_gamer.udid)
     @external_publishers = ExternalPublisher.load_all_for_device(@device)
     if @external_publishers.empty?
-      redirect_to games_editors_picks_path
+      redirect_to games_more_games_path(:no_games => true)
     end
   end
 

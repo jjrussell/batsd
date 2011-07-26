@@ -1,26 +1,16 @@
 #jqt
   #recommended.current
-    %div.top_nav_bar.toolbar
+    .top_nav_bar.toolbar
       .nav_content
         .right
           = mail_to 'support@tapjoy.com', 'Support', :id => 'support'
         .right
           = link_to 'My Account', "#my_account", :class => "flip"  
-    %div.container.vertical-scroll
-      %div.scroller.with-scrollbar
-        %div.page
+    .container.vertical-scroll
+      .scroller.with-scrollbar
+        .page
           .logo
-            .slide_nav
-              .slider.slider_right.right
-                %span.title.small
-                  More Games
-              .slider_btn.left
-                .slider.slider_active.slider_left
-                  %span.title
-                    My Apps
-                .slide_arrow_wrapper.bottom_arrow
-                  .slide_arrow
-          .content.message
+          .content
             %ul
               - @editors_picks.each do |pick|
                 %li.offer_item.clearfix
@@ -34,8 +24,7 @@
                         .offer_meta
                           %span.offer_category
                             = pick.offer.item.categories.first.to_s.titleize
-                          %span.offer_rating
-                            = pick.offer.item.user_rating
+                          %span.offer_rating{ :rating => pick.offer.item.user_rating }
                         .offer_description
                           = pick.description
                         .offer_button
@@ -48,9 +37,9 @@
 
 
   #my_account.tan
-    %div.container.vertical-scroll
-      %div.scroller.with-scrollbar
-        %div.page
+    .container.vertical-scroll
+      .scroller.with-scrollbar
+        .page
           .logo
             .slide_nav.left
               .left
@@ -59,11 +48,12 @@
               .slider.slider_active.slider_left.left
                 .title
                   = link_to 'Back', "#", :class => "back" 
-          .content.hide 
+          .content
+            = link_to "Logout", games_logout_path
 
 
 #loader.dialog_wrapper.hide
-  #progress.dialog
+  .dialog
     .dialog_title
       Loading
     .dialog_image
@@ -82,4 +72,8 @@
         var jQT = new $.jQTouch({
           slideSelector: '#jqt .slide_nav',
         });
+        var linked_games = TJG.utils.getParam("no_games");
+        if (linked_games.indexOf("true") != -1) {
+          $("#register_device").fadeIn(350); 
+        }          
       });

@@ -84,7 +84,7 @@
                   More Games
               .slider.slider_left.left
                 %span.title
-                  = link_to 'My Apps', "#home", :class => "slideright" 
+                  = link_to "My Apps", "#home", :class => "slideright" 
           #more_games_content.content.hide
 
   #my_account.tan
@@ -98,9 +98,9 @@
                   .slide_arrow
               .slider.slider_active.slider_left.left
                 .title
-                  = link_to 'Back', "#", :class => "back" 
-          .content.hide   
-
+                  = link_to "Back", "#", :class => "back"
+          .content
+            = link_to "Logout", games_logout_path
 
 #sign_up_dialog.dialog_wrapper.hide
   .dialog

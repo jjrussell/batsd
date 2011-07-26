@@ -466,8 +466,6 @@ form#new_gamer input[type=password] {
   font-weight: bold; 
   -webkit-transform: rotate(-1deg);	
   -moz-transform: rotate(-1deg);
-  -ms-transform: rotate(-1deg);
-  -o-transform: rotate(-1deg);
   transform: rotate(-1deg);
 }
 .web .earn_paper_title {
@@ -669,7 +667,11 @@ form#new_gamer_session .fieldWithErrors input[type=text],  form#new_gamer_sessio
   padding-top: 6px;
 }
 .mobile .offer_title {
-  font-size: 12px;
+  font-size: 13px;
+}
+.offer_meta, .offer_description {
+  font-size: 11px;
+  margin: 2px 0;
 }
 #earn_content .button.grey {
   -moz-border-radius: 8px;
@@ -775,10 +777,12 @@ form#new_gamer_session .fieldWithErrors input[type=text],  form#new_gamer_sessio
   text-shadow: none;
   color: #006C94;
 }
-.button.grey a {
-  background: transparent url('/images/games/button_right_arrow.png') no-repeat center right;
+.button.grey a { 
   color: #2F8AA4;
-  padding-right: 20px;
+}
+.button.grey.arrow a {
+  background: transparent url('/images/games/button_right_arrow.png') no-repeat center right;
+  padding-right: 20px; 
 }
 .button.m_width {
   padding: 6px 10px 7px 10px;
@@ -859,7 +863,6 @@ body {
   -webkit-text-size-adjust: none;
   -webkit-user-select: none;
   bottom: 0;
-  font-family: "Helvetica Neue", Helvetica;
   left: 0;
   position: absolute;
   right: 0;

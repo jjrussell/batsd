@@ -4,6 +4,7 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options({:path_prefix => MACHINE_TYPE == 'games' ? '' : 'games', :name_prefix => 'games_'}) do |m|
     m.root :controller => 'games/homepage', :action => :index
     m.real_index 'real_index', :controller => 'games/homepage', :action => :real_index
+    m.more_games 'more_games', :controller => 'games/more_games', :action => :index
     
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy ]
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
