@@ -218,15 +218,15 @@ class Currency < ActiveRecord::Base
 private
   
   def cache_by_app_id
-    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'), false, 1.day)
+    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }, false, 1.day)
     
     if app_id_changed?
-      Mc.distributed_put("mysql.app_currencies.#{app_id_was}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC'), false, 1.day)
+      Mc.distributed_put("mysql.app_currencies.#{app_id_was}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }, false, 1.day)
     end
   end
   
   def clear_cache_by_app_id
-    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'), false, 1.day)
+    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }, false, 1.day)
   end
   
   def get_spend_share_ratio
