@@ -73,13 +73,19 @@ private
         :currency           => currency,
         :device_type        => params[:device_type],
         :geoip_data         => geoip_data,
-        :required_length    => 25,
+        :required_length    => 100,
         :os_version         => params[:os_version],
         :type               => Offer::DISPLAY_OFFER_TYPE,
         :library_version    => params[:library_version],
         :screen_layout_size => params[:screen_layout_size])
-
-    offer = offer_list[rand(offer_list.size)]
+        
+    if offer_list.any?
+      weight_scale = 1 - offer_list.last.rank_score
+      weights = offer_list.collect { |offer| offer.rank_score + weight_scale }
+      offer = offer_list.weighted_rand(weights)
+    else
+      offer = nil
+    end
   
     if offer.present?
       @click_url = offer.get_click_url(
