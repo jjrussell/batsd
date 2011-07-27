@@ -2,33 +2,23 @@ class Tools::AgencyUsersController < WebsiteController
   layout 'tabbed'
   current_tab :tools
   filter_access_to :all
-
-  before_filter :get_agency_users
-
+  before_filter :get_account_managers, :only => [ :show ]
+  
   def index
+    @agency_users = UserRole.find_by_name("agency").users
   end
 
   def show
-    if params[:id] == 'featured'
-      @offers = Offer.get_cached_offers({ :type => Offer::FEATURED_OFFER_TYPE })
-    elsif params[:id] == 'non_rewarded'
-      @offers = Offer.get_cached_offers({ :type => Offer::NON_REWARDED_DISPLAY_OFFER_TYPE })
-    else
-      @offers = Offer.get_cached_offers({ :type => Offer::DEFAULT_OFFER_TYPE, :exp => params[:id] })
-    end
+    @pid=params[:id]
+    @agency_user = User.find(params[:id])
+    #render(:partial => 'shared/_partner_table', :locals => {:partners => @agency_user.partners})
     
-    @offers.reject! { |offer| offer.show_rate == 0 }
-    
-    if params[:device] && params[:device] != 'all'
-      @offers.reject! { |o| !o.get_device_types.include?(params[:device]) }
-    end
   end
 
 private
-
-  def get_agency_users
-    # sort experiments by id ascending
-    @agency_users = Experiments::EXPERIMENTS.to_a.sort! { |a, b| a[1] <=> b[1] }
+  def get_account_managers
+    @account_managers = User.account_managers.map{|u|[u.email, u.id]}.sort
+    @account_managers.unshift(["All", "all"])
+    @account_managers.push(["Not assigned", "none"])
   end
-
 end

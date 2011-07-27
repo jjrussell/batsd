@@ -1,1 +1,43 @@
-- @page_title = "Agency User Show"
+- @page_title = "Agency User"
+%h1= @page_title
+%h2= "Basic Info"
+%table.tablesorter
+  %thead
+    %tr
+      %th User ID
+      %th Email
+      %th Roles
+  %tbody
+    %tr
+      %td.user-id= @agency_user.id
+      %td.email= @agency_user.email
+      %td
+        %ul
+          - @agency_user.user_roles.sort_by(&:name).each do |role|
+            %li{:class => role.name}= role.name
+  %br/
+
+%h2= "Partners"
+=render :partial => "shared/partner_table", :locals => { :partners => @agency_user.partners }
+
+
+- content_for :page_styles do
+  :plain
+    td.user-id {
+      font-family: 'courier new';
+    }
+    td.email {
+      font-size: 16px;
+    }
+    td {
+      vertical-align: top;
+    }
+    ul {
+      margin: 0px;
+    }
+    li.admin, li.executive {
+      color: red;
+    }
+    li.payout_manager, li.payops {
+      color: green;
+    }
