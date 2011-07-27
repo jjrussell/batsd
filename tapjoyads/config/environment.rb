@@ -130,4 +130,3 @@ Mime::Type.register "text/objective-c-header", :h
 Mime::Type.register "text/java", :java
 Mime::Type.register "application/x-apple-aspen-config", :mobileconfig
 Differ.format = :html
-COMMUNITY_URL = 'http://groups.google.com/group/tapjoy-developer'
