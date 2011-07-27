@@ -9,10 +9,7 @@ class Tools::AgencyUsersController < WebsiteController
   end
 
   def show
-    @pid=params[:id]
-    @agency_user = User.find(params[:id])
-    #render(:partial => 'shared/_partner_table', :locals => {:partners => @agency_user.partners})
-    
+    @agency_user = User.find(params[:id])    
   end
 
 private
