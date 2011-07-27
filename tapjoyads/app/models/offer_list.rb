@@ -22,7 +22,18 @@ class OfferList
     
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
-    @offers = RailsCache.get_and_put("offers.#{@type}") { Offer.get_unsorted_offers(@type) }.value.sort_by { |o| [ o.featured? ? 0 : 1, -o.calculate_rank_score(@currency.weights) ] }
+    if @hide_rewarded_app_offers
+      @type = case type
+      when Offer::FEATURED_OFFER_TYPE
+        Offer::NON_REWARDED_FEATURED_OFFER_TYPE
+      when Offer::DISPLAY_OFFER_TYPE
+        Offer::NON_REWARDED_DISPLAY_OFFER_TYPE
+      else
+        @type
+      end
+    end
+    
+    @offers = RailsCache.get_and_put("offers.#{@type}") { Offer.get_unsorted_offers(@type) }.value.each { |o| o.calculate_rank_score(@currency.weights) }
   end
   
   def weighted_rand
@@ -40,6 +51,7 @@ class OfferList
   end
   
   def get_offers(start, max_offers)
+    @offers.sort! { |a,b| b.rank_score <=> a.rank_score }
     returned_offers = []
     offers_to_find  = start + max_offers
     found_offers    = 0
