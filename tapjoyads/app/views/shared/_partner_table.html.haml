@@ -1,0 +1,74 @@
+%table#partners_table.tablesorter
+  %thead
+    %tr
+      %th Name
+      %th Contact
+      - if current_user.is_one_of?([:admin, :account_mgr])
+        %th Account Manager
+      %th Balance
+      %th
+        Pending
+        %br/
+        Earnings
+      %th{ :class => params[:q].blank? ? 'up_arrow' : '' } Created
+      %th Premier
+      %th Offers
+  %tbody
+    - partners.each do |partner|
+      %tr{ :class => cycle('even', 'odd') }
+        %td.nowrap= link_to(partner.name || 'Unknown', partner_path(partner))
+        %td
+          = partner.non_managers.map(&:email).join(', ')
+          %br/
+          = partner.contact_phone
+          %br/
+          - form_tag(make_current_partner_path(partner)) do
+            - if current_partner == partner
+              = submit_tag("Acting as this partner", :class => 'act_as_button', :disabled => true)
+            - else
+              = submit_tag("Act as this partner", :class => 'act_as_button')
+        - if current_user.is_one_of?([:admin, :account_mgr])
+          %td.account_manager
+            - form_for(partner) do |f|
+              - options = options_from_collection_for_select(User.account_managers, "id", "email", partner.account_managers.map(&:id))
+              = f.select :account_managers, options, {:include_blank => '(no one)'}
+            = image_tag 'load-circle.gif', :class => 'hidden'
+            .message.hidden
+        %td= number_to_currency(partner.balance / 100.0)
+        %td= number_to_currency(partner.pending_earnings / 100.0)
+        %td.nowrap= partner.created_at.to_s(:pub)
+        %td= partner.is_premier? ? "#{partner.premier_discount}%" : "false"
+        %td
+          - partner.offers.each do |o|
+            .offer
+              = image_tag(o.get_icon_url, :size => '20x20')
+              = link_to_offer(o)
+              - if o.tapjoy_enabled? || o.user_enabled?
+                = '(' + (o.tapjoy_enabled? ? 'T' : '') + (o.user_enabled? ? 'U' : '') + ')'
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+    table.tablesorter th.up_arrow {
+      background-position: 100% 50%;
+      background-repeat: no-repeat;
+      background-image: url(/stylesheets/themes/blue/asc.gif);
+      background-color: #8DBDD8;
+    }
+    .offer {
+      display: inline-block;
+      padding-right: 10px;
+      padding-top: 5px;
+    }
+    .nowrap {
+      white-space: nowrap;
+    }
+    .act_as_button {
+      font-size: 10px!important;
+      padding:2px!important;
+    }
+    .agency {
+      color: red;
+    }
