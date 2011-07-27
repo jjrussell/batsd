@@ -53,7 +53,7 @@ class Tools::OrdersController < WebsiteController
   end
 
   def mark_invoiced
-    order = Order.find(params[:order_id])
+    order = Order.find(params[:id])
     order.status = 1
     order.save
     flash[:notice] = "Order #{order.id} marked as invoiced"

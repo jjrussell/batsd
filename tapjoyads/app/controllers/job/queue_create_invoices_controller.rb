@@ -7,8 +7,10 @@ class Job::QueueCreateInvoicesController < Job::SqsReaderController
 private
 
   def on_message(message)
-    order = Order.find(message)
-    order.create_freshbooks_invoice unless order.invoice_id
-    order.save!
+    Order.transaction do
+      order = Order.find(message, :lock => 'FOR UPDATE')
+      order.create_freshbooks_invoice unless (order.invoice_id || order.status == 3)
+      order.save!
+    end
   end
 end
