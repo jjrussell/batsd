@@ -369,7 +369,7 @@ private
   def create_app_metadata
     return unless store_id.present?
 
-    app_metadata = AppMetadata.find(:first, :conditions => ["store_name = ? and store_id = ?", store_name, store_id])
+    app_metadata = AppMetadata.find_by_store_name_and_store_id(store_name, store_id)
     if app_metadata.nil?
       # only create this record if one doesn't already exist for this store and store_id
       app_metadata = AppMetadata.new(
@@ -379,10 +379,7 @@ private
     end
     fill_app_metadata(app_metadata)
 
-    AppMetadataMapping.create!(
-      :app_id          => id,
-      :app_metadata_id => app_metadata.id
-    )
+    app_metadata.apps << self
   end
 
   def update_app_metadata
@@ -396,7 +393,7 @@ private
     else
       if mapping.app_metadata.store_id != store_id
         # app_metadata record points to the wrong store_id -- update to correct record, creating if necessary
-        new_metadata = AppMetadata.find(:first, :conditions => ["store_name = ? and store_id = ?", store_name, store_id])
+        new_metadata = AppMetadata.find_by_store_name_and_store_id(store_name, store_id)
         if new_metadata.nil?
           new_metadata = AppMetadata.create!(
             :store_name => store_name,

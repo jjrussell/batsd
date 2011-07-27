@@ -168,10 +168,7 @@ class OneOffs
         )
       end
 
-      AppMetadataMapping.create!(
-        :app_id          => app.id,
-        :app_metadata_id => app_metadata.id
-      )
+      app_metadata.apps << app
     end
   end
 end
