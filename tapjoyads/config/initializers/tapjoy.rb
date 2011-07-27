@@ -25,7 +25,7 @@ WINDOWS_CONNECT_SDK = 'https://s3.amazonaws.com/tapjoy/sdks/'
 WINDOWS_OFFERS_SDK  = 'https://s3.amazonaws.com/tapjoy/sdks/'
 WINDOWS_VG_SDK      = 'https://s3.amazonaws.com/tapjoy/sdks/'
 
-COMMUNITY_URL = 'http://groups.google.com/group/tapjoy-developer'
+COMMUNITY_URL = 'https://groups.google.com/group/tapjoy-developer'
 
 unless Rails.env == 'production'
   Mc.cache.flush
