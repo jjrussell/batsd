@@ -53,6 +53,8 @@
           - if premier_enabled?
             = mail_to "premiersupport@tapjoy.com", "Support", :subject => "Premier Support"
             |
+          = link_to('Community', COMMUNITY_URL)
+          |
           = link_to('Logout', logout_path)
         .clear
     
