@@ -20,7 +20,7 @@ user = ARGV[2] || 'webuser'
 serial = (ARGV[3] || false) && server_groups.include?('webserver')
 if serial
   elb_interface = Ec2Tasks.get_elb_interface
-  registered_webservers = elb_interface.describe_instance_health('web-lb').collect { |instance| instance[:instance_id] }
+  registered_webservers = elb_interface.describe_instance_health('api-lb').collect { |instance| instance[:instance_id] }
 end
 
 # add servers to ~/.ssh/known_hosts to prevent prompts
