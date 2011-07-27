@@ -64,7 +64,7 @@ module GetOffersHelper
     elsif offer.price <= 300
       '$$$'
     else
-      '$$$$'
+      '$$$+'
     end
   end
   
