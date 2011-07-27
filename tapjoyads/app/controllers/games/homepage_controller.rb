@@ -4,7 +4,7 @@ class Games::HomepageController < GamesController
   
   def index
     if current_gamer.present?
-      redirect_to games_real_index_path 
+      redirect_to games_real_index_path
     else 
       render :layout => false, :template => 'games/homepage/index'
     end

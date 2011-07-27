@@ -172,11 +172,27 @@ TJG.ui = {
                '<div class="dialog_content">A confirmation email has been sent to the address you entered.  Please follow the registration in the email to verify your address and complete the account registration. :)</div>'
               ].join('');
               $('.close_dialog').unbind('click');
-              if (d.redirect_url) {
+              if (TJG.vars.isIos == false) {
+                  if (d.more_games_url) {
+                    $('.close_dialog').click(function(){
+                      alert(d.more_games_url);
+                      document.location.href = d.more_games_url;
+                    });                    
+                  }
+                  else {
+                    document.location.href = location.protocol + '//' + location.host;
+                  }
+              }
+              else if (d.link_device_url) {
                 $('.close_dialog').click(function(){
-                  document.location.href = d.redirect_url;
+                  document.location.href = d.link_device_url;
                 });
               }
+              else {
+                $('.close_dialog').click(function(){
+                  document.location.href = location.protocol + '//' + location.host;
+                });
+              } 
             }
             else {
               var error = 'There was an issue with registering your account';

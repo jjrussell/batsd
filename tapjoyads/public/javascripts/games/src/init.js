@@ -5,6 +5,7 @@ TJG.vars.isDev = true;
 TJG.vars.isSwapped = false;
 TJG.vars.isIos = false;
 TJG.vars.isTouch = false;
+TJG.vars.newRegister = false;
 TJG.appOfferWall = {};
 (function(window, document) {
     var winH = $(window).height();

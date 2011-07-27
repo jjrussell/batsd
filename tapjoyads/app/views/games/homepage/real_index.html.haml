@@ -37,11 +37,10 @@
                       - external_publisher.currencies.each_with_index do |currency, i|
                         - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency), :currency => currency[:name], :app_name => external_publisher.app_name) do
                           .offer_button
-                            .button.blue         
+                            .button.blue 
                               %span.amount
                                 Earn
                                 = currency[:name]
-                        = " " if i != external_publisher.currencies.size - 1
 
   #earn
     .top_nav_bar.toolbar
@@ -120,7 +119,7 @@
       .dialog_header_left
       .dialog_title.title_2 Hooray!
     .dialog_header Your device has been linked to your Tapjoy Games account
-    .dialog_content Now close this box and start earning currency in your favorite games!s  
+    .dialog_content Now close this box and start earning currency in your favorite games!
 
 
 #loader.dialog_wrapper.hide
@@ -179,7 +178,7 @@
                       '</ul>'
                     ];
                     if (TJG.appOfferWall[appId]['offers_left'] > 0) {
-                      t.push('<div class="get_more_apps" app_id="' + appId + '"><div class="get_more_apps_content title_2">Load More<div class="load_more_loader dialog_image hide"></div></div></div>');
+                      t.push('<div class="get_more_apps" app_id="' + appId + '"><div class="get_more_apps_content title_2">Load More<div class="load_more_loader dialog_image dark hide"></div></div></div>');
                     }
                     t = t.join('');
                     $("#earn_content").html(t);
@@ -244,13 +243,13 @@
           });
           if (TJG.moreAppOfferWall) {
             TJG.ui.hideLoader();
-            $("#more_games_content").html(c);
+            $("#more_games_content").html(TJG.moreAppOfferWall);
             TJG.onload.loadCufon();
             $("#more_games_content").fadeIn(450);
           }
           else {
-            $.ajax({
-              url: "#{games_root_path}" + "/more_games?ajax=1",
+            $.ajax({ 
+              url: "#{games_editor_picks_path}" + "?ajax=1",
               success: function(c) {
                 TJG.moreAppOfferWall = c;
                 TJG.ui.hideLoader();
@@ -268,4 +267,5 @@
       getOfferWalls();
       getMoreGames();
       TJG.path =  "#{games_root_path}";
+      TJG.editor_choice_path =  "#{games_editor_picks_path}";
     });

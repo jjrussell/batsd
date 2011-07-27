@@ -12,7 +12,7 @@
             .slide_nav
               .slider.slider_right.right
                 %span.title.small
-                  More Games
+                  = link_to "More Games", games_more_games_path
               .slider_btn.left
                 .slider.slider_active.slider_left
                   %span.title
@@ -25,7 +25,7 @@
             .message_header
               You must link your device in order to view your apps!
             .message_content
-              %span.button.grey
+              %span.button.grey.arrow  
                 = link_to "Please link your device now", new_games_gamer_device_path
 
   #my_account.tan
@@ -43,9 +43,10 @@
           .content.hide
 
 #bad_news.dialog_wrapper.hide
+  .close_dialog
+    .close_button
   .dialog
     .dialog_header_wrapper
-      .dialog_header_wrapper
       .dialog_header_right
       .dialog_header_left
       .dialog_title.title_2 Bad News
@@ -59,7 +60,7 @@
     .dialog_image
 
 - content_for :page_javascript do
-  - if Rails.env.production?
+  - if Rails.env.development?
     :plain
       $(window).load(function() {
         if (TJG.vars.isIos == false) {

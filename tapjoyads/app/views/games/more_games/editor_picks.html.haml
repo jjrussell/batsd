@@ -10,6 +10,17 @@
       .scroller.with-scrollbar
         .page
           .logo
+            .slide_nav
+              .slider_wrapper.right 
+                .slider.slider_active.slider_right
+                  %span.title.small
+                    More Games
+                .slide_arrow_wrapper.bottom_arrow
+                  .slide_arrow
+              .slider_btn.left
+                .slider.slider_left
+                  %span.title
+                    =link_to "My Apps", games_root_path
           .content
             %ul
               - @editors_picks.each do |pick|

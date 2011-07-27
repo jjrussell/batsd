@@ -11,7 +11,7 @@ class Games::GamersController < GamesController
     end
     if @gamer.save
       GamesMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.perishable_token))
-      render(:json => { :success => true, :redirect_url => new_games_gamer_device_path }) and return
+      render(:json => { :success => true, :link_device_url => new_games_gamer_device_path, :more_games_url => games_more_games_path }) and return
     else
       render(:json => { :success => false, :error => @gamer.errors }) and return
     end

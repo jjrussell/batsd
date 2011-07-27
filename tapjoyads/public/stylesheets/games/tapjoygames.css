@@ -8,7 +8,7 @@ table { border-collapse: collapse; border-spacing: 0; }
 .web body, .ipad body {
     background: #434343 url('/images/games/bg.png');
 }
-.web body .tan, .ipad body .tan {
+.web body .tan, .ipad body .tan, div.slider {
   background: #434343 url('/images/games/bg_tan.png');
   color: #605846;
 }
@@ -98,6 +98,9 @@ a, a:visited {
   from {-webkit-transform: rotate(0deg);}
   to {-webkit-transform: rotate(360deg);}
 }
+.dialog_image.dark {
+  background:transparent url('/images/games/loader_dark.png') no-repeat;
+}
 #loader.dialog_wrapper {
   width: 200px;
 }
@@ -179,9 +182,9 @@ form#new_gamer input[type=password] {
 }
 .close_button {
   background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAAGWB6gOAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTQzMTY2MkJBNTQwMTFFMEFBNTM5NkIyNTM1Njc3OEMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTQzMTY2MkNBNTQwMTFFMEFBNTM5NkIyNTM1Njc3OEMiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4OEQzOUI1NEE0RTYxMUUwQUE1Mzk2QjI1MzU2Nzc4QyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5NDMxNjYyQUE1NDAxMUUwQUE1Mzk2QjI1MzU2Nzc4QyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsTjM4IAAArhSURBVHjaYmCAAG5L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) no-repeat;
+  cursor: pointer;
   float: right;
   height: 36px;
-  cursor: pointer;
   position: absolute;
   right: -15px;
   top: -15px;
@@ -273,20 +276,17 @@ form#new_gamer input[type=password] {
   height: 145px;
 }
 .mobile.hd.portrait .logo {
-  background: transparent url('/images/games/logo_bg_mobile_hd_p.png') no-repeat;
+  background: transparent url('/images/games/logo_title_web.png') no-repeat;
   background-size: 100%;
   margin: 0 auto;
   width: 100%;
 }
 .mobile.hd.landscape .logo {
-  background: transparent url('/images/games/logo_bg_mobile_hd_l.png') no-repeat;
+  background: transparent url('/images/games/logo_title_web.png') no-repeat;
   background-size: 100%;
   margin: 0 auto;
   width: 100%;
 }
-
-
-
 .slide_nav {
   position: relative;
 }
@@ -360,11 +360,17 @@ form#new_gamer input[type=password] {
   padding-bottom: 1px;
   top: -1px;
 }
-.web .slide_arrow_wrapper.bottom_arrow {
+.web .slide_arrow_wrapper.bottom_arrow, .ipad .slide_arrow_wrapper.bottom_arrow {
   left: 46px;
   padding-bottom: 1px;
   top: -1px;
 }
+.web .slider_wrapper.right .slide_arrow_wrapper.bottom_arrow, .ipad .slider_wrapper.right .slide_arrow_wrapper.bottom_arrow  {
+  left: 62px;
+}
+.mobile .slider_wrapper.right .slide_arrow_wrapper.bottom_arrow {
+  left: 40px;
+}   
 .slide_arrow_wrapper.left_arrow {
   background-color: transparent;
   height: 30px;
@@ -396,7 +402,7 @@ form#new_gamer input[type=password] {
 .web .content, .ipad .content {
   color: #FFF;
   margin: 0 auto;
-  max-width: 1000px;
+  max-width: 880px;
   padding: 0 40px; 
 }
 .mobile .content {
@@ -658,6 +664,11 @@ form#new_gamer_session .fieldWithErrors input[type=text],  form#new_gamer_sessio
 .mobile .landscape .offer_text {
   width: 400px;
 }
+.web .portrait .offer_text, .ipad .portrait .offer_text {
+  width: 800px;
+}
+.web .landscape .offer_text, .ipad .landscape .offer_text {
+}  
 .offer_info {
   float: left;
   text-overflow: ellipsis;
@@ -669,10 +680,14 @@ form#new_gamer_session .fieldWithErrors input[type=text],  form#new_gamer_sessio
 .mobile .offer_title {
   font-size: 13px;
 }
-.offer_meta, .offer_description {
-  font-size: 11px;
-  margin: 2px 0;
+.web .offer_meta, .web .offer_description, .ipad .offer_meta, .ipad .offer_description {
+  font-size: 13px;
+  margin: 4px 0;
 }
+.mobile .offer_meta, .mobile .offer_description {
+  font-size: 12px;
+  margin: 2px 0;
+}  
 #earn_content .button.grey {
   -moz-border-radius: 8px;
   -webkit-border-radius: 8px
@@ -776,6 +791,9 @@ form#new_gamer_session .fieldWithErrors input[type=text],  form#new_gamer_sessio
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #E6E6E6), color-stop(1, #C4C4C4));
   text-shadow: none;
   color: #006C94;
+}
+.mobile .button.grey {
+  font-size: 12px;
 }
 .button.grey a { 
   color: #2F8AA4;
