@@ -83,6 +83,7 @@ authorization do
     has_permission_on :tools_external_publishers, :to => [ :index, :update ]
     has_permission_on :tools_users, :to => [ :index, :show ]
     has_permission_on :tools_users_partner_assignments, :to => [ :create, :destroy ]
+    has_permission_on :tools_agency_users, :to => [ :index, :show ]
   end
 
   role :games_editor do

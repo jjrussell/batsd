@@ -1,0 +1,41 @@
+- @page_title = 'Agency User'
+
+%h1= @page_title
+
+%table.tablesorter
+  %thead
+    %tr
+      %th User ID
+      %th Email
+      %th Roles
+  %tbody
+    - @agency_users.each do |user|
+      %tr
+        %td.user-id= link_to(user.id, tools_agency_user_path(user.id))
+        %td.email= user.email
+        %td
+          %ul
+            - user.user_roles.sort_by(&:name).each do |role|
+              %li{:class => role.name}= role.name
+  %br/
+
+- content_for :page_styles do
+  :plain
+    td.user-id {
+      font-family: 'courier new';
+    }
+    td.email {
+      font-size: 16px;
+    }
+    td {
+      vertical-align: top;
+    }
+    ul {
+      margin: 0px;
+    }
+    li.admin, li.executive {
+      color: red;
+    }
+    li.payout_manager, li.payops {
+      color: green;
+    }
