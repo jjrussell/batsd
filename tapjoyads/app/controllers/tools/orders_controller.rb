@@ -19,7 +19,11 @@ class Tools::OrdersController < WebsiteController
       render :action => :new and return
     end
 
-    @order.billing_email = billing_email unless billing_email.blank?
+    unless billing_email.blank?
+      partner = @order.partner
+      partner.billing_email = billing_email
+      partner.save
+    end
 
     log_activity(@order)
     if @order.save
@@ -37,7 +41,7 @@ class Tools::OrdersController < WebsiteController
   end
 
   def retry_invoicing
-    order = Order.find(params[:order_id])
+    order = Order.find(params[:id])
     order.create_freshbooks_invoice
     order.save
     if order.status != 3
@@ -45,7 +49,7 @@ class Tools::OrdersController < WebsiteController
     else
       flash[:error] = "Unable to create invoice for billing email #{order.billing_email}.  Please make sure they exist in FreshBooks."
     end
-    redirect_to tools_failed_invoices_path
+    redirect_to failed_invoices_tools_orders_path
   end
 
   def mark_invoiced
@@ -53,7 +57,7 @@ class Tools::OrdersController < WebsiteController
     order.status = 1
     order.save
     flash[:notice] = "Order #{order.id} marked as invoiced"
-    redirect_to tools_failed_invoices_path
+    redirect_to failed_invoices_tools_orders_path
   end
 
 end

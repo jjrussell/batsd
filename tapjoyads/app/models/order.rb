@@ -51,33 +51,23 @@ class Order < ActiveRecord::Base
   def is_bonus?;    payment_method==2;  end
   def is_transfer?; payment_method==3;  end
 
-  def billing_email=(email)
-    partner.billing_email = email
-    partner.save!
-  end
-
-  def freshbooks_client_id=(client_id)
-    partner.freshbooks_client_id = client_id
-    partner.save!
-  end
-
   def create_freshbooks_invoice
     return if invoice_id
+
+    unless freshbooks_client_id
+      partner.freshbooks_client_id = FreshBooks.get_client_id(billing_email)
+      partner.save! if freshbooks_client_id
+    end
+
     if freshbooks_client_id
       self.invoice_id = FreshBooks.create_invoice(invoice_details)
       self.status = 1
-      Rails.logger.info "FreshBooks invoice created for order #{id}"
-    elsif client_id = FreshBooks.get_client_id(billing_email)
-      self.freshbooks_client_id = client_id
-      Rails.logger.info "Associated partner #{partner.id} with FreshBooks client"
-      self.invoice_id = FreshBooks.create_invoice(invoice_details)
-      self.status = 1
-      Rails.logger.info "FreshBooks invoice created for order #{id}"
     else
-      Rails.logger.info "Unable to create invoice, check that client exists in FreshBooks"
       self.status = 3
     end
   end
+
+private
 
   def invoice_details
     {
@@ -98,8 +88,6 @@ class Order < ActiveRecord::Base
     }
   end
 
-private
-  
   def update_balance
     return true if amount == 0
     Partner.connection.execute("UPDATE partners SET balance = (balance + #{amount}) WHERE id = '#{partner_id}'")
