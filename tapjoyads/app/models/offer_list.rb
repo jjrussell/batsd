@@ -1,23 +1,24 @@
 class OfferList
+  attr_reader :offers
   
-  def initialize(options = {})
-    @publisher_app            = options.delete(:publisher_app)           { |k| raise "#{k} is a required argument" }
-    @device                   = options.delete(:device)                  { |k| raise "#{k} is a required argument" }
-    @currency                 = options.delete(:currency)                { |k| raise "#{k} is a required argument" }
-    @device_type              = options.delete(:device_type)
-    @geoip_data               = options.delete(:geoip_data)              { {} }
-    @app_version              = options.delete(:app_version)
-    @direct_pay_providers     = options.delete(:direct_pay_providers)    { [] }
-    @type                     = options.delete(:type) || Offer::DEFAULT_OFFER_TYPE
-    @library_version          = options.delete(:library_version) || ''
-    @os_version               = options.delete(:os_version)
-    @screen_layout_size       = options.delete(:screen_layout_size)
-  
-    @source                   = options.delete(:source)
-    @exp                      = options.delete(:exp)  
-    @include_rating_offer     = options.delete(:include_rating_offer) { false }
-
-    @hide_rewarded_app_offers = @currency.hide_rewarded_app_installs_for_version?(@app_version, @source)
+  def initialize(options        = {})
+    @publisher_app              = options.delete(:publisher_app)           { |k| raise "#{k} is a required argument" }
+    @device                     = options.delete(:device)                  { |k| raise "#{k} is a required argument" }
+    @currency                   = options.delete(:currency)                { |k| raise "#{k} is a required argument" }
+    @device_type                = options.delete(:device_type)
+    @geoip_data                 = options.delete(:geoip_data)              { {} }
+    @app_version                = options.delete(:app_version)
+    @direct_pay_providers       = options.delete(:direct_pay_providers)    { [] }
+    @type                       = options.delete(:type) || Offer::DEFAULT_OFFER_TYPE
+    @library_version            = options.delete(:library_version) || ''
+    @os_version                 = options.delete(:os_version)
+    @screen_layout_size         = options.delete(:screen_layout_size)
+    @source                     = options.delete(:source)
+    @exp                        = options.delete(:exp)  
+    @include_rating_offer       = options.delete(:include_rating_offer) { false }
+    
+    @hide_rewarded_app_installs = @currency.hide_rewarded_app_installs_for_version?(@app_version, @source)
+    @platform                   = @publisher_app.platform_name
     
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
@@ -32,7 +33,7 @@ class OfferList
       end
     end
     
-    @offers = RailsCache.get_and_put("offers.#{@type}") { Offer.get_unsorted_offers(@type) }.value.each { |o| o.calculate_rank_score(@currency.weights) }
+    @offers = RailsCache.get_and_put("offers.#{@type}.#{@platform}.#{@hide_rewarded_app_installs}") { OfferCacher.get_unsorted_offers_prerejected(@type, @platform, @hide_rewarded_app_installs) }.value.each { |o| o.calculate_rank_score(@currency) }
   end
   
   def weighted_rand

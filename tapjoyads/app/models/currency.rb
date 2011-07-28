@@ -51,7 +51,8 @@ class Currency < ActiveRecord::Base
   after_cache_clear :clear_cache_by_app_id
   
   delegate :weights, :to => :currency_group
-  memoize :weights
+  delegate :categories, :to => :app
+  memoize :weights, :categories
   
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = (Rails.env != 'production'))
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}")
@@ -185,33 +186,6 @@ class Currency < ActiveRecord::Base
   def hide_rewarded_app_installs_for_version?(app_version, source)
     return false if source == 'tj_games'
     hide_rewarded_app_installs? && (minimum_hide_rewarded_app_installs_version.blank? || app_version.present? && app_version.version_greater_than_or_equal_to?(minimum_hide_rewarded_app_installs_version))
-  end
-  
-  def cache_offers
-    weights = currency_group.weights
-    
-    offer_list = Offer.get_unsorted_offers('offerwall').reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
-    Offer.cache_offer_list(offer_list, weights, Offer::DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default], self)
-
-    offer_list = Offer.get_unsorted_offers('featured').reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
-    Offer.cache_offer_list(offer_list, weights.merge({ :random => 0 }), Offer::FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default], self)
-      
-    offer_list = Offer.get_unsorted_offers('display').reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
-    Offer.cache_offer_list(offer_list, weights, Offer::DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default], self)
-    
-    offer_list = Offer.get_unsorted_offers('non_rewarded_display').reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
-    Offer.cache_offer_list(offer_list, weights, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default], self)
-    
-    offer_list = Offer.get_unsorted_offers('non_rewarded_featured').reject { |offer| offer.should_reject_from_app_or_currency?(app, self) }
-    Offer.cache_offer_list(offer_list, weights, Offer::NON_REWARDED_FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default], self)
-  end
-  
-  def get_cached_offers(options = {}, &block)
-    if block_given?
-      Offer.get_cached_offers(options.merge(:currency => self), &block)
-    else
-      Offer.get_cached_offers(options.merge(:currency => self))
-    end
   end
   
   def calculate_spend_shares
