@@ -61,7 +61,17 @@ private
   end
   
   def set_locale
-    I18n.locale = AVAILABLE_LOCALES.include?(params[:language_code]) ? params[:language_code] : nil
+    language_code = params[:language_code]
+    if AVAILABLE_LOCALES.include?(language_code)
+      I18n.locale = language_code
+    else
+      if params[:language_code]['-']
+        language_code = language_code.split('-').first
+        if AVAILABLE_LOCALES.include?(language_code)
+          I18n.locale = language_code
+        end
+      end
+    end
   end
   
   def fix_params
