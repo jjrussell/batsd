@@ -9,7 +9,7 @@
 
     %link{ :rel => 'shortcut icon', :href => '/favicon-tjgames.ico', :content => 'image/vnd.microsoft.icon' }
     %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
- 
+        
     %title= @page_title.blank? ? 'Tapjoy Games' : "#{@page_title} - Tapjoy Games"
     
     - if Rails.env.production?
@@ -30,19 +30,12 @@
     = yield
     
     - if Rails.env.production?
-      //= javascript_include_tag 'games/tapjoygames.min-1.0'
-      = javascript_include_tag 'games/src/jquery-1.4.2'
-      = javascript_include_tag 'games/src/init'
-      = javascript_include_tag 'games/src/cufon-min' 
-      = javascript_include_tag 'games/src/Cooper_Std_900.font'
-      = javascript_include_tag 'games/src/AmerType_Md_BT_700.font'
-      = javascript_include_tag 'games/src/jqtouch'
-      = javascript_include_tag 'games/src/jqt.scroll'
-      = javascript_include_tag 'games/src/tapjoygames'
+      = javascript_include_tag 'games/tjgames.min-1.0'
     - else
+      //= javascript_include_tag 'games/tjgames.min-1.0'
       = javascript_include_tag 'games/src/jquery-1.4.2'
       = javascript_include_tag 'games/src/init'
-      = javascript_include_tag 'games/src/cufon-min' 
+      = javascript_include_tag 'games/src/cufon' 
       = javascript_include_tag 'games/src/Cooper_Std_900.font'
       = javascript_include_tag 'games/src/AmerType_Md_BT_700.font'
       = javascript_include_tag 'games/src/jqtouch'

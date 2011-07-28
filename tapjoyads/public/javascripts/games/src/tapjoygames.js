@@ -115,6 +115,8 @@ TJG.ui = {
     }
     $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
     TJG.onload.loadCufon();
+    $(".close_dialog").show();
+    $("#sign_up_dialog_content").parent().animate({ height: "260px", }, 250);
     $("#sign_up_dialog").fadeIn();
     $('form#new_gamer').submit(function(e){
       e.preventDefault();
@@ -207,6 +209,7 @@ TJG.ui = {
                 '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
                 '<div class="dialog_content">', error ,'. <span id="sign_up_again"><a href="#">Please click here to try again.</a></span></div>',
               ].join('');
+              $(".close_dialog").hide();
             }
             $("#sign_up_dialog_content").parent().animate({ height: "190px", }, 250);
             $("#sign_up_dialog_content").html(msg);
@@ -223,6 +226,7 @@ TJG.ui = {
               '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
               '<div class="dialog_content">', error ,'. <span id="sign_up_again"><a href="#">Please click here to try again.</a></span></div>',
             ].join('');
+            $(".close_dialog").hide(); 
             $("#sign_up_dialog_content").html(msg);
             TJG.onload.loadCufon();
             $('#sign_up_again').click(function(){
@@ -240,8 +244,10 @@ TJG.ui = {
 (function(window, document) {
 
     TJG.onload = {
-
       loadCufon : function (fn,delay) {
+        if (!delay) {
+          delay = 1;
+        }
         if (Cufon) {
           Cufon.replace('.title', { fontFamily: 'Cooper Std' });
           Cufon.replace('.title_2', { fontFamily: 'AmerType Md BT' });
@@ -260,26 +266,18 @@ TJG.ui = {
       },
       
       loadEvents : function () {
-        
-        $('#how_works').click(function(){
-        });
-        
         $('.close_dialog').click(function(){
           TJG.ui.removeDialogs();
         });
-        
         $('#sign_up, #sign_up_form').click(function(){
           TJG.utils.centerDialog("#sign_up_dialog");
           TJG.ui.showRegister();
         });
-        
         $('#how_works').click(function(){
           TJG.utils.centerDialog("#how_works_dialog");
           $("#how_works_dialog").fadeIn(350);
         });
-        
       }
-      
     };
 
     TJG.init = function() {  
@@ -288,7 +286,6 @@ TJG.ui = {
       for (var key in TJG.onload) {
         TJG.onload[key]();
       }
-      
     };
     window.addEventListener("load", TJG.init, false);
 

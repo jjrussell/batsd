@@ -19,9 +19,7 @@ ActionController::Routing::Routes.draw do |map|
     m.confirm 'confirm', :controller => 'games/confirmations', :action => :create
     
     m.resources :password_resets, :controller => 'games/password_resets', :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
-
-    m.resources :editors_picks, :controller => 'games/editors_picks', :as => 'editors_picks', :only => [ :index ]
-
+    
   end
 
   break if MACHINE_TYPE == 'games'

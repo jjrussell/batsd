@@ -1,4 +1,4 @@
-  class Gamer < ActiveRecord::Base
+class Gamer < ActiveRecord::Base
   include UuidPrimaryKey
   
   attr_accessor :terms_of_service

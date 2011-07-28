@@ -5,7 +5,7 @@
         .right
           = mail_to 'support@tapjoy.com', 'Support', :id => 'support'
         .right
-          = link_to 'My Account', "#my_account", :class => "flip"  
+          = link_to 'My Account', "#my_account", :class => "flip"
     .container.vertical-scroll
       .scroller.with-scrollbar
         .page
@@ -88,76 +88,67 @@
     .dialog_image
 
 - content_for :page_javascript do
-  - if Rails.env.production?
-    :plain
-      $(window).load(function() {
-        var jQT = new $.jQTouch({
-          slideSelector: '#jqt .slide_nav',
-        });
+  :plain
+    $(window).load(function() {
+      var jQT = new $.jQTouch({
+        slideSelector: '#jqt .slide_nav',
       });
-  - else
-    :plain
-      $(window).load(function() {
-        var jQT = new $.jQTouch({
-          slideSelector: '#jqt .slide_nav',
-        });
-        var linked_games = TJG.utils.getParam("no_games");
-        if (linked_games.indexOf("true") != -1) {
-          $("#register_device").fadeIn(350); 
-        }
-        function getTopGames() {
-          TJG.moreAppOfferWall = $("#more_games_content").html();
-          $("#top_grossing_games_tab").click(function() {
-            $("#top_grossing_games_button").addClass("dark_grey").removeClass("grey");
-            $("#recommended_games_button").addClass("grey").removeClass("dark_grey");
-            $("#recommended_games_button_arrow").hide();
-            $("#top_grossing_games_button_arrow").show();
-          
-            $("#recommended_games_tab").click(function() {
-              $("#recommended_games_button").addClass("dark_grey").removeClass("grey");
-              $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");
-              $("#top_grossing_games_button_arrow").hide();
-              $("#recommended_games_button_arrow").show();
-              if (TJG.moreAppOfferWall) {
-                TJG.ui.hideLoader();
-                $("#more_games_content").html(TJG.moreAppOfferWall);
-                TJG.onload.loadCufon();
-                $("#more_games_content").fadeIn(450);
-              }
-            });
-          
-            if (TJG.topAppOfferWall) {
-              $("#more_games_content").html(TJG.topAppOfferWall);
+      var linked_games = TJG.utils.getParam("no_games");
+      if (linked_games.indexOf("true") != -1) {
+        $("#register_device").fadeIn(350); 
+      }
+      function getTopGames() {
+        TJG.moreAppOfferWall = $("#more_games_content").html();
+        $("#top_grossing_games_tab").click(function() {
+          $("#top_grossing_games_button").addClass("dark_grey").removeClass("grey");
+          $("#recommended_games_button").addClass("grey").removeClass("dark_grey");
+          $("#recommended_games_button_arrow").hide();
+          $("#top_grossing_games_button_arrow").show();
+          $("#recommended_games_tab").click(function() {
+            $("#recommended_games_button").addClass("dark_grey").removeClass("grey");
+            $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");
+            $("#top_grossing_games_button_arrow").hide();
+            $("#recommended_games_button_arrow").show();
+            if (TJG.moreAppOfferWall) {
+              TJG.ui.hideLoader();
+              $("#more_games_content").html(TJG.moreAppOfferWall);
               TJG.onload.loadCufon();
               $("#more_games_content").fadeIn(450);
             }
-            else {
-              TJG.ui.showLoader();
-              $("#more_games_content").fadeOut(450,function() {
-                $("#more_games_content").empty();
-              });
-              $.ajax({ 
-                url: TJG.top_apps_path + "?ajax=1",
-                timeout: 15000,
-                success: function(c) {
-                  TJG.topAppOfferWall = c;
-                  TJG.ui.hideLoader();
-                  $("#more_games_content").html(c);
-                  TJG.onload.loadCufon();
-                  $("#more_games_content").fadeIn(450); 
-                },
-                error: function () {
-                  var m = [
-                    '<div>There was an issue. Please try again</div>'
-                  ].join('');
-                  $("#more_games_content").html(m); 
-                  $("#more_games_content").fadeIn(450);
-                }
-              });
-            }          
           });
-        }                                                                             
-        TJG.path =  "#{games_root_path}";
-        TJG.top_apps_path =  "#{games_more_games_path}" + "/top";
-        getTopGames(); 
-      });
+      
+          if (TJG.topAppOfferWall) {
+            $("#more_games_content").html(TJG.topAppOfferWall);
+            TJG.onload.loadCufon();
+            $("#more_games_content").fadeIn(450);
+          }
+          else {
+            TJG.ui.showLoader();
+            $("#more_games_content").fadeOut(450,function() {
+              $("#more_games_content").empty();
+            });
+            $.ajax({ 
+              url: TJG.top_apps_path + "?ajax=1",
+              timeout: 15000,
+              success: function(c) {
+                TJG.topAppOfferWall = c;
+                TJG.ui.hideLoader();
+                $("#more_games_content").html(c);
+                TJG.onload.loadCufon();
+                $("#more_games_content").fadeIn(450); 
+              },
+              error: function () {
+                var m = [
+                  '<div>There was an issue. Please try again</div>'
+                ].join('');
+                $("#more_games_content").html(m); 
+                $("#more_games_content").fadeIn(450);
+              }
+            });
+          }          
+        });
+      }                                                                             
+      TJG.path =  "#{games_root_path}";
+      TJG.top_apps_path =  "#{games_more_games_path}" + "/top";
+      getTopGames(); 
+    });  

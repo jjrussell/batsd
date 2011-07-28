@@ -32,7 +32,7 @@ class ExternalPublisher
     }
     # TODO: add device_type and other device info, either here or at get_offers time
     if Rails.env == 'development' 
-      "http://localhost:3000/get_offers?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
+      "/get_offers?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
     else
       "https://ws.tapjoyads.com/get_offers?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
     end
