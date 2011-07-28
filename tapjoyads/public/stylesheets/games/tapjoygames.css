@@ -658,6 +658,9 @@ form#new_gamer input[type=password] {
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
 }
+.content_box .account_info {
+  padding: 20px;
+}
 a.forgot_pass {
   color: #6B5F54;
   font-size: 12px;

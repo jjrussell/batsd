@@ -126,11 +126,12 @@
                 My Account Info 
             .content_box_top_arrow_wrapper
               .content_box_top_arrow
-            .content_box.clearfix 
-              .account_info
-                - current_gamer.inspect
-              .button.lt_blue.logout
-                = link_to "Logout", games_logout_path
+            .content_box.clearfix
+              - if current_gamer.present?
+                .account_info
+                  = "Logged in as #{current_gamer.email}"
+                .button.lt_blue.logout
+                  = link_to "Logout", games_logout_path
 
 #sign_up_dialog.dialog_wrapper.hide
   .dialog
