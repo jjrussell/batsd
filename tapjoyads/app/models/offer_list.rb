@@ -1,5 +1,4 @@
 class OfferList
-  attr_reader :offers
   
   def initialize(options = {})
     @publisher_app            = options.delete(:publisher_app)           { |k| raise "#{k} is a required argument" }
@@ -13,7 +12,7 @@ class OfferList
     @library_version          = options.delete(:library_version) || ''
     @os_version               = options.delete(:os_version)
     @screen_layout_size       = options.delete(:screen_layout_size)
-    
+  
     @source                   = options.delete(:source)
     @exp                      = options.delete(:exp)  
     @include_rating_offer     = options.delete(:include_rating_offer) { false }
@@ -42,6 +41,7 @@ class OfferList
       weight_scale = 1 - offers.last.rank_score
       weights = offers.collect { |o| o.rank_score + weight_scale }
       offer = offers.weighted_rand(weights)
+      return offer if offer.nil?
       if offer.should_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version, @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size)
         offers.delete(offer)
       else
