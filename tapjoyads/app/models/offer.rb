@@ -476,7 +476,7 @@ class Offer < ActiveRecord::Base
 
   def calculate_ranking_fields
     return if Rails.env == 'test' # We need to be seeding the test environment with enabled offers for these calculations to work
-    stats                       = Offer.get_offer_rank_statistics
+    stats                       = OfferCacher.get_offer_stats
     self.normal_conversion_rate = (stats[:cvr_std_dev] == 0) ? 0 : (conversion_rate - stats[:cvr_mean]) / stats[:cvr_std_dev]
     self.normal_price           = (stats[:price_std_dev] == 0) ? 0 : (price - stats[:price_mean]) / stats[:price_std_dev]
     self.normal_avg_revenue     = (stats[:avg_revenue_std_dev] == 0) ? 0 : (avg_revenue - stats[:avg_revenue_mean]) / stats[:avg_revenue_std_dev]
@@ -494,7 +494,7 @@ class Offer < ActiveRecord::Base
     self.rank_score = currency.weights.keys.inject(0) { |sum, key| sum + (currency.weights[key] * send(key)) }
     self.rank_score += 5 if item_type == "ActionOffer"
     self.rank_score += 10 if price == 0
-    self.rank_score += (categories & currency.categories).length * 500
+    self.rank_score += (categories & currency.categories).length * 10
     rank_score
   end
 
@@ -732,11 +732,10 @@ private
 
   def geoip_reject?(geoip_data, device)
     return false if EXEMPT_UDIDS.include?(device.key)
-
     return true if !countries.blank? && countries != '[]' && !get_countries.include?(geoip_data[:country])
     return true if !postal_codes.blank? && postal_codes != '[]' && !get_postal_codes.include?(geoip_data[:postal_code])
     return true if !cities.blank? && cities != '[]' && !get_cities.include?(geoip_data[:city])
-
+    
     false
   end
 

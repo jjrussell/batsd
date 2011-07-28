@@ -27,7 +27,7 @@ class OfferCacher
       offers.each { |o| o.run_callbacks(:before_cache) }
       App::PLATFORMS.values.each do |platform|
         [ true, false ].each do |hide_rewarded_app_installs|
-          Offer::ALL_DEVICES.each do |device_type|
+          (Offer::ALL_DEVICES + [ "" ]).each do |device_type|
             cache_offer_list("#{type}.#{platform}.#{hide_rewarded_app_installs}.#{device_type}", offers.reject { |o| o.pre_cache_reject?(platform, hide_rewarded_app_installs, device_type) }, save_to_s3)
           end
         end
@@ -41,7 +41,7 @@ class OfferCacher
     def cache_offer_list(key, offers, save_to_s3 = false)
       s3_key = "unsorted_offers.#{key}"
       mc_key = "s3.#{s3_key}.#{SCHEMA_VERSION}"
-      bucket = S3.bucket(BucketNames::OFFER_DATA)
+      bucket = S3.bucket(BucketNames::OFFER_DATA) if save_to_s3
       group = 0
     
       offers.compact.each_slice(GROUP_SIZE) do |offer_group|
