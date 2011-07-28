@@ -1,6 +1,6 @@
 class Games::HomepageController < GamesController
   
-  before_filter :require_complete_gamer, :only => 'real_index' 
+  before_filter :require_complete_gamer, :except => 'index' 
   
   def index
     if current_gamer.present?
