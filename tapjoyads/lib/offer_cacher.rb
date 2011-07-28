@@ -27,7 +27,7 @@ class OfferCacher
       offers.each { |o| o.run_callbacks(:before_cache) }
       App::PLATFORMS.values.each do |platform|
         [ true, false ].each do |hide_rewarded_app_installs|
-          cache_offer_list("#{type}.#{platform}.#{hide_rewarded_app_installs}", offers.reject { |o| o.should_reject_from_platform_or_device_type_or_rewarded?(platform, hide_rewarded_app_installs) }, save_to_s3)
+          cache_offer_list("#{type}.#{platform}.#{hide_rewarded_app_installs}", offers.reject { |o| o.pre_cache_reject?(platform, hide_rewarded_app_installs) }, save_to_s3)
         end
       end
     end
