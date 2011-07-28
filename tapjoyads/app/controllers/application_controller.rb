@@ -62,6 +62,7 @@ private
 
   def set_locale
     language_code = params[:language_code]
+    I18n.locale = nil
     if AVAILABLE_LOCALES.include?(language_code)
       I18n.locale = language_code
     elsif language_code.present? && language_code['-']
