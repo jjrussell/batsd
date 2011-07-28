@@ -10,21 +10,21 @@
     %img.header{:src => "/images/meet_the_team.png"}/
     - @employees.each do |employee|
       #user
-        .teampic= image_tag employee.get_photo_url, :alt => employee.full_name
+        .teampic= image_tag(h(employee.get_photo_url), :alt => h(employee.full_name))
         %span.name
-          = employee.full_name
+          = h(employee.full_name)
         %span.title
-          = employee.title
+          = h(employee.title)
         .about
           %p.biosmall
             - if (employee.biography.length > 140)
-              = truncate(employee.biography, :length => 140)
+              = truncate(h(employee.biography), :length => 140)
               %a.showbio{:href => "javascript:;"}
                 [Full Bio]
             - else
-              = employee.biography
+              = h(employee.biography)
           %p.biolarge
-            = employee.biography
+            = h(employee.biography)
             %a.showbio{:href => "javascript:;"}
               [Short Bio]
           #questions
@@ -32,16 +32,16 @@
               %span.header
                 Secret superpower
               %span.answer
-                = employee.superpower
+                = h(employee.superpower)
             .question
               %span.header
                 Currently playing
               %span.answer
-                = employee.current_games
+                = h(employee.current_games)
             .question
               %span.header
                 Weapon of choice
               %span.answer
-                = employee.weapon
+                = h(employee.weapon)
       .divider
 .clear
