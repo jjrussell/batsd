@@ -59,21 +59,20 @@ private
   def set_time_zone
     Time.zone = 'UTC'
   end
-  
+
   def set_locale
     language_code = params[:language_code]
-    if AVAILABLE_LOCALES.include?(language_code)
-      I18n.locale = language_code
-    else
-      if params[:language_code]['-']
+    I18n.locale =
+      if AVAILABLE_LOCALES.include?(language_code)
+        language_code
+      elsif language_code.present? && language_code['-']
         language_code = language_code.split('-').first
         if AVAILABLE_LOCALES.include?(language_code)
-          I18n.locale = language_code
+          language_code
         end
       end
-    end
   end
-  
+
   def fix_params
     downcase_param(:udid)
     downcase_param(:app_id)
