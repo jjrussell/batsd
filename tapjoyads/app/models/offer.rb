@@ -536,7 +536,6 @@ class Offer < ActiveRecord::Base
   end
 
   def post_cache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
-    device_platform_mismatch?(publisher_app, device_type) ||
       geoip_reject?(geoip_data, device) ||
       already_complete?(publisher_app, device, app_version) ||
       show_rate_reject?(device) ||
@@ -554,8 +553,8 @@ class Offer < ActiveRecord::Base
       currency_whitelist_reject?(currency)
   end
 
-  def pre_cache_reject?(platform_name, hide_rewarded_app_installs)
-    app_platform_mismatch?(platform_name) || hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
+  def pre_cache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
+    app_platform_mismatch?(platform_name) || hide_rewarded_app_installs_reject?(hide_rewarded_app_installs) || device_platform_mismatch?(normalized_device_type)
   end
 
   def update_payment(force_update = false)
@@ -714,17 +713,10 @@ private
       (self_promote_only? && partner_id != publisher_app.partner_id)
   end
 
-  def device_platform_mismatch?(publisher_app, device_type_param)
-    device_type = normalize_device_type(device_type_param)
-    device_type ||=
-      case publisher_app.platform
-      when 'android', 'windows'
-        publisher_app.platform
-      else
-        'itouch'
-      end
+  def device_platform_mismatch?(normalized_device_type)
+    return false if normalized_device_type.blank?
 
-    !get_device_types.include?(device_type)
+    !get_device_types.include?(normalized_device_type)
   end
 
   def app_platform_mismatch?(app_platform_name)
@@ -861,22 +853,6 @@ private
 
   def cookie_tracking_reject?(publisher_app, library_version)
     cookie_tracking? && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
-  end
-
-  def normalize_device_type(device_type_param)
-    if device_type_param =~ /iphone/i
-      'iphone'
-    elsif device_type_param =~ /ipod/i
-      'itouch'
-    elsif device_type_param =~ /ipad/i
-      'ipad'
-    elsif device_type_param =~ /android/i
-      'android'
-    elsif device_type_param =~ /windows/i
-      'windows'
-    else
-      nil
-    end
   end
 
   def cleanup_url

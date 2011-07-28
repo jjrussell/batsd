@@ -27,13 +27,15 @@ class OfferCacher
       offers.each { |o| o.run_callbacks(:before_cache) }
       App::PLATFORMS.values.each do |platform|
         [ true, false ].each do |hide_rewarded_app_installs|
-          cache_offer_list("#{type}.#{platform}.#{hide_rewarded_app_installs}", offers.reject { |o| o.pre_cache_reject?(platform, hide_rewarded_app_installs) }, save_to_s3)
+          Offer::ALL_DEVICES.each do |device_type|
+            cache_offer_list("#{type}.#{platform}.#{hide_rewarded_app_installs}.#{device_type}", offers.reject { |o| o.pre_cache_reject?(platform, hide_rewarded_app_installs, device_type) }, save_to_s3)
+          end
         end
       end
     end
 
-    def get_unsorted_offers_prerejected(type, platform, hide_rewarded_app_installs)
-      get_offer_list("#{type}.#{platform}.#{hide_rewarded_app_installs}")
+    def get_unsorted_offers_prerejected(type, platform, hide_rewarded_app_installs, device_type)
+      get_offer_list("#{type}.#{platform}.#{hide_rewarded_app_installs}.#{device_type}")
     end
     
     def cache_offer_list(key, offers, save_to_s3 = false)

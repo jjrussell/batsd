@@ -1,7 +1,7 @@
 class OfferList
   attr_reader :offers
   
-  def initialize(options        = {})
+  def initialize(options = {})
     @publisher_app              = options.delete(:publisher_app)           { |k| raise "#{k} is a required argument" }
     @device                     = options.delete(:device)                  { |k| raise "#{k} is a required argument" }
     @currency                   = options.delete(:currency)                { |k| raise "#{k} is a required argument" }
@@ -18,7 +18,9 @@ class OfferList
     @include_rating_offer       = options.delete(:include_rating_offer) { false }
     
     @hide_rewarded_app_installs = @currency.hide_rewarded_app_installs_for_version?(@app_version, @source)
-    @platform                   = @publisher_app.platform_name
+    @platform_name              = @publisher_app.platform_name
+    @platform                   = @publisher_app.platform
+    @normalized_device_type     = Device.normalize_device_type(@device_type)
     
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
@@ -33,7 +35,7 @@ class OfferList
       end
     end
     
-    @offers = RailsCache.get_and_put("offers.#{@type}.#{@platform}.#{@hide_rewarded_app_installs}") { OfferCacher.get_unsorted_offers_prerejected(@type, @platform, @hide_rewarded_app_installs) }.value.each { |o| o.calculate_rank_score(@currency) }
+    @offers = RailsCache.get_and_put("offers.#{@type}.#{@platform_name}.#{@hide_rewarded_app_installs}.#{@normalized_device_type}") { OfferCacher.get_unsorted_offers_prerejected(@type, @platform_name, @hide_rewarded_app_installs, @normalized_device_type) }.value.each { |o| o.calculate_rank_score(@currency) }
   end
   
   def weighted_rand
