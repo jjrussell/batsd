@@ -8,6 +8,7 @@
           = link_to 'My Account', "#my_account", :class => "flip"
     .container.vertical-scroll
       .scroller.with-scrollbar
+        .page
           .logo
             .slide_nav
               .slider.slider_right.right
@@ -60,7 +61,7 @@
     .dialog_image
 
 - content_for :page_javascript do
-  - if Rails.env.development?
+  - if Rails.env.production?
     :plain
       $(window).load(function() {
         if (TJG.vars.isIos == false) {

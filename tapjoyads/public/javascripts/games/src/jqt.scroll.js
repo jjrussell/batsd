@@ -126,7 +126,7 @@
                 },
                 ".vertical-scroll > div": {
                     margin: "0 auto",
-                    "padding-bottom":"30px",
+                    "padding-bottom":"40px",
                     "-webkit-transition-property": "-webkit-transform",
                     "-webkit-transition-timing-function": "cubic-bezier(0,0,.25,1)",
                     "-webkit-transform": "translate3d(0,0,0)",

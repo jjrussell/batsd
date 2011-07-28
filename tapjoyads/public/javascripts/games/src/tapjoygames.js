@@ -23,10 +23,10 @@ TJG.utils = {
   },
   
   disableScrollOnBody : function() {
-  if (!TJG.vars.isTouch) return;
+    if (!TJG.vars.isTouch) return;
     document.body.addEventListener("touchmove", function(e) {
       e.preventDefault();
-   },   false);
+    }, false);
   },
   
   getParam : function(name) {
@@ -64,10 +64,16 @@ TJG.ui = {
     $('.dialog_wrapper').fadeOut();
   },
   
-  getOffferRow : function (o,c) {
-    var t = [];
-    $.each(o, function(i,v){
-      t.push('<li class="offer_item clearfix">'); 
+  getOffferRow : function (obj,currency,i,hidden) {
+    var t = [], clsId = "", style = "";
+    if (i) {
+      clsId = "offer_item_" + i;
+    }
+    if (hidden) {
+      style = 'style="display:none;"';
+    }
+    $.each(obj, function(i,v){
+      t.push('<li class="offer_item clearfix '+ clsId +'" '+ style +'>'); 
         t.push('<div class="offer_image">');
           t.push('<img src="' + v.IconURL + '">');
         t.push('</div>');
@@ -77,16 +83,15 @@ TJG.ui = {
           t.push('</div>');
           t.push('<div class="offer_info">');
             t.push('<a href="' + v.RedirectURL + '">');
-              t.push('<div class="offer_button">');
+              t.push('<div class="offer_button my_apps">');
                 t.push('<div class="button grey">');
                   t.push('<span class="amount">');
                     t.push(v.Amount);
                   t.push('</span>');
                   t.push(' ');
                   t.push('<span class="currency">');
-                    t.push(c);
+                    t.push(currency);
                   t.push('</span>');
-                  t.push(' ');
                   t.push('<span class="cost">');
                     t.push(v.Cost);
                   t.push('</span>'); 
@@ -152,7 +157,6 @@ TJG.ui = {
         ].join('');
         $("#sign_up_dialog_content").html(loader);
         $("#sign_up_dialog_content").parent().animate({ height: "120px", }, 250);
-        //$("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
         TJG.onload.loadCufon();
         $.ajax({
           type: 'POST',
@@ -162,7 +166,6 @@ TJG.ui = {
           dataType: 'json', 
           data: { 'authenticity_token': values['authenticity_token'], 'gamer[email]': values['gamer[email]'], 'gamer[password]': values['gamer[password]'], 'gamer[referrer]': values['gamer[referrer]'] },
           success: function(d) {
-            $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
             var msg;
             if (d.success) {
               hasLinked = false;
@@ -175,7 +178,6 @@ TJG.ui = {
               if (TJG.vars.isIos == false) {
                   if (d.more_games_url) {
                     $('.close_dialog').click(function(){
-                      alert(d.more_games_url);
                       document.location.href = d.more_games_url;
                     });                    
                   }
@@ -210,7 +212,7 @@ TJG.ui = {
             $("#sign_up_dialog_content").html(msg);
             TJG.onload.loadCufon();
             $('#sign_up_again').click(function(){
-              $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
+              TJG.ui.showRegister();
               $("#sign_up_dialog_content").parent().animate({ height: "260px", }, 250);
               TJG.onload.loadCufon();
             });
@@ -224,7 +226,7 @@ TJG.ui = {
             $("#sign_up_dialog_content").html(msg);
             TJG.onload.loadCufon();
             $('#sign_up_again').click(function(){
-              $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
+               TJG.ui.showRegister();
               $("#sign_up_dialog_content").parent().animate({ height: "260px", }, 250);
               TJG.onload.loadCufon();
             });
@@ -239,10 +241,15 @@ TJG.ui = {
 
     TJG.onload = {
 
-      loadCufon : function () {
+      loadCufon : function (fn,delay) {
         if (Cufon) {
           Cufon.replace('.title', { fontFamily: 'Cooper Std' });
           Cufon.replace('.title_2', { fontFamily: 'AmerType Md BT' });
+        }
+        if (fn) {
+          setTimeout(function() { 
+            fn;
+            }, delay);
         }
       },
 
@@ -264,6 +271,11 @@ TJG.ui = {
         $('#sign_up, #sign_up_form').click(function(){
           TJG.utils.centerDialog("#sign_up_dialog");
           TJG.ui.showRegister();
+        });
+        
+        $('#how_works').click(function(){
+          TJG.utils.centerDialog("#how_works_dialog");
+          $("#how_works_dialog").fadeIn(350);
         });
         
       }

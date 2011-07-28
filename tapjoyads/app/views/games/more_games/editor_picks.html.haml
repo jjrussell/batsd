@@ -22,29 +22,47 @@
                   %span.title
                     =link_to "My Apps", games_root_path
           .content
-            %ul
-              - @editors_picks.each do |pick|
-                %li.offer_item.clearfix
-                  .offer_image
-                    = image_tag pick.offer.get_icon_url, :size => '57x57'
-                  .offer_text
-                    .offer_title.title
-                      = pick.offer.name
-                    .offer_info
-                      - if %w(App ActionOffer).include?(pick.offer.item_type)
-                        .offer_meta
-                          %span.offer_category
-                            = pick.offer.item.categories.first.to_s.titleize
-                          %span.offer_rating{ :rating => pick.offer.item.user_rating }
-                        .offer_description
-                          = pick.description
-                        .offer_button
-                          %a{:href => pick.offer.url }
-                            .button.grey
-                              %span.amount
-                                = number_to_currency(pick.offer.price/100)
-                              %span.offer_url
-                                = link_to 'Get it!', pick.offer.url
+            .tab_wrapper.clearfix
+              #top_grossing_games_tab.tab_right.hide
+                #top_grossing_games_button.tab_button.grey
+                  .tab_content
+                    Popular Games
+                #top_grossing_games_button_arrow.tab_button_bottom_arrrow_wrapper.hide
+                  .tab_button_bottom_arrrow
+              #recommended_games_tab.tab_left
+                #recommended_games_button.tab_button.dark_grey
+                  .tab_content
+                    Tapjoy Recommends
+                #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
+                  .tab_button_bottom_arrrow
+            #more_games_content
+              %ul
+                - @editors_picks.each do |pick|
+                  %li.offer_item.clearfix
+                    .offer_image
+                      = image_tag pick.offer.get_icon_url, :size => '57x57'
+                    .offer_text
+                      .offer_title.title
+                        = pick.offer.name
+                      .offer_info
+                        - if %w(App ActionOffer).include?(pick.offer.item_type)
+                          .offer_meta
+                            %span.offer_category
+                              = pick.offer.item.categories.first.to_s.titleize
+                            %span.offer_rating{ :rating => pick.offer.item.user_rating }
+                          .offer_description
+                            = pick.description
+                          .offer_button.more_games
+                            %a{:href => pick.offer.url }
+                              .button.grey
+                                - if pick.offer.price == 0
+                                  %span.amount.free
+                                    Free!
+                                - else
+                                  %span.amount
+                                    = number_to_currency(pick.offer.price/100.0)
+                                  %span.get_it
+                                    Get it!  
 
 
   #my_account.tan
@@ -86,5 +104,60 @@
         var linked_games = TJG.utils.getParam("no_games");
         if (linked_games.indexOf("true") != -1) {
           $("#register_device").fadeIn(350); 
-        }          
+        }
+        function getTopGames() {
+          TJG.moreAppOfferWall = $("#more_games_content").html();
+          $("#top_grossing_games_tab").click(function() {
+            $("#top_grossing_games_button").addClass("dark_grey").removeClass("grey");
+            $("#recommended_games_button").addClass("grey").removeClass("dark_grey");
+            $("#recommended_games_button_arrow").hide();
+            $("#top_grossing_games_button_arrow").show();
+          
+            $("#recommended_games_tab").click(function() {
+              $("#recommended_games_button").addClass("dark_grey").removeClass("grey");
+              $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");
+              $("#top_grossing_games_button_arrow").hide();
+              $("#recommended_games_button_arrow").show();
+              if (TJG.moreAppOfferWall) {
+                TJG.ui.hideLoader();
+                $("#more_games_content").html(TJG.moreAppOfferWall);
+                TJG.onload.loadCufon();
+                $("#more_games_content").fadeIn(450);
+              }
+            });
+          
+            if (TJG.topAppOfferWall) {
+              $("#more_games_content").html(TJG.topAppOfferWall);
+              TJG.onload.loadCufon();
+              $("#more_games_content").fadeIn(450);
+            }
+            else {
+              TJG.ui.showLoader();
+              $("#more_games_content").fadeOut(450,function() {
+                $("#more_games_content").empty();
+              });
+              $.ajax({ 
+                url: TJG.top_apps_path + "?ajax=1",
+                timeout: 15000,
+                success: function(c) {
+                  TJG.topAppOfferWall = c;
+                  TJG.ui.hideLoader();
+                  $("#more_games_content").html(c);
+                  TJG.onload.loadCufon();
+                  $("#more_games_content").fadeIn(450); 
+                },
+                error: function () {
+                  var m = [
+                    '<div>There was an issue. Please try again</div>'
+                  ].join('');
+                  $("#more_games_content").html(m); 
+                  $("#more_games_content").fadeIn(450);
+                }
+              });
+            }          
+          });
+        }                                                                             
+        TJG.path =  "#{games_root_path}";
+        TJG.top_apps_path =  "#{games_more_games_path}" + "/top";
+        getTopGames(); 
       });

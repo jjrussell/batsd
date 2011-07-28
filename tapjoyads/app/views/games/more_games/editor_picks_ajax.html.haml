@@ -14,11 +14,14 @@
               %span.offer_rating{ :rating => pick.offer.item.user_rating }
             .offer_description
               = pick.description
-            .offer_button
+            .offer_button.more_games
               %a{:href => pick.offer.url }
                 .button.grey
-                  %span.amount
-                    - if pick.offer.price == 0
+                  - if pick.offer.price == 0
+                    %span.amount.free
                       Free!
-                    - else
+                  - else
+                    %span.amount
                       = number_to_currency(pick.offer.price/100.0)
+                    %span.get_it
+                      Get it!

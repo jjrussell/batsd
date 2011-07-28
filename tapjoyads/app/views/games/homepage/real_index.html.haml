@@ -46,9 +46,9 @@
     .top_nav_bar.toolbar
       .nav_content
         .right
-          = link_to 'Support', "#", :id => "support"
+          = mail_to 'support@tapjoy.com', 'Support', :id => 'support'
         .right
-          = link_to 'My Account', "#my_account", :class => "flip"    
+          = link_to 'My Account', "#my_account", :class => "flip"
     .container.vertical-scroll
       .scroller.with-scrollbar
         .page
@@ -70,7 +70,7 @@
     .top_nav_bar.toolbar
       .nav_content
         .right
-          = link_to 'Support', "#support", :class => "flip"
+          = mail_to 'support@tapjoy.com', 'Support', :id => 'support'
         .right
           = link_to 'My Account', "#my_account", :class => "flip"    
     .container.vertical-scroll
@@ -78,13 +78,32 @@
         %div.page
           .logo
             %div.slide_nav
-              .slider.slider_active.slider_right.right
-                %span.title.small
-                  More Games
-              .slider.slider_left.left
-                %span.title
-                  = link_to "My Apps", "#home", :class => "slideright" 
-          #more_games_content.content.hide
+              .slider_wrapper.right 
+                .slider.slider_active.slider_right
+                  %span.title.small
+                    More Games
+                .slide_arrow_wrapper.bottom_arrow
+                  .slide_arrow
+              .slider_btn.left
+                .slider.slider_left
+                  %span.title
+                    = link_to "My Apps", "#home", :class => "slideright"
+          .content
+            .tab_wrapper.clearfix
+              #top_grossing_games_tab.tab_right.hide
+                #top_grossing_games_button.tab_button.grey
+                  .tab_content
+                    Popular Games
+                #top_grossing_games_button_arrow.tab_button_bottom_arrrow_wrapper
+                  .tab_button_bottom_arrrow
+              #recommended_games_tab.tab_left
+                #recommended_games_button.tab_button.dark_grey
+                  .tab_content
+                    Tapjoy Recommends
+                #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
+                  .tab_button_bottom_arrrow
+            #more_games_content
+
 
   #my_account.tan
     .container.vertical-scroll
@@ -143,9 +162,10 @@
 
       function getOfferWalls() {
         $(".get_offerwall_jsonp").each(function() {
+          var i = 0;
           $(this).click(function(){
             TJG.ui.showLoader();
-            $("#earn_content").fadeOut(350,function() {
+            $("#earn_content").fadeOut(450,function() {
               $("#earn_content").empty();
               jQT.goTo('#earn', 'slideleft');  
             });
@@ -159,56 +179,86 @@
             TJG.appOfferWall[appId]['jsonp_url'] = url;
             var title = 'Viewing offers for <span class="bold">' + appName + '</span>';
             $("#app_title").html(title);
-            $("#app_title").fadeIn(350);
+            $("#app_title").show();
             if (url) {
               if (!TJG.appOfferWall[appId]['offers']) {
                 jQT.goTo('#earn', 'slideleft');   
-                $.getJSON(url+"&callback=?", function(data) {
-                  TJG.ui.hideLoader();
-                  if (data.OfferArray) {
-                    var offers = data.OfferArray;
-                    offerOffset = offers.length;
-                    TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
-                    TJG.appOfferWall[appId]['offset'] = offerOffset;
-                    TJG.appOfferWall[appId]['offers'] = offers; 
-                    var offerRows = TJG.ui.getOffferRow(offers, currencyName, appId);
-                    var t = [
-                      '<ul id="offerwall_id-', appId ,'">',
-                        offerRows,
-                      '</ul>'
-                    ];
-                    if (TJG.appOfferWall[appId]['offers_left'] > 0) {
-                      t.push('<div class="get_more_apps" app_id="' + appId + '"><div class="get_more_apps_content title_2">Load More<div class="load_more_loader dialog_image dark hide"></div></div></div>');
-                    }
-                    t = t.join('');
-                    $("#earn_content").html(t);
-                    TJG.onload.loadCufon();
-                    $("#earn_content").fadeIn(450);
-                    $(".get_more_apps").click(function(){
-                      var appId = $(this).attr("app_id");
-                      $(".load_more_loader").show();
+                $.ajax({
+                  url: url+"&callback=?",
+                  dataType: 'json',
+                  timeout: 15000,
+                  success: function(data) {
+                    TJG.ui.hideLoader();
+                    if (data.OfferArray) {
+                      var offers = data.OfferArray;
+                      offerOffset = offers.length;
+                      TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                      TJG.appOfferWall[appId]['offset'] = offerOffset;
+                      TJG.appOfferWall[appId]['offers'] = offers; 
+                      var offerRows = TJG.ui.getOffferRow(offers, currencyName);
+                      var t = [
+                        '<ul id="offerwall_id-', appId ,'">',
+                          offerRows,
+                        '</ul>',
+                      ];
                       if (TJG.appOfferWall[appId]['offers_left'] > 0) {
-                        var url = TJG.appOfferWall[appId]['jsonp_url'];
-                        url = url + "&start=" + TJG.appOfferWall[appId]['offset'] + "&max=25&callback=?";
-                        $.getJSON(url, function(data) {
-                           if (data.OfferArray) {
-                             var offers = data.OfferArray;
-                             TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
-                             TJG.appOfferWall[appId]['offset'] = TJG.appOfferWall[appId]['offset'] + 25;
-                             var moreOfferRows = TJG.ui.getOffferRow(offers, currencyName, appId);
-                             $("#offerwall_id-" + appId).append(moreOfferRows).fadeIn(350);
-                             TJG.onload.loadCufon();
-                             $(".load_more_loader").hide();
-                             if (data.MoreDataAvailable == 0) {
-                               $("#get_more_apps").hide();
-                             }
-                             $.each(offers, function(i,o) {
-                               TJG.appOfferWall[appId]['offers'].push(o);
-                             });
-                           }
-                        });  
+                        t.push('<div class="load_more_loader hide"><div class="dialog_image"></div></div>');
+                        t.push('<div class="get_more_apps" app_id="' + appId + '"><div class="get_more_apps_content">Load More</div>');
                       }
-                    });
+                      t = t.join('');
+                      $("#earn_content").html(t);
+                      TJG.onload.loadCufon($("#earn_content").fadeIn(500),300);
+                      //$("#earn_content").fadeIn(500);
+                      $(".get_more_apps").click(function(){
+                        var appId = $(this).attr("app_id");
+                        $(".load_more_loader").show();
+                        if (TJG.appOfferWall[appId]['offers_left'] > 0) {
+                          var url = TJG.appOfferWall[appId]['jsonp_url'];
+                          url = url + "&start=" + TJG.appOfferWall[appId]['offset'] + "&max=25&callback=?";
+                          $.ajax({
+                            url: url,
+                            dataType: 'json',
+                            timeout: 15000,
+                            success: function(data) {
+                              if (data.OfferArray) {
+                                var offers = data.OfferArray;
+                                TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                                TJG.appOfferWall[appId]['offset'] = TJG.appOfferWall[appId]['offset'] + 25;
+                                var moreOfferRows = TJG.ui.getOffferRow(offers, currencyName, i, true);
+                                $("#offerwall_id-" + appId).append(moreOfferRows);
+                                var el = ".offer_item_" + i;
+                                $.each($(el), function(n,o) {
+                                  $(o).fadeIn(600);
+                                });
+                                TJG.onload.loadCufon();
+                                $(".load_more_loader").hide();
+                                if (data.MoreDataAvailable == 0) {
+                                  $("#get_more_apps").hide();
+                                }
+                                $.each(offers, function(i,o) {
+                                  TJG.appOfferWall[appId]['offers'].push(o);
+                                });
+                              }
+                            },
+                            error: function () {
+                              var m = [
+                                '<div>There was an issue fetching more offers. Please try again</div>'
+                              ].join('');                               
+                              $("#offerwall_id-" + appId).append(m).fadeIn(350);
+                              $(".load_more_loader").hide();
+                            }
+                          });
+                          i++;
+                        }
+                      });
+                    }
+                  },
+                  error: function() {
+                    var m = [
+                     '<div>There was an issue. Please try again</div>'
+                    ].join('');
+                    $("#earn_content").html(m); 
+                    $("#earn_content").fadeIn(450);    
                   }
                 });
               } 
@@ -217,55 +267,125 @@
                 var c = TJG.ui.getOffferRow(TJG.appOfferWall[appId]['offers'],currencyName);
                 $("#earn_content").html(c);
                 TJG.onload.loadCufon();
-                $("#earn_content").fadeIn(350);
+                $("#earn_content").fadeIn(450);
               }
               else {
                  var m = [
-                  '<div>There was an issue. Please try again</div>'
+                   '<div>There was an issue. Please try again</div>'
                  ].join('');
                  $("#earn_content").html(m); 
-                 $("#earn_content").fadeIn(350);
+                 $("#earn_content").fadeIn(450);
               }
             }
+            else {
+              var m = [
+                '<div>There was an issue. Please try again</div>'
+              ].join('');
+              $("#earn_content").html(m); 
+              $("#earn_content").fadeIn(450);
+           }
           });
         }); 
       }
+      
       function reloadOfferWalls () {
         $(".get_offerwall_jsonp").unbind("click");
         getOfferWalls();
       }
+      
       function getMoreGames() {
         $(".more_games_url").click(function() {
-            TJG.ui.showLoader();
-            $("#more_games_content").fadeOut(350,function() {
-              $("#earn_content").empty();
+          $("#recommended_games_button").addClass("dark_grey").removeClass("grey");
+          $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");
+          $("#top_grossing_games_button_arrow").hide();
+          $("#recommended_games_button_arrow").show();
+          $("#more_games_content").fadeOut(350,function() {
               jQT.goTo('#more_games', 'slideleft');  
           });
           if (TJG.moreAppOfferWall) {
-            TJG.ui.hideLoader();
             $("#more_games_content").html(TJG.moreAppOfferWall);
             TJG.onload.loadCufon();
             $("#more_games_content").fadeIn(450);
           }
           else {
+            TJG.ui.showLoader();
             $.ajax({ 
-              url: "#{games_editor_picks_path}" + "?ajax=1",
+              url: TJG.more_games + "?ajax=1",
+              timeout: 15000,
               success: function(c) {
                 TJG.moreAppOfferWall = c;
                 TJG.ui.hideLoader();
                 $("#more_games_content").html(c);
-                reloadOfferWalls();
                 TJG.onload.loadCufon();
                 $("#more_games_content").fadeIn(450); 
               },
               error: function() {
+                var m = [
+                  '<div>There was an issue. Please try again</div>'
+                ].join('');
+                $("#more_games_content").html(m); 
+                $("#more_games_content").fadeIn(450);
               }
             });
           }
         }); 
       }
+      
+      function getTopGames() {
+        $("#top_grossing_games_tab").click(function() {
+          $("#top_grossing_games_button").addClass("dark_grey").removeClass("grey");
+          $("#recommended_games_button").addClass("grey").removeClass("dark_grey");
+          $("#recommended_games_button_arrow").hide();
+          $("#top_grossing_games_button_arrow").show();
+          
+          $("#recommended_games_tab").click(function() {
+            $("#recommended_games_button").addClass("dark_grey").removeClass("grey");
+            $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");
+            $("#top_grossing_games_button_arrow").hide();
+            $("#recommended_games_button_arrow").show();
+            if (TJG.moreAppOfferWall) {
+              TJG.ui.hideLoader();
+              $("#more_games_content").html(TJG.moreAppOfferWall);
+              TJG.onload.loadCufon();
+              $("#more_games_content").fadeIn(450);
+            }
+          });
+          
+          if (TJG.topAppOfferWall) {
+            $("#more_games_content").html(TJG.topAppOfferWall);
+            TJG.onload.loadCufon();
+            $("#more_games_content").fadeIn(450);
+          }
+          else {
+            TJG.ui.showLoader();
+            $("#more_games_content").fadeOut(450,function() {
+              $("#more_games_content").empty();
+            });
+            $.ajax({ 
+              url: TJG.top_apps_path + "?ajax=1",
+              timeout: 15000,
+              success: function(c) {
+                TJG.topAppOfferWall = c;
+                TJG.ui.hideLoader();
+                $("#more_games_content").html(c);
+                TJG.onload.loadCufon();
+                $("#more_games_content").fadeIn(450); 
+              },
+              error: function () {
+                var m = [
+                  '<div>There was an issue. Please try again</div>'
+                ].join('');
+                $("#more_games_content").html(m); 
+                $("#more_games_content").fadeIn(450);
+              }
+            });
+          }          
+        });
+      }
+      TJG.path =  "#{games_root_path}";
+      TJG.more_games =  "#{games_more_games_path}";
+      TJG.top_apps_path =  "#{games_more_games_path}" + "/top";
       getOfferWalls();
       getMoreGames();
-      TJG.path =  "#{games_root_path}";
-      TJG.editor_choice_path =  "#{games_editor_picks_path}";
+      getTopGames();
     });
