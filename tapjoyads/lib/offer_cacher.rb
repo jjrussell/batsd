@@ -4,34 +4,34 @@ class OfferCacher
   
   class << self
   
-    def cache_offers
+    def cache_offers(save_to_s3 = false)
       Benchmark.realtime do
         offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.to_a
         offer_list.each { |o| o.run_callbacks(:before_cache) }
-        cache_unsorted_offers_prerejected(offer_list, Offer::DEFAULT_OFFER_TYPE)
+        cache_unsorted_offers_prerejected(offer_list, Offer::DEFAULT_OFFER_TYPE, save_to_s3)
 
         offer_list = Offer.enabled_offers.featured.rewarded.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.rewarded.for_offer_list
         offer_list.each { |o| o.run_callbacks(:before_cache) }
-        cache_unsorted_offers_prerejected(offer_list, Offer::FEATURED_OFFER_TYPE)
+        cache_unsorted_offers_prerejected(offer_list, Offer::FEATURED_OFFER_TYPE, save_to_s3)
 
         offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.for_display_ads.to_a
         offer_list.each { |o| o.run_callbacks(:before_cache) }
-        cache_unsorted_offers_prerejected(offer_list, Offer::DISPLAY_OFFER_TYPE)
+        cache_unsorted_offers_prerejected(offer_list, Offer::DISPLAY_OFFER_TYPE, save_to_s3)
 
         offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.for_offer_list.to_a
         offer_list.each { |o| o.run_callbacks(:before_cache) }
-        cache_unsorted_offers_prerejected(offer_list, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE)
+        cache_unsorted_offers_prerejected(offer_list, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, save_to_s3)
 
         offer_list = Offer.enabled_offers.featured.non_rewarded.free_apps.for_offer_list + Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.for_offer_list
         offer_list.each { |o| o.run_callbacks(:before_cache) }
-        cache_unsorted_offers_prerejected(offer_list, Offer::NON_REWARDED_FEATURED_OFFER_TYPE)
+        cache_unsorted_offers_prerejected(offer_list, Offer::NON_REWARDED_FEATURED_OFFER_TYPE, save_to_s3)
       end
     end
 
-    def cache_unsorted_offers_prerejected(offers, type)
+    def cache_unsorted_offers_prerejected(offers, type, save_to_s3 = false)
       App::PLATFORMS.values.each do |platform|
         [ true, false ].each do |hide_rewarded_app_installs|
-          cache_offer_list("#{type}.#{platform}.#{hide_rewarded_app_installs}", offers.reject { |o| o.should_reject_from_platform_or_device_type_or_rewarded?(platform, hide_rewarded_app_installs) })
+          cache_offer_list("#{type}.#{platform}.#{hide_rewarded_app_installs}", offers.reject { |o| o.should_reject_from_platform_or_device_type_or_rewarded?(platform, hide_rewarded_app_installs) }, save_to_s3)
         end
       end
     end
