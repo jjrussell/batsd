@@ -20,11 +20,21 @@ class AppTest < ActiveSupport::TestCase
     end
     
     should "update its offers' bids when its price changes" do
-      @offer = @app.primary_offer
-      @current_offer_bid = @offer.bid
+      offer = @app.primary_offer
+      current_offer_bid = offer.bid
       @app.update_attributes({:price => 400})
-      @offer.reload
-      assert_equal 200, @offer.bid
+      offer.reload
+      assert_equal 200, offer.bid
+    end
+
+    should "update action offer bids when its price changes" do
+      action_offer = @app.action_offers.build(:name => @app.name, :partner => @app.partner)
+      action_offer.save
+      offer = action_offer.primary_offer
+      current_offer_bid = offer.bid
+      @app.update_attributes({:price => 400})
+      offer.reload
+      assert_equal 200, offer.bid
     end
   end
   
