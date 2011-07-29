@@ -32,7 +32,7 @@ class GetOffersController < ApplicationController
     end
   end
 
-  def 
+  def featured
     set_geoip_data
     if @currency.get_test_device_ids.include?(params[:udid])
       @offer_list = [ build_test_offer(@publisher_app) ]
