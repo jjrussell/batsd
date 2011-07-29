@@ -17,6 +17,14 @@ class Games::HomepageController < GamesController
       redirect_to games_more_games_path(:no_games => true)
     end
   end
+  
+  def tos
+    render 'games/tos'
+  end
+  
+  def privacy
+    render 'games/privacy'
+  end   
 
 private
 
@@ -24,7 +32,7 @@ private
     if current_gamer.blank?
       redirect_to games_login_path
     elsif current_gamer.udid.blank?
-      render :template => 'games/register_device'
+      render 'games/register_device'
     end
   end
 

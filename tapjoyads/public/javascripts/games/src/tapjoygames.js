@@ -76,6 +76,7 @@ TJG.ui = {
       t.push('<li class="offer_item clearfix '+ clsId +'" '+ style +'>'); 
         t.push('<div class="offer_image">');
           t.push('<img src="' + v.IconURL + '">');
+          //t.push('<div class="image_loader"></div>');
         t.push('</div>');
         t.push('<div class="offer_text">');
           t.push('<div class="offer_title title">');
@@ -174,12 +175,16 @@ TJG.ui = {
               msg = [
                 '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Success!</div></div>',
                 '<div class="dialog_header">Your Tapjoy Games account was sucessfully created</div>',
-               '<div class="dialog_content">A confirmation email has been sent to the address you entered.  Please follow the registration in the email to verify your address and complete the account registration. :)</div>'
+               '<div class="dialog_content">A confirmation email has been sent to the address you entered.  Please follow the registration in the email to verify your address and complete the account registration. :)</div>',
+               '<div class="dialog_content"><div class="continue_link_device"><div class="button dialog_button">Continue</div></div></div>'
               ].join('');
               $('.close_dialog').unbind('click');
+              $("#sign_up_dialog_content").parent().animate({ height: "230px", }, 250);
+              $("#sign_up_dialog_content").html(msg);
+              TJG.onload.loadCufon(); 
               if (TJG.vars.isIos == false) {
                   if (d.more_games_url) {
-                    $('.close_dialog').click(function(){
+                    $('.close_dialog,.continue_link_device').click(function(){
                       document.location.href = d.more_games_url;
                     });                    
                   }
@@ -188,12 +193,13 @@ TJG.ui = {
                   }
               }
               else if (d.link_device_url) {
-                $('.close_dialog').click(function(){
+                $('.close_dialog,.continue_link_device').click(function(){
                   document.location.href = d.link_device_url;
+                  $("#sign_up_dialog_content").hide();
                 });
               }
               else {
-                $('.close_dialog').click(function(){
+                $('.close_dialog,.continue_link_device').click(function(){
                   document.location.href = location.protocol + '//' + location.host;
                 });
               } 
@@ -209,11 +215,9 @@ TJG.ui = {
                 '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
                 '<div class="dialog_content">', error ,'. <span id="sign_up_again"><a href="#">Please click here to try again.</a></span></div>',
               ].join('');
+              $("#sign_up_dialog_content").html(msg);
               $(".close_dialog").hide();
             }
-            $("#sign_up_dialog_content").parent().animate({ height: "190px", }, 250);
-            $("#sign_up_dialog_content").html(msg);
-            TJG.onload.loadCufon();
             $('#sign_up_again').click(function(){
               TJG.ui.showRegister();
               $("#sign_up_dialog_content").parent().animate({ height: "260px", }, 250);
@@ -262,7 +266,7 @@ TJG.ui = {
       removeLoader : function () {
         TJG.ui.hideLoader(250,function(){
            $('#jqt').fadeTo(250,1);
-        });   
+        });
       },
       
       loadEvents : function () {
@@ -277,7 +281,7 @@ TJG.ui = {
           TJG.utils.centerDialog("#how_works_dialog");
           $("#how_works_dialog").fadeIn(350);
         });
-      }
+      },
     };
 
     TJG.init = function() {  

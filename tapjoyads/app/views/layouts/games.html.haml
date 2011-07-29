@@ -12,18 +12,9 @@
         
     %title= @page_title.blank? ? 'Tapjoy Games' : "#{@page_title} - Tapjoy Games"
     
-    - if Rails.env.production?
-      %style{ :type => "text/css", :media => "screen" }
-        @import "/stylesheets/games/tapjoygames.css";
-      %style{ :type => 'text/css' }
-        = yield :page_styles
-        :plain
-          .css {
+    %style{ :type => "text/css", :media => "screen" }
+      @import "/stylesheets/games/tapjoygames.css";
 
-          }
-    - else
-      %style{ :type => "text/css", :media => "screen" }
-        @import "/stylesheets/games/tapjoygames.css";
     = yield :page_head
     
   %body

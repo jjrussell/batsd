@@ -5,7 +5,7 @@
         .right
           = mail_to 'support@tapjoy.com', 'Support', :id => 'support'
         .right
-          = link_to 'My Account', "#my_account", :class => "flip"
+          = link_to 'My Account', "#my_account", :class => "flip" 
     .container.vertical-scroll
       .scroller.with-scrollbar
         .page
@@ -17,10 +17,11 @@
                     More Games
                 .slide_arrow_wrapper.bottom_arrow
                   .slide_arrow
-              .slider_btn.left
-                .slider.slider_left
-                  %span.title
-                    =link_to "My Apps", games_root_path
+              %a{ :href => games_root_path }
+                .slider_btn.left
+                  .slider.slider_left
+                    %span.title
+                      My Apps       
           .content
             .tab_wrapper.clearfix
               #top_grossing_games_tab.tab_right.hide
@@ -36,33 +37,7 @@
                 #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
                   .tab_button_bottom_arrrow
             #more_games_content
-              %ul
-                - @editors_picks.each do |pick|
-                  %li.offer_item.clearfix
-                    .offer_image
-                      = image_tag pick.offer.get_icon_url, :size => '57x57'
-                    .offer_text
-                      .offer_title.title
-                        = pick.offer.name
-                      .offer_info
-                        - if %w(App ActionOffer).include?(pick.offer.item_type)
-                          .offer_meta
-                            %span.offer_category
-                              = pick.offer.item.categories.first.to_s.titleize
-                            %span.offer_rating{ :rating => pick.offer.item.user_rating }
-                          .offer_description
-                            = pick.description
-                          .offer_button.more_games
-                            %a{:href => pick.offer.url }
-                              .button.grey
-                                - if pick.offer.price == 0
-                                  %span.amount.free
-                                    Free!
-                                - else
-                                  %span.amount
-                                    = number_to_currency(pick.offer.price/100.0)
-                                  %span.get_it
-                                    Get it!  
+              = render 'editor_picks_block'
 
 
   #my_account.tan

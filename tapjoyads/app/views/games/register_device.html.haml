@@ -11,9 +11,10 @@
         .page
           .logo
             .slide_nav
-              .slider.slider_right.right
-                %span.title.small
-                  = link_to "More Games", games_more_games_path
+              %a{ :href=> games_more_games_path }
+                .slider.slider_right.right
+                  %span.title.small
+                    More Games 
               .slider_btn.left
                 .slider.slider_active.slider_left
                   %span.title
@@ -26,8 +27,9 @@
             .message_header
               You must link your device in order to view your apps!
             .message_content
-              %span.button.grey.arrow  
-                = link_to "Please link your device now", new_games_gamer_device_path
+              %a{ :href => new_games_gamer_device_path }
+                %span.button.grey.arrow  
+                  Please link your device now
 
   #my_account.tan
     .container.vertical-scroll

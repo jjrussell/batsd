@@ -5,7 +5,7 @@ class Games::MoreGamesController < GamesController
     if params[:ajax] == '1'
       render :layout => false, :template => 'games/more_games/editor_picks_ajax'
     else
-      render :template => 'games/more_games/editor_picks'
+      render 'games/more_games/editor_picks'
     end
   end
   

@@ -1,0 +1,27 @@
+%ul
+  - @editors_picks.each do |pick|
+    %li.offer_item.clearfix
+      .offer_image
+        = image_tag pick.offer.get_icon_url, :size => '57x57'
+      .offer_text
+        .offer_title.title
+          = pick.offer.name
+        .offer_info
+          - if %w(App ActionOffer).include?(pick.offer.item_type)
+            .offer_meta
+              %span.offer_category
+                = pick.offer.item.categories.first.to_s.titleize
+              %span.offer_rating{ :rating => pick.offer.item.user_rating }
+            .offer_description
+              = pick.description
+            .offer_button.more_games
+              %a{:href => pick.offer.url }
+                .button.grey
+                  - if pick.offer.price == 0
+                    %span.amount.free
+                      Free!
+                  - else
+                    %span.amount
+                      = number_to_currency(pick.offer.price/100.0)
+                    %span.get_it
+                      Get it!

@@ -1,6 +1,6 @@
 #jqt
   #login.tan.current 
-    %div.container
+    .container
       .page.no_top_nav_bar
         .logo
         .content.narrow
@@ -67,7 +67,7 @@
       .field_row.clearfix
         .field.field_tos
           = f.check_box :terms_of_service
-          = f.label :terms_of_service, "I agree to the Terms of Service and that I am over the age of 13"
+          = f.label :terms_of_service, "I agree to the #{ link_to('Terms of services', '/tos') }, #{ link_to('Privacy Policy', '/privacy') }, and that I am over the age of 13"
         .field
           = f.hidden_field :referrer, :value => params[:referrer]
           = f.submit 'Do it!', :class => 'right button m_width lt_blue'
@@ -106,7 +106,5 @@
 - content_for :page_javascript do
   :plain
     $(window).load(function() {
-      TJG.path =  '#{games_root_path}';
       
-      $("")
     });
