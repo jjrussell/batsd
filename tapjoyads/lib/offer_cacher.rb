@@ -3,6 +3,7 @@ ActionOffer
 class OfferCacher
   
   GROUP_SIZE = 200
+  OFFER_TYPES = [ Offer::DEFAULT_OFFER_TYPE, Offer::FEATURED_OFFER_TYPE, Offer::DISPLAY_OFFER_TYPE, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_OFFER_TYPE ]
   
   class << self
   
@@ -68,12 +69,12 @@ class OfferCacher
     def get_offer_list(key)
       s3_key = "unsorted_offers.#{key}"
       mc_key = "s3.#{s3_key}.#{SCHEMA_VERSION}"
-      bucket = S3.bucket(BucketNames::OFFER_DATA)
       group = 0
       offers = []
     
       loop do
         offer_group = Mc.distributed_get_and_put("#{mc_key}.#{group}", false, 1.day) do
+          bucket = S3.bucket(BucketNames::OFFER_DATA)
           Marshal.restore(bucket.get("#{s3_key}.#{group}"))
         end
         offers |= offer_group
@@ -111,6 +112,18 @@ class OfferCacher
       Mc.get_and_put("s3.offer_rank_statistics") do
         bucket = S3.bucket(BucketNames::OFFER_DATA)
         Marshal.restore(bucket.get("offer_rank_statistics"))
+      end
+    end
+    
+    def populate_rails_cache
+      OFFER_TYPES.each do |type|
+        App::PLATFORMS.values.each do |platform|
+          [ true, false ].each do |hide_rewarded_app_installs|
+            (Offer::ALL_DEVICES + [ "" ]).each do |device_type|
+              RailsCache.put("#{type}.#{platform}.#{hide_rewarded_app_installs}.#{device_type}", get_unsorted_offers_prerejected(type, platform, hide_rewarded_app_installs, device_type))
+            end
+          end
+        end
       end
     end
   

@@ -17,7 +17,7 @@ class RailsCache
     end
     
     def get(key)
-      @@rails_cache[key]
+      @@rails_cache[key].clone
     end
     
     def get_and_put(key, max_age = 5.minutes, &block)
