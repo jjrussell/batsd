@@ -29,10 +29,9 @@
   = render 'my_account'
 
 - content_for :page_javascript do
-  - if Rails.env.production?
-    :plain
-      $(window).load(function() {
-        var jQT = new $.jQTouch({
-          slideSelector: '#jqt .slide_nav',
-        });
+  :plain
+    $(window).load(function() {
+      var jQT = new $.jQTouch({
+        slideSelector: '#jqt .slide_nav',
       });
+    });   

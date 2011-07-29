@@ -31,11 +31,7 @@ class ExternalPublisher
       :json              => '1'
     }
     # TODO: add device_type and other device info, either here or at get_offers time
-    if Rails.env == 'development' 
-      "/get_offers?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
-    else
-      "https://ws.tapjoyads.com/get_offers?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
-    end
+    "#{API_URL}/get_offers?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
 
   def self.load_all_for_device(device)
