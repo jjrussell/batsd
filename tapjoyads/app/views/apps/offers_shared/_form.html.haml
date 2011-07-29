@@ -264,7 +264,6 @@
         if (!options.skipValidation) {
           checkMinimumPrice();
           checkMaximumBid(false);
-          updatePercentile();
         }
         if ( $('#daily_budget_on').is(':checked') ) {
           setEstimatedBudget();
@@ -301,7 +300,7 @@
       font-weight: bold;
       display: inline;
     }
-    .premier, .percentile-details, #estimated_budget {
+    .premier, #estimated_budget {
       font-size: 12px;
     }
     textarea,
@@ -313,9 +312,6 @@
     }
     .tapjoy-disabled {
       color: #AF1515;
-    }
-    #percentile {
-      font-weight: bold;
     }
     label.narrower, input.narrower {
       width: 140px;
