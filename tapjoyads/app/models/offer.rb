@@ -33,7 +33,7 @@ class Offer < ActiveRecord::Base
   DAILY_STATS_START_HOUR = 6
   DAILY_STATS_RANGE = 6
 
-  attr_accessor :offer_list_length, :rank_score
+  attr_accessor :rank_score
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -490,12 +490,22 @@ class Offer < ActiveRecord::Base
     save!
   end
 
+  def cached_rank_scores
+    rank_scores = {}
+    CurrencyGroup.find_each do |currency_group|
+      rank_score = currency_group.weights.keys.inject(0) { |sum, key| sum + (currency_group.weights[key] * send(key)) }
+      rank_score += 5 if item_type == "ActionOffer"
+      rank_score += 10 if price == 0
+      rank_scores[currency_group.id] = rank_score
+    end
+    rank_scores
+  end
+  memoize :cached_rank_scores
+  
   def calculate_rank_score(currency)
-    self.rank_score = currency.weights.keys.inject(0) { |sum, key| sum + (currency.weights[key] * send(key)) }
-    self.rank_score += 5 if item_type == "ActionOffer"
-    self.rank_score += 10 if price == 0
+    self.rank_score = cached_rank_scores[currency.currency_group_id]
     self.rank_score += (categories & currency.categories).length * 10
-    rank_score
+    self.rank_score
   end
 
   def categories

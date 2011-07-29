@@ -1,3 +1,5 @@
+ActionOffer
+
 class OfferCacher
   
   GROUP_SIZE = 200
