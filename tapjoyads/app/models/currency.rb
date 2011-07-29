@@ -50,9 +50,9 @@ class Currency < ActiveRecord::Base
   after_cache :cache_by_app_id
   after_cache_clear :clear_cache_by_app_id
   
-  delegate :weights, :to => :currency_group
+  delegate :postcache_weights, :to => :currency_group
   delegate :categories, :to => :app
-  memoize :weights, :categories
+  memoize :postcache_weights, :categories
   
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = (Rails.env != 'production'))
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}")

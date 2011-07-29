@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110721163803) do
+ActiveRecord::Schema.define(:version => 20110729185712) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -147,6 +147,7 @@ ActiveRecord::Schema.define(:version => 20110721163803) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "rank_boost",                           :default => 0, :null => false
+    t.integer  "category_match",                       :default => 0, :null => false
   end
 
   add_index "currency_groups", ["id"], :name => "index_currency_groups_on_id", :unique => true

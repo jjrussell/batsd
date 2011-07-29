@@ -490,21 +490,21 @@ class Offer < ActiveRecord::Base
     save!
   end
 
-  def cached_rank_scores
+  def precache_rank_scores
     rank_scores = {}
     CurrencyGroup.find_each do |currency_group|
-      rank_score = currency_group.weights.keys.inject(0) { |sum, key| sum + (currency_group.weights[key] * send(key)) }
-      rank_score += 5 if item_type == "ActionOffer"
-      rank_score += 10 if price == 0
-      rank_scores[currency_group.id] = rank_score
+      score = currency_group.precache_weights.keys.inject(0) { |sum, key| sum + (currency_group.precache_weights[key] * send(key)) }
+      score += 5 if item_type == "ActionOffer"
+      score += 10 if price == 0
+      rank_scores[currency_group.id] = score
     end
     rank_scores
   end
-  memoize :cached_rank_scores
+  memoize :precache_rank_scores
   
-  def calculate_rank_score(currency)
-    self.rank_score = cached_rank_scores[currency.currency_group_id] || 0
-    self.rank_score += (categories & currency.categories).length * 10
+  def postcache_rank_score(currency)
+    self.rank_score = precache_rank_scores[currency.currency_group_id] || 0
+    self.rank_score += (categories & currency.categories).length * (currency.postcache_weights[:category_match] || 0)
     self.rank_score
   end
 
