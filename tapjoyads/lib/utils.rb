@@ -234,9 +234,8 @@ class Utils
           Mc.put(key, data)
         end
       end
-      Offer.cache_offer_stats
-      Offer.cache_offers
-      # TODO: Cache offers for each currency
+      OfferCacher.cache_offer_stats
+      OfferCacher.cache_offers
       Mc.cache_all
       true
     end

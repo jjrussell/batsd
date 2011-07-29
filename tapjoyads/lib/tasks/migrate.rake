@@ -3,7 +3,7 @@ namespace :db do
   task :migrate do
     if Rails.env == 'production'
       Mc.cache_all
-      Offer.cache_offers
+      OfferCacher.cache_offers
     end
   end
 end
