@@ -3,7 +3,6 @@ class GetOffersController < ApplicationController
   layout 'iphone', :only => :webpage
   
   prepend_before_filter :decrypt_data_param
-  before_filter :fix_tapulous
   before_filter :choose_experiment, :except => :featured
   before_filter :set_featured_params, :only => :featured
   before_filter :setup
@@ -73,13 +72,6 @@ class GetOffersController < ApplicationController
   end
   
 private
-
-  def fix_tapulous
-    # special code for Tapulous not sending udid
-    if params[:app_id] == 'e2479a17-ce5e-45b3-95be-6f24d2c85c6f'
-      params[:udid] = params[:publisher_user_id] if params[:udid].blank?
-    end
-  end
   
   def set_featured_params
     params[:type] = Offer::FEATURED_OFFER_TYPE
