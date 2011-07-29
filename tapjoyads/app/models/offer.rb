@@ -505,7 +505,7 @@ class Offer < ActiveRecord::Base
   def postcache_rank_score(currency)
     self.rank_score = precache_rank_scores[currency.currency_group_id] || 0
     self.rank_score += (categories & currency.categories).length * (currency.postcache_weights[:category_match] || 0)
-    self.rank_score
+    rank_score
   end
 
   def categories
@@ -518,13 +518,6 @@ class Offer < ActiveRecord::Base
     end
   end
   memoize :categories
-
-  def estimated_percentile
-    if @estimated_percentile.nil? || changed?
-      @estimated_percentile = recalculate_estimated_percentile
-    end
-    @estimated_percentile
-  end
 
   def name_with_suffix
     name_suffix.blank? ? name : "#{name} -- #{name_suffix}"
@@ -623,14 +616,6 @@ class Offer < ActiveRecord::Base
     non_rewarded_offer
   end
 
-  def budget_may_not_be_met?
-    (daily_budget > 0) && needs_higher_bid?
-  end
-
-  def needs_higher_bid?
-    !self_promote_only? && rank_boost == 0 && (bid_is_bad? || bid_is_passable?)
-  end
-
   def needs_more_funds?
     show_rate != 1 && (unlimited_budget? || low_balance?)
   end
@@ -641,24 +626,6 @@ class Offer < ActiveRecord::Base
 
   def on_track_for_budget?
     show_rate != 1 && !needs_more_funds?
-  end
-
-  def bid_is_good?
-    show_rate == 1 && estimated_percentile >= 85
-  rescue
-    false
-  end
-
-  def bid_is_passable?
-    show_rate == 1 && estimated_percentile >= 50 && estimated_percentile < 85
-  rescue
-    false
-  end
-
-  def bid_is_bad?
-    show_rate == 1 && estimated_percentile < 50
-  rescue
-    false
   end
 
   def icon_id
@@ -872,31 +839,6 @@ private
     now = Time.now.utc
     self.next_stats_aggregation_time = now if next_stats_aggregation_time.blank?
     self.next_daily_stats_aggregation_time = (now + 1.day).beginning_of_day + DAILY_STATS_START_HOUR.hours + rand(DAILY_STATS_RANGE.hours) if next_daily_stats_aggregation_time.blank?
-  end
-
-  def recalculate_estimated_percentile
-    weights = CurrencyGroup.find_by_name('default').weights
-    if conversion_rate == 0
-      self.conversion_rate = is_paid? ? (0.05 / (0.01 * price)) : 0.50
-    end
-
-    calculate_ranking_fields
-    calculate_rank_score(weights.merge({ :random => 0 }))
-
-    if featured? && rewarded?
-      @ranked_offers ||= Offer.get_cached_offers({ :type => FEATURED_OFFER_TYPE }).reject { |offer| offer.rank_boost > 0 || offer.id == self.id }
-    elsif featured && !rewarded?
-      @ranked_offers ||= Offer.get_cached_offers({ :type => NON_REWARDED_FEATURED_OFFER_TYPE }).reject { |offer| offer.rank_boost > 0 || offer.id == self.id }
-    elsif !featured && rewarded?
-      self.rank_score += weights[:random] * 0.5
-      @ranked_offers ||= Offer.get_cached_offers({ :type => DEFAULT_OFFER_TYPE }).reject { |offer| offer.rank_boost > 0 || offer.id == self.id }
-    else
-      self.rank_score += weights[:random] * 0.5
-      @ranked_offers ||= Offer.get_cached_offers({ :type => NON_REWARDED_DISPLAY_OFFER_TYPE }).reject { |offer| offer.rank_boost > 0 || offer.id == self.id }
-    end
-
-    worse_offers = @ranked_offers.select { |offer| offer.rank_score < rank_score }
-    100 * worse_offers.size / @ranked_offers.size
   end
 
   def bid_higher_than_min_bid
