@@ -14,12 +14,6 @@ class Homepage::CareersController < WebsiteController
         ]
       },
       {
-        :name => "Developer Relations",
-        :list => [
-          { :title => "Developer Outreach Associate", :href => "/careers/developer_outreach_associate"},
-          ]
-      },
-      {
         :name => "Sales",
         :list => [
           { :title => "Director, Advertising Sales", :href => "/careers/director_advertising_sales"},
@@ -29,7 +23,9 @@ class Homepage::CareersController < WebsiteController
       {
         :name => "Finance",
         :list => [
+          { :title => "Financial Controller", :href => "/careers/financial_controller"},
           { :title => "Senior Accountant", :href => "/careers/senior_accountant"},
+          { :title => "Accounting Operations Manager", :href => "/careers/accounting_operations"},
         ]
       },
       {

@@ -3,7 +3,7 @@ class ToolsController < WebsiteController
 
   filter_access_to :all
 
-  after_filter :save_activity_logs, :only => [ :update_user, :update_android_app, :update_device, :resolve_clicks ]
+  after_filter :save_activity_logs, :only => [ :update_user, :update_android_app, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies ]
 
   def index
   end
@@ -384,5 +384,46 @@ class ToolsController < WebsiteController
     Offer.find_all_by_id(@apps.map{|app|app['tapjoy_apps']}.flatten).each do |app|
       @tapjoy_apps[app.id] = app
     end
+  end
+  
+  def award_currencies
+    @publisher_app = App.find_in_cache(params[:publisher_app_id])
+    return unless verify_records([ @publisher_app ])
+    
+    support_request = SupportRequest.find_by_udid_and_app_id(params[:udid], params[:publisher_app_id])
+    if support_request.nil?
+      flash[:error] = "Support request not found. The user must submit a support request for the app in order to award them currency." 
+      redirect_to :action => :device_info, :udid => params[:udid]  
+      return
+    end        
+    @publisher_user_id = support_request.publisher_user_id
+  end
+  
+  def update_award_currencies
+    if params[:amount].nil? || params[:amount].empty?
+      flash[:error] = "Must provide an amount." 
+      redirect_to :action => :award_currencies, :publisher_app_id => params[:publisher_app_id], :currency_id => params[:currency_id], :udid =>params[:udid] 
+      return
+    end
+
+    customer_support_reward = Reward.new
+    customer_support_reward.type                       =  'customer support'
+    customer_support_reward.udid                       =  params[:udid]
+    customer_support_reward.publisher_user_id          =  params[:publisher_user_id]
+    customer_support_reward.currency_id                =  params[:currency_id]
+    customer_support_reward.publisher_app_id           =  params[:publisher_app_id]
+    customer_support_reward.advertiser_app_id          =  params[:publisher_app_id]
+    customer_support_reward.offer_id                   =  params[:publisher_app_id]
+    customer_support_reward.currency_reward            =  params[:amount]
+    customer_support_reward.publisher_amount           =  0
+    customer_support_reward.advertiser_amount          =  0
+    customer_support_reward.tapjoy_amount              =  0
+    customer_support_reward.customer_support_username  =  current_user.username
+
+    message = customer_support_reward.serialize
+    Sqs.send_message(QueueNames::SEND_CURRENCY, message)
+    
+    flash[:notice] = " Successfully awarded #{params[:amount]} currency. " 
+    redirect_to :action => :device_info, :udid => params[:udid]  
   end
 end
