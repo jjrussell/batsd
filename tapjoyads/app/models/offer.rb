@@ -503,7 +503,7 @@ class Offer < ActiveRecord::Base
   memoize :cached_rank_scores
   
   def calculate_rank_score(currency)
-    self.rank_score = cached_rank_scores[currency.currency_group_id]
+    self.rank_score = cached_rank_scores[currency.currency_group_id] || 0
     self.rank_score += (categories & currency.categories).length * 10
     self.rank_score
   end

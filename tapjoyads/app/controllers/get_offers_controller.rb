@@ -32,13 +32,11 @@ class GetOffersController < ApplicationController
     end
   end
 
-  def featured
+  def 
+    set_geoip_data
     if @currency.get_test_device_ids.include?(params[:udid])
-      @geoip_data = get_geoip_data
-      @geoip_data[:country] = params[:country_code] if params[:country_code].present?
       @offer_list = [ build_test_offer(@publisher_app) ]
     else
-      set_geoip_data
       @offer_list = [ get_offer_list.weighted_rand ].compact
     end
     @more_data_available = 0
@@ -126,7 +124,7 @@ private
     @web_request.put('viewed_at', @now.to_f.to_s)
   end
   
-  def get_offer_list(options = {})
+  def get_offer_list
     @offer_list = OfferList.new(
       :publisher_app        => @publisher_app,
       :device               => @device,
