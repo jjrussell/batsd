@@ -1,0 +1,37 @@
+#jqt
+  #find_games.current
+    = render 'nav_bar'
+    .container.vertical-scroll
+      .scroller.with-scrollbar
+        .page
+          .logo
+            .slide_nav
+              %a{ :href=> games_more_games_path }
+                .slider.slider_right.right
+                  %span.title.small
+                    More Games 
+              .slider_btn.left
+                .slider.slider_active.slider_left
+                  %span.title
+                    My Apps
+                .slide_arrow_wrapper.bottom_arrow
+                  .slide_arrow
+          .content.message
+            .message_title.title
+              Uh Oh!
+            .message_header
+              No Tapjoy Games have been linked to this device.  Why not try out some new games?
+            .message_content
+              %a{ :href => games_more_games_path }
+                %span.button.grey.arrow  
+                  Find cool games!
+
+  = render 'my_account'
+
+- content_for :page_javascript do
+  :plain
+    $(window).load(function() {
+      var jQT = new $.jQTouch({
+        slideSelector: '#jqt .slide_nav',
+      });
+    });   

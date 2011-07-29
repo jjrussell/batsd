@@ -4,12 +4,15 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options({:path_prefix => MACHINE_TYPE == 'games' ? '' : 'games', :name_prefix => 'games_'}) do |m|
     m.root :controller => 'games/homepage', :action => :index
     m.real_index 'real_index', :controller => 'games/homepage', :action => :real_index
+    m.more_games 'more_games', :controller => 'games/more_games', :action => :index
+    m.tos 'tos', :controller => 'games/homepage', :action => :tos
+    m.privacy 'privacy', :controller => 'games/homepage', :action => :privacy
     
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy ]
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
     m.logout 'logout', :controller => 'games/gamer_sessions', :action => :destroy
     
-    m.resource :gamer, :controller => 'games/gamers', :only => [ :new, :create, :edit, :update ] do |gamer|
+    m.resource :gamer, :controller => 'games/gamers', :only => [ :create, :edit, :update ] do |gamer|
       gamer.resource :device, :controller => 'games/gamers/devices', :only => [ :new, :create ], :member => { :finalize => :get }
     end
     m.register 'register', :controller => 'games/gamers', :action => :new
@@ -18,9 +21,7 @@ ActionController::Routing::Routes.draw do |map|
     m.confirm 'confirm', :controller => 'games/confirmations', :action => :create
     
     m.resources :password_resets, :controller => 'games/password_resets', :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
-
-    m.resources :editors_picks, :controller => 'games/editors_picks', :as => 'editors_picks', :only => [ :index ]
-
+    
   end
 
   break if MACHINE_TYPE == 'games'
