@@ -390,10 +390,11 @@ class ToolsController < WebsiteController
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @publisher_app ])
     
-    support_request = SupportRequest.find_by_udid_and_app_id(params[:udid], params[:publisher_app_id]);
+    support_request = SupportRequest.find_by_udid_and_app_id(params[:udid], params[:publisher_app_id])
     if support_request.nil?
-      flash[:error] = "Support_request is not found." 
+      flash[:error] = "Support request not found. The user must submit a support request for the app in order to award them currency." 
       redirect_to :action => :device_info, :udid => params[:udid]  
+      return
     end        
     @publisher_user_id = support_request.publisher_user_id
   end
