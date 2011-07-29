@@ -29,8 +29,8 @@ class Homepage::CareersController < WebsiteController
       {
         :name => "Finance",
         :list => [
-          { :title => "Financial Controller", :href => "/careers/financial_controller"}
-          { :title => "Senior Accountant", :href => "/careers/senior_accountant"}
+          { :title => "Financial Controller", :href => "/careers/financial_controller"},
+          { :title => "Senior Accountant", :href => "/careers/senior_accountant"},
           { :title => "Accounting Operations Manager", :href => "/careers/accounting_operations"},
         ]
       },
