@@ -1,11 +1,6 @@
 #jqt
-  #register_device.current
-    .top_nav_bar.toolbar
-      .nav_content
-        .right
-          = mail_to 'support@tapjoy.com', 'Support', :id => 'support'
-        .right
-          = link_to 'My Account', "#my_account", :class => "flip"
+  #link_device.current
+    = render 'nav_bar'
     .container.vertical-scroll
       .scroller.with-scrollbar
         .page
@@ -31,36 +26,7 @@
                 %span.button.grey.arrow  
                   Please link your device now
 
-  #my_account.tan
-    .container.vertical-scroll
-      .scroller.with-scrollbar
-        .page
-          .logo
-            .slide_nav.left
-              .left
-                .slide_arrow_wrapper.left_arrow
-                  .slide_arrow
-              .slider.slider_active.slider_left.left
-                .title
-                  = link_to 'Back', "#", :class => "back"
-          .content.hide
-
-#bad_news.dialog_wrapper.hide
-  .close_dialog
-    .close_button
-  .dialog
-    .dialog_header_wrapper
-      .dialog_header_right
-      .dialog_header_left
-      .dialog_title.title_2 Bad News
-    .dialog_header Incompatible Device
-    .dialog_content To complete account registration please visit us on a supported mobile device.
-
-#loader.dialog_wrapper.hide
-  .dialog
-    .dialog_title
-      Loading
-    .dialog_image
+  = render 'my_account'
 
 - content_for :page_javascript do
   - if Rails.env.production?

@@ -67,7 +67,7 @@
       .field_row.clearfix
         .field.field_tos
           = f.check_box :terms_of_service
-          = f.label :terms_of_service, "I agree to the #{ link_to('Terms of services', '/tos') }, #{ link_to('Privacy Policy', '/privacy') }, and that I am over the age of 13"
+          = f.label :terms_of_service, "I agree to the #{ link_to('Terms of services', games_tos_path, :target => '_blank') }, #{ link_to('Privacy Policy', games_privacy_path, :target => '_blank') }, and that I am over the age of 13"
         .field
           = f.hidden_field :referrer, :value => params[:referrer]
           = f.submit 'Do it!', :class => 'right button m_width lt_blue'
@@ -75,36 +75,7 @@
         = error_message_on @gamer, :email
         = error_message_on @gamer, :password
         = error_message_on @gamer, :terms_of_service
-
-#bad_news.dialog_wrapper.hide
-  .dialog
-    .dialog_header_wrapper
-      .dialog_header_right
-      .dialog_header_left
-      .dialog_title.title_2 Bad News
-    .dialog_header Incompatible Device
-    .dialog_content To complete account registration please visit us on a supported mobile device.
-
-#how_works_dialog.dialog_wrapper.hide
-  .close_dialog
-    .close_button
-  .dialog
-    .dialog_header_wrapper
-      .dialog_header_right
-      .dialog_header_left
-      .dialog_title.title_2 How's it work?
-    .dialog_header Using Tapjoy games couldn't be easier!
-    .dialog_content All your games are listed in <span class="bold">My Apps</span>. From there, you can start earning currency and discovering new, cool games to play!
-
-#loader.dialog_wrapper.hide
-  #progress.dialog
-    .dialog_title
-      Loading
-    .dialog_image
     
     
 - content_for :page_javascript do
   :plain
-    $(window).load(function() {
-      
-    });

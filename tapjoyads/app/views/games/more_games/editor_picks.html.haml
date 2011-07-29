@@ -1,11 +1,6 @@
 #jqt
   #recommended.current
-    .top_nav_bar.toolbar
-      .nav_content
-        .right
-          = mail_to 'support@tapjoy.com', 'Support', :id => 'support'
-        .right
-          = link_to 'My Account', "#my_account", :class => "flip" 
+    = render 'nav_bar'
     .container.vertical-scroll
       .scroller.with-scrollbar
         .page
@@ -52,15 +47,20 @@
               .slider.slider_active.slider_left.left
                 .title
                   = link_to 'Back', "#", :class => "back" 
-          .content
-            = link_to "Logout", games_logout_path
+          .content.narrow.pad
+            .my_account_header_wrapper
+              .my_account_header.title_2
+                My Account Info 
+            .content_box_top_arrow_wrapper
+              .content_box_top_arrow
+            .content_box_wrapper
+              .content_box.clearfix
+                - if current_gamer.present?
+                  .account_info
+                    = "Logged in as #{current_gamer.email}"
+                  .button.lt_blue.logout
+                    = link_to "Logout", games_logout_path
 
-
-#loader.dialog_wrapper.hide
-  .dialog
-    .dialog_title
-      Loading
-    .dialog_image
 
 - content_for :page_javascript do
   :plain
@@ -68,8 +68,9 @@
       var jQT = new $.jQTouch({
         slideSelector: '#jqt .slide_nav',
       });
-      var linked_games = TJG.utils.getParam("no_games");
-      if (linked_games.indexOf("true") != -1) {
+      var install = TJG.utils.getParam("register_device");
+      if (install.indexOf("true") != -1) {
+        TJG.utils.centerDialog("#register_device");
         $("#register_device").fadeIn(350); 
       }
       function getTopGames() {

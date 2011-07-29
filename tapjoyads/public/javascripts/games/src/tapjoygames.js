@@ -147,7 +147,7 @@ TJG.ui = {
         hasError = true;
       }
       else if(values['gamer[terms_of_service]'] == false) {
-        $(".email_error").html('Please agree to the Terms of Service');
+        $(".email_error").html('Please agree to the terms and conditions above');
         hasError = true;
       }
       if (hasError) {
@@ -195,7 +195,7 @@ TJG.ui = {
               else if (d.link_device_url) {
                 $('.close_dialog,.continue_link_device').click(function(){
                   document.location.href = d.link_device_url;
-                  $("#sign_up_dialog_content").hide();
+                  $("#sign_up_dialog").hide();
                 });
               }
               else {

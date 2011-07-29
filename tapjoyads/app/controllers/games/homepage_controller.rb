@@ -1,6 +1,6 @@
 class Games::HomepageController < GamesController
   
-  before_filter :require_complete_gamer, :except => 'index' 
+  before_filter :require_complete_gamer, :except => [ :index, :tos, :privacy ]
   
   def index
     if current_gamer.present?
@@ -14,16 +14,14 @@ class Games::HomepageController < GamesController
     @device = Device.new(:key => current_gamer.udid)
     @external_publishers = ExternalPublisher.load_all_for_device(@device)
     if @external_publishers.empty?
-      redirect_to games_more_games_path(:no_games => true)
+      render 'games/homepage/no_games'
     end
   end
   
   def tos
-    render 'games/tos'
   end
   
   def privacy
-    render 'games/privacy'
   end   
 
 private
@@ -32,9 +30,8 @@ private
     if current_gamer.blank?
       redirect_to games_login_path
     elsif current_gamer.udid.blank?
-      render 'games/register_device'
+      render 'games/homepage/register_device'
     end
   end
-
 
 end
