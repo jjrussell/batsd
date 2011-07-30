@@ -772,8 +772,12 @@ class Offer < ActiveRecord::Base
         # is_paid? ? (price * 0.65).round : 50
       end
     elsif item_type == 'ActionOffer'
-      platform = App::PLATFORMS.index(get_platform)
-      platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
+      if is_paid?
+        (price * 0.50).round
+      else
+        platform = App::PLATFORMS.index(get_platform)
+        platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
+      end
     else
       0
     end
