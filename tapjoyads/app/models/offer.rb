@@ -540,7 +540,7 @@ class Offer < ActiveRecord::Base
     search_name
   end
 
-  def post_cache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
+  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
       geoip_reject?(geoip_data, device) ||
       already_complete?(publisher_app, device, app_version) ||
       show_rate_reject?(device) ||
@@ -558,7 +558,7 @@ class Offer < ActiveRecord::Base
       currency_whitelist_reject?(currency)
   end
 
-  def pre_cache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
+  def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
     app_platform_mismatch?(platform_name) || hide_rewarded_app_installs_reject?(hide_rewarded_app_installs) || device_platform_mismatch?(normalized_device_type)
   end
 
