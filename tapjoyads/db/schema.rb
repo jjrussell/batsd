@@ -50,7 +50,6 @@ ActiveRecord::Schema.define(:version => 20110721163803) do
   end
 
   add_index "app_metadata_mappings", ["app_id", "app_metadata_id"], :name => "index_app_metadata_mappings_on_app_id_and_app_metadata_id", :unique => true
-  add_index "app_metadata_mappings", ["app_id"], :name => "index_app_metadata_mappings_on_app_id"
   add_index "app_metadata_mappings", ["id"], :name => "index_app_metadata_mappings_on_id", :unique => true
 
   create_table "app_metadatas", :id => false, :force => true do |t|

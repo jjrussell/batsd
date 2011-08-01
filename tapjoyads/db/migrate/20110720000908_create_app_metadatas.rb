@@ -30,7 +30,6 @@ class CreateAppMetadatas < ActiveRecord::Migration
 
     add_index :app_metadata_mappings, :id, :unique => true
     add_index :app_metadata_mappings, [:app_id, :app_metadata_id], :unique => true
-    add_index :app_metadata_mappings, [:app_id]
   end
 
   def self.down
