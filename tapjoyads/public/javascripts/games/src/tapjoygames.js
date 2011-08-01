@@ -73,6 +73,10 @@ TJG.ui = {
       style = 'style="display:none;"';
     }
     $.each(obj, function(i,v){
+      var freeCls = "";
+      if (v.Cost == "Free") {
+        freeCls = "free";
+      }
       t.push('<li class="offer_item clearfix '+ clsId +'" '+ style +'>'); 
         t.push('<div class="offer_image">');
           t.push('<img src="' + v.IconURL + '">');
@@ -93,7 +97,7 @@ TJG.ui = {
                   t.push('<span class="currency">');
                     t.push(currency);
                   t.push('</span>');
-                  t.push('<span class="cost">');
+                  t.push('<span class="cost '+ freeCls +'">');
                     t.push(v.Cost);
                   t.push('</span>'); 
                 t.push('</div>');
