@@ -24,6 +24,7 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :sent_currency,     :type => :time
   self.sdb_attr :sent_money_txn,    :type => :time
   self.sdb_attr :send_currency_status
+  self.sdb_attr :customer_support_username
   
   def initialize(options = {})
     super({:load_from_memcache => false}.merge(options))
