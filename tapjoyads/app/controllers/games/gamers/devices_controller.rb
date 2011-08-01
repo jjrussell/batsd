@@ -46,6 +46,6 @@ class Games::Gamers::DevicesController < GamesController
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
     end
-    redirect_to games_root_path
+    redirect_to games_root_path(:register_device => true)
   end
 end
