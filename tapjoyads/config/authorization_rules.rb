@@ -22,6 +22,7 @@ authorization do
   
   role :tools do
     has_permission_on :tools, :to => [ :index ]
+    has_permission_on :internal_devices, :to => [ :new, :update, :index, :show, :destroy, :block ]
   end
   
   role :customer_service do
