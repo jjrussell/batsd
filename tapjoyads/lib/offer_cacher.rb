@@ -2,8 +2,11 @@ ActionOffer
 
 class OfferCacher
   
-  GROUP_SIZE = 200
-  OFFER_TYPES = [ Offer::DEFAULT_OFFER_TYPE, Offer::FEATURED_OFFER_TYPE, Offer::DISPLAY_OFFER_TYPE, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_OFFER_TYPE ]
+  GROUP_SIZE            = 200
+  OFFER_TYPES           = [ Offer::DEFAULT_OFFER_TYPE, Offer::FEATURED_OFFER_TYPE, Offer::DISPLAY_OFFER_TYPE, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_OFFER_TYPE ]
+  DEVICE_TYPES          = Offer::ALL_DEVICES | [ "" ]
+  PLATFORMS             = App::PLATFORMS.values
+  HIDE_REWARDED_OPTIONS = [ true, false ]
   
   class << self
   
@@ -28,9 +31,9 @@ class OfferCacher
 
     def cache_unsorted_offers_prerejected(offers, type, save_to_s3 = false)
       offers.each { |o| o.run_callbacks(:before_cache) }
-      App::PLATFORMS.values.each do |platform|
-        [ true, false ].each do |hide_rewarded_app_installs|
-          (Offer::ALL_DEVICES + [ "" ]).each do |device_type|
+      PLATFORMS.each do |platform|
+        HIDE_REWARDED_OPTIONS.each do |hide_rewarded_app_installs|
+          DEVICE_TYPES.each do |device_type|
             cache_offer_list("#{type}.#{platform}.#{hide_rewarded_app_installs}.#{device_type}", offers.reject { |o| o.pre_cache_reject?(platform, hide_rewarded_app_installs, device_type) }, save_to_s3)
           end
         end
@@ -117,9 +120,9 @@ class OfferCacher
     
     def populate_rails_cache
       OFFER_TYPES.each do |type|
-        App::PLATFORMS.values.each do |platform|
-          [ true, false ].each do |hide_rewarded_app_installs|
-            (Offer::ALL_DEVICES + [ "" ]).each do |device_type|
+        PLATFORMS.each do |platform|
+          HIDE_REWARDED_OPTIONS.each do |hide_rewarded_app_installs|
+            DEVICE_TYPES.each do |device_type|
               RailsCache.put("#{type}.#{platform}.#{hide_rewarded_app_installs}.#{device_type}", get_unsorted_offers_prerejected(type, platform, hide_rewarded_app_installs, device_type))
             end
           end

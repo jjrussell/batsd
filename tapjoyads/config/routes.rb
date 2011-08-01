@@ -101,7 +101,7 @@ ActionController::Routing::Routes.draw do |map|
       user.resources :partner_assignments, :only => [ :create, :destroy ], :controller => 'users/partner_assignments'
     end
     tools.resources :employees, :only => [ :index, :new, :create, :edit, :update ], :member => [ :delete_photo ]
-    tools.resources :preview_experiments, :only => [ :index, :show ]
+    tools.resources :offer_lists, :only => [ :index ]
     tools.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
     tools.resources :external_publishers, :only => [ :index, :update ]
     tools.resources :jobs, :except => [ :show ]

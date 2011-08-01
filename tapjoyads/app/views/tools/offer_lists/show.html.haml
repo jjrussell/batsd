@@ -32,11 +32,6 @@
 %table#offers.tablesorter
   %thead
     %tr
-      - if params[:id] == "featured"
-        %th Display %
-      - else
-        %th Avg Rank
-      %th Rank Score
       %th Name
       %th Show Rate
       %th CVR
@@ -47,14 +42,7 @@
       %th Devices
       %th Type
   %tbody#offers_tbody
-    - rank = 1
     - @offers.each_with_index do |offer, i|
-      %tr{ "data-item_type" => offer.item_type }
-        - if params[:id] == "featured"
-          %td= "#{(100.0 * weights[i] / total_weight).round(2)}%"
-        - else
-          %td= rank.floor.to_i.to_s
-        %td= offer.rank_score
         %td= (permitted_to? :show, :statz) ? link_to(offer.name, statz_path(offer)) : offer.name
         %td= offer.show_rate
         %td= offer.conversion_rate

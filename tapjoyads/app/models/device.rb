@@ -111,6 +111,8 @@ class Device < SimpledbShardedResource
       'itouch'
     elsif device_type_param =~ /ipad/i
       'ipad'
+    elsif device_type_param =~ /itouch/i
+      'itouch'
     elsif device_type_param =~ /android/i
       'android'
     elsif device_type_param =~ /windows/i

@@ -2,9 +2,9 @@ class OfferList
   attr_reader :offers
   
   def initialize(options = {})
-    @publisher_app              = options.delete(:publisher_app)           { |k| raise "#{k} is a required argument" }
-    @device                     = options.delete(:device)                  { |k| raise "#{k} is a required argument" }
-    @currency                   = options.delete(:currency)                { |k| raise "#{k} is a required argument" }
+    @publisher_app              = options.delete(:publisher_app)
+    @device                     = options.delete(:device)
+    @currency                   = options.delete(:currency)
     @device_type                = options.delete(:device_type)
     @geoip_data                 = options.delete(:geoip_data)              { {} }
     @app_version                = options.delete(:app_version)
@@ -16,9 +16,11 @@ class OfferList
     @source                     = options.delete(:source)
     @exp                        = options.delete(:exp)  
     @include_rating_offer       = options.delete(:include_rating_offer) { false }
+    @platform_name              = options.delete(:platform_name)
+    @hide_rewarded_app_installs = options.delete(:hide_rewarded_app_installs)
     
-    @hide_rewarded_app_installs = @currency.hide_rewarded_app_installs_for_version?(@app_version, @source)
-    @platform_name              = @publisher_app.platform_name
+    @hide_rewarded_app_installs = @currency.hide_rewarded_app_installs_for_version?(@app_version, @source) if @hide_rewarded_app_installs.nil?
+    @platform_name              ||= @publisher_app.platform_name
     @normalized_device_type     = Device.normalize_device_type(@device_type)
     
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -40,8 +42,10 @@ class OfferList
     
     @offers = cached_object.value
     
-    @offers.each do |o|
-      o.postcache_rank_score(@currency)
+    if @currency
+      @offers.each do |o|
+        o.postcache_rank_score(@currency)
+      end
     end
     Rails.logger.info "Found #{@offers.length} offers."
   end
