@@ -74,7 +74,6 @@ private
       :currency           => currency,
       :device_type        => params[:device_type],
       :geoip_data         => geoip_data,
-      :required_length    => 100,
       :os_version         => params[:os_version],
       :type               => Offer::DISPLAY_OFFER_TYPE,
       :library_version    => params[:library_version],

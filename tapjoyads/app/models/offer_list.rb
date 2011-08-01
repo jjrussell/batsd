@@ -25,8 +25,8 @@ class OfferList
     
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
-    if @hide_rewarded_app_offers
-      @type = case type
+    if @hide_rewarded_app_installs
+      @type = case @type
       when Offer::FEATURED_OFFER_TYPE
         Offer::NON_REWARDED_FEATURED_OFFER_TYPE
       when Offer::DISPLAY_OFFER_TYPE
