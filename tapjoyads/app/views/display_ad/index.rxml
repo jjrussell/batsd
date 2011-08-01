@@ -11,5 +11,12 @@ xml.TapjoyAd do
   elsif @click_url.present? && @image.present?
     xml.ClickURL @click_url
     xml.Image @image
+  elsif @click_url.present? && @offer.present? && @amount.present? && @image_url.present?
+    xml.ClickURL @click_url
+    xml.Cost visual_cost(@offer)
+    xml.Amount @amount
+    xml.IconURL @offer.get_icon_url(:source => :cloudfront, :size => '57')
+    xml.Name @offer.name
+    xml.ImageURL @image_url
   end
 end

@@ -2,7 +2,7 @@ class DisplayAdController < ApplicationController
   
   before_filter :set_device_type, :setup, :except => :image
   
-  def index
+  def index      
   end
   
   def webview
@@ -98,12 +98,17 @@ private
           :displayer_app_id  => params[:app_id],
           :country_code      => geoip_data[:country]
       )
-      if params[:action] == 'webview'
+      if params[:action] == 'webview' || params[:details] == '1'
         @image_url = get_ad_image_url(publisher_app, offer, params[:size], currency, params[:display_multiplier])
       else
         @image = get_ad_image(publisher_app, offer, params[:size], currency, params[:display_multiplier])
       end
-    
+
+      if params[:details] == '1'
+        @offer     = offer
+        @amount    = currency.get_visual_reward_amount(offer, params[:display_multiplier])
+      end
+          
       web_request.offer_id = offer.id
       web_request.add_path('display_ad_shown')
     end
