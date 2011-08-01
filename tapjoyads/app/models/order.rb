@@ -18,7 +18,7 @@ class Order < ActiveRecord::Base
   belongs_to :partner
   
   validates_presence_of :partner
-  validates_presence_of :billing_email, :message => "Partner needs a billing email for invoicing"
+  validates_presence_of :billing_email, :on => :create, :if => :create_invoice, :message => "Partner needs a billing email for invoicing"
   validates_inclusion_of :status, :in => STATUS_CODES.keys
   validates_inclusion_of :payment_method, :in => PAYMENT_METHODS.keys
   validates_uniqueness_of :invoice_id, :allow_nil => true
@@ -50,6 +50,15 @@ class Order < ActiveRecord::Base
   def is_invoiced?; payment_method==1;  end
   def is_bonus?;    payment_method==2;  end
   def is_transfer?; payment_method==3;  end
+
+  def create_invoice
+    @create_invoice = true unless defined?(@create_invoice)
+    @create_invoice
+  end
+
+  def create_invoice=(bool)
+    @create_invoice = ['1', true].include?(bool)
+  end
 
   def create_freshbooks_invoice
     return if invoice_id
