@@ -21,10 +21,11 @@
               Uh Oh!
             .message_header
               No Tapjoy Games have been linked to this device.  Why not try out some new games?
-            .message_content
+            .message_content.find_games
               %a{ :href => games_more_games_path }
-                %span.button.grey.arrow  
-                  Find cool games!
+                .button.grey.arrow
+                  .arrow_bg  
+                    Find cool games!
 
   = render 'my_account'
 

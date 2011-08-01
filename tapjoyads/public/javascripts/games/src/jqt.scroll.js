@@ -105,11 +105,6 @@
         height = function(vars){return (window.innerHeight) + "px"},
         width = function (){return window.innerWidth + "px";},
         cssRules = {
-            /**
-             *
-             *
-             *    @var Object
-             */
             variables : {
                 toolbarHeight: 44
             },
@@ -322,12 +317,8 @@
             matrix, mp,
             dimension = $this[options.outerDimension](),
             parent = $this.parent()[options.dimension](),
-            //maxScroll
             endPoint = -(dimension - parent),
-            //a distance to stop inertia from hitting
             quarter = parent / options.divider;
-            
-        //ignore some stuff
         if (!!options.ignore && $(event.target).is(options.ignore) || event.targetTouches.length !== options.numberOfTouches) { 
             return null;
         }
@@ -381,7 +372,6 @@
             point = data.startPosition - distance,
             duration = 0;
         
-        //apply friction if past scroll points
         if (point > 5) {
             point = (point - 5) / options.friction;
             

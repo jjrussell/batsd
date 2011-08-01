@@ -29,9 +29,10 @@
                       - external_publisher.currencies.each_with_index do |currency, i|
                         - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency), :currency => currency[:name], :app_name => external_publisher.app_name) do
                           .offer_button
-                            .button.blue 
-                              %span.amount
+                            .button.grey 
+                              %span.earn
                                 Earn
+                              %span.currency
                                 = currency[:name]
 
   #earn
