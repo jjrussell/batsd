@@ -109,7 +109,7 @@ class Mc
       cache ||= @@cache
       cache = cache.clone if clone
       
-      Rails.logger.info_with_time("Wrote to memcache") do
+      Rails.logger.info_with_time("Wrote to memcache: #{key}") do
         cache.set(CGI::escape(key), value, time.to_i)
       end
     end
