@@ -401,7 +401,7 @@ private
           )
         end
 
-        mapping = AppMetadataMapping.find(mapping.id);
+        mapping = AppMetadataMapping.find(mapping.id)
         mapping.app_metadata_id = new_metadata.id
         mapping.save!
         # do we need to remove any app_metadatas records that are no longer associated to any apps?
