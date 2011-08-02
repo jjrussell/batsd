@@ -59,7 +59,7 @@ class PayoutInfo < ActiveRecord::Base
         :bank_account_number => decrypt_bank_account_number,
         :bank_routing_number => decrypt_bank_routing_number,
       }
-    when 'paypal' # TODO: implement this
+    when 'paypal'
       {
         :paypal_email => paypal_email
       }
