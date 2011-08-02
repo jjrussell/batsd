@@ -38,6 +38,7 @@ namespace :admin do
     end
     puts("finished in #{time} seconds.")
     system("rm -f #{dump_file}")
+    system("rm -f #{dump_file2}")
   end
   
   desc "Prints the apache restarts logs"
