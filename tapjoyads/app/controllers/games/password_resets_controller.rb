@@ -43,7 +43,7 @@ private
     @gamer = Gamer.find_using_perishable_token(params[:id])
     if @gamer.nil?
       flash[:error] = "Your password reset token has expired. Please use the 'Forgot password?' link below to request a new one."
-      #redirect_to games_login_path
+      redirect_to games_login_path
     end
   end
   

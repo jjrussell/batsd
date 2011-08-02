@@ -42,6 +42,7 @@ TJG.utils = {
 TJG.ui = { 
   
   hideLoader : function(delay,fn) {
+    TJG.repositionDialog = [];
     if (delay == null) {
       delay = 300;
     }
@@ -52,6 +53,7 @@ TJG.ui = {
   
   showLoader : function(delay,fn) {
     TJG.utils.centerDialog("#loader");
+    TJG.repositionDialog = ["#loader"];
     if (delay == null) {
       delay = 300;
     } 
@@ -62,6 +64,7 @@ TJG.ui = {
   
   removeDialogs : function () {
     $('.dialog_wrapper').fadeOut();
+    TJG.repositionDialog = [];
   },
   
   getOffferRow : function (obj,currency,i,hidden) {
@@ -118,6 +121,7 @@ TJG.ui = {
     else {
       path = location.pathname.replace(/\/$/, '');
     }
+    TJG.repositionDialog = ["#sign_up_dialog"];
     $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
     TJG.onload.loadCufon();
     $(".close_dialog").show();
@@ -276,13 +280,16 @@ TJG.ui = {
       loadEvents : function () {
         $('.close_dialog').click(function(){
           TJG.ui.removeDialogs();
+          TJG.repositionDialog = [];
         });
         $('#sign_up, #sign_up_form').click(function(){
           TJG.utils.centerDialog("#sign_up_dialog");
+          TJG.repositionDialog = ["#sign_up_dialog"];
           TJG.ui.showRegister();
         });
         $('#how_works').click(function(){
           TJG.utils.centerDialog("#how_works_dialog");
+          TJG.repositionDialog = ["#how_works_dialog"];
           $("#how_works_dialog").fadeIn(350);
         });
       },

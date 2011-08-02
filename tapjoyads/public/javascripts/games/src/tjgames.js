@@ -6247,13 +6247,17 @@ TJG.vars.isSwapped = false;
 TJG.vars.isIos = false;
 TJG.vars.isTouch = false;
 TJG.appOfferWall = {};
+TJG.openiDialogs = {};
 (function(window, document) {
-    var winH = $(window).height();
-    var winW = $(window).width();
-    var el = "#loader";
-    $(el).css('top',  winH/2-$().height()/2);
-    $(el).css('left', winW/2-$(el).width()/2);
-    $(el).show();
+    var winH, winW;
+    function centerDialog (el) {
+      winH = $(window).height();
+      winW = $(window).width();
+      $(el).css('top',  winH/2-$().height()/2);
+      $(el).css('left', winW/2-$(el).width()/2);
+      $(el).show();    
+    }
+    centerDialog("#loader");
     /*!
      * master-class v0.1
      * http://johnboxall.github.com/master-class/
@@ -6311,6 +6315,11 @@ TJG.appOfferWall = {};
             currentOrientationClass = orientationClass;
             var className = TJG.doc.className;
             TJG.doc.className = className ? className.replace(orientationRe, currentOrientationClass) : currentOrientationClass;
+            if (TJG.repositionDialog.length > 0) {
+              for (var i = 0; i < TJG.repositionDialog.length; i++) {
+                centerDialog(TJG.repositionDialog[i]);
+              }
+            }
          }
       }, false);
     }
@@ -8392,11 +8401,6 @@ Cufon.registerFont({"w":238,"face":{"font-family":"AmerType Md BT","font-weight"
         height = function(vars){return (window.innerHeight) + "px"},
         width = function (){return window.innerWidth + "px";},
         cssRules = {
-            /**
-             *
-             *
-             *    @var Object
-             */
             variables : {
                 toolbarHeight: 44
             },
@@ -8609,12 +8613,8 @@ Cufon.registerFont({"w":238,"face":{"font-family":"AmerType Md BT","font-weight"
             matrix, mp,
             dimension = $this[options.outerDimension](),
             parent = $this.parent()[options.dimension](),
-            //maxScroll
             endPoint = -(dimension - parent),
-            //a distance to stop inertia from hitting
             quarter = parent / options.divider;
-            
-        //ignore some stuff
         if (!!options.ignore && $(event.target).is(options.ignore) || event.targetTouches.length !== options.numberOfTouches) { 
             return null;
         }
@@ -8668,7 +8668,6 @@ Cufon.registerFont({"w":238,"face":{"font-family":"AmerType Md BT","font-weight"
             point = data.startPosition - distance,
             duration = 0;
         
-        //apply friction if past scroll points
         if (point > 5) {
             point = (point - 5) / options.friction;
             
@@ -9067,6 +9066,7 @@ TJG.utils = {
 TJG.ui = { 
   
   hideLoader : function(delay,fn) {
+    TJG.repositionDialog = [];
     if (delay == null) {
       delay = 300;
     }
@@ -9077,6 +9077,7 @@ TJG.ui = {
   
   showLoader : function(delay,fn) {
     TJG.utils.centerDialog("#loader");
+    TJG.repositionDialog = ["#loader"];
     if (delay == null) {
       delay = 300;
     } 
@@ -9087,6 +9088,7 @@ TJG.ui = {
   
   removeDialogs : function () {
     $('.dialog_wrapper').fadeOut();
+    TJG.repositionDialog = [];
   },
   
   getOffferRow : function (obj,currency,i,hidden) {
@@ -9098,6 +9100,10 @@ TJG.ui = {
       style = 'style="display:none;"';
     }
     $.each(obj, function(i,v){
+      var freeCls = "";
+      if (v.Cost == "Free") {
+        freeCls = "free";
+      }
       t.push('<li class="offer_item clearfix '+ clsId +'" '+ style +'>'); 
         t.push('<div class="offer_image">');
           t.push('<img src="' + v.IconURL + '">');
@@ -9118,7 +9124,7 @@ TJG.ui = {
                   t.push('<span class="currency">');
                     t.push(currency);
                   t.push('</span>');
-                  t.push('<span class="cost">');
+                  t.push('<span class="cost '+ freeCls +'">');
                     t.push(v.Cost);
                   t.push('</span>'); 
                 t.push('</div>');
@@ -9139,6 +9145,7 @@ TJG.ui = {
     else {
       path = location.pathname.replace(/\/$/, '');
     }
+    TJG.repositionDialog = ["#sign_up_dialog"];
     $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
     TJG.onload.loadCufon();
     $(".close_dialog").show();
@@ -9297,13 +9304,16 @@ TJG.ui = {
       loadEvents : function () {
         $('.close_dialog').click(function(){
           TJG.ui.removeDialogs();
+          TJG.repositionDialog = [];
         });
         $('#sign_up, #sign_up_form').click(function(){
           TJG.utils.centerDialog("#sign_up_dialog");
+          TJG.repositionDialog = ["#sign_up_dialog"];
           TJG.ui.showRegister();
         });
         $('#how_works').click(function(){
           TJG.utils.centerDialog("#how_works_dialog");
+          TJG.repositionDialog = ["#how_works_dialog"];
           $("#how_works_dialog").fadeIn(350);
         });
       },
