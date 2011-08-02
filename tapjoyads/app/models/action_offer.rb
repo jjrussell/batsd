@@ -43,8 +43,8 @@ private
     offer.url              = app.direct_store_url
     offer.instructions     = instructions
     offer.device_types     = app.primary_offer.device_types
-    offer.bid              = offer.min_bid
     offer.price            = prerequisite_offer_id? ? 0 : app.price
+    offer.bid              = offer.min_bid
     offer.name_suffix      = 'action'
     offer.third_party_data = prerequisite_offer_id
     offer.icon_id_override = app_id
@@ -60,6 +60,9 @@ private
       offer.instructions     = instructions if instructions_changed?
       offer.hidden           = hidden if hidden_changed?
       offer.price            = prerequisite_offer_id? ? 0 : app.price
+      if offer.price_changed? && offer.bid < offer.min_bid
+        offer.bid = offer.min_bid
+      end
       offer.third_party_data = prerequisite_offer_id if prerequisite_offer_id_changed?
       offer.save! if offer.changed?
     end
