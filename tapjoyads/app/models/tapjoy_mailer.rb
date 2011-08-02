@@ -132,6 +132,5 @@ class TapjoyMailer < ActionMailer::Base
     content_type 'text/html'
     subject 'Approve Unknown Device'
     body(:verification_key => verification_key, :block_link => block_link, :reset_link => reset_link)
-    from
   end
 end
