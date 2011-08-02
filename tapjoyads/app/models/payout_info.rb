@@ -72,11 +72,11 @@ class PayoutInfo < ActiveRecord::Base
 
 private
   def require_bank_info?
-    %w(ach wire).include?(payout_method) || international? && payout_method != 'paypal'
+    %w(ach wire).include?(payout_method) || international? && !uses_paypal?
   end
 
   def international?
-    payment_country.to_s.downcase != 'united states of america' && payout_method != 'paypal'
+    payment_country.to_s.downcase != 'united states of america' && !uses_paypal?
   end
 
   def uses_paypal?
