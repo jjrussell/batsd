@@ -37,6 +37,7 @@ class InternalDevice < ActiveRecord::Base
 
   def block!
     self.status = 'blocked'
+    self.save
   end
 
   def verifier=(ver)

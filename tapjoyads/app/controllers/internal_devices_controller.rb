@@ -36,7 +36,6 @@ class InternalDevicesController < WebsiteController
   def destroy
     device = InternalDevice.find(params[:id])
     device.block!
-    device.save
     flash[:notice] = "Device #{device.description} removed"
     redirect_to internal_device_path(current_user.id)
   end
