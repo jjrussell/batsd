@@ -2,7 +2,7 @@ class DisplayAdController < ApplicationController
   
   before_filter :set_device_type, :setup, :except => :image
   
-  def index      
+  def index
   end
   
   def webview
