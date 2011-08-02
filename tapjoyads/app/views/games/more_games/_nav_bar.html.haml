@@ -1,0 +1,10 @@
+.top_nav_bar.toolbar
+  .nav_content
+    - if current_gamer.present?
+      .right
+        = mail_to 'support@tapjoy.com', 'Support', :id => 'support'
+      .right
+        = link_to 'My Account', "#my_account", :class => "flip"
+    - else
+      .right
+        = link_to 'Login', games_login_path                                                                                                                    

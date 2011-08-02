@@ -28,10 +28,10 @@ class ExternalPublisher
       :currency_id       => currency[:id],
       :app_id            => app_id,
       :source            => 'tj_games',
+      :json              => '1'
     }
     # TODO: add device_type and other device info, either here or at get_offers time
-    
-    "https://ws.tapjoyads.com/get_offers/webpage?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
+    "#{API_URL}/get_offers?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
 
   def self.load_all_for_device(device)
@@ -46,6 +46,16 @@ class ExternalPublisher
     
     external_publishers.sort! do |e1, e2|
       e2.last_run_time <=> e1.last_run_time
+    end
+    external_publishers
+  end
+
+  def self.load_all_for_device_filter_installed(device)
+    device_apps = device.apps
+    external_publishers = []
+    self.load_all.each do |app_id, external_publisher|
+      next if device_apps[app_id].present?
+      external_publishers << external_publisher
     end
     external_publishers
   end

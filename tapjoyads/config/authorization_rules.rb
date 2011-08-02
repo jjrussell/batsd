@@ -26,7 +26,7 @@ authorization do
   
   role :customer_service do
     includes :tools
-    has_permission_on :tools, :to => [ :resolve_clicks, :device_info, :update_device ]
+    has_permission_on :tools, :to => [ :resolve_clicks, :device_info, :update_device, :award_currencies, :update_award_currencies ]
   end
   
   role :money do
@@ -67,7 +67,7 @@ authorization do
     includes :money
     has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser ]
     has_permission_on :search, :to => [ :offers, :partners, :users ]
-    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :edit_android_app, :update_android_app, :device_info, :update_device, :freemium_android ]
+    has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :edit_android_app, :update_android_app, :device_info, :update_device, :freemium_android, :award_currencies, :update_award_currencies ]
     has_permission_on :tools_enable_offer_requests, :to => [ :index, :update ]
     has_permission_on :activities, :to => [ :index ]
     has_permission_on :partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :new_transfer, :create_transfer, :reporting, :agency_api ]
@@ -82,6 +82,7 @@ authorization do
     has_permission_on :tools_external_publishers, :to => [ :index, :update ]
     has_permission_on :tools_users, :to => [ :index, :show ]
     has_permission_on :tools_users_partner_assignments, :to => [ :create, :destroy ]
+    has_permission_on :tools_agency_users, :to => [ :index, :show ]
   end
 
   role :games_editor do

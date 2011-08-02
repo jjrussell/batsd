@@ -147,5 +147,29 @@ class OneOffs
       info.update_attribute(:payment_country => info.address_country)
     end
   end
+
+  def self.migrate_app_metadata
+    App.find_each(:conditions => "store_id != ''") do |app|
+      app_metadata = AppMetadata.find(:first, :conditions => ["store_name = ? and store_id = ?", app.store_name, app.store_id])
+      if app_metadata == nil
+        # only create this record if one doesn't already exist for this store and store_id
+        app_metadata = AppMetadata.create!(
+          :name              => app.name,
+          :description       => app.description,
+          :price             => app.price,
+          :store_name        => app.store_name,
+          :store_id          => app.store_id,
+          :age_rating        => app.age_rating,
+          :file_size_bytes   => app.file_size_bytes,
+          :supported_devices => app.supported_devices,
+          :released_at       => app.released_at,
+          :user_rating       => app.user_rating,
+          :categories        => app.categories
+        )
+      end
+
+      app_metadata.apps << app
+    end
+  end
 end
 

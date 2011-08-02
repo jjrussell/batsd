@@ -1,12 +1,13 @@
 class Job::MasterDailyAppStatsController < Job::JobController
   
   def index
-    now = Time.zone.now
+    next_aggregation_time = Time.zone.now + 1.day
+    offer_ids = Offer.to_aggregate_daily_stats.collect(&:id)
     
-    Offer.to_aggregate_daily_stats.find_each do |offer|
-      offer.next_daily_stats_aggregation_time = now + 1.day
-      offer.save(false)
-      Sqs.send_message(QueueNames::APP_STATS_DAILY, offer.id)
+    Offer.connection.execute("UPDATE offers SET next_daily_stats_aggregation_time = '#{next_aggregation_time.to_s(:db)}' WHERE id IN ('#{offer_ids.join("','")}')")
+    
+    offer_ids.each do |offer_id|
+      Sqs.send_message(QueueNames::APP_STATS_DAILY, offer_id)
     end
     
     render :text => 'ok'
