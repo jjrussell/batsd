@@ -37,10 +37,15 @@ class InternalDevicesController < WebsiteController
     device = InternalDevice.find(params[:id])
     device.block!
     flash[:notice] = "Device #{device.description} removed"
-    redirect_to internal_device_path(current_user.id)
+    if params[:token].present?
+      redirect_to edit_password_reset_url(params[:token])
+    else
+      redirect_to internal_device_path(current_user.id)
+    end
   end
 
   def block
     @device = InternalDevice.find(params[:id])
+    @token = params[:token]
   end
 end

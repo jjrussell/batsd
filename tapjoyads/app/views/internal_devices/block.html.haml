@@ -2,4 +2,4 @@
 
 %h1 Block Device
 
-%h2= link_to("Click here to block device", "/internal_devices/#{@device.id}", :method => :delete)
+%h2= link_to("Click here to block device", "/internal_devices/#{@device.id}?token=#{@token}", :method => :delete)
