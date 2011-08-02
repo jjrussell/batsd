@@ -96,7 +96,8 @@
                             var m = [
                               '<div>There was an issue fetching more offers. Please try again</div>'
                             ].join('');                               
-                            $("#offerwall_id-" + appId).append(m).fadeIn(350);
+                            $("#offerwall_id-" + appId).html(m).fadeIn(350);
+                            $(".get_more_apps_content").html("Load More");
                             $(".load_more_loader").hide();
                             isLoading = false;
                           }

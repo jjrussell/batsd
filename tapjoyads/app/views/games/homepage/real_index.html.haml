@@ -96,7 +96,7 @@
   = render 'my_account'
 
 - content_for :page_javascript do
-  - if Rails.env.production?
+  - if Rails.env.development?
     = render 'index_js_min'
   - else
     = render 'index_js'
