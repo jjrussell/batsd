@@ -107,7 +107,7 @@ input {
   margin: 10px auto;
   width: 35px;
   -webkit-transform: rotate(360deg);
-  -webkit-animation-name: spin;
+  -webkit-animation-name: spin;                             
   -webkit-animation-duration: .8s;
   -webkit-animation-iteration-count: infinite;
 }
@@ -501,6 +501,10 @@ form#new_gamer input {
   left: 4px;
 }  
 /* Content */
+.flash_message {
+  margin-bottom: 12px;
+  text-align: center;
+}
 .web .content,
 .ipad .content {
   color: #FFF;

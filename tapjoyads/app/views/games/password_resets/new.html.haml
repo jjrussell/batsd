@@ -13,23 +13,58 @@
               .content_box.clearfix
                 %div
                   - if @gamer
-                    %p You should receive an email with instructions to reset your password in the next few minutes.
+                    %p 
+                      You should receive an email with instructions to reset your password in the next few minutes.
                     %p
                       If you are still having problems logging in, you can
                       = link_to("request another password reset email", new_games_password_reset_path)
                       or email
                       = mail_to("mobilehelp@tapjoygames.com") + "."
                   - else
-                    %p Enter the email address associated with your account and we will send you a link to reset your password.
-                    - form_tag(games_password_resets_path) do
-                      .field
-                        = label_tag(:email)
-                        = email_field_tag(:email)
-                      .field
-                        = submit_tag('Submit', :class => 'button lt_blue')
-                      %p
-                        - [:error].each do |key|
-                          - unless flash[key].blank?
-                            .account_error
-                              = flash[key]
-                                                      
+                    %p 
+                      Enter the email address associated with your account and we will send you a link to reset your password.
+                    %p
+                      - form_tag(games_password_resets_path) do
+                        .field
+                          = label_tag(:email)
+                          = email_field_tag(:email)
+                        .field
+                          = submit_tag('Submit', :class => 'button lt_blue')
+                        %p
+                          - [:notice, :error, :success].each do |key|
+                            - unless flash[key].blank?
+                              %div{ :class => "account_error #{key}" }= flash[key]
+                      .formError.hide
+                        .email_error
+                            
+- content_for :page_javascript do
+  :plain
+    $(window).load(function() {
+      $('form').submit(function(e){
+        $(".formError").hide();
+        var inputs, email, values = {}, emailReg;
+        inputs = $('form :input[type=email]');
+        emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
+        inputs.each(function() {
+          if (this.type == 'checkbox' || this.type == 'radio') {
+            values[this.name] = $(this).attr("checked");
+          }
+          else {
+            values[this.name] = $(this).val();
+          }
+          email = values['email'];
+          var test = emailReg.test(email);
+          if( values['email'] == '' ) {
+            $(".email_error").html('Please enter your email address');
+            $(".formError").show();
+            e.preventDefault();
+          }
+          else if ( !emailReg.test(email) ) {
+            $(".email_error").html('Enter a valid email address');
+            $(".formError").show();
+            e.preventDefault();
+          }  
+        });
+      });
+    });
+    

@@ -17,23 +17,28 @@
                 .slide_arrow_wrapper.bottom_arrow
                   .slide_arrow
           .content
-            %ul
-              -@external_publishers.each do |external_publisher|
-                %li.offer_item.clearfix
-                  .offer_image
-                    = image_tag(external_publisher.get_icon_url(:source => :cloudfront))
-                  .offer_text
-                    .offer_title.title
-                      = external_publisher.app_name
-                    .offer_info
-                      - external_publisher.currencies.each_with_index do |currency, i|
-                        - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency), :currency => currency[:name], :app_name => external_publisher.app_name) do
-                          .offer_button
-                            .button.grey 
-                              %span.earn
-                                Earn
-                              %span.currency
-                                = currency[:name]
+            .flash_message
+              - [:notice, :error, :success].each do |key|
+                - unless flash[key].blank?
+                  %div{ :class => "#{key}" }= flash[key]
+            .offer_list
+              %ul
+                -@external_publishers.each do |external_publisher|
+                  %li.offer_item.clearfix
+                    .offer_image
+                      = image_tag(external_publisher.get_icon_url(:source => :cloudfront))
+                    .offer_text
+                      .offer_title.title
+                        = external_publisher.app_name
+                      .offer_info
+                        - external_publisher.currencies.each_with_index do |currency, i|
+                          - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency), :currency => currency[:name], :app_name => external_publisher.app_name) do
+                            .offer_button
+                              .button.grey 
+                                %span.earn
+                                  Earn
+                                %span.currency
+                                  = currency[:name]  
 
   #earn
     = render 'nav_bar'
@@ -95,8 +100,22 @@
 
   = render 'my_account'
 
+#bad_news.dialog_wrapper.hide
+  .close_dialog
+    .close_button
+  .dialog
+    .dialog_header_wrapper
+      .dialog_header_right
+      .dialog_header_left
+      .dialog_title.title_2 Bad News
+    .dialog_content
+      - [:error].each do |key|
+        - unless flash[key].blank?
+          .account_error
+            = flash[key]
+
 - content_for :page_javascript do
-  - if Rails.env.development?
+  - if Rails.env.production?
     = render 'index_js_min'
   - else
     = render 'index_js'
