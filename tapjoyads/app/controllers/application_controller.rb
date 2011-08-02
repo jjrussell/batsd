@@ -5,8 +5,8 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   
   before_filter :set_time_zone
-  before_filter :set_locale
   before_filter :fix_params
+  before_filter :set_locale
   before_filter :reject_banned_ips
 
   # See ActionController::RequestForgeryProtection for details
@@ -100,6 +100,7 @@ private
     set_param(:max, :Max)
     set_param(:virtual_good_id, :VirtualGoodID)
     set_param(:library_version, :ConnectLibraryVersion)
+    set_param(:language_code, :language)
   end
   
   def downcase_param(p)

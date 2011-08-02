@@ -65,6 +65,8 @@ class App < ActiveRecord::Base
   has_many :action_offers
   has_many :non_rewarded_offers, :class_name => 'Offer', :as => :item, :conditions => "not rewarded"
   has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "not rewarded", :order => "created_at"
+  has_many :app_metadata_mappings
+  has_many :app_metadatas, :through => :app_metadata_mappings
   
   belongs_to :partner
 
@@ -74,8 +76,10 @@ class App < ActiveRecord::Base
   before_validation_on_create :generate_secret_key
   
   after_create :create_primary_offer
+  after_create :create_app_metadata
   after_update :update_offers
   after_update :update_rating_offer
+  after_update :update_app_metadata
   
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :by_platform, lambda { |platform| { :conditions => ["platform = ?", platform] } }
@@ -361,4 +365,62 @@ private
       rating_offer.save!
     end
   end
+
+  def create_app_metadata
+    return unless store_id.present?
+
+    app_metadata = AppMetadata.find_by_store_name_and_store_id(store_name, store_id)
+    if app_metadata.nil?
+      # only create this record if one doesn't already exist for this store and store_id
+      app_metadata = AppMetadata.new(
+        :store_name => store_name,
+        :store_id   => store_id
+      )
+    end
+    fill_app_metadata(app_metadata)
+
+    app_metadata.apps << self
+  end
+
+  def update_app_metadata
+    return unless store_id.present?
+
+    mapping = AppMetadataMapping.find(:first, :joins => :app_metadata, :conditions => ["app_id = ? and #{AppMetadata.quoted_table_name}.store_name = ?", id, store_name])
+
+    if mapping.nil?
+      # app changed from not live to live status, need to create metadata records
+      create_app_metadata
+    else
+      if mapping.app_metadata.store_id != store_id
+        # app_metadata record points to the wrong store_id -- update to correct record, creating if necessary
+        new_metadata = AppMetadata.find_by_store_name_and_store_id(store_name, store_id)
+        if new_metadata.nil?
+          new_metadata = AppMetadata.create!(
+            :store_name => store_name,
+            :store_id   => store_id
+          )
+        end
+
+        mapping = AppMetadataMapping.find(mapping.id);
+        mapping.app_metadata_id = new_metadata.id
+        mapping.save!
+        # do we need to remove any app_metadatas records that are no longer associated to any apps?
+      end
+      fill_app_metadata(mapping.app_metadata)
+    end
+  end
+
+  def fill_app_metadata(app_metadata)
+    app_metadata.name               = name
+    app_metadata.price              = price
+    app_metadata.description        = description
+    app_metadata.age_rating         = age_rating
+    app_metadata.file_size_bytes    = file_size_bytes
+    app_metadata.released_at        = released_at
+    app_metadata.user_rating        = user_rating
+    app_metadata.categories         = categories
+    app_metadata.supported_devices  = supported_devices
+    app_metadata.save!
+  end
+
 end

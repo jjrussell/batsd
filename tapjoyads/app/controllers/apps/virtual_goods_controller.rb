@@ -103,15 +103,16 @@ private
     end
 
     if params[:virtual_good][:data]
-      if params[:virtual_good][:data].size <= (5 << 20) # 5MB
+      data_size = params[:virtual_good][:data].size
+      if data_size <= (5 << 20) # 5MB
         bucket = S3.bucket(BucketNames::VIRTUAL_GOODS)
         data = params[:virtual_good][:data].read
         bucket.put("data/#{@virtual_good.key}.zip", data, {}, 'public-read')
         @virtual_good.has_data = true
-        @virtual_good.file_size = 0
+        @virtual_good.file_size = data_size
         @virtual_good.data_hash = Digest::MD5.hexdigest data
       else
-        flash[:error] = "data file size (#{number_to_human_size(params[:virtual_good][:data].size)}) is too large"
+        flash[:error] = "data file size (#{number_to_human_size(data_size)}) is too large"
         return false
       end
     end
