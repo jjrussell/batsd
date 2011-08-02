@@ -5,8 +5,8 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   
   before_filter :set_time_zone
-  before_filter :set_locale
   before_filter :fix_params
+  before_filter :set_locale
   before_filter :reject_banned_ips
 
   # See ActionController::RequestForgeryProtection for details
@@ -61,7 +61,7 @@ private
   end
 
   def set_locale
-    language_code = params[:language_code] || params[:language]
+    language_code = params[:language_code]
     I18n.locale = nil
     if AVAILABLE_LOCALES.include?(language_code)
       I18n.locale = language_code
