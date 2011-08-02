@@ -9,7 +9,7 @@ private
   def on_message(message)
     Order.transaction do
       order = Order.find(message, :lock => 'FOR UPDATE')
-      order.create_freshbooks_invoice unless (order.invoice_id || order.status == 3)
+      order.create_freshbooks_invoice unless (order.invoice_id || order.failed_invoice?)
       order.save!
     end
   end

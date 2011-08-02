@@ -2,10 +2,8 @@ class Order < ActiveRecord::Base
   include UuidPrimaryKey
 
   STATUS_CODES = {
-    0 => 'Invalid',
+    0 => 'Failed Invoice',
     1 => 'Normal',
-    2 => 'Refund',
-    3 => 'Not Invoiced',
   }
 
   PAYMENT_METHODS = {
@@ -28,11 +26,10 @@ class Order < ActiveRecord::Base
 
   delegate :billing_email, :freshbooks_client_id, :to => :partner
 
-  named_scope :paid, :conditions => 'status = 1'
   named_scope :not_invoiced, :conditions => 'status = 3'
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at > ?", date ] } }
   named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
-  named_scope :for_discount, lambda { paid.created_since(3.months.ago.to_date).scoped(:order => 'created_at DESC').scope(:find) }
+  named_scope :for_discount, lambda { created_since(3.months.ago.to_date).scoped(:order => 'created_at DESC').scope(:find) }
   
   def <=> other
     created_at <=> other.created_at
@@ -72,8 +69,12 @@ class Order < ActiveRecord::Base
       self.invoice_id = FreshBooks.create_invoice(invoice_details)
       self.status = 1
     else
-      self.status = 3
+      self.status = 0
     end
+  end
+
+  def failed_invoice?
+    status == 0
   end
 
 private

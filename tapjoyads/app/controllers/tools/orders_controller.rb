@@ -43,7 +43,7 @@ class Tools::OrdersController < WebsiteController
     order = Order.find(params[:id])
     order.create_freshbooks_invoice
     order.save
-    if order.status != 3
+    if order.status != 0
       flash[:notice] = "Invoice created to billing email #{order.billing_email}"
     else
       flash[:error] = "Unable to create invoice for billing email #{order.billing_email}.  Please make sure they exist in FreshBooks."

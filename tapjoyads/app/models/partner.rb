@@ -215,7 +215,7 @@ class Partner < ActiveRecord::Base
     advertiser_conversions_sum = monthly_accountings.prior_to(archive_cutoff).sum(:spend)
     advertiser_conversions_sum += Conversion.created_since(archive_cutoff).sum(:advertiser_amount, :conditions => [ "advertiser_offer_id IN (?)", offer_ids ])
     
-    orders_sum = orders.sum(:amount, :conditions => 'status != 0')
+    orders_sum = orders.sum(:amount)
     payouts_sum = payouts.sum(:amount, :conditions => 'status = 1')
     earnings_adjustments_sum = earnings_adjustments.sum(:amount)
     
