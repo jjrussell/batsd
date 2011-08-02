@@ -61,7 +61,7 @@ private
   end
 
   def set_locale
-    language_code = params[:language_code]
+    language_code = params[:language_code] || params[:language]
     I18n.locale = nil
     if AVAILABLE_LOCALES.include?(language_code)
       I18n.locale = language_code
@@ -100,6 +100,7 @@ private
     set_param(:max, :Max)
     set_param(:virtual_good_id, :VirtualGoodID)
     set_param(:library_version, :ConnectLibraryVersion)
+    set_param(:language_code, :language)
   end
   
   def downcase_param(p)
