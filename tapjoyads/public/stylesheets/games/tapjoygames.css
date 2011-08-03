@@ -130,7 +130,8 @@ input {
 #sign_up_dialog.dialog_wrapper,
 #bad_news.dialog_wrapper,
 #register_device.dialog_wrapper,
-#how_works_dialog.dialog_wrapper {
+#how_works_dialog.dialog_wrapper,
+#flash_error.dialog_wrapper {
   width: 280px;
 }
 #how_works_dialog .dialog_header_wrapper {
@@ -138,6 +139,9 @@ input {
 }
 #bad_news.dialog_wrapper .dialog {
   height: 120px;
+} 
+#flash_error .dialog {
+  height: 60px;
 }
 #register_device .dialog  {
   height: 150px;
@@ -764,9 +768,7 @@ form#new_gamer_session .fieldWithErrors input[type=password] {
   margin: 6px auto;
   width: 140px;
 }
-.mobile .sign_up_button.button.lt_blue,
-.web .sign_up_button.button.lt_blue,
-.ipad .sign_up_button.button.lt_blue {
+.sign_up_button.button.lt_blue {
   font-size: 16px;
   padding: 10px 0 6px;
 }
@@ -1108,6 +1110,10 @@ input.button {
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
 }
+.button.lt_blue:hover, .button.lt_blue:active{
+  -moz-box-shadow: inset 0px 0px 6px #15566B;
+  -webkit-box-shadow: inset 0px 0px 6px #15566B;
+}
 .button.lt_blue.logout {
   margin: 0 auto 12px;
   width: 120px;
@@ -1171,6 +1177,15 @@ input.button {
 #static .content_box div, .account .content_box div {
   padding: 6px 12px 6px 12px;
 }
+.mobile #reset_password form input[type=email] {
+  width: 160px;
+} 
+#reset_password form input[type=email] {
+  width: 220px;
+}
+.mobile .account input[type=submit] {
+  font-size: 12px;
+} 
 .account input[type=submit] {
   padding: 6px 12px;
   cursor: pointer;

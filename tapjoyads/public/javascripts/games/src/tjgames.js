@@ -9104,35 +9104,36 @@ TJG.ui = {
       if (v.Cost == "Free") {
         freeCls = "free";
       }
-      t.push('<li class="offer_item clearfix '+ clsId +'" '+ style +'>'); 
-        t.push('<div class="offer_image">');
-          t.push('<img src="' + v.IconURL + '">');
-          //t.push('<div class="image_loader"></div>');
-        t.push('</div>');
-        t.push('<div class="offer_text">');
-          t.push('<div class="offer_title title">');
-            t.push(v.Name);
+      t.push('<a href="' + v.RedirectURL + '">'); 
+        t.push('<li class="offer_item clearfix '+ clsId +'" '+ style +'>'); 
+          t.push('<div class="offer_image">');
+            t.push('<img src="' + v.IconURL + '">');
+            //t.push('<div class="image_loader"></div>');
           t.push('</div>');
-          t.push('<div class="offer_info">');
-            t.push('<a href="' + v.RedirectURL + '">');
-              t.push('<div class="offer_button my_apps">');
-                t.push('<div class="button grey">');
-                  t.push('<span class="amount">');
-                    t.push(v.Amount);
-                  t.push('</span>');
-                  t.push(' ');
-                  t.push('<span class="currency">');
-                    t.push(currency);
-                  t.push('</span>');
-                  t.push('<span class="cost '+ freeCls +'">');
-                    t.push(v.Cost);
-                  t.push('</span>'); 
-                t.push('</div>');
-              t.push('</div>'); 
-            t.push('</a>');             
+          t.push('<div class="offer_text">');
+            t.push('<div class="offer_title title">');
+              t.push(v.Name);
+            t.push('</div>');
+            t.push('<div class="offer_info">');
+                t.push('<div class="offer_button my_apps">');
+                  t.push('<div class="button grey">');
+                    t.push('<span class="amount">');
+                      t.push(v.Amount);
+                    t.push('</span>');
+                    t.push(' ');
+                    t.push('<span class="currency">');
+                      t.push(currency);
+                    t.push('</span>');
+                    t.push('<span class="cost '+ freeCls +'">');
+                      t.push(v.Cost);
+                    t.push('</span>'); 
+                  t.push('</div>');
+                t.push('</div>'); 
+            t.push('</div>');
           t.push('</div>');
-        t.push('</div>');
-      t.push('</li>');
+        t.push('</li>');
+      t.push('</a>');
+
     });
     return t.join('');    
   },
@@ -9317,6 +9318,12 @@ TJG.ui = {
           $("#how_works_dialog").fadeIn(350);
         });
       },
+      
+      checkFlashMessages: function () {
+        if($('#flash_error').length > 0) {
+          TJG.utils.centerDialog("#flash_error");
+        }
+      }
     };
 
     TJG.init = function() {  

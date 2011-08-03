@@ -17,10 +17,6 @@
                 .slide_arrow_wrapper.bottom_arrow
                   .slide_arrow
           .content
-            .flash_message
-              - [:notice, :error, :success].each do |key|
-                - unless flash[key].blank?
-                  %div{ :class => "#{key}" }= flash[key]
             .offer_list
               %ul
                 -@external_publishers.each do |external_publisher|

@@ -1,3 +1,5 @@
+:javascript
+  var noMessage = false;
 #jqt
   #reset_password.tan.account.current 
     .container
@@ -20,6 +22,8 @@
                       = link_to("request another password reset email", new_games_password_reset_path)
                       or email
                       = mail_to("mobilehelp@tapjoygames.com") + "."
+                      :javascript
+                        var noMessage = true;
                   - else
                     %p 
                       Enter the email address associated with your account and we will send you a link to reset your password.
@@ -30,16 +34,15 @@
                           = email_field_tag(:email)
                         .field
                           = submit_tag('Submit', :class => 'button lt_blue')
-                        %p
-                          - [:notice, :error, :success].each do |key|
-                            - unless flash[key].blank?
-                              %div{ :class => "account_error #{key}" }= flash[key]
                       .formError.hide
                         .email_error
                             
 - content_for :page_javascript do
   :plain
     $(window).load(function() {
+      if (noMessage) {
+        $("#flash_error").hide();
+      }
       $('form').submit(function(e){
         $(".formError").hide();
         var inputs, email, values = {}, emailReg;

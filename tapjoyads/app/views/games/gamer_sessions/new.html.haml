@@ -4,10 +4,6 @@
       .page.no_top_nav_bar
         .logo
         .content.narrow
-          .flash_message
-            - [:notice, :error, :success].each do |key|
-              - unless flash[key].blank?
-                %div{ :class => "#{key}" }= flash[key] 
           #earn_paper
             #earn_paper_content
               #how_works.how_works.right.earn_paper_title
