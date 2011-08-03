@@ -26,7 +26,7 @@ class Order < ActiveRecord::Base
 
   delegate :billing_email, :freshbooks_client_id, :to => :partner
 
-  named_scope :not_invoiced, :conditions => 'status = 3'
+  named_scope :not_invoiced, :conditions => 'status = 0'
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at > ?", date ] } }
   named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
   named_scope :for_discount, lambda { created_since(3.months.ago.to_date).scoped(:order => 'created_at DESC').scope(:find) }
@@ -49,7 +49,7 @@ class Order < ActiveRecord::Base
   def is_transfer?; payment_method==3;  end
 
   def create_invoice
-    @create_invoice = true unless defined?(@create_invoice)
+    @create_invoice = false unless defined?(@create_invoice)
     @create_invoice
   end
 
