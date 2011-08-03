@@ -58,4 +58,4 @@ UDID_SALT = '2AdufehEmUpEdrEtamaspuxasU#=De'
 FRESHBOOKS_API_URL = 'tjdev.freshbooks.com'
 FRESHBOOKS_AUTH_TOKEN = '59548f1150fa38c3feb2a67d6b1a0f8b'
 
-Mc.cache.flush unless local_config['clear_memcache'] == false
+CLEAR_MEMCACHE = !(local_config['clear_memcache'] == false)
