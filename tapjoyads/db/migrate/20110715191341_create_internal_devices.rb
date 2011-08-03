@@ -1,7 +1,7 @@
 class CreateInternalDevices < ActiveRecord::Migration
   def self.up
     create_table :internal_devices, :id => false do |t|
-      t.column :id, 'char(36) binary', :null => false
+      t.guid :id, :null => false
       t.column :user_id, 'char(36) binary', :null => false
       t.string :description
       t.integer :verification_key

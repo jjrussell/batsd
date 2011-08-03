@@ -105,7 +105,7 @@ private
   end
 
   def redirect_bad_device
-    flash[:error] = "Sorry, this computer has been blocked. Please talk with the site admins if this is an error."
+    flash[:error] = "Sorry, this computer has been blocked. Please contact dev@tapjoy.com if this is an error."
     UserSession.find.destroy
     redirect_to login_path
   end

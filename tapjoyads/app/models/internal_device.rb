@@ -28,7 +28,7 @@ class InternalDevice < ActiveRecord::Base
   end
 
   def generate_verification_key
-    self.verification_key ||= rand(1000000)
+    self.verification_key ||= (0..7).map{ rand(9) + 1 }.join.to_i
   end
 
   def set_status
