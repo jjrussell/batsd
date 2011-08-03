@@ -17,22 +17,24 @@
                 .slide_arrow_wrapper.bottom_arrow
                   .slide_arrow
           .content
-            %ul
-              -@external_publishers.each do |external_publisher|
-                %li.offer_item.clearfix
-                  .offer_image
-                    = image_tag(external_publisher.get_icon_url(:source => :cloudfront))
-                  .offer_text
-                    .offer_title.title
-                      = external_publisher.app_name
-                    .offer_info
-                      - external_publisher.currencies.each_with_index do |currency, i|
-                        - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency), :currency => currency[:name], :app_name => external_publisher.app_name) do
-                          .offer_button
-                            .button.blue 
-                              %span.amount
-                                Earn
-                                = currency[:name]
+            .offer_list
+              %ul
+                -@external_publishers.each do |external_publisher|
+                  %li.offer_item.clearfix
+                    .offer_image
+                      = image_tag(external_publisher.get_icon_url(:source => :cloudfront))
+                    .offer_text
+                      .offer_title.title
+                        = external_publisher.app_name
+                      .offer_info
+                        - external_publisher.currencies.each_with_index do |currency, i|
+                          - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency), :currency => currency[:name], :app_name => external_publisher.app_name) do
+                            .offer_button
+                              .button.grey 
+                                %span.earn
+                                  Earn
+                                %span.currency
+                                  = currency[:name]  
 
   #earn
     = render 'nav_bar'
@@ -93,6 +95,7 @@
             #more_games_content
 
   = render 'my_account'
+
 
 - content_for :page_javascript do
   - if Rails.env.production?

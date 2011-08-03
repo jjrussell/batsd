@@ -1,6 +1,6 @@
 #jqt
   #privacy.tan.current 
-    .container
+    #static.container
       .page.no_top_nav_bar
         .logo
         .content.narrow.pad
@@ -13,14 +13,14 @@
                   We at Tapjoy, Inc. (“Tapjoy,” “we,” “us,” “our”) know that our users
                   (“you,” “your”) care about how your personal information is used and shared, and we
                   take your privacy seriously. Please read the following Tapjoy Games Privacy Policy
-                  (the “Privacy Policy”). By visiting or using the www.tapjoygames.com website or
+                  (the “Privacy Policy”). By visiting or using the #{ link_to('www.tapjoygames.com', "http://www.tapjoygames.com") } website or
                   application, and any other linked pages, features, content, or any other services we
                   offer from time to time by in connection therewith (collectively, “Tapjoy Games”),
                   you acknowledge that you accept the practices and policies outlined in this Privacy
                   Policy, and you hereby consent that we will collect, use, and share your information
                   in the following ways. This Privacy Policy only applies to products and services
                   related to Tapjoy Games; other products and services provided by Tapjoy may be
-                  governed by separate privacy policies.                      
+                  governed by separate privacy policies.
               %h1
                 I. What Does This Privacy Policy Cover?
               %div
@@ -38,8 +38,9 @@
                   In the event that we learn that we have collected personal information from a child under
                   age 13 without verification of parental consent, we will delete that information as quickly
                   as possible. If you believe that we might have any information from or about a child
-                  under 13, please contact us at privacy@tapjoy.com.                   
-
+                  under 13, please contact us at
+                  = succeed "." do
+                    %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com
               %h1
                 II. What Information Does Tapjoy Collect?
               %div
@@ -51,7 +52,6 @@
                   users utilize Tapjoy Games, and as otherwise set forth in this Privacy Policy. We may
                   share certain types of Personal Information with third parties (as set forth in this Section
                   and in Section III below). We collect the following types of information:
-
                   %h2
                     A. Information You Provide to Us:
                   %p
@@ -71,8 +71,7 @@
                     user name, email address, gender, and age. We may collect other Personal Information
                     you provide us through your use of Tapjoy Games. You can choose not to provide us
                     with certain information, but then you may not be able to take advantage of many of our
-                    special features. 
-
+                    special features.
                   %h2
                     B. Information Collected Automatically:
                   %p
@@ -91,18 +90,18 @@
                         of cookies, but this may prevent you from taking advantage of some features.
                         [Our advertising partners may also transmit cookies to your computer, when
                         you click on ads that appear on our site. This Privacy Policy does not cover
-                        the use of cookies by any advertisers.]                                
-              
+                        the use of cookies by any advertisers.]
                   %h2
                     C. E-mail and Other Communications:
                   %p
                     We may contact you, by email or other means; for example, we may send you
                     promotional offers on behalf of other businesses, or communicate with you about your
                     use of Tapjoy Games. [If you do not want to receive email or other mail from us, please
-                    indicate your preference by emailing privacy@tapjoy.com. Also, we may receive a
-                    confirmation when you open an email from us. This confirmation helps us make emails
-                    more interesting and improve our service.                         
-                                                                                        
+                    indicate your preference by emailing
+                    = succeed "." do
+                      %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com
+                    Also, we may receive a confirmation when you open an email from us. This confirmation helps us make emails
+                    more interesting and improve our service.
               %h1
                 III. Will Tapjoy Share Any of the Information It Receives?
               %div
@@ -156,8 +155,7 @@
                 %p
                   Tapjoy Games may contain links to other sites. We are not responsible for the
                   privacy policies and/or practices on other sites. When following a link to another site you
-                  should read that site’s privacy policy.             
-          
+                  should read that site’s privacy policy.
               %h1
                 V. What Personal Information Can I Access?
               %div
@@ -171,8 +169,9 @@
                 %p
                   The information you can view and update through your account may change
                   as Tapjoy Games changes. If you have any questions about viewing or updating
-                  information we have on file about you, please contact us at privacy@tapjoy.com.
-                                                                                               
+                  information we have on file about you, please contact us at
+                  = succeed "." do
+                    %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com
               %h1  
                 VI. What Choices Do I Have?
               %div
@@ -186,19 +185,21 @@
                       unrevised information in our records.
                     %li
                       You may request deletion of your account by sending an e-mail to
-                      privacy@tapjoy.com. Please note that some information may remain in our private
+                      = succeed "." do
+                        %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com
+                      Please note that some information may remain in our private
                       records after deletion of your account. We may use any aggregated data derived from
                       or incorporating your personal information after you delete your account, but not in a
                       manner that would identify you personally.
                     %li
                       If you do not wish to receive email or other mail from us, contact us at
-                      privacy@tapjoy.com. Please note that if you do not want to receive legal notices from
+                      = succeed "." do
+                        %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com 
+                      Please note that if you do not want to receive legal notices from
                       us, such as this Privacy Policy, those legal notices will still govern your use of Tapjoy
                       Games, and you are responsible for reviewing such legal notices for changes.        
-            
               %h1
                 VII. Changes to this Privacy Policy
-            
               %div
                 %p
                   We may amend this Privacy Policy from time to time. Use of information we
@@ -206,18 +207,19 @@
                   used. If we make changes in the way we use Personal Information, we will notify you by
                   posting an announcement on the Tapjoy Games website or sending you an email. You
                   are bound by any changes to the Privacy Policy when you use Tapjoy Games after such
-                  changes have been first posted.                                                             
-          
+                  changes have been first posted.
               %h1
                 VIII. Questions or Concerns
               %div
                 %p
                   If you have any questions or concerns regarding our privacy policies, please send
-                  us a detailed message to privacy@tapjoy.com. We will make every effort to resolve your
+                  us a detailed message to  
+                  = succeed "." do
+                    %a{:href => "mailto:privacy@tapjoy.com"} privacy@tapjoy.com
+                  We will make every effort to resolve your
                   concerns.
               %div
-                %p                                                                                          
-                  Effective Date: ________, 2011                                                                    
+                Effective Date: August 1, 2011
           
           
 #loader.dialog_wrapper.hide

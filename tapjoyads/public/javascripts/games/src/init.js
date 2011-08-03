@@ -6,13 +6,17 @@ TJG.vars.isSwapped = false;
 TJG.vars.isIos = false;
 TJG.vars.isTouch = false;
 TJG.appOfferWall = {};
+TJG.openiDialogs = {};
 (function(window, document) {
-    var winH = $(window).height();
-    var winW = $(window).width();
-    var el = "#loader";
-    $(el).css('top',  winH/2-$().height()/2);
-    $(el).css('left', winW/2-$(el).width()/2);
-    $(el).show();
+    var winH, winW;
+    function centerDialog (el) {
+      winH = $(window).height();
+      winW = $(window).width();
+      $(el).css('top',  winH/2-$().height()/2);
+      $(el).css('left', winW/2-$(el).width()/2);
+      $(el).show();    
+    }
+    centerDialog("#loader");
     /*!
      * master-class v0.1
      * http://johnboxall.github.com/master-class/
@@ -70,6 +74,11 @@ TJG.appOfferWall = {};
             currentOrientationClass = orientationClass;
             var className = TJG.doc.className;
             TJG.doc.className = className ? className.replace(orientationRe, currentOrientationClass) : currentOrientationClass;
+            if (TJG.repositionDialog.length > 0) {
+              for (var i = 0; i < TJG.repositionDialog.length; i++) {
+                centerDialog(TJG.repositionDialog[i]);
+              }
+            }
          }
       }, false);
     }

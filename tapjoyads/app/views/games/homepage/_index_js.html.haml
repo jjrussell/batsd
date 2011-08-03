@@ -51,18 +51,21 @@
                       '</ul>',
                     ];
                     if (TJG.appOfferWall[appId]['offers_left'] > 0) {
-                      t.push('<div class="load_more_loader hide"><div class="dialog_image"></div></div>');
                       t.push('<div class="get_more_apps" app_id="' + appId + '"><div class="get_more_apps_content">Load More</div>');
                     }
                     t = t.join('');
                     $("#earn_content").html(t);
                     TJG.onload.loadCufon($("#earn_content").fadeIn(500),300);
+                    var isLoading = false;
                     $(".get_more_apps").click(function(){
+                      if (isLoading) { return; }
+                      $(".get_more_apps_content").html('<div class="image_loader"></div>');
                       var appId = $(this).attr("app_id");
                       $(".load_more_loader").show();
                       if (TJG.appOfferWall[appId]['offers_left'] > 0) {
                         var url = TJG.appOfferWall[appId]['jsonp_url'];
                         url = url + "&start=" + TJG.appOfferWall[appId]['offset'] + "&max=25&callback=?";
+                        isLoading = true;
                         $.ajax({
                           url: url,
                           dataType: 'json',
@@ -76,10 +79,10 @@
                               $("#offerwall_id-" + appId).append(moreOfferRows);
                               var el = ".offer_item_" + i;
                               $.each($(el), function(n,o) {
-                                $(o).fadeIn(600);
+                                $(o).fadeIn(500);
                               });
                               TJG.onload.loadCufon();
-                              $(".load_more_loader").hide();
+                              $(".get_more_apps_content").html("Load More");
                               if (data.MoreDataAvailable == 0) {
                                 $("#get_more_apps").hide();
                               }
@@ -87,13 +90,16 @@
                                 TJG.appOfferWall[appId]['offers'].push(o);
                               });
                             }
+                            isLoading = false;
                           },
                           error: function () {
                             var m = [
                               '<div>There was an issue fetching more offers. Please try again</div>'
                             ].join('');                               
-                            $("#offerwall_id-" + appId).append(m).fadeIn(350);
+                            $("#offerwall_id-" + appId).html(m).fadeIn(350);
+                            $(".get_more_apps_content").html("Load More");
                             $(".load_more_loader").hide();
+                            isLoading = false;
                           }
                         });
                         i++;
