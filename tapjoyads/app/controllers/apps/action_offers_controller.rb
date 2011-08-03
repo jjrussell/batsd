@@ -14,7 +14,7 @@ class Apps::ActionOffersController < WebsiteController
   end
   
   def create
-    action_offer_params = params[:action_offer].merge(:partner => current_partner, :prerequisite_offer => @app.primary_offer)
+    action_offer_params = params[:action_offer].merge(:partner => current_partner, :prerequisite_offer => @app.primary_offer, :instructions => 'Enter your instructions here.')
     @action_offer = @app.action_offers.build action_offer_params
     if @action_offer.save
       redirect_to edit_app_action_offer_path(@app, @action_offer)
