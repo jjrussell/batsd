@@ -97,8 +97,6 @@ private
     
     @device = Device.new(:key => params[:udid])
     if @device.opted_out?
-      @offer_list = []
-      @more_data_available = 0
       if params[:action] == 'webpage'
         @message = "You have opted out."
         render :template => 'get_offers/webpage'
