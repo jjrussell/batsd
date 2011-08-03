@@ -3,8 +3,6 @@ class ValidateOffersController < ApplicationController
   before_filter :set_device_type, :setup
   
   def index
-    #test url: 
-    #http://localhost:3000/validate_offers?udid=test&type=0&currency_id=2349536b-c810-47d7-836c-2cd47cd3a796&app_id=2349536b-c810-47d7-836c-2cd47cd3a796&offer_id=2349536b-c810-47d7-836c-2cd47cd3a796
     if @offer.is_valid_for?(@publisher_app, @device, @currency, params[:device_type], @geoip_data, params[:app_version], @direct_pay_providers, params[:type], @hide_app_offers, params[:library_version], params[:os_version], params[:screen_layout_size])
       render :text => true
     else
