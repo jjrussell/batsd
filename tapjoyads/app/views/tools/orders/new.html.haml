@@ -36,7 +36,7 @@
         = error_message_on @order, :note
     %tr
       %th= f.label :create_invoice
-      %td= f.check_box :create_invoice
+      %td= f.check_box :create_invoice, :checked => true
     - if @order.errors.on(:billing_email)
       %tr
         %th= f.label :billing_email
