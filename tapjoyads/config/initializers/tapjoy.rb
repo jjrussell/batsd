@@ -26,3 +26,5 @@ WINDOWS_OFFERS_SDK  = 'https://s3.amazonaws.com/tapjoy/sdks/'
 WINDOWS_VG_SDK      = 'https://s3.amazonaws.com/tapjoy/sdks/'
 
 DEV_FORUM_URL = 'https://groups.google.com/group/tapjoy-developer'
+
+Mc.cache.flush if CLEAR_MEMCACHE
