@@ -45,30 +45,30 @@ class Reward < SimpledbShardedResource
     conversions = []
     
     conversions << Conversion.new do |c|
-      c.id                  = self.key
-      c.reward_id           = self.key
-      c.advertiser_offer_id = self.offer_id
-      c.publisher_app_id    = self.publisher_app_id
-      c.advertiser_amount   = self.advertiser_amount
-      c.publisher_amount    = self.publisher_amount
-      c.tapjoy_amount       = self.tapjoy_amount
-      c.reward_type_string  = self.type
-      c.created_at          = self.created
-      c.country             = self.country
+      c.id                  = key
+      c.reward_id           = key
+      c.advertiser_offer_id = offer_id
+      c.publisher_app_id    = publisher_app_id
+      c.advertiser_amount   = advertiser_amount
+      c.publisher_amount    = publisher_amount
+      c.tapjoy_amount       = tapjoy_amount
+      c.reward_type_string  = type
+      c.created_at          = created
+      c.country             = country
     end
     
-    if self.displayer_app_id.present? && self.source == 'display_ad' # TO REMOVE: the source check when we fix our data corruption issues
+    if displayer_app_id.present? && source == 'display_ad' # TO REMOVE: the source check when we fix our data corruption issues
       conversions << Conversion.new do |c|
-        c.id                               = self.reward_key_2
-        c.reward_id                        = self.key
-        c.advertiser_offer_id              = self.offer_id
-        c.publisher_app_id                 = self.displayer_app_id
+        c.id                               = reward_key_2
+        c.reward_id                        = key
+        c.advertiser_offer_id              = offer_id
+        c.publisher_app_id                 = displayer_app_id
         c.advertiser_amount                = 0
-        c.publisher_amount                 = self.displayer_amount
+        c.publisher_amount                 = displayer_amount
         c.tapjoy_amount                    = 0
-        c.reward_type_string_for_displayer = self.type
-        c.created_at                       = self.created
-        c.country                          = self.country
+        c.reward_type_string_for_displayer = type
+        c.created_at                       = created
+        c.country                          = country
       end
     end
     
