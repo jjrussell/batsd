@@ -96,19 +96,6 @@
 
   = render 'my_account'
 
-#bad_news.dialog_wrapper.hide
-  .close_dialog
-    .close_button
-  .dialog
-    .dialog_header_wrapper
-      .dialog_header_right
-      .dialog_header_left
-      .dialog_title.title_2 Bad News
-    .dialog_content
-      - [:error].each do |key|
-        - unless flash[key].blank?
-          .account_error
-            = flash[key]
 
 - content_for :page_javascript do
   - if Rails.env.production?
