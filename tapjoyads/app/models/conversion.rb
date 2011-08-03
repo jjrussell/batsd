@@ -53,7 +53,7 @@ class Conversion < ActiveRecord::Base
   validates_inclusion_of :reward_type, :in => REWARD_TYPES.values
   
   before_save :sanitize_reward_id
-  after_create :update_partner_amounts, :update_realtime_stats
+  after_create :update_partner_amounts
   
   named_scope :created_since, lambda { |date| { :conditions => [ "created_at >= ?", date ] } }
   named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
@@ -159,20 +159,6 @@ class Conversion < ActiveRecord::Base
     self.reward_type_string = "display_#{string}"
   end
   
-private
-  
-  def update_partner_amounts
-    partners = []
-    partners << publisher_app.partner_id unless publisher_amount == 0
-    partners << advertiser_offer.partner_id unless advertiser_amount == 0 || advertiser_offer.nil?
-    
-    return true if partners.empty?
-    
-    Partner.find_all_by_id(partners, :lock => "FOR UPDATE")
-    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET pending_earnings = (pending_earnings + #{publisher_amount}) WHERE id = '#{publisher_app.partner_id}'") unless publisher_amount == 0
-    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET balance = (balance + #{advertiser_amount}) WHERE id = '#{advertiser_offer.partner_id}'") unless advertiser_amount == 0 || advertiser_offer.nil?
-  end
-  
   def update_realtime_stats
     Conversion.get_stat_definitions(reward_type).each do |stat_definition|
       stat_name  = stat_definition[:stat]
@@ -190,6 +176,20 @@ private
         end
       end
     end
+  end
+  
+private
+  
+  def update_partner_amounts
+    partners = []
+    partners << publisher_app.partner_id unless publisher_amount == 0
+    partners << advertiser_offer.partner_id unless advertiser_amount == 0 || advertiser_offer.nil?
+    
+    return true if partners.empty?
+    
+    Partner.find_all_by_id(partners, :lock => "FOR UPDATE")
+    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET pending_earnings = (pending_earnings + #{publisher_amount}) WHERE id = '#{publisher_app.partner_id}'") unless publisher_amount == 0
+    Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET balance = (balance + #{advertiser_amount}) WHERE id = '#{advertiser_offer.partner_id}'") unless advertiser_amount == 0 || advertiser_offer.nil?
   end
   
   def sanitize_reward_id
