@@ -10,7 +10,9 @@ class Job::SqsReaderController < Job::JobController
   def index
     queue = Sqs.queue(@queue_name)
     
-    @num_reads.times do
+    count = 0
+    while count < @num_reads do
+      count += 1
       # read a message off the queue
       retries = 3
       begin
