@@ -1,13 +1,9 @@
-class ValidateOffersController < ApplicationController
+class ValidateVideoOfferController < ApplicationController
   
   before_filter :set_device_type, :setup
   
   def index
-    if @offer.is_valid_for?(@publisher_app, @device, @currency, params[:device_type], @geoip_data, params[:app_version], @direct_pay_providers, params[:type], @hide_app_offers, params[:library_version], params[:os_version], params[:screen_layout_size])
-      render :text => true
-    else
-      render :text => false
-    end
+    @valid = @offer.is_valid_for?(@publisher_app, @device, @currency, params[:device_type], @geoip_data, params[:app_version], @direct_pay_providers, params[:type], @hide_app_offers, params[:library_version], params[:os_version], params[:screen_layout_size])
   end
   
 private
@@ -28,6 +24,7 @@ private
     
     @hide_app_offers = @currency.hide_rewarded_app_installs_for_version?(params[:app_version], params[:source])
     @direct_pay_providers = params[:direct_pay_providers].to_s.split(',')
+    @amount = @currency.get_visual_reward_amount(@offer, params[:display_multiplier])
   end
   
   ##
