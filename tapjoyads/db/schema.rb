@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110721163803) do
+ActiveRecord::Schema.define(:version => 20110804221334) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -677,5 +677,18 @@ ActiveRecord::Schema.define(:version => 20110721163803) do
   add_index "users", ["perishable_token"], :name => "index_users_on_perishable_token"
   add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"
   add_index "users", ["username"], :name => "index_users_on_username", :unique => true
+
+  create_table "video_offers", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36,                    :null => false
+    t.string   "partner_id", :limit => 36,                    :null => false
+    t.string   "name",                                        :null => false
+    t.boolean  "hidden",                   :default => false, :null => false
+    t.string   "video_url"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "video_offers", ["id"], :name => "index_video_offers_on_id", :unique => true
+  add_index "video_offers", ["partner_id"], :name => "index_video_offers_on_partner_id"
 
 end

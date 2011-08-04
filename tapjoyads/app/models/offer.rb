@@ -16,6 +16,7 @@ class Offer < ActiveRecord::Base
   DISPLAY_OFFER_TYPE               = '3'
   NON_REWARDED_DISPLAY_OFFER_TYPE  = '4'
   NON_REWARDED_FEATURED_OFFER_TYPE = '5'
+  VIDEO_OFFER_TYPE                 = '6'
   GROUP_SIZE = 200
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
@@ -128,6 +129,8 @@ class Offer < ActiveRecord::Base
   named_scope :with_rank_boosts, :joins => :rank_boosts, :readonly => false
   named_scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
   named_scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
+  named_scope :video_offers, :conditions => "item_type = 'VideoOffer'"
+  named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
   delegate :balance, :pending_earnings, :name, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   
   alias_method :events, :offer_events
@@ -168,30 +171,35 @@ class Offer < ActiveRecord::Base
     Benchmark.realtime do
       weights = CurrencyGroup.find_by_name('default').weights
       
-      offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.to_a
+      offer_list = Offer.enabled_offers.nonfeatured.rewarded.non_video_offers.for_offer_list.to_a
       offer_list.each { |o| o.run_callbacks(:before_cache) }
       cache_unsorted_offers(offer_list, DEFAULT_OFFER_TYPE)
       cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
-      offer_list = Offer.enabled_offers.featured.rewarded.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.rewarded.for_offer_list
+      offer_list = Offer.enabled_offers.featured.rewarded.non_video_offers.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.rewarded.non_video_offers.for_offer_list
       offer_list.each { |o| o.run_callbacks(:before_cache) }
       cache_unsorted_offers(offer_list, FEATURED_OFFER_TYPE)
       cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
-      offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.for_display_ads.to_a
+      offer_list = Offer.enabled_offers.nonfeatured.rewarded.non_video_offers.for_offer_list.for_display_ads.to_a
       offer_list.each { |o| o.run_callbacks(:before_cache) }
       cache_unsorted_offers(offer_list, DISPLAY_OFFER_TYPE)
       cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
-      offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.for_offer_list.to_a
+      offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.non_video_offers.free_apps.for_offer_list.to_a
       offer_list.each { |o| o.run_callbacks(:before_cache) }
       cache_unsorted_offers(offer_list, NON_REWARDED_DISPLAY_OFFER_TYPE)
       cache_offer_list(offer_list, weights, NON_REWARDED_DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
-      offer_list = Offer.enabled_offers.featured.non_rewarded.free_apps.for_offer_list + Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.for_offer_list
+      offer_list = Offer.enabled_offers.featured.non_rewarded.non_video_offers.free_apps.for_offer_list + Offer.enabled_offers.nonfeatured.non_rewarded.non_video_offers.free_apps.for_offer_list
       offer_list.each { |o| o.run_callbacks(:before_cache) }
       cache_unsorted_offers(offer_list, NON_REWARDED_FEATURED_OFFER_TYPE)
       cache_offer_list(offer_list, weights, NON_REWARDED_FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+      
+      offer_list = Offer.enabled_offers.video_offers.for_offer_list.to_a
+      offer_list.each { |o| o.run_callbacks(:before_cache) }
+      cache_unsorted_offers(offer_list, VIDEO_OFFER_TYPE)
+      cache_offer_list(offer_list, weights, VIDEO_OFFER_TYPE, Experiments::EXPERIMENTS[:default])      
     end
   end
   
