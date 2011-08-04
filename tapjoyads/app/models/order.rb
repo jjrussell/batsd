@@ -57,7 +57,7 @@ class Order < ActiveRecord::Base
     @create_invoice = ['1', true].include?(bool)
   end
 
-  def create_freshbooks_invoice
+  def create_freshbooks_invoice!
     return if invoice_id
 
     unless freshbooks_client_id
@@ -71,6 +71,7 @@ class Order < ActiveRecord::Base
     else
       self.status = 0
     end
+    self.save!
   end
 
   def failed_invoice?

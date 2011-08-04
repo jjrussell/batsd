@@ -5,12 +5,13 @@ class Tools::OrdersController < WebsiteController
   after_filter :save_activity_logs, :only => [ :create ]
 
   def new
+    @partner = Partner.find(params[:partner_id])
     @order = Order.new
   end
   
   def create
     order_params = sanitize_currency_params(params[:order], [ :amount ])
-    billing_email = order_params.delete(:billing_email)
+    billing_email = params.delete(:billing_email)
     @order = Order.new(order_params)
 
     unless @order.partner
@@ -18,10 +19,15 @@ class Tools::OrdersController < WebsiteController
       render :action => :new and return
     end
 
+    @partner = @order.partner
     unless billing_email.blank?
-      partner = @order.partner
-      partner.billing_email = billing_email
-      partner.save
+      log_activity(@partner)
+      @partner.billing_email = billing_email
+      unless @partner.save
+        flash[:error] = "There was a problem updating the partner: #{@partner.errors.full_messages.join(', ')}"
+        render :action => :new
+        return
+      end
     end
 
     log_activity(@order)
@@ -29,7 +35,7 @@ class Tools::OrdersController < WebsiteController
       Sqs.send_message(QueueNames::CREATE_INVOICES, @order.id) if @order.create_invoice
       amount = NumberHelper.new.number_to_currency(@order.amount / 100.0 )
       flash[:notice] = "The order of <b>#{amount}</b> to <b>#{@order.billing_email}</b> was successfully created."
-      redirect_to new_tools_order_path
+      redirect_to new_tools_order_path(:partner_id => @partner.id)
     else
       render :action => :new
     end
@@ -41,9 +47,14 @@ class Tools::OrdersController < WebsiteController
 
   def retry_invoicing
     order = Order.find(params[:id])
-    order.create_freshbooks_invoice
-    order.save
-    if order.status != 0
+    begin
+      order.create_freshbooks_invoice!
+    rescue Exception => ex
+      flash[:error] = "There was a problem creating the invoice: #{ex.message}"
+      redirect_to failed_invoices_tools_orders_path
+    end
+
+    if order.status == 1
       flash[:notice] = "Invoice created to billing email #{order.billing_email}"
     else
       flash[:error] = "Unable to create invoice for billing email #{order.billing_email}.  Please make sure they exist in FreshBooks."
@@ -54,8 +65,11 @@ class Tools::OrdersController < WebsiteController
   def mark_invoiced
     order = Order.find(params[:id])
     order.status = 1
-    order.save
-    flash[:notice] = "Order #{order.id} marked as invoiced"
+    if order.save
+      flash[:notice] = "Order #{order.id} marked as invoiced"
+    else
+      flash[:error] = "There was a problem saving the order: #{order.errors.full_messages}"
+    end
     redirect_to failed_invoices_tools_orders_path
   end
 

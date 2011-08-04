@@ -9,6 +9,9 @@
   - if permitted_to?(:new, :tools_earnings_adjustments)
     |
     = link_to('Create Earnings Adjustment', new_tools_earnings_adjustment_path(:partner_id => @partner.id))
+  - if permitted_to? :new, :tools_orders
+    |
+    = link_to 'New Order', new_tools_order_path(:partner_id => @partner.id)
   - if permitted_to?(:new, :tools_generic_offers)
     |
     = link_to("Create Generic Offer", new_tools_generic_offer_path(:partner_id => @partner.id))

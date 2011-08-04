@@ -1,14 +1,10 @@
 - @page_title = 'Create Order'
 
-%h1 Create Order
+%h1 Create Order for #{@partner.name}
 
 - form_for [ :tools, @order ], :html => { :class => 'tjform' } do |f|
+  = f.hidden_field :partner_id, :value => @partner.id
   %table
-    %tr
-      %th= f.label :partner_id, 'Partner ID'
-      %td
-        = f.text_field :partner_id, :size => 50
-        = error_message_on @order, :partner
     %tr
       %th= f.label :amount
       %td
@@ -37,11 +33,11 @@
     %tr
       %th= f.label :create_invoice
       %td= f.check_box :create_invoice, :checked => true
-    - if @order.errors.on(:billing_email)
+    - if @order.errors.on(:billing_email) || @partner.billing_email.blank?
       %tr
-        %th= f.label :billing_email
+        %th= label_tag :billing_email
         %td
-          = f.text_field :billing_email, :size => 50
+          = text_field_tag :billing_email, @partner.billing_email, :size => 50
           = error_message_on @order, :billing_email
     %tr
       %td{ :colspan => 2 }= f.submit 'Create Order'

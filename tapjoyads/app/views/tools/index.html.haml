@@ -5,8 +5,6 @@
 - if has_permissions_for_one_of?(:payops, :payout_manager, :executive, :account_mgr)
   %h3 Money
 %ul
-  - if permitted_to? :new, :tools_orders
-    %li= link_to 'New Order', new_tools_order_path
   - if permitted_to? :failed_invoices, :tools_orders
     %li= link_to 'Failed Invoices', failed_invoices_tools_orders_path
   - if permitted_to? :index, :tools_payouts
