@@ -1,8 +1,8 @@
 xml.instruct!
 
 xml.TapjoyVideo do
-  xml.Valid @valid
-  if @valid
+  xml.Valid @offer.present?
+  if @offer.present?
     xml.ClickURL @click_url
     xml.OfferID @offer.id
     xml.Name @offer.name

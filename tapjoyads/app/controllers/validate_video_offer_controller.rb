@@ -10,8 +10,9 @@ private
 
   def setup
     params[:currency_id] ||= params[:app_id]
-    return unless verify_params([ :app_id, :udid, :currency_id, :offer_id, :type ])
+    return unless verify_params([ :app_id, :udid, :currency_id, :offer_id, :type, :publisher_user_id ])
     
+    now = Time.zone.now
     @geoip_data = get_geoip_data
     @geoip_data[:country] = params[:country_code] if params[:country_code].present?
     
@@ -25,5 +26,16 @@ private
     @hide_app_offers = @currency.hide_rewarded_app_installs_for_version?(params[:app_version], params[:source])
     @direct_pay_providers = params[:direct_pay_providers].to_s.split(',')
     @amount = @currency.get_visual_reward_amount(@offer, params[:display_multiplier])
+    
+    @click_url = @offer.get_click_url(
+        :publisher_app     => @publisher_app,
+        :publisher_user_id => params[:publisher_user_id],
+        :udid              => params[:udid],
+        :currency_id       => @currency.id,
+        :source            => 'videos',
+        :viewed_at         => now,
+        :displayer_app_id  => params[:app_id],
+        :country_code      => @geoip_data[:country]
+    )
   end
 end

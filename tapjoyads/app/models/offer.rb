@@ -546,6 +546,8 @@ class Offer < ActiveRecord::Base
       click_url += "test_offer"
     elsif item_type == 'ActionOffer'
       click_url += "action"
+    elsif item_type == 'VideoOffer'
+      click_url += "video"
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end
