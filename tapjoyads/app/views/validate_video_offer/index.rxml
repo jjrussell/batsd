@@ -4,6 +4,7 @@ xml.TapjoyVideo do
   xml.Valid @valid
   if @valid
     xml.Name @offer.name
+    xml.OfferID @offer.id
     xml.Amount @amount
   end
 end
