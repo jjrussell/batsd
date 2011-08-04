@@ -1,6 +1,6 @@
 class ValidateVideoOfferController < ApplicationController
   
-  before_filter :set_device_type, :setup
+  before_filter :setup
   
   def index
     @valid = @offer.is_valid_for?(@publisher_app, @device, @currency, params[:device_type], @geoip_data, params[:app_version], @direct_pay_providers, params[:type], @hide_app_offers, params[:library_version], params[:os_version], params[:screen_layout_size])
@@ -26,26 +26,4 @@ private
     @direct_pay_providers = params[:direct_pay_providers].to_s.split(',')
     @amount = @currency.get_visual_reward_amount(@offer, params[:display_multiplier])
   end
-  
-  ##
-  # Sets the device_type parameter from the device_ua param, which AdMarvel sends.
-  def set_device_type
-    if params[:device_type].blank? && params[:device_ua].present?
-      params[:device_type] = case params[:device_ua]
-      when /iphone;/i
-        'iphone'
-      when /ipod;/i
-        'ipod'
-      when /ipad;/i
-        'ipad'
-      when /android/i
-        'android'
-      when /windows/i
-        'windows'
-      else
-        nil
-      end
-    end
-  end
-  
 end
