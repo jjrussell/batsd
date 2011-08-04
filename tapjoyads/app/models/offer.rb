@@ -739,6 +739,23 @@ class Offer < ActiveRecord::Base
       should_reject_from_app_or_currency?(publisher_app, currency)
   end
   
+  def is_valid_for?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
+    !(device_platform_mismatch?(publisher_app, device_type) ||
+      geoip_reject?(geoip_data, device) ||
+      already_complete?(publisher_app, device, app_version) ||
+      flixter_reject?(publisher_app, device) ||
+      minimum_bid_reject?(currency, type) ||
+      jailbroken_reject?(device) ||
+      direct_pay_reject?(direct_pay_providers) ||
+      action_app_reject?(device) ||
+      hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs) ||
+      min_os_version_reject?(os_version) ||
+      cookie_tracking_reject?(publisher_app, library_version) ||
+      screen_layout_sizes_reject?(screen_layout_size) ||
+      should_reject_from_app_or_currency?(publisher_app, currency)) &&
+      accepting_clicks?
+  end
+  
   def should_reject_from_app_or_currency?(publisher_app, currency)
     is_disabled?(publisher_app, currency) || app_platform_mismatch?(publisher_app) || age_rating_reject?(currency) || publisher_whitelist_reject?(publisher_app) || currency_whitelist_reject?(currency)
   end
