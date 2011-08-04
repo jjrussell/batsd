@@ -14,8 +14,10 @@ private
     reward = Reward.deserialize(message.to_s)
     return if reward.sent_currency?
     
+    mc_time = Time.zone.now.to_i / 1.hour
     if @slow_callbacks.include?(reward.currency_id)
       @num_reads += 1 if @num_reads < @max_reads
+      Mc.increment_count("send_currency_skip.#{reward.currency_id}.#{mc_time}")
       raise SkippedSendCurrency.new("not attempting to ping the callback for #{reward.currency_id}")
     end
     
@@ -90,7 +92,6 @@ private
         reward.delete('sent_currency')
         reward.serial_save
         
-        mc_time = Time.zone.now.to_i / 1.hour
         num_failures = Mc.increment_count("send_currency_failure.#{currency.id}.#{mc_time}")
         if num_failures < 5000
           Mc.compare_and_swap("send_currency_failures.#{mc_time}") do |failures|
