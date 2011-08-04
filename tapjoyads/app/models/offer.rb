@@ -128,7 +128,9 @@ class Offer < ActiveRecord::Base
   named_scope :with_rank_boosts, :joins => :rank_boosts, :readonly => false
   named_scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
   named_scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
+  
   delegate :balance, :pending_earnings, :name, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
+  memoize :partner_balance
   
   alias_method :events, :offer_events
   alias_method :random, :rand
@@ -423,7 +425,7 @@ class Offer < ActiveRecord::Base
   end
   
   def is_enabled?
-    tapjoy_enabled? && user_enabled? && ((payment > 0 && partner.balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
+    tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
   end
   
   def accepting_clicks?
