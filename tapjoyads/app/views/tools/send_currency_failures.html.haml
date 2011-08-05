@@ -12,6 +12,10 @@ Total failures last hour: #{@last_hour_total}
 Unique failures this hour: #{@this_hour_unique}
 %br
 Unique failures last hour: #{@last_hour_unique}
+%br
+Skips this hour: #{@this_hour_skips}
+%br
+Skips last hour: #{@last_hour_skips}
 
 %table#fails.tablesorter
   %thead
@@ -22,6 +26,8 @@ Unique failures last hour: #{@last_hour_unique}
       %th Currency App
       %th This Hour Unique
       %th Last Hour Unique
+      %th This Hour Skips
+      %th Last Hour Skips
   %tbody
     - @failures.each do |hash|
       %tr
@@ -33,6 +39,8 @@ Unique failures last hour: #{@last_hour_unique}
           = link_to(hash[:currency].app.name, statz_path(hash[:currency].app.id))
         %td= number_with_delimiter(hash[:this_hour_unique])
         %td= number_with_delimiter(hash[:last_hour_unique])
+        %td= number_with_delimiter(hash[:this_hour_skips])
+        %td= number_with_delimiter(hash[:last_hour_skips])
 
 - content_for :page_javascript do
   :plain
@@ -54,6 +62,8 @@ Unique failures last hour: #{@last_hour_unique}
           3: { sorter: false },
           4: { sorter: 'formatted-number-column' },
           5: { sorter: 'formatted-number-column' },
+          6: { sorter: 'formatted-number-column' },
+          7: { sorter: 'formatted-number-column' },
         },
         sortList: [ [1, 1], [2, 1] ]
       });
