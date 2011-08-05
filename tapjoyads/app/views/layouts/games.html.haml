@@ -18,6 +18,13 @@
     = yield :page_head
     
   %body
+    %noscript
+      %style{:type => "text/css", :media => "screen"}
+        :plain
+          #jqt {display:none;}
+      .noscript_msg
+        Please go into your browser settings and enable JavaScript to continue using Tapjoy Games.
+
     = yield
     
     // Dialogs
@@ -64,7 +71,7 @@
 
     - [:notice, :error, :success].each do |key|
       - unless flash[key].blank?
-        #flash_error.dialog_wrapper
+        #flash_error.dialog_wrapper.hide
           .close_dialog
             .close_button
           .dialog

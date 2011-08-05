@@ -81,30 +81,34 @@ TJG.ui = {
         freeCls = "free";
       }
       t.push('<a href="' + v.RedirectURL + '">'); 
-        t.push('<li class="offer_item clearfix '+ clsId +'" '+ style +'>'); 
-          t.push('<div class="offer_image">');
-            t.push('<img src="' + v.IconURL + '">');
-            //t.push('<div class="image_loader"></div>');
-          t.push('</div>');
+        t.push('<li class="offer_item clearfix '+ clsId +'" '+ style +'>');
+          t.push('<a href="' + v.RedirectURL + '">');  
+            t.push('<div class="offer_image">');
+              t.push('<img src="' + v.IconURL + '">');
+              //t.push('<div class="image_loader"></div>');
+            t.push('</div>'); 
+          t.push('</a>');
           t.push('<div class="offer_text">');
             t.push('<div class="offer_title title">');
               t.push(v.Name);
             t.push('</div>');
             t.push('<div class="offer_info">');
-                t.push('<div class="offer_button my_apps">');
-                  t.push('<div class="button grey">');
-                    t.push('<span class="amount">');
-                      t.push(v.Amount);
-                    t.push('</span>');
-                    t.push(' ');
-                    t.push('<span class="currency">');
-                      t.push(currency);
-                    t.push('</span>');
-                    t.push('<span class="cost '+ freeCls +'">');
-                      t.push(v.Cost);
-                    t.push('</span>'); 
-                  t.push('</div>');
-                t.push('</div>'); 
+                t.push('<a href="' + v.RedirectURL + '">');
+                  t.push('<div class="offer_button my_apps">');
+                    t.push('<div class="button grey">');
+                      t.push('<span class="amount">');
+                        t.push(v.Amount);
+                      t.push('</span>');
+                      t.push(' ');
+                      t.push('<span class="currency">');
+                        t.push(currency);
+                      t.push('</span>');
+                      t.push('<span class="cost '+ freeCls +'">');
+                        t.push(v.Cost);
+                      t.push('</span>'); 
+                    t.push('</div>');
+                  t.push('</div>');  
+                t.push('</a>'); 
             t.push('</div>');
           t.push('</div>');
         t.push('</li>');
@@ -126,7 +130,7 @@ TJG.ui = {
     $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
     TJG.onload.loadCufon();
     $(".close_dialog").show();
-    $("#sign_up_dialog_content").parent().animate({ height: "260px", }, 250);
+    $("#sign_up_dialog_content").parent().animate({ height: "270px", }, 250);
     $("#sign_up_dialog").fadeIn();
     $('form#new_gamer').submit(function(e){
       e.preventDefault();
@@ -203,9 +207,19 @@ TJG.ui = {
               }
               else if (d.link_device_url) {
                 $('.close_dialog,.continue_link_device').click(function(){
-                  document.location.href = d.link_device_url;
-                  $("#sign_up_dialog").hide();
-                });
+                  $('.close_dialog').unbind('click');
+                  msg = [
+                    '<div id="link_device" class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Link Device</div></div>',
+                    '<div class="dialog_header">The final step is to link your device to your Tapjoy Games account.  Please continue and click install on the next screen.</div>',
+                    '<div class="dialog_content"><div class="link_device_url"><div class="button dialog_button">Link Device</div></div></div>'
+                  ].join('');
+                  $("#sign_up_dialog_content").parent().animate({ height: "170px", }, 250);
+                  $("#sign_up_dialog_content").html(msg);
+                  TJG.onload.loadCufon();
+                  $('.close_dialog,.link_device_url').click(function(){
+                    document.location.href = d.link_device_url;
+                  });
+                }); 
               }
               else {
                 $('.close_dialog,.continue_link_device').click(function(){
@@ -229,7 +243,7 @@ TJG.ui = {
             }
             $('#sign_up_again').click(function(){
               TJG.ui.showRegister();
-              $("#sign_up_dialog_content").parent().animate({ height: "260px", }, 250);
+              $("#sign_up_dialog_content").parent().animate({ height: "270px", }, 250);
               TJG.onload.loadCufon();
             });
           },
@@ -244,7 +258,7 @@ TJG.ui = {
             TJG.onload.loadCufon();
             $('#sign_up_again').click(function(){
                TJG.ui.showRegister();
-              $("#sign_up_dialog_content").parent().animate({ height: "260px", }, 250);
+              $("#sign_up_dialog_content").parent().animate({ height: "270px", }, 250);
               TJG.onload.loadCufon();
             });
           }
@@ -298,6 +312,8 @@ TJG.ui = {
       checkFlashMessages: function () {
         if($('#flash_error').length > 0) {
           TJG.utils.centerDialog("#flash_error");
+          $("#flash_error").fadeIn();
+          TJG.repositionDialog = ["#flash_error"];
         }
       }
     };
