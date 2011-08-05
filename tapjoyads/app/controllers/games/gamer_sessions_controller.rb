@@ -8,7 +8,11 @@ class Games::GamerSessionsController < GamesController
   def create
     @gamer_session = GamerSession.new(params[:gamer_session])
     if @gamer_session.save
-      redirect_to games_root_path
+      if params[:data].present?
+       redirect_to finalize_games_gamer_device_path(:data => params[:data])
+      else
+        redirect_to games_root_path
+      end
     else
       @gamer = Gamer.new
       render :action => :new
