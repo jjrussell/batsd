@@ -21,16 +21,24 @@ class ExternalPublisher
     Offer.get_icon_url(options.merge(:icon_id => Offer.hashed_icon_id(app_id)))
   end
   
-  def get_offerwall_url(device, currency)
+  def get_offerwall_url(device, currency, headers)
+    language_code, country_code = HeaderParser.locale(headers['accept-language'])
+    device_type = HeaderParser.device_type(headers['user-agent'])
+    os_version = HeaderParser.os_version(headers['user-agent']) if device_type.present?
+    
     data = {
       :udid              => device.key,
       :publisher_user_id => device.key,
       :currency_id       => currency[:id],
       :app_id            => app_id,
       :source            => 'tj_games',
-      :json              => '1'
+      :json              => '1',
+      :language_code     => language_code,
+      :country_code      => country_code,
+      :device_type       => device_type,
+      :os_version        => os_version,
     }
-    # TODO: add device_type and other device info, either here or at get_offers time
+    
     "#{API_URL}/get_offers?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
 
