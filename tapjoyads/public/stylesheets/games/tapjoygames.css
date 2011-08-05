@@ -5,6 +5,18 @@ ol, ul { list-style: none; }
 blockquote, q { quotes: none; }
 blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; } 
 table { border-collapse: collapse; border-spacing: 0; }
+@font-face {
+  font-family: 'Cooper';
+  font-style: normal;
+  font-weight: bold;
+  src: local('Cooper'), url('/fonts/CooperStd.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'AmericanTypewriter';
+  font-style: normal;
+  font-weight: bold;
+  src: local('AmericanTypewriter'), url('/fonts/AmericanTypewriter.ttf') format('truetype');
+}
 .web body,.ipad body {
   background: #434343 url('/images/games/bg_web.png');
   font-size: 16px;
@@ -457,13 +469,13 @@ form#new_gamer input {
   width: 18px;
 }
 .mobile .slide_arrow_wrapper.bottom_arrow {
-  left: 30px;
+  left: 26px;
   padding-bottom: 1px;
   top: -1px;
 }
 .web .slide_arrow_wrapper.bottom_arrow,
 .ipad .slide_arrow_wrapper.bottom_arrow {
-  left: 46px;
+  left: 40px;
   padding-bottom: 1px;
   top: -1px;
 }
@@ -916,10 +928,11 @@ form#new_gamer_session .fieldWithErrors input[type=password] {
 .offer_title {
   color: #FFF;
   font-size: 18px;
-  padding-top: 6px;
+  padding: 6px 0 2px;
+  text-shadow: 0 1px 4px #222;
 }
 .mobile .offer_title {
-  font-size: 13px;
+  font-size: 16px;
 }
 .web .offer_meta,
 .web .offer_description,
@@ -1093,9 +1106,9 @@ form#new_gamer_session .fieldWithErrors input[type=password] {
 .button {
   border-radius: 6px;
   color: #FFF;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
-  padding: 8px 10px 8px 10px;
+  padding: 7px 10px 7px 10px;
   text-decoration: none;
   text-align: center;
   text-shadow: 0 1px 1px #1F81A0;
@@ -1212,14 +1225,11 @@ input.button {
   cursor: pointer;
 }
 .title {
-  font-family: 'Cooper Std';
+  font-family: 'Cooper';
 }
 .title_2 {
-  font-family: 'AmerType Md BT';
+  font-family: 'AmericanTypewriter';
 }
-.sharp .cufon-vml cvml\:shape {
-  antialias: false !important;
-} 
 h1 {
   font-size: 22px;
 }

@@ -88,14 +88,12 @@
             if (TJG.moreAppOfferWall) {
               TJG.ui.hideLoader();
               $("#more_games_content").html(TJG.moreAppOfferWall);
-              TJG.onload.loadCufon();
               $("#more_games_content").fadeIn(450);
             }
           });
       
           if (TJG.topAppOfferWall) {
             $("#more_games_content").html(TJG.topAppOfferWall);
-            TJG.onload.loadCufon();
             $("#more_games_content").fadeIn(450);
           }
           else {
@@ -110,7 +108,6 @@
                 TJG.topAppOfferWall = c;
                 TJG.ui.hideLoader();
                 $("#more_games_content").html(c);
-                TJG.onload.loadCufon();
                 $("#more_games_content").fadeIn(450); 
               },
               error: function () {
