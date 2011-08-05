@@ -139,7 +139,7 @@
       %td
         = f.text_field(:publisher_app_whitelist)
         = error_message_on @offer, :publisher_app_whitelist
-    - if [ 'App', 'EmailOffer', 'GenericOffer', 'ActionOffer' ].include?(@offer.item_type)
+    - if [ 'App', 'EmailOffer', 'GenericOffer', 'ActionOffer', 'VideoOffer' ].include?(@offer.item_type)
       %tr
         %th
           = f.label(:bid)

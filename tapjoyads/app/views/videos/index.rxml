@@ -7,7 +7,7 @@ xml.TapjoyVideo do
     xml.OfferID @offer.id
     xml.Name @offer.name
     xml.Amount @amount
-    xml.VideoURL @offer.third_party_data
+    xml.VideoURL @offer.url
     xml.Interval 30.minutes
   end
 end

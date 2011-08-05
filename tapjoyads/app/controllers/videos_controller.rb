@@ -4,7 +4,7 @@ class VideosController < ApplicationController
   
   def index
   end
- 
+  
 private
 
   def setup
@@ -14,7 +14,7 @@ private
     now = Time.zone.now
     geoip_data = get_geoip_data
     geoip_data[:country] = params[:country_code] if params[:country_code].present?
-        
+    
     device = Device.new(:key => params[:udid])
     publisher_app = App.find_in_cache(params[:app_id])
     currency = Currency.find_in_cache(params[:currency_id])
@@ -25,7 +25,7 @@ private
     
     web_request = WebRequest.new(:time => now)
     web_request.put_values('videos_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
-
+    
     offer_list, more_data_available = publisher_app.get_offer_list(
         :device             => device,
         :currency           => currency,
@@ -44,7 +44,7 @@ private
     else
       @offer = nil
     end
-  
+    
     if @offer.present?
       @click_url = offer.get_click_url(
           :publisher_app     => publisher_app,
@@ -60,6 +60,5 @@ private
     end
     
     web_request.save
-  end 
-
+  end
 end

@@ -60,7 +60,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :in => [ true, false ]
-  validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer )
+  validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer)
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :device_types, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     begin
@@ -654,6 +654,29 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def get_video_url(options = {})
+    Offer.get_video_url({:video_id => Offer.id}.merge(options))
+  end
+  
+  def self.get_video_url(options = {})
+    video_id  = options.delete(:video_id)  { |k| raise "#{k} is a required argument" }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
+    prefix = "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy"
+    
+    "#{prefix}/videos/src/#{video_id}.mp4"
+  end
+  
+  def save_video!(video_src_blob)
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    
+    existing_video_blob = bucket.get("videos/src/#{id}.mp4") rescue ''
+    
+    return if Digest::MD5.hexdigest(video_src_blob) == Digest::MD5.hexdigest(existing_video_blob)
+    
+    bucket.put("videos/src/#{id}.mp4", video_src_blob, {}, "public-read")
+  end
+  
   def expected_device_types
     if item_type == 'App' || item_type == 'ActionOffer' || item_type == 'RatingOffer'
       item.get_offer_device_types
@@ -805,6 +828,8 @@ class Offer < ActiveRecord::Base
         platform = App::PLATFORMS.index(get_platform)
         platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
       end
+    elsif item_type == 'VideoOffer'
+      5
     else
       0
     end
