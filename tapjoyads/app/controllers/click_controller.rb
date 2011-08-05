@@ -211,7 +211,7 @@ private
   end
   
   def render_unavailable_offer
-    render 'unavailable_offer', :status => 404
+    render 'unavailable_offer', :status => 403
   end
   
 end
