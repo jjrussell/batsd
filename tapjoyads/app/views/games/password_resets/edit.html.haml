@@ -20,3 +20,29 @@
                       = submit_tag('Submit', :class => 'button lt_blue')
                     .field
                       = error_message_on @gamer, :password
+                  .formError.hide
+                    .account_error
+                     
+- content_for :page_javascript do
+  :plain
+    $(window).load(function() {
+      $('form').submit(function(e){
+        $(".formError").hide();
+        var inputs, email, values = {};
+        inputs = $('form :input[type=password]');
+        inputs.each(function() {
+          if (this.type == 'checkbox' || this.type == 'radio') {
+            values[this.name] = $(this).attr("checked");
+          }
+          else {
+            values[this.name] = $(this).val();
+          }
+          email = values['gamer[password]'];
+          if( email == '' ) {
+            $(".email_error").html('Please enter a password');
+            $(".formError").show();
+            e.preventDefault();
+          }
+        });
+      });
+    });
