@@ -28,7 +28,7 @@
     $(window).load(function() {
       $('form').submit(function(e){
         $(".formError").hide();
-        var inputs, email, values = {};
+        var inputs, pass, values = {};
         inputs = $('form :input[type=password]');
         inputs.each(function() {
           if (this.type == 'checkbox' || this.type == 'radio') {
@@ -37,9 +37,9 @@
           else {
             values[this.name] = $(this).val();
           }
-          email = values['gamer[password]'];
-          if( email == '' ) {
-            $(".email_error").html('Please enter a password');
+          pass = values['gamer[password]'];
+          if( pass == '' ) {
+            $(".account_error").html('Please enter a password');
             $(".formError").show();
             e.preventDefault();
           }
