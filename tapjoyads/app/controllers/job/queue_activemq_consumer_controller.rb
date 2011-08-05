@@ -2,16 +2,18 @@ class Job::QueueActivemqConsumerController < Job::JobController
   
   def index
     now = Time.zone.now
+    transaction = UUIDTools::UUID.random_create.hexdigest
     messages = []
-    consumer = Activemq.get_consumer(params[:server], params[:queue]) do |message|
+    consumer = Activemq.get_consumer(params[:server], params[:queue], { :transaction => transaction }) do |message|
       messages << message
+      consumer.acknowledge(message, { :transaction => transaction })
     end
     
     consumer.join(params[:seconds].to_f)
     consumer.listener_thread.exit
     
     unless messages.empty?
-      filename = "#{params[:server]}_#{UUIDTools::UUID.random_create.hexdigest}"
+      filename = "#{params[:server]}_#{transaction}"
       tmp_path = "tmp/#{filename}.s3"
       s3_path  = "#{params[:queue]}/#{now.to_s(:yyyy_mm_dd)}/#{now.hour}/#{filename}"
       data     = File.open(tmp_path, 'w+')
@@ -23,8 +25,8 @@ class Job::QueueActivemqConsumerController < Job::JobController
       retries = 3
       begin
         data.rewind
-        bucket = S3.bucket(BucketNames::FAILED_WEB_REQUEST_SAVES)
-        bucket.put(s3_path, data.read)
+        bucket = S3.bucket(BucketNames::ACTIVEMQ_MESSAGES)
+        Timeout.timeout(30) { bucket.put(s3_path, data) }
       rescue Exception => e
         if retries > 0
           retries -= 1
@@ -38,12 +40,9 @@ class Job::QueueActivemqConsumerController < Job::JobController
         end
       end
       
+      consumer.commit(transaction)
       data.close
       File.delete(tmp_path)
-      
-      messages.each do |msg|
-        consumer.acknowledge(msg)
-      end
     end
     
     consumer.close

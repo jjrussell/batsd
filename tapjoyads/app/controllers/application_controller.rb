@@ -5,8 +5,8 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   
   before_filter :set_time_zone
-  before_filter :set_locale
   before_filter :fix_params
+  before_filter :set_locale
   before_filter :reject_banned_ips
 
   # See ActionController::RequestForgeryProtection for details
@@ -59,11 +59,20 @@ private
   def set_time_zone
     Time.zone = 'UTC'
   end
-  
+
   def set_locale
-    I18n.locale = AVAILABLE_LOCALES.include?(params[:language_code]) ? params[:language_code] : nil
+    language_code = params[:language_code]
+    I18n.locale = nil
+    if AVAILABLE_LOCALES.include?(language_code)
+      I18n.locale = language_code
+    elsif language_code.present? && language_code['-']
+      language_code = language_code.split('-').first
+      if AVAILABLE_LOCALES.include?(language_code)
+        I18n.locale = language_code
+      end
+    end
   end
-  
+
   def fix_params
     downcase_param(:udid)
     downcase_param(:app_id)
@@ -91,6 +100,7 @@ private
     set_param(:max, :Max)
     set_param(:virtual_good_id, :VirtualGoodID)
     set_param(:library_version, :ConnectLibraryVersion)
+    set_param(:language_code, :language)
   end
   
   def downcase_param(p)

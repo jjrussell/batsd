@@ -54,11 +54,16 @@ class Currency < ActiveRecord::Base
   memoize :weights
   
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = (Rails.env != 'production'))
-    if do_lookup
-      Mc.distributed_get_and_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", false, 1.day) { find_all_by_app_id(app_id, :order => 'ordinal ASC') }
-    else
-      Mc.distributed_get("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}") { [] }
+    currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}")
+    if currencies.nil?
+      if do_lookup
+        currencies = find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
+        Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", currencies, false, 1.day)
+      else
+        currencies = []
+      end
     end
+    currencies
   end
   
   def get_visual_reward_amount(offer, display_multiplier = 1)
@@ -141,14 +146,17 @@ class Currency < ActiveRecord::Base
   def get_disabled_offer_ids
     Set.new(disabled_offers.split(';'))
   end
+  memoize :get_disabled_offer_ids
   
   def get_disabled_partner_ids
     Set.new(disabled_partners.split(';'))
   end
+  memoize :get_disabled_partner_ids
   
   def get_offer_whitelist
     Set.new(offer_whitelist.split(';'))
   end
+  memoize :get_offer_whitelist
   
   def get_disabled_partners
     Partner.find_all_by_id(disabled_partners.split(';'))
@@ -157,6 +165,7 @@ class Currency < ActiveRecord::Base
   def get_test_device_ids
     Set.new(test_devices.split(';'))
   end
+  memoize :get_test_device_ids
 
   def tapjoy_managed?
     callback_url == TAPJOY_MANAGED_CALLBACK_URL
@@ -214,15 +223,18 @@ class Currency < ActiveRecord::Base
 private
   
   def cache_by_app_id
-    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'), false, 1.day)
+    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
+    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", currencies, false, 1.day)
     
     if app_id_changed?
-      Mc.distributed_put("mysql.app_currencies.#{app_id_was}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC'), false, 1.day)
+      currencies = Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
+      Mc.distributed_put("mysql.app_currencies.#{app_id_was}.#{SCHEMA_VERSION}", currencies, false, 1.day)
     end
   end
   
   def clear_cache_by_app_id
-    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC'), false, 1.day)
+    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
+    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{SCHEMA_VERSION}", currencies, false, 1.day)
   end
   
   def get_spend_share_ratio

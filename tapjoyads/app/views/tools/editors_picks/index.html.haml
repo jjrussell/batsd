@@ -3,7 +3,7 @@
 
 = link_to 'Schedule new editors\' pick', new_tools_editors_pick_path
 %br/
-= link_to 'View editors\' picks list', games_editors_picks_path
+= link_to 'View editors\' picks list', games_more_games_path
 = render :partial => 'list', :object => @active_editors_picks, :locals => { :list_name => :active }
 = render :partial => 'list', :object => @upcoming_editors_picks, :locals => { :list_name => :upcoming }
 #expired_picks.hidden

@@ -18,7 +18,7 @@
 #press_wrapper { background: url('../images/press_bg.png') repeat-x; height: 67px; width: 100%; }
 #press { margin: 0px auto; width: 980px; }
 #press img { float: left; }
-#press a { float: left; margin: 25px 22px 0 22px; }
+#press a { float: left; margin: 22px 22px 0 22px; }
 
 #clients { float: left; margin-top: 35px; }
 #clients .header { margin-bottom: 25px; }

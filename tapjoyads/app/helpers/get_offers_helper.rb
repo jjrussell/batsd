@@ -64,14 +64,14 @@ module GetOffersHelper
     elsif offer.price <= 300
       '$$$'
     else
-      '$$$$'
+      '$$$+'
     end
   end
-  
+
   def link_to_missing_currency
     support_params = [ 'app_id', 'currency_id', 'udid', 'device_type', 'publisher_user_id', 'language_code' ].inject({}) { |h,k| h[k] = params[k]; h }
-    link_to(t('text.offerwall.missing_currency', :currency => @currency.name), 
+    link_to(t('text.offerwall.missing_currency', :currency => @currency.name),
       new_support_request_path(support_params))
   end
-  
+
 end

@@ -2,7 +2,7 @@ class GetOffersController < ApplicationController
   
   layout 'iphone', :only => :webpage
   
-  before_filter :decrypt_data_param
+  prepend_before_filter :decrypt_data_param
   before_filter :fix_tapulous
   before_filter :choose_experiment, :except => :featured
   before_filter :set_featured_params, :only => :featured
@@ -51,7 +51,10 @@ class GetOffersController < ApplicationController
     end
     @more_data_available = 0
     
-    @web_request.add_path('featured_offer_shown') unless @offer_list.empty?
+    unless @offer_list.empty?
+      @web_request.offer_id = @offer_list.first.id
+      @web_request.add_path('featured_offer_shown')
+    end
     
     if params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
@@ -87,7 +90,7 @@ private
   def set_featured_params
     params[:type] = Offer::FEATURED_OFFER_TYPE
     params[:start] = '0'
-    params[:max] = '50'
+    params[:max] = '100'
     params[:source] = 'featured'
     params[:rate_app_offer] = '0'
   end

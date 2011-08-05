@@ -3,7 +3,7 @@ class ToolsController < WebsiteController
 
   filter_access_to :all
 
-  after_filter :save_activity_logs, :only => [ :update_user, :update_android_app, :update_device, :resolve_clicks ]
+  after_filter :save_activity_logs, :only => [ :update_user, :update_android_app, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies ]
 
   def index
   end
@@ -63,6 +63,8 @@ class ToolsController < WebsiteController
     @last_hour_total  = 0
     @this_hour_unique = 0
     @last_hour_unique = 0
+    @this_hour_skips  = 0
+    @last_hour_skips  = 0
     Currency.find((this_hour_failures.keys + last_hour_failures.keys).uniq, :include => :app).each do |currency|
       hash                    = {}
       hash[:currency]         = currency
@@ -70,12 +72,16 @@ class ToolsController < WebsiteController
       hash[:last_hour_total]  = Mc.get_count("send_currency_failure.#{currency.id}.#{last_hour_mc_time}")
       hash[:this_hour_unique] = (this_hour_failures[currency.id] || []).length
       hash[:last_hour_unique] = (last_hour_failures[currency.id] || []).length
+      hash[:this_hour_skips]  = Mc.get_count("send_currency_skip.#{currency.id}.#{this_hour_mc_time}")
+      hash[:last_hour_skips]  = Mc.get_count("send_currency_skip.#{currency.id}.#{last_hour_mc_time}")
       
       @failures << hash
       @this_hour_total  += hash[:this_hour_total]
       @last_hour_total  += hash[:last_hour_total]
       @this_hour_unique += hash[:this_hour_unique]
       @last_hour_unique += hash[:last_hour_unique]
+      @this_hour_skips  += hash[:this_hour_skips]
+      @last_hour_skips  += hash[:last_hour_skips]
     end
   end
   
@@ -117,7 +123,7 @@ class ToolsController < WebsiteController
   def elb_status
     elb_interface  = RightAws::ElbInterface.new
     ec2_interface  = RightAws::Ec2.new
-    @lb_names      = Rails.env == 'production' ? %w( masterjob-lb job-lb website-lb games-lb web-lb test-lb ) : []
+    @lb_names      = Rails.env == 'production' ? %w( masterjob-lb job-lb website-lb games-lb api-lb test-lb ) : []
     @lb_instances  = {}
     @ec2_instances = {}
     @lb_names.each do |lb_name|
@@ -384,5 +390,46 @@ class ToolsController < WebsiteController
     Offer.find_all_by_id(@apps.map{|app|app['tapjoy_apps']}.flatten).each do |app|
       @tapjoy_apps[app.id] = app
     end
+  end
+  
+  def award_currencies
+    @publisher_app = App.find_in_cache(params[:publisher_app_id])
+    return unless verify_records([ @publisher_app ])
+    
+    support_request = SupportRequest.find_by_udid_and_app_id(params[:udid], params[:publisher_app_id])
+    if support_request.nil?
+      flash[:error] = "Support request not found. The user must submit a support request for the app in order to award them currency." 
+      redirect_to :action => :device_info, :udid => params[:udid]  
+      return
+    end        
+    @publisher_user_id = support_request.publisher_user_id
+  end
+  
+  def update_award_currencies
+    if params[:amount].nil? || params[:amount].empty?
+      flash[:error] = "Must provide an amount." 
+      redirect_to :action => :award_currencies, :publisher_app_id => params[:publisher_app_id], :currency_id => params[:currency_id], :udid =>params[:udid] 
+      return
+    end
+
+    customer_support_reward = Reward.new
+    customer_support_reward.type                       =  'customer support'
+    customer_support_reward.udid                       =  params[:udid]
+    customer_support_reward.publisher_user_id          =  params[:publisher_user_id]
+    customer_support_reward.currency_id                =  params[:currency_id]
+    customer_support_reward.publisher_app_id           =  params[:publisher_app_id]
+    customer_support_reward.advertiser_app_id          =  params[:publisher_app_id]
+    customer_support_reward.offer_id                   =  params[:publisher_app_id]
+    customer_support_reward.currency_reward            =  params[:amount]
+    customer_support_reward.publisher_amount           =  0
+    customer_support_reward.advertiser_amount          =  0
+    customer_support_reward.tapjoy_amount              =  0
+    customer_support_reward.customer_support_username  =  current_user.username
+
+    message = customer_support_reward.serialize
+    Sqs.send_message(QueueNames::SEND_CURRENCY, message)
+    
+    flash[:notice] = " Successfully awarded #{params[:amount]} currency. " 
+    redirect_to :action => :device_info, :udid => params[:udid]  
   end
 end

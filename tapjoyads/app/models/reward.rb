@@ -24,6 +24,7 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :sent_currency,     :type => :time
   self.sdb_attr :sent_money_txn,    :type => :time
   self.sdb_attr :send_currency_status
+  self.sdb_attr :customer_support_username
   
   def initialize(options = {})
     super({:load_from_memcache => false}.merge(options))
@@ -38,6 +39,46 @@ class Reward < SimpledbShardedResource
   
   def serial_save(options = {})
     super({ :write_to_memcache => false }.merge(options))
+  end
+  
+  def build_conversions
+    conversions = []
+    
+    conversions << Conversion.new do |c|
+      c.id                  = key
+      c.reward_id           = key
+      c.advertiser_offer_id = offer_id
+      c.publisher_app_id    = publisher_app_id
+      c.advertiser_amount   = advertiser_amount
+      c.publisher_amount    = publisher_amount
+      c.tapjoy_amount       = tapjoy_amount
+      c.reward_type_string  = type
+      c.created_at          = created
+      c.country             = country
+    end
+    
+    if displayer_app_id.present? && source == 'display_ad' # TO REMOVE: the source check when we fix our data corruption issues
+      conversions << Conversion.new do |c|
+        c.id                               = reward_key_2
+        c.reward_id                        = key
+        c.advertiser_offer_id              = offer_id
+        c.publisher_app_id                 = displayer_app_id
+        c.advertiser_amount                = 0
+        c.publisher_amount                 = displayer_amount
+        c.tapjoy_amount                    = 0
+        c.reward_type_string_for_displayer = type
+        c.created_at                       = created
+        c.country                          = country
+      end
+    end
+    
+    conversions
+  end
+  
+  def update_realtime_stats
+    build_conversions.each do |c|
+      c.update_realtime_stats
+    end
   end
   
 end

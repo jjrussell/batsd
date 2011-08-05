@@ -9,38 +9,8 @@ private
   def on_message(message)
     reward = Reward.deserialize(message.to_s)
     
-    if reward.publisher_amount.blank?
-      raise "No amounts set for reward: #{reward.key}"
-    end
-    
-    conversion = Conversion.new do |c|
-      c.id                  = reward.key
-      c.reward_id           = reward.key
-      c.advertiser_offer_id = reward.offer_id
-      c.publisher_app_id    = reward.publisher_app_id
-      c.advertiser_amount   = reward.advertiser_amount
-      c.publisher_amount    = reward.publisher_amount
-      c.tapjoy_amount       = reward.tapjoy_amount
-      c.reward_type_string  = reward.type
-      c.created_at          = reward.created
-      c.country             = reward.country
-    end
-    save_conversion(conversion)
-    
-    if reward.displayer_app_id.present? && reward.source == 'display_ad' # TO REMOVE: the source check when we fix our data corruption issues
-      conversion = Conversion.new do |c|
-        c.id                               = reward.reward_key_2
-        c.reward_id                        = reward.key
-        c.advertiser_offer_id              = reward.offer_id
-        c.publisher_app_id                 = reward.displayer_app_id
-        c.advertiser_amount                = 0
-        c.publisher_amount                 = reward.displayer_amount
-        c.tapjoy_amount                    = 0
-        c.reward_type_string_for_displayer = reward.type
-        c.created_at                       = reward.created
-        c.country                          = reward.country
-      end
-      save_conversion(conversion)
+    reward.build_conversions.each do |c|
+      save_conversion(c)
     end
   end
   
