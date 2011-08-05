@@ -87,6 +87,12 @@ Factory.define :generic_offer do |generic_offer|
   generic_offer.url 'http://ws.tapjoyads.com/healthz?click_key=TAPJOY_GENERIC'
 end
 
+Factory.define :video_offer do |video_offer|
+  video_offer.association :partner
+  video_offer.name { Factory.next(:name) }
+  video_offer.video_url ''
+end
+
 Factory.define :conversion do |conversion|
   conversion.association :publisher_app, :factory => :app
   conversion.advertiser_offer { Factory(:app).primary_offer }
