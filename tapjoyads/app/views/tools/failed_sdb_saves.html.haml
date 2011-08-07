@@ -6,6 +6,7 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
 %br
 %br
 Number of domains: #{@failed_sdb_saves.size}
+Number of bad web-requests: #{@bad_web_requests.size}
 
 %table#fails.tablesorter
   %thead

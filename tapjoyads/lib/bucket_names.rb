@@ -1,5 +1,4 @@
 class BucketNames
-  ACTIVEMQ_MESSAGES        = RUN_MODE_PREFIX + 'activemq-messages'
   ADIMAGES                 = RUN_MODE_PREFIX + 'adimages'
   CONVERSION_ARCHIVES      = RUN_MODE_PREFIX + 'conversion-archives'
   FAILED_SDB_SAVES         = RUN_MODE_PREFIX + 'failed-sdb-saves-generic'

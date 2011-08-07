@@ -22,7 +22,6 @@ ENV['AWS_ACCESS_KEY_ID'] = amazon['dev']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['dev']['secret_access_key']
 
 MEMCACHE_SERVERS = ['127.0.0.1']
-ACTIVEMQ_SERVERS = []
 
 EXCEPTIONS_NOT_LOGGED = []
 
@@ -54,3 +53,5 @@ MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = '2AdufehEmUpEdrEtamaspuxasU#=De'
+
+CLEAR_MEMCACHE = !(local_config['clear_memcache'] == false)

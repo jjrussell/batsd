@@ -10,7 +10,9 @@ class Job::SqsReaderController < Job::JobController
   def index
     queue = Sqs.queue(@queue_name)
     
-    @num_reads.times do
+    count = 0
+    while count < @num_reads do
+      count += 1
       # read a message off the queue
       retries = 3
       begin
@@ -49,7 +51,9 @@ class Job::SqsReaderController < Job::JobController
           params.merge!(message_params)
           raise e
         else
-          NewRelic::Agent.agent.error_collector.notice_error(e, { :uri => request.path, :request_params => params.merge(message_params) })
+          unless e.is_a?(SkippedSendCurrency)
+            NewRelic::Agent.agent.error_collector.notice_error(e, { :uri => request.path, :request_params => params.merge(message_params) })
+          end
           next
         end
       end

@@ -1,6 +1,5 @@
 class ActionOffer < ActiveRecord::Base
   include UuidPrimaryKey
-  acts_as_cacheable
   
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
@@ -11,7 +10,7 @@ class ActionOffer < ActiveRecord::Base
   
   validates_presence_of :partner, :app, :name, :variable_name
   validates_uniqueness_of :variable_name, :scope => :app_id, :case_sensitive => false
-  validates_presence_of :instructions, :unless => :new_record?
+  validates_presence_of :instructions
   validates_presence_of :prerequisite_offer, :if => Proc.new { |action_offer| action_offer.prerequisite_offer_id? }
   
   named_scope :visible, :conditions => { :hidden => false }

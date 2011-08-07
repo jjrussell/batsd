@@ -3,6 +3,8 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
   def initialize
     super QueueNames::SEND_CURRENCY
     @raise_on_error = false
+    @max_reads = @num_reads * 2
+    @slow_callbacks = Set.new
   end
   
 private
@@ -11,6 +13,13 @@ private
     params.delete(:callback_url)
     reward = Reward.deserialize(message.to_s)
     return if reward.sent_currency?
+    
+    mc_time = Time.zone.now.to_i / 1.hour
+    if @slow_callbacks.include?(reward.currency_id)
+      @num_reads += 1 if @num_reads < @max_reads
+      Mc.increment_count("send_currency_skip.#{reward.currency_id}.#{mc_time}")
+      raise SkippedSendCurrency.new("not attempting to ping the callback for #{reward.currency_id}")
+    end
     
     currency = Currency.find_in_cache(reward.currency_id, true)
     publisher_user_id = reward.publisher_user_id
@@ -70,15 +79,19 @@ private
           reward.send_currency_status = 'OK'
         else
           params[:callback_url] = callback_url
-          response = Downloader.get_strict(callback_url, { :timeout => 30 })
-          reward.send_currency_status = response.status
+          begin
+            response = Downloader.get_strict(callback_url, { :timeout => 20 })
+            reward.send_currency_status = response.status
+          rescue Patron::TimeoutError => e
+            @slow_callbacks << reward.currency_id
+            raise e
+          end
         end
         params.delete(:callback_url)
       rescue Exception => e
         reward.delete('sent_currency')
         reward.serial_save
         
-        mc_time = Time.zone.now.to_i / 1.hour
         num_failures = Mc.increment_count("send_currency_failure.#{currency.id}.#{mc_time}")
         if num_failures < 5000
           Mc.compare_and_swap("send_currency_failures.#{mc_time}") do |failures|

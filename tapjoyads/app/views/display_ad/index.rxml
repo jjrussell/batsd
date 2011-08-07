@@ -18,5 +18,10 @@ xml.TapjoyAd do
     xml.IconURL @offer.get_icon_url(:source => :cloudfront, :size => '57')
     xml.Name @offer.name
     xml.ImageURL @image_url
+    xml.Categories do
+      @categories.each do |category|
+        xml.Category category
+      end
+    end
   end
 end

@@ -21,10 +21,11 @@
               Phone not linked!
             .message_header
               You must link your device in order to view your apps!
-            .message_content
+            .message_content.link_device
               %a{ :href => new_games_gamer_device_path }
-                %span.button.grey.arrow  
-                  Please link your device now
+                .button.grey.arrow
+                  .arrow_bg
+                    Please link your device now
 
   = render 'my_account'
 

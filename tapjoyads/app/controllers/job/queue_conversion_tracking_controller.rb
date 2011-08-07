@@ -115,5 +115,7 @@ private
     
     Sqs.send_message(QueueNames::SEND_CURRENCY, message) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
     Sqs.send_message(QueueNames::CREATE_CONVERSIONS, message)
+    
+    reward.update_realtime_stats
   end
 end
