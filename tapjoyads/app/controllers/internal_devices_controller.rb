@@ -1,5 +1,5 @@
 class InternalDevicesController < WebsiteController
-  filter_access_to :all
+  filter_access_to :new, :update, :index, :show, :destroy
 
   def new
     if params[:device].present?
@@ -8,9 +8,11 @@ class InternalDevicesController < WebsiteController
       @device = InternalDevice.new
       current_user.internal_devices << @device
       cookies["device"] = { :value => @device.id, :expires => 1.year.from_now }
-      block_device_url = block_internal_device_url(@device.id)
-      password_reset_url = edit_password_reset_url(current_user.perishable_token)
-      TapjoyMailer.deliver_approve_device(current_user.email, @device.verification_key, block_device_url, password_reset_url)
+      block_device_url = block_internal_device_url(@device.id, :token => current_user.perishable_token)
+      geoip_data = get_geoip_data
+      location = "#{geoip_data[:city]}, #{geoip_data[:region]}, #{geoip_data[:country]} (#{get_ip_address})"
+      timestamp = Time.now.strftime("%l:%M%P %Z on %b %d, %Y")
+      TapjoyMailer.deliver_approve_device(current_user.email, @device.verification_key, block_device_url, location, timestamp)
     end
   end
 
@@ -37,15 +39,15 @@ class InternalDevicesController < WebsiteController
     device = InternalDevice.find(params[:id])
     device.block!
     flash[:notice] = "Device #{device.description} removed"
-    if params[:token].present?
-      redirect_to edit_password_reset_url(params[:token])
-    else
-      redirect_to internal_device_path(current_user.id)
-    end
+    redirect_to internal_device_path(current_user.id)
   end
 
   def block
     @device = InternalDevice.find(params[:id])
+    @device.block!
     @token = params[:token]
+    session = UserSession.find
+    session.destroy if session
+    redirect_to edit_password_reset_url(params[:token])
   end
 end
