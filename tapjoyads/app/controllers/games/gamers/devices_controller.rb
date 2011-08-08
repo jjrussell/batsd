@@ -23,8 +23,13 @@ class Games::Gamers::DevicesController < GamesController
       end
     end
     raise "Error parsing plist" if udid.blank? || product.blank? || version.blank?
-  
-    redirect_to finalize_games_gamer_device_path(:udid => udid, :product => product, :version => version), :status => 301
+    
+    data = {
+      :udid              => udid,
+      :product           => product,
+      :version           => version
+    } 
+    redirect_to finalize_games_gamer_device_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)), :status => 301
   rescue Exception => e
     Notifier.alert_new_relic(e.class, e.message, request, params)
     flash[:error] = "Error linking device. Please try again."
@@ -33,19 +38,25 @@ class Games::Gamers::DevicesController < GamesController
 
   def finalize
     if current_gamer.present?
-      current_gamer.udid = params[:udid]
-      device = Device.new(:key => params[:udid])
-      device.product = params[:product]
-      device.version = params[:version]
+      redirect_to games_root_path unless params[:data].present?
+      data = SymmetricCrypto.decrypt_object(params[:data], SYMMETRIC_CRYPTO_SECRET)
+      current_gamer.udid = data[:udid]
+      device = Device.new(:key => data[:udid])
+      device.product = data[:product]
+      device.version = data[:version]
     
       if current_gamer.save
         device.save
+        redirect_to games_root_path(:register_device => true)
       else
         flash[:error] = "Error linking device. Please try again."
+        redirect_to games_root_path
       end
     else
-      flash[:error] = "Please log in and try again. You must have cookies enabled."
+      flash[:error] = "Please log in to link your device. You must have cookies enabled."
+      redirect_to games_login_path(:data => params[:data])
     end
-    redirect_to games_root_path(:register_device => true)
   end
 end
+
+

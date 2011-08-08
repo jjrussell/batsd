@@ -131,7 +131,9 @@ class Offer < ActiveRecord::Base
   named_scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
   named_scope :video_offers, :conditions => "item_type = 'VideoOffer'"
   named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
+
   delegate :balance, :pending_earnings, :name, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
+  memoize :partner_balance
   
   alias_method :events, :offer_events
   alias_method :random, :rand
@@ -173,27 +175,27 @@ class Offer < ActiveRecord::Base
       
       offer_list = Offer.enabled_offers.nonfeatured.rewarded.non_video_offers.for_offer_list.to_a
       offer_list.each { |o| o.run_callbacks(:before_cache) }
-      cache_unsorted_offers(offer_list, DEFAULT_OFFER_TYPE)
+      # cache_unsorted_offers(offer_list, DEFAULT_OFFER_TYPE)
       cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
       offer_list = Offer.enabled_offers.featured.rewarded.non_video_offers.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.rewarded.non_video_offers.for_offer_list
       offer_list.each { |o| o.run_callbacks(:before_cache) }
-      cache_unsorted_offers(offer_list, FEATURED_OFFER_TYPE)
+      # cache_unsorted_offers(offer_list, FEATURED_OFFER_TYPE)
       cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
       offer_list = Offer.enabled_offers.nonfeatured.rewarded.non_video_offers.for_offer_list.for_display_ads.to_a
       offer_list.each { |o| o.run_callbacks(:before_cache) }
-      cache_unsorted_offers(offer_list, DISPLAY_OFFER_TYPE)
+      # cache_unsorted_offers(offer_list, DISPLAY_OFFER_TYPE)
       cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
       offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.non_video_offers.free_apps.for_offer_list.to_a
       offer_list.each { |o| o.run_callbacks(:before_cache) }
-      cache_unsorted_offers(offer_list, NON_REWARDED_DISPLAY_OFFER_TYPE)
+      # cache_unsorted_offers(offer_list, NON_REWARDED_DISPLAY_OFFER_TYPE)
       cache_offer_list(offer_list, weights, NON_REWARDED_DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
       offer_list = Offer.enabled_offers.featured.non_rewarded.non_video_offers.free_apps.for_offer_list + Offer.enabled_offers.nonfeatured.non_rewarded.non_video_offers.free_apps.for_offer_list
       offer_list.each { |o| o.run_callbacks(:before_cache) }
-      cache_unsorted_offers(offer_list, NON_REWARDED_FEATURED_OFFER_TYPE)
+      # cache_unsorted_offers(offer_list, NON_REWARDED_FEATURED_OFFER_TYPE)
       cache_offer_list(offer_list, weights, NON_REWARDED_FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
       offer_list = Offer.enabled_offers.video_offers.for_offer_list.to_a
@@ -431,7 +433,7 @@ class Offer < ActiveRecord::Base
   end
   
   def is_enabled?
-    tapjoy_enabled? && user_enabled? && ((payment > 0 && partner.balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
+    tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
   end
   
   def accepting_clicks?

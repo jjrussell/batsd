@@ -1,7 +1,7 @@
 #jqt
   #login.tan.current 
     .container
-      .page.no_top_nav_bar
+      .page
         .logo
         .content.narrow
           #earn_paper
@@ -26,6 +26,8 @@
               .content_box_top_arrow
             .content_box.clearfix
               - form_for([ :games, @gamer_session ]) do |f|
+                - if params[:data].present?
+                  = hidden_field_tag :data, params[:data]
                 .field.login_email.clearfix
                   = f.label :email
                   = f.email_field :email

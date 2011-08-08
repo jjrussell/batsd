@@ -89,7 +89,7 @@ private
       build_web_request('expired_click')
       save_web_request
       @destination_url = get_destination_url
-      render 'unavailable_offer'
+      render_unavailable_offer
       return
     end
     
@@ -124,7 +124,7 @@ private
       build_web_request('disabled_currency')
       save_web_request
       @destination_url = get_destination_url
-      render 'unavailable_offer'
+      render_unavailable_offer
     end
     disabled
   end
@@ -135,7 +135,7 @@ private
       build_web_request('disabled_offer')
       save_web_request
       @destination_url = get_destination_url
-      render 'unavailable_offer'
+      render_unavailable_offer
     end
     disabled
   end
@@ -150,7 +150,7 @@ private
       build_web_request('completed_offer')
       save_web_request
       @destination_url = get_destination_url
-      render 'unavailable_offer'
+      render_unavailable_offer
     end
     completed
   end
@@ -215,6 +215,10 @@ private
       :itunes_link_affiliate => @itunes_link_affiliate,
       :display_multiplier    => params[:display_multiplier],
     })
+  end
+  
+  def render_unavailable_offer
+    render 'unavailable_offer', :status => 403
   end
   
 end

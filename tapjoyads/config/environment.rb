@@ -54,7 +54,6 @@ Rails::Initializer.run do |config|
   config.gem 'curbit', :version => '0.2.0'
   config.gem 'newrelic_rpm', :version => '3.0.1'
   config.gem 'differ', :version => '0.1.2'
-  config.gem 'stomp', :version => '1.1.9'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
@@ -113,7 +112,6 @@ Rails::Initializer.run do |config|
         Mc.reset_connection
         SimpledbResource.reset_connection
         Sqs.reset_connection
-        Activemq.reset_connection
       end
     end
   end

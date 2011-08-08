@@ -51,7 +51,9 @@ class Job::SqsReaderController < Job::JobController
           params.merge!(message_params)
           raise e
         else
-          NewRelic::Agent.agent.error_collector.notice_error(e, { :uri => request.path, :request_params => params.merge(message_params) })
+          unless e.is_a?(SkippedSendCurrency)
+            NewRelic::Agent.agent.error_collector.notice_error(e, { :uri => request.path, :request_params => params.merge(message_params) })
+          end
           next
         end
       end

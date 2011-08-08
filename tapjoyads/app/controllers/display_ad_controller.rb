@@ -105,8 +105,15 @@ private
       end
 
       if params[:details] == '1'
-        @offer     = offer
-        @amount    = currency.get_visual_reward_amount(offer, params[:display_multiplier])
+        @offer  = offer
+        @amount = currency.get_visual_reward_amount(offer, params[:display_multiplier])
+        if @offer.item_type == 'App'
+          advertiser_app = App.find_in_cache(@offer.item_id)
+          return unless verify_records([ advertiser_app ])
+          @categories = advertiser_app.categories
+        else
+          @categories = []
+        end
       end
           
       web_request.offer_id = offer.id
