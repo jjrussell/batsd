@@ -347,7 +347,7 @@ log {
 };
 
 destination log_server {
-  tcp("ec2-75-101-220-29.compute-1.amazonaws.com"
+  tcp("ec2-50-16-78-80.compute-1.amazonaws.com"
     port(51400)
   );
 };
