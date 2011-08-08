@@ -1,6 +1,6 @@
 class Job::MasterSetBadDomainsController < Job::JobController
   # The threshold for the number of fails/second that will cause a domain to be take out of service.
-  FAIL_RATE_LIMIT = 0.50
+  FAIL_RATE_LIMIT = 0.70
   
   def index
     mc_key = 'failed_sdb_saves.bad_domains'
