@@ -35,9 +35,9 @@
                   = f.label :password
                   = f.password_field :password, :size => '15'
                   = f.submit 'Login!', :class => 'right button lt_blue'
-              .login_error
-                = error_message_on @gamer_session, :email
-                = error_message_on @gamer_session, :password
+              .login_error.center
+                = error_message_on @gamer_session, :email, :prepend_text => "Email "
+                = error_message_on @gamer_session, :password, :prepend_text => "Password "
           #sign_up_form
             .sign_first_timer
               First Timer?
@@ -81,3 +81,32 @@
     
 - content_for :page_javascript do
   :plain
+    $(window).load(function() {
+      $('form#new_gamer_session').submit(function(e){
+        $(".formError").hide();
+        var inputs, email, pass, values = {};
+        var emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
+        inputs = $('form#new_gamer_session :input*');
+        inputs.each(function() {
+          console.log(this);
+          if (this.type == 'checkbox' || this.type == 'radio') {
+            values[this.name] = $(this).attr("checked");
+          }
+          else {
+            values[this.name] = $(this).val();
+          }
+          email = values['gamer_session[email]'];
+          pass = values['gamer_session[password]'];
+          if ( email == '' ) {
+            $(".login_error").html('Please enter your email address');
+            $(".formError").show();
+            e.preventDefault();
+          }
+          else if ( pass == '' ) { 
+            $(".login_error").html('Please enter your password');
+            $(".formError").show();
+            e.preventDefault();
+          }  
+        });
+      });
+    });
