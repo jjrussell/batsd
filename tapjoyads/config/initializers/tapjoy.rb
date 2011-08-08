@@ -27,4 +27,6 @@ WINDOWS_VG_SDK      = 'https://s3.amazonaws.com/tapjoy/sdks/'
 
 DEV_FORUM_URL = 'https://groups.google.com/group/tapjoy-developer'
 
+WEB_REQUEST_LOGGER = SyslogLogger.new("#{RUN_MODE_PREFIX}rails-web_requests")
+
 Mc.cache.flush if CLEAR_MEMCACHE
