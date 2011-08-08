@@ -555,6 +555,7 @@ ActiveRecord::Schema.define(:version => 20110804221334) do
     t.string   "signature"
     t.string   "doing_business_as"
     t.string   "payment_country"
+    t.string   "paypal_email"
   end
 
   add_index "payout_infos", ["id"], :name => "index_payout_infos_on_id", :unique => true

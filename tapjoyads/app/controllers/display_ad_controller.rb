@@ -227,20 +227,7 @@ private
   # Sets the device_type parameter from the device_ua param, which AdMarvel sends.
   def set_device_type
     if params[:device_type].blank? && params[:device_ua].present?
-      params[:device_type] = case params[:device_ua]
-      when /iphone;/i
-        'iphone'
-      when /ipod;/i
-        'ipod'
-      when /ipad;/i
-        'ipad'
-      when /android/i
-        'android'
-      when /windows/i
-        'windows'
-      else
-        nil
-      end
+      params[:device_type] = HeaderParser.device_type(params[:device_ua])
     end
   end
   
