@@ -35,7 +35,8 @@ private
         :os_version         => params[:os_version],
         :type               => Offer::VIDEO_OFFER_TYPE,
         :library_version    => params[:library_version],
-        :screen_layout_size => params[:screen_layout_size])
+        :screen_layout_size => params[:screen_layout_size],
+        :exclude_offer_id   => params[:exclude_offer_id])
         
     if offer_list.any?
       weight_scale = 1 - offer_list.last.rank_score
@@ -46,7 +47,7 @@ private
     end
     
     if @offer.present?
-      @click_url = offer.get_click_url(
+      @click_url = @offer.get_click_url(
           :publisher_app     => publisher_app,
           :publisher_user_id => params[:publisher_user_id],
           :udid              => params[:udid],

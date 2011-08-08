@@ -222,6 +222,7 @@ class App < ActiveRecord::Base
     os_version           = options.delete(:os_version)
     library_version      = options.delete(:library_version) || ''
     screen_layout_size   = options.delete(:screen_layout_size)
+    exclude_offer_id     = options.delete(:exclude_offer_id)
 
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
@@ -236,7 +237,7 @@ class App < ActiveRecord::Base
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)
       if rate_app_offer.present? && rate_app_offer.accepting_clicks?
         offer_list_length += 1
-        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size)
+        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size, exclude_offer_id)
           num_rejected += 1
         else
           final_offer_list << rate_app_offer
@@ -246,7 +247,7 @@ class App < ActiveRecord::Base
     
     offer_list_length += currency.get_cached_offers({ :type => type, :exp => exp }) do |offers|
       offers.each do |offer|
-        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size)
+        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size, exclude_offer_id)
           num_rejected += 1
         else
           final_offer_list << offer
