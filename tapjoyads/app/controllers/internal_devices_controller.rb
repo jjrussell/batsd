@@ -12,7 +12,7 @@ class InternalDevicesController < WebsiteController
       geoip_data = get_geoip_data
       location = [ geoip_data[:city], geoip_data[:region], geoip_data[:country] ].compact.join(', ')
       location += " (#{get_ip_address})"
-      timestamp = Time.now.strftime("%l:%M%P %Z on %b %d, %Y")
+      timestamp = Time.zone.now.strftime("%l:%M%p on %b %d, %Y")
       TapjoyMailer.deliver_approve_device(current_user.email, @device.verification_key, block_device_url, location, timestamp)
     end
   end
