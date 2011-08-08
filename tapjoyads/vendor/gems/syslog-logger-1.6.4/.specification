@@ -1,0 +1,63 @@
+--- !ruby/object:Gem::Specification 
+name: syslog-logger
+version: !ruby/object:Gem::Version 
+  version: 1.6.4
+platform: ruby
+authors: 
+- Eric Hodel; Chris Powell; Matthew Boeh; Ian Lesperance; Dana Danger; Brian Smith; Ashley Martens
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2010-08-18 00:00:00 -07:00
+default_executable: 
+dependencies: []
+
+description: An improved Logger replacement that logs to syslog. It is almost drop-in with a few caveats.
+email: ashleym1972@gmail.com
+executables: []
+
+extensions: []
+
+extra_rdoc_files: 
+- README.rdoc
+files: 
+- README.rdoc
+- lib/syslog_logger.rb
+- lib/syslog_logger_env_formatting.rb
+- test/test_syslog_logger.rb
+has_rdoc: true
+homepage: http://github.com/ashleym1972/syslog_logger
+licenses: []
+
+post_install_message: 
+rdoc_options: 
+- --line-numbers
+- --inline-source
+- --title
+- SyslogLogger
+- --main
+- README.rdoc
+require_paths: 
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      version: "0"
+  version: 
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      version: "0"
+  version: 
+requirements: []
+
+rubyforge_project: 
+rubygems_version: 1.3.5
+signing_key: 
+specification_version: 3
+summary: An improved Logger replacement that logs to syslog. It is almost drop-in with a few caveats.
+test_files: 
+- test/test_syslog_logger.rb
