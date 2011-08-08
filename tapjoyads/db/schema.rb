@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110721163803) do
+ActiveRecord::Schema.define(:version => 20110802033509) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -555,6 +555,7 @@ ActiveRecord::Schema.define(:version => 20110721163803) do
     t.string   "signature"
     t.string   "doing_business_as"
     t.string   "payment_country"
+    t.string   "paypal_email"
   end
 
   add_index "payout_infos", ["id"], :name => "index_payout_infos_on_id", :unique => true
