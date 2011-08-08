@@ -33,11 +33,11 @@ class ExternalPublisher
       :app_id            => app_id,
       :source            => 'tj_games',
       :json              => '1',
-      :language_code     => language_code,
-      :country_code      => country_code,
-      :device_type       => device_type,
-      :os_version        => os_version,
     }
+    data[:language_code] = language_code if language_code.present?
+    data[:country_code]  = country_code if country_code.present?
+    data[:device_type]   = device_type if device_type.present?
+    data[:os_version]    = os_version if os_version.present?
     
     "#{API_URL}/get_offers?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
