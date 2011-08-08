@@ -55,7 +55,7 @@ class WebsiteController < ApplicationController
 
   def check_employee_device
     if current_user && current_user.employee?
-      return if request.path.match(/logout|approve_device/)
+      return if request.path.match(/logout|approve_device|block/)
       if cookies['device'].present?
         device = InternalDevice.find(cookies['device'])
         if device.approved?

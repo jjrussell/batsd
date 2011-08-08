@@ -10,7 +10,8 @@ class InternalDevicesController < WebsiteController
       cookies["device"] = { :value => @device.id, :expires => 1.year.from_now }
       block_device_url = block_internal_device_url(@device.id, :token => current_user.perishable_token)
       geoip_data = get_geoip_data
-      location = "#{geoip_data[:city]}, #{geoip_data[:region]}, #{geoip_data[:country]} (#{get_ip_address})"
+      location = [ geoip_data[:city], geoip_data[:region], geoip_data[:country] ].compact.join(', ')
+      location += " (#{get_ip_address})"
       timestamp = Time.now.strftime("%l:%M%P %Z on %b %d, %Y")
       TapjoyMailer.deliver_approve_device(current_user.email, @device.verification_key, block_device_url, location, timestamp)
     end
