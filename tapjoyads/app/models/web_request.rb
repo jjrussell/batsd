@@ -178,7 +178,7 @@ class WebRequest < SimpledbResource
     
     update_realtime_stats
     
-    # WEB_REQUEST_LOGGER << self.serialize
+    # WEB_REQUEST_LOGGER << self.serialize(:attributes_only => true)
   end
   
   ##
