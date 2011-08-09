@@ -672,7 +672,8 @@ class Offer < ActiveRecord::Base
   def save_video!(video_src_blob)
     bucket = S3.bucket(BucketNames::TAPJOY)
     
-    existing_video_blob = bucket.get("videos/src/#{id}.mp4") rescue ''
+    key = bucket.key("videos/src/#{id}.mp4")
+    existing_video_blob = key.exists? ? key.get : ''
     
     return if Digest::MD5.hexdigest(video_src_blob) == Digest::MD5.hexdigest(existing_video_blob)
     
