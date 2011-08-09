@@ -16,6 +16,7 @@ class Offer < ActiveRecord::Base
   DISPLAY_OFFER_TYPE               = '3'
   NON_REWARDED_DISPLAY_OFFER_TYPE  = '4'
   NON_REWARDED_FEATURED_OFFER_TYPE = '5'
+  VIDEO_OFFER_TYPE                 = '6'
   GROUP_SIZE = 200
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
@@ -59,7 +60,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :in => [ true, false ]
-  validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer )
+  validates_inclusion_of :item_type, :in => %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer)
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_each :device_types, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     begin
@@ -128,7 +129,9 @@ class Offer < ActiveRecord::Base
   named_scope :with_rank_boosts, :joins => :rank_boosts, :readonly => false
   named_scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
   named_scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
-  
+  named_scope :video_offers, :conditions => "item_type = 'VideoOffer'"
+  named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
+
   delegate :balance, :pending_earnings, :name, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   memoize :partner_balance
   
@@ -170,30 +173,35 @@ class Offer < ActiveRecord::Base
     Benchmark.realtime do
       weights = CurrencyGroup.find_by_name('default').weights
       
-      offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.to_a
+      offer_list = Offer.enabled_offers.nonfeatured.rewarded.non_video_offers.for_offer_list.to_a
       offer_list.each { |o| o.run_callbacks(:before_cache) }
       # cache_unsorted_offers(offer_list, DEFAULT_OFFER_TYPE)
       cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
-      offer_list = Offer.enabled_offers.featured.rewarded.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.rewarded.for_offer_list
+      offer_list = Offer.enabled_offers.featured.rewarded.non_video_offers.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.rewarded.non_video_offers.for_offer_list
       offer_list.each { |o| o.run_callbacks(:before_cache) }
       # cache_unsorted_offers(offer_list, FEATURED_OFFER_TYPE)
       cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
-      offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.for_display_ads.to_a
+      offer_list = Offer.enabled_offers.nonfeatured.rewarded.non_video_offers.for_offer_list.for_display_ads.to_a
       offer_list.each { |o| o.run_callbacks(:before_cache) }
       # cache_unsorted_offers(offer_list, DISPLAY_OFFER_TYPE)
       cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
-      offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.for_offer_list.to_a
+      offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.non_video_offers.free_apps.for_offer_list.to_a
       offer_list.each { |o| o.run_callbacks(:before_cache) }
       # cache_unsorted_offers(offer_list, NON_REWARDED_DISPLAY_OFFER_TYPE)
       cache_offer_list(offer_list, weights, NON_REWARDED_DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
-      offer_list = Offer.enabled_offers.featured.non_rewarded.free_apps.for_offer_list + Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.for_offer_list
+      offer_list = Offer.enabled_offers.featured.non_rewarded.non_video_offers.free_apps.for_offer_list + Offer.enabled_offers.nonfeatured.non_rewarded.non_video_offers.free_apps.for_offer_list
       offer_list.each { |o| o.run_callbacks(:before_cache) }
       # cache_unsorted_offers(offer_list, NON_REWARDED_FEATURED_OFFER_TYPE)
       cache_offer_list(offer_list, weights, NON_REWARDED_FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
+      
+      offer_list = Offer.enabled_offers.video_offers.for_offer_list.to_a
+      offer_list.each { |o| o.run_callbacks(:before_cache) }
+      cache_unsorted_offers(offer_list, VIDEO_OFFER_TYPE)
+      cache_offer_list(offer_list, weights, VIDEO_OFFER_TYPE, Experiments::EXPERIMENTS[:default])      
     end
   end
   
@@ -540,6 +548,8 @@ class Offer < ActiveRecord::Base
       click_url += "test_offer"
     elsif item_type == 'ActionOffer'
       click_url += "action"
+    elsif item_type == 'VideoOffer'
+      click_url += "video"
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end
@@ -646,6 +656,29 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def get_video_url(options = {})
+    Offer.get_video_url({:video_id => Offer.id}.merge(options))
+  end
+  
+  def self.get_video_url(options = {})
+    video_id  = options.delete(:video_id)  { |k| raise "#{k} is a required argument" }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    
+    prefix = "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy"
+    
+    "#{prefix}/videos/src/#{video_id}.mp4"
+  end
+  
+  def save_video!(video_src_blob)
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    
+    existing_video_blob = bucket.get("videos/src/#{id}.mp4") rescue ''
+    
+    return if Digest::MD5.hexdigest(video_src_blob) == Digest::MD5.hexdigest(existing_video_blob)
+    
+    bucket.put("videos/src/#{id}.mp4", video_src_blob, {}, "public-read")
+  end
+  
   def expected_device_types
     if item_type == 'App' || item_type == 'ActionOffer' || item_type == 'RatingOffer'
       item.get_offer_device_types
@@ -724,7 +757,7 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
-  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
+  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, exclude_offer_id)
     device_platform_mismatch?(publisher_app, device_type) ||
       geoip_reject?(geoip_data, device) ||
       already_complete?(publisher_app, device, app_version) ||
@@ -738,7 +771,12 @@ class Offer < ActiveRecord::Base
       min_os_version_reject?(os_version) ||
       cookie_tracking_reject?(publisher_app, library_version) ||
       screen_layout_sizes_reject?(screen_layout_size) ||
-      should_reject_from_app_or_currency?(publisher_app, currency)
+      should_reject_from_app_or_currency?(publisher_app, currency) ||
+      exclude_offer_id?(exclude_offer_id)
+  end
+  
+  def exclude_offer_id?(exclude_offer_id)
+    exclude_offer_id == item_id
   end
   
   def is_valid_for?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
@@ -797,6 +835,8 @@ class Offer < ActiveRecord::Base
         platform = App::PLATFORMS.index(get_platform)
         platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
       end
+    elsif item_type == 'VideoOffer'
+      5
     else
       0
     end

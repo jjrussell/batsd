@@ -3,8 +3,11 @@ xml.instruct!
 xml.TapjoyVideo do
   xml.Valid @valid
   if @valid
-    xml.Name @offer.name
+    xml.ClickURL @click_url
     xml.OfferID @offer.id
+    xml.Name @offer.name
     xml.Amount @amount
+    xml.VideoURL @offer.url
+    xml.Interval 30.minutes
   end
 end

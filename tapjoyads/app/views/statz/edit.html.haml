@@ -139,7 +139,7 @@
       %td
         = f.text_field(:publisher_app_whitelist)
         = error_message_on @offer, :publisher_app_whitelist
-    - if [ 'App', 'EmailOffer', 'GenericOffer', 'ActionOffer' ].include?(@offer.item_type)
+    - if [ 'App', 'EmailOffer', 'GenericOffer', 'ActionOffer', 'VideoOffer' ].include?(@offer.item_type)
       %tr
         %th
           = f.label(:bid)
@@ -168,6 +168,14 @@
         %td
           = f.text_field(:overall_budget)
           = error_message_on @offer, :overall_budget
+    - if @offer.item_type == 'VideoOffer'
+      %tr
+        %th
+          = f.label(:age_rating)
+          #help_age_rating.help ?
+        %td
+          = f.text_field(:age_rating)
+          = error_message_on @offer, :age_rating
     - if @offer.item_type == 'App'
       %tr
         %th
@@ -210,6 +218,7 @@
   #help_min_bid_override_content{ :name => 'Min Bid Override' } Manually set the minimum allowed bid for this offer.
   #help_min_os_version_content{:name => 'Minimum OS Version'} Your offer will only be shown to devices with an OS at this version or higher.
   #help_screen_layout_sizes_content{ :name => 'Screen Layout Sizes' } Targets this offer to these screen sizes. If no specific screen sizes are selected, all screen sizes will be targeted.
+  #help_age_rating_content{ :name => 'Age Rating' } Set the minimum viewing age, the recommended ages are 4/9/12/17. If it is viewable to all, just leave the field empty.
 
 - content_for :page_styles do
   :plain
