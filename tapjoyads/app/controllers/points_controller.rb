@@ -48,9 +48,7 @@ class PointsController < ApplicationController
     @point_purchases = PointPurchases.new(:key => "#{params[:publisher_user_id]}.#{params[:app_id]}")
     @point_purchases.points += tap_points
 
-    web_request = WebRequest.new
-    web_request.put_values('award_points', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
-    web_request.save
+    check_success('award_points')
 
     Sqs.send_message(QueueNames::SEND_CURRENCY, message)
 
@@ -73,16 +71,13 @@ class PointsController < ApplicationController
     pp_key = "#{publisher_user_id}.#{params[:app_id]}"
     tap_points = params[:tap_points].to_i
     if tap_points == 0
+      @success = true
+      @message = ''
       @point_purchases = PointPurchases.new(:key => pp_key)
     else
       @success, @message, @point_purchases = PointPurchases.spend_points(pp_key, tap_points)
     end
-
-    if @success
-      web_request = WebRequest.new
-      web_request.put_values('spend_points', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
-      web_request.save
-    end
+    check_success('spend_points')
 
     render :template => 'get_vg_store_items/user_account'
   end
@@ -98,12 +93,7 @@ class PointsController < ApplicationController
 
     quantity = params[:quantity].blank? ? 1 : params[:quantity].to_i
     @success, @message, @point_purchases = PointPurchases.purchase_virtual_good("#{publisher_user_id}.#{params[:app_id]}", params[:virtual_good_id], quantity)
-
-    if @success
-      web_request = WebRequest.new
-      web_request.put_values('purchased_vg', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
-      web_request.save
-    end
+    check_success('purchased_vg')
 
     render :template => 'get_vg_store_items/user_account'
   end
@@ -120,13 +110,18 @@ class PointsController < ApplicationController
     quantity = params[:quantity].blank? ? 1 : params[:quantity].to_i
 
     @success, @message, @point_purchases = PointPurchases.consume_virtual_good("#{publisher_user_id}.#{params[:app_id]}", params[:virtual_good_id], quantity)
-
-    if @success
-      web_request = WebRequest.new
-      web_request.put_values('consumed_vg', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
-      web_request.save
-    end
+    check_success('consumed_vg')
 
     render :template => 'get_vg_store_items/user_account'
+  end
+
+private
+
+  def check_success(path)
+    if @success
+      web_request = WebRequest.new
+      web_request.put_values(path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+      web_request.save
+    end
   end
 end

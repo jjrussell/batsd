@@ -120,7 +120,9 @@ class StoreRank
 
             request.on_complete do |response|
               current_offset = response.effective_url.split('start=').last.split('&').first.to_i
-              if response.code != 200
+              if response.code == 404
+                Notifier.alert_new_relic(AndroidRank404, "404 reached on #{response.effective_url}")
+              elsif response.code != 200
                 error_count += 1
                 if error_count > 50
                   raise "Too many errors attempting to download android ranks, giving up. App store down?"
@@ -475,7 +477,7 @@ private
     "featured" => {
       :id => "apps_featured",
       :skip_lang => true,
-      :cat_pages => 2,
+      :skip_cat => true,
       :pages => 2,
     },
   }
