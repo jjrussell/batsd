@@ -99,7 +99,6 @@ private
     set_param(:start, :Start)
     set_param(:max, :Max)
     set_param(:virtual_good_id, :VirtualGoodID)
-    set_param(:library_version, :ConnectLibraryVersion)
     set_param(:language_code, :language)
   end
   
