@@ -17,7 +17,7 @@ class Tools::VideoOffersController < WebsiteController
     log_activity(@video_offer)
     
     if @video_offer.save
-      unless params[:video].blank?
+      if params[:video].present?
         @video_offer.primary_offer.save_video!(params[:video].read)
       end
       flash[:notice] = 'Successfully created Video Offer'
@@ -32,7 +32,7 @@ class Tools::VideoOffersController < WebsiteController
     log_activity(@video_offer)
     
     if @video_offer.update_attributes(params[:video_offer])
-      unless params[:video].blank?
+      if params[:video].present?
         @video_offer.primary_offer.save_video!(params[:video].read)
       end
       flash[:notice] = 'Successfully updated Video Offer'
