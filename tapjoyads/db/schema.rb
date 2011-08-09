@@ -302,8 +302,8 @@ ActiveRecord::Schema.define(:version => 20110802033509) do
     t.string   "id",               :limit => 36, :null => false
     t.string   "user_id",          :limit => 36, :null => false
     t.string   "description"
+    t.string   "status"
     t.integer  "verification_key"
-    t.integer  "status_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

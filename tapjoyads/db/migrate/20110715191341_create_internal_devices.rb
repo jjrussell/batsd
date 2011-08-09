@@ -4,8 +4,8 @@ class CreateInternalDevices < ActiveRecord::Migration
       t.guid :id, :null => false
       t.column :user_id, 'char(36) binary', :null => false
       t.string :description
+      t.string :status
       t.integer :verification_key
-      t.integer :status_id
 
       t.timestamps
     end

@@ -2,30 +2,17 @@ class InternalDevice < ActiveRecord::Base
   include UuidPrimaryKey
   belongs_to :user
 
-  STATUS_CODES = {
-    0 => 'pending',
-    1 => 'approved',
-    2 => 'blocked',
-  }
+  STATUSES = [ 'pending', 'approved', 'blocked' ]
 
   attr_accessible :description, :verifier
   attr_reader :verifier
 
   before_validation_on_create :generate_verification_key, :set_status
 
-  validates_inclusion_of :status_id, :in => STATUS_CODES.keys
+  validates_inclusion_of :status, :in => STATUSES
   validates_presence_of :verification_key
 
-  named_scope :approved, :conditions => 'status_id = 1'
-
-  def status
-    STATUS_CODES[status_id]
-  end
-
-  def status=(string)
-    raise "invalid status" unless STATUS_CODES.values.include?(string)
-    self.status_id = STATUS_CODES.invert[string]
-  end
+  named_scope :approved, :conditions => "status = 'approved'"
 
   def generate_verification_key
     self.verification_key ||= (0..7).map{ rand(9) + 1 }.join.to_i
