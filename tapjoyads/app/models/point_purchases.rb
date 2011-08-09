@@ -102,7 +102,7 @@ class PointPurchases < SimpledbShardedResource
     return true, message, pp
   rescue RightAws::AwsError
     return false, "Error contacting backend datastore"
-  rescue UnknownVirtualGood => e
+  rescue UnknownVirtualGood, NotEnoughGoodsError => e
     return false, e.to_s
   end
   
