@@ -73,6 +73,8 @@ class PointsController < ApplicationController
     pp_key = "#{publisher_user_id}.#{params[:app_id]}"
     tap_points = params[:tap_points].to_i
     if tap_points == 0
+      @success = true
+      @message = ''
       @point_purchases = PointPurchases.new(:key => pp_key)
     else
       @success, @message, @point_purchases = PointPurchases.spend_points(pp_key, tap_points)
