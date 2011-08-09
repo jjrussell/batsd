@@ -96,7 +96,8 @@ class PointsController < ApplicationController
     @currency = Currency.find_in_cache(params[:app_id])
     return unless verify_records([ @currency ])
 
-    @success, @message, @point_purchases = PointPurchases.purchase_virtual_good("#{publisher_user_id}.#{params[:app_id]}", params[:virtual_good_id])
+    quantity = params[:quantity].blank? ? 1 : params[:quantity].to_i
+    @success, @message, @point_purchases = PointPurchases.purchase_virtual_good("#{publisher_user_id}.#{params[:app_id]}", params[:virtual_good_id], quantity)
 
     if @success
       web_request = WebRequest.new
