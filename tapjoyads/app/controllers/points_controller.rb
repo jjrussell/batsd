@@ -95,10 +95,12 @@ class PointsController < ApplicationController
     render :template => 'get_vg_store_items/user_account'
   end
 
-  def check_success(key)
+private
+
+  def check_success(path)
     if @success
       web_request = WebRequest.new
-      web_request.put_values(key, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+      web_request.put_values(path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
       web_request.save
     end
   end
