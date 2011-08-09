@@ -106,4 +106,26 @@ class PointsController < ApplicationController
 
     render :template => 'get_vg_store_items/user_account'
   end
+
+  def consume_vg
+    return unless verify_params([:app_id, :udid, :virtual_good_id])
+
+    publisher_user_id = params[:udid]
+    publisher_user_id = params[:publisher_user_id] unless params[:publisher_user_id].blank?
+
+    @currency = Currency.find_in_cache(params[:app_id])
+    return unless verify_records([ @currency ])
+
+    quantity = params[:quantity].blank? ? 1 : params[:quantity].to_i
+
+    @success, @message, @point_purchases = PointPurchases.consume_virtual_good("#{publisher_user_id}.#{params[:app_id]}", params[:virtual_good_id], quantity)
+
+    if @success
+      web_request = WebRequest.new
+      web_request.put_values('consumed_vg', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
+      web_request.save
+    end
+
+    render :template => 'get_vg_store_items/user_account'
+  end
 end
