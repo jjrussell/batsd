@@ -1,13 +1,103 @@
-#main
-  %img{ :src => '/images/coming-soon.jpg' }
-  
-- content_for :page_styles do
-  :plain
-    #main {
-      margin: 100px auto 0;
-      width: 500px;
-      height: 500px;
-    }
-    
-- content_for :page_head do
-  %meta{ :name => 'description', :content => 'Tapjoy Games: The destination for Mobile Apps, Mobile Games, Android, Apple, iPhone, iPad, iOS' }
+#jqt
+  #home.current
+    .container.scroll.vertical-scroll
+      .scroller.with-scrollbar
+        .top_nav_bar
+        .page
+          .logo
+            .slide_nav
+              %a{ :href => "#", :class => "more_games_url" }
+                .slider.slider_right.right
+                  %span.title.small
+                    More Games      
+              .slider_btn.left
+                .slider.slider_active.slider_left
+                  %span.title
+                    My Apps
+                .slide_arrow_wrapper.bottom_arrow
+                  .slide_arrow
+          .content
+            .offer_list
+              %ul
+                -@external_publishers.each do |external_publisher|
+                  %li.offer_item.clearfix
+                    .offer_image
+                      = image_tag(external_publisher.get_icon_url(:source => :cloudfront))
+                    .offer_text
+                      .offer_title.title
+                        = external_publisher.app_name
+                      .offer_info
+                        - external_publisher.currencies.each_with_index do |currency, i|
+                          - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency), :currency => currency[:name], :app_name => external_publisher.app_name) do
+                            .offer_button
+                              .button.grey 
+                                %span.earn
+                                  Earn
+                                %span.currency
+                                  = currency[:name]  
+
+  #earn
+    .container.vertical-scroll
+      .scroller.with-scrollbar
+        .top_nav_bar
+        .page
+          .logo.logo_title
+            .slide_nav
+              %a{ :href => "#", :class => "more_games_url"}
+                .slider.slider_right.right.hide
+                  %span.title.small
+                    More Games 
+              %a{ :href => "#home", :class => "slideright" }
+                .left
+                  .slide_arrow_wrapper.left_arrow
+                    .slide_arrow
+                .slider.slider_active.slider_left.left
+                  %span.title
+                    Back
+          #app_title.hide
+          #earn_content.content.hide
+
+  #more_games
+    .container.vertical-scroll
+      .scroller.with-scrollbar
+        .top_nav_bar
+        .page
+          .logo
+            .slide_nav
+              .slider_wrapper.right.hide 
+                .slider.slider_active.slider_right
+                  %span.title.small
+                    More Games
+                .slide_arrow_wrapper.bottom_arrow
+                  .slide_arrow
+              %a{ :href => "#home", :class => "slideright"}
+                .slider_btn.left
+                  .left
+                    .slide_arrow_wrapper.left_arrow
+                      .slide_arrow
+                  .slider.slider_active.slider_left.left
+                    %span.title
+                      Back
+          .content
+            .tab_wrapper.clearfix
+              #top_grossing_games_tab.tab_right.hide
+                #top_grossing_games_button.tab_button.grey
+                  .tab_content
+                    Popular Games
+                #top_grossing_games_button_arrow.tab_button_bottom_arrrow_wrapper
+                  .tab_button_bottom_arrrow
+              #recommended_games_tab.tab_left
+                #recommended_games_button.tab_button.dark_grey
+                  .tab_content
+                    Tapjoy Recommends
+                #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
+                  .tab_button_bottom_arrrow
+            #more_games_content
+
+= render 'my_account'
+
+- content_for :page_javascript do
+  - if Rails.env.development?
+    = render 'index_js_min'
+  - else
+    = render 'index_js'

@@ -88,7 +88,6 @@
         var emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
         inputs = $('form#new_gamer_session :input*');
         inputs.each(function() {
-          console.log(this);
           if (this.type == 'checkbox' || this.type == 'radio') {
             values[this.name] = $(this).attr("checked");
           }

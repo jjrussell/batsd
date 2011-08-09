@@ -135,11 +135,7 @@ a, a:visited {
   height: 80px;
   padding: 30px;
 }
-#sign_up_dialog.dialog_wrapper,
-#bad_news.dialog_wrapper,
-#register_device.dialog_wrapper,
-#how_works_dialog.dialog_wrapper,
-#flash_error.dialog_wrapper {
+.dialog_wrapper {
   width: 280px;
 }
 #link_device.dialog_header_wrapper {
@@ -154,7 +150,7 @@ a, a:visited {
 #flash_error .dialog {
   height: 60px;
 }
-#register_device .dialog  {
+#register_device .dialog, #my_account_dialog_content .dialog  {
   height: 150px;
 }
 #sign_up_dialog .dialog {
@@ -162,6 +158,12 @@ a, a:visited {
 }
 #how_works_dialog .dialog {
   height: 180px;
+}
+#my_account_dialog.dialog_wrapper, #my_account_dialog_content.dialog_wrapper {
+  opacity: 1;     
+}
+#my_account_dialog .dialog{
+  height: 260px;
 }
 #how_works_dialog .dialog .dialog_title {
   padding: 0px;
@@ -239,32 +241,18 @@ form#new_gamer input {
 }
 /* Nav */
 .top_nav_bar {
-  background: #333333 url(data:image/png;base64,R0lGODlhPAAaANUAADAwMTMzNDMzNSsrMSEhIyEhIi0tMDQ0NyIiIysrMGBgaDMzOGBgZlxcaCoqMFxcZmJiaCAgImJiajQ0OVxcYjQ0OGZmalpaYigoLmBgai0tLmZmcGZmaDU1NyoqLiAgIWZmbmBgYlpaZjMzNy0tMy4uMTExNy0tMTExNDAwNS4uNDExNTAwMzAwNC4uMwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C1hNUCBEYXRhWE1QPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS4wLWMwNjAgNjEuMTM0Nzc3LCAyMDEwLzAyLzEyLTE3OjMyOjAwICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpEMkVCMkI0QkE4RkIxMUUwQTI3NkNGOEJDQjVBRDlFRiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpEMkVCMkI0Q0E4RkIxMUUwQTI3NkNGOEJDQjVBRDlFRiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkQyRUIyQjQ5QThGQjExRTBBMjc2Q0Y4QkNCNUFEOUVGIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkQyRUIyQjRBQThGQjExRTBBMjc2Q0Y4QkNCNUFEOUVGIi8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Af/+/fz7+vn49/b19PPy8fDv7u3s6+rp6Ofm5eTj4uHg397d3Nva2djX1tXU09LR0M/OzczLysnIx8bFxMPCwcC/vr28u7q5uLe2tbSzsrGwr66trKuqqainpqWko6KhoJ+enZybmpmYl5aVlJOSkZCPjo2Mi4qJiIeGhYSDgoGAf359fHt6eXh3dnV0c3JxcG9ubWxramloZ2ZlZGNiYWBfXl1cW1pZWFdWVVRTUlFQT05NTEtKSUhHRkVEQ0JBQD8+PTw7Ojk4NzY1NDMyMTAvLi0sKyopKCcmJSQjIiEgHx4dHBsaGRgXFhUUExIREA8ODQwLCgkIBwYFBAMCAQAAIfkEAAAAAAAsAAAAADwAGgAABv9AlgqlalVUqdZqZXCxUE4Uq8RaoVqubMqFZQVcACjLlZQKpKxqS6USrFKjlsnUSq/SB9Y6lUqciicuUIEoSVknLSUkJ4glJyQJBgkkBicGLCQDmZkeDllNiFhaWSYAWEkaJ08lLQFTYVdZLiolLicDLiUGJBgOkwMDl7eLWAMnKVBQKrIurlVPVymaKV+tAE4BKGh6VVlYJSmB4owswYwtJ76Bu5MGlWS5KawtV54rXywCU4ItW2B1d8ikSZGGRZIVJiaYWLBgxYQRfA6MWLhiwRwhK1R4qYLCCqMiJARlYcUmZBpTWVbUKdhPj4oFLfqpMIHCmKFly0poUvExEMj/BCgOVLAiQKMaE3quyElRMQXFjkn6TUQox0TIFQIIZhmDRGVHLoXWdLUjhAs3PWDkDUBRSwWJWrJUZFwjSIWDPylCvh2JwhW1NNoABGJaglUgAGPGcEG8AkCJOHw0rhGiJICoKwlmJXLE6CMRJYJUulUSp4WAmC6xIBk4RV8aJ/1imhgBMYmbQEpOOikH6BFeRuZYuLN7CzgG4H4gobB0wtEsLVeWCRJOQqZ0NifuqQRo2QUJJCaKFK3DNDzTNHWys7i2/jkAN/RiWg60RAmf2Se0iQrF87scPXNpRNhZMblQ2hv9nKEEHVEhNNgZaChRgn6P+IdOSCjowwUuWQzh/5MK7LFAhx51gNYMhFIsoYoJB8xG0BIoVHDAAaKZNgKJTIGBQkj/1MQFGCOppBkXd5jmxhxyMVGFZXVwAVBfbPRzEQsjHNABRLXJVtuNZs2UgkZoQOHCEk6ZsMIIK6gCx2xLzDhmbNcoIQCGAQRA0JeSmXBaR2uYmYJFScRhppYIvRGAkqBhUV0ySmxTpxZ8dIgIiSs4kRESa8SxHhaF6MGmplI04YIAP7LC1ndXxJmhE0l8OdKrLehVggOiCAmPNnZYdmkSRQTl1BrxfbmEpQKYMMsIC0iEUEdWsBjACAKgqaxCMWE5AhtMycXGFc0BUKkU4BVIBAnfecjFeWkUceUQUnxkBNFLBK3CB4/y2NKZA8Yo41yTXiC4hFVdmcnnl9CQCIVK+aAhrJiJyuLjqCUsg4t0zSiDjABUXCHFd04gBtoY6KBh6ylYmLJFYykV5i0AFK+gSwL9UHFopfEto8pzSBABgCkTYnSHKSR6s8UWduRCJaYAKqC0BBYo0IAFEHBAQQMNPPAABRc8cIEIDzQAQQZXP6DAAxA0wIAEGShwNgMQQMAAAwpIoAAIZj9ttgIbsK1ACHATQEABCPwNOAIIFEBA4IcjXsDghgt++OJ/+124341P/sHiBUSgOQERGG54BEEAADs=) repeat-x;
-  color: #D3D3D3;
-  height: 26px;
-  width: 100%;
+  background: transparent url('/images/games/my_account.png') no-repeat;
+  cursor: pointer;
+  position: absolute;
+  height: 44px;
+  width: 44px;
 }
 .mobile.hd .top_nav_bar { 
-  background: transparent url('/images/games/nav_bar_hd.jpg') center bottom repeat-x;
+  background: transparent url('/images/games/my_account_hd.png') no-repeat;
   background-size: 100%;
 }
 .top_nav_bar a {
   color: #D3D3D3;
-}
-.top_nav_bar .nav_content {
-  padding: 4px 16px;
-}
-.top_nav_bar .nav_content .nav_item {
-  margin-left: 14px;
-}
-.top_nav_bar .nav_content .divider { 
-  background: #D3D3D3;
-  border-right: 1px solid #7C7C7E;
-  height: 14px;
-  margin-left: 14px;
-  position: relative;
-  top: 2px;
-  width: 1px;
 }
 /* Page */
 .web .page,
@@ -325,12 +313,19 @@ form#new_gamer input {
 .ipad .logo.logo_title {
   background: transparent url('/images/games/logo_title_web.jpg') no-repeat;
   height: 290px;
+  position: relative;
+  overflow: hidden;
+  top: 2px;
+  width: 640px; 
 }
 .mobile .logo.logo_title {
   background: transparent url('/images/games/logo_title_mobile.jpg') no-repeat;
-  height: 145px;
+  height: 144px;
   padding: 0;
+  position: relative;
   overflow: hidden;
+  top: 2px;
+  width: 320px;
 }
 .mobile.hd.portrait .logo {
   background: transparent url('/images/games/logo_bg_tan_mobile_hd_p.jpg') no-repeat;
@@ -382,7 +377,7 @@ form#new_gamer input {
   padding: 6px 20px 0;
   position: relative;
   text-align: center;
-  top: -40px;
+  top: -34px;
   width: 572px;
 }
 .mobile #app_title {
@@ -392,7 +387,7 @@ form#new_gamer input {
   padding: 3px 10px 0;
   position: relative;
   text-align: center;
-  top: -22px;
+  top: -18px;
   width: 280px;
 } 
 .web #earn_content,
@@ -431,8 +426,8 @@ form#new_gamer input {
   padding: 12px 10px 8px;
 }
 .mobile .slide_nav  div.slider {
-  padding: 4px 4px 6px;
-}
+  padding: 8px 4px 6px;
+}              
 .slide_nav .slider.slider_active,
 .slide_nav .slider:active,
 .slide_nav .slider:hover {
@@ -675,7 +670,7 @@ form#new_gamer input {
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
 }
-.content_box .account_info {
+.account_info {
   padding: 20px;
 }
 a.forgot_pass {
@@ -693,29 +688,6 @@ form#new_gamer input[type=checkbox] {
   position: relative;
   top: 6px;
 }
-/*
-form#new_gamer input[type=checkbox] {
-  display: inline-block;
-  float: left;
-  background: transparent url('/images/games/checkbox.png') no-repeat;
-  background-position: 0 -34px;
-  border: none;
-  height: 16px;
-  position: relative;
-  overflow: hidden;
-  top: 6px;
-  width:  16px;
-  -khtml-appearance: none;
-  -moz-appearance: none;
-  -webkit-appearance: none;
-}
-form#new_gamer input[type=checkbox]:checked {
-  height: 20px;
-  background: transparent url('/images/games/checkbox.png') no-repeat;
-  position: relative;
-  top: 2px;
-}
-*/
 form#new_gamer label[for=gamer_terms_of_service] {
   float: left;
   font-size: 10px;
@@ -981,7 +953,7 @@ form#new_gamer_session .login_pass {
   color: #006C94;
   padding-right: 6px;
 }
-.get_more_apps, .tab_button.grey {
+.get_more_apps, .grey_button, .tab_button.grey {
   background: -moz-linear-gradient(top, #E7E7E7 0%, #A6A6A6 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #E7E7E7), color-stop(1, #A6A6A6));
   cursor: pointer; 
@@ -993,7 +965,7 @@ form#new_gamer_session .login_pass {
   -moz-box-shadow: 0 1px #F2F2F2;
   -webkit-box-shadow: 0 1px #F2F2F2; 
 }
-.get_more_apps_content {
+.get_more_apps_content, .grey_button_content {
   font-size: 16px;
   font-weight: bold;
   color: #444;
@@ -1001,14 +973,25 @@ form#new_gamer_session .login_pass {
   text-align: center;
   text-shadow: 1px 1px 0px #F2F2F2;
 }
-.get_more_apps:hover, .get_more_apps:active {
+.get_more_apps:hover, .get_more_apps:active, .grey_button:hover, .grey_button:active {
   color: #444;
-  background: -webkit-gradient(linear, left top, left bottom, from(#D6D6D6), to(#B8B8B8));
-  background: -moz-linear-gradient(top,  #D6D6D6,  #B8B8B8);
+  background: -webkit-gradient(linear, left top, left bottom, from(#D6D6D6), to(#C4C4C4));
+  background: -moz-linear-gradient(top,  #D6D6D6,  #c4c4c4);
   position: relative;
   top: 1px;
   -moz-box-shadow: 0 1px #4E4E4E;
   -webkit-box-shadow: 0 1px #4E4E4E;
+}
+.grey_button {
+  width: 250px;
+}
+.grey_button .light {
+  color: #6C6C6C;
+}
+#my_account_dialog .grey_button {
+  margin: 16px auto;
+  position: relative;
+  opacity: 1;
 }
 .tab_button.dark_grey, .tab_button_bottom_arrrow {
   background:#2A2A2A url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RUI5N0I4REZBRjZEMTFFMEFGNTc5RTY4N0ExMDA2M0YiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RUI5N0I4RTBBRjZEMTFFMEFGNTc5RTY4N0ExMDA2M0YiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpFQjk3QjhEREFGNkQxMUUwQUY1NzlFNjg3QTEwMDYzRiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpFQjk3QjhERUFGNkQxMUUwQUY1NzlFNjg3QTEwMDYzRiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PuDRi2UAAAXsSURBVHjarFhbjtww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);
@@ -1217,6 +1200,24 @@ input.button {
   padding: 6px 12px;
   cursor: pointer;
 }
+.contact_form {
+  padding: 12px;                                
+}
+.contact_form form textarea {
+  border: 1px solid #C1C1C1;
+  display: block;
+  margin-bottom: 12px;
+  -webkit-appearance: none;
+}
+.web .contact_form form textarea, .ipad .contact_form form textarea {
+  width: 550px;
+}
+.mobile .contact_form {
+  width: 270px;
+}
+.mobile .contact_form form textarea {
+  width: 266px;
+} 
 .title {
   font-family: 'Cooper';
 }

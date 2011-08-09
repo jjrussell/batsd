@@ -1,16 +1,8 @@
 class Games::HomepageController < GamesController
   
-  before_filter :require_complete_gamer, :except => [ :index, :tos, :privacy ]
-  
-  def index
-    if current_gamer.present?
-      redirect_to games_real_index_path
-    else 
-      render :layout => false, :template => 'games/homepage/index'
-    end
-  end
+  before_filter :require_complete_gamer, :except => [ :tos, :privacy ]
 
-  def real_index
+  def index
     @device = Device.new(:key => current_gamer.udid)
     @external_publishers = ExternalPublisher.load_all_for_device(@device)
     if @external_publishers.empty?

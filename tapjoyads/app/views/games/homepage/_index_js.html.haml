@@ -31,7 +31,8 @@
           $("#app_title").show();
           if (url) {
             if (!TJG.appOfferWall[appId]['offers']) {
-              jQT.goTo('#earn', 'slideleft');   
+              jQT.goTo('#earn', 'slideleft');
+              $("html, body").animate({scrollTop:0}, 800);
               $.ajax({
                 url: url+"&callback=?",
                 dataType: 'json',
@@ -41,7 +42,12 @@
                   if (data.OfferArray) {
                     var offers = data.OfferArray;
                     offerOffset = offers.length;
-                    TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                    if (data.MoreDataAvailable) {
+                      TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                    }
+                    else {
+                      TJG.appOfferWall[appId]['offers_left'] = 0;
+                    }
                     TJG.appOfferWall[appId]['offset'] = offerOffset;
                     TJG.appOfferWall[appId]['offers'] = offers; 
                     var offerRows = TJG.ui.getOffferRow(offers, currencyName);
@@ -51,7 +57,13 @@
                       '</ul>',
                     ];
                     if (TJG.appOfferWall[appId]['offers_left'] > 0) {
-                      t.push('<div class="get_more_apps" app_id="' + appId + '"><div class="get_more_apps_content">Load More</div>');
+                      t.push('<div class="more_button_wrapper"><div class="get_more_apps" app_id="' + appId + '"><div class="get_more_apps_content">Load More</div></div></div>');
+                    }
+                    else {
+                      t.push('<div class="more_button_wrapper"><div class="back_to_top grey_button"><div class="grey_button_content">Back to Top</div></div></div>');
+                      $(".back_to_top").click(function(){
+                        $("html, body").animate({scrollTop:0}, 'slow');
+                      });
                     }
                     t = t.join('');
                     $("#earn_content").html(t);
@@ -73,7 +85,12 @@
                           success: function(data) {
                             if (data.OfferArray) {
                               var offers = data.OfferArray;
-                              TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                              if (data.MoreDataAvailable) {
+                                TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                              }
+                              else {
+                                TJG.appOfferWall[appId]['offers_left'] = 0;
+                              }
                               TJG.appOfferWall[appId]['offset'] = TJG.appOfferWall[appId]['offset'] + 25;
                               var moreOfferRows = TJG.ui.getOffferRow(offers, currencyName, i, true);
                               $("#offerwall_id-" + appId).append(moreOfferRows);
@@ -81,9 +98,14 @@
                               $.each($(el), function(n,o) {
                                 $(o).fadeIn(500);
                               });
-                              $(".get_more_apps_content").html("Load More");
-                              if (data.MoreDataAvailable == 0) {
-                                $("#get_more_apps").hide();
+                              if (TJG.appOfferWall[appId]['offers_left'] > 0) {
+                                $(".get_more_apps_content").html("Load More");
+                              }
+                              else {
+                                $(".more_button_wrapper").html('<div class="back_to_top grey_button"><div class="grey_button_content">Back to Top</div></div>');
+                                $(".back_to_top").click(function(){
+                                  $("html, body").animate({scrollTop:0}, 'slow');
+                                }); 
                               }
                               $.each(offers, function(i,o) {
                                 TJG.appOfferWall[appId]['offers'].push(o);
@@ -226,7 +248,7 @@
               $("#more_games_content").fadeIn(450);
             }
           });
-        }          
+        }
       });
     }
     TJG.path =  "#{games_root_path}";
