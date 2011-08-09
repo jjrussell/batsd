@@ -54,6 +54,7 @@ Rails::Initializer.run do |config|
   config.gem 'curbit', :version => '0.2.0'
   config.gem 'newrelic_rpm', :version => '3.0.1'
   config.gem 'differ', :version => '0.1.2'
+  config.gem 'syslog-logger', :version => '1.6.4', :lib => 'syslog_logger'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.

@@ -46,4 +46,9 @@ namespace :admin do
     system("script/cloudrun 'webserver' 'uptime ; if [ -f /mnt/log/apache_restarts.log ] ; then cat /mnt/log/apache_restarts.log ; fi' 'ubuntu'")
   end
   
+  desc "Reconfigure syslog-ng"
+  task :reconfigure_syslog_ng do
+    system("script/cloudrun 'masterjobs jobserver webserver website games testserver' 'sudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb' 'ubuntu'")
+  end
+  
 end

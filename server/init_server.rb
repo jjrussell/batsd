@@ -22,6 +22,9 @@ else
   `ln -s /mnt/log/rails /home/webuser/tapjoyserver/tapjoyads/log`
   `ln -s /mnt/tmp/rails /home/webuser/tapjoyserver/tapjoyads/tmp`
 
+  # configure syslog-ng
+  `/home/webuser/tapjoyserver/server/syslog-ng/configure.rb`
+
   # deploy the latest code
   if server_type == 'test'
     `su webuser -c 'cd /home/webuser/tapjoyserver && server/deploy.rb master'`

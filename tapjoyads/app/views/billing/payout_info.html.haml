@@ -79,36 +79,43 @@
           %td
             = f.select(:payout_method, options_for_select(PayoutInfo::PAYOUT_METHODS, @payout_info.payout_method))
             = f.error_message_on(:payout_method)
+        %tr.paypal
+          %th
+            = f.label :paypal_email, 'PayPal Email address'
+            .help.no-help ?
+          %td
+            = f.text_field(:paypal_email)
+            = f.error_message_on(:paypal_email)
         %tr
           %td{:colspan => 2}
             %h3 Beneficiary Address
-        %tr.address
+        %tr
           %th
             = f.label :address, 'Address'
             .help.no-help ?
           %td
             = f.text_field(:address_1)
             = f.error_message_on(:address_1)
-        %tr.address
+        %tr
           %th &nbsp;
           %td
             = f.text_field(:address_2)
             = f.error_message_on(:address_2)
-        %tr.address
+        %tr
           %th
             = f.label :city, 'City'
             .help.no-help ?
           %td
             = f.text_field(:address_city)
             = f.error_message_on(:address_city)
-        %tr.country_us.address
+        %tr.country_us
           %th
             = f.label :state, 'State'
             .help.no-help ?
           %td
             = f.select(:address_state, options_for_select(list_of_states, @payout_info.address_state || 'CA'))
             = f.error_message_on(:address_state)
-        %tr.address
+        %tr
           %th
             %span.country_us= f.label :postal_codes, 'ZIP code'
             %span.country_other= f.label :postal_codes, 'Postal code'
@@ -238,15 +245,30 @@
 - content_for :page_javascript do
   :plain
     var toggleByCountry = function() {
-      if (isUS()) {
-        $('.country_us').show();
-        toggleByPayoutMethod();
-        $('#payout_info_payout_method option').attr('disabled', '');
-      } else {
+      var method = $('#payout_info_payout_method').val();
+      if (method == 'paypal') {
         $('.country_us').hide();
+        $('.country_other').hide();
+        $('.address').hide();
+        $('.paypal').show();
+      } else {
+        $('.country_us').show();
         $('.country_other').show();
-        $('#payout_info_payout_method').val('wire');
-        $('#payout_info_payout_method option:not(:last)').attr('disabled', 'disabled')
+        $('.address').show();
+        $('.paypal').hide();
+        if (isUS()) {
+          $('.country_us').show();
+          toggleByPayoutMethod();
+          $('#payout_info_payout_method option').attr('disabled', '');
+        } else {
+          $('.country_us').hide();
+          $('.country_other').show();
+          if (method == 'check' || method == 'ach') {
+            $('#payout_info_payout_method').val('wire');
+          }
+          $('#payout_info_payout_method option:nth(0)').attr('disabled', 'disabled')
+          $('#payout_info_payout_method option:nth(1)').attr('disabled', 'disabled')
+        }
       }
     };
     var toggleByPayoutMethod = function() {
@@ -268,6 +290,7 @@
 
     $('#payout_info_payment_country').change(toggleByCountry);
     $('#payout_info_payout_method').change(toggleByPayoutMethod);
+    $('#payout_info_payout_method').change(toggleByCountry);
     toggleByCountry();
     $('#payout_info_account_type').change(function(){
       $('#payout_info_tax_id').val('');
