@@ -49,7 +49,7 @@ class PointPurchases < SimpledbShardedResource
   def self.purchase_virtual_good(key, virtual_good_key, quantity = 1)
     raise QuantityTooLowError if quantity < 1
     virtual_good = VirtualGood.new(:key => virtual_good_key)
-    raise UnknownVirtualGood.new if virtual_good.is_new
+    raise UnknownVirtualGood if virtual_good.is_new
     
     message = ''
     pp = PointPurchases.transaction(:key => key) do |point_purchases|
@@ -58,8 +58,8 @@ class PointPurchases < SimpledbShardedResource
       point_purchases.add_virtual_good(virtual_good.key, quantity)
       point_purchases.points = point_purchases.points - (virtual_good.price * quantity)
       
-      raise TooManyPurchases.new if virtual_good.max_purchases > 0 && point_purchases.get_virtual_good_quantity(virtual_good.key) > virtual_good.max_purchases
-      raise BalanceTooLowError.new if point_purchases.points < 0
+      raise TooManyPurchases if virtual_good.max_purchases > 0 && point_purchases.get_virtual_good_quantity(virtual_good.key) > virtual_good.max_purchases
+      raise BalanceTooLowError if point_purchases.points < 0
       message = "You successfully purchased #{virtual_good.name}"
     end
     
@@ -75,7 +75,7 @@ class PointPurchases < SimpledbShardedResource
     pp = PointPurchases.transaction(:key => key) do |point_purchases|
       point_purchases.points = point_purchases.points - points
       
-      raise BalanceTooLowError.new if point_purchases.points < 0
+      raise BalanceTooLowError if point_purchases.points < 0
       message = "You successfully spent #{points} points"
     end
     
@@ -89,11 +89,11 @@ class PointPurchases < SimpledbShardedResource
   def self.consume_virtual_good(key, virtual_good_key, quantity = 1)
     raise QuantityTooLowError if quantity < 1
     virtual_good = VirtualGood.new(:key => virtual_good_key)
-    raise UnknownVirtualGood.new if virtual_good.is_new
+    raise UnknownVirtualGood if virtual_good.is_new
 
     message = ''
     pp = PointPurchases.transaction(:key => key) do |point_purchases|
-      raise NotEnoughGoodsError.new if quantity > point_purchases.get_virtual_good_quantity(virtual_good.key)
+      raise NotEnoughGoodsError if quantity > point_purchases.get_virtual_good_quantity(virtual_good.key)
       Rails.logger.info "Using virtual good: used => #{quantity}, remaining => #{point_purchases.get_virtual_good_quantity(virtual_good.key) - quantity}"
 
       point_purchases.add_virtual_good(virtual_good.key, -quantity)
