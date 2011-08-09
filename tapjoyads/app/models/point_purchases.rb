@@ -57,7 +57,7 @@ class PointPurchases < SimpledbShardedResource
       point_purchases.add_virtual_good(virtual_good.key, quantity)
       point_purchases.points = point_purchases.points - (virtual_good.price * quantity)
       
-      raise TooManyPurchases.new if virtual_good.max_purchases > 0 && point_purchases.get_virtual_good_quantity(virtual_good.key) >= virtual_good.max_purchases
+      raise TooManyPurchases.new if virtual_good.max_purchases > 0 && point_purchases.get_virtual_good_quantity(virtual_good.key) > virtual_good.max_purchases
       raise BalanceTooLowError.new if point_purchases.points < 0
       message = "You successfully purchased #{virtual_good.name}"
     end
