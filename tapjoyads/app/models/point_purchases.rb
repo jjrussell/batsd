@@ -47,6 +47,7 @@ class PointPurchases < SimpledbShardedResource
   end
   
   def self.purchase_virtual_good(key, virtual_good_key, quantity = 1)
+    raise QuantityTooLowError if quantity < 1
     virtual_good = VirtualGood.new(:key => virtual_good_key)
     raise UnknownVirtualGood.new if virtual_good.is_new
     
@@ -65,7 +66,7 @@ class PointPurchases < SimpledbShardedResource
     return true, message, pp
   rescue RightAws::AwsError
     return false, "Error contacting backend datastore"
-  rescue BalanceTooLowError, UnknownVirtualGood, TooManyPurchases => e
+  rescue BalanceTooLowError, UnknownVirtualGood, TooManyPurchases, QuantityTooLowError => e
     return false, e.to_s
   end
   
@@ -86,6 +87,7 @@ class PointPurchases < SimpledbShardedResource
   end
 
   def self.consume_virtual_good(key, virtual_good_key, quantity = 1)
+    raise QuantityTooLowError if quantity < 1
     virtual_good = VirtualGood.new(:key => virtual_good_key)
     raise UnknownVirtualGood.new if virtual_good.is_new
 
@@ -102,7 +104,7 @@ class PointPurchases < SimpledbShardedResource
     return true, message, pp
   rescue RightAws::AwsError
     return false, "Error contacting backend datastore"
-  rescue UnknownVirtualGood, NotEnoughGoodsError => e
+  rescue UnknownVirtualGood, NotEnoughGoodsError, QuantityTooLowError => e
     return false, e.to_s
   end
   
@@ -119,5 +121,8 @@ private
   end
   class NotEnoughGoodsError < RuntimeError
     def to_s; "You don't have enough of this item to do that"; end
+  end
+  class QuantityTooLowError < RuntimeError
+    def to_s; "The quantity must be greater than 0"; end
   end
 end
