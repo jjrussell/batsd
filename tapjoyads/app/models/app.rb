@@ -305,6 +305,12 @@ private
       offer.device_types = get_offer_device_types.to_json if store_id_changed?
       offer.save! if offer.changed?
     end
+
+    action_offers.each do |action_offer|
+      action_offer.partner_id = partner_id if partner_id_changed?
+      action_offer.hidden = hidden if hidden_changed?
+      action_offer.save! if action_offer.changed? || price_changed?
+    end
   end
 
   def update_rating_offer
@@ -348,7 +354,7 @@ private
           )
         end
 
-        mapping = AppMetadataMapping.find(mapping.id);
+        mapping = AppMetadataMapping.find(mapping.id)
         mapping.app_metadata_id = new_metadata.id
         mapping.save!
         # do we need to remove any app_metadatas records that are no longer associated to any apps?

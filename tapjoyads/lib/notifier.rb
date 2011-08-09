@@ -9,6 +9,8 @@ class DeviceCountryChanged < RuntimeError; end
 class JailbrokenInstall < RuntimeError; end
 class FailedToInvalidateCloudfront < RuntimeError; end
 class SdbObjectNotInS3 < RuntimeError; end
+class SkippedSendCurrency < RuntimeError; end
+class AndroidRank404 < RuntimeError; end
 
 # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
 class EmailWorthyError < RuntimeError
@@ -19,6 +21,7 @@ end
 class BalancesMismatch < EmailWorthyError; end
 class UnverifiedStatsError < EmailWorthyError; end
 class AppStoreSearchFailed < EmailWorthyError; end
+class SyslogNgError < EmailWorthyError; end
 
 class Notifier
 

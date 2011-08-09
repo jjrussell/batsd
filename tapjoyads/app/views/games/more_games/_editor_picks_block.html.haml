@@ -20,6 +20,8 @@
                   - if pick.offer.price == 0
                     %span.amount.free
                       Free!
+                    %span.get_it
+                      Get it!
                   - else
                     %span.amount
                       = number_to_currency(pick.offer.price/100.0)

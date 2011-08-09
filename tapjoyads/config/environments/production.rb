@@ -30,9 +30,6 @@ MEMCACHE_SERVERS = [ 'tj-acs-prod.fqfjqv.1xm3.use1.acsvc.amazonaws.com',
                      'tj-acs-prod.fqfjqv.1xm4.use1.acsvc.amazonaws.com',
                      'tj-acs-prod.fqfjqv.1xm5.use1.acsvc.amazonaws.com',
                      'tj-acs-prod.fqfjqv.1xm6.use1.acsvc.amazonaws.com' ]
-ACTIVEMQ_SERVERS = [ 'ec2-184-72-154-250.compute-1.amazonaws.com',
-                     'ec2-184-72-84-33.compute-1.amazonaws.com',
-                     'ec2-174-129-79-59.compute-1.amazonaws.com' ]
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
@@ -56,7 +53,7 @@ ENV['AWS_SECRET_ACCESS_KEY'] = amazon['production']['secret_access_key']
 # to the list of transient problems which will automatically get retried by RightAws.
 RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
 
-MAX_WEB_REQUEST_DOMAINS = 280
+MAX_WEB_REQUEST_DOMAINS = 300
 NUM_POINT_PURCHASES_DOMAINS = 10
 NUM_CLICK_DOMAINS = 50
 NUM_REWARD_DOMAINS = 50
@@ -74,3 +71,5 @@ MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 SYMMETRIC_CRYPTO_SECRET = 'YI,B&nZVZQtl*YRDYpEjVE&\U\#jL2!H#H&*2d'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = 'Z*Xac$dum8xeB9-Quv3St@RET6E6UT'
+
+CLEAR_MEMCACHE = false

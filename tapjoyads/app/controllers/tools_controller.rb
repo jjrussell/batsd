@@ -63,6 +63,8 @@ class ToolsController < WebsiteController
     @last_hour_total  = 0
     @this_hour_unique = 0
     @last_hour_unique = 0
+    @this_hour_skips  = 0
+    @last_hour_skips  = 0
     Currency.find((this_hour_failures.keys + last_hour_failures.keys).uniq, :include => :app).each do |currency|
       hash                    = {}
       hash[:currency]         = currency
@@ -70,12 +72,16 @@ class ToolsController < WebsiteController
       hash[:last_hour_total]  = Mc.get_count("send_currency_failure.#{currency.id}.#{last_hour_mc_time}")
       hash[:this_hour_unique] = (this_hour_failures[currency.id] || []).length
       hash[:last_hour_unique] = (last_hour_failures[currency.id] || []).length
+      hash[:this_hour_skips]  = Mc.get_count("send_currency_skip.#{currency.id}.#{this_hour_mc_time}")
+      hash[:last_hour_skips]  = Mc.get_count("send_currency_skip.#{currency.id}.#{last_hour_mc_time}")
       
       @failures << hash
       @this_hour_total  += hash[:this_hour_total]
       @last_hour_total  += hash[:last_hour_total]
       @this_hour_unique += hash[:this_hour_unique]
       @last_hour_unique += hash[:last_hour_unique]
+      @this_hour_skips  += hash[:this_hour_skips]
+      @last_hour_skips  += hash[:last_hour_skips]
     end
   end
   

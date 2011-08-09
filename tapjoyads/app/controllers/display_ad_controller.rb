@@ -97,8 +97,15 @@ private
       end
 
       if params[:details] == '1'
-        @offer     = offer
-        @amount    = currency.get_visual_reward_amount(offer, params[:display_multiplier])
+        @offer  = offer
+        @amount = currency.get_visual_reward_amount(offer, params[:display_multiplier])
+        if @offer.item_type == 'App'
+          advertiser_app = App.find_in_cache(@offer.item_id)
+          return unless verify_records([ advertiser_app ])
+          @categories = advertiser_app.categories
+        else
+          @categories = []
+        end
       end
           
       web_request.offer_id = offer.id
@@ -212,20 +219,7 @@ private
   # Sets the device_type parameter from the device_ua param, which AdMarvel sends.
   def set_device_type
     if params[:device_type].blank? && params[:device_ua].present?
-      params[:device_type] = case params[:device_ua]
-      when /iphone;/i
-        'iphone'
-      when /ipod;/i
-        'ipod'
-      when /ipad;/i
-        'ipad'
-      when /android/i
-        'android'
-      when /windows/i
-        'windows'
-      else
-        nil
-      end
+      params[:device_type] = HeaderParser.device_type(params[:device_ua])
     end
   end
   

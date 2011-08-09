@@ -21,7 +21,7 @@ class UdidReports
     date = Time.zone.parse(date_str).beginning_of_day
     conditions = "offer_id = '#{offer_id}' AND created >= '#{date.to_i}' AND created < '#{(date + 1.day).to_i}'"
     fs_path = "tmp/#{offer_id}_#{date.strftime('%Y-%m-%d')}.s3"
-    outfile = File.open(fs_path, 'w+')
+    outfile = File.open(fs_path, 'w')
     
     NUM_REWARD_DOMAINS.times do |i|
       Reward.select(:domain_name => "rewards_#{i}", :where => conditions) do |reward|
@@ -33,12 +33,12 @@ class UdidReports
     end
     
     if outfile.pos > 0
+      outfile.close
       path = "#{offer_id}/#{date.strftime('%Y-%m')}/#{date.strftime('%Y-%m-%d')}.csv"
       retries = 3
       begin
-        outfile.rewind
         bucket = S3.bucket(BucketNames::UDID_REPORTS)
-        bucket.put(path, outfile.read, {}, 'authenticated-read')
+        bucket.put(path, open(fs_path), {}, 'authenticated-read')
       rescue RightAws::AwsError => e
         if retries > 0
           retries -= 1
