@@ -3,7 +3,7 @@ class Job::QueueFailedWebRequestSavesController < Job::JobController
   def initialize
     @queue     = Sqs.queue(QueueNames::FAILED_WEB_REQUEST_SAVES)
     @bucket    = S3.bucket(BucketNames::FAILED_WEB_REQUEST_SAVES)
-    @num_reads = 5
+    @num_reads = 20
   end
   
   def index
@@ -67,6 +67,7 @@ class Job::QueueFailedWebRequestSavesController < Job::JobController
       error_counts = {}
     end
     items_by_date.each do |date, items|
+      next if date == now.to_s(:yyyy_mm_dd)
       items.in_groups_of(25) do |sdb_items|
         sdb_items.compact!
         
