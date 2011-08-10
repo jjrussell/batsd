@@ -91,3 +91,7 @@
 %ul
   - if permitted_to? :index, :tools_employees
     %li= link_to 'Manage employee list', tools_employees_path
+  - if permitted_to? :show, :internal_devices
+    %li= link_to 'My approved devices', internal_device_path(current_user.id)
+  - if permitted_to? :index, :internal_devices
+    %li= link_to 'All approved devices', internal_devices_path

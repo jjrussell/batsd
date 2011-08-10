@@ -47,25 +47,26 @@ class PointPurchases < SimpledbShardedResource
   end
   
   def self.purchase_virtual_good(key, virtual_good_key, quantity = 1)
+    raise QuantityTooLowError if quantity < 1
     virtual_good = VirtualGood.new(:key => virtual_good_key)
-    raise UnknownVirtualGood.new if virtual_good.is_new
+    raise UnknownVirtualGood if virtual_good.is_new
     
     message = ''
     pp = PointPurchases.transaction(:key => key) do |point_purchases|
       Rails.logger.info "Purchasing virtual good for price: #{virtual_good.price}, from user balance: #{point_purchases.points}"
-      raise TooManyPurchases.new if virtual_good.max_purchases > 0 && point_purchases.get_virtual_good_quantity(virtual_good.key) >= virtual_good.max_purchases
       
       point_purchases.add_virtual_good(virtual_good.key, quantity)
       point_purchases.points = point_purchases.points - (virtual_good.price * quantity)
       
-      raise BalanceTooLowError.new if point_purchases.points < 0
+      raise TooManyPurchases if virtual_good.max_purchases > 0 && point_purchases.get_virtual_good_quantity(virtual_good.key) > virtual_good.max_purchases
+      raise BalanceTooLowError if point_purchases.points < 0
       message = "You successfully purchased #{virtual_good.name}"
     end
     
     return true, message, pp
   rescue RightAws::AwsError
     return false, "Error contacting backend datastore"
-  rescue BalanceTooLowError, UnknownVirtualGood, TooManyPurchases => e
+  rescue BalanceTooLowError, UnknownVirtualGood, TooManyPurchases, QuantityTooLowError => e
     return false, e.to_s
   end
   
@@ -74,7 +75,7 @@ class PointPurchases < SimpledbShardedResource
     pp = PointPurchases.transaction(:key => key) do |point_purchases|
       point_purchases.points = point_purchases.points - points
       
-      raise BalanceTooLowError.new if point_purchases.points < 0
+      raise BalanceTooLowError if point_purchases.points < 0
       message = "You successfully spent #{points} points"
     end
     
@@ -82,6 +83,28 @@ class PointPurchases < SimpledbShardedResource
   rescue RightAws::AwsError
     return false, "Error contacting backend datastore"
   rescue BalanceTooLowError => e
+    return false, e.to_s
+  end
+
+  def self.consume_virtual_good(key, virtual_good_key, quantity = 1)
+    raise QuantityTooLowError if quantity < 1
+    virtual_good = VirtualGood.new(:key => virtual_good_key)
+    raise UnknownVirtualGood if virtual_good.is_new
+
+    message = ''
+    pp = PointPurchases.transaction(:key => key) do |point_purchases|
+      raise NotEnoughGoodsError if quantity > point_purchases.get_virtual_good_quantity(virtual_good.key)
+      Rails.logger.info "Using virtual good: used => #{quantity}, remaining => #{point_purchases.get_virtual_good_quantity(virtual_good.key) - quantity}"
+
+      point_purchases.add_virtual_good(virtual_good.key, -quantity)
+
+      message = "You successfully used #{virtual_good.name}"
+    end
+
+    return true, message, pp
+  rescue RightAws::AwsError
+    return false, "Error contacting backend datastore"
+  rescue UnknownVirtualGood, NotEnoughGoodsError, QuantityTooLowError => e
     return false, e.to_s
   end
   
@@ -95,5 +118,11 @@ private
   end
   class UnknownVirtualGood < RuntimeError;
     def to_s; "Unknown virtual good"; end
+  end
+  class NotEnoughGoodsError < RuntimeError
+    def to_s; "You don't have enough of this item to do that"; end
+  end
+  class QuantityTooLowError < RuntimeError
+    def to_s; "The quantity must be greater than 0"; end
   end
 end

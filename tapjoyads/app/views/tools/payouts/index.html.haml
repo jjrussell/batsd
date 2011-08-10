@@ -137,6 +137,7 @@
                 fields += "<br/><b>Country</b>: " + data.address_country;
               }
             } else if (data.payout_method == 'paypal') {
+              fields += "<br/><b>Paypal Email</b>: " + data.paypal_email;
             } else {
               fields += "<br/><b>Bank</b>: " + data.bank_name;
               fields += "<br/><b>Bank Address</b>: " + data.bank_address;

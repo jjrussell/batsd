@@ -35,11 +35,6 @@ private
   def setup
     return unless verify_params([:app_id, :udid])
     
-    #TO REMOVE: hackey stuff for doodle buddy, remove on Jan 1, 2011
-    doodle_buddy_holiday_id = '0f791872-31ec-4b8e-a519-779983a3ea1a'
-    doodle_buddy_regular_id = '3cb9aacb-f0e6-4894-90fe-789ea6b8361d'
-    params[:app_id] = doodle_buddy_regular_id if params[:app_id] == doodle_buddy_holiday_id
-    
     if params[:publisher_user_id].present?
       publisher_user_id = params[:publisher_user_id]
     else

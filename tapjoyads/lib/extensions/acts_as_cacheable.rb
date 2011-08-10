@@ -41,6 +41,7 @@ module ActsAsCacheable
   module InstanceMethods
     def cache
       run_callbacks(:before_cache)
+      clear_association_cache
       returning Mc.distributed_put("mysql.#{self.class.class_name.underscore}.#{id}.#{SCHEMA_VERSION}", self, false, 1.day) do
         run_callbacks(:after_cache)
       end

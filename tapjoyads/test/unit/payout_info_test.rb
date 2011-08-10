@@ -48,5 +48,12 @@ class PayoutInfoTest < ActiveSupport::TestCase
       @info.bank_name = @info.bank_account_number = @info.bank_routing_number = "foo"
       assert @info.valid?
     end
+
+    should "validate paypal email if paypal" do
+      @info.payout_method = 'paypal'
+      assert !@info.valid?
+      @info.paypal_email = 'foo'
+      assert @info.valid?
+    end
   end
 end

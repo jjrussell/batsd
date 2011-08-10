@@ -1,7 +1,7 @@
 require 'extensions'
 require 'notifier'
 
-GEOIP = GeoIP.new("#{RAILS_ROOT}/data/GeoLiteCity.dat")
+GEOIP = GeoIP.new("#{RAILS_ROOT}/data/GeoIPCity.dat")
 BANNED_IPS = Set.new(['174.120.96.162', '151.197.180.227', '74.63.224.218', '65.19.143.2'])
 
 UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
@@ -26,5 +26,7 @@ WINDOWS_OFFERS_SDK  = 'https://s3.amazonaws.com/tapjoy/sdks/'
 WINDOWS_VG_SDK      = 'https://s3.amazonaws.com/tapjoy/sdks/'
 
 DEV_FORUM_URL = 'https://groups.google.com/group/tapjoy-developer'
+
+WEB_REQUEST_LOGGER = SyslogLogger.new("#{RUN_MODE_PREFIX}rails-web_requests")
 
 Mc.cache.flush if CLEAR_MEMCACHE
