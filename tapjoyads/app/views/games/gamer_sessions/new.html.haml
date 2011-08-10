@@ -30,7 +30,7 @@
                   = hidden_field_tag :data, params[:data]
                 .field.login_email.clearfix
                   = f.label :email
-                  = f.email_field :email
+                  = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off"
                 .field.login_pass.clearfix
                   = f.label :password
                   = f.password_field :password, :size => '15'
@@ -62,7 +62,7 @@
     - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
       .field
         = f.label :email
-        = f.email_field :email
+        = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off"
       .field
         = f.label :password
         = f.password_field :password

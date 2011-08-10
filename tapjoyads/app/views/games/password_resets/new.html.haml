@@ -31,7 +31,7 @@
                       - form_tag(games_password_resets_path) do
                         .field
                           = label_tag(:email)
-                          = email_field_tag(:email)
+                          = email_field_tag(:email, nil, "autocorrect" => "off", "autocapitalize" => "off")
                         .field
                           = submit_tag('Submit', :class => 'button lt_blue')
                       .formError.hide
