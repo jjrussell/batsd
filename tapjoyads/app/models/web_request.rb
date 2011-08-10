@@ -33,11 +33,11 @@ class WebRequest < SimpledbResource
   self.sdb_attr :language
   self.sdb_attr :screen_density
   self.sdb_attr :screen_layout_size
-  self.sdb_attr :carrier_name        
+  self.sdb_attr :carrier_name, :cgi_escape => true   
   self.sdb_attr :allows_voip         
   self.sdb_attr :carrier_country_code
-  self.sdb_attr :mobile_country_code 
-  self.sdb_attr :mobile_network_code 
+  self.sdb_attr :mobile_country_code, :cgi_escape => true
+  self.sdb_attr :mobile_network_code
   self.sdb_attr :click_key
   self.sdb_attr :transaction_id
   self.sdb_attr :tap_points
