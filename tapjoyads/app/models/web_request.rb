@@ -64,7 +64,7 @@ class WebRequest < SimpledbResource
                                     { :stat => 'offers_opened',             :attr => :publisher_app_id },
                                     { :stat => 'paid_clicks',               :attr => :offer_id } ],
     'featured_offer_click'     => [ { :stat => 'featured_offers_opened',    :attr => :publisher_app_id },
-                                    { :stat => 'paid_clicks',               :attr => :offer_id } ],                        
+                                    { :stat => 'paid_clicks',               :attr => :offer_id } ],
   }
   STAT_TO_PATH_MAP = {
     'logins'                    => { :paths => [ 'connect' ],                             :attr_name => 'app_id' },
