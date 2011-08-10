@@ -67,6 +67,7 @@ class Job::QueueFailedWebRequestSavesController < Job::JobController
       error_counts = {}
     end
     items_by_date.each do |date, items|
+      next if date == now.to_s(:yyyy_mm_dd)
       items.in_groups_of(25) do |sdb_items|
         sdb_items.compact!
         

@@ -18,4 +18,5 @@ class QueueNames
   RECOUNT_STATS            = RUN_MODE_PREFIX + 'RecountStats'
   CACHE_OFFERS             = RUN_MODE_PREFIX + 'CacheOffers'
   UDID_REPORTS             = RUN_MODE_PREFIX + 'UdidReports'
+  SERIALIZED_WEB_REQUESTS  = RUN_MODE_PREFIX + 'SerializedWebRequests'
 end

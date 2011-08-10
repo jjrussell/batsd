@@ -196,12 +196,17 @@ class SimpledbResource
     end
     return if @this_domain_name =~ /^#{RUN_MODE_PREFIX}devices_/
     Rails.logger.info "Sdb save failed. Adding to sqs. Domain: #{@this_domain_name} Key: #{@key} Exception: #{e.class} - #{e}"
-    bucket_name, queue_name = get_failed_save_bucket_and_queue
-    uuid = UUIDTools::UUID.random_create.to_s
-    bucket = S3.bucket(bucket_name)
-    bucket.put("incomplete/#{uuid}", self.serialize)
-    message = { :uuid => uuid, :options => options_copy }.to_json
-    Sqs.send_message(queue_name, message)
+    if @this_domain_name =~ /^#{RUN_MODE_PREFIX}web-request-/
+      message = self.serialize
+      Sqs.send_message(QueueNames::SERIALIZED_WEB_REQUESTS, message)
+    else
+      bucket_name, queue_name = get_failed_save_bucket_and_queue
+      uuid = UUIDTools::UUID.random_create.to_s
+      bucket = S3.bucket(bucket_name)
+      bucket.put("incomplete/#{uuid}", self.serialize)
+      message = { :uuid => uuid, :options => options_copy }.to_json
+      Sqs.send_message(queue_name, message)
+    end
     Rails.logger.info "Successfully added to sqs. Message: #{message}"
   ensure
     Rails.logger.flush
