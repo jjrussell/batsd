@@ -142,6 +142,15 @@ class Offer < ActiveRecord::Base
     item_type == 'App' || item_type == 'ActionOffer'
   end
 
+  def get_countries_blacklist
+    if app_offer?
+      item.get_countries_blacklist
+    else
+      []
+    end
+  end
+  memoize :get_countries_blacklist
+
   def self.redistribute_hourly_stats_aggregation
     Benchmark.realtime do
       now = Time.zone.now + 15.minutes
@@ -949,17 +958,18 @@ private
     return false if age_rating.nil?
     currency.max_age_rating < age_rating
   end
-  
+
   def geoip_reject?(geoip_data, device)
     return false if EXEMPT_UDIDS.include?(device.key)
 
-    return true if !countries.blank? && countries != '[]' && !get_countries.include?(geoip_data[:country])
-    return true if !postal_codes.blank? && postal_codes != '[]' && !get_postal_codes.include?(geoip_data[:postal_code])
-    return true if !cities.blank? && cities != '[]' && !get_cities.include?(geoip_data[:city])
-        
+    return true if countries.present? && countries != '[]' && !get_countries.include?(geoip_data[:country])
+    return true if get_countries_blacklist.include?(geoip_data[:country])
+    return true if postal_codes.present? && postal_codes != '[]' && !get_postal_codes.include?(geoip_data[:postal_code])
+    return true if cities.present? && cities != '[]' && !get_cities.include?(geoip_data[:city])
+
     false
   end
-  
+
   def already_complete?(publisher_app, device, app_version)
     return false if EXEMPT_UDIDS.include?(device.key) || multi_complete?
     

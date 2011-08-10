@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110802033509) do
+ActiveRecord::Schema.define(:version => 20110810222949) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -96,6 +96,7 @@ ActiveRecord::Schema.define(:version => 20110802033509) do
     t.datetime "released_at"
     t.float    "user_rating"
     t.string   "categories"
+    t.string   "countries_blacklist"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true

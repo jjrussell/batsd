@@ -23,7 +23,7 @@ class ActionOffer < ActiveRecord::Base
   
   delegate :user_enabled?, :tapjoy_enabled?, :bid, :min_bid, :daily_budget, :integrated?, :to => :primary_offer
 
-  delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :to => :app
+  delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :get_countries_blacklist, :to => :app
 
   delegate :primary_category, :user_rating, :to => :app
 
