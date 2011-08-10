@@ -7,6 +7,7 @@ class Job::QueueFailedWebRequestSavesController < Job::JobController
   end
   
   def index
+    sleep(rand(10))
     available_messages = []
     @num_reads.times do
       retries = 3
