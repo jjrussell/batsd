@@ -197,8 +197,8 @@ class SimpledbResource
     return if @this_domain_name =~ /^#{RUN_MODE_PREFIX}devices_/
     Rails.logger.info "Sdb save failed. Adding to sqs. Domain: #{@this_domain_name} Key: #{@key} Exception: #{e.class} - #{e}"
     if @this_domain_name =~ /^#{RUN_MODE_PREFIX}web-request-/
-      message = self.serialize
-      Sqs.send_message(QueueNames::SERIALIZED_WEB_REQUESTS, message)
+      message = Base64::encode64(self.serialize)
+      Sqs.send_message(QueueNames::ENCODED_WEB_REQUESTS, message)
     else
       bucket_name, queue_name = get_failed_save_bucket_and_queue
       uuid = UUIDTools::UUID.random_create.to_s
