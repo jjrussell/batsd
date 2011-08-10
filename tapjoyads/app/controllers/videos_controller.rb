@@ -24,7 +24,7 @@ private
     params[:publisher_app_id] = publisher_app.id
     
     web_request = WebRequest.new(:time => now)
-    web_request.put_values('videos_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
+    web_request.put_values('video_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
     
     offer_list, more_data_available = publisher_app.get_offer_list(
         :device             => device,
@@ -58,6 +58,9 @@ private
           :country_code      => geoip_data[:country]
       )
       @amount = currency.get_visual_reward_amount(@offer, params[:display_multiplier])
+      
+      web_request.offer_id = @offer.id
+      web_request.add_path('video_returned')
     end
     
     web_request.save

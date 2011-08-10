@@ -174,27 +174,27 @@ class Offer < ActiveRecord::Base
       weights = CurrencyGroup.find_by_name('default').weights
       
       offer_list = Offer.enabled_offers.nonfeatured.rewarded.non_video_offers.for_offer_list.to_a
-      offer_list.each { |o| o.run_callbacks(:before_cache) }
+      offer_list.each { |o| o.run_callbacks(:before_cache); o.clear_association_cache }
       # cache_unsorted_offers(offer_list, DEFAULT_OFFER_TYPE)
       cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
       offer_list = Offer.enabled_offers.featured.rewarded.non_video_offers.for_offer_list + Offer.enabled_offers.nonfeatured.free_apps.rewarded.non_video_offers.for_offer_list
-      offer_list.each { |o| o.run_callbacks(:before_cache) }
+      offer_list.each { |o| o.run_callbacks(:before_cache); o.clear_association_cache }
       # cache_unsorted_offers(offer_list, FEATURED_OFFER_TYPE)
       cache_offer_list(offer_list, weights.merge({ :random => 0 }), FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
   
       offer_list = Offer.enabled_offers.nonfeatured.rewarded.non_video_offers.for_offer_list.for_display_ads.to_a
-      offer_list.each { |o| o.run_callbacks(:before_cache) }
+      offer_list.each { |o| o.run_callbacks(:before_cache); o.clear_association_cache }
       # cache_unsorted_offers(offer_list, DISPLAY_OFFER_TYPE)
       cache_offer_list(offer_list, weights, DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
       offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.non_video_offers.free_apps.for_offer_list.to_a
-      offer_list.each { |o| o.run_callbacks(:before_cache) }
+      offer_list.each { |o| o.run_callbacks(:before_cache); o.clear_association_cache }
       # cache_unsorted_offers(offer_list, NON_REWARDED_DISPLAY_OFFER_TYPE)
       cache_offer_list(offer_list, weights, NON_REWARDED_DISPLAY_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
       offer_list = Offer.enabled_offers.featured.non_rewarded.non_video_offers.free_apps.for_offer_list + Offer.enabled_offers.nonfeatured.non_rewarded.non_video_offers.free_apps.for_offer_list
-      offer_list.each { |o| o.run_callbacks(:before_cache) }
+      offer_list.each { |o| o.run_callbacks(:before_cache); o.clear_association_cache }
       # cache_unsorted_offers(offer_list, NON_REWARDED_FEATURED_OFFER_TYPE)
       cache_offer_list(offer_list, weights, NON_REWARDED_FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
@@ -672,7 +672,8 @@ class Offer < ActiveRecord::Base
   def save_video!(video_src_blob)
     bucket = S3.bucket(BucketNames::TAPJOY)
     
-    existing_video_blob = bucket.get("videos/src/#{id}.mp4") rescue ''
+    key = bucket.key("videos/src/#{id}.mp4")
+    existing_video_blob = key.exists? ? key.get : ''
     
     return if Digest::MD5.hexdigest(video_src_blob) == Digest::MD5.hexdigest(existing_video_blob)
     
