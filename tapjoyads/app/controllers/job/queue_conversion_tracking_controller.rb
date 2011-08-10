@@ -95,26 +95,26 @@ private
     click.put('installed_at', installed_at_epoch)
     click.serial_save
     
-    web_request = WebRequest.new
-    web_request.add_path('reward')
-    web_request.put('time', installed_at_epoch)
-    web_request.type              = reward.type
-    web_request.publisher_app_id  = reward.publisher_app_id
-    web_request.advertiser_app_id = reward.advertiser_app_id
-    web_request.displayer_app_id  = reward.displayer_app_id
-    web_request.offer_id          = reward.offer_id
-    web_request.currency_id       = reward.currency_id
-    web_request.publisher_user_id = reward.publisher_user_id
-    web_request.advertiser_amount = reward.advertiser_amount
-    web_request.publisher_amount  = reward.publisher_amount
-    web_request.displayer_amount  = reward.displayer_amount
-    web_request.tapjoy_amount     = reward.tapjoy_amount
-    web_request.currency_reward   = reward.currency_reward
-    web_request.source            = reward.source
-    web_request.udid              = reward.udid
-    web_request.country           = reward.country
-    web_request.exp               = reward.exp
-    web_request.viewed_at         = reward.viewed_at
-    web_request.serial_save
+    # web_request = WebRequest.new
+    # web_request.add_path('reward')
+    # web_request.put('time', installed_at_epoch)
+    # web_request.type              = reward.type
+    # web_request.publisher_app_id  = reward.publisher_app_id
+    # web_request.advertiser_app_id = reward.advertiser_app_id
+    # web_request.displayer_app_id  = reward.displayer_app_id
+    # web_request.offer_id          = reward.offer_id
+    # web_request.currency_id       = reward.currency_id
+    # web_request.publisher_user_id = reward.publisher_user_id
+    # web_request.advertiser_amount = reward.advertiser_amount
+    # web_request.publisher_amount  = reward.publisher_amount
+    # web_request.displayer_amount  = reward.displayer_amount
+    # web_request.tapjoy_amount     = reward.tapjoy_amount
+    # web_request.currency_reward   = reward.currency_reward
+    # web_request.source            = reward.source
+    # web_request.udid              = reward.udid
+    # web_request.country           = reward.country
+    # web_request.exp               = reward.exp
+    # web_request.viewed_at         = reward.viewed_at
+    # web_request.serial_save
   end
 end
