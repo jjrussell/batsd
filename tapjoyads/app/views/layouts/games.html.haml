@@ -11,8 +11,7 @@
         
     %title= @page_title.blank? ? 'Tapjoy Games' : "#{@page_title} - Tapjoy Games"
     
-    %style{ :type => "text/css", :media => "screen" }
-      @import "/stylesheets/games/tapjoygames.css";
+    = stylesheet_link_tag("games/tapjoygames")
 
     = yield :page_head
     
