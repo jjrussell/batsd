@@ -724,6 +724,10 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
+  def store_id_for_feed
+    item_type == 'App' ? third_party_data : Offer.hashed_icon_id(id)
+  end
+  
   def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
     device_platform_mismatch?(publisher_app, device_type) ||
       geoip_reject?(geoip_data, device) ||
