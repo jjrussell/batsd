@@ -19,4 +19,5 @@ class QueueNames
   CACHE_OFFERS             = RUN_MODE_PREFIX + 'CacheOffers'
   UDID_REPORTS             = RUN_MODE_PREFIX + 'UdidReports'
   SERIALIZED_WEB_REQUESTS  = RUN_MODE_PREFIX + 'SerializedWebRequests'
+  ENCODED_WEB_REQUESTS     = RUN_MODE_PREFIX + 'EncodedWebRequests'
 end
