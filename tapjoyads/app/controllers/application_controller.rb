@@ -209,5 +209,10 @@ private
     
     true
   end
-  
+
+  def nag_user_about_payout_info
+    if current_partner.payout_info.nil? || !current_partner.payout_info.valid?
+      flash.now[:notice] = "Please remember to <a href='/billing/payment-info'>update your W8/W9</a>."
+    end
+  end
 end
