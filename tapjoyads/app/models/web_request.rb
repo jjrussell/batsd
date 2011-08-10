@@ -64,9 +64,7 @@ class WebRequest < SimpledbResource
                                     { :stat => 'offers_opened',             :attr => :publisher_app_id },
                                     { :stat => 'paid_clicks',               :attr => :offer_id } ],
     'featured_offer_click'     => [ { :stat => 'featured_offers_opened',    :attr => :publisher_app_id },
-                                    { :stat => 'paid_clicks',               :attr => :offer_id } ],
-    'video_requested'          => [ { :stat => 'videos_requested',          :attr => :publisher_app_id } ],
-    'video_returned'           => [ { :stat => 'videos_returned',           :attr => :publisher_app_id } ],                             
+                                    { :stat => 'paid_clicks',               :attr => :offer_id } ],                        
   }
   STAT_TO_PATH_MAP = {
     'logins'                    => { :paths => [ 'connect' ],                             :attr_name => 'app_id' },
@@ -85,8 +83,6 @@ class WebRequest < SimpledbResource
     'offers_opened'             => { :paths => [ 'offer_click' ],                         :attr_name => 'publisher_app_id' },
     'featured_offers_opened'    => { :paths => [ 'featured_offer_click' ],                :attr_name => 'publisher_app_id' },
     'paid_clicks'               => { :paths => [ 'offer_click', 'featured_offer_click' ], :attr_name => 'offer_id' },
-    'videos_requested'          => { :paths => [ 'video_requested' ],                     :attr_name => 'publisher_app_id' },
-    'videos_returned'           => { :paths => [ 'video_returned' ],                      :attr_name => 'publisher_app_id' },
   }
   
   @@bad_domains = {}
