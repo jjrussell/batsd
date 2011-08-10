@@ -32,7 +32,6 @@
           if (url) {
             if (!TJG.appOfferWall[appId]['offers']) {
               jQT.goTo('#earn', 'slideleft');
-              $("html, body").animate({scrollTop:0}, 800);
               $.ajax({
                 url: url+"&callback=?",
                 dataType: 'json',
