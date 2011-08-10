@@ -58,12 +58,6 @@
                     if (TJG.appOfferWall[appId]['offers_left'] > 0) {
                       t.push('<div class="more_button_wrapper"><div class="get_more_apps" app_id="' + appId + '"><div class="get_more_apps_content">Load More</div></div></div>');
                     }
-                    else {
-                      t.push('<div class="more_button_wrapper"><div class="back_to_top grey_button"><div class="grey_button_content">Back to Top</div></div></div>');
-                      $(".back_to_top").click(function(){
-                        $("html, body").animate({scrollTop:0}, 'slow');
-                      });
-                    }
                     t = t.join('');
                     $("#earn_content").html(t);
                     $("#earn_content").fadeIn(500);
@@ -101,10 +95,7 @@
                                 $(".get_more_apps_content").html("Load More");
                               }
                               else {
-                                $(".more_button_wrapper").html('<div class="back_to_top grey_button"><div class="grey_button_content">Back to Top</div></div>');
-                                $(".back_to_top").click(function(){
-                                  $("html, body").animate({scrollTop:0}, 'slow');
-                                }); 
+                                $(".get_more_apps").hide();
                               }
                               $.each(offers, function(i,o) {
                                 TJG.appOfferWall[appId]['offers'].push(o);
