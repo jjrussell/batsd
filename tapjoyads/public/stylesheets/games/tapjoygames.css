@@ -247,6 +247,12 @@ form#new_gamer input {
   height: 44px;
   width: 44px;
 }
+.hidden_nav {
+  position: absolute;
+  left: 44px;
+  height: 44px;
+  width: 100%;
+}
 .mobile.hd .top_nav_bar { 
   background: transparent url('/images/games/my_account_hd.png') no-repeat;
   background-size: 100%;
