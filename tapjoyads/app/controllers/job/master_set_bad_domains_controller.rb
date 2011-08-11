@@ -2,10 +2,10 @@ class Job::MasterSetBadDomainsController < Job::JobController
   
   def index
     now         = Time.zone.now
-    earlier     = now - 10.minutes
+    earlier     = now - 1.minute
     mc_key      = 'failed_sdb_saves.web_request_failures'
-    now_key     = (now.to_f / 10.minutes).to_i
-    earlier_key = (earlier.to_f / 10.minutes).to_i
+    now_key     = (now.to_f / 1.minute).to_i
+    earlier_key = (earlier.to_f / 1.minute).to_i
     date        = now.to_s(:yyyy_mm_dd)
     failures    = {}
     

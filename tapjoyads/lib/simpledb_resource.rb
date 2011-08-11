@@ -186,7 +186,7 @@ class SimpledbResource
     if e.is_a?(RightAws::AwsError)
       Mc.increment_count("failed_sdb_saves.sdb.#{@this_domain_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
       if @this_domain_name =~ /^#{RUN_MODE_PREFIX}web-request-/
-        Mc.increment_count("failed_sdb_saves.wr.#{@this_domain_name}.#{(now.to_f / 10.minutes).to_i}", false, 1.day)
+        Mc.increment_count("failed_sdb_saves.wr.#{@this_domain_name}.#{(now.to_f / 1.minute).to_i}", false, 1.hour)
       end
     else
       Mc.increment_count("failed_sdb_saves.mc.#{@this_domain_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
