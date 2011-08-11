@@ -769,6 +769,8 @@ private
     cgi_escape = options.delete(:cgi_escape) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
+    return value if value.blank?
+
     if cgi_escape
       value = @@special_values[:escaped] + CGI::escape(value)
     else
