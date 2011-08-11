@@ -1,3 +1,5 @@
+# TO REMOVE: once this queue has emptied
+
 class Job::QueueFailedWebRequestSavesController < Job::JobController
   
   def initialize
@@ -7,7 +9,6 @@ class Job::QueueFailedWebRequestSavesController < Job::JobController
   end
   
   def index
-    sleep(rand(10))
     available_messages = []
     @num_reads.times do
       retries = 3
@@ -79,6 +80,7 @@ class Job::QueueFailedWebRequestSavesController < Job::JobController
           break if error_counts[date][domain_name] == 0
         end
         domain_name = error_counts[date].sort { |a, b| a[1] <=> b[1] }[0][0] if error_counts[date][domain_name] > 0
+        domain_name = 'web-request-2011-08-09-0' if date == '2011-08-09'
         sdb_items.each { |item| item.this_domain_name = domain_name }
         
         Rails.logger.info "Saving #{sdb_items.size} items to #{domain_name}, keys: #{sdb_items.map(&:key).inspect}"

@@ -1,0 +1,13 @@
+%h1 Support Requests
+%h2 #{@start_time.to_s(:pub_ampm)} to #{@end_time.to_s(:pub_ampm)}
+%p #{@total} Support Requests
+
+= render('table', :type => :offer, :requests => @offers) if @offers.length > 0
+= render('table', :type => :publisher_app, :requests => @publisher_apps) if @publisher_apps.length > 0
+= render('table', :type => :udid, :requests => @udids) if @udids.length > 0
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('.tablesorter').tablesorter({ widgets: ['zebra'] });
+    });

@@ -39,6 +39,8 @@
     %li= link_to 'Manage user roles', tools_users_path
   - if permitted_to? :index, :tools_jobs
     %li= link_to 'Job Configuration', tools_jobs_path
+  - if permitted_to? :index, :tools_support_requests
+    %li= link_to 'Support Request Stats', tools_support_requests_path
 
 - if has_permissions_for_one_of?(:games_editor)
   %h3 Games

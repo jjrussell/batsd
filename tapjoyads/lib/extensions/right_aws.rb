@@ -298,7 +298,11 @@ module RightAws
       @last_response = nil
       response=nil
       blockexception = nil
-      reiteration_time = request[:server] == 'sdb.amazonaws.com' ? 1 : nil
+      if request[:server] == 'sdb.amazonaws.com' && (@last_request.path =~ /web-request/ || @last_request.body =~ /web-request/)
+        reiteration_time = -1
+      else
+        reiteration_time = nil
+      end
 
       if(block != nil)
         # TRB 9/17/07 Careful - because we are passing in blocks, we get a situation where
