@@ -21,13 +21,13 @@ class Tools::SupportRequestsController < WebsiteController
       @total += 1
     end
     
-     offer_ids.each do |k,v|
-       @offers[Offer.find(k)] = v unless k.nil?
-     end
-     
-     publisher_app_ids.each do |k,v|
-       @publisher_apps[App.find(k)] = v unless k.nil?
-     end
+    offer_ids.each do |k,v|
+      @offers[Offer.find(k)] = v unless k.nil?
+    end
+
+    publisher_app_ids.each do |k,v|
+      @publisher_apps[App.find(k)] = v unless k.nil?
+    end
   end
   
 end
