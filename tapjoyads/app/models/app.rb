@@ -181,7 +181,7 @@ class App < ActiveRecord::Base
     self.supported_devices  = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
     
     if data[:currency].present? && data[:currency] != 'USD' && price > 0
-      self.price = recalculate_app_price(data)
+      self.price = AppStore.recalculate_app_price(self.platform, self.price, data[:currency])
     end
     
     download_icon(data[:icon_url], data[:small_icon_url]) unless new_record?
