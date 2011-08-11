@@ -543,7 +543,11 @@ class Offer < ActiveRecord::Base
     search_name += " (hidden)" if hidden?
     search_name
   end
-
+  
+  def store_id_for_feed
+    item_type == 'App' ? third_party_data : Offer.hashed_icon_id(id)
+  end
+  
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
     geoip_reject?(geoip_data, device) ||
       already_complete?(publisher_app, device, app_version) ||

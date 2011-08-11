@@ -1,8 +1,9 @@
 #jqt
   #find_games.current
-    = render 'nav_bar'
+    .hidden_nav.toolbar
     .container.vertical-scroll
       .scroller.with-scrollbar
+        .top_nav_bar
         .page
           .logo
             .slide_nav
@@ -27,7 +28,7 @@
                   .arrow_bg  
                     Find cool games!
 
-  = render 'my_account'
+= render 'my_account'
 
 - content_for :page_javascript do
   :plain

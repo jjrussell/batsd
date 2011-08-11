@@ -91,8 +91,26 @@ class PointsController < ApplicationController
     @currency = Currency.find_in_cache(params[:app_id])
     return unless verify_records([ @currency ])
 
-    @success, @message, @point_purchases = PointPurchases.purchase_virtual_good("#{publisher_user_id}.#{params[:app_id]}", params[:virtual_good_id])
+    quantity = params[:quantity].blank? ? 1 : params[:quantity].to_i
+    @success, @message, @point_purchases = PointPurchases.purchase_virtual_good("#{publisher_user_id}.#{params[:app_id]}", params[:virtual_good_id], quantity)
     check_success('purchased_vg')
+
+    render :template => 'get_vg_store_items/user_account'
+  end
+
+  def consume_vg
+    return unless verify_params([:app_id, :udid, :virtual_good_id])
+
+    publisher_user_id = params[:udid]
+    publisher_user_id = params[:publisher_user_id] unless params[:publisher_user_id].blank?
+
+    @currency = Currency.find_in_cache(params[:app_id])
+    return unless verify_records([ @currency ])
+
+    quantity = params[:quantity].blank? ? 1 : params[:quantity].to_i
+
+    @success, @message, @point_purchases = PointPurchases.consume_virtual_good("#{publisher_user_id}.#{params[:app_id]}", params[:virtual_good_id], quantity)
+    check_success('consumed_vg')
 
     render :template => 'get_vg_store_items/user_account'
   end

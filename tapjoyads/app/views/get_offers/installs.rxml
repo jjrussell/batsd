@@ -14,7 +14,7 @@ xml.TapjoyConnectReturnObject do
         xml.ActionURL get_click_url(offer)
         xml.PublisherUserRecordID params[:publisher_user_id]
         xml.Type '1'
-        xml.StoreID offer.third_party_data
+        xml.StoreID offer.store_id_for_feed
         xml.Currency @currency.name
       end
       

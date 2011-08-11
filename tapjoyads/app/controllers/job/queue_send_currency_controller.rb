@@ -45,7 +45,7 @@ private
     callback_url += "#{mark}snuid=#{CGI::escape(publisher_user_id)}&currency=#{reward.currency_reward}"
     if currency.send_offer_data?
       offer = Offer.find_in_cache(reward.offer_id, true)
-      callback_url += "&storeId=#{CGI::escape(offer.third_party_data)}" if offer.item_type == 'App' && offer.third_party_data?
+      callback_url += "&storeId=#{CGI::escape(offer.store_id_for_feed)}"
       callback_url += "&application=#{CGI::escape(offer.name)}"
       publisher_revenue = reward.publisher_amount / 100.0
       callback_url += "&rev=#{publisher_revenue}"
