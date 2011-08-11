@@ -7,12 +7,16 @@ class AppStore
   WINDOWS_APP_URL     = 'http://catalog.zune.net/v3.2/en-US/apps/_APPID_?store=Zest&clientType=WinMobile+7.0'
   WINDOWS_SEARCH_URL  = 'http://catalog.zune.net/v3.2/en-US/?includeApplications=true&prefix='
 
+  # NOTE: these numbers change every once in a while. Last update: 2011-08-11
   PRICE_TIERS = {
-    'CAD' => [ 0, 99, 199, 299, 399, 499 ],
-    'EUR' => [ 0, 79, 159, 239, 299, 399 ],
-    'GBP' => [ 0, 59, 119, 179, 239, 299 ],
-    'JPY' => [ 0, 11500, 23000, 35000, 45000, 60000 ],
-    'AUD' => [ 0, 119, 249, 399, 499, 599 ],
+    'AUD' => [ 0.99, 1.99, 2.99, 4.49, 5.49 ],
+    'CHF' => [ 0.65, 1.30, 1.94, 2.59, 3.24 ],
+    'EUR' => [ 0.79, 1.59, 2.39, 2.99, 3.99 ],
+    'GBP' => [ 0.69, 1.49, 1.99, 2.49, 2.99 ],
+    'JPY' => [   85,  170,  250,  350,  450 ],
+    'MXP' => [   12,   24,   36,   48,   60 ],
+    'NOK' => [    7,   14,   21,   28,   35 ],
+    'NZD' => [ 1.29, 2.59, 4.19, 5.29, 6.49 ],
   }
 
   # returns hash of app info
@@ -44,7 +48,7 @@ class AppStore
     if platform == 'iphone' && PRICE_TIERS[currency].present?
       PRICE_TIERS[currency].each_with_index do |tier_price, tier|
         if price <= tier_price
-          return tier == 0 ? 0 : (tier * 100) - 1
+          return 99 + (tier * 100)
         end
       end
 
