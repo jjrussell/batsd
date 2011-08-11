@@ -45,7 +45,9 @@ class AppStore
   end
 
   def self.recalculate_app_price(platform, price, currency)
-    if platform == 'iphone' && PRICE_TIERS[currency].present?
+    if currency == 'USD' || price == 0
+      price
+    elsif platform == 'iphone' && PRICE_TIERS[currency].present?
       PRICE_TIERS[currency].each_with_index do |tier_price, tier|
         if price <= tier_price
           return 99 + (tier * 100)
@@ -53,8 +55,6 @@ class AppStore
       end
 
       599 # the price is too damn high
-    elsif currency == 'USD'
-      price
     else
       # TODO: Real multi-currency handling for android. For now simply set the price to a positive value if it's not USD.
       99
