@@ -19,6 +19,27 @@ class AppStore
     end
   end
 
+  BLACKLISTABLE_COUNTRIES = ['US', 'GB', 'KR', 'CN', 'JP', 'TW', 'HK', 'FR', 'DE']
+  def self.prepare_country_blacklist(id, platform)
+    case platform.downcase
+    when 'iphone'
+      list = []
+      BLACKLISTABLE_COUNTRIES.each do |country|
+        retries = 0
+        begin
+          results = self.fetch_app_by_id_for_apple(id, country)
+          list << country if results.blank?
+        rescue
+          retries += 1
+          retry if retries < 5
+        end
+      end
+      list
+    else
+      [] # not supported
+    end
+  end
+
   # returns an array of first 24 App instances matching "term"
   def self.search(term, platform, country='')
     term = term.strip.gsub(/\s/, '+')
