@@ -2,8 +2,9 @@ class InternalDevicesController < WebsiteController
   filter_access_to :new, :update, :index, :show, :destroy
 
   def new
-    if params[:device].present?
-      @device = InternalDevice.find(params[:device])
+    if params[:device].present? || cookies[:device].present?
+      device_id = params[:device] || cookies[:device]
+      @device = InternalDevice.find(device_id)
     else
       @device = InternalDevice.new
       current_user.internal_devices << @device
