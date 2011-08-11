@@ -89,7 +89,12 @@ class WebRequest < SimpledbResource
   @@domain_weights = nil
   
   def self.refresh_domain_choices_and_weights
-    failures  = Mc.get('failed_sdb_saves.web_request_failures') || {}
+    begin
+      failures = Mc.get('failed_sdb_saves.web_request_failures') || {}
+    rescue Exception => e
+      failures = {}
+      Notifier.alert_new_relic(e.class, e.message)
+    end
     max_fails = failures.values.max
     @@domain_choices, @@domain_weights = failures.map { |domain, fails| [ domain, (fails - max_fails).abs ] }.transpose
   end
