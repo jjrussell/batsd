@@ -88,6 +88,12 @@ class WebRequest < SimpledbResource
   @@domain_choices = nil
   @@domain_weights = nil
   
+  def self.refresh_domain_choices_and_weights
+    failures  = Mc.get('failed_sdb_saves.web_request_failures') || {}
+    max_fails = failures.values.max
+    @@domain_choices, @@domain_weights = failures.map { |domain, fails| [ domain, (fails - max_fails).abs ] }.transpose
+  end
+  
   def initialize(options = {})
     @now = options.delete(:time) { Time.zone.now }
     super({:load => false}.merge(options))
@@ -95,7 +101,7 @@ class WebRequest < SimpledbResource
 
   def dynamic_domain_name
     if rand(100) == 1
-      refresh_domain_choices_and_weights
+      WebRequest.refresh_domain_choices_and_weights
     end
     
     date = @now.to_s(:yyyy_mm_dd)
@@ -238,12 +244,6 @@ private
   
   def get_failed_save_bucket_and_queue
     [ BucketNames::FAILED_WEB_REQUEST_SAVES, QueueNames::FAILED_WEB_REQUEST_SAVES ]
-  end
-  
-  def refresh_domain_choices_and_weights
-    failures  = Mc.get('failed_sdb_saves.web_request_failures') || {}
-    max_fails = failures.values.max
-    @@domain_choices, @@domain_weights = failures.map { |domain, fails| [ domain, (fails - max_fails).abs ] }.transpose
   end
   
 end
