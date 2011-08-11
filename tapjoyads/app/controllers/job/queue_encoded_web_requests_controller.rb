@@ -2,7 +2,7 @@ class Job::QueueEncodedWebRequestsController < Job::JobController
   
   def initialize
     @queue     = Sqs.queue(QueueNames::ENCODED_WEB_REQUESTS)
-    @num_reads = 25
+    @num_reads = 10
   end
   
   def index
