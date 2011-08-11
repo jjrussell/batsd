@@ -1,3 +1,5 @@
+Dir[File.dirname(__FILE__) + '/one_offs/*.rb'].each { |file| require(file) }
+
 class OneOffs
 
   def self.copy_ranks_to_s3(start_time_string=nil, end_time_string=nil, granularity_string='hourly')
