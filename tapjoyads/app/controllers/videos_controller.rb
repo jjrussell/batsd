@@ -31,7 +31,6 @@ private
         :os_version         => params[:os_version],
         :type               => Offer::VIDEO_OFFER_TYPE,
         :library_version    => params[:library_version],
-        :screen_layout_size => params[:screen_layout_size],
-        :exclude_offer_id   => params[:exclude_offer_id])
+        :screen_layout_size => params[:screen_layout_size])
   end
 end
