@@ -1,0 +1,12 @@
+%h3= "Most Requests by #{type.to_s.titleize}"
+%table.tablesorter
+  %thead
+    %tr
+      %th #{type.to_s.titleize}
+      %th Requests
+  %tbody
+    - requests.sort { |a,b| b[1] <=> a[1] }[0...25].each do |k,v|
+      %tr{:class => cycle('even', 'odd') }
+        %td= (k.is_a?(App) || k.is_a?(Offer)) ? link_to(k.name, statz_path(k)) : k
+        %td= v
+%br
