@@ -85,7 +85,8 @@ class WebRequest < SimpledbResource
     'paid_clicks'               => { :paths => [ 'offer_click', 'featured_offer_click' ], :attr_name => 'offer_id' },
   }
   
-  @@bad_domains = {}
+  @@domain_choices = nil
+  @@domain_weights = nil
   
   def initialize(options = {})
     @now = options.delete(:time) { Time.zone.now }
@@ -93,20 +94,15 @@ class WebRequest < SimpledbResource
   end
 
   def dynamic_domain_name
-    date = @now.strftime('%Y-%m-%d')
-    num = rand(MAX_WEB_REQUEST_DOMAINS)
-    domain_name = "web-request-#{date}-#{num}"
-
-    if rand(100) == 1 
-      @@bad_domains = Mc.get('failed_sdb_saves.bad_domains') || {}
+    if rand(100) == 1
+      refresh_domain_choices_and_weights
     end
     
-    if @@bad_domains[domain_name]
-      num = rand(MAX_WEB_REQUEST_DOMAINS)
-      domain_name = "web-request-#{date}-#{num}"
+    date = @now.to_s(:yyyy_mm_dd)
+    if @@domain_choices.present? && @@domain_choices.first =~ /#{date}/
+      domain_name = @@domain_choices.weighted_rand(@@domain_weights)
     end
-    
-    domain_name
+    domain_name ||= "web-request-#{date}-#{rand(MAX_WEB_REQUEST_DOMAINS)}"
   end
   
   def add_path(path)
@@ -242,6 +238,12 @@ private
   
   def get_failed_save_bucket_and_queue
     [ BucketNames::FAILED_WEB_REQUEST_SAVES, QueueNames::FAILED_WEB_REQUEST_SAVES ]
+  end
+  
+  def refresh_domain_choices_and_weights
+    failures  = Mc.get('failed_sdb_saves.web_request_failures') || {}
+    max_fails = failures.values.max
+    @@domain_choices, @@domain_weights = failures.map { |domain, fails| [ domain, (fails - max_fails).abs ] }.transpose
   end
   
 end
