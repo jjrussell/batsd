@@ -35,4 +35,34 @@ class AppStoreTest < ActiveSupport::TestCase
     fake_response
   end
 =end
+
+  context "Class Methods" do
+    should "calculate equivalent price when not using USD" do
+      app = Factory(:app, :price => 200, :platform => 'iphone')
+
+      app.price = 99
+      data = { :currency => 'CAD' }
+      assert_equal 99, AppStore.recalculate_app_price(app, data)
+
+      app.price = 119
+      data = { :currency => 'GBP' }
+      assert_equal 199, AppStore.recalculate_app_price(app, data)
+
+      app.price = 239
+      data = { :currency => 'EUR' }
+      assert_equal 299, AppStore.recalculate_app_price(app, data)
+
+      app.price = 45000
+      data = { :currency => 'JPY' }
+      assert_equal 399, AppStore.recalculate_app_price(app, data)
+
+      app.price = 599
+      data = { :currency => 'AUD' }
+      assert_equal 499, AppStore.recalculate_app_price(app, data)
+
+      app.price = 2999
+      data = { :currency => 'QQQ' }
+      assert_equal 99, AppStore.recalculate_app_price(app, data)
+    end
+  end
 end

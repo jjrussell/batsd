@@ -7,6 +7,14 @@ class AppStore
   WINDOWS_APP_URL     = 'http://catalog.zune.net/v3.2/en-US/apps/_APPID_?store=Zest&clientType=WinMobile+7.0'
   WINDOWS_SEARCH_URL  = 'http://catalog.zune.net/v3.2/en-US/?includeApplications=true&prefix='
 
+  PRICE_TIERS = {
+    'CAD' => [99, 199, 299, 399, 499],
+    'EUR' => [79, 159, 239, 299, 399],
+    'GBP' => [59, 119, 179, 239, 299],
+    'JPY' => [11500, 23000, 35000, 45000, 60000],
+    'AUD' => [119, 249, 399, 499, 599],
+  }
+
   # returns hash of app info
   def self.fetch_app_by_id(id, platform, country='')
     case platform.downcase
@@ -29,6 +37,27 @@ class AppStore
       self.search_apple_app_store(term, country)
     when 'windows'
       self.search_windows_marketplace(term)
+    end
+  end
+
+  def self.recalculate_app_price(app, data)
+    if app.platform == 'iphone' && PRICE_TIERS[data[:currency]].present?
+      if app.price < PRICE_TIERS[data[:currency]][0]
+        0
+      elsif app.price < PRICE_TIERS[data[:currency]][1]
+        99
+      elsif app.price < PRICE_TIERS[data[:currency]][2]
+        199
+      elsif app.price < PRICE_TIERS[data[:currency]][3]
+        299
+      elsif app.price < PRICE_TIERS[data[:currency]][4]
+        399
+      else
+        499
+      end
+    else
+      # TODO: Real multi-currency handling. For now simply set the price to a positive value if it's not USD.
+      99
     end
   end
 

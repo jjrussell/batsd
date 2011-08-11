@@ -180,9 +180,8 @@ class App < ActiveRecord::Base
     self.categories         = data[:categories]
     self.supported_devices  = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
     
-    # TODO: Real multi-currency handling. For now simply set the price to a positive value if it's not USD.
     if data[:currency].present? && data[:currency] != 'USD' && price > 0
-      self.price = 99
+      self.price = recalculate_app_price(data)
     end
     
     download_icon(data[:icon_url], data[:small_icon_url]) unless new_record?
