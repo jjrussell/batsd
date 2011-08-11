@@ -16,7 +16,7 @@ class Job::MasterSetBadDomainsController < Job::JobController
       failures[domain_name] = count
     end
     
-    Mc.put(mc_key, failures)
+    Mc.distributed_put(mc_key, failures)
     
     render :text => 'ok'
   end

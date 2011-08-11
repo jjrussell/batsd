@@ -90,7 +90,7 @@ class WebRequest < SimpledbResource
   
   def self.refresh_domain_choices_and_weights
     begin
-      failures = Mc.get('failed_sdb_saves.web_request_failures') || {}
+      failures = Mc.distributed_get('failed_sdb_saves.web_request_failures') || {}
     rescue Exception => e
       failures = {}
       Notifier.alert_new_relic(e.class, e.message)
