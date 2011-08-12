@@ -130,7 +130,7 @@ class TapjoyMailer < ActionMailer::Base
     from 'noreply@tapjoy.com'
     recipients email_address
     content_type 'text/html'
-    subject 'Approve Unknown Device'
+    subject 'Approve Unknown Computer or Device'
     body(:verification_key => verification_key, :block_link => block_link, :location => location, :timestamp => timestamp)
   end
 end

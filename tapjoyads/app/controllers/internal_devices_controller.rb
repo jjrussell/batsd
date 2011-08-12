@@ -22,7 +22,7 @@ class InternalDevicesController < WebsiteController
     device = InternalDevice.find(params[:id])
     device.update_attributes(params[:internal_device])
     if device.approved?
-      flash[:notice] = "Device approved! To see the devices you've logged in with <a href=#{internal_device_path(current_user.id)}>click here</a>"
+      flash[:notice] = "Device approved! To see the devices and computers you've logged in with <a href=#{internal_device_path(current_user.id)}>click here</a>"
       redirect_to statz_index_path
     else
       redirect_bad_device
