@@ -46,7 +46,7 @@ private
   end
   
   def xml_for_buttons
-    buttons = video_buttons.sort_by {|button| button.ordinal}
+    buttons = video_buttons.ordered
     buttons_xml = buttons.inject([]) do |result, button|
       result << button.xml_for_offer
     end

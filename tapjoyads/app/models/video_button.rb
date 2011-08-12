@@ -5,7 +5,9 @@ class VideoButton < ActiveRecord::Base
   
   validates_presence_of :url, :name
   validates_numericality_of :ordinal, :only_integer => true
-
+  
+  named_scope :ordered, :order => "ordinal"
+  
   def xml_for_offer
     builder = Builder::XmlMarkup.new
     xml = builder.Button do |button|

@@ -8,7 +8,7 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
   after_filter :save_activity_logs
   
   def index
-    @video_buttons = VideoOffer.find(params[:video_offer_id]).video_buttons.sort_by {|button| button.ordinal}
+    @video_buttons = VideoOffer.find(params[:video_offer_id]).video_buttons.ordered
   end
   
   def new
