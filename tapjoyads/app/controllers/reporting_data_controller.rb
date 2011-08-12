@@ -74,10 +74,10 @@ private
       partners = @user.partners
     end
     
-    @total_offer = partners.inject(0) { |sum, partner| sum + partner.offers.size }
+    @total_offers = partners.inject(0) { |sum, partner| sum + partner.offers.size }
     @page_size = params[:page_size] ? params[:page_size].to_i : 100
-    @total_page = (@total_offer.to_f / @page_size).ceil
-    @current_page = params[:page] ? (params[:page].to_i <= @total_page? params[:page].to_i : @total_page) : 1
+    @total_pages = (@total_offers.to_f / @page_size).ceil
+    @current_page = params[:page] ? (params[:page].to_i <= @total_pages? params[:page].to_i : @total_pages) : 1
 
     need_to_skip = (@current_page - 1) * @page_size
     need_to_show = @page_size
