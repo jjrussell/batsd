@@ -2,6 +2,13 @@ class PressRelease < ActiveRecord::Base
   include UuidPrimaryKey
 
   validates_presence_of :link_text, :link_id, :link_href, :content_title, :content_body
+  validates_each :link_href do |record, attribute, value|
+    begin
+      record.errors.add(attribute, "must start with #{record.link_id}") unless value.starts_with?(record.link_id.to_s)
+    rescue
+      record.errors.add(attribute, "must start with #{record.link_id}")
+    end
+  end
 
   named_scope :ordered, :order => "link_id DESC"
   named_scope :not_future, :conditions => ["published_at < ?", Time.zone.now.end_of_day]
