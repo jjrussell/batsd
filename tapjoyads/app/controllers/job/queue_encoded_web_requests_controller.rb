@@ -2,7 +2,7 @@ class Job::QueueEncodedWebRequestsController < Job::JobController
   
   def initialize
     @queue     = Sqs.queue(QueueNames::ENCODED_WEB_REQUESTS)
-    @num_reads = 5
+    @num_reads = 30 - [ @queue.size_not_visible / 10000, 10 ].min * 2
   end
   
   def index
@@ -10,6 +10,8 @@ class Job::QueueEncodedWebRequestsController < Job::JobController
     available_messages  = []
     items_by_date       = {}
     message_by_item_key = {}
+    
+    Rails.logger.info "QueueEncodedWebRequests: num_reads = #{@num_reads}"
     
     @num_reads.times do
       retries = 3
