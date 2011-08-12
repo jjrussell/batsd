@@ -1,7 +1,9 @@
-%tr
-  %th.admin Country (admin)
-  %td.admin
+%tr.admin
+  %th Country
+  %td
     - options = appstore_countries.invert.sort
     - options.unshift(["Select a country", ""])
     = select_tag 'app_country', options_for_select(options)
-    iPhone-only; only use for search
+    .inline_help
+      iPhone-only. This field is strictly for app store search, and setting this
+      field has no bearing on offer country targeting.

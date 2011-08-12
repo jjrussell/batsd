@@ -28,10 +28,18 @@
                   - checked = country_set.include?(country_code)
                   = check_box_tag "country_#{country_code}", '1', checked, :class => 'country', :country_code => country_code, :country_name => Countries.country_code_to_name[country_code]
                   = label_tag "country_#{country_code}", Countries.country_code_to_name[country_code]
-    
+
+- if @app.platform == 'iphone'
+  %tr.admin
+    %th
+      Country Blacklist
+      #help_country_blacklist.help ?
+    %td
+      - if @app.get_countries_blacklist.present?
+        = @app.countries_blacklist
 .hidden
   #help_country_targeting_content{ :name => 'Country Targeting' } Target this offer to specific countries.
-  
+
 - content_for :page_styles do
   :plain
     #change_countries {
@@ -123,5 +131,3 @@
         setCountries();
       });
     });
-  
-    

@@ -963,7 +963,7 @@ private
     return false if EXEMPT_UDIDS.include?(device.key)
 
     return true if countries.present? && countries != '[]' && !get_countries.include?(geoip_data[:country])
-    return true if get_countries_blacklist.include?(geoip_data[:country])
+    return true if geoip_data[:country] && get_countries_blacklist.include?(geoip_data[:country].to_s.upcase)
     return true if postal_codes.present? && postal_codes != '[]' && !get_postal_codes.include?(geoip_data[:postal_code])
     return true if cities.present? && cities != '[]' && !get_cities.include?(geoip_data[:city])
 
