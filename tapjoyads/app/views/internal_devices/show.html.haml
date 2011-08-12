@@ -1,0 +1,12 @@
+- @page_title = "Your Approved Devices"
+
+%h1 Your Approved Devices
+
+%table#approved_devices_table.tablesorter
+  %tr
+    %th Description
+    %th
+  - @internal_devices.each do |internal_device|
+    %tr
+      %td= internal_device.description
+      %td= link_to("Remove device", internal_device, :method => :delete, :confirm => "Are you sure?")

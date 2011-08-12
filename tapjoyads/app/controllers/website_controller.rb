@@ -8,6 +8,7 @@ class WebsiteController < ApplicationController
   helper_method :current_user, :current_partner, :current_partner_apps, :current_partner_offers, :current_partner_app_offers, :current_partner_active_app_offers, :premier_enabled?
   
   before_filter { |c| Authorization.current_user = c.current_user }
+  before_filter :check_employee_device
 
   def current_user
     @current_user ||= current_user_session && current_user_session.record
@@ -52,6 +53,25 @@ class WebsiteController < ApplicationController
     current_partner.exclusivity_level.present?
   end
 
+  def check_employee_device
+    return if Rails.env == 'development'
+    if current_user && current_user.employee?
+      return if request.path.match(/logout|approve_device|block/)
+      if cookies['device'].present?
+        device = InternalDevice.find(cookies['device'])
+        if device.approved?
+          return
+        elsif device.pending?
+          redirect_to new_internal_device_path(:device => device.id)
+        else
+          redirect_bad_device
+        end
+      else
+        redirect_to new_internal_device_path
+      end
+    end
+  end
+
 protected
   
   def permission_denied
@@ -66,8 +86,7 @@ protected
 private
   
   def current_user_session
-    return @current_user_session if defined?(@current_user_session)
-    @current_user_session = UserSession.find
+    @current_user_session ||= UserSession.find
   end
   
   def set_time_zone
@@ -85,4 +104,11 @@ private
   def set_platform
     @platform = params[:platform] || 'all'
   end
+
+  def redirect_bad_device
+    flash[:error] = "Sorry, this computer has been blocked. Please contact dev@tapjoy.com if this is an error."
+    UserSession.find.destroy
+    redirect_to login_path
+  end
+
 end

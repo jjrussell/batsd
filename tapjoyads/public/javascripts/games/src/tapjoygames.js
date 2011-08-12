@@ -128,7 +128,6 @@ TJG.ui = {
     }
     TJG.repositionDialog = ["#sign_up_dialog"];
     $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
-    TJG.onload.loadCufon();
     $(".close_dialog").show();
     $("#sign_up_dialog_content").parent().animate({ height: "270px", }, 250);
     $("#sign_up_dialog").fadeIn();
@@ -173,7 +172,6 @@ TJG.ui = {
         ].join('');
         $("#sign_up_dialog_content").html(loader);
         $("#sign_up_dialog_content").parent().animate({ height: "120px", }, 250);
-        TJG.onload.loadCufon();
         $.ajax({
           type: 'POST',
           url: rurl,
@@ -194,7 +192,6 @@ TJG.ui = {
               $('.close_dialog').unbind('click');
               $("#sign_up_dialog_content").parent().animate({ height: "230px", }, 250);
               $("#sign_up_dialog_content").html(msg);
-              TJG.onload.loadCufon(); 
               if (TJG.vars.isIos == false) {
                   if (d.more_games_url) {
                     $('.close_dialog,.continue_link_device').click(function(){
@@ -215,7 +212,6 @@ TJG.ui = {
                   ].join('');
                   $("#sign_up_dialog_content").parent().animate({ height: "170px", }, 250);
                   $("#sign_up_dialog_content").html(msg);
-                  TJG.onload.loadCufon();
                   $('.close_dialog,.link_device_url').click(function(){
                     document.location.href = d.link_device_url;
                   });
@@ -244,7 +240,6 @@ TJG.ui = {
             $('#sign_up_again').click(function(){
               TJG.ui.showRegister();
               $("#sign_up_dialog_content").parent().animate({ height: "270px", }, 250);
-              TJG.onload.loadCufon();
             });
           },
           error: function() {
@@ -255,36 +250,21 @@ TJG.ui = {
             ].join('');
             $(".close_dialog").hide(); 
             $("#sign_up_dialog_content").html(msg);
-            TJG.onload.loadCufon();
             $('#sign_up_again').click(function(){
                TJG.ui.showRegister();
               $("#sign_up_dialog_content").parent().animate({ height: "270px", }, 250);
-              TJG.onload.loadCufon();
             });
           }
         });
       }
     });
   }
+  
 };
   
 (function(window, document) {
 
     TJG.onload = {
-      loadCufon : function (fn,delay) {
-        if (!delay) {
-          delay = 1;
-        }
-        if (Cufon) {
-          Cufon.replace('.title', { fontFamily: 'Cooper Std' });
-          Cufon.replace('.title_2', { fontFamily: 'AmerType Md BT' });
-        }
-        if (fn) {
-          setTimeout(function() { 
-            fn;
-            }, delay);
-        }
-      },
 
       removeLoader : function () {
         TJG.ui.hideLoader(250,function(){
@@ -307,6 +287,20 @@ TJG.ui = {
           TJG.repositionDialog = ["#how_works_dialog"];
           $("#how_works_dialog").fadeIn(350);
         });
+        $('.top_nav_bar').click(function(){
+          TJG.utils.centerDialog("#my_account_dialog");
+          TJG.repositionDialog = ["#my_account_dialog"];
+          $("#my_account_dialog").fadeIn(350);
+        });
+        $('.my_account_url').click(function(){
+          $("#my_account_dialog").fadeOut(350, function() {
+            TJG.utils.centerDialog("#my_account_dialog_content");
+            TJG.repositionDialog = ["#my_account_dialog_content"];
+            $("#my_account_dialog_content").fadeIn(350);     
+          });
+        });  
+        
+
       },
       
       checkFlashMessages: function () {

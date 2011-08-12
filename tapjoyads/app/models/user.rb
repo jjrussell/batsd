@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
   has_many :partners, :through => :partner_assignments
   has_many :enable_offer_requests
   has_many :admin_devices
-  
+  has_many :internal_devices
   belongs_to :current_partner, :class_name => 'Partner'
   belongs_to :reseller
 
@@ -55,6 +55,12 @@ class User < ActiveRecord::Base
 
   def has_valid_email?
     email.present? && !(/mailinator\.com$|example\.com$|test\.com$/ =~ email)
+  end
+
+  def employee?
+    user_roles.include? UserRole.find_by_name('admin')
+    # for now we can test just on admins
+    # user_roles.any? { |role| role.employee? }
   end
 
 private
