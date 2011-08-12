@@ -108,5 +108,6 @@ authorization do
     has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
     has_permission_on :tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :tools_support_requests, :to => [ :index ]
+    has_permission_on :tools_press_releases, :to => [ :index, :new, :create, :edit, :update ]
   end
 end
