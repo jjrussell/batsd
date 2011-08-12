@@ -58,9 +58,17 @@ class Job::QueueEncodedWebRequestsController < Job::JobController
         
         Rails.logger.info "Saving #{sdb_items.size} items to #{domain_name}, keys: #{sdb_items.map(&:key).inspect}"
         
+        retries = 1
         begin
-          SimpledbResource.put_items(sdb_items)
+          Timeout.timeout(15) { SimpledbResource.put_items(sdb_items) }
         rescue RightAws::AwsError => e
+          Notifier.alert_new_relic(e.class, e.message, request, params)
+          next
+        rescue Timeout::Error => e
+          if retries > 0
+            retries -= 1
+            retry
+          end
           Notifier.alert_new_relic(e.class, e.message, request, params)
           next
         end
