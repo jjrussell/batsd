@@ -14,11 +14,6 @@ class Tools::OrdersController < WebsiteController
     billing_email = params.delete(:billing_email)
     @order = Order.new(order_params)
 
-    unless @order.partner
-      flash[:error] = "Invalid partner id: #{@order.partner_id}"
-      render :action => :new and return
-    end
-
     @partner = @order.partner
     unless billing_email.blank?
       log_activity(@partner)
