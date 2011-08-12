@@ -23,7 +23,7 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
   
   def create
     return unless verify_params([ :video_offer_id ], { :render_missing_text => false })
-
+    
     @video_button = VideoButton.new(params[:video_button])
     log_activity(@video_button)
     
@@ -51,7 +51,7 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
     flash[:notice] = 'Successfully destroyed Video Button'
     redirect_to :action => :index
   end
-
+  
 private
 
   def find_button
