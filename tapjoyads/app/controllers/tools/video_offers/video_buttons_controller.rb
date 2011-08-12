@@ -12,7 +12,7 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
   end
   
   def new
-    @video_button = VideoButton.new(:video_offer_id => params[:video_offer_id])
+    @video_button = @video_offer.video_buttons.build
   end
   
   def edit
