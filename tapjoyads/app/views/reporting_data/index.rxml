@@ -1,6 +1,10 @@
 xml.instruct!
 xml.MarketingData do
   xml.Date @date
+  xml.TotalOffers @total_offer
+  xml.PageSize @page_size
+  xml.TotalPages @total_page
+  xml.CurrentPage @current_page
   @appstats_list.each do |offer_with_stats|
     offer = offer_with_stats[0]
     appstats = offer_with_stats[1]
