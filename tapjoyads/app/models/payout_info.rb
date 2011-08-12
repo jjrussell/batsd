@@ -3,7 +3,7 @@ class PayoutInfo < ActiveRecord::Base
 
   ENCRYPTED_FIELDS = [ :tax_id, :bank_name, :bank_address, :bank_account_number, :bank_routing_number ]
   ACCOUNT_TYPES = %w(Individual Partnership LLC Corporation Other)
-  PAYOUT_METHODS = [ ['Check', 'check'], ['ACH', 'ach'], ['Wire', 'wire'] ]
+  PAYOUT_METHODS = [ ['Check', 'check'], ['ACH', 'ach'], ['Wire', 'wire'], ['PayPal', 'paypal'] ]
 
   acts_as_decryptable :encrypt => ENCRYPTED_FIELDS, :key => SYMMETRIC_CRYPTO_SECRET, :show => '*' * 8
   belongs_to :partner
@@ -18,6 +18,7 @@ class PayoutInfo < ActiveRecord::Base
   validates_presence_of :signature, :billing_name, :tax_country, :account_type,
     :tax_id, :company_name, :address_1, :address_city, :address_state, :address_postal_code
   validates_presence_of :bank_name, :bank_account_number, :bank_routing_number, :if => :require_bank_info?
+  validates_presence_of :paypal_email, :if => :uses_paypal?
   validates_inclusion_of :account_type, :in => ACCOUNT_TYPES
   validates_inclusion_of :payout_method, :in => PAYOUT_METHODS.map(&:last)
   validates_inclusion_of :payout_method, :in => ['wire'], :if => :international?,
@@ -58,9 +59,9 @@ class PayoutInfo < ActiveRecord::Base
         :bank_account_number => decrypt_bank_account_number,
         :bank_routing_number => decrypt_bank_routing_number,
       }
-    when 'paypal' # TODO: implement this
+    when 'paypal'
       {
-        # :paypal_email => paypal_email
+        :paypal_email => paypal_email
       }
     end.merge({
       :payout_method => payout_method,
@@ -71,10 +72,14 @@ class PayoutInfo < ActiveRecord::Base
 
 private
   def require_bank_info?
-    %w(ach wire).include?(payout_method) || international?
+    %w(ach wire).include?(payout_method) || international? && !uses_paypal?
   end
 
   def international?
-    payment_country.to_s.downcase != 'united states of america'
+    payment_country.to_s.downcase != 'united states of america' && !uses_paypal?
+  end
+
+  def uses_paypal?
+    payout_method == 'paypal'
   end
 end

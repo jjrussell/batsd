@@ -31,7 +31,7 @@
           $("#app_title").show();
           if (url) {
             if (!TJG.appOfferWall[appId]['offers']) {
-              jQT.goTo('#earn', 'slideleft');   
+              jQT.goTo('#earn', 'slideleft');
               $.ajax({
                 url: url+"&callback=?",
                 dataType: 'json',
@@ -41,7 +41,12 @@
                   if (data.OfferArray) {
                     var offers = data.OfferArray;
                     offerOffset = offers.length;
-                    TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                    if (data.MoreDataAvailable) {
+                      TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                    }
+                    else {
+                      TJG.appOfferWall[appId]['offers_left'] = 0;
+                    }
                     TJG.appOfferWall[appId]['offset'] = offerOffset;
                     TJG.appOfferWall[appId]['offers'] = offers; 
                     var offerRows = TJG.ui.getOffferRow(offers, currencyName);
@@ -51,18 +56,21 @@
                       '</ul>',
                     ];
                     if (TJG.appOfferWall[appId]['offers_left'] > 0) {
-                      t.push('<div class="load_more_loader hide"><div class="dialog_image"></div></div>');
-                      t.push('<div class="get_more_apps" app_id="' + appId + '"><div class="get_more_apps_content">Load More</div>');
+                      t.push('<div class="more_button_wrapper"><div class="get_more_apps" app_id="' + appId + '"><div class="get_more_apps_content">Load More</div></div></div>');
                     }
                     t = t.join('');
                     $("#earn_content").html(t);
-                    TJG.onload.loadCufon($("#earn_content").fadeIn(500),300);
+                    $("#earn_content").fadeIn(500);
+                    var isLoading = false;
                     $(".get_more_apps").click(function(){
+                      if (isLoading) { return; }
+                      $(".get_more_apps_content").html('<div class="image_loader"></div>');
                       var appId = $(this).attr("app_id");
                       $(".load_more_loader").show();
                       if (TJG.appOfferWall[appId]['offers_left'] > 0) {
                         var url = TJG.appOfferWall[appId]['jsonp_url'];
                         url = url + "&start=" + TJG.appOfferWall[appId]['offset'] + "&max=25&callback=?";
+                        isLoading = true;
                         $.ajax({
                           url: url,
                           dataType: 'json',
@@ -70,30 +78,39 @@
                           success: function(data) {
                             if (data.OfferArray) {
                               var offers = data.OfferArray;
-                              TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                              if (data.MoreDataAvailable) {
+                                TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                              }
+                              else {
+                                TJG.appOfferWall[appId]['offers_left'] = 0;
+                              }
                               TJG.appOfferWall[appId]['offset'] = TJG.appOfferWall[appId]['offset'] + 25;
                               var moreOfferRows = TJG.ui.getOffferRow(offers, currencyName, i, true);
                               $("#offerwall_id-" + appId).append(moreOfferRows);
                               var el = ".offer_item_" + i;
                               $.each($(el), function(n,o) {
-                                $(o).fadeIn(600);
+                                $(o).fadeIn(500);
                               });
-                              TJG.onload.loadCufon();
-                              $(".load_more_loader").hide();
-                              if (data.MoreDataAvailable == 0) {
-                                $("#get_more_apps").hide();
+                              if (TJG.appOfferWall[appId]['offers_left'] > 0) {
+                                $(".get_more_apps_content").html("Load More");
+                              }
+                              else {
+                                $(".get_more_apps").hide();
                               }
                               $.each(offers, function(i,o) {
                                 TJG.appOfferWall[appId]['offers'].push(o);
                               });
                             }
+                            isLoading = false;
                           },
                           error: function () {
                             var m = [
                               '<div>There was an issue fetching more offers. Please try again</div>'
                             ].join('');                               
-                            $("#offerwall_id-" + appId).append(m).fadeIn(350);
+                            $("#offerwall_id-" + appId).html(m).fadeIn(350);
+                            $(".get_more_apps_content").html("Load More");
                             $(".load_more_loader").hide();
+                            isLoading = false;
                           }
                         });
                         i++;
@@ -114,7 +131,6 @@
               TJG.ui.hideLoader();
               var c = TJG.ui.getOffferRow(TJG.appOfferWall[appId]['offers'],currencyName);
               $("#earn_content").html(c);
-              TJG.onload.loadCufon();
               $("#earn_content").fadeIn(450);
             }
             else {
@@ -152,7 +168,6 @@
         });
         if (TJG.moreAppOfferWall) {
           $("#more_games_content").html(TJG.moreAppOfferWall);
-          TJG.onload.loadCufon();
           $("#more_games_content").fadeIn(450);
         }
         else {
@@ -164,7 +179,6 @@
               TJG.moreAppOfferWall = c;
               TJG.ui.hideLoader();
               $("#more_games_content").html(c);
-              TJG.onload.loadCufon();
               $("#more_games_content").fadeIn(450); 
             },
             error: function() {
@@ -194,15 +208,13 @@
           if (TJG.moreAppOfferWall) {
             TJG.ui.hideLoader();
             $("#more_games_content").html(TJG.moreAppOfferWall);
-            TJG.onload.loadCufon();
             $("#more_games_content").fadeIn(450);
           }
         });
       
         if (TJG.topAppOfferWall) {
           $("#more_games_content").html(TJG.topAppOfferWall);
-          TJG.onload.loadCufon();
-          $("#more_games_content").fadeIn(450);
+            $("#more_games_content").fadeIn(450);
         }
         else {
           TJG.ui.showLoader();
@@ -216,7 +228,6 @@
               TJG.topAppOfferWall = c;
               TJG.ui.hideLoader();
               $("#more_games_content").html(c);
-              TJG.onload.loadCufon();
               $("#more_games_content").fadeIn(450); 
             },
             error: function () {
@@ -227,7 +238,7 @@
               $("#more_games_content").fadeIn(450);
             }
           });
-        }          
+        }
       });
     }
     TJG.path =  "#{games_root_path}";

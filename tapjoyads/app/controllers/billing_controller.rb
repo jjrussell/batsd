@@ -170,7 +170,7 @@ class BillingController < WebsiteController
       :tax_country, :account_type, :billing_name, :tax_id, :signature, :terms,
       :address_country, :address_1, :address_2, :address_city, :address_state, :address_postal_code,
       :payout_method, :bank_name, :bank_address, :bank_account_number, :bank_routing_number,
-      :payment_country,
+      :payment_country, :paypal_email,
     ]
     if @payout_info.safe_update_attributes(params[:payout_info], safe_attributes)
       flash[:notice] = "Your information has been saved."

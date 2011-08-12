@@ -185,6 +185,9 @@ class SimpledbResource
   rescue Exception => e
     if e.is_a?(RightAws::AwsError)
       Mc.increment_count("failed_sdb_saves.sdb.#{@this_domain_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
+      if @this_domain_name =~ /^#{RUN_MODE_PREFIX}web-request-/
+        Mc.increment_count("failed_sdb_saves.wr.#{@this_domain_name}.#{(now.to_f / 1.minute).to_i}", false, 1.hour)
+      end
     else
       Mc.increment_count("failed_sdb_saves.mc.#{@this_domain_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
     end
@@ -196,12 +199,17 @@ class SimpledbResource
     end
     return if @this_domain_name =~ /^#{RUN_MODE_PREFIX}devices_/
     Rails.logger.info "Sdb save failed. Adding to sqs. Domain: #{@this_domain_name} Key: #{@key} Exception: #{e.class} - #{e}"
-    bucket_name, queue_name = get_failed_save_bucket_and_queue
-    uuid = UUIDTools::UUID.random_create.to_s
-    bucket = S3.bucket(bucket_name)
-    bucket.put("incomplete/#{uuid}", self.serialize)
-    message = { :uuid => uuid, :options => options_copy }.to_json
-    Sqs.send_message(queue_name, message)
+    if @this_domain_name =~ /^#{RUN_MODE_PREFIX}web-request-/
+      message = Base64::encode64(self.serialize)
+      Sqs.send_message(QueueNames::ENCODED_WEB_REQUESTS, message)
+    else
+      bucket_name, queue_name = get_failed_save_bucket_and_queue
+      uuid = UUIDTools::UUID.random_create.to_s
+      bucket = S3.bucket(bucket_name)
+      bucket.put("incomplete/#{uuid}", self.serialize)
+      message = { :uuid => uuid, :options => options_copy }.to_json
+      Sqs.send_message(queue_name, message)
+    end
     Rails.logger.info "Successfully added to sqs. Message: #{message}"
   ensure
     Rails.logger.flush
@@ -760,6 +768,8 @@ private
   def escape_specials(value, options = {})
     cgi_escape = options.delete(:cgi_escape) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
+    return value if value.blank?
 
     if cgi_escape
       value = @@special_values[:escaped] + CGI::escape(value)

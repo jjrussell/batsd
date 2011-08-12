@@ -18,6 +18,6 @@ class QueueNames
   RECOUNT_STATS            = RUN_MODE_PREFIX + 'RecountStats'
   CACHE_OFFERS             = RUN_MODE_PREFIX + 'CacheOffers'
   UDID_REPORTS             = RUN_MODE_PREFIX + 'UdidReports'
-  FAILED_ACTIVEMQ_WRITES   = RUN_MODE_PREFIX + 'FailedActivemqWrites'
   CREATE_INVOICES          = RUN_MODE_PREFIX + 'CreateInvoices'
+  ENCODED_WEB_REQUESTS     = RUN_MODE_PREFIX + 'EncodedWebRequests'
 end

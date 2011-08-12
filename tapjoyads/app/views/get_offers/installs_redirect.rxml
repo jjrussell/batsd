@@ -13,7 +13,7 @@ xml.TapjoyConnectReturnObject do
         end
         xml.Name offer.name
         xml.RedirectURL get_click_url(offer)
-        xml.StoreID offer.third_party_data || offer.id
+        xml.StoreID offer.store_id_for_feed
         if params[:source] == 'featured'
           xml.FullScreenAdURL get_fullscreen_ad_url(offer)
           xml.MediumIconURL offer.get_icon_url(:source => :cloudfront, :size => '256')

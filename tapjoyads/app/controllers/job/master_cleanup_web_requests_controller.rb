@@ -19,6 +19,10 @@ class Job::MasterCleanupWebRequestsController < Job::JobController
         next unless domain_names.include?(domain_name)
 
         backup_options = { :delete_domain => true, :prefix => "#{day.to_s}/" }
+        # TO REMOVE: this if block after 2011-08-10 has been backed up
+        if day.to_s == '2011-08-10'
+          backup_options[:where] = "path != 'reward'"
+        end
         message = { :domain_name => domain_name, :s3_bucket => BucketNames::WEB_REQUESTS, :backup_options => backup_options }.to_json
         Sqs.send_message(QueueNames::SDB_BACKUPS, message)
       end

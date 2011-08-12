@@ -1,8 +1,9 @@
 #jqt
   #link_device.current
-    = render 'nav_bar'
+    .hidden_nav.toolbar
     .container.vertical-scroll
       .scroller.with-scrollbar
+        .top_nav_bar
         .page
           .logo
             .slide_nav
@@ -21,12 +22,13 @@
               Phone not linked!
             .message_header
               You must link your device in order to view your apps!
-            .message_content
+            .message_content.link_device
               %a{ :href => new_games_gamer_device_path }
-                %span.button.grey.arrow  
-                  Please link your device now
+                .button.grey.arrow
+                  .arrow_bg
+                    Please link your device now
 
-  = render 'my_account'
+= render 'my_account'
 
 - content_for :page_javascript do
   - if Rails.env.production?

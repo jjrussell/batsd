@@ -14,8 +14,10 @@ private
     reward = Reward.deserialize(message.to_s)
     return if reward.sent_currency?
     
+    mc_time = Time.zone.now.to_i / 1.hour
     if @slow_callbacks.include?(reward.currency_id)
       @num_reads += 1 if @num_reads < @max_reads
+      Mc.increment_count("send_currency_skip.#{reward.currency_id}.#{mc_time}")
       raise SkippedSendCurrency.new("not attempting to ping the callback for #{reward.currency_id}")
     end
     
@@ -43,7 +45,7 @@ private
     callback_url += "#{mark}snuid=#{CGI::escape(publisher_user_id)}&currency=#{reward.currency_reward}"
     if currency.send_offer_data?
       offer = Offer.find_in_cache(reward.offer_id, true)
-      callback_url += "&storeId=#{CGI::escape(offer.third_party_data)}" if offer.item_type == 'App' && offer.third_party_data?
+      callback_url += "&storeId=#{CGI::escape(offer.store_id_for_feed)}"
       callback_url += "&application=#{CGI::escape(offer.name)}"
       publisher_revenue = reward.publisher_amount / 100.0
       callback_url += "&rev=#{publisher_revenue}"
@@ -90,7 +92,6 @@ private
         reward.delete('sent_currency')
         reward.serial_save
         
-        mc_time = Time.zone.now.to_i / 1.hour
         num_failures = Mc.increment_count("send_currency_failure.#{currency.id}.#{mc_time}")
         if num_failures < 5000
           Mc.compare_and_swap("send_currency_failures.#{mc_time}") do |failures|

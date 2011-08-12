@@ -1,10 +1,48 @@
-- @page_title = 'Password Reset'
-
-
-- form_for(:gamer, @gamer, :url => { :action => :update }, :html => { :method => :put }) do |f|
-  .field
-    = f.label :password
-    = f.password_field :password
-    = error_message_on @gamer, :password
-  .field
-    = f.submit 'Submit'
+#jqt
+  #update_password.tan.account.current 
+    .container
+      .page.no_top_nav_bar
+        .logo
+        .content.narrow.pad
+          .header_wrapper
+            .title_2
+              Update Password 
+            .content_box_top_arrow_wrapper
+              .content_box_top_arrow
+            .content_box_wrapper
+              .content_box.clearfix 
+                %div
+                  - form_for(:gamer, @gamer, :url => { :action => :update }, :html => { :method => :put }) do |f|
+                    .field
+                      = f.label :password
+                      = f.password_field :password
+                    .field
+                      = submit_tag('Submit', :class => 'button lt_blue')
+                    .field
+                      = error_message_on @gamer, :password
+                  .formError.hide
+                    .account_error
+                     
+- content_for :page_javascript do
+  :plain
+    $(window).load(function() {
+      $('form').submit(function(e){
+        $(".formError").hide();
+        var inputs, pass, values = {};
+        inputs = $('form :input[type=password]');
+        inputs.each(function() {
+          if (this.type == 'checkbox' || this.type == 'radio') {
+            values[this.name] = $(this).attr("checked");
+          }
+          else {
+            values[this.name] = $(this).val();
+          }
+          pass = values['gamer[password]'];
+          if( pass == '' ) {
+            $(".account_error").html('Please enter a password');
+            $(".formError").show();
+            e.preventDefault();
+          }
+        });
+      });
+    });

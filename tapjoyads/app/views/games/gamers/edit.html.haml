@@ -1,11 +1,22 @@
-- @page_title = 'Link'
-
-%h1 Link your account to your udid
-
-- form_for([ :games, @gamer ], :url => { :action => :update }) do |f|
-  .field
-    = f.label :udid
-    = f.text_field :udid
-    = error_message_on @gamer, :udid
-  .field
-    = f.submit 'Submit'
+#jqt
+  #update_device.tan.account.current 
+    .container
+      .page.no_top_nav_bar
+        .logo
+        .content.narrow.pad
+          .header_wrapper
+            .title_2
+              Update Device
+            .content_box_top_arrow_wrapper
+              .content_box_top_arrow
+            .content_box_wrapper
+              .content_box.clearfix
+                %div   
+                  - form_for([ :games, @gamer ], :url => { :action => :update }) do |f|
+                    .field
+                      = f.label :udid
+                      = f.text_field :udid
+                    .field
+                      = submit_tag('Submit', :class => 'button lt_blue')
+                    .field
+                      = error_message_on @gamer, :udid

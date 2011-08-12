@@ -1,36 +1,24 @@
 class Job::MasterSetBadDomainsController < Job::JobController
-  # The threshold for the number of fails/second that will cause a domain to be take out of service.
-  FAIL_RATE_LIMIT = 0.35
   
   def index
-    mc_key = 'failed_sdb_saves.bad_domains'
-    bad_domains = Mc.get(mc_key) || {}
-    
-    now = Time.zone.now
-    date = now.strftime('%Y-%m-%d')
-    minumum_interval = 5.minutes
-    hour_key = ((now - minumum_interval).to_f / 1.hour).to_i
-    
-    bad_domains.reject! do |key, value|
-      value + 1.hours < now
-    end
+    now         = Time.zone.now
+    earlier     = now - 1.minute
+    mc_key      = 'failed_sdb_saves.web_request_failures'
+    now_key     = (now.to_f / 1.minute).to_i
+    earlier_key = (earlier.to_f / 1.minute).to_i
+    date        = now.to_s(:yyyy_mm_dd)
+    failures    = {}
     
     MAX_WEB_REQUEST_DOMAINS.times do |num|
       domain_name = "web-request-#{date}-#{num}"
-      count = Mc.get_count("failed_sdb_saves.sdb.#{domain_name}.#{hour_key}")
-      seconds = (now - minumum_interval).hour == now.hour ? now - now.beginning_of_hour : 1.hour
-      fail_rate = count.to_f / seconds
-      
-      if fail_rate > FAIL_RATE_LIMIT && bad_domains[domain_name].nil?
-        bad_domains[domain_name] = now
-        Notifier.alert_new_relic(BadWebRequestDomain, 
-          "#{domain_name} has been marked bad. #{fail_rate} fails/second over last #{seconds} seconds.",
-          request, params)
-      end
+      count = Mc.get_count("failed_sdb_saves.wr.#{domain_name}.#{now_key}")
+      count += Mc.get_count("failed_sdb_saves.wr.#{domain_name}.#{earlier_key}")
+      failures[domain_name] = count
     end
     
-    Mc.put(mc_key, bad_domains)
+    Mc.distributed_put(mc_key, failures)
     
     render :text => 'ok'
   end
+  
 end

@@ -6247,13 +6247,17 @@ TJG.vars.isSwapped = false;
 TJG.vars.isIos = false;
 TJG.vars.isTouch = false;
 TJG.appOfferWall = {};
+TJG.openiDialogs = {};
 (function(window, document) {
-    var winH = $(window).height();
-    var winW = $(window).width();
-    var el = "#loader";
-    $(el).css('top',  winH/2-$().height()/2);
-    $(el).css('left', winW/2-$(el).width()/2);
-    $(el).show();
+    var winH, winW;
+    function centerDialog (el) {
+      winH = $(window).height();
+      winW = $(window).width();
+      $(el).css('top',  winH/2-$().height()/2);
+      $(el).css('left', winW/2-$(el).width()/2);
+      $(el).show();    
+    }
+    centerDialog("#loader");
     /*!
      * master-class v0.1
      * http://johnboxall.github.com/master-class/
@@ -6311,6 +6315,11 @@ TJG.appOfferWall = {};
             currentOrientationClass = orientationClass;
             var className = TJG.doc.className;
             TJG.doc.className = className ? className.replace(orientationRe, currentOrientationClass) : currentOrientationClass;
+            if (TJG.repositionDialog.length > 0) {
+              for (var i = 0; i < TJG.repositionDialog.length; i++) {
+                centerDialog(TJG.repositionDialog[i]);
+              }
+            }
          }
       }, false);
     }
@@ -6337,1282 +6346,7 @@ TJG.appOfferWall = {};
         className = className.replace(replace, classReplaces[replace]);
     }
     TJG.doc.className = className + classes.join(' ');
-})(this, document);/*!
- * Copyright (c) 2009 Simo Kinnunen.
- * Licensed under the MIT license.
- *
- * @version ${Version}
- */
-
-var Cufon = (function() {
-
-	var api = function() {
-		return api.replace.apply(null, arguments);
-	};
-
-	var DOM = api.DOM = {
-
-		ready: (function() {
-
-			var complete = false, readyStatus = { loaded: 1, complete: 1 };
-
-			var queue = [], perform = function() {
-				if (complete) return;
-				complete = true;
-				for (var fn; fn = queue.shift(); fn());
-			};
-
-			// Gecko, Opera, WebKit r26101+
-
-			if (document.addEventListener) {
-				document.addEventListener('DOMContentLoaded', perform, false);
-				window.addEventListener('pageshow', perform, false); // For cached Gecko pages
-			}
-
-			// Old WebKit, Internet Explorer
-
-			if (!window.opera && document.readyState) (function() {
-				readyStatus[document.readyState] ? perform() : setTimeout(arguments.callee, 10);
-			})();
-
-			// Internet Explorer
-
-			if (document.readyState && document.createStyleSheet) (function() {
-				try {
-					document.body.doScroll('left');
-					perform();
-				}
-				catch (e) {
-					setTimeout(arguments.callee, 1);
-				}
-			})();
-
-			addEvent(window, 'load', perform); // Fallback
-
-			return function(listener) {
-				if (!arguments.length) perform();
-				else complete ? listener() : queue.push(listener);
-			};
-
-		})(),
-
-		root: function() {
-			return document.documentElement || document.body;
-		}
-
-	};
-
-	var CSS = api.CSS = {
-
-		Size: function(value, base) {
-
-			this.value = parseFloat(value);
-			this.unit = String(value).match(/[a-z%]*$/)[0] || 'px';
-
-			this.convert = function(value) {
-				return value / base * this.value;
-			};
-
-			this.convertFrom = function(value) {
-				return value / this.value * base;
-			};
-
-			this.toString = function() {
-				return this.value + this.unit;
-			};
-
-		},
-
-		addClass: function(el, className) {
-			var current = el.className;
-			el.className = current + (current && ' ') + className;
-			return el;
-		},
-
-		color: cached(function(value) {
-			var parsed = {};
-			parsed.color = value.replace(/^rgba\((.*?),\s*([\d.]+)\)/, function($0, $1, $2) {
-				parsed.opacity = parseFloat($2);
-				return 'rgb(' + $1 + ')';
-			});
-			return parsed;
-		}),
-
-		// has no direct CSS equivalent.
-		// @see http://msdn.microsoft.com/en-us/library/system.windows.fontstretches.aspx
-		fontStretch: cached(function(value) {
-			if (typeof value == 'number') return value;
-			if (/%$/.test(value)) return parseFloat(value) / 100;
-			return {
-				'ultra-condensed': 0.5,
-				'extra-condensed': 0.625,
-				condensed: 0.75,
-				'semi-condensed': 0.875,
-				'semi-expanded': 1.125,
-				expanded: 1.25,
-				'extra-expanded': 1.5,
-				'ultra-expanded': 2
-			}[value] || 1;
-		}),
-
-		getStyle: function(el) {
-			var view = document.defaultView;
-			if (view && view.getComputedStyle) return new Style(view.getComputedStyle(el, null));
-			if (el.currentStyle) return new Style(el.currentStyle);
-			return new Style(el.style);
-		},
-
-		gradient: cached(function(value) {
-			var gradient = {
-				id: value,
-				type: value.match(/^-([a-z]+)-gradient\(/)[1],
-				stops: []
-			}, colors = value.substr(value.indexOf('(')).match(/([\d.]+=)?(#[a-f0-9]+|[a-z]+\(.*?\)|[a-z]+)/ig);
-			for (var i = 0, l = colors.length, stop; i < l; ++i) {
-				stop = colors[i].split('=', 2).reverse();
-				gradient.stops.push([ stop[1] || i / (l - 1), stop[0] ]);
-			}
-			return gradient;
-		}),
-
-		quotedList: cached(function(value) {
-			// doesn't work properly with empty quoted strings (""), but
-			// it's not worth the extra code.
-			var list = [], re = /\s*((["'])([\s\S]*?[^\\])\2|[^,]+)\s*/g, match;
-			while (match = re.exec(value)) list.push(match[3] || match[1]);
-			return list;
-		}),
-
-		recognizesMedia: cached(function(media) {
-			var el = document.createElement('style'), sheet, container, supported;
-			el.type = 'text/css';
-			el.media = media;
-			try { // this is cached anyway
-				el.appendChild(document.createTextNode('/**/'));
-			} catch (e) {}
-			container = elementsByTagName('head')[0];
-			container.insertBefore(el, container.firstChild);
-			sheet = (el.sheet || el.styleSheet);
-			supported = sheet && !sheet.disabled;
-			container.removeChild(el);
-			return supported;
-		}),
-
-		removeClass: function(el, className) {
-			var re = RegExp('(?:^|\\s+)' + className +  '(?=\\s|$)', 'g');
-			el.className = el.className.replace(re, '');
-			return el;
-		},
-
-		supports: function(property, value) {
-			var checker = document.createElement('span').style;
-			if (checker[property] === undefined) return false;
-			checker[property] = value;
-			return checker[property] === value;
-		},
-
-		textAlign: function(word, style, position, wordCount) {
-			if (style.get('textAlign') == 'right') {
-				if (position > 0) word = ' ' + word;
-			}
-			else if (position < wordCount - 1) word += ' ';
-			return word;
-		},
-
-		textShadow: cached(function(value) {
-			if (value == 'none') return null;
-			var shadows = [], currentShadow = {}, result, offCount = 0;
-			var re = /(#[a-f0-9]+|[a-z]+\(.*?\)|[a-z]+)|(-?[\d.]+[a-z%]*)|,/ig;
-			while (result = re.exec(value)) {
-				if (result[0] == ',') {
-					shadows.push(currentShadow);
-					currentShadow = {};
-					offCount = 0;
-				}
-				else if (result[1]) {
-					currentShadow.color = result[1];
-				}
-				else {
-					currentShadow[[ 'offX', 'offY', 'blur' ][offCount++]] = result[2];
-				}
-			}
-			shadows.push(currentShadow);
-			return shadows;
-		}),
-
-		textTransform: (function() {
-			var map = {
-				uppercase: function(s) {
-					return s.toUpperCase();
-				},
-				lowercase: function(s) {
-					return s.toLowerCase();
-				},
-				capitalize: function(s) {
-					return s.replace(/\b./g, function($0) {
-						return $0.toUpperCase();
-					});
-				}
-			};
-			return function(text, style) {
-				var transform = map[style.get('textTransform')];
-				return transform ? transform(text) : text;
-			};
-		})(),
-
-		whiteSpace: (function() {
-			var ignore = {
-				inline: 1,
-				'inline-block': 1,
-				'run-in': 1
-			};
-			var wsStart = /^\s+/, wsEnd = /\s+$/;
-			return function(text, style, node, previousElement) {
-				if (previousElement) {
-					if (previousElement.nodeName.toLowerCase() == 'br') {
-						text = text.replace(wsStart, '');
-					}
-				}
-				if (ignore[style.get('display')]) return text;
-				if (!node.previousSibling) text = text.replace(wsStart, '');
-				if (!node.nextSibling) text = text.replace(wsEnd, '');
-				return text;
-			};
-		})()
-
-	};
-
-	CSS.ready = (function() {
-
-		// don't do anything in Safari 2 (it doesn't recognize any media type)
-		var complete = !CSS.recognizesMedia('all'), hasLayout = false;
-
-		var queue = [], perform = function() {
-			complete = true;
-			for (var fn; fn = queue.shift(); fn());
-		};
-
-		var links = elementsByTagName('link'), styles = elementsByTagName('style');
-
-		function isContainerReady(el) {
-			return el.disabled || isSheetReady(el.sheet, el.media || 'screen');
-		}
-
-		function isSheetReady(sheet, media) {
-			// in Opera sheet.disabled is true when it's still loading,
-			// even though link.disabled is false. they stay in sync if
-			// set manually.
-			if (!CSS.recognizesMedia(media || 'all')) return true;
-			if (!sheet || sheet.disabled) return false;
-			try {
-				var rules = sheet.cssRules, rule;
-				if (rules) {
-					// needed for Safari 3 and Chrome 1.0.
-					// in standards-conforming browsers cssRules contains @-rules.
-					// Chrome 1.0 weirdness: rules[<number larger than .length - 1>]
-					// returns the last rule, so a for loop is the only option.
-					search: for (var i = 0, l = rules.length; rule = rules[i], i < l; ++i) {
-						switch (rule.type) {
-							case 2: // @charset
-								break;
-							case 3: // @import
-								if (!isSheetReady(rule.styleSheet, rule.media.mediaText)) return false;
-								break;
-							default:
-								// only @charset can precede @import
-								break search;
-						}
-					}
-				}
-			}
-			catch (e) {} // probably a style sheet from another domain
-			return true;
-		}
-
-		function allStylesLoaded() {
-			// Internet Explorer's style sheet model, there's no need to do anything
-			if (document.createStyleSheet) return true;
-			// standards-compliant browsers
-			var el, i;
-			for (i = 0; el = links[i]; ++i) {
-				if (el.rel.toLowerCase() == 'stylesheet' && !isContainerReady(el)) return false;
-			}
-			for (i = 0; el = styles[i]; ++i) {
-				if (!isContainerReady(el)) return false;
-			}
-			return true;
-		}
-
-		DOM.ready(function() {
-			// getComputedStyle returns null in Gecko if used in an iframe with display: none
-			if (!hasLayout) hasLayout = CSS.getStyle(document.body).isUsable();
-			if (complete || (hasLayout && allStylesLoaded())) perform();
-			else setTimeout(arguments.callee, 10);
-		});
-
-		return function(listener) {
-			if (complete) listener();
-			else queue.push(listener);
-		};
-
-	})();
-
-	function Font(data) {
-
-		var face = this.face = data.face, wordSeparators = {
-			'\u0020': 1,
-			'\u00a0': 1,
-			'\u3000': 1
-		};
-
-		this.glyphs = data.glyphs;
-		this.w = data.w;
-		this.baseSize = parseInt(face['units-per-em'], 10);
-
-		this.family = face['font-family'].toLowerCase();
-		this.weight = face['font-weight'];
-		this.style = face['font-style'] || 'normal';
-
-		this.viewBox = (function () {
-			var parts = face.bbox.split(/\s+/);
-			var box = {
-				minX: parseInt(parts[0], 10),
-				minY: parseInt(parts[1], 10),
-				maxX: parseInt(parts[2], 10),
-				maxY: parseInt(parts[3], 10)
-			};
-			box.width = box.maxX - box.minX;
-			box.height = box.maxY - box.minY;
-			box.toString = function() {
-				return [ this.minX, this.minY, this.width, this.height ].join(' ');
-			};
-			return box;
-		})();
-
-		this.ascent = -parseInt(face.ascent, 10);
-		this.descent = -parseInt(face.descent, 10);
-
-		this.height = -this.ascent + this.descent;
-
-		this.spacing = function(chars, letterSpacing, wordSpacing) {
-			var glyphs = this.glyphs, glyph, kerning, k,
-				jumps = [], width = 0,
-				i = -1, j = -1, chr;
-			while (chr = chars[++i]) {
-				glyph = glyphs[chr] || this.missingGlyph;
-				if (!glyph) continue;
-				if (kerning) {
-					width -= k = kerning[chr] || 0;
-					jumps[j] -= k;
-				}
-				width += jumps[++j] = ~~(glyph.w || this.w) + letterSpacing + (wordSeparators[chr] ? wordSpacing : 0);
-				kerning = glyph.k;
-			}
-			jumps.total = width;
-			return jumps;
-		};
-
-	}
-
-	function FontFamily() {
-
-		var styles = {}, mapping = {
-			oblique: 'italic',
-			italic: 'oblique'
-		};
-
-		this.add = function(font) {
-			(styles[font.style] || (styles[font.style] = {}))[font.weight] = font;
-		};
-
-		this.get = function(style, weight) {
-			var weights = styles[style] || styles[mapping[style]]
-				|| styles.normal || styles.italic || styles.oblique;
-			if (!weights) return null;
-			// we don't have to worry about "bolder" and "lighter"
-			// because IE's currentStyle returns a numeric value for it,
-			// and other browsers use the computed value anyway
-			weight = {
-				normal: 400,
-				bold: 700
-			}[weight] || parseInt(weight, 10);
-			if (weights[weight]) return weights[weight];
-			// http://www.w3.org/TR/CSS21/fonts.html#propdef-font-weight
-			// Gecko uses x99/x01 for lighter/bolder
-			var up = {
-				1: 1,
-				99: 0
-			}[weight % 100], alts = [], min, max;
-			if (up === undefined) up = weight > 400;
-			if (weight == 500) weight = 400;
-			for (var alt in weights) {
-				if (!hasOwnProperty(weights, alt)) continue;
-				alt = parseInt(alt, 10);
-				if (!min || alt < min) min = alt;
-				if (!max || alt > max) max = alt;
-				alts.push(alt);
-			}
-			if (weight < min) weight = min;
-			if (weight > max) weight = max;
-			alts.sort(function(a, b) {
-				return (up
-					? (a >= weight && b >= weight) ? a < b : a > b
-					: (a <= weight && b <= weight) ? a > b : a < b) ? -1 : 1;
-			});
-			return weights[alts[0]];
-		};
-
-	}
-
-	function HoverHandler() {
-
-		function contains(node, anotherNode) {
-			if (node.contains) return node.contains(anotherNode);
-			return node.compareDocumentPosition(anotherNode) & 16;
-		}
-
-		function onOverOut(e) {
-			var related = e.relatedTarget;
-			if (!related || contains(this, related)) return;
-			trigger(this, e.type == 'mouseover');
-		}
-
-		function onEnterLeave(e) {
-			trigger(this, e.type == 'mouseenter');
-		}
-
-		function trigger(el, hoverState) {
-			// A timeout is needed so that the event can actually "happen"
-			// before replace is triggered. This ensures that styles are up
-			// to date.
-			setTimeout(function() {
-				var options = sharedStorage.get(el).options;
-				api.replace(el, hoverState ? merge(options, options.hover) : options, true);
-			}, 10);
-		}
-
-		this.attach = function(el) {
-			if (el.onmouseenter === undefined) {
-				addEvent(el, 'mouseover', onOverOut);
-				addEvent(el, 'mouseout', onOverOut);
-			}
-			else {
-				addEvent(el, 'mouseenter', onEnterLeave);
-				addEvent(el, 'mouseleave', onEnterLeave);
-			}
-		};
-
-	}
-
-	function ReplaceHistory() {
-
-		var list = [], map = {};
-
-		function filter(keys) {
-			var values = [], key;
-			for (var i = 0; key = keys[i]; ++i) values[i] = list[map[key]];
-			return values;
-		}
-
-		this.add = function(key, args) {
-			map[key] = list.push(args) - 1;
-		};
-
-		this.repeat = function() {
-			var snapshot = arguments.length ? filter(arguments) : list, args;
-			for (var i = 0; args = snapshot[i++];) api.replace(args[0], args[1], true);
-		};
-
-	}
-
-	function Storage() {
-
-		var map = {}, at = 0;
-
-		function identify(el) {
-			return el.cufid || (el.cufid = ++at);
-		}
-
-		this.get = function(el) {
-			var id = identify(el);
-			return map[id] || (map[id] = {});
-		};
-
-	}
-
-	function Style(style) {
-
-		var custom = {}, sizes = {};
-
-		this.extend = function(styles) {
-			for (var property in styles) {
-				if (hasOwnProperty(styles, property)) custom[property] = styles[property];
-			}
-			return this;
-		};
-
-		this.get = function(property) {
-			return custom[property] != undefined ? custom[property] : style[property];
-		};
-
-		this.getSize = function(property, base) {
-			return sizes[property] || (sizes[property] = new CSS.Size(this.get(property), base));
-		};
-
-		this.isUsable = function() {
-			return !!style;
-		};
-
-	}
-
-	function addEvent(el, type, listener) {
-		if (el.addEventListener) {
-			el.addEventListener(type, listener, false);
-		}
-		else if (el.attachEvent) {
-			el.attachEvent('on' + type, function() {
-				return listener.call(el, window.event);
-			});
-		}
-	}
-
-	function attach(el, options) {
-		var storage = sharedStorage.get(el);
-		if (storage.options) return el;
-		if (options.hover && options.hoverables[el.nodeName.toLowerCase()]) {
-			hoverHandler.attach(el);
-		}
-		storage.options = options;
-		return el;
-	}
-
-	function cached(fun) {
-		var cache = {};
-		return function(key) {
-			if (!hasOwnProperty(cache, key)) cache[key] = fun.apply(null, arguments);
-			return cache[key];
-		};
-	}
-
-	function getFont(el, style) {
-		var families = CSS.quotedList(style.get('fontFamily').toLowerCase()), family;
-		for (var i = 0; family = families[i]; ++i) {
-			if (fonts[family]) return fonts[family].get(style.get('fontStyle'), style.get('fontWeight'));
-		}
-		return null;
-	}
-
-	function elementsByTagName(query) {
-		return document.getElementsByTagName(query);
-	}
-
-	function hasOwnProperty(obj, property) {
-		return obj.hasOwnProperty(property);
-	}
-
-	function merge() {
-		var merged = {}, arg, key;
-		for (var i = 0, l = arguments.length; arg = arguments[i], i < l; ++i) {
-			for (key in arg) {
-				if (hasOwnProperty(arg, key)) merged[key] = arg[key];
-			}
-		}
-		return merged;
-	}
-
-	function process(font, text, style, options, node, el) {
-		var fragment = document.createDocumentFragment(), processed;
-		if (text === '') return fragment;
-		var separate = options.separate;
-		var parts = text.split(separators[separate]), needsAligning = (separate == 'words');
-		if (needsAligning && HAS_BROKEN_REGEXP) {
-			// @todo figure out a better way to do this
-			if (/^\s/.test(text)) parts.unshift('');
-			if (/\s$/.test(text)) parts.push('');
-		}
-		for (var i = 0, l = parts.length; i < l; ++i) {
-			processed = engines[options.engine](font,
-				needsAligning ? CSS.textAlign(parts[i], style, i, l) : parts[i],
-				style, options, node, el, i < l - 1);
-			if (processed) fragment.appendChild(processed);
-		}
-		return fragment;
-	}
-
-	function replaceElement(el, options) {
-		var name = el.nodeName.toLowerCase();
-		if (options.ignore[name]) return;
-		var replace = !options.textless[name];
-		var style = CSS.getStyle(attach(el, options)).extend(options);
-		var font = getFont(el, style), node, type, next, anchor, text, lastElement;
-		if (!font) return;
-		for (node = el.firstChild; node; node = next) {
-			type = node.nodeType;
-			next = node.nextSibling;
-			if (replace && type == 3) {
-				// Node.normalize() is broken in IE 6, 7, 8
-				if (anchor) {
-					anchor.appendData(node.data);
-					el.removeChild(node);
-				}
-				else anchor = node;
-				if (next) continue;
-			}
-			if (anchor) {
-				el.replaceChild(process(font,
-					CSS.whiteSpace(anchor.data, style, anchor, lastElement),
-					style, options, node, el), anchor);
-				anchor = null;
-			}
-			if (type == 1) {
-				if (node.firstChild) {
-					if (node.nodeName.toLowerCase() == 'cufon') {
-						engines[options.engine](font, null, style, options, node, el);
-					}
-					else arguments.callee(node, options);
-				}
-				lastElement = node;
-			}
-		}
-	}
-
-	var HAS_BROKEN_REGEXP = ' '.split(/\s+/).length == 0;
-
-	var sharedStorage = new Storage();
-	var hoverHandler = new HoverHandler();
-	var replaceHistory = new ReplaceHistory();
-	var initialized = false;
-
-	var engines = {}, fonts = {}, defaultOptions = {
-		autoDetect: false,
-		engine: null,
-		//fontScale: 1,
-		//fontScaling: false,
-		forceHitArea: false,
-		hover: false,
-		hoverables: {
-			a: true
-		},
-		ignore: {
-			applet: 1,
-			canvas: 1,
-			col: 1,
-			colgroup: 1,
-			head: 1,
-			iframe: 1,
-			map: 1,
-			optgroup: 1,
-			option: 1,
-			script: 1,
-			select: 1,
-			style: 1,
-			textarea: 1,
-			title: 1,
-			pre: 1
-		},
-		printable: true,
-		//rotation: 0,
-		//selectable: false,
-		selector: (
-				window.Sizzle
-			||	(window.jQuery && function(query) { return jQuery(query); }) // avoid noConflict issues
-			||	(window.dojo && dojo.query)
-			||	(window.Ext && Ext.query)
-			||	(window.YAHOO && YAHOO.util && YAHOO.util.Selector && YAHOO.util.Selector.query)
-			||	(window.$$ && function(query) { return $$(query); })
-			||	(window.$ && function(query) { return $(query); })
-			||	(document.querySelectorAll && function(query) { return document.querySelectorAll(query); })
-			||	elementsByTagName
-		),
-		separate: 'words', // 'none' and 'characters' are also accepted
-		textless: {
-			dl: 1,
-			html: 1,
-			ol: 1,
-			table: 1,
-			tbody: 1,
-			thead: 1,
-			tfoot: 1,
-			tr: 1,
-			ul: 1
-		},
-		textShadow: 'none'
-	};
-
-	var separators = {
-		// The first pattern may cause unicode characters above
-		// code point 255 to be removed in Safari 3.0. Luckily enough
-		// Safari 3.0 does not include non-breaking spaces in \s, so
-		// we can just use a simple alternative pattern.
-		words: /\s/.test('\u00a0') ? /[^\S\u00a0]+/ : /\s+/,
-		characters: '',
-		none: /^/
-	};
-
-	api.now = function() {
-		DOM.ready();
-		return api;
-	};
-
-	api.refresh = function() {
-		replaceHistory.repeat.apply(replaceHistory, arguments);
-		return api;
-	};
-
-	api.registerEngine = function(id, engine) {
-		if (!engine) return api;
-		engines[id] = engine;
-		return api.set('engine', id);
-	};
-
-	api.registerFont = function(data) {
-		if (!data) return api;
-		var font = new Font(data), family = font.family;
-		if (!fonts[family]) fonts[family] = new FontFamily();
-		fonts[family].add(font);
-		return api.set('fontFamily', '"' + family + '"');
-	};
-
-	api.replace = function(elements, options, ignoreHistory) {
-		options = merge(defaultOptions, options);
-		if (!options.engine) return api; // there's no browser support so we'll just stop here
-		if (!initialized) {
-			CSS.addClass(DOM.root(), 'cufon-active cufon-loading');
-			CSS.ready(function() {
-				// fires before any replace() calls, but it doesn't really matter
-				CSS.addClass(CSS.removeClass(DOM.root(), 'cufon-loading'), 'cufon-ready');
-			});
-			initialized = true;
-		}
-		if (options.hover) options.forceHitArea = true;
-		if (options.autoDetect) delete options.fontFamily;
-		if (typeof options.textShadow == 'string') {
-			options.textShadow = CSS.textShadow(options.textShadow);
-		}
-		if (typeof options.color == 'string' && /^-/.test(options.color)) {
-			options.textGradient = CSS.gradient(options.color);
-		}
-		else delete options.textGradient;
-		if (!ignoreHistory) replaceHistory.add(elements, arguments);
-		if (elements.nodeType || typeof elements == 'string') elements = [ elements ];
-		CSS.ready(function() {
-			for (var i = 0, l = elements.length; i < l; ++i) {
-				var el = elements[i];
-				if (typeof el == 'string') api.replace(options.selector(el), options, true);
-				else replaceElement(el, options);
-			}
-		});
-		return api;
-	};
-
-	api.set = function(option, value) {
-		defaultOptions[option] = value;
-		return api;
-	};
-
-	return api;
-
-})();
-
-Cufon.registerEngine('vml', (function() {
-
-	var ns = document.namespaces;
-	if (!ns) return;
-	ns.add('cvml', 'urn:schemas-microsoft-com:vml');
-	ns = null;
-
-	var check = document.createElement('cvml:shape');
-	check.style.behavior = 'url(#default#VML)';
-	if (!check.coordsize) return; // VML isn't supported
-	check = null;
-
-	var HAS_BROKEN_LINEHEIGHT = (document.documentMode || 0) < 8;
-
-	document.write(('<style type="text/css">' +
-		'cufoncanvas{text-indent:0;}' +
-		'@media screen{' +
-			'cvml\\:shape,cvml\\:rect,cvml\\:fill,cvml\\:shadow{behavior:url(#default#VML);display:block;antialias:true;position:absolute;}' +
-			'cufoncanvas{position:absolute;text-align:left;}' +
-			'cufon{display:inline-block;position:relative;vertical-align:' +
-			(HAS_BROKEN_LINEHEIGHT
-				? 'middle'
-				: 'text-bottom') +
-			';}' +
-			'cufon cufontext{position:absolute;left:-10000in;font-size:1px;}' +
-			'a cufon{cursor:pointer}' + // ignore !important here
-		'}' +
-		'@media print{' +
-			'cufon cufoncanvas{display:none;}' +
-		'}' +
-	'</style>').replace(/;/g, '!important;'));
-
-	function getFontSizeInPixels(el, value) {
-		return getSizeInPixels(el, /(?:em|ex|%)$|^[a-z-]+$/i.test(value) ? '1em' : value);
-	}
-
-	// Original by Dead Edwards.
-	// Combined with getFontSizeInPixels it also works with relative units.
-	function getSizeInPixels(el, value) {
-		if (value === '0') return 0;
-		if (/px$/i.test(value)) return parseFloat(value);
-		var style = el.style.left, runtimeStyle = el.runtimeStyle.left;
-		el.runtimeStyle.left = el.currentStyle.left;
-		el.style.left = value.replace('%', 'em');
-		var result = el.style.pixelLeft;
-		el.style.left = style;
-		el.runtimeStyle.left = runtimeStyle;
-		return result;
-	}
-
-	function getSpacingValue(el, style, size, property) {
-		var key = 'computed' + property, value = style[key];
-		if (isNaN(value)) {
-			value = style.get(property);
-			style[key] = value = (value == 'normal') ? 0 : ~~size.convertFrom(getSizeInPixels(el, value));
-		}
-		return value;
-	}
-
-	var fills = {};
-
-	function gradientFill(gradient) {
-		var id = gradient.id;
-		if (!fills[id]) {
-			var stops = gradient.stops, fill = document.createElement('cvml:fill'), colors = [];
-			fill.type = 'gradient';
-			fill.angle = 180;
-			fill.focus = '0';
-			fill.method = 'sigma';
-			fill.color = stops[0][1];
-			for (var j = 1, k = stops.length - 1; j < k; ++j) {
-				colors.push(stops[j][0] * 100 + '% ' + stops[j][1]);
-			}
-			fill.colors = colors.join(',');
-			fill.color2 = stops[k][1];
-			fills[id] = fill;
-		}
-		return fills[id];
-	}
-
-	return function(font, text, style, options, node, el, hasNext) {
-
-		var redraw = (text === null);
-
-		if (redraw) text = node.alt;
-
-		var viewBox = font.viewBox;
-
-		var size = style.computedFontSize || (style.computedFontSize = new Cufon.CSS.Size(getFontSizeInPixels(el, style.get('fontSize')) + 'px', font.baseSize));
-
-		var wrapper, canvas;
-
-		if (redraw) {
-			wrapper = node;
-			canvas = node.firstChild;
-		}
-		else {
-			wrapper = document.createElement('cufon');
-			wrapper.className = 'cufon cufon-vml';
-			wrapper.alt = text;
-
-			canvas = document.createElement('cufoncanvas');
-			wrapper.appendChild(canvas);
-
-			if (options.printable) {
-				var print = document.createElement('cufontext');
-				print.appendChild(document.createTextNode(text));
-				wrapper.appendChild(print);
-			}
-
-			// ie6, for some reason, has trouble rendering the last VML element in the document.
-			// we can work around this by injecting a dummy element where needed.
-			// @todo find a better solution
-			if (!hasNext) wrapper.appendChild(document.createElement('cvml:shape'));
-		}
-
-		var wStyle = wrapper.style;
-		var cStyle = canvas.style;
-
-		var height = size.convert(viewBox.height), roundedHeight = Math.ceil(height);
-		var roundingFactor = roundedHeight / height;
-		var stretchFactor = roundingFactor * Cufon.CSS.fontStretch(style.get('fontStretch'));
-		var minX = viewBox.minX, minY = viewBox.minY;
-
-		cStyle.height = roundedHeight;
-		cStyle.top = Math.round(size.convert(minY - font.ascent));
-		cStyle.left = Math.round(size.convert(minX));
-
-		wStyle.height = size.convert(font.height) + 'px';
-
-		var color = style.get('color');
-		var chars = Cufon.CSS.textTransform(text, style).split('');
-
-		var jumps = font.spacing(chars,
-			getSpacingValue(el, style, size, 'letterSpacing'),
-			getSpacingValue(el, style, size, 'wordSpacing')
-		);
-
-		if (!jumps.length) return null;
-
-		var width = jumps.total;
-		var fullWidth = -minX + width + (viewBox.width - jumps[jumps.length - 1]);
-
-		var shapeWidth = size.convert(fullWidth * stretchFactor), roundedShapeWidth = Math.round(shapeWidth);
-
-		var coordSize = fullWidth + ',' + viewBox.height, coordOrigin;
-		var stretch = 'r' + coordSize + 'ns';
-
-		var fill = options.textGradient && gradientFill(options.textGradient);
-
-		var glyphs = font.glyphs, offsetX = 0;
-		var shadows = options.textShadow;
-		var i = -1, j = 0, chr;
-
-		while (chr = chars[++i]) {
-
-			var glyph = glyphs[chars[i]] || font.missingGlyph, shape;
-			if (!glyph) continue;
-
-			if (redraw) {
-				// some glyphs may be missing so we can't use i
-				shape = canvas.childNodes[j];
-				while (shape.firstChild) shape.removeChild(shape.firstChild); // shadow, fill
-			}
-			else {
-				shape = document.createElement('cvml:shape');
-				canvas.appendChild(shape);
-			}
-
-			shape.stroked = 'f';
-			shape.coordsize = coordSize;
-			shape.coordorigin = coordOrigin = (minX - offsetX) + ',' + minY;
-			shape.path = (glyph.d ? 'm' + glyph.d + 'xe' : '') + 'm' + coordOrigin + stretch;
-			shape.fillcolor = color;
-
-			if (fill) shape.appendChild(fill.cloneNode(false));
-
-			// it's important to not set top/left or IE8 will grind to a halt
-			var sStyle = shape.style;
-			sStyle.width = roundedShapeWidth;
-			sStyle.height = roundedHeight;
-
-			if (shadows) {
-				// due to the limitations of the VML shadow element there
-				// can only be two visible shadows. opacity is shared
-				// for all shadows.
-				var shadow1 = shadows[0], shadow2 = shadows[1];
-				var color1 = Cufon.CSS.color(shadow1.color), color2;
-				var shadow = document.createElement('cvml:shadow');
-				shadow.on = 't';
-				shadow.color = color1.color;
-				shadow.offset = shadow1.offX + ',' + shadow1.offY;
-				if (shadow2) {
-					color2 = Cufon.CSS.color(shadow2.color);
-					shadow.type = 'double';
-					shadow.color2 = color2.color;
-					shadow.offset2 = shadow2.offX + ',' + shadow2.offY;
-				}
-				shadow.opacity = color1.opacity || (color2 && color2.opacity) || 1;
-				shape.appendChild(shadow);
-			}
-
-			offsetX += jumps[j++];
-		}
-
-		// addresses flickering issues on :hover
-
-		var cover = shape.nextSibling, coverFill, vStyle;
-
-		if (options.forceHitArea) {
-
-			if (!cover) {
-				cover = document.createElement('cvml:rect');
-				cover.stroked = 'f';
-				cover.className = 'cufon-vml-cover';
-				coverFill = document.createElement('cvml:fill');
-				coverFill.opacity = 0;
-				cover.appendChild(coverFill);
-				canvas.appendChild(cover);
-			}
-
-			vStyle = cover.style;
-
-			vStyle.width = roundedShapeWidth;
-			vStyle.height = roundedHeight;
-
-		}
-		else if (cover) canvas.removeChild(cover);
-
-		wStyle.width = Math.max(Math.ceil(size.convert(width * stretchFactor)), 0);
-
-		if (HAS_BROKEN_LINEHEIGHT) {
-
-			var yAdjust = style.computedYAdjust;
-
-			if (yAdjust === undefined) {
-				var lineHeight = style.get('lineHeight');
-				if (lineHeight == 'normal') lineHeight = '1em';
-				else if (!isNaN(lineHeight)) lineHeight += 'em'; // no unit
-				style.computedYAdjust = yAdjust = 0.5 * (getSizeInPixels(el, lineHeight) - parseFloat(wStyle.height));
-			}
-
-			if (yAdjust) {
-				wStyle.marginTop = Math.ceil(yAdjust) + 'px';
-				wStyle.marginBottom = yAdjust + 'px';
-			}
-
-		}
-
-		return wrapper;
-
-	};
-
-})());
-
-Cufon.registerEngine('canvas', (function() {
-
-	// Safari 2 doesn't support .apply() on native methods
-
-	var check = document.createElement('canvas');
-	if (!check || !check.getContext || !check.getContext.apply) return;
-	check = null;
-
-	var HAS_INLINE_BLOCK = Cufon.CSS.supports('display', 'inline-block');
-
-	// Firefox 2 w/ non-strict doctype (almost standards mode)
-	var HAS_BROKEN_LINEHEIGHT = !HAS_INLINE_BLOCK && (document.compatMode == 'BackCompat' || /frameset|transitional/i.test(document.doctype.publicId));
-
-	var styleSheet = document.createElement('style');
-	styleSheet.type = 'text/css';
-	styleSheet.appendChild(document.createTextNode((
-		'cufon{text-indent:0;}' +
-		'@media screen,projection{' +
-			'cufon{display:inline;display:inline-block;position:relative;vertical-align:middle;' +
-			(HAS_BROKEN_LINEHEIGHT
-				? ''
-				: 'font-size:1px;line-height:1px;') +
-			'}cufon cufontext{display:-moz-inline-box;display:inline-block;width:0;height:0;overflow:hidden;text-indent:-10000in;}' +
-			(HAS_INLINE_BLOCK
-				? 'cufon canvas{position:relative;}'
-				: 'cufon canvas{position:absolute;}') +
-		'}' +
-		'@media print{' +
-			'cufon{padding:0;}' + // Firefox 2
-			'cufon canvas{display:none;}' +
-		'}'
-	).replace(/;/g, '!important;')));
-	document.getElementsByTagName('head')[0].appendChild(styleSheet);
-
-	function generateFromVML(path, context) {
-		var atX = 0, atY = 0;
-		var code = [], re = /([mrvxe])([^a-z]*)/g, match;
-		generate: for (var i = 0; match = re.exec(path); ++i) {
-			var c = match[2].split(',');
-			switch (match[1]) {
-				case 'v':
-					code[i] = { m: 'bezierCurveTo', a: [ atX + ~~c[0], atY + ~~c[1], atX + ~~c[2], atY + ~~c[3], atX += ~~c[4], atY += ~~c[5] ] };
-					break;
-				case 'r':
-					code[i] = { m: 'lineTo', a: [ atX += ~~c[0], atY += ~~c[1] ] };
-					break;
-				case 'm':
-					code[i] = { m: 'moveTo', a: [ atX = ~~c[0], atY = ~~c[1] ] };
-					break;
-				case 'x':
-					code[i] = { m: 'closePath' };
-					break;
-				case 'e':
-					break generate;
-			}
-			context[code[i].m].apply(context, code[i].a);
-		}
-		return code;
-	}
-
-	function interpret(code, context) {
-		for (var i = 0, l = code.length; i < l; ++i) {
-			var line = code[i];
-			context[line.m].apply(context, line.a);
-		}
-	}
-
-	return function(font, text, style, options, node, el) {
-
-		var redraw = (text === null);
-
-		if (redraw) text = node.getAttribute('alt');
-
-		var viewBox = font.viewBox;
-
-		var size = style.getSize('fontSize', font.baseSize);
-
-		var expandTop = 0, expandRight = 0, expandBottom = 0, expandLeft = 0;
-		var shadows = options.textShadow, shadowOffsets = [];
-		if (shadows) {
-			for (var i = shadows.length; i--;) {
-				var shadow = shadows[i];
-				var x = size.convertFrom(parseFloat(shadow.offX));
-				var y = size.convertFrom(parseFloat(shadow.offY));
-				shadowOffsets[i] = [ x, y ];
-				if (y < expandTop) expandTop = y;
-				if (x > expandRight) expandRight = x;
-				if (y > expandBottom) expandBottom = y;
-				if (x < expandLeft) expandLeft = x;
-			}
-		}
-
-		var chars = Cufon.CSS.textTransform(text, style).split('');
-
-		var jumps = font.spacing(chars,
-			~~size.convertFrom(parseFloat(style.get('letterSpacing')) || 0),
-			~~size.convertFrom(parseFloat(style.get('wordSpacing')) || 0)
-		);
-
-		if (!jumps.length) return null; // there's nothing to render
-
-		var width = jumps.total;
-
-		expandRight += viewBox.width - jumps[jumps.length - 1];
-		expandLeft += viewBox.minX;
-
-		var wrapper, canvas;
-
-		if (redraw) {
-			wrapper = node;
-			canvas = node.firstChild;
-		}
-		else {
-			wrapper = document.createElement('cufon');
-			wrapper.className = 'cufon cufon-canvas';
-			wrapper.setAttribute('alt', text);
-
-			canvas = document.createElement('canvas');
-			wrapper.appendChild(canvas);
-
-			if (options.printable) {
-				var print = document.createElement('cufontext');
-				print.appendChild(document.createTextNode(text));
-				wrapper.appendChild(print);
-			}
-		}
-
-		var wStyle = wrapper.style;
-		var cStyle = canvas.style;
-
-		var height = size.convert(viewBox.height);
-		var roundedHeight = Math.ceil(height);
-		var roundingFactor = roundedHeight / height;
-		var stretchFactor = roundingFactor * Cufon.CSS.fontStretch(style.get('fontStretch'));
-		var stretchedWidth = width * stretchFactor;
-
-		var canvasWidth = Math.ceil(size.convert(stretchedWidth + expandRight - expandLeft));
-		var canvasHeight = Math.ceil(size.convert(viewBox.height - expandTop + expandBottom));
-
-		canvas.width = canvasWidth;
-		canvas.height = canvasHeight;
-
-		// needed for WebKit and full page zoom
-		cStyle.width = canvasWidth + 'px';
-		cStyle.height = canvasHeight + 'px';
-
-		// minY has no part in canvas.height
-		expandTop += viewBox.minY;
-
-		cStyle.top = Math.round(size.convert(expandTop - font.ascent)) + 'px';
-		cStyle.left = Math.round(size.convert(expandLeft)) + 'px';
-
-		var wrapperWidth = Math.max(Math.ceil(size.convert(stretchedWidth)), 0) + 'px';
-
-		if (HAS_INLINE_BLOCK) {
-			wStyle.width = wrapperWidth;
-			wStyle.height = size.convert(font.height) + 'px';
-		}
-		else {
-			wStyle.paddingLeft = wrapperWidth;
-			wStyle.paddingBottom = (size.convert(font.height) - 1) + 'px';
-		}
-
-		var g = canvas.getContext('2d'), scale = height / viewBox.height;
-
-		// proper horizontal scaling is performed later
-		g.scale(scale, scale * roundingFactor);
-		g.translate(-expandLeft, -expandTop);
-		g.save();
-
-		function renderText() {
-			var glyphs = font.glyphs, glyph, i = -1, j = -1, chr;
-			g.scale(stretchFactor, 1);
-			while (chr = chars[++i]) {
-				var glyph = glyphs[chars[i]] || font.missingGlyph;
-				if (!glyph) continue;
-				if (glyph.d) {
-					g.beginPath();
-					if (glyph.code) interpret(glyph.code, g);
-					else glyph.code = generateFromVML('m' + glyph.d, g);
-					g.fill();
-				}
-				g.translate(jumps[++j], 0);
-			}
-			g.restore();
-		}
-
-		if (shadows) {
-			for (var i = shadows.length; i--;) {
-				var shadow = shadows[i];
-				g.save();
-				g.fillStyle = shadow.color;
-				g.translate.apply(g, shadowOffsets[i]);
-				renderText();
-			}
-		}
-
-		var gradient = options.textGradient;
-		if (gradient) {
-			var stops = gradient.stops, fill = g.createLinearGradient(0, viewBox.minY, 0, viewBox.maxY);
-			for (var i = 0, l = stops.length; i < l; ++i) {
-				fill.addColorStop.apply(fill, stops[i]);
-			}
-			g.fillStyle = fill;
-		}
-		else g.fillStyle = style.get('color');
-
-		renderText();
-
-		return wrapper;
-
-	};
-
-})());/*!
- * The following copyright notice may not be removed under any circumstances.
- * 
- * Copyright:
- * © 1987, 1991, 1995, 1998, 2001, 2002 Adobe Systems Incorporated. All rights
- * reserved.
- * 
- * Full name:
- * CooperBlackStd
- * 
- * Manufacturer:
- * Adobe Systems Incorporated
- * 
- * Designer:
- * Oswald Bruce Cooper
- * 
- * Vendor URL:
- * http://www.adobe.com/type
- * 
- * License information:
- * http://www.adobe.com/type/legal.html
- */
-Cufon.registerFont({"w":226,"face":{"font-family":"Cooper Std","font-weight":900,"font-stretch":"normal","units-per-em":"360","panose-1":"2 8 9 3 4 3 11 2 4 4","ascent":"252","descent":"-108","cap-height":"4","bbox":"-8 -289.08 396 90","underline-thickness":"18","underline-position":"-18","stemh":"39","stemv":"81","unicode-range":"U+0020-U+007E"},"glyphs":{" ":{"w":113},"!":{"d":"98,-35v0,22,-18,40,-40,40v-22,0,-40,-18,-40,-40v0,-22,18,-40,40,-40v22,0,40,18,40,40xm58,-103v-27,-15,-43,-63,-43,-99v0,-27,12,-55,43,-55v76,0,40,129,0,154","w":116},"\"":{"d":"57,-118v-25,-14,-38,-57,-39,-90v0,-24,12,-49,39,-49v67,0,35,116,0,139xm155,-118v-25,-14,-38,-57,-39,-90v0,-24,12,-49,39,-49v68,0,35,116,0,139","w":211},"#":{"d":"146,-59r-7,52v-1,9,-11,7,-21,7v-4,0,-7,-3,-6,-7r7,-52v1,-10,-10,-7,-18,-7v-4,0,-7,3,-7,7r-8,52v-1,9,-11,7,-21,7v-4,0,-7,-3,-6,-7r8,-52v-1,-17,-36,6,-29,-27v3,-17,41,6,37,-27v-2,-17,-35,7,-29,-28v3,-15,33,2,35,-13r6,-49v1,-9,12,-7,22,-7v4,0,6,3,5,7r-7,49v-2,8,10,6,18,6v25,-7,-8,-67,36,-62v4,0,7,3,6,7r-7,49v0,15,36,-8,29,27v-4,18,-43,-8,-36,27v-2,17,37,-8,28,27v0,16,-32,-2,-35,14xm109,-120v-14,6,-12,36,9,27v14,-5,13,-34,-9,-27"},"$":{"d":"129,-229v0,20,30,21,46,15v20,-2,58,72,15,72v-19,0,-33,-37,-66,-37v-10,0,-20,5,-20,17v0,35,110,14,110,97v0,47,-51,72,-77,74v-20,2,5,40,-26,30v-29,8,-13,-21,-27,-29v-14,-2,-42,-8,-52,-16v-13,-9,-20,-42,-20,-56v0,-8,4,-16,13,-16v25,0,20,50,76,50v8,0,26,-4,26,-16v0,-11,-3,-13,-42,-27v-33,-12,-67,-34,-67,-73v0,-36,29,-65,63,-71v21,-3,-4,-40,27,-30v17,0,21,-2,21,16"},"%":{"d":"302,-66v2,79,-145,95,-146,8v-2,-86,143,-91,146,-8xm234,-31v23,-7,6,-63,-12,-67v-7,0,-11,8,-11,14v0,6,5,53,23,53xm151,-195v2,80,-144,94,-146,8v-2,-86,143,-91,146,-8xm83,-160v25,-7,6,-63,-12,-67v-7,0,-11,8,-11,14v0,6,5,53,23,53xm242,-249v-10,26,-91,152,-116,197v-25,45,-23,54,-39,54v-5,0,-21,-2,-21,-10v11,-24,111,-182,137,-234v3,-17,30,-22,39,-7","w":306},"&":{"d":"170,-77v-11,0,-17,-17,-17,-26v0,-73,99,-66,99,-96v0,-19,-25,1,-26,-15v14,-46,103,-36,103,17v0,46,-54,58,-54,69v0,10,27,12,27,43v0,39,-52,90,-150,90v-95,0,-147,-50,-147,-101v0,-45,40,-53,40,-60v0,-4,-13,-21,-13,-38v0,-40,44,-68,89,-68v20,0,64,8,64,35v0,10,-11,21,-21,21v-11,0,-19,-15,-36,-15v-14,0,-22,11,-22,24v0,35,39,12,39,37v0,43,-42,14,-42,47v0,36,35,74,72,74v24,0,54,-15,54,-43v0,-13,-11,-22,-24,-22v-23,0,-23,27,-35,27","w":328},"(":{"d":"25,-126v0,-74,36,-163,120,-163v36,0,40,9,40,18v5,19,-24,20,-34,16v-43,0,-48,98,-48,129v0,31,5,129,48,129v9,-3,39,-3,34,16v0,9,-4,18,-40,18v-84,0,-120,-89,-120,-163","w":188},")":{"d":"163,-126v0,74,-35,163,-119,163v-36,0,-40,-9,-40,-18v-6,-19,24,-20,33,-16v43,0,48,-98,48,-129v0,-31,-5,-129,-48,-129v-9,3,-39,3,-33,-16v0,-9,4,-18,40,-18v84,0,119,89,119,163","w":188},"*":{"d":"152,-215v9,11,25,-7,40,-7v13,0,15,28,15,29v0,17,-40,10,-40,20v0,3,22,26,22,35v0,6,-21,22,-27,22v-9,0,-21,-37,-28,-37v-5,0,-25,33,-34,33v-6,0,-24,-14,-24,-22v0,-13,26,-29,26,-35v0,-8,-36,-7,-36,-23v0,-5,6,-27,14,-27v16,-2,42,31,38,-3v-1,-15,-1,-27,15,-27v9,0,22,-1,22,11v0,8,-3,21,-3,31","w":272},"+":{"d":"113,-179v52,-1,-7,79,40,66v24,3,48,-12,48,21v0,33,-24,18,-48,21v-30,-8,-19,21,-19,43v0,16,2,23,-21,23v-33,0,-16,-24,-20,-48v12,-47,-66,13,-67,-39v-1,-33,24,-18,48,-21v30,7,19,-20,19,-43v0,-16,-3,-23,20,-23"},",":{"d":"51,67v-36,0,0,-33,0,-57v0,-15,-39,-7,-39,-51v0,-23,19,-44,42,-44v33,0,48,32,48,61v0,32,-23,91,-51,91","w":113},"-":{"d":"108,-118v-6,19,-10,59,-34,58v-26,-9,-74,10,-74,-13v5,-19,10,-58,34,-57v26,9,74,-11,74,12","w":107},".":{"d":"100,-39v0,24,-19,44,-43,44v-24,0,-44,-20,-44,-44v0,-24,20,-43,44,-43v24,0,43,19,43,43","w":113},"\/":{"d":"179,-239r-128,259v-13,26,-12,33,-28,33v-9,0,-31,-1,-31,-13r128,-259v13,-26,12,-33,28,-33v9,0,31,1,31,13","w":178},"0":{"d":"9,-105v0,-61,38,-107,101,-107v61,0,107,51,107,111v0,71,-57,106,-104,106v-62,0,-104,-50,-104,-110xm137,-78v0,-17,-6,-80,-30,-80v-15,0,-17,16,-17,28v0,16,7,81,30,81v14,0,17,-18,17,-29"},"1":{"d":"210,-20v0,32,-64,25,-95,25v-13,0,-100,-2,-100,-27v1,-17,20,-12,35,-12v14,0,19,-10,19,-51v0,-31,19,-71,-32,-71v-8,0,-14,-3,-14,-11v0,-25,81,-45,134,-45v11,0,30,1,30,16v0,18,-26,5,-27,39v-1,40,-4,70,2,105v5,32,48,6,48,32"},"2":{"d":"3,-9v7,-21,90,-83,88,-120v0,-13,-7,-20,-20,-20v-22,0,-26,21,-43,21v-10,0,-23,-10,-23,-21v0,-32,68,-63,112,-63v61,0,86,28,86,56v0,46,-60,76,-60,91v10,30,52,-8,59,-9v42,16,-4,101,-24,91v-20,0,-2,-17,-35,-17r-119,0v-6,0,-21,1,-21,-9"},"3":{"d":"112,-39v0,-31,-42,-33,-64,-27v-9,0,-15,-21,-15,-28v0,-15,48,-13,48,-47v0,-13,-14,-24,-28,-24v-18,0,-30,13,-36,13v-8,0,-13,-13,-13,-20v0,-19,50,-40,92,-40v29,0,88,9,88,47v0,31,-27,38,-27,46v0,13,61,1,61,64v0,46,-42,93,-137,93v-18,0,-82,-3,-82,-29v7,-32,30,-13,65,-13v23,0,48,-13,48,-35"},"4":{"d":"53,-71v4,12,25,7,37,8v25,0,25,0,25,-23v0,-15,6,-51,-8,-50v-23,7,-45,46,-54,65xm217,-25v5,24,-26,5,-19,37v10,38,-42,18,-70,23v-34,6,4,-53,-33,-45v-34,-6,-92,17,-91,-24v0,-27,4,-35,37,-73r83,-96v15,-14,31,-23,52,-23v17,0,17,11,17,24r0,119v-8,25,30,3,24,29r0,29"},"5":{"d":"179,-145r-76,0v-8,0,-18,-1,-18,11v0,9,10,9,18,10v93,10,112,51,112,76v0,46,-54,87,-131,87v-58,0,-69,-16,-69,-29v0,-46,85,15,85,-38v0,-23,-34,-32,-52,-35v-10,-1,-36,-3,-36,-18v0,-18,17,-68,24,-86v17,-45,19,-43,37,-43r123,0v13,0,17,1,17,16v0,17,-7,49,-34,49"},"6":{"d":"141,-219v-9,18,-37,40,-35,57v6,18,22,-3,48,-3v39,0,69,33,69,71v0,50,-40,99,-106,99v-66,0,-111,-47,-111,-108v0,-59,62,-137,84,-137v8,0,51,10,51,21xm144,-62v0,-17,-11,-50,-32,-50v-13,0,-18,11,-18,22v0,15,16,45,33,45v10,0,17,-7,17,-17"},"7":{"d":"39,-220v26,13,108,13,157,10v16,-1,28,12,19,27r-72,219v-3,9,-3,12,-21,12v-44,0,-63,-10,-53,-29r65,-124v3,-6,10,-18,10,-24v0,-14,-32,-12,-43,-12v-72,0,-37,22,-67,22v-49,0,-23,-105,5,-101"},"8":{"d":"188,-131v58,43,48,136,-68,136v-44,0,-116,-17,-116,-73v0,-33,30,-40,30,-48v0,-6,-24,-18,-24,-49v0,-45,48,-69,99,-69v36,0,110,11,110,59v0,31,-31,37,-31,44xm150,-176v1,-26,-45,-34,-50,-10v0,13,26,31,38,31v9,0,12,-14,12,-21xm136,-51v0,-26,-39,-32,-61,-39v-7,0,-9,8,-9,14v0,23,22,44,45,44v12,0,25,-5,25,-19"},"9":{"d":"178,-14v-11,15,-50,62,-69,62v-12,-1,-66,-22,-39,-35v17,-9,36,-35,36,-49v-1,-11,-16,-5,-25,-6v-52,0,-76,-45,-76,-86v3,-115,215,-113,215,3v0,41,-18,78,-42,111xm139,-109v0,-15,-9,-50,-30,-50v-33,7,-17,69,13,70v11,0,17,-10,17,-20"},":":{"d":"100,-145v0,24,-19,43,-43,43v-24,0,-44,-19,-44,-43v0,-24,20,-44,44,-44v24,0,43,20,43,44xm100,-39v0,24,-19,44,-43,44v-24,0,-44,-20,-44,-44v0,-24,20,-43,44,-43v24,0,43,19,43,43","w":113},";":{"d":"102,-24v0,32,-23,91,-51,91v-36,0,0,-33,0,-57v0,-15,-39,-7,-39,-51v0,-23,19,-44,42,-44v33,0,48,32,48,61xm99,-145v0,24,-20,43,-44,43v-24,0,-43,-19,-43,-43v0,-24,19,-44,43,-44v24,0,44,20,44,44","w":113},"<":{"d":"93,-92r94,41v22,5,16,35,6,46v-56,-20,-107,-46,-161,-68v-9,-8,-9,-30,0,-38r161,-68v11,8,16,43,-6,46"},"=":{"d":"177,-107r-127,0v-16,0,-24,3,-24,-20v0,-23,8,-21,24,-21r127,0v16,0,24,-2,24,21v0,23,-8,20,-24,20xm177,-36r-127,0v-16,0,-24,2,-24,-21v0,-23,8,-21,24,-21r127,0v16,0,24,-2,24,21v0,23,-8,21,-24,21"},">":{"d":"40,-51r94,-41r-94,-41v-21,-4,-17,-34,-7,-46v57,19,107,46,161,68v10,8,10,30,0,38r-161,68v-10,-9,-15,-43,7,-46"},"?":{"d":"70,-201v0,39,-67,54,-67,12v0,-31,31,-68,87,-68v37,0,89,24,89,67v0,22,-14,40,-41,50v-37,14,-16,41,-51,41v-15,0,-24,-8,-24,-23v0,-31,31,-47,31,-78v0,-8,-3,-19,-12,-19v-10,0,-12,10,-12,18xm125,-35v0,22,-18,40,-40,40v-22,0,-40,-18,-40,-40v0,-22,18,-40,40,-40v22,0,40,18,40,40","w":182},"@":{"d":"213,-180v2,17,-23,74,-10,87v4,0,28,-11,33,-55v4,-32,-18,-84,-89,-84v-56,0,-107,43,-111,106v-5,66,43,105,104,105v64,0,76,-66,96,-23v0,4,-47,49,-105,49v-74,0,-131,-52,-122,-128v9,-75,68,-134,144,-134v55,0,117,37,111,104v-5,63,-54,98,-109,98v-23,0,-10,-22,-18,-22v-6,0,-21,23,-48,23v-21,0,-33,-16,-30,-42v8,-62,64,-114,112,-83v5,0,18,-10,33,-10v8,0,9,2,9,9xm124,-95v9,0,33,-37,35,-58v0,-4,0,-8,-4,-8v-9,0,-33,28,-36,56v0,4,0,10,5,10","w":272},"A":{"d":"133,-157v-16,8,-17,33,-24,48v5,11,26,3,40,5v4,0,14,0,14,-5v-6,-15,-14,-42,-30,-48xm30,-42v29,-49,69,-108,69,-173v0,-25,12,-43,44,-43v31,0,51,31,65,55v6,10,61,120,74,150v12,27,31,11,31,32v0,26,-51,25,-69,25v-51,0,-83,-1,-83,-23v0,-17,22,-10,22,-23v0,-16,-9,-18,-67,-18v-19,0,-30,1,-30,19v0,14,23,4,23,23v0,38,-124,23,-109,1v0,-17,22,-11,30,-25","w":312},"B":{"d":"162,-255v103,1,95,73,57,114v0,5,3,5,7,7v15,6,40,26,40,56v0,36,-24,80,-96,80r-141,0v-11,0,-24,-6,-24,-19v0,-22,24,0,26,-60r4,-103v2,-54,-29,-30,-29,-55v13,-42,83,-7,131,-19v8,0,17,-1,25,-1xm132,-217v-21,0,-12,30,-12,50v0,14,0,21,11,21v22,0,26,-15,26,-35v0,-16,-5,-36,-25,-36xm134,-111v-18,0,-13,16,-14,32v0,42,7,43,18,43v21,0,28,-14,28,-33v0,-22,-7,-42,-32,-42","w":271},"C":{"d":"9,-127v0,-74,69,-130,140,-130v48,1,55,24,84,15v15,0,34,22,34,62v0,21,-12,38,-33,38v-37,0,-28,-64,-92,-64v-28,0,-39,26,-39,46v0,53,28,99,78,99v46,0,53,-25,64,-25v34,10,6,68,-19,70v-12,0,-38,21,-80,21v-76,0,-137,-60,-137,-132","w":272},"D":{"d":"35,-68r2,-125v1,-37,-26,-20,-26,-43v0,-17,21,-19,34,-19r117,0v100,0,133,62,133,127v0,80,-62,144,-170,129v-42,-5,-109,18,-120,-20v0,-26,29,4,30,-49xm124,-196r0,134v0,18,3,26,22,26v45,0,53,-46,53,-82v0,-84,-31,-98,-59,-98v-15,0,-16,6,-16,20","w":303},"E":{"d":"225,4v-56,0,-131,-3,-194,-4v-24,0,-24,-10,-24,-15v0,-20,24,-5,27,-43v4,-66,5,-59,1,-124v-3,-55,-30,-26,-30,-52v0,-22,30,-18,45,-18v43,1,148,1,165,-8v21,0,29,36,29,52v0,12,-5,25,-19,25v-28,0,-6,-34,-74,-34v-40,0,-36,8,-36,49v0,21,1,21,23,21v27,0,7,-40,33,-40v21,0,22,41,22,55v0,15,-2,58,-24,58v-22,0,-1,-38,-37,-38v-15,0,-14,13,-14,25v0,53,3,50,41,50v74,0,53,-50,83,-50v40,10,0,91,-17,91","w":261},"F":{"d":"32,-50v12,-41,7,-100,4,-149v-2,-31,-28,-16,-28,-36v11,-41,76,-10,131,-16v7,0,80,-4,85,-4v21,-1,49,78,9,78v-25,0,-12,-37,-81,-37v-22,0,-31,-2,-31,50v0,6,0,13,21,13v28,0,10,-33,35,-33v21,0,22,39,22,53v0,17,-2,60,-26,60v-23,0,1,-40,-38,-40v-16,0,-14,3,-14,40v0,53,35,24,35,51v0,8,3,24,-84,24v-58,0,-67,-9,-67,-24v0,-20,22,-10,27,-30","w":250,"k":{"A":32,",":30,".":31}},"G":{"d":"102,-148v0,74,43,100,66,100v13,0,22,-9,22,-22v0,-30,-38,-1,-38,-34v0,-26,55,-28,73,-28v68,0,72,20,72,30v1,20,-26,11,-30,29v-12,53,-64,78,-115,78v-76,0,-143,-52,-143,-132v0,-97,109,-152,199,-121v35,-19,59,21,58,50v0,18,-9,36,-28,36v-36,0,-36,-50,-85,-50v-31,0,-51,26,-51,64","w":300},"H":{"d":"298,-231v-11,34,-26,-1,-26,78r0,94v-5,21,23,19,24,36v0,9,-1,27,-72,27v-16,0,-62,-1,-62,-25v0,-28,25,3,25,-70v0,-19,-4,-18,-22,-18v-50,0,-46,1,-46,33v0,49,22,30,22,53v0,25,-52,27,-69,27v-17,0,-67,-2,-67,-26v0,-8,6,-12,12,-15v13,-6,17,-5,17,-80v0,-96,-2,-88,-15,-95v-5,-3,-11,-7,-11,-14v0,-28,60,-30,80,-30v15,0,57,1,57,23v0,30,-26,9,-26,62v0,26,23,17,45,17v24,0,23,-3,23,-14v2,-59,-15,-33,-24,-61v0,-7,-2,-27,70,-27v17,0,65,0,65,25","w":303},"I":{"d":"27,-205v-8,-10,-22,-11,-22,-25v0,-26,74,-26,81,-26v22,0,66,1,66,25v0,13,-15,12,-22,21v-14,17,-12,172,4,169v9,5,18,7,18,18v0,11,-4,27,-83,27v-15,0,-60,0,-60,-23v0,-12,12,-14,18,-21v11,-4,12,-163,0,-165","w":156},"J":{"d":"206,-189r-3,111v-2,76,-81,83,-101,83v-42,0,-105,-18,-105,-69v0,-23,17,-43,41,-43v27,0,50,24,39,53v0,9,7,14,16,13v42,-4,22,-78,25,-143v2,-40,-32,-18,-32,-42v0,-7,3,-30,73,-30v68,0,76,16,76,26v0,19,-28,11,-29,41","w":237},"K":{"d":"219,0v-38,-5,-54,-69,-89,-82v-11,0,-10,15,-10,27v0,17,22,19,22,37v0,12,-8,22,-71,22v-57,0,-65,-10,-65,-22v0,-19,19,-9,23,-39v4,-44,6,-91,0,-134v-4,-31,-24,-17,-24,-39v0,-6,-3,-26,76,-26v17,0,54,-1,54,24v0,19,-20,8,-20,50v0,5,1,15,7,15v10,0,38,-37,38,-45v0,-8,-6,-11,-6,-19v0,-27,48,-25,65,-25v17,0,59,-3,59,23v0,30,-37,12,-50,25v-7,7,-38,29,-38,44v0,10,9,18,15,25r75,86v11,12,33,11,33,33v0,35,-60,15,-94,20","w":312},"L":{"d":"205,5v-49,-6,-109,-4,-165,-5v-12,0,-30,1,-30,-16v0,-22,28,-3,29,-45v2,-49,1,-90,-2,-133v-2,-30,-32,-14,-32,-35v0,-47,171,-25,150,-3v0,21,-29,5,-29,39r0,115v0,26,4,38,30,38v61,0,41,-50,64,-50v47,0,10,98,-15,95","w":239,"k":{"T":26,"V":32,"W":31,"y":10,"Y":28}},"M":{"d":"87,-117v-11,0,-7,48,-7,60v0,39,23,21,23,40v0,21,-39,21,-53,21v-13,0,-45,-1,-45,-20v0,-21,22,-3,25,-33v2,-30,14,-120,0,-157v-3,-8,-24,-10,-24,-25v0,-21,33,-25,62,-25v42,0,42,7,53,25v13,21,34,80,50,84v11,3,26,-41,39,-65v18,-34,18,-44,66,-44v16,0,52,0,52,23v0,14,-16,18,-19,30v-10,48,-6,79,-2,147v1,26,22,21,22,37v0,24,-49,23,-65,23v-15,0,-64,1,-64,-22v0,-13,16,-14,19,-26v1,-6,9,-68,-4,-68v-25,9,-39,99,-64,106v-17,5,-39,-94,-64,-111","w":334},"N":{"d":"112,-240v36,29,66,64,108,88v16,-7,8,-37,6,-53v-5,-15,-24,-10,-24,-29v0,-23,37,-22,52,-22v16,0,55,-2,55,23v0,21,-20,12,-25,29v-11,41,-3,94,-5,142v0,16,2,66,-22,66v-7,0,-14,-4,-19,-9r-111,-100v-5,-5,-14,-13,-22,-13v-18,8,-12,44,-9,64v3,23,25,14,25,32v0,24,-37,26,-54,26v-17,0,-54,-3,-54,-26v0,-19,20,-11,24,-34v6,-42,6,-89,0,-133v-5,-36,-32,-21,-32,-43v0,-26,49,-24,65,-24v22,0,25,3,42,16","w":314},"O":{"d":"144,5v-76,0,-135,-55,-135,-132v0,-76,61,-130,139,-130v99,0,137,88,137,134v0,77,-68,128,-141,128xm193,-87v0,-33,-20,-117,-62,-117v-20,0,-30,21,-30,39v0,31,22,116,61,116v22,0,31,-19,31,-38","w":294},"P":{"d":"171,-174v0,-23,-12,-41,-36,-41v-14,0,-14,5,-14,12r0,54v0,8,-2,15,17,15v24,0,33,-18,33,-40xm39,-57r0,-141v0,-27,-34,-12,-34,-35v0,-23,32,-16,54,-16v52,0,91,-6,99,-6v49,0,96,26,96,80v0,65,-60,89,-127,81v-11,0,-4,17,-6,26v1,45,28,26,28,47v0,23,-52,25,-68,25v-15,0,-69,-1,-69,-24v0,-20,27,-7,27,-37","w":258,"k":{"A":33,",":29,".":32}},"Q":{"d":"193,-87v0,-33,-20,-117,-62,-117v-20,0,-30,21,-30,39v0,31,22,116,61,116v22,0,31,-19,31,-38xm204,67v-67,0,-126,-56,-183,-53v-6,0,-8,-5,-8,-10v0,-18,18,-27,36,-23v2,0,5,-1,5,-4v0,-8,-45,-32,-45,-104v0,-76,61,-130,139,-130v99,0,137,88,137,134v0,57,-32,97,-85,118v-2,1,-5,3,-5,5v0,6,12,17,54,17v24,0,38,-16,38,7v0,11,-24,43,-83,43","w":295},"R":{"d":"131,-215v-23,1,-11,34,-15,53v-1,9,-3,18,9,18v23,0,31,-14,31,-36v0,-18,-4,-35,-25,-35xm32,-75r0,-102v0,-56,-27,-34,-27,-56v15,-42,76,-14,122,-21v59,-9,122,4,122,65v0,22,-10,43,-30,52v-9,4,-5,13,3,16v25,8,37,26,42,65v4,33,27,13,27,35v0,14,-16,28,-57,28v-58,0,-65,-32,-76,-80v-4,-17,-10,-33,-30,-33v-8,0,-11,1,-11,24v0,10,1,24,3,34v3,17,21,12,21,29v0,13,-9,23,-67,23v-17,0,-69,0,-69,-26v0,-19,27,-6,27,-53","w":293,"k":{"T":17,"V":26,"W":27,"y":26,"Y":26}},"S":{"d":"49,-110v-64,-50,-36,-147,71,-147v38,0,49,17,72,6v12,0,40,27,40,57v0,12,-8,24,-21,24v-24,0,-39,-41,-76,-41v-11,0,-23,5,-23,18v0,28,50,20,91,49v70,50,31,150,-85,149v-24,0,-64,-6,-85,-17v-17,-10,-25,-48,-25,-66v0,-10,4,-20,15,-20v26,0,21,57,87,57v8,0,28,-3,28,-17v0,-26,-49,-21,-89,-52","w":244},"T":{"d":"46,-257r176,0v14,0,43,27,43,66v0,18,-9,30,-27,30v-31,0,-32,-42,-50,-42v-14,0,-12,19,-12,22r0,110v0,43,33,23,33,48v0,11,-7,27,-74,27v-18,0,-86,1,-86,-27v0,-19,24,-10,29,-25v12,-33,7,-78,9,-118v2,-38,-6,-37,-11,-37v-16,0,-25,42,-54,42v-14,0,-22,-13,-22,-26v0,-31,25,-70,46,-70","w":265,"k":{"w":-12,"y":-11,"A":28,",":27,".":30,"u":-6,"a":12,"c":15,"e":15,"i":-16,"o":15,"s":11,":":-18,";":-20}},"U":{"d":"226,-100r0,-90v0,-39,-31,-24,-31,-45v0,-22,42,-21,57,-21v14,0,53,0,53,21v0,20,-27,7,-27,40r0,97v0,16,1,103,-124,103v-142,0,-126,-110,-126,-114r0,-83v1,-23,-23,-22,-23,-39v0,-5,-4,-25,70,-25v59,0,71,11,71,25v0,26,-27,1,-28,45v-2,63,-8,137,54,137v57,0,54,-47,54,-51","w":310},"V":{"d":"306,-235v-10,30,-26,3,-46,43r-81,165v-8,15,-15,31,-34,31v-21,0,-26,-12,-34,-29r-72,-158v-11,-23,-14,-28,-28,-30v-7,-1,-11,-6,-11,-14v0,-28,58,-29,76,-29v76,0,72,18,72,23v0,14,-17,14,-17,24v0,8,14,36,23,55v3,6,7,20,15,20v12,1,18,-19,22,-27v4,-9,21,-41,21,-50v0,-13,-18,-9,-18,-23v0,-22,45,-22,59,-22v45,0,53,8,53,21","w":303,"k":{"y":30,"A":53,",":44,".":45,"r":32,"u":22,"-":23,"a":35,"e":48,"i":-7,"o":48,":":13,";":12}},"W":{"d":"149,-138v21,-18,35,-55,5,-77v-7,-5,-13,-9,-13,-18v0,-2,-5,-23,70,-23v70,0,68,16,68,22v0,12,-16,15,-16,24v0,10,12,32,16,40v3,6,10,28,19,28v12,0,28,-61,28,-66v0,-15,-24,-7,-24,-27v0,-22,37,-21,52,-21v15,0,42,2,42,22v0,18,-15,13,-25,38r-62,162v-5,38,-51,52,-67,13r-33,-79v-2,-4,-4,-15,-10,-15v-15,7,-31,66,-41,87v-9,19,-12,32,-35,32v-20,0,-26,-12,-32,-29r-67,-171v-10,-26,-24,-13,-24,-35v0,-25,48,-25,65,-25v72,0,67,14,53,46v8,27,13,57,31,72","w":393,"k":{"y":14,"A":47,",":30,".":31,"r":21,"u":11,"-":19,"a":30,"e":30,"i":-8,"o":30,":":6,";":4}},"X":{"d":"158,-39v0,-12,-16,-35,-26,-41v-5,0,-27,33,-27,38v0,8,15,7,15,23v0,10,-9,23,-60,23v-51,0,-60,-13,-60,-25v0,-9,6,-17,21,-17v28,0,62,-58,81,-81v-17,-27,-38,-49,-56,-74v-18,-24,-40,-12,-40,-33v0,-8,1,-30,89,-30v72,0,70,22,50,44v0,5,13,22,17,22v5,0,18,-18,18,-22v0,-8,-13,-7,-13,-22v0,-12,9,-22,62,-22v15,0,52,-1,52,22v0,17,-13,16,-26,18v-32,6,-47,41,-65,64v22,33,49,61,72,92v18,23,39,14,39,35v0,11,-2,29,-90,29v-15,0,-68,2,-68,-22v0,-14,15,-13,15,-21","w":300},"Y":{"d":"251,-206v-23,28,-61,53,-61,104v0,33,2,48,5,55v5,10,24,8,24,25v0,26,-57,26,-75,26v-71,0,-80,-16,-80,-26v0,-19,21,-12,27,-27v5,-14,15,-89,-10,-103r-40,-47v-18,-21,-41,-15,-41,-33v0,-8,-3,-24,81,-24v75,0,74,14,74,22v0,9,-10,12,-10,20v0,8,14,31,23,31v9,0,25,-20,25,-28v0,-10,-10,-10,-10,-24v0,-21,41,-21,55,-21v45,0,57,5,57,21v0,23,-27,9,-44,29","w":294,"k":{"v":31,"A":45,",":39,".":40,"u":22,"-":26,"a":45,"e":46,"i":-5,"o":46,":":14,";":12,"p":30,"q":46}},"Z":{"d":"36,-255v49,11,128,0,184,-1v22,-1,18,23,10,37r-78,133v-3,5,-16,27,-16,33v0,9,20,8,25,8v63,0,43,-48,70,-48v18,0,26,11,26,28v0,59,-24,76,-73,65r-152,0v-12,0,-26,3,-26,-14v31,-66,72,-122,105,-185v0,-9,-15,-11,-24,-11v-45,0,-34,49,-60,49v-49,0,-8,-94,9,-94","w":259},"[":{"d":"116,-226r0,200v-7,33,18,31,45,29v8,0,18,3,18,12v0,22,-28,21,-70,21v-51,0,-63,5,-63,-62r0,-200v0,-67,12,-63,63,-63v42,0,70,-1,70,21v0,17,-24,11,-40,11v-25,0,-23,8,-23,31","w":188},"\\":{"d":"141,20r-141,-259v0,-12,22,-13,31,-13v19,0,17,7,31,33r142,259v0,12,-24,13,-33,13v-16,0,-16,-7,-30,-33","w":178},"]":{"d":"73,-26r0,-200v7,-34,-19,-29,-46,-29v-8,0,-17,-4,-17,-13v0,-22,27,-21,69,-21v51,0,63,-4,63,63r0,200v0,67,-12,62,-63,62v-42,0,-69,1,-69,-21v0,-30,77,11,63,-41","w":188},"^":{"d":"154,-73r-41,-95r-41,95v-5,21,-34,15,-46,6v19,-57,46,-107,68,-161v8,-9,30,-9,38,0r69,161v-9,9,-43,15,-47,-6"},"_":{"d":"0,27r180,0r0,18r-180,0r0,-18","w":180},"a":{"d":"100,-77v-22,-1,-28,40,-5,42v19,0,22,-39,5,-42xm117,-13v-29,24,-113,29,-112,-33v0,-26,25,-58,88,-58v11,0,16,1,16,-12v0,-12,0,-37,-17,-37v-22,0,-24,39,-56,39v-12,0,-20,-8,-20,-20v0,-31,61,-50,95,-50v21,0,77,8,77,62r0,36v0,63,22,29,22,48v0,21,-29,43,-55,43v-28,0,-29,-18,-38,-18","w":214},"b":{"d":"108,-162v10,-6,31,-22,54,-22v38,0,71,32,71,80v0,62,-46,109,-108,109v-45,0,-66,-23,-72,-23v-6,0,-32,13,-35,-2v8,-14,9,-120,8,-160v0,-21,-27,-11,-27,-32v0,-24,69,-40,99,-40v10,0,9,7,9,15r-2,70v0,2,0,5,3,5xm152,-73v0,-17,-5,-56,-29,-56v-16,0,-17,14,-17,26v0,70,4,75,18,75v24,0,28,-27,28,-45","w":239},"c":{"d":"6,-90v0,-52,46,-94,106,-94v54,0,82,30,82,55v0,20,-15,36,-35,36v-39,0,-22,-45,-50,-45v-16,0,-24,17,-24,31v0,27,20,53,48,53v34,0,47,-20,54,10v0,21,-33,49,-83,49v-54,0,-98,-40,-98,-95","w":199},"d":{"d":"144,-100v0,-14,0,-45,-21,-45v-24,0,-29,42,-29,59v0,17,5,46,27,46v24,0,23,-44,23,-60xm142,-16v-12,5,-28,21,-52,21v-47,0,-84,-50,-84,-94v0,-48,39,-95,89,-95v25,0,39,11,43,11v5,0,5,-12,5,-16v0,-22,-26,-11,-26,-30v0,-27,92,-33,93,-33v11,0,13,7,13,19r0,172v0,25,19,17,19,36v0,27,-79,29,-83,29v-18,0,-5,-20,-17,-20","w":245},"e":{"d":"173,-83r-78,0v-4,0,-10,-1,-10,5v0,18,24,33,41,33v27,0,40,-16,48,-16v8,0,14,11,14,18v0,28,-52,48,-84,48v-65,0,-98,-47,-98,-93v0,-55,47,-96,101,-96v61,0,88,47,88,74v0,24,-10,27,-22,27xm105,-117v10,0,21,2,21,-11v0,-13,-8,-23,-21,-23v-12,0,-21,12,-21,24v0,13,12,10,21,10","w":200},"f":{"d":"30,-54v0,-20,15,-56,-12,-56v-4,0,-15,1,-15,-5v0,-28,-2,-30,9,-32v25,-5,-4,-21,-4,-50v0,-43,44,-57,80,-57v59,0,73,31,73,46v0,15,-13,28,-28,28v-31,0,-35,-32,-56,-32v-7,0,-12,6,-12,13v0,23,38,30,44,46v7,11,43,-5,40,10v-3,12,4,34,-11,33v-35,-9,-26,33,-21,55v5,22,32,11,32,33v0,9,-1,26,-82,26v-17,0,-64,-1,-64,-26v0,-20,27,-10,27,-32","w":160,"k":{"f":-14}},"g":{"d":"126,-114v0,-15,-3,-42,-23,-42v-32,2,-26,70,1,70v16,0,22,-14,22,-28xm58,18v0,19,28,24,42,24v12,0,39,-1,39,-18v0,-24,-51,-2,-76,-12v-3,0,-5,3,-5,6xm216,-3v0,32,-31,76,-119,76v-67,0,-92,-25,-92,-48v0,-21,20,-22,20,-27v0,-5,-20,-14,-20,-30v0,-26,30,-34,30,-39v0,-4,-25,-20,-25,-47v0,-65,90,-71,147,-57v27,0,41,-19,46,-19v33,15,-15,51,-7,67v-3,55,-64,69,-115,64v-6,0,-10,4,-10,10v11,28,63,7,92,7v37,0,53,21,53,43","w":218},"h":{"d":"139,-14v6,-11,15,-39,15,-65v0,-18,1,-52,-25,-52v-36,0,-22,46,-22,77v0,30,15,24,15,37v0,21,-41,21,-55,21v-51,0,-63,-11,-63,-22v0,-14,15,-8,20,-31v7,-37,4,-93,3,-134v-1,-26,-23,-16,-23,-33v0,-29,94,-36,94,-36v11,0,12,3,12,13r-2,69v0,7,-1,18,8,18v11,0,16,-32,56,-32v66,0,62,62,62,72r1,58v0,31,18,23,18,37v0,21,-46,21,-59,21v-11,0,-55,0,-55,-18","w":256},"i":{"d":"110,-167r0,100v0,42,21,27,21,46v0,24,-46,25,-62,25v-62,0,-64,-14,-64,-23v0,-13,15,-14,19,-25v5,-13,5,-65,1,-78v-3,-13,-21,-9,-21,-25v0,-26,91,-36,95,-36v11,0,11,8,11,16xm108,-230v0,28,-48,36,-69,36v-15,0,-32,-7,-32,-25v0,-24,48,-33,66,-33v14,0,35,4,35,22","w":135},"j":{"d":"114,-164r0,155v0,18,1,44,-11,59v-13,16,-42,23,-62,23v-21,5,-61,-24,-31,-37v22,5,18,-9,18,-28r0,-112v0,-35,-24,-18,-24,-37v0,-34,98,-42,98,-42v13,0,12,9,12,19xm110,-230v0,28,-48,36,-69,36v-15,0,-32,-7,-32,-25v0,-24,48,-33,66,-33v14,0,35,4,35,22","w":139},"k":{"d":"245,-160v4,18,-41,15,-52,35v0,9,42,61,49,69v16,20,36,20,36,35v0,26,-57,23,-87,21v-40,-3,-44,-51,-72,-69v-14,26,12,37,11,48v0,10,-3,25,-59,25v-30,0,-63,1,-63,-23v0,-17,19,-5,20,-35r3,-126v0,-29,-27,-10,-27,-31v0,-24,81,-41,100,-41v10,0,10,5,10,13r-2,77v-10,52,27,26,37,14v0,-5,-7,-8,-7,-15v0,-19,36,-20,49,-20v15,0,54,1,54,23","w":277},"l":{"d":"117,-234v-2,23,-7,148,-3,194v4,13,20,7,20,22v0,24,-44,22,-59,22v-16,0,-67,2,-67,-24v0,-13,17,-8,20,-21v8,-39,8,-92,2,-135v-4,-27,-26,-16,-26,-37v0,-31,93,-39,98,-39v12,0,15,7,15,18","w":138},"m":{"d":"229,-151v12,-7,36,-32,63,-32v34,0,56,19,56,54r0,76v0,21,13,23,13,33v0,23,-41,24,-55,24v-12,0,-54,-2,-54,-21v0,-13,13,-13,13,-34v0,-31,10,-71,-19,-78v-27,4,-18,35,-18,60v0,44,13,37,13,50v-3,39,-128,23,-113,3v0,-19,19,-4,17,-47v-1,-26,8,-60,-19,-66v-28,5,-18,40,-18,67v0,58,36,66,-48,66v-14,0,-56,0,-56,-19v0,-16,21,-7,21,-52r0,-33v1,-38,-11,-26,-18,-46v0,-27,89,-37,90,-37v19,0,2,28,16,32v14,-8,33,-32,65,-32v43,0,43,32,51,32","w":365},"n":{"d":"113,-153v17,-6,22,-30,55,-30v75,0,62,73,66,128v2,28,16,22,16,37v0,6,2,22,-66,22v-13,0,-48,1,-48,-19v0,-13,12,-8,14,-31v2,-26,12,-83,-22,-83v-32,0,-21,40,-21,69v0,35,13,28,13,42v0,22,-48,22,-63,22v-14,0,-51,0,-51,-22v0,-17,16,-2,17,-37r2,-54v1,-27,-21,-18,-21,-37v0,-19,83,-37,90,-37v20,-1,5,26,19,30","w":253},"o":{"d":"221,-90v-1,114,-215,134,-215,7v0,-64,57,-101,116,-101v63,0,99,49,99,94xm139,-63v0,-16,-8,-78,-32,-78v-12,0,-19,11,-18,21v1,23,8,79,33,80v14,1,17,-11,17,-23","w":227},"p":{"d":"157,-85v0,-17,-4,-46,-27,-46v-13,0,-17,5,-17,71v0,12,5,16,18,16v22,0,26,-24,26,-41xm27,6v8,0,6,-123,1,-125v-5,-5,-24,0,-24,-21v0,-24,73,-43,100,-43v15,0,5,15,14,18v5,0,25,-19,55,-19v109,0,88,189,-14,189v-25,0,-43,-22,-43,3v0,27,22,18,22,36v0,20,-33,23,-47,23v-48,0,-86,-18,-86,-36v0,-16,16,-11,22,-25","w":251},"q":{"d":"141,-87v0,-15,3,-57,-21,-57v-6,0,-24,7,-24,45v0,38,15,58,29,58v18,0,16,-34,16,-46xm6,-90v0,-86,98,-107,168,-85v15,0,25,-9,39,-9v9,0,16,3,16,13v-1,4,-9,112,-6,174v2,41,19,24,19,44v0,23,-34,24,-50,24v-19,0,-80,-4,-80,-32v0,-18,26,-7,26,-36v-6,-24,-19,2,-50,2v-53,0,-82,-46,-82,-95","w":245},"r":{"d":"24,-48v5,-17,4,-40,4,-61v0,-35,-22,-16,-22,-38v0,-28,84,-36,87,-36v23,-4,9,22,22,29v9,0,14,-29,45,-29v24,0,40,18,40,42v0,24,-20,43,-44,43v-23,0,-31,-20,-40,-20v-10,0,-8,24,-8,30v0,11,1,26,3,40v2,16,29,5,29,27v0,23,-31,25,-71,25v-17,0,-65,1,-65,-24v0,-15,16,-15,20,-28","w":202,"k":{"v":-5,"w":-5,"y":-4,"f":-13,",":27,".":28,"g":-3,"h":7,"m":-4,"n":-5,"r":-2,"t":-8,"u":-8,"z":-10,"-":-9}},"s":{"d":"56,0v-33,11,-46,-26,-48,-49v0,-9,4,-17,14,-17v16,0,30,35,50,35v7,0,14,-3,14,-11v0,-21,-70,-24,-70,-83v0,-50,56,-69,103,-54v29,-18,51,20,52,43v0,10,-8,17,-17,17v-21,0,-32,-29,-48,-29v-6,0,-13,6,-13,13v0,23,79,27,79,83v1,51,-66,66,-116,52","w":180},"t":{"d":"102,-229v35,0,-5,56,29,45v18,3,46,-10,40,17v4,33,-19,22,-41,22v-13,0,-13,1,-13,14v1,28,-6,88,19,83v19,-4,37,-15,37,8v0,24,-42,45,-78,45v-18,0,-64,-8,-64,-65r0,-74v5,-26,-55,7,-30,-38r82,-53v8,-5,8,-4,19,-4","w":175},"u":{"d":"145,-18v-13,5,-30,22,-54,22v-68,0,-63,-54,-63,-108v0,-55,-24,-31,-24,-55v0,-23,90,-24,93,-24v10,0,11,5,11,14r0,91v0,14,2,37,21,37v36,-7,19,-56,21,-90v-3,-18,-21,-12,-21,-27v0,-21,72,-25,86,-25v26,-1,18,32,18,54r0,73v0,22,20,12,20,29v0,24,-64,31,-84,31v-28,0,-10,-22,-24,-22","w":256},"v":{"d":"88,-21r-60,-112v-10,-20,-31,-9,-31,-28v0,-9,5,-22,73,-22v13,0,61,-1,61,18v0,12,-14,15,-14,24v0,8,13,36,22,36v12,0,25,-31,25,-38v0,-9,-12,-13,-12,-23v0,-18,39,-17,50,-17v10,0,38,0,38,16v0,17,-24,9,-34,29r-59,115v-20,44,-44,30,-59,2","w":237,"k":{",":33,".":34}},"w":{"d":"255,4v-33,-11,-42,-62,-68,-81v-32,16,-29,70,-65,81v-13,0,-21,-15,-27,-25r-68,-111v-12,-19,-30,-8,-30,-26v0,-23,55,-25,72,-25v14,0,58,1,58,22v0,8,-7,11,-7,16v0,6,16,38,25,38v6,0,17,-19,17,-24v0,-17,-22,-17,-22,-30v0,-7,1,-22,72,-22v14,0,52,-1,52,19v0,13,-11,15,-11,23v0,7,13,35,21,35v11,0,25,-32,25,-35v0,-9,-10,-12,-10,-24v0,-18,32,-18,44,-18v12,0,44,0,44,18v0,20,-24,6,-39,36r-46,90v-6,12,-21,43,-37,43","w":374,"k":{",":33,".":34}},"x":{"d":"167,-95v9,17,20,32,31,47v16,23,30,15,30,30v0,9,-1,22,-73,22v-15,0,-60,3,-60,-21v0,-13,14,-9,14,-20v0,-7,-12,-27,-19,-27v-6,0,-22,26,-22,33v0,8,9,8,9,19v0,15,-28,16,-39,16v-13,0,-38,0,-38,-18v0,-19,17,-3,34,-30r33,-55v-7,-14,-19,-23,-28,-36v-13,-16,-35,-8,-35,-26v0,-23,63,-22,78,-22v12,0,57,-2,57,18v-10,15,-8,29,7,37v5,0,16,-16,16,-21v0,-5,-8,-11,-8,-17v0,-17,28,-17,39,-17v28,0,33,8,33,17v0,13,-20,13,-30,28v-10,15,-21,27,-29,43","w":227},"y":{"d":"200,-131v-42,67,-38,195,-139,195v-26,0,-57,-13,-57,-43v0,-18,14,-33,32,-33v33,0,24,38,39,38v25,0,10,-36,3,-50r-51,-106v-7,-14,-27,-9,-27,-26v0,-11,6,-27,82,-27v14,0,47,1,47,22v0,10,-9,12,-9,21v0,14,16,39,22,39v11,0,19,-24,19,-33v0,-16,-12,-16,-12,-28v0,-19,34,-21,47,-21v12,0,38,1,38,18v0,21,-21,13,-34,34","w":234,"k":{",":35,".":37}},"z":{"d":"146,-179v13,0,39,-3,37,12v-16,44,-46,75,-62,119v0,8,7,9,13,9v30,0,24,-31,40,-31v42,11,0,82,-18,76v-22,-7,-86,-6,-121,-6v-9,0,-29,0,-29,-14v18,-44,51,-76,69,-121v0,-8,-11,-7,-16,-7v-26,0,-21,30,-40,30v-37,-9,0,-74,15,-74v10,0,12,7,72,7r40,0","w":194},"{":{"d":"89,-127v53,5,29,70,34,119v-7,22,34,15,30,31v3,15,-31,13,-48,13v-65,0,-50,-74,-51,-133v6,-22,-35,-14,-31,-31v-4,-17,37,-8,31,-31v1,-58,-13,-130,51,-130v18,0,51,-2,48,14v4,16,-37,8,-30,30v-3,51,14,109,-34,118","w":188},"|":{"d":"68,90r0,-360r42,0r0,360r-42,0","w":178},"}":{"d":"66,-8v5,-49,-18,-114,34,-119r0,-2v-52,-4,-29,-68,-34,-116v7,-22,-34,-13,-30,-30v-4,-16,31,-14,48,-14v63,0,51,72,51,130v-7,23,35,14,30,31v5,16,-37,9,-30,31v-1,59,14,133,-51,133v-17,0,-51,3,-48,-13v-4,-16,37,-9,30,-31","w":188},"~":{"d":"169,-126v17,0,32,3,32,24v0,23,-19,43,-41,43v-28,0,-66,-25,-80,-25v-7,7,-6,29,-22,25v-17,0,-32,-3,-32,-24v0,-23,19,-43,41,-43v28,0,66,24,80,24v4,0,4,-2,4,-6v0,-13,9,-18,18,-18"},"'":{"d":"57,-118v-25,-14,-38,-57,-39,-90v0,-24,12,-49,39,-49v67,0,35,116,0,139","w":113},"`":{"d":"102,-202v-49,0,-77,-33,-77,-42v8,-25,59,-27,74,-9v-13,18,22,19,23,38v0,12,-11,13,-20,13","w":146},"\u00a0":{"w":113}}});
-/*!
- * The following copyright notice may not be removed under any circumstances.
- * 
- * Copyright:
- * Copyright 1990-1993 Bitstream Inc.  All rights reserved.
- */
-Cufon.registerFont({"w":238,"face":{"font-family":"AmerType Md BT","font-weight":700,"font-stretch":"normal","units-per-em":"360","panose-1":"2 9 8 4 3 5 5 2 2 4","ascent":"288","descent":"-72","x-height":"6","bbox":"-24.1348 -275 388 85","underline-thickness":"39.9023","underline-position":"-17.5781","unicode-range":"U+0020-U+007E"},"glyphs":{" ":{"w":119},"!":{"d":"64,-245v24,0,37,13,33,38v-7,40,-2,94,-14,126v-15,8,-47,4,-44,-20r-9,-114v-1,-21,12,-30,34,-30xm64,4v-18,0,-34,-15,-34,-35v0,-19,15,-34,34,-34v18,0,34,16,34,35v0,17,-17,34,-34,34","w":127},"\"":{"d":"71,-253r34,0r0,98r-34,0r0,-98xm14,-253r34,0r0,98r-34,0r0,-98","w":119},"#":{"d":"125,-149r-16,43r44,0r15,-43r-43,0xm125,-257r38,0r-25,73r42,0r26,-73r39,0r-26,73r50,0r-13,35r-49,0r-15,42r51,0r-13,36r-51,0r-26,73r-39,0r26,-73r-42,0r-27,73r-38,0r25,-73r-50,0r13,-36r50,0r15,-42r-53,0r13,-35r53,0","w":276},"$":{"d":"121,17v-16,3,-10,-16,-11,-30v-41,1,-75,-20,-75,-58v0,-18,10,-32,27,-33v24,-2,36,28,21,43v2,6,16,11,27,10r0,-56v-36,-9,-67,-27,-68,-64v-1,-36,31,-63,68,-63v0,-13,-3,-28,12,-26v15,-2,12,13,12,26v33,1,59,14,61,46v2,29,-48,34,-50,7v3,-10,3,-19,-11,-17r0,43v42,15,67,23,67,70v0,43,-27,64,-67,71v-1,15,4,34,-13,31xm131,-53v19,-2,33,-24,19,-39v-4,-4,-10,-7,-19,-10r0,49xm111,-198v-16,1,-31,17,-18,30v4,3,10,5,18,7r0,-37"},"%":{"d":"69,-2v-4,10,-26,9,-29,0v33,-67,72,-127,107,-191v-15,6,-36,3,-45,-6v10,42,-9,84,-50,84v-34,0,-52,-27,-52,-63v0,-37,19,-61,53,-63v18,-1,62,30,80,28v31,4,29,-27,57,-28v12,-1,9,9,6,15xm53,-211v-22,1,-23,64,0,65v22,-2,20,-63,0,-65xm186,-90v-21,2,-21,63,0,65v21,-1,21,-63,0,-65xm186,-121v34,0,52,27,52,63v0,36,-18,63,-52,63v-34,0,-52,-27,-52,-63v0,-37,18,-62,52,-63","w":243},"&":{"d":"290,-153v0,45,-47,63,-86,45v39,57,-20,113,-90,113v-57,0,-103,-32,-103,-86v0,-35,19,-61,49,-65v-50,-33,-4,-100,58,-100v38,0,65,14,68,47v3,33,-54,43,-59,12v1,-10,-3,-16,-12,-16v-26,-1,-24,38,-1,39v13,1,24,8,23,20v8,50,-69,10,-67,61v1,24,21,34,46,35v24,0,42,-9,44,-29v1,-10,-16,-36,-15,-45v5,-48,72,-14,102,-24v-14,1,-23,-8,-23,-22v0,-18,12,-29,29,-29v23,0,37,19,37,44","w":296},"'":{"d":"14,-253r34,0r0,98r-34,0r0,-98","w":61},"(":{"d":"149,-248v31,0,30,37,-2,42v-55,9,-78,48,-78,116v-1,68,23,107,78,115v32,5,33,44,3,42v-86,-7,-140,-67,-140,-157v0,-91,54,-158,139,-158","w":185},")":{"d":"36,67v-14,1,-23,-8,-23,-20v0,-17,22,-21,37,-25v46,-13,65,-49,65,-112v0,-69,-22,-108,-77,-116v-32,-5,-33,-44,-3,-42v86,7,140,68,140,158v0,91,-54,149,-139,157","w":185},"*":{"d":"110,-128v0,17,-38,17,-39,1v5,-13,12,-26,14,-42v-17,0,-20,30,-35,33v-16,3,-33,-37,-6,-36v12,0,26,-1,33,-9v-11,-13,-46,2,-47,-19v0,-14,20,-39,30,-15v6,13,13,17,22,25v12,-17,-35,-55,8,-55v36,0,5,32,5,53v16,0,21,-29,35,-33v15,-1,33,37,6,36v-13,-1,-23,3,-33,7v5,17,47,-1,47,21v1,14,-21,39,-30,15v-8,-11,-14,-21,-25,-23v1,15,11,30,15,41","w":180},"+":{"d":"132,-215r36,0r0,90r87,0r0,35r-87,0r0,90r-36,0r0,-90r-87,0r0,-35r87,0r0,-90","w":299},",":{"d":"49,1v-40,-8,-25,-72,12,-66v71,11,23,138,-19,147v-39,-11,15,-50,15,-73v0,-4,-2,-7,-8,-8","w":119},"-":{"d":"111,-93v3,36,-50,18,-79,21v-19,2,-23,-4,-24,-21v-3,-38,50,-19,80,-22v20,-2,22,4,23,22","w":119,"k":{"o":-7,"Y":28,"X":13,"W":20,"V":21,"Q":-13,"O":-13,"J":-20,"G":-13,"C":-7,"A":6}},".":{"d":"60,5v-19,0,-35,-16,-35,-35v0,-19,16,-34,35,-34v18,0,34,16,34,35v0,17,-17,34,-34,34","w":119},"\/":{"d":"83,-245v13,-1,12,2,12,12r-70,255v0,12,-37,19,-32,3r71,-258v2,-8,8,-12,19,-12","w":98},"0":{"d":"119,-243v68,0,107,52,107,124v0,72,-38,124,-107,124v-69,0,-106,-52,-106,-124v0,-73,37,-124,106,-124xm119,-195v-36,0,-46,35,-46,77v0,42,11,77,46,77v35,0,46,-35,46,-77v0,-42,-10,-77,-46,-77"},"1":{"d":"70,-48v12,-1,31,10,31,-10r0,-123v3,-30,-56,9,-53,-33v3,-42,62,-16,99,-25v13,1,12,8,13,25r0,158v-1,16,18,8,29,8v12,0,20,10,20,23v2,37,-43,23,-72,22v-34,-1,-89,18,-89,-22v-1,-14,9,-23,22,-23"},"2":{"d":"114,-242v56,0,98,20,98,70v0,55,-43,63,-95,77v-34,9,-51,24,-51,45v12,-12,23,-22,44,-22v30,-6,47,40,69,21v-10,1,-17,-10,-17,-19v-1,-16,14,-27,29,-27v22,0,33,20,33,45v0,34,-28,58,-64,57v-35,6,-51,-39,-77,-35v11,19,-6,36,-29,35v-45,-2,-51,-69,-24,-99v18,-20,49,-37,84,-49v25,-9,37,-19,37,-30v2,-28,-50,-34,-66,-17v18,16,3,49,-24,49v-23,0,-40,-14,-39,-37v1,-42,45,-64,92,-64"},"3":{"d":"166,-235v24,-3,55,-6,52,22v-3,25,-42,51,-58,71v38,3,61,24,61,62v1,56,-49,86,-110,86v-51,0,-97,-23,-97,-69v-1,-25,15,-42,39,-42v27,0,42,36,24,54v20,21,82,9,78,-27v-2,-22,-18,-32,-43,-30v-30,1,-28,-34,-8,-46r37,-38r-54,0v-22,-2,-13,20,-11,33v-1,15,-8,25,-25,25v-42,0,-23,-49,-28,-83v-4,-28,30,-18,51,-18r92,0"},"4":{"d":"149,-1v-32,0,-79,18,-79,-20v0,-22,23,-23,44,-19v15,3,8,-18,10,-30v-44,-5,-134,19,-114,-38v33,-42,72,-95,111,-131v30,-12,59,-8,59,40r0,87v22,1,49,-5,46,20v4,27,-23,21,-46,22v2,12,-6,32,9,30v20,-4,41,-2,41,19v0,38,-49,20,-81,20xm127,-111r3,-85r-61,85r58,0"},"5":{"d":"106,-111v-31,2,-82,24,-78,-22v3,-31,1,-75,13,-98v40,-9,104,-2,152,-4v19,-1,9,27,11,47v2,20,-6,26,-25,27v-29,2,-12,-33,-45,-28v-26,4,-55,-10,-48,22r0,17v60,-23,133,6,131,70v-1,56,-48,86,-110,86v-45,0,-87,-22,-88,-62v0,-21,17,-38,38,-38v25,0,40,24,28,46v21,21,73,4,70,-28v-2,-22,-23,-36,-49,-35"},"6":{"d":"125,-41v24,0,43,-12,43,-36v0,-24,-19,-35,-43,-35v-24,0,-44,11,-43,35v0,23,19,36,43,36xm145,-195v-33,-17,-69,16,-64,56v51,-38,146,-13,146,60v0,55,-43,85,-101,85v-73,0,-110,-49,-110,-123v0,-75,43,-125,115,-125v40,-1,73,14,75,48v0,19,-13,31,-33,31v-20,0,-34,-11,-28,-32"},"7":{"d":"121,6v-48,0,-50,-63,-33,-100v14,-31,60,-58,83,-84v-27,20,-73,-10,-91,-17v-16,0,-3,24,-4,36v0,17,-11,27,-29,27v-42,-1,-17,-54,-26,-87v0,-15,7,-22,21,-22v16,0,19,9,19,25v12,-43,89,-21,114,-7v8,0,17,-20,28,-17v17,0,30,17,30,35v0,42,-90,92,-86,145v2,29,12,66,-26,66"},"8":{"d":"119,-109v-25,0,-45,11,-45,33v0,23,20,35,45,34v25,0,45,-10,45,-34v0,-23,-20,-33,-45,-33xm119,-200v-17,0,-33,8,-33,24v0,16,16,24,33,24v18,1,32,-8,32,-24v0,-17,-15,-24,-32,-24xm215,-175v0,24,-12,35,-29,45v24,12,39,29,39,61v0,53,-46,75,-106,75v-60,0,-105,-21,-105,-75v0,-33,15,-49,39,-61v-17,-11,-30,-21,-30,-45v1,-45,44,-67,96,-67v52,0,95,21,96,67"},"9":{"d":"89,-41v33,16,69,-17,66,-53v-52,41,-142,12,-142,-63v0,-55,43,-86,101,-85v72,0,110,48,110,122v0,78,-48,126,-126,126v-40,0,-74,-11,-77,-45v-3,-37,64,-43,69,-10xm114,-196v-25,0,-41,14,-41,37v0,23,17,36,41,36v24,1,40,-14,41,-36v0,-23,-16,-37,-41,-37"},":":{"d":"64,-92v-18,0,-35,-16,-35,-35v0,-19,16,-35,35,-35v19,0,34,16,34,35v0,18,-17,35,-34,35xm64,4v-19,0,-35,-16,-35,-35v0,-19,16,-34,35,-34v18,0,34,16,34,35v0,17,-17,34,-34,34","w":127},";":{"d":"64,-92v-18,0,-35,-16,-35,-35v0,-19,16,-35,35,-35v19,0,35,17,35,35v0,18,-17,35,-35,35xm60,4v-15,-5,-32,-12,-31,-33v1,-21,14,-36,35,-36v25,0,36,21,35,48v-2,42,-24,88,-55,99v-38,-12,19,-52,16,-78","w":127},"<":{"d":"253,-210r0,39r-156,64r156,64r0,38r-207,-85r0,-35","w":299},"=":{"d":"45,-87r210,0r0,35r-210,0r0,-35xm45,-163r210,0r0,35r-210,0r0,-35","w":299},">":{"d":"46,-210r207,85r0,35r-207,85r0,-38r158,-64r-158,-64r0,-39","w":299},"?":{"d":"146,-172v4,-33,-54,-38,-70,-17v25,13,7,54,-23,54v-20,0,-36,-17,-36,-38v0,-48,48,-72,100,-72v50,0,89,26,89,73v0,43,-38,60,-70,69v-7,6,-2,25,-15,26v-21,7,-49,2,-46,-23v-6,-50,67,-32,71,-72xm105,4v-19,0,-34,-16,-34,-35v0,-18,16,-34,34,-34v18,0,35,16,35,35v0,18,-17,34,-35,34","w":218},"@":{"d":"243,-19v-23,1,-37,-8,-38,-29v-22,46,-118,36,-109,-31v-8,-69,82,-134,127,-76r9,-17r31,0r-27,112v0,9,7,12,17,13v39,-8,58,-44,59,-88v1,-59,-55,-98,-117,-97v-90,3,-147,54,-147,140v0,73,57,120,134,119v43,-1,78,-15,106,-34r14,21v-32,23,-69,40,-120,40v-98,-2,-166,-49,-166,-145v0,-107,72,-169,180,-169v86,0,149,42,149,126v0,64,-37,112,-102,115xm134,-78v0,34,34,41,54,22v16,-15,19,-43,26,-67v-4,-17,-11,-30,-31,-29v-29,0,-49,40,-49,74","w":360},"A":{"d":"166,-122r-21,-72r-20,72r41,0xm-13,-24v0,-40,53,-2,56,-43r51,-153v10,-26,12,-26,51,-26v40,0,42,-1,52,26r59,171v15,9,51,-6,48,25v-4,47,-74,14,-118,25v-20,0,-34,-8,-34,-27v0,-14,12,-26,24,-19v17,-1,8,-21,5,-33v-27,-4,-44,-2,-69,0v-7,11,-12,39,9,31v13,-1,18,9,18,21v0,49,-82,15,-125,28v-17,1,-27,-10,-27,-26","w":291,"k":{"y":6,"w":6,"v":6,"Y":10,"X":6,"W":16,"V":13,"U":10,"T":13,";":-10,":":-10,".":-13,"-":8,",":-13}},"B":{"d":"137,-195v-29,-4,-20,19,-20,40v0,9,3,9,14,9v25,0,44,-4,44,-24v0,-21,-15,-22,-38,-25xm29,-46v12,1,27,8,27,-11r0,-125v3,-21,-15,-11,-28,-11v-11,0,-18,-10,-18,-22v-1,-44,61,-19,98,-23v63,-7,138,-8,136,58v-1,32,-18,46,-50,50v35,3,58,23,58,59v2,99,-131,64,-218,73v-16,2,-24,-9,-24,-25v-1,-13,7,-23,19,-23xm139,-104v-33,-8,-19,23,-22,48v2,12,10,9,28,10v26,1,40,-8,40,-30v0,-22,-21,-28,-46,-28","w":271,"k":{"Y":6,"W":6,"V":6,"-":-10}},"C":{"d":"125,-246v26,0,43,8,53,24v0,-15,8,-22,22,-22v36,1,12,51,20,83v0,19,-9,25,-27,26v-43,2,-15,-68,-62,-63v-38,4,-51,34,-51,78v0,41,14,76,48,78v28,0,40,-13,40,-43v0,-19,9,-25,26,-26v22,-1,33,16,33,38v-2,52,-45,78,-104,78v-70,0,-110,-52,-110,-125v0,-74,40,-127,112,-126","w":235,"k":{"A":6,"-":-8}},"D":{"d":"147,-195v-25,-1,-26,1,-25,25r0,111v0,17,3,16,23,16v40,0,50,-33,50,-79v0,-45,-9,-71,-48,-73xm25,-46v13,1,31,11,31,-11r0,-126v3,-30,-53,8,-53,-34v0,-37,48,-19,79,-22v106,-10,181,11,181,120v0,74,-41,123,-112,121r-75,-2v-30,-1,-75,13,-73,-23v0,-14,8,-23,22,-23","w":278,"k":{"Y":6,"W":6,"V":6,"A":6,"-":-11}},"E":{"d":"56,-182v3,-25,-18,-12,-31,-11v-14,0,-22,-9,-22,-23v3,-46,67,-21,111,-22r114,-3v40,-2,18,49,24,81v6,32,-52,38,-52,8v0,-38,-5,-49,-49,-46v-38,-5,-33,19,-33,53v18,3,32,-2,26,-23v1,-10,8,-16,19,-16v42,2,10,61,22,98v1,13,-10,16,-22,18v-34,4,-1,-51,-45,-37v0,34,-7,67,36,60v48,2,51,-8,48,-49v-1,-13,13,-21,26,-21v44,-1,24,56,29,93v3,21,-14,25,-36,23v-63,-4,-132,-3,-192,0v-18,1,-26,-7,-26,-24v-1,-23,21,-25,43,-22v10,2,9,-1,10,-12r0,-125","w":277},"F":{"d":"129,-44v21,-6,53,-4,52,21v-2,41,-66,22,-105,22v-29,0,-73,13,-73,-22v0,-23,23,-27,43,-21v10,-1,9,-2,10,-13r0,-125v2,-31,-56,8,-53,-34v3,-46,67,-21,111,-22r114,-3v40,-2,18,49,24,81v6,32,-52,38,-52,8v0,-39,-6,-49,-49,-46v-39,-5,-33,20,-33,54v15,6,33,-1,26,-23v2,-20,44,-19,41,5v-3,26,-3,52,0,78v1,13,-10,17,-22,18v-34,4,0,-49,-45,-38r0,51v-1,8,4,9,11,9","w":257,"k":{"r":6,"o":10,"i":-7,"e":10,"a":6,"T":-7,"A":20,";":11,":":11,".":44,"-":11,",":44}},"G":{"d":"13,-120v0,-97,99,-160,170,-104v0,-26,46,-30,46,-3v0,36,14,83,-29,83v-42,0,-19,-55,-67,-54v-39,1,-53,33,-53,78v0,43,12,76,50,77v20,0,37,-10,37,-29v0,-15,-9,-13,-22,-13v-13,0,-21,-9,-21,-22v-3,-38,44,-23,73,-23v31,1,79,-16,79,23v0,35,-46,8,-46,36v0,29,22,79,-22,76v-16,0,-26,-6,-25,-23v-11,14,-39,23,-64,23v-66,1,-106,-55,-106,-125","w":277,"k":{"Y":6,"W":6,"T":6,"-":-8}},"H":{"d":"166,-24v-5,-27,29,-11,29,-33r0,-46v-28,-4,-48,-1,-74,0v3,20,-8,53,9,59v16,0,21,4,20,19v-3,50,-77,14,-122,27v-16,0,-24,-10,-25,-25v-1,-23,23,-27,43,-21v10,-1,9,-2,10,-13r0,-127v-1,-27,-57,8,-53,-32v5,-47,75,-12,118,-25v18,1,29,7,29,26v5,25,-29,14,-29,31r0,30v26,1,45,4,74,0r0,-33v-3,-12,-31,-4,-29,-27v5,-49,76,-14,121,-27v16,0,27,8,27,25v0,22,-23,26,-44,21v-10,1,-9,2,-10,13r0,128v-1,18,21,7,32,7v12,1,23,10,22,24v-4,46,-76,13,-119,25v-19,0,-29,-7,-29,-26","w":316},"I":{"d":"28,-47v12,0,31,11,31,-10r0,-127v1,-27,-53,9,-53,-32v0,-37,46,-25,76,-22v34,3,94,-22,96,21v1,24,-21,25,-43,22v-10,-2,-9,1,-10,12r0,129v-1,18,21,7,32,7v13,0,21,10,21,23v2,38,-46,25,-76,22v-34,-3,-96,23,-96,-21v0,-14,8,-24,22,-24","w":184},"J":{"d":"82,-40v62,0,41,-82,44,-142v3,-32,-56,9,-56,-34v0,-37,49,-22,80,-22v34,0,91,-19,92,22v1,22,-21,26,-42,21v-9,1,-9,1,-10,12r0,95v3,70,-38,91,-101,93v-54,2,-88,-25,-92,-75v-5,-63,100,-85,105,-20v2,26,-33,40,-47,20v-2,-1,-5,2,-4,4v0,15,14,26,31,26","w":240},"K":{"d":"281,2v-38,-14,-105,21,-108,-22v-1,-12,23,-17,12,-29r-33,-59r-31,26v2,14,-6,38,9,38v16,0,20,5,20,19v0,50,-79,13,-122,27v-16,0,-25,-9,-25,-25v0,-24,22,-27,43,-21v10,-1,9,-2,10,-13r0,-125v2,-31,-57,8,-53,-34v3,-47,74,-13,118,-25v30,-8,41,46,13,46v-24,0,-9,35,-13,56v21,-21,46,-38,65,-61v0,-6,-13,-14,-13,-21v1,-31,44,-17,69,-17v26,-1,61,-11,61,20v0,29,-29,20,-47,27v-15,18,-40,28,-50,51v20,31,35,66,57,94v18,4,46,-9,46,20v0,18,-10,29,-28,28","w":307,"k":{"y":20,"u":16,"o":6,"e":6,"Y":13,"W":13,"U":10,"O":13,"C":13,"A":6,"-":11}},"L":{"d":"174,-215v0,40,-53,3,-53,33r0,117v1,19,10,19,31,20v41,2,46,-14,43,-51v-1,-13,12,-21,26,-21v44,-1,24,57,29,94v3,22,-15,26,-39,24v-61,-4,-124,-3,-182,0v-18,1,-26,-7,-26,-24v-1,-23,21,-25,43,-22v10,2,9,-1,10,-12r0,-125v2,-31,-53,8,-53,-34v0,-42,54,-22,88,-22v32,0,83,-18,83,23","w":258,"k":{"y":13,"u":6,"Y":33,"W":26,"V":26,"U":13,"T":26,"A":-20,"-":-7}},"M":{"d":"242,-25v-5,-26,28,-10,28,-32r2,-146r-3,0r-45,175v0,31,-35,32,-57,23v-4,-3,-8,-10,-11,-23r-45,-175r-3,0v4,45,3,97,3,146v0,21,30,6,27,32v-5,47,-65,15,-107,27v-13,0,-21,-11,-21,-25v-1,-21,18,-28,37,-21v8,-1,8,-2,8,-13r0,-125v4,-20,-14,-11,-26,-11v-12,0,-19,-11,-19,-23v-1,-40,51,-22,85,-22v27,0,64,-14,70,18r25,142v4,-52,19,-95,26,-142v4,-31,42,-18,69,-18v32,0,85,-18,85,22v0,22,-17,26,-37,21v-8,1,-7,3,-8,13r0,126v-2,18,15,9,26,9v12,0,20,10,19,24v0,44,-62,14,-100,25v-18,0,-28,-9,-28,-27","w":382},"N":{"d":"27,-47v12,-1,29,11,29,-10r0,-125v2,-19,-17,-11,-29,-11v-30,0,-21,-50,6,-48v34,2,68,4,101,0v11,-1,18,11,23,22r67,165r-6,-129v2,-17,-14,-11,-25,-10v-13,0,-18,-10,-19,-23v-3,-36,40,-22,68,-22v31,0,82,-17,82,22v0,23,-20,26,-40,21v-7,-1,-9,5,-9,13r0,149v-2,33,-9,34,-48,35v-23,0,-39,-10,-47,-30r-62,-140v-4,-9,-7,-18,-9,-26r5,137v-1,17,14,12,26,10v12,1,19,10,19,24v0,35,-41,23,-68,22v-31,-1,-84,18,-83,-22v0,-15,5,-24,19,-24","w":322},"O":{"d":"80,-120v0,43,10,76,48,76v37,0,49,-35,49,-76v0,-43,-11,-76,-49,-76v-37,0,-48,33,-48,76xm129,-245v73,0,115,50,115,125v0,75,-43,125,-116,125v-74,0,-115,-50,-115,-125v0,-75,42,-125,116,-125","w":257,"k":{"Y":6,"X":6,"V":6,"A":6,";":-7,":":-7,".":15,"-":-10,",":15}},"P":{"d":"29,-47v11,0,27,10,27,-10r0,-127v2,-17,-16,-8,-27,-8v-11,-1,-19,-10,-19,-23v0,-40,44,-19,79,-23v76,-9,153,-1,149,77v-3,61,-41,83,-115,78v-12,-2,-4,20,-6,30v0,16,21,6,32,6v14,1,23,10,24,24v1,38,-51,22,-82,22v-36,0,-81,18,-81,-22v-1,-14,7,-24,19,-24xm139,-194v-33,-7,-19,29,-22,55v1,8,2,9,10,10v28,0,48,-8,49,-31v1,-23,-13,-35,-37,-34","w":245,"k":{"o":6,"e":6,"W":6,"U":6,"A":13,";":13,":":13,".":53,",":53}},"Q":{"d":"128,-196v-55,0,-56,91,-37,131v7,13,18,20,32,21v-3,-6,-24,-19,-21,-31v0,-13,15,-22,28,-22v19,1,30,13,36,30v23,-39,16,-129,-38,-129xm189,62v-37,0,-55,-18,-53,-57v-80,4,-122,-48,-123,-125v0,-75,42,-125,116,-125v73,0,116,50,115,125v0,55,-23,93,-59,113v2,8,4,22,13,21v12,-2,10,-23,27,-23v13,0,26,11,25,24v-1,31,-27,47,-61,47","w":257,"k":{"-":-10}},"R":{"d":"138,-194v-30,-7,-21,21,-21,44v0,10,4,9,15,9v27,0,46,-3,47,-26v0,-22,-16,-27,-41,-27xm31,-46v11,1,25,8,25,-11r0,-128v-1,-22,-46,6,-46,-30v0,-43,50,-18,88,-22v64,-7,152,-14,149,59v-1,34,-18,46,-50,51v36,6,49,24,46,68v-3,32,47,-5,47,34v0,39,-47,23,-75,27v-65,10,-5,-112,-79,-100v-27,-3,-17,23,-19,44v-1,16,17,8,27,8v27,0,21,52,-8,48v-31,-4,-72,-3,-103,0v-16,1,-23,-9,-23,-25v-1,-14,7,-23,21,-23","w":281,"k":{"y":6,"W":10,"V":13,"T":6,"C":6,"A":-20}},"S":{"d":"219,-76v7,80,-115,104,-160,59v0,14,-9,21,-23,21v-39,0,-20,-47,-25,-78v-3,-18,11,-29,29,-28v22,0,29,16,30,38v7,27,78,31,77,-5v5,-22,-52,-29,-71,-35v-37,-11,-64,-27,-66,-68v-4,-72,105,-96,151,-51v-5,-14,7,-22,21,-22v37,0,19,44,24,74v2,13,-13,21,-26,21v-31,1,-20,-54,-63,-50v-18,2,-37,7,-37,24v-5,18,50,23,70,28v42,9,65,28,69,72","w":229},"T":{"d":"57,-47v12,-1,31,10,31,-10r0,-123v0,-8,-7,-15,-16,-14v-20,0,-12,28,-11,44v0,13,-13,21,-27,21v-44,0,-24,-54,-29,-91v-3,-18,15,-23,35,-21v27,1,54,2,81,2r90,-2v42,-2,18,51,26,85v0,17,-12,27,-30,27v-27,0,-28,-24,-24,-48v-1,-10,-4,-17,-13,-17v-11,-1,-20,9,-16,19r0,121v-1,16,20,7,31,7v14,0,22,9,22,23v1,40,-52,22,-86,22v-33,0,-88,19,-86,-22v0,-14,8,-23,22,-23","w":241,"k":{"y":-7,"w":-7,"r":-7,"o":10,"i":-7,"e":10,"c":10,"T":-7,"A":13,";":11,":":11,".":26,",":26}},"U":{"d":"155,-48v58,0,30,-84,36,-135v2,-21,-32,-7,-29,-32v6,-48,76,-13,121,-26v18,0,26,8,27,24v1,23,-24,30,-44,22v-10,1,-9,1,-9,13r0,78v4,80,-32,109,-102,109v-80,0,-111,-41,-102,-132r0,-55v3,-22,-31,-10,-32,-10v-13,0,-21,-10,-21,-23v3,-48,74,-13,118,-26v18,0,27,10,29,27v3,25,-31,11,-29,32v5,51,-21,134,37,134","w":308,"k":{"A":10}},"V":{"d":"292,-216v0,21,-19,26,-39,21v-10,2,-10,8,-15,20r-49,151v1,36,-62,27,-87,21v-31,-52,-40,-132,-68,-188v-4,-9,-17,-2,-27,-2v-11,-1,-21,-10,-20,-23v3,-47,74,-14,118,-25v31,-8,42,46,10,47v-10,0,-11,5,-9,12r33,118r35,-124v-5,-11,-31,-3,-29,-26v5,-49,76,-14,121,-27v17,0,26,9,26,25","w":277,"k":{"y":6,"u":20,"o":29,"i":13,"e":29,"a":31,"O":8,"A":20,";":24,":":24,".":60,"-":29,",":60}},"W":{"d":"279,-182v5,-23,-36,-6,-33,-32v6,-46,75,-16,117,-27v14,0,25,10,25,24v0,38,-42,6,-51,42r-38,154v3,32,-58,23,-84,17v-4,-3,-7,-8,-8,-16r-19,-141r-4,0r-19,141v5,32,-65,21,-81,17v-5,-3,-9,-9,-11,-18r-38,-154v0,-37,-54,-4,-51,-42v4,-43,71,-12,110,-24v18,-1,32,9,32,26v0,20,-16,19,-31,22v-4,2,-2,6,-2,11r25,122r3,0r24,-159v-1,-30,51,-19,76,-15v17,50,19,118,30,174r3,0","w":374,"k":{"y":6,"u":15,"r":16,"o":18,"i":11,"e":20,"a":20,"A":16,";":21,":":21,".":44,"-":21,",":44}},"X":{"d":"145,-22v-3,-19,29,-14,16,-35r-23,-38v-8,16,-21,31,-26,49v2,10,23,7,20,24v-7,45,-73,10,-113,24v-29,4,-32,-46,-7,-49v15,3,26,2,34,-10r44,-65r-50,-71v-19,-3,-44,4,-42,-23v2,-46,67,-13,107,-25v15,0,28,8,27,23v4,19,-25,15,-14,34r20,33r25,-42v-2,-6,-20,-11,-18,-25v6,-42,71,-14,111,-23v28,-7,29,45,7,48v-17,-3,-29,-4,-35,11r-41,60v18,24,32,53,52,75v19,4,45,-5,43,23v-4,47,-70,12,-110,26v-15,-1,-28,-8,-27,-24","w":276,"k":{"O":6,"C":6,"A":6,"-":18}},"Y":{"d":"300,-216v0,37,-44,10,-59,34r-61,95v3,14,-8,42,9,42v23,0,50,-3,49,21v-1,39,-58,22,-92,22v-34,0,-89,17,-90,-22v-1,-24,26,-24,49,-21v18,2,10,-34,6,-47v-23,-33,-41,-71,-68,-100v-19,-6,-52,5,-50,-24v3,-47,75,-12,119,-25v17,0,29,7,29,23v5,21,-27,12,-16,34r22,42v8,-17,18,-33,25,-51v-4,-9,-22,-10,-20,-25v7,-43,78,-11,121,-23v17,0,27,8,27,25","w":294,"k":{"u":26,"o":28,"i":6,"e":28,"a":23,"O":6,"C":13,"A":16,";":31,":":31,".":29,"-":43,",":29}},"Z":{"d":"167,-240v25,-2,60,-7,57,22v1,8,-7,20,-14,29r-108,139v26,-4,73,12,75,-15v-7,-23,-10,-58,25,-55v45,4,17,62,27,100v1,31,-47,19,-75,20r-120,1v-32,-2,-33,-38,-10,-58r107,-138v-20,3,-57,-8,-60,11v7,23,1,46,-24,45v-40,0,-19,-52,-26,-86v2,-29,49,-15,75,-15r71,0","w":244},"[":{"d":"97,78v-29,-2,-73,20,-73,-25r0,-270v-5,-42,44,-22,73,-24v30,-1,76,-12,76,23v0,45,-61,13,-91,20r0,233v26,8,90,-26,91,20v0,35,-45,26,-76,23","w":185},"\\":{"d":"104,22v0,11,0,13,-13,12v-10,0,-16,-4,-18,-13r-71,-259v-1,-9,8,-6,17,-7v8,0,13,3,15,12","w":98},"]":{"d":"89,-241v30,1,73,-18,73,25r0,270v-1,53,-72,11,-119,27v-19,1,-30,-9,-30,-26v0,-45,61,-13,90,-20r0,-233v-26,-8,-89,26,-90,-20v-1,-36,46,-24,76,-23","w":185},"^":{"d":"158,-257r44,0r85,99r-42,0r-65,-65r-66,65r-41,0","w":360},"_":{"d":"0,49r180,0r0,36r-180,0r0,-36","w":180},"`":{"d":"45,-234v-23,-6,-23,-39,1,-40v32,9,52,45,74,65v-20,17,-54,-20,-75,-25","w":180},"a":{"d":"90,-34v27,0,35,-19,33,-48v-11,8,-55,6,-55,28v0,12,8,20,22,20xm211,-21v0,36,-65,34,-72,5v-33,36,-136,30,-131,-34v2,-42,22,-52,65,-58v26,-4,54,-13,51,-25v4,-19,-34,-29,-39,-11v6,19,-12,28,-30,28v-17,0,-32,-11,-32,-28v3,-34,36,-42,77,-42v53,0,80,13,80,71r0,67v2,15,31,4,31,27","w":219},"b":{"d":"127,6v-26,0,-42,-10,-54,-26v0,19,-1,24,-23,23v-20,-1,-24,1,-24,-16r0,-181v-5,-20,-53,9,-50,-26v3,-40,58,-12,93,-22v9,0,11,5,11,15r0,65v6,-15,27,-25,48,-25v47,0,75,43,75,94v0,55,-25,99,-76,99xm112,-141v-33,0,-34,30,-34,65v0,23,12,40,35,39v26,-1,36,-23,36,-52v0,-32,-9,-51,-37,-52","w":216},"c":{"d":"102,6v-54,0,-91,-41,-91,-96v0,-58,37,-96,94,-96v40,0,70,18,73,53v3,35,-57,43,-60,10v4,-11,4,-20,-13,-19v-27,2,-38,22,-38,52v0,29,13,51,37,53v29,1,22,-40,49,-40v15,0,27,12,27,27v0,35,-38,56,-78,56","w":188},"d":{"d":"13,-92v0,-74,74,-120,123,-73v-2,-14,6,-38,-9,-37v-19,3,-43,5,-42,-18v2,-40,59,-12,94,-22v10,0,9,4,10,15r0,177v1,23,46,-7,44,28v-3,39,-50,16,-81,24v-12,3,-10,-9,-10,-20v-15,14,-27,23,-53,24v-51,-1,-76,-41,-76,-98xm103,-37v33,1,34,-31,34,-66v0,-26,-11,-38,-34,-38v-27,0,-36,21,-36,52v0,30,9,52,36,52","w":225},"e":{"d":"136,-114v4,-31,-35,-41,-53,-23v-6,6,-9,13,-9,23r62,0xm195,-101v0,12,-2,19,-13,19r-110,0v1,28,11,46,39,46v29,1,22,-34,52,-34v18,0,30,7,30,24v-1,34,-44,52,-85,52v-59,0,-97,-37,-97,-96v0,-58,37,-97,94,-96v54,0,90,32,90,85","w":204,"k":{"x":6}},"f":{"d":"128,-200v2,-8,0,-12,-7,-12v-15,0,-15,17,-15,34v22,-2,44,-4,44,20v0,20,-16,21,-33,19v-9,-1,-8,1,-9,10r0,80v-2,15,17,7,27,7v12,0,21,9,20,21v-5,44,-80,12,-128,22v-15,3,-23,-8,-23,-22v0,-19,19,-24,38,-19v10,0,9,-1,10,-11r0,-78v-1,-24,-49,5,-45,-29v-2,-24,23,-23,46,-20v-3,-48,20,-69,66,-69v34,-1,59,10,61,39v2,29,-47,31,-52,8","w":166},"g":{"d":"145,16v0,-28,-49,-10,-72,-19v-7,2,-15,9,-15,18v2,30,87,27,87,1xm105,-149v-15,0,-24,11,-24,27v0,15,9,27,24,26v15,0,23,-11,23,-26v0,-15,-8,-27,-23,-27xm3,18v0,-25,14,-34,37,-40v-17,-3,-28,-12,-28,-32v0,-20,11,-31,28,-37v-34,-44,11,-107,76,-93v-1,-26,17,-37,43,-38v21,0,39,10,38,30v0,13,-7,22,-21,21v-14,3,-20,-27,-29,-8r1,6v22,11,32,23,33,53v4,55,-68,77,-115,53v-4,0,-5,5,-6,8v5,23,24,18,63,18v53,0,75,13,75,57v0,46,-46,63,-99,63v-52,0,-96,-16,-96,-61","w":195},"h":{"d":"5,-21v-3,-35,40,-5,40,-30r0,-140v3,-23,-42,5,-40,-28v3,-41,49,-16,86,-24v10,1,9,5,10,17r0,62v37,-40,131,-23,114,54r0,59v-1,24,41,-3,41,29v0,45,-62,11,-97,24v-15,0,-21,-8,-21,-23v-6,-22,20,-12,20,-28v0,-35,11,-86,-26,-86v-38,0,-29,46,-31,84v-1,19,28,9,26,30v-4,43,-67,10,-102,23v-14,0,-19,-8,-20,-23","w":258},"i":{"d":"80,-189v-18,0,-34,-16,-34,-33v0,-18,15,-33,34,-33v17,0,34,15,34,33v0,17,-16,33,-34,33xm25,-42v12,1,28,8,28,-9r0,-80v0,-25,-50,6,-47,-28v3,-40,60,-14,95,-23v9,0,11,7,11,17r0,115v0,24,47,-8,47,29v0,36,-51,20,-81,20v-28,0,-73,14,-72,-20v0,-12,6,-22,19,-21","w":160},"j":{"d":"88,-189v-18,0,-35,-15,-35,-33v0,-19,16,-33,35,-33v18,0,33,14,33,33v0,18,-15,33,-33,33xm92,-180v15,-1,28,-5,28,15r0,150v4,62,-29,80,-81,83v-31,2,-59,-13,-60,-40v-1,-18,13,-31,31,-31v23,0,24,19,28,33v30,-1,23,-40,23,-81r0,-80v0,-26,-46,7,-46,-28v0,-35,47,-18,77,-21","w":152},"k":{"d":"2,-21v-2,-37,47,-1,47,-30r0,-140v0,-25,-50,6,-47,-29v4,-36,54,-15,88,-22v13,0,12,4,12,20r0,118v12,-12,28,-20,37,-35v0,-7,-21,-14,-18,-25v8,-37,65,-8,107,-18v25,-6,29,40,6,42v-8,-1,-20,-9,-29,-2v-10,12,-33,18,-34,35v17,22,28,52,50,69v14,-6,39,-2,38,17v-2,41,-63,11,-95,23v-32,1,-8,-31,-18,-46v-10,-9,-13,-37,-29,-31v-7,8,-20,9,-17,26v-2,15,10,10,18,8v9,0,17,10,16,21v-2,43,-71,8,-108,22v-16,0,-23,-7,-24,-23","w":256,"k":{"u":13,"a":6}},"l":{"d":"21,-42v11,0,28,9,28,-9r0,-140v1,-26,-51,7,-47,-29v4,-38,60,-13,94,-22v10,1,11,8,11,20r0,172v-1,24,40,-7,40,29v0,35,-43,20,-72,20v-28,0,-74,14,-73,-20v1,-11,6,-21,19,-21","w":150},"m":{"d":"211,-51v-2,20,22,8,22,30v0,39,-49,13,-76,23v-13,0,-20,-8,-20,-23v-4,-21,20,-12,20,-28v0,-35,12,-87,-25,-87v-37,0,-28,49,-29,85v-1,19,26,9,24,30v-4,43,-65,10,-100,23v-15,0,-21,-8,-21,-23v0,-18,16,-24,33,-19v8,0,7,-5,8,-14r0,-75v1,-27,-41,5,-41,-30v0,-36,42,-19,75,-23v15,-1,10,19,11,33v10,-41,85,-49,103,-10v38,-42,135,-34,121,49r0,63v0,12,22,5,24,5v20,2,19,45,-4,44v-29,-14,-96,21,-93,-23v1,-11,1,-16,9,-19v8,1,9,-2,9,-9v-3,-34,13,-87,-25,-87v-36,0,-22,51,-25,85","w":356},"n":{"d":"133,-135v-37,0,-29,47,-30,84v0,19,27,9,25,30v-4,41,-63,12,-102,22v-15,1,-21,-7,-21,-22v0,-18,16,-24,33,-19v7,-1,7,-2,8,-11r0,-80v2,-15,-14,-9,-24,-8v-11,1,-17,-9,-17,-20v0,-38,46,-17,77,-24v13,0,8,20,9,34v11,-22,31,-35,63,-36v67,-2,65,64,62,134v-1,17,15,9,26,9v22,0,20,46,-5,43v-26,-3,-52,-1,-78,0v-15,0,-20,-8,-20,-22v-6,-22,20,-11,20,-28v0,-35,11,-86,-26,-86","w":259},"o":{"d":"105,-142v-27,0,-38,22,-38,52v0,30,11,52,38,52v27,0,38,-21,38,-52v0,-29,-12,-51,-38,-52xm105,6v-57,1,-94,-38,-94,-96v0,-58,37,-96,94,-96v58,0,95,38,95,96v0,59,-36,96,-95,96","w":210,"k":{"x":6,"-":-7}},"p":{"d":"20,-182v30,9,71,-19,64,26v14,-17,28,-30,58,-29v51,1,75,41,75,97v0,75,-74,121,-123,73v3,16,-9,48,10,48v20,-3,41,-4,41,19v0,37,-51,20,-80,20v-26,0,-65,14,-65,-19v0,-19,16,-25,34,-20v7,-1,6,-3,7,-11r0,-153v0,-23,-41,6,-41,-27v0,-13,7,-24,20,-24xm163,-91v7,-59,-69,-71,-69,-13v0,35,0,67,33,66v28,0,32,-23,36,-53","w":232},"q":{"d":"103,-38v33,2,34,-30,34,-66v0,-23,-12,-39,-34,-39v-25,0,-37,22,-36,52v0,31,8,52,36,53xm85,52v0,-38,51,-4,51,-30r0,-37v-48,48,-134,1,-123,-73v-12,-82,82,-127,129,-72v0,-18,0,-23,22,-22v21,1,25,-2,25,15r0,189v-2,16,14,10,24,9v11,0,17,10,17,22v0,32,-39,20,-64,19v-30,-1,-81,17,-81,-20","w":215},"r":{"d":"49,-131v1,-17,-18,-8,-27,-8v-9,0,-15,-10,-15,-20v0,-36,47,-18,76,-23v14,-2,7,22,9,36v10,-24,24,-34,54,-38v52,-6,73,79,19,82v-21,1,-35,-19,-26,-38v-37,2,-34,49,-33,90v-1,24,47,-7,47,29v0,37,-53,20,-82,20v-26,0,-64,13,-64,-20v0,-20,15,-23,34,-19v7,2,7,-4,8,-11r0,-80","w":199,"k":{".":23,"-":13,",":23}},"s":{"d":"185,-57v4,64,-99,82,-133,43v-2,12,-7,18,-20,18v-29,0,-13,-35,-18,-61v0,-23,37,-24,42,-2v4,15,20,24,39,24v37,0,39,-27,1,-34v-40,-8,-77,-17,-80,-61v-3,-57,87,-68,120,-41v0,-12,6,-14,19,-14v26,-2,11,29,16,51v0,12,-6,18,-18,18v-23,0,-25,-31,-54,-31v-12,0,-22,5,-22,15v0,8,11,14,34,18v42,8,71,13,74,57","w":196},"t":{"d":"95,6v-65,0,-60,-66,-56,-132v2,-27,-47,4,-41,-30v-3,-25,18,-21,39,-23v7,-20,-5,-62,34,-56v28,-3,21,22,22,46v0,25,68,-10,63,28v3,29,-26,20,-52,22v-7,0,-11,1,-10,8r0,71v0,14,0,20,12,20v29,1,-4,-57,32,-53v16,2,22,16,21,36v0,42,-22,63,-64,63","w":171},"u":{"d":"122,-44v38,2,28,-49,30,-87v1,-13,-12,-10,-20,-9v-12,1,-22,-8,-21,-20v1,-38,53,-15,86,-23v10,1,11,6,12,17r0,119v6,17,49,-7,43,25v1,41,-51,13,-81,24v-15,1,-9,-18,-10,-31v-7,20,-36,35,-63,35v-67,0,-60,-69,-59,-137v0,-23,-41,5,-41,-28v0,-40,52,-16,86,-24v10,1,12,4,12,17v0,44,-18,119,26,122","w":254},"v":{"d":"139,-131v2,-16,-26,-10,-22,-32v6,-35,62,-12,96,-19v12,-3,20,9,20,22v0,30,-33,9,-41,31r-41,117v-3,27,-70,25,-78,0v-14,-42,-27,-89,-46,-127v-14,-4,-36,2,-35,-21v0,-40,59,-14,97,-22v11,-2,18,8,18,19v0,11,-5,19,-14,21v-6,0,-9,4,-8,11v10,28,19,57,27,88","w":224,"k":{".":28,",":28}},"w":{"d":"313,-160v0,30,-34,8,-39,31v-10,43,-19,94,-36,132v-18,4,-70,12,-67,-17r-23,-126v-11,46,-12,102,-29,142v-16,5,-69,15,-67,-14r-34,-127v-12,-5,-37,2,-35,-21v2,-42,61,-12,96,-23v21,-1,24,38,5,41v-7,1,-10,3,-9,9r18,97v11,-46,12,-103,30,-142v17,-8,62,-11,58,18r26,124r14,-98v0,-15,-23,-7,-21,-27v3,-40,58,-11,93,-22v12,0,20,9,20,23","w":302,"k":{".":26,"-":-7,",":26}},"x":{"d":"158,2v-34,4,-25,-32,-13,-43r-23,-31r-22,33v13,7,20,48,-12,41v-35,-8,-92,18,-93,-23v-1,-32,37,-10,50,-28r32,-43v-18,-15,-25,-52,-57,-48v-12,1,-19,-9,-19,-20v0,-42,62,-11,97,-23v26,1,17,36,7,45v3,12,12,20,18,29v5,-10,14,-17,17,-29v-10,-8,-20,-44,7,-45v33,11,95,-19,97,23v1,29,-33,12,-46,29r-31,39v20,18,27,61,67,51v25,4,19,46,-5,43v-23,-4,-47,-2,-71,0","w":245,"k":{"o":6,"e":6,"c":6}},"y":{"d":"61,28v25,-2,31,-35,19,-62r-47,-106v-15,-2,-39,2,-38,-21v3,-41,64,-12,102,-22v18,-5,25,36,7,36v-9,0,-10,9,-7,15v7,27,21,48,23,80v10,-19,20,-61,28,-87v-4,-10,-20,-9,-20,-26v0,-23,28,-15,47,-15v27,0,67,-14,67,20v0,31,-35,8,-44,31v-31,78,-45,192,-146,196v-30,1,-50,-16,-52,-43v-2,-30,54,-42,54,-6v0,6,1,11,7,10","k":{".":31,"-":6,",":31}},"z":{"d":"139,-180v44,-12,57,30,31,57r-78,80v21,-4,61,13,51,-22v0,-13,6,-22,19,-22v37,-1,14,47,22,78v-2,16,-31,8,-47,9r-96,0v-33,2,-34,-31,-16,-50r88,-89v-19,4,-59,-13,-52,17v0,13,-8,22,-20,22v-27,1,-19,-35,-20,-62v-2,-21,15,-18,34,-18r84,0","w":198},"{":{"d":"74,-200v-4,-57,29,-60,81,-60r0,37v-78,-16,1,126,-75,130v43,3,37,48,37,94v0,31,8,36,38,35r0,37v-52,1,-81,-3,-81,-60v0,-46,8,-95,-46,-88r0,-37v50,10,49,-40,46,-88","w":180},"|":{"d":"72,-275r36,0r0,360r-36,0r0,-360","w":180},"}":{"d":"100,-93v-76,-5,8,-142,-75,-130r0,-37v52,-1,84,4,81,60v-2,46,-6,99,47,88r0,37v-53,-7,-50,40,-47,88v3,58,-29,61,-81,60r0,-37v79,17,0,-125,75,-129","w":180},"~":{"d":"150,-127v46,19,86,14,119,-14r0,39v-20,13,-39,23,-67,24v-34,0,-78,-26,-103,-23v-28,3,-47,12,-68,28r0,-39v34,-23,71,-34,119,-15","w":299},"\u00a0":{"w":119}}});
-/*
+})(this, document);/*
 
             _/    _/_/    _/_/_/_/_/                              _/
                _/    _/      _/      _/_/    _/    _/    _/_/_/  _/_/_/
@@ -8392,11 +7126,6 @@ Cufon.registerFont({"w":238,"face":{"font-family":"AmerType Md BT","font-weight"
         height = function(vars){return (window.innerHeight) + "px"},
         width = function (){return window.innerWidth + "px";},
         cssRules = {
-            /**
-             *
-             *
-             *    @var Object
-             */
             variables : {
                 toolbarHeight: 44
             },
@@ -8609,12 +7338,8 @@ Cufon.registerFont({"w":238,"face":{"font-family":"AmerType Md BT","font-weight"
             matrix, mp,
             dimension = $this[options.outerDimension](),
             parent = $this.parent()[options.dimension](),
-            //maxScroll
             endPoint = -(dimension - parent),
-            //a distance to stop inertia from hitting
             quarter = parent / options.divider;
-            
-        //ignore some stuff
         if (!!options.ignore && $(event.target).is(options.ignore) || event.targetTouches.length !== options.numberOfTouches) { 
             return null;
         }
@@ -8668,7 +7393,6 @@ Cufon.registerFont({"w":238,"face":{"font-family":"AmerType Md BT","font-weight"
             point = data.startPosition - distance,
             duration = 0;
         
-        //apply friction if past scroll points
         if (point > 5) {
             point = (point - 5) / options.friction;
             
@@ -9067,6 +7791,7 @@ TJG.utils = {
 TJG.ui = { 
   
   hideLoader : function(delay,fn) {
+    TJG.repositionDialog = [];
     if (delay == null) {
       delay = 300;
     }
@@ -9077,6 +7802,7 @@ TJG.ui = {
   
   showLoader : function(delay,fn) {
     TJG.utils.centerDialog("#loader");
+    TJG.repositionDialog = ["#loader"];
     if (delay == null) {
       delay = 300;
     } 
@@ -9087,6 +7813,7 @@ TJG.ui = {
   
   removeDialogs : function () {
     $('.dialog_wrapper').fadeOut();
+    TJG.repositionDialog = [];
   },
   
   getOffferRow : function (obj,currency,i,hidden) {
@@ -9098,35 +7825,44 @@ TJG.ui = {
       style = 'style="display:none;"';
     }
     $.each(obj, function(i,v){
-      t.push('<li class="offer_item clearfix '+ clsId +'" '+ style +'>'); 
-        t.push('<div class="offer_image">');
-          t.push('<img src="' + v.IconURL + '">');
-          //t.push('<div class="image_loader"></div>');
-        t.push('</div>');
-        t.push('<div class="offer_text">');
-          t.push('<div class="offer_title title">');
-            t.push(v.Name);
+      var freeCls = "";
+      if (v.Cost == "Free") {
+        freeCls = "free";
+      }
+      t.push('<a href="' + v.RedirectURL + '">'); 
+        t.push('<li class="offer_item clearfix '+ clsId +'" '+ style +'>');
+          t.push('<a href="' + v.RedirectURL + '">');  
+            t.push('<div class="offer_image">');
+              t.push('<img src="' + v.IconURL + '">');
+              //t.push('<div class="image_loader"></div>');
+            t.push('</div>'); 
+          t.push('</a>');
+          t.push('<div class="offer_text">');
+            t.push('<div class="offer_title title">');
+              t.push(v.Name);
+            t.push('</div>');
+            t.push('<div class="offer_info">');
+                t.push('<a href="' + v.RedirectURL + '">');
+                  t.push('<div class="offer_button my_apps">');
+                    t.push('<div class="button grey">');
+                      t.push('<span class="amount">');
+                        t.push(v.Amount);
+                      t.push('</span>');
+                      t.push(' ');
+                      t.push('<span class="currency">');
+                        t.push(currency);
+                      t.push('</span>');
+                      t.push('<span class="cost '+ freeCls +'">');
+                        t.push(v.Cost);
+                      t.push('</span>'); 
+                    t.push('</div>');
+                  t.push('</div>');  
+                t.push('</a>'); 
+            t.push('</div>');
           t.push('</div>');
-          t.push('<div class="offer_info">');
-            t.push('<a href="' + v.RedirectURL + '">');
-              t.push('<div class="offer_button my_apps">');
-                t.push('<div class="button grey">');
-                  t.push('<span class="amount">');
-                    t.push(v.Amount);
-                  t.push('</span>');
-                  t.push(' ');
-                  t.push('<span class="currency">');
-                    t.push(currency);
-                  t.push('</span>');
-                  t.push('<span class="cost">');
-                    t.push(v.Cost);
-                  t.push('</span>'); 
-                t.push('</div>');
-              t.push('</div>'); 
-            t.push('</a>');             
-          t.push('</div>');
-        t.push('</div>');
-      t.push('</li>');
+        t.push('</li>');
+      t.push('</a>');
+
     });
     return t.join('');    
   },
@@ -9139,10 +7875,10 @@ TJG.ui = {
     else {
       path = location.pathname.replace(/\/$/, '');
     }
+    TJG.repositionDialog = ["#sign_up_dialog"];
     $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
-    TJG.onload.loadCufon();
     $(".close_dialog").show();
-    $("#sign_up_dialog_content").parent().animate({ height: "260px", }, 250);
+    $("#sign_up_dialog_content").parent().animate({ height: "270px", }, 250);
     $("#sign_up_dialog").fadeIn();
     $('form#new_gamer').submit(function(e){
       e.preventDefault();
@@ -9185,7 +7921,6 @@ TJG.ui = {
         ].join('');
         $("#sign_up_dialog_content").html(loader);
         $("#sign_up_dialog_content").parent().animate({ height: "120px", }, 250);
-        TJG.onload.loadCufon();
         $.ajax({
           type: 'POST',
           url: rurl,
@@ -9206,7 +7941,6 @@ TJG.ui = {
               $('.close_dialog').unbind('click');
               $("#sign_up_dialog_content").parent().animate({ height: "230px", }, 250);
               $("#sign_up_dialog_content").html(msg);
-              TJG.onload.loadCufon(); 
               if (TJG.vars.isIos == false) {
                   if (d.more_games_url) {
                     $('.close_dialog,.continue_link_device').click(function(){
@@ -9219,9 +7953,18 @@ TJG.ui = {
               }
               else if (d.link_device_url) {
                 $('.close_dialog,.continue_link_device').click(function(){
-                  document.location.href = d.link_device_url;
-                  $("#sign_up_dialog").hide();
-                });
+                  $('.close_dialog').unbind('click');
+                  msg = [
+                    '<div id="link_device" class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Link Device</div></div>',
+                    '<div class="dialog_header">The final step is to link your device to your Tapjoy Games account.  Please continue and click install on the next screen.</div>',
+                    '<div class="dialog_content"><div class="link_device_url"><div class="button dialog_button">Link Device</div></div></div>'
+                  ].join('');
+                  $("#sign_up_dialog_content").parent().animate({ height: "170px", }, 250);
+                  $("#sign_up_dialog_content").html(msg);
+                  $('.close_dialog,.link_device_url').click(function(){
+                    document.location.href = d.link_device_url;
+                  });
+                }); 
               }
               else {
                 $('.close_dialog,.continue_link_device').click(function(){
@@ -9245,8 +7988,7 @@ TJG.ui = {
             }
             $('#sign_up_again').click(function(){
               TJG.ui.showRegister();
-              $("#sign_up_dialog_content").parent().animate({ height: "260px", }, 250);
-              TJG.onload.loadCufon();
+              $("#sign_up_dialog_content").parent().animate({ height: "270px", }, 250);
             });
           },
           error: function() {
@@ -9257,36 +7999,21 @@ TJG.ui = {
             ].join('');
             $(".close_dialog").hide(); 
             $("#sign_up_dialog_content").html(msg);
-            TJG.onload.loadCufon();
             $('#sign_up_again').click(function(){
                TJG.ui.showRegister();
-              $("#sign_up_dialog_content").parent().animate({ height: "260px", }, 250);
-              TJG.onload.loadCufon();
+              $("#sign_up_dialog_content").parent().animate({ height: "270px", }, 250);
             });
           }
         });
       }
     });
   }
+  
 };
   
 (function(window, document) {
 
     TJG.onload = {
-      loadCufon : function (fn,delay) {
-        if (!delay) {
-          delay = 1;
-        }
-        if (Cufon) {
-          Cufon.replace('.title', { fontFamily: 'Cooper Std' });
-          Cufon.replace('.title_2', { fontFamily: 'AmerType Md BT' });
-        }
-        if (fn) {
-          setTimeout(function() { 
-            fn;
-            }, delay);
-        }
-      },
 
       removeLoader : function () {
         TJG.ui.hideLoader(250,function(){
@@ -9297,16 +8024,41 @@ TJG.ui = {
       loadEvents : function () {
         $('.close_dialog').click(function(){
           TJG.ui.removeDialogs();
+          TJG.repositionDialog = [];
         });
         $('#sign_up, #sign_up_form').click(function(){
           TJG.utils.centerDialog("#sign_up_dialog");
+          TJG.repositionDialog = ["#sign_up_dialog"];
           TJG.ui.showRegister();
         });
         $('#how_works').click(function(){
           TJG.utils.centerDialog("#how_works_dialog");
+          TJG.repositionDialog = ["#how_works_dialog"];
           $("#how_works_dialog").fadeIn(350);
         });
+        $('.top_nav_bar').click(function(){
+          TJG.utils.centerDialog("#my_account_dialog");
+          TJG.repositionDialog = ["#my_account_dialog"];
+          $("#my_account_dialog").fadeIn(350);
+        });
+        $('.my_account_url').click(function(){
+          $("#my_account_dialog").fadeOut(350, function() {
+            TJG.utils.centerDialog("#my_account_dialog_content");
+            TJG.repositionDialog = ["#my_account_dialog_content"];
+            $("#my_account_dialog_content").fadeIn(350);     
+          });
+        });  
+        
+
       },
+      
+      checkFlashMessages: function () {
+        if($('#flash_error').length > 0) {
+          TJG.utils.centerDialog("#flash_error");
+          $("#flash_error").fadeIn();
+          TJG.repositionDialog = ["#flash_error"];
+        }
+      }
     };
 
     TJG.init = function() {  

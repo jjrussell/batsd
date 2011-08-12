@@ -1,8 +1,9 @@
 #jqt
   #find_games.current
-    = render 'nav_bar'
+    .hidden_nav.toolbar
     .container.vertical-scroll
       .scroller.with-scrollbar
+        .top_nav_bar
         .page
           .logo
             .slide_nav
@@ -21,12 +22,13 @@
               Uh Oh!
             .message_header
               No Tapjoy Games have been linked to this device.  Why not try out some new games?
-            .message_content
+            .message_content.find_games
               %a{ :href => games_more_games_path }
-                %span.button.grey.arrow  
-                  Find cool games!
+                .button.grey.arrow
+                  .arrow_bg  
+                    Find cool games!
 
-  = render 'my_account'
+= render 'my_account'
 
 - content_for :page_javascript do
   :plain

@@ -42,6 +42,7 @@ TJG.utils = {
 TJG.ui = { 
   
   hideLoader : function(delay,fn) {
+    TJG.repositionDialog = [];
     if (delay == null) {
       delay = 300;
     }
@@ -52,6 +53,7 @@ TJG.ui = {
   
   showLoader : function(delay,fn) {
     TJG.utils.centerDialog("#loader");
+    TJG.repositionDialog = ["#loader"];
     if (delay == null) {
       delay = 300;
     } 
@@ -62,6 +64,7 @@ TJG.ui = {
   
   removeDialogs : function () {
     $('.dialog_wrapper').fadeOut();
+    TJG.repositionDialog = [];
   },
   
   getOffferRow : function (obj,currency,i,hidden) {
@@ -73,35 +76,44 @@ TJG.ui = {
       style = 'style="display:none;"';
     }
     $.each(obj, function(i,v){
-      t.push('<li class="offer_item clearfix '+ clsId +'" '+ style +'>'); 
-        t.push('<div class="offer_image">');
-          t.push('<img src="' + v.IconURL + '">');
-          //t.push('<div class="image_loader"></div>');
-        t.push('</div>');
-        t.push('<div class="offer_text">');
-          t.push('<div class="offer_title title">');
-            t.push(v.Name);
+      var freeCls = "";
+      if (v.Cost == "Free") {
+        freeCls = "free";
+      }
+      t.push('<a href="' + v.RedirectURL + '">'); 
+        t.push('<li class="offer_item clearfix '+ clsId +'" '+ style +'>');
+          t.push('<a href="' + v.RedirectURL + '">');  
+            t.push('<div class="offer_image">');
+              t.push('<img src="' + v.IconURL + '">');
+              //t.push('<div class="image_loader"></div>');
+            t.push('</div>'); 
+          t.push('</a>');
+          t.push('<div class="offer_text">');
+            t.push('<div class="offer_title title">');
+              t.push(v.Name);
+            t.push('</div>');
+            t.push('<div class="offer_info">');
+                t.push('<a href="' + v.RedirectURL + '">');
+                  t.push('<div class="offer_button my_apps">');
+                    t.push('<div class="button grey">');
+                      t.push('<span class="amount">');
+                        t.push(v.Amount);
+                      t.push('</span>');
+                      t.push(' ');
+                      t.push('<span class="currency">');
+                        t.push(currency);
+                      t.push('</span>');
+                      t.push('<span class="cost '+ freeCls +'">');
+                        t.push(v.Cost);
+                      t.push('</span>'); 
+                    t.push('</div>');
+                  t.push('</div>');  
+                t.push('</a>'); 
+            t.push('</div>');
           t.push('</div>');
-          t.push('<div class="offer_info">');
-            t.push('<a href="' + v.RedirectURL + '">');
-              t.push('<div class="offer_button my_apps">');
-                t.push('<div class="button grey">');
-                  t.push('<span class="amount">');
-                    t.push(v.Amount);
-                  t.push('</span>');
-                  t.push(' ');
-                  t.push('<span class="currency">');
-                    t.push(currency);
-                  t.push('</span>');
-                  t.push('<span class="cost">');
-                    t.push(v.Cost);
-                  t.push('</span>'); 
-                t.push('</div>');
-              t.push('</div>'); 
-            t.push('</a>');             
-          t.push('</div>');
-        t.push('</div>');
-      t.push('</li>');
+        t.push('</li>');
+      t.push('</a>');
+
     });
     return t.join('');    
   },
@@ -114,10 +126,10 @@ TJG.ui = {
     else {
       path = location.pathname.replace(/\/$/, '');
     }
+    TJG.repositionDialog = ["#sign_up_dialog"];
     $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
-    TJG.onload.loadCufon();
     $(".close_dialog").show();
-    $("#sign_up_dialog_content").parent().animate({ height: "260px", }, 250);
+    $("#sign_up_dialog_content").parent().animate({ height: "270px", }, 250);
     $("#sign_up_dialog").fadeIn();
     $('form#new_gamer').submit(function(e){
       e.preventDefault();
@@ -160,7 +172,6 @@ TJG.ui = {
         ].join('');
         $("#sign_up_dialog_content").html(loader);
         $("#sign_up_dialog_content").parent().animate({ height: "120px", }, 250);
-        TJG.onload.loadCufon();
         $.ajax({
           type: 'POST',
           url: rurl,
@@ -181,7 +192,6 @@ TJG.ui = {
               $('.close_dialog').unbind('click');
               $("#sign_up_dialog_content").parent().animate({ height: "230px", }, 250);
               $("#sign_up_dialog_content").html(msg);
-              TJG.onload.loadCufon(); 
               if (TJG.vars.isIos == false) {
                   if (d.more_games_url) {
                     $('.close_dialog,.continue_link_device').click(function(){
@@ -194,9 +204,18 @@ TJG.ui = {
               }
               else if (d.link_device_url) {
                 $('.close_dialog,.continue_link_device').click(function(){
-                  document.location.href = d.link_device_url;
-                  $("#sign_up_dialog").hide();
-                });
+                  $('.close_dialog').unbind('click');
+                  msg = [
+                    '<div id="link_device" class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Link Device</div></div>',
+                    '<div class="dialog_header">The final step is to link your device to your Tapjoy Games account.  Please continue and click install on the next screen.</div>',
+                    '<div class="dialog_content"><div class="link_device_url"><div class="button dialog_button">Link Device</div></div></div>'
+                  ].join('');
+                  $("#sign_up_dialog_content").parent().animate({ height: "170px", }, 250);
+                  $("#sign_up_dialog_content").html(msg);
+                  $('.close_dialog,.link_device_url').click(function(){
+                    document.location.href = d.link_device_url;
+                  });
+                }); 
               }
               else {
                 $('.close_dialog,.continue_link_device').click(function(){
@@ -220,8 +239,7 @@ TJG.ui = {
             }
             $('#sign_up_again').click(function(){
               TJG.ui.showRegister();
-              $("#sign_up_dialog_content").parent().animate({ height: "260px", }, 250);
-              TJG.onload.loadCufon();
+              $("#sign_up_dialog_content").parent().animate({ height: "270px", }, 250);
             });
           },
           error: function() {
@@ -232,36 +250,21 @@ TJG.ui = {
             ].join('');
             $(".close_dialog").hide(); 
             $("#sign_up_dialog_content").html(msg);
-            TJG.onload.loadCufon();
             $('#sign_up_again').click(function(){
                TJG.ui.showRegister();
-              $("#sign_up_dialog_content").parent().animate({ height: "260px", }, 250);
-              TJG.onload.loadCufon();
+              $("#sign_up_dialog_content").parent().animate({ height: "270px", }, 250);
             });
           }
         });
       }
     });
   }
+  
 };
   
 (function(window, document) {
 
     TJG.onload = {
-      loadCufon : function (fn,delay) {
-        if (!delay) {
-          delay = 1;
-        }
-        if (Cufon) {
-          Cufon.replace('.title', { fontFamily: 'Cooper Std' });
-          Cufon.replace('.title_2', { fontFamily: 'AmerType Md BT' });
-        }
-        if (fn) {
-          setTimeout(function() { 
-            fn;
-            }, delay);
-        }
-      },
 
       removeLoader : function () {
         TJG.ui.hideLoader(250,function(){
@@ -272,16 +275,41 @@ TJG.ui = {
       loadEvents : function () {
         $('.close_dialog').click(function(){
           TJG.ui.removeDialogs();
+          TJG.repositionDialog = [];
         });
         $('#sign_up, #sign_up_form').click(function(){
           TJG.utils.centerDialog("#sign_up_dialog");
+          TJG.repositionDialog = ["#sign_up_dialog"];
           TJG.ui.showRegister();
         });
         $('#how_works').click(function(){
           TJG.utils.centerDialog("#how_works_dialog");
+          TJG.repositionDialog = ["#how_works_dialog"];
           $("#how_works_dialog").fadeIn(350);
         });
+        $('.top_nav_bar').click(function(){
+          TJG.utils.centerDialog("#my_account_dialog");
+          TJG.repositionDialog = ["#my_account_dialog"];
+          $("#my_account_dialog").fadeIn(350);
+        });
+        $('.my_account_url').click(function(){
+          $("#my_account_dialog").fadeOut(350, function() {
+            TJG.utils.centerDialog("#my_account_dialog_content");
+            TJG.repositionDialog = ["#my_account_dialog_content"];
+            $("#my_account_dialog_content").fadeIn(350);     
+          });
+        });  
+        
+
       },
+      
+      checkFlashMessages: function () {
+        if($('#flash_error').length > 0) {
+          TJG.utils.centerDialog("#flash_error");
+          $("#flash_error").fadeIn();
+          TJG.repositionDialog = ["#flash_error"];
+        }
+      }
     };
 
     TJG.init = function() {  
