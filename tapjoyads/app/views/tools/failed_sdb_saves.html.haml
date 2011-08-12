@@ -6,6 +6,10 @@ As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
 %br
 %br
 Number of domains: #{@failed_sdb_saves.size}
+%br
+Batch Put Failures This Hour: #{@this_hour_batch_puts}
+%br
+Batch Put Failures Last Hour: #{@last_hour_batch_puts}
 
 %table#fails.tablesorter
   %thead
