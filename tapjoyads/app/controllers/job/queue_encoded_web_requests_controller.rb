@@ -62,7 +62,7 @@ class Job::QueueEncodedWebRequestsController < Job::JobController
         
         retries = 1
         begin
-          Timeout.timeout(15) { SimpledbResource.put_items(sdb_items) }
+          Timeout.timeout(7) { SimpledbResource.put_items(sdb_items) }
           Rails.logger.info "QueueEncodedWebRequests: Saved #{sdb_items.size} items to #{domain_name}"
         rescue RightAws::AwsError => e
           Rails.logger.info "QueueEncodedWebRequests: Failed saving #{sdb_items.size} items to #{domain_name}"
