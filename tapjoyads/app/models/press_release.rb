@@ -3,7 +3,7 @@ class PressRelease < ActiveRecord::Base
 
   validates_presence_of :link_text, :link_id, :link_href, :content_title, :content_body
 
-  named_scope :ordered, :order => "published_at DESC"
+  named_scope :ordered, :order => "link_id DESC"
   named_scope :not_future, :conditions => ["published_at < ?", Time.zone.now.end_of_day]
 
   def self.most_recent_and_not_future
