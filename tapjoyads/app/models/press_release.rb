@@ -18,7 +18,6 @@ class PressRelease < ActiveRecord::Base
   end
 
   def press_date(location="San Francisco, CA")
-    Rails.logger.warn location
     "<b>#{location} &ndash; #{published_at.to_s(:pr)}</b> &ndash; "
   end
 end
