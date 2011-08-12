@@ -8,7 +8,7 @@ class Job < ActiveRecord::Base
   validates_inclusion_of :job_type, :in => JOB_TYPES
   validates_inclusion_of :frequency, :in => FREQUENCIES
   validates_inclusion_of :active, :in => [ true, false ]
-  validates_numericality_of :seconds, :only_integer => true, :greater_than => 0
+  validates_numericality_of :seconds, :only_integer => true, :greater_than_or_equal_to => 0
   validates_each :seconds do |record, attribute, value|
     if record.frequency == 'daily'
       record.errors.add(attribute, 'should be less than 1 day') unless value < 1.day.to_i
@@ -49,11 +49,13 @@ class Job < ActiveRecord::Base
     time = (Time.now.utc.beginning_of_day + seconds).in_time_zone(Time.zone)
     case frequency
     when 'interval'
+      return 'every second'         if seconds == 0
       str = 'every'
       str += " #{time.min} minutes" if time.min > 0
       str += " #{time.sec} seconds" if time.sec > 0
       str
     when 'hourly'
+      return 'hourly on the hour'   if seconds == 0
       str = 'hourly at'
       str += " #{time.min} minutes" if time.min > 0
       str += " #{time.sec} seconds" if time.sec > 0

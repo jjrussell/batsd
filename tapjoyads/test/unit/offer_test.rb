@@ -21,7 +21,7 @@ class OfferTest < ActiveSupport::TestCase
   should validate_numericality_of :show_rate
   should validate_numericality_of :payment_range_low
   should validate_numericality_of :payment_range_high
-  
+
   context "An App Offer for a free app" do
     setup do
       @offer = Factory(:app).primary_offer
@@ -43,6 +43,14 @@ class OfferTest < ActiveSupport::TestCase
       assert !@offer.valid?
     end
 
+    should "reject depending on countries blacklist" do
+      device = Factory(:device)
+      @offer.item.countries_blacklist = ["GB"]
+      geoip_data = { :country => "US" }
+      assert !@offer.send(:geoip_reject?, geoip_data, device)
+      geoip_data = { :country => "GB" }
+      assert @offer.send(:geoip_reject?, geoip_data, device)
+    end
   end
 
 end

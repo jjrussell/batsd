@@ -5,6 +5,7 @@ class PremierController < WebsiteController
   filter_access_to :all
 
   before_filter :set_partner
+  before_filter :nag_user_about_payout_info
   after_filter :save_activity_logs, :only => [ :update ]
 
   def edit
