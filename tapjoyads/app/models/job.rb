@@ -49,11 +49,13 @@ class Job < ActiveRecord::Base
     time = (Time.now.utc.beginning_of_day + seconds).in_time_zone(Time.zone)
     case frequency
     when 'interval'
+      return 'every second'         if seconds == 0
       str = 'every'
       str += " #{time.min} minutes" if time.min > 0
       str += " #{time.sec} seconds" if time.sec > 0
       str
     when 'hourly'
+      return 'hourly on the hour'   if seconds == 0
       str = 'hourly at'
       str += " #{time.min} minutes" if time.min > 0
       str += " #{time.sec} seconds" if time.sec > 0
