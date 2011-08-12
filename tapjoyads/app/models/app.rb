@@ -180,7 +180,7 @@ class App < ActiveRecord::Base
     self.user_rating         = data[:user_rating]
     self.categories          = data[:categories]
     self.supported_devices   = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
-    self.countries_blacklist = AppStore.prepare_country_blacklist(store_id, platform)
+    self.countries_blacklist = AppStore.prepare_countries_blacklist(store_id, platform)
     
     # TODO: Real multi-currency handling. For now simply set the price to a positive value if it's not USD.
     if data[:currency].present? && data[:currency] != 'USD' && price > 0

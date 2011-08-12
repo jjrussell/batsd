@@ -20,7 +20,7 @@ class AppStore
   end
 
   BLACKLISTABLE_COUNTRIES = ['US', 'GB', 'KR', 'CN', 'JP', 'TW', 'HK', 'FR', 'DE']
-  def self.prepare_country_blacklist(id, platform)
+  def self.prepare_countries_blacklist(id, platform)
     case platform.downcase
     when 'iphone'
       list = []
