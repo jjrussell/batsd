@@ -34,8 +34,15 @@ class Job::QueueEncodedWebRequestsController < Job::JobController
     
     available_messages.each do |message|
       sdb_string = Base64::decode64(message.to_s)
-      sdb_item   = SimpledbResource.deserialize(sdb_string)
-      date       = sdb_item.this_domain_name.scan(/^web-request-(\d{4}-\d{2}-\d{2})/)[0][0]
+      begin
+        sdb_item = SimpledbResource.deserialize(sdb_string)
+      rescue JSON::ParserError
+        bucket = S3.bucket(BucketNames::FAILED_WEB_REQUEST_SAVES)
+        bucket.put("parser_errors/#{UUIDTools::UUID.random_create.to_s}", sdb_string)
+        delete_message(message)
+        next
+      end
+      date = sdb_item.this_domain_name.scan(/^web-request-(\d{4}-\d{2}-\d{2})/)[0][0]
       items_by_date[date] ||= []
       items_by_date[date] << sdb_item
       message_by_item_key[sdb_item.key] = message
