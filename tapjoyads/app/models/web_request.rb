@@ -247,8 +247,4 @@ private
     end
   end
   
-  def get_failed_save_bucket_and_queue
-    [ BucketNames::FAILED_WEB_REQUEST_SAVES, QueueNames::FAILED_WEB_REQUEST_SAVES ]
-  end
-  
 end
