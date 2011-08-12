@@ -33,11 +33,11 @@ class WebRequest < SimpledbResource
   self.sdb_attr :language
   self.sdb_attr :screen_density
   self.sdb_attr :screen_layout_size
-  self.sdb_attr :carrier_name        
+  self.sdb_attr :carrier_name, :cgi_escape => true   
   self.sdb_attr :allows_voip         
   self.sdb_attr :carrier_country_code
-  self.sdb_attr :mobile_country_code 
-  self.sdb_attr :mobile_network_code 
+  self.sdb_attr :mobile_country_code, :cgi_escape => true
+  self.sdb_attr :mobile_network_code
   self.sdb_attr :click_key
   self.sdb_attr :transaction_id
   self.sdb_attr :tap_points
@@ -65,8 +65,6 @@ class WebRequest < SimpledbResource
                                     { :stat => 'paid_clicks',               :attr => :offer_id } ],
     'featured_offer_click'     => [ { :stat => 'featured_offers_opened',    :attr => :publisher_app_id },
                                     { :stat => 'paid_clicks',               :attr => :offer_id } ],
-    'video_requested'          => [ { :stat => 'videos_requested',          :attr => :publisher_app_id } ],
-    'video_returned'           => [ { :stat => 'videos_returned',           :attr => :publisher_app_id } ],                             
   }
   STAT_TO_PATH_MAP = {
     'logins'                    => { :paths => [ 'connect' ],                             :attr_name => 'app_id' },
@@ -85,11 +83,21 @@ class WebRequest < SimpledbResource
     'offers_opened'             => { :paths => [ 'offer_click' ],                         :attr_name => 'publisher_app_id' },
     'featured_offers_opened'    => { :paths => [ 'featured_offer_click' ],                :attr_name => 'publisher_app_id' },
     'paid_clicks'               => { :paths => [ 'offer_click', 'featured_offer_click' ], :attr_name => 'offer_id' },
-    'videos_requested'          => { :paths => [ 'video_requested' ],                     :attr_name => 'publisher_app_id' },
-    'videos_returned'           => { :paths => [ 'video_returned' ],                      :attr_name => 'publisher_app_id' },
   }
   
-  @@bad_domains = {}
+  @@domain_choices = nil
+  @@domain_weights = nil
+  
+  def self.refresh_domain_choices_and_weights
+    begin
+      failures = Mc.distributed_get('failed_sdb_saves.web_request_failures') || {}
+    rescue Exception => e
+      failures = {}
+      Notifier.alert_new_relic(e.class, e.message)
+    end
+    max_fails = failures.values.max
+    @@domain_choices, @@domain_weights = failures.map { |domain, fails| [ domain, (fails - max_fails).abs ] }.transpose
+  end
   
   def initialize(options = {})
     @now = options.delete(:time) { Time.zone.now }
@@ -97,20 +105,15 @@ class WebRequest < SimpledbResource
   end
 
   def dynamic_domain_name
-    date = @now.strftime('%Y-%m-%d')
-    num = rand(MAX_WEB_REQUEST_DOMAINS)
-    domain_name = "web-request-#{date}-#{num}"
-
-    if rand(100) == 1 
-      @@bad_domains = Mc.get('failed_sdb_saves.bad_domains') || {}
+    if rand(100) == 1
+      WebRequest.refresh_domain_choices_and_weights
     end
     
-    if @@bad_domains[domain_name]
-      num = rand(MAX_WEB_REQUEST_DOMAINS)
-      domain_name = "web-request-#{date}-#{num}"
+    date = @now.to_s(:yyyy_mm_dd)
+    if @@domain_choices.present? && @@domain_choices.first =~ /#{date}/
+      domain_name = @@domain_choices.weighted_rand(@@domain_weights)
     end
-    
-    domain_name
+    domain_name ||= "web-request-#{date}-#{rand(MAX_WEB_REQUEST_DOMAINS)}"
   end
   
   def add_path(path)

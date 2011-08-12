@@ -176,6 +176,9 @@
         %td
           = f.text_field(:age_rating)
           = error_message_on @offer, :age_rating
+      %tr
+        %th= f.label(:third_party_data)
+        %td= f.text_area(:third_party_data)
     - if @offer.item_type == 'App'
       %tr
         %th

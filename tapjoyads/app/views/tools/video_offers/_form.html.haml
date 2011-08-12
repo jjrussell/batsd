@@ -13,5 +13,8 @@
     %tr
       %th= label_tag :video, @video_offer.new_record? ? 'Upload Video' : 'Upload New Video'
       %td= file_field_tag :video
+    - if !@video_offer.new_record?
+      %tr
+        %td{ :colspan => 2 }= link_to("View/Edit Video Button", tools_video_offer_video_buttons_path(@video_offer.id))
     %tr
       %td{ :colspan => 2 }= f.submit @video_offer.new_record? ? 'Create Video Offer' : 'Update Video Offer'

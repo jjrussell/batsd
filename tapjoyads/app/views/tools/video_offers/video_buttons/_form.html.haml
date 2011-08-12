@@ -1,0 +1,24 @@
+- form_for [ :tools, @video_offer, @video_button ], :html => { :class => 'tjform' } do |f|
+  %table
+    %tr
+      %th= f.label :name
+      %td
+        = f.text_field :name, :size => 50
+        = error_message_on @video_button, :name
+        = f.hidden_field :video_offer_id
+    %tr
+      %th= f.label :url
+      %td
+        = f.text_field :url, :size => 50
+        = error_message_on @video_button, :url
+    %tr
+      %th
+        = f.label :ordinal
+        #help_ordinal.help ?
+      %td
+        = f.text_field :ordinal, :size => 50
+        = error_message_on @video_button, :ordinal
+    %tr
+      %td{ :colspan => 2 }= f.submit @video_button.new_record? ? 'Create Video Button' : 'Update Video Button'
+.hidden
+  #help_ordinal_content{ :name => 'Ordinal' } Priority of the button, the smaller the ordinal, the higher the priority. (Integer only)

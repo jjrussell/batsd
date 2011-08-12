@@ -173,7 +173,7 @@ class Offer < ActiveRecord::Base
     Benchmark.realtime do
       weights = CurrencyGroup.find_by_name('default').weights
       
-      offer_list = Offer.enabled_offers.nonfeatured.rewarded.non_video_offers.for_offer_list.to_a
+      offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.to_a
       offer_list.each { |o| o.run_callbacks(:before_cache); o.clear_association_cache }
       # cache_unsorted_offers(offer_list, DEFAULT_OFFER_TYPE)
       cache_offer_list(offer_list, weights, DEFAULT_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
@@ -758,7 +758,11 @@ class Offer < ActiveRecord::Base
     search_name
   end
   
-  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, exclude_offer_id)
+  def store_id_for_feed
+    item_type == 'App' ? third_party_data : Offer.hashed_icon_id(id)
+  end
+  
+  def should_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids)
     device_platform_mismatch?(publisher_app, device_type) ||
       geoip_reject?(geoip_data, device) ||
       already_complete?(publisher_app, device, app_version) ||
@@ -773,11 +777,12 @@ class Offer < ActiveRecord::Base
       cookie_tracking_reject?(publisher_app, library_version) ||
       screen_layout_sizes_reject?(screen_layout_size) ||
       should_reject_from_app_or_currency?(publisher_app, currency) ||
-      exclude_offer_id?(exclude_offer_id)
+      video_offers_reject?(video_offer_ids, type)
   end
   
-  def exclude_offer_id?(exclude_offer_id)
-    exclude_offer_id == item_id
+  def video_offers_reject?(video_offer_ids, type)
+    return false if type == Offer::VIDEO_OFFER_TYPE
+    item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
   
   def is_valid_for?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
@@ -837,7 +842,7 @@ class Offer < ActiveRecord::Base
         platform.nil? ? 35 : App::PLATFORM_DETAILS[platform][:min_action_offer_bid]
       end
     elsif item_type == 'VideoOffer'
-      5
+      15
     else
       0
     end

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110804221334) do
+ActiveRecord::Schema.define(:version => 20110811010607) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -297,6 +297,19 @@ ActiveRecord::Schema.define(:version => 20110804221334) do
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true
   add_index "generic_offers", ["partner_id"], :name => "index_generic_offers_on_partner_id"
   add_index "generic_offers", ["third_party_data"], :name => "index_generic_offers_on_third_party_data"
+
+  create_table "internal_devices", :id => false, :force => true do |t|
+    t.string   "id",               :limit => 36, :null => false
+    t.string   "user_id",          :limit => 36, :null => false
+    t.string   "description"
+    t.string   "status"
+    t.integer  "verification_key"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "internal_devices", ["id"], :name => "index_internal_devices_on_id", :unique => true
+  add_index "internal_devices", ["user_id"], :name => "index_internal_devices_on_user_id"
 
   create_table "jobs", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36,                      :null => false
@@ -647,6 +660,7 @@ ActiveRecord::Schema.define(:version => 20110804221334) do
     t.string   "name",                     :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "employee"
   end
 
   add_index "user_roles", ["id"], :name => "index_user_roles_on_id", :unique => true
@@ -678,6 +692,19 @@ ActiveRecord::Schema.define(:version => 20110804221334) do
   add_index "users", ["perishable_token"], :name => "index_users_on_perishable_token"
   add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"
   add_index "users", ["username"], :name => "index_users_on_username", :unique => true
+
+  create_table "video_buttons", :id => false, :force => true do |t|
+    t.string   "id",             :limit => 36, :null => false
+    t.string   "video_offer_id", :limit => 36, :null => false
+    t.string   "name",                         :null => false
+    t.string   "url",                          :null => false
+    t.integer  "ordinal"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "video_buttons", ["id"], :name => "index_video_buttons_on_id", :unique => true
+  add_index "video_buttons", ["video_offer_id"], :name => "index_video_buttons_on_video_offer_id"
 
   create_table "video_offers", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36,                    :null => false

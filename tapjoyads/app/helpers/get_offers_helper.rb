@@ -26,18 +26,22 @@ module GetOffersHelper
   end
   
   def get_click_url(offer)
-    offer.get_click_url(
-        :publisher_app      => @publisher_app,
-        :publisher_user_id  => params[:publisher_user_id],
-        :udid               => params[:udid],
-        :currency_id        => @currency.id,
-        :source             => params[:source],
-        :app_version        => params[:app_version],
-        :viewed_at          => @now,
-        :exp                => params[:exp],
-        :country_code       => @geoip_data[:country],
-        :language_code      => params[:language_code],
-        :display_multiplier => params[:display_multiplier])
+    if offer.item_type == 'VideoOffer'
+      "tjvideo://video_id=#{offer.id}"
+    else
+      offer.get_click_url(
+          :publisher_app      => @publisher_app,
+          :publisher_user_id  => params[:publisher_user_id],
+          :udid               => params[:udid],
+          :currency_id        => @currency.id,
+          :source             => params[:source],
+          :app_version        => params[:app_version],
+          :viewed_at          => @now,
+          :exp                => params[:exp],
+          :country_code       => @geoip_data[:country],
+          :language_code      => params[:language_code],
+          :display_multiplier => params[:display_multiplier])
+    end
   end
 
   def get_fullscreen_ad_url(offer)

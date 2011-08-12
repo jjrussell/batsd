@@ -290,4 +290,82 @@ module RightAws
       end
     end
   end
+  
+  module RightAwsBaseInterface
+    def request_info_impl(connection, benchblock, request, parser, &block) #:nodoc:
+      @connection    = connection
+      @last_request  = request[:request]
+      @last_response = nil
+      response=nil
+      blockexception = nil
+      if request[:server] == 'sdb.amazonaws.com' && (@last_request.path =~ /web-request/ || @last_request.body =~ /web-request/)
+        reiteration_time = -1
+      else
+        reiteration_time = nil
+      end
+
+      if(block != nil)
+        # TRB 9/17/07 Careful - because we are passing in blocks, we get a situation where
+        # an exception may get thrown in the block body (which is high-level
+        # code either here or in the application) but gets caught in the
+        # low-level code of HttpConnection.  The solution is not to let any
+        # exception escape the block that we pass to HttpConnection::request.
+        # Exceptions can originate from code directly in the block, or from user
+        # code called in the other block which is passed to response.read_body.
+        benchblock.service.add! do
+          responsehdr = @connection.request(request) do |response|
+          #########
+            begin
+              @last_response = response
+              if response.is_a?(Net::HTTPSuccess)
+                @error_handler = nil
+                response.read_body(&block)
+              else
+                @error_handler = AWSErrorHandler.new(self, parser, :errors_list => self.class.amazon_problems, :reiteration_time => reiteration_time) unless @error_handler
+                check_result   = @error_handler.check(request)
+                if check_result
+                  @error_handler = nil
+                  return check_result 
+                end
+                raise AwsError.new(@last_errors, @last_response.code, @last_request_id)
+              end
+            rescue Exception => e
+              blockexception = e
+            end
+          end
+          #########
+
+          #OK, now we are out of the block passed to the lower level
+          if(blockexception)
+            raise blockexception
+          end
+          benchblock.xml.add! do
+            parser.parse(responsehdr)
+          end
+          return parser.result
+        end
+      else
+        benchblock.service.add!{ response = @connection.request(request) }
+          # check response for errors...
+        @last_response = response
+        if response.is_a?(Net::HTTPSuccess)
+          @error_handler = nil
+          benchblock.xml.add! { parser.parse(response) }
+          return parser.result
+        else
+          @error_handler = AWSErrorHandler.new(self, parser, :errors_list => self.class.amazon_problems, :reiteration_time => reiteration_time) unless @error_handler
+          check_result   = @error_handler.check(request)
+          if check_result
+            @error_handler = nil
+            return check_result 
+          end
+          raise AwsError.new(@last_errors, @last_response.code, @last_request_id)
+        end
+      end
+    rescue
+      @error_handler = nil
+      raise
+    end
+  end
+  
 end

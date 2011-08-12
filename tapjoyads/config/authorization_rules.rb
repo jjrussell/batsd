@@ -22,6 +22,7 @@ authorization do
   
   role :tools do
     has_permission_on :tools, :to => [ :index ]
+    has_permission_on :internal_devices, :to => [ :new, :update, :index, :show, :destroy, :block ]
   end
   
   role :customer_service do
@@ -78,6 +79,7 @@ authorization do
     has_permission_on :tools_premier_partners, :to => [ :index ]
     has_permission_on :tools_generic_offers, :to => [ :new, :create, :edit, :update ]
     has_permission_on :tools_video_offers, :to => [ :new, :create, :edit, :update ]
+    has_permission_on :tools_video_offers_video_buttons, :to => [ :index, :new, :create, :edit, :update, :show, :destroy ]
     has_permission_on :tools_admin_devices, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :tools_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :tools_external_publishers, :to => [ :index, :update ]
@@ -107,5 +109,6 @@ authorization do
     has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :send_currency_failures, :sqs_lengths, :elb_status, :as_groups, :manage_user_roles, :update_user_roles ]
     has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
     has_permission_on :tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :tools_support_requests, :to => [ :index ]
   end
 end

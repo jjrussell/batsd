@@ -21,6 +21,9 @@ ActionController::Routing::Routes.draw do |map|
     m.confirm 'confirm', :controller => 'games/confirmations', :action => :create
     
     m.resources :password_resets, :controller => 'games/password_resets', :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
+    
+    m.resources :support_requests, :controller => 'games/support_requests', :only => [ :new, :create ]
+
   end
 
   break if MACHINE_TYPE == 'games'
@@ -35,6 +38,9 @@ ActionController::Routing::Routes.draw do |map|
   map.login 'login', :controller => :user_sessions, :action => :new
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
   map.resources :password_resets, :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
+  map.resources :internal_devices, :only => [ :index, :show, :destroy ], :member => { :block => :get }
+  map.new_internal_device 'approve_device', :controller => :internal_devices, :action => 'new', :conditions => { :method => :get }
+  map.update_internal_device 'approve_device', :controller => :internal_devices, :action => 'update', :conditions => { :method => :put }
   
   # Dashboard routes
   map.namespace :account do |account|
@@ -91,7 +97,9 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :tools do |tools|
     tools.resources :premier_partners, :only => [ :index ]
     tools.resources :generic_offers, :only => [ :new, :create, :edit, :update ]
-    tools.resources :video_offers, :only => [ :new, :create, :edit, :update ]
+    tools.resources :video_offers, :only => [ :new, :create, :edit, :update ] do |video_offer|
+      video_offer.resources :video_buttons, :controller => 'video_offers/video_buttons'
+    end
     tools.resources :orders, :only => [ :new, :create ]
     tools.resources :payouts, :only => [ :index, :create ], :member => { :info => :get }
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
@@ -109,6 +117,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :earnings_adjustments, :only => [ :new, :create ]
     tools.resources :editors_picks, :except => [ :destroy ], :member => { :activate => :post, :expire => :post }
     tools.resources :agency_users, :only => [ :index, :show ]
+    tools.resources :support_requests, :only => [ :index ]
   end
   
   # Additional webserver routes
