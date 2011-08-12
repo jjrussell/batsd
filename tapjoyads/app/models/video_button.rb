@@ -11,7 +11,6 @@ class VideoButton < ActiveRecord::Base
     xml = builder.Button do |button|
       button.tag!("Name", name)
       button.tag!("URL", url)
-      button.tag!("Ordinal", ordinal)
     end
     xml.to_s
   end
