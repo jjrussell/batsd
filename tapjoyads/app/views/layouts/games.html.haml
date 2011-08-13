@@ -48,6 +48,22 @@
         .dialog_header Incompatible Device
         .dialog_content To complete account registration please visit us on a supported mobile device.
 
+    #linked_device.dialog_wrapper.hide
+      .close_dialog
+        .close_button
+      .dialog
+        .dialog_header_wrapper
+          .dialog_header_right
+          .dialog_header_left
+          .dialog_title.title_2 Hmmm...
+        .dialog_header 
+          %div It appears that this device is linked to a Tapjoy Games account.  
+          %div Are you sure you want to register a new account for this device?  If so, you may continue.
+          .continue_registration
+            .button.dialog_button
+              Continue
+
+
     #how_works_dialog.dialog_wrapper.hide
       .close_dialog
         .close_button
@@ -94,7 +110,7 @@
                   
     #loader.dialog_wrapper.hide
       #progress.dialog
-        .dialog_title
+        .dialog_title.title_2
           Loading
         .dialog_image
 
@@ -114,9 +130,21 @@
       = javascript_include_tag 'games/src/jquery-1.4.2'
       = javascript_include_tag 'games/src/init'
       = javascript_include_tag 'games/src/jqtouch'
-      = javascript_include_tag 'games/src/jqt.scroll'
+      =# javascript_include_tag 'games/src/jqt.scroll'
       = javascript_include_tag 'games/src/tapjoygames'
     
     = yield :included_javascripts
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
       = yield :page_javascript
+    
+    - if Rails.env.production?  
+      :javascript
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-25098478-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })(); 

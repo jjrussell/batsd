@@ -1,4 +1,15 @@
 TJG.utils = {
+ 
+  isNull : function(v) {
+    if (typeof v=='boolean'){
+      return false;
+    } else if (typeof v=='number'){
+      return false;
+    }
+    else {
+      return v == undefined || v == null || v == '';
+    }
+  },
 
   hideURLBar : function() {
     setTimeout(function() { 
@@ -36,7 +47,35 @@ TJG.utils = {
     var results = regex.exec( window.location.href ); 
     if( results == null ) return ""; 
     else return results[1];
-  } 
+  },
+  
+  setLocalStorage: function(k,v) {
+    if (typeof(localStorage) == 'undefined' ) {
+      return;
+    } 
+    else {
+      try {
+        localStorage[k] = v;
+      } catch (e) {
+        if (e == QUOTA_EXCEEDED_ERR) {
+        }
+      }
+    }
+  },
+  
+  unsetLocalStorage: function(k) {
+    if (typeof(localStorage) == 'undefined' ) {
+      return;
+    }
+    localStorage.removeItem(k);
+  },
+  
+  getLocalStorage: function(k) {
+    if (typeof(localStorage) == 'undefined' ) {
+      return;
+    }
+    return localStorage[k];
+  }
   
 };
 TJG.ui = { 
@@ -258,8 +297,180 @@ TJG.ui = {
         });
       }
     });
-  }
+  },
   
+  showAddHomeDialog : function() {
+    var startY = startX = 0,
+    options = {
+      message: "Install Tapjoy Games on your %device: tap %icon and then <strong>Add to Home Screen</strong>.",
+      animationIn: 'fade',
+      animationOut: 'fade',
+      startDelay: 2000,
+      lifespan: 10000,
+      bottomOffset: 14,
+      expire: 0,
+      touchIcon: false,
+      arrow: true,
+      iterations: 5
+    },
+    theInterval, closeTimeout, el, i, l,
+    expired = TJG.utils.getLocalStorage("addHome");
+    TJG.vars.version =  TJG.vars.version ?  TJG.vars.version[0].replace(/[^\d_]/g,'').replace('_','.')*1 : 0;
+    expired = expired == 'null' ? 0 : expired*1;
+    
+    var div = document.createElement('div'),
+    close,
+    link = options.touchIcon ? $('head link[rel=apple-touch-icon],head link[rel=apple-touch-icon-precomposed]') : [],
+    sizes, touchIcon = '';
+    div.id = 'addToHome';
+    div.style.cssText += 'position:absolute;-webkit-transition-property:-webkit-transform,opacity;-webkit-transition-duration:0;-webkit-transform:translate3d(0,0,0);';
+    div.style.left = '-9999px';
+    if (link.length) {
+      for (i=0, l=link.length; i<l; i++) {
+        sizes = link[i].getAttribute('sizes');
+        if (sizes) {
+          if (TJG.vars.isRetina && sizes == '114x114') { 
+            touchIcon = link[i].href;
+            break;
+          }
+        } else {
+          touchIcon = link[i].href;
+        }
+      }
+      touchIcon = '<span style="background-image:url(' + touchIcon + ')" class="touchIcon"></span>';
+    }
+    div.className = (TJG.vars.isIPad ? 'ipad' : 'iphone') + (touchIcon ? ' wide' : '');
+    var m =  options.message.replace('%device', TJG.vars.platform).replace('%icon', TJG.vars.version >= 4.2 ? '<span class="share"></span>' : '<span class="plus">+</span>');
+    var a = (options.arrow ? '<span class="arrow"></span>' : '');
+    var t = [
+      touchIcon,
+      m,
+      a,
+      '<span class="close_add_to_home">\u00D7</span>'
+    ].join('');
+    div.innerHTML = t;
+    document.body.appendChild(div);
+    el = div;
+    
+    function transitionEnd () {
+      el.removeEventListener('webkitTransitionEnd', transitionEnd, false);
+      el.style.webkitTransitionProperty = '-webkit-transform';
+      el.style.webkitTransitionDuration = '0.2s';
+      if (closeTimeout) {
+        clearInterval(theInterval);
+        theInterval = setInterval(setPosition, options.iterations);
+      } 
+      else {
+        el.parentNode.removeChild(el);
+      }   
+    }
+
+    function setPosition () {
+      var matrix = new WebKitCSSMatrix(window.getComputedStyle(el, null).webkitTransform),
+      posY = TJG.vars.isIPad ? window.scrollY - startY : window.scrollY + window.innerHeight - startY,
+      posX = TJG.vars.isIPad ? window.scrollX - startX : window.scrollX + Math.round((window.innerWidth - el.offsetWidth)/2) - startX;
+      if (posY == matrix.m42 && posX == matrix.m41) return;
+      clearInterval(theInterval);
+      el.removeEventListener('webkitTransitionEnd', transitionEnd, false);
+      setTimeout(function () {
+        el.addEventListener('webkitTransitionEnd', transitionEnd, false);
+        el.style.webkitTransform = 'translate3d(' + posX + 'px,' + posY + 'px,0)';
+      }, 0);
+    }
+
+    function addToHomeClose () {
+      alert('closing');
+      clearInterval(theInterval);
+      clearTimeout(closeTimeout);
+      closeTimeout = null;
+      el.removeEventListener('webkitTransitionEnd', transitionEnd, false);
+      var posY = TJG.vars.isIPad ? window.scrollY - startY : window.scrollY + window.innerHeight - startY,
+      posX = TJG.vars.isIPad ? window.scrollX - startX : window.scrollX + Math.round((window.innerWidth - el.offsetWidth)/2) - startX,
+      opacity = '1',
+      duration = '0';
+      $(".close_add_to_home").click(function(){
+        addToHomeClose();
+      });
+      el.style.webkitTransitionProperty = '-webkit-transform,opacity';
+      switch (options.animationOut) {
+        case 'drop':
+        if (isIPad) {
+          duration = '0.4s';
+          opacity = '0';
+          posY = posY + 50;
+        } else {
+          duration = '0.6s';
+          posY = posY + el.offsetHeight + options.bottomOffset + 50;
+        }
+        break;
+        case 'bubble':
+        if (isIPad) {
+          duration = '0.8s';
+          posY = posY - el.offsetHeight - options.bottomOffset - 50;
+        } 
+        else {
+          duration = '0.4s';
+          opacity = '0';
+          posY = posY - 50;
+        }
+        break;
+        default:
+        duration = '0.8s';
+        opacity = '0';
+      }
+
+      el.addEventListener('webkitTransitionEnd', transitionEnd, false);
+      el.style.opacity = opacity;
+      el.style.webkitTransitionDuration = duration;
+      el.style.webkitTransform = 'translate3d(' + posX + 'px,' + posY + 'px,0)';
+    }
+    
+    setTimeout(function () {
+      var duration;
+      startY = TJG.vars.isIPad  ? window.scrollY : window.innerHeight + window.scrollY;
+      startX = TJG.vars.isIPad  ? window.scrollX : Math.round((window.innerWidth - el.offsetWidth)/2) + window.scrollX;
+      el.style.top = TJG.vars.isIPad ? startY + options.bottomOffset + 'px' : startY - el.offsetHeight - options.bottomOffset + 'px';
+      el.style.left = TJG.vars.isIPad ? startX + (OSVersion >=5 ? 160 : 208) - Math.round(el.offsetWidth/2) + 'px' : startX + 'px';
+      switch (options.animationIn) {
+        case 'drop':
+        if (TJG.vars.isIPad) {
+          duration = '0.6s';
+          el.style.webkitTransform = 'translate3d(0,' + -(window.scrollY + options.bottomOffset + el.offsetHeight) + 'px,0)';
+        } 
+        else {
+          duration = '0.9s';
+          el.style.webkitTransform = 'translate3d(0,' + -(startY + options.bottomOffset) + 'px,0)';
+        }
+        break;
+        case 'bubble':
+        if (TJG.vars.isIPad) {
+          duration = '0.6s';
+          el.style.opacity = '0'
+          el.style.webkitTransform = 'translate3d(0,' + (startY + 50) + 'px,0)';
+        } 
+        else {
+          duration = '0.6s';
+          el.style.webkitTransform = 'translate3d(0,' + (el.offsetHeight + options.bottomOffset + 50) + 'px,0)';
+        }
+        break;
+        default:
+        duration = '1s';
+        el.style.opacity = '0';
+      }
+
+      setTimeout(function () {
+        el.style.webkitTransitionDuration = duration;
+        el.style.opacity = '1';
+        el.style.webkitTransform = 'translate3d(0,0,0)';
+        el.addEventListener('webkitTransitionEnd', transitionEnd, false);
+        }, 0);
+        $(".close_add_to_home").click(function(){
+          addToHomeClose();
+        });
+        closeTimeout = setTimeout(addToHomeClose, options.lifespan);
+    }, options.startDelay);
+    window.addToHomeClose = addToHomeClose;
+  }
 };
   
 (function(window, document) {
@@ -278,9 +489,23 @@ TJG.ui = {
           TJG.repositionDialog = [];
         });
         $('#sign_up, #sign_up_form').click(function(){
-          TJG.utils.centerDialog("#sign_up_dialog");
-          TJG.repositionDialog = ["#sign_up_dialog"];
-          TJG.ui.showRegister();
+          if (!TJG.utils.isNull(TJG.utils.getLocalStorage("gamer_data"))) {
+            TJG.utils.centerDialog("#linked_device");
+            TJG.repositionDialog = ["#linked_device"];
+            $("#linked_device").fadeIn(350);
+            $(".continue_registration").click(function() {
+              $("#linked_device").fadeOut(350, function() {
+                TJG.utils.centerDialog("#sign_up_dialog");
+                TJG.repositionDialog = ["#sign_up_dialog"];
+                TJG.ui.showRegister();
+              });
+            });
+          }
+          else {      
+            TJG.utils.centerDialog("#sign_up_dialog");
+            TJG.repositionDialog = ["#sign_up_dialog"];
+            TJG.ui.showRegister();  
+          }
         });
         $('#how_works').click(function(){
           TJG.utils.centerDialog("#how_works_dialog");
@@ -288,9 +513,9 @@ TJG.ui = {
           $("#how_works_dialog").fadeIn(350);
         });
         $('.top_nav_bar').click(function(){
-          TJG.utils.centerDialog("#my_account_dialog");
-          TJG.repositionDialog = ["#my_account_dialog"];
-          $("#my_account_dialog").fadeIn(350);
+           TJG.utils.centerDialog("#my_account_dialog");
+           TJG.repositionDialog = ["#my_account_dialog"];
+           $("#my_account_dialog").fadeIn(350);
         });
         $('.my_account_url').click(function(){
           $("#my_account_dialog").fadeOut(350, function() {
@@ -298,9 +523,7 @@ TJG.ui = {
             TJG.repositionDialog = ["#my_account_dialog_content"];
             $("#my_account_dialog_content").fadeIn(350);     
           });
-        });  
-        
-
+        });
       },
       
       checkFlashMessages: function () {
@@ -313,8 +536,9 @@ TJG.ui = {
     };
 
     TJG.init = function() {  
-      
-      TJG.utils.hideURLBar();
+      if (TJG.vars.isIos) {
+        TJG.utils.hideURLBar();
+      }
       for (var key in TJG.onload) {
         TJG.onload[key]();
       }

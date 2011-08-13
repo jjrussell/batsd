@@ -8,6 +8,12 @@
       TJG.utils.centerDialog("#register_device");
       $("#register_device").fadeIn(350); 
     }
+    
+    TJG.ui.showAddHomeDialog();
+    
+    $('#earn .vertical-scroll').swipe(function(evt, data) { 
+      TJG.utils.hideURLBar();
+    });
 
     function getOfferWalls() {
       $(".get_offerwall_jsonp").each(function() {
@@ -16,7 +22,7 @@
           TJG.ui.showLoader();
           $("#earn_content").fadeOut(450,function() {
             $("#earn_content").empty();
-            jQT.goTo('#earn', 'slideleft');  
+            jQT.goTo('#earn', 'slideleft');
           });
           var url = $(this).attr("jsonp_url");
           var appId = $(this).attr("id");
@@ -123,7 +129,7 @@
                    '<div>There was an issue. Please try again</div>'
                   ].join('');
                   $("#earn_content").html(m); 
-                  $("#earn_content").fadeIn(450);    
+                  $("#earn_content").fadeIn(450);
                 }
               });
             } 
@@ -151,12 +157,12 @@
         });
       }); 
     }
-  
+
     function reloadOfferWalls () {
       $(".get_offerwall_jsonp").unbind("click");
       getOfferWalls();
     }
-  
+
     function getMoreGames() {
       $(".more_games_url").click(function() {
         $("#recommended_games_button").addClass("dark_grey").removeClass("grey");
@@ -190,16 +196,16 @@
             }
           });
         }
-      }); 
+      });
     }
-  
+
     function getTopGames() {
       $("#top_grossing_games_tab").click(function() {
         $("#top_grossing_games_button").addClass("dark_grey").removeClass("grey");
         $("#recommended_games_button").addClass("grey").removeClass("dark_grey");
         $("#recommended_games_button_arrow").hide();
         $("#top_grossing_games_button_arrow").show();
-      
+
         $("#recommended_games_tab").click(function() {
           $("#recommended_games_button").addClass("dark_grey").removeClass("grey");
           $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");
@@ -211,7 +217,7 @@
             $("#more_games_content").fadeIn(450);
           }
         });
-      
+
         if (TJG.topAppOfferWall) {
           $("#more_games_content").html(TJG.topAppOfferWall);
             $("#more_games_content").fadeIn(450);

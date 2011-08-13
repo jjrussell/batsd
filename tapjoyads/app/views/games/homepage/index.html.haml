@@ -1,6 +1,5 @@
 #jqt
   #home.current
-    .hidden_nav.toolbar
     .container.scroll.vertical-scroll
       .scroller.with-scrollbar
         .top_nav_bar
@@ -10,7 +9,7 @@
               %a{ :href => "#", :class => "more_games_url" }
                 .slider.slider_right.right
                   %span.title.small
-                    More Games      
+                    More Games
               .slider_btn.left
                 .slider.slider_active.slider_left
                   %span.title
@@ -35,7 +34,7 @@
                                 %span.earn
                                   Earn
                                 %span.currency
-                                  = currency[:name]  
+                                  = currency[:name]
 
   #earn
     .container.vertical-scroll
@@ -57,7 +56,9 @@
                     Back
           #app_title.hide
           #earn_content.content.hide
-
+        .back_to_top
+          Back to top
+        
   #more_games
     .container.vertical-scroll
       .scroller.with-scrollbar
@@ -97,7 +98,9 @@
 
 = render 'my_account'
 
+
 - content_for :page_javascript do
+  TJG.gamer_data = "#{@gamer_data_encrypt}";
   - if Rails.env.production?
     = render 'index_js_min'
   - else

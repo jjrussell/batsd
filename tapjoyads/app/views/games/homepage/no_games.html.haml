@@ -1,6 +1,5 @@
 #jqt
   #find_games.current
-    .hidden_nav.toolbar
     .container.vertical-scroll
       .scroller.with-scrollbar
         .top_nav_bar
@@ -32,8 +31,9 @@
 
 - content_for :page_javascript do
   :plain
+    TJG.gamer_data = "#{@gamer_data_encrypt}";
     $(window).load(function() {
       var jQT = new $.jQTouch({
         slideSelector: '#jqt .slide_nav',
       });
-    });   
+    });

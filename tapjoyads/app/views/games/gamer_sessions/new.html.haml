@@ -34,7 +34,7 @@
                 .field.login_pass.clearfix
                   = f.label :password
                   = f.password_field :password, :size => '15'
-                  = f.submit 'Login!', :class => 'right button lt_blue'
+                  = f.submit 'Login!', :class => 'right button lt_blue title'
               .login_error.center
                 = error_message_on @gamer_session, :email, :prepend_text => "Email "
                 = error_message_on @gamer_session, :password, :prepend_text => "Password "
