@@ -15,7 +15,14 @@ class VideoOffer < ActiveRecord::Base
   after_update :update_offers
   
   named_scope :visible, :conditions => { :hidden => false }
-  
+
+  def update_buttons
+    offers.each do |offer|
+      offer.third_party_data = xml_for_buttons
+      offer.save! if offer.changed?
+    end
+  end
+    
 private
   
   def create_primary_offer
@@ -36,7 +43,6 @@ private
       offer.name = name if name_changed?
       offer.url = video_url if video_url_changed?
       offer.hidden = hidden if hidden_changed?
-      offer.third_party_data = xml_for_buttons  if buttons_changed?(offer.updated_at)
       offer.save! if offer.changed?
     end
   end
@@ -51,10 +57,5 @@ private
       result << button.xml_for_offer
     end
     buttons_xml.to_s
-  end
-  
-  def buttons_changed?(updated_at)
-    video_buttons.each {|button| return true if button.updated_at > updated_at}
-    return false
   end
 end

@@ -6,6 +6,9 @@ class VideoButton < ActiveRecord::Base
   validates_presence_of :url, :name
   validates_numericality_of :ordinal, :only_integer => true
   
+  after_save :update_offer
+  after_destroy :update_offer
+  
   named_scope :ordered, :order => "ordinal"
   
   def xml_for_offer
@@ -15,5 +18,12 @@ class VideoButton < ActiveRecord::Base
       button.tag!("URL", url)
     end
     xml.to_s
+  end
+  
+private
+
+  def update_offer
+    video_offer = VideoOffer.find(video_offer_id)
+    video_offer.update_buttons
   end
 end
