@@ -38,9 +38,9 @@ ActionController::Routing::Routes.draw do |map|
   map.login 'login', :controller => :user_sessions, :action => :new
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
   map.resources :password_resets, :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
-  map.resources :internal_devices, :only => [ :index, :show, :destroy ], :member => { :block => :get }
+  map.resources :internal_devices, :only => [ :index, :show, :destroy, :edit, :update ], :member => { :block => :get }
   map.new_internal_device 'approve_device', :controller => :internal_devices, :action => 'new', :conditions => { :method => :get }
-  map.update_internal_device 'approve_device', :controller => :internal_devices, :action => 'update', :conditions => { :method => :put }
+  map.approve_internal_device 'approve_device/:id', :controller => :internal_devices, :action => 'approve', :conditions => { :method => :get }
   
   # Dashboard routes
   map.namespace :account do |account|

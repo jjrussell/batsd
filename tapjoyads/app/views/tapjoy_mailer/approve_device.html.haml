@@ -2,18 +2,11 @@
   You are being sent this email because an attempt was made to login to your
   account at Tapjoy.com from a computer or device that was not recognized by our system.
   The request was made from #{@location} at #{@timestamp}.
-  If it is you who is trying to access your account on this device then you
-  can enter the verification number below into the appropriate box at Tapjoy.com.
+  If it is you who is trying to access your account then you
+  can click the verification link below to enable access for this device.
 
 %p
-  Verification Key:
-  %b= @verification_key
-
-%p
-  Verifying your account by email helps to protect us in the case that an attacker
-  manages to get their hands on your account credentials for Tapjoy.com.  You can help by
-  ensuring that your password for this email account is not the same as the one you use to
-  login to the website.  If you have any questions, feel free to email dev@tapjoy.com.
+  %b= link_to("Verify computer or device", @verification_link)
 
 %p
   %b
@@ -22,3 +15,9 @@
 
 %p
   %b= link_to("Block device and reset password", @block_link)
+
+%p
+  Verifying your account by email helps to protect us in the case that an attacker
+  manages to get their hands on your account credentials for Tapjoy.com.  You can help by
+  ensuring that your password for this email account is not the same as the one you use to
+  login to the website.  If you have any questions, feel free to email dev@tapjoy.com.

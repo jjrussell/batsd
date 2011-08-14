@@ -58,7 +58,7 @@ class WebsiteController < ApplicationController
     if current_user && current_user.employee?
       return if request.path.match(/logout|approve_device|block/)
       if cookies['device'].present?
-        device = InternalDevice.find(cookies['device'])
+        device = current_user.internal_devices.find(cookies['device'])
         if device.approved?
           return
         elsif device.pending?
