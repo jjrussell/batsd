@@ -54,7 +54,7 @@ class WebsiteController < ApplicationController
   end
 
   def check_employee_device
-    return if Rails.env == 'development'
+    return unless Rails.env == 'production'
     if current_user && current_user.employee?
       return if request.path.match(/logout|approve_device|block/)
       if cookies['device'].present?
