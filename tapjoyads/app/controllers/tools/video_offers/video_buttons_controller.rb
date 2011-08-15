@@ -8,7 +8,7 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
   after_filter :save_activity_logs
   
   def index
-    @video_buttons = VideoOffer.find(params[:video_offer_id]).video_buttons.ordered
+    @video_buttons = @video_offer.video_buttons.ordered
   end
   
   def new
@@ -21,9 +21,7 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
   def show
   end
   
-  def create
-    return unless verify_params([ :video_offer_id ], { :render_missing_text => false })
-    
+  def create    
     @video_button = VideoButton.new(params[:video_button])
     log_activity(@video_button)
     
@@ -55,8 +53,6 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
 private
 
   def find_button
-    return unless verify_params([ :id ], { :render_missing_text => false })
-    
     @video_button = VideoButton.find(params[:id], :include => :video_offer)
   end
   
