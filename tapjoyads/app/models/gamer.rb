@@ -4,6 +4,8 @@ class Gamer < ActiveRecord::Base
   attr_accessor :terms_of_service
   validates_acceptance_of :terms_of_service, :on => :create
   
+  after_create :generate_confirmation_token!
+  
   acts_as_authentic do |c|
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
     c.perishable_token_valid_for = 1.hour
@@ -17,4 +19,10 @@ class Gamer < ActiveRecord::Base
     save
   end
   
+private
+
+  def generate_confirmation_token!
+    self.confirmation_token = Authlogic::Random.friendly_token
+    save
+  end
 end
