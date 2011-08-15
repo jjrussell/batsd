@@ -96,6 +96,7 @@ ActiveRecord::Schema.define(:version => 20110811010607) do
     t.datetime "released_at"
     t.float    "user_rating"
     t.string   "categories"
+    t.text     "countries_blacklist"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true

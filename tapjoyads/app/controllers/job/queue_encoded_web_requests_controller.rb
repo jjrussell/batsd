@@ -2,7 +2,7 @@ class Job::QueueEncodedWebRequestsController < Job::JobController
   
   def initialize
     @queue     = Sqs.queue(QueueNames::ENCODED_WEB_REQUESTS)
-    @num_reads = 5
+    @num_reads = 30 - [ @queue.size_not_visible / 10000, 10 ].min * 2
   end
   
   def index
@@ -10,6 +10,8 @@ class Job::QueueEncodedWebRequestsController < Job::JobController
     available_messages  = []
     items_by_date       = {}
     message_by_item_key = {}
+    
+    Rails.logger.info "QueueEncodedWebRequests: num_reads = #{@num_reads}"
     
     @num_reads.times do
       retries = 3
@@ -34,8 +36,17 @@ class Job::QueueEncodedWebRequestsController < Job::JobController
     
     available_messages.each do |message|
       sdb_string = Base64::decode64(message.to_s)
-      sdb_item   = SimpledbResource.deserialize(sdb_string)
-      date       = sdb_item.this_domain_name.scan(/^web-request-(\d{4}-\d{2}-\d{2})/)[0][0]
+      begin
+        sdb_item = SimpledbResource.deserialize(sdb_string)
+      rescue JSON::ParserError
+        uuid   = UUIDTools::UUID.random_create.to_s
+        bucket = S3.bucket(BucketNames::FAILED_WEB_REQUEST_SAVES)
+        bucket.put("parser_errors/#{uuid}", sdb_string)
+        delete_message(message)
+        Rails.logger.info "QueueEncodedWebRequests: ParserError, message logged to S3 as #{uuid}"
+        next
+      end
+      date = sdb_item.this_domain_name.scan(/^web-request-(\d{4}-\d{2}-\d{2})/)[0][0]
       items_by_date[date] ||= []
       items_by_date[date] << sdb_item
       message_by_item_key[sdb_item.key] = message
@@ -49,11 +60,20 @@ class Job::QueueEncodedWebRequestsController < Job::JobController
           item.put('from_queue', now.to_f.to_s)
         end
         
-        Rails.logger.info "Saving #{sdb_items.size} items to #{domain_name}, keys: #{sdb_items.map(&:key).inspect}"
-        
+        retries = 1
         begin
-          SimpledbResource.put_items(sdb_items)
+          Timeout.timeout(7) { SimpledbResource.put_items(sdb_items) }
+          Rails.logger.info "QueueEncodedWebRequests: Saved #{sdb_items.size} items to #{domain_name}"
         rescue RightAws::AwsError => e
+          Rails.logger.info "QueueEncodedWebRequests: Failed saving #{sdb_items.size} items to #{domain_name}"
+          Notifier.alert_new_relic(e.class, e.message, request, params)
+          next
+        rescue Timeout::Error => e
+          if retries > 0
+            retries -= 1
+            retry
+          end
+          Rails.logger.info "QueueEncodedWebRequests: Failed saving #{sdb_items.size} items to #{domain_name}"
           Notifier.alert_new_relic(e.class, e.message, request, params)
           next
         end

@@ -1,5 +1,5 @@
 module AppHelper
-  def countries
+  def appstore_countries
     { :hk => "HK - Hong Kong",
       :il => "IL - Israel",
       :us => "US - United States",
