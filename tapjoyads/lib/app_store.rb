@@ -7,6 +7,18 @@ class AppStore
   WINDOWS_APP_URL     = 'http://catalog.zune.net/v3.2/en-US/apps/_APPID_?store=Zest&clientType=WinMobile+7.0'
   WINDOWS_SEARCH_URL  = 'http://catalog.zune.net/v3.2/en-US/?includeApplications=true&prefix='
 
+  # NOTE: these numbers change every once in a while. Last update: 2011-08-11
+  PRICE_TIERS = {
+    'AUD' => [ 0.99, 1.99, 2.99, 4.49, 5.49 ],
+    'CHF' => [ 0.65, 1.30, 1.94, 2.59, 3.24 ],
+    'EUR' => [ 0.79, 1.59, 2.39, 2.99, 3.99 ],
+    'GBP' => [ 0.69, 1.49, 1.99, 2.49, 2.99 ],
+    'JPY' => [   85,  170,  250,  350,  450 ],
+    'MXP' => [   12,   24,   36,   48,   60 ],
+    'NOK' => [    7,   14,   21,   28,   35 ],
+    'NZD' => [ 1.29, 2.59, 4.19, 5.29, 6.49 ],
+  }
+
   # returns hash of app info
   def self.fetch_app_by_id(id, platform, country='')
     case platform.downcase
@@ -16,6 +28,27 @@ class AppStore
       self.fetch_app_by_id_for_apple(id, country)
     when 'windows'
       self.fetch_app_by_id_for_windows(id)
+    end
+  end
+
+  BLACKLISTABLE_COUNTRIES = ['US', 'GB', 'KR', 'CN', 'JP', 'TW', 'HK', 'FR', 'DE']
+  def self.prepare_countries_blacklist(id, platform)
+    case platform.downcase
+    when 'iphone'
+      list = []
+      BLACKLISTABLE_COUNTRIES.each do |country|
+        retries = 0
+        begin
+          results = self.fetch_app_by_id_for_apple(id, country)
+          list << country if results.blank?
+        rescue
+          retries += 1
+          retry if retries < 5
+        end
+      end
+      list
+    else
+      [] # not supported
     end
   end
 
@@ -29,6 +62,23 @@ class AppStore
       self.search_apple_app_store(term, country)
     when 'windows'
       self.search_windows_marketplace(term)
+    end
+  end
+
+  def self.recalculate_app_price(platform, price, currency)
+    if currency == 'USD' || price == 0
+      price
+    elsif platform == 'iphone' && PRICE_TIERS[currency].present?
+      PRICE_TIERS[currency].each_with_index do |tier_price, tier|
+        if price <= tier_price
+          return 99 + (tier * 100)
+        end
+      end
+
+      599 # the price is too damn high
+    else
+      # TODO: Real multi-currency handling for android. For now simply set the price to a positive value if it's not USD.
+      99
     end
   end
 
@@ -198,13 +248,14 @@ private
   end
 
   def self.app_info_from_apple(hash)
+    price = recalculate_app_price('iphone', hash['price'], hash['currency'])
     app_info = {
       :item_id            => hash["trackId"],
       :title              => hash["trackName"],
       :url                => hash["trackViewUrl"],
       :icon_url           => hash["artworkUrl100"],
       :small_icon_url     => hash["artworkUrl60"],
-      :price              => hash["price"],
+      :price              => '%.2f' % (price.to_f / 100.0),
       :description        => hash["description"],
       :publisher          => hash["artistName"],
       :file_size_bytes    => hash["fileSizeBytes"],
@@ -214,6 +265,7 @@ private
       :released_at        => hash["releaseDate"],
       :currency           => hash["currency"],
       # other possibly useful values:
+      #   hash["currency"],
       #   hash["version"]
       #   hash["genreIds"]
     }

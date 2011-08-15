@@ -115,6 +115,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :editors_picks, :except => [ :destroy ], :member => { :activate => :post, :expire => :post }
     tools.resources :agency_users, :only => [ :index, :show ]
     tools.resources :support_requests, :only => [ :index ]
+    tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
   end
   
   # Additional webserver routes
