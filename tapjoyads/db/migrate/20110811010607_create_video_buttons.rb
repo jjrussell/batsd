@@ -6,6 +6,7 @@ class CreateVideoButtons < ActiveRecord::Migration
       t.string  :name, :null => false
       t.string  :url, :null => false
       t.integer :ordinal
+      t.boolean :enabled, :default => true
       t.timestamps
     end
     

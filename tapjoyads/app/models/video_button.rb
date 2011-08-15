@@ -7,9 +7,9 @@ class VideoButton < ActiveRecord::Base
   validates_numericality_of :ordinal, :only_integer => true
   
   after_save :update_offer
-  after_destroy :update_offer
   
   named_scope :ordered, :order => "ordinal"
+  named_scope :enabled_buttons, :conditions => { :enabled => true }
   
   def xml_for_offer
     builder = Builder::XmlMarkup.new

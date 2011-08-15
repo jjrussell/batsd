@@ -18,11 +18,15 @@ class VideoOffer < ActiveRecord::Base
 
   def update_buttons
     offers.each do |offer|
-      offer.third_party_data = xml_for_buttons
+      offer.third_party_data = xml_for_buttons if is_valid_for_update_buttons?
       offer.save! if offer.changed?
     end
   end
-    
+  
+  def is_valid_for_update_buttons?
+    video_buttons.enabled_buttons.size <= 2
+  end
+  
 private
   
   def create_primary_offer
@@ -52,7 +56,7 @@ private
   end
   
   def xml_for_buttons
-    buttons = video_buttons.ordered
+    buttons = video_buttons.enabled_buttons.ordered
     buttons_xml = buttons.inject([]) do |result, button|
       result << button.xml_for_offer
     end
