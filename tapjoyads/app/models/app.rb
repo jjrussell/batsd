@@ -182,9 +182,8 @@ class App < ActiveRecord::Base
     self.supported_devices   = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
     self.countries_blacklist = AppStore.prepare_countries_blacklist(store_id, platform)
     
-    # TODO: Real multi-currency handling. For now simply set the price to a positive value if it's not USD.
     if data[:currency].present? && data[:currency] != 'USD' && price > 0
-      self.price = 99
+      self.price = AppStore.recalculate_app_price(self.platform, self.price, data[:currency])
     end
     
     download_icon(data[:icon_url], data[:small_icon_url]) unless new_record?
