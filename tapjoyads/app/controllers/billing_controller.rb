@@ -4,6 +4,7 @@ class BillingController < WebsiteController
   filter_access_to :all
   before_filter :get_selected_option
   before_filter :get_statements, :only => [:index, :export_statements, :export_orders, :export_payouts, :export_adjustments]
+  before_filter :nag_user_about_payout_info, :except => [:payout_info]
   after_filter :save_activity_logs, :only => [ :create_order, :create_transfer, :update_payout_info ]
 
   def index

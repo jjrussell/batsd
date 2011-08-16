@@ -25,8 +25,17 @@
         %td
           = @app.platform_name
           = f.hidden_field :platform
-      - if permitted_to?(:edit, :statz)
+      - if permitted_to?(:edit, :statz) && @app.platform == 'iphone'
         = render :partial => 'select_country'
+        %tr.admin
+          %th
+            Country blacklist
+          %td
+            - if @app.get_countries_blacklist.present?
+              = @app.countries_blacklist
+            .inline_help
+              This field is auto-filled from iTunes. Offers from this app will not
+              show up in countries appearing in this field.
       %tr
         %th
           Name
