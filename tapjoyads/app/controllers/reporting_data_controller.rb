@@ -62,7 +62,7 @@ private
       render :text => "Invalid date", :status => 400
       return
     end
-
+    
     @date = start_time.strftime("%Y-%m-%d")
     @appstats_list = []
     
@@ -74,15 +74,36 @@ private
       partners = @user.partners
     end
     
+    @total_offers = partners.inject(0) { |sum, partner| sum + partner.offers.size }
+    @page_size = params[:page_size].to_i
+    @page_size = ( @page_size > 0 ) ? ( @page_size > 200 ? 200 : @page_size ) : 100
+    @total_pages = (@total_offers.to_f / @page_size).ceil
+    @current_page = params[:page].to_i
+    @current_page = (@current_page > 0) ? (@current_page <= @total_pages ? @current_page : @total_pages) : 1
+    
+    need_to_skip = (@current_page - 1) * @page_size
+    need_to_show = @page_size
+    
     partners.each do |partner|
-      partner.offers.each do |offer|
-        appstats = Appstats.new(offer.id, {
-          :start_time => start_time,
-          :end_time => start_time + 24.hours})
-        
-        @appstats_list << [ offer, appstats ]
+      break if need_to_show <= 0
+      
+      if partner.offers.size < need_to_skip
+        need_to_skip -= partner.offers.size
+        next
+      end
+      
+      if partner.offers.present?
+        show_size = (need_to_show < (partner.offers.size - need_to_skip)) ? need_to_show : (partner.offers.size - need_to_skip)
+    
+        partner.offers[need_to_skip, show_size].each do |offer|
+          appstats = Appstats.new(offer.id, {
+            :start_time => start_time,
+            :end_time => start_time + 24.hours})
+  
+          @appstats_list << [ offer, appstats ]
+        end
+        need_to_show -= show_size
       end
     end
   end
-  
 end
