@@ -5,18 +5,6 @@
 
   %p
     Our system does not recognize the computer or device you are using to log in with.
-    In order to verify your account we have emailed a verification code to you which you can enter below.
-    Once you have entered the proper code this device will be remembered for future logins.
-  #new_device
-    - form_for(@device, :url => update_internal_device_url, :html => { :id => '', :class => 'tjform' }) do |f|
-      %p= hidden_field_tag :id, @device.id
-      %table
-        %tr
-          %th= f.label :verifier
-          %td= f.text_field :verifier
-        %tr
-          %th= f.label :description
-          %td= f.text_field :description
-        %tr
-          %td= f.submit 'Verify'
-
+    In order to verify your account we have emailed a verification link to you which you can click to confirm your device.
+  %p Once you have verified this device it will be remembered for future logins.
+  %b#new_device= link_to("Resend email", new_internal_device_path(:device => @device.id, :resend => true))

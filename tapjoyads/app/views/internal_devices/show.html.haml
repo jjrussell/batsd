@@ -6,7 +6,9 @@
   %tr
     %th Description
     %th
+    %th
   - @internal_devices.each do |internal_device|
     %tr
       %td= internal_device.description
+      %td= link_to("Edit description", edit_internal_device_path(internal_device))
       %td= link_to("Remove device", internal_device, :method => :delete, :confirm => "Are you sure?")
