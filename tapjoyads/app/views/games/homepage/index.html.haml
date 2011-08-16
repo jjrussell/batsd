@@ -43,7 +43,7 @@
                     Back
           #app_title.hide
           #earn_content.content.hide
-        
+
   #more_games
     .container.vertical-scroll
       .scroller.with-scrollbar
@@ -84,9 +84,10 @@
 = render 'my_account'
 
 - content_for :page_javascript do
-  - if Rails.env.production?
-    :plain
-      = render 'index_js_min'
-  - else
-    :plain
-      = render 'index_js'
+  :plain
+    $(window).load(function() { 
+      TJG.ui.homeInit();
+      TJG.path =  "#{games_root_path}";
+      TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
+      TJG.more_games_popular =  "#{games_more_games_popular_path}";
+    });
