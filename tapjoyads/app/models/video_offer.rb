@@ -24,7 +24,7 @@ class VideoOffer < ActiveRecord::Base
   end
   
   def is_valid_for_update_buttons?
-    video_buttons.enabled_buttons.size <= 2
+    video_buttons.enabled.size <= 2
   end
   
 private
@@ -56,7 +56,7 @@ private
   end
   
   def xml_for_buttons
-    buttons = video_buttons.enabled_buttons.ordered
+    buttons = video_buttons.enabled.ordered
     buttons_xml = buttons.inject([]) do |result, button|
       result << button.xml_for_offer
     end
