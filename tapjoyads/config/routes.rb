@@ -3,10 +3,11 @@ ActionController::Routing::Routes.draw do |map|
   
   map.with_options({:path_prefix => MACHINE_TYPE == 'games' ? '' : 'games', :name_prefix => 'games_'}) do |m|
     m.root :controller => 'games/homepage', :action => :index
-    m.real_index 'real_index', :controller => 'games/homepage', :action => :real_index
-    m.more_games 'more_games', :controller => 'games/more_games', :action => :index
     m.tos 'tos', :controller => 'games/homepage', :action => :tos
     m.privacy 'privacy', :controller => 'games/homepage', :action => :privacy
+    
+    m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
+    m.more_games_popular 'popular', :controller => 'games/more_games', :action => :popular
     
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy ]
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
@@ -38,9 +39,9 @@ ActionController::Routing::Routes.draw do |map|
   map.login 'login', :controller => :user_sessions, :action => :new
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
   map.resources :password_resets, :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
-  map.resources :internal_devices, :only => [ :index, :show, :destroy ], :member => { :block => :get }
+  map.resources :internal_devices, :only => [ :index, :show, :destroy, :edit, :update ], :member => { :block => :get }
   map.new_internal_device 'approve_device', :controller => :internal_devices, :action => 'new', :conditions => { :method => :get }
-  map.update_internal_device 'approve_device', :controller => :internal_devices, :action => 'update', :conditions => { :method => :put }
+  map.approve_internal_device 'approve_device/:id', :controller => :internal_devices, :action => 'approve', :conditions => { :method => :get }
   
   # Dashboard routes
   map.namespace :account do |account|

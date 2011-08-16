@@ -17,25 +17,12 @@
                 .slide_arrow_wrapper.bottom_arrow
                   .slide_arrow
           .content
-            .offer_list
-              %ul
-                -@external_publishers.each do |external_publisher|
-                  %li.offer_item.clearfix
-                    .offer_image
-                      = image_tag(external_publisher.get_icon_url(:source => :cloudfront))
-                    .offer_text
-                      .offer_title.title
-                        = external_publisher.app_name
-                      .offer_info
-                        - external_publisher.currencies.each_with_index do |currency, i|
-                          - link_to("#", :id => currency[:id], :class => "get_offerwall_jsonp", :jsonp_url => external_publisher.get_offerwall_url(@device, currency, request.headers), :currency => currency[:name], :app_name => external_publisher.app_name) do
-                            .offer_button
-                              .button.grey 
-                                %span.earn
-                                  Earn
-                                %span.currency
-                                  = currency[:name]
-
+            - if current_gamer.udid.blank?
+              = render 'register_device'
+            - elsif @external_publishers.blank?
+              = render 'no_games'
+            - else
+              = render 'my_apps'
   #earn
     .container.vertical-scroll
       .scroller.with-scrollbar

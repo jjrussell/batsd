@@ -232,14 +232,7 @@ TJG.ui = {
               $("#sign_up_dialog_content").parent().animate({ height: "230px", }, 250);
               $("#sign_up_dialog_content").html(msg);
               if (TJG.vars.isIos == false) {
-                  if (d.more_games_url) {
-                    $('.close_dialog,.continue_link_device').click(function(){
-                      document.location.href = d.more_games_url;
-                    });                    
-                  }
-                  else {
-                    document.location.href = location.protocol + '//' + location.host;
-                  }
+                document.location.href = location.protocol + '//' + location.host;
               }
               else if (d.link_device_url) {
                 $('.close_dialog,.continue_link_device').click(function(){
