@@ -75,7 +75,7 @@ private
     end
     
     @total_offers = partners.inject(0) { |sum, partner| sum + partner.offers.size }
-    @page_size = (params[:page_size] && params[:page_size].match(/\A[1-9]\d*\Z/)) ? params[:page_size].to_i : 100
+    @page_size = (params[:page_size] && params[:page_size].match(/\A[1-9]\d*\Z/)) ? (params[:page_size].to_i > 200 ? 200 : params[:page_size].to_i) : 100
     @total_pages = (@total_offers.to_f / @page_size).ceil
     @current_page = (params[:page] && params[:page].match(/\A[1-9]\d*\Z/)) ? (params[:page].to_i <= @total_pages ? params[:page].to_i : @total_pages) : 1
 
