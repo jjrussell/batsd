@@ -5,6 +5,8 @@ class ReportingDataControllerTest < ActionController::TestCase
     setup do
       @partner = Factory(:partner)
       @user = Factory(:user)
+      @user.partners << @partner
+      @partner.offers << Factory(:app).primary_offer
     end
 
     context "with missing params" do
@@ -22,9 +24,19 @@ class ReportingDataControllerTest < ActionController::TestCase
       should respond_with(403)
     end
 
+    context "with invalid date parameter" do
+      setup do
+        @response = get(:index, :date => 'poo', :username => @user.username, :api_key => @user.api_key)
+      end
+      should respond_with(400)
+      should "respond with error message" do
+        assert_equal @response.body, "Invalid date"
+      end
+    end
+
     context "with valid params, xml" do
       setup do
-        @response = get(:index, :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key)
+        @response = get(:index, :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key, :partner_id => @partner.id)
       end
       should respond_with(200)
       should respond_with_content_type(:xml)
