@@ -19,7 +19,7 @@ Your API Key:
 
 %p URL
 %pre
-  https://www.tapjoy.com/reporting_data.xml?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD[&page=NUM&page_size=NUM]
+  https://www.tapjoy.com/reporting_data.xml?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD[&page=NUM]
 
 %p Response
 %pre
@@ -84,7 +84,7 @@ Your API Key:
 
 %p URL
 %pre
-  https://www.tapjoy.com/reporting_data.json?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD[&page=NUM&page_size=NUM]
+  https://www.tapjoy.com/reporting_data.json?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD[&page=NUM]
 
 %p Response
 %pre
@@ -146,7 +146,27 @@ Your API Key:
       ]
     }
 
-%h4 Field Descriptions
+%h4 General Field Descriptions
+%table.tablesorter
+  %thead
+    %tr
+      %th Field
+      %th Description
+  %tbody
+    %tr
+      %td TotalOffers
+      %td The total number of offers.
+    %tr
+      %td PageSize
+      %td The maximum number of offers show on each page.
+    %tr
+      %td TotalPages
+      %td The total number of pages for this report.
+    %tr
+      %td CurrentPage
+      %td Current page number.
+
+%h4 App Field Descriptions
 %table.tablesorter
   %thead
     %tr
