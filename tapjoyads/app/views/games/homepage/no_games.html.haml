@@ -31,7 +31,6 @@
 
 - content_for :page_javascript do
   :plain
-    TJG.gamer_data = "#{@gamer_data_encrypt}";
     $(window).load(function() {
       var jQT = new $.jQTouch({
         slideSelector: '#jqt .slide_nav',

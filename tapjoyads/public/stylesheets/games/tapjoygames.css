@@ -836,10 +836,13 @@ form#new_gamer_session .login_pass {
 .login_header_wrapper a, .my_account_header_wrapper a, .header_wrapper a {
   color: #6B5F54;
 }
-.formError, .email_error, .account_error, .login_error {
+.formError, .email_error, .account_error, .login_error, .form_error {
   color: #F21C1A;
   font-size: 13px;
 }
+.formError .pad, .email_error .pad, .account_error .pad, .login_error .pad, .form_error .pad {
+  padding: 6px;
+} 
 .mobile .tab_wrapper {
   width: 100%;
 }
