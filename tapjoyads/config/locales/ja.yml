@@ -13,7 +13,7 @@ ja:
       missing_currency: "{{currency}}が受取れない場合"
 
       # original wall only
-      instructions: "{{currency}} を獲得するために、次の中からアプリをインストールして開いてください"
+      instructions: "{{currency_name}} を獲得するために、次の中からアプリをインストールして起動してください"
       amount_and_currency: "{{amount}} {{currency}}"
       earn_currency: "{{amount_and_currency}} を獲得"
       buy_currency: "{{amount_and_currency}} を買う"
@@ -27,10 +27,10 @@ ja:
       title: "指示"
       amount_and_currency: "{{amount}} {{currency}}"
       earn_currency: "{{amount_and_currency}} を獲得"
-      header: "次のステップによって {{currency}} を獲得する"
-      footer: "このステップを完了してから {{amount_and_currency}} を獲得する"
+      header: "次のステップを完了すると {{currency}} を獲得できます"
+      footer: "このステップを完了づると {{amount_and_currency}} を獲得できます"
       download_action: "こちら"
-      download_link: "このアプリがない場合には {{download_action}} をクッリク してダウンロードしてください"
+      download_link: "このアプリをインストールするには {{download_action}} をクリックしてください"
       continue_link: "続くにはクリックしてください"
       
     support:
