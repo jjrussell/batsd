@@ -291,6 +291,13 @@ Your API Key:
   The data returned will be in the time zone specified for your account, configurable on the 
   =link_to("change account details page", edit_user_path(current_user)) + '.'
 
+%h4 Pages
+
+%p
+  This feed will return data on a maximum of 100 offers at once. In order to see data about additional offers, provide the
+  %span.code page 
+  parameter to the request.
+
 - content_for :page_javascript do
   :plain
     $('#regenerate').click(function(){
