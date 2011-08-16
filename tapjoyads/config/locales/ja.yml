@@ -13,7 +13,7 @@ ja:
       missing_currency: "{{currency}}が受取れない場合"
 
       # original wall only
-      instructions: "{{currency_name}} を獲得するために、次の中からアプリをインストールして起動してください"
+      instructions: "{{currency}} を獲得するために、次の中からアプリをインストールして起動してください"
       amount_and_currency: "{{amount}} {{currency}}"
       earn_currency: "{{amount_and_currency}} を獲得"
       buy_currency: "{{amount_and_currency}} を買う"
