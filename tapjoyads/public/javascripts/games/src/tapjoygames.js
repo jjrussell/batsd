@@ -219,7 +219,7 @@ TJG.ui = {
           dataType: 'json', 
           data: { 'authenticity_token': values['authenticity_token'], 'gamer[email]': values['gamer[email]'], 'gamer[password]': values['gamer[password]'], 'gamer[referrer]': values['gamer[referrer]'] },
           success: function(d) {
-            var msg;                                          x
+            var msg;
             if (d.success) {
               hasLinked = false;
               msg = [
