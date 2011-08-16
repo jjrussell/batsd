@@ -112,8 +112,6 @@ class ReportingDataControllerTest < ActionController::TestCase
       @partner.users << @user
       @offer = Factory(:app).primary_offer
       @partner.offers << @offer
-      #UdidReports.stubs(:get_daily_report).returns('')
-      #UdidReports.stubs(:get_monthly_report).returns('')
     end
 
     context "with missing params" do
