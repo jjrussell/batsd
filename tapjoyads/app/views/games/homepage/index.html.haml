@@ -43,8 +43,6 @@
                     Back
           #app_title.hide
           #earn_content.content.hide
-        .back_to_top
-          Back to top
         
   #more_games
     .container.vertical-scroll
@@ -87,6 +85,8 @@
 
 - content_for :page_javascript do
   - if Rails.env.production?
-    = render 'index_js_min'
+    :plain
+      = render 'index_js_min'
   - else
-    = render 'index_js'
+    :plain
+      = render 'index_js'
