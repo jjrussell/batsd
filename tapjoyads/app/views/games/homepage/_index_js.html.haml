@@ -173,7 +173,7 @@
         else {
           TJG.ui.showLoader();
           $.ajax({ 
-            url: TJG.more_games + "?ajax=1",
+            url: TJG.more_games_editor_picks,
             timeout: 15000,
             success: function(c) {
               TJG.moreAppOfferWall = c;
@@ -222,7 +222,7 @@
             $("#more_games_content").empty();
           });
           $.ajax({ 
-            url: TJG.top_apps_path + "?ajax=1",
+            url: TJG.more_games_popular,
             timeout: 15000,
             success: function(c) {
               TJG.topAppOfferWall = c;
@@ -242,8 +242,8 @@
       });
     }
     TJG.path =  "#{games_root_path}";
-    TJG.more_games =  "#{games_more_games_path}";
-    TJG.top_apps_path =  "#{games_more_games_path}" + "/top";
+    TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
+    TJG.more_games_popular =  "#{games_more_games_popular_path}";
     getOfferWalls();
     getMoreGames();
     getTopGames();

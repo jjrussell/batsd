@@ -3,10 +3,11 @@ ActionController::Routing::Routes.draw do |map|
   
   map.with_options({:path_prefix => MACHINE_TYPE == 'games' ? '' : 'games', :name_prefix => 'games_'}) do |m|
     m.root :controller => 'games/homepage', :action => :index
-    m.real_index 'real_index', :controller => 'games/homepage', :action => :real_index
-    m.more_games 'more_games', :controller => 'games/more_games', :action => :index
     m.tos 'tos', :controller => 'games/homepage', :action => :tos
     m.privacy 'privacy', :controller => 'games/homepage', :action => :privacy
+    
+    m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
+    m.more_games_popular 'popular', :controller => 'games/more_games', :action => :popular
     
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy ]
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
