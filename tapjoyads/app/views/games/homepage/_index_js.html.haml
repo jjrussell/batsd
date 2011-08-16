@@ -3,14 +3,15 @@
     var jQT = new $.jQTouch({
       slideSelector: '#jqt .slide_nav',
     });
+    
     var install = TJG.utils.getParam("register_device");
     if (install.indexOf("true") != -1) {
       TJG.utils.centerDialog("#register_device");
       $("#register_device").fadeIn(350); 
     }
-    
-    TJG.ui.showAddHomeDialog();
-    
+    if (TJG.vars.isIos || TJG.vars.isSafari) {
+      TJG.ui.showAddHomeDialog();
+    }
     $('#earn .vertical-scroll').swipe(function(evt, data) { 
       TJG.utils.hideURLBar();
     });

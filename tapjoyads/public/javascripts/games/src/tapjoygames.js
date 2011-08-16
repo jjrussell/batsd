@@ -219,7 +219,7 @@ TJG.ui = {
           dataType: 'json', 
           data: { 'authenticity_token': values['authenticity_token'], 'gamer[email]': values['gamer[email]'], 'gamer[password]': values['gamer[password]'], 'gamer[referrer]': values['gamer[referrer]'] },
           success: function(d) {
-            var msg;
+            var msg;                                          x
             if (d.success) {
               hasLinked = false;
               msg = [
@@ -302,51 +302,41 @@ TJG.ui = {
   showAddHomeDialog : function() {
     var startY = startX = 0,
     options = {
-      message: "Install Tapjoy Games on your %device: tap %icon and then <strong>Add to Home Screen</strong>.",
+      message: 'Add <span class="bold">Tapjoy Games</span> to your home screen.',
       animationIn: 'fade',
       animationOut: 'fade',
-      startDelay: 2000,
-      lifespan: 10000,
+      startDelay: 500,
+      lifespan: 1000000,
       bottomOffset: 14,
       expire: 0,
-      touchIcon: false,
       arrow: true,
       iterations: 5
     },
     theInterval, closeTimeout, el, i, l,
-    expired = TJG.utils.getLocalStorage("addHome");
+    expired = TJG.utils.getLocalStorage("tjg.bookmark.expired"),
+    shown = TJG.utils.getLocalStorage("tjg.bookmark.shown");
+    if (TJG.utils.isNull(shown)) {
+      shown = 0;
+    }
+    shown = parseInt(shown);
+    if (expired) {
+      return;
+    }
+    if (shown >= 4) {
+      TJG.utils.setLocalStorage("tjg.bookmark.expired", true)
+    }
     TJG.vars.version =  TJG.vars.version ?  TJG.vars.version[0].replace(/[^\d_]/g,'').replace('_','.')*1 : 0;
     expired = expired == 'null' ? 0 : expired*1;
-    
-    var div = document.createElement('div'),
-    close,
-    link = options.touchIcon ? $('head link[rel=apple-touch-icon],head link[rel=apple-touch-icon-precomposed]') : [],
-    sizes, touchIcon = '';
+    var div = document.createElement('div'), close;
     div.id = 'addToHome';
     div.style.cssText += 'position:absolute;-webkit-transition-property:-webkit-transform,opacity;-webkit-transition-duration:0;-webkit-transform:translate3d(0,0,0);';
     div.style.left = '-9999px';
-    if (link.length) {
-      for (i=0, l=link.length; i<l; i++) {
-        sizes = link[i].getAttribute('sizes');
-        if (sizes) {
-          if (TJG.vars.isRetina && sizes == '114x114') { 
-            touchIcon = link[i].href;
-            break;
-          }
-        } else {
-          touchIcon = link[i].href;
-        }
-      }
-      touchIcon = '<span style="background-image:url(' + touchIcon + ')" class="touchIcon"></span>';
-    }
-    div.className = (TJG.vars.isIPad ? 'ipad' : 'iphone') + (touchIcon ? ' wide' : '');
-    var m =  options.message.replace('%device', TJG.vars.platform).replace('%icon', TJG.vars.version >= 4.2 ? '<span class="share"></span>' : '<span class="plus">+</span>');
+    div.className = (TJG.vars.isIPad ? 'ipad wide' : 'iphone');
+    var m =  options.message;
     var a = (options.arrow ? '<span class="arrow"></span>' : '');
     var t = [
-      touchIcon,
       m,
-      a,
-      '<span class="close_add_to_home">\u00D7</span>'
+      a
     ].join('');
     div.innerHTML = t;
     document.body.appendChild(div);
@@ -364,7 +354,6 @@ TJG.ui = {
         el.parentNode.removeChild(el);
       }   
     }
-
     function setPosition () {
       var matrix = new WebKitCSSMatrix(window.getComputedStyle(el, null).webkitTransform),
       posY = TJG.vars.isIPad ? window.scrollY - startY : window.scrollY + window.innerHeight - startY,
@@ -377,24 +366,19 @@ TJG.ui = {
         el.style.webkitTransform = 'translate3d(' + posX + 'px,' + posY + 'px,0)';
       }, 0);
     }
-
     function addToHomeClose () {
-      alert('closing');
       clearInterval(theInterval);
       clearTimeout(closeTimeout);
       closeTimeout = null;
       el.removeEventListener('webkitTransitionEnd', transitionEnd, false);
       var posY = TJG.vars.isIPad ? window.scrollY - startY : window.scrollY + window.innerHeight - startY,
       posX = TJG.vars.isIPad ? window.scrollX - startX : window.scrollX + Math.round((window.innerWidth - el.offsetWidth)/2) - startX,
-      opacity = '1',
+      opacity = '0.95',
       duration = '0';
-      $(".close_add_to_home").click(function(){
-        addToHomeClose();
-      });
       el.style.webkitTransitionProperty = '-webkit-transform,opacity';
       switch (options.animationOut) {
         case 'drop':
-        if (isIPad) {
+        if (TJG.vars.isIPad) {
           duration = '0.4s';
           opacity = '0';
           posY = posY + 50;
@@ -404,7 +388,7 @@ TJG.ui = {
         }
         break;
         case 'bubble':
-        if (isIPad) {
+        if (TJG.vars.isIPad) {
           duration = '0.8s';
           posY = posY - el.offsetHeight - options.bottomOffset - 50;
         } 
@@ -418,19 +402,17 @@ TJG.ui = {
         duration = '0.8s';
         opacity = '0';
       }
-
       el.addEventListener('webkitTransitionEnd', transitionEnd, false);
       el.style.opacity = opacity;
       el.style.webkitTransitionDuration = duration;
       el.style.webkitTransform = 'translate3d(' + posX + 'px,' + posY + 'px,0)';
     }
-    
     setTimeout(function () {
       var duration;
       startY = TJG.vars.isIPad  ? window.scrollY : window.innerHeight + window.scrollY;
       startX = TJG.vars.isIPad  ? window.scrollX : Math.round((window.innerWidth - el.offsetWidth)/2) + window.scrollX;
       el.style.top = TJG.vars.isIPad ? startY + options.bottomOffset + 'px' : startY - el.offsetHeight - options.bottomOffset + 'px';
-      el.style.left = TJG.vars.isIPad ? startX + (OSVersion >=5 ? 160 : 208) - Math.round(el.offsetWidth/2) + 'px' : startX + 'px';
+      el.style.left = TJG.vars.isIPad ? startX + (TJG.vars.version >=5 ? 160 : 208) - Math.round(el.offsetWidth/2) + 'px' : startX + 'px';
       switch (options.animationIn) {
         case 'drop':
         if (TJG.vars.isIPad) {
@@ -457,16 +439,14 @@ TJG.ui = {
         duration = '1s';
         el.style.opacity = '0';
       }
-
       setTimeout(function () {
         el.style.webkitTransitionDuration = duration;
-        el.style.opacity = '1';
+        el.style.opacity = '0.95';
+        shown = shown + 1;
+        TJG.utils.setLocalStorage("tjg.bookmark.shown", shown);
         el.style.webkitTransform = 'translate3d(0,0,0)';
         el.addEventListener('webkitTransitionEnd', transitionEnd, false);
         }, 0);
-        $(".close_add_to_home").click(function(){
-          addToHomeClose();
-        });
         closeTimeout = setTimeout(addToHomeClose, options.lifespan);
     }, options.startDelay);
     window.addToHomeClose = addToHomeClose;
@@ -488,24 +468,10 @@ TJG.ui = {
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
-        $('#sign_up, #sign_up_form').click(function(){
-          if (!TJG.utils.isNull(TJG.utils.getLocalStorage("gamer_data"))) {
-            TJG.utils.centerDialog("#linked_device");
-            TJG.repositionDialog = ["#linked_device"];
-            $("#linked_device").fadeIn(350);
-            $(".continue_registration").click(function() {
-              $("#linked_device").fadeOut(350, function() {
-                TJG.utils.centerDialog("#sign_up_dialog");
-                TJG.repositionDialog = ["#sign_up_dialog"];
-                TJG.ui.showRegister();
-              });
-            });
-          }
-          else {      
+        $('#sign_up, #sign_up_form').click(function() {
             TJG.utils.centerDialog("#sign_up_dialog");
             TJG.repositionDialog = ["#sign_up_dialog"];
             TJG.ui.showRegister();  
-          }
         });
         $('#how_works').click(function(){
           TJG.utils.centerDialog("#how_works_dialog");

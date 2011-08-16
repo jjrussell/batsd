@@ -5,7 +5,7 @@ TJG.vars.isIos = false;
 TJG.vars.isTouch = false;
 TJG.appOfferWall = {};
 (function(window, document) {
-    var  winH, winW;
+    var winH, winW;
     function centerDialog (el) {
       winH = $(window).height();
       winW = $(window).width();
@@ -14,8 +14,7 @@ TJG.appOfferWall = {};
       $(el).show();    
     }
     centerDialog("#loader");
-     var classes = [''], classReplaces = {}, device = "", orientationCompute = "";
-     var nav = navigator;
+     var nav = navigator, classes = [''], classReplaces = {}, device = "", orientationCompute = "";
      TJG.vars.isIos = (/iphone|ipod|ipad/gi).test(nav.platform);
      TJG.vars.isAndroid = (/android/gi).test(nav.platform);
      TJG.vars.isMobile = /(ip(od|ad|hone)|android)/gi.test(nav.userAgent);
