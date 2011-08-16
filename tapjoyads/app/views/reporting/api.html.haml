@@ -19,7 +19,7 @@ Your API Key:
 
 %p URL
 %pre
-  https://www.tapjoy.com/reporting_data.xml?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD
+  https://www.tapjoy.com/reporting_data.xml?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD[&page=NUM]
 
 %p Response
 %pre
@@ -27,6 +27,10 @@ Your API Key:
     &lt;?xml version="1.0" encoding="UTF-8"?&gt;
     &lt;MarketingData&gt;
       &lt;Date&gt;YYYY-MM-DD&lt;/Date&gt;
+      &lt;TotalOffers&gt;NUM&lt;/TotalOffers&gt;
+      &lt;PageSize&gt;NUM&lt;/PageSize&gt;
+      &lt;TotalPages&gt;NUM&lt;/TotalPages&gt;
+      &lt;CurrentPage&gt;NUM&lt;/CurrentPage&gt;
       &lt;App&gt;
         &lt;Name&gt;App Name&lt;/Name&gt;
         &lt;AppKey&gt;00000000-0000-0000-0000-000000000000&lt;/AppKey&gt;
@@ -80,13 +84,17 @@ Your API Key:
 
 %p URL
 %pre
-  https://www.tapjoy.com/reporting_data.json?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD
+  https://www.tapjoy.com/reporting_data.json?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD[&page=NUM]
 
 %p Response
 %pre
   :preserve
     {
       "Date" : "YYYY-MM-DD",
+      "TotalOffers" : NUM,
+      "PageSize" : NUM,
+      "TotalPages" : NUM,
+      "CurrentPage" : NUM,
       "Apps" : [
         {
           "Name"                           : "App Name",
@@ -138,7 +146,27 @@ Your API Key:
       ]
     }
 
-%h4 Field Descriptions
+%h4 General Field Descriptions
+%table.tablesorter
+  %thead
+    %tr
+      %th Field
+      %th Description
+  %tbody
+    %tr
+      %td TotalOffers
+      %td The total number of offers.
+    %tr
+      %td PageSize
+      %td The maximum number of offers show on each page.
+    %tr
+      %td TotalPages
+      %td The total number of pages for this report.
+    %tr
+      %td CurrentPage
+      %td Current page number.
+
+%h4 App Field Descriptions
 %table.tablesorter
   %thead
     %tr
@@ -282,6 +310,13 @@ Your API Key:
 %p
   The data returned will be in the time zone specified for your account, configurable on the 
   =link_to("change account details page", edit_user_path(current_user)) + '.'
+
+%h4 Pages
+
+%p
+  This feed will return data on a maximum of 100 offers at once. In order to see data about additional offers, provide the
+  %span.code page 
+  parameter to the request.
 
 - content_for :page_javascript do
   :plain

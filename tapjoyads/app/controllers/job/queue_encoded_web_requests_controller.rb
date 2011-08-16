@@ -2,7 +2,7 @@ class Job::QueueEncodedWebRequestsController < Job::JobController
   
   def initialize
     @queue     = Sqs.queue(QueueNames::ENCODED_WEB_REQUESTS)
-    @num_reads = 30 - [ @queue.size_not_visible / 10000, 10 ].min * 2
+    @num_reads = 35 - [ @queue.size_not_visible / 10000, 10 ].min * 2
   end
   
   def index
@@ -65,8 +65,9 @@ class Job::QueueEncodedWebRequestsController < Job::JobController
           Timeout.timeout(7) { SimpledbResource.put_items(sdb_items) }
           Rails.logger.info "QueueEncodedWebRequests: Saved #{sdb_items.size} items to #{domain_name}"
         rescue RightAws::AwsError => e
-          Rails.logger.info "QueueEncodedWebRequests: Failed saving #{sdb_items.size} items to #{domain_name}"
-          Notifier.alert_new_relic(e.class, e.message, request, params)
+          Mc.increment_count("failed_sdb_saves.batch_puts.#{(now.to_f / 1.hour).to_i}", false, 1.day)
+          Rails.logger.info "QueueEncodedWebRequests: Failed saving #{sdb_items.size} items to #{domain_name} - #{e.class}: #{e.message}"
+          Notifier.alert_new_relic(e.class, e.message, request, params) unless e.message =~ /ServiceUnavailable/
           next
         rescue Timeout::Error => e
           if retries > 0
