@@ -181,11 +181,7 @@ class App < ActiveRecord::Base
     self.categories          = data[:categories]
     self.supported_devices   = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
     self.countries_blacklist = AppStore.prepare_countries_blacklist(store_id, platform)
-    
-    if data[:currency].present? && data[:currency] != 'USD' && price > 0
-      self.price = AppStore.recalculate_app_price(self.platform, self.price, data[:currency])
-    end
-    
+
     download_icon(data[:icon_url], data[:small_icon_url]) unless new_record?
     data
   end
@@ -223,6 +219,7 @@ class App < ActiveRecord::Base
     os_version           = options.delete(:os_version)
     library_version      = options.delete(:library_version) || ''
     screen_layout_size   = options.delete(:screen_layout_size)
+    video_offer_ids      = options.delete(:video_offer_ids)      { [] }
 
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
@@ -237,7 +234,7 @@ class App < ActiveRecord::Base
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)
       if rate_app_offer.present? && rate_app_offer.accepting_clicks?
         offer_list_length += 1
-        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size)
+        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size, video_offer_ids)
           num_rejected += 1
         else
           final_offer_list << rate_app_offer
@@ -247,7 +244,7 @@ class App < ActiveRecord::Base
     
     offer_list_length += currency.get_cached_offers({ :type => type, :exp => exp }) do |offers|
       offers.each do |offer|
-        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size)
+        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size, video_offer_ids)
           num_rejected += 1
         else
           final_offer_list << offer
