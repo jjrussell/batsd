@@ -1120,7 +1120,7 @@ private
   end
   
   def hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs)
-    hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer'
+    hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer' && item_type !='VideoOffer'
   end
   
   def cookie_tracking_reject?(publisher_app, library_version)
