@@ -84,8 +84,8 @@
 = render 'my_account'
 
 - content_for :page_javascript do
-  :plain
-    $(window).load(function() { 
+  :plain 
+    $(window).load(function() {
       TJG.ui.homeInit();
       TJG.path =  "#{games_root_path}";
       TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";

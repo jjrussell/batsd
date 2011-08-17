@@ -24,7 +24,8 @@ ActionController::Routing::Routes.draw do |map|
     m.resources :password_resets, :controller => 'games/password_resets', :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
     
     m.resources :support_requests, :controller => 'games/support_requests', :only => [ :new, :create ]
-
+    
+    m.manifest 'tapjoygames.manifest', :controller => 'games/manifest', :action => :show
   end
 
   break if MACHINE_TYPE == 'games'
