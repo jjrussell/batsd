@@ -65,20 +65,20 @@ class AppStore
     end
   end
 
-  def self.recalculate_app_price(platform, price, currency)
-    if currency == 'USD' || price == 0
-      price
+  def self.recalculate_app_price(platform, price_in_dollars, currency)
+    if currency == 'USD' || price_in_dollars == 0
+      price_in_dollars
     elsif platform == 'iphone' && PRICE_TIERS[currency].present?
       PRICE_TIERS[currency].each_with_index do |tier_price, tier|
-        if price <= tier_price
-          return 99 + (tier * 100)
+        if price_in_dollars <= tier_price
+          return tier + 0.99
         end
       end
 
-      599 # the price is too damn high
+      5.99 # the price is too damn high
     else
       # TODO: Real multi-currency handling for android. For now simply set the price to a positive value if it's not USD.
-      99
+      0.99
     end
   end
 
@@ -248,14 +248,14 @@ private
   end
 
   def self.app_info_from_apple(hash)
-    price = recalculate_app_price('iphone', hash['price'], hash['currency'])
+    price_in_dollars = recalculate_app_price('iphone', hash['price'], hash['currency'])
     app_info = {
       :item_id            => hash["trackId"],
       :title              => hash["trackName"],
       :url                => hash["trackViewUrl"],
       :icon_url           => hash["artworkUrl100"],
       :small_icon_url     => hash["artworkUrl60"],
-      :price              => "%.2f" % price,
+      :price              => '%.2f' % price_in_dollars,
       :description        => hash["description"],
       :publisher          => hash["artistName"],
       :file_size_bytes    => hash["fileSizeBytes"],
