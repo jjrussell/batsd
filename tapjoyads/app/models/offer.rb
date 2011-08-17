@@ -208,7 +208,7 @@ class Offer < ActiveRecord::Base
       cache_offer_list(offer_list, weights, NON_REWARDED_FEATURED_OFFER_TYPE, Experiments::EXPERIMENTS[:default])
       
       offer_list = Offer.enabled_offers.video_offers.for_offer_list.to_a
-      offer_list.each { |o| o.run_callbacks(:before_cache) }
+      offer_list.each { |o| o.run_callbacks(:before_cache); o.clear_association_cache }
       cache_unsorted_offers(offer_list, VIDEO_OFFER_TYPE)
       cache_offer_list(offer_list, weights, VIDEO_OFFER_TYPE, Experiments::EXPERIMENTS[:default])      
     end
