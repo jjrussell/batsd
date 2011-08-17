@@ -203,12 +203,11 @@ class SimpledbResource
       message = Base64::encode64(self.serialize)
       Sqs.send_message(QueueNames::ENCODED_WEB_REQUESTS, message)
     else
-      bucket_name, queue_name = get_failed_save_bucket_and_queue
       uuid = UUIDTools::UUID.random_create.to_s
-      bucket = S3.bucket(bucket_name)
+      bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
       bucket.put("incomplete/#{uuid}", self.serialize)
       message = { :uuid => uuid, :options => options_copy }.to_json
-      Sqs.send_message(queue_name, message)
+      Sqs.send_message(QueueNames::FAILED_SDB_SAVES, message)
     end
     Rails.logger.info "Successfully added to sqs. Message: #{message}"
   ensure
@@ -803,17 +802,6 @@ private
       delete(attr_name)
       attr_name += '_'
     end
-  end
-  
-  ##
-  # Increments a count in memecache which counts how many times a domain is saved to per minute.
-  def increment_domain_freq_count
-    key = "savefreq.#{@this_domain_name}.#{(Time.now.to_i / 1.minutes).to_i}"
-    Mc.increment_count(key, false, 10.minutes)
-  end
-  
-  def get_failed_save_bucket_and_queue
-    [ BucketNames::FAILED_SDB_SAVES, QueueNames::FAILED_SDB_SAVES ]
   end
   
 end

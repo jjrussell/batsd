@@ -1,6 +1,7 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
+  json_set_field :countries_blacklist
 
   ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS' }
   BETA_PLATFORMS    = { 'windows' => 'Windows Phone' }
@@ -170,19 +171,19 @@ class App < ActiveRecord::Base
       data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
     end
     raise "Fetching app store data failed for app: #{name} (#{id})." if data.nil?
-    self.name               = data[:title]
-    self.price              = (data[:price].to_f * 100).round
-    self.description        = data[:description]
-    self.age_rating         = data[:age_rating]
-    self.file_size_bytes    = data[:file_size_bytes]
-    self.released_at        = data[:released_at]
-    self.user_rating        = data[:user_rating]
-    self.categories         = data[:categories]
-    self.supported_devices  = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
+    self.name                = data[:title]
+    self.price               = (data[:price].to_f * 100).round
+    self.description         = data[:description]
+    self.age_rating          = data[:age_rating]
+    self.file_size_bytes     = data[:file_size_bytes]
+    self.released_at         = data[:released_at]
+    self.user_rating         = data[:user_rating]
+    self.categories          = data[:categories]
+    self.supported_devices   = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
+    self.countries_blacklist = AppStore.prepare_countries_blacklist(store_id, platform)
     
-    # TODO: Real multi-currency handling. For now simply set the price to a positive value if it's not USD.
     if data[:currency].present? && data[:currency] != 'USD' && price > 0
-      self.price = 99
+      self.price = AppStore.recalculate_app_price(self.platform, self.price, data[:currency])
     end
     
     download_icon(data[:icon_url], data[:small_icon_url]) unless new_record?
