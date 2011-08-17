@@ -3,34 +3,54 @@
 #a_dvertisers
   %img.header{:src => "/images/tapjoy_for_advertisers.png"}/
   #about
-    %p If you're looking to find new users or drive engagement within your app, Tapjoy is the solution for your needs. We reach over 200 million Android and iOS users through our network and help them discover new apps with a great user experience. You only pay when users engage with your application.
-    -#%p
-      Not sold?
-      %a{:href => "..."}
-        Checkout how we made
-        %label
-          Kayak Mobile
-        the #1 travel app
-  #divider
-  #become_an_advertiser
-    %span Are you ready to start driving users to your mobile apps?
-    = link_to "", register_path
-  %h2 Advertiser Products
-  #advertiser_phone
-    %img.screenshot.offerwall.show{:src => "/images/offerwall.png"}/
-    %img.screenshot.featured{:src => "/images/featured.jpg"}/
-    %img.screenshot.ppa{:src => "/images/ppa.jpg"}/
+    %h2 Helping you reach mobile consumers everywhere
+    %p Tapjoy’s mobile advertising platform combines extensive reach, sophisticated targeting and engaging ad units to drive meaningful results whether you’re a brand, agency or developer. 
+    = link_to "", register_path, {:id => 'start_advertising'}
+  %img#stats{:src => "/images/network_stats.png"}
+  .section
+    %img{:src => "/images/performancemarketing.jpg"}
+    .right
+      %h2 Performance Marketing
+      %p Performance marketing runs deep in Tapjoy’s DNA as we created the first Pay-Per-Engagement ad unit on mobile.
+      %p Whether you’re looking for app distribution or qualified leads, Tapjoy is the one-stop shop for ROI positive advertising. With rich targeting and a bided market, we have a solution for every marketing budget.
+      = link_to "", register_path, {:class => 'contact_us'}
+  .section.section_right
+    %img{:src => "/images/performancemarketing.jpg"}
+    .right
+      %h2 Brands & Agencies
+      %p Tapjoy’s turnkey mobile solutions are designed to help brands and their agencies present their messages to their target audiences at scale in a easy, efficient, manner.
+      %p From HD video to full screen takeovers, we have the right ad units to deliver your brand message to mobile consumers everywhere. 
+      = link_to "", register_path, {:class => 'contact_us'}
   #products
-    .product{:rel => "offerwall"}
-      %img{:src => "/images/offerwall_icon.png"}/
-      %span Offerwall
-      %p The Tapjoy Offerwall allows users to browse and discover exciting apps. By listing your app in our offerwall, Tapjoy helps you break through the noise and show your app to millions of Android and iOS users. By buying on a CPA basis, you only pay when someone downloads and tries your app.
-    .product{:rel => "featured"}
-      %img{:src => "/images/featured_icon.png"}/
-      %span Featured Ad Placement
-      %p Looking for premium placement within our marketplace? The Tapjoy Featured ad unit is a full page interstitial that is displayed when an app is first run. You gain maximum exposure for your app or marketing action with this full screen, rich ad unit
-    .product{:rel => "ppa"}
-      %img{:src => "/images/ppa_icon.png"}/
-      %span Pay-Per-Action and Engagement
-      %p The Pay-Per-Action ad platform allows you to drive deep user engagement within your app. PPA enables you to define specific actions, such as completing a tutorial, watching a video, or performing a product search. This enables you to engage users to perform actions that you value.
+    .header_divider
+    %h2 Advertiser Products
+    #links
+      .link_box
+        = link_to "Video", '', {:title => 'video'}
+      .link_box
+        = link_to "Banner", '', {:title => 'banner'}
+      .link_box
+        = link_to "Featured", '', {:title => 'featured'}
+      .link_box.selected
+        = link_to "Marketplace", '', {:title => 'marketplace'}
+    .header_divider
+    .details.marketplace_copy
+      %h3 Tapjoy Marketplace
+      %p Whether you’re looking for distribution of your app or qualified leads to your mobile landing page, the Tapjoy Marketplace is a robust way for mobile consumers to view your offerings.
+      %p It's easy to setup and get started and you can bid the price that makes sense for your marketing budget.
+    .details.featured_copy
+      %h3 Featured
+      %p The Tapjoy Featured ad unit is a full screen interstitial that shows on app startup. This prominent placement allows you to reach mobile users and present your marketing message in a rich canvas.
+    .details.banner_copy
+      %h3 Banners
+      %p Tapjoy display banners are an easy, cost-effective way to get distribution for your apps across the marketplace.
+      %p No creative is needed and setup is a snap so you can get your marketing campaign launched as quickly as possible. 
+    .details.video_copy
+      %h3 Video
+      %p Tapjoy’s video marketplace allows advertisers to reach tens of millions of mobile consumers with their video messages on a cost per completed view (CPV) basis.
+      %p With rich targeting and a slick, native player experience, you can be sure that your videos are played in HD quality to the right audience. After video completion, advertisers can define their call to action with customizable buttons. 
+    .screenshot.marketplace
+    .screenshot.featured
+    .screenshot.banner
+    .screenshot.video
 .clear
