@@ -15,6 +15,10 @@
   = render :partial => 'pagination_links'
 
 - if @test_offer.present?
+  - unless @currency.tapjoy_enabled?
+    - render(:layout => 'box') do
+      .explanation
+        You must email #{mail_to("publishersupport@tapjoy.com")} before users will be able to view offers.
   - render(:layout => 'box') do
     .explanation
       = @test_offer.name
@@ -93,7 +97,7 @@
   
     .offer { display: block; float: left; text-decoration: none; width: 100%; }
     .content { margin-top: 10px; }
-    .explanation { color: #0c429b; font-weight: bold; font-size: 13px; margin: 0px 10px 0 10px; text-align: center; height: 14px; }
+    .explanation { color: #0c429b; font-weight: bold; font-size: 13px; margin: 0px 10px 0 10px; text-align: center; min-height: 14px; }
     .icon { float: left; margin: 0 10px 0 19px; }
     .icon img { width: 57px; height: 57px; }
     .offer-text { color: #686868; display: table-cell; font-size: 14px; height: 57px; margin: 0; padding-right: 7px; position: relative; top: 10px; vertical-align: middle; }
