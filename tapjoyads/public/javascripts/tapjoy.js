@@ -44,7 +44,7 @@ $(document).ready(function() {
         // Highlight link
         $(".link_box").removeClass('selected');
         $(this).parent().addClass('selected');
-        
+
         // Change screenshot & content
         $(".screenshot").hide();
         $(".details").hide();
