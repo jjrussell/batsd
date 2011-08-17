@@ -12,6 +12,9 @@
   - if permitted_to?(:new, :tools_generic_offers)
     |
     = link_to("Create Generic Offer", new_tools_generic_offer_path(:partner_id => @partner.id))
+  - if permitted_to?(:new, :tools_video_offers)
+    |
+    = link_to("Create Video Offer", new_tools_video_offer_path(:partner_id => @partner.id))
   |
   = link_to('Activity Log', activities_path(:partner_id => @partner.id))
   |
