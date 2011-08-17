@@ -23,8 +23,16 @@
         = f.text_field :ordinal, :size => 50
         = error_message_on @video_button, :ordinal
     %tr
+      %th
+        = f.label :enabled
+        #help_enabled.help ?
+      %td
+        = f.check_box :enabled
+        = error_message_on @video_button, :enabled
+    %tr
       %td{ :colspan => 2 }= f.submit @video_button.new_record? ? 'Create Video Button' : 'Update Video Button'
 .hidden
   #help_name_content{ :name => 'Ordinal' } The text appearing on the button.
   #help_url_content{ :name => 'Ordinal' } The URL the button links to.
   #help_ordinal_content{ :name => 'Ordinal' } Priority of the button, the smaller the ordinal, the higher the priority. (Integer only)
+  #help_enabled_content{ :name => 'Enabled' } Only enabled button will be shown by the end of the video. Permit at most 2 enabled buttons.

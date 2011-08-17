@@ -93,6 +93,13 @@ Factory.define :video_offer do |video_offer|
   video_offer.video_url ''
 end
 
+Factory.define :video_button do |video_button|
+  video_button.association :video_offer
+  video_button.name { Factory.next(:name) }
+  video_button.url 'http://www.tapjoy.com'
+  video_button.ordinal 1
+end
+
 Factory.define :conversion do |conversion|
   conversion.association :publisher_app, :factory => :app
   conversion.advertiser_offer { Factory(:app).primary_offer }

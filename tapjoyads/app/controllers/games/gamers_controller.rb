@@ -8,7 +8,7 @@ class Games::GamersController < GamesController
       g.terms_of_service = params[:gamer][:terms_of_service]
     end
     if @gamer.save
-      GamesMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.perishable_token))
+      GamesMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.confirmation_token))
       render(:json => { :success => true, :link_device_url => new_games_gamer_device_path, :more_games_url => games_more_games_path }) and return
     else
       render(:json => { :success => false, :error => @gamer.errors }) and return

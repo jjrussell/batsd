@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110811010607) do
+ActiveRecord::Schema.define(:version => 20110815201813) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -261,8 +261,8 @@ ActiveRecord::Schema.define(:version => 20110811010607) do
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
 
   create_table "gamers", :id => false, :force => true do |t|
-    t.string   "id",                :limit => 36, :null => false
-    t.string   "email",                           :null => false
+    t.string   "id",                 :limit => 36,                 :null => false
+    t.string   "email",                                            :null => false
     t.string   "crypted_password"
     t.string   "password_salt"
     t.string   "persistence_token"
@@ -274,8 +274,10 @@ ActiveRecord::Schema.define(:version => 20110811010607) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "udid"
+    t.string   "confirmation_token",               :default => "", :null => false
   end
 
+  add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
   add_index "gamers", ["email"], :name => "index_gamers_on_email", :unique => true
   add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
@@ -695,11 +697,12 @@ ActiveRecord::Schema.define(:version => 20110811010607) do
   add_index "users", ["username"], :name => "index_users_on_username", :unique => true
 
   create_table "video_buttons", :id => false, :force => true do |t|
-    t.string   "id",             :limit => 36, :null => false
-    t.string   "video_offer_id", :limit => 36, :null => false
-    t.string   "name",                         :null => false
-    t.string   "url",                          :null => false
+    t.string   "id",             :limit => 36,                   :null => false
+    t.string   "video_offer_id", :limit => 36,                   :null => false
+    t.string   "name",                                           :null => false
+    t.string   "url",                                            :null => false
     t.integer  "ordinal"
+    t.boolean  "enabled",                      :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
   end

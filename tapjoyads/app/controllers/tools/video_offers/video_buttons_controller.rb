@@ -3,12 +3,12 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
   current_tab :tools
   filter_access_to :all
   
-  before_filter :find_button, :only => [ :edit, :show, :update, :destroy ]
+  before_filter :find_button, :only => [ :edit, :show, :update ]
   before_filter :find_video_offer
   after_filter :save_activity_logs
   
   def index
-    @video_buttons = VideoOffer.find(params[:video_offer_id]).video_buttons.ordered
+    @video_buttons = @video_offer.video_buttons.ordered
   end
   
   def new
@@ -21,15 +21,18 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
   def show
   end
   
-  def create
-    return unless verify_params([ :video_offer_id ], { :render_missing_text => false })
-    
+  def create    
     @video_button = VideoButton.new(params[:video_button])
     log_activity(@video_button)
     
     if @video_button.save
-      flash[:notice] = 'Successfully created Video Button'
-      redirect_to :action => :index
+      unless @video_offer.is_valid_for_update_buttons?
+        flash.now[:warning] = 'Support at most 2 enabled buttons.'
+        render :action => :new
+      else
+        flash[:notice] = 'Successfully created Video Button'
+        redirect_to :action => :index
+      end
     else
       render :action => :new
     end
@@ -39,24 +42,21 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
     log_activity(@video_button)
     
     if @video_button.update_attributes(params[:video_button])
-      flash[:notice] = 'Successfully updated Video Button'
-      redirect_to :action => :show
+      unless @video_offer.is_valid_for_update_buttons?
+        flash.now[:warning] = 'Support at most 2 enabled buttons.'
+        render :action => :edit
+      else
+        flash[:notice] = 'Successfully updated Video Button'
+        redirect_to :action => :show
+      end
     else
       render :action => :edit
     end
   end
   
-  def destroy
-    @video_button.destroy
-    flash[:notice] = 'Successfully destroyed Video Button'
-    redirect_to :action => :index
-  end
-  
 private
 
   def find_button
-    return unless verify_params([ :id ], { :render_missing_text => false })
-    
     @video_button = VideoButton.find(params[:id], :include => :video_offer)
   end
   
