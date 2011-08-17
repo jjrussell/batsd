@@ -462,7 +462,7 @@ form#new_gamer input {
 }
 .slide_arrow_wrapper {
   height: 9px;
-  overflow: hidden;
+  overflow-y: hidden;
   position: relative;
   padding: 0 1px;
   width: 18px;
@@ -490,7 +490,6 @@ form#new_gamer input {
   height: 30px;
   padding-left: 3px;
   left: 1px;
-  top: 2px;
   width: 6px;
 }
 .slide_arrow {
