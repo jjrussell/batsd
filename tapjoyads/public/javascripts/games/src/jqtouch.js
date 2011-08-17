@@ -171,8 +171,6 @@
                     fromPage.unbind('webkitTransitionEnd', navigationEndHandler);
                     fromPage.removeClass(finalAnimationName + ' out current');
                     toPage.removeClass(finalAnimationName + ' in');
-                    // scrollTo(0, 0);
-                    // toPage.css('top', 0);
                 } else {
                     fromPage.removeClass(finalAnimationName + ' out current');
                 }

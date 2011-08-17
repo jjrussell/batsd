@@ -1,9 +1,0 @@
-#my_account_dialog_content.dialog_wrapper.hide
-  .close_dialog
-    .close_button
-  .dialog
-    - if current_gamer.present?
-      .account_info
-        = "Logged in as #{current_gamer.email}"
-      .button.lt_blue.logout
-        = link_to "Logout", games_logout_path
