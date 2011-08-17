@@ -255,7 +255,7 @@ private
       :url                => hash["trackViewUrl"],
       :icon_url           => hash["artworkUrl100"],
       :small_icon_url     => hash["artworkUrl60"],
-      :price              => '%.2f' % (price.to_f / 100.0),
+      :price              => "%.2f" % price,
       :description        => hash["description"],
       :publisher          => hash["artistName"],
       :file_size_bytes    => hash["fileSizeBytes"],
