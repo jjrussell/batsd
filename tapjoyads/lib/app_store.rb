@@ -263,7 +263,6 @@ private
       :user_rating        => hash["averageUserRatingForCurrentVersion"] || hash["averageUserRating"],
       :categories         => hash["genres"],
       :released_at        => hash["releaseDate"],
-      :currency           => hash["currency"],
       # other possibly useful values:
       #   hash["currency"],
       #   hash["version"]
