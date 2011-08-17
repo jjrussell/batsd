@@ -23,7 +23,6 @@ class VideoButton < ActiveRecord::Base
 private
 
   def update_offer
-    video_offer = VideoOffer.find(video_offer_id)
     video_offer.update_buttons
   end
 end
