@@ -33,7 +33,7 @@ class HomepageController < WebsiteController
 
   def privacy
   end
-  
+
   def privacy_mobile
     render :layout => false
   end
@@ -54,12 +54,16 @@ class HomepageController < WebsiteController
   def index
     render :layout => 'newhome'
   end
-  
+
   def careers
     redirect_to '/careers' and return
   end
-  
+
   def events
+    render :layout => false
+  end
+
+  def advertiser_contact
     render :layout => false
   end
 end

@@ -1,5 +1,5 @@
 - @page_title = "Advertisers"
-- content_for :page_head, stylesheet_link_tag('advertisers')
+- content_for :page_head, stylesheet_link_tag('advertisers', 'facebox')
 #a_dvertisers
   = image_tag('tapjoy_for_advertisers.png', :class => 'header')
   #about
@@ -13,14 +13,14 @@
       %h2 Performance Marketing
       %p Performance marketing runs deep in Tapjoy's DNA as we created the first Pay-Per-Engagement ad unit on mobile.
       %p Whether you're looking for app distribution or qualified leads, Tapjoy is the one-stop shop for ROI positive advertising. With rich targeting and a bided market, we have a solution for every marketing budget.
-      = link_to "", register_path, :class => 'contact_us'
+      = link_to "", '/site/advertiser_contact?type=performance', :class => 'contact_us', :rel => 'facebox'
   .section.section_right
     = image_tag('performancemarketing.jpg')
     .right
       %h2 Brands &amp; Agencies
       %p Tapjoy's turnkey mobile solutions are designed to help brands and their agencies present their messages to their target audiences at scale in a easy, efficient, manner.
       %p From HD video to full screen takeovers, we have the right ad units to deliver your brand message to mobile consumers everywhere.
-      = link_to "", register_path, :class => 'contact_us'
+      = link_to "", '/site/advertiser_contact?type=agency', :class => 'contact_us', :rel => 'facebox'
   #products
     .header_divider
     %h2 Advertiser Products
