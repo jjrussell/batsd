@@ -93,7 +93,7 @@ ActionController::Routing::Routes.draw do |map|
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
                      :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
-                     :freemium_android => :get,:award_currencies => :get, :update_award_currencies => :post},
+                     :freemium_android => :get, :award_currencies => :get, :update_award_currencies => :post},
     :member => {  :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post}
   map.namespace :tools do |tools|
     tools.resources :premier_partners, :only => [ :index ]
@@ -101,6 +101,9 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :orders, :only => [ :new, :create ],
       :member => { :mark_invoiced => :put, :retry_invoicing => :put },
       :collection => { :failed_invoices => :get }
+    tools.resources :video_offers, :only => [ :new, :create, :edit, :update ] do |video_offer|
+      video_offer.resources :video_buttons, :controller => 'video_offers/video_buttons'
+    end
     tools.resources :payouts, :only => [ :index, :create ], :member => { :info => :get }
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]
