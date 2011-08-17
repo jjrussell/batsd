@@ -361,3 +361,6 @@ table#admin_devices_table tr.mine td {
   font-size: 12px;
   color: gray;
 }
+select.chosen {
+  width: 250px;
+}
