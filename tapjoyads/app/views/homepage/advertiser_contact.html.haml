@@ -1,1 +1,25 @@
-Here be dragons.
+- source = params[:source] == 'performance' ? 'performance' : 'agencies'
+- form_for('info', :url => {:action => 'contact'}, :html => {:id => 'contact_form'}) do |f|
+  %table{:width => '500px;'}
+    %tbody
+      %tr
+        %td= f.label :name, 'Your name'
+        %td= f.text_field :name, :value => params[:info] && params[:info][:name]
+      %tr
+        %td= f.label :email, 'Your email'
+        %td= f.text_field :email, :value => params[:info] && params[:info][:email]
+      %tr
+        %td= f.label :phone, 'Your phone'
+        %td= f.text_field :phone, :value => params[:info] && params[:info][:phone]
+      %tr
+        %td= f.label :company, 'Your company'
+        %td= f.text_field :company, :value => params[:info] && params[:info][:company]
+      %tr
+        %td= f.label :title, 'Your title'
+        %td= f.text_field :title, :value => params[:info] && params[:info][:title]
+      %tr
+        %td= f.label :comments
+        %td= f.text_area :comments, :size => '30x5', :value => params[:info] && params[:info][:comments]
+        %td= f.hidden_field :source, :value => source
+  %br/
+  %p= submit_tag 'Send'

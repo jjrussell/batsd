@@ -14,10 +14,14 @@ class HomepageController < WebsiteController
 
   def contact
     if params[:info]
-      if params[:info][:source] == 'publishers_contact'
+      case params[:info][:source]
+      when 'publishers_contact'
         # TODO: this is submitted from /publishing. consolidate with regular contact page
         TapjoyMailer.deliver_publisher_application(params[:info])
         redirect_to :action => 'contact-thanks'
+      when 'performance', 'agencies'
+        TapjoyMailer.deliver_advertiser_application(params[:info])
+        redirect_to :back
       else
         info = params[:info]
         if info[:name].blank? || info[:email].blank? || info[:details].blank? || info[:reason].blank?
