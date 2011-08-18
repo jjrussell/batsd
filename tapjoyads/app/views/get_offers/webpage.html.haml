@@ -6,8 +6,9 @@
 - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
   = render :partial => 'currency_selector'
 
-#instructions
-  = t 'text.offerwall.instructions', :currency => @currency.name
+- if @currency.conversion_rate > 0
+  #instructions
+    = t 'text.offerwall.instructions', :currency => @currency.name
 
 - if @start_index > 0
   .pagination
@@ -32,10 +33,11 @@
         .offertext
           .cell
             %span.offername #{offer.name} (#{visual_cost(offer)})
-            %br
-            - amount_and_currency = capture_haml do
-              %span.amount= t('text.offerwall.amount_and_currency', :currency => @currency.name, :amount => @currency.get_visual_reward_amount(offer, params[:display_multiplier]))
-            = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount_and_currency => amount_and_currency) : t('text.offerwall.earn_currency', :amount_and_currency => amount_and_currency)
+            - if @currency.conversion_rate > 0
+              %br
+              - amount_and_currency = capture_haml do
+                %span.amount= t('text.offerwall.amount_and_currency', :currency => @currency.name, :amount => @currency.get_visual_reward_amount(offer, params[:display_multiplier]))
+              = offer.direct_pay? ? t('text.offerwall.buy_currency', :amount_and_currency => amount_and_currency) : t('text.offerwall.earn_currency', :amount_and_currency => amount_and_currency)
 
 - if @start_index > 0 || @more_data_available > 0
   .pagination
@@ -45,8 +47,9 @@
 
 #privacy
   = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/site/privacy_mobile')
-  ·
-  = link_to_missing_currency
+  - if @currency.conversion_rate > 0
+    ·
+    = link_to_missing_currency
 
 #adsby 
   = t('text.shared.ads_by')

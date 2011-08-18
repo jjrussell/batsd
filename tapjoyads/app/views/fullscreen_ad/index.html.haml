@@ -1,5 +1,5 @@
 #main
-  - if @offer.rewarded?
+  - if @offer.rewarded? && @currency.conversion_rate > 0
     %h1
       Earn
       %span.amount= @currency.get_visual_reward_amount(@offer, params[:display_multiplier])
