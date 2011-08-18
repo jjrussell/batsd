@@ -1452,9 +1452,11 @@ body {
   }
 }
 #jqt .slideright.in {
+  z-index: 10;
   -webkit-animation-name: slideRightIn;
 }
 #jqt .slideright.out {
+  z-index: 0;
   -webkit-animation-name: slideRightOut;
 }
 @-webkit-keyframes slideRightIn {
