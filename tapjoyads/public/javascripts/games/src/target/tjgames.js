@@ -7441,7 +7441,7 @@ TJG.ui = {
     $('#earn .vertical-scroll').swipe(function(evt, data) { 
       TJG.utils.hideURLBar();
     });
-    
+
     function getOfferWalls() {
       $(".get_offerwall_jsonp").each(function() {
         var i = 0;
@@ -7613,12 +7613,12 @@ TJG.ui = {
         $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");
         $("#top_grossing_games_button_arrow").hide();
         $("#recommended_games_button_arrow").show();
-        $("#more_games_content").fadeOut(350,function() {
+        $("#more_games_content").fadeOut(250,function() {
             jQT.goTo('#more_games', 'slideleft');  
         });
         if (TJG.moreAppOfferWall) {
           $("#more_games_content").html(TJG.moreAppOfferWall);
-          $("#more_games_content").fadeIn(350);
+          $("#more_games_content").fadeIn(250);
         }
         else {
           TJG.ui.showLoader();
@@ -7629,14 +7629,14 @@ TJG.ui = {
               TJG.moreAppOfferWall = c;
               TJG.ui.hideLoader();
               $("#more_games_content").html(c);
-              $("#more_games_content").fadeIn(350); 
+              $("#more_games_content").fadeIn(250); 
             },
             error: function() {
               var m = [
                 '<div>There was an issue. Please try again</div>'
               ].join('');
               $("#more_games_content").html(m); 
-              $("#more_games_content").fadeIn(350);
+              $("#more_games_content").fadeIn(250);
             }
           });
         }
@@ -7655,40 +7655,39 @@ TJG.ui = {
           $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");
           $("#top_grossing_games_button_arrow").hide();
           $("#recommended_games_button_arrow").show();
-          $("#more_games_content").fadeOut(350, function(){
-            if (TJG.moreAppOfferWall) {
-              TJG.ui.hideLoader();
+          if (TJG.moreAppOfferWall) {
+            TJG.ui.hideLoader();
+            $("#more_games_content").fadeOut(250, function () {
               $("#more_games_content").html(TJG.moreAppOfferWall);
-              $("#more_games_content").fadeIn(350);
-            }
-          });
+              $("#more_games_content").fadeIn(250);
+            });
+          }
         });
 
         if (TJG.topAppOfferWall) {
-          $("#more_games_content").fadeOut(350,function() {
+          $("#more_games_content").fadeOut(250, function () {
             $("#more_games_content").html(TJG.topAppOfferWall);
-            $("#more_games_content").fadeIn(350);
+            $("#more_games_content").fadeIn(250);
           });
         }
         else {
           TJG.ui.showLoader();
-          $("#more_games_content").fadeOut(450);
+          $("#more_games_content").fadeOut(250);
           $.ajax({ 
             url: TJG.more_games_popular,
             timeout: 15000,
             success: function(c) {
               TJG.topAppOfferWall = c;
-              console.log(c);
               TJG.ui.hideLoader();
               $("#more_games_content").html(c);
-              $("#more_games_content").fadeIn(450); 
+              $("#more_games_content").fadeIn(250); 
             },
             error: function () {
               var m = [
                 '<div>There was an issue. Please try again</div>'
               ].join('');
               $("#more_games_content").html(m); 
-              $("#more_games_content").fadeIn(450);
+              $("#more_games_content").fadeIn(250);
             }
           });
         }
