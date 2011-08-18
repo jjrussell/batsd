@@ -1,6 +1,6 @@
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed,  figure, figcaption, footer, header, hgroup, menu, a, output, ruby, section, summary, time, mark, audio, video { margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; vertical-align: baseline; }
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section { display: block; }
-body { line-height: 1; }
+body { line-height: 1; -webkit-perspective: 0; -webkit-transform-style: flat; }
 ol, ul { list-style: none; }
 blockquote, q { quotes: none; }
 blockquote:before, blockquote:after, q:before, q:after { content: ''; content: none; } 
@@ -254,6 +254,11 @@ form#new_gamer input {
 .mobile.hd .top_nav_bar { 
   background: transparent url('/images/games/my_account_hd.png') no-repeat;
   background-size: 100%;
+  cursor: pointer;
+  position: absolute;
+  height: 44px;
+  width: 44px; 
+  z-index: 4;
 }
 /* Page */
 .web .page,
@@ -1351,13 +1356,6 @@ body {
 #jqt .out {
   z-index: 0 !important;
 }
-#jqt.supports3d {
-  -webkit-perspective: 800;
-  -webkit-transform-style: preserve-3d;
-}
-#jqt.supports3d > * {
-  -webkit-transform: translate3d(0,0,0) rotate(0) scale(1);
-}
 #jqt .fade.in {
   -webkit-animation-name: fadeIn;
 }
@@ -1430,10 +1428,12 @@ body {
 }
 #jqt .slideleft.in {
   -webkit-animation-name: slideLeftIn;
+  z-index: 10;
 }
 
 #jqt .slideleft.out {
   -webkit-animation-name: slideLeftOut;
+  z-index: 0;
 }
 @-webkit-keyframes slideLeftIn {
   0% {
@@ -1572,7 +1572,7 @@ body {
   }
 }
 #jqt .swapright {
-  -webkit-animation-duration: .7s;
+  -webkit-animation-duration: 1s;
   -webkit-transform: perspective(800);
   -webkit-animation-timing-function: ease-out;
 }
@@ -1611,7 +1611,7 @@ body {
   }
 }
 #jqt .swapleft {
-  -webkit-animation-duration: .7s;
+  -webkit-animation-duration: 1s;
   -webkit-transform: perspective(800);
   -webkit-animation-timing-function: ease-out;
 }
