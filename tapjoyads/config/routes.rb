@@ -98,10 +98,12 @@ ActionController::Routing::Routes.draw do |map|
   map.namespace :tools do |tools|
     tools.resources :premier_partners, :only => [ :index ]
     tools.resources :generic_offers, :only => [ :new, :create, :edit, :update ]
+    tools.resources :orders, :only => [ :new, :create ],
+      :member => { :mark_invoiced => :put, :retry_invoicing => :put },
+      :collection => { :failed_invoices => :get }
     tools.resources :video_offers, :only => [ :new, :create, :edit, :update ] do |video_offer|
       video_offer.resources :video_buttons, :controller => 'video_offers/video_buttons'
     end
-    tools.resources :orders, :only => [ :new, :create ]
     tools.resources :payouts, :only => [ :index, :create ], :member => { :info => :get }
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]
