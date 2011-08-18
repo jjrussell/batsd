@@ -7,9 +7,10 @@
 - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
   = render :partial => 'currency_selector'
 
-- render(:layout => 'box') do
-  %p.explanation
-    = t('text.offerwall.redesign_instructions', :currency => @currency.name)
+- if @currency.conversion_rate > 0
+  - render(:layout => 'box') do
+    %p.explanation
+      = t('text.offerwall.redesign_instructions', :currency => @currency.name)
 
 - if @start_index > 0
   = render :partial => 'pagination_links'
@@ -39,7 +40,7 @@
                 .icon
                   %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => offer.get_icon_url(:source => :cloudfront, :size => '57') }
                 .offer-text    
-                  - unless @currency.conversion_rate == 0
+                  - if @currency.conversion_rate > 0
                     %span
                       - amount = capture_haml do
                         %label= @currency.get_visual_reward_amount(offer, params[:display_multiplier])
@@ -59,8 +60,9 @@
   #footer
     = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/site/privacy_mobile')
     %span &nbsp;|&nbsp;
-    = link_to_missing_currency
-    %span &nbsp;|&nbsp;
+    - if @currency.conversion_rate > 0
+      = link_to_missing_currency
+      %span &nbsp;|&nbsp;
     %span
       = t('text.shared.ads_by')
     %img{ :src => '/images/logo.jpg' }
