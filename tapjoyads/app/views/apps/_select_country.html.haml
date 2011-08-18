@@ -1,7 +1,7 @@
 %tr.admin
   %th Country
   %td
-    - options = appstore_countries.invert.sort
+    - options = AppStore::APPSTORE_COUNTRIES.invert.sort
     - options.unshift(["Select a country", ""])
     = select_tag 'app_country', options_for_select(options)
     .inline_help

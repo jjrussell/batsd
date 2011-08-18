@@ -1,0 +1,12 @@
+xml.instruct!
+
+xml.TapjoyVideo do
+  xml.Valid @valid
+  if @valid
+    xml.ClickURL @click_url
+    xml.OfferID @offer.id
+    xml.Name @offer.name
+    xml.Amount @amount
+    xml.VideoURL @offer.url
+  end
+end

@@ -26,7 +26,7 @@ module GetOffersHelper
   end
   
   def get_click_url(offer)
-    offer.get_click_url(
+    click_url = offer.get_click_url(
         :publisher_app      => @publisher_app,
         :publisher_user_id  => params[:publisher_user_id],
         :udid               => params[:udid],
@@ -38,6 +38,11 @@ module GetOffersHelper
         :country_code       => @geoip_data[:country],
         :language_code      => params[:language_code],
         :display_multiplier => params[:display_multiplier])
+    if offer.item_type == 'VideoOffer'
+      "tjvideo://video_id=#{offer.id}&click_url=#{click_url}"
+    else
+      click_url
+    end
   end
 
   def get_fullscreen_ad_url(offer)

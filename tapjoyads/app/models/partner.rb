@@ -56,6 +56,7 @@ class Partner < ActiveRecord::Base
   end
   
   before_validation :remove_whitespace_from_attributes, :update_rev_share
+  before_save :check_billing_email
   after_save :update_currencies, :update_offers
   
   cattr_reader :per_page
@@ -214,7 +215,7 @@ class Partner < ActiveRecord::Base
     advertiser_conversions_sum = monthly_accountings.prior_to(archive_cutoff).sum(:spend)
     advertiser_conversions_sum += Conversion.created_since(archive_cutoff).sum(:advertiser_amount, :conditions => [ "advertiser_offer_id IN (?)", offer_ids ])
     
-    orders_sum = orders.sum(:amount, :conditions => 'status = 1')
+    orders_sum = orders.sum(:amount)
     payouts_sum = payouts.sum(:amount, :conditions => 'status = 1')
     earnings_adjustments_sum = earnings_adjustments.sum(:amount)
     
@@ -317,4 +318,7 @@ private
     self.offer_whitelist   = offer_whitelist.gsub(/\s/, '')
   end
   
+  def check_billing_email
+    self.freshbooks_client_id = nil if billing_email_changed?
+  end
 end

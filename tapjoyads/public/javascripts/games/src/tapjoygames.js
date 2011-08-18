@@ -1,4 +1,15 @@
 TJG.utils = {
+ 
+  isNull : function(v) {
+    if (typeof v == 'boolean') {
+      return false;
+    } else if (typeof v == 'number') {
+      return false;
+    }
+    else {
+      return v == undefined || v == null || v == '';
+    }
+  },
 
   hideURLBar : function() {
     setTimeout(function() { 
@@ -36,7 +47,33 @@ TJG.utils = {
     var results = regex.exec( window.location.href ); 
     if( results == null ) return ""; 
     else return results[1];
-  } 
+  },
+  
+  setLocalStorage: function(k,v) {
+    if (typeof(localStorage) == 'undefined' ) {
+      return;
+    } 
+    else {
+      try {
+        localStorage[k] = v;
+      } catch (e) {
+      }
+    }
+  },
+  
+  unsetLocalStorage: function(k) {
+    if (typeof(localStorage) == 'undefined' ) {
+      return;
+    }
+    localStorage.removeItem(k);
+  },
+  
+  getLocalStorage: function(k) {
+    if (typeof(localStorage) == 'undefined' ) {
+      return;
+    }
+    return localStorage[k];
+  }
   
 };
 TJG.ui = { 
@@ -193,14 +230,7 @@ TJG.ui = {
               $("#sign_up_dialog_content").parent().animate({ height: "230px", }, 250);
               $("#sign_up_dialog_content").html(msg);
               if (TJG.vars.isIos == false) {
-                  if (d.more_games_url) {
-                    $('.close_dialog,.continue_link_device').click(function(){
-                      document.location.href = d.more_games_url;
-                    });                    
-                  }
-                  else {
-                    document.location.href = location.protocol + '//' + location.host;
-                  }
+                document.location.href = location.protocol + '//' + location.host;
               }
               else if (d.link_device_url) {
                 $('.close_dialog,.continue_link_device').click(function(){
@@ -258,6 +288,432 @@ TJG.ui = {
         });
       }
     });
+  },
+  
+  showAddHomeDialog : function() {
+    var startY = startX = 0,
+    options = {
+      message: 'Add <span class="bold">Tapjoy Games</span> to your home screen.',
+      animationIn: 'fade',
+      animationOut: 'fade',
+      startDelay: 2000,
+      lifespan: 10000,
+      bottomOffset: 14,
+      expire: 0,
+      arrow: true,
+      iterations: 5
+    },
+    theInterval, closeTimeout, el, i, l,
+    expired = TJG.utils.getLocalStorage("tjg.bookmark.expired"),
+    shown = TJG.utils.getLocalStorage("tjg.bookmark.shown");
+    if (TJG.utils.isNull(shown)) {
+      shown = 0;
+    }
+    shown = parseInt(shown);
+    if (expired) {
+      return;
+    }
+    if (shown >= 4) {
+      TJG.utils.setLocalStorage("tjg.bookmark.expired", true)
+    }
+    TJG.vars.version =  TJG.vars.version ?  TJG.vars.version[0].replace(/[^\d_]/g,'').replace('_','.')*1 : 0;
+    expired = expired == 'null' ? 0 : expired*1;
+    var div = document.createElement('div'), close;
+    div.id = 'addToHome';
+    div.style.cssText += 'position:absolute;-webkit-transition-property:-webkit-transform,opacity;-webkit-transition-duration:0;-webkit-transform:translate3d(0,0,0);';
+    div.style.left = '-9999px';
+    div.className = (TJG.vars.isIPad ? 'ipad wide' : 'iphone');
+    var m =  options.message;
+    var a = (options.arrow ? '<span class="arrow"></span>' : '');
+    var t = [
+      m,
+      a
+    ].join('');
+    div.innerHTML = t;
+    document.body.appendChild(div);
+    el = div;
+    
+    function transitionEnd () {
+      el.removeEventListener('webkitTransitionEnd', transitionEnd, false);
+      el.style.webkitTransitionProperty = '-webkit-transform';
+      el.style.webkitTransitionDuration = '0.2s';
+      if (closeTimeout) {
+        clearInterval(theInterval);
+        theInterval = setInterval(setPosition, options.iterations);
+      } 
+      else {
+        el.parentNode.removeChild(el);
+      }   
+    }
+    function setPosition () {
+      var matrix = new WebKitCSSMatrix(window.getComputedStyle(el, null).webkitTransform),
+      posY = TJG.vars.isIPad ? window.scrollY - startY : window.scrollY + window.innerHeight - startY,
+      posX = TJG.vars.isIPad ? window.scrollX - startX : window.scrollX + Math.round((window.innerWidth - el.offsetWidth)/2) - startX;
+      if (posY == matrix.m42 && posX == matrix.m41) return;
+      clearInterval(theInterval);
+      el.removeEventListener('webkitTransitionEnd', transitionEnd, false);
+      setTimeout(function () {
+        el.addEventListener('webkitTransitionEnd', transitionEnd, false);
+        el.style.webkitTransform = 'translate3d(' + posX + 'px,' + posY + 'px,0)';
+      }, 0);
+    }
+    function addToHomeClose () {
+      clearInterval(theInterval);
+      clearTimeout(closeTimeout);
+      closeTimeout = null;
+      el.removeEventListener('webkitTransitionEnd', transitionEnd, false);
+      var posY = TJG.vars.isIPad ? window.scrollY - startY : window.scrollY + window.innerHeight - startY,
+      posX = TJG.vars.isIPad ? window.scrollX - startX : window.scrollX + Math.round((window.innerWidth - el.offsetWidth)/2) - startX,
+      opacity = '0.95',
+      duration = '0';
+      el.style.webkitTransitionProperty = '-webkit-transform,opacity';
+      switch (options.animationOut) {
+        case 'drop':
+        if (TJG.vars.isIPad) {
+          duration = '0.4s';
+          opacity = '0';
+          posY = posY + 50;
+        } else {
+          duration = '0.6s';
+          posY = posY + el.offsetHeight + options.bottomOffset + 50;
+        }
+        break;
+        case 'bubble':
+        if (TJG.vars.isIPad) {
+          duration = '0.8s';
+          posY = posY - el.offsetHeight - options.bottomOffset - 50;
+        } 
+        else {
+          duration = '0.4s';
+          opacity = '0';
+          posY = posY - 50;
+        }
+        break;
+        default:
+        duration = '0.8s';
+        opacity = '0';
+      }
+      el.addEventListener('webkitTransitionEnd', transitionEnd, false);
+      el.style.opacity = opacity;
+      el.style.webkitTransitionDuration = duration;
+      el.style.webkitTransform = 'translate3d(' + posX + 'px,' + posY + 'px,0)';
+    }
+    setTimeout(function () {
+      var duration;
+      startY = TJG.vars.isIPad  ? window.scrollY : window.innerHeight + window.scrollY;
+      startX = TJG.vars.isIPad  ? window.scrollX : Math.round((window.innerWidth - el.offsetWidth)/2) + window.scrollX;
+      el.style.top = TJG.vars.isIPad ? startY + options.bottomOffset + 'px' : startY - el.offsetHeight - options.bottomOffset + 'px';
+      el.style.left = TJG.vars.isIPad ? startX + (TJG.vars.version >=5 ? 160 : 208) - Math.round(el.offsetWidth/2) + 'px' : startX + 'px';
+      switch (options.animationIn) {
+        case 'drop':
+        if (TJG.vars.isIPad) {
+          duration = '0.6s';
+          el.style.webkitTransform = 'translate3d(0,' + -(window.scrollY + options.bottomOffset + el.offsetHeight) + 'px,0)';
+        } 
+        else {
+          duration = '0.9s';
+          el.style.webkitTransform = 'translate3d(0,' + -(startY + options.bottomOffset) + 'px,0)';
+        }
+        break;
+        case 'bubble':
+        if (TJG.vars.isIPad) {
+          duration = '0.6s';
+          el.style.opacity = '0'
+          el.style.webkitTransform = 'translate3d(0,' + (startY + 50) + 'px,0)';
+        } 
+        else {
+          duration = '0.6s';
+          el.style.webkitTransform = 'translate3d(0,' + (el.offsetHeight + options.bottomOffset + 50) + 'px,0)';
+        }
+        break;
+        default:
+        duration = '1s';
+        el.style.opacity = '0';
+      }
+      setTimeout(function () {
+        el.style.webkitTransitionDuration = duration;
+        el.style.opacity = '0.95';
+        shown = shown + 1;
+        TJG.utils.setLocalStorage("tjg.bookmark.shown", shown);
+        el.style.webkitTransform = 'translate3d(0,0,0)';
+        el.addEventListener('webkitTransitionEnd', transitionEnd, false);
+        }, 0);
+        closeTimeout = setTimeout(addToHomeClose, options.lifespan);
+    }, options.startDelay);
+    window.addToHomeClose = addToHomeClose;
+  },
+  
+  homeInit : function () {
+    var jQT = new $.jQTouch({
+      slideSelector: '#jqt .slide_nav',
+    });
+  
+    var install = TJG.utils.getParam("register_device");
+    if (install.indexOf("true") != -1) {
+      TJG.utils.centerDialog("#register_device");
+      $("#register_device").fadeIn(350); 
+    }
+    if (TJG.vars.isIos || TJG.vars.isSafari) {
+      TJG.ui.showAddHomeDialog();
+    }
+    $('#earn .vertical-scroll').swipe(function(evt, data) { 
+      TJG.utils.hideURLBar();
+    });
+
+    function getOfferWalls() {
+      $(".get_offerwall_jsonp").each(function() {
+        var i = 0;
+        $(this).click(function(){
+          TJG.ui.showLoader();
+          $("#earn_content").fadeOut(450,function() {
+            $("#earn_content").empty();
+            jQT.goTo('#earn', 'slideleft');
+          });
+          var url = $(this).attr("jsonp_url");
+          var appId = $(this).attr("id");
+          var appName = $(this).attr("app_name");
+          var currencyName = $(this).attr("currency");
+          if (!TJG.appOfferWall[appId]) {
+            TJG.appOfferWall[appId] = {};
+          }
+          TJG.appOfferWall[appId]['jsonp_url'] = url;
+          var title = 'Viewing offers for <span class="bold">' + appName + '</span>';
+          $("#app_title").html(title);
+          $("#app_title").show();
+          if (url) {
+            if (!TJG.appOfferWall[appId]['offers']) {
+              jQT.goTo('#earn', 'slideleft');
+              $("html, body").animate({scrollTop:0}, 800);
+              $.ajax({
+                url: url+"&callback=?",
+                dataType: 'json',
+                timeout: 15000,
+                success: function(data) {
+                  TJG.ui.hideLoader();
+                  if (data.OfferArray) {
+                    var offers = data.OfferArray;
+                    offerOffset = offers.length;
+                    if (data.MoreDataAvailable) {
+                      TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                    }
+                    else {
+                      TJG.appOfferWall[appId]['offers_left'] = 0;
+                    }
+                    TJG.appOfferWall[appId]['offset'] = offerOffset;
+                    TJG.appOfferWall[appId]['offers'] = offers; 
+                    var offerRows = TJG.ui.getOffferRow(offers, currencyName);
+                    var t = [
+                      '<ul id="offerwall_id-', appId ,'">',
+                        offerRows,
+                      '</ul>',
+                    ];
+                    if (TJG.appOfferWall[appId]['offers_left'] > 0) {
+                      t.push('<div class="more_button_wrapper"><div class="get_more_apps" app_id="' + appId + '"><div class="get_more_apps_content">Load More</div></div></div>');
+                    }
+                    else {
+                      t.push('<div class="more_button_wrapper"><div class="back_to_top grey_button"><div class="grey_button_content">Back to Top</div></div></div>');
+                      $(".back_to_top").click(function(){
+                        $("html, body").animate({scrollTop:0}, 'slow');
+                      });
+                    }
+                    t = t.join('');
+                    $("#earn_content").html(t);
+                    $("#earn_content").fadeIn(500);
+                    var isLoading = false;
+                    var hasFailed = false;
+                    $(".get_more_apps").click(function(){
+                      if (isLoading) { return; }
+                      $(".get_more_apps_content").html('<div class="image_loader"></div>');
+                      var appId = $(this).attr("app_id");
+                      $(".load_more_loader").show();
+                      if (TJG.appOfferWall[appId]['offers_left'] > 0) {
+                        var url = TJG.appOfferWall[appId]['jsonp_url'];
+                        url = url + "&start=" + TJG.appOfferWall[appId]['offset'] + "&max=25&callback=?";
+                        isLoading = true;
+                        $.ajax({
+                          url: url,
+                          dataType: 'json',
+                          timeout: 15000,
+                          success: function(data) {
+                            if (data.OfferArray) {
+                              var offers = data.OfferArray;
+                              if (data.MoreDataAvailable) {
+                                TJG.appOfferWall[appId]['offers_left'] = data.MoreDataAvailable;
+                              }
+                              else {
+                                TJG.appOfferWall[appId]['offers_left'] = 0;
+                              }
+                              TJG.appOfferWall[appId]['offset'] = TJG.appOfferWall[appId]['offset'] + 25;
+                              var moreOfferRows = TJG.ui.getOffferRow(offers, currencyName, i, true);
+                              $("#offerwall_id-" + appId).append(moreOfferRows);
+                              var el = ".offer_item_" + i;
+                              $.each($(el), function(n,o) {
+                                $(o).fadeIn(500);
+                              });
+                              if (TJG.appOfferWall[appId]['offers_left'] > 0) {
+                                $(".get_more_apps_content").html("Load More");
+                              }
+                              else {
+                                $(".more_button_wrapper").html('<div class="back_to_top grey_button"><div class="grey_button_content">Back to Top</div></div>');
+                                $(".back_to_top").click(function(){
+                                  $("html, body").animate({scrollTop:0}, 'slow');
+                                }); 
+                              }
+                              $.each(offers, function(i,o) {
+                                TJG.appOfferWall[appId]['offers'].push(o);
+                              });
+                            }
+                            isLoading = false;
+                          },
+                          error: function () {
+                            var m = [
+                              '<div class="center">There was an issue fetching more offers. Please try again.</div>'
+                            ].join('');
+                            if (!hasFailed) {
+                              $("#offerwall_id-" + appId).append(m).fadeIn(350);
+                            }
+                            hasFailed = true;
+                            $(".get_more_apps_content").html("Load More");
+                            $(".load_more_loader").hide();
+                            isLoading = false;
+                          }
+                        });
+                        i++;
+                      }
+                    });
+                  }
+                },
+                error: function() {
+                  var m = [
+                   '<div class="center">There was an issue. Please try again</div>'
+                  ].join('');
+                  $("#earn_content").html(m); 
+                  $("#earn_content").fadeIn(450);
+                  $("html, body").animate({scrollTop:0}, 800);
+                }
+              });
+            } 
+            else if (TJG.appOfferWall[appId]['offers']) {
+              TJG.ui.hideLoader();
+              var c = TJG.ui.getOffferRow(TJG.appOfferWall[appId]['offers'],currencyName);
+              $("#earn_content").html(c);
+              $("#earn_content").fadeIn(450);
+              $("html, body").animate({scrollTop:0}, 800);
+            }
+            else {
+               var m = [
+                 '<div class="center">There was an issue. Please try again</div>'
+               ].join('');
+               $("#earn_content").html(m); 
+               $("#earn_content").fadeIn(450);
+               $("html, body").animate({scrollTop:0}, 800); 
+            }
+          }
+          else {
+            var m = [
+              '<div class="center">There was an issue. Please try again</div>'
+            ].join('');
+            $("#earn_content").html(m); 
+            $("#earn_content").fadeIn(450);
+         }
+        });
+      }); 
+    }
+
+    function reloadOfferWalls () {
+      $(".get_offerwall_jsonp").unbind("click");
+      getOfferWalls();
+    }
+
+    function getMoreGames() {
+      $(".more_games_url").click(function() {
+        $("#recommended_games_button").addClass("dark_grey").removeClass("grey");
+        $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");
+        $("#top_grossing_games_button_arrow").hide();
+        $("#recommended_games_button_arrow").show();
+        $("#more_games_content").fadeOut(350,function() {
+            jQT.goTo('#more_games', 'slideleft');  
+        });
+        if (TJG.moreAppOfferWall) {
+          $("#more_games_content").html(TJG.moreAppOfferWall);
+          $("#more_games_content").fadeIn(450);
+        }
+        else {
+          TJG.ui.showLoader();
+          $.ajax({ 
+            url: TJG.more_games_editor_picks,
+            timeout: 15000,
+            success: function(c) {
+              TJG.moreAppOfferWall = c;
+              TJG.ui.hideLoader();
+              $("#more_games_content").html(c);
+              $("#more_games_content").fadeIn(450); 
+            },
+            error: function() {
+              var m = [
+                '<div>There was an issue. Please try again</div>'
+              ].join('');
+              $("#more_games_content").html(m); 
+              $("#more_games_content").fadeIn(450);
+            }
+          });
+        }
+      });
+    }
+
+    function getTopGames() {
+      $("#top_grossing_games_tab").click(function() {
+        $("#top_grossing_games_button").addClass("dark_grey").removeClass("grey");
+        $("#recommended_games_button").addClass("grey").removeClass("dark_grey");
+        $("#recommended_games_button_arrow").hide();
+        $("#top_grossing_games_button_arrow").show();
+
+        $("#recommended_games_tab").click(function() {
+          $("#recommended_games_button").addClass("dark_grey").removeClass("grey");
+          $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");
+          $("#top_grossing_games_button_arrow").hide();
+          $("#recommended_games_button_arrow").show();
+          if (TJG.moreAppOfferWall) {
+            TJG.ui.hideLoader();
+            $("#more_games_content").html(TJG.moreAppOfferWall);
+            $("#more_games_content").fadeIn(450);
+          }
+        });
+
+        if (TJG.topAppOfferWall) {
+          $("#more_games_content").html(TJG.topAppOfferWall);
+            $("#more_games_content").fadeIn(450);
+        }
+        else {
+          TJG.ui.showLoader();
+          $("#more_games_content").fadeOut(450,function() {
+            $("#more_games_content").empty();
+          });
+          $.ajax({ 
+            url: TJG.more_games_popular,
+            timeout: 15000,
+            success: function(c) {
+              TJG.topAppOfferWall = c;
+              TJG.ui.hideLoader();
+              $("#more_games_content").html(c);
+              $("#more_games_content").fadeIn(450); 
+            },
+            error: function () {
+              var m = [
+                '<div>There was an issue. Please try again</div>'
+              ].join('');
+              $("#more_games_content").html(m); 
+              $("#more_games_content").fadeIn(450);
+            }
+          });
+        }
+      });
+    }
+    getOfferWalls();
+    getMoreGames();
+    getTopGames();
+    
+    
   }
   
 };
@@ -277,10 +733,10 @@ TJG.ui = {
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
-        $('#sign_up, #sign_up_form').click(function(){
-          TJG.utils.centerDialog("#sign_up_dialog");
-          TJG.repositionDialog = ["#sign_up_dialog"];
-          TJG.ui.showRegister();
+        $('#sign_up, #sign_up_form').click(function() {
+            TJG.utils.centerDialog("#sign_up_dialog");
+            TJG.repositionDialog = ["#sign_up_dialog"];
+            TJG.ui.showRegister();  
         });
         $('#how_works').click(function(){
           TJG.utils.centerDialog("#how_works_dialog");
@@ -288,9 +744,9 @@ TJG.ui = {
           $("#how_works_dialog").fadeIn(350);
         });
         $('.top_nav_bar').click(function(){
-          TJG.utils.centerDialog("#my_account_dialog");
-          TJG.repositionDialog = ["#my_account_dialog"];
-          $("#my_account_dialog").fadeIn(350);
+           TJG.utils.centerDialog("#my_account_dialog");
+           TJG.repositionDialog = ["#my_account_dialog"];
+           $("#my_account_dialog").fadeIn(350);
         });
         $('.my_account_url').click(function(){
           $("#my_account_dialog").fadeOut(350, function() {
@@ -298,9 +754,7 @@ TJG.ui = {
             TJG.repositionDialog = ["#my_account_dialog_content"];
             $("#my_account_dialog_content").fadeIn(350);     
           });
-        });  
-        
-
+        });
       },
       
       checkFlashMessages: function () {
@@ -313,12 +767,14 @@ TJG.ui = {
     };
 
     TJG.init = function() {  
-      
-      TJG.utils.hideURLBar();
+      if (TJG.vars.isIos) {
+        TJG.utils.hideURLBar();
+      }
       for (var key in TJG.onload) {
         TJG.onload[key]();
       }
     };
     window.addEventListener("load", TJG.init, false);
+   
 
 })(this, document);

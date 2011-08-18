@@ -1,7 +1,7 @@
 class Games::ConfirmationsController < GamesController
   
   def create
-    @gamer = Gamer.find_using_perishable_token(params[:token], 1.year)
+    @gamer = Gamer.find_by_confirmation_token(params[:token])
     if @gamer.present? && (@gamer.confirmed_at? || @gamer.confirm!)
       flash[:notice] = 'Email address confirmed.'
       redirect_to games_root_path
