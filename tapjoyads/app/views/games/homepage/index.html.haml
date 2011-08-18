@@ -67,7 +67,7 @@
                       Back
           .content
             .tab_wrapper.clearfix
-              #top_grossing_games_tab.tab_right.hide
+              #top_grossing_games_tab.tab_right
                 #top_grossing_games_button.tab_button.grey
                   .tab_content
                     Popular Games
@@ -84,8 +84,8 @@
 = render 'my_account'
 
 - content_for :page_javascript do
-  :plain 
-    $(window).load(function() {
+  :plain
+    $(window).load(function() { 
       TJG.ui.homeInit();
       TJG.path =  "#{games_root_path}";
       TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
