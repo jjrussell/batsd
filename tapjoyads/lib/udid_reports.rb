@@ -76,8 +76,6 @@ class UdidReports
   end
   
   def self.get_monthly_report(offer_id, month)
-    raise "Offer id is required" unless offer_id
-    raise "Invalid date format" unless month =~ /^\d{4}-\d{2}$/
     bucket = S3.bucket(BucketNames::UDID_REPORTS)
     report_data = ''
     bucket.keys(:prefix => "#{offer_id}/#{month}/").each do |key|
@@ -87,8 +85,6 @@ class UdidReports
   end
   
   def self.get_daily_report(offer_id, date)
-    raise "Offer id is required" unless offer_id
-    raise "Invalid date format" unless date =~ /^\d{4}-\d{2}-\d{2}$/
     bucket = S3.bucket(BucketNames::UDID_REPORTS)
     key = bucket.key("#{offer_id}/#{date[0...7]}/#{date}.csv")
     if key.exists?

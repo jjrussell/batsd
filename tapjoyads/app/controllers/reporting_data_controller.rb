@@ -10,6 +10,10 @@ class ReportingDataController < WebsiteController
   rate_limit :udids, :key => proc { |c| "#{c.params[:username]}.#{c.params[:offer_id]}" }, :max_calls => 2, :time_limit => 1.hour, :wait_time => 1.hour, :status => 420
   
   def index
+    respond_to do |format|
+      format.xml
+      format.json
+    end
   end
   
   def udids
