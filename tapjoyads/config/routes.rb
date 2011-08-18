@@ -3,10 +3,11 @@ ActionController::Routing::Routes.draw do |map|
   
   map.with_options({:path_prefix => MACHINE_TYPE == 'games' ? '' : 'games', :name_prefix => 'games_'}) do |m|
     m.root :controller => 'games/homepage', :action => :index
-    m.real_index 'real_index', :controller => 'games/homepage', :action => :real_index
-    m.more_games 'more_games', :controller => 'games/more_games', :action => :index
     m.tos 'tos', :controller => 'games/homepage', :action => :tos
     m.privacy 'privacy', :controller => 'games/homepage', :action => :privacy
+    
+    m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
+    m.more_games_popular 'popular', :controller => 'games/more_games', :action => :popular
     
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy ]
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
@@ -38,9 +39,9 @@ ActionController::Routing::Routes.draw do |map|
   map.login 'login', :controller => :user_sessions, :action => :new
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
   map.resources :password_resets, :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
-  map.resources :internal_devices, :only => [ :index, :show, :destroy ], :member => { :block => :get }
+  map.resources :internal_devices, :only => [ :index, :show, :destroy, :edit, :update ], :member => { :block => :get }
   map.new_internal_device 'approve_device', :controller => :internal_devices, :action => 'new', :conditions => { :method => :get }
-  map.update_internal_device 'approve_device', :controller => :internal_devices, :action => 'update', :conditions => { :method => :put }
+  map.approve_internal_device 'approve_device/:id', :controller => :internal_devices, :action => 'approve', :conditions => { :method => :get }
   
   # Dashboard routes
   map.namespace :account do |account|
@@ -92,12 +93,17 @@ ActionController::Routing::Routes.draw do |map|
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
                      :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
-                     :freemium_android => :get,:award_currencies => :get, :update_award_currencies => :post},
+                     :freemium_android => :get, :award_currencies => :get, :update_award_currencies => :post},
     :member => {  :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post}
   map.namespace :tools do |tools|
     tools.resources :premier_partners, :only => [ :index ]
     tools.resources :generic_offers, :only => [ :new, :create, :edit, :update ]
-    tools.resources :orders, :only => [ :new, :create ]
+    tools.resources :orders, :only => [ :new, :create ],
+      :member => { :mark_invoiced => :put, :retry_invoicing => :put },
+      :collection => { :failed_invoices => :get }
+    tools.resources :video_offers, :only => [ :new, :create, :edit, :update ] do |video_offer|
+      video_offer.resources :video_buttons, :controller => 'video_offers/video_buttons'
+    end
     tools.resources :payouts, :only => [ :index, :create ], :member => { :info => :get }
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]
@@ -115,6 +121,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :editors_picks, :except => [ :destroy ], :member => { :activate => :post, :expire => :post }
     tools.resources :agency_users, :only => [ :index, :show ]
     tools.resources :support_requests, :only => [ :index ]
+    tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
   end
   
   # Additional webserver routes

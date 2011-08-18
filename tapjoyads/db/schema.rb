@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110802033509) do
+ActiveRecord::Schema.define(:version => 20110815201813) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -96,6 +96,7 @@ ActiveRecord::Schema.define(:version => 20110802033509) do
     t.datetime "released_at"
     t.float    "user_rating"
     t.string   "categories"
+    t.text     "countries_blacklist"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -260,8 +261,8 @@ ActiveRecord::Schema.define(:version => 20110802033509) do
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
 
   create_table "gamers", :id => false, :force => true do |t|
-    t.string   "id",                :limit => 36, :null => false
-    t.string   "email",                           :null => false
+    t.string   "id",                 :limit => 36,                 :null => false
+    t.string   "email",                                            :null => false
     t.string   "crypted_password"
     t.string   "password_salt"
     t.string   "persistence_token"
@@ -273,8 +274,10 @@ ActiveRecord::Schema.define(:version => 20110802033509) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "udid"
+    t.string   "confirmation_token",               :default => "", :null => false
   end
 
+  add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
   add_index "gamers", ["email"], :name => "index_gamers_on_email", :unique => true
   add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
@@ -490,10 +493,14 @@ ActiveRecord::Schema.define(:version => 20110802033509) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "note"
+    t.integer  "invoice_id"
+    t.string   "description"
+    t.string   "note_to_client"
   end
 
   add_index "orders", ["created_at"], :name => "index_orders_on_created_at"
   add_index "orders", ["id"], :name => "index_orders_on_id", :unique => true
+  add_index "orders", ["invoice_id"], :name => "index_orders_on_invoice_id", :unique => true
   add_index "orders", ["partner_id"], :name => "index_orders_on_partner_id"
 
   create_table "partner_assignments", :id => false, :force => true do |t|
@@ -538,6 +545,8 @@ ActiveRecord::Schema.define(:version => 20110802033509) do
     t.boolean  "apsalar_sharing_adv",                                                    :default => false,     :null => false
     t.boolean  "apsalar_sharing_pub",                                                    :default => false,     :null => false
     t.string   "reseller_id",                :limit => 36
+    t.string   "billing_email"
+    t.integer  "freshbooks_client_id"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
@@ -692,5 +701,32 @@ ActiveRecord::Schema.define(:version => 20110802033509) do
   add_index "users", ["perishable_token"], :name => "index_users_on_perishable_token"
   add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"
   add_index "users", ["username"], :name => "index_users_on_username", :unique => true
+
+  create_table "video_buttons", :id => false, :force => true do |t|
+    t.string   "id",             :limit => 36,                   :null => false
+    t.string   "video_offer_id", :limit => 36,                   :null => false
+    t.string   "name",                                           :null => false
+    t.string   "url",                                            :null => false
+    t.integer  "ordinal"
+    t.boolean  "enabled",                      :default => true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "video_buttons", ["id"], :name => "index_video_buttons_on_id", :unique => true
+  add_index "video_buttons", ["video_offer_id"], :name => "index_video_buttons_on_video_offer_id"
+
+  create_table "video_offers", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36,                    :null => false
+    t.string   "partner_id", :limit => 36,                    :null => false
+    t.string   "name",                                        :null => false
+    t.boolean  "hidden",                   :default => false, :null => false
+    t.string   "video_url"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "video_offers", ["id"], :name => "index_video_offers_on_id", :unique => true
+  add_index "video_offers", ["partner_id"], :name => "index_video_offers_on_partner_id"
 
 end

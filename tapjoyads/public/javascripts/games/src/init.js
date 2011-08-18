@@ -1,12 +1,9 @@
 var TJG = {}; TJG.vars = {};
 TJG.doc = document.documentElement;
 TJG.vars.orientationClasses = ['landscape', 'portrait'];
-TJG.vars.isDev = true;
-TJG.vars.isSwapped = false;
 TJG.vars.isIos = false;
 TJG.vars.isTouch = false;
 TJG.appOfferWall = {};
-TJG.openiDialogs = {};
 (function(window, document) {
     var winH, winW;
     function centerDialog (el) {
@@ -17,30 +14,34 @@ TJG.openiDialogs = {};
       $(el).show();    
     }
     centerDialog("#loader");
-    /*!
-     * master-class v0.1
-     * http://johnboxall.github.com/master-class/
-     * Copyright 2010, Mobify
-     * Freely distributed under the MIT license.
-     */
-    var classes = [''], classReplaces = {}, device = "", orientationCompute = "";
-    var ua = navigator.userAgent;
-    var m = /(ip(od|ad|hone)|android)/gi.exec(ua);
-    if (m) {
-      var v = RegExp(/OS\s([\d+_?]*)\slike/i).exec(ua);
-      TJG.vars.version = v != null ? v[1].replace(/_/g, '.') : 4;
-      TJG.vars.device = m[2] ? m[1].toLowerCase() : m[1].toLowerCase();
-      classReplaces['device'] = TJG.vars.device;
-      classes.push('ratio-' + window.devicePixelRatio);
-      classReplaces['no-os'] = m[2] ? 'ios' : m[1].toLowerCase();
-      if (TJG.vars.device == 'ipad') {
-        classReplaces['mobile'] = 'ipad';
-      }
+     var nav = navigator, classes = [''], classReplaces = {}, device = "", orientationCompute = "";
+     TJG.vars.isIos = (/iphone|ipod|ipad/gi).test(nav.platform);
+     TJG.vars.isAndroid = (/android/gi).test(nav.platform);
+     TJG.vars.isMobile = /(ip(od|ad|hone)|android)/gi.test(nav.userAgent);
+     TJG.vars.isIPad = (/ipad/gi).test(nav.platform);
+     TJG.vars.isRetina = 'devicePixelRatio' in window && window.devicePixelRatio > 1;
+     TJG.vars.isSafari = nav.appVersion.match(/Safari/gi);
+     TJG.vars.hasHomescreen = 'standalone' in nav && TJG.vars.isIos;
+     TJG.vars.isStandalone = TJG.vars.hasHomescreen && nav.standalone;
+     TJG.vars.version = nav.appVersion.match(/OS \d+_\d+/g);
+     TJG.vars.platform = nav.platform.split(' ')[0];
+     TJG.vars.language = nav.language.replace('-', '_');
+     if (TJG.vars.isIos || TJG.vars.isMobile) {
+       if (TJG.vars.isIPad) {
+         classReplaces['mobile'] = 'ipad';
+       }
     }
     else {
       classReplaces['mobile'] = 'web';
     }
     classes.push(winW + 'x' + winH);
+    if ('ontouchend' in document) {
+      classReplaces['no-touch'] = 'touch';
+      TJG.vars.isTouch = true;
+    }
+    if (TJG.vars.isRetina) {
+        classReplaces['no-hd'] = 'hd';
+    } 
     function getOrientationClass() {
       return TJG.vars.orientationClasses[window.orientation % 180 ? 0 : 1];
     }
@@ -48,26 +49,6 @@ TJG.openiDialogs = {};
       var orientationRe = new RegExp('(' + TJG.vars.orientationClasses.join('|') + ')'),
         orientationEvent = ('onorientationchange' in window) ? 'orientationchange' : 'resize',
           currentOrientationClass = classes.push(getOrientationClass());
-      if (TJG.vars.width > TJG.vars.height) {
-        orientationCompute = 'landscape';
-      }
-      else {
-          orientationCompute = 'portrait';
-      }
-      var isSwapped = false;
-      if (getOrientationClass() != orientationCompute) {
-        classes.push('orientation-swap');
-        isSwapped = true;
-        TJG.vars.isSwapped = isSwapped;
-      }
-      if (TJG.vars.device == 'android') {
-        if (TJG.vars.width <= 480 && getOrientationClass() == 'portrait' && TJG.vars.isSwapped) {
-          classReplaces['web'] = 'android-phone';
-        }
-        if (TJG.vars.width <= 800 && getOrientationClass() == 'landscape' && TJG.vars.isSwapped) {
-          classReplaces['web'] = 'android-phone';
-        }
-      }
       addEventListener(orientationEvent, function() {
           var orientationClass = getOrientationClass();
           if (currentOrientationClass != orientationClass) {
@@ -82,24 +63,6 @@ TJG.openiDialogs = {};
          }
       }, false);
     }
-    if ('ontouchend' in document) {
-      classReplaces['no-touch'] = 'touch';
-      TJG.vars.isTouch = true;
-    }
-    if (TJG.vars.device == 'iphone' || TJG.vars.device == 'ipod' || TJG.vars.device == 'ipad') {
-      TJG.vars.isIos = true;
-    } 
-    var test = document.createElement('div');
-    test.style.display = 'none';
-    test.id = 'mc-test';
-    test.innerHTML = '<style type="text/css">@media(-webkit-min-device-pixel-ratio:1.5){#mc-test{color:red}}@media(-webkit-min-device-pixel-ratio:2.0){#mc-test{color:blue}}</style>';
-    TJG.doc.appendChild(test);
-    var color = test.ownerDocument.defaultView.getComputedStyle(test, null).getPropertyValue('color'), m = /255(\))?/gi.exec(color);
-    if (m) {
-        classes.push('hd' + (m[1] ? 20 : 15));
-        classReplaces['no-hd'] = 'hd';
-    }
-    TJG.doc.removeChild(test);
     var className = TJG.doc.className;
     for (replace in classReplaces) {              
         className = className.replace(replace, classReplaces[replace]);

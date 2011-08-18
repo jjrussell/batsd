@@ -1,6 +1,7 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
+  json_set_field :countries_blacklist
 
   ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS' }
   BETA_PLATFORMS    = { 'windows' => 'Windows Phone' }
@@ -170,21 +171,17 @@ class App < ActiveRecord::Base
       data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
     end
     raise "Fetching app store data failed for app: #{name} (#{id})." if data.nil?
-    self.name               = data[:title]
-    self.price              = (data[:price].to_f * 100).round
-    self.description        = data[:description]
-    self.age_rating         = data[:age_rating]
-    self.file_size_bytes    = data[:file_size_bytes]
-    self.released_at        = data[:released_at]
-    self.user_rating        = data[:user_rating]
-    self.categories         = data[:categories]
-    self.supported_devices  = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
-    
-    # TODO: Real multi-currency handling. For now simply set the price to a positive value if it's not USD.
-    if data[:currency].present? && data[:currency] != 'USD' && price > 0
-      self.price = 99
-    end
-    
+    self.name                = data[:title]
+    self.price               = (data[:price].to_f * 100).round
+    self.description         = data[:description]
+    self.age_rating          = data[:age_rating]
+    self.file_size_bytes     = data[:file_size_bytes]
+    self.released_at         = data[:released_at]
+    self.user_rating         = data[:user_rating]
+    self.categories          = data[:categories]
+    self.supported_devices   = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
+    self.countries_blacklist = AppStore.prepare_countries_blacklist(store_id, platform)
+
     download_icon(data[:icon_url], data[:small_icon_url]) unless new_record?
     data
   end
@@ -222,6 +219,7 @@ class App < ActiveRecord::Base
     os_version           = options.delete(:os_version)
     library_version      = options.delete(:library_version) || ''
     screen_layout_size   = options.delete(:screen_layout_size)
+    video_offer_ids      = options.delete(:video_offer_ids)      { [] }
 
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
@@ -236,7 +234,7 @@ class App < ActiveRecord::Base
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)
       if rate_app_offer.present? && rate_app_offer.accepting_clicks?
         offer_list_length += 1
-        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size)
+        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size, video_offer_ids)
           num_rejected += 1
         else
           final_offer_list << rate_app_offer
@@ -246,7 +244,7 @@ class App < ActiveRecord::Base
     
     offer_list_length += currency.get_cached_offers({ :type => type, :exp => exp }) do |offers|
       offers.each do |offer|
-        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size)
+        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size, video_offer_ids)
           num_rejected += 1
         else
           final_offer_list << offer

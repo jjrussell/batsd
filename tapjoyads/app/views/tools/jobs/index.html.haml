@@ -23,7 +23,7 @@
         %td= job.frequency_in_words
         %td
           = link_to('[edit]', edit_tools_job_path(job))
-          = link_to('[destroy]', tools_job_path(job), :method => :delete, :confirm => 'Are you sure?')
+          = link_to('[destroy]', tools_job_path(job), :method => :delete, :confirm => "Delete #{job.job_path}?")
 
 - content_for :page_styles do
   :plain

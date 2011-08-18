@@ -22,7 +22,7 @@ authorization do
   
   role :tools do
     has_permission_on :tools, :to => [ :index ]
-    has_permission_on :internal_devices, :to => [ :new, :update, :index, :show, :destroy, :block ]
+    has_permission_on :internal_devices, :to => [ :new, :edit, :update, :index, :show, :destroy, :approve ]
   end
   
   role :customer_service do
@@ -40,6 +40,7 @@ authorization do
   role :payops do
     includes :money
     has_permission_on :tools_payouts, :to => [ :index ]
+    has_permission_on :tools_orders, :to => [ :failed_invoices, :retry_invoicing, :mark_invoiced ]
   end
 
   role :payout_manager do
@@ -78,6 +79,8 @@ authorization do
     has_permission_on :tools_preview_experiments, :to => [ :index, :show ]
     has_permission_on :tools_premier_partners, :to => [ :index ]
     has_permission_on :tools_generic_offers, :to => [ :new, :create, :edit, :update ]
+    has_permission_on :tools_video_offers, :to => [ :new, :create, :edit, :update ]
+    has_permission_on :tools_video_offers_video_buttons, :to => [ :index, :new, :create, :edit, :update, :show ]
     has_permission_on :tools_admin_devices, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :tools_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :tools_external_publishers, :to => [ :index, :update ]
@@ -108,5 +111,6 @@ authorization do
     has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
     has_permission_on :tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :tools_support_requests, :to => [ :index ]
+    has_permission_on :tools_press_releases, :to => [ :index, :new, :create, :edit, :update ]
   end
 end
