@@ -76,7 +76,7 @@
               %span.light
                 Give us
               %span.dark
-                Feedback         
+                Feedback
         #report_bug.grey_button
           %a{ :href => new_games_support_request_path( :type => "report_bug" ) }
             .grey_button_content
@@ -112,9 +112,12 @@
       = javascript_include_tag 'games/tjgames.min-1.2'
     - else
       = javascript_include_tag 'games/src/jquery-1.4.2'
-      = javascript_include_tag 'games/src/init'
+      = javascript_include_tag 'games/src/tjg.init'
       = javascript_include_tag 'games/src/jqtouch'
-      = javascript_include_tag 'games/src/tapjoygames'
+      = javascript_include_tag 'games/src/tjg.utils'
+      = javascript_include_tag 'games/src/tjg.ui'
+      = javascript_include_tag 'games/src/tjg.social'
+      = javascript_include_tag 'games/src/tjg.load'
     
     = yield :included_javascripts
     %script{ :type => 'text/javascript', :charset => 'utf-8' }

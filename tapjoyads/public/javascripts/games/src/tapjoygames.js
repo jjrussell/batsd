@@ -690,7 +690,9 @@ TJG.ui = {
         }
         else {
           TJG.ui.showLoader();
-          $("#more_games_content").fadeOut(450);
+          $("#more_games_content").fadeOut(450,function() {
+            $("#more_games_content").empty();
+          });
           $.ajax({ 
             url: TJG.more_games_popular,
             timeout: 15000,
