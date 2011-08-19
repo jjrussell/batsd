@@ -46,7 +46,7 @@ class AppStoreTest < ActiveSupport::TestCase
         end
       end
 
-      assert_equal 199, AppStore.recalculate_app_price('iphone',   199, 'USD')
+      assert_equal 1.99, AppStore.recalculate_app_price('iphone',  1.99, 'USD')
       assert_equal 0.99, AppStore.recalculate_app_price('iphone',  2999, 'QQQ')
       assert_equal 0.99, AppStore.recalculate_app_price('android', 2999, 'JPY')
     end
