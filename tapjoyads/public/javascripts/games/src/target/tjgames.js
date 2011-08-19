@@ -7447,9 +7447,8 @@ TJG.ui = {
         var i = 0;
         $(this).click(function(){
           TJG.ui.showLoader();
-          $("#earn_content").fadeOut(450,function() {
+          $("#earn_content").fadeOut(250,function() {
             $("#earn_content").empty();
-            jQT.goTo('#earn', 'slideleft');
           });
           var url = $(this).attr("jsonp_url");
           var appId = $(this).attr("id");
@@ -7464,7 +7463,6 @@ TJG.ui = {
           $("#app_title").show();
           if (url) {
             if (!TJG.appOfferWall[appId]['offers']) {
-              jQT.goTo('#earn', 'slideleft');
               $("html, body").animate({scrollTop:0}, 800);
               $.ajax({
                 url: url+"&callback=?",
@@ -7500,7 +7498,8 @@ TJG.ui = {
                     }
                     t = t.join('');
                     $("#earn_content").html(t);
-                    $("#earn_content").fadeIn(500);
+                    jQT.goTo('#earn', 'slideleft');
+                    $("#earn_content").fadeIn(450);
                     var isLoading = false;
                     var hasFailed = false;
                     $(".get_more_apps").click(function(){
@@ -7530,7 +7529,7 @@ TJG.ui = {
                               $("#offerwall_id-" + appId).append(moreOfferRows);
                               var el = ".offer_item_" + i;
                               $.each($(el), function(n,o) {
-                                $(o).fadeIn(500);
+                                $(o).fadeIn(450);
                               });
                               if (TJG.appOfferWall[appId]['offers_left'] > 0) {
                                 $(".get_more_apps_content").html("Load More");
@@ -7552,7 +7551,7 @@ TJG.ui = {
                               '<div class="center">There was an issue fetching more offers. Please try again.</div>'
                             ].join('');
                             if (!hasFailed) {
-                              $("#offerwall_id-" + appId).append(m).fadeIn(350);
+                              $("#offerwall_id-" + appId).append(m).fadeIn(450);
                             }
                             hasFailed = true;
                             $(".get_more_apps_content").html("Load More");
@@ -7569,7 +7568,8 @@ TJG.ui = {
                   var m = [
                    '<div class="center">There was an issue. Please try again</div>'
                   ].join('');
-                  $("#earn_content").html(m); 
+                  $("#earn_content").html(m);
+                  jQT.goTo('#earn', 'slideleft'); 
                   $("#earn_content").fadeIn(450);
                   $("html, body").animate({scrollTop:0}, 800);
                 }
@@ -7579,6 +7579,7 @@ TJG.ui = {
               TJG.ui.hideLoader();
               var c = TJG.ui.getOffferRow(TJG.appOfferWall[appId]['offers'],currencyName);
               $("#earn_content").html(c);
+              jQT.goTo('#earn', 'slideleft');
               $("#earn_content").fadeIn(450);
               $("html, body").animate({scrollTop:0}, 800);
             }
@@ -7586,7 +7587,8 @@ TJG.ui = {
                var m = [
                  '<div class="center">There was an issue. Please try again</div>'
                ].join('');
-               $("#earn_content").html(m); 
+               $("#earn_content").html(m);
+               jQT.goTo('#earn', 'slideleft'); 
                $("#earn_content").fadeIn(450);
                $("html, body").animate({scrollTop:0}, 800); 
             }
@@ -7613,11 +7615,10 @@ TJG.ui = {
         $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");
         $("#top_grossing_games_button_arrow").hide();
         $("#recommended_games_button_arrow").show();
-        $("#more_games_content").fadeOut(250,function() {
-            jQT.goTo('#more_games', 'slideleft');  
-        });
+        $("#more_games_content").fadeOut(250);
         if (TJG.moreAppOfferWall) {
           $("#more_games_content").html(TJG.moreAppOfferWall);
+          jQT.goTo('#more_games', 'slideleft');  
           $("#more_games_content").fadeIn(250);
         }
         else {
@@ -7629,13 +7630,15 @@ TJG.ui = {
               TJG.moreAppOfferWall = c;
               TJG.ui.hideLoader();
               $("#more_games_content").html(c);
+              jQT.goTo('#more_games', 'slideleft');  
               $("#more_games_content").fadeIn(250); 
             },
             error: function() {
               var m = [
                 '<div>There was an issue. Please try again</div>'
               ].join('');
-              $("#more_games_content").html(m); 
+              $("#more_games_content").html(m);
+              jQT.goTo('#more_games', 'slideleft');   
               $("#more_games_content").fadeIn(250);
             }
           });
@@ -7649,21 +7652,19 @@ TJG.ui = {
         $("#recommended_games_button").addClass("grey").removeClass("dark_grey");
         $("#recommended_games_button_arrow").hide();
         $("#top_grossing_games_button_arrow").show();
-
+        $("#recommended_games_tab").unbind("click");
         $("#recommended_games_tab").click(function() {
           $("#recommended_games_button").addClass("dark_grey").removeClass("grey");
           $("#top_grossing_games_button").addClass("grey").removeClass("dark_grey");
           $("#top_grossing_games_button_arrow").hide();
           $("#recommended_games_button_arrow").show();
           if (TJG.moreAppOfferWall) {
-            TJG.ui.hideLoader();
             $("#more_games_content").fadeOut(250, function () {
               $("#more_games_content").html(TJG.moreAppOfferWall);
               $("#more_games_content").fadeIn(250);
             });
           }
         });
-
         if (TJG.topAppOfferWall) {
           $("#more_games_content").fadeOut(250, function () {
             $("#more_games_content").html(TJG.topAppOfferWall);
@@ -7672,22 +7673,25 @@ TJG.ui = {
         }
         else {
           TJG.ui.showLoader();
-          $("#more_games_content").fadeOut(250);
           $.ajax({ 
             url: TJG.more_games_popular,
             timeout: 15000,
             success: function(c) {
               TJG.topAppOfferWall = c;
               TJG.ui.hideLoader();
-              $("#more_games_content").html(c);
-              $("#more_games_content").fadeIn(250); 
+              $("#more_games_content").fadeOut(250, function () {
+                $("#more_games_content").html(c);
+                $("#more_games_content").fadeIn(250); 
+              });
             },
             error: function () {
               var m = [
                 '<div>There was an issue. Please try again</div>'
               ].join('');
-              $("#more_games_content").html(m); 
-              $("#more_games_content").fadeIn(250);
+              $("#more_games_content").fadeOut(250, function () {
+                $("#more_games_content").html(m); 
+                $("#more_games_content").fadeIn(250);
+              });
             }
           });
         }
