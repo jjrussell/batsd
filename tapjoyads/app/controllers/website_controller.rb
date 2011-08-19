@@ -57,8 +57,8 @@ class WebsiteController < ApplicationController
     return unless Rails.env == 'production'
     if current_user && current_user.employee?
       return if request.path.match(/logout|approve_device|block/)
-      if cookies['device'].present?
-        device = current_user.internal_devices.find(cookies['device'])
+      if device_cookie
+        device = current_user.internal_devices.find_by_id(device_cookie)
         if device.approved?
           return
         elsif device.pending?
@@ -70,6 +70,14 @@ class WebsiteController < ApplicationController
         redirect_to new_internal_device_path
       end
     end
+  end
+
+  def device_cookie
+    @cookie ||= cookies["#{current_user.email}-device"]
+  end
+
+  def set_cookie(options)
+    cookies["#{current_user.email}-device"] = options
   end
 
 protected
