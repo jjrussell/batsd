@@ -620,7 +620,7 @@ class Offer < ActiveRecord::Base
       jailbroken_reject?(device) ||
       direct_pay_reject?(direct_pay_providers) ||
       action_app_reject?(device) ||
-      hide_rewarded_app_installs_reject?(currency, hide_rewarded_app_installs) ||
+      hide_rewarded_app_installs_reject?(hide_rewarded_app_installs) ||
       min_os_version_reject?(os_version) ||
       cookie_tracking_reject?(publisher_app, library_version) ||
       screen_layout_sizes_reject?(screen_layout_size) ||
@@ -629,7 +629,7 @@ class Offer < ActiveRecord::Base
       age_rating_reject?(currency) ||
       publisher_whitelist_reject?(publisher_app) ||
       currency_whitelist_reject?(currency) ||
-      accepting_clicks?
+      accepting_clicks?)
   end
 
   def update_payment(force_update = false)
