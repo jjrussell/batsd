@@ -1,35 +1,57 @@
 - @page_title = 'Create Order'
 
-%h1 Create Order
+%h1 Create Order for #{@partner.name}
 
 - form_for [ :tools, @order ], :html => { :class => 'tjform' } do |f|
+  = f.hidden_field :partner_id, :value => @partner.id
   %table
-    %tr
-      %th= f.label :partner_id, 'Partner ID'
-      %td
-        = f.text_field :partner_id, :size => 50
-        = error_message_on @order, :partner
     %tr
       %th= f.label :amount
       %td
         = f.currency_field :amount, {}, {:class => 'allow_negative'}
         = error_message_on @order, :amount
     %tr
-      %th= f.label :status
-      %td
-        = f.select :status, '<option>1</option>'
-        = error_message_on @order, :status
-    %tr
       %th= f.label :payment_method
       %td
         = f.select :payment_method, '<option value="1">Billable</option><option value="2">Marketing Expense</option>'
         = error_message_on @order, :payment_method
     %tr
-      %th= f.label :note
+      %th= f.label :description
+      %td
+        = f.text_field :description, :size => 50
+        = error_message_on @order, :note
+    %tr
+      %th= f.label :internal_note
       %td
         = f.text_field :note, :size => 50
         = error_message_on @order, :note
     %tr
-      %td{ :colspan => 2 }= f.submit 'Create Order'
+      %th= f.label :note_to_client
+      %td
+        = f.text_field :note_to_client, :size => 50
+        = error_message_on @order, :note
     %tr
-      %td{ :colspan => 2 }= link_to "Don't forget to create an invoice in freshbooks", "http://tapjoy.freshbooks.com/"
+      %th= f.label :create_invoice
+      %td= f.check_box :create_invoice, :checked => true
+    - if @order.errors.on(:billing_email) || @partner.billing_email.blank?
+      %tr
+        %th= label_tag :billing_email
+        %td
+          = text_field_tag :billing_email, @partner.billing_email, :size => 50
+          = error_message_on @order, :billing_email
+    %tr
+      %td{ :colspan => 2 }= f.submit 'Create Order'
+
+- content_for :page_javascript do
+  :plain
+    var toggleCreateInvoice = function() {
+      if ($('#order_payment_method').val() === '2') {
+        $('#order_create_invoice').attr('checked', false);
+        $('#order_create_invoice').attr('disabled', 'disabled');
+      } else {
+        $('#order_create_invoice').attr('checked', true);
+        $('#order_create_invoice').attr('disabled', '');
+      }
+    };
+
+    $('#order_payment_method').change(toggleCreateInvoice);

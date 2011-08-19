@@ -5,6 +5,7 @@ class AppsController < WebsiteController
   before_filter :grab_partner_apps
   before_filter :has_apps, :only => [:show, :index, :integrate, :publisher_integrate]
   before_filter :find_app, :only => [:show, :index, :integrate, :publisher_integrate, :update, :confirm, :archive, :unarchive ]
+  before_filter :nag_user_about_payout_info, :only => [:show]
   after_filter :save_activity_logs, :only => [ :update, :create, :archive, :unarchive ]
 
   def index

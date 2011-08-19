@@ -132,7 +132,8 @@ private
       :library_version      => params[:library_version],
       :os_version           => params[:os_version],
       :source               => params[:source],
-      :screen_layout_size   => params[:screen_layout_size])
+      :screen_layout_size   => params[:screen_layout_size],
+      :video_offer_ids      => params[:video_offer_ids].to_s.split(','))
   end
   
   def save_web_request
@@ -146,6 +147,10 @@ private
       @geoip_data = get_geoip_data
     end
     @geoip_data[:country] = params[:country_code] if params[:country_code].present?
+  end
+  
+  def save_web_request
+    @web_request.save
   end
   
 end

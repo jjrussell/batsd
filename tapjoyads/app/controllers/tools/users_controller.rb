@@ -10,6 +10,11 @@ class Tools::UsersController < WebsiteController
       :include => { :role_assignments => [ :user_role ] }).sort_by do |user|
         [user.user_roles.blank? ? 1 : 0, user.email.downcase]
       end
+    agency_user_role = UserRole.find_by_name('agency')
+    @tapjoy_users += RoleAssignment.find(:all,
+      :conditions => [ "user_role_id != ?", agency_user_role.id],
+      :include => [:user]).map(&:user)
+    @tapjoy_users.uniq!
   end
 
   def show

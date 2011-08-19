@@ -49,7 +49,7 @@ class SdbBackup
     
     if delete_domain
       Rails.logger.info "Deleting domain"
-      retries = 3
+      retries = 20
       begin
         response = SimpledbResource.delete_domain(domain_name)
       rescue RightAws::AwsError => e

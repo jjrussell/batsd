@@ -3,7 +3,8 @@ class UsersController < WebsiteController
   current_tab :account
   
   filter_access_to :all
-  
+
+  before_filter :nag_user_about_payout_info
   after_filter :save_activity_logs, :only => [ :create, :update ]
   around_filter :update_mail_chimp_email, :only => [ :update ]
 

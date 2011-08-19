@@ -18,6 +18,7 @@ class OfferList
     @include_rating_offer       = options.delete(:include_rating_offer) { false }
     @platform_name              = options.delete(:platform_name)
     @hide_rewarded_app_installs = options.delete(:hide_rewarded_app_installs)
+    @video_offer_ids            = options.delete(:video_offer_ids) { [] }
     
     @hide_rewarded_app_installs = @currency.hide_rewarded_app_installs_for_version?(@app_version, @source) if @currency
     @platform_name              = @publisher_app.platform_name if @publisher_app
@@ -84,7 +85,7 @@ class OfferList
     @offers.each_with_index do |offer, i|
       return [ returned_offers, @offers.length - i ] if found_offers >= offers_to_find
       
-      unless offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version, @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size)
+      unless offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version, @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size, @video_offer_ids)
         returned_offers << offer if found_offers >= start
         found_offers += 1
       end

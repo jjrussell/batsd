@@ -1,7 +1,6 @@
 class QueueNames
   CONVERSION_TRACKING      = RUN_MODE_PREFIX + 'ConversionTracking'
   FAILED_SDB_SAVES         = RUN_MODE_PREFIX + 'FailedSdbSaves'
-  FAILED_WEB_REQUEST_SAVES = RUN_MODE_PREFIX + 'FailedWebRequestSaves'
   FAILED_DOWNLOADS         = RUN_MODE_PREFIX + 'FailedDownloads'
   CREATE_CONVERSIONS       = RUN_MODE_PREFIX + 'CreateConversions'
   SEND_CURRENCY            = RUN_MODE_PREFIX + 'SendCurrency'
@@ -18,5 +17,6 @@ class QueueNames
   RECOUNT_STATS            = RUN_MODE_PREFIX + 'RecountStats'
   CACHE_OFFERS             = RUN_MODE_PREFIX + 'CacheOffers'
   UDID_REPORTS             = RUN_MODE_PREFIX + 'UdidReports'
+  CREATE_INVOICES          = RUN_MODE_PREFIX + 'CreateInvoices'
   ENCODED_WEB_REQUESTS     = RUN_MODE_PREFIX + 'EncodedWebRequests'
 end

@@ -128,6 +128,7 @@
   #help_overall_budget_content{ :name => 'Overall Budget' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
   #help_rank_score_content{ :name => 'Rank Score' } The last computed rank score for this offer.
   #help_min_bid_override_content{ :name => 'Min Bid Override' } Manually set the minimum allowed bid for this offer.
+  #help_countries_blacklist_content{ :name => 'Country Blacklist' } This field is auto-filled from iTunes, and updated daily. To manually target countries, use the country targeting field, but note that this offer will not be shown in countries listed in this blacklist, irrespective of country targeting.
 
 - content_for :page_javascript do
   :plain
@@ -137,9 +138,3 @@
         return false;
       });
     });
-  
-- content_for :page_styles do
-  :plain
-    .admin th {
-      color: blue;
-    }

@@ -129,6 +129,10 @@ module ActionView
       def email_field(method, options = {})
         @template.email_field(@object_name, method, objectify_options(options))
       end
+      
+      def chosen_select(method, choices, options = {}, html_options = {})
+        select(method, choices, options, html_options.merge(:class => 'chosen'))
+      end
     end
 
     module FormHelper

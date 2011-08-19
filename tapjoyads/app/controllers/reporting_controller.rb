@@ -8,7 +8,8 @@ class ReportingController < WebsiteController
   before_filter :find_offer, :only => [ :show, :export, :download_udids ]
   before_filter :setup, :only => [ :show, :export, :aggregate ]
   before_filter :set_platform, :only => [ :aggregate ]
-  
+  before_filter :nag_user_about_payout_info, :only => [:show]
+
   def index
     unless current_partner_offers.empty?
       if session[:last_shown_app].present?

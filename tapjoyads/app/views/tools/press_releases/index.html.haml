@@ -1,0 +1,31 @@
+- @page_title = "Press Releases"
+
+%h1 Press Releases
+
+%h4= link_to "[Add New Press Release]", new_tools_press_release_path
+
+%table.tablesorter
+  %thead
+    %tr
+      %th Date
+      %th Title
+      %th Subtitle
+      %th Action
+  %tbody
+    - @press_releases.each do |press_release|
+      - class_name = cycle('', 'odd')
+      - class_name += " future" if press_release.future?
+      %tr{ :class => class_name }
+        %td.nobr= press_release.published_at.to_date
+        %td= truncate(h(press_release.content_title), :length => 80)
+        %td= truncate(h(press_release.content_subtitle), :length => 80)
+        %td= link_to("Edit", edit_tools_press_release_path(press_release))
+
+- content_for :page_styles do
+  :plain
+    tr.future td {
+      color: #f00 !important;
+    }
+    .nobr {
+      white-space: nowrap;
+    }
