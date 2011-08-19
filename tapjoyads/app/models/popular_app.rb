@@ -27,6 +27,9 @@ class PopularApp
         next
       end
       
+      next if offer.item_type != 'App'
+      next if offer.item.store_id.blank?
+      
       appstats = Appstats.new(offer.id, { :start_time => start_time, :end_time => now + 1.hour, :stat_types => [ 'new_users' ] }).stats
       new_users = appstats['new_users'].sum
       
