@@ -588,7 +588,7 @@ class Offer < ActiveRecord::Base
   end
   
 
-  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
+  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids)
     geoip_reject?(geoip_data, device) ||
     already_complete?(publisher_app, device, app_version) ||
     show_rate_reject?(device) ||
