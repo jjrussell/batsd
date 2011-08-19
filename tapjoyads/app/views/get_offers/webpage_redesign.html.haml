@@ -1,4 +1,4 @@
-- @page_title = t('text.offerwall.title', :currency => @currency.name)
+- @page_title = @currency.conversion_rate > 0 ? t('text.offerwall.title', :currency => @currency.name) : ''
 
 - unless @message.blank?
   - render(:layout => 'box') do
