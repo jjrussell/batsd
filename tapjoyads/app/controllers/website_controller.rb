@@ -73,7 +73,17 @@ class WebsiteController < ApplicationController
   end
 
   def device_cookie
-    @cookie ||= cookies["#{current_user.email}-device"]
+    @device_id ||= cookies["#{current_user.email}-device"]
+    # TODO: take this block out on/after 08/25/2011
+    unless @device_id
+      @device_id = cookies["device"]
+      if @device_id
+        set_cookie( { :value => @device_id, :expires => 1.year.from_now } )
+        cookies.delete("device")
+      end
+    end
+    @device_id
+    # TODO: remove to here
   end
 
   def set_cookie(options)
