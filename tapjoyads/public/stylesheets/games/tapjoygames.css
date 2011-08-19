@@ -1445,11 +1445,9 @@ body {
   }
 }
 #jqt .slideright.in {
-  z-index: 10;
   -webkit-animation-name: slideRightIn;
 }
 #jqt .slideright.out {
-  z-index: 0;
   -webkit-animation-name: slideRightOut;
 }
 @-webkit-keyframes slideRightIn {
@@ -1469,11 +1467,9 @@ body {
   }
 }
 #jqt .slideup.in {
-  z-index: 10;
   -webkit-animation-name: slideUpIn;
 }
 #jqt .slideup.out {
-  z-index: 0;
   -webkit-animation-name: slideUpOut;
 }
 @-webkit-keyframes slideUpIn {
@@ -1493,11 +1489,9 @@ body {
   }
 }
 #jqt .slidedown.in {
-  z-index: 0;
   -webkit-animation-name: slideDownIn;
 }
 #jqt .slidedown.out {
-  z-index: 10;
   -webkit-animation-name: slideDownOut;
 }
 @-webkit-keyframes slideDownIn {
