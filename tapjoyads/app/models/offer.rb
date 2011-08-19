@@ -611,11 +611,6 @@ class Offer < ActiveRecord::Base
     app_platform_mismatch?(platform_name) || hide_rewarded_app_installs_reject?(hide_rewarded_app_installs) || device_platform_mismatch?(normalized_device_type)
   end
   
-  def video_offers_reject?(video_offer_ids, type)
-    return false if type == Offer::VIDEO_OFFER_TYPE
-    item_type == 'VideoOffer' && !video_offer_ids.include?(id)
-  end
-  
   def is_valid_for?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
     !(device_platform_mismatch?(publisher_app, device_type) ||
       geoip_reject?(geoip_data, device) ||
@@ -629,7 +624,11 @@ class Offer < ActiveRecord::Base
       min_os_version_reject?(os_version) ||
       cookie_tracking_reject?(publisher_app, library_version) ||
       screen_layout_sizes_reject?(screen_layout_size) ||
-      should_reject_from_app_or_currency?(publisher_app, currency)) &&
+      is_disabled?(publisher_app, currency) ||
+      app_platform_mismatch?(publisher_app) ||
+      age_rating_reject?(currency) ||
+      publisher_whitelist_reject?(publisher_app) ||
+      currency_whitelist_reject?(currency) ||
       accepting_clicks?
   end
 
@@ -910,6 +909,11 @@ private
 
   def cookie_tracking_reject?(publisher_app, library_version)
     cookie_tracking? && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
+  end
+  
+  def video_offers_reject?(video_offer_ids, type)
+    return false if type == Offer::VIDEO_OFFER_TYPE
+    item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
 
   def cleanup_url
