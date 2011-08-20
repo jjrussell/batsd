@@ -81,7 +81,9 @@
     function scroll() {
       var images = document.getElementsByTagName('img');
       for (var i = 0, image; image = images[i]; i++) {
-        if (window.scrollY + window.innerHeight + 480 > image.offsetTop) {
+        var scrollY = (document.compatMode == "CSS1Compat" ? document.body.parentNode.scrollTop : window.scrollY);
+
+        if (scrollY + window.innerHeight + 480 > image.offsetTop) {
           loadImage(image);
         }
       }
