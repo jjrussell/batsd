@@ -39,7 +39,7 @@ module GetOffersHelper
         :language_code      => params[:language_code],
         :display_multiplier => params[:display_multiplier])
     if offer.item_type == 'VideoOffer'
-      "tjvideo://video_id=#{offer.id}&click_url=#{click_url}"
+      "tjvideo://video_id=#{offer.id}&amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&currency_name=#{CGI::escape(@currency.name)}&click_url=#{click_url}"
     else
       click_url
     end
