@@ -86,35 +86,6 @@ class Utils
     file.close
   end
   
-  def self.copy_web_requests_to_tmp(date)
-    bucket = S3.bucket(BucketNames::WEB_REQUESTS)
-
-    MAX_WEB_REQUEST_DOMAINS.times do |num|
-      s3_name = "#{date}/web-request-#{date}-#{num}.sdb"
-      next unless bucket.key(s3_name).exists?
-      puts "Found #{s3_name}"
-
-      gzip_file = open("tmp/web-request-#{date}-#{num}.sdb", 'w')
-      S3.s3.interface.get(bucket.full_name, s3_name) do |chunk|
-        gzip_file.write(chunk)
-      end
-
-      gzip_file.close
-    end
-  end
-  
-  def self.write_web_requests_from_tmp(date)
-    raise "Cannot write to web-requests bucket from a production env" if Rails.env == 'production'
-    
-    bucket = S3.bucket(BucketNames::WEB_REQUESTS)
-    
-    MAX_WEB_REQUEST_DOMAINS.times do |num|
-      s3_name = "#{date}/web-request-#{date}-#{num}.sdb"
-      puts "Writing #{s3_name}"
-      bucket.put(s3_name, open("tmp/web-request-#{date}-#{num}.sdb"))
-    end
-  end
-  
   def self.get_publisher_breakdown_for_campaign(advertiser_app_id, start_time, end_time)
     counts = {}
     NUM_REWARD_DOMAINS.times do |i|
@@ -128,6 +99,68 @@ class Utils
     counts
   end
   
+  def self.fix_stuck_send_currency(reward_id, status)
+    reward = Reward.find(reward_id, :consistent => true)
+    if reward.sent_currency.present? && reward.send_currency_status.present?
+      puts "already awarded"
+    elsif reward.sent_currency.present?
+      puts "sent_currency present"
+    else
+      reward.sent_currency = Time.zone.now
+      reward.send_currency_status = status
+      reward.save!
+      puts "fixed"
+    end
+    reward
+  end
+  
+  def self.fix_conditional_check_failed(reward_id)
+    reward = Reward.find(reward_id, :consistent => true)
+    if reward.sent_currency.present? && reward.send_currency_status.present?
+      puts "already awarded"
+    elsif reward.sent_currency.nil? && reward.send_currency_status.nil?
+      puts "everything is ok"
+    elsif reward.sent_currency.present? && reward.send_currency_status.nil?
+      reward.delete('sent_currency')
+      reward.save!
+      puts "deleted sent_currency"
+    else
+      puts "something weird has happened"
+    end
+    reward
+  end
+  
+  def self.fix_device_with_parse_error(udid)
+    device = Device.find(udid, :after_initialize => false)
+    str = device.get('apps')
+    pos = str.index('}')
+    if pos.nil?
+      pos = str.rindex(',')
+      removed = str.slice!(pos..-1)
+      str += '}'
+    else
+      removed = str.slice!(pos+1..-1)
+    end
+    device.apps = JSON.parse(str)
+    device.save!
+    puts "removed #{removed}"
+    Device.find(udid, :consistent => true)
+  end
+  
+  def self.cleanup_orphaned_failed_sdb_saves
+    time = Time.zone.now - 24.hours
+    count = 0
+    bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
+    bucket.keys(:prefix => 'incomplete/').each do |key|
+      next if key.name == 'incomplete/'
+      if key.last_modified < time
+        count += 1
+        puts "moving: #{key.name} - last modified: #{key.last_modified}"
+        bucket.move_key(key.name, key.name.gsub('incomplete', 'orphaned'))
+      end
+    end
+    puts "moved #{count} orphaned items from #{BucketNames::FAILED_SDB_SAVES}"
+  end
   
   
   class Memcache
