@@ -58,9 +58,7 @@ class User < ActiveRecord::Base
   end
 
   def employee?
-    user_roles.include? UserRole.find_by_name('admin')
-    # for now we can test just on admins
-    # user_roles.any? { |role| role.employee? }
+    user_roles.any? { |role| role.employee? }
   end
 
 private

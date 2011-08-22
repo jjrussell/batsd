@@ -35,7 +35,7 @@ class MonthlyAccounting < ActiveRecord::Base
     # balance components
     orders = {}
     Order.using_slave_db do
-      orders = Order.created_between(start_time, end_time).sum(:amount, :conditions => [ "status = ? AND partner_id = ?", 1, partner.id ], :group => :payment_method)
+      orders = Order.created_between(start_time, end_time).sum(:amount, :conditions => [ "partner_id = ?", partner.id ], :group => :payment_method)
     end
     self.website_orders   = orders[0] || 0
     self.invoiced_orders  = orders[1] || 0
