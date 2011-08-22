@@ -15,6 +15,6 @@ class FreeAppCountController < ApplicationController
       :os_version         => params[:os_version],
       :screen_layout_size => params[:screen_layout_size])
     
-    @free_app_count = offer_list.offers.reject { |o| !(o.item_type == 'App' && o.price == 0) }.length
+    @free_app_count = offer_list.get_offers(0, 1000).first.length
   end
 end
