@@ -619,6 +619,13 @@ class Offer < ActiveRecord::Base
     
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
     
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    existing_icon_blob = bucket.get("icons/src/#{icon_id}.jpg") rescue ''
+    if existing_icon_blob.blank?
+      default_image_name = '84bbcd065714fe388a0cdb46506fcbfa410842a88ec97d00f47d2a966d0c7297'
+      return "#{prefix}/icons/#{size}/#{default_image_name}.jpg"
+    end
+    
     "#{prefix}/icons/#{size}/#{icon_id}.jpg"
   end
   
@@ -629,7 +636,21 @@ class Offer < ActiveRecord::Base
     existing_icon_blob = bucket.get("icons/src/#{icon_id}.jpg") rescue ''
     
     return if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
+    
+    if item_type == 'VideoOffer'
+      icon_200 = Magick::Image.from_blob(icon_src_blob)[0].resize(200, 125).opaque('#ffffff00', 'white')
+      icon_200 = icon_200.opaque('#ffffff00', 'white')
+      icon_200.alpha(Magick::OpaqueAlphaChannel)
       
+      icon_200_blob = icon_200.to_blob{|i| i.format = 'JPG'}
+      
+      bucket.put("icons/src/#{icon_id}.jpg", icon_src_blob, {}, "public-read")
+      bucket.put("icons/200/#{icon_id}.jpg", icon_200_blob, {}, "public-read")
+      
+      Mc.delete("icon.s3.#{id}")
+      return
+    end
+    
     icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
     medium_icon_blob = icon_256.to_blob{|i| i.format = 'JPG'}
     
@@ -651,7 +672,7 @@ class Offer < ActiveRecord::Base
     bucket.put("icons/256/#{icon_id}.jpg", icon_256_blob, {}, "public-read")
     bucket.put("icons/114/#{icon_id}.jpg", icon_114_blob, {}, "public-read")
     bucket.put("icons/57/#{icon_id}.jpg", icon_57_blob, {}, "public-read")
-  
+    
     Mc.delete("icon.s3.#{id}")
     
     # Invalidate cloudfront
