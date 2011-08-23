@@ -7,6 +7,7 @@ xml.TapjoyVideos do
         xml.OfferID offer.id
         xml.Name offer.name
         xml.Amount @currency.get_visual_reward_amount(offer, params[:display_multiplier])
+        xml.CurrencyName @currency.name
         xml.VideoURL offer.url
         xml.Buttons do
           xml << offer.third_party_data
