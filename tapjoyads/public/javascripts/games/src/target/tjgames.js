@@ -882,7 +882,10 @@ TJG.loadedImages = {};
     $(el).each(function (n,o) { 
       if ( this && $.inviewport( this, { padding: padSpace, threshold:preLoad } ) ) {
         var img = $(o).children("img:first");
-        $(img).attr("src", $(img).attr("s"));
+        if ($(img).attr("loaded") == "true") {
+          return;
+        }
+        $(img).attr("src", $(img).attr("s")).attr("loaded", "true");
         $(img).error(function() {
           $(img).attr("src", TJG.blank_img);
         });          
@@ -898,7 +901,10 @@ TJG.loadedImages = {};
               var id = $(o).attr("id");
               if ( this && $.inviewport( this, { padding: padSpace, threshold:preLoad } ) ) {
                 var img = $(o).children("img:first");
-                $(img).attr("src", $(img).attr("s"));
+                if ($(img).attr("loaded") == "true") {
+                  return;
+                }   
+                $(img).attr("src", $(img).attr("s")).attr("loaded", "true");
                 $(img).error(function() {
                   $(img).attr("src", TJG.blank_img);
                 });

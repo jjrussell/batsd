@@ -326,6 +326,9 @@ form#new_gamer input {
   position: relative;
   top: -20px;
 }
+.mobile #more_games .content {
+  padding-top: 12px;
+}
 .web #more_games .content,
 .ipad #more_games .content {
   padding-top: 26px;
