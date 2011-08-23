@@ -9,6 +9,7 @@ class Conversion < ActiveRecord::Base
     'generic'                     => 3,
     'install_jailbroken'          => 4,
     'action'                      => 5,
+    'video'                       => 6,
     
     # Special
     'imported'                    => 999,
@@ -20,6 +21,7 @@ class Conversion < ActiveRecord::Base
     'display_generic'             => 1003,
     'display_install_jailbroken'  => 1004,
     'display_action'              => 1005,
+    'display_video'               => 1006,
     
     # Featured types (all base types +2000)
     'featured_offer'              => 2000,
@@ -28,20 +30,21 @@ class Conversion < ActiveRecord::Base
     'featured_generic'            => 2003,
     'featured_install_jailbroken' => 2004,
     'featured_action'             => 2005,
+    'featured_video'              => 2006,
   }
   
   STAT_TO_REWARD_TYPE_MAP = {
-    'offers'                    => { :reward_types => [ 0, 2, 3, 5 ],                                  :attr_name => 'publisher_app_id' },
-    'published_installs'        => { :reward_types => [ 1, 4 ],                                        :attr_name => 'publisher_app_id' },
-    'display_conversions'       => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005 ],          :attr_name => 'publisher_app_id' },
-    'featured_published_offers' => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005 ],          :attr_name => 'publisher_app_id' },
-    'paid_installs'             => { :reward_types => [ 0, 1, 2, 3, 5, 2000, 2001, 2002, 2003, 2005 ], :attr_name => 'advertiser_offer_id' },
-    'jailbroken_installs'       => { :reward_types => [ 4, 2004 ],                                     :attr_name => 'advertiser_offer_id' },
-    'offers_revenue'            => { :reward_types => [ 0, 2, 3, 5 ],                                  :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
-    'installs_revenue'          => { :reward_types => [ 1, 4 ],                                        :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
-    'display_revenue'           => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005 ],          :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
-    'featured_revenue'          => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005 ],          :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
-    'installs_spend'            => { :reward_types => [ 0, 1, 2, 3, 5, 2000, 2001, 2002, 2003, 2005 ], :attr_name => 'advertiser_offer_id', :sum_attr => :advertiser_amount },
+    'offers'                    => { :reward_types => [ 0, 2, 3, 5, 6 ],                                        :attr_name => 'publisher_app_id' },
+    'published_installs'        => { :reward_types => [ 1, 4 ],                                                 :attr_name => 'publisher_app_id' },
+    'display_conversions'       => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006 ],             :attr_name => 'publisher_app_id' },
+    'featured_published_offers' => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006 ],             :attr_name => 'publisher_app_id' },
+    'paid_installs'             => { :reward_types => [ 0, 1, 2, 3, 5, 6, 2000, 2001, 2002, 2003, 2005, 2006 ], :attr_name => 'advertiser_offer_id' },
+    'jailbroken_installs'       => { :reward_types => [ 4, 2004 ],                                              :attr_name => 'advertiser_offer_id' },
+    'offers_revenue'            => { :reward_types => [ 0, 2, 3, 5, 6 ],                                        :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
+    'installs_revenue'          => { :reward_types => [ 1, 4 ],                                                 :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
+    'display_revenue'           => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006 ],             :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
+    'featured_revenue'          => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006 ],             :attr_name => 'publisher_app_id',    :sum_attr => :publisher_amount },
+    'installs_spend'            => { :reward_types => [ 0, 1, 2, 3, 5, 6, 2000, 2001, 2002, 2003, 2005, 2006 ], :attr_name => 'advertiser_offer_id', :sum_attr => :advertiser_amount },
   }
   
   belongs_to :publisher_app, :class_name => 'App'
@@ -64,7 +67,7 @@ class Conversion < ActiveRecord::Base
   
   def self.get_stat_definitions(reward_type)
     case reward_type
-    when 0, 2, 3, 5
+    when 0, 2, 3, 5, 6
       [ { :stat => 'offers',         :attr => :publisher_app_id },
         { :stat => 'paid_installs',  :attr => :advertiser_offer_id },
         { :stat => 'offers_revenue', :attr => :publisher_app_id,    :increment => :publisher_amount },
@@ -78,10 +81,10 @@ class Conversion < ActiveRecord::Base
       [ { :stat => 'jailbroken_installs', :attr => :advertiser_offer_id },
         { :stat => 'published_installs',  :attr => :publisher_app_id },
         { :stat => 'installs_revenue',    :attr => :publisher_app_id, :increment => :publisher_amount } ]
-    when 1000, 1001, 1002, 1003, 1004, 1005
+    when 1000, 1001, 1002, 1003, 1004, 1005, 1006
       [ { :stat => 'display_conversions', :attr => :publisher_app_id },
         { :stat => 'display_revenue',     :attr => :publisher_app_id, :increment => :publisher_amount } ]
-    when 2000, 2001, 2002, 2003, 2005
+    when 2000, 2001, 2002, 2003, 2005, 2006
       [ { :stat => 'featured_published_offers', :attr => :publisher_app_id },
         { :stat => 'paid_installs',             :attr => :advertiser_offer_id },
         { :stat => 'featured_revenue',          :attr => :publisher_app_id,    :increment => :publisher_amount },

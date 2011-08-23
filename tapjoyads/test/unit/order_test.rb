@@ -6,8 +6,8 @@ class OrderTest < ActiveSupport::TestCase
   should belong_to(:partner)
   
   should validate_presence_of(:partner)
-  should ensure_inclusion_of(:status).in_range(Order::STATUS_CODES)
-  should ensure_inclusion_of(:payment_method).in_range(Order::PAYMENT_METHODS)
+  should ensure_inclusion_of(:status).in_range(Order::STATUS_CODES.keys)
+  should ensure_inclusion_of(:payment_method).in_range(Order::PAYMENT_METHODS.keys)
   should validate_numericality_of(:amount)
   
   context "An Order" do

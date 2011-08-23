@@ -1,0 +1,23 @@
+- @page_title = 'Failed Invoices'
+
+%h1 Failed Invoices
+
+%table.tablesorter
+  %thead
+    %tr
+      %th Order #
+      %th Amt.
+      %th Partner name
+      %th Partner id
+      %th Billing email
+      %th
+      %th
+  - @orders.each do |order|
+    %tr
+      %td= order.id
+      %td= number_to_currency(order.amount / 100.0)
+      %td= order.partner.name
+      %td= link_to(order.partner.id, order.partner)
+      %td= order.billing_email
+      %td= link_to("Retry invoicing", retry_invoicing_tools_order_path(order), :method => :put)
+      %td= link_to("Mark as invoiced", mark_invoiced_tools_order_path(order), :method => :put)

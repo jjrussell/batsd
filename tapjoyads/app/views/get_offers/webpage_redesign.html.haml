@@ -1,4 +1,4 @@
-- @page_title = t('text.offerwall.title', :currency => @currency.name)
+- @page_title = @currency.conversion_rate > 0 ? t('text.offerwall.title', :currency => @currency.name) : ''
 
 - unless @message.blank?
   - render(:layout => 'box') do
@@ -7,9 +7,10 @@
 - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
   = render :partial => 'currency_selector'
 
-- render(:layout => 'box') do
-  %p.explanation
-    = t('text.offerwall.redesign_instructions', :currency => @currency.name)
+- if @currency.conversion_rate > 0
+  - render(:layout => 'box') do
+    %p.explanation
+      = t('text.offerwall.redesign_instructions', :currency => @currency.name)
 
 - if @start_index > 0
   = render :partial => 'pagination_links'
@@ -38,11 +39,12 @@
               .content
                 .icon
                   %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => offer.get_icon_url(:source => :cloudfront, :size => '57') }
-                .offer-text
-                  %span
-                    - amount = capture_haml do
-                      %label= @currency.get_visual_reward_amount(offer, params[:display_multiplier])
-                    = offer.direct_pay? ? t('text.offerwall.redesign_buy_currency', :amount => amount, :currency => @currency.name) : t('text.offerwall.redesign_earn_currency', :amount => amount, :currency => @currency.name)
+                .offer-text    
+                  - if @currency.conversion_rate > 0
+                    %span
+                      - amount = capture_haml do
+                        %label= @currency.get_visual_reward_amount(offer, params[:display_multiplier])
+                      = offer.direct_pay? ? t('text.offerwall.redesign_buy_currency', :amount => amount, :currency => @currency.name) : t('text.offerwall.redesign_earn_currency', :amount => amount, :currency => @currency.name)
                   %p
                     %b= offer.name
                 .ribbon
@@ -58,8 +60,9 @@
   #footer
     = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/site/privacy_mobile')
     %span &nbsp;|&nbsp;
-    = link_to_missing_currency
-    %span &nbsp;|&nbsp;
+    - if @currency.conversion_rate > 0
+      = link_to_missing_currency
+      %span &nbsp;|&nbsp;
     %span
       = t('text.shared.ads_by')
     %img{ :src => '/images/logo.jpg' }
@@ -100,7 +103,7 @@
     .explanation { color: #0c429b; font-weight: bold; font-size: 13px; margin: 0px 10px 0 10px; text-align: center; min-height: 14px; }
     .icon { float: left; margin: 0 10px 0 19px; }
     .icon img { width: 57px; height: 57px; }
-    .offer-text { color: #686868; display: table-cell; font-size: 14px; height: 57px; margin: 0; padding-right: 7px; position: relative; top: 10px; vertical-align: middle; }
+    .offer-text { color: #686868; display: table-cell; font-size: 14px; height: 47px; margin: 0; padding: 10px 7px 0 0; vertical-align: middle; }
     .offer-text span { color: #505050; font-size: 14px; font-weight: bold; }
     .offer-text span label { color: #0c429b; }
     .offer-text p { font-size: 12px; line-height: 14px; margin: 2px 0 0 0; }
