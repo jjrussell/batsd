@@ -12,10 +12,11 @@
     %title= @page_title.blank? ? 'Tapjoy Games' : "#{@page_title} - Tapjoy Games"
     
     = stylesheet_link_tag("games/tapjoygames")
-
+    = stylesheet_link_tag("games/tjg.retina", :media => "only screen and (-webkit-min-device-pixel-ratio: 2)")
     = yield :page_head
     
   %body
+    %h1
     %noscript
       %style{:type => "text/css", :media => "screen"}
         :plain
@@ -109,9 +110,9 @@
 
     
     - if Rails.env.production?
-      = javascript_include_tag 'games/tjgames.min-1.2'
+      = javascript_include_tag 'games/tjgames.min-1.21'
     - else
-      = javascript_include_tag 'games/src/jquery-1.4.2'
+      = javascript_include_tag 'games/src/tjg.jquery-1.6.2.min'
       = javascript_include_tag 'games/src/init'
       = javascript_include_tag 'games/src/jqtouch'
       = javascript_include_tag 'games/src/tapjoygames'

@@ -3,7 +3,10 @@ TJG.doc = document.documentElement;
 TJG.vars.orientationClasses = ['landscape', 'portrait'];
 TJG.vars.isIos = false;
 TJG.vars.isTouch = false;
+TJG.vars.imageLoaderInit = false;
+TJG.vars.autoKey = 0;  
 TJG.appOfferWall = {};
+TJG.loadedImages = {};
 (function(window, document) {
     var winH, winW;
     function centerDialog (el) {
