@@ -30,7 +30,7 @@ class Partner < ActiveRecord::Base
   validates_inclusion_of :exclusivity_level_type, :in => ExclusivityLevel::TYPES, :allow_nil => true, :allow_blank => false
   validates_inclusion_of :use_whitelist, :approved_publisher, :in => [ true, false ]
   validate :exclusivity_level_legal
-  validates_format_of :billing_email, :with => Authlogic::Regex.email, :message => "invalid, please input only one"
+  validates_format_of :billing_email, :with => Authlogic::Regex.email, :message => "should look like an email address.", :allow_blank => true, :allow_nil => true
   # validates_format_of :name, :with => /^[[:print:]]*$/, :message => "Partner name must be alphanumeric."
   validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
     record.errors.add(attribute, "must be blank when using whitelisting") if record.use_whitelist? && value.present?
