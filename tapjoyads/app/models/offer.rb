@@ -638,6 +638,9 @@ class Offer < ActiveRecord::Base
     
     if item_type == 'VideoOffer'
       icon_200 = Magick::Image.from_blob(icon_src_blob)[0].resize(200, 125).opaque('#ffffff00', 'white')
+      corner_mask_blob = bucket.get("display/round_mask_200x125.png")
+      corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(200, 125)
+      icon_200.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
       icon_200 = icon_200.opaque('#ffffff00', 'white')
       icon_200.alpha(Magick::OpaqueAlphaChannel)
       
