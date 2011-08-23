@@ -216,7 +216,9 @@ class Utils
                            'statz.partner-android.cached_stats.24_hours',
                            'statz.partner-android.cached_stats.7_days',
                            'statz.partner-android.cached_stats.1_month',
-                           'tools.disabled_popular_offers' ]
+                           'tools.disabled_popular_offers',
+                           'cached_apps.popular_ios',
+                           'cached_apps.popular_android' ]
       (keys + distributed_keys).each do |key|
         data = Mc.get(key)
         f = File.open("tmp/mc_#{key}", 'w')
@@ -255,7 +257,9 @@ class Utils
                            'statz.partner-android.cached_stats.24_hours',
                            'statz.partner-android.cached_stats.7_days',
                            'statz.partner-android.cached_stats.1_month',
-                           'tools.disabled_popular_offers' ]
+                           'tools.disabled_popular_offers',
+                           'cached_apps.popular_ios',
+                           'cached_apps.popular_android' ]
       Mc.cache.flush
       (keys + distributed_keys).each do |key|
         f = File.open("tmp/mc_#{key}", 'r')
@@ -271,7 +275,6 @@ class Utils
       Offer.cache_offers
       # TODO: Cache offers for each currency
       Mc.cache_all
-      PopularApp.cache
       true
     end
     
