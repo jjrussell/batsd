@@ -19,4 +19,5 @@ class QueueNames
   UDID_REPORTS             = RUN_MODE_PREFIX + 'UdidReports'
   CREATE_INVOICES          = RUN_MODE_PREFIX + 'CreateInvoices'
   ENCODED_WEB_REQUESTS     = RUN_MODE_PREFIX + 'EncodedWebRequests'
+  FAILED_EMAILS            = RUN_MODE_PREFIX + 'FailedEmails'
 end
