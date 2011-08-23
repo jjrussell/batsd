@@ -872,7 +872,7 @@ TJG.loadedImages = {};
     $("html, body").animate({scrollTop:0}, delay);
   },
   
-  loadImages: function (el, appId) {
+  loadImages: function (el) {
     TJG.vars.scrolling = false;
     var preLoad = 0, padSpace = 0;
     if (TJG.vars.isIos) {
@@ -883,6 +883,9 @@ TJG.loadedImages = {};
       if ( this && $.inviewport( this, { padding: padSpace, threshold:preLoad } ) ) {
         var img = $(o).children("img:first");
         $(img).attr("src", $(img).attr("s"));
+        $(img).error(function() {
+          $(img).attr("src", TJG.blank_img);
+        });          
       }
     }); 
     
@@ -893,12 +896,12 @@ TJG.loadedImages = {};
           setTimeout( function() {
             $(el).each(function (n,o) {
               var id = $(o).attr("id");
-              if (TJG.loadedImages[id]) {
-                return;
-              }
               if ( this && $.inviewport( this, { padding: padSpace, threshold:preLoad } ) ) {
                 var img = $(o).children("img:first");
                 $(img).attr("src", $(img).attr("s"));
+                $(img).error(function() {
+                  $(img).attr("src", TJG.blank_img);
+                });
               }
             }); 
             TJG.vars.scrolling = false;
@@ -1323,15 +1326,19 @@ TJG.ui = {
       $("#home").bind('pageAnimationEnd', function(e, info){
         if (info.direction == "in") {
           $("#home .content").fadeIn("fast");
+          TJG.ui.removeDialogs();
         }
       });
       $("#earn").bind('pageAnimationEnd', function(e, info){
         if (info.direction == "in") {
           $("#earn .content").fadeIn("fast");
-        }       });
+          TJG.ui.removeDialogs();
+        }       
+      });
       $("#more_games").bind('pageAnimationEnd', function(e, info){
         if (info.direction == "in") {
           $("#more_games .content").fadeIn("fast");
+          TJG.ui.removeDialogs();
         }       
       }); 
       $(".get_offerwall_jsonp").each(function() {
@@ -1381,7 +1388,7 @@ TJG.ui = {
                   }
                   t = t.join('');
                   $("#earn_content").html(t).fadeIn(fadeSpd);
-                  TJG.utils.loadImages(".offer_image_loader_wrapper", appId);
+                  TJG.utils.loadImages(".offer_image_loader_wrapper");
                   var isLoading = false;
                   var hasFailed = false;
                   $(".get_more_apps").click(function(){
@@ -1413,7 +1420,7 @@ TJG.ui = {
                             $.each($(el), function(n,o) {
                               $(o).fadeIn(fadeSpd);
                             });
-                            TJG.utils.loadImages(".offer_image_loader_wrapper", appId);
+                            TJG.utils.loadImages(".offer_image_loader_wrapper");
                             if (TJG.appOfferWall[appId]['offers_left'] > 0) {
                               $(".get_more_apps_content").html("Load More");
                             }
@@ -1489,6 +1496,7 @@ TJG.ui = {
               TJG.moreAppOfferWall = c;
               TJG.ui.hideLoader();
               $("#more_games_content").html(c).fadeIn(fadeSpd);
+              TJG.utils.loadImages(".offer_image_loader_wrapper");
             },
             error: function() {
               var m = [
@@ -1533,7 +1541,8 @@ TJG.ui = {
               TJG.topAppOfferWall = c;
               TJG.ui.hideLoader();
               $("#more_games_content").fadeOut(fadeSpdFast, function () {
-                $("#more_games_content").html(c).fadeIn(fadeSpdFast); 
+                $("#more_games_content").html(c).fadeIn(fadeSpdFast);
+                TJG.utils.loadImages(".offer_image_loader_wrapper"); 
               });
             },
             error: function () {
