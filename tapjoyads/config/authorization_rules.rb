@@ -40,6 +40,7 @@ authorization do
   role :payops do
     includes :money
     has_permission_on :tools_payouts, :to => [ :index ]
+    has_permission_on :tools_orders, :to => [ :failed_invoices, :retry_invoicing, :mark_invoiced ]
   end
 
   role :payout_manager do

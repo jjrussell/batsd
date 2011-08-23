@@ -30,6 +30,7 @@ class Partner < ActiveRecord::Base
   validates_inclusion_of :exclusivity_level_type, :in => ExclusivityLevel::TYPES, :allow_nil => true, :allow_blank => false
   validates_inclusion_of :use_whitelist, :approved_publisher, :in => [ true, false ]
   validate :exclusivity_level_legal
+  validates_format_of :billing_email, :with => Authlogic::Regex.email, :message => "should look like an email address.", :allow_blank => true, :allow_nil => true
   # validates_format_of :name, :with => /^[[:print:]]*$/, :message => "Partner name must be alphanumeric."
   validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
     record.errors.add(attribute, "must be blank when using whitelisting") if record.use_whitelist? && value.present?
@@ -56,6 +57,7 @@ class Partner < ActiveRecord::Base
   end
   
   before_validation :remove_whitespace_from_attributes, :update_rev_share
+  before_save :check_billing_email
   after_save :update_currencies, :update_offers
   
   cattr_reader :per_page
@@ -214,7 +216,7 @@ class Partner < ActiveRecord::Base
     advertiser_conversions_sum = monthly_accountings.prior_to(archive_cutoff).sum(:spend)
     advertiser_conversions_sum += Conversion.created_since(archive_cutoff).sum(:advertiser_amount, :conditions => [ "advertiser_offer_id IN (?)", offer_ids ])
     
-    orders_sum = orders.sum(:amount, :conditions => 'status = 1')
+    orders_sum = orders.sum(:amount)
     payouts_sum = payouts.sum(:amount, :conditions => 'status = 1')
     earnings_adjustments_sum = earnings_adjustments.sum(:amount)
     
@@ -317,4 +319,7 @@ private
     self.offer_whitelist   = offer_whitelist.gsub(/\s/, '')
   end
   
+  def check_billing_email
+    self.freshbooks_client_id = nil if billing_email_changed?
+  end
 end

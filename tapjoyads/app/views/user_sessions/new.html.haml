@@ -54,18 +54,16 @@
 - content_for :page_javascript do
   :plain
     var forgotPassword = $.noop;
-    $(function($) {
-      toggleForgotPassword = function() {
-        if ($('#forgot_password_mobile').is(':hidden')) {
-          $('#login_mobile').hide();
-          $('#forgot_password_mobile').show();
-        } else {
-          $('#login_mobile').show();
-          $('#forgot_password_mobile').hide();
-        }
-      };
-      $('#user_session_username').focus();
-    });
+    var toggleForgotPassword = function () {
+      if ($('#forgot_password_mobile').is(':hidden')) {
+        $('#login_mobile').hide();
+        $('#forgot_password_mobile').show();
+      } else {
+        $('#login_mobile').show();
+        $('#forgot_password_mobile').hide();
+      }
+    };
+    $('#user_session_username').focus();
   
 - content_for :page_styles do
   :plain
