@@ -136,10 +136,6 @@ private
       :video_offer_ids      => params[:video_offer_ids].to_s.split(','))
   end
   
-  def save_web_request
-    @web_request.save
-  end
-  
   def set_geoip_data(is_server_to_server = false)
     if is_server_to_server && params[:device_ip].blank?
       @geoip_data = {}
