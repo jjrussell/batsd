@@ -30,7 +30,7 @@ Rails::Initializer.run do |config|
   # These gems can't be vendored
   config.gem 'daemons', :version => '1.0.10'
   config.gem 'hpricot', :version => '0.8.1'
-  config.gem 'json', :version => '1.1.9'
+  config.gem 'json', :version => '1.5.3'
   config.gem 'libxml-ruby', :version => '1.1.3', :lib => 'xml'
   config.gem 'memcached', :version => '1.2.7'
   config.gem 'mysql', :version => '2.8.1'
@@ -48,7 +48,7 @@ Rails::Initializer.run do |config|
   config.gem 'hoptoad_notifier', :version => '2.4.11'
   config.gem 'plist', :version => '3.1.0'
   config.gem 'read_from_slave', :version => '0.4.0'
-  config.gem 'uuidtools', :version => '2.0.0'
+  config.gem 'uuidtools', :version => '2.1.2'
   config.gem 'will_paginate', :version => '2.3.12'
   config.gem 'hominid', :version => '2.2.0'
   config.gem 'curbit', :version => '0.2.0'

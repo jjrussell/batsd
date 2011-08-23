@@ -161,6 +161,24 @@ module UUIDTools
         clock_seq_hi_and_reserved, clock_seq_low, nodes)
     end
 
+    # Parses a UUID from an Integer.
+    def self.parse_int(uuid_int)
+      unless uuid_int.kind_of?(Integer)
+        raise ArgumentError,
+          "Expected Integer, got #{uuid_int.class.name} instead."
+      end
+      return self.parse_raw(self.convert_int_to_byte_string(uuid_int, 16))
+    end
+
+    # Parse a UUID from a hexdigest String.
+    def self.parse_hexdigest(uuid_hexdigest)
+      unless uuid_hexdigest.kind_of?(String)
+        raise ArgumentError,
+          "Expected String, got #{uuid_hexdigest.class.name} instead."
+      end
+      return self.parse_int(uuid_hexdigest.to_i(16))
+    end
+
     # Creates a UUID from a random value.
     def self.random_create()
       new_uuid = self.parse_raw(SecureRandom.random_bytes(16))
@@ -192,8 +210,7 @@ module UUIDTools
             octet.to_i(16)
           end
         else
-          nodes = []
-          SecureRandom.random_bytes(6).each_byte { |chr| nodes << chr }
+          nodes = SecureRandom.random_bytes(6).unpack("C*")
           nodes[0] |= 0b00000001
         end
         for i in 0..5
@@ -359,36 +376,43 @@ module UUIDTools
 
     # Returns the hex digest of the UUID object.
     def hexdigest
-      return self.to_i.to_s(16).rjust(32, "0")
+      return @hexdigest unless @hexdigest.nil?
+      if self.frozen?
+        return generate_hexdigest
+      else
+        return (@hexdigest = generate_hexdigest)
+      end
     end
 
     # Returns the raw bytes that represent this UUID.
     def raw
-      return self.class.convert_int_to_byte_string(self.to_i, 16)
+      return @raw unless @raw.nil?
+      if self.frozen?
+        return generate_raw
+      else
+        return (@raw = generate_raw)
+      end
     end
 
     # Returns a string representation for this UUID.
     def to_s
-      result = sprintf("%8.8x-%4.4x-%4.4x-%2.2x%2.2x-", @time_low, @time_mid,
-        @time_hi_and_version, @clock_seq_hi_and_reserved, @clock_seq_low);
-      for i in 0..5
-        result << sprintf("%2.2x", @nodes[i])
+      return @string unless @string.nil?
+      if self.frozen?
+        return generate_s
+      else
+        return (@string = generate_s)
       end
-      return result.downcase
     end
     alias_method :to_str, :to_s
 
     # Returns an integer representation for this UUID.
     def to_i
-      @integer ||= (begin
-        bytes = (time_low << 96) + (time_mid << 80) +
-          (time_hi_and_version << 64) + (clock_seq_hi_and_reserved << 56) +
-          (clock_seq_low << 48)
-        for i in 0..5
-          bytes += (nodes[i] << (40 - (i * 8)))
-        end
-        bytes
-      end)
+      return @integer unless @integer.nil?
+      if self.frozen?
+        return generate_i
+      else
+        return (@integer = generate_i)
+      end
     end
 
     # Returns a URI string for this UUID.
@@ -398,8 +422,56 @@ module UUIDTools
 
     # Returns an integer hash value.
     def hash
-      @hash ||= self.to_i % 0x3fffffff
+      return @hash unless @hash.nil?
+      if self.frozen?
+        return generate_hash
+      else
+        return (@hash = generate_hash)
+      end
     end
+
+    #These methods generate the appropriate representations the above methods cache
+    protected
+    
+    # Generates the hex digest of the UUID object.
+    def generate_hexdigest
+      return self.to_i.to_s(16).rjust(32, "0")
+    end
+    
+    # Generates an integer hash value.
+    def generate_hash
+      return self.to_i % 0x3fffffff
+    end
+    
+    # Generates an integer representation for this UUID.
+    def generate_i
+      return (begin
+        bytes = (time_low << 96) + (time_mid << 80) +
+          (time_hi_and_version << 64) + (clock_seq_hi_and_reserved << 56) +
+          (clock_seq_low << 48)
+        for i in 0..5
+          bytes += (nodes[i] << (40 - (i * 8)))
+        end
+        bytes
+      end)
+    end
+    
+    # Generates a string representation for this UUID.
+    def generate_s
+      result = sprintf("%8.8x-%4.4x-%4.4x-%2.2x%2.2x-", @time_low, @time_mid,
+        @time_hi_and_version, @clock_seq_hi_and_reserved, @clock_seq_low);
+      for i in 0..5
+        result << sprintf("%2.2x", @nodes[i])
+      end
+      return result.downcase
+    end
+    
+    # Generates the raw bytes that represent this UUID.
+    def generate_raw
+      return self.class.convert_int_to_byte_string(self.to_i, 16)
+    end
+    
+    public
 
     # Returns true if this UUID is exactly equal to the other UUID.
     def eql?(other)
@@ -412,13 +484,36 @@ module UUIDTools
       if !defined?(@@mac_address)
         require 'rbconfig'
         os_platform = Config::CONFIG['target_os']
-        if (os_platform =~ /win/ && !(os_platform =~ /darwin/)) ||
-            os_platform =~ /w32/
+        os_class = nil
+        if (os_platform =~ /win/i && !(os_platform =~ /darwin/i)) ||
+            os_platform =~ /w32/i
+          os_class = :windows
+        elsif os_platform =~ /solaris/i
+          os_class = :solaris
+        elsif os_platform =~ /netbsd/i
+          os_class = :netbsd
+        elsif os_platform =~ /openbsd/i
+          os_class = :openbsd
+        end
+        mac_regexps = [
+          Regexp.new("address:? (#{(["[0-9a-fA-F]{2}"] * 6).join(":")})"),
+          Regexp.new("addr:? (#{(["[0-9a-fA-F]{2}"] * 6).join(":")})"),
+          Regexp.new("ether:? (#{(["[0-9a-fA-F]{2}"] * 6).join(":")})"),
+          Regexp.new("(#{(["[0-9a-fA-F]{2}"] * 6).join(":")})"),
+          Regexp.new("(#{(["[0-9a-fA-F]{2}"] * 6).join("-")})")
+        ]
+        parse_mac = lambda do |output|
+          (mac_regexps.map do |regexp|
+            result = output[regexp, 1]
+            result.downcase.gsub(/-/, ":") if result != nil
+          end).compact.first
+        end
+        if os_class == :windows
           script_in_path = true
         else
           script_in_path = Kernel.system("which ifconfig 2>&1 > /dev/null")
         end
-        if os_platform =~ /solaris/
+        if os_class == :solaris
           begin
             ifconfig_output =
               (script_in_path ? `ifconfig -a` : `/sbin/ifconfig -a`)
@@ -439,73 +534,55 @@ module UUIDTools
             rescue Exception
             end
           end
-        elsif os_platform =~ /win/ && !(os_platform =~ /darwin/)
+        elsif os_class == :windows
           begin
-            ifconfig_output = `ipconfig /all`
-            mac_addresses = ifconfig_output.scan(
-              Regexp.new("(#{(["[0-9a-fA-F]{2}"] * 6).join("-")})"))
-            if mac_addresses.size > 0
-              @@mac_address = mac_addresses.first.first.downcase.gsub(/-/, ":")
-            end
+            @@mac_address = parse_mac.call(`ipconfig /all`)
           rescue
           end
         else
           begin
-            mac_addresses = []
-            if os_platform =~ /netbsd/
-              ifconfig_output =
-                (script_in_path ? `ifconfig -a 2>&1` : `/sbin/ifconfig -a 2>&1`)
-              mac_addresses = ifconfig_output.scan(
-                Regexp.new("address\: (#{(["[0-9a-fA-F]{2}"] * 6).join(":")})"))
-            elsif os_platform =~ /openbsd/
-              ifconfig_output = `/sbin/ifconfig -a 2>&1`
-              ifconfig_output =
-                (script_in_path ? `ifconfig -a 2>&1` : `/sbin/ifconfig -a 2>&1`)
-              mac_addresses = ifconfig_output.scan(
-                Regexp.new("addr (#{(["[0-9a-fA-F]{2}"] * 6).join(":")})"))
+            if os_class == :netbsd
+              @@mac_address = parse_mac.call(
+                script_in_path ? `ifconfig -a 2>&1` : `/sbin/ifconfig -a 2>&1`
+              )
+            elsif os_class == :openbsd
+              @@mac_address = parse_mac.call(
+                script_in_path ? `ifconfig -a 2>&1` : `/sbin/ifconfig -a 2>&1`
+              )
             elsif File.exists?('/sbin/ifconfig')
-              ifconfig_output =
-                (script_in_path ? `ifconfig 2>&1` : `/sbin/ifconfig 2>&1`)
-              mac_addresses = ifconfig_output.scan(
-                Regexp.new("ether (#{(["[0-9a-fA-F]{2}"] * 6).join(":")})"))
-              if mac_addresses.size == 0
-                ifconfig_output =
-                  (script_in_path ?
-                    `ifconfig -a 2>&1` : `/sbin/ifconfig -a 2>&1`)
-                mac_addresses = ifconfig_output.scan(
-                  Regexp.new("ether (#{(["[0-9a-fA-F]{2}"] * 6).join(":")})"))
+              @@mac_address = parse_mac.call(
+                script_in_path ? `ifconfig 2>&1` : `/sbin/ifconfig 2>&1`
+              )
+              if @@mac_address == nil
+                @@mac_address = parse_mac.call(
+                  script_in_path ?
+                    `ifconfig -a 2>&1` : `/sbin/ifconfig -a 2>&1`
+                )
               end
-              if mac_addresses.size == 0
-                ifconfig_output =
-                  (script_in_path ?
+              if @@mac_address == nil
+                @@mac_address = parse_mac.call(
+                  script_in_path ?
                     `ifconfig | grep HWaddr | cut -c39- 2>&1` :
-                    `/sbin/ifconfig | grep HWaddr | cut -c39- 2>&1`)
-                mac_addresses = ifconfig_output.scan(
-                  Regexp.new("(#{(["[0-9a-fA-F]{2}"] * 6).join(":")})"))
+                    `/sbin/ifconfig | grep HWaddr | cut -c39- 2>&1`
+                )
               end
             else
-              ifconfig_output =
-                (script_in_path ? `ifconfig 2>&1` : `/sbin/ifconfig 2>&1`)
-              mac_addresses = ifconfig_output.scan(
-                Regexp.new("ether (#{(["[0-9a-fA-F]{2}"] * 6).join(":")})"))
-              if mac_addresses.size == 0
-                ifconfig_output =
-                  (script_in_path ?
-                    `ifconfig -a 2>&1` : `/sbin/ifconfig -a 2>&1`)
-                mac_addresses = ifconfig_output.scan(
-                  Regexp.new("ether (#{(["[0-9a-fA-F]{2}"] * 6).join(":")})"))
+              @@mac_address = parse_mac.call(
+                script_in_path ? `ifconfig 2>&1` : `/sbin/ifconfig 2>&1`
+              )
+              if @@mac_address == nil
+                @@mac_address = parse_mac.call(
+                  script_in_path ?
+                    `ifconfig -a 2>&1` : `/sbin/ifconfig -a 2>&1`
+                )
               end
-              if mac_addresses.size == 0
-                ifconfig_output =
-                  (script_in_path ?
+              if @@mac_address == nil
+                @@mac_address = parse_mac.call(
+                  script_in_path ?
                     `ifconfig | grep HWaddr | cut -c39- 2>&1` :
-                    `/sbin/ifconfig | grep HWaddr | cut -c39- 2>&1`)
-                mac_addresses = ifconfig_output.scan(
-                  Regexp.new("(#{(["[0-9a-fA-F]{2}"] * 6).join(":")})"))
+                    `/sbin/ifconfig | grep HWaddr | cut -c39- 2>&1`
+                )
               end
-            end
-            if mac_addresses.size > 0
-              @@mac_address = mac_addresses.first.first
             end
           rescue
           end
@@ -565,6 +642,9 @@ module UUIDTools
 
     def self.convert_int_to_byte_string(integer, size) #:nodoc:
       byte_string = ""
+      if byte_string.respond_to?(:force_encoding)
+        byte_string.force_encoding(Encoding::ASCII_8BIT)
+      end
       for i in 0..(size - 1)
         byte_string << ((integer >> (((size - 1) - i) * 8)) & 0xFF)
       end
@@ -572,6 +652,9 @@ module UUIDTools
     end
 
     def self.convert_byte_string_to_int(byte_string) #:nodoc:
+      if byte_string.respond_to?(:force_encoding)
+        byte_string.force_encoding(Encoding::ASCII_8BIT)
+      end
       integer = 0
       size = byte_string.size
       for i in 0..(size - 1)
