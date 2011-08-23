@@ -17,7 +17,15 @@ function stringToNumber(currency, allowNegative) {
   }
 }
 
+function isMobile() { 
+  return navigator.userAgent.toLowerCase().match('mobile');
+}
+
 $(function($){
+  if (!isMobile()) {
+    $('select.chosen').chosen();
+  }
+  
   $('.flash').click(function(){
     if ($(this).children('a, span a').length == 0) {
       $(this).slideUp();

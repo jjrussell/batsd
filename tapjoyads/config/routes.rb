@@ -3,10 +3,11 @@ ActionController::Routing::Routes.draw do |map|
   
   map.with_options({:path_prefix => MACHINE_TYPE == 'games' ? '' : 'games', :name_prefix => 'games_'}) do |m|
     m.root :controller => 'games/homepage', :action => :index
-    m.real_index 'real_index', :controller => 'games/homepage', :action => :real_index
-    m.more_games 'more_games', :controller => 'games/more_games', :action => :index
     m.tos 'tos', :controller => 'games/homepage', :action => :tos
     m.privacy 'privacy', :controller => 'games/homepage', :action => :privacy
+    
+    m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
+    m.more_games_popular 'popular', :controller => 'games/more_games', :action => :popular
     
     m.resources :gamer_sessions, :controller => 'games/gamer_sessions', :only => [ :new, :create, :destroy ]
     m.login 'login', :controller => 'games/gamer_sessions', :action => :new
@@ -92,12 +93,17 @@ ActionController::Routing::Routes.draw do |map|
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
                      :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
-                     :freemium_android => :get,:award_currencies => :get, :update_award_currencies => :post},
+                     :freemium_android => :get, :award_currencies => :get, :update_award_currencies => :post},
     :member => {  :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post}
   map.namespace :tools do |tools|
     tools.resources :premier_partners, :only => [ :index ]
     tools.resources :generic_offers, :only => [ :new, :create, :edit, :update ]
-    tools.resources :orders, :only => [ :new, :create ]
+    tools.resources :orders, :only => [ :new, :create ],
+      :member => { :mark_invoiced => :put, :retry_invoicing => :put },
+      :collection => { :failed_invoices => :get }
+    tools.resources :video_offers, :only => [ :new, :create, :edit, :update ] do |video_offer|
+      video_offer.resources :video_buttons, :controller => 'video_offers/video_buttons'
+    end
     tools.resources :payouts, :only => [ :index, :create ], :member => { :info => :get }
     tools.resources :enable_offer_requests, :only => [ :update, :index ]
     tools.resources :admin_devices, :only => [ :index, :new, :create, :edit, :update, :destroy ]

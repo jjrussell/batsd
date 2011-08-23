@@ -36,6 +36,13 @@ class ClickController < ApplicationController
     redirect_to(get_destination_url)
   end
   
+  def video
+    create_click('video')
+    handle_pay_per_click
+    
+    render :text => 'OK'
+  end
+  
   def test_offer
     publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @currency, publisher_app ])

@@ -1,0 +1,17 @@
+xml.instruct!
+xml.TapjoyVideos do
+  @offer_list.each do |offer|
+    xml.TapjoyVideo do
+        xml.ClickURL offer.get_click_url(:publisher_app => @publisher_app, :publisher_user_id => params[:publisher_user_id], :udid => params[:udid], :currency_id => @currency.id, 
+                                         :source => 'videos', :viewed_at => Time.zone.now,:displayer_app_id => params[:app_id],:country_code => @geoip_data[:country])
+        xml.OfferID offer.id
+        xml.Name offer.name
+        xml.Amount @currency.get_visual_reward_amount(offer, params[:display_multiplier])
+        xml.CurrencyName @currency.name
+        xml.VideoURL offer.url
+        xml.Buttons do
+          xml << offer.third_party_data
+        end
+    end
+  end
+end

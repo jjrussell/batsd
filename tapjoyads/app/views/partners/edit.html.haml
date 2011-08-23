@@ -4,7 +4,7 @@
 
 - form_for(@partner, nil, :html => { :class => 'tjform' }) do |f|
   .field
-    = f.label(:approved_publisher, 'Approved publisher')
+    = f.label :approved_publisher
     #help_approved_publisher.help ?
     = f.check_box(:approved_publisher)
   .field
@@ -17,7 +17,12 @@
     - options = options_from_collection_for_select(User.account_managers, "id", "email", @partner.account_managers.map(&:id))
     = f.select :account_managers, options, {:include_blank => '(no one)'}
   .field
-    = f.label :rev_share, 'Rev share'
+    = f.label :billing_email
+    #help_billing_email.help ?
+    = f.text_field :billing_email
+    = error_message_on(@partner, :billing_email) if @partner.errors.on :billing_email
+  .field
+    = f.label :rev_share
     #help_rev_share.help ?
     = f.text_field :rev_share
     = error_message_on(@partner, :rev_share) if @partner.errors.on :rev_share
@@ -27,12 +32,12 @@
     = f.text_field :direct_pay_share
     = error_message_on(@partner, :direct_pay_share) if @partner.errors.on :direct_pay_share
   .field
-    = f.label :transfer_bonus, 'Transfer bonus'
+    = f.label :transfer_bonus
     #help_transfer_bonus.help ?
     = f.text_field :transfer_bonus
     = error_message_on(@partner, :transfer_bonus) if @partner.errors.on :transfer_bonus
   .field
-    = f.label :disabled_partners, 'Disabled partners'
+    = f.label :disabled_partners
     #help_disabled_partners.help ?
     = f.text_area :disabled_partners
     = error_message_on(@partner, :disabled_partners) if @partner.errors.on :disabled_partners
@@ -51,6 +56,8 @@
     Who is managing this partner?
   #help_disabled_partners_content{:name => 'Disabled partners'}
     Offers belonging to partners that are in this list will not be shown in this partner's offerwalls.
+  #help_billing_email_content{:name => 'Billing email'}
+    The email contact used for invoicing.
   #help_rev_share_content{:name => 'Rev share'}
     The share of offer revenue that this publisher gets. A number between 0 an 1.
   #help_direct_pay_share_content{:name => 'Direct-pay share'}

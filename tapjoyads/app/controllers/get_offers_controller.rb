@@ -171,7 +171,8 @@ private
         :library_version      => params[:library_version],
         :os_version           => params[:os_version],
         :source               => params[:source],
-        :screen_layout_size   => params[:screen_layout_size])
+        :screen_layout_size   => params[:screen_layout_size],
+        :video_offer_ids      => params[:video_offer_ids].to_s.split(','))
 
     @offer_list = @offer_list[@start_index, @max_items] || []
   end

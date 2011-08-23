@@ -40,15 +40,15 @@ class AppStoreTest < ActiveSupport::TestCase
     should "calculate equivalent price when not using USD" do
       AppStore::PRICE_TIERS.each do |currency, tiers|
         tiers.each_with_index do |price, tier|
-          expected_price = 99 + tier * 100
+          expected_price = 0.01 * (99 + tier * 100)
           usd_price = AppStore.recalculate_app_price('iphone', price, currency)
           assert_equal expected_price, usd_price, [price, currency].inspect
         end
       end
 
-      assert_equal 199, AppStore.recalculate_app_price('iphone',   199, 'USD')
-      assert_equal  99, AppStore.recalculate_app_price('iphone',  2999, 'QQQ')
-      assert_equal  99, AppStore.recalculate_app_price('android', 2999, 'JPY')
+      assert_equal 1.99, AppStore.recalculate_app_price('iphone',  1.99, 'USD')
+      assert_equal 0.99, AppStore.recalculate_app_price('iphone',  2999, 'QQQ')
+      assert_equal 0.99, AppStore.recalculate_app_price('android', 2999, 'JPY')
     end
   end
 end
