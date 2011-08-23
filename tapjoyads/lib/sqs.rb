@@ -43,4 +43,24 @@ class Sqs
       end
     end
   end
+  
+  def self.read_messages(queue_name)
+    q = queue(queue_name)
+    loop do
+      message = q.receive
+      unless message.to_s == ''
+        yield message
+      end
+    end
+  end
+  
+  def self.delete_messages(queue_name, regex)
+    read_messages(queue_name) do |message|
+      if message.to_s =~ regex
+        puts message.to_s
+        message.delete
+      end
+    end
+  end
+  
 end
