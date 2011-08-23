@@ -1,6 +1,8 @@
 class Employee < ActiveRecord::Base
   include UuidPrimaryKey
 
+  has_many :reviews, :as => :author
+
   validates_presence_of :first_name, :last_name, :title, :email, :superpower, :current_games, :weapon, :biography
   validates_uniqueness_of :email
   
