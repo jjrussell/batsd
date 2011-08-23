@@ -48,15 +48,6 @@ class Order < ActiveRecord::Base
   def is_bonus?;    payment_method==2;  end
   def is_transfer?; payment_method==3;  end
 
-  def create_invoice
-    @create_invoice = false unless defined?(@create_invoice)
-    @create_invoice
-  end
-
-  def create_invoice=(bool)
-    @create_invoice = ['1', true].include?(bool)
-  end
-
   def create_freshbooks_invoice!
     return if invoice_id
 
