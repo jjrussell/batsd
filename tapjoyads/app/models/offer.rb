@@ -608,21 +608,22 @@ class Offer < ActiveRecord::Base
   end
   
   def get_icon_url(options = {})
-    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id)}.merge(options))
+    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
   end
   
   def self.get_icon_url(options = {})
     source   = options.delete(:source)   { :s3 }
     size     = options.delete(:size)     { '57' }
     icon_id  = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
+    item_type  = options.delete(:item_type)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
     
-    bucket = S3.bucket(BucketNames::TAPJOY)
-    existing_icon_blob = bucket.get("icons/src/#{icon_id}.jpg") rescue ''
-    if existing_icon_blob.blank?
-      return "#{prefix}/videos/assets/default.png"
+    if item_type == 'VideoOffer'
+      bucket = S3.bucket(BucketNames::TAPJOY)
+      existing_icon_blob = bucket.get("icons/src/#{icon_id}.jpg") rescue ''
+      return "#{prefix}/videos/assets/default.png" if existing_icon_blob.blank?
     end
     
     "#{prefix}/icons/#{size}/#{icon_id}.jpg"
