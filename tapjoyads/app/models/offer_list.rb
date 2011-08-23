@@ -21,8 +21,18 @@ class OfferList
     @video_offer_ids            = options.delete(:video_offer_ids) { [] }
     
     @hide_rewarded_app_installs = @currency.hide_rewarded_app_installs_for_version?(@app_version, @source) if @currency
-    @platform_name              = @publisher_app.platform_name if @publisher_app
     @normalized_device_type     = Device.normalize_device_type(@device_type)
+    
+    if @publisher_app
+      @platform_name            = @publisher_app.platform_name   
+      @normalized_device_type ||=
+        case @publisher_app.platform
+        when 'android', 'windows'
+          @publisher_app.platform
+        else
+          'itouch'
+        end
+    end
     
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
