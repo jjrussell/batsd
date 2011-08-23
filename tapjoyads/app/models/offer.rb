@@ -622,8 +622,7 @@ class Offer < ActiveRecord::Base
     bucket = S3.bucket(BucketNames::TAPJOY)
     existing_icon_blob = bucket.get("icons/src/#{icon_id}.jpg") rescue ''
     if existing_icon_blob.blank?
-      default_image_name = '84bbcd065714fe388a0cdb46506fcbfa410842a88ec97d00f47d2a966d0c7297'
-      return "#{prefix}/icons/#{size}/#{default_image_name}.jpg"
+      return "#{prefix}/videos/assets/default.png"
     end
     
     "#{prefix}/icons/#{size}/#{icon_id}.jpg"
