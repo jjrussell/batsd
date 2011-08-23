@@ -271,6 +271,7 @@ class Utils
       Offer.cache_offers
       # TODO: Cache offers for each currency
       Mc.cache_all
+      PopularApp.cache
       true
     end
     
