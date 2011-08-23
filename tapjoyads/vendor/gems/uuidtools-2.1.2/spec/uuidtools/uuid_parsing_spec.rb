@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), "../spec_helper.rb")
+require File.expand_path("../../spec_helper.rb", __FILE__)
 
 describe UUIDTools::UUID, "when parsing" do
   it "should correctly parse the MAC address from a timestamp version UUID" do
@@ -105,5 +105,23 @@ describe UUIDTools::UUID, "when parsing" do
     UUIDTools::UUID.new(0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0]).should be_eql(
       UUIDTools::UUID.new(0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0])
     )
+  end
+
+  it "should correctly parse integers" do
+    UUIDTools::UUID.new(0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0]).should ==
+      UUIDTools::UUID.parse_int(0)
+    UUIDTools::UUID.parse_int(0).should be_nil_uuid
+    uuid = UUIDTools::UUID.timestamp_create
+    UUIDTools::UUID.parse_int(uuid.to_i).should == uuid
+  end
+
+  it "should correctly parse hexdigests" do
+    UUIDTools::UUID.new(0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0]).should ==
+      UUIDTools::UUID.parse_hexdigest("00000000000000000000000000000000")
+    UUIDTools::UUID.parse_hexdigest(
+      "00000000000000000000000000000000"
+    ).should be_nil_uuid
+    uuid = UUIDTools::UUID.timestamp_create
+    UUIDTools::UUID.parse_hexdigest(uuid.hexdigest).should == uuid
   end
 end
