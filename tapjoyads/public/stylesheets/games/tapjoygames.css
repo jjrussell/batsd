@@ -1351,13 +1351,6 @@ body {
 #jqt .out {
   z-index: 0 !important;
 }
-#jqt.supports3d {
-  -webkit-perspective: 800;
-  -webkit-transform-style: preserve-3d;
-}
-#jqt.supports3d > * {
-  -webkit-transform: translate3d(0,0,0) rotate(0) scale(1);
-}
 #jqt .fade.in {
   -webkit-animation-name: fadeIn;
 }
@@ -1474,11 +1467,9 @@ body {
   }
 }
 #jqt .slideup.in {
-  z-index: 10;
   -webkit-animation-name: slideUpIn;
 }
 #jqt .slideup.out {
-  z-index: 0;
   -webkit-animation-name: slideUpOut;
 }
 @-webkit-keyframes slideUpIn {
@@ -1498,11 +1489,9 @@ body {
   }
 }
 #jqt .slidedown.in {
-  z-index: 0;
   -webkit-animation-name: slideDownIn;
 }
 #jqt .slidedown.out {
-  z-index: 10;
   -webkit-animation-name: slideDownOut;
 }
 @-webkit-keyframes slideDownIn {

@@ -10,3 +10,5 @@
 
 #right ul { color: #636363; float: left; font: 12px arial; margin-bottom: 15px; }
 #right li { clear: left; float: left; list-style: disc; margin: 0 0 10px 15px; }
+
+#jobscore { font-weight: bold; font-size: 20px; }

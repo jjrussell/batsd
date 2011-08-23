@@ -27,8 +27,9 @@ class EditorsPick < ActiveRecord::Base
   end
 
   def self.cached_active
-    Mc.distributed_get_and_put('active_editors_picks', false, 1.minute) do
-      self.active.first(10)
+    Mc.distributed_get_and_put('cached_apps.active_editors_picks', false, 1.minute) do
+      picks = self.active.first(10)
+      picks.map { |p| CachedApp.new(p.offer, p.description) }
     end
   end
 private
