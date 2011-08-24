@@ -68,7 +68,7 @@ class App < ActiveRecord::Base
   has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "not rewarded", :order => "created_at"
   has_many :app_metadata_mappings
   has_many :app_metadatas, :through => :app_metadata_mappings
-  has_many :reviews
+  has_many :app_reviews
   
   belongs_to :partner
 
