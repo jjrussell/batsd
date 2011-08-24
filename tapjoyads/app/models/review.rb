@@ -8,13 +8,14 @@ class Review < ActiveRecord::Base
   validates_uniqueness_of :featured_on
   validates_presence_of :author, :app, :text
 
-  named_scope :not_featured_employee, :conditions => { :featured_on => nil, :author_type => 'Employee' }, :order => "created_at DESC"
-  named_scope :already_featured, :conditions => [ "featured_on < ?", Time.zone.now.to_date ], :order => "featured_on ASC"
-  named_scope :featured_on_date, lambda { |date| { :conditions => ["featured_on = ?", date.to_date] } }
+  named_scope :employee, :conditions => { :author_type => 'Employee' }
+  named_scope :not_featured, :conditions => { :featured_on => nil }, :order => "created_at DESC"
+  named_scope :featured_before,  lambda { |date| { :conditions => [ "featured_on < ?", date.to_date ], :order => "featured_on ASC" } }
+  named_scope :featured_on_date, lambda { |date| { :conditions => [ "featured_on = ?", date.to_date ] } }
 
   def self.featured_review
     review = Review.featured_on_date(Time.zone.now).first ||
-             Review.not_featured_employee.first ||
+             Review.employee.featured_before(Time.zone.now).first ||
              Review.already_featured.first
 
     review.featured_on = Time.zone.now
