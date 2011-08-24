@@ -12,7 +12,7 @@
 
 ######
 # options
-@version:4.0
+@version:3.1
 
 options {
         # disable the chained hostname format in logs
@@ -68,7 +68,7 @@ options {
 	# is not a real hostname.
 	bad_hostname("^gconfd$");
 
-  # time_sleep(20); # default: 0 milliseconds
+  time_sleep(10); # default: 0 milliseconds
 };
 
 
@@ -346,8 +346,8 @@ source app_server {
     ip(0.0.0.0)
     port(51400)
     max-connections(8192) # default: 10 connections
-    # log_fetch_limit()     # default: 10 messages per poll per connection
-    # log_iw_size()         # default: 100 messages
+    log_fetch_limit(50)   # default: 10 messages per poll per connection
+    log_iw_size(20000)    # default: 100 messages
   );
 };
 
@@ -360,9 +360,9 @@ destination ebs_file {
     dir_group("ubuntu")
     dir_perm(0755)
     create_dirs(yes)
-    # flush_lines()   # default: 0 lines
-    # flush_timeout() # default: 10000 milliseconds
-    # log_fifo_size() # default: 1000 lines
+    flush_lines(1000)     # default: 0 lines
+    flush_timeout(1000)   # default: 10000 milliseconds
+    log_fifo_size(100000) # default: 1000 lines
   );
 };
 

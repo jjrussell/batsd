@@ -344,10 +344,10 @@ destination log_server {
   tcp("10.42.35.25"
     failover_servers("10.42.38.104", "10.92.46.149")
     port(51400)
-    # flush_lines()                  # default: 0 lines
-    # flush_timeout()                # default: 10000 milliseconds
-    # log_disk_fifo_size(5368709120) # default: 0 bytes
-    # log_fifo_size()                # default: 1000 lines
+    flush_lines(100)               # default: 0 lines
+    flush_timeout(1000)            # default: 10000 milliseconds
+    log_disk_fifo_size(4294967296) # default: 0 bytes
+    log_fifo_size(100000)          # default: 1000 lines
   );
 };
 
@@ -359,5 +359,5 @@ log {
   source(s_all);
   filter(f_rails);
   destination(log_server);
-  flags(final);
+  flags(flow-control, final);
 };
