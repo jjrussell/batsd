@@ -28,7 +28,7 @@ class GetOffersController < ApplicationController
     set_offer_list(:is_server_to_server => false)
 
     if @currency.hide_rewarded_app_installs_for_version?(params[:app_version], params[:source]) || DEVICES_FOR_REDESIGN.include?(params[:udid])
-      render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
+      render :template => 'get_offers/webpage_redesign_2', :layout => 'offerwall_redesign_2'
     end
   end
 
