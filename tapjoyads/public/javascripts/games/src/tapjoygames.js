@@ -746,12 +746,14 @@ TJG.ui = {
           if (TJG.moreAppOfferWall) {
             $("#more_games_content").fadeOut(fadeSpdFast, function () {
               $("#more_games_content").html(TJG.moreAppOfferWall).fadeIn(fadeSpdFast);
+              TJG.utils.loadImages(".offer_image_loader_wrapper");
             });
           }
         });
         if (TJG.topAppOfferWall) {
           $("#more_games_content").fadeOut(fadeSpdFast, function () {
             $("#more_games_content").html(TJG.topAppOfferWall).fadeIn(fadeSpdSlow);
+            TJG.utils.loadImages(".offer_image_loader_wrapper");
           });
         }
         else {
