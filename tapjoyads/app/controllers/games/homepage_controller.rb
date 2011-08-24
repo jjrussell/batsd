@@ -5,7 +5,6 @@ class Games::HomepageController < GamesController
   def index
     @device = Device.new(:key => current_gamer.udid)
     @external_publishers = ExternalPublisher.load_all_for_device(@device)
-    @featured_review = Review.featured_review
   end
   
   def tos

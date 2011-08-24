@@ -72,6 +72,20 @@ ActiveRecord::Schema.define(:version => 20110823201241) do
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
   add_index "app_metadatas", ["store_name", "store_id"], :name => "index_app_metadatas_on_store_name_and_store_id", :unique => true
 
+  create_table "app_reviews", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36, :null => false
+    t.string   "app_id",      :limit => 36, :null => false
+    t.string   "author_id",   :limit => 36, :null => false
+    t.string   "author_type",               :null => false
+    t.string   "text",                      :null => false
+    t.date     "featured_on"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
+  add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
+
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                      :limit => 36,                    :null => false
     t.string   "partner_id",              :limit => 36,                    :null => false
@@ -655,21 +669,6 @@ ActiveRecord::Schema.define(:version => 20110823201241) do
   end
 
   add_index "resellers", ["id"], :name => "index_resellers_on_id", :unique => true
-
-  create_table "reviews", :id => false, :force => true do |t|
-    t.string   "id",          :limit => 36, :null => false
-    t.string   "app_id",      :limit => 36, :null => false
-    t.string   "author_id",   :limit => 36, :null => false
-    t.string   "author_type",               :null => false
-    t.string   "text",                      :null => false
-    t.date     "featured_on"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "reviews", ["app_id", "author_id"], :name => "index_reviews_on_app_id_and_author_id", :unique => true
-  add_index "reviews", ["featured_on"], :name => "index_reviews_on_featured_on", :unique => true
-  add_index "reviews", ["id"], :name => "index_reviews_on_id", :unique => true
 
   create_table "role_assignments", :id => false, :force => true do |t|
     t.string "id",           :limit => 36, :null => false

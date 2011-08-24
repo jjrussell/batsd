@@ -1,6 +1,5 @@
-class Review < ActiveRecord::Base
+class AppReview < ActiveRecord::Base
   include UuidPrimaryKey
-  acts_as_cacheable
 
   belongs_to :author, :polymorphic => true
   belongs_to :app
@@ -11,16 +10,18 @@ class Review < ActiveRecord::Base
   named_scope :employee, :conditions => { :author_type => 'Employee' }
   named_scope :not_featured, :conditions => { :featured_on => nil }, :order => "created_at DESC"
   named_scope :featured_before,  lambda { |date| { :conditions => [ "featured_on < ?", date.to_date ], :order => "featured_on ASC" } }
-  named_scope :featured_on_date, lambda { |date| { :conditions => [ "featured_on = ?", date.to_date ] } }
+  named_scope :featured_on, lambda { |date| { :conditions => [ "featured_on = ?", date.to_date ] } }
 
   def self.featured_review
-    review = Review.featured_on_date(Time.zone.now).first ||
-             Review.employee.featured_before(Time.zone.now).first ||
-             Review.already_featured.first
+    Mc.get_and_put("featured_app_review", false, 1.hour) do
+      review = AppReview.featured_on(Time.zone.now).first ||
+              AppReview.employee.not_featured.first ||
+              AppReview.featured_before(Time.zone.now).first
 
-    review.featured_on = Time.zone.now
-    review.save
+      review.featured_on = Time.zone.now
+      review.save
 
-    review
+      review
+    end
   end
 end
