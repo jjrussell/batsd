@@ -68,25 +68,17 @@ private
     web_request = WebRequest.new(:time => now)
     web_request.put_values('display_ad_requested', params, get_ip_address, geoip_data, request.headers['User-Agent'])
 
-    offer_list, more_data_available = publisher_app.get_offer_list(
-        :device             => device,
-        :currency           => currency,
-        :device_type        => params[:device_type],
-        :geoip_data         => geoip_data,
-        :required_length    => 100,
-        :os_version         => params[:os_version],
-        :type               => Offer::DISPLAY_OFFER_TYPE,
-        :library_version    => params[:library_version],
-        :screen_layout_size => params[:screen_layout_size])
-        
-    if offer_list.any?
-      weight_scale = 1 - offer_list.last.rank_score
-      weights = offer_list.collect { |offer| offer.rank_score + weight_scale }
-      offer = offer_list.weighted_rand(weights)
-    else
-      offer = nil
-    end
-  
+    offer = OfferList.new(
+      :publisher_app      => publisher_app,
+      :device             => device,
+      :currency           => currency,
+      :device_type        => params[:device_type],
+      :geoip_data         => geoip_data,
+      :os_version         => params[:os_version],
+      :type               => Offer::DISPLAY_OFFER_TYPE,
+      :library_version    => params[:library_version],
+      :screen_layout_size => params[:screen_layout_size]).weighted_rand
+    
     if offer.present?
       @click_url = offer.get_click_url(
           :publisher_app     => publisher_app,

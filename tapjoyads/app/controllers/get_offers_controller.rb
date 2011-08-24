@@ -3,7 +3,6 @@ class GetOffersController < ApplicationController
   layout 'iphone', :only => :webpage
   
   prepend_before_filter :decrypt_data_param
-  before_filter :fix_tapulous
   before_filter :choose_experiment, :except => :featured
   before_filter :set_featured_params, :only => :featured
   before_filter :setup
@@ -25,7 +24,8 @@ class GetOffersController < ApplicationController
       @test_offer = build_test_offer(@publisher_app)
     end
     
-    set_offer_list(:is_server_to_server => false)
+    set_geoip_data
+    @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
 
     if @currency.hide_rewarded_app_installs_for_version?(params[:app_version], params[:source]) || DEVICES_FOR_REDESIGN.include?(params[:udid])
       render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
@@ -33,25 +33,15 @@ class GetOffersController < ApplicationController
   end
 
   def featured
+    set_geoip_data
     if @currency.get_test_device_ids.include?(params[:udid])
-      @geoip_data = get_geoip_data
-      @geoip_data[:country] = params[:country_code] if params[:country_code].present?
       @offer_list = [ build_test_offer(@publisher_app) ]
     else
-      set_offer_list(:is_server_to_server => false)
-      if @offer_list.present? && @offer_list.first.featured?
-        @offer_list.reject! { |o| !o.featured? }
-      end
-      
-      unless @offer_list.empty?
-        weight_scale = 1 - @offer_list.last.rank_score
-        weights = @offer_list.collect { |offer| offer.rank_score + weight_scale }
-        @offer_list = [ @offer_list.weighted_rand(weights) ]
-      end
+      @offer_list = [ get_offer_list.weighted_rand ].compact
     end
     @more_data_available = 0
     
-    unless @offer_list.empty?
+    if @offer_list.any?
       @web_request.offer_id = @offer_list.first.id
       @web_request.add_path('featured_offer_shown')
     end
@@ -65,7 +55,8 @@ class GetOffersController < ApplicationController
   
   def index
     is_server_to_server = params[:redirect] == '1' || (params[:json] == '1' && params[:callback].blank?)
-    set_offer_list(:is_server_to_server => is_server_to_server)
+    set_geoip_data(is_server_to_server)
+    @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
     
     if params[:type] == Offer::CLASSIC_OFFER_TYPE
       render :template => 'get_offers/offers'
@@ -79,18 +70,9 @@ class GetOffersController < ApplicationController
   end
   
 private
-
-  def fix_tapulous
-    # special code for Tapulous not sending udid
-    if params[:app_id] == 'e2479a17-ce5e-45b3-95be-6f24d2c85c6f'
-      params[:udid] = params[:publisher_user_id] if params[:udid].blank?
-    end
-  end
   
   def set_featured_params
     params[:type] = Offer::FEATURED_OFFER_TYPE
-    params[:start] = '0'
-    params[:max] = '100'
     params[:source] = 'featured'
     params[:rate_app_offer] = '0'
   end
@@ -115,8 +97,6 @@ private
     
     @device = Device.new(:key => params[:udid])
     if @device.opted_out?
-      @offer_list = []
-      @more_data_available = 0
       if params[:action] == 'webpage'
         @message = "You have opted out."
         render :template => 'get_offers/webpage'
@@ -137,44 +117,32 @@ private
     @web_request.put('viewed_at', @now.to_f.to_s)
   end
   
-  def set_offer_list(options = {})
-    is_server_to_server = options.delete(:is_server_to_server) { false }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
+  def get_offer_list
+    @offer_list = OfferList.new(
+      :publisher_app        => @publisher_app,
+      :device               => @device,
+      :currency             => @currency,
+      :device_type          => params[:device_type],
+      :geoip_data           => @geoip_data,
+      :type                 => params[:type],
+      :app_version          => params[:app_version],
+      :include_rating_offer => params[:rate_app_offer] != '0',
+      :direct_pay_providers => params[:direct_pay_providers].to_s.split(','),
+      :exp                  => params[:exp],
+      :library_version      => params[:library_version],
+      :os_version           => params[:os_version],
+      :source               => params[:source],
+      :screen_layout_size   => params[:screen_layout_size],
+      :video_offer_ids      => params[:video_offer_ids].to_s.split(','))
+  end
+  
+  def set_geoip_data(is_server_to_server = false)
     if is_server_to_server && params[:device_ip].blank?
       @geoip_data = {}
     else
       @geoip_data = get_geoip_data
     end
     @geoip_data[:country] = params[:country_code] if params[:country_code].present?
-    
-    type = case params[:type]
-    when Offer::FEATURED_OFFER_TYPE
-      Offer::FEATURED_OFFER_TYPE
-    when Offer::CLASSIC_OFFER_TYPE
-      Offer::CLASSIC_OFFER_TYPE
-    else
-      Offer::DEFAULT_OFFER_TYPE
-    end
-    
-    @offer_list, @more_data_available = @publisher_app.get_offer_list(
-        :device               => @device,
-        :currency             => @currency,
-        :device_type          => params[:device_type],
-        :geoip_data           => @geoip_data,
-        :type                 => type,
-        :required_length      => (@start_index + @max_items),
-        :app_version          => params[:app_version],
-        :include_rating_offer => params[:rate_app_offer] != '0',
-        :direct_pay_providers => params[:direct_pay_providers].to_s.split(','),
-        :exp                  => params[:exp],
-        :library_version      => params[:library_version],
-        :os_version           => params[:os_version],
-        :source               => params[:source],
-        :screen_layout_size   => params[:screen_layout_size],
-        :video_offer_ids      => params[:video_offer_ids].to_s.split(','))
-
-    @offer_list = @offer_list[@start_index, @max_items] || []
   end
   
   def save_web_request

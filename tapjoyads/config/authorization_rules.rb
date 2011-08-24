@@ -2,7 +2,7 @@ authorization do
 
   role :partner do
     has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :publisher_integrate, :search, :sdk_download, :archive ]
-    has_permission_on :apps_offers, :to => [ :new, :create, :edit, :update, :percentile, :toggle ]
+    has_permission_on :apps_offers, :to => [ :new, :create, :edit, :update, :toggle ]
     has_permission_on :apps_currencies, :to => [ :show, :update, :new, :create, :reset_test_device ]
     has_permission_on :apps_virtual_goods, :to => [ :show, :update, :new, :create, :index, :reorder ]
     has_permission_on :enable_offer_requests, :to => [ :create ]
@@ -76,7 +76,7 @@ authorization do
     has_permission_on :tools_rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
     has_permission_on :apps, :to => [ :unarchive ]
     has_permission_on :partners_offer_discounts, :to => [ :index, :new, :create, :deactivate ]
-    has_permission_on :tools_preview_experiments, :to => [ :index, :show ]
+    has_permission_on :tools_offer_lists, :to => [ :index ]
     has_permission_on :tools_premier_partners, :to => [ :index ]
     has_permission_on :tools_generic_offers, :to => [ :new, :create, :edit, :update ]
     has_permission_on :tools_video_offers, :to => [ :new, :create, :edit, :update ]

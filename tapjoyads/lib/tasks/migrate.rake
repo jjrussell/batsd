@@ -4,7 +4,7 @@ namespace :db do
     SCHEMA_VERSION = ActiveRecord::Migrator.current_version
     if Rails.env == 'production'
       Mc.cache_all
-      Offer.cache_offers
+      OfferCacher.cache_offers
     end
   end
 end

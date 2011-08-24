@@ -15,33 +15,6 @@
         %td
           = f.currency_field :bid, {}, :class => 'togglable'
           = error_message_on @offer, :bid
-          - if @offer.featured?
-            #percentile-info.percentile-details
-              This bid will make your offer more prioritized than
-              %span#percentile= "#{@offer.estimated_percentile}%" rescue 'N/A'
-              of featured offers.
-            #percentile-info-loading.percentile-details{ :style => 'display: none' }
-              Estimating new featured placement...
-            .percentile-details
-              The bid is just one of many factors affecting your featured offer ranking.
-          - elsif !@offer.rewarded?
-            #percentile-info.percentile-details
-              This bid will make your offer more prioritized than
-              %span#percentile= "#{@offer.estimated_percentile}%" rescue 'N/A'
-              of ads.
-            #percentile-info-loading.percentile-details{ :style => 'display: none' }
-              Estimating new ad placement...
-            .percentile-details
-              The bid is just one of many factors affecting your ranking.
-          - else
-            #percentile-info.percentile-details
-              This bid places you above approximately
-              %span#percentile= "#{@offer.estimated_percentile}%" rescue 'N/A'
-              of offers on the offerwall.
-            #percentile-info-loading.percentile-details{ :style => 'display: none' }
-              Estimating new offerwall placement...
-            .percentile-details
-              The bid is just one of many factors affecting your offerwall ranking.
 
       %tr
         %th
@@ -271,23 +244,6 @@
         }
         return true
       }
-      var updatePercentile = function() {
-        $.ajax({
-          data: { "bid" : $('#offer_bid').val() },
-          beforeSend: function() {
-            $('#percentile-info').hide();
-            $('#percentile-info-loading').show();
-          },
-          success: function(result) {
-            $('#percentile').html(result.percentile + "%");
-            $('#percentile-info-loading').hide();
-            $('#percentile-info').show();
-            $('#percentile').effect('highlight', {}, 1500);
-          },
-          type: 'post',
-          url: '#{percentile_app_offer_url(@app, @offer)}'
-        });
-      };
 
       var toggleDailyBudget = function() {
         if ($('#offer_daily_budget').val() == 0) {
@@ -308,7 +264,6 @@
         if (!options.skipValidation) {
           checkMinimumPrice();
           checkMaximumBid(false);
-          updatePercentile();
         }
         if ( $('#daily_budget_on').is(':checked') ) {
           setEstimatedBudget();
@@ -345,7 +300,7 @@
       font-weight: bold;
       display: inline;
     }
-    .premier, .percentile-details, #estimated_budget {
+    .premier, #estimated_budget {
       font-size: 12px;
     }
     textarea,
@@ -357,9 +312,6 @@
     }
     .tapjoy-disabled {
       color: #AF1515;
-    }
-    #percentile {
-      font-weight: bold;
     }
     label.narrower, input.narrower {
       width: 140px;
@@ -417,17 +369,3 @@
       background: -webkit-gradient(linear, left top, left bottom, from(#f88), to(#b66));
       background: -moz-linear-gradient(top, #f88, #b66);
     }
-
-    #offer_status {
-      padding: .8em;
-      margin-bottom: 1em;
-      border: 2px solid #ddd;
-    }
-
-    #offer_status.bad { background: #FBB3B4; color: #6a0f01; border-color: #FB8284; }
-    #offer_status.mediocre { background: #FFF6BF; color: #514721; border-color: #FFD324; }
-    #offer_status.good { background: #E6EFC2; color: #264409; border-color: #C6D880; }
-
-    #offer_status.bad a { color:#6a0f01; }
-    #offer_status.mediocre a { color:#514721; }
-    #offer_status.good a { color:#264409; }
