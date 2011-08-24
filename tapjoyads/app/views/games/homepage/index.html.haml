@@ -7,7 +7,7 @@
           .logo
             .slide_nav
               %a{ :href => "#", :class => "more_games_url" }
-                .slider.slider_right.right
+                .slider.more_games.slider_right.right
                   %span.title.small
                     More Games
               .slider_btn.left
@@ -23,6 +23,7 @@
               = render 'no_games'
             - else
               = render 'my_apps'
+
   #earn
     .container.vertical-scroll
       .scroller.with-scrollbar
@@ -30,18 +31,14 @@
         .page
           .logo.logo_title
             .slide_nav
-              %a{ :href => "#", :class => "more_games_url"}
-                .slider.slider_right.right.hide
-                  %span.title.small
-                    More Games 
               %a{ :href => "#home", :class => "slideright" }
                 .left
                   .slide_arrow_wrapper.left_arrow
                     .slide_arrow
-                .slider.slider_active.slider_left.left
+                .slider.back.slider_active.slider_left.left
                   %span.title
                     Back
-          #app_title.hide
+          #app_title
           #earn_content.content.hide
 
   #more_games
@@ -51,18 +48,12 @@
         .page
           .logo
             .slide_nav
-              .slider_wrapper.right.hide 
-                .slider.slider_active.slider_right
-                  %span.title.small
-                    More Games
-                .slide_arrow_wrapper.bottom_arrow
-                  .slide_arrow
               %a{ :href => "#home", :class => "slideright"}
                 .slider_btn.left
                   .left
                     .slide_arrow_wrapper.left_arrow
                       .slide_arrow
-                  .slider.slider_active.slider_left.left
+                  .slider.back.slider_active.slider_left.left
                     %span.title
                       Back
           .content
@@ -79,7 +70,7 @@
                     Tapjoy Recommends
                 #recommended_games_button_arrow.tab_button_bottom_arrrow_wrapper
                   .tab_button_bottom_arrrow
-            #more_games_content
+            #more_games_content.hide
 
 = render 'my_account'
 
@@ -90,4 +81,6 @@
       TJG.path =  "#{games_root_path}";
       TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
       TJG.more_games_popular =  "#{games_more_games_popular_path}";
+      TJG.blank_img = "#{CLOUDFRONT_URL}/images/blank.png";
+      TJG.load_img = "#{CLOUDFRONT_URL}/images/load-circle.gif";
     });

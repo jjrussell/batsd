@@ -4,13 +4,15 @@
       .scroller.with-scrollbar
         .page
           .logo
-            .slide_nav.left
-              .left
-                .slide_arrow_wrapper.left_arrow
-                  .slide_arrow
-              .slider.slider_active.slider_left.left
-                .title
-                  = link_to 'Back', games_root_path
+            .slide_nav
+              %a{ :href => games_root_path, :class => "slideright"}
+                .slider_btn.left
+                  .left
+                    .slide_arrow_wrapper.left_arrow
+                      .slide_arrow
+                  .slider.back.slider_active.slider_left.left
+                    %span.title
+                      Back
           .content.narrow.pad
             .my_account_header_wrapper
               .my_account_header.title_2
