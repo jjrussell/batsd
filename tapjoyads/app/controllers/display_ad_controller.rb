@@ -149,7 +149,7 @@ private
       background_blob = bucket.get("display/self_ad_bg_#{width}x#{height}.png")
       background = Magick::Image.from_blob(background_blob)[0]
       
-      offer_icon_blob = bucket.get("icons/medium/#{offer.icon_id}.jpg")
+      offer_icon_blob = bucket.get("icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg")
       offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
       
       corner_mask_blob = bucket.get("display/round_mask.png")
