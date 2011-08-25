@@ -920,10 +920,10 @@ form#new_gamer_session .login_pass {
   -moz-box-shadow: inset 0 -1px #333333;
   -webkit-box-shadow: inset 0 -1px #333333;
 }
-.app_item {
+.app_review .app_item, .app_review.full .app_item {
   margin-top: 6px;
 }
-.offer_image, .app_image  {
+.offer_image, .app_review .app_image  {
   float: left;
   overflow: hidden !important;
   margin-right: 9px;
@@ -934,30 +934,33 @@ form#new_gamer_session .login_pass {
   box-shadow: 0px 2px 4px #222;
   z-index: 3;
 }
-.app_image {
+.app_review .app_image {
   -moz-border-radius: 12px;
   -webkit-border-radius: 12px;
   -moz-box-shadow: 0 0 4px #9C9C9C;
   -webkit-box-shadow: 0px 2px 4px #9C9C9C;
   box-shadow: 0px 2px 4px #9C9C9C;
 }
-.mobile .offer_image, .mobile .app_image {
+.mobile .offer_image, .mobile .app_review .app_image {
   margin-right: 6px;
 }
 .offer_image {
   height: 57px;
   width: 57px;
 }
-.app_image {
+.app_review .app_image {
   height: 114px;
   width: 114px;
 }
-.offer_text, .app_text {
+.offer_text, .app_review .app_text {
   float: left;
 }
-.app_text {
+.app_review .app_text {
   color: #6A6A6A;
   font-size: 18px;
+}
+.app_review.full .app_text {
+  color: #FFF;
 }
 .mobile.portrait .offer_text {
   width: 240px;
@@ -970,17 +973,17 @@ form#new_gamer_session .login_pass {
 .ipad .offer_text {
   width: 600px;
 }
-.web .app_text,
-.ipad.portrait .app_text,
-.ipad .app_text {
+.web .app_review .app_text,
+.ipad.portrait .app_review .app_text,
+.ipad .app_review .app_text {
   padding-right: 6px;
   width: 420px;
 }
-.offer_info, .app_info {
+.offer_info, .app_review .app_info {
   float: left;
   text-overflow: ellipsis;
 }
-.web .app_info, .ipad .app_info {
+.web .app_review .app_info, .ipad .app_review .app_info {
   height: 110px;
 }
 .offer_title {
@@ -989,10 +992,13 @@ form#new_gamer_session .login_pass {
   padding: 6px 0 2px;
   text-shadow: 0 1px 4px #222;
 }
-.app_title {
+.app_review .app_title {
   color: #4B4B4B;
   font-size: 22px;
   padding: 6px 0;
+}
+.app_review.full .app_title {
+  color: #FFF;
 }
 .mobile .offer_title {
   font-size: 16px;
