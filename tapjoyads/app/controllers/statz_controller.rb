@@ -116,10 +116,11 @@ class StatzController < WebsiteController
   end
   
   def gamez
-    data = "created,publisher_app_id,advertiser_app_id,udid,publisher_amount,advertiser_amount,tapjoy_amount,currency_reward,r.country\n"
+    Time.zone = 'UTC'
+    data = "created,created_date,publisher_app_id,advertiser_app_id,udid,publisher_amount,advertiser_amount,tapjoy_amount,currency_reward,r.country\n"
     NUM_REWARD_DOMAINS.times do |i|
       Reward.select :domain_name => "rewards_#{i}", :where => "source = 'tj_games'" do |r|
-        data += "#{r.created.to_s},#{r.publisher_app_id},#{r.advertiser_app_id},#{r.udid},#{r.publisher_amount},#{r.advertiser_amount},#{r.tapjoy_amount},#{r.currency_reward},#{r.country}\n"
+        data += "#{r.created.to_s},#{r.created.to_date.to_s},#{r.publisher_app_id},#{r.advertiser_app_id},#{r.udid},#{r.publisher_amount},#{r.advertiser_amount},#{r.tapjoy_amount},#{r.currency_reward},#{r.country}\n"
       end
     end
     
