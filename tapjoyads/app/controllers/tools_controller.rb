@@ -334,7 +334,7 @@ class ToolsController < WebsiteController
     @app.price = params[:price].to_i
 
     if @app.save
-      @app.download_icon(params[:url], nil) unless params[:url].blank?
+      @app.download_icon(params[:url]) unless params[:url].blank?
       flash[:notice] = 'App was successfully updated'
       redirect_to statz_path(@app)
     else

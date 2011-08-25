@@ -422,7 +422,7 @@ class Offer < ActiveRecord::Base
     "#{prefix}/icons/#{size}/#{icon_id}.jpg"
   end
 
-  def save_icon!(icon_src_blob, small_icon_src_blob = nil)
+  def save_icon!(icon_src_blob)
     bucket = S3.bucket(BucketNames::TAPJOY)
 
     icon_id = Offer.hashed_icon_id(id)
@@ -443,10 +443,6 @@ class Offer < ActiveRecord::Base
     icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
     icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
 
-    small_icon_src_blob = icon_src_blob if small_icon_src_blob.blank?
-    bucket.put("icons/#{id}.png", small_icon_src_blob, {}, "public-read")
-    bucket.put("icons/medium/#{id}.jpg", medium_icon_blob, {}, "public-read")
-
     bucket.put("icons/src/#{icon_id}.jpg", icon_src_blob, {}, "public-read")
     bucket.put("icons/256/#{icon_id}.jpg", icon_256_blob, {}, "public-read")
     bucket.put("icons/114/#{icon_id}.jpg", icon_114_blob, {}, "public-read")
@@ -458,7 +454,7 @@ class Offer < ActiveRecord::Base
     if existing_icon_blob.present?
       begin
         acf = RightAws::AcfInterface.new
-        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/#{id}.png", "/icons/medium/#{id}.jpg", "/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg"], "#{id}.#{Time.now.to_i}")
+        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg"], "#{id}.#{Time.now.to_i}")
       rescue Exception => e
         Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
       end

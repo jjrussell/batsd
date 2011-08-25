@@ -52,7 +52,7 @@ class AppsController < WebsiteController
     end
     
     if @app.save
-      @app.download_icon(app_store_data[:icon_url], app_store_data[:small_icon_url])
+      @app.download_icon(app_store_data[:icon_url])
       flash[:notice] = 'App was successfully created.'
       redirect_to(@app)
     else

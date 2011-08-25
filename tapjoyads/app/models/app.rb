@@ -183,21 +183,20 @@ class App < ActiveRecord::Base
     self.supported_devices   = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
     self.countries_blacklist = AppStore.prepare_countries_blacklist(store_id, platform)
 
-    download_icon(data[:icon_url], data[:small_icon_url]) unless new_record?
+    download_icon(data[:icon_url]) unless new_record?
     data
   end
 
-  def download_icon(url, small_url)
+  def download_icon(url)
     return if url.blank?
     
     begin
       icon_src_blob = Downloader.get(url, :timeout => 30)
-      small_icon_src_blob = small_url.nil? ? icon_src_blob : Downloader.get(small_url, :timeout => 30)
     rescue Exception => e
       Rails.logger.info "Failed to download icon for url: #{url}. Error: #{e}"
       Notifier.alert_new_relic(AppDataFetchError, "icon url #{url} for app id #{id}. Error: #{e}")
     else
-      primary_offer.save_icon!(icon_src_blob, small_icon_src_blob)
+      primary_offer.save_icon!(icon_src_blob)
     end
   end
 
