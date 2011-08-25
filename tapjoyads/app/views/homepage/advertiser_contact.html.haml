@@ -54,9 +54,15 @@
               $('#error').text('Error: please try again.');
               $('#error').show();
             } else if (textStatus == 'success') {
-              $('#message').text('Your form was submitted successfully!');
-              $('#message').show();
-              $('#submit_button').hide();
+              var responseJson = $.parseJSON(jqXHR.response);
+              if (responseJson.error) {
+                $('#error').text(responseJson.error);
+                $('#error').show();
+              } else {
+                $('#message').text('Your form was submitted successfully!');
+                $('#message').show();
+                $('#submit_button').hide();
+              }
             };
             $('#submit_button').attr('disabled', '');
           }

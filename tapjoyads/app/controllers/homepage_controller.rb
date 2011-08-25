@@ -20,8 +20,12 @@ class HomepageController < WebsiteController
         TapjoyMailer.deliver_publisher_application(params[:info])
         redirect_to :action => 'contact-thanks'
       when 'performance', 'agencies'
-        TapjoyMailer.deliver_advertiser_application(params[:info])
-        render :json => nil
+        if params[:info][:email] =~ Authlogic::Regex.email
+          TapjoyMailer.deliver_advertiser_application(params[:info])
+          render :json => nil
+        else
+          render :json => {:error => 'Invalid email address.'}
+        end
       else
         info = params[:info]
         if info[:name].blank? || info[:email].blank? || info[:details].blank? || info[:reason].blank?
