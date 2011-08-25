@@ -16,6 +16,13 @@ TJG.utils = {
       return v == undefined || v == null || v == '';
     }
   },
+  
+  or : function (v, defval) {
+    if (this.isNull(v)) {
+      return defval;
+    }
+    return v;
+  },
 
   hideURLBar : function() {
     setTimeout(function() { 
@@ -136,33 +143,29 @@ TJG.utils = {
   }
   
 };
+$.utils = TJG.utils;
+
 TJG.ui = { 
   
   hideLoader : function(delay,fn) {
     TJG.repositionDialog = [];
-    if (delay == null) {
-      delay = "fast";
-    }
+    delay = $.utils.or(delay, "fast");
     setTimeout(function() {
       $('#loader').fadeOut(delay,fn);
     });
   },
   
   showLoader : function(delay,fn) {
-    TJG.utils.centerDialog("#loader");
+    $.utils.centerDialog("#loader");
     TJG.repositionDialog = ["#loader"];
-    if (delay == null) {
-      delay = "fast";
-    }
+    delay = $.utils.or(delay, "fast");
     setTimeout(function() {
       $('#loader').fadeIn(delay,fn);
     });
   },
   
   removeDialogs : function (delay) {
-    if (delay == null) {
-      delay = "fast";
-    }
+    delay = $.utils.or(delay, "fast");
     setTimeout(function() {
       $('.dialog_wrapper').fadeOut(delay); 
     });
@@ -532,37 +535,44 @@ TJG.ui = {
     function getOfferWalls() {
       $("#home").bind('pageAnimationStart', function(e, info){
         if (info.direction == "out") {
-          $("#home .content").fadeOut("fast");
+          $("#home .content_wrapper").fadeOut("fast");
         }
       });
       $("#earn").bind('pageAnimationStart', function(e, info){
         if (info.direction == "out") {
-          $("#earn .content").fadeOut("fast");
+          $("#earn .content_wrapper").fadeOut("fast");
         }     
       });
       $("#more_games").bind('pageAnimationStart', function(e, info){
         if (info.direction == "out") {
-          $("#more_games .content").fadeOut("fast");
+          $("#more_games .content_wrapper").fadeOut("fast");
         }
       });
+      $("#feat_app").bind('pageAnimationStart', function(e, info){
+        if (info.direction == "out") {
+          $("#feat_app .content_wrapper").fadeOut("fast");
+        }
+      }); 
       $("#home").bind('pageAnimationEnd', function(e, info){
         if (info.direction == "in") {
-          $("#home .content").fadeIn("fast");
-          TJG.ui.removeDialogs();
+          $("#home .content_wrapper").fadeIn("fast");
         }
       });
       $("#earn").bind('pageAnimationEnd', function(e, info){
         if (info.direction == "in") {
-          $("#earn .content").fadeIn("fast");
-          TJG.ui.removeDialogs();
+          $("#earn .content_wrapper").fadeIn("fast");
         }       
       });
       $("#more_games").bind('pageAnimationEnd', function(e, info){
         if (info.direction == "in") {
-          $("#more_games .content").fadeIn("fast");
-          TJG.ui.removeDialogs();
-        }       
-      }); 
+          $("#more_games .content_wrapper").fadeIn("fast");
+        }
+      });
+      $("#feat_app").bind('pageAnimationEnd', function(e, info){
+        if (info.direction == "in") {
+          $("#feat_app .content_wrapper").fadeIn("fast");
+        }
+      });  
       $(".get_offerwall_jsonp").each(function() {
         var i = 0;
         $(this).click(function(){
@@ -781,9 +791,15 @@ TJG.ui = {
         }
       });
     }
+    function featuredReview() {
+      $(".feat_app_url").click(function() { 
+         slidePage("#feat_app", "left");
+      });
+    }
     getOfferWalls();
     getMoreGames();
     getTopGames();
+    featuredReview();
   }
   
 };
