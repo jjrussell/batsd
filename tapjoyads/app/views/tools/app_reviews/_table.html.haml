@@ -11,7 +11,7 @@
     - @app_reviews.each do |app_review|
       %tr
         %td= link_to(app_review.app_name, statz_path(app_review.app_id))
-        %td= link_to(app_review.author_name, edit_tools_employee_path(app_review.author))
+        %td= link_to(app_review.author_full_name, edit_tools_employee_path(app_review.author))
         %td= app_review.text
         %td
           - form_for([:tools, app_review]) do |f|
@@ -37,7 +37,6 @@
         }
       });
       $("#app_reviews_table").tablesorter({
-        debug: true,
         widgets: ['zebra'],
         headers: {
           3: { sorter: 'date-field-column' },

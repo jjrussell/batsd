@@ -10,11 +10,12 @@ class AppReview < ActiveRecord::Base
   validates_presence_of :author, :app, :text
 
   named_scope :by_employees, :conditions => { :author_type => 'Employee' }
-  named_scope :not_featured, :conditions => { :featured_on => nil }, :order => "created_at DESC"
+  named_scope :not_featured, :conditions => { :featured_on => nil }, :limit => 1, :order => "created_at DESC"
   named_scope :featured_before,  lambda { |date| { :conditions => [ "featured_on < ?", date.to_date ], :order => "featured_on ASC" } }
-  named_scope :featured_on, lambda { |date| { :conditions => [ "featured_on = ?", date.to_date ] } }
+  named_scope :featured_on, lambda { |date| { :conditions => [ "featured_on = ?", date.to_date ], :limit => 1 } }
 
   delegate :name, :id, :to => :app, :prefix => true
+  delegate :full_name, :to => :author, :prefix => true
 
   def self.featured_review
     Mc.get_and_put("featured_app_review", false, 1.hour) do
@@ -27,9 +28,4 @@ class AppReview < ActiveRecord::Base
       review
     end
   end
-
-  def author_name
-    author.full_name
-  end
-
 end
