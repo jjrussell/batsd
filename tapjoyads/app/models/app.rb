@@ -205,10 +205,6 @@ class App < ActiveRecord::Base
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
   end
   
-  def display_money_share
-    0.6
-  end
-
   def can_have_new_currency?
     currencies.empty? || !currencies.any? { |c| Currency::SPECIAL_CALLBACK_URLS.include?(c.callback_url) }
   end
