@@ -19,7 +19,7 @@ class Offer < ActiveRecord::Base
   VIDEO_OFFER_TYPE                 = '6'
   OFFER_TYPE_NAMES = {
     DEFAULT_OFFER_TYPE               => 'Offerwall Offers',
-    FEATURED_OFFER_TYPE              => 'Featured OFfers',
+    FEATURED_OFFER_TYPE              => 'Featured Offers',
     DISPLAY_OFFER_TYPE               => 'Display Ad Offers',
     NON_REWARDED_DISPLAY_OFFER_TYPE  => 'Non-Rewarded Display Ad Offers',
     NON_REWARDED_FEATURED_OFFER_TYPE => 'Non-Rewarded Featured Offers',

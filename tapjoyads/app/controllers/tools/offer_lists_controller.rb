@@ -7,6 +7,7 @@ class Tools::OfferListsController < WebsiteController
     if params[:type]
       offer_list_keys = [ 'type', 'device_type', 'platform_name', 'hide_rewarded_app_installs' ]
       offer_list_params = params.reject { |k,v| !offer_list_keys.include?(k) }
+      offer_list_params['hide_rewarded_app_installs'] = false unless offer_list_params['hide_rewarded_app_installs'] == 'true'
 
       @offers = OfferList.new(offer_list_params).offers.sort_by { |offer| -offer.precache_rank_score_for(params[:currency_group_id]) }
     end
