@@ -454,7 +454,7 @@ class Offer < ActiveRecord::Base
     if existing_icon_blob.present?
       begin
         acf = RightAws::AcfInterface.new
-        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/#{id}.png", "/icons/medium/#{id}.jpg", "/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg"], "#{id}.#{Time.now.to_i}")
+        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg"], "#{id}.#{Time.now.to_i}")
       rescue Exception => e
         Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
       end
