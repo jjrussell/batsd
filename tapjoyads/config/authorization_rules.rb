@@ -94,15 +94,10 @@ authorization do
     has_permission_on :tools_editors_picks, :to => [ :index, :new, :create, :show, :edit, :update, :activate, :expire ]
   end
 
-  role :raffle_manager do
-    has_permission_on :raffle_manager, :to => [ :index, :new, :create, :edit, :update ]
-  end
-  
   role :admin do
     includes :tools
     includes :payops
     includes :executive
-    includes :raffle_manager
     includes :account_mgr
     includes :hr
     includes :games_editor
