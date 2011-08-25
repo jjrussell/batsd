@@ -8,8 +8,6 @@ class AppReview < ActiveRecord::Base
   validates_uniqueness_of :author_id, :scope => :app_id, :message => "has already reviewed this app"
   validates_presence_of :author, :app, :text
 
-  named_scope :for_app, lambda { |app_id| { :conditions => { :app_id => app_id } } }
-  named_scope :by_author, lambda { |author_id| { :conditions => { :author_id => author_id } } }
   named_scope :by_employees, :conditions => { :author_type => 'Employee' }
   named_scope :not_featured, :conditions => { :featured_on => nil }, :limit => 1, :order => "created_at DESC"
   named_scope :featured_before,  lambda { |date| { :conditions => [ "featured_on < ?", date.to_date ], :order => "featured_on ASC", :limit => 1 } }
@@ -20,11 +18,12 @@ class AppReview < ActiveRecord::Base
 
   def self.featured_review
     Mc.get_and_put("featured_app_review", false, 1.hour) do
-      review = AppReview.featured_on(Time.zone.now).first ||
+      now = Time.now.utc
+      review = AppReview.featured_on(now).first ||
               AppReview.by_employees.not_featured.first ||
-              AppReview.featured_before(Time.zone.now).first
+              AppReview.featured_before(now).first
 
-      review.featured_on = Time.zone.now
+      review.featured_on = now
       review.save
       review
     end

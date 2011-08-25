@@ -2,14 +2,14 @@
 
 %h1
   All App Reviews
-  - if defined?(@app)
+  - if @app.present?
     for #{@app.name}
-  - if defined?(@author)
+  - if @author.present?
     by #{@author.full_name}
 
-- if defined?(@app)
+- if @app.present?
   = link_to "[Add new review for #{@app.name}]", new_tools_app_review_path(:app_id => @app.id)
-- if defined?(@app) || defined?(@author)
+- if @app.present? || @author.present?
   = link_to "[All app reviews]", tools_app_reviews_path
 
 %br
