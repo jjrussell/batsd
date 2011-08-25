@@ -116,7 +116,7 @@ class StatzController < WebsiteController
   end
   
   def gamez
-    Time.zone.now = 'UTC'
+    Time.zone = 'UTC'
     data = "created,created_date,publisher_app_id,advertiser_app_id,udid,publisher_amount,advertiser_amount,tapjoy_amount,currency_reward,r.country\n"
     NUM_REWARD_DOMAINS.times do |i|
       Reward.select :domain_name => "rewards_#{i}", :where => "source = 'tj_games'" do |r|
