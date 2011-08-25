@@ -17,7 +17,6 @@ class Offer < ActiveRecord::Base
   NON_REWARDED_DISPLAY_OFFER_TYPE  = '4'
   NON_REWARDED_FEATURED_OFFER_TYPE = '5'
   VIDEO_OFFER_TYPE                 = '6'
-  GROUP_SIZE = 200
 
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
@@ -126,8 +125,6 @@ class Offer < ActiveRecord::Base
   named_scope :visible, :conditions => { :hidden => false }
   named_scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
   named_scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
-  named_scope :for_ios_only, :conditions => 'device_types not like "%android%"'
-  named_scope :with_rank_boosts, :joins => :rank_boosts, :readonly => false
   named_scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
   named_scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
   named_scope :video_offers, :conditions => "item_type = 'VideoOffer'"
@@ -231,14 +228,6 @@ class Offer < ActiveRecord::Base
 
   def user_bid_max
     [is_paid? ? 5 * price / 100.0 : 3, bid / 100.0].max
-  end
-
-  def is_primary?
-    item_id == id
-  end
-
-  def is_secondary?
-    !is_primary?
   end
 
   def is_enabled?
@@ -698,10 +687,6 @@ class Offer < ActiveRecord::Base
     daily_budget.zero? && overall_budget.zero?
   end
 
-  def on_track_for_budget?
-    show_rate != 1 && !needs_more_funds?
-  end
-
   def icon_id
     icon_id_override || item_id
   end
@@ -716,10 +701,6 @@ class Offer < ActiveRecord::Base
 
   def can_request_enable?
     item_type == 'App' ? item.store_id.present? : true
-  end
-
-  def free_app?
-    item_type == 'App' && price == 0
   end
 
   def has_contacts?
