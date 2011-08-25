@@ -14,7 +14,7 @@
         %td= link_to(app_review.author_full_name, edit_tools_employee_path(app_review.author))
         %td= app_review.text
         %td
-          - form_for([:tools, app_review]) do |f|
+          - form_for([:tools, app_review], :url => update_featured_tools_app_review_path(app_review)) do |f|
             = f.text_field :featured_on, :class => 'featured_on', :id => "#{app_review.id}.datepicker", :value => (app_review.featured_on.present? ? app_review.featured_on.strftime("%m/%d/%Y") : '')
             = f.submit
         %td= link_to('Edit', edit_tools_app_review_path(app_review))

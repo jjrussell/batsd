@@ -6,7 +6,8 @@ class AppReview < ActiveRecord::Base
   belongs_to :author, :polymorphic => true
   belongs_to :app
 
-  validates_uniqueness_of :featured_on
+  validates_uniqueness_of :featured_on, :allow_nil => true
+  validates_uniqueness_of :author_id, :scope => :app_id
   validates_presence_of :author, :app, :text
 
   named_scope :by_employees, :conditions => { :author_type => 'Employee' }

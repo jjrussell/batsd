@@ -8,9 +8,8 @@ class Tools::AppReviewsController < WebsiteController
   end
 
   def new
-    @app_review = AppReview.new
-    @app_id = params[:app_id]
-    @employee_ids = Employee.active_only.collect { |emp| [ emp.full_name, emp.id ] }
+    @app_review = AppReview.new(:app_id => params[:app_id])
+    @employees = Employee.active_by_first_name
   end
 
   def create
@@ -20,6 +19,7 @@ class Tools::AppReviewsController < WebsiteController
       flash[:notice] = 'App review was successfully created.'
       redirect_to tools_app_review_path(@app_review.app_id)
     else
+      @employees = Employee.active_by_first_name
       render :action => :new
     end
   end
@@ -31,8 +31,7 @@ class Tools::AppReviewsController < WebsiteController
 
   def edit
     @app_review = AppReview.find(params[:id])
-    @app_ids = App.all.collect { |app| [ app.name, app.id ] }
-    @employee_ids = Employee.active_only.collect { |emp| [ emp.full_name, emp.id ] }
+    @employees = Employee.active_by_first_name
   end
 
   def update
@@ -40,13 +39,21 @@ class Tools::AppReviewsController < WebsiteController
     @app_review.author = Employee.find(params[:app_review][:author_id]) if params[:app_review][:author_id]
     if @app_review.update_attributes(params[:app_review])
       flash[:notice] = 'App review was successfully updated.'
-      redirect_to tools_app_reviews_path
-    elsif params[:app_review][:author_id]
+      redirect_to tools_app_review_path(@app_review.app_id)
+    else
+      @employees = Employee.active_by_first_name
       render :action => :edit
+    end
+  end
+
+  def update_featured
+    @app_review = AppReview.find(params[:id])
+    if @app_review.update_attributes(params[:app_review])
+      flash[:notice] = 'App successfully updated'
     else
       flash[:error] = "Sorry, that date already has an app featured on it"
-      redirect_to tools_app_reviews_path
     end
+    redirect_to tools_app_review_path(@app_review.app_id)
   end
 
   def destroy
