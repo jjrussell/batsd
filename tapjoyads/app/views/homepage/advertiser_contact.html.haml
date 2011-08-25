@@ -55,7 +55,7 @@
               $('#error').show();
             } else if (textStatus == 'success') {
               var responseJson = $.parseJSON(jqXHR.response);
-              if (responseJson.error) {
+              if (responseJson && responseJson.error) {
                 $('#error').text(responseJson.error);
                 $('#error').show();
               } else {
