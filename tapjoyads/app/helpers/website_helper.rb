@@ -7,11 +7,11 @@ module WebsiteHelper
   end
 
   def is_mobile?
-    request.env["HTTP_USER_AGENT"][/mobile/i]
+    (request.headers['User-Agent'] || '')[/mobile/i]
   end
 
   def is_msie?
-    request.env["HTTP_USER_AGENT"][/msie/i]
+    (request.headers['User-Agent'] || '')[/msie/i]
   end
 
   def platform_icon_url(object)
