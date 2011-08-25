@@ -1,7 +1,65 @@
 - @page_title = 'All App Reviews'
 
-%h1 All App Reviews
+%h1
+  All App Reviews
+  - if defined?(@app)
+    for #{@app.name}
+  - if defined?(@author)
+    by #{@author.full_name}
+
+- if defined?(@app)
+  = link_to "[Add new review for #{@app.name}]", new_tools_app_review_path(:app_id => @app.id)
+- if defined?(@app) || defined?(@author)
+  = link_to "[All app reviews]", tools_app_reviews_path
 
 %br
 
-= render 'table'
+%table#app_reviews_table.tablesorter
+  %thead
+    %tr
+      %th App Name
+      %th Reviewer
+      %th Review Text
+      %th Featured On
+      %th
+      %th
+  %tbody
+    - @app_reviews.each do |app_review|
+      %tr
+        %td= link_to(app_review.app_name, tools_app_reviews_path(:app_id => app_review.app_id))
+        %td= link_to(app_review.author_full_name, tools_app_reviews_path(:author_id => app_review.author_id))
+        %td= app_review.text
+        %td
+          - form_for([:tools, app_review], :url => update_featured_tools_app_review_path(app_review)) do |f|
+            = f.text_field :featured_on, :class => 'featured_on', :id => "#{app_review.id}.datepicker", :value => (app_review.featured_on.present? ? app_review.featured_on.strftime("%m/%d/%Y") : '')
+            = f.submit
+        %td= link_to('Edit', edit_tools_app_review_path(app_review))
+        %td= link_to('Delete', tools_app_review_path(app_review), :method => :delete, :confirm => "Delete review?")
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $.tablesorter.addParser({
+        id: 'date-field-column',
+        is: function(s) { return false; },
+        type: 'text',
+        format: function(s) {
+          var value = $(s)[0]['app_review[featured_on]']['value'];
+          if (value.length > 0){
+            values = value.split('/');
+            value = values[2] + values[0] + values[1];
+          }
+          return value;
+        }
+      });
+      $("#app_reviews_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          3: { sorter: 'date-field-column' },
+          4: { sorter: false },
+          5: { sorter: false }
+        }
+      });
+
+      $(".featured_on").datepicker();
+    });

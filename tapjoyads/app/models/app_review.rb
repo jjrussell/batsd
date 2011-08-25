@@ -1,15 +1,15 @@
 class AppReview < ActiveRecord::Base
   include UuidPrimaryKey
 
-  attr_accessible :app_id, :text, :featured_on
-
   belongs_to :author, :polymorphic => true
   belongs_to :app
 
   validates_uniqueness_of :featured_on, :allow_nil => true
-  validates_uniqueness_of :author_id, :scope => :app_id
+  validates_uniqueness_of :author_id, :scope => :app_id, :message => "has already reviewed this app"
   validates_presence_of :author, :app, :text
 
+  named_scope :for_app, lambda { |app_id| { :conditions => { :app_id => app_id } } }
+  named_scope :by_author, lambda { |author_id| { :conditions => { :author_id => author_id } } }
   named_scope :by_employees, :conditions => { :author_type => 'Employee' }
   named_scope :not_featured, :conditions => { :featured_on => nil }, :limit => 1, :order => "created_at DESC"
   named_scope :featured_before,  lambda { |date| { :conditions => [ "featured_on < ?", date.to_date ], :order => "featured_on ASC", :limit => 1 } }

@@ -1,43 +1,17 @@
 - form_for([:tools, @app_review], :html => { :class => 'tjform' }) do |f|
-  .field
-    = f.hidden_field :app_id
-  .field
-    = f.label :reviewer
-    = f.select :author_id, options_from_collection_for_select(@employees, :id, :full_name, @app_review.author_id)
-    = error_message_on @app_review, :author
-  .field
-    = f.label :review_text
-    = f.text_area :text, :rows => 10, :size => 50
-    = error_message_on @app_review, :text
-  = f.submit
-
-- content_for :page_styles do
-  :plain
-
-    label {
-      vertical-align: top;
-      font-weight: bold;
-      text-align: right;
-      display: inline-block;
-      width: 200px;
-      margin-left: -200px;
-    }
-
-    textarea {
-      width: 500px;
-      height: 150px;
-    }
-
-    input[type=submit] {
-      float: right;
-    }
-
-    .field {
-      margin-bottom: 5px;
-      margin-left: 200px;
-    }
-
-    .disabled_partner_names {
-      width: 400px;
-      margin-left: 20px;
-    }
+  = f.hidden_field :app_id
+  = f.hidden_field :author_type, :value => 'Employee'
+  %table
+    %tr
+      %th= f.label :reviewer
+      %td
+        = f.select :author_id, options_from_collection_for_select(@employees, :id, :full_name, @app_review.author_id)
+        = error_message_on @app_review, :author
+    %tr
+      %th= f.label :review_text
+      %td
+        = f.text_area :text, :rows => 10, :size => 50
+        = error_message_on @app_review, :text
+    %tr
+      %th
+      %td= f.submit
