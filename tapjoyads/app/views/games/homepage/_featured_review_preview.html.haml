@@ -2,21 +2,21 @@
   .feat_content
     .staff_info
       .staff_img
-        %img{:src => "https://s3.amazonaws.com/tapjoy/employee_photos/6d96a998-ad42-4452-8ae3-7a74972f83d3.png"}
+        %img{:src => @featured_review.author.get_photo_url(:source => :cloudfront) }
       .staff_meta
         .staff_title
         .staff_name
           by 
           %span.author
-            Daniel Lim
+            = @featured_review.author.first_name
     .app_review
       %a{ :href => "#", :class => "feat_app_url" }
         .app_item.clearfix
           .feat_arrow.right
           .app_image
-            %img{:src => "https://d21x2jbj16e06e.cloudfront.net/icons/114/ed344f88682bd19b42f3db9af003e1ce6715fe8661ffb6e414a559e9b78308b8.jpg"}
+            %img{:src => Offer.get_icon_url(:size => '114', :source => :cloudfront, :icon_id => Offer.hashed_icon_id(@featured_review.app_id)) }
           .app_text
             .app_title.title
-              Gun Bros
+              = @featured_review.app.name
             .app_info
-              = truncate("Enlist with the Gun Bros today! Mow down your enemies with tons of insanely powerful guns, armor and other explosive power-ups in the F.R.A.G.G.E.D Armory.", :length => 125)    
+              = truncate(@featured_review.text, :length => 65)

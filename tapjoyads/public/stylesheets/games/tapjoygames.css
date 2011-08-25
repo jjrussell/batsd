@@ -1059,12 +1059,19 @@ form#new_gamer_session .login_pass {
   color: #4B4B4B;
   font-size: 22px;
   padding: 6px 0;
+  width: 420px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .mobile .app_review .app_title {
   padding: 3px 0;
+  width: 210px;
 }
 .app_review.full .app_title {
   padding: 0;
+  overflow: visible;
+  white-space: normal;
 } 
 .mobile .app_title {
   font-size: 16px;
@@ -1072,6 +1079,18 @@ form#new_gamer_session .login_pass {
 }
 .app_review.full .app_title {
   color: #FFF;
+}
+.app_review .review_text {
+  font-size: 18px;
+  line-height: 28px;
+}
+.mobile .app_review .review_text {
+  font-size: 16px;
+  line-height: 18px;
+}
+.mobile .app_review .review_text {
+  font-size: 16px;
+  line-height: 18px;
 }
 .mobile .offer_title {
   font-size: 16px;
