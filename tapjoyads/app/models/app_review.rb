@@ -11,8 +11,8 @@ class AppReview < ActiveRecord::Base
 
   named_scope :by_employees, :conditions => { :author_type => 'Employee' }
   named_scope :not_featured, :conditions => { :featured_on => nil }, :limit => 1, :order => "created_at DESC"
-  named_scope :featured_before,  lambda { |date| { :conditions => [ "featured_on < ?", date.to_date ], :order => "featured_on ASC" } }
-  named_scope :featured_on, lambda { |date| { :conditions => [ "featured_on = ?", date.to_date ], :limit => 1 } }
+  named_scope :featured_before,  lambda { |date| { :conditions => [ "featured_on < ?", date.to_date ], :order => "featured_on ASC", :limit => 1 } }
+  named_scope :featured_on, lambda { |date| { :conditions => [ "featured_on = ?", date.to_date ] } }
 
   delegate :name, :id, :to => :app, :prefix => true
   delegate :full_name, :to => :author, :prefix => true
