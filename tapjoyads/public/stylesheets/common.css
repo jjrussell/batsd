@@ -41,6 +41,7 @@ a:hover { text-decoration: underline; }
 #about_tapjoy a:hover { text-decoration: underline; }
 #legal_stuff { float: left; margin-left: 50px; }
 #legal_stuff p { clear: left; float: left; margin-top: 12px;  }
+#truste { clear: left; float: left; margin-top: 18px; }
 
 #client_login { background: url('/images/customer_login.jpg'); width: 128px; height: 33px; margin: 15px 0 0 860px; position: absolute; }
 
