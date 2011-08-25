@@ -1,4 +1,4 @@
-  class GetOffersController < ApplicationController
+class GetOffersController < ApplicationController
   
   layout 'iphone', :only => :webpage
   
