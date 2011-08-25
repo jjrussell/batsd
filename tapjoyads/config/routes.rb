@@ -70,7 +70,7 @@ ActionController::Routing::Routes.draw do |map|
     :collection => { :contact => :post }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get, :download_udids => :get },
-    :collection => { :global => :get, :publisher => :get, :advertiser => :get }
+    :collection => { :global => :get, :publisher => :get, :advertiser => :get, :games => :get }
   map.resources :raffle_manager, :only => [ :index, :edit, :update, :new, :create ]
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
