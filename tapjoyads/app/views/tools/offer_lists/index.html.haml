@@ -5,17 +5,20 @@
 - form_tag('', :method => :get) do
   %table
     %tr
-      %td= label_tag 'type', 'Offer Type'
-      %td= select_tag 'type', options_for_select(OfferCacher::OFFER_TYPES, params[:type])
+      %td= label_tag :type, 'Offer Type'
+      %td= select_tag :type, options_for_select(OfferCacher::OFFER_TYPES.collect { |type| [ Offer::OFFER_TYPE_NAMES[type], type ] }, params[:type])
     %tr
-      %td= label_tag 'device_type', 'User Device Type'
-      %td= select_tag 'device_type', options_for_select(OfferCacher::DEVICE_TYPES, params[:device_type])
+      %td= label_tag :device_type, 'User Device Type'
+      %td= select_tag :device_type, options_for_select(OfferCacher::DEVICE_TYPES, params[:device_type])
     %tr
-      %td= label_tag 'platform_name', 'Publisher App Platform'
-      %td= select_tag 'platform_name', options_for_select(OfferCacher::PLATFORMS, params[:platform_name])
+      %td= label_tag :platform_name, 'Publisher App Platform'
+      %td= select_tag :platform_name, options_for_select(OfferCacher::PLATFORMS, params[:platform_name])
     %tr
-      %td= label_tag 'hide_rewarded_app_installs'
-      %td= select_tag 'hide_rewarded_app_installs', options_for_select(OfferCacher::HIDE_REWARDED_OPTIONS, params[:hide_rewarded_app_installs] == 'true')
+      %td= label_tag :hide_rewarded_app_installs
+      %td= select_tag :hide_rewarded_app_installs, options_for_select(OfferCacher::HIDE_REWARDED_OPTIONS, params[:hide_rewarded_app_installs] == 'true')
+    %tr
+      %td= label_tag :currency_group_id, 'Currency Group'
+      %td= select_tag :currency_group_id, options_for_select(CurrencyGroup.all.collect { |cg| [ cg.name, cg.id ] })
       
     %tr
       %td{ :colspan => 2 }= submit_tag('Submit')
@@ -24,6 +27,8 @@
   %table#offers.tablesorter
     %thead
       %tr
+        %th Rank
+        %th Score
         %th Name
         %th Show Rate
         %th CVR
@@ -36,6 +41,8 @@
     %tbody#offers_tbody
       - @offers.each_with_index do |offer, i|
         %tr
+          %td= i + 1
+          %td= offer.precache_rank_score_for(params[:currency_group_id])
           %td= (permitted_to? :show, :statz) ? link_to(offer.name, statz_path(offer)) : offer.name
           %td= offer.show_rate
           %td= offer.conversion_rate

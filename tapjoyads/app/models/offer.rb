@@ -17,6 +17,14 @@ class Offer < ActiveRecord::Base
   NON_REWARDED_DISPLAY_OFFER_TYPE  = '4'
   NON_REWARDED_FEATURED_OFFER_TYPE = '5'
   VIDEO_OFFER_TYPE                 = '6'
+  OFFER_TYPE_NAMES = {
+    DEFAULT_OFFER_TYPE               => 'Offerwall Offers',
+    FEATURED_OFFER_TYPE              => 'Featured OFfers',
+    DISPLAY_OFFER_TYPE               => 'Display Ad Offers',
+    NON_REWARDED_DISPLAY_OFFER_TYPE  => 'Non-Rewarded Display Ad Offers',
+    NON_REWARDED_FEATURED_OFFER_TYPE => 'Non-Rewarded Featured Offers',
+    VIDEO_OFFER_TYPE                 => 'Video Offers'
+  }
 
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
@@ -531,8 +539,12 @@ class Offer < ActiveRecord::Base
   end
   memoize :precache_rank_scores
   
+  def precache_rank_score_for(currency_group_id)
+    precache_rank_scores[currency_group_id]
+  end
+  
   def postcache_rank_score(currency)
-    self.rank_score = precache_rank_scores[currency.currency_group_id] || 0
+    self.rank_score = precache_rank_score_for(currency.currency_group_id) || 0
     self.rank_score += (categories & currency.categories).length * (currency.postcache_weights[:category_match] || 0)
     rank_score
   end
@@ -880,7 +892,7 @@ private
   end
   
   def hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
-    hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer' && item_type !='VideoOffer'
+    hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer' && item_type != 'VideoOffer'
   end
 
   def cookie_tracking_reject?(publisher_app, library_version)
