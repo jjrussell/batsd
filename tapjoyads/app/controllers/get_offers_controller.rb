@@ -1,4 +1,4 @@
-class GetOffersController < ApplicationController
+  class GetOffersController < ApplicationController
   
   layout 'iphone', :only => :webpage
   
@@ -96,17 +96,6 @@ private
     return unless verify_records([ @currency, @publisher_app ])
     
     @device = Device.new(:key => params[:udid])
-    if @device.opted_out?
-      if params[:action] == 'webpage'
-        @message = "You have opted out."
-        render :template => 'get_offers/webpage'
-      elsif params[:json] == '1'
-        render :template => 'get_offers/installs_json', :content_type => 'application/json'
-      else
-        render :template => 'get_offers/installs_redirect'
-      end
-      return
-    end
     
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
