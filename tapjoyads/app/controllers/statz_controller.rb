@@ -115,7 +115,7 @@ class StatzController < WebsiteController
     load_partner_stats
   end
   
-  def games
+  def gamez
     data = "created,publisher_app_id,advertiser_app_id,udid,publisher_amount,advertiser_amount,tapjoy_amount,currency_reward,r.country\n"
     NUM_REWARD_DOMAINS.times do |i|
       Reward.select :domain_name => "rewards_#{i}", :where => "source = 'tj_games'" do |r|
