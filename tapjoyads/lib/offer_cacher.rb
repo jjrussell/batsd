@@ -12,6 +12,9 @@ class OfferCacher
   
     def cache_offers(save_to_s3 = false)
       Benchmark.realtime do
+        offer_list = []
+        cache_unsorted_offers_prerejected(offer_list, Offer::CLASSIC_OFFER_TYPE, save_to_s3)
+        
         offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.to_a
         cache_unsorted_offers_prerejected(offer_list, Offer::DEFAULT_OFFER_TYPE, save_to_s3)
 
