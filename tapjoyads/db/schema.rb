@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110823002513) do
+ActiveRecord::Schema.define(:version => 20110823201241) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -71,6 +71,20 @@ ActiveRecord::Schema.define(:version => 20110823002513) do
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
   add_index "app_metadatas", ["store_name", "store_id"], :name => "index_app_metadatas_on_store_name_and_store_id", :unique => true
+
+  create_table "app_reviews", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36, :null => false
+    t.string   "app_id",      :limit => 36, :null => false
+    t.string   "author_id",   :limit => 36, :null => false
+    t.string   "author_type",               :null => false
+    t.string   "text",                      :null => false
+    t.date     "featured_on"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
+  add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "apps", :id => false, :force => true do |t|
     t.string   "id",                      :limit => 36,                    :null => false
@@ -177,6 +191,7 @@ ActiveRecord::Schema.define(:version => 20110823002513) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "rank_boost",                           :default => 0, :null => false
+    t.integer  "category_match",                       :default => 0, :null => false
   end
 
   add_index "currency_groups", ["id"], :name => "index_currency_groups_on_id", :unique => true

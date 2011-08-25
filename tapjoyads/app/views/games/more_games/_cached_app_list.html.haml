@@ -2,7 +2,8 @@
   - cached_app_list.each do |cached_app|
     %li.offer_item.clearfix
       .offer_image
-        = image_tag cached_app.icon_url
+        .offer_image_loader_wrapper
+          %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => cached_app.icon_url }
       .offer_text
         .offer_title.title
           = cached_app.name

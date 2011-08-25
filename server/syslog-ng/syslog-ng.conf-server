@@ -12,6 +12,7 @@
 
 ######
 # options
+@version:3.1
 
 options {
         # disable the chained hostname format in logs
@@ -25,13 +26,6 @@ options {
         # the time to wait before an idle destination file is closed
         # (default is 60)
         time_reap(360);
-
-        # the number of lines buffered before written to file
-        # you might want to increase this if your disk isn't catching with
-        # all the log messages you get or if you want less disk activity
-        # (say on a laptop)
-        # (default is 0)
-        #sync(0);
 
         # the number of lines fitting in the output queue
         log_fifo_size(2048);
@@ -62,7 +56,7 @@ options {
         # socket, glibc can handle arbitrary length log messages, but -- for
         # example -- syslogd accepts only 1024 bytes
         # (default is 2048)
-        #log_msg_size(2048);
+        log_msg_size(8192);
 
 	#Disable statistic log messages.
 	stats_freq(0);
@@ -73,6 +67,8 @@ options {
 	# we tell the syslog-ng that if a hostname match this regexp than that
 	# is not a real hostname.
 	bad_hostname("^gconfd$");
+
+  time_sleep(10); # default: 0 milliseconds
 };
 
 
@@ -87,7 +83,7 @@ source s_all {
         # function to send logs to)
         unix-stream("/dev/log");
         # messages from the kernel
-        file("/proc/kmsg" log_prefix("kernel: "));
+        file("/proc/kmsg" program_override("kernel: "));
         # use the following line if you want to receive remote UDP logging messages
         # (this is equivalent to the "-r" syslogd flag)
         # udp();
@@ -345,15 +341,17 @@ log {
         destination(dp_xconsole);
 };
 
-source s_rails {
+source app_server {
   tcp(
     ip(0.0.0.0)
     port(51400)
-    max-connections(8192)
+    max-connections(8192) # default: 10 connections
+    log_fetch_limit(50)   # default: 10 messages per poll per connection
+    log_iw_size(20000)    # default: 100 messages
   );
 };
 
-destination df_rails {
+destination ebs_file {
   file("/ebs/log/$PROGRAM/$YEAR-$MONTH-$DAY-$HOUR.log"
     owner("ubuntu")
     group("ubuntu")
@@ -362,15 +360,19 @@ destination df_rails {
     dir_group("ubuntu")
     dir_perm(0755)
     create_dirs(yes)
+    flush_lines(1000)     # default: 0 lines
+    flush_timeout(1000)   # default: 10000 milliseconds
+    log_fifo_size(100000) # default: 1000 lines
   );
 };
 
 filter f_rails {
-  program("^rails-");
+  program("rails-");
 };
 
 log {
-  source(s_rails);
+  source(app_server);
   filter(f_rails);
-  destination(df_rails);
+  destination(ebs_file);
+  flags(flow-control, final);
 };

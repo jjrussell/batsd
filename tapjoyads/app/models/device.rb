@@ -104,4 +104,22 @@ class Device < SimpledbShardedResource
     save
   end
   
+  def self.normalize_device_type(device_type_param)
+    if device_type_param =~ /iphone/i
+      'iphone'
+    elsif device_type_param =~ /ipod/i
+      'itouch'
+    elsif device_type_param =~ /ipad/i
+      'ipad'
+    elsif device_type_param =~ /itouch/i
+      'itouch'
+    elsif device_type_param =~ /android/i
+      'android'
+    elsif device_type_param =~ /windows/i
+      'windows'
+    else
+      nil
+    end
+  end
+  
 end

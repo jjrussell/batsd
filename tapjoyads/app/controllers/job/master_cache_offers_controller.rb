@@ -5,12 +5,8 @@ class Job::MasterCacheOffersController < Job::JobController
       offer.update_attribute(:show_rate, 0.10) if offer.is_free? && offer.show_rate > 0.10 && offer.partner.balance <= 10000 && !offer.allow_negative_balance
     end
     
-    Offer.cache_offer_stats
-    Offer.cache_offers
-    
-    # Currency.tapjoy_enabled.find_each do |currency|
-    #   Sqs.send_message(QueueNames::CACHE_OFFERS, currency.id)
-    # end
+    OfferCacher.cache_offer_stats
+    OfferCacher.cache_offers
     
     render :text => 'ok'
   end

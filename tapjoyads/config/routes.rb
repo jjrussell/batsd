@@ -50,7 +50,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post } do |app|
-    app.resources :offers, :only => [ :new, :create, :edit, :update ] , :member => { :percentile => :post, :toggle => :post }, :controller => 'apps/offers' do |offer|
+    app.resources :offers, :only => [ :new, :create, :edit, :update ] , :member => { :toggle => :post }, :controller => 'apps/offers' do |offer|
       offer.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :controller => 'apps/offers/offer_events', :as => :scheduling
     end
     app.resources :currencies, :only => [ :show, :update, :new, :create ],
@@ -70,7 +70,7 @@ ActionController::Routing::Routes.draw do |map|
     :collection => { :contact => :post }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get, :download_udids => :get },
-    :collection => { :global => :get, :publisher => :get, :advertiser => :get }
+    :collection => { :global => :get, :publisher => :get, :advertiser => :get, :gamez => :get }
   map.resources :raffle_manager, :only => [ :index, :edit, :update, :new, :create ]
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
@@ -113,7 +113,7 @@ ActionController::Routing::Routes.draw do |map|
       user.resources :partner_assignments, :only => [ :create, :destroy ], :controller => 'users/partner_assignments'
     end
     tools.resources :employees, :only => [ :index, :new, :create, :edit, :update ], :member => [ :delete_photo ]
-    tools.resources :preview_experiments, :only => [ :index, :show ]
+    tools.resources :offer_lists, :only => [ :index ]
     tools.resources :rank_boosts, :except => [ :show, :destroy ], :member => { :deactivate => :post }
     tools.resources :external_publishers, :only => [ :index, :update ]
     tools.resources :jobs, :except => [ :show ]

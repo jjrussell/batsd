@@ -68,6 +68,7 @@ class App < ActiveRecord::Base
   has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "not rewarded", :order => "created_at"
   has_many :app_metadata_mappings
   has_many :app_metadatas, :through => :app_metadata_mappings
+  has_many :app_reviews
   
   belongs_to :partner
 
@@ -182,86 +183,27 @@ class App < ActiveRecord::Base
     self.supported_devices   = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
     self.countries_blacklist = AppStore.prepare_countries_blacklist(store_id, platform)
 
-    download_icon(data[:icon_url], data[:small_icon_url]) unless new_record?
+    download_icon(data[:icon_url]) unless new_record?
     data
   end
 
-  def download_icon(url, small_url)
+  def download_icon(url)
     return if url.blank?
     
     begin
       icon_src_blob = Downloader.get(url, :timeout => 30)
-      small_icon_src_blob = small_url.nil? ? icon_src_blob : Downloader.get(small_url, :timeout => 30)
     rescue Exception => e
       Rails.logger.info "Failed to download icon for url: #{url}. Error: #{e}"
       Notifier.alert_new_relic(AppDataFetchError, "icon url #{url} for app id #{id}. Error: #{e}")
     else
-      primary_offer.save_icon!(icon_src_blob, small_icon_src_blob)
+      primary_offer.save_icon!(icon_src_blob)
     end
   end
 
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
   end
-
-  def get_offer_list(options = {})
-    device               = options.delete(:device)               { |k| raise "#{k} is a required argument" }
-    currency             = options.delete(:currency)             { |k| raise "#{k} is a required argument" }
-    geoip_data           = options.delete(:geoip_data)           { {} }
-    required_length      = options.delete(:required_length)      { 999 }
-    include_rating_offer = options.delete(:include_rating_offer) { false }
-    direct_pay_providers = options.delete(:direct_pay_providers) { [] }
-    app_version          = options.delete(:app_version)
-    device_type          = options.delete(:device_type)
-    type                 = options.delete(:type)
-    source               = options.delete(:source)
-    exp                  = options.delete(:exp)
-    os_version           = options.delete(:os_version)
-    library_version      = options.delete(:library_version) || ''
-    screen_layout_size   = options.delete(:screen_layout_size)
-    video_offer_ids      = options.delete(:video_offer_ids)      { [] }
-
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    
-    return [ [], 0 ] if type == Offer::CLASSIC_OFFER_TYPE || !currency.tapjoy_enabled?
-    
-    final_offer_list  = []
-    num_rejected      = 0
-    offer_list_length = 0
-    hide_app_offers   = currency.hide_rewarded_app_installs_for_version?(app_version, source)
-    
-    if include_rating_offer && enabled_rating_offer_id.present?
-      rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)
-      if rate_app_offer.present? && rate_app_offer.accepting_clicks?
-        offer_list_length += 1
-        if rate_app_offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size, video_offer_ids)
-          num_rejected += 1
-        else
-          final_offer_list << rate_app_offer
-        end
-      end
-    end
-    
-    offer_list_length += currency.get_cached_offers({ :type => type, :exp => exp }) do |offers|
-      offers.each do |offer|
-        if offer.should_reject?(self, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_app_offers, library_version, os_version, screen_layout_size, video_offer_ids)
-          num_rejected += 1
-        else
-          final_offer_list << offer
-        end
-        break if required_length == final_offer_list.length
-      end
-      
-      'break' if required_length == final_offer_list.length
-    end
-    
-    [ final_offer_list, offer_list_length - final_offer_list.length - num_rejected ]
-  end
   
-  def display_money_share
-    0.6
-  end
-
   def can_have_new_currency?
     currencies.empty? || !currencies.any? { |c| Currency::SPECIAL_CALLBACK_URLS.include?(c.callback_url) }
   end
