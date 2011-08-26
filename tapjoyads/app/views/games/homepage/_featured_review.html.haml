@@ -1,7 +1,7 @@
 .app_review.full
   .app_item.clearfix
     .app_image
-      %img{:src => Offer.get_icon_url(:size => '114', :source => :cloudfront, :icon_id => Offer.hashed_icon_id(@featured_review.app_id)) }
+      %img{:src => Offer.get_icon_url(:size => '57', :source => :cloudfront, :icon_id => Offer.hashed_icon_id(@featured_review.app_id)) }
     .app_text
       .app_title.title
         = @featured_review.app.name
