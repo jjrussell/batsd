@@ -206,8 +206,12 @@ class Offer < ActiveRecord::Base
     conversion_rate * bid_for_ranks
   end
 
+  def primary_offer_enabled?
+    Offer.enabled_offers.find_by_id(item_id).present?
+  end
+
   def send_low_conversion_email?
-    item_id == id || Offer.enabled_offers.find_by_id(item_id)
+    item_id == id || !primary_offer_enabled?
   end
 
   def calculate_min_conversion_rate
