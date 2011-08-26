@@ -438,11 +438,13 @@ class Offer < ActiveRecord::Base
     icon_256_blob = icon_256.to_blob{|i| i.format = 'JPG'}
     icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
     icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
+    icon_57_png_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'PNG'}
 
     bucket.put("icons/src/#{icon_id}.jpg", icon_src_blob, {}, "public-read")
     bucket.put("icons/256/#{icon_id}.jpg", icon_256_blob, {}, "public-read")
     bucket.put("icons/114/#{icon_id}.jpg", icon_114_blob, {}, "public-read")
     bucket.put("icons/57/#{icon_id}.jpg", icon_57_blob, {}, "public-read")
+    bucket.put("icons/57/#{icon_id}.png", icon_57_png_blob, {}, "public-read")
 
     Mc.delete("icon.s3.#{id}")
 
@@ -450,7 +452,7 @@ class Offer < ActiveRecord::Base
     if existing_icon_blob.present?
       begin
         acf = RightAws::AcfInterface.new
-        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg"], "#{id}.#{Time.now.to_i}")
+        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg", "/icons/57/#{icon_id}.png"], "#{id}.#{Time.now.to_i}")
       rescue Exception => e
         Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
       end
