@@ -6,7 +6,7 @@ class OptOutsController < ApplicationController
       d.opted_out = true
       d.save
     end
-    redirect_to '/site/privacy_mobile'
+    redirect_to '/site/privacy'
   end
   
 end
