@@ -14,9 +14,6 @@
       %td= label_tag :platform_name, 'Publisher App Platform'
       %td= select_tag :platform_name, options_for_select(OfferCacher::PLATFORMS, params[:platform_name])
     %tr
-      %td= label_tag :hide_rewarded_app_installs
-      %td= select_tag :hide_rewarded_app_installs, options_for_select(OfferCacher::HIDE_REWARDED_OPTIONS, params[:hide_rewarded_app_installs] == 'true')
-    %tr
       %td= label_tag :currency_group_id, 'Currency Group'
       %td= select_tag :currency_group_id, options_for_select(CurrencyGroup.all.collect { |cg| [ cg.name, cg.id ] })
       
