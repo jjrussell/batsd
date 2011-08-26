@@ -156,8 +156,6 @@ ActionController::Routing::Routes.draw do |map|
     agency.resources :currencies, :only => [ :index, :show, :create, :update ]
   end
   
-  map.resources :raffles, :only => [ :index, :edit, :update ], :collection => { :status => :get }, :member => { :purchase => :post }
-  
   ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/legacy.rb'))
   ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/default.rb'))
 end
