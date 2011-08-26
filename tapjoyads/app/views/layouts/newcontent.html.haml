@@ -21,5 +21,7 @@
       #content
         %a#client_login{:href => "/login"}
         .clear
+        - flash.each do |name, msg|
+          .flash{ :id => "flash_#{name}" }= msg
         = yield
     = render :partial => '/homepage/footer'
