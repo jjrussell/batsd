@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110823201241) do
+ActiveRecord::Schema.define(:version => 20110825210500) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -77,13 +77,14 @@ ActiveRecord::Schema.define(:version => 20110823201241) do
     t.string   "app_id",      :limit => 36, :null => false
     t.string   "author_id",   :limit => 36, :null => false
     t.string   "author_type",               :null => false
-    t.string   "text",                      :null => false
+    t.text     "text",                      :null => false
     t.date     "featured_on"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "app_reviews", ["app_id", "author_id"], :name => "index_app_reviews_on_app_id_and_author_id", :unique => true
+  add_index "app_reviews", ["featured_on"], :name => "index_app_reviews_on_featured_on", :unique => true
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
 
   create_table "apps", :id => false, :force => true do |t|

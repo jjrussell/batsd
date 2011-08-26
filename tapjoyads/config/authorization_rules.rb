@@ -67,7 +67,7 @@ authorization do
   
   role :account_mgr do
     includes :money
-    has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser ]
+    has_permission_on :statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :gamez ]
     has_permission_on :search, :to => [ :offers, :partners, :users ]
     has_permission_on :tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :edit_android_app, :update_android_app, :device_info, :update_device, :freemium_android, :award_currencies, :update_award_currencies ]
     has_permission_on :tools_enable_offer_requests, :to => [ :index, :update ]
@@ -92,6 +92,7 @@ authorization do
   role :games_editor do
     has_permission_on :tools, :to => [ :index ]
     has_permission_on :tools_editors_picks, :to => [ :index, :new, :create, :show, :edit, :update, :activate, :expire ]
+    has_permission_on :tools_app_reviews, :to => [ :index, :new, :create, :edit, :update, :update_featured, :destroy ]
   end
 
   role :admin do

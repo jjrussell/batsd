@@ -6,6 +6,7 @@
   %thead
     %tr
       %th Order #
+      %th Created At
       %th Amt.
       %th Partner name
       %th Partner id
@@ -15,6 +16,7 @@
   - @orders.each do |order|
     %tr
       %td= order.id
+      %td= order.created_at.to_s(:mdy_ampm)
       %td= number_to_currency(order.amount / 100.0)
       %td= order.partner.name
       %td= link_to(order.partner.id, order.partner)
