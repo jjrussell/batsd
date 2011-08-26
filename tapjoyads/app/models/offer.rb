@@ -206,11 +206,15 @@ class Offer < ActiveRecord::Base
     conversion_rate * bid_for_ranks
   end
 
+  def send_low_conversion_email?
+    item_id == id || Offer.enabled_offers.find_by_id(item_id)
+  end
+
   def calculate_min_conversion_rate
     min_cvr = min_conversion_rate
     if min_cvr.nil?
       if is_free?
-        min_cvr = rewarded? ? 0.12 : 0.03
+        min_cvr = rewarded? ? 0.12 : 0.01
       else
         min_cvr = item_type == 'GenericOffer' ? 0.002 : 0.005
       end
