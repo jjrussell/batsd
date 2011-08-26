@@ -32,7 +32,7 @@ private
     conversion_rate = 1.0 if conversion_rate > 1.0
 
     min_conversion_rate = offer.calculate_min_conversion_rate
-    if recent_clicks > 200 && conversion_rate < min_conversion_rate
+    if recent_clicks > 200 && conversion_rate < min_conversion_rate && offer.send_low_conversion_email?
       stats = {
         :recent_clicks => recent_clicks,
         :recent_installs => recent_installs,
