@@ -6,12 +6,12 @@ class Tools::AppReviewsController < WebsiteController
   def index
     if params[:app_id]
       @app = App.find(params[:app_id])
-      @app_reviews = @app.app_reviews.by_employees
+      @app_reviews = @app.app_reviews.by_employees.ordered_by_date
     elsif params[:author_id]
       @author = Employee.find(params[:author_id])
-      @app_reviews = @author.app_reviews
+      @app_reviews = @author.app_reviews.ordered_by_date
     else
-      @app_reviews = AppReview.by_employees
+      @app_reviews = AppReview.by_employees.ordered_by_date
     end
   end
 
