@@ -491,16 +491,13 @@ class Offer < ActiveRecord::Base
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
     click_key             = options.delete(:click_key)             { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
-    source                = options.delete(:source)                { nil }
     options.delete(:language_code)
     options.delete(:display_multiplier)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
     if item_type == 'App' && final_url =~ /^http:\/\/phobos\.apple\.com/
-      if source == 'tj_games'
-        final_url += '&referrer=tapjoy'
-      end
+      final_url += '&referrer=tapjoy'
       
       if itunes_link_affiliate == 'tradedoubler'
         final_url += '&partnerId=2003&tduid=UK1800811'
