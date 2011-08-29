@@ -419,9 +419,9 @@ class Offer < ActiveRecord::Base
   end
 
   def self.get_icon_url(options = {})
-    source   = options.delete(:source)   { :s3 }
-    size     = options.delete(:size)     { '57' }
-    icon_id  = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
+    source     = options.delete(:source)   { :s3 }
+    size       = options.delete(:size)     { '57' }
+    icon_id    = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
     item_type  = options.delete(:item_type)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
