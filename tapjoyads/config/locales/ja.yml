@@ -8,8 +8,8 @@ ja:
       # shared between the original wall and the redesigned wall
       title: "{{currency}} 稼ぐ"
       free: "無料"
-      next: "次 {{items}}"
-      previous: "前 {{items}}"
+      next: "次の {{items}}件"
+      previous: "前の {{items}}件"
       missing_currency: "{{currency}}が受取れない場合"
 
       # original wall only
@@ -27,8 +27,8 @@ ja:
       title: "指示"
       amount_and_currency: "{{amount}} {{currency}}"
       earn_currency: "{{amount_and_currency}} を獲得"
-      header: "次のステップを完了すると {{currency}} を獲得できます"
-      footer: "このステップを完了づると {{amount_and_currency}} を獲得できます"
+      header: "次のステップを完了すると {{currency}} が獲得できます"
+      footer: "このステップを完了すると {{amount_and_currency}} が獲得できます"
       download_action: "こちら"
       download_link: "このアプリをインストールするには {{download_action}} をクリックしてください"
       continue_link: "続くにはクリックしてください"
@@ -47,6 +47,6 @@ ja:
       missing_description: "オファー広告の内容を記入してください"
       missing_offer: "オファー広告の内容を記入する必要があります"
       invalid_email: "正しいメールアドレスを記入してください"
-      abuse_warning: "このフォームはオファー広告の手続きを終了したにもかかわらず、仮想通貨を受取れなかったユーザのためのものです。不正利用の場合にはオファー広告を利用することが出来なくなります。"
+      abuse_warning: "このフォームはオファー案件の手続きを終了したにもかかわらず、仮想通貨を受取れなかったお客様のためのものです。　不正利用の場合にはオファー広告を利用することが出来なくなります。"
       select_offer: "オファー広告を選択してください"
       another_offer: "その他（下記に記入してください）"
