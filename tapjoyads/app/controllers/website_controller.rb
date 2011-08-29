@@ -74,7 +74,7 @@ class WebsiteController < ApplicationController
 
   def device_cookie
     @device_id ||= cookies["#{current_user.email}-device"]
-    # TODO: take this block out on/after 08/25/2011
+    # TODO: take this block out on/after 09/07/2011
     unless @device_id
       @device_id = cookies["device"]
       if @device_id
