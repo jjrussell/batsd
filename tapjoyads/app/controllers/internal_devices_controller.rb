@@ -5,13 +5,13 @@ class InternalDevicesController < WebsiteController
     if params[:resend]
       @device = current_user.internal_devices.find(params[:device])
       send_email
-    elsif params[:device].present? || cookies[:device].present?
-      device_id = params[:device] || cookies[:device]
-      @device = current_user.internal_devices.find(device_id)
+    elsif params[:device] || device_cookie
+      device_id = params[:device] || device_cookie
+      @device = current_user.internal_devices.find_by_id(device_id)
     else
       @device = InternalDevice.new
       current_user.internal_devices << @device
-      cookies["device"] = { :value => @device.id, :expires => 1.year.from_now }
+      set_cookie( { :value => @device.id, :expires => 1.year.from_now } )
       send_email
     end
   end
@@ -74,4 +74,5 @@ private
     timestamp = Time.zone.now.strftime("%l:%M%p on %b %d, %Y")
     TapjoyMailer.deliver_approve_device(current_user.email, verification_url, block_device_url, location, timestamp)
   end
+
 end

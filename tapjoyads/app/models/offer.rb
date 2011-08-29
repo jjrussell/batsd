@@ -19,7 +19,7 @@ class Offer < ActiveRecord::Base
   VIDEO_OFFER_TYPE                 = '6'
   OFFER_TYPE_NAMES = {
     DEFAULT_OFFER_TYPE               => 'Offerwall Offers',
-    FEATURED_OFFER_TYPE              => 'Featured OFfers',
+    FEATURED_OFFER_TYPE              => 'Featured Offers',
     DISPLAY_OFFER_TYPE               => 'Display Ad Offers',
     NON_REWARDED_DISPLAY_OFFER_TYPE  => 'Non-Rewarded Display Ad Offers',
     NON_REWARDED_FEATURED_OFFER_TYPE => 'Non-Rewarded Featured Offers',
@@ -206,11 +206,19 @@ class Offer < ActiveRecord::Base
     conversion_rate * bid_for_ranks
   end
 
+  def primary_offer_enabled?
+    Offer.enabled_offers.find_by_id(item_id).present?
+  end
+
+  def send_low_conversion_email?
+    item_id == id || !primary_offer_enabled?
+  end
+
   def calculate_min_conversion_rate
     min_cvr = min_conversion_rate
     if min_cvr.nil?
       if is_free?
-        min_cvr = rewarded? ? 0.12 : 0.03
+        min_cvr = rewarded? ? 0.12 : 0.01
       else
         min_cvr = item_type == 'GenericOffer' ? 0.002 : 0.005
       end
@@ -302,10 +310,12 @@ class Offer < ActiveRecord::Base
 
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
     if item_type == 'App' && final_url =~ /^http:\/\/phobos\.apple\.com/
+      final_url += '&referrer=tapjoy'
+      
       if itunes_link_affiliate == 'tradedoubler'
         final_url += '&partnerId=2003&tduid=UK1800811'
       else
-        final_url = "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&type=10&tmpid=3909&RD_PARM1=#{CGI::escape(final_url)}"
+        final_url += '&partnerId=30&siteID=OxXMC6MRBt4'
       end
     elsif item_type == 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
@@ -463,11 +473,13 @@ class Offer < ActiveRecord::Base
     icon_256_blob = icon_256.to_blob{|i| i.format = 'JPG'}
     icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
     icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
+    icon_57_png_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'PNG'}
 
     bucket.put("icons/src/#{icon_id}.jpg", icon_src_blob, {}, "public-read")
     bucket.put("icons/256/#{icon_id}.jpg", icon_256_blob, {}, "public-read")
     bucket.put("icons/114/#{icon_id}.jpg", icon_114_blob, {}, "public-read")
     bucket.put("icons/57/#{icon_id}.jpg", icon_57_blob, {}, "public-read")
+    bucket.put("icons/57/#{icon_id}.png", icon_57_png_blob, {}, "public-read")
     
     Mc.delete("icon.s3.#{id}")
 
@@ -475,7 +487,7 @@ class Offer < ActiveRecord::Base
     if existing_icon_blob.present?
       begin
         acf = RightAws::AcfInterface.new
-        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg"], "#{id}.#{Time.now.to_i}")
+        acf.invalidate('E1MG6JDV6GH0F2', ["/icons/256/#{icon_id}.jpg", "/icons/114/#{icon_id}.jpg", "/icons/57/#{icon_id}.jpg", "/icons/57/#{icon_id}.png"], "#{id}.#{Time.now.to_i}")
       rescue Exception => e
         Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
       end

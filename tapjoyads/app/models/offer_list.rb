@@ -17,10 +17,9 @@ class OfferList
     @exp                        = options.delete(:exp)  
     @include_rating_offer       = options.delete(:include_rating_offer) { false }
     @platform_name              = options.delete(:platform_name)
-    @hide_rewarded_app_installs = options.delete(:hide_rewarded_app_installs)
     @video_offer_ids            = options.delete(:video_offer_ids) { [] }
     
-    @hide_rewarded_app_installs = @currency.hide_rewarded_app_installs_for_version?(@app_version, @source) if @currency
+    @hide_rewarded_app_installs = @currency ? @currency.hide_rewarded_app_installs_for_version?(@app_version, @source) : false
     @normalized_device_type     = Device.normalize_device_type(@device_type)
     
     if @publisher_app

@@ -31,8 +31,8 @@
           %img{:src => "/images/techcrunch.jpg"}/
         %a{:href => "http://www.insidemobileapps.com/2011/08/04/diversifying-beyond-games-tapjoy-boasts-of-driving-10m-conversions-for-brands-in-july/"}
           %img{:src => "/images/insidemobileapps.jpg"}/
-    #footer_wrapper
-      #footer
+    #clients_wrapper
+      #clients_holder
         #clients
           %img.header{:src => "/images/checkout_a_few_of_our_clients.png"}/
           .clear
@@ -116,42 +116,4 @@
               %span.appname Steve Hartmann
               %span.company GameFly
         #footer_divider
-        #footer_content
-          #about_tapjoy
-            %img.header{:src => "/images/about_tapjoy.png"}/
-            .clear
-            %ul
-              %li
-                %a{:href => "/site/team"} Meet the team
-              %li
-                %a{:href => "/press"} Tapjoy in the press
-              %li
-                %a{:href => "http://blog.tapjoy.com"} Read our blog
-              %li.last
-                %a{:href => "/careers"} Work at Tapjoy
-            %ul
-              %li
-                %a{:href => "/site/contact"} Contact us
-              %li
-                %a{:href => "http://knowledge.tapjoy.com"} Tapjoy Knowledge Center
-              %li.last
-                %a{:href => "/site/privacy"} Privacy Policy
-          #legal_stuff
-            %img.header{:src => "/images/legal_stuff.png"}/
-            %p
-              All content © 2011 Tapjoy. Website created with love in downtown San Francisco, CA
-            .clear
-      .clear
-    = javascript_include_tag 'jquery-1.4.2.min', 'tapjoy'
-    %script{ :type => 'text/javascript', :charset => 'utf-8' }
-      = yield :page_javascript
-      - unless Rails.env == 'development'
-        :plain
-          var _gaq = _gaq || [];
-          _gaq.push(['_setAccount', 'UA-5323442-1']);
-          _gaq.push(['_trackPageview']);
-          (function() {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();
+    = render :partial => '/homepage/footer'

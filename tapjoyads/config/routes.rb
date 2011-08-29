@@ -71,7 +71,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get, :download_udids => :get },
     :collection => { :global => :get, :publisher => :get, :advertiser => :get, :gamez => :get }
-  map.resources :raffle_manager, :only => [ :index, :edit, :update, :new, :create ]
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
     :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post, :reporting => :get },
@@ -119,6 +118,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :jobs, :except => [ :show ]
     tools.resources :earnings_adjustments, :only => [ :new, :create ]
     tools.resources :editors_picks, :except => [ :destroy ], :member => { :activate => :post, :expire => :post }
+    tools.resources :app_reviews, :except => [ :show ], :member => { :update_featured => :put }
     tools.resources :agency_users, :only => [ :index, :show ]
     tools.resources :support_requests, :only => [ :index ]
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
@@ -154,8 +154,6 @@ ActionController::Routing::Routes.draw do |map|
     agency.resources :partners, :only => [ :index, :show, :create, :update ], :collection => { :link => :post }
     agency.resources :currencies, :only => [ :index, :show, :create, :update ]
   end
-  
-  map.resources :raffles, :only => [ :index, :edit, :update ], :collection => { :status => :get }, :member => { :purchase => :post }
   
   ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/legacy.rb'))
   ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/default.rb'))
