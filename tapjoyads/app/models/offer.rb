@@ -310,10 +310,12 @@ class Offer < ActiveRecord::Base
 
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
     if item_type == 'App' && final_url =~ /^http:\/\/phobos\.apple\.com/
+      final_url += '&referrer=tapjoy'
+      
       if itunes_link_affiliate == 'tradedoubler'
         final_url += '&partnerId=2003&tduid=UK1800811'
       else
-        final_url = "http://click.linksynergy.com/fs-bin/click?id=OxXMC6MRBt4&subid=&offerid=146261.1&type=10&tmpid=3909&RD_PARM1=#{CGI::escape(final_url)}"
+        final_url += '&partnerId=30&siteID=OxXMC6MRBt4'
       end
     elsif item_type == 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
