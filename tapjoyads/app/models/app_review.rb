@@ -9,6 +9,7 @@ class AppReview < ActiveRecord::Base
   validates_presence_of :author, :app, :text
 
   named_scope :by_employees, :conditions => { :author_type => 'Employee' }
+  named_scope :ordered_by_date, :order => "featured_on DESC"
   named_scope :not_featured, :conditions => { :featured_on => nil }, :limit => 1, :order => "created_at DESC"
   named_scope :featured_before,  lambda { |date| { :conditions => [ "featured_on < ?", date.to_date ], :order => "featured_on ASC", :limit => 1 } }
   named_scope :featured_on, lambda { |date| { :conditions => [ "featured_on = ?", date.to_date ] } }
