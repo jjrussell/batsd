@@ -93,6 +93,8 @@ private
       return
     end
     
+    @device = Device.new(:key => params[:udid])
+    
     # Hottest App sends the same publisher_user_id for every click
     if params[:publisher_app_id] == '469f7523-3b99-4b42-bcfb-e18d9c3c4576'
       params[:publisher_user_id] = params[:udid]
@@ -101,13 +103,8 @@ private
   
   def validate_click
     return if currency_disabled?
-    
     return if offer_disabled?
-    
-    @device = Device.new(:key => params[:udid])
-    unless @offer.multi_complete?
-      return if offer_completed?
-    end
+    return if offer_completed?
     
     wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
     build_web_request(wr_path)
@@ -136,11 +133,26 @@ private
   end
   
   def offer_completed?
+    return false if @offer.multi_complete?
+    
     app_id_for_device = params[:advertiser_app_id]
     if @offer.item_type == 'RatingOffer'
       app_id_for_device = RatingOffer.get_id_with_app_version(params[:advertiser_app_id], params[:app_version])
     end
+    
     completed = @device.has_app(app_id_for_device)
+    unless completed
+      publisher_user = PublisherUser.new(:key => "#{params[:publisher_app_id]}.#{params[:publisher_user_id]}")
+      other_udids = publisher_user.udids - [ @device.key ]
+      other_udids.each do |udid|
+        device = Device.new(:key => udid)
+        if device.has_app(app_id_for_device)
+          completed = true 
+          break
+        end
+      end
+    end
+    
     if completed
       build_web_request('completed_offer')
       save_web_request
