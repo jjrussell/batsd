@@ -43,7 +43,7 @@ class Currency < ActiveRecord::Base
   named_scope :potential_external_publishers, :conditions => "potential_external_publisher = true"
   named_scope :external_publishers, :conditions => "external_publisher = true"
   
-  before_validation :remove_whitespace_from_attributes
+  before_validation :sanitize_attributes
   before_validation_on_create :assign_default_currency_group
   before_create :set_values_from_partner_and_reseller
   before_update :update_spend_share
@@ -211,8 +211,8 @@ private
     end
   end
   
-  def remove_whitespace_from_attributes
-    self.test_devices    = test_devices.gsub(/\s/, '')
+  def sanitize_attributes
+    self.test_devices    = test_devices.gsub(/\s/, '').downcase
     self.disabled_offers = disabled_offers.gsub(/\s/, '')
   end
   
