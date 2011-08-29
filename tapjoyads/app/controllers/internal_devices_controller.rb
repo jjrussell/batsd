@@ -2,16 +2,16 @@ class InternalDevicesController < WebsiteController
   filter_access_to :new, :edit, :update, :index, :show, :destroy, :approve
 
   def new
-    if params[:resend]
-      @device = current_user.internal_devices.find(params[:device])
-      send_email
-    elsif params[:device] || device_cookie
-      device_id = params[:device] || device_cookie
-      @device = current_user.internal_devices.find_by_id(device_id)
-    else
+    @device = current_user.internal_devices.find_by_id(device_cookie)
+
+    if @device.nil?
       @device = InternalDevice.new
       current_user.internal_devices << @device
       set_cookie( { :value => @device.id, :expires => 1.year.from_now } )
+      send_email
+    elsif @device.approved?
+      redirect_to statz_index_path
+    elsif params[:resend]
       send_email
     end
   end
