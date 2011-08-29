@@ -27,7 +27,9 @@ private
 
   def default_path
     options = { :user => @user_session.record }
-    if permitted_to?(:index, :statz, options)
+    if has_role_with_hierarchy?(:admin)
+      tools_path
+    elsif permitted_to?(:index, :statz, options)
       statz_index_path
     elsif permitted_to?(:index, :tools, options)
       tools_path
