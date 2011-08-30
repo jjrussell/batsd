@@ -1,5 +1,5 @@
 #a_dvertisers { float: left; margin-top: 42px; width: 980px; }
-#about { clear: left; float: left; font-size: 14px; margin-top: 15px; width: 449px; }
+#about { clear: left; float: left; font-size: 14px; margin-top: 15px; width: 480px; }
 #about p { color: #828282; line-height: 27px; float: left; margin-top: 15px; }
 #about a { color: #6c6c6c; font-weight: bold; }
 #about a label { color: #0077b1; }
@@ -11,8 +11,8 @@
 
 h2 { clear: both; }
 
-.section { background: #f6f6f6; border-radius: 5px; box-shadow: inset 0 0 5px #C1C1C1; float: left; margin-top: 59px; width: 477px; }
-.section_right { margin-left: 25px; }
+.section { background: #f6f6f6; border-radius: 5px; box-shadow: inset 0 0 5px #C1C1C1; clear: both; float: left; margin-top: 49px; width: 477px; }
+.section_right { clear: none; margin-left: 25px; }
 .section img { float: left; margin: 15px 0 0 15px; }
 .right { float: left; margin-left: 7px; width: 345px; }
 .right h2 { margin-top: 18px; }
@@ -45,6 +45,7 @@ h2 { clear: both; }
 
 /** form **/
 
+#contact_form { clear: both; }
 #contact_form input, #contact_form label { font-size: 12px; margin-bottom: 5px; }
 .content h2 { margin-top: 18px; }
 .content p { color: #606060; float: left; font-size: 16px; line-height: 19px; margin: 12px 0 12px 0; width: 345px; }
