@@ -593,7 +593,9 @@ TJG.ui = {
               timeout: 15000,
               success: function(data) {
                 TJG.ui.hideLoader();
-                $("#app_title").append('&nbsp;&nbsp;-&nbsp;&nbsp;You\'ve got <span class="bold">' + data.TapPoints + '</span> ' + data.CurrencyName);
+                if (data.TapPoints) {
+                  $("#app_title").append('&nbsp;&nbsp;-&nbsp;&nbsp;You\'ve got <span class="bold">' + data.TapPoints + '</span> ' + data.CurrencyName);
+                }
                 if (data.OfferArray) {
                   var offers = data.OfferArray;
                   offerOffset = offers.length;

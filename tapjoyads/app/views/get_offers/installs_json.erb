@@ -22,7 +22,9 @@
 ],
 "Message":<%=('Install one of the apps below to earn ' + @currency.name).to_json -%>
 ,"CurrencyName":<%=@currency.name.to_json -%>
-,"TapPoints":<%= @tap_points -%>
+<% if @tap_points.present? %>
+  ,"TapPoints":<%= @tap_points -%>
+<% end %>
 <% if @more_data_available > 0 %>
   , "MoreDataAvailable":<%= @more_data_available.to_json -%>
 <% end %>
