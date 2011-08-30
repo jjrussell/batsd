@@ -507,6 +507,13 @@ class Offer < ActiveRecord::Base
     "#{prefix}/videos/src/#{video_id}.mp4"
   end
   
+  def video_exist?
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    key = bucket.key("videos/src/#{id}.mp4")
+    
+    return key.exists?
+  end
+  
   def save_video!(video_src_blob)
     bucket = S3.bucket(BucketNames::TAPJOY)
     
@@ -645,7 +652,7 @@ class Offer < ActiveRecord::Base
   end
   
   def is_valid_for?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
-    !(device_platform_mismatch?(publisher_app, device_type) ||
+    !(device_platform_mismatch?(Device.normalize_device_type(device_type)) ||
       geoip_reject?(geoip_data, device) ||
       already_complete?(publisher_app, device, app_version) ||
       flixter_reject?(publisher_app, device) ||
@@ -661,8 +668,9 @@ class Offer < ActiveRecord::Base
       app_platform_mismatch?(publisher_app) ||
       age_rating_reject?(currency) ||
       publisher_whitelist_reject?(publisher_app) ||
-      currency_whitelist_reject?(currency) ||
-      accepting_clicks?)
+      currency_whitelist_reject?(currency)) &&
+      accepting_clicks? &&
+      video_exist?
   end
 
   def update_payment(force_update = false)

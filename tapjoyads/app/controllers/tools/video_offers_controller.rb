@@ -13,11 +13,17 @@ class Tools::VideoOffersController < WebsiteController
   end
   
   def create
+    if params[:video].blank?
+      flash[:error] = 'Please upload a video'
+      render :action => :new
+      return
+    end
+    
     @video_offer = VideoOffer.new(params[:video_offer])
     log_activity(@video_offer)
     
     if @video_offer.save
-      @video_offer.primary_offer.save_video!(params[:video].read) if params[:video].present?
+      @video_offer.primary_offer.save_video!(params[:video].read)
       @video_offer.primary_offer.save_icon!(params[:icon].read) if params[:icon].present?
       flash[:notice] = 'Successfully created Video Offer'
       redirect_to statz_path(@video_offer.primary_offer)
