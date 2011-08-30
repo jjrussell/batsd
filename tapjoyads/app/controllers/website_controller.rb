@@ -57,12 +57,11 @@ class WebsiteController < ApplicationController
     return unless Rails.env == 'production'
     if current_user && current_user.employee?
       return if request.path.match(/logout|approve_device|block/)
-      if device_cookie
-        device = current_user.internal_devices.find_by_id(device_cookie)
+      if device = current_user.internal_devices.find_by_id(device_cookie)
         if device.approved?
           return
         elsif device.pending?
-          redirect_to new_internal_device_path(:device => device.id)
+          redirect_to new_internal_device_path
         else
           redirect_bad_device
         end
@@ -75,12 +74,13 @@ class WebsiteController < ApplicationController
   def device_cookie
     @device_id ||= cookies["#{current_user.email}-device"]
     # TODO: take this block out on/after 09/07/2011
-    unless @device_id
-      @device_id = cookies["device"]
-      if @device_id
-        set_cookie( { :value => @device_id, :expires => 1.year.from_now } )
-        cookies.delete("device")
-      end
+    return @device_id if @device_id
+    @device_id = cookies["device"]
+    if @device_id && current_user.internal_devices.find_by_id(@device_id)
+      set_cookie( { :value => @device_id, :expires => 1.year.from_now } )
+      cookies.delete("device")
+    else
+      @device_id = nil
     end
     @device_id
     # TODO: remove to here
