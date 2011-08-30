@@ -57,6 +57,9 @@ class GetOffersController < ApplicationController
     is_server_to_server = params[:redirect] == '1' || (params[:json] == '1' && params[:callback].blank?)
     set_geoip_data(is_server_to_server)
     @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
+    if @currency.tapjoy_managed? && params[:source] == 'tj_games'
+      @tap_points = PointPurchases.new(:key => "#{params[:publisher_user_id]}.#{@currency.id}").points
+    end
     
     if params[:type] == Offer::CLASSIC_OFFER_TYPE
       render :template => 'get_offers/offers'
