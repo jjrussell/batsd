@@ -792,58 +792,73 @@ form#new_gamer_session .login_pass {
 }
 /* Featured */
 .web .feat_review, .ipad .feat_review {
-  background: transparent url('/images/games/paper_web.png') no-repeat center center;
+  background: transparent url('/images/games/paper_web.png') no-repeat center top;
   height: 280px;
   width: 640px;
 }
 .web .feat_review.min, .ipad .feat_review.min {
-  background: transparent url('/images/games/paper_min_web.png') no-repeat center center;
+  background: transparent url('/images/games/paper_min_web.png') no-repeat center top;
   height: 130px;
   width: 640px;   
-}
-.mobile.hd .feat_review {
-  background: transparent url('/images/games/paper_web.png') no-repeat center center;
-  background-size: 100%;
-  width: 320px;
-}
-.mobile.hd .feat_review.min {
-  background: transparent url('/images/games/paper_min_web.png') no-repeat center center;
-  background-size: 100%;
-  width: 320px;
-}  
+} 
 .mobile .feat_review {
-  background: transparent url('/images/games/paper_mobile.png') no-repeat center center;
+  background: transparent url('/images/games/paper_mobile.png') no-repeat center top;
   height: 140px;
   width: 320px;
 }
 .mobile .feat_review.min {
-  background: transparent url('/images/games/paper_min_mobile.png') no-repeat center center;
-  height: 65px;
+  background: transparent url('/images/games/paper_min_mobile.png') no-repeat center top;
+  height: 70px;
   width: 320px;
 }  
 .feat_review {
   margin: 12px auto;
+}
+.feat_toggle {
+  background: transparent url('/images/games/feat_open_web.png') no-repeat center center;
+  cursor: pointer;
+  float: right;
+  height: 50px;
+  position: relative;
+  top: 42px;
+  right: 30px;
+  width: 50px;
+}
+.mobile .feat_toggle {
+  background: transparent url('/images/games/feat_open_mobile.png') no-repeat center center;
+  float: right;
+  height: 25px;
+  top: 21px;
+  right: 15px; 
+  width: 25px;
+}
+.feat_toggle.collaspe {
+  background: transparent url('/images/games/feat_close_web.png') no-repeat center center;
+}
+.mobile .feat_toggle.collaspe {
+  background: transparent url('/images/games/feat_close_mobile.png') no-repeat center center;
 }
 .mobile .feat_review {
   margin: 6px auto;
 }
 .feat_content {
   color: #4B4B4B;
-  -webkit-transform: rotate(-1deg);
-  -moz-transform: rotate(-1deg);
-  transform: rotate(-1deg);
 }
 .web .feat_content, .ipad .feat_content {
   padding: 40px 32px 0px;
 }
 .mobile .feat_content {
   padding: 20px 16px 0px;
+}
+.staff_info {
 } 
 .web .staff_info, .ipad .staff_info {
   height: 72px;
+  margin-bottom: 12px;
 }
 .mobile .staff_info {
   height: 36px;
+  margin-bottom: 6px;
 }
 .staff_info.full {
   margin-top: 12px;
@@ -887,10 +902,6 @@ form#new_gamer_session .login_pass {
   margin-bottom: 6px;
   width: 154px;
 }
-.mobile.hd .staff_info .staff_title {
-  background: transparent url('/images/games/staff_pick_web.png') no-repeat center center;
-  background-size: 100%;
-}
 .mobile .staff_info .staff_title {
   background: transparent url('/images/games/staff_pick_mobile.png') no-repeat center center;
   height: 12px;
@@ -910,16 +921,17 @@ form#new_gamer_session .login_pass {
 }
 .staff_info .staff_name .author {
   color: #6E6E6E;
+  font-weight: bold;
 }
 .staff_info.full .staff_name .author {
   color: #FFF;
-  font-size: 20px;
-  font-weight: normal;
+  font-size: 16px;
+  font-weight: bold;
   position: relative;
   top: 14px;
 }
 .mobile .staff_info.full .staff_name .author {
-  font-size: 14px;
+  font-size: 12px;
   top: 7px;
 }
 .web .feat_arrow, .ipad .feat_arrow {
@@ -935,10 +947,6 @@ form#new_gamer_session .login_pass {
   position: relative;
   top: 20px;
   width: 12px;
-}
-.mobile.hd .feat_arrow {
-  background: transparent url('/images/games/feat_arrow_web.png') no-repeat center center;
-  background-size: 100%;
 }
 /* Offer */    
 .offer_item {
@@ -987,22 +995,16 @@ form#new_gamer_session .login_pass {
 .mobile .offer_image, .mobile .app_review .app_image {
   margin-right: 6px;
 }
-.offer_image {
+.offer_image, .app_image {
   height: 57px;
   width: 57px;
 }
-.app_review .app_image {
+.mobile .app_review .app_image img {
   height: 57px;
   width: 57px;
-}
-.mobile.hd .app_review .app_image {
-  height: 57px;
-  width: 57px; 
 }
 .mobile.hd .app_review .app_image img {
   background-size: 100%;
-  height: 57px;
-  width: 57px;
 }
 .offer_text, .app_review .app_text {
   float: left;
@@ -1033,7 +1035,7 @@ form#new_gamer_session .login_pass {
 .ipad.portrait .app_review .app_text,
 .ipad .app_review .app_text {
   padding-right: 6px;
-  width: 420px;
+  width: 460px;
 }
 .mobile .app_review .app_text{
   padding-right: 3px;
@@ -1064,9 +1066,11 @@ form#new_gamer_session .login_pass {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.mobile .app_review .app_title {
-  padding: 3px 0;
+.mobile.portrait .app_review .app_title {
   width: 210px;
+}
+.mobile.portrait .app_review .app_title {
+  width: 310px;
 }
 .app_review.full .app_title {
   padding: 0;
@@ -1081,16 +1085,10 @@ form#new_gamer_session .login_pass {
   color: #FFF;
 }
 .app_review .review_text {
-  font-size: 18px;
-  line-height: 28px;
+  font-size: 15px;
 }
 .mobile .app_review .review_text {
-  font-size: 16px;
-  line-height: 18px;
-}
-.mobile .app_review .review_text {
-  font-size: 16px;
-  line-height: 18px;
+  font-size: 13px;
 }
 .mobile .offer_title {
   font-size: 16px;
@@ -1108,10 +1106,13 @@ form#new_gamer_session .login_pass {
   margin: 2px 0;
 }
 .app_meta {
-  margin: 4px 0;
+  color: #B5B5B5;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 6px;
 }
 .mobile .app_meta {
-  margin: 2px 0;
+  font-size: 10px;                 
 }
 .offer_button.my_apps:hover span,
 .offer_button.my_apps:active span,
@@ -1456,7 +1457,7 @@ h2.title {
 }
 .noscript_msg {
   font-size: 18px;
-  padding:50px 20px;
+  padding: 50px 20px;
   text-align:center;
 }
 .clearfix:after {
