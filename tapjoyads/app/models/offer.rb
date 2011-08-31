@@ -757,6 +757,30 @@ class Offer < ActiveRecord::Base
   def unlogged_attributes
     [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
   end
+  
+  def percentile
+    percentile_group_id = CurrencyGroup.find_by_name('percentile').id
+    offers = OfferList.new(:type => percentile_type).offers
+    100 * offers.select { |o| o.precache_rank_score_for(percentile_group_id) <= precache_rank_score_for(percentile_group_id) }.length / offers.length
+  end
+  
+  def percentile_type
+    return VIDEO_OFFER_TYPE if item_type == 'VideoOffer'
+    
+    if featured?
+      if rewarded?
+        FEATURED_OFFER_TYPE
+      else
+        NON_REWARDED_FEATURED_OFFER_TYPE
+      end
+    else
+      if rewarded?
+        DEFAULT_OFFER_TYPE
+      else
+        NON_REWARDED_DISPLAY_OFFER_TYPE
+      end
+    end
+  end
 
 private
 
@@ -775,6 +799,8 @@ private
   end
 
   def app_platform_mismatch?(app_platform_name)
+    return false if app_platform_name.blank?
+    
     platform_name = get_platform
     platform_name != 'All' && platform_name != app_platform_name
   end
