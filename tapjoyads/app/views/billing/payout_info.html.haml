@@ -75,7 +75,7 @@
         %tr
           %th
             = f.label :payout_method, 'Payment Method'
-            .help.no-help ?
+            #help_payment_method.help ?
           %td
             = f.select(:payout_method, options_for_select(PayoutInfo::PAYOUT_METHODS, @payout_info.payout_method))
             = f.error_message_on(:payout_method)
@@ -194,6 +194,23 @@
   #help_doing_business_as_content{:name => 'Doing Business As'}
     (Optional) Trade name under which your business is being conducted,
     if applicable.
+  #help_payment_method_content{:name=> 'Payment Method'}
+    %strong U.S.:
+    %br/
+    ACH - $0 / 2-4 business days
+    %br/
+    Wires - $12 USD / 1 business day
+    %br/
+    Check - $0 / 4-6 business days
+    %br/
+    Paypal - 5% of payout amount / 1 business day
+    %br/
+    %br/
+    %strong International:
+    %br/
+    Wires - $25 USD / 1 business day
+    %br/
+    Paypal - 5% of payout amount / 1 business day
   #help_tin_content{:name => 'Tax ID'}
     %strong U.S.:
     Your Taxpayer Information Number (TIN) is either your Social Security Number (SSN) if you are an individual or your Employer ID Number (EIN) if you are a corporation or partnership.
