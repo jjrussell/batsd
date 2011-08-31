@@ -522,6 +522,8 @@ TJG.ui = {
     if (TJG.vars.isIos || TJG.vars.isSafari) {
       TJG.ui.showAddHomeDialog();
     }
+    TJG.ui.loadRatings();
+    
     function slidePage(el,dir) {
       if (dir == 'right') {
         dir = 'slideright'
@@ -720,6 +722,7 @@ TJG.ui = {
         if (TJG.moreAppOfferWall) {
           $("#more_games_content").html(TJG.moreAppOfferWall).fadeIn(fadeSpdSlow, function() {
             TJG.utils.loadImages(".offer_image_loader_wrapper");
+            TJG.ui.loadRatings();
           });
         }
         else {
@@ -732,6 +735,7 @@ TJG.ui = {
               TJG.ui.hideLoader();
               $("#more_games_content").html(c).fadeIn(fadeSpd, function(){
                 TJG.utils.loadImages(".offer_image_loader_wrapper");
+                TJG.ui.loadRatings();
               });
             },
             error: function() {
@@ -761,6 +765,7 @@ TJG.ui = {
             $("#more_games_content").fadeOut(fadeSpdFast, function () {
               $("#more_games_content").html(TJG.moreAppOfferWall).fadeIn(fadeSpdFast, function(){
                 TJG.utils.loadImages(".offer_image_loader_wrapper");
+                TJG.ui.loadRatings(); 
               });
             });
           }
@@ -769,6 +774,7 @@ TJG.ui = {
           $("#more_games_content").fadeOut(fadeSpdFast, function () {
             $("#more_games_content").html(TJG.topAppOfferWall).fadeIn(fadeSpdSlow, function() {
               TJG.utils.loadImages(".offer_image_loader_wrapper");
+              TJG.ui.loadRatings();
             });
           });
         }
@@ -783,6 +789,7 @@ TJG.ui = {
               $("#more_games_content").fadeOut(fadeSpdFast, function () {
                 $("#more_games_content").html(c).fadeIn(fadeSpdFast, function() {
                   TJG.utils.loadImages(".offer_image_loader_wrapper");
+                  TJG.ui.loadRatings();
                 });
               });
             },
@@ -807,6 +814,29 @@ TJG.ui = {
     getMoreGames();
     getTopGames();
     featuredReview();
+  },
+
+  loadRatings : function () {
+    $(".offer_rating, .app_rating").each(function (n,o) {
+      var rating = $(this).attr("rating");
+      var t = [], max = 5, start = 0;
+      if (rating) {
+        rating = parseFloat(rating);
+      }
+      for (var i = 1; i <= 5; i++) {
+        var starcls = "star off";
+        if (rating >= i) {
+          starcls = "star on";
+          start++;
+        }
+        else if (rating > start){ 
+          starcls = "star half";
+          start++;
+        }
+        t.push('<span class="', starcls ,'"></span>');
+      }
+      $(this).html(t.join('')).fadeIn("slow");
+    });
   }
   
 };
