@@ -1,5 +1,5 @@
 html { overflow: -moz-scrollbars-vertical; overflow: scrollbars-vertical; }
-body { background: #616161; color: #787878; font-family: helvetica, arial; }
+body { background: #616161; color: #787878; font-family: helvetica, arial, sans-serif; }
 
 h1 { color: #636363; font-weight: bold; font-size: 24px; width: 100%; line-height: 30px; }
 h2 { color: #5c5c5c; float: left; font-size: 20px; font-weight: bold; }
@@ -48,7 +48,7 @@ a:hover { text-decoration: underline; }
 #legal_stuff p { clear: left; float: left; margin-top: 12px;  }
 #truste { clear: left; float: left; margin-top: 18px; }
 
-#client_login { background: url('/images/customer_login.jpg'); width: 128px; height: 33px; margin: 15px 0 0 860px; position: absolute; }
+#client_login { background: url('/images/customer_login.jpg'); width: 128px; height: 33px; margin: 15px 0 0 850px; position: absolute; }
 
 #android_wrapper { background: #94c147; height: 36px; border-top: 1px solid #A3D64E; }
 #android_wrapper a { display: block; width: 860px; margin: 0px auto; margin-top: 2px; text-align: center; }

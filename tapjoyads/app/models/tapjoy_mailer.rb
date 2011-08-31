@@ -76,7 +76,23 @@ class TapjoyMailer < ActionMailer::Base
     subject "Publisher form inquiry from #{info[:first]} #{info[:last]} at #{info[:company]}"
     body(:info => info)
   end
-  
+
+  def advertiser_application(info)
+    from 'support@tapjoy.com'
+    if Rails.env == 'development'
+      recipients "dev@tapjoy.com"
+    else
+      if info[:source] == 'performance'
+        recipients "performancemarketing@tapjoy.com"
+      else
+        recipients "brands@tapjoy.com"
+      end
+    end
+    content_type 'text/html'
+    subject "Advertiser inquiry from #{info[:name]} at #{info[:company]}"
+    body(:info => info)
+  end
+
   def androidfund_application(info)
     from 'admin@tapjoy.com'
     if Rails.env == 'development'

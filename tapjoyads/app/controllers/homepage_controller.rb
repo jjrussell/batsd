@@ -16,10 +16,18 @@ class HomepageController < WebsiteController
 
   def contact
     if params[:info]
-      if params[:info][:source] == 'publishers_contact'
+      case params[:info][:source]
+      when 'publishers_contact'
         # TODO: this is submitted from /publishing. consolidate with regular contact page
         TapjoyMailer.deliver_publisher_application(params[:info])
         redirect_to :action => 'contact-thanks'
+      when 'performance', 'agencies'
+        if params[:info][:email] =~ Authlogic::Regex.email
+          TapjoyMailer.deliver_advertiser_application(params[:info])
+          render :json => nil
+        else
+          render :json => {:error => 'Invalid email address.'}
+        end
       else
         info = params[:info]
         if info[:name].blank? || info[:email].blank? || info[:details].blank? || info[:reason].blank?
@@ -35,7 +43,7 @@ class HomepageController < WebsiteController
 
   def privacy
   end
-  
+
   def privacy_mobile
     render :layout => false
   end
@@ -56,12 +64,16 @@ class HomepageController < WebsiteController
   def index
     render :layout => 'newhome'
   end
-  
+
   def careers
     redirect_to '/careers' and return
   end
-  
+
   def events
+    render :layout => false
+  end
+
+  def advertiser_contact
     render :layout => false
   end
 end

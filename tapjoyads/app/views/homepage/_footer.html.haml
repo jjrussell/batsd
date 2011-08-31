@@ -29,14 +29,14 @@
   .clear
 = javascript_include_tag 'jquery-1.4.2.min', 'tapjoy'
 = javascript_include_tag 'facebox'
-%script{:type => "text/javascript", :language => "Javascript"}
-  jQuery(document).ready(function($) {
-  $('a[rel*=facebox]').facebox({
-  closeImage   : '../images/closelabel.png'
-  }) 
-  })
 %script{ :type => 'text/javascript', :charset => 'utf-8' }
   = yield :page_javascript
+  :plain
+    jQuery(document).ready(function($) {
+      $('a[rel*=facebox]').facebox({
+        closeImage   : '/images/closelabel.png'
+      });
+    });
   - unless Rails.env == 'development'
     :plain
       var _gaq = _gaq || [];
