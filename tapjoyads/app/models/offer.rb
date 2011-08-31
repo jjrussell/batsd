@@ -507,13 +507,6 @@ class Offer < ActiveRecord::Base
     "#{prefix}/videos/src/#{video_id}.mp4"
   end
   
-  def video_exist?
-    bucket = S3.bucket(BucketNames::TAPJOY)
-    key = bucket.key("videos/src/#{id}.mp4")
-    
-    return key.exists?
-  end
-  
   def save_video!(video_src_blob)
     bucket = S3.bucket(BucketNames::TAPJOY)
     
@@ -669,8 +662,7 @@ class Offer < ActiveRecord::Base
       age_rating_reject?(currency) ||
       publisher_whitelist_reject?(publisher_app) ||
       currency_whitelist_reject?(currency)) &&
-      accepting_clicks? &&
-      video_exist?
+      accepting_clicks?
   end
 
   def update_payment(force_update = false)

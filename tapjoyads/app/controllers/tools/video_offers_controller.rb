@@ -13,14 +13,13 @@ class Tools::VideoOffersController < WebsiteController
   end
   
   def create
-    if params[:video].blank?
-      flash[:error] = 'Please upload a video'
-      render :action => :new
-      return
-    end
-    
     @video_offer = VideoOffer.new(params[:video_offer])
     log_activity(@video_offer)
+    
+    if params[:video].blank?
+      flash.now[:error] = 'Please upload a video'
+      render :action => :new and return
+    end
     
     if @video_offer.save
       @video_offer.primary_offer.save_video!(params[:video].read)
