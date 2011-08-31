@@ -49,4 +49,4 @@ h2 { clear: both; }
 #contact_form input, #contact_form label { font-size: 12px; margin-bottom: 5px; }
 .content h2 { margin-top: 18px; }
 .content p { color: #606060; float: left; font-size: 16px; line-height: 19px; margin: 12px 0 12px 0; width: 345px; }
-#error { clear: both; margin: 10px 0 10px 0; }
+#error { background: #fff; color: red; clear: both; margin: 0 0 10px 0; }
