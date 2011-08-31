@@ -17,6 +17,7 @@ xml.VGStoreItemReturnClass do
       xml.AttributeValue point_purchases.get_virtual_good_quantity(virtual_good.key)
     end
   end
+  xml.MaxNumberOwned virtual_good.max_purchases
   xml.NumberOwned point_purchases.get_virtual_good_quantity(virtual_good.key)
   xml.ThumbImageURL virtual_good.icon_url
   xml.DatafileURL virtual_good.data_url if virtual_good.has_data
