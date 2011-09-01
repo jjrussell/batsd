@@ -760,8 +760,8 @@ class Offer < ActiveRecord::Base
   
   def percentile
     percentile_group_id = CurrencyGroup.find_by_name('percentile').id
-    offers = OfferList.new(:type => percentile_type).offers
-    100 * offers.select { |o| o.precache_rank_score_for(percentile_group_id) <= precache_rank_score_for(percentile_group_id) }.length / offers.length
+    offers = OfferList.new(:type => percentile_type).offers.reject { |o| o.id == id }
+    100 * offers.select { |o| precache_rank_score_for(percentile_group_id) >= o.precache_rank_score_for(percentile_group_id) }.length / offers.length
   end
   
   def percentile_type
