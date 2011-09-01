@@ -119,8 +119,8 @@ end
 
 Factory.define :monthly_accounting do |monthly_accounting|
   monthly_accounting.association :partner
-  monthly_accounting.month                      { Date.today.month }
-  monthly_accounting.year                       { Date.today.year }
+  monthly_accounting.month                      { Time.zone.now.month }
+  monthly_accounting.year                       { Time.zone.now.year }
 
   monthly_accounting.beginning_balance          { 0 }
   monthly_accounting.ending_balance             { 5 }
