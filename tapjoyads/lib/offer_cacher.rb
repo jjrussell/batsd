@@ -99,7 +99,7 @@ class OfferCacher
       conversion_rates    = offer_list.collect(&:conversion_rate)
       prices              = offer_list.collect(&:price)
       avg_revenues        = offer_list.collect(&:avg_revenue)
-      bids                = offer_list.collect(&:bid)
+      bids                = offer_list.collect(&:bid_for_ranks)
       cvr_mean            = conversion_rates.mean
       cvr_std_dev         = conversion_rates.standard_deviation
       price_mean          = prices.mean
