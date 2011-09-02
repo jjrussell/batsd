@@ -1,5 +1,7 @@
-- form_tag(export_reporting_path(@offer.id), :id => 'download', :class => 'tjform') do
+- form_tag(export_path, :id => 'download', :class => 'tjform') do
   = hidden_field_tag(:date, '', { :id => :download_date, :value => @start_time.to_date.to_s(:mdy)} )
   = hidden_field_tag(:end_date, '', { :id => :download_end_date, :value => @end_time.to_date.to_s(:mdy) })
   = hidden_field_tag(:granularity, '', { :id => :download_granularity, :value => @granularity })
+  - if @platform.present?
+    = hidden_field_tag(:platform, '', { :id => :download_platform, :value => @platform })
   %a#export_submit{ :href => '', :onclick => 'this.parentNode.submit()' } Download as CSV
