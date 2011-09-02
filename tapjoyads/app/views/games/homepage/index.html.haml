@@ -4,6 +4,7 @@
       .scroller.with-scrollbar
         .top_nav_bar
         .page
+          .logo_title_preload
           .logo
             .slide_nav
               %a{ :href => "#", :class => "more_games_url" }
@@ -16,15 +17,20 @@
                     My Apps
                 .slide_arrow_wrapper.bottom_arrow
                   .slide_arrow
-          .content_wrapper
-            = render 'featured_review_preview'
-            .content
-              - if current_gamer.udid.blank?
+          - if current_gamer.udid.blank?
+            .content_wrapper
+              .content
                 = render 'register_device'
-              - elsif @external_publishers.blank?
+          - elsif @external_publishers.blank?
+            .content_wrapper
+              = render 'featured_review_preview'
+              .content
                 = render 'no_games'
-              - else
-                = render 'my_apps'   
+          - else
+            .content_wrapper
+              = render 'featured_review_preview'
+              .content
+                = render 'my_apps'
   #feat_app
     .container.vertical-scroll
       .scroller.with-scrollbar
@@ -48,6 +54,7 @@
       .scroller.with-scrollbar
         .top_nav_bar
         .page
+          .logo_title_preload
           .logo.logo_title
             .slide_nav
               %a{ :href => "#home", :class => "slideright" }

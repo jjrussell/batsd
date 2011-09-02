@@ -8,7 +8,8 @@
       .app_meta.clearfix
         .app_category
           = @featured_review.app.primary_category
-        .app_rating.hide{ :rating => @featured_review.app.user_rating }
+        .app_rating_wrapper
+          .app_rating.hide{ :rating => @featured_review.app.user_rating }
       %div
       - link_to(@featured_review.app.info_url) do
         .button.grey  
