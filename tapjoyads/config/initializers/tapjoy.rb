@@ -26,6 +26,7 @@ WINDOWS_OFFERS_SDK  = 'https://s3.amazonaws.com/tapjoy/sdks/'
 WINDOWS_VG_SDK      = 'https://s3.amazonaws.com/tapjoy/sdks/'
 
 DEV_FORUM_URL = 'https://groups.google.com/group/tapjoy-developer'
+TAPJOY_GAMES_REGISTRATION_OFFER_ID = 'f7cc4972-7349-42dd-a696-7fcc9dcc2d03'
 
 WEB_REQUEST_LOGGER = SyslogLogger.new("#{RUN_MODE_PREFIX}rails-web_requests")
 
