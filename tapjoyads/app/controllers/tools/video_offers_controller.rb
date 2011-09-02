@@ -25,7 +25,7 @@ class Tools::VideoOffersController < WebsiteController
       @video_offer.primary_offer.save_video!(params[:video].read)
       @video_offer.primary_offer.save_icon!(params[:icon].read) if params[:icon].present?
       flash[:notice] = 'Successfully created Video Offer'
-      redirect_to statz_path(@video_offer.primary_offer)
+      redirect_to edit_tools_video_offer_path(@video_offer.id)
     else
       render :action => :new
     end
