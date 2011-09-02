@@ -51,6 +51,6 @@ class Click < SimpledbShardedResource
   end
 
   def rewardable?
-    ! (click.new_record? || click.installed_at? || click.clicked_at < (Time.zone.now - 2.days))
+    ! (new_record? || installed_at? || clicked_at < (Time.zone.now - 2.days))
   end
 end
