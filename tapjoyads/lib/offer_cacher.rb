@@ -5,7 +5,7 @@ class OfferCacher
   GROUP_SIZE            = 200
   OFFER_TYPES           = [ Offer::DEFAULT_OFFER_TYPE, Offer::FEATURED_OFFER_TYPE, Offer::DISPLAY_OFFER_TYPE, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_OFFER_TYPE, Offer::VIDEO_OFFER_TYPE ]
   DEVICE_TYPES          = Offer::ALL_DEVICES | [ "" ]
-  PLATFORMS             = App::PLATFORMS.values
+  PLATFORMS             = App::PLATFORMS.values | [ "" ]
   HIDE_REWARDED_OPTIONS = [ true, false ]
   
   class << self
@@ -99,7 +99,7 @@ class OfferCacher
       conversion_rates    = offer_list.collect(&:conversion_rate)
       prices              = offer_list.collect(&:price)
       avg_revenues        = offer_list.collect(&:avg_revenue)
-      bids                = offer_list.collect(&:bid)
+      bids                = offer_list.collect(&:bid_for_ranks)
       cvr_mean            = conversion_rates.mean
       cvr_std_dev         = conversion_rates.standard_deviation
       price_mean          = prices.mean
