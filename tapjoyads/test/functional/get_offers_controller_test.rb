@@ -76,6 +76,109 @@ class GetOffersControllerTest < ActionController::TestCase
       @response = get(:webpage, @params.merge(:app_version => "16"))
       assert_template "get_offers/webpage_redesign.html.haml"
     end
+  end
 
+  context "when calling 'featured'" do
+    setup do
+      @device = Factory(:device)
+      @currency = Factory(:currency, :test_devices => @device.id)
+      @offer = Factory(:app).primary_offer
+      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
+      @params = { :udid => 'stuff', :publisher_user_id => 'more_stuff', :currency_id => @currency.id, :app_id => @currency.app.id }
+    end
+
+    should "assign test offer for test devices" do
+      @response = get(:featured, @params.merge(:udid => @device.id))
+      assert assigns(:offer_list).first.item_type == "TestOffer"
+      assert assigns(:offer_list).length == 1
+    end
+
+    should "render appropriate views" do
+      @response = get(:featured, @params)
+      assert_template "get_offers/installs_redirect"
+
+      @response = get(:featured, @params.merge(:json => 1))
+      assert_template "get_offers/installs_json"
+      assert_equal "application/json", @response.content_type
+    end
+
+    should "have offers" do
+      @response = get(:featured, @params)
+      assert assigns(:web_request).offer_id != nil
+      assert assigns(:web_request).path.include?("featured_offer_shown")
+    end
+
+    should "not have more data" do
+      @response = get(:featured, @params)
+      assert_equal 0, assigns(:more_data_available)
+    end
+  end
+
+  context "when calling 'featured' with no offers available" do
+    setup do
+      @device = Factory(:device)
+      @currency = Factory(:currency, :test_devices => @device.id)
+      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([])
+      RailsCache.stubs(:get).returns(nil)
+      @params = { :udid => 'stuff', :publisher_user_id => 'more_stuff', :currency_id => @currency.id, :app_id => @currency.app.id }
+      @response = get(:index, @params)
+    end
+
+    should "return no offers" do
+      assert assigns(:offer_list).empty?
+      assert assigns(:web_request).offer_id.nil?
+    end
+  end
+
+  context "in setup" do
+    setup do
+      @device = Factory(:device)
+      @currency = Factory(:currency)
+      @offer = Factory(:app).primary_offer
+      controller.stubs(:get_ip_address).returns('208.90.212.38')
+      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
+      @params = { :udid => @device.id, :publisher_user_id => 'more_stuff', :currency_id => @currency.id, :app_id => @currency.app.id }
+      @response = get(:index, @params)
+    end
+
+    should "assign instance variables" do
+      @response = get(:index, @params.merge(:exp => 10))
+      web_request = assigns(:web_request)
+      assert_equal web_request.viewed_at.to_s, assigns(:now).to_s
+      assert_equal "10", web_request.exp
+      assert_equal @request.headers["User-Agent"], web_request.user_agent
+      assert_equal '208.90.212.38', web_request.ip_address
+      assert_equal 'offerwall', web_request.source
+      assert_equal @device.key, assigns(:device).key
+      assert_equal 25, assigns(:max_items)
+      assert_equal 0, assigns(:start_index)
+
+      assert web_request.path.include? 'offers'
+      assert_equal @currency, assigns(:currency)
+
+      @response = get(:index, @params.merge(:source => 'featured', :exp => 10, :type => '0'))
+      web_request = assigns(:web_request)
+      assert web_request.path.include? 'featured_offer_requested'
+      assert_equal nil, web_request.exp
+
+      @response = get(:index, @params.merge(:currency_selector => '1'))
+      assert_equal @currency, assigns(:currency)
+      assert assigns(:currencies)
+
+      @response = get(:index, @params.merge(:max => 5))
+      assert_equal 5, assigns(:max_items)
+
+      @response = get(:index, @params.merge(:start => 2))
+      assert_equal 2, assigns(:start_index)
+
+      app = Factory(:app)
+      @response = get(:index, @params.merge(:app_id => app.id))
+      assert assigns(:currency).nil?
+
+      @currency.id = @currency.app_id
+      @currency.save
+      @response = get(:index, @params.merge(:currency_id => nil))
+      assert assigns(:currency)
+    end
   end
 end
