@@ -8,10 +8,11 @@
         .offer_title.title
           = cached_app.name
         .offer_info
-          .offer_meta
-            %span.offer_category
+          .offer_meta.clearfix
+            .offer_category
               = cached_app.primary_category.try(:titleize)
-            %span.offer_rating{ :rating => cached_app.user_rating }
+            .offer_rating_wrapper
+              .offer_rating.hide{ :rating => cached_app.user_rating }
           .offer_description
             = cached_app.description
           .offer_button.more_games
