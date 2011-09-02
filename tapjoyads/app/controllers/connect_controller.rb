@@ -10,7 +10,7 @@ class ConnectController < ApplicationController
     end
     
     click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}")
-    unless click.new_record? || click.installed_at? || click.clicked_at < (Time.zone.now - 2.days)
+    if click.rewardable?
       message = { :click => click.serialize(:attributes_only => true), :install_timestamp => Time.zone.now.to_f.to_s }.to_json
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
     end
