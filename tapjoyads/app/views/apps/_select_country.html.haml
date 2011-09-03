@@ -1,8 +1,14 @@
+:ruby
+  options = GeoIP::CountryName.zip(GeoIP::CountryCode).select do |name, code|
+    code.match(/[a-z][a-z]/i)
+  end.map do |name, code|
+    ["#{code} -- #{name}", code]
+  end.sort
+  options.unshift(["Select a country", ""])
+
 %tr.admin
   %th Country
   %td
-    - options = AppStore::APPSTORE_COUNTRIES.invert.sort
-    - options.unshift(["Select a country", ""])
     = select_tag 'app_country', options_for_select(options)
     .inline_help
       iPhone-only. This field is strictly for app store search, and setting this
