@@ -5,7 +5,14 @@ class GetOffersControllerTest < ActionController::TestCase
     setup do
       @currency = Factory(:currency)
       @offer = Factory(:app).primary_offer
-      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
+      @offer2 = Factory(:app).primary_offer
+      @offer2.countries = ["GB"].to_json
+      @offer2.save
+      @offer3 = Factory(:app).primary_offer
+      @offer3.countries = ["US"].to_json
+      @offer3.save
+      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer, @offer2, @offer3])
+      RailsCache.stubs(:get).returns(nil)
       controller.stubs(:get_ip_address).returns('208.90.212.38')
       @params = { :udid => 'stuff', :publisher_user_id => 'more_stuff', :currency_id => @currency.id, :app_id => @currency.app.id }
       @response = get(:index, @params.merge(:json => 1))
@@ -23,7 +30,7 @@ class GetOffersControllerTest < ActionController::TestCase
       assert_template "get_offers/installs"
     end
 
-    should "have proper geoip date" do
+    should "have proper geoip data" do
       @response = get(:index, @params.merge(:json => 1))
       assert assigns(:geoip_data).empty?
       @response = get(:index, @params)
@@ -34,6 +41,13 @@ class GetOffersControllerTest < ActionController::TestCase
       assert !assigns(:geoip_data).empty?
       @response = get(:index, @params.merge(:redirect => 1))
       assert assigns(:geoip_data).empty?
+    end
+
+    should "return offers targeted to country" do
+      @response = get(:index, @params)
+      assert_equal [@offer, @offer3], assigns(:offer_list)
+      @response = get(:index, @params.merge(:country_code => 'GB'))
+      assert_equal [@offer, @offer2], assigns(:offer_list)
     end
   end
 
@@ -83,6 +97,7 @@ class GetOffersControllerTest < ActionController::TestCase
       @device = Factory(:device)
       @currency = Factory(:currency, :test_devices => @device.id)
       @offer = Factory(:app).primary_offer
+      controller.stubs(:get_ip_address).returns('208.90.212.38')
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
       @params = { :udid => 'stuff', :publisher_user_id => 'more_stuff', :currency_id => @currency.id, :app_id => @currency.app.id }
     end
@@ -111,6 +126,11 @@ class GetOffersControllerTest < ActionController::TestCase
     should "not have more data" do
       @response = get(:featured, @params)
       assert_equal 0, assigns(:more_data_available)
+    end
+
+    should "have proper geoip data" do
+      @response = get(:featured, @params)
+      assert !assigns(:geoip_data).empty?
     end
   end
 
@@ -170,6 +190,9 @@ class GetOffersControllerTest < ActionController::TestCase
 
       @response = get(:index, @params.merge(:start => 2))
       assert_equal 2, assigns(:start_index)
+
+      @response = get(:index, @params.merge(:country_code => 'GB'))
+      assert_equal 'GB', assigns(:geoip_data)[:country]
 
       app = Factory(:app)
       @response = get(:index, @params.merge(:app_id => app.id))
