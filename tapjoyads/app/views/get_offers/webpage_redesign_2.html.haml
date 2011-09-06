@@ -1,0 +1,111 @@
+
+- @page_title = @currency.conversion_rate > 0 ? t('text.offerwall.title', :currency => @currency.name) : ''
+
+- unless @message.blank?
+  #top_box
+    .explanation= @message
+
+- if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
+  = render :partial => 'currency_selector'
+
+- if @currency.conversion_rate > 0
+  #top_box
+    .explanation
+      = t('text.offerwall.redesign_instructions', :currency => @currency.name)
+
+- if @start_index > 0
+  = render :partial => 'pagination_links'
+
+- if @test_offer.present?
+  - unless @currency.tapjoy_enabled?
+    #top_box
+      .explanation
+        You must email #{mail_to("publishersupport@tapjoy.com")} before users will be able to view offers.
+  #top_box
+    .explanation
+      = @test_offer.name
+      %br
+      = link_to("Click to receive #{@currency.get_visual_reward_amount(@test_offer, params[:display_multiplier])} #{@currency.name}", get_click_url(@test_offer))
+
+#offers.box
+  - link_class = 'offer video'
+  - link_to('google.com', :class => link_class, :onclick => "this.className += ' clicked';") do
+    .content
+      .banner
+        .cost
+          $$
+      .icon
+        .video_icon{:style => "background: url('/images/offerwall_redesign_2/video-default.png');"}
+          .play
+      .offer-text    
+        %span
+          Video Offer
+        %p
+          %b Video offer details
+      .load
+  .divider
+  - @offer_list.each_with_index do |offer, index|
+    - link_class = index == 0 ? 'offer first' : index == @offer_list.size - 1 ? 'offer last' : 'offer'
+    - link_to(get_click_url(offer), :class => link_class, :onclick => "this.className += ' clicked';") do
+      .content
+        .banner
+          .cost
+            = visual_cost(offer)
+        .icon
+          -# for now 114 is too much overhead.. may be able to use it later if we can save some kb elsewhere
+          .offer_icon{:style => "background: url(" << offer.get_icon_url(:source => :cloudfront, :size => '57') << ")"}
+        .offer-text    
+          - if @currency.conversion_rate > 0
+            %span
+              - amount = capture_haml do
+                %label= @currency.get_visual_reward_amount(offer, params[:display_multiplier])
+              = offer.direct_pay? ? t('text.offerwall.redesign_buy_currency', :amount => amount, :currency => @currency.name) : t('text.offerwall.redesign_earn_currency', :amount => amount, :currency => @currency.name)
+          %p
+            %b= offer.name
+        .load
+    .divider
+
+-# - if @start_index > 0 || @more_data_available > 0
+  -# = render :partial => 'pagination_links'
+
+#bottom_box
+  = link_to("", 'test.com', :id => 'plus');
+  = link_to("Load some more offers!", 'test.com', :id => 'load_more');
+  
+#footerWrapper
+  #footer
+    = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/site/privacy_mobile')
+    %span &nbsp;|&nbsp;
+    - if @currency.conversion_rate > 0
+      = link_to_missing_currency
+      %span &nbsp;|&nbsp;
+    %span
+      = t('text.shared.ads_by')
+    #logo
+
+%img.hidden{ :src => '/images/load-circle.gif' }
+
+- content_for :page_javascript do
+  :plain
+    window.onload = init;
+    window.onscroll = scroll;
+    document.body.ontouchmove = scroll;
+
+    function init() {
+      window.setTimeout(scroll, 0);
+    }
+
+    function scroll() {
+      images = document.getElementsByTagName('img');
+      for (var i = 0, image; image = images[i]; i++) {
+        if (window.scrollY + window.innerHeight + 480 > image.offsetTop) {
+          loadImage(image);
+        }
+      }
+    }
+
+    function loadImage(image) {
+      if (image.getAttribute('s') && image.src != image.getAttribute('s')) {
+        image.src = image.getAttribute('s');
+      }
+    }
