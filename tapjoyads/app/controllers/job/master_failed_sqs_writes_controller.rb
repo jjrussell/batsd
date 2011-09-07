@@ -7,7 +7,14 @@ class Job::MasterFailedSqsWritesController < Job::JobController
     bucket = S3.bucket(BucketNames::FAILED_SQS_WRITES)
     bucket.keys.each do |key|
       json_string = bucket.get(key.to_s).to_s
-      json = JSON.parse(json_string)
+      begin
+        json = JSON.parse(json_string)
+      rescue JSON::ParserError => e
+        bucket.delete_folder(key.to_s)
+        Notifier.alert_new_relic(e.class, e.message, request, params)
+        next
+      end
+      
       message = json['message']
       queue_name = json['queue_name']
       

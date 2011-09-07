@@ -20,7 +20,11 @@ class Device < SimpledbShardedResource
   end
   
   def after_initialize
-    @parsed_apps = apps
+    begin
+      @parsed_apps = apps
+    rescue JSON::ParserError
+      fix_parser_error
+    end
   end
   
   def set_app_run!(app_id, params)
@@ -83,7 +87,7 @@ class Device < SimpledbShardedResource
   alias :set_app_ran :set_app_run
 
   def has_app(app_id)
-    last_run_time(app_id).present?
+    @parsed_apps[app_id].present?
   end
   
   def last_run_time(app_id)
@@ -128,6 +132,22 @@ class Device < SimpledbShardedResource
     else
       nil
     end
+  end
+  
+private
+  
+  def fix_parser_error
+    str = get('apps')
+    pos = str.index('}')
+    if pos.nil?
+      pos = str.rindex(',')
+      removed = str.slice!(pos..-1)
+      str += '}'
+    else
+      removed = str.slice!(pos+1..-1)
+    end
+    @parsed_apps = JSON.parse(str)
+    self.apps = @parsed_apps
   end
   
 end

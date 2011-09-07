@@ -26,7 +26,7 @@ class Utils
     app_existing_udids = 0
     invalid_udids = 0
     parse_errors = 0
-    now = Time.zone.now.to_f.to_s
+    now = "%.5f" % Time.zone.now.to_f
     file = File.open(filename, 'r')
     outfile = File.open("#{filename}.parse_errors", 'w')
     time = Benchmark.realtime do
@@ -49,7 +49,7 @@ class Utils
           app_existing_udids += 1
         else
           app_new_udids += 1
-          apps_hash = device.apps
+          apps_hash = device.parsed_apps
           apps_hash[app_id] = now
           device.apps = apps_hash
           begin
@@ -128,23 +128,6 @@ class Utils
       puts "something weird has happened"
     end
     reward
-  end
-  
-  def self.fix_device_with_parse_error(udid)
-    device = Device.find(udid, :after_initialize => false)
-    str = device.get('apps')
-    pos = str.index('}')
-    if pos.nil?
-      pos = str.rindex(',')
-      removed = str.slice!(pos..-1)
-      str += '}'
-    else
-      removed = str.slice!(pos+1..-1)
-    end
-    device.apps = JSON.parse(str)
-    device.save!
-    puts "removed #{removed}"
-    Device.find(udid, :consistent => true)
   end
   
   def self.cleanup_orphaned_failed_sdb_saves

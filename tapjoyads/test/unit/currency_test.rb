@@ -96,7 +96,7 @@ class CurrencyTest < ActiveSupport::TestCase
       end
       
       should "calculate publisher amounts" do
-        assert_equal 6, @currency.get_publisher_amount(@offer, @displayer_app)
+        assert_equal 0, @currency.get_publisher_amount(@offer, @displayer_app)
       end
       
       should "calculate advertiser amounts" do
@@ -104,7 +104,7 @@ class CurrencyTest < ActiveSupport::TestCase
       end
       
       should "calculate tapjoy amounts" do
-        assert_equal 4, @currency.get_tapjoy_amount(@offer, @displayer_app)
+        assert_equal 13, @currency.get_tapjoy_amount(@offer, @displayer_app)
       end
       
       should "calculate reward amounts" do
@@ -112,7 +112,7 @@ class CurrencyTest < ActiveSupport::TestCase
       end
       
       should "calculate displayer amounts" do
-        assert_equal 15, @currency.get_displayer_amount(@offer, @displayer_app)
+        assert_equal 12, @currency.get_displayer_amount(@offer, @displayer_app)
       end
     end
     

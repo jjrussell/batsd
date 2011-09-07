@@ -4,7 +4,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
     super QueueNames::SEND_CURRENCY
     @raise_on_error = false
     @max_reads = @num_reads * 2
-    @slow_callbacks = Set.new
+    @bad_callbacks = Set.new
   end
   
 private
@@ -15,7 +15,7 @@ private
     return if reward.sent_currency?
     
     mc_time = Time.zone.now.to_i / 1.hour
-    if @slow_callbacks.include?(reward.currency_id)
+    if @bad_callbacks.include?(reward.currency_id)
       @num_reads += 1 if @num_reads < @max_reads
       Mc.increment_count("send_currency_skip.#{reward.currency_id}.#{mc_time}")
       raise SkippedSendCurrency.new("not attempting to ping the callback for #{reward.currency_id}")
@@ -82,8 +82,8 @@ private
           begin
             response = Downloader.get_strict(callback_url, { :timeout => 20 })
             reward.send_currency_status = response.status
-          rescue Patron::TimeoutError => e
-            @slow_callbacks << reward.currency_id
+          rescue Exception => e
+            @bad_callbacks << reward.currency_id
             raise e
           end
         end

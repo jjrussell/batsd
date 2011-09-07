@@ -5,20 +5,25 @@
     .app_text
       .app_title.title
         = @featured_review.app.name
-      .app_meta
-        = @featured_review.app.primary_category
+      .app_meta.clearfix
+        .app_category
+          = @featured_review.app.primary_category
+        .app_rating_wrapper
+          .app_rating.hide{ :rating => @featured_review.app.user_rating }
+      %div
       - link_to(@featured_review.app.info_url) do
         .button.grey  
           Download now!
 
-  .staff_info.full.clearfix
-    .staff_img
-      %img{:src => @featured_review.author.get_photo_url(:source => :cloudfront) }
-    .staff_meta
-      .staff_name
-        %span.author
-          #{@featured_review.author.first_name} says:
+  .review.clearfix
+    .staff_info.full
+      .staff_img
+        %img{:src => @featured_review.author.get_photo_url(:source => :cloudfront) }
+      .staff_meta
+        .staff_name
+          %span.author
+            #{@featured_review.author.first_name} says:
 
-  .review_text
-    -# TODO: Escape this text once we start supporting user reviews.
-    = "&#8220;#{@featured_review.text.gsub("\n", "<br>")}&#8221"
+    .review_text
+      -# TODO: Escape this text once we start supporting user reviews.
+      = "&#8220;#{@featured_review.text.gsub("\n", "<br>")}&#8221"   

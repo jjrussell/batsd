@@ -108,12 +108,17 @@ private
     end
     
     device = Device.new(:key => click.udid)
-    device.set_app_run!(click.advertiser_app_id, params)
-    
-    message = { :click => click.serialize(:attributes_only => true), :install_timestamp => @now.to_f.to_s }.to_json
-    Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
-    
-    render_success
+    if device.has_app(click.advertiser_app_id) && !offer.multi_complete?
+      click.block_reason = "AlreadyCompleted"
+      click.save
+      @error_message = "offer has already been completed by this device for click {#{click.key}}"
+      notify_and_render_error(false)
+    else
+      device.set_app_run!(click.advertiser_app_id, params)
+      message = { :click => click.serialize(:attributes_only => true), :install_timestamp => @now.to_f.to_s }.to_json
+      Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
+      render_success
+    end
   end
   
   def render_success
