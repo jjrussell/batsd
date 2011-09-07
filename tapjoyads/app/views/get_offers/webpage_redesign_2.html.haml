@@ -38,7 +38,7 @@
             = visual_cost(offer)
         .icon
           - if offer.item_type == 'VideoOffer'
-            .video_icon{:style => "background: url('/images/offerwall_redesign_2/video-default.png');"}
+            .video_icon{:style => "background: url(" << offer.get_icon_url(:source => :cloudfront, :size => '200') << ")"}
               .play
           - else
             -# for now 114 is too much overhead.. may be able to use it later if we can save some kb elsewhere
