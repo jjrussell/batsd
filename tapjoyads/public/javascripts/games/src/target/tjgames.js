@@ -1306,6 +1306,8 @@ TJG.ui = {
     if (TJG.vars.isIos || TJG.vars.isSafari) {
       TJG.ui.showAddHomeDialog();
     }
+    TJG.ui.loadRatings();
+    
     function slidePage(el,dir) {
       if (dir == 'right') {
         dir = 'slideright'
@@ -1403,8 +1405,9 @@ TJG.ui = {
                     });
                   }
                   t = t.join('');
-                  $("#earn_content").html(t).fadeIn(fadeSpd);
-                  TJG.utils.loadImages(".offer_image_loader_wrapper");
+                  $("#earn_content").html(t).fadeIn(fadeSpd, function(){
+                    TJG.utils.loadImages(".offer_image_loader_wrapper");
+                  });
                   var isLoading = false;
                   var hasFailed = false;
                   $(".get_more_apps").click(function(){
@@ -1501,7 +1504,10 @@ TJG.ui = {
         $("#top_grossing_games_button_arrow").hide();
         $("#recommended_games_button_arrow").show();
         if (TJG.moreAppOfferWall) {
-          $("#more_games_content").html(TJG.moreAppOfferWall).fadeIn(fadeSpdSlow);
+          $("#more_games_content").html(TJG.moreAppOfferWall).fadeIn(fadeSpdSlow, function() {
+            TJG.utils.loadImages(".offer_image_loader_wrapper");
+            TJG.ui.loadRatings();
+          });
         }
         else {
           TJG.ui.showLoader();
@@ -1511,8 +1517,10 @@ TJG.ui = {
             success: function(c) {
               TJG.moreAppOfferWall = c;
               TJG.ui.hideLoader();
-              $("#more_games_content").html(c).fadeIn(fadeSpd);
-              TJG.utils.loadImages(".offer_image_loader_wrapper");
+              $("#more_games_content").html(c).fadeIn(fadeSpd, function(){
+                TJG.utils.loadImages(".offer_image_loader_wrapper");
+                TJG.ui.loadRatings();
+              });
             },
             error: function() {
               var m = [
@@ -1539,15 +1547,19 @@ TJG.ui = {
           $("#recommended_games_button_arrow").show();
           if (TJG.moreAppOfferWall) {
             $("#more_games_content").fadeOut(fadeSpdFast, function () {
-              $("#more_games_content").html(TJG.moreAppOfferWall).fadeIn(fadeSpdFast);
-              TJG.utils.loadImages(".offer_image_loader_wrapper");
+              $("#more_games_content").html(TJG.moreAppOfferWall).fadeIn(fadeSpdFast, function(){
+                TJG.utils.loadImages(".offer_image_loader_wrapper");
+                TJG.ui.loadRatings(); 
+              });
             });
           }
         });
         if (TJG.topAppOfferWall) {
           $("#more_games_content").fadeOut(fadeSpdFast, function () {
-            $("#more_games_content").html(TJG.topAppOfferWall).fadeIn(fadeSpdSlow);
-            TJG.utils.loadImages(".offer_image_loader_wrapper");
+            $("#more_games_content").html(TJG.topAppOfferWall).fadeIn(fadeSpdSlow, function() {
+              TJG.utils.loadImages(".offer_image_loader_wrapper");
+              TJG.ui.loadRatings();
+            });
           });
         }
         else {
@@ -1559,8 +1571,10 @@ TJG.ui = {
               TJG.topAppOfferWall = c;
               TJG.ui.hideLoader();
               $("#more_games_content").fadeOut(fadeSpdFast, function () {
-                $("#more_games_content").html(c).fadeIn(fadeSpdFast);
-                TJG.utils.loadImages(".offer_image_loader_wrapper"); 
+                $("#more_games_content").html(c).fadeIn(fadeSpdFast, function() {
+                  TJG.utils.loadImages(".offer_image_loader_wrapper");
+                  TJG.ui.loadRatings();
+                });
               });
             },
             error: function () {
@@ -1584,6 +1598,29 @@ TJG.ui = {
     getMoreGames();
     getTopGames();
     featuredReview();
+  },
+
+  loadRatings : function () {
+    $(".offer_rating, .app_rating").each(function (n,o) {
+      var rating = $(this).attr("rating");
+      var t = [], max = 5, start = 0;
+      if (rating) {
+        rating = parseFloat(rating);
+      }
+      for (var i = 1; i <= 5; i++) {
+        var starcls = "star off";
+        if (rating >= i) {
+          starcls = "star on";
+          start++;
+        }
+        else if (rating > start){ 
+          starcls = "star half";
+          start++;
+        }
+        t.push('<span class="', starcls ,'"></span>');
+      }
+      $(this).html(t.join('')).fadeIn("slow");
+    });
   }
   
 };
@@ -1624,6 +1661,18 @@ TJG.ui = {
             TJG.repositionDialog = ["#my_account_dialog_content"];
             $("#my_account_dialog_content").fadeIn(350);     
           });
+        });
+        $('.feat_toggle').click(function(){
+          if ($(this).hasClass('collaspe')) {
+            $(this).removeClass('collaspe');
+            $(".feat_review").removeClass('min');
+            $(".app_review").show();
+          }
+          else {
+            $(this).addClass('collaspe');
+            $(".feat_review").addClass('min');
+            $(".app_review").hide();
+          }
         });
       },
       

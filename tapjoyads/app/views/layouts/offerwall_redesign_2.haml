@@ -1,0 +1,82 @@
+!!! Mobile
+
+%html{ :class => 'no-js no-os no-touch no-hd' }
+  %head
+    %title
+      = @page_title
+    = yield :included_stylesheets
+    %style{ :type => 'text/css' }
+      :plain
+        html, body { margin: 0; padding: 0; border: 0; }
+        body { font-family: Helvetica, "Tahoma Bold", Arial, sans-serif; font-size:16px; background: #fff; color: #505050; word-wrap: break-word; -webkit-text-size-adjust: none; -webkit-touch-callout: none; height: 100%; }
+        h1, h2, h3, h4, h5, h6 { font-weight: normal; }
+        p img { float: left; margin: 0 10px 5px 0; padding: 0; }
+        img { border: 0; max-width: 100%; }
+        table { width:auto; border-collapse: collapse;border-spacing: 0; }
+
+        #top_box { background: url('/images/offerwall_redesign_2/bgsprite.jpg'); height: 60px; margin: 0px; width: 100%; }
+        .hd #top_box { background: url('/images/offerwall_redesign_2/bgsprite-2x.jpg'); background-size: 60px auto; height: 60px; width: 100%; }
+        .explanation { text-shadow: 1px 1px 1px #fff; color: 4f4f4f; clear: both; font-size: 14px; float: left; font-weight: bold; margin: 0px; margin-top: 12px; padding: 0px; text-align: center; width: 100%; }
+
+        #bottom_box { float: left; background: url('/images/offerwall_redesign_2/bgsprite.jpg'); background-position: 0 -60px; height: 60px; margin: 0px; width: 100%; }
+        .hd #bottom_box { background: url('/images/offerwall_redesign_2/bgsprite-2x.jpg'); background-position: 0 -60px; background-size: 60px auto; height: 60px; width: 100%; }
+
+        #plus { background: url('/images/offerwall_redesign_2/plus.png'); float: left; margin: 13px 0 0 10px; width: 37px; height: 37px; }
+        .hd #plus { background: url('/images/offerwall_redesign_2/plus-2x.png'); background-size: 37px 37px; width: 37px; height: 37px; }
+
+        #load_more { color: #fff; font-size: 16px; font-weight: bold; float: left; margin-left: 6px; margin-top: 21px; text-decoration: none; text-shadow: 1px 1px 2px #3a3a3a; }
+          
+        .hidden { display: none; }
+      
+        .banner { background: url('/images/offerwall_redesign_2/sprites.png') no-repeat; float: right; height: 39px; width: 39px; margin-top: -1px; }
+        .hd .banner { background: url('/images/offerwall_redesign_2/sprites-2x.png'); background-size: 78px 40px; float: right; height: 39px; width: 39px; }
+        .cost { color: #fff; font-weight: bold; margin: 8px 0 0 11px; font-size: 13px; text-align: center; width: 29px; -o-transform: rotate(45deg); -moz-transform: rotate(45deg); -webkit-transform: rotate(45deg); }
+
+        .divider { background: #d8d8d8; float: left; width: 100%; height: 1px; width: 100%; }
+        
+        .offer { background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#f2f2f2), to(#fff)); box-shadow:inset 1px 1px 0px #fff; -webkit-box-shadow:inset 1px 1px 0px #fff; display: block; float: left; height: 76px; text-decoration: none; width: 100%; }
+        .icon { float: left; margin: 9px; }
+        .offer_icon { background-size: 57px 57px; height: 57px; width: 57px; }
+        
+        .video { height: 86px; }
+        .video .icon { margin: 11px 9px 0 9px; }
+        .video_icon { background-size: 100px 63px; width: 100px; height: 63px; }
+        .play { background: url('/images/offerwall_redesign_2/sprites.png') no-repeat; background-position: -39px 0; float: left; width: 39px; height: 39px; margin: 10px 0 0 30px; }
+        .hd .play { background: url('/images/offerwall_redesign_2/sprites-2x.png') no-repeat; background-size: 78px 40px; background-position: -39px 0; float: left; width: 39px; height: 39px; }
+        
+        .offer-text { color: #7a7a7a; display: table-cell; font-size: 14px; height: 47px; margin: 0; padding: 10px 7px 0 0; vertical-align: middle; }
+        .video .offer-text { padding-top: 13px; vertical-align: middle; }
+        .offer-text span { color: #505050; font-size: 14px; font-weight: bold; }
+        .offer-text span label { color: #0c429b; }
+        .offer-text p { font-size: 12px; line-height: 14px; margin: 2px 0 0 0; }
+        .ribbon { background: url('/images/ribbon.png') no-repeat; color: #fff; float: right; font-size: 14px; font-weight: bold; height: 50px; line-height: 10px; margin: -60px 4px 0 0; width: 63px; }
+        .hd .ribbon { background: url('/images/ribbon-2x.png') no-repeat; background-size: 63px 22px; }
+        .ribbon span { float: right; text-align: center; width: 50px; height: 20px; left: 20px; top: 5px; line-height: 20px; }
+    
+        .load { float: right; height: 16px; width: 16px; margin: -30px 22px 0 0; }
+        .offer.clicked .load { background: transparent url(/images/load-circle.gif) no-repeat 98%; }
+        .hd .offer.clicked .load { background: transparent url(/images/load-circle-2x.gif) no-repeat 98%; }
+    
+        #footerWrapper { background: url('/images/offerwall_redesign_2/footer.jpg'); float: left; padding-bottom: 20px; width: 100%; }
+        .hd #footerWrapper { background: url('/images/offerwall_redesign_2/footer-2x.jpg'); background-size: 45px auto; float: left; width: 100%; }
+        #footer { margin: 0px auto; margin-top: 20px; text-align: center; width: 270px; }
+        #footer a, #footer span { color: #fff; float: left; font-size: 13px; text-decoration: none; }
+        #footer #logo { background: url('/images/offerwall_redesign_2/tapjoy.jpg'); float: left; width: 36px; height: 12px; margin: 3px 0 0 5px; }
+        .hd #footer #logo { background: url('/images/offerwall_redesign_2/tapjoy-2x.jpg'); background-size: 36px 12px; }
+        
+        .pagination a { color: #505050; font-size: 120%; font-weight: bold; display: block; }
+        .pagination .prev { float: left; }
+        .pagination .next { float: right; }
+        
+    %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
+    %meta{ 'name' => 'viewport', :content => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
+  %body
+    = yield
+      
+    = yield :included_javascripts
+    %script{ :type => 'text/javascript', :charset => 'utf-8' }
+      -# master-class v0.1
+      (function(f,h){var c=h.documentElement,i=[""],d={"no-js":"js"},a=/(ip(od|ad|hone)|android|nokia|blackberry|webos)/gi.exec(navigator.userAgent);if(a)d["no-os"]=a[2]?"ios":a[1].toLowerCase();if("orientation"in f){var j=["landscape","portrait"],k=RegExp("("+j.join("|")+")");a="onorientationchange"in f?"orientationchange":"resize";var g=i.push(j[f.orientation%180?0:1]);addEventListener(a,function(){var e=j[f.orientation%180?0:1];if(g!=e){g=e;e=c.className;c.className=e?e.replace(k,g):g}},false)}if("ontouchend"in
+      h)d["no-touch"]="touch";var b=h.createElement("div");b.style.display="none";b.id="mc-test";b.innerHTML='<style type="text/css">@media(-webkit-min-device-pixel-ratio:1.5){#mc-test{color:red}}@media(-webkit-min-device-pixel-ratio:2.0){#mc-test{color:blue}}</style>';c.appendChild(b);if(a=/255(\))?/gi.exec(b.ownerDocument.defaultView.getComputedStyle(b,null).getPropertyValue("color"))){i.push("hd"+(a[1]?20:15));d["no-hd"]="hd"}c.removeChild(b);a=c.className;for(replace in d)a=a.replace(replace,d[replace]);
+      c.className=a+i.join(" ")})(this,document);
+      = yield :page_javascript
