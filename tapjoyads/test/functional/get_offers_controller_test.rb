@@ -72,7 +72,7 @@ class GetOffersControllerTest < ActionController::TestCase
       device = Device.new(:key => 'a100000d9833c5')
       @response = get(:webpage, @params.merge(:udid => device.id))
       assert_template "get_offers/webpage_redesign"
-      assert_equal "layouts/iphone_redesign", @response.layout
+      assert_equal "layouts/offerwall_redesign_2", @response.layout
 
       @currency.hide_rewarded_app_installs = true
       @currency.save!
@@ -161,7 +161,7 @@ class GetOffersControllerTest < ActionController::TestCase
       @response = get(:index, @params)
     end
 
-    should "assign instance variables" do
+    should "assign web_request" do
       @response = get(:index, @params.merge(:exp => 10))
       web_request = assigns(:web_request)
       assert_equal web_request.viewed_at.to_s, assigns(:now).to_s
@@ -169,30 +169,27 @@ class GetOffersControllerTest < ActionController::TestCase
       assert_equal @request.headers["User-Agent"], web_request.user_agent
       assert_equal '208.90.212.38', web_request.ip_address
       assert_equal 'offerwall', web_request.source
-      assert_equal @device.key, assigns(:device).key
-      assert_equal 25, assigns(:max_items)
-      assert_equal 0, assigns(:start_index)
-
       assert web_request.path.include? 'offers'
-      assert_equal @currency, assigns(:currency)
 
       @response = get(:index, @params.merge(:source => 'featured', :exp => 10, :type => '0'))
       web_request = assigns(:web_request)
       assert web_request.path.include? 'featured_offer_requested'
       assert_equal nil, web_request.exp
+    end
+
+    should "assign max_items" do
+      assert_equal 25, assigns(:max_items)
+
+      @response = get(:index, @params.merge(:max => 5))
+      assert_equal 5, assigns(:max_items)
+    end
+
+    should "assign currency/currencies" do
+      assert_equal @currency, assigns(:currency)
 
       @response = get(:index, @params.merge(:currency_selector => '1'))
       assert_equal @currency, assigns(:currency)
       assert assigns(:currencies)
-
-      @response = get(:index, @params.merge(:max => 5))
-      assert_equal 5, assigns(:max_items)
-
-      @response = get(:index, @params.merge(:start => 2))
-      assert_equal 2, assigns(:start_index)
-
-      @response = get(:index, @params.merge(:country_code => 'GB'))
-      assert_equal 'GB', assigns(:geoip_data)[:country]
 
       app = Factory(:app)
       @response = get(:index, @params.merge(:app_id => app.id))
@@ -202,6 +199,19 @@ class GetOffersControllerTest < ActionController::TestCase
       @currency.save
       @response = get(:index, @params.merge(:currency_id => nil))
       assert assigns(:currency)
+    end
+
+    should "assign start_index" do
+      assert_equal @device.key, assigns(:device).key
+      assert_equal 0, assigns(:start_index)
+
+      @response = get(:index, @params.merge(:start => 2))
+      assert_equal 2, assigns(:start_index)
+    end
+
+    should "set country from country_code" do
+      @response = get(:index, @params.merge(:country_code => 'GB'))
+      assert_equal 'GB', assigns(:geoip_data)[:country]
     end
   end
 end
