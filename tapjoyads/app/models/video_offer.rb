@@ -9,6 +9,7 @@ class VideoOffer < ActiveRecord::Base
   
   validates_presence_of :partner, :name
   validates_presence_of :video_url, :unless => :new_record?
+  validate :video_exists, :unless => :new_record?
   
   before_save :update_video_url
   after_create :create_primary_offer
@@ -61,5 +62,12 @@ private
       result << button.xml_for_offer
     end
     buttons_xml.to_s
+  end
+  
+  def video_exists
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    key = bucket.key("videos/src/#{id}.mp4")
+    
+    errors.add :video_url, 'Video does not exist.' if !key.exists?
   end
 end

@@ -415,17 +415,25 @@ class Offer < ActiveRecord::Base
   end
 
   def get_icon_url(options = {})
-    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id)}.merge(options))
+    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
   end
 
   def self.get_icon_url(options = {})
-    source   = options.delete(:source)   { :s3 }
-    size     = options.delete(:size)     { '57' }
-    icon_id  = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
+    source     = options.delete(:source)   { :s3 }
+    size       = options.delete(:size)     { '57' }
+    icon_id    = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
+    item_type  = options.delete(:item_type)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
-
+    
+    if item_type == 'VideoOffer'
+      bucket = S3.bucket(BucketNames::TAPJOY)
+      existing_icon_blob = bucket.get("icons/src/#{icon_id}.jpg") rescue ''
+      size = '200'
+      return "#{prefix}/videos/assets/default.png" if existing_icon_blob.blank?
+    end
+    
     "#{prefix}/icons/#{size}/#{icon_id}.jpg"
   end
 
@@ -436,9 +444,26 @@ class Offer < ActiveRecord::Base
     existing_icon_blob = bucket.get("icons/src/#{icon_id}.jpg") rescue ''
 
     return if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
-
+    
+    if item_type == 'VideoOffer'
+      icon_200 = Magick::Image.from_blob(icon_src_blob)[0].resize(200, 125).opaque('#ffffff00', 'white')
+      corner_mask_blob = bucket.get("display/round_mask_200x125.png")
+      corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(200, 125)
+      icon_200.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
+      icon_200 = icon_200.opaque('#ffffff00', 'white')
+      icon_200.alpha(Magick::OpaqueAlphaChannel)
+      
+      icon_200_blob = icon_200.to_blob{|i| i.format = 'JPG'}
+      
+      bucket.put("icons/src/#{icon_id}.jpg", icon_src_blob, {}, "public-read")
+      bucket.put("icons/200/#{icon_id}.jpg", icon_200_blob, {}, "public-read")
+      
+      Mc.delete("icon.s3.#{id}")
+      return
+    end
+    
     icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
-
+    
     corner_mask_blob = bucket.get("display/round_mask.png")
     corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(256, 256)
     icon_256.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
@@ -455,7 +480,7 @@ class Offer < ActiveRecord::Base
     bucket.put("icons/114/#{icon_id}.jpg", icon_114_blob, {}, "public-read")
     bucket.put("icons/57/#{icon_id}.jpg", icon_57_blob, {}, "public-read")
     bucket.put("icons/57/#{icon_id}.png", icon_57_png_blob, {}, "public-read")
-
+    
     Mc.delete("icon.s3.#{id}")
 
     # Invalidate cloudfront
@@ -620,7 +645,7 @@ class Offer < ActiveRecord::Base
   end
   
   def is_valid_for?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
-    !(device_platform_mismatch?(publisher_app, device_type) ||
+    !(device_platform_mismatch?(Device.normalize_device_type(device_type)) ||
       geoip_reject?(geoip_data, device) ||
       already_complete?(publisher_app, device, app_version) ||
       flixter_reject?(publisher_app, device) ||
@@ -636,8 +661,8 @@ class Offer < ActiveRecord::Base
       app_platform_mismatch?(publisher_app) ||
       age_rating_reject?(currency) ||
       publisher_whitelist_reject?(publisher_app) ||
-      currency_whitelist_reject?(currency) ||
-      accepting_clicks?)
+      currency_whitelist_reject?(currency)) &&
+      accepting_clicks?
   end
 
   def update_payment(force_update = false)
