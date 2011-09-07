@@ -4,25 +4,25 @@
     %h3 iPhone Library (#{@iphone_version})
     %ul
       %li
-        - sdk_popup_link 'iOS Advertiser Library', 'iphone-adv'
+        - sdk_link 'iOS Advertiser Library', 'iphone-adv', false
       %li
-        - sdk_popup_link 'iOS Publisher Library', 'iphone-pub'
+        - sdk_link 'iOS Publisher Library', 'iphone-pub'
       %li
-        - sdk_popup_link 'iOS Publisher Library (+ Virtual Goods)', 'iphone-vg'
+        - sdk_link 'iOS Publisher Library (+ Virtual Goods)', 'iphone-vg'
 
     %h3 Android Library (#{@android_version})
     %ul
       %li
-        - sdk_popup_link 'Android Advertiser Library', 'android-adv'
+        - sdk_link 'Android Advertiser Library', 'android-adv', false
       %li
-        - sdk_popup_link 'Android Publisher Library', 'android-pub'
+        - sdk_link 'Android Publisher Library', 'android-pub'
       %li
-        - sdk_popup_link 'Android Publisher Library (+ Virtual Goods)', 'android-vg'
+        - sdk_link 'Android Publisher Library (+ Virtual Goods)', 'android-vg'
 
     %h3 Third-party Plugins
     %ul
       %li
-        - sdk_popup_link 'Unity Plugin for iOS', 'iphone-unity'
+        - sdk_link 'Unity Plugin for iOS', 'iphone-unity'
 
 - content_for :page_head, stylesheet_link_tag('facebox')
 - content_for :included_javascripts, javascript_include_tag('facebox')

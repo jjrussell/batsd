@@ -5,9 +5,9 @@
 %ol
   %li
     Select our
-    - sdk_popup_link 'Offers Library', "#{@app.platform}-pub", false
+    - sdk_link 'Offers Library', "#{@app.platform}-pub"
     or
-    - sdk_popup_link 'Virtual Goods Library', "#{@app.platform}-vg", false
+    - sdk_link 'Virtual Goods Library', "#{@app.platform}-vg"
     \.
   %li Add the Tapjoy library to your project directory.
   %li Compile and run your project.
@@ -34,10 +34,10 @@
 
 %p
   .left.download_link
-    - sdk_popup_link 'Offers Library Download', "#{@app.platform}-pub"
+    - sdk_link 'Offers Library Download', "#{@app.platform}-pub"
   .clear
   .left.download_link
-    - sdk_popup_link 'Virtual Goods Library Download', "#{@app.platform}-vg"
+    - sdk_link 'Virtual Goods Library Download', "#{@app.platform}-vg"
   .clear
 
 - content_for :page_head, stylesheet_link_tag('facebox')

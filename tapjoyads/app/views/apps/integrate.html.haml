@@ -6,7 +6,7 @@
 %ol
   %li
     Download the lightweight, open source
-    - sdk_popup_link 'Tapjoy library', "#{@app.platform}-adv", false
+    - sdk_link 'Tapjoy library', "#{@app.platform}-adv", false
     \.
   %li Add it to your project directory.
   %li Compile and run your project.
@@ -33,7 +33,7 @@
 
 %p
   .left.download_link
-    - sdk_popup_link 'Advertiser Library Download', "#{@app.platform}-adv"
+    - sdk_link 'Advertiser Library Download', "#{@app.platform}-adv", false
   .clear
 
 - content_for :page_head, stylesheet_link_tag('facebox')
