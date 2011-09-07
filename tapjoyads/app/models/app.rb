@@ -6,6 +6,11 @@ class App < ActiveRecord::Base
   ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS' }
   BETA_PLATFORMS    = { 'windows' => 'Windows Phone' }
   PLATFORMS         = ALLOWED_PLATFORMS.merge(BETA_PLATFORMS)
+  APPSTORE_COUNTRIES_OPTIONS = GeoIP::CountryName.zip(GeoIP::CountryCode).select do |name, code|
+      code.match(/[a-z]{2}/i)
+    end.map do |name, code|
+      ["#{code} -- #{name}", code]
+    end.sort.unshift(["Select a country", ""])
   PLATFORM_DETAILS = {
     'android' => {
       :expected_device_types => Offer::ANDROID_DEVICES,
