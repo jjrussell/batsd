@@ -57,8 +57,8 @@ class GetOffersControllerTest < ActionController::TestCase
 
       device = Device.new(:key => 'a100000d9833c5')
       @response = get(:webpage, @params.merge(:udid => device.id))
-      assert_template "get_offers/webpage_redesign"
-      assert_equal "layouts/iphone_redesign", @response.layout
+      assert_template "get_offers/webpage_redesign_2"
+      assert_equal "layouts/offerwall_redesign_2", @response.layout
 
       @currency.hide_rewarded_app_installs = true
       @currency.save!
