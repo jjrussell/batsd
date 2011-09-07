@@ -76,6 +76,12 @@ class Device < SimpledbShardedResource
   end
   alias :set_app_ran! :set_app_run!
 
+  def set_app_run(app_id)
+    @parsed_apps[app_id] = "%.5f" % Time.zone.now.to_f
+    self.apps = @parsed_apps
+  end
+  alias :set_app_ran :set_app_run
+
   def has_app(app_id)
     last_run_time(app_id).present?
   end
