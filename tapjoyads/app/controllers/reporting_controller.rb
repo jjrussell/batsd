@@ -6,8 +6,8 @@ class ReportingController < WebsiteController
   
   filter_access_to :all
   before_filter :find_offer, :only => [ :show, :export, :download_udids ]
-  before_filter :setup, :only => [ :show, :export, :aggregate ]
-  before_filter :set_platform, :only => [ :aggregate ]
+  before_filter :setup, :only => [ :show, :export, :aggregate, :export_aggregate ]
+  before_filter :set_platform, :only => [ :aggregate, :export_aggregate ]
   before_filter :nag_user_about_payout_info, :only => [:show]
 
   def index
@@ -65,11 +65,19 @@ class ReportingController < WebsiteController
         render 'shared/aggregate'
       end
       format.json do
-        options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :stat_prefix => get_stat_prefix('partner') }
+        options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :stat_prefix => get_stat_prefix('partner'), :platform => @platform }
         @appstats = Appstats.new(@partner.id, options)
         render :json => { :data => @appstats.graph_data }
       end
     end
+  end
+
+  def export_aggregate
+    @partner = current_partner
+    options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :stat_prefix => get_stat_prefix('partner') }
+    @appstats = Appstats.new(@partner.id, options)
+    data = @appstats.to_csv
+    send_data(data.join("\n"), :type => 'text/csv', :filename => "#{@platform}_#{@start_time.to_s(:yyyy_mm_dd)}_#{@end_time.to_s(:yyyy_mm_dd)}.csv")
   end
   
 private

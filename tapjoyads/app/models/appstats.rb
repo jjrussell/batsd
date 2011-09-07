@@ -11,6 +11,7 @@ class Appstats
     @stat_types = options.delete(:stat_types) { Stats::STAT_TYPES }
     @include_labels = options.delete(:include_labels) { false }
     @stat_prefix = options.delete(:stat_prefix) { 'app' }
+    @platform = options.delete(:platform)
     cache_hours = options.delete(:cache_hours) { 3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
@@ -261,7 +262,8 @@ class Appstats
 
       :granularity => @granularity,
       :date => @start_time.to_date.to_s(:mdy),
-      :end_date => @end_time.to_date.to_s(:mdy)
+      :end_date => @end_time.to_date.to_s(:mdy),
+      :platform => @platform
     }
 
     if get_virtual_good_partitions(offer).size > 0
