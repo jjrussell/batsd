@@ -10,7 +10,7 @@ class GetOffersController < ApplicationController
   after_filter :save_web_request
 
   DEVICES_FOR_REDESIGN = Set.new([
-    'c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1', # Stephen
+    'c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1', # Stephen iTouch
     'a850ff9e654965299104754249ceaa5f7b61a69e', # Eric iPhone
     'b4c86b4530a0ee889765a166d80492b46f7f3636', # Ryan iPhone
     '36fa4959f5e1513ba1abd95e68ad40b75b237f15', # Kai iPad
@@ -18,6 +18,7 @@ class GetOffersController < ApplicationController
     '355031040923092',                          # Linda Nexus S
     'a100000d9833c5',                           # Stephen Evo
     'ade749ccc744336ad81cbcdbf36a5720778c6f13', # Amir iPhone
+    '355031040123271',                          # Kai Nexus S 
   ])
 
   def webpage
