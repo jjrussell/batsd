@@ -54,12 +54,8 @@
         .load
     .divider
 
--# - if @start_index > 0 || @more_data_available > 0
-  -# = render :partial => 'pagination_links'
-
-#bottom_box
-  = link_to("", 'test.com', :id => 'plus');
-  = link_to("Load some more offers!", 'test.com', :id => 'load_more');
+- if @start_index > 0 || @more_data_available > 0
+  = render :partial => 'pagination_links'
   
 #footerWrapper
   #footer
