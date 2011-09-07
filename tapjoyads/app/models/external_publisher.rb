@@ -43,12 +43,11 @@ class ExternalPublisher
   end
 
   def self.load_all_for_device(device)
-    device_apps = device.apps
     external_publishers = []
     self.load_all.each do |app_id, external_publisher|
-      next if device_apps[app_id].blank?
+      next unless device.has_app(app_id)
       
-      external_publisher.last_run_time = device_apps[app_id].to_i
+      external_publisher.last_run_time = device.parsed_apps[app_id].to_i
       external_publishers << external_publisher
     end
     
@@ -59,10 +58,9 @@ class ExternalPublisher
   end
 
   def self.load_all_for_device_filter_installed(device)
-    device_apps = device.apps
     external_publishers = []
     self.load_all.each do |app_id, external_publisher|
-      next if device_apps[app_id].present?
+      next if device.has_app(app_id)
       external_publishers << external_publisher
     end
     external_publishers
