@@ -27,7 +27,7 @@ class Device < SimpledbShardedResource
     end
   end
   
-  def set_app_ran!(app_id, params)
+  def set_app_run!(app_id, params)
     return [] unless app_id =~ APP_ID_FOR_DEVICES_REGEX
     
     now = Time.zone.now
@@ -78,7 +78,12 @@ class Device < SimpledbShardedResource
     
     path_list
   end
-  
+
+  def set_app_run(app_id)
+    @parsed_apps[app_id] = "%.5f" % Time.zone.now.to_f
+    self.apps = @parsed_apps
+  end
+
   def has_app(app_id)
     @parsed_apps[app_id].present?
   end
@@ -93,12 +98,12 @@ class Device < SimpledbShardedResource
     last_run_timestamp.present? ? Time.zone.at(last_run_timestamp.to_f) : nil
   end
   
-  def unset_app_ran!(app_id)
+  def unset_app_run!(app_id)
     @parsed_apps.delete(app_id)
     self.apps = @parsed_apps
     save!
   end
-  
+
   def set_publisher_user_id!(app_id, publisher_user_id)
     parsed_publisher_user_ids = publisher_user_ids
     return if parsed_publisher_user_ids[app_id] == publisher_user_id

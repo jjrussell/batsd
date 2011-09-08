@@ -173,7 +173,7 @@ class OneOffs
       app_metadata.apps << app
     end
   end
-  
+
   def self.populate_instructions
     ActionOffer.connection.execute("update action_offers set instructions = 'Enter your instructions here.' where instructions is null")
   end
