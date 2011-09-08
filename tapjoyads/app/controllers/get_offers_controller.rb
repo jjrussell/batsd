@@ -29,10 +29,10 @@ class GetOffersController < ApplicationController
     set_geoip_data
     @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
 
-    if @currency.hide_rewarded_app_installs_for_version?(params[:app_version], params[:source])
-      render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
-    elsif DEVICES_FOR_REDESIGN.include?(params[:udid])
+    if params[:library_version].to_s.version_greater_than_or_equal_to?('8.1.0') || DEVICES_FOR_REDESIGN.include?(params[:udid])
       render :template => 'get_offers/webpage_redesign_2', :layout => 'offerwall_redesign_2'
+    elsif @currency.hide_rewarded_app_installs_for_version?(params[:app_version], params[:source])
+      render :template => 'get_offers/webpage_redesign', :layout => 'iphone_redesign'
     end
   end
 
