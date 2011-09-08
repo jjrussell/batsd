@@ -22,9 +22,23 @@ class SdkController < WebsiteController
         IPHONE_VG_SDK
       when 'iphone-unity'
         IPHONE_UNITY_PLUGIN
+      when 'windows-adv'
+        WINDOWS_CONNECT_SDK
+      when 'windows-pub'
+        WINDOWS_OFFERS_SDK
+      when 'windows-vg'
+        WINDOWS_VG_SDK
       else
         sdk_index_path
       end
       redirect_to target
+  end
+
+  def popup
+    render :layout => false
+  end
+
+  def license
+    render :layout => false
   end
 end

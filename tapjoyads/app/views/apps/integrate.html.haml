@@ -4,7 +4,10 @@
 %h3
   Integrate your application
 %ol
-  %li Download the lightweight, open source #{link_to('Tapjoy library', @app.sdk_url(:connect))}.
+  %li
+    Download the lightweight, open source
+    - sdk_link 'Tapjoy library', "#{@app.platform}-adv", false
+    \.
   %li Add it to your project directory.
   %li Compile and run your project.
   %li Add the Tapjoy credentials (provided below) to your app.
@@ -29,16 +32,25 @@
   = clippy(@app.secret_key)
 
 %p
-  .left.download_link= link_to 'Advertiser Library Download', @app.sdk_url(:connect)
+  .left.download_link
+    - sdk_link 'Advertiser Library Download', "#{@app.platform}-adv", false
   .clear
 
+- content_for :page_head, stylesheet_link_tag('facebox')
+- content_for :included_javascripts, javascript_include_tag('facebox')
+- content_for :page_javascript do
+  :plain
+    $(document).ready(function($) {
+      $('a[rel*=facebox]').facebox({
+        closeImage : '/images/closelabel.png'
+      });
+    });
 - content_for :page_styles do
   :plain
     .download_link {
       font-weight: bold;
       font-size: 120%;
     }
-  
     .app_id {
       display: inline;
       font-family: courier;
