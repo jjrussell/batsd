@@ -14,6 +14,8 @@ class SdkController < WebsiteController
         ANDROID_OFFERS_SDK
       when 'android-vg'
         ANDROID_VG_SDK
+      when 'android-unity'
+        ANDROID_UNITY_PLUGIN
       when 'iphone-adv'
         IPHONE_CONNECT_SDK
       when 'iphone-pub'
