@@ -78,13 +78,11 @@ class Device < SimpledbShardedResource
     
     path_list
   end
-  alias :set_app_ran! :set_app_run!
 
   def set_app_run(app_id)
     @parsed_apps[app_id] = "%.5f" % Time.zone.now.to_f
     self.apps = @parsed_apps
   end
-  alias :set_app_ran :set_app_run
 
   def has_app(app_id)
     @parsed_apps[app_id].present?
@@ -105,7 +103,6 @@ class Device < SimpledbShardedResource
     self.apps = @parsed_apps
     save!
   end
-  alias :unset_app_ran! :unset_app_run!
 
   def set_publisher_user_id!(app_id, publisher_user_id)
     parsed_publisher_user_ids = publisher_user_ids
