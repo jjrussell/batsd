@@ -18,7 +18,7 @@ private
     publisher_app = App.find_in_cache(params[:app_id])
     @currency = Currency.find_in_cache(params[:currency_id])
     @currency = nil if @currency.present? && @currency.app_id != params[:app_id]
-    return unless verify_records([ publisher_app, @currency ], :render_missing_text => false)
+    return unless verify_records([ publisher_app, @currency ])
     
     params[:publisher_app_id] = publisher_app.id
     
