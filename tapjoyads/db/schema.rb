@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110825210500) do
+ActiveRecord::Schema.define(:version => 20110901002629) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -170,7 +170,7 @@ ActiveRecord::Schema.define(:version => 20110825210500) do
     t.integer  "minimum_offerwall_bid"
     t.integer  "minimum_display_bid"
     t.boolean  "external_publisher",                                                                     :default => false, :null => false
-    t.boolean  "potential_external_publisher",                                                           :default => false, :null => false
+    t.boolean  "udid_for_user_id",                                                                       :default => false, :null => false
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
   end
