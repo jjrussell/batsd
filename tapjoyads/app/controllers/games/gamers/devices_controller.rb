@@ -46,8 +46,7 @@ class Games::Gamers::DevicesController < GamesController
       device.version = data[:version]
 
       if current_gamer.save
-        device.set_app_run(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
-        device.save
+        device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
         redirect_to games_root_path(:register_device => true)
       else
         flash[:error] = "Error linking device. Please try again."

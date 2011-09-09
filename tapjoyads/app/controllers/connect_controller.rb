@@ -19,7 +19,7 @@ class ConnectController < ApplicationController
     web_request.put_values('connect', params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     
     device = Device.new(:key => params[:udid])
-    path_list = device.set_app_run!(params[:app_id], params)
+    path_list = device.handle_connect!(params[:app_id], params)
     path_list.each do |path|
       web_request.add_path(path)
     end
