@@ -85,7 +85,7 @@ class Device < SimpledbShardedResource
   end
 
   def set_last_run_time!(app_id)
-    set_last_run_time
+    set_last_run_time(app_id)
     save
   end
 
