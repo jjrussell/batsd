@@ -40,8 +40,8 @@ class Currency < ActiveRecord::Base
   named_scope :for_ios, :joins => :app, :conditions => "#{App.quoted_table_name}.platform = 'iphone'"
   named_scope :just_app_ids, :select => :app_id, :group => :app_id
   named_scope :tapjoy_enabled, :conditions => 'tapjoy_enabled'
-  named_scope :potential_external_publishers, :conditions => "potential_external_publisher = true"
-  named_scope :external_publishers, :conditions => "external_publisher = true"
+  named_scope :udid_for_user_id, :conditions => "udid_for_user_id"
+  named_scope :external_publishers, :conditions => "external_publisher"
   
   before_validation :sanitize_attributes
   before_validation_on_create :assign_default_currency_group
