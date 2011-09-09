@@ -6,7 +6,9 @@ class Tools::ExternalPublishersController < WebsiteController
   after_filter :save_activity_logs, :only => [ :update ]
   
   def index
-    @currencies = Currency.potential_external_publishers
+    @num_tapjoy_enabled = Currency.tapjoy_enabled.count
+    @num_external_pubs = Currency.external_publishers.count
+    @currencies = Currency.find_all_by_tapjoy_enabled(true, :include => [:app, :partner])
   end
   
   def update

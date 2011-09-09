@@ -6,15 +6,15 @@
   The below currencies are potential external publishers. If they are enabled, users will be able to earn currency outside the app though Tapjoy Games.
   
 %p
-  = "Total: #{@currencies.size}"
+  = "Total currencies: #{@num_tapjoy_enabled}"
   &nbsp;
-  = "Enabled: #{@currencies.select{|c| c.external_publisher?}.size}"
+  = "Total enabled as external pubs: #{@num_external_pubs}"
 
 %table.tablesorter.currencies_table
   %thead
     %tr
-      %th
       %th App
+      %th Platform
       %th Currency
       %th Partner
       %th Enabled?
@@ -22,8 +22,8 @@
   %tbody
     - @currencies.each do |currency|
       %tr
-        %td.img= image_tag(Offer.get_icon_url(:icon_id => Offer.hashed_icon_id(currency.id)), :size => '30x30')
-        %td= currency.app.name
+        %td= link_to(currency.app.name, statz_path(currency.app_id))
+        %td= currency.app.platform
         %td= currency.name
         %td= currency.partner.name
         %td.state= currency.external_publisher? ? 'enabled' : 'disabled'
@@ -56,7 +56,6 @@
       $(".currencies_table").tablesorter({
         widgets: ['zebra'],
         headers: {
-          0:  { sorter: false },
           5:  { sorter: false }
         }
       });
