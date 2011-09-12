@@ -29,7 +29,8 @@ Environment Setup:
   -Clone your forked repo locally
     -git clone git@github.com:[your github nickname]/tapjoyserver.git
   -Add main tapjoyserver repo as remote repo (for updating your code with the latest)
-    -git remote add --track master tapjoyserver git@github.com:Tapjoy/tapjoyserver.git
+    -git remote add tapjoy git@github.com:Tapjoy/tapjoyserver.git
+    -important that it's named "tapjoy" for deploy script to work
 
 
 -Downgrade rubygems
