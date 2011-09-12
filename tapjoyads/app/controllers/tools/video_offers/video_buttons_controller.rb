@@ -26,8 +26,11 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
     log_activity(@video_button)
     
     if @video_button.save
-      unless @video_offer.is_valid_for_update_buttons?
+      if !@video_offer.is_valid_for_update_buttons?
         flash.now[:warning] = 'Support at most 2 enabled buttons.'
+        render :action => :new
+      elsif @video_button.name.size > 15
+        flash.now[:warning] = 'Please limit the name of the button to 15 characters.'
         render :action => :new
       else
         flash[:notice] = 'Successfully created Video Button'
@@ -42,8 +45,11 @@ class Tools::VideoOffers::VideoButtonsController < WebsiteController
     log_activity(@video_button)
     
     if @video_button.update_attributes(params[:video_button])
-      unless @video_offer.is_valid_for_update_buttons?
+      if !@video_offer.is_valid_for_update_buttons?
         flash.now[:warning] = 'Support at most 2 enabled buttons.'
+        render :action => :edit
+      elsif @video_button.name.size > 15
+        flash.now[:warning] = 'Please limit the name of the button to 15 characters.'
         render :action => :edit
       else
         flash[:notice] = 'Successfully updated Video Button'
