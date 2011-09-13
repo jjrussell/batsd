@@ -82,3 +82,10 @@ Environment Setup:
   -sudo env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
   -sudo gem install rcov -v 0.9.10
   -sudo rake gems:install
+  
+
+-Set up accounts and database
+  -Create developer account at www.tapjoy.com and have someone give you the "admin" role
+  -Sync prod db with local db (this will overwrite any pre-existing changes)
+    -sudo rake admin:sync_db
+  -Now you have an admin account in production and locally
