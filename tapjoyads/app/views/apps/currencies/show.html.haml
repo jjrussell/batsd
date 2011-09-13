@@ -21,6 +21,8 @@
           = error_message_on(@currency, :conversion_rate)
           #currency_name_text.right_label
             = @currency.name
+          .details
+            This conversion rate determines how much currency to award your users for every $1 that <b>you earn (net to you)</b> via Tapjoy.  Tapjoy only awards users virtual currency based on your net earnings.
     - if @app.currencies.size <= 1
       %tr
         %th
@@ -272,4 +274,8 @@
     
     .currency_form {
       width: 680px;
+    }
+    
+    .details {
+      font-size: 12px;
     }
