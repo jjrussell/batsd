@@ -30,10 +30,14 @@ class PointsControllerTest < ActionController::TestCase
     end
 
     should 'award points and render user_account' do
+      Sqs.expects(:send_message)
+      controller.expects(:check_success).with('award_points')
+      Reward.any_instance.expects(:serial_save).with(:catch_exceptions => false, :expected_attr => { 'type' => nil })
+      Reward.any_instance.expects(:serialize).with(:attributes_only => true)
       get :award, @params
       assert_template 'user_account'
       assert assigns(:success)
-      #assert_equal PointPurchases.new(:key => "#{@params[:publisher_user_id]}.#{@params[:app_id]}", :consistent => true), assigns(:point_purchases)
+      assert_equal "#{@params[:publisher_user_id]}.#{@params[:app_id]}", assigns(:point_purchases).key
       assert_equal "10 points awarded", assigns(:message)
     end
 
@@ -46,15 +50,16 @@ class PointsControllerTest < ActionController::TestCase
     end
 
     should 'create a reward' do
-      get :award, @params
+      get :award, @params.merge(:country => 'US')
       assert_template 'user_account'
       r = Reward.new(:key => @params[:guid], :consistent => true)
       assert !r.new_record?
+      assert_equal 'award_currency', r.type
       assert_equal @params[:app_id], r.publisher_app_id
       assert_equal @currency.id, r.currency_id
       assert_equal @params[:publisher_user_id], r.publisher_user_id
       assert_equal @params[:udid], r.udid
-      assert_equal @params[:country], r.country
+      assert_equal 'US', r.country
     end
   end
 
