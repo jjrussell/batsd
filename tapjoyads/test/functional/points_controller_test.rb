@@ -64,7 +64,42 @@ class PointsControllerTest < ActionController::TestCase
   end
 
   context "on GET to :spend" do
+    setup do
+      @app = Factory(:app)
+      @currency = Factory(:currency, :id => @app.id)
+      @params = {
+        :app_id => @app.id,
+        :udid => 'stuff',
+        :tap_points => 10,
+      }
+    end
 
+    should "render points too low message" do
+      get :spend, @params
+      assert_template 'user_account'
+      assert !assigns(:success)
+      assert !assigns(:point_purchases)
+      assert_equal "Balance too low", assigns(:message)
+    end
+
+    should "spend points and render user_account" do
+      p = PointPurchases.new(:key => "#{@params[:udid]}.#{@params[:app_id]}")
+      p.points += 100
+      p.save!
+      controller.expects(:check_success).with('spend_points')
+      get :spend, @params
+      assert assigns(:success)
+      assert assigns(:point_purchases)
+      assert_equal "You successfully spent #{@params[:tap_points]} points", assigns(:message)
+    end
+
+    should "spend zero points" do
+      get :spend, @params.merge(:tap_points => '0')
+      assert assigns(:success)
+      assert assigns(:point_purchases)
+      assert_equal "", assigns(:message)
+
+    end
   end
 
   context "on GET to :purchase_vg" do
