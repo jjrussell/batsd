@@ -26,6 +26,9 @@ class Offer < ActiveRecord::Base
     VIDEO_OFFER_TYPE                 => 'Video Offers'
   }
 
+  DISPLAY_AD_SIZES = {1 => '320x50', 2 => '640x100', 3 => '768x90'}
+  DISPLAY_AD_DEFAULT_SIZE_KEY = 1 # default size (if no size is provided) is 320x50
+  
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
                                   'conversion_rate', 'show_rate', 'self_promote_only',

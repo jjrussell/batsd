@@ -203,16 +203,12 @@ private
   # Parses the size param and returns a width, height couplet. Ensures that the values returned are
   # supported by the get_ad_image method.
   def parse_size(size)
-    case size
-    when /320x50/i
-      [320, 50]
-    when /640x100/i
-      [640, 100]
-    when /768x90/i
-      [768, 90]
-    else
-      [320, 50]
+    Offer::DISPLAY_AD_SIZES.values.each do |value|
+      if size =~ /^#{value}$/i
+        return size.downcase.split("x")
+      end
     end
+    return Offer::DISPLAY_AD_SIZES[Offer::DISPLAY_AD_DEFAULT_SIZE_KEY]
   end
   
   ##
