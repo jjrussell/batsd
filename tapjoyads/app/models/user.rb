@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
   end
 
   def can_manage_account?
-    self.is_one_of?([:agency, :account_mgr, :admin])
+    self.is_one_of?([:account_mgr, :admin])
   end
 
   def managing?(partner)

@@ -60,7 +60,7 @@ ActionController::Routing::Routes.draw do |map|
     app.resources :action_offers, :only => [ :new, :create, :edit, :update, :index ], :member => { :toggle => :post }, :collection => { :TJCPPA => :get, :TapjoyPPA => :get }, :controller => 'apps/action_offers'
   end
   map.resources :enable_offer_requests, :only => [ :create ]
-  map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }, :collection => { :aggregate => :get, :api => :get, :regenerate_api_key => :post }
+  map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }, :collection => { :aggregate => :get, :export_aggregate => :post, :api => :get, :regenerate_api_key => :post }
   map.resources :billing, :only => [ :index ],
     :collection => { :create_order => :post, :create_transfer => :post, :update_payout_info => :post, :forget_credit_card => :post }
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
@@ -148,7 +148,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'glu', :controller => 'homepage/press', :action => 'glu'
   map.connect 'publishing', :controller => 'homepage', :action => 'publishers'
   map.connect 'androidfund', :controller => 'androidfund'
-  map.resources :sdk, :only => [ :index, :show ]
+  map.resources :sdk, :only => [ :index, :show ], :collection => { :popup => :get, :license => :get }
   map.namespace :agency_api do |agency|
     agency.resources :apps, :only => [ :index, :show, :create, :update ]
     agency.resources :partners, :only => [ :index, :show, :create, :update ], :collection => { :link => :post }
