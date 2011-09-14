@@ -28,12 +28,15 @@ Rails::Initializer.run do |config|
   # You have to specify the :lib option for libraries, where the Gem name (sqlite3-ruby) differs from the file itself (sqlite3)
 
   # These gems can't be vendored
+  config.gem 'aws-sdk', :version => '1.1.2'
   config.gem 'daemons', :version => '1.0.10'
   config.gem 'hpricot', :version => '0.8.1'
+  config.gem 'httparty', :version => '0.7.8'
   config.gem 'json', :version => '1.5.3'
   config.gem 'libxml-ruby', :version => '1.1.3', :lib => 'xml'
   config.gem 'memcached', :version => '1.2.7'
   config.gem 'mysql', :version => '2.8.1'
+  config.gem 'nokogiri', :version => '1.5.0'
   config.gem 'patron', :version => '0.4.4'
   config.gem 'right_aws', :version => '1.10.0'
   config.gem 'rmagick', :version => '2.12.2', :lib => 'RMagick'
