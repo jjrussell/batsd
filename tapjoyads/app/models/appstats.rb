@@ -11,14 +11,8 @@ class Appstats
     @stat_types = options.delete(:stat_types) { Stats::STAT_TYPES }
     @include_labels = options.delete(:include_labels) { false }
     @stat_prefix = options.delete(:stat_prefix) { 'app' }
-    if @stat_prefix == 'app'
-      offer = Offer.find(app_key)
-      @platform = offer.get_platform.downcase
-    elsif @stat_prefix =~ /\w*-(\w*)/
-      @platform = $1
-    else
-      @platform = 'all'
-    end
+    @platform = @stat_prefix =~ /\w*-(\w*)/ ? $1 : 'all'
+
     cache_hours = options.delete(:cache_hours) { 3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
