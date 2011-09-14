@@ -20,6 +20,10 @@ config.gem 'factory_girl', :version => '1.3.1'
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['dev']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['dev']['secret_access_key']
+AWS.config(
+  :access_key_id     => amazon['dev']['access_key_id'],
+  :secret_access_key => amazon['dev']['secret_access_key']
+)
 
 MEMCACHE_SERVERS = ['127.0.0.1']
 
