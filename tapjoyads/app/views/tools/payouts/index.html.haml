@@ -35,7 +35,10 @@
           - if payout_info.present?
             = payout_info.company_name
           - else
-            = partner.name
+            \-
+          %br/
+          %strong Partner Name:
+          = partner.name
           - if payout_info.present? && payout_info.doing_business_as.present?
             %br/
             %strong d/b/a:
