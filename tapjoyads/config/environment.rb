@@ -41,11 +41,11 @@ Rails::Initializer.run do |config|
   config.gem 'typhoeus', :version => '0.2.0'
 
   # These gems should be vendored
+  config.gem 'airbrake', :version => '3.0.4'
   config.gem 'authlogic', :version => '2.1.3'
   config.gem 'declarative_authorization', :version => '0.4.1'
   config.gem 'geoip', :version => '1.1.1'
   config.gem 'haml', :version => '2.2.23'
-  config.gem 'hoptoad_notifier', :version => '2.4.11'
   config.gem 'plist', :version => '3.1.0'
   config.gem 'read_from_slave', :version => '0.4.0'
   config.gem 'uuidtools', :version => '2.1.2'
