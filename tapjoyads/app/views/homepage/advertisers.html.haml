@@ -54,5 +54,7 @@
 - content_for :page_javascript do
   :plain
     $(function($){
-      $($('.contact_us')[0]).click();
+      if (location.href.match(/#contact$/)) {
+        $($('.contact_us')[0]).click();
+      }
     });
