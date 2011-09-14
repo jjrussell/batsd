@@ -50,3 +50,11 @@
     .screenshot.banner
     .screenshot.video
 .clear
+
+- content_for :page_javascript do
+  :plain
+    if (location.href.match(/#contact$/)) {
+      setTimeout(function(){
+        $($('.contact_us')[0]).click();
+      }, 100);
+    }
