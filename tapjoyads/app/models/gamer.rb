@@ -1,6 +1,8 @@
 class Gamer < ActiveRecord::Base
   include UuidPrimaryKey
   
+  has_many :gamer_devices
+  
   attr_accessor :terms_of_service
   validates_acceptance_of :terms_of_service, :on => :create
   

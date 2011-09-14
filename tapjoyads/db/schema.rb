@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110901002629) do
+ActiveRecord::Schema.define(:version => 20110913190213) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -91,26 +91,17 @@ ActiveRecord::Schema.define(:version => 20110901002629) do
     t.string   "id",                      :limit => 36,                    :null => false
     t.string   "partner_id",              :limit => 36,                    :null => false
     t.string   "name",                                                     :null => false
-    t.text     "description"
-    t.integer  "price",                                 :default => 0
     t.string   "platform"
-    t.string   "store_id"
     t.text     "store_url"
     t.integer  "color"
     t.boolean  "use_raw_url",                           :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "age_rating"
     t.integer  "rotation_direction",                    :default => 0,     :null => false
     t.integer  "rotation_time",                         :default => 0,     :null => false
     t.boolean  "hidden",                                :default => false, :null => false
-    t.integer  "file_size_bytes"
-    t.string   "supported_devices"
     t.string   "enabled_rating_offer_id", :limit => 36
     t.string   "secret_key",                                               :null => false
-    t.datetime "released_at"
-    t.float    "user_rating"
-    t.string   "categories"
     t.text     "countries_blacklist"
   end
 
@@ -275,6 +266,18 @@ ActiveRecord::Schema.define(:version => 20110901002629) do
   add_index "enable_offer_requests", ["id"], :name => "index_enable_offer_requests_on_id", :unique => true
   add_index "enable_offer_requests", ["offer_id"], :name => "index_enable_offer_requests_on_offer_id"
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
+
+  create_table "gamer_devices", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36, :null => false
+    t.string   "gamer_id",   :limit => 36, :null => false
+    t.string   "device_id",  :limit => 36, :null => false
+    t.string   "name",                     :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "gamer_devices", ["device_id"], :name => "index_gamer_devices_on_device_id"
+  add_index "gamer_devices", ["gamer_id"], :name => "index_gamer_devices_on_gamer_id"
 
   create_table "gamers", :id => false, :force => true do |t|
     t.string   "id",                 :limit => 36,                 :null => false

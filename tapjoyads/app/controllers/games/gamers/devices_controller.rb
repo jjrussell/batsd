@@ -41,6 +41,7 @@ class Games::Gamers::DevicesController < GamesController
       redirect_to games_root_path unless params[:data].present?
       data = SymmetricCrypto.decrypt_object(params[:data], SYMMETRIC_CRYPTO_SECRET)
       current_gamer.udid = data[:udid]
+      current_gamer.gamer_devices.build(:device_id => data[:udid])
       device = Device.new(:key => data[:udid])
       device.product = data[:product]
       device.version = data[:version]
