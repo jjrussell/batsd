@@ -1,4 +1,4 @@
-- form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform', :id => 'update' }) do |f|
+- form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :multipart => true, :class => 'tjform', :id => 'update' }) do |f|
   %table
     %tbody
       %tr
@@ -120,6 +120,21 @@
         %td
           = f.select(:min_os_version, @app.os_versions, :include_blank => 'No Minimum')
           = error_message_on(@offer, :min_os_version)
+          
+      - existing_creatives = @offer.banner_creatives
+      - Offer::DISPLAY_AD_SIZES.values.each do |size|
+        %tr
+          %th
+            = f.label("#{size}_custom_creative")
+          %td
+            - if existing_creatives.has_key? size
+              - format = existing_creatives[size]
+              = image_tag(banner_creative_image_path(:offer_id => @offer.id, :size => size, :format => format))
+              = check_box_tag("remove_#{size}_custom_creative")
+              Remove
+            = f.file_field("#{size}_custom_creative", :accept => "image/png")
+            (Optional)
+          
           
       - if permitted_to?(:edit, :statz)
         = render('apps/offers_shared/admin_fields', :f => f)
