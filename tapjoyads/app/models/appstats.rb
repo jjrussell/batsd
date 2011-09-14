@@ -12,7 +12,6 @@ class Appstats
     @include_labels = options.delete(:include_labels) { false }
     @stat_prefix = options.delete(:stat_prefix) { 'app' }
     @platform = @stat_prefix =~ /\w*-(\w*)/ ? $1 : 'all'
-
     cache_hours = options.delete(:cache_hours) { 3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
