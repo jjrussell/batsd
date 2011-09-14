@@ -58,12 +58,7 @@ class PointsController < ApplicationController
   def spend
     return unless verify_params([:app_id, :udid, :tap_points])
 
-    if params[:publisher_user_id].present?
-      publisher_user_id = params[:publisher_user_id]
-    else
-      publisher_user_id = params[:udid]
-      params[:publisher_user_id] = params[:udid]
-    end
+    publisher_user_id = params[:publisher_user_id] || params[:udid]
 
     @currency = Currency.find_in_cache(params[:app_id])
     return unless verify_records([ @currency ])
@@ -85,8 +80,7 @@ class PointsController < ApplicationController
   def purchase_vg
     return unless verify_params([:app_id, :udid, :virtual_good_id])
 
-    publisher_user_id = params[:udid]
-    publisher_user_id = params[:publisher_user_id] unless params[:publisher_user_id].blank?
+    publisher_user_id = params[:publisher_user_id] || params[:udid]
 
     @currency = Currency.find_in_cache(params[:app_id])
     return unless verify_records([ @currency ])
@@ -101,8 +95,7 @@ class PointsController < ApplicationController
   def consume_vg
     return unless verify_params([:app_id, :udid, :virtual_good_id])
 
-    publisher_user_id = params[:udid]
-    publisher_user_id = params[:publisher_user_id] unless params[:publisher_user_id].blank?
+    publisher_user_id = params[:publisher_user_id] || params[:udid]
 
     @currency = Currency.find_in_cache(params[:app_id])
     return unless verify_records([ @currency ])
@@ -119,6 +112,7 @@ private
 
   def check_success(path)
     if @success
+      params[:publisher_user_id] ||= params[:udid]
       web_request = WebRequest.new
       web_request.put_values(path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
       web_request.save
