@@ -73,6 +73,51 @@ options {
 
 
 ######
+# rails
+
+source app_server {
+  tcp(
+    ip(0.0.0.0)
+    port(51400)
+    max-connections(8192) # default: 10 connections
+    log_fetch_limit(50)   # default: 10 messages per poll per connection
+    log_iw_size(20000)    # default: 100 messages
+  );
+};
+
+destination ebs_file {
+  file("/ebs/log/$PROGRAM/$YEAR-$MONTH-$DAY-$HOUR.log"
+    owner("ubuntu")
+    group("ubuntu")
+    perm(0644)
+    dir_owner("ubuntu")
+    dir_group("ubuntu")
+    dir_perm(0755)
+    create_dirs(yes)
+    flush_lines(1000)     # default: 0 lines
+    flush_timeout(1000)   # default: 10000 milliseconds
+    log_fifo_size(100000) # default: 1000 lines
+  );
+};
+
+filter f_rails {
+  program("rails-");
+};
+
+log {
+  source(app_server);
+  filter(f_rails);
+  destination(ebs_file);
+  flags(flow-control, final);
+};
+
+
+##############################################################
+# everything below comes from the default ubuntu configuration
+##############################################################
+
+
+######
 # sources
 
 # all known message sources
@@ -339,40 +384,4 @@ log {
         source(s_all);
         filter(f_xconsole);
         destination(dp_xconsole);
-};
-
-source app_server {
-  tcp(
-    ip(0.0.0.0)
-    port(51400)
-    max-connections(8192) # default: 10 connections
-    log_fetch_limit(50)   # default: 10 messages per poll per connection
-    log_iw_size(20000)    # default: 100 messages
-  );
-};
-
-destination ebs_file {
-  file("/ebs/log/$PROGRAM/$YEAR-$MONTH-$DAY-$HOUR.log"
-    owner("ubuntu")
-    group("ubuntu")
-    perm(0644)
-    dir_owner("ubuntu")
-    dir_group("ubuntu")
-    dir_perm(0755)
-    create_dirs(yes)
-    flush_lines(1000)     # default: 0 lines
-    flush_timeout(1000)   # default: 10000 milliseconds
-    log_fifo_size(100000) # default: 1000 lines
-  );
-};
-
-filter f_rails {
-  program("rails-");
-};
-
-log {
-  source(app_server);
-  filter(f_rails);
-  destination(ebs_file);
-  flags(flow-control, final);
 };
