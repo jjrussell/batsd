@@ -44,11 +44,11 @@ class Offer < ActiveRecord::Base
   DAILY_STATS_RANGE = 6
   
   FREQUENCIES_CAPPING_INTERVAL = {
-    "not setting" => 0,
-    "1 hour"      => 3600,
-    "8 hours"     => 28800,
-    "24 hours"    => 86400,
-    "1 minute"    => 60
+    "none" => 0,
+    "1 hour"      => 1.hour.to_i,
+    "8 hours"     => 8.hours.to_i,
+    "24 hours"    => 24.hours.to_i,
+    "1 minute"    => 1.minute.to_i
   }
 
   attr_accessor :rank_score
@@ -981,11 +981,11 @@ private
   end
   
   def frequency_capping_reject?(device)
-    return false unless multi_complete? && interval != Offer::FREQUENCIES_CAPPING_INTERVAL['not setting']
+    return false unless multi_complete? && interval != Offer::FREQUENCIES_CAPPING_INTERVAL['none']
     
     if device.has_app(id)
       last_run_time = device.last_run_time(id)
-      last_run_time + interval > Time.now.utc
+      last_run_time + interval > Time.zone.now
     else
       false
     end
