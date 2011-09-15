@@ -819,6 +819,17 @@ class Offer < ActiveRecord::Base
       end
     end
   end
+  
+  def frequency_capping_reject?(device)
+    return false unless multi_complete? && interval != Offer::FREQUENCIES_CAPPING_INTERVAL['none']
+    
+    if device.has_app(id)
+      last_run_time = device.last_run_time(id)
+      last_run_time + interval > Time.zone.now
+    else
+      false
+    end
+  end
 
 private
 
@@ -978,17 +989,6 @@ private
   def video_offers_reject?(video_offer_ids, type)
     return false if type == Offer::VIDEO_OFFER_TYPE
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
-  end
-  
-  def frequency_capping_reject?(device)
-    return false unless multi_complete? && interval != Offer::FREQUENCIES_CAPPING_INTERVAL['none']
-    
-    if device.has_app(id)
-      last_run_time = device.last_run_time(id)
-      last_run_time + interval > Time.zone.now
-    else
-      false
-    end
   end
 
   def cleanup_url
