@@ -15,13 +15,6 @@
       %td= file_field_tag :video
     - if !@video_offer.new_record?
       %tr
-        %th= label_tag "Current Icon", "Current Icon"
-        %td= image_tag @video_offer.primary_offer.get_icon_url(:size => '200'), :size => '200x125'
-    %tr
-      %th= label_tag :icon, @video_offer.new_record? ? 'Upload Icon' : 'Upload New Icon'
-      %td= file_field_tag :icon
-    - if !@video_offer.new_record?
-      %tr
         %td{ :colspan => 2 }= link_to("View/Edit Video Button", tools_video_offer_video_buttons_path(@video_offer.id))
     %tr
       %td{ :colspan => 2 }= f.submit @video_offer.new_record? ? 'Create Video Offer' : 'Update Video Offer'

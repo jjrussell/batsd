@@ -31,7 +31,8 @@
   .divider
   - @offer_list.each_with_index do |offer, index|
     - link_class = index == 0 ? 'offer first' : index == @offer_list.size - 1 ? 'offer last' : 'offer'
-    - link_class << ' video' if offer.item_type == 'VideoOffer'
+    - if offer.item_type == 'VideoOffer'
+      - link_class << ' video'
     - link_to(get_click_url(offer), :class => link_class, :onclick => "this.className += ' clicked';") do
       .content
         .banner
@@ -41,7 +42,6 @@
           - if offer.item_type == 'VideoOffer'
             .video_icon
               %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => offer.get_icon_url(:source => :cloudfront, :size => '57') }
-              .play
           - else  
             .offer_icon
               %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => offer.get_icon_url(:source => :cloudfront, :size => '57') }
@@ -55,14 +55,11 @@
             %b= offer.name
         .load
     .divider
-    
 - if @more_data_available > 0
-  %a{ :href => "javascript:void(0);", :onclick => "javascript:getMoreAds()" }
-    #bottom_box
-      #load_more
-        #plus
-        #load_more_text
-          Load more!
+  #bottom_box
+    #plus
+    %a{ :href => "javascript:void(0);", :id => "load_more", :onclick => "javascript:getOffers()" }
+      Load some more offers!          
   
 #footerWrapper
   #footer
@@ -141,19 +138,19 @@
       }
     }
     
-    function getMoreAds() {
+    function getOffers() {
       if (firstLoad) {
         loadJQ('getOffers');
       }
       else {
-        fetchMoreAds();
+        fetchOffers();
       }
     }
     
-    function fetchMoreAds() {
+    function fetchOffers() {
       if (avail <= 0) {return;}
       if (url) {
-        $("#load_more_text").html("Loading...");
+        $("#load_more").html("Loading...");
         $.ajax({
           url: url + '&limit=25&start=' + start,
           dataType: 'json',
@@ -163,7 +160,7 @@
               var offers = data.OfferArray;
               offset = offers.length;
               if (data.MoreDataAvailable) {
-                $("#load_more_text").html("Load more");
+                $("#load_more").html("Load some more offers");
                 avail = data.MoreDataAvailable;
               }
               else {
@@ -214,7 +211,7 @@
             } 
           },
           error: function() {
-            $("#load_more_text").html("There was an issue. Please try again.");
+            $("#load_more").html("There was an issue. Please try again.");
           }
         });
       }   

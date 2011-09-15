@@ -12,7 +12,7 @@ class Games::Gamers::DevicesController < GamesController
   def create
     match = request.raw_post.match(/<plist.*<\/plist>/m)
     raise "Plist not present" unless match.present? && match[0].present?
-
+  
     udid, product, version = nil
     (Hpricot(match[0])/"key").each do |key|
       value = key.next_sibling.inner_text
@@ -23,12 +23,12 @@ class Games::Gamers::DevicesController < GamesController
       end
     end
     raise "Error parsing plist" if udid.blank? || product.blank? || version.blank?
-
+    
     data = {
       :udid              => udid,
       :product           => product,
       :version           => version
-    }
+    } 
     redirect_to finalize_games_gamer_device_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)), :status => 301
   rescue Exception => e
     Notifier.alert_new_relic(e.class, e.message, request, params)
@@ -44,9 +44,9 @@ class Games::Gamers::DevicesController < GamesController
       device = Device.new(:key => data[:udid])
       device.product = data[:product]
       device.version = data[:version]
-
+    
       if current_gamer.save
-        device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+        device.save
         redirect_to games_root_path(:register_device => true)
       else
         flash[:error] = "Error linking device. Please try again."
@@ -58,3 +58,5 @@ class Games::Gamers::DevicesController < GamesController
     end
   end
 end
+
+

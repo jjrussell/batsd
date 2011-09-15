@@ -10,7 +10,7 @@ class ExternalPublisher
   
   def add_currency(currency)
     self.currencies ||= []
-    self.currencies << { :id => currency.id, :name => currency.name, :udid_for_user_id => currency.udid_for_user_id }
+    self.currencies << { :id => currency.id, :name => currency.name }
   end
 
   def primary_currency_name
@@ -26,11 +26,9 @@ class ExternalPublisher
     device_type = HeaderParser.device_type(headers['user-agent'])
     os_version = HeaderParser.os_version(headers['user-agent']) if device_type.present?
     
-    publisher_user_id = currency[:udid_for_user_id] ? device.key : device.publisher_user_ids[app_id]
-    
     data = {
       :udid              => device.key,
-      :publisher_user_id => publisher_user_id,
+      :publisher_user_id => device.key,
       :currency_id       => currency[:id],
       :app_id            => app_id,
       :source            => 'tj_games',
@@ -45,17 +43,27 @@ class ExternalPublisher
   end
 
   def self.load_all_for_device(device)
+    device_apps = device.apps
     external_publishers = []
     self.load_all.each do |app_id, external_publisher|
-      next unless device.has_app(app_id)
-      next unless device.publisher_user_ids[app_id].present? || external_publisher.currencies.all? { |h| h[:udid_for_user_id] }
+      next if device_apps[app_id].blank?
       
-      external_publisher.last_run_time = device.parsed_apps[app_id].to_i
+      external_publisher.last_run_time = device_apps[app_id].to_i
       external_publishers << external_publisher
     end
     
     external_publishers.sort! do |e1, e2|
       e2.last_run_time <=> e1.last_run_time
+    end
+    external_publishers
+  end
+
+  def self.load_all_for_device_filter_installed(device)
+    device_apps = device.apps
+    external_publishers = []
+    self.load_all.each do |app_id, external_publisher|
+      next if device_apps[app_id].present?
+      external_publishers << external_publisher
     end
     external_publishers
   end
@@ -79,8 +87,8 @@ class ExternalPublisher
     end
     
     key = 'external_publishers'
-    bucket = AWS::S3.new.buckets[BucketNames::OFFER_DATA]
-    bucket.objects[key].write(Marshal.dump(external_publishers))
+    bucket = S3.bucket(BucketNames::OFFER_DATA)
+    bucket.put(key, Marshal.dump(external_publishers))
     Mc.distributed_put(key, external_publishers, false, 1.day)
   end
   
@@ -89,7 +97,7 @@ class ExternalPublisher
     yesterday = now - 1.day
     date_string = yesterday.to_s(:yyyy_mm_dd)
     
-    Currency.find_each(:conditions => 'udid_for_user_id = false') do |currency|
+    Currency.find_each(:conditions => 'potential_external_publisher = false') do |currency|
       appstats = Appstats.new(currency.app_id, :start_time => yesterday.beginning_of_day - 1.day, :end_time => now.beginning_of_day, :stat_types => ['offerwall_views', 'display_ads_requested', 'featured_offers_requested'])
       next if appstats.stats['offerwall_views'].sum + appstats.stats['display_ads_requested'].sum + appstats.stats['featured_offers_requested'].sum == 0
       
@@ -105,7 +113,7 @@ class ExternalPublisher
       end
       
       if valid_currency && count >= 100
-        currency.udid_for_user_id = true
+        currency.potential_external_publisher = true
         currency.save!
       end
     end

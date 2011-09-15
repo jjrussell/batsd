@@ -205,7 +205,7 @@ private
       if @offer.item_type == 'RatingOffer'
         app_id_for_device = RatingOffer.get_id_with_app_version(params[:advertiser_app_id], params[:app_version])
       end
-      @device.set_last_run_time!(app_id_for_device)
+      @device.set_app_ran!(app_id_for_device, params)
       
       message = { :click => @click.serialize(:attributes_only => true), :install_timestamp => @now.to_f.to_s }.to_json
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)

@@ -35,10 +35,7 @@
           - if payout_info.present?
             = payout_info.company_name
           - else
-            \-
-          %br/
-          %strong Partner Name:
-          = partner.name
+            = partner.name
           - if payout_info.present? && payout_info.doing_business_as.present?
             %br/
             %strong d/b/a:
@@ -74,6 +71,9 @@
               %span.status
           - else
             &nbsp;
+          
+
+= will_paginate(@partners)
 
 - content_for :page_javascript do
   :plain

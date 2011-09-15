@@ -114,7 +114,7 @@ private
       @error_message = "offer has already been completed by this device for click {#{click.key}}"
       notify_and_render_error(false)
     else
-      device.set_last_run_time!(click.advertiser_app_id)
+      device.set_app_ran!(click.advertiser_app_id, params)
       message = { :click => click.serialize(:attributes_only => true), :install_timestamp => @now.to_f.to_s }.to_json
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
       render_success

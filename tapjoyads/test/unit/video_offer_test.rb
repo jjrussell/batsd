@@ -44,6 +44,13 @@ class VideoOfferTest < ActiveSupport::TestCase
       assert_equal 'changed_offer_name_2', @offer.name
     end
     
+    should "update the primary_offer's hidden field when video_offer's hidden field is changed" do
+      @video_offer.update_attributes({:hidden => true})
+      @video_offer.reload
+      assert @video_offer.hidden?
+      assert !@offer.tapjoy_enabled?
+    end
+    
     should "have value stored in url of the primary_offer after video_offer created" do
       @video_url = Offer.get_video_url({:video_id => @video_offer.id})
       assert_equal @video_url, @offer.url

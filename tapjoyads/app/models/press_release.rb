@@ -12,11 +12,11 @@ class PressRelease < ActiveRecord::Base
   end
 
   named_scope :ordered, :order => "link_id DESC"
-  named_scope :not_future, :conditions => ["published_at < ?", Time.zone.now]
+  named_scope :not_future, :conditions => ["published_at < ?", Time.zone.now.end_of_day]
 
   def self.most_recent_and_not_future
     PressRelease.first( :order => "link_id DESC",
-                       :conditions => ["content_body is not null and published_at < ?", Time.zone.now])
+                       :conditions => ["content_body is not null and published_at < ?", Time.zone.now.end_of_day])
   end
 
   def future?

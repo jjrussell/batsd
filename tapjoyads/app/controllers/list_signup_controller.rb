@@ -80,7 +80,7 @@ class ListSignupController < ApplicationController
       @signup.save
       
       device = Device.new(:key => @signup.udid)
-      device.set_last_run_time!(@signup.advertiser_app_id)
+      device.set_app_ran!(@signup.advertiser_app_id, params)
       
       click = Click.new(:key => "#{@signup.udid}.#{@signup.advertiser_app_id}")
       

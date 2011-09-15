@@ -4,34 +4,29 @@
     %h3 iPhone Library (#{@iphone_version})
     %ul
       %li
-        - sdk_link 'iOS Advertiser Library', 'iphone-adv', false
+        = link_to 'iOS Advertiser Library', sdk_path('iphone-adv')
+        = clippy(sdk_path('iphone-adv', :only_path => false))
       %li
-        - sdk_link 'iOS Publisher Library', 'iphone-pub'
+        = link_to 'iOS Publisher Library', sdk_path('iphone-pub')
+        = clippy(sdk_path('iphone-pub', :only_path => false))
       %li
-        - sdk_link 'iOS Publisher Library (+ Virtual Goods)', 'iphone-vg'
+        = link_to 'iOS Publisher Library (+ Virtual Goods)', sdk_path('iphone-vg')
+        = clippy(sdk_path('iphone-vg', :only_path => false))
 
     %h3 Android Library (#{@android_version})
     %ul
       %li
-        - sdk_link 'Android Advertiser Library', 'android-adv', false
+        = link_to 'Android Advertiser Library', sdk_path('android-adv')
+        = clippy(sdk_path('android-adv', :only_path => false))
       %li
-        - sdk_link 'Android Publisher Library', 'android-pub'
+        = link_to 'Android Publisher Library', sdk_path('android-pub')
+        = clippy(sdk_path('android-pub', :only_path => false))
       %li
-        - sdk_link 'Android Publisher Library (+ Virtual Goods)', 'android-vg'
+        = link_to 'Android Publisher Library (+ Virtual Goods)', sdk_path('android-vg')
+        = clippy(sdk_path('android-vg', :only_path => false))
 
     %h3 Third-party Plugins
     %ul
       %li
-        - sdk_link 'Unity Plugin for iOS', 'iphone-unity'
-      %li
-        - sdk_link 'Unity Plugin for Android', 'android-unity'
-
-- content_for :page_head, stylesheet_link_tag('facebox')
-- content_for :included_javascripts, javascript_include_tag('facebox')
-- content_for :page_javascript do
-  :plain
-    $(document).ready(function($) {
-      $('a[rel*=facebox]').facebox({
-        closeImage : '/images/closelabel.png'
-      });
-    });
+        = link_to 'Unity Plugin for iOS', sdk_path('iphone-unity')
+        = clippy(sdk_path('iphone-unity', :only_path => false))

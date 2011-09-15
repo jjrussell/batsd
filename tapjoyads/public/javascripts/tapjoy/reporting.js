@@ -16,7 +16,6 @@ var loadData = function(data) {
   $('#download_date').val(data.date);
   $('#download_end_date').val(data.end_date);
   $('#download_granularity').val(data.granularity);
-  $('#download_platform').val(data.platform);
 };
 
 var rangeIsLast24Hours = function() {

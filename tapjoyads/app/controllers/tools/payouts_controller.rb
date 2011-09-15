@@ -8,9 +8,11 @@ class Tools::PayoutsController < WebsiteController
     if params[:year] && params[:month]
       @start_date = Time.zone.parse("#{params[:year]}-#{params[:month]}-01")
       @end_date = @start_date + 1.month
-      @partners = Partner.to_payout(:include => 'payout_info').payout_info_changed(@start_date, @end_date)
+      @partners = Partner.to_payout(:include => 'payout_info').
+        payout_info_changed(@start_date, @end_date).
+        paginate(:page => params[:page])
     else
-      @partners = Partner.to_payout(:include => 'payout_info')
+      @partners = Partner.to_payout(:include => 'payout_info').paginate(:page => params[:page])
     end
   end
 

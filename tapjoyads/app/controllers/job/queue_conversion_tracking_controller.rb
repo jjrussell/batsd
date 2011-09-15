@@ -57,8 +57,6 @@ private
       Notifier.alert_new_relic(JailbrokenInstall, "Device: #{click.udid} is jailbroken and installed a paid app: #{click.advertiser_app_id}, for click: #{click.key}", request, params)
     end
     
-    device.set_publisher_user_id!(click.publisher_app_id, click.publisher_user_id)
-    
     click.type = "featured_#{click.type}" if click.source == 'featured'
     
     reward = Reward.new(:key => click.reward_key)
