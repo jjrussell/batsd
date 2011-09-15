@@ -5,21 +5,14 @@
         %img.header{:src => "/images/about_tapjoy.png"}/
         .clear
         %ul
-          %li
-            %a{:href => "/site/team"} Meet the team
-          %li
-            %a{:href => "/press"} Tapjoy in the press
-          %li
-            %a{:href => "http://blog.tapjoy.com"} Read our blog
-          %li.last
-            %a{:href => "/careers"} Work at Tapjoy
+          %li= link_to 'Meet the team', '/site/team'
+          %li= link_to 'Tapjoy in the press', '/press'
+          %li= link_to 'Read our blog', 'http://blog.tapjoy.com'
+          %li= link_to 'Work at Tapjoy', '/careers'
         %ul
-          %li
-            %a{:href => "/site/contact"} Contact us
-          %li
-            %a{:href => "http://knowledge.tapjoy.com"} Tapjoy Knowledge Center
-          %li.last
-            %a{:href => "/site/privacy"} Privacy Policy
+          %li= link_to 'Contact us', '/site/contact'
+          %li= link_to 'Tapjoy Knowledge Center', 'http://knowledge.tapjoy.com'
+          %li= link_to 'Privacy Policy', '/site/privacy'
       #legal_stuff
         %img.header{:src => "/images/legal_stuff.png"}/
         %p
@@ -30,13 +23,13 @@
 = javascript_include_tag 'jquery-1.4.2.min', 'tapjoy'
 = javascript_include_tag 'facebox'
 %script{ :type => 'text/javascript', :charset => 'utf-8' }
-  = yield :page_javascript
   :plain
     jQuery(document).ready(function($) {
       $('a[rel*=facebox]').facebox({
         closeImage   : '/images/closelabel.png'
       });
     });
+  = yield :page_javascript
   - unless Rails.env == 'development'
     :plain
       var _gaq = _gaq || [];
