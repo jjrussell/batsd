@@ -647,7 +647,7 @@ class Offer < ActiveRecord::Base
     publisher_whitelist_reject?(publisher_app) ||
     currency_whitelist_reject?(currency) ||
     video_offers_reject?(video_offer_ids, type) ||
-    frequency_capping_reject?(device.key)
+    frequency_capping_reject?(device)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -672,7 +672,7 @@ class Offer < ActiveRecord::Base
       age_rating_reject?(currency) ||
       publisher_whitelist_reject?(publisher_app) ||
       currency_whitelist_reject?(currency) ||
-      frequency_capping_reject?(device.key)) &&
+      frequency_capping_reject?(device)) &&
       accepting_clicks?
   end
 
@@ -980,10 +980,9 @@ private
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
   
-  def frequency_capping_reject?(udid)
+  def frequency_capping_reject?(device)
     return false unless multi_complete? && interval != Offer::FREQUENCIES_CAPPING_INTERVAL['not setting']
     
-    device = Device.new(:key => udid )
     if device.has_app(id)
       last_run_time = device.last_run_time(id)
       last_run_time + interval > Time.now.utc
