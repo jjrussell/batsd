@@ -19,15 +19,6 @@ class Apps::OffersController < WebsiteController
     redirect_to :action => :edit, :id => @offer.id
   end
   
-  def banner_creative_image
-    creative_key = "#{params[:offer_id]}_#{params[:size]}.#{params[:format]}"
-    image_data = Mc.get_and_put("banner_creatives.#{creative_key}", false, 1.hour) do
-      bucket = S3.bucket(BucketNames::TAPJOY)
-      bucket.get("banner_creatives/#{creative_key}")
-    end
-    send_data image_data, :type => "image/#{params[:format]}", :disposition => 'inline'
-  end
-  
   def edit
     if !@offer.tapjoy_enabled?
       if @offer.rewarded? && !@offer.featured?
@@ -54,15 +45,15 @@ class Apps::OffersController < WebsiteController
       param_name = "#{size}_custom_creative".to_sym
       creative_file = params[:offer][param_name]
       
-      if !creative_file
-        if @offer.has_banner_creative_for_size?(size) && params["remove_#{size}_custom_creative".to_sym] != "1" # nothing has changed, keep banner_creatives as-is
-          format_key = Offer::DISPLAY_AD_FORMATS.invert.fetch(@offer.banner_creatives[size])
-          params[:offer][:banner_creatives] << "#{size_key},#{format_key};"
-        end
-        # TODO: delete "removed" creative file from S3? If so, may want to do so farther down in case error occurs
+      if !creative_file && @offer.has_banner_creative_for_size?(size) && params["remove_#{param_name}".to_sym] != "1"
+        # nothing has changed, keep banner_creative as-is
+        format_key = @offer.banner_creative_format_key_for_size(size)
+        params[:offer][:banner_creatives] << "#{size_key},#{format_key};"
+          
+        # TODO: delete "removed" creative file from S3? If so, may want to do so farther down in code path in case error occurs
       end
       
-      if creative_file # new file has been uploaded... keep as separate block in case "remove" was selected *and* file was uploaded
+      if creative_file # new file has been uploaded
         begin
           creative_arr = Magick::Image.from_blob(creative_file.read)
           if creative_arr.size != 1
@@ -94,7 +85,7 @@ class Apps::OffersController < WebsiteController
           Mc.put("banner_creatives.#{creative_key}", creative.to_blob, false, 1.hour)
         rescue
         end
-        format_key = Offer::DISPLAY_AD_FORMATS.invert.fetch(format)
+        format_key = Offer::DISPLAY_AD_FORMATS.invert[format]
         params[:offer][:banner_creatives] << "#{size_key},#{format_key};"
       end
       

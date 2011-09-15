@@ -15,16 +15,28 @@ class DisplayAdController < ApplicationController
   
   def image
     params[:currency_id] ||= params[:publisher_app_id]
-    return unless verify_params([ :publisher_app_id, :advertiser_app_id, :size, :currency_id ])
-    
+    return unless verify_params([ :advertiser_app_id, :size ])
     width, height = parse_size(params[:size])
+    size_str = "#{width}x#{height}"
+    
+    offer = Offer.find_in_cache(params[:advertiser_app_id])
+    if offer.has_banner_creative_for_size?(size_str)
+      format = offer.banner_creative_format_for_size(size_str)
+      creative_key = "#{params[:advertiser_app_id]}_#{size_str}.#{format}"
+      image_data = Mc.get_and_put("banner_creatives.#{creative_key}", false, 1.hour) do
+        bucket = S3.bucket(BucketNames::TAPJOY)
+        bucket.get("banner_creatives/#{creative_key}")
+      end
+      send_data image_data, :type => "image/#{format}", :disposition => 'inline' and return
+    end
+    
+    return unless verify_params([ :publisher_app_id, :currency_id ])
 
     key = "display_ad.decoded.#{params[:currency_id]}.#{params[:advertiser_app_id]}.#{width}x#{height}.#{params[:display_multiplier] || 1}"
     image_data = Mc.get_and_put(key, false, 5.minutes) do
       publisher = App.find_in_cache(params[:publisher_app_id])
       currency = Currency.find_in_cache(params[:currency_id])
       currency = nil if currency.present? && currency.app_id != params[:publisher_app_id]
-      offer = Offer.find_in_cache(params[:advertiser_app_id])
       return unless verify_records([ publisher, currency, offer ])
 
       ad_image_base64 = get_ad_image(publisher, offer, params[:size], currency, params[:display_multiplier])

@@ -197,6 +197,14 @@ class Offer < ActiveRecord::Base
     end
     creatives_hash
   end
+  
+  def banner_creative_format_for_size(size)
+    banner_creatives[size]
+  end
+  
+  def banner_creative_format_key_for_size(size)
+    Offer::DISPLAY_AD_FORMATS.invert[banner_creative_format_for_size(size)]
+  end
 
   def find_associated_offers
     Offer.find(:all, :conditions => ["item_id = ? and id != ?", item_id, id])

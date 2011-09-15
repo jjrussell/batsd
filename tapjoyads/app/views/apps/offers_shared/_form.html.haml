@@ -129,7 +129,7 @@
           %td
             - if existing_creatives.has_key? size
               - format = existing_creatives[size]
-              = image_tag(banner_creative_image_path(:offer_id => @offer.id, :size => size, :format => format))
+              = image_tag("#{API_URL}/display_ad/image?advertiser_app_id=#{@offer.id}&size=#{size}")
               = check_box_tag("remove_#{size}_custom_creative")
               Remove
             = f.file_field("#{size}_custom_creative", :accept => "image/png")
