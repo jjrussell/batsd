@@ -91,17 +91,26 @@ ActiveRecord::Schema.define(:version => 20110913190213) do
     t.string   "id",                      :limit => 36,                    :null => false
     t.string   "partner_id",              :limit => 36,                    :null => false
     t.string   "name",                                                     :null => false
+    t.text     "description"
+    t.integer  "price",                                 :default => 0
     t.string   "platform"
+    t.string   "store_id"
     t.text     "store_url"
     t.integer  "color"
     t.boolean  "use_raw_url",                           :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "age_rating"
     t.integer  "rotation_direction",                    :default => 0,     :null => false
     t.integer  "rotation_time",                         :default => 0,     :null => false
     t.boolean  "hidden",                                :default => false, :null => false
+    t.integer  "file_size_bytes"
+    t.string   "supported_devices"
     t.string   "enabled_rating_offer_id", :limit => 36
     t.string   "secret_key",                                               :null => false
+    t.datetime "released_at"
+    t.float    "user_rating"
+    t.string   "categories"
     t.text     "countries_blacklist"
   end
 
