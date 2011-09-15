@@ -46,6 +46,15 @@ class StatzController < WebsiteController
 
   def update
     log_activity(@offer)
+    
+    params[:offer][:frequency] == Offer::FREQUENCIES['unlimited'] if params[:offer][:multi_complete] == true && params[:offer][:frequency] == Offer::FREQUENCIES['not setting']
+    if params[:offer][:frequency] == Offer::FREQUENCIES['not setting']
+      params[:offer][:multi_complete] = false
+    else
+      params[:offer][:multi_complete] = true
+      params[:offer][:interval] = Offer::FREQUENCIES_CAPPING_INTERVAL['per day'] if Offer::FREQUENCIES_CAPPING_INTERVAL['not setting']
+    end
+    
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
     
     if @offer.update_attributes(offer_params)

@@ -36,12 +36,32 @@ class Offer < ActiveRecord::Base
                                   'payment_range_high', 'icon_id_override', 'rank_boost',
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
                                   'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
-                                  'cookie_tracking', 'min_os_version', 'screen_layout_sizes' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'cookie_tracking', 'min_os_version', 'screen_layout_sizes', 'frequency', 'interval' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
 
   DAILY_STATS_START_HOUR = 6
   DAILY_STATS_RANGE = 6
+  
+  FREQUENCIES = {
+    "not setting" => 0,
+    "1"           => 1,
+    "unlimited"   => -1
+  }
+  
+  FREQUENCIES_CAPPING_INTERVAL = {
+    "not setting" => 0,
+    "per day"     => 1,
+    "per hour"    => 2,
+    "per minute"  => 3
+  }
+  
+  INTERVAL_TO_PATTERN = {
+    0 => "%Y-%m-%d %H:%M:%S",
+    1 => "%Y-%m-%d",
+    2 => "%Y-%m-%d %H",
+    3 => "%Y-%m-%d %H:%M"
+  }
 
   attr_accessor :rank_score
 
@@ -59,6 +79,8 @@ class Offer < ActiveRecord::Base
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
   validates_numericality_of :price, :only_integer => true
+  validates_numericality_of :frequency, :only_integer => true
+  validates_numericality_of :interval, :only_integer => true
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 10000, :allow_nil => false
   validates_numericality_of :min_bid_override, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => true
@@ -103,7 +125,7 @@ class Offer < ActiveRecord::Base
   end
   validates_each :multi_complete do |record, attribute, value|
     if value
-      record.errors.add(attribute, "is only for GenericOffers") unless record.item_type == 'GenericOffer'
+      # record.errors.add(attribute, "is only for GenericOffers") unless record.item_type == 'GenericOffer'
       record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
     end
   end
@@ -637,7 +659,8 @@ class Offer < ActiveRecord::Base
     age_rating_reject?(currency) ||
     publisher_whitelist_reject?(publisher_app) ||
     currency_whitelist_reject?(currency) ||
-    video_offers_reject?(video_offer_ids, type)
+    video_offers_reject?(video_offer_ids, type) ||
+    frequency_capping_reject?(device.key)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -661,7 +684,8 @@ class Offer < ActiveRecord::Base
       app_platform_mismatch?(publisher_app) ||
       age_rating_reject?(currency) ||
       publisher_whitelist_reject?(publisher_app) ||
-      currency_whitelist_reject?(currency)) &&
+      currency_whitelist_reject?(currency) ||
+      frequency_capping_reject?(device.key)) &&
       accepting_clicks?
   end
 
@@ -851,7 +875,7 @@ private
 
   def already_complete?(publisher_app, device, app_version)
     return false if EXEMPT_UDIDS.include?(device.key) || multi_complete?
-
+    
     app_id_for_device = item_id
     if item_type == 'RatingOffer'
       app_id_for_device = RatingOffer.get_id_with_app_version(item_id, app_version)
@@ -967,6 +991,19 @@ private
   def video_offers_reject?(video_offer_ids, type)
     return false if type == Offer::VIDEO_OFFER_TYPE
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
+  end
+  
+  def frequency_capping_reject?(udid)
+    return false if frequency == Offer::FREQUENCIES['not setting'] || frequency == Offer::FREQUENCIES['unlimited']
+    
+    device = Device.new(:key => udid )
+    if device.has_app(id)
+      last_run_time = device.last_run_time(id)
+      pattern = Offer::INTERVAL_TO_PATTERN[interval]
+      last_run_time.strftime(pattern) == Time.now.utc.strftime(pattern)
+    else
+      false
+    end
   end
 
   def cleanup_url
