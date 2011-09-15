@@ -11,8 +11,8 @@ class GamesController < ApplicationController
     @current_gamer ||= current_gamer_session && current_gamer_session.record
   end
   
-  def current_device
-    
+  def current_device_id
+    session[:current_device_id]
   end
   
 protected

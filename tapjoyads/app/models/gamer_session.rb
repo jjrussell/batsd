@@ -1,2 +1,2 @@
-class GamerSession < Authlogic::Session::Base  
+class GamerSession < Authlogic::Session::Base
 end

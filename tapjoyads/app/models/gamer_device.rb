@@ -1,6 +1,6 @@
 class GamerDevice < ActiveRecord::Base
   include UuidPrimaryKey
-  
+
   PRODUCT_NAMES = {
     'iPod1,1'    => 'iPod Touch (Original)',
     'iPod2,1'    => 'iPod Touch (2nd Gen)',

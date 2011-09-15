@@ -11,6 +11,7 @@ class Games::GamerSessionsController < GamesController
       if params[:data].present?
         redirect_to finalize_games_gamer_device_path(:data => params[:data])
       else
+        session[:current_device_id] = current_gamer.devices.first.device_id
         redirect_to games_root_path
       end
     else
@@ -20,6 +21,7 @@ class Games::GamerSessionsController < GamesController
   end
 
   def destroy
+    session.delete(:current_device_id)
     gamer_session = GamerSession.find
     gamer_session.destroy unless gamer_session.nil?
     redirect_to games_root_path
