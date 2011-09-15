@@ -59,7 +59,7 @@ class PointsController < ApplicationController
   end
 
   def spend
-    return unless verify_params([:app_id, :udid, :tap_points])
+    return unless verify_params([:app_id, :udid, :tap_points, :publisher_user_id])
 
     @currency = Currency.find_in_cache(params[:app_id])
     return unless verify_records([ @currency ])
@@ -79,7 +79,7 @@ class PointsController < ApplicationController
   end
 
   def purchase_vg
-    return unless verify_params([:app_id, :udid, :virtual_good_id])
+    return unless verify_params([:app_id, :udid, :virtual_good_id, :publisher_user_id])
 
     @currency = Currency.find_in_cache(params[:app_id])
     return unless verify_records([ @currency ])
@@ -92,7 +92,7 @@ class PointsController < ApplicationController
   end
 
   def consume_vg
-    return unless verify_params([:app_id, :udid, :virtual_good_id])
+    return unless verify_params([:app_id, :udid, :virtual_good_id, :publisher_user_id])
 
     @currency = Currency.find_in_cache(params[:app_id])
     return unless verify_records([ @currency ])

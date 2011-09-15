@@ -211,6 +211,6 @@ private
   end
   
   def set_publisher_user_id
-    params[:publisher_user_id] ||= params[:udid]
+    params[:publisher_user_id] = params[:udid] if params[:publisher_user_id].blank?
   end
 end

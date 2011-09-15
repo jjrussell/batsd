@@ -1,7 +1,6 @@
 class GetVgStoreItemsController < ApplicationController
 
-  before_filter :set_publisher_user_id
-  before_filter :setup
+  before_filter :set_publisher_user_id, :setup
 
   ##
   # All virtual goods that are available to be purchased for this app from this device.
@@ -34,7 +33,7 @@ class GetVgStoreItemsController < ApplicationController
 private
   
   def setup
-    return unless verify_params([:app_id, :udid])
+    return unless verify_params([:app_id, :udid, :publisher_user_id])
     
     @currency = Currency.find_in_cache(params[:app_id])
     if @currency.nil?
