@@ -488,7 +488,6 @@ ActiveRecord::Schema.define(:version => 20110914201513) do
     t.boolean  "cookie_tracking",                                                               :default => false, :null => false
     t.string   "min_os_version",                                                                :default => "",    :null => false
     t.text     "screen_layout_sizes",                                                                              :null => false
-    t.integer  "frequency",                                                                     :default => 0,     :null => false
     t.integer  "interval",                                                                      :default => 0,     :null => false
   end
 
