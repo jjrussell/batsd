@@ -27,4 +27,9 @@ class GamerDevice < ActiveRecord::Base
   def product=(product)
     self.name = PRODUCT_NAMES[product]
   end
+  
+  def device=(device)
+    self.device_id = device.id
+    self.product = device.product
+  end
 end

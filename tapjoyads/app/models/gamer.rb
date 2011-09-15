@@ -3,10 +3,12 @@ class Gamer < ActiveRecord::Base
   
   has_many :gamer_devices
   
-  attr_accessor :terms_of_service
+  attr_accessor :terms_of_service, :current_device_id
   validates_acceptance_of :terms_of_service, :on => :create
   
   before_create :generate_confirmation_token
+  
+  alias_method :devices, :gamer_devices
   
   acts_as_authentic do |c|
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
