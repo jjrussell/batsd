@@ -1033,7 +1033,7 @@ TJG.ui = {
           values[this.name] = $(this).attr("checked");
         }
         else if (this.type == 'checkbox') {
-          if ($(this).attr("checked") == "checked") {
+          if ($(this).attr("checked")) {
             values[this.name] = '1';
           }
           else {
