@@ -68,6 +68,22 @@ class Job::QueueEncodedWebRequestsController < Job::JobController
           Mc.increment_count("failed_sdb_saves.batch_puts.#{(now.to_f / 1.hour).to_i}", false, 1.day)
           Rails.logger.info "QueueEncodedWebRequests: Failed saving #{sdb_items.size} items to #{domain_name} - #{e.class}: #{e.message}"
           Notifier.alert_new_relic(e.class, e.message, request, params) unless e.message =~ /ServiceUnavailable/
+          if e.message =~ /SignatureDoesNotMatch/
+            sdb_items.each do |item|
+              begin
+                item.save!
+                delete_message(message_by_item_key[item.key])
+              rescue Exception => e
+                if e.message =~ /SignatureDoesNotMatch/
+                  uuid   = UUIDTools::UUID.random_create.to_s
+                  bucket = S3.bucket(BucketNames::FAILED_WEB_REQUEST_SAVES)
+                  bucket.put("signature_does_not_match/#{uuid}", item.serialize)
+                  delete_message(message_by_item_key[item.key])
+                  Rails.logger.info "QueueEncodedWebRequests: SignatureDoesNotMatch, message logged to S3 as #{uuid}"
+                end
+              end
+            end
+          end
           next
         rescue Timeout::Error => e
           if retries > 0
