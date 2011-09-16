@@ -13,10 +13,10 @@
       "RedirectURL":<%= get_click_url(offer).to_json -%>,
       "StoreID":<%= offer.store_id_for_feed.to_json -%>,
       "Payout":<%= @currency.get_publisher_amount(offer).to_json -%>,
+      "Type":<%= offer.item_type.to_json -%>
       <% if params[:source] == 'featured' %>,
         , "FullScreenAdURL":<%= get_fullscreen_ad_url(offer).to_json -%>
       <% end %>
-      "Type":<%= offer.item_type.to_json -%>
     }
     <%= ',' if i < @offer_list.length - 1 -%>
   <% end %>

@@ -15,9 +15,9 @@ class Games::GamersController < GamesController
         Downloader.get_with_retry url
       end
     end
-    if @gamer.save
+     if @gamer.save
       GamesMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.confirmation_token))
-      render(:json => { :success => true, :link_device_url => new_games_gamer_device_path }) and return
+      render(:json => { :success => true, :link_device_url => new_games_gamer_device_path, :linked => @gamer.udid? }) and return
     else
       render(:json => { :success => false, :error => @gamer.errors }) and return
     end

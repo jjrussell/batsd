@@ -40,7 +40,7 @@
             = visual_cost(offer)
         .icon
           - if offer.item_type == 'VideoOffer'
-              %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => offer.get_icon_url(:source => :cloudfront, :size => '200') }
+            .video_icon{:style => "background: url(" << offer.get_icon_url(:source => :cloudfront, :size => '200') << ")"}
               .play
           - else  
             .offer_icon
@@ -59,7 +59,7 @@
 - if @more_data_available > 0
   #bottom_box
     #plus
-    %a{ :href => "javascript:void(0);", :id => "load_more", :onclick => "javascript:getOffers()" }
+    %a{ :href => "javascript:void(0);", :id => "load_more", :onclick => "javascript:getAds()" }
       Load some more offers!
 #footerWrapper
   #footer
@@ -115,8 +115,8 @@
           else if (typeof $ != 'undefined') {
             firstLoad = false;
             jqLoaded = true;
-            if (ref == 'getOffers') {
-              getOffers();
+            if (ref == 'getAds') {
+              getAds();
             }
             clearInterval(jqInt);
           }
@@ -132,15 +132,15 @@
         firstLoad = false;
         jqLoaded = true;
         clearInterval(jqInt);
-        if (ref == 'getOffers') {
-          getOffers();
+        if (ref == 'getAds') {
+          getAds();
         }
       }
     }
     
-    function getOffers() {
+    function getAds() {
       if (firstLoad) {
-        loadJQ('getOffers');
+        loadJQ('getAds');
       }
       else {
         fetchOffers();
