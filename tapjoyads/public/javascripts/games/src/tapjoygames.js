@@ -303,7 +303,7 @@ TJG.ui = {
               if (d.linked) { 
                 $('.close_dialog,.continue_link_device').click(function(){
                   if (TJG.path) {
-                    document.location.href = TG.path;
+                    document.location.href = TJG.path;
                   }
                   else {
                     document.location.href = document.domain;
