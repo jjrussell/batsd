@@ -44,11 +44,11 @@ class Offer < ActiveRecord::Base
   DAILY_STATS_RANGE = 6
   
   FREQUENCIES_CAPPING_INTERVAL = {
-    "none" => 0,
-    "1 hour"      => 1.hour.to_i,
-    "8 hours"     => 8.hours.to_i,
-    "24 hours"    => 24.hours.to_i,
-    "1 minute"    => 1.minute.to_i
+    "none"     => 0,
+    "1 minute" => 1.minute.to_i,
+    "1 hour"   => 1.hour.to_i,
+    "8 hours"  => 8.hours.to_i,
+    "24 hours" => 24.hours.to_i,
   }
 
   attr_accessor :rank_score
@@ -66,8 +66,7 @@ class Offer < ActiveRecord::Base
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
-  validates_numericality_of :price, :only_integer => true
-  validates_numericality_of :interval, :only_integer => true
+  validates_numericality_of :price, :interval, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 10000, :allow_nil => false
   validates_numericality_of :min_bid_override, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => true
@@ -823,9 +822,8 @@ class Offer < ActiveRecord::Base
   def frequency_capping_reject?(device)
     return false unless multi_complete? && interval != Offer::FREQUENCIES_CAPPING_INTERVAL['none']
     
-    if device.has_app(id)
-      last_run_time = device.last_run_time(id)
-      last_run_time + interval > Time.zone.now
+    if device.has_app(item_id)
+      device.last_run_time(item_id) + interval > Time.zone.now
     else
       false
     end
