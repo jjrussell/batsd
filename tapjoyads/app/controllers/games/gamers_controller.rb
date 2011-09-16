@@ -23,7 +23,7 @@ class Games::GamersController < GamesController
         @gamer_profile.gamer = @gamer
         @gamer_profile.save!
         GamesMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.confirmation_token))
-        render(:json => { :success => true, :link_device_url => new_games_gamer_device_path }) and return
+        render(:json => { :success => true, :link_device_url => new_games_gamer_device_path, :linked => @gamer.udid? }) and return
       end
     rescue ActiveRecord::RecordInvalid => e
       errors = []
