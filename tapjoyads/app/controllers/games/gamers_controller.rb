@@ -15,11 +15,25 @@ class Games::GamersController < GamesController
         Downloader.get_with_retry url
       end
     end
-    if @gamer.save
-      GamesMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.confirmation_token))
-      render(:json => { :success => true, :link_device_url => new_games_gamer_device_path }) and return
-    else
-      render(:json => { :success => false, :error => @gamer.errors }) and return
+    @gamer_profile = GamerProfile.new( :birthdate => Date.new(params[:date][:year].to_i, params[:date][:month].to_i, params[:date][:day].to_i) )
+
+    begin
+      Gamer.transaction do
+        @gamer.save!
+        @gamer_profile.gamer = @gamer
+        @gamer_profile.save!
+        GamesMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.confirmation_token))
+        render(:json => { :success => true, :link_device_url => new_games_gamer_device_path }) and return
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      errors = []
+      @gamer.errors.each do |error|
+        errors << (error)
+      end
+      @gamer_profile.errors.each do |error|
+        errors << (error)
+      end
+      render(:json => { :success => false, :error => errors }) and return
     end
   end
 
