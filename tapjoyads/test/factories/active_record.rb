@@ -55,6 +55,7 @@ Factory.define :app do |app|
   app.association :partner
   app.name { Factory.next(:name) }
   app.platform 'iphone'
+  app.store_id 'whatevs'
 end
 
 Factory.define :enable_offer_request do |req|
