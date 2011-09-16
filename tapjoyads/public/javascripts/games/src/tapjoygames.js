@@ -195,10 +195,12 @@ TJG.ui = {
           t.push('<div class="offer_text">');
             t.push('<div class="offer_title title">');
               t.push(v.Name);
-            t.push('</div>'); 
-            t.push('<div class="offer_install">');
-              t.push('Install and run ' + v.Name);
-            t.push('</div>');  
+            t.push('</div>');
+            if (v.Type && v.Type == 'App') { 
+              t.push('<div class="offer_install">');
+                t.push('Install and run ' + v.Name);
+              t.push('</div>'); 
+            }  
             t.push('<div class="offer_info">');
                 t.push('<a href="' + v.RedirectURL + '">');
                   t.push('<div class="offer_button my_apps">');
@@ -553,7 +555,7 @@ TJG.ui = {
       ].join('');
       div.innerHTML = t;
       document.body.appendChild(div);
-      */                                        
+      */
     }   
     TJG.ui.loadRatings();
     
