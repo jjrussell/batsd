@@ -172,7 +172,7 @@ TJG.ui = {
     TJG.repositionDialog = [];
   },
   
-  getOffferRow : function (obj,currency,i,hidden) {
+  getOfferRow : function (obj,currency,i,hidden) {
     var t = [], clsId = "", style = "";
     if (i) {
       clsId = "offer_item_" + i;
@@ -196,6 +196,11 @@ TJG.ui = {
             t.push('<div class="offer_title title">');
               t.push(v.Name);
             t.push('</div>');
+            if (v.Type && v.Type == 'App') { 
+              t.push('<div class="offer_install">');
+                t.push('Install and run ' + v.Name);
+              t.push('</div>'); 
+            }  
             t.push('<div class="offer_info">');
                 t.push('<a href="' + v.RedirectURL + '">');
                   t.push('<div class="offer_button my_apps">');
@@ -295,8 +300,15 @@ TJG.ui = {
               $('.close_dialog').unbind('click');
               $("#sign_up_dialog_content").parent().animate({ height: "230px", }, animateSpd);
               $("#sign_up_dialog_content").html(msg);
-              if (TJG.vars.isIos == false) {
-                document.location.href = location.protocol + '//' + location.host;
+              if (d.linked) { 
+                $('.close_dialog,.continue_link_device').click(function(){
+                  if (TJG.path) {
+                    document.location.href = TG.path;
+                  }
+                  else {
+                    document.location.href = document.domain;
+                  }
+                });
               }
               else if (d.link_device_url) {
                 $('.close_dialog,.continue_link_device').click(function(){
@@ -376,11 +388,11 @@ TJG.ui = {
       shown = 0;
     }
     shown = parseInt(shown);
-    if (expired) {
+    if (expired == "true") {
       return;
     }
     if (shown >= 4) {
-      TJG.utils.setLocalStorage("tjg.bookmark.expired", true)
+      TJG.utils.setLocalStorage("tjg.bookmark.expired", true);
     }
     TJG.vars.version =  TJG.vars.version ?  TJG.vars.version[0].replace(/[^\d_]/g,'').replace('_','.')*1 : 0;
     expired = expired == 'null' ? 0 : expired*1;
@@ -515,13 +527,36 @@ TJG.ui = {
     });
     var fadeSpd = 350, fadeSpdFast = 250, fadeSpdSlow = 700;
     var install = TJG.utils.getParam("register_device");
-    if (install.indexOf("true") != -1) {
-      TJG.utils.centerDialog("#register_device");
-      $("#register_device").fadeIn(fadeSpd); 
-    }
     if (TJG.vars.isIos || TJG.vars.isSafari) {
       TJG.ui.showAddHomeDialog();
     }
+    var expand = TJG.utils.getLocalStorage("tjg.feat_review.expand");
+    if (expand == "true") {
+      $(".feat_toggle").removeClass('collaspe');
+      $(".feat_review").removeClass('min');
+      $(".app_review").show(); 
+    }
+    var repeat = TJG.utils.getLocalStorage("tjg.repeat_visit");
+    if (install.indexOf("true") != -1) {
+      TJG.utils.centerDialog("#register_device");
+      $("#register_device").fadeIn(fadeSpd); 
+    } 
+    else if (repeat != "true") {
+      /*
+      var div = document.createElement('div'), close;
+      div.id = 'firstTime';
+      div.style.cssText += 'position:absolute;-webkit-transition-property:-webkit-transform,opacity;-webkit-transition-duration:0;-webkit-transform:translate3d(0,0,0);';
+      div.style.left = '-9999px';
+      var m =  "message";
+      var a = '<span class="arrow"></span>';
+      var t = [
+        m,
+        a
+      ].join('');
+      div.innerHTML = t;
+      document.body.appendChild(div);
+      */
+    }   
     TJG.ui.loadRatings();
     
     function slidePage(el,dir) {
@@ -585,7 +620,7 @@ TJG.ui = {
             TJG.appOfferWall[appId] = {};
           }
           TJG.appOfferWall[appId]['jsonp_url'] = url;
-          var title = 'Viewing offers for <span class="bold">' + appName + '</span>';
+          var title = 'Complete any of the offers below to earn <span class="bold">' + currencyName + '</span> for <span class="bold">' + appName + '</span>';
           $("#app_title").html(title).show();
           if (url) {
             TJG.ui.showLoader();
@@ -605,7 +640,7 @@ TJG.ui = {
                     TJG.appOfferWall[appId]['offers_left'] = 0;
                   }
                   TJG.appOfferWall[appId]['offset'] = offerOffset;
-                  var offerRows = TJG.ui.getOffferRow(offers, currencyName);
+                  var offerRows = TJG.ui.getOfferRow(offers, currencyName);
                   var t = [
                     '<ul id="offerwall_id-', appId ,'">',
                       offerRows,
@@ -649,7 +684,7 @@ TJG.ui = {
                               TJG.appOfferWall[appId]['offers_left'] = 0;
                             }
                             TJG.appOfferWall[appId]['offset'] = TJG.appOfferWall[appId]['offset'] + 25;
-                            var moreOfferRows = TJG.ui.getOffferRow(offers, currencyName, i, true);
+                            var moreOfferRows = TJG.ui.getOfferRow(offers, currencyName, i, true);
                             $("#offerwall_id-" + appId).append(moreOfferRows);
                             var el = ".offer_item_" + i;
                             $.each($(el), function(n,o) {
@@ -883,11 +918,13 @@ TJG.ui = {
             $(this).removeClass('collaspe');
             $(".feat_review").removeClass('min');
             $(".app_review").show();
+            TJG.utils.setLocalStorage("tjg.feat_review.expand", true);
           }
           else {
             $(this).addClass('collaspe');
             $(".feat_review").addClass('min');
             $(".app_review").hide();
+            TJG.utils.setLocalStorage("tjg.feat_review.expand", false);
           }
         });
       },

@@ -54,8 +54,7 @@
       .scroller.with-scrollbar
         .top_nav_bar
         .page
-          .logo_title_preload
-          .logo.logo_title
+          .logo
             .slide_nav
               %a{ :href => "#home", :class => "slideright" }
                 .left
@@ -64,9 +63,11 @@
                 .slider.back.slider_active.slider_left.left
                   %span.title
                     Back
-          #app_title
           .content_wrapper
-            #earn_content.content.hide
+            .content
+              #app_title
+                %span.arrow
+              #earn_content.hide
 
   #more_games
     .container.vertical-scroll
@@ -110,8 +111,6 @@
   :plain
     $(window).load(function() { 
       TJG.ui.homeInit();
-      TJG.path =  "#{games_root_path}";
       TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
       TJG.more_games_popular =  "#{games_more_games_popular_path}";
-      TJG.blank_img = "#{CLOUDFRONT_URL}/images/blank.png";
     });
