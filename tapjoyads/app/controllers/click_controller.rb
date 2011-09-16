@@ -133,7 +133,7 @@ private
   end
   
   def offer_completed?
-    return false if @offer.multi_complete?
+    return false if @offer.multi_complete? && !@offer.frequency_capping_reject?(@device)
     
     app_id_for_device = params[:advertiser_app_id]
     if @offer.item_type == 'RatingOffer'
