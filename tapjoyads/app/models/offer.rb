@@ -26,9 +26,9 @@ class Offer < ActiveRecord::Base
     VIDEO_OFFER_TYPE                 => 'Video Offers'
   }
 
-  DISPLAY_AD_SIZES = {1 => '320x50', 2 => '640x100', 3 => '768x90'}
+  DISPLAY_AD_SIZES = {1 => '320x50', 2 => '640x100', 3 => '768x90'} # DO NOT change keys, these are essentially ids
   DISPLAY_AD_DEFAULT_SIZE_KEY = 1 # default size (if no size is provided) is 320x50
-  DISPLAY_AD_FORMATS = {1 => 'png', 2 => 'jpeg', 3 => 'gif'}
+  DISPLAY_AD_FORMATS = {1 => 'png', 2 => 'jpeg', 3 => 'jpg', 4 => 'gif'} # DO NOT change keys, these are essentially ids
   
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
@@ -191,7 +191,8 @@ class Offer < ActiveRecord::Base
   # converts string of format "1,2;2,3" to hash of format {"320x50" => "jpeg", "640x200" => "gif"}
   def banner_creatives
     creatives_hash = {}
-    read_attribute(:banner_creatives).split(";").each do |creative_str|
+    creatives_str = read_attribute(:banner_creatives) || ""
+    creatives_str.split(";").each do |creative_str|
       creative_attrs = creative_str.split(",")
       creatives_hash[Offer::DISPLAY_AD_SIZES[creative_attrs[0].to_i]] = Offer::DISPLAY_AD_FORMATS[creative_attrs[1].to_i]
     end

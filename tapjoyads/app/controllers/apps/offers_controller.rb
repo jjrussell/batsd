@@ -37,6 +37,10 @@ class Apps::OffersController < WebsiteController
     end
   end
   
+  def preview
+    render :layout => false
+  end
+  
   def update
     params[:offer].delete(:payment)
     
@@ -49,9 +53,9 @@ class Apps::OffersController < WebsiteController
         # nothing has changed, keep banner_creative as-is
         format_key = @offer.banner_creative_format_key_for_size(size)
         params[:offer][:banner_creatives] << "#{size_key},#{format_key};"
-          
-        # TODO: delete "removed" creative file from S3? If so, may want to do so farther down in code path in case error occurs
       end
+      
+      # TODO: delete "removed" creative files from S3? May want to write a job for that later. Meanwhile, taking up space unnecessarily isn't a big deal
       
       if creative_file # new file has been uploaded
         begin
@@ -65,7 +69,7 @@ class Apps::OffersController < WebsiteController
             raise "invalid format"
           end
         rescue
-          flash[:error] = "#{size} creative file is invalid - please provide a .png, .jpeg, or static .gif"
+          flash[:error] = "#{size} creative file is invalid - please provide one of the following file types: #{Offer::DISPLAY_AD_FORMATS.values.join(', ')} (.gifs must be static)"
           render :action => :edit and return
         end
         dimensions = "#{creative.columns}x#{creative.rows}"

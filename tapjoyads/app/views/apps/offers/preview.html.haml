@@ -1,0 +1,15 @@
+- @page_title = 'Ad Preview'
+
+- sizes = Offer::DISPLAY_AD_SIZES.values
+- sizes.each_with_index do |size, index|
+  - if index > 0
+    %br
+  = size
+  ad:
+  %div
+    = image_tag("#{API_URL}/display_ad/image?advertiser_app_id=#{@offer.id}&size=#{size}&publisher_app_id=5e428eac-bc89-4015-8695-0af1df0f5f2b&currency_id=5e428eac-bc89-4015-8695-0af1df0f5f2b", :alt => "#{size}img")
+
+- if !@offer.rewarded?
+  %br
+  To provide custom creatives for your ads, please contact
+  = mail_to "support@tapjoy.com"

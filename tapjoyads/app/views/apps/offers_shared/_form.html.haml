@@ -1,6 +1,13 @@
+- content_for :page_head, stylesheet_link_tag('facebox')
+
 - form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :multipart => true, :class => 'tjform', :id => 'update' }) do |f|
   %table
     %tbody
+      %tr
+        %th
+          = f.label "View Ads"
+        %td
+          = link_to("Click to preview ad images", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox')
       %tr
         %th
           = f.label :user_enabled, @offer.featured? ? 'Enable Featured Installs' : 'Enable Installs'
@@ -121,21 +128,6 @@
           = f.select(:min_os_version, @app.os_versions, :include_blank => 'No Minimum')
           = error_message_on(@offer, :min_os_version)
           
-      - existing_creatives = @offer.banner_creatives
-      - Offer::DISPLAY_AD_SIZES.values.each do |size|
-        %tr
-          %th
-            = f.label("#{size}_custom_creative")
-          %td
-            - if existing_creatives.has_key? size
-              - format = existing_creatives[size]
-              = image_tag("#{API_URL}/display_ad/image?advertiser_app_id=#{@offer.id}&size=#{size}")
-              = check_box_tag("remove_#{size}_custom_creative")
-              Remove
-            = f.file_field("#{size}_custom_creative", :accept => "image/png")
-            (Optional)
-          
-          
       - if permitted_to?(:edit, :statz)
         = render('apps/offers_shared/admin_fields', :f => f)
       %tr
@@ -181,9 +173,9 @@
   #bid_high_warn.colorbox-content
     Please confirm that your new bid will be:
     .amount &nbsp;
-    
+
 - content_for :page_javascript do
-  :plain
+  :plain      
     var requestAppEnable = $.noop;
     $(function($){
       var originalBidValue = stringToNumber($('#offer_bid').val());
