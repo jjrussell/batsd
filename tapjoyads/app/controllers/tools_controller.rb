@@ -12,7 +12,7 @@ class ToolsController < WebsiteController
   end
 
   def monthly_data
-    most_recent_period = Date.current.beginning_of_month.last_month
+    most_recent_period = Date.current.beginning_of_month.prev_month
     @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
 
     @months = []

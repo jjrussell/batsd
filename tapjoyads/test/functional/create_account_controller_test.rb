@@ -47,7 +47,7 @@ class CreateAccountControllerTest < ActionController::TestCase
       should respond_with(:success)
       should respond_with_content_type(:json)
       should "respond with validation errors" do
-        assert_equal({ :error => [ [ :username, 'has already been taken' ], [ :email, 'has already been taken' ] ] }.to_json, @response.body)
+        assert_equal({ :error => [ [ :email, 'has already been taken' ], [ :username, 'has already been taken' ] ] }.to_json, @response.body)
       end
     end
     
@@ -58,7 +58,7 @@ class CreateAccountControllerTest < ActionController::TestCase
       should respond_with(:success)
       should respond_with_content_type(:json)
       should "respond with validation errors" do
-        assert_equal({ :error => [ [ :password_confirmation, 'is too short (minimum is 4 characters)' ], [ :password, 'is too short (minimum is 4 characters)' ] ] }.to_json, @response.body)
+        assert_equal({ :error => [ [ :password, 'is too short (minimum is 4 characters)' ], [ :password_confirmation, 'is too short (minimum is 4 characters)' ] ] }.to_json, @response.body)
       end
     end
     

@@ -103,7 +103,7 @@ class Conversion < ActiveRecord::Base
   end
   
   def self.accounting_cutoff_time
-    Time.zone.now.beginning_of_month.last_month
+    Time.zone.now.beginning_of_month.prev_month
   end
   
   def self.is_partitioned?

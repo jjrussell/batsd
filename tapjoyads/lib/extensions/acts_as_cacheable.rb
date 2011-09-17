@@ -21,7 +21,7 @@ module ActsAsCacheable
         end
 
         def find_in_cache(id, do_lookup = (Rails.env != 'production'))
-          object = Mc.distributed_get("mysql.#{class_name.underscore}.#{id}.#{SCHEMA_VERSION}")
+          object = Mc.distributed_get("mysql.#{model_name.underscore}.#{id}.#{SCHEMA_VERSION}")
           if object.nil? && do_lookup
             object = find(id)
             object.cache
@@ -42,14 +42,14 @@ module ActsAsCacheable
     def cache
       run_callbacks(:before_cache)
       clear_association_cache
-      returning Mc.distributed_put("mysql.#{self.class.class_name.underscore}.#{id}.#{SCHEMA_VERSION}", self, false, 1.day) do
+      Mc.distributed_put("mysql.#{self.class.model_name.underscore}.#{id}.#{SCHEMA_VERSION}", self, false, 1.day).tap do
         run_callbacks(:after_cache)
       end
     end
 
     def clear_cache
       run_callbacks(:before_cache_clear)
-      returning Mc.distributed_delete("mysql.#{self.class.class_name.underscore}.#{id}.#{SCHEMA_VERSION}") do
+      Mc.distributed_delete("mysql.#{self.class.model_name.underscore}.#{id}.#{SCHEMA_VERSION}").tap do
         run_callbacks(:after_cache_clear)
       end
     end
