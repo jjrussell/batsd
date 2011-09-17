@@ -196,6 +196,22 @@ private
     test_offer
   end
   
+  def build_test_video_offer(publisher_app)
+    test_video_offer = VideoOffer.new(:partner_id => publisher_app.id)
+    test_video_offer.id = publisher_app.id
+    test_video_offer.name = 'Test Video Offer (Visible to Test Devices)'
+    test_video_offer.video_url = 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4'
+    
+    primary_offer = Offer.new
+    primary_offer.id = publisher_app.id
+    primary_offer.name = 'Test Video Offer (Visible to Test Devices)'
+    primary_offer.reward_value = 100
+    
+    test_video_offer.primary_offer = primary_offer
+    test_video_offer.primary_offer.item_type = "TestVideoOffer"
+    test_video_offer
+  end
+  
   def decrypt_data_param
     return unless params[:data].present?
     

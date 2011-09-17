@@ -370,6 +370,8 @@ class Offer < ActiveRecord::Base
       click_url += "rating"
     elsif item_type == 'TestOffer'
       click_url += "test_offer"
+    elsif item_type == 'TestVideoOffer'
+      click_url += "test_video_offer"
     elsif item_type == 'ActionOffer'
       click_url += "action"
     elsif item_type == 'VideoOffer'
@@ -415,6 +417,8 @@ class Offer < ActiveRecord::Base
     ad_url = "#{API_URL}/fullscreen_ad"
     if item_type == 'TestOffer'
       ad_url += "/test_offer"
+    elsif item_type == 'TestVideoOffer'
+      ad_url += "/test_video_offer"
     end
     ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}&country_code=#{country_code}&display_multiplier=#{display_multiplier}"
     ad_url += "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?

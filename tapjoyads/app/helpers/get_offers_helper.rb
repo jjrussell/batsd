@@ -45,7 +45,7 @@ module GetOffersHelper
         :country_code       => @geoip_data[:country],
         :language_code      => params[:language_code],
         :display_multiplier => params[:display_multiplier])
-    if offer.item_type == 'VideoOffer'
+    if offer.item_type == 'VideoOffer' || offer.item_type == 'TestVideoOffer'
       "tjvideo://video_id=#{offer.id}&amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&currency_name=#{URI::escape(@currency.name)}&click_url=#{click_url}"
     else
       click_url
