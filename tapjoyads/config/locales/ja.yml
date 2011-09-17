@@ -6,36 +6,36 @@ ja:
 
     offerwall:
       # shared between the original wall and the redesigned wall
-      title: "{{currency}} 稼ぐ"
+      title: "%{currency} 稼ぐ"
       free: "無料"
-      next: "次の {{items}}件"
-      previous: "前の {{items}}件"
-      missing_currency: "{{currency}}が受取れない場合"
+      next: "次の %{items}件"
+      previous: "前の %{items}件"
+      missing_currency: "%{currency}が受取れない場合"
 
       # original wall only
-      instructions: "{{currency}} を獲得するために、次の中からアプリをインストールして起動してください"
-      amount_and_currency: "{{amount}} {{currency}}"
-      earn_currency: "{{amount_and_currency}} を獲得"
-      buy_currency: "{{amount_and_currency}} を買う"
+      instructions: "%{currency} を獲得するために、次の中からアプリをインストールして起動してください"
+      amount_and_currency: "%{amount} %{currency}"
+      earn_currency: "%{amount_and_currency} を獲得"
+      buy_currency: "%{amount_and_currency} を買う"
 
       # redesigned wall only
-      redesign_instructions: "次のアクションで {{currency}} を獲得する"
-      redesign_earn_currency: "{{amount}} {{currency}}  を獲得"
-      redesign_buy_currency: "{{amount}} {{currency}} を買う"
+      redesign_instructions: "次のアクションで %{currency} を獲得する"
+      redesign_earn_currency: "%{amount} %{currency}  を獲得"
+      redesign_buy_currency: "%{amount} %{currency} を買う"
 
     instructions:
       title: "指示"
-      amount_and_currency: "{{amount}} {{currency}}"
-      earn_currency: "{{amount_and_currency}} を獲得"
-      header: "次のステップを完了すると {{currency}} が獲得できます"
-      footer: "このステップを完了すると {{amount_and_currency}} が獲得できます"
+      amount_and_currency: "%{amount} %{currency}"
+      earn_currency: "%{amount_and_currency} を獲得"
+      header: "次のステップを完了すると %{currency} が獲得できます"
+      footer: "このステップを完了すると %{amount_and_currency} が獲得できます"
       download_action: "こちら"
-      download_link: "このアプリをインストールするには {{download_action}} をクリックしてください"
+      download_link: "このアプリをインストールするには %{download_action} をクリックしてください"
       continue_link: "続くにはクリックしてください"
       
     support:
-      title: "{{currency}}が受取れない場合?"
-      instructions_1: "{{currency}}が受取れなかったオファー広告を選択し、メールアドレスを記入してください"
+      title: "%{currency}が受取れない場合?"
+      instructions_1: "%{currency}が受取れなかったオファー広告を選択し、メールアドレスを記入してください"
       instructions_2: "詳細情報が記入されていない時は、時間が'掛かる場合があります。"
       specify_offer_label: "オファー広告を指定してください"
       offer_name_label: "オファー広告名"
@@ -43,7 +43,7 @@ ja:
       email_address_label: "メールアドレス"
       submit_support_request: "サポートを依頼する"
       support_request_submitted: "サポートが依頼されました"
-      thanks: "サポート依頼を受け付けました。オファー広告の手続き完了後に{{currency}}を発行をいたします"
+      thanks: "サポート依頼を受け付けました。オファー広告の手続き完了後に%{currency}を発行をいたします"
       missing_description: "オファー広告の内容を記入してください"
       missing_offer: "オファー広告の内容を記入する必要があります"
       invalid_email: "正しいメールアドレスを記入してください"
