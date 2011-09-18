@@ -34,20 +34,9 @@ class UdidReports
     
     if outfile.pos > 0
       outfile.close
-      path = "#{offer_id}/#{date.strftime('%Y-%m')}/#{date.strftime('%Y-%m-%d')}.csv"
-      retries = 3
-      begin
-        bucket = S3.bucket(BucketNames::UDID_REPORTS)
-        bucket.put(path, open(fs_path), {}, 'authenticated-read')
-      rescue RightAws::AwsError => e
-        if retries > 0
-          retries -= 1
-          sleep(1)
-          retry
-        else
-          raise e
-        end
-      end
+      path   = "#{offer_id}/#{date.strftime('%Y-%m')}/#{date.strftime('%Y-%m-%d')}.csv"
+      bucket = AWS::S3.new.buckets[BucketNames::UDID_REPORTS]
+      bucket.objects[path].write(:file => fs_path, :acl => :authenticated_read)
       cache_available_months(offer_id)
     end
     
