@@ -38,7 +38,8 @@ class Apps::OffersController < WebsiteController
   end
   
   def preview
-    render :layout => false
+    raise "Only non-rewarded offers should be preview-able" if @offer.rewarded?
+    render :layout => 'simple'
   end
   
   def update

@@ -1,0 +1,10 @@
+!!! Strict
+%html
+  %head
+    %title
+      = @page_title
+    = yield :included_stylesheets
+    %style{ :type => 'text/css' }
+      = yield :page_styles
+  %body
+    = yield

@@ -28,7 +28,7 @@ class Offer < ActiveRecord::Base
 
   DISPLAY_AD_SIZES = {1 => '320x50', 2 => '640x100', 3 => '768x90'} # DO NOT change keys, these are essentially ids
   DISPLAY_AD_DEFAULT_SIZE_KEY = 1 # default size (if no size is provided) is 320x50
-  DISPLAY_AD_FORMATS = {1 => 'png', 2 => 'jpeg', 3 => 'jpg', 4 => 'gif'} # DO NOT change keys, these are essentially ids
+  DISPLAY_AD_FORMATS = {1 => 'png', 2 => 'jpeg', 3 => 'jpg', 4 => 'jpe', 5 => 'gif'} # DO NOT change keys, these are essentially ids
   
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
