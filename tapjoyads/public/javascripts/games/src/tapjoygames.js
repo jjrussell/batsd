@@ -262,7 +262,11 @@ TJG.ui = {
       });
       $(".email_error").hide();
       emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
-      if(values['gamer[email]'] == '') {
+      if(values['date[day]'] == '' || values['date[month]'] == '' || values['date[year]'] == '') {
+        $(".email_error").html('Please enter your birthdate');
+        hasError = true;
+      }
+      else if(values['gamer[email]'] == '') {
         $(".email_error").html('Please enter your email address');
         hasError = true;
       }
