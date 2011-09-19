@@ -21,7 +21,7 @@ namespace :javascript do
       } 
     }
     
-    system "java -jar #{COMPILER_JAR_PATH} #{JS_COMPILE_DIR}/tjgames.js --type js -o #{JS_DIR}/#{COMPILER_OUT_FILE}-#{version}#{EXT}"
+    system "java -jar #{COMPILER_JAR_PATH} #{JS_COMPILE_DIR}/#{JS_COMPILE_FILE} --type js -o #{JS_DIR}/#{COMPILER_OUT_FILE}-#{version}#{EXT}"
 
   end
   
