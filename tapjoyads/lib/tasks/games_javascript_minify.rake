@@ -23,7 +23,15 @@ namespace :javascript do
     }
     
     system "java -jar #{COMPILER_JAR_PATH} #{JS_COMPILE_DIR}/#{JS_COMPILE_FILE} --type js -o #{JS_DIR}/#{COMPILER_OUT_FILE}-#{version}#{EXT}"
-
+    if File.exist?("#{JS_DIR}/#{COMPILER_OUT_FILE}-#{version}#{EXT}")
+      print "\n\tFile successfully compiled at: "
+      print File.ctime("#{JS_DIR}/#{COMPILER_OUT_FILE}-#{version}#{EXT}")
+      print "\n\tFile location: "
+      print "#{JS_DIR}/#{COMPILER_OUT_FILE}-#{version}#{EXT}"
+      print "\n\n"
+    else
+      print "\n\tCompilation Failed\n\n"
+    end
   end
   
 end
