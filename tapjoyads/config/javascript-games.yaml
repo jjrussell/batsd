@@ -1,0 +1,7 @@
+version: '1.23'
+files: [
+  'tjg.jquery-1.6.2.min',
+  'init',
+  'jqtouch',
+  'tapjoygames'
+]   
