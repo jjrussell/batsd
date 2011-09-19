@@ -33,18 +33,23 @@ module GetOffersHelper
   end
   
   def get_click_url(offer)
-    click_url = offer.get_click_url(
-        :publisher_app      => @publisher_app,
-        :publisher_user_id  => params[:publisher_user_id],
-        :udid               => params[:udid],
-        :currency_id        => @currency.id,
-        :source             => params[:source],
-        :app_version        => params[:app_version],
-        :viewed_at          => @now,
-        :exp                => params[:exp],
-        :country_code       => @geoip_data[:country],
-        :language_code      => params[:language_code],
-        :display_multiplier => params[:display_multiplier])
+    click_options = {
+      :publisher_app      => @publisher_app,
+      :publisher_user_id  => params[:publisher_user_id],
+      :udid               => params[:udid],
+      :currency_id        => @currency.id,
+      :source             => params[:source],
+      :app_version        => params[:app_version],
+      :viewed_at          => @now,
+      :exp                => params[:exp],
+      :country_code       => @geoip_data[:country],
+      :language_code      => params[:language_code],
+      :display_multiplier => params[:display_multiplier]
+    }
+    
+    click_options[:offer_specific_data] = params[:device_name] if offer.item_id == TAPJOY_GAMES_REGISTRATION_OFFER_ID
+    click_url = offer.get_click_url(click_options)
+        
     if offer.item_type == 'VideoOffer'
       "tjvideo://video_id=#{offer.id}&amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&currency_name=#{URI::escape(@currency.name)}&click_url=#{click_url}"
     else
