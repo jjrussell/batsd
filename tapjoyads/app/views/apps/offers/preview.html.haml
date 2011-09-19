@@ -6,8 +6,11 @@
     %br
   = "#{size} banner ad:"
   %div
-    = image_tag("#{API_URL}/display_ad/image?advertiser_app_id=#{@offer.id}&size=#{size}", :alt => "#{size}img")
+    - publisher_app_id = "2349536b-c810-47d7-836c-2cd47cd3a796" # TapDefense
+    = image_tag("#{API_URL}/display_ad/image?advertiser_app_id=#{@offer.id}&size=#{size}&publisher_app_id=#{publisher_app_id}", :alt => "#{size}img")
 
 %br
 To provide custom creatives for your non-rewarded ads, please contact
-= mail_to "support@tapjoy.com"
+= "#{mail_to "support@tapjoy.com"}."
+Please ensure images have correct dimensions and are of the following file types:
+= Offer::DISPLAY_AD_FORMATS.values.join(', ') << '.'

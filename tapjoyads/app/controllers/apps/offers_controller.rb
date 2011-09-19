@@ -20,6 +20,13 @@ class Apps::OffersController < WebsiteController
   end
   
   def edit
+    @show_preview_link = false
+    if !@offer.rewarded?
+      bucket = S3.bucket(BucketNames::TAPJOY)
+      key = RightAws::S3::Key.create(bucket, "icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg")
+      @show_preview_link = key.exists?
+    end
+        
     if !@offer.tapjoy_enabled?
       if @offer.rewarded? && !@offer.featured?
         if @offer.integrated?
