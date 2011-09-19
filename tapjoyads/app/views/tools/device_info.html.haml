@@ -119,9 +119,9 @@
           - if @has_displayer
             %td= disp.nil? ? '-' : link_to_statz(disp.name, disp)
           %td
-            - if click.type =~ /install_jailbroken/
-              Already awarded
-            - elsif click.installed_at?
+            - if click.manually_resolved_at? && click.installed_at?
+              Manually awarded
+            - elsif click.installed_at? || click.type =~ /install_jailbroken/
               Already awarded
             - elsif click.block_reason?
               - if click.block_reason =~ /TooManyUdidsForPublisherUserId/
@@ -150,6 +150,10 @@
                   %li
                     Installed at:
                     %nobr= click.installed_at.to_s(:pub_abbr_ampm_sec)
+                - if click.manually_resolved_at?
+                  %li
+                    Manually Resolved at:
+                    %nobr= click.manually_resolved_at.to_s(:pub_abbr_ampm_sec)
                 %li
                   Currency:
                   = click.currency_reward

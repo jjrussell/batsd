@@ -180,12 +180,12 @@ class WebRequest < SimpledbResource
   # Also increments all stats associated with this webrequest.
   def serial_save(options = {})
     self.time = @now unless self.time?
-    # self.put('syslog_ng', '1')
+    self.put('syslog_ng', '1')
     super({:write_to_memcache => false}.merge(options))
     
     update_realtime_stats
     
-    # WEB_REQUEST_LOGGER << self.serialize(:attributes_only => true)
+    WEB_REQUEST_LOGGER << self.serialize(:attributes_only => true)
   end
   
   ##

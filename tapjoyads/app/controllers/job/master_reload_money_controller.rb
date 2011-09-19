@@ -31,7 +31,7 @@ class Job::MasterReloadMoneyController < Job::JobController
 private
 
   def get_money_stats(start_times, end_time)
-    archive_cutoff = Conversion.archive_cutoff_time
+    accounting_cutoff = Conversion.accounting_cutoff_time
     tj_partner = Partner.find('70f54c6d-f078-426c-8113-d6e43ac06c6d')
     stats = {}
     android_ids = App.by_platform('android').collect(&:id)
@@ -42,12 +42,12 @@ private
       start_times.each do |key, start_time|
         stats[key] = {}
 
-        if start_time < archive_cutoff
-          stats[key]['advertiser_spend'] = MonthlyAccounting.since(start_time).prior_to(archive_cutoff).sum(:spend)
-          stats[key]['advertiser_spend'] += Conversion.created_between(archive_cutoff, end_time).sum(:advertiser_amount)
+        if start_time < accounting_cutoff
+          stats[key]['advertiser_spend'] = MonthlyAccounting.since(start_time).prior_to(accounting_cutoff).sum(:spend)
+          stats[key]['advertiser_spend'] += Conversion.created_between(accounting_cutoff, end_time).sum(:advertiser_amount)
 
-          stats[key]['publisher_earnings'] = MonthlyAccounting.since(start_time).prior_to(archive_cutoff).sum(:earnings, :conditions => ["partner_id != ?", tj_partner.id])
-          stats[key]['publisher_earnings'] += Conversion.created_between(archive_cutoff, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id NOT IN (?)", tj_partner.app_ids])
+          stats[key]['publisher_earnings'] = MonthlyAccounting.since(start_time).prior_to(accounting_cutoff).sum(:earnings, :conditions => ["partner_id != ?", tj_partner.id])
+          stats[key]['publisher_earnings'] += Conversion.created_between(accounting_cutoff, end_time).sum(:publisher_amount, :conditions => ["publisher_app_id NOT IN (?)", tj_partner.app_ids])
 
           stats[key]['android_conversions']  = '-'
           stats[key]['android_adv_spend']    = '-'

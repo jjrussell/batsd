@@ -32,7 +32,7 @@
     %tr
       %td{ :colspan => 2 }= f.submit @video_button.new_record? ? 'Create Video Button' : 'Update Video Button'
 .hidden
-  #help_name_content{ :name => 'Ordinal' } The text appearing on the button.
-  #help_url_content{ :name => 'Ordinal' } The URL the button links to.
+  #help_name_content{ :name => 'Name' } The text appearing on the button. Maximum 20 characters.
+  #help_url_content{ :name => 'URL' } The URL the button links to.
   #help_ordinal_content{ :name => 'Ordinal' } Priority of the button, the smaller the ordinal, the higher the priority. (Integer only)
   #help_enabled_content{ :name => 'Enabled' } Only enabled button will be shown by the end of the video. Permit at most 2 enabled buttons.
