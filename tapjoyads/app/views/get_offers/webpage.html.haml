@@ -28,12 +28,7 @@
 #offers
   - @offer_list.each do |offer|
     .offer
-      - url = "#"
-      - onclick_js = "return false;"
-      - if !defined?(preview) || !preview
-        - url = get_click_url(offer)
-        - onclick_js = "this.className = 'clicked';"
-      - link_to(url, :onclick => onclick_js) do
+      - link_to(get_click_url(offer), :onclick => "this.className = 'clicked';") do
         %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => offer.get_icon_url(:source => :cloudfront, :size => '57') }
         .offertext
           .cell

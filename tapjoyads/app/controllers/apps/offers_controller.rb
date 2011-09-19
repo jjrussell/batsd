@@ -3,7 +3,7 @@ class Apps::OffersController < WebsiteController
   current_tab :apps
 
   filter_access_to :all
-  before_filter :setup, :except => [ :toggle, :banner_creative_image ]
+  before_filter :setup, :except => [ :toggle ]
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
   
   def new
