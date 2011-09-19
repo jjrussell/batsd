@@ -107,11 +107,12 @@
             .dialog_content
               %div{ :class => "#{key}" }= flash[key]
     -#
-    -# For production, please run this task: $ rake javascript:tjgames_minify
-    -# Versioning changes should match javascript-games.yaml
+    -# Until this task is automated for production build, please run this task: $ rake javascript:games_minify
+    -# Production versioning changes should match version configure in: javascript-games.yaml
+    -# 
     
     - if Rails.env.production?
-      = javascript_include_tag 'games/tjgames.min-1.23'
+      = javascript_include_tag 'games/tjgames.min-1.24'
     - else
       - @config = YAML::load(File.open("config/javascript-games.yaml"))
       - files = @config['files']

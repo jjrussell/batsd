@@ -1,3 +1,4 @@
+YAML_CONFIG = "config/javascript-games.yaml"
 JS_DIR = "public/javascripts/games"
 JS_SRC_DIR = "public/javascripts/games/src"
 JS_COMPILE_DIR = "public/javascripts/games/src/target"
@@ -9,9 +10,9 @@ EXT = '.js'
 namespace :javascript do
 
   desc "Tapjoy Games - Compile and minify JavaScript files"
-  task :tjgames_minify do
+  task :games_minify do
     require 'yaml'
-    @config = YAML::load(File.open("config/javascript-games.yaml"))
+    @config = YAML::load(File.open(YAML_CONFIG))
     files = @config['files']
     version = @config['version']
     File.open("#{JS_COMPILE_DIR}/#{JS_COMPILE_FILE}","w+") { |f|
