@@ -1623,13 +1623,14 @@ body {
     -webkit-transform: translateX(100%);
   }
 }
-#addToHome {
+#addToHome, #newUser {
   font-size: 14px;
   background-color: #222;
   border: 3px solid #b6b5b5;
   color: #FFF
   line-height: 130%;
   padding: 12px 10px;
+  position: absolute;
   opacity: 0.95;
   text-align: center;
   width: 306px;
@@ -1639,21 +1640,23 @@ body {
   -moz-border-radius: 6px;
   -webkit-box-sizing: border-box;
   -webkit-user-select: none;
-
+}
+#newUser {
+  display: none;
 }
 #addToHome.ipad {
   width: 326px;
 }
-#addToHome .arrow {
-  position: absolute;
+#addToHome .arrow, #newUser .arrow {
   background-color: #222;
   border-width: 0 3px 3px 0;
   border-style: solid;
   border-color: #b6b5b5;
-  height: 16px;
   bottom: -12px;
+  height: 16px;
   left: 50%;
   margin-left: -8px;
+  position: absolute;
   width: 16px;
   -webkit-transform: rotateZ(45deg);
 }
