@@ -3,7 +3,7 @@
 - form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :multipart => true, :class => 'tjform', :id => 'update' }) do |f|
   %table
     %tbody
-      - if defined?(@show_preview_link) && @show_preview_link
+      - if !@offer.rewarded?
         %tr
           %th
             = f.label "View Ads"

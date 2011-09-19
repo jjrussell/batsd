@@ -19,14 +19,7 @@ class Apps::OffersController < WebsiteController
     redirect_to :action => :edit, :id => @offer.id
   end
   
-  def edit
-    @show_preview_link = false
-    if !@offer.rewarded?
-      bucket = S3.bucket(BucketNames::TAPJOY)
-      key = RightAws::S3::Key.create(bucket, "icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg")
-      @show_preview_link = key.exists?
-    end
-        
+  def edit        
     if !@offer.tapjoy_enabled?
       if @offer.rewarded? && !@offer.featured?
         if @offer.integrated?
@@ -46,6 +39,11 @@ class Apps::OffersController < WebsiteController
   
   def preview
     raise "Only non-rewarded offers should be preview-able" if @offer.rewarded?
+    
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    key = RightAws::S3::Key.create(bucket, "icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg")
+    @show_generated_ads = key.exists?
+    
     render :layout => 'simple'
   end
   
