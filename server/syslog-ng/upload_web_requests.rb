@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# this should run on the syslog-ng servers 5 minutes after each hour
+# this should run on the syslog-ng servers 15 minutes after each hour
 #
 # makes sure that all logfiles from the previous 24 hours have been uploaded to s3.
 # once a file is uploaded, keep a copy for 48 hours before deleting.

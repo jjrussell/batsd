@@ -18,6 +18,13 @@ module GetOffersHelper
     link_to("<div class='arrow'></div>#{t('text.offerwall.next', :items => [@more_data_available, @max_items].min)}", url, :onclick => "this.className = 'clicked';")
   end
   
+  def get_next_link_json
+    return nil if @more_data_available < 1
+    tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
+    tmp_params['json'] = "1"
+    "/get_offers?data=#{SymmetricCrypto.encrypt_object(tmp_params, SYMMETRIC_CRYPTO_SECRET)}"
+  end
+  
   def get_currency_link(currency)
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['currency_id'] = currency.id

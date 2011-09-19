@@ -7,18 +7,17 @@ class DeviceTest < ActiveSupport::TestCase
      @device = Device.new
      @device.save!
      @key = @device.id
-     sleep 0.5 # give SimpleDB time to save
     end
     
     should "be correctly found when searched by id" do
-      assert_equal @device, Device.find(@key)
-      assert_equal @device, Device.find_by_id(@key)
-      assert_equal @device, Device.find_all_by_id(@key).first
+      assert_equal @device, Device.find(@key, :consistent => true)
+      assert_equal @device, Device.find_by_id(@key, :consistent => true)
+      assert_equal @device, Device.find_all_by_id(@key, :consistent => true).first
     end
     
     should "be correctly found when searched by where conditions" do
-      assert_equal @device, Device.find(:first, :where => "itemname() = '#{@key}'")
-      assert_equal @device, Device.find(:all, :where => "itemname() = '#{@key}'").first
+      assert_equal @device, Device.find(:first, :where => "itemname() = '#{@key}'", :consistent => true)
+      assert_equal @device, Device.find(:all, :where => "itemname() = '#{@key}'", :consistent => true).first
     end
   end
   
@@ -35,20 +34,19 @@ class DeviceTest < ActiveSupport::TestCase
   
   context "Multiple new Devices" do
     setup do
-      @count = Device.count
+      @count = Device.count(:consistent => true)
       @num = 5
       @num.times { Device.new.save! }
-      sleep 0.5
     end
     
     should "be counted correctly" do
-      assert_equal @count + @num, Device.count
+      assert_equal @count + @num, Device.count(:consistent => true)
     end
     
     should "be counted correctly per-domain" do
       sum = 0
       Device.all_domain_names.each do |name|
-        sum += Device.count(:domain_name => name)
+        sum += Device.count(:domain_name => name, :consistent => true)
       end
       assert_equal @count + @num, sum
     end
@@ -61,7 +59,8 @@ class DeviceTest < ActiveSupport::TestCase
 
       @jb_device = Factory(:device)
       @jb_device.is_jailbroken = true
-      @jb_device.save
+      @jb_device.stubs(:save)
+      @jb_device.stubs(:save!)
 
       @app = Factory(:app)
     end
