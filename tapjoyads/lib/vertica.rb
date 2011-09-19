@@ -1,0 +1,3 @@
+class Vertica
+  
+end

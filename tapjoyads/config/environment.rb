@@ -58,6 +58,7 @@ Rails::Initializer.run do |config|
   config.gem 'newrelic_rpm', :version => '3.0.1'
   config.gem 'differ', :version => '0.1.2'
   config.gem 'syslog-logger', :version => '1.6.4', :lib => 'syslog_logger'
+  config.gem 'vertica', :version => '0.8.1'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
