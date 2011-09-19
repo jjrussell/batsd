@@ -52,8 +52,8 @@ TJG.loadedImages = {};
     function centerDialog (el) {
       winH = $(window).height();
       winW = $(window).width();
-      $(el).css('top',  winH/2-$().height()/2);
-      $(el).css('left', winW/2-$(el).width()/2);
+      $(el).css('top',  winH/2-$(el).outerHeight()/2);
+      $(el).css('left', winW/2-$(el).outerWidth()/2);
       $(el).show();    
     }
     centerDialog("#loader");
@@ -111,7 +111,8 @@ TJG.loadedImages = {};
         className = className.replace(replace, classReplaces[replace]);
     }
     TJG.doc.className = className + classes.join(' ');
-})(this, document);/*
+})(this, document);
+/*
 
             _/    _/_/    _/_/_/_/_/                              _/
                _/    _/      _/      _/_/    _/    _/    _/_/_/  _/_/_/
@@ -782,7 +783,8 @@ TJG.loadedImages = {};
         $.jQTouch.prototype.extensions.push(extension);
     }
 
-})(jQuery);TJG.utils = {
+})(jQuery);
+TJG.utils = {
   
   genSym : function() {
     var res = '' + TJG.vars.autoKey;
@@ -824,10 +826,13 @@ TJG.loadedImages = {};
   },
   
   centerDialog : function(el) {
-    var winH = $(window).height();
-    var winW = $(window).width();
-    $(el).css('top',  winH/2-$(el).height()/2);
-    $(el).css('left', winW/2-$(el).width()/2); 
+    var h = parseInt(($(window).height()/2)-($(el).outerHeight()+16/2));
+    var w = parseInt(($(window).width()/2)-($(el).outerWidth()/2));
+    if (h <= 0) {
+      h = 16;
+    }
+    $(el).css('top',  h + "px");
+    $(el).css('left', w + "px"); 
   },
   
   disableScrollOnBody : function() {
@@ -1196,7 +1201,7 @@ TJG.ui = {
       return;
     }
     if (shown >= 4) {
-      TJG.utils.setLocalStorage("tjg.bookmark.expired", true);
+      TJG.utils.setLocalStorage("tjg.bookmark.expired", "true");
     }
     TJG.vars.version =  TJG.vars.version ?  TJG.vars.version[0].replace(/[^\d_]/g,'').replace('_','.')*1 : 0;
     expired = expired == 'null' ? 0 : expired*1;
@@ -1340,27 +1345,56 @@ TJG.ui = {
       $(".feat_review").removeClass('min');
       $(".app_review").show(); 
     }
-    var repeat = TJG.utils.getLocalStorage("tjg.repeat_visit");
+    var repeat = TJG.utils.getLocalStorage("tjg.new_user");
     if (install.indexOf("true") != -1) {
       TJG.utils.centerDialog("#register_device");
-      $("#register_device").fadeIn(fadeSpd); 
-    } 
-    else if (repeat != "true") {
-      /*
+      $("#register_device").fadeIn(fadeSpd);
+      if (repeat != "false") {
+         $("#register_device .close_dialog").click(function() {
+           showInto();
+         });
+      }
+    }
+    else if (repeat != "false") {
+      showInto();
+    }
+    
+    function showInto () {
       var div = document.createElement('div'), close;
-      div.id = 'firstTime';
-      div.style.cssText += 'position:absolute;-webkit-transition-property:-webkit-transform,opacity;-webkit-transition-duration:0;-webkit-transform:translate3d(0,0,0);';
-      div.style.left = '-9999px';
-      var m =  "message";
+      var id = "newUser";
+      var obj = "#" + id; 
+      div.id = id;
+      div.style.cssText += 'position:absolute;';
+      var m =  '<div><div class="dialog_content bold">How does it work?</div><div>All your games are listed below. Click the buttons next to the apps to start earning currency</div></div>';
       var a = '<span class="arrow"></span>';
       var t = [
-        m,
+        m,                    
         a
       ].join('');
       div.innerHTML = t;
       document.body.appendChild(div);
-      */
-    }   
+      var pos = $("#home .offer_list").position();
+      if (pos) {
+        var top = pos.top;
+        var elW = $(obj).outerWidth();
+        var winW = $(window).width();
+        var w = parseInt((winW-elW)/2);
+        $(obj).css({ 
+          "top": top - $(obj).outerHeight() - 12 + "px",
+          "left": w + "px"
+        });
+        $("#home").animate({opacity: 0.5}, fadeSpd, function(){
+          $(obj).fadeIn(fadeSpd);
+        });
+        $("#home").click(function() {
+          $(this).animate({opacity: 1}, fadeSpd, function() {
+            $(obj).fadeOut(fadeSpd);
+          });
+          TJG.utils.setLocalStorage("tjg.new_user", "false");
+        });
+      }  
+    }
+    
     TJG.ui.loadRatings();
     
     function slidePage(el,dir) {
@@ -1722,13 +1756,13 @@ TJG.ui = {
             $(this).removeClass('collaspe');
             $(".feat_review").removeClass('min');
             $(".app_review").show();
-            TJG.utils.setLocalStorage("tjg.feat_review.expand", true);
+            TJG.utils.setLocalStorage("tjg.feat_review.expand", "true");
           }
           else {
             $(this).addClass('collaspe');
             $(".feat_review").addClass('min');
             $(".app_review").hide();
-            TJG.utils.setLocalStorage("tjg.feat_review.expand", false);
+            TJG.utils.setLocalStorage("tjg.feat_review.expand", "false");
           }
         });
       },
