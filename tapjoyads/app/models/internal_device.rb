@@ -28,7 +28,7 @@ class InternalDevice < ActiveRecord::Base
   end
 
   def verifier=(ver)
-    self.status = verification_key == ver.to_i ? 'approved' : 'blocked'
+    self.status = 'approved' if verification_key == ver.to_i
   end
 
   def pending?; status == 'pending'; end
