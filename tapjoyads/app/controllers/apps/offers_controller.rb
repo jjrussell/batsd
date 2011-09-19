@@ -19,7 +19,7 @@ class Apps::OffersController < WebsiteController
     redirect_to :action => :edit, :id => @offer.id
   end
   
-  def edit        
+  def edit
     if !@offer.tapjoy_enabled?
       if @offer.rewarded? && !@offer.featured?
         if @offer.integrated?
@@ -76,12 +76,12 @@ class Apps::OffersController < WebsiteController
           end
         rescue
           flash[:error] = "#{size} creative file is invalid - please provide one of the following file types: #{Offer::DISPLAY_AD_FORMATS.values.join(', ')} (.gifs must be static)"
-          render :action => :edit and return
+          redirect_to :action => :edit and return
         end
         dimensions = "#{creative.columns}x#{creative.rows}"
         if dimensions != size
           flash[:error] = "#{size} creative file has invalid dimensions"
-          render :action => :edit and return
+          redirect_to :action => :edit and return
         end
         begin
           bucket = S3.bucket(BucketNames::TAPJOY)
@@ -89,7 +89,7 @@ class Apps::OffersController < WebsiteController
           bucket.put("banner_creatives/#{creative_key}", creative.to_blob, {}, 'public-read')
         rescue
           flash[:error] = "Encountered unexpected error while uploading #{size} creative file, please try again"
-          render :action => :edit and return
+          redirect_to :action => :edit and return
         end
         begin
           Mc.put("banner_creatives.#{creative_key}", creative.to_blob, false, 1.hour)
