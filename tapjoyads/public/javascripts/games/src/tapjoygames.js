@@ -394,7 +394,7 @@ TJG.ui = {
   showAddHomeDialog : function() {
     var startY = startX = 0,
     options = {
-      message: 'Add <span class="bold">Tapjoy Games</span> to your home screen.',
+      message: '<div>Add <span class="bold">Tapjoy Games</span> to your home screen.</div><div class="bookmark"><span>Just tap </span><span class="bookmark_icon"></span><span> and select </span><span class="bookmark_btn"></span></div>',
       animationIn: 'fade',
       animationOut: 'fade',
       startDelay: 2000,
@@ -579,7 +579,7 @@ TJG.ui = {
       var obj = "#" + id; 
       div.id = id;
       div.style.cssText += 'position:absolute;';
-      var m =  '<div><div class="dialog_content bold">How does it work?</div><div>All your games are listed below. Click the buttons next to the apps to start earning currency</div></div>';
+      var m =  '<div class="close_button"></div><div class="dialog_content bold">How does it work?</div><div>All your games are listed below. Click the buttons next to the apps to start earning currency</div>';
       var a = '<span class="arrow"></span>';
       var t = [
         m,                    
@@ -600,10 +600,9 @@ TJG.ui = {
         $("#home").animate({opacity: 0.5}, fadeSpd, function(){
           $(obj).fadeIn(fadeSpd);
         });
-        $("#home").click(function() {
-          $(this).animate({opacity: 1}, fadeSpd, function() {
-            $(obj).fadeOut(fadeSpd);
-          });
+        $("#home, #newUser .close_button").click(function() {
+          $("#home").animate({opacity: 1}, fadeSpd);
+          $(obj).fadeOut(fadeSpd);
           TJG.utils.setLocalStorage("tjg.new_user", "false");
         });
       }  

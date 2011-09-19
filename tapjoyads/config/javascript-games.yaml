@@ -1,7 +1,9 @@
-version: '1.24'
-files: [
-  'tjg.jquery-1.6.2.min',
-  'init',
-  'jqtouch',
-  'tapjoygames'
-]   
+javascript:
+  version: '1.24'
+  files: [
+    'tjg.jquery-1.6.2.min',
+    'init',
+    'jqtouch',
+    'tapjoygames'
+  ]
+  compile_out_file: 'tjgames.min'    

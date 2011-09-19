@@ -108,14 +108,12 @@
               %div{ :class => "#{key}" }= flash[key]
     -#
     -# Until this task is automated for production build, please run this task: $ rake javascript:games_minify
-    -# Production versioning changes should match version configure in: javascript-games.yaml
     -# 
     
     - if Rails.env.production?
-      = javascript_include_tag 'games/tjgames.min-1.24'
+      = javascript_include_tag 'games/' << GAMES_CONFIG['js_compile_out_file'] << '-' << GAMES_CONFIG['js_version']
     - else
-      - @config = YAML::load(File.open("config/javascript-games.yaml"))
-      - files = @config['files']
+      - files = GAMES_CONFIG['js_files']
       - files.each do |f|
         = javascript_include_tag "games/src/" << f 
     
