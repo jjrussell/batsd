@@ -400,6 +400,7 @@ class Offer < ActiveRecord::Base
     country_code       = options.delete(:country_code)       { nil }
     language_code      = options.delete(:language_code)      { nil }
     display_multiplier = options.delete(:display_multiplier) { 1 }
+    device_name        = options.delete(:device_name)        { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
@@ -433,7 +434,8 @@ class Offer < ActiveRecord::Base
       :displayer_app_id   => displayer_app_id,
       :exp                => exp,
       :language_code      => language_code,
-      :display_multiplier => display_multiplier
+      :display_multiplier => display_multiplier,
+      :device_name        => device_name,
     }
 
     "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"

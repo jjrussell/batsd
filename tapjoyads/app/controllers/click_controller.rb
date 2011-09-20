@@ -196,6 +196,8 @@ private
     @click.displayer_amount  = @currency.get_displayer_amount(@offer, @displayer_app)
     @click.tapjoy_amount     = @currency.get_tapjoy_amount(@offer, @displayer_app)
     @click.exp               = params[:exp]
+    @click.device_name       = params[:device_name]
+
     @click.save
   end
   
