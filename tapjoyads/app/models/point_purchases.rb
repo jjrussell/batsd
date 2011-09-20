@@ -21,7 +21,7 @@ class PointPurchases < SimpledbShardedResource
   end
   
   def dynamic_domain_name
-    domain_number = @key.hash % NUM_POINT_PURCHASES_DOMAINS
+    domain_number = @key.matz_silly_hash % NUM_POINT_PURCHASES_DOMAINS
     
     return "point_purchases_#{domain_number}"
   end
