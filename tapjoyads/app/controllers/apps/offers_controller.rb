@@ -85,15 +85,11 @@ class Apps::OffersController < WebsiteController
         end
         begin
           bucket = S3.bucket(BucketNames::TAPJOY)
-          creative_key = "#{@offer.id}_#{size}.#{format}"
-          bucket.put("banner_creatives/#{creative_key}", creative.to_blob, {}, 'public-read')
+          filename = "#{@offer.id}_#{size}.#{format}"
+          bucket.put("banner_creatives/#{filename}", creative.to_blob, {}, 'public-read')
         rescue
           flash[:error] = "Encountered unexpected error while uploading #{size} creative file, please try again"
           redirect_to :action => :edit and return
-        end
-        begin
-          Mc.put("banner_creatives.#{creative_key}", creative.to_blob, false, 1.hour)
-        rescue
         end
         format_key = Offer::DISPLAY_AD_FORMATS.invert[format]
         params[:offer][:banner_creatives] << "#{size_key},#{format_key};"

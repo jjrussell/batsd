@@ -124,7 +124,8 @@
         - format = existing_creatives[size]
         = check_box_tag("remove_#{size}_custom_creative", "1", false, :class=>"hidden")
         %div{:id => "existing_#{size}_image"}
-          = image_tag("#{API_URL}/display_ad/image?advertiser_app_id=#{@offer.id}&size=#{size}")
+          - dimensions = size.split("x")
+          = image_tag(@offer.get_ad_image_url(nil, dimensions[0].to_i, dimensions[1].to_i), :alt => "#{size}img")
           %div
             = link_to("Remove/Change", "#", :id => "remove_link_for_#{size}")
       %div{file_chooser_options}

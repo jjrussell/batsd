@@ -14,29 +14,16 @@ class DisplayAdController < ApplicationController
   end
   
   def image
-    params[:currency_id] ||= params[:publisher_app_id]
-    return unless verify_params([ :advertiser_app_id, :size ])
+    params[:currency_id] = params[:publisher_app_id] if params[:currency_id].blank?
+    return unless verify_params([ :advertiser_app_id, :size, :publisher_app_id, :currency_id ])
     width, height = parse_size(params[:size])
-    size_str = "#{width}x#{height}"
-    
-    offer = Offer.find_in_cache(params[:advertiser_app_id])
-    if offer.has_banner_creative_for_size?(size_str)
-      format = offer.banner_creative_format_for_size(size_str)
-      creative_key = "#{params[:advertiser_app_id]}_#{size_str}.#{format}"
-      image_data = Mc.get_and_put("banner_creatives.#{creative_key}", false, 1.hour) do
-        bucket = S3.bucket(BucketNames::TAPJOY)
-        bucket.get("banner_creatives/#{creative_key}")
-      end
-      send_data image_data, :type => "image/#{format}", :disposition => 'inline' and return
-    end
-    
-    return unless verify_params([ :publisher_app_id, :currency_id ])
 
     key = "display_ad.decoded.#{params[:currency_id]}.#{params[:advertiser_app_id]}.#{width}x#{height}.#{params[:display_multiplier] || 1}"
     image_data = Mc.get_and_put(key, false, 5.minutes) do
       publisher = App.find_in_cache(params[:publisher_app_id])
       currency = Currency.find_in_cache(params[:currency_id])
       currency = nil if currency.present? && currency.app_id != params[:publisher_app_id]
+      offer = Offer.find_in_cache(params[:advertiser_app_id])
       return unless verify_records([ publisher, currency, offer ])
 
       ad_image_base64 = get_ad_image(publisher, offer, params[:size], currency, params[:display_multiplier])
@@ -99,7 +86,8 @@ private
           :country_code      => geoip_data[:country]
       )
       if params[:action] == 'webview' || params[:details] == '1'
-        @image_url = get_ad_image_url(publisher_app, offer, params[:size], currency, params[:display_multiplier])
+        width, height = parse_size(params[:size])
+        @image_url = offer.get_ad_image_url(publisher_app.id, width, height, currency.id, params[:display_multiplier])
       else
         @image = get_ad_image(publisher_app, offer, params[:size], currency, params[:display_multiplier])
       end
@@ -121,13 +109,6 @@ private
     end
     
     web_request.save
-  end
-
-  def get_ad_image_url(publisher_app, offer, size, currency, display_multiplier)
-    display_multiplier = (display_multiplier || 1).to_f
-    width, height = parse_size(params[:size])
-    # TO REMOVE: displayer_app_id param after rollout.
-    "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app.id}&advertiser_app_id=#{offer.id}&displayer_app_id=#{publisher_app.id}&size=#{width}x#{height}&display_multiplier=#{display_multiplier}&currency_id=#{currency.id}"
   end
 
   def get_ad_image(publisher, offer, size, currency, display_multiplier)

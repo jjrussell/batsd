@@ -372,6 +372,20 @@ class Offer < ActiveRecord::Base
 
     final_url
   end
+  
+  def get_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil)
+    size_str = "#{width}x#{height}"
+    
+    if !self.rewarded? and self.has_banner_creative_for_size?(size_str)
+      format = self.banner_creative_format_for_size(size_str)
+      filename = "#{self.id}_#{size_str}.#{format}"
+      return "#{CLOUDFRONT_URL}/banner_creatives/#{filename}"
+    end
+    
+    display_multiplier = (display_multiplier || 1).to_f
+    # TO REMOVE: displayer_app_id param after rollout.
+    "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{self.id}&displayer_app_id=#{publisher_app_id}&size=#{width}x#{height}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}"
+  end
 
   def get_click_url(options)
     publisher_app      = options.delete(:publisher_app)      { |k| raise "#{k} is a required argument" }
