@@ -38,8 +38,6 @@ class Apps::OffersController < WebsiteController
   end
   
   def preview
-    raise "Only non-rewarded offers should be preview-able" if @offer.rewarded?
-    
     bucket = S3.bucket(BucketNames::TAPJOY)
     key = RightAws::S3::Key.create(bucket, "icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg")
     @show_generated_ads = key.exists?
