@@ -581,7 +581,6 @@ class Offer < ActiveRecord::Base
       score = currency_group.precache_weights.keys.inject(0) { |sum, key| sum + (currency_group.precache_weights[key] * send(key)) }
       score += 5 if item_type == "ActionOffer"
       score += 10 if price == 0
-      score += 10 if featured?
       rank_scores[currency_group.id] = score
     end
     rank_scores
