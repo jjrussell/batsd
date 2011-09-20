@@ -327,7 +327,7 @@ class Offer < ActiveRecord::Base
       else
         final_url += '&partnerId=30&siteID=OxXMC6MRBt4'
       end
-    elsif library_version.nil? || library_version > '8.1.0'
+    elsif library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
       final_url.sub!('market://search?q=', 'http://market.android.com/details?id=')
     elsif item_type == 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
