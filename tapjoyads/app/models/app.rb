@@ -125,8 +125,8 @@ class App < ActiveRecord::Base
     VirtualGood.count(:where => "app_id = '#{self.id}'") > 0
   end
 
-  def store_url
-    if use_raw_url?
+  def store_url(read_attribute = false)
+    if read_attribute || use_raw_url?
       read_attribute(:store_url)
     else
       direct_store_url
