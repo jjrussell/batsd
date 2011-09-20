@@ -347,19 +347,19 @@ class Offer < ActiveRecord::Base
   end
 
   def get_click_url(options)
-    publisher_app       = options.delete(:publisher_app)       { |k| raise "#{k} is a required argument" }
-    publisher_user_id   = options.delete(:publisher_user_id)   { |k| raise "#{k} is a required argument" }
-    udid                = options.delete(:udid)                { |k| raise "#{k} is a required argument" }
-    currency_id         = options.delete(:currency_id)         { |k| raise "#{k} is a required argument" }
-    source              = options.delete(:source)              { |k| raise "#{k} is a required argument" }
-    app_version         = options.delete(:app_version)         { nil }
-    viewed_at           = options.delete(:viewed_at)           { |k| raise "#{k} is a required argument" }
-    displayer_app_id    = options.delete(:displayer_app_id)    { nil }
-    exp                 = options.delete(:exp)                 { nil }
-    country_code        = options.delete(:country_code)        { nil }
-    language_code       = options.delete(:language_code)       { nil }
-    display_multiplier  = options.delete(:display_multiplier)  { 1 }
-    offer_specific_data = options.delete(:offer_specific_data) { nil }
+    publisher_app      = options.delete(:publisher_app)      { |k| raise "#{k} is a required argument" }
+    publisher_user_id  = options.delete(:publisher_user_id)  { |k| raise "#{k} is a required argument" }
+    udid               = options.delete(:udid)               { |k| raise "#{k} is a required argument" }
+    currency_id        = options.delete(:currency_id)        { |k| raise "#{k} is a required argument" }
+    source             = options.delete(:source)             { |k| raise "#{k} is a required argument" }
+    app_version        = options.delete(:app_version)        { nil }
+    viewed_at          = options.delete(:viewed_at)          { |k| raise "#{k} is a required argument" }
+    displayer_app_id   = options.delete(:displayer_app_id)   { nil }
+    exp                = options.delete(:exp)                { nil }
+    country_code       = options.delete(:country_code)       { nil }
+    language_code      = options.delete(:language_code)      { nil }
+    display_multiplier = options.delete(:display_multiplier) { 1 }
+    device_name        = options.delete(:device_name)        { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
@@ -380,21 +380,21 @@ class Offer < ActiveRecord::Base
     end
 
     data = {
-      :advertiser_app_id   => item_id,
-      :publisher_app_id    => publisher_app.id,
-      :publisher_user_id   => publisher_user_id,
-      :udid                => udid,
-      :source              => source,
-      :offer_id            => id,
-      :app_version         => app_version,
-      :viewed_at           => viewed_at.to_f,
-      :currency_id         => currency_id,
-      :country_code        => country_code,
-      :displayer_app_id    => displayer_app_id,
-      :exp                 => exp,
-      :language_code       => language_code,
-      :display_multiplier  => display_multiplier,
-      :offer_specific_data => offer_specific_data,
+      :advertiser_app_id  => item_id,
+      :publisher_app_id   => publisher_app.id,
+      :publisher_user_id  => publisher_user_id,
+      :udid               => udid,
+      :source             => source,
+      :offer_id           => id,
+      :app_version        => app_version,
+      :viewed_at          => viewed_at.to_f,
+      :currency_id        => currency_id,
+      :country_code       => country_code,
+      :displayer_app_id   => displayer_app_id,
+      :exp                => exp,
+      :language_code      => language_code,
+      :display_multiplier => display_multiplier,
+      :device_name        => device_name,
     }
 
     "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"

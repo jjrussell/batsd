@@ -44,10 +44,10 @@ module GetOffersHelper
       :exp                => params[:exp],
       :country_code       => @geoip_data[:country],
       :language_code      => params[:language_code],
-      :display_multiplier => params[:display_multiplier]
+      :display_multiplier => params[:display_multiplier],
+      :device_name        => params[:device_name]
     }
     
-    click_options[:offer_specific_data] = params[:device_name] if offer.item_id == TAPJOY_GAMES_REGISTRATION_OFFER_ID
     click_url = offer.get_click_url(click_options)
         
     if offer.item_type == 'VideoOffer'

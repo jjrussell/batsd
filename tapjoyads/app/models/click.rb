@@ -26,7 +26,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :exp
   self.sdb_attr :block_reason
   self.sdb_attr :manually_resolved_at, :type => :time
-  self.sdb_attr :offer_specific_data
+  self.sdb_attr :device_name
   
   def initialize(options = {})
     super({ :load_from_memcache => false }.merge(options))

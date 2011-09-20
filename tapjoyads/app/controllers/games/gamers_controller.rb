@@ -10,9 +10,9 @@ class Games::GamersController < GamesController
     if @gamer.referrer.starts_with?('tjreferrer:')
       click = Click.new :key => @gamer.referrer.gsub('tjreferrer:', '')
       if click.rewardable?
-        device = Device.new :key => click.udid
-        device.product = click.offer_specific_data
-        device.save
+        @device = Device.new :key => click.udid
+        @device.product = click.device_name
+        @device.save
         @gamer.udid = click.udid
         url = "#{API_URL}/offer_completed?click_key=#{click.key}"
         Downloader.get_with_retry url
