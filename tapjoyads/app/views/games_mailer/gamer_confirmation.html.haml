@@ -1,11 +1,36 @@
 %p Thanks for creating a Tapjoy Games account!
 
+%p Now you can start discovering cool new apps while adding fuel to your existing ones.
+
 %p
-  Please confirm your email address by clicking the following link.
-  If the link doesn't work, just copy/paste it into your browser.
+  %b Getting started:
+  %br
+  Confirm your email address by clicking the following link.
+  If the link doesn't work, just copy/paste it into your browser:
+  %br
+  %a{:href => @confirmation_link}= @confirmation_link
 
-%p= link_to(@confirmation_link, @confirmation_link)
+- unless @linked
+  %p
+    %b Link your device:
+    %br
+    By linking your device, we can personalize your Tapjoy Games experience.
+    You must be on your device to link to your account.
+  %p
+    %img{:src => 'https://s3.amazonaws.com/tapjoy/images/link-device-tj-games.png'}
 
-Thank you,
-%br
-Tapjoy Games
+
+%p
+  %b Add Tapjoy Games to your Home Screen:
+  %br
+  Engaging with your favorite apps can be just a tap away.
+%p
+  %img{:src => 'https://s3.amazonaws.com/tapjoy/images/home-screen-tj-games.png'}
+
+%p
+  If you have any questions or problems,
+  please contact us at feedback@tapjoy.com and we’ll help you with what you need.
+
+%p Let the discovery begin!!
+
+%p Team Tapjoy
