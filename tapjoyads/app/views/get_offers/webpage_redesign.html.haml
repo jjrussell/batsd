@@ -15,16 +15,17 @@
 - if @start_index > 0
   = render :partial => 'pagination_links'
 
-- if @test_offer.present?
+- if @test_offers.present?
   - unless @currency.tapjoy_enabled?
     - render(:layout => 'box') do
       .explanation
         You must email #{mail_to("publishersupport@tapjoy.com")} before users will be able to view offers.
-  - render(:layout => 'box') do
-    .explanation
-      = @test_offer.name
-      %br
-      = link_to("Click to receive #{@currency.get_visual_reward_amount(@test_offer, params[:display_multiplier])} #{@currency.name}", get_click_url(@test_offer))
+  - @test_offers.each do |test_offer|
+    - render(:layout => 'box') do
+      .explanation
+        = test_offer.name
+        %br
+        = link_to("Click to receive #{@currency.get_visual_reward_amount(test_offer, params[:display_multiplier])} #{@currency.name}", get_click_url(test_offer))
 
 #offers.box
   = render :partial => 'top_corners'

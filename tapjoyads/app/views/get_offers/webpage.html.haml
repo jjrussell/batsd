@@ -16,7 +16,7 @@
     .next= get_next_link
     .clear
 
-- if @test_offers.any?
+- if @test_offers.present?
   - unless @currency.tapjoy_enabled?
     .message
       You must email #{mail_to("publishersupport@tapjoy.com")} before users will be able to view offers.
