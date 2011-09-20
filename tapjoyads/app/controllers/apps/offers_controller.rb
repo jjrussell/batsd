@@ -55,7 +55,7 @@ class Apps::OffersController < WebsiteController
       param_name = "#{size}_custom_creative".to_sym
       creative_file = params[:offer][param_name]
       
-      if !creative_file && @offer.has_banner_creative_for_size?(size) && params["remove_#{param_name}".to_sym] != "1"
+      if !creative_file and @offer.has_banner_creative_for_size?(size) and params["remove_#{param_name}".to_sym] != "1"
         # nothing has changed, keep banner_creative as-is
         format_key = @offer.banner_creative_format_key_for_size(size)
         params[:offer][:banner_creatives] << "#{size_key},#{format_key};"
