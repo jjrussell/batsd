@@ -86,7 +86,7 @@ Rails::Initializer.run do |config|
   # Make sure the secret is at least 30 characters and all random, 
   # no regular words or you'll be exposed to dictionary attacks.
   config.action_controller.session = {
-    :session_key => '_tapjoyads_session',
+    :key         => '_tapjoyads_session',
     :secret      => 'd3d936761e9ec0ff1aa0ce15efa6c5c6a6d0d529cfebf302de850328d321978b4d3017e36811a7bdee90ea38120346bccde1316f41849a8022a275c8390a69f1'
   }
 
