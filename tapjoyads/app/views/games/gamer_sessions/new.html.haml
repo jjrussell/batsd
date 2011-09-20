@@ -64,7 +64,7 @@
     - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
       .field
         = label_tag :birthdate
-        = select_date nil, { :order => [:day, :month, :year], :start_year => (Time.now.year - 100), :end_year => Time.now.year, :include_blank => true }
+        = select_date nil, { :order => [:month, :day, :year], :start_year => (Time.now.year - 100), :end_year => Time.now.year, :include_blank => false, :prompt => {:day => 'Day', :month => 'Month', :year => 'Year'} }
       .field
         = f.label :email
         = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off"
