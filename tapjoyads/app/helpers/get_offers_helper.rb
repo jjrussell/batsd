@@ -33,7 +33,7 @@ module GetOffersHelper
   end
   
   def get_click_url(offer)
-    click_options = {
+    click_url = offer.get_click_url(
       :publisher_app      => @publisher_app,
       :publisher_user_id  => params[:publisher_user_id],
       :udid               => params[:udid],
@@ -45,10 +45,7 @@ module GetOffersHelper
       :country_code       => @geoip_data[:country],
       :language_code      => params[:language_code],
       :display_multiplier => params[:display_multiplier],
-      :device_name        => params[:device_name]
-    }
-    
-    click_url = offer.get_click_url(click_options)
+      :device_name        => params[:device_name])
         
     if offer.item_type == 'VideoOffer'
       "tjvideo://video_id=#{offer.id}&amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&currency_name=#{URI::escape(@currency.name)}&click_url=#{click_url}"
