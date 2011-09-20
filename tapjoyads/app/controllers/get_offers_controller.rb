@@ -42,6 +42,10 @@ class GetOffersController < ApplicationController
       @offer_list = [ build_test_offer(@publisher_app) ]
     else
       @offer_list = [ get_offer_list.weighted_rand ].compact
+      if @offer_list.empty?
+        params[:type] = Offer::FEATURED_BACKFILLED_OFFER_TYPE
+        @offer_list = [ get_offer_list.weighted_rand ].compact
+      end
     end
     @more_data_available = 0
     
