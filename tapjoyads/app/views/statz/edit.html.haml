@@ -190,11 +190,6 @@
       - use_raw_url = @offer.item.use_raw_url
       %tr
         %th
-          = label_tag(:app_store_id, 'Store ID')
-          #help_app_store_id.help ?
-        %td= text_field_tag(:app_store_id, @offer.item.store_id)
-      %tr
-        %th
           = label_tag(:app_use_raw_url, 'Override Store URL')
           #help_app_use_raw_url.help ?
         %td= check_box_tag(:app_use_raw_url, "1", use_raw_url)
@@ -239,7 +234,6 @@
   #help_daily_budget_content{ :name => 'Daily Budget' } The maximum number of conversions to complete in one day.
   #help_overall_budget_content{ :name => 'Overall Budget' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
   #help_interval_content{ :name => 'Interval' } The interval for frequency capping.
-  #help_app_store_id_content{ :name => 'Store ID' } The App Store ID or Android Market name of this app. i.e. '297558390' for Apple, 'com.tapjoy.tapout' for Android
   #help_app_use_raw_url_content{ :name => 'Override Store URL' } Allows for manual override of Store URL field
   #help_app_store_url_content{ :name => 'Store URL' } The URL that the user will be redirected to upon clicking an ad (typically links to Market Place / App store search results page)
   #help_bid_content{ :name => 'Bid' } The bid affects your payment and your offerwall rank.
