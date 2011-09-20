@@ -70,5 +70,6 @@ $(document).ready(function() {
       biolarge.hide();
       biosmall.show();
     }
+    return false;
   })
 })

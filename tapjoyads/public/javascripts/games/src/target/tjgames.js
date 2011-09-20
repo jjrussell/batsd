@@ -1021,7 +1021,7 @@ TJG.ui = {
     TJG.repositionDialog = ["#sign_up_dialog"];
     $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
     $(".close_dialog").show();
-    $("#sign_up_dialog_content").parent().animate({ height: "270px", }, animateSpd);
+    $("#sign_up_dialog_content").parent().animate({ height: "290px", }, animateSpd);
     $("#sign_up_dialog").fadeIn();
     $('form#new_gamer').submit(function(e){
       e.preventDefault();
@@ -1029,8 +1029,16 @@ TJG.ui = {
       rurl = $(this).attr('action');
       inputs = $('form#new_gamer :input');
       inputs.each(function() {
-        if (this.type == 'checkbox' || this.type == 'radio') {
+        if (this.type == 'radio') {
           values[this.name] = $(this).attr("checked");
+        }
+        else if (this.type == 'checkbox') {
+          if ($(this).attr("checked")) {
+            values[this.name] = '1';
+          }
+          else {
+            values[this.name] = '0';
+          }
         }
         else {
           values[this.name] = $(this).val();
@@ -1038,7 +1046,11 @@ TJG.ui = {
       });
       $(".email_error").hide();
       emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
-      if(values['gamer[email]'] == '') {
+      if(values['date[day]'] == '' || values['date[month]'] == '' || values['date[year]'] == '') {
+        $(".email_error").html('Please enter your birthdate');
+        hasError = true;
+      }
+      else if(values['gamer[email]'] == '') {
         $(".email_error").html('Please enter your email address');
         hasError = true;
       }
@@ -1070,7 +1082,16 @@ TJG.ui = {
           cache: false,
           timeout: 15000,
           dataType: 'json', 
-          data: { 'authenticity_token': values['authenticity_token'], 'gamer[email]': values['gamer[email]'], 'gamer[password]': values['gamer[password]'], 'gamer[referrer]': values['gamer[referrer]'] },
+          data: {
+            'authenticity_token': values['authenticity_token'],
+            'gamer[email]': values['gamer[email]'],
+            'gamer[password]': values['gamer[password]'],
+            'gamer[referrer]': values['gamer[referrer]'],
+            'gamer[terms_of_service]': values['gamer[terms_of_service]'],
+            'date[day]': values['date[day]'],
+            'date[month]': values['date[month]'],
+            'date[year]': values['date[year]']
+          },
           success: function(d) {
             var msg;
             if (d.success) {
@@ -1117,8 +1138,11 @@ TJG.ui = {
             }
             else {
               var error = 'There was an issue with registering your account';
-              if (d.error) {
-                if (d.error[0][0] && d.error[0][1]) {
+              if (d.error && d.error[0]) {
+                if (d.error[0][0] == 'birthdate') {
+                  error = 'Sorry we are currently unable to process your request'
+                }
+                else if (d.error[0][0] && d.error[0][1]) {
                   error = 'The ' + d.error[0][0] + ' ' + d.error[0][1];
                 }
               }
@@ -1131,7 +1155,7 @@ TJG.ui = {
             }
             $('#sign_up_again').click(function(){
               TJG.ui.showRegister();
-              $("#sign_up_dialog_content").parent().animate({ height: "270px", }, animateSpd);
+              $("#sign_up_dialog_content").parent().animate({ height: "290px", }, animateSpd);
             });
           },
           error: function() {
@@ -1144,7 +1168,7 @@ TJG.ui = {
             $("#sign_up_dialog_content").html(msg);
             $('#sign_up_again').click(function(){
                TJG.ui.showRegister();
-              $("#sign_up_dialog_content").parent().animate({ height: "270px", }, animateSpd);
+              $("#sign_up_dialog_content").parent().animate({ height: "290px", }, animateSpd);
             });
           }
         });

@@ -49,6 +49,38 @@ class GetOffersControllerTest < ActionController::TestCase
       @response = get(:index, @params.merge(:country_code => 'GB'))
       assert_equal [@offer, @offer2], assigns(:offer_list)
     end
+    
+    should "render json with correct fields" do
+      json = JSON.parse(@response.body)
+      assert json['OfferArray'].present?
+      assert_equal 'Free', json['OfferArray'][0]['Cost']
+      assert_equal '17', json['OfferArray'][0]['Amount']
+      assert_equal @offer.name, json['OfferArray'][0]['Name']
+      assert_equal 17, json['OfferArray'][0]['Payout']
+      assert_equal "App", json['OfferArray'][0]['Type']
+      assert_equal @offer.store_id_for_feed, json['OfferArray'][0]['StoreID']
+      assert json['OfferArray'][0]['IconURL'].present?
+      assert json['OfferArray'][0]['RedirectURL'].present?
+      
+      assert_equal 'TAPJOY_BUCKS', json['CurrencyName']
+      assert_equal 'Install one of the apps below to earn TAPJOY_BUCKS', json['Message']
+    end
+    
+    should "return FullScreenAdURL when rendering featured json" do
+      @response = get(:index, @params.merge(:json => 1, :source => 'featured'))
+      json = JSON.parse(@response.body)
+      assert json['OfferArray'].present?
+      assert json['OfferArray'][0]['FullScreenAdURL'].present?
+    end
+    
+    should "wrap json in a callback url when requesting jsonp" do
+      @response = get(:index, @params.merge(:json => 1, :source => 'featured', :callback => '();callbackFunction'))
+      match = @response.body.match(/(^callbackFunction\()(.*)(\)$)/m)
+      assert_equal 'callbackFunction(', match[1], "JSONP response should start with callback function"
+      assert_equal ')', match[3], "JSONP response should end with callback paran"
+      json = JSON.parse(match[2])
+      assert json['OfferArray'].present?
+    end
   end
 
   context "when calling 'webpage'" do
