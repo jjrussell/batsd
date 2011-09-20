@@ -328,7 +328,7 @@ class Offer < ActiveRecord::Base
         final_url += '&partnerId=30&siteID=OxXMC6MRBt4'
       end
     elsif library_version.nil? || library_version > '8.1.0'
-      final_url.sub!(/^market:\/\//, 'http://market.android.com/')
+      final_url.sub!('market://search?q=', 'http://market.android.com/details?id=')
     elsif item_type == 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
     elsif item_type == 'GenericOffer'
@@ -364,6 +364,7 @@ class Offer < ActiveRecord::Base
     language_code      = options.delete(:language_code)      { nil }
     display_multiplier = options.delete(:display_multiplier) { 1 }
     device_name        = options.delete(:device_name)        { nil }
+    library_version    = options.delete(:library_version)    { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
@@ -399,6 +400,7 @@ class Offer < ActiveRecord::Base
       :language_code      => language_code,
       :display_multiplier => display_multiplier,
       :device_name        => device_name,
+      :library_version    => library_version,
     }
 
     "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
