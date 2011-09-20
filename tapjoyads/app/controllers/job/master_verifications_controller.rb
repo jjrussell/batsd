@@ -19,7 +19,7 @@ private
     day_of_week = Date.today.wday
     
     Partner.find_each do |partner|
-      next unless partner.id.matz_silly_hash % 7 == day_of_week
+      next unless partner.id.hash % 7 == day_of_week
       
       Partner.verify_balances(partner.id, true)
     end
