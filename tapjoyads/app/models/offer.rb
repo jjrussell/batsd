@@ -290,6 +290,7 @@ class Offer < ActiveRecord::Base
     language_code         = options.delete(:language_code)         { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
     display_multiplier    = options.delete(:display_multiplier)    { 1 }
+    options.delete(:library_version)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     data = {
@@ -312,6 +313,7 @@ class Offer < ActiveRecord::Base
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
     click_key             = options.delete(:click_key)             { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
+    library_version       = options.delete(:library_version)       { nil }
     options.delete(:language_code)
     options.delete(:display_multiplier)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -325,6 +327,8 @@ class Offer < ActiveRecord::Base
       else
         final_url += '&partnerId=30&siteID=OxXMC6MRBt4'
       end
+    elsif library_version.nil? || library_version > '8.1.0'
+      final_url.sub!(/^market:\/\//, 'http://market.android.com/')
     elsif item_type == 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
     elsif item_type == 'GenericOffer'
