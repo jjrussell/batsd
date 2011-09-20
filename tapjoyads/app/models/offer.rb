@@ -290,7 +290,7 @@ class Offer < ActiveRecord::Base
     language_code         = options.delete(:language_code)         { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
     display_multiplier    = options.delete(:display_multiplier)    { 1 }
-    options.delete(:library_version)
+    library_version       = options.delete(:library_version)       { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     data = {
@@ -301,7 +301,8 @@ class Offer < ActiveRecord::Base
       :itunes_link_affiliate => itunes_link_affiliate,
       :currency_id           => currency.id,
       :language_code         => language_code,
-      :display_multiplier    => display_multiplier
+      :display_multiplier    => display_multiplier,
+      :library_version       => library_version,
     }
 
     "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
