@@ -1,23 +1,37 @@
 - @page_title = 'Ad Preview'
 
-- sizes = Offer::DISPLAY_AD_SIZES.values
-- sizes.each_with_index do |size, index|
-  - if index > 0
+#previews
+  - publisher_app_id = "2349536b-c810-47d7-836c-2cd47cd3a796" # TapDefense
+  - if @offer.featured?
+    Featured ad:
     %br
-  = "#{size} banner ad:"
-  %div
-    - if !@show_generated_ads and !@offer.has_banner_creative_for_size?(size)
-      [
-      %i
-        Please link your app to the app store so we can generate this ad image using your app's icon.
-      ]
+    - if !@show_generated_ads
+      = render :partial => "link_to_appstore_msg"
     - else
-      - publisher_app_id = "2349536b-c810-47d7-836c-2cd47cd3a796" # TapDefense
-      - dimensions = size.split("x")
-      = image_tag(@offer.get_ad_image_url(publisher_app_id, dimensions[0].to_i, dimensions[1].to_i), :alt => "#{size}img")
+      = image_tag("#{API_URL}/fullscreen_ad/image?advertiser_app_id=#{@offer.id}&publisher_app_id=#{publisher_app_id}&offer_id=#{@offer.id}", :alt => "featuredimg")
+    %br
+    %br
+  - if !@offer.featured? || !@offer.rewarded?
+    - sizes = Offer::DISPLAY_AD_SIZES.values
+    - sizes.each_with_index do |size, index|
+      - if index > 0
+        %br
+      = "#{size} banner ad:"
+      %div
+        - if !@show_generated_ads and !@offer.has_banner_creative_for_size?(size)
+          = render :partial => "link_to_appstore_msg"
+        - else
+          - dimensions = size.split("x")
+          = image_tag(@offer.get_ad_image_url(publisher_app_id, dimensions[0].to_i, dimensions[1].to_i), :alt => "#{size}img")
 
-%br
-*To provide custom creatives for your non-rewarded ads, please contact
-= "#{mail_to "support@tapjoy.com"}."
-Please ensure images have correct dimensions and are of the following file types:
-= "[#{Offer::DISPLAY_AD_FORMATS.values.join(', ')}]."
+    %br
+    *To provide custom creatives for your non-rewarded ads, please contact
+    = "#{mail_to "support@tapjoy.com"}."
+    Please ensure images have correct dimensions and are of the following file types:
+    = "[#{Offer::DISPLAY_AD_FORMATS.values.join(', ')}]."
+
+- content_for :page_styles do
+  :plain
+    div#previews {
+      text-align: center;
+    }
