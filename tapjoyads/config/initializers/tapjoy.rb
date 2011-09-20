@@ -38,4 +38,4 @@ AWS.config(
   :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY']
 )  
 
-GAMES_CONFIG = YAML::load(File.open("config/games.yaml"))[ ENV['RAILS_ENV'] ]
+GAMES_CONFIG = YAML::load_file("#{RAILS_ROOT}/config/games.yaml")[Rails.env]

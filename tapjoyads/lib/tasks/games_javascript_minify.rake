@@ -17,7 +17,7 @@ namespace :javascript do
     compile_out_file = @config['js_compile_out_file']
     File.open("#{JS_CAT_DIR}/#{JS_CAT_FILE}","w+") { |f|
       f.puts files.map{ |j|
-        c = "#{JS_SRC_DIR}/" << j << "#{EXT}"
+        c = "#{JS_SRC_DIR}/#{j}#{EXT}"
         IO.read(c)
       } 
     }
