@@ -557,7 +557,7 @@ TJG.ui = {
     if (expand == "true") {
       $(".feat_toggle").removeClass('collaspe');
       $(".feat_review").removeClass('min');
-      $(".app_review").show(); 
+      $(".app_review").show();
     }
     var repeat = TJG.utils.getLocalStorage("tjg.new_user");
     if (install.indexOf("true") != -1) {
@@ -576,13 +576,13 @@ TJG.ui = {
     function showInto () {
       var div = document.createElement('div'), close;
       var id = "newUser";
-      var obj = "#" + id; 
+      var obj = "#" + id;
       div.id = id;
       div.style.cssText += 'position:absolute;';
       var m =  '<div class="close_button"></div><div class="dialog_content bold">How does it work?</div><div>All your games are listed below. Click the buttons next to the apps to start earning currency.</div>';
       var a = '<span class="arrow"></span>';
       var t = [
-        m,                    
+        m,
         a
       ].join('');
       div.innerHTML = t;
