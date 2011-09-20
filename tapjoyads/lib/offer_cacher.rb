@@ -30,7 +30,7 @@ class OfferCacher
         offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.non_video_offers.for_offer_list.to_a
         cache_unsorted_offers_prerejected(offer_list, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, save_to_s3)
 
-        # TODO - just get rid of this?
+        # TODO - split this up into NON_REWARDED_FEATURED_OFFER_TYPE and NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE at some point
         offer_list = Offer.enabled_offers.featured.non_rewarded.free_apps.non_video_offers.for_offer_list + Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.non_video_offers.scoped(:limit => 100, :order => 'rand()').for_offer_list
         cache_unsorted_offers_prerejected(offer_list, Offer::NON_REWARDED_FEATURED_OFFER_TYPE, save_to_s3)
         
