@@ -142,11 +142,11 @@ class TapjoyMailer < ActionMailer::Base
       :device_type => device_type, :email_address => email_address, :language_code => language_code, :offer => offer)
   end
   
-  def approve_device(email_address, verification_link, block_link, location, timestamp)
+  def approve_device(email_address, verification_link, password_reset_link, location, timestamp)
     from 'noreply@tapjoy.com'
     recipients email_address
     content_type 'text/html'
     subject 'Approve Unknown Computer or Device'
-    body(:verification_link => verification_link, :block_link => block_link, :location => location, :timestamp => timestamp)
+    body(:verification_link => verification_link, :password_reset_link => password_reset_link, :location => location, :timestamp => timestamp)
   end
 end

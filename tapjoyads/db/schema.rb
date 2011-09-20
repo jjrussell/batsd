@@ -276,6 +276,23 @@ ActiveRecord::Schema.define(:version => 20110914201513) do
   add_index "enable_offer_requests", ["offer_id"], :name => "index_enable_offer_requests_on_offer_id"
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
 
+  create_table "gamer_profiles", :id => false, :force => true do |t|
+    t.string   "id",            :limit => 36, :null => false
+    t.string   "gamer_id",      :limit => 36, :null => false
+    t.string   "last_name"
+    t.string   "first_name"
+    t.string   "gender"
+    t.date     "birthdate"
+    t.string   "city"
+    t.string   "country"
+    t.string   "favorite_game"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "gamer_profiles", ["gamer_id"], :name => "index_gamer_profiles_on_gamer_id", :unique => true
+  add_index "gamer_profiles", ["id"], :name => "index_gamer_profiles_on_id", :unique => true
+
   create_table "gamers", :id => false, :force => true do |t|
     t.string   "id",                 :limit => 36,                 :null => false
     t.string   "email",                                            :null => false

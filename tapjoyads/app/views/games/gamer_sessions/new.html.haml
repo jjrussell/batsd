@@ -63,6 +63,9 @@
   .dialog_content
     - form_for([ :games, @gamer ], :url => games_gamer_path ) do |f|
       .field
+        = label_tag :birthdate
+        = select_date nil, { :order => [:month, :day, :year], :start_year => (Time.now.year - 100), :end_year => Time.now.year, :include_blank => false, :prompt => {:day => 'Day', :month => 'Month', :year => 'Year'} }
+      .field
         = f.label :email
         = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off"
       .field
@@ -71,7 +74,7 @@
       .field_row.clearfix
         .field.field_tos
           = f.check_box :terms_of_service
-          = f.label :terms_of_service, "By checking this box I assert that I am over the age of 13 and agree to the #{ link_to('terms of services', games_tos_path, :target => '_blank') } & #{ link_to('privacy policy', games_privacy_path, :target => '_blank') }"
+          = f.label :terms_of_service, "By checking this box I assert that I agree to the #{ link_to('terms of services', games_tos_path, :target => '_blank') } & #{ link_to('privacy policy', games_privacy_path, :target => '_blank') }"
         .field
           = f.hidden_field :referrer, :value => params[:referrer]
           = f.submit 'Do it!', :class => 'right button m_width lt_blue'

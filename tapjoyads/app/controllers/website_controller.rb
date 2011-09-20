@@ -56,34 +56,17 @@ class WebsiteController < ApplicationController
   def check_employee_device
     return unless Rails.env == 'production'
     if current_user && current_user.employee?
-      return if request.path.match(/logout|approve_device|block/)
-      if device = current_user.internal_devices.find_by_id(device_cookie)
-        if device.approved?
-          return
-        elsif device.pending?
-          redirect_to new_internal_device_path
-        else
-          redirect_bad_device
-        end
-      else
-        redirect_to new_internal_device_path
+      if request.path.match(/logout|approve_device/)
+        return
+      elsif device = current_user.internal_devices.find_by_id(device_cookie)
+        return if device.approved?
       end
+      redirect_to new_internal_device_path
     end
   end
 
   def device_cookie
     @device_id ||= cookies["#{current_user.email}-device"]
-    # TODO: take this block out on/after 09/07/2011
-    return @device_id if @device_id
-    @device_id = cookies["device"]
-    if @device_id && current_user.internal_devices.find_by_id(@device_id)
-      set_cookie( { :value => @device_id, :expires => 1.year.from_now } )
-      cookies.delete("device")
-    else
-      @device_id = nil
-    end
-    @device_id
-    # TODO: remove to here
   end
 
   def set_cookie(options)
@@ -121,12 +104,6 @@ private
 
   def set_platform
     @platform = params[:platform] || 'all'
-  end
-
-  def redirect_bad_device
-    flash[:error] = "Sorry, this computer has been blocked. Please contact dev@tapjoy.com if this is an error."
-    UserSession.find.destroy
-    redirect_to login_path
   end
 
   def nag_user_about_payout_info

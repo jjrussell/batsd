@@ -8,14 +8,15 @@ class SimpledbShardedResource < SimpledbResource
     if options[:domain_name]
       super(options)
     else
-      where = options.delete(:where)
+      where      = options.delete(:where)
+      consistent = options.delete(:consistent)
       raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
       
       hydra = Typhoeus::Hydra.new
       count = 0
 
       all_domain_names.each do |current_domain_name|
-        SimpledbResource.count_async(:domain_name => current_domain_name, :where => where, :hydra => hydra) do |c|
+        SimpledbResource.count_async(:domain_name => current_domain_name, :where => where, :hydra => hydra, :consistent => consistent) do |c|
           count += c
         end
       end
