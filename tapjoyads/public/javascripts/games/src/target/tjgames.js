@@ -1365,7 +1365,7 @@ TJG.ui = {
       var obj = "#" + id; 
       div.id = id;
       div.style.cssText += 'position:absolute;';
-      var m =  '<div class="close_button"></div><div class="dialog_content bold">How does it work?</div><div>All your games are listed below. Click the buttons next to the apps to start earning currency</div>';
+      var m =  '<div class="close_button"></div><div class="dialog_content bold">How does it work?</div><div>All your games are listed below. Click the buttons next to the apps to start earning currency.</div>';
       var a = '<span class="arrow"></span>';
       var t = [
         m,                    
