@@ -9,7 +9,7 @@
   = label_tag(:platform)  # currently labelled as 'platform' for device type, we can change it as required later
   = select_tag 'device', options_for_select(["all"] + Offer::ALL_DEVICES, params[:device])
   = label_tag(:status)
-  = select_tag(:status, options_for_select ([["All", "*"], ["Approved","a"], ["Blocked","b"]], :selected => params[:status])  )
+  = select_tag(:status, options_for_select([["All", "*"], ["Approved","a"], ["Blocked","b"]], :selected => params[:status]) )
   = submit_tag("Filter")
 
 

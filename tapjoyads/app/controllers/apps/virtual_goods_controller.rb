@@ -93,7 +93,7 @@ private
             return false
           end
         rescue
-          flash[:error] = "icon file may not be of PNG format"
+          flash[:error] = "icon file should be of PNG format"
           return false
         end
       else

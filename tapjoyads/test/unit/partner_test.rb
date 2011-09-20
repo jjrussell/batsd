@@ -41,13 +41,6 @@ class PartnerTest < ActiveSupport::TestCase
       assert_equal 1, @partner.account_managers.length
     end
 
-    should "add agency as account manager" do
-      agency_role = Factory(:user_role, :name => "agency")
-      agency_user = Factory(:user, :user_roles => [agency_role])
-      @partner.users << agency_user
-      assert_equal 1, @partner.account_managers.length
-    end
-
     should "add normal users but not as account manager" do
       @partner.users << Factory(:user)
       assert_equal 0, @partner.account_managers.length

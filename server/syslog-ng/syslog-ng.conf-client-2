@@ -71,6 +71,37 @@ options {
 
 
 ######
+# rails
+
+destination log_server {
+  tcp("10.127.86.88"
+    failover_servers("10.42.38.242", "10.125.111.80")
+    port(51400)
+    flush_lines(100)               # default: 0 lines
+    flush_timeout(1000)            # default: 10000 milliseconds
+    log_disk_fifo_size(4294967296) # default: 0 bytes
+    log_fifo_size(100000)          # default: 1000 lines
+  );
+};
+
+filter f_rails {
+  program("rails-");
+};
+
+log {
+  source(s_all);
+  filter(f_rails);
+  destination(log_server);
+  flags(flow-control, final);
+};
+
+
+##############################################################
+# everything below comes from the default ubuntu configuration
+##############################################################
+
+
+######
 # sources
 
 # all known message sources
@@ -338,26 +369,4 @@ log {
         source(s_all);
         filter(f_xconsole);
         destination(dp_xconsole);
-};
-
-destination log_server {
-  tcp("10.127.86.88"
-    failover_servers("10.42.38.242", "10.125.111.80")
-    port(51400)
-    flush_lines(100)               # default: 0 lines
-    flush_timeout(1000)            # default: 10000 milliseconds
-    log_disk_fifo_size(4294967296) # default: 0 bytes
-    log_fifo_size(100000)          # default: 1000 lines
-  );
-};
-
-filter f_rails {
-  program("rails-");
-};
-
-log {
-  source(s_all);
-  filter(f_rails);
-  destination(log_server);
-  flags(flow-control, final);
 };

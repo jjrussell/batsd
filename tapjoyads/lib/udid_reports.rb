@@ -34,20 +34,9 @@ class UdidReports
     
     if outfile.pos > 0
       outfile.close
-      path = "#{offer_id}/#{date.strftime('%Y-%m')}/#{date.strftime('%Y-%m-%d')}.csv"
-      retries = 3
-      begin
-        bucket = S3.bucket(BucketNames::UDID_REPORTS)
-        bucket.put(path, open(fs_path), {}, 'authenticated-read')
-      rescue RightAws::AwsError => e
-        if retries > 0
-          retries -= 1
-          sleep(1)
-          retry
-        else
-          raise e
-        end
-      end
+      path   = "#{offer_id}/#{date.strftime('%Y-%m')}/#{date.strftime('%Y-%m-%d')}.csv"
+      bucket = AWS::S3.new.buckets[BucketNames::UDID_REPORTS]
+      bucket.objects[path].write(:file => fs_path, :acl => :authenticated_read)
       cache_available_months(offer_id)
     end
     
@@ -57,11 +46,11 @@ class UdidReports
   end
   
   def self.cache_available_months(offer_id)
-    bucket = S3.bucket(BucketNames::UDID_REPORTS)
+    bucket = AWS::S3.new.buckets[BucketNames::UDID_REPORTS]
     months = Set.new
-    bucket.keys(:prefix => "#{offer_id}/").each do |key|
-      next unless key.name.ends_with?('.csv')
-      month = key.name.gsub("#{offer_id}/", '')[0...7]
+    bucket.objects.with_prefix("#{offer_id}/").each do |obj|
+      next unless obj.key.ends_with?('.csv')
+      month = obj.key.gsub("#{offer_id}/", '')[0...7]
       months << month
     end
     available_months = months.sort
@@ -76,19 +65,19 @@ class UdidReports
   end
   
   def self.get_monthly_report(offer_id, month)
-    bucket = S3.bucket(BucketNames::UDID_REPORTS)
+    bucket = AWS::S3.new.buckets[BucketNames::UDID_REPORTS]
     report_data = ''
-    bucket.keys(:prefix => "#{offer_id}/#{month}/").each do |key|
-      report_data += key.get
+    bucket.objects.with_prefix("#{offer_id}/#{month}/").each do |obj|
+      report_data += obj.read
     end
     report_data
   end
   
   def self.get_daily_report(offer_id, date)
-    bucket = S3.bucket(BucketNames::UDID_REPORTS)
-    key = bucket.key("#{offer_id}/#{date[0...7]}/#{date}.csv")
-    if key.exists?
-      key.get
+    bucket = AWS::S3.new.buckets[BucketNames::UDID_REPORTS]
+    obj = bucket.objects["#{offer_id}/#{date[0...7]}/#{date}.csv"]
+    if obj.exists?
+      obj.read
     else
       ''
     end

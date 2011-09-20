@@ -13,4 +13,6 @@ end
 Factory.define :virtual_good do |virtual_good|
   virtual_good.key { Factory.next(:guid) }
   virtual_good.name { Factory.next(:name) }
+  virtual_good.price 10
+  virtual_good.max_purchases 5
 end

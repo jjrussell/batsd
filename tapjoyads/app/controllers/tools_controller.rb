@@ -266,7 +266,7 @@ class ToolsController < WebsiteController
       flash[:error] = "Because the click was from 48+ hours ago this might fail. If it doesn't go through, try again in a few minutes."
     end
 
-    click.put('manually_resolved_at', Time.zone.now.to_f.to_s)
+    click.manually_resolved_at = Time.zone.now
     click.serial_save
 
     if Rails.env == 'production'

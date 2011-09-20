@@ -25,14 +25,10 @@
     .header_divider
     %h2 Advertiser Products
     #links
-      .link_box
-        = link_to "Video", '', :title => 'video'
-      .link_box
-        = link_to "Banner", '', :title => 'banner'
-      .link_box
-        = link_to "Featured", '', :title => 'featured'
-      .link_box.selected
-        = link_to "Marketplace", '', :title => 'marketplace'
+      .link_box= link_to "Video", '', :title => 'video'
+      .link_box= link_to "Banner", '', :title => 'banner'
+      .link_box= link_to "Featured", '', :title => 'featured'
+      .link_box.selected= link_to "Marketplace", '', :title => 'marketplace'
     .header_divider
     .details.marketplace_copy
       %h3 Tapjoy Marketplace
@@ -54,3 +50,11 @@
     .screenshot.banner
     .screenshot.video
 .clear
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      if (location.href.match(/#contact$/)) {
+        $($('.contact_us')[0]).click();
+      }
+    });

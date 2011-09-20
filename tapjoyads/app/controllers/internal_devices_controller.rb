@@ -50,7 +50,7 @@ class InternalDevicesController < WebsiteController
       flash[:notice] = "Device approved!  Please enter a description for this device"
       render :action => :edit
     else
-      redirect_bad_device
+      redirect_to new_internal_device_path
     end
   end
 
@@ -66,13 +66,13 @@ class InternalDevicesController < WebsiteController
 private
 
   def send_email
-    block_device_url = block_internal_device_url(@device.id, :token => current_user.perishable_token)
+    password_reset_url = edit_password_reset_url(current_user.perishable_token)
     verification_url = approve_internal_device_url(@device.id, :verifier => @device.verification_key)
     geoip_data = get_geoip_data
     location = [ geoip_data[:city], geoip_data[:region], geoip_data[:country] ].compact.join(', ')
     location += " (#{get_ip_address})"
     timestamp = Time.zone.now.strftime("%l:%M%p on %b %d, %Y")
-    TapjoyMailer.deliver_approve_device(current_user.email, verification_url, block_device_url, location, timestamp)
+    TapjoyMailer.deliver_approve_device(current_user.email, verification_url, password_reset_url, location, timestamp)
   end
 
 end

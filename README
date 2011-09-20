@@ -19,8 +19,24 @@ Environment Setup:
   -use the dvd that came with your mac or download from apple
 
 
+-Git configurations
+  -Create github.com account if necessary
+  -In github, fork main tapjoyserver repository
+    -main repo location: https://github.com/Tapjoy/tapjoyserver (may need to be given access)
+    -click "Fork"
+  -Add your SSH key to github
+    -see Account Settings->SSH Public Keys->Need help with public keys? for full instructions
+  -Clone your forked repo locally
+    -git clone git@github.com:[your github nickname]/tapjoyserver.git
+  -Add main tapjoyserver repo as remote repo (for updating your code with the latest)
+    -git remote add tapjoy git@github.com:Tapjoy/tapjoyserver.git
+    -important that it's named "tapjoy" for deploy script to work
+
+
 -Downgrade rubygems
-  -sudo gem uninstall rubygems-update -v 1.7.2
+  -Uninstall existing versions if necessary
+    -use 'gem list' to determine if versions exist
+    -if applicable, use 'gem uninstall rubygems-update -v [version]' to remove
   -sudo gem install rubygems-update -v 1.3.5
   -sudo update_rubygems _1.3.5_
 
@@ -57,12 +73,27 @@ Environment Setup:
   -cp tapjoyserver/tapjoyads/config/database-default.yml tapjoyserver/tapjoyads/config/database.yml
   -mkdir tapjoyserver/tapjoyads/tmp
   -mkdir tapjoyserver/tapjoyads/log
-  -cp tapjoysersver/tapjoyads/config/local-default.yml tapjoyserver/tapjoyads/config/local.yml
+  -cp tapjoyserver/tapjoyads/config/local-default.yml tapjoyserver/tapjoyads/config/local.yml
   - open local.yml and change api_url to point to the local address of the app (ex: http://tapjoy.local or http://localhost:3000)
 
 
 -Install required gems
   -sudo env ARCHFLAGS="-arch x86_64" gem install memcached -v 1.2.7
   -sudo env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
-  -sudo env ARCHFLAGS="-arch x86_64" gem install patron -v 0.4.4
-  -sudo rake RAILS_ENV=test gems:install
+  -sudo gem install rcov -v 0.9.10
+  -sudo rake gems:install
+  
+
+-Set up accounts and database
+  -Create developer account at www.tapjoy.com and have someone give you the "admin" role
+  -Sync prod db with local db (this will overwrite any pre-existing changes)
+    -rake admin:sync_db
+  -Now you have an admin account in production and locally
+
+
+-Download desired editor (most people use TextMate) and set it to use soft tabs (2 spaces)
+  - Instructions for TextMate:
+    - TextMate -> Preferences -> Advanced -> Shell Variables
+    - Add TM_SOFT_TABS with value of YES (make sure it doesn't convert the TM to a ™ symbol)
+    - Add TM_TAB_SIZE with value of 2
+    - See http://manual.macromates.com/en/environment_variables.html if curious about other TextMate shell variables

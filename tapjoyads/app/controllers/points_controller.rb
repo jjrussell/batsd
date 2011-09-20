@@ -1,4 +1,7 @@
 class PointsController < ApplicationController
+
+  before_filter :set_publisher_user_id, :only => [ :spend, :purchase_vg, :consume_vg ]
+
   def award
     return unless verify_params([ :app_id, :udid, :publisher_user_id, :tap_points, :guid, :timestamp, :verifier ])
     hash_bits = [
@@ -56,19 +59,12 @@ class PointsController < ApplicationController
   end
 
   def spend
-    return unless verify_params([:app_id, :udid, :tap_points])
-
-    if params[:publisher_user_id].present?
-      publisher_user_id = params[:publisher_user_id]
-    else
-      publisher_user_id = params[:udid]
-      params[:publisher_user_id] = params[:udid]
-    end
+    return unless verify_params([:app_id, :udid, :tap_points, :publisher_user_id])
 
     @currency = Currency.find_in_cache(params[:app_id])
     return unless verify_records([ @currency ])
 
-    pp_key = "#{publisher_user_id}.#{params[:app_id]}"
+    pp_key = "#{params[:publisher_user_id]}.#{params[:app_id]}"
     tap_points = params[:tap_points].to_i
     if tap_points == 0
       @success = true
@@ -83,33 +79,27 @@ class PointsController < ApplicationController
   end
 
   def purchase_vg
-    return unless verify_params([:app_id, :udid, :virtual_good_id])
-
-    publisher_user_id = params[:udid]
-    publisher_user_id = params[:publisher_user_id] unless params[:publisher_user_id].blank?
+    return unless verify_params([:app_id, :udid, :virtual_good_id, :publisher_user_id])
 
     @currency = Currency.find_in_cache(params[:app_id])
     return unless verify_records([ @currency ])
 
     quantity = params[:quantity].blank? ? 1 : params[:quantity].to_i
-    @success, @message, @point_purchases = PointPurchases.purchase_virtual_good("#{publisher_user_id}.#{params[:app_id]}", params[:virtual_good_id], quantity)
+    @success, @message, @point_purchases = PointPurchases.purchase_virtual_good("#{params[:publisher_user_id]}.#{params[:app_id]}", params[:virtual_good_id], quantity)
     check_success('purchased_vg')
 
     render :template => 'get_vg_store_items/user_account'
   end
 
   def consume_vg
-    return unless verify_params([:app_id, :udid, :virtual_good_id])
-
-    publisher_user_id = params[:udid]
-    publisher_user_id = params[:publisher_user_id] unless params[:publisher_user_id].blank?
+    return unless verify_params([:app_id, :udid, :virtual_good_id, :publisher_user_id])
 
     @currency = Currency.find_in_cache(params[:app_id])
     return unless verify_records([ @currency ])
 
     quantity = params[:quantity].blank? ? 1 : params[:quantity].to_i
 
-    @success, @message, @point_purchases = PointPurchases.consume_virtual_good("#{publisher_user_id}.#{params[:app_id]}", params[:virtual_good_id], quantity)
+    @success, @message, @point_purchases = PointPurchases.consume_virtual_good("#{params[:publisher_user_id]}.#{params[:app_id]}", params[:virtual_good_id], quantity)
     check_success('consumed_vg')
 
     render :template => 'get_vg_store_items/user_account'

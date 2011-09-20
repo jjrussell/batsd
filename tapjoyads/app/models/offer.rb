@@ -36,12 +36,20 @@ class Offer < ActiveRecord::Base
                                   'payment_range_high', 'icon_id_override', 'rank_boost',
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
                                   'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
-                                  'cookie_tracking', 'min_os_version', 'screen_layout_sizes' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'cookie_tracking', 'min_os_version', 'screen_layout_sizes', 'interval' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
 
   DAILY_STATS_START_HOUR = 6
   DAILY_STATS_RANGE = 6
+  
+  FREQUENCIES_CAPPING_INTERVAL = {
+    "none"     => 0,
+    "1 minute" => 1.minute.to_i,
+    "1 hour"   => 1.hour.to_i,
+    "8 hours"  => 8.hours.to_i,
+    "24 hours" => 24.hours.to_i,
+  }
 
   attr_accessor :rank_score
 
@@ -58,7 +66,7 @@ class Offer < ActiveRecord::Base
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
-  validates_numericality_of :price, :only_integer => true
+  validates_numericality_of :price, :interval, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 10000, :allow_nil => false
   validates_numericality_of :min_bid_override, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => true
@@ -103,7 +111,7 @@ class Offer < ActiveRecord::Base
   end
   validates_each :multi_complete do |record, attribute, value|
     if value
-      record.errors.add(attribute, "is only for GenericOffers") unless record.item_type == 'GenericOffer'
+      record.errors.add(attribute, "is not for App offers") if record.item_type == 'App'
       record.errors.add(attribute, "cannot be used for pay-per-click offers") if record.pay_per_click?
     end
   end
@@ -351,6 +359,7 @@ class Offer < ActiveRecord::Base
     country_code       = options.delete(:country_code)       { nil }
     language_code      = options.delete(:language_code)      { nil }
     display_multiplier = options.delete(:display_multiplier) { 1 }
+    device_name        = options.delete(:device_name)        { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
@@ -384,7 +393,8 @@ class Offer < ActiveRecord::Base
       :displayer_app_id   => displayer_app_id,
       :exp                => exp,
       :language_code      => language_code,
-      :display_multiplier => display_multiplier
+      :display_multiplier => display_multiplier,
+      :device_name        => device_name,
     }
 
     "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
@@ -637,7 +647,8 @@ class Offer < ActiveRecord::Base
     age_rating_reject?(currency) ||
     publisher_whitelist_reject?(publisher_app) ||
     currency_whitelist_reject?(currency) ||
-    video_offers_reject?(video_offer_ids, type)
+    video_offers_reject?(video_offer_ids, type) ||
+    frequency_capping_reject?(device)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -661,7 +672,8 @@ class Offer < ActiveRecord::Base
       app_platform_mismatch?(publisher_app) ||
       age_rating_reject?(currency) ||
       publisher_whitelist_reject?(publisher_app) ||
-      currency_whitelist_reject?(currency)) &&
+      currency_whitelist_reject?(currency) ||
+      frequency_capping_reject?(device)) &&
       accepting_clicks?
   end
 
@@ -808,6 +820,16 @@ class Offer < ActiveRecord::Base
       end
     end
   end
+  
+  def frequency_capping_reject?(device)
+    return false unless multi_complete? && interval != Offer::FREQUENCIES_CAPPING_INTERVAL['none']
+    
+    if device.has_app(item_id)
+      device.last_run_time(item_id) + interval > Time.zone.now
+    else
+      false
+    end
+  end
 
 private
 
@@ -851,7 +873,7 @@ private
 
   def already_complete?(publisher_app, device, app_version)
     return false if EXEMPT_UDIDS.include?(device.key) || multi_complete?
-
+    
     app_id_for_device = item_id
     if item_type == 'RatingOffer'
       app_id_for_device = RatingOffer.get_id_with_app_version(item_id, app_version)

@@ -143,7 +143,7 @@ class PartnersController < WebsiteController
         render 'shared/aggregate'
       end
       format.json do
-        options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :stat_prefix => get_stat_prefix('partner'), :platform => @platform }
+        options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :stat_prefix => get_stat_prefix('partner') }
         @appstats = Appstats.new(@partner.id, options)
         render :json => { :data => @appstats.graph_data(:admin => true) }
       end

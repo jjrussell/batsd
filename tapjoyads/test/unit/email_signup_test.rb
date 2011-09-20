@@ -27,14 +27,13 @@ class EmailSignupTest < ActiveSupport::TestCase
   
   context "Multiple new EmailSignups" do
     setup do
-      @count = EmailSignup.count
+      @count = EmailSignup.count(:consistent => true)
       @num = 5
       @num.times { Factory(:email_signup) }
-      sleep 0.5
     end
     
     should "be counted correctly" do
-      assert_equal @count + @num, EmailSignup.count
+      assert_equal @count + @num, EmailSignup.count(:consistent => true)
     end
   end
   

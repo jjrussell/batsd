@@ -172,7 +172,7 @@ TJG.ui = {
     TJG.repositionDialog = [];
   },
   
-  getOffferRow : function (obj,currency,i,hidden) {
+  getOfferRow : function (obj,currency,i,hidden) {
     var t = [], clsId = "", style = "";
     if (i) {
       clsId = "offer_item_" + i;
@@ -196,6 +196,11 @@ TJG.ui = {
             t.push('<div class="offer_title title">');
               t.push(v.Name);
             t.push('</div>');
+            if (v.Type && v.Type == 'App') { 
+              t.push('<div class="offer_install">');
+                t.push('Install and run ' + v.Name);
+              t.push('</div>'); 
+            }  
             t.push('<div class="offer_info">');
                 t.push('<a href="' + v.RedirectURL + '">');
                   t.push('<div class="offer_button my_apps">');
@@ -232,7 +237,7 @@ TJG.ui = {
     TJG.repositionDialog = ["#sign_up_dialog"];
     $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
     $(".close_dialog").show();
-    $("#sign_up_dialog_content").parent().animate({ height: "270px", }, animateSpd);
+    $("#sign_up_dialog_content").parent().animate({ height: "290px", }, animateSpd);
     $("#sign_up_dialog").fadeIn();
     $('form#new_gamer').submit(function(e){
       e.preventDefault();
@@ -240,8 +245,16 @@ TJG.ui = {
       rurl = $(this).attr('action');
       inputs = $('form#new_gamer :input');
       inputs.each(function() {
-        if (this.type == 'checkbox' || this.type == 'radio') {
+        if (this.type == 'radio') {
           values[this.name] = $(this).attr("checked");
+        }
+        else if (this.type == 'checkbox') {
+          if ($(this).attr("checked")) {
+            values[this.name] = '1';
+          }
+          else {
+            values[this.name] = '0';
+          }
         }
         else {
           values[this.name] = $(this).val();
@@ -249,7 +262,11 @@ TJG.ui = {
       });
       $(".email_error").hide();
       emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
-      if(values['gamer[email]'] == '') {
+      if(values['date[day]'] == '' || values['date[month]'] == '' || values['date[year]'] == '') {
+        $(".email_error").html('Please enter your birthdate');
+        hasError = true;
+      }
+      else if(values['gamer[email]'] == '') {
         $(".email_error").html('Please enter your email address');
         hasError = true;
       }
@@ -281,7 +298,16 @@ TJG.ui = {
           cache: false,
           timeout: 15000,
           dataType: 'json', 
-          data: { 'authenticity_token': values['authenticity_token'], 'gamer[email]': values['gamer[email]'], 'gamer[password]': values['gamer[password]'], 'gamer[referrer]': values['gamer[referrer]'] },
+          data: {
+            'authenticity_token': values['authenticity_token'],
+            'gamer[email]': values['gamer[email]'],
+            'gamer[password]': values['gamer[password]'],
+            'gamer[referrer]': values['gamer[referrer]'],
+            'gamer[terms_of_service]': values['gamer[terms_of_service]'],
+            'date[day]': values['date[day]'],
+            'date[month]': values['date[month]'],
+            'date[year]': values['date[year]']
+          },
           success: function(d) {
             var msg;
             if (d.success) {
@@ -295,8 +321,15 @@ TJG.ui = {
               $('.close_dialog').unbind('click');
               $("#sign_up_dialog_content").parent().animate({ height: "230px", }, animateSpd);
               $("#sign_up_dialog_content").html(msg);
-              if (TJG.vars.isIos == false) {
-                document.location.href = location.protocol + '//' + location.host;
+              if (d.linked) { 
+                $('.close_dialog,.continue_link_device').click(function(){
+                  if (TJG.path) {
+                    document.location.href = TJG.path;
+                  }
+                  else {
+                    document.location.href = document.domain;
+                  }
+                });
               }
               else if (d.link_device_url) {
                 $('.close_dialog,.continue_link_device').click(function(){
@@ -321,8 +354,11 @@ TJG.ui = {
             }
             else {
               var error = 'There was an issue with registering your account';
-              if (d.error) {
-                if (d.error[0][0] && d.error[0][1]) {
+              if (d.error && d.error[0]) {
+                if (d.error[0][0] == 'birthdate') {
+                  error = 'Sorry we are currently unable to process your request'
+                }
+                else if (d.error[0][0] && d.error[0][1]) {
                   error = 'The ' + d.error[0][0] + ' ' + d.error[0][1];
                 }
               }
@@ -335,7 +371,7 @@ TJG.ui = {
             }
             $('#sign_up_again').click(function(){
               TJG.ui.showRegister();
-              $("#sign_up_dialog_content").parent().animate({ height: "270px", }, animateSpd);
+              $("#sign_up_dialog_content").parent().animate({ height: "290px", }, animateSpd);
             });
           },
           error: function() {
@@ -348,7 +384,7 @@ TJG.ui = {
             $("#sign_up_dialog_content").html(msg);
             $('#sign_up_again').click(function(){
                TJG.ui.showRegister();
-              $("#sign_up_dialog_content").parent().animate({ height: "270px", }, animateSpd);
+              $("#sign_up_dialog_content").parent().animate({ height: "290px", }, animateSpd);
             });
           }
         });
@@ -376,11 +412,11 @@ TJG.ui = {
       shown = 0;
     }
     shown = parseInt(shown);
-    if (expired) {
+    if (expired == "true") {
       return;
     }
     if (shown >= 4) {
-      TJG.utils.setLocalStorage("tjg.bookmark.expired", true)
+      TJG.utils.setLocalStorage("tjg.bookmark.expired", true);
     }
     TJG.vars.version =  TJG.vars.version ?  TJG.vars.version[0].replace(/[^\d_]/g,'').replace('_','.')*1 : 0;
     expired = expired == 'null' ? 0 : expired*1;
@@ -515,13 +551,36 @@ TJG.ui = {
     });
     var fadeSpd = 350, fadeSpdFast = 250, fadeSpdSlow = 700;
     var install = TJG.utils.getParam("register_device");
-    if (install.indexOf("true") != -1) {
-      TJG.utils.centerDialog("#register_device");
-      $("#register_device").fadeIn(fadeSpd); 
-    }
     if (TJG.vars.isIos || TJG.vars.isSafari) {
       TJG.ui.showAddHomeDialog();
     }
+    var expand = TJG.utils.getLocalStorage("tjg.feat_review.expand");
+    if (expand == "true") {
+      $(".feat_toggle").removeClass('collaspe');
+      $(".feat_review").removeClass('min');
+      $(".app_review").show(); 
+    }
+    var repeat = TJG.utils.getLocalStorage("tjg.repeat_visit");
+    if (install.indexOf("true") != -1) {
+      TJG.utils.centerDialog("#register_device");
+      $("#register_device").fadeIn(fadeSpd); 
+    } 
+    else if (repeat != "true") {
+      /*
+      var div = document.createElement('div'), close;
+      div.id = 'firstTime';
+      div.style.cssText += 'position:absolute;-webkit-transition-property:-webkit-transform,opacity;-webkit-transition-duration:0;-webkit-transform:translate3d(0,0,0);';
+      div.style.left = '-9999px';
+      var m =  "message";
+      var a = '<span class="arrow"></span>';
+      var t = [
+        m,
+        a
+      ].join('');
+      div.innerHTML = t;
+      document.body.appendChild(div);
+      */
+    }   
     TJG.ui.loadRatings();
     
     function slidePage(el,dir) {
@@ -585,7 +644,7 @@ TJG.ui = {
             TJG.appOfferWall[appId] = {};
           }
           TJG.appOfferWall[appId]['jsonp_url'] = url;
-          var title = 'Viewing offers for <span class="bold">' + appName + '</span>';
+          var title = 'Complete any of the offers below to earn <span class="bold">' + currencyName + '</span> for <span class="bold">' + appName + '</span>';
           $("#app_title").html(title).show();
           if (url) {
             TJG.ui.showLoader();
@@ -605,7 +664,7 @@ TJG.ui = {
                     TJG.appOfferWall[appId]['offers_left'] = 0;
                   }
                   TJG.appOfferWall[appId]['offset'] = offerOffset;
-                  var offerRows = TJG.ui.getOffferRow(offers, currencyName);
+                  var offerRows = TJG.ui.getOfferRow(offers, currencyName);
                   var t = [
                     '<ul id="offerwall_id-', appId ,'">',
                       offerRows,
@@ -649,7 +708,7 @@ TJG.ui = {
                               TJG.appOfferWall[appId]['offers_left'] = 0;
                             }
                             TJG.appOfferWall[appId]['offset'] = TJG.appOfferWall[appId]['offset'] + 25;
-                            var moreOfferRows = TJG.ui.getOffferRow(offers, currencyName, i, true);
+                            var moreOfferRows = TJG.ui.getOfferRow(offers, currencyName, i, true);
                             $("#offerwall_id-" + appId).append(moreOfferRows);
                             var el = ".offer_item_" + i;
                             $.each($(el), function(n,o) {
@@ -883,11 +942,13 @@ TJG.ui = {
             $(this).removeClass('collaspe');
             $(".feat_review").removeClass('min');
             $(".app_review").show();
+            TJG.utils.setLocalStorage("tjg.feat_review.expand", true);
           }
           else {
             $(this).addClass('collaspe');
             $(".feat_review").addClass('min');
             $(".app_review").hide();
+            TJG.utils.setLocalStorage("tjg.feat_review.expand", false);
           }
         });
       },

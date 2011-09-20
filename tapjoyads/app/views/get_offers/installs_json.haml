@@ -1,0 +1,26 @@
+:ruby
+  offer_array = []
+  @offer_list.each do |offer|
+    hash                    = {}
+    hash["Cost"]            = visual_cost(offer)
+    hash["Amount"]          = @currency.get_visual_reward_amount(offer, params[:display_multiplier])
+    hash["IconURL"]         = offer.get_icon_url(:source => :cloudfront, :size => '57')
+    hash["Name"]            = offer.name
+    hash["RedirectURL"]     = get_click_url(offer)
+    hash["StoreID"]         = offer.store_id_for_feed
+    hash["Payout"]          = @currency.get_publisher_amount(offer)
+    hash["Type"]            = offer.item_type
+    hash["FullScreenAdURL"] = get_fullscreen_ad_url(offer) if params[:source] == 'featured'
+    offer_array << hash
+  end
+  
+  obj                      = {}
+  obj["OfferArray"]        = offer_array
+  obj["Message"]           = "Install one of the apps below to earn #{@currency.name}"
+  obj["CurrencyName"]      = @currency.name
+  obj["TapPoints"]         = @tap_points if @tap_points.present?
+  obj["MoreDataAvailable"] = @more_data_available if @more_data_available > 0
+  
+= "#{params[:callback].gsub(/\W/, '')}(" if params[:callback].present?
+= obj.to_json
+= ")" if params[:callback].present?

@@ -4,6 +4,7 @@ class VideoButton < ActiveRecord::Base
   belongs_to :video_offer
   
   validates_presence_of :url, :name
+  validates_length_of :name, :maximum => 20, :message => "Please limit the name to 20 characters"
   validates_numericality_of :ordinal, :only_integer => true
   
   after_save :update_offer

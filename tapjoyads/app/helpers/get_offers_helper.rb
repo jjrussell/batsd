@@ -18,6 +18,13 @@ module GetOffersHelper
     link_to("<div class='arrow'></div>#{t('text.offerwall.next', :items => [@more_data_available, @max_items].min)}", url, :onclick => "this.className = 'clicked';")
   end
   
+  def get_next_link_json
+    return nil if @more_data_available < 1
+    tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
+    tmp_params['json'] = "1"
+    "/get_offers?data=#{SymmetricCrypto.encrypt_object(tmp_params, SYMMETRIC_CRYPTO_SECRET)}"
+  end
+  
   def get_currency_link(currency)
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['currency_id'] = currency.id
@@ -27,17 +34,19 @@ module GetOffersHelper
   
   def get_click_url(offer)
     click_url = offer.get_click_url(
-        :publisher_app      => @publisher_app,
-        :publisher_user_id  => params[:publisher_user_id],
-        :udid               => params[:udid],
-        :currency_id        => @currency.id,
-        :source             => params[:source],
-        :app_version        => params[:app_version],
-        :viewed_at          => @now,
-        :exp                => params[:exp],
-        :country_code       => @geoip_data[:country],
-        :language_code      => params[:language_code],
-        :display_multiplier => params[:display_multiplier])
+      :publisher_app      => @publisher_app,
+      :publisher_user_id  => params[:publisher_user_id],
+      :udid               => params[:udid],
+      :currency_id        => @currency.id,
+      :source             => params[:source],
+      :app_version        => params[:app_version],
+      :viewed_at          => @now,
+      :exp                => params[:exp],
+      :country_code       => @geoip_data[:country],
+      :language_code      => params[:language_code],
+      :display_multiplier => params[:display_multiplier],
+      :device_name        => params[:device_name])
+        
     if offer.item_type == 'VideoOffer'
       "tjvideo://video_id=#{offer.id}&amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&currency_name=#{URI::escape(@currency.name)}&click_url=#{click_url}"
     else

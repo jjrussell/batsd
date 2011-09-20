@@ -79,8 +79,8 @@ class ExternalPublisher
     end
     
     key = 'external_publishers'
-    bucket = S3.bucket(BucketNames::OFFER_DATA)
-    bucket.put(key, Marshal.dump(external_publishers))
+    bucket = AWS::S3.new.buckets[BucketNames::OFFER_DATA]
+    bucket.objects[key].write(Marshal.dump(external_publishers))
     Mc.distributed_put(key, external_publishers, false, 1.day)
   end
   

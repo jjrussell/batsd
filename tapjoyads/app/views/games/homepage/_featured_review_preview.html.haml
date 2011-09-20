@@ -1,6 +1,5 @@
-.feat_review_preload
-.feat_review
-  .feat_toggle
+.feat_review.min
+  .feat_toggle.collaspe
   .feat_content
     .staff_info
       .staff_img
@@ -11,7 +10,7 @@
           by 
           %span.author
             = @featured_review.author.first_name
-    .app_review
+    .app_review.hide
       %a{ :href => "#", :class => "feat_app_url" }
         .app_item.clearfix
           .feat_arrow.right

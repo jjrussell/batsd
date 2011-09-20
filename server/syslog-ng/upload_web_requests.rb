@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# this should run on the syslog-ng servers 5 minutes after each hour
+# this should run on the syslog-ng servers 15 minutes after each hour
 #
 # makes sure that all logfiles from the previous 24 hours have been uploaded to s3.
 # once a file is uploaded, keep a copy for 48 hours before deleting.
@@ -22,23 +22,28 @@ while time < end_time do
   logfile_path = "#{ebs_base}/#{filename}.log"
 
   if File.exists?(logfile_path)
-    sdbfile_path  = "#{local_base}/#{filename}.sdb"
+    unique_id     = UUIDTools::UUID.random_create.hexdigest
+    tmpfile_path  = "#{logfile_path}.uploading.#{unique_id}"
+    sdbfile_path  = "#{local_base}/#{filename}.#{unique_id}.sdb"
     gzipfile_path = "#{sdbfile_path}.gz"
-    s3_path       = "syslog-ng/#{time.strftime('%Y-%m-%d')}/#{time.strftime('%H')}-#{UUIDTools::UUID.random_create.hexdigest}.sdb.gz"
+    s3_path       = "syslog-ng/#{time.strftime('%Y-%m-%d')}/#{time.strftime('%H')}-#{unique_id}.sdb.gz"
 
-    `sed 's/^.*]:\ //' #{logfile_path} > #{sdbfile_path}`
+    File.rename(logfile_path, tmpfile_path)
+
+    `sed 's/^.*]:\ //' #{tmpfile_path} > #{sdbfile_path}`
     `gzip #{sdbfile_path}`
 
     s3_object = bucket.objects[s3_path]
     s3_object.write(open(gzipfile_path))
 
     File.delete(gzipfile_path)
-    File.rename(logfile_path, "#{logfile_path}.uploaded")
+    File.rename(tmpfile_path, "#{logfile_path}.uploaded.#{unique_id}")
   end
 
   delete_time = time - 172800 # 48 hours
-  uploaded_path = "#{ebs_base}/#{delete_time.strftime('%Y-%m-%d-%H')}.log.uploaded"
-  File.delete(uploaded_path) if File.exists?(uploaded_path)
+  Dir.glob("#{ebs_base}/#{delete_time.strftime('%Y-%m-%d-%H')}.log.uploaded*").each do |filename|
+    File.delete(filename)
+  end
 
   time += 3600
 end

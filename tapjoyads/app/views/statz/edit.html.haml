@@ -73,8 +73,7 @@
         %td
           = f.check_box(:rewarded)
           = error_message_on @offer, :rewarded
-        
-    - if @offer.item_type == 'GenericOffer'
+    - if @offer.item_type != 'App'
       %tr
         %th
           = f.label(:multi_complete, 'Multi-complete')
@@ -82,6 +81,14 @@
         %td
           = f.check_box(:multi_complete)
           = error_message_on @offer, :multi_complete
+      %tr
+        %th
+          = f.label(:interval)
+          #help_interval.help ?
+        %td
+          = f.select(:interval, options_for_select(Offer::FREQUENCIES_CAPPING_INTERVAL, @offer.interval), { :include_blank => false })
+          = error_message_on @offer, :interval
+    - if @offer.item_type == 'GenericOffer'
       %tr
         %th
           = f.label(:direct_pay, 'Direct-pay')
@@ -216,6 +223,7 @@
   #help_publisher_app_whitelist_content{ :name => 'Publisher App Whitelist' } Restrict this offer to these publisher apps. Must be a ";" separated list of publisher app IDs.
   #help_daily_budget_content{ :name => 'Daily Budget' } The maximum number of conversions to complete in one day.
   #help_overall_budget_content{ :name => 'Overall Budget' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
+  #help_interval_content{ :name => 'Interval' } The interval for frequency capping.
   #help_app_store_id_content{ :name => 'Store ID' } The App Store ID or Android Market name of this app. i.e. '297558390' for Apple, 'com.tapjoy.tapout' for Android
   #help_bid_content{ :name => 'Bid' } The bid affects your payment and your offerwall rank.
   #help_min_bid_override_content{ :name => 'Min Bid Override' } Manually set the minimum allowed bid for this offer.

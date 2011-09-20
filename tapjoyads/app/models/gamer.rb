@@ -2,9 +2,12 @@ class Gamer < ActiveRecord::Base
   include UuidPrimaryKey
   
   has_many :gamer_devices
-  
+  has_one :gamer_profile
+
+  validates_associated :gamer_profile, :on => :create
+  validates_presence_of :email
   attr_accessor :terms_of_service
-  validates_acceptance_of :terms_of_service, :on => :create
+  validates_acceptance_of :terms_of_service, :on => :create, :allow_nil => false
   
   before_create :generate_confirmation_token
   

@@ -12,7 +12,7 @@
     %title= @page_title.blank? ? 'Tapjoy Games' : "#{@page_title} - Tapjoy Games"
     
     = stylesheet_link_tag("games/tapjoygames")
-    = stylesheet_link_tag("games/tjg.retina", :media => "only screen and (-webkit-min-device-pixel-ratio: 2)")
+    = stylesheet_link_tag("games/tjg.retina", :media => "(-webkit-min-device-pixel-ratio: 2)")
     = yield :page_head
     
   %body
@@ -109,7 +109,7 @@
 
     
     - if Rails.env.production?
-      = javascript_include_tag 'games/tjgames.min-1.22'
+      = javascript_include_tag 'games/tjgames.min-1.23'
     - else
       = javascript_include_tag 'games/src/tjg.jquery-1.6.2.min'
       = javascript_include_tag 'games/src/init'
@@ -120,7 +120,11 @@
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
       = yield :page_javascript
     
-    - if Rails.env.production?  
+    :javascript
+      TJG.path =  "#{games_root_path}";
+      TJG.blank_img = "#{CLOUDFRONT_URL}/images/blank.png";
+    
+    - if Rails.env.production?
       :javascript
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', 'UA-25098478-1']);

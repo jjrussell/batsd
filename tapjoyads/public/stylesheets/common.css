@@ -41,7 +41,7 @@ a:hover { text-decoration: underline; }
 #about_tapjoy { float: left; }
 #about_tapjoy ul { border-left: 2px solid #44a7d0; float: left; margin: 10px 22px 0 0; padding-left: 10px; }
 #about_tapjoy ul li { margin-bottom: 10px; }
-#about_tapjoy ul li.last { margin-bottom: 0px; }
+#about_tapjoy ul li:last-child { margin-bottom: 0px; }
 #about_tapjoy a { color: #fff; text-decoration: none; }
 #about_tapjoy a:hover { text-decoration: underline; }
 #legal_stuff { float: left; margin-left: 50px; }
