@@ -18,7 +18,7 @@ class GamerDevice < ActiveRecord::Base
     'iPad2,2'    => 'iPad 2 3G',
     'iPad2,3'    => 'iPad 2 3G',
   }
-  PRODUCT_NAMES.default = 'Unknown Device'
+  PRODUCT_NAMES.default = 'My Device'
   
   belongs_to :gamer
   
