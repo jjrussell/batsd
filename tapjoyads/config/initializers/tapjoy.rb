@@ -36,4 +36,6 @@ Mc.cache.flush if CLEAR_MEMCACHE
 AWS.config(
   :access_key_id     => ENV['AWS_ACCESS_KEY_ID'],
   :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY']
-)
+)  
+
+GAMES_CONFIG = YAML::load_file("#{RAILS_ROOT}/config/games.yaml")[Rails.env]
