@@ -169,9 +169,7 @@ TJG.ui = {
   
   resizeDialogs: function () {
     $.each($(".dialog_wrapper"), function() {
-      var h = $(this).outerHeight();
-      var c = $(this).children('.   ');
-      c.css("height", h - 4 + "px");
+      $(this).find('.dialog').css("height", $(this).outerHeight() - 4 + "px");
     });
   },
   
@@ -245,11 +243,15 @@ TJG.ui = {
     else {
       path = location.pathname.replace(/\/$/, '');
     }
-    TJG.repositionDialog = ["#sign_up_dialog"];
+    $("#sign_up_dialog_content").parent().css("height", "270px");
     $("#sign_up_dialog_content").html($('#sign_up_dialog_content_placeholder').html());
-    $(".close_dialog").show();
-    $("#sign_up_dialog_content").parent().animate({ height: "290px", }, animateSpd);
-    $("#sign_up_dialog").fadeIn();
+    setTimeout(function() {
+      TJG.utils.centerDialog("#sign_up_dialog");
+      TJG.repositionDialog = ["#sign_up_dialog"];
+      $(".close_dialog").show();
+      $("#sign_up_dialog").fadeIn();
+    }, 50);
+
     $('form#new_gamer').submit(function(e){
       e.preventDefault();
       var rurl, inputs, values = {}, data, hasError = false, emailReg;
@@ -345,18 +347,9 @@ TJG.ui = {
               else if (d.link_device_url) {
                 $('.close_dialog,.continue_link_device').click(function(){
                   $('.close_dialog').unbind('click');
-                  
-                  /*
-                  msg = [
-                    '<div id="link_device" class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Link Device</div></div>',
-                    '<div class="dialog_header">The final step is to link your device to your Tapjoy Games account.  Please continue and click install on the next screen.</div>',
-                    '<div class="dialog_content"><div class="link_device_url"><div class="button grey dialog_button">Link Device</div></div></div>'
-                  ].join('');
-                  */
-                  //$("#sign_up_dialog_content").parent().animate({ height: "170px", }, animateSpd);
-                  less_pad
-                  $("#sign_up_dialog_content").addClass("less_pad");
                   $("#sign_up_dialog_content").html($("#link_device_dialog").html());
+                  $("#sign_up_dialog_content .dialog_header_wrapper").css("padding", "6px 12px");
+                  $("#sign_up_dialog_content").parent().animate({ height: "300px", }, animateSpd);
                   $('.close_dialog,.link_device_url').click(function(){
                     document.location.href = d.link_device_url;
                   });
@@ -387,7 +380,6 @@ TJG.ui = {
             }
             $('#sign_up_again').click(function(){
               TJG.ui.showRegister();
-              $("#sign_up_dialog_content").parent().animate({ height: "290px", }, animateSpd);
             });
           },
           error: function() {
@@ -400,7 +392,6 @@ TJG.ui = {
             $("#sign_up_dialog_content").html(msg);
             $('#sign_up_again').click(function(){
                TJG.ui.showRegister();
-              $("#sign_up_dialog_content").parent().animate({ height: "290px", }, animateSpd);
             });
           }
         });
@@ -950,9 +941,7 @@ TJG.ui = {
 
       removeLoader : function () {
         TJG.ui.hideLoader(250,function(){
-           $('#jqt').fadeTo(250,1,function(){
-             TJG.ui.resizeDialogs();
-           });
+           $('#jqt').fadeTo(250,1);
         });
       },
 
@@ -962,8 +951,6 @@ TJG.ui = {
           TJG.repositionDialog = [];
         });
         $('#sign_up, #sign_up_form').click(function() {
-            TJG.utils.centerDialog("#sign_up_dialog");
-            TJG.repositionDialog = ["#sign_up_dialog"];
             TJG.ui.showRegister();
         });
         $('#how_works').click(function(){

@@ -88,8 +88,8 @@ a, a:visited {
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
 }
-.dialog_content, .dialog_header {
-  padding: 0 12px;
+.dialog_content {
+  padding: 6px 12px;
 }
 .dialog_content a, .dialog_content a:visited {
   color: #C1C1C1;
@@ -132,6 +132,9 @@ a, a:visited {
 #link_device_dialog .dialog_header_wrapper {
   padding: 6px 12px;
 }
+#link_device_dialog .dialog {
+  height: 290px;
+}
 #bad_news.dialog_wrapper .dialog {
   height: 120px;
 } 
@@ -142,6 +145,7 @@ a, a:visited {
   height: 150px;
 }
 #sign_up_dialog .dialog {
+  padding-bottom: 6px;
 }
 #how_works_dialog .dialog, #linked_device .dialog {
   height: 180px;
@@ -177,10 +181,10 @@ a, a:visited {
   width: 50px;
 }         
 .dialog_header_wrapper {
-  padding: 0 36px;
+  padding: 2px 36px;
 }
-.dialog_header_wrapper.less_pad {
-  padding: 0 16px;
+.dialog_header_wrapper .less_pad {
+  padding: 2px 16px;
 }
 .dialog_header_left {
   float: left;
@@ -192,7 +196,7 @@ a, a:visited {
 }
 .dialog_header {
   font-size: 14px;
-  margin: 6px 0; 
+  margin: 6px; 
 }
 .dialog_header div {
   margin: 6px 0;
