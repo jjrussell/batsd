@@ -1398,7 +1398,7 @@ input.button {
   margin: 0 auto;
   width: 100px;
 }
-.message_content .button.grey.arrow {link_device_btn
+.message_content .button.grey.arrow {
   color: #2778A1;
 }
 .message_content:hover .button.grey.arrow, .message_content:active .button.grey.arrow {
