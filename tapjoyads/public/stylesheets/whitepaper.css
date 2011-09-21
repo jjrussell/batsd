@@ -12,7 +12,7 @@ p { clear: both; margin-top: 30px; line-height: 24px; }
 #form .container { float: left; width: 300px; margin-bottom: 20px; }
 #form .even { margin-left: 36px; }
 #form label { font-weight: bold; font-size: 16px; float: left; margin-bottom: 10px; }
-#form input[type=text] { clear: left; float: left; height: 36px; padding-left: 10px; border: none; width: 290px; }
+#form input[type=text], #form input[type=email] { clear: left; float: left; height: 36px; padding-left: 10px; border: none; width: 290px; }
 .free { font-size: 12px; }
 #submit { border: none; background: url('/images/submit_sprite.png'); height: 36px; width: 80px; float: right; margin-top: 15px; }
 #submit:hover { background-position: -80px 0; }
