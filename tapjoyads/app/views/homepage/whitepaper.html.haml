@@ -2,48 +2,36 @@
 - content_for :page_head, stylesheet_link_tag('whitepaper', 'facebox')
 #whitepaper
   #right
-    %img{:src => "/images/whitepaper1.jpg", :id => "whitepaper1"}
-    %img{:src => "/images/whitepaper2.jpg", :id => "whitepaper2"}
-  #left 
+    = image_tag('whitepaper1.jpg', :id => "whitepaper1")
+    = image_tag('whitepaper2.jpg', :id => "whitepaper2")
+  #left
     = image_tag('whitepaper_header.png', :class => 'header')
     %p
-      %b Mobile Advertising & ROI: Bests Practices for Performance-Based Mobile Advertising
+      %b Mobile Advertising &amp; ROI: Bests Practices for Performance-Based Mobile Advertising
       %br August 2011
-    %p
-      Smartphones, tablets and other mobile devices have significantly altered the way people consume and interact with their favorite media, presenting an enormous opportunity for advertisers to connect with their targeted audiences in new and powerful ways. This white paper helps advertisers understand how to take advantage of this phenomenon by looking at the current best practices for running high-impact, results-driven mobile advertising campaigns. In it you will learn:
+    %p Smartphones, tablets and other mobile devices have significantly altered the way people consume and interact with their favorite media, presenting an enormous opportunity for advertisers to connect with their targeted audiences in new and powerful ways. This white paper helps advertisers understand how to take advantage of this phenomenon by looking at the current best practices for running high-impact, results-driven mobile advertising campaigns. In it you will learn:
     %ul
-      %li
-        Why advertise on mobile platforms
-      %li
-        What are the common challenges in mobile advertising
-      %li
-        How to drive customer engagements
-      %li
-        What types of campaigns to run on mobile
-      %li
-        How to optimize your site and creative for mobile
+      %li Why advertise on mobile platforms
+      %li What are the common challenges in mobile advertising
+      %li How to drive customer engagements
+      %li What types of campaigns to run on mobile
+      %li How to optimize your site and creative for mobile
     #form
       .container
-        %label
-          First name
+        %label First name
         %input{:type => "text"}
       .container.even
-        %label
-          Last name
+        %label Last name
         %input{:type => "text"}
       .container
-        %label
-          Company name
+        %label Company name
         %input{:type => "text"}
       .container.even
-        %label
-          Email address
+        %label Email address
         %input{:type => "text"}
-      %span.free
-        The link to your FREE white paper will be sent to the email address provided
+      %span.free The link to your FREE white paper will be sent to the email address provided
       .container.checkbox
         %input{:type => "checkbox"}
-        %label
-          Please let me know about future white papers in this series
+        %label Please let me know about future white papers in this series
       = submit_tag('', :id => 'submit')
 .clear
