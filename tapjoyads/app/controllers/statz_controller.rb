@@ -62,6 +62,12 @@ class StatzController < WebsiteController
         redirect_to statz_path(@offer)
       end
     rescue
+      # reset cache -- TODO: make acts_as_cacheable transaction-safe, if possible
+      Offer.find(@offer.id).cache
+      if @offer.item_type == 'App'
+        App.find(@offer.item_id).cache
+      end
+      
       flash.now[:error] = "Errors encountered, please see messages below"
       render :action => :edit
     end
