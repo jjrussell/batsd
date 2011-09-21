@@ -23,7 +23,8 @@ class GetOffersController < ApplicationController
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
-      @test_offers = [ build_test_offer(@publisher_app) , build_test_video_offer(@publisher_app).primary_offer ]
+      @test_offers = [ build_test_offer(@publisher_app) ]
+      @test_offers << build_test_video_offer(@publisher_app).primary_offer if params[:video_offer_ids].to_s.split(',').include? 'testvideoid'
     end
     
     set_geoip_data
