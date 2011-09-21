@@ -127,15 +127,16 @@
           .dialog
             .dialog_content
               %div{ :class => "#{key}" }= flash[key]
-
+    -#
+    -# Until this task is automated for production build, please run this task: $ rake javascript:games_minify
+    -# 
     
     - if Rails.env.production?
-      = javascript_include_tag 'games/tjgames.min-1.23'
+      = javascript_include_tag "games/#{GAMES_CONFIG['js_compile_out_file']}-#{GAMES_CONFIG['js_version']}"
     - else
-      = javascript_include_tag 'games/src/tjg.jquery-1.6.2.min'
-      = javascript_include_tag 'games/src/init'
-      = javascript_include_tag 'games/src/jqtouch'
-      = javascript_include_tag 'games/src/tapjoygames'
+      - files = GAMES_CONFIG['js_files']
+      - files.each do |f|
+        = javascript_include_tag "games/src/#{f}" 
     
     = yield :included_javascripts
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
