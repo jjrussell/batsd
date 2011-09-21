@@ -5,8 +5,17 @@
 - content_for :page_styles do
   :plain
     #currencies {
+  
+  - if params[:library_version] == '8.1.0'
+    :plain
+      margin: 4px 3%;
+      font-size: 100%;
+  - else
+    :plain
       margin: 10px 3%;
       font-size: 90%;
+  
+  :plain
       font-weight: bold;
       text-align: center;
     }
@@ -17,7 +26,14 @@
       border-right: 0;
       background: -moz-linear-gradient(top, #fff, #ccc);
       background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ccc));
-      color: #004E09;
+      color: #{params[:library_version] == '8.1.0' ? '#0F4EB6' : '#004E09'};
+      
+  -if params[:library_version] == '8.1.0'
+    :plain
+      text-decoration: none;
+      font-size: 15px;
+  
+  :plain
     }
     #currencies span:first-child a {
       -moz-border-radius: 5px 0 0 5px;
@@ -29,7 +45,16 @@
       -webkit-border-radius: 0 5px 5px 0;
     }
     #currencies a.current {
+  
+  - if params[:library_version] == '8.1.0'
+    :plain
+      background: -moz-linear-gradient(top, rgb(83, 121, 184), #0F4EB6);
+      background: -webkit-gradient(linear, left top, left bottom, from(rgb(83, 121, 184)), to(#0F4EB6));
+  - else
+    :plain
       background: -moz-linear-gradient(top, rgb(0, 136, 16), #004E09);
       background: -webkit-gradient(linear, left top, left bottom, from(rgb(0, 136, 16)), to(#004E09));
+    
+  :plain
       color: #fff;
     }

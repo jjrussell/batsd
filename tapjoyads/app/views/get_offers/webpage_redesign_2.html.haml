@@ -5,13 +5,13 @@
   #top_box
     .explanation= @message
 
-- if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
-  = render :partial => 'currency_selector'
-
-- if @currency.conversion_rate > 0
+- if @currency.conversion_rate > 0 || (params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1)
   #top_box
     .explanation
-      = t('text.offerwall.redesign_instructions', :currency => @currency.name)
+      - if @currency.conversion_rate > 0
+        = t('text.offerwall.redesign_instructions', :currency => @currency.name)
+      - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
+        = render :partial => 'currency_selector'
 
 - if @start_index > 0
   = render :partial => 'pagination_links'
