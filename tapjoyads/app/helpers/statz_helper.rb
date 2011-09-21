@@ -54,7 +54,7 @@ module StatzHelper
           ["false", "nonrewarded"],
         ]
       when :offer_type
-        %w(App ActionOffer GenericOffer)
+        %w(App ActionOffer GenericOffer VideoOffer)
       end
     options.unshift([ '-', '' ])
   end
