@@ -164,6 +164,14 @@ TJG.ui = {
     });
   },
   
+  resizeDialogs: function () {
+    $.each($(".dialog_wrapper"), function() {
+      var h = $(this).outerHeight();
+      var c = $(this).children('.   ');
+      c.css("height", h - 4 + "px");
+    });
+  },
+  
   removeDialogs : function (delay) {
     delay = $.utils.or(delay, "fast");
     setTimeout(function() {
@@ -287,11 +295,11 @@ TJG.ui = {
       }
       else if (hasError != true) {
         var loader = [
-          '<div id="dialog_title title_2">Registering</div>',
+          '<div class="dialog_title title_2">Registering</div>',
           '<div class="dialog_image"></div>'
         ].join('');
         $("#sign_up_dialog_content").html(loader);
-        $("#sign_up_dialog_content").parent().animate({ height: "120px", }, animateSpd);
+        $("#sign_up_dialog_content").parent().animate({ height: "100px", }, animateSpd);
         $.ajax({
           type: 'POST',
           url: rurl,
@@ -314,9 +322,9 @@ TJG.ui = {
               hasLinked = false;
               msg = [
                 '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Success!</div></div>',
-                '<div class="dialog_header">Your Tapjoy Games account was sucessfully created</div>',
+                '<div class="dialog_header">Your Tapjoy Games account was sucessfully created!</div>',
                '<div class="dialog_content">A confirmation email has been sent to the address you entered.  Please follow the registration in the email to verify your address and complete the account registration. :)</div>',
-               '<div class="dialog_content"><div class="continue_link_device"><div class="button dialog_button">Continue</div></div></div>'
+               '<div class="dialog_content"><div class="continue_link_device"><div class="button grey dialog_button">Continue</div></div></div>'
               ].join('');
               $('.close_dialog').unbind('click');
               $("#sign_up_dialog_content").parent().animate({ height: "230px", }, animateSpd);
@@ -334,13 +342,18 @@ TJG.ui = {
               else if (d.link_device_url) {
                 $('.close_dialog,.continue_link_device').click(function(){
                   $('.close_dialog').unbind('click');
+                  
+                  /*
                   msg = [
                     '<div id="link_device" class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Link Device</div></div>',
                     '<div class="dialog_header">The final step is to link your device to your Tapjoy Games account.  Please continue and click install on the next screen.</div>',
-                    '<div class="dialog_content"><div class="link_device_url"><div class="button dialog_button">Link Device</div></div></div>'
+                    '<div class="dialog_content"><div class="link_device_url"><div class="button grey dialog_button">Link Device</div></div></div>'
                   ].join('');
-                  $("#sign_up_dialog_content").parent().animate({ height: "170px", }, animateSpd);
-                  $("#sign_up_dialog_content").html(msg);
+                  */
+                  //$("#sign_up_dialog_content").parent().animate({ height: "170px", }, animateSpd);
+                  less_pad
+                  $("#sign_up_dialog_content").addClass("less_pad");
+                  $("#sign_up_dialog_content").html($("#link_device_dialog").html());
                   $('.close_dialog,.link_device_url').click(function(){
                     document.location.href = d.link_device_url;
                   });
@@ -364,7 +377,7 @@ TJG.ui = {
               }
               msg = [
                 '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
-                '<div class="dialog_content">', error ,'. <span id="sign_up_again"><a href="#">Please click here to try again.</a></span></div>',
+                '<div class="dialog_content"><div>', error ,'.</div> <div id="sign_up_again"><div class="button grey dialog_button">Try Again</div></div></div>',
               ].join('');
               $("#sign_up_dialog_content").html(msg);
               $(".close_dialog").hide();
@@ -378,7 +391,7 @@ TJG.ui = {
             var error = 'There was an issue'; 
             msg = [
               '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
-              '<div class="dialog_content">', error ,'. <span id="sign_up_again"><a href="#">Please click here to try again.</a></span></div>',
+              '<div class="dialog_content"><div>', error ,'.</div><div id="sign_up_again"><div class="button grey dialog_button">Try Again</div></div></div>',
             ].join('');
             $(".close_dialog").hide(); 
             $("#sign_up_dialog_content").html(msg);
@@ -906,7 +919,9 @@ TJG.ui = {
 
       removeLoader : function () {
         TJG.ui.hideLoader(250,function(){
-           $('#jqt').fadeTo(250,1);
+           $('#jqt').fadeTo(250,1,function(){
+             TJG.ui.resizeDialogs();
+           });
         });
       },
 
@@ -918,7 +933,7 @@ TJG.ui = {
         $('#sign_up, #sign_up_form').click(function() {
             TJG.utils.centerDialog("#sign_up_dialog");
             TJG.repositionDialog = ["#sign_up_dialog"];
-            TJG.ui.showRegister();  
+            TJG.ui.showRegister();
         });
         $('#how_works').click(function(){
           TJG.utils.centerDialog("#how_works_dialog");
@@ -934,8 +949,13 @@ TJG.ui = {
           $("#my_account_dialog").fadeOut(350, function() {
             TJG.utils.centerDialog("#my_account_dialog_content");
             TJG.repositionDialog = ["#my_account_dialog_content"];
-            $("#my_account_dialog_content").fadeIn(350);     
+            $("#my_account_dialog_content").fadeIn(350);
           });
+        });
+        $('#link_device').click(function(){
+          TJG.utils.centerDialog("#link_device_dialog");
+          TJG.repositionDialog = ["#link_device_dialog"];
+          $("#link_device_dialog").fadeIn(350);
         });
         $('.feat_toggle').click(function(){
           if ($(this).hasClass('collaspe')) {
@@ -962,7 +982,7 @@ TJG.ui = {
       }
     };
 
-    TJG.init = function() {  
+    TJG.init = function() {
       if (TJG.vars.isIos) {
         TJG.utils.hideURLBar();
       }
