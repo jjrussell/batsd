@@ -17,6 +17,9 @@ class GamerDevice < ActiveRecord::Base
     'iPad2,1'    => 'iPad 2 Wi-Fi',
     'iPad2,2'    => 'iPad 2 3G',
     'iPad2,3'    => 'iPad 2 3G',
+    'iPhone'     => 'iPhone',
+    'iPad'       => 'iPad',
+    'iPod'       => 'iPod Touch'
   }
   PRODUCT_NAMES.default = 'My Device'
   
