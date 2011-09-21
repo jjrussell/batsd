@@ -198,7 +198,7 @@
           = label_tag(:app_store_url, 'Store URL')
           #help_app_store_url.help ?
         %td
-          = text_field_tag(:app_store_url, @offer.item.store_url(true), :class => (use_raw_url ? '' : 'hidden'))
+          = text_field_tag(:app_store_url, @offer.item.read_attribute(:store_url), :class => (use_raw_url ? '' : 'hidden'))
           %span{:id => 'app_direct_store_url', :class => (use_raw_url ? 'hidden' : '')}
             = h(@offer.item.direct_store_url)
           
