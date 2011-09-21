@@ -167,12 +167,6 @@ TJG.ui = {
     });
   },
   
-  resizeDialogs: function () {
-    $.each($(".dialog_wrapper"), function() {
-      $(this).find('.dialog').css("height", $(this).outerHeight() - 4 + "px");
-    });
-  },
-  
   removeDialogs : function (delay) {
     delay = $.utils.or(delay, "fast");
     setTimeout(function() {
