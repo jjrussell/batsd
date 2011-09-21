@@ -40,7 +40,7 @@ class GetOffersController < ApplicationController
   def featured
     set_geoip_data
     if @currency.get_test_device_ids.include?(params[:udid])
-      @offer_list = [ build_test_offer(@publisher_app), build_test_video_offer(@publisher_app).primary_offer ]
+      @offer_list = [ build_test_offer(@publisher_app) ]
     else
       @offer_list = [ get_offer_list.weighted_rand ].compact
     end

@@ -74,9 +74,7 @@ class ClickController < ApplicationController
     publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @currency, publisher_app ])
     
-    unless @currency.get_test_device_ids.include?(params[:udid])
-      raise "not a test device"
-    end
+    raise "not a test device" unless @currency.get_test_device_ids.include?(params[:udid])
     
     @test_video_offer = build_test_video_offer(publisher_app)
     

@@ -204,13 +204,13 @@ private
     
     primary_offer                  = Offer.new
     primary_offer.id               = 'testvideoid'
+    primary_offer.item_id          = 'testvideoid'
     primary_offer.name             = 'Test Video Offer (Visible to Test Devices)'
     primary_offer.url              = 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4'
     primary_offer.reward_value     = 100
     primary_offer.third_party_data = ''
     
     test_video_offer.primary_offer           = primary_offer
-    test_video_offer.primary_offer.item_id   = 'testvideoid'
     test_video_offer.primary_offer.item_type = 'TestVideoOffer'
     test_video_offer
   end

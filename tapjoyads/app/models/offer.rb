@@ -662,7 +662,8 @@ class Offer < ActiveRecord::Base
   def is_valid_for?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
     (test_device?(currency, device) && 
       is_test_video_offer?(type) ) ||
-    (!(device_platform_mismatch?(Device.normalize_device_type(device_type)) ||
+    (!(is_test_video_offer?(type) ||
+      device_platform_mismatch?(Device.normalize_device_type(device_type)) ||
       geoip_reject?(geoip_data, device) ||
       already_complete?(publisher_app, device, app_version) ||
       flixter_reject?(publisher_app, device) ||
