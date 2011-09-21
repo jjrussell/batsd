@@ -660,7 +660,7 @@ class Offer < ActiveRecord::Base
   end
   
   def is_valid_for?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
-    (test_device?(currency, device) && 
+    (is_test_device?(currency, device) && 
       is_test_video_offer?(type) ) ||
     (!(is_test_video_offer?(type) ||
       device_platform_mismatch?(Device.normalize_device_type(device_type)) ||
@@ -998,7 +998,7 @@ private
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
   
-  def test_device?(currency, device)
+  def is_test_device?(currency, device)
     currency.get_test_device_ids.include?(device.id)
   end
   

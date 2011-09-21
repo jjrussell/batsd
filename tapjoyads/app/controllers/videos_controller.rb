@@ -21,7 +21,7 @@ private
     return unless verify_records([ publisher_app, @currency ])
     
     params[:publisher_app_id] = publisher_app.id
-        
+    
     @offer_list, @more_data_available = OfferList.new(
       :device             => device,
       :publisher_app      => publisher_app,
