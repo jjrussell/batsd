@@ -941,7 +941,7 @@ private
     min_bid = case type
     when DEFAULT_OFFER_TYPE
       currency.minimum_offerwall_bid
-    when FEATURED_OFFER_TYPE
+    when FEATURED_OFFER_TYPE || FEATURED_BACKFILLED_OFFER_TYPE
       currency.minimum_featured_bid
     when DISPLAY_OFFER_TYPE
       currency.minimum_display_bid
