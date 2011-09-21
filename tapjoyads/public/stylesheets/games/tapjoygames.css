@@ -1405,7 +1405,7 @@ input.button {
   color: #FFF;
 }
 .message_content .button.grey.arrow .arrow_bg {
-  background: transparent url('/images/games/button_right_arrow_mobile.png') no-repeat 2px right;
+  background: transparent url('/images/games/button_right_arrow.png') no-repeat 2px right;
   padding-right: 16px;
 }
 .message_content.find_games, .message_content.link_device {
@@ -1420,12 +1420,12 @@ input.button {
   display: block;
 }
 .link_device_image {
-  background: transparent url('/images/games/link_device_mobile.png') no-repeat center center;
+  background: transparent url('/images/games/link_device.png') no-repeat center center;
   height: 84px;
   width: 250px;
 }
 .link_device_install_icon {
-  background: transparent url('/images/games/install_device_mobile.png') no-repeat center center;
+  background: transparent url('/images/games/install_device.png') no-repeat center center;
   float: left;
   height: 16px;
   position: relative;
