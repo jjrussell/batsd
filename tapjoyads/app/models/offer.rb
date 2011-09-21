@@ -441,7 +441,7 @@ class Offer < ActiveRecord::Base
 
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
     
-    if item_type == 'VideoOffer'
+    if item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
       bucket = S3.bucket(BucketNames::TAPJOY)
       existing_icon_blob = bucket.get("icons/src/#{icon_id}.jpg") rescue ''
       size = '200'
@@ -660,7 +660,9 @@ class Offer < ActiveRecord::Base
   end
   
   def is_valid_for?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
-    !(device_platform_mismatch?(Device.normalize_device_type(device_type)) ||
+    (test_device?(currency, device) && 
+      is_test_video_offer?(type) ) ||
+    (!(device_platform_mismatch?(Device.normalize_device_type(device_type)) ||
       geoip_reject?(geoip_data, device) ||
       already_complete?(publisher_app, device, app_version) ||
       flixter_reject?(publisher_app, device) ||
@@ -678,9 +680,9 @@ class Offer < ActiveRecord::Base
       publisher_whitelist_reject?(publisher_app) ||
       currency_whitelist_reject?(currency) ||
       frequency_capping_reject?(device)) &&
-      accepting_clicks?
+      accepting_clicks?)
   end
-
+  
   def update_payment(force_update = false)
     if (force_update || bid_changed? || new_record?)
       if (item_type == 'App' || item_type == 'ActionOffer')
@@ -994,7 +996,15 @@ private
     return false if type == Offer::VIDEO_OFFER_TYPE
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
-
+  
+  def test_device?(currency, device)
+    currency.get_test_device_ids.include?(device.id)
+  end
+  
+  def is_test_video_offer?(type)
+    type == 'TestVideoOffer'
+  end
+  
   def cleanup_url
     self.url = url.gsub(" ", "%20")
   end
