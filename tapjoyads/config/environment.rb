@@ -117,6 +117,7 @@ Rails::Initializer.run do |config|
         Mc.reset_connection
         SimpledbResource.reset_connection
         Sqs.reset_connection
+        VerticaCluster.reset_connection
       end
     end
   end
