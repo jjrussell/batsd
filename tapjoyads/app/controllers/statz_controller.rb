@@ -48,17 +48,21 @@ class StatzController < WebsiteController
     log_activity(@offer)
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
     
-    if @offer.update_attributes(offer_params)
+    begin
+      ActiveRecord::Base.transaction do
+        @offer.update_attributes!(offer_params)
       
-      if @offer.item_type == 'App'
-        app = @offer.item
-        log_activity(app)
-        app.update_attributes({ :use_raw_url => params[:app_use_raw_url], :store_url => params[:app_store_url] })
+        if @offer.item_type == 'App'
+          app = @offer.item
+          log_activity(app)
+          app.update_attributes!({ :use_raw_url => params[:app_use_raw_url], :store_url => params[:app_store_url] })
+        end
+    
+        flash[:notice] = "Successfully updated #{@offer.name}"
+        redirect_to statz_path(@offer)
       end
-      
-      flash[:notice] = "Successfully updated #{@offer.name}"
-      redirect_to statz_path(@offer)
-    else
+    rescue
+      flash.now[:error] = "Errors encountered, please see messages below"
       render :action => :edit
     end
   end

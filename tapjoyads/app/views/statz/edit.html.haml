@@ -187,7 +187,7 @@
         %th= f.label(:third_party_data)
         %td= f.text_area(:third_party_data)
     - if @offer.item_type == 'App'
-      - use_raw_url = @offer.item.use_raw_url
+      - use_raw_url = @offer.item.use_raw_url?
       %tr
         %th
           = label_tag(:app_use_raw_url, 'Override Store URL')
@@ -198,7 +198,9 @@
           = label_tag(:app_store_url, 'Store URL')
           #help_app_store_url.help ?
         %td
-          = text_field_tag(:app_store_url, @offer.item.read_attribute(:store_url), :class => (use_raw_url ? '' : 'hidden'))
+          %span{:id => 'app_store_url_container', :class => (use_raw_url ? '' : 'hidden')}
+            = text_field_tag(:app_store_url, @offer.item.read_attribute(:store_url))
+            = error_message_on @offer.item, :store_url
           %span{:id => 'app_direct_store_url', :class => (use_raw_url ? 'hidden' : '')}
             = h(@offer.item.direct_store_url)
           
@@ -249,11 +251,12 @@
         $('#app_use_raw_url').click(function(){
           if(this.checked) {
             $('#app_direct_store_url')[0].className = 'hidden';
-            $('#app_store_url')[0].className = '';
+            $('#app_store_url_container')[0].className = '';
           } else {
-            $('#app_store_url')[0].className = 'hidden';
+            $('#app_store_url_container')[0].className = 'hidden';
             $('#app_direct_store_url')[0].className = '';
           }
+          return true;
         });
       })
 

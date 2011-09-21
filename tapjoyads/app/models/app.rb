@@ -78,6 +78,7 @@ class App < ActiveRecord::Base
   belongs_to :partner
 
   validates_presence_of :partner, :name, :secret_key
+  validates_presence_of :store_url, :if => lambda { |app| app.use_raw_url? }
   validates_inclusion_of :platform, :in => PLATFORMS.keys
 
   before_validation_on_create :generate_secret_key
