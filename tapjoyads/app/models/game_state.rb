@@ -7,7 +7,7 @@ class GameState < SimpledbShardedResource
   self.sdb_attr :udids, :force_array => true, :replace => false
   
   def dynamic_domain_name
-    domain_number = @key.hash % GameState.num_domains
+    domain_number = @key.matz_silly_hash % GameState.num_domains
     "game_states_#{domain_number}"
   end
 

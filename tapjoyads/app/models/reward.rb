@@ -32,7 +32,7 @@ class Reward < SimpledbShardedResource
   end
   
   def dynamic_domain_name
-    domain_number = @key.hash % NUM_REWARD_DOMAINS
+    domain_number = @key.matz_silly_hash % NUM_REWARD_DOMAINS
     
     return "rewards_#{domain_number}"
   end

@@ -290,6 +290,7 @@ class Offer < ActiveRecord::Base
     language_code         = options.delete(:language_code)         { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
     display_multiplier    = options.delete(:display_multiplier)    { 1 }
+    library_version       = options.delete(:library_version)       { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     data = {
@@ -300,7 +301,8 @@ class Offer < ActiveRecord::Base
       :itunes_link_affiliate => itunes_link_affiliate,
       :currency_id           => currency.id,
       :language_code         => language_code,
-      :display_multiplier    => display_multiplier
+      :display_multiplier    => display_multiplier,
+      :library_version       => library_version,
     }
 
     "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
@@ -312,18 +314,23 @@ class Offer < ActiveRecord::Base
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
     click_key             = options.delete(:click_key)             { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
+    library_version       = options.delete(:library_version)       { nil }
     options.delete(:language_code)
     options.delete(:display_multiplier)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
-    if item_type == 'App' && final_url =~ /^http:\/\/phobos\.apple\.com/
-      final_url += '&referrer=tapjoy'
-      
-      if itunes_link_affiliate == 'tradedoubler'
-        final_url += '&partnerId=2003&tduid=UK1800811'
-      else
-        final_url += '&partnerId=30&siteID=OxXMC6MRBt4'
+    if item_type == 'App'
+      if final_url =~ /^http:\/\/phobos\.apple\.com/
+        final_url += '&referrer=tapjoy'
+
+        if itunes_link_affiliate == 'tradedoubler'
+          final_url += '&partnerId=2003&tduid=UK1800811'
+        else
+          final_url += '&partnerId=30&siteID=OxXMC6MRBt4'
+        end
+      elsif library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
+        final_url.sub!('market://search?q=', 'http://market.android.com/details?id=')
       end
     elsif item_type == 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
@@ -360,6 +367,7 @@ class Offer < ActiveRecord::Base
     language_code      = options.delete(:language_code)      { nil }
     display_multiplier = options.delete(:display_multiplier) { 1 }
     device_name        = options.delete(:device_name)        { nil }
+    library_version    = options.delete(:library_version)    { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
@@ -395,6 +403,7 @@ class Offer < ActiveRecord::Base
       :language_code      => language_code,
       :display_multiplier => display_multiplier,
       :device_name        => device_name,
+      :library_version    => library_version,
     }
 
     "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"

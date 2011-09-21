@@ -15,7 +15,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :version
   
   def dynamic_domain_name
-    domain_number = @key.hash % NUM_DEVICES_DOMAINS
+    domain_number = @key.matz_silly_hash % NUM_DEVICES_DOMAINS
     "devices_#{domain_number}"
   end
   
