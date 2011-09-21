@@ -43,8 +43,7 @@ class GetOffersController < ApplicationController
     else
       @offer_list = [ get_offer_list.weighted_rand ].compact
       if @offer_list.empty?
-        params[:type] = Offer::FEATURED_BACKFILLED_OFFER_TYPE
-        @offer_list = [ get_offer_list.weighted_rand ].compact
+        @offer_list = [ get_offer_list(Offer::FEATURED_BACKFILLED_OFFER_TYPE).weighted_rand ].compact
       end
     end
     @more_data_available = 0
@@ -117,14 +116,14 @@ private
     @web_request.put('viewed_at', @now.to_f.to_s)
   end
   
-  def get_offer_list
+  def get_offer_list(type = nil)
     @offer_list = OfferList.new(
       :publisher_app        => @publisher_app,
       :device               => @device,
       :currency             => @currency,
       :device_type          => params[:device_type],
       :geoip_data           => @geoip_data,
-      :type                 => params[:type],
+      :type                 => type || params[:type],
       :app_version          => params[:app_version],
       :include_rating_offer => params[:rate_app_offer] != '0',
       :direct_pay_providers => params[:direct_pay_providers].to_s.split(','),
