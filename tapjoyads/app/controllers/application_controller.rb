@@ -197,18 +197,19 @@ private
   end
   
   def build_test_video_offer(publisher_app)
-    test_video_offer           = VideoOffer.new(:partner_id => publisher_app.id)
-    test_video_offer.id        = 'test_video_id'
-    test_video_offer.name      = 'Test Video Offer (Visible to Test Devices)'
-    test_video_offer.video_url = 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4'
+    test_video_offer = VideoOffer.new(
+      :id         => 'test_video_id',
+      :name       => 'Test Video Offer (Visible to Test Devices)',
+      :partner_id => publisher_app.partner_id,
+      :video_url  => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4')
     
-    primary_offer                  = Offer.new
-    primary_offer.id               = 'test_video_id'
-    primary_offer.item_id          = 'test_video_id'
-    primary_offer.name             = 'Test Video Offer (Visible to Test Devices)'
-    primary_offer.url              = 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4'
-    primary_offer.reward_value     = 100
-    primary_offer.third_party_data = ''
+    primary_offer = Offer.new(
+      :id               => 'test_video_id',
+      :item_id          => 'test_video_id',
+      :name             => 'Test Video Offer (Visible to Test Devices)',
+      :url              => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4',
+      :reward_value     => 100,
+      :third_party_data => '')
     
     test_video_offer.primary_offer           = primary_offer
     test_video_offer.primary_offer.item_type = 'TestVideoOffer'
