@@ -16,7 +16,7 @@ ANDROID_VG_SDK       = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyVirtualGoodsS
 ANDROID_UNITY_PLUGIN = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyUnityPlugin_Android_v8.1.0.zip'
 
 IPHONE_CONNECT_SDK  = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectSDK_iOS_v8.1.1.zip'
-IPHONE_OFFERS_SDK   = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectOffersSDK_iOS_v8.1.1.zip'
+IPHONE_OFFERS_SDK   = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectPublisherSDK_iOS_v8.1.1.zip'
 IPHONE_VG_SDK       = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectVirtualGoodsSDK_iOS_v8.1.1.zip'
 IPHONE_UNITY_PLUGIN = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectUnityPluginSample_8.1.1.zip'
 
