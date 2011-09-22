@@ -77,6 +77,20 @@ class TapjoyMailer < ActionMailer::Base
     body(:info => info)
   end
 
+  def whitepaper_request(info)
+    from 'support@tapjoy.com'
+    if Rails.env == 'development'
+      recipients "hwanjoon@tapjoy.com"
+    else
+      recipients "sunny.cha@tapjoy.com, raghu.nayani@tapjoy.com"
+    end
+    content_type 'text/html'
+    subject_text = "Whitepaper request from #{info[:name]}"
+    subject_text += " at #{info[:company]}" if info[:company].present?
+    subject subject_text
+    body(:info => info)
+  end
+
   def advertiser_application(info)
     from 'support@tapjoy.com'
     if Rails.env == 'development'

@@ -22,3 +22,5 @@ p { clear: both; margin-top: 30px; line-height: 24px; }
 #form .checkbox label { font-weight: normal; font-size: 13px; }
 
 #whitepaper1 { margin: 50px 0 15px 5px; }
+#flash_error { color: red; }
+#flash_message { color: green; }

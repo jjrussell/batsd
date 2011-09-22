@@ -17,22 +17,22 @@
       %li What types of campaigns to run on mobile
       %li How to optimize your site and creative for mobile
     #form
-      - form_for '/' do
+      - form_tag '/site/whitepaper' do
         .container
-          = label_tag :first_name
-          = text_field_tag :first_name
+          = label_tag 'info[first_name]', 'First name'
+          = text_field_tag 'info[first_name]', params[:info] ? params[:info][:first_name] : ''
         .container.even
-          = label_tag :last_name
-          = text_field_tag :last_name
+          = label_tag 'info[last_name]', 'Last name'
+          = text_field_tag 'info[last_name]', params[:info] ? params[:info][:last_name] : ''
         .container
-          = label_tag :company_name
-          = text_field_tag :company_name
+          = label_tag 'info[company]', 'Company name'
+          = text_field_tag 'info[company]', params[:info] ? params[:info][:company] : ''
         .container.even
-          = label_tag :email_address
-          = email_field_tag :email_address
+          = label_tag 'info[email]', 'Email address'
+          = email_field_tag 'info[email]', params[:info] ? params[:info][:email] : ''
         %span.free The link to your FREE white paper will be sent to the email address provided
         .container.checkbox
-          = check_box_tag :future
-          = label_tag :future, 'Please let me know about future white papers in this series'
+          = check_box_tag 'info[future]'
+          = label_tag 'info[future]', 'Please let me know about future white papers in this series'
         = submit_tag('', :id => 'submit')
 .clear
