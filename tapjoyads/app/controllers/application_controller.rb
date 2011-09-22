@@ -204,12 +204,12 @@ private
       :video_url  => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4')
     
     primary_offer = Offer.new(
-      :id               => 'test_video_id',
       :item_id          => 'test_video_id',
       :name             => 'Test Video Offer (Visible to Test Devices)',
       :url              => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4',
       :reward_value     => 100,
       :third_party_data => '')
+    primary_offer.id = 'test_video_id'
     
     test_video_offer.primary_offer           = primary_offer
     test_video_offer.primary_offer.item_type = 'TestVideoOffer'
