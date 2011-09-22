@@ -33,6 +33,7 @@ ActionController::Routing::Routes.draw do |map|
   map.root :controller => :homepage, :action => 'start'
   map.connect 'site/:action', :controller => 'homepage'
   map.connect 'index.html', :controller => 'homepage', :action => 'index'
+  map.connect 'site/advertisers/whitepaper', :controller => 'homepage', :action => 'whitepaper'
 
   # Login and registration routes
   map.register 'register', :controller => :sign_up, :action => :new

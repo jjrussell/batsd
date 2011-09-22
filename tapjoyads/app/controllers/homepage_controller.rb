@@ -76,4 +76,19 @@ class HomepageController < WebsiteController
   def advertiser_contact
     render :layout => false
   end
+
+  def whitepaper
+    if params[:info]
+      if params[:info][:email].present?
+        if params[:info][:email] =~ Authlogic::Regex.email
+          TapjoyMailer.deliver_whitepaper_request(params[:info])
+          flash.now[:message] = 'Success!'
+        else
+          flash.now[:error] = 'Invalid email address.'
+        end
+      else
+        flash.now[:error] = 'Email address is required.'
+      end
+    end
+  end
 end
