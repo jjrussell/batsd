@@ -20,7 +20,7 @@ private
     @publisher_app = App.find_in_cache(params[:app_id])
     @currency = Currency.find_in_cache(params[:currency_id])
     @currency = nil if @currency.present? && @currency.app_id != params[:app_id]
-    if params[:offer_id] == 'testvideoid'
+    if params[:offer_id] == 'test_video_id'
       @offer = build_test_video_offer(@publisher_app).primary_offer
     else
       @offer = Offer.find_in_cache(params[:offer_id])
