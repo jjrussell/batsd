@@ -13,12 +13,12 @@
         p img { float: left; margin: 0 10px 5px 0; padding: 0; }
         img { border: 0; max-width: 100%; }
         table { width:auto; border-collapse: collapse;border-spacing: 0; }
-        #top_box { margin: 0px; width: 100%; padding-bottom: 1px; }
+        #top_box { margin: 0px; width: 100%; padding-bottom: 6px; }
         #top_box, #bottom_box { background: -moz-linear-gradient(center top, #F0F0F0, #7F7F7F 98%, #4C4C4C 99%) repeat scroll 0 0 transparent; }
-        #top_box, #bottom_box { background: -webkit-linear-gradient(top, #F0F0F0, #7F7F7F 98%, #4C4C4C 99%) repeat scroll 0 0 transparent; }
+        #top_box, #bottom_box { background: -webkit-gradient(linear, left top, left bottom, from(#F0F0F0), to(#7F7F7F)); }
         
-        .explanation { color: 4f4f4f; clear: both; font-size: 14px; font-weight: bold; margin: 0; padding: 6px 0 0 0; text-align: center; width: 100%; }
-        #bottom_box { float: left; background-position: 0 -60px; cursor:pointer; height: 60px; margin: 0px; width: 100%; }
+        .explanation { color: 4f4f4f; font-size: 14px; font-weight: bold; margin: 0; padding: 6px 0 0 0; text-align: center; width: 100%; }
+        #bottom_box { cursor:pointer; margin: 0px; width: 100%; }
         #plus { background: url('/images/offerwall_redesign_2/plus.png'); }
         #plus { float: left; margin: 13px 0 0 10px; width: 37px; height: 37px; }
         #load_more { color: #fff; font-size: 16px; font-weight: bold; float: left; margin-left: 6px; margin-top: 21px; text-decoration: none; text-shadow: 1px 1px 2px #3a3a3a; }
@@ -52,7 +52,7 @@
         #footer { margin: 0px auto; margin-top: 20px; text-align: center; width: 100%; }
         #footer a, #footer span { color: #fff; font-size: 13px; text-decoration: none; }
         #footer #logo { background: transparent url(data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAA3AAD/4QNvaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjAtYzA2MCA2MS4xMzQ3NzcsIDIwMTAvMDIvMTItMTc6MzI6MDAgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6RjU0MTJDMDQ0NjIwNjgxMTg4QzY5REY4NzgyN0E2N0YiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6Q0MyNEMyMzRDNjRCMTFFMEI2RTVDRjk5QkNBNDIzRTYiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6Q0MyNEMyMzNDNjRCMTFFMEI2RTVDRjk5QkNBNDIzRTYiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpERkY3REI2MThBMjA2ODExOTJCMEI0OTI2QkZFQkU2RSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpGNTQxMkMwNDQ2MjA2ODExODhDNjlERjg3ODI3QTY3RiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pv/uAA5BZG9iZQBkwAAAAAH/2wCEAAcFBQUFBQcFBQcKBwYHCgwJBwcJDA4LCwwLCw4RDAwMDAwMEQ4QEREREA4VFRcXFRUfHx8fHyMjIyMjIyMjIyMBCAgIDg0OGxISGx4YFBgeIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjI//AABEIAAwAJAMBEQACEQEDEQH/xACCAAADAQAAAAAAAAAAAAAAAAADBQYCAQEAAwEAAAAAAAAAAAAAAAADAQIEBRAAAAMHAQUFCQAAAAAAAAAAAgMEARESExQFFQAhMUEiFmEygiMGgUJSkjM0RCUXEQAABQIEBgMBAAAAAAAAAAAAARECEmEDITGBIvBBUaHhE3GxBBT/2gAMAwEAAhEDEQA/AGlqvg7mcC8G3FXbLa20G3YxCw2aQUaBWJMWSEoIAvIa5jIHbtj+OuhaInWy2kqoOTeM23T3OSMu/wBBQG2+nzT/AD7Na0qhtzJt9WeUYWmCUcWI5ppqYKgQGCY1zXx7m6n+VmeOSiC/bcyNC3IvBgpNySWu2EkobYXj1Se9qLggTGHBSq2pywkgMAGJrZeyJjGtbDtaF2ifYJpmXwGt/pc4iM66hcFFYZC1QZZrSuJtxNuVK1KBh4CwplgmTyWBYeLzyonsHv2NezVPU0KV91DRASm9F0s7ApqiXkaZ578JVSIvqPqZfmxfDw1SBSThQnsdCXCBFYf6jiE+BqMXAKR9vDIjbFHO5pEyJ8fJoylyUK6C4p4FrYczjA9cw11e3AxUsifSigrZXJI3Q8fZrRa9iOTpXsMl70q1cl5Imo1dK+Eqgq+usMGkdLx0qAurxsnkj70T+R8XZqjpRx8hWwnhp00ALLm+lr11vU4WYVMwdH3YBzaik5Je6P33u7dQyS1qLXIxpQR/7j+jfjv8dBiab55NF4vFo8VqE2xog//Z) no-repeat; } 
-        #footer #logo { display: inline; padding-right: 36px; width: 36px; height: 12px; margin: 0 0 0 2px; vertical-align: -4px; }
+        #footer #logo { display: inline; padding-right: 36px; width: 36px; height: 12px; margin: 0 0 0 2px; vertical-align: -6px; }
         
         .pagination a { color: #505050; font-size: 120%; font-weight: bold; display: block; }
         .pagination .prev { float: left; }
