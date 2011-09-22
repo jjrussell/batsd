@@ -6,12 +6,11 @@ class EmailSignupTest < ActiveSupport::TestCase
     setup do
      @email_signup = Factory(:email_signup)
      @email_address = @email_signup.email_address
-     sleep 0.5
     end
     
     should "be correctly found when searched by dynamic finder attribute methods" do
-      assert_equal @email_signup, EmailSignup.find_by_email_address(@email_address)
-      assert_equal @email_signup, EmailSignup.find_all_by_email_address(@email_address).first
+      assert_equal @email_signup, EmailSignup.find_by_email_address(@email_address, :consistent => true)
+      assert_equal @email_signup, EmailSignup.find_all_by_email_address(@email_address, :consistent => true).first
     end
     
     should "raise errors when dynamic finder attributes are not matched" do
