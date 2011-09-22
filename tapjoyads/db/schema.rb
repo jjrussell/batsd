@@ -276,13 +276,18 @@ ActiveRecord::Schema.define(:version => 20110914201513) do
   add_index "enable_offer_requests", ["offer_id"], :name => "index_enable_offer_requests_on_offer_id"
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
 
-<<<<<<< HEAD
   create_table "gamer_devices", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
     t.string   "gamer_id",   :limit => 36, :null => false
     t.string   "device_id",  :limit => 36, :null => false
     t.string   "name",                     :null => false
-=======
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "gamer_devices", ["device_id"], :name => "index_gamer_devices_on_device_id"
+  add_index "gamer_devices", ["gamer_id"], :name => "index_gamer_devices_on_gamer_id"
+
   create_table "gamer_profiles", :id => false, :force => true do |t|
     t.string   "id",            :limit => 36, :null => false
     t.string   "gamer_id",      :limit => 36, :null => false
@@ -293,18 +298,12 @@ ActiveRecord::Schema.define(:version => 20110914201513) do
     t.string   "city"
     t.string   "country"
     t.string   "favorite_game"
->>>>>>> 353c91868dee4e5191cf5c974895aa04c08f6560
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-<<<<<<< HEAD
-  add_index "gamer_devices", ["device_id"], :name => "index_gamer_devices_on_device_id"
-  add_index "gamer_devices", ["gamer_id"], :name => "index_gamer_devices_on_gamer_id"
-=======
   add_index "gamer_profiles", ["gamer_id"], :name => "index_gamer_profiles_on_gamer_id", :unique => true
   add_index "gamer_profiles", ["id"], :name => "index_gamer_profiles_on_id", :unique => true
->>>>>>> 353c91868dee4e5191cf5c974895aa04c08f6560
 
   create_table "gamers", :id => false, :force => true do |t|
     t.string   "id",                 :limit => 36,                 :null => false
