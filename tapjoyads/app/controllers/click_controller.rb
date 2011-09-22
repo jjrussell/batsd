@@ -3,10 +3,10 @@ class ClickController < ApplicationController
   
   before_filter :decrypt_data_param
   before_filter :setup
-  before_filter :validate_click, :except => :test_offer
+  before_filter :validate_click, :except => [ :test_offer, :test_video_offer ]
   before_filter :determine_link_affiliates, :only => :app
   
-  after_filter :save_web_request, :except => :test_offer
+  after_filter :save_web_request, :except => [ :test_offer, :test_video_offer ]
   
   def app
     create_click('install')
@@ -70,13 +70,42 @@ class ClickController < ApplicationController
     Sqs.send_message(QueueNames::SEND_CURRENCY, message)
   end
   
+  def test_video_offer
+    return unless verify_records([ @currency ])
+    
+    raise "not a test device" unless @currency.get_test_device_ids.include?(params[:udid])
+    
+    test_reward = Reward.new
+    test_reward.type              = 'test_video_offer'
+    test_reward.udid              = params[:udid]
+    test_reward.publisher_user_id = params[:publisher_user_id]
+    test_reward.currency_id       = params[:currency_id]
+    test_reward.publisher_app_id  = params[:publisher_app_id]
+    test_reward.advertiser_app_id = params[:publisher_app_id]
+    test_reward.offer_id          = params[:publisher_app_id]
+    test_reward.currency_reward   = @currency.get_reward_amount(@offer)
+    test_reward.publisher_amount  = 0
+    test_reward.advertiser_amount = 0
+    test_reward.tapjoy_amount     = 0
+    
+    message = test_reward.serialize
+    Sqs.send_message(QueueNames::SEND_CURRENCY, message)
+  end
+  
 private
   
   def setup
     return false unless verify_params([ :data ])
     
     @now = Time.zone.now
-    @offer = Offer.find_in_cache(params[:offer_id])
+    if params[:offer_id] == 'test_video'
+      publisher_app = App.find_in_cache(params[:publisher_app_id])
+      return unless verify_records([ publisher_app ])
+      
+      @offer = build_test_video_offer(publisher_app).primary_offer
+    else
+      @offer = Offer.find_in_cache(params[:offer_id])
+    end
     @currency = Currency.find_in_cache(params[:currency_id])
     required_records = [ @offer, @currency ]
     if params[:displayer_app_id].present?
