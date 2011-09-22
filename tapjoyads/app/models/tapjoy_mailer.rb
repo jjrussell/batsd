@@ -84,6 +84,7 @@ class TapjoyMailer < ActionMailer::Base
     else
       recipients "sunny.cha@tapjoy.com, raghu.nayani@tapjoy.com"
     end
+    info[:name] = [info[:first_name], info[:last_name]].join(' ').strip || info[:email]
     content_type 'text/html'
     subject_text = "Whitepaper request from #{info[:name]}"
     subject_text += " at #{info[:company]}" if info[:company].present?
