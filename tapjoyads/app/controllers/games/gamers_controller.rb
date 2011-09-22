@@ -1,11 +1,14 @@
 class Games::GamersController < GamesController
 
+  before_filter :set_profile, :only => [ :edit, :password, :update_password ]
+
   def create
     @gamer = Gamer.new do |g|
-      g.email            = params[:gamer][:email]
-      g.password         = params[:gamer][:password]
-      g.referrer         = params[:gamer][:referrer]
-      g.terms_of_service = params[:gamer][:terms_of_service]
+      g.email                 = params[:gamer][:email]
+      g.password              = params[:gamer][:password]
+      g.password_confirmation = params[:gamer][:password]
+      g.referrer              = params[:gamer][:referrer]
+      g.terms_of_service      = params[:gamer][:terms_of_service]
     end
     if @gamer.referrer.starts_with?('tjreferrer:')
       click = Click.new :key => @gamer.referrer.gsub('tjreferrer:', '')
@@ -36,19 +39,23 @@ class Games::GamersController < GamesController
     end
   end
 
-  def edit
-    @gamer = current_gamer
-  end
-
-  def update
-    @gamer = current_gamer
-    @gamer.udid = params[:gamer][:udid]
+  def update_password
+    @gamer.safe_update_attributes(params[:gamer], [ :password, :password_confirmation ])
     if @gamer.save
-      redirect_to games_root_path
+      redirect_to edit_games_gamer_path
     else
-      flash.now[:error] = 'Error updating'
-      render :action => :edit
+      flash.now[:error] = 'Error updating password'
+      render :action => :password
     end
   end
 
+private
+  def set_profile
+    if current_gamer.present?
+      @gamer = current_gamer
+    else
+      flash[:error] = "Please log in and try again. You must have cookies enabled."
+      redirect_to games_root_path
+    end
+  end
 end

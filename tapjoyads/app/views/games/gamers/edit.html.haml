@@ -1,22 +1,67 @@
 #jqt
-  #update_device.tan.account.current 
+  #manage_account.tan.account.current
     .container
       .page.no_top_nav_bar
-        .logo
+        = render(:partial => 'header', :locals => { :back_button => games_root_path })
         .content.narrow.pad
           .header_wrapper
-            .title_2
-              Update Device
-            .content_box_top_arrow_wrapper
-              .content_box_top_arrow
             .content_box_wrapper
               .content_box.clearfix
-                %div   
-                  - form_for([ :games, @gamer ], :url => { :action => :update }) do |f|
-                    .field
-                      = f.label :udid
-                      = f.text_field :udid
-                    .field
-                      = submit_tag('Submit', :class => 'button lt_blue')
-                    .field
-                      = error_message_on @gamer, :udid
+                #account_options
+                  %a{ :href => edit_games_gamer_gamer_profile_path }
+                    .slider.bottom_line.clearfix
+                      .profile_arrow.right
+                      .field.clearfix
+                        .label
+                          Edit My Profile
+                  %a{ :href => "#" }
+                    .slider.bottom_line.clearfix
+                      .profile_arrow.right
+                      .field.clearfix
+                        .label
+                          Currently Using:
+                        .value
+                          My iPad
+                  %a{ :href => @gamer.get_gravatar_profile_url, :target => '_blank' }
+                    .slider.bottom_line.clearfix
+                      .profile_arrow.right
+                      .field.clearfix
+                        .label
+                          Gravatar:
+                        .image
+                          %img{ :src => @gamer.get_avatar_url(30) }
+                  %a{ :href => password_games_gamer_path }
+                    .slider.clearfix
+                      .profile_arrow.right
+                      .field.clearfix
+                        .label
+                          Reset Password
+            .title_2
+              Invite Your Friends!
+            #invite_friends
+              %a{ :href => "#" }
+                .social_btn_wrapper.clearfix
+                  .social_btn.fb
+              %a{ :href => "#" }
+                .social_btn_wrapper.clearfix
+                  .social_btn.email
+            .title_2
+              Contact Tapjoy
+            .content_box_wrapper
+              %a{ :href => new_games_support_request_path( :type => 'feedback' ) }
+                .content_box.clearfix
+                  %div
+                    .login_pass.clearfix.center_contact
+                      Give us Feedback
+            .content_box_wrapper
+              %a{ :href => new_games_support_request_path( :type => 'report_bug' ) }
+                .content_box.clearfix
+                  %div
+                    .login_pass.clearfix.center_contact
+                      Report a Bug
+            .content_box_wrapper
+              %a{ :href => new_games_support_request_path( :type => 'contact_support' ) }
+                .content_box.clearfix
+                  %div
+                    .login_pass.clearfix.center_contact
+                      Customer Support

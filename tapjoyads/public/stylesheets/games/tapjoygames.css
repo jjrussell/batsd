@@ -135,7 +135,7 @@ a, a:visited {
 #flash_error .dialog {
   height: 60px;
 }
-#register_device .dialog, #my_account_dialog_content .dialog  {
+#register_device .dialog  {
   height: 150px;
 }
 #sign_up_dialog .dialog {
@@ -143,12 +143,6 @@ a, a:visited {
 }
 #how_works_dialog .dialog, #linked_device .dialog {
   height: 180px;
-}
-#my_account_dialog.dialog_wrapper, #my_account_dialog_content.dialog_wrapper {
-  opacity: 1;     
-}
-#my_account_dialog .dialog{
-  height: 260px;
 }
 #how_works_dialog .dialog .dialog_title {
   padding: 0px;
@@ -656,6 +650,168 @@ form#new_gamer_session .login_email {
 }
 form#new_gamer_session .login_pass {
   width: 100%;
+}
+#manage_account .title_2 {
+  padding: 8px 0 12px 8px;
+}
+#manage_account .center_contact {
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+}
+#profile_info_display {
+  width: 100%;
+}
+.info_expand {
+  background: transparent url('/images/games/dark_bg.png') repeat;
+  width: 100%;
+}
+.info_expand_bottom_arrow_wrapper {
+  height: 18px;
+  margin: 0 auto;
+  max-width: 600px;
+  overflow-y: hidden;
+  position: relative;
+  top: 0px;
+  padding: 0;
+}
+.info_expand_bottom_arrow {
+  background: transparent url('/images/games/dark_bg.png') repeat;
+  display: block;
+  height: 25px;
+  left: 40px;
+  position: relative;
+  top: -13px;
+  width: 25px;
+  -webkit-transform: rotateZ(45deg);
+  -moz-transform: rotateZ(45deg);
+}
+#profile_info_display td {
+  padding: 4px;
+  vertical-align: middle;
+}
+#profile_info_display img {
+  overflow: hidden;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+}
+.large_avatar {
+  background-color: #FFFFFF;
+  overflow: hidden;
+  padding: 3px 3px 2px 3px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+}
+.gamer_name {
+  color: #FFFFFF;
+  font-size: 24px;
+  font-weight: bold;
+}
+.gamer_signup_date {
+  color: #FFFFFF;
+  font-size: 14px;
+}
+#account_options {
+  padding: 0;
+}
+#account_options .bottom_line {
+  border-bottom: 1px solid #DEDEDE;
+}
+#account_options .slider {
+  height: 50px;
+  padding: 0;
+  width: 100%;
+  vertical-align: middle;
+}
+#account_options .label {
+  float: left;
+  font-weight: bold;
+  position: relative;
+  top: 6px;
+}
+#account_options .value {
+  float: left;
+  position: relative;
+  top: 6px;
+}
+#account_options .image {
+  float: left;
+  position: relative;
+}
+#invite_friends .social_btn {
+  background: transparent url('/images/games/friends_sprites.png');
+  float: left;
+  height: 78px;
+  margin-bottom: 12px;
+  margin-left: 12px;
+  overflow: hidden;
+  width: 78px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+}
+#invite_friends .social_btn.fb {
+  background-position: 0 0;
+}
+#invite_friends .social_btn.fb:hover, #invite_friends .social_btn.fb:action {
+  background-position: 100% 0;
+}
+#invite_friends .social_btn.email {
+  background-position: 0 100%;
+}
+#invite_friends .social_btn.email:hover, #invite_friends .social_btn.email:action {
+  background-position: 100% 100%;
+}
+.profile_arrow {
+  background: transparent url('/images/games/feat_arrow_mobile.png') no-repeat center center;
+  height: 22px;
+  padding: 0;
+  position: relative;
+  top: 8px;
+  width: 12px;
+}
+#edit_profile {
+  padding: 0;
+}
+#edit_profile .bottom_line {
+  border-bottom: 1px solid #DEDEDE;
+}
+#edit_profile .slider {
+  padding: 0;
+  vertical-align: middle;
+  width: 100%;
+}
+#edit_profile .field {
+  margin: 6px 12px 6px 12px;
+}
+#edit_profile label {
+  color: #4B4B4B;
+  float: left;
+  font-weight: bold;
+  position: relative;
+  top: 6px;
+}
+#edit_profile input[type=text],
+#edit_profile input[type=password],
+#edit_profile select {
+  border: none;
+  color: #7E7E7E;
+  float: left;
+  font-size: 16px;
+  outline: none; 
+  padding: 4px 6px;
+  position: relative;
+  top: 2px;
+  -webkit-appearance: none;
+}
+#edit_profile .value,
+#edit_profile .fieldWithErrors {
+  float: left;
+  position: relative;
+}
+.button_bar input[type=submit] {
+	float: right;
+  margin: 0 16px 10px 0;
+  position: relative;
 }
 #sign_up_form {
   padding: 12px 20px;
@@ -1227,11 +1383,6 @@ form#new_gamer_session .login_pass {
 }
 .grey_button .light {
   color: #6C6C6C;
-}
-#my_account_dialog .grey_button {
-  margin: 16px auto;
-  position: relative;
-  opacity: 1;
 }
 .tab_button.dark_grey, .tab_button_bottom_arrrow {
   background:#2A2A2A url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAIAAACRXR/mAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6RUI5N0I4REZBRjZEMTFFMEFGNTc5RTY4N0ExMDA2M0YiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6RUI5N0I4RTBBRjZEMTFFMEFGNTc5RTY4N0ExMDA2M0YiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpFQjk3QjhEREFGNkQxMUUwQUY1NzlFNjg3QTEwMDYzRiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpFQjk3QjhERUFGNkQxMUUwQUY1NzlFNjg3QTEwMDYzRiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PuDRi2UAAAXsSURBVHjarFhbjtww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);
