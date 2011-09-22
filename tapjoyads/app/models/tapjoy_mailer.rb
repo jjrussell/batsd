@@ -80,7 +80,7 @@ class TapjoyMailer < ActionMailer::Base
   def whitepaper_request(info)
     from 'support@tapjoy.com'
     if Rails.env == 'development'
-      recipients "hwanjoon@tapjoy.com"
+      recipients "dev@tapjoy.com"
     else
       recipients "sunny.cha@tapjoy.com, raghu.nayani@tapjoy.com"
     end
