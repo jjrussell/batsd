@@ -223,6 +223,7 @@ private
       :language_code         => params[:language_code],
       :itunes_link_affiliate => @itunes_link_affiliate,
       :display_multiplier    => params[:display_multiplier],
+      :library_version       => params[:library_version],
     })
   end
   
