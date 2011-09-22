@@ -93,7 +93,12 @@ Environment Setup:
 
 -Download desired editor (most people use TextMate) and set it to use soft tabs (2 spaces)
   - Instructions for TextMate:
-    - TextMate -> Preferences -> Advanced -> Shell Variables
-    - Add TM_SOFT_TABS with value of YES (make sure it doesn't convert the TM to a ™ symbol)
-    - Add TM_TAB_SIZE with value of 2
-    - See http://manual.macromates.com/en/environment_variables.html if curious about other TextMate shell variables
+    -TextMate -> Preferences -> Advanced -> Shell Variables
+    -Add TM_SOFT_TABS with value of YES (make sure it doesn't convert the TM to a ™ symbol)
+    -Add TM_TAB_SIZE with value of 2
+    -See http://manual.macromates.com/en/environment_variables.html if curious about other TextMate shell variables
+
+
+-Update DNS server list (this is to ensure Ruby Resolv library will work most of the time)
+  -Prepend "8.8.8.8" and "8.8.4.4" to your DNS list
+    -In OSX, System Preferences -> Network -> Advanced -> DNS -> + -> [prepend ips] -> OK -> Apply

@@ -4,7 +4,7 @@ class Games::HomepageController < GamesController
 
   def index
     @device = Device.new(:key => current_device_id)
-    @external_publishers = ExternalPublisher.load_all_for_device(@device)
+    @external_publishers = ExternalPublisher.load_all_for_device(@device) if @device.present?
     @featured_review = AppReview.featured_review
   end
   
