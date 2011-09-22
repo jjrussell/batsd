@@ -98,7 +98,7 @@ private
     return false unless verify_params([ :data ])
     
     @now = Time.zone.now
-    if params[:offer_id] == 'test_video_id'
+    if params[:offer_id] == 'test_video'
       publisher_app = App.find_in_cache(params[:publisher_app_id])
       return unless verify_records([ publisher_app ])
       
