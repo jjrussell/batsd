@@ -1,0 +1,11 @@
+- name = [@info[:first_name], @info[:last_name]].join(' ').strip
+- name = name.blank? ? @info[:email] : name
+
+%h2 Whitepaper Request
+%p Name: #{name}
+%p Company: #{@info[:company]}
+%p Email: #{@info[:email]}
+- if @info[:future] == '1'
+  %p
+    %b Please let me know about future white papers in this series
+%p From: https://www.tapjoy.com/site/whitepaper
