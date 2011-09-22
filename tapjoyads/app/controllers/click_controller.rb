@@ -71,12 +71,9 @@ class ClickController < ApplicationController
   end
   
   def test_video_offer
-    publisher_app = App.find_in_cache(params[:publisher_app_id])
-    return unless verify_records([ @currency, publisher_app ])
+    return unless verify_records([ @currency ])
     
     raise "not a test device" unless @currency.get_test_device_ids.include?(params[:udid])
-    
-    @test_video_offer = build_test_video_offer(publisher_app)
     
     test_reward = Reward.new
     test_reward.type              = 'test_video_offer'
@@ -86,7 +83,7 @@ class ClickController < ApplicationController
     test_reward.publisher_app_id  = params[:publisher_app_id]
     test_reward.advertiser_app_id = params[:publisher_app_id]
     test_reward.offer_id          = params[:publisher_app_id]
-    test_reward.currency_reward   = @currency.get_reward_amount(@test_video_offer.primary_offer)
+    test_reward.currency_reward   = @currency.get_reward_amount(@offer)
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
     test_reward.tapjoy_amount     = 0
@@ -101,7 +98,14 @@ private
     return false unless verify_params([ :data ])
     
     @now = Time.zone.now
-    @offer = Offer.find_in_cache(params[:offer_id])
+    if params[:offer_id] == 'test_video_id'
+      publisher_app = App.find_in_cache(params[:publisher_app_id])
+      return unless verify_records([ publisher_app ])
+      
+      @offer = build_test_video_offer(publisher_app).primary_offer
+    else
+      @offer = Offer.find_in_cache(params[:offer_id])
+    end
     @currency = Currency.find_in_cache(params[:currency_id])
     required_records = [ @offer, @currency ]
     if params[:displayer_app_id].present?
