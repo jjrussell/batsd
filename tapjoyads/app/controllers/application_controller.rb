@@ -198,10 +198,10 @@ private
   
   def build_test_video_offer(publisher_app)
     test_video_offer = VideoOffer.new(
-      :id         => 'test_video_id',
       :name       => 'Test Video Offer (Visible to Test Devices)',
       :partner_id => publisher_app.partner_id,
       :video_url  => 'https://s3.amazonaws.com/tapjoy/videos/src/test_video.mp4')
+    test_video_offer.id = 'test_video_id'
     
     primary_offer = Offer.new(
       :item_id          => 'test_video_id',
