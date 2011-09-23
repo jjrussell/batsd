@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110914201513) do
+ActiveRecord::Schema.define(:version => 20110922195535) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -506,6 +506,7 @@ ActiveRecord::Schema.define(:version => 20110914201513) do
     t.string   "min_os_version",                                                                :default => "",    :null => false
     t.text     "screen_layout_sizes",                                                                              :null => false
     t.integer  "interval",                                                                      :default => 0,     :null => false
+    t.boolean  "url_overridden",                                                                :default => false, :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

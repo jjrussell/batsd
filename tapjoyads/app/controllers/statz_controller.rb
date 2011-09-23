@@ -47,27 +47,14 @@ class StatzController < WebsiteController
   def update
     log_activity(@offer)
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
+    if @offer.item_type == 'App' && !params[:override_default_url]
+      offer_params[:url] = @offer.item.store_url
+    end
     
-    begin
-      ActiveRecord::Base.transaction do
-        @offer.update_attributes!(offer_params)
-      
-        if @offer.item_type == 'App'
-          app = @offer.item
-          log_activity(app)
-          app.update_attributes!({ :use_raw_url => params[:app_use_raw_url], :store_url => params[:app_store_url] })
-        end
-    
-        flash[:notice] = "Successfully updated #{@offer.name}"
-        redirect_to statz_path(@offer)
-      end
-    rescue
-      # reset cache -- TODO: make acts_as_cacheable transaction-safe, if possible
-      Offer.find(@offer.id).cache
-      if @offer.item_type == 'App'
-        App.find(@offer.item_id).cache
-      end
-      
+    if @offer.update_attributes(offer_params)
+      flash[:notice] = "Successfully updated #{@offer.name}"
+      redirect_to statz_path(@offer)
+    else
       flash.now[:error] = "Errors encountered, please see messages below"
       render :action => :edit
     end
