@@ -58,7 +58,28 @@
           .dialog_title.title_2 How's it work?
         .dialog_header Using Tapjoy games couldn't be easier!
         .dialog_content All your games are listed in <span class="bold">My Apps</span>. From there, you can start earning currency and discovering new, cool games to play!
-
+    
+    #link_device_dialog.dialog_wrapper.hide
+      .close_dialog
+        .close_button
+      .dialog
+        .dialog_header_wrapper
+          .dialog_header_right
+          .dialog_header_left
+          .dialog_title.title_2 Link Device
+        .dialog_header On the next screen you will see this:
+        .dialog_content
+          .link_device_image
+          .link_device_content.clearfix
+            %span Clicking
+            %span.link_device_install_icon
+            %span will allow Tapjoy Games
+            %span to work with your device. Don't worry, your device won't be altered in any way.
+          %a{ :href => new_games_gamer_device_path }
+            .link_device_btn.button.grey
+              Link my device now!
+              
+    
     #my_account_dialog.dialog_wrapper.hide
       .close_dialog
         .close_button
@@ -106,15 +127,16 @@
           .dialog
             .dialog_content
               %div{ :class => "#{key}" }= flash[key]
-
+    -#
+    -# Until this task is automated for production build, please run this task: $ rake javascript:games_minify
+    -# 
     
     - if Rails.env.production?
-      = javascript_include_tag 'games/tjgames.min-1.23'
+      = javascript_include_tag "games/#{GAMES_CONFIG['js_compile_out_file']}-#{GAMES_CONFIG['js_version']}"
     - else
-      = javascript_include_tag 'games/src/tjg.jquery-1.6.2.min'
-      = javascript_include_tag 'games/src/init'
-      = javascript_include_tag 'games/src/jqtouch'
-      = javascript_include_tag 'games/src/tapjoygames'
+      - files = GAMES_CONFIG['js_files']
+      - files.each do |f|
+        = javascript_include_tag "games/src/#{f}" 
     
     = yield :included_javascripts
     %script{ :type => 'text/javascript', :charset => 'utf-8' }

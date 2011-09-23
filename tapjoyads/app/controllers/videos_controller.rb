@@ -32,5 +32,6 @@ private
       :type               => Offer::VIDEO_OFFER_TYPE,
       :library_version    => params[:library_version],
       :screen_layout_size => params[:screen_layout_size]).get_offers(0, 100)
+    @offer_list.insert(0, build_test_video_offer(publisher_app).primary_offer) if @currency.get_test_device_ids.include?(params[:udid])
   end
 end

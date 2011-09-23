@@ -6,7 +6,7 @@ class GameStateMapping < SimpledbShardedResource
   self.sdb_attr :publisher_user_id
   
   def dynamic_domain_name
-    domain_number = @key.hash % GameStateMapping.num_domains
+    domain_number = @key.matz_silly_hash % GameStateMapping.num_domains
     "game_state_mappings_#{domain_number}"
   end
   

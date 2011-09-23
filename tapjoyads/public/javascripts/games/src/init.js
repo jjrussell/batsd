@@ -12,8 +12,8 @@ TJG.loadedImages = {};
     function centerDialog (el) {
       winH = $(window).height();
       winW = $(window).width();
-      $(el).css('top',  winH/2-$().height()/2);
-      $(el).css('left', winW/2-$(el).width()/2);
+      $(el).css('top',  winH/2-$(el).outerHeight()/2);
+      $(el).css('left', winW/2-$(el).outerWidth()/2);
       $(el).show();    
     }
     centerDialog("#loader");
