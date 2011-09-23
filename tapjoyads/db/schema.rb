@@ -287,6 +287,7 @@ ActiveRecord::Schema.define(:version => 20110914201513) do
 
   add_index "gamer_devices", ["device_id"], :name => "index_gamer_devices_on_device_id"
   add_index "gamer_devices", ["gamer_id"], :name => "index_gamer_devices_on_gamer_id"
+  add_index "gamer_devices", ["id"], :name => "index_gamer_devices_on_id", :unique => true
 
   create_table "gamer_profiles", :id => false, :force => true do |t|
     t.string   "id",            :limit => 36, :null => false
