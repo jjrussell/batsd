@@ -97,7 +97,7 @@ class StatsAggregation
     WebRequest::STAT_TO_PATH_MAP.each do |stat_name, path_definition|
       conditions = "#{get_path_condition(path_definition[:paths])} AND #{path_definition[:attr_name]} = '#{offer.id}'"
       verify_stat_over_range(stat_row, stat_name, offer, start_time, end_time) do |s_time, e_time|
-        VerticaCluster.count('web_request', "#{conditions} AND #{get_time_condition(s_time, e_time)}")
+        WebRequest.count_with_vertica("#{conditions} AND #{get_time_condition(s_time, e_time)}")
       end
     end
     
@@ -106,7 +106,7 @@ class StatsAggregation
         stat_path = [ 'virtual_goods', virtual_good.key ]
         conditions = "path LIKE '%purchased_vg%' AND app_id = '#{offer.id}' AND virtual_good_id = '#{virtual_good.key}'"
         verify_stat_over_range(stat_row, stat_path, offer, start_time, end_time) do |s_time, e_time|
-          VerticaCluster.count('web_request', "#{conditions} AND #{get_time_condition(s_time, e_time)}")
+          WebRequest.count_with_vertica("#{conditions} AND #{get_time_condition(s_time, e_time)}")
         end
       end
     end

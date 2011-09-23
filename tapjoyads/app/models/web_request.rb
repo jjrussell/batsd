@@ -226,6 +226,14 @@ class WebRequest < SimpledbResource
     return count
   end
   
+  def self.count_with_vertica(conditions)
+    VerticaCluster.count('web_request', conditions)
+  end
+  
+  def self.select_with_vertica(options = {})
+    VerticaCluster.query('web_request', options)
+  end
+  
 private
   
   def update_realtime_stats
