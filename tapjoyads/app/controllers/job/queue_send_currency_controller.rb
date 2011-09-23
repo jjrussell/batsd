@@ -58,52 +58,55 @@ private
     
     reward.sent_currency = Time.zone.now
     
-    if Rails.env == 'production'
-      begin
-        reward.serial_save(:catch_exceptions => false, :expected_attr => {'sent_currency' => nil})
-      rescue Simpledb::ExpectedAttributeError => e
-        reward = Reward.new(:key => reward.key, :consistent => true)
-        if reward.send_currency_status?
-          return
-        else
+    begin
+      reward.serial_save(:catch_exceptions => false, :expected_attr => {'sent_currency' => nil})
+    rescue Simpledb::ExpectedAttributeError => e
+      reward = Reward.new(:key => reward.key, :consistent => true)
+      if reward.send_currency_status?
+        return
+      else
+        raise e
+      end
+    end
+
+    begin
+      if currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL
+        params[:callback_url] = Currency::TAPJOY_MANAGED_CALLBACK_URL
+        PointPurchases.transaction(:key => "#{publisher_user_id}.#{reward.publisher_app_id}") do |point_purchases|
+          point_purchases.points = point_purchases.points + reward.currency_reward
+        end
+        reward.send_currency_status = 'OK'
+      else
+        params[:callback_url] = callback_url
+        begin
+          if Rails.env == 'production' || Rails.env == 'test'
+            response = Downloader.get_strict(callback_url, { :timeout => 20 })
+            status = response.status
+          else
+            status = 'OK'
+          end
+          reward.send_currency_status = status
+        rescue Exception => e
+          @bad_callbacks << reward.currency_id
           raise e
         end
       end
-      
-      begin
-        if currency.callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL
-          params[:callback_url] = Currency::TAPJOY_MANAGED_CALLBACK_URL
-          PointPurchases.transaction(:key => "#{publisher_user_id}.#{reward.publisher_app_id}") do |point_purchases|
-            point_purchases.points = point_purchases.points + reward.currency_reward
-          end
-          reward.send_currency_status = 'OK'
-        else
-          params[:callback_url] = callback_url
-          begin
-            response = Downloader.get_strict(callback_url, { :timeout => 20 })
-            reward.send_currency_status = response.status
-          rescue Exception => e
-            @bad_callbacks << reward.currency_id
-            raise e
-          end
+      params.delete(:callback_url)
+    rescue Exception => e
+      reward.delete('sent_currency')
+      reward.serial_save
+
+      num_failures = Mc.increment_count("send_currency_failure.#{currency.id}.#{mc_time}")
+      if num_failures < 5000
+        Mc.compare_and_swap("send_currency_failures.#{mc_time}") do |failures|
+          failures ||= {}
+          failures[currency.id] ||= Set.new
+          failures[currency.id] << reward.key
+          failures
         end
-        params.delete(:callback_url)
-      rescue Exception => e
-        reward.delete('sent_currency')
-        reward.serial_save
-        
-        num_failures = Mc.increment_count("send_currency_failure.#{currency.id}.#{mc_time}")
-        if num_failures < 5000
-          Mc.compare_and_swap("send_currency_failures.#{mc_time}") do |failures|
-            failures ||= {}
-            failures[currency.id] ||= Set.new
-            failures[currency.id] << reward.key
-            failures
-          end
-        end
-        
-        raise e
       end
+
+      raise e
     end
     
     reward.serial_save
