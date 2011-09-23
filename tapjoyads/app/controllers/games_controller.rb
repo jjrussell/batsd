@@ -12,7 +12,7 @@ class GamesController < ApplicationController
   end
   
   def current_device_id
-    session[:current_device_id] ||= current_gamer.devices.first.device_id
+    session[:current_device_id] ||= current_gamer.devices.first.device_id if current_gamer && current_gamer.devices.any?
   end
   
 protected

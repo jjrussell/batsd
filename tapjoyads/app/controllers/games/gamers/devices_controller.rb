@@ -47,7 +47,6 @@ class Games::Gamers::DevicesController < GamesController
 
       if current_gamer.devices.create(:device => device)
         device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
-        session[:current_device_id] = device.id
         redirect_to games_root_path(:register_device => true)
       else
         flash[:error] = "Error linking device. Please try again."
