@@ -8,8 +8,8 @@
   #top_box
     .explanation
       = t('text.offerwall.redesign_instructions', :currency => @currency.name)
-      - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
-        = render :partial => 'currency_selector', :locals => {:redesign => true}
+  - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
+    = render :partial => 'currency_selector', :locals => {:redesign => true}
 
 - if @start_index > 0
   = render :partial => 'pagination_links'
@@ -58,7 +58,7 @@
   #bottom_box{ :onclick => "javascript:getAds();" }
     #plus
     %a{ :href => "javascript:void(0);", :id => "load_more" }
-      Load some more offers!
+      Load some more!
 #footerWrapper
   #footer
     - if @currency.conversion_rate > 0
