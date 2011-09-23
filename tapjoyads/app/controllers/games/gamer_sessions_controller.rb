@@ -20,7 +20,7 @@ class Games::GamerSessionsController < GamesController
   end
 
   def destroy
-    session.delete(:current_device_id)
+    session[:current_device_id] = nil
     gamer_session = GamerSession.find
     gamer_session.destroy unless gamer_session.nil?
     redirect_to games_root_path

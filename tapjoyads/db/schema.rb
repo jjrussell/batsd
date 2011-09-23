@@ -279,7 +279,7 @@ ActiveRecord::Schema.define(:version => 20110914201513) do
   create_table "gamer_devices", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
     t.string   "gamer_id",   :limit => 36, :null => false
-    t.string   "device_id",  :limit => 36, :null => false
+    t.string   "device_id",                :null => false
     t.string   "name",                     :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
