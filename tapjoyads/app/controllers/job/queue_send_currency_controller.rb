@@ -79,7 +79,12 @@ private
       else
         params[:callback_url] = callback_url
         begin
-          status = Rails.env == 'development' ? 'OK' : Downloader.get_strict(callback_url, { :timeout => 20 }).status
+          if Rails.env == 'production' || Rails.env == 'test'
+            response = Downloader.get_strict(callback_url, { :timeout => 20 })
+            status = response.status
+          else
+            status = 'OK'
+          end
           reward.send_currency_status = status
         rescue Exception => e
           @bad_callbacks << reward.currency_id
