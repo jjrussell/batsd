@@ -5,7 +5,7 @@ class GamesMailer < ActionMailer::Base
     recipients gamer.email
     subject "Welcome to Tapjoy Games!"
     content_type 'text/html'
-    body :confirmation_link => confirmation_link, :linked => gamer.udid?
+    body :confirmation_link => confirmation_link, :linked => gamer.devices.any?
   end
   
   def password_reset(gamer, reset_link)

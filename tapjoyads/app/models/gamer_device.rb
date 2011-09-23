@@ -26,7 +26,7 @@ class GamerDevice < ActiveRecord::Base
   belongs_to :gamer
   
   validates_presence_of :gamer, :device_id, :name
-  validates_uniqueness_of :device_id, :scope => [:gamer]
+  validates_uniqueness_of :device_id, :scope => [:gamer_id]
   
   
   def product=(new_product)
