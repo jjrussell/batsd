@@ -3,7 +3,7 @@ class ValidateVideoController < ApplicationController
   before_filter :setup
   
   def index
-    @valid = @offer.is_valid_for?(@publisher_app, @device, @currency, params[:device_type], @geoip_data, params[:app_version], @direct_pay_providers, Offer::VIDEO_OFFER_TYPE, @hide_app_offers, params[:library_version], params[:os_version], params[:screen_layout_size])
+    @valid = @offer.is_valid_for?(@publisher_app, @device, @currency, params[:device_type], @geoip_data, params[:app_version], @direct_pay_providers, @offer.item_type, @hide_app_offers, params[:library_version], params[:os_version], params[:screen_layout_size])
   end
   
 private
@@ -20,7 +20,11 @@ private
     @publisher_app = App.find_in_cache(params[:app_id])
     @currency = Currency.find_in_cache(params[:currency_id])
     @currency = nil if @currency.present? && @currency.app_id != params[:app_id]
-    @offer = Offer.find_in_cache(params[:offer_id])
+    if params[:offer_id] == 'test_video'
+      @offer = build_test_video_offer(@publisher_app).primary_offer
+    else
+      @offer = Offer.find_in_cache(params[:offer_id])
+    end
     return unless verify_records([ @publisher_app, @currency, @offer ], :render_missing_text => false)
     
     @hide_app_offers = @currency.hide_rewarded_app_installs_for_version?(params[:app_version], params[:source])

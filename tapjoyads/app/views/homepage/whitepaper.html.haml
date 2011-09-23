@@ -1,0 +1,38 @@
+- @page_title = "Mobile Advertising White Paper"
+- content_for :page_head, stylesheet_link_tag('whitepaper', 'facebox')
+#whitepaper
+  #right
+    = image_tag('whitepaper1.jpg', :id => "whitepaper1")
+    = image_tag('whitepaper2.jpg', :id => "whitepaper2")
+  #left
+    = image_tag('whitepaper_header.png', :class => 'header')
+    %p
+      %b Mobile Advertising &amp; ROI: Bests Practices for Performance-Based Mobile Advertising
+      %br August 2011
+    %p Smartphones, tablets and other mobile devices have significantly altered the way people consume and interact with their favorite media, presenting an enormous opportunity for advertisers to connect with their targeted audiences in new and powerful ways. This white paper helps advertisers understand how to take advantage of this phenomenon by looking at the current best practices for running high-impact, results-driven mobile advertising campaigns. In it you will learn:
+    %ul
+      %li Why advertise on mobile platforms
+      %li What are the common challenges in mobile advertising
+      %li How to drive customer engagements
+      %li What types of campaigns to run on mobile
+      %li How to optimize your site and creative for mobile
+    #form
+      - form_tag '/site/whitepaper' do
+        .container
+          = label_tag 'info[first_name]', 'First name'
+          = text_field_tag 'info[first_name]', params[:info] ? params[:info][:first_name] : ''
+        .container.even
+          = label_tag 'info[last_name]', 'Last name'
+          = text_field_tag 'info[last_name]', params[:info] ? params[:info][:last_name] : ''
+        .container
+          = label_tag 'info[company]', 'Company name'
+          = text_field_tag 'info[company]', params[:info] ? params[:info][:company] : ''
+        .container.even
+          = label_tag 'info[email]', 'Email address'
+          = email_field_tag 'info[email]', params[:info] ? params[:info][:email] : ''
+        %span.free The link to your FREE white paper will be sent to the email address provided
+        .container.checkbox
+          = check_box_tag 'info[future]'
+          = label_tag 'info[future]', 'Please let me know about future white papers in this series'
+        = submit_tag('', :id => 'submit')
+.clear
