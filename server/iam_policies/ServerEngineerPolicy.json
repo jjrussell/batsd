@@ -3,16 +3,16 @@
     {
       "Effect"   : "Allow",
       "Action"   : [
-        "s3:*",
-        "sdb:*",
-        "sqs:*",
-        "ec2:*",
         "autoscaling:*",
         "cloudfront:*",
-        "elasticloadbalancing:*",
-        "rds:*",
         "cloudwatch:*",
+        "ec2:*",
         "elasticmapreduce:*"
+        "rds:*",
+        "s3:*",
+        "sdb:*",
+        "ses:*",
+        "sqs:*",
       ],
       "Resource" : "*"
     }
