@@ -121,7 +121,7 @@ Rails::Initializer.run do |config|
   end
   
   # Mailer:
-  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.delivery_method = :amazon_ses
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.perform_deliveries = true
   
