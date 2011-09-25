@@ -3,14 +3,14 @@
     {
       "Effect"   : "Allow",
       "Action"   : [
-        "autoscaling:Describe*",
-        "cloudfront:CreateInvalidation",
-        "ec2:Describe*",
-        "elasticloadbalancing:DescribeInstanceHealth",
         "s3:*",
         "sdb:*",
         "ses:*"
         "sqs:*",
+        "ec2:Describe*",
+        "autoscaling:Describe*",
+        "cloudfront:CreateInvalidation",
+        "elasticloadbalancing:DescribeInstanceHealth"
       ],
       "Resource" : "*"
     }
