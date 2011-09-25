@@ -12,7 +12,7 @@
         "elasticloadbalancing:*",
         "rds:*",
         "cloudwatch:*",
-        "elasticmapreduce:*",
+        "elasticmapreduce:*"
       ],
       "Resource" : "*"
     }
