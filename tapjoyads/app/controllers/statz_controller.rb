@@ -47,9 +47,6 @@ class StatzController < WebsiteController
   def update
     log_activity(@offer)
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
-    if @offer.item_type == 'App' && !params[:override_default_url]
-      offer_params[:url] = @offer.item.store_url
-    end
     
     if @offer.update_attributes(offer_params)
       flash[:notice] = "Successfully updated #{@offer.name}"

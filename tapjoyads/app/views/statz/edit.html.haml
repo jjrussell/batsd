@@ -189,9 +189,9 @@
     - if @offer.item_type == 'App'
       %tr
         %th
-          = f.label(:override_default_url, 'Override Default Destination URL')
-          #help_override_default_url.help ?
-        %td= check_box_tag(:override_default_url, "1", @offer.url_overridden?)
+          = f.label(:url_overridden, 'Override Default Destination URL')
+          #help_url_overridden.help ?
+        %td= f.check_box(:url_overridden)
       %tr
         %th
           = f.label(:url, 'Destination URL')
@@ -235,7 +235,7 @@
   #help_daily_budget_content{ :name => 'Daily Budget' } The maximum number of conversions to complete in one day.
   #help_overall_budget_content{ :name => 'Overall Budget' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
   #help_interval_content{ :name => 'Interval' } The interval for frequency capping.
-  #help_override_default_url_content{ :name => 'Override Store URL' } Allows for manual override of Completion URL field
+  #help_url_overridden_content{ :name => 'Override Store URL' } Allows for manual override of Completion URL field
   #help_url_content{ :name => 'Store URL' } The URL that the user will be redirected to upon clicking an ad (typically links to Market Place / App store search results page)
   #help_bid_content{ :name => 'Bid' } The bid affects your payment and your offerwall rank.
   #help_min_bid_override_content{ :name => 'Min Bid Override' } Manually set the minimum allowed bid for this offer.
@@ -247,7 +247,7 @@
   - content_for :page_javascript do
     :plain
       $(function($){
-        $('#override_default_url').click(function(){
+        $('#offer_url_overridden').click(function(){
           if(this.checked) {
             $('#default_url')[0].className = 'hidden';
             $('#url_container')[0].className = '';
