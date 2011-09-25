@@ -94,7 +94,7 @@ class GetOffersControllerTest < ActionController::TestCase
 
     should "assign test offer for test devices" do
       @response = get(:webpage, @params.merge(:udid => @device.id))
-      assert assigns(:test_offer)
+      assert assigns(:test_offers)
     end
 
     should "render redesign for appropriate devices" do

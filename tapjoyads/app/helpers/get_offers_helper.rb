@@ -29,7 +29,7 @@ module GetOffersHelper
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['currency_id'] = currency.id
     url = "/get_offers/webpage?data=#{SymmetricCrypto.encrypt_object(tmp_params, SYMMETRIC_CRYPTO_SECRET)}"
-    link_to(currency.name, url, :class => currency.id == @currency.id ? 'current' : '')
+    link_to(currency.name, url)
   end
   
   def get_click_url(offer)
