@@ -9,7 +9,7 @@ class GamesMailer < ActionMailer::Base
   end
   
   def password_reset(gamer, reset_link)
-    from 'Tapjoy <noreply@tapjoy.com>'
+    from 'Tapjoy Support <support@tapjoy.com>'
     recipients gamer.email
     subject "Password Reset Request - Tapjoy Games"
     content_type 'text/html'
