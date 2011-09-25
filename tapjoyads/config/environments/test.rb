@@ -32,7 +32,7 @@ EXCEPTIONS_NOT_LOGGED = []
 
 RUN_MODE_PREFIX = 'test_'
 API_URL = ''
-CLOUDFRONT_URL = "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" # just hit S3 directly in test mode
+CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['test']['access_key_id']
