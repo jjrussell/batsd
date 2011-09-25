@@ -10,9 +10,9 @@
         "autoscaling:*",
         "cloudfront:*",
         "elasticloadbalancing:*",
-        "elasticmapreduce:*"
         "rds:*",
         "cloudwatch:*",
+        "elasticmapreduce:*",
       ],
       "Resource" : "*"
     }

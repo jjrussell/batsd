@@ -5,8 +5,8 @@
       "Action"   : [
         "s3:*",
         "sdb:*",
-        "ses:*"
         "sqs:*",
+        "ses:*"
         "ec2:Describe*",
         "autoscaling:Describe*",
         "cloudfront:CreateInvalidation",
