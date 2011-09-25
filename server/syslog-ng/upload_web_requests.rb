@@ -24,17 +24,15 @@ while time < end_time do
   if File.exists?(logfile_path)
     unique_id     = UUIDTools::UUID.random_create.hexdigest
     tmpfile_path  = "#{logfile_path}.uploading.#{unique_id}"
-    sdbfile_path  = "#{local_base}/#{filename}.#{unique_id}.sdb"
-    gzipfile_path = "#{sdbfile_path}.gz"
+    gzipfile_path = "#{local_base}/#{filename}.#{unique_id}.sdb.gz"
     s3_path       = "syslog-ng/#{time.strftime('%Y-%m-%d')}/#{time.strftime('%H')}-#{unique_id}.sdb.gz"
 
     File.rename(logfile_path, tmpfile_path)
 
-    `sed 's/^.*]:\ //' #{tmpfile_path} > #{sdbfile_path}`
-    `gzip #{sdbfile_path}`
+    `gzip -c #{tmpfile_path} > #{gzipfile_path}`
 
     s3_object = bucket.objects[s3_path]
-    s3_object.write(open(gzipfile_path))
+    s3_object.write(:file => gzipfile_path)
 
     File.delete(gzipfile_path)
     File.rename(tmpfile_path, "#{logfile_path}.uploaded.#{unique_id}")

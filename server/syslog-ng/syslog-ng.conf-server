@@ -85,8 +85,13 @@ source app_server {
   );
 };
 
+template web_request {
+  template("$MSG\n"); # default: "$ISODATE $HOST $MSGHDR$MSG\n"
+};
+
 destination ebs_file {
   file("/ebs/log/$PROGRAM/$YEAR-$MONTH-$DAY-$HOUR.log"
+    template(web_request)
     owner("ubuntu")
     group("ubuntu")
     perm(0644)
