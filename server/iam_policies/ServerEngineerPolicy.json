@@ -11,8 +11,8 @@
         "cloudfront:*",
         "elasticloadbalancing:*",
         "elasticmapreduce:*"
-        "cloudwatch:*",
         "rds:*",
+        "cloudwatch:*",
       ],
       "Resource" : "*"
     }
