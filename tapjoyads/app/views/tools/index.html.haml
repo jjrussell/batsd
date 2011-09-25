@@ -39,6 +39,8 @@
     %li= link_to 'ELB Status', elb_status_tools_path
   - if permitted_to? :as_groups, :tools
     %li= link_to 'Auto-Scaling Groups', as_groups_tools_path
+  - if permitted_to? :ses_status, :tools
+    %li= link_to 'SES Status', ses_status_tools_path
   - if permitted_to? :create, :tools_users_role_assignments
     %li= link_to 'Manage user roles', tools_users_path
   - if permitted_to? :index, :tools_jobs
