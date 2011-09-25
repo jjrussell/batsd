@@ -6,7 +6,7 @@
         "s3:*",
         "sdb:*",
         "sqs:*",
-        "ses:*"
+        "ses:*",
         "ec2:Describe*",
         "autoscaling:Describe*",
         "cloudfront:CreateInvalidation",
