@@ -670,6 +670,7 @@ class Offer < ActiveRecord::Base
   def store_id_for_feed
     item_type == 'App' ? third_party_data : Offer.hashed_icon_id(id)
   end
+  
 
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids)
     geoip_reject?(geoip_data, device) ||
@@ -693,12 +694,6 @@ class Offer < ActiveRecord::Base
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
     app_platform_mismatch?(platform_name) || hide_rewarded_app_installs_reject?(hide_rewarded_app_installs) || device_platform_mismatch?(normalized_device_type)
-  end
-  
-  def check_for_uploaded_icon
-    bucket = S3.bucket(BucketNames::TAPJOY)
-    key = RightAws::S3::Key.create(bucket, "icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg")
-    key.exists?
   end
   
   def is_valid_for?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)

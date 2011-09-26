@@ -1,0 +1,45 @@
+- @page_title = 'Ad Preview'
+
+#previews
+  - publisher_app_id = "2349536b-c810-47d7-836c-2cd47cd3a796" # TapDefense
+  - if @offer.featured?
+    Featured ad:
+    %div
+      - if !@show_generated_ads
+        = render :partial => "no_icon"
+      - else
+        = image_tag("#{API_URL}/fullscreen_ad/image?advertiser_app_id=#{@offer.id}&publisher_app_id=#{publisher_app_id}&offer_id=#{@offer.id}", :alt => "featuredimg")
+  - else
+    - if @offer.rewarded?
+      Offer Wall ad:
+      %div
+        - if !@show_generated_ads
+          = render :partial => "no_icon"
+        - else
+          = image_tag("#{API_URL}/get_offers/image?advertiser_app_id=#{@offer.id}&publisher_app_id=#{publisher_app_id}&offer_id=#{@offer.id}", :alt => "offerwallimg")
+      %br
+    
+    - sizes = Offer::DISPLAY_AD_SIZES.values
+    - sizes.each_with_index do |size, index|
+      - if index > 0
+        %br
+      = "#{size} banner ad:"
+      %div
+        - if !@show_generated_ads and !@offer.has_banner_creative_for_size?(size)
+          = render :partial => "no_icon"
+        - else
+          - dimensions = size.split("x")
+          = image_tag(@offer.get_ad_image_url(publisher_app_id, dimensions[0].to_i, dimensions[1].to_i), :alt => "#{size}img")
+
+    - if !@offer.rewarded?
+      %br
+      *To provide custom creatives for your non-rewarded ads, please contact
+      = "#{mail_to "support@tapjoy.com"}."
+      Please ensure images have correct dimensions and are of the following file types:
+      = "[#{Offer::DISPLAY_AD_FORMATS.values.join(', ')}]."
+
+- content_for :page_styles do
+  :plain
+    #previews {
+      text-align: center;
+    }

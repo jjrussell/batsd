@@ -38,8 +38,11 @@ class Apps::OffersController < WebsiteController
   end
   
   def preview
-    @show_generated_ads = @offer.check_for_uploaded_icon
-    render 'apps/offers_shared/preview', :layout => 'simple'
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    key = RightAws::S3::Key.create(bucket, "icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg")
+    @show_generated_ads = key.exists?
+    
+    render :layout => 'simple'
   end
   
   def update
