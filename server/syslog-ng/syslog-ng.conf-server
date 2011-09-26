@@ -90,7 +90,7 @@ template web_request {
 };
 
 destination ebs_file {
-  file("/ebs/log/$PROGRAM/$YEAR-$MONTH-$DAY-$HOUR.log"
+  file("/ebs/log/$PROGRAM/$YEAR-$MONTH-$DAY-$HOUR$MIN.log"
     template(web_request)
     owner("ubuntu")
     group("ubuntu")
