@@ -22,7 +22,6 @@ class GetOffersController < ApplicationController
   ])
 
   def image
-    require "imgkit"
     img = IMGKit.new("#{API_URL}/get_offers/webpage?app_id=#{params[:publisher_app_id]}&offer_id=#{params[:offer_id]}", :width => 320)
     
     send_data img.to_png, :type => 'image/png', :disposition => 'inline'
