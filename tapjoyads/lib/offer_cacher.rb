@@ -30,9 +30,7 @@ class OfferCacher
         offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.non_video_offers.for_offer_list.to_a
         cache_unsorted_offers_prerejected(offer_list, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, save_to_s3)
 
-        # TODO - Once we get enough (i.e. more than zero) legit non-rewarded featured offers, remove the second array and utilize the backup offer list if necessary
-        # (In other words, just remove the "+" and everything after it on the line below)
-        offer_list = Offer.enabled_offers.featured.non_rewarded.free_apps.non_video_offers.for_offer_list.to_a + Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.non_video_offers.scoped(:limit => 100, :order => 'rand()').for_offer_list.to_a
+        offer_list = Offer.enabled_offers.featured.non_rewarded.free_apps.non_video_offers.for_offer_list.to_a
         cache_unsorted_offers_prerejected(offer_list, Offer::NON_REWARDED_FEATURED_OFFER_TYPE, save_to_s3)
         
         offer_list = Offer.enabled_offers.nonfeatured.non_rewarded.free_apps.non_video_offers.for_offer_list.to_a
