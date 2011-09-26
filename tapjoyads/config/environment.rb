@@ -42,7 +42,6 @@ Rails::Initializer.run do |config|
   config.gem 'rmagick', :version => '2.12.2', :lib => 'RMagick'
   config.gem 'sqlite3', :version => '1.3.3'
   config.gem 'typhoeus', :version => '0.2.0'
-  config.gem 'imgkit', :version => '1.3.2'
 
   # These gems should be vendored
   config.gem 'airbrake', :version => '3.0.4'
