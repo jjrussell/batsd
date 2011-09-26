@@ -43,7 +43,7 @@ TJG.utils = {
     var h = parseInt(($(window).height()/2)-($(el).outerHeight()+16/2));
     var w = parseInt(($(window).width()/2)-($(el).outerWidth()/2));
     if (h <= 0) {
-      h = 16;
+      h = 24;
     }
     $(el).css('top',  h + "px");
     $(el).css('left', w + "px"); 
