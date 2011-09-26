@@ -829,7 +829,7 @@ TJG.utils = {
     var h = parseInt(($(window).height()/2)-($(el).outerHeight()+16/2));
     var w = parseInt(($(window).width()/2)-($(el).outerWidth()/2));
     if (h <= 0) {
-      h = 16;
+      h = 24;
     }
     $(el).css('top',  h + "px");
     $(el).css('left', w + "px"); 
@@ -1127,7 +1127,7 @@ TJG.ui = {
               else if (d.link_device_url) {
                 $('.close_dialog,.continue_link_device').click(function(){
                   $('.close_dialog').unbind('click');
-                  $("#sign_up_dialog_content").html($("#link_device_dialog").html());
+                  $("#sign_up_dialog_content").html($("#link_device_dialog .dialog").html());
                   $("#sign_up_dialog_content .dialog_header_wrapper").css("padding", "6px 12px");
                   $("#sign_up_dialog_content").parent().animate({ height: "300px", }, animateSpd);
                   $('.close_dialog,.link_device_url').click(function(){
