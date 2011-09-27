@@ -226,7 +226,7 @@ class WebRequest < SimpledbResource
     return count
   end
   
-  def self.count_with_vertica(conditions)
+  def self.count_with_vertica(conditions = nil)
     VerticaCluster.count('web_request', conditions)
   end
   
