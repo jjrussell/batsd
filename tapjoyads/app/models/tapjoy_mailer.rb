@@ -164,4 +164,16 @@ class TapjoyMailer < ActionMailer::Base
     subject 'Approve Unknown Computer or Device'
     body(:verification_link => verification_link, :password_reset_link => password_reset_link, :location => location, :timestamp => timestamp)
   end
+  
+  def partner_name_change_notification(partner, name_was, acct_mgr_email, partner_link)
+    from 'Tapjoy <noreply@tapjoy.com>'
+    if Rails.env == 'production'
+      recipients 'accounting@tapjoy.com'
+    else
+      recipients 'dev@tapjoy.com'
+    end
+    content_type 'text/html'
+    subject 'Partner Name Change Notification'
+    body(:partner => partner, :name_was => name_was, :acct_mgr_email => acct_mgr_email, :partner_link => partner_link)
+  end
 end
