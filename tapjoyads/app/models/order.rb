@@ -70,7 +70,7 @@ class Order < ActiveRecord::Base
   end
 
   def billable?
-    payment_method_string == 'Invoice'
+    payment_method == 1
   end
 
 private
