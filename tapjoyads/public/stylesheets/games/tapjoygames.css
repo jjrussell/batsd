@@ -428,7 +428,6 @@ form#new_gamer input {
 .mobile .content {
   color: #FFF;
   margin: 0 auto; 
-  margin: 0 auto;
   min-height: 480px;
   padding: 8px 7px;
 }
@@ -654,6 +653,13 @@ form#new_gamer_session .login_pass {
 #manage_account .title_2 {
   padding: 8px 0 12px 8px;
 }
+.web #manage_account .center_contact {
+  padding: 12px 0;
+}
+.mobile #manage_account .center_contact {
+  padding: 8px 0;
+  font-size: 14px;
+}
 #manage_account .center_contact {
   font-weight: bold;
   text-align: center;
@@ -666,23 +672,46 @@ form#new_gamer_session .login_pass {
   background: transparent url('/images/games/dark_bg.png') repeat;
   width: 100%;
 }
+.web #profile_info_display .center_container {
+  max-width: 600px;
+  padding: 16px 40px;
+}
+.mobile #profile_info_display .center_container {
+  max-width: 320px;
+  padding: 8px 7px;
+}
+#profile_info_display .center_container {
+  margin: 0 auto;
+}
+.web .info_expand_bottom_arrow_wrapper {
+  max-width: 600px;
+  padding: 0 40px;
+}
+.mobile .info_expand_bottom_arrow_wrapper {
+  max-width: 320px;
+  padding: 0 7px;
+}
 .info_expand_bottom_arrow_wrapper {
   height: 18px;
   margin: 0 auto;
-  max-width: 600px;
   overflow-y: hidden;
   position: relative;
-  top: 0px;
-  padding: 0;
+}
+.web .info_expand_bottom_arrow {
+  height: 25px;
+  top: -13px;
+  width: 25px;
+}
+.mobile .info_expand_bottom_arrow {
+  height: 16px;
+  top: -8px;
+  width: 16px;
 }
 .info_expand_bottom_arrow {
   background: transparent url('/images/games/dark_bg.png') repeat;
   display: block;
-  height: 25px;
-  left: 40px;
+  left: 38px;
   position: relative;
-  top: -13px;
-  width: 25px;
   -webkit-transform: rotateZ(45deg);
   -moz-transform: rotateZ(45deg);
 }
@@ -702,50 +731,92 @@ form#new_gamer_session .login_pass {
   -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
 }
+.web .gamer_name {
+  font-size: 24px;
+}
+.mobile .gamer_name {
+  font-size: 18px;
+}
 .gamer_name {
   color: #FFFFFF;
-  font-size: 24px;
   font-weight: bold;
+}
+.web .gamer_signup_date {
+  font-size: 14px;
+}
+.mobile .gamer_signup_date {
+  font-size: 12px;
 }
 .gamer_signup_date {
   color: #FFFFFF;
-  font-size: 14px;
 }
 #account_options {
   padding: 0;
 }
+.mobile #account_options {
+  font-size: 14px;
+}
 #account_options .bottom_line {
   border-bottom: 1px solid #DEDEDE;
 }
-#account_options .slider {
+.web #account_options .slider {
   height: 50px;
+}
+.mobile #account_options .slider {
+  height: 35px;
+}
+#account_options .slider {
   padding: 0;
   width: 100%;
   vertical-align: middle;
+}
+.web #account_options .field {
+  padding: 12px;
+}
+.mobile #account_options .field {
+  padding: 3px;
+}
+.web #account_options .label {
+  padding: 4px;
+}
+.mobile #account_options .label {
+  padding: 8px 4px 4px 6px;
 }
 #account_options .label {
   float: left;
   font-weight: bold;
   position: relative;
-  top: 6px;
+}
+.web #account_options .value {
+  padding: 4px;
+}
+.mobile #account_options .value {
+  padding: 8px 4px 4px 0px;
 }
 #account_options .value {
   float: left;
   position: relative;
-  top: 6px;
 }
 #account_options .image {
   float: left;
+  padding: 0;
   position: relative;
 }
-#invite_friends .social_btn {
-  background: transparent url('/images/games/friends_sprites.png');
-  float: left;
+.web #invite_friends .social_btn {
+  background: transparent url('/images/games/friends_sprites_web.png');
   height: 78px;
+  width: 78px;
+}
+.mobile #invite_friends .social_btn {
+  background: transparent url('/images/games/friends_sprites_mobile.png');
+  height: 39px;
+  width: 39px;
+}
+#invite_friends .social_btn {
+  float: left;
   margin-bottom: 12px;
   margin-left: 12px;
   overflow: hidden;
-  width: 78px;
   -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
 }
@@ -781,14 +852,24 @@ form#new_gamer_session .login_pass {
   width: 100%;
 }
 #edit_profile .field {
-  margin: 6px 12px 6px 12px;
+  padding: 12px 0 12px 12px;
+}
+.mobile #edit_profile label {
+  font-size: 12px;
 }
 #edit_profile label {
   color: #4B4B4B;
   float: left;
   font-weight: bold;
   position: relative;
-  top: 6px;
+}
+.mobile #edit_profile input[type=text],
+.mobile #edit_profile input[type=password],
+.mobile #edit_profile select {
+  font-size: 10px;
+}
+.mobile #edit_profile select {
+  width: 230px;
 }
 #edit_profile input[type=text],
 #edit_profile input[type=password],
@@ -798,14 +879,17 @@ form#new_gamer_session .login_pass {
   float: left;
   font-size: 16px;
   outline: none; 
-  padding: 4px 6px;
+  padding: 0 0 0 4px;
   position: relative;
-  top: 2px;
   -webkit-appearance: none;
+}
+.mobile #edit_profile .value {
+  font-size: 12px;
 }
 #edit_profile .value,
 #edit_profile .fieldWithErrors {
   float: left;
+  padding: 0 0 0 4px;
   position: relative;
 }
 .button_bar input[type=submit] {
