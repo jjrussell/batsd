@@ -152,4 +152,5 @@ Environment Setup:
   </VirtualHost>
   
   -Open /etc/hosts and add '127.0.0.1   gems.local' to the end of the file 
-  -To start Apache: sudo apachectl restart
+  -To restart Apache: sudo apachectl restart
+  
