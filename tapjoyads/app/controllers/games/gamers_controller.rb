@@ -13,7 +13,7 @@ class Games::GamersController < GamesController
         @device = Device.new :key => click.udid
         @device.product = click.device_name
         @device.save
-        @gamer.devices.create(:device => @device)
+        @gamer.devices.build(:device => @device)
         url = "#{API_URL}/offer_completed?click_key=#{click.key}"
         Downloader.get_with_retry url
       end
