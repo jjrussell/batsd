@@ -81,7 +81,7 @@ Environment Setup:
   -sudo env ARCHFLAGS="-arch x86_64" gem install memcached -v 1.2.7
   -sudo env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
   -sudo gem install rcov -v 0.9.10
-  -sudo gem install -v=2.3.4 rails
+  -sudo gem install -v 2.3.14 rails
   -sudo rake gems:install
   
 
@@ -104,16 +104,52 @@ Environment Setup:
   -Prepend "8.8.8.8" and "8.8.4.4" to your DNS list
     -In OSX, System Preferences -> Network -> Advanced -> DNS -> + -> [prepend ips] -> OK -> Apply
 
--If you want to install Passenger (so you can use alternate local domains instead of http://localhost:3000)
-  -Install passenger
-  -Enable vhosts in httpd.conf
-  -Add vhost
-  -Add host
-  -Start Apache
+-OPTIONAL: to install Passenger (so you can use alternate local domains instead of http://localhost:3000)
+  -sudo gem install passenger
+  -sudo passenger-install-apache2-module (follow on-screen instructions)
+  -Open /etc/apache2/httpd.conf and remove the '#' in front of 'Include /private/etc/apache2/extra/httpd-vhosts.conf'
+  -Open /etc/apache2/extra/httpd-vhosts.conf and replace contents with the following:
+  
+  # My Virtual Hosts
+  NameVirtualHost *:80
 
--If you want sinatra-rubygems
-  -Install sinatra gem
-  -Clone from git
-  -Add vhost
-  -Add host
-  -Restart apache
+  <VirtualHost *:80>
+    DocumentRoot "/path/to/tapjoyserver/tapjoyads/public"
+    ServerName tapjoy.local
+    RailsEnv development
+    RailsBaseURI /
+    <Directory "/path/to/tapjoyserver/tapjoyads/public">
+      Options FollowSymLinks
+      Options -MultiViews
+      AllowOverride None
+      Order allow,deny
+      Allow from all
+     </Directory>
+  </VirtualHost>
+  
+  <VirtualHost *:80>
+    DocumentRoot "/Library/WebServer/Documents"
+    ServerName localhost
+  </VirtualHost>
+  
+  -Open /etc/hosts and add '127.0.0.1   tapjoy.local' to the end of the file 
+  -To start Apache in OSX, System Preferences -> Sharing -> Check checkbox for 'Web Sharing'
+
+-OPTIONAL: To install sinatra-rubygems (for easy access to local gem Rdocs)
+  -sudo gem install sinatra
+  -git clone git://github.com/jnewland/sinatra-rubygems.git
+  -Open /etc/apache2/extra/httpd-vhosts.conf and append the following to the end:
+  
+  <VirtualHost *:80>
+    DocumentRoot "/path/to/sinatra-rubygems/public"
+    ServerName gems.local
+    RackEnv production
+    RackBaseURI /
+    <Directory "/path/to/sinatra-rubygems/public">
+      Order allow,deny
+      Allow from all
+     </Directory>
+  </VirtualHost>
+  
+  -Open /etc/hosts and add '127.0.0.1   gems.local' to the end of the file 
+  -To start Apache: sudo apachectl restart
