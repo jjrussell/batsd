@@ -12,7 +12,7 @@ class ToolsController < WebsiteController
   end
 
   def monthly_data
-    most_recent_period = Date.current.beginning_of_month.last_month
+    most_recent_period = Date.current.beginning_of_month.prev_month
     @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
 
     @months = []
@@ -138,6 +138,14 @@ class ToolsController < WebsiteController
       
       @lb_instances[lb_name].sort! { |a, b| a[:instance_id] <=> b[:instance_id] }
     end
+  end
+
+  def ses_status
+    ses = AWS::SimpleEmailService.new
+    @quotas = ses.quotas
+    @statistics = ses.statistics.sort_by { |s| -s[:sent].to_i }
+    @verified_senders = ses.email_addresses.collect
+    @queue = Sqs.queue(QueueNames::FAILED_EMAILS)
   end
 
   def as_groups

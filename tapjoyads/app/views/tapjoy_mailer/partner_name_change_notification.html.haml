@@ -1,0 +1,11 @@
+%h3 A partner's name was changed.
+
+Partner ID: #{@partner.id}
+%br
+Original Name: #{@name_was}
+%br
+New Name: #{@partner.name}
+%br
+Changed by: #{@acct_mgr_email}
+%br
+= link_to(@partner_link, @partner_link)
