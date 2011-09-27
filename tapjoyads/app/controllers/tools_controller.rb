@@ -140,6 +140,14 @@ class ToolsController < WebsiteController
     end
   end
 
+  def ses_status
+    ses = AWS::SimpleEmailService.new
+    @quotas = ses.quotas
+    @statistics = ses.statistics.sort_by { |s| -s[:sent].to_i }
+    @verified_senders = ses.email_addresses.collect
+    @queue = Sqs.queue(QueueNames::FAILED_EMAILS)
+  end
+
   def as_groups
     as_interface = RightAws::AsInterface.new
     @as_groups = as_interface.describe_auto_scaling_groups
