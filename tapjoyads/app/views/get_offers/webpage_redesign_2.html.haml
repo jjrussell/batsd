@@ -1,37 +1,35 @@
-
 - @page_title = @currency.conversion_rate > 0 ? t('text.offerwall.title', :currency => @currency.name) : ''
 
 - unless @message.blank?
   #top_box
     .explanation= @message
 
-- if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
-  = render :partial => 'currency_selector'
-
 - if @currency.conversion_rate > 0
   #top_box
     .explanation
       = t('text.offerwall.redesign_instructions', :currency => @currency.name)
+  - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
+    = render :partial => 'currency_selector', :locals => {:redesign => true}
 
 - if @start_index > 0
   = render :partial => 'pagination_links'
 
-- if @test_offer.present?
+- if @test_offers.present?
   - unless @currency.tapjoy_enabled?
     #top_box
       .explanation
         You must email #{mail_to("publishersupport@tapjoy.com")} before users will be able to view offers.
-  #top_box
-    .explanation
-      = @test_offer.name
-      %br
-      = link_to("Click to receive #{@currency.get_visual_reward_amount(@test_offer, params[:display_multiplier])} #{@currency.name}", get_click_url(@test_offer))
+  - @test_offers.each do |test_offer|
+    #top_box
+      .explanation
+        = test_offer.name
+        %br
+        = link_to("Click to receive #{@currency.get_visual_reward_amount(test_offer, params[:display_multiplier])} #{@currency.name}", get_click_url(test_offer))
 
 #offers.box
   - @offer_list.each_with_index do |offer, index|
     - link_class = index == 0 ? 'offer first' : index == @offer_list.size - 1 ? 'offer last' : 'offer'
     - link_class << ' video' if offer.item_type == 'VideoOffer'
-    .divider
     - link_to(get_click_url(offer), :class => link_class, :onclick => "this.className += ' clicked';") do
       .content
         .banner
@@ -53,20 +51,21 @@
           %p
             %b= offer.name
         .load
-    .divider
+    - unless index == (@offer_list.size-1)
+      .divider
     
 - if @more_data_available > 0
   #bottom_box{ :onclick => "javascript:getAds();" }
     #plus
     %a{ :href => "javascript:void(0);", :id => "load_more" }
-      Load some more offers!
+      Load some more!
 #footerWrapper
   #footer
-    = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/site/privacy_mobile')
-    %span &nbsp;|&nbsp;
     - if @currency.conversion_rate > 0
       = link_to_missing_currency
       %span &nbsp;|&nbsp;
+    = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/site/privacy_mobile')
+    %br
     %span
       = t('text.shared.ads_by')
     #logo
@@ -174,6 +173,9 @@
                   offerCls = 'video';
                   imgCls = 'video_icon';
                 }
+                if (i == 0) {
+                  t.push('<div class="divider"></div>');
+                }
                 t.push('<a class="offer '+ offerCls +'" href="'+ v.RedirectURL + '">');
                   t.push('<div class="content">');
                     t.push('<div class="banner">');
@@ -202,7 +204,9 @@
                     t.push('</div>');
                   t.push('</div>');
                 t.push('</a>');
-                t.push('<div class="divider"></div>');
+                if (i != (offers.length - 1)) {
+                  t.push('<div class="divider"></div>');
+                }
               });
               $("#offers").append(t.join(''));
               scroll();

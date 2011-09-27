@@ -104,7 +104,7 @@ authorization do
     includes :hr
     includes :games_editor
     has_permission_on :pub_offer_whitelist, :to => [ :index, :enable, :disable ]
-    has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :send_currency_failures, :sqs_lengths, :elb_status, :as_groups, :manage_user_roles, :update_user_roles ]
+    has_permission_on :tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :send_currency_failures, :sqs_lengths, :elb_status, :ses_status, :as_groups, :manage_user_roles, :update_user_roles ]
     has_permission_on :tools_users_role_assignments, :to => [ :create, :destroy ]
     has_permission_on :tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :tools_support_requests, :to => [ :index ]

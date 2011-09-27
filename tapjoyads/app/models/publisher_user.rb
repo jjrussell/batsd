@@ -6,7 +6,7 @@ class PublisherUser < SimpledbShardedResource
   self.sdb_attr :udids, :force_array => true, :replace => false
   
   def dynamic_domain_name
-    domain_number = @key.hash % NUM_PUBLISHER_USER_DOMAINS
+    domain_number = @key.matz_silly_hash % NUM_PUBLISHER_USER_DOMAINS
     "publisher_users_#{domain_number}"
   end
   

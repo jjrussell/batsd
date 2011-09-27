@@ -321,6 +321,7 @@ class Offer < ActiveRecord::Base
     language_code         = options.delete(:language_code)         { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
     display_multiplier    = options.delete(:display_multiplier)    { 1 }
+    library_version       = options.delete(:library_version)       { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     data = {
@@ -331,7 +332,8 @@ class Offer < ActiveRecord::Base
       :itunes_link_affiliate => itunes_link_affiliate,
       :currency_id           => currency.id,
       :language_code         => language_code,
-      :display_multiplier    => display_multiplier
+      :display_multiplier    => display_multiplier,
+      :library_version       => library_version,
     }
 
     "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
@@ -343,18 +345,23 @@ class Offer < ActiveRecord::Base
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
     click_key             = options.delete(:click_key)             { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
+    library_version       = options.delete(:library_version)       { nil }
     options.delete(:language_code)
     options.delete(:display_multiplier)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
-    if item_type == 'App' && final_url =~ /^http:\/\/phobos\.apple\.com/
-      final_url += '&referrer=tapjoy'
-      
-      if itunes_link_affiliate == 'tradedoubler'
-        final_url += '&partnerId=2003&tduid=UK1800811'
-      else
-        final_url += '&partnerId=30&siteID=OxXMC6MRBt4'
+    if item_type == 'App'
+      if final_url =~ /^http:\/\/phobos\.apple\.com/
+        final_url += '&referrer=tapjoy'
+
+        if itunes_link_affiliate == 'tradedoubler'
+          final_url += '&partnerId=2003&tduid=UK1800811'
+        else
+          final_url += '&partnerId=30&siteID=OxXMC6MRBt4'
+        end
+      elsif library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
+        final_url.sub!('market://search?q=', 'http://market.android.com/details?id=')
       end
     elsif item_type == 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
@@ -405,6 +412,7 @@ class Offer < ActiveRecord::Base
     language_code      = options.delete(:language_code)      { nil }
     display_multiplier = options.delete(:display_multiplier) { 1 }
     device_name        = options.delete(:device_name)        { nil }
+    library_version    = options.delete(:library_version)    { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
@@ -416,6 +424,8 @@ class Offer < ActiveRecord::Base
       click_url += "rating"
     elsif item_type == 'TestOffer'
       click_url += "test_offer"
+    elsif item_type == 'TestVideoOffer'
+      click_url += "test_video_offer"
     elsif item_type == 'ActionOffer'
       click_url += "action"
     elsif item_type == 'VideoOffer'
@@ -440,6 +450,7 @@ class Offer < ActiveRecord::Base
       :language_code      => language_code,
       :display_multiplier => display_multiplier,
       :device_name        => device_name,
+      :library_version    => library_version,
     }
 
     "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
@@ -457,13 +468,16 @@ class Offer < ActiveRecord::Base
     exp                = options.delete(:exp)                { nil }
     country_code       = options.delete(:country_code)       { nil }
     display_multiplier = options.delete(:display_multiplier) { 1 }
+    library_version    = options.delete(:library_version)    { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     ad_url = "#{API_URL}/fullscreen_ad"
     if item_type == 'TestOffer'
       ad_url += "/test_offer"
+    elsif item_type == 'TestVideoOffer'
+      ad_url += "/test_video_offer"
     end
-    ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}&country_code=#{country_code}&display_multiplier=#{display_multiplier}"
+    ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app.id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}&country_code=#{country_code}&display_multiplier=#{display_multiplier}&library_version=#{library_version}"
     ad_url += "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
     ad_url += "&exp=#{exp}" if exp.present?
     ad_url
@@ -482,7 +496,7 @@ class Offer < ActiveRecord::Base
 
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
     
-    if item_type == 'VideoOffer'
+    if item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
       bucket = S3.bucket(BucketNames::TAPJOY)
       existing_icon_blob = bucket.get("icons/src/#{icon_id}.jpg") rescue ''
       size = '200'
@@ -678,7 +692,7 @@ class Offer < ActiveRecord::Base
 
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids)
     geoip_reject?(geoip_data, device) ||
-    already_complete?(publisher_app, device, app_version) ||
+    already_complete?(device, app_version) ||
     show_rate_reject?(device) ||
     flixter_reject?(publisher_app, device) ||
     minimum_bid_reject?(currency, type) ||
@@ -701,9 +715,12 @@ class Offer < ActiveRecord::Base
   end
   
   def is_valid_for?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size)
-    !(device_platform_mismatch?(Device.normalize_device_type(device_type)) ||
+    (is_test_device?(currency, device) && 
+      is_test_video_offer?(type) ) ||
+    (!(is_test_video_offer?(type) ||
+      device_platform_mismatch?(Device.normalize_device_type(device_type)) ||
       geoip_reject?(geoip_data, device) ||
-      already_complete?(publisher_app, device, app_version) ||
+      already_complete?(device, app_version) ||
       flixter_reject?(publisher_app, device) ||
       minimum_bid_reject?(currency, type) ||
       jailbroken_reject?(device) ||
@@ -719,9 +736,9 @@ class Offer < ActiveRecord::Base
       publisher_whitelist_reject?(publisher_app) ||
       currency_whitelist_reject?(currency) ||
       frequency_capping_reject?(device)) &&
-      accepting_clicks?
+      accepting_clicks?)
   end
-
+  
   def update_payment(force_update = false)
     if (force_update || bid_changed? || new_record?)
       if (item_type == 'App' || item_type == 'ActionOffer')
@@ -976,7 +993,7 @@ private
     false
   end
 
-  def already_complete?(publisher_app, device, app_version)
+  def already_complete?(device, app_version = nil)
     return false if EXEMPT_UDIDS.include?(device.key) || multi_complete?
     
     app_id_for_device = item_id
@@ -1095,7 +1112,15 @@ private
     return false if type == Offer::VIDEO_OFFER_TYPE
     item_type == 'VideoOffer' && !video_offer_ids.include?(id)
   end
-
+  
+  def is_test_device?(currency, device)
+    currency.get_test_device_ids.include?(device.id)
+  end
+  
+  def is_test_video_offer?(type)
+    type == 'TestVideoOffer'
+  end
+  
   def cleanup_url
     self.url = url.gsub(" ", "%20")
   end

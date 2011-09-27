@@ -16,7 +16,7 @@ class Order < ActiveRecord::Base
   belongs_to :partner
   
   validates_presence_of :partner
-  validates_presence_of :billing_email, :on => :create, :if => :create_invoice, :message => "Partner needs a billing email for invoicing"
+  validates_presence_of :billing_email, :on => :create, :if => :billable?, :message => "Partner needs a billing email for invoicing"
   validates_inclusion_of :status, :in => STATUS_CODES.keys
   validates_inclusion_of :payment_method, :in => PAYMENT_METHODS.keys
   validates_uniqueness_of :invoice_id, :allow_nil => true
@@ -67,6 +67,10 @@ class Order < ActiveRecord::Base
 
   def failed_invoice?
     status == 0
+  end
+
+  def billable?
+    payment_method == 1
   end
 
 private

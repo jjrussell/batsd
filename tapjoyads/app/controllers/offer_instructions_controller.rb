@@ -16,6 +16,7 @@ class OfferInstructionsController < ApplicationController
       :currency              => @currency,
       :click_key             => params[:click_key],
       :itunes_link_affiliate => params[:itunes_link_affiliate],
+      :library_version       => params[:library_version],
     })
   end
   
