@@ -88,7 +88,7 @@ a, a:visited {
   -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
 }
-.dialog_content, .dialog_header {
+.dialog_content {
   padding: 6px 12px;
 }
 .dialog_content a, .dialog_content a:visited {
@@ -129,6 +129,12 @@ a, a:visited {
 #how_works_dialog .dialog_header_wrapper {
   padding: 6px;
 }
+#link_device_dialog .dialog_header_wrapper {
+  padding: 6px 12px;
+}
+#link_device_dialog .dialog {
+  height: 290px;
+}
 #bad_news.dialog_wrapper .dialog {
   height: 120px;
 } 
@@ -139,7 +145,7 @@ a, a:visited {
   height: 150px;
 }
 #sign_up_dialog .dialog {
-  height: 280px;
+  padding-bottom: 6px;
 }
 #how_works_dialog .dialog, #linked_device .dialog {
   height: 180px;
@@ -150,8 +156,8 @@ a, a:visited {
 #bad_news .dialog {
   height: 240px;
 }
-#sign_up_again a {
-  color: #C1C1C1;
+#sign_up_again {
+  margin-top: 6px;
 }
 .dialog form#new_gamer {
   margin: 0 auto;
@@ -169,7 +175,10 @@ a, a:visited {
   width: 50px;
 }         
 .dialog_header_wrapper {
-  padding: 0 36px;
+  padding: 2px 36px;
+}
+.dialog_header_wrapper .less_pad {
+  padding: 2px 16px;
 }
 .dialog_header_left {
   float: left;
@@ -181,10 +190,13 @@ a, a:visited {
 }
 .dialog_header {
   font-size: 14px;
-  margin: 10px 0; 
+  margin: 6px; 
 }
 .dialog_header div {
   margin: 6px 0;
+}
+#link_device_dialog .dialog_header {
+  padding: 0;
 }
 .dialog_content {
   font-size: 14px;
@@ -202,7 +214,6 @@ a, a:visited {
 form#new_gamer input[type=text],
 form#new_gamer input[type=email],
 form#new_gamer input[type=password] {
-  margin-top: 6px;
   padding: 4px;
   width: 244px;
   -moz-border-radius: 3px;
@@ -219,7 +230,7 @@ form#new_gamer input[type=submit]{
 form#new_gamer label,
 form#new_gamer input {
   display: block;
-  padding-top: 6px;
+  padding: 3px 0;
 }
 /* Nav */
 .top_nav_bar {
@@ -462,9 +473,15 @@ form#new_gamer input {
 }
 .message_title {
   font-size: 22px;
+  margin-top: 85px;
 }
 .message_header {
+  color: #D2D2D2;
+  font-family: "Arial Rounded MT Bold""Arial Rounded MT", Arial, Helvetica, sans-serif;
+  font-weight: bold;
   margin: 6px 0 12px;
+  text-shadow: 0 1px 4px #252525;
+
 }
 .message_content {
   margin: 20px 0 12px;
@@ -976,6 +993,7 @@ form#new_gamer_session .login_pass {
 .formError, .email_error, .account_error, .login_error, .form_error {
   color: #F21C1A;
   font-size: 13px;
+  padding: 4px;
 }
 .formError .pad, .email_error .pad, .account_error .pad, .login_error .pad, .form_error .pad {
   padding: 6px;
@@ -1610,13 +1628,10 @@ input.button {
 .button.lt_blue.logout a {
   color: #FFF;
 }
-.button.dialog_button {
-  border: 1px solid #111;
+.button.grey.dialog_button {
   cursor: pointer;
   margin: 0 auto;
   width: 100px;
-  background: -moz-linear-gradient(top, #363636 0%, #111 100%);
-  background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #363636), color-stop(1, #111));
 }
 .message_content .button.grey.arrow {
   color: #2778A1;
@@ -1625,14 +1640,38 @@ input.button {
   color: #FFF;
 }
 .message_content .button.grey.arrow .arrow_bg {
-  background: transparent url('/images/games/button_right_arrow.png') no-repeat center right;
-  padding-right: 20px; 
+  background: transparent url('/images/games/button_right_arrow.png') no-repeat 2px right;
+  padding-right: 16px;
 }
-.message_content.link_device {
-  width: 230px;
-}
-.message_content.find_games {
+.message_content.find_games, .message_content.link_device {
   width: 160px;
+}
+.link_device_content {
+  line-height: 18px;
+  margin: 12px 0;
+}
+.link_device_content span {
+  float: left;
+  display: block;
+}
+.link_device_image {
+  background: transparent url('/images/games/link_device.png') no-repeat center center;
+  height: 84px;
+  width: 250px;
+}
+.link_device_install_icon {
+  background: transparent url('/images/games/install_device.png') no-repeat center center;
+  float: left;
+  height: 16px;
+  position: relative;
+  margin: 0 2px;
+  top: 2px;
+  width: 48px;
+}
+.link_device_btn {
+  cursor: pointer;
+  margin: 0 auto;
+  width: 150px;
 }
 #static {
   font-size: 12px;
@@ -1729,6 +1768,9 @@ h2.title {
 }
 .bold {
   font-weight: bold;
+}
+.no_wrap {
+  white-space: nowrap;
 }
 .field_row {
   width: 100%;
