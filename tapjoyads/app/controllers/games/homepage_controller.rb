@@ -3,7 +3,7 @@ class Games::HomepageController < GamesController
   before_filter :require_gamer, :except => [ :tos, :privacy ]
 
   def index
-    @device = Device.new(:key => current_gamer.udid) if current_gamer.udid.present?
+    @device = Device.new(:key => current_device_id)
     @external_publishers = ExternalPublisher.load_all_for_device(@device) if @device.present?
     @featured_review = AppReview.featured_review
   end

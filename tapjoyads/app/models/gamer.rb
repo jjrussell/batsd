@@ -1,6 +1,7 @@
 class Gamer < ActiveRecord::Base
   include UuidPrimaryKey
-
+  
+  has_many :gamer_devices
   has_one :gamer_profile
 
   validates_associated :gamer_profile, :on => :create
@@ -9,6 +10,8 @@ class Gamer < ActiveRecord::Base
   validates_acceptance_of :terms_of_service, :on => :create, :allow_nil => false
   
   before_create :generate_confirmation_token
+  
+  alias_method :devices, :gamer_devices
   
   acts_as_authentic do |c|
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
