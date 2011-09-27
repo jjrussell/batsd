@@ -103,3 +103,17 @@ Environment Setup:
 -Update DNS server list (this is to ensure Ruby Resolv library will work most of the time)
   -Prepend "8.8.8.8" and "8.8.4.4" to your DNS list
     -In OSX, System Preferences -> Network -> Advanced -> DNS -> + -> [prepend ips] -> OK -> Apply
+
+-If you want to install Passenger (so you can use alternate local domains instead of http://localhost:3000)
+  -Install passenger
+  -Enable vhosts in httpd.conf
+  -Add vhost
+  -Add host
+  -Start Apache
+
+-If you want sinatra-rubygems
+  -Install sinatra gem
+  -Clone from git
+  -Add vhost
+  -Add host
+  -Restart apache
