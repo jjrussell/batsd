@@ -12,7 +12,8 @@ class GamesController < ApplicationController
   end
   
   def current_device_id
-    session[:current_device_id] ||= current_gamer.devices.first.device_id if current_gamer && current_gamer.devices.any?
+    session[:current_device_id] ||= SymmetricCrypto.encrypt_object(current_gamer.devices.first.device_id, SYMMETRIC_CRYPTO_SECRET) if current_gamer && current_gamer.devices.any?
+    SymmetricCrypto.decrypt_object(session[:current_device_id], SYMMETRIC_CRYPTO_SECRET)
   end
   
 protected
