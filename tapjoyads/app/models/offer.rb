@@ -56,6 +56,10 @@ class Offer < ActiveRecord::Base
   }
 
   attr_accessor :rank_score
+  
+  DISPLAY_AD_SIZES.values.each do |size|
+    attr_accessor "custom_creative_#{size}".to_sym
+  end
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -731,6 +735,66 @@ class Offer < ActiveRecord::Base
   def update_payment!
     update_payment(true)
     save!
+  end
+  
+  # returns success boolean
+  def update_custom_creatives(creatives)
+    banner_creatives_str = ""
+    errors_encountered = false
+    creatives.each do |creative|
+      size_key = creative[:size_key]
+      size = creative[:size]
+      file = creative[:file]
+      remove = creative[:remove]
+      if !file and has_banner_creative_for_size?(size) and !remove
+        # nothing has changed, keep banner_creative as-is
+        format_key = banner_creative_format_key_for_size(size)
+        banner_creatives_str << "#{size_key},#{format_key};"
+      end
+  
+      # TODO: delete "removed" creative files from S3? May want to write a job for that later. Meanwhile, taking up space unnecessarily isn't a big deal
+  
+      if file # new file has been uploaded
+        begin
+          creative_arr = Magick::Image.from_blob(file.read)
+          if creative_arr.size != 1
+            raise "image contains multiple layers (e.g. animated .gif)"
+          end
+          creative = creative_arr[0]
+          format = creative.format.downcase
+          if !Offer::DISPLAY_AD_FORMATS.values.include? format
+            raise "invalid format"
+          end
+        rescue
+          errors_encountered = true
+          self.errors.add("custom_creative_#{size}".to_sym, "new file is invalid - please provide one of the following file types: #{Offer::DISPLAY_AD_FORMATS.values.join(', ')} (.gifs must be static)")
+          next
+        end
+        dimensions = "#{creative.columns}x#{creative.rows}"
+        if dimensions != size
+          errors_encountered = true
+          self.errors.add("custom_creative_#{size}".to_sym, "new file has invalid dimensions")
+          next
+        end
+        begin
+          bucket = S3.bucket(BucketNames::TAPJOY)
+          filename = "#{id}_#{size}.#{format}"
+          bucket.put("banner_creatives/#{filename}", creative.to_blob, {}, 'public-read')
+        rescue
+          errors_encountered = true
+          self.errors.add("custom_creative_#{size}".to_sym, "encountered unexpected error while uploading new file, please try again")
+          next
+        end
+        format_key = Offer::DISPLAY_AD_FORMATS.invert[format]
+        banner_creatives_str << "#{size_key},#{format_key};"
+      end
+    end
+    banner_creatives_str.chomp!(";")
+    if !errors_encountered
+      self.banner_creatives = banner_creatives_str
+      return true
+    end
+    false
   end
 
   def min_bid
