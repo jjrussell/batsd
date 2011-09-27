@@ -4,6 +4,11 @@
 
 - form_for(@partner, nil, :html => { :class => 'tjform' }) do |f|
   .field
+    = f.label :name
+    #help_name.help ?
+    = f.text_field :name
+    = error_message_on(@partner, :name)
+  .field
     = f.label :approved_publisher
     #help_approved_publisher.help ?
     = f.check_box(:approved_publisher)
@@ -47,6 +52,8 @@
   = submit_tag "Update"
 
 .hidden
+  #help_name_content{:name => 'Name'}
+    The partner's name. Finance will be notified if the name is changed.
   #help_approved_publisher_content{:name => 'Approved publisher'}
     Approval status for publishing offers.
     Checking this box will make all future currencies created by this partner "tapjoy enabled" by default.
