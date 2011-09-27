@@ -16,7 +16,7 @@ class OfferEventsController < WebsiteController
       @event_scope = 'upcoming'
     end
     
-    @offer_events = offer_events_scope.send(@event_scope).paginate(:page => params[:page], :per_page => 40)
+    @offer_events = offer_events_scope.send(@event_scope)
   end
 
   def new

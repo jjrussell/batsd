@@ -72,8 +72,12 @@ class PartnersController < WebsiteController
     
     params[:partner][:account_managers] = User.find_all_by_id(params[:partner][:account_managers])
 
-    safe_attributes = [ :account_managers, :account_manager_notes, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email ]
+    safe_attributes = [ :name, :account_managers, :account_manager_notes, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email ]
+    name_was = @partner.name
     if @partner.safe_update_attributes(params[:partner], safe_attributes)
+      if name_was != @partner.name
+        TapjoyMailer.deliver_partner_name_change_notification(@partner, name_was, current_user.email, partner_url(@partner))
+      end
       flash.now[:notice] = 'Partner was successfully updated.'
       render :action => :show
     else

@@ -16,14 +16,15 @@
     .next= get_next_link
     .clear
 
-- if @test_offer.present?
+- if @test_offers.present?
   - unless @currency.tapjoy_enabled?
     .message
       You must email #{mail_to("publishersupport@tapjoy.com")} before users will be able to view offers.
-  .message
-    = @test_offer.name
-    %br
-    = link_to("Click to receive #{@currency.get_visual_reward_amount(@test_offer, params[:display_multiplier])} #{@currency.name}", get_click_url(@test_offer))
+  - @test_offers.each do |test_offer|
+    .message
+      = test_offer.name
+      %br
+      = link_to("Click to receive #{@currency.get_visual_reward_amount(test_offer, params[:display_multiplier])} #{@currency.name}", get_click_url(test_offer))
 
 #offers
   - @offer_list.each do |offer|
