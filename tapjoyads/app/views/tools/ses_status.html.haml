@@ -1,0 +1,99 @@
+- @page_title = 'Ses Status'
+
+%h1 SES Status
+
+As of: #{Time.zone.now.to_s(:pub_ampm_sec)}
+
+%h2 Quotas
+%table.tablesorter.flex
+  %thead
+    %tr
+      %th Sent last 24 hours
+      %th Max 24-hour
+      %th Max send rate per second
+  %tbody
+    %tr
+      %td= @quotas[:sent_last_24_hours]
+      %td= @quotas[:max_24_hour_send]
+      %td= @quotas[:max_send_rate]
+
+%h2 Failed Emails Queue
+%table.tablesorter.flex
+  %thead
+    %tr
+      %th Length
+      %th Length (non-visible)
+  %tbody
+    %tr
+      %td= @queue.size
+      %td= @queue.size_not_visible
+
+%h2 Delivery Attempts
+
+%table#metadata.tablesorter
+  %thead
+    %tr
+      %th Timestamp (15-minute window)
+      %th Delivery attempts
+      %th Rejects
+      %th Bounces
+      %th Complaints
+  %tbody
+    - @statistics.each do |stat|
+      %tr
+        %td= Time.zone.at(stat[:sent]).to_s
+        %td= number_with_delimiter(stat[:delivery_attempts])
+        %td= number_with_delimiter(stat[:rejects])
+        %td= number_with_delimiter(stat[:bounces])
+        %td= number_with_delimiter(stat[:complaints])
+        
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $.tablesorter.addParser({
+        id: 'name-column',
+        is: function(s) { return false; },
+        type: 'text',
+        format: function(s) {
+          return s.replace(/-/g, '_');
+        }
+      });
+      $.tablesorter.addParser({
+        id: 'formatted-number-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/,/g, '');
+        }
+      });
+      $("#metadata").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0: { sorter: 'name-column' },
+          1: { sorter: 'formatted-number-column' },
+          2: { sorter: 'formatted-number-column' },
+          3: { sorter: 'formatted-number-column' },
+          4: { sorter: 'formatted-number-column' }
+        },
+        sortList: [ [0, 1] ]
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+
+    table.tablesorter thead tr .header {
+      background-position: right bottom;
+    }
+    
+    .flex {
+      width: auto !important;
+    }
+    
+    h2 {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
