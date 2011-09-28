@@ -85,7 +85,7 @@ class StatzController < WebsiteController
     @last_run_times = []
     admin_devices.each do |admin_device|
       device = Device.new(:key => admin_device.udid)
-      last_run_time = device.has_app(@offer.item_id) ? device.last_run_time(@offer.item_id).to_s(:pub_ampm_sec) : 'Never'
+      last_run_time = device.has_app?(@offer.item_id) ? device.last_run_time(@offer.item_id).to_s(:pub_ampm_sec) : 'Never'
       @last_run_times << [ admin_device, last_run_time ]
     end
   end
