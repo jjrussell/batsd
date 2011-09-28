@@ -138,7 +138,6 @@
   %br
   Upload custom creatives:
   %br
-  %br
   - Offer::DISPLAY_AD_SIZES.each do |size|
     %iframe.creative_upload{:src => upload_creative_app_offer_path(:id => @offer.id, :app => @app.id, :size => size)}
 
@@ -436,5 +435,5 @@
     .creative_upload {
       width: 100%;
       border: none;
-      height: 63px;
+      height: 30px;
     }

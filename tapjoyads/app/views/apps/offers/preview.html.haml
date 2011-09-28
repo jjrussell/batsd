@@ -4,23 +4,23 @@
   - publisher_app_id = "2349536b-c810-47d7-836c-2cd47cd3a796" # TapDefense
   - if @offer.featured?
     Featured ad:
-    %br
+    %div{:class => "img320x480"}
     - if !@show_generated_ads
       = render :partial => "link_to_appstore_msg"
     - else
-      = image_tag("#{API_URL}/fullscreen_ad/image?advertiser_app_id=#{@offer.id}&publisher_app_id=#{publisher_app_id}&offer_id=#{@offer.id}", :alt => "featuredimg")
-    %br
+      - url = "#{API_URL}/fullscreen_ad/image?advertiser_app_id=#{@offer.id}&publisher_app_id=#{publisher_app_id}&offer_id=#{@offer.id}"
+      = image_tag(url, :alt => "featuredimg")
     %br
   - if !@offer.featured? || !@offer.rewarded?
     - Offer::DISPLAY_AD_SIZES.each_with_index do |size, index|
       - if index > 0
         %br
       = "#{size} banner ad:"
-      %div
+      %div{:class => "img#{size}"}
         - if !@show_generated_ads and !@offer.banner_creatives.include?(size)
           = render :partial => "link_to_appstore_msg"
         - else
-          - width, height = size.split("x")
+          - width, height = size.split("x").collect{|x|x.to_i}
           = image_tag(@offer.get_ad_image_url(publisher_app_id, width, height, nil, nil, true), :alt => "#{size}img")
 
     %br
@@ -34,3 +34,15 @@
     div#previews {
       text-align: center;
     }
+    div.img320x480 {
+      min-width: 320px;
+      height: 480px;
+    }
+    
+  - Offer::DISPLAY_AD_SIZES.each do |size|
+    - width, height = size.split("x")
+    :plain
+      div.img#{size} {
+        min-width: #{width}px;
+        height: #{height}px;
+      }

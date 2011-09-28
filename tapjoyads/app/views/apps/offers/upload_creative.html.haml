@@ -5,39 +5,96 @@
   - form_tag(url, :method => :delete, :id => "remove_form_for_#{@size}", :class => "hidden") {}
 
 - form_for(@offer, :url => url, :html => { :method => (creative_exists ? :put : :post), :multipart => true }) do |f|
-  - file_chooser_options = {:id => "choose_#{@size}_file"}
-  = f.label("#{@size}:")
-  - if creative_exists
-    File exists.
-    = link_to("View", '#', :class => 'view_link')
-    = link_to("Remove", '#', :id => "remove_link_for_#{@size}")
-  %br
-  = f.file_field("custom_creative_#{@size}")
-  = f.submit 'Update', {:id => "#{@size}_update"}
-  = error_message_on @offer, "custom_creative_#{@size}".to_sym
+  %table
+    %tbody
+      %th
+        = "#{@size} creative"
+      %td
+        - if @success_message
+          %span#success_message
+            = h(@success_message)
+        - if creative_exists
+          = link_to("View existing file", '#', :class => 'view_link')
+          |
+          = link_to("Remove existing file", '#', :id => "remove_link")
+        - else
+          = f.file_field("custom_creative_#{@size}")
+          = f.submit('Upload', :id => "upload_button")
+        = image_tag("spinner.gif", :id => "spinner", :class => "hidden")
 
 - content_for :page_javascript do
   :plain
     $(function($){
+      toggle_other_forms(false);
+    
       $('.view_link').click(function() {
         parent.document.getElementById('preview_link').click();
         return false;
       });
       
-      $('#remove_link_for_#{@size}').click(function() {
-        $('#remove_form_for_#{@size}')[0].submit();
+      $('#remove_link').click(function() {
+        if(confirm('Are you sure? This will remove the #{@size} creative entirely.')) {
+          $('#spinner').show();
+          toggle_other_forms(true);
+          $('#remove_form_for_#{@size}')[0].submit();
+        }
         return false;
       });
+      
+      $('#upload_button').click(function() {
+        $('#spinner').show();
+        toggle_other_forms(true);
+        return true;
+      });
+      
+      function toggle_other_forms(disabled) {
+        var iframes = $(parent.document).find('iframe');
+        for(var i = 0; i<iframes.length; i++) {
+          var iframe = $(iframes[i]);
+          var upload_button = iframe.contents().find('#upload_button');
+          if (upload_button.length > 0) {
+            upload_button.attr('disabled', disabled);
+          }
+          var remove_link = iframe.contents().find('#remove_link');
+          if (remove_link.length > 0) {
+            if (disabled) {
+              remove_link.hide();
+            } else {
+              remove_link.show();
+            }
+          }
+        }
+      }
     });
+
+- if @success_message
+  - content_for :page_javascript do
+    :plain
+      $(function($){
+        $('#success_message').fadeOut(2000);
+      });
+
+- if @error_message
+  - content_for :page_javascript do
+    :plain
+      $(function($){
+        alert("#{@error_message}");
+      });
 
 - content_for :page_styles do
   :plain
     body {
       margin: 0;
     }
-    label {
+    th {
       font-weight: bold;
+      padding-right: 10px;
+      text-align: right;
+      width: 194px;
     }
     .hidden {
-      display:none;
+      display: none;
+    }
+    #success_message {
+      color: green;
     }

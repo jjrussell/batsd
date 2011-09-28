@@ -1,10 +1,15 @@
 class Apps::OffersController < WebsiteController
-  layout 'apps'
+  layout :determine_layout
   current_tab :apps
 
   filter_access_to :all
   before_filter :setup, :except => [ :toggle ]
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
+  
+  def determine_layout
+    return 'simple' if params[:action] == 'upload_creative'
+    'apps'
+  end
   
   def new
     
@@ -85,16 +90,17 @@ class Apps::OffersController < WebsiteController
         @offer.banner_creatives += @size.to_a
       when :put
         # do nothing
+      when :get
+        return # we're done, just show form
     end
     @offer.send("banner_creative_#{@size}_blob=", image_data)
     begin
-      @offer.save!
-      flash.now[:success] = 'Success!'
-    rescue BannerUploadError => e
+      @offer.save! 
+      @success_message = "File #{request.method == :delete ? 'removed' : 'uploaded'} successfully"
+    rescue BannerSyncError => e
       @offer.reload # we want the form to reset back to the way it was
-      flash.now[:error] = e.message
+      @error_message = e.message
     end
-    render :layout => 'simple'
   end
   
   def toggle

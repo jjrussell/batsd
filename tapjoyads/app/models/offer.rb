@@ -406,7 +406,7 @@ class Offer < ActiveRecord::Base
       url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{self.id}&displayer_app_id=#{publisher_app_id}&size=#{width}x#{height}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}"
       delim = '&'
     end
-    url << "#{delim}id=#{Time.now.to_s}" if bust_cache
+    url << "#{delim}ts=#{Time.now.to_i}" if bust_cache
     url
   end
 
@@ -951,7 +951,7 @@ private
   def delete_banner_creative(size, format='jpg')
     banner_creative_s3_key(size, format).delete
   rescue
-    raise BannerUploadError.new("Encountered unexpected error while deleting existing file, please try again")
+    raise BannerSyncError.new("Encountered unexpected error while deleting existing file, please try again.")
   end
   
   def upload_banner_creative(blob, size, format='jpg')
@@ -963,16 +963,16 @@ private
       creative = creative_arr[0]
       creative.format = format
     rescue
-      raise BannerUploadError.new("New file is invalid - unable to convert to .#{format}")
+      raise BannerSyncError.new("New file is invalid - unable to convert to .#{format}.")
     end
     
     width, height = size.split("x").collect{|x|x.to_i}
-    raise BannerUploadError.new("New file has invalid dimensions") if [width, height] != [creative.columns, creative.rows]
+    raise BannerSyncError.new("New file has invalid dimensions.") if [width, height] != [creative.columns, creative.rows]
     
     begin
       banner_creative_s3_key(size, format).put(creative.to_blob, 'public-read')
     rescue
-      raise BannerUploadError.new("Encountered unexpected error while uploading new file, please try again")
+      raise BannerSyncError.new("Encountered unexpected error while uploading new file, please try again.")
     end
     
     # Add to memcache
@@ -1205,4 +1205,4 @@ private
 
 end
 
-class BannerUploadError < StandardError; end
+class BannerSyncError < StandardError; end
