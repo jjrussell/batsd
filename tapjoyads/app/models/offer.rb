@@ -394,16 +394,20 @@ class Offer < ActiveRecord::Base
     final_url
   end
   
-  def get_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil)
+  def get_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false)
     size_str = "#{width}x#{height}"
     
     if !self.rewarded? and self.banner_creatives.include?(size_str)
-      return "#{CLOUDFRONT_URL}/#{banner_creative_path(size_str)}"
+      url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size_str)}"
+      delim = '?'
+    else
+      display_multiplier = (display_multiplier || 1).to_f
+      # TO REMOVE: displayer_app_id param after rollout.
+      url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{self.id}&displayer_app_id=#{publisher_app_id}&size=#{width}x#{height}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}"
+      delim = '&'
     end
-    
-    display_multiplier = (display_multiplier || 1).to_f
-    # TO REMOVE: displayer_app_id param after rollout.
-    "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{self.id}&displayer_app_id=#{publisher_app_id}&size=#{width}x#{height}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}"
+    url << "#{delim}id=#{Time.now.to_s}" if bust_cache
+    url
   end
 
   def get_click_url(options)

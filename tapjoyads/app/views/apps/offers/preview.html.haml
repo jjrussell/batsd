@@ -20,8 +20,8 @@
         - if !@show_generated_ads and !@offer.banner_creatives.include?(size)
           = render :partial => "link_to_appstore_msg"
         - else
-          - dimensions = size.split("x")
-          = image_tag(@offer.get_ad_image_url(publisher_app_id, dimensions[0].to_i, dimensions[1].to_i), :alt => "#{size}img")
+          - width, height = size.split("x")
+          = image_tag(@offer.get_ad_image_url(publisher_app_id, width, height, nil, nil, true), :alt => "#{size}img")
 
     %br
     *To provide custom creatives for your non-rewarded ads, please contact
