@@ -53,7 +53,7 @@ private
     offers.each do |offer|
       offer.partner_id = partner_id if partner_id_changed?
       offer.icon_id_override = app_id if app_id_changed? && app_id_was == offer.icon_id_override
-      offer.url = app.store_url if app_id_changed? && !offer.url_overridden?
+      offer.url = app.store_url if !offer.url_overridden?
       offer.name = name if name_changed?
       offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?
