@@ -40,12 +40,12 @@ class Games::Gamers::DevicesController < GamesController
     if current_gamer.present?
       redirect_to games_root_path unless params[:data].present?
       data = SymmetricCrypto.decrypt_object(params[:data], SYMMETRIC_CRYPTO_SECRET)
-      current_gamer.udid = data[:udid]
+      
       device = Device.new(:key => data[:udid])
       device.product = data[:product]
       device.version = data[:version]
 
-      if current_gamer.save
+      if current_gamer.devices.create(:device => device)
         device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
         redirect_to games_root_path(:register_device => true)
       else
