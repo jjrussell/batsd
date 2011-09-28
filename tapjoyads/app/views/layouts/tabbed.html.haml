@@ -21,7 +21,7 @@
       #top_nav
         .left
           - premier_suffix = current_partner.is_premier? ? '_premier' : ''
-          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo#{premier_suffix}.png"), root_path
+          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo#{premier_suffix}.png"), dashboard_root_path
         .right
           = current_user.username
           - if current_user.can_manage_account?
