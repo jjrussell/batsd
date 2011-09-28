@@ -8,17 +8,14 @@ FactoryGirl.define do
 
   factory :admin, :parent => :user do
     after_build  { |a| a.user_roles << UserRole.find_or_create_by_name('admin') }
-    after_create { |a| RoleAssignment.find_or_create_by_user_id_and_user_role_id(a.id, UserRole.find_or_create_by_name('admin').id) }
   end
 
   factory :account_mgr_user, :parent => :user do
     after_build  { |a| a.user_roles << UserRole.find_or_create_by_name('account_mgr') }
-    after_create { |a| RoleAssignment.find_or_create_by_user_id_and_user_role_id(a.id, UserRole.find_or_create_by_name('account_mgr').id) }
   end
 
   factory :agency_user, :parent => :user do
     after_build  { |a| a.user_roles << UserRole.find_or_create_by_name('agency') }
-    after_create { |a| RoleAssignment.find_or_create_by_user_id_and_user_role_id(a.id, UserRole.find_or_create_by_name('agency').id) }
   end
 
   factory :partner do
