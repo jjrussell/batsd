@@ -26,9 +26,7 @@ class Offer < ActiveRecord::Base
     VIDEO_OFFER_TYPE                 => 'Video Offers'
   }
 
-  DISPLAY_AD_SIZES = {1 => '320x50', 2 => '640x100', 3 => '768x90'} # DO NOT change keys, these are essentially ids
-  DISPLAY_AD_DEFAULT_SIZE_KEY = 1 # default size (if no size is provided) is 320x50
-  DISPLAY_AD_FORMATS = {1 => 'png', 2 => 'jpeg', 3 => 'jpg', 4 => 'jpe', 5 => 'gif'} # DO NOT change keys, these are essentially ids
+  DISPLAY_AD_SIZES = ['320x50', '640x100', '768x90']
   
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
@@ -55,10 +53,11 @@ class Offer < ActiveRecord::Base
     "24 hours" => 24.hours.to_i,
   }
 
+  serialize :banner_creatives, Array
   attr_accessor :rank_score
   
-  DISPLAY_AD_SIZES.values.each do |size|
-    attr_accessor "custom_creative_#{size}".to_sym
+  DISPLAY_AD_SIZES.each do |size|
+    attr_accessor "banner_creative_#{size}_blob".to_sym
   end
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
@@ -176,6 +175,27 @@ class Offer < ActiveRecord::Base
   end
   memoize :get_countries_blacklist
 
+  def banner_creatives
+    self.banner_creatives = [] if super.nil?
+    super
+  end
+  
+  def banner_creatives_was
+    return [] if super.nil?
+    super
+  end
+  
+  def banner_creatives_changed?
+    return false if (super && banner_creatives_was.empty? && banner_creatives.empty?)
+    super
+  end
+
+  def after_save
+    # sync_banner_creatives should always be the last thing run by the after_save callback
+    # that's why it's here rather than defined at the top of the class
+    sync_banner_creatives
+  end
+
   def self.redistribute_hourly_stats_aggregation
     Benchmark.realtime do
       now = Time.zone.now + 15.minutes
@@ -199,32 +219,9 @@ class Offer < ActiveRecord::Base
       end
     end
   end
-  
-  # converts string of format "1,2;2,3" to hash of format {"320x50" => "jpeg", "640x200" => "gif"}
-  def banner_creatives
-    creatives_hash = {}
-    creatives_str = read_attribute(:banner_creatives) || ""
-    creatives_str.split(";").each do |creative_str|
-      creative_attrs = creative_str.split(",")
-      creatives_hash[Offer::DISPLAY_AD_SIZES[creative_attrs[0].to_i]] = Offer::DISPLAY_AD_FORMATS[creative_attrs[1].to_i]
-    end
-    creatives_hash
-  end
-  
-  def banner_creative_format_for_size(size)
-    banner_creatives[size]
-  end
-  
-  def banner_creative_format_key_for_size(size)
-    Offer::DISPLAY_AD_FORMATS.invert[banner_creative_format_for_size(size)]
-  end
 
   def find_associated_offers
     Offer.find(:all, :conditions => ["item_id = ? and id != ?", item_id, id])
-  end
-  
-  def has_banner_creative_for_size?(size)
-    banner_creatives.has_key? size
   end
 
   def integrated?
@@ -338,6 +335,15 @@ class Offer < ActiveRecord::Base
 
     "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
+  
+  def banner_creative_filename(size, format='jpg')
+    "#{id}_#{size}.#{format}"
+  end
+  
+  def banner_creative_s3_key(size, format='jpg')
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    RightAws::S3::Key.create(bucket, "banner_creatives/#{banner_creative_filename(size, format)}")
+  end
 
   def complete_action_url(options)
     udid                  = options.delete(:udid)                  { |k| raise "#{k} is a required argument" }
@@ -387,10 +393,8 @@ class Offer < ActiveRecord::Base
   def get_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil)
     size_str = "#{width}x#{height}"
     
-    if !self.rewarded? and self.has_banner_creative_for_size?(size_str)
-      format = self.banner_creative_format_for_size(size_str)
-      filename = "#{self.id}_#{size_str}.#{format}"
-      return "#{CLOUDFRONT_URL}/banner_creatives/#{filename}"
+    if !self.rewarded? and self.banner_creatives.include?(size_str)
+      return "#{CLOUDFRONT_URL}/banner_creatives/#{banner_creative_filename(size_str)}"
     end
     
     display_multiplier = (display_multiplier || 1).to_f
@@ -753,66 +757,6 @@ class Offer < ActiveRecord::Base
     update_payment(true)
     save!
   end
-  
-  # returns success boolean
-  def update_custom_creatives(creatives)
-    banner_creatives_str = ""
-    errors_encountered = false
-    creatives.each do |creative|
-      size_key = creative[:size_key]
-      size = creative[:size]
-      file = creative[:file]
-      remove = creative[:remove]
-      if !file and has_banner_creative_for_size?(size) and !remove
-        # nothing has changed, keep banner_creative as-is
-        format_key = banner_creative_format_key_for_size(size)
-        banner_creatives_str << "#{size_key},#{format_key};"
-      end
-  
-      # TODO: delete "removed" creative files from S3? May want to write a job for that later. Meanwhile, taking up space unnecessarily isn't a big deal
-  
-      if file # new file has been uploaded
-        begin
-          creative_arr = Magick::Image.from_blob(file.read)
-          if creative_arr.size != 1
-            raise "image contains multiple layers (e.g. animated .gif)"
-          end
-          creative = creative_arr[0]
-          format = creative.format.downcase
-          if !Offer::DISPLAY_AD_FORMATS.values.include? format
-            raise "invalid format"
-          end
-        rescue
-          errors_encountered = true
-          self.errors.add("custom_creative_#{size}".to_sym, "new file is invalid - please provide one of the following file types: #{Offer::DISPLAY_AD_FORMATS.values.join(', ')} (.gifs must be static)")
-          next
-        end
-        dimensions = "#{creative.columns}x#{creative.rows}"
-        if dimensions != size
-          errors_encountered = true
-          self.errors.add("custom_creative_#{size}".to_sym, "new file has invalid dimensions")
-          next
-        end
-        begin
-          bucket = S3.bucket(BucketNames::TAPJOY)
-          filename = "#{id}_#{size}.#{format}"
-          bucket.put("banner_creatives/#{filename}", creative.to_blob, {}, 'public-read')
-        rescue
-          errors_encountered = true
-          self.errors.add("custom_creative_#{size}".to_sym, "encountered unexpected error while uploading new file, please try again")
-          next
-        end
-        format_key = Offer::DISPLAY_AD_FORMATS.invert[format]
-        banner_creatives_str << "#{size_key},#{format_key};"
-      end
-    end
-    banner_creatives_str.chomp!(";")
-    if !errors_encountered
-      self.banner_creatives = banner_creatives_str
-      return true
-    end
-    false
-  end
 
   def min_bid
     return min_bid_override if min_bid_override
@@ -954,6 +898,75 @@ class Offer < ActiveRecord::Base
   end
 
 private
+  
+  def sync_banner_creatives
+    creative_blobs = {}
+    Offer::DISPLAY_AD_SIZES.each do |size|
+      image_data = (send("banner_creative_#{size}_blob") rescue nil)
+      creative_blobs[size] = image_data if !image_data.blank?
+    end
+    
+    return if (!banner_creatives_changed? && creative_blobs.empty?)
+    if (banner_creatives.size - banner_creatives_was.size).abs > 1 || creative_blobs.size > 1
+      raise "Unable to sync changes to more than one banner creative at a time"
+    end
+    
+    blob = creative_blobs.values.first # will be nil for banner creative removals
+    if banner_creatives.size > banner_creatives_was.size
+      # banner creative added, find which size was added and make sure file matches up
+      new_size = (banner_creatives - banner_creatives_was).first
+      raise "#{new_size} banner creative file not provided" if creative_blobs[new_size].nil?
+      
+      # upload to S3
+      upload_banner_creative(blob, new_size)
+    elsif banner_creatives_was.size > banner_creatives.size
+      # banner creative removed, find which size was removed
+      removed_size = (banner_creatives_was - banner_creatives).first
+      
+      # delete from S3
+      delete_banner_creative(removed_size)
+    else
+      # a banner creative was changed, find which size it applies to
+      size = creative_blobs.keys.first
+      
+      # upload file to S3
+      upload_banner_creative(blob, size)
+    end
+    
+    if creative_blobs.any?
+      # 'acts_as_cacheable' caches entire object, including any attributes, so... let's clear the blob and re-cache
+      blob.replace("") if blob
+      self.cache
+    end
+  end
+  
+  def delete_banner_creative(size, format='jpg')
+    banner_creative_s3_key(size, format).delete
+  rescue
+    raise BannerUploadError.new("Encountered unexpected error while deleting existing file, please try again")
+  end
+  
+  def upload_banner_creative(blob, size, format='jpg')
+    begin
+      creative_arr = Magick::Image.from_blob(blob)
+      if creative_arr.size != 1
+        raise "image contains multiple layers (e.g. animated .gif)"
+      end
+      creative = creative_arr[0]
+      creative.format = format
+    rescue
+      raise BannerUploadError.new("New file is invalid - unable to convert to .#{format}")
+    end
+    
+    dimensions = "#{creative.columns}x#{creative.rows}"
+    raise BannerUploadError.new("New file has invalid dimensions") if dimensions != size
+    
+    begin
+      banner_creative_s3_key(size, format).put(creative.to_blob, 'public-read')
+    rescue
+      raise BannerUploadError.new("Encountered unexpected error while uploading new file, please try again")
+    end
+  end
 
   def is_disabled?(publisher_app, currency)
     item_id == currency.app_id ||
@@ -1168,3 +1181,5 @@ private
   end
 
 end
+
+class BannerUploadError < StandardError; end

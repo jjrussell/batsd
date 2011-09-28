@@ -1,0 +1,43 @@
+- url = upload_creative_app_offer_path(:id => @offer.id, :app_id => @app.id, :size => @size)
+- creative_exists = @offer.banner_creatives.include? @size
+
+- if creative_exists
+  - form_tag(url, :method => :delete, :id => "remove_form_for_#{@size}", :class => "hidden") {}
+
+- form_for(@offer, :url => url, :html => { :method => (creative_exists ? :put : :post), :multipart => true }) do |f|
+  - file_chooser_options = {:id => "choose_#{@size}_file"}
+  = f.label("#{@size}:")
+  - if creative_exists
+    File exists.
+    = link_to("View", '#', :class => 'view_link')
+    = link_to("Remove", '#', :id => "remove_link_for_#{@size}")
+  %br
+  = f.file_field("custom_creative_#{@size}")
+  = f.submit 'Update', {:id => "#{@size}_update"}
+  = error_message_on @offer, "custom_creative_#{@size}".to_sym
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('.view_link').click(function() {
+        parent.document.getElementById('preview_link').click();
+        return false;
+      });
+      
+      $('#remove_link_for_#{@size}').click(function() {
+        $('#remove_form_for_#{@size}')[0].submit();
+        return false;
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    body {
+      margin: 0;
+    }
+    label {
+      font-weight: bold;
+    }
+    .hidden {
+      display:none;
+    }

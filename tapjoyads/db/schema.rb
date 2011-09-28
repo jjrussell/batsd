@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110927200827) do
+ActiveRecord::Schema.define(:version => 20110914201514) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -517,20 +517,21 @@ ActiveRecord::Schema.define(:version => 20110927200827) do
   add_index "offers", ["user_enabled", "tapjoy_enabled"], :name => "index_offers_on_user_enabled_and_tapjoy_enabled"
 
   create_table "orders", :id => false, :force => true do |t|
-    t.string   "id",             :limit => 36,                :null => false
-    t.string   "partner_id",     :limit => 36,                :null => false
+    t.string   "id",             :limit => 36,                    :null => false
+    t.string   "partner_id",     :limit => 36,                    :null => false
     t.string   "payment_txn_id", :limit => 36
     t.string   "refund_txn_id",  :limit => 36
     t.string   "coupon_id",      :limit => 36
-    t.integer  "status",                       :default => 1, :null => false
-    t.integer  "payment_method",                              :null => false
-    t.integer  "amount",                       :default => 0, :null => false
+    t.integer  "status",                       :default => 1,     :null => false
+    t.integer  "payment_method",                                  :null => false
+    t.integer  "amount",                       :default => 0,     :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "note"
     t.integer  "invoice_id"
     t.string   "description"
     t.string   "note_to_client"
+    t.boolean  "create_invoice",               :default => false
   end
 
   add_index "orders", ["created_at"], :name => "index_orders_on_created_at"

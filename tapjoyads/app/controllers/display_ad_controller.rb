@@ -193,12 +193,12 @@ private
   # supported by the get_ad_image method.
   def parse_size(size)
     dimensions = nil
-    Offer::DISPLAY_AD_SIZES.values.each do |value|
+    Offer::DISPLAY_AD_SIZES.each do |value|
       if size =~ /^#{value}$/i
         dimensions = size.downcase.split("x")
       end
     end
-    dimensions ||= Offer::DISPLAY_AD_SIZES[Offer::DISPLAY_AD_DEFAULT_SIZE_KEY].split("x")
+    return [320 50] if dimensions.nil?
     dimensions.collect{|x|x.to_i}
   end
   

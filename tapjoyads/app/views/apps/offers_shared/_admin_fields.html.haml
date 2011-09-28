@@ -111,28 +111,6 @@
       = f.select(:screen_layout_sizes, options_for_select(@app.screen_layout_sizes, @offer.get_screen_layout_sizes), {}, :multiple => true)
       = error_message_on @offer, :screen_layout_sizes
 
-- existing_creatives = @offer.banner_creatives
-- banner_creative_sizes = Offer::DISPLAY_AD_SIZES.values
-- banner_creative_sizes.each do |size|
-  %tr.admin
-    %th
-      = f.label("custom_creative_#{size}")
-    %td
-      - file_chooser_options = {:id => "choose_#{size}_file"}
-      - if existing_creatives.has_key? size
-        - file_chooser_options[:class] = :hidden
-        - format = existing_creatives[size]
-        = check_box_tag("remove_custom_creative_#{size}", "1", false, :class=>"hidden")
-        %div{:id => "existing_#{size}_image"}
-          - dimensions = size.split("x")
-          = image_tag(@offer.get_ad_image_url(nil, dimensions[0].to_i, dimensions[1].to_i), :alt => "#{size}img")
-          %div
-            = link_to("Remove/Change", "#", :id => "remove_link_for_#{size}")
-      %div{file_chooser_options}
-        = f.file_field("custom_creative_#{size}")
-        (Optional)
-      = error_message_on @offer, "custom_creative_#{size}".to_sym
-
 .hidden
   #help_admin_offer_name_content{:name => 'Offer Name'} Name that will be displayed on offer walls.
   #help_tapjoy_enabled_content{ :name => 'Tapjoy Enabled' } Whether or not the offer is enabled for installs.
@@ -159,15 +137,4 @@
         $('input#offer_name').val(#{@offer.item.name.to_json});
         return false;
       });
-
-  - banner_creative_sizes.each do |size|
-    :plain
-      $('#remove_link_for_#{size}').click(function() {
-        $('#remove_custom_creative_#{size}')[0].checked = true;
-        $('#choose_#{size}_file')[0].className = '';
-        $('#existing_#{size}_image')[0].innerHTML = 'Existing file will be removed on update. If desired, upload new file below:';
-        return false;
-      });
-
-  :plain
     });

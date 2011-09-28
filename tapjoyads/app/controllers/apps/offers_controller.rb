@@ -58,21 +58,8 @@ class Apps::OffersController < WebsiteController
           :name, :name_suffix, :show_rate, :min_conversion_rate, :countries, :cities,
           :postal_codes, :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override ]
     end
-    
-    @offer.attributes=(offer_params.reject {|k,v| !safe_attributes.include?(k.to_sym) })
-    @offer.valid?
-    
-    if permitted_to? :edit, :statz
-      creatives = []
-      Offer::DISPLAY_AD_SIZES.each do |size_key, size|
-        param_name = "custom_creative_#{size}".to_sym
-        creatives << {:size_key => size_key, :size => size, :file => params[:offer][param_name], :remove => (params["remove_#{param_name}".to_sym] == "1")}
-      end
-      @offer.update_custom_creatives(creatives)
-    end
 
-    if @offer.errors.empty?
-      @offer.save!
+    if @offer.safe_update_attributes(offer_params, safe_attributes)
       flash[:notice] = 'Your offer was successfully updated.'
       redirect_to :action => :edit
     else
@@ -84,6 +71,29 @@ class Apps::OffersController < WebsiteController
       flash.now[:error] = 'Your offer could not be updated.'
       render :action => :edit
     end
+  end
+  
+  def upload_creative
+    @size = params[:size]
+    image_data = params[:offer]["custom_creative_#{@size}".to_sym].read rescue nil
+    case request.method
+      when :delete
+        # necessary to use assignment so @offer.banner_creatives_changed? will be true (can't modify in-place)
+        @offer.banner_creatives -= @size.to_a
+      when :post
+        # necessary to use assignment so @offer.banner_creatives_changed? will be true (can't modify in-place)
+        @offer.banner_creatives += @size.to_a
+      when :put
+        # do nothing
+    end
+    @offer.send("banner_creative_#{@size}_blob=", image_data)
+    begin
+      @offer.save!
+    rescue BannerUploadError => e
+      @offer.reload # we want the form to reset back to the way it was
+      flash.now[:error] = e.message
+    end
+    render :layout => 'simple'
   end
   
   def toggle

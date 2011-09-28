@@ -1,14 +1,14 @@
 - content_for :page_head, stylesheet_link_tag('facebox')
 
-- form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :multipart => true, :class => 'tjform', :id => 'update' }) do |f|
+- form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform', :id => 'update' }) do |f|
   %table
     %tbody
-      -#- if !@offer.rewarded?
-      %tr
-        %th
-          = f.label "View Ads"
-        %td
-          = link_to("Click to preview ad images", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox')
+      - if !@offer.rewarded? && !@offer.featured?
+        %tr
+          %th
+            = f.label "View Ads"
+          %td
+            = link_to("Click to preview ad images", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox', :id => 'preview_link')
       %tr
         %th
           = f.label :user_enabled, @offer.featured? ? 'Enable Featured Installs' : 'Enable Installs'
@@ -133,6 +133,14 @@
         = render('apps/offers_shared/admin_fields', :f => f)
       %tr
         %td{ :colspan => 2 }= f.submit 'Update', {:disabled => 'disabled', :id => 'offer_submit_button'}
+
+- if permitted_to?(:edit, :statz) && !@offer.rewarded? && !@offer.featured?
+  %br
+  Upload custom creatives:
+  %br
+  %br
+  - Offer::DISPLAY_AD_SIZES.each do |size|
+    %iframe.creative_upload{:src => upload_creative_app_offer_path(:id => @offer.id, :app => @app.id, :size => size)}
 
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
   - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
@@ -342,7 +350,6 @@
         checkMinimumPrice();
         return checkValidBudget() && checkMaximumBid(true);
       });
-      
     });
 
 - content_for :page_styles do
@@ -425,4 +432,9 @@
     }
     #percentile {
       font-weight: bold;
+    }
+    .creative_upload {
+      width: 100%;
+      border: none;
+      height: 63px;
     }

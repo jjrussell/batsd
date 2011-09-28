@@ -12,13 +12,12 @@
     %br
     %br
   - if !@offer.featured? || !@offer.rewarded?
-    - sizes = Offer::DISPLAY_AD_SIZES.values
-    - sizes.each_with_index do |size, index|
+    - Offer::DISPLAY_AD_SIZES.each_with_index do |size, index|
       - if index > 0
         %br
       = "#{size} banner ad:"
       %div
-        - if !@show_generated_ads and !@offer.has_banner_creative_for_size?(size)
+        - if !@show_generated_ads and !@offer.banner_creatives.include?(size)
           = render :partial => "link_to_appstore_msg"
         - else
           - dimensions = size.split("x")
@@ -26,9 +25,9 @@
 
     %br
     *To provide custom creatives for your non-rewarded ads, please contact
-    = "#{mail_to "support@tapjoy.com"}."
-    Please ensure images have correct dimensions and are of the following file types:
-    = "[#{Offer::DISPLAY_AD_FORMATS.values.join(', ')}]."
+    - succeed '.' do
+      = mail_to "support@tapjoy.com"
+    Please ensure images have correct dimensions.
 
 - content_for :page_styles do
   :plain
