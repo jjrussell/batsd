@@ -1,4 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
+  map.with_options({:path_prefix => MACHINE_TYPE == 'dashboard' ? '' : 'dashboard', :name_prefix => 'dashboard_'}) do |m|
+    m.root :controller => 'dashboard/homepage', :action => :index
+  end
+  
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
