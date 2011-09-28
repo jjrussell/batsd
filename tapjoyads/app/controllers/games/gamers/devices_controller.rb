@@ -29,7 +29,7 @@ class Games::Gamers::DevicesController < GamesController
       :udid              => udid,
       :product           => product,
       :version           => version,
-      :mac_address       => mac_address.downcase.gsub(/-/,"")
+      :mac_address       => mac_address.downcase.gsub(/:/,"")
     }
     redirect_to finalize_games_gamer_device_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)), :status => 301
   rescue Exception => e
