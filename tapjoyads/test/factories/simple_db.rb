@@ -12,7 +12,7 @@ FactoryGirl.define do
   end
 
   factory :virtual_good do
-    key { Factory.next(:guid) }
+    key  { Factory.next(:guid) }
     name { Factory.next(:name) }
     price 10
     max_purchases 5

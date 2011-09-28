@@ -1,23 +1,23 @@
 FactoryGirl.define do
   factory :user do
-    email { Factory.next(:email) }
+    email    { Factory.next(:email) }
     username { |u| u.email }
     password 'asdf'
     password_confirmation 'asdf'
   end
 
   factory :admin, :parent => :user do
-    after_build { |a| a.user_roles << UserRole.find_or_create_by_name('admin') }
+    after_build  { |a| a.user_roles << UserRole.find_or_create_by_name('admin') }
     after_create { |a| RoleAssignment.find_or_create_by_user_id_and_user_role_id(a.id, UserRole.find_or_create_by_name('admin').id) }
   end
 
   factory :account_mgr_user, :parent => :user do
-    after_build { |a| a.user_roles << UserRole.find_or_create_by_name('account_mgr') }
+    after_build  { |a| a.user_roles << UserRole.find_or_create_by_name('account_mgr') }
     after_create { |a| RoleAssignment.find_or_create_by_user_id_and_user_role_id(a.id, UserRole.find_or_create_by_name('account_mgr').id) }
   end
 
   factory :agency_user, :parent => :user do
-    after_build { |a| a.user_roles << UserRole.find_or_create_by_name('agency') }
+    after_build  { |a| a.user_roles << UserRole.find_or_create_by_name('agency') }
     after_create { |a| RoleAssignment.find_or_create_by_user_id_and_user_role_id(a.id, UserRole.find_or_create_by_name('agency').id) }
   end
 
@@ -26,19 +26,19 @@ FactoryGirl.define do
   end
 
   factory :payout_info do
-    signature { Factory.next(:name) }
-    billing_name { Factory.next(:name) }
-    tax_country { 'United States of America' }
-    account_type { 'LLC' }
-    tax_id { Factory.next(:name) }
-    company_name { Factory.next(:name) }
-    address_1 { Factory.next(:name) }
-    address_city { Factory.next(:name) }
-    address_state { Factory.next(:name) }
+    signature           { Factory.next(:name) }
+    billing_name        { Factory.next(:name) }
+    tax_country         { 'United States of America' }
+    account_type        { 'LLC' }
+    tax_id              { Factory.next(:name) }
+    company_name        { Factory.next(:name) }
+    address_1           { Factory.next(:name) }
+    address_city        { Factory.next(:name) }
+    address_state       { Factory.next(:name) }
     address_postal_code { Factory.next(:name) }
-    payment_country { 'United States of America' }
-    payout_method { 'check' }
-    association :partner
+    payment_country     { 'United States of America' }
+    payout_method       { 'check' }
+    association         :partner
   end
 
   factory :order do
@@ -49,7 +49,7 @@ FactoryGirl.define do
   factory :payout do
     association :partner
     month { Date.today.month }
-    year { Date.today.year }
+    year  { Date.today.year }
   end
 
   factory :app do
@@ -60,7 +60,7 @@ FactoryGirl.define do
   end
 
   factory :enable_offer_request do
-    offer { Factory(:app).primary_offer }
+    offer        { Factory(:app).primary_offer }
     requested_by { Factory(:user) }
   end
 
@@ -145,30 +145,30 @@ FactoryGirl.define do
   end
 
   factory :rank_boost do
-    offer { Factory(:app).primary_offer }
-    amount 1
+    offer      { Factory(:app).primary_offer }
     start_time { Time.zone.now }
-    end_time { Time.zone.now + 1.hour }
+    end_time   { Time.zone.now + 1.hour }
+    amount 1
   end
 
   factory :action_offer do
-    name 'do something'
-    association :partner
-    association :app
+    name         'do something'
+    association  :partner
+    association  :app
     instructions '1. do some stuff'
   end
 
   factory :offer_event do
     offer { Factory(:app).primary_offer }
-    scheduled_for 1.hour.from_now
-    user_enabled true
+    scheduled_for       1.hour.from_now
+    user_enabled        true
     change_user_enabled true
-    daily_budget nil
+    daily_budget        nil
     change_daily_budget false
   end
 
   factory :gamer do
     username { Factory.next(:name) }
-    email { Factory.next(:email) }
+    email    { Factory.next(:email) }
   end
 end
