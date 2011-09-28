@@ -89,6 +89,7 @@ class Apps::OffersController < WebsiteController
     @offer.send("banner_creative_#{@size}_blob=", image_data)
     begin
       @offer.save!
+      flash.now[:success] = 'Success!'
     rescue BannerUploadError => e
       @offer.reload # we want the form to reset back to the way it was
       flash.now[:error] = e.message

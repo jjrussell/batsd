@@ -336,13 +336,17 @@ class Offer < ActiveRecord::Base
     "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
   
-  def banner_creative_filename(size, format='jpg')
-    "#{id}_#{size}.#{format}"
+  def banner_creative_path(size, format='jpg')
+    "banner_creatives/#{id}_#{size}.#{format}"
   end
   
   def banner_creative_s3_key(size, format='jpg')
     bucket = S3.bucket(BucketNames::TAPJOY)
-    RightAws::S3::Key.create(bucket, "banner_creatives/#{banner_creative_filename(size, format)}")
+    RightAws::S3::Key.create(bucket, "#{banner_creative_path(size, format)}")
+  end
+  
+  def banner_creative_mc_key(size, format='jpg')
+    banner_creative_path(size, format).gsub('/','.')
   end
 
   def complete_action_url(options)
@@ -394,7 +398,7 @@ class Offer < ActiveRecord::Base
     size_str = "#{width}x#{height}"
     
     if !self.rewarded? and self.banner_creatives.include?(size_str)
-      return "#{CLOUDFRONT_URL}/banner_creatives/#{banner_creative_filename(size_str)}"
+      return "#{CLOUDFRONT_URL}/#{banner_creative_path(size_str)}"
     end
     
     display_multiplier = (display_multiplier || 1).to_f
@@ -958,13 +962,32 @@ private
       raise BannerUploadError.new("New file is invalid - unable to convert to .#{format}")
     end
     
-    dimensions = "#{creative.columns}x#{creative.rows}"
-    raise BannerUploadError.new("New file has invalid dimensions") if dimensions != size
+    width, height = size.split("x").collect{|x|x.to_i}
+    raise BannerUploadError.new("New file has invalid dimensions") if [width, height] != [creative.columns, creative.rows]
     
     begin
+      bucket = S3.bucket(BucketNames::TAPJOY)
+      small_logo = Magick::Image.from_blob(bucket.get("images/tapjoylogo-small.png"))[0]
+      
+      creative.composite!(small_logo, width - small_logo.columns, height - small_logo.rows, Magick::AtopCompositeOp)
       banner_creative_s3_key(size, format).put(creative.to_blob, 'public-read')
     rescue
       raise BannerUploadError.new("Encountered unexpected error while uploading new file, please try again")
+    end
+    
+    # Add to memcache
+    begin
+      Mc.put(banner_creative_mc_key(size, format), Base64.encode64(creative.to_blob).gsub("\n", ''), false, 1.hour)
+    rescue
+      # no worries, it will get cached later if needed
+    end
+
+    # Invalidate cloudfront
+    begin
+      acf = RightAws::AcfInterface.new
+      acf.invalidate('E1MG6JDV6GH0F2', banner_creative_path(size, format).to_a, "#{id}.#{Time.now.to_i}")
+    rescue Exception => e
+      Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
     end
   end
 
