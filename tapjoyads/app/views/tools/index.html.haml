@@ -76,7 +76,7 @@
   - if permitted_to? :index, :tools_premier_partners
     %li= link_to 'Premier Partners', tools_premier_partners_path
   - if permitted_to? :edit_android_app, :tools
-    %li= link_to 'Manually edit Android app', :action => :edit_android_app
+    %li= link_to 'Manually edit Android app', edit_android_app_tools_path
   - if permitted_to? :index, :tools_enable_offer_requests
     %li= link_to 'Enable Requests', tools_enable_offer_requests_path
   - if permitted_to? :index, :tools_offer_events
