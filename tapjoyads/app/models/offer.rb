@@ -966,10 +966,6 @@ private
     raise BannerUploadError.new("New file has invalid dimensions") if [width, height] != [creative.columns, creative.rows]
     
     begin
-      bucket = S3.bucket(BucketNames::TAPJOY)
-      small_logo = Magick::Image.from_blob(bucket.get("images/tapjoylogo-small.png"))[0]
-      
-      creative.composite!(small_logo, width - small_logo.columns, height - small_logo.rows, Magick::AtopCompositeOp)
       banner_creative_s3_key(size, format).put(creative.to_blob, 'public-read')
     rescue
       raise BannerUploadError.new("Encountered unexpected error while uploading new file, please try again")
