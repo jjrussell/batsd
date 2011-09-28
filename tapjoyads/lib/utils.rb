@@ -45,7 +45,7 @@ class Utils
           next
         end
         device.is_new ? new_udids += 1 : existing_udids += 1
-        if device.has_app app_id
+        if device.has_app? app_id
           app_existing_udids += 1
         else
           app_new_udids += 1

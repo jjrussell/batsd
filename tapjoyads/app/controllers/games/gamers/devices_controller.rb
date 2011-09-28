@@ -13,21 +13,23 @@ class Games::Gamers::DevicesController < GamesController
     match = request.raw_post.match(/<plist.*<\/plist>/m)
     raise "Plist not present" unless match.present? && match[0].present?
 
-    udid, product, version = nil
+    udid, product, version, mac_address = nil
     (Hpricot(match[0])/"key").each do |key|
       value = key.next_sibling.inner_text
       case key.inner_text
       when 'UDID';    udid = value
       when 'PRODUCT'; product = value
       when 'VERSION'; version = value
+      when 'MAC_ADDRESS_EN0'; mac_address = value
       end
     end
-    raise "Error parsing plist" if udid.blank? || product.blank? || version.blank?
+    raise "Error parsing plist" if udid.blank? || product.blank? || version.blank? || mac_address.blank?
 
     data = {
       :udid              => udid,
       :product           => product,
-      :version           => version
+      :version           => version,
+      :mac_address       => mac_address.downcase.gsub(/:/,"")
     }
     redirect_to finalize_games_gamer_device_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)), :status => 301
   rescue Exception => e
@@ -40,12 +42,13 @@ class Games::Gamers::DevicesController < GamesController
     if current_gamer.present?
       redirect_to games_root_path unless params[:data].present?
       data = SymmetricCrypto.decrypt_object(params[:data], SYMMETRIC_CRYPTO_SECRET)
-      current_gamer.udid = data[:udid]
+      
       device = Device.new(:key => data[:udid])
       device.product = data[:product]
       device.version = data[:version]
+      device.mac_address = data[:mac_address]
 
-      if current_gamer.save
+      if current_gamer.devices.create(:device => device)
         device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
         redirect_to games_root_path(:register_device => true)
       else

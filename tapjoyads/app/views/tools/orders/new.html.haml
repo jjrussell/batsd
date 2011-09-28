@@ -30,9 +30,6 @@
       %td
         = f.text_field :note_to_client, :size => 50
         = error_message_on @order, :note
-    %tr
-      %th= f.label :create_invoice
-      %td= f.check_box :create_invoice, :checked => true
     - if @order.errors.on(:billing_email) || @partner.billing_email.blank?
       %tr
         %th= label_tag :billing_email
@@ -41,17 +38,3 @@
           = error_message_on @order, :billing_email
     %tr
       %td{ :colspan => 2 }= f.submit 'Create Order'
-
-- content_for :page_javascript do
-  :plain
-    var toggleCreateInvoice = function() {
-      if ($('#order_payment_method').val() === '2') {
-        $('#order_create_invoice').attr('checked', false);
-        $('#order_create_invoice').attr('disabled', 'disabled');
-      } else {
-        $('#order_create_invoice').attr('checked', true);
-        $('#order_create_invoice').attr('disabled', '');
-      }
-    };
-
-    $('#order_payment_method').change(toggleCreateInvoice);

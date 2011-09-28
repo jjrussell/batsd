@@ -12,7 +12,7 @@ class ToolsController < WebsiteController
   end
 
   def monthly_data
-    most_recent_period = Date.current.beginning_of_month.last_month
+    most_recent_period = Date.current.beginning_of_month.prev_month
     @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
 
     @months = []
@@ -123,7 +123,7 @@ class ToolsController < WebsiteController
   def elb_status
     elb_interface  = RightAws::ElbInterface.new
     ec2_interface  = RightAws::Ec2.new
-    @lb_names      = Rails.env == 'production' ? %w( masterjob-lb job-lb website-lb games-lb api-lb test-lb ) : []
+    @lb_names      = Rails.env == 'production' ? %w( masterjob-lb job-lb website-lb dashboard-lb games-lb api-lb test-lb ) : []
     @lb_instances  = {}
     @ec2_instances = {}
     @lb_names.each do |lb_name|
@@ -138,6 +138,14 @@ class ToolsController < WebsiteController
       
       @lb_instances[lb_name].sort! { |a, b| a[:instance_id] <=> b[:instance_id] }
     end
+  end
+
+  def ses_status
+    ses = AWS::SimpleEmailService.new
+    @quotas = ses.quotas
+    @statistics = ses.statistics.sort_by { |s| -s[:sent].to_i }
+    @verified_senders = ses.email_addresses.collect
+    @queue = Sqs.queue(QueueNames::FAILED_EMAILS)
   end
 
   def as_groups

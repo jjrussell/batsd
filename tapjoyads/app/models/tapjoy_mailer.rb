@@ -1,21 +1,21 @@
 class TapjoyMailer < ActionMailer::Base
   
   def newrelic_alert(error)
-    from "admin@tapjoy.com"
+    from 'Tapjoy <noreply@tapjoy.com>'
     recipients "dev@tapjoy.com"
     subject "NewRelic Error: #{error.inspect}"
     body(:error => error)
   end
   
   def sms_sent(phone, message)
-    from "admin@tapjoy.com"
+    from 'Tapjoy <noreply@tapjoy.com>'
     recipients "dev@tapjoy.com"
     subject "An SMS has been sent"
     body :text => "An sms has been sent to #{phone}, with the message: #{message}"
   end
   
   def email_signup(to_email, confirm_code, currency_name, publisher_app_name, amount)
-    from "noreply@tapjoy.com"
+    from 'Tapjoy <noreply@tapjoy.com>'
     recipients to_email
     subject "Confirmation email - get #{amount} #{publisher_app_name} #{currency_name}"
     content_type 'text/html'
@@ -30,7 +30,7 @@ class TapjoyMailer < ActionMailer::Base
     account_managers += [ 'accountmanagers@tapjoy.com', 'dev@tapjoy.com' ]
     account_managers = account_managers.join(', ')
 
-    from "admin@tapjoy.com"
+    from 'Tapjoy <noreply@tapjoy.com>'
     reply_to account_managers
     recipients account_managers
     subject "Low Conversion Rate Warning! - #{offer.name_with_suffix_and_platform}"
@@ -38,7 +38,7 @@ class TapjoyMailer < ActionMailer::Base
   end
 
   def password_reset(user_email, reset_link)
-    from "support@tapjoy.com"
+    from 'Tapjoy Support <support@tapjoy.com>'
     recipients user_email
     subject "Password Reset - Tapjoy.com"
     content_type 'text/html'
@@ -46,7 +46,7 @@ class TapjoyMailer < ActionMailer::Base
   end
   
   def new_secondary_account(user_email, reset_link)
-    from "support@tapjoy.com"
+    from 'Tapjoy Support <support@tapjoy.com>'
     recipients user_email
     subject "New Account Created - Tapjoy.com"
     content_type 'text/html'
@@ -54,7 +54,7 @@ class TapjoyMailer < ActionMailer::Base
   end
 
   def contact_us(info)
-    from 'support@tapjoy.com'
+    from 'Tapjoy <noreply@tapjoy.com>'
     if Rails.env == 'development'
       recipients "dev@tapjoy.com"
     else
@@ -66,7 +66,7 @@ class TapjoyMailer < ActionMailer::Base
   end
 
   def publisher_application(info)
-    from 'support@tapjoy.com'
+    from 'Tapjoy <noreply@tapjoy.com>'
     if Rails.env == 'development'
       recipients "dev@tapjoy.com"
     else
@@ -78,7 +78,7 @@ class TapjoyMailer < ActionMailer::Base
   end
 
   def whitepaper_request(info)
-    from 'support@tapjoy.com'
+    from 'Tapjoy <noreply@tapjoy.com>'
     if Rails.env == 'development'
       recipients "dev@tapjoy.com"
     else
@@ -93,7 +93,7 @@ class TapjoyMailer < ActionMailer::Base
   end
 
   def advertiser_application(info)
-    from 'support@tapjoy.com'
+    from 'Tapjoy <noreply@tapjoy.com>'
     if Rails.env == 'development'
       recipients "dev@tapjoy.com"
     else
@@ -109,7 +109,7 @@ class TapjoyMailer < ActionMailer::Base
   end
 
   def androidfund_application(info)
-    from 'admin@tapjoy.com'
+    from 'Tapjoy <noreply@tapjoy.com>'
     if Rails.env == 'development'
       recipients "dev+androidfund@tapjoy.com"
     else
@@ -121,7 +121,7 @@ class TapjoyMailer < ActionMailer::Base
   end
 
   def campaign_status(email_recipients, partner, low_balance, account_balance, account_manager_email, offers_not_meeting_budget, offers_needing_higher_bids, premier, premier_discount)
-    from 'support@tapjoy.com'
+    from 'Tapjoy Support <support@tapjoy.com>'
     recipients email_recipients
     subject "Tapjoy Campaign Status for #{partner.name || partner.contact_name}"
     content_type 'text/html'
@@ -131,7 +131,7 @@ class TapjoyMailer < ActionMailer::Base
   end
 
   def payout_info_reminder(email_recipients, earnings)
-    from 'support@tapjoy.com'
+    from 'Tapjoy Support <support@tapjoy.com>'
     cc 'hwanjoon@tapjoy.com'#'accountspayable@tapjoy.com'
     recipients email_recipients
     subject 'Payment Information Needed'
@@ -158,10 +158,22 @@ class TapjoyMailer < ActionMailer::Base
   end
   
   def approve_device(email_address, verification_link, password_reset_link, location, timestamp)
-    from 'noreply@tapjoy.com'
+    from 'Tapjoy <noreply@tapjoy.com>'
     recipients email_address
     content_type 'text/html'
     subject 'Approve Unknown Computer or Device'
     body(:verification_link => verification_link, :password_reset_link => password_reset_link, :location => location, :timestamp => timestamp)
+  end
+  
+  def partner_name_change_notification(partner, name_was, acct_mgr_email, partner_link)
+    from 'Tapjoy <noreply@tapjoy.com>'
+    if Rails.env == 'production'
+      recipients 'accounting@tapjoy.com'
+    else
+      recipients 'dev@tapjoy.com'
+    end
+    content_type 'text/html'
+    subject 'Partner Name Change Notification'
+    body(:partner => partner, :name_was => name_was, :acct_mgr_email => acct_mgr_email, :partner_link => partner_link)
   end
 end

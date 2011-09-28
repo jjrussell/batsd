@@ -37,7 +37,7 @@ private
       other_udids = publisher_user.udids - [ click.udid ]
       other_udids.each do |udid|
         device = Device.new(:key => udid)
-        if device.has_app(click.advertiser_app_id)
+        if device.has_app?(click.advertiser_app_id)
           click.block_reason = "AlreadyRewardedForPublisherUserId (UDID=#{udid})"
           click.serial_save
           return

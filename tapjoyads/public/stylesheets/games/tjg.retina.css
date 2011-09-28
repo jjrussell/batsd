@@ -123,3 +123,7 @@
   height: 78px;
   width: 78px;
 }
+.mobile.hd .link_device_install_icon {
+  background: transparent url('/images/games/install_device_hd.png') no-repeat center center;
+  background-size: 100%;
+}                
