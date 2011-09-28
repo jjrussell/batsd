@@ -89,7 +89,7 @@ class Device < SimpledbShardedResource
     save
   end
 
-  def has_app(app_id)
+  def has_app?(app_id)
     @parsed_apps[app_id].present?
   end
   

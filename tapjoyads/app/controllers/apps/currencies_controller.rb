@@ -10,7 +10,7 @@ class Apps::CurrenciesController < WebsiteController
   def show
     @udids_to_check = @currency.get_test_device_ids.map do |id|
       device = Device.new(:key => id)
-      if device.has_app(@app.id)
+      if device.has_app?(@app.id)
         last_run_time = device.last_run_time(@app.id).to_s(:pub_ampm_sec)
       else
         last_run_time = "Never"
