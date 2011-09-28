@@ -923,7 +923,7 @@ private
     if banner_creatives.size > banner_creatives_was.size
       # banner creative added, find which size was added and make sure file matches up
       new_size = (banner_creatives - banner_creatives_was).first
-      raise "#{new_size} banner creative file not provided" if creative_blobs[new_size].nil?
+      raise BannerSyncError.new("#{new_size} banner creative file not provided.") if creative_blobs[new_size].nil?
       
       # upload to S3
       upload_banner_creative(blob, new_size)
