@@ -849,13 +849,21 @@ form#new_gamer_session .login_pass {
 #invite_friends .social_btn.email:hover, #invite_friends .social_btn.email:action {
   background-position: 100% 100%;
 }
+.web .profile_arrow {
+  background: transparent url('/images/games/caret-web.jpg') no-repeat center center;
+  height: 35px;
+  top: 4px;
+  width: 20px;
+}
+.mobile .profile_arrow {
+  background: transparent url('/images/games/caret-mobile.jpg') no-repeat center center;
+  height: 18px;
+  top: 3px;
+  width: 10px;
+}
 .profile_arrow {
-  background: transparent url('/images/games/feat_arrow_mobile.png') no-repeat center center;
-  height: 22px;
   padding: 0;
   position: relative;
-  top: 8px;
-  width: 12px;
 }
 #edit_profile {
   padding: 0;
