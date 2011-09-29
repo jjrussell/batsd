@@ -23,6 +23,8 @@ elsif security_groups.include? 'website'
   server_type = 'website'
 elsif security_groups.include? 'games'
   server_type = 'games'
+elsif security_groups.include? 'dashboard'
+  server_type = 'dashboard'
 end
 
 print server_type

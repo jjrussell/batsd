@@ -12,6 +12,7 @@
    <string>ICCID</string>
    <string>VERSION</string>
    <string>PRODUCT</string>
+   <string>MAC_ADDRESS_EN0</string>
   </array>
  </dict>
  <key>PayloadOrganization</key>
@@ -25,7 +26,7 @@
  <key>PayloadIdentifier</key>
  <string>com.tapjoygames.profile-service</string>
  <key>PayloadDescription</key>
- <string>This temporary profile will be used to link your device to your Tapjoy Games profile.</string>
+ <string>This temporary profile will be used to personalize your experience on Tapjoy Games.</string>
  <key>PayloadType</key>
  <string>Profile Service</string>
 </dict>

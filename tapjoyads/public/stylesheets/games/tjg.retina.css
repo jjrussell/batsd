@@ -116,4 +116,8 @@
 .mobile.hd .bookmark_btn {
   background: transparent url('/images/games/bookmark_btn_web.png') no-repeat;
   background-size: 100%;
-}                   
+}
+.mobile.hd .link_device_install_icon {
+  background: transparent url('/images/games/install_device_hd.png') no-repeat center center;
+  background-size: 100%;
+}                

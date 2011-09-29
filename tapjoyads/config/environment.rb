@@ -34,14 +34,14 @@ Rails::Initializer.run do |config|
   config.gem 'httparty', :version => '0.7.8'
   config.gem 'json', :version => '1.5.3'
   config.gem 'libxml-ruby', :version => '1.1.3', :lib => 'xml'
-  config.gem 'memcached', :version => '1.2.7'
+  config.gem 'memcached', :version => '1.3.2'
   config.gem 'mysql', :version => '2.8.1'
   config.gem 'nokogiri', :version => '1.5.0'
   config.gem 'patron', :version => '0.4.4'
   config.gem 'right_aws', :version => '1.10.0'
   config.gem 'rmagick', :version => '2.12.2', :lib => 'RMagick'
   config.gem 'sqlite3', :version => '1.3.3'
-  config.gem 'typhoeus', :version => '0.2.0'
+  config.gem 'typhoeus', :version => '0.2.4'
 
   # These gems should be vendored
   config.gem 'airbrake', :version => '3.0.4'
@@ -58,7 +58,7 @@ Rails::Initializer.run do |config|
   config.gem 'sass', :version => '3.1.7'
   config.gem 'syslog-logger', :version => '1.6.4', :lib => 'syslog_logger'
   config.gem 'uuidtools', :version => '2.1.2'
-  config.gem 'will_paginate', :version => '2.3.12'
+  config.gem 'will_paginate', :version => '2.3.16'
   
 
   # Only load the plugins named here, in the order given. By default, all plugins 

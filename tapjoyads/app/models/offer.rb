@@ -844,7 +844,7 @@ class Offer < ActiveRecord::Base
   def frequency_capping_reject?(device)
     return false unless multi_complete? && interval != Offer::FREQUENCIES_CAPPING_INTERVAL['none']
     
-    if device.has_app(item_id)
+    if device.has_app?(item_id)
       device.last_run_time(item_id) + interval > Time.zone.now
     else
       false
@@ -901,25 +901,25 @@ private
 
     if app_id_for_device == '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424'
       # Don't show 'Tap farm' offer to users that already have 'Tap farm', 'Tap farm 6', or 'Tap farm 5'
-      return device.has_app(app_id_for_device) || device.has_app('bad4b0ae-8458-42ba-97ba-13b302827234') || device.has_app('403014c2-9a1b-4c1d-8903-5a41aa09be0e')
+      return device.has_app?(app_id_for_device) || device.has_app?('bad4b0ae-8458-42ba-97ba-13b302827234') || device.has_app?('403014c2-9a1b-4c1d-8903-5a41aa09be0e')
     end
 
     if app_id_for_device == 'b23efaf0-b82b-4525-ad8c-4cd11b0aca91'
       # Don't show 'Tap Store' offer to users that already have 'Tap Store', 'Tap Store Boost', or 'Tap Store Plus'
-      return device.has_app(app_id_for_device) || device.has_app('a994587c-390c-4295-a6b6-dd27713030cb') || device.has_app('6703401f-1cb2-42ec-a6a4-4c191f8adc27')
+      return device.has_app?(app_id_for_device) || device.has_app?('a994587c-390c-4295-a6b6-dd27713030cb') || device.has_app?('6703401f-1cb2-42ec-a6a4-4c191f8adc27')
     end
 
     if app_id_for_device == '3885c044-9c8e-41d4-b136-c877915dda91'
       # don't show the beat level 2 in clubworld action to users that already have clubworld
-      return device.has_app(app_id_for_device) || device.has_app('a3980ac5-7d33-43bc-8ba1-e4598c7ed279')
+      return device.has_app?(app_id_for_device) || device.has_app?('a3980ac5-7d33-43bc-8ba1-e4598c7ed279')
     end
 
     if app_id_for_device == '7f44c068-6fa1-482c-b2d2-770edcf8f83d' || app_id_for_device == '192e6d0b-cc2f-44c2-957c-9481e3c223a0'
       # there are 2 groupon apps
-      return device.has_app('7f44c068-6fa1-482c-b2d2-770edcf8f83d') || device.has_app('192e6d0b-cc2f-44c2-957c-9481e3c223a0')
+      return device.has_app?('7f44c068-6fa1-482c-b2d2-770edcf8f83d') || device.has_app?('192e6d0b-cc2f-44c2-957c-9481e3c223a0')
     end
 
-    device.has_app(app_id_for_device)
+    device.has_app?(app_id_for_device)
   end
 
   def show_rate_reject?(device)
@@ -943,7 +943,7 @@ private
       return true unless publisher_app.id == tap_fish_id || publisher_app.id == tap_fish_coins_id
 
       # Only show offer if user has recently run flixter:
-      return true if !device.has_app(flixter_id) || device.last_run_time(flixter_id) < (Time.zone.now - 1.days)
+      return true if !device.has_app?(flixter_id) || device.last_run_time(flixter_id) < (Time.zone.now - 1.days)
     end
     false
   end
@@ -977,7 +977,7 @@ private
   end
 
   def action_app_reject?(device)
-    item_type == "ActionOffer" && third_party_data.present? && !device.has_app(third_party_data)
+    item_type == "ActionOffer" && third_party_data.present? && !device.has_app?(third_party_data)
   end
 
   def min_os_version_reject?(os_version)
