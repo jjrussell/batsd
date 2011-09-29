@@ -33,7 +33,8 @@ end
 
 RUN_MODE_PREFIX = 'dev_'
 API_URL = local_config['api_url'] || ''
-CLOUDFRONT_URL = "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" # just hit S3 directly in dev mode
+DASHBOARD_URL = local_config['dashboard_url'] || ''
+CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 
 MAX_WEB_REQUEST_DOMAINS = 2
 NUM_POINT_PURCHASES_DOMAINS = 2

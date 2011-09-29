@@ -103,7 +103,7 @@ $(function($){
       var platform = $('#app_platform').val();
       var country = $('#app_country').val() || "us";
       $.ajax({
-        url: '/apps/search/;',
+        url: '/apps/search',
         data: { term: term, platform: platform, country: country},
         dataType: 'json',
         success: success,

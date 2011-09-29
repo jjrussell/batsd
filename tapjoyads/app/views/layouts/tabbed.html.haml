@@ -21,7 +21,7 @@
       #top_nav
         .left
           - premier_suffix = current_partner.is_premier? ? '_premier' : ''
-          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo#{premier_suffix}.png"), root_path
+          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo#{premier_suffix}.png"), dashboard_root_path
         .right
           = current_user.username
           - if current_user.can_manage_account?
@@ -66,12 +66,18 @@
         - tabs << { :account   => users_path }           if permitted_to?(:index, :users)
         - tabs << { :partners  => partners_path }        if permitted_to?(:index, :partners)
         - tabs << { :premier   => premier_path }         if permitted_to?(:edit,  :premier)
-        - #tabs << { :support   => support_index_path }   if permitted_to?(:index, :support)
         - tabs << { :tools     => tools_path }           if permitted_to?(:index, :tools)
         - tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :statz)
         = navigation(tabs)
 
       #content
+        - if request.host != 'dashboard.tapjoy.com'
+          .flash
+            %strong
+            The Tapjoy dashboard is now located at
+            = succeed '.' do
+              = link_to 'dashboard.tapjoy.com', 'https://dashboard.tapjoy.com'
+            Please update your bookmarks.
         - flash.each do |name, msg|
           .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
             %strong #{name.to_s.humanize}:
@@ -86,7 +92,7 @@
 
       #footer
         &copy; #{Time.now.year} Tapjoy, Inc.
-        = link_to 'Privacy Policy', '/privacy.html', :target => '_blank'
+        = link_to 'Privacy Policy', 'https://www.tapjoy.com/privacy.html', :target => '_blank'
 
     = javascript_include_tag 'jquery-1.4.2.min', 'jquery-ui-1.8.5.min', 'jquery.tablesorter', 'jquery.colorbox.min', 'application', 'chosen.jquery', 'facebox'
     = yield :included_javascripts
