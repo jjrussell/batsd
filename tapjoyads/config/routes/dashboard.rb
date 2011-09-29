@@ -47,8 +47,6 @@ ActionController::Routing::Routes.draw do |map|
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
   map.transfer_funds_billing 'billing/transfer-funds', :controller => :billing, :action => :transfer_funds
   map.payout_info_billing 'billing/payment-info', :controller => :billing, :action => :payout_info
-  map.resources :support, :only => [ :index ],
-    :collection => { :contact => :post }
   map.resources :statz, :only => [ :index, :show, :edit, :update, :new, :create ],
     :member => { :last_run_times => :get, :udids => :get, :download_udids => :get },
     :collection => { :global => :get, :publisher => :get, :advertiser => :get, :gamez => :get }
