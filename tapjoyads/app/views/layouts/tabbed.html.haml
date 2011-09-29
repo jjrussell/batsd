@@ -71,12 +71,13 @@
         = navigation(tabs)
 
       #content
-        .flash
-          %strong
-          The Tapjoy dashboard is now located at
-          = succeed '.' do
-            = link_to 'dashboard.tapjoy.com', 'https://dashboard.tapjoy.com'
-          Please update your bookmarks.
+        - if request.host != 'dashboard.tapjoy.com'
+          .flash
+            %strong
+            The Tapjoy dashboard is now located at
+            = succeed '.' do
+              = link_to 'dashboard.tapjoy.com', 'https://dashboard.tapjoy.com'
+            Please update your bookmarks.
         - flash.each do |name, msg|
           .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
             %strong #{name.to_s.humanize}:
