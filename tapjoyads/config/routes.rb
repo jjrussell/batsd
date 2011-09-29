@@ -12,6 +12,8 @@ ActionController::Routing::Routes.draw do |map|
     ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/web.rb'))
     ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/legacy.rb'))
     ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/default.rb'))
+  elsif MACHINE_TYPE == 'jobs' || MACHINE_TYPE == 'masterjobs'
+    ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/default.rb'))
   else
     # jobs/masterjobs/test/dev
     ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/dashboard.rb'))
