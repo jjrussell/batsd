@@ -1,7 +1,7 @@
 xml.instruct!
 xml.MarketingData do
   xml.Date @date
-  xml.Timezone Time.zone
+  xml.Timezone Time.zone.to_s
   xml.TotalOffers @total_offers
   xml.PageSize @page_size
   xml.TotalPages @total_pages
