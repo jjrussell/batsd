@@ -10,4 +10,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'glu', :controller => 'homepage/press', :action => 'glu'
   map.connect 'publishing', :controller => 'homepage', :action => 'publishers'
   map.connect 'androidfund', :controller => 'androidfund'
+  map.connect 'androidfund/apply', :controller => 'androidfund', :action => :apply
+  map.connect 'privacy', :controller => 'homepage', :action => 'privacy'
+  map.connect 'privacy.html', :controller => 'homepage', :action => 'privacy'
+  map.resources :opt_outs, :only => :create
 end

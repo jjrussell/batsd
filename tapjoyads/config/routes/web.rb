@@ -1,5 +1,4 @@
 ActionController::Routing::Routes.draw do |map|
-  # Additional webserver routes
   map.resources :offer_instructions, :only => [ :index ]
   map.resources :support_requests, :only => [ :new, :create ]
   map.resources :surveys, :only => [ :edit, :create ]
