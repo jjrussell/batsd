@@ -3,6 +3,7 @@ ActionController::Routing::Routes.draw do |map|
     m.root :controller => 'dashboard/homepage', :action => :index
   end
   
+  map.resource :sign_up, :controller => :sign_up, :only => :create
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
   map.logout 'logout', :controller => :user_sessions, :action => :destroy
