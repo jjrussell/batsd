@@ -49,16 +49,10 @@ class StatzController < WebsiteController
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
     
     if @offer.update_attributes(offer_params)
-      
-      unless params[:app_store_id].blank?
-        app = @offer.item
-        log_activity(app)
-        app.update_attributes({ :store_id => params[:app_store_id] })
-      end
-      
       flash[:notice] = "Successfully updated #{@offer.name}"
       redirect_to statz_path(@offer)
     else
+      flash.now[:error] = "Errors encountered, please see messages below"
       render :action => :edit
     end
   end

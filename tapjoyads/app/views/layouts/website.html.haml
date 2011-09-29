@@ -14,7 +14,7 @@
     #main
       #top_nav
         .left
-          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo.png"), dashboard_root_path
+          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo.png"), "#{WEBSITE_URL}/"
         .right
           = link_to('Dev forum', DEV_FORUM_URL)
           |
@@ -32,6 +32,13 @@
         .clear
 
       #content
+        - if request.host != 'dashboard.tapjoy.com'
+          .flash
+            %strong
+            The Tapjoy dashboard is now located at
+            = succeed '.' do
+              = link_to 'dashboard.tapjoy.com', "#{DASHBOARD_URL}#{request.path}"
+            Please update your bookmarks.
         - flash.each do |name, msg|
           .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
             %strong #{name.to_s.humanize}:

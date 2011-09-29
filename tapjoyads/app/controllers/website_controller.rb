@@ -77,7 +77,12 @@ protected
   
   def permission_denied
     flash[:error] = "Sorry, you are not allowed to access that page."
-    redirect_to(login_path(:goto => request.path))
+    if current_user
+      destination = request.env['HTTP_REFERER'] =~ /tapjoy.com/ ? request.env['HTTP_REFERER'] : dashboard_root_path
+    else
+      destination = login_path(:goto => request.path)
+    end
+    redirect_to(destination)
   end
   
   def ssl_required?
