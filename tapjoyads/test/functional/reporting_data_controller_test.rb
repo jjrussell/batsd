@@ -1,4 +1,7 @@
 require 'test_helper'
+require 'rexml/document'
+
+include REXML   # So we can avoid REXML prefix
 
 class ReportingDataControllerTest < ActionController::TestCase
   context "on GET to :index" do
@@ -48,6 +51,52 @@ class ReportingDataControllerTest < ActionController::TestCase
       end
       should respond_with(200)
       should respond_with_content_type(:json)
+    end
+    
+    context "with timezone param" do
+      setup do
+        @app = @partner.offers.first        
+        @stats = Stats.new(:key => "app.2011-01-01.#{@app.id}", :load_from_memcache => false)
+        @stats.update_stat_for_hour('logins', 12, 1)
+        @stats.save!
+      end
+      
+      should "default to UTC when param is invalid" do
+        response = get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key, :timezone => 'invalid')
+        xml = Document.new response.body
+        xml.elements.each("MarketingData/Timezone") {
+          |node| assert_equal('(GMT+00:00) UTC', node.text)
+        }
+        xml.elements.each("MarketingData/App/SessionsHourly") {
+          |node| assert_equal('0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0', node.text)
+        }
+      end
+      
+      should "shift values left by 8 with timezone=-8" do
+        response = get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key, :timezone => '-8')
+        xml = Document.new response.body
+        xml.elements.each("MarketingData/Timezone") {
+          |node| assert_equal('(GMT-08:00) Pacific Time (US & Canada)', node.text)
+        }
+        xml.elements.each("MarketingData/App/SessionsHourly") {
+          |node| assert_equal('0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0', node.text)
+        }
+      end
+      
+      should "default to user timezone when no timezone specified" do
+        response = get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key)
+        xml = Document.new response.body
+        xml.elements.each("MarketingData/Timezone") {
+          |node| assert_equal('(GMT+00:00) UTC', node.text)
+        }
+        xml.elements.each("MarketingData/App/SessionsHourly") {
+          |node| assert_equal('0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0', node.text)
+        }        
+      end
+      
+      teardown do
+        @stats.delete_all
+      end
     end
   end
 
