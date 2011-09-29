@@ -1,5 +1,9 @@
 ENV["RAILS_ENV"] = "test"
 require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
+
+ActiveRecord::Base.send(:include, AfterCommit::AfterSavepoint) # for compatibility with after_commit gem
+ActiveRecord::Base.include_after_savepoint_extensions # for compatibility with after_commit gem
+
 require 'test_help'
 require "authlogic/test_case" # include at the top of test_helper.rb
 
