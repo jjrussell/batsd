@@ -47,7 +47,7 @@ class ExternalPublisher
   def self.load_all_for_device(device)
     external_publishers = []
     self.load_all.each do |app_id, external_publisher|
-      next unless device.has_app(app_id)
+      next unless device.has_app?(app_id)
       next unless device.publisher_user_ids[app_id].present? || external_publisher.currencies.all? { |h| h[:udid_for_user_id] }
       
       external_publisher.last_run_time = device.parsed_apps[app_id].to_i

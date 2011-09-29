@@ -169,13 +169,13 @@ private
       app_id_for_device = RatingOffer.get_id_with_app_version(params[:advertiser_app_id], params[:app_version])
     end
     
-    completed = @device.has_app(app_id_for_device)
+    completed = @device.has_app?(app_id_for_device)
     unless completed
       publisher_user = PublisherUser.new(:key => "#{params[:publisher_app_id]}.#{params[:publisher_user_id]}")
       other_udids = publisher_user.udids - [ @device.key ]
       other_udids.each do |udid|
         device = Device.new(:key => udid)
-        if device.has_app(app_id_for_device)
+        if device.has_app?(app_id_for_device)
           completed = true 
           break
         end

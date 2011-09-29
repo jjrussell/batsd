@@ -10,6 +10,7 @@ class Gamer < ActiveRecord::Base
   validates_acceptance_of :terms_of_service, :on => :create, :allow_nil => false
   
   before_create :generate_confirmation_token
+  before_create :check_referrer
   
   alias_method :devices, :gamer_devices
   
@@ -30,5 +31,19 @@ private
 
   def generate_confirmation_token
     self.confirmation_token = Authlogic::Random.friendly_token
+  end
+  
+  def check_referrer
+    if referrer.starts_with?('tjreferrer:')
+      click = Click.new :key => referrer.gsub('tjreferrer:', '')
+      if click.rewardable?
+        device = Device.new :key => click.udid
+        device.product = click.device_name
+        device.save
+        devices.build(:device => device)
+        url = "#{API_URL}/offer_completed?click_key=#{click.key}"
+        Downloader.get_with_retry url
+      end
+    end
   end
 end
