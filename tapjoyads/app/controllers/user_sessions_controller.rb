@@ -2,7 +2,7 @@ class UserSessionsController < WebsiteController
   
   def new
     if current_user
-      redirect_to(params[:goto] || default_path) and return
+      redirect_to(default_path) and return
     end
     @user_session = UserSession.new
     @goto = params[:goto]
