@@ -19,6 +19,9 @@ ActionController::Routing::Routes.draw do |map|
     agency.resources :partners, :only => [ :index, :show, :create, :update ], :collection => { :link => :post }
     agency.resources :currencies, :only => [ :index, :show, :create, :update ]
   end
+  map.connect 'create_account', :controller => :create_account, :action => :index
+  map.connect 'reporting_data', :controller => :reporting_data, :action => :index
+  map.connect 'reporting_data/udids', :controller => :reporting_data, :action => :udids
   
   map.namespace :account do |account|
     account.resources :whitelist, :controller => 'whitelist', :only => [ :index ], :collection => [ :enable, :disable ]
@@ -101,4 +104,18 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :support_requests, :only => [ :index ]
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
   end
+  
+  map.connect 'adways_data',          :controller => :adways_data,          :action => :index
+  map.connect 'brooklyn_packet_data', :controller => :brooklyn_packet_data, :action => :index
+  map.connect 'ea_data',              :controller => :ea_data,              :action => :index
+  map.connect 'fluent_data',          :controller => :fluent_data,          :action => :index
+  map.connect 'glu_data',             :controller => :glu_data,             :action => :index
+  map.connect 'gogii_data',           :controller => :gogii_data,           :action => :index
+  map.connect 'loopt_data',           :controller => :loopt_data,           :action => :index
+  map.connect 'ngmoco_data',          :controller => :ngmoco_data,          :action => :index
+  map.connect 'pinger_data',          :controller => :pinger_data,          :action => :index
+  map.connect 'pocketgems_data',      :controller => :pocketgems_data,      :action => :index
+  map.connect 'sgn_data',             :controller => :sgn_data,             :action => :index
+  map.connect 'zynga_data',           :controller => :zynga_data,           :action => :index
+  map.connect 'tapulous_marketing',   :controller => :tapulous_marketing,   :action => :index
 end
