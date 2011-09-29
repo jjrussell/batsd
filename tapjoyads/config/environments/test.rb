@@ -21,7 +21,7 @@ config.action_controller.allow_forgery_protection    = false
 # ActionMailer::Base.deliveries array.
 config.action_mailer.delivery_method = :test
 
-config.gem 'factory_girl', :version => '1.3.1'
+config.gem 'factory_girl', :version => '2.1.2'
 config.gem 'shoulda', :version => '2.11.1'
 config.gem 'shoulda-addons', :version => '0.2.2', :lib => 'shoulda_addons'
 config.gem 'mocha', :version => '0.9.12'

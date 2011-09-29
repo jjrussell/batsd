@@ -133,7 +133,7 @@ a, a:visited {
   padding: 6px 12px;
 }
 #link_device_dialog .dialog {
-  height: 290px;
+  height: 300px;
 }
 #bad_news.dialog_wrapper .dialog {
   height: 120px;
@@ -1427,16 +1427,16 @@ input.button {
 .link_device_install_icon {
   background: transparent url('/images/games/install_device.png') no-repeat center center;
   float: left;
-  height: 16px;
+  height: 20px;
+  margin: 0 3px;
   position: relative;
-  margin: 0 2px;
-  top: 2px;
-  width: 48px;
+  top: -1px;
+  width: 60px;
 }
 .link_device_btn {
   cursor: pointer;
   margin: 0 auto;
-  width: 150px;
+  width: 160px;
 }
 #static {
   font-size: 12px;
