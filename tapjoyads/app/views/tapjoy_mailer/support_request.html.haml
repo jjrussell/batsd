@@ -1,9 +1,9 @@
-= support_request_field :offer, @offer.is_a?(Offer) ? "#{@offer.name} #{statz_url(@offer.id, :host => 'www.tapjoy.com', :protocol => 'https')}" : @offer
+= support_request_field :offer, @offer.is_a?(Offer) ? "#{@offer.name} #{DASHBOARD_URL}/statz/#{@offer.id}" : @offer
 = support_request_field :description, @description
-= support_request_field :udid, "#{@udid} #{device_info_tools_url(:host => 'www.tapjoy.com', :protocol => 'https', :udid => @udid)}"
+= support_request_field :udid, "#{@udid} #{DASHBOARD_URL}/tools/device_info?udid={@udid}"
 = support_request_field :publisher_user_id, @publisher_user_id
 = support_request_field :currency_id, "#{@currency.name} (#{@currency.id})"
-= support_request_field :publisher_app, "#{@app.name} #{statz_url(@app.id, :host => 'www.tapjoy.com', :protocol => 'https')}"
+= support_request_field :publisher_app, "#{@app.name} #{DASHBOARD_URL}/statz/#{@app.id}"
 = support_request_field :device_type, @device_type
 = support_request_field :email_address, @email_address
 = support_request_field :language_code, @language_code
