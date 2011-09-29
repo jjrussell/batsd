@@ -5,7 +5,7 @@ class GamesMailer < ActionMailer::Base
     recipients gamer.email
     subject "Welcome to Tapjoy Games!"
     content_type 'text/html'
-    body :confirmation_link => confirmation_link, :linked => gamer.udid?
+    body :confirmation_link => confirmation_link, :linked => gamer.devices.any?
   end
   
   def password_reset(gamer, reset_link)
@@ -24,20 +24,20 @@ class GamesMailer < ActionMailer::Base
     body(:content => content, :email => gamer.email, :user_agent => user_agent)
   end
   
-  def report_bug(gamer, content, user_agent)
+  def report_bug(gamer, content, user_agent, device_id)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients "mobilehelp@tapjoy.com"
     subject "Bug Report - Tapjoy Games"
     content_type 'text/html'
-    body(:content => content, :email => gamer.email, :udid => gamer.udid, :user_agent => user_agent)
+    body(:content => content, :email => gamer.email, :udid => device_id, :user_agent => user_agent)
   end
   
-  def contact_support(gamer, content, user_agent)
+  def contact_support(gamer, content, user_agent, device_id)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients "mobilehelp@tapjoy.com"
     subject "User Support - Tapjoy Games"
     content_type 'text/html'
-    body(:content => content, :email => gamer.email, :udid => gamer.udid, :user_agent => user_agent)
+    body(:content => content, :email => gamer.email, :udid => device_id, :user_agent => user_agent)
   end
   
 end

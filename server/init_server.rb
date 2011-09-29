@@ -32,11 +32,11 @@ else
     `su webuser -c 'cd /home/webuser/tapjoyserver && server/deploy.rb'`
   end
 
-  # start apache
+  # configure apache
   `cp /home/webuser/tapjoyserver/server/apache2.conf /etc/apache2/`
   `cp /home/webuser/tapjoyserver/server/passenger.conf /etc/apache2/mods-available/`
   `cp /home/webuser/tapjoyserver/server/passenger.load /etc/apache2/mods-available/`
-  `/etc/init.d/apache2 start`
+  `/etc/init.d/apache2 reload`
 
   # start memcached and mysql on testservers
   if server_type == 'test'

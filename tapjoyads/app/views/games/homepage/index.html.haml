@@ -17,7 +17,7 @@
                     My Apps
                 .slide_arrow_wrapper.bottom_arrow
                   .slide_arrow
-          - if current_gamer.udid.blank?
+          - if current_gamer.devices.empty?
             .content_wrapper
               .content
                 = render 'register_device'
