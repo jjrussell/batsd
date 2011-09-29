@@ -20,7 +20,7 @@ class UserSessionsController < WebsiteController
     unless user_session.nil?
       user_session.destroy
     end
-    redirect_to root_path
+    redirect_to dashboard_root_path
   end
 
 private
@@ -36,7 +36,7 @@ private
     elsif permitted_to?(:index, :apps, options)
       apps_path
     else
-      root_path
+      dashboard_root_path
     end
   end
 
