@@ -63,7 +63,7 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
     end
     context "with missing params" do
       setup do
-        @response = get(:index)
+        @response = get(:index, :id => 'not_a_partner_id')
       end
       should respond_with(400)
       should respond_with_content_type(:json)
@@ -281,7 +281,7 @@ class AgencyApi::PartnersControllerTest < ActionController::TestCase
     end
     context "with missing params" do
       setup do
-        @response = put(:update)
+        @response = put(:update, :id => 'not_a_partner_id')
       end
       should respond_with(400)
       should respond_with_content_type(:json)
