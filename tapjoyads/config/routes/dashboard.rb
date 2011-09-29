@@ -21,6 +21,8 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.connect 'create_account', :controller => :create_account, :action => :index
   map.connect 'reporting_data', :controller => :reporting_data, :action => :index
+  map.connect 'reporting_data.json', :controller => :reporting_data, :action => :index
+  map.connect 'reporting_data.xml', :controller => :reporting_data, :action => :index
   map.connect 'reporting_data/udids', :controller => :reporting_data, :action => :udids
   
   map.namespace :account do |account|
