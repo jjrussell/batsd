@@ -53,10 +53,8 @@ private
       return
     end
     
-    if !params[:timezone].blank?
-      timezoneParam = params[:timezone].is_numeric? ? params[:timezone].to_i : params[:timezone]
-    end
-    Time.zone = params[:timezone].blank? ? @user.time_zone : timezoneParam
+    Time.zone = @user.time_zone
+    Time.zone = params[:timezone].to_i if params[:timezone].present?
   end
 
   def lookup_stats

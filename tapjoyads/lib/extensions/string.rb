@@ -12,8 +12,4 @@ class String
     
     (key + (key >> 5)).signed_overflow
   end
-  
-  def is_numeric?
-      true if Float(self) rescue false
-  end
 end

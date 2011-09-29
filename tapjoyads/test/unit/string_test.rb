@@ -25,30 +25,4 @@ class StringTest < ActiveSupport::TestCase
       end
     end
   end
-  
-  context "is_numeric?" do
-    should "return true for 0" do
-      assert "0".is_numeric?
-    end
-    
-    should "return true for an integer" do
-      assert "7".is_numeric?
-    end
-    
-    should "return true for a floating point number" do
-      assert "7.1".is_numeric?
-    end
-    
-    should "return true for a negative number" do
-      assert "-.8".is_numeric?
-    end
-    
-    should "return false for a string" do
-      assert !"string".is_numeric?
-    end
-    
-    should "return false for empty string" do
-      assert !"".is_numeric?
-    end
-  end
 end

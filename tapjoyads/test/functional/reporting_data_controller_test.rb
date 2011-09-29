@@ -64,34 +64,34 @@ class ReportingDataControllerTest < ActionController::TestCase
       should "default to UTC when param is invalid" do
         response = get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key, :timezone => 'invalid')
         xml = Document.new response.body
-        xml.elements.each("MarketingData/Timezone") {
-          |node| assert_equal('(GMT+00:00) UTC', node.text)
-        }
-        xml.elements.each("MarketingData/App/SessionsHourly") {
-          |node| assert_equal('0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0', node.text)
-        }
+        xml.elements.each("MarketingData/Timezone") do |node| 
+          assert_equal('(GMT+00:00) Casablanca', node.text)
+        end
+        xml.elements.each("MarketingData/App/SessionsHourly") do |node| 
+          assert_equal('0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0', node.text)
+        end
       end
       
       should "shift values left by 8 with timezone=-8" do
         response = get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key, :timezone => '-8')
         xml = Document.new response.body
-        xml.elements.each("MarketingData/Timezone") {
-          |node| assert_equal('(GMT-08:00) Pacific Time (US & Canada)', node.text)
-        }
-        xml.elements.each("MarketingData/App/SessionsHourly") {
-          |node| assert_equal('0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0', node.text)
-        }
+        xml.elements.each("MarketingData/Timezone") do |node| 
+          assert_equal('(GMT-08:00) Pacific Time (US & Canada)', node.text)
+        end
+        xml.elements.each("MarketingData/App/SessionsHourly") do |node| 
+          assert_equal('0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0', node.text)
+        end
       end
       
       should "default to user timezone when no timezone specified" do
         response = get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key)
         xml = Document.new response.body
-        xml.elements.each("MarketingData/Timezone") {
-          |node| assert_equal('(GMT+00:00) UTC', node.text)
-        }
-        xml.elements.each("MarketingData/App/SessionsHourly") {
-          |node| assert_equal('0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0', node.text)
-        }        
+        xml.elements.each("MarketingData/Timezone") do |node| 
+          assert_equal('(GMT+00:00) UTC', node.text)
+        end
+        xml.elements.each("MarketingData/App/SessionsHourly") do |node| 
+          assert_equal('0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0', node.text)
+        end       
       end
       
       teardown do
