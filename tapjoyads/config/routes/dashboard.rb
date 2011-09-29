@@ -58,6 +58,7 @@ ActionController::Routing::Routes.draw do |map|
     m.search_users 'search/users', :action => 'users'
     m.search_partners 'search/partners', :action => 'partners'
   end
+  map.resource :premier, :controller => :premier, :only => [ :update ]
   map.premier 'premier', :controller => :premier, :action => :edit
   
   # Admin tools routes
