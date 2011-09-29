@@ -10,7 +10,7 @@ class InternalDevicesController < WebsiteController
       set_cookie( { :value => @device.id, :expires => 1.year.from_now } )
       send_email
     elsif @device.approved?
-      redirect_to root_path
+      redirect_to dashboard_root_path
     elsif params[:resend]
       send_email
     end

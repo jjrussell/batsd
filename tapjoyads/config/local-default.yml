@@ -1,2 +1,3 @@
 api_url: http://tapjoy.local
+dashboard_url: http://tapjoy.local
 clear_memcache: true
