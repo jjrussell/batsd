@@ -941,11 +941,8 @@ private
       upload_banner_creative!(blob, size)
     end
     
-    if creative_blobs.any?
-      # 'acts_as_cacheable' caches entire object, including any attributes, so... let's clear the blob and re-cache
-      blob.replace("") if blob
-      self.cache
-    end
+    # 'acts_as_cacheable' caches entire object, including all attributes, so... let's clear the blob
+    blob.replace("") if blob
   end
   
   def delete_banner_creative!(size, format='jpg')
