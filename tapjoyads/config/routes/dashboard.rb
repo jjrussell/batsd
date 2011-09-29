@@ -50,10 +50,11 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :activities, :only => [ :index ]
   map.resources :partners, :only => [ :index, :show, :new, :create, :update, :edit ],
     :member => { :make_current => :post, :manage => :post, :stop_managing => :post, :mail_chimp_info => :get, :new_transfer => :get, :create_transfer => :post, :reporting => :get },
-    :collection => { :managed_by => :get, :agency_api => :get } do |partner|
+    :collection => { :agency_api => :get } do |partner|
     partner.resources :offer_discounts, :only => [ :index, :new, :create ], :member => { :deactivate => :post }, :controller => 'partners/offer_discounts'
     partner.resources :payout_infos, :only => [ :index, :update ]
   end
+  map.connect 'partners/managed_by/:id', :controller => :partners, :action => :managed_by
   map.with_options(:controller => 'search') do |m|
     m.search_offers 'search/offers', :action => 'offers'
     m.search_users 'search/users', :action => 'users'
@@ -69,8 +70,8 @@ ActionController::Routing::Routes.draw do |map|
                      :sdb_metadata => :get, :reset_device => :get, :send_currency_failures => :get, :sanitize_users => :get,
                      :resolve_clicks => :post, :sqs_lengths => :get, :elb_status => :get, :ses_status => :get,
                      :publishers_without_payout_info => :get, :publisher_payout_info_changes => :get, :device_info => :get,
-                     :freemium_android => :get, :award_currencies => :get, :update_award_currencies => :post,
-                     :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post }
+                     :freemium_android => :get, :award_currencies => :post, :update_award_currencies => :post,
+                     :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post, :update_device => :post }
   map.namespace :tools do |tools|
     tools.resources :premier_partners, :only => [ :index ]
     tools.resources :generic_offers, :only => [ :new, :create, :edit, :update ]
