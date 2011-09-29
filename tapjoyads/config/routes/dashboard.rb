@@ -105,7 +105,7 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
   end
   
-  map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :callback
+  map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback
   
   map.connect 'adways_data',          :controller => :adways_data,          :action => :index
   map.connect 'brooklyn_packet_data', :controller => :brooklyn_packet_data, :action => :index
