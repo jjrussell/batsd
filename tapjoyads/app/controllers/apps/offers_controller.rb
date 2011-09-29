@@ -80,6 +80,7 @@ class Apps::OffersController < WebsiteController
   
   def upload_creative
     @size = params[:size]
+    @creative_exists = @offer.banner_creatives.include? @size
     image_data = params[:offer]["custom_creative_#{@size}".to_sym].read rescue nil
     case request.method
       when :delete

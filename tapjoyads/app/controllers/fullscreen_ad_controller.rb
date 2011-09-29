@@ -2,13 +2,6 @@ class FullscreenAdController < ApplicationController
   
   layout 'iphone'
   
-  def image
-    require "imgkit"
-    img = IMGKit.new("#{API_URL}/fullscreen_ad?advertiser_app_id=#{params[:advertiser_app_id]}&publisher_app_id=#{params[:publisher_app_id]}&offer_id=#{params[:offer_id]}", :width => 320, :height => 480)
-    
-    send_data img.to_png, :type => 'image/png', :disposition => 'inline'
-  end
-  
   def index
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     @currency = Currency.find_in_cache(params[:currency_id] || params[:publisher_app_id])

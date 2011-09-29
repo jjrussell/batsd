@@ -2,15 +2,6 @@
 
 #previews
   - publisher_app_id = "2349536b-c810-47d7-836c-2cd47cd3a796" # TapDefense
-  - if @offer.featured?
-    Featured ad:
-    %div{:class => "img320x480"}
-    - if !@show_generated_ads
-      = render :partial => "link_to_appstore_msg"
-    - else
-      - url = "#{API_URL}/fullscreen_ad/image?advertiser_app_id=#{@offer.id}&publisher_app_id=#{publisher_app_id}&offer_id=#{@offer.id}"
-      = image_tag(url, :alt => "featuredimg")
-    %br
   - if !@offer.featured? || !@offer.rewarded?
     - Offer::DISPLAY_AD_SIZES.each_with_index do |size, index|
       - if index > 0
@@ -18,7 +9,9 @@
       = "#{size} banner ad:"
       %div{:class => "img#{size}"}
         - if !@show_generated_ads and !@offer.banner_creatives.include?(size)
-          = render :partial => "link_to_appstore_msg"
+          = surround "[", "]" do
+            %i<>
+              Please link your app to the app store so we can generate this ad using your app's icon.
         - else
           - width, height = size.split("x").collect{|x|x.to_i}
           = image_tag(@offer.get_ad_image_url(publisher_app_id, width, height, nil, nil, true), :alt => "#{size}img")

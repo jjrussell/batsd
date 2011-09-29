@@ -1,10 +1,9 @@
 - url = upload_creative_app_offer_path(:id => @offer.id, :app_id => @app.id, :size => @size)
-- creative_exists = @offer.banner_creatives.include? @size
 
-- if creative_exists
+- if @creative_exists
   - form_tag(url, :method => :delete, :id => "remove_form_for_#{@size}", :class => "hidden") {}
 
-- form_for(@offer, :url => url, :html => { :method => (creative_exists ? :put : :post), :multipart => true }) do |f|
+- form_for(@offer, :url => url, :html => { :method => (@creative_exists ? :put : :post), :multipart => true }) do |f|
   %table
     %tbody
       %th
@@ -13,7 +12,7 @@
         - if @success_message
           %span#success_message
             = h(@success_message)
-        - if creative_exists
+        - if @creative_exists
           = link_to("View existing file", '#', :class => 'view_link')
           |
           = link_to("Remove existing file", '#', :id => "remove_link")

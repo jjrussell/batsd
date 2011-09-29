@@ -191,9 +191,9 @@ class Offer < ActiveRecord::Base
   end
 
   def after_save
-    # sync_banner_creatives should always be the last thing run by the after_save callback
+    # sync_banner_creatives! should always be the last thing run by the after_save callback
     # that's why it's here rather than defined at the top of the class
-    sync_banner_creatives
+    sync_banner_creatives!
   end
 
   def self.redistribute_hourly_stats_aggregation
@@ -907,7 +907,7 @@ class Offer < ActiveRecord::Base
 
 private
   
-  def sync_banner_creatives
+  def sync_banner_creatives!
     creative_blobs = {}
     Offer::DISPLAY_AD_SIZES.each do |size|
       image_data = (send("banner_creative_#{size}_blob") rescue nil)
@@ -926,19 +926,19 @@ private
       raise BannerSyncError.new("#{new_size} banner creative file not provided.") if creative_blobs[new_size].nil?
       
       # upload to S3
-      upload_banner_creative(blob, new_size)
+      upload_banner_creative!(blob, new_size)
     elsif banner_creatives_was.size > banner_creatives.size
       # banner creative removed, find which size was removed
       removed_size = (banner_creatives_was - banner_creatives).first
       
       # delete from S3
-      delete_banner_creative(removed_size)
+      delete_banner_creative!(removed_size)
     else
       # a banner creative was changed, find which size it applies to
       size = creative_blobs.keys.first
       
       # upload file to S3
-      upload_banner_creative(blob, size)
+      upload_banner_creative!(blob, size)
     end
     
     if creative_blobs.any?
@@ -948,13 +948,13 @@ private
     end
   end
   
-  def delete_banner_creative(size, format='jpg')
+  def delete_banner_creative!(size, format='jpg')
     banner_creative_s3_key(size, format).delete
   rescue
     raise BannerSyncError.new("Encountered unexpected error while deleting existing file, please try again.")
   end
   
-  def upload_banner_creative(blob, size, format='jpg')
+  def upload_banner_creative!(blob, size, format='jpg')
     begin
       creative_arr = Magick::Image.from_blob(blob)
       if creative_arr.size != 1
