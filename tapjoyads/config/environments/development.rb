@@ -33,6 +33,7 @@ end
 
 RUN_MODE_PREFIX = 'dev_'
 API_URL = local_config['api_url'] || ''
+DASHBOARD_URL = local_config['dashboard_url'] || ''
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 
 MAX_WEB_REQUEST_DOMAINS = 2

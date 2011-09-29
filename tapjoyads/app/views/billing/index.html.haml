@@ -43,13 +43,13 @@
         #details_explanation
           Click one of the months on the left to see more details
         #buttons
-          = button_to 'Export Monthly Statements', {:method => 'GET', :action => 'export_statements' }
+          = button_to 'Export Monthly Statements', { :action => 'export_statements' }, :method => 'get'
           %br
-          = button_to 'Export Payments', {:method => 'GET', :action => 'export_orders' }
+          = button_to 'Export Payments', { :action => 'export_orders' }, :method => 'get'
           %br
-          = button_to 'Export Payouts', {:method => 'GET', :action => 'export_payouts' }
+          = button_to 'Export Payouts', { :action => 'export_payouts' }, :method => 'get'
           %br
-          = button_to 'Export Adjustments', {:method => 'GET', :action => 'export_adjustments' }
+          = button_to 'Export Adjustments', { :action => 'export_adjustments' }, :method => 'get'
     - else
       .none No statements available
 
