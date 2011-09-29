@@ -1,6 +1,9 @@
 class UserSessionsController < WebsiteController
   
   def new
+    if current_user
+      redirect_to(params[:goto] || default_path) and return
+    end
     @user_session = UserSession.new
     @goto = params[:goto]
   end
@@ -20,13 +23,13 @@ class UserSessionsController < WebsiteController
     unless user_session.nil?
       user_session.destroy
     end
-    redirect_to dashboard_root_path
+    redirect_to login_path
   end
 
 private
 
   def default_path
-    options = { :user => @user_session.record }
+    options = { :user => current_user || @user_session.record }
     if has_role_with_hierarchy?(:admin)
       tools_path
     elsif permitted_to?(:index, :statz, options)
@@ -36,7 +39,7 @@ private
     elsif permitted_to?(:index, :apps, options)
       apps_path
     else
-      dashboard_root_path
+      login_path
     end
   end
 

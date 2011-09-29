@@ -77,7 +77,7 @@ protected
   
   def permission_denied
     flash[:error] = "Sorry, you are not allowed to access that page."
-    redirect_to(login_path(:goto => request.path))
+    redirect_to(current_user ? request.env['HTTP_REFERER'] || dashboard_root_path : login_path(:goto => request.path))
   end
   
   def ssl_required?
