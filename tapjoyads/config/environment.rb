@@ -59,7 +59,7 @@ Rails::Initializer.run do |config|
   config.gem 'syslog-logger', :version => '1.6.4', :lib => 'syslog_logger'
   config.gem 'uuidtools', :version => '2.1.2'
   config.gem 'will_paginate', :version => '2.3.16'
-  
+  config.gem 'after_commit', :version => '1.0.10'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
   # in vendor/plugins are loaded in alphabetical order.
