@@ -95,9 +95,7 @@ ActiveRecord::Schema.define(:version => 20110927200827) do
     t.integer  "price",                                 :default => 0
     t.string   "platform"
     t.string   "store_id"
-    t.text     "store_url"
     t.integer  "color"
-    t.boolean  "use_raw_url",                           :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "age_rating"
