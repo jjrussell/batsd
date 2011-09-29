@@ -13,7 +13,7 @@ class RatingOffer < ActiveRecord::Base
   after_create :create_primary_offer, :create_icon
   after_update :update_offers
 
-  delegate :get_offer_device_types, :platform, :to => :app
+  delegate :get_offer_device_types, :platform, :store_url, :to => :app
 
   named_scope :visible, :conditions => { :hidden => false }
   
@@ -52,9 +52,9 @@ private
   def update_offers
     offers.each do |offer|
       offer.partner_id = partner_id if partner_id_changed?
+      offer.url = app.store_url unless offer.url_overridden?
       offer.name = name if name_changed?
       offer.hidden = hidden if hidden_changed?
-      offer.url = app.store_url
       offer.save! if offer.changed?
     end
   end

@@ -519,6 +519,7 @@ ActiveRecord::Schema.define(:version => 20110927200827) do
     t.string   "min_os_version",                                                                :default => "",    :null => false
     t.text     "screen_layout_sizes",                                                                              :null => false
     t.integer  "interval",                                                                      :default => 0,     :null => false
+    t.boolean  "url_overridden",                                                                :default => false, :null => false
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

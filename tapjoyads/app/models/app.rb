@@ -21,7 +21,7 @@ class App < ActiveRecord::Base
       },
       :store_name => 'Market',
       :info_url => 'https://market.android.com/details?id=STORE_ID',
-      :direct_store_url => 'market://search?q=STORE_ID',
+      :store_url => 'market://search?q=STORE_ID',
       :default_actions_file_name => "TapjoyPPA.java",
       :min_action_offer_bid => 25,
       :versions => [ '1.5', '1.6', '2.0', '2.1', '2.2', '2.3', '3.0' ],
@@ -36,7 +36,7 @@ class App < ActiveRecord::Base
       },
       :store_name => 'App Store',
       :info_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
-      :direct_store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
+      :store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
       :default_actions_file_name => "TJCPPA.h",
       :min_action_offer_bid => 35,
       :versions => [ '2.0', '2.1', '2.2', '3.0', '3.1', '3.2', '4.0', '4.1', '4.2', '4.3' ],
@@ -50,7 +50,7 @@ class App < ActiveRecord::Base
       },
       :store_name => 'Marketplace',
       :info_url => 'http://social.zune.net/redirect?type=phoneapp&id=STORE_ID',
-      :direct_store_url => 'http://social.zune.net/redirect?type=phoneapp&id=STORE_ID',
+      :store_url => 'http://social.zune.net/redirect?type=phoneapp&id=STORE_ID',
       :default_actions_file_name => '', #TODO fill this out
       :min_action_offer_bid => 25,
       :versions => [ '7.0' ],
@@ -86,6 +86,7 @@ class App < ActiveRecord::Base
   after_create :create_app_metadata
   after_update :update_offers
   after_update :update_rating_offer
+  after_update :update_action_offers
   after_update :update_app_metadata
   
   named_scope :visible, :conditions => { :hidden => false }
@@ -126,17 +127,7 @@ class App < ActiveRecord::Base
   end
 
   def store_url
-    if use_raw_url?
-      read_attribute(:store_url)
-    else
-      direct_store_url
-    end
-  end
-  
-  def store_url=(url)
-    if use_raw_url?
-      write_attribute(:store_url, url)
-    end
+    PLATFORM_DETAILS[platform][:store_url].sub('STORE_ID', store_id.to_s)
   end
 
   def categories=(arr)
@@ -153,10 +144,6 @@ class App < ActiveRecord::Base
 
   def info_url
     PLATFORM_DETAILS[platform][:info_url].sub('STORE_ID', store_id.to_s)
-  end
-
-  def direct_store_url
-    PLATFORM_DETAILS[platform][:direct_store_url].sub('STORE_ID', store_id.to_s)
   end
 
   def primary_country
@@ -295,7 +282,7 @@ private
         offer.price = price
         offer.bid = offer.min_bid if offer.bid < offer.min_bid
       end
-      offer.url = store_url if store_url_changed? || use_raw_url_changed? || store_id_changed?
+      offer.url = store_url if store_id_changed? && !offer.url_overridden?
       offer.third_party_data = store_id if store_id_changed?
       offer.age_rating = age_rating if age_rating_changed?
       offer.hidden = hidden if hidden_changed?
@@ -314,6 +301,14 @@ private
   def update_rating_offer
     if (name_changed? || store_id_changed?) && rating_offer.present?
       rating_offer.save!
+    end
+  end
+  
+  def update_action_offers
+    if store_id_changed?
+      action_offers.each do |action_offer|
+        action_offer.save!
+      end
     end
   end
 

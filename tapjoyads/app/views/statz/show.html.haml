@@ -36,8 +36,8 @@
   - if @offer.reward_value.present?
     - property_row('Reward Value', number_to_currency(@offer.reward_value / 100.0))
   - if @offer.item_type == 'App'
-    - if @offer.item.use_raw_url?
-      - property_row('Raw url', link_to('[url]', @offer.item.store_url), nil, @offer.item.store_url.blank? ? 'incomplete' : nil)
+    - if @offer.url_overridden?
+      - property_row('Overridden destination url', link_to('[url]', @offer.url))
     - else
       - property_row('Store id', link_to(@offer.item.store_id, @offer.item.info_url), nil, @offer.item.store_id.blank? ? 'incomplete' : nil)
     - property_row('File size', number_to_human_size(@offer.item.file_size_bytes), nil, @offer.item.large_download? ? 'warning' : nil)
