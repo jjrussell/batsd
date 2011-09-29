@@ -94,7 +94,7 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
     
     context "with missing params" do
       setup do
-        @response = get(:show)
+        @response = get(:show, :id => 'not_a_currency_id')
       end
       should respond_with(400)
       should respond_with_content_type(:json)
@@ -276,7 +276,7 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
     
     context "with missing params" do
       setup do
-        @response = put(:update)
+        @response = put(:update, :id => 'not_a_currency_id')
       end
       should respond_with(400)
       should respond_with_content_type(:json)
