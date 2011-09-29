@@ -19,7 +19,7 @@ Your API Key:
 
 %p URL
 %pre
-  https://api.tapjoy.com/reporting_data.xml?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD[&page=NUM]
+  https://api.tapjoy.com/reporting_data.xml?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD[&page=NUM][&timezone=NUM]
 
 %p Response
 %pre
@@ -27,6 +27,7 @@ Your API Key:
     &lt;?xml version="1.0" encoding="UTF-8"?&gt;
     &lt;MarketingData&gt;
       &lt;Date&gt;YYYY-MM-DD&lt;/Date&gt;
+      &lt;Timezone&gt;NUM&lt;/Timezone&gt;
       &lt;TotalOffers&gt;NUM&lt;/TotalOffers&gt;
       &lt;PageSize&gt;NUM&lt;/PageSize&gt;
       &lt;TotalPages&gt;NUM&lt;/TotalPages&gt;
@@ -84,13 +85,14 @@ Your API Key:
 
 %p URL
 %pre
-  https://api.tapjoy.com/reporting_data.json?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD[&page=NUM]
+  https://api.tapjoy.com/reporting_data.json?email=#{CGI::escape(current_user.username)}&api_key=#{current_user.api_key}&date=YYYY-MM-DD[&page=NUM][&timezone=NUM]
 
 %p Response
 %pre
   :preserve
     {
       "Date" : "YYYY-MM-DD",
+      "Timezone" : NUM,
       "TotalOffers" : NUM,
       "PageSize" : NUM,
       "TotalPages" : NUM,
@@ -153,6 +155,9 @@ Your API Key:
       %th Field
       %th Description
   %tbody
+    %tr
+      %td Timezone
+      %td The timezone in which statistics are being returned.
     %tr
       %td TotalOffers
       %td The total number of offers.
@@ -308,8 +313,20 @@ Your API Key:
 %h4 Time zone
 
 %p
-  The data returned will be in the time zone specified for your account, configurable on the 
-  =link_to("change account details page", edit_user_path(current_user)) + '.'
+  Unless 
+  %span.code timezone
+  is specified in your request URL, the data returned will be in the time zone specified for your account. 
+  (Your account timezone can be configured on the 
+  =link_to("change account details page", edit_user_path(current_user)) + '.)  The'
+  %span.code timezone
+  parameter expects an integer specifying the UTC offset of the desired time zone in hours
+  %i (i.e. 
+  %span.code 'timezone=-8'
+  %i for Pacific Time)
+  or seconds
+  %i (i.e. 
+  %span.code 'timezone=-28800'
+  %i for Pacific Time).
 
 %h4 Pages
 
