@@ -202,14 +202,8 @@ private
   # Parses the size param and returns a width, height couplet. Ensures that the values returned are
   # supported by the get_ad_image method.
   def parse_size(size)
-    dimensions = nil
-    Offer::DISPLAY_AD_SIZES.each do |value|
-      if size =~ /^#{value}$/i
-        dimensions = size.downcase.split("x")
-      end
-    end
-    return [320, 50] if dimensions.nil?
-    dimensions.collect{|x|x.to_i}
+    size = size.downcase
+    dimensions = Offer::DISPLAY_AD_SIZES.include?(size) ? size.split("x").collect{|x|x.to_i} : [320, 50]
   end
   
   ##
