@@ -21,7 +21,7 @@
       #top_nav
         .left
           - premier_suffix = current_partner.is_premier? ? '_premier' : ''
-          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo#{premier_suffix}.png"), dashboard_root_path
+          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo#{premier_suffix}.png"), "#{WEBSITE_URL}/"
         .right
           = current_user.username
           - if current_user.can_manage_account?
@@ -76,7 +76,7 @@
             %strong
             The Tapjoy dashboard is now located at
             = succeed '.' do
-              = link_to 'dashboard.tapjoy.com', 'https://dashboard.tapjoy.com'
+              = link_to 'dashboard.tapjoy.com', "#{DASHBOARD_URL}#{request.path}"
             Please update your bookmarks.
         - flash.each do |name, msg|
           .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
