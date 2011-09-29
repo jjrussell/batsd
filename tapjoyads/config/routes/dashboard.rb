@@ -20,10 +20,7 @@ ActionController::Routing::Routes.draw do |map|
     agency.resources :currencies, :only => [ :index, :show, :create, :update ]
   end
   map.connect 'create_account', :controller => :create_account, :action => :index
-  map.connect 'reporting_data', :controller => :reporting_data, :action => :index
-  map.connect 'reporting_data.json', :controller => :reporting_data, :action => :index
-  map.connect 'reporting_data.xml', :controller => :reporting_data, :action => :index
-  map.connect 'reporting_data/udids', :controller => :reporting_data, :action => :udids
+  map.resources :reporting_data, :only => :index, :collection => { :udids => :get }
   
   map.namespace :account do |account|
     account.resources :whitelist, :controller => 'whitelist', :only => [ :index ], :collection => [ :enable, :disable ]
