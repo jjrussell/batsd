@@ -24,7 +24,7 @@ class InternalDevicesController < WebsiteController
     device = InternalDevice.find(params[:id])
     device.update_attributes(params[:internal_device])
     flash[:notice] = "Device updated! To see the devices and computers you've logged in with <a href=#{internal_device_path(current_user.id)}>click here</a>"
-    redirect_to statz_index_path
+    redirect_to dashboard_root_path
   end
 
   def index
