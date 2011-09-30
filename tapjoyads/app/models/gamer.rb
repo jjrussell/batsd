@@ -42,12 +42,12 @@ class Gamer < ActiveRecord::Base
   end
 
   def get_gravatar_profile_url
-    "http://www.gravatar.com/#{generate_gravatar_hash}"
+    "https://secure.gravatar.com/#{generate_gravatar_hash}"
   end
 
   def get_avatar_url(size=nil)
     size_param = size.present? ? "&size=#{size}" : nil
-    "http://www.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm#{size_param}"
+    "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm#{size_param}"
   end
 
 private
