@@ -117,6 +117,12 @@
   background: transparent url('/images/games/bookmark_btn_web.png') no-repeat;
   background-size: 100%;
 }
+.mobile.hd #invite_friends .social_btn {
+  background: transparent url('/images/games/friends_sprites_web.png');
+  background-size: 100%;
+  height: 78px;
+  width: 78px;
+}
 .mobile.hd .link_device_install_icon {
   background: transparent url('/images/games/install_device_hd.png') no-repeat center center;
   background-size: 100%;

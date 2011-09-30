@@ -22,7 +22,7 @@ class Games::PasswordResetsController < GamesController
   end
   
   def update
-    if @gamer.safe_update_attributes(params[:gamer], [ :password ])
+    if @gamer.safe_update_attributes(params[:gamer], [ :password, :password_confirmation ])
       flash[:notice] = "Password successfully updated."
       redirect_to games_root_path
     else
