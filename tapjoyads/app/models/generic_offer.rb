@@ -9,6 +9,7 @@ class GenericOffer < ActiveRecord::Base
   belongs_to :partner
 
   validates_presence_of :partner, :name, :url
+  validates_inclusion_of :category, :in => CATEGORIES, :allow_blank => true
 
   after_create :create_primary_offer
   after_update :update_offers

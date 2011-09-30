@@ -1,12 +1,12 @@
 require 'test_helper'
 
-class ToolsControllerTest < ActionController::TestCase
+class Tools::GenericOffersControllerTest < ActionController::TestCase
   setup :activate_authlogic
 
   context "with a non-logged in user" do
     should "redirect to login page" do
       get :index
-      assert_redirected_to(login_path(:goto => tools_path))
+      assert_redirected_to(login_path(:goto => tools_generic_offers_path))
     end
   end
 
@@ -17,7 +17,7 @@ class ToolsControllerTest < ActionController::TestCase
       login_as(@user)
     end
 
-    context "accessing tools index" do
+    context "accessing generic offers index" do
       should "redirect to dashboard" do
         get :index
         assert_redirected_to(dashboard_root_path)
@@ -32,11 +32,15 @@ class ToolsControllerTest < ActionController::TestCase
       login_as(@user)
     end
 
-    context "accessing tools index" do
+    context "accessing generic offers index" do
       should "render appropriate page" do
         get :index
-        assert_template "tools/index"
+        assert_template "generic_offers/index"
       end
+
+      # Test that index page contains appropriate listings and fields
     end
+
+    # Test that we can update a generic offer's category
   end
 end

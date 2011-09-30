@@ -1,0 +1,79 @@
+- @page_title = "Generic Offers"
+
+%h1= @page_title
+- if permitted_to?(:new, :tools_generic_offers)
+  = link_to("Create Generic Offer", new_tools_generic_offer_path(:partner_id => current_partner))
+
+  %table#generic_offers_table.tablesorter
+    %thead
+      %tr
+        %th Icon
+        %th Name
+        %th Category
+        %th Price
+        %th URL
+        %th Created
+    %tbody
+      - @generic_offers.each do |generic_offer|
+        %tr{ :class => cycle('even', 'odd') }
+          %td
+            .icon= image_tag(generic_offer.primary_offer.get_icon_url, :size => '57x57')
+          %td= link_to(generic_offer.name, statz_path(generic_offer))
+          %td= generic_offer.category
+          %td= number_to_currency(generic_offer.price / 100.0)
+          %td= link_to(truncate(generic_offer.url, 50), generic_offer.url)
+          %td.nowrap= generic_offer.created_at.to_s(:pub)
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $.tablesorter.addParser({
+        id: 'currency-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/\$/g, '').replace(/,/g, '');
+        }
+      });
+      $("#generic_offers_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0:  { sorter: false },
+          3:  { sorter: 'currency-column' },
+          4:  { sorter: false },
+          5:  { sorter: 'usLongDate' }
+        },
+        sortList: [[1,0], [5,0]]
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+    table.tablesorter th.up_arrow {
+      background-position: 100% 50%;
+      background-repeat: no-repeat;
+      background-image: url(/stylesheets/themes/blue/asc.gif);
+      background-color: #8DBDD8;
+    }
+    .offer {
+      display: inline-block;
+      padding-right: 10px;
+      padding-top: 5px;
+    }
+    .nowrap {
+      white-space: nowrap;
+    }
+    .act_as_button {
+      font-size: 10px!important;
+      padding:2px!important;
+    }
+    .agency {
+      color: red;
+    }
+    .icon {
+      max-width: 60px;
+      overflow: hidden;
+    }

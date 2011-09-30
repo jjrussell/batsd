@@ -3,7 +3,11 @@ class Tools::GenericOffersController < WebsiteController
   current_tab :tools
   filter_access_to :all
   after_filter :save_activity_logs, :only => [ :create, :update ]
-  
+
+  def index
+    @generic_offers = GenericOffer.all
+  end
+
   def new
     @generic_offer = GenericOffer.new(:partner_id => params[:partner_id])
   end

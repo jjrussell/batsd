@@ -14,7 +14,7 @@
     %tr
       %th= f.label :category
       %td
-        = f.select :category, GenericOffer::CATEGORIES
+        = f.select :category, GenericOffer::CATEGORIES, :include_blank => true
         = error_message_on @generic_offer, :category
     %tr
       %th= f.label :price
