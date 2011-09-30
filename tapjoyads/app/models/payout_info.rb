@@ -30,7 +30,7 @@ class PayoutInfo < ActiveRecord::Base
     end
   end
   validates_each :beneficiary_name do |record, attribute, value|
-    unless record.valid_names?
+    if record.invalid_names?
       record.errors.add(attribute, 'Beneficiary name must match billing name.')
     end
   end
@@ -75,8 +75,8 @@ class PayoutInfo < ActiveRecord::Base
     })
   end
 
-  def valid_names?
-    beneficiary_name.to_s.strip.downcase == billing_name.to_s.strip.downcase
+  def invalid_names?
+    beneficiary_name.to_s.strip.downcase != billing_name.to_s.strip.downcase
   end
 
 private

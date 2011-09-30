@@ -320,6 +320,10 @@
       var billingName = $('#payout_info_billing_name').val().replace(/^ +/,'').replace(/ +$/,'').toLowerCase();
       var beneficiaryName = $('#payout_info_beneficiary_name').val().replace(/^ +/,'').replace(/ +$/,'').toLowerCase();
       if (beneficiaryName != billingName) {
+        $('#flash_error').text('Your beneficiary name does not match your billing name. We need you to correct this in order to pay you.').show();
         return false;
+      } else {
+        $('#flash_error').hide();
+        return true
       }
     });
