@@ -738,6 +738,9 @@ class Offer < ActiveRecord::Base
 
   def create_featured_clone
     featured_offer = self.clone
+    now = Time.now.utc
+    featured_offer.created_at = now
+    featured_offer.updated_at = now
     featured_offer.featured = true
     featured_offer.name_suffix = "featured"
     featured_offer.bid = featured_offer.min_bid
@@ -748,6 +751,9 @@ class Offer < ActiveRecord::Base
 
   def create_non_rewarded_clone
     non_rewarded_offer = self.clone
+    now = Time.now.utc
+    non_rewarded_offer.created_at = now
+    non_rewarded_offer.updated_at = now
     non_rewarded_offer.rewarded = false
     non_rewarded_offer.name_suffix = "non-rewarded"
     non_rewarded_offer.bid = non_rewarded_offer.min_bid

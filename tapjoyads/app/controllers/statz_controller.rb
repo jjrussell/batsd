@@ -62,6 +62,9 @@ class StatzController < WebsiteController
   
   def create
     new_offer = @offer.clone
+    now = Time.now.utc
+    new_offer.created_at = now
+    new_offer.updated_at = now
     new_offer.tapjoy_enabled = false
     new_offer.name_suffix = params[:suffix]
     new_offer.save!

@@ -63,6 +63,9 @@ class Apps::CurrenciesController < WebsiteController
       @currency.ordinal = 1
     else
       @currency = @app.currencies.first.clone
+      now = Time.now.utc
+      @currency.created_at = now
+      @currency.updated_at = now
       @currency.ordinal = @app.currencies.last.ordinal + 100
     end
     
