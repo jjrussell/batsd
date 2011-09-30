@@ -29,6 +29,11 @@ class PayoutInfo < ActiveRecord::Base
       record.errors.add(attribute, 'Please enter a valid Tax ID')
     end
   end
+  validates_each :beneficiary_name do |record, attribute, value|
+    unless record.valid_names?
+      record.errors.add(attribute, 'Beneficiary name must match billing name.')
+    end
+  end
 
   named_scope :recently_updated, lambda { |date|
     {
@@ -68,6 +73,10 @@ class PayoutInfo < ActiveRecord::Base
       :account_type => account_type,
       :payment_country => payment_country.titleize,
     })
+  end
+
+  def valid_names?
+    beneficiary_name.to_s.strip.downcase == billing_name.to_s.strip.downcase
   end
 
 private

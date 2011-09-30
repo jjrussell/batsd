@@ -316,3 +316,10 @@
       $('#payout_info_bank_account_number').val('');
       $('#payout_info_bank_routing_number').val('');
     });
+    $('form').submit(function(){
+      var billingName = $('#payout_info_billing_name').val().replace(/^ +/,'').replace(/ +$/,'').toLowerCase();
+      var beneficiaryName = $('#payout_info_beneficiary_name').val().replace(/^ +/,'').replace(/ +$/,'').toLowerCase();
+      if (beneficiaryName != billingName) {
+        return false;
+      }
+    });
