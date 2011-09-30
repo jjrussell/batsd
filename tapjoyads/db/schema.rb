@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110927200827) do
+ActiveRecord::Schema.define(:version => 20110929223733) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -341,6 +341,7 @@ ActiveRecord::Schema.define(:version => 20110927200827) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "instructions"
+    t.string   "category"
   end
 
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true

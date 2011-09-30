@@ -10,6 +10,12 @@
       %td
         = f.text_field :name, :size => 50
         = error_message_on @generic_offer, :name
+
+    %tr
+      %th= f.label :category
+      %td
+        = f.select :category, GenericOffer::CATEGORIES
+        = error_message_on @generic_offer, :category
     %tr
       %th= f.label :price
       %td
