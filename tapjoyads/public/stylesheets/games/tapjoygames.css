@@ -670,7 +670,8 @@ form#new_gamer_session .login_pass {
 #manage_account .title_2 {
   padding: 8px 0 12px 8px;
 }
-.web #manage_account .center_contact {
+.web #manage_account .center_contact,
+.ipad #manage_account .center_contact {
   padding: 12px 0;
 }
 .mobile #manage_account .center_contact {
@@ -689,7 +690,8 @@ form#new_gamer_session .login_pass {
   background: transparent url('/images/games/dark_bg.png') repeat;
   width: 100%;
 }
-.web #profile_info_display .center_container {
+.web #profile_info_display .center_container,
+.ipad #profile_info_display .center_container {
   max-width: 600px;
   padding: 16px 40px;
 }
@@ -700,7 +702,8 @@ form#new_gamer_session .login_pass {
 #profile_info_display .center_container {
   margin: 0 auto;
 }
-.web .info_expand_bottom_arrow_wrapper {
+.web .info_expand_bottom_arrow_wrapper,
+.ipad .info_expand_bottom_arrow_wrapper {
   max-width: 600px;
   padding: 0 40px;
 }
@@ -714,7 +717,8 @@ form#new_gamer_session .login_pass {
   overflow-y: hidden;
   position: relative;
 }
-.web .info_expand_bottom_arrow {
+.web .info_expand_bottom_arrow,
+.ipad .info_expand_bottom_arrow {
   height: 25px;
   top: -13px;
   width: 25px;
@@ -748,7 +752,8 @@ form#new_gamer_session .login_pass {
   -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
 }
-.web .gamer_name {
+.web .gamer_name,
+.ipad .gamer_name {
   font-size: 24px;
 }
 .mobile .gamer_name {
@@ -758,7 +763,8 @@ form#new_gamer_session .login_pass {
   color: #FFFFFF;
   font-weight: bold;
 }
-.web .gamer_signup_date {
+.web .gamer_signup_date,
+.ipad .gamer_signup_date {
   font-size: 14px;
 }
 .mobile .gamer_signup_date {
@@ -776,7 +782,8 @@ form#new_gamer_session .login_pass {
 #account_options .bottom_line {
   border-bottom: 1px solid #DEDEDE;
 }
-.web #account_options .slider {
+.web #account_options .slider,
+.ipad #account_options .slider {
   height: 50px;
 }
 .mobile #account_options .slider {
@@ -787,13 +794,15 @@ form#new_gamer_session .login_pass {
   width: 100%;
   vertical-align: middle;
 }
-.web #account_options .field {
+.web #account_options .field,
+.ipad #account_options .field {
   padding: 12px;
 }
 .mobile #account_options .field {
   padding: 3px;
 }
-.web #account_options .label {
+.web #account_options .label,
+.ipad #account_options .label {
   padding: 4px;
 }
 .mobile #account_options .label {
@@ -804,7 +813,8 @@ form#new_gamer_session .login_pass {
   font-weight: bold;
   position: relative;
 }
-.web #account_options .value {
+.web #account_options .value,
+.ipad #account_options .value {
   padding: 4px;
 }
 .mobile #account_options .value {
@@ -819,7 +829,8 @@ form#new_gamer_session .login_pass {
   padding: 0;
   position: relative;
 }
-.web #invite_friends .social_btn {
+.web #invite_friends .social_btn,
+.ipad #invite_friends .social_btn {
   background: transparent url('/images/games/friends_sprites_web.png');
   height: 78px;
   width: 78px;
@@ -849,7 +860,8 @@ form#new_gamer_session .login_pass {
 #invite_friends .social_btn.email:hover, #invite_friends .social_btn.email:action {
   background-position: 100% 100%;
 }
-.web .profile_arrow {
+.web .profile_arrow,
+.ipad .profile_arrow {
   background: transparent url('/images/games/caret-web.jpg') no-repeat center center;
   height: 35px;
   top: 4px;
