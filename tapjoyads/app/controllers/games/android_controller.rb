@@ -27,7 +27,7 @@ class Games::AndroidController < GamesController
       if current_gamer.devices.empty?
         redirect_to finalize_games_gamer_device_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)) and return
       end
-      redirect_to games_root_path and return
+      redirect_to games_root_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)) and return
     end
     redirect_to games_login_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET))
   end
