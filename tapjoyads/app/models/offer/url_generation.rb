@@ -79,7 +79,7 @@ module Offer::UrlGeneration
     final_url
   end
 
-  def get_click_url(options)
+  def click_url(options)
     publisher_app      = options.delete(:publisher_app)      { |k| raise "#{k} is a required argument" }
     publisher_user_id  = options.delete(:publisher_user_id)  { |k| raise "#{k} is a required argument" }
     udid               = options.delete(:udid)               { |k| raise "#{k} is a required argument" }
@@ -137,7 +137,7 @@ module Offer::UrlGeneration
     "#{click_url}?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
 
-  def get_fullscreen_ad_url(options)
+  def fullscreen_ad_url(options)
     publisher_app      = options.delete(:publisher_app)      { |k| raise "#{k} is a required argument" }
     publisher_user_id  = options.delete(:publisher_user_id)  { |k| raise "#{k} is a required argument" }
     udid               = options.delete(:udid)               { |k| raise "#{k} is a required argument" }
