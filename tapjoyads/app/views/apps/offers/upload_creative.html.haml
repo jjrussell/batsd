@@ -27,7 +27,7 @@
       toggle_other_forms(false);
     
       $('.view_link').click(function() {
-        parent.document.getElementById('preview_link').click();
+        parent.$.facebox({ajax: parent.document.getElementById('preview_link').href});
         return false;
       });
       
