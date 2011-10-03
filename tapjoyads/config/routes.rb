@@ -1,6 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
   map.connect 'healthz', :controller => :healthz, :action => :index
-  
+
   if MACHINE_TYPE == 'dashboard'
     ActionController::Routing::Routes.add_configuration_file(Rails.root.join('config/routes/dashboard.rb'))
   elsif MACHINE_TYPE == 'games'
