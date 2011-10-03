@@ -29,17 +29,12 @@ class GamerDevice < ActiveRecord::Base
   validates_presence_of :gamer, :device_id, :name
   validates_uniqueness_of :device_id, :scope => [:gamer_id]
   
-  
-  def product=(new_product)
-    self.name = PRODUCT_NAMES[new_product]
-  end
-  
   def device=(new_device)
     self.device_id = new_device.id
     if new_device.platform == 'android' && new_device.product.present?
       self.name = "Android (#{new_device.product})"
     else
-      self.product = new_device.product
+      self.name = PRODUCT_NAMES[new_device.product] if new_device.product.present?
     end
   end
 end

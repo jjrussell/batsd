@@ -20,8 +20,7 @@ class Games::AndroidController < GamesController
       :udid       => params[:udid],
       :product    => params[:device_name],
       :version    => params[:os_version],
-      :platform   => params[:platform],
-      :version    => params[:os_version]
+      :platform   => params[:platform]
     }
     if current_gamer.present?
       if current_gamer.devices.empty?
