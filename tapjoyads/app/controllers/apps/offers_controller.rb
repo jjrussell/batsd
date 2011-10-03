@@ -80,8 +80,8 @@ class Apps::OffersController < WebsiteController
   
   def upload_creative
     @size = params[:size]
-    @creative_exists = @offer.banner_creatives.include? @size
     image_data = params[:offer]["custom_creative_#{@size}".to_sym].read rescue nil
+    modifying = true
     case request.method
       when :delete
         # necessary to use assignment so @offer.banner_creatives_changed? will be true (can't modify in-place)
@@ -92,16 +92,19 @@ class Apps::OffersController < WebsiteController
       when :put
         # do nothing
       when :get
-        return # we're done, just show form
+        modifying = false
     end
-    @offer.send("banner_creative_#{@size}_blob=", image_data)
-    begin
-      @offer.save! 
-      @success_message = "File #{request.method == :delete ? 'removed' : 'uploaded'} successfully"
-    rescue BannerSyncError => e
-      @offer.reload # we want the form to reset back to the way it was
-      @error_message = e.message
+    if modifying
+      @offer.send("banner_creative_#{@size}_blob=", image_data)
+      begin
+        @offer.save! 
+        @success_message = "File #{request.method == :delete ? 'removed' : 'uploaded'} successfully"
+      rescue BannerSyncError => e
+        @offer.reload # we want the form to reset back to the way it was
+        @error_message = e.message
+      end
     end
+    @creative_exists = @offer.banner_creatives.include? @size
   end
   
   def toggle

@@ -3,7 +3,7 @@
 - if @creative_exists
   - form_tag(url, :method => :delete, :id => "remove_form_for_#{@size}", :class => "hidden") {}
 
-- form_for(@offer, :url => url, :html => { :method => (@creative_exists ? :put : :post), :multipart => true }) do |f|
+- form_for(@offer, :url => url, :html => { :id => 'upload_form', :method => (@creative_exists ? :put : :post), :multipart => true }) do |f|
   %table
     %tbody
       %th
@@ -40,7 +40,7 @@
         return false;
       });
       
-      $('#upload_button').click(function() {
+      $('#upload_form').submit(function() {
         $('#spinner').show();
         toggle_other_forms(true);
         return true;
@@ -83,6 +83,7 @@
 - content_for :page_styles do
   :plain
     body {
+      overflow: hidden;
       margin: 0;
     }
     th {
