@@ -1,15 +1,10 @@
 class Apps::OffersController < WebsiteController
-  layout :determine_layout
+  layout 'apps'
   current_tab :apps
 
   filter_access_to :all
   before_filter :setup, :except => [ :toggle ]
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
-  
-  def determine_layout
-    return 'simple' if params[:action] == 'upload_creative'
-    'apps'
-  end
   
   def new
     
@@ -81,6 +76,7 @@ class Apps::OffersController < WebsiteController
   def upload_creative
     @size = params[:size]
     image_data = params[:offer]["custom_creative_#{@size}".to_sym].read rescue nil
+    
     modifying = true
     case request.method
       when :delete
@@ -94,6 +90,7 @@ class Apps::OffersController < WebsiteController
       when :get
         modifying = false
     end
+    
     if modifying
       @offer.send("banner_creative_#{@size}_blob=", image_data)
       begin
@@ -104,7 +101,9 @@ class Apps::OffersController < WebsiteController
         @error_message = e.message
       end
     end
+    
     @creative_exists = @offer.banner_creatives.include? @size
+    render :layout => 'simple'
   end
   
   def toggle
