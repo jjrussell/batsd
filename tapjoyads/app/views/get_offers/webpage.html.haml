@@ -47,7 +47,7 @@
     .clear
 
 #privacy
-  = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/site/privacy_mobile')
+  = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile")
   - if @currency.conversion_rate > 0
     ·
     = link_to_missing_currency
