@@ -202,7 +202,7 @@ private
   # Parses the size param and returns a width, height couplet. Ensures that the values returned are
   # supported by the get_ad_image method.
   def parse_size(size)
-    size = size.downcase
+    size &&= size.downcase
     dimensions = Offer::DISPLAY_AD_SIZES.include?(size) ? size.split("x").collect{|x|x.to_i} : [320, 50]
   end
   
