@@ -32,9 +32,8 @@
         .clear
 
       #content
-        - if request.host != 'dashboard.tapjoy.com'
+        - if should_use_dashboard?
           .flash
-            %strong
             The Tapjoy dashboard is now located at
             = succeed '.' do
               = link_to 'dashboard.tapjoy.com', "#{DASHBOARD_URL}#{request.path}"
