@@ -45,6 +45,9 @@ class DisplayAdControllerTest < ActionController::TestCase
           response = get(:image, @params)
           assert_equal('image/png', response.content_type)
         
+          # To diagnose a mismatch, uncomment the following and compare the new image to #{RAILS_ROOT}/test/assets/banner_ads/custom_320x50.png
+          # File.open("#{RAILS_ROOT}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
+        
           assert(@custom_banner == response.body)
         end
       end
@@ -71,6 +74,9 @@ class DisplayAdControllerTest < ActionController::TestCase
           # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
           # File.open("#{RAILS_ROOT}/test/assets/banner_ads/generated_320x50.png", 'w') { |f| f.write(response.body) }
           
+          # To diagnose a mismatch, uncomment the following and compare the new image to #{RAILS_ROOT}/test/assets/banner_ads/generated_320x50.png
+          # File.open("#{RAILS_ROOT}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
+          
           assert(@generated_banner == response.body)
         end
       end
@@ -93,6 +99,9 @@ class DisplayAdControllerTest < ActionController::TestCase
            response = get(:index, @params.merge(:format => 'json'))
            assert_equal('application/json', response.content_type)
            
+           # To diagnose a mismatch, uncomment the following and compare the new image to #{RAILS_ROOT}/test/assets/banner_ads/custom_320x50.png
+           # File.open("#{RAILS_ROOT}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
+           
            assert(custom_banner == Base64.decode64(assigns['image']))
          end
          
@@ -105,6 +114,9 @@ class DisplayAdControllerTest < ActionController::TestCase
            
            response = get(:index, @params)
            assert_equal('application/xml', response.content_type)
+           
+           # To diagnose a mismatch, uncomment the following and compare the new image to #{RAILS_ROOT}/test/assets/banner_ads/custom_640x100.png
+           # File.open("#{RAILS_ROOT}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
            
            assert(custom_banner == Base64.decode64(assigns['image']))
          end
@@ -131,6 +143,9 @@ class DisplayAdControllerTest < ActionController::TestCase
            # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
            # File.open("#{RAILS_ROOT}/test/assets/banner_ads/generated_320x50.png", 'w') { |f| f.write(Base64.decode64(assigns['image'])) }
            
+           # To diagnose a mismatch, uncomment the following and compare the new image to #{RAILS_ROOT}/test/assets/banner_ads/generated_320x50.png
+           # File.open("#{RAILS_ROOT}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
+           
            assert(File.read("#{RAILS_ROOT}/test/assets/banner_ads/generated_320x50.png") == Base64.decode64(assigns['image']))
          end
          
@@ -143,6 +158,9 @@ class DisplayAdControllerTest < ActionController::TestCase
            
            # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
            # File.open("#{RAILS_ROOT}/test/assets/banner_ads/generated_640x100.png", 'w') { |f| f.write(Base64.decode64(assigns['image'])) }
+           
+           # To diagnose a mismatch, uncomment the following and compare the new image to #{RAILS_ROOT}/test/assets/banner_ads/generated_640x100.png
+           # File.open("#{RAILS_ROOT}/test/assets/banner_ads/wtf.png", 'w') { |f| f.write(response.body) }
            
            assert(File.read("#{RAILS_ROOT}/test/assets/banner_ads/generated_640x100.png") == Base64.decode64(assigns['image']))
          end
