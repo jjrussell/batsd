@@ -408,8 +408,8 @@ class Offer < ActiveRecord::Base
     "#{prefix}/videos/src/#{video_id}.mp4"
   end
   
-  def save
-    super
+  def save(perform_validation = true)
+    super(perform_validation)
   rescue BannerSyncError => bse
     self.errors.add(bse.offer_attr_name.to_sym, bse.message)
     false
