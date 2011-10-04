@@ -533,20 +533,16 @@ class Offer < ActiveRecord::Base
 
   def create_featured_clone
     featured_offer = self.clone
-    featured_offer.featured = true
-    featured_offer.name_suffix = "featured"
+    featured_offer.attributes = { :created_at => nil, :updated_at => nil, :featured => true, :name_suffix => "featured", :tapjoy_enabled => false }
     featured_offer.bid = featured_offer.min_bid
-    featured_offer.tapjoy_enabled = false
     featured_offer.save!
     featured_offer
   end
 
   def create_non_rewarded_clone
     non_rewarded_offer = self.clone
-    non_rewarded_offer.rewarded = false
-    non_rewarded_offer.name_suffix = "non-rewarded"
+    non_rewarded_offer.attributes = { :created_at => nil, :updated_at => nil, :rewarded => false, :name_suffix => "non-rewarded", :tapjoy_enabled = false }
     non_rewarded_offer.bid = non_rewarded_offer.min_bid
-    non_rewarded_offer.tapjoy_enabled = false
     non_rewarded_offer.save!
     non_rewarded_offer
   end
