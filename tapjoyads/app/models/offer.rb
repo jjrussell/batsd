@@ -973,7 +973,7 @@ private
     
     # Add to memcache
     begin
-      Mc.put(banner_creative_mc_key(size, format), Base64.encode64(creative.to_blob).gsub("\n", ''), false, 1.hour)
+      Mc.put(banner_creative_mc_key(size, format), Base64.encode64(creative.to_blob).gsub("\n", ''))
     rescue
       # no worries, it will get cached later if needed
     end

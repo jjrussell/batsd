@@ -116,14 +116,14 @@ private
     display_multiplier = (display_multiplier || 1).to_f
     size = "#{width}x#{height}"
     
+    if offer.display_custom_banner_for_size?(size)
+      return Mc.get_and_put(offer.banner_creative_mc_key(size)) do
+        Base64.encode64(offer.banner_creative_s3_key(size).get).gsub("\n", '')
+      end
+    end
+    
     key = "display_ad.#{currency.id}.#{offer.id}.#{size}.#{display_multiplier}"
     Mc.get_and_put(key, false, 1.hour) do
-      if offer.display_custom_banner_for_size?(size)
-        return Mc.get_and_put(offer.banner_creative_mc_key(size), false, 1.hour) do
-          Base64.encode64(offer.banner_creative_s3_key(size).get).gsub("\n", '')
-        end
-      end
-      
       if width == 640 && height == 100
         border = 4
         icon_padding = 7
