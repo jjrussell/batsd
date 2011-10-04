@@ -93,12 +93,11 @@ class Apps::OffersController < WebsiteController
     
     if modifying
       @offer.send("banner_creative_#{@size}_blob=", image_data)
-      begin
-        @offer.save! 
+      if @offer.save
         @success_message = "File #{request.method == :delete ? 'removed' : 'uploaded'} successfully"
-      rescue BannerSyncError => e
+      else
+        @error_message = @offer.errors["custom_creative_#{@size}_blob".to_sym]
         @offer.reload # we want the form to reset back to the way it was
-        @error_message = e.message
       end
     end
     
