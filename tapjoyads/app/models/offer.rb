@@ -389,10 +389,14 @@ class Offer < ActiveRecord::Base
     final_url
   end
   
+  def display_custom_banner_for_size?(size)
+    return !rewarded? && !featured? && is_free? && item_type != 'VideoOffer' && banner_creatives.include?(size)
+  end
+  
   def get_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false)
     size_str = "#{width}x#{height}"
     
-    if !self.rewarded? and self.banner_creatives.include?(size_str)
+    if display_custom_banner_for_size?(size_str)
       url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size_str)}"
       delim = '?'
     else

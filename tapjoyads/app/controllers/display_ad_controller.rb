@@ -118,7 +118,7 @@ private
     
     key = "display_ad.#{currency.id}.#{offer.id}.#{size}.#{display_multiplier}"
     Mc.get_and_put(key, false, 1.hour) do
-      if offer.banner_creatives.include?(size)
+      if offer.display_custom_banner_for_size?(size)
         return Mc.get_and_put(offer.banner_creative_mc_key(size), false, 1.hour) do
           Base64.encode64(offer.banner_creative_s3_key(size).get).gsub("\n", '')
         end

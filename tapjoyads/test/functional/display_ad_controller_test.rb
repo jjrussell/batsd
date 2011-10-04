@@ -26,6 +26,7 @@ class DisplayAdControllerTest < ActionController::TestCase
       context "with custom ad" do
         setup do
           @offer.banner_creatives = %w(320x50)
+          @offer.rewarded = false
       
           s3key = RightAws::S3::Key.create(@bucket, @offer.banner_creative_path('320x50'))
           RightAws::S3::Key.stubs(:create).with(@bucket, @offer.banner_creative_path('320x50')).returns(s3key)
@@ -72,6 +73,7 @@ class DisplayAdControllerTest < ActionController::TestCase
        context "with custom ad" do
          setup do
            @offer.banner_creatives = %w(320x50 640x100)
+           @offer.rewarded = false
          end
          
          should "return proper image data in json" do
