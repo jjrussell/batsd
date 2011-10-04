@@ -21,7 +21,7 @@
           %td= link_to(generic_offer.name, statz_path(generic_offer))
           %td= generic_offer.category
           %td= number_to_currency(generic_offer.price / 100.0)
-          %td= link_to(truncate(generic_offer.url, 50), generic_offer.url)
+          %td= link_to(truncate(generic_offer.url, :length => 50), generic_offer.url)
           %td.nowrap= generic_offer.created_at.to_s(:pub)
 
 - content_for :page_javascript do
