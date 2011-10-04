@@ -48,7 +48,7 @@ class OfferList
       end
     end
     
-    if @device && @device.opted_out?
+    if @device && @device.opted_out? || @currency && !@currency.tapjoy_enabled?
       @offers = []
     else
       @offers = RailsCache.get_and_put("offers.#{@type}.#{@platform_name}.#{@hide_rewarded_app_installs}.#{@normalized_device_type}") do
