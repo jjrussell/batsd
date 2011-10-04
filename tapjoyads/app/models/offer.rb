@@ -315,22 +315,6 @@ class Offer < ActiveRecord::Base
     return !rewarded? && !featured? && is_free? && item_type != 'VideoOffer' && banner_creatives.include?(size)
   end
   
-  def get_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false)
-    size_str = "#{width}x#{height}"
-    
-    if display_custom_banner_for_size?(size_str)
-      url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size_str)}"
-      delim = '?'
-    else
-      display_multiplier = (display_multiplier || 1).to_f
-      # TO REMOVE: displayer_app_id param after rollout.
-      url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{self.id}&displayer_app_id=#{publisher_app_id}&size=#{width}x#{height}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}"
-      delim = '&'
-    end
-    url << "#{delim}ts=#{Time.now.to_i}" if bust_cache
-    url
-  end
-  
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
   end
