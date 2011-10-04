@@ -134,7 +134,7 @@ private
   end
   
   def get_offer_list(type = nil)
-    @offer_list = OfferList.new(
+    OfferList.new(
       :publisher_app        => @publisher_app,
       :device               => @device,
       :currency             => @currency,
@@ -149,7 +149,8 @@ private
       :os_version           => params[:os_version],
       :source               => params[:source],
       :screen_layout_size   => params[:screen_layout_size],
-      :video_offer_ids      => params[:video_offer_ids].to_s.split(','))
+      :video_offer_ids      => params[:video_offer_ids].to_s.split(',')
+    )
   end
   
   def set_geoip_data(is_server_to_server = false)

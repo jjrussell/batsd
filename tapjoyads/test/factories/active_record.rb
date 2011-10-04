@@ -20,6 +20,7 @@ FactoryGirl.define do
 
   factory :partner do
     name { Factory.next(:name) }
+    approved_publisher true
   end
 
   factory :payout_info do
