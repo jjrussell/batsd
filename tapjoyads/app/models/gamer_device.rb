@@ -34,7 +34,7 @@ class GamerDevice < ActiveRecord::Base
     if new_device.platform == 'android' && new_device.product.present?
       self.name = "Android (#{new_device.product})"
     else
-      self.name = PRODUCT_NAMES[new_device.product] if new_device.product.present?
+      self.name = PRODUCT_NAMES[new_device.product]
     end
   end
 end
