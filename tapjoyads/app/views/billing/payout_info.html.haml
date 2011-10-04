@@ -7,7 +7,7 @@
   %h2 Payment Information
   %p Please enter in your payment and tax information. We require this information for payouts as well as compliance with tax authorities. We use industry standard technology to store your tax and payment information.
 
-  - form_for [current_partner, @payout_info], :url => update_payout_info_billing_path, :class => 'tjform' do |f|
+  - form_for [current_partner, @payout_info], :url => update_payout_info_billing_path, :html => { :method => :put } do |f|
     %table.payout_info
       %tbody
         %tr
