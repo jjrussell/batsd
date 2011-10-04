@@ -340,8 +340,8 @@ class Offer < ActiveRecord::Base
   end
   
   def banner_creative_s3_key(size, format='png')
-    bucket = S3.bucket(BucketNames::TAPJOY)
-    RightAws::S3::Key.create(bucket, "#{banner_creative_path(size, format)}")
+    bucket = AWS::S3.new.buckets[BucketNames::TAPJOY]
+    bucket.objects[banner_creative_path(size, format)]
   end
   
   def banner_creative_mc_key(size, format='png')
@@ -969,7 +969,7 @@ private
     raise BannerSyncError.new("New file has invalid dimensions.") if [width, height] != [creative.columns, creative.rows]
     
     begin
-      banner_creative_s3_key(size, format).put(creative.to_blob, 'public-read')
+      banner_creative_s3_key(size, format).write(:data => creative.to_blob, :acl => :public_read)
     rescue
       raise BannerSyncError.new("Encountered unexpected error while uploading new file, please try again.")
     end

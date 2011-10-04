@@ -10,8 +10,14 @@ class DisplayAdControllerTest < ActionController::TestCase
       Offer.stubs(:find_in_cache).with(@offer.id).returns(@offer)
       OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
     
-      @bucket = S3.bucket(BucketNames::TAPJOY)
-      S3.stubs(:bucket).with(BucketNames::TAPJOY).returns(@bucket)
+      @right_aws_bucket = S3.bucket(BucketNames::TAPJOY)
+      S3.stubs(:bucket).with(BucketNames::TAPJOY).returns(@right_aws_bucket)
+      
+      aws_sdk_s3 = AWS::S3.new
+      @aws_sdk_bucket = AWS::S3::Bucket.new(BucketNames::TAPJOY)
+      buckets = { BucketNames::TAPJOY => @aws_sdk_bucket }
+      aws_sdk_s3.stubs(:buckets).returns(buckets)
+      AWS::S3.stubs(:new).returns(aws_sdk_s3)
     
       @currency = Factory(:currency)
       @params = { :udid => 'stuff', :publisher_user_id => 'more_stuff', :currency_id => @currency.id, :app_id => @currency.app.id }
@@ -27,11 +33,12 @@ class DisplayAdControllerTest < ActionController::TestCase
         setup do
           @offer.banner_creatives = %w(320x50)
           @offer.rewarded = false
-      
-          s3key = RightAws::S3::Key.create(@bucket, @offer.banner_creative_path('320x50'))
-          RightAws::S3::Key.stubs(:create).with(@bucket, @offer.banner_creative_path('320x50')).returns(s3key)
-          @custom_banner = File.open("#{RAILS_ROOT}/test/assets/banner_ads/custom_320x50.png").read
-          s3key.stubs(:get).returns(@custom_banner)
+          
+          aws_sdk_object = AWS::S3::S3Object.new(@aws_sdk_bucket, @offer.banner_creative_path('320x50'))
+          @custom_banner = File.read("#{RAILS_ROOT}/test/assets/banner_ads/custom_320x50.png")
+          aws_sdk_object.stubs(:read).returns(@custom_banner)
+          objects = { @offer.banner_creative_path('320x50') => aws_sdk_object }
+          @aws_sdk_bucket.stubs(:objects).returns(objects)
         end
       
         should "return proper image" do
@@ -44,17 +51,17 @@ class DisplayAdControllerTest < ActionController::TestCase
     
       context "with generated ad" do
         setup do
-          ad_bg = File.open("#{RAILS_ROOT}/test/assets/display/self_ad_bg_320x50.png").read
-          td_icon = File.open("#{RAILS_ROOT}/test/assets/icons/tap_defense.jpg").read
-          round_mask = File.open("#{RAILS_ROOT}/test/assets/display/round_mask.png").read
-          icon_shadow = File.open("#{RAILS_ROOT}/test/assets/display/icon_shadow.png").read
+          ad_bg = File.read("#{RAILS_ROOT}/test/assets/display/self_ad_bg_320x50.png")
+          td_icon = File.read("#{RAILS_ROOT}/test/assets/icons/tap_defense.jpg")
+          round_mask = File.read("#{RAILS_ROOT}/test/assets/display/round_mask.png")
+          icon_shadow = File.read("#{RAILS_ROOT}/test/assets/display/icon_shadow.png")
           
-          @bucket.stubs(:get).with("display/self_ad_bg_320x50.png").returns(ad_bg)
-          @bucket.stubs(:get).with("icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg").returns(td_icon)
-          @bucket.stubs(:get).with("display/round_mask.png").returns(round_mask)
-          @bucket.stubs(:get).with("display/icon_shadow.png").returns(icon_shadow)
+          @right_aws_bucket.stubs(:get).with("display/self_ad_bg_320x50.png").returns(ad_bg)
+          @right_aws_bucket.stubs(:get).with("icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg").returns(td_icon)
+          @right_aws_bucket.stubs(:get).with("display/round_mask.png").returns(round_mask)
+          @right_aws_bucket.stubs(:get).with("display/icon_shadow.png").returns(icon_shadow)
           
-          @generated_banner = File.open("#{RAILS_ROOT}/test/assets/banner_ads/generated_320x50.png").read
+          @generated_banner = File.read("#{RAILS_ROOT}/test/assets/banner_ads/generated_320x50.png")
         end
         
         should "return proper image" do
@@ -77,10 +84,11 @@ class DisplayAdControllerTest < ActionController::TestCase
          end
          
          should "return proper image data in json" do
-           s3key = RightAws::S3::Key.create(@bucket, @offer.banner_creative_path('320x50'))
-           RightAws::S3::Key.stubs(:create).with(@bucket, @offer.banner_creative_path('320x50')).returns(s3key)
-           custom_banner = File.open("#{RAILS_ROOT}/test/assets/banner_ads/custom_320x50.png").read
-           s3key.stubs(:get).returns(custom_banner)
+           aws_sdk_object = AWS::S3::S3Object.new(@aws_sdk_bucket, @offer.banner_creative_path('320x50'))
+           custom_banner = File.read("#{RAILS_ROOT}/test/assets/banner_ads/custom_320x50.png")
+           aws_sdk_object.stubs(:read).returns(custom_banner)
+           objects = { @offer.banner_creative_path('320x50') => aws_sdk_object }
+           @aws_sdk_bucket.stubs(:objects).returns(objects)
            
            response = get(:index, @params.merge(:format => 'json'))
            assert_equal('application/json', response.content_type)
@@ -89,10 +97,11 @@ class DisplayAdControllerTest < ActionController::TestCase
          end
          
          should "return proper image data in xml" do
-           s3key = RightAws::S3::Key.create(@bucket, @offer.banner_creative_path('640x100'))
-           RightAws::S3::Key.stubs(:create).with(@bucket, @offer.banner_creative_path('640x100')).returns(s3key)
-           custom_banner = File.open("#{RAILS_ROOT}/test/assets/banner_ads/custom_640x100.png").read
-           s3key.stubs(:get).returns(custom_banner)
+           aws_sdk_object = AWS::S3::S3Object.new(@aws_sdk_bucket, @offer.banner_creative_path('640x100'))
+           custom_banner = File.read("#{RAILS_ROOT}/test/assets/banner_ads/custom_640x100.png")
+           aws_sdk_object.stubs(:read).returns(custom_banner)
+           objects = { @offer.banner_creative_path('640x100') => aws_sdk_object }
+           @aws_sdk_bucket.stubs(:objects).returns(objects)
            
            response = get(:index, @params)
            assert_equal('application/xml', response.content_type)
@@ -103,18 +112,18 @@ class DisplayAdControllerTest < ActionController::TestCase
      
        context "with generated ad" do
          setup do
-           td_icon = File.open("#{RAILS_ROOT}/test/assets/icons/tap_defense.jpg").read
-           round_mask = File.open("#{RAILS_ROOT}/test/assets/display/round_mask.png").read
-           icon_shadow = File.open("#{RAILS_ROOT}/test/assets/display/icon_shadow.png").read
+           td_icon = File.read("#{RAILS_ROOT}/test/assets/icons/tap_defense.jpg")
+           round_mask = File.read("#{RAILS_ROOT}/test/assets/display/round_mask.png")
+           icon_shadow = File.read("#{RAILS_ROOT}/test/assets/display/icon_shadow.png")
            
-           @bucket.stubs(:get).with("icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg").returns(td_icon)
-           @bucket.stubs(:get).with("display/round_mask.png").returns(round_mask)
-           @bucket.stubs(:get).with("display/icon_shadow.png").returns(icon_shadow)
+           @right_aws_bucket.stubs(:get).with("icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg").returns(td_icon)
+           @right_aws_bucket.stubs(:get).with("display/round_mask.png").returns(round_mask)
+           @right_aws_bucket.stubs(:get).with("display/icon_shadow.png").returns(icon_shadow)
          end
        
          should "return proper image data in json" do
-           ad_bg = File.open("#{RAILS_ROOT}/test/assets/display/self_ad_bg_320x50.png").read
-           @bucket.stubs(:get).with("display/self_ad_bg_320x50.png").returns(ad_bg)
+           ad_bg = File.read("#{RAILS_ROOT}/test/assets/display/self_ad_bg_320x50.png")
+           @right_aws_bucket.stubs(:get).with("display/self_ad_bg_320x50.png").returns(ad_bg)
            
            response = get(:index, @params.merge(:format => 'json'))
            assert_equal('application/json', response.content_type)
@@ -122,12 +131,12 @@ class DisplayAdControllerTest < ActionController::TestCase
            # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
            # File.open("#{RAILS_ROOT}/test/assets/banner_ads/generated_320x50.png", 'w') { |f| f.write(Base64.decode64(assigns['image'])) }
            
-           assert(File.open("#{RAILS_ROOT}/test/assets/banner_ads/generated_320x50.png").read == Base64.decode64(assigns['image']))
+           assert(File.read("#{RAILS_ROOT}/test/assets/banner_ads/generated_320x50.png") == Base64.decode64(assigns['image']))
          end
          
          should "return proper image data in xml" do
-           ad_bg = File.open("#{RAILS_ROOT}/test/assets/display/self_ad_bg_640x100.png").read
-           @bucket.stubs(:get).with("display/self_ad_bg_640x100.png").returns(ad_bg)
+           ad_bg = File.read("#{RAILS_ROOT}/test/assets/display/self_ad_bg_640x100.png")
+           @right_aws_bucket.stubs(:get).with("display/self_ad_bg_640x100.png").returns(ad_bg)
            
            response = get(:index, @params)
            assert_equal('application/xml', response.content_type)
@@ -135,7 +144,7 @@ class DisplayAdControllerTest < ActionController::TestCase
            # Uncomment the following to re-generate the image if needed (e.g. background image changes, text changes, etc)
            # File.open("#{RAILS_ROOT}/test/assets/banner_ads/generated_640x100.png", 'w') { |f| f.write(Base64.decode64(assigns['image'])) }
            
-           assert(File.open("#{RAILS_ROOT}/test/assets/banner_ads/generated_640x100.png").read == Base64.decode64(assigns['image']))
+           assert(File.read("#{RAILS_ROOT}/test/assets/banner_ads/generated_640x100.png") == Base64.decode64(assigns['image']))
          end
        end
      end
