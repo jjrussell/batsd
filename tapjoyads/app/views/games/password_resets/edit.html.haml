@@ -14,8 +14,11 @@
                 %div
                   - form_for(:gamer, @gamer, :url => { :action => :update }, :html => { :method => :put }) do |f|
                     .field
-                      = f.label :password
+                      = f.label :password, 'New Password'
                       = f.password_field :password
+                    .field
+                      = f.label :password_confirmation, 'Confirm Password'
+                      = f.password_field :password_confirmation
                     .field
                       = submit_tag('Submit', :class => 'button lt_blue')
                     .field

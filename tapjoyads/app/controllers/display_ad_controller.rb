@@ -76,7 +76,7 @@ private
       :screen_layout_size => params[:screen_layout_size]).weighted_rand
     
     if offer.present?
-      @click_url = offer.get_click_url(
+      @click_url = offer.click_url(
           :publisher_app     => publisher_app,
           :publisher_user_id => params[:publisher_user_id],
           :udid              => params[:udid],

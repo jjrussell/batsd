@@ -4,6 +4,7 @@ class GamerProfile < ActiveRecord::Base
   belongs_to :gamer
 
   validate :at_least_age_thirteen
+  validates_inclusion_of :gender, :in => %w{ male female }, :allow_nil => true, :allow_blank => true
 
   def at_least_age_thirteen
     unless birthdate.nil?

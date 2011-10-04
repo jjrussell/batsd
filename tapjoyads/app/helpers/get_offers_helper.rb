@@ -33,7 +33,7 @@ module GetOffersHelper
   end
   
   def get_click_url(offer)
-    click_url = offer.get_click_url(
+    click_url = offer.click_url(
       :publisher_app      => @publisher_app,
       :publisher_user_id  => params[:publisher_user_id],
       :udid               => params[:udid],
@@ -56,7 +56,7 @@ module GetOffersHelper
   end
 
   def get_fullscreen_ad_url(offer)
-    offer.get_fullscreen_ad_url(
+    offer.fullscreen_ad_url(
         :publisher_app      => @publisher_app,
         :publisher_user_id  => params[:publisher_user_id],
         :udid               => params[:udid],

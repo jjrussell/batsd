@@ -3,6 +3,7 @@
 class WebRequest < SimpledbResource
   
   self.sdb_attr :udid
+  self.sdb_attr :mac_address
   self.sdb_attr :android_id
   self.sdb_attr :app_id
   self.sdb_attr :offer_id
@@ -129,6 +130,7 @@ class WebRequest < SimpledbResource
       self.campaign_id          = params[:campaign_id]
       self.app_id               = params[:app_id]
       self.udid                 = params[:udid]
+      self.mac_address          = params[:mac_address]
       self.android_id           = params[:android_id]
       self.currency_id          = params[:currency_id]
                                 
