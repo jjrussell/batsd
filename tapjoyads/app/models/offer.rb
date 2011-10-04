@@ -540,7 +540,7 @@ class Offer < ActiveRecord::Base
 
   def create_non_rewarded_clone
     non_rewarded_offer = self.clone
-    non_rewarded_offer.attributes = { :created_at => nil, :updated_at => nil, :rewarded => false, :name_suffix => "non-rewarded", :tapjoy_enabled = false }
+    non_rewarded_offer.attributes = { :created_at => nil, :updated_at => nil, :rewarded => false, :name_suffix => "non-rewarded", :tapjoy_enabled => false }
     non_rewarded_offer.bid = non_rewarded_offer.min_bid
     non_rewarded_offer.save!
     non_rewarded_offer
