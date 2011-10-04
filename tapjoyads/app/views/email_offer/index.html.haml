@@ -21,11 +21,11 @@
       = @currency.name + "."
       
     = check_box_tag(:agreed_to_privacy)
-    = label_tag(:agreed_to_privacy, "I have reviewed and acknowledged #{link_to("Tapjoy's privacy policy.", "https://www.tapjoy.com/site/privacy_mobile")}")
+    = label_tag(:agreed_to_privacy, "I have reviewed and acknowledged #{link_to("Tapjoy's privacy policy.", "#{WEBSITE_URL}/site/privacy_mobile")}")
     
     %p
       Your email address will be associated with your phone’s ID and some app usage history. However, we have a clear privacy policy that explains how we protect this information. Please see our privacy policy here:
-      = link_to('https://www.tapjoy.com/site/privacy_mobile', 'https://www.tapjoy.com/site/privacy_mobile')
+      = link_to("#{WEBSITE_URL}/site/privacy_mobile", "#{WEBSITE_URL}/site/privacy_mobile")
   
     %p
       = submit_tag('Submit')

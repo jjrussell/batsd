@@ -154,6 +154,8 @@ class BillingController < WebsiteController
       @payout_info = current_partner.payout_info
       if @payout_info.valid?
         @terms_checked = true
+      elsif @payout_info.invalid_names?
+        flash.now[:error] = 'Your beneficiary name does not match your billing name. We need you to correct this in order to pay you.'
       else
         flash.now[:warning] = "You have some missing information. Please contact <a href='support@tapjoy.com'>support@tapjoy.com</a> if you need further assistance."
       end

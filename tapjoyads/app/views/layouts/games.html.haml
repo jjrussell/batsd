@@ -81,39 +81,6 @@
               Personalize my account!
               
     
-    #my_account_dialog.dialog_wrapper.hide
-      .close_dialog
-        .close_button
-      .dialog
-        #manage_account.grey_button
-          .my_account_url
-            .grey_button_content
-              %span.light
-                Manage
-              %span.dark
-                My Account
-        #give_feedback.grey_button
-          %a{ :href => new_games_support_request_path( :type => "feedback" ) }
-            .grey_button_content
-              %span.light
-                Give us
-              %span.dark
-                Feedback         
-        #report_bug.grey_button
-          %a{ :href => new_games_support_request_path( :type => "report_bug" ) }
-            .grey_button_content
-              %span.light
-                Report
-              %span.dark
-                a Bug
-        #contact_support.grey_button
-          %a{ :href => new_games_support_request_path( :type => "contact_support" ) }
-            .grey_button_content
-              %span.light
-                Contact
-              %span.dark
-                Support
-                  
     #loader.dialog_wrapper.hide
       #progress.dialog
         .dialog_title.title_2

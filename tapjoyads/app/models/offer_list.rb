@@ -39,6 +39,8 @@ class OfferList
       @type = case @type
       when Offer::FEATURED_OFFER_TYPE
         Offer::NON_REWARDED_FEATURED_OFFER_TYPE
+      when Offer::FEATURED_BACKFILLED_OFFER_TYPE
+        Offer::NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE
       when Offer::DISPLAY_OFFER_TYPE
         Offer::NON_REWARDED_DISPLAY_OFFER_TYPE
       else
