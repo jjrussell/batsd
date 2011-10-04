@@ -952,18 +952,6 @@ TJG.ui = {
           TJG.repositionDialog = ["#how_works_dialog"];
           $("#how_works_dialog").fadeIn(350);
         });
-        $('.top_nav_bar').click(function(){
-           TJG.utils.centerDialog("#my_account_dialog");
-           TJG.repositionDialog = ["#my_account_dialog"];
-           $("#my_account_dialog").fadeIn(350);
-        });
-        $('.my_account_url').click(function(){
-          $("#my_account_dialog").fadeOut(350, function() {
-            TJG.utils.centerDialog("#my_account_dialog_content");
-            TJG.repositionDialog = ["#my_account_dialog_content"];
-            $("#my_account_dialog_content").fadeIn(350);
-          });
-        });
         $('#link_device').click(function(){
           TJG.utils.centerDialog("#link_device_dialog");
           TJG.repositionDialog = ["#link_device_dialog"];

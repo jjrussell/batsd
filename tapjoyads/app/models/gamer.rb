@@ -8,7 +8,7 @@ class Gamer < ActiveRecord::Base
   validates_presence_of :email
   attr_accessor :terms_of_service
   validates_acceptance_of :terms_of_service, :on => :create, :allow_nil => false
-  
+
   before_create :generate_confirmation_token
   before_create :check_referrer
   
@@ -19,15 +19,41 @@ class Gamer < ActiveRecord::Base
     c.perishable_token_valid_for = 1.hour
     c.login_field = :email
     c.validate_login_field = false
-    c.require_password_confirmation = false
+    c.require_password_confirmation = true
   end
-  
+
   def confirm!
     self.confirmed_at = Time.zone.now
     save
   end
-  
+
+  def get_gamer_name
+    if gamer_profile.present? && ( gamer_profile.first_name.present? || gamer_profile.last_name.present? )
+      if gamer_profile.first_name.blank?
+        gamer_profile.last_name
+      elsif gamer_profile.last_name.blank?
+        gamer_profile.first_name
+      else
+        "#{gamer_profile.first_name} #{gamer_profile.last_name}"
+      end
+    else
+      email
+    end
+  end
+
+  def get_gravatar_profile_url
+    "https://secure.gravatar.com/#{generate_gravatar_hash}"
+  end
+
+  def get_avatar_url(size=nil)
+    size_param = size.present? ? "&size=#{size}" : nil
+    "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm#{size_param}"
+  end
+
 private
+  def generate_gravatar_hash
+    Digest::MD5.hexdigest email.strip.downcase
+  end
 
   def generate_confirmation_token
     self.confirmation_token = Authlogic::Random.friendly_token

@@ -40,7 +40,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :enable_offer_requests, :only => [ :create ]
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }, :collection => { :aggregate => :get, :export_aggregate => :post, :api => :get, :regenerate_api_key => :post }
   map.resources :billing, :only => [ :index ],
-    :collection => { :create_order => :post, :create_transfer => :post, :update_payout_info => :post, :forget_credit_card => :post, :export_statements => :get, :export_orders => :get, :export_payouts => :get, :export_adjustments => :get }
+    :collection => { :create_order => :post, :create_transfer => :post, :update_payout_info => :put, :forget_credit_card => :post, :export_statements => :get, :export_orders => :get, :export_payouts => :get, :export_adjustments => :get }
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
   map.transfer_funds_billing 'billing/transfer-funds', :controller => :billing, :action => :transfer_funds
   map.payout_info_billing 'billing/payment-info', :controller => :billing, :action => :payout_info

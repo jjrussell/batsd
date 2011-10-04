@@ -1,0 +1,29 @@
+.logo
+  .slide_nav
+    %a{ :href => back_button, :class => "slideleft" }
+      .left
+        .slide_arrow_wrapper.left_arrow
+          .slide_arrow
+      .slider.back.slider_active.slider_left.left
+        %span.title
+          Back
+    %a{ :href => games_logout_path }
+      .slider.logout.slider_right.right
+        %span.title
+          Log Out
+#profile_info_display
+  .info_expand
+    .center_container
+      %table
+        %tr
+          %td
+            %a{ :href => @gamer.get_gravatar_profile_url, :target => '_blank' }
+              .large_avatar
+                %img{ :src => @gamer.get_avatar_url }
+          %td
+            %div.gamer_name
+              = "#{@gamer.get_gamer_name}"
+            %div.gamer_signup_date
+              = "Member since #{@gamer.created_at.strftime("%B %d, %Y")}"
+  .info_expand_bottom_arrow_wrapper
+    .info_expand_bottom_arrow

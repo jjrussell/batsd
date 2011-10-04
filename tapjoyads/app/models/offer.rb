@@ -17,13 +17,17 @@ class Offer < ActiveRecord::Base
   NON_REWARDED_DISPLAY_OFFER_TYPE  = '4'
   NON_REWARDED_FEATURED_OFFER_TYPE = '5'
   VIDEO_OFFER_TYPE                 = '6'
+  FEATURED_BACKFILLED_OFFER_TYPE   = '7'
+  NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE = '8'
   OFFER_TYPE_NAMES = {
     DEFAULT_OFFER_TYPE               => 'Offerwall Offers',
     FEATURED_OFFER_TYPE              => 'Featured Offers',
     DISPLAY_OFFER_TYPE               => 'Display Ad Offers',
     NON_REWARDED_DISPLAY_OFFER_TYPE  => 'Non-Rewarded Display Ad Offers',
     NON_REWARDED_FEATURED_OFFER_TYPE => 'Non-Rewarded Featured Offers',
-    VIDEO_OFFER_TYPE                 => 'Video Offers'
+    VIDEO_OFFER_TYPE                 => 'Video Offers',
+    FEATURED_BACKFILLED_OFFER_TYPE   => 'Featured Offers (Backfilled)',
+    NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)'
   }
 
   DISPLAY_AD_SIZES = {1 => '320x50', 2 => '640x100', 3 => '768x90'} # DO NOT change keys, these are essentially ids
@@ -634,7 +638,6 @@ class Offer < ActiveRecord::Base
       score = currency_group.precache_weights.keys.inject(0) { |sum, key| sum + (currency_group.precache_weights[key] * send(key)) }
       score += 5 if item_type == "ActionOffer"
       score += 10 if price == 0
-      score += 10 if featured?
       rank_scores[currency_group.id] = score
     end
     rank_scores
@@ -1003,13 +1006,9 @@ private
     min_bid = case type
     when DEFAULT_OFFER_TYPE
       currency.minimum_offerwall_bid
-    when FEATURED_OFFER_TYPE
+    when FEATURED_OFFER_TYPE, FEATURED_BACKFILLED_OFFER_TYPE, NON_REWARDED_FEATURED_OFFER_TYPE, NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE
       currency.minimum_featured_bid
-    when DISPLAY_OFFER_TYPE
-      currency.minimum_display_bid
-    when NON_REWARDED_FEATURED_OFFER_TYPE
-      currency.minimum_featured_bid
-    when NON_REWARDED_DISPLAY_OFFER_TYPE
+    when DISPLAY_OFFER_TYPE, NON_REWARDED_DISPLAY_OFFER_TYPE
       currency.minimum_display_bid
     end
     min_bid.present? && bid < min_bid
