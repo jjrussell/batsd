@@ -39,6 +39,8 @@ class OfferList
       @type = case @type
       when Offer::FEATURED_OFFER_TYPE
         Offer::NON_REWARDED_FEATURED_OFFER_TYPE
+      when Offer::FEATURED_BACKFILLED_OFFER_TYPE
+        Offer::NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE
       when Offer::DISPLAY_OFFER_TYPE
         Offer::NON_REWARDED_DISPLAY_OFFER_TYPE
       else
@@ -48,7 +50,7 @@ class OfferList
     
     if @device && @device.opted_out?
       @offers = []
-    else    
+    else
       @offers = RailsCache.get_and_put("offers.#{@type}.#{@platform_name}.#{@hide_rewarded_app_installs}.#{@normalized_device_type}") do
         OfferCacher.get_unsorted_offers_prerejected(@type, @platform_name, @hide_rewarded_app_installs, @normalized_device_type)
       end.value

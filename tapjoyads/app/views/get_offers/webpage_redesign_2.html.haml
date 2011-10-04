@@ -64,7 +64,7 @@
     - if @currency.conversion_rate > 0
       = link_to_missing_currency
       %span &nbsp;|&nbsp;
-    = link_to(t('text.shared.privacy'), 'https://www.tapjoy.com/site/privacy_mobile')
+    = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile")
     %br
     %span
       = t('text.shared.ads_by')
