@@ -133,6 +133,7 @@ class Offer < ActiveRecord::Base
   before_save :calculate_ranking_fields
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
+  after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
 
   named_scope :enabled_offers, :joins => :partner,
     :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0))"
@@ -188,12 +189,6 @@ class Offer < ActiveRecord::Base
   def banner_creatives_changed?
     return false if (super && banner_creatives_was.empty? && banner_creatives.empty?)
     super
-  end
-
-  def after_save
-    # sync_banner_creatives! should always be the last thing run by the after_save callback
-    # that's why it's here rather than defined at the top of the class
-    sync_banner_creatives!
   end
 
   def self.redistribute_hourly_stats_aggregation
@@ -336,16 +331,16 @@ class Offer < ActiveRecord::Base
     "#{API_URL}/offer_instructions?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
   
-  def banner_creative_path(size, format='jpg')
-    "banner_creatives/#{id}_#{size}.#{format}"
+  def banner_creative_path(size, format='png')
+    "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
   end
   
-  def banner_creative_s3_key(size, format='jpg')
+  def banner_creative_s3_key(size, format='png')
     bucket = S3.bucket(BucketNames::TAPJOY)
     RightAws::S3::Key.create(bucket, "#{banner_creative_path(size, format)}")
   end
   
-  def banner_creative_mc_key(size, format='jpg')
+  def banner_creative_mc_key(size, format='png')
     banner_creative_path(size, format).gsub('/','.')
   end
 
@@ -945,13 +940,13 @@ private
     blob.replace("") if blob
   end
   
-  def delete_banner_creative!(size, format='jpg')
+  def delete_banner_creative!(size, format='png')
     banner_creative_s3_key(size, format).delete
   rescue
     raise BannerSyncError.new("Encountered unexpected error while deleting existing file, please try again.")
   end
   
-  def upload_banner_creative!(blob, size, format='jpg')
+  def upload_banner_creative!(blob, size, format='png')
     begin
       creative_arr = Magick::Image.from_blob(blob)
       if creative_arr.size != 1

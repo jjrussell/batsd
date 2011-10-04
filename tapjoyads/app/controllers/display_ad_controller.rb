@@ -19,14 +19,12 @@ class DisplayAdController < ApplicationController
     width, height = parse_size(params[:size])
     size = "#{width}x#{height}"
 
-    offer = Offer.find_in_cache(params[:advertiser_app_id])
-    format = offer.banner_creatives.include?(size) ? 'jpg' : 'png'
-
     key = "display_ad.decoded.#{params[:currency_id]}.#{params[:advertiser_app_id]}.#{size}.#{params[:display_multiplier] || 1}"
     image_data = Mc.get_and_put(key, false, 5.minutes) do
       publisher = App.find_in_cache(params[:publisher_app_id])
       currency = Currency.find_in_cache(params[:currency_id])
       currency = nil if currency.present? && currency.app_id != params[:publisher_app_id]
+      offer = Offer.find_in_cache(params[:advertiser_app_id])
       return unless verify_records([ publisher, currency, offer ])
 
       ad_image_base64 = get_ad_image(publisher, offer, width, height, currency, params[:display_multiplier])
@@ -34,7 +32,7 @@ class DisplayAdController < ApplicationController
       Base64.decode64(ad_image_base64)
     end
     
-    send_data image_data, :type => "image/#{format}", :disposition => 'inline'
+    send_data image_data, :type => "image/png", :disposition => 'inline'
   end
   
 private
