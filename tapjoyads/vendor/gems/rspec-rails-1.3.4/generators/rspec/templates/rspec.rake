@@ -51,10 +51,7 @@ spec_prereq = File.exist?(File.join(RAILS_ROOT, 'config', 'database.yml')) ? "db
 task :noop do
 end
 
-# TODO: remove when all tests have been changed to specs
-task :test_all => [:test, :spec]
-
-task :default => [:test_all]
+task :default => :spec
 task :stats => "spec:statsetup"
 
 desc "Run all specs in spec directory (excluding plugin specs)"
