@@ -519,6 +519,7 @@ ActiveRecord::Schema.define(:version => 20110930205352) do
     t.text     "screen_layout_sizes",                                                                              :null => false
     t.integer  "interval",                                                                      :default => 0,     :null => false
     t.boolean  "url_overridden",                                                                :default => false, :null => false
+    t.text     "banner_creatives"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

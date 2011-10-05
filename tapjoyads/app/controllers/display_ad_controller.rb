@@ -14,12 +14,12 @@ class DisplayAdController < ApplicationController
   end
   
   def image
-    params[:currency_id] ||= params[:publisher_app_id]
-    return unless verify_params([ :publisher_app_id, :advertiser_app_id, :size, :currency_id ])
-    
+    params[:currency_id] = params[:publisher_app_id] if params[:currency_id].blank?
+    return unless verify_params([ :advertiser_app_id, :size, :publisher_app_id, :currency_id ])
     width, height = parse_size(params[:size])
+    size = "#{width}x#{height}"
 
-    key = "display_ad.decoded.#{params[:currency_id]}.#{params[:advertiser_app_id]}.#{width}x#{height}.#{params[:display_multiplier] || 1}"
+    key = "display_ad.decoded.#{params[:currency_id]}.#{params[:advertiser_app_id]}.#{size}.#{params[:display_multiplier] || 1}"
     image_data = Mc.get_and_put(key, false, 5.minutes) do
       publisher = App.find_in_cache(params[:publisher_app_id])
       currency = Currency.find_in_cache(params[:currency_id])
@@ -27,12 +27,12 @@ class DisplayAdController < ApplicationController
       offer = Offer.find_in_cache(params[:advertiser_app_id])
       return unless verify_records([ publisher, currency, offer ])
 
-      ad_image_base64 = get_ad_image(publisher, offer, params[:size], currency, params[:display_multiplier])
+      ad_image_base64 = get_ad_image(publisher, offer, width, height, currency, params[:display_multiplier])
       
       Base64.decode64(ad_image_base64)
     end
     
-    send_data image_data, :type => 'image/png', :disposition => 'inline'
+    send_data image_data, :type => "image/png", :disposition => 'inline'
   end
   
 private
@@ -86,10 +86,11 @@ private
           :displayer_app_id  => params[:app_id],
           :country_code      => geoip_data[:country]
       )
+      width, height = parse_size(params[:size])
       if params[:action] == 'webview' || params[:details] == '1'
-        @image_url = get_ad_image_url(publisher_app, offer, params[:size], currency, params[:display_multiplier])
+        @image_url = offer.get_ad_image_url(publisher_app.id, width, height, currency.id, params[:display_multiplier])
       else
-        @image = get_ad_image(publisher_app, offer, params[:size], currency, params[:display_multiplier])
+        @image = get_ad_image(publisher_app, offer, width, height, currency, params[:display_multiplier])
       end
 
       if params[:details] == '1'
@@ -111,17 +112,17 @@ private
     web_request.save
   end
 
-  def get_ad_image_url(publisher_app, offer, size, currency, display_multiplier)
+  def get_ad_image(publisher, offer, width, height, currency, display_multiplier)
     display_multiplier = (display_multiplier || 1).to_f
-    width, height = parse_size(params[:size])
-    # TO REMOVE: displayer_app_id param after rollout.
-    "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app.id}&advertiser_app_id=#{offer.id}&displayer_app_id=#{publisher_app.id}&size=#{width}x#{height}&display_multiplier=#{display_multiplier}&currency_id=#{currency.id}"
-  end
-
-  def get_ad_image(publisher, offer, size, currency, display_multiplier)
-    display_multiplier = (display_multiplier || 1).to_f
-    width, height = parse_size(size)
-    key = "display_ad.#{currency.id}.#{offer.id}.#{width}x#{height}.#{display_multiplier}"
+    size = "#{width}x#{height}"
+    
+    if offer.display_custom_banner_for_size?(size)
+      return Mc.get_and_put(offer.banner_creative_mc_key(size)) do
+        Base64.encode64(offer.banner_creative_s3_key(size).read).gsub("\n", '')
+      end
+    end
+    
+    key = "display_ad.#{currency.id}.#{offer.id}.#{size}.#{display_multiplier}"
     Mc.get_and_put(key, false, 1.hour) do
       if width == 640 && height == 100
         border = 4
@@ -199,16 +200,8 @@ private
   # Parses the size param and returns a width, height couplet. Ensures that the values returned are
   # supported by the get_ad_image method.
   def parse_size(size)
-    case size
-    when /320x50/i
-      [320, 50]
-    when /640x100/i
-      [640, 100]
-    when /768x90/i
-      [768, 90]
-    else
-      [320, 50]
-    end
+    size &&= size.downcase
+    dimensions = Offer::DISPLAY_AD_SIZES.include?(size) ? size.split("x").collect{|x|x.to_i} : [320, 50]
   end
   
   ##

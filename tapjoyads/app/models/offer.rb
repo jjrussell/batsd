@@ -33,6 +33,8 @@ class Offer < ActiveRecord::Base
     NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)'
   }
 
+  DISPLAY_AD_SIZES = ['320x50', '640x100', '768x90']
+  
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
                                   'conversion_rate', 'show_rate', 'self_promote_only',
@@ -57,6 +59,12 @@ class Offer < ActiveRecord::Base
     "8 hours"  => 8.hours.to_i,
     "24 hours" => 24.hours.to_i,
   }
+
+  serialize :banner_creatives, Array
+  
+  DISPLAY_AD_SIZES.each do |size|
+    attr_accessor "banner_creative_#{size}_blob".to_sym
+  end
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -130,6 +138,7 @@ class Offer < ActiveRecord::Base
   before_save :update_payment
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
+  after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
 
   named_scope :enabled_offers, :joins => :partner,
     :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0))"
@@ -171,6 +180,21 @@ class Offer < ActiveRecord::Base
     end
   end
   memoize :get_countries_blacklist
+
+  def banner_creatives
+    self.banner_creatives = [] if super.nil?
+    super
+  end
+  
+  def banner_creatives_was
+    return [] if super.nil?
+    super
+  end
+  
+  def banner_creatives_changed?
+    return false if (super && banner_creatives_was.empty? && banner_creatives.empty?)
+    super
+  end
 
   def self.redistribute_hourly_stats_aggregation
     Benchmark.realtime do
@@ -273,7 +297,24 @@ class Offer < ActiveRecord::Base
   def has_virtual_goods?
     VirtualGood.count(:where => "app_id = '#{self.item_id}'") > 0
   end
-
+  
+  def banner_creative_path(size, format='png')
+    "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
+  end
+  
+  def banner_creative_s3_key(size, format='png')
+    bucket = AWS::S3.new.buckets[BucketNames::TAPJOY]
+    bucket.objects[banner_creative_path(size, format)]
+  end
+  
+  def banner_creative_mc_key(size, format='png')
+    banner_creative_path(size, format).gsub('/','.')
+  end
+  
+  def display_custom_banner_for_size?(size)
+    return !rewarded? && !featured? && is_free? && item_type != 'VideoOffer' && banner_creatives.include?(size)
+  end
+  
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
   end
@@ -365,6 +406,13 @@ class Offer < ActiveRecord::Base
     prefix = "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy"
     
     "#{prefix}/videos/src/#{video_id}.mp4"
+  end
+  
+  def save(perform_validation = true)
+    super(perform_validation)
+  rescue BannerSyncError => bse
+    self.errors.add(bse.offer_attr_name.to_sym, bse.message)
+    false
   end
   
   def save_video!(video_src_blob)
@@ -554,6 +602,89 @@ class Offer < ActiveRecord::Base
   def unlogged_attributes
     [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
   end
+
+private
+  
+  def sync_banner_creatives!
+    creative_blobs = {}
+    Offer::DISPLAY_AD_SIZES.each do |size|
+      image_data = (send("banner_creative_#{size}_blob") rescue nil)
+      creative_blobs[size] = image_data if !image_data.blank?
+    end
+    
+    return if (!banner_creatives_changed? && creative_blobs.empty?)
+    if (banner_creatives.size - banner_creatives_was.size).abs > 1 || creative_blobs.size > 1
+      raise "Unable to sync changes to more than one banner creative at a time"
+    end
+    
+    blob = creative_blobs.values.first # will be nil for banner creative removals
+    if banner_creatives.size > banner_creatives_was.size
+      # banner creative added, find which size was added and make sure file matches up
+      new_size = (banner_creatives - banner_creatives_was).first
+      raise BannerSyncError.new("custom_creative_#{new_size}_blob", "#{new_size} banner creative file not provided.") if creative_blobs[new_size].nil?
+      
+      # upload to S3
+      upload_banner_creative!(blob, new_size)
+    elsif banner_creatives_was.size > banner_creatives.size
+      # banner creative removed, find which size was removed
+      removed_size = (banner_creatives_was - banner_creatives).first
+      
+      # delete from S3
+      delete_banner_creative!(removed_size)
+    else
+      # a banner creative was changed, find which size it applies to
+      size = creative_blobs.keys.first
+      
+      # upload file to S3
+      upload_banner_creative!(blob, size)
+    end
+    
+    # 'acts_as_cacheable' caches entire object, including all attributes, so... let's clear the blob
+    blob.replace("") if blob
+  end
+  
+  def delete_banner_creative!(size, format='png')
+    banner_creative_s3_key(size, format).delete
+  rescue
+    raise BannerSyncError.new("custom_creative_#{size}_blob", "Encountered unexpected error while deleting existing file, please try again.")
+  end
+  
+  def upload_banner_creative!(blob, size, format='png')
+    begin
+      creative_arr = Magick::Image.from_blob(blob)
+      if creative_arr.size != 1
+        raise "image contains multiple layers (e.g. animated .gif)"
+      end
+      creative = creative_arr[0]
+      creative.format = format
+    rescue
+      raise BannerSyncError.new("custom_creative_#{size}_blob", "New file is invalid - unable to convert to .#{format}.")
+    end
+    
+    width, height = size.split("x").collect{|x|x.to_i}
+    raise BannerSyncError.new("custom_creative_#{size}_blob", "New file has invalid dimensions.") if [width, height] != [creative.columns, creative.rows]
+    
+    begin
+      banner_creative_s3_key(size, format).write(:data => creative.to_blob, :acl => :public_read)
+    rescue
+      raise BannerSyncError.new("custom_creative_#{size}_blob", "Encountered unexpected error while uploading new file, please try again.")
+    end
+    
+    # Add to memcache
+    begin
+      Mc.put(banner_creative_mc_key(size, format), Base64.encode64(creative.to_blob).gsub("\n", ''))
+    rescue
+      # no worries, it will get cached later if needed
+    end
+
+    # Invalidate cloudfront
+    begin
+      acf = RightAws::AcfInterface.new
+      acf.invalidate('E1MG6JDV6GH0F2', banner_creative_path(size, format).to_a, "#{id}.#{Time.now.to_i}")
+    rescue Exception => e
+      Notifier.alert_new_relic(FailedToInvalidateCloudfront, e.message)
+    end
+  end
   
   def is_test_device?(currency, device)
     currency.get_test_device_ids.include?(device.id)
@@ -608,4 +739,12 @@ class Offer < ActiveRecord::Base
     end
   end
 
+end
+
+class BannerSyncError < StandardError;
+  attr_accessor :offer_attr_name
+  def initialize(offer_attr_name, message)
+    super(message)
+    self.offer_attr_name = offer_attr_name
+  end
 end

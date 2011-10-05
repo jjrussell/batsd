@@ -1,6 +1,14 @@
+- content_for :page_head, stylesheet_link_tag('facebox')
+
 - form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform', :id => 'update' }) do |f|
   %table
     %tbody
+      - if !@offer.rewarded? && !@offer.featured?
+        %tr
+          %th
+            = f.label "View Ads"
+          %td
+            = link_to("Click to preview ad images", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox', :id => 'preview_link')
       %tr
         %th
           = f.label :user_enabled, @offer.featured? ? 'Enable Featured Installs' : 'Enable Installs'
@@ -126,6 +134,13 @@
       %tr
         %td{ :colspan => 2 }= f.submit 'Update', {:disabled => 'disabled', :id => 'offer_submit_button'}
 
+- if permitted_to?(:edit, :statz) && !@offer.rewarded? && !@offer.featured?
+  %br
+  Upload custom creatives:
+  %br
+  - Offer::DISPLAY_AD_SIZES.each do |size|
+    %iframe.creative_upload{:src => upload_creative_app_offer_path(:id => @offer.id, :app => @app.id, :size => size)}
+
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
   - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
     = f.hidden_field(:offer_id)
@@ -166,9 +181,9 @@
   #bid_high_warn.colorbox-content
     Please confirm that your new bid will be:
     .amount &nbsp;
-    
+
 - content_for :page_javascript do
-  :plain
+  :plain      
     var requestAppEnable = $.noop;
     $(function($){
       var originalBidValue = stringToNumber($('#offer_bid').val());
@@ -334,7 +349,6 @@
         checkMinimumPrice();
         return checkValidBudget() && checkMaximumBid(true);
       });
-      
     });
 
 - content_for :page_styles do
@@ -417,4 +431,9 @@
     }
     #percentile {
       font-weight: bold;
+    }
+    .creative_upload {
+      width: 100%;
+      border: none;
+      height: 30px;
     }
