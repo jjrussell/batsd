@@ -46,7 +46,7 @@ class Offer < ActiveRecord::Base
                                   'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
                                   'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
-                                  'interval' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
+                                  'interval', 'banner_creatives' ].map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
 
