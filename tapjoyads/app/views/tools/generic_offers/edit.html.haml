@@ -2,4 +2,6 @@
 
 %h1= "Update Generic Offer: #{@generic_offer.name}"
 
+= link_to("[Statz for '#{@generic_offer.name}']", statz_path(@generic_offer.id))
+
 = render 'form'

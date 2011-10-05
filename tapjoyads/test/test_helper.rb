@@ -5,7 +5,7 @@ ActiveRecord::Base.send(:include, AfterCommit::AfterSavepoint) # for compatibili
 ActiveRecord::Base.include_after_savepoint_extensions # for compatibility with after_commit gem
 
 require 'test_help'
-require "authlogic/test_case" # include at the top of test_helper.rb
+require "authlogic/test_case"
 
 class ActiveSupport::TestCase
   # Transactional fixtures accelerate your tests by wrapping each test method
@@ -21,7 +21,7 @@ class ActiveSupport::TestCase
   # don't care one way or the other, switching from MyISAM to InnoDB tables
   # is recommended.
   #
-  # The only drawback to using transactional fixtures is when you actually 
+  # The only drawback to using transactional fixtures is when you actually
   # need to test transactions.  Since your test is bracketed by a transaction,
   # any transactions started in your code will be automatically rolled back.
   #self.use_transactional_fixtures = true
@@ -43,7 +43,7 @@ class ActiveSupport::TestCase
   def login_as(user)
     UserSession.create(user)
   end
-  
+
   # Tests equality of attribute hashes. An attribute hash has the form:
   # { :key1 => [value1, value2], :key2 => [value3]}
   # The value arrays may be in any order.

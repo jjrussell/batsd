@@ -110,7 +110,7 @@
     %td
       = f.select(:screen_layout_sizes, options_for_select(@app.screen_layout_sizes, @offer.get_screen_layout_sizes), {}, :multiple => true)
       = error_message_on @offer, :screen_layout_sizes
-        
+
 .hidden
   #help_admin_offer_name_content{:name => 'Offer Name'} Name that will be displayed on offer walls.
   #help_tapjoy_enabled_content{ :name => 'Tapjoy Enabled' } Whether or not the offer is enabled for installs.
