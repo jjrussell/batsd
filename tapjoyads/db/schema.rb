@@ -1,4 +1,4 @@
-# This file is auto-generated from the current state of the database. Instead of editing this file, 
+# This file is auto-generated from the current state of the database. Instead of editing this file,
 # please use the migrations feature of Active Record to incrementally modify your database, and
 # then regenerate this schema definition.
 #
@@ -339,6 +339,7 @@ ActiveRecord::Schema.define(:version => 20110930205352) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "instructions"
+    t.string   "category"
   end
 
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true

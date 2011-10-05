@@ -2,7 +2,7 @@ authorization do
 
   role :partner do
     has_permission_on :apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :publisher_integrate, :search, :sdk_download, :archive ]
-    has_permission_on :apps_offers, :to => [ :new, :create, :edit, :update, :toggle, :percentile, :preview ]
+    has_permission_on :apps_offers, :to => [ :new, :create, :edit, :update, :toggle, :percentile, :preview, :upload_creative ]
     has_permission_on :apps_currencies, :to => [ :show, :update, :new, :create, :reset_test_device ]
     has_permission_on :apps_virtual_goods, :to => [ :show, :update, :new, :create, :index, :reorder ]
     has_permission_on :enable_offer_requests, :to => [ :create ]
@@ -19,24 +19,24 @@ authorization do
   role :agency do
     has_permission_on :partners, :to => [ :index, :show, :make_current, :new, :create, :agency_api ]
   end
-  
+
   role :tools do
     has_permission_on :tools, :to => [ :index ]
     has_permission_on :internal_devices, :to => [ :new, :edit, :update, :index, :show, :destroy, :approve ]
   end
-  
+
   role :customer_service do
     includes :tools
     has_permission_on :tools, :to => [ :resolve_clicks, :device_info, :update_device, :award_currencies, :update_award_currencies ]
   end
-  
+
   role :money do
     includes :tools
     has_permission_on :tools, :to => [ :money, :monthly_data ]
     has_permission_on :tools_orders, :to => [ :new, :create ]
     has_permission_on :tools_earnings_adjustments, :to => [ :new, :create ]
   end
-  
+
   role :payops do
     includes :money
     has_permission_on :tools_payouts, :to => [ :index ]
@@ -59,12 +59,12 @@ authorization do
     includes :reporting
     has_permission_on :tools, :to => [ :money, :monthly_data ]
   end
-  
+
   role :hr do
     includes :tools
     has_permission_on :tools_employees, :to => [ :index, :new, :create, :edit, :update, :delete_photo ]
   end
-  
+
   role :account_mgr do
     includes :money
     includes :games_editor
@@ -79,7 +79,7 @@ authorization do
     has_permission_on :partners_offer_discounts, :to => [ :index, :new, :create, :deactivate ]
     has_permission_on :tools_offer_lists, :to => [ :index ]
     has_permission_on :tools_premier_partners, :to => [ :index ]
-    has_permission_on :tools_generic_offers, :to => [ :new, :create, :edit, :update ]
+    has_permission_on :tools_generic_offers, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :tools_video_offers, :to => [ :new, :create, :edit, :update ]
     has_permission_on :tools_video_offers_video_buttons, :to => [ :index, :new, :create, :edit, :update, :show ]
     has_permission_on :tools_admin_devices, :to => [ :index, :new, :create, :edit, :update, :destroy ]

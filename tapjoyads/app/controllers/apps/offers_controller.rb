@@ -45,57 +45,6 @@ class Apps::OffersController < WebsiteController
   def update
     params[:offer].delete(:payment)
     
-    if permitted_to? :edit, :statz
-      params[:offer][:banner_creatives] = "";
-      Offer::DISPLAY_AD_SIZES.each do |size_key, size|
-        param_name = "#{size}_custom_creative".to_sym
-        creative_file = params[:offer][param_name]
-      
-        if !creative_file and @offer.has_banner_creative_for_size?(size) and params["remove_#{param_name}".to_sym] != "1"
-          # nothing has changed, keep banner_creative as-is
-          format_key = @offer.banner_creative_format_key_for_size(size)
-          params[:offer][:banner_creatives] << "#{size_key},#{format_key};"
-        end
-      
-        # TODO: delete "removed" creative files from S3? May want to write a job for that later. Meanwhile, taking up space unnecessarily isn't a big deal
-      
-        if creative_file # new file has been uploaded
-          begin
-            creative_arr = Magick::Image.from_blob(creative_file.read)
-            if creative_arr.size != 1
-              raise "image probably contains multiple layers (e.g. animated .gif)"
-            end
-            creative = creative_arr[0]
-            format = creative.format.downcase
-            if !Offer::DISPLAY_AD_FORMATS.values.include? format
-              raise "invalid format"
-            end
-          rescue
-            flash[:error] = "#{size} creative file is invalid - please provide one of the following file types: #{Offer::DISPLAY_AD_FORMATS.values.join(', ')} (.gifs must be static)"
-            redirect_to :action => :edit and return
-          end
-          dimensions = "#{creative.columns}x#{creative.rows}"
-          if dimensions != size
-            flash[:error] = "#{size} creative file has invalid dimensions"
-            redirect_to :action => :edit and return
-          end
-          begin
-            bucket = S3.bucket(BucketNames::TAPJOY)
-            filename = "#{@offer.id}_#{size}.#{format}"
-            bucket.put("banner_creatives/#{filename}", creative.to_blob, {}, 'public-read')
-          rescue
-            flash[:error] = "Encountered unexpected error while uploading #{size} creative file, please try again"
-            redirect_to :action => :edit and return
-          end
-          format_key = Offer::DISPLAY_AD_FORMATS.invert[format]
-          params[:offer][:banner_creatives] << "#{size_key},#{format_key};"
-        end
-      
-        params[:offer].delete(param_name)
-      end
-      params[:offer][:banner_creatives].chomp!(";")
-    end
-    
     params[:offer][:daily_budget].gsub!(',', '') if params[:offer][:daily_budget].present?
     params[:offer][:daily_budget] = 0 if params[:daily_budget] == 'off'
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
@@ -104,7 +53,7 @@ class Apps::OffersController < WebsiteController
     if permitted_to? :edit, :statz
       safe_attributes += [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
           :name, :name_suffix, :show_rate, :min_conversion_rate, :countries, :cities,
-          :postal_codes, :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override, :banner_creatives ]
+          :postal_codes, :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override ]
     end
 
     if @offer.safe_update_attributes(offer_params, safe_attributes)
@@ -119,6 +68,38 @@ class Apps::OffersController < WebsiteController
       flash.now[:error] = 'Your offer could not be updated.'
       render :action => :edit
     end
+  end
+  
+  def upload_creative
+    @size = params[:size]
+    image_data = params[:offer]["custom_creative_#{@size}".to_sym].read rescue nil
+    
+    modifying = true
+    case request.method
+      when :delete
+        # necessary to use assignment so @offer.banner_creatives_changed? will be true (can't modify in-place)
+        @offer.banner_creatives -= @size.to_a
+      when :post
+        # necessary to use assignment so @offer.banner_creatives_changed? will be true (can't modify in-place)
+        @offer.banner_creatives += @size.to_a
+      when :put
+        # do nothing
+      when :get
+        modifying = false
+    end
+    
+    if modifying
+      @offer.send("banner_creative_#{@size}_blob=", image_data)
+      if @offer.save
+        @success_message = "File #{request.method == :delete ? 'removed' : 'uploaded'} successfully"
+      else
+        @error_message = @offer.errors["custom_creative_#{@size}_blob".to_sym]
+        @offer.reload # we want the form to reset back to the way it was
+      end
+    end
+    
+    @creative_exists = @offer.banner_creatives.include? @size
+    render :layout => 'simple'
   end
   
   def toggle

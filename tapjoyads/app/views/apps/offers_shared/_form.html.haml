@@ -1,13 +1,13 @@
 - content_for :page_head, stylesheet_link_tag('facebox')
 
-- form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :multipart => true, :class => 'tjform', :id => 'update' }) do |f|
+- form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform', :id => 'update' }) do |f|
   %table
     %tbody
       %tr
         %th
           = f.label "View Ads"
         %td
-          = link_to("Click to preview ad images", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox')
+          = link_to("Click to preview ad images", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox', :id => 'preview_link')
       %tr
         %th
           = f.label :user_enabled, @offer.featured? ? 'Enable Featured Installs' : 'Enable Installs'
@@ -32,7 +32,7 @@
             .percentile-details
               The bid is just one of many factors affecting your featured offer ranking.
           - elsif !@offer.rewarded?
-            #percentile-info.percentile-details          
+            #percentile-info.percentile-details
               This bid will make your offer more prioritized than
               %span#percentile= "#{@offer.percentile}%" rescue 'N/A'
               of ads.
@@ -127,11 +127,18 @@
         %td
           = f.select(:min_os_version, @app.os_versions, :include_blank => 'No Minimum')
           = error_message_on(@offer, :min_os_version)
-          
+
       - if permitted_to?(:edit, :statz)
         = render('apps/offers_shared/admin_fields', :f => f)
       %tr
         %td{ :colspan => 2 }= f.submit 'Update', {:disabled => 'disabled', :id => 'offer_submit_button'}
+
+- if permitted_to?(:edit, :statz) && !@offer.rewarded? && !@offer.featured?
+  %br
+  Upload custom creatives:
+  %br
+  - Offer::DISPLAY_AD_SIZES.each do |size|
+    %iframe.creative_upload{:src => upload_creative_app_offer_path(:id => @offer.id, :app => @app.id, :size => size)}
 
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
   - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
@@ -175,7 +182,7 @@
     .amount &nbsp;
 
 - content_for :page_javascript do
-  :plain      
+  :plain
     var requestAppEnable = $.noop;
     $(function($){
       var originalBidValue = stringToNumber($('#offer_bid').val());
@@ -283,7 +290,7 @@
           $('#offer_daily_budget').val('');
         }
       };
-      
+
       var updatePercentile = function() {
         $.ajax({
           data: { "bid" : $('#offer_bid').val() },
@@ -341,7 +348,6 @@
         checkMinimumPrice();
         return checkValidBudget() && checkMaximumBid(true);
       });
-      
     });
 
 - content_for :page_styles do
@@ -424,4 +430,9 @@
     }
     #percentile {
       font-weight: bold;
+    }
+    .creative_upload {
+      width: 100%;
+      border: none;
+      height: 30px;
     }

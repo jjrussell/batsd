@@ -3,8 +3,20 @@
   %head
     %title
       = @page_title
+    = javascript_include_tag 'jquery-1.4.2.min', 'jquery-ui-1.8.5.min', 'jquery.tablesorter', 'jquery.colorbox.min', 'application', 'chosen.jquery', 'facebox'
     = yield :included_stylesheets
     %style{ :type => 'text/css' }
       = yield :page_styles
   %body
+    - flash.each do |name, msg|
+      .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
+        %strong #{name.to_s.humanize}:
+        = msg
+    - [:error, :warning, :notice].each do |name|
+      - if flash[name].blank?
+        .flash.hidden{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
+          %strong #{name.to_s.humanize}:
+          %span.message &nbsp;
     = yield
+    %script{ :type => 'text/javascript', :charset => 'utf-8' }
+      = yield :page_javascript
