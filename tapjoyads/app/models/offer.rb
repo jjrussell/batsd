@@ -490,7 +490,6 @@ class Offer < ActiveRecord::Base
   def store_id_for_feed
     item_type == 'App' ? third_party_data : Offer.hashed_icon_id(id)
   end
-<<<<<<< HEAD
 
   def check_for_uploaded_icon
     bucket = S3.bucket(BucketNames::TAPJOY)
@@ -498,9 +497,6 @@ class Offer < ActiveRecord::Base
     key.exists?
   end
 
-=======
-
->>>>>>> 85c2d8ab49ee81a35c448a813f605ea893a8b631
   def update_payment(force_update = false)
     if (force_update || bid_changed? || new_record?)
       if (item_type == 'App' || item_type == 'ActionOffer')
