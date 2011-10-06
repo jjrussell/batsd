@@ -1,5 +1,4 @@
 module Offer::Ranking
-  extend ActiveSupport::Memoizable
   
   def self.included(base)
     base.class_eval do
@@ -34,7 +33,6 @@ module Offer::Ranking
     end
     rank_scores
   end
-  memoize :precache_rank_scores
 
   def precache_rank_score_for(currency_group_id)
     precache_rank_scores[currency_group_id]
