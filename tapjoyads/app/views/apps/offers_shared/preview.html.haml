@@ -4,20 +4,20 @@
   - publisher_app_id = "2349536b-c810-47d7-836c-2cd47cd3a796" # TapDefense
   - if @offer.featured?
     Featured ad:
-    %div
+    %div.img320x480
       - if !@show_generated_ads
         = render :partial => "no_icon"
       - else
-        = image_tag(@offer.fullscreen_ad_image_url(publisher_app_id), :alt => 'featuredimg')
+        = image_tag(@offer.fullscreen_ad_image_url(publisher_app_id), :class => 'preview', :alt => '')
   - else
     - show_display_ads = (!@offer.rewarded? || (@offer.item_type == 'App' && @offer.price == 0 && @offer.name.length <= 30))
     - if @offer.rewarded? # show offer wall ad
       Marketplace ad:
-      %div
+      %div.img320x200
         - if !@show_generated_ads
           = render :partial => "no_icon"
         - else
-          = image_tag(@offer.get_offers_image_url(publisher_app_id), :alt => "offerwallimg")
+          = image_tag(@offer.get_offers_image_url(publisher_app_id), :class => 'preview', :alt => '')
       - if show_display_ads
         %br
 
@@ -31,7 +31,7 @@
             = render :partial => "no_icon"
           - else
             - width, height = size.split("x").collect{|x|x.to_i}
-            = image_tag(@offer.display_ad_image_url(publisher_app_id, width, height, nil, nil, true), :alt => "#{size}img")
+            = image_tag(@offer.display_ad_image_url(publisher_app_id, width, height, nil, nil, true), :class => 'preview', :alt => '')
       - if @offer.rewarded?
         %br
         .banner_ad_notes
@@ -45,25 +45,35 @@
             = mail_to "support@tapjoy.com"
           Please ensure images have correct dimensions.
 
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $("img.preview").load(function() {
+        this.setAttribute("style", "display: inline;");
+      });
+    });
+
 - content_for :page_styles do
   :plain
     #previews {
       text-align: center;
     }
 
-    div.img320x480 {
-      min-width: 320px;
-      height: 480px;
-    }
-
     .banner_ad_notes {
       font-size: 12px;
     }
 
-  - Offer::DISPLAY_AD_SIZES.each do |size|
+    img.preview {
+      display: none;
+    }
+
+  - (Offer::DISPLAY_AD_SIZES + %w(320x480 320x200)).each do |size|
     - width, height = size.split("x")
     :plain
-      div.img#{size} {
+      div.img#{width}x#{height} {
         min-width: #{width}px;
         height: #{height}px;
+        background-image: url('/images/spinner.gif');
+        background-repeat: no-repeat;
+        background-position: center;
       }
