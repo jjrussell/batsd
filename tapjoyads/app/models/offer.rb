@@ -316,7 +316,6 @@ class Offer < ActiveRecord::Base
     return !rewarded? && !featured? && is_free? && item_type != 'VideoOffer' && banner_creatives.include?(size)
   end
 
->>>>>>> 85c2d8ab49ee81a35c448a813f605ea893a8b631
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
   end

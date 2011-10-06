@@ -12,7 +12,7 @@
   - else
     - show_display_ads = (!@offer.rewarded? || (@offer.item_type == 'App' && @offer.price == 0 && @offer.name.length <= 30))
     - if @offer.rewarded? # show offer wall ad
-      Offer Wall ad:
+      Marketplace ad:
       %div
         - if !@show_generated_ads
           = render :partial => "no_icon"
@@ -20,19 +20,18 @@
           = image_tag("#{API_URL}/get_offers/image?advertiser_app_id=#{@offer.id}&publisher_app_id=#{publisher_app_id}&offer_id=#{@offer.id}", :alt => "offerwallimg")
       - if show_display_ads
         %br
-    
+
     - if show_display_ads
-      - sizes = Offer::DISPLAY_AD_SIZES.values
-      - sizes.each_with_index do |size, index|
+      - Offer::DISPLAY_AD_SIZES.each_with_index do |size, index|
         - if index > 0
           %br
         = "#{size} banner ad:"
-        %div
-          - if !@show_generated_ads and !@offer.has_banner_creative_for_size?(size)
+        %div{:class => "img#{size}"}
+          - if !@show_generated_ads && !@offer.display_custom_banner_for_size?(size)
             = render :partial => "no_icon"
           - else
-            - dimensions = size.split("x")
-            = image_tag(@offer.get_ad_image_url(publisher_app_id, dimensions[0].to_i, dimensions[1].to_i), :alt => "#{size}img")
+            - width, height = size.split("x").collect{|x|x.to_i}
+            = image_tag(@offer.get_ad_image_url(publisher_app_id, width, height, nil, nil, true), :alt => "#{size}img")
       - if @offer.rewarded?
         %br
         .banner_ad_notes
@@ -44,16 +43,27 @@
           *To provide custom creatives for your non-rewarded ads, please contact
           = succeed '.' do
             = mail_to "support@tapjoy.com"
-          Please ensure images have correct dimensions and are of the following file types:
-          = surround '[', '].' do
-            = Offer::DISPLAY_AD_FORMATS.values.join(', ')
+          Please ensure images have correct dimensions.
 
 - content_for :page_styles do
   :plain
     #previews {
       text-align: center;
     }
-    
+
+    div.img320x480 {
+      min-width: 320px;
+      height: 480px;
+    }
+
     .banner_ad_notes {
       font-size: 12px;
     }
+
+  - Offer::DISPLAY_AD_SIZES.each do |size|
+    - width, height = size.split("x")
+    :plain
+      div.img#{size} {
+        min-width: #{width}px;
+        height: #{height}px;
+      }
