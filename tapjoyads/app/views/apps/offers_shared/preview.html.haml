@@ -8,7 +8,7 @@
       - if !@show_generated_ads
         = render :partial => "no_icon"
       - else
-        = image_tag("#{API_URL}/fullscreen_ad/image?advertiser_app_id=#{@offer.id}&publisher_app_id=#{publisher_app_id}&offer_id=#{@offer.id}", :alt => "featuredimg")
+        = image_tag(@offer.fullscreen_ad_image_url(publisher_app_id), :alt => 'featuredimg')
   - else
     - show_display_ads = (!@offer.rewarded? || (@offer.item_type == 'App' && @offer.price == 0 && @offer.name.length <= 30))
     - if @offer.rewarded? # show offer wall ad
@@ -17,7 +17,7 @@
         - if !@show_generated_ads
           = render :partial => "no_icon"
         - else
-          = image_tag("#{API_URL}/get_offers/image?advertiser_app_id=#{@offer.id}&publisher_app_id=#{publisher_app_id}&offer_id=#{@offer.id}", :alt => "offerwallimg")
+          = image_tag(@offer.get_offers_image_url(publisher_app_id), :alt => "offerwallimg")
       - if show_display_ads
         %br
 
@@ -31,7 +31,7 @@
             = render :partial => "no_icon"
           - else
             - width, height = size.split("x").collect{|x|x.to_i}
-            = image_tag(@offer.get_ad_image_url(publisher_app_id, width, height, nil, nil, true), :alt => "#{size}img")
+            = image_tag(@offer.display_ad_image_url(publisher_app_id, width, height, nil, nil, true), :alt => "#{size}img")
       - if @offer.rewarded?
         %br
         .banner_ad_notes
