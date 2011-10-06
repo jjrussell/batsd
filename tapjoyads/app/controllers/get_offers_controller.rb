@@ -1,12 +1,12 @@
 class GetOffersController < ApplicationController
-  
+
   layout 'iphone', :only => :webpage
-  
+
   prepend_before_filter :decrypt_data_param
   before_filter :choose_experiment, :except => [:featured, :image]
   before_filter :set_featured_params, :only => :featured
   before_filter :setup, :except => :image
-  
+
   after_filter :save_web_request, :except => :image
 
   DEVICES_FOR_REDESIGN = Set.new([
@@ -22,8 +22,9 @@ class GetOffersController < ApplicationController
   ])
 
   def image
-    img = IMGKit.new("#{API_URL}/get_offers/webpage?app_id=#{params[:publisher_app_id]}&offer_id=#{params[:offer_id]}", :width => 320)
-    
+    offer = Offer.find_in_cache(params[:offer_id])
+    img = IMGKit.new(offer.get_offers_webpage_url(params[:publisher_app_id]), :width => 320)
+
     send_data img.to_png, :type => 'image/png', :disposition => 'inline'
   end
 
@@ -32,7 +33,7 @@ class GetOffersController < ApplicationController
       @test_offers = [ build_test_offer(@publisher_app) ]
       @test_offers << build_test_video_offer(@publisher_app).primary_offer if params[:video_offer_ids].to_s.split(',').include? 'test_video'
     end
-    
+
     set_geoip_data
     if params[:offer_id]
       @offer_list, @more_data_available = [[Offer.find_in_cache(params[:offer_id])], 0]
@@ -58,19 +59,19 @@ class GetOffersController < ApplicationController
       end
     end
     @more_data_available = 0
-    
+
     if @offer_list.any?
       @web_request.offer_id = @offer_list.first.id
       @web_request.add_path('featured_offer_shown')
     end
-    
+
     if params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
     else
       render :template => 'get_offers/installs_redirect'
     end
   end
-  
+
   def index
     is_server_to_server = params[:redirect] == '1' || (params[:json] == '1' && params[:callback].blank?)
     set_geoip_data(is_server_to_server)
@@ -78,7 +79,7 @@ class GetOffersController < ApplicationController
     if @currency.tapjoy_managed? && params[:source] == 'tj_games'
       @tap_points = PointPurchases.new(:key => "#{params[:publisher_user_id]}.#{@currency.id}").points
     end
-    
+
     if params[:type] == Offer::CLASSIC_OFFER_TYPE
       render :template => 'get_offers/offers'
     elsif params[:redirect] == '1'
@@ -89,15 +90,15 @@ class GetOffersController < ApplicationController
       render :template => 'get_offers/installs'
     end
   end
-  
+
 private
-  
+
   def set_featured_params
     params[:type] = Offer::FEATURED_OFFER_TYPE
     params[:source] = 'featured'
     params[:rate_app_offer] = '0'
   end
-  
+
   def setup
     required_params = [:app_id]
     if params[:action] == 'webpage' && params[:offer_id]
@@ -106,11 +107,11 @@ private
       required_params += [:udid, :publisher_user_id]
     end
     return unless verify_params(required_params)
-    
+
     @now = Time.zone.now
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 25).to_i
-    
+
     params[:currency_id] = params[:app_id] if params[:currency_id].blank?
     if params[:currency_selector] == '1'
       @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])
@@ -121,18 +122,18 @@ private
     end
     @publisher_app = App.find_in_cache(params[:app_id])
     return unless verify_records([ @currency, @publisher_app ])
-    
+
     @device = Device.new(:key => params[:udid]) if params[:udid]
-    
+
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
-    
+
     wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
     @web_request = WebRequest.new(:time => @now)
     @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
     @web_request.put('viewed_at', @now.to_f.to_s)
   end
-  
+
   def get_offer_list(type = nil)
     OfferList.new(
       :publisher_app        => @publisher_app,
@@ -152,7 +153,7 @@ private
       :video_offer_ids      => params[:video_offer_ids].to_s.split(',')
     )
   end
-  
+
   def set_geoip_data(is_server_to_server = false)
     if is_server_to_server && params[:device_ip].blank?
       @geoip_data = {}
@@ -161,9 +162,9 @@ private
     end
     @geoip_data[:country] = params[:country_code] if params[:country_code].present?
   end
-  
+
   def save_web_request
     @web_request.save
   end
-  
+
 end

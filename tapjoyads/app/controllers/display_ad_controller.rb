@@ -20,6 +20,9 @@ class DisplayAdController < ApplicationController
     size = "#{width}x#{height}"
 
     key = "display_ad.decoded.#{params[:currency_id]}.#{params[:advertiser_app_id]}.#{size}.#{params[:display_multiplier] || 1}"
+    re_cache = (params[:re_cache] && params[:re_cache] == 'true')
+    Mc.delete(key) if re_cache
+
     image_data = Mc.get_and_put(key, false, 5.minutes) do
       publisher = App.find_in_cache(params[:publisher_app_id])
       currency = Currency.find_in_cache(params[:currency_id])
@@ -27,7 +30,7 @@ class DisplayAdController < ApplicationController
       offer = Offer.find_in_cache(params[:advertiser_app_id])
       return unless verify_records([ publisher, currency, offer ])
 
-      ad_image_base64 = get_ad_image(publisher, offer, width, height, currency, params[:display_multiplier])
+      ad_image_base64 = get_ad_image(publisher, offer, width, height, currency, params[:display_multiplier], re_cache)
 
       Base64.decode64(ad_image_base64)
     end
@@ -88,7 +91,7 @@ private
       )
       width, height = parse_size(params[:size])
       if params[:action] == 'webview' || params[:details] == '1'
-        @image_url = offer.get_ad_image_url(publisher_app.id, width, height, currency.id, params[:display_multiplier])
+        @image_url = offer.display_ad_image_url(publisher_app.id, width, height, currency.id, params[:display_multiplier])
       else
         @image = get_ad_image(publisher_app, offer, width, height, currency, params[:display_multiplier])
       end
@@ -112,17 +115,20 @@ private
     web_request.save
   end
 
-  def get_ad_image(publisher, offer, width, height, currency, display_multiplier)
+  def get_ad_image(publisher, offer, width, height, currency, display_multiplier, re_cache = false)
     display_multiplier = (display_multiplier || 1).to_f
     size = "#{width}x#{height}"
 
     if offer.display_custom_banner_for_size?(size)
-      return Mc.get_and_put(offer.banner_creative_mc_key(size)) do
+      key = offer.banner_creative_mc_key(size)
+      Mc.delete(key) if re_cache
+      return Mc.get_and_put(key) do
         Base64.encode64(offer.banner_creative_s3_key(size).read).gsub("\n", '')
       end
     end
 
     key = "display_ad.#{currency.id}.#{offer.id}.#{size}.#{display_multiplier}"
+    Mc.delete(key) if re_cache
     Mc.get_and_put(key, false, 1.hour) do
       if width == 640 && height == 100
         border = 4
