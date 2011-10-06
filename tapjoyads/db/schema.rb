@@ -319,13 +319,19 @@ ActiveRecord::Schema.define(:version => 20110930205352) do
     t.datetime "updated_at"
     t.string   "udid"
     t.string   "confirmation_token",               :default => "", :null => false
+    t.string   "facebook_id"
+    t.string   "fb_access_token"
+    t.integer  "referral_count",                   :default => 0
+    t.string   "referred_by",        :limit => 36
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
   add_index "gamers", ["email"], :name => "index_gamers_on_email", :unique => true
+  add_index "gamers", ["facebook_id"], :name => "index_gamers_on_facebook_id"
   add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
   add_index "gamers", ["persistence_token"], :name => "index_gamers_on_persistence_token"
+  add_index "gamers", ["referred_by"], :name => "index_gamers_on_referred_by"
 
   create_table "generic_offers", :id => false, :force => true do |t|
     t.string   "id",               :limit => 36,                    :null => false
@@ -358,6 +364,21 @@ ActiveRecord::Schema.define(:version => 20110930205352) do
 
   add_index "internal_devices", ["id"], :name => "index_internal_devices_on_id", :unique => true
   add_index "internal_devices", ["user_id"], :name => "index_internal_devices_on_user_id"
+
+  create_table "invitations", :id => false, :force => true do |t|
+    t.string   "id",            :limit => 36,                :null => false
+    t.string   "gamer_id",      :limit => 36,                :null => false
+    t.string   "noob_id",       :limit => 36
+    t.string   "external_info",                              :null => false
+    t.integer  "channel",                                    :null => false
+    t.integer  "status",                      :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "invitations", ["external_info"], :name => "index_invitations_on_external_info"
+  add_index "invitations", ["gamer_id"], :name => "index_invitations_on_gamer_id"
+  add_index "invitations", ["id"], :name => "index_invitations_on_id", :unique => true
 
   create_table "jobs", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36,                      :null => false
