@@ -3,11 +3,11 @@ class GetOffersController < ApplicationController
   layout 'iphone', :only => :webpage
   
   prepend_before_filter :decrypt_data_param
-  before_filter :choose_experiment, :except => :featured
+  before_filter :choose_experiment, :except => [:featured, :image]
   before_filter :set_featured_params, :only => :featured
-  before_filter :setup
+  before_filter :setup, :except => :image
   
-  after_filter :save_web_request
+  after_filter :save_web_request, :except => :image
 
   DEVICES_FOR_REDESIGN = Set.new([
     'c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1', # Stephen iTouch
@@ -18,8 +18,14 @@ class GetOffersController < ApplicationController
     '355031040923092',                          # Linda Nexus S
     'a100000d9833c5',                           # Stephen Evo
     'ade749ccc744336ad81cbcdbf36a5720778c6f13', # Amir iPhone
-    '355031040123271',                          # Kai Nexus S 
+    '355031040123271',                          # Kai Nexus S
   ])
+
+  def image
+    img = IMGKit.new("#{API_URL}/get_offers/webpage?app_id=#{params[:publisher_app_id]}&offer_id=#{params[:offer_id]}", :width => 320)
+    
+    send_data img.to_png, :type => 'image/png', :disposition => 'inline'
+  end
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
@@ -28,7 +34,11 @@ class GetOffersController < ApplicationController
     end
     
     set_geoip_data
-    @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
+    if params[:offer_id]
+      @offer_list, @more_data_available = [[Offer.find_in_cache(params[:offer_id])], 0]
+    else
+      @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
+    end
 
     if params[:library_version].to_s.version_greater_than_or_equal_to?('8.1.0') || DEVICES_FOR_REDESIGN.include?(params[:udid])
       render :template => 'get_offers/webpage_redesign_2', :layout => 'offerwall_redesign_2'
@@ -89,7 +99,13 @@ private
   end
   
   def setup
-    return unless verify_params([ :app_id, :udid, :publisher_user_id ])
+    required_params = [:app_id]
+    if params[:action] == 'webpage' && params[:offer_id]
+      required_params << :offer_id
+    else
+      required_params += [:udid, :publisher_user_id]
+    end
+    return unless verify_params(required_params)
     
     @now = Time.zone.now
     @start_index = (params[:start] || 0).to_i
@@ -106,7 +122,7 @@ private
     @publisher_app = App.find_in_cache(params[:app_id])
     return unless verify_records([ @currency, @publisher_app ])
     
-    @device = Device.new(:key => params[:udid])
+    @device = Device.new(:key => params[:udid]) if params[:udid]
     
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE

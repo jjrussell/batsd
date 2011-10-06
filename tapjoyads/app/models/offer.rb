@@ -490,6 +490,12 @@ class Offer < ActiveRecord::Base
     item_type == 'App' ? third_party_data : Offer.hashed_icon_id(id)
   end
 
+  def check_for_uploaded_icon
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    key = RightAws::S3::Key.create(bucket, "icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg")
+    key.exists?
+  end
+
   def update_payment(force_update = false)
     if (force_update || bid_changed? || new_record?)
       if (item_type == 'App' || item_type == 'ActionOffer')

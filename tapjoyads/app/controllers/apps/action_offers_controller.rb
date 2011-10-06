@@ -35,6 +35,11 @@ class Apps::ActionOffersController < WebsiteController
     end
   end
   
+  def preview
+    @show_generated_ads = @offer.check_for_uploaded_icon
+    render 'apps/offers_shared/preview', :layout => 'simple'
+  end
+  
   def update
     params[:action_offer][:primary_offer_attributes].delete(:payment)
     params[:action_offer][:primary_offer_attributes][:daily_budget].gsub!(',', '') if params[:action_offer][:primary_offer_attributes][:daily_budget].present?

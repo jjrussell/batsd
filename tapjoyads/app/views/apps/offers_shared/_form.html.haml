@@ -3,12 +3,11 @@
 - form_for(@offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform', :id => 'update' }) do |f|
   %table
     %tbody
-      - if !@offer.rewarded? && !@offer.featured?
-        %tr
-          %th
-            = f.label "View Ads"
-          %td
-            = link_to("Click to preview ad images", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox', :id => 'preview_link')
+      %tr
+        %th
+          = f.label "View Ads"
+        %td
+          = link_to("Click to preview ad images", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox', :id => 'preview_link')
       %tr
         %th
           = f.label :user_enabled, @offer.featured? ? 'Enable Featured Installs' : 'Enable Installs'
@@ -33,7 +32,7 @@
             .percentile-details
               The bid is just one of many factors affecting your featured offer ranking.
           - elsif !@offer.rewarded?
-            #percentile-info.percentile-details          
+            #percentile-info.percentile-details
               This bid will make your offer more prioritized than
               %span#percentile= "#{@offer.percentile}%" rescue 'N/A'
               of ads.
@@ -128,7 +127,7 @@
         %td
           = f.select(:min_os_version, @app.os_versions, :include_blank => 'No Minimum')
           = error_message_on(@offer, :min_os_version)
-          
+
       - if permitted_to?(:edit, :statz)
         = render('apps/offers_shared/admin_fields', :f => f)
       %tr
@@ -183,7 +182,7 @@
     .amount &nbsp;
 
 - content_for :page_javascript do
-  :plain      
+  :plain
     var requestAppEnable = $.noop;
     $(function($){
       var originalBidValue = stringToNumber($('#offer_bid').val());
@@ -291,7 +290,7 @@
           $('#offer_daily_budget').val('');
         }
       };
-      
+
       var updatePercentile = function() {
         $.ajax({
           data: { "bid" : $('#offer_bid').val() },
