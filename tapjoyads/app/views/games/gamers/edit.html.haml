@@ -35,13 +35,18 @@
                     .field
                       .label
                         Reset Password
-            -# .title_2
-              -# Invite Your Friends!
-            -# #invite_friends.clearfix
-              -# %a{ :href => "#" }
-                -# .social_btn.fb
-              -# %a{ :href => "#" }
-                -# .social_btn.email
+            .title_2
+              Invite Your Friends!
+            #invite_friends.clearfix
+              .social_btn_wrapper
+                = fb_connect_async_js
+                - if @gamer.facebook_id.blank?
+                  .social_btn.fb{ :onclick => "doLogin('email,offline_access,create_note')" }
+                - else
+                  .social_btn.fb{ :onclick => "location.href='#{games_social_invite_facebook_friends_path}';" }
+              .social_btn_wrapper
+                %a{ :href => games_social_invite_email_friends_path }
+                  .social_btn.email
             .title_2
               Contact Tapjoy
             .content_box_wrapper
@@ -56,3 +61,42 @@
               %a{ :href => new_games_support_request_path( :type => 'contact_support' ) }
                 .content_box.clearfix.center_contact
                   Customer Support
+
+- content_for :page_javascript do
+  :plain
+    var error = '#{params[:error]}';
+
+    $(document).ready(function() {
+      if(error){
+        $('.error_msg').removeClass('hidden');
+        $('.error_msg').text(error);
+      }
+    });
+
+    var doLogin = function(scope){
+      FB.getLoginStatus(handleSessionResponse);
+    };
+
+    // handle a session response from any of the auth related calls
+    var handleSessionResponse = function(response) {
+      // if we dont have a session (which means the user has been logged out, redirect the user)
+      if (!response.session) {
+        FB.login(function(response) {
+          if (response.session) {
+            FB.api('/me', function(response) {
+              <!--
+              window.location = "#{games_social_invite_facebook_friends_path(:valid_login => true)}"
+              //-->
+            });
+          } else {
+            console.log('User cancelled login or did not fully authorize.');
+          }
+        }, {perms: 'email,offline_access,create_note'});
+        return;
+      }
+
+      //if we do have a non-null response.session, call FB.logout(),
+      //the JS method will log the user out
+      //of Facebook and remove any authorization cookies
+      FB.logout(handleSessionResponse);
+    };

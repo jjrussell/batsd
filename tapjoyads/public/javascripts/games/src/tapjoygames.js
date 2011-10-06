@@ -1,11 +1,11 @@
 TJG.utils = {
-  
+
   genSym : function() {
     var res = '' + TJG.vars.autoKey;
     TJG.vars.autoKey++;
     return res;
   },
-  
+
   isNull : function(v) {
     if (typeof v == 'boolean') {
       return false;
@@ -16,7 +16,7 @@ TJG.utils = {
       return v == undefined || v == null || v == '';
     }
   },
-  
+
   or : function (v, defval) {
     if (this.isNull(v)) {
       return defval;
@@ -25,7 +25,7 @@ TJG.utils = {
   },
 
   hideURLBar : function() {
-    setTimeout(function() { 
+    setTimeout(function() {
       window.scrollTo(0, 1);
     }, 0);
   },
@@ -36,9 +36,9 @@ TJG.utils = {
 
   updateOrientation : function() {
     var orientation = this.getOrientation();
-    TJG.doc.setAttribute("orient", orientation); 
+    TJG.doc.setAttribute("orient", orientation);
   },
-  
+
   centerDialog : function(el) {
     var h = parseInt(($(window).height()/2)-($(el).outerHeight()+16/2));
     var w = parseInt(($(window).width()/2)-($(el).outerWidth()/2));
@@ -46,29 +46,29 @@ TJG.utils = {
       h = 24;
     }
     $(el).css('top',  h + "px");
-    $(el).css('left', w + "px"); 
+    $(el).css('left', w + "px");
   },
-  
+
   disableScrollOnBody : function() {
     if (!TJG.vars.isTouch) return;
     document.body.addEventListener("touchmove", function(e) {
       e.preventDefault();
     }, false);
   },
-  
+
   getParam : function(name) {
-    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]"); 
-    var regexS = "[\\?&]"+name+"=([^&]*)"; 
-    var regex = new RegExp( regexS ); 
-    var results = regex.exec( window.location.href ); 
-    if( results == null ) return ""; 
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    var regexS = "[\\?&]"+name+"=([^&]*)";
+    var regex = new RegExp( regexS );
+    var results = regex.exec( window.location.href );
+    if( results == null ) return "";
     else return results[1];
   },
-  
+
   setLocalStorage: function(k,v) {
     if (typeof(localStorage) == 'undefined' ) {
       return;
-    } 
+    }
     else {
       try {
         localStorage[k] = v;
@@ -76,28 +76,28 @@ TJG.utils = {
       }
     }
   },
-  
+
   unsetLocalStorage: function(k) {
     if (typeof(localStorage) == 'undefined' ) {
       return;
     }
     localStorage.removeItem(k);
   },
-  
+
   getLocalStorage: function(k) {
     if (typeof(localStorage) == 'undefined' ) {
       return;
     }
     return localStorage[k];
   },
-  
+
   scrollTop : function (delay){
     if (delay == null) {
       delay = "slow";
-    } 
+    }
     $("html, body").animate({scrollTop:0}, delay);
   },
-  
+
   loadImages: function (el) {
     TJG.vars.scrolling = false;
     var preLoad = 0, padSpace = 0;
@@ -105,7 +105,7 @@ TJG.utils = {
       preLoad = 60;
       padSpace = 80;
     }
-    $(el).each(function (n,o) { 
+    $(el).each(function (n,o) {
       if ( this && $.inviewport( this, { padding: padSpace, threshold:preLoad } ) ) {
         var img = $(o).children("img:first");
         if ($(img).attr("loaded") == "true") {
@@ -114,10 +114,10 @@ TJG.utils = {
         $(img).attr("src", $(img).attr("s")).attr("loaded", "true");
         $(img).error(function() {
           $(img).attr("src", TJG.blank_img);
-        });          
+        });
       }
-    }); 
-    
+    });
+
     if (!TJG.vars.imageLoaderInit) {
       $(window).scroll( function() {
         if (!TJG.vars.scrolling) {
@@ -129,13 +129,13 @@ TJG.utils = {
                 var img = $(o).children("img:first");
                 if ($(img).attr("loaded") == "true") {
                   return;
-                }   
+                }
                 $(img).attr("src", $(img).attr("s")).attr("loaded", "true");
                 $(img).error(function() {
                   $(img).attr("src", TJG.blank_img);
                 });
               }
-            }); 
+            });
             TJG.vars.scrolling = false;
           }, 150);
         }
@@ -144,12 +144,12 @@ TJG.utils = {
       TJG.vars.imageLoaderInit = true;
     }
   }
-  
+
 };
 $.utils = TJG.utils;
 
-TJG.ui = { 
-  
+TJG.ui = {
+
   hideLoader : function(delay,fn) {
     TJG.repositionDialog = [];
     delay = $.utils.or(delay, "fast");
@@ -157,7 +157,7 @@ TJG.ui = {
       $('#loader').fadeOut(delay,fn);
     });
   },
-  
+
   showLoader : function(delay,fn) {
     $.utils.centerDialog("#loader");
     TJG.repositionDialog = ["#loader"];
@@ -166,15 +166,45 @@ TJG.ui = {
       $('#loader').fadeIn(delay,fn);
     });
   },
-  
+
+  showLoaderAtCenter : function(delay,fn) {
+    $.utils.centerDialog("#loader");
+    delay = $.utils.or(delay, "fast");
+    setTimeout(function() {
+      var scrollTop = $(window).scrollTop();
+      var screenHeight = $(window).height();
+      var height = $('#sender').height();
+      $('#loader').fadeIn(delay,fn).css({ top: scrollTop + screenHeight / 2 - height / 2 });
+    });
+  },
+
+  hideSender : function(delay,fn) {
+    TJG.repositionDialog = [];
+    delay = $.utils.or(delay, "fast");
+    setTimeout(function() {
+      $('#sender').fadeOut(delay,fn);
+    });
+  },
+
+  showSender : function(delay,fn) {
+    $.utils.centerDialog("#sender");
+    delay = $.utils.or(delay, "fast");
+    setTimeout(function() {
+      var scrollTop = $(window).scrollTop();
+      var screenHeight = $(window).height();
+      var height = $('#sender').height();
+      $('#sender').fadeIn(delay,fn).css({ top: scrollTop + screenHeight / 2 - height / 2 });
+    });
+  },
+
   removeDialogs : function (delay) {
     delay = $.utils.or(delay, "fast");
     setTimeout(function() {
-      $('.dialog_wrapper').fadeOut(delay); 
+      $('.dialog_wrapper').fadeOut(delay);
     });
     TJG.repositionDialog = [];
   },
-  
+
   getOfferRow : function (obj,currency,i,hidden) {
     var t = [], clsId = "", style = "";
     if (i) {
@@ -188,22 +218,22 @@ TJG.ui = {
       if (v.Cost == "Free") {
         freeCls = "free";
       }
-      t.push('<a href="' + v.RedirectURL + '">'); 
+      t.push('<a href="' + v.RedirectURL + '">');
         t.push('<li class="offer_item clearfix '+ clsId +'" '+ style +'>');
           t.push('<a href="' + v.RedirectURL + '">');
             t.push('<div class="offer_image">');
               t.push('<div id="'+ TJG.utils.genSym() +'" class="offer_image_loader_wrapper"><img src="' + TJG.blank_img + '" s="' + v.IconURL + '"></div>');
-            t.push('</div>'); 
+            t.push('</div>');
           t.push('</a>');
           t.push('<div class="offer_text">');
             t.push('<div class="offer_title title">');
               t.push(v.Name);
             t.push('</div>');
-            if (v.Type && v.Type == 'App') { 
+            if (v.Type && v.Type == 'App') {
               t.push('<div class="offer_install">');
                 t.push('Install and run ' + v.Name);
-              t.push('</div>'); 
-            }  
+              t.push('</div>');
+            }
             t.push('<div class="offer_info">');
                 t.push('<a href="' + v.RedirectURL + '">');
                   t.push('<div class="offer_button my_apps">');
@@ -217,10 +247,10 @@ TJG.ui = {
                       t.push('</span>');
                       t.push('<span class="cost '+ freeCls +'">');
                         t.push(v.Cost);
-                      t.push('</span>'); 
+                      t.push('</span>');
                     t.push('</div>');
-                  t.push('</div>');  
-                t.push('</a>'); 
+                  t.push('</div>');
+                t.push('</a>');
             t.push('</div>');
           t.push('</div>');
         t.push('</li>');
@@ -228,7 +258,7 @@ TJG.ui = {
     });
     return t.join('');
   },
-  
+
   showRegister : function () {
     var hasLinked = true, path, animateSpd = "fast";
     if (TJG.path) {
@@ -304,7 +334,7 @@ TJG.ui = {
           url: rurl,
           cache: false,
           timeout: 15000,
-          dataType: 'json', 
+          dataType: 'json',
           data: {
             'authenticity_token': values['authenticity_token'],
             'gamer[email]': values['gamer[email]'],
@@ -328,7 +358,7 @@ TJG.ui = {
               $('.close_dialog').unbind('click');
               $("#sign_up_dialog_content").parent().animate({ height: "230px", }, animateSpd);
               $("#sign_up_dialog_content").html(msg);
-              if (d.linked) { 
+              if (d.linked) {
                 $('.close_dialog,.continue_link_device').click(function(){
                   if (TJG.path) {
                     document.location.href = TJG.path;
@@ -347,13 +377,13 @@ TJG.ui = {
                   $('.close_dialog,.link_device_url').click(function(){
                     document.location.href = d.link_device_url;
                   });
-                }); 
+                });
               }
               else {
                 $('.close_dialog,.continue_link_device').click(function(){
                   document.location.href = location.protocol + '//' + location.host;
                 });
-              } 
+              }
             }
             else {
               var error = 'There was an issue with registering your account';
@@ -377,12 +407,12 @@ TJG.ui = {
             });
           },
           error: function() {
-            var error = 'There was an issue'; 
+            var error = 'There was an issue';
             msg = [
               '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
               '<div class="dialog_content"><div>', error ,'.</div><div id="sign_up_again"><div class="button grey dialog_button">Try Again</div></div></div>',
             ].join('');
-            $(".close_dialog").hide(); 
+            $(".close_dialog").hide();
             $("#sign_up_dialog_content").html(msg);
             $('#sign_up_again').click(function(){
                TJG.ui.showRegister();
@@ -392,7 +422,7 @@ TJG.ui = {
       }
     });
   },
-  
+
   showAddHomeDialog : function() {
     var startY = startX = 0,
     options = {
@@ -435,7 +465,7 @@ TJG.ui = {
     div.innerHTML = t;
     document.body.appendChild(div);
     el = div;
-    
+
     function transitionEnd () {
       el.removeEventListener('webkitTransitionEnd', transitionEnd, false);
       el.style.webkitTransitionProperty = '-webkit-transform';
@@ -443,10 +473,10 @@ TJG.ui = {
       if (closeTimeout) {
         clearInterval(theInterval);
         theInterval = setInterval(setPosition, options.iterations);
-      } 
+      }
       else {
         el.parentNode.removeChild(el);
-      }   
+      }
     }
     function setPosition () {
       var matrix = new WebKitCSSMatrix(window.getComputedStyle(el, null).webkitTransform),
@@ -485,7 +515,7 @@ TJG.ui = {
         if (TJG.vars.isIPad) {
           duration = '0.8s';
           posY = posY - el.offsetHeight - options.bottomOffset - 50;
-        } 
+        }
         else {
           duration = '0.4s';
           opacity = '0';
@@ -512,7 +542,7 @@ TJG.ui = {
         if (TJG.vars.isIPad) {
           duration = '0.6s';
           el.style.webkitTransform = 'translate3d(0,' + -(window.scrollY + options.bottomOffset + el.offsetHeight) + 'px,0)';
-        } 
+        }
         else {
           duration = '0.9s';
           el.style.webkitTransform = 'translate3d(0,' + -(startY + options.bottomOffset) + 'px,0)';
@@ -523,7 +553,7 @@ TJG.ui = {
           duration = '0.6s';
           el.style.opacity = '0'
           el.style.webkitTransform = 'translate3d(0,' + (startY + 50) + 'px,0)';
-        } 
+        }
         else {
           duration = '0.6s';
           el.style.webkitTransform = 'translate3d(0,' + (el.offsetHeight + options.bottomOffset + 50) + 'px,0)';
@@ -545,7 +575,7 @@ TJG.ui = {
     }, options.startDelay);
     window.addToHomeClose = addToHomeClose;
   },
-  
+
   homeInit : function () {
     var jQT = new $.jQTouch({
       slideSelector: '#jqt',
@@ -574,7 +604,7 @@ TJG.ui = {
     else if (repeat != "false") {
       showInto();
     }
-    
+
     function showInto () {
       var div = document.createElement('div'), close;
       var id = "newUser";
@@ -595,7 +625,7 @@ TJG.ui = {
         var elW = $(obj).outerWidth();
         var winW = $(window).width();
         var w = parseInt((winW-elW)/2);
-        $(obj).css({ 
+        $(obj).css({
           "top": top - $(obj).outerHeight() - 12 + "px",
           "left": w + "px"
         });
@@ -607,11 +637,11 @@ TJG.ui = {
           $(obj).fadeOut(fadeSpd);
           TJG.utils.setLocalStorage("tjg.new_user", "false");
         });
-      }  
+      }
     }
-    
+
     TJG.ui.loadRatings();
-    
+
     function slidePage(el,dir) {
       if (dir == 'right') {
         dir = 'slideright'
@@ -621,7 +651,7 @@ TJG.ui = {
       }
       jQT.goTo(el, dir);
     }
-    
+
     function getOfferWalls() {
       $("#home").bind('pageAnimationStart', function(e, info){
         if (info.direction == "out") {
@@ -631,7 +661,7 @@ TJG.ui = {
       $("#earn").bind('pageAnimationStart', function(e, info){
         if (info.direction == "out") {
           $("#earn .content_wrapper").fadeOut("fast");
-        }     
+        }
       });
       $("#more_games").bind('pageAnimationStart', function(e, info){
         if (info.direction == "out") {
@@ -642,7 +672,7 @@ TJG.ui = {
         if (info.direction == "out") {
           $("#feat_app .content_wrapper").fadeOut("fast");
         }
-      }); 
+      });
       $("#home").bind('pageAnimationEnd', function(e, info){
         if (info.direction == "in") {
           $("#home .content_wrapper").fadeIn("fast");
@@ -651,7 +681,7 @@ TJG.ui = {
       $("#earn").bind('pageAnimationEnd', function(e, info){
         if (info.direction == "in") {
           $("#earn .content_wrapper").fadeIn("fast");
-        }       
+        }
       });
       $("#more_games").bind('pageAnimationEnd', function(e, info){
         if (info.direction == "in") {
@@ -662,7 +692,7 @@ TJG.ui = {
         if (info.direction == "in") {
           $("#feat_app .content_wrapper").fadeIn("fast");
         }
-      });  
+      });
       $(".get_offerwall_jsonp").each(function() {
         var i = 0;
         $(this).click(function(){
@@ -751,7 +781,7 @@ TJG.ui = {
                               $(".more_button_wrapper").html('<div class="back_to_top grey_button"><div class="grey_button_content">Back to Top</div></div>');
                               $(".back_to_top").click(function(){
                                 TJG.utils.scrollTop();
-                              }); 
+                              });
                             }
                           }
                           isLoading = false;
@@ -792,7 +822,7 @@ TJG.ui = {
             TJG.utils.scrollTop();
          }
         });
-      }); 
+      });
     }
 
     function reloadOfferWalls () {
@@ -815,7 +845,7 @@ TJG.ui = {
         }
         else {
           TJG.ui.showLoader();
-          $.ajax({ 
+          $.ajax({
             url: TJG.more_games_editor_picks,
             timeout: 15000,
             success: function(c) {
@@ -853,7 +883,7 @@ TJG.ui = {
             $("#more_games_content").fadeOut(fadeSpdFast, function () {
               $("#more_games_content").html(TJG.moreAppOfferWall).fadeIn(fadeSpdFast, function(){
                 TJG.utils.loadImages(".offer_image_loader_wrapper");
-                TJG.ui.loadRatings(); 
+                TJG.ui.loadRatings();
               });
             });
           }
@@ -868,7 +898,7 @@ TJG.ui = {
         }
         else {
           TJG.ui.showLoader();
-          $.ajax({ 
+          $.ajax({
             url: TJG.more_games_popular,
             timeout: 15000,
             success: function(c) {
@@ -894,7 +924,7 @@ TJG.ui = {
       });
     }
     function featuredReview() {
-      $(".feat_app_url").click(function() { 
+      $(".feat_app_url").click(function() {
          slidePage("#feat_app", "left");
       });
     }
@@ -917,7 +947,7 @@ TJG.ui = {
           starcls = "star on";
           start++;
         }
-        else if (rating > start){ 
+        else if (rating > start){
           starcls = "star half";
           start++;
         }
@@ -926,9 +956,9 @@ TJG.ui = {
       $(this).html(t.join('')).fadeIn("slow");
     });
   }
-  
+
 };
-  
+
 (function(window, document) {
 
     TJG.onload = {
@@ -972,7 +1002,7 @@ TJG.ui = {
           }
         });
       },
-      
+
       checkFlashMessages: function () {
         if($('#flash_error').length > 0) {
           TJG.utils.centerDialog("#flash_error");
@@ -991,6 +1021,6 @@ TJG.ui = {
       }
     };
     window.addEventListener("load", TJG.init, false);
-   
+
 
 })(this, document);

@@ -11,7 +11,7 @@ class Games::GamersController < GamesController
       g.terms_of_service      = params[:gamer][:terms_of_service]
     end
     @gamer_profile = GamerProfile.new( :birthdate => Date.new(params[:date][:year].to_i, params[:date][:month].to_i, params[:date][:day].to_i) )
-    @gamer.gamer_profile = @gamer_profile
+    @gamer.gamer_profile = gamer_profile
 
     if @gamer.save
       GamesMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.confirmation_token))

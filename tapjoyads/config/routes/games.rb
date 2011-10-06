@@ -20,10 +20,24 @@ ActionController::Routing::Routes.draw do |map|
     m.resources :confirmations, :controller => 'games/confirmations', :only => [ :create ]
     m.confirm 'confirm', :controller => 'games/confirmations', :action => :create
     
+    m.social_login_facebook 'login_facebook', :controller => 'games/social', :action => :login_facebook
+    m.social_invite_friends 'invite_friends', :controller => 'games/social', :action => :invite_friends
+    m.social_invite_email_friends 'invite_email_friends', :controller => 'games/social', :action => :invite_email_friends
+    m.social_send_email_invites 'send_email_invites', :controller => 'games/social', :action => :send_email_invites
+    m.social_invite_facebook_friends 'invite_facebook_friends', :controller => 'games/social', :action => :invite_facebook_friends
+    m.social_send_facebook_invites 'send_facebook_invites', :controller => 'games/social', :action => :send_facebook_invites
+
     m.resources :password_resets, :controller => 'games/password_resets', :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
     
     m.resources :support_requests, :controller => 'games/support_requests', :only => [ :new, :create ]
     
     m.resources :android, :controller => 'games/android', :action => :index
+    
+    m.social_login_facebook 'login_facebook', :controller => 'games/social', :action => :login_facebook
+    m.social_invite_friends 'invite_friends', :controller => 'games/social', :action => :invite_friends
+    m.social_invite_email_friends 'invite_email_friends', :controller => 'games/social', :action => :invite_email_friends
+    m.social_send_email_invites 'send_email_invites', :controller => 'games/social', :action => :send_email_invites
+    m.social_invite_facebook_friends 'invite_facebook_friends', :controller => 'games/social', :action => :invite_facebook_friends
+    m.social_send_facebook_invites 'send_facebook_invites', :controller => 'games/social', :action => :send_facebook_invites
   end
 end
