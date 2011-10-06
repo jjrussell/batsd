@@ -59,7 +59,7 @@
 
 #footerMargin
   #footer
-    = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile")
+    = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}")
     %span &nbsp;|&nbsp;
     - if @currency.conversion_rate > 0
       = link_to_missing_currency

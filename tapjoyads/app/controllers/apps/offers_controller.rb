@@ -37,8 +37,17 @@ class Apps::OffersController < WebsiteController
     end
   end
   
+  def preview
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    key = RightAws::S3::Key.create(bucket, "icons/src/#{Offer.hashed_icon_id(@offer.icon_id)}.jpg")
+    @show_generated_ads = key.exists?
+    
+    render :layout => 'simple'
+  end
+  
   def update
     params[:offer].delete(:payment)
+    
     params[:offer][:daily_budget].gsub!(',', '') if params[:offer][:daily_budget].present?
     params[:offer][:daily_budget] = 0 if params[:daily_budget] == 'off'
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
@@ -62,6 +71,38 @@ class Apps::OffersController < WebsiteController
       flash.now[:error] = 'Your offer could not be updated.'
       render :action => :edit
     end
+  end
+  
+  def upload_creative
+    @size = params[:size]
+    image_data = params[:offer]["custom_creative_#{@size}".to_sym].read rescue nil
+    
+    modifying = true
+    case request.method
+      when :delete
+        # necessary to use assignment so @offer.banner_creatives_changed? will be true (can't modify in-place)
+        @offer.banner_creatives -= @size.to_a
+      when :post
+        # necessary to use assignment so @offer.banner_creatives_changed? will be true (can't modify in-place)
+        @offer.banner_creatives += @size.to_a
+      when :put
+        # do nothing
+      when :get
+        modifying = false
+    end
+    
+    if modifying
+      @offer.send("banner_creative_#{@size}_blob=", image_data)
+      if @offer.save
+        @success_message = "File #{request.method == :delete ? 'removed' : 'uploaded'} successfully"
+      else
+        @error_message = @offer.errors["custom_creative_#{@size}_blob".to_sym]
+        @offer.reload # we want the form to reset back to the way it was
+      end
+    end
+    
+    @creative_exists = @offer.banner_creatives.include? @size
+    render :layout => 'simple'
   end
   
   def toggle

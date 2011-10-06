@@ -9,7 +9,7 @@
     %li= link_to('Change your email notification settings', @mail_chimp_url)
 %h3 Users with access
 
-%table
+%table.users
   %thead
     %tr.underline
       %th Login
@@ -24,18 +24,18 @@
 
 - content_for :page_styles do
   :plain
-    table {
+    table.users {
       table-layout: fixed;
       width: 100%;
       border-collapse: collapse;
       margin-bottom: 20px;
     }
     
-    th, td {
+    table.users th, table.users td {
       text-align: left;
       padding: 3px 5px;
     }
     
-    td {
+    table.users td {
       border-top: 1px solid #888;
     }

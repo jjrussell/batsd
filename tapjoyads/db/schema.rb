@@ -339,6 +339,7 @@ ActiveRecord::Schema.define(:version => 20110930205352) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "instructions"
+    t.string   "category"
   end
 
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true
@@ -518,6 +519,7 @@ ActiveRecord::Schema.define(:version => 20110930205352) do
     t.text     "screen_layout_sizes",                                                                              :null => false
     t.integer  "interval",                                                                      :default => 0,     :null => false
     t.boolean  "url_overridden",                                                                :default => false, :null => false
+    t.text     "banner_creatives"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

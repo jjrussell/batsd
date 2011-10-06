@@ -19,7 +19,8 @@ class GamerDevice < ActiveRecord::Base
     'iPad2,3'    => 'iPad 2 3G',
     'iPhone'     => 'iPhone',
     'iPad'       => 'iPad',
-    'iPod'       => 'iPod Touch'
+    'iPod'       => 'iPod Touch',
+    'android'    => 'Android'
   }
   PRODUCT_NAMES.default = 'My Device'
   
@@ -28,13 +29,12 @@ class GamerDevice < ActiveRecord::Base
   validates_presence_of :gamer, :device_id, :name
   validates_uniqueness_of :device_id, :scope => [:gamer_id]
   
-  
-  def product=(new_product)
-    self.name = PRODUCT_NAMES[new_product]
-  end
-  
   def device=(new_device)
     self.device_id = new_device.id
-    self.product = new_device.product
+    if new_device.platform == 'android' && new_device.product.present?
+      self.name = "Android (#{new_device.product})"
+    else
+      self.name = PRODUCT_NAMES[new_device.product]
+    end
   end
 end

@@ -31,7 +31,7 @@ class PayoutInfo < ActiveRecord::Base
   end
   validates_each :beneficiary_name do |record, attribute, value|
     if record.invalid_names?
-      record.errors.add(attribute, 'Beneficiary name must match billing name.')
+      record.errors.add(attribute, 'Beneficiary name must match legal name.')
     end
   end
 

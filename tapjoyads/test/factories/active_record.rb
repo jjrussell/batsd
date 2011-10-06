@@ -20,11 +20,13 @@ FactoryGirl.define do
 
   factory :partner do
     name { Factory.next(:name) }
+    approved_publisher true
   end
 
   factory :payout_info do
     signature           { Factory.next(:name) }
     billing_name        { Factory.next(:name) }
+    beneficiary_name    { billing_name }
     tax_country         { 'United States of America' }
     account_type        { 'LLC' }
     tax_id              { Factory.next(:name) }

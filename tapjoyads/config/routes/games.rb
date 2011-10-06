@@ -23,5 +23,7 @@ ActionController::Routing::Routes.draw do |map|
     m.resources :password_resets, :controller => 'games/password_resets', :as => 'password-reset', :only => [ :new, :create, :edit, :update ]
     
     m.resources :support_requests, :controller => 'games/support_requests', :only => [ :new, :create ]
+    
+    m.resources :android, :controller => 'games/android', :action => :index
   end
 end
