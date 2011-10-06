@@ -1,6 +1,6 @@
 module Offer::Rejecting
   
-  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids)
+  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source)
     geoip_reject?(geoip_data, device) ||
     already_complete?(device, app_version) ||
     show_rate_reject?(device) ||
@@ -10,7 +10,7 @@ module Offer::Rejecting
     direct_pay_reject?(direct_pay_providers) ||
     action_app_reject?(device) ||
     min_os_version_reject?(os_version) ||
-    cookie_tracking_reject?(publisher_app, library_version) ||
+    cookie_tracking_reject?(publisher_app, library_version, source) ||
     screen_layout_sizes_reject?(screen_layout_size) ||
     is_disabled?(publisher_app, currency) ||
     age_rating_reject?(currency) ||
@@ -38,7 +38,6 @@ module Offer::Rejecting
       action_app_reject?(device) ||
       hide_rewarded_app_installs_reject?(hide_rewarded_app_installs) ||
       min_os_version_reject?(os_version) ||
-      cookie_tracking_reject?(publisher_app, library_version) ||
       screen_layout_sizes_reject?(screen_layout_size) ||
       is_disabled?(publisher_app, currency) ||
       app_platform_mismatch?(publisher_app) ||
@@ -206,8 +205,8 @@ module Offer::Rejecting
     hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer' && item_type != 'VideoOffer'
   end
 
-  def cookie_tracking_reject?(publisher_app, library_version)
-    cookie_tracking? && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
+  def cookie_tracking_reject?(publisher_app, library_version, source)
+    cookie_tracking? && source != 'tj_games' && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
   end
   
   def video_offers_reject?(video_offer_ids, type)
