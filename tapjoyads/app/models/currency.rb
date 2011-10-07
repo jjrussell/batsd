@@ -165,8 +165,11 @@ class Currency < ActiveRecord::Base
     self.reseller          = partner.reseller
     calculate_spend_shares
     self.direct_pay_share  = partner.direct_pay_share
-    self.offer_whitelist   = partner.offer_whitelist
-    self.use_whitelist     = partner.use_whitelist
+    # TO REMOVE - after animoica is done with their shit
+    unless id == '6036ef18-e4a9-4ded-ad48-53d5b0e0b086'
+      self.offer_whitelist   = partner.offer_whitelist
+      self.use_whitelist     = partner.use_whitelist
+    end
     self.tapjoy_enabled    = partner.approved_publisher if new_record?
     true
   end
