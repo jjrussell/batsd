@@ -12,7 +12,7 @@ class Gamer < ActiveRecord::Base
 
   before_create :generate_confirmation_token
   before_create :check_referrer
-  
+
   alias_method :devices, :gamer_devices
 
   acts_as_authentic do |c|
@@ -27,7 +27,7 @@ class Gamer < ActiveRecord::Base
     self.confirmed_at = Time.zone.now
     save
   end
-  
+
   def update_facebook_info!(facebook_user)
     if facebook_id != facebook_user.id
       self.facebook_id = facebook_user.id
@@ -59,7 +59,7 @@ class Gamer < ActiveRecord::Base
     end
     invitation
   end
-  
+
   def get_gamer_name
     if gamer_profile.present? && ( gamer_profile.first_name.present? || gamer_profile.last_name.present? )
       if gamer_profile.first_name.blank?
@@ -90,31 +90,29 @@ private
 
   def check_referrer
     if referrer?
-      self.referred_by, invitation_id = SymmetricCrypto.decrypt_object(referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
-      if referred_by? && invitation_id
-        Gamer.increment_counter(:referral_count, referred_by)
-        invitation = Invitation.find_by_id(invitation_id)
-        follow_gamer(Gamer.find_by_id(referred_by))
-        Invitation.reconcile_pending_invitations(self, :invitation => invitation)
+      if referrer.starts_with?('tjreferrer:')
+        click = Click.new :key => referrer.gsub('tjreferrer:', '')
+        if click.rewardable?
+          device = Device.new :key => click.udid
+          device.product = click.device_name
+          device.save
+          devices.build(:device => device)
+          url = "#{API_URL}/offer_completed?click_key=#{click.key}"
+          Downloader.get_with_retry url
+        end
+      else
+        self.referred_by, invitation_id = SymmetricCrypto.decrypt_object(referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
+        if referred_by? && invitation_id
+          Gamer.increment_counter(:referral_count, referred_by)
+          invitation = Invitation.find_by_id(invitation_id)
+          follow_gamer(Gamer.find_by_id(referred_by))
+          Invitation.reconcile_pending_invitations(self, :invitation => invitation)
+        end
       end
     end
   end
 
   def generate_confirmation_token
     self.confirmation_token = Authlogic::Random.friendly_token
-  end
-  
-  def check_referrer
-    if referrer.starts_with?('tjreferrer:')
-      click = Click.new :key => referrer.gsub('tjreferrer:', '')
-      if click.rewardable?
-        device = Device.new :key => click.udid
-        device.product = click.device_name
-        device.save
-        devices.build(:device => device)
-        url = "#{API_URL}/offer_completed?click_key=#{click.key}"
-        Downloader.get_with_retry url
-      end
-    end
   end
 end
