@@ -1,6 +1,7 @@
 class Games::SocialController < GamesController
   before_filter :require_gamer
   before_filter :offline_facebook_authenticate, :only => [:invite_facebook_friends, :send_facebook_invites ]
+  before_filter :validate_recipients, :only => [ :send_email_invites ]
 
   def invite_facebook_friends
     current_facebook_user.fetch
@@ -59,43 +60,37 @@ class Games::SocialController < GamesController
   end
 
   def send_email_invites
-    if params[:recipients].present?
-      recipients = params[:recipients]
-      gamers = []
-      non_gamers = []
+    gamers = []
+    non_gamers = []
 
-      recipients.split(/,/).each do |recipient|
-        recipient = recipient.strip.downcase
-        gamer = Gamer.find_by_email(recipient)
-        if gamer
-          if gamer.email != current_gamer.email
-            gamers << recipient
-            gamer = Gamer.find_by_email(recipient)
-            current_gamer.follow_gamer(gamer)
-          end
-        else
-          non_gamers << recipient
-          invitation = Invitation.find_by_external_info_and_gamer_id(recipient, current_gamer.id)
-          if invitation.blank?
-            invitation = Invitation.new
-            invitation.gamer_id = current_gamer.id
-            invitation.channel = Invitation::EMAIL
-            invitation.external_info = recipient
-            invitation.save
-          end
+    @recipients.each do |recipient|
+      gamer = Gamer.find_by_email(recipient)
+      if gamer
+        if gamer.email != current_gamer.email
+          gamers << recipient
+          gamer = Gamer.find_by_email(recipient)
+          current_gamer.follow_gamer(gamer)
+        end
+      else
+        non_gamers << recipient
+        invitation = Invitation.find_by_external_info_and_gamer_id(recipient, current_gamer.id)
+        if invitation.blank?
+          invitation = Invitation.new
+          invitation.gamer_id = current_gamer.id
+          invitation.channel = Invitation::EMAIL
+          invitation.external_info = recipient
+          invitation.save
+        end
 
-          if invitation.pending?
-            content = "Hi, <br/><br/>#{current_gamer.get_gamer_name} has invited you to join Tapjoy. With Tapjoy you can discover tons of apps and build fuel in your current ones. Create your account here:"
-            signature = "Start Discovering!<br/>Team Tapjoy"
-            link = games_login_url(:referrer => invitation.encrypted_referral_id)
-            GamesMailer.deliver_invite(current_gamer, recipient, content, link, signature)
-          end
+        if invitation.pending?
+          content = "Hi, <br/><br/>#{current_gamer.get_gamer_name} has invited you to join Tapjoy. With Tapjoy you can discover tons of apps and build fuel in your current ones. Create your account here:"
+          signature = "Start Discovering!<br/>Team Tapjoy"
+          link = games_login_url(:referrer => invitation.encrypted_referral_id)
+          GamesMailer.deliver_invite(current_gamer, recipient, content, link, signature)
         end
       end
-      render :json => { :success => true, :gamers => gamers, :non_gamers => non_gamers }
-    else
-      render :json => { :success => false, :error => "Please provide at least one email" }
     end
+    render :json => { :success => true, :gamers => gamers, :non_gamers => non_gamers }
   end
 
 private
@@ -111,5 +106,25 @@ private
 
   def require_gamer
     redirect_to games_login_path if current_gamer.blank?
+  end
+  
+  def validate_recipients
+    if params[:recipients].present?
+      @recipients = params[:recipients].split(/,/)
+      not_valid = []
+      
+      @recipients.each_with_index do |recipient, index|
+        @recipients[index] = recipient.strip.downcase
+        not_valid << recipient if @recipients[index] !~ Authlogic::Regex.email
+      end
+      
+      if not_valid.length == 1
+        render :json => { :success => false, :error => "This email(#{not_valid.join(', ')}) is invalid, please revise it" }
+      elsif not_valid.length > 1
+        render :json => { :success => false, :error => "These emails(#{not_valid.join(', ')}) are invalid, please revise them" }
+      end
+    else
+      render :json => { :success => false, :error => "Please provide at least one email" }
+    end
   end
 end
