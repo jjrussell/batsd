@@ -140,20 +140,24 @@ module Offer::UrlGeneration
   def display_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false)
     size = "#{width}x#{height}"
 
+    delim = '?'
     if display_custom_banner_for_size?(size)
       url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size)}"
-      url << "?ts=#{Time.now.to_i}" if bust_cache
     else
       display_multiplier = (display_multiplier || 1).to_f
       # TO REMOVE: displayer_app_id param after rollout.
       url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{id}&displayer_app_id=#{publisher_app_id}&size=#{size}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}"
       url << "&re_cache=#{bust_cache}"
+      delim = '&'
     end
+    url << "#{delim}ts=#{Time.now.to_i}" if bust_cache
     url
   end
 
-  def fullscreen_ad_image_url(publisher_app_id)
-    "#{API_URL}/fullscreen_ad/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
+  def fullscreen_ad_image_url(publisher_app_id, bust_cache = false)
+    url = "#{API_URL}/fullscreen_ad/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
+    url << "&ts=#{Time.now.to_i}" if bust_cache
+    url
   end
 
   def fullscreen_ad_url(options)
@@ -183,8 +187,10 @@ module Offer::UrlGeneration
     ad_url
   end
 
-  def get_offers_image_url(publisher_app_id)
-    "#{API_URL}/get_offers/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
+  def get_offers_image_url(publisher_app_id, bust_cache = false)
+    url = "#{API_URL}/get_offers/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
+    url << "&ts=#{Time.now.to_i}" if bust_cache
+    url
   end
 
   def get_offers_webpage_url(publisher_app_id)

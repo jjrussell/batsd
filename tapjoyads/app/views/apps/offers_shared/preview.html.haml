@@ -8,7 +8,7 @@
       - if !@show_generated_ads
         = render :partial => "no_icon"
       - else
-        = image_tag(@offer.fullscreen_ad_image_url(publisher_app_id), :class => 'preview', :alt => '')
+        = image_tag(@offer.fullscreen_ad_image_url(publisher_app_id, true), :class => 'preview', :alt => '')
   - else
     - if @offer.rewarded? # show offer wall ad
       Marketplace ad:
@@ -16,7 +16,7 @@
         - if !@show_generated_ads
           = render :partial => "no_icon"
         - else
-          = image_tag(@offer.get_offers_image_url(publisher_app_id), :class => 'preview', :alt => '')
+          = image_tag(@offer.get_offers_image_url(publisher_app_id, true), :class => 'preview', :alt => '')
 
     - if @offer.display_banner_ads?
       - Offer::DISPLAY_AD_SIZES.each_with_index do |size, index|
@@ -63,11 +63,15 @@
 
   - (Offer::DISPLAY_AD_SIZES + %w(320x480 320x200)).each do |size|
     - width, height = size.split("x")
+    - if @show_generated_ads # show spinner while images are loading
+      :plain
+        div.img#{width}x#{height} {
+          background-image: url('/images/spinner.gif');
+          background-repeat: no-repeat;
+          background-position: center;
+        }
     :plain
       div.img#{width}x#{height} {
-        background-image: url('/images/spinner.gif');
-        background-repeat: no-repeat;
-        background-position: center;
         height: #{height}px;
         margin-bottom: 10px;
         margin-top: 5px;
