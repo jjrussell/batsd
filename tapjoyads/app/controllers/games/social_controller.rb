@@ -14,7 +14,7 @@ class Games::SocialController < GamesController
       friend[:name].downcase
     end
   end
-  
+
   def send_facebook_invites
     friends = params[:friends]
 
@@ -63,7 +63,7 @@ class Games::SocialController < GamesController
       recipients = params[:recipients]
       gamers = []
       non_gamers = []
-      
+
       recipients.split(/,/).each do |recipient|
         recipient = recipient.strip.downcase
         gamer = Gamer.find_by_email(recipient)
@@ -85,17 +85,13 @@ class Games::SocialController < GamesController
           end
 
           if invitation.pending?
-            content = "
-            Hi, <br/><br/>
-            #{current_gamer.get_gamer_name} has invited you to join Tapjoy. With Tapjoy you can discover tons of apps and build fuel in your current ones. Create your account here:"
-            signature = "Start Discovering! <br/>
-            Team Tapjoy"
-            link = "#{games_login_url(:referrer => invitation.encrypted_referral_id)}"
+            content = "Hi, <br/><br/>#{current_gamer.get_gamer_name} has invited you to join Tapjoy. With Tapjoy you can discover tons of apps and build fuel in your current ones. Create your account here:"
+            signature = "Start Discovering!<br/>Team Tapjoy"
+            link = games_login_url(:referrer => invitation.encrypted_referral_id)
             GamesMailer.deliver_invite(current_gamer, recipient, content, link, signature)
           end
         end
       end
-      
       render :json => { :success => true, :gamers => gamers, :non_gamers => non_gamers }
     else
       render :json => { :success => false, :error => "Please provide at least one email" }
