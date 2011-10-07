@@ -38,8 +38,9 @@ class Games::SocialController < GamesController
           if invitation.pending?
             name = "www.tapjoygames.com"
             link = games_login_url :referrer => invitation.encrypted_referral_id
-            message = "#{current_gamer.get_gamer_name} has invited you to join Tapjoy.\nExperience the best of mobile apps!"
-            post = Mogli::Post.new(:name => name, :link => link, :message => message, :picture => "test.tapjoy.com/images/games/tmp_tapjoy_logo.png")
+            message = "#{friend.first_name} #{friend.last_name} has invited you to join Tapjoy."
+            description = "Experience the best of mobile apps!"
+            post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => "test.tapjoy.com/images/games/tmp_tapjoy_logo.png")
             posts << friend.feed_create(post)
           end
         end
