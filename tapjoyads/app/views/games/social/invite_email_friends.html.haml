@@ -4,7 +4,7 @@
 .email_invite_wrapper
   - form_tag games_social_send_email_invites_path, :id => 'invite_friends' do
     #recipients_lable Recipients
-    .recipients_wrapper= text_field_tag 'recipients', @recipients, :placeholder => 'Please use comma separate multiple emails'
+    .recipients_wrapper= text_field_tag 'recipients', @recipients, :placeholder => 'Use commas to separate multiple emails'
     .content_wrapper= text_area_tag 'content', @content, :rows => 10, :disabled => true
     %span#back_button Back
     %span#invite_button Invite
