@@ -54,6 +54,7 @@ private
     end
     
     Time.zone = @user.time_zone
+    Time.zone = params[:timezone].to_i if params[:timezone].present?
   end
 
   def lookup_stats

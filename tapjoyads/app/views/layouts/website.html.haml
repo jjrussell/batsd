@@ -14,7 +14,7 @@
     #main
       #top_nav
         .left
-          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo.png"), dashboard_root_path
+          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo.png"), "#{WEBSITE_URL}/"
         .right
           = link_to('Dev forum', DEV_FORUM_URL)
           |
@@ -32,6 +32,12 @@
         .clear
 
       #content
+        - if should_use_dashboard?
+          .flash
+            The Tapjoy dashboard is now located at
+            = succeed '.' do
+              = link_to 'dashboard.tapjoy.com', "#{DASHBOARD_URL}#{request.path}"
+            Please update your bookmarks.
         - flash.each do |name, msg|
           .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
             %strong #{name.to_s.humanize}:
@@ -46,7 +52,7 @@
 
       #footer
         &copy; #{Time.now.year} Tapjoy, Inc.
-        = link_to 'Privacy Policy', 'https://www.tapjoy.com/privacy.html', :target => '_blank'
+        = link_to 'Privacy Policy', "#{WEBSITE_URL}/privacy.html", :target => '_blank'
 
     = javascript_include_tag 'jquery-1.4.2.min', 'jquery-ui-1.8.5.min', 'jquery.tablesorter', 'application', 'chosen.jquery'
     = yield :included_javascripts

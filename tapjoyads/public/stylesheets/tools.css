@@ -11,6 +11,9 @@ table.with-border td.small {
 .rewarded {
   background-color: #0d0;
 }
+.rewarded-failed {
+  background-color: orange;
+}
 .not-rewarded {
   background-color: #644;
   color: #eee;

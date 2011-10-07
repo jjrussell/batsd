@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110927200827) do
+ActiveRecord::Schema.define(:version => 20110930205352) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -95,9 +95,7 @@ ActiveRecord::Schema.define(:version => 20110927200827) do
     t.integer  "price",                                 :default => 0
     t.string   "platform"
     t.string   "store_id"
-    t.text     "store_url"
     t.integer  "color"
-    t.boolean  "use_raw_url",                           :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "age_rating"
@@ -341,6 +339,7 @@ ActiveRecord::Schema.define(:version => 20110927200827) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "instructions"
+    t.string   "category"
   end
 
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true
@@ -481,7 +480,7 @@ ActiveRecord::Schema.define(:version => 20110927200827) do
     t.boolean  "tapjoy_enabled",                                                                :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "third_party_data"
+    t.text     "third_party_data"
     t.decimal  "conversion_rate",                                 :precision => 8, :scale => 6, :default => 0.0,   :null => false
     t.decimal  "show_rate",                                       :precision => 8, :scale => 6, :default => 1.0,   :null => false
     t.boolean  "self_promote_only",                                                             :default => false, :null => false
@@ -519,6 +518,8 @@ ActiveRecord::Schema.define(:version => 20110927200827) do
     t.string   "min_os_version",                                                                :default => "",    :null => false
     t.text     "screen_layout_sizes",                                                                              :null => false
     t.integer  "interval",                                                                      :default => 0,     :null => false
+    t.boolean  "url_overridden",                                                                :default => false, :null => false
+    t.text     "banner_creatives"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

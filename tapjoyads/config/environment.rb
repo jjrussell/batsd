@@ -45,6 +45,7 @@ Rails::Initializer.run do |config|
 
   # These gems should be vendored
   config.gem 'airbrake', :version => '3.0.4'
+  config.gem 'after_commit', :version => '1.0.10'
   config.gem 'authlogic', :version => '2.1.3'
   config.gem 'curbit', :version => '0.2.0'
   config.gem 'declarative_authorization', :version => '0.4.1'

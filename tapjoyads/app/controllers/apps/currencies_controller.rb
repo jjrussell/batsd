@@ -63,7 +63,7 @@ class Apps::CurrenciesController < WebsiteController
       @currency.ordinal = 1
     else
       @currency = @app.currencies.first.clone
-      @currency.ordinal = @app.currencies.last.ordinal + 100
+      @currency.attributes = { :created_at => nil, :updated_at => nil, :ordinal => (@app.currencies.last.ordinal + 100) }
     end
     
     log_activity(@currency)

@@ -31,7 +31,7 @@ private
     @direct_pay_providers = params[:direct_pay_providers].to_s.split(',')
     @amount = @currency.get_visual_reward_amount(@offer, params[:display_multiplier])
     
-    @click_url = @offer.get_click_url(
+    @click_url = @offer.click_url(
         :publisher_app     => @publisher_app,
         :publisher_user_id => params[:publisher_user_id],
         :udid              => params[:udid],

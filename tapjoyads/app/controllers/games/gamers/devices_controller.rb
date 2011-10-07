@@ -29,7 +29,8 @@ class Games::Gamers::DevicesController < GamesController
       :udid              => udid,
       :product           => product,
       :version           => version,
-      :mac_address       => mac_address.downcase.gsub(/:/,"")
+      :mac_address       => mac_address.downcase.gsub(/:/,""),
+      :platform          => 'ios'
     }
     redirect_to finalize_games_gamer_device_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)), :status => 301
   rescue Exception => e
@@ -47,6 +48,7 @@ class Games::Gamers::DevicesController < GamesController
       device.product = data[:product]
       device.version = data[:version]
       device.mac_address = data[:mac_address]
+      device.platform = data[:platform]
 
       if current_gamer.devices.create(:device => device)
         device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)

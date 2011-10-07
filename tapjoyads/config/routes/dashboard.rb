@@ -2,7 +2,7 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options({:path_prefix => MACHINE_TYPE == 'dashboard' ? '' : 'dashboard', :name_prefix => 'dashboard_'}) do |m|
     m.root :controller => 'dashboard/homepage', :action => :index
   end
-  
+
   map.resource :sign_up, :controller => :sign_up, :only => :create
   map.register 'register', :controller => :sign_up, :action => :new
   map.login 'login', :controller => :user_sessions, :action => :new
@@ -11,27 +11,24 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :internal_devices, :only => [ :index, :show, :destroy, :edit, :update ], :member => { :block => :get }
   map.new_internal_device 'approve_device', :controller => :internal_devices, :action => 'new', :conditions => { :method => :get }
   map.approve_internal_device 'approve_device/:id', :controller => :internal_devices, :action => 'approve', :conditions => { :method => :get }
-  
+
   map.resources :sdk, :only => [ :index, :show ], :collection => { :popup => :get, :license => :get }
-  
+
   map.namespace :agency_api do |agency|
     agency.resources :apps, :only => [ :index, :show, :create, :update ]
     agency.resources :partners, :only => [ :index, :show, :create, :update ], :collection => { :link => :post }
     agency.resources :currencies, :only => [ :index, :show, :create, :update ]
   end
   map.connect 'create_account', :controller => :create_account, :action => :index
-  map.connect 'reporting_data', :controller => :reporting_data, :action => :index
-  map.connect 'reporting_data.json', :controller => :reporting_data, :action => :index
-  map.connect 'reporting_data.xml', :controller => :reporting_data, :action => :index
-  map.connect 'reporting_data/udids', :controller => :reporting_data, :action => :udids
-  
+  map.resources :reporting_data, :only => :index, :collection => { :udids => :get }
+
   map.namespace :account do |account|
     account.resources :whitelist, :controller => 'whitelist', :only => [ :index ], :collection => [ :enable, :disable ]
-  end  
+  end
   map.resources :user_sessions, :only => [ :new, :create, :destroy ]
   map.resources :users, :as => :account, :except => [ :show, :destroy ]
   map.resources :apps, :except => [ :destroy ], :member => { :confirm => :get, :integrate => :get, :publisher_integrate => :get, :archive => :post, :unarchive => :post }, :collection => { :search => :get } do |app|
-    app.resources :offers, :only => [ :new, :create, :edit, :update ] , :member => { :toggle => :post, :percentile => :post }, :controller => 'apps/offers' do |offer|
+    app.resources :offers, :only => [ :new, :create, :edit, :update ] , :member => { :toggle => :post, :percentile => :post, :preview => :get, :upload_creative => [:get, :post, :put, :delete] }, :controller => 'apps/offers' do |offer|
       offer.resources :offer_events, :only => [ :index, :new, :create, :edit, :update, :destroy ], :controller => 'apps/offers/offer_events', :as => :scheduling
     end
     app.resources :currencies, :only => [ :show, :update, :new, :create ],
@@ -43,7 +40,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :enable_offer_requests, :only => [ :create ]
   map.resources :reporting, :only => [ :index, :show ], :member => { :export => :post, :download_udids => :get }, :collection => { :aggregate => :get, :export_aggregate => :post, :api => :get, :regenerate_api_key => :post }
   map.resources :billing, :only => [ :index ],
-    :collection => { :create_order => :post, :create_transfer => :post, :update_payout_info => :post, :forget_credit_card => :post, :export_statements => :get, :export_orders => :get, :export_payouts => :get, :export_adjustments => :get }
+    :collection => { :create_order => :post, :create_transfer => :post, :update_payout_info => :put, :forget_credit_card => :post, :export_statements => :get, :export_orders => :get, :export_payouts => :get, :export_adjustments => :get }
   map.add_funds_billing 'billing/add-funds', :controller => :billing, :action => :add_funds
   map.transfer_funds_billing 'billing/transfer-funds', :controller => :billing, :action => :transfer_funds
   map.payout_info_billing 'billing/payment-info', :controller => :billing, :action => :payout_info
@@ -65,7 +62,7 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.resource :premier, :controller => :premier, :only => [ :update ]
   map.premier 'premier', :controller => :premier, :action => :edit
-  
+
   # Admin tools routes
   map.resources :tools, :only => :index,
     :collection => { :monthly_data => :get, :new_transfer => :get,
@@ -77,7 +74,7 @@ ActionController::Routing::Routes.draw do |map|
                      :edit_android_app => :get, :update_android_app => :post, :update_user_roles => :post, :update_device => :post }
   map.namespace :tools do |tools|
     tools.resources :premier_partners, :only => [ :index ]
-    tools.resources :generic_offers, :only => [ :new, :create, :edit, :update ]
+    tools.resources :generic_offers, :only => [ :index, :new, :create, :edit, :update ]
     tools.resources :orders, :only => [ :new, :create ],
       :member => { :mark_invoiced => :put, :retry_invoicing => :put },
       :collection => { :failed_invoices => :get }
@@ -104,9 +101,9 @@ ActionController::Routing::Routes.draw do |map|
     tools.resources :support_requests, :only => [ :index ]
     tools.resources :press_releases, :only => [ :index, :new, :create, :edit, :update ]
   end
-  
+
   map.connect 'mail_chimp_callback/callback', :controller => :mail_chimp_callback, :action => :callback
-  
+
   map.connect 'adways_data',          :controller => :adways_data,          :action => :index
   map.connect 'brooklyn_packet_data', :controller => :brooklyn_packet_data, :action => :index
   map.connect 'ea_data',              :controller => :ea_data,              :action => :index
