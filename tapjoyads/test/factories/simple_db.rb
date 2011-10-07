@@ -17,4 +17,14 @@ FactoryGirl.define do
     price 10
     max_purchases 5
   end
+
+  factory :reward do
+    app = Factory(:app)
+
+    publisher_app_id  app.id
+    currency_id       { Factory(:currency, :id => app.id).id }
+    key               { Factory.next(:guid) }
+    publisher_user_id "bill"
+    currency_reward    100
+  end
 end
