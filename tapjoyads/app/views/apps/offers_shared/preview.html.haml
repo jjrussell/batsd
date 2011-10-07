@@ -5,28 +5,28 @@
   - if @offer.featured?
     Featured ad:
     %div.img320x480
-      - if !@show_generated_ads
-        = render :partial => "no_icon"
+      - if @show_generated_ads
+        = image_tag(@offer.fullscreen_ad_image_url(publisher_app_id, true), :class => 'preview', :alt => '')
       - else
-        = image_tag(@offer.fullscreen_ad_image_url(publisher_app_id), :class => 'preview', :alt => '')
+        = render :partial => "no_icon"
   - else
     - if @offer.rewarded? # show offer wall ad
       Marketplace ad:
       %div.img320x200
-        - if !@show_generated_ads
-          = render :partial => "no_icon"
+        - if @show_generated_ads
+          = image_tag(@offer.get_offers_image_url(publisher_app_id, true), :class => 'preview', :alt => '')
         - else
-          = image_tag(@offer.get_offers_image_url(publisher_app_id), :class => 'preview', :alt => '')
+          = render :partial => "no_icon"
 
     - if @offer.display_banner_ads?
       - Offer::DISPLAY_AD_SIZES.each_with_index do |size, index|
         = "#{size} banner ad:"
         %div{:class => "img#{size}"}
-          - if !@show_generated_ads
-            = render :partial => "no_icon"
-          - else
+          - if @show_generated_ads
             - width, height = size.split("x").collect{|x|x.to_i}
             = image_tag(@offer.display_ad_image_url(publisher_app_id, width, height, nil, nil, true), :class => 'preview', :alt => '')
+          - else
+            = render :partial => "no_icon"
 
     - if @offer.rewarded?
       .banner_ad_notes
@@ -63,11 +63,15 @@
 
   - (Offer::DISPLAY_AD_SIZES + %w(320x480 320x200)).each do |size|
     - width, height = size.split("x")
+    - if @show_generated_ads # show spinner while images are loading
+      :plain
+        div.img#{width}x#{height} {
+          background-image: url('/images/spinner.gif');
+          background-repeat: no-repeat;
+          background-position: center;
+        }
     :plain
       div.img#{width}x#{height} {
-        background-image: url('/images/spinner.gif');
-        background-repeat: no-repeat;
-        background-position: center;
         height: #{height}px;
         margin-bottom: 10px;
         margin-top: 5px;
