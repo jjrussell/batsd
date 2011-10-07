@@ -26,9 +26,11 @@ ActionController::Routing::Routes.draw do |map|
     
     m.resources :android, :controller => 'games/android', :action => :index
     
-    m.social_invite_email_friends 'invite_email_friends', :controller => 'games/social', :action => :invite_email_friends
-    m.social_send_email_invites 'send_email_invites', :controller => 'games/social', :action => :send_email_invites
-    m.social_invite_facebook_friends 'invite_facebook_friends', :controller => 'games/social', :action => :invite_facebook_friends
-    m.social_send_facebook_invites 'send_facebook_invites', :controller => 'games/social', :action => :send_facebook_invites
+    map.with_options :controller => 'games/social', :name_prefix => 'games_social_' do |social|
+      social.invite_email_friends 'invite_email_friends', :action => :invite_email_friends
+      social.send_email_invites 'send_email_invites', :action => :send_email_invites
+      social.invite_facebook_friends 'invite_facebook_friends', :action => :invite_facebook_friends
+      social.send_facebook_invites 'send_facebook_invites', :action => :send_facebook_invites
+    end
   end
 end
