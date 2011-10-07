@@ -70,7 +70,7 @@ class OfferList
       weights = offers.collect { |o| o.rank_score + weight_scale }
       offer = offers.weighted_rand(weights)
       return offer if offer.nil?
-      if offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version, @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size, @video_offer_ids)
+      if offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version, @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size, @video_offer_ids, @source)
         offers.delete(offer)
       else
         return offer
@@ -87,7 +87,7 @@ class OfferList
     
     if start == 0 && @include_rating_offer && @publisher_app.enabled_rating_offer_id.present?
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id)
-      if rate_app_offer.present? && rate_app_offer.accepting_clicks? && !rate_app_offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version, @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size, @video_offer_ids)
+      if rate_app_offer.present? && rate_app_offer.accepting_clicks? && !rate_app_offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version, @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size, @video_offer_ids, @source)
         returned_offers << rate_app_offer
         found_offers += 1
       end
@@ -96,7 +96,7 @@ class OfferList
     @offers.each_with_index do |offer, i|
       return [ returned_offers, @offers.length - i ] if found_offers >= offers_to_find
       
-      unless offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version, @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size, @video_offer_ids)
+      unless offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version, @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size, @video_offer_ids, @source)
         returned_offers << offer if found_offers >= start
         found_offers += 1
       end
