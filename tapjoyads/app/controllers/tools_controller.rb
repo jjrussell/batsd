@@ -199,11 +199,20 @@ class ToolsController < WebsiteController
       @jailbroken_count = 0
       @not_rewarded_count = 0
       @blocked_count = 0
+      @rewarded_failed_clicks_count = 0
+      @rewards = {}
       click_app_ids = []
       NUM_CLICK_DOMAINS.times do |i|
         Click.select(:domain_name => "clicks_#{i}", :where => conditions) do |click|
           @clicks << click
-          @rewarded_clicks_count += 1 if click.installed_at?
+          if click.installed_at?
+            @rewards[click.reward_key] = Reward.find(click.reward_key)
+            if @rewards[click.reward_key] && (@rewards[click.reward_key].send_currency_status == 'OK' || @rewards[click.reward_key].send_currency_status == '200')
+              @rewarded_clicks_count += 1
+            else
+              @rewarded_failed_clicks_count += 1
+            end
+          end
           @jailbroken_count += 1 if click.type =~ /install_jailbroken/
           if click.block_reason?
             if click.block_reason =~ /TooManyUdidsForPublisherUserId/
