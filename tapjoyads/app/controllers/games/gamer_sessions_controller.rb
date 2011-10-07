@@ -7,6 +7,7 @@ class Games::GamerSessionsController < GamesController
 
   def create
     @gamer_session = GamerSession.new(params[:gamer_session])
+    @gamer_session.remember_me = true
     if @gamer_session.save
       if params[:data].present?
         redirect_to finalize_games_gamer_device_path(:data => params[:data])
