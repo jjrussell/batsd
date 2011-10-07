@@ -3,8 +3,6 @@ require 'test_helper'
 class GamerTest < ActiveSupport::TestCase
   subject { Factory(:user) }
 
-  should validate_uniqueness_of(:username)
-
   context "Gamer" do
     setup do
       @gamer = Factory(:gamer)
