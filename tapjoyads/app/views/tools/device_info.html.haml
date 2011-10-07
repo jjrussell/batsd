@@ -105,7 +105,7 @@
         - tr_class = (i > 4 && click.key != params[:click_key]) ? 'more-clicks' : ''
         - if click.installed_at?
           - if @rewards[click.reward_key] && (@rewards[click.reward_key].send_currency_status == 'OK' || @rewards[click.reward_key].send_currency_status == '200')
-            - tr_class += ' rewarded' if click.installed_at?
+            - tr_class += ' rewarded'
           - else
             - tr_class += ' rewarded-failed'
         - tr_class += ' jailbroken' if click.type =~ /install_jailbroken/
