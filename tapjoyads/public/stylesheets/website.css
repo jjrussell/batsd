@@ -154,8 +154,8 @@ ul.navigation li {
 }
 ul.navigation li:hover {
   background: #bbb;
-	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#bbb));
-	background: -moz-linear-gradient(top, #fff, #bbb);
+  background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#bbb));
+  background: -moz-linear-gradient(top, #fff, #bbb);
 }
 ul.navigation li:last-child {
   border-right: 1px solid #888;
@@ -213,7 +213,8 @@ form.tjform {
 .tjform textarea,
 .tjform input[type=text],
 .tjform input[type=email],
-.tjform input[type=password] {
+.tjform input[type=password],
+.tjform input[type=file] {
   padding: 2px;
   border: 2px solid #bec5cb;
   font-size: 16px;

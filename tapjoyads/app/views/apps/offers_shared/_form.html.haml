@@ -137,8 +137,8 @@
   %br
   Upload custom creatives:
   %br
-  - @custom_creative_sizes.each do |size|
-    %iframe.creative_upload{:src => upload_creative_app_offer_path(:id => @offer.id, :app => @app.id, :size => size)}
+  - @custom_creative_sizes.each do |size_hash|
+    %iframe.creative_upload{:src => upload_creative_app_offer_path(:id => @offer.id, :app => @app.id, :size => size_hash[:dimensions], :label => size_hash[:label])}
 
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
   - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
@@ -434,5 +434,5 @@
     .creative_upload {
       width: 100%;
       border: none;
-      height: 30px;
+      height: 35px;
     }

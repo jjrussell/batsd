@@ -37,9 +37,13 @@ class Apps::OffersController < WebsiteController
     end
 
     if !@offer.rewarded?
-      @custom_creative_sizes = Offer::DISPLAY_AD_SIZES
+      @custom_creative_sizes = Offer::DISPLAY_AD_SIZES.collect { |size| { :dimensions => size, :label => "#{size} creative" }}
     elsif @offer.featured?
-      @custom_creative_sizes = Offer::FEATURED_AD_SIZES
+      @custom_creative_sizes = Offer::FEATURED_AD_SIZES.collect do |size|
+        width, height = size.split("x").collect{|x|x.to_i}
+        orientation = width > height ? "(landscape)" : "(portrait)"
+        { :dimensions => size, :label => "#{size} #{orientation} creative" }
+      end
     end
   end
 
@@ -78,6 +82,7 @@ class Apps::OffersController < WebsiteController
 
   def upload_creative
     @size = params[:size]
+    @label = params[:label]
     image_data = params[:offer]["custom_creative_#{@size}".to_sym].read rescue nil
 
     modifying = true

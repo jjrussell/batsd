@@ -34,7 +34,7 @@ class Offer < ActiveRecord::Base
   }
 
   DISPLAY_AD_SIZES = ['320x50', '640x100', '768x90']
-  FEATURED_AD_SIZES = ['960x640', '640x480', '480x320', '320x480']
+  FEATURED_AD_SIZES = ['960x640', '640x960', '480x320', '320x480']
 
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
@@ -65,6 +65,9 @@ class Offer < ActiveRecord::Base
   serialize :banner_creatives, Array
 
   DISPLAY_AD_SIZES.each do |size|
+    attr_accessor "banner_creative_#{size}_blob".to_sym
+  end
+  FEATURED_AD_SIZES.each do |size|
     attr_accessor "banner_creative_#{size}_blob".to_sym
   end
 
@@ -313,14 +316,8 @@ class Offer < ActiveRecord::Base
     banner_creative_path(size, format).gsub('/','.')
   end
 
-  def display_banner_ads?
-    return false if (is_paid? || featured?)
-    return (item_type == 'App' && name.length <= 30) if rewarded?
-    item_type != 'VideoOffer'
-  end
-
   def display_custom_banner_for_size?(size)
-    display_banner_ads? && banner_creatives.include?(size)
+    return !rewarded? && !featured? && is_free? && item_type != 'VideoOffer' && banner_creatives.include?(size)
   end
 
   def get_icon_url(options = {})
@@ -498,8 +495,9 @@ class Offer < ActiveRecord::Base
   end
 
   def check_for_uploaded_icon
-    bucket = AWS::S3.new.buckets[BucketNames::TAPJOY]
-    bucket.objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"].exists?
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    key = RightAws::S3::Key.create(bucket, "icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg")
+    key.exists?
   end
 
   def update_payment(force_update = false)
@@ -620,21 +618,26 @@ private
 
   def sync_banner_creatives!
     creative_blobs = {}
-    Offer::DISPLAY_AD_SIZES.each do |size|
+    if !rewarded? && !featured?
+      custom_creative_sizes = Offer::DISPLAY_AD_SIZES
+    elsif featured?
+      custom_creative_sizes = Offer::FEATURED_AD_SIZES
+    end
+    custom_creative_sizes.each do |size|
       image_data = (send("banner_creative_#{size}_blob") rescue nil)
       creative_blobs[size] = image_data if !image_data.blank?
     end
 
     return if (!banner_creatives_changed? && creative_blobs.empty?)
     if (banner_creatives.size - banner_creatives_was.size).abs > 1 || creative_blobs.size > 1
-      raise "Unable to sync changes to more than one banner creative at a time"
+      raise "Unable to sync changes to more than one custom creative file at a time"
     end
 
     blob = creative_blobs.values.first # will be nil for banner creative removals
     if banner_creatives.size > banner_creatives_was.size
       # banner creative added, find which size was added and make sure file matches up
       new_size = (banner_creatives - banner_creatives_was).first
-      raise BannerSyncError.new("custom_creative_#{new_size}_blob", "#{new_size} banner creative file not provided.") if creative_blobs[new_size].nil?
+      raise BannerSyncError.new("custom_creative_#{new_size}_blob", "#{new_size} custom creative file not provided.") if creative_blobs[new_size].nil?
 
       # upload to S3
       upload_banner_creative!(blob, new_size)
