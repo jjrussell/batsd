@@ -32,7 +32,22 @@ while time < end_time do
     `gzip -c #{tmpfile_path} > #{gzipfile_path}`
 
     s3_object = bucket.objects[s3_path]
-    s3_object.write(:file => gzipfile_path)
+    retries = 3
+    begin
+      s3_object.write(:file => gzipfile_path)
+    rescue Exception => e
+      if retries > 0
+        retries -= 1
+        sleep 1
+        retry
+      else
+        if File.exists?(logfile_path)
+          raise e
+        else
+          File.rename(tmpfile_path, logfile_path)
+        end
+      end
+    end
 
     File.delete(gzipfile_path)
     File.rename(tmpfile_path, "#{logfile_path}.uploaded.#{unique_id}")
