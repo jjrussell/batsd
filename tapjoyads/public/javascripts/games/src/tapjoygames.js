@@ -406,7 +406,7 @@ TJG.ui = {
     setTimeout(function() {
       TJG.utils.centerDialog("#update_dob_dialog");
       TJG.repositionDialog = ["#update_dob_dialog"];
-      $(".close_dialog").show();
+      $(".container").hide();
       $("#update_dob_dialog").fadeIn();
     }, 50);
 
