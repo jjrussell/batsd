@@ -38,12 +38,32 @@ class Gamer < ActiveRecord::Base
     end
   end
 
+  def update_twitter_info!(authhash)
+    if twitter_id != authhash[:twitter_id]
+      self.twitter_id            = authhash[:twitter_id]
+      self.twitter_access_token  = authhash[:twitter_access_token]
+      self.twitter_access_secret = authhash[:twitter_access_secret]
+      save!
+
+      Invitation.reconcile_pending_invitations(self, :external_info => twitter_id)
+    end
+  end
+  
+  def clear_twitter_info!
+    self.twitter_id            = nil
+    self.twitter_access_token  = nil
+    self.twitter_access_secret = nil
+    save!
+  end
+
   def external_info(channel)
     case channel
     when Invitation::EMAIL
       email
     when Invitation::FACEBOOK
       facebook_id
+    when Invitation::TWITTER
+      twitter_id
     end
   end
 
@@ -51,10 +71,10 @@ class Gamer < ActiveRecord::Base
     Friendship.establish_friendship(id, friend.id)
   end
 
-  def facebook_invitation_for(friend_id)
+  def invitation_for(friend_id, channel)
     invitation = Invitation.find_by_external_info_and_gamer_id(friend_id, id)
     if invitation.nil?
-      invitation = invitations.build(:channel => Invitation::FACEBOOK, :external_info => friend_id)
+      invitation = invitations.build(:channel => channel, :external_info => friend_id)
       invitation.save
     end
     invitation

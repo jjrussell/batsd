@@ -79,3 +79,7 @@ FRESHBOOKS_API_URL = 'tapjoy.freshbooks.com'
 FRESHBOOKS_AUTH_TOKEN = '26c1ce82ad1cfab698746e532361f814'
 
 CLEAR_MEMCACHE = false
+
+twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+ENV['CONSUMER_KEY'] = twitter['production']['consumer_key']
+ENV['CONSUMER_SECRET'] = twitter['production']['consumer_secret']
