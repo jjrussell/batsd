@@ -29,6 +29,8 @@ class Games::GamersController < GamesController
   end
 
   def edit
+    @gamer_profile = @gamer.gamer_profile || GamerProfile.new(:gamer => @gamer)
+
     @geoip_data = get_geoip_data
     @geoip_data[:country_name] = Countries.country_code_to_name[@geoip_data[:country]]
 
@@ -51,7 +53,6 @@ private
   def set_profile
     if current_gamer.present?
       @gamer = current_gamer
-      @gamer_profile = @gamer.gamer_profile || GamerProfile.new(:gamer => @gamer)
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
       redirect_to games_root_path

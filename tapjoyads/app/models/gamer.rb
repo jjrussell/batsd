@@ -27,10 +27,16 @@ class Gamer < ActiveRecord::Base
     save
   end
 
-  def get_gamer_name
+  def get_gamer_nickname
     if gamer_profile.present? && gamer_profile.nickname.present?
       gamer_profile.nickname
-    elsif gamer_profile.present? && gamer_profile.name.present?
+    else
+      get_gamer_name
+    end
+  end
+  
+  def get_gamer_name
+    if gamer_profile.present? && gamer_profile.name.present?
       gamer_profile.name
     else
       email
