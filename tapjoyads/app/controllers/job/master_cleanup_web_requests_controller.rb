@@ -18,9 +18,18 @@ class Job::MasterCleanupWebRequestsController < Job::JobController
 
         next unless domain_names.include?(domain_name)
 
-        backup_options = { :delete_domain => true, :prefix => "#{day.to_s}/" }
-        message = { :domain_name => domain_name, :s3_bucket => BucketNames::WEB_REQUESTS, :backup_options => backup_options }.to_json
-        Sqs.send_message(QueueNames::SDB_BACKUPS, message)
+        retries = 20
+        begin
+          SimpledbResource.delete_domain(domain_name)
+        rescue RightAws::AwsError => e
+          if retries > 0
+            retries -= 1
+            sleep 1
+            retry
+          else
+            raise e
+          end
+        end
       end
 
       day -= 1.day
