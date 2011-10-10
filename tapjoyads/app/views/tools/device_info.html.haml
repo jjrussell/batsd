@@ -102,7 +102,7 @@
         - adv = @click_apps[click.advertiser_app_id]
         - pub = @click_apps[click.publisher_app_id]
         - disp = @click_apps[click.displayer_app_id]
-        - tr_class = (i > 4 && click.key != params[:click_key]) ? 'more-clicks' : ''
+        - tr_class = ''
         - if click.installed_at?
           - if @rewards[click.reward_key] && (@rewards[click.reward_key].send_currency_status == 'OK' || @rewards[click.reward_key].send_currency_status == '200')
             - tr_class += ' rewarded'
@@ -187,8 +187,6 @@
                   %li
                     Pub user ID:
                     = click.publisher_user_id
-  - if @clicks.length > 5
-    = link_to('(show all)', '#', {:id => 'show_more_clicks'})
 
 - content_for :page_head, stylesheet_link_tag('tools')
 
@@ -200,10 +198,6 @@
         $('#show_more_apps').hide();
         return false;
       });
-      $('#show_more_clicks').click(function(){
-        $('.more-clicks').show();
-        $('#show_more_clicks').hide();
-        return false;
       });
       $('.show-click-detail').click(function(){
         $(this).hide();
