@@ -12,3 +12,4 @@ tapjoy.komodoproject
 .project
 config/local.yml
 public/stylesheets/games/facebook.css
+data/GeoIPCity.dat

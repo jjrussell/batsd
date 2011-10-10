@@ -48,7 +48,7 @@ server_list.each do |server|
   count += 1
   server[:server_num] = count
   server[:serial] = serial && server[:aws_groups].include?('webserver') && registered_webservers.include?(server[:aws_instance_id])
-  server[:boot_app] = server[:aws_groups].include?('website') || server[:aws_groups].include?('games')
+  server[:boot_app] = server[:aws_groups].include?('website') || server[:aws_groups].include?('games') || server[:aws_groups].include?('dashboard')
   puts server[:serial] ? "#{server[:dns_name]} (serial)" : "#{server[:dns_name]}"
 end
 puts "User: #{user}"
