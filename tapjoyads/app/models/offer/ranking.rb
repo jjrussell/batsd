@@ -1,5 +1,4 @@
 module Offer::Ranking
-  extend ActiveSupport::Memoizable
   
   def self.included(base)
     base.class_eval do
@@ -34,7 +33,6 @@ module Offer::Ranking
     end
     rank_scores
   end
-  memoize :precache_rank_scores
 
   def precache_rank_score_for(currency_group_id)
     precache_rank_scores[currency_group_id]
@@ -42,7 +40,7 @@ module Offer::Ranking
 
   def postcache_rank_score(currency)
     self.rank_score = precache_rank_score_for(currency.currency_group_id) || 0
-    self.rank_score += (categories & currency.categories).length.to_f / currency.categories.length * (currency.postcache_weights[:category_match] || 0)
+    self.rank_score += (categories & currency.categories).length.to_f / currency.categories.length * (currency.postcache_weights[:category_match] || 0) if currency.categories.any?
     rank_score
   end
   
