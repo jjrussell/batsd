@@ -18,7 +18,18 @@ class Job::MasterCleanupWebRequestsController < Job::JobController
 
         next unless domain_names.include?(domain_name)
 
-        SimpledbResource.delete_domain(domain_name)
+        retries = 20
+        begin
+          SimpledbResource.delete_domain(domain_name)
+        rescue RightAws::AwsError => e
+          if retries > 0
+            retries -= 1
+            sleep 1
+            retry
+          else
+            raise e
+          end
+        end
       end
 
       day -= 1.day
