@@ -9,22 +9,25 @@ require 'rubygems'
 require 'uuidtools'
 require 'aws-sdk'
 
-ebs_base   = '/ebs/log/rails-web_requests'
-local_base = '/mnt'
-now        = Time.now.utc
-end_time   = Time.at(now.to_i - 300 - (now.to_i % 60)).utc
-time       = end_time - 86400 # 24 hours
-s3         = AWS::S3.new(:access_key_id => 'AKIAIIKZSMGHPF4Q6JAA', :secret_access_key => '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')
-bucket     = s3.buckets['web-requests']
+AWS_KEY_ID     = 'AKIAIOELYY4DYORMCAFA'
+AWS_SECRET_KEY = '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'
+EBS_BASE       = '/ebs/log/rails-web_requests'
+LOCAL_BASE     = '/mnt'
+now            = Time.now.utc
+end_time       = Time.at(now.to_i - 300 - (now.to_i % 60)).utc
+time           = end_time - 86400 # 24 hours
+ses            = AWS::SimpleEmailService.new(:access_key_id => AWS_KEY_ID, :secret_access_key => AWS_SECRET_KEY)
+s3             = AWS::S3.new(:access_key_id => AWS_KEY_ID, :secret_access_key => AWS_SECRET_KEY)
+bucket         = s3.buckets['web-requests']
 
 while time < end_time do
   filename     = "#{time.strftime('%Y-%m-%d-%H%M')}"
-  logfile_path = "#{ebs_base}/#{filename}.log"
+  logfile_path = "#{EBS_BASE}/#{filename}.log"
 
   if File.exists?(logfile_path)
     unique_id     = UUIDTools::UUID.random_create.hexdigest
     tmpfile_path  = "#{logfile_path}.uploading.#{unique_id}"
-    gzipfile_path = "#{local_base}/#{filename}.#{unique_id}.sdb.gz"
+    gzipfile_path = "#{LOCAL_BASE}/#{filename}.#{unique_id}.sdb.gz"
     s3_path       = "syslog-ng/#{time.strftime('%Y-%m-%d')}/#{time.strftime('%H%M')}-#{unique_id}.sdb.gz"
 
     File.rename(logfile_path, tmpfile_path)
@@ -42,7 +45,11 @@ while time < end_time do
         retry
       else
         if File.exists?(logfile_path)
-          raise e
+          ses.send_email(
+            :from      => 'Syslog-ng <noreply@tapjoy.com>',
+            :to        => 'dev@tapjoy.com',
+            :subject   => 'FAILED: Web-request upload',
+            :body_text => "Failed to upload: #{tmpfile_path}")
         else
           File.rename(tmpfile_path, logfile_path)
         end
@@ -54,7 +61,7 @@ while time < end_time do
   end
 
   delete_time = time - 172800 # 48 hours
-  Dir.glob("#{ebs_base}/#{delete_time.strftime('%Y-%m-%d-%H%M')}.log.uploaded.*").each do |filename|
+  Dir.glob("#{EBS_BASE}/#{delete_time.strftime('%Y-%m-%d-%H%M')}.log.uploaded.*").each do |filename|
     File.delete(filename)
   end
 
