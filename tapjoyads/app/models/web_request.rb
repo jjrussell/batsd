@@ -229,11 +229,11 @@ class WebRequest < SimpledbResource
   end
   
   def self.count_with_vertica(conditions = nil)
-    VerticaCluster.count('web_request', conditions)
+    VerticaCluster.count('production.web_request', conditions)
   end
   
   def self.select_with_vertica(options = {})
-    VerticaCluster.query('web_request', options)
+    VerticaCluster.query('production.web_request', options)
   end
   
 private
