@@ -28,6 +28,15 @@ class Games::GamersController < GamesController
     end
   end
 
+  def edit
+    @geoip_data = get_geoip_data
+    @geoip_data[:country_name] = Countries.country_code_to_name[@geoip_data[:country]]
+
+    if @gamer_profile.country.blank?
+      @gamer_profile.country = Countries.country_code_to_name[@geoip_data[:country]]
+    end
+  end
+
   def update_password
     @gamer.safe_update_attributes(params[:gamer], [ :password, :password_confirmation ])
     if @gamer.save
@@ -42,6 +51,7 @@ private
   def set_profile
     if current_gamer.present?
       @gamer = current_gamer
+      @gamer_profile = @gamer.gamer_profile || GamerProfile.new(:gamer => @gamer)
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
       redirect_to games_root_path

@@ -163,6 +163,13 @@ a, a:visited {
   margin: 0 auto;
   text-align: left;
 }
+#update_dob_again {
+  margin-top: 6px;
+}
+#update_dob_dialog form {
+  margin: 0 auto;
+  text-align: left;
+}
 .dialog_title {
   font-size: 20px;
 }
@@ -231,6 +238,16 @@ form#new_gamer label,
 form#new_gamer input {
   display: block;
   padding: 3px 0;
+}
+#update_dob_dialog label {
+  display: block;
+  padding: 3px 0;
+}
+#update_dob_dialog input[type=submit] {
+  margin-top: 8px;
+}
+#update_dob_dialog .field {
+  width: 100%;
 }
 /* Nav */
 .top_nav_bar {
@@ -641,7 +658,7 @@ form#new_gamer_session input[type=password] {
   width: 130px;
 }    
 form#new_gamer_session label {
-    padding: 0 8px 0 12px;
+  padding: 0 8px 0 12px;
 }
 form#new_gamer_session .login_pass label {
   padding: 4px 8px 0 12px;
@@ -929,6 +946,9 @@ form#new_gamer_session .login_pass {
   padding: 0 0 0 4px;
   position: relative;
 }
+.button_bar {
+  width: 100%;
+}
 .button_bar input[type=submit] {
 	float: right;
   margin: 0 16px 10px 0;
@@ -1010,12 +1030,12 @@ form#new_gamer_session .login_pass {
 .login_header_wrapper a, .my_account_header_wrapper a, .header_wrapper a {
   color: #6B5F54;
 }
-.formError, .email_error, .account_error, .login_error, .form_error {
+.formError, .email_error, .account_error, .login_error, .form_error, .dob_error {
   color: #F21C1A;
   font-size: 13px;
   padding: 4px;
 }
-.formError .pad, .email_error .pad, .account_error .pad, .login_error .pad, .form_error .pad {
+.formError .pad, .email_error .pad, .account_error .pad, .login_error .pad, .form_error .pad, .dob_error .pad {
   padding: 6px;
 } 
 .mobile .tab_wrapper {

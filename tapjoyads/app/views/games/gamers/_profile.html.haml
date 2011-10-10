@@ -1,0 +1,48 @@
+.title_2
+  My Profile
+- form_for([ :games, :gamer, @gamer_profile ], :url => games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
+  .content_box_wrapper
+    .content_box.clearfix
+      #edit_profile
+        .slider.bottom_line.clearfix
+          .field.clearfix
+            = f.label :name, 'Name: '
+            = f.text_field :name, :size => 50
+        .slider.bottom_line.clearfix
+          .field.clearfix
+            = f.label :nickname, 'Nickname: '
+            = f.text_field :nickname, :size => 50
+        .slider.bottom_line.clearfix
+          .field.clearfix
+            = label_tag 'Email: '
+            = text_field_tag :email, @gamer.email, { :readonly => 'readonly', :size => 50 }
+        .slider.bottom_line.clearfix
+          .field.clearfix
+            = f.label :gender, 'Gender: '
+            = f.select :gender, { 'Male' => 'male', 'Female' => 'female', 'Other' => 'other' }, :include_blank => true
+        .slider.bottom_line.clearfix
+          .field.clearfix
+            = label_tag 'Date of Birth: '
+            = text_field_tag :birthdate, @gamer_profile.birthdate.strftime("%B %d, %Y"), { :readonly => 'readonly', :size => 40 }
+        .slider.bottom_line.clearfix
+          .field.clearfix
+            = f.label :country, 'Country: '
+            = f.select :country, GeoIP::CountryName
+        .slider.bottom_line.clearfix
+          .field.clearfix
+            = f.label :city, 'City: '
+            = f.text_field :city, :size => 50
+        .slider.bottom_line.clearfix
+          .field.clearfix
+            = f.label :postal_code, 'Zip/Postal Code: '
+            = f.text_field :postal_code, :size => 35
+        .slider.bottom_line.clearfix
+          .field.clearfix
+            = f.label :favorite_game, 'Favorite App: '
+            = f.text_field :favorite_game, :size => 40
+        .slider.clearfix
+          .field.clearfix
+            = f.label :favorite_category, 'Favorite Category: '
+            = f.text_field :favorite_category, :size => 35
+  .button_bar.clearfix
+    = submit_tag('Save', :class => 'button lt_blue')
