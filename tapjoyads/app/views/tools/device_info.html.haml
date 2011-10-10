@@ -79,6 +79,8 @@
     Clicks (#{@clicks.length}) &amp;
     %span.rewarded Rewards (#{@rewarded_clicks_count})
     +
+    %span.rewarded-failed Rewards Failed (#{@rewarded_failed_clicks_count})
+    +
     %span.jailbroken Jailbroken (#{@jailbroken_count})
     +
     %span.not-rewarded Won't reward (#{@not_rewarded_count})
@@ -101,7 +103,11 @@
         - pub = @click_apps[click.publisher_app_id]
         - disp = @click_apps[click.displayer_app_id]
         - tr_class = (i > 4 && click.key != params[:click_key]) ? 'more-clicks' : ''
-        - tr_class += ' rewarded' if click.installed_at?
+        - if click.installed_at?
+          - if @rewards[click.reward_key] && (@rewards[click.reward_key].send_currency_status == 'OK' || @rewards[click.reward_key].send_currency_status == '200')
+            - tr_class += ' rewarded'
+          - else
+            - tr_class += ' rewarded-failed'
         - tr_class += ' jailbroken' if click.type =~ /install_jailbroken/
         - tr_class += ' click-key-match' if click.key == params[:click_key]
         - if click.block_reason?
@@ -154,6 +160,13 @@
                   %li
                     Manually Resolved at:
                     %nobr= click.manually_resolved_at.to_s(:pub_abbr_ampm_sec)
+                - if @rewards[click.reward_key] && @rewards[click.reward_key].sent_currency?
+                  %li
+                    Send Currency at:
+                    %nobr= @rewards[click.reward_key].sent_currency.to_s(:pub_abbr_ampm_sec)
+                  %li
+                    Award Status:
+                    %nobr= @rewards[click.reward_key].send_currency_status
                 %li
                   Currency:
                   = click.currency_reward
