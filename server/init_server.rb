@@ -25,6 +25,7 @@ server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
 
 # configure geoip database
 `su webuser -c 'geoipupdate -d /home/webuser/GeoIP/'`
+`rm -rf /home/webuser/tapjoyserver/tapjoyads/data/GeoIPCity.dat`
 `su webuser -c 'ln -s /home/webuser/GeoIP/GeoIPCity.dat /home/webuser/tapjoyserver/tapjoyads/data/'`
 
 # deploy the latest code
