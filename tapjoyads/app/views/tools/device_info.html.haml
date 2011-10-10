@@ -139,54 +139,7 @@
                 = submit_tag 'Award'
           %td.small
             = link_to('show', '#', :class => 'show-click-detail')
-            .hidden
-              %ul.nobr
-                %li
-                  Click ID:
-                  = clippy(click.key)
-                - if click.viewed_at?
-                  %li
-                    Viewed at:
-                    %nobr= click.viewed_at.to_s(:pub_abbr_ampm_sec)
-                - if click.clicked_at?
-                  %li
-                    Clicked at:
-                    %nobr= click.clicked_at.to_s(:pub_abbr_ampm_sec)
-                - if click.installed_at?
-                  %li
-                    Installed at:
-                    %nobr= click.installed_at.to_s(:pub_abbr_ampm_sec)
-                - if click.manually_resolved_at?
-                  %li
-                    Manually Resolved at:
-                    %nobr= click.manually_resolved_at.to_s(:pub_abbr_ampm_sec)
-                - if @rewards[click.reward_key] && @rewards[click.reward_key].sent_currency?
-                  %li
-                    Send Currency at:
-                    %nobr= @rewards[click.reward_key].sent_currency.to_s(:pub_abbr_ampm_sec)
-                  %li
-                    Award Status:
-                    %nobr= @rewards[click.reward_key].send_currency_status
-                %li
-                  Currency:
-                  = click.currency_reward
-                %li
-                  Adv:
-                  = number_to_currency(click.advertiser_amount/100.0)
-                %li
-                  Pub:
-                  = number_to_currency(click.publisher_amount/100.0)
-                - if click.displayer_app_id?
-                  %li
-                    Disp:
-                    = number_to_currency(click.displayer_amount/100.0)
-                %li
-                  Tj:
-                  = number_to_currency(click.tapjoy_amount/100.0)
-                - if click.publisher_user_id != click.udid
-                  %li
-                    Pub user ID:
-                    = click.publisher_user_id
+            - click_info_ul(click, @rewards[click.reward_key])
 
 - content_for :page_head, stylesheet_link_tag('tools')
 
@@ -197,7 +150,6 @@
         $('.more-apps').show();
         $('#show_more_apps').hide();
         return false;
-      });
       });
       $('.show-click-detail').click(function(){
         $(this).hide();
