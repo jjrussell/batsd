@@ -154,9 +154,12 @@ module Offer::UrlGeneration
     url
   end
 
-  def fullscreen_ad_image_url(publisher_app_id, bust_cache = false)
+  def fullscreen_ad_image_url(publisher_app_id, bust_cache = false, options = {})
     url = "#{API_URL}/fullscreen_ad/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
     url << "&ts=#{Time.now.to_i}" if bust_cache
+    options.each do |key,value|
+      url << "&#{key}=#{value}"
+    end
     url
   end
 
@@ -173,6 +176,10 @@ module Offer::UrlGeneration
     country_code       = options.delete(:country_code)       { nil }
     display_multiplier = options.delete(:display_multiplier) { 1 }
     library_version    = options.delete(:library_version)    { nil }
+
+    # Allow screen size to be specified for ad previews
+    width              = options.delete(:width)              { nil }
+    height             = options.delete(:height)             { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     ad_url = "#{API_URL}/fullscreen_ad"
@@ -184,6 +191,8 @@ module Offer::UrlGeneration
     ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app_id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}&country_code=#{country_code}&display_multiplier=#{display_multiplier}&library_version=#{library_version}"
     ad_url += "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
     ad_url += "&exp=#{exp}" if exp.present?
+    ad_url += "&width=#{width}" if width.present?
+    ad_url += "&height=#{height}" if height.present?
     ad_url
   end
 

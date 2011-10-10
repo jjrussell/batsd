@@ -615,10 +615,18 @@ class Offer < ActiveRecord::Base
     [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
   end
 
+  def display_banner_ads?
+    return false if (is_paid? || featured?)
+    return (item_type == 'App' && name.length <= 30) if rewarded?
+    item_type != 'VideoOffer'
+  end
+
 private
 
   def sync_banner_creatives!
     creative_blobs = {}
+
+    custom_creative_sizes = []
     if !rewarded? && !featured?
       custom_creative_sizes = Offer::DISPLAY_AD_SIZES
     elsif featured?
@@ -634,6 +642,14 @@ private
       raise "Unable to sync changes to more than one custom creative file at a time"
     end
 
+    # Get proper format for creative
+    format = ''
+    if !rewarded? && !featured?
+      format = 'png'
+    elsif featured?
+      format = 'jpeg'
+    end
+
     blob = creative_blobs.values.first # will be nil for banner creative removals
     if banner_creatives.size > banner_creatives_was.size
       # banner creative added, find which size was added and make sure file matches up
@@ -641,19 +657,19 @@ private
       raise BannerSyncError.new("custom_creative_#{new_size}_blob", "#{new_size} custom creative file not provided.") if creative_blobs[new_size].nil?
 
       # upload to S3
-      upload_banner_creative!(blob, new_size)
+      upload_banner_creative!(blob, new_size, format)
     elsif banner_creatives_was.size > banner_creatives.size
       # banner creative removed, find which size was removed
       removed_size = (banner_creatives_was - banner_creatives).first
 
       # delete from S3
-      delete_banner_creative!(removed_size)
+      delete_banner_creative!(removed_size, format)
     else
       # a banner creative was changed, find which size it applies to
       size = creative_blobs.keys.first
 
       # upload file to S3
-      upload_banner_creative!(blob, size)
+      upload_banner_creative!(blob, size, format)
     end
 
     # 'acts_as_cacheable' caches entire object, including all attributes, so... let's clear the blob
@@ -674,6 +690,7 @@ private
       end
       creative = creative_arr[0]
       creative.format = format
+      creative.interlace = Magick::PlaneInterlace if format == 'jpeg'
     rescue
       raise BannerSyncError.new("custom_creative_#{size}_blob", "New file is invalid - unable to convert to .#{format}.")
     end

@@ -42,13 +42,14 @@ class Apps::OffersController < WebsiteController
       @custom_creative_sizes = Offer::FEATURED_AD_SIZES.collect do |size|
         width, height = size.split("x").collect{|x|x.to_i}
         orientation = width > height ? "(landscape)" : "(portrait)"
-        { :dimensions => size, :label => "#{size} #{orientation} creative" }
+        { :dimensions => size, :label => "#{size} #{orientation}" }
       end
     end
   end
 
   def preview
     @show_generated_ads = @offer.check_for_uploaded_icon
+    @dimensions = params[:dimensions] if params[:dimensions].present?
     render 'apps/offers_shared/preview', :layout => 'simple'
   end
 
