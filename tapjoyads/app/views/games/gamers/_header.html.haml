@@ -25,7 +25,7 @@
               = @gamer.get_gamer_nickname
             %div.gamer_email
               = @gamer.email
-            %div.gamer_dob
-              = "Date of Birth: #{@gamer_profile.birthdate.strftime("%B %d, %Y")}"
+            %div.gamer_signup_date
+              = "Member since #{@gamer.created_at.strftime("%B %d, %Y")}"
   .info_expand_bottom_arrow_wrapper
     .info_expand_bottom_arrow

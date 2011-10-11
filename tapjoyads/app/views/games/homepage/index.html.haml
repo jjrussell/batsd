@@ -138,9 +138,9 @@
       TJG.more_games_popular =  "#{games_more_games_popular_path}";
     });
 
-- if @gamer_profile.birthdate.blank?
-  - content_for :page_javascript2 do
-    :plain
-      $(window).load(function() { 
-        TJG.ui.showUpdateDob();
-      });
+-# - if @gamer_profile.birthdate.blank?
+  -# - content_for :page_javascript2 do
+    -# :plain
+      -# $(window).load(function() { 
+        -# TJG.ui.showUpdateDob();
+      -# });

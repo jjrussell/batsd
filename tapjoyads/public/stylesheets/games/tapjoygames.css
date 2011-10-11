@@ -787,14 +787,14 @@ form#new_gamer_session .login_pass {
   color: #FFFFFF;
   font-weight: bold;
 }
-.web .gamer_dob,
-.ipad .gamer_dob {
+.web .gamer_signup_date,
+.ipad .gamer_signup_date {
   font-size: 14px;
 }
-.mobile .gamer_dob {
+.mobile .gamer_signup_date {
   font-size: 12px;
 }
-.gamer_dob {
+.gamer_signup_date {
   margin-top: 3px;
   color: #FFFFFF;
 }
