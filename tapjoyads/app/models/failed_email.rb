@@ -10,7 +10,7 @@ class FailedEmail < SimpledbResource
   self.sdb_attr :serialized_email
 
   def initialize(options = {})
-    super({:load => false}.merge(options))
+    super({:load_from_memcache => false}.merge(options))
   end
 
   def serial_save(options = {})

@@ -14,7 +14,7 @@ class SupportRequest < SimpledbResource
   self.sdb_attr :offer_id
 
   def initialize(options = {})
-    super({:load => false}.merge(options))
+    super({:load_from_memcached => false}.merge(options))
   end
 
   def serial_save(options = {})
