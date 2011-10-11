@@ -1,7 +1,7 @@
 class SupportRequest < SimpledbResource
-  
+
   self.domain_name = 'support_requests'
-  
+
   self.sdb_attr :udid
   self.sdb_attr :description
   self.sdb_attr :email_address
@@ -12,6 +12,14 @@ class SupportRequest < SimpledbResource
   self.sdb_attr :app_id
   self.sdb_attr :currency_id
   self.sdb_attr :offer_id
+
+  def initialize(options = {})
+    super({:load => false}.merge(options))
+  end
+
+  def serial_save(options = {})
+    super({:write_to_memcache => false}.merge(options))
+  end
 
   def fill(params, app, currency, offer)
     self.description       = params[:description]
@@ -25,5 +33,5 @@ class SupportRequest < SimpledbResource
     self.currency_id       = currency.id
     self.offer_id          = offer.id if offer.present?
   end
-  
+
 end
