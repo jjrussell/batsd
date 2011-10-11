@@ -30,8 +30,8 @@ class Gamer < ActiveRecord::Base
   def get_gamer_nickname
     if gamer_profile.present? && gamer_profile.nickname.present?
       gamer_profile.nickname
-    else
-      get_gamer_name
+    elsif gamer_profile.present? && gamer_profile.name.present?
+      gamer_profile.name
     end
   end
   

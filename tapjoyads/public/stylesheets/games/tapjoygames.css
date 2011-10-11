@@ -776,18 +776,26 @@ form#new_gamer_session .login_pass {
 .mobile .gamer_name {
   font-size: 18px;
 }
-.gamer_name {
+.web .gamer_email,
+.ipad .gamer_email {
+  font-size: 18px;
+}
+.mobile .gamer_email {
+  font-size: 16px;
+}
+.gamer_name, .gamer_email {
   color: #FFFFFF;
   font-weight: bold;
 }
-.web .gamer_signup_date,
-.ipad .gamer_signup_date {
+.web .gamer_dob,
+.ipad .gamer_dob {
   font-size: 14px;
 }
-.mobile .gamer_signup_date {
+.mobile .gamer_dob {
   font-size: 12px;
 }
-.gamer_signup_date {
+.gamer_dob {
+  margin-top: 3px;
   color: #FFFFFF;
 }
 #account_options {

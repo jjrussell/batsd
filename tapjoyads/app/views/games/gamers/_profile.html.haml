@@ -14,16 +14,8 @@
             = f.text_field :nickname, :size => 50
         .slider.bottom_line.clearfix
           .field.clearfix
-            = label_tag 'Email: '
-            = text_field_tag :email, @gamer.email, { :readonly => 'readonly', :size => 50 }
-        .slider.bottom_line.clearfix
-          .field.clearfix
             = f.label :gender, 'Gender: '
             = f.select :gender, { 'Male' => 'male', 'Female' => 'female' }, :include_blank => true
-        .slider.bottom_line.clearfix
-          .field.clearfix
-            = label_tag 'Date of Birth: '
-            = text_field_tag :birthdate, @gamer_profile.birthdate.strftime("%B %d, %Y"), { :readonly => 'readonly', :size => 40 }
         .slider.bottom_line.clearfix
           .field.clearfix
             = f.label :country, 'Country: '
