@@ -193,11 +193,11 @@ class ToolsController < WebsiteController
         @device = nil
         return
       end
-      @cut_off_date = (params[:cut_off_date] || Time.zone.now.beginning_of_day).to_i
+      @cut_off_date = (params[:cut_off_date] || Time.zone.now).to_i
       conditions = [
         "udid = '#{udid}'",
-        "`clicked_at` < '#{@cut_off_date}'",
-        "`clicked_at` > '#{@cut_off_date - 1.month}'",
+        "clicked_at < '#{@cut_off_date}'",
+        "clicked_at > '#{@cut_off_date - 1.month}'",
       ].join(' and ')
       @clicks = []
       @rewarded_clicks_count = 0
