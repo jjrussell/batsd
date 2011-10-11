@@ -31,9 +31,9 @@ class Experiments
     date = start_time.to_date
     
     while date <= end_time.to_date + 2.days && date <= Time.zone.now.to_date      
-      offerwall_views += WebRequest.count_with_vertica "path LIKE '%offers%' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
-      clicks += WebRequest.count_with_vertica "path LIKE '%offer_click%' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
-      conversions += WebRequest.count_with_vertica "path LIKE '%conversion%' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
+      offerwall_views += WebRequest.count_with_vertica "path = '[offers]' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
+      clicks += WebRequest.count_with_vertica "path = '[offer_click]' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
+      conversions += WebRequest.count_with_vertica "path = '[reward]' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
       date += 1.day
     end
     

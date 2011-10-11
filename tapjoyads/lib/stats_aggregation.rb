@@ -95,7 +95,7 @@ class StatsAggregation
     raise "can't wrap over multiple days" if start_time.day != (end_time - 1.second).day
     
     WebRequest::STAT_TO_PATH_MAP.each do |stat_name, path_definition|
-      conditions = "#{get_path_condition(path_definition[:paths])} AND #{path_definition[:attr_name]} = '#{offer.id}'"
+      conditions = "#{get_path_condition(path_definition[:paths], path_definition[:use_like])} AND #{path_definition[:attr_name]} = '#{offer.id}'"
       verify_stat_over_range(stat_row, stat_name, offer, start_time, end_time) do |s_time, e_time|
         WebRequest.count_with_vertica("#{conditions} AND #{get_time_condition(s_time, e_time)}")
       end
@@ -104,7 +104,7 @@ class StatsAggregation
     if stat_row.get_hourly_count('vg_purchases')[start_time.hour..(end_time - 1.second).hour].sum > 0
       offer.virtual_goods.each do |virtual_good|
         stat_path = [ 'virtual_goods', virtual_good.key ]
-        conditions = "path LIKE '%purchased_vg%' AND app_id = '#{offer.id}' AND virtual_good_id = '#{virtual_good.key}'"
+        conditions = "path = '[purchased_vg]' AND app_id = '#{offer.id}' AND virtual_good_id = '#{virtual_good.key}'"
         verify_stat_over_range(stat_row, stat_path, offer, start_time, end_time) do |s_time, e_time|
           WebRequest.count_with_vertica("#{conditions} AND #{get_time_condition(s_time, e_time)}")
         end
@@ -181,8 +181,8 @@ class StatsAggregation
     "time >= #{start_time.to_f} AND time < #{end_time.to_f}"
   end
   
-  def self.get_path_condition(paths)
-    path_condition = paths.map { |p| "path LIKE '%#{p}%'" }.join(' OR ')
+  def self.get_path_condition(paths, use_like)
+    path_condition = paths.map { |p| use_like ? "path LIKE '%#{p}%'" : "path = '[#{p}]'" }.join(' OR ')
     "(#{path_condition})"
   end
   

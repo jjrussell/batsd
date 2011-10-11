@@ -86,7 +86,7 @@ class ExternalPublisher
   
   def self.populate_potential
     start_time = (Time.zone.now - 1.day).beginning_of_day
-    conditions = "(path LIKE '%offers%' OR path LIKE '%display_ad_requested%' OR path LIKE '%featured_offer_requested%') AND time >= #{start_time.to_i}"
+    conditions = "(path = '[offers]' OR path LIKE '%display_ad_requested%' OR path LIKE '%featured_offer_requested%') AND time >= #{start_time.to_i}"
     
     Currency.find_each(:conditions => 'udid_for_user_id = false') do |currency|
       appstats = Appstats.new(currency.app_id, :start_time => start_time, :stat_types => ['offerwall_views', 'display_ads_requested', 'featured_offers_requested'])
