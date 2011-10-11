@@ -36,7 +36,7 @@ API_URL = local_config['api_url'] || ''
 DASHBOARD_URL = local_config['dashboard_url'] || ''
 WEBSITE_URL = local_config['website_url'] || ''
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
-TJG_URL = 'www.tapjoygames.com'
+TJG_URL = local_config['tjg_url'] || ''
 
 MAX_WEB_REQUEST_DOMAINS = 2
 NUM_POINT_PURCHASES_DOMAINS = 2

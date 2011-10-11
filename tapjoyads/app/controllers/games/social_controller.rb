@@ -40,8 +40,9 @@ class Games::SocialController < GamesController
             name = TJG_URL
             link = games_login_url :referrer => invitation.encrypted_referral_id
             message = "#{friend.first_name} #{friend.last_name} has invited you to join Tapjoy."
+            
             description = "Experience the best of mobile apps!"
-            post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => "test.tapjoy.com/images/games/tmp_tapjoy_logo.png")
+            post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => "#{TJG_URL}/images/games/star_on_web.png")
             posts << friend.feed_create(post)
           end
         end

@@ -37,7 +37,7 @@ API_URL = ''
 DASHBOARD_URL = ''
 WEBSITE_URL = ''
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
-TJG_URL = 'www.tapjoygames.com'
+TJG_URL = ''
 
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['test']['access_key_id']
