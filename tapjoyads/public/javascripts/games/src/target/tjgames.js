@@ -2014,6 +2014,21 @@ TJG.social = {
       TJG.utils.centerDialog(dialog_selector);
       $(dialog_selector).fadeIn(350).css({ top: scrollTop + screenHeight / 2 - height / 2 });
     }; // centerDialog
+    
+    var sendInvite = function(event) {
+      event.preventDefault();
+      var url = $('form#invite_friends').attr('action');
+
+      if(channel == 'FB'){
+        if(selectedFriends.length == 0) {
+          showErrorDialog('You must select at least one friend before sending out an invite', TJG.ui.hideLoader());
+        } else {
+          submitFbInvitation(url);
+        }
+      }else if(channel == 'EMAIL'){
+        submitEmailInvitation(url, $('#recipients').val());
+      }      
+    }; // sendInvite
 
     // bind events
     window.onresize = onWindowResize;
@@ -2046,18 +2061,7 @@ TJG.social = {
     });
 
     $('#invite_button').click(function(event){
-      event.preventDefault();
-      var url = $('form#invite_friends').attr('action');
-
-      if(channel == 'FB'){
-        if(selectedFriends.length == 0) {
-          showErrorDialog('You must select at least one friend before sending out an invite', TJG.ui.hideLoader());
-        } else {
-          submitFbInvitation(url);
-        }
-      }else if(channel == 'EMAIL'){
-        submitEmailInvitation(url, $('#recipients').val());
-      }
+      sendInvite(event);
     });
 
     $('#back_button').click(function(event){
@@ -2071,6 +2075,13 @@ TJG.social = {
         currentPage = 1;
         showFriendList();
       }
+    });
+    
+    $('#recipients').keypress(function(event){
+        code= (event.keyCode ? event.keyCode : event.which);
+        if (code == 13){
+          sendInvite(event);
+        }
     });
 
     // call functions
