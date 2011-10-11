@@ -27,7 +27,7 @@ class Games::SocialController < GamesController
       non_gamers = []
 
       friends.each do |friend_id|
-        gamer = Gamer.find_gamer_based_on_facebook(friend_id) #Gamer.find_by_facebook_id(friend_id)
+        gamer = Gamer.find_gamer_based_on_facebook(friend_id)
         if gamer
           gamers << gamer.get_gamer_name
           current_gamer.follow_gamer(gamer)
@@ -37,7 +37,7 @@ class Games::SocialController < GamesController
           non_gamers << "#{friend.first_name} #{friend.last_name}"
           invitation = current_gamer.facebook_invitation_for(friend_id)
           if invitation.pending?
-            name = "www.tapjoygames.com"
+            name = TJG_URL
             link = games_login_url :referrer => invitation.encrypted_referral_id
             message = "#{friend.first_name} #{friend.last_name} has invited you to join Tapjoy."
             description = "Experience the best of mobile apps!"
@@ -56,7 +56,7 @@ class Games::SocialController < GamesController
   end
 
   def invite_email_friends
-    @content ="Hi,\n\n#{current_gamer.get_gamer_name} has invited you to join Tapjoy. With Tapjoy you can discover tons of apps and build fuel in your current ones. Create your account here:\n\nwww.tapjoygames.com\n\nStart Discovering!\nTeam Tapjoy"
+    @content ="Hi,\n\n#{current_gamer.get_gamer_name} has invited you to join Tapjoy. \n\nWith Tapjoy you can discover tons of apps and build fuel in your current ones. Create your account here:\n\n#{TJG_URL}\n\nStart Discovering!\nTeam Tapjoy"
   end
 
   def send_email_invites
@@ -83,7 +83,7 @@ class Games::SocialController < GamesController
         end
 
         if invitation.pending?
-          content = "Hi, <br/><br/>#{current_gamer.get_gamer_name} has invited you to join Tapjoy. With Tapjoy you can discover tons of apps and build fuel in your current ones. Create your account here:"
+          content = "Hi, <br/><br/>#{current_gamer.get_gamer_name} has invited you to join Tapjoy. <br/><br/>With Tapjoy you can discover tons of apps and build fuel in your current ones. Create your account here:"
           signature = "Start Discovering!<br/>Team Tapjoy"
           link = games_login_url(:referrer => invitation.encrypted_referral_id)
           GamesMailer.deliver_invite(current_gamer, recipient, content, link, signature)
