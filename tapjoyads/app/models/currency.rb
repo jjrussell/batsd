@@ -171,6 +171,7 @@ class Currency < ActiveRecord::Base
       self.use_whitelist     = partner.use_whitelist
     end
     self.tapjoy_enabled    = partner.approved_publisher if new_record?
+    self.external_publisher ||= partner.accepted_publisher_tos?
     true
   end
   

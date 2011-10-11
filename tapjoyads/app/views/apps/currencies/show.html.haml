@@ -2,6 +2,8 @@
 
 %h3 Virtual Currency
 
+= render('tos_info')
+
 - form_for [@app, @currency], :html => {:class => 'tjform'} do |f|
   %table.currency_form
     %tr
