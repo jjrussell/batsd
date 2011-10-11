@@ -76,7 +76,8 @@
     = link_to('(show all)', '#', {:id => 'show_more_apps'})
 
   %h3
-    Clicks (#{@clicks.length}) &amp;
+    Clicks (#{@clicks.length})
+    +
     %span.rewarded Rewards (#{@rewarded_clicks_count})
     +
     %span.rewarded-failed Rewards Failed (#{@rewarded_failed_clicks_count})
@@ -86,6 +87,8 @@
     %span.not-rewarded Won't reward (#{@not_rewarded_count})
     +
     %span.blocked Blocked (#{@blocked_count})
+  Showing
+  %b #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date).to_s(:pub)}
   %table.with-border
     %thead
       %tr
@@ -93,16 +96,13 @@
         %td Installed
         %td Adv.
         %td Pub.
-        - if @has_displayer
-          %td Disp.
         %td Resolve
         %td Details
     %tbody
       - @clicks.each_with_index do |click, i|
         - adv = @click_apps[click.advertiser_app_id]
         - pub = @click_apps[click.publisher_app_id]
-        - disp = @click_apps[click.displayer_app_id]
-        - tr_class = (i > 4 && click.key != params[:click_key]) ? 'more-clicks' : ''
+        - tr_class = ''
         - if click.installed_at?
           - if @rewards[click.reward_key] && (@rewards[click.reward_key].send_currency_status == 'OK' || @rewards[click.reward_key].send_currency_status == '200')
             - tr_class += ' rewarded'
@@ -122,8 +122,6 @@
               = click.installed_at? ? click.installed_at.to_s(:pub_abbr_ampm_sec) : '-'
           %td= adv.nil? ? '-'  : link_to_statz(adv.name, adv)
           %td= pub.nil? ? '-'  : link_to_statz(pub.name, pub)
-          - if @has_displayer
-            %td= disp.nil? ? '-' : link_to_statz(disp.name, disp)
           %td
             - if click.manually_resolved_at? && click.installed_at?
               Manually awarded
@@ -139,56 +137,12 @@
                 = submit_tag 'Award'
           %td.small
             = link_to('show', '#', :class => 'show-click-detail')
-            .hidden
-              %ul.nobr
-                %li
-                  Click ID:
-                  = clippy(click.key)
-                - if click.viewed_at?
-                  %li
-                    Viewed at:
-                    %nobr= click.viewed_at.to_s(:pub_abbr_ampm_sec)
-                - if click.clicked_at?
-                  %li
-                    Clicked at:
-                    %nobr= click.clicked_at.to_s(:pub_abbr_ampm_sec)
-                - if click.installed_at?
-                  %li
-                    Installed at:
-                    %nobr= click.installed_at.to_s(:pub_abbr_ampm_sec)
-                - if click.manually_resolved_at?
-                  %li
-                    Manually Resolved at:
-                    %nobr= click.manually_resolved_at.to_s(:pub_abbr_ampm_sec)
-                - if @rewards[click.reward_key] && @rewards[click.reward_key].sent_currency?
-                  %li
-                    Send Currency at:
-                    %nobr= @rewards[click.reward_key].sent_currency.to_s(:pub_abbr_ampm_sec)
-                  %li
-                    Award Status:
-                    %nobr= @rewards[click.reward_key].send_currency_status
-                %li
-                  Currency:
-                  = click.currency_reward
-                %li
-                  Adv:
-                  = number_to_currency(click.advertiser_amount/100.0)
-                %li
-                  Pub:
-                  = number_to_currency(click.publisher_amount/100.0)
-                - if click.displayer_app_id?
-                  %li
-                    Disp:
-                    = number_to_currency(click.displayer_amount/100.0)
-                %li
-                  Tj:
-                  = number_to_currency(click.tapjoy_amount/100.0)
-                - if click.publisher_user_id != click.udid
-                  %li
-                    Pub user ID:
-                    = click.publisher_user_id
-  - if @clicks.length > 5
-    = link_to('(show all)', '#', {:id => 'show_more_clicks'})
+            - click_info_ul(click, @rewards[click.reward_key])
+      %tr
+        %td{:colspan => 6}
+          - text = "Show #{Time.zone.at(@cut_off_date - 2.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)}"
+          = button_to text, '#', :class => 'next-clicks'
+          * Please note that there may not be more clicks.
 
 - content_for :page_head, stylesheet_link_tag('tools')
 
@@ -200,14 +154,17 @@
         $('#show_more_apps').hide();
         return false;
       });
-      $('#show_more_clicks').click(function(){
-        $('.more-clicks').show();
-        $('#show_more_clicks').hide();
-        return false;
-      });
       $('.show-click-detail').click(function(){
         $(this).hide();
         $(this).siblings('.hidden').show();
         return false;
       });
     });
+  - if @device && @cut_off_date
+    :plain
+      $(function($){
+        $('.next-clicks').click(function(){
+          location.href = '#{device_info_tools_path(:udid => @device.key, :cut_off_date => @cut_off_date - 1.month)}';
+          return false;
+        });
+      });

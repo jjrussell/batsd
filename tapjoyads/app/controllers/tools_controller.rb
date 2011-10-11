@@ -50,14 +50,14 @@ class ToolsController < WebsiteController
     @total_balance = Mc.get('money.total_balance') || 0
     @total_pending_earnings = Mc.get('money.total_pending_earnings') || 0
   end
-  
+
   def send_currency_failures
     @now               = Time.zone.now
     this_hour_mc_time  = @now.to_i / 1.hour
     last_hour_mc_time  = this_hour_mc_time - 1
     this_hour_failures = Mc.get("send_currency_failures.#{this_hour_mc_time}") { {} }
     last_hour_failures = Mc.get("send_currency_failures.#{last_hour_mc_time}") { {} }
-    
+
     @failures         = []
     @this_hour_total  = 0
     @last_hour_total  = 0
@@ -74,7 +74,7 @@ class ToolsController < WebsiteController
       hash[:last_hour_unique] = (last_hour_failures[currency.id] || []).length
       hash[:this_hour_skips]  = Mc.get_count("send_currency_skip.#{currency.id}.#{this_hour_mc_time}")
       hash[:last_hour_skips]  = Mc.get_count("send_currency_skip.#{currency.id}.#{last_hour_mc_time}")
-      
+
       @failures << hash
       @this_hour_total  += hash[:this_hour_total]
       @last_hour_total  += hash[:last_hour_total]
@@ -84,7 +84,7 @@ class ToolsController < WebsiteController
       @last_hour_skips  += hash[:last_hour_skips]
     end
   end
-  
+
   def failed_sdb_saves
     this_hour_key         = (Time.zone.now.to_f / 1.hour).to_i
     last_hour_key         = ((Time.zone.now.to_f - 1.hour) / 1.hour).to_i
@@ -135,7 +135,7 @@ class ToolsController < WebsiteController
           @ec2_instances[instance[:aws_instance_id]] = instance
         end
       end
-      
+
       @lb_instances[lb_name].sort! { |a, b| a[:instance_id] <=> b[:instance_id] }
     end
   end
@@ -166,7 +166,7 @@ class ToolsController < WebsiteController
     if params[:udid]
       udid = params[:udid].downcase
       clicks_deleted = 0
-      
+
       device = Device.new(:key => udid)
       NUM_CLICK_DOMAINS.times do |i|
         Click.select(:domain_name => "clicks_#{i}", :where => "itemName() like '#{udid}.%'") do |click|
@@ -174,7 +174,7 @@ class ToolsController < WebsiteController
           clicks_deleted += 1
         end
       end
-        
+
       device.delete_all
       flash.now[:notice] = "Device successfully reset and #{clicks_deleted} clicks deleted"
     end
@@ -193,7 +193,12 @@ class ToolsController < WebsiteController
         @device = nil
         return
       end
-      conditions = "udid = '#{udid}'"
+      @cut_off_date = (params[:cut_off_date] || Time.zone.now).to_i
+      conditions = [
+        "udid = '#{udid}'",
+        "clicked_at < '#{@cut_off_date}'",
+        "clicked_at > '#{@cut_off_date - 1.month}'",
+      ].join(' and ')
       @clicks = []
       @rewarded_clicks_count = 0
       @jailbroken_count = 0
@@ -407,24 +412,24 @@ class ToolsController < WebsiteController
       @tapjoy_apps[app.id] = app
     end
   end
-  
+
   def award_currencies
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @publisher_app ])
-    
+
     support_request = SupportRequest.find_by_udid_and_app_id(params[:udid], params[:publisher_app_id])
     if support_request.nil?
-      flash[:error] = "Support request not found. The user must submit a support request for the app in order to award them currency." 
-      redirect_to :action => :device_info, :udid => params[:udid]  
+      flash[:error] = "Support request not found. The user must submit a support request for the app in order to award them currency."
+      redirect_to :action => :device_info, :udid => params[:udid]
       return
-    end        
+    end
     @publisher_user_id = support_request.publisher_user_id
   end
-  
+
   def update_award_currencies
     if params[:amount].nil? || params[:amount].empty?
-      flash[:error] = "Must provide an amount." 
-      redirect_to :action => :award_currencies, :publisher_app_id => params[:publisher_app_id], :currency_id => params[:currency_id], :udid =>params[:udid] 
+      flash[:error] = "Must provide an amount."
+      redirect_to :action => :award_currencies, :publisher_app_id => params[:publisher_app_id], :currency_id => params[:currency_id], :udid =>params[:udid]
       return
     end
 
@@ -444,8 +449,8 @@ class ToolsController < WebsiteController
 
     message = customer_support_reward.serialize
     Sqs.send_message(QueueNames::SEND_CURRENCY, message)
-    
-    flash[:notice] = " Successfully awarded #{params[:amount]} currency. " 
-    redirect_to :action => :device_info, :udid => params[:udid]  
+
+    flash[:notice] = " Successfully awarded #{params[:amount]} currency. "
+    redirect_to :action => :device_info, :udid => params[:udid]
   end
 end
