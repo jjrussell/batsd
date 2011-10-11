@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111011061057) do
+ActiveRecord::Schema.define(:version => 20111011182943) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -171,6 +171,7 @@ ActiveRecord::Schema.define(:version => 20111011061057) do
     t.boolean  "udid_for_user_id",                                                                       :default => false, :null => false
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
+    t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
