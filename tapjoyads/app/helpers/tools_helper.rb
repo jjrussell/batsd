@@ -7,8 +7,8 @@ module ToolsHelper
     concat_li_timestamp("Installed at", click.installed_at)
     concat_li_timestamp("Manually Resolved at", click.manually_resolved_at)
     if reward.try :sent_currency?
-      concat_li_timestamp("Send Currency at", rewards.sent_currency)
-      concat_li("Award Status", rewards.send_currency_status)
+      concat_li_timestamp("Send Currency at", reward.sent_currency)
+      concat_li("Award Status", reward.send_currency_status)
     end
     concat_li("Currency", click.currency_reward)
     concat_li_currency('Adv', click.advertiser_amount)
