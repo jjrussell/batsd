@@ -1294,6 +1294,7 @@ TJG.social = {
     $('#recipients').keypress(function(event){
         code= (event.keyCode ? event.keyCode : event.which);
         if (code == 13){
+          $('#recipients').blur();
           sendInvite(event);
         }
     });
