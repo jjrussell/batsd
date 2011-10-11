@@ -394,13 +394,7 @@ TJG.ui = {
   },
   
   showUpdateDob : function () {
-    var hasLinked = true, path, animateSpd = "fast";
-    if (TJG.path) {
-       path = TJG.path;
-    }
-    else {
-      path = location.pathname.replace(/\/$/, '');
-    }
+    var animateSpd = "fast";
     $("#update_dob_dialog_content").parent().css("height", "180px");
     $("#update_dob_dialog_content").html($('#update_dob_dialog_content_placeholder').html());
     setTimeout(function() {
@@ -411,13 +405,11 @@ TJG.ui = {
     }, 50);
 
     $('#update_dob_dialog form').submit(function(e){
-      console.log("submitting update dob form...");
       e.preventDefault();
-      var rurl, inputs, values = {}, data, hasError = false, emailReg;
+      var rurl, inputs, values = {}, hasError = false;
       rurl = $(this).attr('action');
       inputs = $('#update_dob_dialog form :input');
       inputs.each(function() {
-	      console.log("value for "+this.name+" is "+$(this).val());
         values[this.name] = $(this).val();
       });
       $(".dob_error").hide();
@@ -455,11 +447,11 @@ TJG.ui = {
             }
             else {
               var error = 'There was an issue while updating your profile.';
-              var account_deleted = false;
+              var underage_account_blocked = false;
               if (d.error && d.error[0]) {
                 if (d.error[0][0] == 'birthdate') {
                   error = 'Sorry, this service is currently unavailable'
-                  account_deleted = true
+                  underage_account_blocked = true
                 }
                 else if (d.error[0][0] && d.error[0][1]) {
                   error = 'The ' + d.error[0][0] + ' ' + d.error[0][1];
@@ -471,7 +463,7 @@ TJG.ui = {
               ].join('');
               $("#update_dob_dialog_content").html(msg);
             }
-            if (account_deleted) {
+            if (underage_account_blocked) {
               $('#update_dob_again .dialog_button').html('OK');
               $('#update_dob_again').click(function(){
                 document.location.href = TJG.logout_path;
