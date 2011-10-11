@@ -43,12 +43,12 @@ namespace :admin do
 
   desc "Reconfigure syslog-ng"
   task :reconfigure_syslog_ng do
-    system("script/cloudrun 'masterjobs jobserver webserver website dashboard games testserver' 'sudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb' 'ubuntu'")
+    system("script/cloudrun 'masterjobs jobserver webserver website dashboard games testserver' 'sudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb 2>&1' 'ubuntu'")
   end
 
   desc "Update geoip databse"
   task :geoipupdate do
-    system("script/cloudrun 'masterjobs jobserver webserver website dashboard games' 'geoipupdate -d GeoIP/ ; touch tapjoyserver/tapjoyads/tmp/restart.txt' 'webuser' 'serial'")
+    system("script/cloudrun 'masterjobs jobserver webserver website dashboard games' 'geoipupdate -d GeoIP/ 2>&1 ; touch tapjoyserver/tapjoyads/tmp/restart.txt' 'webuser' 'serial'")
   end
 
 end
