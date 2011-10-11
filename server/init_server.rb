@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
+server_type = `su - webuser -c '/home/webuser/tapjoyserver/server/server_type.rb'`
 
 # setup ssh keys
 `/home/webuser/tapjoyserver/server/copy_authorized_keys.rb`
@@ -17,22 +17,23 @@ server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
 `rm -rf /home/webuser/tapjoyserver/tapjoyads/log`
 `rm -rf /home/webuser/tapjoyserver/tapjoyads/tmp`
 `ln -s /mnt/log/apache2 /var/log/apache2`
-`su webuser -c 'ln -s /mnt/log/rails /home/webuser/tapjoyserver/tapjoyads/log'`
-`su webuser -c 'ln -s /mnt/tmp/rails /home/webuser/tapjoyserver/tapjoyads/tmp'`
+`su - webuser -c 'ln -s /mnt/log/rails /home/webuser/tapjoyserver/tapjoyads/log'`
+`su - webuser -c 'ln -s /mnt/tmp/rails /home/webuser/tapjoyserver/tapjoyads/tmp'`
 
 # configure syslog-ng
 `/home/webuser/tapjoyserver/server/syslog-ng/configure.rb`
 
 # configure geoip database
-`su webuser -c 'geoipupdate -d /home/webuser/GeoIP/'`
+`su - webuser -c 'crontab -r'`
+`su - webuser -c 'geoipupdate -d /home/webuser/GeoIP/'`
 `rm -rf /home/webuser/tapjoyserver/tapjoyads/data/GeoIPCity.dat`
-`su webuser -c 'ln -s /home/webuser/GeoIP/GeoIPCity.dat /home/webuser/tapjoyserver/tapjoyads/data/'`
+`su - webuser -c 'ln -s /home/webuser/GeoIP/GeoIPCity.dat /home/webuser/tapjoyserver/tapjoyads/data/'`
 
 # deploy the latest code
 if server_type == 'test'
-  `su webuser -c 'cd /home/webuser/tapjoyserver && server/deploy.rb master'`
+  `su - webuser -c 'cd /home/webuser/tapjoyserver && server/deploy.rb master'`
 else
-  `su webuser -c 'cd /home/webuser/tapjoyserver && server/deploy.rb'`
+  `su - webuser -c 'cd /home/webuser/tapjoyserver && server/deploy.rb'`
 end
 
 # start apache
@@ -48,4 +49,4 @@ if server_type == 'test'
 end
 
 # boot the app
-`su webuser -c 'curl -s http://localhost:9898/healthz'`
+`su - webuser -c 'curl -s http://localhost:9898/healthz'`
