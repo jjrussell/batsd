@@ -25,5 +25,17 @@ ActionController::Routing::Routes.draw do |map|
     m.resources :support_requests, :controller => 'games/support_requests', :only => [ :new, :create ]
     
     m.resources :android, :controller => 'games/android', :action => :index
+    
+    map.with_options :controller => 'games/social', :name_prefix => 'games_social_' do |social|
+      social.invite_email_friends 'invite_email_friends', :action => :invite_email_friends
+      social.send_email_invites 'send_email_invites', :action => :send_email_invites
+      social.invite_facebook_friends 'invite_facebook_friends', :action => :invite_facebook_friends
+      social.send_facebook_invites 'send_facebook_invites', :action => :send_facebook_invites
+      social.invite_twitter_friends 'invite_twitter_friends', :action => :invite_twitter_friends
+      social.send_twitter_invites 'send_twitter_invites', :action => :send_twitter_invites
+    end
   end
+  
+  map.games_social_twitter_auth 'auth/twitter/callback', :controller => 'games/social/twitter', :action => :authenticate
+  map.games_social_twitter_auth_failure 'auth/failure', :controller => 'games/social/twitter', :action => :failure
 end

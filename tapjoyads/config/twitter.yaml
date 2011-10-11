@@ -1,0 +1,11 @@
+test:
+  consumer_key: 'B9zToT0qEzWyNnIOYqZA'
+  consumer_secret: 'ubI5ntqnzCybslXUx7X4cC4IlfTFSMXdzYWtIfCk0'
+
+dev:
+  consumer_key: 'B9zToT0qEzWyNnIOYqZA'
+  consumer_secret: 'ubI5ntqnzCybslXUx7X4cC4IlfTFSMXdzYWtIfCk0'
+  
+production:
+  consumer_key: 'B9zToT0qEzWyNnIOYqZA'
+  consumer_secret: 'ubI5ntqnzCybslXUx7X4cC4IlfTFSMXdzYWtIfCk0'

@@ -39,5 +39,13 @@ class GamesMailer < ActionMailer::Base
     content_type 'text/html'
     body(:content => content, :email => gamer.email, :udid => device_id, :user_agent => user_agent)
   end
-  
+
+  def invite(gamer, recipients_email, content, link, signature)
+    from "#{gamer.get_gamer_name} <noreply@tapjoy.com>"
+    recipients recipients_email
+    subject "#{gamer.get_gamer_name} has invited you to join Tapjoy"
+    content_type 'text/html'
+    body(:content => content, :link => link, :signature => signature)
+  end
+
 end
