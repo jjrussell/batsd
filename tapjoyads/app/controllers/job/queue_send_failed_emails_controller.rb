@@ -14,7 +14,9 @@ class Job::QueueSendFailedEmailsController < Job::SqsReaderController
     rescue AWS::SimpleEmailService::Errors::MessageRejected => e
       recipients = mail.to.to_a + mail.cc.to_a + mail.bcc.to_a
       if e.to_s =~ /Address blacklisted/ && recipients.size == 1
-        Rails.logger.info "Address blackslisted: #{recipients.first}"
+        failed_email = FailedEmail.new
+        failed_email.fill(mail)
+        failed_email.serial_save
       else
         raise e
       end
