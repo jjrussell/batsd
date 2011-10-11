@@ -39,7 +39,7 @@ class Invitation < ActiveRecord::Base
     if invitation
       external_info = noob.external_info(invitation.channel)
     elsif external_info
-      invitation = Invitation.find_by_gamer_id_and_external_info(noob.referred_by, external_info)
+      invitation = Invitation.find_by_gamer_id_and_external_info(noob.gamer_profile.referred_by, external_info)
     else
       raise "Need invitation or external info"
     end
@@ -50,7 +50,7 @@ class Invitation < ActiveRecord::Base
       gamer.follow_gamer(noob)
     end
 
-    if invitation
+    if invitation && invitation.external_info == external_info
       invitation.status = ACCEPTED
       invitation.noob_id = noob.id
       invitation.save

@@ -28,23 +28,18 @@ class Gamer < ActiveRecord::Base
     save
   end
 
-  def update_facebook_info!(facebook_user)
-    if facebook_id != facebook_user.id
-      self.facebook_id = facebook_user.id
-      self.fb_access_token = facebook_user.client.access_token
-      save!
-
-      Invitation.reconcile_pending_invitations(self, :external_info => facebook_id)
-    end
-  end
-
   def external_info(channel)
     case channel
     when Invitation::EMAIL
       email
     when Invitation::FACEBOOK
-      facebook_id
+      gamer_profile.facebook_id
     end
+  end
+  
+  def self.find_gamer_based_on_facebook(external)
+    gamer_profile = GamerProfile.find_by_facebook_id(external)
+    Gamer.find_by_id(gamer_profile.gamer_id) if gamer_profile.present?
   end
 
   def follow_gamer(friend)
@@ -101,11 +96,12 @@ private
           Downloader.get_with_retry url
         end
       else
-        self.referred_by, invitation_id = SymmetricCrypto.decrypt_object(referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
-        if referred_by? && invitation_id
-          Gamer.increment_counter(:referral_count, referred_by)
-          invitation = Invitation.find_by_id(invitation_id)
-          follow_gamer(Gamer.find_by_id(referred_by))
+        self.gamer_profile.referred_by, invitation_id = SymmetricCrypto.decrypt_object(referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
+        if gamer_profile.referred_by? && invitation_id
+          referred_by_gamer = Gamer.find(self.gamer_profile.referred_by)
+          referred_by_gamer.gamer_profile.update_attributes!(:referral_count => referred_by_gamer.gamer_profile.referral_count + 1)
+          invitation = Invitation.find(invitation_id)
+          follow_gamer(Gamer.find_by_id(gamer_profile.referred_by))
           Invitation.reconcile_pending_invitations(self, :invitation => invitation)
         end
       end
