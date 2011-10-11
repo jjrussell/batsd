@@ -19,9 +19,8 @@ class Games::Gamers::GamerProfilesController < GamesController
     else
       @gamer_profile.errors.each do |attribute, error|
         if attribute == 'birthdate'
-          logger.debug("younger than thirteen, deleting account")
-          @gamer_profile.destroy
-          @gamer.destroy
+          @gamer.blocked = true
+          @gamer.save!
         end
       end
       render(:json => { :success => false, :error => @gamer_profile.errors }) and return

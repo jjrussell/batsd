@@ -458,7 +458,7 @@ TJG.ui = {
               var account_deleted = false;
               if (d.error && d.error[0]) {
                 if (d.error[0][0] == 'birthdate') {
-                  error = 'This service is currently unavailable'
+                  error = 'Sorry, this service is currently unavailable'
                   account_deleted = true
                 }
                 else if (d.error[0][0] && d.error[0][1]) {
@@ -474,7 +474,7 @@ TJG.ui = {
             if (account_deleted) {
               $('#update_dob_again .dialog_button').html('OK');
               $('#update_dob_again').click(function(){
-                document.location.href = TJG.path;
+                document.location.href = TJG.logout_path;
               });
             } else {
               $('#update_dob_again').click(function(){

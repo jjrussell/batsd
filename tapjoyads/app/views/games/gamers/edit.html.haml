@@ -5,26 +5,26 @@
         = render(:partial => 'header', :locals => { :back_button => games_root_path })
         .content.narrow
           .header_wrapper
-            .title_2
-              Invite Your Friends!
-            #invite_friends.clearfix
-              %a{ :href => "#" }
-                .social_btn.fb
-              %a{ :href => "#" }
-                .social_btn.email
+            -# .title_2
+              -# Invite Your Friends!
+            -# #invite_friends.clearfix
+              -# %a{ :href => "#" }
+                -# .social_btn.fb
+              -# %a{ :href => "#" }
+                -# .social_btn.email
             = render(:partial => 'profile')
             .title_2
               Options
             .content_box_wrapper
               #account_options.content_box.clearfix
-                %a{ :href => "#" }
-                  .slider.bottom_line.clearfix
-                    .profile_arrow.right
-                    .field
-                      .label
-                        Currently Using:
-                      .value
-                        My iPad
+                -# %a{ :href => "#" }
+                  -# .slider.bottom_line.clearfix
+                    -# .profile_arrow.right
+                    -# .field
+                      -# .label
+                        -# Currently Using:
+                      -# .value
+                        -# My iPad
                 %a{ :href => @gamer.get_gravatar_profile_url, :target => '_blank' }
                   .slider.bottom_line.clearfix
                     .profile_arrow.right
