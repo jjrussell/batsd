@@ -43,7 +43,7 @@ namespace :admin do
 
   desc "Reconfigure syslog-ng"
   task :reconfigure_syslog_ng do
-    system("script/cloudrun 'masterjobs jobserver webserver website dashboard games testserver' 'sudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb' 'ubuntu'")
+    system("script/cloudrun 'masterjobs jobserver webserver website dashboard games testserver' 'sudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb 2>&1' 'ubuntu'")
   end
 
   desc "Update geoip databse"
