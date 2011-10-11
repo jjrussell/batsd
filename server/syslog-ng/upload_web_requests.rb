@@ -6,19 +6,19 @@
 # once a file is uploaded, keep a copy for 48 hours before deleting.
 
 require 'rubygems'
+require 'yaml'
 require 'uuidtools'
 require 'aws-sdk'
 
-AWS_KEY_ID     = 'AKIAIOELYY4DYORMCAFA'
-AWS_SECRET_KEY = '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'
-EBS_BASE       = '/ebs/log/rails-web_requests'
-LOCAL_BASE     = '/mnt'
-now            = Time.now.utc
-end_time       = Time.at(now.to_i - 300 - (now.to_i % 60)).utc
-time           = end_time - 86400 # 24 hours
-ses            = AWS::SimpleEmailService.new(:access_key_id => AWS_KEY_ID, :secret_access_key => AWS_SECRET_KEY)
-s3             = AWS::S3.new(:access_key_id => AWS_KEY_ID, :secret_access_key => AWS_SECRET_KEY)
-bucket         = s3.buckets['web-requests']
+AWS_CONFIG = YAML::load_file("/home/ubuntu/.tapjoy_aws_credentials.yaml")
+EBS_BASE   = '/ebs/log/rails-web_requests'
+LOCAL_BASE = '/mnt'
+now        = Time.now.utc
+end_time   = Time.at(now.to_i - 300 - (now.to_i % 60)).utc
+time       = end_time - 86400 # 24 hours
+ses        = AWS::SimpleEmailService.new(:access_key_id => AWS_CONFIG['access_key_id'], :secret_access_key => AWS_CONFIG['secret_access_key'])
+s3         = AWS::S3.new(:access_key_id => AWS_CONFIG['access_key_id'], :secret_access_key => AWS_CONFIG['secret_access_key'])
+bucket     = s3.buckets['web-requests']
 
 while time < end_time do
   filename     = "#{time.strftime('%Y-%m-%d-%H%M')}"
