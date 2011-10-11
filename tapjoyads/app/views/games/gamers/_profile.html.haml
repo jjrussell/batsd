@@ -7,11 +7,11 @@
         .slider.bottom_line.clearfix
           .field.clearfix
             = f.label :name, 'Name: '
-            = f.text_field :name, :size => 50
+            = f.text_field :name, :size => 40
         .slider.bottom_line.clearfix
           .field.clearfix
             = f.label :nickname, 'Nickname: '
-            = f.text_field :nickname, :size => 50
+            = f.text_field :nickname, :size => 35
         .slider.bottom_line.clearfix
           .field.clearfix
             = f.label :gender, 'Gender: '
@@ -23,18 +23,18 @@
         .slider.bottom_line.clearfix
           .field.clearfix
             = f.label :city, 'City: '
-            = f.text_field :city, :size => 50
+            = f.text_field :city, :size => 45
         .slider.bottom_line.clearfix
           .field.clearfix
             = f.label :postal_code, 'Zip/Postal Code: '
-            = f.text_field :postal_code, :size => 35
+            = f.text_field :postal_code, :size => 30
         .slider.bottom_line.clearfix
           .field.clearfix
             = f.label :favorite_game, 'Favorite App: '
-            = f.text_field :favorite_game, :size => 40
+            = f.text_field :favorite_game, :size => 35
         .slider.clearfix
           .field.clearfix
             = f.label :favorite_category, 'Favorite Category: '
-            = f.text_field :favorite_category, :size => 35
+            = f.text_field :favorite_category, :size => 30
   .button_bar.clearfix
     = submit_tag('Save', :class => 'button lt_blue')
