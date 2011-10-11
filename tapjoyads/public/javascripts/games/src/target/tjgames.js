@@ -1769,6 +1769,7 @@ TJG.social = {
     var pageSize = options.pageSize;
     var fbFriends = options.fbFriends;
     var inviteUrl = options.inviteUrl;
+    var channel = options.channel;
 
     // local functions
     var onWindowResize = function(event) {
@@ -1913,22 +1914,84 @@ TJG.social = {
               document.location.href = location.protocol + '//' + location.host + inviteUrl;
             });
           } else {
-            showErrorDialog(d.error);
+            showErrorDialog(d.error, TJG.ui.hideLoader());
           }
         },
         error: function(d) {
           var error = 'There was an issue, please try again later';
-          showErrorDialog(error);
+          showErrorDialog(error, TJG.ui.hideLoader());
         }
       });
     }; // submitFbInvitation
+    
+    var submitEmailInvitation = function(rurl, recipients){
+      sending();
+
+      $.ajax({
+        type: 'POST',
+        url: rurl,
+        cache: false,
+        timeout: 35000,
+        dataType: 'json',
+        data: {
+          recipients: recipients
+        },
+        success: function(d) {
+          var existDiv = '', notExistDiv = '';
+
+          if(d.success) {
+            if(d.gamers.length == 1) {
+              existDiv = '<div class="dialog_content">' + d.gamers.toString().replace(/\,/g, ", ") + ' has already registered, you are now following him/her.</div>';
+            }else if(d.gamers.length > 1) {
+              existDiv = '<div class="dialog_content">' + d.gamers.toString().replace(/\,/g, ", ") + ' have already registered, you are now following them.</div>';
+            }
+            if(d.non_gamers.length != 0) {
+              notExistDiv = '<div class="dialog_content">Tapjoy invites have been sent to '+d.non_gamers.toString().replace(/\,/g, ", ")+'</div>';
+            }
+            if(d.gamers.length == 0 && d.non_gamers.length == 0){
+              var error = 'Please provide an email other than yourselves';
+              showErrorDialog(error, TJG.ui.hideSender());
+              return;
+            }
+
+            var msg = [
+              '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Success!</div></div>',
+              '<div style="margin: 5px;"></div>',
+              existDiv,
+              notExistDiv,
+              '<div class="dialog_content"><div class="continue_invite"><div class="button grey dialog_button"  style="margin-bottom: 10px;">Continue</div></div></div>'
+            ].join('');
+            $('#social_dialog_content').parent().animate({}, animateSpeed);
+            $('#social_dialog_content').html(msg);
+
+            TJG.ui.hideSender();
+            centerDialog($('#social_dialog').height(), '#social_dialog_content', '#social_dialog');
+
+            $('.close_dialog, .continue_invite').click(function(){
+              document.location.href = location.protocol + '//' + location.host + inviteUrl;
+            });
+          } else {
+            showErrorDialog(d.error, TJG.ui.hideSender());
+          }
+        },
+        error: function(d) {
+          var error = 'There was an issue, please try again later';
+          showErrorDialog(error, TJG.ui.hideSender());
+        }
+      });
+    }; // submitEmailInvitation
 
     var loading = function(){
       $('.close_dialog').hide();
       TJG.ui.showLoaderAtCenter();
     };
+    
+    var sending = function(){
+      $('.close_dialog').hide();
+      TJG.ui.showSender();
+    }
 
-    var showErrorDialog = function(error) {
+    var showErrorDialog = function(error, hideTransitionDialog) {
       var msg = [
         '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
         '<div class="dialog_content">', error, '. <span id="invite_again"><a href="#">Please click here to try again.</a></span><div style="margin: 5px;"></div></div>',
@@ -1936,7 +1999,7 @@ TJG.social = {
       $('#social_dialog_content').parent().animate({}, animateSpeed);
       $('#social_dialog_content').html(msg);
 
-      TJG.ui.hideLoader();
+      hideTransitionDialog;
       centerDialog($('#social_dialog').height(), '#social_dialog_content', '#social_dialog');
 
       $('#invite_again, .close_dialog').click(function(event){
@@ -1986,10 +2049,14 @@ TJG.social = {
       event.preventDefault();
       var url = $('form#invite_friends').attr('action');
 
-      if(selectedFriends.length == 0) {
-        showErrorDialog('You must select at least one friend before sending out an invite');
-      } else {
-        submitFbInvitation(url);
+      if(channel == 'FB'){
+        if(selectedFriends.length == 0) {
+          showErrorDialog('You must select at least one friend before sending out an invite', TJG.ui.hideLoader());
+        } else {
+          submitFbInvitation(url);
+        }
+      }else if(channel == 'EMAIL'){
+        submitEmailInvitation(url, $('#recipients').val());
       }
     });
 
