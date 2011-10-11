@@ -24,21 +24,20 @@ class Experiments
   
   def self.get_experiment_data(start_time, end_time, experiment_id)
     experiment_id = experiment_id.to_s
-    viewed_at_condition_sdb = "viewed_at >= '#{start_time.to_i}' AND viewed_at < '#{end_time.to_i}'"
-    viewed_at_condition_vertica = "viewed_at >= #{start_time.to_i} AND viewed_at < #{end_time.to_i}"
+    viewed_at_condition = "viewed_at >= '#{start_time.to_i}' and viewed_at < '#{end_time.to_i}'"
     offerwall_views = clicks = conversions = 0
     revenues = []
     date = start_time.to_date
     
     while date <= end_time.to_date + 2.days && date <= Time.zone.now.to_date      
-      offerwall_views += WebRequest.count_with_vertica "path LIKE '%offers%' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
-      clicks += WebRequest.count_with_vertica "path LIKE '%offer_click%' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
-      conversions += WebRequest.count_with_vertica "path LIKE '%conversion%' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
+      offerwall_views += WebRequest.count :date => date, :where => "path = 'offers' and #{viewed_at_condition} and exp = '#{experiment_id}'"
+      clicks += WebRequest.count :date => date, :where => "path = 'offer_click' and #{viewed_at_condition} and exp = '#{experiment_id}'"
+      conversions += WebRequest.count :date => date, :where => "path = 'conversion' and #{viewed_at_condition} and exp = '#{experiment_id}'"
       date += 1.day
     end
     
     NUM_REWARD_DOMAINS.times do |i|
-      Reward.select :domain_name => "rewards_#{i}", :where => "#{viewed_at_condition_sdb} AND (exp = '#{experiment_id}')" do |reward|
+      Reward.select :domain_name => "rewards_#{i}", :where => "#{viewed_at_condition} and (exp = '#{experiment_id}')" do |reward|
         revenues << reward.publisher_amount
       end
     end
