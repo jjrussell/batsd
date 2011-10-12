@@ -943,7 +943,7 @@ form#new_gamer_session .login_pass {
   position: relative;
 }
 .button_bar input[type=submit] {
-	float: right;
+  float: right;
   margin: 0 16px 10px 0;
   position: relative;
 }
@@ -1000,7 +1000,7 @@ form#new_gamer_session .login_pass {
 .mobile #login_form {
   padding: 0px 10px;
 }
-.web #login_form .  ,
+.web #login_form .content_box,
 .ipad #login_form .content_box {
   padding: 12px 0 2px;
 }
@@ -1937,7 +1937,7 @@ body {
   font-size: 14px;
   background-color: #222;
   border: 3px solid #b6b5b5;
-  color: #FFF
+  color: #FFF;
   line-height: 130%;
   padding: 12px 10px;
   position: absolute;

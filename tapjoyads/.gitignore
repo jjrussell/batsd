@@ -13,3 +13,4 @@ tapjoy.komodoproject
 config/local.yml
 data/GeoIPCity.dat
 public/stylesheets/*.css
+public/stylesheets/games/*.css
