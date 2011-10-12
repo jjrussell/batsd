@@ -13,6 +13,11 @@
     #help_approved_publisher.help ?
     = f.check_box(:approved_publisher)
   .field
+    = f.label :accepted_publisher_tos, 'Accepted publisher ToS'
+    #help_accepted_publisher_tos.help ?
+    = f.check_box :accepted_publisher_tos
+    = error_message_on(@partner, :accepted_publisher_tos) if @partner.errors.on :accepted_publisher_tos
+  .field
     = f.label(:account_manager_notes, 'Internal notes')
     #help_account_manager_notes.help ?
     = f.text_area :account_manager_notes
@@ -71,6 +76,8 @@
     The share of direct-pay revenue that this publisher gets. A number between 0 an 1.
   #help_transfer_bonus_content{:name => 'Transfer bonus'}
     The bonus that this partner gets when transferring between pending earnings and balance. A value of 0.1 will give a 10% bonus.
+  #help_accepted_publisher_tos_content{:name => 'Accepted publisher ToS'}
+    Has this partner accepted the publisher terms of service?
 
 - content_for :page_styles do
   :plain

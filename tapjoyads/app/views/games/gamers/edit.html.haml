@@ -5,14 +5,18 @@
         = render(:partial => 'header', :locals => { :back_button => games_root_path })
         .content.narrow
           .header_wrapper
+            -# .title_2
+              -# Invite Your Friends!
+            -# #invite_friends.clearfix
+              -# %a{ :href => "#" }
+                -# .social_btn.fb
+              -# %a{ :href => "#" }
+                -# .social_btn.email
+            = render(:partial => 'profile')
+            .title_2
+              Options
             .content_box_wrapper
               #account_options.content_box.clearfix
-                %a{ :href => edit_games_gamer_gamer_profile_path }
-                  .slider.bottom_line.clearfix
-                    .profile_arrow.right
-                    .field
-                      .label
-                        Edit My Profile
                 -# %a{ :href => "#" }
                   -# .slider.bottom_line.clearfix
                     -# .profile_arrow.right
@@ -26,7 +30,7 @@
                     .profile_arrow.right
                     .field
                       .label
-                        Gravatar:
+                        Icon:
                       #user_gravatar.image
                         %img{ :src => @gamer.get_avatar_url(30) }
                 %a{ :href => password_games_gamer_path }
@@ -35,13 +39,6 @@
                     .field
                       .label
                         Reset Password
-            -# .title_2
-              -# Invite Your Friends!
-            -# #invite_friends.clearfix
-              -# %a{ :href => "#" }
-                -# .social_btn.fb
-              -# %a{ :href => "#" }
-                -# .social_btn.email
             .title_2
               Contact Tapjoy
             .content_box_wrapper
