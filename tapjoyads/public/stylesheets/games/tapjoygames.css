@@ -99,10 +99,8 @@ a, a:visited {
   height: 35px;
   margin: 10px auto;
   width: 35px;
-  -webkit-transform: rotate(360deg);
-  -webkit-animation-name: spin;
-  -webkit-animation-duration: .8s;
-  -webkit-animation-iteration-count: infinite;
+  -webkit-animation: spin .8s infinite linear;
+  -moz-animation: spin .8s infinite linear;
 }
 .image_loader {
   margin: 0 auto;
@@ -112,6 +110,10 @@ a, a:visited {
 @-webkit-keyframes spin {
   from {-webkit-transform: rotate(0deg);}
   to {-webkit-transform: rotate(360deg);}
+}
+@-moz-keyframes spin {
+  from {-moz-transform: rotate(0deg);}
+  to {-moz-transform: rotate(360deg);}
 }
 #loader.dialog_wrapper {
   width: 200px;
@@ -519,6 +521,8 @@ form#new_gamer input {
   font-weight: bold;
   -webkit-transform: rotate(-1deg);
   -moz-transform: rotate(-1deg);
+  -o-transform: rotate(-1deg);
+  -ms-transform: rotate(-1deg);
   transform: rotate(-1deg);
 }
 .web .earn_paper_title, .ipad .earn_paper_title {
