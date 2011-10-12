@@ -30,8 +30,6 @@ class Games::GamersController < GamesController
 
   def edit
     @geoip_data = get_geoip_data
-    @geoip_data[:country_name] = Countries.country_code_to_name[@geoip_data[:country]]
-
     if @gamer_profile.country.blank?
       @gamer_profile.country = Countries.country_code_to_name[@geoip_data[:country]]
     end
