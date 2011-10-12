@@ -19,7 +19,7 @@
         .slider.bottom_line.clearfix
           .field.clearfix
             = f.label :country, 'Country: '
-            = f.select :country, GeoIP::CountryName
+            = f.select :country, Countries.country_names
         .slider.bottom_line.clearfix
           .field.clearfix
             = f.label :city, 'City: '
