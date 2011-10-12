@@ -69,7 +69,18 @@ class Apps::CurrenciesController < WebsiteController
     log_activity(@currency)
     @currency.name = params[:currency][:name]
     
+    partner = @currency.partner
+    
+    unless partner.accepted_publisher_tos? || params[:terms_of_service] == '1'
+      flash[:error] = 'You must accept the terms of service to create a new virtual currency'
+      render :action => :new and return
+    end
+    
     if @currency.save
+      if params[:terms_of_service] == '1'
+        log_activity(partner)
+        partner.update_attribute :accepted_publisher_tos, true
+      end
       flash[:notice] = 'Currency was successfully created.'
       redirect_to app_currency_path(:app_id => params[:app_id], :id => @currency.id)
     else
