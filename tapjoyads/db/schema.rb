@@ -602,6 +602,7 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
     t.string   "reseller_id",                :limit => 36
     t.string   "billing_email"
     t.integer  "freshbooks_client_id"
+    t.boolean  "accepted_publisher_tos"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
