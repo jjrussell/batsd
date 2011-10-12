@@ -1,0 +1,106 @@
+#main
+  - link_to(get_click_url(@offer), :class => 'image-link') do
+    %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => @offer.fullscreen_ad_image_url(@publisher_app.id, true, :dimensions => @dimensions), :class => 'creative', :id => 'creative' }
+  .clear
+  = link_to('Skip', 'dismiss', :class => 'skip')
+  = link_to("#{@offer.item_type == 'App' ? 'Download' : 'Earn now'}", get_click_url(@offer), :class => 'download')
+
+  - content_for :page_javascript do
+    :plain
+      document.ontouchmove = function(e){ e.preventDefault(); }
+      window.onload = init;
+
+      function init() {
+        var availableCreatives = [];
+
+    - # Provide available custom creative sizes to javascript
+    - @offer.banner_creatives.each do |size|
+      :plain
+        availableCreatives.push("#{size}");
+
+    :plain
+        creative = document.getElementById('creative');
+        main = document.getElementById('main');
+
+        if (creative.getAttribute('s') && creative.src != creative.getAttribute('s')) {
+          creative.src = creative.getAttribute('s');
+        }
+
+        if(#{@height.present?}) {
+          clientHeight = #{@height};
+          clientWidth = #{@width};
+        } else {
+          clientHeight = document.documentElement.clientHeight;
+          clientWidth = document.documentElement.clientWidth;
+        }
+
+        //document.body.setAttribute('style', 'height: ' + (clientHeight  - 30) + 'px;');
+
+        //if (clientHeight < 480) {
+        //  creative.setAttribute('style', 'width: 96px; height: 96px;');
+        //  main.setAttribute('style', 'height: 294px; margin-top: -147px; top: 50%');
+        //} else if (clientHeight > 800) {
+        //  creative.setAttribute('style', 'width: 512px; height: 512px;');
+        //  main.setAttribute('style', 'height: 710px; margin-top: -355px; top: 50%');
+        //} else {
+        //  creative.setAttribute('style', 'width: 256px; height: 256px;');
+        //  main.setAttribute('style', 'height: 454px; margin-top: -227px; top: 50%');
+        //}
+      }
+
+  - content_for :page_styles do
+    :plain
+
+      body {
+        margin: 0;
+        height: #{@height}px;
+        background-color: #000;
+      }
+
+      #main {
+        font-size: 20px;
+        text-align: center;
+        position: relative;
+        margin: 0;
+      }
+
+      .image-link {
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      img.creative {
+        border: 1px solid #aaa;
+        display: block;
+        margin: 0 auto;
+        padding: 3px;
+        width: #{@width}px;
+        height: #{@height}px;
+        background-color: #FFF;
+        background-image: url('/images/spinner.gif');
+        background-repeat: no-repeat;
+        background-position: center;
+      }
+
+      .skip,
+      .download {
+        border: 1px solid #aaa;
+        -moz-border-radius: 7px;
+        -webkit-border-radius: 7px;
+        text-decoration: none;
+      }
+
+      .skip {
+        padding: 5px;
+        margin-right: 20px;
+        color: #555;
+        background-color: #ccc;
+      }
+
+      .download {
+        background: url("/images/arrow-right.png") no-repeat scroll 98% 50% #eee;
+        color: #004E09;
+        display; block;
+        padding: 5px 50px 5px 40px;
+        font-weight: bold;
+      }

@@ -37,12 +37,15 @@ class Apps::OffersController < WebsiteController
     end
 
     if !@offer.rewarded?
-      @custom_creative_sizes = Offer::DISPLAY_AD_SIZES.collect { |size| { :dimensions => size, :label => "#{size} creative" }}
+      @custom_creative_sizes = Offer::DISPLAY_AD_SIZES.collect { |size| { :dimensions => size, :label_image_size => "#{size} creative" }}
     elsif @offer.featured?
       @custom_creative_sizes = Offer::FEATURED_AD_SIZES.collect do |size|
         width, height = size.split("x").collect{|x|x.to_i}
+        screen_height = height + Offer::FEATURED_AD_BUTTON_HEIGHT
         orientation = width > height ? "(landscape)" : "(portrait)"
-        { :dimensions => size, :label => "#{size} #{orientation}" }
+        { :dimensions         => size,
+          :label_image_size   => "#{size} #{orientation}",
+          :label_screen_size  => "#{width}x#{screen_height} #{orientation}" }
       end
     end
   end

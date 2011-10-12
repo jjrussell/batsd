@@ -6,12 +6,14 @@ class FullscreenAdController < ApplicationController
     offer = Offer.find_in_cache(params[:offer_id])
     if params[:dimensions].present?
       width, height = params[:dimensions].split("x")
+      screen_height = height.to_i + Offer::FEATURED_AD_BUTTON_HEIGHT
     else
       # Default to showing low-res ad with portrait orientation
       width = 320
-      height = 480
+      height = 440
+      screen_height = 480
     end
-    img = IMGKit.new(offer.fullscreen_ad_url(:publisher_app_id => params[:publisher_app_id], :width => width, :height => height), :width => width, :height => height)
+    img = IMGKit.new(offer.fullscreen_ad_url(:publisher_app_id => params[:publisher_app_id], :width => width, :height => height), :width => width, :height => screen_height)
 
     send_data img.to_png, :type => 'image/png', :disposition => 'inline'
   end
@@ -32,6 +34,9 @@ class FullscreenAdController < ApplicationController
     @geoip_data = { :country => params[:country_code] }
     @width = params[:width] if params[:width].present?
     @height = params[:height] if params[:height].present?
+
+    creative_exists = true if @offer.banner_creatives.any? { |size| Offer::FEATURED_AD_SIZES.include?(size) }
+    render :custom_creative, :layout => "blank" if creative_exists
   end
 
   def test_offer

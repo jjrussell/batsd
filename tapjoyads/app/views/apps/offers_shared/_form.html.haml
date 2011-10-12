@@ -9,7 +9,7 @@
         %td
           - if @offer.featured?
             - @custom_creative_sizes.each do |size_hash|
-              = link_to("Preview #{size_hash[:label]} ads", preview_app_offer_path(:id => @offer.id, :app_id => @app.id, :dimensions => size_hash[:dimensions]), :rel => 'facebox', :id => 'preview_link')
+              = link_to("Preview #{size_hash[:label_screen_size]} ads", preview_app_offer_path(:id => @offer.id, :app_id => @app.id, :dimensions => size_hash[:dimensions]), :rel => 'facebox', :id => 'preview_link')
               %br
           - else
             = link_to("Preview ads", preview_app_offer_path(:id => @offer.id, :app_id => @app.id), :rel => 'facebox', :id => 'preview_link')
@@ -143,7 +143,7 @@
   Upload custom creatives:
   %br
   - @custom_creative_sizes.each do |size_hash|
-    %iframe.creative_upload{:src => upload_creative_app_offer_path(:id => @offer.id, :app => @app.id, :size => size_hash[:dimensions], :label => "#{size_hash[:label]} creative")}
+    %iframe.creative_upload{:src => upload_creative_app_offer_path(:id => @offer.id, :app => @app.id, :size => size_hash[:dimensions], :label => "#{size_hash[:label_image_size]} creative")}
 
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
   - form_for(@enable_request, :html => { :class => 'tjform' }) do |f|
