@@ -42,6 +42,8 @@ private
   def set_profile
     if current_gamer.present?
       @gamer = current_gamer
+      @gamer_profile = @gamer.gamer_profile || GamerProfile.new(:gamer => @gamer)
+      @gamer.gamer_profile = @gamer_profile
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
       redirect_to games_root_path
