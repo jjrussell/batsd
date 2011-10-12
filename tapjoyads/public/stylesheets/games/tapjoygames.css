@@ -927,7 +927,10 @@ form#new_gamer_session .login_pass {
   width: 100%;
 }
 #edit_profile .field {
-  padding: 12px 0 12px 12px;
+  margin: 12px 0;
+  padding: 0;
+  position: relative;
+  width: 100%;
 }
 .mobile #edit_profile label {
   font-size: 12px;
@@ -937,35 +940,43 @@ form#new_gamer_session .login_pass {
   float: left;
   font-weight: bold;
   position: relative;
+  text-align: right;
+  width: 30%;
 }
 .mobile #edit_profile input[type=text],
 .mobile #edit_profile input[type=password],
 .mobile #edit_profile select {
   font-size: 10px;
 }
-.mobile #edit_profile select {
-  width: 230px;
-}
 #edit_profile input[type=text],
 #edit_profile input[type=password],
 #edit_profile select {
   border: none;
+  bottom: 0px;
   color: #7E7E7E;
-  float: left;
   font-size: 16px;
+  margin: 0;
   outline: none;
-  padding: 0 0 0 4px;
-  position: relative;
+  padding: 0;
+  position: absolute;
+  right: 0px;
+  width: 69%;
   -webkit-appearance: none;
 }
-.mobile #edit_profile .value {
-  font-size: 12px;
-}
-#edit_profile .value,
 #edit_profile .fieldWithErrors {
+  bottom: 0px;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 0px;
+  width: 69%;
+}
+#edit_profile .fieldWithErrors input[type=password] {
   float: left;
-  padding: 0 0 0 4px;
   position: relative;
+}
+#edit_profile .formError {
+  padding: 0 0 0 2px;
 }
 .button_bar {
   width: 100%;
@@ -1050,6 +1061,10 @@ form#new_gamer_session .login_pass {
 }
 .login_header_wrapper a, .my_account_header_wrapper a, .header_wrapper a {
   color: #6B5F54;
+}
+.formError {
+  float: left;
+  width: 100%;
 }
 .formError, .email_error, .account_error, .login_error, .form_error, .dob_error {
   color: #F21C1A;
