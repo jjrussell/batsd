@@ -59,6 +59,7 @@ Rails::Initializer.run do |config|
   config.gem 'sass', :version => '3.1.7'
   config.gem 'syslog-logger', :version => '1.6.4', :lib => 'syslog_logger'
   config.gem 'uuidtools', :version => '2.1.2'
+  config.gem 'vertica', :version => '0.8.1'
   config.gem 'will_paginate', :version => '2.3.16'
 
   # Only load the plugins named here, in the order given. By default, all plugins 
@@ -118,6 +119,7 @@ Rails::Initializer.run do |config|
         Mc.reset_connection
         SimpledbResource.reset_connection
         Sqs.reset_connection
+        VerticaCluster.reset_connection
       end
     end
   end
