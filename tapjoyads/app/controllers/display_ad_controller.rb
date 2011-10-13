@@ -169,10 +169,10 @@ private
       img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
       img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
 
-      if currency.hide_rewarded_app_installs?
-        text = "Try #{offer.name} today"
-      else
+      if offer.rewarded?
         text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
+      else
+        text = "Try #{offer.name} today"
       end
 
       font = Rails.env == 'production' ? 'Helvetica' : ''
