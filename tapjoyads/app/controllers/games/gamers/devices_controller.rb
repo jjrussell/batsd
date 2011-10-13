@@ -47,7 +47,7 @@ class Games::Gamers::DevicesController < GamesController
       device = Device.new(:key => data[:udid])
       device.product = data[:product]
       device.version = data[:version]
-      device.mac_address = data[:mac_address]
+      device.mac_address = data[:mac_address] if data[:mac_address].present?
       device.platform = data[:platform]
 
       if current_gamer.devices.create(:device => device)
