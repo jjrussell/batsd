@@ -23,7 +23,7 @@ class Games::Gamers::DevicesController < GamesController
       when 'MAC_ADDRESS_EN0'; mac_address = value
       end
     end
-    raise "Error parsing plist" if udid.blank? || product.blank? || version.blank? || mac_address.blank?
+    raise "Error parsing plist" if udid.blank? || product.blank? || version.blank?
 
     data = {
       :udid              => udid,
