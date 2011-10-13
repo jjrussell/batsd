@@ -32,17 +32,17 @@ class Games::SocialController < GamesController
           gamers << gamer.get_gamer_name
           current_gamer.follow_gamer(gamer)
         else
-          friend_id = '572498594' if Rails.env != 'production'
+          friend_id = DEV_FACEBOOK_ID if Rails.env != 'production'
           friend = Mogli::User.find(friend_id.to_i, current_facebook_client)
           non_gamers << "#{friend.first_name} #{friend.last_name}"
           invitation = current_gamer.facebook_invitation_for(friend_id)
           if invitation.pending?
-            name = TJG_URL
+            name = TJGAMES_URL
             link = games_login_url :referrer => invitation.encrypted_referral_id
             message = "#{friend.first_name} #{friend.last_name} has invited you to join Tapjoy."
             
             description = "Experience the best of mobile apps!"
-            post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => "#{TJG_URL}/images/games/star_on_web.png")
+            post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => "#{TJGAMES_URL}/images/games/star_on_web.png")
             posts << friend.feed_create(post)
           end
         end
@@ -57,7 +57,7 @@ class Games::SocialController < GamesController
   end
 
   def invite_email_friends
-    @content ="Hi,\n\n#{current_gamer.get_gamer_name} has invited you to join Tapjoy. \n\nWith Tapjoy you can discover tons of apps and build fuel in your current ones. Create your account here:\n\n#{TJG_URL}\n\nStart Discovering!\nTeam Tapjoy"
+    @content ="Hi,\n\n#{current_gamer.get_gamer_name} has invited you to join Tapjoy. \n\nWith Tapjoy you can discover tons of apps and build fuel in your current ones. Create your account here:\n\n#{TJGAMES_URL}\n\nStart Discovering!\nTeam Tapjoy"
   end
 
   def send_email_invites
