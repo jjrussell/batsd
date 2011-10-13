@@ -20,8 +20,8 @@ class DisplayAdController < ApplicationController
     size = "#{width}x#{height}"
 
     key = "display_ad.decoded.#{params[:currency_id]}.#{params[:advertiser_app_id]}.#{size}.#{params[:display_multiplier] || 1}"
-    re_cache = (params[:re_cache] && params[:re_cache] == 'true')
-    Mc.delete(key) if re_cache
+    re_cache = (params[:re_memcache] && params[:re_memcache] == 'true')
+    Mc.delete(key) if re_memcache
 
     image_data = Mc.get_and_put(key, false, 5.minutes) do
       publisher = App.find_in_cache(params[:publisher_app_id])
@@ -34,6 +34,8 @@ class DisplayAdController < ApplicationController
 
       Base64.decode64(ad_image_base64)
     end
+
+    prevent_browser_cache(params[:prevent_browser_cache])
 
     send_data image_data, :type => "image/png", :disposition => 'inline'
   end
