@@ -4,6 +4,7 @@ class Gamer < ActiveRecord::Base
   has_many :gamer_devices
   has_many :invitations
   has_one :gamer_profile
+  delegate :facebook_id, :facebook_id?, :fb_access_token, :referred_by, :referred_by=, :referred_by?, :referral_count, :to => :gamer_profile
 
   validates_associated :gamer_profile, :on => :create
   validates_presence_of :email
@@ -33,7 +34,7 @@ class Gamer < ActiveRecord::Base
     when Invitation::EMAIL
       email
     when Invitation::FACEBOOK
-      gamer_profile.facebook_id
+      facebook_id
     end
   end
   
@@ -98,12 +99,12 @@ private
           Downloader.get_with_retry url
         end
       else
-        self.gamer_profile.referred_by, invitation_id = SymmetricCrypto.decrypt_object(referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
-        if gamer_profile.referred_by? && invitation_id
-          referred_by_gamer = Gamer.find(self.gamer_profile.referred_by)
-          referred_by_gamer.gamer_profile.update_attributes!(:referral_count => referred_by_gamer.gamer_profile.referral_count + 1)
+        self.referred_by, invitation_id = SymmetricCrypto.decrypt_object(referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
+        if referred_by? && invitation_id
+          referred_by_gamer = Gamer.find(self.referred_by)
+          referred_by_gamer.gamer_profile.update_attributes!(:referral_count => referred_by_gamer.referral_count + 1)
           invitation = Invitation.find(invitation_id)
-          follow_gamer(Gamer.find_by_id(gamer_profile.referred_by))
+          follow_gamer(Gamer.find_by_id(referred_by))
           Invitation.reconcile_pending_invitations(self, :invitation => invitation)
         end
       end

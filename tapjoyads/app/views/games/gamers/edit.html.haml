@@ -10,7 +10,7 @@
             #invite_friends.clearfix
               .social_btn_wrapper
                 = fb_connect_async_js
-                - if @gamer.gamer_profile.facebook_id.blank?
+                - if @gamer.facebook_id.blank?
                   .social_btn.fb{ :onclick => "doLogin('email,offline_access,create_note');" }
                 - else
                   .social_btn.fb{ :onclick => "location.href='#{games_social_invite_facebook_friends_path}';" }
