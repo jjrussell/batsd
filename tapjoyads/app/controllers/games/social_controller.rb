@@ -96,10 +96,12 @@ class Games::SocialController < GamesController
 
 private
   def offline_facebook_authenticate
-    if current_gamer.gamer_profile.facebook_id.blank? && params[:valid_login] && current_facebook_user
-      current_gamer.gamer_profile.update_facebook_info!(current_facebook_user)
-    elsif current_gamer.gamer_profile.facebook_id?
-      fb_create_user_and_client(current_gamer.gamer_profile.fb_access_token, '', current_gamer.gamer_profile.facebook_id)
+    profile = current_gamer.gamer_profile
+    
+    if profile.facebook_id.blank? && params[:valid_login] && current_facebook_user
+      profile.update_facebook_info!(current_facebook_user)
+    elsif profile.facebook_id?
+      fb_create_user_and_client(profile.fb_access_token, '', profile.facebook_id)
     else
       redirect_to games_social_invite_friends_path(:error => "Please connect facebook with tapjoy games.")
     end
