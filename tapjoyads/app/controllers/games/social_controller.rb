@@ -103,12 +103,13 @@ private
     elsif profile.facebook_id?
       fb_create_user_and_client(profile.fb_access_token, '', profile.facebook_id)
     else
-      redirect_to games_social_invite_friends_path(:error => "Please connect facebook with tapjoy games.")
+      flash[:error] = 'Please connect facebook with tapjoy games.'
+      redirect_to edit_games_gamer_path
     end
   end
 
   def require_gamer
-    redirect_to games_login_path if current_gamer.blank?
+    redirect_to games_login_path unless current_gamer
   end
   
   def validate_recipients

@@ -47,7 +47,7 @@ class Invitation < ActiveRecord::Base
 
     Invitation.pending_invitations_for(external_info).each do |invitation|
       gamer = Gamer.find_by_id(invitation.gamer_id)
-      gamer.follow_gamer(noob)
+      gamer.follow_gamer(noob) if gamer
     end
 
     if invitation && invitation.external_info == external_info
