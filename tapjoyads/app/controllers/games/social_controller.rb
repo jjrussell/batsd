@@ -86,7 +86,7 @@ class Games::SocialController < GamesController
 
         if invitation.pending?
           link = games_login_url(:referrer => invitation.encrypted_referral_id)
-          GamesMailer.deliver_invite(current_gamer, recipient, link)
+          GamesMailer.deliver_invite(current_gamer.get_gamer_name, recipient, link)
         end
       end
     end
