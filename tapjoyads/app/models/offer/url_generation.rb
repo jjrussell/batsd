@@ -147,7 +147,7 @@ module Offer::UrlGeneration
       display_multiplier = (display_multiplier || 1).to_f
       # TO REMOVE: displayer_app_id param after rollout.
       url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{id}&displayer_app_id=#{publisher_app_id}&size=#{size}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}"
-      url << "&re_cache=#{bust_cache}"
+      url << "&re_memcache=#{bust_cache}&prevent_browser_cache=#{bust_cache}"
       delim = '&'
     end
     url << "#{delim}ts=#{Time.now.to_i}" if bust_cache
@@ -158,7 +158,7 @@ module Offer::UrlGeneration
     if options[:dimensions].present? && display_custom_banner_for_size?(options[:dimensions])
       url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size)}"
     else
-      url = "#{API_URL}/fullscreen_ad/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
+      url = "#{API_URL}/fullscreen_ad/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}&prevent_browser_cache=#{bust_cache}"
     end
     url << "&ts=#{Time.now.to_i}" if bust_cache
     options.each do |key,value|
@@ -187,21 +187,22 @@ module Offer::UrlGeneration
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     ad_url = "#{API_URL}/fullscreen_ad"
-    if item_type == 'TestOffer'
-      ad_url += "/test_offer"
-    elsif item_type == 'TestVideoOffer'
-      ad_url += "/test_video_offer"
-    end
-    ad_url += "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app_id}&publisher_user_id=#{publisher_user_id}&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}&currency_id=#{currency_id}&country_code=#{country_code}&display_multiplier=#{display_multiplier}&library_version=#{library_version}"
-    ad_url += "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
-    ad_url += "&exp=#{exp}" if exp.present?
-    ad_url += "&width=#{width}" if width.present?
-    ad_url += "&height=#{height}" if height.present?
+    ad_url << "/test_offer" if item_type == 'TestOffer'
+    ad_url << "/test_video_offer" if item_type == 'TestVideoOffer'
+
+    ad_url << "?advertiser_app_id=#{item_id}&publisher_app_id=#{publisher_app_id}&publisher_user_id=#{publisher_user_id}" <<
+      "&udid=#{udid}&source=#{source}&offer_id=#{id}&app_version=#{app_version}&viewed_at=#{viewed_at.to_f}" <<
+      "&currency_id=#{currency_id}&country_code=#{country_code}&display_multiplier=#{display_multiplier}" <<
+      "&library_version=#{library_version}"
+    ad_url << "&displayer_app_id=#{displayer_app_id}" if displayer_app_id.present?
+    ad_url << "&exp=#{exp}" if exp.present?
+    ad_url << "&width=#{width}" if width.present?
+    ad_url << "&height=#{height}" if height.present?
     ad_url
   end
 
   def get_offers_image_url(publisher_app_id, bust_cache = false)
-    url = "#{API_URL}/get_offers/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
+    url = "#{API_URL}/get_offers/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}&prevent_browser_cache=#{bust_cache}"
     url << "&ts=#{Time.now.to_i}" if bust_cache
     url
   end

@@ -25,6 +25,8 @@ class GetOffersController < ApplicationController
     offer = Offer.find_in_cache(params[:offer_id])
     img = IMGKit.new(offer.get_offers_webpage_url(params[:publisher_app_id]), :width => 320)
 
+    prevent_browser_cache(params[:prevent_browser_cache])
+
     send_data img.to_png, :type => 'image/png', :disposition => 'inline'
   end
 
