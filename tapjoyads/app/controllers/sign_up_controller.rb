@@ -20,6 +20,7 @@ class SignUpController < WebsiteController
     @user.partners << @user.current_partner
     if @user.save
       flash[:notice] = 'Account successfully created.'
+      TapjoyMailer.deliver_partner_signup(@user.email)
       redirect_to apps_path
     else
       render :action => :new
