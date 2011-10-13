@@ -1208,7 +1208,104 @@ TJG.ui = {
       }
     });
   },
+  
+  showUpdateDob : function () {
+    var animateSpd = "fast";
+    $("#update_dob_dialog_content").parent().css("height", "180px");
+    $("#update_dob_dialog_content").html($('#update_dob_dialog_content_placeholder').html());
+    setTimeout(function() {
+      TJG.utils.centerDialog("#update_dob_dialog");
+      TJG.repositionDialog = ["#update_dob_dialog"];
+      $(".container").hide();
+      $("#update_dob_dialog").fadeIn();
+    }, 50);
 
+    $('#update_dob_dialog form').submit(function(e){
+      e.preventDefault();
+      var rurl, inputs, values = {}, hasError = false;
+      rurl = $(this).attr('action');
+      inputs = $('#update_dob_dialog form :input');
+      inputs.each(function() {
+        values[this.name] = $(this).val();
+      });
+      $(".dob_error").hide();
+      if(values['date[day]'] == '' || values['date[month]'] == '' || values['date[year]'] == '') {
+        $(".dob_error").html('Please enter your birthdate');
+        hasError = true;
+      }
+      if (hasError) {
+        $(".dob_error").show();
+      }
+      else if (hasError != true) {
+        var loader = [
+          '<div class="dialog_title title_2">Registering</div>',
+          '<div class="dialog_image"></div>'
+        ].join('');
+        $("#update_dob_dialog_content").html(loader);
+        $("#update_dob_dialog_content").parent().animate({ height: "100px", }, animateSpd);
+        $.ajax({
+          type: 'POST',
+          url: rurl,
+          cache: false,
+          timeout: 15000,
+          dataType: 'json', 
+          data: {
+            '_method': 'put',
+            'authenticity_token': values['authenticity_token'],
+            'date[day]': values['date[day]'],
+            'date[month]': values['date[month]'],
+            'date[year]': values['date[year]']
+          },
+          success: function(d) {
+            var msg;
+            if (d.success) {
+              document.location.href = TJG.path;
+            }
+            else {
+              var error = 'There was an issue while updating your profile.';
+              var underage_account_blocked = false;
+              if (d.error && d.error[0]) {
+                if (d.error[0][0] == 'birthdate') {
+                  error = 'Sorry, this service is currently unavailable'
+                  underage_account_blocked = true
+                }
+                else if (d.error[0][0] && d.error[0][1]) {
+                  error = 'The ' + d.error[0][0] + ' ' + d.error[0][1];
+                }
+              }
+              msg = [
+                '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
+                '<div class="dialog_content"><div>', error ,'.</div> <div id="update_dob_again"><div class="button grey dialog_button">Try Again</div></div></div>',
+              ].join('');
+              $("#update_dob_dialog_content").html(msg);
+            }
+            if (underage_account_blocked) {
+              $('#update_dob_again .dialog_button').html('OK');
+              $('#update_dob_again').click(function(){
+                document.location.href = TJG.logout_path;
+              });
+            } else {
+              $('#update_dob_again').click(function(){
+                TJG.ui.showUpdateDob();
+              });
+            }
+          },
+          error: function() {
+            var error = 'There was an issue'; 
+            msg = [
+              '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
+              '<div class="dialog_content"><div>', error ,'.</div><div id="update_dob_again"><div class="button grey dialog_button">Try Again</div></div></div>',
+            ].join('');
+            $("#update_dob_dialog_content").html(msg);
+            $('#update_dob_again').click(function(){
+               TJG.ui.showUpdateDob();
+            });
+          }
+        });
+      }
+    });
+  },
+  
   showAddHomeDialog : function() {
     var startY = startX = 0,
     options = {
@@ -2080,6 +2177,7 @@ TJG.social = {
     $('#recipients').keypress(function(event){
         code= (event.keyCode ? event.keyCode : event.which);
         if (code == 13){
+          $('#recipients').blur();
           sendInvite(event);
         }
     });

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111010212915) do
+ActiveRecord::Schema.define(:version => 20111011182943) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -171,6 +171,7 @@ ActiveRecord::Schema.define(:version => 20111010212915) do
     t.boolean  "udid_for_user_id",                                                                       :default => false, :null => false
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
+    t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -288,8 +289,8 @@ ActiveRecord::Schema.define(:version => 20111010212915) do
   add_index "gamer_devices", ["id"], :name => "index_gamer_devices_on_id", :unique => true
 
   create_table "gamer_profiles", :id => false, :force => true do |t|
-    t.string   "id",              :limit => 36,                :null => false
-    t.string   "gamer_id",        :limit => 36,                :null => false
+    t.string   "id",                :limit => 36,                    :null => false
+    t.string   "gamer_id",          :limit => 36,                    :null => false
     t.string   "last_name"
     t.string   "first_name"
     t.string   "gender"
@@ -303,6 +304,11 @@ ActiveRecord::Schema.define(:version => 20111010212915) do
     t.string   "fb_access_token"
     t.string   "referred_by",     :limit => 36
     t.integer  "referral_count",                :default => 0
+    t.string   "name"
+    t.string   "nickname"
+    t.string   "postal_code"
+    t.string   "favorite_category"
+    t.boolean  "use_gravatar",                    :default => false
   end
 
   add_index "gamer_profiles", ["facebook_id"], :name => "index_gamer_profiles_on_facebook_id"
@@ -311,8 +317,8 @@ ActiveRecord::Schema.define(:version => 20111010212915) do
   add_index "gamer_profiles", ["referred_by"], :name => "index_gamer_profiles_on_referred_by"
 
   create_table "gamers", :id => false, :force => true do |t|
-    t.string   "id",                 :limit => 36,                 :null => false
-    t.string   "email",                                            :null => false
+    t.string   "id",                 :limit => 36,                    :null => false
+    t.string   "email",                                               :null => false
     t.string   "crypted_password"
     t.string   "password_salt"
     t.string   "persistence_token"
@@ -324,7 +330,8 @@ ActiveRecord::Schema.define(:version => 20111010212915) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "udid"
-    t.string   "confirmation_token",               :default => "", :null => false
+    t.string   "confirmation_token",               :default => "",    :null => false
+    t.boolean  "blocked",                          :default => false
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
@@ -616,6 +623,7 @@ ActiveRecord::Schema.define(:version => 20111010212915) do
     t.string   "reseller_id",                :limit => 36
     t.string   "billing_email"
     t.integer  "freshbooks_client_id"
+    t.boolean  "accepted_publisher_tos"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

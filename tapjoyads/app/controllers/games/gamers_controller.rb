@@ -28,6 +28,13 @@ class Games::GamersController < GamesController
     end
   end
 
+  def edit
+    @geoip_data = get_geoip_data
+    if @gamer_profile.country.blank?
+      @gamer_profile.country = Countries.country_code_to_name[@geoip_data[:country]]
+    end
+  end
+
   def update_password
     @gamer.safe_update_attributes(params[:gamer], [ :password, :password_confirmation ])
     if @gamer.save

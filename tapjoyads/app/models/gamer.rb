@@ -55,15 +55,17 @@ class Gamer < ActiveRecord::Base
     invitation
   end
 
+  def get_gamer_nickname
+    if gamer_profile.present? && gamer_profile.nickname.present?
+      gamer_profile.nickname
+    elsif gamer_profile.present? && gamer_profile.name.present?
+      gamer_profile.name
+    end
+  end
+  
   def get_gamer_name
-    if gamer_profile.present? && ( gamer_profile.first_name.present? || gamer_profile.last_name.present? )
-      if gamer_profile.first_name.blank?
-        gamer_profile.last_name
-      elsif gamer_profile.last_name.blank?
-        gamer_profile.first_name
-      else
-        "#{gamer_profile.first_name} #{gamer_profile.last_name}"
-      end
+    if gamer_profile.present? && gamer_profile.name.present?
+      gamer_profile.name
     else
       email
     end
