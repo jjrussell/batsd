@@ -76,10 +76,11 @@ class Games::SocialController < GamesController
         non_gamers << recipient
         invitation = Invitation.find_by_external_info_and_gamer_id(recipient, current_gamer.id)
         if invitation.blank?
-          invitation = Invitation.new
-          invitation.gamer_id = current_gamer.id
-          invitation.channel = Invitation::EMAIL
-          invitation.external_info = recipient
+          invitation = Invitation.new({
+            :gamer_id => current_gamer.id,
+            :channel => Invitation::EMAIL,
+            :external_info => recipient,
+          })
           invitation.save
         end
 
