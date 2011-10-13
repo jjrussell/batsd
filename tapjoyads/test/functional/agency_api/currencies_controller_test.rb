@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
-  
+
   context "on GET to :index" do
     setup do
       @agency_user = Factory(:agency_user)
@@ -9,7 +9,7 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
       PartnerAssignment.create!(:user => @agency_user, :partner => @partner)
       @app = Factory(:app, :partner => @partner)
     end
-    
+
     context "with missing params" do
       setup do
         @response = get(:index)
@@ -61,6 +61,7 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
     end
     context "with valid params" do
       setup do
+        Resolv.stubs(:getaddress).returns('1.1.1.1')
         @currency = Factory(:currency, :app => @app, :partner => @partner, :name => 'foo', :conversion_rate => 50, :initial_balance => 50, :test_devices => 'asdf', :callback_url => 'http://tapjoy.com', :secret_key => 'bar')
         @response = get(:index, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :app_id => @app.id)
       end
@@ -82,7 +83,7 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
   context "on GET to :show" do
     setup do
       @agency_user = Factory(:agency_user)
@@ -91,7 +92,7 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
       @app = Factory(:app, :partner => @partner)
       @currency = Factory(:currency, :id => @app.id, :app => @app, :partner => @partner)
     end
-    
+
     context "with missing params" do
       setup do
         @response = get(:show, :id => 'not_a_currency_id')
@@ -160,7 +161,7 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
   context "on POST to :create" do
     setup do
       @agency_user = Factory(:agency_user)
@@ -168,7 +169,7 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
       PartnerAssignment.create!(:user => @agency_user, :partner => @partner)
       @app = Factory(:app, :partner => @partner)
     end
-    
+
     context "with missing params" do
       setup do
         @response = post(:create)
@@ -246,6 +247,7 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
     end
     context "with valid params" do
       setup do
+        Resolv.stubs(:getaddress).returns('1.1.1.1')
         @response = post(:create, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :app_id => @app.id, :name => 'currency', :conversion_rate => 100, :initial_balance => 100, :test_devices => 'asdf;fdsa', :callback_url => 'http://tapjoy.com', :secret_key => 'bar')
       end
       should respond_with(200)
@@ -264,7 +266,7 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
   context "on PUT to :update" do
     setup do
       @agency_user = Factory(:agency_user)
@@ -273,7 +275,7 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
       @app = Factory(:app, :partner => @partner)
       @currency = Factory(:currency, :id => @app.id, :app => @app, :partner => @partner)
     end
-    
+
     context "with missing params" do
       setup do
         @response = put(:update, :id => 'not_a_currency_id')
@@ -337,6 +339,7 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
     end
     context "with valid params" do
       setup do
+        Resolv.stubs(:getaddress).returns('1.1.1.1')
         @response = put(:update, :id => @currency.id, :agency_id => @agency_user.id, :api_key => @agency_user.api_key, :name => 'foo', :conversion_rate => 200, :initial_balance => 200, :test_devices => 'asdf;fdsa', :callback_url => 'http://tapjoy.com', :secret_key => 'bar')
       end
       should respond_with(200)
@@ -354,5 +357,5 @@ class AgencyApi::CurrenciesControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
 end

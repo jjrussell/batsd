@@ -72,7 +72,7 @@ class Partner < ActiveRecord::Base
   named_scope :search, lambda { |name_or_email| { :joins => :users,
       :conditions => [ "#{Partner.quoted_table_name}.name LIKE ? OR #{User.quoted_table_name}.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
     }
-  named_scope :premier, lambda { { :joins => :offer_discounts, :conditions => [ "#{OfferDiscount.quoted_table_name}.expires_on > ? ", Time.zone.today ], :group => "#{Partner.quoted_table_name}.id" } }
+  named_scope :premier, :conditions => 'premier_discount > 0'
   named_scope :payout_info_changed, lambda { |start_date, end_date| { :joins => :payout_info,
     :conditions => [ "#{PayoutInfo.quoted_table_name}.updated_at >= ? and #{PayoutInfo.quoted_table_name}.updated_at < ? ", start_date, end_date ]
   } }
@@ -284,7 +284,7 @@ class Partner < ActiveRecord::Base
 private
 
   def update_currencies
-    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed?
+    if rev_share_changed? || direct_pay_share_changed? || disabled_partners_changed? || offer_whitelist_changed? || use_whitelist_changed? || accepted_publisher_tos_changed?
       currencies.each do |c|
         c.set_values_from_partner_and_reseller
         c.save!

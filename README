@@ -74,7 +74,14 @@ Environment Setup:
   -mkdir tapjoyserver/tapjoyads/tmp
   -mkdir tapjoyserver/tapjoyads/log
   -cp tapjoyserver/tapjoyads/config/local-default.yml tapjoyserver/tapjoyads/config/local.yml
-  - open local.yml and change api_url to point to the local address of the app (ex: http://tapjoy.local or http://localhost:3000)
+  -open local.yml and change the urls to point to the local address of the app (ex: http://tapjoy.local or http://localhost:3000)
+
+
+-Download GeoIP database
+  -download http://s3.amazonaws.com/dev_tapjoy/rails_env/GeoLiteCity.dat.gz
+  -extract database file and move it into place
+    -gunzip GeoLiteCity.dat.gz
+    -mv GeoLiteCity.dat tapjoyserver/tapjoyads/data/GeoIPCity.dat
 
 
 -Install required gems
