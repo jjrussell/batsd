@@ -21,7 +21,7 @@ class DisplayAdController < ApplicationController
 
     key = "display_ad.decoded.#{params[:currency_id]}.#{params[:advertiser_app_id]}.#{size}.#{params[:display_multiplier] || 1}"
     re_cache = (params[:re_memcache] && params[:re_memcache] == 'true')
-    Mc.delete(key) if re_memcache
+    Mc.delete(key) if re_cache
 
     image_data = Mc.get_and_put(key, false, 5.minutes) do
       publisher = App.find_in_cache(params[:publisher_app_id])
