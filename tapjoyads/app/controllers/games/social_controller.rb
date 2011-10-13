@@ -120,10 +120,8 @@ private
         not_valid << recipient if @recipients[index] !~ Authlogic::Regex.email
       end
       
-      if not_valid.length == 1
-        render :json => { :success => false, :error => "This email(#{not_valid.join(', ')}) is invalid, please revise it" }
-      elsif not_valid.length > 1
-        render :json => { :success => false, :error => "These emails(#{not_valid.join(', ')}) are invalid, please revise them" }
+      if not_valid.any?
+        render :json => { :success => false, :error => "Invalid email(s):  #{not_valid.join(', ')}" }
       end
     else
       render :json => { :success => false, :error => "Please provide at least one email" }
