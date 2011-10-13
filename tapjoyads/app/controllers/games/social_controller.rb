@@ -84,10 +84,8 @@ class Games::SocialController < GamesController
         end
 
         if invitation.pending?
-          content = "Hi, <br/><br/>#{current_gamer.get_gamer_name} has invited you to join Tapjoy. <br/><br/>With Tapjoy you can discover tons of apps and build fuel in your current ones. Create your account here:"
-          signature = "Start Discovering!<br/>Team Tapjoy"
           link = games_login_url(:referrer => invitation.encrypted_referral_id)
-          GamesMailer.deliver_invite(current_gamer, recipient, content, link, signature)
+          GamesMailer.deliver_invite(current_gamer, recipient, link)
         end
       end
     end
