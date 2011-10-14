@@ -42,7 +42,7 @@ class GamerTest < ActiveSupport::TestCase
       Friendship.expects(:establish_friendship).with(@new_gamer.id, @referring_gamer.id).once
       Friendship.expects(:establish_friendship).with(@referring_gamer.id, @new_gamer.id).once
       Friendship.expects(:establish_friendship).with(@stalker_gamer.id, @new_gamer.id).once
-      Friendship.expects(:establish_friendship).with(@new_gamer.id, @stalker_gamer.id).times(0)
+      Friendship.expects(:establish_friendship).with(@new_gamer.id, @stalker_gamer.id).never
 
       @new_gamer.referrer = accepted_invitation.encrypted_referral_id
       @new_gamer.send :check_referrer
