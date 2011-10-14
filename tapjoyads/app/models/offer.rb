@@ -320,7 +320,11 @@ class Offer < ActiveRecord::Base
   def get_video_icon_url(options = {})
     if item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
       bucket = S3.bucket(BucketNames::TAPJOY)
-      bucket.key("icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg").exists? ? get_icon_url({:source => :cloudfront}.merge(options)) : "#{CLOUDFRONT_URL}/videos/assets/default.png"
+      begin
+        bucket.key("icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg").exists? ? get_icon_url({:source => :cloudfront}.merge(options)) : "#{CLOUDFRONT_URL}/videos/assets/default.png"
+      rescue RightAws::AwsError
+        "#{CLOUDFRONT_URL}/videos/assets/default.png"
+      end 
     end 
   end
   memoize :get_video_icon_url
