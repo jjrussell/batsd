@@ -74,13 +74,11 @@
       FB.login(function(response) {
         if (response.session) {
           FB.api('/me', function(response) {
-            console.log("inside the handleSessionResponse function: prepare to redirect");
             <!--
             window.location = "#{games_social_invite_facebook_friends_path(:valid_login => true)}"
             //-->
           });
         } else {
-          console.log('User cancelled login or did not fully authorize.');
         }
       }, {perms: 'email,offline_access,create_note'});
     };
