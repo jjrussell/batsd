@@ -422,7 +422,7 @@ TJG.ui = {
       }
     });
   },
-  
+
   showUpdateDob : function () {
     var animateSpd = "fast";
     $("#update_dob_dialog_content").parent().css("height", "180px");
@@ -462,7 +462,7 @@ TJG.ui = {
           url: rurl,
           cache: false,
           timeout: 15000,
-          dataType: 'json', 
+          dataType: 'json',
           data: {
             '_method': 'put',
             'authenticity_token': values['authenticity_token'],
@@ -505,7 +505,7 @@ TJG.ui = {
             }
           },
           error: function() {
-            var error = 'There was an issue'; 
+            var error = 'There was an issue';
             msg = [
               '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
               '<div class="dialog_content"><div>', error ,'.</div><div id="update_dob_again"><div class="button grey dialog_button">Try Again</div></div></div>',
@@ -519,7 +519,7 @@ TJG.ui = {
       }
     });
   },
-  
+
   showAddHomeDialog : function() {
     var startY = startX = 0,
     options = {
@@ -1234,7 +1234,7 @@ TJG.social = {
         }
       });
     }; // submitFbInvitation
-    
+
     var submitEmailInvitation = function(rurl, recipients){
       sending();
 
@@ -1296,7 +1296,7 @@ TJG.social = {
       $('.close_dialog').hide();
       TJG.ui.showLoaderAtCenter();
     };
-    
+
     var sending = function(){
       $('.close_dialog').hide();
       TJG.ui.showSender();
@@ -1325,20 +1325,20 @@ TJG.social = {
       TJG.utils.centerDialog(dialog_selector);
       $(dialog_selector).fadeIn(350).css({ top: scrollTop + screenHeight / 2 - height / 2 });
     }; // centerDialog
-    
+
     var sendInvite = function(event) {
       event.preventDefault();
       var url = $('form#invite_friends').attr('action');
 
       if(channel == 'FB'){
         if(selectedFriends.length == 0) {
-          showErrorDialog('You must select at least one friend before sending out an invite', TJG.ui.hideLoader());
+          showErrorDialog('Please select at least one friend before sending out an invite', TJG.ui.hideLoader());
         } else {
           submitFbInvitation(url);
         }
       }else if(channel == 'EMAIL'){
         submitEmailInvitation(url, $('#recipients').val());
-      }      
+      }
     }; // sendInvite
 
     // bind events
@@ -1387,7 +1387,7 @@ TJG.social = {
         showFriendList();
       }
     });
-    
+
     $('#recipients').keypress(function(event){
         code= (event.keyCode ? event.keyCode : event.which);
         if (code == 13){

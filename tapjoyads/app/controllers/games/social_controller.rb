@@ -20,7 +20,7 @@ class Games::SocialController < GamesController
     friends = params[:friends]
 
     if friends.blank?
-      render(:json => { :success => false, :error => "You must select at least one friend before sending out an invite" })
+      render(:json => { :success => false, :error => "Please select at least one friend before sending out an invite" })
     else
       posts = []
       gamers = []
@@ -42,7 +42,7 @@ class Games::SocialController < GamesController
             name = TJGAMES_URL
             link = games_login_url :referrer => invitation.encrypted_referral_id
             message = "#{friend.first_name} #{friend.last_name} has invited you to join Tapjoy."
-            
+
             description = "Experience the best of mobile apps!"
             post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => "#{TJGAMES_URL}/images/TapjoyGames_icon_114x114.jpg")
             posts << friend.feed_create(post)
@@ -53,7 +53,7 @@ class Games::SocialController < GamesController
       if gamers.any? || posts.any?{|post| post.id.present? }
         render :json => { :success => true, :gamers => gamers, :non_gamers => non_gamers }
       else
-        render :json => { :success => false, :error => "There was an issue with inviting your friend, please try again later" }
+        render :json => { :success => false, :error => "There was an issue with inviting your friend. Please try again later" }
       end
     end
   end
@@ -102,7 +102,7 @@ private
     elsif current_gamer.facebook_id?
       fb_create_user_and_client(current_gamer.fb_access_token, '', current_gamer.facebook_id)
     else
-      flash[:error] = 'Please connect facebook with tapjoy games.'
+      flash[:error] = 'Please connect Facebook with Tapjoy.'
       redirect_to edit_games_gamer_path
     end
   end
@@ -110,17 +110,17 @@ private
   def require_gamer
     redirect_to games_login_path unless current_gamer
   end
-  
+
   def validate_recipients
     if params[:recipients].present?
       @recipients = params[:recipients].split(/,/)
       not_valid = []
-      
+
       @recipients.each_with_index do |recipient, index|
         @recipients[index] = recipient.strip.downcase
         not_valid << recipient if @recipients[index] !~ Authlogic::Regex.email
       end
-      
+
       if not_valid.any?
         render :json => { :success => false, :error => "Invalid email(s):  #{not_valid.join(', ')}" }
       end
