@@ -117,8 +117,8 @@ class WebRequest
   self.define_attr :language
   self.define_attr :screen_density
   self.define_attr :screen_layout_size
-  self.define_attr :carrier_name, :cgi_escape => true   
-  self.define_attr :allows_voip         
+  self.define_attr :carrier_name, :cgi_escape => true
+  self.define_attr :allows_voip
   self.define_attr :carrier_country_code
   self.define_attr :mobile_country_code, :cgi_escape => true
   self.define_attr :mobile_network_code
