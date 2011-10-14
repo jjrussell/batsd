@@ -33,6 +33,11 @@ class Games::GamersController < GamesController
     if @gamer_profile.country.blank?
       @gamer_profile.country = Countries.country_code_to_name[@geoip_data[:country]]
     end
+    
+    if @gamer_profile.facebook_id.present?
+      fb_create_user_and_client(@gamer_profile.fb_access_token, '', @gamer_profile.facebook_id)
+      current_facebook_user.fetch
+    end
   end
 
   def update_password

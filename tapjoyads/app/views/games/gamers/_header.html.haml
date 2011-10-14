@@ -27,5 +27,11 @@
               = @gamer.email
             %div.gamer_signup_date
               = "Member since #{@gamer.created_at.strftime("%B %d, %Y")}"
+            - if @gamer.facebook_id?
+              %div.gamer_signup_date
+                = fb_connect_async_js
+                %span= "You are logged in Facebook as #{fb_name(current_facebook_user, :use_you => false)}. (not #{fb_name(current_facebook_user, :use_you => false, :linked => false)}? ["
+                %span= link_to "click here to remove", dissociate_account_games_gamer_gamer_profile_path(:account_type => Invitation::FACEBOOK)
+                %span= '])'
   .info_expand_bottom_arrow_wrapper
     .info_expand_bottom_arrow

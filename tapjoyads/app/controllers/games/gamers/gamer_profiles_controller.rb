@@ -1,6 +1,6 @@
 class Games::Gamers::GamerProfilesController < GamesController
 
-  before_filter :set_profile, :only => [ :update, :update_birthdate ]
+  before_filter :set_profile, :only => [ :update, :update_birthdate, :dissociate_account ]
 
   def update
     @gamer_profile.safe_update_attributes(params[:gamer_profile], [ :name, :nickname, :gender, :city, :country, :postal_code, :favorite_game, :favorite_category ])
@@ -24,6 +24,25 @@ class Games::Gamers::GamerProfilesController < GamesController
         end
       end
       render(:json => { :success => false, :error => @gamer_profile.errors }) and return
+    end
+  end
+  
+  def dissociate_account
+    if params[:account_type].present?
+      channel = params[:account_type].to_i
+      case channel
+      when Invitation::FACEBOOK
+        @gamer_profile.facebook_id     = nil
+        @gamer_profile.fb_access_token = nil
+      end
+
+      if @gamer_profile.save!
+        flash[:notice] = "You've successfully dissociated your #{Invitation::CHANNEL[channel]} account."
+        redirect_to edit_games_gamer_path and return
+      else
+        flash[:error] = 'Please try dissociate later.'
+        redirect_to edit_games_gamer_path and return
+      end
     end
   end
 
