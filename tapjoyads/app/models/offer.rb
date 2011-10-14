@@ -332,9 +332,8 @@ class Offer < ActiveRecord::Base
 
     if item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
       bucket = S3.bucket(BucketNames::TAPJOY)
-      existing_icon_blob = bucket.get("icons/src/#{icon_id}.jpg") rescue ''
       size = '200'
-      return "#{prefix}/videos/assets/default.png" if existing_icon_blob.blank?
+      return "#{prefix}/videos/assets/default.png" unless bucket.key("icons/src/#{icon_id}.jpg").exists?
     end
 
     "#{prefix}/icons/#{size}/#{icon_id}.jpg"
