@@ -7,7 +7,8 @@ class Games::SocialControllerTest < ActionController::TestCase
 
   context "inviting facebook friends" do
     setup do
-      @gamer = Factory(:facebook_gamer)
+      @gamer = Factory(:gamer)
+      @gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => @gamer)
       games_login_as(@gamer)
     end
 
@@ -22,7 +23,8 @@ class Games::SocialControllerTest < ActionController::TestCase
         Mogli::User.stubs(:find).returns(mogli_user)
         Mogli::Post.stubs(:new).returns(mogli_post)
 
-        gamer = Factory(:gamer, :facebook_id => 'foo')
+        gamer = Factory(:gamer)
+        gamer.gamer_profile = GamerProfile.create(:facebook_id => 'foo', :gamer => gamer)
         friends = ['foo', 'bar']
         post 'send_facebook_invites', :friends => friends, :content => 'hello'
         assert_response(200)
@@ -45,8 +47,8 @@ class Games::SocialControllerTest < ActionController::TestCase
         Mogli::User.stubs(:find).returns(mogli_user)
         Mogli::Post.stubs(:new).returns(mogli_post)
 
-        gamer = Factory(:gamer, :facebook_id => 'foo')
-        puts gamer.facebook_id
+        gamer = Factory(:gamer)
+        gamer.gamer_profile = GamerProfile.create(:facebook_id => 'bar', :gamer => gamer)
         invitation = Factory(:invitation, :gamer => gamer, :noob_id => @gamer.id)
         friends = ['foo', 'bar']
         post 'send_facebook_invites', :friends => friends, :content => 'hello'

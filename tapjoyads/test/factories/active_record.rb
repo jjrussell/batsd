@@ -173,10 +173,6 @@ FactoryGirl.define do
     terms_of_service { '1' }
   end
 
-  factory :facebook_gamer, :parent => :gamer do
-    facebook_id { Factory.next(:name) }
-  end
-
   factory :invitation do
     gamer         { Factory(:facebook_gamer) }
     noob          { Factory(:gamer) }
