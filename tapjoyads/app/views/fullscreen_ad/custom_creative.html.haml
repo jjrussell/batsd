@@ -1,6 +1,6 @@
 #main
   - link_to(get_click_url(@offer), :class => 'image-link') do
-    %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => @offer.fullscreen_ad_image_url(@publisher_app.id, true, :dimensions => @dimensions), :class => 'creative', :id => 'creative' }
+    %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :class => 'creative', :id => 'creative' }
   .clear
   = link_to('Skip', 'dismiss', :class => 'skip')
   = link_to("#{@offer.item_type == 'App' ? 'Download' : 'Earn now'}", get_click_url(@offer), :class => 'download')
@@ -11,28 +11,99 @@
       window.onload = init;
 
       function init() {
+        // We want the custom creative we choose to be within this percentage
+        // of the client's actual screen size
+        //var marginThreshold = .20;
+        var baseCreativeUrl = "#{CLOUDFRONT_URL}";
+        var buttonHeight = #{Offer::FEATURED_AD_BUTTON_HEIGHT};
+
+        var availableCreativeSizes = [];
         var availableCreatives = [];
 
     - # Provide available custom creative sizes to javascript
     - @offer.banner_creatives.each do |size|
       :plain
-        availableCreatives.push("#{size}");
+        availableCreativeSizes.push("#{size}".split('x'));
+        availableCreatives.push("#{@offer.banner_creative_path(size, 'jpeg')}");
 
     :plain
         creative = document.getElementById('creative');
         main = document.getElementById('main');
 
-        if (creative.getAttribute('s') && creative.src != creative.getAttribute('s')) {
-          creative.src = creative.getAttribute('s');
+        // Determine target screen size and orientation
+        if(#{@height.present? && @width.present?}) {
+          var clientWidth = #{@width};
+          var clientHeight = #{@height} + buttonHeight;
+        } else {
+          var clientHeight = document.documentElement.clientHeight;
+          var clientWidth = document.documentElement.clientWidth;
+        }
+        var orientation = (clientHeight > clientWidth) ? 'portrait' : 'landscape';
+        //var horizMarginThreshold = Math.round(clientWidth * marginThreshold);
+        //var vertMarginThreshold = Math.round(clientHeight * marginThreshold);
+
+        // Scan through all available creatives to determine best screen fit
+        var preferredCreative = -1;
+        var preferredCreativeOrientation = '';
+        var minHorizMarginPercent = -1;
+        var minVertMarginPercent = -1;
+        for(i = 0; i < availableCreativeSizes.length; i++ ) {
+          // Get info about this creative
+          var creativeWidth = parseInt(availableCreativeSizes[i][0]);
+          var creativeHeight = parseInt(availableCreativeSizes[i][1]);
+          var creativeOrientation = (creativeHeight > creativeWidth) ? 'portrait' : 'landscape';
+          var horizMargin = clientWidth - creativeWidth;
+          var vertMargin = clientHeight - (creativeHeight + buttonHeight);
+          var horizMarginPercent = Math.abs(horizMargin) / clientWidth;
+          var vertMarginPercent = Math.abs(vertMargin) / clientHeight;
+
+
+          alert("clientHeight: " + clientHeight + " (" + typeof(clientHeight) + ")\n" +
+                "clientWidth: " + clientWidth + " (" + typeof(clientWidth) + ")\n" +
+                "creativeHeight: " + creativeHeight + " (" + typeof(creativeHeight) + ")\n" +
+                "creativeWidth: " + creativeWidth + " (" + typeof(creativeWidth) + ")\n" +
+                "preferredCreative: " + preferredCreative + " (" + typeof(preferredCreative) + ")\n" +
+                " - Orientation: " + preferredCreativeOrientation + " (" + typeof(preferredCreativeOrientation) + ")\n" +
+                " - minHorizMarginPercent: " + minHorizMarginPercent + " (" + typeof(minHorizMarginPercent) + ")\n" +
+                " - minVertMarginPercent: " + minVertMarginPercent + " (" + typeof(minVertMarginPercent) + ")\n");
+
+          // If this is the first creative being considered, set it as the current 'favorite'
+          if(i == 0) {
+            preferredCreative = 0;
+            preferredCreativeOrientation = creativeOrientation;
+            minHorizMarginPercent = horizMarginPercent;
+            minVertMarginPercent = vertMarginPercent;
+
+            // Since this is the current favorite, we don't need to do any comparisons in this iteration
+            continue;
+          }
+
+          // If this creative is a perfect fit, use it
+          if(horizMargin == 0 && vertMargin == 0) {
+            alert("Perfect fit!");
+            preferredCreative = i;
+            break;
+          }
+
+          // If this creative's orientation is a better match than what we have, use it
+
+
+
+          // Otherwise, calculate how good of a fit this creative is and compare its fit
+          // with the current favorite
+          alert("Horizontal Margin: " + horizMargin + " (Percentage: " + horizMarginPercent + ")\n" +
+                "Vertical Margin: " + vertMargin + " (Percentage: " + vertMarginPercent + ")\n" +
+                "Orientation: " + creativeOrientation + " (" + typeof(creativeOrientation) + ")\n");
+          if(horizMarginPercent <= minHorizMarginPercent && vertMarginPercent <= minVertMarginPercent) {
+            preferredCreative = i;
+            minHorizMarginPercent = horizMarginPercent;
+            minVertMarginPercent = vertMarginPercent;
+          }
         }
 
-        if(#{@height.present?}) {
-          clientHeight = #{@height};
-          clientWidth = #{@width};
-        } else {
-          clientHeight = document.documentElement.clientHeight;
-          clientWidth = document.documentElement.clientWidth;
-        }
+        //if (creative.getAttribute('s') && creative.src != creative.getAttribute('s')) {
+        //  creative.src = creative.getAttribute('s');
+        //}
 
         //document.body.setAttribute('style', 'height: ' + (clientHeight  - 30) + 'px;');
 
