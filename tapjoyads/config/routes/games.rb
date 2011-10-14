@@ -25,5 +25,7 @@ ActionController::Routing::Routes.draw do |map|
     m.resources :support_requests, :controller => 'games/support_requests', :only => [ :new, :create ]
     
     m.resources :android, :controller => 'games/android', :action => :index
+    
+    m.switch_device 'switch_device', :controller => 'games/homepage', :action => :switch_device
   end
 end

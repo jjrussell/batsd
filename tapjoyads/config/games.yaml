@@ -1,5 +1,5 @@
 defaults: &defaults
-  js_version: '1.25'
+  js_version: '1.26'
   js_files: [
     'tjg.jquery-1.6.2.min',
     'init',

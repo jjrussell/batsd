@@ -4,7 +4,7 @@ TJG.vars.orientationClasses = ['landscape', 'portrait'];
 TJG.vars.isIos = false;
 TJG.vars.isTouch = false;
 TJG.vars.imageLoaderInit = false;
-TJG.vars.autoKey = 0;  
+TJG.vars.autoKey = 0;
 TJG.appOfferWall = {};
 TJG.loadedImages = {};
 (function(window, document) {
@@ -14,13 +14,25 @@ TJG.loadedImages = {};
       winW = $(window).width();
       $(el).css('top',  winH/2-$(el).outerHeight()/2);
       $(el).css('left', winW/2-$(el).outerWidth()/2);
-      $(el).show();    
+      $(el).show();
     }
     centerDialog("#loader");
      var nav = navigator, classes = [''], classReplaces = {}, device = "", orientationCompute = "";
      TJG.vars.isIos = (/iphone|ipod|ipad/gi).test(nav.platform);
-     TJG.vars.isAndroid = (/android/gi).test(nav.platform);
-     TJG.vars.isMobile = /(ip(od|ad|hone)|android)/gi.test(nav.userAgent);
+     TJG.vars.isIpad = (/ipad/gi).test(nav.userAgent);
+     TJG.vars.isIpod = (/ipod/gi).test(nav.userAgent);
+     TJG.vars.isIphone = (/iphone/gi).test(nav.userAgent);
+     TJG.vars.isAndroid = (/android/gi).test(nav.userAgent);
+     TJG.vars.isMobile = /(ip(od|ad|hone))/gi.test(nav.userAgent);
+     if (TJG.vars.isIos) {
+       TJG.vars.device_type = nav.platform;
+     }
+     if (TJG.vars.isAndroid) {
+       TJG.vars.device_type = 'android';
+       if ((/mobile/gi).test(nav.userAgent)) {
+         TJG.vars.isMobile = true;
+       }
+     }
      TJG.vars.isIPad = (/ipad/gi).test(nav.platform);
      TJG.vars.isRetina = 'devicePixelRatio' in window && window.devicePixelRatio > 1;
      TJG.vars.isSafari = nav.appVersion.match(/Safari/gi);
@@ -44,7 +56,7 @@ TJG.loadedImages = {};
     }
     if (TJG.vars.isRetina) {
         classReplaces['no-hd'] = 'hd';
-    } 
+    }
     function getOrientationClass() {
       return TJG.vars.orientationClasses[window.orientation % 180 ? 0 : 1];
     }
@@ -67,7 +79,7 @@ TJG.loadedImages = {};
       }, false);
     }
     var className = TJG.doc.className;
-    for (replace in classReplaces) {              
+    for (replace in classReplaces) {
         className = className.replace(replace, classReplaces[replace]);
     }
     TJG.doc.className = className + classes.join(' ');

@@ -25,7 +25,7 @@ TJG.utils = {
   },
 
   hideURLBar : function() {
-    setTimeout(function() { 
+    setTimeout(function() {
       window.scrollTo(0, 1);
     }, 0);
   },
@@ -36,17 +36,17 @@ TJG.utils = {
 
   updateOrientation : function() {
     var orientation = this.getOrientation();
-    TJG.doc.setAttribute("orient", orientation); 
+    TJG.doc.setAttribute("orient", orientation);
   },
   
   centerDialog : function(el) {
     var h = parseInt(($(window).height()/2)-($(el).outerHeight()+16/2));
     var w = parseInt(($(window).width()/2)-($(el).outerWidth()/2));
     if (h <= 0) {
-      h = 24;
+      h = 36;
     }
     $(el).css('top',  h + "px");
-    $(el).css('left', w + "px"); 
+    $(el).css('left', w + "px");
   },
   
   disableScrollOnBody : function() {
@@ -57,18 +57,18 @@ TJG.utils = {
   },
   
   getParam : function(name) {
-    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]"); 
-    var regexS = "[\\?&]"+name+"=([^&]*)"; 
-    var regex = new RegExp( regexS ); 
-    var results = regex.exec( window.location.href ); 
-    if( results == null ) return ""; 
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    var regexS = "[\\?&]"+name+"=([^&]*)";
+    var regex = new RegExp( regexS );
+    var results = regex.exec( window.location.href );
+    if( results == null ) return "";
     else return results[1];
   },
   
   setLocalStorage: function(k,v) {
     if (typeof(localStorage) == 'undefined' ) {
       return;
-    } 
+    }
     else {
       try {
         localStorage[k] = v;
@@ -91,10 +91,42 @@ TJG.utils = {
     return localStorage[k];
   },
   
+  setCookie: function(name, value, days, years) {
+    if (days) {
+      var date = new Date();
+      var time = 0;
+      if (years) {
+        time = years*365*24*60*60*1000;
+      }
+      else {
+        time = days*24*60*60*1000;
+      }
+      date.setTime(date.getTime()+(time));
+      var expires = "; expires=" + date.toGMTString();
+    }
+    else var expires = "";
+    document.cookie = name + "=" + value+ expires + "; path=/";
+  },
+  
+  getCookie: function(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+      var c = ca[i];
+      while (c.charAt(0)==' ') c = c.substring(1,c.length);
+      if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+  },
+  
+  deleteCookie: function(name) {
+    setCookie(name, "", -1);
+  },
+  
   scrollTop : function (delay){
     if (delay == null) {
       delay = "slow";
-    } 
+    }
     $("html, body").animate({scrollTop:0}, delay);
   },
   
@@ -105,7 +137,7 @@ TJG.utils = {
       preLoad = 60;
       padSpace = 80;
     }
-    $(el).each(function (n,o) { 
+    $(el).each(function (n,o) {
       if ( this && $.inviewport( this, { padding: padSpace, threshold:preLoad } ) ) {
         var img = $(o).children("img:first");
         if ($(img).attr("loaded") == "true") {
@@ -114,9 +146,9 @@ TJG.utils = {
         $(img).attr("src", $(img).attr("s")).attr("loaded", "true");
         $(img).error(function() {
           $(img).attr("src", TJG.blank_img);
-        });          
+        });
       }
-    }); 
+    });
     
     if (!TJG.vars.imageLoaderInit) {
       $(window).scroll( function() {
@@ -129,13 +161,13 @@ TJG.utils = {
                 var img = $(o).children("img:first");
                 if ($(img).attr("loaded") == "true") {
                   return;
-                }   
+                }
                 $(img).attr("src", $(img).attr("s")).attr("loaded", "true");
                 $(img).error(function() {
                   $(img).attr("src", TJG.blank_img);
                 });
               }
-            }); 
+            });
             TJG.vars.scrolling = false;
           }, 150);
         }
@@ -148,7 +180,7 @@ TJG.utils = {
 };
 $.utils = TJG.utils;
 
-TJG.ui = { 
+TJG.ui = {
   
   hideLoader : function(delay,fn) {
     TJG.repositionDialog = [];
@@ -170,7 +202,7 @@ TJG.ui = {
   removeDialogs : function (delay) {
     delay = $.utils.or(delay, "fast");
     setTimeout(function() {
-      $('.dialog_wrapper').fadeOut(delay); 
+      $('.dialog_wrapper').fadeOut(delay);
     });
     TJG.repositionDialog = [];
   },
@@ -188,22 +220,22 @@ TJG.ui = {
       if (v.Cost == "Free") {
         freeCls = "free";
       }
-      t.push('<a href="' + v.RedirectURL + '">'); 
+      t.push('<a href="' + v.RedirectURL + '">');
         t.push('<li class="offer_item clearfix '+ clsId +'" '+ style +'>');
           t.push('<a href="' + v.RedirectURL + '">');
             t.push('<div class="offer_image">');
               t.push('<div id="'+ TJG.utils.genSym() +'" class="offer_image_loader_wrapper"><img src="' + TJG.blank_img + '" s="' + v.IconURL + '"></div>');
-            t.push('</div>'); 
+            t.push('</div>');
           t.push('</a>');
           t.push('<div class="offer_text">');
             t.push('<div class="offer_title title">');
               t.push(v.Name);
             t.push('</div>');
-            if (v.Type && v.Type == 'App') { 
+            if (v.Type && v.Type == 'App') {
               t.push('<div class="offer_install">');
                 t.push('Install and run ' + v.Name);
-              t.push('</div>'); 
-            }  
+              t.push('</div>');
+            }
             t.push('<div class="offer_info">');
                 t.push('<a href="' + v.RedirectURL + '">');
                   t.push('<div class="offer_button my_apps">');
@@ -217,10 +249,10 @@ TJG.ui = {
                       t.push('</span>');
                       t.push('<span class="cost '+ freeCls +'">');
                         t.push(v.Cost);
-                      t.push('</span>'); 
+                      t.push('</span>');
                     t.push('</div>');
-                  t.push('</div>');  
-                t.push('</a>'); 
+                  t.push('</div>');
+                t.push('</a>');
             t.push('</div>');
           t.push('</div>');
         t.push('</li>');
@@ -304,7 +336,7 @@ TJG.ui = {
           url: rurl,
           cache: false,
           timeout: 15000,
-          dataType: 'json', 
+          dataType: 'json',
           data: {
             'authenticity_token': values['authenticity_token'],
             'gamer[email]': values['gamer[email]'],
@@ -322,11 +354,10 @@ TJG.ui = {
               msg = [
                 '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Success!</div></div>',
                 '<div class="dialog_header">Your Tapjoy Games account was sucessfully created!</div>',
-               '<div class="dialog_content">A confirmation email has been sent to the address you entered.  Please follow the registration in the email to verify your address and complete the account registration. :)</div>',
-               '<div class="dialog_content"><div class="continue_link_device"><div class="button grey dialog_button">Continue</div></div></div>'
+               '<div class="dialog_content"><div class="continue_link_device"><div class="button grey dialog_button">Connect My Device</div></div></div>'
               ].join('');
               $('.close_dialog').unbind('click');
-              $("#sign_up_dialog_content").parent().animate({ height: "230px", }, animateSpd);
+              $("#sign_up_dialog_content").parent().animate({ height: "140px", }, animateSpd);
               $("#sign_up_dialog_content").html(msg);
               if (d.linked) { 
                 $('.close_dialog,.continue_link_device').click(function(){
@@ -338,22 +369,21 @@ TJG.ui = {
                   }
                 });
               }
-              else if (d.link_device_url) {
+              else if (d.link_device_url && TJG.vars.isIos) {
                 $('.close_dialog,.continue_link_device').click(function(){
-                  $('.close_dialog').unbind('click');
-                  $("#sign_up_dialog_content").html($("#link_device_dialog .dialog").html());
-                  $("#sign_up_dialog_content .dialog_header_wrapper").css("padding", "6px 12px");
-                  $("#sign_up_dialog_content").parent().animate({ height: "300px", }, animateSpd);
-                  $('.close_dialog,.link_device_url').click(function(){
-                    document.location.href = d.link_device_url;
-                  });
-                }); 
+                  document.location.href = d.link_device_url;
+                });
               }
               else {
                 $('.close_dialog,.continue_link_device').click(function(){
-                  document.location.href = location.protocol + '//' + location.host;
+                  if (TJG.path) {
+                    document.location.href = TJG.path;
+                  }
+                  else {
+                    document.location.href = document.domain;
+                  }
                 });
-              } 
+              }
             }
             else {
               var error = 'There was an issue with registering your account';
@@ -377,12 +407,12 @@ TJG.ui = {
             });
           },
           error: function() {
-            var error = 'There was an issue'; 
+            var error = 'There was an issue';
             msg = [
               '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Oops!</div></div>',
               '<div class="dialog_content"><div>', error ,'.</div><div id="sign_up_again"><div class="button grey dialog_button">Try Again</div></div></div>',
             ].join('');
-            $(".close_dialog").hide(); 
+            $(".close_dialog").hide();
             $("#sign_up_dialog_content").html(msg);
             $('#sign_up_again').click(function(){
                TJG.ui.showRegister();
@@ -540,10 +570,10 @@ TJG.ui = {
       if (closeTimeout) {
         clearInterval(theInterval);
         theInterval = setInterval(setPosition, options.iterations);
-      } 
+      }
       else {
         el.parentNode.removeChild(el);
-      }   
+      }
     }
     function setPosition () {
       var matrix = new WebKitCSSMatrix(window.getComputedStyle(el, null).webkitTransform),
@@ -582,7 +612,7 @@ TJG.ui = {
         if (TJG.vars.isIPad) {
           duration = '0.8s';
           posY = posY - el.offsetHeight - options.bottomOffset - 50;
-        } 
+        }
         else {
           duration = '0.4s';
           opacity = '0';
@@ -609,7 +639,7 @@ TJG.ui = {
         if (TJG.vars.isIPad) {
           duration = '0.6s';
           el.style.webkitTransform = 'translate3d(0,' + -(window.scrollY + options.bottomOffset + el.offsetHeight) + 'px,0)';
-        } 
+        }
         else {
           duration = '0.9s';
           el.style.webkitTransform = 'translate3d(0,' + -(startY + options.bottomOffset) + 'px,0)';
@@ -620,7 +650,7 @@ TJG.ui = {
           duration = '0.6s';
           el.style.opacity = '0'
           el.style.webkitTransform = 'translate3d(0,' + (startY + 50) + 'px,0)';
-        } 
+        }
         else {
           duration = '0.6s';
           el.style.webkitTransform = 'translate3d(0,' + (el.offsetHeight + options.bottomOffset + 50) + 'px,0)';
@@ -643,13 +673,113 @@ TJG.ui = {
     window.addToHomeClose = addToHomeClose;
   },
   
+  showDeviceSelection : function(devices,showClose) {
+    var fadeSpd = 350, fadeSpdFast = 250, fadeSpdSlow = 700;
+    var div = document.createElement('div');
+    var id = "deviceSelect";
+    var obj = "#" + id;
+    div.id = id;
+    div.style.cssText += 'position:absolute;';
+    var d = [];
+    var a = [];
+    var path;
+    if (TJG.path) {
+      path = TJG.path;
+    }
+    else {
+      path = location.pathname.replace(/\/$/, '');
+    }
+    var device_found = false, load_selector = false;
+    var device_count = 0;
+    var matched_data = "";
+    $.each(devices, function(i,v){
+      var device_type = v.device_type;
+      var nav_device_type = TJG.vars.device_type;
+      if (!TJG.utils.isNull(device_type) && nav_device_type && (device_type.toLowerCase() == nav_device_type.toLowerCase())) {
+        device_count++;
+        device_found = true;
+        matched_data - v.data;
+        d.push('<li>');
+          d.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
+            d.push(v.name);
+          d.push('</a>');
+        d.push('</li>');
+      }
+      else if (!TJG.vars.isTouch){
+        a.push('<li>');
+          a.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
+            a.push(v.name);
+          a.push('</a>');
+        a.push('</li>');
+      }
+    });
+    if (device_count == 1) { // Redirect as only one type of device
+      alert('redirect');
+    }
+    var m = "", link_device = "";
+    var close = "";
+    if (showClose) {
+      close = '<div class="close_button close_device_select"></div>';
+    }
+    if (device_found == false) {
+      if (TJG.vars.isIos) {
+        link_device = '<div class="button lt_blue"><a href="' + TJG.ios_link_device + '">Connect My Device</a></div>';
+        m =  [
+          close,
+          '<div class="dialog_header bold">Please reconnect your device:</div>',
+          '<div class="dialog_content">',
+            '<ul>',
+              link_device,
+            '</ul>',
+          '</div>'
+        ].join('');
+      }
+      else {
+        load_selector = true;
+        d = a;
+      }
+    }
+    m =  [
+      close,
+      '<div class="dialog_header bold">Please select your current device:</div>',
+      '<div class="dialog_content">',
+        '<ul>',
+          d.join(''),
+          '</ul>',
+      '</div>'
+    ].join('');
+
+    div.innerHTML = m;
+    document.body.appendChild(div);
+    var h = parseInt(($(window).height()/2)-($(obj).outerHeight()+16/2));
+    var w = parseInt(($(window).width()/2)-($(obj).outerWidth()/2));
+    if (h <= 0) {
+      h = 36;
+    }
+    $(obj).css('top',  h + "px");
+    $(obj).css('left', w + "px");
+    $("#jqt >*").each(function(){
+      $(this).animate({opacity: 0.025}, fadeSpd, function() {
+        $(obj).fadeIn(fadeSpd);
+      });
+    });
+    $('.close_device_select').click(function() {
+      $(obj).fadeOut(fadeSpd);
+      $("#jqt >*").each(function(){
+        $(this).animate({opacity: 1}, fadeSpd, function() {
+          $(obj).remove();
+        });
+      });
+    });
+  },
+  
   homeInit : function () {
     var jQT = new $.jQTouch({
       slideSelector: '#jqt',
     });
     var fadeSpd = 350, fadeSpdFast = 250, fadeSpdSlow = 700;
     var install = TJG.utils.getParam("register_device");
-    if (TJG.vars.isIos || TJG.vars.isSafari) {
+    if (TJG.vars.isIos || TJG.vars.hasHomescreen) {
       TJG.ui.showAddHomeDialog();
     }
     var expand = TJG.utils.getLocalStorage("tjg.feat_review.expand");
@@ -664,15 +794,26 @@ TJG.ui = {
       $("#register_device").fadeIn(fadeSpd);
       if (repeat != "false") {
          $("#register_device .close_dialog").click(function() {
-           showInto();
+           showIntro();
          });
       }
+    }
+    else if (TJG.require_select_device && TJG.select_device) {
+      TJG.ui.showDeviceSelection(TJG.select_device, false);
+      $('.device_switch').html("switch device")
     }
     else if (repeat != "false") {
       showInto();
     }
+    if (!TJG.require_select_device && TJG.select_device) {
+      $('.nav_device_info').css('cursor','pointer');
+      $('.device_switch').html("switch device")
+      $('.nav_device_info').click(function(){
+        TJG.ui.showDeviceSelection(TJG.select_device, true);
+      });
+    }
     
-    function showInto () {
+    function showIntro () {
       var div = document.createElement('div'), close;
       var id = "newUser";
       var obj = "#" + id;
@@ -692,11 +833,11 @@ TJG.ui = {
         var elW = $(obj).outerWidth();
         var winW = $(window).width();
         var w = parseInt((winW-elW)/2);
-        $(obj).css({ 
+        $(obj).css({
           "top": top - $(obj).outerHeight() - 12 + "px",
           "left": w + "px"
         });
-        $("#home").animate({opacity: 0.5}, fadeSpd, function(){
+        $("#home").animate({opacity: 0.25}, fadeSpd, function(){
           $(obj).fadeIn(fadeSpd);
         });
         $("#home, #newUser .close_button").click(function() {
@@ -704,7 +845,7 @@ TJG.ui = {
           $(obj).fadeOut(fadeSpd);
           TJG.utils.setLocalStorage("tjg.new_user", "false");
         });
-      }  
+      }
     }
     
     TJG.ui.loadRatings();
@@ -728,7 +869,7 @@ TJG.ui = {
       $("#earn").bind('pageAnimationStart', function(e, info){
         if (info.direction == "out") {
           $("#earn .content_wrapper").fadeOut("fast");
-        }     
+        }
       });
       $("#more_games").bind('pageAnimationStart', function(e, info){
         if (info.direction == "out") {
@@ -739,7 +880,7 @@ TJG.ui = {
         if (info.direction == "out") {
           $("#feat_app .content_wrapper").fadeOut("fast");
         }
-      }); 
+      });
       $("#home").bind('pageAnimationEnd', function(e, info){
         if (info.direction == "in") {
           $("#home .content_wrapper").fadeIn("fast");
@@ -748,7 +889,7 @@ TJG.ui = {
       $("#earn").bind('pageAnimationEnd', function(e, info){
         if (info.direction == "in") {
           $("#earn .content_wrapper").fadeIn("fast");
-        }       
+        }
       });
       $("#more_games").bind('pageAnimationEnd', function(e, info){
         if (info.direction == "in") {
@@ -759,7 +900,7 @@ TJG.ui = {
         if (info.direction == "in") {
           $("#feat_app .content_wrapper").fadeIn("fast");
         }
-      });  
+      });
       $(".get_offerwall_jsonp").each(function() {
         var i = 0;
         $(this).click(function(){
@@ -848,7 +989,7 @@ TJG.ui = {
                               $(".more_button_wrapper").html('<div class="back_to_top grey_button"><div class="grey_button_content">Back to Top</div></div>');
                               $(".back_to_top").click(function(){
                                 TJG.utils.scrollTop();
-                              }); 
+                              });
                             }
                           }
                           isLoading = false;
@@ -889,7 +1030,7 @@ TJG.ui = {
             TJG.utils.scrollTop();
          }
         });
-      }); 
+      });
     }
 
     function reloadOfferWalls () {
@@ -912,7 +1053,7 @@ TJG.ui = {
         }
         else {
           TJG.ui.showLoader();
-          $.ajax({ 
+          $.ajax({
             url: TJG.more_games_editor_picks,
             timeout: 15000,
             success: function(c) {
@@ -965,7 +1106,7 @@ TJG.ui = {
         }
         else {
           TJG.ui.showLoader();
-          $.ajax({ 
+          $.ajax({
             url: TJG.more_games_popular,
             timeout: 15000,
             success: function(c) {
@@ -991,7 +1132,7 @@ TJG.ui = {
       });
     }
     function featuredReview() {
-      $(".feat_app_url").click(function() { 
+      $(".feat_app_url").click(function() {
          slidePage("#feat_app", "left");
       });
     }
@@ -1014,7 +1155,7 @@ TJG.ui = {
           starcls = "star on";
           start++;
         }
-        else if (rating > start){ 
+        else if (rating > start){
           starcls = "star half";
           start++;
         }
@@ -1035,14 +1176,25 @@ TJG.ui = {
            $('#jqt').fadeTo(250,1);
         });
       },
-
+      
+      checkDeviceData: function() {
+        var c_data = TJG.utils.getCookie('data');
+        var ls_data = TJG.utils.getLocalStorage('data');
+        if (c_data && !ls_data) {
+          TJG.utils.setLocalStorage('data', c_data);
+        }
+        if (!c_data && ls_data) {
+          TJG.utils.setCookie('data', ls_data, 365, 1);
+        }
+      },
+      
       loadEvents : function () {
         $('.close_dialog').click(function(){
           TJG.ui.removeDialogs();
           TJG.repositionDialog = [];
         });
         $('#sign_up, #sign_up_form').click(function() {
-            TJG.ui.showRegister();
+          TJG.ui.showRegister();
         });
         $('#how_works').click(function(){
           TJG.utils.centerDialog("#how_works_dialog");
@@ -1066,6 +1218,51 @@ TJG.ui = {
             $(".feat_review").addClass('min');
             $(".app_review").hide();
             TJG.utils.setLocalStorage("tjg.feat_review.expand", "false");
+          }
+        });
+        if ($('form#new_gamer_session')) {
+          $('form#new_gamer_session').submit(function(e){
+            $(".formError").hide();
+            var inputs, email, pass, values = {};
+            var emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
+            inputs = $('form#new_gamer_session :input*');
+            inputs.each(function() {
+              if (this.type == 'checkbox' || this.type == 'radio') {
+                values[this.name] = $(this).attr("checked");
+              }
+              else {
+                values[this.name] = $(this).val();
+              }
+              email = values['gamer_session[email]'];
+              pass = values['gamer_session[password]'];
+              if ( email == '' ) {
+                $(".login_error").html('Please enter your email address');
+                $(".formError").show();
+                e.preventDefault();
+              }
+              else if ( pass == '' ) {
+                $(".login_error").html('Please enter your password');
+                $(".formError").show();
+                e.preventDefault();
+              }
+            });
+          });
+        }
+        var w = $('.nav_device_info').width();
+        w = w + 24;
+        $('.device_name').fadeOut(250, function(){
+          $('.nav_device_info').animate({width:"0px"}, 250);
+        });
+        $('.nav_device').click(function(){
+          if ($('.nav_device_info').width() == 0) {
+            $('.nav_device_info').animate({width:w + "px"}, 250, function() {
+              $('.device_name,.device_switch').fadeIn(250);
+            });
+          }
+          else {
+            $('.device_name,.device_switch').fadeOut(250, function(){
+              $('.nav_device_info').animate({width:"0px"}, 250);
+            });
           }
         });
       },

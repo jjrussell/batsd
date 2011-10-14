@@ -220,6 +220,10 @@ a, a:visited {
   top: -12px;
   width: 40px;
 }
+.close_device_select {
+  right: -16px;
+  top: -16px;
+}
 form#new_gamer input[type=text],
 form#new_gamer input[type=email],
 form#new_gamer input[type=password] {
@@ -253,11 +257,57 @@ form#new_gamer input {
 }
 /* Nav */
 .top_nav_bar {
+  color: #573D27;
+  font-weight: bold;
+  font-family: "Arial Rounded MT Bold", "Arial Rounded MT", Arial, Helvetica, sans-serif;
+  height: 32px;
+  position: absolute;
+  width: 100%;
+}
+.nav_profile {
   background: transparent url('/images/games/my_account.png') no-repeat;
   cursor: pointer;
-  position: absolute;
-  height: 44px;
-  width: 44px;
+  float: left;
+  height: 32px;
+  width: 32px;
+}
+.nav_device_info {
+  background: transparent url('/images/games/device_bg.png') repeat-x;
+  float: right;
+  height: 32px;
+  overflow: hidden;
+  text-align: center;
+}
+.nav_device {
+  background: transparent url('/images/games/device.png') no-repeat;
+  cursor: pointer;
+  float: right;
+  height: 32px;
+  overflow: hidden;
+  position: relative;
+  width: 32px;
+}
+.device_icon div {
+  height: 24px;
+  left: 8px;
+  position: relative;
+  top: 1px;
+  width: 24px;
+}
+.device_icon .mobile {
+  background: transparent url('/images/games/mobile_icon.png') no-repeat center center;
+  left: 14px;
+  height: 22px;
+  top: 2px;
+  width: 14px;
+}
+.device_name {
+  font-size: 14px;
+  padding: 4px 12px 0;
+}
+.device_switch {
+  font-size: 11px;
+  margin-top: 4px;
 }
 /* Page */
 .web .page,
@@ -285,6 +335,16 @@ form#new_gamer input {
 .mobile .tan .page {
   background: transparent url(data:image/jpeg;base64,/9j/4QAYRXhpZgAASUkqAAgAAAAAAAAAAAAAAP/sABFEdWNreQABAAQAAAA8AAD/4QNvaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLwA8P3hwYWNrZXQgYmVnaW49Iu+7vyIgaWQ9Ilc1TTBNcENlaGlIenJlU3pOVGN6a2M5ZCI/PiA8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIiB4OnhtcHRrPSJBZG9iZSBYTVAgQ29yZSA1LjAtYzA2MCA2MS4xMzQ3NzcsIDIwMTAvMDIvMTItMTc6MzI6MDAgICAgICAgICI+IDxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdFJlZj0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlUmVmIyIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bXBNTTpPcmlnaW5hbERvY3VtZW50SUQ9InhtcC5kaWQ6OTgwRkQyOUIyNjIwNjgxMTlGQ0JBOEI2MjY2RTA3NDgiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NDJDMjg0NDNCRUFEMTFFMEEwOTFBMTk2QTBGOEMwRjQiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NDJDMjg0NDJCRUFEMTFFMEEwOTFBMTk2QTBGOEMwRjQiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5OTBGRDI5QjI2MjA2ODExOUZDQkE4QjYyNjZFMDc0OCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5ODBGRDI5QjI2MjA2ODExOUZDQkE4QjYyNjZFMDc0OCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6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) repeat-x;
 }
+.logo_top {
+  height: 180px;
+  margin: 0 auto;
+  width: 240px;
+}
+.mobile .logo_top {
+  height: 74px;
+  margin: 0 auto;
+  width: 120px;
+}
 .web .logo,
 .ipad .logo {
   background: transparent url('/images/games/logo_web.jpg') no-repeat;
@@ -306,18 +366,17 @@ form#new_gamer input {
 }
 .web .slide_nav,
 .ipad .slide_nav {
-  top: 180px;
 }
 #app_title {
   background-color: rgba(255, 255, 255, 0.1);
   padding: 10px;
   -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
 }
 .web #app_title,
 .ipad #app_title {
   margin: 0 auto;
   margin-bottom: 12px;
-
   position: relative;
   text-align: center;
   width: 572px;
@@ -338,7 +397,6 @@ form#new_gamer input {
 }
 .mobile .slide_nav {
   padding: 0 8px 0 15px;
-  top: 74px;
 }
 .slide_nav, .slide_nav a {
   color: #71503B;
@@ -495,7 +553,10 @@ form#new_gamer input {
 }
 .message_title {
   font-size: 22px;
-  margin-top: 85px;
+  margin-top: 24px;
+}
+.mobile .message_title {
+  margin-top: 8px;
 }
 .message_header {
   color: #D2D2D2;
@@ -879,6 +940,7 @@ form#new_gamer_session .login_pass {
   width: 39px;
 }
 #invite_friends .social_btn {
+  border-radius: 6px;
   float: left;
   margin-bottom: 12px;
   margin-left: 12px;
@@ -1017,6 +1079,7 @@ form#new_gamer_session .login_pass {
   width: 165px;
 }
 .sign_up_button.button.lt_blue {
+  border-radius: 6px;
   cursor: pointer;
   font-size: 18px;
   padding: 10px 0 8px;
@@ -1283,6 +1346,7 @@ form#new_gamer_session .login_pass {
   margin-top: 3px;
 }
 .offer_image, .app_review .app_image  {
+  border-radius: 6px;
   float: left;
   height: 57px;
   overflow: hidden !important;
@@ -1309,6 +1373,7 @@ form#new_gamer_session .login_pass {
   width: 110px;
 }
 .web .app_review .app_image, .ipad .app_review .app_image {
+  border-radius: 12px;
   -moz-border-radius: 12px;
   -webkit-border-radius: 12px;
 }
@@ -1339,6 +1404,16 @@ form#new_gamer_session .login_pass {
 }
 .app_review.full .app_text {
   color: #FFF;
+}
+.tap_points {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-family: "Arial Rounded MT Bold", "Arial Rounded MT", Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  padding: 6px;
+  margin: 4px 6px 0 0;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
 }
 .mobile.portrait .offer_text {
   width: 240px;
@@ -1530,6 +1605,7 @@ form#new_gamer_session .login_pass {
 .get_more_apps, .grey_button, .tab_button.grey {
   background: -moz-linear-gradient(top, #E7E7E7 0%, #A6A6A6 100%);
   background: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #E7E7E7), color-stop(1, #A6A6A6));
+  border-radius: 6px;
   cursor: pointer;
   height: 40px;
   margin: 8px auto;
@@ -1567,6 +1643,7 @@ form#new_gamer_session .login_pass {
 }
 .tab_button.dark_grey {
   border: 1px solid #141414;
+  border-radius: 6px;
   cursor: pointer;
   height: 40px;
   margin: 8px auto;
@@ -1578,6 +1655,7 @@ form#new_gamer_session .login_pass {
 }
 /* Buttons */
 .tab_button {
+  border-radius: 6px;
   width: 180px;
   -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
@@ -1976,7 +2054,8 @@ body {
     -webkit-transform: translateX(100%);
   }
 }
-#addToHome, #newUser {
+#addToHome, #newUser, #deviceSelect {
+  border-radius: 6px;
   font-size: 14px;
   background-color: #222;
   border: 3px solid #b6b5b5;

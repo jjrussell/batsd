@@ -22,13 +22,22 @@ class Games::AndroidController < GamesController
       :version    => params[:os_version],
       :platform   => params[:platform]
     }
+    
     if current_gamer.present?
       if current_gamer.devices.empty?
-        redirect_to finalize_games_gamer_device_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)) and return
+        redirect_to finalize_games_gamer_device_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET))
+      else
+        cookies[:data] = encypt_data if params[:data].present?
+        redirect_to games_root_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET))
       end
-      redirect_to games_root_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)) and return
+    else
+      if cookies[:data].present?
+        redirect_to games_login_path
+      else
+        cookies[:data] = encypt_data if params[:data].present?
+        redirect_to games_login_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET))
+      end
     end
-    redirect_to games_login_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET))
   end
 
 end
