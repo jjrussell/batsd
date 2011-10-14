@@ -10,17 +10,15 @@ attempts = 0
 loop do
   attempts += 1
   output = `/usr/bin/geoipupdate -d /home/webuser/GeoIP/ 2>&1`
+  puts output
   if $?.exitstatus == 0
     `touch /home/webuser/tapjoyserver/tapjoyads/tmp/restart.txt`
-    puts "Updated GeoIP Database"
     break
   elsif $?.exitstatus == 1 && output =~ /GeoIP\ Database\ up\ to\ date/
-    puts "GeoIP Database up to date"
     break
   else
-    puts output
     if attempts > 5
-      puts "Failed to update Geoip Database"
+      puts "Failed to update Geoip Database: too many attempts"
       break
     else
       sleep(0.5)
