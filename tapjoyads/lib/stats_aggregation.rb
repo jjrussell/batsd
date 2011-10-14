@@ -107,7 +107,7 @@ class StatsAggregation
 
   def verify_web_request_stats_over_range(stat_row, offer, start_time, end_time)
     WebRequest::STAT_TO_PATH_MAP.each do |stat_name, path_definition|
-      conditions = "#{get_path_condition(path_definition[:paths], path_definition[:use_like])} AND #{path_definition[:attr_name]} IN ('#{@offer_ids.map(&:id).join("','")}')"
+      conditions = "#{get_path_condition(path_definition[:paths], path_definition[:use_like])} AND #{path_definition[:attr_name]} IN ('#{@offer_ids.join("','")}')"
       verify_stat_over_range(stat_row, stat_name, offer, start_time, end_time, false) do |s_time, e_time|
         get_web_request_count(path_definition[:attr_name], "#{conditions} AND #{get_time_condition(s_time, e_time)}", offer.id)
       end
