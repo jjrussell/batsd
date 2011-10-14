@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111011182943) do
+ActiveRecord::Schema.define(:version => 20111013180423) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -289,10 +289,8 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
   add_index "gamer_devices", ["id"], :name => "index_gamer_devices_on_id", :unique => true
 
   create_table "gamer_profiles", :id => false, :force => true do |t|
-    t.string   "id",                :limit => 36,                    :null => false
-    t.string   "gamer_id",          :limit => 36,                    :null => false
-    t.string   "last_name"
-    t.string   "first_name"
+    t.string   "id",                     :limit => 36,                    :null => false
+    t.string   "gamer_id",               :limit => 36,                    :null => false
     t.string   "gender"
     t.date     "birthdate"
     t.string   "city"
@@ -304,15 +302,16 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
     t.string   "nickname"
     t.string   "postal_code"
     t.string   "favorite_category"
-    t.boolean  "use_gravatar",                    :default => false
+    t.boolean  "use_gravatar",                         :default => false
+    t.boolean  "allow_marketing_emails",               :default => true
   end
 
   add_index "gamer_profiles", ["gamer_id"], :name => "index_gamer_profiles_on_gamer_id", :unique => true
   add_index "gamer_profiles", ["id"], :name => "index_gamer_profiles_on_id", :unique => true
 
   create_table "gamers", :id => false, :force => true do |t|
-    t.string   "id",                 :limit => 36,                    :null => false
-    t.string   "email",                                               :null => false
+    t.string   "id",                   :limit => 36,                    :null => false
+    t.string   "email",                                                 :null => false
     t.string   "crypted_password"
     t.string   "password_salt"
     t.string   "persistence_token"
@@ -324,8 +323,9 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "udid"
-    t.string   "confirmation_token",               :default => "",    :null => false
-    t.boolean  "blocked",                          :default => false
+    t.string   "confirmation_token",                 :default => "",    :null => false
+    t.boolean  "blocked",                            :default => false
+    t.integer  "accepted_tos_version",               :default => 1
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true

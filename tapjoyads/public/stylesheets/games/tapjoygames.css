@@ -165,13 +165,6 @@ a, a:visited {
   margin: 0 auto;
   text-align: left;
 }
-#update_dob_again {
-  margin-top: 6px;
-}
-#update_dob_dialog form {
-  margin: 0 auto;
-  text-align: left;
-}
 .dialog_title {
   font-size: 20px;
 }
@@ -241,15 +234,17 @@ form#new_gamer input {
   display: block;
   padding: 3px 0;
 }
-#update_dob_dialog label {
-  display: block;
-  padding: 3px 0;
+#accept_tos_dialog label {
+  font-size: 12px;
 }
-#update_dob_dialog input[type=submit] {
-  margin-top: 8px;
+#accept_tos_dialog .dialog_header a, #accept_tos_dialog .dialog_header a:visited {
+  color: red;
 }
-#update_dob_dialog .field {
-  width: 100%;
+#accept_tos_dialog input[type=submit] {
+  margin-top: 10px;
+}
+#accept_tos_again {
+  margin-top: 6px;
 }
 /* Nav */
 .top_nav_bar {
@@ -978,6 +973,32 @@ form#new_gamer_session .login_pass {
 #edit_profile .formError {
   padding: 0 0 0 2px;
 }
+#edit_communications {
+  padding: 0;
+}
+#edit_communications .bottom_line {
+  border-bottom: 1px solid #DEDEDE;
+}
+#edit_communications .slider {
+  padding: 0;
+  vertical-align: middle;
+  width: 100%;
+}
+#edit_communications .field {
+  margin: 12px 0;
+  padding: 0;
+  position: relative;
+  width: 100%;
+}
+.mobile #edit_communications label {
+  font-size: 12px;
+}
+#edit_communications label {
+  color: #7E7E7E;
+}
+#edit_communications input[type=checkbox] {
+  margin: 0 0 0 12px;
+}
 .button_bar {
   width: 100%;
 }
@@ -1066,12 +1087,12 @@ form#new_gamer_session .login_pass {
   float: left;
   width: 100%;
 }
-.formError, .email_error, .account_error, .login_error, .form_error, .dob_error {
+.formError, .email_error, .account_error, .login_error, .form_error, .tos_error {
   color: #F21C1A;
   font-size: 13px;
   padding: 4px;
 }
-.formError .pad, .email_error .pad, .account_error .pad, .login_error .pad, .form_error .pad, .dob_error .pad {
+.formError .pad, .email_error .pad, .account_error .pad, .login_error .pad, .form_error .pad, .tos_error .pad {
   padding: 6px;
 }
 .mobile .tab_wrapper {
