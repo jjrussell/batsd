@@ -201,6 +201,7 @@ class WebRequest
   end
 
   def save
+    @attributes['updated-at'] = [ Time.zone.now.to_f.to_s ]
     begin
       WEB_REQUEST_LOGGER << to_json
       update_realtime_stats
