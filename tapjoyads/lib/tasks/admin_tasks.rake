@@ -48,7 +48,7 @@ namespace :admin do
 
   desc "Update geoip databse"
   task :geoipupdate do
-    system("script/cloudrun 'masterjobs jobserver webserver website dashboard games' 'geoipupdate -d GeoIP/ 2>&1 ; touch tapjoyserver/tapjoyads/tmp/restart.txt' 'webuser' 'serial'")
+    system("script/cloudrun 'masterjobs jobserver webserver website dashboard games' 'tapjoyserver/server/update_geoip.rb' 'webuser' 'serial'")
   end
 
 end
