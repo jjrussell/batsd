@@ -23,13 +23,14 @@ class Games::Gamers::DevicesController < GamesController
       when 'MAC_ADDRESS_EN0'; mac_address = value
       end
     end
-    raise "Error parsing plist" if udid.blank? || product.blank? || version.blank? || mac_address.blank?
-
+    raise "Error parsing plist" if udid.blank? || product.blank? || version.blank?
+    
+    mac_address = mac_address.present? ? mac_address.downcase.gsub(/:/,"") : nil
     data = {
       :udid              => udid,
       :product           => product,
       :version           => version,
-      :mac_address       => mac_address.downcase.gsub(/:/,""),
+      :mac_address       => mac_address,
       :platform          => 'ios'
     }
     redirect_to finalize_games_gamer_device_path(:data => SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)), :status => 301
@@ -47,7 +48,7 @@ class Games::Gamers::DevicesController < GamesController
       device = Device.new(:key => data[:udid])
       device.product = data[:product]
       device.version = data[:version]
-      device.mac_address = data[:mac_address]
+      device.mac_address = data[:mac_address] if data[:mac_address].present?
       device.platform = data[:platform]
 
       if current_gamer.devices.create(:device => device)

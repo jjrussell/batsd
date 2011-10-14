@@ -337,10 +337,13 @@ class Offer < ActiveRecord::Base
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
 
     if item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
-      bucket = S3.bucket(BucketNames::TAPJOY)
-      existing_icon_blob = bucket.get("icons/src/#{icon_id}.jpg") rescue ''
       size = '200'
-      return "#{prefix}/videos/assets/default.png" if existing_icon_blob.blank?
+      # TODO: clean this up so it doesn't use memcached
+      icon_exists = Mc.get_and_put("s3.video_icon_exists.#{icon_id}", false, 10.minutes) do
+        bucket = S3.bucket(BucketNames::TAPJOY)
+        bucket.key("icons/src/#{icon_id}.jpg").exists?
+      end
+      return "#{prefix}/videos/assets/default.png" unless icon_exists
     end
 
     "#{prefix}/icons/#{size}/#{icon_id}.jpg"
