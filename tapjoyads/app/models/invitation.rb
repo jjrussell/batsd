@@ -38,8 +38,8 @@ class Invitation < ActiveRecord::Base
     invitation    = options.delete(:invitation)     { nil }
     if invitation
       external_info = noob.external_info(invitation.channel)
-    elsif external_info
-      invitation = Invitation.find_by_gamer_id_and_external_info(noob.gamer_profile.referred_by, external_info)
+    elsif external_info && noob
+      invitation = Invitation.find_by_gamer_id_and_external_info(noob.referred_by, external_info)
     else
       raise "Need invitation or external info"
     end

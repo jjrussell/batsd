@@ -27,10 +27,12 @@ class Games::SocialController < GamesController
       non_gamers = []
 
       friends.each do |friend_id|
-        gamer = Gamer.find_gamer_based_on_facebook(friend_id)
-        if gamer
-          gamers << gamer.get_gamer_name
-          current_gamer.follow_gamer(gamer)
+        exist_gamers = Gamer.find_all_gamer_based_on_facebook(friend_id)
+        if exist_gamers.any?
+          exist_gamers.each do |gamer|
+            gamers << gamer.get_gamer_name
+            current_gamer.follow_gamer(gamer)
+          end
         else
           friend_id = DEV_FACEBOOK_ID if Rails.env != 'production'
           friend = Mogli::User.find(friend_id.to_i, current_facebook_client)
