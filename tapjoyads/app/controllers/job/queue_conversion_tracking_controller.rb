@@ -97,9 +97,8 @@ private
     click.put('installed_at', installed_at_epoch)
     click.serial_save
     
-    web_request = WebRequest.new
-    web_request.add_path('reward')
-    web_request.put('time', installed_at_epoch)
+    web_request = WebRequest.new(:time => Time.zone.at(installed_at_epoch))
+    web_request.path              = 'reward'
     web_request.type              = reward.type
     web_request.publisher_app_id  = reward.publisher_app_id
     web_request.advertiser_app_id = reward.advertiser_app_id
@@ -117,6 +116,6 @@ private
     web_request.country           = reward.country
     web_request.exp               = reward.exp
     web_request.viewed_at         = reward.viewed_at
-    web_request.serial_save
+    web_request.save
   end
 end
