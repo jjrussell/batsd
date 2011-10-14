@@ -7,8 +7,8 @@
     Select our
     - sdk_link 'Offers Library', "#{@app.platform}-pub"
     or
-    - sdk_link 'Virtual Goods Library', "#{@app.platform}-vg"
-    \.
+    = succeed '.' do
+      - sdk_link 'Virtual Goods Library', "#{@app.platform}-vg"
   %li Add the Tapjoy library to your project directory.
   %li Compile and run your project.
   %li Add the Tapjoy credentials (provided below) to your app.
@@ -41,14 +41,6 @@
   .clear
 
 - content_for :page_head, stylesheet_link_tag('facebox')
-- content_for :included_javascripts, javascript_include_tag('facebox')
-- content_for :page_javascript do
-  :plain
-    $(document).ready(function($) {
-      $('a[rel*=facebox]').facebox({
-        closeImage : '/images/closelabel.png'
-      });
-    });
 - content_for :page_styles do
   :plain
     .download_link {
