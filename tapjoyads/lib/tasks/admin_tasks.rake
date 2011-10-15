@@ -12,6 +12,8 @@ namespace :admin do
 
   desc "Copies the production database to the development database"
   task :sync_db do
+    raise "Must be run from development mode" unless Rails.env == 'development'
+
     database_yml = YAML::load_file("config/database.yml")
     source       = database_yml['production_slave']
     dest         = database_yml['development']
