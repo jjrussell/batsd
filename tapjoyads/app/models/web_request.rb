@@ -147,57 +147,42 @@ class WebRequest
   end
 
   def put_values(path, params, ip_address, geoip_data, user_agent)
-    self.path = path
-
-    if params
-      self.campaign_id          = params[:campaign_id]
-      self.app_id               = params[:app_id]
-      self.udid                 = params[:udid]
-      self.mac_address          = params[:mac_address]
-      self.android_id           = params[:android_id]
-      self.currency_id          = params[:currency_id]
-
-      self.app_version          = params[:app_version]
-      self.device_os_version    = params[:device_os_version] || params[:os_version]
-      self.device_type          = params[:device_type]
-      self.device_name          = params[:device_name]
-      self.library_version      = params[:library_version]
-
-      self.offer_id             = params[:offer_id]
-      self.publisher_app_id     = params[:publisher_app_id]
-      self.advertiser_app_id    = params[:advertiser_app_id]
-      self.displayer_app_id     = params[:displayer_app_id]
-
-      self.device_ip            = params[:device_ip]
-      self.user_agent           = user_agent
-      self.type                 = params[:type]
-      self.publisher_user_id    = params[:publisher_user_id]
-      self.virtual_good_id      = params[:virtual_good_id]
-
-      self.source               = params[:source]
-      self.exp                  = params[:exp]
-      self.country              = params[:country_code]
-      self.language             = params[:language]
-      self.transaction_id       = params[:transaction_id]
-
-      self.tap_points           = params[:tap_points]
-
-      self.screen_density       = params[:screen_density]
-      self.screen_layout_size   = params[:screen_layout_size]
-
-      self.carrier_name         = params[:carrier_name]
-      self.allows_voip          = params[:allows_voip]
-      self.carrier_country_code = params[:carrier_country_code]
-      self.mobile_country_code  = params[:mobile_country_code]
-      self.mobile_network_code  = params[:mobile_network_code]
-    end
-
-    unless self.ip_address?
-      self.ip_address = ip_address
-    end
-
-    self.country = geoip_data[:country] if self.country.blank?
-    self.geoip_country = geoip_data[:country]
+    self.path                 = path
+    self.ip_address           = ip_address
+    self.user_agent           = user_agent
+    self.campaign_id          = params[:campaign_id]
+    self.app_id               = params[:app_id]
+    self.udid                 = params[:udid]
+    self.mac_address          = params[:mac_address]
+    self.android_id           = params[:android_id]
+    self.currency_id          = params[:currency_id]
+    self.app_version          = params[:app_version]
+    self.device_os_version    = params[:device_os_version] || params[:os_version]
+    self.device_type          = params[:device_type]
+    self.device_name          = params[:device_name]
+    self.library_version      = params[:library_version]
+    self.offer_id             = params[:offer_id]
+    self.publisher_app_id     = params[:publisher_app_id]
+    self.advertiser_app_id    = params[:advertiser_app_id]
+    self.displayer_app_id     = params[:displayer_app_id]
+    self.device_ip            = params[:device_ip]
+    self.type                 = params[:type]
+    self.publisher_user_id    = params[:publisher_user_id]
+    self.virtual_good_id      = params[:virtual_good_id]
+    self.source               = params[:source]
+    self.exp                  = params[:exp]
+    self.language             = params[:language]
+    self.transaction_id       = params[:transaction_id]
+    self.tap_points           = params[:tap_points]
+    self.screen_density       = params[:screen_density]
+    self.screen_layout_size   = params[:screen_layout_size]
+    self.carrier_name         = params[:carrier_name]
+    self.allows_voip          = params[:allows_voip]
+    self.carrier_country_code = params[:carrier_country_code]
+    self.mobile_country_code  = params[:mobile_country_code]
+    self.mobile_network_code  = params[:mobile_network_code]
+    self.country              = params[:country_code].present? ? params[:country_code] : geoip_data[:country]
+    self.geoip_country        = geoip_data[:country]
   end
 
   def save
