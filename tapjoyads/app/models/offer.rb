@@ -304,7 +304,7 @@ class Offer < ActiveRecord::Base
     "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
   end
 
-  def banner_creative_s3_key(size, format='png')
+  def banner_creative_s3_object(size, format='png')
     bucket = S3.bucket(BucketNames::TAPJOY)
     bucket.objects[banner_creative_path(size, format)]
   end
@@ -651,7 +651,7 @@ private
   end
 
   def delete_banner_creative!(size, format='png')
-    banner_creative_s3_key(size, format).delete
+    banner_creative_s3_object(size, format).delete
   rescue
     raise BannerSyncError.new("custom_creative_#{size}_blob", "Encountered unexpected error while deleting existing file, please try again.")
   end
@@ -672,7 +672,7 @@ private
     raise BannerSyncError.new("custom_creative_#{size}_blob", "New file has invalid dimensions.") if [width, height] != [creative.columns, creative.rows]
 
     begin
-      banner_creative_s3_key(size, format).write(:data => creative.to_blob, :acl => :public_read)
+      banner_creative_s3_object(size, format).write(:data => creative.to_blob, :acl => :public_read)
     rescue
       raise BannerSyncError.new("custom_creative_#{size}_blob", "Encountered unexpected error while uploading new file, please try again.")
     end

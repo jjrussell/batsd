@@ -225,7 +225,7 @@ class StoreRank
     results = { :apps => apps, :created_at => time }
     bucket = S3.bucket(BucketNames::STORE_RANKS)
     object = bucket.objects["android/freemium/#{time.strftime('%Y-%m-%d')}"]
-    object.write(:data => results.to_json, :acl => :public_read)
+    object.write(:data => results.to_json)
   end
 
   def self.top_freemium_android_apps(time=nil)

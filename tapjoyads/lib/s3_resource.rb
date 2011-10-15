@@ -138,11 +138,11 @@ class S3Resource
 
       Mc.put(get_memcache_key, @attributes) if save_to_memcache
 
-      bucket = S3.bucket(bucket_name)
+      object = S3.bucket(bucket_name).objects[id]
       raw_attributes = convert_to_raw_attributes
 
       begin
-        bucket.objects[id].write(:data => raw_attributes)
+        object.write(:data => raw_attributes)
       rescue Exception => e
         if retries > 0
           delay ||= 0.1

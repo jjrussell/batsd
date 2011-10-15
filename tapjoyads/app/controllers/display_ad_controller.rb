@@ -118,7 +118,7 @@ class DisplayAdController < ApplicationController
 
     if offer.display_custom_banner_for_size?(size)
       return Mc.get_and_put(offer.banner_creative_mc_key(size)) do
-        Base64.encode64(offer.banner_creative_s3_key(size).read).gsub("\n", '')
+        Base64.encode64(offer.banner_creative_s3_object(size).read).gsub("\n", '')
       end
     end
 
