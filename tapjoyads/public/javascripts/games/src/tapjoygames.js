@@ -691,6 +691,7 @@ TJG.ui = {
     }
     var device_found = false, load_selector = false;
     var device_count = 0;
+    var device_data;
     var matched_data = "";
     $.each(devices, function(i,v){
       var device_type = v.device_type;
@@ -698,6 +699,7 @@ TJG.ui = {
       if (!TJG.utils.isNull(device_type) && nav_device_type && (device_type.toLowerCase() == nav_device_type.toLowerCase())) {
         device_count++;
         device_found = true;
+        device_data = v.data;
         matched_data - v.data;
         d.push('<li>');
           d.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
@@ -706,15 +708,16 @@ TJG.ui = {
         d.push('</li>');
       }
       else if (!TJG.vars.isTouch){
-        a.push('<li>');
-          a.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
+        a.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
+          a.push('<li class="button grey">');
             a.push(v.name);
-          a.push('</a>');
-        a.push('</li>');
+          a.push('</li>');
+        a.push('</a>');
       }
     });
-    if (device_count == 1) { // Redirect as only one type of device
-      alert('redirect');
+    if (device_count == 1) {
+      document.location.href = path + '/switch_device?data=' + device_data;
+      return;
     }
     var m = "", link_device = "";
     var close = "";
@@ -739,13 +742,19 @@ TJG.ui = {
         d = a;
       }
     }
+    
+    var other = "";
+    if (TJG.vars.isAndroid) {
+      other = '<a href="' + TJG.vars.isAndroid + '">Other</a>';
+    }
     m =  [
       close,
       '<div class="dialog_header bold">Please select your current device:</div>',
       '<div class="dialog_content">',
         '<ul>',
           d.join(''),
-          '</ul>',
+          other,
+        '</ul>',
       '</div>'
     ].join('');
 
@@ -800,14 +809,22 @@ TJG.ui = {
     }
     else if (TJG.require_select_device && TJG.select_device) {
       TJG.ui.showDeviceSelection(TJG.select_device, false);
-      $('.device_switch').html("switch device")
+      $('.device_switch').html("wrong device?");
+      $('.device_name').addClass("has_switch");
     }
     else if (repeat != "false") {
-      showInto();
+      showIntro();
     }
-    if (!TJG.require_select_device && TJG.select_device) {
+    if (!TJG.vars.isTouch) {
       $('.nav_device_info').css('cursor','pointer');
-      $('.device_switch').html("switch device")
+      $('.nav_device_info').click(function(){
+        TJG.ui.showDeviceSelection(TJG.select_device, true);
+      });
+      $('.device_switch').html("wrong device?");
+      $('.device_name').addClass("has_switch");
+    }
+    else if (!TJG.require_select_device && TJG.select_device) {
+      $('.nav_device_info').css('cursor','pointer');
       $('.nav_device_info').click(function(){
         TJG.ui.showDeviceSelection(TJG.select_device, true);
       });

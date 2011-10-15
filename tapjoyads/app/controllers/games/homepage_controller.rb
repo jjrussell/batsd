@@ -31,6 +31,17 @@ class Games::HomepageController < GamesController
     #@gamer_profile = current_gamer.gamer_profile || GamerProfile.new
   end
   
+  def switch_device
+    if params[:data].nil?
+      redirect_to games_root_path
+    elsif set_current_device(params[:data])
+      cookies[:data] = { :value => params[:data], :expires => 1.year.from_now }
+      redirect_to games_root_path(:switch => true)
+    else
+      redirect_to games_root_path(:switch => false)
+    end
+  end
+  
   def tos
   end
   

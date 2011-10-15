@@ -49,6 +49,7 @@
           .nav_device_info
             .device_name
               = @device_name
+            .device_switch
           .nav_device
             .device_icon
               .mobile
@@ -77,6 +78,7 @@
           .nav_device_info
             .device_name
               = @device_name
+            .device_switch
           .nav_device
             .device_icon
               .mobile
@@ -107,6 +109,7 @@
           .nav_device_info
             .device_name
               = @device_name
+            .device_switch
           .nav_device
             .device_icon
               .mobile
@@ -174,6 +177,7 @@
       TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
       TJG.more_games_popular =  "#{games_more_games_popular_path}";
       TJG.ios_link_device = "#{new_games_gamer_device_path}";
+      TJG.android_market_url = "#{GAMES_ANDROID_MARKET_URL}";
       TJG.ui.homeInit();
     });
   -# - if @gamer_profile.birthdate.blank?

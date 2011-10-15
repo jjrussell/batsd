@@ -260,8 +260,8 @@ form#new_gamer input {
   color: #573D27;
   font-weight: bold;
   font-family: "Arial Rounded MT Bold", "Arial Rounded MT", Arial, Helvetica, sans-serif;
-  height: 32px;
   position: absolute;
+  height: 32px;
   width: 100%;
 }
 .nav_profile {
@@ -302,12 +302,16 @@ form#new_gamer input {
   width: 14px;
 }
 .device_name {
-  font-size: 14px;
-  padding: 4px 12px 0;
+  font-size: 16px;
+  padding: 6px 12px 0;
+}
+.device_name.has_switch {
+  font-size: 13px;
+  padding: 2px 12px 0;
 }
 .device_switch {
-  font-size: 11px;
-  margin-top: 4px;
+  font-size: 10px;
+  margin-top: 2px;
 }
 /* Page */
 .web .page,
@@ -1409,9 +1413,11 @@ form#new_gamer_session .login_pass {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 6px;
   font-family: "Arial Rounded MT Bold", "Arial Rounded MT", Arial, Helvetica, sans-serif;
-  font-size: 12px;
-  padding: 6px;
-  margin: 4px 6px 0 0;
+  font-size: 11px;
+  padding: 4px 6px;
+  margin: 0 12px 0 4px;
+  position: relative;
+  top: 8px;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
 }
@@ -2059,7 +2065,7 @@ body {
   font-size: 14px;
   background-color: #222;
   border: 3px solid #b6b5b5;
-  color: #FFF
+  color: #FFF;
   line-height: 130%;
   padding: 12px 10px;
   position: absolute;
@@ -2072,6 +2078,15 @@ body {
   -moz-border-radius: 6px;
   -webkit-box-sizing: border-box;
   -webkit-user-select: none;
+}
+#deviceSelect li {
+  margin: 8px 0;
+}
+#deviceSelect li a {
+  color: #333;
+}
+#deviceSelect li a:hover, #deviceSelect li a:active{
+  color: #FFF;
 }
 #newUser {
   display: none;
