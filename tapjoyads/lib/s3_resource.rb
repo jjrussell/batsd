@@ -143,7 +143,7 @@ class S3Resource
 
       begin
         object.write(:data => raw_attributes)
-      rescue Exception => e
+      rescue AWS::Errors::Base => e
         if retries > 0
           delay ||= 0.1
           Rails.logger.info("#{e.class}: S3 save failed, will retry #{retries} more times")
