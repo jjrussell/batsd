@@ -50,7 +50,18 @@ class Job::MasterArchiveConversionsController < Job::JobController
     end
 
     # upload to s3
-    bucket.objects["#{base_filename}.sql.gz"].write(:file => gzip_filename)
+    retries = 3
+    begin
+      bucket.objects["#{base_filename}.sql.gz"].write(:file => gzip_filename)
+    rescue AWS::Errors::Base => e
+      if retries > 0
+        retries -= 1
+        sleep 5
+        retry
+      else
+        raise e
+      end
+    end
   ensure
     `rm #{local_filename}`
     `rm #{gzip_filename}`

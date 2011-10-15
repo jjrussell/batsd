@@ -119,7 +119,7 @@ class S3Resource
   def save(options = {})
     begin
       save!(options)
-    rescue AWS::Errors::Base => e
+    rescue AWS::Errors::Base
       false
     end
   end
