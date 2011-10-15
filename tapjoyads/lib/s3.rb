@@ -1,10 +1,11 @@
 class S3
 
-  def self.bucket(bucket_name, create = false)
-    s3     = AWS::S3.new
-    bucket = s3.buckets[bucket_name]
-    bucket = s3.buckets.create(bucket_name) if create && !bucket.exists?
-    bucket
+  def self.bucket(bucket_name)
+    AWS::S3.new.buckets[bucket_name]
+  end
+
+  def self.create_bucket(bucket_name)
+    AWS::S3.new.buckets.create(bucket_name)
   end
 
 end
