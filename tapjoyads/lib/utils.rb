@@ -134,12 +134,13 @@ class Utils
     time = Time.zone.now - 24.hours
     count = 0
     bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
-    bucket.keys(:prefix => 'incomplete/').each do |key|
-      next if key.name == 'incomplete/'
-      if key.last_modified < time
+    bucket.objects.with_prefix('incomplete/').each do |obj|
+      next if obj.key == 'incomplete/'
+      if obj.last_modified < time
         count += 1
-        puts "moving: #{key.name} - last modified: #{key.last_modified}"
-        bucket.move_key(key.name, key.name.gsub('incomplete', 'orphaned'))
+        puts "moving: #{obj.key} - last modified: #{obj.last_modified}"
+        obj.copy_to(obj.key.gsub('incomplete', 'orphaned'))
+        obj.delete
       end
     end
     puts "moved #{count} orphaned items from #{BucketNames::FAILED_SDB_SAVES}"

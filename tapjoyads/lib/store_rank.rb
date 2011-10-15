@@ -224,19 +224,19 @@ class StoreRank
     time = Time.zone.now
     results = { :apps => apps, :created_at => time }
     bucket = S3.bucket(BucketNames::STORE_RANKS)
-    key = bucket.key("android/freemium/#{time.strftime('%Y-%m-%d')}")
-    bucket.put(key, results.to_json, {}, 'public-read')
+    object = bucket.objects["android/freemium/#{time.strftime('%Y-%m-%d')}"]
+    object.write(:data => results.to_json, :acl => :public_read)
   end
 
   def self.top_freemium_android_apps(time=nil)
     time ||= Time.zone.now - 5.minutes
     bucket = S3.bucket(BucketNames::STORE_RANKS)
-    key = bucket.key("android/freemium/#{time.strftime('%Y-%m-%d')}")
-    unless key.exists?
+    object = bucket.objects["android/freemium/#{time.strftime('%Y-%m-%d')}"]
+    unless object.exists?
       time -= 1.day
-      key = bucket.key("android/freemium/#{time.strftime('%Y-%m-%d')}")
+      object = bucket.objects["android/freemium/#{time.strftime('%Y-%m-%d')}"]
     end
-    JSON.load(bucket.get(key))
+    JSON.load(object.read)
   end
 
 private
@@ -280,10 +280,10 @@ private
 
   def self.save_to_bucket(ranks_file_name)
     retries = 3
+    object  = S3.bucket(BucketNames::STORE_RANKS).objects["#{ranks_file_name}.gz"]
     begin
-      bucket = S3.bucket(BucketNames::STORE_RANKS)
-      bucket.put("#{ranks_file_name}.gz", open("tmp/#{ranks_file_name}.gz"))
-    rescue RightAws::AwsError => e
+      object.write(:file => "tmp/#{ranks_file_name}.gz")
+    rescue AWS::Errors::Base => e
       log_progress "Failed attempt to write to s3. Error: #{e}"
       if (retries -= 1) > 0
         sleep(1)

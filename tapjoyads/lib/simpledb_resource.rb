@@ -205,7 +205,7 @@ class SimpledbResource
     else
       uuid = UUIDTools::UUID.random_create.to_s
       bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
-      bucket.put("incomplete/#{uuid}", self.serialize)
+      bucket.objects["incomplete/#{uuid}"].write(:data => self.serialize)
       message = { :uuid => uuid, :options => options_copy }.to_json
       Sqs.send_message(QueueNames::FAILED_SDB_SAVES, message)
     end
