@@ -59,7 +59,7 @@ class Games::SocialController < GamesController
   end
 
   def invite_email_friends
-    @content ="Hi,\n\n#{current_gamer.get_gamer_name} has invited you to join Tapjoy. \n\nWith Tapjoy you can discover tons of apps and build fuel in your current ones. Create your account here:\n\n#{TJGAMES_URL}\n\nStart Discovering!\nTeam Tapjoy"
+    @content = Invitation.invitation_message(current_gamer.get_gamer_name)
   end
 
   def send_email_invites
