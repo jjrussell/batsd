@@ -1267,7 +1267,7 @@ TJG.ui = {
         }
         var w = $('.nav_device_info').width();
         w = w + 24;
-        $('.device_name').fadeOut(250, function(){
+        $('.device_name,.device_switch').fadeOut(250, function(){
           $('.nav_device_info').animate({width:"0px"}, 250);
         });
         $('.nav_device').click(function(){

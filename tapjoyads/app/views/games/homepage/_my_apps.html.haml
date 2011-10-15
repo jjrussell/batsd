@@ -18,8 +18,9 @@
                     Earn
                   %span.currency
                     = currency[:name]
-              - publisher_user_id = currency[:udid_for_user_ids] ? @device.key : @device.publisher_user_ids[external_publisher.app_id]
-              -# if currency.tapjoy_managed?
-              - tap_points = PointPurchases.new(:key => "#{publisher_user_id}.#{currency[:id]}").points
-              .tap_points.left
-                = "Balance: #{tap_points} #{currency[:name]}" if tap_points.present?
+              - if currency[:tapjoy_enabled]
+                - publisher_user_id = currency[:udid_for_user_ids] ? @device.key : @device.publisher_user_ids[external_publisher.app_id]
+                - tap_points = PointPurchases.new(:key => "#{publisher_user_id}.#{currency[:id]}").points
+                - if tap_points.present?
+                  .tap_points.left
+                    = "Balance: #{tap_points} #{currency[:name]}"

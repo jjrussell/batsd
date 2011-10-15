@@ -10,7 +10,7 @@ class ExternalPublisher
   
   def add_currency(currency)
     self.currencies ||= []
-    self.currencies << { :id => currency.id, :name => currency.name, :udid_for_user_id => currency.udid_for_user_id }
+    self.currencies << { :id => currency.id, :name => currency.name, :udid_for_user_id => currency.udid_for_user_id, :tapjoy_enabled => currency.tapjoy_enabled }
   end
 
   def primary_currency_name
@@ -43,7 +43,7 @@ class ExternalPublisher
     
     "#{API_URL}/get_offers?data=#{SymmetricCrypto.encrypt_object(data, SYMMETRIC_CRYPTO_SECRET)}"
   end
-
+  
   def self.load_all_for_device(device)
     external_publishers = []
     self.load_all.each do |app_id, external_publisher|
