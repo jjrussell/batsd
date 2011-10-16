@@ -12,7 +12,7 @@ class Job::MasterDailyAppStatsController < Job::JobController
     vertica_count = WebRequest.count_with_vertica("path LIKE '%featured_offer_requested%' AND time >= #{start_time.to_i} AND time < #{end_time.to_i}")
     percentage    = vertica_count / stats_count.to_f
     if percentage < 0.99999 || percentage > 1.00001
-      Notifier.alert_new_relic(AppStatsVerifyError, "Cannot verify daily stats because Vertica is missing data. Appstats count: #{stats_count}, Vertica count: #{vertica_count}", request, params)
+      Notifier.alert_new_relic(VerticaMissingDataError, "Cannot verify daily stats because Vertica is missing data. Appstats count: #{stats_count}, Vertica count: #{vertica_count}", request, params)
       render :text => 'ok'
       return
     end
