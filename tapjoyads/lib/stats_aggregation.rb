@@ -172,20 +172,21 @@ class StatsAggregation
       return
     end
 
-    unless counts_acceptable?(value_over_range, hourly_values[start_time.hour..(end_time - 1.second).hour].sum, require_exact_match)
-      message = "Verification of #{stat_name_or_path.inspect} failed for offer: #{offer.name} (#{offer.id}), for range: #{start_time.to_s(:db)} - #{end_time.to_s(:db)}. Value is: #{value_over_range}, hourly values are: #{hourly_values[start_time.hour..(end_time - 1.second).hour].inspect}"
+    range = start_time.hour..(end_time - 1.second).hour
+    unless counts_acceptable?(value_over_range, hourly_values[range].sum, require_exact_match)
+      message = "Verification of #{stat_name_or_path.inspect} failed for offer: #{offer.name} (#{offer.id}), for range: #{start_time.to_s(:db)} - #{end_time.to_s(:db)}. Value is: #{value_over_range}, hourly values are: #{hourly_values[range].inspect}, difference is: #{value_over_range - hourly_values[range].sum}"
       Notifier.alert_new_relic(AppStatsVerifyError, message)
 
       time = start_time
       while time < end_time
         hour_value = yield(time, time + 1.hour)
         hourly_values[time.hour] = hour_value
-        break if counts_acceptable?(value_over_range, hourly_values[start_time.hour..(end_time - 1.second).hour].sum, require_exact_match)
+        break if counts_acceptable?(value_over_range, hourly_values[range].sum, require_exact_match)
         time += 1.hour
       end
 
-      unless counts_acceptable?(value_over_range, hourly_values[start_time.hour..(end_time - 1.second).hour].sum, require_exact_match)
-        raise "Re-counted each hour for #{stat_name_or_path.inspect} and counts do not match the total count for offer: #{offer.name} (#{offer.id}), for range: #{start_time.to_s(:db)} - #{end_time.to_s(:db)}. Value is: #{value_over_range}, hourly sum is: #{hourly_values[start_time.hour..(end_time - 1.second).hour].sum}"
+      unless counts_acceptable?(value_over_range, hourly_values[range].sum, require_exact_match)
+        raise "Re-counted each hour for #{stat_name_or_path.inspect} and counts do not match the total count for offer: #{offer.name} (#{offer.id}), for range: #{start_time.to_s(:db)} - #{end_time.to_s(:db)}. Value is: #{value_over_range}, hourly sum is: #{hourly_values[range].sum}"
       end
     end
   end
