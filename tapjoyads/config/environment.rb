@@ -118,7 +118,6 @@ Rails::Initializer.run do |config|
       if forked
         Mc.reset_connection
         SimpledbResource.reset_connection
-        Sqs.reset_connection
         VerticaCluster.reset_connection
       end
     end

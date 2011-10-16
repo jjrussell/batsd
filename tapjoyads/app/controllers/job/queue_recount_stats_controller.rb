@@ -7,7 +7,7 @@ class Job::QueueRecountStatsController < Job::SqsReaderController
   private
 
   def on_message(message)
-    json = JSON.parse(message.to_s)
+    json = JSON.parse(message.body)
     start_time = Time.zone.at(json['start_time'])
     end_time = Time.zone.at(json['end_time'])
 

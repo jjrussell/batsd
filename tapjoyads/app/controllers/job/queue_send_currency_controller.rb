@@ -1,34 +1,34 @@
 class Job::QueueSendCurrencyController < Job::SqsReaderController
-  
+
   def initialize
     super QueueNames::SEND_CURRENCY
     @raise_on_error = false
     @max_reads = @num_reads * 2
     @bad_callbacks = Set.new
   end
-  
-private
-  
+
+  private
+
   def on_message(message)
     params.delete(:callback_url)
-    reward = Reward.deserialize(message.to_s)
+    reward = Reward.deserialize(message.body)
     return if reward.sent_currency?
-    
+
     mc_time = Time.zone.now.to_i / 1.hour
     if @bad_callbacks.include?(reward.currency_id)
       @num_reads += 1 if @num_reads < @max_reads
       Mc.increment_count("send_currency_skip.#{reward.currency_id}.#{mc_time}")
       raise SkippedSendCurrency.new("not attempting to ping the callback for #{reward.currency_id}")
     end
-    
+
     currency = Currency.find_in_cache(reward.currency_id, true)
     publisher_user_id = reward.publisher_user_id
     callback_url = currency.callback_url
-    
+
     if callback_url == Currency::PLAYDOM_CALLBACK_URL
       first_char = publisher_user_id[0, 1]
       publisher_user_id = publisher_user_id[1..-1]
-      
+
       if first_char == 'F'
         callback_url = 'http://offer-dynamic-lb.playdom.com/tapjoy/mob/facebook/fp/main' # facebook url
       elsif first_char == 'M' || first_char == 'P'
@@ -39,7 +39,7 @@ private
         return
       end
     end
-    
+
     mark = '?'
     mark = '&' if callback_url =~ /\?/
     callback_url += "#{mark}snuid=#{CGI::escape(publisher_user_id)}&currency=#{reward.currency_reward}"
@@ -55,9 +55,9 @@ private
       hash = Digest::MD5.hexdigest(hash_source)
       callback_url += "&id=#{reward.key}&verifier=#{hash}"
     end
-    
+
     reward.sent_currency = Time.zone.now
-    
+
     begin
       reward.serial_save(:catch_exceptions => false, :expected_attr => {'sent_currency' => nil})
     rescue Simpledb::ExpectedAttributeError => e
@@ -108,7 +108,8 @@ private
 
       raise e
     end
-    
+
     reward.serial_save
   end
+
 end

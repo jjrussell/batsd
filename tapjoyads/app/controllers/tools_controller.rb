@@ -115,7 +115,14 @@ class ToolsController < WebsiteController
   end
 
   def sqs_lengths
-    @queues = Sqs.sqs.queues
+    @queues = Sqs.queues.map do |queue|
+      {
+        :name        => queue.url.split('/').last,
+        :size        => queue.visible_messages,
+        :hidden_size => queue.invisible_messages,
+        :visibility  => queue.visibility_timeout,
+      }
+    end
   end
 
   def elb_status

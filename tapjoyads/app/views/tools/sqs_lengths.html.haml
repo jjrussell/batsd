@@ -17,10 +17,10 @@ Number of queues: #{@queues.size}
   %tbody
     - @queues.each do |queue|
       %tr
-        %td= queue.name
-        %td= number_with_delimiter(queue.size)
-        %td= number_with_delimiter(queue.size_not_visible)
-        %td= number_with_delimiter(queue.visibility)
+        %td= queue[:name]
+        %td= number_with_delimiter(queue[:size])
+        %td= number_with_delimiter(queue[:hidden_size])
+        %td= number_with_delimiter(queue[:visibility])
 
 - content_for :page_javascript do
   :plain

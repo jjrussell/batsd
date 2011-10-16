@@ -1,37 +1,37 @@
 class Job::QueueConversionTrackingController < Job::SqsReaderController
-  
+
   def initialize
     super QueueNames::CONVERSION_TRACKING
   end
-  
-private
-  
+
+  private
+
   def on_message(message)
-    json = JSON.parse(message.to_s)
+    json = JSON.parse(message.body)
     click = Click.deserialize(json['click'])
     installed_at_epoch = json['install_timestamp']
-    
+
     offer = Offer.find_in_cache(click.offer_id, true)
     currency = Currency.find_in_cache(click.currency_id, true)
-    
+
     if click.installed_at? || (offer.item_type != 'GenericOffer' && click.clicked_at < (Time.zone.now - 2.days)) || click.block_reason?
       return
     end
-    
+
     # Try to stop Playdom users from click-frauding (specifically from Mobsters: Big Apple)
     if currency.callback_url == Currency::PLAYDOM_CALLBACK_URL && click.publisher_user_id !~ /^(F|M|P)[0-9]+$/
       click.block_reason = "InvalidPlaydomUserId"
       click.serial_save
       return
     end
-    
+
     publisher_user = PublisherUser.new(:key => "#{click.publisher_app_id}.#{click.publisher_user_id}")
     unless publisher_user.update!(click.udid)
       click.block_reason = "TooManyUdidsForPublisherUserId"
       click.serial_save
       return
     end
-    
+
     # Do not reward if user has installed this app for the same publisher user id on another device
     unless offer.multi_complete?
       other_udids = publisher_user.udids - [ click.udid ]
@@ -44,11 +44,11 @@ private
         end
       end
     end
-    
+
     unless click.reward_key
       raise "Click #{click.key} missing reward key!"
     end
-    
+
     device = Device.new(:key => click.udid)
     if device.is_jailbroken && offer.is_paid? && offer.item_type == 'App' && click.type == 'install'
       click.tapjoy_amount += click.advertiser_amount
@@ -56,11 +56,11 @@ private
       click.type += '_jailbroken'
       Notifier.alert_new_relic(JailbrokenInstall, "Device: #{click.udid} is jailbroken and installed a paid app: #{click.advertiser_app_id}, for click: #{click.key}", request, params)
     end
-    
+
     device.set_publisher_user_id!(click.publisher_app_id, click.publisher_user_id)
-    
+
     click.type = "featured_#{click.type}" if click.source == 'featured'
-    
+
     reward = Reward.new(:key => click.reward_key)
     reward.put('created', installed_at_epoch)
     reward.type              = click.type
@@ -81,22 +81,22 @@ private
     reward.reward_key_2      = click.reward_key_2
     reward.exp               = click.exp
     reward.viewed_at         = click.viewed_at
-    
+
     begin
       reward.serial_save(:catch_exceptions => false, :expected_attr => { 'type' => nil })
     rescue Simpledb::ExpectedAttributeError => e
       return
     end
-    
-    message = reward.serialize(:attributes_only => true)
-    Sqs.send_message(QueueNames::SEND_CURRENCY, message) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
-    Sqs.send_message(QueueNames::CREATE_CONVERSIONS, message)
-    
+
+    reward_message = reward.serialize(:attributes_only => true)
+    Sqs.send_message(QueueNames::SEND_CURRENCY, reward_message) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
+    Sqs.send_message(QueueNames::CREATE_CONVERSIONS, reward_message)
+
     reward.update_realtime_stats rescue nil # we don't really care if this produces an error
-    
+
     click.put('installed_at', installed_at_epoch)
     click.serial_save
-    
+
     web_request = WebRequest.new(:time => Time.zone.at(installed_at_epoch))
     web_request.path              = 'reward'
     web_request.type              = reward.type

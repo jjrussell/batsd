@@ -37,6 +37,7 @@ API_URL = ''
 DASHBOARD_URL = ''
 WEBSITE_URL = ''
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
+AWS_ACCOUNT_ID = '331510376354'
 
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['test']['access_key_id']

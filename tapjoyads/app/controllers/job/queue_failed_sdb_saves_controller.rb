@@ -8,7 +8,7 @@ class Job::QueueFailedSdbSavesController < Job::SqsReaderController
   private
 
   def on_message(message)
-    json             = JSON.parse(message.to_s)
+    json             = JSON.parse(message.body)
     uuid             = json['uuid']
     @options         = json['options'].symbolize_keys
     @incomplete_path = "incomplete/#{uuid}"

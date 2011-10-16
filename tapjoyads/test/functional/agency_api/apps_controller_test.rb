@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class AgencyApi::AppsControllerTest < ActionController::TestCase
-  
+
   context "on GET to :index" do
     setup do
       @agency_user = Factory(:agency_user)
@@ -9,7 +9,7 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
       PartnerAssignment.create!(:user => @agency_user, :partner => @partner)
       @app = Factory(:app, :partner => @partner)
     end
-    
+
     context "with missing params" do
       setup do
         @response = get(:index)
@@ -60,7 +60,7 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
   context "on GET to :show" do
     setup do
       @agency_user = Factory(:agency_user)
@@ -68,7 +68,7 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
       PartnerAssignment.create!(:user => @agency_user, :partner => @partner)
       @app = Factory(:app, :partner => @partner)
     end
-    
+
     context "with missing params" do
       setup do
         @response = get(:show, :id => 'not_an_app_id')
@@ -137,14 +137,14 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
   context "on POST to :create" do
     setup do
       @agency_user = Factory(:agency_user)
       @partner = Factory(:partner)
       PartnerAssignment.create!(:user => @agency_user, :partner => @partner)
     end
-    
+
     context "with missing params" do
       setup do
         @response = post(:create)
@@ -212,7 +212,7 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
       end
 
       should "assign store id" do
-        Sqs.expects(:send_message).with('test_GetStoreInfo', regexp_matches(/(\w+-){4}\w+/))
+        Sqs.expects(:send_message).with(QueueNames::GET_STORE_INFO, regexp_matches(/(\w+-){4}\w+/))
         post :create, @params.merge(:store_id => 'wah!')
         result = JSON.parse(@response.body)
         assert result['success']
@@ -227,7 +227,7 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
   context "on PUT to :update" do
     setup do
       @agency_user = Factory(:agency_user)
@@ -235,7 +235,7 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
       PartnerAssignment.create!(:user => @agency_user, :partner => @partner)
       @app = Factory(:app, :partner => @partner)
     end
-    
+
     context "with missing params" do
       setup do
         @response = put(:update, :id => 'not_an_app_id')
@@ -321,7 +321,7 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
       end
 
       should "change store id" do
-        Sqs.expects(:send_message).with('test_GetStoreInfo', regexp_matches(/(\w+-){4}\w+/))
+        Sqs.expects(:send_message).with(QueueNames::GET_STORE_INFO, regexp_matches(/(\w+-){4}\w+/))
         post :update, @params.merge(:store_id => 'wah!')
         result = JSON.parse(@response.body)
         assert result['success']
@@ -330,5 +330,5 @@ class AgencyApi::AppsControllerTest < ActionController::TestCase
       end
     end
   end
-  
+
 end
