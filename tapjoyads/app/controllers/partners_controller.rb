@@ -72,7 +72,7 @@ class PartnersController < WebsiteController
     
     params[:partner][:account_managers] = User.find_all_by_id(params[:partner][:account_managers])
 
-    safe_attributes = [ :name, :account_managers, :account_manager_notes, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email ]
+    safe_attributes = [ :name, :account_managers, :account_manager_notes, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos ]
     name_was = @partner.name
     if @partner.safe_update_attributes(params[:partner], safe_attributes)
       if name_was != @partner.name

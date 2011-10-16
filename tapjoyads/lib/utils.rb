@@ -283,8 +283,8 @@ class Utils
     def self.queue_recount_stats_jobs
       end_time = Time.now.utc.beginning_of_hour.to_i
       start_time = end_time - 1.hour
-      Offer.find_each do |offer|
-        message = { :offer_id => offer.id, :start_time => start_time, :end_time => end_time }.to_json
+      Offer.find_in_batches(:batch_size => StatsAggregation::OFFERS_PER_MESSAGE) do |offers|
+        message = { :offer_ids => offers.map(&:id), :start_time => start_time, :end_time => end_time }.to_json
         Sqs.send_message(QueueNames::RECOUNT_STATS, message)
       end
     end

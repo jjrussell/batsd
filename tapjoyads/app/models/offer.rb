@@ -317,25 +317,30 @@ class Offer < ActiveRecord::Base
     return !rewarded? && !featured? && is_free? && item_type != 'VideoOffer' && banner_creatives.include?(size)
   end
 
+  def get_video_icon_url(options = {})
+    if item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
+      bucket = S3.bucket(BucketNames::TAPJOY)
+      begin
+        bucket.key("icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg").exists? ? get_icon_url({:source => :cloudfront}.merge(options)) : "#{CLOUDFRONT_URL}/videos/assets/default.png"
+      rescue RightAws::AwsError
+        "#{CLOUDFRONT_URL}/videos/assets/default.png"
+      end 
+    end 
+  end
+  memoize :get_video_icon_url
+
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
   end
 
   def self.get_icon_url(options = {})
     source     = options.delete(:source)   { :s3 }
-    size       = options.delete(:size)     { '57' }
     icon_id    = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
     item_type  = options.delete(:item_type)
+    size       = options.delete(:size)     { (item_type == 'VideoOffer' || item_type == 'TestVideoOffer') ? '200' : '57' }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
-
-    if item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
-      bucket = S3.bucket(BucketNames::TAPJOY)
-      existing_icon_blob = bucket.get("icons/src/#{icon_id}.jpg") rescue ''
-      size = '200'
-      return "#{prefix}/videos/assets/default.png" if existing_icon_blob.blank?
-    end
 
     "#{prefix}/icons/#{size}/#{icon_id}.jpg"
   end

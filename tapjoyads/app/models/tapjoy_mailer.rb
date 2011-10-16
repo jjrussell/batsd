@@ -176,4 +176,11 @@ class TapjoyMailer < ActionMailer::Base
     subject 'Partner Name Change Notification'
     body(:partner => partner, :name_was => name_was, :acct_mgr_email => acct_mgr_email, :partner_link => partner_link)
   end
+
+  def partner_signup(email_address)
+    from 'Tapjoy <noreply@tapjoy.com>'
+    recipients email_address
+    content_type 'text/html'
+    subject 'Thanks for signing up with Tapjoy!'
+  end
 end

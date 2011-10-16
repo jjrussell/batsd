@@ -1,12 +1,12 @@
 class WebsiteController < ApplicationController
   include SslRequirement
-  
+
   layout 'website'
-  
+
   skip_before_filter :fix_params
-  
+
   helper_method :current_user, :current_partner, :current_partner_apps, :current_partner_offers, :current_partner_app_offers, :current_partner_active_app_offers, :premier_enabled?
-  
+
   before_filter { |c| Authorization.current_user = c.current_user }
   before_filter :check_employee_device
 
@@ -44,11 +44,11 @@ class WebsiteController < ApplicationController
     end
     object
   end
-  
+
   def sanitize_currency_param(field)
     field.blank? ? field : (field.gsub(/[\$,]/,'').to_f * 100).round.to_s
   end
-  
+
   def premier_enabled?
     current_partner.exclusivity_level.present?
   end
@@ -74,7 +74,7 @@ class WebsiteController < ApplicationController
   end
 
 protected
-  
+
   def permission_denied
     flash[:error] = "Sorry, you are not allowed to access that page."
     if current_user
@@ -84,25 +84,25 @@ protected
     end
     redirect_to(destination)
   end
-  
+
   def ssl_required?
     Rails.env == 'production'
   end
-  
+
 private
-  
+
   def current_user_session
     @current_user_session ||= UserSession.find
   end
-  
+
   def set_time_zone
     if current_user
-      Time.zone = current_user.time_zone 
+      Time.zone = current_user.time_zone
     else
       Time.zone = 'UTC'
     end
   end
-  
+
   def get_stat_prefix(group)
     @platform == 'all' ? group : "#{group}-#{@platform}"
   end
@@ -112,8 +112,9 @@ private
   end
 
   def nag_user_about_payout_info
-    if current_partner.approved_publisher? && (current_partner.payout_info.nil? || !current_partner.payout_info.valid?)
-      flash.now[:notice] = "Please remember to <a href='/billing/payment-info'>update your W8/W9</a>."
+    if flash.now[:notice].blank? && current_partner.approved_publisher? &&
+      (current_partner.payout_info.nil? || !current_partner.payout_info.valid?)
+        flash.now[:notice] = "Please remember to <a href='/billing/payment-info'>update your W8/W9</a>."
     end
   end
 end
