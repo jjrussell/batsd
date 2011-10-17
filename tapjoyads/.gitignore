@@ -11,7 +11,6 @@ db/production.sqlite
 tapjoy.komodoproject
 .project
 config/local.yml
-public/stylesheets/games/facebook.css
 data/GeoIPCity.dat
 public/stylesheets/*.css
 public/stylesheets/games/*.css
