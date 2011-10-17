@@ -71,7 +71,7 @@
     });
 
     var doLogin = function(scope){
-      FB.login(function(response) {
+      FB.login(function(response, scope) {
         if (response.session) {
           FB.api('/me', function(response) {
             <!--
@@ -80,5 +80,5 @@
           });
         } else {
         }
-      }, {perms: 'email,offline_access,create_note'});
+      }, {perms: scope});
     };
