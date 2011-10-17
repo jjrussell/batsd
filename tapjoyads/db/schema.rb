@@ -300,15 +300,15 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
     t.string   "favorite_game"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "facebook_id"
-    t.string   "fb_access_token"
-    t.string   "referred_by",     :limit => 36
-    t.integer  "referral_count",                :default => 0
     t.string   "name"
     t.string   "nickname"
     t.string   "postal_code"
     t.string   "favorite_category"
     t.boolean  "use_gravatar",                    :default => false
+    t.string   "facebook_id"
+    t.string   "fb_access_token"
+    t.string   "referred_by",       :limit => 36
+    t.integer  "referral_count",                  :default => 0
   end
 
   add_index "gamer_profiles", ["facebook_id"], :name => "index_gamer_profiles_on_facebook_id"
