@@ -65,6 +65,7 @@ class Games::SocialController < GamesController
   def send_email_invites
     gamers = []
     non_gamers = []
+    current_facebook_user.fetch
 
     @recipients.each do |recipient|
       gamer = Gamer.find_by_email(recipient)
@@ -84,7 +85,7 @@ class Games::SocialController < GamesController
             :external_info => recipient,
           })
           invitation.save
-          
+
           link = games_login_url(:referrer => invitation.encrypted_referral_id)
           GamesMailer.deliver_invite(current_gamer.get_gamer_name, recipient, link)
         end
