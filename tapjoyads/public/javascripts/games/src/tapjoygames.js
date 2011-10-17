@@ -73,6 +73,7 @@ TJG.utils = {
       try {
         localStorage[k] = v;
       } catch (e) {
+        localStorage.clear();
       }
     }
   },
@@ -673,7 +674,7 @@ TJG.ui = {
     window.addToHomeClose = addToHomeClose;
   },
   
-  showDeviceSelection : function(devices,showClose) {
+  showDeviceSelection : function(devices, showClose) {
     var fadeSpd = 350, fadeSpdFast = 250, fadeSpdSlow = 700;
     var div = document.createElement('div');
     var id = "deviceSelect";
@@ -688,24 +689,20 @@ TJG.ui = {
     }
     else {
       path = location.pathname.replace(/\/$/, '');
-    }
-    var device_found = false, load_selector = false;
-    var device_count = 0;
-    var device_data;
-    var matched_data = "";
+    }    
+    var device_found = false, load_selector = false, device_count = 0, device_data, matched_data;
     $.each(devices, function(i,v){
       var device_type = v.device_type;
-      var nav_device_type = TJG.vars.device_type;
-      if (!TJG.utils.isNull(device_type) && nav_device_type && (device_type.toLowerCase() == nav_device_type.toLowerCase())) {
+      if (!TJG.utils.isNull(device_type) && TJG.vars.device_type && (device_type.toLowerCase() == TJG.vars.device_type.toLowerCase())) {
         device_count++;
         device_found = true;
         device_data = v.data;
         matched_data - v.data;
-        d.push('<li>');
-          d.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
+        d.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
+          d.push('<li class="button grey">');
             d.push(v.name);
-          d.push('</a>');
-        d.push('</li>');
+          d.push('</li>');
+        d.push('</a>');
       }
       else if (!TJG.vars.isTouch){
         a.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
@@ -725,8 +722,8 @@ TJG.ui = {
       close = '<div class="close_button close_device_select"></div>';
     }
     if (device_found == false) {
-      if (TJG.vars.isIos) {
-        link_device = '<div class="button lt_blue"><a href="' + TJG.ios_link_device + '">Connect My Device</a></div>';
+      if (TJG.vars.isIos && TJG.vars.ios_link_device_url) {
+        link_device = '<div class="button lt_blue"><a href="' + TJG.ios_link_device_url + '">Connect My Device</a></div>';
         m =  [
           close,
           '<div class="dialog_header bold">Please reconnect your device:</div>',
@@ -744,8 +741,11 @@ TJG.ui = {
     }
     
     var other = "";
-    if (TJG.vars.isAndroid) {
-      other = '<a href="' + TJG.vars.isAndroid + '">Other</a>';
+    if (TJG.vars.isAndroid &&  TJG.android_market_url) {
+      other = '<a href="' +  TJG.android_market_url + '"><div class="button grey">Other</div></a>';
+    }
+    else if (TJG.vars.isIos && TJG.ios_link_device_url) {
+      other = '<a href="' +  TJG.ios_link_device_url + '"><div class="button grey">Other</div></a>';
     }
     m =  [
       close,
@@ -788,6 +788,8 @@ TJG.ui = {
     });
     var fadeSpd = 350, fadeSpdFast = 250, fadeSpdSlow = 700;
     var install = TJG.utils.getParam("register_device");
+    
+    // Enable bookmarking modal
     if (TJG.vars.isIos || TJG.vars.hasHomescreen) {
       TJG.ui.showAddHomeDialog();
     }
@@ -797,6 +799,7 @@ TJG.ui = {
       $(".feat_review").removeClass('min');
       $(".app_review").show();
     }
+    // Checks if new user. If so, shows intro tutorial
     var repeat = TJG.utils.getLocalStorage("tjg.new_user");
     if (install.indexOf("true") != -1) {
       TJG.utils.centerDialog("#register_device");
@@ -807,23 +810,17 @@ TJG.ui = {
          });
       }
     }
+    // Cookie is missing, so prompt user to select device
     else if (TJG.require_select_device && TJG.select_device) {
       TJG.ui.showDeviceSelection(TJG.select_device, false);
-      $('.device_switch').html("wrong device?");
-      $('.device_name').addClass("has_switch");
     }
     else if (repeat != "false") {
       showIntro();
     }
-    if (!TJG.vars.isTouch) {
-      $('.nav_device_info').css('cursor','pointer');
-      $('.nav_device_info').click(function(){
-        TJG.ui.showDeviceSelection(TJG.select_device, true);
-      });
+    // If user has multiple devices, enable device selection UI
+    if (TJG.select_device && (TJG.select_device.length > 1)) {
       $('.device_switch').html("wrong device?");
       $('.device_name').addClass("has_switch");
-    }
-    else if (!TJG.require_select_device && TJG.select_device) {
       $('.nav_device_info').css('cursor','pointer');
       $('.nav_device_info').click(function(){
         TJG.ui.showDeviceSelection(TJG.select_device, true);
@@ -1185,7 +1182,7 @@ TJG.ui = {
 };
   
 (function(window, document) {
-
+  
     TJG.onload = {
 
       removeLoader : function () {
@@ -1195,13 +1192,34 @@ TJG.ui = {
       },
       
       checkDeviceData: function() {
-        var c_data = TJG.utils.getCookie('data');
-        var ls_data = TJG.utils.getLocalStorage('data');
-        if (c_data && !ls_data) {
-          TJG.utils.setLocalStorage('data', c_data);
+        var d = new Date();
+        var t = d.getTime();
+        TJG.vars.c_data = TJG.utils.getCookie('data');
+        TJG.vars.ls_data = TJG.utils.getLocalStorage('data');
+        TJG.vars.link_ts = TJG.utils.getLocalStorage('link_ts');
+        TJG.vars.data_ts = TJG.utils.getLocalStorage('data_ts');
+        
+        // Set localStorage timestamp for previous registrations
+        if (TJG.vars.ls_data && TJG.vars.isIos 
+          && !TJG.utils.isNull(TJG.select_device) 
+            && (TJG.select_device.length == 1) 
+              && TJG.utils.isNull(TJG.vars.link_ts) 
+                && TJG.utils.isNull(TJG.vars.data_ts)) {
+          TJG.utils.setLocalStorage('data_ts', t);
+          TJG.utils.setLocalStorage('link_ts', t);
         }
-        if (!c_data && ls_data) {
-          TJG.utils.setCookie('data', ls_data, 365, 1);
+        // Sets data cookie localStorage
+        if (TJG.vars.c_data && !TJG.vars.ls_data) {
+          TJG.utils.setLocalStorage('data', TJG.vars.c_data);
+          TJG.utils.setLocalStorage('data_ts', t);
+          var install = TJG.utils.getParam("register_device");
+          if (install.indexOf("true") != -1) {
+            TJG.utils.setLocalStorage('link_ts', t);
+          }
+        }
+        // Sets cookie if localStorage exists
+        if (!TJG.vars.c_data && TJG.vars.ls_data) {
+          TJG.utils.setCookie('data', TJG.vars.ls_data, 365, 1);
         }
       },
       

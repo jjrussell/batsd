@@ -19,19 +19,20 @@ TJG.loadedImages = {};
     centerDialog("#loader");
      var nav = navigator, classes = [''], classReplaces = {}, device = "", orientationCompute = "";
      TJG.vars.isIos = (/iphone|ipod|ipad/gi).test(nav.platform);
+     TJG.vars.device_type = nav.platform.toLowerCase();
      TJG.vars.isIpad = (/ipad/gi).test(nav.userAgent);
      TJG.vars.isIpod = (/ipod/gi).test(nav.userAgent);
      TJG.vars.isIphone = (/iphone/gi).test(nav.userAgent);
      TJG.vars.isAndroid = (/android/gi).test(nav.userAgent);
      TJG.vars.isMobile = /(ip(od|ad|hone))/gi.test(nav.userAgent);
-     if (TJG.vars.isIos) {
-       TJG.vars.device_type = nav.platform;
-     }
      if (TJG.vars.isAndroid) {
        TJG.vars.device_type = 'android';
        if ((/mobile/gi).test(nav.userAgent)) {
          TJG.vars.isMobile = true;
        }
+     }
+     if (TJG.vars.device_type) {
+       TJG.vars.device_type = '' + TJG.vars.device_type.toLowerCase();
      }
      TJG.vars.isIPad = (/ipad/gi).test(nav.platform);
      TJG.vars.isRetina = 'devicePixelRatio' in window && window.devicePixelRatio > 1;
@@ -83,4 +84,5 @@ TJG.loadedImages = {};
         className = className.replace(replace, classReplaces[replace]);
     }
     TJG.doc.className = className + classes.join(' ');
+    TJG.vars.device_type = 'ipod';
 })(this, document);

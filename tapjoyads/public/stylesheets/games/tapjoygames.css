@@ -2079,6 +2079,9 @@ body {
   -webkit-box-sizing: border-box;
   -webkit-user-select: none;
 }
+#deviceSelect {
+  width: 280px;
+}
 #deviceSelect li {
   margin: 8px 0;
 }
