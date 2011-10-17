@@ -305,10 +305,16 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
     t.string   "postal_code"
     t.string   "favorite_category"
     t.boolean  "use_gravatar",                    :default => false
+    t.string   "facebook_id"
+    t.string   "fb_access_token"
+    t.string   "referred_by",       :limit => 36
+    t.integer  "referral_count",                  :default => 0
   end
 
+  add_index "gamer_profiles", ["facebook_id"], :name => "index_gamer_profiles_on_facebook_id"
   add_index "gamer_profiles", ["gamer_id"], :name => "index_gamer_profiles_on_gamer_id", :unique => true
   add_index "gamer_profiles", ["id"], :name => "index_gamer_profiles_on_id", :unique => true
+  add_index "gamer_profiles", ["referred_by"], :name => "index_gamer_profiles_on_referred_by"
 
   create_table "gamers", :id => false, :force => true do |t|
     t.string   "id",                 :limit => 36,                    :null => false
@@ -365,6 +371,21 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
 
   add_index "internal_devices", ["id"], :name => "index_internal_devices_on_id", :unique => true
   add_index "internal_devices", ["user_id"], :name => "index_internal_devices_on_user_id"
+
+  create_table "invitations", :id => false, :force => true do |t|
+    t.string   "id",            :limit => 36,                :null => false
+    t.string   "gamer_id",      :limit => 36,                :null => false
+    t.string   "noob_id",       :limit => 36
+    t.string   "external_info",                              :null => false
+    t.integer  "channel",                                    :null => false
+    t.integer  "status",                      :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "invitations", ["external_info"], :name => "index_invitations_on_external_info"
+  add_index "invitations", ["gamer_id"], :name => "index_invitations_on_gamer_id"
+  add_index "invitations", ["id"], :name => "index_invitations_on_id", :unique => true
 
   create_table "jobs", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36,                      :null => false

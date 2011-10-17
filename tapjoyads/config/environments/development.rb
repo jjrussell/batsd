@@ -15,6 +15,8 @@ config.action_controller.perform_caching             = false
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
 
+config.gem 'mail_safe', :version => '0.3.1'
+
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['dev']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['dev']['secret_access_key']
@@ -34,6 +36,7 @@ API_URL = local_config['api_url'] || ''
 DASHBOARD_URL = local_config['dashboard_url'] || ''
 WEBSITE_URL = local_config['website_url'] || ''
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
+TJGAMES_URL = local_config['tjgames_url'] || ''
 
 NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2
@@ -57,3 +60,5 @@ FRESHBOOKS_API_URL = 'tjdev.freshbooks.com'
 FRESHBOOKS_AUTH_TOKEN = '59548f1150fa38c3feb2a67d6b1a0f8b'
 
 CLEAR_MEMCACHE = !(local_config['clear_memcache'] == false)
+
+DEV_FACEBOOK_ID = '100000459598424'
