@@ -19,10 +19,10 @@ FactoryGirl.define do
   end
 
   factory :reward do
-    app = Factory(:app)
-
-    publisher_app_id  app.id
-    currency_id       { Factory(:currency, :id => app.id).id }
+    # app = Factory(:app)
+    # 
+    # publisher_app_id  app.id
+    # currency_id       { Factory(:currency, :id => app.id).id }
     key               { Factory.next(:guid) }
     publisher_user_id "bill"
     currency_reward    100
