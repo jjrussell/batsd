@@ -25,7 +25,7 @@ server_type = `su - webuser -c '/home/webuser/tapjoyserver/server/server_type.rb
 
 # configure geoip database
 `su - webuser -c 'crontab -r'`
-`su - webuser -c 'geoipupdate -d /home/webuser/GeoIP/'`
+`su - webuser -c '/home/webuser/tapjoyserver/server/update_geoip.rb'`
 `rm -rf /home/webuser/tapjoyserver/tapjoyads/data/GeoIPCity.dat`
 `su - webuser -c 'ln -s /home/webuser/GeoIP/GeoIPCity.dat /home/webuser/tapjoyserver/tapjoyads/data/'`
 
