@@ -36,12 +36,12 @@ class Games::SocialController < GamesController
         else
           friend_id = DEV_FACEBOOK_ID if Rails.env != 'production'
           friend = Mogli::User.find(friend_id.to_i, current_facebook_client)
-          non_gamers << "#{friend.first_name} #{friend.last_name}"
+          non_gamers << friend.name
           invitation = current_gamer.facebook_invitation_for(friend_id)
           if invitation.pending?
             name = TJGAMES_URL
             link = games_login_url :referrer => invitation.encrypted_referral_id
-            message = "#{friend.first_name} #{friend.last_name} has invited you to join Tapjoy."
+            message = "#{current_facebook_user.name} has invited you to join Tapjoy."
 
             description = "Experience the best of mobile apps!"
             post = Mogli::Post.new(:name => name, :link => link, :message => message, :description => description, :caption => " ", :picture => "#{TJGAMES_URL}/images/TapjoyGames_icon_114x114.jpg")
