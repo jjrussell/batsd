@@ -15,7 +15,6 @@ config.action_controller.perform_caching             = false
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
 
-config.gem 'factory_girl', :version => '2.1.2'
 config.gem 'mail_safe', :version => '0.3.1'
 
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
