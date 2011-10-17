@@ -18,7 +18,7 @@ class Gamer < ActiveRecord::Base
 
   acts_as_authentic do |c|
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
-    c.perishable_token_valid_for = 1.hour
+    c.perishable_token_valid_for = 1.day
     c.login_field = :email
     c.validate_login_field = false
     c.require_password_confirmation = true
@@ -70,7 +70,7 @@ class Gamer < ActiveRecord::Base
       gamer_profile.name
     end
   end
-  
+
   def get_gamer_name
     if gamer_profile.present? && gamer_profile.name.present?
       gamer_profile.name
