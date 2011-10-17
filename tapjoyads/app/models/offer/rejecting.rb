@@ -63,6 +63,7 @@ module Offer::Rejecting
   def is_disabled?(publisher_app, currency)
     item_id == currency.app_id ||
       currency.get_disabled_offer_ids.include?(item_id) ||
+      currency.get_disabled_offer_ids.include?(id) ||
       currency.get_disabled_partner_ids.include?(partner_id) ||
       (currency.only_free_offers? && is_paid?) ||
       (self_promote_only? && partner_id != publisher_app.partner_id)
