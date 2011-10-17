@@ -12,4 +12,14 @@ class GamerProfile < ActiveRecord::Base
       errors.add(:birthdate, "is less than thirteen years ago") if (turns_thirteen.future?)
     end
   end
+  
+  def update_facebook_info!(facebook_user)
+    if facebook_id != facebook_user.id
+      self.facebook_id = facebook_user.id
+      self.fb_access_token = facebook_user.client.access_token
+      save!
+
+      Invitation.reconcile_pending_invitations(Gamer.find_by_id(self.gamer_id), :external_info => self.facebook_id)
+    end
+  end
 end
