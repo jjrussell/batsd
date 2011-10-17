@@ -84,5 +84,4 @@ TJG.loadedImages = {};
         className = className.replace(replace, classReplaces[replace]);
     }
     TJG.doc.className = className + classes.join(' ');
-    TJG.vars.device_type = 'ipod';
 })(this, document);

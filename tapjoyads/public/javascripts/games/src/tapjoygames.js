@@ -690,10 +690,12 @@ TJG.ui = {
     else {
       path = location.pathname.replace(/\/$/, '');
     }    
-    var device_found = false, load_selector = false, device_count = 0, device_data, matched_data;
+    var device_found = false, device_count = 0, device_data, matched_data;
     $.each(devices, function(i,v){
       var device_type = v.device_type;
-      if (!TJG.utils.isNull(device_type) && TJG.vars.device_type && (device_type.toLowerCase() == TJG.vars.device_type.toLowerCase())) {
+      if (!TJG.utils.isNull(device_type)
+        && TJG.vars.device_type
+          && (device_type.toLowerCase() == TJG.vars.device_type.toLowerCase())) {
         device_count++;
         device_found = true;
         device_data = v.data;
@@ -704,7 +706,7 @@ TJG.ui = {
           d.push('</li>');
         d.push('</a>');
       }
-      else if (!TJG.vars.isTouch){
+      else if (!TJG.vars.isTouch){ // Web
         a.push('<a href="', path ,'/switch_device?data=', v.data ,'">');
           a.push('<li class="button grey">');
             a.push(v.name);
@@ -712,21 +714,17 @@ TJG.ui = {
         a.push('</a>');
       }
     });
-    if (device_count == 1) {
-      document.location.href = path + '/switch_device?data=' + device_data;
-      return;
-    }
-    var m = "", link_device = "";
-    var close = "";
+    var m = "", link_device = "", close = "";
     if (showClose) {
       close = '<div class="close_button close_device_select"></div>';
     }
+    // If no matching device is found, link user to appropriate linking URL
     if (device_found == false) {
-      if (TJG.vars.isIos && TJG.vars.ios_link_device_url) {
-        link_device = '<div class="button lt_blue"><a href="' + TJG.ios_link_device_url + '">Connect My Device</a></div>';
+      if (TJG.vars.isIos && TJG.ios_link_device_url) {
+        link_device = '<a href="' + TJG.ios_link_device_url + '"><div class="button grey">Connect My Device</div></a>';
         m =  [
           close,
-          '<div class="dialog_header bold">Please reconnect your device:</div>',
+          '<div class="dialog_header bold">Please connect your device:</div>',
           '<div class="dialog_content">',
             '<ul>',
               link_device,
@@ -734,30 +732,49 @@ TJG.ui = {
           '</div>'
         ].join('');
       }
-      else {
-        load_selector = true;
-        d = a;
+      else if (TJG.vars.isAndroid &&  TJG.android_market_url) {
+        link_device = '<a href="' + TJG.android_market_url + '"><div class="button grey">Connect My Device</div></a>';
+        m =  [
+          close,
+          '<div class="dialog_header bold">Please connect your Android device:</div>',
+          '<div class="dialog_content">',
+            '<ul>',
+              link_device,
+            '</ul>',
+          '</div>'
+        ].join('');
+      }
+      else if (!TJG.vars.isTouch) { // Web - Allow user to select device
+        m =  [
+          close,
+          '<div class="dialog_header bold">Please select your device:</div>',
+          '<div class="dialog_content">',
+            '<ul>',
+              a.join(''),
+            '</ul>',
+          '</div>'
+        ].join('');
       }
     }
-    
-    var other = "";
-    if (TJG.vars.isAndroid &&  TJG.android_market_url) {
-      other = '<a href="' +  TJG.android_market_url + '"><div class="button grey">Other</div></a>';
+    else {
+      var other = "";
+      if (TJG.vars.isAndroid &&  TJG.android_market_url) {
+        other = '<a href="' +  TJG.android_market_url + '"><div class="button grey">Other</div></a>';
+      }
+      else if (TJG.vars.isIos && TJG.ios_link_device_url) {
+        other = '<a href="' +  TJG.ios_link_device_url + '"><div class="button grey">Other</div></a>';
+      }
+      m =  [
+        close,
+        '<div class="dialog_header bold">Please select your current device:</div>',
+        '<div class="dialog_content">',
+          '<ul>',
+            d.join(''),
+            other,
+          '</ul>',
+        '</div>'
+      ].join('');
     }
-    else if (TJG.vars.isIos && TJG.ios_link_device_url) {
-      other = '<a href="' +  TJG.ios_link_device_url + '"><div class="button grey">Other</div></a>';
-    }
-    m =  [
-      close,
-      '<div class="dialog_header bold">Please select your current device:</div>',
-      '<div class="dialog_content">',
-        '<ul>',
-          d.join(''),
-          other,
-        '</ul>',
-      '</div>'
-    ].join('');
-
     div.innerHTML = m;
     document.body.appendChild(div);
     var h = parseInt(($(window).height()/2)-($(obj).outerHeight()+16/2));
