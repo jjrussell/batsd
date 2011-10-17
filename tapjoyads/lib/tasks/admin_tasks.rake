@@ -1,20 +1,19 @@
 namespace :admin do
 
-  # admin:restart_apache
-  desc "Restarts apache on all the webservers"
-  task :restart_apache do
-    system("script/cloudrun 'webserver' 'sleep 5 ; sudo /etc/init.d/apache2 stop ; sleep 2 ; sudo /etc/init.d/apache2 start' 'ubuntu' 'serial'")
+  desc "Reloads apache on all the webservers"
+  task :reload_apache do
+    system("script/cloudrun 'webserver' 'sudo /etc/init.d/apache2 reload ; curl -s localhost:9898/healthz 2>&1' 'ubuntu' 'serial'")
   end
 
-  # admin:view_long_jobs
   desc "Lists the contents of the tmp dirs on each job machine for *sdb* and *s3*"
   task :view_long_jobs do
     system("script/cloudrun 'masterjobs jobserver' 'uptime ; ls -lh tapjoyserver/tapjoyads/tmp/*sdb* tapjoyserver/tapjoyads/tmp/*s3* tapjoyserver/tapjoyads/tmp/*json* 2> /dev/null'")
   end
 
-  # admin:sync_db
   desc "Copies the production database to the development database"
   task :sync_db do
+    raise "Must be run from development mode" unless Rails.env == 'development'
+
     database_yml = YAML::load_file("config/database.yml")
     source       = database_yml['production_slave']
     dest         = database_yml['development']
@@ -28,8 +27,8 @@ namespace :admin do
     end
     puts("finished in #{time} seconds.")
 
-    system("rake db:drop")
-    system("rake db:create")
+    Rake.application.invoke_task('db:drop')
+    Rake.application.invoke_task('db:create')
 
     print("Restoring backup to the development database... ")
     time = Benchmark.realtime do
@@ -42,13 +41,15 @@ namespace :admin do
   end
 
   desc "Reconfigure syslog-ng"
-  task :reconfigure_syslog_ng do
-    system("script/cloudrun 'masterjobs jobserver webserver website dashboard games testserver' 'sudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb 2>&1' 'ubuntu'")
+  task :reconfigure_syslog_ng, :args do |task, task_args|
+    servers = Rails.env == 'test' ? 'testserver' : 'masterjobs jobserver website dashboard games webserver'
+    system("script/cloudrun '#{servers}' 'sudo /home/webuser/tapjoyserver/server/syslog-ng/configure.rb #{task_args[:args]} 2>&1' 'ubuntu'")
   end
 
   desc "Update geoip databse"
   task :geoipupdate do
-    system("script/cloudrun 'masterjobs jobserver webserver website dashboard games' 'tapjoyserver/server/update_geoip.rb' 'webuser' 'serial'")
+    servers = Rails.env == 'test' ? 'testserver' : 'masterjobs jobserver website dashboard games webserver'
+    system("script/cloudrun '#{servers}' 'tapjoyserver/server/update_geoip.rb' 'webuser' 'serial'")
   end
 
 end

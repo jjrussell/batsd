@@ -1,6 +1,6 @@
 class Gamer < ActiveRecord::Base
   include UuidPrimaryKey
-  
+
   has_many :gamer_devices
   has_one :gamer_profile
 
@@ -11,12 +11,12 @@ class Gamer < ActiveRecord::Base
 
   before_create :generate_confirmation_token
   before_create :check_referrer
-  
+
   alias_method :devices, :gamer_devices
-  
+
   acts_as_authentic do |c|
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
-    c.perishable_token_valid_for = 1.hour
+    c.perishable_token_valid_for = 1.day
     c.login_field = :email
     c.validate_login_field = false
     c.require_password_confirmation = true
@@ -34,7 +34,7 @@ class Gamer < ActiveRecord::Base
       gamer_profile.name
     end
   end
-  
+
   def get_gamer_name
     if gamer_profile.present? && gamer_profile.name.present?
       gamer_profile.name
@@ -60,7 +60,7 @@ private
   def generate_confirmation_token
     self.confirmation_token = Authlogic::Random.friendly_token
   end
-  
+
   def check_referrer
     if referrer.starts_with?('tjreferrer:')
       click = Click.new :key => referrer.gsub('tjreferrer:', '')
