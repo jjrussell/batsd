@@ -46,12 +46,13 @@ API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
 DASHBOARD_URL = local_config['dashboard_url'] || 'https://dashboard.tapjoy.com'
 WEBSITE_URL = local_config['website_url'] || 'https://www.tapjoy.com'
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
-AWS_ACCOUNT_ID = '266171351246'
+TJGAMES_URL = local_config['tjgames_url'] || 'https://www.tapjoygames.com'
 
 # Amazon services:
 amazon = YAML::load_file("#{ENV['HOME']}/.tapjoy_aws_credentials.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['production']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['production']['secret_access_key']
+AWS_ACCOUNT_ID = '266171351246'
 
 # Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
 # to the list of transient problems which will automatically get retried by RightAws.

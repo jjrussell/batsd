@@ -44,6 +44,10 @@ class ActiveSupport::TestCase
     UserSession.create(user)
   end
 
+  def games_login_as(user)
+    GamerSession.create(user)
+  end
+
   # Tests equality of attribute hashes. An attribute hash has the form:
   # { :key1 => [value1, value2], :key2 => [value3]}
   # The value arrays may be in any order.
