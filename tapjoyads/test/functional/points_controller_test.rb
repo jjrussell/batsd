@@ -14,6 +14,7 @@ class PointsControllerTest < ActionController::TestCase
         :timestamp => Time.zone.now
       }
       @params[:verifier] = verifier(@params)
+      Sqs.stubs(:send_message)
     end
 
     should 'render error for bad verifier' do
