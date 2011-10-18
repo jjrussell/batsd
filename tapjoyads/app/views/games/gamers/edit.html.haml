@@ -5,18 +5,19 @@
         = render(:partial => 'header', :locals => { :back_button => games_root_path })
         .content.narrow
           .header_wrapper
-            .title_2
-              Invite Your Friends!
-            #invite_friends.clearfix
-              .social_btn_wrapper
-                = fb_connect_async_js
-                - if @gamer.facebook_id.blank?
-                  .social_btn.fb{ :onclick => "doLogin('email,offline_access,create_note');" }
-                - else
-                  .social_btn.fb{ :onclick => "location.href='#{games_social_invite_facebook_friends_path}';" }
-              .social_btn_wrapper
-                %a{ :href => games_social_invite_email_friends_path }
-                  .social_btn.email
+            - if params[:show_social]
+              .title_2
+                Invite Your Friends!
+              #invite_friends.clearfix
+                .social_btn_wrapper
+                  = fb_connect_async_js
+                  - if @gamer.facebook_id.blank?
+                    .social_btn.fb{ :onclick => "doLogin('email,offline_access,create_note');" }
+                  - else
+                    .social_btn.fb{ :onclick => "location.href='#{games_social_invite_facebook_friends_path}';" }
+                .social_btn_wrapper
+                  %a{ :href => games_social_invite_email_friends_path }
+                    .social_btn.email
             = render(:partial => 'profile')
             .title_2
               Options
