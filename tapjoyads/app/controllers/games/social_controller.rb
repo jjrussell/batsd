@@ -122,7 +122,7 @@ private
   def dissociate_and_redirect
     current_gamer.gamer_profile.dissociate_account!(Invitation::FACEBOOK)
     render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
-    flash[:error] = 'Please grant use both permissions before sending out an invite'
+    flash[:error] = 'Please grant us both permissions before sending out an invite.'
     redirect_to edit_games_gamer_path
   end
 
