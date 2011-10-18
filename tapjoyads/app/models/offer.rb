@@ -329,8 +329,8 @@ class Offer < ActiveRecord::Base
         bucket.key("icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg").exists? ? get_icon_url({:source => :cloudfront}.merge(options)) : "#{CLOUDFRONT_URL}/videos/assets/default.png"
       rescue RightAws::AwsError
         "#{CLOUDFRONT_URL}/videos/assets/default.png"
-      end 
-    end 
+      end
+    end
   end
   memoize :get_video_icon_url
 
@@ -696,7 +696,7 @@ private
       end
       creative = creative_arr[0]
       creative.format = format
-      creative.interlace = Magick::PlaneInterlace if format == 'jpeg'
+      creative.interlace = Magick::JPEGInterlace if format == 'jpeg'
     rescue
       raise BannerSyncError.new("custom_creative_#{size}_blob", "New file is invalid - unable to convert to .#{format}.")
     end
@@ -705,7 +705,7 @@ private
     raise BannerSyncError.new("custom_creative_#{size}_blob", "New file has invalid dimensions.") if [width, height] != [creative.columns, creative.rows]
 
     begin
-      banner_creative_s3_key(size, format).write(:data => creative.to_blob, :acl => :public_read)
+      banner_creative_s3_key(size, format).write(:data => creative.to_blob { self.quality = 75 }, :acl => :public_read)
     rescue
       raise BannerSyncError.new("custom_creative_#{size}_blob", "Encountered unexpected error while uploading new file, please try again.")
     end

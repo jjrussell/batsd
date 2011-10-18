@@ -10,19 +10,24 @@
         %th
           = f.label("custom_creative_#{@size}", @label)
         %td
-          - if @success_message
-            %span#success_message
-              = h(@success_message)
-          - if @creative_exists
-            = link_to("View existing file", '#', :class => 'view_link')
-            |
-            = link_to("Remove existing file", '#', :id => "remove_link")
-          - else
-            = f.file_field("custom_creative_#{@size}")
-            %td
-              = f.submit('Upload', :id => "upload_button")
-          %td
-            = image_tag("spinner.gif", :id => "spinner", :class => "hidden")
+          %table
+            - if @success_message
+              %tr#success_message.hidden
+                %td
+                  = h(@success_message)
+            %tr#controls
+              %td
+                - if @creative_exists
+                  = link_to("View existing file", '#', :class => 'view_link')
+                  |
+                  = link_to("Remove existing file", '#', :id => "remove_link")
+                - else
+                  = f.file_field("custom_creative_#{@size}")
+                  %td
+                    = f.submit('Upload', :id => "upload_button")
+            %tr
+              %td
+                = image_tag("spinner.gif", :id => "spinner", :class => "hidden")
 
 - content_for :page_javascript do
   :plain
@@ -30,7 +35,7 @@
       toggle_other_forms(false);
 
       $('.view_link').click(function() {
-        parent.$.facebox({ajax: parent.$('#preview_link')[0].href});
+        parent.$.facebox({ajax: "#{preview_app_offer_path(:id => @offer.id, :app_id => @app.id, :dimensions => @size)}" })
         return false;
       });
 
@@ -39,6 +44,7 @@
           $('#spinner').show();
           toggle_other_forms(true);
           $('#remove_form_for_#{@size}')[0].submit();
+          $('#controls').fadeOut('fast');
         }
         return false;
       });
@@ -46,6 +52,7 @@
       $('#upload_form').submit(function() {
         $('#spinner').show();
         toggle_other_forms(true);
+        $('#controls').fadeOut('fast');
         return true;
       });
 
@@ -72,8 +79,11 @@
 - if @success_message
   - content_for :page_javascript do
     :plain
-      $(function($){
-        $('#success_message').fadeOut(2000);
+      $(function($) {
+        $('#controls').hide();
+        $('#success_message').fadeIn('fast').delay(2000).fadeOut('fast', function() {
+          $('#controls').fadeIn('fast');
+        });
       });
 
 - if @error_message
@@ -89,6 +99,10 @@
       background: none;
       overflow: hidden;
       margin: 0;
+    }
+    table {
+      border: 0;
+      border-collapse: collapse;
     }
     th {
       font-weight: bold;
