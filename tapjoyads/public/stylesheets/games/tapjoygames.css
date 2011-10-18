@@ -566,9 +566,9 @@ form#new_gamer input {
   color: #D2D2D2;
   font-family: "Arial Rounded MT Bold""Arial Rounded MT", Arial, Helvetica, sans-serif;
   font-weight: bold;
+  line-height: 120%;
   margin: 6px 0 12px;
   text-shadow: 0 1px 4px #252525;
-
 }
 .message_content {
   margin: 20px 0 12px;
@@ -1500,7 +1500,7 @@ form#new_gamer_session .login_pass {
 .offer_meta {
   color: #B5B5B5;
   font-weight: bold;
-  min-height: 20px;
+  min-height: 18px;
 }
 .web .offer_meta,
 .ipad .offer_meta {
@@ -1509,6 +1509,7 @@ form#new_gamer_session .login_pass {
 .web .offer_description,
 .ipad .offer_description {
   font-size: 14px;
+  margin: 4px 0;
 }
 .mobile .offer_meta {
   font-size: 10px;
@@ -1791,20 +1792,24 @@ input.button {
 .button.grey.dialog_button {
   cursor: pointer;
   margin: 0 auto;
-  width: 100px;
+  width: 200px;
 }
 .message_content .button.grey.arrow {
   color: #2778A1;
+}
+.message_header a, .message_content a {
+  color: #218BAD;
 }
 .message_content:hover .button.grey.arrow, .message_content:active .button.grey.arrow {
   color: #FFF;
 }
 .message_content .button.grey.arrow .arrow_bg {
-  background: transparent url('/images/games/button_right_arrow.png') no-repeat 2px right;
+  background: transparent url('/images/games/button_right_arrow.png') no-repeat right;
+  display: block;
   padding-right: 16px;
 }
 .message_content.find_games, .message_content.link_device {
-  width: 160px;
+  width: 120px;
 }
 .link_device_content {
   line-height: 18px;

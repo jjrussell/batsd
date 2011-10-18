@@ -15,8 +15,9 @@ class GamesController < ApplicationController
     if session[:current_device_id]
       @current_device_id = SymmetricCrypto.decrypt_object(session[:current_device_id], SYMMETRIC_CRYPTO_SECRET)
     else
-      @current_device_id = current_device_id_cookie if current_device_id_cookie.present? && valid_device_id(current_device_id_cookie)
-      @current_device_id ||= current_gamer.devices.first.device_id if current_gamer.devices
+      device_id_cookie = current_device_id_cookie
+      @current_device_id = device_id_cookie if device_id_cookie.present? && valid_device_id(device_id_cookie)
+      @current_device_id ||= current_gamer.devices.first.device_id if current_gamer.devices.present?
     end
     session[:current_device_id] ||= SymmetricCrypto.encrypt_object(@current_device_id, SYMMETRIC_CRYPTO_SECRET)
     @current_device_id
