@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111011182943) do
+ActiveRecord::Schema.define(:version => 20111018003119) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -157,7 +157,6 @@ ActiveRecord::Schema.define(:version => 20111011182943) do
     t.decimal  "spend_share",                                              :precision => 8, :scale => 6, :default => 0.5,   :null => false
     t.integer  "minimum_featured_bid"
     t.decimal  "direct_pay_share",                                         :precision => 8, :scale => 6, :default => 1.0,   :null => false
-    t.boolean  "banner_advertiser",                                                                      :default => false, :null => false
     t.text     "offer_whitelist",                                                                                           :null => false
     t.boolean  "use_whitelist",                                                                          :default => false, :null => false
     t.boolean  "tapjoy_enabled",                                                                         :default => false, :null => false
