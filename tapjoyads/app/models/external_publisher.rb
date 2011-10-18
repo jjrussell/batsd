@@ -1,5 +1,7 @@
 class ExternalPublisher
   
+  TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
+  
   attr_accessor :app_id, :app_name, :currencies, :last_run_time
   
   def initialize(currency)
@@ -10,9 +12,9 @@ class ExternalPublisher
   
   def add_currency(currency)
     self.currencies ||= []
-    self.currencies << { :id => currency.id, :name => currency.name, :udid_for_user_id => currency.udid_for_user_id, :tapjoy_enabled => currency.tapjoy_enabled }
+    self.currencies << { :id => currency.id, :name => currency.name, :udid_for_user_id => currency.udid_for_user_id, :tapjoy_managed => currency.callback_url == TAPJOY_MANAGED_CALLBACK_URL }
   end
-
+  
   def primary_currency_name
     currencies.each { |c| return c[:name] if c[:id] == app_id }
   end
