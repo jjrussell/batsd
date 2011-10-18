@@ -1,6 +1,6 @@
 class Games::SocialController < GamesController
   before_filter :require_gamer
-  before_filter :offline_facebook_authenticate, :only => [:invite_facebook_friends, :send_facebook_invites ]
+  before_filter :offline_facebook_authenticate, :only => [ :invite_facebook_friends, :send_facebook_invites ]
   before_filter :validate_recipients, :only => [ :send_email_invites ]
 
   def invite_facebook_friends
@@ -25,7 +25,9 @@ class Games::SocialController < GamesController
       posts = []
       gamers = []
       non_gamers = []
-
+      
+      current_facebook_user.fetch
+      
       friends.each do |friend_id|
         exist_gamers = Gamer.find_all_gamer_based_on_facebook(friend_id)
         if exist_gamers.any?
@@ -97,12 +99,31 @@ private
   def offline_facebook_authenticate
     if current_gamer.facebook_id.blank? && params[:valid_login] && current_facebook_user
       current_gamer.gamer_profile.update_facebook_info!(current_facebook_user)
+      check_permissions_and_redirect and return
     elsif current_gamer.facebook_id?
       fb_create_user_and_client(current_gamer.fb_access_token, '', current_gamer.facebook_id)
+      check_permissions_and_redirect and return
     else
       flash[:error] = 'Please connect Facebook with Tapjoy.'
       redirect_to edit_games_gamer_path
     end
+  end
+
+  def check_permissions_and_redirect
+    begin
+      unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
+        dissociate_and_redirect
+      end
+    rescue => e
+      dissociate_and_redirect
+    end
+  end
+
+  def dissociate_and_redirect
+    current_gamer.gamer_profile.dissociate_account!(Invitation::FACEBOOK)
+    render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
+    flash[:error] = 'Please grant use both permissions before sending out an invite'
+    redirect_to edit_games_gamer_path
   end
 
   def require_gamer
