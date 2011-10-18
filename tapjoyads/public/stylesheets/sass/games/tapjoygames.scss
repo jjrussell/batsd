@@ -1802,6 +1802,9 @@ input.button {
 #static .content_box div, .account .content_box div {
   padding: 6px 12px 6px 12px;
 }
+#static .content_box .single_spaced {
+  padding: 0;
+}
 .mobile #reset_password form input[type=email] {
   width: 160px;
 }
