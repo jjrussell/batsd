@@ -44,7 +44,6 @@ class Games::GamersControllerTest < ActionController::TestCase
       assert_response(200)
       json = JSON.load(@response.body)
       assert_equal false, json['success']
-      puts json.to_json
       assert_equal 1, json['error'].length
     end
   end
