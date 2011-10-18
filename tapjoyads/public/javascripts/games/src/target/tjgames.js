@@ -1156,6 +1156,13 @@ TJG.ui = {
                 '<div class="dialog_header">Your Tapjoy Games account was sucessfully created!</div>',
                '<div class="dialog_content"><div class="continue_link_device"><div class="button grey dialog_button">Connect My Device</div></div></div>'
               ].join('');
+              if (!TJG.vars.isTouch) {
+                msg = [
+                  '<div class="dialog_header_wrapper"><div class="dialog_header_right"></div><div class="dialog_header_left"></div><div class="dialog_title title_2">Success!</div></div>',
+                  '<div class="dialog_header">Your Tapjoy Games account was sucessfully created!</div>',
+                 '<div class="dialog_content"><div class="continue_link_device"><div class="button grey dialog_button">Continue</div></div></div>'
+                ].join('');
+              }
               $('.close_dialog').unbind('click');
               $("#sign_up_dialog_content").parent().animate({ height: "140px", }, animateSpd);
               $("#sign_up_dialog_content").html(msg);
@@ -1169,9 +1176,22 @@ TJG.ui = {
                   }
                 });
               }
-              else if (d.link_device_url && TJG.vars.isIos) {
+              else if (d.link_device_url) {
                 $('.close_dialog,.continue_link_device').click(function(){
-                  document.location.href = d.link_device_url;
+                  if (TJG.vars.isAndroid &&  TJG.android_market_url) {
+                    document.location.href = TJG.android_market_url;
+                  }
+                  else if (TJG.vars.isIos && TJG.ios_link_device_url) {
+                    document.location.href = TJG.ios_link_device_url;
+                  }
+                  else {
+                    if (TJG.path) {
+                      document.location.href = TJG.path;
+                    }
+                    else {
+                      document.location.href = document.domain;
+                    }
+                  }
                 });
               }
               else {
@@ -2053,9 +2073,12 @@ TJG.ui = {
           $("#how_works_dialog").fadeIn(350);
         });
         $('#link_device').click(function(){
-          TJG.utils.centerDialog("#link_device_dialog");
-          TJG.repositionDialog = ["#link_device_dialog"];
-          $("#link_device_dialog").fadeIn(350);
+          if (TJG.vars.isAndroid &&  TJG.android_market_url) {
+            document.location.href = TJG.android_market_url;
+          }
+          else if (TJG.vars.isIos && TJG.ios_link_device_url) {
+            document.location.href = TJG.ios_link_device_url;
+          }
         });
         $('.feat_toggle').click(function(){
           if ($(this).hasClass('collaspe')) {
@@ -2104,18 +2127,20 @@ TJG.ui = {
         $('.device_name,.device_switch').fadeOut(250, function(){
           $('.nav_device_info').animate({width:"0px"}, 250);
         });
-        $('.nav_device').click(function(){
-          if ($('.nav_device_info').width() == 0) {
-            $('.nav_device_info').animate({width:w + "px"}, 250, function() {
-              $('.device_name,.device_switch').fadeIn(250);
-            });
-          }
-          else {
-            $('.device_name,.device_switch').fadeOut(250, function(){
-              $('.nav_device_info').animate({width:"0px"}, 250);
-            });
-          }
-        });
+        if (TJG.select_device) {
+          $('.nav_device').click(function(){
+            if ($('.nav_device_info').width() == 0) {
+              $('.nav_device_info').animate({width:w + "px"}, 250, function() {
+                $('.device_name,.device_switch').fadeIn(250);
+              });
+            }
+            else {
+              $('.device_name,.device_switch').fadeOut(250, function(){
+                $('.nav_device_info').animate({width:"0px"}, 250);
+              });
+            }
+          });
+        }
       },
       
       checkFlashMessages: function () {

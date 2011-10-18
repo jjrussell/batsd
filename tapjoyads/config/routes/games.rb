@@ -3,6 +3,8 @@ ActionController::Routing::Routes.draw do |map|
     m.root :controller => 'games/homepage', :action => :index
     m.tos 'tos', :controller => 'games/homepage', :action => :tos
     m.privacy 'privacy', :controller => 'games/homepage', :action => :privacy
+    m.switch_device 'switch_device', :controller => 'games/homepage', :action => :switch_device
+    m.send_device_link 'send_device_link', :controller => 'games/homepage', :action => :send_device_link
     
     m.more_games_editor_picks 'editor_picks', :controller => 'games/more_games', :action => :editor_picks
     m.more_games_popular 'popular', :controller => 'games/more_games', :action => :popular
@@ -26,6 +28,5 @@ ActionController::Routing::Routes.draw do |map|
     
     m.resources :android, :controller => 'games/android', :action => :index
     
-    m.switch_device 'switch_device', :controller => 'games/homepage', :action => :switch_device
   end
 end
