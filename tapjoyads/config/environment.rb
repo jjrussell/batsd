@@ -54,7 +54,7 @@ Rails::Initializer.run do |config|
   config.gem 'haml', :version => '3.1.3'
   config.gem 'hominid', :version => '2.2.0'
   config.gem 'imgkit', :version => '1.3.2'
-  config.gem 'newrelic_rpm', :version => '3.0.1'
+  config.gem 'newrelic_rpm', :version => '3.2.0'
   config.gem 'plist', :version => '3.1.0'
   config.gem 'read_from_slave', :version => '0.4.0'
   config.gem 'sass', :version => '3.1.7'

@@ -167,7 +167,16 @@ FactoryGirl.define do
   end
 
   factory :gamer do
-    username { Factory.next(:name) }
     email    { Factory.next(:email) }
+    password { 'asdf' }
+    password_confirmation { 'asdf' }
+    terms_of_service { '1' }
+  end
+
+  factory :invitation do
+    gamer         { Factory(:facebook_gamer) }
+    noob          { Factory(:gamer) }
+    channel       { 0 }
+    external_info { Factory.next(:name) }
   end
 end
