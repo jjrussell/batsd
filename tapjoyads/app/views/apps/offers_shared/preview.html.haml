@@ -14,7 +14,7 @@
   - else
     - if @offer.rewarded? # show offer wall ad
       Marketplace ad:
-      %div.img320x200
+      %div.img320x76
         - if @show_generated_ads
           = image_tag(@offer.get_offers_image_url(publisher_app_id, true), :class => 'preview', :alt => '')
         - else
@@ -45,7 +45,7 @@
   :plain
     $(function($){
       $("img.preview").load(function() {
-        this.setAttribute("style", "display: inline;");
+        this.setAttribute("style", "display: inline; border: 1px solid;");
       });
     });
 
@@ -63,7 +63,7 @@
       display: none;
     }
 
-  - (Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES + %w(320x480 320x200)).each do |size|
+  - (Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES + %w(320x480 320x76)).each do |size|
     - width, height = size.split("x")
     - height_with_buttons = height.to_i + Offer::FEATURED_AD_BUTTON_HEIGHT
     - if @show_generated_ads # show spinner while images are loading

@@ -6,7 +6,7 @@
 - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
   = render :partial => 'currency_selector'
 
-- if @currency.conversion_rate > 0
+- if @currency.conversion_rate > 0 && !@for_preview
   #instructions
     = t 'text.offerwall.instructions', :currency => @currency.name
 
@@ -46,15 +46,16 @@
     .next= get_next_link
     .clear
 
-#privacy
-  = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}")
-  - if @currency.conversion_rate > 0
-    ·
-    = link_to_missing_currency
+- unless @for_preview
+  #privacy
+    = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}")
+    - if @currency.conversion_rate > 0
+      ·
+      = link_to_missing_currency
 
-#adsby 
-  = t('text.shared.ads_by')
-  %img{ :src => "#{CLOUDFRONT_URL}/images/tapjoylogo-small.png", :alt => "Tapjoy"}
+  #adsby
+    = t('text.shared.ads_by')
+    %img{ :src => "#{CLOUDFRONT_URL}/images/tapjoylogo-small.png", :alt => "Tapjoy"}
 
 .clear
 
@@ -110,18 +111,18 @@
       vertical-align: baseline;
       text-decoration: none;
     }
-    
+
     body {
       margin-bottom: 10px;
     }
-    
+
     img {
       border: 0;
     }
-    
+
     .message,
     .pagination,
-    #instructions { 
+    #instructions {
       padding: 10px;
       margin: 10px 3%;
       color: #004E09;
@@ -133,11 +134,11 @@
       -moz-border-radius: 7px;
       -webkit-border-radius: 7px;
     }
-    
+
     #instructions {
       font-size: 110%;
     }
-    
+
     #offers {
       margin: 10px 3%;
       background: white;
@@ -202,69 +203,69 @@
     #offers .offer .amount {
       color: rgb(0, 136, 16);
     }
-    
-    #adsby, 
+
+    #adsby,
     #privacy a {
       font-size: 75%;
       color: #004E09;
     }
-    
+
     #adsby {
       margin-top: 2px;
       float: right;
       margin-right: 5%;
     }
-    
+
     #adsby img {
       vertical-align: bottom;
     }
-    
+
     #privacy {
       float: left;
       margin-left: 5%;
     }
-    
+
     #privacy a {
       text-decoration: underline;
     }
-    
+
     .pagination a {
       font-size: 120%;
       font-weight: bold;
       color: #004E09;
       display: block;
     }
-    
+
     .pagination .prev a {
       padding: 5px 0 5px 20px;
       background: transparent url(/images/arrow-left-small.png) no-repeat 0%;
     }
-    
+
     .pagination .next a {
       padding: 5px 20px 5px 0;
       background: transparent url(/images/arrow-right-small.png) no-repeat 100%;
     }
-    
+
     .pagination .prev a.clicked {
       background: transparent url(/images/load-circle.gif) no-repeat 0%;
     }
-    
+
     .pagination .next a.clicked {
       background: transparent url(/images/load-circle.gif) no-repeat 100%;
     }
-    
+
     .pagination .prev {
       float: left;
     }
-    
+
     .pagination .next {
       float: right;
     }
-    
+
     .clear {
       clear: both;
     }
-    
+
     .hidden {
       display: none;
     }

@@ -2,3 +2,4 @@ api_url: http://tapjoy.local
 dashboard_url: http://tapjoy.local
 website_url: http://tapjoy.local
 clear_memcache: true
+tjgames_url: http://tapjoy.local

@@ -4,7 +4,7 @@
   #top_box
     .explanation= @message
 
-- if @currency.conversion_rate > 0
+- if @currency.conversion_rate > 0 && !@for_preview
   #top_box
     .explanation
       = t('text.offerwall.redesign_instructions', :currency => @currency.name)
@@ -39,10 +39,10 @@
           - if offer.item_type == 'VideoOffer'
             .video_icon{:style => "background: url(" << offer.get_video_icon_url << ")"}
               .play
-          - else  
+          - else
             .offer_icon
               %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => offer.get_icon_url(:source => :cloudfront, :size => '57') }
-        .offer-text    
+        .offer-text
           - if @currency.conversion_rate > 0
             %span
               - amount = capture_haml do
@@ -53,22 +53,23 @@
         .load
     - unless index == (@offer_list.size-1)
       .divider
-    
+
 - if @more_data_available > 0
   #bottom_box{ :onclick => "javascript:getAds();" }
     #plus
     %a{ :href => "javascript:void(0);", :id => "load_more" }
       Load some more!
-#footerWrapper
-  #footer
-    - if @currency.conversion_rate > 0
-      = link_to_missing_currency
-      %span &nbsp;|&nbsp;
-    = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}")
-    %br
-    %span
-      = t('text.shared.ads_by')
-    #logo
+- unless @for_preview
+  #footerWrapper
+    #footer
+      - if @currency.conversion_rate > 0
+        = link_to_missing_currency
+        %span &nbsp;|&nbsp;
+      = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}")
+      %br
+      %span
+        = t('text.shared.ads_by')
+      #logo
 
 %img.hidden{ :src => '/images/load-circle.gif' }
 
@@ -84,7 +85,7 @@
     var currency = "#{@currency.name}";
     var avail = "#{@more_data_available}";
     avail = parseInt(avail);
-    
+
     function scroll() {
       images = document.getElementsByTagName('img');
       for (var i = 0, image; image = images[i]; i++) {
@@ -93,13 +94,13 @@
         }
       }
     }
-    
+
     function loadImage(image) {
       if (image.getAttribute('s') && image.src != image.getAttribute('s')) {
         image.src = image.getAttribute('s');
       }
     }
-    
+
     function loadJQ(ref){
       if (jqSrc) {
         var s = document.createElement("script");
@@ -121,7 +122,7 @@
         }, 100);
       }
     }
-    
+
     function checkJQ(ref) {
       if (jqLoaded) {
         return;
@@ -135,7 +136,7 @@
         }
       }
     }
-    
+
     function getAds() {
       if (firstLoad) {
         loadJQ('getAds');
@@ -144,7 +145,7 @@
         fetchOffers();
       }
     }
-    
+
     function fetchOffers() {
       if (avail <= 0) {return;}
       if (url) {
@@ -199,7 +200,7 @@
                       t.push('<p>');
                         t.push('<b>');
                           t.push(v.Name);
-                        t.push('</b>'); 
+                        t.push('</b>');
                       t.push('</p>');
                     t.push('</div>');
                   t.push('</div>');
@@ -211,16 +212,16 @@
               $("#offers").append(t.join(''));
               scroll();
               start = start + 25;
-            } 
+            }
           },
           error: function() {
             $("#load_more").html("There was an issue. Please try again.");
           }
         });
-      }   
+      }
     }
-    
+
     function init() {
       window.setTimeout(scroll, 0);
     }
-     
+

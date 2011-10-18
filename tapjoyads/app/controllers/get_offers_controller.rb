@@ -23,7 +23,7 @@ class GetOffersController < ApplicationController
 
   def image
     offer = Offer.find_in_cache(params[:offer_id])
-    img = IMGKit.new(offer.get_offers_webpage_url(params[:publisher_app_id]), :width => 320)
+    img = IMGKit.new(offer.get_offers_webpage_url(params[:publisher_app_id], '8.1.0'), :width => 320)
 
     prevent_browser_cache(params[:prevent_browser_cache])
 
@@ -37,7 +37,7 @@ class GetOffersController < ApplicationController
     end
 
     set_geoip_data
-    if params[:offer_id]
+    if @for_preview = !params[:offer_id].blank?
       @offer_list, @more_data_available = [[Offer.find_in_cache(params[:offer_id])], 0]
     else
       @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)

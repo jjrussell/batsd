@@ -118,7 +118,7 @@ a, a:visited {
 #loader.dialog_wrapper {
   width: 200px;
 }
-#loader.dialog_wrapper .dialog {
+#loader.dialog_wrapper .dialog, #sender.dialog_wrapper .dialog {
   height: 80px;
   padding: 30px;
 }
@@ -879,7 +879,6 @@ form#new_gamer_session .login_pass {
   width: 39px;
 }
 #invite_friends .social_btn {
-  float: left;
   margin-bottom: 12px;
   margin-left: 12px;
   overflow: hidden;
@@ -897,6 +896,11 @@ form#new_gamer_session .login_pass {
 }
 #invite_friends .social_btn.email:hover, #invite_friends .social_btn.email:action {
   background-position: 100% 100%;
+}
+#invite_friends .social_btn_wrapper {
+  cursor: pointer;
+  float: left;
+  position: relative;
 }
 .web .profile_arrow,
 .ipad .profile_arrow {
@@ -1827,7 +1831,7 @@ h2.title {
 .left {
   float: left;
 }
-.hide {
+.hidden, .hide {
   display: none;
 }
 .notvisible {

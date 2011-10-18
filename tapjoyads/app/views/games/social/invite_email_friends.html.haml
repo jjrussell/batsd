@@ -1,0 +1,26 @@
+- content_for :page_head, stylesheet_link_tag('games/facebook')
+
+%h1.titlebar Send an Email Invite
+.email_invite_wrapper
+  - form_tag games_social_send_email_invites_path, :id => 'invite_friends' do
+    #recipients_lable Recipients
+    .recipients_wrapper= text_field_tag 'recipients', @recipients, :placeholder => 'Use commas to separate multiple emails'
+    .content_wrapper= text_area_tag 'content', @content, :rows => 10, :disabled => true
+    %span#back_button Back
+    %span#invite_button Invite
+
+#social_dialog.dialog_wrapper.hide
+  .close_dialog
+    .close_button
+  .dialog
+    #social_dialog_content
+
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      var options = {
+        channel:   'EMAIL',
+        inviteUrl: #{edit_games_gamer_path.to_json},
+      };
+      TJG.social.setup(options);
+    });
