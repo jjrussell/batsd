@@ -117,9 +117,11 @@ private
   def has_permissions?
     begin
       unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
+        @error_msg = "Please grant us both permissions before sending out an invite."
         return false
       end
     rescue => e
+      @error_msg = "Please authorize us before sending out an invite."
       return false
     end
     true
@@ -128,7 +130,7 @@ private
   def dissociate_and_redirect
     current_gamer.gamer_profile.dissociate_account!(Invitation::FACEBOOK)
     render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
-    flash[:error] = 'Please grant us both permissions before sending out an invite.'
+    flash[:error] = @error_msg
     redirect_to edit_games_gamer_path
   end
 
