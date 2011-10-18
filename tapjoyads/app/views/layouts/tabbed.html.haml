@@ -53,6 +53,8 @@
           - if premier_enabled?
             = mail_to "premiersupport@tapjoy.com", "Support", :subject => "Premier Support"
             |
+          = link_to('Knowledge Center', KNOWLEDGE_CENTER_URL)
+          |
           = link_to('Dev forum', DEV_FORUM_URL)
           |
           = link_to('Logout', logout_path)
