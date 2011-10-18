@@ -194,7 +194,7 @@ module Offer::UrlGeneration
     url
   end
 
-  def get_offers_webpage_url(publisher_app_id)
-    "#{API_URL}/get_offers/webpage?app_id=#{publisher_app_id}&offer_id=#{id}"
+  def get_offers_webpage_url(publisher_app_id, library_version = nil)
+    "#{API_URL}/get_offers/webpage?app_id=#{publisher_app_id}&offer_id=#{id}&library_version=#{library_version}"
   end
 end
