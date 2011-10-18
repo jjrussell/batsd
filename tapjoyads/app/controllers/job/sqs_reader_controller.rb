@@ -35,7 +35,7 @@ class Job::SqsReaderController < Job::JobController
         Rails.logger.warn "Error processing message. Error: #{e}"
         message_params = split_message_into_params(message.body)
         if @raise_on_error
-          params.merge!(message_params)
+          NewRelic::Agent.add_custom_parameters(message_params)
           raise e
         else
           unless e.is_a?(SkippedSendCurrency)
