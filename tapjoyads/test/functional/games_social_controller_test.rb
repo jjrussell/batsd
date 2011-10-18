@@ -14,6 +14,7 @@ class Games::SocialControllerTest < ActionController::TestCase
       mogli_user.stubs(:feed_create).returns(mogli_post)
       mogli_user.stubs(:first_name).returns('f')
       mogli_user.stubs(:last_name).returns('l')
+      mogli_user.stubs(:name).returns('name')
       mogli_post.stubs(:id).returns('a')
       Mogli::User.stubs(:find).returns(mogli_user)
       Mogli::Post.stubs(:new).returns(mogli_post)
