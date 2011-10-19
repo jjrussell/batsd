@@ -6,7 +6,6 @@ class QueueNames
   SEND_CURRENCY            = RUN_MODE_PREFIX + 'SendCurrency'
   APP_STATS_HOURLY         = RUN_MODE_PREFIX + 'AppStatsHourly'
   APP_STATS_DAILY          = RUN_MODE_PREFIX + 'AppStatsDaily'
-  PRE_CREATE_DOMAINS       = RUN_MODE_PREFIX + 'PreCreateDomains'
   CALCULATE_SHOW_RATE      = RUN_MODE_PREFIX + 'CalculateShowRate'
   SELECT_VG_ITEMS          = RUN_MODE_PREFIX + 'SelectVgItems'
   GET_STORE_INFO           = RUN_MODE_PREFIX + 'GetStoreInfo'
@@ -18,6 +17,5 @@ class QueueNames
   CACHE_OFFERS             = RUN_MODE_PREFIX + 'CacheOffers'
   UDID_REPORTS             = RUN_MODE_PREFIX + 'UdidReports'
   CREATE_INVOICES          = RUN_MODE_PREFIX + 'CreateInvoices'
-  ENCODED_WEB_REQUESTS     = RUN_MODE_PREFIX + 'EncodedWebRequests'
   FAILED_EMAILS            = RUN_MODE_PREFIX + 'FailedEmails'
 end
