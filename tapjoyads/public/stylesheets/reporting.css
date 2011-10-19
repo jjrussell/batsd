@@ -1,86 +1,85 @@
 .icon {
   padding-bottom: 20px;
   padding-right: 10px;
-  float: left;
-}
+  float: left; }
+
 #tables {
-  padding: 20px 0;
-}
+  padding: 20px 0; }
+
 .data {
   float: left;
-  padding: 0 10px;
-}
+  padding: 0 10px; }
+
 table {
-  border-collapse: collapse;
-}
+  border-collapse: collapse; }
+
 table.properties {
-  border-collapse: separate;
-}
+  border-collapse: separate; }
+
 th, td {
   border: 1px solid #ccc;
-  padding: 2px 5px;
-}
+  padding: 2px 5px; }
+
 th {
-  text-align: center;
-}
+  text-align: center; }
+
 td {
-  text-align: left;
-}
+  text-align: left; }
+
 .tjform input[type=submit] {
   margin: 0;
-  float: none;
-}
+  float: none; }
+
 .load-circle {
-  text-align: center;
-}
+  text-align: center; }
+
 #associated_list,
 #boosts_list {
-  display: none;
-}
+  display: none; }
+
 #associated_list h5,
 #boosts_list h5 {
-  margin: 5px;
-}
+  margin: 5px; }
+
 .currency {
-  margin-bottom: 16px;
-}
+  margin-bottom: 16px; }
+
 .currency .details {
   display: none;
-  margin-left: 10px;
-}
+  margin-left: 10px; }
+
 h4 {
-  margin-bottom: 6px;
-}
+  margin-bottom: 6px; }
+
 .properties td {
   border: 1px solid #ccc;
   padding: 0 5px;
-  max-width: 500px;
-}
+  max-width: 500px; }
+
 .properties tr td:first-child {
-  text-align: right;
-}
+  text-align: right; }
+
 .true {
-  background: -webkit-gradient(linear, left top, right bottom, from(#494), to(#fff));
-  background: -moz-linear-gradient(left,  #494,  #fff);
-}
+  background: -webkit-gradient(linear, left top, right bottom, from(#449944), to(white));
+  background: -moz-linear-gradient(left, #449944, white); }
+
 .false {
-  background: -webkit-gradient(linear, left top, right bottom, from(#ccc), to(#fff));
-  background: -moz-linear-gradient(left,  #ccc,  #fff);
-}
+  background: -webkit-gradient(linear, left top, right bottom, from(#cccccc), to(white));
+  background: -moz-linear-gradient(left, #cccccc, white); }
+
 .incomplete {
-  background: -webkit-gradient(linear, left top, right bottom, from(#f40), to(#fff));
-  background: -moz-linear-gradient(left,  #f40,  #fff);
-}
+  background: -webkit-gradient(linear, left top, right bottom, from(#ff4400), to(white));
+  background: -moz-linear-gradient(left, #ff4400, white); }
+
 .warning {
-  background: -webkit-gradient(linear, left top, right bottom, from(#ff4), to(#fff));
-  background: -moz-linear-gradient(left,  #ff4,  #fff);
-}
+  background: -webkit-gradient(linear, left top, right bottom, from(#ffff44), to(white));
+  background: -moz-linear-gradient(left, #ffff44, white); }
+
 .tjform input[type=submit] {
   margin: 0;
-  float: none;
-}
+  float: none; }
+
 .dropdown {
   margin: 3px 0;
   font-weight: bold;
-  font-size: 80%;
-}
+  font-size: 80%; }

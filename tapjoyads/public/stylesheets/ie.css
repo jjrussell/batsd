@@ -1,8 +1,5 @@
-div.contentArea
-{
-margin-top:-10px
-}
-div.header
-{
-width:94%;
-}
+div.contentArea {
+  margin-top: -10px; }
+
+div.header {
+  width: 94%; }

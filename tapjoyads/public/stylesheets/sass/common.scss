@@ -1,0 +1,55 @@
+html { overflow: -moz-scrollbars-vertical; overflow: scrollbars-vertical; }
+body { background: #616161; color: #787878; font-family: helvetica, arial, sans-serif; }
+
+h1 { color: #636363; font-weight: bold; font-size: 24px; width: 100%; line-height: 30px; }
+h2 { color: #5c5c5c; float: left; font-size: 20px; font-weight: bold; }
+h3 { color: #1486b8; float: left; font-size: 16px; font-weight: bold; }
+
+.clear { clear: both; }
+a { color: #1486b8; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+#flash_notice { background: #1b9bd3; border-radius: 4px; color: #fff; float: left; margin-top: 60px; width: 100%; padding: 5px; }
+#flash_notice span { float: left; margin: 10px 0 10px 0; text-align: center; width: 100%; }
+#error { background: #ae0000; border-radius: 4px; color: #fff; float: left; margin-top: 60px; width: 100%; }
+#error span { float: left; margin: 10px 0 10px 0; text-align: center; width: 100%; }
+
+.header { float: left; }
+
+#header_wrapper { background: url('/images/header_repeat.jpg') repeat-x; height: 99px; width: 100%; }
+#header { background: url('/images/header_bg.jpg') no-repeat; height: 99px; margin: 0px auto; width: 980px; }
+#logo { background: url('/images/logo.png') no-repeat; float: left; height: 61px; margin-top: 21px; width: 153px; }
+#nav { float: right; margin-top: 32px; }
+.nav_link { float: left; height: 30px; }
+
+#nav_home { background: url('/images/nav_sprite.png'); width: 68px; }
+#nav_home:hover { background-position: -68px 0; }
+#nav_developers { background: url('/images/nav_sprite.png') -136px 0; width: 137px; }
+#nav_developers:hover { background-position: -273px 0; }
+#nav_advertisers { background: url('/images/nav_sprite.png') -410px 0; width: 108px; }
+#nav_advertisers:hover { background-position: -518px 0; }
+#nav_about { background: url('/images/nav_sprite.png') -626px 0; width: 120px; }
+#nav_about:hover { background-position: -746px 0; }
+
+#content_wrapper { background: #fff; width: 100%; }
+#content { background: url('/images/content_bg.jpg') no-repeat; margin: 0px auto; width: 980px; }
+
+#footer_wrapper { background: url('/images/footer_bg.jpg') repeat-x; width: 100%; }
+#footer { margin: 0px auto; width: 980px; }
+
+#footer_content { color: #fff; float: left; font-size: 15px; margin: 43px 0 35px; min-height: 250px; }
+#about_tapjoy { float: left; }
+#about_tapjoy ul { border-left: 2px solid #44a7d0; float: left; margin: 10px 22px 0 0; padding-left: 10px; }
+#about_tapjoy ul li { margin-bottom: 10px; }
+#about_tapjoy ul li:last-child { margin-bottom: 0px; }
+#about_tapjoy a { color: #fff; text-decoration: none; }
+#about_tapjoy a:hover { text-decoration: underline; }
+#legal_stuff { float: left; margin-left: 50px; }
+#legal_stuff p { clear: left; float: left; margin-top: 12px;  }
+#truste { clear: left; float: left; margin-top: 18px; }
+
+#client_login { background: url('/images/customer_login.jpg'); width: 128px; height: 33px; margin: 15px 0 0 850px; position: absolute; }
+
+#android_wrapper { background: #94c147; height: 36px; border-top: 1px solid #A3D64E; }
+#android_wrapper a { display: block; width: 860px; margin: 0px auto; margin-top: 2px; text-align: center; }
+#android_wrapper a img { }

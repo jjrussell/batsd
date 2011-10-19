@@ -1,6 +1,7 @@
 class GamesController < ApplicationController
+  include Facebooker2::Rails::Controller
   include SslRequirement
-  
+
   layout 'games'
   
   skip_before_filter :fix_params

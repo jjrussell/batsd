@@ -38,12 +38,12 @@ DASHBOARD_URL = ''
 WEBSITE_URL = ''
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 GAMES_ANDROID_MARKET_URL = 'http://market.android.com/details?id=com.tapjoy.tapjoy'
+TJGAMES_URL = ''
 
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['test']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['test']['secret_access_key']
 
-MAX_WEB_REQUEST_DOMAINS = 2
 NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2
 NUM_REWARD_DOMAINS = 2
@@ -66,3 +66,5 @@ FRESHBOOKS_API_URL = 'tjdev.freshbooks.com'
 FRESHBOOKS_AUTH_TOKEN = '59548f1150fa38c3feb2a67d6b1a0f8b'
 
 CLEAR_MEMCACHE = true
+
+DEV_FACEBOOK_ID = '100000459598424'

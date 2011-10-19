@@ -1,0 +1,16 @@
+#map { float: left; margin-top: 20px; }
+#contact_info { float: left; margin-top: 15px; width: 180px; }
+.info_box { float: left; margin: 10px 0 10px 15px; }
+.info_box h2 { margin-bottom: 10px; }
+#contact_info .info_box p { color: #8e8e8e; font-size: 14px; }
+
+#contact_form { clear: both; float: left; width: 100%; }
+#contact_form div { float: left; }
+#contact_form label { color: #7e7e7e; clear: left; float: left; font-size: 13px; font-weight: bold; margin: 13px 0 4px 0; width: 273px; }
+#contact_form input[type=text], #contact_form select { border: 1px solid #bdbdbd; clear: left; float: left; height: 36px; width: 273px; }
+
+#details { float: right; margin-left: 24px; width: 384px; }
+#details textarea { border: 1px solid #bdbdbd; height: 175px; width: 384px; }
+
+#send_it { background: url('../images/send_it_sprite.png'); border: none; float: right; margin-top: 10px; height: 33px; width: 107px; }
+#send_it:hover { background-position: -107px 0px; }

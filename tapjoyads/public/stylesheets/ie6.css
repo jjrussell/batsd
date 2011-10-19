@@ -1,11 +1,6 @@
+div.contentArea {
+  margin-top: -8px; }
 
-div.contentArea
-{
-margin-top:-8px;
-}
-
-div.management
-{
-margin:0px 20px 20px 0px;
-width:97%;
-}
+div.management {
+  margin: 0px 20px 20px 0px;
+  width: 97%; }
