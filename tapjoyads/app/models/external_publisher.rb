@@ -67,12 +67,6 @@ class ExternalPublisher
       Marshal.restore(bucket.get(key))
     end
   end
-  
-  def self.cache2
-    Currency.external_publishers.each do |currency|
-      puts currency.tapjoy_managed?
-    end
-  end
 
   def self.cache
     external_publishers = {}

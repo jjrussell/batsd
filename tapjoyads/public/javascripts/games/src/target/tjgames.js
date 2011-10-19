@@ -2127,20 +2127,18 @@ TJG.ui = {
         $('.device_name,.device_switch').fadeOut(250, function(){
           $('.nav_device_info').animate({width:"0px"}, 250);
         });
-        if (TJG.select_device) {
-          $('.nav_device').click(function(){
-            if ($('.nav_device_info').width() == 0) {
-              $('.nav_device_info').animate({width:w + "px"}, 250, function() {
-                $('.device_name,.device_switch').fadeIn(250);
-              });
-            }
-            else {
-              $('.device_name,.device_switch').fadeOut(250, function(){
-                $('.nav_device_info').animate({width:"0px"}, 250);
-              });
-            }
-          });
-        }
+        $('.nav_device').click(function(){
+          if ($('.nav_device_info').width() == 0) {
+            $('.nav_device_info').animate({width:w + "px"}, 250, function() {
+              $('.device_name,.device_switch').fadeIn(250);
+            });
+          }
+          else {
+            $('.device_name,.device_switch').fadeOut(250, function(){
+              $('.nav_device_info').animate({width:"0px"}, 250);
+            });
+          }
+        });
       },
       
       checkFlashMessages: function () {
