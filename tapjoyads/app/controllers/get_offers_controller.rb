@@ -51,7 +51,7 @@ class GetOffersController < ApplicationController
     
     if @offer_list.any?
       @web_request.offer_id = @offer_list.first.id
-      @web_request.add_path('featured_offer_shown')
+      @web_request.path = 'featured_offer_shown'
     end
     
     if params[:json] == '1'
@@ -114,7 +114,7 @@ private
     wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
     @web_request = WebRequest.new(:time => @now)
     @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
-    @web_request.put('viewed_at', @now.to_f.to_s)
+    @web_request.viewed_at = @now
   end
   
   def get_offer_list(type = nil)
