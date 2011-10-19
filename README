@@ -90,7 +90,7 @@ Environment Setup:
   -sudo gem install rcov -v 0.9.10
   -sudo gem install -v 2.3.14 rails
   -sudo rake gems:install
-  
+
 
 -Set up accounts and database
   -Create developer account at dashboard.tapjoy.com and have someone give you the "admin" role
@@ -111,12 +111,21 @@ Environment Setup:
   -Prepend "8.8.8.8" and "8.8.4.4" to your DNS list
     -In OSX, System Preferences -> Network -> Advanced -> DNS -> + -> [prepend ips] -> OK -> Apply
 
+-Add wkhtmltoimage binary (this is so ad previews will work)
+  -Utilized by imgkit gem
+  -For OSX:
+    -Download binary from: http://code.google.com/p/wkhtmltopdf/downloads/detail?name=wkhtmltoimage-OSX-0.10.0_rc2-static.tar.bz2&can=2&q=
+  -For other OS's:
+    -Find and download appropriate **wkhtmltoimage** binary at http://code.google.com/p/wkhtmltopdf/downloads/list
+  -sudo mv [filename] /usr/local/bin/wkhtmltoimage
+
+
 -OPTIONAL: to install Passenger (so you can use alternate local domains instead of http://localhost:3000)
   -sudo gem install passenger
   -sudo passenger-install-apache2-module (follow on-screen instructions)
   -Open /etc/apache2/httpd.conf and remove the '#' in front of 'Include /private/etc/apache2/extra/httpd-vhosts.conf'
   -Open /etc/apache2/extra/httpd-vhosts.conf and replace contents with the following:
-  
+
   # My Virtual Hosts
   NameVirtualHost *:80
 
@@ -133,20 +142,20 @@ Environment Setup:
       Allow from all
      </Directory>
   </VirtualHost>
-  
+
   <VirtualHost *:80>
     DocumentRoot "/Library/WebServer/Documents"
     ServerName localhost
   </VirtualHost>
-  
-  -Open /etc/hosts and add '127.0.0.1   tapjoy.local' to the end of the file 
+
+  -Open /etc/hosts and add '127.0.0.1   tapjoy.local' to the end of the file
   -To start Apache in OSX, System Preferences -> Sharing -> Check checkbox for 'Web Sharing'
 
 -OPTIONAL: To install sinatra-rubygems (for easy access to local gem Rdocs)
   -sudo gem install sinatra
   -git clone git://github.com/jnewland/sinatra-rubygems.git
   -Open /etc/apache2/extra/httpd-vhosts.conf and append the following to the end:
-  
+
   <VirtualHost *:80>
     DocumentRoot "/path/to/sinatra-rubygems/public"
     ServerName gems.local
@@ -157,7 +166,7 @@ Environment Setup:
       Allow from all
      </Directory>
   </VirtualHost>
-  
-  -Open /etc/hosts and add '127.0.0.1   gems.local' to the end of the file 
+
+  -Open /etc/hosts and add '127.0.0.1   gems.local' to the end of the file
   -To restart Apache: sudo apachectl restart
-  
+

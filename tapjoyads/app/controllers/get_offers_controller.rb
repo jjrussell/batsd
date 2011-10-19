@@ -5,9 +5,9 @@ class GetOffersController < ApplicationController
   prepend_before_filter :decrypt_data_param
   before_filter :choose_experiment, :except => [:featured, :image]
   before_filter :set_featured_params, :only => :featured
-  before_filter :setup
+  before_filter :setup, :except => :image
 
-  after_filter :save_web_request
+  after_filter :save_web_request, :except => :image
 
   DEVICES_FOR_REDESIGN = Set.new([
     'c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1', # Stephen iTouch
@@ -102,7 +102,13 @@ private
   end
 
   def setup
-    return unless verify_params([ :app_id, :udid, :publisher_user_id ])
+    required_params = [:app_id]
+    if params[:action] == 'webpage' && params[:offer_id]
+      required_params << :offer_id
+    else
+      required_params += [:udid, :publisher_user_id]
+    end
+    return unless verify_params(required_params)
 
     @now = Time.zone.now
     @start_index = (params[:start] || 0).to_i
@@ -119,8 +125,10 @@ private
     @publisher_app = App.find_in_cache(params[:app_id])
     return unless verify_records([ @currency, @publisher_app ])
 
-    @device = Device.new(:key => params[:udid])
-    @device.set_publisher_user_id!(params[:app_id], params[:publisher_user_id])
+    if params[:udid]
+      @device = Device.new(:key => params[:udid])
+      @device.set_publisher_user_id!(params[:app_id], params[:publisher_user_id])
+    end
 
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
