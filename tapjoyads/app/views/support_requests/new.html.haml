@@ -1,13 +1,13 @@
 - @page_title = t('text.support.title', :currency => @currency.name)
 #main
   %h1= @page_title
-  
+
   - if flash[:error].present?
     %p.error= flash[:error]
 
   .instructions
     %p= t('text.support.instructions_1', :currency => @currency.name)
-  
+
   - if @incomplete_offers.nil?
     = button_to(t('text.support.select_offer'), request.url, :id => 'show_offers')
 
@@ -27,14 +27,14 @@
     = submit_tag(t('text.support.submit_support_request'))
 
 #privacy
-  = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile")
+  = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}")
 
-#adsby 
+#adsby
   = t('text.shared.ads_by')
   %img{ :src => "#{CLOUDFRONT_URL}/images/tapjoylogo-small.png", :alt => "Tapjoy"}
-  
+
 - content_for :included_javascripts, javascript_include_tag('jquery-1.4.2.min')
-  
+
 - content_for :page_javascript do
   :plain
     $(function($){
@@ -50,10 +50,10 @@
         });
         $('#offer_id').change();
       }
-    
+
       $('#show_offers').click(function() {
         $(this).attr("disabled", "disabled");
-      
+
         $.ajax({
           type: "GET",
           url: $(this).attr("href"),
@@ -68,7 +68,7 @@
         });
         return false;
       });
-      
+
       initializeOfferChangeEvents();
     });
 
@@ -90,12 +90,12 @@
       margin-bottom: 10px;
       color: #004E09;
     }
-    
+
     h1 {
       font-size: 24pt;
       margin-bottom: 10px;
     }
-    
+
     label {
       display: block;
       font-size: 10pt;
@@ -113,25 +113,25 @@
       -webkit-border-radius: 10px;
       padding: 10px;
     }
-    
+
     form div, p, .field {
       margin-bottom: 10px;
     }
-    
+
     textarea {
       height: 60px;
     }
-    
+
     input[type=text], textarea {
       width: 100%;
     }
-    
+
     input[type=submit] {
       display: block;
       margin: 0 auto;
     }
 
-    #adsby, 
+    #adsby,
     #privacy a {
       font-size: 75%;
       color: #004E09;
