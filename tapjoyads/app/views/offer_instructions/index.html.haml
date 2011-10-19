@@ -1,7 +1,7 @@
 - @page_title = t('text.instructions.title')
 - amount_and_currency = capture_haml do
   %span.amount= t('text.instructions.amount_and_currency', :amount => @currency.get_visual_reward_amount(@offer, params[:display_multiplier]), :currency => @currency.name)
-  
+
 #offers
   #header
     %img.app_icon{ :src => @offer.get_icon_url(:source => :cloudfront, :size => '57') }
@@ -9,12 +9,12 @@
       = @offer.name
       %br
       = t('text.instructions.earn_currency', :amount_and_currency => amount_and_currency)
-  
-  #action_instructions  
+
+  #action_instructions
     .important= t('text.instructions.header', :currency => @currency.name)
     .instructions= simple_paragraphs @offer.instructions
     .important= t('text.instructions.footer', :amount_and_currency => amount_and_currency)
-    
+
   #footer
     %div
       - if @offer.item_type == 'ActionOffer'
@@ -23,11 +23,11 @@
         = t('text.instructions.download_link', :download_action => download_action)
       - else
         = link_to(t('text.instructions.continue_link'), @complete_action_url, :class => 'continue')
-  
-#privacy
-  = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile")
 
-#adsby 
+#privacy
+  = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}")
+
+#adsby
   = t('text.shared.ads_by')
   %img{ :src => "#{CLOUDFRONT_URL}/images/tapjoylogo-small.png", :alt => "Tapjoy"}
 
@@ -35,7 +35,7 @@
 
 %img.hidden{ :src => '/images/load-circle.gif' }
 
-  
+
 - content_for :page_styles do
   :plain
     * {
@@ -49,16 +49,16 @@
       vertical-align: baseline;
       text-decoration: none;
     }
-  
+
     body {
       margin-bottom: 10px;
       color: #004E09;
     }
-  
+
     img {
       border: 0;
     }
-  
+
     #offers {
       margin: 10px 3%;
       background: white;
@@ -67,80 +67,80 @@
       -webkit-border-radius: 10px;
       padding: 10px;
     }
-  
+
     .amount {
       color: rgb(0, 136, 16);
     }
-  
-    #adsby, 
+
+    #adsby,
     #privacy a {
       font-size: 75%;
       color: #004E09;
     }
-  
+
     #adsby {
       margin-top: 2px;
       float: right;
       margin-right: 5%;
     }
-  
+
     #adsby img {
       vertical-align: bottom;
     }
-  
+
     #privacy {
       float: left;
       margin-left: 5%;
       text-decoration: underline;
     }
-  
+
     .clear {
       clear: both;
     }
-  
+
     .hidden {
       display: none;
     }
-    
+
     #header img {
       float: left;
       margin: 0 10px 0 0;
     }
-    
+
     #header #action_name {
       height: 57px;
       display: table-cell;
       vertical-align: middle;
       padding-bottom: 10px;
     }
-    
+
     #header {
       border-bottom: 2px solid;
     }
-    
+
     #action_instructions {
       clear: both;
       margin-top: 10px;
       border-bottom: 2px solid;
     }
-    
+
     .important {
       font-weight: bold;
       margin: 10px 0;
     }
-    
+
     .instructions {
       margin: 10px 20px;
     }
-    
+
     .instructions p {
       margin-bottom: 10px;
     }
-    
+
     #footer {
       margin: 10px 0 0;
     }
-    
+
     .continue {
       font-size: 24px;
     }
