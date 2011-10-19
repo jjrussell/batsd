@@ -40,23 +40,19 @@ class Gamer < ActiveRecord::Base
     end
   end
 
-  def self.find_all_gamer_based_on_facebook(external)
-    gamer_profiles = GamerProfile.find_all_by_facebook_id(external)
-    gamers = []
+  def self.find_all_gamer_based_on_channel(channel, external)
+    gamer_profiles = []
     
-    if gamer_profiles.any?
-      gamer_profiles.each do |profile|
-        gamers << Gamer.find_by_id(profile.gamer_id)
-      end
+    case channel
+    when Invitation::FACEBOOK
+      gamer_profiles = GamerProfile.find_all_by_facebook_id(external)
+    when Invitation::TWITTER
+      gamer_profiles = GamerProfile.find_all_by_twitter_id(external)
     end
-    gamers
-  end
-  
-  def self.find_all_gamer_based_on_twitter(external)
-    gamer_profiles = GamerProfile.find_all_by_twitter_id(external)
+    
     gamers = []
     
-    if gamer_profiles.any?
+    if gamer_profiles.present?
       gamer_profiles.each do |profile|
         gamers << Gamer.find_by_id(profile.gamer_id)
       end

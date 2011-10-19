@@ -31,7 +31,7 @@ class Games::SocialController < GamesController
       non_gamers = []
 
       friends.each do |friend_id|
-        exist_gamers = Gamer.find_all_gamer_based_on_facebook(friend_id)
+        exist_gamers = Gamer.find_all_gamer_based_on_channel(Invitation::FACEBOOK, friend_id)
         if exist_gamers.any?
           exist_gamers.each do |gamer|
             gamers << gamer.get_gamer_name
@@ -131,7 +131,7 @@ class Games::SocialController < GamesController
       non_gamers = []
 
       friends.each do |friend_id|        
-        exist_gamers = Gamer.find_all_gamer_based_on_twitter(Invitation::TWITTER, friend_id)
+        exist_gamers = Gamer.find_all_gamer_based_on_channel(Invitation::TWITTER, friend_id)
         if exist_gamers.any?
           exist_gamers.each do |gamer|
             gamers << gamer.get_gamer_name
