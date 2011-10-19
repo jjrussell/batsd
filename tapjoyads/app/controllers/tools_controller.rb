@@ -89,8 +89,6 @@ class ToolsController < WebsiteController
     this_hour_key         = (Time.zone.now.to_f / 1.hour).to_i
     last_hour_key         = ((Time.zone.now.to_f - 1.hour) / 1.hour).to_i
     @failed_sdb_saves     = {}
-    @this_hour_batch_puts = Mc.get_count("failed_sdb_saves.batch_puts.#{this_hour_key}")
-    @last_hour_batch_puts = Mc.get_count("failed_sdb_saves.batch_puts.#{last_hour_key}")
 
     SimpledbResource.get_domain_names.each do |domain_name|
       sdb_this_hour_count = Mc.get_count("failed_sdb_saves.sdb.#{domain_name}.#{this_hour_key}")

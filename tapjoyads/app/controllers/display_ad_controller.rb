@@ -111,7 +111,7 @@ private
       end
 
       web_request.offer_id = offer.id
-      web_request.add_path('display_ad_shown')
+      web_request.path = 'display_ad_shown'
     end
 
     web_request.save

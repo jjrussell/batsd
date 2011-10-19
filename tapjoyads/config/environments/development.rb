@@ -38,7 +38,6 @@ WEBSITE_URL = local_config['website_url'] || ''
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 TJGAMES_URL = local_config['tjgames_url'] || ''
 
-MAX_WEB_REQUEST_DOMAINS = 2
 NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2
 NUM_REWARD_DOMAINS = 2

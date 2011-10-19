@@ -2,7 +2,6 @@ class FailedToWriteToSqsError < RuntimeError; end
 class FailedToDownloadError < RuntimeError; end
 class AppStatsVerifyError < RuntimeError; end
 class GetStoreInfoError < RuntimeError; end
-class BadWebRequestDomain < RuntimeError; end
 class AppDataFetchError < RuntimeError; end
 class GenericOfferCallbackError < RuntimeError; end
 class DeviceCountryChanged < RuntimeError; end
@@ -21,7 +20,6 @@ end
 class BalancesMismatch < EmailWorthyError; end
 class UnverifiedStatsError < EmailWorthyError; end
 class AppStoreSearchFailed < EmailWorthyError; end
-class SyslogNgError < EmailWorthyError; end
 class VerticaMissingDataError < EmailWorthyError; end
 
 class Notifier

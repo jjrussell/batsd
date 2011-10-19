@@ -5,9 +5,9 @@ class GetOffersController < ApplicationController
   prepend_before_filter :decrypt_data_param
   before_filter :choose_experiment, :except => [:featured, :image]
   before_filter :set_featured_params, :only => :featured
-  before_filter :setup, :except => :image
+  before_filter :setup
 
-  after_filter :save_web_request, :except => :image
+  after_filter :save_web_request
 
   DEVICES_FOR_REDESIGN = Set.new([
     'c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1', # Stephen iTouch
@@ -64,7 +64,7 @@ class GetOffersController < ApplicationController
 
     if @offer_list.any?
       @web_request.offer_id = @offer_list.first.id
-      @web_request.add_path('featured_offer_shown')
+      @web_request.path = 'featured_offer_shown'
     end
 
     if params[:json] == '1'
@@ -102,13 +102,7 @@ private
   end
 
   def setup
-    required_params = [:app_id]
-    if params[:action] == 'webpage' && params[:offer_id]
-      required_params << :offer_id
-    else
-      required_params += [:udid, :publisher_user_id]
-    end
-    return unless verify_params(required_params)
+    return unless verify_params([ :app_id, :udid, :publisher_user_id ])
 
     @now = Time.zone.now
     @start_index = (params[:start] || 0).to_i
@@ -125,7 +119,8 @@ private
     @publisher_app = App.find_in_cache(params[:app_id])
     return unless verify_records([ @currency, @publisher_app ])
 
-    @device = Device.new(:key => params[:udid]) if params[:udid]
+    @device = Device.new(:key => params[:udid])
+    @device.set_publisher_user_id!(params[:app_id], params[:publisher_user_id])
 
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
@@ -133,7 +128,7 @@ private
     wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
     @web_request = WebRequest.new(:time => @now)
     @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
-    @web_request.put('viewed_at', @now.to_f.to_s)
+    @web_request.viewed_at = @now
   end
 
   def get_offer_list(type = nil)
