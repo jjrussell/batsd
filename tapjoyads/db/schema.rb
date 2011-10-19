@@ -331,7 +331,7 @@ ActiveRecord::Schema.define(:version => 20111018003119) do
     t.string   "udid"
     t.string   "confirmation_token",                 :default => "",    :null => false
     t.boolean  "blocked",                            :default => false
-    t.integer  "accepted_tos_version",               :default => 2
+    t.integer  "accepted_tos_version",               :default => 0
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
