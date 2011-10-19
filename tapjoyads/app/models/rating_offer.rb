@@ -63,8 +63,7 @@ class RatingOffer < ActiveRecord::Base
     return if Rails.env == 'test'
 
     bucket = S3.bucket(BucketNames::TAPJOY)
-    image_data = bucket.objects['icons/ratestar.png'].read
-    bucket.objects["icons/#{id}.png"].write(:data => image_data, :acl => :public_read)
+    bucket.objects['icons/ratestar.png'].copy_to("icons/#{id}.png", :acl => :public_read)
 
     image_data = bucket.objects['icons/114/ratestar.jpg'].read
     primary_offer.save_icon!(image_data)
