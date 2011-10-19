@@ -131,14 +131,15 @@
   %meta{ :name => 'keywords', :content => 'games, mobile games, mobile apps, iOS, iPhone, iTouch, iPad, Android' }
 
 - content_for :page_javascript do
-  :plain
-    $(window).load(function() { 
-      TJG.ui.homeInit();
-      TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
-      TJG.more_games_popular =  "#{games_more_games_popular_path}";
-    });
   - if current_gamer.accepted_tos_version < TAPJOY_GAMES_CURRENT_TOS_VERSION
     :plain
       $(window).load(function() { 
         TJG.ui.showAcceptTos();
+      });
+  - else
+    :plain
+      $(window).load(function() {
+        TJG.ui.homeInit();
+        TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
+        TJG.more_games_popular =  "#{games_more_games_popular_path}";
       });
