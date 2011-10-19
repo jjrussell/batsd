@@ -3,12 +3,12 @@
 #previews
   - publisher_app_id = "2349536b-c810-47d7-836c-2cd47cd3a796" # TapDefense
   - if @offer.featured?
-    - width, height = @dimensions.split('x')
+    - width, height = @image_size.split('x')
     - screen_height = height.to_i + Offer::FEATURED_AD_BUTTON_HEIGHT
     = "Featured ad: (#{width}x#{screen_height})"
     %div{:class => "img#{@dimensions}"}
       - if @show_generated_ads
-        = image_tag(@offer.fullscreen_ad_image_url(publisher_app_id, true, :dimensions => @dimensions), :class => 'preview', :alt => '')
+        = image_tag(@offer.fullscreen_ad_image_url(publisher_app_id, true, :image_size => @image_size), :class => 'preview', :alt => '')
       - else
         = render :partial => "no_icon"
   - else

@@ -9,7 +9,7 @@
     :plain
       document.ontouchmove = function(e){ e.preventDefault(); }
       window.onload = init;
-      window.onorientationchange = init;
+      window.onresize = init;
 
       var availableCreativeSizes = [];
       var availableCreatives = [];
@@ -19,13 +19,8 @@
       var preferredCreativeOrientation = '';
 
       function init() {
-        // We want the custom creative we choose to be within this percentage
-        // of the client's actual screen size
-        var baseCreativeUrl = "#{CLOUDFRONT_URL}";
-        var buttonHeight = #{Offer::FEATURED_AD_BUTTON_HEIGHT};
-
     - # Provide available custom creative sizes to javascript
-    - @offer.banner_creatives.each do |size|
+    - @offer.banner_creatives.each_with_index do |size,index|
       :plain
         availableCreativeSizes.push("#{size}".split('x'));
         availableCreatives.push("#{@offer.banner_creative_path(size, 'jpeg')}");
@@ -34,7 +29,7 @@
         // Determine target screen size and orientation
         if(#{@height.present? && @width.present?}) {
           var clientWidth = parseInt('#{@width}');
-          var clientHeight = parseInt('#{@height}') + buttonHeight;
+          var clientHeight = parseInt('#{@height}');
         } else {
           var clientWidth = window.innerWidth;
           var clientHeight = window.innerHeight;
@@ -52,7 +47,7 @@
             var creativeHeight = parseInt(availableCreativeSizes[i][1]);
             var creativeOrientation = (creativeHeight > creativeWidth) ? 'portrait' : 'landscape';
             var horizMargin = clientWidth - creativeWidth;
-            var vertMargin = clientHeight - (creativeHeight + buttonHeight);
+            var vertMargin = clientHeight - creativeHeight;
             var horizMarginPercent = horizMargin / creativeWidth;
             var vertMarginPercent = vertMargin / creativeHeight;
 
@@ -98,13 +93,17 @@
           var creativeWidth = parseInt(availableCreativeSizes[preferredCreative][0]);
           var creativeHeight = parseInt(availableCreativeSizes[preferredCreative][1]);
           var horizMargin = clientWidth - creativeWidth;
-          var vertMargin = clientHeight - (creativeHeight + buttonHeight);
+          var vertMargin = clientHeight - creativeHeight;
           minHorizMarginPercent = horizMargin / creativeWidth;
           minVertMarginPercent = vertMargin / creativeHeight;
         }
 
+        alert("Screen size: " + clientWidth + "x" + clientHeight + " (" + clientOrientation + ")\n" +
+              "");
+
         // If we've found creative to use, then tweak the styling and download the image
         if(preferredCreative >= 0) {
+          var baseCreativeUrl = "#{CLOUDFRONT_URL}";
           var creative = document.getElementById('creative');
           var main = document.getElementById('main');
 
@@ -122,14 +121,14 @@
             horizMargin = Math.round((clientWidth - newWidth) / 2);
           }
           if(clientHeight != newHeight) {
-            vertMargin = Math.round((clientHeight - newHeight - buttonHeight) / 2);
+            vertMargin = Math.round((clientHeight - newHeight) / 2);
           }
 
           // Apply size constraints to image tag in markup
           creative.setAttribute('style', 'width: ' + newWidth + 'px; height: ' + newHeight + 'px;');
-          main.setAttribute('style', 'height: ' + (newHeight + buttonHeight) + 'px; ' +
+          main.setAttribute('style', 'height: ' + newHeight + 'px; ' +
                                      'margin: ' + vertMargin + 'px ' + horizMargin + 'px;');
-                                     
+
          // Set the image url if this is the initial drawing
          creative.src = baseCreativeUrl + "/" + availableCreatives[preferredCreative];
         }
@@ -144,7 +143,7 @@
       }
 
       #main {
-        font-size: 20px;
+        font-size: 40px;
         text-align: center;
         position: relative;
         margin: auto;
@@ -170,14 +169,14 @@
       .skip,
       .download {
         border: 1px solid #aaa;
-        -moz-border-radius: 7px;
-        -webkit-border-radius: 7px;
+        -moz-border-radius: 14px;
+        -webkit-border-radius: 14px;
         text-decoration: none;
       }
 
       .skip {
-        padding: 5px;
-        margin-right: 20px;
+        padding: 10px;
+        margin-right: 40px;
         color: #555;
         background-color: #ccc;
       }
@@ -186,6 +185,6 @@
         background: url("/images/arrow-right.png") no-repeat scroll 98% 50% #eee;
         color: #004E09;
         display; block;
-        padding: 5px 50px 5px 40px;
+        padding: 10px 100px 10px 80px;
         font-weight: bold;
       }

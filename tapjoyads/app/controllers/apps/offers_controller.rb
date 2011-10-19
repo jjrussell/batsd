@@ -41,18 +41,16 @@ class Apps::OffersController < WebsiteController
     elsif @offer.featured?
       @custom_creative_sizes = Offer::FEATURED_AD_SIZES.collect do |size|
         width, height = size.split("x").collect{|x|x.to_i}
-        screen_height = height + Offer::FEATURED_AD_BUTTON_HEIGHT
         orientation = width > height ? "(landscape)" : "(portrait)"
-        { :dimensions         => size,
-          :label_image_size   => "#{size} #{orientation}",
-          :label_screen_size  => "#{width}x#{screen_height} #{orientation}" }
+        { :image_size         => size,
+          :label_image_size   => "#{size} #{orientation}" }
       end
     end
   end
 
   def preview
     @show_generated_ads = @offer.check_for_uploaded_icon
-    @dimensions = params[:dimensions] if params[:dimensions].present?
+    @image_size = params[:image_size] if params[:image_size].present?
     render 'apps/offers_shared/preview', :layout => 'simple'
   end
 
@@ -85,18 +83,18 @@ class Apps::OffersController < WebsiteController
   end
 
   def upload_creative
-    @size = params[:size]
+    @image_size = params[:image_size]
     @label = params[:label]
-    image_data = params[:offer]["custom_creative_#{@size}".to_sym].read rescue nil
+    image_data = params[:offer]["custom_creative_#{@image_size}".to_sym].read rescue nil
 
     modifying = true
     case request.method
       when :delete
         # necessary to use assignment so @offer.banner_creatives_changed? will be true (can't modify in-place)
-        @offer.banner_creatives -= @size.to_a
+        @offer.banner_creatives -= @image_size.to_a
       when :post
         # necessary to use assignment so @offer.banner_creatives_changed? will be true (can't modify in-place)
-        @offer.banner_creatives += @size.to_a
+        @offer.banner_creatives += @image_size.to_a
       when :put
         # do nothing
       when :get
@@ -104,16 +102,16 @@ class Apps::OffersController < WebsiteController
     end
 
     if modifying
-      @offer.send("banner_creative_#{@size}_blob=", image_data)
+      @offer.send("banner_creative_#{@image_size}_blob=", image_data)
       if @offer.save
-        @success_message = "File #{request.method == :delete ? 'removed' : 'uploaded'} successfully"
+        @success_message = "File #{request.method == :delete ? 'removed' : 'uploaded'} successfully."
       else
-        @error_message = @offer.errors["custom_creative_#{@size}_blob".to_sym]
+        @error_message = @offer.errors["custom_creative_#{@image_size}_blob".to_sym]
         @offer.reload # we want the form to reset back to the way it was
       end
     end
 
-    @creative_exists = @offer.banner_creatives.include? @size
+    @creative_exists = @offer.banner_creatives.include? @image_size
     render :layout => 'simple'
   end
 

@@ -35,8 +35,7 @@ class Offer < ActiveRecord::Base
   }
 
   DISPLAY_AD_SIZES = ['320x50', '640x100', '768x90']
-  FEATURED_AD_SIZES = ['960x600', '640x920', '480x280', '320x440']
-  FEATURED_AD_BUTTON_HEIGHT = 40 #pixels
+  FEATURED_AD_SIZES = ['960x640', '640x960', '480x320', '320x480']
 
   OFFER_LIST_REQUIRED_COLUMNS = [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
