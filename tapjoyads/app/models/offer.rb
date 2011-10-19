@@ -310,7 +310,7 @@ class Offer < ActiveRecord::Base
   end
 
   def banner_creative_mc_key(size, format = 'png')
-    banner_creative_path(size, format).gsub('/','.')
+    banner_creative_path(size, format).gsub('/', '.')
   end
 
   def display_custom_banner_for_size?(size)
