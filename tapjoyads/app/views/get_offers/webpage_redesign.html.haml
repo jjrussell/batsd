@@ -39,7 +39,11 @@
             .r
               .content
                 .icon
-                  %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => offer.get_icon_url(:source => :cloudfront, :size => '57') }
+                  - icon_url = offer.get_icon_url(:source => :cloudfront, :size => '57')
+                  - if @for_preview
+                    = image_tag(icon_url)
+                  - else
+                    %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => icon_url }
                 .offer-text
                   - if @currency.conversion_rate > 0
                     %span
