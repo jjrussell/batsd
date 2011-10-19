@@ -22,7 +22,7 @@ class Games::Social::TwitterController < GamesController
       
       if authhash[:twitter_id] != '' and authhash[:twitter_access_token] != '' and authhash[:twitter_access_secret] != ''
         session[:authhash] = authhash
-        current_gamer.update_twitter_info!(authhash)
+        current_gamer.gamer_profile.update_twitter_info!(authhash)
         redirect_to games_social_invite_twitter_friends_path
         
         # if authhash[:twitter_id] == current_gamer.twitter_id

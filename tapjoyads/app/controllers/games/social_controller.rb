@@ -131,10 +131,12 @@ class Games::SocialController < GamesController
       non_gamers = []
 
       friends.each do |friend_id|        
-        gamer = Gamer.find_by_twitter_id(friend_id)
-        if gamer
-          gamers << gamer.get_gamer_name
-          current_gamer.follow_gamer(gamer)
+        exist_gamers = Gamer.find_all_gamer_based_on_twitter(Invitation::TWITTER, friend_id)
+        if exist_gamers.any?
+          exist_gamers.each do |gamer|
+            gamers << gamer.get_gamer_name
+            current_gamer.follow_gamer(gamer)
+          end
         else
           friend_name = Twitter.user(friend_id.to_i).name
           non_gamers << "#{friend_name}"
@@ -144,9 +146,9 @@ class Games::SocialController < GamesController
           
           if invitation.pending?
             link = games_login_url :referrer => invitation.encrypted_referral_id
-            link = "http://www.tapjoygames.com/games/login?referrer=#{invitation.encrypted_referral_id}" if Rails.env != 'production'
+            link = "http://www.tapjoygames.com/games/login?referrer=#{invitation.encrypted_referral_id}" if Rails.env != 'production' #we need this because twitter cannot recognize IP addr as a valid url
             
-            message = "#{friend_name} has invited you to join Tapjoy. Experience the best of mobile apps! #{link}"
+            message = "#{Twitter.user(current_gamer.twitter_id.to_i).name} has invited you to join Tapjoy. Experience the best of mobile apps! #{link}"
             
             begin
               # posts << Twitter.update(message)
@@ -207,7 +209,7 @@ private
       # return
     when '401'
       # render :json => { :success => false, :error => "For somereason, you\'ve revoke our app in your TWITTER, please re-authenticating us." } and return
-      current_gamer.clear_twitter_info!
+      current_gamer.gamer_profile.clear_twitter_info!
       redirect_to games_social_invite_twitter_friends_path
       return
     end

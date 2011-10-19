@@ -4,7 +4,7 @@ class Gamer < ActiveRecord::Base
   has_many :gamer_devices
   has_many :invitations
   has_one :gamer_profile
-  delegate :facebook_id, :facebook_id?, :fb_access_token, :referred_by, :referred_by=, :referred_by?, :referral_count, :to => :gamer_profile
+  delegate :facebook_id, :facebook_id?, :fb_access_token, :twitter_id, :twitter_id?, :twitter_access_token, :twitter_access_token?, :twitter_access_secret, :twitter_access_secret?, :referred_by, :referred_by=, :referred_by?, :referral_count, :to => :gamer_profile
 
   validates_associated :gamer_profile, :on => :create
   validates_presence_of :email
@@ -29,24 +29,6 @@ class Gamer < ActiveRecord::Base
     save
   end
 
-  def update_twitter_info!(authhash)
-    if twitter_id != authhash[:twitter_id]
-      self.twitter_id            = authhash[:twitter_id]
-      self.twitter_access_token  = authhash[:twitter_access_token]
-      self.twitter_access_secret = authhash[:twitter_access_secret]
-      save!
-
-      Invitation.reconcile_pending_invitations(self, :external_info => twitter_id)
-    end
-  end
-  
-  def clear_twitter_info!
-    self.twitter_id            = nil
-    self.twitter_access_token  = nil
-    self.twitter_access_secret = nil
-    save!
-  end
-
   def external_info(channel)
     case channel
     when Invitation::EMAIL
@@ -60,6 +42,18 @@ class Gamer < ActiveRecord::Base
 
   def self.find_all_gamer_based_on_facebook(external)
     gamer_profiles = GamerProfile.find_all_by_facebook_id(external)
+    gamers = []
+    
+    if gamer_profiles.any?
+      gamer_profiles.each do |profile|
+        gamers << Gamer.find_by_id(profile.gamer_id)
+      end
+    end
+    gamers
+  end
+  
+  def self.find_all_gamer_based_on_twitter(external)
+    gamer_profiles = GamerProfile.find_all_by_twitter_id(external)
     gamers = []
     
     if gamer_profiles.any?

@@ -22,4 +22,22 @@ class GamerProfile < ActiveRecord::Base
       Invitation.reconcile_pending_invitations(Gamer.find_by_id(self.gamer_id), :external_info => self.facebook_id)
     end
   end
+  
+  def update_twitter_info!(authhash)
+    if twitter_id != authhash[:twitter_id]
+      self.twitter_id            = authhash[:twitter_id]
+      self.twitter_access_token  = authhash[:twitter_access_token]
+      self.twitter_access_secret = authhash[:twitter_access_secret]
+      save!
+
+      Invitation.reconcile_pending_invitations(Gamer.find_by_id(self.gamer_id), :external_info => twitter_id)
+    end
+  end
+  
+  def clear_twitter_info!
+    self.twitter_id            = nil
+    self.twitter_access_token  = nil
+    self.twitter_access_secret = nil
+    save!
+  end
 end

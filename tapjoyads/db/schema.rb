@@ -289,8 +289,8 @@ ActiveRecord::Schema.define(:version => 20111018003119) do
   add_index "gamer_devices", ["id"], :name => "index_gamer_devices_on_id", :unique => true
 
   create_table "gamer_profiles", :id => false, :force => true do |t|
-    t.string   "id",                :limit => 36,                    :null => false
-    t.string   "gamer_id",          :limit => 36,                    :null => false
+    t.string   "id",                    :limit => 36,                    :null => false
+    t.string   "gamer_id",              :limit => 36,                    :null => false
     t.string   "last_name"
     t.string   "first_name"
     t.string   "gender"
@@ -300,21 +300,25 @@ ActiveRecord::Schema.define(:version => 20111018003119) do
     t.string   "favorite_game"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "facebook_id"
+    t.string   "fb_access_token"
+    t.string   "referred_by",           :limit => 36
+    t.integer  "referral_count",                      :default => 0
     t.string   "name"
     t.string   "nickname"
     t.string   "postal_code"
     t.string   "favorite_category"
-    t.boolean  "use_gravatar",                    :default => false
-    t.string   "facebook_id"
-    t.string   "fb_access_token"
-    t.string   "referred_by",       :limit => 36
-    t.integer  "referral_count",                  :default => 0
+    t.boolean  "use_gravatar",                        :default => false
+    t.string   "twitter_id"
+    t.string   "twitter_access_token"
+    t.string   "twitter_access_secret"
   end
 
   add_index "gamer_profiles", ["facebook_id"], :name => "index_gamer_profiles_on_facebook_id"
   add_index "gamer_profiles", ["gamer_id"], :name => "index_gamer_profiles_on_gamer_id", :unique => true
   add_index "gamer_profiles", ["id"], :name => "index_gamer_profiles_on_id", :unique => true
   add_index "gamer_profiles", ["referred_by"], :name => "index_gamer_profiles_on_referred_by"
+  add_index "gamer_profiles", ["twitter_id"], :name => "index_gamer_profiles_on_twitter_id"
 
   create_table "gamers", :id => false, :force => true do |t|
     t.string   "id",                 :limit => 36,                    :null => false
@@ -332,6 +336,8 @@ ActiveRecord::Schema.define(:version => 20111018003119) do
     t.string   "udid"
     t.string   "confirmation_token",               :default => "",    :null => false
     t.boolean  "blocked",                          :default => false
+    t.integer  "referral_count",                   :default => 0
+    t.string   "referred_by",        :limit => 36
   end
 
   add_index "gamers", ["confirmation_token"], :name => "index_gamers_on_confirmation_token", :unique => true
@@ -339,6 +345,7 @@ ActiveRecord::Schema.define(:version => 20111018003119) do
   add_index "gamers", ["id"], :name => "index_gamers_on_id", :unique => true
   add_index "gamers", ["perishable_token"], :name => "index_gamers_on_perishable_token"
   add_index "gamers", ["persistence_token"], :name => "index_gamers_on_persistence_token"
+  add_index "gamers", ["referred_by"], :name => "index_gamers_on_referred_by"
 
   create_table "generic_offers", :id => false, :force => true do |t|
     t.string   "id",               :limit => 36,                    :null => false
@@ -546,8 +553,8 @@ ActiveRecord::Schema.define(:version => 20111018003119) do
     t.string   "min_os_version",                                                                :default => "",    :null => false
     t.text     "screen_layout_sizes",                                                                              :null => false
     t.integer  "interval",                                                                      :default => 0,     :null => false
-    t.text     "banner_creatives"
     t.boolean  "url_overridden",                                                                :default => false, :null => false
+    t.text     "banner_creatives"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
