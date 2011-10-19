@@ -1,7 +1,5 @@
 class ExternalPublisher
   
-  TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
-  
   attr_accessor :app_id, :app_name, :currencies, :last_run_time
   
   def initialize(currency)
@@ -12,7 +10,7 @@ class ExternalPublisher
   
   def add_currency(currency)
     self.currencies ||= []
-    self.currencies << { :id => currency.id, :name => currency.name, :udid_for_user_id => currency.udid_for_user_id, :tapjoy_managed => currency.callback_url == TAPJOY_MANAGED_CALLBACK_URL }
+    self.currencies << { :id => currency.id, :name => currency.name, :udid_for_user_id => currency.udid_for_user_id, :tapjoy_managed => currency.tapjoy_managed? }
   end
   
   def primary_currency_name
@@ -67,6 +65,12 @@ class ExternalPublisher
     Mc.distributed_get_and_put(key, false, 1.day) do
       bucket = S3.bucket(BucketNames::OFFER_DATA)
       Marshal.restore(bucket.get(key))
+    end
+  end
+  
+  def self.cache2
+    Currency.external_publishers.each do |currency|
+      puts currency.tapjoy_managed?
     end
   end
 
