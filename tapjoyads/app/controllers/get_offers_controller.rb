@@ -64,7 +64,7 @@ class GetOffersController < ApplicationController
 
     if @offer_list.any?
       @web_request.offer_id = @offer_list.first.id
-      @web_request.add_path('featured_offer_shown')
+      @web_request.path = 'featured_offer_shown'
     end
 
     if params[:json] == '1'
@@ -125,7 +125,10 @@ private
     @publisher_app = App.find_in_cache(params[:app_id])
     return unless verify_records([ @currency, @publisher_app ])
 
-    @device = Device.new(:key => params[:udid]) if params[:udid]
+    if params[:udid]
+      @device = Device.new(:key => params[:udid])
+      @device.set_publisher_user_id!(params[:app_id], params[:publisher_user_id])
+    end
 
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
@@ -133,7 +136,7 @@ private
     wr_path = params[:source] == 'featured' ? 'featured_offer_requested' : 'offers'
     @web_request = WebRequest.new(:time => @now)
     @web_request.put_values(wr_path, params, get_ip_address, get_geoip_data, request.headers['User-Agent'])
-    @web_request.put('viewed_at', @now.to_f.to_s)
+    @web_request.viewed_at = @now
   end
 
   def get_offer_list(type = nil)

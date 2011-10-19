@@ -275,12 +275,13 @@ ActiveRecord::Schema.define(:version => 20111018003119) do
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
 
   create_table "gamer_devices", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36, :null => false
-    t.string   "gamer_id",   :limit => 36, :null => false
-    t.string   "device_id",                :null => false
-    t.string   "name",                     :null => false
+    t.string   "id",          :limit => 36, :null => false
+    t.string   "gamer_id",    :limit => 36, :null => false
+    t.string   "device_id",                 :null => false
+    t.string   "name",                      :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "device_type"
   end
 
   add_index "gamer_devices", ["device_id"], :name => "index_gamer_devices_on_device_id"
