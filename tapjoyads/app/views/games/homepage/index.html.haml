@@ -119,7 +119,6 @@
   .dialog_content
     - form_for([ :games, current_gamer ], :url => accept_tos_games_gamer_path, :html => { :method => "put" }, :class => "accept_tos_form") do |f|
       .field
-        = hidden_field_tag 'tos_version', 2
         = f.check_box :terms_of_service
         = f.label :terms_of_service, "By checking this box I assert that I agree to the terms of service."
       .field.clearfix
@@ -138,7 +137,7 @@
       TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
       TJG.more_games_popular =  "#{games_more_games_popular_path}";
     });
-  - if current_gamer.accepted_tos_version < 2
+  - if current_gamer.accepted_tos_version < TAPJOY_GAMES_CURRENT_TOS_VERSION
     :plain
       $(window).load(function() { 
         TJG.ui.showAcceptTos();

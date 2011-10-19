@@ -42,7 +42,7 @@ class Games::GamersController < GamesController
   end
 
   def accept_tos
-    @gamer.accepted_tos_version = params[:tos_version]
+    @gamer.accepted_tos_version = TAPJOY_GAMES_CURRENT_TOS_VERSION
     if @gamer.save
       render(:json => { :success => true }) and return
     else

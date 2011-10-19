@@ -1,6 +1,6 @@
 class AddTosVersionToGamers < ActiveRecord::Migration
   def self.up
-    add_column :gamers, :accepted_tos_version, :integer, :default => 1
+    add_column :gamers, :accepted_tos_version, :integer, :default => 2
     add_column :gamer_profiles, :allow_marketing_emails, :boolean, :default => true
     remove_column :gamer_profiles, :first_name
     remove_column :gamer_profiles, :last_name
