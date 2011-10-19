@@ -185,9 +185,6 @@ class SimpledbResource
   rescue Exception => e
     if e.is_a?(RightAws::AwsError)
       Mc.increment_count("failed_sdb_saves.sdb.#{@this_domain_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
-      if @this_domain_name =~ /^#{RUN_MODE_PREFIX}web-request-/
-        Mc.increment_count("failed_sdb_saves.wr.#{@this_domain_name}.#{(now.to_f / 1.minute).to_i}", false, 1.hour)
-      end
     else
       Mc.increment_count("failed_sdb_saves.mc.#{@this_domain_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
     end
@@ -199,16 +196,11 @@ class SimpledbResource
     end
     return if @this_domain_name =~ /^#{RUN_MODE_PREFIX}devices_/
     Rails.logger.info "Sdb save failed. Adding to sqs. Domain: #{@this_domain_name} Key: #{@key} Exception: #{e.class} - #{e}"
-    if @this_domain_name =~ /^#{RUN_MODE_PREFIX}web-request-/
-      message = Base64::encode64(self.serialize)
-      Sqs.send_message(QueueNames::ENCODED_WEB_REQUESTS, message)
-    else
-      uuid = UUIDTools::UUID.random_create.to_s
-      bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
-      bucket.put("incomplete/#{uuid}", self.serialize)
-      message = { :uuid => uuid, :options => options_copy }.to_json
-      Sqs.send_message(QueueNames::FAILED_SDB_SAVES, message)
-    end
+    uuid = UUIDTools::UUID.random_create.to_s
+    bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
+    bucket.put("incomplete/#{uuid}", self.serialize)
+    message = { :uuid => uuid, :options => options_copy }.to_json
+    Sqs.send_message(QueueNames::FAILED_SDB_SAVES, message)
     Rails.logger.info "Successfully added to sqs. Message: #{message}"
   ensure
     Rails.logger.flush
