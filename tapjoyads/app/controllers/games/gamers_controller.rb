@@ -10,21 +10,24 @@ class Games::GamersController < GamesController
       g.referrer              = params[:gamer][:referrer]
       g.terms_of_service      = params[:gamer][:terms_of_service]
     end
-    @gamer_profile = GamerProfile.new( :birthdate => Date.new(params[:date][:year].to_i, params[:date][:month].to_i, params[:date][:day].to_i) )
+    birthdate = Date.new(params[:date][:year].to_i, params[:date][:month].to_i, params[:date][:day].to_i)
+    @gamer_profile = GamerProfile.new(:birthdate => birthdate)
     @gamer.gamer_profile = @gamer_profile
 
     if @gamer.save
       GamesMailer.deliver_gamer_confirmation(@gamer, games_confirm_url(:token => @gamer.confirmation_token))
-      render(:json => { :success => true, :link_device_url => new_games_gamer_device_path, :linked => @gamer.devices.any? }) and return
+      render(:json => { :success => true, :link_device_url => new_games_gamer_device_path, :linked => @gamer.devices.any? })
     else
-      errors = []
-      @gamer.errors.each do |error|
-        errors << (error) unless error[0] == 'gamer_profile'
-      end
-      @gamer_profile.errors.each do |error|
-        errors << (error)
-      end
-      render(:json => { :success => false, :error => errors }) and return
+      errors = @gamer.errors.reject{|error|error[0] == 'gamer_profile'}
+      errors |= @gamer_profile.errors.to_a
+      render(:json => { :success => false, :error => errors })
+    end
+  end
+
+  def edit
+    @geoip_data = get_geoip_data
+    if @gamer_profile.country.blank?
+      @gamer_profile.country = Countries.country_code_to_name[@geoip_data[:country]]
     end
   end
 
@@ -42,6 +45,8 @@ private
   def set_profile
     if current_gamer.present?
       @gamer = current_gamer
+      @gamer_profile = @gamer.gamer_profile || GamerProfile.new(:gamer => @gamer)
+      @gamer.gamer_profile = @gamer_profile
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
       redirect_to games_root_path

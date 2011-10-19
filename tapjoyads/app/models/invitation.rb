@@ -34,6 +34,22 @@ class Invitation < ActiveRecord::Base
   named_scope :twitter,  :conditions => { :channel => TWITTER }
   named_scope :pending_invitations_for, lambda { |external_info| { :conditions => ["external_info = ? and status = ?", external_info, PENDING ] } }
 
+  def self.invitation_message(name, link_url=nil)
+    link = link_url ? "<a href='#{link_url}'>#{TJGAMES_URL}</a>" : TJGAMES_URL
+    <<-eos.gsub(/^ {6}/, '')
+      Hi,
+
+      #{name} has invited you to join Tapjoy, where you can discover mobile apps just for you.
+
+      To get started, create your account here:
+
+      #{link}
+
+      Start Discovering!
+      Team Tapjoy
+    eos
+  end
+
   def pending?; status == PENDING; end
 
   def self.reconcile_pending_invitations(noob, options={})
@@ -41,7 +57,7 @@ class Invitation < ActiveRecord::Base
     invitation    = options.delete(:invitation)     { nil }
     if invitation
       external_info = noob.external_info(invitation.channel)
-    elsif external_info
+    elsif external_info && noob
       invitation = Invitation.find_by_gamer_id_and_external_info(noob.referred_by, external_info)
     else
       raise "Need invitation or external info"
@@ -50,10 +66,10 @@ class Invitation < ActiveRecord::Base
 
     Invitation.pending_invitations_for(external_info).each do |invitation|
       gamer = Gamer.find_by_id(invitation.gamer_id)
-      gamer.follow_gamer(noob)
+      gamer.follow_gamer(noob) if gamer
     end
 
-    if invitation
+    if invitation && invitation.external_info == external_info
       invitation.status = ACCEPTED
       invitation.noob_id = noob.id
       invitation.save

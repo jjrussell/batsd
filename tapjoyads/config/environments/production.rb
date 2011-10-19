@@ -46,6 +46,7 @@ API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
 DASHBOARD_URL = local_config['dashboard_url'] || 'https://dashboard.tapjoy.com'
 WEBSITE_URL = local_config['website_url'] || 'https://www.tapjoy.com'
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
+TJGAMES_URL = local_config['tjgames_url'] || 'https://www.tapjoygames.com'
 
 # Amazon services:
 amazon = YAML::load_file("#{ENV['HOME']}/.tapjoy_aws_credentials.yaml")
@@ -56,7 +57,6 @@ ENV['AWS_SECRET_ACCESS_KEY'] = amazon['production']['secret_access_key']
 # to the list of transient problems which will automatically get retried by RightAws.
 RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
 
-MAX_WEB_REQUEST_DOMAINS = 370
 NUM_POINT_PURCHASES_DOMAINS = 10
 NUM_CLICK_DOMAINS = 50
 NUM_REWARD_DOMAINS = 50

@@ -36,7 +36,7 @@ class AppsController < WebsiteController
   def create
     @app = App.new
     log_activity(@app)
-    
+
     @app.partner = current_partner
     @app.platform = params[:app][:platform]
     @app.store_id = params[:app][:store_id] if params[:state] == 'live'
@@ -50,7 +50,7 @@ class AppsController < WebsiteController
       render :action => "new"
       return
     end
-    
+
     if @app.save
       @app.download_icon(app_store_data[:icon_url])
       flash[:notice] = 'App was successfully created.'
@@ -63,7 +63,7 @@ class AppsController < WebsiteController
 
   def update
     log_activity(@app)
-    
+
     @app.name = params[:app][:name]
     @app.store_id = params[:app][:store_id] if params[:state] == 'live'
     country = params[:app_country]
@@ -126,7 +126,7 @@ private
     else
       @app = current_partner.apps.find(params[:id] || session[:last_shown_app])
     end
-    
+
     session[:last_shown_app] = @app.id
   end
 

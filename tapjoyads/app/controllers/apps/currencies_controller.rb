@@ -32,7 +32,7 @@ class Apps::CurrenciesController < WebsiteController
     
     safe_attributes = [:name, :conversion_rate, :initial_balance, :callback_url, :secret_key, :test_devices, :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid]
     if permitted_to?(:edit, :statz)
-      safe_attributes += [:disabled_offers, :max_age_rating, :only_free_offers, :ordinal, :banner_advertiser, :hide_rewarded_app_installs, :minimum_hide_rewarded_app_installs_version, :tapjoy_enabled, :rev_share_override]
+      safe_attributes += [:disabled_offers, :max_age_rating, :only_free_offers, :ordinal, :hide_rewarded_app_installs, :minimum_hide_rewarded_app_installs_version, :tapjoy_enabled, :rev_share_override]
     end
     
     if @currency.safe_update_attributes(currency_params, safe_attributes)
@@ -69,7 +69,18 @@ class Apps::CurrenciesController < WebsiteController
     log_activity(@currency)
     @currency.name = params[:currency][:name]
     
+    partner = @currency.partner
+    
+    unless partner.accepted_publisher_tos? || params[:terms_of_service] == '1'
+      flash[:error] = 'You must accept the terms of service to create a new virtual currency'
+      render :action => :new and return
+    end
+    
     if @currency.save
+      if params[:terms_of_service] == '1'
+        log_activity(partner)
+        partner.update_attribute :accepted_publisher_tos, true
+      end
       flash[:notice] = 'Currency was successfully created.'
       redirect_to app_currency_path(:app_id => params[:app_id], :id => @currency.id)
     else

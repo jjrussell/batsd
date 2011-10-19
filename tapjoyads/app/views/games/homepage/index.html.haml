@@ -105,6 +105,27 @@
                     .tab_button_bottom_arrrow
               #more_games_content.hide   
 
+-# #update_dob_dialog.dialog_wrapper.hide
+  -# .dialog
+    -# #update_dob_dialog_content
+-# #update_dob_dialog_content_placeholder.hide
+  -# .dialog_header_wrapper
+    -# .dialog_header_right
+    -# .dialog_header_left
+    -# .dialog_title.title_2
+      -# Required Info Missing
+  -# .dialog_header
+    -# Please provide your birthdate
+  -# .dialog_content
+    -# - form_for([ :games, :gamer, @gamer_profile ], :url => update_birthdate_games_gamer_gamer_profile_path, :html => { :method => "put" }, :class => "update_dob_form") do |f|
+      -# .field
+        -# = label_tag :birthdate
+        -# = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'Day', :month => 'Month', :year => 'Year'} }
+      -# .field.clearfix
+        -# = f.submit 'Submit', :class => 'right button m_width lt_blue'
+      -# .dob_error.center
+        -# = error_message_on @gamer_profile, :birthdate
+
 - content_for :page_head do
   %meta{ :name => 'description', :content => 'Tapjoy Games: The destination for mobile apps and games on Android, iPhone and iPad.' }
   %meta{ :name => 'keywords', :content => 'games, mobile games, mobile apps, iOS, iPhone, iTouch, iPad, Android' }
@@ -116,3 +137,8 @@
       TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
       TJG.more_games_popular =  "#{games_more_games_popular_path}";
     });
+  -# - if @gamer_profile.birthdate.blank?
+    -# :plain
+      -# $(window).load(function() { 
+        -# TJG.ui.showUpdateDob();
+      -# });

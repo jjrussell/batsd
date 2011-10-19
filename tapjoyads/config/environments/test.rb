@@ -37,12 +37,12 @@ API_URL = ''
 DASHBOARD_URL = ''
 WEBSITE_URL = ''
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
+TJGAMES_URL = ''
 
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['test']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['test']['secret_access_key']
 
-MAX_WEB_REQUEST_DOMAINS = 2
 NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2
 NUM_REWARD_DOMAINS = 2
@@ -69,3 +69,5 @@ CLEAR_MEMCACHE = true
 twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
 ENV['CONSUMER_KEY'] = twitter['test']['consumer_key']
 ENV['CONSUMER_SECRET'] = twitter['test']['consumer_secret']
+
+DEV_FACEBOOK_ID = '100000459598424'

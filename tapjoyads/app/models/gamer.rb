@@ -4,6 +4,7 @@ class Gamer < ActiveRecord::Base
   has_many :gamer_devices
   has_many :invitations
   has_one :gamer_profile
+  delegate :facebook_id, :facebook_id?, :fb_access_token, :referred_by, :referred_by=, :referred_by?, :referral_count, :to => :gamer_profile
 
   validates_associated :gamer_profile, :on => :create
   validates_presence_of :email
@@ -17,7 +18,7 @@ class Gamer < ActiveRecord::Base
 
   acts_as_authentic do |c|
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
-    c.perishable_token_valid_for = 1.hour
+    c.perishable_token_valid_for = 1.day
     c.login_field = :email
     c.validate_login_field = false
     c.require_password_confirmation = true
@@ -26,16 +27,6 @@ class Gamer < ActiveRecord::Base
   def confirm!
     self.confirmed_at = Time.zone.now
     save
-  end
-
-  def update_facebook_info!(facebook_user)
-    if facebook_id != facebook_user.id
-      self.facebook_id = facebook_user.id
-      self.fb_access_token = facebook_user.client.access_token
-      save!
-
-      Invitation.reconcile_pending_invitations(self, :external_info => facebook_id)
-    end
   end
 
   def update_twitter_info!(authhash)
@@ -67,6 +58,18 @@ class Gamer < ActiveRecord::Base
     end
   end
 
+  def self.find_all_gamer_based_on_facebook(external)
+    gamer_profiles = GamerProfile.find_all_by_facebook_id(external)
+    gamers = []
+    
+    if gamer_profiles.any?
+      gamer_profiles.each do |profile|
+        gamers << Gamer.find_by_id(profile.gamer_id)
+      end
+    end
+    gamers
+  end
+
   def follow_gamer(friend)
     Friendship.establish_friendship(id, friend.id)
   end
@@ -80,15 +83,17 @@ class Gamer < ActiveRecord::Base
     invitation
   end
 
+  def get_gamer_nickname
+    if gamer_profile.present? && gamer_profile.nickname.present?
+      gamer_profile.nickname
+    elsif gamer_profile.present? && gamer_profile.name.present?
+      gamer_profile.name
+    end
+  end
+
   def get_gamer_name
-    if gamer_profile.present? && ( gamer_profile.first_name.present? || gamer_profile.last_name.present? )
-      if gamer_profile.first_name.blank?
-        gamer_profile.last_name
-      elsif gamer_profile.last_name.blank?
-        gamer_profile.first_name
-      else
-        "#{gamer_profile.first_name} #{gamer_profile.last_name}"
-      end
+    if gamer_profile.present? && gamer_profile.name.present?
+      gamer_profile.name
     else
       email
     end
@@ -123,8 +128,9 @@ private
       else
         self.referred_by, invitation_id = SymmetricCrypto.decrypt_object(referrer, SYMMETRIC_CRYPTO_SECRET).split(',')
         if referred_by? && invitation_id
-          Gamer.increment_counter(:referral_count, referred_by)
-          invitation = Invitation.find_by_id(invitation_id)
+          referred_by_gamer = Gamer.find(self.referred_by)
+          referred_by_gamer.gamer_profile.update_attributes!(:referral_count => referred_by_gamer.referral_count + 1)
+          invitation = Invitation.find(invitation_id)
           follow_gamer(Gamer.find_by_id(referred_by))
           Invitation.reconcile_pending_invitations(self, :invitation => invitation)
         end

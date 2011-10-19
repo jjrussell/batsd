@@ -63,7 +63,7 @@ end
 thread_list = []
 server_list.each do |server|
   thread = Thread.new do
-    puts "Running on #{server[:aws_groups].to_s.gsub('tapbase', '')} #{server[:dns_name]} (#{server[:server_num]} / #{server_list.length})", `ssh #{user}@#{server[:dns_name]} '#{command}'`, "\n"
+    puts "Running on #{server[:aws_groups].to_s.gsub('tapbase', '')} #{server[:dns_name]} (#{server[:server_num]} / #{server_list.length})", `ssh #{user}@#{server[:dns_name]} 'source /etc/profile ; #{command}'`, "\n"
     if server[:boot_app]
       `curl -s http://#{server[:dns_name]}:9898/healthz`
     end

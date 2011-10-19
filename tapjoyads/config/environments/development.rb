@@ -15,7 +15,7 @@ config.action_controller.perform_caching             = false
 # Don't care if the mailer can't send
 config.action_mailer.raise_delivery_errors = false
 
-config.gem 'factory_girl', :version => '2.1.2'
+config.gem 'mail_safe', :version => '0.3.1'
 
 amazon = YAML::load_file("#{RAILS_ROOT}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['dev']['access_key_id']
@@ -36,8 +36,8 @@ API_URL = local_config['api_url'] || ''
 DASHBOARD_URL = local_config['dashboard_url'] || ''
 WEBSITE_URL = local_config['website_url'] || ''
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
+TJGAMES_URL = local_config['tjgames_url'] || ''
 
-MAX_WEB_REQUEST_DOMAINS = 2
 NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2
 NUM_REWARD_DOMAINS = 2
@@ -64,3 +64,5 @@ CLEAR_MEMCACHE = !(local_config['clear_memcache'] == false)
 twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
 ENV['CONSUMER_KEY'] = twitter['dev']['consumer_key']
 ENV['CONSUMER_SECRET'] = twitter['dev']['consumer_secret']
+
+DEV_FACEBOOK_ID = '100000459598424'
