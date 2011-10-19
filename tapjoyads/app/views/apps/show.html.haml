@@ -13,7 +13,8 @@
   For help integrating your app, please refer to our
   = link_to('Knowledge Center', KNOWLEDGE_CENTER_URL)
   or check out our
-  = link_to('Developer Forum', DEV_FORUM_URL)
+  = succeed '.' do
+    = link_to('Developer Forum', DEV_FORUM_URL)
 
 - form_for(@app, :html => { :class => 'tjform' }) do |f|
   = f.hidden_field :store_id
