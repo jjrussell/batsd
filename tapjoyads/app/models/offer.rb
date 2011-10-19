@@ -300,16 +300,16 @@ class Offer < ActiveRecord::Base
     VirtualGood.count(:where => "app_id = '#{self.item_id}'") > 0
   end
 
-  def banner_creative_path(size, format='png')
+  def banner_creative_path(size, format = 'png')
     "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
   end
 
-  def banner_creative_s3_object(size, format='png')
+  def banner_creative_s3_object(size, format = 'png')
     bucket = S3.bucket(BucketNames::TAPJOY)
     bucket.objects[banner_creative_path(size, format)]
   end
 
-  def banner_creative_mc_key(size, format='png')
+  def banner_creative_mc_key(size, format = 'png')
     banner_creative_path(size, format).gsub('/','.')
   end
 
