@@ -977,30 +977,30 @@ form#new_gamer_session .login_pass {
 #edit_profile .formError {
   padding: 0 0 0 2px;
 }
-#edit_communications {
+#edit_preferences {
   padding: 0;
 }
-#edit_communications .bottom_line {
+#edit_preferences .bottom_line {
   border-bottom: 1px solid #DEDEDE;
 }
-#edit_communications .slider {
+#edit_preferences .slider {
   padding: 0;
   vertical-align: middle;
   width: 100%;
 }
-#edit_communications .field {
+#edit_preferences .field {
   margin: 12px 0;
   padding: 0;
   position: relative;
   width: 100%;
 }
-.mobile #edit_communications label {
+.mobile #edit_preferences label {
   font-size: 12px;
 }
-#edit_communications label {
+#edit_preferences label {
   color: #7E7E7E;
 }
-#edit_communications input[type=checkbox] {
+#edit_preferences input[type=checkbox] {
   margin: 0 0 0 12px;
 }
 .button_bar {

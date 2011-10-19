@@ -8,7 +8,7 @@ class Games::Gamers::GamerProfilesController < GamesController
       redirect_to edit_games_gamer_path
     else
       flash.now[:error] = 'Error updating profile'
-      render :action => :edit
+      redirect_to :controller => '/games/gamers', :action => :edit
     end
   end
 
@@ -33,7 +33,7 @@ class Games::Gamers::GamerProfilesController < GamesController
       redirect_to edit_games_gamer_path
     else
       flash.now[:error] = 'Error updating selection'
-      render :action => :edit
+      redirect_to :controller => '/games/gamers', :action => :prefs
     end
   end
 

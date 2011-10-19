@@ -10,7 +10,7 @@
             - form_for([ :games, :gamer, @gamer_profile ], :url => update_prefs_games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
               .content_box_wrapper
                 .content_box.clearfix
-                  #edit_communications
+                  #edit_preferences
                     .slider.clearfix
                       .field.clearfix
                         = f.check_box :allow_marketing_emails
