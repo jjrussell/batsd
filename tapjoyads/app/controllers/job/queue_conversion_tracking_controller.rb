@@ -97,7 +97,7 @@ private
     click.put('installed_at', installed_at_epoch)
     click.serial_save
     
-    web_request = WebRequest.new(:time => Time.zone.at(installed_at_epoch))
+    web_request = WebRequest.new(:time => Time.zone.at(installed_at_epoch.to_f))
     web_request.path              = 'reward'
     web_request.type              = reward.type
     web_request.publisher_app_id  = reward.publisher_app_id
