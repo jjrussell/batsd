@@ -69,7 +69,6 @@ class Games::SocialController < GamesController
   def send_email_invites
     gamers = []
     non_gamers = []
-    current_facebook_user.fetch
 
     @recipients.each do |recipient|
       gamer = Gamer.find_by_email(recipient)
