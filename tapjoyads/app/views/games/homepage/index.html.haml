@@ -1,45 +1,40 @@
 #jqt
   #home.current
-    .container.vertical-scroll
-      .scroller.with-scrollbar
-        .top_nav_bar
+    .nav
+      .aside_nav
+        %span
+          Help
+        %span
+          |
+        %span
+          Logout
+      .logo
+      .nav_buttons
+        %ul.nav_list.clearfix
+          %li.my_apps.active
+            My Apps
+          %li.more_apps
+            More Apps
           %a{ :href => edit_games_gamer_path }
-            .nav_profile
-          .nav_device_info
-            .device_name
-              = @device_name
-            .device_switch
-          .nav_device
-            .device_icon
-              .mobile
-        .page
-          .logo
-            .logo_top
-            .slide_nav
-              %a{ :href => "#", :class => "more_games_url" }
-                .slider.more_games.slider_right.right
-                  %span.title.small
-                    More Apps
-              .slider_btn.left
-                .slider.slider_active.slider_left
-                  %span.title
-                    My Apps
-                .slide_arrow_wrapper.bottom_arrow
-                  .slide_arrow
-          - if current_gamer.devices.empty?
-            .content_wrapper
-              .content
-                = render 'register_device'
-          - elsif @external_publishers.blank?
-            .content_wrapper
-              = render 'featured_review_preview'
-              .content
-                = render 'no_games'
-          - else
-            .content_wrapper
-              = render 'featured_review_preview'
-              .content
-                = render 'my_apps'
+            %li.my_acct
+              My Account
+          %li.share
+        
+    - if current_gamer.devices.empty?
+      .content_wrapper
+        .content
+          = render 'register_device'
+    - elsif @external_publishers.blank?
+      .content_wrapper
+        = render 'featured_review_preview'
+        .content
+          = render 'no_games'
+    - else
+      .content_wrapper
+        = render 'featured_review_preview'
+        .content
+          = render 'my_apps'
+            
   #feat_app
     .container.vertical-scroll
       .scroller.with-scrollbar

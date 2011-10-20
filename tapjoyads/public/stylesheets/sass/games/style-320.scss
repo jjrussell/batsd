@@ -1,0 +1,33 @@
+$main-title-font-size: 1.2em;
+$main-font-size: 1em;
+$main-font-color: #505F6D;
+$main-font-name: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+
+$nav-height: 200px;
+$nav-padding-v: 16px;
+$nav-padding-h: 8px;
+$nav-bg-color: #E9E5DA;
+
+$logo-bottom-margin: 16px;
+
+@mixin button ($radius: 6px, $padding: 8px 8px) {
+  @include rounded-corners($radius);
+  padding: $padding;
+  text-align: center;
+}
+
+@mixin rounded-corners($radius: 6px) {
+  border-radius: $radius;
+  -moz-border-radius-: $radius;
+  -webkit-border-radius: $radius;
+}
+.nav_buttons li {
+  font-size: 0.7em;
+  width: 70px;
+  @include button(16px, 8px 4px);
+}
+
+.nav_buttons li.share {
+  height: 12px;
+  width: 20px;
+}

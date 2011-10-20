@@ -1,0 +1,33 @@
+$main-title-font-size: 1.2em;
+$main-font-size: 1em;
+$main-font-color: #505F6D;
+$main-font-name: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+
+$nav-height: 200px;
+$nav-padding-v: 16px;
+$nav-padding-h: 8px;
+$nav-bg-color: #E9E5DA;
+
+$logo-bottom-margin: 16px;
+
+.nav {
+  padding: $nav-padding-v/2 $nav-padding-h/2;
+  
+  .aside_nav {
+    top: 12px;
+  }
+  .logo {
+    background: transparent url('/images/games/v2/logo_mobile.png') no-repeat;
+    height: 38px;
+    margin: 0 auto;
+    margin-bottom: $logo-bottom-margin/2;
+    width: 84px;
+  }
+  .nav_buttons {
+    width: 450px;
+  }
+  .nav_buttons li {
+    font-size: 0.8em;
+    width: 110px;
+  }
+}
