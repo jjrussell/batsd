@@ -7,7 +7,7 @@ class Games::Gamers::GamerProfilesController < GamesController
     if @gamer_profile.save
       redirect_to edit_games_gamer_path
     else
-      flash.now[:error] = 'Error updating profile'
+      flash[:error] = 'Error updating profile'
       redirect_to :controller => '/games/gamers', :action => :edit
     end
   end
@@ -32,7 +32,7 @@ class Games::Gamers::GamerProfilesController < GamesController
     if @gamer_profile.save
       redirect_to edit_games_gamer_path
     else
-      flash.now[:error] = 'Error updating selection'
+      flash[:error] = 'Error updating preferences'
       redirect_to :controller => '/games/gamers', :action => :prefs
     end
   end
