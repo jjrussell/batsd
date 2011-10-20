@@ -4,6 +4,8 @@ class AppReview < ActiveRecord::Base
   belongs_to :author, :polymorphic => true
   belongs_to :app
 
+  before_save :copy_platform
+
   validates_uniqueness_of [:featured_on, :platform], :allow_nil => true
   validates_uniqueness_of :author_id, :scope => :app_id, :message => "has already reviewed this app"
   validates_presence_of :author, :app, :text
@@ -13,29 +15,33 @@ class AppReview < ActiveRecord::Base
   named_scope :not_featured, :conditions => { :featured_on => nil }, :limit => 1, :order => "created_at DESC"
   named_scope :featured_before,  lambda { |date| { :conditions => [ "featured_on < ?", date.to_date ], :order => "featured_on ASC", :limit => 1 } }
   named_scope :featured_on, lambda { |date| { :conditions => [ "featured_on = ?", date.to_date ] } }
+  named_scope :for_platform, lambda { |platform| { :conditions => [ "platform = ?", platform ] } }
 
   delegate :name, :id, :to => :app, :prefix => true
   delegate :full_name, :to => :author, :prefix => true
 
   def self.featured_review(platform)
-    Rails.logger.warn("\n\n[#{platform}]\n\n")
     platform = 'iphone' unless %w(android iphone).include?(platform)
     Mc.get_and_put("featured_app_review.#{platform}", false, 1.hour) do
       now = Time.now.utc
-      reviews = AppReview.featured_on(now).select{|review| review.app.platform == platform}
-      if reviews.blank?
-        reviews = AppReview.by_employees.not_featured.select{|review| review.app.platform == platform}
-        if reviews.blank?
-          reviews = AppReview.featured_before(now).select{|review| review.app.platform == platform}
-        end
+      review = AppReview.featured_on(now).for_platform(platform).first
+      review = AppReview.by_employees.not_featured.for_platform(platform) if review.nil?
+      review = AppReview.featured_before(now).for_platform(platform)      if review.nil?
+
+      if review.nil?
+        Notifier.alert_new_relic(AppReviewEmptyError, "Platform #{platform}, Time #{now}")
+        raise
+      else
+        review.featured_on = now
+        review.save
+        review
       end
-
-      Notifier.alert_new_relic(AppReviewEmptyError, "Platform #{platform}, Time #{now}") if reviews.blank?
-
-      review = reviews.first
-      review.featured_on = now
-      review.save
-      review
     end
+  end
+
+private
+
+  def copy_platform
+    self.platform = app.platform
   end
 end
