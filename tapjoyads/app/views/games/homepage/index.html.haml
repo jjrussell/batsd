@@ -139,44 +139,45 @@
               #more_games_content.hide
 
 
--# #update_dob_dialog.dialog_wrapper.hide
-  -# .dialog
-    -# #update_dob_dialog_content
--# #update_dob_dialog_content_placeholder.hide
-  -# .dialog_header_wrapper
-    -# .dialog_header_right
-    -# .dialog_header_left
-    -# .dialog_title.title_2
-      -# Required Info Missing
-  -# .dialog_header
-    -# Please provide your birthdate
-  -# .dialog_content
-    -# - form_for([ :games, :gamer, @gamer_profile ], :url => update_birthdate_games_gamer_gamer_profile_path, :html => { :method => "put" }, :class => "update_dob_form") do |f|
-      -# .field
-        -# = label_tag :birthdate
-        -# = select_date nil, { :order => [:month, :day, :year], :start_year => Time.now.year, :end_year => (Time.now.year - 100), :include_blank => false, :prompt => {:day => 'Day', :month => 'Month', :year => 'Year'} }
-      -# .field.clearfix
-        -# = f.submit 'Submit', :class => 'right button m_width lt_blue'
-      -# .dob_error.center
-        -# = error_message_on @gamer_profile, :birthdate
+#accept_tos_dialog.dialog_wrapper.hide
+  .dialog
+    #accept_tos_dialog_content
+#accept_tos_dialog_content_placeholder.hide
+  .dialog_header_wrapper
+    .dialog_header_right
+    .dialog_header_left
+    .dialog_title.title_2
+      Action Required!
+  .dialog_header
+    Our #{ link_to('terms of service', games_tos_path, :target => '_blank') } have changed.  Please review and indicate your agreement below.
+  .dialog_content
+    - form_for([ :games, current_gamer ], :url => accept_tos_games_gamer_path, :html => { :method => "put" }, :class => "accept_tos_form") do |f|
+      .field
+        = f.check_box :terms_of_service
+        = f.label :terms_of_service, "By checking this box I assert that I agree to the terms of service."
+      .field.clearfix
+        = f.submit 'OK', :class => 'right button m_width lt_blue'
+      .tos_error.center
+        = error_message_on @gamer_profile, :birthdate
 
 - content_for :page_head do
   %meta{ :name => 'description', :content => 'Tapjoy Games: The destination for mobile apps and games on Android, iPhone and iPad.' }
   %meta{ :name => 'keywords', :content => 'games, mobile games, mobile apps, iOS, iPhone, iTouch, iPad, Android' }
 
 - content_for :page_javascript do
-  :plain
-    $(window).load(function() {
-      TJG.select_device = #{@device_data.to_json};
-      TJG.require_select_device = #{@require_select_device.to_json};
-      TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
-      TJG.more_games_popular =  "#{games_more_games_popular_path}";
-      TJG.ios_link_device_url = "#{new_games_gamer_device_path}";
-      TJG.android_market_url = "#{GAMES_ANDROID_MARKET_URL}";
-      TJG.ui.homeInit();
-    });
-  -# - if @gamer_profile.birthdate.blank?
-    -# :plain
-      -# $(window).load(function() { 
-        -# TJG.ui.showUpdateDob();
-      -# });
+  - if current_gamer.accepted_tos_version < TAPJOY_GAMES_CURRENT_TOS_VERSION
+    :plain
+      $(window).load(function() {
+        TJG.ui.showAcceptTos();
+      });
+  - else
+    :plain
+      $(window).load(function() {
+        TJG.select_device = #{@device_data.to_json};
+        TJG.require_select_device = #{@require_select_device.to_json};
+        TJG.more_games_editor_picks =  "#{games_more_games_editor_picks_path}";
+        TJG.more_games_popular =  "#{games_more_games_popular_path}";
+        TJG.ios_link_device_url = "#{new_games_gamer_device_path}";
+        TJG.android_market_url = "#{GAMES_ANDROID_MARKET_URL}";
+        TJG.ui.homeInit();
+      });

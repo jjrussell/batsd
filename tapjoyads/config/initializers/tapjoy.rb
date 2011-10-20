@@ -28,6 +28,7 @@ SCHEMA_VERSION = ActiveRecord::Migrator.current_version
 
 DEV_FORUM_URL = 'https://groups.google.com/group/tapjoy-developer'
 TAPJOY_GAMES_REGISTRATION_OFFER_ID = 'f7cc4972-7349-42dd-a696-7fcc9dcc2d03'
+TAPJOY_GAMES_CURRENT_TOS_VERSION = 2
 
 WEB_REQUEST_LOGGER = SyslogLogger.new("#{RUN_MODE_PREFIX}rails-web_requests")
 

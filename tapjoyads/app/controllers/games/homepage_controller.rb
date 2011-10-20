@@ -28,7 +28,6 @@ class Games::HomepageController < GamesController
     @device = Device.new(:key => device_id) if device_id.present?
     @external_publishers = ExternalPublisher.load_all_for_device(@device) if @device.present?
     @featured_review = AppReview.featured_review
-    #@gamer_profile = current_gamer.gamer_profile || GamerProfile.new
   end
   
   def switch_device

@@ -50,7 +50,6 @@ class GamesMailer < ActionMailer::Base
     body(:ios_link => ios_link, :android_link => android_link)
   end
   
-
   def invite(gamer_name, recipients_email, link)
     from "#{gamer_name} <noreply@tapjoy.com>"
     recipients recipients_email

@@ -24,11 +24,7 @@ class OneOffs
 
 
   def self.update_gamer_devices
-<<<<<<< HEAD
-    GamerDevice.scoped(:conditions => 'gamer_devices.device_type is null').each do |device|
-=======
     GamerDevice.find_each(:conditions => "device_type is null") do |device|
->>>>>>> e8bd90eb3350f9b490bea597006d46f6ac62e863
       if PRODUCT_TYPES[device.name].present?
         device.device_type = PRODUCT_TYPES[device.name]
         device.save!
