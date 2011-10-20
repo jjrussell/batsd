@@ -17,13 +17,22 @@ class AppReview < ActiveRecord::Base
   delegate :name, :id, :to => :app, :prefix => true
   delegate :full_name, :to => :author, :prefix => true
 
-  def self.featured_review
-    Mc.get_and_put("featured_app_review", false, 1.hour) do
+  def self.featured_review(platform)
+    Rails.logger.warn("\n\n[#{platform}]\n\n")
+    platform = 'iphone' unless %w(android iphone).include?(platform)
+    Mc.get_and_put("featured_app_review.#{platform}", false, 1.hour) do
       now = Time.now.utc
-      review = AppReview.featured_on(now).first ||
-              AppReview.by_employees.not_featured.first ||
-              AppReview.featured_before(now).first
+      reviews = AppReview.featured_on(now).select{|review| review.app.platform == platform}
+      if reviews.blank?
+        reviews = AppReview.by_employees.not_featured.select{|review| review.app.platform == platform}
+        if reviews.blank?
+          reviews = AppReview.featured_before(now).select{|review| review.app.platform == platform}
+        end
+      end
 
+      Notifier.alert_new_relic(AppReviewEmptyError, "Platform #{platform}, Time #{now}") if reviews.blank?
+
+      review = reviews.first
       review.featured_on = now
       review.save
       review
