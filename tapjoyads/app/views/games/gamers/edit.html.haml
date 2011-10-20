@@ -40,11 +40,17 @@
                       #user_gravatar.image
                         %img{ :src => @gamer.get_avatar_url(30) }
                 %a{ :href => password_games_gamer_path }
-                  .slider.clearfix
+                  .slider.bottom_line.clearfix
                     .profile_arrow.right
                     .field
                       .label
                         Reset Password
+                %a{ :href => prefs_games_gamer_path }
+                  .slider.clearfix
+                    .profile_arrow.right
+                    .field
+                      .label
+                        Preferences
             .title_2
               Contact Tapjoy
             .content_box_wrapper
