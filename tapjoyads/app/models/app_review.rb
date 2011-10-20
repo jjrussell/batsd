@@ -29,8 +29,7 @@ class AppReview < ActiveRecord::Base
                 AppReview.featured_before(now).for_platform(platform).first
 
       if review.nil?
-        Notifier.alert_new_relic(AppReviewEmptyError, "Platform #{platform}, Time #{now}")
-        raise
+        raise AppReviewEmptyError.new("Platform #{platform}, Time #{now}")
       else
         review.featured_on = now
         review.save
