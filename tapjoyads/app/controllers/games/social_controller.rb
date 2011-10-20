@@ -1,4 +1,6 @@
 class Games::SocialController < GamesController
+  rescue_from Mogli::Client::SessionInvalidatedDueToPasswordChange, :with => :handle_oauth_exception
+  
   before_filter :require_gamer
   before_filter :offline_facebook_authenticate, :only => [ :invite_facebook_friends, :send_facebook_invites ]
   before_filter :validate_recipients, :only => [ :send_email_invites ]
@@ -109,7 +111,7 @@ private
         dissociate_and_redirect
       end
     else
-      flash[:error] = 'Please connect Facebook with Tapjoy.'
+      flash[:error] = @error_msg ||'Please connect Facebook with Tapjoy.'
       redirect_to edit_games_gamer_path
     end
   end
@@ -120,7 +122,6 @@ private
         @error_msg = "Please grant us both permissions before sending out an invite."
       end
     rescue
-      @error_msg = "Please authorize us before sending out an invite."
     end
     @error_msg.blank?
   end
@@ -130,6 +131,11 @@ private
     render :json => { :success => false, :error_redirect => true } and return if params[:ajax].present?
     flash[:error] = @error_msg
     redirect_to edit_games_gamer_path
+  end
+  
+  def handle_oauth_exception(e)
+    @error_msg = "Please authorize us before sending out an invite."
+    dissociate_and_redirect and return
   end
 
   def require_gamer
