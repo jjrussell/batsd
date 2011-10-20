@@ -1,4 +1,5 @@
 defaults: &defaults
+  layout: 'games_v2'
   js_version: '1.3'
   js_files: [
     'tjg.jquery-1.6.2.min',
