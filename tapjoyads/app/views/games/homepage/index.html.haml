@@ -13,7 +13,7 @@
         .nav_buttons
           %ul.nav_list.clearfix
             %ul.pair
-              %li.active
+              %li.active_button
                 My Apps
               %li.more_games_url
                 More Apps
@@ -53,8 +53,9 @@
         .nav_buttons
           %ul.nav_list.clearfix
             %ul.pair
-              %li.active
-                My Apps
+              %a{ :href => "#home", :class => "slideright" }
+                %li
+                  My Apps
               %li.more_games_url
                 More Apps
             %ul.pair
@@ -81,8 +82,9 @@
         .nav_buttons
           %ul.nav_list.clearfix
             %ul.pair
-              %li.active
-                My Apps
+              %a{ :href => "#home", :class => "slideright" }
+                %li
+                  My Apps
               %li.more_games_url
                 More Apps
             %ul.pair
@@ -91,6 +93,7 @@
                   My Account
               %li.share
                 Share
+                
     .content_wrapper
       .content
         #app_title
@@ -111,9 +114,10 @@
         .nav_buttons
           %ul.nav_list.clearfix
             %ul.pair
-              %li
-                My Apps
-              %li.more_games_url.active
+              %a{ :href => "#home", :class => "slideright" }
+                %li
+                  My Apps
+              %li.active_button.more_games_url
                 More Apps
             %ul.pair
               %a{ :href => edit_games_gamer_path }

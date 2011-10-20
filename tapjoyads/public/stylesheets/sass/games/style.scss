@@ -174,7 +174,7 @@ a, a:visited {
         width: 80px;
       }
     }
-    .nav_buttons li.active, .nav_buttons li:active {
+    .nav_buttons ul li.active_button, .nav_buttons ul li:active {
       border-color: #B0131D;
       color: #FFF;
       text-shadow: 0 1px 1px #444;
